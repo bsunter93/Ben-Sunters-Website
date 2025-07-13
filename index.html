@@ -5,84 +5,156 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Benjamin J. Sunter - Program Manager</title>
   <style>
+    :root {
+      --primary: #4285f4;
+      --accent: #34a853;
+      --bg: #f9f9f9;
+      --text: #333;
+      --card-bg: #ffffff;
+      --shadow: rgba(0, 0, 0, 0.1);
+    }
+
     body {
-      font-family: Arial, sans-serif;
-      line-height: 1.6;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
       margin: 0;
       padding: 0;
-      background-color: #f4f4f4;
+      background-color: var(--bg);
+      color: var(--text);
     }
-    header, section, footer {
-      padding: 20px;
-      margin: 10px;
-      background-color: #fff;
-      border: 1px solid #ddd;
+
+    header {
+      background: linear-gradient(90deg, var(--primary), var(--accent));
+      color: white;
+      padding: 40px 20px;
+      text-align: center;
+      box-shadow: 0 4px 12px var(--shadow);
     }
-    h1, h2, h3 {
-      color: #333;
+
+    header h1 {
+      margin: 0 0 10px;
+      font-size: 2.5rem;
     }
+
+    header p {
+      margin: 0;
+      font-size: 1.2rem;
+    }
+
+    nav {
+      background: white;
+      border-top: 4px solid var(--primary);
+      box-shadow: 0 2px 6px var(--shadow);
+    }
+
     nav ul {
-      list-style: none;
-      padding: 0;
       display: flex;
-      gap: 15px;
+      justify-content: center;
+      gap: 30px;
+      padding: 15px;
+      margin: 0;
+      list-style: none;
     }
-    nav ul li {
-      display: inline;
-    }
+
     nav ul li a {
       text-decoration: none;
-      color: #007acc;
+      color: var(--primary);
+      font-weight: bold;
+      transition: color 0.3s ease;
     }
+
+    nav ul li a:hover {
+      color: var(--accent);
+    }
+
     .container {
-      max-width: 800px;
+      max-width: 1000px;
       margin: auto;
+      padding: 40px 20px;
+    }
+
+    section {
+      background: var(--card-bg);
+      border-radius: 10px;
+      box-shadow: 0 6px 20px var(--shadow);
+      margin-bottom: 40px;
+      padding: 30px;
+    }
+
+    h2 {
+      border-bottom: 3px solid var(--primary);
+      padding-bottom: 10px;
+      margin-bottom: 20px;
+      font-size: 2rem;
+    }
+
+    h3 {
+      color: var(--accent);
+      margin-top: 20px;
+    }
+
+    p {
+      line-height: 1.7;
+      margin-bottom: 15px;
+    }
+
+    footer {
+      text-align: center;
+      padding: 30px;
+      background: #222;
+      color: #aaa;
+    }
+
+    a {
+      color: var(--primary);
     }
   </style>
 </head>
 <body>
-  <header class="container">
+  <header>
     <h1>Benjamin J. Sunter</h1>
     <p>Program Manager @ Google</p>
-    <nav>
-      <ul>
-        <li><a href="#about">About</a></li>
-        <li><a href="#experience">Experience</a></li>
-        <li><a href="#personal">Personal</a></li>
-        <li><a href="#contact">Contact</a></li>
-      </ul>
-    </nav>
   </header>
 
-  <section id="about" class="container">
-    <h2>About Me</h2>
-    <p>I'm a Program Manager at Google with a passion for driving transformational change in high-tech environments. I lead multi-billion dollar programs and cross-functional teams of 200+ people. My focus is turning complex problems into scalable business solutions.</p>
-  </section>
+  <nav>
+    <ul>
+      <li><a href="#about">About</a></li>
+      <li><a href="#experience">Experience</a></li>
+      <li><a href="#personal">Personal</a></li>
+      <li><a href="#contact">Contact</a></li>
+    </ul>
+  </nav>
 
-  <section id="experience" class="container">
-    <h2>Professional Experience</h2>
-    <h3>Google</h3>
-    <p>Leading annual planning for Americas Sellside Partnerships. Driving strategic initiatives and cross-functional collaboration to generate revenue and improve processes.</p>
+  <main class="container">
+    <section id="about">
+      <h2>About Me</h2>
+      <p>I'm a Program Manager at Google with a passion for driving transformational change in high-tech environments. I lead multi-billion dollar programs and cross-functional teams of 200+ people. My focus is turning complex problems into scalable business solutions.</p>
+    </section>
 
-    <h3>Enterprise Program Manager</h3>
-    <p>Led $26.5B merger implementation programs with 200+ team members. Specialized in enterprise architecture and digital transformation.</p>
+    <section id="experience">
+      <h2>Professional Experience</h2>
+      <h3>Google</h3>
+      <p>Leading annual planning for Americas Sellside Partnerships. Driving strategic initiatives and cross-functional collaboration to generate revenue and improve processes.</p>
 
-    <h3>Process Improvement Specialist</h3>
-    <p>Certified Lean Six Sigma Green Belt. Implemented automation and centralization strategies saving significant time and reducing overhead.</p>
-  </section>
+      <h3>Enterprise Program Manager</h3>
+      <p>Led $26.5B merger implementation programs with 200+ team members. Specialized in enterprise architecture and digital transformation.</p>
 
-  <section id="personal" class="container">
-    <h2>Beyond the Professional</h2>
-    <p>I love spending time outdoors with my family, working in the garden, and experimenting with hot sauces. I'm a former college cheerleader, a collector, and a hands-on builder.</p>
-  </section>
+      <h3>Process Improvement Specialist</h3>
+      <p>Certified Lean Six Sigma Green Belt. Implemented automation and centralization strategies saving significant time and reducing overhead.</p>
+    </section>
 
-  <section id="contact" class="container">
-    <h2>Contact</h2>
-    <p>Ready to collaborate or talk about program management? Let's connect.</p>
-    <p>Email: <a href="mailto:Sunterbb@gmail.com">Sunterbb@gmail.com</a></p>
-  </section>
+    <section id="personal">
+      <h2>Beyond the Professional</h2>
+      <p>I love spending time outdoors with my family, working in the garden, and experimenting with hot sauces. I'm a former college cheerleader, a collector, and a hands-on builder.</p>
+    </section>
 
-  <footer class="container">
+    <section id="contact">
+      <h2>Contact</h2>
+      <p>Ready to collaborate or talk about program management? Let's connect.</p>
+      <p>Email: <a href="mailto:Sunterbb@gmail.com">Sunterbb@gmail.com</a></p>
+    </section>
+  </main>
+
+  <footer>
     <p>&copy; 2025 Benjamin J. Sunter</p>
   </footer>
 </body>
