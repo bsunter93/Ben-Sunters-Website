@@ -5,201 +5,533 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Benjamin J. Sunter - AdTech Program Manager</title>
   <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+    
     :root {
-      --primary: #0f9d58;
-      --accent: #4285f4;
-      --bg: #f4f7fa;
-      --text: #1a1a1a;
+      --primary: #2563eb;
+      --primary-light: #3b82f6;
+      --accent: #10b981;
+      --accent-light: #34d399;
+      --bg: #f8fafc;
+      --bg-secondary: #f1f5f9;
+      --text: #1e293b;
+      --text-light: #475569;
+      --text-muted: #64748b;
       --card-bg: #ffffff;
-      --highlight: #fbbc05;
-      --shadow: rgba(0, 0, 0, 0.1);
+      --border: #e2e8f0;
+      --shadow: rgba(15, 23, 42, 0.08);
+      --shadow-lg: rgba(15, 23, 42, 0.12);
+      --gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
     }
 
     body {
-      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-      margin: 0;
-      padding: 0;
-      background-color: var(--bg);
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      line-height: 1.6;
       color: var(--text);
+      background: var(--bg);
+      scroll-behavior: smooth;
     }
 
+    /* Header with floating effect */
     header {
-      background: linear-gradient(120deg, var(--primary), var(--accent));
-      color: white;
-      padding: 60px 20px 40px;
-      text-align: center;
-      box-shadow: 0 4px 12px var(--shadow);
       position: relative;
+      background: var(--gradient);
+      color: white;
+      padding: 80px 20px 60px;
+      text-align: center;
+      overflow: hidden;
     }
 
-    .profile-wrapper {
+    header::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 300"><path d="M0,96L48,112C96,128,192,160,288,160C384,160,480,128,576,112C672,96,768,96,864,112C960,128,1008,160,1032,176L1056,192V0H1008C960,0,864,0,768,0C672,0,576,0,480,0C384,0,288,0,192,0C96,0,48,0,24,0H0V96Z" fill="rgba(255,255,255,0.1)"/></svg>') no-repeat center top;
+      background-size: cover;
+      opacity: 0.3;
+    }
+
+    .hero-content {
       position: relative;
+      z-index: 2;
+      max-width: 800px;
+      margin: 0 auto;
+    }
+
+    .profile-image {
+      width: 180px;
+      height: 180px;
+      border-radius: 50%;
+      object-fit: cover;
+      object-position: 10% 5%;
+      border: 6px solid rgba(255, 255, 255, 0.2);
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
+      margin-bottom: 30px;
+      transition: transform 0.3s ease;
+    }
+
+    .profile-image:hover {
+      transform: scale(1.05);
+    }
+
+    h1 {
+      font-size: 3.5rem;
+      font-weight: 700;
+      margin-bottom: 20px;
+      text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
+
+    .subtitle {
+      font-size: 1.3rem;
+      font-weight: 400;
+      opacity: 0.9;
+      margin-bottom: 30px;
+    }
+
+    .cta-buttons {
+      display: flex;
+      gap: 20px;
+      justify-content: center;
+      flex-wrap: wrap;
+      margin-top: 40px;
+    }
+
+    .btn {
+      padding: 12px 30px;
+      border: none;
+      border-radius: 50px;
+      font-weight: 600;
+      text-decoration: none;
+      transition: all 0.3s ease;
+      cursor: pointer;
       display: inline-block;
     }
 
-    header img {
-  width: 220px;
-  height: 220px;
-  border-radius: 50%;
-  object-fit: cover;
-  object-position: 10% 5%; /* ← Adjusted to center more of your face */
-  border: 4px solid white;
-}
-
-    header h1 {
-      margin: 10px 0 10px;
-      font-size: 2.8rem;
+    .btn-primary {
+      background: var(--accent);
+      color: white;
     }
 
-    header p {
-      margin: 0;
-      font-size: 1.2rem;
-      font-weight: 500;
+    .btn-secondary {
+      background: rgba(255, 255, 255, 0.2);
+      color: white;
+      border: 2px solid rgba(255, 255, 255, 0.3);
     }
 
+    .btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+    }
+
+    /* Navigation */
     nav {
-      background: white;
-      border-top: 4px solid var(--primary);
-      box-shadow: 0 2px 6px var(--shadow);
+      position: sticky;
+      top: 0;
+      background: rgba(255, 255, 255, 0.95);
+      backdrop-filter: blur(10px);
+      border-bottom: 1px solid var(--border);
+      z-index: 1000;
+      padding: 15px 0;
     }
 
     nav ul {
       display: flex;
       justify-content: center;
-      gap: 35px;
-      padding: 16px;
-      margin: 0;
+      gap: 40px;
       list-style: none;
+      max-width: 800px;
+      margin: 0 auto;
+      padding: 0 20px;
     }
 
-    nav ul li a {
+    nav a {
+      color: var(--text);
       text-decoration: none;
-      color: var(--accent);
-      font-weight: bold;
-      font-size: 1.1rem;
-      position: relative;
+      font-weight: 500;
+      padding: 8px 16px;
+      border-radius: 20px;
+      transition: all 0.3s ease;
     }
 
-    nav ul li a::after {
-      content: '';
-      position: absolute;
-      width: 0;
-      height: 2px;
-      background: var(--highlight);
-      left: 0;
-      bottom: -5px;
-      transition: width 0.3s ease;
+    nav a:hover {
+      background: var(--primary);
+      color: white;
+      transform: translateY(-1px);
     }
 
-    nav ul li a:hover::after {
-      width: 100%;
-    }
-
-    .container {
+    /* Main content */
+    main {
       max-width: 1000px;
-      margin: auto;
-      padding: 40px 20px;
+      margin: 0 auto;
+      padding: 60px 20px;
     }
 
     section {
       background: var(--card-bg);
-      border-radius: 12px;
-      box-shadow: 0 6px 20px var(--shadow);
+      border-radius: 16px;
+      padding: 40px;
       margin-bottom: 40px;
-      padding: 35px;
+      box-shadow: 0 4px 20px var(--shadow);
+      border: 1px solid var(--border);
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    section:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 8px 30px var(--shadow-lg);
     }
 
     h2 {
-      border-left: 6px solid var(--primary);
-      padding-left: 16px;
-      margin-bottom: 20px;
-      font-size: 2rem;
+      color: var(--primary);
+      font-size: 2.2rem;
+      font-weight: 600;
+      margin-bottom: 30px;
+      position: relative;
+      padding-left: 20px;
+    }
+
+    h2::before {
+      content: '';
+      position: absolute;
+      left: 0;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 4px;
+      height: 40px;
+      background: var(--accent);
+      border-radius: 2px;
     }
 
     h3 {
+      color: var(--primary-light);
+      font-size: 1.4rem;
+      font-weight: 600;
+      margin: 30px 0 15px 0;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    h3::before {
+      content: '▸';
       color: var(--accent);
-      margin-top: 20px;
+      font-size: 1.2rem;
     }
 
     p {
+      color: var(--text-light);
+      margin-bottom: 20px;
       line-height: 1.7;
-      margin-bottom: 15px;
     }
 
+    /* Special highlight boxes */
     .highlight-box {
-      background: #e8f0fe;
+      background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%);
+      border: 1px solid #bae6fd;
+      border-radius: 12px;
+      padding: 25px;
+      margin: 25px 0;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .highlight-box::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 4px;
+      height: 100%;
+      background: var(--accent);
+    }
+
+    .highlight-box p {
+      color: var(--text);
+      margin: 0;
+      font-weight: 500;
+    }
+
+    /* Stats or achievements */
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 20px;
+      margin: 30px 0;
+    }
+
+    .stat-card {
+      background: var(--bg-secondary);
       padding: 20px;
-      border-left: 4px solid var(--accent);
-      border-radius: 8px;
-      margin-top: 20px;
-    }
-
-    footer {
+      border-radius: 12px;
       text-align: center;
-      padding: 30px;
-      background: #202124;
-      color: #aaa;
-      font-size: 0.95rem;
+      border: 1px solid var(--border);
     }
 
-    a {
+    .stat-number {
+      font-size: 2rem;
+      font-weight: 700;
       color: var(--primary);
+    }
+
+    .stat-label {
+      color: var(--text-muted);
+      font-size: 0.9rem;
+    }
+
+    /* Personal interests styling */
+    .interests-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+      gap: 15px;
+      margin: 20px 0;
+    }
+
+    .interest-item {
+      background: var(--bg-secondary);
+      padding: 15px;
+      border-radius: 8px;
+      text-align: center;
+      font-weight: 500;
+      color: var(--text);
+      border: 1px solid var(--border);
+      transition: all 0.3s ease;
+    }
+
+    .interest-item:hover {
+      background: var(--primary);
+      color: white;
+      transform: translateY(-2px);
+    }
+
+    /* Contact section */
+    .contact-card {
+      background: var(--gradient);
+      color: white;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .contact-card::before {
+      content: '';
+      position: absolute;
+      top: -50%;
+      left: -50%;
+      width: 200%;
+      height: 200%;
+      background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%);
+      animation: float 6s ease-in-out infinite;
+    }
+
+    @keyframes float {
+      0%, 100% { transform: translateY(0px) rotate(0deg); }
+      50% { transform: translateY(-20px) rotate(180deg); }
+    }
+
+    .contact-card h2 {
+      color: white;
+    }
+
+    .contact-card h2::before {
+      background: rgba(255, 255, 255, 0.3);
+    }
+
+    .contact-card p {
+      color: rgba(255, 255, 255, 0.9);
+    }
+
+    .contact-card a {
+      color: var(--accent-light);
+      text-decoration: none;
+      font-weight: 600;
+      padding: 2px 8px;
+      border-radius: 4px;
+      transition: all 0.3s ease;
+    }
+
+    .contact-card a:hover {
+      background: rgba(255, 255, 255, 0.2);
+      color: white;
+    }
+
+    /* Footer */
+    footer {
+      background: var(--text);
+      color: var(--text-muted);
+      text-align: center;
+      padding: 40px 20px;
+      margin-top: 60px;
+    }
+
+    footer p {
+      margin: 0;
+      color: var(--text-muted);
+    }
+
+    /* Responsive design */
+    @media (max-width: 768px) {
+      h1 {
+        font-size: 2.5rem;
+      }
+
+      .subtitle {
+        font-size: 1.1rem;
+      }
+
+      nav ul {
+        flex-direction: column;
+        gap: 10px;
+      }
+
+      section {
+        padding: 30px 25px;
+      }
+
+      .cta-buttons {
+        flex-direction: column;
+        align-items: center;
+      }
+
+      .stats-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    /* Smooth animations */
+    section {
+      opacity: 0;
+      transform: translateY(20px);
+      animation: fadeInUp 0.6s ease forwards;
+    }
+
+    section:nth-child(1) { animation-delay: 0.1s; }
+    section:nth-child(2) { animation-delay: 0.2s; }
+    section:nth-child(3) { animation-delay: 0.3s; }
+    section:nth-child(4) { animation-delay: 0.4s; }
+
+    @keyframes fadeInUp {
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
     }
   </style>
 </head>
 <body>
   <header>
-    <div class="profile-wrapper">
-      <img src="profile-picture.jpg" alt="Benjamin J. Sunter">
+    <div class="hero-content">
+      <img src="profile-picture.jpg" alt="Benjamin J. Sunter" class="profile-image">
+      <h1>Benjamin J. Sunter</h1>
+      <p class="subtitle">AdTech Program Manager • First-Party Data Strategist • Digital Growth Architect</p>
+      <div class="cta-buttons">
+        <a href="#experience" class="btn btn-primary">View My Work</a>
+        <a href="#contact" class="btn btn-secondary">Let's Connect</a>
+      </div>
     </div>
-    <h1>Benjamin J. Sunter</h1>
-    <p>AdTech Program Manager • First-Party Data Strategist • Digital Growth Architect</p>
   </header>
 
   <nav>
     <ul>
       <li><a href="#about">About</a></li>
       <li><a href="#experience">Experience</a></li>
+      <li><a href="#achievements">Achievements</a></li>
       <li><a href="#personal">Personal</a></li>
       <li><a href="#contact">Contact</a></li>
     </ul>
   </nav>
 
-  <main class="container">
+  <main>
     <section id="about">
       <h2>About Me</h2>
-      <p>I'm a Program Manager at Google driving innovative solutions at the intersection of AdTech, data strategy, and digital transformation. I specialize in empowering publishers to scale sustainably in a privacy-first landscape through cutting-edge technology and measurable business outcomes.</p>
+      <p>I'm a Program Manager at Google driving innovative solutions at the intersection of AdTech, data strategy, and digital transformation. With a background in Industrial Engineering and Lean Six Sigma, I bring both technical expertise and process optimization to every challenge.</p>
+      
       <div class="highlight-box">
-        <p>I help publishers of every size unlock incremental revenue and enhance their UX and brand equity using first-party data strategies and audience management solutions. I’m deeply experienced in leveraging Google Ad Manager 360 and Google AdMob to build sustainable monetization ecosystems in a privacy-safe way.</p>
+        <p>I specialize in empowering publishers to scale sustainably in a privacy-first landscape through cutting-edge technology and measurable business outcomes. My approach combines data-driven insights with human-centered design to create solutions that actually work.</p>
       </div>
+
+      <p>Whether it's leading multi-billion dollar merger implementations or helping publishers unlock incremental revenue through first-party data strategies, I'm passionate about turning complex challenges into elegant solutions that drive real impact.</p>
     </section>
 
     <section id="experience">
       <h2>Professional Experience</h2>
-      <h3>Program Manager - Google</h3>
-      <p>Lead strategic annual planning for Americas Sellside Partnerships, orchestrating initiatives with engineering, product, and partner teams to drive measurable growth and operational excellence.</p>
+      
+      <h3>Program Manager - Google (2022 - Present)</h3>
+      <p>Leading annual planning for Google's Americas Sellside Partnerships business, managing strategy and execution across 7 vertical teams with 200+ team members. I drive initiatives that generate incremental revenue while maintaining 92% CSAT scores with publisher partners.</p>
+      
+      <div class="highlight-box">
+        <p>Key Focus: Privacy-preserving first-party data solutions with Google Ad Manager 360 and AdMob, touching over billions in publisher ARR and generating significant incremental revenue annually.</p>
+      </div>
 
-      <h3>Enterprise Program Manager</h3>
-      <p>Led $26.5B merger implementation programs with 200+ cross-functional team members. Specialized in enterprise architecture and digital transformation across highly complex organizations.</p>
+      <h3>Program Manager - Accenture (2016 - 2021)</h3>
+      <p>Orchestrated a $26.5B telecommunications merger implementation, managing 60+ projects across 24 workstreams with 150+ delivery teams. Created automated dashboards providing insights into 11,000+ user stories and designed governance frameworks that reduced stakeholder overhead by 15%.</p>
 
       <h3>Process Improvement Specialist</h3>
-      <p>Certified Lean Six Sigma Green Belt. Drove enterprise-wide automation and centralization, significantly increasing efficiency and reducing operational overhead.</p>
+      <p>Certified Lean Six Sigma Green Belt driving enterprise-wide automation and centralization initiatives. Specialized in identifying inefficiencies and implementing sustainable solutions that scale across complex organizations.</p>
+    </section>
+
+    <section id="achievements">
+      <h2>Key Achievements</h2>
+      
+      <div class="stats-grid">
+        <div class="stat-card">
+          <div class="stat-number">$26.5B</div>
+          <div class="stat-label">Merger Implementation</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-number">234%</div>
+          <div class="stat-label">Sales Quota Achievement</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-number">92%</div>
+          <div class="stat-label">Partner CSAT Score</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-number">200+</div>
+          <div class="stat-label">Team Members Led</div>
+        </div>
+      </div>
+
+      <div class="highlight-box">
+        <p>Awarded Top Salesperson in team Q1'25, doubled individual sales quota in H1'2025, and led operational excellence initiatives with VP-level visibility that saved 8 FTE time annually through automation.</p>
+      </div>
     </section>
 
     <section id="personal">
       <h2>Beyond the Resume</h2>
-      <p>When I’m not building data-driven growth strategies, I’m spending time outdoors with my family, crafting hot sauces, or working in my garden. I'm also a former college cheerleader, collector, and a hands-on builder with a knack for creative problem solving.</p>
+      <p>When I'm not building data-driven growth strategies, you'll find me embracing life's diverse passions. I believe the best solutions come from varied experiences and perspectives.</p>
+      
+      <div class="interests-grid">
+        <div class="interest-item">🌶️ Hot Sauce Crafting</div>
+        <div class="interest-item">🌱 Gardening</div>
+        <div class="interest-item">🏔️ Outdoor Adventures</div>
+        <div class="interest-item">📚 Collecting</div>
+        <div class="interest-item">🔨 Building & Making</div>
+        <div class="interest-item">👨‍👩‍👧‍👦 Family Time</div>
+      </div>
+
+      <p>As a former college cheerleader turned tech program manager, I've learned that leadership is about lifting others up, whether that's on the sidelines or in the boardroom. My hands-on approach to problem-solving, combined with a knack for creative solutions, helps me tackle challenges from unexpected angles.</p>
     </section>
 
-    <section id="contact">
-      <h2>Let’s Connect</h2>
-      <p>Have an opportunity, idea, or challenge in AdTech or digital growth? I’d love to hear from you.</p>
+    <section id="contact" class="contact-card">
+      <h2>Let's Connect</h2>
+      <p>Have an opportunity, idea, or challenge in AdTech, digital growth, or program management? I'd love to hear from you and explore how we can create something meaningful together.</p>
+      <p>Whether you're a publisher looking to optimize your revenue strategy, a startup needing program management expertise, or just someone who wants to chat about the future of digital advertising, let's start the conversation.</p>
       <p>Email: <a href="mailto:Sunterbb@gmail.com">Sunterbb@gmail.com</a></p>
+      <p>LinkedIn: <a href="https://www.linkedin.com/in/benjamin-sunter/">benjamin-sunter</a></p>
     </section>
   </main>
 
   <footer>
-    <p>&copy; 2025 Benjamin J. Sunter • AdTech Growth Architect</p>
+    <p>&copy; 2025 Benjamin J. Sunter • Crafted with care in Cupertino, CA</p>
   </footer>
 </body>
 </html>
