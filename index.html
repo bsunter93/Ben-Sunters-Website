@@ -27,6 +27,8 @@
       position: relative;
     }
 
+
+
     /* --- Animated Banner --- */
     .animated-banner {
       position: relative;
@@ -284,7 +286,7 @@
       transition: transform 0.3s, box-shadow 0.3s;
       position: relative;
       perspective: 1000px;
-      height: 180px;
+      height: 220px;
       display: flex;
       flex-direction: column;
       justify-content: center;
@@ -308,7 +310,7 @@
 
     /* Flip card styles */
     .flip-card {
-      height: 180px;
+      height: 220px;
       perspective: 1000px;
     }
 
@@ -494,9 +496,18 @@
     <section id="fun-facts">
         <h2>A Few Fun Facts</h2>
         <div class="fun-facts">
-            <div class="fact">
-                <p class="fact-emoji">🗺️</p>
-                <p>I am married with two kids, and we love to adventure outdoors!</p>
+            <div class="fact flip-card" onclick="this.classList.toggle('flipped')">
+                <div class="flip-card-inner">
+                    <div class="flip-card-front">
+                        <p class="fact-emoji">🏕️</p>
+                        <p>I'm married with two kids and love spending time outdoors—whether it's hiking, camping, or just enjoying nature.</p>
+                    </div>
+                    <div class="flip-card-back hot-sauce-back">
+                        <div class="flip-card-back-content">
+                            <p>Click to flip back!</p>
+                        </div>
+                    </div>
+                </div>
             </div>
             <div class="fact flip-card" onclick="this.classList.toggle('flipped')">
                 <div class="flip-card-inner">
