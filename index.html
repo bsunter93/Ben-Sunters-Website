@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Benjamin J. Sunter - Program Manager</title>
+    <title>Benjamin J. Sunter - Program Manager @ Google</title>
     <style>
         * {
             margin: 0;
@@ -12,7 +12,7 @@
         }
 
         body {
-            font-family: 'Arial', sans-serif;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             line-height: 1.6;
             color: #333;
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
@@ -50,6 +50,20 @@
             color: white;
             text-decoration: none;
             transition: transform 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .logo::before {
+            content: '⚡';
+            font-size: 1.2rem;
+            animation: pulse 2s ease-in-out infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.2); }
         }
 
         .logo:hover {
@@ -76,7 +90,7 @@
             height: 2px;
             bottom: -5px;
             left: 0;
-            background: white;
+            background: linear-gradient(90deg, #4285f4, #ea4335);
             transition: width 0.3s ease;
         }
 
@@ -103,8 +117,8 @@
             left: 0;
             right: 0;
             bottom: 0;
-            background: radial-gradient(circle at 20% 80%, rgba(120, 119, 198, 0.3) 0%, transparent 50%),
-                        radial-gradient(circle at 80% 20%, rgba(255, 119, 198, 0.3) 0%, transparent 50%);
+            background: radial-gradient(circle at 20% 80%, rgba(66, 133, 244, 0.3) 0%, transparent 50%),
+                        radial-gradient(circle at 80% 20%, rgba(234, 67, 53, 0.3) 0%, transparent 50%);
             animation: float 6s ease-in-out infinite;
         }
 
@@ -116,7 +130,7 @@
         .hero-content {
             position: relative;
             z-index: 1;
-            max-width: 600px;
+            max-width: 800px;
         }
 
         .profile-image {
@@ -128,17 +142,43 @@
             margin-bottom: 2rem;
             animation: slideInUp 1s ease-out 0.2s both;
             transition: all 0.3s ease;
+            position: relative;
         }
 
         .profile-image:hover {
-            transform: scale(1.05);
-            border-color: rgba(255, 255, 255, 0.6);
+            transform: scale(1.05) rotate(2deg);
+            border-color: #4285f4;
+            box-shadow: 0 0 30px rgba(66, 133, 244, 0.5);
         }
 
         .hero h1 {
             font-size: 3.5rem;
-            margin-bottom: 1rem;
+            margin-bottom: 0.5rem;
             animation: slideInUp 1s ease-out;
+        }
+
+        .hero .subtitle {
+            font-size: 1.4rem;
+            margin-bottom: 1rem;
+            animation: slideInUp 1s ease-out 0.2s both;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 1rem;
+        }
+
+        .google-badge {
+            background: linear-gradient(45deg, #4285f4, #ea4335, #fbbc05, #34a853);
+            padding: 0.5rem 1rem;
+            border-radius: 25px;
+            font-weight: bold;
+            font-size: 0.9rem;
+            animation: glow 2s ease-in-out infinite alternate;
+        }
+
+        @keyframes glow {
+            from { box-shadow: 0 0 10px rgba(66, 133, 244, 0.5); }
+            to { box-shadow: 0 0 20px rgba(66, 133, 244, 0.8); }
         }
 
         .hero p {
@@ -160,9 +200,9 @@
 
         .cta-button {
             display: inline-block;
-            background: linear-gradient(45deg, #ff6b6b, #feca57);
+            background: linear-gradient(45deg, #4285f4, #ea4335);
             color: white;
-            padding: 12px 30px;
+            padding: 15px 35px;
             text-decoration: none;
             border-radius: 50px;
             font-weight: bold;
@@ -170,6 +210,7 @@
             animation: slideInUp 1s ease-out 0.6s both;
             position: relative;
             overflow: hidden;
+            margin: 0 1rem;
         }
 
         .cta-button::before {
@@ -189,12 +230,12 @@
 
         .cta-button:hover {
             transform: translateY(-2px);
-            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+            box-shadow: 0 10px 25px rgba(66, 133, 244, 0.4);
         }
 
         /* Content Sections */
         .section {
-            padding: 4rem 0;
+            padding: 5rem 0;
             background: white;
             margin: 2rem 0;
             border-radius: 20px;
@@ -210,7 +251,7 @@
             left: 0;
             right: 0;
             height: 4px;
-            background: linear-gradient(90deg, #667eea, #764ba2);
+            background: linear-gradient(90deg, #4285f4, #ea4335, #fbbc05, #34a853);
         }
 
         .section h2 {
@@ -227,47 +268,65 @@
             bottom: -10px;
             left: 50%;
             transform: translateX(-50%);
-            width: 50px;
+            width: 60px;
             height: 3px;
-            background: linear-gradient(90deg, #667eea, #764ba2);
+            background: linear-gradient(90deg, #4285f4, #ea4335);
         }
 
-        .grid {
+        .experience-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
             gap: 2rem;
             margin-top: 2rem;
         }
 
-        .card {
+        .experience-card {
             background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
-            padding: 2rem;
+            padding: 2.5rem;
             border-radius: 15px;
-            text-align: center;
             transition: all 0.3s ease;
             position: relative;
             overflow: hidden;
+            border-left: 4px solid transparent;
         }
 
-        .card::before {
+        .experience-card.google {
+            border-left-color: #4285f4;
+        }
+
+        .experience-card::before {
             content: '';
             position: absolute;
             top: 0;
             left: 0;
             right: 0;
             bottom: 0;
-            background: linear-gradient(135deg, rgba(102, 126, 234, 0.1), rgba(118, 75, 162, 0.1));
+            background: linear-gradient(135deg, rgba(66, 133, 244, 0.05), rgba(234, 67, 53, 0.05));
             opacity: 0;
             transition: opacity 0.3s ease;
         }
 
-        .card:hover::before {
+        .experience-card:hover::before {
             opacity: 1;
         }
 
-        .card:hover {
+        .experience-card:hover {
             transform: translateY(-10px);
-            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.15);
+        }
+
+        .company-logo {
+            width: 60px;
+            height: 60px;
+            margin-bottom: 1rem;
+            border-radius: 8px;
+            background: linear-gradient(45deg, #4285f4, #ea4335);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+            font-size: 1.2rem;
         }
 
         .card h3 {
@@ -284,13 +343,143 @@
             z-index: 1;
         }
 
+        /* Personal Section */
+        .personal-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 2rem;
+            margin-top: 2rem;
+        }
+
+        .personal-card {
+            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+            padding: 2rem;
+            border-radius: 15px;
+            text-align: center;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .personal-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(135deg, rgba(52, 168, 83, 0.1), rgba(251, 188, 5, 0.1));
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .personal-card:hover::before {
+            opacity: 1;
+        }
+
+        .personal-card:hover {
+            transform: translateY(-5px) scale(1.02);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+        }
+
+        .personal-icon {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            animation: bounce 2s ease-in-out infinite;
+        }
+
+        @keyframes bounce {
+            0%, 20%, 50%, 80%, 100% { transform: translateY(0); }
+            40% { transform: translateY(-10px); }
+            60% { transform: translateY(-5px); }
+        }
+
+        .photo-gallery {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            margin-top: 2rem;
+        }
+
+        .photo-item {
+            aspect-ratio: 1;
+            background: linear-gradient(135deg, #f0f0f0, #e0e0e0);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #666;
+            font-style: italic;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .photo-item:hover {
+            transform: scale(1.05);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+        }
+
+        .skills-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 2rem;
+            margin-top: 2rem;
+        }
+
+        .skill-category {
+            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+            padding: 2rem;
+            border-radius: 15px;
+            transition: all 0.3s ease;
+        }
+
+        .skill-category:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.1);
+        }
+
+        .skill-tag {
+            display: inline-block;
+            background: linear-gradient(45deg, #4285f4, #34a853);
+            color: white;
+            padding: 0.3rem 0.8rem;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            margin: 0.2rem;
+            transition: all 0.3s ease;
+        }
+
+        .skill-tag:hover {
+            transform: scale(1.05);
+            box-shadow: 0 5px 15px rgba(66, 133, 244, 0.3);
+        }
+
         /* Footer */
         footer {
-            background: rgba(0, 0, 0, 0.8);
+            background: rgba(0, 0, 0, 0.9);
             color: white;
             text-align: center;
-            padding: 2rem 0;
+            padding: 3rem 0;
             margin-top: 4rem;
+        }
+
+        .footer-content {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 2rem;
+            flex-wrap: wrap;
+        }
+
+        .footer-icon {
+            font-size: 2rem;
+            animation: rotate 3s linear infinite;
+        }
+
+        @keyframes rotate {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
         }
 
         /* Responsive Design */
@@ -303,6 +492,11 @@
                 font-size: 2.5rem;
             }
 
+            .hero .subtitle {
+                flex-direction: column;
+                gap: 0.5rem;
+            }
+
             .hero p {
                 font-size: 1rem;
             }
@@ -311,7 +505,9 @@
                 font-size: 2rem;
             }
 
-            .grid {
+            .experience-grid,
+            .personal-grid,
+            .skills-grid {
                 grid-template-columns: 1fr;
             }
         }
@@ -327,6 +523,15 @@
             opacity: 1;
             transform: translateY(0);
         }
+
+        .floating-element {
+            animation: floatSlow 8s ease-in-out infinite;
+        }
+
+        @keyframes floatSlow {
+            0%, 100% { transform: translateY(0px) rotate(0deg); }
+            50% { transform: translateY(-10px) rotate(2deg); }
+        }
     </style>
 </head>
 <body>
@@ -336,7 +541,8 @@
             <ul class="nav-links">
                 <li><a href="#home">Home</a></li>
                 <li><a href="#about">About</a></li>
-                <li><a href="#expertise">Expertise</a></li>
+                <li><a href="#experience">Experience</a></li>
+                <li><a href="#personal">Personal</a></li>
                 <li><a href="#contact">Contact</a></li>
             </ul>
         </nav>
@@ -346,72 +552,200 @@
         <div class="hero-content">
             <img src="profile-picture.jpg" alt="Benjamin J. Sunter" class="profile-image">
             <h1>Benjamin J. Sunter</h1>
-            <p>Program Manager & Process Improvement Practitioner specializing in software product development, digital transformation, and enterprise systems implementation</p>
-            <a href="#about" class="cta-button">Learn More About Me</a>
+            <div class="subtitle">
+                <span>Program Manager</span>
+                <div class="google-badge">@ Google</div>
+            </div>
+            <p>Leading high-impact programs at world-class companies • Driving digital transformation & process excellence in enterprise environments • Building scalable solutions for complex technical challenges</p>
+            <div>
+                <a href="#experience" class="cta-button">View My Experience</a>
+                <a href="#personal" class="cta-button">Get to Know Me</a>
+            </div>
         </div>
     </section>
 
     <div class="container">
         <section class="section fade-in" id="about">
             <h2>About Me</h2>
-            <p style="text-align: center; font-size: 1.1rem; color: #666; max-width: 800px; margin: 0 auto;">
-                I'm a Program Manager and Process Improvement Practitioner with extensive experience in software product development management, 
-                product delivery, and program management in large-scale enterprise systems implementation. Currently at Google, I lead annual 
-                planning for Google's Americas Sellside Partnerships business and have a proven track record of driving incremental revenue 
-                and operational excellence through strategic program management and process improvement initiatives.
+            <p style="text-align: center; font-size: 1.2rem; color: #666; max-width: 900px; margin: 0 auto; line-height: 1.8;">
+                I'm a Program Manager at <strong>Google</strong> with a passion for driving transformational change in high-tech environments. 
+                With extensive experience leading multi-billion dollar programs and cross-functional teams of 200+ members, I specialize in 
+                turning complex technical challenges into scalable business solutions. My expertise spans enterprise systems implementation, 
+                process optimization, and strategic program management at world-class organizations.
             </p>
         </section>
 
-        <section class="section fade-in" id="expertise">
-            <h2>My Expertise</h2>
-            <div class="grid">
-                <div class="card">
-                    <h3>Program Management</h3>
-                    <p>Leading large-scale enterprise programs including Google's $XB Americas Sellside Partnerships business and $26.5B merger implementations with cross-functional teams of 200+ members.</p>
+        <section class="section fade-in" id="experience">
+            <h2>Professional Experience</h2>
+            <div class="experience-grid">
+                <div class="experience-card google floating-element">
+                    <div class="company-logo">G</div>
+                    <h3>Program Manager - Google</h3>
+                    <p><strong>Americas Sellside Partnerships</strong></p>
+                    <p>Leading annual planning for Google's multi-billion dollar Americas Sellside Partnerships business. Driving strategic initiatives that generate incremental revenue through process optimization and cross-functional collaboration with engineering, product, and business teams.</p>
+                    <div style="margin-top: 1rem;">
+                        <span class="skill-tag">Strategic Planning</span>
+                        <span class="skill-tag">Revenue Operations</span>
+                        <span class="skill-tag">Partnership Management</span>
+                    </div>
                 </div>
-                <div class="card">
-                    <h3>Process Improvement</h3>
-                    <p>Lean Six Sigma certified practitioner specializing in operational excellence initiatives, automation, and centralization that generate incremental revenue and save FTE time annually.</p>
+                
+                <div class="experience-card floating-element">
+                    <div class="company-logo">🏢</div>
+                    <h3>Enterprise Program Manager</h3>
+                    <p><strong>Large-Scale Systems Implementation</strong></p>
+                    <p>Led $26.5B merger implementation programs with 200+ cross-functional team members. Specialized in enterprise architecture design, system integration, and digital transformation initiatives across complex organizational structures.</p>
+                    <div style="margin-top: 1rem;">
+                        <span class="skill-tag">Enterprise Architecture</span>
+                        <span class="skill-tag">System Integration</span>
+                        <span class="skill-tag">Digital Transformation</span>
+                    </div>
                 </div>
-                <div class="card">
-                    <h3>Digital Transformation</h3>
-                    <p>Expert in software product delivery using waterfall and agile methodologies, enterprise architecture design, and large-scale IT systems implementation and integration.</p>
+
+                <div class="experience-card floating-element">
+                    <div class="company-logo">⚙️</div>
+                    <h3>Process Improvement Specialist</h3>
+                    <p><strong>Lean Six Sigma Practitioner</strong></p>
+                    <p>Certified Lean Six Sigma Green Belt driving operational excellence initiatives. Implemented automation and centralization strategies that save significant FTE time annually while improving quality and reducing operational overhead.</p>
+                    <div style="margin-top: 1rem;">
+                        <span class="skill-tag">Lean Six Sigma</span>
+                        <span class="skill-tag">Process Automation</span>
+                        <span class="skill-tag">Operational Excellence</span>
+                    </div>
                 </div>
+            </div>
+        </section>
+
+        <section class="section fade-in" id="personal">
+            <h2>Beyond the Professional</h2>
+            <p style="text-align: center; font-size: 1.1rem; color: #666; max-width: 800px; margin: 0 auto 3rem;">
+                When I'm not driving digital transformation, you'll find me exploring the great outdoors with my family, 
+                building something new in my workshop, or perfecting my latest hot sauce recipe. Life is about balance, 
+                adventure, and the people we share it with.
+            </p>
+            
+            <div class="personal-grid">
+                <div class="personal-card">
+                    <div class="personal-icon">👨‍👩‍👧‍👦</div>
+                    <h3>Family Man</h3>
+                    <p>Married to my amazing wife Payton, father of 2 wonderful kids. Family adventures and creating memories together are what fuel my passion for life.</p>
+                </div>
+                
+                <div class="personal-card">
+                    <div class="personal-icon">🎽</div>
+                    <h3>Former College Cheerleader</h3>
+                    <p>Teamwork, leadership, and performing under pressure - lessons from the sidelines that translate perfectly to the boardroom.</p>
+                </div>
+                
+                <div class="personal-card">
+                    <div class="personal-icon">🎣</div>
+                    <h3>Outdoor Enthusiast</h3>
+                    <p>Florida native who loves fishing, camping, hiking, and rockhounding. There's nothing like nature to recharge and find clarity.</p>
+                </div>
+                
+                <div class="personal-card">
+                    <div class="personal-icon">🌶️</div>
+                    <h3>Hot Sauce Connoisseur</h3>
+                    <p>From mild to volcanic - I collect, taste, and experiment with hot sauces from around the world. Always up for a spicy challenge!</p>
+                </div>
+                
+                <div class="personal-card">
+                    <div class="personal-icon">🌱</div>
+                    <h3>Gardener & Builder</h3>
+                    <p>Growing my own ingredients and building projects from scratch. There's satisfaction in creating something with your own hands.</p>
+                </div>
+                
+                <div class="personal-card">
+                    <div class="personal-icon">🏺</div>
+                    <h3>Collector</h3>
+                    <p>Curating various collections - from rocks and minerals to unique finds. Each piece tells a story and sparks curiosity.</p>
+                </div>
+            </div>
+
+            <h3 style="text-align: center; margin: 3rem 0 2rem; font-size: 1.8rem; color: #333;">Life in Photos</h3>
+            <div class="photo-gallery">
+                <div class="photo-item">Professional Headshot</div>
+                <div class="photo-item">Family Adventure</div>
+                <div class="photo-item">Fishing Trip</div>
+                <div class="photo-item">Outdoor Exploration</div>
+                <div class="photo-item">Workshop Project</div>
+                <div class="photo-item">Garden Harvest</div>
+                <div class="photo-item">Rock Collection</div>
+                <div class="photo-item">Team Building</div>
             </div>
         </section>
 
         <section class="section fade-in" id="contact">
-            <h2>Skills & Tools</h2>
-            <div style="text-align: center; margin-bottom: 3rem;">
-                <div style="display: inline-block; background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%); padding: 2rem; border-radius: 15px; margin: 1rem; max-width: 800px;">
-                    <h3 style="color: #333; margin-bottom: 1rem;">Technical Expertise</h3>
-                    <p style="color: #666; line-height: 1.8;">
-                        <strong>Project & Program Management:</strong> Atlassian JIRA Align, AgileCraft, JIRA, Confluence, CA Rally<br>
-                        <strong>Development Methodologies:</strong> Waterfall, Agile, Scrum, Kanban, Lean Six Sigma<br>
-                        <strong>Data & Analytics:</strong> Tableau, PowerBI, Microsoft SQL Server, Data Analysis & Transformation<br>
-                        <strong>Architecture & Design:</strong> Solution Architecture, Enterprise Architecture, System Design<br>
-                        <strong>Certifications:</strong> Lean Six Sigma Green Belt, Google Project Management Certification
-                    </p>
+            <h2>Technical Expertise</h2>
+            <div class="skills-grid">
+                <div class="skill-category">
+                    <h3 style="color: #4285f4; margin-bottom: 1rem;">Program Management</h3>
+                    <div>
+                        <span class="skill-tag">Atlassian JIRA Align</span>
+                        <span class="skill-tag">AgileCraft</span>
+                        <span class="skill-tag">JIRA & Confluence</span>
+                        <span class="skill-tag">CA Rally</span>
+                        <span class="skill-tag">Strategic Planning</span>
+                    </div>
+                </div>
+                
+                <div class="skill-category">
+                    <h3 style="color: #ea4335; margin-bottom: 1rem;">Methodologies</h3>
+                    <div>
+                        <span class="skill-tag">Agile & Scrum</span>
+                        <span class="skill-tag">Waterfall</span>
+                        <span class="skill-tag">Kanban</span>
+                        <span class="skill-tag">Lean Six Sigma</span>
+                        <span class="skill-tag">Design Thinking</span>
+                    </div>
+                </div>
+                
+                <div class="skill-category">
+                    <h3 style="color: #fbbc05; margin-bottom: 1rem;">Data & Analytics</h3>
+                    <div>
+                        <span class="skill-tag">Tableau</span>
+                        <span class="skill-tag">PowerBI</span>
+                        <span class="skill-tag">SQL Server</span>
+                        <span class="skill-tag">Data Transformation</span>
+                        <span class="skill-tag">Business Intelligence</span>
+                    </div>
+                </div>
+                
+                <div class="skill-category">
+                    <h3 style="color: #34a853; margin-bottom: 1rem;">Architecture & Systems</h3>
+                    <div>
+                        <span class="skill-tag">Solution Architecture</span>
+                        <span class="skill-tag">Enterprise Architecture</span>
+                        <span class="skill-tag">System Integration</span>
+                        <span class="skill-tag">Cloud Platforms</span>
+                        <span class="skill-tag">API Design</span>
+                    </div>
                 </div>
             </div>
-            <h2>Get In Touch</h2>
-            <p style="text-align: center; font-size: 1.1rem; color: #666; margin-bottom: 2rem;">
-                Interested in discussing program management, process improvement, or potential opportunities? I'd love to connect.
+            
+            <h2 style="margin-top: 4rem;">Let's Connect</h2>
+            <p style="text-align: center; font-size: 1.2rem; color: #666; margin-bottom: 2rem;">
+                Ready to discuss how I can drive transformational change in your organization? 
+                Let's talk about program management, process improvement, or explore new opportunities in high-tech.
             </p>
             <div style="text-align: center;">
-                <a href="mailto:Sunterbb@gmail.com" class="cta-button">Contact Me</a>
+                <a href="mailto:Sunterbb@gmail.com" class="cta-button">Get In Touch</a>
             </div>
         </section>
     </div>
 
     <footer>
         <div class="container">
-            <p>&copy; 2025 Benjamin J. Sunter. All rights reserved.</p>
+            <div class="footer-content">
+                <div class="footer-icon">🚀</div>
+                <p>&copy; 2025 Benjamin J. Sunter • Program Manager @ Google • Florida, USA</p>
+                <div class="footer-icon">⚡</div>
+            </div>
         </div>
     </footer>
 
     <script>
-        // Smooth scrolling for navigation links
+        // Enhanced smooth scrolling
         document.querySelectorAll('a[href^="#"]').forEach(anchor => {
             anchor.addEventListener('click', function (e) {
                 e.preventDefault();
@@ -425,16 +759,18 @@
             });
         });
 
-        // Fade in animation on scroll
+        // Advanced fade in animation with stagger
         const observerOptions = {
             threshold: 0.1,
             rootMargin: '0px 0px -50px 0px'
         };
 
         const observer = new IntersectionObserver((entries) => {
-            entries.forEach(entry => {
+            entries.forEach((entry, index) => {
                 if (entry.isIntersecting) {
-                    entry.target.classList.add('visible');
+                    setTimeout(() => {
+                        entry.target.classList.add('visible');
+                    }, index * 100);
                 }
             });
         }, observerOptions);
@@ -443,17 +779,46 @@
             observer.observe(el);
         });
 
-        // Header background change on scroll
+        // Enhanced header with Google colors
         window.addEventListener('scroll', () => {
             const header = document.querySelector('header');
             if (window.scrollY > 100) {
                 header.style.background = 'rgba(255, 255, 255, 0.95)';
                 header.style.backdropFilter = 'blur(20px)';
+                header.style.borderBottom = '1px solid rgba(66, 133, 244, 0.3)';
             } else {
                 header.style.background = 'rgba(255, 255, 255, 0.1)';
                 header.style.backdropFilter = 'blur(10px)';
+                header.style.borderBottom = '1px solid rgba(255, 255, 255, 0.2)';
             }
         });
-    </script>
-</body>
-</html>
+
+        // Micro-interactions for cards
+        document.querySelectorAll('.experience-card, .personal-card, .skill-category').forEach(card => {
+            card.addEventListener('mouseenter', function() {
+                this.style.transform = 'translateY(-10px) scale(1.02)';
+            });
+            
+            card.addEventListener('mouseleave', function() {
+                this.style.transform = 'translateY(0) scale(1)';
+            });
+        });
+
+        // Animated skill tags
+        document.querySelectorAll('.skill-tag').forEach(tag => {
+            tag.addEventListener('mouseenter', function() {
+                this.style.transform = 'scale(1.1) rotate(2deg)';
+                this.style.boxShadow = '0 8px 20px rgba(66, 133, 244, 0.4)';
+            });
+            
+            tag.addEventListener('mouseleave', function() {
+                this.style.transform = 'scale(1) rotate(0deg)';
+                this.style.boxShadow = 'none';
+            });
+        });
+
+        // Profile image interaction
+        const profileImage = document.querySelector('.profile-image');
+        profileImage.addEventListener('mouseenter', function() {
+            this.style.transform = 'scale(1.1) rotate(5deg)';
+            this.style.boxShadow = '0 0 40px rgba(
