@@ -301,7 +301,11 @@
       transition: transform 0.3s, box-shadow 0.3s;
       position: relative;
       perspective: 1000px;
-      height: 150px;
+      height: 180px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
     }
 
     .fact:hover {
@@ -311,11 +315,17 @@
 
     .fact-emoji {
       font-size: 2rem;
+      margin-bottom: 0.5rem;
+    }
+
+    .fact p:not(.fact-emoji) {
+      margin: 0;
+      line-height: 1.4;
     }
 
     /* Flip card styles */
     .flip-card {
-      height: 150px;
+      height: 180px;
       perspective: 1000px;
     }
 
@@ -354,18 +364,30 @@
     .flip-card-back {
       background-color: var(--highlight-bg);
       transform: rotateY(180deg);
+      position: relative;
       background-image: url('ben1.jpg');
       background-size: cover;
       background-position: center;
       background-repeat: no-repeat;
-      position: relative;
+    }
+
+    .flip-card-back::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(0, 0, 0, 0.3);
+      border-radius: 8px;
     }
 
     .flip-card-back-content {
       position: relative;
       z-index: 2;
-      color: var(--text);
+      color: white;
       font-weight: 600;
+      text-shadow: 0 2px 4px rgba(0, 0, 0, 0.7);
     }
 
     /* --- Contact --- */
