@@ -8,13 +8,13 @@
     @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
     
     :root {
-      --bg: #fdfdfd; 
-      --text: #333; 
-      --text-light: #555;
-      --primary: #4A90E2; 
-      --accent: #50E3C2; 
-      --highlight-bg: #f0f7ff; 
-      --highlight-border: #d4e7f7;
+      --bg: #f8f9fa; 
+      --text: #212529; 
+      --text-light: #495057;
+      --primary: #6C63FF; /* Bolder Indigo */
+      --accent: #00DF9A;  /* Fun Mint Green */
+      --highlight-bg: #f0f0ff; 
+      --highlight-border: #dadaff;
     }
 
     body {
@@ -36,6 +36,7 @@
       border-radius: 50%;
       border: 5px solid var(--primary);
       margin-bottom: 1rem;
+      box-shadow: 0 4px 15px rgba(108, 99, 255, 0.2);
     }
 
     h1 {
@@ -138,11 +139,12 @@
       border-radius: 8px;
       padding: 1rem;
       text-align: center;
-      transition: transform 0.3s;
+      transition: transform 0.3s, box-shadow 0.3s;
     }
 
     .fact:hover {
       transform: translateY(-5px);
+      box-shadow: 0 4px 20px rgba(108, 99, 255, 0.15);
     }
 
     .fact-emoji {
@@ -155,6 +157,11 @@
       text-decoration: none;
       font-weight: 600;
       margin: 0 0.5rem;
+      transition: color 0.3s;
+    }
+
+    .contact-links a:hover {
+        color: var(--accent);
     }
     
     footer {
@@ -167,7 +174,7 @@
 </head>
 <body>
   <header>
-    <img src="https://i.imgur.com/your-image-url.jpg" alt="Benjamin J. Sunter" class="profile-image">
+    <img src="profile-picture.jpg" alt="Benjamin J. Sunter" class="profile-image">
     <h1>Benjamin J. Sunter</h1>
     <p class="subtitle">Program Manager | AdTech Strategist | Problem Solver</p>
   </header>
