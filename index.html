@@ -8,801 +8,259 @@
     @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
     
     :root {
-      --primary: #2563eb;
-      --primary-light: #3b82f6;
-      --accent: #10b981;
-      --accent-light: #34d399;
-      --bg: #f8fafc;
-      --bg-secondary: #f1f5f9;
-      --text: #1e293b;
-      --text-light: #475569;
-      --text-muted: #64748b;
-      --card-bg: #ffffff;
-      --border: #e2e8f0;
-      --shadow: rgba(15, 23, 42, 0.08);
-      --shadow-lg: rgba(15, 23, 42, 0.12);
-      --gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-    }
-
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
+      --bg: #fdfdfd; 
+      --text: #333; 
+      --text-light: #555;
+      --primary: #4A90E2; 
+      --accent: #50E3C2; 
+      --highlight-bg: #f0f7ff; 
+      --highlight-border: #d4e7f7;
     }
 
     body {
-      font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-      line-height: 1.6;
+      font-family: 'Inter', sans-serif;
+      background-color: var(--bg);
       color: var(--text);
-      background: var(--bg);
-      scroll-behavior: smooth;
+      line-height: 1.6;
     }
 
-    /* Header with floating effect */
+    /* --- Header --- */
     header {
-      position: relative;
-      background: var(--gradient);
-      color: white;
-      padding: 80px 20px 60px;
       text-align: center;
-      overflow: hidden;
-    }
-
-    header::before {
-      content: '';
-      position: absolute;
-      top: 0;
-      left: 0;
-      right: 0;
-      bottom: 0;
-      background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 300"><path d="M0,96L48,112C96,128,192,160,288,160C384,160,480,128,576,112C672,96,768,96,864,112C960,128,1008,160,1032,176L1056,192V0H1008C960,0,864,0,768,0C672,0,576,0,480,0C384,0,288,0,192,0C96,0,48,0,24,0H0V96Z" fill="rgba(255,255,255,0.1)"/></svg>') no-repeat center top;
-      background-size: cover;
-      opacity: 0.3;
-    }
-
-    /* Floating geometric shapes */
-    header::after {
-      content: '';
-      position: absolute;
-      top: 10%;
-      left: 10%;
-      width: 100px;
-      height: 100px;
-      background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><polygon points="50,10 90,90 10,90" fill="rgba(255,255,255,0.05)" stroke="rgba(255,255,255,0.1)" stroke-width="1"/><circle cx="30" cy="30" r="3" fill="rgba(255,255,255,0.1)"/><circle cx="70" cy="70" r="2" fill="rgba(255,255,255,0.1)"/></svg>');
-      animation: float 8s ease-in-out infinite;
-      opacity: 0.6;
-    }
-
-    .floating-elements {
-      position: absolute;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      pointer-events: none;
-    }
-
-    .floating-elements::before {
-      content: '∞';
-      position: absolute;
-      top: 20%;
-      right: 15%;
-      font-size: 24px;
-      color: rgba(255,255,255,0.1);
-      animation: drift 12s ease-in-out infinite;
-    }
-
-    .floating-elements::after {
-      content: '⚡';
-      position: absolute;
-      bottom: 20%;
-      left: 20%;
-      font-size: 20px;
-      color: rgba(255,255,255,0.1);
-      animation: drift 10s ease-in-out infinite reverse;
-    }
-
-    @keyframes drift {
-      0%, 100% { transform: translateY(0px) translateX(0px); }
-      25% { transform: translateY(-10px) translateX(5px); }
-      50% { transform: translateY(-5px) translateX(-5px); }
-      75% { transform: translateY(5px) translateX(10px); }
-    }
-
-    .hero-content {
-      position: relative;
-      z-index: 2;
-      max-width: 800px;
-      margin: 0 auto;
-    }
-
-    .hero-content::before {
-      content: '';
-      position: absolute;
-      top: -50px;
-      left: 50%;
-      transform: translateX(-50%);
-      width: 200px;
-      height: 200px;
-      background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200"><path d="M100,20 Q150,50 180,100 Q150,150 100,180 Q50,150 20,100 Q50,50 100,20 Z" fill="none" stroke="rgba(255,255,255,0.1)" stroke-width="1"/><circle cx="100" cy="100" r="3" fill="rgba(255,255,255,0.15)"/></svg>');
-      animation: rotate 20s linear infinite;
-      opacity: 0.4;
+      padding: 5rem 1rem;
     }
 
     .profile-image {
-      width: 180px;
-      height: 180px;
+      width: 150px;
+      height: 150px;
       border-radius: 50%;
-      object-fit: cover;
-      object-position: 10% 5%;
-      border: 6px solid rgba(255, 255, 255, 0.2);
-      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
-      margin-bottom: 30px;
-      transition: transform 0.3s ease;
-    }
-
-    .profile-image:hover {
-      transform: scale(1.05);
+      border: 5px solid var(--primary);
+      margin-bottom: 1rem;
     }
 
     h1 {
-      font-size: 3.5rem;
+      font-size: 2.5rem;
       font-weight: 700;
-      margin-bottom: 20px;
-      text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+      color: var(--primary);
     }
 
     .subtitle {
-      font-size: 1.3rem;
-      font-weight: 400;
-      opacity: 0.9;
-      margin-bottom: 30px;
+      font-size: 1.2rem;
+      color: var(--text-light);
     }
 
-    .cta-buttons {
-      display: flex;
-      gap: 20px;
-      justify-content: center;
-      flex-wrap: wrap;
-      margin-top: 40px;
-    }
-
-    .btn {
-      padding: 12px 30px;
-      border: none;
-      border-radius: 50px;
-      font-weight: 600;
-      text-decoration: none;
-      transition: all 0.3s ease;
-      cursor: pointer;
-      display: inline-block;
-    }
-
-    .btn-primary {
-      background: var(--accent);
-      color: white;
-    }
-
-    .btn-secondary {
-      background: rgba(255, 255, 255, 0.2);
-      color: white;
-      border: 2px solid rgba(255, 255, 255, 0.3);
-    }
-
-    .btn:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
-    }
-
-    /* Navigation */
-    nav {
-      position: sticky;
-      top: 0;
-      background: rgba(255, 255, 255, 0.95);
-      backdrop-filter: blur(15px);
-      border-bottom: 1px solid var(--border);
-      z-index: 1000;
-      padding: 18px 0;
-      box-shadow: 0 2px 10px rgba(0,0,0,0.05);
-    }
-
-    nav::before {
-      content: '';
-      position: absolute;
-      top: 0;
-      left: 0;
-      right: 0;
-      height: 2px;
-      background: linear-gradient(90deg, var(--primary), var(--accent), var(--primary));
-      opacity: 0.3;
-    }
-
-    nav ul {
-      display: flex;
-      justify-content: center;
-      gap: 45px;
-      list-style: none;
+    /* --- Main Content --- */
+    main {
       max-width: 800px;
       margin: 0 auto;
-      padding: 0 20px;
-    }
-
-    nav a {
-      color: var(--text);
-      text-decoration: none;
-      font-weight: 500;
-      padding: 10px 20px;
-      border-radius: 25px;
-      transition: all 0.3s ease;
-      position: relative;
-      overflow: hidden;
-    }
-
-    nav a::before {
-      content: '';
-      position: absolute;
-      top: 50%;
-      left: 50%;
-      width: 0;
-      height: 0;
-      background: linear-gradient(135deg, var(--primary), var(--accent));
-      border-radius: 50%;
-      transition: all 0.3s ease;
-      transform: translate(-50%, -50%);
-      z-index: -1;
-    }
-
-    nav a:hover::before {
-      width: 100%;
-      height: 100%;
-      border-radius: 25px;
-    }
-
-    nav a:hover {
-      color: white;
-      transform: translateY(-2px);
-      box-shadow: 0 4px 15px rgba(37,99,235,0.3);
-    }
-
-    /* Main content */
-    main {
-      max-width: 1000px;
-      margin: 0 auto;
-      padding: 40px 20px;
-      position: relative;
-    }
-
-    /* Flowing background elements */
-    main::before {
-      content: '';
-      position: absolute;
-      top: 0;
-      left: -100px;
-      width: 300px;
-      height: 100%;
-      background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 300 1000"><path d="M50,0 Q100,200 150,400 Q200,600 100,800 Q50,900 150,1000" fill="none" stroke="rgba(37,99,235,0.03)" stroke-width="2"/><path d="M100,100 Q150,300 200,500 Q150,700 100,900" fill="none" stroke="rgba(16,185,129,0.03)" stroke-width="1.5"/><circle cx="125" cy="200" r="3" fill="rgba(37,99,235,0.05)"/><circle cx="175" cy="600" r="2" fill="rgba(16,185,129,0.05)"/></svg>');
-      opacity: 0.4;
-      animation: drift 20s ease-in-out infinite;
-      pointer-events: none;
-    }
-
-    main::after {
-      content: '';
-      position: absolute;
-      top: 0;
-      right: -100px;
-      width: 300px;
-      height: 100%;
-      background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 300 1000"><path d="M250,0 Q200,200 150,400 Q100,600 200,800 Q250,900 150,1000" fill="none" stroke="rgba(37,99,235,0.03)" stroke-width="2"/><path d="M200,100 Q150,300 100,500 Q150,700 200,900" fill="none" stroke="rgba(16,185,129,0.03)" stroke-width="1.5"/><circle cx="175" cy="300" r="2.5" fill="rgba(37,99,235,0.05)"/><circle cx="125" cy="700" r="2" fill="rgba(16,185,129,0.05)"/></svg>');
-      opacity: 0.4;
-      animation: drift 25s ease-in-out infinite reverse;
-      pointer-events: none;
+      padding: 1rem;
     }
 
     section {
-      background: var(--card-bg);
-      border-radius: 20px;
-      padding: 45px;
-      margin-bottom: 25px;
-      box-shadow: 0 8px 30px var(--shadow);
-      border: 1px solid var(--border);
-      transition: transform 0.3s ease, box-shadow 0.3s ease;
-      position: relative;
-      overflow: hidden;
-    }
-
-    section::before {
-      content: '';
-      position: absolute;
-      top: -20px;
-      right: -20px;
-      width: 140px;
-      height: 140px;
-      background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 140 140"><path d="M20,70 Q40,30 70,70 Q100,110 120,70" fill="none" stroke="rgba(37,99,235,0.06)" stroke-width="1.5"/><circle cx="30" cy="30" r="2" fill="rgba(37,99,235,0.08)"/><circle cx="110" cy="110" r="1.5" fill="rgba(37,99,235,0.08)"/><path d="M10,10 Q30,50 50,30 Q70,10 90,30" fill="none" stroke="rgba(16,185,129,0.05)" stroke-width="1"/></svg>');
-      opacity: 0.4;
-      animation: rotate 30s linear infinite;
-    }
-
-    section:nth-child(2)::before {
-      background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 140 140"><path d="M30,20 L50,60 L30,100 L70,70 Z" fill="rgba(16,185,129,0.06)"/><circle cx="90" cy="40" r="2.5" fill="rgba(16,185,129,0.08)"/><path d="M100,100 Q120,80 140,100" fill="none" stroke="rgba(37,99,235,0.05)" stroke-width="1.2"/></svg>');
-      animation: rotate 25s linear infinite reverse;
-    }
-
-    section:nth-child(3)::before {
-      background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 140 140"><path d="M40,20 C70,50 100,80 130,110" fill="none" stroke="rgba(37,99,235,0.08)" stroke-width="2"/><rect x="20" y="100" width="12" height="12" rx="3" fill="rgba(37,99,235,0.06)"/><circle cx="100" cy="30" r="3" fill="rgba(16,185,129,0.08)"/></svg>');
-      animation: rotate 35s linear infinite;
-    }
-
-    section:nth-child(4)::before {
-      background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 140 140"><path d="M30,70 Q70,30 110,70 Q70,110 30,70" fill="rgba(16,185,129,0.04)"/><circle cx="70" cy="70" r="2" fill="rgba(16,185,129,0.12)"/><path d="M10,10 L20,20 M130,10 L120,20 M10,130 L20,120 M130,130 L120,120" stroke="rgba(37,99,235,0.06)" stroke-width="1.5"/></svg>');
-      animation: rotate 20s linear infinite reverse;
-    }
-
-    section:nth-child(5)::before {
-      background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 140 140"><path d="M20,20 Q70,60 120,20 Q80,80 120,120 Q70,80 20,120 Q60,60 20,20" fill="none" stroke="rgba(37,99,235,0.06)" stroke-width="1.8"/><circle cx="70" cy="35" r="2.5" fill="rgba(16,185,129,0.1)"/><circle cx="105" cy="105" r="2" fill="rgba(37,99,235,0.1)"/></svg>');
-      animation: rotate 28s linear infinite;
-    }
-
-    section:hover {
-      transform: translateY(-5px);
-      box-shadow: 0 8px 30px var(--shadow-lg);
-    }
-
-    section:hover::before {
-      opacity: 0.6;
+      margin-bottom: 3rem;
+      border-left: 3px solid var(--accent);
+      padding-left: 1.5rem;
     }
 
     h2 {
+      font-size: 1.8rem;
+      font-weight: 600;
       color: var(--primary);
-      font-size: 2.2rem;
-      font-weight: 600;
-      margin-bottom: 30px;
-      position: relative;
-      padding-left: 20px;
+      margin-bottom: 1rem;
     }
 
-    h2::before {
-      content: '';
-      position: absolute;
-      left: 0;
-      top: 50%;
-      transform: translateY(-50%);
-      width: 4px;
-      height: 40px;
-      background: var(--accent);
-      border-radius: 2px;
+    .highlight-box {
+      background-color: var(--highlight-bg);
+      border: 1px solid var(--highlight-border);
+      border-radius: 8px;
+      padding: 1.5rem;
+      margin: 1.5rem 0;
     }
 
-    h3 {
-      color: var(--primary-light);
-      font-size: 1.4rem;
+    /* --- Experience --- */
+    .job {
+      margin-bottom: 2rem;
+    }
+
+    .job-title {
+      font-size: 1.2rem;
       font-weight: 600;
-      margin: 30px 0 15px 0;
+    }
+
+    .job-company {
+      color: var(--text-light);
+    }
+
+    /* --- Skills Section --- */
+    .skills-container {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 1.5rem;
+      padding-top: 1rem;
+    }
+
+    .skills-category h3 {
+      font-size: 1.1rem;
+      font-weight: 600;
+      color: var(--primary);
+      margin-bottom: 0.75rem;
+    }
+
+    .skills-category ul {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+    }
+
+    .skills-category li {
+      margin-bottom: 0.5rem;
+      color: var(--text-light);
       display: flex;
       align-items: center;
-      gap: 10px;
     }
-
-    h3::before {
-      content: '▸';
+    
+    .skills-category li::before {
+      content: '✓';
       color: var(--accent);
-      font-size: 1.2rem;
+      margin-right: 0.5rem;
+      font-weight: 700;
     }
-
-    p {
-      color: var(--text-light);
-      margin-bottom: 20px;
-      line-height: 1.7;
-    }
-
-    /* Special highlight boxes */
-    .highlight-box {
-      background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%);
-      border: 2px solid #bae6fd;
-      border-radius: 16px;
-      padding: 30px;
-      margin: 30px 0;
-      position: relative;
-      overflow: hidden;
-      box-shadow: 0 4px 15px rgba(59, 130, 246, 0.1);
-    }
-
-    .highlight-box::before {
-      content: '';
-      position: absolute;
-      top: 0;
-      left: 0;
-      width: 6px;
-      height: 100%;
-      background: linear-gradient(to bottom, var(--accent), var(--primary));
-      border-radius: 0 3px 3px 0;
-    }
-
-    .highlight-box::after {
-      content: '';
-      position: absolute;
-      top: 15px;
-      right: 20px;
-      width: 80px;
-      height: 80px;
-      background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 80 80"><path d="M20,40 Q40,20 60,40 Q40,60 20,40" fill="none" stroke="rgba(37,99,235,0.12)" stroke-width="1.5"/><circle cx="40" cy="40" r="3" fill="rgba(37,99,235,0.15)"/><path d="M15,15 L25,25 M65,15 L55,25 M15,65 L25,55 M65,65 L55,55" stroke="rgba(37,99,235,0.08)" stroke-width="1"/><circle cx="25" cy="25" r="1.5" fill="rgba(16,185,129,0.2)"/><circle cx="55" cy="55" r="1" fill="rgba(16,185,129,0.2)"/></svg>');
-      opacity: 0.6;
-      animation: pulse 4s ease-in-out infinite;
-    }
-
-    @keyframes pulse {
-      0%, 100% { opacity: 0.6; transform: scale(1); }
-      50% { opacity: 0.8; transform: scale(1.05); }
-    }
-
-    .highlight-box p {
-      color: var(--text);
-      margin: 0;
-      font-weight: 500;
-      position: relative;
-      z-index: 1;
-    }
-
-    /* Stats or achievements */
-    .stats-grid {
+    
+    /* --- Fun Facts --- */
+    .fun-facts {
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-      gap: 25px;
-      margin: 35px 0;
+      gap: 1rem;
     }
 
-    .stat-card {
-      background: linear-gradient(135deg, var(--bg-secondary) 0%, #f8fafc 100%);
-      padding: 25px;
-      border-radius: 16px;
+    .fact {
+      background-color: var(--highlight-bg);
+      border-radius: 8px;
+      padding: 1rem;
       text-align: center;
-      border: 2px solid var(--border);
-      position: relative;
-      overflow: hidden;
-      transition: transform 0.3s ease, box-shadow 0.3s ease;
+      transition: transform 0.3s;
     }
 
-    .stat-card::before {
-      content: '';
-      position: absolute;
-      top: -50%;
-      left: -50%;
-      width: 200%;
-      height: 200%;
-      background: radial-gradient(circle, rgba(37,99,235,0.03) 0%, transparent 70%);
-      animation: rotate 15s linear infinite;
-    }
-
-    .stat-card::after {
-      content: '';
-      position: absolute;
-      top: 10px;
-      right: 10px;
-      width: 30px;
-      height: 30px;
-      background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 30 30"><path d="M5,15 Q15,5 25,15 Q15,25 5,15" fill="none" stroke="rgba(37,99,235,0.1)" stroke-width="1"/><circle cx="15" cy="15" r="1" fill="rgba(16,185,129,0.3)"/></svg>');
-      opacity: 0.5;
-    }
-
-    .stat-card:hover {
+    .fact:hover {
       transform: translateY(-5px);
-      box-shadow: 0 10px 25px rgba(37,99,235,0.15);
     }
 
-    .stat-card:hover::after {
-      opacity: 1;
-    }
-
-    .stat-number {
+    .fact-emoji {
       font-size: 2rem;
-      font-weight: 700;
+    }
+
+    /* --- Contact --- */
+    .contact-links a {
       color: var(--primary);
-    }
-
-    .stat-label {
-      color: var(--text-muted);
-      font-size: 0.9rem;
-    }
-
-    /* Personal interests styling */
-    .interests-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-      gap: 18px;
-      margin: 25px 0;
-    }
-
-    .interest-item {
-      background: linear-gradient(135deg, var(--bg-secondary) 0%, #f1f5f9 100%);
-      padding: 18px;
-      border-radius: 12px;
-      text-align: center;
-      font-weight: 500;
-      color: var(--text);
-      border: 1px solid var(--border);
-      transition: all 0.3s ease;
-      position: relative;
-      overflow: hidden;
-    }
-
-    .interest-item::before {
-      content: '';
-      position: absolute;
-      top: 0;
-      left: 0;
-      right: 0;
-      bottom: 0;
-      background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><circle cx="25" cy="25" r="2" fill="rgba(37,99,235,0.08)"/><circle cx="75" cy="75" r="1.5" fill="rgba(16,185,129,0.08)"/><path d="M15,85 Q50,65 85,85" fill="none" stroke="rgba(37,99,235,0.06)" stroke-width="1.2"/><path d="M10,10 Q30,50 50,30 Q70,10 90,30" fill="none" stroke="rgba(16,185,129,0.05)" stroke-width="1"/></svg>');
-      opacity: 0.4;
-      transition: opacity 0.3s ease;
-    }
-
-    .interest-item:hover {
-      background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%);
-      color: white;
-      transform: translateY(-3px);
-      box-shadow: 0 6px 20px rgba(37,99,235,0.3);
-    }
-
-    .interest-item:hover::before {
-      opacity: 0.8;
-      background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><circle cx="25" cy="25" r="2" fill="rgba(255,255,255,0.2)"/><circle cx="75" cy="75" r="1.5" fill="rgba(255,255,255,0.15)"/><path d="M15,85 Q50,65 85,85" fill="none" stroke="rgba(255,255,255,0.1)" stroke-width="1.2"/><path d="M10,10 Q30,50 50,30 Q70,10 90,30" fill="none" stroke="rgba(255,255,255,0.08)" stroke-width="1"/></svg>');
-    }
-
-    /* Contact section */
-    .contact-card {
-      background: var(--gradient);
-      color: white;
-      text-align: center;
-      position: relative;
-      overflow: hidden;
-    }
-
-    .contact-card::before {
-      content: '';
-      position: absolute;
-      top: -50%;
-      left: -50%;
-      width: 200%;
-      height: 200%;
-      background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%);
-      animation: float 6s ease-in-out infinite;
-    }
-
-    .contact-card::after {
-      content: '';
-      position: absolute;
-      top: 20px;
-      right: 30px;
-      width: 120px;
-      height: 120px;
-      background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 120"><path d="M20,60 Q40,30 60,60 Q80,90 100,60" fill="none" stroke="rgba(255,255,255,0.1)" stroke-width="1.5"/><circle cx="30" cy="30" r="2" fill="rgba(255,255,255,0.1)"/><circle cx="90" cy="90" r="1.5" fill="rgba(255,255,255,0.1)"/><path d="M10,10 L20,20 M100,10 L90,20 M10,110 L20,100 M100,110 L90,100" stroke="rgba(255,255,255,0.08)" stroke-width="0.8"/></svg>');
-      opacity: 0.4;
-      animation: rotate 25s linear infinite;
-    }
-
-    @keyframes float {
-      0%, 100% { transform: translateY(0px) rotate(0deg); }
-      50% { transform: translateY(-20px) rotate(180deg); }
-    }
-
-    @keyframes rotate {
-      0% { transform: rotate(0deg); }
-      100% { transform: rotate(360deg); }
-    }
-
-    .contact-card h2 {
-      color: white;
-    }
-
-    .contact-card h2::before {
-      background: rgba(255, 255, 255, 0.3);
-    }
-
-    .contact-card p {
-      color: rgba(255, 255, 255, 0.9);
-    }
-
-    .contact-card a {
-      color: var(--accent-light);
       text-decoration: none;
       font-weight: 600;
-      padding: 2px 8px;
-      border-radius: 4px;
-      transition: all 0.3s ease;
+      margin: 0 0.5rem;
     }
-
-    .contact-card a:hover {
-      background: rgba(255, 255, 255, 0.2);
-      color: white;
-    }
-
-    /* Footer */
+    
     footer {
-      background: linear-gradient(135deg, var(--text) 0%, #0f172a 100%);
-      color: var(--text-muted);
-      text-align: center;
-      padding: 50px 20px;
-      margin-top: 40px;
-      position: relative;
-      overflow: hidden;
-    }
-
-    footer::before {
-      content: '';
-      position: absolute;
-      top: 0;
-      left: 0;
-      right: 0;
-      height: 100%;
-      background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 200"><path d="M0,100 Q250,50 500,100 Q750,150 1000,100 V200 H0 Z" fill="rgba(255,255,255,0.02)"/><circle cx="200" cy="80" r="2" fill="rgba(255,255,255,0.05)"/><circle cx="800" cy="120" r="1.5" fill="rgba(255,255,255,0.05)"/></svg>');
-      opacity: 0.6;
-    }
-
-    footer p {
-      margin: 0;
-      color: var(--text-muted);
-      position: relative;
-      z-index: 1;
-      font-size: 1.1rem;
-    }
-
-    /* Responsive design */
-    @media (max-width: 768px) {
-      h1 {
-        font-size: 2.5rem;
-      }
-
-      .subtitle {
-        font-size: 1.1rem;
-      }
-
-      nav ul {
-        flex-direction: column;
-        gap: 10px;
-      }
-
-      section {
-        padding: 30px 25px;
-      }
-
-      .cta-buttons {
-        flex-direction: column;
-        align-items: center;
-      }
-
-      .stats-grid {
-        grid-template-columns: 1fr;
-      }
-    }
-
-    /* Smooth animations */
-    section {
-      opacity: 0;
-      transform: translateY(20px);
-      animation: fadeInUp 0.6s ease forwards;
-    }
-
-    section:nth-child(1) { animation-delay: 0.1s; }
-    section:nth-child(2) { animation-delay: 0.2s; }
-    section:nth-child(3) { animation-delay: 0.3s; }
-    section:nth-child(4) { animation-delay: 0.4s; }
-
-    @keyframes fadeInUp {
-      to {
-        opacity: 1;
-        transform: translateY(0);
-      }
+        text-align: center;
+        padding: 2rem 1rem;
+        color: var(--text-light);
+        font-size: 0.9rem;
     }
   </style>
 </head>
 <body>
   <header>
-    <div class="floating-elements"></div>
-    <div class="hero-content">
-      <img src="profile-picture.jpg" alt="Benjamin J. Sunter" class="profile-image">
-      <h1>Benjamin J. Sunter</h1>
-      <p class="subtitle">AdTech Program Manager • First-Party Data Strategist • Digital Growth Architect</p>
-      <div class="cta-buttons">
-        <a href="#experience" class="btn btn-primary">View My Work</a>
-        <a href="#contact" class="btn btn-secondary">Let's Connect</a>
-      </div>
-    </div>
+    <img src="https://i.imgur.com/your-image-url.jpg" alt="Benjamin J. Sunter" class="profile-image">
+    <h1>Benjamin J. Sunter</h1>
+    <p class="subtitle">Program Manager | AdTech Strategist | Problem Solver</p>
   </header>
-
-  <nav>
-    <ul>
-      <li><a href="#about">About</a></li>
-      <li><a href="#experience">Experience</a></li>
-      <li><a href="#achievements">Achievements</a></li>
-      <li><a href="#personal">Personal</a></li>
-      <li><a href="#contact">Contact</a></li>
-    </ul>
-  </nav>
 
   <main>
     <section id="about">
-      <h2>About Me</h2>
-      <p>I'm a Program Manager at Google driving innovative solutions at the intersection of AdTech, data strategy, and digital transformation. With a background in Industrial Engineering and Lean Six Sigma, I bring both technical expertise and process optimization to every challenge.</p>
-      
+      <h2>A Little About Me</h2>
+      <p>I'm a Program Manager at Google, but my journey started with a degree in Industrial Engineering. I've always been fascinated by how things work, and now I apply that curiosity to the complex world of digital advertising. My goal is simple: to help publishers thrive in a privacy-focused world. 🚀</p>
       <div class="highlight-box">
-        <p>I specialize in empowering publishers to scale sustainably in a privacy-first landscape through cutting-edge technology and measurable business outcomes. My approach combines data-driven insights with human-centered design to create solutions that actually work.</p>
+        <p>Whether I'm leading a multi-billion dollar merger or helping a publisher unlock new revenue streams, I believe in a human-centered approach. It's not just about data; it's about understanding people and their needs.</p>
       </div>
-
-      <p>Whether it's leading multi-billion dollar merger implementations or helping publishers unlock incremental revenue through first-party data strategies, I'm passionate about turning complex challenges into elegant solutions that drive real impact.</p>
     </section>
 
     <section id="experience">
-      <h2>Professional Experience</h2>
-      
-      <h3>Program Manager - Google (2022 - Present)</h3>
-      <p>Leading annual planning for Google's Americas Sellside Partnerships business, managing strategy and execution across 7 vertical teams with 200+ team members. I drive initiatives that generate incremental revenue while maintaining 92% CSAT scores with publisher partners.</p>
-      
-      <div class="highlight-box">
-        <p>Key Focus: Privacy-preserving first-party data solutions with Google Ad Manager 360 and AdMob, touching over billions in publisher ARR and generating significant incremental revenue annually.</p>
+      <h2>My Professional Journey</h2>
+      <div class="job">
+        <p class="job-title">Program Manager</p>
+        <p class="job-company">Google (2022 - Present)</p>
+        <p>I lead planning and strategy for Google's Americas Sellside Partnerships, working with an incredible team to drive growth and keep our partners happy. A big part of my focus is on privacy-preserving data solutions—a challenge I'm passionate about tackling.</p>
       </div>
-
-      <h3>Program Manager - Accenture (2016 - 2021)</h3>
-      <p>Orchestrated a $26.5B telecommunications merger implementation, managing 60+ projects across 24 workstreams with 150+ delivery teams. Created automated dashboards providing insights into 11,000+ user stories and designed governance frameworks that reduced stakeholder overhead by 15%.</p>
-
-      <h3>Process Improvement Specialist</h3>
-      <p>Certified Lean Six Sigma Green Belt driving enterprise-wide automation and centralization initiatives. Specialized in identifying inefficiencies and implementing sustainable solutions that scale across complex organizations.</p>
-    </section>
-
-    <section id="achievements">
-      <h2>Key Achievements</h2>
-      
-      <div class="stats-grid">
-        <div class="stat-card">
-          <div class="stat-number">$26.5B</div>
-          <div class="stat-label">Merger Implementation</div>
-        </div>
-        <div class="stat-card">
-          <div class="stat-number">234%</div>
-          <div class="stat-label">Sales Quota Achievement</div>
-        </div>
-        <div class="stat-card">
-          <div class="stat-number">92%</div>
-          <div class="stat-label">Partner CSAT Score</div>
-        </div>
-        <div class="stat-card">
-          <div class="stat-number">200+</div>
-          <div class="stat-label">Team Members Led</div>
-        </div>
-      </div>
-
-      <div class="highlight-box">
-        <p>Awarded Top Salesperson in team Q1'25, doubled individual sales quota in H1'2025, and led operational excellence initiatives with VP-level visibility that saved 8 FTE time annually through automation.</p>
+      <div class="job">
+        <p class="job-title">Program Manager</p>
+        <p class="job-company">Accenture (2016 - 2021)</p>
+        <p>Here, I had the opportunity to orchestrate a massive $26.5B telecommunications merger. It was a masterclass in organization and teamwork, and I'm proud of the streamlined processes we built.</p>
       </div>
     </section>
 
-    <section id="personal">
-      <h2>Beyond the Resume</h2>
-      <p>When I'm not building data-driven growth strategies, you'll find me embracing life's diverse passions. I believe the best solutions come from varied experiences and perspectives.</p>
-      
-      <div class="interests-grid">
-        <div class="interest-item">🌶️ Hot Sauce Crafting</div>
-        <div class="interest-item">🌱 Gardening</div>
-        <div class="interest-item">🏔️ Outdoor Adventures</div>
-        <div class="interest-item">📚 Collecting</div>
-        <div class="interest-item">🔨 Building & Making</div>
-        <div class="interest-item">👨‍👩‍👧‍👦 Family Time</div>
+    <section id="skills">
+      <h2>Skills & Methodologies</h2>
+      <div class="skills-container">
+        <div class="skills-category">
+          <h3>Program & Product</h3>
+          <ul>
+            <li>Go-to-Market Strategy</li>
+            <li>Product Lifecycle Management</li>
+            <li>Stakeholder Management</li>
+            <li>Software Development Lifecycle</li>
+            <li>Technical Architecture Design</li>
+          </ul>
+        </div>
+        <div class="skills-category">
+          <h3>Process & Frameworks</h3>
+          <ul>
+            <li>Agile Development</li>
+            <li>Lean Six Sigma</li>
+            <li>Process Improvement</li>
+            <li>Operating Model Design</li>
+            <li>Shared Services Governance</li>
+          </ul>
+        </div>
+        <div class="skills-category">
+          <h3>Data & Tools</h3>
+          <ul>
+            <li>Data Analysis & Visualization</li>
+            <li>SQL / Relational Databases</li>
+            <li>JIRA & Atlassian Suite</li>
+            <li>Tableau & PowerBI</li>
+            <li>Microsoft CA Rally</li>
+          </ul>
+        </div>
       </div>
-
-      <p>As a former college cheerleader turned tech program manager, I've learned that leadership is about lifting others up, whether that's on the sidelines or in the boardroom. My hands-on approach to problem-solving, combined with a knack for creative solutions, helps me tackle challenges from unexpected angles.</p>
     </section>
 
-    <section id="contact" class="contact-card">
+    <section id="fun-facts">
+        <h2>A Few Fun Facts</h2>
+        <div class="fun-facts">
+            <div class="fact">
+                <p class="fact-emoji">🌶️</p>
+                <p>I craft my own hot sauce—always chasing that perfect balance of heat and flavor.</p>
+            </div>
+            <div class="fact">
+                <p class="fact-emoji">📣</p>
+                <p>I was a college cheerleader! It taught me a lot about teamwork and lifting others up.</p>
+            </div>
+            <div class="fact">
+                <p class="fact-emoji">🔨</p>
+                <p>I love building things with my hands, from garden beds to home improvement projects.</p>
+            </div>
+        </div>
+    </section>
+
+    <section id="contact">
       <h2>Let's Connect</h2>
-      <p>Have an opportunity, idea, or challenge in AdTech, digital growth, or program management? I'd love to hear from you and explore how we can create something meaningful together.</p>
-      <p>Whether you're a publisher looking to optimize your revenue strategy, a startup needing program management expertise, or just someone who wants to chat about the future of digital advertising, let's start the conversation.</p>
-      <p>Email: <a href="mailto:Sunterbb@gmail.com">Sunterbb@gmail.com</a></p>
-      <p>LinkedIn: <a href="https://www.linkedin.com/in/benjamin-sunter/">benjamin-sunter</a></p>
+      <p>I'm always open to chatting about AdTech, program management, or even your favorite hot sauce recipe. Feel free to reach out!</p>
+      <p class="contact-links">
+        <a href="mailto:Sunterbb@gmail.com">Email</a> | 
+        <a href="https://www.linkedin.com/in/benjamin-sunter/">LinkedIn</a>
+      </p>
     </section>
   </main>
-
+  
   <footer>
-    <p>&copy; 2025 Benjamin J. Sunter • Crafted with care in Cupertino, CA</p>
+      <p>&copy; 2025 Benjamin J. Sunter | Crafted with care in Cupertino, CA</p>
   </footer>
 </body>
 </html>
