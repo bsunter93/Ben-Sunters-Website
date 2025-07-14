@@ -926,7 +926,10 @@
     }
       /* --- Video Cards --- */
 
-      .video-cards-grid {
+    .video-cards-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 1.5rem;
   width: 100%;
   max-width: 1200px;
   margin: 2rem auto;
