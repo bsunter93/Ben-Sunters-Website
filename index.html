@@ -27,8 +27,6 @@
       position: relative;
     }
 
-
-
     /* --- Animated Banner --- */
     .animated-banner {
       position: relative;
@@ -171,7 +169,7 @@
     /* --- Header --- */
     header {
       text-align: center;
-      padding: 3rem 1rem;
+      padding: 2rem 0.5rem;
     }
 
     .profile-image {
@@ -196,15 +194,15 @@
 
     /* --- Main Content --- */
     main {
-      max-width: 800px;
+      max-width: 900px;
       margin: 0 auto;
-      padding: 1rem;
+      padding: 0 0.5rem;
     }
 
     section {
-      margin-bottom: 3rem;
+      margin-bottom: 2.5rem;
       border-left: 3px solid var(--accent);
-      padding-left: 1.5rem;
+      padding-left: 1rem;
     }
 
     h2 {
@@ -236,12 +234,24 @@
       color: var(--text-light);
     }
 
-    /* --- Career Highlights --- */
+    /* --- Notable Achievements --- */
     .highlights-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+      grid-template-columns: repeat(3, 1fr);
       gap: 1rem;
       margin-top: 1rem;
+    }
+
+    @media (max-width: 768px) {
+      .highlights-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }
+
+    @media (max-width: 480px) {
+      .highlights-grid {
+        grid-template-columns: 1fr;
+      }
     }
 
     .highlight-card {
@@ -253,6 +263,11 @@
       transition: all 0.3s ease;
       position: relative;
       overflow: hidden;
+      min-height: 140px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
     }
 
     .highlight-card::before {
@@ -494,7 +509,7 @@
     
     footer {
         text-align: center;
-        padding: 2rem 1rem;
+        padding: 1.5rem 0.5rem;
         color: var(--text-light);
         font-size: 0.9rem;
     }
@@ -544,7 +559,7 @@
     </section>
 
     <section id="highlights">
-      <h2>Career Highlights</h2>
+      <h2>Notable Achievements</h2>
       <div class="highlights-grid">
         <div class="highlight-card">
           <div class="highlight-icon">🚀</div>
