@@ -1,1226 +1,1258 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Benjamin J. Sunter - AdTech Program Manager</title>
-  <style>
-    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
-    
-    :root {
-      --bg: #f8f9fa; 
-      --text: #212529; 
-      --text-light: #495057;
-      --primary: #6C63FF; /* Bolder Indigo */
-      --accent: #00DF9A;  /* Fun Mint Green */
-      --highlight-bg: #f0f0ff; 
-      --highlight-border: #dadaff;
-    }
-
-    body {
-      font-family: 'Inter', sans-serif;
-      background-color: #fafafa;
-      color: var(--text);
-      line-height: 1.6;
-      margin: 0;
-      padding: 0;
-      position: relative;
-    }
-
-    /* --- Animated Banner --- */
-    .animated-banner {
-      position: relative;
-      height: 180px;
-      background: linear-gradient(135deg, #ff6b6b 0%, #feca57 100%);
-      overflow: hidden;
-      border-bottom: 3px solid var(--accent);
-      animation: colorShift 30s ease-in-out infinite;
-    }
-
-    @keyframes colorShift {
-      0% { background: linear-gradient(135deg, #ff6b6b 0%, #feca57 100%); }
-      12.5% { background: linear-gradient(135deg, #ff8f6b 0%, #feca57 100%); }
-      25% { background: linear-gradient(135deg, #feca57 0%, #c4e157 100%); }
-      37.5% { background: linear-gradient(135deg, #feca57 0%, #1dd1a1 100%); }
-      50% { background: linear-gradient(135deg, #1dd1a1 0%, #2dc5a1 100%); }
-      62.5% { background: linear-gradient(135deg, #1dd1a1 0%, #48dbfb 100%); }
-      75% { background: linear-gradient(135deg, #48dbfb 0%, #6b8fff 100%); }
-      87.5% { background: linear-gradient(135deg, #48dbfb 0%, #ff6b6b 100%); }
-      100% { background: linear-gradient(135deg, #ff6b6b 0%, #feca57 100%); }
-    }
-
-    .banner-content {
-      position: relative;
-      z-index: 10;
-      height: 100%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      color: white;
-      font-size: 1.1rem;
-      font-weight: 300;
-      text-shadow: 0 2px 4px rgba(0,0,0,0.3);
-    }
-
-    /* Floating Mathematical Symbols */
-    .math-symbol {
-      position: absolute;
-      color: rgba(255, 255, 255, 0.1);
-      font-size: 2rem;
-      font-weight: 300;
-      animation: float 8s ease-in-out infinite;
-      pointer-events: none;
-    }
-
-    .math-symbol:nth-child(1) { left: 10%; top: 20%; animation-delay: 0s; }
-    .math-symbol:nth-child(2) { left: 20%; top: 60%; animation-delay: 2s; }
-    .math-symbol:nth-child(3) { left: 80%; top: 30%; animation-delay: 4s; }
-    .math-symbol:nth-child(4) { left: 70%; top: 70%; animation-delay: 6s; }
-    .math-symbol:nth-child(5) { left: 40%; top: 10%; animation-delay: 1s; }
-    .math-symbol:nth-child(6) { left: 90%; top: 80%; animation-delay: 3s; }
-
-    @keyframes float {
-      0%, 100% { transform: translateY(0px) rotate(0deg); opacity: 0.1; }
-      50% { transform: translateY(-20px) rotate(180deg); opacity: 0.3; }
-    }
-
-    /* Subtle Grid Pattern */
-    .grid-overlay {
-      position: absolute;
-      top: 0;
-      left: 0;
-      right: 0;
-      bottom: 0;
-      background-image: 
-        linear-gradient(rgba(255,255,255,0.1) 1px, transparent 1px),
-        linear-gradient(90deg, rgba(255,255,255,0.1) 1px, transparent 1px);
-      background-size: 20px 20px;
-      opacity: 0.3;
-      animation: gridShift 20s linear infinite;
-    }
-
-    @keyframes gridShift {
-      0% { transform: translate(0, 0); }
-      100% { transform: translate(20px, 20px); }
-    }
-
-    /* Nature-inspired Particles */
-    .particle {
-      position: absolute;
-      background: rgba(255, 255, 255, 0.6);
-      border-radius: 50%;
-      animation: drift 15s ease-in-out infinite;
-      pointer-events: none;
-    }
-
-    .particle:nth-child(1) { width: 3px; height: 3px; left: 5%; top: 40%; animation-delay: 0s; }
-    .particle:nth-child(2) { width: 2px; height: 2px; left: 25%; top: 20%; animation-delay: 3s; }
-    .particle:nth-child(3) { width: 4px; height: 4px; left: 50%; top: 60%; animation-delay: 6s; }
-    .particle:nth-child(4) { width: 2px; height: 2px; left: 75%; top: 30%; animation-delay: 9s; }
-    .particle:nth-child(5) { width: 3px; height: 3px; left: 85%; top: 70%; animation-delay: 12s; }
-
-    @keyframes drift {
-      0%, 100% { transform: translate(0, 0); opacity: 0.3; }
-      25% { transform: translate(30px, -20px); opacity: 0.8; }
-      50% { transform: translate(-20px, -40px); opacity: 0.6; }
-      75% { transform: translate(40px, -10px); opacity: 0.4; }
-    }
-
-    /* Fibonacci Spiral (Very Subtle) */
-    .fibonacci-spiral {
-      position: absolute;
-      top: 50%;
-      right: 10%;
-      width: 60px;
-      height: 60px;
-      border: 2px solid rgba(255, 255, 255, 0.1);
-      border-radius: 50%;
-      animation: spiral 30s linear infinite;
-      transform-origin: center;
-    }
-
-    @keyframes spiral {
-      0% { transform: translateY(-50%) rotate(0deg) scale(0.8); opacity: 0.1; }
-      50% { transform: translateY(-50%) rotate(180deg) scale(1.2); opacity: 0.3; }
-      100% { transform: translateY(-50%) rotate(360deg) scale(0.8); opacity: 0.1; }
-    }
-
-    /* DNA Helix Inspiration */
-    .dna-strand {
-      position: absolute;
-      left: 5%;
-      top: 0;
-      width: 2px;
-      height: 100%;
-      background: linear-gradient(to bottom, 
-        transparent 0%, 
-        rgba(255,255,255,0.2) 25%, 
-        rgba(255,255,255,0.4) 50%, 
-        rgba(255,255,255,0.2) 75%, 
-        transparent 100%);
-      animation: dnaRotate 12s ease-in-out infinite;
-    }
-
-    @keyframes dnaRotate {
-      0%, 100% { transform: scaleY(1) rotate(0deg); }
-      50% { transform: scaleY(1.2) rotate(180deg); }
-    }
-
-    /* --- Header --- */
-    header {
-      text-align: center;
-      padding: 2rem 0.5rem;
-    }
-
-    .profile-image {
-      width: 180px;
-      height: 180px;
-      border-radius: 50%;
-      border: 5px solid var(--primary);
-      margin-bottom: 1rem;
-      box-shadow: 0 4px 15px rgba(108, 99, 255, 0.2);
-    }
-
-    h1 {
-      font-size: 2.5rem;
-      font-weight: 700;
-      color: var(--primary);
-    }
-
-    .subtitle {
-      font-size: 1.2rem;
-      color: var(--text-light);
-    }
-
-    /* --- Main Content --- */
-    main {
-      max-width: 900px;
-      margin: 0 auto;
-      padding: 0 0.5rem;
-    }
-
-    section {
-      margin-bottom: 2.5rem;
-      border-left: 3px solid var(--accent);
-      padding-left: 1rem;
-    }
-
-    h2 {
-      font-size: 1.8rem;
-      font-weight: 600;
-      color: var(--primary);
-      margin-bottom: 1rem;
-    }
-
-    .highlight-box {
-      background-color: var(--highlight-bg);
-      border: 1px solid var(--highlight-border);
-      border-radius: 8px;
-      padding: 1.5rem;
-      margin: 1.5rem 0;
-    }
-
-    /* --- Experience --- */
-    .job {
-      margin-bottom: 2rem;
-    }
-
-    .job-title {
-      font-size: 1.2rem;
-      font-weight: 600;
-    }
-
-    .job-company {
-      color: var(--text-light);
-    }
-
-    /* --- Notable Achievements --- */
-    .highlights-grid {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 1rem;
-      margin-top: 1rem;
-    }
-
-    @media (max-width: 768px) {
-      .highlights-grid {
-        grid-template-columns: repeat(2, 1fr);
-      }
-    }
-
-    @media (max-width: 480px) {
-      .highlights-grid {
-        grid-template-columns: 1fr;
-      }
-    }
-
-    .highlight-card {
-      background: linear-gradient(135deg, #f8f9ff 0%, #e8f2ff 100%);
-      border: 2px solid var(--primary);
-      border-radius: 12px;
-      padding: 1.5rem 1rem;
-      text-align: center;
-      transition: all 0.3s ease;
-      position: relative;
-      overflow: hidden;
-      min-height: 140px;
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-      align-items: center;
-    }
-
-    .highlight-card::before {
-      content: '';
-      position: absolute;
-      top: 0;
-      left: -100%;
-      width: 100%;
-      height: 100%;
-      background: linear-gradient(90deg, transparent, rgba(108, 99, 255, 0.1), transparent);
-      transition: left 0.5s ease;
-    }
-
-    .highlight-card:hover::before {
-      left: 100%;
-    }
-
-    .highlight-card:hover {
-      transform: translateY(-5px);
-      box-shadow: 0 8px 25px rgba(108, 99, 255, 0.2);
-      border-color: var(--accent);
-    }
-
-    .highlight-icon {
-      font-size: 2rem;
-      margin-bottom: 0.5rem;
-      display: block;
-    }
-
-    .highlight-metric {
-      font-size: 1.8rem;
-      font-weight: 700;
-      color: var(--primary);
-      margin-bottom: 0.25rem;
-      position: relative;
-      z-index: 1;
-    }
-
-    .highlight-description {
-      font-size: 0.85rem;
-      color: var(--text-light);
-      font-weight: 500;
-      line-height: 1.3;
-      position: relative;
-      z-index: 1;
-    }
-
-    /* --- Skills Section --- */
-    .skills-container {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-      gap: 1.5rem;
-      padding-top: 1rem;
-    }
-
-    .skills-category h3 {
-      font-size: 1.1rem;
-      font-weight: 600;
-      color: var(--primary);
-      margin-bottom: 0.75rem;
-    }
-
-    .skills-category ul {
-      list-style: none;
-      padding: 0;
-      margin: 0;
-    }
-
-    .skills-category li {
-      margin-bottom: 0.5rem;
-      color: var(--text-light);
-      display: flex;
-      align-items: center;
-    }
-    
-    .skills-category li::before {
-      content: '✓';
-      color: var(--accent);
-      margin-right: 0.5rem;
-      font-weight: 700;
-    }
-      /* --- Work Samples Dashboard --- */
-    .dashboard-container {
-      margin-top: 2rem;
-    }
-
-    .dashboard-container h3 {
-      color: var(--primary);
-      font-size: 1.4rem;
-      margin-bottom: 0.5rem;
-    }
-
-    .tableau-dashboard {
-      background: white;
-      border-radius: 12px;
-      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
-      overflow: hidden;
-      margin-top: 1rem;
-      animation: slideInUp 0.8s ease-out;
-    }
-
-    @keyframes slideInUp {
-      from {
-        opacity: 0;
-        transform: translateY(30px);
-      }
-      to {
-        opacity: 1;
-        transform: translateY(0);
-      }
-    }
-
-    .dashboard-header {
-      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-      color: white;
-      padding: 1.5rem;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      flex-wrap: wrap;
-    }
-
-    .dashboard-title {
-      font-size: 1.3rem;
-      font-weight: 600;
-    }
-
-    .dashboard-filters {
-      display: flex;
-      gap: 0.5rem;
-      flex-wrap: wrap;
-    }
-
-    .filter-tag {
-      background: rgba(255, 255, 255, 0.2);
-      padding: 0.3rem 0.8rem;
-      border-radius: 20px;
-      font-size: 0.85rem;
-      backdrop-filter: blur(10px);
-    }
-
-    .dashboard-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-      gap: 1.5rem;
-      padding: 2rem;
-    }
-
-    .metric-card {
-      background: #f8fafc;
-      border-radius: 8px;
-      padding: 1.5rem;
-      border-left: 4px solid var(--primary);
-      transition: transform 0.3s ease;
-      animation: fadeInScale 0.6s ease-out;
-    }
-
-    .metric-card:hover {
-      transform: translateY(-3px);
-    }
-
-    @keyframes fadeInScale {
-      from {
-        opacity: 0;
-        transform: scale(0.95);
-      }
-      to {
-        opacity: 1;
-        transform: scale(1);
-      }
-    }
-
-    .metric-header {
-      font-size: 0.9rem;
-      color: var(--text-light);
-      margin-bottom: 0.5rem;
-      font-weight: 500;
-    }
-
-    .metric-value {
-      font-size: 2.2rem;
-      font-weight: 700;
-      color: var(--primary);
-      margin-bottom: 0.5rem;
-    }
-
-    .metric-trend {
-      font-size: 0.85rem;
-      font-weight: 600;
-      margin-bottom: 1rem;
-    }
-
-    .metric-trend.positive {
-      color: #10b981;
-    }
-
-    .metric-trend.neutral {
-      color: #6b7280;
-    }
-
-    .progress-bar {
-      width: 100%;
-      height: 6px;
-      background: #e5e7eb;
-      border-radius: 3px;
-      overflow: hidden;
-    }
-
-    .progress-fill {
-      height: 100%;
-      background: linear-gradient(90deg, var(--primary), var(--accent));
-      border-radius: 3px;
-      animation: progressAnimation 2s ease-out;
-    }
-
-    .progress-fill.budget {
-      background: linear-gradient(90deg, #f59e0b, #eab308);
-    }
-
-    @keyframes progressAnimation {
-      from {
-        width: 0%;
-      }
-    }
-
-    .star-rating {
-      display: flex;
-      gap: 0.2rem;
-    }
-
-    .star {
-      color: #fbbf24;
-      font-size: 1.2rem;
-    }
-
-    .star.filled {
-      animation: starTwinkle 0.8s ease-out;
-    }
-
-    .star.half {
-      background: linear-gradient(90deg, #fbbf24 50%, #e5e7eb 50%);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      animation: starTwinkle 0.8s ease-out 0.2s;
-    }
-
-    @keyframes starTwinkle {
-      0%, 100% {
-        transform: scale(1);
-      }
-      50% {
-        transform: scale(1.2);
-      }
-    }
-
-    .chart-container {
-      background: #f8fafc;
-      border-radius: 8px;
-      padding: 1.5rem;
-      border-left: 4px solid var(--accent);
-      animation: slideInLeft 0.8s ease-out;
-    }
-
-    @keyframes slideInLeft {
-      from {
-        opacity: 0;
-        transform: translateX(-20px);
-      }
-      to {
-        opacity: 1;
-        transform: translateX(0);
-      }
-    }
-
-    .chart-title {
-      font-size: 1.1rem;
-      font-weight: 600;
-      color: var(--primary);
-      margin-bottom: 1rem;
-    }
-
-    .gantt-chart {
-      display: flex;
-      flex-direction: column;
-      gap: 1rem;
-    }
-
-    .gantt-item {
-      display: flex;
-      align-items: center;
-      gap: 1rem;
-    }
-
-    .task-name {
-      width: 120px;
-      font-size: 0.9rem;
-      color: var(--text-light);
-    }
-
-    .task-bar {
-      height: 20px;
-      border-radius: 10px;
-      position: relative;
-      flex-grow: 1;
-      max-width: 200px;
-      animation: taskBarGrow 1.5s ease-out;
-    }
-
-    .task-bar.completed {
-      background: linear-gradient(90deg, #10b981, #059669);
-    }
-
-    .task-bar.in-progress {
-      background: linear-gradient(90deg, #f59e0b, #d97706);
-    }
-
-    .task-bar.planned {
-      background: linear-gradient(90deg, #6b7280, #4b5563);
-    }
-
-    @keyframes taskBarGrow {
-      from {
-        width: 0%;
-      }
-    }
-
-    .task-progress {
-      font-size: 0.8rem;
-      color: var(--text-light);
-      font-weight: 600;
-      min-width: 35px;
-    }
-
-    .line-chart {
-      position: relative;
-      height: 120px;
-      background: linear-gradient(to top, #f3f4f6 0%, transparent 100%);
-      border-radius: 6px;
-      overflow: hidden;
-    }
-
-    .chart-line {
-      position: relative;
-      height: 100%;
-    }
-
-    .data-point {
-      position: absolute;
-      width: 8px;
-      height: 8px;
-      background: var(--primary);
-      border-radius: 50%;
-      animation: pointPulse 0.8s ease-out;
-      box-shadow: 0 0 10px rgba(108, 99, 255, 0.5);
-    }
-
-    .data-point::after {
-      content: '';
-      position: absolute;
-      width: 4px;
-      height: 100vh;
-      background: linear-gradient(to bottom, var(--primary), transparent);
-      left: 2px;
-      top: 0;
-    }
-
-    @keyframes pointPulse {
-      0% {
-        transform: scale(0);
-        opacity: 0;
-      }
-      50% {
-        transform: scale(1.5);
-        opacity: 0.8;
-      }
-      100% {
-        transform: scale(1);
-        opacity: 1;
-      }
-    }
-
-    .chart-axis {
-      display: flex;
-      justify-content: space-between;
-      margin-top: 0.5rem;
-      font-size: 0.8rem;
-      color: var(--text-light);
-    }
-
-    .risk-matrix {
-      background: #f8fafc;
-      border-radius: 8px;
-      padding: 1.5rem;
-      border-left: 4px solid #ef4444;
-      position: relative;
-      animation: slideInRight 0.8s ease-out;
-    }
-
-    @keyframes slideInRight {
-      from {
-        opacity: 0;
-        transform: translateX(20px);
-      }
-      to {
-        opacity: 1;
-        transform: translateX(0);
-      }
-    }
-
-    .matrix-grid {
-      position: relative;
-      height: 120px;
-      background: linear-gradient(to top, #fef3c7 0%, #fee2e2 100%);
-      border-radius: 6px;
-      margin-bottom: 1rem;
-    }
-
-    .risk-item {
-      position: absolute;
-      padding: 0.3rem 0.6rem;
-      border-radius: 4px;
-      font-size: 0.8rem;
-      font-weight: 600;
-      color: white;
-      animation: riskItemFloat 0.8s ease-out;
-    }
-
-    .risk-item.low {
-      background: #10b981;
-    }
-
-    .risk-item.medium {
-      background: #f59e0b;
-    }
-
-    .risk-item.high {
-      background: #ef4444;
-    }
-
-    @keyframes riskItemFloat {
-      0% {
-        opacity: 0;
-        transform: translateY(10px);
-      }
-      100% {
-        opacity: 1;
-        transform: translateY(0);
-      }
-    }
-
-    .matrix-labels {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      font-size: 0.8rem;
-      color: var(--text-light);
-    }
-
-    .y-label {
-      transform: rotate(-90deg);
-      position: absolute;
-      left: -20px;
-      top: 50%;
-    }
-
-    .x-label {
-      margin-left: auto;
-    }
-
-    @media (max-width: 768px) {
-      .dashboard-grid {
-        grid-template-columns: 1fr;
-        padding: 1rem;
-      }
-      
-      .dashboard-header {
-        flex-direction: column;
-        gap: 1rem;
-        text-align: center;
-      }
-      
-      .task-name {
-        width: 80px;
-        font-size: 0.8rem;
-      }
-    }
-    /* --- Fun Facts --- */
-    .fun-facts {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-      gap: 1rem;
-    }
-
-    .fact {
-      background-color: var(--highlight-bg);
-      border-radius: 8px;
-      padding: 1rem;
-      text-align: center;
-      transition: transform 0.3s, box-shadow 0.3s;
-      position: relative;
-      perspective: 1000px;
-      height: 220px;
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-      align-items: center;
-    }
-
-    .fact:hover {
-      transform: translateY(-5px);
-      box-shadow: 0 4px 20px rgba(108, 99, 255, 0.15);
-    }
-
-    .fact-emoji {
-      font-size: 2rem;
-      margin-bottom: 0.5rem;
-    }
-
-    .fact p:not(.fact-emoji) {
-      margin: 0;
-      line-height: 1.4;
-    }
-
-    /* Flip card styles */
-    .flip-card {
-      height: 220px;
-      perspective: 1000px;
-      position: relative;
-    }
-
-    /* Click me indicator */
-    .flip-card::before {
-      content: '👆 click me!';
-      position: absolute;
-      top: -15px;
-      right: -10px;
-      background: linear-gradient(135deg, #ff6b6b, #feca57);
-      color: white;
-      font-size: 0.7rem;
-      font-weight: 600;
-      padding: 4px 8px;
-      border-radius: 12px;
-      z-index: 10;
-      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
-      animation: bounce 2s ease-in-out infinite;
-      text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
-      border: 2px solid rgba(255, 255, 255, 0.3);
-    }
-
-    @keyframes bounce {
-      0%, 20%, 50%, 80%, 100% { transform: translateY(0) rotate(-5deg); }
-      40% { transform: translateY(-8px) rotate(-3deg); }
-      60% { transform: translateY(-4px) rotate(-7deg); }
-    }
-
-    /* Hide click indicator when flipped */
-    .flip-card.flipped::before {
-      opacity: 0;
-      pointer-events: none;
-    }
-
-    .flip-card-inner {
-      position: relative;
-      width: 100%;
-      height: 100%;
-      text-align: center;
-      transition: transform 0.8s;
-      transform-style: preserve-3d;
-      cursor: pointer;
-    }
-
-    .flip-card.flipped .flip-card-inner {
-      transform: rotateY(180deg);
-    }
-
-    .flip-card-front, .flip-card-back {
-      position: absolute;
-      width: 100%;
-      height: 100%;
-      backface-visibility: hidden;
-      border-radius: 8px;
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-      align-items: center;
-      padding: 1rem;
-      box-sizing: border-box;
-    }
-
-    .flip-card-front {
-      background-color: var(--highlight-bg);
-    }
-
-    .flip-card-back {
-      background-color: var(--highlight-bg);
-      transform: rotateY(180deg);
-      position: relative;
-      background-image: url('ben1.jpg');
-      background-size: cover;
-      background-position: center;
-      background-repeat: no-repeat;
-    }
-
-    .outdoor-back {
-      background-image: url('hiking.jpeg');
-    }
-
-    .building-back {
-      background-image: url('IMG_0970.jpeg');
-    }
-
-    .flip-card-back::before {
-      content: '';
-      position: absolute;
-      top: 0;
-      left: 0;
-      right: 0;
-      bottom: 0;
-      background: rgba(0, 0, 0, 0.3);
-      border-radius: 8px;
-    }
-
-    .flip-card-back-content {
-      position: relative;
-      z-index: 2;
-      color: white;
-      font-weight: 600;
-      text-shadow: 0 2px 4px rgba(0, 0, 0, 0.7);
-    }
-
-    /* --- Contact --- */
-    .contact-links a {
-      color: var(--primary);
-      text-decoration: none;
-      font-weight: 600;
-      margin: 0 0.5rem;
-      transition: color 0.3s;
-    }
-
-    .contact-links a:hover {
-        color: var(--accent);
-    }
-    
-    footer {
-        text-align: center;
-        padding: 1.5rem 0.5rem;
-        color: var(--text-light);
-        font-size: 0.9rem;
-    }
-  </style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Benjamin J. Sunter - AdTech Program Manager</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+    
+    :root {
+      --bg: #f8f9fa; 
+      --text: #212529; 
+      --text-light: #495057;
+      --primary: #6C63FF; /* Bolder Indigo */
+      --accent: #00DF9A;  /* Fun Mint Green */
+      --highlight-bg: #f0f0ff; 
+      --highlight-border: #dadaff;
+    }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background-color: #fafafa;
+      color: var(--text);
+      line-height: 1.6;
+      margin: 0;
+      padding: 0;
+      position: relative;
+    }
+
+    /* --- Animated Banner --- */
+    .animated-banner {
+      position: relative;
+      height: 180px;
+      background: linear-gradient(135deg, #ff6b6b 0%, #feca57 100%);
+      overflow: hidden;
+      border-bottom: 3px solid var(--accent);
+      animation: colorShift 30s ease-in-out infinite;
+    }
+
+    @keyframes colorShift {
+      0% { background: linear-gradient(135deg, #ff6b6b 0%, #feca57 100%); }
+      12.5% { background: linear-gradient(135deg, #ff8f6b 0%, #feca57 100%); }
+      25% { background: linear-gradient(135deg, #feca57 0%, #c4e157 100%); }
+      37.5% { background: linear-gradient(135deg, #feca57 0%, #1dd1a1 100%); }
+      50% { background: linear-gradient(135deg, #1dd1a1 0%, #2dc5a1 100%); }
+      62.5% { background: linear-gradient(135deg, #1dd1a1 0%, #48dbfb 100%); }
+      75% { background: linear-gradient(135deg, #48dbfb 0%, #6b8fff 100%); }
+      87.5% { background: linear-gradient(135deg, #48dbfb 0%, #ff6b6b 100%); }
+      100% { background: linear-gradient(135deg, #ff6b6b 0%, #feca57 100%); }
+    }
+
+    .banner-content {
+      position: relative;
+      z-index: 10;
+      height: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      font-size: 1.1rem;
+      font-weight: 300;
+      text-shadow: 0 2px 4px rgba(0,0,0,0.3);
+    }
+
+    /* Floating Mathematical Symbols */
+    .math-symbol {
+      position: absolute;
+      color: rgba(255, 255, 255, 0.1);
+      font-size: 2rem;
+      font-weight: 300;
+      animation: float 8s ease-in-out infinite;
+      pointer-events: none;
+    }
+
+    .math-symbol:nth-child(1) { left: 10%; top: 20%; animation-delay: 0s; }
+    .math-symbol:nth-child(2) { left: 20%; top: 60%; animation-delay: 2s; }
+    .math-symbol:nth-child(3) { left: 80%; top: 30%; animation-delay: 4s; }
+    .math-symbol:nth-child(4) { left: 70%; top: 70%; animation-delay: 6s; }
+    .math-symbol:nth-child(5) { left: 40%; top: 10%; animation-delay: 1s; }
+    .math-symbol:nth-child(6) { left: 90%; top: 80%; animation-delay: 3s; }
+
+    @keyframes float {
+      0%, 100% { transform: translateY(0px) rotate(0deg); opacity: 0.1; }
+      50% { transform: translateY(-20px) rotate(180deg); opacity: 0.3; }
+    }
+
+    /* Subtle Grid Pattern */
+    .grid-overlay {
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background-image: 
+        linear-gradient(rgba(255,255,255,0.1) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255,255,255,0.1) 1px, transparent 1px);
+      background-size: 20px 20px;
+      opacity: 0.3;
+      animation: gridShift 20s linear infinite;
+    }
+
+    @keyframes gridShift {
+      0% { transform: translate(0, 0); }
+      100% { transform: translate(20px, 20px); }
+    }
+
+    /* Nature-inspired Particles */
+    .particle {
+      position: absolute;
+      background: rgba(255, 255, 255, 0.6);
+      border-radius: 50%;
+      animation: drift 15s ease-in-out infinite;
+      pointer-events: none;
+    }
+
+    .particle:nth-child(1) { width: 3px; height: 3px; left: 5%; top: 40%; animation-delay: 0s; }
+    .particle:nth-child(2) { width: 2px; height: 2px; left: 25%; top: 20%; animation-delay: 3s; }
+    .particle:nth-child(3) { width: 4px; height: 4px; left: 50%; top: 60%; animation-delay: 6s; }
+    .particle:nth-child(4) { width: 2px; height: 2px; left: 75%; top: 30%; animation-delay: 9s; }
+    .particle:nth-child(5) { width: 3px; height: 3px; left: 85%; top: 70%; animation-delay: 12s; }
+
+    @keyframes drift {
+      0%, 100% { transform: translate(0, 0); opacity: 0.3; }
+      25% { transform: translate(30px, -20px); opacity: 0.8; }
+      50% { transform: translate(-20px, -40px); opacity: 0.6; }
+      75% { transform: translate(40px, -10px); opacity: 0.4; }
+    }
+
+    /* Fibonacci Spiral (Very Subtle) */
+    .fibonacci-spiral {
+      position: absolute;
+      top: 50%;
+      right: 10%;
+      width: 60px;
+      height: 60px;
+      border: 2px solid rgba(255, 255, 255, 0.1);
+      border-radius: 50%;
+      animation: spiral 30s linear infinite;
+      transform-origin: center;
+    }
+
+    @keyframes spiral {
+      0% { transform: translateY(-50%) rotate(0deg) scale(0.8); opacity: 0.1; }
+      50% { transform: translateY(-50%) rotate(180deg) scale(1.2); opacity: 0.3; }
+      100% { transform: translateY(-50%) rotate(360deg) scale(0.8); opacity: 0.1; }
+    }
+
+    /* DNA Helix Inspiration */
+    .dna-strand {
+      position: absolute;
+      left: 5%;
+      top: 0;
+      width: 2px;
+      height: 100%;
+      background: linear-gradient(to bottom, 
+        transparent 0%, 
+        rgba(255,255,255,0.2) 25%, 
+        rgba(255,255,255,0.4) 50%, 
+        rgba(255,255,255,0.2) 75%, 
+        transparent 100%);
+      animation: dnaRotate 12s ease-in-out infinite;
+    }
+
+    @keyframes dnaRotate {
+      0%, 100% { transform: scaleY(1) rotate(0deg); }
+      50% { transform: scaleY(1.2) rotate(180deg); }
+    }
+
+    /* --- Header --- */
+    header {
+      text-align: center;
+      padding: 2rem 0.5rem;
+    }
+
+    .profile-image {
+      width: 180px;
+      height: 180px;
+      border-radius: 50%;
+      border: 5px solid var(--primary);
+      margin-bottom: 1rem;
+      box-shadow: 0 4px 15px rgba(108, 99, 255, 0.2);
+    }
+
+    h1 {
+      font-size: 2.5rem;
+      font-weight: 700;
+      color: var(--primary);
+    }
+
+    .subtitle {
+      font-size: 1.2rem;
+      color: var(--text-light);
+    }
+
+    /* --- Main Content --- */
+    main {
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 0 0.5rem;
+    }
+
+    section {
+      margin-bottom: 2.5rem;
+      border-left: 3px solid var(--accent);
+      padding-left: 1rem;
+    }
+
+    h2 {
+      font-size: 1.8rem;
+      font-weight: 600;
+      color: var(--primary);
+      margin-bottom: 1rem;
+    }
+
+    .highlight-box {
+      background-color: var(--highlight-bg);
+      border: 1px solid var(--highlight-border);
+      border-radius: 8px;
+      padding: 1.5rem;
+      margin: 1.5rem 0;
+    }
+
+    /* --- Experience --- */
+    .job {
+      margin-bottom: 2rem;
+    }
+
+    .job-title {
+      font-size: 1.2rem;
+      font-weight: 600;
+    }
+
+    .job-company {
+      color: var(--text-light);
+    }
+
+    /* --- Notable Achievements --- */
+    .highlights-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1rem;
+      margin-top: 1rem;
+    }
+
+    @media (max-width: 768px) {
+      .highlights-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }
+
+    @media (max-width: 480px) {
+      .highlights-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .highlight-card {
+      background: linear-gradient(135deg, #f8f9ff 0%, #e8f2ff 100%);
+      border: 2px solid var(--primary);
+      border-radius: 12px;
+      padding: 1.5rem 1rem;
+      text-align: center;
+      transition: all 0.3s ease;
+      position: relative;
+      overflow: hidden;
+      min-height: 140px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .highlight-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(108, 99, 255, 0.1), transparent);
+      transition: left 0.5s ease;
+    }
+
+    .highlight-card:hover::before {
+      left: 100%;
+    }
+
+    .highlight-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 8px 25px rgba(108, 99, 255, 0.2);
+      border-color: var(--accent);
+    }
+
+    .highlight-icon {
+      font-size: 2rem;
+      margin-bottom: 0.5rem;
+      display: block;
+    }
+
+    .highlight-metric {
+      font-size: 1.8rem;
+      font-weight: 700;
+      color: var(--primary);
+      margin-bottom: 0.25rem;
+      position: relative;
+      z-index: 1;
+    }
+
+    .highlight-description {
+      font-size: 0.85rem;
+      color: var(--text-light);
+      font-weight: 500;
+      line-height: 1.3;
+      position: relative;
+      z-index: 1;
+    }
+
+    /* --- Skills Section --- */
+    .skills-container {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 1.5rem;
+      padding-top: 1rem;
+    }
+
+    .skills-category h3 {
+      font-size: 1.1rem;
+      font-weight: 600;
+      color: var(--primary);
+      margin-bottom: 0.75rem;
+    }
+
+    .skills-category ul {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+    }
+
+    .skills-category li {
+      margin-bottom: 0.5rem;
+      color: var(--text-light);
+      display: flex;
+      align-items: center;
+    }
+    
+    .skills-category li::before {
+      content: '✓';
+      color: var(--accent);
+      margin-right: 0.5rem;
+      font-weight: 700;
+    }
+      /* --- Work Samples Dashboard --- */
+    .dashboard-container {
+      margin-top: 2rem;
+    }
+
+    .dashboard-container h3 {
+      color: var(--primary);
+      font-size: 1.4rem;
+      margin-bottom: 0.5rem;
+    }
+
+    .tableau-dashboard {
+      background: white;
+      border-radius: 12px;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+      overflow: hidden;
+      margin-top: 1rem;
+      animation: slideInUp 0.8s ease-out;
+    }
+
+    @keyframes slideInUp {
+      from {
+        opacity: 0;
+        transform: translateY(30px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .dashboard-header {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      padding: 1.5rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+    }
+
+    .dashboard-title {
+      font-size: 1.3rem;
+      font-weight: 600;
+    }
+
+    .dashboard-filters {
+      display: flex;
+      gap: 0.5rem;
+      flex-wrap: wrap;
+    }
+
+    .filter-tag {
+      background: rgba(255, 255, 255, 0.2);
+      padding: 0.3rem 0.8rem;
+      border-radius: 20px;
+      font-size: 0.85rem;
+      backdrop-filter: blur(10px);
+    }
+
+    .dashboard-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 1.5rem;
+      padding: 2rem;
+    }
+
+    .metric-card {
+      background: #f8fafc;
+      border-radius: 8px;
+      padding: 1.5rem;
+      border-left: 4px solid var(--primary);
+      transition: transform 0.3s ease;
+      animation: fadeInScale 0.6s ease-out;
+    }
+
+    .metric-card:hover {
+      transform: translateY(-3px);
+    }
+
+    @keyframes fadeInScale {
+      from {
+        opacity: 0;
+        transform: scale(0.95);
+      }
+      to {
+        opacity: 1;
+        transform: scale(1);
+      }
+    }
+
+    .metric-header {
+      font-size: 0.9rem;
+      color: var(--text-light);
+      margin-bottom: 0.5rem;
+      font-weight: 500;
+    }
+
+    .metric-value {
+      font-size: 2.2rem;
+      font-weight: 700;
+      color: var(--primary);
+      margin-bottom: 0.5rem;
+    }
+
+    .metric-trend {
+      font-size: 0.85rem;
+      font-weight: 600;
+      margin-bottom: 1rem;
+    }
+
+    .metric-trend.positive {
+      color: #10b981;
+    }
+
+    .metric-trend.neutral {
+      color: #6b7280;
+    }
+
+    .progress-bar {
+      width: 100%;
+      height: 6px;
+      background: #e5e7eb;
+      border-radius: 3px;
+      overflow: hidden;
+    }
+
+    .progress-fill {
+      height: 100%;
+      background: linear-gradient(90deg, var(--primary), var(--accent));
+      border-radius: 3px;
+      animation: progressAnimation 2s ease-out;
+    }
+
+    .progress-fill.budget {
+      background: linear-gradient(90deg, #f59e0b, #eab308);
+    }
+
+    @keyframes progressAnimation {
+      from {
+        width: 0%;
+      }
+    }
+
+    .star-rating {
+      display: flex;
+      gap: 0.2rem;
+    }
+
+    .star {
+      color: #fbbf24;
+      font-size: 1.2rem;
+    }
+
+    .star.filled {
+      animation: starTwinkle 0.8s ease-out;
+    }
+
+    .star.half {
+      background: linear-gradient(90deg, #fbbf24 50%, #e5e7eb 50%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      animation: starTwinkle 0.8s ease-out 0.2s;
+    }
+
+    @keyframes starTwinkle {
+      0%, 100% {
+        transform: scale(1);
+      }
+      50% {
+        transform: scale(1.2);
+      }
+    }
+
+    .chart-container {
+      background: #f8fafc;
+      border-radius: 8px;
+      padding: 1.5rem;
+      border-left: 4px solid var(--accent);
+      animation: slideInLeft 0.8s ease-out;
+    }
+
+    @keyframes slideInLeft {
+      from {
+        opacity: 0;
+        transform: translateX(-20px);
+      }
+      to {
+        opacity: 1;
+        transform: translateX(0);
+      }
+    }
+
+    .chart-title {
+      font-size: 1.1rem;
+      font-weight: 600;
+      color: var(--primary);
+      margin-bottom: 1rem;
+    }
+
+    .gantt-chart {
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+    }
+
+    .gantt-item {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+    }
+
+    .task-name {
+      width: 120px;
+      font-size: 0.9rem;
+      color: var(--text-light);
+    }
+
+    .task-bar {
+      height: 20px;
+      border-radius: 10px;
+      position: relative;
+      flex-grow: 1;
+      max-width: 200px;
+      animation: taskBarGrow 1.5s ease-out;
+    }
+
+    .task-bar.completed {
+      background: linear-gradient(90deg, #10b981, #059669);
+    }
+
+    .task-bar.in-progress {
+      background: linear-gradient(90deg, #f59e0b, #d97706);
+    }
+
+    .task-bar.planned {
+      background: linear-gradient(90deg, #6b7280, #4b5563);
+    }
+
+    @keyframes taskBarGrow {
+      from {
+        width: 0%;
+      }
+    }
+
+    .task-progress {
+      font-size: 0.8rem;
+      color: var(--text-light);
+      font-weight: 600;
+      min-width: 35px;
+    }
+
+    .line-chart {
+      position: relative;
+      height: 120px;
+      background: linear-gradient(to top, #f3f4f6 0%, transparent 100%);
+      border-radius: 6px;
+      overflow: hidden;
+    }
+
+    .chart-line {
+      position: relative;
+      height: 100%;
+    }
+
+    .data-point {
+      position: absolute;
+      width: 8px;
+      height: 8px;
+      background: var(--primary);
+      border-radius: 50%;
+      animation: pointPulse 0.8s ease-out;
+      box-shadow: 0 0 10px rgba(108, 99, 255, 0.5);
+    }
+
+    .data-point::after {
+      content: '';
+      position: absolute;
+      width: 4px;
+      height: 100vh;
+      background: linear-gradient(to bottom, var(--primary), transparent);
+      left: 2px;
+      top: 0;
+    }
+
+    @keyframes pointPulse {
+      0% {
+        transform: scale(0);
+        opacity: 0;
+      }
+      50% {
+        transform: scale(1.5);
+        opacity: 0.8;
+      }
+      100% {
+        transform: scale(1);
+        opacity: 1;
+      }
+    }
+
+    .chart-axis {
+      display: flex;
+      justify-content: space-between;
+      margin-top: 0.5rem;
+      font-size: 0.8rem;
+      color: var(--text-light);
+    }
+
+    /* --- RAID Log Table (MODIFIED) --- */
+    .raid-container {
+      background: #f8fafc;
+      border-radius: 8px;
+      padding: 1.5rem;
+      border-left: 4px solid var(--primary);
+      animation: fadeInScale 0.8s ease-out;
+      margin-top: 1.5rem;
+      grid-column: 1 / -1; /* Make it span full width in the grid */
+    }
+
+    .raid-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 1rem;
+    }
+
+    .raid-table th, .raid-table td {
+      padding: 12px 15px;
+      text-align: left;
+      border-bottom: 1px solid #e5e7eb;
+    }
+
+    .raid-table th {
+      background-color: #f3f4f6;
+      color: var(--text-light);
+      font-size: 0.8rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .raid-table tbody tr {
+      transition: background-color 0.2s ease-in-out;
+    }
+
+    .raid-table tbody tr:hover {
+      background-color: var(--highlight-bg);
+    }
+
+    .raid-table td {
+      font-size: 0.9rem;
+      color: var(--text-light);
+    }
+
+    .raid-type-indicator {
+      display: inline-flex;
+      justify-content: center;
+      align-items: center;
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      color: white;
+      font-weight: 700;
+      font-size: 1rem;
+    }
+
+    .raid-risk { background: #ef4444; } /* Red */
+    .raid-action { background: #3b82f6; } /* Blue */
+    .raid-issue { background: #f59e0b; } /* Amber */
+    .raid-decision { background: #8b5cf6; } /* Violet */
+
+    .status-badge {
+      padding: 4px 10px;
+      border-radius: 12px;
+      font-size: 0.8rem;
+      font-weight: 600;
+      white-space: nowrap;
+    }
+
+    .status-high { background-color: #fee2e2; color: #b91c1c; }
+    .status-medium { background-color: #fef3c7; color: #b45309; }
+    .status-resolved { background-color: #dcfce7; color: #15803d; }
+    .status-pending { background-color: #e0e7ff; color: #4338ca; }
+
+    @media (max-width: 768px) {
+      .dashboard-grid {
+        grid-template-columns: 1fr;
+        padding: 1rem;
+      }
+      
+      .dashboard-header {
+        flex-direction: column;
+        gap: 1rem;
+        text-align: center;
+      }
+      
+      .task-name {
+        width: 80px;
+        font-size: 0.8rem;
+      }
+    }
+
+    /* Responsive adjustments for the RAID table */
+    @media (max-width: 600px) {
+      .raid-table thead {
+        display: none; /* Hide header on small screens */
+      }
+
+      .raid-table, .raid-table tbody, .raid-table tr, .raid-table td {
+        display: block;
+        width: 100%;
+      }
+
+      .raid-table tr {
+        margin-bottom: 1rem;
+        border: 1px solid #e5e7eb;
+        border-radius: 8px;
+      }
+
+      .raid-table td {
+        text-align: right;
+        padding: 10px 15px;
+        border-bottom: 1px dotted #e5e7eb;
+        position: relative;
+      }
+      
+      .raid-table tr td:last-child {
+        border-bottom: none;
+      }
+
+      .raid-table td::before {
+        content: attr(data-label);
+        position: absolute;
+        left: 15px;
+        font-weight: 600;
+        color: var(--text);
+        text-align: left;
+      }
+    }
+    /* --- Fun Facts --- */
+    .fun-facts {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 1rem;
+    }
+
+    .fact {
+      background-color: var(--highlight-bg);
+      border-radius: 8px;
+      padding: 1rem;
+      text-align: center;
+      transition: transform 0.3s, box-shadow 0.3s;
+      position: relative;
+      perspective: 1000px;
+      height: 220px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .fact:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 4px 20px rgba(108, 99, 255, 0.15);
+    }
+
+    .fact-emoji {
+      font-size: 2rem;
+      margin-bottom: 0.5rem;
+    }
+
+    .fact p:not(.fact-emoji) {
+      margin: 0;
+      line-height: 1.4;
+    }
+
+    /* Flip card styles */
+    .flip-card {
+      height: 220px;
+      perspective: 1000px;
+      position: relative;
+    }
+
+    /* Click me indicator */
+    .flip-card::before {
+      content: '👆 click me!';
+      position: absolute;
+      top: -15px;
+      right: -10px;
+      background: linear-gradient(135deg, #ff6b6b, #feca57);
+      color: white;
+      font-size: 0.7rem;
+      font-weight: 600;
+      padding: 4px 8px;
+      border-radius: 12px;
+      z-index: 10;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+      animation: bounce 2s ease-in-out infinite;
+      text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+      border: 2px solid rgba(255, 255, 255, 0.3);
+    }
+
+    @keyframes bounce {
+      0%, 20%, 50%, 80%, 100% { transform: translateY(0) rotate(-5deg); }
+      40% { transform: translateY(-8px) rotate(-3deg); }
+      60% { transform: translateY(-4px) rotate(-7deg); }
+    }
+
+    /* Hide click indicator when flipped */
+    .flip-card.flipped::before {
+      opacity: 0;
+      pointer-events: none;
+    }
+
+    .flip-card-inner {
+      position: relative;
+      width: 100%;
+      height: 100%;
+      text-align: center;
+      transition: transform 0.8s;
+      transform-style: preserve-3d;
+      cursor: pointer;
+    }
+
+    .flip-card.flipped .flip-card-inner {
+      transform: rotateY(180deg);
+    }
+
+    .flip-card-front, .flip-card-back {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      backface-visibility: hidden;
+      border-radius: 8px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      padding: 1rem;
+      box-sizing: border-box;
+    }
+
+    .flip-card-front {
+      background-color: var(--highlight-bg);
+    }
+
+    .flip-card-back {
+      background-color: var(--highlight-bg);
+      transform: rotateY(180deg);
+      position: relative;
+      background-image: url('ben1.jpg');
+      background-size: cover;
+      background-position: center;
+      background-repeat: no-repeat;
+    }
+
+    .outdoor-back {
+      background-image: url('hiking.jpeg');
+    }
+
+    .building-back {
+      background-image: url('IMG_0970.jpeg');
+    }
+
+    .flip-card-back::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(0, 0, 0, 0.3);
+      border-radius: 8px;
+    }
+
+    .flip-card-back-content {
+      position: relative;
+      z-index: 2;
+      color: white;
+      font-weight: 600;
+      text-shadow: 0 2px 4px rgba(0, 0, 0, 0.7);
+    }
+
+    /* --- Contact --- */
+    .contact-links a {
+      color: var(--primary);
+      text-decoration: none;
+      font-weight: 600;
+      margin: 0 0.5rem;
+      transition: color 0.3s;
+    }
+
+    .contact-links a:hover {
+        color: var(--accent);
+    }
+    
+    footer {
+        text-align: center;
+        padding: 1.5rem 0.5rem;
+        color: var(--text-light);
+        font-size: 0.9rem;
+    }
+  </style>
 </head>
 <body>
-  <div class="animated-banner">
-    <div class="grid-overlay"></div>
-    <div class="dna-strand"></div>
-    <div class="fibonacci-spiral"></div>
-    
-    <!-- Mathematical symbols floating -->
-    <div class="math-symbol">∞</div>
-    <div class="math-symbol">φ</div>
-    <div class="math-symbol">∑</div>
-    <div class="math-symbol">∆</div>
-    <div class="math-symbol">π</div>
-    <div class="math-symbol">≈</div>
-    
-    <!-- Nature-inspired particles -->
-    <div class="particle"></div>
-    <div class="particle"></div>
-    <div class="particle"></div>
-    <div class="particle"></div>
-    <div class="particle"></div>
-    
-    <div class="banner-content">
-      <span>Driving Growth through Data and Design</span>
-    </div>
-  </div>
+  <div class="animated-banner">
+    <div class="grid-overlay"></div>
+    <div class="dna-strand"></div>
+    <div class="fibonacci-spiral"></div>
+    
+        <div class="math-symbol">∞</div>
+    <div class="math-symbol">φ</div>
+    <div class="math-symbol">∑</div>
+    <div class="math-symbol">∆</div>
+    <div class="math-symbol">π</div>
+    <div class="math-symbol">≈</div>
+    
+        <div class="particle"></div>
+    <div class="particle"></div>
+    <div class="particle"></div>
+    <div class="particle"></div>
+    <div class="particle"></div>
+    
+    <div class="banner-content">
+      <span>Driving Growth through Data and Design</span>
+    </div>
+  </div>
 
-  <div class="background-image"></div>
+  <div class="background-image"></div>
 
-  <header>
-    <img src="profile-picture.jpg" alt="Benjamin J. Sunter" class="profile-image">
-    <h1>Benjamin J. Sunter</h1>
-    <p class="subtitle">Program Manager | AdTech Strategist | Problem Solver</p>
-  </header>
+  <header>
+    <img src="profile-picture.jpg" alt="Benjamin J. Sunter" class="profile-image">
+    <h1>Benjamin J. Sunter</h1>
+    <p class="subtitle">Program Manager | AdTech Strategist | Problem Solver</p>
+  </header>
 
-  <main>
-    <section id="about">
-      <h2>A Little About Me</h2>
-      <p>I'm a Program Manager at Google, but my journey started with a degree in Industrial Engineering. I've always been fascinated by how things work, and now I apply that curiosity to the complex world of digital advertising. My goal is simple: to help publishers thrive in a privacy-focused world. 🚀</p>
-      <div class="highlight-box">
-        <p>Whether I'm leading a multi-billion dollar merger or helping a publisher unlock new revenue streams, I believe in a human-centered approach. It's not just about data; it's about understanding people and their needs.</p>
-      </div>
-    </section>
+  <main>
+    <section id="about">
+      <h2>A Little About Me</h2>
+      <p>I'm a Program Manager at Google, but my journey started with a degree in Industrial Engineering. I've always been fascinated by how things work, and now I apply that curiosity to the complex world of digital advertising. My goal is simple: to help publishers thrive in a privacy-focused world. 🚀</p>
+      <div class="highlight-box">
+        <p>Whether I'm leading a multi-billion dollar merger or helping a publisher unlock new revenue streams, I believe in a human-centered approach. It's not just about data; it's about understanding people and their needs.</p>
+      </div>
+    </section>
 
-    <section id="highlights">
-      <h2>Notable Achievements</h2>
-      <div class="highlights-grid">
-        <div class="highlight-card">
-          <div class="highlight-icon">🚀</div>
-          <div class="highlight-metric">$26.5B</div>
-          <div class="highlight-description">Program managed telecom merger implementation</div>
-        </div>
-        <div class="highlight-card">
-          <div class="highlight-icon">🏆</div>
-          <div class="highlight-metric">234%</div>
-          <div class="highlight-description">Achieved sales quota in Q1'25 as top performer</div>
-        </div>
-        <div class="highlight-card">
-          <div class="highlight-icon">👥</div>
-          <div class="highlight-metric">200+</div>
-          <div class="highlight-description">Led cross-functional teams across Americas</div>
-        </div>
-        <div class="highlight-card">
-          <div class="highlight-icon">⚡</div>
-          <div class="highlight-metric">8 FTE</div>
-          <div class="highlight-description">Time savings delivered through Operational Excellence</div>
-        </div>
-        <div class="highlight-card">
-          <div class="highlight-icon">📊</div>
-          <div class="highlight-metric">92%</div>
-          <div class="highlight-description">Average publisher satisfaction score maintained</div>
-        </div>
-        <div class="highlight-card">
-          <div class="highlight-icon">🎯</div>
-          <div class="highlight-metric">60+</div>
-          <div class="highlight-description">Individual projects managed within single program portfolio</div>
-        </div>
-      </div>
-    </section>
+    <section id="highlights">
+      <h2>Notable Achievements</h2>
+      <div class="highlights-grid">
+        <div class="highlight-card">
+          <div class="highlight-icon">🚀</div>
+          <div class="highlight-metric">$26.5B</div>
+          <div class="highlight-description">Program managed telecom merger implementation</div>
+        </div>
+        <div class="highlight-card">
+          <div class="highlight-icon">🏆</div>
+          <div class="highlight-metric">234%</div>
+          <div class="highlight-description">Achieved sales quota in Q1'25 as top performer</div>
+        </div>
+        <div class="highlight-card">
+          <div class="highlight-icon">👥</div>
+          <div class="highlight-metric">200+</div>
+          <div class="highlight-description">Led cross-functional teams across Americas</div>
+        </div>
+        <div class="highlight-card">
+          <div class="highlight-icon">⚡</div>
+          <div class="highlight-metric">8 FTE</div>
+          <div class="highlight-description">Time savings delivered through Operational Excellence</div>
+        </div>
+        <div class="highlight-card">
+          <div class="highlight-icon">📊</div>
+          <div class="highlight-metric">92%</div>
+          <div class="highlight-description">Average publisher satisfaction score maintained</div>
+        </div>
+        <div class="highlight-card">
+          <div class="highlight-icon">🎯</div>
+          <div class="highlight-metric">60+</div>
+          <div class="highlight-description">Individual projects managed within single program portfolio</div>
+        </div>
+      </div>
+    </section>
 
-    <section id="experience">
-      <h2>My Professional Journey</h2>
-      <div class="job">
-        <p class="job-title">Program Manager</p>
-        <p class="job-company">Google (2022 - Present)</p>
-        <p>I lead planning and strategy for Google's Americas Sellside Partnerships, working with an incredible team to drive growth and keep our partners happy. A big part of my focus is on privacy-preserving data solutions—a challenge I'm passionate about tackling.</p>
-      </div>
-      <div class="job">
-        <p class="job-title">Program Manager</p>
-        <p class="job-company">Accenture (2016 - 2021)</p>
-        <p>Here, I had the opportunity to orchestrate a massive $26.5B telecommunications merger. It was a masterclass in organization and teamwork, and I'm proud of the streamlined processes we built.</p>
-      </div>
-    </section>
+    <section id="experience">
+      <h2>My Professional Journey</h2>
+      <div class="job">
+        <p class="job-title">Program Manager</p>
+        <p class="job-company">Google (2022 - Present)</p>
+        <p>I lead planning and strategy for Google's Americas Sellside Partnerships, working with an incredible team to drive growth and keep our partners happy. A big part of my focus is on privacy-preserving data solutions—a challenge I'm passionate about tackling.</p>
+      </div>
+      <div class="job">
+        <p class="job-title">Program Manager</p>
+        <p class="job-company">Accenture (2016 - 2021)</p>
+        <p>Here, I had the opportunity to orchestrate a massive $26.5B telecommunications merger. It was a masterclass in organization and teamwork, and I'm proud of the streamlined processes we built.</p>
+      </div>
+    </section>
 
-    <section id="skills">
-      <h2>Skills & Methodologies</h2>
-      <div class="skills-container">
-        <div class="skills-category">
-          <h3>Program & Product</h3>
-          <ul>
-            <li>Go-to-Market Strategy</li>
-            <li>Product Lifecycle Management</li>
-            <li>Stakeholder Management</li>
-            <li>Software Development Lifecycle</li>
-            <li>Technical Architecture Design</li>
-          </ul>
-        </div>
-        <div class="skills-category">
-          <h3>Process & Frameworks</h3>
-          <ul>
-            <li>Agile Development</li>
-            <li>Lean Six Sigma</li>
-            <li>Process Improvement</li>
-            <li>Operating Model Design</li>
-            <li>Shared Services Governance</li>
-          </ul>
-        </div>
-        <div class="skills-category">
-          <h3>Data & Tools</h3>
-          <ul>
-            <li>Data Analysis & Visualization</li>
-            <li>SQL / Relational Databases</li>
-            <li>JIRA & Atlassian Suite</li>
-            <li>Tableau & PowerBI</li>
-            <li>Microsoft CA Rally</li>
-          </ul>
-        </div>
-      </div>
-    </section>
+    <section id="skills">
+      <h2>Skills & Methodologies</h2>
+      <div class="skills-container">
+        <div class="skills-category">
+          <h3>Program & Product</h3>
+          <ul>
+            <li>Go-to-Market Strategy</li>
+            <li>Product Lifecycle Management</li>
+            <li>Stakeholder Management</li>
+            <li>Software Development Lifecycle</li>
+            <li>Technical Architecture Design</li>
+          </ul>
+        </div>
+        <div class="skills-category">
+          <h3>Process & Frameworks</h3>
+          <ul>
+            <li>Agile Development</li>
+            <li>Lean Six Sigma</li>
+            <li>Process Improvement</li>
+            <li>Operating Model Design</li>
+            <li>Shared Services Governance</li>
+          </ul>
+        </div>
+        <div class="skills-category">
+          <h3>Data & Tools</h3>
+          <ul>
+            <li>Data Analysis & Visualization</li>
+            <li>SQL / Relational Databases</li>
+            <li>JIRA & Atlassian Suite</li>
+            <li>Tableau & PowerBI</li>
+            <li>Microsoft CA Rally</li>
+          </ul>
+        </div>
+      </div>
+    </section>
 
- <section id="work-samples">
-      <h2>Work Samples</h2>
-    <div class="tableau-dashboard">
-          <div class="dashboard-header">
-            <div class="dashboard-title">Q3 2025 Sales Enablement Program</div>
-            <div class="dashboard-filters">
-              <span class="filter-tag">Global</span>
-              <span class="filter-tag">Sellside</span>
-              <span class="filter-tag">Active</span>
-            </div>
-          </div>
-          <div class="dashboard-grid">
-            <div class="metric-card">
-              <div class="metric-header">Revenue Attainment vs Goal</div>
-              <div class="metric-value">112%</div>
-              <div class="metric-trend positive">↗ +$4.2M above target</div>
-              <div class="progress-bar">
-                <div class="progress-fill" style="width: 112%;"></div>
-              </div>
-            </div>
-            <div class="metric-card">
-              <div class="metric-header">Initiative Progress</div>
-              <div class="metric-value">73%</div>
-              <div class="metric-trend positive">↗ On track for Q4</div>
-              <div class="progress-bar">
-                <div class="progress-fill budget" style="width: 73%;"></div>
-              </div>
-            </div>
-            <div class="metric-card">
-              <div class="metric-header">Partner Satisfaction</div>
-              <div class="metric-value">4.3/5</div>
-              <div class="metric-trend positive">↗ +0.2 from Q2</div>
-              <div class="star-rating">
-                <span class="star filled">★</span>
-                <span class="star filled">★</span>
-                <span class="star filled">★</span>
-                <span class="star filled">★</span>
-                <span class="star half">★</span>
-              </div>
-            </div>
-            <div class="chart-container">
-              <div class="chart-title">Key Initiative Progress</div>
-              <div class="gantt-chart">
-                <div class="gantt-item">
-                  <div class="task-name">Privacy Solutions</div>
-                  <div class="task-bar completed" style="width: 89%;"></div>
-                  <div class="task-progress">89%</div>
-                </div>
-                <div class="gantt-item">
-                  <div class="task-name">Sales Training</div>
-                  <div class="task-bar in-progress" style="width: 67%;"></div>
-                  <div class="task-progress">67%</div>
-                </div>
-                <div class="gantt-item">
-                  <div class="task-name">Partner Onboarding</div>
-                  <div class="task-bar in-progress" style="width: 54%;"></div>
-                  <div class="task-progress">54%</div>
-                </div>
-              </div>
-            </div>
-            <div class="chart-container">
-              <div class="chart-title">Incremental Revenue by Region (Monthly)</div>
-              <div class="line-chart">
-                <div class="chart-line">
-                  <div class="data-point" style="left: 15%; bottom: 35%; background: #6C63FF;" title="AMS Sales"></div>
-                  <div class="data-point" style="left: 25%; bottom: 25%; background: #00DF9A;" title="LATAM Sales"></div>
-                  <div class="data-point" style="left: 35%; bottom: 60%; background: #FF6B6B;" title="EMEA Sales"></div>
-                  <div class="data-point" style="left: 50%; bottom: 45%; background: #6C63FF;" title="AMS Sales"></div>
-                  <div class="data-point" style="left: 60%; bottom: 30%; background: #00DF9A;" title="LATAM Sales"></div>
-                  <div class="data-point" style="left: 70%; bottom: 75%; background: #FF6B6B;" title="EMEA Sales"></div>
-                  <div class="data-point" style="left: 85%; bottom: 55%; background: #6C63FF;" title="AMS Sales"></div>
-                </div>
-              </div>
-              <div class="chart-axis">
-                <span>Apr</span>
-                <span>May</span>
-                <span>Jun</span>
-                <span>Jul</span>
-              </div>
-            </div>
-            <div class="raid-log">
-              <div class="chart-title">RAID Log Summary</div>
-              <div class="raid-items">
-                <div class="raid-item risk">
-                  <div class="raid-type">R</div>
-                  <div class="raid-content">
-                    <div class="raid-title">Q4 Resource Allocation</div>
-                    <div class="raid-status">Medium | Mitigating</div>
-                  </div>
-                </div>
-                <div class="raid-item action">
-                  <div class="raid-type">A</div>
-                  <div class="raid-content">
-                    <div class="raid-title">Partner Training Rollout</div>
-                    <div class="raid-status">High | Due 8/15</div>
-                  </div>
-                </div>
-                <div class="raid-item issue">
-                  <div class="raid-type">I</div>
-                  <div class="raid-content">
-                    <div class="raid-title">API Integration Delays</div>
-                    <div class="raid-status">Low | Resolved</div>
-                  </div>
-                </div>
-                <div class="raid-item decision">
-                  <div class="raid-type">D</div>
-                  <div class="raid-content">
-                    <div class="raid-title">H2 Strategy Alignment</div>
-                    <div class="raid-status">Pending Approval</div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-    </section>
-    <section id="fun-facts">
-        <h2>A Few Fun Facts</h2>
-        <div class="fun-facts">
-            <div class="fact flip-card" onclick="this.classList.toggle('flipped')">
-                <div class="flip-card-inner">
-                    <div class="flip-card-front">
-                        <p class="fact-emoji">🏕️</p>
-                        <p>I'm married with two kids and love spending time outdoors—whether it's hiking, camping, or just enjoying nature.</p>
-                    </div>
-                    <div class="flip-card-back outdoor-back">
-                        <div class="flip-card-back-content">
-                            <p>Click to flip back!</p>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="fact flip-card" onclick="this.classList.toggle('flipped')">
-                <div class="flip-card-inner">
-                    <div class="flip-card-front">
-                        <p class="fact-emoji">📣</p>
-                        <p>I was a college cheerleader! It taught me a lot about teamwork and lifting others up.</p>
-                    </div>
-                    <div class="flip-card-back cheerleader-back">
-                        <div class="flip-card-back-content">
-                            <p>Click to flip back!</p>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="fact flip-card" onclick="this.classList.toggle('flipped')">
-                <div class="flip-card-inner">
-                    <div class="flip-card-front">
-                        <p class="fact-emoji">🔨</p>
-                        <p>I love building things with my hands, from garden beds to home improvement projects.</p>
-                    </div>
-                    <div class="flip-card-back building-back">
-                        <div class="flip-card-back-content">
-                            <p>Click to flip back!</p>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
+ <section id="work-samples">
+      <h2>Work Samples</h2>
+    <div class="tableau-dashboard">
+          <div class="dashboard-header">
+            <div class="dashboard-title">Q3 2025 Sales Enablement Program</div>
+            <div class="dashboard-filters">
+              <span class="filter-tag">Global</span>
+              <span class="filter-tag">Sellside</span>
+              <span class="filter-tag">Active</span>
+            </div>
+          </div>
+          <div class="dashboard-grid">
+            <div class="metric-card">
+              <div class="metric-header">Revenue Attainment vs Goal</div>
+              <div class="metric-value">112%</div>
+              <div class="metric-trend positive">↗ +$4.2M above target</div>
+              <div class="progress-bar">
+                <div class="progress-fill" style="width: 112%;"></div>
+              </div>
+            </div>
+            <div class="metric-card">
+              <div class="metric-header">Initiative Progress</div>
+              <div class="metric-value">73%</div>
+              <div class="metric-trend positive">↗ On track for Q4</div>
+              <div class="progress-bar">
+                <div class="progress-fill budget" style="width: 73%;"></div>
+              </div>
+            </div>
+            <div class="metric-card">
+              <div class="metric-header">Partner Satisfaction</div>
+              <div class="metric-value">4.3/5</div>
+              <div class="metric-trend positive">↗ +0.2 from Q2</div>
+              <div class="star-rating">
+                <span class="star filled">★</span>
+                <span class="star filled">★</span>
+                <span class="star filled">★</span>
+                <span class="star filled">★</span>
+                <span class="star half">★</span>
+              </div>
+            </div>
+            <div class="chart-container">
+              <div class="chart-title">Key Initiative Progress</div>
+              <div class="gantt-chart">
+                <div class="gantt-item">
+                  <div class="task-name">Privacy Solutions</div>
+                  <div class="task-bar completed" style="width: 89%;"></div>
+                  <div class="task-progress">89%</div>
+                </div>
+                <div class="gantt-item">
+                  <div class="task-name">Sales Training</div>
+                  <div class="task-bar in-progress" style="width: 67%;"></div>
+                  <div class="task-progress">67%</div>
+                </div>
+                <div class="gantt-item">
+                  <div class="task-name">Partner Onboarding</div>
+                  <div class="task-bar in-progress" style="width: 54%;"></div>
+                  <div class="task-progress">54%</div>
+                </div>
+              </div>
+            </div>
+            <div class="chart-container">
+              <div class="chart-title">Incremental Revenue by Region (Monthly)</div>
+              <div class="line-chart">
+                <div class="chart-line">
+                  <div class="data-point" style="left: 15%; bottom: 35%; background: #6C63FF;" title="AMS Sales"></div>
+                  <div class="data-point" style="left: 25%; bottom: 25%; background: #00DF9A;" title="LATAM Sales"></div>
+                  <div class="data-point" style="left: 35%; bottom: 60%; background: #FF6B6B;" title="EMEA Sales"></div>
+                  <div class="data-point" style="left: 50%; bottom: 45%; background: #6C63FF;" title="AMS Sales"></div>
+                  <div class="data-point" style="left: 60%; bottom: 30%; background: #00DF9A;" title="LATAM Sales"></div>
+                  <div class="data-point" style="left: 70%; bottom: 75%; background: #FF6B6B;" title="EMEA Sales"></div>
+                  <div class="data-point" style="left: 85%; bottom: 55%; background: #6C63FF;" title="AMS Sales"></div>
+                </div>
+              </div>
+              <div class="chart-axis">
+                <span>Apr</span>
+                <span>May</span>
+                <span>Jun</span>
+                <span>Jul</span>
+              </div>
+            </div>
+                        <div class="raid-container">
+                <div class="chart-title">RAID Log Summary</div>
+                <table class="raid-table">
+                    <thead>
+                        <tr>
+                            <th scope="col">Type</th>
+                            <th scope="col">Description</th>
+                            <th scope="col">Priority / Status</th>
+                            <th scope="col">Owner</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td data-label="Type"><span class="raid-type-indicator raid-risk">R</span></td>
+                            <td data-label="Description">Q4 resource allocation constraints may impact project timelines.</td>
+                            <td data-label="Priority / Status"><span class="status-badge status-medium">Medium</span></td>
+                            <td data-label="Owner">B. Sunter</td>
+                        </tr>
+                        <tr>
+                            <td data-label="Type"><span class="raid-type-indicator raid-action">A</span></td>
+                    _        <td data-label="Description">Finalize and roll out new partner training modules.</td>
+                            <td data-label="Priority / Status"><span class="status-badge status-high">High | Due 8/15</span></td>
+                            <td data-label="Owner">J. Doe</td>
+                        </tr>
+                        <tr>
+                            <td data-label="Type"><span class="raid-type-indicator raid-issue">I</span></td>
+                            <td data-label="Description">Minor API integration delays with Platform X resolved.</td>
+                            <td data-label="Priority / Status"><span class="status-badge status-resolved">Resolved</span></td>
+                            <td data-label="Owner">A. Smith</td>
+                        </tr>
+                        <tr>
+                            <td data-label="Type"><span class="raid-type-indicator raid-decision">D</span></td>
+                            <td data-label="Description">Approval required for H2 strategic pivot to EMEA market focus.</td>
+                            <td data-label="Priority / Status"><span class="status-badge status-pending">Pending Approval</span></td>
+                            <td data-label="Owner">Leadership</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+          </div>
+      </div>
+    </section>
 
-    <section id="contact">
-      <h2>Let's Connect</h2>
-      <p>I'm always open to chatting about AdTech, program management, or even your favorite hot sauce recipe. Feel free to reach out!</p>
-      <p class="contact-links">
-        <a href="mailto:Sunterbb@gmail.com">Email</a> | 
-        <a href="https://www.linkedin.com/in/benjamin-sunter/">LinkedIn</a>
-      </p>
-    </section>
-  </main>
-  
-  <footer>
-      <p>&copy; 2025 Benjamin J. Sunter | Crafted with care in Cupertino, CA</p>
-  </footer>
+    <section id="fun-facts">
+        <h2>Beyond the Desk: Fun Facts</h2>
+        <div class="fun-facts">
+            <div class="flip-card" ontouchstart="this.classList.toggle('flipped');">
+                <div class="flip-card-inner" onclick="this.parentElement.classList.toggle('flipped')">
+                    <div class="flip-card-front">
+                        <p class="fact-emoji">🧗</p>
+                        <p>I'm an avid rock climber and love finding new routes to conquer.</p>
+                    </div>
+                    <div class="flip-card-back outdoor-back">
+                        <div class="flip-card-back-content">Top of Mission Peak</div>
+                    </div>
+                </div>
+            </div>
+            <div class="flip-card" ontouchstart="this.classList.toggle('flipped');">
+                <div class="flip-card-inner" onclick="this.parentElement.classList.toggle('flipped')">
+                    <div class="flip-card-front">
+                        <p class="fact-emoji">🏗️</p>
+                        <p>In my spare time, I enjoy building custom furniture from reclaimed wood.</p>
+                    </div>
+                    <div class="flip-card-back building-back">
+                        <div class="flip-card-back-content">Handmade Bookshelf</div>
+                    </div>
+                </div>
+            </div>
+            <div class="flip-card" ontouchstart="this.classList.toggle('flipped');">
+                <div class="flip-card-inner" onclick="this.parentElement.classList.toggle('flipped')">
+                    <div class="flip-card-front">
+                        <p class="fact-emoji">🌶️</p>
+                        <p>I grow some of the world's hottest chili peppers in my garden.</p>
+                    </div>
+                    <div class="flip-card-back">
+                        <div class="flip-card-back-content">Ghost Pepper Harvest</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="contact">
+      <h2>Get In Touch</h2>
+      <p>I'm always open to connecting with fellow professionals and innovators. Feel free to reach out!</p>
+      <p class="contact-links">
+        <a href="#">LinkedIn</a> | <a href="#">Email</a>
+      </p>
+    </section>
+  </main>
+
+  <footer>
+    <p>&copy; 2025 Benjamin J. Sunter</p>
+  </footer>
+
 </body>
 </html>
