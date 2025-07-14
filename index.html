@@ -349,9 +349,37 @@
       margin-right: 0.5rem;
       font-weight: 700;
     }
-      /* --- Work Samples Dashboard --- */
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Work Samples Dashboard</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+    
+    :root {
+      --bg: #f8f9fa; 
+      --text: #212529; 
+      --text-light: #495057;
+      --primary: #6C63FF;
+      --accent: #00DF9A;
+      --highlight-bg: #f0f0ff; 
+      --highlight-border: #dadaff;
+    }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background-color: #fafafa;
+      color: var(--text);
+      line-height: 1.6;
+      margin: 0;
+      padding: 20px;
+    }
+
     .dashboard-container {
-      margin-top: 2rem;
+      max-width: 1200px;
+      margin: 0 auto;
     }
 
     .dashboard-container h3 {
@@ -754,6 +782,125 @@
         font-size: 0.8rem;
       }
     }
+  </style>
+</head>
+<body>
+  <div class="dashboard-container">
+    <h3>Work Samples Dashboard</h3>
+    <div class="tableau-dashboard">
+      <div class="dashboard-header">
+        <div class="dashboard-title">AdTech Program Performance</div>
+        <div class="dashboard-filters">
+          <div class="filter-tag">Americas</div>
+          <div class="filter-tag">Q1 2025</div>
+          <div class="filter-tag">Active</div>
+        </div>
+      </div>
+      
+      <div class="dashboard-grid">
+        <!-- Key Metrics -->
+        <div class="metric-card">
+          <div class="metric-header">Revenue Growth</div>
+          <div class="metric-value">+234%</div>
+          <div class="metric-trend positive">↗ +15% vs Q4</div>
+          <div class="progress-bar">
+            <div class="progress-fill" style="width: 85%;"></div>
+          </div>
+        </div>
+        
+        <div class="metric-card">
+          <div class="metric-header">Publisher Satisfaction</div>
+          <div class="metric-value">92%</div>
+          <div class="metric-trend positive">↗ +3% vs Q4</div>
+          <div class="star-rating">
+            <span class="star filled">★</span>
+            <span class="star filled">★</span>
+            <span class="star filled">★</span>
+            <span class="star filled">★</span>
+            <span class="star half">★</span>
+          </div>
+        </div>
+        
+        <div class="metric-card">
+          <div class="metric-header">Budget Utilization</div>
+          <div class="metric-value">78%</div>
+          <div class="metric-trend neutral">→ On track</div>
+          <div class="progress-bar">
+            <div class="progress-fill budget" style="width: 78%;"></div>
+          </div>
+        </div>
+        
+        <div class="metric-card">
+          <div class="metric-header">Active Projects</div>
+          <div class="metric-value">60</div>
+          <div class="metric-trend positive">↗ +12 new</div>
+          <div class="progress-bar">
+            <div class="progress-fill" style="width: 90%;"></div>
+          </div>
+        </div>
+        
+        <!-- Project Timeline -->
+        <div class="chart-container">
+          <div class="chart-title">Project Timeline</div>
+          <div class="gantt-chart">
+            <div class="gantt-item">
+              <div class="task-name">Privacy Tools</div>
+              <div class="task-bar completed" style="width: 85%;"></div>
+              <div class="task-progress">85%</div>
+            </div>
+            <div class="gantt-item">
+              <div class="task-name">API Integration</div>
+              <div class="task-bar in-progress" style="width: 60%;"></div>
+              <div class="task-progress">60%</div>
+            </div>
+            <div class="gantt-item">
+              <div class="task-name">Partner Onboarding</div>
+              <div class="task-bar planned" style="width: 30%;"></div>
+              <div class="task-progress">30%</div>
+            </div>
+          </div>
+        </div>
+        
+        <!-- Performance Trend -->
+        <div class="chart-container">
+          <div class="chart-title">Performance Trend</div>
+          <div class="line-chart">
+            <div class="chart-line">
+              <div class="data-point" style="left: 10%; bottom: 20%;"></div>
+              <div class="data-point" style="left: 30%; bottom: 40%;"></div>
+              <div class="data-point" style="left: 50%; bottom: 65%;"></div>
+              <div class="data-point" style="left: 70%; bottom: 80%;"></div>
+              <div class="data-point" style="left: 90%; bottom: 75%;"></div>
+            </div>
+          </div>
+          <div class="chart-axis">
+            <span>Jan</span>
+            <span>Feb</span>
+            <span>Mar</span>
+            <span>Apr</span>
+            <span>May</span>
+          </div>
+        </div>
+        
+        <!-- Risk Matrix -->
+        <div class="risk-matrix">
+          <div class="chart-title">Risk Assessment</div>
+          <div class="matrix-grid">
+            <div class="y-label">Impact</div>
+            <div class="risk-item low" style="left: 20%; bottom: 20%;">Tech Debt</div>
+            <div class="risk-item medium" style="left: 60%; bottom: 40%;">Resource</div>
+            <div class="risk-item high" style="left: 80%; bottom: 70%;">Privacy</div>
+          </div>
+          <div class="matrix-labels">
+            <span>Low</span>
+            <span class="x-label">Probability → High</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</body>
+</html>
     /* --- Fun Facts --- */
     .fun-facts {
       display: grid;
