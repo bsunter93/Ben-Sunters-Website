@@ -348,25 +348,6 @@
       color: var(--accent);
       margin-right: 0.5rem;
       font-weight: 700;
-    }
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Work Samples Dashboard</title>
-  <style>
-    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
-    
-    :root {
-      --bg: #f8f9fa; 
-      --text: #212529; 
-      --text-light: #495057;
-      --primary: #6C63FF;
-      --accent: #00DF9A;
-      --highlight-bg: #f0f0ff; 
-      --highlight-border: #dadaff;
-    }
 
     body {
       font-family: 'Inter', sans-serif;
@@ -782,9 +763,7 @@
         font-size: 0.8rem;
       }
     }
-  </style>
-</head>
-<body>
+
   <div class="dashboard-container">
     <h3>Work Samples Dashboard</h3>
     <div class="tableau-dashboard">
@@ -861,7 +840,7 @@
           </div>
         </div>
         
-        <!-- Performance Trend -->
+  
         <div class="chart-container">
           <div class="chart-title">Performance Trend</div>
           <div class="line-chart">
@@ -882,25 +861,7 @@
           </div>
         </div>
         
-        <!-- Risk Matrix -->
-        <div class="risk-matrix">
-          <div class="chart-title">Risk Assessment</div>
-          <div class="matrix-grid">
-            <div class="y-label">Impact</div>
-            <div class="risk-item low" style="left: 20%; bottom: 20%;">Tech Debt</div>
-            <div class="risk-item medium" style="left: 60%; bottom: 40%;">Resource</div>
-            <div class="risk-item high" style="left: 80%; bottom: 70%;">Privacy</div>
-          </div>
-          <div class="matrix-labels">
-            <span>Low</span>
-            <span class="x-label">Probability → High</span>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-</body>
-</html>
+      
     /* --- Fun Facts --- */
     .fun-facts {
       display: grid;
