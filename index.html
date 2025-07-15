@@ -49,69 +49,61 @@
       87.5% { background: linear-gradient(135deg, #48dbfb 0%, #ff6b6b 100%); }
       100% { background: linear-gradient(135deg, #ff6b6b 0%, #feca57 100%); }
     }
-/* Add this to your existing .animated-banner CSS rule */
-.animated-banner {
+/* ADD this new hero section CSS */
+.hero-section {
   position: relative;
-  height: 180px;
-  background: linear-gradient(135deg, #ff6b6b 0%, #feca57 100%);
-  overflow: hidden;
+  height: 300px;
+  background-image: url('IMG_1101.jpeg');
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  text-align: center;
   border-bottom: 3px solid var(--accent);
-  animation: colorShift 30s ease-in-out infinite;
 }
 
-/* Add this new CSS rule after your existing .animated-banner rule */
-.animated-banner::before {
+.hero-section::before {
   content: '';
   position: absolute;
   top: 0;
   left: 0;
   right: 0;
   bottom: 0;
-  background-image: url('IMG_1101.jpeg');
-  background-size: cover;
-  background-position: center;
-  background-repeat: no-repeat;
-  opacity: 0.15;
+  background: rgba(0, 0, 0, 0.2);
   z-index: 1;
-  animation: subtleShift 45s ease-in-out infinite;
 }
 
-@keyframes subtleShift {
-  0%, 100% { 
-    opacity: 0.15; 
-    transform: scale(1.02); 
-  }
-  50% { 
-    opacity: 0.25; 
-    transform: scale(1.05); 
-  }
-}
-
-/* Update your existing .banner-content to ensure it stays on top */
-.banner-content {
+.hero-content {
   position: relative;
-  z-index: 10;
-  height: 100%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: white;
-  font-size: 1.1rem;
-  font-weight: 300;
-  text-shadow: 0 2px 4px rgba(0,0,0,0.3);
+  z-index: 2;
+  max-width: 600px;
+  padding: 0 2rem;
 }
-    .banner-content {
-      position: relative;
-      z-index: 10;
-      height: 100%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      color: white;
-      font-size: 1.1rem;
-      font-weight: 300;
-      text-shadow: 0 2px 4px rgba(0,0,0,0.3);
-    }
+
+.hero-title {
+  font-size: 3rem;
+  font-weight: 700;
+  margin-bottom: 1rem;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
+}
+
+.hero-subtitle {
+  font-size: 1.3rem;
+  font-weight: 300;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
+}
+
+/* HTML to add above your animated banner:
+<div class="hero-section">
+  <div class="hero-content">
+    <h1 class="hero-title">Benjamin J. Sunter</h1>
+    <p class="hero-subtitle">Driving Growth through Data and Design</p>
+  </div>
+</div>
+*/
 
     /* Floating Mathematical Symbols */
     .math-symbol {
@@ -1219,6 +1211,12 @@
   </style>
 </head>
 <body>
+  <div class="hero-section">
+  <div class="hero-content">
+    <h1 class="hero-title">Benjamin J. Sunter</h1>
+    <p class="hero-subtitle">Driving Growth through Data and Design</p>
+  </div>
+</div>
   <div class="animated-banner">
     <div class="grid-overlay"></div>
     <div class="dna-strand"></div>
