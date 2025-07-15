@@ -233,7 +233,6 @@
       margin-top: 1rem;
     }
 
-
 /* Highlights Grid */
 .highlights-grid {
   display: flex;
@@ -242,7 +241,8 @@
 }
 
 .highlights-grid > * {
-  flex: 1 1 300px; /* grow, shrink, basis - adjusts automatically */
+  flex: 1 1 calc(33.333% - 0.67rem); /* 3 columns accounting for gap */
+  max-width: calc(33.333% - 0.67rem);
   min-width: 0; /* prevents overflow issues */
 }
 
@@ -255,7 +255,8 @@
 }
 
 .dashboard-grid > * {
-  flex: 1 1 400px; /* Slightly larger basis for dashboard items */
+  flex: 1 1 calc(50% - 0.5rem); /* 2 columns accounting for gap */
+  max-width: calc(50% - 0.5rem);
   min-width: 0;
 }
 
@@ -263,32 +264,33 @@
 @media (max-width: 768px) {
   .highlights-grid > * {
     flex: 1 1 calc(50% - 0.5rem); /* 2 columns with gap consideration */
+    max-width: calc(50% - 0.5rem);
   }
   
   .dashboard-grid {
-    flex-direction: column;
     padding: 1rem;
   }
   
   .dashboard-grid > * {
-    flex: 1 1 auto;
-    width: 100%;
+    flex: 1 1 100%; /* Single column for dashboard on tablet */
+    max-width: 100%;
   }
 }
 
 /* Mobile breakpoint - single column stack */
 @media (max-width: 480px) {
-  .highlights-grid {
-    flex-direction: column;
-  }
-  
   .highlights-grid > * {
-    flex: 1 1 auto;
-    width: 100%;
+    flex: 1 1 100%; /* Single column */
+    max-width: 100%;
   }
   
   .dashboard-grid {
     padding: 0.5rem;
+  }
+  
+  .dashboard-grid > * {
+    flex: 1 1 100%;
+    max-width: 100%;
   }
 }
     .highlight-card {
