@@ -28,92 +28,40 @@
       position: relative;
     }
 
-    /* --- Animated Banner --- */
-    .animated-banner {
-      position: relative;
-      height: 180px;
-      background: linear-gradient(135deg, #ff6b6b 0%, #feca57 100%);
-      overflow: hidden;
-      border-bottom: 3px solid var(--accent);
-      animation: colorShift 30s ease-in-out infinite;
-    }
-
-    @keyframes colorShift {
-      0% { background: linear-gradient(135deg, #ff6b6b 0%, #feca57 100%); }
-      12.5% { background: linear-gradient(135deg, #ff8f6b 0%, #feca57 100%); }
-      25% { background: linear-gradient(135deg, #feca57 0%, #c4e157 100%); }
-      37.5% { background: linear-gradient(135deg, #feca57 0%, #1dd1a1 100%); }
-      50% { background: linear-gradient(135deg, #1dd1a1 0%, #2dc5a1 100%); }
-      62.5% { background: linear-gradient(135deg, #1dd1a1 0%, #48dbfb 100%); }
-      75% { background: linear-gradient(135deg, #48dbfb 0%, #6b8fff 100%); }
-      87.5% { background: linear-gradient(135deg, #48dbfb 0%, #ff6b6b 100%); }
-      100% { background: linear-gradient(135deg, #ff6b6b 0%, #feca57 100%); }
-    }
-/* ADD this new hero section CSS */
-.hero-section {
+   /* REPLACE your existing .animated-banner rule with this */
+.animated-banner {
   position: relative;
-  height: 300px;
+  height: 180px;
   background-image: url('IMG_1101.jpeg');
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: white;
-  text-align: center;
+  overflow: hidden;
   border-bottom: 3px solid var(--accent);
 }
 
-.hero-section::before {
+/* Add a subtle overlay for better text readability */
+.animated-banner::before {
   content: '';
   position: absolute;
   top: 0;
   left: 0;
   right: 0;
   bottom: 0;
-  background: rgba(0, 0, 0, 0.2);
+  background: linear-gradient(135deg, rgba(108, 99, 255, 0.2) 0%, rgba(0, 223, 154, 0.1) 100%);
   z-index: 1;
 }
 
-.hero-content {
-  position: relative;
-  z-index: 2;
-  max-width: 600px;
-  padding: 0 2rem;
-}
-
-.hero-title {
-  font-size: 3rem;
-  font-weight: 700;
-  margin-bottom: 1rem;
-  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
-}
-
-.hero-subtitle {
-  font-size: 1.3rem;
+/* Keep your floating elements but make them more subtle */
+.math-symbol {
+  position: absolute;
+  color: rgba(255, 255, 255, 0.3);
+  font-size: 1.5rem;
   font-weight: 300;
-  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
+  animation: float 8s ease-in-out infinite;
+  pointer-events: none;
+  z-index: 2;
 }
-
-/* HTML to add above your animated banner:
-<div class="hero-section">
-  <div class="hero-content">
-    <h1 class="hero-title">Benjamin J. Sunter</h1>
-    <p class="hero-subtitle">Driving Growth through Data and Design</p>
-  </div>
-</div>
-*/
-
-    /* Floating Mathematical Symbols */
-    .math-symbol {
-      position: absolute;
-      color: rgba(255, 255, 255, 0.1);
-      font-size: 2rem;
-      font-weight: 300;
-      animation: float 8s ease-in-out infinite;
-      pointer-events: none;
-    }
 
     .math-symbol:nth-child(1) { left: 10%; top: 20%; animation-delay: 0s; }
     .math-symbol:nth-child(2) { left: 20%; top: 60%; animation-delay: 2s; }
@@ -1211,11 +1159,6 @@
   </style>
 </head>
 <body>
-  <div class="hero-section">
-  <div class="hero-content">
-    <h1 class="hero-title">Benjamin J. Sunter</h1>
-    <p class="hero-subtitle">Driving Growth through Data and Design</p>
-  </div>
 </div>
   <div class="animated-banner">
     <div class="grid-overlay"></div>
