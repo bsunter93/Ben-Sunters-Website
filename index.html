@@ -940,8 +940,28 @@
   width: 100%;
   box-sizing: border-box;
 }
-    
 
+/* Medium screens — allow smaller cards */
+@media (max-width: 900px) {
+  .video-cards-grid {
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  }
+}
+
+/* Smaller tablets and large phones */
+@media (max-width: 600px) {
+  .video-cards-grid {
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  }
+}
+
+/* Mobile phones — stack cards vertically */
+@media (max-width: 400px) {
+  .video-cards-grid {
+    grid-template-columns: 1fr;
+  }
+}
+    
     .video-card {
       background: white;
       border-radius: 12px;
