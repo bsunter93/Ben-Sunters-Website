@@ -244,7 +244,63 @@
         grid-template-columns: 1fr;
       }
     }
+/* Highlights Grid */
+.highlights-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
 
+.highlights-grid > * {
+  flex: 1 1 300px; /* grow, shrink, basis - adjusts automatically */
+  min-width: 0; /* prevents overflow issues */
+}
+
+/* Dashboard Grid */
+.dashboard-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  padding: 2rem; /* Default desktop padding */
+}
+
+.dashboard-grid > * {
+  flex: 1 1 400px; /* Slightly larger basis for dashboard items */
+  min-width: 0;
+}
+
+/* Tablet breakpoint */
+@media (max-width: 768px) {
+  .highlights-grid > * {
+    flex: 1 1 calc(50% - 0.5rem); /* 2 columns with gap consideration */
+  }
+  
+  .dashboard-grid {
+    flex-direction: column;
+    padding: 1rem;
+  }
+  
+  .dashboard-grid > * {
+    flex: 1 1 auto;
+    width: 100%;
+  }
+}
+
+/* Mobile breakpoint - single column stack */
+@media (max-width: 480px) {
+  .highlights-grid {
+    flex-direction: column;
+  }
+  
+  .highlights-grid > * {
+    flex: 1 1 auto;
+    width: 100%;
+  }
+  
+  .dashboard-grid {
+    padding: 0.5rem;
+  }
+}
     .highlight-card {
       background: linear-gradient(135deg, #f8f9ff 0%, #e8f2ff 100%);
       border: 2px solid var(--primary);
