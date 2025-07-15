@@ -653,7 +653,79 @@
       font-size: 0.8rem;
       color: var(--text-light);
     }
+/* Enhanced AdTech Revenue Chart Styles */
+.adtech-point {
+  position: relative;
+  background: linear-gradient(45deg, #6C63FF, #00DF9A);
+  border: 2px solid white;
+  box-shadow: 0 0 15px rgba(108, 99, 255, 0.4);
+  animation: pointPulse 0.8s ease-out, adtechGlow 3s ease-in-out infinite;
+}
 
+.adtech-point::before {
+  content: '';
+  position: absolute;
+  top: -2px;
+  left: -2px;
+  right: -2px;
+  bottom: -2px;
+  background: linear-gradient(45deg, #6C63FF, #00DF9A, #FF6B6B);
+  border-radius: 50%;
+  z-index: -1;
+  animation: rotate 4s linear infinite;
+}
+
+@keyframes adtechGlow {
+  0%, 100% { box-shadow: 0 0 15px rgba(108, 99, 255, 0.4); }
+  50% { box-shadow: 0 0 25px rgba(0, 223, 154, 0.6); }
+}
+
+@keyframes rotate {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+.point-label {
+  position: absolute;
+  top: -25px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: rgba(0, 0, 0, 0.8);
+  color: white;
+  padding: 2px 6px;
+  border-radius: 4px;
+  font-size: 0.7rem;
+  font-weight: 600;
+  white-space: nowrap;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  pointer-events: none;
+}
+
+.adtech-point:hover .point-label {
+  opacity: 1;
+}
+
+.trend-area {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 100%;
+  background: linear-gradient(
+    to bottom,
+    rgba(108, 99, 255, 0.1) 0%,
+    rgba(0, 223, 154, 0.05) 50%,
+    transparent 100%
+  );
+  clip-path: polygon(15% 65%, 30% 75%, 45% 40%, 60% 55%, 75% 70%, 90% 25%, 100% 100%, 0% 100%);
+  animation: areaFill 2s ease-out;
+}
+
+@keyframes areaFill {
+  from { opacity: 0; transform: scaleY(0); }
+  to { opacity: 1; transform: scaleY(1); }
+}
     .risk-matrix {
       background: #f8fafc;
       border-radius: 8px;
@@ -1349,25 +1421,68 @@
               </div>
             </div>
             <div class="chart-container">
-              <div class="chart-title">Incremental Revenue by Region (Monthly)</div>
-              <div class="line-chart">
-                <div class="chart-line">
-                  <div class="data-point" style="left: 15%; bottom: 35%; background: #6C63FF;" title="AMS Sales"></div>
-                  <div class="data-point" style="left: 25%; bottom: 25%; background: #00DF9A;" title="LATAM Sales"></div>
-                  <div class="data-point" style="left: 35%; bottom: 60%; background: #FF6B6B;" title="EMEA Sales"></div>
-                  <div class="data-point" style="left: 50%; bottom: 45%; background: #6C63FF;" title="AMS Sales"></div>
-                  <div class="data-point" style="left: 60%; bottom: 30%; background: #00DF9A;" title="LATAM Sales"></div>
-                  <div class="data-point" style="left: 70%; bottom: 75%; background: #FF6B6B;" title="EMEA Sales"></div>
-                  <div class="data-point" style="left: 85%; bottom: 55%; background: #6C63FF;" title="AMS Sales"></div>
-                </div>
-              </div>
-              <div class="chart-axis">
-                <span>Apr</span>
-                <span>May</span>
-                <span>Jun</span>
-                <span>Jul</span>
-              </div>
-            </div>
+            <div class="chart-container">
+  <div class="chart-title">Privacy-First Revenue Growth (Monthly)</div>
+  <div class="line-chart">
+    <div class="chart-line">
+      <!-- Connected line segments -->
+      <svg style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none;">
+        <defs>
+          <linearGradient id="lineGradient" x1="0%" y1="0%" x2="100%" y2="0%">
+            <stop offset="0%" style="stop-color:#6C63FF;stop-opacity:1" />
+            <stop offset="50%" style="stop-color:#00DF9A;stop-opacity:1" />
+            <stop offset="100%" style="stop-color:#FF6B6B;stop-opacity:1" />
+          </linearGradient>
+        </defs>
+        <polyline points="15,65 30,75 45,40 60,55 75,70 90,25" 
+                  fill="none" 
+                  stroke="url(#lineGradient)" 
+                  stroke-width="3"
+                  stroke-dasharray="5,5"
+                  opacity="0.7">
+          <animate attributeName="stroke-dashoffset" values="10;0" dur="3s" repeatCount="indefinite"/>
+        </polyline>
+      </svg>
+      
+      <!-- Data points with AdTech context -->
+      <div class="data-point adtech-point" style="left: 15%; bottom: 35%;" 
+           title="Cookieless Solutions: +$2.1M">
+        <div class="point-label">Cookieless</div>
+      </div>
+      <div class="data-point adtech-point" style="left: 30%; bottom: 25%;" 
+           title="First-Party Data: +$1.8M">
+        <div class="point-label">1P Data</div>
+      </div>
+      <div class="data-point adtech-point" style="left: 45%; bottom: 60%;" 
+           title="Privacy Sandbox: +$3.2M">
+        <div class="point-label">Sandbox</div>
+      </div>
+      <div class="data-point adtech-point" style="left: 60%; bottom: 45%;" 
+           title="Contextual Targeting: +$2.7M">
+        <div class="point-label">Contextual</div>
+      </div>
+      <div class="data-point adtech-point" style="left: 75%; bottom: 30%;" 
+           title="Header Bidding: +$1.9M">
+        <div class="point-label">Header</div>
+      </div>
+      <div class="data-point adtech-point" style="left: 90%; bottom: 75%;" 
+           title="Unified ID 2.0: +$4.1M">
+        <div class="point-label">UID 2.0</div>
+      </div>
+      
+      <!-- Trend area fill -->
+      <div class="trend-area"></div>
+    </div>
+  </div>
+  <div class="chart-axis">
+    <span>Apr</span>
+    <span>May</span>
+    <span>Jun</span>
+    <span>Jul</span>
+    <span>Aug</span>
+    <span>Sep</span>
+  </div>
+</div>
           <div class="chart-container">
               <div class="chart-title">RAID Log Summary</div>
               <div class="raid-items">
