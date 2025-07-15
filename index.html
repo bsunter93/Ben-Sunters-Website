@@ -233,6 +233,17 @@
       margin-top: 1rem;
     }
 
+    @media (max-width: 768px) {
+      .highlights-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }
+
+    @media (max-width: 480px) {
+      .highlights-grid {
+        grid-template-columns: 1fr;
+      }
+    }
 /* Highlights Grid */
 .highlights-grid {
   display: flex;
@@ -241,8 +252,7 @@
 }
 
 .highlights-grid > * {
-  flex: 1 1 calc(33.333% - 0.67rem); /* 3 columns accounting for gap */
-  max-width: calc(33.333% - 0.67rem);
+  flex: 1 1 300px; /* grow, shrink, basis - adjusts automatically */
   min-width: 0; /* prevents overflow issues */
 }
 
@@ -255,8 +265,7 @@
 }
 
 .dashboard-grid > * {
-  flex: 1 1 calc(50% - 0.5rem); /* 2 columns accounting for gap */
-  max-width: calc(50% - 0.5rem);
+  flex: 1 1 400px; /* Slightly larger basis for dashboard items */
   min-width: 0;
 }
 
@@ -264,33 +273,32 @@
 @media (max-width: 768px) {
   .highlights-grid > * {
     flex: 1 1 calc(50% - 0.5rem); /* 2 columns with gap consideration */
-    max-width: calc(50% - 0.5rem);
   }
   
   .dashboard-grid {
+    flex-direction: column;
     padding: 1rem;
   }
   
   .dashboard-grid > * {
-    flex: 1 1 100%; /* Single column for dashboard on tablet */
-    max-width: 100%;
+    flex: 1 1 auto;
+    width: 100%;
   }
 }
 
 /* Mobile breakpoint - single column stack */
 @media (max-width: 480px) {
+  .highlights-grid {
+    flex-direction: column;
+  }
+  
   .highlights-grid > * {
-    flex: 1 1 100%; /* Single column */
-    max-width: 100%;
+    flex: 1 1 auto;
+    width: 100%;
   }
   
   .dashboard-grid {
     padding: 0.5rem;
-  }
-  
-  .dashboard-grid > * {
-    flex: 1 1 100%;
-    max-width: 100%;
   }
 }
     .highlight-card {
@@ -944,6 +952,11 @@
       margin-left: auto;
     }
 
+    @media (max-width: 768px) {
+      .dashboard-grid {
+        grid-template-columns: 1fr;
+        padding: 1rem;
+      }
       
       .dashboard-header {
         flex-direction: column;
@@ -1017,6 +1030,11 @@
       margin-left: auto;
     }
 
+    @media (max-width: 768px) {
+      .dashboard-grid {
+        grid-template-columns: 1fr;
+        padding: 1rem;
+      }
       
       .dashboard-header {
         flex-direction: column;
@@ -1306,7 +1324,7 @@
   <main>
     <section id="about">
       <h2>A Little About Me</h2>
-      <p>I'm a Program Manager at Google, but my journey started with a degree in Industrial Engineering from the University of Florida (Go Gators!). I've always been fascinated by how things work, and now I apply that curiosity to the complex world of digital advertising. My goal is simple: to help publishers thrive in a privacy-focused world. 🚀</p>
+      <p>I'm a Program Manager at Google, but my journey started with a degree in Industrial Engineering. I've always been fascinated by how things work, and now I apply that curiosity to the complex world of digital advertising. My goal is simple: to help publishers thrive in a privacy-focused world. 🚀</p>
       <div class="highlight-box">
         <p>Whether I'm leading a multi-billion dollar merger or helping a publisher unlock new revenue streams, I believe in a human-centered approach. It's not just about data; it's about understanding people and their needs.</p>
       </div>
