@@ -1121,6 +1121,7 @@
       font-weight: 500;
       margin-bottom: 1rem;
     }
+    
     /* --- Fun Facts --- */
     .fun-facts {
       display: grid;
@@ -1284,6 +1285,229 @@
         color: var(--text-light);
         font-size: 0.9rem;
     }
+     * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+            color: #333;
+        }
+
+        #problem-solving {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            padding: 40px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+            backdrop-filter: blur(10px);
+        }
+
+        h2 {
+            color: #2c3e50;
+            font-size: 2.5em;
+            margin-bottom: 20px;
+            text-align: center;
+            background: linear-gradient(45deg, #3498db, #2c3e50);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        p {
+            font-size: 1.2em;
+            line-height: 1.6;
+            margin-bottom: 30px;
+            text-align: center;
+            color: #555;
+        }
+
+        .terminal-container {
+            background: #1a1a1a;
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.3);
+            margin: 20px 0;
+            border: 1px solid #333;
+        }
+
+        .terminal-header {
+            background: linear-gradient(180deg, #3c3c3c 0%, #2a2a2a 100%);
+            padding: 12px 16px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid #444;
+        }
+
+        .terminal-controls {
+            display: flex;
+            gap: 8px;
+        }
+
+        .control {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .control.close {
+            background: #ff5f56;
+        }
+
+        .control.minimize {
+            background: #ffbd2e;
+        }
+
+        .control.maximize {
+            background: #27ca3f;
+        }
+
+        .control:hover {
+            transform: scale(1.1);
+            box-shadow: 0 0 10px rgba(255, 255, 255, 0.3);
+        }
+
+        .terminal-title {
+            color: #ccc;
+            font-family: 'Courier New', monospace;
+            font-size: 14px;
+            font-weight: bold;
+        }
+
+        .terminal-body {
+            background: #0d1117;
+            min-height: 400px;
+            padding: 20px;
+            font-family: 'Courier New', monospace;
+            font-size: 14px;
+            line-height: 1.5;
+        }
+
+        .terminal-content {
+            color: #c9d1d9;
+        }
+
+        .terminal-line {
+            margin: 8px 0;
+            display: flex;
+            align-items: center;
+            min-height: 20px;
+        }
+
+        .prompt {
+            color: #7dd3fc;
+            font-weight: bold;
+            margin-right: 8px;
+        }
+
+        .command {
+            color: #a5d6ff;
+        }
+
+        .output {
+            color: #8be9fd;
+            margin-left: 0;
+        }
+
+        .success {
+            color: #50fa7b;
+        }
+
+        .warning {
+            color: #f1fa8c;
+        }
+
+        .error {
+            color: #ff5555;
+        }
+
+        .cursor {
+            color: #7dd3fc;
+            animation: blink 1s infinite;
+        }
+
+        @keyframes blink {
+            0%, 50% { opacity: 1; }
+            51%, 100% { opacity: 0; }
+        }
+
+        .terminal-footer {
+            background: #2a2a2a;
+            padding: 15px;
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            border-top: 1px solid #444;
+        }
+
+        .terminal-btn {
+            background: linear-gradient(45deg, #4facfe, #00f2fe);
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 25px;
+            cursor: pointer;
+            font-family: 'Courier New', monospace;
+            font-weight: bold;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(79, 172, 254, 0.3);
+        }
+
+        .terminal-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(79, 172, 254, 0.4);
+        }
+
+        .terminal-btn:active {
+            transform: translateY(0);
+        }
+
+        .typing-indicator {
+            display: inline-block;
+            margin-left: 5px;
+        }
+
+        .typing-indicator::after {
+            content: '|';
+            animation: blink 1s infinite;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 10px;
+            margin: 10px 0;
+        }
+
+        .stat-item {
+            background: rgba(79, 172, 254, 0.1);
+            padding: 8px 12px;
+            border-radius: 5px;
+            border-left: 3px solid #4facfe;
+        }
+
+        .progress-bar {
+            background: #333;
+            height: 6px;
+            border-radius: 3px;
+            overflow: hidden;
+            margin: 5px 0;
+        }
+
+        .progress-fill {
+            background: linear-gradient(45deg, #50fa7b, #8be9fd);
+            height: 100%;
+            transition: width 0.5s ease;
+        }
   </style>
 </head>
 <body>
@@ -1652,6 +1876,297 @@
         <a href="https://www.linkedin.com/in/benjamin-sunter/">LinkedIn</a>
       </p>
     </section>
+             <section id="problem-solving">
+        <h2>Problem-Solving in Action</h2>
+        <p>Here's how I approach complex challenges - watch me break down a real AdTech optimization problem:</p>
+        
+        <div class="terminal-container">
+            <div class="terminal-header">
+                <div class="terminal-controls">
+                    <div class="control close"></div>
+                    <div class="control minimize"></div>
+                    <div class="control maximize"></div>
+                </div>
+                <div class="terminal-title">benjamin@google:~/adtech-optimizer$</div>
+            </div>
+            <div class="terminal-body">
+                <div class="terminal-content" id="terminal-content">
+                    <div class="terminal-line">
+                        <span class="prompt">benjamin@google:~/adtech-optimizer$</span>
+                        <span class="cursor">█</span>
+                    </div>
+                </div>
+            </div>
+            <div class="terminal-footer">
+                <button class="terminal-btn" onclick="startDemo()">▶ Start Demo</button>
+                <button class="terminal-btn" onclick="resetDemo()">↻ Reset</button>
+                <button class="terminal-btn" onclick="skipToEnd()">⏭ Skip to Results</button>
+            </div>
+        </div>
+    </section>
+ <script>
+        let demoRunning = false;
+        let currentStep = 0;
+        const terminalContent = document.getElementById('terminal-content');
+
+        const demoSteps = [
+            {
+                command: "python analyze_campaign_performance.py --campaign-id=12345",
+                output: [
+                    "🔍 Analyzing campaign performance...",
+                    "",
+                    "Campaign ID: 12345 - Mobile Gaming App Install",
+                    "Current CTR: 2.3% | Target: 3.5%",
+                    "Current CPA: $8.50 | Target: $6.00",
+                    "Budget Utilization: 78% | Impressions: 2.4M",
+                    "",
+                    "⚠️  Performance gaps identified:"
+                ],
+                delay: 1000
+            },
+            {
+                command: "# Identifying bottlenecks",
+                output: [
+                    "📊 Key Issues Found:",
+                    "├── Low CTR on iOS devices (-23% vs Android)",
+                    "├── High CPA in tier-1 geos (+45% vs target)",
+                    "├── Suboptimal bid distribution",
+                    "└── Creative fatigue detected (frequency: 8.2)",
+                    "",
+                    "🎯 Optimization Strategy:",
+                    "1. Segment bidding by device type",
+                    "2. Implement dynamic creative rotation",
+                    "3. Adjust geo-targeting weights"
+                ],
+                delay: 1500
+            },
+            {
+                command: "python optimize_bidding_strategy.py --auto-segment",
+                output: [
+                    "🤖 Running ML-based bid optimization...",
+                    "",
+                    "Training gradient boosting model...",
+                    "Features: [device_type, geo, hour, creative_id, audience_segment]",
+                    "",
+                    "Cross-validation scores: [0.847, 0.852, 0.839, 0.851, 0.845]",
+                    "Mean CV Score: 0.847 ± 0.005",
+                    "",
+                    "✅ Model trained successfully!"
+                ],
+                delay: 2000
+            },
+            {
+                command: "python deploy_optimization.py --dry-run",
+                output: [
+                    "🔧 Generating optimization recommendations...",
+                    "",
+                    "Bid Adjustments:",
+                    "├── iOS: +15% bid modifier",
+                    "├── Android: baseline",
+                    "├── Tier-1 geos: -12% bid modifier",
+                    "└── Tier-2 geos: +8% bid modifier",
+                    "",
+                    "Creative Rotation:",
+                    "├── Pause creative_001 (frequency > 10)",
+                    "├── Boost creative_007 (+25% weight)",
+                    "└── Launch creative_012 (new variant)",
+                    "",
+                    "📈 Projected Impact:",
+                    "Expected CTR improvement: +28%",
+                    "Expected CPA reduction: -22%",
+                    "Confidence interval: 95%"
+                ],
+                delay: 1800
+            },
+            {
+                command: "python deploy_optimization.py --execute",
+                output: [
+                    "🚀 Deploying optimizations to live campaign...",
+                    "",
+                    "✅ Bid modifiers updated",
+                    "✅ Creative rotation activated",
+                    "✅ Audience segments refreshed",
+                    "✅ Monitoring alerts configured",
+                    "",
+                    "🎉 Optimization deployed successfully!",
+                    "",
+                    "Real-time monitoring active at:",
+                    "https://adtech-dashboard.internal/campaign/12345"
+                ],
+                delay: 1200
+            },
+            {
+                command: "python monitor_results.py --live --interval=1h",
+                output: [
+                    "📊 Live Performance Monitoring (24h results):",
+                    "",
+                    "🎯 Key Metrics:",
+                    "CTR: 2.3% → 3.1% (+35% improvement)",
+                    "CPA: $8.50 → $6.80 (-20% improvement)",
+                    "Conversion Rate: 12.4% → 15.8% (+27%)",
+                    "ROI: 285% → 347% (+22%)",
+                    "",
+                    "💰 Financial Impact:",
+                    "Daily cost savings: $2,340",
+                    "Monthly projected savings: $70,200",
+                    "Additional conversions: +156/day",
+                    "",
+                    "🏆 Mission Accomplished!",
+                    "Optimization exceeded target KPIs across all metrics."
+                ],
+                delay: 2200
+            }
+        ];
+
+        function typeText(element, text, speed = 50) {
+            return new Promise((resolve) => {
+                let i = 0;
+                const timer = setInterval(() => {
+                    if (i < text.length) {
+                        element.textContent += text.charAt(i);
+                        i++;
+                    } else {
+                        clearInterval(timer);
+                        resolve();
+                    }
+                }, speed);
+            });
+        }
+
+        function addProgressBar(percentage) {
+            const line = document.createElement('div');
+            line.className = 'terminal-line';
+            line.innerHTML = `
+                <div class="progress-bar">
+                    <div class="progress-fill" style="width: ${percentage}%"></div>
+                </div>
+            `;
+            terminalContent.appendChild(line);
+        }
+
+        async function executeStep(step) {
+            // Add command line
+            const commandLine = document.createElement('div');
+            commandLine.className = 'terminal-line';
+            commandLine.innerHTML = `<span class="prompt">benjamin@google:~/adtech-optimizer$</span> <span class="command"></span>`;
+            terminalContent.appendChild(commandLine);
+
+            // Type command
+            const commandSpan = commandLine.querySelector('.command');
+            await typeText(commandSpan, step.command, 30);
+
+            // Add output lines
+            for (let i = 0; i < step.output.length; i++) {
+                const outputLine = document.createElement('div');
+                outputLine.className = 'terminal-line';
+                
+                let className = 'output';
+                if (step.output[i].includes('✅') || step.output[i].includes('🎉')) {
+                    className = 'success';
+                } else if (step.output[i].includes('⚠️') || step.output[i].includes('📊')) {
+                    className = 'warning';
+                } else if (step.output[i].includes('❌')) {
+                    className = 'error';
+                }
+                
+                outputLine.innerHTML = `<span class="${className}"></span>`;
+                terminalContent.appendChild(outputLine);
+                
+                const outputSpan = outputLine.querySelector('span');
+                await typeText(outputSpan, step.output[i], 25);
+                
+                // Add small delay between output lines
+                await new Promise(resolve => setTimeout(resolve, 200));
+            }
+
+            // Scroll to bottom
+            terminalContent.scrollTop = terminalContent.scrollHeight;
+            
+            // Wait before next step
+            await new Promise(resolve => setTimeout(resolve, step.delay));
+        }
+
+        async function startDemo() {
+            if (demoRunning) return;
+            
+            demoRunning = true;
+            currentStep = 0;
+            
+            // Clear terminal except for the prompt
+            terminalContent.innerHTML = '';
+            
+            try {
+                for (let i = 0; i < demoSteps.length; i++) {
+                    if (!demoRunning) break;
+                    currentStep = i;
+                    await executeStep(demoSteps[i]);
+                }
+            } catch (error) {
+                console.error('Demo error:', error);
+            }
+            
+            demoRunning = false;
+            
+            // Add final prompt
+            const finalLine = document.createElement('div');
+            finalLine.className = 'terminal-line';
+            finalLine.innerHTML = `<span class="prompt">benjamin@google:~/adtech-optimizer$</span> <span class="cursor">█</span>`;
+            terminalContent.appendChild(finalLine);
+        }
+
+        function resetDemo() {
+            demoRunning = false;
+            currentStep = 0;
+            terminalContent.innerHTML = `
+                <div class="terminal-line">
+                    <span class="prompt">benjamin@google:~/adtech-optimizer$</span>
+                    <span class="cursor">█</span>
+                </div>
+            `;
+        }
+
+        async function skipToEnd() {
+            if (demoRunning) return;
+            
+            demoRunning = true;
+            terminalContent.innerHTML = '';
+            
+            // Show all steps instantly
+            for (let step of demoSteps) {
+                const commandLine = document.createElement('div');
+                commandLine.className = 'terminal-line';
+                commandLine.innerHTML = `<span class="prompt">benjamin@google:~/adtech-optimizer$</span> <span class="command">${step.command}</span>`;
+                terminalContent.appendChild(commandLine);
+                
+                for (let output of step.output) {
+                    const outputLine = document.createElement('div');
+                    outputLine.className = 'terminal-line';
+                    
+                    let className = 'output';
+                    if (output.includes('✅') || output.includes('🎉')) {
+                        className = 'success';
+                    } else if (output.includes('⚠️') || output.includes('📊')) {
+                        className = 'warning';
+                    }
+                    
+                    outputLine.innerHTML = `<span class="${className}">${output}</span>`;
+                    terminalContent.appendChild(outputLine);
+                }
+            }
+            
+            // Add final prompt
+            const finalLine = document.createElement('div');
+            finalLine.className = 'terminal-line';
+            finalLine.innerHTML = `<span class="prompt">benjamin@google:~/adtech-optimizer$</span> <span class="cursor">█</span>`;
+            terminalContent.appendChild(finalLine);
+            
+            terminalContent.scrollTop = terminalContent.scrollHeight;
+            demoRunning = false;
+        }
+
+        // Initialize terminal
+        resetDemo();
+    </script>
   </main>
   
   <footer>
