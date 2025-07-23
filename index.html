@@ -900,9 +900,9 @@
 
     .video-cards-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      grid-template-columns: repeat(2, 1fr);
       gap: 1.5rem;
-      max-width: 800px;
+      max-width: 700px;
       margin: 0 auto;
     }
 
@@ -913,6 +913,8 @@
       box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
       transition: transform 0.3s ease, box-shadow 0.3s ease;
       animation: fadeInUp 0.8s ease-out;
+      max-width: 320px;
+      margin: 0 auto;
     }
 
     .video-card:hover {
@@ -931,9 +933,16 @@
       }
     }
 
+    .video-card video {
+      width: 100%;
+      height: 180px;
+      object-fit: cover;
+      display: block;
+    }
+
     .video-placeholder {
       width: 100%;
-      height: 200px;
+      height: 180px;
       background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
       display: flex;
       align-items: center;
@@ -1089,18 +1098,21 @@
       background-image: url('hiking.jpeg');
       background-size: cover;
       background-position: center;
+      background-repeat: no-repeat;
     }
 
     .cheerleader-back {
       background-image: url('ben1.jpg');
       background-size: cover;
       background-position: center;
+      background-repeat: no-repeat;
     }
 
     .building-back {
       background-image: url('IMG_0970.jpeg');
       background-size: cover;
       background-position: center;
+      background-repeat: no-repeat;
     }
 
     .flip-card-back::before {
@@ -1110,8 +1122,9 @@
       left: 0;
       right: 0;
       bottom: 0;
-      background: rgba(0, 0, 0, 0.3);
+      background: rgba(0, 0, 0, 0.1);
       border-radius: 8px;
+      z-index: 1;
     }
 
     .flip-card-back-content {
@@ -1120,6 +1133,7 @@
       color: white;
       font-weight: 600;
       text-shadow: 0 2px 4px rgba(0, 0, 0, 0.7);
+      opacity: 0;
     }
 
     /* Contact */
@@ -1495,7 +1509,7 @@
     <section id="fun-facts">
       <h2>A Few Fun Facts</h2>
       <div class="fun-facts">
-        <div class="fact flip-card" onclick="this.classList.toggle('flipped')">
+        <div class="fact flip-card">
           <div class="flip-card-inner">
             <div class="flip-card-front">
               <p class="fact-emoji">🏕️</p>
@@ -1503,12 +1517,12 @@
             </div>
             <div class="flip-card-back outdoor-back">
               <div class="flip-card-back-content">
-                <p>Nature adventures with the family are my favorite way to recharge and find inspiration!</p>
+                <!-- Image will be shown as background -->
               </div>
             </div>
           </div>
         </div>
-        <div class="fact flip-card" onclick="this.classList.toggle('flipped')">
+        <div class="fact flip-card">
           <div class="flip-card-inner">
             <div class="flip-card-front">
               <p class="fact-emoji">📣</p>
@@ -1516,12 +1530,12 @@
             </div>
             <div class="flip-card-back cheerleader-back">
               <div class="flip-card-back-content">
-                <p>Those teamwork and leadership skills from cheerleading still help me every day in program management!</p>
+                <!-- Image will be shown as background -->
               </div>
             </div>
           </div>
         </div>
-        <div class="fact flip-card" onclick="this.classList.toggle('flipped')">
+        <div class="fact flip-card">
           <div class="flip-card-inner">
             <div class="flip-card-front">
               <p class="fact-emoji">🔨</p>
@@ -1529,7 +1543,7 @@
             </div>
             <div class="flip-card-back building-back">
               <div class="flip-card-back-content">
-                <p>There's something satisfying about creating something tangible that you can see and touch!</p>
+                <!-- Image will be shown as background -->
               </div>
             </div>
           </div>
