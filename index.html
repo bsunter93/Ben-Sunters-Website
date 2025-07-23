@@ -886,12 +886,24 @@
     }
 
     /* Video Cards */
+    .video-cards-container {
+      margin-top: 2rem;
+      padding: 0 1rem;
+    }
+
+    .video-cards-container h3 {
+      color: var(--primary);
+      font-size: 1.4rem;
+      margin-bottom: 1rem;
+      text-align: center;
+    }
+
     .video-cards-grid {
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
       gap: 1.5rem;
-      margin: 2rem 0;
-      grid-column: 1 / -1;
+      max-width: 800px;
+      margin: 0 auto;
     }
 
     .video-card {
@@ -1001,6 +1013,7 @@
       perspective: 1000px;
       position: relative;
       cursor: pointer;
+      background: transparent;
     }
 
     .flip-card::before {
@@ -1019,6 +1032,7 @@
       animation: bounce 2s ease-in-out infinite;
       text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
       border: 2px solid rgba(255, 255, 255, 0.3);
+      transition: opacity 0.3s ease;
     }
 
     @keyframes bounce {
@@ -1049,6 +1063,7 @@
       position: absolute;
       width: 100%;
       height: 100%;
+      -webkit-backface-visibility: hidden;
       backface-visibility: hidden;
       border-radius: 8px;
       display: flex;
@@ -1061,13 +1076,13 @@
 
     .flip-card-front {
       background-color: var(--highlight-bg);
+      border: 1px solid var(--highlight-border);
     }
 
     .flip-card-back {
       background-color: var(--highlight-bg);
       transform: rotateY(180deg);
       position: relative;
-      background: linear-gradient(135deg, #6C63FF 0%, #00DF9A 100%);
     }
 
     .outdoor-back {
@@ -1446,28 +1461,31 @@
           </div>
         </div>
         
-        <div class="video-cards-grid">
-          <div class="video-card">
-            <video controls>
-              <source src="gantt.mp4" type="video/mp4">
-              Your browser does not support the video tag.
-            </video>
-            <div class="video-card-content">
-              <div class="video-card-badge">Featured</div>
-              <h3 class="video-card-title">Gantt Chart Sample</h3>
-              <p class="video-card-description">Short and simple Gantt Chart with automated controls.</p>
+        <div class="video-cards-container">
+          <h3>Project Demonstrations</h3>
+          <div class="video-cards-grid">
+            <div class="video-card">
+              <video controls>
+                <source src="gantt.mp4" type="video/mp4">
+                Your browser does not support the video tag.
+              </video>
+              <div class="video-card-content">
+                <div class="video-card-badge">Featured</div>
+                <h3 class="video-card-title">Gantt Chart Sample</h3>
+                <p class="video-card-description">Short and simple Gantt Chart with automated controls.</p>
+              </div>
             </div>
-          </div>
 
-          <div class="video-card">
-            <video controls>
-              <source src="commsdocs.mp4" type="video/mp4">
-              Your browser does not support the video tag.
-            </video>
-            <div class="video-card-content">
-              <div class="video-card-badge">Tutorial</div>
-              <h3 class="video-card-title">Executive Comms</h3>
-              <p class="video-card-description">Sample of an executive communications document.</p>
+            <div class="video-card">
+              <video controls>
+                <source src="commsdocs.mp4" type="video/mp4">
+                Your browser does not support the video tag.
+              </video>
+              <div class="video-card-content">
+                <div class="video-card-badge">Tutorial</div>
+                <h3 class="video-card-title">Executive Comms</h3>
+                <p class="video-card-description">Sample of an executive communications document.</p>
+              </div>
             </div>
           </div>
         </div>
@@ -1553,12 +1571,25 @@
 
       progressBars.forEach(bar => observer.observe(bar));
 
-      // Add click handlers for flip cards
+      // Add click handlers for flip cards with proper event handling
       const flipCards = document.querySelectorAll('.flip-card');
       flipCards.forEach(card => {
-        card.addEventListener('click', function() {
+        card.addEventListener('click', function(e) {
+          e.preventDefault();
+          e.stopPropagation();
           this.classList.toggle('flipped');
         });
+        
+        // Also add keyboard support
+        card.addEventListener('keydown', function(e) {
+          if (e.key === 'Enter' || e.key === ' ') {
+            e.preventDefault();
+            this.classList.toggle('flipped');
+          }
+        });
+        
+        // Make it focusable
+        card.setAttribute('tabindex', '0');
       });
     });
   </script>
