@@ -351,6 +351,45 @@
       animation: slideInUp 0.8s ease-out;
     }
 
+    .dashboard-tabs {
+      display: flex;
+      background: #f8f9fa;
+      border-bottom: 1px solid #e9ecef;
+    }
+
+    .dashboard-tab {
+      flex: 1;
+      padding: 1rem 1.5rem;
+      background: none;
+      border: none;
+      font-size: 0.9rem;
+      font-weight: 500;
+      color: #6c757d;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      border-bottom: 3px solid transparent;
+    }
+
+    .dashboard-tab:hover {
+      background: #e9ecef;
+      color: var(--primary);
+    }
+
+    .dashboard-tab.active {
+      background: white;
+      color: var(--primary);
+      border-bottom-color: var(--primary);
+      font-weight: 600;
+    }
+
+    .dashboard-content {
+      display: none;
+    }
+
+    .dashboard-content.active {
+      display: block;
+    }
+
     @keyframes slideInUp {
       from {
         opacity: 0;
@@ -646,9 +685,165 @@
       border-top: 1px solid #e5e7eb;
     }
 
-    .line-chart.realistic {
-      background: #f9fafb;
-      border: 1px solid #e5e7eb;
+    /* RAID Visual Styles */
+    .raid-visual {
+      padding: 1rem 0;
+    }
+
+    .raid-summary-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 1rem;
+      margin-bottom: 1.5rem;
+    }
+
+    .raid-summary-item {
+      background: white;
+      border-radius: 8px;
+      padding: 1rem;
+      text-align: center;
+      border-left: 4px solid;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+    }
+
+    .raid-summary-item.risk {
+      border-left-color: #ef4444;
+    }
+
+    .raid-summary-item.action {
+      border-left-color: #3b82f6;
+    }
+
+    .raid-summary-item.issue {
+      border-left-color: #f59e0b;
+    }
+
+    .raid-summary-item.decision {
+      border-left-color: #10b981;
+    }
+
+    .raid-icon {
+      font-size: 1.5rem;
+      margin-bottom: 0.5rem;
+      display: block;
+    }
+
+    .raid-count {
+      font-size: 1.8rem;
+      font-weight: 700;
+      color: var(--primary);
+      margin-bottom: 0.25rem;
+    }
+
+    .raid-label {
+      font-size: 0.85rem;
+      color: var(--text-light);
+      font-weight: 500;
+    }
+
+    .priority-items {
+      background: #f8f9fa;
+      border-radius: 8px;
+      padding: 1rem;
+    }
+
+    .priority-item {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      padding: 0.75rem 0;
+      border-bottom: 1px solid #e9ecef;
+    }
+
+    .priority-item:last-child {
+      border-bottom: none;
+    }
+
+    .priority-badge {
+      font-size: 0.75rem;
+      font-weight: 600;
+      padding: 0.25rem 0.5rem;
+      border-radius: 4px;
+      min-width: 60px;
+      text-align: center;
+    }
+
+    .priority-text {
+      font-size: 0.85rem;
+      color: var(--text);
+      line-height: 1.3;
+    }
+
+    .priority-item.urgent .priority-badge {
+      background: #fee2e2;
+      color: #dc2626;
+    }
+
+    .priority-item.high .priority-badge {
+      background: #fef3c7;
+      color: #d97706;
+    }
+
+    .priority-item.medium .priority-badge {
+      background: #d1fae5;
+      color: #059669;
+    }
+
+    /* Overview Layout */
+    .overview-layout {
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+      padding: 1rem;
+    }
+
+    .kpi-section {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1rem;
+    }
+
+    .chart-section {
+      width: 100%;
+    }
+
+    .metric-card.compact {
+      background: #f8fafc;
+      border-radius: 8px;
+      padding: 1rem;
+      border-left: 4px solid var(--primary);
+      transition: transform 0.3s ease;
+      animation: fadeInScale 0.6s ease-out;
+    }
+
+    .chart-container.full-width {
+      background: #f8fafc;
+      border-radius: 8px;
+      padding: 1.25rem;
+      border-left: 4px solid var(--accent);
+      animation: slideInLeft 0.8s ease-out;
+      width: 100%;
+      max-width: none;
+    }
+
+    @media (max-width: 768px) {
+      .kpi-section {
+        grid-template-columns: 1fr;
+        gap: 0.75rem;
+      }
+      
+      .overview-layout {
+        padding: 0.75rem;
+        gap: 0.75rem;
+      }
+      
+      .metric-card.compact {
+        padding: 0.75rem;
+      }
+      
+      .chart-container.full-width {
+        padding: 1rem;
+      }
     }
 
     @keyframes taskBarGrow {
@@ -1348,130 +1543,184 @@
             <span class="filter-tag">Active</span>
           </div>
         </div>
-        <div class="dashboard-grid">
-          <div class="metric-card">
-            <div class="metric-header">Revenue Attainment (Q3 Goal: $37.5M)</div>
-            <div class="metric-value">$42.1M</div>
-            <div class="metric-trend positive">↗ 112% of target (+$4.6M)</div>
-            <div class="progress-bar">
-              <div class="progress-fill" style="width: 112%;"></div>
+        
+        <div class="dashboard-tabs">
+          <button class="dashboard-tab active" onclick="showDashboardTab(event, 'overview')">📊 Overview</button>
+          <button class="dashboard-tab" onclick="showDashboardTab(event, 'projects')">🎯 Projects</button>
+          <button class="dashboard-tab" onclick="showDashboardTab(event, 'issues')">⚠️ Issues</button>
+        </div>
+
+        <div id="overview" class="dashboard-content active">
+          <div class="overview-layout">
+            <div class="kpi-section">
+              <div class="metric-card compact">
+                <div class="metric-header">Revenue Attainment (Q3 Goal: $37.5M)</div>
+                <div class="metric-value">$42.1M</div>
+                <div class="metric-trend positive">↗ 112% of target (+$4.6M)</div>
+                <div class="progress-bar">
+                  <div class="progress-fill" style="width: 112%;"></div>
+                </div>
+                <div class="metric-note">*Includes TACoS optimization program impact</div>
+              </div>
+              <div class="metric-card compact">
+                <div class="metric-header">Implementation Status (H2 Privacy Roadmap)</div>
+                <div class="metric-value">67/92</div>
+                <div class="metric-trend neutral">↔ 3 weeks behind, mitigating with resource realloc</div>
+                <div class="progress-bar">
+                  <div class="progress-fill budget" style="width: 73%;"></div>
+                </div>
+                <div class="metric-note">Key blocker: Legal review on EU consent framework</div>
+              </div>
+              <div class="metric-card compact">
+                <div class="metric-header">Partner NPS (Survey Period: Jul 1-15)</div>
+                <div class="metric-value">73 NPS</div>
+                <div class="metric-trend positive">↗ +8 pts from Q2 (was 65)</div>
+                <div class="progress-bar">
+                  <div class="progress-fill" style="width: 73%;"></div>
+                </div>
+                <div class="metric-note">n=247 responses, 34% response rate</div>
+              </div>
             </div>
-            <div class="metric-note">*Includes TACoS optimization program impact</div>
+            <div class="chart-section">
+              <div class="chart-container full-width">
+                <div class="chart-title">Revenue by Privacy Solution & Environment (M/M Growth %)</div>
+                <div class="line-chart realistic">
+                  <div class="chart-data">
+                    <div class="data-bar" style="height: 45%; background: #6C63FF;">
+                      <span class="bar-label">Topics API<br>$2.3M<br><small>Web Display</small></span>
+                    </div>
+                    <div class="data-bar" style="height: 72%; background: #00DF9A;">
+                      <span class="bar-label">1P Data<br>$4.1M<br><small>CTV + Mobile</small></span>
+                    </div>
+                    <div class="data-bar" style="height: 38%; background: #FF6B6B;">
+                      <span class="bar-label">Contextual<br>$1.9M<br><small>Cross-platform</small></span>
+                    </div>
+                    <div class="data-bar" style="height: 85%; background: #FFA726;">
+                      <span class="bar-label">Header Bidding<br>$5.2M<br><small>Web + GMA</small></span>
+                    </div>
+                    <div class="data-bar" style="height: 29%; background: #9C27B0;">
+                      <span class="bar-label">UID 2.0<br>$1.4M<br><small>Mobile App</small></span>
+                    </div>
+                  </div>
+                </div>
+                <div class="chart-axis">
+                  <span>Topics</span>
+                  <span>1P Data</span>
+                  <span>Contextual</span>
+                  <span>Header</span>
+                  <span>UID 2.0</span>
+                </div>
+                <div class="chart-footer">*July data, ~85% of portfolio reporting. CTV growth +23% M/M</div>
+              </div>
+            </div>
           </div>
-          <div class="metric-card">
-            <div class="metric-header">Implementation Status (H2 Privacy Roadmap)</div>
-            <div class="metric-value">67/92</div>
-            <div class="metric-trend neutral">↔ 3 weeks behind, mitigating with resource realloc</div>
-            <div class="progress-bar">
-              <div class="progress-fill budget" style="width: 73%;"></div>
+        </div>
+
+        <div id="projects" class="dashboard-content">
+          <div class="dashboard-grid">
+            <div class="chart-container">
+              <div class="chart-title">Q3 Initiative Health Check (Updated: 7/18)</div>
+              <div class="gantt-chart">
+                <div class="gantt-item">
+                  <div class="task-name">Privacy Sandbox Migration</div>
+                  <div class="task-bar completed" style="width: 89%;"></div>
+                  <div class="task-progress">89%</div>
+                  <div class="task-details">32/36 partners onboarded</div>
+                </div>
+                <div class="gantt-item">
+                  <div class="task-name">Sales Enablement 2.0</div>
+                  <div class="task-bar in-progress" style="width: 67%;"></div>
+                  <div class="task-progress">67%</div>
+                  <div class="task-details">Training modules 1-4 live</div>
+                </div>
+                <div class="gantt-item">
+                  <div class="task-name">Partner Portal v3.1</div>
+                  <div class="task-bar behind" style="width: 42%;"></div>
+                  <div class="task-progress">42%</div>
+                  <div class="task-details">API docs pending</div>
+                </div>
+                <div class="gantt-item">
+                  <div class="task-name">COPPA Compliance</div>
+                  <div class="task-bar completed" style="width: 100%;"></div>
+                  <div class="task-progress">100%</div>
+                  <div class="task-details">Shipped 7/12</div>
+                </div>
+              </div>
             </div>
-            <div class="metric-note">Key blocker: Legal review on EU consent framework</div>
+            <div class="metric-card">
+              <div class="metric-header">Project Health Summary</div>
+              <div class="health-indicators">
+                <div class="health-item">
+                  <span class="health-dot green"></span>
+                  <span class="health-label">On Track: 2 projects</span>
+                </div>
+                <div class="health-item">
+                  <span class="health-dot yellow"></span>
+                  <span class="health-label">At Risk: 1 project</span>
+                </div>
+                <div class="health-item">
+                  <span class="health-dot red"></span>
+                  <span class="health-label">Behind: 1 project</span>
+                </div>
+              </div>
+              <div class="metric-note">Next milestone: Partner Portal API release (8/15)</div>
+            </div>
           </div>
-          <div class="metric-card">
-            <div class="metric-header">Partner NPS (Survey Period: Jul 1-15)</div>
-            <div class="metric-value">73 NPS</div>
-            <div class="metric-trend positive">↗ +8 pts from Q2 (was 65)</div>
-            <div class="progress-bar">
-              <div class="progress-fill" style="width: 73%;"></div>
+        </div>
+
+        <div id="issues" class="dashboard-content">
+          <div class="dashboard-grid">
+            <div class="chart-container">
+              <div class="chart-title">Active Issues & Dependencies</div>
+              <div class="raid-visual">
+                <div class="raid-summary-grid">
+                  <div class="raid-summary-item risk">
+                    <div class="raid-icon">⚠️</div>
+                    <div class="raid-count">2</div>
+                    <div class="raid-label">High Risk</div>
+                  </div>
+                  <div class="raid-summary-item action">
+                    <div class="raid-icon">📋</div>
+                    <div class="raid-count">4</div>
+                    <div class="raid-label">Actions</div>
+                  </div>
+                  <div class="raid-summary-item issue">
+                    <div class="raid-icon">🔧</div>
+                    <div class="raid-count">1</div>
+                    <div class="raid-label">Resolved</div>
+                  </div>
+                  <div class="raid-summary-item decision">
+                    <div class="raid-icon">🎯</div>
+                    <div class="raid-count">3</div>
+                    <div class="raid-label">Decisions</div>
+                  </div>
+                </div>
+                <div class="priority-items">
+                  <div class="priority-item urgent">
+                    <span class="priority-badge">🔴 URGENT</span>
+                    <span class="priority-text">GMA SDK v23.1 compatibility (12% inventory impact)</span>
+                  </div>
+                  <div class="priority-item high">
+                    <span class="priority-badge">🟡 HIGH</span>
+                    <span class="priority-text">iOS 18 tracking changes assessment due 7/25</span>
+                  </div>
+                  <div class="priority-item medium">
+                    <span class="priority-badge">🟢 MED</span>
+                    <span class="priority-text">CTV measurement standardization (Nielsen/Comscore)</span>
+                  </div>
+                </div>
+              </div>
+              <div class="raid-footer">Last updated: 7/18/2025 2:47 PM PT • Next review: 7/25</div>
             </div>
-            <div class="metric-note">n=247 responses, 34% response rate</div>
-          </div>
-          <div class="chart-container">
-            <div class="chart-title">Q3 Initiative Health Check (Updated: 7/18)</div>
-            <div class="gantt-chart">
-              <div class="gantt-item">
-                <div class="task-name">Privacy Sandbox Migration</div>
-                <div class="task-bar completed" style="width: 89%;"></div>
-                <div class="task-progress">89%</div>
-                <div class="task-details">32/36 partners onboarded</div>
+            <div class="metric-card">
+              <div class="metric-header">Issue Resolution Time</div>
+              <div class="metric-value">2.3 days</div>
+              <div class="metric-trend positive">↗ 15% faster than Q2</div>
+              <div class="progress-bar">
+                <div class="progress-fill" style="width: 85%;"></div>
               </div>
-              <div class="gantt-item">
-                <div class="task-name">Sales Enablement 2.0</div>
-                <div class="task-bar in-progress" style="width: 67%;"></div>
-                <div class="task-progress">67%</div>
-                <div class="task-details">Training modules 1-4 live</div>
-              </div>
-              <div class="gantt-item">
-                <div class="task-name">Partner Portal v3.1</div>
-                <div class="task-bar behind" style="width: 42%;"></div>
-                <div class="task-progress">42%</div>
-                <div class="task-details">API docs pending</div>
-              </div>
-              <div class="gantt-item">
-                <div class="task-name">COPPA Compliance</div>
-                <div class="task-bar completed" style="width: 100%;"></div>
-                <div class="task-progress">100%</div>
-                <div class="task-details">Shipped 7/12</div>
-              </div>
+              <div class="metric-note">Target: <2.5 days avg resolution</div>
             </div>
-          </div>
-          <div class="chart-container">
-            <div class="chart-title">Revenue by Privacy Solution & Environment (M/M Growth %)</div>
-            <div class="line-chart realistic">
-              <div class="chart-data">
-                <div class="data-bar" style="height: 45%; background: #6C63FF;">
-                  <span class="bar-label">Topics API<br>$2.3M<br><small>Web Display</small></span>
-                </div>
-                <div class="data-bar" style="height: 72%; background: #00DF9A;">
-                  <span class="bar-label">1P Data<br>$4.1M<br><small>CTV + Mobile</small></span>
-                </div>
-                <div class="data-bar" style="height: 38%; background: #FF6B6B;">
-                  <span class="bar-label">Contextual<br>$1.9M<br><small>Cross-platform</small></span>
-                </div>
-                <div class="data-bar" style="height: 85%; background: #FFA726;">
-                  <span class="bar-label">Header Bidding<br>$5.2M<br><small>Web + GMA</small></span>
-                </div>
-                <div class="data-bar" style="height: 29%; background: #9C27B0;">
-                  <span class="bar-label">UID 2.0<br>$1.4M<br><small>Mobile App</small></span>
-                </div>
-              </div>
-            </div>
-            <div class="chart-axis">
-              <span>Topics</span>
-              <span>1P Data</span>
-              <span>Contextual</span>
-              <span>Header</span>
-              <span>UID 2.0</span>
-            </div>
-            <div class="chart-footer">*July data, ~85% of portfolio reporting. CTV growth +23% M/M</div>
-          </div>
-          <div class="chart-container">
-            <div class="chart-title">Active Issues & Dependencies (RAID)</div>
-            <div class="raid-items realistic">
-              <div class="raid-item risk">
-                <div class="raid-type">R</div>
-                <div class="raid-content">
-                  <div class="raid-title">GMA SDK v23.1 compatibility issues</div>
-                  <div class="raid-status high">HIGH | Affecting 12% of mobile app inventory</div>
-                  <div class="raid-owner">Owner: Sarah Chen (PM) • Android team engaged</div>
-                </div>
-              </div>
-              <div class="raid-item action">
-                <div class="raid-type">A</div>
-                <div class="raid-content">
-                  <div class="raid-title">CTV measurement framework standardization</div>
-                  <div class="raid-status medium">MED | Due 8/2 (Nielsen/Comscore alignment)</div>
-                  <div class="raid-owner">Owner: Mike Rodriguez • Cross-functional w/ Measurement</div>
-                </div>
-              </div>
-              <div class="raid-item issue">
-                <div class="raid-type">I</div>
-                <div class="raid-content">
-                  <div class="raid-title">Samsung CTV bid response latency (7/14-7/16)</div>
-                  <div class="raid-status low">RESOLVED | Root cause: edge server configuration</div>
-                  <div class="raid-owner">Resolved by: Infrastructure team • Postmortem in Confluence</div>
-                </div>
-              </div>
-              <div class="raid-item decision">
-                <div class="raid-type">D</div>
-                <div class="raid-content">
-                  <div class="raid-title">iOS 18 tracking changes impact assessment</div>
-                  <div class="raid-status pending">PENDING | Exec review 7/25 w/ Apple liaison</div>
-                  <div class="raid-owner">Escalated to: Jennifer Liu (Director) • Legal consulted</div>
-                </div>
-              </div>
-            </div>
-            <div class="raid-footer">Last updated: 7/18/2025 2:47 PM PT • Next review: 7/25</div>
           </div>
         </div>
         
@@ -1553,7 +1802,7 @@
 
     <section id="contact">
       <h2>Let's Connect</h2>
-      <p>I'm always open to chatting about AdTech, program management, or even your favorite hot sauce recipe. Feel free to reach out!</p>
+      <p>I'm always open to chatting about AdTech, program management, or even your favorite hiking spot! Feel free to reach out!</p>
       <p class="contact-links">
         <a href="mailto:Sunterbb@gmail.com">Email</a> | 
         <a href="https://www.linkedin.com/in/benjamin-sunter/">LinkedIn</a>
@@ -1584,6 +1833,21 @@
       });
 
       progressBars.forEach(bar => observer.observe(bar));
+
+      // Dashboard tab functionality
+      window.showDashboardTab = function(evt, tabName) {
+        // Hide all content
+        const contents = document.querySelectorAll('.dashboard-content');
+        contents.forEach(content => content.classList.remove('active'));
+        
+        // Remove active class from all tabs
+        const tabs = document.querySelectorAll('.dashboard-tab');
+        tabs.forEach(tab => tab.classList.remove('active'));
+        
+        // Show selected content and mark tab as active
+        document.getElementById(tabName).classList.add('active');
+        evt.currentTarget.classList.add('active');
+      };
 
       // Add click handlers for flip cards with proper event handling
       const flipCards = document.querySelectorAll('.flip-card');
