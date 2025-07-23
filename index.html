@@ -31,7 +31,10 @@
     .animated-banner {
       position: relative;
       height: 180px;
-      background: linear-gradient(135deg, #6C63FF 0%, #00DF9A 100%);
+      background-image: url('IMG_1101.jpeg');
+      background-size: cover;
+      background-position: center;
+      background-repeat: no-repeat;
       overflow: hidden;
       border-bottom: 3px solid var(--accent);
     }
@@ -160,13 +163,11 @@
       border: 5px solid var(--primary);
       margin-bottom: 1rem;
       box-shadow: 0 4px 15px rgba(108, 99, 255, 0.2);
-      background: #ddd;
-      display: flex;
-      align-items: center;
-      justify-content: center;
+      background-image: url('profile-picture.jpg');
+      background-size: cover;
+      background-position: center;
+      display: block;
       margin: 0 auto 1rem;
-      color: #666;
-      font-size: 0.9rem;
     }
 
     h1 {
@@ -567,8 +568,87 @@
       background: linear-gradient(90deg, #f59e0b, #d97706);
     }
 
-    .task-bar.planned {
-      background: linear-gradient(90deg, #6b7280, #4b5563);
+    .task-bar.behind {
+      background: linear-gradient(90deg, #ef4444, #dc2626);
+    }
+
+    .task-details {
+      font-size: 0.75rem;
+      color: #6b7280;
+      margin-left: 0.5rem;
+      font-style: italic;
+    }
+
+    .chart-data {
+      display: flex;
+      align-items: flex-end;
+      justify-content: space-around;
+      height: 120px;
+      padding: 1rem 0;
+      gap: 0.5rem;
+    }
+
+    .data-bar {
+      flex: 1;
+      max-width: 40px;
+      position: relative;
+      border-radius: 4px 4px 0 0;
+      min-height: 20px;
+      display: flex;
+      align-items: flex-end;
+      justify-content: center;
+    }
+
+    .bar-label {
+      position: absolute;
+      bottom: -50px;
+      font-size: 0.7rem;
+      color: var(--text-light);
+      text-align: center;
+      line-height: 1.2;
+      font-weight: 500;
+    }
+
+    .bar-label small {
+      display: block;
+      font-size: 0.6rem;
+      color: #9ca3af;
+      font-weight: normal;
+    }
+
+    .chart-footer {
+      font-size: 0.75rem;
+      color: #6b7280;
+      font-style: italic;
+      margin-top: 0.5rem;
+      text-align: right;
+    }
+
+    .metric-note {
+      font-size: 0.75rem;
+      color: #6b7280;
+      margin-top: 0.5rem;
+      font-style: italic;
+    }
+
+    .raid-owner {
+      font-size: 0.75rem;
+      color: #6b7280;
+      margin-top: 0.25rem;
+    }
+
+    .raid-footer {
+      font-size: 0.75rem;
+      color: #6b7280;
+      font-style: italic;
+      margin-top: 1rem;
+      padding-top: 1rem;
+      border-top: 1px solid #e5e7eb;
+    }
+
+    .line-chart.realistic {
+      background: #f9fafb;
+      border: 1px solid #e5e7eb;
     }
 
     @keyframes taskBarGrow {
@@ -990,6 +1070,24 @@
       background: linear-gradient(135deg, #6C63FF 0%, #00DF9A 100%);
     }
 
+    .outdoor-back {
+      background-image: url('hiking.jpeg');
+      background-size: cover;
+      background-position: center;
+    }
+
+    .cheerleader-back {
+      background-image: url('ben1.jpg');
+      background-size: cover;
+      background-position: center;
+    }
+
+    .building-back {
+      background-image: url('IMG_0970.jpeg');
+      background-size: cover;
+      background-position: center;
+    }
+
     .flip-card-back::before {
       content: '';
       position: absolute;
@@ -1110,7 +1208,7 @@
   </div>
 
   <header>
-    <div class="profile-image">Profile Image</div>
+    <img src="profile-picture.jpg" alt="Benjamin J. Sunter" class="profile-image">
     <h1>Benjamin J. Sunter</h1>
     <p class="subtitle">Program Manager | AdTech Strategist | Problem Solver</p>
   </header>
@@ -1223,144 +1321,137 @@
         </div>
         <div class="dashboard-grid">
           <div class="metric-card">
-            <div class="metric-header">Revenue Attainment vs Goal</div>
-            <div class="metric-value">112%</div>
-            <div class="metric-trend positive">↗ +$4.2M above target</div>
+            <div class="metric-header">Revenue Attainment (Q3 Goal: $37.5M)</div>
+            <div class="metric-value">$42.1M</div>
+            <div class="metric-trend positive">↗ 112% of target (+$4.6M)</div>
             <div class="progress-bar">
               <div class="progress-fill" style="width: 112%;"></div>
             </div>
+            <div class="metric-note">*Includes TACoS optimization program impact</div>
           </div>
           <div class="metric-card">
-            <div class="metric-header">Initiative Progress</div>
-            <div class="metric-value">73%</div>
-            <div class="metric-trend positive">↗ On track for Q4</div>
+            <div class="metric-header">Implementation Status (H2 Privacy Roadmap)</div>
+            <div class="metric-value">67/92</div>
+            <div class="metric-trend neutral">↔ 3 weeks behind, mitigating with resource realloc</div>
             <div class="progress-bar">
               <div class="progress-fill budget" style="width: 73%;"></div>
             </div>
+            <div class="metric-note">Key blocker: Legal review on EU consent framework</div>
           </div>
           <div class="metric-card">
-            <div class="metric-header">Partner Satisfaction</div>
-            <div class="metric-value">4.3/5</div>
-            <div class="metric-trend positive">↗ +0.2 from Q2</div>
-            <div class="star-rating">
-              <span class="star filled">★</span>
-              <span class="star filled">★</span>
-              <span class="star filled">★</span>
-              <span class="star filled">★</span>
-              <span class="star half">★</span>
+            <div class="metric-header">Partner NPS (Survey Period: Jul 1-15)</div>
+            <div class="metric-value">73 NPS</div>
+            <div class="metric-trend positive">↗ +8 pts from Q2 (was 65)</div>
+            <div class="progress-bar">
+              <div class="progress-fill" style="width: 73%;"></div>
             </div>
+            <div class="metric-note">n=247 responses, 34% response rate</div>
           </div>
           <div class="chart-container">
-            <div class="chart-title">Key Initiative Progress</div>
+            <div class="chart-title">Q3 Initiative Health Check (Updated: 7/18)</div>
             <div class="gantt-chart">
               <div class="gantt-item">
-                <div class="task-name">Privacy Solutions</div>
+                <div class="task-name">Privacy Sandbox Migration</div>
                 <div class="task-bar completed" style="width: 89%;"></div>
                 <div class="task-progress">89%</div>
+                <div class="task-details">32/36 partners onboarded</div>
               </div>
               <div class="gantt-item">
-                <div class="task-name">Sales Training</div>
+                <div class="task-name">Sales Enablement 2.0</div>
                 <div class="task-bar in-progress" style="width: 67%;"></div>
                 <div class="task-progress">67%</div>
+                <div class="task-details">Training modules 1-4 live</div>
               </div>
               <div class="gantt-item">
-                <div class="task-name">Partner Onboarding</div>
-                <div class="task-bar in-progress" style="width: 54%;"></div>
-                <div class="task-progress">54%</div>
+                <div class="task-name">Partner Portal v3.1</div>
+                <div class="task-bar behind" style="width: 42%;"></div>
+                <div class="task-progress">42%</div>
+                <div class="task-details">API docs pending</div>
+              </div>
+              <div class="gantt-item">
+                <div class="task-name">COPPA Compliance</div>
+                <div class="task-bar completed" style="width: 100%;"></div>
+                <div class="task-progress">100%</div>
+                <div class="task-details">Shipped 7/12</div>
               </div>
             </div>
           </div>
           <div class="chart-container">
-            <div class="chart-title">Privacy-First Revenue Growth (Monthly)</div>
-            <div class="line-chart">
-              <div class="chart-line">
-                <svg style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none;">
-                  <defs>
-                    <linearGradient id="lineGradient" x1="0%" y1="0%" x2="100%" y2="0%">
-                      <stop offset="0%" style="stop-color:#6C63FF;stop-opacity:1" />
-                      <stop offset="50%" style="stop-color:#00DF9A;stop-opacity:1" />
-                      <stop offset="100%" style="stop-color:#FF6B6B;stop-opacity:1" />
-                    </linearGradient>
-                  </defs>
-                  <polyline points="15,65 30,75 45,40 60,55 75,70 90,25" 
-                            fill="none" 
-                            stroke="url(#lineGradient)" 
-                            stroke-width="3"
-                            stroke-dasharray="5,5"
-                            opacity="0.7">
-                    <animate attributeName="stroke-dashoffset" values="10;0" dur="3s" repeatCount="indefinite"/>
-                  </polyline>
-                </svg>
-                
-                <div class="data-point adtech-point" style="left: 15%; bottom: 35%;">
-                  <div class="point-label">Cookieless</div>
+            <div class="chart-title">Revenue by Privacy Solution & Environment (M/M Growth %)</div>
+            <div class="line-chart realistic">
+              <div class="chart-data">
+                <div class="data-bar" style="height: 45%; background: #6C63FF;">
+                  <span class="bar-label">Topics API<br>$2.3M<br><small>Web Display</small></span>
                 </div>
-                <div class="data-point adtech-point" style="left: 30%; bottom: 25%;">
-                  <div class="point-label">1P Data</div>
+                <div class="data-bar" style="height: 72%; background: #00DF9A;">
+                  <span class="bar-label">1P Data<br>$4.1M<br><small>CTV + Mobile</small></span>
                 </div>
-                <div class="data-point adtech-point" style="left: 45%; bottom: 60%;">
-                  <div class="point-label">Sandbox</div>
+                <div class="data-bar" style="height: 38%; background: #FF6B6B;">
+                  <span class="bar-label">Contextual<br>$1.9M<br><small>Cross-platform</small></span>
                 </div>
-                <div class="data-point adtech-point" style="left: 60%; bottom: 45%;">
-                  <div class="point-label">Contextual</div>
+                <div class="data-bar" style="height: 85%; background: #FFA726;">
+                  <span class="bar-label">Header Bidding<br>$5.2M<br><small>Web + GMA</small></span>
                 </div>
-                <div class="data-point adtech-point" style="left: 75%; bottom: 30%;">
-                  <div class="point-label">Header</div>
+                <div class="data-bar" style="height: 29%; background: #9C27B0;">
+                  <span class="bar-label">UID 2.0<br>$1.4M<br><small>Mobile App</small></span>
                 </div>
-                <div class="data-point adtech-point" style="left: 90%; bottom: 75%;">
-                  <div class="point-label">UID 2.0</div>
-                </div>
-                
-                <div class="trend-area"></div>
               </div>
             </div>
             <div class="chart-axis">
-              <span>Apr</span>
-              <span>May</span>
-              <span>Jun</span>
-              <span>Jul</span>
-              <span>Aug</span>
-              <span>Sep</span>
+              <span>Topics</span>
+              <span>1P Data</span>
+              <span>Contextual</span>
+              <span>Header</span>
+              <span>UID 2.0</span>
             </div>
+            <div class="chart-footer">*July data, ~85% of portfolio reporting. CTV growth +23% M/M</div>
           </div>
           <div class="chart-container">
-            <div class="chart-title">RAID Log Summary</div>
-            <div class="raid-items">
+            <div class="chart-title">Active Issues & Dependencies (RAID)</div>
+            <div class="raid-items realistic">
               <div class="raid-item risk">
                 <div class="raid-type">R</div>
                 <div class="raid-content">
-                  <div class="raid-title">Q4 Resource Allocation</div>
-                  <div class="raid-status medium">Medium | Mitigating</div>
+                  <div class="raid-title">GMA SDK v23.1 compatibility issues</div>
+                  <div class="raid-status high">HIGH | Affecting 12% of mobile app inventory</div>
+                  <div class="raid-owner">Owner: Sarah Chen (PM) • Android team engaged</div>
                 </div>
               </div>
               <div class="raid-item action">
                 <div class="raid-type">A</div>
                 <div class="raid-content">
-                  <div class="raid-title">Partner Training Rollout</div>
-                  <div class="raid-status high">High | Due 8/15</div>
+                  <div class="raid-title">CTV measurement framework standardization</div>
+                  <div class="raid-status medium">MED | Due 8/2 (Nielsen/Comscore alignment)</div>
+                  <div class="raid-owner">Owner: Mike Rodriguez • Cross-functional w/ Measurement</div>
                 </div>
               </div>
               <div class="raid-item issue">
                 <div class="raid-type">I</div>
                 <div class="raid-content">
-                  <div class="raid-title">API Integration Delays</div>
-                  <div class="raid-status low">Low | Resolved</div>
+                  <div class="raid-title">Samsung CTV bid response latency (7/14-7/16)</div>
+                  <div class="raid-status low">RESOLVED | Root cause: edge server configuration</div>
+                  <div class="raid-owner">Resolved by: Infrastructure team • Postmortem in Confluence</div>
                 </div>
               </div>
               <div class="raid-item decision">
                 <div class="raid-type">D</div>
                 <div class="raid-content">
-                  <div class="raid-title">H2 Strategy Alignment</div>
-                  <div class="raid-status pending">Pending Approval</div>
+                  <div class="raid-title">iOS 18 tracking changes impact assessment</div>
+                  <div class="raid-status pending">PENDING | Exec review 7/25 w/ Apple liaison</div>
+                  <div class="raid-owner">Escalated to: Jennifer Liu (Director) • Legal consulted</div>
                 </div>
               </div>
             </div>
+            <div class="raid-footer">Last updated: 7/18/2025 2:47 PM PT • Next review: 7/25</div>
           </div>
         </div>
         
         <div class="video-cards-grid">
           <div class="video-card">
-            <div class="video-placeholder">📊 Gantt Chart Demo</div>
+            <video controls>
+              <source src="gantt.mp4" type="video/mp4">
+              Your browser does not support the video tag.
+            </video>
             <div class="video-card-content">
               <div class="video-card-badge">Featured</div>
               <h3 class="video-card-title">Gantt Chart Sample</h3>
@@ -1369,7 +1460,10 @@
           </div>
 
           <div class="video-card">
-            <div class="video-placeholder">📝 Executive Comms</div>
+            <video controls>
+              <source src="commsdocs.mp4" type="video/mp4">
+              Your browser does not support the video tag.
+            </video>
             <div class="video-card-content">
               <div class="video-card-badge">Tutorial</div>
               <h3 class="video-card-title">Executive Comms</h3>
@@ -1389,7 +1483,7 @@
               <p class="fact-emoji">🏕️</p>
               <p>I'm married with two kids and love spending time outdoors—whether it's hiking, camping, or just enjoying nature.</p>
             </div>
-            <div class="flip-card-back">
+            <div class="flip-card-back outdoor-back">
               <div class="flip-card-back-content">
                 <p>Nature adventures with the family are my favorite way to recharge and find inspiration!</p>
               </div>
@@ -1402,7 +1496,7 @@
               <p class="fact-emoji">📣</p>
               <p>I was a college cheerleader! It taught me a lot about teamwork and lifting others up.</p>
             </div>
-            <div class="flip-card-back">
+            <div class="flip-card-back cheerleader-back">
               <div class="flip-card-back-content">
                 <p>Those teamwork and leadership skills from cheerleading still help me every day in program management!</p>
               </div>
@@ -1415,7 +1509,7 @@
               <p class="fact-emoji">🔨</p>
               <p>I love building things with my hands, from garden beds to home improvement projects.</p>
             </div>
-            <div class="flip-card-back">
+            <div class="flip-card-back building-back">
               <div class="flip-card-back-content">
                 <p>There's something satisfying about creating something tangible that you can see and touch!</p>
               </div>
