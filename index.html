@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -12,8 +11,8 @@
       --bg: #f8f9fa; 
       --text: #212529; 
       --text-light: #495057;
-      --primary: #6C63FF; /* Bolder Indigo */
-      --accent: #00DF9A;  /* Fun Mint Green */
+      --primary: #6C63FF;
+      --accent: #00DF9A;
       --highlight-bg: #f0f0ff; 
       --highlight-border: #dadaff;
     }
@@ -28,40 +27,35 @@
       position: relative;
     }
 
-   /* REPLACE your existing .animated-banner rule with this */
-.animated-banner {
-  position: relative;
-  height: 180px;
-  background-image: url('IMG_1101.jpeg');
-  background-size: cover;
-  background-position: center;
-  background-repeat: no-repeat;
-  overflow: hidden;
-  border-bottom: 3px solid var(--accent);
-}
+    /* Animated Banner */
+    .animated-banner {
+      position: relative;
+      height: 180px;
+      background: linear-gradient(135deg, #6C63FF 0%, #00DF9A 100%);
+      overflow: hidden;
+      border-bottom: 3px solid var(--accent);
+    }
 
-/* Add a subtle overlay for better text readability */
-.animated-banner::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background: linear-gradient(135deg, rgba(108, 99, 255, 0.2) 0%, rgba(0, 223, 154, 0.1) 100%);
-  z-index: 1;
-}
+    .animated-banner::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: linear-gradient(135deg, rgba(108, 99, 255, 0.2) 0%, rgba(0, 223, 154, 0.1) 100%);
+      z-index: 1;
+    }
 
-/* Keep your floating elements but make them more subtle */
-.math-symbol {
-  position: absolute;
-  color: rgba(255, 255, 255, 0.4);
-  font-size: 1.5rem;
-  font-weight: 300;
-  animation: float 8s ease-in-out infinite;
-  pointer-events: none;
-  z-index: 2;
-}
+    .math-symbol {
+      position: absolute;
+      color: rgba(255, 255, 255, 0.4);
+      font-size: 1.5rem;
+      font-weight: 300;
+      animation: float 8s ease-in-out infinite;
+      pointer-events: none;
+      z-index: 2;
+    }
 
     .math-symbol:nth-child(1) { left: 10%; top: 20%; animation-delay: 0s; }
     .math-symbol:nth-child(2) { left: 20%; top: 60%; animation-delay: 2s; }
@@ -75,7 +69,6 @@
       50% { transform: translateY(-20px) rotate(180deg); opacity: 0.3; }
     }
 
-    /* Subtle Grid Pattern */
     .grid-overlay {
       position: absolute;
       top: 0;
@@ -95,7 +88,6 @@
       100% { transform: translate(20px, 20px); }
     }
 
-    /* Nature-inspired Particles */
     .particle {
       position: absolute;
       background: rgba(255, 255, 255, 0.6);
@@ -117,7 +109,6 @@
       75% { transform: translate(40px, -10px); opacity: 0.4; }
     }
 
-    /* Fibonacci Spiral (Very Subtle) */
     .fibonacci-spiral {
       position: absolute;
       top: 50%;
@@ -136,7 +127,6 @@
       100% { transform: translateY(-50%) rotate(360deg) scale(0.8); opacity: 0.1; }
     }
 
-    /* DNA Helix Inspiration */
     .dna-strand {
       position: absolute;
       left: 5%;
@@ -157,7 +147,7 @@
       50% { transform: scaleY(1.2) rotate(180deg); }
     }
 
-    /* --- Header --- */
+    /* Header */
     header {
       text-align: center;
       padding: 2rem 0.5rem;
@@ -170,24 +160,33 @@
       border: 5px solid var(--primary);
       margin-bottom: 1rem;
       box-shadow: 0 4px 15px rgba(108, 99, 255, 0.2);
+      background: #ddd;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto 1rem;
+      color: #666;
+      font-size: 0.9rem;
     }
 
     h1 {
       font-size: 2.5rem;
       font-weight: 700;
       color: var(--primary);
+      margin: 0.5rem 0;
     }
 
     .subtitle {
       font-size: 1.2rem;
       color: var(--text-light);
+      margin: 0;
     }
 
-    /* --- Main Content --- */
+    /* Main Content */
     main {
       max-width: 1200px;
       margin: 0 auto;
-      padding: 0 0.5rem;
+      padding: 0 1rem;
     }
 
     section {
@@ -211,7 +210,7 @@
       margin: 1.5rem 0;
     }
 
-    /* --- Experience --- */
+    /* Experience */
     .job {
       margin-bottom: 2rem;
     }
@@ -219,80 +218,22 @@
     .job-title {
       font-size: 1.2rem;
       font-weight: 600;
+      margin-bottom: 0.25rem;
     }
 
     .job-company {
       color: var(--text-light);
+      margin-bottom: 0.5rem;
     }
 
-    /* --- Notable Achievements --- */
+    /* Highlights Grid */
     .highlights-grid {
       display: grid;
-      grid-template-columns: repeat(3, 1fr);
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
       gap: 1rem;
       margin-top: 1rem;
     }
 
-/* Highlights Grid */
-.highlights-grid {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 1rem;
-}
-
-.highlights-grid > * {
-  flex: 1 1 calc(33.333% - 0.67rem); /* 3 columns accounting for gap */
-  max-width: calc(33.333% - 0.67rem);
-  min-width: 0; /* prevents overflow issues */
-}
-
-/* Dashboard Grid */
-.dashboard-grid {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 1rem;
-  padding: 2rem; /* Default desktop padding */
-}
-
-.dashboard-grid > * {
-  flex: 1 1 calc(50% - 0.5rem); /* 2 columns accounting for gap */
-  max-width: calc(50% - 0.5rem);
-  min-width: 0;
-}
-
-/* Tablet breakpoint */
-@media (max-width: 768px) {
-  .highlights-grid > * {
-    flex: 1 1 calc(50% - 0.5rem); /* 2 columns with gap consideration */
-    max-width: calc(50% - 0.5rem);
-  }
-  
-  .dashboard-grid {
-    padding: 1rem;
-  }
-  
-  .dashboard-grid > * {
-    flex: 1 1 100%; /* Single column for dashboard on tablet */
-    max-width: 100%;
-  }
-}
-
-/* Mobile breakpoint - single column stack */
-@media (max-width: 480px) {
-  .highlights-grid > * {
-    flex: 1 1 100%; /* Single column */
-    max-width: 100%;
-  }
-  
-  .dashboard-grid {
-    padding: 0.5rem;
-  }
-  
-  .dashboard-grid > * {
-    flex: 1 1 100%;
-    max-width: 100%;
-  }
-}
     .highlight-card {
       background: linear-gradient(135deg, #f8f9ff 0%, #e8f2ff 100%);
       border: 2px solid var(--primary);
@@ -354,7 +295,7 @@
       z-index: 1;
     }
 
-    /* --- Skills Section --- */
+    /* Skills Section */
     .skills-container {
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
@@ -388,21 +329,16 @@
       margin-right: 0.5rem;
       font-weight: 700;
     }
-      /* --- Work Samples Dashboard --- */
-    .dashboard-container {
-  margin-top: 2rem;
-  padding: 0 0.5rem;
-  width: 100%;
-  max-width: 1100px;
-  margin-left: auto;
-  margin-right: auto;
-  box-sizing: border-box;
-}
 
-    .dashboard-container h3 {
-      color: var(--primary);
-      font-size: 1.4rem;
-      margin-bottom: 0.5rem;
+    /* Work Samples Dashboard */
+    .dashboard-container {
+      margin-top: 2rem;
+      padding: 0;
+      width: 100%;
+      max-width: 1100px;
+      margin-left: auto;
+      margin-right: auto;
+      box-sizing: border-box;
     }
 
     .tableau-dashboard {
@@ -556,6 +492,7 @@
       background: linear-gradient(90deg, #fbbf24 50%, #e5e7eb 50%);
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
+      background-clip: text;
       animation: starTwinkle 0.8s ease-out 0.2s;
     }
 
@@ -610,6 +547,7 @@
       width: 120px;
       font-size: 0.9rem;
       color: var(--text-light);
+      flex-shrink: 0;
     }
 
     .task-bar {
@@ -644,6 +582,7 @@
       color: var(--text-light);
       font-weight: 600;
       min-width: 35px;
+      flex-shrink: 0;
     }
 
     .line-chart {
@@ -694,6 +633,79 @@
       }
     }
 
+    .adtech-point {
+      position: relative;
+      background: linear-gradient(45deg, #6C63FF, #00DF9A);
+      border: 2px solid white;
+      box-shadow: 0 0 15px rgba(108, 99, 255, 0.4);
+      animation: pointPulse 0.8s ease-out, adtechGlow 3s ease-in-out infinite;
+    }
+
+    .adtech-point::before {
+      content: '';
+      position: absolute;
+      top: -2px;
+      left: -2px;
+      right: -2px;
+      bottom: -2px;
+      background: linear-gradient(45deg, #6C63FF, #00DF9A, #FF6B6B);
+      border-radius: 50%;
+      z-index: -1;
+      animation: rotate 4s linear infinite;
+    }
+
+    @keyframes adtechGlow {
+      0%, 100% { box-shadow: 0 0 15px rgba(108, 99, 255, 0.4); }
+      50% { box-shadow: 0 0 25px rgba(0, 223, 154, 0.6); }
+    }
+
+    @keyframes rotate {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+
+    .point-label {
+      position: absolute;
+      top: -25px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: rgba(0, 0, 0, 0.8);
+      color: white;
+      padding: 2px 6px;
+      border-radius: 4px;
+      font-size: 0.7rem;
+      font-weight: 600;
+      white-space: nowrap;
+      opacity: 0;
+      transition: opacity 0.3s ease;
+      pointer-events: none;
+    }
+
+    .adtech-point:hover .point-label {
+      opacity: 1;
+    }
+
+    .trend-area {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      height: 100%;
+      background: linear-gradient(
+        to bottom,
+        rgba(108, 99, 255, 0.1) 0%,
+        rgba(0, 223, 154, 0.05) 50%,
+        transparent 100%
+      );
+      clip-path: polygon(15% 65%, 30% 75%, 45% 40%, 60% 55%, 75% 70%, 90% 25%, 100% 100%, 0% 100%);
+      animation: areaFill 2s ease-out;
+    }
+
+    @keyframes areaFill {
+      from { opacity: 0; transform: scaleY(0); }
+      to { opacity: 1; transform: scaleY(1); }
+    }
+
     .chart-axis {
       display: flex;
       justify-content: space-between;
@@ -701,98 +713,7 @@
       font-size: 0.8rem;
       color: var(--text-light);
     }
-/* Enhanced AdTech Revenue Chart Styles */
-.adtech-point {
-  position: relative;
-  background: linear-gradient(45deg, #6C63FF, #00DF9A);
-  border: 2px solid white;
-  box-shadow: 0 0 15px rgba(108, 99, 255, 0.4);
-  animation: pointPulse 0.8s ease-out, adtechGlow 3s ease-in-out infinite;
-}
 
-.adtech-point::before {
-  content: '';
-  position: absolute;
-  top: -2px;
-  left: -2px;
-  right: -2px;
-  bottom: -2px;
-  background: linear-gradient(45deg, #6C63FF, #00DF9A, #FF6B6B);
-  border-radius: 50%;
-  z-index: -1;
-  animation: rotate 4s linear infinite;
-}
-
-@keyframes adtechGlow {
-  0%, 100% { box-shadow: 0 0 15px rgba(108, 99, 255, 0.4); }
-  50% { box-shadow: 0 0 25px rgba(0, 223, 154, 0.6); }
-}
-
-@keyframes rotate {
-  0% { transform: rotate(0deg); }
-  100% { transform: rotate(360deg); }
-}
-
-.point-label {
-  position: absolute;
-  top: -25px;
-  left: 50%;
-  transform: translateX(-50%);
-  background: rgba(0, 0, 0, 0.8);
-  color: white;
-  padding: 2px 6px;
-  border-radius: 4px;
-  font-size: 0.7rem;
-  font-weight: 600;
-  white-space: nowrap;
-  opacity: 0;
-  transition: opacity 0.3s ease;
-  pointer-events: none;
-}
-
-.adtech-point:hover .point-label {
-  opacity: 1;
-}
-
-.trend-area {
-  position: absolute;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  height: 100%;
-  background: linear-gradient(
-    to bottom,
-    rgba(108, 99, 255, 0.1) 0%,
-    rgba(0, 223, 154, 0.05) 50%,
-    transparent 100%
-  );
-  clip-path: polygon(15% 65%, 30% 75%, 45% 40%, 60% 55%, 75% 70%, 90% 25%, 100% 100%, 0% 100%);
-  animation: areaFill 2s ease-out;
-}
-
-@keyframes areaFill {
-  from { opacity: 0; transform: scaleY(0); }
-  to { opacity: 1; transform: scaleY(1); }
-}
-    .risk-matrix {
-      background: #f8fafc;
-      border-radius: 8px;
-      padding: 1.5rem;
-      border-left: 4px solid #ef4444;
-      position: relative;
-      animation: slideInRight 0.8s ease-out;
-    }
-
-    @keyframes slideInRight {
-      from {
-        opacity: 0;
-        transform: translateX(20px);
-      }
-      to {
-        opacity: 1;
-        transform: translateX(0);
-      }
-    }
     /* RAID Log Styles */
     .raid-items {
       display: flex;
@@ -884,165 +805,14 @@
       color: #4338ca;
     }
 
-    .matrix-grid {
-      position: relative;
-      height: 120px;
-      background: linear-gradient(to top, #fef3c7 0%, #fee2e2 100%);
-      border-radius: 6px;
-      margin-bottom: 1rem;
-    }
-
-    .risk-item {
-      position: absolute;
-      padding: 0.3rem 0.6rem;
-      border-radius: 4px;
-      font-size: 0.8rem;
-      font-weight: 600;
-      color: white;
-      animation: riskItemFloat 0.8s ease-out;
-    }
-
-    .risk-item.low {
-      background: #10b981;
-    }
-
-    .risk-item.medium {
-      background: #f59e0b;
-    }
-
-    .risk-item.high {
-      background: #ef4444;
-    }
-
-    @keyframes riskItemFloat {
-      0% {
-        opacity: 0;
-        transform: translateY(10px);
-      }
-      100% {
-        opacity: 1;
-        transform: translateY(0);
-      }
-    }
-}
-    .matrix-labels {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      font-size: 0.8rem;
-      color: var(--text-light);
-    }
-
-    .y-label {
-      transform: rotate(-90deg);
-      position: absolute;
-      left: -20px;
-      top: 50%;
-    }
-
-    .x-label {
-      margin-left: auto;
-    }
-
-      
-      .dashboard-header {
-        flex-direction: column;
-        gap: 1rem;
-        text-align: center;
-      }
-      
-      .task-name {
-        width: 80px;
-        font-size: 0.8rem;
-      }
-
-
-    .matrix-grid {
-      position: relative;
-      height: 120px;
-      background: linear-gradient(to top, #fef3c7 0%, #fee2e2 100%);
-      border-radius: 6px;
-      margin-bottom: 1rem;
-    }
-
-    .risk-item {
-      position: absolute;
-      padding: 0.3rem 0.6rem;
-      border-radius: 4px;
-      font-size: 0.8rem;
-      font-weight: 600;
-      color: white;
-      animation: riskItemFloat 0.8s ease-out;
-    }
-
-    .risk-item.low {
-      background: #10b981;
-    }
-
-    .risk-item.medium {
-      background: #f59e0b;
-    }
-
-    .risk-item.high {
-      background: #ef4444;
-    }
-
-    @keyframes riskItemFloat {
-      0% {
-        opacity: 0;
-        transform: translateY(10px);
-      }
-      100% {
-        opacity: 1;
-        transform: translateY(0);
-      }
-    }
-
-    .matrix-labels {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      font-size: 0.8rem;
-      color: var(--text-light);
-    }
-
-    .y-label {
-      transform: rotate(-90deg);
-      position: absolute;
-      left: -20px;
-      top: 50%;
-    }
-
-    .x-label {
-      margin-left: auto;
-    }
-
-      
-      .dashboard-header {
-        flex-direction: column;
-        gap: 1rem;
-        text-align: center;
-      }
-      
-      .task-name {
-        width: 80px;
-        font-size: 0.8rem;
-      }
-    }
-    }
-      /* --- Video Cards --- */
-
+    /* Video Cards */
     .video-cards-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-  gap: 1.5rem;
-  width: 250%;
-  max-width: 1100px;
-  margin: 2rem auto;
-  padding: 0 1rem;
-  grid-column: 1 / -1;
-}
-    
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 1.5rem;
+      margin: 2rem 0;
+      grid-column: 1 / -1;
+    }
 
     .video-card {
       background: white;
@@ -1069,11 +839,16 @@
       }
     }
 
-    .video-card video {
+    .video-placeholder {
       width: 100%;
       height: 200px;
-      object-fit: cover;
-      display: block;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      font-size: 1.2rem;
+      font-weight: 600;
     }
 
     .video-card-content {
@@ -1103,10 +878,11 @@
       font-weight: 500;
       margin-bottom: 1rem;
     }
-    /* --- Fun Facts --- */
+
+    /* Fun Facts */
     .fun-facts {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
       gap: 1rem;
     }
 
@@ -1140,14 +916,13 @@
       line-height: 1.4;
     }
 
-    /* Flip card styles */
     .flip-card {
       height: 220px;
       perspective: 1000px;
       position: relative;
+      cursor: pointer;
     }
 
-    /* Click me indicator */
     .flip-card::before {
       content: '👆 click me!';
       position: absolute;
@@ -1172,7 +947,6 @@
       60% { transform: translateY(-4px) rotate(-7deg); }
     }
 
-    /* Hide click indicator when flipped */
     .flip-card.flipped::before {
       opacity: 0;
       pointer-events: none;
@@ -1185,7 +959,6 @@
       text-align: center;
       transition: transform 0.8s;
       transform-style: preserve-3d;
-      cursor: pointer;
     }
 
     .flip-card.flipped .flip-card-inner {
@@ -1214,18 +987,7 @@
       background-color: var(--highlight-bg);
       transform: rotateY(180deg);
       position: relative;
-      background-image: url('ben1.jpg');
-      background-size: cover;
-      background-position: center;
-      background-repeat: no-repeat;
-    }
-
-    .outdoor-back {
-      background-image: url('hiking.jpeg');
-    }
-
-    .building-back {
-      background-image: url('IMG_0970.jpeg');
+      background: linear-gradient(135deg, #6C63FF 0%, #00DF9A 100%);
     }
 
     .flip-card-back::before {
@@ -1247,7 +1009,7 @@
       text-shadow: 0 2px 4px rgba(0, 0, 0, 0.7);
     }
 
-    /* --- Contact --- */
+    /* Contact */
     .contact-links a {
       color: var(--primary);
       text-decoration: none;
@@ -1257,19 +1019,75 @@
     }
 
     .contact-links a:hover {
-        color: var(--accent);
+      color: var(--accent);
     }
     
     footer {
+      text-align: center;
+      padding: 1.5rem 0.5rem;
+      color: var(--text-light);
+      font-size: 0.9rem;
+    }
+
+    /* Responsive Design */
+    @media (max-width: 768px) {
+      .highlights-grid {
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      }
+      
+      .dashboard-grid {
+        grid-template-columns: 1fr;
+        padding: 1rem;
+      }
+      
+      .dashboard-header {
+        flex-direction: column;
+        gap: 1rem;
         text-align: center;
-        padding: 1.5rem 0.5rem;
-        color: var(--text-light);
-        font-size: 0.9rem;
+      }
+      
+      .task-name {
+        width: 80px;
+        font-size: 0.8rem;
+      }
+
+      .video-cards-grid {
+        grid-template-columns: 1fr;
+      }
+
+      h1 {
+        font-size: 2rem;
+      }
+
+      .subtitle {
+        font-size: 1rem;
+      }
+    }
+
+    @media (max-width: 480px) {
+      .highlights-grid {
+        grid-template-columns: 1fr;
+      }
+      
+      .skills-container {
+        grid-template-columns: 1fr;
+      }
+
+      .fun-facts {
+        grid-template-columns: 1fr;
+      }
+
+      main {
+        padding: 0 0.5rem;
+      }
+
+      section {
+        padding-left: 0.5rem;
+      }
     }
   </style>
 </head>
 <body>
-</div>
   <div class="animated-banner">
     <div class="grid-overlay"></div>
     <div class="dna-strand"></div>
@@ -1289,16 +1107,10 @@
     <div class="particle"></div>
     <div class="particle"></div>
     <div class="particle"></div>
-    
-    <div class="banner-content">
-      <span></span>
-    </div>
   </div>
 
-  <div class="background-image"></div>
-
   <header>
-    <img src="profile-picture.jpg" alt="Benjamin J. Sunter" class="profile-image">
+    <div class="profile-image">Profile Image</div>
     <h1>Benjamin J. Sunter</h1>
     <p class="subtitle">Program Manager | AdTech Strategist | Problem Solver</p>
   </header>
@@ -1398,232 +1210,219 @@
       </div>
     </section>
 
- <section id="work-samples">
+    <section id="work-samples">
       <h2>Work Samples</h2>
-    <div class="tableau-dashboard">
-          <div class="dashboard-header">
-            <div class="dashboard-title">Q3 2025 Sales Enablement Program</div>
-            <div class="dashboard-filters">
-              <span class="filter-tag">Global</span>
-              <span class="filter-tag">Sellside</span>
-              <span class="filter-tag">Active</span>
+      <div class="tableau-dashboard">
+        <div class="dashboard-header">
+          <div class="dashboard-title">Q3 2025 Sales Enablement Program</div>
+          <div class="dashboard-filters">
+            <span class="filter-tag">Global</span>
+            <span class="filter-tag">Sellside</span>
+            <span class="filter-tag">Active</span>
+          </div>
+        </div>
+        <div class="dashboard-grid">
+          <div class="metric-card">
+            <div class="metric-header">Revenue Attainment vs Goal</div>
+            <div class="metric-value">112%</div>
+            <div class="metric-trend positive">↗ +$4.2M above target</div>
+            <div class="progress-bar">
+              <div class="progress-fill" style="width: 112%;"></div>
             </div>
           </div>
-          <div class="dashboard-grid">
-            <div class="metric-card">
-              <div class="metric-header">Revenue Attainment vs Goal</div>
-              <div class="metric-value">112%</div>
-              <div class="metric-trend positive">↗ +$4.2M above target</div>
-              <div class="progress-bar">
-                <div class="progress-fill" style="width: 112%;"></div>
-              </div>
+          <div class="metric-card">
+            <div class="metric-header">Initiative Progress</div>
+            <div class="metric-value">73%</div>
+            <div class="metric-trend positive">↗ On track for Q4</div>
+            <div class="progress-bar">
+              <div class="progress-fill budget" style="width: 73%;"></div>
             </div>
-            <div class="metric-card">
-              <div class="metric-header">Initiative Progress</div>
-              <div class="metric-value">73%</div>
-              <div class="metric-trend positive">↗ On track for Q4</div>
-              <div class="progress-bar">
-                <div class="progress-fill budget" style="width: 73%;"></div>
-              </div>
+          </div>
+          <div class="metric-card">
+            <div class="metric-header">Partner Satisfaction</div>
+            <div class="metric-value">4.3/5</div>
+            <div class="metric-trend positive">↗ +0.2 from Q2</div>
+            <div class="star-rating">
+              <span class="star filled">★</span>
+              <span class="star filled">★</span>
+              <span class="star filled">★</span>
+              <span class="star filled">★</span>
+              <span class="star half">★</span>
             </div>
-            <div class="metric-card">
-              <div class="metric-header">Partner Satisfaction</div>
-              <div class="metric-value">4.3/5</div>
-              <div class="metric-trend positive">↗ +0.2 from Q2</div>
-              <div class="star-rating">
-                <span class="star filled">★</span>
-                <span class="star filled">★</span>
-                <span class="star filled">★</span>
-                <span class="star filled">★</span>
-                <span class="star half">★</span>
-              </div>
-            </div>
-            <div class="chart-container">
-              <div class="chart-title">Key Initiative Progress</div>
-              <div class="gantt-chart">
-                <div class="gantt-item">
-                  <div class="task-name">Privacy Solutions</div>
-                  <div class="task-bar completed" style="width: 89%;"></div>
-                  <div class="task-progress">89%</div>
-                </div>
-                <div class="gantt-item">
-                  <div class="task-name">Sales Training</div>
-                  <div class="task-bar in-progress" style="width: 67%;"></div>
-                  <div class="task-progress">67%</div>
-                </div>
-                <div class="gantt-item">
-                  <div class="task-name">Partner Onboarding</div>
-                  <div class="task-bar in-progress" style="width: 54%;"></div>
-                  <div class="task-progress">54%</div>
-                </div>
-              </div>
-            </div>
-            <div class="chart-container">
-  <div class="chart-title">Privacy-First Revenue Growth (Monthly)</div>
-  <div class="line-chart">
-    <div class="chart-line">
-      <!-- Connected line segments -->
-      <svg style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none;">
-        <defs>
-          <linearGradient id="lineGradient" x1="0%" y1="0%" x2="100%" y2="0%">
-            <stop offset="0%" style="stop-color:#6C63FF;stop-opacity:1" />
-            <stop offset="50%" style="stop-color:#00DF9A;stop-opacity:1" />
-            <stop offset="100%" style="stop-color:#FF6B6B;stop-opacity:1" />
-          </linearGradient>
-        </defs>
-        <polyline points="15,65 30,75 45,40 60,55 75,70 90,25" 
-                  fill="none" 
-                  stroke="url(#lineGradient)" 
-                  stroke-width="3"
-                  stroke-dasharray="5,5"
-                  opacity="0.7">
-          <animate attributeName="stroke-dashoffset" values="10;0" dur="3s" repeatCount="indefinite"/>
-        </polyline>
-      </svg>
-      
-      <!-- Data points with AdTech context -->
-      <div class="data-point adtech-point" style="left: 15%; bottom: 35%;" 
-           title="Cookieless Solutions: +$2.1M">
-        <div class="point-label">Cookieless</div>
-      </div>
-      <div class="data-point adtech-point" style="left: 30%; bottom: 25%;" 
-           title="First-Party Data: +$1.8M">
-        <div class="point-label">1P Data</div>
-      </div>
-      <div class="data-point adtech-point" style="left: 45%; bottom: 60%;" 
-           title="Privacy Sandbox: +$3.2M">
-        <div class="point-label">Sandbox</div>
-      </div>
-      <div class="data-point adtech-point" style="left: 60%; bottom: 45%;" 
-           title="Contextual Targeting: +$2.7M">
-        <div class="point-label">Contextual</div>
-      </div>
-      <div class="data-point adtech-point" style="left: 75%; bottom: 30%;" 
-           title="Header Bidding: +$1.9M">
-        <div class="point-label">Header</div>
-      </div>
-      <div class="data-point adtech-point" style="left: 90%; bottom: 75%;" 
-           title="Unified ID 2.0: +$4.1M">
-        <div class="point-label">UID 2.0</div>
-      </div>
-      
-      <!-- Trend area fill -->
-      <div class="trend-area"></div>
-    </div>
-  </div>
-  <div class="chart-axis">
-    <span>Apr</span>
-    <span>May</span>
-    <span>Jun</span>
-    <span>Jul</span>
-    <span>Aug</span>
-    <span>Sep</span>
-  </div>
-</div>
+          </div>
           <div class="chart-container">
-              <div class="chart-title">RAID Log Summary</div>
-              <div class="raid-items">
-                <div class="raid-item risk">
-                  <div class="raid-type">R</div>
-                  <div class="raid-content">
-                    <div class="raid-title">Q4 Resource Allocation</div>
-                    <div class="raid-status medium">Medium | Mitigating</div>
-                  </div>
+            <div class="chart-title">Key Initiative Progress</div>
+            <div class="gantt-chart">
+              <div class="gantt-item">
+                <div class="task-name">Privacy Solutions</div>
+                <div class="task-bar completed" style="width: 89%;"></div>
+                <div class="task-progress">89%</div>
+              </div>
+              <div class="gantt-item">
+                <div class="task-name">Sales Training</div>
+                <div class="task-bar in-progress" style="width: 67%;"></div>
+                <div class="task-progress">67%</div>
+              </div>
+              <div class="gantt-item">
+                <div class="task-name">Partner Onboarding</div>
+                <div class="task-bar in-progress" style="width: 54%;"></div>
+                <div class="task-progress">54%</div>
+              </div>
+            </div>
+          </div>
+          <div class="chart-container">
+            <div class="chart-title">Privacy-First Revenue Growth (Monthly)</div>
+            <div class="line-chart">
+              <div class="chart-line">
+                <svg style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none;">
+                  <defs>
+                    <linearGradient id="lineGradient" x1="0%" y1="0%" x2="100%" y2="0%">
+                      <stop offset="0%" style="stop-color:#6C63FF;stop-opacity:1" />
+                      <stop offset="50%" style="stop-color:#00DF9A;stop-opacity:1" />
+                      <stop offset="100%" style="stop-color:#FF6B6B;stop-opacity:1" />
+                    </linearGradient>
+                  </defs>
+                  <polyline points="15,65 30,75 45,40 60,55 75,70 90,25" 
+                            fill="none" 
+                            stroke="url(#lineGradient)" 
+                            stroke-width="3"
+                            stroke-dasharray="5,5"
+                            opacity="0.7">
+                    <animate attributeName="stroke-dashoffset" values="10;0" dur="3s" repeatCount="indefinite"/>
+                  </polyline>
+                </svg>
+                
+                <div class="data-point adtech-point" style="left: 15%; bottom: 35%;">
+                  <div class="point-label">Cookieless</div>
                 </div>
-                <div class="raid-item action">
-                  <div class="raid-type">A</div>
-                  <div class="raid-content">
-                    <div class="raid-title">Partner Training Rollout</div>
-                    <div class="raid-status high">High | Due 8/15</div>
-                  </div>
+                <div class="data-point adtech-point" style="left: 30%; bottom: 25%;">
+                  <div class="point-label">1P Data</div>
                 </div>
-                <div class="raid-item issue">
-                  <div class="raid-type">I</div>
-                  <div class="raid-content">
-                    <div class="raid-title">API Integration Delays</div>
-                    <div class="raid-status low">Low | Resolved</div>
-                  </div>
+                <div class="data-point adtech-point" style="left: 45%; bottom: 60%;">
+                  <div class="point-label">Sandbox</div>
                 </div>
-                <div class="raid-item decision">
-                  <div class="raid-type">D</div>
-                  <div class="raid-content">
-                    <div class="raid-title">H2 Strategy Alignment</div>
-                    <div class="raid-status pending">Pending Approval</div>
-                  </div>
+                <div class="data-point adtech-point" style="left: 60%; bottom: 45%;">
+                  <div class="point-label">Contextual</div>
+                </div>
+                <div class="data-point adtech-point" style="left: 75%; bottom: 30%;">
+                  <div class="point-label">Header</div>
+                </div>
+                <div class="data-point adtech-point" style="left: 90%; bottom: 75%;">
+                  <div class="point-label">UID 2.0</div>
+                </div>
+                
+                <div class="trend-area"></div>
+              </div>
+            </div>
+            <div class="chart-axis">
+              <span>Apr</span>
+              <span>May</span>
+              <span>Jun</span>
+              <span>Jul</span>
+              <span>Aug</span>
+              <span>Sep</span>
+            </div>
+          </div>
+          <div class="chart-container">
+            <div class="chart-title">RAID Log Summary</div>
+            <div class="raid-items">
+              <div class="raid-item risk">
+                <div class="raid-type">R</div>
+                <div class="raid-content">
+                  <div class="raid-title">Q4 Resource Allocation</div>
+                  <div class="raid-status medium">Medium | Mitigating</div>
+                </div>
+              </div>
+              <div class="raid-item action">
+                <div class="raid-type">A</div>
+                <div class="raid-content">
+                  <div class="raid-title">Partner Training Rollout</div>
+                  <div class="raid-status high">High | Due 8/15</div>
+                </div>
+              </div>
+              <div class="raid-item issue">
+                <div class="raid-type">I</div>
+                <div class="raid-content">
+                  <div class="raid-title">API Integration Delays</div>
+                  <div class="raid-status low">Low | Resolved</div>
+                </div>
+              </div>
+              <div class="raid-item decision">
+                <div class="raid-type">D</div>
+                <div class="raid-content">
+                  <div class="raid-title">H2 Strategy Alignment</div>
+                  <div class="raid-status pending">Pending Approval</div>
                 </div>
               </div>
             </div>
-            <div class="video-cards-grid">
-    <!-- Video Card 1 -->
-    <div class="video-card">
-        <video controls>
-            <source src="gantt.mp4" type="video/mp4">
-            Your browser does not support the video tag.
-        </video>
-        <div class="video-card-content">
-            <div class="video-card-badge">Featured</div>
-            <h3 class="video-card-title">Gantt Chart Sample</h3>
-            <p class="video-card-description">Short and simple Gantt Chart with automated controls.</p>
+          </div>
         </div>
-    </div>
+        
+        <div class="video-cards-grid">
+          <div class="video-card">
+            <div class="video-placeholder">📊 Gantt Chart Demo</div>
+            <div class="video-card-content">
+              <div class="video-card-badge">Featured</div>
+              <h3 class="video-card-title">Gantt Chart Sample</h3>
+              <p class="video-card-description">Short and simple Gantt Chart with automated controls.</p>
+            </div>
+          </div>
 
-    <!-- Video Card 2 -->
-    <div class="video-card">
-        <video controls>
-            <source src="commsdocs.mp4" type="video/mp4">
-            Your browser does not support the video tag.
-        </video>
-        <div class="video-card-content">
-            <div class="video-card-badge">Tutorial</div>
-            <h3 class="video-card-title">Executive Comms</h3>
-            <p class="video-card-description">Sample of an executive communications document.</p>
+          <div class="video-card">
+            <div class="video-placeholder">📝 Executive Comms</div>
+            <div class="video-card-content">
+              <div class="video-card-badge">Tutorial</div>
+              <h3 class="video-card-title">Executive Comms</h3>
+              <p class="video-card-description">Sample of an executive communications document.</p>
+            </div>
+          </div>
         </div>
-    </div>
-</div>
+      </div>
     </section>
+
     <section id="fun-facts">
-        <h2>A Few Fun Facts</h2>
-        <div class="fun-facts">
-            <div class="fact flip-card" onclick="this.classList.toggle('flipped')">
-                <div class="flip-card-inner">
-                    <div class="flip-card-front">
-                        <p class="fact-emoji">🏕️</p>
-                        <p>I'm married with two kids and love spending time outdoors—whether it's hiking, camping, or just enjoying nature.</p>
-                    </div>
-                    <div class="flip-card-back outdoor-back">
-                        <div class="flip-card-back-content">
-                            <p>Click to flip back!</p>
-                        </div>
-                    </div>
-                </div>
+      <h2>A Few Fun Facts</h2>
+      <div class="fun-facts">
+        <div class="fact flip-card" onclick="this.classList.toggle('flipped')">
+          <div class="flip-card-inner">
+            <div class="flip-card-front">
+              <p class="fact-emoji">🏕️</p>
+              <p>I'm married with two kids and love spending time outdoors—whether it's hiking, camping, or just enjoying nature.</p>
             </div>
-            <div class="fact flip-card" onclick="this.classList.toggle('flipped')">
-                <div class="flip-card-inner">
-                    <div class="flip-card-front">
-                        <p class="fact-emoji">📣</p>
-                        <p>I was a college cheerleader! It taught me a lot about teamwork and lifting others up.</p>
-                    </div>
-                    <div class="flip-card-back cheerleader-back">
-                        <div class="flip-card-back-content">
-                            <p>Click to flip back!</p>
-                        </div>
-                    </div>
-                </div>
+            <div class="flip-card-back">
+              <div class="flip-card-back-content">
+                <p>Nature adventures with the family are my favorite way to recharge and find inspiration!</p>
+              </div>
             </div>
-            <div class="fact flip-card" onclick="this.classList.toggle('flipped')">
-                <div class="flip-card-inner">
-                    <div class="flip-card-front">
-                        <p class="fact-emoji">🔨</p>
-                        <p>I love building things with my hands, from garden beds to home improvement projects.</p>
-                    </div>
-                    <div class="flip-card-back building-back">
-                        <div class="flip-card-back-content">
-                            <p>Click to flip back!</p>
-                        </div>
-                    </div>
-                </div>
-            </div>
+          </div>
         </div>
+        <div class="fact flip-card" onclick="this.classList.toggle('flipped')">
+          <div class="flip-card-inner">
+            <div class="flip-card-front">
+              <p class="fact-emoji">📣</p>
+              <p>I was a college cheerleader! It taught me a lot about teamwork and lifting others up.</p>
+            </div>
+            <div class="flip-card-back">
+              <div class="flip-card-back-content">
+                <p>Those teamwork and leadership skills from cheerleading still help me every day in program management!</p>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="fact flip-card" onclick="this.classList.toggle('flipped')">
+          <div class="flip-card-inner">
+            <div class="flip-card-front">
+              <p class="fact-emoji">🔨</p>
+              <p>I love building things with my hands, from garden beds to home improvement projects.</p>
+            </div>
+            <div class="flip-card-back">
+              <div class="flip-card-back-content">
+                <p>There's something satisfying about creating something tangible that you can see and touch!</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
     </section>
 
     <section id="contact">
@@ -1637,7 +1436,37 @@
   </main>
   
   <footer>
-      <p>&copy; 2025 Benjamin J. Sunter | Crafted with care in Cupertino, CA</p>
+    <p>&copy; 2025 Benjamin J. Sunter | Crafted with care in Cupertino, CA</p>
   </footer>
+
+  <script>
+    // Add some interactive functionality
+    document.addEventListener('DOMContentLoaded', function() {
+      // Animate progress bars on scroll
+      const progressBars = document.querySelectorAll('.progress-fill');
+      const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+          if (entry.isIntersecting) {
+            const bar = entry.target;
+            const width = bar.style.width;
+            bar.style.width = '0%';
+            setTimeout(() => {
+              bar.style.width = width;
+            }, 100);
+          }
+        });
+      });
+
+      progressBars.forEach(bar => observer.observe(bar));
+
+      // Add click handlers for flip cards
+      const flipCards = document.querySelectorAll('.flip-card');
+      flipCards.forEach(card => {
+        card.addEventListener('click', function() {
+          this.classList.toggle('flipped');
+        });
+      });
+    });
+  </script>
 </body>
 </html>
