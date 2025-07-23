@@ -618,18 +618,28 @@
       font-style: italic;
     }
 
+    .chart-data-wrapper {
+      width: 100%;
+      overflow-x: auto;
+      padding: 0 1rem;
+    }
+
     .chart-data {
       display: flex;
       align-items: flex-end;
-      justify-content: space-around;
+      justify-content: space-between;
       height: 120px;
       padding: 1rem 0;
-      gap: 0.5rem;
+      gap: 0.75rem;
+      overflow: visible;
+      width: 100%;
+      min-width: 450px;
     }
 
     .data-bar {
       flex: 1;
-      max-width: 40px;
+      max-width: 60px;
+      min-width: 50px;
       position: relative;
       border-radius: 4px 4px 0 0;
       min-height: 20px;
@@ -640,12 +650,16 @@
 
     .bar-label {
       position: absolute;
-      bottom: -50px;
-      font-size: 0.7rem;
+      bottom: -55px;
+      font-size: 0.65rem;
       color: var(--text-light);
       text-align: center;
-      line-height: 1.2;
+      line-height: 1.1;
       font-weight: 500;
+      left: 50%;
+      transform: translateX(-50%);
+      white-space: nowrap;
+      width: 70px;
     }
 
     .bar-label small {
@@ -819,11 +833,17 @@
     .chart-container.full-width {
       background: #f8fafc;
       border-radius: 8px;
-      padding: 1.25rem;
+      padding: 1.5rem 1rem;
       border-left: 4px solid var(--accent);
       animation: slideInLeft 0.8s ease-out;
       width: 100%;
       max-width: none;
+      overflow: visible;
+    }
+
+    .chart-container.full-width .line-chart {
+      margin-bottom: 70px;
+      overflow: visible;
     }
 
     @media (max-width: 768px) {
@@ -1096,8 +1116,8 @@
     .video-cards-grid {
       display: grid;
       grid-template-columns: repeat(2, 1fr);
-      gap: 1.5rem;
-      max-width: 700px;
+      gap: 2rem;
+      max-width: 900px;
       margin: 0 auto;
     }
 
@@ -1108,7 +1128,7 @@
       box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
       transition: transform 0.3s ease, box-shadow 0.3s ease;
       animation: fadeInUp 0.8s ease-out;
-      max-width: 320px;
+      max-width: 420px;
       margin: 0 auto;
     }
 
@@ -1130,14 +1150,14 @@
 
     .video-card video {
       width: 100%;
-      height: 180px;
+      height: 220px;
       object-fit: cover;
       display: block;
     }
 
     .video-placeholder {
       width: 100%;
-      height: 180px;
+      height: 220px;
       background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
       display: flex;
       align-items: center;
@@ -1585,21 +1605,23 @@
               <div class="chart-container full-width">
                 <div class="chart-title">Revenue by Privacy Solution & Environment (M/M Growth %)</div>
                 <div class="line-chart realistic">
-                  <div class="chart-data">
-                    <div class="data-bar" style="height: 45%; background: #6C63FF;">
-                      <span class="bar-label">Topics API<br>$2.3M<br><small>Web Display</small></span>
-                    </div>
-                    <div class="data-bar" style="height: 72%; background: #00DF9A;">
-                      <span class="bar-label">1P Data<br>$4.1M<br><small>CTV + Mobile</small></span>
-                    </div>
-                    <div class="data-bar" style="height: 38%; background: #FF6B6B;">
-                      <span class="bar-label">Contextual<br>$1.9M<br><small>Cross-platform</small></span>
-                    </div>
-                    <div class="data-bar" style="height: 85%; background: #FFA726;">
-                      <span class="bar-label">Header Bidding<br>$5.2M<br><small>Web + GMA</small></span>
-                    </div>
-                    <div class="data-bar" style="height: 29%; background: #9C27B0;">
-                      <span class="bar-label">UID 2.0<br>$1.4M<br><small>Mobile App</small></span>
+                  <div class="chart-data-wrapper">
+                    <div class="chart-data">
+                      <div class="data-bar" style="height: 45%; background: #6C63FF;">
+                        <span class="bar-label">Topics API<br>$2.3M<br><small>Web Display</small></span>
+                      </div>
+                      <div class="data-bar" style="height: 72%; background: #00DF9A;">
+                        <span class="bar-label">1P Data<br>$4.1M<br><small>CTV + Mobile</small></span>
+                      </div>
+                      <div class="data-bar" style="height: 38%; background: #FF6B6B;">
+                        <span class="bar-label">Contextual<br>$1.9M<br><small>Cross-platform</small></span>
+                      </div>
+                      <div class="data-bar" style="height: 85%; background: #FFA726;">
+                        <span class="bar-label">Header Bidding<br>$5.2M<br><small>Web + GMA</small></span>
+                      </div>
+                      <div class="data-bar" style="height: 29%; background: #9C27B0;">
+                        <span class="bar-label">UID 2.0<br>$1.4M<br><small>Mobile App</small></span>
+                      </div>
                     </div>
                   </div>
                 </div>
@@ -1802,7 +1824,7 @@
 
     <section id="contact">
       <h2>Let's Connect</h2>
-      <p>I'm always open to chatting about AdTech, program management, or even your favorite hiking spot! Feel free to reach out!</p>
+      <p>I'm always open to chatting about AdTech, program management, or even your favorite hot sauce recipe. Feel free to reach out!</p>
       <p class="contact-links">
         <a href="mailto:Sunterbb@gmail.com">Email</a> | 
         <a href="https://www.linkedin.com/in/benjamin-sunter/">LinkedIn</a>
