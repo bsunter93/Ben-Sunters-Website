@@ -183,6 +183,54 @@
       margin: 0;
     }
 
+    /* --- START: New Main Navigation Styles --- */
+    .main-navigation {
+      display: flex;
+      justify-content: center;
+      background-color: #fff;
+      border-bottom: 1px solid #e0e0e0;
+      margin-bottom: 2.5rem;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+    }
+
+    .main-nav-tab {
+      padding: 1rem 2rem;
+      background: none;
+      border: none;
+      font-size: 1.1rem;
+      font-weight: 600;
+      color: var(--text-light);
+      cursor: pointer;
+      transition: all 0.3s ease;
+      border-bottom: 4px solid transparent;
+      position: relative;
+      top: 1px;
+    }
+
+    .main-nav-tab:hover {
+      color: var(--primary);
+    }
+
+    .main-nav-tab.active {
+      color: var(--primary);
+      border-bottom-color: var(--primary);
+    }
+
+    .page-section {
+      display: none; /* Hidden by default */
+      animation: fadeIn 0.8s ease;
+    }
+
+    .page-section.active {
+      display: block; /* Shown when active */
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    /* --- END: New Main Navigation Styles --- */
+
     /* Main Content */
     main {
       max-width: 1200px;
@@ -330,6 +378,96 @@
       margin-right: 0.5rem;
       font-weight: 700;
     }
+
+    /* --- START: New Blog & Projects Section Styles --- */
+    .projects-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+        gap: 2rem;
+        margin-top: 1rem;
+    }
+
+    .project-card {
+        background: #fff;
+        border-radius: 12px;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+        overflow: hidden;
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+        display: flex;
+        flex-direction: column;
+    }
+
+    .project-card:hover {
+        transform: translateY(-8px);
+        box-shadow: 0 10px 25px rgba(108, 99, 255, 0.2);
+    }
+
+    .project-image-placeholder {
+        height: 200px;
+        background: linear-gradient(135deg, var(--primary), var(--accent));
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+    }
+    
+    .project-image-text {
+        font-size: 1.5rem;
+        font-weight: 600;
+        text-shadow: 0 1px 3px rgba(0,0,0,0.2);
+    }
+
+    .project-content {
+        padding: 1.5rem;
+        flex-grow: 1;
+        display: flex;
+        flex-direction: column;
+    }
+
+    .project-tags {
+        margin-bottom: 0.75rem;
+    }
+
+    .project-tag {
+        display: inline-block;
+        background-color: var(--highlight-bg);
+        color: var(--primary);
+        padding: 0.25rem 0.75rem;
+        border-radius: 15px;
+        font-size: 0.75rem;
+        font-weight: 600;
+        margin-right: 0.5rem;
+        margin-bottom: 0.5rem;
+    }
+
+    .project-title {
+        font-size: 1.25rem;
+        font-weight: 700;
+        color: var(--text);
+        margin-bottom: 0.5rem;
+        margin-top: 0;
+    }
+
+    .project-description {
+        font-size: 0.9rem;
+        color: var(--text-light);
+        line-height: 1.5;
+        flex-grow: 1;
+        margin-bottom: 1rem;
+    }
+
+    .project-link {
+        color: var(--primary);
+        text-decoration: none;
+        font-weight: 600;
+        transition: color 0.3s ease;
+        align-self: flex-start;
+    }
+
+    .project-link:hover {
+        color: var(--accent);
+    }
+    /* --- END: New Blog & Projects Section Styles --- */
 
     /* Work Samples Dashboard */
     .dashboard-container {
@@ -1433,6 +1571,10 @@
     }
 
     @media (max-width: 480px) {
+      .main-nav-tab {
+        padding: 0.8rem 1rem;
+        font-size: 1rem;
+      }
       .highlights-grid {
         grid-template-columns: 1fr;
       }
@@ -1461,7 +1603,6 @@
     <div class="dna-strand"></div>
     <div class="fibonacci-spiral"></div>
     
-    <!-- Mathematical symbols floating -->
     <div class="math-symbol">∞</div>
     <div class="math-symbol">φ</div>
     <div class="math-symbol">∑</div>
@@ -1469,7 +1610,6 @@
     <div class="math-symbol">π</div>
     <div class="math-symbol">≈</div>
     
-    <!-- Nature-inspired particles -->
     <div class="particle"></div>
     <div class="particle"></div>
     <div class="particle"></div>
@@ -1483,386 +1623,464 @@
     <p class="subtitle">Program Manager | AdTech Strategist | Problem Solver</p>
   </header>
 
-  <main>
-    <section id="about">
-      <h2>A Little About Me</h2>
-      <p>I'm a Program Manager at Google, but my journey started with a degree in Industrial Engineering from the University of Florida (Go Gators!). I've always been fascinated by how things work, and now I apply that curiosity to the complex world of digital advertising. My goal is simple: to help publishers thrive in a privacy-focused world. 🚀</p>
-      <div class="highlight-box">
-        <p>Whether I'm leading a multi-billion dollar merger or helping a publisher unlock new revenue streams, I believe in a human-centered approach. It's not just about data; it's about understanding people and their needs.</p>
-      </div>
-    </section>
+  <nav class="main-navigation">
+    <button class="main-nav-tab active" data-tab="about-me-content">About Me</button>
+    <button class="main-nav-tab" data-tab="blog-projects-content">Blog & Projects</button>
+  </nav>
+  <div id="about-me-content" class="page-section active">
+    <main>
+      <section id="about">
+        <h2>A Little About Me</h2>
+        <p>I'm a Program Manager at Google, but my journey started with a degree in Industrial Engineering from the University of Florida (Go Gators!). I've always been fascinated by how things work, and now I apply that curiosity to the complex world of digital advertising. My goal is simple: to help publishers thrive in a privacy-focused world. 🚀</p>
+        <div class="highlight-box">
+          <p>Whether I'm leading a multi-billion dollar merger or helping a publisher unlock new revenue streams, I believe in a human-centered approach. It's not just about data; it's about understanding people and their needs.</p>
+        </div>
+      </section>
 
-    <section id="highlights">
-      <h2>Notable Achievements</h2>
-      <div class="highlights-grid">
-        <div class="highlight-card">
-          <div class="highlight-icon">🚀</div>
-          <div class="highlight-metric">$26.5B</div>
-          <div class="highlight-description">Program managed telecom merger implementation</div>
-        </div>
-        <div class="highlight-card">
-          <div class="highlight-icon">🏆</div>
-          <div class="highlight-metric">234%</div>
-          <div class="highlight-description">Achieved sales quota in Q1'25 as top performer</div>
-        </div>
-        <div class="highlight-card">
-          <div class="highlight-icon">👥</div>
-          <div class="highlight-metric">200+</div>
-          <div class="highlight-description">Led cross-functional teams across Americas</div>
-        </div>
-        <div class="highlight-card">
-          <div class="highlight-icon">⚡</div>
-          <div class="highlight-metric">8 FTE</div>
-          <div class="highlight-description">Time savings delivered through Operational Excellence</div>
-        </div>
-        <div class="highlight-card">
-          <div class="highlight-icon">📊</div>
-          <div class="highlight-metric">92%</div>
-          <div class="highlight-description">Average publisher satisfaction score maintained</div>
-        </div>
-        <div class="highlight-card">
-          <div class="highlight-icon">🎯</div>
-          <div class="highlight-metric">60+</div>
-          <div class="highlight-description">Individual projects managed within single program portfolio</div>
-        </div>
-      </div>
-    </section>
-
-    <section id="experience">
-      <h2>My Professional Journey</h2>
-      <div class="job">
-        <p class="job-title">Program Manager</p>
-        <p class="job-company">Google (2022 - Present)</p>
-        <p>I lead planning and strategy for Google's Americas Sellside Partnerships, working with an incredible team to drive growth and keep our partners happy. A big part of my focus is on privacy-preserving data solutions—a challenge I'm passionate about tackling.</p>
-      </div>
-      <div class="job">
-        <p class="job-title">Program Manager</p>
-        <p class="job-company">Accenture (2016 - 2021)</p>
-        <p>Here, I had the opportunity to orchestrate a massive $26.5B telecommunications merger. It was a masterclass in organization and teamwork, and I'm proud of the streamlined processes we built.</p>
-      </div>
-    </section>
-
-    <section id="skills">
-      <h2>Skills & Methodologies</h2>
-      <div class="skills-container">
-        <div class="skills-category">
-          <h3>Program & Product</h3>
-          <ul>
-            <li>Go-to-Market Strategy</li>
-            <li>Product Lifecycle Management</li>
-            <li>Stakeholder Management</li>
-            <li>Software Development Lifecycle</li>
-            <li>Technical Architecture Design</li>
-          </ul>
-        </div>
-        <div class="skills-category">
-          <h3>Process & Frameworks</h3>
-          <ul>
-            <li>Agile Development</li>
-            <li>Lean Six Sigma</li>
-            <li>Process Improvement</li>
-            <li>Operating Model Design</li>
-            <li>Shared Services Governance</li>
-          </ul>
-        </div>
-        <div class="skills-category">
-          <h3>Data & Tools</h3>
-          <ul>
-            <li>Data Analysis & Visualization</li>
-            <li>SQL / Relational Databases</li>
-            <li>JIRA & Atlassian Suite</li>
-            <li>Tableau & PowerBI</li>
-            <li>Microsoft CA Rally</li>
-          </ul>
-        </div>
-      </div>
-    </section>
-
-    <section id="work-samples">
-      <h2>Work Samples</h2>
-      <div class="tableau-dashboard">
-        <div class="dashboard-header">
-          <div class="dashboard-title">Q3 2025 Sales Enablement Program</div>
-          <div class="dashboard-filters">
-            <span class="filter-tag">Global</span>
-            <span class="filter-tag">Sellside</span>
-            <span class="filter-tag">Active</span>
+      <section id="highlights">
+        <h2>Notable Achievements</h2>
+        <div class="highlights-grid">
+          <div class="highlight-card">
+            <div class="highlight-icon">🚀</div>
+            <div class="highlight-metric">$26.5B</div>
+            <div class="highlight-description">Program managed telecom merger implementation</div>
+          </div>
+          <div class="highlight-card">
+            <div class="highlight-icon">🏆</div>
+            <div class="highlight-metric">234%</div>
+            <div class="highlight-description">Achieved sales quota in Q1'25 as top performer</div>
+          </div>
+          <div class="highlight-card">
+            <div class="highlight-icon">👥</div>
+            <div class="highlight-metric">200+</div>
+            <div class="highlight-description">Led cross-functional teams across Americas</div>
+          </div>
+          <div class="highlight-card">
+            <div class="highlight-icon">⚡</div>
+            <div class="highlight-metric">8 FTE</div>
+            <div class="highlight-description">Time savings delivered through Operational Excellence</div>
+          </div>
+          <div class="highlight-card">
+            <div class="highlight-icon">📊</div>
+            <div class="highlight-metric">92%</div>
+            <div class="highlight-description">Average publisher satisfaction score maintained</div>
+          </div>
+          <div class="highlight-card">
+            <div class="highlight-icon">🎯</div>
+            <div class="highlight-metric">60+</div>
+            <div class="highlight-description">Individual projects managed within single program portfolio</div>
           </div>
         </div>
-        
-        <div class="dashboard-tabs">
-          <button class="dashboard-tab active" onclick="showDashboardTab(event, 'overview')">📊 Overview</button>
-          <button class="dashboard-tab" onclick="showDashboardTab(event, 'projects')">🎯 Projects</button>
-          <button class="dashboard-tab" onclick="showDashboardTab(event, 'issues')">⚠️ Issues</button>
-        </div>
+      </section>
 
-        <div id="overview" class="dashboard-content active">
-          <div class="overview-layout">
-            <div class="kpi-section">
-              <div class="metric-card compact">
-                <div class="metric-header">Revenue Attainment (Q3 Goal: $37.5M)</div>
-                <div class="metric-value">$42.1M</div>
-                <div class="metric-trend positive">↗ 112% of target (+$4.6M)</div>
+      <section id="experience">
+        <h2>My Professional Journey</h2>
+        <div class="job">
+          <p class="job-title">Program Manager</p>
+          <p class="job-company">Google (2022 - Present)</p>
+          <p>I lead planning and strategy for Google's Americas Sellside Partnerships, working with an incredible team to drive growth and keep our partners happy. A big part of my focus is on privacy-preserving data solutions—a challenge I'm passionate about tackling.</p>
+        </div>
+        <div class="job">
+          <p class="job-title">Program Manager</p>
+          <p class="job-company">Accenture (2016 - 2021)</p>
+          <p>Here, I had the opportunity to orchestrate a massive $26.5B telecommunications merger. It was a masterclass in organization and teamwork, and I'm proud of the streamlined processes we built.</p>
+        </div>
+      </section>
+
+      <section id="skills">
+        <h2>Skills & Methodologies</h2>
+        <div class="skills-container">
+          <div class="skills-category">
+            <h3>Program & Product</h3>
+            <ul>
+              <li>Go-to-Market Strategy</li>
+              <li>Product Lifecycle Management</li>
+              <li>Stakeholder Management</li>
+              <li>Software Development Lifecycle</li>
+              <li>Technical Architecture Design</li>
+            </ul>
+          </div>
+          <div class="skills-category">
+            <h3>Process & Frameworks</h3>
+            <ul>
+              <li>Agile Development</li>
+              <li>Lean Six Sigma</li>
+              <li>Process Improvement</li>
+              <li>Operating Model Design</li>
+              <li>Shared Services Governance</li>
+            </ul>
+          </div>
+          <div class="skills-category">
+            <h3>Data & Tools</h3>
+            <ul>
+              <li>Data Analysis & Visualization</li>
+              <li>SQL / Relational Databases</li>
+              <li>JIRA & Atlassian Suite</li>
+              <li>Tableau & PowerBI</li>
+              <li>Microsoft CA Rally</li>
+            </ul>
+          </div>
+        </div>
+      </section>
+
+      <section id="work-samples">
+        <h2>Work Samples</h2>
+        <div class="tableau-dashboard">
+          <div class="dashboard-header">
+            <div class="dashboard-title">Q3 2025 Sales Enablement Program</div>
+            <div class="dashboard-filters">
+              <span class="filter-tag">Global</span>
+              <span class="filter-tag">Sellside</span>
+              <span class="filter-tag">Active</span>
+            </div>
+          </div>
+          
+          <div class="dashboard-tabs">
+            <button class="dashboard-tab active" onclick="showDashboardTab(event, 'overview')">📊 Overview</button>
+            <button class="dashboard-tab" onclick="showDashboardTab(event, 'projects')">🎯 Projects</button>
+            <button class="dashboard-tab" onclick="showDashboardTab(event, 'issues')">⚠️ Issues</button>
+          </div>
+
+          <div id="overview" class="dashboard-content active">
+            <div class="overview-layout">
+              <div class="kpi-section">
+                <div class="metric-card compact">
+                  <div class="metric-header">Revenue Attainment (Q3 Goal: $37.5M)</div>
+                  <div class="metric-value">$42.1M</div>
+                  <div class="metric-trend positive">↗ 112% of target (+$4.6M)</div>
+                  <div class="progress-bar">
+                    <div class="progress-fill" style="width: 112%;"></div>
+                  </div>
+                  <div class="metric-note">*Includes TACoS optimization program impact</div>
+                </div>
+                <div class="metric-card compact">
+                  <div class="metric-header">Implementation Status (H2 Privacy Roadmap)</div>
+                  <div class="metric-value">67/92</div>
+                  <div class="metric-trend neutral">↔ 3 weeks behind, mitigating with resource realloc</div>
+                  <div class="progress-bar">
+                    <div class="progress-fill budget" style="width: 73%;"></div>
+                  </div>
+                  <div class="metric-note">Key blocker: Legal review on EU consent framework</div>
+                </div>
+                <div class="metric-card compact">
+                  <div class="metric-header">Partner NPS (Survey Period: Jul 1-15)</div>
+                  <div class="metric-value">73 NPS</div>
+                  <div class="metric-trend positive">↗ +8 pts from Q2 (was 65)</div>
+                  <div class="progress-bar">
+                    <div class="progress-fill" style="width: 73%;"></div>
+                  </div>
+                  <div class="metric-note">n=247 responses, 34% response rate</div>
+                </div>
+              </div>
+              <div class="chart-section">
+                <div class="chart-container full-width">
+                  <div class="chart-title">Revenue by Privacy Solution & Environment</div>
+                  <div class="revenue-chart-simple">
+                    <div class="chart-row">
+                      <span class="solution-name">Topics API (Web)</span>
+                      <div class="revenue-bar" style="width: 45%; background: #6C63FF;"></div>
+                      <span class="revenue-value">$2.3M</span>
+                    </div>
+                    <div class="chart-row">
+                      <span class="solution-name">1P Data (CTV/Mobile)</span>
+                      <div class="revenue-bar" style="width: 72%; background: #00DF9A;"></div>
+                      <span class="revenue-value">$4.1M</span>
+                    </div>
+                    <div class="chart-row">
+                      <span class="solution-name">Contextual</span>
+                      <div class="revenue-bar" style="width: 38%; background: #FF6B6B;"></div>
+                      <span class="revenue-value">$1.9M</span>
+                    </div>
+                    <div class="chart-row">
+                      <span class="solution-name">Header Bidding (GMA)</span>
+                      <div class="revenue-bar" style="width: 85%; background: #FFA726;"></div>
+                      <span class="revenue-value">$5.2M</span>
+                    </div>
+                    <div class="chart-row">
+                      <span class="solution-name">UID 2.0 (Mobile App)</span>
+                      <div class="revenue-bar" style="width: 29%; background: #9C27B0;"></div>
+                      <span class="revenue-value">$1.4M</span>
+                    </div>
+                  </div>
+                  <div class="chart-footer">*July data, ~85% of portfolio reporting. CTV growth +23% M/M</div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div id="projects" class="dashboard-content">
+            <div class="dashboard-grid">
+              <div class="chart-container">
+                <div class="chart-title">Q3 Initiative Health Check (Updated: 7/18)</div>
+                <div class="gantt-chart">
+                  <div class="gantt-item">
+                    <div class="task-name">Privacy Sandbox Migration</div>
+                    <div class="task-bar completed" style="width: 89%;"></div>
+                    <div class="task-progress">89%</div>
+                    <div class="task-details">32/36 partners onboarded</div>
+                  </div>
+                  <div class="gantt-item">
+                    <div class="task-name">Sales Enablement 2.0</div>
+                    <div class="task-bar in-progress" style="width: 67%;"></div>
+                    <div class="task-progress">67%</div>
+                    <div class="task-details">Training modules 1-4 live</div>
+                  </div>
+                  <div class="gantt-item">
+                    <div class="task-name">Partner Portal v3.1</div>
+                    <div class="task-bar behind" style="width: 42%;"></div>
+                    <div class="task-progress">42%</div>
+                    <div class="task-details">API docs pending</div>
+                  </div>
+                  <div class="gantt-item">
+                    <div class="task-name">COPPA Compliance</div>
+                    <div class="task-bar completed" style="width: 100%;"></div>
+                    <div class="task-progress">100%</div>
+                    <div class="task-details">Shipped 7/12</div>
+                  </div>
+                </div>
+              </div>
+              <div class="metric-card">
+                <div class="metric-header">Project Health Summary</div>
+                <div class="health-indicators">
+                  <div class="health-item">
+                    <span class="health-dot green"></span>
+                    <span class="health-label">On Track: 2 projects</span>
+                  </div>
+                  <div class="health-item">
+                    <span class="health-dot yellow"></span>
+                    <span class="health-label">At Risk: 1 project</span>
+                  </div>
+                  <div class="health-item">
+                    <span class="health-dot red"></span>
+                    <span class="health-label">Behind: 1 project</span>
+                  </div>
+                </div>
+                <div class="metric-note">Next milestone: Partner Portal API release (8/15)</div>
+              </div>
+            </div>
+          </div>
+
+          <div id="issues" class="dashboard-content">
+            <div class="dashboard-grid">
+              <div class="chart-container">
+                <div class="chart-title">Active Issues & Dependencies</div>
+                <div class="raid-visual">
+                  <div class="raid-summary-grid">
+                    <div class="raid-summary-item risk">
+                      <div class="raid-icon">⚠️</div>
+                      <div class="raid-count">2</div>
+                      <div class="raid-label">High Risk</div>
+                    </div>
+                    <div class="raid-summary-item action">
+                      <div class="raid-icon">📋</div>
+                      <div class="raid-count">4</div>
+                      <div class="raid-label">Actions</div>
+                    </div>
+                    <div class="raid-summary-item issue">
+                      <div class="raid-icon">🔧</div>
+                      <div class="raid-count">1</div>
+                      <div class="raid-label">Resolved</div>
+                    </div>
+                    <div class="raid-summary-item decision">
+                      <div class="raid-icon">🎯</div>
+                      <div class="raid-count">3</div>
+                      <div class="raid-label">Decisions</div>
+                    </div>
+                  </div>
+                  <div class="priority-items">
+                    <div class="priority-item urgent">
+                      <span class="priority-badge">🔴 URGENT</span>
+                      <span class="priority-text">GMA SDK v23.1 compatibility (12% inventory impact)</span>
+                    </div>
+                    <div class="priority-item high">
+                      <span class="priority-badge">🟡 HIGH</span>
+                      <span class="priority-text">iOS 18 tracking changes assessment due 7/25</span>
+                    </div>
+                    <div class="priority-item medium">
+                      <span class="priority-badge">🟢 MED</span>
+                      <span class="priority-text">CTV measurement standardization (Nielsen/Comscore)</span>
+                    </div>
+                  </div>
+                </div>
+                <div class="raid-footer">Last updated: 7/18/2025 2:47 PM PT • Next review: 7/25</div>
+              </div>
+              <div class="metric-card">
+                <div class="metric-header">Issue Resolution Time</div>
+                <div class="metric-value">2.3 days</div>
+                <div class="metric-trend positive">↗ 15% faster than Q2</div>
                 <div class="progress-bar">
-                  <div class="progress-fill" style="width: 112%;"></div>
+                  <div class="progress-fill" style="width: 85%;"></div>
                 </div>
-                <div class="metric-note">*Includes TACoS optimization program impact</div>
-              </div>
-              <div class="metric-card compact">
-                <div class="metric-header">Implementation Status (H2 Privacy Roadmap)</div>
-                <div class="metric-value">67/92</div>
-                <div class="metric-trend neutral">↔ 3 weeks behind, mitigating with resource realloc</div>
-                <div class="progress-bar">
-                  <div class="progress-fill budget" style="width: 73%;"></div>
-                </div>
-                <div class="metric-note">Key blocker: Legal review on EU consent framework</div>
-              </div>
-              <div class="metric-card compact">
-                <div class="metric-header">Partner NPS (Survey Period: Jul 1-15)</div>
-                <div class="metric-value">73 NPS</div>
-                <div class="metric-trend positive">↗ +8 pts from Q2 (was 65)</div>
-                <div class="progress-bar">
-                  <div class="progress-fill" style="width: 73%;"></div>
-                </div>
-                <div class="metric-note">n=247 responses, 34% response rate</div>
-              </div>
-            </div>
-            <div class="chart-section">
-              <div class="chart-container full-width">
-                <div class="chart-title">Revenue by Privacy Solution & Environment</div>
-                <div class="revenue-chart-simple">
-                  <div class="chart-row">
-                    <span class="solution-name">Topics API (Web)</span>
-                    <div class="revenue-bar" style="width: 45%; background: #6C63FF;"></div>
-                    <span class="revenue-value">$2.3M</span>
-                  </div>
-                  <div class="chart-row">
-                    <span class="solution-name">1P Data (CTV/Mobile)</span>
-                    <div class="revenue-bar" style="width: 72%; background: #00DF9A;"></div>
-                    <span class="revenue-value">$4.1M</span>
-                  </div>
-                  <div class="chart-row">
-                    <span class="solution-name">Contextual</span>
-                    <div class="revenue-bar" style="width: 38%; background: #FF6B6B;"></div>
-                    <span class="revenue-value">$1.9M</span>
-                  </div>
-                  <div class="chart-row">
-                    <span class="solution-name">Header Bidding (GMA)</span>
-                    <div class="revenue-bar" style="width: 85%; background: #FFA726;"></div>
-                    <span class="revenue-value">$5.2M</span>
-                  </div>
-                  <div class="chart-row">
-                    <span class="solution-name">UID 2.0 (Mobile App)</span>
-                    <div class="revenue-bar" style="width: 29%; background: #9C27B0;"></div>
-                    <span class="revenue-value">$1.4M</span>
-                  </div>
-                </div>
-                <div class="chart-footer">*July data, ~85% of portfolio reporting. CTV growth +23% M/M</div>
+                <div class="metric-note">Target: <2.5 days avg resolution</div>
               </div>
             </div>
           </div>
-        </div>
+          
+          <div class="video-cards-container">
+            <h3>Project Demonstrations</h3>
+            <div class="video-cards-grid">
+              <div class="video-card">
+                <video controls>
+                  <source src="gantt.mp4" type="video/mp4">
+                  Your browser does not support the video tag.
+                </video>
+                <div class="video-card-content">
+                  <div class="video-card-badge">Featured</div>
+                  <h3 class="video-card-title">Gantt Chart Sample</h3>
+                  <p class="video-card-description">Short and simple Gantt Chart with automated controls.</p>
+                </div>
+              </div>
 
-        <div id="projects" class="dashboard-content">
-          <div class="dashboard-grid">
-            <div class="chart-container">
-              <div class="chart-title">Q3 Initiative Health Check (Updated: 7/18)</div>
-              <div class="gantt-chart">
-                <div class="gantt-item">
-                  <div class="task-name">Privacy Sandbox Migration</div>
-                  <div class="task-bar completed" style="width: 89%;"></div>
-                  <div class="task-progress">89%</div>
-                  <div class="task-details">32/36 partners onboarded</div>
-                </div>
-                <div class="gantt-item">
-                  <div class="task-name">Sales Enablement 2.0</div>
-                  <div class="task-bar in-progress" style="width: 67%;"></div>
-                  <div class="task-progress">67%</div>
-                  <div class="task-details">Training modules 1-4 live</div>
-                </div>
-                <div class="gantt-item">
-                  <div class="task-name">Partner Portal v3.1</div>
-                  <div class="task-bar behind" style="width: 42%;"></div>
-                  <div class="task-progress">42%</div>
-                  <div class="task-details">API docs pending</div>
-                </div>
-                <div class="gantt-item">
-                  <div class="task-name">COPPA Compliance</div>
-                  <div class="task-bar completed" style="width: 100%;"></div>
-                  <div class="task-progress">100%</div>
-                  <div class="task-details">Shipped 7/12</div>
+              <div class="video-card">
+                <video controls>
+                  <source src="commsdocs.mp4" type="video/mp4">
+                  Your browser does not support the video tag.
+                </video>
+                <div class="video-card-content">
+                  <div class="video-card-badge">Tutorial</div>
+                  <h3 class="video-card-title">Executive Comms</h3>
                 </div>
               </div>
-            </div>
-            <div class="metric-card">
-              <div class="metric-header">Project Health Summary</div>
-              <div class="health-indicators">
-                <div class="health-item">
-                  <span class="health-dot green"></span>
-                  <span class="health-label">On Track: 2 projects</span>
-                </div>
-                <div class="health-item">
-                  <span class="health-dot yellow"></span>
-                  <span class="health-label">At Risk: 1 project</span>
-                </div>
-                <div class="health-item">
-                  <span class="health-dot red"></span>
-                  <span class="health-label">Behind: 1 project</span>
-                </div>
-              </div>
-              <div class="metric-note">Next milestone: Partner Portal API release (8/15)</div>
             </div>
           </div>
         </div>
+      </section>
 
-        <div id="issues" class="dashboard-content">
-          <div class="dashboard-grid">
-            <div class="chart-container">
-              <div class="chart-title">Active Issues & Dependencies</div>
-              <div class="raid-visual">
-                <div class="raid-summary-grid">
-                  <div class="raid-summary-item risk">
-                    <div class="raid-icon">⚠️</div>
-                    <div class="raid-count">2</div>
-                    <div class="raid-label">High Risk</div>
-                  </div>
-                  <div class="raid-summary-item action">
-                    <div class="raid-icon">📋</div>
-                    <div class="raid-count">4</div>
-                    <div class="raid-label">Actions</div>
-                  </div>
-                  <div class="raid-summary-item issue">
-                    <div class="raid-icon">🔧</div>
-                    <div class="raid-count">1</div>
-                    <div class="raid-label">Resolved</div>
-                  </div>
-                  <div class="raid-summary-item decision">
-                    <div class="raid-icon">🎯</div>
-                    <div class="raid-count">3</div>
-                    <div class="raid-label">Decisions</div>
-                  </div>
-                </div>
-                <div class="priority-items">
-                  <div class="priority-item urgent">
-                    <span class="priority-badge">🔴 URGENT</span>
-                    <span class="priority-text">GMA SDK v23.1 compatibility (12% inventory impact)</span>
-                  </div>
-                  <div class="priority-item high">
-                    <span class="priority-badge">🟡 HIGH</span>
-                    <span class="priority-text">iOS 18 tracking changes assessment due 7/25</span>
-                  </div>
-                  <div class="priority-item medium">
-                    <span class="priority-badge">🟢 MED</span>
-                    <span class="priority-text">CTV measurement standardization (Nielsen/Comscore)</span>
-                  </div>
-                </div>
+      <section id="fun-facts">
+        <h2>A Few Fun Facts</h2>
+        <div class="fun-facts">
+          <div class="fact flip-card">
+            <div class="flip-card-inner">
+              <div class="flip-card-front">
+                <p class="fact-emoji">🏕️</p>
+                <p>I'm married with two kids and love spending time outdoors—whether it's hiking, camping, or just enjoying nature.</p>
               </div>
-              <div class="raid-footer">Last updated: 7/18/2025 2:47 PM PT • Next review: 7/25</div>
+              <div class="flip-card-back outdoor-back">
+                <div class="flip-card-back-content">
+                  </div>
+              </div>
             </div>
-            <div class="metric-card">
-              <div class="metric-header">Issue Resolution Time</div>
-              <div class="metric-value">2.3 days</div>
-              <div class="metric-trend positive">↗ 15% faster than Q2</div>
-              <div class="progress-bar">
-                <div class="progress-fill" style="width: 85%;"></div>
+          </div>
+          <div class="fact flip-card">
+            <div class="flip-card-inner">
+              <div class="flip-card-front">
+                <p class="fact-emoji">📣</p>
+                <p>I was a college cheerleader! It taught me a lot about teamwork and lifting others up.</p>
               </div>
-              <div class="metric-note">Target: <2.5 days avg resolution</div>
+              <div class="flip-card-back cheerleader-back">
+                <div class="flip-card-back-content">
+                  </div>
+              </div>
+            </div>
+          </div>
+          <div class="fact flip-card">
+            <div class="flip-card-inner">
+              <div class="flip-card-front">
+                <p class="fact-emoji">🔨</p>
+                <p>I love building things with my hands, from garden beds to home improvement projects.</p>
+              </div>
+              <div class="flip-card-back building-back">
+                <div class="flip-card-back-content">
+                  </div>
+              </div>
             </div>
           </div>
         </div>
-        
-        <div class="video-cards-container">
-          <h3>Project Demonstrations</h3>
-          <div class="video-cards-grid">
-            <div class="video-card">
-              <video controls>
-                <source src="gantt.mp4" type="video/mp4">
-                Your browser does not support the video tag.
-              </video>
-              <div class="video-card-content">
-                <div class="video-card-badge">Featured</div>
-                <h3 class="video-card-title">Gantt Chart Sample</h3>
-                <p class="video-card-description">Short and simple Gantt Chart with automated controls.</p>
-              </div>
-            </div>
+      </section>
 
-            <div class="video-card">
-              <video controls>
-                <source src="commsdocs.mp4" type="video/mp4">
-                Your browser does not support the video tag.
-              </video>
-              <div class="video-card-content">
-                <div class="video-card-badge">Tutorial</div>
-                <h3 class="video-card-title">Executive Comms</h3>
+      <section id="contact">
+        <h2>Let's Connect</h2>
+        <p>I'm always open to chatting about AdTech, program management, or even your favorite hiking spot! Feel free to reach out!</p>
+        <p class="contact-links">
+          <a href="mailto:Sunterbb@gmail.com">Email</a> | 
+          <a href="https://www.linkedin.com/in/benjamin-sunter/">LinkedIn</a>
+        </p>
+      </section>
+    </main>
+  </div>
+  <div id="blog-projects-content" class="page-section">
+    <main>
+      <section id="projects-section">
+        <h2>Blog & Projects</h2>
+        <div class="projects-grid">
+          
+          <div class="project-card">
+            <div class="project-image-placeholder">
+              <span class="project-image-text">Project Viz</span>
+            </div>
+            <div class="project-content">
+              <div class="project-tags">
+                <span class="project-tag">Data Viz</span>
+                <span class="project-tag">AdTech</span>
+                <span class="project-tag">Tableau</span>
               </div>
+              <h3 class="project-title">Interactive Ad Campaign Dashboard</h3>
+              <p class="project-description">A deep dive into creating a real-time campaign performance dashboard using Tableau and Google BigQuery, focusing on privacy-centric metrics.</p>
+              <a href="#" class="project-link">Read More →</a>
             </div>
           </div>
-        </div>
-      </div>
-    </section>
 
-    <section id="fun-facts">
-      <h2>A Few Fun Facts</h2>
-      <div class="fun-facts">
-        <div class="fact flip-card">
-          <div class="flip-card-inner">
-            <div class="flip-card-front">
-              <p class="fact-emoji">🏕️</p>
-              <p>I'm married with two kids and love spending time outdoors—whether it's hiking, camping, or just enjoying nature.</p>
+          <div class="project-card">
+            <div class="project-image-placeholder">
+              <span class="project-image-text">Blog Post</span>
             </div>
-            <div class="flip-card-back outdoor-back">
-              <div class="flip-card-back-content">
-                <!-- Image will be shown as background -->
+            <div class="project-content">
+              <div class="project-tags">
+                <span class="project-tag">Strategy</span>
+                <span class="project-tag">Privacy</span>
               </div>
+              <h3 class="project-title">Navigating the Post-Cookie World</h3>
+              <p class="project-description">An analysis of emerging AdTech solutions like Google's Privacy Sandbox and UIDs, and how publishers can prepare their strategies for 2026 and beyond.</p>
+              <a href="#" class="project-link">Read More →</a>
             </div>
           </div>
-        </div>
-        <div class="fact flip-card">
-          <div class="flip-card-inner">
-            <div class="flip-card-front">
-              <p class="fact-emoji">📣</p>
-              <p>I was a college cheerleader! It taught me a lot about teamwork and lifting others up.</p>
-            </div>
-            <div class="flip-card-back cheerleader-back">
-              <div class="flip-card-back-content">
-                <!-- Image will be shown as background -->
-              </div>
-            </div>
-          </div>
-        </div>
-        <div class="fact flip-card">
-          <div class="flip-card-inner">
-            <div class="flip-card-front">
-              <p class="fact-emoji">🔨</p>
-              <p>I love building things with my hands, from garden beds to home improvement projects.</p>
-            </div>
-            <div class="flip-card-back building-back">
-              <div class="flip-card-back-content">
-                <!-- Image will be shown as background -->
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </section>
 
-    <section id="contact">
-      <h2>Let's Connect</h2>
-      <p>I'm always open to chatting about AdTech, program management, or even your favorite hiking spot! Feel free to reach out!</p>
-      <p class="contact-links">
-        <a href="mailto:Sunterbb@gmail.com">Email</a> | 
-        <a href="https://www.linkedin.com/in/benjamin-sunter/">LinkedIn</a>
-      </p>
-    </section>
-  </main>
-  
+          <div class="project-card">
+            <div class="project-image-placeholder">
+              <span class="project-image-text">Case Study</span>
+            </div>
+            <div class="project-content">
+              <div class="project-tags">
+                <span class="project-tag">Process Improvement</span>
+                <span class="project-tag">Lean Six Sigma</span>
+              </div>
+              <h3 class="project-title">Streamlining Partner Onboarding</h3>
+              <p class="project-description">How we applied Lean principles to reduce partner onboarding time by 35%, improving satisfaction and accelerating time-to-revenue.</p>
+              <a href="#" class="project-link">Read More →</a>
+            </div>
+          </div>
+
+        </div>
+      </section>
+    </main>
+  </div>
   <footer>
     <p>&copy; 2025 Benjamin J. Sunter | Crafted with care in Cupertino, CA</p>
   </footer>
 
   <script>
-    // Add some interactive functionality
     document.addEventListener('DOMContentLoaded', function() {
+      // --- START: New Main Tab Navigation Logic ---
+      const mainTabs = document.querySelectorAll('.main-nav-tab');
+      const pageSections = document.querySelectorAll('.page-section');
+
+      mainTabs.forEach(tab => {
+        tab.addEventListener('click', () => {
+          // Deactivate all tabs and sections
+          mainTabs.forEach(t => t.classList.remove('active'));
+          pageSections.forEach(s => s.classList.remove('active'));
+
+          // Activate the clicked tab
+          tab.classList.add('active');
+
+          // Activate the corresponding section
+          const targetSectionId = tab.getAttribute('data-tab');
+          document.getElementById(targetSectionId).classList.add('active');
+        });
+      });
+      // --- END: New Main Tab Navigation Logic ---
+
+
       // Animate progress bars on scroll
       const progressBars = document.querySelectorAll('.progress-fill');
       const observer = new IntersectionObserver((entries) => {
