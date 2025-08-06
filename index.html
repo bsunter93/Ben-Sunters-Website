@@ -1259,13 +1259,13 @@
       text-align: center;
     }
 
-    .video-cards-grid {
-      display: grid;
-      grid-template-columns: repeat(2, 1fr);
-      gap: 2rem;
-      max-width: 900px;
-      margin: 0 auto;
-    }
+   .video-cards-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 2rem;
+  max-width: 1200px;
+  margin: 0 auto;
+}
 
     .video-card {
       background: white;
@@ -1939,6 +1939,23 @@
                 <div class="video-card-content">
                   <div class="video-card-badge">Tutorial</div>
                   <h3 class="video-card-title">Executive Comms</h3>
+                </div>
+              </div>
+
+              <div class="video-card">
+                <iframe 
+                  width="100%" 
+                  height="220" 
+                  src="https://www.youtube.com/embed/i1aFLizDaEU" 
+                  title="YouTube Short" 
+                  frameborder="0" 
+                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" 
+                  allowfullscreen>
+                </iframe>
+                <div class="video-card-content">
+                  <div class="video-card-badge">YouTube Short</div>
+                  <h3 class="video-card-title">My Latest Project</h3>
+                  <p class="video-card-description">Check out this quick demo of my latest work!</p>
                 </div>
               </div>
             </div>
