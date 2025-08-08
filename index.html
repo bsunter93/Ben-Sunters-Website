@@ -25,9 +25,38 @@
       --highlight-border: #dadaff;
     }
 
+    /* Custom scrollbar */
+    ::-webkit-scrollbar {
+      width: 12px;
+    }
+
+    ::-webkit-scrollbar-track {
+      background: #f1f1f1;
+      border-radius: 0;
+    }
+
+    ::-webkit-scrollbar-thumb {
+      background: linear-gradient(135deg, var(--primary), var(--accent));
+      border-radius: 0;
+      border: 2px solid #f1f1f1;
+    }
+
+    ::-webkit-scrollbar-thumb:hover {
+      background: linear-gradient(135deg, var(--accent), var(--primary));
+    }
+
+    /* Cursor effects */
+    * {
+      cursor: default;
+    }
+
+    a, button, .flip-card {
+      cursor: pointer;
+    }
+
     body {
       font-family: 'Inter', sans-serif;
-      background-color: #fafafa;
+      background: linear-gradient(135deg, #fafafa 0%, #f5f7fa 100%);
       color: var(--text);
       line-height: 1.6;
       margin: 0;
@@ -39,18 +68,17 @@
     .animated-banner {
       position: relative;
       height: 200px;
-      background: linear-gradient(135deg, #1a1a2e 0%, #16213e 25%, #0f3460 50%, #533483 75%, #e94560 100%);
-      background-size: 400% 400%;
-      animation: gradientShift 15s ease infinite;
+      background: linear-gradient(135deg, #2c3e50 0%, #34495e 50%, #2c3e50 100%);
+      background-size: 200% 200%;
+      animation: subtleShift 20s ease infinite;
       overflow: hidden;
-      border-bottom: 4px solid var(--accent);
-      box-shadow: inset 0 0 100px rgba(233, 69, 96, 0.3);
+      border-bottom: 3px solid var(--accent);
+      box-shadow: inset 0 0 50px rgba(0, 0, 0, 0.1);
     }
 
-    @keyframes gradientShift {
-      0% { background-position: 0% 50%; }
+    @keyframes subtleShift {
+      0%, 100% { background-position: 0% 50%; }
       50% { background-position: 100% 50%; }
-      100% { background-position: 0% 50%; }
     }
 
     .animated-banner::before {
@@ -174,48 +202,30 @@
       width: 200px;
       height: 200px;
       border-radius: 50%;
-      border: 6px solid transparent;
-      background: linear-gradient(45deg, #6C63FF, #00DF9A, #FF6B6B, #6C63FF) border-box;
-      background-clip: padding-box, border-box;
+      border: 4px solid var(--primary);
       margin-bottom: 1rem;
-      box-shadow: 0 8px 25px rgba(108, 99, 255, 0.3), 0 0 50px rgba(0, 223, 154, 0.2);
+      box-shadow: 0 8px 25px rgba(108, 99, 255, 0.2), 0 2px 10px rgba(0, 0, 0, 0.1);
       background-image: url('profile-picture.jpg');
       background-size: cover;
       background-position: center;
       display: block;
       margin: 0 auto 1rem;
       position: relative;
-      animation: profileGlow 4s ease-in-out infinite;
+      transition: transform 0.3s ease;
     }
 
-    @keyframes profileGlow {
-      0%, 100% { 
-        box-shadow: 0 8px 25px rgba(108, 99, 255, 0.3), 0 0 50px rgba(0, 223, 154, 0.2);
-        transform: scale(1);
-      }
-      50% { 
-        box-shadow: 0 12px 35px rgba(108, 99, 255, 0.5), 0 0 70px rgba(0, 223, 154, 0.4);
-        transform: scale(1.02);
-      }
+    .profile-image:hover {
+      transform: scale(1.02);
+      box-shadow: 0 12px 35px rgba(108, 99, 255, 0.3), 0 4px 15px rgba(0, 0, 0, 0.1);
     }
 
     h1 {
       font-size: 3rem;
       font-weight: 800;
-      background: linear-gradient(135deg, #6C63FF, #00DF9A, #FF6B6B);
-      background-size: 300% 300%;
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      background-clip: text;
+      color: #2c3e50;
       margin: 0.5rem 0;
-      animation: textShine 8s ease-in-out infinite;
-      text-shadow: 0 0 30px rgba(108, 99, 255, 0.5);
       position: relative;
-    }
-
-    @keyframes textShine {
-      0%, 100% { background-position: 0% 50%; }
-      50% { background-position: 100% 50%; }
+      text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
     }
 
     .subtitle {
@@ -370,10 +380,7 @@
     .highlight-metric {
       font-size: 2.2rem;
       font-weight: 900;
-      background: linear-gradient(135deg, var(--primary), var(--accent));
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      background-clip: text;
+      color: var(--primary);
       margin-bottom: 0.25rem;
       position: relative;
       z-index: 1;
@@ -585,13 +592,15 @@
     }
 
     .dashboard-header {
-      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      background: linear-gradient(135deg, #34495e 0%, #2c3e50 100%);
       color: white;
       padding: 1.5rem;
       display: flex;
       justify-content: space-between;
       align-items: center;
       flex-wrap: wrap;
+      position: relative;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
     }
 
     .dashboard-title {
@@ -1700,9 +1709,12 @@
     <main>
       <section id="about">
         <h2>A Little About Me</h2>
-        <p>I'm a Program Manager at Google, but my journey started with a degree in Industrial Engineering from the University of Florida (Go Gators!). I've always been fascinated by how things work, and now I apply that curiosity to the complex world of digital advertising. My goal is simple: to help publishers thrive in a privacy-focused world. 🚀</p>
+        <p>I'm a Program Manager at Google, where I leverage my Industrial Engineering degree from the University of Florida (Go Gators!) to solve complex challenges in digital advertising. My approach combines analytical rigor with strategic thinking to drive measurable business outcomes.</p>
+        
+        <p>With eight years of progressive experience across consulting and technology, I've developed expertise in scaling operations, managing cross-functional initiatives, and delivering results in high-stakes environments. My engineering background provides the analytical foundation, while my program management experience has honed my ability to navigate ambiguity and drive consensus across diverse stakeholder groups.</p>
+        
         <div class="highlight-box">
-          <p>Whether I'm leading a multi-billion dollar merger or helping a publisher unlock new revenue streams, I believe in a human-centered approach. It's not just about data; it's about understanding people and their needs.</p>
+          <p>I specialize in transforming complex technical challenges into actionable business strategies. Whether orchestrating multi-billion dollar integrations or optimizing publisher revenue streams in a privacy-first landscape, I focus on building sustainable solutions that balance stakeholder needs with technical constraints. My goal is simple: deliver exceptional results while building systems that scale.</p>
         </div>
       </section>
 
@@ -1747,12 +1759,16 @@
         <div class="job">
           <p class="job-title">Program Manager</p>
           <p class="job-company">Google (2022 - Present)</p>
-          <p>I lead planning and strategy for Google's Americas Sellside Partnerships, working with an incredible team to drive growth and keep our partners happy. A big part of my focus is on privacy-preserving data solutions—a challenge I'm passionate about tackling.</p>
+          <p>I lead strategic planning and execution for Google's Americas Sellside Partnerships, managing a portfolio that spans programmatic advertising, privacy-preserving technologies, and partner enablement initiatives. My role encompasses driving go-to-market strategies, coordinating cross-functional product launches, and maintaining operational excellence across a 200+ person organization.</p>
+          
+          <p>Key focus areas include developing privacy-first advertising solutions, optimizing publisher revenue operations, and building scalable processes that support both partner success and business growth. I work closely with engineering, product, legal, and sales teams to translate complex technical capabilities into market-ready solutions.</p>
         </div>
         <div class="job">
           <p class="job-title">Program Manager</p>
           <p class="job-company">Accenture (2016 - 2021)</p>
-          <p>Here, I had the opportunity to orchestrate a massive $26.5B telecommunications merger. It was a masterclass in organization and teamwork, and I'm proud of the streamlined processes we built.</p>
+          <p>Led program management for large-scale digital transformation initiatives, with my signature achievement being the orchestration of a $26.5B telecommunications merger. This role required managing complex stakeholder relationships, coordinating technical integrations, and ensuring seamless operational continuity across multiple business units.</p>
+          
+          <p>Developed expertise in change management, process optimization, and cross-functional leadership while working with Fortune 500 clients across telecommunications, technology, and financial services sectors. Built reputation for delivering high-stakes projects on time and under budget.</p>
         </div>
       </section>
 
