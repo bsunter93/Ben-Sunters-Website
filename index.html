@@ -140,40 +140,42 @@
     
     .social-bar {
       display: flex;
-      gap: 1.5rem;
+      gap: 1rem;
       margin-top: 2rem;
       flex-wrap: wrap;
     }
     
-    .social-bar a {
+    .social-bar a, .social-bar span {
       color: var(--white);
-      opacity: 0.7;
       text-decoration: none;
       font-size: 0.85rem;
-      transition: opacity 0.3s;
+      font-weight: 500;
+      transition: all 0.3s;
+      padding: 0.6rem 1.2rem;
+      border: 1px solid rgba(255,255,255,0.3);
+      border-radius: 4px;
+      background: rgba(255,255,255,0.05);
     }
     
-    .social-bar a:hover { opacity: 1; }
-    
-    .social-bar span {
-      color: var(--white);
-      opacity: 0.7;
-      font-size: 0.85rem;
+    .social-bar a:hover {
+      background: var(--gold);
+      color: var(--navy);
+      border-color: var(--gold);
     }
     
     .stats {
       background: var(--navy);
       padding: 4rem 2rem;
-      display: grid;
-      grid-template-columns: repeat(4, 1fr);
-      max-width: 1000px;
-      margin: 0 auto;
-      gap: 2rem;
+      display: flex;
+      justify-content: center;
+      gap: 4rem;
+      flex-wrap: wrap;
     }
     
     .stat {
       text-align: center;
       color: var(--white);
+      min-width: 180px;
     }
     
     .stat-number {
@@ -1417,7 +1419,8 @@
     
     @media (max-width: 768px) {
       .hero { flex-direction: column; text-align: center; padding: 3rem 1.5rem; }
-      .stats { grid-template-columns: repeat(2, 1fr); }
+      .stats { gap: 2rem; padding: 3rem 1.5rem; }
+      .stat { min-width: 140px; }
       .about-content, .skills-grid, .personal-grid, .capabilities-grid { grid-template-columns: 1fr; }
       .main-nav-tab { padding: 0.75rem 1.5rem; font-size: 0.8rem; }
       .hero h1 { font-size: 2rem; }
