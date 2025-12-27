@@ -447,46 +447,309 @@
       margin: 0 auto;
     }
     
-    .work-card {
+    /* Executive Dashboard */
+    .dashboard-frame {
       background: var(--white);
-      border-radius: 4px;
-      padding: 2rem;
-      box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+      border-radius: 8px;
+      box-shadow: 0 10px 40px rgba(0,0,0,0.1);
+      overflow: hidden;
     }
     
-    .metrics-grid {
+    .dashboard-header {
+      background: linear-gradient(135deg, var(--navy) 0%, var(--navy-light) 100%);
+      padding: 1.25rem 2rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 1rem;
+    }
+    
+    .dashboard-title-area {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+    }
+    
+    .dashboard-icon {
+      width: 40px;
+      height: 40px;
+      background: rgba(255,255,255,0.1);
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.2rem;
+    }
+    
+    .dashboard-title {
+      color: var(--white);
+      font-family: 'Playfair Display', serif;
+      font-size: 1.3rem;
+      font-weight: 600;
+    }
+    
+    .dashboard-subtitle {
+      color: rgba(255,255,255,0.6);
+      font-size: 0.8rem;
+    }
+    
+    .dashboard-filters {
+      display: flex;
+      gap: 0.5rem;
+      flex-wrap: wrap;
+    }
+    
+    .filter-pill {
+      background: rgba(255,255,255,0.15);
+      color: var(--white);
+      padding: 0.4rem 0.9rem;
+      border-radius: 20px;
+      font-size: 0.75rem;
+      font-weight: 500;
+      backdrop-filter: blur(10px);
+    }
+    
+    .filter-pill.active {
+      background: var(--gold);
+      color: var(--navy);
+    }
+    
+    .dashboard-body {
+      padding: 2rem;
+    }
+    
+    .dashboard-kpis {
       display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 1.5rem;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 1.25rem;
       margin-bottom: 2rem;
     }
     
-    .metric-box {
-      background: var(--gray-light);
-      padding: 1.5rem;
-      border-radius: 4px;
-      border-left: 3px solid var(--gold);
+    .kpi-card {
+      background: linear-gradient(135deg, #f8f9fa 0%, #fff 100%);
+      border: 1px solid #e9ecef;
+      border-radius: 8px;
+      padding: 1.25rem;
+      position: relative;
+      overflow: hidden;
     }
     
-    .metric-box h4 {
-      font-size: 0.75rem;
+    .kpi-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 4px;
+      height: 100%;
+      background: var(--gold);
+    }
+    
+    .kpi-label {
+      font-size: 0.7rem;
       color: var(--gray);
       text-transform: uppercase;
       letter-spacing: 1px;
       margin-bottom: 0.5rem;
+      font-weight: 600;
     }
     
-    .metric-box .value {
+    .kpi-value {
       font-family: 'Playfair Display', serif;
-      font-size: 2rem;
-      color: var(--navy);
+      font-size: 1.8rem;
       font-weight: 700;
+      color: var(--navy);
+      line-height: 1;
+      margin-bottom: 0.5rem;
     }
     
-    .metric-box .trend {
+    .kpi-trend {
+      display: flex;
+      align-items: center;
+      gap: 0.3rem;
+      font-size: 0.75rem;
+      font-weight: 600;
+    }
+    
+    .kpi-trend.up { color: #10b981; }
+    .kpi-trend.neutral { color: var(--gray); }
+    
+    .kpi-sparkline {
+      position: absolute;
+      bottom: 0;
+      right: 0;
+      width: 60%;
+      height: 40px;
+      opacity: 0.15;
+    }
+    
+    .dashboard-charts {
+      display: grid;
+      grid-template-columns: 1.4fr 1fr;
+      gap: 1.5rem;
+    }
+    
+    .chart-card {
+      background: #f8f9fa;
+      border: 1px solid #e9ecef;
+      border-radius: 8px;
+      padding: 1.5rem;
+    }
+    
+    .chart-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 1rem;
+    }
+    
+    .chart-title {
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: var(--navy);
+    }
+    
+    .chart-legend {
+      display: flex;
+      gap: 1rem;
+      font-size: 0.7rem;
+      color: var(--gray);
+    }
+    
+    .legend-item {
+      display: flex;
+      align-items: center;
+      gap: 0.3rem;
+    }
+    
+    .legend-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+    }
+    
+    .legend-dot.gold { background: var(--gold); }
+    .legend-dot.navy { background: var(--navy); }
+    .legend-dot.green { background: #10b981; }
+    
+    /* Bar Chart */
+    .bar-chart {
+      display: flex;
+      align-items: flex-end;
+      justify-content: space-between;
+      height: 140px;
+      padding-top: 1rem;
+      border-bottom: 1px solid #dee2e6;
+    }
+    
+    .bar-group {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 0.5rem;
+      flex: 1;
+    }
+    
+    .bar-container {
+      display: flex;
+      align-items: flex-end;
+      gap: 3px;
+      height: 100px;
+    }
+    
+    .bar {
+      width: 18px;
+      border-radius: 3px 3px 0 0;
+      transition: height 0.5s ease;
+    }
+    
+    .bar.target { background: var(--navy); opacity: 0.3; }
+    .bar.actual { background: var(--gold); }
+    .bar.actual.exceeded { background: #10b981; }
+    
+    .bar-label {
+      font-size: 0.7rem;
+      color: var(--gray);
+      font-weight: 500;
+    }
+    
+    /* Progress List */
+    .progress-list {
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+    }
+    
+    .progress-item {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+    }
+    
+    .progress-info {
+      flex: 1;
+      min-width: 0;
+    }
+    
+    .progress-name {
       font-size: 0.8rem;
-      color: #10b981;
-      margin-top: 0.25rem;
+      font-weight: 500;
+      color: var(--navy);
+      margin-bottom: 0.25rem;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    
+    .progress-bar-bg {
+      height: 6px;
+      background: #e9ecef;
+      border-radius: 3px;
+      overflow: hidden;
+    }
+    
+    .progress-bar-fill {
+      height: 100%;
+      border-radius: 3px;
+      transition: width 0.5s ease;
+    }
+    
+    .progress-bar-fill.gold { background: var(--gold); }
+    .progress-bar-fill.green { background: #10b981; }
+    .progress-bar-fill.navy { background: var(--navy); }
+    
+    .progress-pct {
+      font-size: 0.75rem;
+      font-weight: 600;
+      color: var(--navy);
+      min-width: 36px;
+      text-align: right;
+    }
+    
+    .dashboard-footer {
+      padding: 1rem 2rem;
+      background: #f8f9fa;
+      border-top: 1px solid #e9ecef;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 0.75rem;
+      color: var(--gray);
+    }
+    
+    .status-dot {
+      display: inline-block;
+      width: 8px;
+      height: 8px;
+      background: #10b981;
+      border-radius: 50%;
+      margin-right: 0.5rem;
+      animation: pulse 2s infinite;
+    }
+    
+    @keyframes pulse {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.5; }
     }
     
     .video-cards-grid {
@@ -764,7 +1027,7 @@
     @media (max-width: 768px) {
       .hero { flex-direction: column; text-align: center; padding: 3rem 1.5rem; }
       .stats { grid-template-columns: repeat(2, 1fr); }
-      .about-content, .skills-grid, .personal-grid, .metrics-grid, .capabilities-grid { grid-template-columns: 1fr; }
+      .about-content, .skills-grid, .personal-grid, .capabilities-grid { grid-template-columns: 1fr; }
       .main-nav-tab { padding: 0.75rem 1.5rem; font-size: 0.8rem; }
       .hero h1 { font-size: 2rem; }
       .stat-number { font-size: 2.5rem; }
@@ -772,6 +1035,12 @@
       .video-cards-grid { grid-template-columns: 1fr; }
       .cert-grid { flex-direction: column; }
       .social-bar { justify-content: center; }
+      .dashboard-kpis { grid-template-columns: repeat(2, 1fr); }
+      .dashboard-charts { grid-template-columns: 1fr; }
+      .dashboard-header { flex-direction: column; text-align: center; }
+      .dashboard-filters { justify-content: center; }
+      .bar-chart { overflow-x: auto; }
+      .kpi-value { font-size: 1.5rem; }
     }
   </style>
 </head>
@@ -968,26 +1237,182 @@
     <section class="work-section" id="work">
       <div class="work-container">
         <span class="section-label">Work Samples</span>
-        <h2>Program Dashboard Example</h2>
-        <p style="color: var(--gray); margin-bottom: 2rem;">Sample strategic initiative tracking visualization (mock data) — built with Tableau/SQL</p>
+        <h2>Executive Dashboard</h2>
+        <p style="color: var(--gray); margin-bottom: 2rem;">Sample strategic initiative tracking visualization — built with Tableau & SQL</p>
         
-        <div class="work-card">
-          <div class="metrics-grid">
-            <div class="metric-box">
-              <h4>Initiative Progress</h4>
-              <div class="value">56/56</div>
-              <div class="trend">All initiatives tracked</div>
+        <div class="dashboard-frame">
+          <div class="dashboard-header">
+            <div class="dashboard-title-area">
+              <div class="dashboard-icon">📊</div>
+              <div>
+                <div class="dashboard-title">Q4 Strategic Initiative Tracker</div>
+                <div class="dashboard-subtitle">Americas Sellside Partnerships</div>
+              </div>
             </div>
-            <div class="metric-box">
-              <h4>Stakeholder Alignment</h4>
-              <div class="value">200+</div>
-              <div class="trend">↗ Weekly governance cadence</div>
+            <div class="dashboard-filters">
+              <span class="filter-pill active">All Regions</span>
+              <span class="filter-pill">Q4 2024</span>
+              <span class="filter-pill">Active</span>
             </div>
-            <div class="metric-box">
-              <h4>Revenue Enabled</h4>
-              <div class="value">$40M</div>
-              <div class="trend">New opportunities identified</div>
+          </div>
+          
+          <div class="dashboard-body">
+            <div class="dashboard-kpis">
+              <div class="kpi-card">
+                <div class="kpi-label">Revenue Enabled</div>
+                <div class="kpi-value">$40M</div>
+                <div class="kpi-trend up">↑ 18% vs target</div>
+                <svg class="kpi-sparkline" viewBox="0 0 100 40" preserveAspectRatio="none">
+                  <path d="M0,35 Q25,30 40,25 T60,20 T80,10 T100,5" fill="none" stroke="var(--gold)" stroke-width="2"/>
+                </svg>
+              </div>
+              <div class="kpi-card">
+                <div class="kpi-label">Initiatives Tracked</div>
+                <div class="kpi-value">56</div>
+                <div class="kpi-trend up">↑ 4 product areas</div>
+                <svg class="kpi-sparkline" viewBox="0 0 100 40" preserveAspectRatio="none">
+                  <path d="M0,30 L20,28 L40,25 L60,22 L80,18 L100,15" fill="none" stroke="var(--navy)" stroke-width="2"/>
+                </svg>
+              </div>
+              <div class="kpi-card">
+                <div class="kpi-label">Stakeholders</div>
+                <div class="kpi-value">200+</div>
+                <div class="kpi-trend neutral">Weekly cadence</div>
+                <svg class="kpi-sparkline" viewBox="0 0 100 40" preserveAspectRatio="none">
+                  <path d="M0,25 Q30,20 50,22 T100,18" fill="none" stroke="var(--gold)" stroke-width="2"/>
+                </svg>
+              </div>
+              <div class="kpi-card">
+                <div class="kpi-label">Avg. CSAT</div>
+                <div class="kpi-value">94%</div>
+                <div class="kpi-trend up">↑ 3% vs Q3</div>
+                <svg class="kpi-sparkline" viewBox="0 0 100 40" preserveAspectRatio="none">
+                  <path d="M0,30 Q20,28 40,22 T70,15 T100,10" fill="none" stroke="#10b981" stroke-width="2"/>
+                </svg>
+              </div>
             </div>
+            
+            <div class="dashboard-charts">
+              <div class="chart-card">
+                <div class="chart-header">
+                  <div class="chart-title">Revenue by Vertical (Target vs Actual)</div>
+                  <div class="chart-legend">
+                    <span class="legend-item"><span class="legend-dot navy"></span> Target</span>
+                    <span class="legend-item"><span class="legend-dot gold"></span> Actual</span>
+                    <span class="legend-item"><span class="legend-dot green"></span> Exceeded</span>
+                  </div>
+                </div>
+                <div class="bar-chart">
+                  <div class="bar-group">
+                    <div class="bar-container">
+                      <div class="bar target" style="height: 70px;"></div>
+                      <div class="bar actual exceeded" style="height: 85px;"></div>
+                    </div>
+                    <span class="bar-label">Media</span>
+                  </div>
+                  <div class="bar-group">
+                    <div class="bar-container">
+                      <div class="bar target" style="height: 55px;"></div>
+                      <div class="bar actual exceeded" style="height: 68px;"></div>
+                    </div>
+                    <span class="bar-label">Gaming</span>
+                  </div>
+                  <div class="bar-group">
+                    <div class="bar-container">
+                      <div class="bar target" style="height: 80px;"></div>
+                      <div class="bar actual" style="height: 75px;"></div>
+                    </div>
+                    <span class="bar-label">Finance</span>
+                  </div>
+                  <div class="bar-group">
+                    <div class="bar-container">
+                      <div class="bar target" style="height: 45px;"></div>
+                      <div class="bar actual exceeded" style="height: 58px;"></div>
+                    </div>
+                    <span class="bar-label">Retail</span>
+                  </div>
+                  <div class="bar-group">
+                    <div class="bar-container">
+                      <div class="bar target" style="height: 60px;"></div>
+                      <div class="bar actual exceeded" style="height: 72px;"></div>
+                    </div>
+                    <span class="bar-label">Tech</span>
+                  </div>
+                  <div class="bar-group">
+                    <div class="bar-container">
+                      <div class="bar target" style="height: 50px;"></div>
+                      <div class="bar actual" style="height: 48px;"></div>
+                    </div>
+                    <span class="bar-label">Travel</span>
+                  </div>
+                  <div class="bar-group">
+                    <div class="bar-container">
+                      <div class="bar target" style="height: 65px;"></div>
+                      <div class="bar actual exceeded" style="height: 78px;"></div>
+                    </div>
+                    <span class="bar-label">Health</span>
+                  </div>
+                </div>
+              </div>
+              
+              <div class="chart-card">
+                <div class="chart-header">
+                  <div class="chart-title">Initiative Completion</div>
+                </div>
+                <div class="progress-list">
+                  <div class="progress-item">
+                    <div class="progress-info">
+                      <div class="progress-name">Secure Signals Rollout</div>
+                      <div class="progress-bar-bg">
+                        <div class="progress-bar-fill green" style="width: 100%;"></div>
+                      </div>
+                    </div>
+                    <span class="progress-pct">100%</span>
+                  </div>
+                  <div class="progress-item">
+                    <div class="progress-info">
+                      <div class="progress-name">Privacy Sandbox Migration</div>
+                      <div class="progress-bar-bg">
+                        <div class="progress-bar-fill gold" style="width: 87%;"></div>
+                      </div>
+                    </div>
+                    <span class="progress-pct">87%</span>
+                  </div>
+                  <div class="progress-item">
+                    <div class="progress-info">
+                      <div class="progress-name">1P Data Framework</div>
+                      <div class="progress-bar-bg">
+                        <div class="progress-bar-fill gold" style="width: 73%;"></div>
+                      </div>
+                    </div>
+                    <span class="progress-pct">73%</span>
+                  </div>
+                  <div class="progress-item">
+                    <div class="progress-info">
+                      <div class="progress-name">Partner Enablement v2</div>
+                      <div class="progress-bar-bg">
+                        <div class="progress-bar-fill navy" style="width: 45%;"></div>
+                      </div>
+                    </div>
+                    <span class="progress-pct">45%</span>
+                  </div>
+                  <div class="progress-item">
+                    <div class="progress-info">
+                      <div class="progress-name">GTM Playbook Refresh</div>
+                      <div class="progress-bar-bg">
+                        <div class="progress-bar-fill navy" style="width: 28%;"></div>
+                      </div>
+                    </div>
+                    <span class="progress-pct">28%</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          
+          <div class="dashboard-footer">
+            <span><span class="status-dot"></span>Live data · Auto-refresh enabled</span>
+            <span>Last updated: Dec 27, 2024 9:41 AM PT</span>
           </div>
         </div>
         
