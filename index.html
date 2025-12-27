@@ -973,9 +973,255 @@
       font-weight: 600;
       font-size: 0.9rem;
       transition: color 0.3s;
+      cursor: pointer;
+      background: none;
+      border: none;
+      padding: 0;
+      font-family: inherit;
     }
     
     .project-link:hover { color: var(--navy); }
+    
+    /* Modal Styles */
+    .modal-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(26, 39, 68, 0.85);
+      backdrop-filter: blur(4px);
+      z-index: 1000;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 2rem;
+      opacity: 0;
+      transition: opacity 0.3s ease;
+    }
+    
+    .modal-overlay.active {
+      display: flex;
+      opacity: 1;
+    }
+    
+    .modal-container {
+      background: var(--white);
+      border-radius: 8px;
+      max-width: 800px;
+      width: 100%;
+      max-height: 85vh;
+      overflow: hidden;
+      box-shadow: 0 25px 80px rgba(0,0,0,0.4);
+      transform: translateY(20px);
+      transition: transform 0.3s ease;
+      display: flex;
+      flex-direction: column;
+    }
+    
+    .modal-overlay.active .modal-container {
+      transform: translateY(0);
+    }
+    
+    .modal-header {
+      background: linear-gradient(135deg, var(--navy) 0%, var(--navy-light) 100%);
+      padding: 1.5rem 2rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      flex-shrink: 0;
+    }
+    
+    .modal-header-content {
+      flex: 1;
+    }
+    
+    .modal-tags {
+      display: flex;
+      gap: 0.5rem;
+      margin-bottom: 0.75rem;
+      flex-wrap: wrap;
+    }
+    
+    .modal-tag {
+      background: rgba(255,255,255,0.15);
+      color: var(--white);
+      padding: 0.25rem 0.75rem;
+      border-radius: 4px;
+      font-size: 0.7rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+    
+    .modal-title {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.6rem;
+      font-weight: 600;
+      color: var(--white);
+      margin: 0;
+      line-height: 1.3;
+    }
+    
+    .modal-close {
+      background: rgba(255,255,255,0.1);
+      border: none;
+      color: var(--white);
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      cursor: pointer;
+      font-size: 1.5rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: background 0.3s;
+      flex-shrink: 0;
+      margin-left: 1rem;
+    }
+    
+    .modal-close:hover {
+      background: rgba(255,255,255,0.2);
+    }
+    
+    .modal-body {
+      padding: 2rem;
+      overflow-y: auto;
+      flex: 1;
+    }
+    
+    .modal-body h3 {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.3rem;
+      color: var(--navy);
+      margin: 2rem 0 1rem 0;
+    }
+    
+    .modal-body h3:first-child {
+      margin-top: 0;
+    }
+    
+    .modal-body p {
+      color: var(--gray);
+      font-size: 1rem;
+      line-height: 1.8;
+      margin-bottom: 1rem;
+    }
+    
+    .modal-body ul {
+      color: var(--gray);
+      font-size: 1rem;
+      line-height: 1.8;
+      margin-bottom: 1rem;
+      padding-left: 1.5rem;
+    }
+    
+    .modal-body li {
+      margin-bottom: 0.5rem;
+    }
+    
+    .modal-highlight {
+      background: var(--gray-light);
+      border-left: 4px solid var(--gold);
+      padding: 1.25rem 1.5rem;
+      margin: 1.5rem 0;
+      font-style: italic;
+      color: var(--navy);
+    }
+    
+    .modal-stats {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1rem;
+      margin: 1.5rem 0;
+    }
+    
+    .modal-stat {
+      background: var(--gray-light);
+      padding: 1rem;
+      border-radius: 6px;
+      text-align: center;
+    }
+    
+    .modal-stat-value {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: var(--navy);
+    }
+    
+    .modal-stat-label {
+      font-size: 0.75rem;
+      color: var(--gray);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+    
+    .modal-footer {
+      padding: 1.25rem 2rem;
+      background: var(--gray-light);
+      border-top: 1px solid #e9ecef;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-shrink: 0;
+    }
+    
+    .modal-author {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+    
+    .modal-author-avatar {
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      background: var(--navy);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--white);
+      font-weight: 600;
+      font-size: 0.85rem;
+    }
+    
+    .modal-author-info {
+      font-size: 0.85rem;
+    }
+    
+    .modal-author-name {
+      font-weight: 600;
+      color: var(--navy);
+    }
+    
+    .modal-author-date {
+      color: var(--gray);
+      font-size: 0.75rem;
+    }
+    
+    .modal-coming-soon {
+      text-align: center;
+      padding: 3rem 2rem;
+    }
+    
+    .modal-coming-soon-icon {
+      font-size: 3rem;
+      margin-bottom: 1rem;
+    }
+    
+    .modal-coming-soon h3 {
+      margin-top: 0;
+    }
+    
+    @media (max-width: 768px) {
+      .modal-overlay { padding: 1rem; }
+      .modal-container { max-height: 90vh; }
+      .modal-header { padding: 1.25rem 1.5rem; }
+      .modal-title { font-size: 1.3rem; }
+      .modal-body { padding: 1.5rem; }
+      .modal-stats { grid-template-columns: 1fr; }
+    }
     
     footer {
       background: var(--navy);
@@ -1508,7 +1754,7 @@
             </div>
             <h3 class="project-title">Interactive Campaign Dashboard</h3>
             <p class="project-description">A deep dive into creating a real-time performance dashboard using Tableau and BigQuery, focusing on executive-ready metrics and automated refresh.</p>
-            <a href="#" class="project-link">Read More →</a>
+            <button class="project-link" onclick="openModal('dashboard')">Read More →</button>
           </div>
         </div>
         
@@ -1521,7 +1767,7 @@
             </div>
             <h3 class="project-title">Building & Shipping My First App</h3>
             <p class="project-description">My latest project exploring app development. Mirror is a spiritual-reflection tool with privacy-safe AI learning that helps you become more mindful and self-attuned.</p>
-            <a href="#" class="project-link">Read More →</a>
+            <button class="project-link" onclick="openModal('mirror')">Read More →</button>
           </div>
         </div>
         
@@ -1534,7 +1780,7 @@
             </div>
             <h3 class="project-title">Streamlining Partner Onboarding</h3>
             <p class="project-description">How we applied Lean principles to reduce partner onboarding time by 35%, improving satisfaction and accelerating time-to-revenue.</p>
-            <a href="#" class="project-link">Read More →</a>
+            <button class="project-link" onclick="openModal('onboarding')">Read More →</button>
           </div>
         </div>
         
@@ -1547,11 +1793,34 @@
             </div>
             <h3 class="project-title">Building Scalable Launch Playbooks</h3>
             <p class="project-description">A framework for creating repeatable launch playbooks that ensure consistency across diverse teams and reduce time-to-execution.</p>
-            <a href="#" class="project-link">Coming Soon →</a>
+            <button class="project-link" onclick="openModal('playbooks')">Coming Soon →</button>
           </div>
         </div>
       </div>
     </section>
+  </div>
+
+  <!-- MODAL -->
+  <div class="modal-overlay" id="modal-overlay" onclick="closeModalOutside(event)">
+    <div class="modal-container" onclick="event.stopPropagation()">
+      <div class="modal-header">
+        <div class="modal-header-content">
+          <div class="modal-tags" id="modal-tags"></div>
+          <h2 class="modal-title" id="modal-title"></h2>
+        </div>
+        <button class="modal-close" onclick="closeModal()">×</button>
+      </div>
+      <div class="modal-body" id="modal-body"></div>
+      <div class="modal-footer">
+        <div class="modal-author">
+          <div class="modal-author-avatar">BS</div>
+          <div class="modal-author-info">
+            <div class="modal-author-name">Benjamin J. Sunter</div>
+            <div class="modal-author-date" id="modal-date"></div>
+          </div>
+        </div>
+      </div>
+    </div>
   </div>
 
   <footer>
@@ -1568,6 +1837,251 @@
   </footer>
 
   <script>
+    // Article Content Database
+    const articles = {
+      dashboard: {
+        title: "Interactive Campaign Dashboard",
+        tags: ["Data Viz", "Tableau", "SQL", "BigQuery"],
+        date: "November 2024",
+        content: `
+          <h3>The Challenge</h3>
+          <p>Managing 56 initiatives across 4 product areas and 200+ stakeholders requires more than spreadsheets. Leadership needed real-time visibility into performance metrics, but existing reporting was manual, inconsistent, and always a week behind.</p>
+          
+          <div class="modal-highlight">
+            "By the time we got the data, it was already too late to course-correct." — VP, Partnerships
+          </div>
+          
+          <h3>The Approach</h3>
+          <p>I designed and built an automated executive dashboard using Tableau connected to BigQuery, with the goal of providing real-time insights that actually drive decisions. The key principles:</p>
+          <ul>
+            <li><strong>Executive-first design:</strong> Lead with the 4-5 metrics that matter most, everything else is drill-down</li>
+            <li><strong>Automated data pipeline:</strong> SQL scripts pull from 6 source systems nightly, with data validation checks</li>
+            <li><strong>Action-oriented visualizations:</strong> Every chart answers a specific question leadership asks weekly</li>
+            <li><strong>Mobile-responsive:</strong> Execs check dashboards on phones between meetings</li>
+          </ul>
+          
+          <h3>Key Features</h3>
+          <p>The dashboard includes several interconnected views:</p>
+          <ul>
+            <li><strong>KPI Summary:</strong> Revenue attainment, initiative progress, stakeholder alignment, and CSAT at a glance</li>
+            <li><strong>Vertical Performance:</strong> Target vs. actual revenue by business vertical with variance highlighting</li>
+            <li><strong>Initiative Tracker:</strong> Gantt-style view of all active initiatives with health indicators</li>
+            <li><strong>Risk Register:</strong> Automated flagging of at-risk initiatives based on milestone slippage</li>
+          </ul>
+          
+          <div class="modal-stats">
+            <div class="modal-stat">
+              <div class="modal-stat-value">6</div>
+              <div class="modal-stat-label">Data Sources</div>
+            </div>
+            <div class="modal-stat">
+              <div class="modal-stat-value">15min</div>
+              <div class="modal-stat-label">Refresh Cycle</div>
+            </div>
+            <div class="modal-stat">
+              <div class="modal-stat-value">40hrs</div>
+              <div class="modal-stat-label">Monthly Time Saved</div>
+            </div>
+          </div>
+          
+          <h3>Technical Implementation</h3>
+          <p>The backend leverages BigQuery for data warehousing with scheduled SQL queries that transform raw data into analysis-ready tables. Key technical decisions included:</p>
+          <ul>
+            <li>Incremental loading patterns to minimize query costs</li>
+            <li>Parameterized date filters for historical comparison</li>
+            <li>Row-level security for team-specific views</li>
+            <li>Slack integration for automated weekly summaries</li>
+          </ul>
+          
+          <h3>Impact</h3>
+          <p>The dashboard transformed how leadership engages with program data. Weekly governance meetings now start with a shared view of reality, and decisions are made with confidence rather than gut feel.</p>
+          
+          <div class="modal-highlight">
+            The automated reporting eliminated 40+ hours of manual work monthly and reduced "data reconciliation" debates in leadership meetings by an estimated 80%.
+          </div>
+        `
+      },
+      mirror: {
+        title: "Building & Shipping My First App",
+        tags: ["Product", "Strategy", "App Development", "AI"],
+        date: "October 2024",
+        content: `
+          <h3>The Idea</h3>
+          <p>Mirror started as a personal experiment: could I build a tool that helps people reflect more meaningfully on their lives, using AI as a thoughtful companion rather than just a chatbot?</p>
+          
+          <p>As someone who values mindfulness but struggles with consistency, I wanted to create something that would make reflection feel natural, not like another task on the to-do list.</p>
+          
+          <div class="modal-highlight">
+            The goal wasn't to build another journaling app—it was to create a space for genuine self-discovery, powered by AI that listens more than it talks.
+          </div>
+          
+          <h3>The Product</h3>
+          <p>Mirror is a spiritual-reflection tool with three core features:</p>
+          <ul>
+            <li><strong>Daily Prompts:</strong> Thoughtful questions tailored to your current life context, not generic inspirational quotes</li>
+            <li><strong>Pattern Recognition:</strong> AI that identifies themes across your reflections over time, surfacing insights you might miss</li>
+            <li><strong>Privacy-First Architecture:</strong> All data encrypted end-to-end; the AI learns your patterns without storing your actual entries</li>
+          </ul>
+          
+          <h3>What I Learned</h3>
+          <p>Building Mirror taught me more about product development than any course could:</p>
+          <ul>
+            <li><strong>Start with the job-to-be-done:</strong> Users don't want an app—they want to feel more self-aware</li>
+            <li><strong>Simplicity is hard:</strong> I cut 60% of my initial features to focus on what actually mattered</li>
+            <li><strong>Shipping beats perfection:</strong> The version I launched wasn't the version I imagined, but it was real</li>
+          </ul>
+          
+          <div class="modal-stats">
+            <div class="modal-stat">
+              <div class="modal-stat-value">3mo</div>
+              <div class="modal-stat-label">Dev Time</div>
+            </div>
+            <div class="modal-stat">
+              <div class="modal-stat-value">1</div>
+              <div class="modal-stat-label">Apps Shipped</div>
+            </div>
+            <div class="modal-stat">
+              <div class="modal-stat-value">∞</div>
+              <div class="modal-stat-label">Lessons Learned</div>
+            </div>
+          </div>
+          
+          <h3>The Business Operations Connection</h3>
+          <p>You might wonder why a business operations leader is building apps. For me, it's about staying close to the craft. Understanding how products actually get built—the tradeoffs, the technical constraints, the user research—makes me a better partner to product and engineering teams.</p>
+          
+          <p>Plus, there's something deeply satisfying about creating something from scratch that actually helps people.</p>
+          
+          <div class="modal-highlight">
+            The skills transfer both ways: my operational mindset helped me scope ruthlessly and ship on time, while the product experience gave me new empathy for the teams I support.
+          </div>
+        `
+      },
+      onboarding: {
+        title: "Streamlining Partner Onboarding",
+        tags: ["Process Improvement", "Lean Six Sigma", "Case Study"],
+        date: "August 2024",
+        content: `
+          <h3>The Problem</h3>
+          <p>Partner onboarding was taking an average of 47 days from signed contract to first revenue. For a business where time-to-revenue directly impacts quarterly targets, this was unacceptable. Worse, the process was inconsistent—some partners onboarded in 3 weeks, others took 3 months.</p>
+          
+          <div class="modal-stats">
+            <div class="modal-stat">
+              <div class="modal-stat-value">47</div>
+              <div class="modal-stat-label">Avg Days to Revenue</div>
+            </div>
+            <div class="modal-stat">
+              <div class="modal-stat-value">12</div>
+              <div class="modal-stat-label">Handoff Points</div>
+            </div>
+            <div class="modal-stat">
+              <div class="modal-stat-value">6</div>
+              <div class="modal-stat-label">Teams Involved</div>
+            </div>
+          </div>
+          
+          <h3>The Approach</h3>
+          <p>I led a cross-functional process improvement initiative using Lean Six Sigma methodology. The project followed DMAIC:</p>
+          
+          <ul>
+            <li><strong>Define:</strong> Mapped the current state with all 6 teams, identified the critical path</li>
+            <li><strong>Measure:</strong> Instrumented each step to understand where time was actually spent</li>
+            <li><strong>Analyze:</strong> Root cause analysis revealed 60% of delays came from just 3 handoff points</li>
+            <li><strong>Improve:</strong> Redesigned the workflow, introduced parallel processing, created SLAs</li>
+            <li><strong>Control:</strong> Built automated tracking dashboard, established weekly standup cadence</li>
+          </ul>
+          
+          <div class="modal-highlight">
+            The biggest insight: most delays weren't from slow work—they were from work sitting in queues between teams. The solution wasn't to work faster, but to eliminate wait time.
+          </div>
+          
+          <h3>Key Changes</h3>
+          <p>The redesigned process included several structural improvements:</p>
+          <ul>
+            <li><strong>Parallel workstreams:</strong> Technical setup and legal review now happen simultaneously</li>
+            <li><strong>Single point of contact:</strong> One onboarding lead owns the relationship end-to-end</li>
+            <li><strong>Standardized templates:</strong> 80% of partners fit standard configurations, reducing custom work</li>
+            <li><strong>Automated status updates:</strong> Partners see real-time progress, reducing check-in overhead</li>
+          </ul>
+          
+          <h3>Results</h3>
+          <div class="modal-stats">
+            <div class="modal-stat">
+              <div class="modal-stat-value">35%</div>
+              <div class="modal-stat-label">Faster Onboarding</div>
+            </div>
+            <div class="modal-stat">
+              <div class="modal-stat-value">30 days</div>
+              <div class="modal-stat-label">New Average</div>
+            </div>
+            <div class="modal-stat">
+              <div class="modal-stat-value">+18 NPS</div>
+              <div class="modal-stat-label">Partner Satisfaction</div>
+            </div>
+          </div>
+          
+          <p>Beyond the numbers, the process improvement created a blueprint that's been adapted for other operational workflows across the organization.</p>
+        `
+      },
+      playbooks: {
+        title: "Building Scalable Launch Playbooks",
+        tags: ["Operations", "Playbooks", "Frameworks"],
+        date: "Coming Soon",
+        content: `
+          <div class="modal-coming-soon">
+            <div class="modal-coming-soon-icon">🚀</div>
+            <h3>Coming Soon</h3>
+            <p>I'm currently documenting my framework for creating repeatable launch playbooks that scale across diverse teams. This piece will cover:</p>
+            <ul style="text-align: left; max-width: 400px; margin: 1.5rem auto;">
+              <li>The anatomy of an effective playbook</li>
+              <li>Balancing standardization with flexibility</li>
+              <li>Getting buy-in from teams who "do things differently"</li>
+              <li>Measuring playbook effectiveness</li>
+              <li>Templates and examples you can steal</li>
+            </ul>
+            <p style="margin-top: 1.5rem; color: var(--gray);">Check back in January 2025, or connect with me on LinkedIn for updates.</p>
+          </div>
+        `
+      }
+    };
+    
+    // Modal Functions
+    function openModal(articleKey) {
+      const article = articles[articleKey];
+      if (!article) return;
+      
+      document.getElementById('modal-title').textContent = article.title;
+      document.getElementById('modal-date').textContent = article.date;
+      document.getElementById('modal-body').innerHTML = article.content;
+      
+      const tagsContainer = document.getElementById('modal-tags');
+      tagsContainer.innerHTML = article.tags.map(tag => 
+        `<span class="modal-tag">${tag}</span>`
+      ).join('');
+      
+      const overlay = document.getElementById('modal-overlay');
+      overlay.classList.add('active');
+      document.body.style.overflow = 'hidden';
+    }
+    
+    function closeModal() {
+      const overlay = document.getElementById('modal-overlay');
+      overlay.classList.remove('active');
+      document.body.style.overflow = '';
+    }
+    
+    function closeModalOutside(event) {
+      if (event.target === document.getElementById('modal-overlay')) {
+        closeModal();
+      }
+    }
+    
+    // Close modal on Escape key
+    document.addEventListener('keydown', function(e) {
+      if (e.key === 'Escape') {
+        closeModal();
+      }
+    });
+
     document.addEventListener('DOMContentLoaded', function() {
       // Tab Navigation
       const mainTabs = document.querySelectorAll('.main-nav-tab');
