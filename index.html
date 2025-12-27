@@ -395,7 +395,132 @@
       color: var(--navy);
     }
     
-    /* Certifications */
+    /* Logo Bar Section */
+    .logo-bar {
+      background: var(--white);
+      padding: 3rem 2rem;
+      border-bottom: 1px solid #eee;
+    }
+    
+    .logo-bar-container {
+      max-width: 900px;
+      margin: 0 auto;
+      text-align: center;
+    }
+    
+    .logo-bar-label {
+      font-size: 0.75rem;
+      color: var(--gray);
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      margin-bottom: 1.5rem;
+      font-weight: 500;
+    }
+    
+    .logo-bar-logos {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 4rem;
+      flex-wrap: wrap;
+    }
+    
+    .logo-bar-item {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: transform 0.3s ease, opacity 0.3s ease;
+      opacity: 0.9;
+    }
+    
+    .logo-bar-item:hover {
+      transform: scale(1.05);
+      opacity: 1;
+    }
+    
+    .logo-bar-item svg {
+      height: 32px;
+      width: auto;
+    }
+    
+    .logo-bar-item.google svg {
+      height: 30px;
+    }
+    
+    .logo-bar-item.accenture svg {
+      height: 34px;
+    }
+    
+    .logo-bar-item.uf img {
+      height: 50px;
+    }
+    
+    /* Experience Inline Logos */
+    .exp-company-row {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      margin-top: 0.25rem;
+    }
+    
+    .exp-logo {
+      height: 20px;
+      width: auto;
+    }
+    
+    .exp-logo.google {
+      height: 18px;
+    }
+    
+    .exp-logo.accenture {
+      height: 22px;
+    }
+    
+    /* Education Section */
+    .education-section {
+      margin-top: 2rem;
+      padding-top: 2rem;
+      border-top: 1px solid #eee;
+    }
+    
+    .education-section h3 {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.1rem;
+      color: var(--navy);
+      margin-bottom: 1rem;
+    }
+    
+    .education-item {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      background: var(--gray-light);
+      padding: 1.25rem 1.5rem;
+      border-radius: 6px;
+    }
+    
+    .education-logo {
+      height: 45px;
+      width: auto;
+      flex-shrink: 0;
+    }
+    
+    .education-details {
+      flex: 1;
+    }
+    
+    .education-degree {
+      font-weight: 600;
+      color: var(--navy);
+      font-size: 0.95rem;
+    }
+    
+    .education-school {
+      color: var(--gray);
+      font-size: 0.85rem;
+    }
+    
+    /* Updated Certification Badges */
     .certifications {
       margin-top: 2rem;
       padding-top: 2rem;
@@ -417,22 +542,38 @@
     
     .cert-badge {
       background: var(--gray-light);
-      border: 2px solid var(--gold);
-      border-radius: 4px;
-      padding: 1rem 1.5rem;
-      text-align: center;
-      min-width: 200px;
+      border-radius: 6px;
+      padding: 1.25rem 1.5rem;
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+    
+    .cert-badge:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    }
+    
+    .cert-logo {
+      height: 40px;
+      width: auto;
+      flex-shrink: 0;
+    }
+    
+    .cert-info {
+      text-align: left;
     }
     
     .cert-badge .cert-name {
       font-weight: 600;
       color: var(--navy);
       font-size: 0.9rem;
-      margin-bottom: 0.25rem;
+      margin-bottom: 0.15rem;
     }
     
     .cert-badge .cert-issuer {
-      font-size: 0.8rem;
+      font-size: 0.75rem;
       color: var(--gray);
     }
     
@@ -1287,6 +1428,10 @@
       .dashboard-filters { justify-content: center; }
       .bar-chart { overflow-x: auto; }
       .kpi-value { font-size: 1.5rem; }
+      .logo-bar-logos { gap: 2rem; }
+      .logo-bar-item svg { height: 24px; }
+      .logo-bar-item.uf img { height: 40px; }
+      .education-item { flex-direction: column; text-align: center; gap: 0.75rem; }
     }
   </style>
 </head>
@@ -1337,6 +1482,34 @@
       </div>
     </div>
 
+    <!-- Logo Bar -->
+    <section class="logo-bar">
+      <div class="logo-bar-container">
+        <div class="logo-bar-label">Experience With</div>
+        <div class="logo-bar-logos">
+          <div class="logo-bar-item google">
+            <svg viewBox="0 0 272 92" xmlns="http://www.w3.org/2000/svg">
+              <path d="M115.75 47.18c0 12.77-9.99 22.18-22.25 22.18s-22.25-9.41-22.25-22.18C71.25 34.32 81.24 25 93.5 25s22.25 9.32 22.25 22.18zm-9.74 0c0-7.98-5.79-13.44-12.51-13.44S80.99 39.2 80.99 47.18c0 7.9 5.79 13.44 12.51 13.44s12.51-5.55 12.51-13.44z" fill="#EA4335"/>
+              <path d="M163.75 47.18c0 12.77-9.99 22.18-22.25 22.18s-22.25-9.41-22.25-22.18c0-12.85 9.99-22.18 22.25-22.18s22.25 9.32 22.25 22.18zm-9.74 0c0-7.98-5.79-13.44-12.51-13.44s-12.51 5.46-12.51 13.44c0 7.9 5.79 13.44 12.51 13.44s12.51-5.55 12.51-13.44z" fill="#FBBC05"/>
+              <path d="M209.75 26.34v39.82c0 16.38-9.66 23.07-21.08 23.07-10.75 0-17.22-7.19-19.66-13.07l8.48-3.53c1.51 3.61 5.21 7.87 11.17 7.87 7.31 0 11.84-4.51 11.84-13v-3.19h-.34c-2.18 2.69-6.38 5.04-11.68 5.04-11.09 0-21.25-9.66-21.25-22.09 0-12.52 10.16-22.26 21.25-22.26 5.29 0 9.49 2.35 11.68 4.96h.34v-3.61h9.25zm-8.56 20.92c0-7.81-5.21-13.52-11.84-13.52-6.72 0-12.35 5.71-12.35 13.52 0 7.73 5.63 13.36 12.35 13.36 6.63 0 11.84-5.63 11.84-13.36z" fill="#4285F4"/>
+              <path d="M225 3v65h-9.5V3h9.5z" fill="#34A853"/>
+              <path d="M262.02 54.48l7.56 5.04c-2.44 3.61-8.32 9.83-18.48 9.83-12.6 0-22.01-9.74-22.01-22.18 0-13.19 9.49-22.18 20.92-22.18 11.51 0 17.14 9.16 18.98 14.11l1.01 2.52-29.65 12.28c2.27 4.45 5.8 6.72 10.75 6.72 4.96 0 8.4-2.44 10.92-6.14zm-23.27-7.98l19.82-8.23c-1.09-2.77-4.37-4.7-8.23-4.7-4.95 0-11.84 4.37-11.59 12.93z" fill="#EA4335"/>
+              <path d="M35.29 41.41V32H67c.31 1.64.47 3.58.47 5.68 0 7.06-1.93 15.79-8.15 22.01-6.05 6.3-13.78 9.66-24.02 9.66C16.32 69.35.36 53.89.36 34.91.36 15.93 16.32.47 35.3.47c10.5 0 17.98 4.12 23.6 9.49l-6.64 6.64c-4.03-3.78-9.49-6.72-16.97-6.72-13.86 0-24.7 11.17-24.7 25.03 0 13.86 10.84 25.03 24.7 25.03 8.99 0 14.11-3.61 17.39-6.89 2.66-2.66 4.41-6.46 5.1-11.65l-22.49.01z" fill="#4285F4"/>
+            </svg>
+          </div>
+          <div class="logo-bar-item accenture">
+            <svg viewBox="0 0 200 60" xmlns="http://www.w3.org/2000/svg">
+              <path d="M138 5 L152 15 L138 25" stroke="#A100FF" stroke-width="5" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+              <text x="10" y="48" font-family="Arial, Helvetica, sans-serif" font-size="32" font-weight="bold" fill="#000000">accenture</text>
+            </svg>
+          </div>
+          <div class="logo-bar-item uf">
+            <img src="uf-logo.png" alt="University of Florida">
+          </div>
+        </div>
+      </div>
+    </section>
+
     <section id="about">
       <span class="section-label">About</span>
       <h2>From Strategy to Execution</h2>
@@ -1382,7 +1555,16 @@
         <div class="exp-header">
           <div>
             <div class="exp-title">Sellside Global Partnerships Program Manager</div>
-            <div class="exp-company">GOOGLE</div>
+            <div class="exp-company-row">
+              <svg class="exp-logo google" viewBox="0 0 272 92" xmlns="http://www.w3.org/2000/svg">
+                <path d="M115.75 47.18c0 12.77-9.99 22.18-22.25 22.18s-22.25-9.41-22.25-22.18C71.25 34.32 81.24 25 93.5 25s22.25 9.32 22.25 22.18zm-9.74 0c0-7.98-5.79-13.44-12.51-13.44S80.99 39.2 80.99 47.18c0 7.9 5.79 13.44 12.51 13.44s12.51-5.55 12.51-13.44z" fill="#EA4335"/>
+                <path d="M163.75 47.18c0 12.77-9.99 22.18-22.25 22.18s-22.25-9.41-22.25-22.18c0-12.85 9.99-22.18 22.25-22.18s22.25 9.32 22.25 22.18zm-9.74 0c0-7.98-5.79-13.44-12.51-13.44s-12.51 5.46-12.51 13.44c0 7.9 5.79 13.44 12.51 13.44s12.51-5.55 12.51-13.44z" fill="#FBBC05"/>
+                <path d="M209.75 26.34v39.82c0 16.38-9.66 23.07-21.08 23.07-10.75 0-17.22-7.19-19.66-13.07l8.48-3.53c1.51 3.61 5.21 7.87 11.17 7.87 7.31 0 11.84-4.51 11.84-13v-3.19h-.34c-2.18 2.69-6.38 5.04-11.68 5.04-11.09 0-21.25-9.66-21.25-22.09 0-12.52 10.16-22.26 21.25-22.26 5.29 0 9.49 2.35 11.68 4.96h.34v-3.61h9.25zm-8.56 20.92c0-7.81-5.21-13.52-11.84-13.52-6.72 0-12.35 5.71-12.35 13.52 0 7.73 5.63 13.36 12.35 13.36 6.63 0 11.84-5.63 11.84-13.36z" fill="#4285F4"/>
+                <path d="M225 3v65h-9.5V3h9.5z" fill="#34A853"/>
+                <path d="M262.02 54.48l7.56 5.04c-2.44 3.61-8.32 9.83-18.48 9.83-12.6 0-22.01-9.74-22.01-22.18 0-13.19 9.49-22.18 20.92-22.18 11.51 0 17.14 9.16 18.98 14.11l1.01 2.52-29.65 12.28c2.27 4.45 5.8 6.72 10.75 6.72 4.96 0 8.4-2.44 10.92-6.14zm-23.27-7.98l19.82-8.23c-1.09-2.77-4.37-4.7-8.23-4.7-4.95 0-11.84 4.37-11.59 12.93z" fill="#EA4335"/>
+                <path d="M35.29 41.41V32H67c.31 1.64.47 3.58.47 5.68 0 7.06-1.93 15.79-8.15 22.01-6.05 6.3-13.78 9.66-24.02 9.66C16.32 69.35.36 53.89.36 34.91.36 15.93 16.32.47 35.3.47c10.5 0 17.98 4.12 23.6 9.49l-6.64 6.64c-4.03-3.78-9.49-6.72-16.97-6.72-13.86 0-24.7 11.17-24.7 25.03 0 13.86 10.84 25.03 24.7 25.03 8.99 0 14.11-3.61 17.39-6.89 2.66-2.66 4.41-6.46 5.1-11.65l-22.49.01z" fill="#4285F4"/>
+              </svg>
+            </div>
           </div>
           <div class="exp-date">2022 — Present</div>
         </div>
@@ -1399,7 +1581,12 @@
         <div class="exp-header">
           <div>
             <div class="exp-title">Program Manager</div>
-            <div class="exp-company">ACCENTURE</div>
+            <div class="exp-company-row">
+              <svg class="exp-logo accenture" viewBox="0 0 2500 544" xmlns="http://www.w3.org/2000/svg">
+                <path d="M0 539.72h64.87L304.49 0H239.1L0 539.72zm2179.37-121.18c-15.36 54.33-56.48 90.5-128.07 90.5-91.54 0-145.87-62.09-145.87-152.59 0-88.42 57.53-155.79 147.95-155.79 68.38 0 113.74 36.69 126.51 87.38h-62.61c-10.71-28.44-38.77-46.61-75.98-46.61-53.82 0-84.33 42.16-84.33 100.57v28.95c0 58.41 30.51 97.37 84.33 97.37 42.68 0 67.86-22.91 77.02-49.78h61.05zm-475.13 96.34c-98.93 0-157.87-66.3-157.87-155.79v-2.08c0-89.49 62.14-156.31 157.87-156.31 59.96 0 102.64 26.88 122.79 67.48l-52.78 30.51c-12.79-26.36-36.21-50.3-79.93-50.3-50.3 0-93.5 40.85-93.5 108.1v2.6c0 67.25 36.21 108.62 93.5 108.62 45.28 0 73.9-27.92 81.49-63.17h-95.58v-46.32h155.27v21.35c0 83.29-52.26 135.31-131.26 135.31zm-330.83-4.16h-59.96V206.08h59.96v28.44c18.07-22.39 46.84-33.1 75.46-33.1v59.44c-35.17-3.64-75.46 11.23-75.46 61.57v182.29zm-241.16 0h-59.96V206.08h59.96v28.44c17.03-20.83 44.24-33.1 78.37-33.1 62.14 0 100.57 40.33 100.57 110.7v198.6h-59.96V320.53c0-42.68-22.39-67.25-61.05-67.25-38.66 0-57.93 27.4-57.93 72.34v185.1zm-264.07 4.16c-99.45 0-160.99-66.82-160.99-156.31v-1.56c0-87.9 63.7-156.31 153.08-156.31 94.54 0 148.36 68.81 148.36 156.31v22.39H972.8c5.2 50.3 40.85 88.42 103.53 88.42 38.66 0 68.29-13.83 92.46-37.73l35.69 38.25c-31.55 31.55-72.86 46.54-123.3 46.54zm87.38-180.21c-5.72-47.1-35.69-83.29-91.54-83.29-51.86 0-85.37 34.63-93.5 83.29h185.04zM785.41 510.72h-68.81l-99.97-137.91-42.68 44.76v93.15h-59.96V121.18h59.96v229.93l130.74-145.03h70.37l-115.82 124.5 126.17 180.14zm-359.27 0h-59.96V206.08h59.96v28.44c17.03-20.83 44.24-33.1 78.37-33.1 62.14 0 100.57 40.33 100.57 110.7v198.6h-59.96V320.53c0-42.68-22.39-67.25-61.05-67.25-38.66 0-57.93 27.4-57.93 72.34v185.1zM2355.83 510.72h59.96V206.08h-59.96v304.64zm29.98-347.32c-22.39 0-39.18-16.51-39.18-37.73 0-21.22 16.79-38.25 39.18-38.25 22.39 0 39.18 17.03 39.18 38.25 0 21.22-16.79 37.73-39.18 37.73zm114.26 347.32V253.21h-44.76v-47.13h44.76v-84.9h59.96v84.9h67.77v47.13h-67.77v209.38c0 25.32 11.75 38.77 37.73 38.77 12.27 0 23.43-1.56 30.03-4.68v47.65c-10.71 5.2-25.84 8.32-46.06 8.32-55.37 0-81.66-28.96-81.66-91.01z" fill="#A100FF"/>
+              </svg>
+              <span class="exp-company">ACCENTURE</span>
+            </div>
           </div>
           <div class="exp-date">2016 — 2021</div>
         </div>
@@ -1469,12 +1656,43 @@
         <h3>Certifications</h3>
         <div class="cert-grid">
           <div class="cert-badge">
-            <div class="cert-name">Lean Six Sigma Green Belt</div>
-            <div class="cert-issuer">Institute of Industrial Engineers · 2015</div>
+            <svg class="cert-logo" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+              <circle cx="50" cy="50" r="48" fill="#006400" stroke="#228B22" stroke-width="2"/>
+              <text x="50" y="35" font-family="Arial Black, sans-serif" font-size="12" fill="#ffffff" text-anchor="middle" font-weight="bold">LEAN</text>
+              <text x="50" y="50" font-family="Arial Black, sans-serif" font-size="10" fill="#FFD700" text-anchor="middle" font-weight="bold">SIX SIGMA</text>
+              <text x="50" y="68" font-family="Arial, sans-serif" font-size="14" fill="#ffffff" text-anchor="middle" font-weight="bold">GREEN BELT</text>
+              <path d="M35 78 L50 88 L65 78" stroke="#FFD700" stroke-width="2" fill="none"/>
+            </svg>
+            <div class="cert-info">
+              <div class="cert-name">Lean Six Sigma Green Belt</div>
+              <div class="cert-issuer">Institute of Industrial Engineers · 2015</div>
+            </div>
           </div>
           <div class="cert-badge">
-            <div class="cert-name">Google Project Management</div>
-            <div class="cert-issuer">Google · 2021</div>
+            <svg class="cert-logo" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+              <rect x="5" y="20" width="90" height="60" rx="4" fill="#4285F4"/>
+              <rect x="10" y="25" width="35" height="25" rx="2" fill="#EA4335"/>
+              <rect x="55" y="25" width="35" height="25" rx="2" fill="#FBBC05"/>
+              <rect x="10" y="55" width="35" height="20" rx="2" fill="#34A853"/>
+              <rect x="55" y="55" width="35" height="20" rx="2" fill="#4285F4"/>
+              <circle cx="50" cy="50" r="12" fill="#ffffff"/>
+              <text x="50" y="54" font-family="Arial, sans-serif" font-size="8" fill="#4285F4" text-anchor="middle" font-weight="bold">PM</text>
+            </svg>
+            <div class="cert-info">
+              <div class="cert-name">Google Project Management</div>
+              <div class="cert-issuer">Google Career Certificates · 2021</div>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <div class="education-section">
+        <h3>Education</h3>
+        <div class="education-item">
+          <img src="uf-logo.png" alt="University of Florida" class="education-logo">
+          <div class="education-details">
+            <div class="education-degree">B.S. Industrial and Systems Engineering</div>
+            <div class="education-school">University of Florida · Gainesville, FL · May 2016</div>
           </div>
         </div>
       </div>
