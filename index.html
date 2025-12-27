@@ -1,2242 +1,1176 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <!-- Google Tag Manager -->
-  <script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
-  new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
-  j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
-  'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
-  })(window,document,'script','dataLayer','GTM-NX8WLZWM');</script>
-  <!-- End Google Tag Manager -->
-  
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Benjamin J. Sunter - AdTech Program Manager</title>
+  <title>Benjamin J. Sunter - Business Operations & Strategy</title>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
   <style>
-    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
-    
     :root {
-      --bg: #f8f9fa; 
-      --text: #212529; 
-      --text-light: #495057;
-      --primary: #6C63FF;
-      --accent: #00DF9A;
-      --highlight-bg: #f0f0ff; 
-      --highlight-border: #dadaff;
+      --navy: #1a2744;
+      --navy-light: #2c3e50;
+      --gold: #c9a961;
+      --gold-light: #e8d5a3;
+      --white: #ffffff;
+      --gray-light: #f8f9fa;
+      --gray: #6c757d;
+      --text: #333;
     }
-
-    /* Custom scrollbar */
-    ::-webkit-scrollbar {
-      width: 12px;
-    }
-
-    ::-webkit-scrollbar-track {
-      background: #f1f1f1;
-      border-radius: 0;
-    }
-
-    ::-webkit-scrollbar-thumb {
-      background: linear-gradient(135deg, var(--primary), var(--accent));
-      border-radius: 0;
-      border: 2px solid #f1f1f1;
-    }
-
-    ::-webkit-scrollbar-thumb:hover {
-      background: linear-gradient(135deg, var(--accent), var(--primary));
-    }
-
-    /* Cursor effects */
-    * {
-      cursor: default;
-    }
-
-    a, button, .flip-card {
-      cursor: pointer;
-    }
-
+    
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    
     body {
       font-family: 'Inter', sans-serif;
-      background: linear-gradient(135deg, #fafafa 0%, #f5f7fa 100%);
       color: var(--text);
-      line-height: 1.6;
-      margin: 0;
-      padding: 0;
-      position: relative;
+      line-height: 1.7;
+      background: var(--white);
     }
-
-    /* Animated Banner */
-    .animated-banner {
-      position: relative;
-      height: 160px;
-      background: linear-gradient(135deg, #2c3e50 0%, #34495e 50%, #2c3e50 100%);
-      background-size: 200% 200%;
-      animation: subtleShift 20s ease infinite;
-      overflow: hidden;
-      border-bottom: 3px solid var(--accent);
-      box-shadow: inset 0 0 50px rgba(0, 0, 0, 0.1);
-    }
-
-    @keyframes subtleShift {
-      0%, 100% { background-position: 0% 50%; }
-      50% { background-position: 100% 50%; }
-    }
-
-    .animated-banner::before {
-      content: '';
-      position: absolute;
-      top: 0;
-      left: 0;
-      right: 0;
-      bottom: 0;
-      background: linear-gradient(135deg, rgba(108, 99, 255, 0.2) 0%, rgba(0, 223, 154, 0.1) 100%);
-      z-index: 1;
-    }
-
-    .math-symbol {
-      position: absolute;
-      color: rgba(255, 255, 255, 0.4);
-      font-size: 1.5rem;
-      font-weight: 300;
-      animation: float 8s ease-in-out infinite;
-      pointer-events: none;
-      z-index: 2;
-    }
-
-    .math-symbol:nth-child(1) { left: 10%; top: 20%; animation-delay: 0s; }
-    .math-symbol:nth-child(2) { left: 20%; top: 60%; animation-delay: 2s; }
-    .math-symbol:nth-child(3) { left: 80%; top: 30%; animation-delay: 4s; }
-    .math-symbol:nth-child(4) { left: 70%; top: 70%; animation-delay: 6s; }
-    .math-symbol:nth-child(5) { left: 40%; top: 10%; animation-delay: 1s; }
-    .math-symbol:nth-child(6) { left: 90%; top: 80%; animation-delay: 3s; }
-
-    @keyframes float {
-      0%, 100% { transform: translateY(0px) rotate(0deg); opacity: 0.1; }
-      50% { transform: translateY(-20px) rotate(180deg); opacity: 0.3; }
-    }
-
-    .grid-overlay {
-      position: absolute;
-      top: 0;
-      left: 0;
-      right: 0;
-      bottom: 0;
-      background-image: 
-        linear-gradient(rgba(255,255,255,0.1) 1px, transparent 1px),
-        linear-gradient(90deg, rgba(255,255,255,0.1) 1px, transparent 1px);
-      background-size: 20px 20px;
-      opacity: 0.3;
-      animation: gridShift 20s linear infinite;
-    }
-
-    @keyframes gridShift {
-      0% { transform: translate(0, 0); }
-      100% { transform: translate(20px, 20px); }
-    }
-
-    .particle {
-      position: absolute;
-      background: rgba(255, 255, 255, 0.6);
-      border-radius: 50%;
-      animation: drift 15s ease-in-out infinite;
-      pointer-events: none;
-    }
-
-    .particle:nth-child(1) { width: 3px; height: 3px; left: 5%; top: 40%; animation-delay: 0s; }
-    .particle:nth-child(2) { width: 2px; height: 2px; left: 25%; top: 20%; animation-delay: 3s; }
-    .particle:nth-child(3) { width: 4px; height: 4px; left: 50%; top: 60%; animation-delay: 6s; }
-    .particle:nth-child(4) { width: 2px; height: 2px; left: 75%; top: 30%; animation-delay: 9s; }
-    .particle:nth-child(5) { width: 3px; height: 3px; left: 85%; top: 70%; animation-delay: 12s; }
-
-    @keyframes drift {
-      0%, 100% { transform: translate(0, 0); opacity: 0.3; }
-      25% { transform: translate(30px, -20px); opacity: 0.8; }
-      50% { transform: translate(-20px, -40px); opacity: 0.6; }
-      75% { transform: translate(40px, -10px); opacity: 0.4; }
-    }
-
-    .fibonacci-spiral {
-      position: absolute;
-      top: 50%;
-      right: 10%;
-      width: 60px;
-      height: 60px;
-      border: 2px solid rgba(255, 255, 255, 0.1);
-      border-radius: 50%;
-      animation: spiral 30s linear infinite;
-      transform-origin: center;
-    }
-
-    @keyframes spiral {
-      0% { transform: translateY(-50%) rotate(0deg) scale(0.8); opacity: 0.1; }
-      50% { transform: translateY(-50%) rotate(180deg) scale(1.2); opacity: 0.3; }
-      100% { transform: translateY(-50%) rotate(360deg) scale(0.8); opacity: 0.1; }
-    }
-
-    .dna-strand {
-      position: absolute;
-      left: 5%;
-      top: 0;
-      width: 2px;
-      height: 100%;
-      background: linear-gradient(to bottom, 
-        transparent 0%, 
-        rgba(255,255,255,0.2) 25%, 
-        rgba(255,255,255,0.4) 50%, 
-        rgba(255,255,255,0.2) 75%, 
-        transparent 100%);
-      animation: dnaRotate 12s ease-in-out infinite;
-    }
-
-    @keyframes dnaRotate {
-      0%, 100% { transform: scaleY(1) rotate(0deg); }
-      50% { transform: scaleY(1.2) rotate(180deg); }
-    }
-
-    /* Header */
-    header {
+    
+    .header {
+      background: var(--white);
+      padding: 2rem 0;
       text-align: center;
-      padding: 2rem 0.5rem;
+      border-bottom: 1px solid #eee;
+      position: sticky;
+      top: 0;
+      z-index: 100;
     }
-
-    .profile-image {
-      width: 200px;
-      height: 200px;
-      border-radius: 50%;
-      border: 4px solid var(--primary);
-      margin-bottom: 1rem;
-      box-shadow: 0 8px 25px rgba(108, 99, 255, 0.2), 0 2px 10px rgba(0, 0, 0, 0.1);
-      background-image: url('profile-picture.jpg');
-      background-size: cover;
-      background-position: center;
-      display: block;
-      margin: 0 auto 1rem;
-      position: relative;
-      transition: transform 0.3s ease;
+    
+    .signature {
+      font-family: 'Playfair Display', serif;
+      font-size: 2.5rem;
+      font-weight: 400;
+      color: var(--navy);
+      font-style: italic;
+      letter-spacing: 2px;
     }
-
-    .profile-image:hover {
-      transform: scale(1.02);
-      box-shadow: 0 12px 35px rgba(108, 99, 255, 0.3), 0 4px 15px rgba(0, 0, 0, 0.1);
-    }
-
-    h1 {
-      font-size: 3rem;
-      font-weight: 800;
-      color: #2c3e50;
-      margin: 0.5rem 0;
-      position: relative;
-      text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-    }
-
-    .subtitle {
-      font-size: 1.2rem;
-      color: var(--text-light);
-      margin: 0;
-    }
-
-    /* --- START: New Main Navigation Styles --- */
+    
     .main-navigation {
       display: flex;
       justify-content: center;
-      background-color: #fff;
-      border-bottom: 1px solid #e0e0e0;
-      margin-bottom: 2.5rem;
-      box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+      gap: 0;
+      margin-top: 1.5rem;
+      border-bottom: 1px solid #eee;
     }
-
+    
     .main-nav-tab {
-      padding: 1rem 2rem;
+      padding: 1rem 2.5rem;
       background: none;
       border: none;
-      font-size: 1.1rem;
-      font-weight: 600;
-      color: var(--text-light);
+      font-size: 0.85rem;
+      font-weight: 500;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      color: var(--gray);
       cursor: pointer;
-      transition: all 0.3s ease;
-      border-bottom: 4px solid transparent;
+      transition: all 0.3s;
+      border-bottom: 3px solid transparent;
       position: relative;
       top: 1px;
     }
-
-    .main-nav-tab:hover {
-      color: var(--primary);
-    }
-
+    
+    .main-nav-tab:hover { color: var(--navy); }
+    
     .main-nav-tab.active {
-      color: var(--primary);
-      border-bottom-color: var(--primary);
+      color: var(--navy);
+      border-bottom-color: var(--gold);
     }
-
+    
     .page-section {
-      display: none; /* Hidden by default */
-      animation: fadeIn 0.8s ease;
+      display: none;
+      animation: fadeIn 0.5s ease;
     }
-
-    .page-section.active {
-      display: block; /* Shown when active */
-    }
-
+    
+    .page-section.active { display: block; }
+    
     @keyframes fadeIn {
       from { opacity: 0; transform: translateY(10px); }
       to { opacity: 1; transform: translateY(0); }
     }
-    /* --- END: New Main Navigation Styles --- */
-
-    /* Main Content */
-    main {
-      max-width: 1200px;
-      margin: 0 auto;
-      padding: 0 1rem;
-    }
-
-    section {
-      margin-bottom: 2.5rem;
-      border-left: 3px solid var(--accent);
-      padding-left: 1rem;
-    }
-
-    h2 {
-      font-size: 1.8rem;
-      font-weight: 600;
-      color: var(--primary);
-      margin-bottom: 1rem;
-    }
-
-    .highlight-box {
-      background-color: var(--highlight-bg);
-      border: 1px solid var(--highlight-border);
-      border-radius: 8px;
-      padding: 1.5rem;
-      margin: 1.5rem 0;
-    }
-
-    /* Experience */
-    .job {
-      margin-bottom: 2rem;
-    }
-
-    .job-title {
-      font-size: 1.2rem;
-      font-weight: 600;
-      margin-bottom: 0.25rem;
-    }
-
-    .job-company {
-      color: var(--text-light);
-      margin-bottom: 0.5rem;
-    }
-
-    /* Highlights Grid */
-    .highlights-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-      gap: 1rem;
-      margin-top: 1rem;
-    }
-
-    .highlight-card {
-      background: linear-gradient(135deg, #f8f9ff 0%, #e8f2ff 100%);
-      border: 2px solid var(--primary);
-      border-radius: 4px;
-      padding: 1.5rem 1rem;
-      text-align: center;
-      transition: all 0.3s ease;
-      position: relative;
-      overflow: hidden;
-      min-height: 140px;
+    
+    .hero {
+      background: var(--navy);
+      color: var(--white);
+      padding: 5rem 2rem;
       display: flex;
-      flex-direction: column;
       justify-content: center;
       align-items: center;
-    }
-
-    .highlight-card::before {
-      content: '';
-      position: absolute;
-      top: 0;
-      left: -100%;
-      width: 100%;
-      height: 100%;
-      background: linear-gradient(90deg, transparent, rgba(108, 99, 255, 0.1), transparent);
-      transition: left 0.5s ease;
-    }
-
-    .highlight-card:hover::before {
-      left: 100%;
-    }
-
-    .highlight-card:hover {
-      transform: translateY(-5px);
-      box-shadow: 0 8px 25px rgba(108, 99, 255, 0.2);
-      border-color: var(--accent);
-    }
-
-    .highlight-icon {
-      font-size: 2rem;
-      margin-bottom: 0.5rem;
-      display: block;
-    }
-
-    .highlight-metric {
-      font-size: 2.2rem;
-      font-weight: 900;
-      color: var(--primary);
-      margin-bottom: 0.25rem;
-      position: relative;
-      z-index: 1;
-      text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-    }
-
-    .highlight-description {
-      font-size: 0.85rem;
-      color: var(--text-light);
-      font-weight: 500;
-      line-height: 1.3;
-      position: relative;
-      z-index: 1;
-    }
-
-    /* Skills Section */
-    .skills-container {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-      gap: 1.5rem;
-      padding-top: 1rem;
-    }
-
-    .skills-category h3 {
-      font-size: 1.1rem;
-      font-weight: 600;
-      color: var(--primary);
-      margin-bottom: 0.75rem;
-    }
-
-    .skills-category ul {
-      list-style: none;
-      padding: 0;
-      margin: 0;
-    }
-
-    .skills-category li {
-      margin-bottom: 0.5rem;
-      color: var(--text-light);
-      display: flex;
-      align-items: center;
-    }
-    
-    .skills-category li::before {
-      content: '✓';
-      color: var(--accent);
-      margin-right: 0.5rem;
-      font-weight: 700;
-    }
-
-    /* --- START: New Blog & Projects Section Styles --- */
-    .projects-grid {
-        display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
-        gap: 2rem;
-        margin-top: 1rem;
-    }
-
-    .project-card {
-        background: #fff;
-        border-radius: 4px;
-        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
-        overflow: hidden;
-        transition: transform 0.3s ease, box-shadow 0.3s ease;
-        display: flex;
-        flex-direction: column;
-    }
-
-    .project-card:hover {
-        transform: translateY(-8px);
-        box-shadow: 0 10px 25px rgba(108, 99, 255, 0.2);
-    }
-
-    .project-image-placeholder {
-        height: 200px;
-        background: linear-gradient(135deg, var(--primary), var(--accent));
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        color: white;
-    }
-    
-    .project-image-text {
-        font-size: 1.5rem;
-        font-weight: 600;
-        text-shadow: 0 1px 3px rgba(0,0,0,0.2);
-    }
-
-    .project-content {
-        padding: 1.5rem;
-        flex-grow: 1;
-        display: flex;
-        flex-direction: column;
-    }
-
-    .project-tags {
-        margin-bottom: 0.75rem;
-    }
-
-    .project-tag {
-        display: inline-block;
-        background-color: var(--highlight-bg);
-        color: var(--primary);
-        padding: 0.25rem 0.75rem;
-        border-radius: 15px;
-        font-size: 0.75rem;
-        font-weight: 600;
-        margin-right: 0.5rem;
-        margin-bottom: 0.5rem;
-    }
-
-    .project-title {
-        font-size: 1.25rem;
-        font-weight: 700;
-        color: var(--text);
-        margin-bottom: 0.5rem;
-        margin-top: 0;
-    }
-
-    .project-description {
-        font-size: 0.9rem;
-        color: var(--text-light);
-        line-height: 1.5;
-        flex-grow: 1;
-        margin-bottom: 1rem;
-    }
-
-    .project-link {
-        color: var(--primary);
-        text-decoration: none;
-        font-weight: 600;
-        transition: color 0.3s ease;
-        align-self: flex-start;
-    }
-
-    .project-link:hover {
-        color: var(--accent);
-    }
-    /* --- END: New Blog & Projects Section Styles --- */
-
-    /* Work Samples Dashboard */
-    .dashboard-container {
-      margin-top: 2rem;
-      padding: 0;
-      width: 100%;
-      max-width: 1100px;
-      margin-left: auto;
-      margin-right: auto;
-      box-sizing: border-box;
-    }
-
-    .tableau-dashboard {
-      background: white;
-      border-radius: 4px;
-      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
-      overflow: hidden;
-      margin-top: 1rem;
-      animation: slideInUp 0.8s ease-out;
-    }
-
-    .dashboard-tabs {
-      display: flex;
-      background: #f8f9fa;
-      border-bottom: 1px solid #e9ecef;
-    }
-
-    .dashboard-tab {
-      flex: 1;
-      padding: 1rem 1.5rem;
-      background: none;
-      border: none;
-      font-size: 0.9rem;
-      font-weight: 500;
-      color: #6c757d;
-      cursor: pointer;
-      transition: all 0.3s ease;
-      border-bottom: 3px solid transparent;
-    }
-
-    .dashboard-tab:hover {
-      background: #e9ecef;
-      color: var(--primary);
-    }
-
-    .dashboard-tab.active {
-      background: white;
-      color: var(--primary);
-      border-bottom-color: var(--primary);
-      font-weight: 600;
-    }
-
-    .dashboard-content {
-      display: none;
-    }
-
-    .dashboard-content.active {
-      display: block;
-    }
-
-    @keyframes slideInUp {
-      from {
-        opacity: 0;
-        transform: translateY(30px);
-      }
-      to {
-        opacity: 1;
-        transform: translateY(0);
-      }
-    }
-
-    .dashboard-header {
-      background: linear-gradient(135deg, #34495e 0%, #2c3e50 100%);
-      color: white;
-      padding: 1.5rem;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      flex-wrap: wrap;
-      position: relative;
-      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-    }
-
-    .dashboard-title {
-      font-size: 1.3rem;
-      font-weight: 600;
-    }
-
-    .dashboard-filters {
-      display: flex;
-      gap: 0.5rem;
+      gap: 4rem;
       flex-wrap: wrap;
     }
-
-    .filter-tag {
-      background: rgba(255, 255, 255, 0.2);
-      padding: 0.3rem 0.8rem;
-      border-radius: 20px;
-      font-size: 0.85rem;
-      backdrop-filter: blur(10px);
+    
+    .hero-image {
+      width: 280px;
+      height: 340px;
+      border-radius: 4px;
+      overflow: hidden;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.3);
     }
-
-    .dashboard-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-      gap: 1.5rem;
-      padding: 2rem;
-    }
-
-    /* Overview Layout */
-    .overview-layout {
-      display: flex;
-      flex-direction: column;
-      gap: 1rem;
-      padding: 1rem;
-    }
-
-    .kpi-section {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 1rem;
-    }
-
-    .chart-section {
+    
+    .hero-image img {
       width: 100%;
+      height: 100%;
+      object-fit: cover;
     }
-
-    .metric-card {
-      background: #f8fafc;
-      border-radius: 4px;
-      padding: 1.5rem;
-      border-left: 4px solid var(--primary);
-      transition: transform 0.3s ease;
-      animation: fadeInScale 0.6s ease-out;
-    }
-
-    .metric-card.compact {
-      background: #f8fafc;
-      border-radius: 4px;
-      padding: 1rem;
-      border-left: 4px solid var(--primary);
-      transition: transform 0.3s ease;
-      animation: fadeInScale 0.6s ease-out;
-    }
-
-    .metric-card:hover {
-      transform: translateY(-3px);
-    }
-
-    @keyframes fadeInScale {
-      from {
-        opacity: 0;
-        transform: scale(0.95);
-      }
-      to {
-        opacity: 1;
-        transform: scale(1);
-      }
-    }
-
-    .metric-header {
-      font-size: 0.9rem;
-      color: var(--text-light);
+    
+    .hero-content { max-width: 520px; }
+    
+    .hero h1 {
+      font-family: 'Playfair Display', serif;
+      font-size: 2.8rem;
+      font-weight: 600;
       margin-bottom: 0.5rem;
-      font-weight: 500;
+      letter-spacing: 1px;
     }
-
-    .metric-value {
-      font-size: 2.2rem;
-      font-weight: 700;
-      color: var(--primary);
-      margin-bottom: 0.5rem;
-    }
-
-    .metric-trend {
-      font-size: 0.85rem;
-      font-weight: 600;
-      margin-bottom: 1rem;
-    }
-
-    .metric-trend.positive {
-      color: #10b981;
-    }
-
-    .metric-trend.neutral {
-      color: #6b7280;
-    }
-
-    .progress-bar {
-      width: 100%;
-      height: 6px;
-      background: #e5e7eb;
-      border-radius: 1px;
-      overflow: hidden;
-    }
-
-    .progress-fill {
-      height: 100%;
-      background: linear-gradient(90deg, var(--primary), var(--accent));
-      border-radius: 1px;
-      animation: progressAnimation 2s ease-out;
-    }
-
-    .progress-fill.budget {
-      background: linear-gradient(90deg, #f59e0b, #eab308);
-    }
-
-    @keyframes progressAnimation {
-      from {
-        width: 0%;
-      }
-    }
-
-    .star-rating {
-      display: flex;
-      gap: 0.2rem;
-    }
-
-    .star {
-      color: #fbbf24;
-      font-size: 1.2rem;
-    }
-
-    .star.filled {
-      animation: starTwinkle 0.8s ease-out;
-    }
-
-    .star.half {
-      background: linear-gradient(90deg, #fbbf24 50%, #e5e7eb 50%);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      background-clip: text;
-      animation: starTwinkle 0.8s ease-out 0.2s;
-    }
-
-    @keyframes starTwinkle {
-      0%, 100% {
-        transform: scale(1);
-      }
-      50% {
-        transform: scale(1.2);
-      }
-    }
-
-    .chart-container {
-      background: #f8fafc;
-      border-radius: 4px;
-      padding: 1.5rem;
-      border-left: 4px solid var(--accent);
-      animation: slideInLeft 0.8s ease-out;
-    }
-
-    .chart-container.full-width {
-      background: #f8fafc;
-      border-radius: 4px;
-      padding: 1.5rem;
-      border-left: 4px solid var(--accent);
-      animation: slideInLeft 0.8s ease-out;
-      width: 100%;
-      max-width: none;
-    }
-
-    @keyframes slideInLeft {
-      from {
-        opacity: 0;
-        transform: translateX(-20px);
-      }
-      to {
-        opacity: 1;
-        transform: translateX(0);
-      }
-    }
-
-    .chart-title {
+    
+    .hero-subtitle {
+      color: var(--gold);
       font-size: 1.1rem;
-      font-weight: 600;
-      color: var(--primary);
-      margin-bottom: 1rem;
-    }
-
-    .gantt-chart {
-      display: flex;
-      flex-direction: column;
-      gap: 1rem;
-    }
-
-    .gantt-item {
-      display: flex;
-      align-items: center;
-      gap: 1rem;
-    }
-
-    .task-name {
-      width: 120px;
-      font-size: 0.9rem;
-      color: var(--text-light);
-      flex-shrink: 0;
-    }
-
-    .task-bar {
-      height: 20px;
-      border-radius: 2px;
-      position: relative;
-      flex-grow: 1;
-      max-width: 200px;
-      animation: taskBarGrow 1.5s ease-out;
-    }
-
-    .task-bar.completed {
-      background: linear-gradient(90deg, #10b981, #059669);
-    }
-
-    .task-bar.in-progress {
-      background: linear-gradient(90deg, #f59e0b, #d97706);
-    }
-
-    .task-bar.planned {
-      background: linear-gradient(90deg, #6b7280, #4b5563);
-    }
-
-    .task-bar.behind {
-      background: linear-gradient(90deg, #ef4444, #dc2626);
-    }
-
-    .task-details {
-      font-size: 0.75rem;
-      color: #6b7280;
-      margin-left: 0.5rem;
-      font-style: italic;
-    }
-
-    @keyframes taskBarGrow {
-      from {
-        width: 0%;
-      }
-    }
-
-    .task-progress {
-      font-size: 0.8rem;
-      color: var(--text-light);
-      font-weight: 600;
-      min-width: 35px;
-      flex-shrink: 0;
-    }
-
-    .line-chart {
-      position: relative;
-      height: 120px;
-      background: linear-gradient(to top, #f3f4f6 0%, transparent 100%);
-      border-radius: 6px;
-      overflow: hidden;
-    }
-
-    .chart-line {
-      position: relative;
-      height: 100%;
-    }
-
-    .data-point {
-      position: absolute;
-      width: 8px;
-      height: 8px;
-      background: var(--primary);
-      border-radius: 50%;
-      animation: pointPulse 0.8s ease-out;
-      box-shadow: 0 0 10px rgba(108, 99, 255, 0.5);
-    }
-
-    .data-point::after {
-      content: '';
-      position: absolute;
-      width: 4px;
-      height: 100vh;
-      background: linear-gradient(to bottom, var(--primary), transparent);
-      left: 2px;
-      top: 0;
-    }
-
-    @keyframes pointPulse {
-      0% {
-        transform: scale(0);
-        opacity: 0;
-      }
-      50% {
-        transform: scale(1.5);
-        opacity: 0.8;
-      }
-      100% {
-        transform: scale(1);
-        opacity: 1;
-      }
-    }
-
-    .adtech-point {
-      position: relative;
-      background: linear-gradient(45deg, #6C63FF, #00DF9A);
-      border: 2px solid white;
-      box-shadow: 0 0 15px rgba(108, 99, 255, 0.4);
-      animation: pointPulse 0.8s ease-out, adtechGlow 3s ease-in-out infinite;
-    }
-
-    .adtech-point::before {
-      content: '';
-      position: absolute;
-      top: -2px;
-      left: -2px;
-      right: -2px;
-      bottom: -2px;
-      background: linear-gradient(45deg, #6C63FF, #00DF9A, #FF6B6B);
-      border-radius: 50%;
-      z-index: -1;
-      animation: rotate 4s linear infinite;
-    }
-
-    @keyframes adtechGlow {
-      0%, 100% { box-shadow: 0 0 15px rgba(108, 99, 255, 0.4); }
-      50% { box-shadow: 0 0 25px rgba(0, 223, 154, 0.6); }
-    }
-
-    @keyframes rotate {
-      0% { transform: rotate(0deg); }
-      100% { transform: rotate(360deg); }
-    }
-
-    .point-label {
-      position: absolute;
-      top: -25px;
-      left: 50%;
-      transform: translateX(-50%);
-      background: rgba(0, 0, 0, 0.8);
-      color: white;
-      padding: 2px 6px;
-      border-radius: 4px;
-      font-size: 0.7rem;
-      font-weight: 600;
-      white-space: nowrap;
-      opacity: 0;
-      transition: opacity 0.3s ease;
-      pointer-events: none;
-    }
-
-    .adtech-point:hover .point-label {
-      opacity: 1;
-    }
-
-    .trend-area {
-      position: absolute;
-      bottom: 0;
-      left: 0;
-      right: 0;
-      height: 100%;
-      background: linear-gradient(
-        to bottom,
-        rgba(108, 99, 255, 0.1) 0%,
-        rgba(0, 223, 154, 0.05) 50%,
-        transparent 100%
-      );
-      clip-path: polygon(15% 65%, 30% 75%, 45% 40%, 60% 55%, 75% 70%, 90% 25%, 100% 100%, 0% 100%);
-      animation: areaFill 2s ease-out;
-    }
-
-    @keyframes areaFill {
-      from { opacity: 0; transform: scaleY(0); }
-      to { opacity: 1; transform: scaleY(1); }
-    }
-
-    .chart-axis {
-      display: flex;
-      justify-content: space-between;
-      margin-top: 0.5rem;
-      font-size: 0.8rem;
-      color: var(--text-light);
-    }
-
-    .chart-footer {
-      font-size: 0.75rem;
-      color: #6b7280;
-      font-style: italic;
-      margin-top: 0.5rem;
-      text-align: right;
-    }
-
-    .metric-note {
-      font-size: 0.75rem;
-      color: #6b7280;
-      margin-top: 0.5rem;
-      font-style: italic;
-    }
-
-    /* Revenue Chart Simple */
-    .revenue-chart-simple {
-      padding: 1rem 0;
-    }
-
-    .chart-row {
-      display: grid;
-      grid-template-columns: 140px 1fr 60px;
-      align-items: center;
-      gap: 1rem;
-      margin-bottom: 0.75rem;
-      padding: 0.5rem 0;
-    }
-
-    .solution-name {
-      font-size: 0.85rem;
       font-weight: 500;
-      color: var(--text);
-    }
-
-    .revenue-bar {
-      height: 24px;
-      border-radius: 2px;
-      position: relative;
-      animation: barGrowth 1.5s ease-out;
-      box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.2);
-      position: relative;
-      overflow: hidden;
-    }
-
-    .revenue-bar::after {
-      content: '';
-      position: absolute;
-      top: 0;
-      left: -100%;
-      width: 100%;
-      height: 100%;
-      background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.4), transparent);
-      animation: shimmer 2s infinite;
-    }
-
-    @keyframes shimmer {
-      0% { left: -100%; }
-      100% { left: 100%; }
-    }
-
-    @keyframes barGrowth {
-      from { width: 0% !important; }
-    }
-
-    .revenue-value {
-      font-size: 0.85rem;
-      font-weight: 600;
-      color: var(--primary);
-      text-align: right;
-    }
-
-    /* RAID Log Styles */
-    .raid-items {
-      display: flex;
-      flex-direction: column;
-      gap: 1rem;
-    }
-
-    .raid-item {
-      display: flex;
-      align-items: center;
-      background: white;
-      border-radius: 8px;
-      padding: 1rem;
-      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-      transition: transform 0.2s ease, box-shadow 0.2s ease;
-    }
-
-    .raid-item:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
-    }
-
-    .raid-type {
-      width: 40px;
-      height: 40px;
-      border-radius: 50%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-weight: 700;
-      font-size: 1.1rem;
-      color: white;
-      margin-right: 1rem;
-      flex-shrink: 0;
-    }
-
-    .raid-item.risk .raid-type {
-      background: linear-gradient(135deg, #ef4444, #dc2626);
-    }
-
-    .raid-item.action .raid-type {
-      background: linear-gradient(135deg, #3b82f6, #2563eb);
-    }
-
-    .raid-item.issue .raid-type {
-      background: linear-gradient(135deg, #f59e0b, #d97706);
-    }
-
-    .raid-item.decision .raid-type {
-      background: linear-gradient(135deg, #10b981, #059669);
-    }
-
-    .raid-content {
-      flex: 1;
-    }
-
-    .raid-title {
-      font-size: 1rem;
-      font-weight: 600;
-      color: var(--text);
-      margin-bottom: 0.25rem;
-    }
-
-    .raid-status {
-      font-size: 0.85rem;
-      font-weight: 500;
-      padding: 0.25rem 0.5rem;
-      border-radius: 4px;
-      display: inline-block;
-    }
-
-    .raid-status.high {
-      background: #fee2e2;
-      color: #dc2626;
-    }
-
-    .raid-status.medium {
-      background: #fef3c7;
-      color: #d97706;
-    }
-
-    .raid-status.low {
-      background: #d1fae5;
-      color: #059669;
-    }
-
-    .raid-status.pending {
-      background: #e0e7ff;
-      color: #4338ca;
-    }
-
-    .raid-owner {
-      font-size: 0.75rem;
-      color: #6b7280;
-      margin-top: 0.25rem;
-    }
-
-    .raid-footer {
-      font-size: 0.75rem;
-      color: #6b7280;
-      font-style: italic;
-      margin-top: 1rem;
-      padding-top: 1rem;
-      border-top: 1px solid #e5e7eb;
-    }
-
-    /* RAID Visual Styles */
-    .raid-visual {
-      padding: 1rem 0;
-    }
-
-    .raid-summary-grid {
-      display: grid;
-      grid-template-columns: repeat(4, 1fr);
-      gap: 1rem;
+      letter-spacing: 2px;
+      text-transform: uppercase;
       margin-bottom: 1.5rem;
     }
-
-    .raid-summary-item {
-      background: white;
-      border-radius: 8px;
-      padding: 1rem;
+    
+    .hero p {
+      color: rgba(255,255,255,0.85);
+      font-size: 1.05rem;
+      line-height: 1.8;
+    }
+    
+    .social-bar {
+      display: flex;
+      gap: 1.5rem;
+      margin-top: 2rem;
+      flex-wrap: wrap;
+    }
+    
+    .social-bar a {
+      color: var(--white);
+      opacity: 0.7;
+      text-decoration: none;
+      font-size: 0.85rem;
+      transition: opacity 0.3s;
+    }
+    
+    .social-bar a:hover { opacity: 1; }
+    
+    .social-bar span {
+      color: var(--white);
+      opacity: 0.7;
+      font-size: 0.85rem;
+    }
+    
+    .stats {
+      background: var(--navy);
+      padding: 4rem 2rem;
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      max-width: 1000px;
+      margin: 0 auto;
+      gap: 2rem;
+    }
+    
+    .stat {
       text-align: center;
-      border-left: 4px solid;
-      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+      color: var(--white);
     }
-
-    .raid-summary-item.risk {
-      border-left-color: #ef4444;
-    }
-
-    .raid-summary-item.action {
-      border-left-color: #3b82f6;
-    }
-
-    .raid-summary-item.issue {
-      border-left-color: #f59e0b;
-    }
-
-    .raid-summary-item.decision {
-      border-left-color: #10b981;
-    }
-
-    .raid-icon {
-      font-size: 1.5rem;
-      margin-bottom: 0.5rem;
-      display: block;
-    }
-
-    .raid-count {
-      font-size: 1.8rem;
+    
+    .stat-number {
+      font-family: 'Playfair Display', serif;
+      font-size: 3.5rem;
       font-weight: 700;
-      color: var(--primary);
-      margin-bottom: 0.25rem;
+      color: var(--gold);
+      line-height: 1;
     }
-
-    .raid-label {
+    
+    .stat-label {
       font-size: 0.85rem;
-      color: var(--text-light);
-      font-weight: 500;
+      color: rgba(255,255,255,0.75);
+      margin-top: 0.75rem;
+      line-height: 1.4;
     }
-
-    .priority-items {
-      background: #f8f9fa;
-      border-radius: 8px;
-      padding: 1rem;
+    
+    section {
+      padding: 5rem 2rem;
+      max-width: 900px;
+      margin: 0 auto;
     }
-
-    .priority-item {
-      display: flex;
-      align-items: center;
-      gap: 0.75rem;
-      padding: 0.75rem 0;
-      border-bottom: 1px solid #e9ecef;
-    }
-
-    .priority-item:last-child {
-      border-bottom: none;
-    }
-
-    .priority-badge {
-      font-size: 0.75rem;
+    
+    .section-label {
+      color: var(--gold);
+      font-size: 0.8rem;
       font-weight: 600;
-      padding: 0.25rem 0.5rem;
+      letter-spacing: 3px;
+      text-transform: uppercase;
+      margin-bottom: 1rem;
+    }
+    
+    h2 {
+      font-family: 'Playfair Display', serif;
+      font-size: 2.2rem;
+      font-weight: 600;
+      color: var(--navy);
+      margin-bottom: 2rem;
+    }
+    
+    .about-content {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 3rem;
+    }
+    
+    .about-content p {
+      color: var(--gray);
+      font-size: 1rem;
+      line-height: 1.9;
+    }
+    
+    .highlight-quote {
+      background: var(--gray-light);
+      border-left: 4px solid var(--gold);
+      padding: 2rem;
+      margin: 2rem 0;
+      font-style: italic;
+      color: var(--navy);
+    }
+    
+    .what-i-do {
+      background: var(--gray-light);
+      padding: 5rem 2rem;
+      max-width: none;
+    }
+    
+    .what-i-do-container {
+      max-width: 1000px;
+      margin: 0 auto;
+    }
+    
+    .capabilities-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 2rem;
+    }
+    
+    .capability-card {
+      background: var(--white);
+      padding: 2rem;
       border-radius: 4px;
-      min-width: 60px;
-      text-align: center;
+      border-top: 3px solid var(--gold);
     }
-
-    .priority-text {
-      font-size: 0.85rem;
-      color: var(--text);
-      line-height: 1.3;
+    
+    .capability-card h3 {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.2rem;
+      color: var(--navy);
+      margin-bottom: 1rem;
     }
-
-    .priority-item.urgent .priority-badge {
-      background: #fee2e2;
-      color: #dc2626;
+    
+    .capability-card p {
+      color: var(--gray);
+      font-size: 0.95rem;
+      line-height: 1.7;
     }
-
-    .priority-item.high .priority-badge {
-      background: #fef3c7;
-      color: #d97706;
+    
+    .experience-item {
+      border-bottom: 1px solid #eee;
+      padding: 2.5rem 0;
     }
-
-    .priority-item.medium .priority-badge {
-      background: #d1fae5;
-      color: #059669;
-    }
-
-    /* Health Indicators */
-    .health-indicators {
+    
+    .experience-item:last-child { border-bottom: none; }
+    
+    .exp-header {
       display: flex;
-      flex-direction: column;
-      gap: 0.75rem;
-      margin: 1rem 0;
-    }
-
-    .health-item {
-      display: flex;
-      align-items: center;
+      justify-content: space-between;
+      align-items: baseline;
+      margin-bottom: 1rem;
+      flex-wrap: wrap;
       gap: 0.5rem;
     }
-
-    .health-dot {
-      width: 12px;
-      height: 12px;
-      border-radius: 50%;
-      flex-shrink: 0;
-    }
-
-    .health-dot.green {
-      background: #10b981;
-    }
-
-    .health-dot.yellow {
-      background: #f59e0b;
-    }
-
-    .health-dot.red {
-      background: #ef4444;
-    }
-
-    .health-label {
-      font-size: 0.9rem;
-      color: var(--text-light);
-    }
-
-    .line-chart.realistic {
-      background: #f9fafb;
-      border: 1px solid #e5e7eb;
-    }
-
-    /* Video Cards */
-    .video-cards-container {
-      margin-top: 2rem;
-      padding: 0 1rem;
-    }
-
-    .video-cards-container h3 {
-      color: var(--primary);
+    
+    .exp-title {
+      font-family: 'Playfair Display', serif;
       font-size: 1.4rem;
-      margin-bottom: 1rem;
-      text-align: center;
+      font-weight: 600;
+      color: var(--navy);
     }
-
+    
+    .exp-company {
+      color: var(--gold);
+      font-weight: 600;
+      font-size: 0.9rem;
+      letter-spacing: 1px;
+    }
+    
+    .exp-date {
+      color: var(--gray);
+      font-size: 0.85rem;
+    }
+    
+    .exp-description {
+      color: var(--gray);
+      font-size: 0.95rem;
+      line-height: 1.8;
+    }
+    
+    .exp-highlights {
+      margin-top: 1rem;
+      padding-left: 0;
+      list-style: none;
+    }
+    
+    .exp-highlights li {
+      color: var(--gray);
+      font-size: 0.9rem;
+      line-height: 1.7;
+      padding: 0.4rem 0;
+      padding-left: 1.5rem;
+      position: relative;
+    }
+    
+    .exp-highlights li::before {
+      content: '';
+      position: absolute;
+      left: 0;
+      top: 0.9rem;
+      width: 8px;
+      height: 8px;
+      background: var(--gold);
+      border-radius: 50%;
+    }
+    
+    .skills-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 2.5rem;
+    }
+    
+    .skill-category h3 {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.1rem;
+      color: var(--navy);
+      margin-bottom: 1rem;
+      padding-bottom: 0.5rem;
+      border-bottom: 2px solid var(--gold);
+    }
+    
+    .skill-category ul { list-style: none; }
+    
+    .skill-category li {
+      color: var(--gray);
+      font-size: 0.9rem;
+      padding: 0.4rem 0;
+    }
+    
+    .tech-stack {
+      margin-top: 2rem;
+      padding-top: 2rem;
+      border-top: 1px solid #eee;
+    }
+    
+    .tech-stack h3 {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.1rem;
+      color: var(--navy);
+      margin-bottom: 1rem;
+    }
+    
+    .tech-pills {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.75rem;
+    }
+    
+    .tech-pill {
+      background: var(--navy);
+      color: var(--white);
+      padding: 0.5rem 1rem;
+      border-radius: 4px;
+      font-size: 0.85rem;
+      font-weight: 500;
+    }
+    
+    .tech-pill.highlight {
+      background: var(--gold);
+      color: var(--navy);
+    }
+    
+    /* Certifications */
+    .certifications {
+      margin-top: 2rem;
+      padding-top: 2rem;
+      border-top: 1px solid #eee;
+    }
+    
+    .certifications h3 {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.1rem;
+      color: var(--navy);
+      margin-bottom: 1rem;
+    }
+    
+    .cert-grid {
+      display: flex;
+      gap: 1.5rem;
+      flex-wrap: wrap;
+    }
+    
+    .cert-badge {
+      background: var(--gray-light);
+      border: 2px solid var(--gold);
+      border-radius: 4px;
+      padding: 1rem 1.5rem;
+      text-align: center;
+      min-width: 200px;
+    }
+    
+    .cert-badge .cert-name {
+      font-weight: 600;
+      color: var(--navy);
+      font-size: 0.9rem;
+      margin-bottom: 0.25rem;
+    }
+    
+    .cert-badge .cert-issuer {
+      font-size: 0.8rem;
+      color: var(--gray);
+    }
+    
+    .work-section {
+      background: var(--gray-light);
+      padding: 5rem 2rem;
+      max-width: none;
+    }
+    
+    .work-container {
+      max-width: 1100px;
+      margin: 0 auto;
+    }
+    
+    .work-card {
+      background: var(--white);
+      border-radius: 4px;
+      padding: 2rem;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+    }
+    
+    .metrics-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1.5rem;
+      margin-bottom: 2rem;
+    }
+    
+    .metric-box {
+      background: var(--gray-light);
+      padding: 1.5rem;
+      border-radius: 4px;
+      border-left: 3px solid var(--gold);
+    }
+    
+    .metric-box h4 {
+      font-size: 0.75rem;
+      color: var(--gray);
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      margin-bottom: 0.5rem;
+    }
+    
+    .metric-box .value {
+      font-family: 'Playfair Display', serif;
+      font-size: 2rem;
+      color: var(--navy);
+      font-weight: 700;
+    }
+    
+    .metric-box .trend {
+      font-size: 0.8rem;
+      color: #10b981;
+      margin-top: 0.25rem;
+    }
+    
     .video-cards-grid {
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
       gap: 2rem;
-      max-width: 1200px;
-      margin: 0 auto;
+      margin-top: 2rem;
     }
-
+    
     .video-card {
-      background: white;
+      background: var(--white);
       border-radius: 4px;
       overflow: hidden;
-      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
-      transition: transform 0.3s ease, box-shadow 0.3s ease;
-      animation: fadeInUp 0.8s ease-out;
-      max-width: 420px;
-      margin: 0 auto;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+      transition: transform 0.3s, box-shadow 0.3s;
     }
-
+    
     .video-card:hover {
       transform: translateY(-5px);
-      box-shadow: 0 8px 30px rgba(0, 0, 0, 0.15);
+      box-shadow: 0 8px 30px rgba(0,0,0,0.12);
     }
-
-    @keyframes fadeInUp {
-      from {
-        opacity: 0;
-        transform: translateY(20px);
-      }
-      to {
-        opacity: 1;
-        transform: translateY(0);
-      }
-    }
-
-    .video-card video {
+    
+    .video-card video, .video-card iframe {
       width: 100%;
-      height: 220px;
+      height: 200px;
       object-fit: cover;
       display: block;
     }
-
-    .video-card-content {
-      padding: 1.5rem;
-    }
-
-    .video-card-title {
-      font-size: 1.1rem;
-      font-weight: 600;
-      color: var(--primary);
-      margin-bottom: 0.5rem;
-    }
-
-    .video-card-description {
-      font-size: 0.9rem;
-      color: var(--text-light);
-      line-height: 1.5;
-    }
-
+    
+    .video-card-content { padding: 1.5rem; }
+    
     .video-card-badge {
       display: inline-block;
-      background: linear-gradient(135deg, var(--primary), var(--accent));
-      color: white;
+      background: var(--gold);
+      color: var(--navy);
       padding: 0.25rem 0.75rem;
-      border-radius: 20px;
-      font-size: 0.8rem;
-      font-weight: 500;
-      margin-bottom: 1rem;
-    }
-
-    .video-placeholder {
-      width: 100%;
-      height: 220px;
-      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      color: white;
-      font-size: 1.2rem;
+      border-radius: 4px;
+      font-size: 0.75rem;
       font-weight: 600;
+      margin-bottom: 0.75rem;
     }
-
-    /* Fun Facts */
-    .fun-facts {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-      gap: 1rem;
-    }
-
-    .fact {
-      background-color: var(--highlight-bg);
-      border-radius: 8px;
-      padding: 1rem;
-      text-align: center;
-      transition: transform 0.3s, box-shadow 0.3s;
-      position: relative;
-      perspective: 1000px;
-      height: 220px;
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-      align-items: center;
-    }
-
-    .fact:hover {
-      transform: translateY(-5px);
-      box-shadow: 0 4px 20px rgba(108, 99, 255, 0.15);
-    }
-
-    .fact-emoji {
-      font-size: 2rem;
+    
+    .video-card-title {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.1rem;
+      color: var(--navy);
       margin-bottom: 0.5rem;
     }
-
-    .fact p:not(.fact-emoji) {
-      margin: 0;
-      line-height: 1.4;
+    
+    .video-card-description {
+      font-size: 0.9rem;
+      color: var(--gray);
+      line-height: 1.5;
     }
-
+    
+    /* Flip Cards */
+    .personal-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 2rem;
+    }
+    
     .flip-card {
       height: 220px;
       perspective: 1000px;
-      position: relative;
       cursor: pointer;
-      background: transparent;
+      position: relative;
     }
-
+    
     .flip-card::before {
-      content: '👆 click me!';
+      content: '👆 click';
       position: absolute;
-      top: -15px;
-      right: -10px;
-      background: linear-gradient(135deg, #ff6b6b, #feca57);
-      color: white;
+      top: -10px;
+      right: -5px;
+      background: var(--gold);
+      color: var(--navy);
       font-size: 0.7rem;
       font-weight: 600;
       padding: 4px 8px;
-      border-radius: 12px;
+      border-radius: 10px;
       z-index: 10;
-      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
-      animation: bounce 2s ease-in-out infinite;
-      text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
-      border: 2px solid rgba(255, 255, 255, 0.3);
-      transition: opacity 0.3s ease;
+      opacity: 1;
+      transition: opacity 0.3s;
     }
-
-    @keyframes bounce {
-      0%, 20%, 50%, 80%, 100% { transform: translateY(0) rotate(-5deg); }
-      40% { transform: translateY(-8px) rotate(-3deg); }
-      60% { transform: translateY(-4px) rotate(-7deg); }
-    }
-
-    .flip-card.flipped::before {
-      opacity: 0;
-      pointer-events: none;
-    }
-
+    
+    .flip-card.flipped::before { opacity: 0; }
+    
     .flip-card-inner {
       position: relative;
       width: 100%;
       height: 100%;
-      text-align: center;
-      transition: transform 0.8s;
+      transition: transform 0.6s;
       transform-style: preserve-3d;
     }
-
-    .flip-card.flipped .flip-card-inner {
-      transform: rotateY(180deg);
-    }
-
+    
+    .flip-card.flipped .flip-card-inner { transform: rotateY(180deg); }
+    
     .flip-card-front, .flip-card-back {
       position: absolute;
       width: 100%;
       height: 100%;
       -webkit-backface-visibility: hidden;
       backface-visibility: hidden;
-      border-radius: 8px;
+      border-radius: 4px;
       display: flex;
       flex-direction: column;
       justify-content: center;
       align-items: center;
-      padding: 1rem;
+      padding: 1.5rem;
       box-sizing: border-box;
     }
-
+    
     .flip-card-front {
-      background-color: var(--highlight-bg);
-      border: 1px solid var(--highlight-border);
-    }
-
-    .flip-card-back {
-      background-color: var(--highlight-bg);
-      transform: rotateY(180deg);
-      position: relative;
-    }
-
-    .outdoor-back {
-      background-image: url('hiking.jpeg');
-      background-size: cover;
-      background-position: center;
-      background-repeat: no-repeat;
-    }
-
-    .cheerleader-back {
-      background-image: url('ben1.jpg');
-      background-size: cover;
-      background-position: center;
-      background-repeat: no-repeat;
-    }
-
-    .building-back {
-      background-image: url('IMG_0970.jpeg');
-      background-size: cover;
-      background-position: center;
-      background-repeat: no-repeat;
-    }
-
-    .flip-card-back::before {
-      content: '';
-      position: absolute;
-      top: 0;
-      left: 0;
-      right: 0;
-      bottom: 0;
-      background: rgba(0, 0, 0, 0.1);
-      border-radius: 8px;
-      z-index: 1;
-    }
-
-    .flip-card-back-content {
-      position: relative;
-      z-index: 2;
-      color: white;
-      font-weight: 600;
-      text-shadow: 0 2px 4px rgba(0, 0, 0, 0.7);
-      opacity: 0;
-    }
-
-    /* Contact */
-    .contact-links a {
-      color: var(--primary);
-      text-decoration: none;
-      font-weight: 600;
-      margin: 0 0.5rem;
-      transition: color 0.3s;
-    }
-
-    .contact-links a:hover {
-      color: var(--accent);
+      background: var(--gray-light);
+      text-align: center;
     }
     
-    footer {
-      text-align: center;
-      padding: 1.5rem 0.5rem;
-      color: var(--text-light);
+    .flip-card-front .icon {
+      font-size: 2.5rem;
+      margin-bottom: 1rem;
+    }
+    
+    .flip-card-front p {
+      color: var(--gray);
+      font-size: 0.95rem;
+      line-height: 1.6;
+      margin: 0;
+    }
+    
+    .flip-card-back {
+      transform: rotateY(180deg);
+      background-size: cover;
+      background-position: center;
+      background-color: var(--navy);
+    }
+    
+    .flip-card-back.outdoor-back {
+      background-image: linear-gradient(rgba(0,0,0,0.1), rgba(0,0,0,0.1)), url('hiking.jpeg');
+    }
+    
+    .flip-card-back.cheerleader-back {
+      background-image: linear-gradient(rgba(0,0,0,0.1), rgba(0,0,0,0.1)), url('ben1.jpg');
+    }
+    
+    .flip-card-back.building-back {
+      background-image: linear-gradient(rgba(0,0,0,0.1), rgba(0,0,0,0.1)), url('IMG_0970.jpeg');
+    }
+    
+    /* Blog & Projects Page */
+    .blog-section {
+      padding: 5rem 2rem;
+      max-width: 1100px;
+      margin: 0 auto;
+    }
+    
+    .projects-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+      gap: 2rem;
+      margin-top: 2rem;
+    }
+    
+    .project-card {
+      background: var(--white);
+      border-radius: 4px;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+      overflow: hidden;
+      transition: transform 0.3s, box-shadow 0.3s;
+    }
+    
+    .project-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 8px 30px rgba(0,0,0,0.12);
+    }
+    
+    .project-image {
+      height: 180px;
+      background: linear-gradient(135deg, var(--navy), var(--navy-light));
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--white);
+      font-family: 'Playfair Display', serif;
+      font-size: 1.3rem;
+      font-weight: 600;
+    }
+    
+    .project-content { padding: 1.5rem; }
+    
+    .project-tags { margin-bottom: 0.75rem; }
+    
+    .project-tag {
+      display: inline-block;
+      background: var(--gray-light);
+      color: var(--navy);
+      padding: 0.25rem 0.75rem;
+      border-radius: 4px;
+      font-size: 0.75rem;
+      font-weight: 600;
+      margin-right: 0.5rem;
+      margin-bottom: 0.5rem;
+    }
+    
+    .project-title {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.2rem;
+      color: var(--navy);
+      margin-bottom: 0.5rem;
+    }
+    
+    .project-description {
       font-size: 0.9rem;
+      color: var(--gray);
+      line-height: 1.6;
+      margin-bottom: 1rem;
     }
-
-    /* Responsive Design */
+    
+    .project-link {
+      color: var(--gold);
+      text-decoration: none;
+      font-weight: 600;
+      font-size: 0.9rem;
+      transition: color 0.3s;
+    }
+    
+    .project-link:hover { color: var(--navy); }
+    
+    footer {
+      background: var(--navy);
+      color: var(--white);
+      padding: 4rem 2rem;
+      text-align: center;
+    }
+    
+    footer h2 {
+      color: var(--white);
+      margin-bottom: 1rem;
+    }
+    
+    footer p {
+      color: rgba(255,255,255,0.7);
+      margin-bottom: 2rem;
+    }
+    
+    .footer-links {
+      display: flex;
+      justify-content: center;
+      gap: 2rem;
+      margin-bottom: 1rem;
+      flex-wrap: wrap;
+    }
+    
+    .footer-links a {
+      color: var(--gold);
+      text-decoration: none;
+      font-weight: 500;
+      transition: opacity 0.3s;
+    }
+    
+    .footer-links a:hover { opacity: 0.7; }
+    
+    .footer-phone {
+      color: rgba(255,255,255,0.7);
+      font-size: 0.9rem;
+      margin-bottom: 2rem;
+    }
+    
+    .copyright {
+      font-size: 0.8rem;
+      color: rgba(255,255,255,0.5);
+      padding-top: 2rem;
+      border-top: 1px solid rgba(255,255,255,0.1);
+    }
+    
     @media (max-width: 768px) {
-      .highlights-grid {
-        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-      }
-      
-      .dashboard-grid {
-        grid-template-columns: 1fr;
-        padding: 1rem;
-      }
-      
-      .dashboard-header {
-        flex-direction: column;
-        gap: 1rem;
-        text-align: center;
-      }
-      
-      .task-name {
-        width: 80px;
-        font-size: 0.8rem;
-      }
-
-      .video-cards-grid {
-        grid-template-columns: 1fr;
-      }
-
-      h1 {
-        font-size: 2rem;
-      }
-
-      .subtitle {
-        font-size: 1rem;
-      }
-
-      .kpi-section {
-        grid-template-columns: 1fr;
-        gap: 0.75rem;
-      }
-      
-      .overview-layout {
-        padding: 0.75rem;
-        gap: 0.75rem;
-      }
-      
-      .metric-card.compact {
-        padding: 0.75rem;
-      }
-      
-      .chart-container.full-width {
-        padding: 1rem;
-      }
-    }
-
-    @media (max-width: 480px) {
-      .main-nav-tab {
-        padding: 0.8rem 1rem;
-        font-size: 1rem;
-      }
-      .highlights-grid {
-        grid-template-columns: 1fr;
-      }
-      
-      .skills-container {
-        grid-template-columns: 1fr;
-      }
-
-      .fun-facts {
-        grid-template-columns: 1fr;
-      }
-
-      main {
-        padding: 0 0.5rem;
-      }
-
-      section {
-        padding-left: 0.5rem;
-      }
+      .hero { flex-direction: column; text-align: center; padding: 3rem 1.5rem; }
+      .stats { grid-template-columns: repeat(2, 1fr); }
+      .about-content, .skills-grid, .personal-grid, .metrics-grid, .capabilities-grid { grid-template-columns: 1fr; }
+      .main-nav-tab { padding: 0.75rem 1.5rem; font-size: 0.8rem; }
+      .hero h1 { font-size: 2rem; }
+      .stat-number { font-size: 2.5rem; }
+      .flip-card { height: 200px; }
+      .video-cards-grid { grid-template-columns: 1fr; }
+      .cert-grid { flex-direction: column; }
+      .social-bar { justify-content: center; }
     }
   </style>
 </head>
 <body>
-  <!-- Google Tag Manager (noscript) -->
-  <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-NX8WLZWM"
-  height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
-  <!-- End Google Tag Manager (noscript) -->
-  
-  <div class="animated-banner">
-    <div class="grid-overlay"></div>
-    <div class="dna-strand"></div>
-    <div class="fibonacci-spiral"></div>
-    
-    <div class="math-symbol">∞</div>
-    <div class="math-symbol">φ</div>
-    <div class="math-symbol">∑</div>
-    <div class="math-symbol">∆</div>
-    <div class="math-symbol">π</div>
-    <div class="math-symbol">≈</div>
-    
-    <div class="particle"></div>
-    <div class="particle"></div>
-    <div class="particle"></div>
-    <div class="particle"></div>
-    <div class="particle"></div>
-  </div>
-
-  <header>
-    <img src="profile-picture.jpg" alt="Benjamin J. Sunter" class="profile-image">
-    <h1>Benjamin J. Sunter</h1>
-    <p class="subtitle">Program Manager | AdTech Strategist | Problem Solver</p>
+  <header class="header">
+    <div class="signature">Benjamin J. Sunter</div>
+    <nav class="main-navigation">
+      <button class="main-nav-tab active" data-tab="about-me-content">About Me</button>
+      <button class="main-nav-tab" data-tab="blog-projects-content">Blog & Projects</button>
+    </nav>
   </header>
 
-  <nav class="main-navigation">
-    <button class="main-nav-tab active" data-tab="about-me-content">About Me</button>
-    <button class="main-nav-tab" data-tab="blog-projects-content">Blog & Projects</button>
-  </nav>
+  <!-- ABOUT ME PAGE -->
   <div id="about-me-content" class="page-section active">
-    <main>
-      <section id="about">
-        <h2>A Little About Me</h2>
-        <p>I'm a Program Manager at Google, leveraging my Industrial Engineering degree from the University of Florida (Go Gators!) to solve complex challenges in digital advertising. My approach combines analytical rigor with strategic thinking to drive measurable business outcomes.</p>
-        
-        <div class="highlight-box">
-          <p>I specialize in transforming complex technical challenges into actionable business strategies. Whether orchestrating multi-billion dollar integrations or optimizing publisher revenue streams, I focus on building sustainable solutions that balance stakeholder needs with technical constraints.</p>
-        </div>
-      </section>
-
-      <section id="highlights">
-        <h2>Notable Achievements</h2>
-        <div class="highlights-grid">
-          <div class="highlight-card">
-            <div class="highlight-icon">🚀</div>
-            <div class="highlight-metric">$26.5B</div>
-            <div class="highlight-description">Program managed telecom merger implementation</div>
-          </div>
-          <div class="highlight-card">
-            <div class="highlight-icon">🏆</div>
-            <div class="highlight-metric">234%</div>
-            <div class="highlight-description">Achieved sales quota in Q1'25 as top performer</div>
-          </div>
-          <div class="highlight-card">
-            <div class="highlight-icon">👥</div>
-            <div class="highlight-metric">200+</div>
-            <div class="highlight-description">Led cross-functional teams across Americas</div>
-          </div>
-          <div class="highlight-card">
-            <div class="highlight-icon">⚡</div>
-            <div class="highlight-metric">8 FTE</div>
-            <div class="highlight-description">Time savings delivered through Operational Excellence</div>
-          </div>
-          <div class="highlight-card">
-            <div class="highlight-icon">📊</div>
-            <div class="highlight-metric">92%</div>
-            <div class="highlight-description">Average publisher satisfaction score maintained</div>
-          </div>
-          <div class="highlight-card">
-            <div class="highlight-icon">🎯</div>
-            <div class="highlight-metric">60+</div>
-            <div class="highlight-description">Individual projects managed within single program portfolio</div>
-          </div>
-        </div>
-      </section>
-
-      <section id="experience">
-        <h2>My Professional Journey</h2>
-        <div class="job">
-          <p class="job-title">First Party Data Solutions Consultant</p>
-          <p class="job-company">Google (2023 - Present)</p>
-          <p>Lead first-party data strategy for high-value publishers across GAM360 and AdMob platforms, managing portfolios representing billions in ARR. Specialize in implementing Secure Signals, Privacy Preserved Signals (PPS), and PPID across web, app, and CTV environments. Partner directly with PGTM and product engineering teams to influence product roadmap decisions.</p>
-          
-          <p>Drive multi-million dollar revenue growth through contextual targeting optimization and open bidding strategy. Program manage team operations including lead distribution, SQL-based analytics infrastructure, and dynamic KPI dashboards. Achieved 234% of Q1 2025 sales quota while maintaining 92% client satisfaction.</p>
-        </div>
-        <div class="job">
-          <p class="job-title">Program Manager</p>
-          <p class="job-company">Google (2022 - 2023)</p>
-          <p>Led organizational transformation for a 200-person Americas Sellside Partnerships team through comprehensive restructuring. As AMS Sellside Program Manager, spearheaded annual strategy and planning for the multi-billion dollar organization, managing plan execution, operational frameworks, and Quarterly Business Reviews (QBRs) with VP-level leadership.</p>
-          
-          <p>Managed end-to-end change process including stakeholder alignment, resource reallocation, and operational continuity during complex business reorganization. Developed strategic planning frameworks that became the foundation for the team's current operational model and successfully transitioned high-performing team members into specialized consulting roles.</p>
-        </div>
-        <div class="job">
-          <p class="job-title">Program Manager</p>
-          <p class="job-company">Accenture (2016 - 2021)</p>
-          <p>Led program management for large-scale digital transformation initiatives, including orchestration of a $26.5B telecommunications merger. Managed complex stakeholder relationships and coordinated technical integrations across multiple business units for Fortune 500 clients.</p>
-        </div>
-      </section>
-
-      <section id="skills">
-        <h2>Skills & Methodologies</h2>
-        <div class="skills-container">
-          <div class="skills-category">
-            <h3>Program & Product</h3>
-            <ul>
-              <li>Go-to-Market Strategy</li>
-              <li>Product Lifecycle Management</li>
-              <li>Stakeholder Management</li>
-              <li>Software Development Lifecycle</li>
-              <li>Technical Architecture Design</li>
-            </ul>
-          </div>
-          <div class="skills-category">
-            <h3>Process & Frameworks</h3>
-            <ul>
-              <li>Agile Development</li>
-              <li>Lean Six Sigma</li>
-              <li>Process Improvement</li>
-              <li>Operating Model Design</li>
-              <li>Shared Services Governance</li>
-            </ul>
-          </div>
-          <div class="skills-category">
-            <h3>Data & Tools</h3>
-            <ul>
-              <li>Data Analysis & Visualization</li>
-              <li>SQL / Relational Databases</li>
-              <li>JIRA & Atlassian Suite</li>
-              <li>Tableau & PowerBI</li>
-              <li>Microsoft CA Rally</li>
-            </ul>
-          </div>
-        </div>
-      </section>
-
-      <section id="work-samples">
-        <h2>Work Samples</h2>
-        <div class="tableau-dashboard">
-          <div class="dashboard-header">
-            <div class="dashboard-title">Q3 2025 Sales Enablement Program (Mock/Sample values)</div>
-            <div class="dashboard-filters">
-              <span class="filter-tag">Global</span>
-              <span class="filter-tag">Sellside</span>
-              <span class="filter-tag">Active</span>
-            </div>
-          </div>
-          
-          <div class="dashboard-tabs">
-            <button class="dashboard-tab active" onclick="showDashboardTab(event, 'overview')">📊 Overview</button>
-            <button class="dashboard-tab" onclick="showDashboardTab(event, 'projects')">🎯 Projects</button>
-            <button class="dashboard-tab" onclick="showDashboardTab(event, 'issues')">⚠️ Issues</button>
-          </div>
-
-          <div id="overview" class="dashboard-content active">
-            <div class="overview-layout">
-              <div class="kpi-section">
-                <div class="metric-card compact">
-                  <div class="metric-header">Revenue Attainment (Q3 Goal: $37.5M)</div>
-                  <div class="metric-value">$42.1M</div>
-                  <div class="metric-trend positive">↗ 112% of target (+$4.6M)</div>
-                  <div class="progress-bar">
-                    <div class="progress-fill" style="width: 112%;"></div>
-                  </div>
-                  <div class="metric-note">*Includes TACoS optimization program impact</div>
-                </div>
-                <div class="metric-card compact">
-                  <div class="metric-header">Implementation Status (H2 Privacy Roadmap)</div>
-                  <div class="metric-value">67/92</div>
-                  <div class="metric-trend neutral">↔ 3 weeks behind, mitigating with resource realloc</div>
-                  <div class="progress-bar">
-                    <div class="progress-fill budget" style="width: 73%;"></div>
-                  </div>
-                  <div class="metric-note">Key blocker: Legal review on EU consent framework</div>
-                </div>
-                <div class="metric-card compact">
-                  <div class="metric-header">Partner NPS (Survey Period: Jul 1-15)</div>
-                  <div class="metric-value">73 NPS</div>
-                  <div class="metric-trend positive">↗ +8 pts from Q2 (was 65)</div>
-                  <div class="progress-bar">
-                    <div class="progress-fill" style="width: 73%;"></div>
-                  </div>
-                  <div class="metric-note">n=247 responses, 34% response rate</div>
-                </div>
-              </div>
-              <div class="chart-section">
-                <div class="chart-container full-width">
-                  <div class="chart-title">Revenue by Privacy Solution & Environment</div>
-                  <div class="revenue-chart-simple" style="padding-right: 1rem;">
-                    <div class="chart-row">
-                      <span class="solution-name">Topics API (Web)</span>
-                      <div class="revenue-bar" style="width: 45%; background: #6C63FF;"></div>
-                      <span class="revenue-value">$2.3M</span>
-                    </div>
-                    <div class="chart-row">
-                      <span class="solution-name">1P Data (CTV/Mobile)</span>
-                      <div class="revenue-bar" style="width: 72%; background: #00DF9A;"></div>
-                      <span class="revenue-value">$4.1M</span>
-                    </div>
-                    <div class="chart-row">
-                      <span class="solution-name">Contextual</span>
-                      <div class="revenue-bar" style="width: 38%; background: #FF6B6B;"></div>
-                      <span class="revenue-value">$1.9M</span>
-                    </div>
-                    <div class="chart-row">
-                      <span class="solution-name">Header Bidding (GMA)</span>
-                      <div class="revenue-bar" style="width: 85%; background: #FFA726;"></div>
-                      <span class="revenue-value">$5.2M</span>
-                    </div>
-                    <div class="chart-row">
-                      <span class="solution-name">UID 2.0 (Mobile App)</span>
-                      <div class="revenue-bar" style="width: 29%; background: #9C27B0;"></div>
-                      <span class="revenue-value">$1.4M</span>
-                    </div>
-                  </div>
-                  <div class="chart-footer" style="padding-right: 1rem;">*July data, ~85% of portfolio reporting. CTV growth +23% M/M</div> 
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <div id="projects" class="dashboard-content">
-            <div class="dashboard-grid">
-              <div class="chart-container">
-                <div class="chart-title">Q3 Initiative Health Check (Updated: 7/18)</div>
-                <div class="gantt-chart">
-                  <div class="gantt-item">
-                    <div class="task-name">Privacy Sandbox Migration</div>
-                    <div class="task-bar completed" style="width: 89%;"></div>
-                    <div class="task-progress">89%</div>
-                    <div class="task-details">32/36 partners onboarded</div>
-                  </div>
-                  <div class="gantt-item">
-                    <div class="task-name">Sales Enablement 2.0</div>
-                    <div class="task-bar in-progress" style="width: 67%;"></div>
-                    <div class="task-progress">67%</div>
-                    <div class="task-details">Training modules 1-4 live</div>
-                  </div>
-                  <div class="gantt-item">
-                    <div class="task-name">Partner Portal v3.1</div>
-                    <div class="task-bar behind" style="width: 42%;"></div>
-                    <div class="task-progress">42%</div>
-                    <div class="task-details">API docs pending</div>
-                  </div>
-                  <div class="gantt-item">
-                    <div class="task-name">COPPA Compliance</div>
-                    <div class="task-bar completed" style="width: 100%;"></div>
-                    <div class="task-progress">100%</div>
-                    <div class="task-details">Shipped 7/12</div>
-                  </div>
-                </div>
-              </div>
-              <div class="metric-card">
-                <div class="metric-header">Project Health Summary</div>
-                <div class="health-indicators">
-                  <div class="health-item">
-                    <span class="health-dot green"></span>
-                    <span class="health-label">On Track: 2 projects</span>
-                  </div>
-                  <div class="health-item">
-                    <span class="health-dot yellow"></span>
-                    <span class="health-label">At Risk: 1 project</span>
-                  </div>
-                  <div class="health-item">
-                    <span class="health-dot red"></span>
-                    <span class="health-label">Behind: 1 project</span>
-                  </div>
-                </div>
-                <div class="metric-note">Next milestone: Partner Portal API release (8/15)</div>
-              </div>
-            </div>
-          </div>
-
-          <div id="issues" class="dashboard-content">
-            <div class="dashboard-grid">
-              <div class="chart-container">
-                <div class="chart-title">Active Issues & Dependencies</div>
-                <div class="raid-visual">
-                  <div class="raid-summary-grid">
-                    <div class="raid-summary-item risk">
-                      <div class="raid-icon">⚠️</div>
-                      <div class="raid-count">2</div>
-                      <div class="raid-label">High Risk</div>
-                    </div>
-                    <div class="raid-summary-item action">
-                      <div class="raid-icon">📋</div>
-                      <div class="raid-count">4</div>
-                      <div class="raid-label">Actions</div>
-                    </div>
-                    <div class="raid-summary-item issue">
-                      <div class="raid-icon">🔧</div>
-                      <div class="raid-count">1</div>
-                      <div class="raid-label">Resolved</div>
-                    </div>
-                    <div class="raid-summary-item decision">
-                      <div class="raid-icon">🎯</div>
-                      <div class="raid-count">3</div>
-                      <div class="raid-label">Decisions</div>
-                    </div>
-                  </div>
-                  <div class="priority-items">
-                    <div class="priority-item urgent">
-                      <span class="priority-badge">🔴 URGENT</span>
-                      <span class="priority-text">GMA SDK v23.1 compatibility (12% inventory impact)</span>
-                    </div>
-                    <div class="priority-item high">
-                      <span class="priority-badge">🟡 HIGH</span>
-                      <span class="priority-text">iOS 18 tracking changes assessment due 7/25</span>
-                    </div>
-                    <div class="priority-item medium">
-                      <span class="priority-badge">🟢 MED</span>
-                      <span class="priority-text">CTV measurement standardization (Nielsen/Comscore)</span>
-                    </div>
-                  </div>
-                </div>
-                <div class="raid-footer">Last updated: 7/18/2025 2:47 PM PT • Next review: 7/25</div>
-              </div>
-              <div class="metric-card">
-                <div class="metric-header">Issue Resolution Time</div>
-                <div class="metric-value">2.3 days</div>
-                <div class="metric-trend positive">↗ 15% faster than Q2</div>
-                <div class="progress-bar">
-                  <div class="progress-fill" style="width: 85%;"></div>
-                </div>
-                <div class="metric-note">Target: <2.5 days avg resolution</div>
-              </div>
-            </div>
-          </div>
-          
-          <div class="video-cards-container">
-            <h3>Project Demonstrations</h3>
-            <div class="video-cards-grid">
-              <div class="video-card">
-                <video controls>
-                  <source src="gantt.mp4" type="video/mp4">
-                  Your browser does not support the video tag.
-                </video>
-                <div class="video-card-content">
-                  <div class="video-card-badge">Featured</div>
-                  <h3 class="video-card-title">Gantt Chart Sample</h3>
-                  <p class="video-card-description">Short and simple Gantt Chart with automated controls.</p>
-                </div>
-              </div>
-
-              <div class="video-card">
-                <video controls>
-                  <source src="commsdocs.mp4" type="video/mp4">
-                  Your browser does not support the video tag.
-                </video>
-                <div class="video-card-content">
-                  <div class="video-card-badge">Tutorial</div>
-                  <h3 class="video-card-title">Executive Comms</h3>
-                </div>
-              </div>
-
-              <div class="video-card">
-                <iframe 
-                  width="100%" 
-                  height="220" 
-                  src="https://www.youtube.com/embed/AgNP0bMWHxY" 
-                  title="YouTube Short" 
-                  frameborder="0" 
-                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" 
-                  allowfullscreen>
-                </iframe>
-                <div class="video-card-content">
-                  <div class="video-card-badge">YouTube Short</div>
-                  <h3 class="video-card-title">My Latest Project</h3>
-                  <p class="video-card-description">Check out this quick demo of my latest work!</p>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      <section id="fun-facts">
-        <h2>A Few Fun Facts</h2>
-        <div class="fun-facts">
-          <div class="fact flip-card">
-            <div class="flip-card-inner">
-              <div class="flip-card-front">
-                <p class="fact-emoji">🏕️</p>
-                <p>I'm married with two kids and love spending time outdoors—whether it's hiking, camping, or just enjoying nature.</p>
-              </div>
-              <div class="flip-card-back outdoor-back">
-                <div class="flip-card-back-content">
-                  </div>
-              </div>
-            </div>
-          </div>
-          <div class="fact flip-card">
-            <div class="flip-card-inner">
-              <div class="flip-card-front">
-                <p class="fact-emoji">📣</p>
-                <p>I was a college cheerleader! It taught me a lot about teamwork and lifting others up.</p>
-              </div>
-              <div class="flip-card-back cheerleader-back">
-                <div class="flip-card-back-content">
-                  </div>
-              </div>
-            </div>
-          </div>
-          <div class="fact flip-card">
-            <div class="flip-card-inner">
-              <div class="flip-card-front">
-                <p class="fact-emoji">🔨</p>
-                <p>I love building things with my hands, from garden beds to home improvement projects.</p>
-              </div>
-              <div class="flip-card-back building-back">
-                <div class="flip-card-back-content">
-                  </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      <section id="contact">
-        <h2>Let's Connect</h2>
-        <p>I'm always open to chatting about AdTech, program management, or even your favorite hiking spot! Feel free to reach out!</p>
-        <p class="contact-links">
-          <a href="mailto:Sunterbb@gmail.com">Email</a> | 
+    <section class="hero">
+      <div class="hero-image">
+        <img src="profile-picture.jpg" alt="Benjamin J. Sunter">
+      </div>
+      <div class="hero-content">
+        <h1>Benjamin J. Sunter</h1>
+        <p class="hero-subtitle">Business Operations & Strategy</p>
+        <p>I translate company strategy into execution. With 10+ years leading cross-functional initiatives at Google and Accenture, I specialize in driving strategic clarity, building operational frameworks, and delivering measurable impact—backed by hands-on technical skills in data analysis and visualization.</p>
+        <div class="social-bar">
+          <a href="mailto:sunterbb@gmail.com">Email</a>
           <a href="https://www.linkedin.com/in/benjamin-sunter/">LinkedIn</a>
-        </p>
-      </section>
-    </main>
-  </div>
-  <div id="blog-projects-content" class="page-section">
-    <main>
-      <section id="projects-section">
-        <h2>Blog & Projects</h2>
-        <div class="projects-grid">
-          
-          <div class="project-card">
-            <div class="project-image-placeholder">
-              <span class="project-image-text">Project Viz</span>
-            </div>
-            <div class="project-content">
-              <div class="project-tags">
-                <span class="project-tag">Data Viz</span>
-                <span class="project-tag">AdTech</span>
-                <span class="project-tag">Tableau</span>
-              </div>
-              <h3 class="project-title">Interactive Ad Campaign Dashboard</h3>
-              <p class="project-description">A deep dive into creating a real-time campaign performance dashboard using Tableau and Google BigQuery, focusing on privacy-centric metrics.</p>
-              <a href="#" class="project-link">Read More →</a>
-            </div>
-          </div>
-
-          <div class="project-card">
-            <div class="project-image-placeholder">
-              <span class="project-image-text">Blog Post</span>
-            </div>
-            <div class="project-content">
-              <div class="project-tags">
-                <span class="project-tag">Strategy</span>
-                <span class="project-tag">Development</span>
-              </div>
-              <h3 class="project-title">Building & Shipping My First App!</h3>
-              <p class="project-description">My latest project has been exploring app development. My first app, Mirror is a spiritual-reflection tool with Privacy-safe, deep AI learning and insights that help you become more mindful, self-attuned and zen.  </p>
-              <a href="#" class="project-link">Read More →</a>
-            </div>
-          </div>
-
-          <div class="project-card">
-            <div class="project-image-placeholder">
-              <span class="project-image-text">Case Study</span>
-            </div>
-            <div class="project-content">
-              <div class="project-tags">
-                <span class="project-tag">Process Improvement</span>
-                <span class="project-tag">Lean Six Sigma</span>
-              </div>
-              <h3 class="project-title">Streamlining Partner Onboarding</h3>
-              <p class="project-description">How we applied Lean principles to reduce partner onboarding time by 35%, improving satisfaction and accelerating time-to-revenue.</p>
-              <a href="#" class="project-link">Read More →</a>
-            </div>
-          </div>
-
+          <a href="https://bensunter.com">bensunter.com</a>
+          <span>321-271-4830</span>
         </div>
-      </section>
-    </main>
+      </div>
+    </section>
+
+    <div class="stats">
+      <div class="stat">
+        <div class="stat-number">$26.5B</div>
+        <div class="stat-label">Strategic Program<br>Value Managed</div>
+      </div>
+      <div class="stat">
+        <div class="stat-number">56</div>
+        <div class="stat-label">Initiatives Across<br>4 Product Areas</div>
+      </div>
+      <div class="stat">
+        <div class="stat-number">600+</div>
+        <div class="stat-label">Features Delivered<br>Across 24 Workstreams</div>
+      </div>
+      <div class="stat">
+        <div class="stat-number">94%</div>
+        <div class="stat-label">Average CSAT<br>on Strategic Events</div>
+      </div>
+    </div>
+
+    <section id="about">
+      <span class="section-label">About</span>
+      <h2>From Strategy to Execution</h2>
+      <div class="about-content">
+        <p>I'm an operations leader who embeds within critical cross-functional initiatives to ensure strategic clarity and drive outcomes. My Industrial and Systems Engineering background from the University of Florida trained me to see systems, identify bottlenecks, and build frameworks that scale.</p>
+        <p>What sets me apart: I'm technical. I build the dashboards and automated reporting that surface insights to leadership. I write SQL to extract data, Python to automate workflows, and design executive-ready visualizations in Tableau and Power BI. Strategy is only as good as the data behind it.</p>
+      </div>
+      <div class="highlight-quote">
+        "I serve as a control tower during periods of significant change—mapping impacts, driving alignment, and keeping stakeholders informed, accountable, and focused on results."
+      </div>
+    </section>
+
+    <section class="what-i-do">
+      <div class="what-i-do-container">
+        <span class="section-label">What I Do</span>
+        <h2>Areas of Expertise</h2>
+        <div class="capabilities-grid">
+          <div class="capability-card">
+            <h3>Strategic Planning & Execution</h3>
+            <p>Drive annual planning in collaboration with executive teams. Translate strategic objectives into actionable project plans, roadmaps, and measurable outcomes that the entire organization can rally around.</p>
+          </div>
+          <div class="capability-card">
+            <h3>Operational Frameworks</h3>
+            <p>Define and implement enterprise-wide approaches to program execution—tools, templates, and tracking methodologies. Build repeatable launch playbooks that scale operational excellence and reduce stakeholder overhead by up to 15%.</p>
+          </div>
+          <div class="capability-card">
+            <h3>Data & Executive Reporting</h3>
+            <p>Build dashboards and automated reporting pipelines using SQL, Python, Tableau, and Power BI. Transform raw data into executive-ready insights that drive decision-making and surface risks early.</p>
+          </div>
+          <div class="capability-card">
+            <h3>Change Management & Alignment</h3>
+            <p>Act as a control tower during organizational transformation. Facilitate cross-functional alignment across 200+ stakeholders, run executive forums, and drive a culture of transparency, urgency, and continuous improvement.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="experience">
+      <span class="section-label">Experience</span>
+      <h2>Professional Journey</h2>
+      
+      <div class="experience-item">
+        <div class="exp-header">
+          <div>
+            <div class="exp-title">Sellside Global Partnerships Program Manager</div>
+            <div class="exp-company">GOOGLE</div>
+          </div>
+          <div class="exp-date">2022 — Present</div>
+        </div>
+        <p class="exp-description">Operationalized and scaled a multi-billion dollar Americas Sellside Partnerships business, leading strategy, execution, budget, and resourcing across 7 vertical teams and 20+ sub-teams.</p>
+        <ul class="exp-highlights">
+          <li>Spearheaded a first-of-its-kind sales artifact that proved definitive ROI of the Secure Signals solution, immediately enabling $40M in new publisher opportunities within one month.</li>
+          <li>Managed execution performance for 56 initiatives across 4 core product areas and 200+ stakeholders via weekly cross-functional governance.</li>
+          <li>Drove in-market adoption of privacy-preserving first-party data solutions, partnering with Product/GTM teams to deliver incremental regional revenue attainment.</li>
+          <li>Led quarterly cross-regional events (trainings, summits, offsites) achieving an average CSAT of 94%.</li>
+        </ul>
+      </div>
+      
+      <div class="experience-item">
+        <div class="exp-header">
+          <div>
+            <div class="exp-title">Program Manager</div>
+            <div class="exp-company">ACCENTURE</div>
+          </div>
+          <div class="exp-date">2016 — 2021</div>
+        </div>
+        <p class="exp-description">Led program management for large-scale enterprise transformations, including orchestration of a $26.5B telecommunications merger integrating 24 workstreams led by 16 VPs.</p>
+        <ul class="exp-highlights">
+          <li>Managed the Integrated Program Plan and launch of 60+ projects covering all major design, development, and testing phases.</li>
+          <li>Governed delivery of designs for 60+ projects, facilitating delivery of 600+ features and reducing 190+ applications under 10 VPs within 12 months.</li>
+          <li>Designed and implemented Tableau dashboards providing automated insights into health, risks, and compliance for 60+ projects, 600+ features, and 11,000+ User Stories across 25 workstreams.</li>
+          <li>Created a Shared Services governance framework that reduced stakeholder low-value overhead by up to 15%.</li>
+        </ul>
+      </div>
+    </section>
+
+    <section id="skills">
+      <span class="section-label">Expertise</span>
+      <h2>Skills & Methodologies</h2>
+      <div class="skills-grid">
+        <div class="skill-category">
+          <h3>Strategy & Operations</h3>
+          <ul>
+            <li>Annual Planning & OKRs</li>
+            <li>Operating Model Design</li>
+            <li>Global Governance Models</li>
+            <li>Go-to-Market Enablement</li>
+            <li>Financial Modeling (ROI)</li>
+          </ul>
+        </div>
+        <div class="skill-category">
+          <h3>Program Execution</h3>
+          <ul>
+            <li>Cross-Functional Leadership</li>
+            <li>Change Management</li>
+            <li>SDLC/Agile Methodologies</li>
+            <li>Risk Management</li>
+            <li>Process Improvement</li>
+          </ul>
+        </div>
+        <div class="skill-category">
+          <h3>Data & Analytics</h3>
+          <ul>
+            <li>SQL & BigQuery</li>
+            <li>Python (Automation)</li>
+            <li>Tableau & Power BI</li>
+            <li>Looker</li>
+            <li>Executive Dashboard Design</li>
+          </ul>
+        </div>
+      </div>
+      
+      <div class="tech-stack">
+        <h3>Technical Toolkit</h3>
+        <div class="tech-pills">
+          <span class="tech-pill highlight">SQL</span>
+          <span class="tech-pill highlight">Python</span>
+          <span class="tech-pill highlight">Tableau</span>
+          <span class="tech-pill highlight">Power BI</span>
+          <span class="tech-pill">BigQuery</span>
+          <span class="tech-pill">Looker</span>
+          <span class="tech-pill">HTML/CSS</span>
+          <span class="tech-pill">JIRA</span>
+          <span class="tech-pill">Confluence</span>
+          <span class="tech-pill">Google Sheets (Advanced)</span>
+        </div>
+      </div>
+      
+      <div class="certifications">
+        <h3>Certifications</h3>
+        <div class="cert-grid">
+          <div class="cert-badge">
+            <div class="cert-name">Lean Six Sigma Green Belt</div>
+            <div class="cert-issuer">Institute of Industrial Engineers · 2015</div>
+          </div>
+          <div class="cert-badge">
+            <div class="cert-name">Google Project Management</div>
+            <div class="cert-issuer">Google · 2021</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="work-section" id="work">
+      <div class="work-container">
+        <span class="section-label">Work Samples</span>
+        <h2>Program Dashboard Example</h2>
+        <p style="color: var(--gray); margin-bottom: 2rem;">Sample strategic initiative tracking visualization (mock data) — built with Tableau/SQL</p>
+        
+        <div class="work-card">
+          <div class="metrics-grid">
+            <div class="metric-box">
+              <h4>Initiative Progress</h4>
+              <div class="value">56/56</div>
+              <div class="trend">All initiatives tracked</div>
+            </div>
+            <div class="metric-box">
+              <h4>Stakeholder Alignment</h4>
+              <div class="value">200+</div>
+              <div class="trend">↗ Weekly governance cadence</div>
+            </div>
+            <div class="metric-box">
+              <h4>Revenue Enabled</h4>
+              <div class="value">$40M</div>
+              <div class="trend">New opportunities identified</div>
+            </div>
+          </div>
+        </div>
+        
+        <div class="video-cards-grid">
+          <div class="video-card">
+            <video controls>
+              <source src="gantt.mp4" type="video/mp4">
+              Your browser does not support the video tag.
+            </video>
+            <div class="video-card-content">
+              <span class="video-card-badge">Featured</span>
+              <h3 class="video-card-title">Gantt Chart Sample</h3>
+              <p class="video-card-description">Automated Gantt chart with dynamic controls for project tracking.</p>
+            </div>
+          </div>
+          
+          <div class="video-card">
+            <video controls>
+              <source src="commsdocs.mp4" type="video/mp4">
+              Your browser does not support the video tag.
+            </video>
+            <div class="video-card-content">
+              <span class="video-card-badge">Tutorial</span>
+              <h3 class="video-card-title">Executive Communications</h3>
+              <p class="video-card-description">Sample executive communication templates and frameworks.</p>
+            </div>
+          </div>
+          
+          <div class="video-card">
+            <iframe src="https://www.youtube.com/embed/AgNP0bMWHxY" title="YouTube Short" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
+            <div class="video-card-content">
+              <span class="video-card-badge">YouTube</span>
+              <h3 class="video-card-title">My Latest Project</h3>
+              <p class="video-card-description">Check out this quick demo of my latest work!</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="personal">
+      <span class="section-label">Beyond Work</span>
+      <h2>A Few Things About Me</h2>
+      <div class="personal-grid">
+        <div class="flip-card" tabindex="0">
+          <div class="flip-card-inner">
+            <div class="flip-card-front">
+              <div class="icon">🏕️</div>
+              <p>Married with two kids. I love spending time outdoors—hiking, camping, or just enjoying nature with family.</p>
+            </div>
+            <div class="flip-card-back outdoor-back"></div>
+          </div>
+        </div>
+        
+        <div class="flip-card" tabindex="0">
+          <div class="flip-card-inner">
+            <div class="flip-card-front">
+              <div class="icon">📣</div>
+              <p>Former college cheerleader at UF. It taught me teamwork, trust, and the importance of lifting others up.</p>
+            </div>
+            <div class="flip-card-back cheerleader-back"></div>
+          </div>
+        </div>
+        
+        <div class="flip-card" tabindex="0">
+          <div class="flip-card-inner">
+            <div class="flip-card-front">
+              <div class="icon">🔨</div>
+              <p>I love building with my hands—from garden beds to home improvement projects. There's clarity in craftsmanship.</p>
+            </div>
+            <div class="flip-card-back building-back"></div>
+          </div>
+        </div>
+      </div>
+    </section>
   </div>
+
+  <!-- BLOG & PROJECTS PAGE -->
+  <div id="blog-projects-content" class="page-section">
+    <section class="blog-section">
+      <span class="section-label">Blog & Projects</span>
+      <h2>Thoughts & Work</h2>
+      <p style="color: var(--gray); margin-bottom: 2rem;">A collection of projects, case studies, and ideas I'm exploring.</p>
+      
+      <div class="projects-grid">
+        <div class="project-card">
+          <div class="project-image">Data Viz</div>
+          <div class="project-content">
+            <div class="project-tags">
+              <span class="project-tag">Data Viz</span>
+              <span class="project-tag">Tableau</span>
+              <span class="project-tag">SQL</span>
+            </div>
+            <h3 class="project-title">Interactive Campaign Dashboard</h3>
+            <p class="project-description">A deep dive into creating a real-time performance dashboard using Tableau and BigQuery, focusing on executive-ready metrics and automated refresh.</p>
+            <a href="#" class="project-link">Read More →</a>
+          </div>
+        </div>
+        
+        <div class="project-card">
+          <div class="project-image">App Dev</div>
+          <div class="project-content">
+            <div class="project-tags">
+              <span class="project-tag">Product</span>
+              <span class="project-tag">Strategy</span>
+            </div>
+            <h3 class="project-title">Building & Shipping My First App</h3>
+            <p class="project-description">My latest project exploring app development. Mirror is a spiritual-reflection tool with privacy-safe AI learning that helps you become more mindful and self-attuned.</p>
+            <a href="#" class="project-link">Read More →</a>
+          </div>
+        </div>
+        
+        <div class="project-card">
+          <div class="project-image">Case Study</div>
+          <div class="project-content">
+            <div class="project-tags">
+              <span class="project-tag">Process</span>
+              <span class="project-tag">Lean Six Sigma</span>
+            </div>
+            <h3 class="project-title">Streamlining Partner Onboarding</h3>
+            <p class="project-description">How we applied Lean principles to reduce partner onboarding time by 35%, improving satisfaction and accelerating time-to-revenue.</p>
+            <a href="#" class="project-link">Read More →</a>
+          </div>
+        </div>
+        
+        <div class="project-card">
+          <div class="project-image">Ops Framework</div>
+          <div class="project-content">
+            <div class="project-tags">
+              <span class="project-tag">Operations</span>
+              <span class="project-tag">Playbooks</span>
+            </div>
+            <h3 class="project-title">Building Scalable Launch Playbooks</h3>
+            <p class="project-description">A framework for creating repeatable launch playbooks that ensure consistency across diverse teams and reduce time-to-execution.</p>
+            <a href="#" class="project-link">Coming Soon →</a>
+          </div>
+        </div>
+      </div>
+    </section>
+  </div>
+
   <footer>
-    <p>&copy; 2025 Benjamin J. Sunter | Crafted with care in Cupertino, CA</p>
+    <span class="section-label">Connect</span>
+    <h2>Let's Talk</h2>
+    <p>I'm always open to discussing business operations, strategy,<br>or how to build better dashboards.</p>
+    <div class="footer-links">
+      <a href="mailto:sunterbb@gmail.com">sunterbb@gmail.com</a>
+      <a href="https://www.linkedin.com/in/benjamin-sunter/">LinkedIn</a>
+      <a href="https://bensunter.com">bensunter.com</a>
+    </div>
+    <div class="footer-phone">321-271-4830</div>
+    <div class="copyright">© 2025 Benjamin J. Sunter · Cupertino, CA</div>
   </footer>
 
   <script>
     document.addEventListener('DOMContentLoaded', function() {
-      // --- START: New Main Tab Navigation Logic ---
+      // Tab Navigation
       const mainTabs = document.querySelectorAll('.main-nav-tab');
       const pageSections = document.querySelectorAll('.page-section');
-
+      
       mainTabs.forEach(tab => {
         tab.addEventListener('click', () => {
-          // Deactivate all tabs and sections
           mainTabs.forEach(t => t.classList.remove('active'));
           pageSections.forEach(s => s.classList.remove('active'));
-
-          // Activate the clicked tab
           tab.classList.add('active');
-
-          // Activate the corresponding section
-          const targetSectionId = tab.getAttribute('data-tab');
-          document.getElementById(targetSectionId).classList.add('active');
+          const targetId = tab.getAttribute('data-tab');
+          document.getElementById(targetId).classList.add('active');
         });
       });
-      // --- END: New Main Tab Navigation Logic ---
-
-
-      // Animate progress bars on scroll
-      const progressBars = document.querySelectorAll('.progress-fill');
-      const observer = new IntersectionObserver((entries) => {
-        entries.forEach(entry => {
-          if (entry.isIntersecting) {
-            const bar = entry.target;
-            const width = bar.style.width;
-            bar.style.width = '0%';
-            setTimeout(() => {
-              bar.style.width = width;
-            }, 100);
-          }
-        });
-      });
-
-      progressBars.forEach(bar => observer.observe(bar));
-
-      // Dashboard tab functionality
-      window.showDashboardTab = function(evt, tabName) {
-        // Hide all content
-        const contents = document.querySelectorAll('.dashboard-content');
-        contents.forEach(content => content.classList.remove('active'));
-        
-        // Remove active class from all tabs
-        const tabs = document.querySelectorAll('.dashboard-tab');
-        tabs.forEach(tab => tab.classList.remove('active'));
-        
-        // Show selected content and mark tab as active
-        document.getElementById(tabName).classList.add('active');
-        evt.currentTarget.classList.add('active');
-      };
-
-      // Add click handlers for flip cards with proper event handling
+      
+      // Flip Cards
       const flipCards = document.querySelectorAll('.flip-card');
       flipCards.forEach(card => {
         card.addEventListener('click', function(e) {
           e.preventDefault();
-          e.stopPropagation();
           this.classList.toggle('flipped');
         });
-        
-        // Also add keyboard support
         card.addEventListener('keydown', function(e) {
           if (e.key === 'Enter' || e.key === ' ') {
             e.preventDefault();
             this.classList.toggle('flipped');
           }
         });
-        
-        // Make it focusable
-        card.setAttribute('tabindex', '0');
       });
     });
   </script>
