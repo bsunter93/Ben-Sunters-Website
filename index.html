@@ -398,6 +398,90 @@
     }
     
     /* Logo Bar Section */
+    .featured-project {
+      background: linear-gradient(135deg, #f8f9fa 0%, #ffffff 100%);
+      padding: 3rem 2rem;
+      border-bottom: 1px solid #eee;
+    }
+    
+    .featured-project-container {
+      max-width: 800px;
+      margin: 0 auto;
+      text-align: center;
+    }
+    
+    .featured-badge {
+      display: inline-block;
+      background: var(--gold);
+      color: var(--navy);
+      padding: 0.4rem 1rem;
+      border-radius: 20px;
+      font-size: 0.75rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      margin-bottom: 1rem;
+    }
+    
+    .featured-title {
+      font-family: 'Playfair Display', serif;
+      font-size: 2rem;
+      font-weight: 600;
+      color: var(--navy);
+      margin-bottom: 1rem;
+    }
+    
+    .featured-description {
+      color: var(--gray);
+      font-size: 1.05rem;
+      line-height: 1.7;
+      margin-bottom: 2rem;
+    }
+    
+    .featured-actions {
+      display: flex;
+      gap: 1rem;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+    
+    .featured-button {
+      padding: 0.9rem 2rem;
+      border-radius: 4px;
+      font-weight: 600;
+      font-size: 0.9rem;
+      text-decoration: none;
+      transition: all 0.3s;
+      display: inline-flex;
+      align-items: center;
+      border: none;
+      cursor: pointer;
+      font-family: inherit;
+    }
+    
+    .featured-button.primary {
+      background: var(--navy);
+      color: var(--white);
+    }
+    
+    .featured-button.primary:hover {
+      background: var(--navy-light);
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(26, 39, 68, 0.3);
+    }
+    
+    .featured-button.secondary {
+      background: transparent;
+      color: var(--navy);
+      border: 2px solid var(--navy);
+    }
+    
+    .featured-button.secondary:hover {
+      background: var(--navy);
+      color: var(--white);
+    }
+    
+    /* Logo Bar Section */
     .logo-bar {
       background: var(--white);
       padding: 3rem 2rem;
@@ -1419,6 +1503,10 @@
     
     @media (max-width: 768px) {
       .hero { flex-direction: column; text-align: center; padding: 3rem 1.5rem; }
+      .featured-project { padding: 2rem 1.5rem; }
+      .featured-title { font-size: 1.5rem; }
+      .featured-actions { flex-direction: column; }
+      .featured-button { width: 100%; justify-content: center; }
       .stats { gap: 2rem; padding: 3rem 1.5rem; }
       .stat { min-width: 140px; }
       .about-content, .skills-grid, .personal-grid, .capabilities-grid { grid-template-columns: 1fr; }
@@ -1466,6 +1554,24 @@
           <a href="https://www.linkedin.com/in/benjamin-sunter/">LinkedIn</a>
           <a href="https://bensunter.com">bensunter.com</a>
           <span>321-271-4830</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- Featured Project Banner -->
+    <section class="featured-project">
+      <div class="featured-project-container">
+        <div class="featured-badge">✨ Latest Project</div>
+        <h2 class="featured-title">Mirror - AI-Powered Reflection App</h2>
+        <p class="featured-description">A spiritual-reflection tool with privacy-safe AI that helps you become more mindful and self-attuned. Now live and monetizing on Google Play.</p>
+        <div class="featured-actions">
+          <a href="https://play.google.com/store/apps/details?id=com.mirrorapp.reflection&pli=1" target="_blank" class="featured-button primary">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor" style="margin-right: 0.5rem;">
+              <path d="M3,20.5V3.5C3,2.91 3.34,2.39 3.84,2.15L13.69,12L3.84,21.85C3.34,21.6 3,21.09 3,20.5M16.81,15.12L6.05,21.34L14.54,12.85L16.81,15.12M20.16,10.81C20.5,11.08 20.75,11.5 20.75,12C20.75,12.5 20.53,12.9 20.18,13.18L17.89,14.5L15.39,12L17.89,9.5L20.16,10.81M6.05,2.66L16.81,8.88L14.54,11.15L6.05,2.66Z"/>
+            </svg>
+            View on Google Play
+          </a>
+          <button onclick="openModal('mirror')" class="featured-button secondary">Learn More</button>
         </div>
       </div>
     </section>
@@ -1986,7 +2092,15 @@
             </div>
             <h3 class="project-title">Building & Shipping My First App</h3>
             <p class="project-description">My latest project exploring app development. Mirror is a spiritual-reflection tool with privacy-safe AI learning that helps you become more mindful and self-attuned.</p>
-            <button class="project-link" onclick="openModal('mirror')">Read More →</button>
+            <div style="display: flex; gap: 1rem; flex-wrap: wrap;">
+              <a href="https://play.google.com/store/apps/details?id=com.mirrorapp.reflection&pli=1" target="_blank" class="project-link" style="display: inline-flex; align-items: center; gap: 0.5rem;">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+                  <path d="M3,20.5V3.5C3,2.91 3.34,2.39 3.84,2.15L13.69,12L3.84,21.85C3.34,21.6 3,21.09 3,20.5M16.81,15.12L6.05,21.34L14.54,12.85L16.81,15.12M20.16,10.81C20.5,11.08 20.75,11.5 20.75,12C20.75,12.5 20.53,12.9 20.18,13.18L17.89,14.5L15.39,12L17.89,9.5L20.16,10.81M6.05,2.66L16.81,8.88L14.54,11.15L6.05,2.66Z"/>
+                </svg>
+                View on Play Store
+              </a>
+              <button class="project-link" onclick="openModal('mirror')">Read More →</button>
+            </div>
           </div>
         </div>
         
@@ -2125,6 +2239,15 @@
         tags: ["Product", "Strategy", "App Development", "AI"],
         date: "October 2024",
         content: `
+          <div style="text-align: center; margin-bottom: 2rem;">
+            <a href="https://play.google.com/store/apps/details?id=com.mirrorapp.reflection&pli=1" target="_blank" style="display: inline-flex; align-items: center; gap: 0.5rem; background: var(--navy); color: var(--white); padding: 0.9rem 2rem; border-radius: 4px; text-decoration: none; font-weight: 600; transition: all 0.3s;">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+                <path d="M3,20.5V3.5C3,2.91 3.34,2.39 3.84,2.15L13.69,12L3.84,21.85C3.34,21.6 3,21.09 3,20.5M16.81,15.12L6.05,21.34L14.54,12.85L16.81,15.12M20.16,10.81C20.5,11.08 20.75,11.5 20.75,12C20.75,12.5 20.53,12.9 20.18,13.18L17.89,14.5L15.39,12L17.89,9.5L20.16,10.81M6.05,2.66L16.81,8.88L14.54,11.15L6.05,2.66Z"/>
+              </svg>
+              Download Mirror on Google Play
+            </a>
+          </div>
+          
           <h3>The Idea</h3>
           <p>Mirror started as a personal experiment: could I build a tool that helps people reflect more meaningfully on their lives, using AI as a thoughtful companion rather than just a chatbot?</p>
           
@@ -2142,12 +2265,16 @@
             <li><strong>Privacy-First Architecture:</strong> All data encrypted end-to-end; the AI learns your patterns without storing your actual entries</li>
           </ul>
           
+          <h3>From Idea to Revenue</h3>
+          <p>The app is now live on Google Play and generating revenue through Meta Network Ads. Shipping something from scratch taught me more about product development than years of managing other people's products.</p>
+          
           <h3>What I Learned</h3>
           <p>Building Mirror taught me more about product development than any course could:</p>
           <ul>
             <li><strong>Start with the job-to-be-done:</strong> Users don't want an app—they want to feel more self-aware</li>
             <li><strong>Simplicity is hard:</strong> I cut 60% of my initial features to focus on what actually mattered</li>
             <li><strong>Shipping beats perfection:</strong> The version I launched wasn't the version I imagined, but it was real</li>
+            <li><strong>Monetization validates value:</strong> People paying for your product is the ultimate product-market fit signal</li>
           </ul>
           
           <div class="modal-stats">
@@ -2156,12 +2283,12 @@
               <div class="modal-stat-label">Dev Time</div>
             </div>
             <div class="modal-stat">
-              <div class="modal-stat-value">1</div>
-              <div class="modal-stat-label">Apps Shipped</div>
+              <div class="modal-stat-value">Live</div>
+              <div class="modal-stat-label">On Play Store</div>
             </div>
             <div class="modal-stat">
-              <div class="modal-stat-value">∞</div>
-              <div class="modal-stat-label">Lessons Learned</div>
+              <div class="modal-stat-value">✓</div>
+              <div class="modal-stat-label">Monetizing</div>
             </div>
           </div>
           
