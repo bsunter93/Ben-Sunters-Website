@@ -1,402 +1,402 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Benjamin J. Sunter - Business Operations & Strategy</title>
-  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
-  <style>
-    :root {
-      --navy: #1a2744;
-      --navy-light: #2c3e50;
-      --gold: #c9a961;
-      --gold-light: #e8d5a3;
-      --white: #ffffff;
-      --gray-light: #f8f9fa;
-      --gray: #6c757d;
-      --text: #333;
-    }
-    
-    * { margin: 0; padding: 0; box-sizing: border-box; }
-    
-    body {
-      font-family: 'Inter', sans-serif;
-      color: var(--text);
-      line-height: 1.7;
-      background: var(--white);
-    }
-    
-    .header {
-      background: var(--white);
-      padding: 2rem 0;
-      text-align: center;
-      border-bottom: 1px solid #eee;
-      position: sticky;
-      top: 0;
-      z-index: 100;
-    }
-    
-    .signature {
-      font-family: 'Playfair Display', serif;
-      font-size: 2.5rem;
-      font-weight: 400;
-      color: var(--navy);
-      font-style: italic;
-      letter-spacing: 2px;
-    }
-    
-    .main-navigation {
-      display: flex;
-      justify-content: center;
-      gap: 0;
-      margin-top: 1.5rem;
-      border-bottom: 1px solid #eee;
-    }
-    
-    .main-nav-tab {
-      padding: 1rem 2.5rem;
-      background: none;
-      border: none;
-      font-size: 0.85rem;
-      font-weight: 500;
-      letter-spacing: 1.5px;
-      text-transform: uppercase;
-      color: var(--gray);
-      cursor: pointer;
-      transition: all 0.3s;
-      border-bottom: 3px solid transparent;
-      position: relative;
-      top: 1px;
-    }
-    
-    .main-nav-tab:hover { color: var(--navy); }
-    
-    .main-nav-tab.active {
-      color: var(--navy);
-      border-bottom-color: var(--gold);
-    }
-    
-    .page-section {
-      display: none;
-      animation: fadeIn 0.5s ease;
-    }
-    
-    .page-section.active { display: block; }
-    
-    @keyframes fadeIn {
-      from { opacity: 0; transform: translateY(10px); }
-      to { opacity: 1; transform: translateY(0); }
-    }
-    
-    .hero {
-      background: var(--navy);
-      color: var(--white);
-      padding: 5rem 2rem;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      gap: 4rem;
-      flex-wrap: wrap;
-    }
-    
-    .hero-image {
-      width: 280px;
-      height: 340px;
-      border-radius: 4px;
-      overflow: hidden;
-      box-shadow: 0 20px 60px rgba(0,0,0,0.3);
-    }
-    
-    .hero-image img {
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-    }
-    
-    .hero-content { max-width: 520px; }
-    
-    .hero h1 {
-      font-family: 'Playfair Display', serif;
-      font-size: 2.8rem;
-      font-weight: 600;
-      margin-bottom: 0.5rem;
-      letter-spacing: 1px;
-    }
-    
-    .hero-subtitle {
-      color: var(--gold);
-      font-size: 1.1rem;
-      font-weight: 500;
-      letter-spacing: 2px;
-      text-transform: uppercase;
-      margin-bottom: 1.5rem;
-    }
-    
-    .hero p {
-      color: rgba(255,255,255,0.85);
-      font-size: 1.05rem;
-      line-height: 1.8;
-    }
-    
-    .social-bar {
-      display: flex;
-      gap: 1rem;
-      margin-top: 2rem;
-      flex-wrap: wrap;
-    }
-    
-    .social-bar a, .social-bar span {
-      color: var(--white);
-      text-decoration: none;
-      font-size: 0.85rem;
-      font-weight: 500;
-      transition: all 0.3s;
-      padding: 0.6rem 1.2rem;
-      border: 1px solid rgba(255,255,255,0.3);
-      border-radius: 4px;
-      background: rgba(255,255,255,0.05);
-    }
-    
-    .social-bar a:hover {
-      background: var(--gold);
-      color: var(--navy);
-      border-color: var(--gold);
-    }
-    
-    .stats {
-      background: var(--navy);
-      padding: 4rem 2rem;
-      display: flex;
-      justify-content: center;
-      gap: 4rem;
-      flex-wrap: wrap;
-    }
-    
-    .stat {
-      text-align: center;
-      color: var(--white);
-      min-width: 180px;
-    }
-    
-    .stat-number {
-      font-family: 'Playfair Display', serif;
-      font-size: 3.5rem;
-      font-weight: 700;
-      color: var(--gold);
-      line-height: 1;
-    }
-    
-    .stat-label {
-      font-size: 0.85rem;
-      color: rgba(255,255,255,0.75);
-      margin-top: 0.75rem;
-      line-height: 1.4;
-    }
-    
-    section {
-      padding: 5rem 2rem;
-      max-width: 900px;
-      margin: 0 auto;
-    }
-    
-    .section-label {
-      color: var(--gold);
-      font-size: 0.8rem;
-      font-weight: 600;
-      letter-spacing: 3px;
-      text-transform: uppercase;
-      margin-bottom: 1rem;
-    }
-    
-    h2 {
-      font-family: 'Playfair Display', serif;
-      font-size: 2.2rem;
-      font-weight: 600;
-      color: var(--navy);
-      margin-bottom: 2rem;
-    }
-    
-    .about-content {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 3rem;
-    }
-    
-    .about-content p {
-      color: var(--gray);
-      font-size: 1rem;
-      line-height: 1.9;
-    }
-    
-    .highlight-quote {
-      background: var(--gray-light);
-      border-left: 4px solid var(--gold);
-      padding: 2rem;
-      margin: 2rem 0;
-      font-style: italic;
-      color: var(--navy);
-    }
-    
-    .what-i-do {
-      background: var(--gray-light);
-      padding: 5rem 2rem;
-      max-width: none;
-    }
-    
-    .what-i-do-container {
-      max-width: 1000px;
-      margin: 0 auto;
-    }
-    
-    .capabilities-grid {
-      display: grid;
-      grid-template-columns: repeat(2, 1fr);
-      gap: 2rem;
-    }
-    
-    .capability-card {
-      background: var(--white);
-      padding: 2rem;
-      border-radius: 4px;
-      border-top: 3px solid var(--gold);
-    }
-    
-    .capability-card h3 {
-      font-family: 'Playfair Display', serif;
-      font-size: 1.2rem;
-      color: var(--navy);
-      margin-bottom: 1rem;
-    }
-    
-    .capability-card p {
-      color: var(--gray);
-      font-size: 0.95rem;
-      line-height: 1.7;
-    }
-    
-    .experience-item {
-      border-bottom: 1px solid #eee;
-      padding: 2.5rem 0;
-    }
-    
-    .experience-item:last-child { border-bottom: none; }
-    
-    .exp-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: baseline;
-      margin-bottom: 1rem;
-      flex-wrap: wrap;
-      gap: 0.5rem;
-    }
-    
-    .exp-title {
-      font-family: 'Playfair Display', serif;
-      font-size: 1.4rem;
-      font-weight: 600;
-      color: var(--navy);
-    }
-    
-    .exp-company {
-      color: var(--gold);
-      font-weight: 600;
-      font-size: 0.9rem;
-      letter-spacing: 1px;
-    }
-    
-    .exp-date {
-      color: var(--gray);
-      font-size: 0.85rem;
-    }
-    
-    .exp-description {
-      color: var(--gray);
-      font-size: 0.95rem;
-      line-height: 1.8;
-    }
-    
-    .exp-highlights {
-      margin-top: 1rem;
-      padding-left: 0;
-      list-style: none;
-    }
-    
-    .exp-highlights li {
-      color: var(--gray);
-      font-size: 0.9rem;
-      line-height: 1.7;
-      padding: 0.4rem 0;
-      padding-left: 1.5rem;
-      position: relative;
-    }
-    
-    .exp-highlights li::before {
-      content: '';
-      position: absolute;
-      left: 0;
-      top: 0.9rem;
-      width: 8px;
-      height: 8px;
-      background: var(--gold);
-      border-radius: 50%;
-    }
-    
-    .skills-grid {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 2.5rem;
-    }
-    
-    .skill-category h3 {
-      font-family: 'Playfair Display', serif;
-      font-size: 1.1rem;
-      color: var(--navy);
-      margin-bottom: 1rem;
-      padding-bottom: 0.5rem;
-      border-bottom: 2px solid var(--gold);
-    }
-    
-    .skill-category ul { list-style: none; }
-    
-    .skill-category li {
-      color: var(--gray);
-      font-size: 0.9rem;
-      padding: 0.4rem 0;
-    }
-    
-    .tech-stack {
-      margin-top: 2rem;
-      padding-top: 2rem;
-      border-top: 1px solid #eee;
-    }
-    
-    .tech-stack h3 {
-      font-family: 'Playfair Display', serif;
-      font-size: 1.1rem;
-      color: var(--navy);
-      margin-bottom: 1rem;
-    }
-    
-    .tech-pills {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 0.75rem;
-    }
-    
-    .tech-pill {
-      background: var(--navy);
-      color: var(--white);
-      padding: 0.5rem 1rem;
-      border-radius: 4px;
-      font-size: 0.85rem;
-      font-weight: 500;
-    }
-    
-    .tech-pill.highlight {
-      background: var(--gold);
-      color: var(--navy);
-    }
-    
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Benjamin J. Sunter - Business Operations & Strategy</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+:root {
+--navy: #1a2744;
+--navy-light: #2c3e50;
+--gold: #c9a961;
+--gold-light: #e8d5a3;
+--white: #ffffff;
+--gray-light: #f8f9fa;
+--gray: #6c757d;
+--text: #333;
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+body {
+font-family: 'Inter', sans-serif;
+color: var(--text);
+line-height: 1.7;
+background: var(--white);
+}
+
+.header {
+background: var(--white);
+padding: 2rem 0;
+text-align: center;
+border-bottom: 1px solid #eee;
+position: sticky;
+top: 0;
+z-index: 100;
+}
+
+.signature {
+font-family: 'Playfair Display', serif;
+font-size: 2.5rem;
+font-weight: 400;
+color: var(--navy);
+font-style: italic;
+letter-spacing: 2px;
+}
+
+.main-navigation {
+display: flex;
+justify-content: center;
+gap: 0;
+margin-top: 1.5rem;
+border-bottom: 1px solid #eee;
+}
+
+.main-nav-tab {
+padding: 1rem 2.5rem;
+background: none;
+border: none;
+font-size: 0.85rem;
+font-weight: 500;
+letter-spacing: 1.5px;
+text-transform: uppercase;
+color: var(--gray);
+cursor: pointer;
+transition: all 0.3s;
+border-bottom: 3px solid transparent;
+position: relative;
+top: 1px;
+}
+
+.main-nav-tab:hover { color: var(--navy); }
+
+.main-nav-tab.active {
+color: var(--navy);
+border-bottom-color: var(--gold);
+}
+
+.page-section {
+display: none;
+animation: fadeIn 0.5s ease;
+}
+
+.page-section.active { display: block; }
+
+@keyframes fadeIn {
+from { opacity: 0; transform: translateY(10px); }
+to { opacity: 1; transform: translateY(0); }
+}
+
+.hero {
+background: var(--navy);
+color: var(--white);
+padding: 5rem 2rem;
+display: flex;
+justify-content: center;
+align-items: center;
+gap: 4rem;
+flex-wrap: wrap;
+}
+
+.hero-image {
+width: 280px;
+height: 340px;
+border-radius: 4px;
+overflow: hidden;
+box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+}
+
+.hero-image img {
+width: 100%;
+height: 100%;
+object-fit: cover;
+}
+
+.hero-content { max-width: 520px; }
+
+.hero h1 {
+font-family: 'Playfair Display', serif;
+font-size: 2.8rem;
+font-weight: 600;
+margin-bottom: 0.5rem;
+letter-spacing: 1px;
+}
+
+.hero-subtitle {
+color: var(--gold);
+font-size: 1.1rem;
+font-weight: 500;
+letter-spacing: 2px;
+text-transform: uppercase;
+margin-bottom: 1.5rem;
+}
+
+.hero p {
+color: rgba(255,255,255,0.85);
+font-size: 1.05rem;
+line-height: 1.8;
+}
+
+.social-bar {
+display: flex;
+gap: 1rem;
+margin-top: 2rem;
+flex-wrap: wrap;
+}
+
+.social-bar a, .social-bar span {
+color: var(--white);
+text-decoration: none;
+font-size: 0.85rem;
+font-weight: 500;
+transition: all 0.3s;
+padding: 0.6rem 1.2rem;
+border: 1px solid rgba(255,255,255,0.3);
+border-radius: 4px;
+background: rgba(255,255,255,0.05);
+}
+
+.social-bar a:hover {
+background: var(--gold);
+color: var(--navy);
+border-color: var(--gold);
+}
+
+.stats {
+background: var(--navy);
+padding: 4rem 2rem;
+display: flex;
+justify-content: center;
+gap: 4rem;
+flex-wrap: wrap;
+}
+
+.stat {
+text-align: center;
+color: var(--white);
+min-width: 180px;
+}
+
+.stat-number {
+font-family: 'Playfair Display', serif;
+font-size: 3.5rem;
+font-weight: 700;
+color: var(--gold);
+line-height: 1;
+}
+
+.stat-label {
+font-size: 0.85rem;
+color: rgba(255,255,255,0.75);
+margin-top: 0.75rem;
+line-height: 1.4;
+}
+
+section {
+padding: 5rem 2rem;
+max-width: 900px;
+margin: 0 auto;
+}
+
+.section-label {
+color: var(--gold);
+font-size: 0.8rem;
+font-weight: 600;
+letter-spacing: 3px;
+text-transform: uppercase;
+margin-bottom: 1rem;
+}
+
+h2 {
+font-family: 'Playfair Display', serif;
+font-size: 2.2rem;
+font-weight: 600;
+color: var(--navy);
+margin-bottom: 2rem;
+}
+
+.about-content {
+display: grid;
+grid-template-columns: 1fr 1fr;
+gap: 3rem;
+}
+
+.about-content p {
+color: var(--gray);
+font-size: 1rem;
+line-height: 1.9;
+}
+
+.highlight-quote {
+background: var(--gray-light);
+border-left: 4px solid var(--gold);
+padding: 2rem;
+margin: 2rem 0;
+font-style: italic;
+color: var(--navy);
+}
+
+.what-i-do {
+background: var(--gray-light);
+padding: 5rem 2rem;
+max-width: none;
+}
+
+.what-i-do-container {
+max-width: 1000px;
+margin: 0 auto;
+}
+
+.capabilities-grid {
+display: grid;
+grid-template-columns: repeat(2, 1fr);
+gap: 2rem;
+}
+
+.capability-card {
+background: var(--white);
+padding: 2rem;
+border-radius: 4px;
+border-top: 3px solid var(--gold);
+}
+
+.capability-card h3 {
+font-family: 'Playfair Display', serif;
+font-size: 1.2rem;
+color: var(--navy);
+margin-bottom: 1rem;
+}
+
+.capability-card p {
+color: var(--gray);
+font-size: 0.95rem;
+line-height: 1.7;
+}
+
+.experience-item {
+border-bottom: 1px solid #eee;
+padding: 2.5rem 0;
+}
+
+.experience-item:last-child { border-bottom: none; }
+
+.exp-header {
+display: flex;
+justify-content: space-between;
+align-items: baseline;
+margin-bottom: 1rem;
+flex-wrap: wrap;
+gap: 0.5rem;
+}
+
+.exp-title {
+font-family: 'Playfair Display', serif;
+font-size: 1.4rem;
+font-weight: 600;
+color: var(--navy);
+}
+
+.exp-company {
+color: var(--gold);
+font-weight: 600;
+font-size: 0.9rem;
+letter-spacing: 1px;
+}
+
+.exp-date {
+color: var(--gray);
+font-size: 0.85rem;
+}
+
+.exp-description {
+color: var(--gray);
+font-size: 0.95rem;
+line-height: 1.8;
+}
+
+.exp-highlights {
+margin-top: 1rem;
+padding-left: 0;
+list-style: none;
+}
+
+.exp-highlights li {
+color: var(--gray);
+font-size: 0.9rem;
+line-height: 1.7;
+padding: 0.4rem 0;
+padding-left: 1.5rem;
+position: relative;
+}
+
+.exp-highlights li::before {
+content: '';
+position: absolute;
+left: 0;
+top: 0.9rem;
+width: 8px;
+height: 8px;
+background: var(--gold);
+border-radius: 50%;
+}
+
+.skills-grid {
+display: grid;
+grid-template-columns: repeat(3, 1fr);
+gap: 2.5rem;
+}
+
+.skill-category h3 {
+font-family: 'Playfair Display', serif;
+font-size: 1.1rem;
+color: var(--navy);
+margin-bottom: 1rem;
+padding-bottom: 0.5rem;
+border-bottom: 2px solid var(--gold);
+}
+
+.skill-category ul { list-style: none; }
+
+.skill-category li {
+color: var(--gray);
+font-size: 0.9rem;
+padding: 0.4rem 0;
+}
+
+.tech-stack {
+margin-top: 2rem;
+padding-top: 2rem;
+border-top: 1px solid #eee;
+}
+
+.tech-stack h3 {
+font-family: 'Playfair Display', serif;
+font-size: 1.1rem;
+color: var(--navy);
+margin-bottom: 1rem;
+}
+
+.tech-pills {
+display: flex;
+flex-wrap: wrap;
+gap: 0.75rem;
+}
+
+.tech-pill {
+background: var(--navy);
+color: var(--white);
+padding: 0.5rem 1rem;
+border-radius: 4px;
+font-size: 0.85rem;
+font-weight: 500;
+}
+
+.tech-pill.highlight {
+background: var(--gold);
+color: var(--navy);
+}
+
     /* Logo Bar Section */
     .featured-project {
       background: linear-gradient(135deg, #f8f9fa 0%, #ffffff 100%);
@@ -481,1082 +481,1082 @@
       color: var(--white);
     }
     
-    /* Logo Bar Section */
-    .logo-bar {
-      background: var(--white);
-      padding: 3rem 2rem;
-      border-bottom: 1px solid #eee;
-    }
-    
-    .logo-bar-container {
-      max-width: 900px;
-      margin: 0 auto;
-      text-align: center;
-    }
-    
-    .logo-bar-label {
-      font-size: 0.75rem;
-      color: var(--gray);
-      text-transform: uppercase;
-      letter-spacing: 2px;
-      margin-bottom: 1.5rem;
-      font-weight: 500;
-    }
-    
-    .logo-bar-logos {
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      gap: 4rem;
-      flex-wrap: wrap;
-    }
-    
-    .logo-bar-item {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      transition: transform 0.3s ease, opacity 0.3s ease;
-      opacity: 0.9;
-    }
-    
-    .logo-bar-item:hover {
-      transform: scale(1.05);
-      opacity: 1;
-    }
-    
-    .logo-bar-item svg {
-      height: 32px;
-      width: auto;
-    }
-    
-    .logo-bar-item.google svg {
-      height: 30px;
-    }
-    
-    .logo-bar-item.accenture svg {
-      height: 34px;
-    }
-    
-    .logo-bar-item.uf img {
-      height: 50px;
-    }
-    
-    .logo-bar-item.accenture img {
-      height: 34px;
-    }
-    
-    /* Experience Inline Logos */
-    .exp-company-row {
-      display: flex;
-      align-items: center;
-      gap: 0.5rem;
-      margin-top: 0.25rem;
-    }
-    
-    .exp-logo {
-      height: 20px;
-      width: auto;
-    }
-    
-    .exp-logo.google {
-      height: 18px;
-    }
-    
-    .exp-logo.accenture {
-      height: 22px;
-    }
-    
-    /* Education Section */
-    .education-section {
-      margin-top: 2rem;
-      padding-top: 2rem;
-      border-top: 1px solid #eee;
-    }
-    
-    .education-section h3 {
-      font-family: 'Playfair Display', serif;
-      font-size: 1.1rem;
-      color: var(--navy);
-      margin-bottom: 1rem;
-    }
-    
-    .education-item {
-      display: flex;
-      align-items: center;
-      gap: 1rem;
-      background: var(--gray-light);
-      padding: 1.25rem 1.5rem;
-      border-radius: 6px;
-    }
-    
-    .education-logo {
-      height: 45px;
-      width: auto;
-      flex-shrink: 0;
-    }
-    
-    .education-details {
-      flex: 1;
-    }
-    
-    .education-degree {
-      font-weight: 600;
-      color: var(--navy);
-      font-size: 0.95rem;
-    }
-    
-    .education-school {
-      color: var(--gray);
-      font-size: 0.85rem;
-    }
-    
-    /* Updated Certification Badges */
-    .certifications {
-      margin-top: 2rem;
-      padding-top: 2rem;
-      border-top: 1px solid #eee;
-    }
-    
-    .certifications h3 {
-      font-family: 'Playfair Display', serif;
-      font-size: 1.1rem;
-      color: var(--navy);
-      margin-bottom: 1rem;
-    }
-    
-    .cert-grid {
-      display: flex;
-      gap: 1.5rem;
-      flex-wrap: wrap;
-    }
-    
-    .cert-badge {
-      background: var(--gray-light);
-      border-radius: 6px;
-      padding: 1.25rem 1.5rem;
-      display: flex;
-      align-items: center;
-      gap: 1rem;
-      transition: transform 0.3s ease, box-shadow 0.3s ease;
-    }
-    
-    .cert-badge:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-    }
-    
-    .cert-logo {
-      height: 40px;
-      width: auto;
-      flex-shrink: 0;
-    }
-    
-    .cert-info {
-      text-align: left;
-    }
-    
-    .cert-badge .cert-name {
-      font-weight: 600;
-      color: var(--navy);
-      font-size: 0.9rem;
-      margin-bottom: 0.15rem;
-    }
-    
-    .cert-badge .cert-issuer {
-      font-size: 0.75rem;
-      color: var(--gray);
-    }
-    
-    .work-section {
-      background: var(--gray-light);
-      padding: 5rem 2rem;
-      max-width: none;
-    }
-    
-    .work-container {
-      max-width: 1100px;
-      margin: 0 auto;
-    }
-    
-    /* Executive Dashboard */
-    .dashboard-frame {
-      background: var(--white);
-      border-radius: 8px;
-      box-shadow: 0 10px 40px rgba(0,0,0,0.1);
-      overflow: hidden;
-    }
-    
-    .dashboard-header {
-      background: linear-gradient(135deg, var(--navy) 0%, var(--navy-light) 100%);
-      padding: 1.25rem 2rem;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      flex-wrap: wrap;
-      gap: 1rem;
-    }
-    
-    .dashboard-title-area {
-      display: flex;
-      align-items: center;
-      gap: 1rem;
-    }
-    
-    .dashboard-icon {
-      width: 40px;
-      height: 40px;
-      background: rgba(255,255,255,0.1);
-      border-radius: 8px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 1.2rem;
-    }
-    
-    .dashboard-title {
-      color: var(--white);
-      font-family: 'Playfair Display', serif;
-      font-size: 1.3rem;
-      font-weight: 600;
-    }
-    
-    .dashboard-subtitle {
-      color: rgba(255,255,255,0.6);
-      font-size: 0.8rem;
-    }
-    
-    .dashboard-filters {
-      display: flex;
-      gap: 0.5rem;
-      flex-wrap: wrap;
-    }
-    
-    .filter-pill {
-      background: rgba(255,255,255,0.15);
-      color: var(--white);
-      padding: 0.4rem 0.9rem;
-      border-radius: 20px;
-      font-size: 0.75rem;
-      font-weight: 500;
-      backdrop-filter: blur(10px);
-    }
-    
-    .filter-pill.active {
-      background: var(--gold);
-      color: var(--navy);
-    }
-    
-    .dashboard-body {
-      padding: 2rem;
-    }
-    
-    .dashboard-kpis {
-      display: grid;
-      grid-template-columns: repeat(4, 1fr);
-      gap: 1.25rem;
-      margin-bottom: 2rem;
-    }
-    
-    .kpi-card {
-      background: linear-gradient(135deg, #f8f9fa 0%, #fff 100%);
-      border: 1px solid #e9ecef;
-      border-radius: 8px;
-      padding: 1.25rem;
-      position: relative;
-      overflow: hidden;
-    }
-    
-    .kpi-card::before {
-      content: '';
-      position: absolute;
-      top: 0;
-      left: 0;
-      width: 4px;
-      height: 100%;
-      background: var(--gold);
-    }
-    
-    .kpi-label {
-      font-size: 0.7rem;
-      color: var(--gray);
-      text-transform: uppercase;
-      letter-spacing: 1px;
-      margin-bottom: 0.5rem;
-      font-weight: 600;
-    }
-    
-    .kpi-value {
-      font-family: 'Playfair Display', serif;
-      font-size: 1.8rem;
-      font-weight: 700;
-      color: var(--navy);
-      line-height: 1;
-      margin-bottom: 0.5rem;
-    }
-    
-    .kpi-trend {
-      display: flex;
-      align-items: center;
-      gap: 0.3rem;
-      font-size: 0.75rem;
-      font-weight: 600;
-    }
-    
-    .kpi-trend.up { color: #10b981; }
-    .kpi-trend.neutral { color: var(--gray); }
-    
-    .kpi-sparkline {
-      position: absolute;
-      bottom: 0;
-      right: 0;
-      width: 60%;
-      height: 40px;
-      opacity: 0.15;
-    }
-    
-    .dashboard-charts {
-      display: grid;
-      grid-template-columns: 1.4fr 1fr;
-      gap: 1.5rem;
-    }
-    
-    .chart-card {
-      background: #f8f9fa;
-      border: 1px solid #e9ecef;
-      border-radius: 8px;
-      padding: 1.5rem;
-    }
-    
-    .chart-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 1rem;
-    }
-    
-    .chart-title {
-      font-size: 0.85rem;
-      font-weight: 600;
-      color: var(--navy);
-    }
-    
-    .chart-legend {
-      display: flex;
-      gap: 1rem;
-      font-size: 0.7rem;
-      color: var(--gray);
-    }
-    
-    .legend-item {
-      display: flex;
-      align-items: center;
-      gap: 0.3rem;
-    }
-    
-    .legend-dot {
-      width: 8px;
-      height: 8px;
-      border-radius: 50%;
-    }
-    
-    .legend-dot.gold { background: var(--gold); }
-    .legend-dot.navy { background: var(--navy); }
-    .legend-dot.green { background: #10b981; }
-    
-    /* Bar Chart */
-    .bar-chart {
-      display: flex;
-      align-items: flex-end;
-      justify-content: space-between;
-      height: 140px;
-      padding-top: 1rem;
-      border-bottom: 1px solid #dee2e6;
-    }
-    
-    .bar-group {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: 0.5rem;
-      flex: 1;
-    }
-    
-    .bar-container {
-      display: flex;
-      align-items: flex-end;
-      gap: 3px;
-      height: 100px;
-    }
-    
-    .bar {
-      width: 18px;
-      border-radius: 3px 3px 0 0;
-      transition: height 0.5s ease;
-    }
-    
-    .bar.target { background: var(--navy); opacity: 0.3; }
-    .bar.actual { background: var(--gold); }
-    .bar.actual.exceeded { background: #10b981; }
-    
-    .bar-label {
-      font-size: 0.7rem;
-      color: var(--gray);
-      font-weight: 500;
-    }
-    
-    /* Progress List */
-    .progress-list {
-      display: flex;
-      flex-direction: column;
-      gap: 1rem;
-    }
-    
-    .progress-item {
-      display: flex;
-      align-items: center;
-      gap: 1rem;
-    }
-    
-    .progress-info {
-      flex: 1;
-      min-width: 0;
-    }
-    
-    .progress-name {
-      font-size: 0.8rem;
-      font-weight: 500;
-      color: var(--navy);
-      margin-bottom: 0.25rem;
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
-    }
-    
-    .progress-bar-bg {
-      height: 6px;
-      background: #e9ecef;
-      border-radius: 3px;
-      overflow: hidden;
-    }
-    
-    .progress-bar-fill {
-      height: 100%;
-      border-radius: 3px;
-      transition: width 0.5s ease;
-    }
-    
-    .progress-bar-fill.gold { background: var(--gold); }
-    .progress-bar-fill.green { background: #10b981; }
-    .progress-bar-fill.navy { background: var(--navy); }
-    
-    .progress-pct {
-      font-size: 0.75rem;
-      font-weight: 600;
-      color: var(--navy);
-      min-width: 36px;
-      text-align: right;
-    }
-    
-    .dashboard-footer {
-      padding: 1rem 2rem;
-      background: #f8f9fa;
-      border-top: 1px solid #e9ecef;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      font-size: 0.75rem;
-      color: var(--gray);
-    }
-    
-    .status-dot {
-      display: inline-block;
-      width: 8px;
-      height: 8px;
-      background: #10b981;
-      border-radius: 50%;
-      margin-right: 0.5rem;
-      animation: pulse 2s infinite;
-    }
-    
-    @keyframes pulse {
-      0%, 100% { opacity: 1; }
-      50% { opacity: 0.5; }
-    }
-    
-    .video-cards-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-      gap: 2rem;
-      margin-top: 2rem;
-    }
-    
-    .video-card {
-      background: var(--white);
-      border-radius: 4px;
-      overflow: hidden;
-      box-shadow: 0 4px 20px rgba(0,0,0,0.08);
-      transition: transform 0.3s, box-shadow 0.3s;
-    }
-    
-    .video-card:hover {
-      transform: translateY(-5px);
-      box-shadow: 0 8px 30px rgba(0,0,0,0.12);
-    }
-    
-    .video-card video, .video-card iframe {
-      width: 100%;
-      height: 200px;
-      object-fit: cover;
-      display: block;
-    }
-    
-    .video-card-content { padding: 1.5rem; }
-    
-    .video-card-badge {
-      display: inline-block;
-      background: var(--gold);
-      color: var(--navy);
-      padding: 0.25rem 0.75rem;
-      border-radius: 4px;
-      font-size: 0.75rem;
-      font-weight: 600;
-      margin-bottom: 0.75rem;
-    }
-    
-    .video-card-title {
-      font-family: 'Playfair Display', serif;
-      font-size: 1.1rem;
-      color: var(--navy);
-      margin-bottom: 0.5rem;
-    }
-    
-    .video-card-description {
-      font-size: 0.9rem;
-      color: var(--gray);
-      line-height: 1.5;
-    }
-    
-    /* Flip Cards */
-    .personal-grid {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 2rem;
-    }
-    
-    .flip-card {
-      height: 220px;
-      perspective: 1000px;
-      cursor: pointer;
-      position: relative;
-    }
-    
-    .flip-card::before {
-      content: '👆 click';
-      position: absolute;
-      top: -10px;
-      right: -5px;
-      background: var(--gold);
-      color: var(--navy);
-      font-size: 0.7rem;
-      font-weight: 600;
-      padding: 4px 8px;
-      border-radius: 10px;
-      z-index: 10;
-      opacity: 1;
-      transition: opacity 0.3s;
-    }
-    
-    .flip-card.flipped::before { opacity: 0; }
-    
-    .flip-card-inner {
-      position: relative;
-      width: 100%;
-      height: 100%;
-      transition: transform 0.6s;
-      transform-style: preserve-3d;
-    }
-    
-    .flip-card.flipped .flip-card-inner { transform: rotateY(180deg); }
-    
-    .flip-card-front, .flip-card-back {
-      position: absolute;
-      width: 100%;
-      height: 100%;
-      -webkit-backface-visibility: hidden;
-      backface-visibility: hidden;
-      border-radius: 4px;
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-      align-items: center;
-      padding: 1.5rem;
-      box-sizing: border-box;
-    }
-    
-    .flip-card-front {
-      background: var(--gray-light);
-      text-align: center;
-    }
-    
-    .flip-card-front .icon {
-      font-size: 2.5rem;
-      margin-bottom: 1rem;
-    }
-    
-    .flip-card-front p {
-      color: var(--gray);
-      font-size: 0.95rem;
-      line-height: 1.6;
-      margin: 0;
-    }
-    
-    .flip-card-back {
-      transform: rotateY(180deg);
-      background-size: cover;
-      background-position: center;
-      background-color: var(--navy);
-    }
-    
-    .flip-card-back.outdoor-back {
-      background-image: linear-gradient(rgba(0,0,0,0.1), rgba(0,0,0,0.1)), url('hiking.jpeg');
-    }
-    
-    .flip-card-back.cheerleader-back {
-      background-image: linear-gradient(rgba(0,0,0,0.1), rgba(0,0,0,0.1)), url('ben1.jpg');
-    }
-    
-    .flip-card-back.building-back {
-      background-image: linear-gradient(rgba(0,0,0,0.1), rgba(0,0,0,0.1)), url('IMG_0970.jpeg');
-    }
-    
-    /* Blog & Projects Page */
-    .blog-section {
-      padding: 5rem 2rem;
-      max-width: 1100px;
-      margin: 0 auto;
-    }
-    
-    .projects-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
-      gap: 2rem;
-      margin-top: 2rem;
-    }
-    
-    .project-card {
-      background: var(--white);
-      border-radius: 4px;
-      box-shadow: 0 4px 20px rgba(0,0,0,0.08);
-      overflow: hidden;
-      transition: transform 0.3s, box-shadow 0.3s;
-    }
-    
-    .project-card:hover {
-      transform: translateY(-5px);
-      box-shadow: 0 8px 30px rgba(0,0,0,0.12);
-    }
-    
-    .project-image {
-      height: 180px;
-      background: linear-gradient(135deg, var(--navy), var(--navy-light));
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      color: var(--white);
-      font-family: 'Playfair Display', serif;
-      font-size: 1.3rem;
-      font-weight: 600;
-    }
-    
-    .project-content { padding: 1.5rem; }
-    
-    .project-tags { margin-bottom: 0.75rem; }
-    
-    .project-tag {
-      display: inline-block;
-      background: var(--gray-light);
-      color: var(--navy);
-      padding: 0.25rem 0.75rem;
-      border-radius: 4px;
-      font-size: 0.75rem;
-      font-weight: 600;
-      margin-right: 0.5rem;
-      margin-bottom: 0.5rem;
-    }
-    
-    .project-title {
-      font-family: 'Playfair Display', serif;
-      font-size: 1.2rem;
-      color: var(--navy);
-      margin-bottom: 0.5rem;
-    }
-    
-    .project-description {
-      font-size: 0.9rem;
-      color: var(--gray);
-      line-height: 1.6;
-      margin-bottom: 1rem;
-    }
-    
-    .project-link {
-      color: var(--gold);
-      text-decoration: none;
-      font-weight: 600;
-      font-size: 0.9rem;
-      transition: color 0.3s;
-      cursor: pointer;
-      background: none;
-      border: none;
-      padding: 0;
-      font-family: inherit;
-    }
-    
-    .project-link:hover { color: var(--navy); }
-    
-    /* Modal Styles */
-    .modal-overlay {
-      position: fixed;
-      top: 0;
-      left: 0;
-      right: 0;
-      bottom: 0;
-      background: rgba(26, 39, 68, 0.85);
-      backdrop-filter: blur(4px);
-      z-index: 1000;
-      display: none;
-      align-items: center;
-      justify-content: center;
-      padding: 2rem;
-      opacity: 0;
-      transition: opacity 0.3s ease;
-    }
-    
-    .modal-overlay.active {
-      display: flex;
-      opacity: 1;
-    }
-    
-    .modal-container {
-      background: var(--white);
-      border-radius: 8px;
-      max-width: 800px;
-      width: 100%;
-      max-height: 85vh;
-      overflow: hidden;
-      box-shadow: 0 25px 80px rgba(0,0,0,0.4);
-      transform: translateY(20px);
-      transition: transform 0.3s ease;
-      display: flex;
-      flex-direction: column;
-    }
-    
-    .modal-overlay.active .modal-container {
-      transform: translateY(0);
-    }
-    
-    .modal-header {
-      background: linear-gradient(135deg, var(--navy) 0%, var(--navy-light) 100%);
-      padding: 1.5rem 2rem;
-      display: flex;
-      justify-content: space-between;
-      align-items: flex-start;
-      flex-shrink: 0;
-    }
-    
-    .modal-header-content {
-      flex: 1;
-    }
-    
-    .modal-tags {
-      display: flex;
-      gap: 0.5rem;
-      margin-bottom: 0.75rem;
-      flex-wrap: wrap;
-    }
-    
-    .modal-tag {
-      background: rgba(255,255,255,0.15);
-      color: var(--white);
-      padding: 0.25rem 0.75rem;
-      border-radius: 4px;
-      font-size: 0.7rem;
-      font-weight: 600;
-      text-transform: uppercase;
-      letter-spacing: 0.5px;
-    }
-    
-    .modal-title {
-      font-family: 'Playfair Display', serif;
-      font-size: 1.6rem;
-      font-weight: 600;
-      color: var(--white);
-      margin: 0;
-      line-height: 1.3;
-    }
-    
-    .modal-close {
-      background: rgba(255,255,255,0.1);
-      border: none;
-      color: var(--white);
-      width: 40px;
-      height: 40px;
-      border-radius: 50%;
-      cursor: pointer;
-      font-size: 1.5rem;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      transition: background 0.3s;
-      flex-shrink: 0;
-      margin-left: 1rem;
-    }
-    
-    .modal-close:hover {
-      background: rgba(255,255,255,0.2);
-    }
-    
-    .modal-body {
-      padding: 2rem;
-      overflow-y: auto;
-      flex: 1;
-    }
-    
-    .modal-body h3 {
-      font-family: 'Playfair Display', serif;
-      font-size: 1.3rem;
-      color: var(--navy);
-      margin: 2rem 0 1rem 0;
-    }
-    
-    .modal-body h3:first-child {
-      margin-top: 0;
-    }
-    
-    .modal-body p {
-      color: var(--gray);
-      font-size: 1rem;
-      line-height: 1.8;
-      margin-bottom: 1rem;
-    }
-    
-    .modal-body ul {
-      color: var(--gray);
-      font-size: 1rem;
-      line-height: 1.8;
-      margin-bottom: 1rem;
-      padding-left: 1.5rem;
-    }
-    
-    .modal-body li {
-      margin-bottom: 0.5rem;
-    }
-    
-    .modal-highlight {
-      background: var(--gray-light);
-      border-left: 4px solid var(--gold);
-      padding: 1.25rem 1.5rem;
-      margin: 1.5rem 0;
-      font-style: italic;
-      color: var(--navy);
-    }
-    
-    .modal-stats {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 1rem;
-      margin: 1.5rem 0;
-    }
-    
-    .modal-stat {
-      background: var(--gray-light);
-      padding: 1rem;
-      border-radius: 6px;
-      text-align: center;
-    }
-    
-    .modal-stat-value {
-      font-family: 'Playfair Display', serif;
-      font-size: 1.5rem;
-      font-weight: 700;
-      color: var(--navy);
-    }
-    
-    .modal-stat-label {
-      font-size: 0.75rem;
-      color: var(--gray);
-      text-transform: uppercase;
-      letter-spacing: 0.5px;
-    }
-    
-    .modal-footer {
-      padding: 1.25rem 2rem;
-      background: var(--gray-light);
-      border-top: 1px solid #e9ecef;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      flex-shrink: 0;
-    }
-    
-    .modal-author {
-      display: flex;
-      align-items: center;
-      gap: 0.75rem;
-    }
-    
-    .modal-author-avatar {
-      width: 36px;
-      height: 36px;
-      border-radius: 50%;
-      background: var(--navy);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      color: var(--white);
-      font-weight: 600;
-      font-size: 0.85rem;
-    }
-    
-    .modal-author-info {
-      font-size: 0.85rem;
-    }
-    
-    .modal-author-name {
-      font-weight: 600;
-      color: var(--navy);
-    }
-    
-    .modal-author-date {
-      color: var(--gray);
-      font-size: 0.75rem;
-    }
-    
-    .modal-coming-soon {
-      text-align: center;
-      padding: 3rem 2rem;
-    }
-    
-    .modal-coming-soon-icon {
-      font-size: 3rem;
-      margin-bottom: 1rem;
-    }
-    
-    .modal-coming-soon h3 {
-      margin-top: 0;
-    }
-    
-    @media (max-width: 768px) {
-      .modal-overlay { padding: 1rem; }
-      .modal-container { max-height: 90vh; }
-      .modal-header { padding: 1.25rem 1.5rem; }
-      .modal-title { font-size: 1.3rem; }
-      .modal-body { padding: 1.5rem; }
-      .modal-stats { grid-template-columns: 1fr; }
-    }
-    
-    footer {
-      background: var(--navy);
-      color: var(--white);
-      padding: 4rem 2rem;
-      text-align: center;
-    }
-    
-    footer h2 {
-      color: var(--white);
-      margin-bottom: 1rem;
-    }
-    
-    footer p {
-      color: rgba(255,255,255,0.7);
-      margin-bottom: 2rem;
-    }
-    
-    .footer-links {
-      display: flex;
-      justify-content: center;
-      gap: 2rem;
-      margin-bottom: 1rem;
-      flex-wrap: wrap;
-    }
-    
-    .footer-links a {
-      color: var(--gold);
-      text-decoration: none;
-      font-weight: 500;
-      transition: opacity 0.3s;
-    }
-    
-    .footer-links a:hover { opacity: 0.7; }
-    
-    .footer-phone {
-      color: rgba(255,255,255,0.7);
-      font-size: 0.9rem;
-      margin-bottom: 2rem;
-    }
-    
-    .copyright {
-      font-size: 0.8rem;
-      color: rgba(255,255,255,0.5);
-      padding-top: 2rem;
-      border-top: 1px solid rgba(255,255,255,0.1);
-    }
-    
-    @media (max-width: 768px) {
-      .hero { flex-direction: column; text-align: center; padding: 3rem 1.5rem; }
+/* Logo Bar Section */
+.logo-bar {
+background: var(--white);
+padding: 3rem 2rem;
+border-bottom: 1px solid #eee;
+}
+
+.logo-bar-container {
+max-width: 900px;
+margin: 0 auto;
+text-align: center;
+}
+
+.logo-bar-label {
+font-size: 0.75rem;
+color: var(--gray);
+text-transform: uppercase;
+letter-spacing: 2px;
+margin-bottom: 1.5rem;
+font-weight: 500;
+}
+
+.logo-bar-logos {
+display: flex;
+justify-content: center;
+align-items: center;
+gap: 4rem;
+flex-wrap: wrap;
+}
+
+.logo-bar-item {
+display: flex;
+align-items: center;
+justify-content: center;
+transition: transform 0.3s ease, opacity 0.3s ease;
+opacity: 0.9;
+}
+
+.logo-bar-item:hover {
+transform: scale(1.05);
+opacity: 1;
+}
+
+.logo-bar-item svg {
+height: 32px;
+width: auto;
+}
+
+.logo-bar-item.google svg {
+height: 30px;
+}
+
+.logo-bar-item.accenture svg {
+height: 34px;
+}
+
+.logo-bar-item.uf img {
+height: 50px;
+}
+
+.logo-bar-item.accenture img {
+height: 34px;
+}
+
+/* Experience Inline Logos */
+.exp-company-row {
+display: flex;
+align-items: center;
+gap: 0.5rem;
+margin-top: 0.25rem;
+}
+
+.exp-logo {
+height: 20px;
+width: auto;
+}
+
+.exp-logo.google {
+height: 18px;
+}
+
+.exp-logo.accenture {
+height: 22px;
+}
+
+/* Education Section */
+.education-section {
+margin-top: 2rem;
+padding-top: 2rem;
+border-top: 1px solid #eee;
+}
+
+.education-section h3 {
+font-family: 'Playfair Display', serif;
+font-size: 1.1rem;
+color: var(--navy);
+margin-bottom: 1rem;
+}
+
+.education-item {
+display: flex;
+align-items: center;
+gap: 1rem;
+background: var(--gray-light);
+padding: 1.25rem 1.5rem;
+border-radius: 6px;
+}
+
+.education-logo {
+height: 45px;
+width: auto;
+flex-shrink: 0;
+}
+
+.education-details {
+flex: 1;
+}
+
+.education-degree {
+font-weight: 600;
+color: var(--navy);
+font-size: 0.95rem;
+}
+
+.education-school {
+color: var(--gray);
+font-size: 0.85rem;
+}
+
+/* Updated Certification Badges */
+.certifications {
+margin-top: 2rem;
+padding-top: 2rem;
+border-top: 1px solid #eee;
+}
+
+.certifications h3 {
+font-family: 'Playfair Display', serif;
+font-size: 1.1rem;
+color: var(--navy);
+margin-bottom: 1rem;
+}
+
+.cert-grid {
+display: flex;
+gap: 1.5rem;
+flex-wrap: wrap;
+}
+
+.cert-badge {
+background: var(--gray-light);
+border-radius: 6px;
+padding: 1.25rem 1.5rem;
+display: flex;
+align-items: center;
+gap: 1rem;
+transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.cert-badge:hover {
+transform: translateY(-2px);
+box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+}
+
+.cert-logo {
+height: 40px;
+width: auto;
+flex-shrink: 0;
+}
+
+.cert-info {
+text-align: left;
+}
+
+.cert-badge .cert-name {
+font-weight: 600;
+color: var(--navy);
+font-size: 0.9rem;
+margin-bottom: 0.15rem;
+}
+
+.cert-badge .cert-issuer {
+font-size: 0.75rem;
+color: var(--gray);
+}
+
+.work-section {
+background: var(--gray-light);
+padding: 5rem 2rem;
+max-width: none;
+}
+
+.work-container {
+max-width: 1100px;
+margin: 0 auto;
+}
+
+/* Executive Dashboard */
+.dashboard-frame {
+background: var(--white);
+border-radius: 8px;
+box-shadow: 0 10px 40px rgba(0,0,0,0.1);
+overflow: hidden;
+}
+
+.dashboard-header {
+background: linear-gradient(135deg, var(--navy) 0%, var(--navy-light) 100%);
+padding: 1.25rem 2rem;
+display: flex;
+justify-content: space-between;
+align-items: center;
+flex-wrap: wrap;
+gap: 1rem;
+}
+
+.dashboard-title-area {
+display: flex;
+align-items: center;
+gap: 1rem;
+}
+
+.dashboard-icon {
+width: 40px;
+height: 40px;
+background: rgba(255,255,255,0.1);
+border-radius: 8px;
+display: flex;
+align-items: center;
+justify-content: center;
+font-size: 1.2rem;
+}
+
+.dashboard-title {
+color: var(--white);
+font-family: 'Playfair Display', serif;
+font-size: 1.3rem;
+font-weight: 600;
+}
+
+.dashboard-subtitle {
+color: rgba(255,255,255,0.6);
+font-size: 0.8rem;
+}
+
+.dashboard-filters {
+display: flex;
+gap: 0.5rem;
+flex-wrap: wrap;
+}
+
+.filter-pill {
+background: rgba(255,255,255,0.15);
+color: var(--white);
+padding: 0.4rem 0.9rem;
+border-radius: 20px;
+font-size: 0.75rem;
+font-weight: 500;
+backdrop-filter: blur(10px);
+}
+
+.filter-pill.active {
+background: var(--gold);
+color: var(--navy);
+}
+
+.dashboard-body {
+padding: 2rem;
+}
+
+.dashboard-kpis {
+display: grid;
+grid-template-columns: repeat(4, 1fr);
+gap: 1.25rem;
+margin-bottom: 2rem;
+}
+
+.kpi-card {
+background: linear-gradient(135deg, #f8f9fa 0%, #fff 100%);
+border: 1px solid #e9ecef;
+border-radius: 8px;
+padding: 1.25rem;
+position: relative;
+overflow: hidden;
+}
+
+.kpi-card::before {
+content: '';
+position: absolute;
+top: 0;
+left: 0;
+width: 4px;
+height: 100%;
+background: var(--gold);
+}
+
+.kpi-label {
+font-size: 0.7rem;
+color: var(--gray);
+text-transform: uppercase;
+letter-spacing: 1px;
+margin-bottom: 0.5rem;
+font-weight: 600;
+}
+
+.kpi-value {
+font-family: 'Playfair Display', serif;
+font-size: 1.8rem;
+font-weight: 700;
+color: var(--navy);
+line-height: 1;
+margin-bottom: 0.5rem;
+}
+
+.kpi-trend {
+display: flex;
+align-items: center;
+gap: 0.3rem;
+font-size: 0.75rem;
+font-weight: 600;
+}
+
+.kpi-trend.up { color: #10b981; }
+.kpi-trend.neutral { color: var(--gray); }
+
+.kpi-sparkline {
+position: absolute;
+bottom: 0;
+right: 0;
+width: 60%;
+height: 40px;
+opacity: 0.15;
+}
+
+.dashboard-charts {
+display: grid;
+grid-template-columns: 1.4fr 1fr;
+gap: 1.5rem;
+}
+
+.chart-card {
+background: #f8f9fa;
+border: 1px solid #e9ecef;
+border-radius: 8px;
+padding: 1.5rem;
+}
+
+.chart-header {
+display: flex;
+justify-content: space-between;
+align-items: center;
+margin-bottom: 1rem;
+}
+
+.chart-title {
+font-size: 0.85rem;
+font-weight: 600;
+color: var(--navy);
+}
+
+.chart-legend {
+display: flex;
+gap: 1rem;
+font-size: 0.7rem;
+color: var(--gray);
+}
+
+.legend-item {
+display: flex;
+align-items: center;
+gap: 0.3rem;
+}
+
+.legend-dot {
+width: 8px;
+height: 8px;
+border-radius: 50%;
+}
+
+.legend-dot.gold { background: var(--gold); }
+.legend-dot.navy { background: var(--navy); }
+.legend-dot.green { background: #10b981; }
+
+/* Bar Chart */
+.bar-chart {
+display: flex;
+align-items: flex-end;
+justify-content: space-between;
+height: 140px;
+padding-top: 1rem;
+border-bottom: 1px solid #dee2e6;
+}
+
+.bar-group {
+display: flex;
+flex-direction: column;
+align-items: center;
+gap: 0.5rem;
+flex: 1;
+}
+
+.bar-container {
+display: flex;
+align-items: flex-end;
+gap: 3px;
+height: 100px;
+}
+
+.bar {
+width: 18px;
+border-radius: 3px 3px 0 0;
+transition: height 0.5s ease;
+}
+
+.bar.target { background: var(--navy); opacity: 0.3; }
+.bar.actual { background: var(--gold); }
+.bar.actual.exceeded { background: #10b981; }
+
+.bar-label {
+font-size: 0.7rem;
+color: var(--gray);
+font-weight: 500;
+}
+
+/* Progress List */
+.progress-list {
+display: flex;
+flex-direction: column;
+gap: 1rem;
+}
+
+.progress-item {
+display: flex;
+align-items: center;
+gap: 1rem;
+}
+
+.progress-info {
+flex: 1;
+min-width: 0;
+}
+
+.progress-name {
+font-size: 0.8rem;
+font-weight: 500;
+color: var(--navy);
+margin-bottom: 0.25rem;
+white-space: nowrap;
+overflow: hidden;
+text-overflow: ellipsis;
+}
+
+.progress-bar-bg {
+height: 6px;
+background: #e9ecef;
+border-radius: 3px;
+overflow: hidden;
+}
+
+.progress-bar-fill {
+height: 100%;
+border-radius: 3px;
+transition: width 0.5s ease;
+}
+
+.progress-bar-fill.gold { background: var(--gold); }
+.progress-bar-fill.green { background: #10b981; }
+.progress-bar-fill.navy { background: var(--navy); }
+
+.progress-pct {
+font-size: 0.75rem;
+font-weight: 600;
+color: var(--navy);
+min-width: 36px;
+text-align: right;
+}
+
+.dashboard-footer {
+padding: 1rem 2rem;
+background: #f8f9fa;
+border-top: 1px solid #e9ecef;
+display: flex;
+justify-content: space-between;
+align-items: center;
+font-size: 0.75rem;
+color: var(--gray);
+}
+
+.status-dot {
+display: inline-block;
+width: 8px;
+height: 8px;
+background: #10b981;
+border-radius: 50%;
+margin-right: 0.5rem;
+animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+0%, 100% { opacity: 1; }
+50% { opacity: 0.5; }
+}
+
+.video-cards-grid {
+display: grid;
+grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+gap: 2rem;
+margin-top: 2rem;
+}
+
+.video-card {
+background: var(--white);
+border-radius: 4px;
+overflow: hidden;
+box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+transition: transform 0.3s, box-shadow 0.3s;
+}
+
+.video-card:hover {
+transform: translateY(-5px);
+box-shadow: 0 8px 30px rgba(0,0,0,0.12);
+}
+
+.video-card video, .video-card iframe {
+width: 100%;
+height: 200px;
+object-fit: cover;
+display: block;
+}
+
+.video-card-content { padding: 1.5rem; }
+
+.video-card-badge {
+display: inline-block;
+background: var(--gold);
+color: var(--navy);
+padding: 0.25rem 0.75rem;
+border-radius: 4px;
+font-size: 0.75rem;
+font-weight: 600;
+margin-bottom: 0.75rem;
+}
+
+.video-card-title {
+font-family: 'Playfair Display', serif;
+font-size: 1.1rem;
+color: var(--navy);
+margin-bottom: 0.5rem;
+}
+
+.video-card-description {
+font-size: 0.9rem;
+color: var(--gray);
+line-height: 1.5;
+}
+
+/* Flip Cards */
+.personal-grid {
+display: grid;
+grid-template-columns: repeat(3, 1fr);
+gap: 2rem;
+}
+
+.flip-card {
+height: 220px;
+perspective: 1000px;
+cursor: pointer;
+position: relative;
+}
+
+.flip-card::before {
+content: '👆 click';
+position: absolute;
+top: -10px;
+right: -5px;
+background: var(--gold);
+color: var(--navy);
+font-size: 0.7rem;
+font-weight: 600;
+padding: 4px 8px;
+border-radius: 10px;
+z-index: 10;
+opacity: 1;
+transition: opacity 0.3s;
+}
+
+.flip-card.flipped::before { opacity: 0; }
+
+.flip-card-inner {
+position: relative;
+width: 100%;
+height: 100%;
+transition: transform 0.6s;
+transform-style: preserve-3d;
+}
+
+.flip-card.flipped .flip-card-inner { transform: rotateY(180deg); }
+
+.flip-card-front, .flip-card-back {
+position: absolute;
+width: 100%;
+height: 100%;
+-webkit-backface-visibility: hidden;
+backface-visibility: hidden;
+border-radius: 4px;
+display: flex;
+flex-direction: column;
+justify-content: center;
+align-items: center;
+padding: 1.5rem;
+box-sizing: border-box;
+}
+
+.flip-card-front {
+background: var(--gray-light);
+text-align: center;
+}
+
+.flip-card-front .icon {
+font-size: 2.5rem;
+margin-bottom: 1rem;
+}
+
+.flip-card-front p {
+color: var(--gray);
+font-size: 0.95rem;
+line-height: 1.6;
+margin: 0;
+}
+
+.flip-card-back {
+transform: rotateY(180deg);
+background-size: cover;
+background-position: center;
+background-color: var(--navy);
+}
+
+.flip-card-back.outdoor-back {
+background-image: linear-gradient(rgba(0,0,0,0.1), rgba(0,0,0,0.1)), url('hiking.jpeg');
+}
+
+.flip-card-back.cheerleader-back {
+background-image: linear-gradient(rgba(0,0,0,0.1), rgba(0,0,0,0.1)), url('ben1.jpg');
+}
+
+.flip-card-back.building-back {
+background-image: linear-gradient(rgba(0,0,0,0.1), rgba(0,0,0,0.1)), url('IMG_0970.jpeg');
+}
+
+/* Blog & Projects Page */
+.blog-section {
+padding: 5rem 2rem;
+max-width: 1100px;
+margin: 0 auto;
+}
+
+.projects-grid {
+display: grid;
+grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+gap: 2rem;
+margin-top: 2rem;
+}
+
+.project-card {
+background: var(--white);
+border-radius: 4px;
+box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+overflow: hidden;
+transition: transform 0.3s, box-shadow 0.3s;
+}
+
+.project-card:hover {
+transform: translateY(-5px);
+box-shadow: 0 8px 30px rgba(0,0,0,0.12);
+}
+
+.project-image {
+height: 180px;
+background: linear-gradient(135deg, var(--navy), var(--navy-light));
+display: flex;
+align-items: center;
+justify-content: center;
+color: var(--white);
+font-family: 'Playfair Display', serif;
+font-size: 1.3rem;
+font-weight: 600;
+}
+
+.project-content { padding: 1.5rem; }
+
+.project-tags { margin-bottom: 0.75rem; }
+
+.project-tag {
+display: inline-block;
+background: var(--gray-light);
+color: var(--navy);
+padding: 0.25rem 0.75rem;
+border-radius: 4px;
+font-size: 0.75rem;
+font-weight: 600;
+margin-right: 0.5rem;
+margin-bottom: 0.5rem;
+}
+
+.project-title {
+font-family: 'Playfair Display', serif;
+font-size: 1.2rem;
+color: var(--navy);
+margin-bottom: 0.5rem;
+}
+
+.project-description {
+font-size: 0.9rem;
+color: var(--gray);
+line-height: 1.6;
+margin-bottom: 1rem;
+}
+
+.project-link {
+color: var(--gold);
+text-decoration: none;
+font-weight: 600;
+font-size: 0.9rem;
+transition: color 0.3s;
+cursor: pointer;
+background: none;
+border: none;
+padding: 0;
+font-family: inherit;
+}
+
+.project-link:hover { color: var(--navy); }
+
+/* Modal Styles */
+.modal-overlay {
+position: fixed;
+top: 0;
+left: 0;
+right: 0;
+bottom: 0;
+background: rgba(26, 39, 68, 0.85);
+backdrop-filter: blur(4px);
+z-index: 1000;
+display: none;
+align-items: center;
+justify-content: center;
+padding: 2rem;
+opacity: 0;
+transition: opacity 0.3s ease;
+}
+
+.modal-overlay.active {
+display: flex;
+opacity: 1;
+}
+
+.modal-container {
+background: var(--white);
+border-radius: 8px;
+max-width: 800px;
+width: 100%;
+max-height: 85vh;
+overflow: hidden;
+box-shadow: 0 25px 80px rgba(0,0,0,0.4);
+transform: translateY(20px);
+transition: transform 0.3s ease;
+display: flex;
+flex-direction: column;
+}
+
+.modal-overlay.active .modal-container {
+transform: translateY(0);
+}
+
+.modal-header {
+background: linear-gradient(135deg, var(--navy) 0%, var(--navy-light) 100%);
+padding: 1.5rem 2rem;
+display: flex;
+justify-content: space-between;
+align-items: flex-start;
+flex-shrink: 0;
+}
+
+.modal-header-content {
+flex: 1;
+}
+
+.modal-tags {
+display: flex;
+gap: 0.5rem;
+margin-bottom: 0.75rem;
+flex-wrap: wrap;
+}
+
+.modal-tag {
+background: rgba(255,255,255,0.15);
+color: var(--white);
+padding: 0.25rem 0.75rem;
+border-radius: 4px;
+font-size: 0.7rem;
+font-weight: 600;
+text-transform: uppercase;
+letter-spacing: 0.5px;
+}
+
+.modal-title {
+font-family: 'Playfair Display', serif;
+font-size: 1.6rem;
+font-weight: 600;
+color: var(--white);
+margin: 0;
+line-height: 1.3;
+}
+
+.modal-close {
+background: rgba(255,255,255,0.1);
+border: none;
+color: var(--white);
+width: 40px;
+height: 40px;
+border-radius: 50%;
+cursor: pointer;
+font-size: 1.5rem;
+display: flex;
+align-items: center;
+justify-content: center;
+transition: background 0.3s;
+flex-shrink: 0;
+margin-left: 1rem;
+}
+
+.modal-close:hover {
+background: rgba(255,255,255,0.2);
+}
+
+.modal-body {
+padding: 2rem;
+overflow-y: auto;
+flex: 1;
+}
+
+.modal-body h3 {
+font-family: 'Playfair Display', serif;
+font-size: 1.3rem;
+color: var(--navy);
+margin: 2rem 0 1rem 0;
+}
+
+.modal-body h3:first-child {
+margin-top: 0;
+}
+
+.modal-body p {
+color: var(--gray);
+font-size: 1rem;
+line-height: 1.8;
+margin-bottom: 1rem;
+}
+
+.modal-body ul {
+color: var(--gray);
+font-size: 1rem;
+line-height: 1.8;
+margin-bottom: 1rem;
+padding-left: 1.5rem;
+}
+
+.modal-body li {
+margin-bottom: 0.5rem;
+}
+
+.modal-highlight {
+background: var(--gray-light);
+border-left: 4px solid var(--gold);
+padding: 1.25rem 1.5rem;
+margin: 1.5rem 0;
+font-style: italic;
+color: var(--navy);
+}
+
+.modal-stats {
+display: grid;
+grid-template-columns: repeat(3, 1fr);
+gap: 1rem;
+margin: 1.5rem 0;
+}
+
+.modal-stat {
+background: var(--gray-light);
+padding: 1rem;
+border-radius: 6px;
+text-align: center;
+}
+
+.modal-stat-value {
+font-family: 'Playfair Display', serif;
+font-size: 1.5rem;
+font-weight: 700;
+color: var(--navy);
+}
+
+.modal-stat-label {
+font-size: 0.75rem;
+color: var(--gray);
+text-transform: uppercase;
+letter-spacing: 0.5px;
+}
+
+.modal-footer {
+padding: 1.25rem 2rem;
+background: var(--gray-light);
+border-top: 1px solid #e9ecef;
+display: flex;
+justify-content: space-between;
+align-items: center;
+flex-shrink: 0;
+}
+
+.modal-author {
+display: flex;
+align-items: center;
+gap: 0.75rem;
+}
+
+.modal-author-avatar {
+width: 36px;
+height: 36px;
+border-radius: 50%;
+background: var(--navy);
+display: flex;
+align-items: center;
+justify-content: center;
+color: var(--white);
+font-weight: 600;
+font-size: 0.85rem;
+}
+
+.modal-author-info {
+font-size: 0.85rem;
+}
+
+.modal-author-name {
+font-weight: 600;
+color: var(--navy);
+}
+
+.modal-author-date {
+color: var(--gray);
+font-size: 0.75rem;
+}
+
+.modal-coming-soon {
+text-align: center;
+padding: 3rem 2rem;
+}
+
+.modal-coming-soon-icon {
+font-size: 3rem;
+margin-bottom: 1rem;
+}
+
+.modal-coming-soon h3 {
+margin-top: 0;
+}
+
+@media (max-width: 768px) {
+.modal-overlay { padding: 1rem; }
+.modal-container { max-height: 90vh; }
+.modal-header { padding: 1.25rem 1.5rem; }
+.modal-title { font-size: 1.3rem; }
+.modal-body { padding: 1.5rem; }
+.modal-stats { grid-template-columns: 1fr; }
+}
+
+footer {
+background: var(--navy);
+color: var(--white);
+padding: 4rem 2rem;
+text-align: center;
+}
+
+footer h2 {
+color: var(--white);
+margin-bottom: 1rem;
+}
+
+footer p {
+color: rgba(255,255,255,0.7);
+margin-bottom: 2rem;
+}
+
+.footer-links {
+display: flex;
+justify-content: center;
+gap: 2rem;
+margin-bottom: 1rem;
+flex-wrap: wrap;
+}
+
+.footer-links a {
+color: var(--gold);
+text-decoration: none;
+font-weight: 500;
+transition: opacity 0.3s;
+}
+
+.footer-links a:hover { opacity: 0.7; }
+
+.footer-phone {
+color: rgba(255,255,255,0.7);
+font-size: 0.9rem;
+margin-bottom: 2rem;
+}
+
+.copyright {
+font-size: 0.8rem;
+color: rgba(255,255,255,0.5);
+padding-top: 2rem;
+border-top: 1px solid rgba(255,255,255,0.1);
+}
+
+@media (max-width: 768px) {
+.hero { flex-direction: column; text-align: center; padding: 3rem 1.5rem; }
       .featured-project { padding: 2rem 1.5rem; }
       .featured-title { font-size: 1.5rem; }
       .featured-actions { flex-direction: column; }
       .featured-button { width: 100%; justify-content: center; }
-      .stats { gap: 2rem; padding: 3rem 1.5rem; }
-      .stat { min-width: 140px; }
-      .about-content, .skills-grid, .personal-grid, .capabilities-grid { grid-template-columns: 1fr; }
-      .main-nav-tab { padding: 0.75rem 1.5rem; font-size: 0.8rem; }
-      .hero h1 { font-size: 2rem; }
-      .stat-number { font-size: 2.5rem; }
-      .flip-card { height: 200px; }
-      .video-cards-grid { grid-template-columns: 1fr; }
-      .cert-grid { flex-direction: column; }
-      .social-bar { justify-content: center; }
-      .dashboard-kpis { grid-template-columns: repeat(2, 1fr); }
-      .dashboard-charts { grid-template-columns: 1fr; }
-      .dashboard-header { flex-direction: column; text-align: center; }
-      .dashboard-filters { justify-content: center; }
-      .bar-chart { overflow-x: auto; }
-      .kpi-value { font-size: 1.5rem; }
-      .logo-bar-logos { gap: 2rem; }
-      .logo-bar-item svg { height: 24px; }
-      .logo-bar-item.uf img { height: 40px; }
-      .education-item { flex-direction: column; text-align: center; gap: 0.75rem; }
-    }
-  </style>
+.stats { gap: 2rem; padding: 3rem 1.5rem; }
+.stat { min-width: 140px; }
+.about-content, .skills-grid, .personal-grid, .capabilities-grid { grid-template-columns: 1fr; }
+.main-nav-tab { padding: 0.75rem 1.5rem; font-size: 0.8rem; }
+.hero h1 { font-size: 2rem; }
+.stat-number { font-size: 2.5rem; }
+.flip-card { height: 200px; }
+.video-cards-grid { grid-template-columns: 1fr; }
+.cert-grid { flex-direction: column; }
+.social-bar { justify-content: center; }
+.dashboard-kpis { grid-template-columns: repeat(2, 1fr); }
+.dashboard-charts { grid-template-columns: 1fr; }
+.dashboard-header { flex-direction: column; text-align: center; }
+.dashboard-filters { justify-content: center; }
+.bar-chart { overflow-x: auto; }
+.kpi-value { font-size: 1.5rem; }
+.logo-bar-logos { gap: 2rem; }
+.logo-bar-item svg { height: 24px; }
+.logo-bar-item.uf img { height: 40px; }
+.education-item { flex-direction: column; text-align: center; gap: 0.75rem; }
+}
+</style>
 </head>
 <body>
-  <header class="header">
-    <div class="signature">Benjamin J. Sunter</div>
-    <nav class="main-navigation">
-      <button class="main-nav-tab active" data-tab="about-me-content">About Me</button>
-      <button class="main-nav-tab" data-tab="blog-projects-content">Blog & Projects</button>
-    </nav>
-  </header>
+<header class="header">
+<div class="signature">Benjamin J. Sunter</div>
+<nav class="main-navigation">
+<button class="main-nav-tab active" data-tab="about-me-content">About Me</button>
+<button class="main-nav-tab" data-tab="blog-projects-content">Blog & Projects</button>
+</nav>
+</header>
 
-  <!-- ABOUT ME PAGE -->
-  <div id="about-me-content" class="page-section active">
-    <section class="hero">
-      <div class="hero-image">
-        <img src="profile-picture.jpg" alt="Benjamin J. Sunter">
-      </div>
-      <div class="hero-content">
-        <h1>Benjamin J. Sunter</h1>
-        <p class="hero-subtitle">Business Operations & Strategy</p>
-        <p>I translate company strategy into execution. With 10+ years leading cross-functional initiatives at Google and Accenture, I specialize in driving strategic clarity, building operational frameworks, and delivering measurable impact—backed by hands-on technical skills in data analysis and visualization.</p>
-        <div class="social-bar">
-          <a href="mailto:sunterbb@gmail.com">Email</a>
-          <a href="https://www.linkedin.com/in/benjamin-sunter/">LinkedIn</a>
-          <a href="https://bensunter.com">bensunter.com</a>
-          <span>321-271-4830</span>
-        </div>
-      </div>
-    </section>
+<!-- ABOUT ME PAGE -->
+<div id="about-me-content" class="page-section active">
+<section class="hero">
+<div class="hero-image">
+<img src="profile-picture.jpg" alt="Benjamin J. Sunter">
+</div>
+<div class="hero-content">
+<h1>Benjamin J. Sunter</h1>
+<p class="hero-subtitle">Business Operations & Strategy</p>
+<p>I translate company strategy into execution. With 10+ years leading cross-functional initiatives at Google and Accenture, I specialize in driving strategic clarity, building operational frameworks, and delivering measurable impact—backed by hands-on technical skills in data analysis and visualization.</p>
+<div class="social-bar">
+<a href="mailto:sunterbb@gmail.com">Email</a>
+<a href="https://www.linkedin.com/in/benjamin-sunter/">LinkedIn</a>
+<a href="https://bensunter.com">bensunter.com</a>
+<span>321-271-4830</span>
+</div>
+</div>
+</section>
 
     <!-- Featured Project Banner -->
     <section class="featured-project">
@@ -1576,522 +1576,523 @@
       </div>
     </section>
 
-    <!-- Logo Bar -->
-    <section class="logo-bar">
-      <div class="logo-bar-container">
-        <div class="logo-bar-label">Experience With</div>
-        <div class="logo-bar-logos">
-          <div class="logo-bar-item google">
-            <svg viewBox="0 0 272 92" xmlns="http://www.w3.org/2000/svg">
-              <path d="M115.75 47.18c0 12.77-9.99 22.18-22.25 22.18s-22.25-9.41-22.25-22.18C71.25 34.32 81.24 25 93.5 25s22.25 9.32 22.25 22.18zm-9.74 0c0-7.98-5.79-13.44-12.51-13.44S80.99 39.2 80.99 47.18c0 7.9 5.79 13.44 12.51 13.44s12.51-5.55 12.51-13.44z" fill="#EA4335"/>
-              <path d="M163.75 47.18c0 12.77-9.99 22.18-22.25 22.18s-22.25-9.41-22.25-22.18c0-12.85 9.99-22.18 22.25-22.18s22.25 9.32 22.25 22.18zm-9.74 0c0-7.98-5.79-13.44-12.51-13.44s-12.51 5.46-12.51 13.44c0 7.9 5.79 13.44 12.51 13.44s12.51-5.55 12.51-13.44z" fill="#FBBC05"/>
-              <path d="M209.75 26.34v39.82c0 16.38-9.66 23.07-21.08 23.07-10.75 0-17.22-7.19-19.66-13.07l8.48-3.53c1.51 3.61 5.21 7.87 11.17 7.87 7.31 0 11.84-4.51 11.84-13v-3.19h-.34c-2.18 2.69-6.38 5.04-11.68 5.04-11.09 0-21.25-9.66-21.25-22.09 0-12.52 10.16-22.26 21.25-22.26 5.29 0 9.49 2.35 11.68 4.96h.34v-3.61h9.25zm-8.56 20.92c0-7.81-5.21-13.52-11.84-13.52-6.72 0-12.35 5.71-12.35 13.52 0 7.73 5.63 13.36 12.35 13.36 6.63 0 11.84-5.63 11.84-13.36z" fill="#4285F4"/>
-              <path d="M225 3v65h-9.5V3h9.5z" fill="#34A853"/>
-              <path d="M262.02 54.48l7.56 5.04c-2.44 3.61-8.32 9.83-18.48 9.83-12.6 0-22.01-9.74-22.01-22.18 0-13.19 9.49-22.18 20.92-22.18 11.51 0 17.14 9.16 18.98 14.11l1.01 2.52-29.65 12.28c2.27 4.45 5.8 6.72 10.75 6.72 4.96 0 8.4-2.44 10.92-6.14zm-23.27-7.98l19.82-8.23c-1.09-2.77-4.37-4.7-8.23-4.7-4.95 0-11.84 4.37-11.59 12.93z" fill="#EA4335"/>
-              <path d="M35.29 41.41V32H67c.31 1.64.47 3.58.47 5.68 0 7.06-1.93 15.79-8.15 22.01-6.05 6.3-13.78 9.66-24.02 9.66C16.32 69.35.36 53.89.36 34.91.36 15.93 16.32.47 35.3.47c10.5 0 17.98 4.12 23.6 9.49l-6.64 6.64c-4.03-3.78-9.49-6.72-16.97-6.72-13.86 0-24.7 11.17-24.7 25.03 0 13.86 10.84 25.03 24.7 25.03 8.99 0 14.11-3.61 17.39-6.89 2.66-2.66 4.41-6.46 5.1-11.65l-22.49.01z" fill="#4285F4"/>
-            </svg>
-          </div>
-          <div class="logo-bar-item accenture">
-            <img src="accenture-logo.png" alt="Accenture" style="height: 34px; width: auto;">
-          </div>
-          <div class="logo-bar-item uf">
-            <img src="uf-logo.png" alt="University of Florida">
-          </div>
-        </div>
-      </div>
-    </section>
+<!-- Logo Bar -->
+<section class="logo-bar">
+<div class="logo-bar-container">
+<div class="logo-bar-label">Experience With</div>
+<div class="logo-bar-logos">
+<div class="logo-bar-item google">
+<svg viewBox="0 0 272 92" xmlns="http://www.w3.org/2000/svg">
+<path d="M115.75 47.18c0 12.77-9.99 22.18-22.25 22.18s-22.25-9.41-22.25-22.18C71.25 34.32 81.24 25 93.5 25s22.25 9.32 22.25 22.18zm-9.74 0c0-7.98-5.79-13.44-12.51-13.44S80.99 39.2 80.99 47.18c0 7.9 5.79 13.44 12.51 13.44s12.51-5.55 12.51-13.44z" fill="#EA4335"/>
+<path d="M163.75 47.18c0 12.77-9.99 22.18-22.25 22.18s-22.25-9.41-22.25-22.18c0-12.85 9.99-22.18 22.25-22.18s22.25 9.32 22.25 22.18zm-9.74 0c0-7.98-5.79-13.44-12.51-13.44s-12.51 5.46-12.51 13.44c0 7.9 5.79 13.44 12.51 13.44s12.51-5.55 12.51-13.44z" fill="#FBBC05"/>
+<path d="M209.75 26.34v39.82c0 16.38-9.66 23.07-21.08 23.07-10.75 0-17.22-7.19-19.66-13.07l8.48-3.53c1.51 3.61 5.21 7.87 11.17 7.87 7.31 0 11.84-4.51 11.84-13v-3.19h-.34c-2.18 2.69-6.38 5.04-11.68 5.04-11.09 0-21.25-9.66-21.25-22.09 0-12.52 10.16-22.26 21.25-22.26 5.29 0 9.49 2.35 11.68 4.96h.34v-3.61h9.25zm-8.56 20.92c0-7.81-5.21-13.52-11.84-13.52-6.72 0-12.35 5.71-12.35 13.52 0 7.73 5.63 13.36 12.35 13.36 6.63 0 11.84-5.63 11.84-13.36z" fill="#4285F4"/>
+<path d="M225 3v65h-9.5V3h9.5z" fill="#34A853"/>
+<path d="M262.02 54.48l7.56 5.04c-2.44 3.61-8.32 9.83-18.48 9.83-12.6 0-22.01-9.74-22.01-22.18 0-13.19 9.49-22.18 20.92-22.18 11.51 0 17.14 9.16 18.98 14.11l1.01 2.52-29.65 12.28c2.27 4.45 5.8 6.72 10.75 6.72 4.96 0 8.4-2.44 10.92-6.14zm-23.27-7.98l19.82-8.23c-1.09-2.77-4.37-4.7-8.23-4.7-4.95 0-11.84 4.37-11.59 12.93z" fill="#EA4335"/>
+<path d="M35.29 41.41V32H67c.31 1.64.47 3.58.47 5.68 0 7.06-1.93 15.79-8.15 22.01-6.05 6.3-13.78 9.66-24.02 9.66C16.32 69.35.36 53.89.36 34.91.36 15.93 16.32.47 35.3.47c10.5 0 17.98 4.12 23.6 9.49l-6.64 6.64c-4.03-3.78-9.49-6.72-16.97-6.72-13.86 0-24.7 11.17-24.7 25.03 0 13.86 10.84 25.03 24.7 25.03 8.99 0 14.11-3.61 17.39-6.89 2.66-2.66 4.41-6.46 5.1-11.65l-22.49.01z" fill="#4285F4"/>
+</svg>
+</div>
+<div class="logo-bar-item accenture">
+<img src="accenture-logo.png" alt="Accenture" style="height: 34px; width: auto;">
+</div>
+<div class="logo-bar-item uf">
+<img src="uf-logo.png" alt="University of Florida">
+</div>
+</div>
+</div>
+</section>
 
-    <div class="stats">
-      <div class="stat">
-        <div class="stat-number">$26.5B</div>
-        <div class="stat-label">Strategic Program<br>Value Managed</div>
-      </div>
-      <div class="stat">
-        <div class="stat-number">56</div>
-        <div class="stat-label">Initiatives Across<br>4 Product Areas</div>
-      </div>
-      <div class="stat">
-        <div class="stat-number">600+</div>
-        <div class="stat-label">Features Delivered<br>Across 24 Workstreams</div>
-      </div>
-      <div class="stat">
-        <div class="stat-number">94%</div>
-        <div class="stat-label">Average CSAT<br>on Strategic Events</div>
-      </div>
-    </div>
+<div class="stats">
+<div class="stat">
+<div class="stat-number">$26.5B</div>
+<div class="stat-label">Strategic Program<br>Value Managed</div>
+</div>
+<div class="stat">
+<div class="stat-number">56</div>
+<div class="stat-label">Initiatives Across<br>4 Product Areas</div>
+</div>
+<div class="stat">
+<div class="stat-number">600+</div>
+<div class="stat-label">Features Delivered<br>Across 24 Workstreams</div>
+</div>
+<div class="stat">
+<div class="stat-number">94%</div>
+<div class="stat-label">Average CSAT<br>on Strategic Events</div>
+</div>
+</div>
 
-    <section id="about">
-      <span class="section-label">About</span>
-      <h2>From Strategy to Execution</h2>
-      <div class="about-content">
-        <p>I'm an operations leader who embeds within critical cross-functional initiatives to ensure strategic clarity and drive outcomes. My Industrial and Systems Engineering background from the University of Florida trained me to see systems, identify bottlenecks, and build frameworks that scale.</p>
-        <p>What sets me apart: I'm technical. I build the dashboards and automated reporting that surface insights to leadership. I write SQL to extract data, Python to automate workflows, and design executive-ready visualizations in Tableau and Power BI. Strategy is only as good as the data behind it.</p>
-      </div>
-      <div class="highlight-quote">
-        "I serve as a control tower during periods of significant change—mapping impacts, driving alignment, and keeping stakeholders informed, accountable, and focused on results."
-      </div>
-    </section>
+<section id="about">
+<span class="section-label">About</span>
+<h2>From Strategy to Execution</h2>
+<div class="about-content">
+<p>I'm an operations leader who embeds within critical cross-functional initiatives to ensure strategic clarity and drive outcomes. My Industrial and Systems Engineering background from the University of Florida trained me to see systems, identify bottlenecks, and build frameworks that scale.</p>
+<p>What sets me apart: I'm technical. I build the dashboards and automated reporting that surface insights to leadership. I write SQL to extract data, Python to automate workflows, and design executive-ready visualizations in Tableau and Power BI. Strategy is only as good as the data behind it.</p>
+</div>
+<div class="highlight-quote">
+"I serve as a control tower during periods of significant change—mapping impacts, driving alignment, and keeping stakeholders informed, accountable, and focused on results."
+</div>
+</section>
 
-    <section class="what-i-do">
-      <div class="what-i-do-container">
-        <span class="section-label">What I Do</span>
-        <h2>Areas of Expertise</h2>
-        <div class="capabilities-grid">
-          <div class="capability-card">
-            <h3>Strategic Planning & Execution</h3>
-            <p>Drive annual planning in collaboration with executive teams. Translate strategic objectives into actionable project plans, roadmaps, and measurable outcomes that the entire organization can rally around.</p>
-          </div>
-          <div class="capability-card">
-            <h3>Operational Frameworks</h3>
-            <p>Define and implement enterprise-wide approaches to program execution—tools, templates, and tracking methodologies. Build repeatable launch playbooks that scale operational excellence and reduce stakeholder overhead by up to 15%.</p>
-          </div>
-          <div class="capability-card">
-            <h3>Data & Executive Reporting</h3>
-            <p>Build dashboards and automated reporting pipelines using SQL, Python, Tableau, and Power BI. Transform raw data into executive-ready insights that drive decision-making and surface risks early.</p>
-          </div>
-          <div class="capability-card">
-            <h3>Change Management & Alignment</h3>
-            <p>Act as a control tower during organizational transformation. Facilitate cross-functional alignment across 200+ stakeholders, run executive forums, and drive a culture of transparency, urgency, and continuous improvement.</p>
-          </div>
-        </div>
-      </div>
-    </section>
+<section class="what-i-do">
+<div class="what-i-do-container">
+<span class="section-label">What I Do</span>
+<h2>Areas of Expertise</h2>
+<div class="capabilities-grid">
+<div class="capability-card">
+<h3>Strategic Planning & Execution</h3>
+<p>Drive annual planning in collaboration with executive teams. Translate strategic objectives into actionable project plans, roadmaps, and measurable outcomes that the entire organization can rally around.</p>
+</div>
+<div class="capability-card">
+<h3>Operational Frameworks</h3>
+<p>Define and implement enterprise-wide approaches to program execution—tools, templates, and tracking methodologies. Build repeatable launch playbooks that scale operational excellence and reduce stakeholder overhead by up to 15%.</p>
+</div>
+<div class="capability-card">
+<h3>Data & Executive Reporting</h3>
+<p>Build dashboards and automated reporting pipelines using SQL, Python, Tableau, and Power BI. Transform raw data into executive-ready insights that drive decision-making and surface risks early.</p>
+</div>
+<div class="capability-card">
+<h3>Change Management & Alignment</h3>
+<p>Act as a control tower during organizational transformation. Facilitate cross-functional alignment across 200+ stakeholders, run executive forums, and drive a culture of transparency, urgency, and continuous improvement.</p>
+</div>
+</div>
+</div>
+</section>
 
-    <section id="experience">
-      <span class="section-label">Experience</span>
-      <h2>Professional Journey</h2>
-      
-      <div class="experience-item">
-        <div class="exp-header">
-          <div>
-            <div class="exp-title">Sellside Global Partnerships Program Manager</div>
-            <div class="exp-company-row">
-              <svg class="exp-logo google" viewBox="0 0 272 92" xmlns="http://www.w3.org/2000/svg">
-                <path d="M115.75 47.18c0 12.77-9.99 22.18-22.25 22.18s-22.25-9.41-22.25-22.18C71.25 34.32 81.24 25 93.5 25s22.25 9.32 22.25 22.18zm-9.74 0c0-7.98-5.79-13.44-12.51-13.44S80.99 39.2 80.99 47.18c0 7.9 5.79 13.44 12.51 13.44s12.51-5.55 12.51-13.44z" fill="#EA4335"/>
-                <path d="M163.75 47.18c0 12.77-9.99 22.18-22.25 22.18s-22.25-9.41-22.25-22.18c0-12.85 9.99-22.18 22.25-22.18s22.25 9.32 22.25 22.18zm-9.74 0c0-7.98-5.79-13.44-12.51-13.44s-12.51 5.46-12.51 13.44c0 7.9 5.79 13.44 12.51 13.44s12.51-5.55 12.51-13.44z" fill="#FBBC05"/>
-                <path d="M209.75 26.34v39.82c0 16.38-9.66 23.07-21.08 23.07-10.75 0-17.22-7.19-19.66-13.07l8.48-3.53c1.51 3.61 5.21 7.87 11.17 7.87 7.31 0 11.84-4.51 11.84-13v-3.19h-.34c-2.18 2.69-6.38 5.04-11.68 5.04-11.09 0-21.25-9.66-21.25-22.09 0-12.52 10.16-22.26 21.25-22.26 5.29 0 9.49 2.35 11.68 4.96h.34v-3.61h9.25zm-8.56 20.92c0-7.81-5.21-13.52-11.84-13.52-6.72 0-12.35 5.71-12.35 13.52 0 7.73 5.63 13.36 12.35 13.36 6.63 0 11.84-5.63 11.84-13.36z" fill="#4285F4"/>
-                <path d="M225 3v65h-9.5V3h9.5z" fill="#34A853"/>
-                <path d="M262.02 54.48l7.56 5.04c-2.44 3.61-8.32 9.83-18.48 9.83-12.6 0-22.01-9.74-22.01-22.18 0-13.19 9.49-22.18 20.92-22.18 11.51 0 17.14 9.16 18.98 14.11l1.01 2.52-29.65 12.28c2.27 4.45 5.8 6.72 10.75 6.72 4.96 0 8.4-2.44 10.92-6.14zm-23.27-7.98l19.82-8.23c-1.09-2.77-4.37-4.7-8.23-4.7-4.95 0-11.84 4.37-11.59 12.93z" fill="#EA4335"/>
-                <path d="M35.29 41.41V32H67c.31 1.64.47 3.58.47 5.68 0 7.06-1.93 15.79-8.15 22.01-6.05 6.3-13.78 9.66-24.02 9.66C16.32 69.35.36 53.89.36 34.91.36 15.93 16.32.47 35.3.47c10.5 0 17.98 4.12 23.6 9.49l-6.64 6.64c-4.03-3.78-9.49-6.72-16.97-6.72-13.86 0-24.7 11.17-24.7 25.03 0 13.86 10.84 25.03 24.7 25.03 8.99 0 14.11-3.61 17.39-6.89 2.66-2.66 4.41-6.46 5.1-11.65l-22.49.01z" fill="#4285F4"/>
-              </svg>
-            </div>
-          </div>
-          <div class="exp-date">2022 — Present</div>
-        </div>
-        <p class="exp-description">Operationalized and scaled a multi-billion dollar Americas Sellside Partnerships business, leading strategy, execution, budget, and resourcing across 7 vertical teams and 20+ sub-teams.</p>
-        <ul class="exp-highlights">
-          <li>Spearheaded a first-of-its-kind sales artifact that proved definitive ROI of the Secure Signals solution, immediately enabling $40M in new publisher opportunities within one month.</li>
-          <li>Managed execution performance for 56 initiatives across 4 core product areas and 200+ stakeholders via weekly cross-functional governance.</li>
-          <li>Drove in-market adoption of privacy-preserving first-party data solutions, partnering with Product/GTM teams to deliver incremental regional revenue attainment.</li>
-          <li>Led quarterly cross-regional events (trainings, summits, offsites) achieving an average CSAT of 94%.</li>
-        </ul>
-      </div>
-      
-      <div class="experience-item">
-        <div class="exp-header">
-          <div>
-            <div class="exp-title">Program Manager</div>
-            <div class="exp-company-row">
-              <img src="accenture-logo.png" alt="Accenture" class="exp-logo accenture" style="height: 22px; width: auto;">
-            </div>
-          </div>
-          <div class="exp-date">2016 — 2021</div>
-        </div>
-        <p class="exp-description">Led program management for large-scale enterprise transformations, including orchestration of a $26.5B telecommunications merger integrating 24 workstreams led by 16 VPs.</p>
-        <ul class="exp-highlights">
-          <li>Managed the Integrated Program Plan and launch of 60+ projects covering all major design, development, and testing phases.</li>
-          <li>Governed delivery of designs for 60+ projects, facilitating delivery of 600+ features and reducing 190+ applications under 10 VPs within 12 months.</li>
-          <li>Designed and implemented Tableau dashboards providing automated insights into health, risks, and compliance for 60+ projects, 600+ features, and 11,000+ User Stories across 25 workstreams.</li>
-          <li>Created a Shared Services governance framework that reduced stakeholder low-value overhead by up to 15%.</li>
-        </ul>
-      </div>
-    </section>
+<section id="experience">
+<span class="section-label">Experience</span>
+<h2>Professional Journey</h2>
 
-    <section id="skills">
-      <span class="section-label">Expertise</span>
-      <h2>Skills & Methodologies</h2>
-      <div class="skills-grid">
-        <div class="skill-category">
-          <h3>Strategy & Operations</h3>
-          <ul>
-            <li>Annual Planning & OKRs</li>
-            <li>Operating Model Design</li>
-            <li>Global Governance Models</li>
-            <li>Go-to-Market Enablement</li>
-            <li>Financial Modeling (ROI)</li>
-          </ul>
-        </div>
-        <div class="skill-category">
-          <h3>Program Execution</h3>
-          <ul>
-            <li>Cross-Functional Leadership</li>
-            <li>Change Management</li>
-            <li>SDLC/Agile Methodologies</li>
-            <li>Risk Management</li>
-            <li>Process Improvement</li>
-          </ul>
-        </div>
-        <div class="skill-category">
-          <h3>Data & Analytics</h3>
-          <ul>
-            <li>SQL & BigQuery</li>
-            <li>Python (Automation)</li>
-            <li>Tableau & Power BI</li>
-            <li>Looker</li>
-            <li>Executive Dashboard Design</li>
-          </ul>
-        </div>
-      </div>
-      
-      <div class="tech-stack">
-        <h3>Technical Toolkit</h3>
-        <div class="tech-pills">
-          <span class="tech-pill highlight">SQL</span>
-          <span class="tech-pill highlight">Python</span>
-          <span class="tech-pill highlight">Tableau</span>
-          <span class="tech-pill highlight">Power BI</span>
-          <span class="tech-pill">BigQuery</span>
-          <span class="tech-pill">Looker</span>
-          <span class="tech-pill">HTML/CSS</span>
-          <span class="tech-pill">JIRA</span>
-          <span class="tech-pill">Confluence</span>
-          <span class="tech-pill">Google Sheets (Advanced)</span>
-        </div>
-      </div>
-      
-      <div class="certifications">
-        <h3>Certifications</h3>
-        <div class="cert-grid">
-          <div class="cert-badge">
-            <svg class="cert-logo" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
-              <circle cx="50" cy="50" r="48" fill="#006400" stroke="#228B22" stroke-width="2"/>
-              <text x="50" y="35" font-family="Arial Black, sans-serif" font-size="12" fill="#ffffff" text-anchor="middle" font-weight="bold">LEAN</text>
-              <text x="50" y="50" font-family="Arial Black, sans-serif" font-size="10" fill="#FFD700" text-anchor="middle" font-weight="bold">SIX SIGMA</text>
-              <text x="50" y="68" font-family="Arial, sans-serif" font-size="14" fill="#ffffff" text-anchor="middle" font-weight="bold">GREEN BELT</text>
-              <path d="M35 78 L50 88 L65 78" stroke="#FFD700" stroke-width="2" fill="none"/>
-            </svg>
-            <div class="cert-info">
-              <div class="cert-name">Lean Six Sigma Green Belt</div>
-              <div class="cert-issuer">Institute of Industrial Engineers · 2015</div>
-            </div>
-          </div>
-          <div class="cert-badge">
-            <svg class="cert-logo" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
-              <rect x="5" y="20" width="90" height="60" rx="4" fill="#4285F4"/>
-              <rect x="10" y="25" width="35" height="25" rx="2" fill="#EA4335"/>
-              <rect x="55" y="25" width="35" height="25" rx="2" fill="#FBBC05"/>
-              <rect x="10" y="55" width="35" height="20" rx="2" fill="#34A853"/>
-              <rect x="55" y="55" width="35" height="20" rx="2" fill="#4285F4"/>
-              <circle cx="50" cy="50" r="12" fill="#ffffff"/>
-              <text x="50" y="54" font-family="Arial, sans-serif" font-size="8" fill="#4285F4" text-anchor="middle" font-weight="bold">PM</text>
-            </svg>
-            <div class="cert-info">
-              <div class="cert-name">Google Project Management</div>
-              <div class="cert-issuer">Google Career Certificates · 2021</div>
-            </div>
-          </div>
-        </div>
-      </div>
-      
-      <div class="education-section">
-        <h3>Education</h3>
-        <div class="education-item">
-          <img src="uf-logo.png" alt="University of Florida" class="education-logo">
-          <div class="education-details">
-            <div class="education-degree">B.S. Industrial and Systems Engineering</div>
-            <div class="education-school">University of Florida · Gainesville, FL · May 2016</div>
-          </div>
-        </div>
-      </div>
-    </section>
+<div class="experience-item">
+<div class="exp-header">
+<div>
+<div class="exp-title">Sellside Global Partnerships Program Manager</div>
+<div class="exp-company-row">
+<svg class="exp-logo google" viewBox="0 0 272 92" xmlns="http://www.w3.org/2000/svg">
+<path d="M115.75 47.18c0 12.77-9.99 22.18-22.25 22.18s-22.25-9.41-22.25-22.18C71.25 34.32 81.24 25 93.5 25s22.25 9.32 22.25 22.18zm-9.74 0c0-7.98-5.79-13.44-12.51-13.44S80.99 39.2 80.99 47.18c0 7.9 5.79 13.44 12.51 13.44s12.51-5.55 12.51-13.44z" fill="#EA4335"/>
+<path d="M163.75 47.18c0 12.77-9.99 22.18-22.25 22.18s-22.25-9.41-22.25-22.18c0-12.85 9.99-22.18 22.25-22.18s22.25 9.32 22.25 22.18zm-9.74 0c0-7.98-5.79-13.44-12.51-13.44s-12.51 5.46-12.51 13.44c0 7.9 5.79 13.44 12.51 13.44s12.51-5.55 12.51-13.44z" fill="#FBBC05"/>
+<path d="M209.75 26.34v39.82c0 16.38-9.66 23.07-21.08 23.07-10.75 0-17.22-7.19-19.66-13.07l8.48-3.53c1.51 3.61 5.21 7.87 11.17 7.87 7.31 0 11.84-4.51 11.84-13v-3.19h-.34c-2.18 2.69-6.38 5.04-11.68 5.04-11.09 0-21.25-9.66-21.25-22.09 0-12.52 10.16-22.26 21.25-22.26 5.29 0 9.49 2.35 11.68 4.96h.34v-3.61h9.25zm-8.56 20.92c0-7.81-5.21-13.52-11.84-13.52-6.72 0-12.35 5.71-12.35 13.52 0 7.73 5.63 13.36 12.35 13.36 6.63 0 11.84-5.63 11.84-13.36z" fill="#4285F4"/>
+<path d="M225 3v65h-9.5V3h9.5z" fill="#34A853"/>
+<path d="M262.02 54.48l7.56 5.04c-2.44 3.61-8.32 9.83-18.48 9.83-12.6 0-22.01-9.74-22.01-22.18 0-13.19 9.49-22.18 20.92-22.18 11.51 0 17.14 9.16 18.98 14.11l1.01 2.52-29.65 12.28c2.27 4.45 5.8 6.72 10.75 6.72 4.96 0 8.4-2.44 10.92-6.14zm-23.27-7.98l19.82-8.23c-1.09-2.77-4.37-4.7-8.23-4.7-4.95 0-11.84 4.37-11.59 12.93z" fill="#EA4335"/>
+<path d="M35.29 41.41V32H67c.31 1.64.47 3.58.47 5.68 0 7.06-1.93 15.79-8.15 22.01-6.05 6.3-13.78 9.66-24.02 9.66C16.32 69.35.36 53.89.36 34.91.36 15.93 16.32.47 35.3.47c10.5 0 17.98 4.12 23.6 9.49l-6.64 6.64c-4.03-3.78-9.49-6.72-16.97-6.72-13.86 0-24.7 11.17-24.7 25.03 0 13.86 10.84 25.03 24.7 25.03 8.99 0 14.11-3.61 17.39-6.89 2.66-2.66 4.41-6.46 5.1-11.65l-22.49.01z" fill="#4285F4"/>
+</svg>
+</div>
+</div>
+<div class="exp-date">2022 — Present</div>
+</div>
+<p class="exp-description">Operationalized and scaled a multi-billion dollar Americas Sellside Partnerships business, leading strategy, execution, budget, and resourcing across 7 vertical teams and 20+ sub-teams.</p>
+<ul class="exp-highlights">
+<li>Spearheaded a first-of-its-kind sales artifact that proved definitive ROI of the Secure Signals solution, immediately enabling $40M in new publisher opportunities within one month.</li>
+<li>Managed execution performance for 56 initiatives across 4 core product areas and 200+ stakeholders via weekly cross-functional governance.</li>
+<li>Drove in-market adoption of privacy-preserving first-party data solutions, partnering with Product/GTM teams to deliver incremental regional revenue attainment.</li>
+<li>Led quarterly cross-regional events (trainings, summits, offsites) achieving an average CSAT of 94%.</li>
+</ul>
+</div>
 
-    <section class="work-section" id="work">
-      <div class="work-container">
-        <span class="section-label">Work Samples</span>
-        <h2>Executive Dashboard</h2>
-        <p style="color: var(--gray); margin-bottom: 2rem;">Sample strategic initiative tracking visualization — built with Tableau & SQL</p>
-        
-        <div class="dashboard-frame">
-          <div class="dashboard-header">
-            <div class="dashboard-title-area">
-              <div class="dashboard-icon">📊</div>
-              <div>
-                <div class="dashboard-title">Q4 Strategic Initiative Tracker</div>
-                <div class="dashboard-subtitle">Americas Sellside Partnerships</div>
-              </div>
-            </div>
-            <div class="dashboard-filters">
-              <span class="filter-pill active">All Regions</span>
-              <span class="filter-pill">Q4 2024</span>
-              <span class="filter-pill">Active</span>
-            </div>
-          </div>
-          
-          <div class="dashboard-body">
-            <div class="dashboard-kpis">
-              <div class="kpi-card">
-                <div class="kpi-label">Revenue Enabled</div>
-                <div class="kpi-value">$40M</div>
-                <div class="kpi-trend up">↑ 18% vs target</div>
-                <svg class="kpi-sparkline" viewBox="0 0 100 40" preserveAspectRatio="none">
-                  <path d="M0,35 Q25,30 40,25 T60,20 T80,10 T100,5" fill="none" stroke="var(--gold)" stroke-width="2"/>
-                </svg>
-              </div>
-              <div class="kpi-card">
-                <div class="kpi-label">Initiatives Tracked</div>
-                <div class="kpi-value">56</div>
-                <div class="kpi-trend up">↑ 4 product areas</div>
-                <svg class="kpi-sparkline" viewBox="0 0 100 40" preserveAspectRatio="none">
-                  <path d="M0,30 L20,28 L40,25 L60,22 L80,18 L100,15" fill="none" stroke="var(--navy)" stroke-width="2"/>
-                </svg>
-              </div>
-              <div class="kpi-card">
-                <div class="kpi-label">Stakeholders</div>
-                <div class="kpi-value">200+</div>
-                <div class="kpi-trend neutral">Weekly cadence</div>
-                <svg class="kpi-sparkline" viewBox="0 0 100 40" preserveAspectRatio="none">
-                  <path d="M0,25 Q30,20 50,22 T100,18" fill="none" stroke="var(--gold)" stroke-width="2"/>
-                </svg>
-              </div>
-              <div class="kpi-card">
-                <div class="kpi-label">Avg. CSAT</div>
-                <div class="kpi-value">94%</div>
-                <div class="kpi-trend up">↑ 3% vs Q3</div>
-                <svg class="kpi-sparkline" viewBox="0 0 100 40" preserveAspectRatio="none">
-                  <path d="M0,30 Q20,28 40,22 T70,15 T100,10" fill="none" stroke="#10b981" stroke-width="2"/>
-                </svg>
-              </div>
-            </div>
-            
-            <div class="dashboard-charts">
-              <div class="chart-card">
-                <div class="chart-header">
-                  <div class="chart-title">Revenue by Vertical (Target vs Actual)</div>
-                  <div class="chart-legend">
-                    <span class="legend-item"><span class="legend-dot navy"></span> Target</span>
-                    <span class="legend-item"><span class="legend-dot gold"></span> Actual</span>
-                    <span class="legend-item"><span class="legend-dot green"></span> Exceeded</span>
-                  </div>
-                </div>
-                <div class="bar-chart">
-                  <div class="bar-group">
-                    <div class="bar-container">
-                      <div class="bar target" style="height: 70px;"></div>
-                      <div class="bar actual exceeded" style="height: 85px;"></div>
-                    </div>
-                    <span class="bar-label">Media</span>
-                  </div>
-                  <div class="bar-group">
-                    <div class="bar-container">
-                      <div class="bar target" style="height: 55px;"></div>
-                      <div class="bar actual exceeded" style="height: 68px;"></div>
-                    </div>
-                    <span class="bar-label">Gaming</span>
-                  </div>
-                  <div class="bar-group">
-                    <div class="bar-container">
-                      <div class="bar target" style="height: 80px;"></div>
-                      <div class="bar actual" style="height: 75px;"></div>
-                    </div>
-                    <span class="bar-label">Finance</span>
-                  </div>
-                  <div class="bar-group">
-                    <div class="bar-container">
-                      <div class="bar target" style="height: 45px;"></div>
-                      <div class="bar actual exceeded" style="height: 58px;"></div>
-                    </div>
-                    <span class="bar-label">Retail</span>
-                  </div>
-                  <div class="bar-group">
-                    <div class="bar-container">
-                      <div class="bar target" style="height: 60px;"></div>
-                      <div class="bar actual exceeded" style="height: 72px;"></div>
-                    </div>
-                    <span class="bar-label">Tech</span>
-                  </div>
-                  <div class="bar-group">
-                    <div class="bar-container">
-                      <div class="bar target" style="height: 50px;"></div>
-                      <div class="bar actual" style="height: 48px;"></div>
-                    </div>
-                    <span class="bar-label">Travel</span>
-                  </div>
-                  <div class="bar-group">
-                    <div class="bar-container">
-                      <div class="bar target" style="height: 65px;"></div>
-                      <div class="bar actual exceeded" style="height: 78px;"></div>
-                    </div>
-                    <span class="bar-label">Health</span>
-                  </div>
-                </div>
-              </div>
-              
-              <div class="chart-card">
-                <div class="chart-header">
-                  <div class="chart-title">Initiative Completion</div>
-                </div>
-                <div class="progress-list">
-                  <div class="progress-item">
-                    <div class="progress-info">
-                      <div class="progress-name">Secure Signals Rollout</div>
-                      <div class="progress-bar-bg">
-                        <div class="progress-bar-fill green" style="width: 100%;"></div>
-                      </div>
-                    </div>
-                    <span class="progress-pct">100%</span>
-                  </div>
-                  <div class="progress-item">
-                    <div class="progress-info">
-                      <div class="progress-name">Privacy Sandbox Migration</div>
-                      <div class="progress-bar-bg">
-                        <div class="progress-bar-fill gold" style="width: 87%;"></div>
-                      </div>
-                    </div>
-                    <span class="progress-pct">87%</span>
-                  </div>
-                  <div class="progress-item">
-                    <div class="progress-info">
-                      <div class="progress-name">1P Data Framework</div>
-                      <div class="progress-bar-bg">
-                        <div class="progress-bar-fill gold" style="width: 73%;"></div>
-                      </div>
-                    </div>
-                    <span class="progress-pct">73%</span>
-                  </div>
-                  <div class="progress-item">
-                    <div class="progress-info">
-                      <div class="progress-name">Partner Enablement v2</div>
-                      <div class="progress-bar-bg">
-                        <div class="progress-bar-fill navy" style="width: 45%;"></div>
-                      </div>
-                    </div>
-                    <span class="progress-pct">45%</span>
-                  </div>
-                  <div class="progress-item">
-                    <div class="progress-info">
-                      <div class="progress-name">GTM Playbook Refresh</div>
-                      <div class="progress-bar-bg">
-                        <div class="progress-bar-fill navy" style="width: 28%;"></div>
-                      </div>
-                    </div>
-                    <span class="progress-pct">28%</span>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-          
-          <div class="dashboard-footer">
-            <span><span class="status-dot"></span>Live data · Auto-refresh enabled</span>
-            <span>Last updated: Dec 27, 2024 9:41 AM PT</span>
-          </div>
-        </div>
-        
-        <div class="video-cards-grid">
-          <div class="video-card">
-            <video controls>
-              <source src="gantt.mp4" type="video/mp4">
-              Your browser does not support the video tag.
-            </video>
-            <div class="video-card-content">
-              <span class="video-card-badge">Featured</span>
-              <h3 class="video-card-title">Gantt Chart Sample</h3>
-              <p class="video-card-description">Automated Gantt chart with dynamic controls for project tracking.</p>
-            </div>
-          </div>
-          
-          <div class="video-card">
-            <video controls>
-              <source src="commsdocs.mp4" type="video/mp4">
-              Your browser does not support the video tag.
-            </video>
-            <div class="video-card-content">
-              <span class="video-card-badge">Tutorial</span>
-              <h3 class="video-card-title">Executive Communications</h3>
-              <p class="video-card-description">Sample executive communication templates and frameworks.</p>
-            </div>
-          </div>
-          
-          <div class="video-card">
-            <iframe src="https://www.youtube.com/embed/AgNP0bMWHxY" title="YouTube Short" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
-            <div class="video-card-content">
-              <span class="video-card-badge">YouTube</span>
-              <h3 class="video-card-title">My Latest Project</h3>
-              <p class="video-card-description">Check out this quick demo of my latest work!</p>
-            </div>
-          </div>
-        </div>
-      </div>
-    </section>
+<div class="experience-item">
+<div class="exp-header">
+<div>
+<div class="exp-title">Program Manager</div>
+<div class="exp-company-row">
+<img src="accenture-logo.png" alt="Accenture" class="exp-logo accenture" style="height: 22px; width: auto;">
+</div>
+</div>
+<div class="exp-date">2016 — 2021</div>
+</div>
+<p class="exp-description">Led program management for large-scale enterprise transformations, including orchestration of a $26.5B telecommunications merger integrating 24 workstreams led by 16 VPs.</p>
+<ul class="exp-highlights">
+<li>Managed the Integrated Program Plan and launch of 60+ projects covering all major design, development, and testing phases.</li>
+<li>Governed delivery of designs for 60+ projects, facilitating delivery of 600+ features and reducing 190+ applications under 10 VPs within 12 months.</li>
+<li>Designed and implemented Tableau dashboards providing automated insights into health, risks, and compliance for 60+ projects, 600+ features, and 11,000+ User Stories across 25 workstreams.</li>
+<li>Created a Shared Services governance framework that reduced stakeholder low-value overhead by up to 15%.</li>
+</ul>
+</div>
+</section>
 
-    <section id="personal">
-      <span class="section-label">Beyond Work</span>
-      <h2>A Few Things About Me</h2>
-      <div class="personal-grid">
-        <div class="flip-card" tabindex="0">
-          <div class="flip-card-inner">
-            <div class="flip-card-front">
-              <div class="icon">🏕️</div>
-              <p>Married with two kids. I love spending time outdoors—hiking, camping, or just enjoying nature with family.</p>
-            </div>
-            <div class="flip-card-back outdoor-back"></div>
-          </div>
-        </div>
-        
-        <div class="flip-card" tabindex="0">
-          <div class="flip-card-inner">
-            <div class="flip-card-front">
-              <div class="icon">📣</div>
-              <p>Former college cheerleader at UF. It taught me teamwork, trust, and the importance of lifting others up.</p>
-            </div>
-            <div class="flip-card-back cheerleader-back"></div>
-          </div>
-        </div>
-        
-        <div class="flip-card" tabindex="0">
-          <div class="flip-card-inner">
-            <div class="flip-card-front">
-              <div class="icon">🔨</div>
-              <p>I love building with my hands—from garden beds to home improvement projects. There's clarity in craftsmanship.</p>
-            </div>
-            <div class="flip-card-back building-back"></div>
-          </div>
-        </div>
-      </div>
-    </section>
-  </div>
+<section id="skills">
+<span class="section-label">Expertise</span>
+<h2>Skills & Methodologies</h2>
+<div class="skills-grid">
+<div class="skill-category">
+<h3>Strategy & Operations</h3>
+<ul>
+<li>Annual Planning & OKRs</li>
+<li>Operating Model Design</li>
+<li>Global Governance Models</li>
+<li>Go-to-Market Enablement</li>
+<li>Financial Modeling (ROI)</li>
+</ul>
+</div>
+<div class="skill-category">
+<h3>Program Execution</h3>
+<ul>
+<li>Cross-Functional Leadership</li>
+<li>Change Management</li>
+<li>SDLC/Agile Methodologies</li>
+<li>Risk Management</li>
+<li>Process Improvement</li>
+</ul>
+</div>
+<div class="skill-category">
+<h3>Data & Analytics</h3>
+<ul>
+<li>SQL & BigQuery</li>
+<li>Python (Automation)</li>
+<li>Tableau & Power BI</li>
+<li>Looker</li>
+<li>Executive Dashboard Design</li>
+</ul>
+</div>
+</div>
 
-  <!-- BLOG & PROJECTS PAGE -->
-  <div id="blog-projects-content" class="page-section">
-    <section class="blog-section">
-      <span class="section-label">Blog & Projects</span>
-      <h2>Thoughts & Work</h2>
-      <p style="color: var(--gray); margin-bottom: 2rem;">A collection of projects, case studies, and ideas I'm exploring.</p>
-      
-      <div class="projects-grid">
-        <div class="project-card">
-          <div class="project-image">Data Viz</div>
-          <div class="project-content">
-            <div class="project-tags">
-              <span class="project-tag">Data Viz</span>
-              <span class="project-tag">Tableau</span>
-              <span class="project-tag">SQL</span>
-            </div>
-            <h3 class="project-title">Interactive Campaign Dashboard</h3>
-            <p class="project-description">A deep dive into creating a real-time performance dashboard using Tableau and BigQuery, focusing on executive-ready metrics and automated refresh.</p>
-            <button class="project-link" onclick="openModal('dashboard')">Read More →</button>
-          </div>
-        </div>
-        
-        <div class="project-card">
-          <div class="project-image">App Dev</div>
-          <div class="project-content">
-            <div class="project-tags">
-              <span class="project-tag">Product</span>
-              <span class="project-tag">Strategy</span>
-            </div>
-            <h3 class="project-title">Building & Shipping My First App</h3>
-            <p class="project-description">My latest project exploring app development. Mirror is a spiritual-reflection tool with privacy-safe AI learning that helps you become more mindful and self-attuned.</p>
+<div class="tech-stack">
+<h3>Technical Toolkit</h3>
+<div class="tech-pills">
+<span class="tech-pill highlight">SQL</span>
+<span class="tech-pill highlight">Python</span>
+<span class="tech-pill highlight">Tableau</span>
+<span class="tech-pill highlight">Power BI</span>
+<span class="tech-pill">BigQuery</span>
+<span class="tech-pill">Looker</span>
+<span class="tech-pill">HTML/CSS</span>
+<span class="tech-pill">JIRA</span>
+<span class="tech-pill">Confluence</span>
+<span class="tech-pill">Google Sheets (Advanced)</span>
+</div>
+</div>
+
+<div class="certifications">
+<h3>Certifications</h3>
+<div class="cert-grid">
+<div class="cert-badge">
+<svg class="cert-logo" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+<circle cx="50" cy="50" r="48" fill="#006400" stroke="#228B22" stroke-width="2"/>
+<text x="50" y="35" font-family="Arial Black, sans-serif" font-size="12" fill="#ffffff" text-anchor="middle" font-weight="bold">LEAN</text>
+<text x="50" y="50" font-family="Arial Black, sans-serif" font-size="10" fill="#FFD700" text-anchor="middle" font-weight="bold">SIX SIGMA</text>
+<text x="50" y="68" font-family="Arial, sans-serif" font-size="14" fill="#ffffff" text-anchor="middle" font-weight="bold">GREEN BELT</text>
+<path d="M35 78 L50 88 L65 78" stroke="#FFD700" stroke-width="2" fill="none"/>
+</svg>
+<div class="cert-info">
+<div class="cert-name">Lean Six Sigma Green Belt</div>
+<div class="cert-issuer">Institute of Industrial Engineers · 2015</div>
+</div>
+</div>
+<div class="cert-badge">
+<svg class="cert-logo" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+<rect x="5" y="20" width="90" height="60" rx="4" fill="#4285F4"/>
+<rect x="10" y="25" width="35" height="25" rx="2" fill="#EA4335"/>
+<rect x="55" y="25" width="35" height="25" rx="2" fill="#FBBC05"/>
+<rect x="10" y="55" width="35" height="20" rx="2" fill="#34A853"/>
+<rect x="55" y="55" width="35" height="20" rx="2" fill="#4285F4"/>
+<circle cx="50" cy="50" r="12" fill="#ffffff"/>
+<text x="50" y="54" font-family="Arial, sans-serif" font-size="8" fill="#4285F4" text-anchor="middle" font-weight="bold">PM</text>
+</svg>
+<div class="cert-info">
+<div class="cert-name">Google Project Management</div>
+<div class="cert-issuer">Google Career Certificates · 2021</div>
+</div>
+</div>
+</div>
+</div>
+
+<div class="education-section">
+<h3>Education</h3>
+<div class="education-item">
+<img src="uf-logo.png" alt="University of Florida" class="education-logo">
+<div class="education-details">
+<div class="education-degree">B.S. Industrial and Systems Engineering</div>
+<div class="education-school">University of Florida · Gainesville, FL · May 2016</div>
+</div>
+</div>
+</div>
+</section>
+
+<section class="work-section" id="work">
+<div class="work-container">
+<span class="section-label">Work Samples</span>
+<h2>Executive Dashboard</h2>
+<p style="color: var(--gray); margin-bottom: 2rem;">Sample strategic initiative tracking visualization — built with Tableau & SQL</p>
+
+<div class="dashboard-frame">
+<div class="dashboard-header">
+<div class="dashboard-title-area">
+<div class="dashboard-icon">📊</div>
+<div>
+<div class="dashboard-title">Q4 Strategic Initiative Tracker</div>
+<div class="dashboard-subtitle">Americas Sellside Partnerships</div>
+</div>
+</div>
+<div class="dashboard-filters">
+<span class="filter-pill active">All Regions</span>
+<span class="filter-pill">Q4 2024</span>
+<span class="filter-pill">Active</span>
+</div>
+</div>
+
+<div class="dashboard-body">
+<div class="dashboard-kpis">
+<div class="kpi-card">
+<div class="kpi-label">Revenue Enabled</div>
+<div class="kpi-value">$40M</div>
+<div class="kpi-trend up">↑ 18% vs target</div>
+<svg class="kpi-sparkline" viewBox="0 0 100 40" preserveAspectRatio="none">
+<path d="M0,35 Q25,30 40,25 T60,20 T80,10 T100,5" fill="none" stroke="var(--gold)" stroke-width="2"/>
+</svg>
+</div>
+<div class="kpi-card">
+<div class="kpi-label">Initiatives Tracked</div>
+<div class="kpi-value">56</div>
+<div class="kpi-trend up">↑ 4 product areas</div>
+<svg class="kpi-sparkline" viewBox="0 0 100 40" preserveAspectRatio="none">
+<path d="M0,30 L20,28 L40,25 L60,22 L80,18 L100,15" fill="none" stroke="var(--navy)" stroke-width="2"/>
+</svg>
+</div>
+<div class="kpi-card">
+<div class="kpi-label">Stakeholders</div>
+<div class="kpi-value">200+</div>
+<div class="kpi-trend neutral">Weekly cadence</div>
+<svg class="kpi-sparkline" viewBox="0 0 100 40" preserveAspectRatio="none">
+<path d="M0,25 Q30,20 50,22 T100,18" fill="none" stroke="var(--gold)" stroke-width="2"/>
+</svg>
+</div>
+<div class="kpi-card">
+<div class="kpi-label">Avg. CSAT</div>
+<div class="kpi-value">94%</div>
+<div class="kpi-trend up">↑ 3% vs Q3</div>
+<svg class="kpi-sparkline" viewBox="0 0 100 40" preserveAspectRatio="none">
+<path d="M0,30 Q20,28 40,22 T70,15 T100,10" fill="none" stroke="#10b981" stroke-width="2"/>
+</svg>
+</div>
+</div>
+
+<div class="dashboard-charts">
+<div class="chart-card">
+<div class="chart-header">
+<div class="chart-title">Revenue by Vertical (Target vs Actual)</div>
+<div class="chart-legend">
+<span class="legend-item"><span class="legend-dot navy"></span> Target</span>
+<span class="legend-item"><span class="legend-dot gold"></span> Actual</span>
+<span class="legend-item"><span class="legend-dot green"></span> Exceeded</span>
+</div>
+</div>
+<div class="bar-chart">
+<div class="bar-group">
+<div class="bar-container">
+<div class="bar target" style="height: 70px;"></div>
+<div class="bar actual exceeded" style="height: 85px;"></div>
+</div>
+<span class="bar-label">Media</span>
+</div>
+<div class="bar-group">
+<div class="bar-container">
+<div class="bar target" style="height: 55px;"></div>
+<div class="bar actual exceeded" style="height: 68px;"></div>
+</div>
+<span class="bar-label">Gaming</span>
+</div>
+<div class="bar-group">
+<div class="bar-container">
+<div class="bar target" style="height: 80px;"></div>
+<div class="bar actual" style="height: 75px;"></div>
+</div>
+<span class="bar-label">Finance</span>
+</div>
+<div class="bar-group">
+<div class="bar-container">
+<div class="bar target" style="height: 45px;"></div>
+<div class="bar actual exceeded" style="height: 58px;"></div>
+</div>
+<span class="bar-label">Retail</span>
+</div>
+<div class="bar-group">
+<div class="bar-container">
+<div class="bar target" style="height: 60px;"></div>
+<div class="bar actual exceeded" style="height: 72px;"></div>
+</div>
+<span class="bar-label">Tech</span>
+</div>
+<div class="bar-group">
+<div class="bar-container">
+<div class="bar target" style="height: 50px;"></div>
+<div class="bar actual" style="height: 48px;"></div>
+</div>
+<span class="bar-label">Travel</span>
+</div>
+<div class="bar-group">
+<div class="bar-container">
+<div class="bar target" style="height: 65px;"></div>
+<div class="bar actual exceeded" style="height: 78px;"></div>
+</div>
+<span class="bar-label">Health</span>
+</div>
+</div>
+</div>
+
+<div class="chart-card">
+<div class="chart-header">
+<div class="chart-title">Initiative Completion</div>
+</div>
+<div class="progress-list">
+<div class="progress-item">
+<div class="progress-info">
+<div class="progress-name">Secure Signals Rollout</div>
+<div class="progress-bar-bg">
+<div class="progress-bar-fill green" style="width: 100%;"></div>
+</div>
+</div>
+<span class="progress-pct">100%</span>
+</div>
+<div class="progress-item">
+<div class="progress-info">
+<div class="progress-name">Privacy Sandbox Migration</div>
+<div class="progress-bar-bg">
+<div class="progress-bar-fill gold" style="width: 87%;"></div>
+</div>
+</div>
+<span class="progress-pct">87%</span>
+</div>
+<div class="progress-item">
+<div class="progress-info">
+<div class="progress-name">1P Data Framework</div>
+<div class="progress-bar-bg">
+<div class="progress-bar-fill gold" style="width: 73%;"></div>
+</div>
+</div>
+<span class="progress-pct">73%</span>
+</div>
+<div class="progress-item">
+<div class="progress-info">
+<div class="progress-name">Partner Enablement v2</div>
+<div class="progress-bar-bg">
+<div class="progress-bar-fill navy" style="width: 45%;"></div>
+</div>
+</div>
+<span class="progress-pct">45%</span>
+</div>
+<div class="progress-item">
+<div class="progress-info">
+<div class="progress-name">GTM Playbook Refresh</div>
+<div class="progress-bar-bg">
+<div class="progress-bar-fill navy" style="width: 28%;"></div>
+</div>
+</div>
+<span class="progress-pct">28%</span>
+</div>
+</div>
+</div>
+</div>
+</div>
+
+<div class="dashboard-footer">
+<span><span class="status-dot"></span>Live data · Auto-refresh enabled</span>
+<span>Last updated: Dec 27, 2024 9:41 AM PT</span>
+</div>
+</div>
+
+<div class="video-cards-grid">
+<div class="video-card">
+<video controls>
+<source src="gantt.mp4" type="video/mp4">
+Your browser does not support the video tag.
+</video>
+<div class="video-card-content">
+<span class="video-card-badge">Featured</span>
+<h3 class="video-card-title">Gantt Chart Sample</h3>
+<p class="video-card-description">Automated Gantt chart with dynamic controls for project tracking.</p>
+</div>
+</div>
+
+<div class="video-card">
+<video controls>
+<source src="commsdocs.mp4" type="video/mp4">
+Your browser does not support the video tag.
+</video>
+<div class="video-card-content">
+<span class="video-card-badge">Tutorial</span>
+<h3 class="video-card-title">Executive Communications</h3>
+<p class="video-card-description">Sample executive communication templates and frameworks.</p>
+</div>
+</div>
+
+<div class="video-card">
+<iframe src="https://www.youtube.com/embed/AgNP0bMWHxY" title="YouTube Short" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
+<div class="video-card-content">
+<span class="video-card-badge">YouTube</span>
+<h3 class="video-card-title">My Latest Project</h3>
+<p class="video-card-description">Check out this quick demo of my latest work!</p>
+</div>
+</div>
+</div>
+</div>
+</section>
+
+<section id="personal">
+<span class="section-label">Beyond Work</span>
+<h2>A Few Things About Me</h2>
+<div class="personal-grid">
+<div class="flip-card" tabindex="0">
+<div class="flip-card-inner">
+<div class="flip-card-front">
+<div class="icon">🏕️</div>
+<p>Married with two kids. I love spending time outdoors—hiking, camping, or just enjoying nature with family.</p>
+</div>
+<div class="flip-card-back outdoor-back"></div>
+</div>
+</div>
+
+<div class="flip-card" tabindex="0">
+<div class="flip-card-inner">
+<div class="flip-card-front">
+<div class="icon">📣</div>
+<p>Former college cheerleader at UF. It taught me teamwork, trust, and the importance of lifting others up.</p>
+</div>
+<div class="flip-card-back cheerleader-back"></div>
+</div>
+</div>
+
+<div class="flip-card" tabindex="0">
+<div class="flip-card-inner">
+<div class="flip-card-front">
+<div class="icon">🔨</div>
+<p>I love building with my hands—from garden beds to home improvement projects. There's clarity in craftsmanship.</p>
+</div>
+<div class="flip-card-back building-back"></div>
+</div>
+</div>
+</div>
+</section>
+</div>
+
+<!-- BLOG & PROJECTS PAGE -->
+<div id="blog-projects-content" class="page-section">
+<section class="blog-section">
+<span class="section-label">Blog & Projects</span>
+<h2>Thoughts & Work</h2>
+<p style="color: var(--gray); margin-bottom: 2rem;">A collection of projects, case studies, and ideas I'm exploring.</p>
+
+<div class="projects-grid">
+<div class="project-card">
+<div class="project-image">Data Viz</div>
+<div class="project-content">
+<div class="project-tags">
+<span class="project-tag">Data Viz</span>
+<span class="project-tag">Tableau</span>
+<span class="project-tag">SQL</span>
+</div>
+<h3 class="project-title">Interactive Campaign Dashboard</h3>
+<p class="project-description">A deep dive into creating a real-time performance dashboard using Tableau and BigQuery, focusing on executive-ready metrics and automated refresh.</p>
+<button class="project-link" onclick="openModal('dashboard')">Read More →</button>
+</div>
+</div>
+
+<div class="project-card">
+<div class="project-image">App Dev</div>
+<div class="project-content">
+<div class="project-tags">
+<span class="project-tag">Product</span>
+<span class="project-tag">Strategy</span>
+</div>
+<h3 class="project-title">Building & Shipping My First App</h3>
+<p class="project-description">My latest project exploring app development. Mirror is a spiritual-reflection tool with privacy-safe AI learning that helps you become more mindful and self-attuned.</p>
+            <button class="project-link" onclick="openModal('mirror')">Read More →</button>
             <div style="display: flex; gap: 1rem; flex-wrap: wrap;">
               <a href="https://play.google.com/store/apps/details?id=com.mirrorapp.reflection&pli=1" target="_blank" class="project-link" style="display: inline-flex; align-items: center; gap: 0.5rem;">
                 <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
@@ -2101,157 +2102,144 @@
               </a>
               <button class="project-link" onclick="openModal('mirror')">Read More →</button>
             </div>
-          </div>
-        </div>
-        
-        <div class="project-card">
-          <div class="project-image">Case Study</div>
-          <div class="project-content">
-            <div class="project-tags">
-              <span class="project-tag">Process</span>
-              <span class="project-tag">Lean Six Sigma</span>
-            </div>
-            <h3 class="project-title">Streamlining Partner Onboarding</h3>
-            <p class="project-description">How we applied Lean principles to reduce partner onboarding time by 35%, improving satisfaction and accelerating time-to-revenue.</p>
-            <button class="project-link" onclick="openModal('onboarding')">Read More →</button>
-          </div>
-        </div>
-        
-        <div class="project-card">
-          <div class="project-image">Ops Framework</div>
-          <div class="project-content">
-            <div class="project-tags">
-              <span class="project-tag">Operations</span>
-              <span class="project-tag">Playbooks</span>
-            </div>
-            <h3 class="project-title">Building Scalable Launch Playbooks</h3>
-            <p class="project-description">A framework for creating repeatable launch playbooks that ensure consistency across diverse teams and reduce time-to-execution.</p>
-            <button class="project-link" onclick="openModal('playbooks')">Coming Soon →</button>
-          </div>
-        </div>
-      </div>
-    </section>
-  </div>
-  
-<div class="project-card">
-  <div class="project-image">Health Tech Operations</div>
-  <div class="project-content">
-    <div class="project-tags">
-      <span class="project-tag">Perspectives</span>
-      <span class="project-tag">Health Tech</span>
-    </div>
-    <h3 class="project-title">The "Logic Gap" in the Waiting Room</h3>
-    <p class="project-description">Reflections on bridging the payer-provider divide through the lens of a tech operator and a doctor’s son.</p>
-    <button class="project-link" onclick="openHealthBlog()">Read Perspective →</button>
-  </div>
 </div>
-  
-  <!-- MODAL -->
-  <div class="modal-overlay" id="modal-overlay" onclick="closeModalOutside(event)">
-    <div class="modal-container" onclick="event.stopPropagation()">
-      <div class="modal-header">
-        <div class="modal-header-content">
-          <div class="modal-tags" id="modal-tags"></div>
-          <h2 class="modal-title" id="modal-title"></h2>
-        </div>
-        <button class="modal-close" onclick="closeModal()">×</button>
-      </div>
-      <div class="modal-body" id="modal-body"></div>
-      <div class="modal-footer">
-        <div class="modal-author">
-          <div class="modal-author-avatar">BS</div>
-          <div class="modal-author-info">
-            <div class="modal-author-name">Benjamin J. Sunter</div>
-            <div class="modal-author-date" id="modal-date"></div>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
+</div>
 
-  <footer>
-    <span class="section-label">Connect</span>
-    <h2>Let's Talk</h2>
-    <p>I'm always open to discussing business operations, strategy,<br>or how to build better dashboards.</p>
-    <div class="footer-links">
-      <a href="mailto:sunterbb@gmail.com">sunterbb@gmail.com</a>
-      <a href="https://www.linkedin.com/in/benjamin-sunter/">LinkedIn</a>
-      <a href="https://bensunter.com">bensunter.com</a>
-    </div>
-    <div class="footer-phone">321-271-4830</div>
-    <div class="copyright">© 2025 Benjamin J. Sunter · Cupertino, CA</div>
-  </footer>
+<div class="project-card">
+<div class="project-image">Case Study</div>
+<div class="project-content">
+<div class="project-tags">
+<span class="project-tag">Process</span>
+<span class="project-tag">Lean Six Sigma</span>
+</div>
+<h3 class="project-title">Streamlining Partner Onboarding</h3>
+<p class="project-description">How we applied Lean principles to reduce partner onboarding time by 35%, improving satisfaction and accelerating time-to-revenue.</p>
+<button class="project-link" onclick="openModal('onboarding')">Read More →</button>
+</div>
+</div>
 
-  <script>
-    // Article Content Database
-    const articles = {
-      dashboard: {
-        title: "Interactive Campaign Dashboard",
-        tags: ["Data Viz", "Tableau", "SQL", "BigQuery"],
-        date: "November 2024",
-        content: `
-          <h3>The Challenge</h3>
-          <p>Managing 56 initiatives across 4 product areas and 200+ stakeholders requires more than spreadsheets. Leadership needed real-time visibility into performance metrics, but existing reporting was manual, inconsistent, and always a week behind.</p>
-          
-          <div class="modal-highlight">
-            "By the time we got the data, it was already too late to course-correct." — VP, Partnerships
-          </div>
-          
-          <h3>The Approach</h3>
-          <p>I designed and built an automated executive dashboard using Tableau connected to BigQuery, with the goal of providing real-time insights that actually drive decisions. The key principles:</p>
-          <ul>
-            <li><strong>Executive-first design:</strong> Lead with the 4-5 metrics that matter most, everything else is drill-down</li>
-            <li><strong>Automated data pipeline:</strong> SQL scripts pull from 6 source systems nightly, with data validation checks</li>
-            <li><strong>Action-oriented visualizations:</strong> Every chart answers a specific question leadership asks weekly</li>
-            <li><strong>Mobile-responsive:</strong> Execs check dashboards on phones between meetings</li>
-          </ul>
-          
-          <h3>Key Features</h3>
-          <p>The dashboard includes several interconnected views:</p>
-          <ul>
-            <li><strong>KPI Summary:</strong> Revenue attainment, initiative progress, stakeholder alignment, and CSAT at a glance</li>
-            <li><strong>Vertical Performance:</strong> Target vs. actual revenue by business vertical with variance highlighting</li>
-            <li><strong>Initiative Tracker:</strong> Gantt-style view of all active initiatives with health indicators</li>
-            <li><strong>Risk Register:</strong> Automated flagging of at-risk initiatives based on milestone slippage</li>
-          </ul>
-          
-          <div class="modal-stats">
-            <div class="modal-stat">
-              <div class="modal-stat-value">6</div>
-              <div class="modal-stat-label">Data Sources</div>
-            </div>
-            <div class="modal-stat">
-              <div class="modal-stat-value">15min</div>
-              <div class="modal-stat-label">Refresh Cycle</div>
-            </div>
-            <div class="modal-stat">
-              <div class="modal-stat-value">40hrs</div>
-              <div class="modal-stat-label">Monthly Time Saved</div>
-            </div>
-          </div>
-          
-          <h3>Technical Implementation</h3>
-          <p>The backend leverages BigQuery for data warehousing with scheduled SQL queries that transform raw data into analysis-ready tables. Key technical decisions included:</p>
-          <ul>
-            <li>Incremental loading patterns to minimize query costs</li>
-            <li>Parameterized date filters for historical comparison</li>
-            <li>Row-level security for team-specific views</li>
-            <li>Slack integration for automated weekly summaries</li>
-          </ul>
-          
-          <h3>Impact</h3>
-          <p>The dashboard transformed how leadership engages with program data. Weekly governance meetings now start with a shared view of reality, and decisions are made with confidence rather than gut feel.</p>
-          
-          <div class="modal-highlight">
-            The automated reporting eliminated 40+ hours of manual work monthly and reduced "data reconciliation" debates in leadership meetings by an estimated 80%.
-          </div>
-        `
-      },
-      mirror: {
-        title: "Building & Shipping My First App",
-        tags: ["Product", "Strategy", "App Development", "AI"],
-        date: "October 2024",
-        content: `
+<div class="project-card">
+<div class="project-image">Ops Framework</div>
+<div class="project-content">
+<div class="project-tags">
+<span class="project-tag">Operations</span>
+<span class="project-tag">Playbooks</span>
+</div>
+<h3 class="project-title">Building Scalable Launch Playbooks</h3>
+<p class="project-description">A framework for creating repeatable launch playbooks that ensure consistency across diverse teams and reduce time-to-execution.</p>
+<button class="project-link" onclick="openModal('playbooks')">Coming Soon →</button>
+</div>
+</div>
+</div>
+</section>
+</div>
+
+<!-- MODAL -->
+<div class="modal-overlay" id="modal-overlay" onclick="closeModalOutside(event)">
+<div class="modal-container" onclick="event.stopPropagation()">
+<div class="modal-header">
+<div class="modal-header-content">
+<div class="modal-tags" id="modal-tags"></div>
+<h2 class="modal-title" id="modal-title"></h2>
+</div>
+<button class="modal-close" onclick="closeModal()">×</button>
+</div>
+<div class="modal-body" id="modal-body"></div>
+<div class="modal-footer">
+<div class="modal-author">
+<div class="modal-author-avatar">BS</div>
+<div class="modal-author-info">
+<div class="modal-author-name">Benjamin J. Sunter</div>
+<div class="modal-author-date" id="modal-date"></div>
+</div>
+</div>
+</div>
+</div>
+</div>
+
+<footer>
+<span class="section-label">Connect</span>
+<h2>Let's Talk</h2>
+<p>I'm always open to discussing business operations, strategy,<br>or how to build better dashboards.</p>
+<div class="footer-links">
+<a href="mailto:sunterbb@gmail.com">sunterbb@gmail.com</a>
+<a href="https://www.linkedin.com/in/benjamin-sunter/">LinkedIn</a>
+<a href="https://bensunter.com">bensunter.com</a>
+</div>
+<div class="footer-phone">321-271-4830</div>
+<div class="copyright">© 2025 Benjamin J. Sunter · Cupertino, CA</div>
+</footer>
+
+<script>
+// Article Content Database
+const articles = {
+dashboard: {
+title: "Interactive Campaign Dashboard",
+tags: ["Data Viz", "Tableau", "SQL", "BigQuery"],
+date: "November 2024",
+content: `
+         <h3>The Challenge</h3>
+         <p>Managing 56 initiatives across 4 product areas and 200+ stakeholders requires more than spreadsheets. Leadership needed real-time visibility into performance metrics, but existing reporting was manual, inconsistent, and always a week behind.</p>
+         
+         <div class="modal-highlight">
+           "By the time we got the data, it was already too late to course-correct." — VP, Partnerships
+         </div>
+         
+         <h3>The Approach</h3>
+         <p>I designed and built an automated executive dashboard using Tableau connected to BigQuery, with the goal of providing real-time insights that actually drive decisions. The key principles:</p>
+         <ul>
+           <li><strong>Executive-first design:</strong> Lead with the 4-5 metrics that matter most, everything else is drill-down</li>
+           <li><strong>Automated data pipeline:</strong> SQL scripts pull from 6 source systems nightly, with data validation checks</li>
+           <li><strong>Action-oriented visualizations:</strong> Every chart answers a specific question leadership asks weekly</li>
+           <li><strong>Mobile-responsive:</strong> Execs check dashboards on phones between meetings</li>
+         </ul>
+         
+         <h3>Key Features</h3>
+         <p>The dashboard includes several interconnected views:</p>
+         <ul>
+           <li><strong>KPI Summary:</strong> Revenue attainment, initiative progress, stakeholder alignment, and CSAT at a glance</li>
+           <li><strong>Vertical Performance:</strong> Target vs. actual revenue by business vertical with variance highlighting</li>
+           <li><strong>Initiative Tracker:</strong> Gantt-style view of all active initiatives with health indicators</li>
+           <li><strong>Risk Register:</strong> Automated flagging of at-risk initiatives based on milestone slippage</li>
+         </ul>
+         
+         <div class="modal-stats">
+           <div class="modal-stat">
+             <div class="modal-stat-value">6</div>
+             <div class="modal-stat-label">Data Sources</div>
+           </div>
+           <div class="modal-stat">
+             <div class="modal-stat-value">15min</div>
+             <div class="modal-stat-label">Refresh Cycle</div>
+           </div>
+           <div class="modal-stat">
+             <div class="modal-stat-value">40hrs</div>
+             <div class="modal-stat-label">Monthly Time Saved</div>
+           </div>
+         </div>
+         
+         <h3>Technical Implementation</h3>
+         <p>The backend leverages BigQuery for data warehousing with scheduled SQL queries that transform raw data into analysis-ready tables. Key technical decisions included:</p>
+         <ul>
+           <li>Incremental loading patterns to minimize query costs</li>
+           <li>Parameterized date filters for historical comparison</li>
+           <li>Row-level security for team-specific views</li>
+           <li>Slack integration for automated weekly summaries</li>
+         </ul>
+         
+         <h3>Impact</h3>
+         <p>The dashboard transformed how leadership engages with program data. Weekly governance meetings now start with a shared view of reality, and decisions are made with confidence rather than gut feel.</p>
+         
+         <div class="modal-highlight">
+           The automated reporting eliminated 40+ hours of manual work monthly and reduced "data reconciliation" debates in leadership meetings by an estimated 80%.
+         </div>
+       `
+},
+mirror: {
+title: "Building & Shipping My First App",
+tags: ["Product", "Strategy", "App Development", "AI"],
+date: "October 2024",
+content: `
           <div style="text-align: center; margin-bottom: 2rem;">
             <a href="https://play.google.com/store/apps/details?id=com.mirrorapp.reflection&pli=1" target="_blank" style="display: inline-flex; align-items: center; gap: 0.5rem; background: var(--navy); color: var(--white); padding: 0.9rem 2rem; border-radius: 4px; text-decoration: none; font-weight: 600; transition: all 0.3s;">
               <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
@@ -2261,240 +2249,220 @@
             </a>
           </div>
           
-          <h3>The Idea</h3>
-          <p>Mirror started as a personal experiment: could I build a tool that helps people reflect more meaningfully on their lives, using AI as a thoughtful companion rather than just a chatbot?</p>
-          
-          <p>As someone who values mindfulness but struggles with consistency, I wanted to create something that would make reflection feel natural, not like another task on the to-do list.</p>
-          
-          <div class="modal-highlight">
-            The goal wasn't to build another journaling app—it was to create a space for genuine self-discovery, powered by AI that listens more than it talks.
-          </div>
-          
-          <h3>The Product</h3>
-          <p>Mirror is a spiritual-reflection tool with three core features:</p>
-          <ul>
-            <li><strong>Daily Prompts:</strong> Thoughtful questions tailored to your current life context, not generic inspirational quotes</li>
-            <li><strong>Pattern Recognition:</strong> AI that identifies themes across your reflections over time, surfacing insights you might miss</li>
-            <li><strong>Privacy-First Architecture:</strong> All data encrypted end-to-end; the AI learns your patterns without storing your actual entries</li>
-          </ul>
-          
+         <h3>The Idea</h3>
+         <p>Mirror started as a personal experiment: could I build a tool that helps people reflect more meaningfully on their lives, using AI as a thoughtful companion rather than just a chatbot?</p>
+         
+         <p>As someone who values mindfulness but struggles with consistency, I wanted to create something that would make reflection feel natural, not like another task on the to-do list.</p>
+         
+         <div class="modal-highlight">
+           The goal wasn't to build another journaling app—it was to create a space for genuine self-discovery, powered by AI that listens more than it talks.
+         </div>
+         
+         <h3>The Product</h3>
+         <p>Mirror is a spiritual-reflection tool with three core features:</p>
+         <ul>
+           <li><strong>Daily Prompts:</strong> Thoughtful questions tailored to your current life context, not generic inspirational quotes</li>
+           <li><strong>Pattern Recognition:</strong> AI that identifies themes across your reflections over time, surfacing insights you might miss</li>
+           <li><strong>Privacy-First Architecture:</strong> All data encrypted end-to-end; the AI learns your patterns without storing your actual entries</li>
+         </ul>
+         
           <h3>From Idea to Revenue</h3>
           <p>The app is now live on Google Play and generating revenue through Meta Network Ads. Shipping something from scratch taught me more about product development than years of managing other people's products.</p>
           
-          <h3>What I Learned</h3>
-          <p>Building Mirror taught me more about product development than any course could:</p>
-          <ul>
-            <li><strong>Start with the job-to-be-done:</strong> Users don't want an app—they want to feel more self-aware</li>
-            <li><strong>Simplicity is hard:</strong> I cut 60% of my initial features to focus on what actually mattered</li>
-            <li><strong>Shipping beats perfection:</strong> The version I launched wasn't the version I imagined, but it was real</li>
+         <h3>What I Learned</h3>
+         <p>Building Mirror taught me more about product development than any course could:</p>
+         <ul>
+           <li><strong>Start with the job-to-be-done:</strong> Users don't want an app—they want to feel more self-aware</li>
+           <li><strong>Simplicity is hard:</strong> I cut 60% of my initial features to focus on what actually mattered</li>
+           <li><strong>Shipping beats perfection:</strong> The version I launched wasn't the version I imagined, but it was real</li>
             <li><strong>Monetization validates value:</strong> People paying for your product is the ultimate product-market fit signal</li>
-          </ul>
-          
-          <div class="modal-stats">
-            <div class="modal-stat">
-              <div class="modal-stat-value">3mo</div>
-              <div class="modal-stat-label">Dev Time</div>
-            </div>
-            <div class="modal-stat">
+         </ul>
+         
+         <div class="modal-stats">
+           <div class="modal-stat">
+             <div class="modal-stat-value">3mo</div>
+             <div class="modal-stat-label">Dev Time</div>
+           </div>
+           <div class="modal-stat">
+              <div class="modal-stat-value">1</div>
+              <div class="modal-stat-label">Apps Shipped</div>
               <div class="modal-stat-value">Live</div>
               <div class="modal-stat-label">On Play Store</div>
-            </div>
-            <div class="modal-stat">
+           </div>
+           <div class="modal-stat">
+              <div class="modal-stat-value">∞</div>
+              <div class="modal-stat-label">Lessons Learned</div>
               <div class="modal-stat-value">✓</div>
               <div class="modal-stat-label">Monetizing</div>
-            </div>
-          </div>
-          
-          <h3>The Business Operations Connection</h3>
-          <p>You might wonder why a business operations leader is building apps. For me, it's about staying close to the craft. Understanding how products actually get built—the tradeoffs, the technical constraints, the user research—makes me a better partner to product and engineering teams.</p>
-          
-          <p>Plus, there's something deeply satisfying about creating something from scratch that actually helps people.</p>
-          
-          <div class="modal-highlight">
-            The skills transfer both ways: my operational mindset helped me scope ruthlessly and ship on time, while the product experience gave me new empathy for the teams I support.
-          </div>
-        `
-      },
-      onboarding: {
-        title: "Streamlining Partner Onboarding",
-        tags: ["Process Improvement", "Lean Six Sigma", "Case Study"],
-        date: "August 2024",
-        content: `
-          <h3>The Problem</h3>
-          <p>Partner onboarding was taking an average of 47 days from signed contract to first revenue. For a business where time-to-revenue directly impacts quarterly targets, this was unacceptable. Worse, the process was inconsistent—some partners onboarded in 3 weeks, others took 3 months.</p>
-          
-          <div class="modal-stats">
-            <div class="modal-stat">
-              <div class="modal-stat-value">47</div>
-              <div class="modal-stat-label">Avg Days to Revenue</div>
-            </div>
-            <div class="modal-stat">
-              <div class="modal-stat-value">12</div>
-              <div class="modal-stat-label">Handoff Points</div>
-            </div>
-            <div class="modal-stat">
-              <div class="modal-stat-value">6</div>
-              <div class="modal-stat-label">Teams Involved</div>
-            </div>
-          </div>
-          
-          <h3>The Approach</h3>
-          <p>I led a cross-functional process improvement initiative using Lean Six Sigma methodology. The project followed DMAIC:</p>
-          
-          <ul>
-            <li><strong>Define:</strong> Mapped the current state with all 6 teams, identified the critical path</li>
-            <li><strong>Measure:</strong> Instrumented each step to understand where time was actually spent</li>
-            <li><strong>Analyze:</strong> Root cause analysis revealed 60% of delays came from just 3 handoff points</li>
-            <li><strong>Improve:</strong> Redesigned the workflow, introduced parallel processing, created SLAs</li>
-            <li><strong>Control:</strong> Built automated tracking dashboard, established weekly standup cadence</li>
-          </ul>
-          
-          <div class="modal-highlight">
-            The biggest insight: most delays weren't from slow work—they were from work sitting in queues between teams. The solution wasn't to work faster, but to eliminate wait time.
-          </div>
-          
-          <h3>Key Changes</h3>
-          <p>The redesigned process included several structural improvements:</p>
-          <ul>
-            <li><strong>Parallel workstreams:</strong> Technical setup and legal review now happen simultaneously</li>
-            <li><strong>Single point of contact:</strong> One onboarding lead owns the relationship end-to-end</li>
-            <li><strong>Standardized templates:</strong> 80% of partners fit standard configurations, reducing custom work</li>
-            <li><strong>Automated status updates:</strong> Partners see real-time progress, reducing check-in overhead</li>
-          </ul>
-          
-          <h3>Results</h3>
-          <div class="modal-stats">
-            <div class="modal-stat">
-              <div class="modal-stat-value">35%</div>
-              <div class="modal-stat-label">Faster Onboarding</div>
-            </div>
-            <div class="modal-stat">
-              <div class="modal-stat-value">30 days</div>
-              <div class="modal-stat-label">New Average</div>
-            </div>
-            <div class="modal-stat">
-              <div class="modal-stat-value">+18 NPS</div>
-              <div class="modal-stat-label">Partner Satisfaction</div>
-            </div>
-          </div>
-          
-          <p>Beyond the numbers, the process improvement created a blueprint that's been adapted for other operational workflows across the organization.</p>
-        `
-      },
-      playbooks: {
-        title: "Building Scalable Launch Playbooks",
-        tags: ["Operations", "Playbooks", "Frameworks"],
-        date: "Coming Soon",
-        content: `
-          <div class="modal-coming-soon">
-            <div class="modal-coming-soon-icon">🚀</div>
-            <h3>Coming Soon</h3>
-            <p>I'm currently documenting my framework for creating repeatable launch playbooks that scale across diverse teams. This piece will cover:</p>
-            <ul style="text-align: left; max-width: 400px; margin: 1.5rem auto;">
-              <li>The anatomy of an effective playbook</li>
-              <li>Balancing standardization with flexibility</li>
-              <li>Getting buy-in from teams who "do things differently"</li>
-              <li>Measuring playbook effectiveness</li>
-              <li>Templates and examples you can steal</li>
-            </ul>
-            <p style="margin-top: 1.5rem; color: var(--gray);">Check back in January 2025, or connect with me on LinkedIn for updates.</p>
-          </div>
-        `
-      },
-       Opinion: {
-        title: "The 'Logic Gap' in the Waiting Room",
-        tags: ["Operations", "Health Tech", "Opinions"],
-        date: "January 2026",
-        content: `
-          <h3>The "Logic Gap" in the Waiting Room/h3>
-          <p>I grew up in a household where healthcare was the only topic of conversation. Both of my parents are doctors, so I spent my childhood hearing about the clinical side of the house: the patients, the outcomes, and the high stakes of the exam room. But after a decade in tech and operations, I’ve started seeing the industry through a different lens. It’s not just a clinical challenge. It’s an infrastructure problem.</p>
-          
+           </div>
+         </div>
+         
+         <h3>The Business Operations Connection</h3>
+         <p>You might wonder why a business operations leader is building apps. For me, it's about staying close to the craft. Understanding how products actually get built—the tradeoffs, the technical constraints, the user research—makes me a better partner to product and engineering teams.</p>
+         
+         <p>Plus, there's something deeply satisfying about creating something from scratch that actually helps people.</p>
+         
+         <div class="modal-highlight">
+           The skills transfer both ways: my operational mindset helped me scope ruthlessly and ship on time, while the product experience gave me new empathy for the teams I support.
+         </div>
+       `
+},
+onboarding: {
+title: "Streamlining Partner Onboarding",
+tags: ["Process Improvement", "Lean Six Sigma", "Case Study"],
+date: "August 2024",
+content: `
+         <h3>The Problem</h3>
+         <p>Partner onboarding was taking an average of 47 days from signed contract to first revenue. For a business where time-to-revenue directly impacts quarterly targets, this was unacceptable. Worse, the process was inconsistent—some partners onboarded in 3 weeks, others took 3 months.</p>
+         
+         <div class="modal-stats">
+           <div class="modal-stat">
+             <div class="modal-stat-value">47</div>
+             <div class="modal-stat-label">Avg Days to Revenue</div>
+           </div>
+           <div class="modal-stat">
+             <div class="modal-stat-value">12</div>
+             <div class="modal-stat-label">Handoff Points</div>
+           </div>
+           <div class="modal-stat">
+             <div class="modal-stat-value">6</div>
+             <div class="modal-stat-label">Teams Involved</div>
+           </div>
+         </div>
+         
+         <h3>The Approach</h3>
+         <p>I led a cross-functional process improvement initiative using Lean Six Sigma methodology. The project followed DMAIC:</p>
+         
+         <ul>
+           <li><strong>Define:</strong> Mapped the current state with all 6 teams, identified the critical path</li>
+           <li><strong>Measure:</strong> Instrumented each step to understand where time was actually spent</li>
+           <li><strong>Analyze:</strong> Root cause analysis revealed 60% of delays came from just 3 handoff points</li>
+           <li><strong>Improve:</strong> Redesigned the workflow, introduced parallel processing, created SLAs</li>
+           <li><strong>Control:</strong> Built automated tracking dashboard, established weekly standup cadence</li>
+         </ul>
+         
+         <div class="modal-highlight">
+           The biggest insight: most delays weren't from slow work—they were from work sitting in queues between teams. The solution wasn't to work faster, but to eliminate wait time.
+         </div>
+         
+         <h3>Key Changes</h3>
+         <p>The redesigned process included several structural improvements:</p>
+         <ul>
+           <li><strong>Parallel workstreams:</strong> Technical setup and legal review now happen simultaneously</li>
+           <li><strong>Single point of contact:</strong> One onboarding lead owns the relationship end-to-end</li>
+           <li><strong>Standardized templates:</strong> 80% of partners fit standard configurations, reducing custom work</li>
+           <li><strong>Automated status updates:</strong> Partners see real-time progress, reducing check-in overhead</li>
+         </ul>
+         
+         <h3>Results</h3>
+         <div class="modal-stats">
+           <div class="modal-stat">
+             <div class="modal-stat-value">35%</div>
+             <div class="modal-stat-label">Faster Onboarding</div>
+           </div>
+           <div class="modal-stat">
+             <div class="modal-stat-value">30 days</div>
+             <div class="modal-stat-label">New Average</div>
+           </div>
+           <div class="modal-stat">
+             <div class="modal-stat-value">+18 NPS</div>
+             <div class="modal-stat-label">Partner Satisfaction</div>
+           </div>
+         </div>
+         
+         <p>Beyond the numbers, the process improvement created a blueprint that's been adapted for other operational workflows across the organization.</p>
+       `
+},
+playbooks: {
+title: "Building Scalable Launch Playbooks",
+tags: ["Operations", "Playbooks", "Frameworks"],
+date: "Coming Soon",
+content: `
+         <div class="modal-coming-soon">
+           <div class="modal-coming-soon-icon">🚀</div>
+           <h3>Coming Soon</h3>
+           <p>I'm currently documenting my framework for creating repeatable launch playbooks that scale across diverse teams. This piece will cover:</p>
+           <ul style="text-align: left; max-width: 400px; margin: 1.5rem auto;">
+             <li>The anatomy of an effective playbook</li>
+             <li>Balancing standardization with flexibility</li>
+             <li>Getting buy-in from teams who "do things differently"</li>
+             <li>Measuring playbook effectiveness</li>
+             <li>Templates and examples you can steal</li>
+           </ul>
+           <p style="margin-top: 1.5rem; color: var(--gray);">Check back in January 2025, or connect with me on LinkedIn for updates.</p>
+         </div>
+       `
+}
+};
 
-        
-          <div class="modal-highlight">
-            The more I dive into this world, the more obvious the "Payer-Provider divide" becomes.
-          </div>
-          
+// Modal Functions
+function openModal(articleKey) {
+const article = articles[articleKey];
+if (!article) return;
 
-          <p>On one side, you have the insurance companies (the payers) managing the financial risk. On the other, you have the doctors (the providers) actually doing the work. The problem is that these two worlds are almost never in sync. They use different data, they have different incentives, and they rarely share a clear map of the patient’s journey.</p>
-       </p>When those two sides don't talk, the patient is the one who ends up doing the heavy lifting. They become the "project manager" for their own crisis, chasing down referrals and trying to figure out why a bill doesn't match a conversation they had in the office.</p>
-        </p>Coming from a background in GTM strategy and reporting infrastructure, this feels like the ultimate "broken funnel." You can have the best doctors in the world and the best insurance coverage on paper, but if the operations connecting them are fragmented, the experience is going to be miserable.</p>  
-  
-          
-          </p>My interest in this space is pretty simple. I want to help build the technical and operational bridges that finally close that gap. We need to raise the standard so that "navigating the system" isn't a second job for the common person.</p>
-          </p>Healthcare should be about getting healthy, not about managing the friction between two massive industries that haven't figured out how to integrate. We’re moving toward a model where the clinical side and the financial side actually speak the same language, and that’s a shift that's long overdue.</p>
-        `
-    };
-    
-    // Modal Functions
-    function openModal(articleKey) {
-      const article = articles[articleKey];
-      if (!article) return;
-      
-      document.getElementById('modal-title').textContent = article.title;
-      document.getElementById('modal-date').textContent = article.date;
-      document.getElementById('modal-body').innerHTML = article.content;
-      
-      const tagsContainer = document.getElementById('modal-tags');
-      tagsContainer.innerHTML = article.tags.map(tag => 
-        `<span class="modal-tag">${tag}</span>`
-      ).join('');
-      
-      const overlay = document.getElementById('modal-overlay');
-      overlay.classList.add('active');
-      document.body.style.overflow = 'hidden';
-    }
-    
-    function closeModal() {
-      const overlay = document.getElementById('modal-overlay');
-      overlay.classList.remove('active');
-      document.body.style.overflow = '';
-    }
-    
-    function closeModalOutside(event) {
-      if (event.target === document.getElementById('modal-overlay')) {
-        closeModal();
-      }
-    }
-    
-    // Close modal on Escape key
-    document.addEventListener('keydown', function(e) {
-      if (e.key === 'Escape') {
-        closeModal();
-      }
-    });
+document.getElementById('modal-title').textContent = article.title;
+document.getElementById('modal-date').textContent = article.date;
+document.getElementById('modal-body').innerHTML = article.content;
 
-    document.addEventListener('DOMContentLoaded', function() {
-      // Tab Navigation
-      const mainTabs = document.querySelectorAll('.main-nav-tab');
-      const pageSections = document.querySelectorAll('.page-section');
-      
-      mainTabs.forEach(tab => {
-        tab.addEventListener('click', () => {
-          mainTabs.forEach(t => t.classList.remove('active'));
-          pageSections.forEach(s => s.classList.remove('active'));
-          tab.classList.add('active');
-          const targetId = tab.getAttribute('data-tab');
-          document.getElementById(targetId).classList.add('active');
-        });
-      });
-      
-      // Flip Cards
-      const flipCards = document.querySelectorAll('.flip-card');
-      flipCards.forEach(card => {
-        card.addEventListener('click', function(e) {
-          e.preventDefault();
-          this.classList.toggle('flipped');
-        });
-        card.addEventListener('keydown', function(e) {
-          if (e.key === 'Enter' || e.key === ' ') {
-            e.preventDefault();
-            this.classList.toggle('flipped');
-          }
-        });
-      });
-    });
-  </script>
+const tagsContainer = document.getElementById('modal-tags');
+tagsContainer.innerHTML = article.tags.map(tag => 
+`<span class="modal-tag">${tag}</span>`
+).join('');
 
+const overlay = document.getElementById('modal-overlay');
+overlay.classList.add('active');
+document.body.style.overflow = 'hidden';
+}
+
+function closeModal() {
+const overlay = document.getElementById('modal-overlay');
+overlay.classList.remove('active');
+document.body.style.overflow = '';
+}
+
+function closeModalOutside(event) {
+if (event.target === document.getElementById('modal-overlay')) {
+closeModal();
+}
+}
+
+// Close modal on Escape key
+document.addEventListener('keydown', function(e) {
+if (e.key === 'Escape') {
+closeModal();
+}
+});
+
+document.addEventListener('DOMContentLoaded', function() {
+// Tab Navigation
+const mainTabs = document.querySelectorAll('.main-nav-tab');
+const pageSections = document.querySelectorAll('.page-section');
+
+mainTabs.forEach(tab => {
+tab.addEventListener('click', () => {
+mainTabs.forEach(t => t.classList.remove('active'));
+pageSections.forEach(s => s.classList.remove('active'));
+tab.classList.add('active');
+const targetId = tab.getAttribute('data-tab');
+document.getElementById(targetId).classList.add('active');
+});
+});
+
+// Flip Cards
+const flipCards = document.querySelectorAll('.flip-card');
+flipCards.forEach(card => {
+card.addEventListener('click', function(e) {
+e.preventDefault();
+this.classList.toggle('flipped');
+});
+card.addEventListener('keydown', function(e) {
+if (e.key === 'Enter' || e.key === ' ') {
+e.preventDefault();
+this.classList.toggle('flipped');
+}
+});
+});
+});
+</script>
 </body>
 </html>
