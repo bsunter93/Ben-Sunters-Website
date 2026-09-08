@@ -147,6 +147,33 @@ h1{font:600 clamp(38px,6.4vw,60px)/1.04 var(--display);letter-spacing:-.028em;ma
 .band .btn.solid{background:var(--warm-bright);border-color:var(--warm-bright);color:#26180A}
 .band .btn.solid:hover{background:#fff;border-color:#fff;color:var(--deep)}
 
+
+/* ── hero meta, admission, subscribe ─────────────────────────────────────── */
+.meta{list-style:none;margin:26px 0 24px;padding:0;display:grid;gap:9px;max-width:62ch}
+.meta li{font:400 14px/1.5 var(--sans);color:var(--on-deep)}
+.meta span{display:inline-block;min-width:64px;font:500 10.5px/1.5 var(--mono);
+  letter-spacing:.12em;text-transform:uppercase;color:var(--warm-bright);
+  margin-right:12px;vertical-align:1px}
+
+/* Set apart rather than buried in the prose. Everything else on this page is a win, and
+   a page of only wins reads as a brochure. */
+.admission{border-left:3px solid var(--warm);background:var(--warm-soft);
+  padding:20px 22px;margin:0 0 26px;border-radius:2px}
+.admission .eyebrow{margin-bottom:10px}
+.admission p{margin:0;max-width:var(--measure);font-size:15.5px;color:var(--body)}
+
+.subscribe{margin:0 0 20px;padding-bottom:18px;border-bottom:1px solid var(--hair)}
+.subscribe label{display:block;font-size:13.5px;color:var(--muted);margin-bottom:9px}
+.subrow{display:flex;gap:7px}
+.subrow input{flex:1 1 auto;min-width:0;font:400 14px/1 var(--sans);color:var(--ink);
+  background:var(--paper);border:1px solid var(--line);border-radius:2px;padding:9px 11px}
+.subrow input:focus{outline:2px solid var(--accent);outline-offset:1px;border-color:var(--accent)}
+.subrow button{flex:none;font:500 13px/1 var(--sans);cursor:pointer;
+  background:var(--ink);color:var(--paper);border:1px solid var(--ink);
+  border-radius:2px;padding:9px 14px}
+.subrow button:hover{background:var(--accent);border-color:var(--accent);color:#fff}
+.subnote{margin:9px 0 0;font-size:13px;color:var(--muted)}
+
 /* ── work ────────────────────────────────────────────────────────────────── */
 .lead-project{
   border:1px solid var(--line);border-left:3px solid var(--accent);
@@ -363,8 +390,14 @@ footer{padding:26px 0 44px;border-top:1px solid var(--hair);
     <div class="figure"><b>200+</b><span>Stakeholders under one planning and governance cadence</span></div>
   </div>
 
+  <ul class="meta">
+    <li><span>Based</span>Denver, Colorado</li>
+    <li><span>Focus</span>Business operations · Strategy &amp; operations · Chief of staff · Technical program management</li>
+  </ul>
+
   <div class="links">
-    <a class="btn solid" href="#contact">Get in touch</a>
+    <a class="btn solid" href="Benjamin-Sunter-Resume.pdf">Resume (PDF)</a>
+    <a class="btn" href="#contact">Get in touch</a>
     <a class="btn" href="https://www.linkedin.com/in/benjamin-sunter" rel="noopener">LinkedIn</a>
     <a class="btn" href="https://github.com/bsunter93" rel="noopener">GitHub</a>
   </div>
@@ -543,45 +576,24 @@ footer{padding:26px 0 44px;border-top:1px solid var(--hair);
   </div>
 </section>
 
-<section id="capabilities" class="wrap tinted">
-  <span class="eyebrow">Capabilities</span>
-  <h2>What I bring</h2>
-  <div class="caps">
-    <div class="cap cap--a">
-      <h3>Strategy &amp; operations</h3>
-      <p>I build the machinery a company runs on: the planning cycle, the goal
-         architecture, and the forums where decisions actually get made rather than
-         reported.</p>
-      <div class="chips"><span class="chip">Business operations</span><span class="chip">Operational excellence</span><span class="chip">Lean / Six Sigma</span><span class="chip">Governance design</span><span class="chip">Annual planning</span><span class="chip">Rhythm of business</span><span class="chip">GTM strategy</span><span class="chip">Sales operations</span><span class="chip">ROI &amp; unit-cost modelling</span><span class="chip">Executive advisory</span></div>
-    </div>
-    <div class="cap cap--b">
-      <h3>Data &amp; systems</h3>
-      <p>I write the queries and build the tooling myself rather than briefing someone
-         else to. A strategy is only worth the data and the mechanisms underneath it.</p>
-      <div class="chips"><span class="chip">SQL</span><span class="chip">BigQuery</span><span class="chip">Python</span><span class="chip">Looker</span><span class="chip">Tableau</span><span class="chip">CRM &amp; pipeline integration</span><span class="chip">Executive KPI dashboards</span><span class="chip">Financial modelling</span><span class="chip">Capacity modelling</span><span class="chip">AI &amp; agentic automation</span></div>
-    </div>
-    <div class="cap cap--c">
-      <h3>Leadership &amp; credentials</h3>
-      <div class="creds">
-        <span class="joblogo"><img src="uf-logo.png" alt="University of Florida" width="30" height="30" loading="lazy"></span>
-        <div>
-          <b>B.S. Industrial &amp; Systems Engineering</b>
-          <span>University of Florida, 2016</span>
-        </div>
-      </div>
-      <div class="chips"><span class="chip">Lean Six Sigma Green Belt</span><span class="chip">Google PM Certificate</span><span class="chip">VP &amp; C-level advisory</span><span class="chip">Cross-functional leadership, 20+ teams</span><span class="chip">$26.5B programme scale</span><span class="chip">4 direct reports</span></div>
-    </div>
-  </section>
-
 <section id="writing" class="wrap">
   <span class="eyebrow">Case studies</span>
   <h2>How the work actually went</h2>
   <p class="lede">Three write-ups of specific problems, what was tried, and what came of
      it. Longer than a bullet point and more honest about the middle part.</p>
+
+  <aside class="admission">
+    <span class="eyebrow">What I got wrong</span>
+    <p>For a long time I treated cross-functional process work as a design problem. It
+       isn't, or not only. Building the mechanism is the easy half. The hard half is that
+       a new operating cadence quietly redistributes who decides what, and if you don't
+       work that part deliberately you end up with a technically correct system nobody
+       adopts. I have shipped a few of those. Now I spend as much time on who has to
+       agree as on how the thing works.</p>
+  </aside>
   <details class="study">
     <summary>
       <span class="st-t">Interactive Campaign Dashboard</span>
-      <span class="st-d">November 2024</span>
       <span class="st-open">Read</span>
     </summary>
     <div class="st-body">
@@ -646,7 +658,6 @@ footer{padding:26px 0 44px;border-top:1px solid var(--hair);
   <details class="study">
     <summary>
       <span class="st-t">Streamlining Partner Onboarding</span>
-      <span class="st-d">August 2024</span>
       <span class="st-open">Read</span>
     </summary>
     <div class="st-body">
@@ -715,7 +726,6 @@ footer{padding:26px 0 44px;border-top:1px solid var(--hair);
   <details class="study">
     <summary>
       <span class="st-t">Building & Shipping My First App</span>
-      <span class="st-d">October 2024</span>
       <span class="st-open">Read</span>
     </summary>
     <div class="st-body">
@@ -789,6 +799,37 @@ footer{padding:26px 0 44px;border-top:1px solid var(--hair);
   </details>
 </section>
 
+<section id="capabilities" class="wrap tinted">
+  <span class="eyebrow">Capabilities</span>
+  <h2>What I bring</h2>
+  <div class="caps">
+    <div class="cap cap--a">
+      <h3>Strategy &amp; operations</h3>
+      <p>I build the machinery a company runs on: the planning cycle, the goal
+         architecture, and the forums where decisions actually get made rather than
+         reported.</p>
+      <div class="chips"><span class="chip">Business operations</span><span class="chip">Operational excellence</span><span class="chip">Lean / Six Sigma</span><span class="chip">Governance design</span><span class="chip">Annual planning</span><span class="chip">Rhythm of business</span><span class="chip">GTM strategy</span><span class="chip">Sales operations</span><span class="chip">ROI &amp; unit-cost modelling</span><span class="chip">Executive advisory</span></div>
+    </div>
+    <div class="cap cap--b">
+      <h3>Data &amp; systems</h3>
+      <p>I write the queries and build the tooling myself rather than briefing someone
+         else to. A strategy is only worth the data and the mechanisms underneath it.</p>
+      <div class="chips"><span class="chip">SQL</span><span class="chip">BigQuery</span><span class="chip">Python</span><span class="chip">Looker</span><span class="chip">Tableau</span><span class="chip">CRM &amp; pipeline integration</span><span class="chip">Executive KPI dashboards</span><span class="chip">Financial modelling</span><span class="chip">Capacity modelling</span><span class="chip">AI &amp; agentic automation</span></div>
+    </div>
+    <div class="cap cap--c">
+      <h3>Leadership &amp; credentials</h3>
+      <div class="creds">
+        <span class="joblogo"><img src="uf-logo.png" alt="University of Florida" width="30" height="30" loading="lazy"></span>
+        <div>
+          <b>B.S. Industrial &amp; Systems Engineering</b>
+          <span>University of Florida, 2016</span>
+        </div>
+      </div>
+      <div class="chips"><span class="chip">Lean Six Sigma Green Belt</span><span class="chip">Google PM Certificate</span><span class="chip">VP &amp; C-level advisory</span><span class="chip">Cross-functional leadership, 20+ teams</span><span class="chip">$26.5B programme scale</span><span class="chip">4 direct reports</span></div>
+    </div>
+  </section>
+
+
 <section id="personal" class="wrap tinted">
   <span class="eyebrow">Beyond work</span>
   <h2>A few things about me</h2>
@@ -820,6 +861,15 @@ footer{padding:26px 0 44px;border-top:1px solid var(--hair);
       </div>
     </div>
     <div class="card">
+      <form class="subscribe" id="subscribe" method="post" action="">
+        <label for="sub-email">Occasional writing on operations, and what I am building.</label>
+        <div class="subrow">
+          <input id="sub-email" name="email" type="email" required autocomplete="email"
+                 placeholder="you@company.com" aria-label="Email address">
+          <button type="submit">Subscribe</button>
+        </div>
+        <p class="subnote" id="subnote" hidden></p>
+      </form>
       <dl>
         <dt>Based</dt><dd>Denver, Colorado</dd>
         <dt>Focus</dt><dd>Business operations, strategy &amp; operations, technical programme management</dd>
@@ -838,6 +888,26 @@ footer{padding:26px 0 44px;border-top:1px solid var(--hair);
 
 <script>
 document.getElementById('yr').textContent = new Date().getFullYear();
+
+// Email capture. ENDPOINT is empty until a provider is chosen, and until then the form
+// hands off to a pre-filled mail client rather than silently swallowing addresses.
+// Set it to a Buttondown / Formspree / ConvertKit POST URL and it submits directly.
+const SUBSCRIBE_ENDPOINT = "";
+(function(){
+  const f = document.getElementById('subscribe'), note = document.getElementById('subnote');
+  if (!f) return;
+  if (SUBSCRIBE_ENDPOINT) f.action = SUBSCRIBE_ENDPOINT;
+  f.addEventListener('submit', e => {
+    if (SUBSCRIBE_ENDPOINT) return;                     // let the provider handle it
+    e.preventDefault();
+    const email = f.querySelector('input').value.trim();
+    if (!email) return;
+    note.hidden = false;
+    note.textContent = 'Opening your mail app to confirm.';
+    location.href = 'mailto:sunterbb@gmail.com?subject=' + encodeURIComponent('Subscribe')
+      + '&body=' + encodeURIComponent('Please add ' + email + ' to your list.');
+  });
+})();
 
 // The bar inverts while the hero band is behind it. Solid is the default in CSS, so
 // this only ever removes chrome; with JS off or broken the bar stays readable.
