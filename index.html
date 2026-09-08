@@ -131,8 +131,9 @@ h2{font:600 clamp(26px,3.4vw,34px)/1.15 var(--display);letter-spacing:-.015em;ma
 h1{font:600 clamp(38px,6.4vw,60px)/1.04 var(--display);letter-spacing:-.028em;margin-bottom:20px}
 .hero p{max-width:58ch;font-size:18px;color:var(--on-deep);margin:0 0 14px}
 .hero p strong{color:#fff;font-weight:600}
-.portrait{width:172px;aspect-ratio:1;border-radius:2px;object-fit:cover;
-  filter:grayscale(1) contrast(1.06) brightness(1.04);outline:1px solid rgba(255,255,255,.16);outline-offset:0}
+.portrait{width:172px;aspect-ratio:1;border-radius:3px;object-fit:cover;
+  outline:1px solid rgba(255,255,255,.22);outline-offset:0;
+  box-shadow:0 6px 22px rgba(0,0,0,.28)}
 
 .figures{display:flex;flex-wrap:wrap;gap:0;margin:38px 0 30px;border-top:1px solid rgba(255,255,255,.15)}
 .figure{flex:1 1 160px;padding:18px 22px 16px 0;border-right:1px solid rgba(255,255,255,.1)}
@@ -244,21 +245,23 @@ h1{font:600 clamp(38px,6.4vw,60px)/1.04 var(--display);letter-spacing:-.028em;ma
    of anything belonging to a former employer. */
 .systems{display:grid;gap:1px;background:var(--hair);border:1px solid var(--hair);
   border-radius:2px;margin-top:24px;overflow:hidden}
-.sysfig{background:var(--surface);padding:24px clamp(18px,3vw,28px) 22px;margin:0}
-.sysfig h4{font:600 16px/1.3 var(--sans);color:var(--ink);margin:0 0 3px}
-.sysfig .sub{display:block;font:400 13px/1.5 var(--sans);color:var(--muted);
+.sysfig{background:var(--surface);padding:30px clamp(20px,3.4vw,34px) 28px;margin:0}
+.sysco{display:block;font:500 10.5px/1 var(--mono);letter-spacing:.14em;
+  text-transform:uppercase;color:var(--co,var(--accent));margin-bottom:9px}
+.sysfig h4{font:600 19px/1.3 var(--sans);color:var(--ink);margin:0 0 3px}
+.sysfig .sub{display:block;font:400 14.5px/1.6 var(--sans);color:var(--muted);
   margin-bottom:18px;max-width:64ch}
 .sysfig svg{width:100%;height:auto;display:block;overflow:visible}
-.sysfig figcaption{margin-top:16px;font:400 12.5px/1.55 var(--sans);color:var(--muted);
+.sysfig figcaption{margin-top:18px;font:400 13.5px/1.6 var(--sans);color:var(--muted);
   max-width:var(--measure)}
 .d-box{fill:var(--surface);stroke:var(--line)}
 .d-fill{fill:var(--accent-soft);stroke:var(--accent)}
 .d-warm{fill:var(--warm-soft);stroke:var(--warm)}
-.d-lab{fill:var(--ink);font:600 12px var(--sans)}
-.d-mut{fill:var(--muted);font:400 10.5px var(--sans)}
-.d-mono{fill:var(--muted);font:500 9.5px var(--mono);letter-spacing:.1em}
-.d-num{fill:var(--accent);font:600 15px var(--display)}
-.d-numw{fill:var(--warm);font:600 15px var(--display)}
+.d-lab{fill:var(--ink);font:600 14px var(--sans)}
+.d-mut{fill:var(--body);font:400 12.5px var(--sans)}
+.d-mono{fill:var(--muted);font:500 11px var(--mono);letter-spacing:.12em}
+.d-num{fill:var(--accent);font:600 22px var(--display)}
+.d-numw{fill:var(--warm);font:600 22px var(--display)}
 .d-line{stroke:var(--line);fill:none}
 .d-acc{stroke:var(--accent);fill:none}
 .d-arrow{fill:var(--muted)}
@@ -441,7 +444,7 @@ footer{padding:26px 0 44px;border-top:1px solid var(--hair);
       <p>I build the software too. SQL and Python for the analysis, and lately whole
          working systems. A plan is only as good as the data and the tools under it.</p>
     </div>
-    <img class="portrait" src="profile-picture.jpg" alt="Benjamin J. Sunter" width="172" height="172">
+    <img class="portrait" src="portrait.jpg" alt="Benjamin J. Sunter" width="172" height="172">
   </div>
 
   <div class="figures">
@@ -529,24 +532,30 @@ footer{padding:26px 0 44px;border-top:1px solid var(--hair);
 
 
   <div class="systems">
-    <figure class="sysfig">
+    <figure class="sysfig" style="--co:var(--accent)">
+      <span class="sysco">Included Health</span>
       <h4>The operating system behind an $18M cost-of-revenue goal</h4>
-      <span class="sub">Included Health. Three functions each owned one translation, so a number
+      <span class="sub">Three functions each owned one translation, so a number
         could travel from an operator's initiative all the way to a unit-cost target without
         anyone renegotiating it. Then a monthly loop put that number back in front of the
         people who could act on it.</span>
-      <svg viewBox="0 0 620 320" role="img" aria-label="A translation chain from operators to workforce management to finance, producing a known gap to target, feeding a monthly execution loop">
-  <text class="d-mono" x="0" y="18">PHASE 1 · PLANNING</text>
-  <rect class="d-fill" x="0" y="30" width="176" height="62" rx="2"/><text class="d-lab" x="14" y="52">Operators</text><text class="d-mut" x="14" y="69">quantify initiative impact</text><text class="d-mono" x="14" y="84">AHT, VISITS PER HOUR</text><path class="d-arrow" d="M192 57 l7 4 -7 4z"/><rect class="d-box" x="222" y="30" width="176" height="62" rx="2"/><text class="d-lab" x="236" y="52">Workforce mgmt</text><text class="d-mut" x="236" y="69">converts impact to FTE</text><text class="d-mono" x="236" y="84">DEMAND AND STAFFING MODEL</text><path class="d-arrow" d="M414 57 l7 4 -7 4z"/><rect class="d-box" x="444" y="30" width="176" height="62" rx="2"/><text class="d-lab" x="458" y="52">Finance</text><text class="d-mut" x="458" y="69">converts FTE to unit cost</text><text class="d-mono" x="458" y="84">VS ANNUAL GOAL</text>
-  <rect class="d-fill" x="0" y="106" width="620" height="30" rx="2"/>
-  <text class="d-lab" x="14" y="126">Gap to the $18M target, known at the start of the year</text>
-  <text class="d-mut" x="0" y="154">Cross-examined and signed off by operators, workforce management and finance, plus engineering where relevant.</text>
+      <svg viewBox="0 0 620 322" role="img" aria-label="A number travels from operators to workforce management to finance. Before, unit cost arrived once around month nine. Now it arrives every month.">
+  <text class="d-mono" x="0" y="18">HOW ONE NUMBER TRAVELS</text>
+  <rect x="0" y="34" width="196" height="54" rx="3" fill="var(--accent)" opacity=".1"/><rect x="0" y="34" width="4" height="54" rx="2" fill="var(--accent)"/><text class="d-lab" x="18" y="57">Operators</text><text class="d-mut" x="18" y="76">impact on AHT, visits per hour</text><path class="d-arrow" d="M200 57 l8 4 -8 4z"/><rect x="212" y="34" width="196" height="54" rx="3" fill="var(--warm)" opacity=".1"/><rect x="212" y="34" width="4" height="54" rx="2" fill="var(--warm)"/><text class="d-lab" x="230" y="57">Workforce mgmt</text><text class="d-mut" x="230" y="76">converted to FTE</text><path class="d-arrow" d="M412 57 l8 4 -8 4z"/><rect x="424" y="34" width="196" height="54" rx="3" fill="var(--sage)" opacity=".1"/><rect x="424" y="34" width="4" height="54" rx="2" fill="var(--sage)"/><text class="d-lab" x="442" y="57">Finance</text><text class="d-mut" x="442" y="76">converted to unit cost</text>
+  <text class="d-mono" x="0" y="130">WHEN OPERATORS ACTUALLY SEE IT</text>
 
-  <text class="d-mono" x="0" y="188">PHASE 2 · EXECUTION — THE PART THAT DID NOT EXIST</text>
-  <rect class="d-box" x="0" y="200" width="176" height="56" rx="2"/><text class="d-lab" x="14" y="223">Finance publishes</text><text class="d-mut" x="14" y="240">monthly unit cost</text><path class="d-arrow" d="M192 224 l7 4 -7 4z"/><rect class="d-warm" x="222" y="200" width="176" height="56" rx="2"/><text class="d-lab" x="236" y="223">Joint MBR</text><text class="d-mut" x="236" y="240">two orgs, one goal</text><path class="d-arrow" d="M414 224 l7 4 -7 4z"/><rect class="d-box" x="444" y="200" width="176" height="56" rx="2"/><text class="d-lab" x="458" y="223">Demand model fixed,</text><text class="d-mut" x="458" y="240">staffing decided early</text>
-  <path class="d-acc" d="M610 264 V286 H10 V264" stroke-dasharray="4 4"/>
-  <path class="d-arrow" d="M6 270 l4 -7 4 7z"/>
-  <text class="d-mut" x="196" y="308">Every month, with the whole year still available to act</text>
+  <text class="d-mono" x="0" y="167" fill="var(--warm)">BEFORE</text>
+  <line x1="72" y1="163" x2="608" y2="163" stroke="var(--line)" stroke-width="2"/>
+  <circle cx="452" cy="163" r="7.5" fill="var(--warm)"/>
+  <text class="d-mut" x="72" y="190">Arrived once, around month nine. By then the only levers left were a</text>
+  <text class="d-mut" x="72" y="208">hiring freeze and cuts.</text>
+
+  <text class="d-mono" x="0" y="236" fill="var(--accent)">AFTER</text>
+  <line x1="72" y1="232" x2="608" y2="232" stroke="var(--accent)" stroke-width="2" opacity=".4"/>
+  <circle cx="72" cy="232" r="5.5" fill="var(--accent)"/><circle cx="120" cy="232" r="5.5" fill="var(--accent)"/><circle cx="168" cy="232" r="5.5" fill="var(--accent)"/><circle cx="216" cy="232" r="5.5" fill="var(--accent)"/><circle cx="264" cy="232" r="5.5" fill="var(--accent)"/><circle cx="312" cy="232" r="5.5" fill="var(--accent)"/><circle cx="360" cy="232" r="5.5" fill="var(--accent)"/><circle cx="408" cy="232" r="5.5" fill="var(--accent)"/><circle cx="456" cy="232" r="5.5" fill="var(--accent)"/><circle cx="504" cy="232" r="5.5" fill="var(--accent)"/><circle cx="552" cy="232" r="5.5" fill="var(--accent)"/><circle cx="600" cy="232" r="5.5" fill="var(--accent)"/>
+  <text class="d-mut" x="72" y="259">Every month, with the year still ahead. Levers: initiative mix, staffing</text>
+  <text class="d-mut" x="72" y="277">plan, and the demand model that drives both.</text>
+  <text class="d-mono" x="72" y="306">JAN</text><text class="d-mono" x="576" y="306">DEC</text>
 </svg>
       <figcaption>Redrawn to show how it fit together. Before this, finance sent unit-cost
         reporting around three quarters of the way through the year, by which point the only
@@ -557,8 +566,9 @@ footer{padding:26px 0 44px;border-top:1px solid var(--hair);
     </figure>
 
     <figure class="sysfig">
+      <span class="sysco" style="--co:var(--accent)">Included Health</span>
       <h4>Goals that report outcomes instead of activity</h4>
-      <span class="sub">Included Health. The goal architecture I wrote for the COO, which went into
+      <span class="sub">The goal architecture I wrote for the COO, which went into
         the following year's operating plan.</span>
       <svg viewBox="0 0 620 208" role="img" aria-label="A goal system that reports activity, redrawn as one that reports outcomes">
   <rect class="d-box" x="0" y="34" width="290" height="150" rx="2"/>
@@ -576,31 +586,28 @@ footer{padding:26px 0 44px;border-top:1px solid var(--hair);
     </figure>
 
     <figure class="sysfig">
+      <span class="sysco" style="--co:var(--warm)">Google</span>
       <h4>Making an opportunity sellable</h4>
-      <span class="sub">Google. The gap was never finding accounts. Sellers had the list and
+      <span class="sub">The gap was never finding accounts. Sellers had the list and
         could not tell a publisher what the opportunity was worth, so it kept losing to
         pitches that arrived with a number attached. The fix was to measure the thing
         rather than estimate it, using Impact Experiments, the incrementality framework
         inside Ad Manager 360.</span>
-      <svg viewBox="0 0 620 296" role="img" aria-label="Sellers already had the list but could not price the opportunity; measured incrementality, custom views and a cleared case study fed a sales contest, moving pipeline 256 percent and 40 million dollars against target">
-  <text class="d-mono" x="0" y="18">THE ACTUAL CONSTRAINT</text>
-  <rect class="d-box" x="0" y="30" width="290" height="46" rx="2"/>
-  <text class="d-mut" x="14" y="58">Sellers already had the list of publishers</text>
-  <rect class="d-warm" x="316" y="30" width="304" height="46" rx="2"/>
-  <text class="d-lab" x="330" y="58">They could not put a number on the pitch</text>
-
-  <text class="d-mono" x="0" y="90">SO I BUILT</text>
-  <rect class="d-fill" x="0" y="96" width="176" height="56" rx="2"/><text class="d-lab" x="14" y="119">Measured impact</text><text class="d-mut" x="14" y="136">Impact Experiments, GAM 360</text><rect class="d-fill" x="222" y="96" width="176" height="56" rx="2"/><text class="d-lab" x="236" y="119">Custom CRM and</text><text class="d-mut" x="236" y="136">product views, net new</text><rect class="d-fill" x="444" y="96" width="176" height="56" rx="2"/><text class="d-lab" x="458" y="119">Published case study</text><text class="d-mut" x="458" y="136">legal and client cleared</text>
-  <path class="d-line" d="M88 158 V176 H532 V158"/>
-  <path class="d-line" d="M310 158 V176"/>
-  <rect class="d-fill" x="150" y="184" width="320" height="48" rx="2"/>
-  <text class="d-lab" x="310" y="206" text-anchor="middle">A sales contest on a live leaderboard</text>
-  <text class="d-mut" x="310" y="223" text-anchor="middle">launched the week the case study cleared</text>
-  <path class="d-line" d="M310 232 V250"/>
-  <text class="d-numw" x="150" y="272" text-anchor="middle">256%</text>
-  <text class="d-mut" x="150" y="288" text-anchor="middle">pipeline movement vs prior quarters</text>
-  <text class="d-num" x="450" y="272" text-anchor="middle">$40M</text>
-  <text class="d-mut" x="450" y="288" text-anchor="middle">against target</text>
+      <svg viewBox="0 0 620 300" role="img" aria-label="A measured dollar figure per publisher unlocked three uses: the internal performance view, the client conversation, and a live leaderboard">
+  <text class="d-mono" x="0" y="18">THE CONSTRAINT</text>
+  <text class="d-mut" x="0" y="42">Sellers already had the list.</text>
+  <text class="d-lab" x="0" y="64" fill="var(--warm)">They could not price it.</text>
+  <rect x="0" y="88" width="300" height="100" rx="3" fill="var(--accent)" opacity=".12"/>
+  <rect x="0" y="88" width="4" height="100" rx="2" fill="var(--accent)"/>
+  <text class="d-num" x="20" y="126">A measured $ figure</text>
+  <text class="d-mut" x="20" y="150">per publisher, from Impact Experiments</text>
+  <text class="d-mut" x="20" y="170">in Ad Manager 360. Not an estimate.</text>
+  <path class="d-acc" d="M300 138 C340 138 340 72 372 72" opacity=".55"/><rect x="372" y="46" width="248" height="54" rx="3" fill="var(--accent)" opacity=".08"/><text class="d-lab" x="388" y="70">The internal performance view</text><text class="d-mut" x="388" y="88">sellers could finally book credit for it</text><path class="d-acc" d="M300 138 C340 138 340 146 372 146" opacity=".55"/><rect x="372" y="120" width="248" height="54" rx="3" fill="var(--accent)" opacity=".08"/><text class="d-lab" x="388" y="144">The client conversation</text><text class="d-mut" x="388" y="162">a figure a publisher would accept</text><path class="d-acc" d="M300 138 C340 138 340 220 372 220" opacity=".55"/><rect x="372" y="194" width="248" height="54" rx="3" fill="var(--accent)" opacity=".08"/><text class="d-lab" x="388" y="218">A live leaderboard</text><text class="d-mut" x="388" y="236">the contest that made it a priority</text>
+  <line x1="0" y1="232" x2="620" y2="232" stroke="var(--line)"/>
+  <text class="d-numw" x="0" y="266">256%</text>
+  <text class="d-mut" x="86" y="266">pipeline movement vs prior quarters</text>
+  <text class="d-num" x="360" y="266">$40M</text>
+  <text class="d-mut" x="440" y="266">against target</text>
 </svg>
       <figcaption>Redrawn to show the sequence. That the number was measured rather than
         modelled is the part that mattered: a publisher will argue with a projection and
@@ -754,12 +761,12 @@ footer{padding:26px 0 44px;border-top:1px solid var(--hair);
 
   <aside class="admission">
     <span class="eyebrow">What I got wrong</span>
-    <p>For a long time I treated cross-functional process work as a design problem. It
-       isn't, or not only. Building the mechanism is the easy half. The hard half is that
-       a new operating cadence quietly redistributes who decides what, and if you don't
-       work that part deliberately you end up with a technically correct system nobody
-       adopts. I have shipped a few of those. Now I spend as much time on who has to
-       agree as on how the thing works.</p>
+    <p>Something I learned the hard way: when you build the thing that connects everyone
+       else's work, you are also changing who decides what, and not everyone reads that
+       as helpful. Early on I would design the cleanest version of a process and then be
+       genuinely surprised when it stalled. It was almost never the design. It was that I
+       had not worked out whose territory it touched, or made it obvious I was not there
+       to replace anyone. I spend a lot more time on that part now than I used to.</p>
   </aside>
   <details class="study">
     <summary>
