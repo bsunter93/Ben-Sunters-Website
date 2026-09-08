@@ -26,7 +26,7 @@
   --ink:#14171C; --body:#33383F; --muted:#5B6068;
   --line:#E1E4E2; --hair:#ECEFED;
   --accent:#0E5C63; --accent-soft:#0E5C6312;
-  --warm:#9E5A06; --warm-bright:#E0A33C; --warm-soft:#9E5A0614;
+  --warm:#8A4E05; --warm-bright:#E0A33C; --warm-soft:#9E5A0614;
   --sage:#3F6B54;
   --display:'Fraunces',Georgia,'Times New Roman',serif;
   --sans:'IBM Plex Sans',-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif;
@@ -147,20 +147,57 @@ h1{font:600 clamp(38px,6.4vw,60px)/1.04 var(--display);letter-spacing:-.028em;ma
 .project video{margin-top:14px;border:1px solid var(--line);border-radius:2px;background:#000}
 
 /* ── experience ──────────────────────────────────────────────────────────── */
-.job{display:grid;grid-template-columns:150px minmax(0,1fr);gap:clamp(16px,3vw,40px);
-  padding:30px 0;border-top:1px solid var(--hair)}
-.job:first-of-type{border-top:1px solid var(--line)}
-@media (max-width:720px){.job{grid-template-columns:1fr;gap:10px}}
-.when{font:400 12.5px/1.5 var(--mono);color:var(--muted);padding-top:3px}
-.job h3{font:600 18px/1.3 var(--sans);margin-bottom:2px}
-.job .org{font:500 13.5px/1.4 var(--sans);color:var(--accent);margin-bottom:14px}
-.when b{display:block;color:var(--warm);font-weight:600;font-size:12.5px}
+/* A timeline, so it is drawn as one: a continuous spine with a node per employer.
+   Each employer carries its own colour through its node, dates, bullets and figures,
+   which is what makes three long entries readable as three distinct places rather
+   than one undifferentiated wall. --co is set per article and everything reads it. */
+.jobs{position:relative;margin-top:8px;padding-left:26px}
+.jobs:before{content:"";position:absolute;left:4px;top:14px;bottom:14px;width:2px;
+  background:linear-gradient(var(--accent),var(--warm) 52%,var(--sage))}
+.job{position:relative;display:grid;grid-template-columns:158px minmax(0,1fr);
+  gap:clamp(16px,3vw,40px);padding:32px 0}
+.job+.job{border-top:1px solid var(--hair)}
+.job:before{content:"";position:absolute;left:-26px;top:40px;width:10px;height:10px;
+  border-radius:50%;background:var(--co);box-shadow:0 0 0 4px var(--paper)}
+.tinted .job:before{box-shadow:0 0 0 4px var(--tint)}
+@media (max-width:720px){
+  .jobs{padding-left:20px}
+  .jobs:before{left:1px}
+  .job{grid-template-columns:1fr;gap:10px}
+  .job:before{left:-20px;top:36px}
+}
+.when{font:400 12.5px/1.5 var(--mono);color:var(--muted);padding-top:2px;
+  border-left:2px solid var(--co);padding-left:11px}
+.when b{display:block;color:var(--co);font-weight:600;font-size:12.5px;letter-spacing:.02em}
+.job h3{font:600 18px/1.3 var(--sans);margin-bottom:3px}
+.job .org{font:500 13.5px/1.4 var(--sans);color:var(--co);margin-bottom:15px}
 .job ul{margin:0;padding:0;list-style:none}
-.job li{position:relative;padding-left:17px;margin-bottom:9px;max-width:var(--measure);font-size:15.5px}
-.job li:before{content:"";position:absolute;left:0;top:9px;width:6px;height:2px;background:var(--warm)}
+.job li{position:relative;padding-left:17px;margin-bottom:10px;max-width:var(--measure);font-size:15.5px}
+.job li:before{content:"";position:absolute;left:0;top:9px;width:7px;height:2px;background:var(--co)}
 .job li b{color:var(--ink);font-weight:600}
-.subrole{font:500 12.5px/1 var(--mono);color:var(--accent);margin:18px 0 9px;
-  letter-spacing:.03em;text-transform:uppercase;padding-left:11px;border-left:2px solid var(--accent)}
+.job li .n{color:var(--co);font-weight:600;white-space:nowrap}
+.subrole{font:500 12.5px/1 var(--mono);color:var(--co);margin:20px 0 10px;
+  letter-spacing:.03em;text-transform:uppercase;padding-left:11px;border-left:2px solid var(--co)}
+.job--ih{--co:var(--accent)} .job--goog{--co:var(--warm)} .job--acn{--co:var(--sage)}
+
+
+/* Real marks, on a plate. A logo has its own ground and its own colours, and several
+   of these are dark ink that would vanish on the dark theme, so each sits on a small
+   white card that reads the same in both. */
+.joblogo{display:inline-flex;align-items:center;justify-content:center;
+  background:#fff;border:1px solid var(--line);border-radius:2px;
+  padding:7px 10px;margin-bottom:12px;height:36px}
+.joblogo img,.joblogo svg{height:21px;width:auto;display:block}
+.creds{display:flex;gap:14px;align-items:flex-start;margin-bottom:14px}
+.creds .joblogo{margin-bottom:0;flex:none;padding:6px;height:44px;width:44px}
+.creds .joblogo img{height:30px}
+.creds div{font-size:14.5px}
+.creds b{display:block;color:var(--ink);font-weight:600}
+.creds span{color:var(--muted);font-size:13.5px}
+.certs{margin:0;padding:0;list-style:none}
+.certs li{font-size:14.5px;padding:5px 0;color:var(--body);
+  position:relative;padding-left:15px}
+.certs li:before{content:"";position:absolute;left:0;top:11px;width:7px;height:2px;background:var(--sage)}
 
 /* ── capabilities ────────────────────────────────────────────────────────── */
 .caps{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:30px}
@@ -281,20 +318,23 @@ footer{padding:26px 0 44px;border-top:1px solid var(--hair);
   <span class="eyebrow">Experience</span>
   <h2>Where I have done it</h2>
 
-  <article class="job">
+  <div class="jobs">
+
+  <article class="job job--ih">
     <div class="when">Jan 2026 – Sep 2026<br>Remote</div>
     <div>
+      <div class="joblogo"><img src="ih-logo.png" alt="Included Health" width="98" height="21" loading="lazy"></div>
       <h3>Business Operations Manager</h3>
       <div class="org">Included Health</div>
       <ul>
         <li><b>Zero to one.</b> Built the Total Cost of Care line of business from white paper to
-            live offering in 27 days, then scaled it across a $120M book spanning 13 Fortune 100
+            live offering in <span class="n">27 days</span>, then scaled it across a $120M book spanning 13 Fortune 100
             accounts, replacing manual operations with a digital-first model in five months.</li>
         <li><b>$18M cost-of-revenue mandate.</b> Took ownership of a fragmented workstream and
             designed the business cadence behind it in seven days, lifting sprint readiness from
-            54% to 79% and closing planning cycles 25% faster year over year.</li>
+            <span class="n">54% to 79%</span> and closing planning cycles 25% faster year over year.</li>
         <li><b>Structural cost takeout.</b> Automated legacy manual outreach into warm inbound
-            routing, cutting labour 70% (1.56 to 0.46 FTE per 100 cases) and isolating $3M in
+            routing, cutting labour <span class="n">70%</span> (1.56 to 0.46 FTE per 100 cases) and isolating $3M in
             uncommitted opportunity.</li>
         <li><b>Executive governance.</b> Authored the OKR and goal-setting architecture presented
             to the COO that moved the enterprise operating model from activity-based management
@@ -303,9 +343,17 @@ footer{padding:26px 0 44px;border-top:1px solid var(--hair);
     </div>
   </article>
 
-  <article class="job">
+  <article class="job job--goog">
     <div class="when">Jan 2022 – Dec 2025<br>Mountain View, CA</div>
     <div>
+      <div class="joblogo"><svg viewBox="0 0 272 92" xmlns="http://www.w3.org/2000/svg">
+<path d="M115.75 47.18c0 12.77-9.99 22.18-22.25 22.18s-22.25-9.41-22.25-22.18C71.25 34.32 81.24 25 93.5 25s22.25 9.32 22.25 22.18zm-9.74 0c0-7.98-5.79-13.44-12.51-13.44S80.99 39.2 80.99 47.18c0 7.9 5.79 13.44 12.51 13.44s12.51-5.55 12.51-13.44z" fill="#EA4335"/>
+<path d="M163.75 47.18c0 12.77-9.99 22.18-22.25 22.18s-22.25-9.41-22.25-22.18c0-12.85 9.99-22.18 22.25-22.18s22.25 9.32 22.25 22.18zm-9.74 0c0-7.98-5.79-13.44-12.51-13.44s-12.51 5.46-12.51 13.44c0 7.9 5.79 13.44 12.51 13.44s12.51-5.55 12.51-13.44z" fill="#FBBC05"/>
+<path d="M209.75 26.34v39.82c0 16.38-9.66 23.07-21.08 23.07-10.75 0-17.22-7.19-19.66-13.07l8.48-3.53c1.51 3.61 5.21 7.87 11.17 7.87 7.31 0 11.84-4.51 11.84-13v-3.19h-.34c-2.18 2.69-6.38 5.04-11.68 5.04-11.09 0-21.25-9.66-21.25-22.09 0-12.52 10.16-22.26 21.25-22.26 5.29 0 9.49 2.35 11.68 4.96h.34v-3.61h9.25zm-8.56 20.92c0-7.81-5.21-13.52-11.84-13.52-6.72 0-12.35 5.71-12.35 13.52 0 7.73 5.63 13.36 12.35 13.36 6.63 0 11.84-5.63 11.84-13.36z" fill="#4285F4"/>
+<path d="M225 3v65h-9.5V3h9.5z" fill="#34A853"/>
+<path d="M262.02 54.48l7.56 5.04c-2.44 3.61-8.32 9.83-18.48 9.83-12.6 0-22.01-9.74-22.01-22.18 0-13.19 9.49-22.18 20.92-22.18 11.51 0 17.14 9.16 18.98 14.11l1.01 2.52-29.65 12.28c2.27 4.45 5.8 6.72 10.75 6.72 4.96 0 8.4-2.44 10.92-6.14zm-23.27-7.98l19.82-8.23c-1.09-2.77-4.37-4.7-8.23-4.7-4.95 0-11.84 4.37-11.59 12.93z" fill="#EA4335"/>
+<path d="M35.29 41.41V32H67c.31 1.64.47 3.58.47 5.68 0 7.06-1.93 15.79-8.15 22.01-6.05 6.3-13.78 9.66-24.02 9.66C16.32 69.35.36 53.89.36 34.91.36 15.93 16.32.47 35.3.47c10.5 0 17.98 4.12 23.6 9.49l-6.64 6.64c-4.03-3.78-9.49-6.72-16.97-6.72-13.86 0-24.7 11.17-24.7 25.03 0 13.86 10.84 25.03 24.7 25.03 8.99 0 14.11-3.61 17.39-6.89 2.66-2.66 4.41-6.46 5.1-11.65l-22.49.01z" fill="#4285F4"/>
+</svg></div>
       <h3>Google Global Partnerships</h3>
       <div class="org">First Party Data Solutions Consultant · Program Manager, Sellside Partnerships</div>
 
@@ -313,12 +361,12 @@ footer{padding:26px 0 44px;border-top:1px solid var(--hair);
       <ul>
         <li><b>Pipeline analytics to revenue.</b> Built the SQL and Looker layer joining sales
             pipeline and CRM data to product-adoption datasets, then architected a Q3 sales
-            competition on it driving $40M incremental revenue against target and up to 256%
+            competition on it driving <span class="n">$40M</span> incremental revenue against target and up to 256%
             quarter-over-quarter sales velocity; the methodology was adopted by pGTM globally.</li>
         <li><b>Product adoption.</b> Drove adoption of privacy-preserving first-party data
             solutions with 30+ Fortune 100 publishers across web, app and CTV, generating more
-            than $100M in incremental annual revenue.</li>
-        <li><b>Quota.</b> 234% of H1 2025 sales quota at 92% client satisfaction; top regional
+            than <span class="n">$100M</span> in incremental annual revenue.</li>
+        <li><b>Quota.</b> <span class="n">234%</span> of H1 2025 sales quota at 92% client satisfaction; top regional
             performer.</li>
         <li><b>Industry platform.</b> Google's selected speaker at a co-branded LiveRamp
             executive summit in New York, briefing 20+ agency buyers on app addressability
@@ -329,33 +377,35 @@ footer{padding:26px 0 44px;border-top:1px solid var(--hair);
       <ul>
         <li><b>Business operations.</b> Ran annual planning, budget and execution governance for
             the $B Americas Sellside Partnerships business across 7 vertical teams, 20+ sub-teams
-            and 200+ stakeholders.</li>
+            and <span class="n">200+ stakeholders</span>.</li>
         <li><b>Operational excellence.</b> Led the regional OpEx programme, improving ARR per FTE
-            across the 200-person Americas organisation by more than 20% year over year for three
+            across the 200-person Americas organisation by more than <span class="n">20% year over year</span> for three
             years.</li>
-        <li><b>Execution governance.</b> Governed 56 initiatives across 4 core product areas
+        <li><b>Execution governance.</b> Governed <span class="n">56 initiatives</span> across 4 core product areas
             through weekly cross-functional forums and VP QBRs.</li>
       </ul>
     </div>
   </article>
 
-  <article class="job">
+  <article class="job job--acn">
     <div class="when">Oct 2016 – Feb 2021<br>Seattle, WA</div>
     <div>
+      <div class="joblogo"><img src="accenture-logo.png" alt="Accenture" width="80" height="21" loading="lazy"></div>
       <h3>Program Manager</h3>
       <div class="org">Accenture</div>
       <ul>
-        <li><b>Merger integration.</b> Engagement lead on a $26.5B telecom merger, governing 24
+        <li><b>Merger integration.</b> Engagement lead on a <span class="n">$26.5B</span> telecom merger, governing 24
             workstreams under 16 VPs and the integrated plan for 60+ projects through design,
             development and testing.</li>
         <li><b>Governance and reporting.</b> Designed the architectural compliance review process
-            and Tableau reporting layer that delivered 600+ features, retired 190+ applications
+            and Tableau reporting layer that delivered <span class="n">600+ features</span>, retired 190+ applications
             within twelve months, and gave automated risk visibility across 11,000+ user stories.</li>
         <li><b>Team leadership.</b> Ran consulting-unit business operations with four direct
             reports across 24 domain teams and a dozen vendors.</li>
       </ul>
     </div>
   </article>
+  </div>
 </section>
 
 <section id="capabilities" class="wrap tinted">
@@ -389,13 +439,19 @@ footer{padding:26px 0 44px;border-top:1px solid var(--hair);
     </div>
     <div class="cap">
       <h3>Leadership &amp; credentials</h3>
-      <ul>
+      <div class="creds">
+        <span class="joblogo"><img src="uf-logo.png" alt="University of Florida" width="30" height="30" loading="lazy"></span>
+        <div>
+          <b>B.S. Industrial &amp; Systems Engineering</b>
+          <span>University of Florida, 2016</span>
+        </div>
+      </div>
+      <ul class="certs">
+        <li>Lean Six Sigma Green Belt</li>
+        <li>Google Project Management Certificate</li>
         <li>VP and C-level executive advisory</li>
         <li>Cross-functional leadership, 20+ teams</li>
         <li>Programme management at $26.5B scale</li>
-        <li>B.S. Industrial &amp; Systems Engineering, University of Florida</li>
-        <li>Lean Six Sigma Green Belt</li>
-        <li>Google Project Management Certificate</li>
       </ul>
     </div>
   </div>
