@@ -105,6 +105,12 @@ h2{font:600 clamp(26px,3.4vw,34px)/1.15 var(--display);letter-spacing:-.015em;ma
 .masthead nav a:hover{color:var(--ink);text-decoration:none}
 .nav-cta{border:1px solid var(--line);border-radius:2px;padding:7px 13px;color:var(--ink)!important}
 .nav-cta:hover{border-color:var(--accent);color:var(--accent)!important}
+.theme-btn{display:inline-flex;align-items:center;justify-content:center;width:30px;height:30px;
+  padding:0;cursor:pointer;color:var(--muted);background:none;border:1px solid transparent;
+  border-radius:2px}
+.theme-btn:hover{color:var(--ink);border-color:var(--line)}
+.over-band .theme-btn{color:var(--on-deep-mut)}
+.over-band .theme-btn:hover{color:#fff;border-color:rgba(255,255,255,.3)}
 
 .masthead.over-band{background:transparent;backdrop-filter:none;border-bottom-color:transparent}
 .over-band .mark{color:var(--on-deep)}
@@ -208,6 +214,27 @@ h1{font:600 clamp(38px,6.4vw,60px)/1.04 var(--display);letter-spacing:-.028em;ma
 .shot figcaption{margin-top:10px;font:400 13px/1.5 var(--sans);color:var(--muted);
   max-width:var(--measure)}
 .project video{width:100%;aspect-ratio:16/10;object-fit:cover}
+
+
+/* ── project heads, demo embed ───────────────────────────────────────────── */
+.proj-head{display:flex;align-items:baseline;gap:14px;flex-wrap:wrap;margin-bottom:10px}
+.proj-when{font:400 11.5px/1 var(--mono);color:var(--muted);letter-spacing:.03em}
+.proj-claim{font:400 17px/1.55 var(--sans);color:var(--ink);max-width:60ch;margin:0 0 14px}
+.proj-note{border-left:2px solid var(--warm);padding-left:14px;color:var(--muted);
+  font-size:15px;max-width:var(--measure)}
+.demo{margin:22px 0}
+.demo-launch{display:block;width:100%;padding:0;border:1px solid var(--line);
+  border-radius:2px;background:var(--surface);cursor:pointer;position:relative;overflow:hidden}
+.demo-launch img{width:100%;display:block;filter:saturate(.55) contrast(.94);transition:filter .2s}
+.demo-launch:hover img{filter:none}
+.demo-cta{position:absolute;inset:auto 0 0 0;display:block;padding:16px 18px;text-align:left;
+  background:linear-gradient(transparent,rgba(11,58,64,.94) 55%);color:#fff;
+  font:600 15px/1.3 var(--sans)}
+.demo-cta em{display:block;font:400 12.5px/1.4 var(--sans);color:var(--on-deep-mut);
+  font-style:normal;margin-top:4px}
+.demo-hold iframe{width:100%;height:min(78vh,760px);border:1px solid var(--line);
+  border-radius:2px;background:var(--surface);display:block}
+.demo-note{margin:9px 0 0;font:400 12.5px/1.5 var(--sans);color:var(--muted)}
 
 /* ── experience ──────────────────────────────────────────────────────────── */
 /* A timeline, so it is drawn as one: a continuous spine with a node per employer.
@@ -362,6 +389,13 @@ footer{padding:26px 0 44px;border-top:1px solid var(--hair);
       <a href="#capabilities">Capabilities</a>
       <a href="#writing">Case studies</a>
       <a href="#contact" class="nav-cta">Contact</a>
+      <button type="button" id="theme" class="theme-btn" aria-label="Switch theme" title="Switch theme">
+        <svg viewBox="0 0 24 24" width="15" height="15" aria-hidden="true" fill="none"
+             stroke="currentColor" stroke-width="1.9" stroke-linecap="round">
+          <circle cx="12" cy="12" r="4.2"/><path d="M12 2.2v2M12 19.8v2M2.2 12h2M19.8 12h2
+          M5 5l1.4 1.4M17.6 17.6L19 19M19 5l-1.4 1.4M6.4 17.6L5 19"/>
+        </svg>
+      </button>
     </nav>
   </div>
 </header>
@@ -410,38 +444,53 @@ footer{padding:26px 0 44px;border-top:1px solid var(--hair);
      some of them are software. The distinction matters less than whether they run without me.</p>
 
   <div class="lead-project">
-    <h3>Career Ops</h3>
-    <p>An event-sourced job-search pipeline I built for myself and then made public. Applications
-       are entities with derived state; emails are events that mutate it, so status is computed
-       from the record rather than typed in by hand. It ingests Gmail, classifies every message,
-       polls public ATS boards across 87 companies for newly posted roles, scores each one
-       against a written profile using the Anthropic API, and renders a command centre that
-       ranks what to do next by how recently a role was posted.</p>
-    <p>It is a real system rather than a demo: SQLite with a derived status model, a review queue
-       for anything the classifier is not sure of, ninety-odd tests, and a scheduled daily run.
-       Most of its interesting bugs were cases where the software confidently told me something
-       untrue, which turns out to be the whole problem with automating judgement.</p>
+    <div class="proj-head">
+      <h3>Career Ops</h3>
+      <span class="proj-when">Built 2026 · in daily use</span>
+    </div>
+    <p class="proj-claim">A job search is mostly grind: reading hundreds of postings to
+       find the few worth an afternoon, then losing track of where everything stands.
+       This removes that. Nothing gets scanned by hand, and every question you actually
+       have about a role is answered in one place before you decide.</p>
+    <p>It watches 87 companies' job boards and surfaces only what matches, ranked by how
+       recently a role was posted, because posting age predicts a reply better than how
+       well you match. For anything it surfaces it already knows the fit against a written
+       profile, the published pay band, what employees say about working there, and
+       whether you have applied before and what happened. Status is never typed in: it
+       reads your mail and derives where each application stands, so the board is right
+       without being maintained.</p>
+    <p class="proj-note">The interesting failures were all the same shape. The software
+       would state something untrue with complete confidence, close a live application as
+       rejected, and be believed because it looked authoritative. Most of the work is
+       teaching it to say it isn't sure.</p>
     <div class="tagrow">
       <span class="tag">Python</span><span class="tag">SQLite</span><span class="tag">Gmail API</span>
       <span class="tag">Anthropic API</span><span class="tag">Event sourcing</span><span class="tag">Open source</span>
     </div>
+    <div class="demo" id="demo">
+      <button type="button" class="demo-launch" id="demo-launch"
+              aria-controls="demo-frame" aria-expanded="false">
+        <img src="careerops-dashboard.png" alt="" loading="lazy">
+        <span class="demo-cta">Open the live dashboard <em>Runs on synthetic data, in your browser</em></span>
+      </button>
+      <div class="demo-hold" id="demo-frame" hidden></div>
+      <p class="demo-note">Fully interactive: filter, sort, open any row. Companies and
+         applications are fictional.</p>
+    </div>
     <a class="btn" href="https://github.com/bsunter93/careerops" rel="noopener">View on GitHub</a>
-    <figure class="shot">
-      <img src="careerops-dashboard.png" alt="The Career Ops command centre: funnel, ageing
-           applications, weekly activity and a ranked list of what to do next" loading="lazy">
-      <figcaption>The command centre it renders. Roles are ranked by how recently they
-        were posted, because that predicts a reply better than how well they match.</figcaption>
-    </figure>
   </div>
 
   <div class="projects">
     <div class="project">
       <div class="appmark">
         <img src="mirror-icon.svg" alt="Mirror app icon" width="40" height="40" loading="lazy">
-        <h3>Mirror</h3>
+        <div>
+          <h3>Mirror</h3>
+          <span class="proj-when">Shipped 2024</span>
+        </div>
       </div>
-      <p>An AI-powered reflection and journaling app, designed, built and shipped to Google Play
-         end to end. The goal was to find out whether I could take something from idea to a
+      <p>An AI reflection and journaling app, designed, built and shipped to Google Play
+         end to end. The question was whether I could take something from idea to a
          published product on my own. I could.</p>
       <div class="appshot">
         <video src="mirror-demo.mp4" poster="mirror-poster.jpg" muted loop playsinline
@@ -449,20 +498,6 @@ footer{padding:26px 0 44px;border-top:1px solid var(--hair);
       </div>
       <a class="playlink" href="https://play.google.com/store/apps/details?id=com.mirrorapp.reflection"
          rel="noopener">View on Google Play &rarr;</a>
-    </div>
-    <div class="project">
-      <h3>Executive reporting</h3>
-      <p>Plan-of-record and status artefacts built for VP and C-level forums, where the job is
-         making a complicated programme legible in one page.</p>
-      <video src="commsdocs-web.mp4" poster="commsdocs-poster.jpg" muted loop playsinline
-             preload="none" controls aria-label="Executive reporting sample"></video>
-    </div>
-    <div class="project">
-      <h3>Programme planning</h3>
-      <p>Integrated planning across dozens of workstreams, dependencies and owners, kept current
-         enough that leaders actually made decisions from it.</p>
-      <video src="gantt-web.mp4" poster="gantt-poster.jpg" muted loop playsinline
-             preload="none" controls aria-label="Programme planning sample"></video>
     </div>
   </div>
 </section>
@@ -888,6 +923,39 @@ footer{padding:26px 0 44px;border-top:1px solid var(--hair);
 
 <script>
 document.getElementById('yr').textContent = new Date().getFullYear();
+
+// Theme. Default follows the OS; a click pins the other one and it sticks. Stored
+// reads are wrapped because a private window can throw on access rather than return null.
+(function(){
+  const root = document.documentElement, btn = document.getElementById('theme');
+  const get = k => { try { return localStorage.getItem(k); } catch (e) { return null; } };
+  const set = (k, v) => { try { localStorage.setItem(k, v); } catch (e) {} };
+  const saved = get('theme');
+  if (saved === 'light' || saved === 'dark') root.setAttribute('data-theme', saved);
+  if (!btn) return;
+  btn.addEventListener('click', () => {
+    const dark = root.getAttribute('data-theme') === 'dark' ||
+      (!root.hasAttribute('data-theme') &&
+       matchMedia('(prefers-color-scheme: dark)').matches);
+    const next = dark ? 'light' : 'dark';
+    root.setAttribute('data-theme', next); set('theme', next);
+  });
+})();
+
+// The dashboard is 123KB of synthetic data. Load it when asked, not on every visit.
+(function(){
+  const btn = document.getElementById('demo-launch'), hold = document.getElementById('demo-frame');
+  if (!btn || !hold) return;
+  btn.addEventListener('click', () => {
+    const f = document.createElement('iframe');
+    f.src = 'careerops-demo.html';
+    f.title = 'Career Ops dashboard, running on synthetic data';
+    f.loading = 'lazy';
+    hold.appendChild(f); hold.hidden = false;
+    btn.hidden = true; btn.setAttribute('aria-expanded', 'true');
+    hold.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+  }, { once: true });
+})();
 
 // Email capture. ENDPOINT is empty until a provider is chosen, and until then the form
 // hands off to a pre-filled mail client rather than silently swallowing addresses.
