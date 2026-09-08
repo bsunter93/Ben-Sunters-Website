@@ -204,6 +204,50 @@ h1{font:600 clamp(38px,6.4vw,60px)/1.04 var(--display);letter-spacing:-.028em;ma
   position:relative;padding-left:15px}
 .certs li:before{content:"";position:absolute;left:0;top:11px;width:7px;height:2px;background:var(--sage)}
 
+
+/* ── mirror demo, case studies, personal ─────────────────────────────────── */
+.appshot{margin-top:14px;display:flex;justify-content:center}
+.appshot video{width:auto;max-height:300px;border-radius:12px;
+  border:1px solid var(--line);background:#000;box-shadow:0 3px 14px rgba(0,0,0,.16)}
+
+.study{border:1px solid var(--line);border-radius:2px;background:var(--surface);margin-bottom:12px}
+.study+.study{margin-top:0}
+.study>summary{list-style:none;cursor:pointer;padding:18px 20px;display:flex;
+  align-items:baseline;gap:14px;flex-wrap:wrap}
+.study>summary::-webkit-details-marker{display:none}
+.study>summary:hover .st-t{color:var(--accent)}
+.st-t{font:600 17px/1.3 var(--display);color:var(--ink);letter-spacing:-.01em;flex:1 1 240px}
+.st-d{font:400 11.5px/1 var(--mono);color:var(--muted);letter-spacing:.04em}
+.st-open{font:500 12px/1 var(--mono);color:var(--accent);letter-spacing:.05em}
+.study[open]>summary{border-bottom:1px solid var(--hair)}
+.study[open] .st-open:after{content:" \2013"} .study:not([open]) .st-open:after{content:" +"}
+.st-body{padding:20px}
+.st-body h3{font:600 12px/1 var(--mono);letter-spacing:.1em;text-transform:uppercase;
+  color:var(--accent);margin:20px 0 9px}
+.st-body h3:first-child{margin-top:0}
+.st-body p{max-width:var(--measure);margin:0 0 12px;font-size:15.5px}
+.st-body ul{margin:0 0 12px;padding-left:18px;max-width:var(--measure)}
+.st-body li{font-size:15.5px;margin-bottom:6px}
+.st-body strong{color:var(--ink)}
+.modal-highlight{border-left:3px solid var(--warm);background:var(--warm-soft);
+  padding:12px 16px;margin:0 0 14px;font:400 15.5px/1.55 var(--display);
+  color:var(--ink);max-width:var(--measure)}
+.st-tags{display:flex;flex-wrap:wrap;gap:6px;margin-top:16px}
+
+.personal-grid{display:grid;grid-template-columns:minmax(0,1.15fr) minmax(0,1fr);
+  gap:clamp(26px,4vw,48px);align-items:center}
+@media (max-width:760px){.personal-grid{grid-template-columns:1fr}}
+.personal img{border-radius:2px;width:100%;height:100%;max-height:300px;object-fit:cover}
+.facts{margin:0;padding:0;list-style:none}
+.facts li{padding:14px 0 14px 17px;border-top:1px solid var(--hair);position:relative;font-size:15.5px}
+.facts li:first-child{border-top:0;padding-top:0}
+.facts li:before{content:"";position:absolute;left:0;top:22px;width:8px;height:2px}
+.facts li:first-child:before{top:8px}
+.facts li:nth-child(1):before{background:var(--accent)}
+.facts li:nth-child(2):before{background:var(--warm)}
+.facts li:nth-child(3):before{background:var(--sage)}
+.facts b{color:var(--ink);font-weight:600}
+
 /* ── capabilities ────────────────────────────────────────────────────────── */
 .caps{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:30px}
 .cap h3{font:500 11px/1 var(--mono);letter-spacing:.13em;text-transform:uppercase;
@@ -236,6 +280,7 @@ footer{padding:26px 0 44px;border-top:1px solid var(--hair);
       <a href="#work">Work</a>
       <a href="#experience">Experience</a>
       <a href="#capabilities">Capabilities</a>
+      <a href="#writing">Case studies</a>
       <a href="#contact" class="pin">Contact</a>
     </nav>
   </div>
@@ -306,6 +351,10 @@ footer{padding:26px 0 44px;border-top:1px solid var(--hair);
       <p>An AI-powered reflection and journaling app, designed, built and shipped to Google Play
          end to end. The goal was to find out whether I could take something from idea to a
          published product on my own. I could.</p>
+      <div class="appshot">
+        <video src="mirror-demo.mp4" poster="mirror-poster.jpg" muted loop playsinline
+               preload="none" controls aria-label="Mirror app demo"></video>
+      </div>
       <a class="playlink" href="https://play.google.com/store/apps/details?id=com.mirrorapp.reflection"
          rel="noopener">View on Google Play &rarr;</a>
     </div>
@@ -464,6 +513,238 @@ footer{padding:26px 0 44px;border-top:1px solid var(--hair);
         <li>Programme management at $26.5B scale</li>
       </ul>
     </div>
+  </div>
+</section>
+
+<section id="writing" class="wrap">
+  <span class="eyebrow">Case studies</span>
+  <h2>How the work actually went</h2>
+  <p class="lede">Three write-ups of specific problems, what was tried, and what came of
+     it. Longer than a bullet point and more honest about the middle part.</p>
+  <details class="study">
+    <summary>
+      <span class="st-t">Interactive Campaign Dashboard</span>
+      <span class="st-d">November 2024</span>
+      <span class="st-open">Read</span>
+    </summary>
+    <div class="st-body">
+<h3>The Challenge</h3>
+         <p>Managing 56 initiatives across 4 product areas and 200+ stakeholders requires more than spreadsheets. Leadership needed real-time visibility into performance metrics, but existing reporting was manual, inconsistent, and always a week behind.</p>
+         
+         <div class="modal-highlight">
+           "By the time we got the data, it was already too late to course-correct." — VP, Partnerships
+         </div>
+         
+         <h3>The Approach</h3>
+         <p>I designed and built an automated executive dashboard using Tableau connected to BigQuery, with the goal of providing real-time insights that actually drive decisions. The key principles:</p>
+         <ul>
+           <li><strong>Executive-first design:</strong> Lead with the 4-5 metrics that matter most, everything else is drill-down</li>
+           <li><strong>Automated data pipeline:</strong> SQL scripts pull from 6 source systems nightly, with data validation checks</li>
+           <li><strong>Action-oriented visualizations:</strong> Every chart answers a specific question leadership asks weekly</li>
+           <li><strong>Mobile-responsive:</strong> Execs check dashboards on phones between meetings</li>
+         </ul>
+         
+         <h3>Key Features</h3>
+         <p>The dashboard includes several interconnected views:</p>
+         <ul>
+           <li><strong>KPI Summary:</strong> Revenue attainment, initiative progress, stakeholder alignment, and CSAT at a glance</li>
+           <li><strong>Vertical Performance:</strong> Target vs. actual revenue by business vertical with variance highlighting</li>
+           <li><strong>Initiative Tracker:</strong> Gantt-style view of all active initiatives with health indicators</li>
+           <li><strong>Risk Register:</strong> Automated flagging of at-risk initiatives based on milestone slippage</li>
+         </ul>
+         
+         <div class="modal-stats">
+           <div class="modal-stat">
+             <div class="modal-stat-value">6</div>
+             <div class="modal-stat-label">Data Sources</div>
+           </div>
+           <div class="modal-stat">
+             <div class="modal-stat-value">15min</div>
+             <div class="modal-stat-label">Refresh Cycle</div>
+           </div>
+           <div class="modal-stat">
+             <div class="modal-stat-value">40hrs</div>
+             <div class="modal-stat-label">Monthly Time Saved</div>
+           </div>
+         </div>
+         
+         <h3>Technical Implementation</h3>
+         <p>The backend leverages BigQuery for data warehousing with scheduled SQL queries that transform raw data into analysis-ready tables. Key technical decisions included:</p>
+         <ul>
+           <li>Incremental loading patterns to minimize query costs</li>
+           <li>Parameterized date filters for historical comparison</li>
+           <li>Row-level security for team-specific views</li>
+           <li>Slack integration for automated weekly summaries</li>
+         </ul>
+         
+         <h3>Impact</h3>
+         <p>The dashboard transformed how leadership engages with program data. Weekly governance meetings now start with a shared view of reality, and decisions are made with confidence rather than gut feel.</p>
+         
+         <div class="modal-highlight">
+           The automated reporting eliminated 40+ hours of manual work monthly and reduced "data reconciliation" debates in leadership meetings by an estimated 80%.
+         </div>
+      <div class="st-tags"><span class="tag">Data Viz</span><span class="tag">Tableau</span><span class="tag">SQL</span><span class="tag">BigQuery</span></div>
+    </div>
+  </details>
+  <details class="study">
+    <summary>
+      <span class="st-t">Streamlining Partner Onboarding</span>
+      <span class="st-d">August 2024</span>
+      <span class="st-open">Read</span>
+    </summary>
+    <div class="st-body">
+<h3>The Problem</h3>
+         <p>Partner onboarding was taking an average of 47 days from signed contract to first revenue. For a business where time-to-revenue directly impacts quarterly targets, this was unacceptable. Worse, the process was inconsistent—some partners onboarded in 3 weeks, others took 3 months.</p>
+         
+         <div class="modal-stats">
+           <div class="modal-stat">
+             <div class="modal-stat-value">47</div>
+             <div class="modal-stat-label">Avg Days to Revenue</div>
+           </div>
+           <div class="modal-stat">
+             <div class="modal-stat-value">12</div>
+             <div class="modal-stat-label">Handoff Points</div>
+           </div>
+           <div class="modal-stat">
+             <div class="modal-stat-value">6</div>
+             <div class="modal-stat-label">Teams Involved</div>
+           </div>
+         </div>
+         
+         <h3>The Approach</h3>
+         <p>I led a cross-functional process improvement initiative using Lean Six Sigma methodology. The project followed DMAIC:</p>
+         
+         <ul>
+           <li><strong>Define:</strong> Mapped the current state with all 6 teams, identified the critical path</li>
+           <li><strong>Measure:</strong> Instrumented each step to understand where time was actually spent</li>
+           <li><strong>Analyze:</strong> Root cause analysis revealed 60% of delays came from just 3 handoff points</li>
+           <li><strong>Improve:</strong> Redesigned the workflow, introduced parallel processing, created SLAs</li>
+           <li><strong>Control:</strong> Built automated tracking dashboard, established weekly standup cadence</li>
+         </ul>
+         
+         <div class="modal-highlight">
+           The biggest insight: most delays weren't from slow work—they were from work sitting in queues between teams. The solution wasn't to work faster, but to eliminate wait time.
+         </div>
+         
+         <h3>Key Changes</h3>
+         <p>The redesigned process included several structural improvements:</p>
+         <ul>
+           <li><strong>Parallel workstreams:</strong> Technical setup and legal review now happen simultaneously</li>
+           <li><strong>Single point of contact:</strong> One onboarding lead owns the relationship end-to-end</li>
+           <li><strong>Standardized templates:</strong> 80% of partners fit standard configurations, reducing custom work</li>
+           <li><strong>Automated status updates:</strong> Partners see real-time progress, reducing check-in overhead</li>
+         </ul>
+         
+         <h3>Results</h3>
+         <div class="modal-stats">
+           <div class="modal-stat">
+             <div class="modal-stat-value">35%</div>
+             <div class="modal-stat-label">Faster Onboarding</div>
+           </div>
+           <div class="modal-stat">
+             <div class="modal-stat-value">30 days</div>
+             <div class="modal-stat-label">New Average</div>
+           </div>
+           <div class="modal-stat">
+             <div class="modal-stat-value">+18 NPS</div>
+             <div class="modal-stat-label">Partner Satisfaction</div>
+           </div>
+         </div>
+         
+         <p>Beyond the numbers, the process improvement created a blueprint that's been adapted for other operational workflows across the organization.</p>
+      <div class="st-tags"><span class="tag">Process Improvement</span><span class="tag">Lean Six Sigma</span><span class="tag">Case Study</span></div>
+    </div>
+  </details>
+  <details class="study">
+    <summary>
+      <span class="st-t">Building & Shipping My First App</span>
+      <span class="st-d">October 2024</span>
+      <span class="st-open">Read</span>
+    </summary>
+    <div class="st-body">
+<div style="text-align: center; margin-bottom: 2rem;">
+            <a href="https://play.google.com/store/apps/details?id=com.mirrorapp.reflection&pli=1" target="_blank" style="display: inline-flex; align-items: center; gap: 0.5rem; background: var(--navy); color: var(--white); padding: 0.9rem 2rem; border-radius: 4px; text-decoration: none; font-weight: 600; transition: all 0.3s;">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+                <path d="M3,20.5V3.5C3,2.91 3.34,2.39 3.84,2.15L13.69,12L3.84,21.85C3.34,21.6 3,21.09 3,20.5M16.81,15.12L6.05,21.34L14.54,12.85L16.81,15.12M20.16,10.81C20.5,11.08 20.75,11.5 20.75,12C20.75,12.5 20.53,12.9 20.18,13.18L17.89,14.5L15.39,12L17.89,9.5L20.16,10.81M6.05,2.66L16.81,8.88L14.54,11.15L6.05,2.66Z"/>
+              </svg>
+              Download Mirror on Google Play
+            </a>
+          </div>
+          
+         <h3>The Idea</h3>
+         <p>Mirror started as a personal experiment: could I build a tool that helps people reflect more meaningfully on their lives, using AI as a thoughtful companion rather than just a chatbot?</p>
+         
+         <p>As someone who values mindfulness but struggles with consistency, I wanted to create something that would make reflection feel natural, not like another task on the to-do list.</p>
+         
+         <div class="modal-highlight">
+           The goal wasn't to build another journaling app—it was to create a space for genuine self-discovery, powered by AI that listens more than it talks.
+         </div>
+         
+         <h3>The Product</h3>
+         <p>Mirror is a spiritual-reflection tool with three core features:</p>
+         <ul>
+           <li><strong>Daily Prompts:</strong> Thoughtful questions tailored to your current life context, not generic inspirational quotes</li>
+           <li><strong>Pattern Recognition:</strong> AI that identifies themes across your reflections over time, surfacing insights you might miss</li>
+           <li><strong>Privacy-First Architecture:</strong> All data encrypted end-to-end; the AI learns your patterns without storing your actual entries</li>
+         </ul>
+         
+          <h3>From Idea to Revenue</h3>
+          <p>The app is now live on Google Play and generating revenue through Meta Network Ads. Shipping something from scratch taught me more about product development than years of managing other people's products.</p>
+          
+         <h3>What I Learned</h3>
+         <p>Building Mirror taught me more about product development than any course could:</p>
+         <ul>
+           <li><strong>Start with the job-to-be-done:</strong> Users don't want an app—they want to feel more self-aware</li>
+           <li><strong>Simplicity is hard:</strong> I cut 60% of my initial features to focus on what actually mattered</li>
+           <li><strong>Shipping beats perfection:</strong> The version I launched wasn't the version I imagined, but it was real</li>
+            <li><strong>Monetization validates value:</strong> People paying for your product is the ultimate product-market fit signal</li>
+         </ul>
+         
+         <div class="modal-stats">
+           <div class="modal-stat">
+             <div class="modal-stat-value">3mo</div>
+             <div class="modal-stat-label">Dev Time</div>
+           </div>
+           <div class="modal-stat">
+              <div class="modal-stat-value">1</div>
+              <div class="modal-stat-label">Apps Shipped</div>
+              <div class="modal-stat-value">Live</div>
+              <div class="modal-stat-label">On Play Store</div>
+           </div>
+           <div class="modal-stat">
+              <div class="modal-stat-value">∞</div>
+              <div class="modal-stat-label">Lessons Learned</div>
+              <div class="modal-stat-value">✓</div>
+              <div class="modal-stat-label">Monetizing</div>
+           </div>
+         </div>
+         
+         <h3>The Business Operations Connection</h3>
+         <p>You might wonder why a business operations leader is building apps. For me, it's about staying close to the craft. Understanding how products actually get built—the tradeoffs, the technical constraints, the user research—makes me a better partner to product and engineering teams.</p>
+         
+         <p>Plus, there's something deeply satisfying about creating something from scratch that actually helps people.</p>
+         
+         <div class="modal-highlight">
+           The skills transfer both ways: my operational mindset helped me scope ruthlessly and ship on time, while the product experience gave me new empathy for the teams I support.
+         </div>
+      <div class="st-tags"><span class="tag">Product</span><span class="tag">Strategy</span><span class="tag">App Development</span><span class="tag">AI</span></div>
+    </div>
+  </details>
+</section>
+
+<section id="personal" class="wrap tinted">
+  <span class="eyebrow">Beyond work</span>
+  <h2>A few things about me</h2>
+  <div class="personal-grid">
+    <ul class="facts">
+      <li><b>Married, two kids.</b> Most weekends involve being outdoors somewhere in
+          Colorado: hiking, camping, or just letting the kids wear themselves out.</li>
+      <li><b>Former college cheerleader at Florida.</b> It taught me teamwork, trust,
+          and that a lot of the job is lifting other people up.</li>
+      <li><b>I build things with my hands.</b> Garden beds, home improvement, whatever
+          needs doing. There is a clarity in craftsmanship that carries over.</li>
+    </ul>
+    <img src="hiking.jpg" alt="Hiking in Colorado" loading="lazy">
   </div>
 </section>
 
