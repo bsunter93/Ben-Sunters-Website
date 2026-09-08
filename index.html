@@ -12,6 +12,9 @@
 <meta property="og:type" content="profile">
 <meta property="og:image" content="https://bensunter.com/profile-picture.jpg">
 <meta name="twitter:card" content="summary">
+<link rel="icon" href="favicon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<meta name="theme-color" content="#0B3A40">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600&family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600&display=swap">
@@ -83,17 +86,34 @@ h2{font:600 clamp(26px,3.4vw,34px)/1.15 var(--display);letter-spacing:-.015em;ma
 .lede{max-width:var(--measure);color:var(--muted);font-size:16px;margin:0 0 40px}
 
 /* ── masthead ────────────────────────────────────────────────────────────── */
+/* Solid by default, so it is readable with no JavaScript and on every section below
+   the fold. While the hero band is still behind it, it goes transparent and inverts,
+   which is the only state where a pale bar over deep petrol looked like a seam. */
 .masthead{
-  position:sticky;top:0;z-index:20;background:color-mix(in srgb,var(--paper) 88%,transparent);
-  backdrop-filter:saturate(180%) blur(10px);border-bottom:1px solid var(--hair);
+  position:sticky;top:0;z-index:20;
+  background:color-mix(in srgb,var(--paper) 88%,transparent);
+  backdrop-filter:saturate(180%) blur(10px);
+  border-bottom:1px solid var(--hair);
+  transition:background .25s ease,border-color .25s ease;
 }
-.masthead .wrap{display:flex;align-items:center;gap:22px;height:58px}
-.mark{font:600 15px/1 var(--display);color:var(--ink);letter-spacing:-.01em;margin-right:auto}
-.masthead nav a.pin{color:var(--accent);font-weight:600}
-.masthead nav{display:flex;gap:22px}
-.masthead nav a{font:500 13px/1 var(--sans);color:var(--muted)}
+.masthead .wrap{display:flex;align-items:center;gap:20px;height:60px}
+.mark{display:flex;align-items:baseline;gap:9px;margin-right:auto;
+  font:600 15px/1 var(--display);color:var(--ink);letter-spacing:-.01em}
+.mark:after{content:"";width:6px;height:6px;border-radius:50%;background:var(--warm)}
+.masthead nav{display:flex;align-items:center;gap:20px}
+.masthead nav a{font:500 13px/1 var(--sans);color:var(--muted);transition:color .18s ease}
 .masthead nav a:hover{color:var(--ink);text-decoration:none}
-@media (max-width:640px){.masthead nav a:not(.pin){display:none}}
+.nav-cta{border:1px solid var(--line);border-radius:2px;padding:7px 13px;color:var(--ink)!important}
+.nav-cta:hover{border-color:var(--accent);color:var(--accent)!important}
+
+.masthead.over-band{background:transparent;backdrop-filter:none;border-bottom-color:transparent}
+.over-band .mark{color:var(--on-deep)}
+.over-band nav a{color:var(--on-deep-mut)}
+.over-band nav a:hover{color:#fff}
+.over-band .nav-cta{border-color:rgba(255,255,255,.3);color:var(--on-deep)!important}
+.over-band .nav-cta:hover{border-color:var(--warm-bright);color:var(--warm-bright)!important}
+@media (max-width:660px){.masthead nav a:not(.nav-cta){display:none}}
+@media (prefers-reduced-motion:reduce){.masthead,.masthead nav a{transition:none}}
 
 /* ── hero ────────────────────────────────────────────────────────────────── */
 .band{background:var(--deep);color:var(--on-deep);border-top:0}
@@ -314,7 +334,7 @@ footer{padding:26px 0 44px;border-top:1px solid var(--hair);
       <a href="#experience">Experience</a>
       <a href="#capabilities">Capabilities</a>
       <a href="#writing">Case studies</a>
-      <a href="#contact" class="pin">Contact</a>
+      <a href="#contact" class="nav-cta">Contact</a>
     </nav>
   </div>
 </header>
@@ -818,6 +838,22 @@ footer{padding:26px 0 44px;border-top:1px solid var(--hair);
 
 <script>
 document.getElementById('yr').textContent = new Date().getFullYear();
+
+// The bar inverts while the hero band is behind it. Solid is the default in CSS, so
+// this only ever removes chrome; with JS off or broken the bar stays readable.
+(function(){
+  const mh = document.querySelector('.masthead'), band = document.querySelector('.band');
+  if (!mh || !band) return;
+  let queued = false;
+  const sync = () => {
+    queued = false;
+    mh.classList.toggle('over-band', band.getBoundingClientRect().bottom > mh.offsetHeight);
+  };
+  addEventListener('scroll', () => { if (!queued) { queued = true; requestAnimationFrame(sync); } },
+                   { passive: true });
+  addEventListener('resize', sync, { passive: true });
+  sync();
+})();
 // Play the work-sample clips only while they are on screen, so nothing downloads
 // or loops for a visitor who never scrolls that far.
 const vids = document.querySelectorAll('.project video');
