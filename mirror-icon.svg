@@ -1,0 +1,119 @@
+<svg width="512" height="512" viewBox="0 0 512 512" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <!-- Main cosmic gradient -->
+    <radialGradient id="backgroundGradient" cx="50%" cy="40%" r="80%">
+      <stop offset="0%" style="stop-color:#8b5cf6;stop-opacity:1" />
+      <stop offset="40%" style="stop-color:#6366f1;stop-opacity:1" />
+      <stop offset="80%" style="stop-color:#4c1d95;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#1e1b4b;stop-opacity:1" />
+    </radialGradient>
+    
+    <!-- Crystal/mirror gradient -->
+    <linearGradient id="crystalGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#ffffff;stop-opacity:0.9" />
+      <stop offset="30%" style="stop-color:#e0e7ff;stop-opacity:0.8" />
+      <stop offset="70%" style="stop-color:#c7d2fe;stop-opacity:0.6" />
+      <stop offset="100%" style="stop-color:#a5b4fc;stop-opacity:0.4" />
+    </linearGradient>
+    
+    <!-- Golden accent -->
+    <linearGradient id="goldGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#fbbf24;stop-opacity:1" />
+      <stop offset="50%" style="stop-color:#f59e0b;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#d97706;stop-opacity:1" />
+    </linearGradient>
+    
+    <!-- Star glow -->
+    <filter id="starGlow">
+      <feGaussianBlur stdDeviation="2" result="coloredBlur"/>
+      <feMerge> 
+        <feMergeNode in="coloredBlur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+    
+    <!-- Crystal shine -->
+    <filter id="crystalGlow">
+      <feGaussianBlur stdDeviation="3" result="coloredBlur"/>
+      <feMerge> 
+        <feMergeNode in="coloredBlur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+  </defs>
+  
+  <!-- Background circle -->
+  <circle cx="256" cy="256" r="240" fill="url(#backgroundGradient)"/>
+  
+  <!-- Cosmic stars -->
+  <g filter="url(#starGlow)" opacity="0.8">
+    <circle cx="120" cy="100" r="2" fill="#ffffff"/>
+    <circle cx="380" cy="120" r="1.5" fill="#e879f9"/>
+    <circle cx="100" cy="300" r="1.8" fill="#fbbf24"/>
+    <circle cx="400" cy="350" r="1.2" fill="#34d399"/>
+    <circle cx="150" cy="400" r="1" fill="#f472b6"/>
+    <circle cx="450" cy="180" r="1" fill="#60a5fa"/>
+    <circle cx="80" cy="200" r="1" fill="#c084fc"/>
+    <circle cx="420" cy="80" r="1.5" fill="#a78bfa"/>
+  </g>
+  
+  <!-- Main crystal mirror shape (hexagonal) -->
+  <g transform="translate(256, 256)">
+    <!-- Outer crystal frame -->
+    <polygon points="0,-120 104,-60 104,60 0,120 -104,60 -104,-60" 
+             fill="url(#goldGradient)" 
+             stroke="#92400e" 
+             stroke-width="4"/>
+    
+    <!-- Inner crystal mirror -->
+    <polygon points="0,-100 87,-50 87,50 0,100 -87,50 -87,-50" 
+             fill="url(#crystalGradient)" 
+             filter="url(#crystalGlow)"/>
+    
+    <!-- Crystal facets for dimension -->
+    <g opacity="0.6">
+      <polygon points="0,-100 87,-50 0,0" fill="#ffffff" opacity="0.3"/>
+      <polygon points="87,-50 87,50 0,0" fill="#e0e7ff" opacity="0.2"/>
+      <polygon points="87,50 0,100 0,0" fill="#c7d2fe" opacity="0.2"/>
+      <polygon points="0,100 -87,50 0,0" fill="#a5b4fc" opacity="0.2"/>
+      <polygon points="-87,50 -87,-50 0,0" fill="#e0e7ff" opacity="0.3"/>
+      <polygon points="-87,-50 0,-100 0,0" fill="#ffffff" opacity="0.4"/>
+    </g>
+    
+    <!-- Central mystical symbol -->
+    <g opacity="0.7">
+      <!-- Simple geometric pattern -->
+      <circle cx="0" cy="0" r="25" fill="none" stroke="#6366f1" stroke-width="2"/>
+      <circle cx="0" cy="0" r="15" fill="none" stroke="#8b5cf6" stroke-width="1.5"/>
+      
+      <!-- Central point -->
+      <circle cx="0" cy="0" r="5" fill="#a855f7"/>
+      
+      <!-- Minimal cosmic rays -->
+      <g stroke="#e879f9" stroke-width="1.5" opacity="0.8">
+        <line x1="0" y1="-35" x2="0" y2="-40"/>
+        <line x1="25" y1="-25" x2="28" y2="-28"/>
+        <line x1="35" y1="0" x2="40" y2="0"/>
+        <line x1="25" y1="25" x2="28" y2="28"/>
+        <line x1="0" y1="35" x2="0" y2="40"/>
+        <line x1="-25" y1="25" x2="-28" y2="28"/>
+        <line x1="-35" y1="0" x2="-40" y2="0"/>
+        <line x1="-25" y1="-25" x2="-28" y2="-28"/>
+      </g>
+    </g>
+  </g>
+  
+  <!-- Highlight reflections -->
+  <g opacity="0.4">
+    <polygon points="200,150 240,120 230,140" fill="#ffffff"/>
+    <polygon points="320,180 350,160 340,200" fill="#ffffff"/>
+  </g>
+  
+  <!-- Subtle floating particles -->
+  <g opacity="0.5">
+    <circle cx="180" cy="340" r="1" fill="#a855f7"/>
+    <circle cx="340" cy="160" r="1" fill="#6366f1"/>
+    <circle cx="160" cy="180" r="1" fill="#e879f9"/>
+    <circle cx="350" cy="320" r="1" fill="#8b5cf6"/>
+  </g>
+</svg>
