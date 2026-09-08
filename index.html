@@ -67,7 +67,10 @@ a:hover{text-decoration:underline;text-underline-offset:3px}
 :focus-visible{outline:2px solid var(--accent);outline-offset:3px;border-radius:2px}
 h1,h2,h3{color:var(--ink);text-wrap:balance;margin:0}
 
-.wrap{max-width:1020px;margin:0 auto;padding:0 clamp(20px,5vw,44px)}
+/* padding-inline, not the padding shorthand. As `padding:0 clamp(...)` this also set
+   padding-block to 0, and being a class it outranked `section{padding:var(--gap) 0}`,
+   so every section carrying .wrap lost its vertical rhythm entirely. */
+.wrap{max-width:1020px;margin:0 auto;padding-inline:clamp(20px,5vw,44px)}
 .eyebrow{
   font:500 11px/1 var(--mono); letter-spacing:.13em; text-transform:uppercase;
   color:var(--accent); display:flex; align-items:center; gap:9px; margin-bottom:18px;
@@ -150,6 +153,14 @@ h1{font:600 clamp(38px,6.4vw,60px)/1.04 var(--display);letter-spacing:-.028em;ma
 .projects .project:nth-child(3){border-top-color:var(--sage)}
 .project p{margin:0;font-size:14.5px;color:var(--muted)}
 .project video{margin-top:14px;border:1px solid var(--line);border-radius:2px;background:#000}
+
+
+.shot{margin:22px 0 0;padding:0}
+.shot img{width:100%;border:1px solid var(--line);border-radius:2px;display:block;
+  background:var(--surface)}
+.shot figcaption{margin-top:10px;font:400 13px/1.5 var(--sans);color:var(--muted);
+  max-width:var(--measure)}
+.project video{width:100%;aspect-ratio:16/10;object-fit:cover}
 
 /* ── experience ──────────────────────────────────────────────────────────── */
 /* A timeline, so it is drawn as one: a continuous spine with a node per employer.
@@ -340,6 +351,12 @@ footer{padding:26px 0 44px;border-top:1px solid var(--hair);
       <span class="tag">Anthropic API</span><span class="tag">Event sourcing</span><span class="tag">Open source</span>
     </div>
     <a class="btn" href="https://github.com/bsunter93/careerops" rel="noopener">View on GitHub</a>
+    <figure class="shot">
+      <img src="careerops-dashboard.png" alt="The Career Ops command centre: funnel, ageing
+           applications, weekly activity and a ranked list of what to do next" loading="lazy">
+      <figcaption>The command centre it renders. Roles are ranked by how recently they
+        were posted, because that predicts a reply better than how well they match.</figcaption>
+    </figure>
   </div>
 
   <div class="projects">
@@ -362,13 +379,15 @@ footer{padding:26px 0 44px;border-top:1px solid var(--hair);
       <h3>Executive reporting</h3>
       <p>Plan-of-record and status artefacts built for VP and C-level forums, where the job is
          making a complicated programme legible in one page.</p>
-      <video src="commsdocs.mp4" muted loop playsinline preload="none" controls></video>
+      <video src="commsdocs-web.mp4" poster="commsdocs-poster.jpg" muted loop playsinline
+             preload="none" controls aria-label="Executive reporting sample"></video>
     </div>
     <div class="project">
       <h3>Programme planning</h3>
       <p>Integrated planning across dozens of workstreams, dependencies and owners, kept current
          enough that leaders actually made decisions from it.</p>
-      <video src="gantt.mp4" muted loop playsinline preload="none" controls></video>
+      <video src="gantt-web.mp4" poster="gantt-poster.jpg" muted loop playsinline
+             preload="none" controls aria-label="Programme planning sample"></video>
     </div>
   </div>
 </section>
