@@ -273,12 +273,21 @@ h1{font:600 clamp(38px,6.4vw,60px)/1.04 var(--display);letter-spacing:-.028em;ma
   .jobfig+.jobfig{border-left:0;border-top:1px solid var(--hair);padding-left:0}}
 
 /* ── capabilities ────────────────────────────────────────────────────────── */
-.caps{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:30px}
+/* Was three bulleted keyword lists, which is a format that exists for résumé
+   parsers rather than people. A line of plain English says what the column means,
+   and the keywords become chips underneath: denser than one-per-row, and they carry
+   the column's colour so the section has some. */
+.caps{display:grid;grid-template-columns:repeat(auto-fit,minmax(258px,1fr));gap:34px}
 .cap h3{font:500 11px/1 var(--mono);letter-spacing:.13em;text-transform:uppercase;
-  color:var(--ink);margin-bottom:14px;padding-bottom:11px;border-bottom:2px solid var(--line)}
-.cap:nth-child(1) h3{border-bottom-color:var(--accent)}
-.cap:nth-child(2) h3{border-bottom-color:var(--warm)}
-.cap:nth-child(3) h3{border-bottom-color:var(--sage)}
+  color:var(--ink);margin-bottom:14px;padding-bottom:11px;border-bottom:2px solid var(--co)}
+.cap--a{--co:var(--accent)} .cap--b{--co:var(--warm)} .cap--c{--co:var(--sage)}
+.cap p{margin:0 0 15px;font-size:15px;color:var(--body);max-width:42ch}
+.chips{display:flex;flex-wrap:wrap;gap:6px}
+.chip{font:400 11.5px/1 var(--mono);color:var(--co);padding:6px 9px;border-radius:2px;
+  /* neutral first, tinted where color-mix is understood */
+  background:var(--hair);border:1px solid var(--line);
+  background:color-mix(in srgb,var(--co) 9%,transparent);
+  border-color:color-mix(in srgb,var(--co) 22%,transparent)}
 .cap ul{margin:0;padding:0;list-style:none}
 .cap li{font-size:14.5px;padding:5px 0;color:var(--body)}
 
@@ -518,32 +527,20 @@ footer{padding:26px 0 44px;border-top:1px solid var(--hair);
   <span class="eyebrow">Capabilities</span>
   <h2>What I bring</h2>
   <div class="caps">
-    <div class="cap">
+    <div class="cap cap--a">
       <h3>Strategy &amp; operations</h3>
-      <ul>
-        <li>Business operations</li>
-        <li>Operational excellence (Lean / Six Sigma)</li>
-        <li>Governance design</li>
-        <li>Annual planning &amp; goal setting</li>
-        <li>Rhythm of business</li>
-        <li>GTM &amp; sales operations</li>
-        <li>ROI &amp; unit-cost modelling</li>
-        <li>Executive advisory</li>
-      </ul>
+      <p>I build the machinery a company runs on: the planning cycle, the goal
+         architecture, and the forums where decisions actually get made rather than
+         reported.</p>
+      <div class="chips"><span class="chip">Business operations</span><span class="chip">Operational excellence</span><span class="chip">Lean / Six Sigma</span><span class="chip">Governance design</span><span class="chip">Annual planning</span><span class="chip">Rhythm of business</span><span class="chip">GTM strategy</span><span class="chip">Sales operations</span><span class="chip">ROI &amp; unit-cost modelling</span><span class="chip">Executive advisory</span></div>
     </div>
-    <div class="cap">
+    <div class="cap cap--b">
       <h3>Data &amp; systems</h3>
-      <ul>
-        <li>SQL &amp; BigQuery</li>
-        <li>Python (ETL, automation)</li>
-        <li>Looker &amp; Tableau</li>
-        <li>CRM and pipeline data integration</li>
-        <li>Executive KPI dashboards</li>
-        <li>Financial &amp; capacity modelling</li>
-        <li>AI and agentic automation</li>
-      </ul>
+      <p>I write the queries and build the tooling myself rather than briefing someone
+         else to. A strategy is only worth the data and the mechanisms underneath it.</p>
+      <div class="chips"><span class="chip">SQL</span><span class="chip">BigQuery</span><span class="chip">Python</span><span class="chip">Looker</span><span class="chip">Tableau</span><span class="chip">CRM &amp; pipeline integration</span><span class="chip">Executive KPI dashboards</span><span class="chip">Financial modelling</span><span class="chip">Capacity modelling</span><span class="chip">AI &amp; agentic automation</span></div>
     </div>
-    <div class="cap">
+    <div class="cap cap--c">
       <h3>Leadership &amp; credentials</h3>
       <div class="creds">
         <span class="joblogo"><img src="uf-logo.png" alt="University of Florida" width="30" height="30" loading="lazy"></span>
@@ -552,16 +549,9 @@ footer{padding:26px 0 44px;border-top:1px solid var(--hair);
           <span>University of Florida, 2016</span>
         </div>
       </div>
-      <ul class="certs">
-        <li>Lean Six Sigma Green Belt</li>
-        <li>Google Project Management Certificate</li>
-        <li>VP and C-level executive advisory</li>
-        <li>Cross-functional leadership, 20+ teams</li>
-        <li>Programme management at $26.5B scale</li>
-      </ul>
+      <div class="chips"><span class="chip">Lean Six Sigma Green Belt</span><span class="chip">Google PM Certificate</span><span class="chip">VP &amp; C-level advisory</span><span class="chip">Cross-functional leadership, 20+ teams</span><span class="chip">$26.5B programme scale</span><span class="chip">4 direct reports</span></div>
     </div>
-  </div>
-</section>
+  </section>
 
 <section id="writing" class="wrap">
   <span class="eyebrow">Case studies</span>
