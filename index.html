@@ -237,6 +237,32 @@ h1{font:600 clamp(38px,6.4vw,60px)/1.04 var(--display);letter-spacing:-.028em;ma
   border-radius:2px;background:var(--surface);display:block}
 .demo-note{margin:9px 0 0;font:400 12.5px/1.5 var(--sans);color:var(--muted)}
 
+
+/* ── system diagrams ─────────────────────────────────────────────────────── */
+/* Drawn rather than screenshotted, so they take theme tokens and stay sharp. These
+   are redrawn from memory to show how each system was put together; none is a copy
+   of anything belonging to a former employer. */
+.systems{display:grid;gap:1px;background:var(--hair);border:1px solid var(--hair);
+  border-radius:2px;margin-top:24px;overflow:hidden}
+.sysfig{background:var(--surface);padding:24px clamp(18px,3vw,28px) 22px;margin:0}
+.sysfig h4{font:600 16px/1.3 var(--sans);color:var(--ink);margin:0 0 3px}
+.sysfig .sub{display:block;font:400 13px/1.5 var(--sans);color:var(--muted);
+  margin-bottom:18px;max-width:64ch}
+.sysfig svg{width:100%;height:auto;display:block;overflow:visible}
+.sysfig figcaption{margin-top:16px;font:400 12.5px/1.55 var(--sans);color:var(--muted);
+  max-width:var(--measure)}
+.d-box{fill:var(--surface);stroke:var(--line)}
+.d-fill{fill:var(--accent-soft);stroke:var(--accent)}
+.d-warm{fill:var(--warm-soft);stroke:var(--warm)}
+.d-lab{fill:var(--ink);font:600 12px var(--sans)}
+.d-mut{fill:var(--muted);font:400 10.5px var(--sans)}
+.d-mono{fill:var(--muted);font:500 9.5px var(--mono);letter-spacing:.1em}
+.d-num{fill:var(--accent);font:600 15px var(--display)}
+.d-numw{fill:var(--warm);font:600 15px var(--display)}
+.d-line{stroke:var(--line);fill:none}
+.d-acc{stroke:var(--accent);fill:none}
+.d-arrow{fill:var(--muted)}
+
 /* ── experience ──────────────────────────────────────────────────────────── */
 /* A timeline, so it is drawn as one: a continuous spine with a node per employer.
    Each employer carries its own colour through its node, dates, bullets and figures,
@@ -499,6 +525,80 @@ footer{padding:26px 0 44px;border-top:1px solid var(--hair);
          applications are fictional.</p>
     </div>
     <a class="btn" href="https://github.com/bsunter93/careerops" rel="noopener">View on GitHub</a>
+  </div>
+
+
+  <div class="systems">
+    <figure class="sysfig">
+      <h4>An operating cadence for an $18M mandate</h4>
+      <span class="sub">Included Health. The work existed but nothing held it together, so I gave it
+        a rhythm: a short weekly pulse, and two monthly points where numbers stopped moving.</span>
+      <svg viewBox="0 0 620 210" role="img" aria-label="Weekly execution pulses feeding two monthly locks, with sprint readiness rising from 54 to 79 percent">
+  <text class="d-mono" x="0" y="30">EVERY WEEK</text>
+  <rect class="d-fill" x="40" y="52" width="86" height="34" rx="2"/><text class="d-lab" x="83" y="74" text-anchor="middle">Week 1</text><path class="d-arrow" d="M129 65 l7 4 -7 4z"/><rect class="d-fill" x="144" y="52" width="86" height="34" rx="2"/><text class="d-lab" x="187" y="74" text-anchor="middle">Week 2</text><path class="d-arrow" d="M233 65 l7 4 -7 4z"/><rect class="d-fill" x="248" y="52" width="86" height="34" rx="2"/><text class="d-lab" x="291" y="74" text-anchor="middle">Week 3</text><path class="d-arrow" d="M337 65 l7 4 -7 4z"/><rect class="d-fill" x="352" y="52" width="86" height="34" rx="2"/><text class="d-lab" x="395" y="74" text-anchor="middle">Week 4</text>
+  <text class="d-mut" x="40" y="104">Execution pulse: what moved, what is blocked, who owns the unblock</text>
+  <path class="d-line" d="M83 112 V132 H395" stroke-dasharray="3 3"/>
+  <path class="d-line" d="M291 112 V132" stroke-dasharray="3 3"/>
+  <text class="d-mono" x="396" y="30">ONCE A MONTH</text>
+  <rect class="d-warm" x="396" y="46" width="196" height="40" rx="2"/>
+  <text class="d-lab" x="494" y="70" text-anchor="middle">Forecast lock</text>
+  <rect class="d-warm" x="396" y="112" width="196" height="40" rx="2"/>
+  <text class="d-lab" x="494" y="136" text-anchor="middle">Workforce model lock</text>
+  <path class="d-arrow" d="M388 62 l7 4 -7 4z"/><path class="d-arrow" d="M388 128 l7 4 -7 4z"/>
+  <path class="d-line" d="M0 172 H620"/>
+  <text class="d-mono" x="0" y="196">SPRINT READINESS</text>
+  <text class="d-numw" x="150" y="199">54%</text>
+  <path class="d-arrow" d="M190 190 l7 4 -7 4z"/>
+  <text class="d-num" x="208" y="199">79%</text>
+  <text class="d-mut" x="262" y="198">and planning cycles closing 25% faster year over year</text>
+</svg>
+      <figcaption>Redrawn to show how it was put together. The point of the locks is that
+        a forecast nobody can edit after Friday is a forecast people argue about before Friday.</figcaption>
+    </figure>
+
+    <figure class="sysfig">
+      <h4>Goals that report outcomes instead of activity</h4>
+      <span class="sub">Included Health. The goal architecture I wrote for the COO, which went into
+        the following year's operating plan.</span>
+      <svg viewBox="0 0 620 208" role="img" aria-label="A goal system that reports activity, redrawn as one that reports outcomes">
+  <rect class="d-box" x="0" y="34" width="290" height="150" rx="2"/>
+  <rect class="d-fill" x="316" y="34" width="304" height="150" rx="2"/>
+  <text class="d-mono" x="14" y="22">BEFORE</text>
+  <text class="d-mono" x="330" y="22">AFTER</text>
+  <text class="d-lab" x="14" y="58">Managing activity</text>
+  <text class="d-lab" x="330" y="58">Managing outcomes</text>
+  <text class="d-mut" x="14" y="86">Every team lists what it did</text><text class="d-mut" x="330" y="86">Every team names what it is changing</text><text class="d-mut" x="14" y="112">Status is the deliverable</text><text class="d-mut" x="330" y="112">The number is the deliverable</text><text class="d-mut" x="14" y="138">Green means busy</text><text class="d-mut" x="330" y="138">Green means moved</text><text class="d-mut" x="14" y="164">Nobody can tell what to stop</text><text class="d-mut" x="330" y="164">Stopping is a decision you can make</text>
+  <path class="d-arrow" d="M298 105 l7 4 -7 4z"/>
+</svg>
+      <figcaption>Redrawn from memory, not a copy of the original. The hard part was never
+        the format. It was that measuring outcomes tells you what to stop, and stopping
+        things is where the disagreements are.</figcaption>
+    </figure>
+
+    <figure class="sysfig">
+      <h4>Telling sellers who to call next</h4>
+      <span class="sub">Google. Sales pipeline, CRM and product-adoption data joined into one
+        ranked list, then turned into plays the field could actually run.</span>
+      <svg viewBox="0 0 620 200" role="img" aria-label="Three data sources joined into a ranked account list, turned into seller plays, producing 40 million dollars against target">
+  <text class="d-mono" x="0" y="16">SOURCES</text>
+  <rect class="d-box" x="0" y="28" width="150" height="34" rx="2"/><text class="d-mut" x="14" y="49">Sales pipeline</text><path class="d-line" d="M150 45 H186 V91 "/><rect class="d-box" x="0" y="74" width="150" height="34" rx="2"/><text class="d-mut" x="14" y="95">CRM accounts</text><path class="d-line" d="M150 91 H186 V91 "/><rect class="d-box" x="0" y="120" width="150" height="34" rx="2"/><text class="d-mut" x="14" y="141">Product adoption</text><path class="d-line" d="M150 137 H186 V91 "/>
+  <rect class="d-fill" x="186" y="60" width="128" height="62" rx="2"/>
+  <text class="d-lab" x="250" y="86" text-anchor="middle">Joined and</text>
+  <text class="d-lab" x="250" y="103" text-anchor="middle">stack-ranked</text>
+  <path class="d-arrow" d="M320 87 l7 4 -7 4z"/>
+  <rect class="d-box" x="340" y="60" width="128" height="62" rx="2"/>
+  <text class="d-lab" x="404" y="86" text-anchor="middle">Plays the sellers</text>
+  <text class="d-lab" x="404" y="103" text-anchor="middle">actually ran</text>
+  <path class="d-arrow" d="M474 87 l7 4 -7 4z"/>
+  <rect class="d-warm" x="494" y="60" width="126" height="62" rx="2"/>
+  <text class="d-numw" x="557" y="88" text-anchor="middle">$40M</text>
+  <text class="d-mut" x="557" y="106" text-anchor="middle">against target</text>
+  <text class="d-mut" x="186" y="152">Ranked by who was most likely to adopt next, not by who was biggest.</text>
+  <text class="d-mut" x="186" y="170">The method was picked up by the wider go-to-market team afterwards.</text>
+</svg>
+      <figcaption>Redrawn to show the flow. Most targeting lists rank by account size
+        because that is the easy sort. This one ranked by who was closest to adopting.</figcaption>
+    </figure>
   </div>
 
   <div class="projects">
