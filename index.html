@@ -348,6 +348,13 @@ h1{font:600 clamp(38px,6.4vw,60px)/1.04 var(--display);letter-spacing:-.028em;ma
 .modal-highlight{border-left:3px solid var(--warm);background:var(--warm-soft);
   padding:12px 16px;margin:0 0 14px;font:400 15.5px/1.55 var(--display);
   color:var(--ink);max-width:var(--measure)}
+
+.st-meta{font:500 11px/1 var(--mono);letter-spacing:.12em;text-transform:uppercase;
+  color:var(--accent);margin:0 0 18px}
+.st-fig{margin:24px 0 0;padding:22px 0 0;border-top:1px solid var(--hair)}
+.st-fig svg{width:100%;height:auto;display:block;overflow:visible}
+.st-fig figcaption{margin-top:16px;font:400 13px/1.6 var(--sans);color:var(--muted);
+  max-width:var(--measure)}
 .st-tags{display:flex;flex-wrap:wrap;gap:6px;margin-top:16px}
 
 .personal-grid{display:grid;grid-template-columns:minmax(0,1.15fr) minmax(0,1fr);
@@ -521,83 +528,6 @@ footer{padding:26px 0 44px;border-top:1px solid var(--hair);
   </div>
 
 
-  <div class="systems">
-    <figure class="sysfig" style="--co:var(--accent)">
-      <span class="sysco">Method</span>
-      <h4>Making a cost number travel, and arrive in time to matter</h4>
-      <span class="sub">Three functions, one translation each, so a number travels from an
-        operator's initiative to a unit-cost target without being renegotiated on the way.</span>
-      <svg viewBox="0 0 620 322" role="img" aria-label="A number travels from operators to workforce management to finance. Before, unit cost arrived once around month nine. Now it arrives every month.">
-  <text class="d-mono" x="0" y="18">HOW ONE NUMBER TRAVELS</text>
-  <rect x="0" y="34" width="196" height="54" rx="3" fill="var(--accent)" opacity=".1"/><rect x="0" y="34" width="4" height="54" rx="2" fill="var(--accent)"/><text class="d-lab" x="18" y="57">Operators</text><text class="d-mut" x="18" y="76">impact on AHT, visits per hour</text><path class="d-arrow" d="M200 57 l8 4 -8 4z"/><rect x="212" y="34" width="196" height="54" rx="3" fill="var(--warm)" opacity=".1"/><rect x="212" y="34" width="4" height="54" rx="2" fill="var(--warm)"/><text class="d-lab" x="230" y="57">Workforce mgmt</text><text class="d-mut" x="230" y="76">converted to FTE</text><path class="d-arrow" d="M412 57 l8 4 -8 4z"/><rect x="424" y="34" width="196" height="54" rx="3" fill="var(--sage)" opacity=".1"/><rect x="424" y="34" width="4" height="54" rx="2" fill="var(--sage)"/><text class="d-lab" x="442" y="57">Finance</text><text class="d-mut" x="442" y="76">converted to unit cost</text>
-  <text class="d-mono" x="0" y="130">WHEN OPERATORS ACTUALLY SEE IT</text>
-
-  <text class="d-mono" x="0" y="167" fill="var(--warm)">BEFORE</text>
-  <line x1="72" y1="163" x2="608" y2="163" stroke="var(--line)" stroke-width="2"/>
-  <circle cx="452" cy="163" r="7.5" fill="var(--warm)"/>
-  <text class="d-mut" x="72" y="190">Arrived once, around month nine. By then the only levers left were a</text>
-  <text class="d-mut" x="72" y="208">hiring freeze and cuts.</text>
-
-  <text class="d-mono" x="0" y="236" fill="var(--accent)">AFTER</text>
-  <line x1="72" y1="232" x2="608" y2="232" stroke="var(--accent)" stroke-width="2" opacity=".4"/>
-  <circle cx="72" cy="232" r="5.5" fill="var(--accent)"/><circle cx="120" cy="232" r="5.5" fill="var(--accent)"/><circle cx="168" cy="232" r="5.5" fill="var(--accent)"/><circle cx="216" cy="232" r="5.5" fill="var(--accent)"/><circle cx="264" cy="232" r="5.5" fill="var(--accent)"/><circle cx="312" cy="232" r="5.5" fill="var(--accent)"/><circle cx="360" cy="232" r="5.5" fill="var(--accent)"/><circle cx="408" cy="232" r="5.5" fill="var(--accent)"/><circle cx="456" cy="232" r="5.5" fill="var(--accent)"/><circle cx="504" cy="232" r="5.5" fill="var(--accent)"/><circle cx="552" cy="232" r="5.5" fill="var(--accent)"/><circle cx="600" cy="232" r="5.5" fill="var(--accent)"/>
-  <text class="d-mut" x="72" y="259">Every month, with the year still ahead. Levers: initiative mix, staffing</text>
-  <text class="d-mut" x="72" y="277">plan, and the demand model that drives both.</text>
-  <text class="d-mono" x="72" y="306">JAN</text><text class="d-mono" x="576" y="306">DEC</text>
-</svg>
-      <figcaption>Timing is the point. Cost reporting that lands once, late, leaves only
-        hiring freezes and cuts. Monthly, in a room where separate orgs can trade off against
-        one goal, operators find out early enough to use something other than headcount.</figcaption>
-    </figure>
-
-    <figure class="sysfig">
-      <span class="sysco" style="--co:var(--accent)">Method</span>
-      <h4>Goals that report outcomes instead of activity</h4>
-      <span class="sub">The kind of goal architecture I write. A version of this went to a
-        COO and into the following year's operating plan.</span>
-      <svg viewBox="0 0 620 208" role="img" aria-label="A goal system that reports activity, redrawn as one that reports outcomes">
-  <rect class="d-box" x="0" y="34" width="290" height="150" rx="2"/>
-  <rect class="d-fill" x="316" y="34" width="304" height="150" rx="2"/>
-  <text class="d-mono" x="14" y="22">BEFORE</text>
-  <text class="d-mono" x="330" y="22">AFTER</text>
-  <text class="d-lab" x="14" y="58">Managing activity</text>
-  <text class="d-lab" x="330" y="58">Managing outcomes</text>
-  <text class="d-mut" x="14" y="86">Every team lists what it did</text><text class="d-mut" x="330" y="86">Every team names what it is changing</text><text class="d-mut" x="14" y="112">Status is the deliverable</text><text class="d-mut" x="330" y="112">The number is the deliverable</text><text class="d-mut" x="14" y="138">Green means busy</text><text class="d-mut" x="330" y="138">Green means moved</text><text class="d-mut" x="14" y="164">Nobody can tell what to stop</text><text class="d-mut" x="330" y="164">Stopping is a decision you can make</text>
-  <path class="d-arrow" d="M298 105 l7 4 -7 4z"/>
-</svg>
-      <figcaption>The hard part is never the format. Measuring outcomes tells you what to
-        stop, and stopping things is where the disagreements are.</figcaption>
-    </figure>
-
-    <figure class="sysfig">
-      <span class="sysco" style="--co:var(--warm)">Google</span>
-      <h4>Making an opportunity sellable</h4>
-      <span class="sub">The gap was never finding accounts. Sellers had the list and could not
-        tell a publisher what the opportunity was worth, so it lost to pitches that arrived
-        with a number. The fix was to measure it, through Impact Experiments in Ad Manager 360.</span>
-      <svg viewBox="0 0 620 300" role="img" aria-label="A measured dollar figure per publisher unlocked three uses: the internal performance view, the client conversation, and a live leaderboard">
-  <text class="d-mono" x="0" y="18">THE CONSTRAINT</text>
-  <text class="d-mut" x="0" y="42">Sellers already had the list.</text>
-  <text class="d-lab" x="0" y="64" fill="var(--warm)">They could not price it.</text>
-  <rect x="0" y="88" width="300" height="100" rx="3" fill="var(--accent)" opacity=".12"/>
-  <rect x="0" y="88" width="4" height="100" rx="2" fill="var(--accent)"/>
-  <text class="d-num" x="20" y="126">A measured $ figure</text>
-  <text class="d-mut" x="20" y="150">per publisher, from Impact Experiments</text>
-  <text class="d-mut" x="20" y="170">in Ad Manager 360. Not an estimate.</text>
-  <path class="d-acc" d="M300 138 C340 138 340 72 372 72" opacity=".55"/><rect x="372" y="46" width="248" height="54" rx="3" fill="var(--accent)" opacity=".08"/><text class="d-lab" x="388" y="70">The internal performance view</text><text class="d-mut" x="388" y="88">sellers could finally book credit for it</text><path class="d-acc" d="M300 138 C340 138 340 146 372 146" opacity=".55"/><rect x="372" y="120" width="248" height="54" rx="3" fill="var(--accent)" opacity=".08"/><text class="d-lab" x="388" y="144">The client conversation</text><text class="d-mut" x="388" y="162">a figure a publisher would accept</text><path class="d-acc" d="M300 138 C340 138 340 220 372 220" opacity=".55"/><rect x="372" y="194" width="248" height="54" rx="3" fill="var(--accent)" opacity=".08"/><text class="d-lab" x="388" y="218">A live leaderboard</text><text class="d-mut" x="388" y="236">the contest that made it a priority</text>
-  <line x1="0" y1="232" x2="620" y2="232" stroke="var(--line)"/>
-  <text class="d-numw" x="0" y="266">256%</text>
-  <text class="d-mut" x="86" y="266">pipeline movement vs prior quarters</text>
-  <text class="d-num" x="360" y="266">$40M</text>
-  <text class="d-mut" x="440" y="266">against target</text>
-</svg>
-      <figcaption>Measured rather than modelled is what mattered: a publisher will argue
-        with a projection and will not argue with their own incrementality result. The
-        contest launched the same week the case study cleared review, so the proof and the
-        reason to use it landed together.</figcaption>
-    </figure>
-  </div>
-
   <div class="projects">
     <div class="project">
       <div class="appmark">
@@ -735,8 +665,7 @@ footer{padding:26px 0 44px;border-top:1px solid var(--hair);
 <section id="writing" class="wrap">
   <span class="eyebrow">Case studies</span>
   <h2>How the work actually went</h2>
-  <p class="lede">Three write-ups of specific problems, what was tried, and what came of
-     it. Longer than a bullet point, and honest about the messy middle.</p>
+  <p class="lede">Three systems, what was actually wrong before them, and what changed.</p>
 
   <aside class="admission">
     <span class="eyebrow">What I got wrong</span>
@@ -750,208 +679,123 @@ footer{padding:26px 0 44px;border-top:1px solid var(--hair);
   </aside>
   <details class="study">
     <summary>
-      <span class="st-t">Interactive Campaign Dashboard</span>
+      <span class="st-t">Making a cost number travel, and arrive in time to matter</span>
       <span class="st-open">Read</span>
     </summary>
     <div class="st-body">
-<h3>The Challenge</h3>
-         <p>Managing 56 initiatives across 4 product areas and 200+ stakeholders requires more than spreadsheets. Leadership needed real-time visibility into performance metrics, but existing reporting was manual, inconsistent, and always a week behind.</p>
-         
-         <div class="modal-highlight">
-           "By the time we got the data, it was already too late to course-correct." — VP, Partnerships
-         </div>
-         
-         <h3>The Approach</h3>
-         <p>I designed and built an automated executive dashboard using Tableau connected to BigQuery, with the goal of providing real-time insights that actually drive decisions. The key principles:</p>
-         <ul>
-           <li><strong>Executive-first design:</strong> Lead with the 4-5 metrics that matter most, everything else is drill-down</li>
-           <li><strong>Automated data pipeline:</strong> SQL scripts pull from 6 source systems nightly, with data validation checks</li>
-           <li><strong>Action-oriented visualizations:</strong> Every chart answers a specific question leadership asks weekly</li>
-           <li><strong>Mobile-responsive:</strong> Execs check dashboards on phones between meetings</li>
-         </ul>
-         
-         <h3>Key Features</h3>
-         <p>The dashboard includes several interconnected views:</p>
-         <ul>
-           <li><strong>KPI Summary:</strong> Revenue attainment, initiative progress, stakeholder alignment, and CSAT at a glance</li>
-           <li><strong>Vertical Performance:</strong> Target vs. actual revenue by business vertical with variance highlighting</li>
-           <li><strong>Initiative Tracker:</strong> Gantt-style view of all active initiatives with health indicators</li>
-           <li><strong>Risk Register:</strong> Automated flagging of at-risk initiatives based on milestone slippage</li>
-         </ul>
-         
-         <div class="modal-stats">
-           <div class="modal-stat">
-             <div class="modal-stat-value">6</div>
-             <div class="modal-stat-label">Data Sources</div>
-           </div>
-           <div class="modal-stat">
-             <div class="modal-stat-value">15min</div>
-             <div class="modal-stat-label">Refresh Cycle</div>
-           </div>
-           <div class="modal-stat">
-             <div class="modal-stat-value">40hrs</div>
-             <div class="modal-stat-label">Monthly Time Saved</div>
-           </div>
-         </div>
-         
-         <h3>Technical Implementation</h3>
-         <p>The backend leverages BigQuery for data warehousing with scheduled SQL queries that transform raw data into analysis-ready tables. Key technical decisions included:</p>
-         <ul>
-           <li>Incremental loading patterns to minimize query costs</li>
-           <li>Parameterized date filters for historical comparison</li>
-           <li>Row-level security for team-specific views</li>
-           <li>Slack integration for automated weekly summaries</li>
-         </ul>
-         
-         <h3>Impact</h3>
-         <p>The dashboard transformed how leadership engages with program data. Weekly governance meetings now start with a shared view of reality, and decisions are made with confidence rather than gut feel.</p>
-         
-         <div class="modal-highlight">
-           The automated reporting eliminated 40+ hours of manual work monthly and reduced "data reconciliation" debates in leadership meetings by an estimated 80%.
-         </div>
-      <div class="st-tags"><span class="tag">Data Viz</span><span class="tag">Tableau</span><span class="tag">SQL</span><span class="tag">BigQuery</span></div>
+      <p class="st-meta">Healthcare operations · method</p>
+      <h3>Before</h3>
+      <p>Forecasts were badly wrong, teams hired against them, and then either shrink went
+         up or they were overstaffed and had to cut. Cost reporting arrived from finance
+         late in the year, by which point the only levers left were people. Engineering and
+         operations barely spoke, even though operators depended on engineering delivery to
+         hit their numbers.</p>
+      <h3>One number everyone signs</h3>
+      <p>Operators quantify their own initiatives in their own metrics. Workforce management
+         converts that to FTE. Finance converts FTE to unit cost against the annual goal.
+         Every input is cross-examined and signed by all three, and by engineering where
+         delivery is a dependency. That gives you a gap to target at the start of the year
+         instead of a discovery in the fourth quarter.</p>
+      <h3>The part that was missing</h3>
+      <p>Execution. Finance publishes unit cost monthly to the operators who own hiring. A
+         joint review puts two previously separate orgs in one room against one goal, so
+         they can trade off against each other, one service line carrying another's miss.
+         It ties into demand modelling, which sits upstream of every staffing decision and
+         is the largest single driver of cost.</p>
+      <figure class="st-fig">
+        <svg viewBox="0 0 620 322" role="img" aria-label="A number travels from operators to workforce management to finance. Before, unit cost arrived once around month nine. Now it arrives every month.">
+  <text class="d-mono" x="0" y="18">HOW ONE NUMBER TRAVELS</text>
+  <rect x="0" y="34" width="196" height="54" rx="3" fill="var(--accent)" opacity=".1"/><rect x="0" y="34" width="4" height="54" rx="2" fill="var(--accent)"/><text class="d-lab" x="18" y="57">Operators</text><text class="d-mut" x="18" y="76">impact on AHT, visits per hour</text><path class="d-arrow" d="M200 57 l8 4 -8 4z"/><rect x="212" y="34" width="196" height="54" rx="3" fill="var(--warm)" opacity=".1"/><rect x="212" y="34" width="4" height="54" rx="2" fill="var(--warm)"/><text class="d-lab" x="230" y="57">Workforce mgmt</text><text class="d-mut" x="230" y="76">converted to FTE</text><path class="d-arrow" d="M412 57 l8 4 -8 4z"/><rect x="424" y="34" width="196" height="54" rx="3" fill="var(--sage)" opacity=".1"/><rect x="424" y="34" width="4" height="54" rx="2" fill="var(--sage)"/><text class="d-lab" x="442" y="57">Finance</text><text class="d-mut" x="442" y="76">converted to unit cost</text>
+  <text class="d-mono" x="0" y="130">WHEN OPERATORS ACTUALLY SEE IT</text>
+
+  <text class="d-mono" x="0" y="167" fill="var(--warm)">BEFORE</text>
+  <line x1="72" y1="163" x2="608" y2="163" stroke="var(--line)" stroke-width="2"/>
+  <circle cx="452" cy="163" r="7.5" fill="var(--warm)"/>
+  <text class="d-mut" x="72" y="190">Arrived once, around month nine. By then the only levers left were a</text>
+  <text class="d-mut" x="72" y="208">hiring freeze and cuts.</text>
+
+  <text class="d-mono" x="0" y="236" fill="var(--accent)">AFTER</text>
+  <line x1="72" y1="232" x2="608" y2="232" stroke="var(--accent)" stroke-width="2" opacity=".4"/>
+  <circle cx="72" cy="232" r="5.5" fill="var(--accent)"/><circle cx="120" cy="232" r="5.5" fill="var(--accent)"/><circle cx="168" cy="232" r="5.5" fill="var(--accent)"/><circle cx="216" cy="232" r="5.5" fill="var(--accent)"/><circle cx="264" cy="232" r="5.5" fill="var(--accent)"/><circle cx="312" cy="232" r="5.5" fill="var(--accent)"/><circle cx="360" cy="232" r="5.5" fill="var(--accent)"/><circle cx="408" cy="232" r="5.5" fill="var(--accent)"/><circle cx="456" cy="232" r="5.5" fill="var(--accent)"/><circle cx="504" cy="232" r="5.5" fill="var(--accent)"/><circle cx="552" cy="232" r="5.5" fill="var(--accent)"/><circle cx="600" cy="232" r="5.5" fill="var(--accent)"/>
+  <text class="d-mut" x="72" y="259">Every month, with the year still ahead. Levers: initiative mix, staffing</text>
+  <text class="d-mut" x="72" y="277">plan, and the demand model that drives both.</text>
+  <text class="d-mono" x="72" y="306">JAN</text><text class="d-mono" x="576" y="306">DEC</text>
+</svg>
+        <figcaption>Timing is the point. Decisions get made before risks land rather than after.</figcaption>
+      </figure>
     </div>
   </details>
+
   <details class="study">
     <summary>
-      <span class="st-t">Streamlining Partner Onboarding</span>
+      <span class="st-t">Goals that report outcomes instead of activity</span>
       <span class="st-open">Read</span>
     </summary>
     <div class="st-body">
-<h3>The Problem</h3>
-         <p>Partner onboarding was taking an average of 47 days from signed contract to first revenue. For a business where time-to-revenue directly impacts quarterly targets, this was unacceptable. Worse, the process was inconsistent—some partners onboarded in 3 weeks, others took 3 months.</p>
-         
-         <div class="modal-stats">
-           <div class="modal-stat">
-             <div class="modal-stat-value">47</div>
-             <div class="modal-stat-label">Avg Days to Revenue</div>
-           </div>
-           <div class="modal-stat">
-             <div class="modal-stat-value">12</div>
-             <div class="modal-stat-label">Handoff Points</div>
-           </div>
-           <div class="modal-stat">
-             <div class="modal-stat-value">6</div>
-             <div class="modal-stat-label">Teams Involved</div>
-           </div>
-         </div>
-         
-         <h3>The Approach</h3>
-         <p>I led a cross-functional process improvement initiative using Lean Six Sigma methodology. The project followed DMAIC:</p>
-         
-         <ul>
-           <li><strong>Define:</strong> Mapped the current state with all 6 teams, identified the critical path</li>
-           <li><strong>Measure:</strong> Instrumented each step to understand where time was actually spent</li>
-           <li><strong>Analyze:</strong> Root cause analysis revealed 60% of delays came from just 3 handoff points</li>
-           <li><strong>Improve:</strong> Redesigned the workflow, introduced parallel processing, created SLAs</li>
-           <li><strong>Control:</strong> Built automated tracking dashboard, established weekly standup cadence</li>
-         </ul>
-         
-         <div class="modal-highlight">
-           The biggest insight: most delays weren't from slow work—they were from work sitting in queues between teams. The solution wasn't to work faster, but to eliminate wait time.
-         </div>
-         
-         <h3>Key Changes</h3>
-         <p>The redesigned process included several structural improvements:</p>
-         <ul>
-           <li><strong>Parallel workstreams:</strong> Technical setup and legal review now happen simultaneously</li>
-           <li><strong>Single point of contact:</strong> One onboarding lead owns the relationship end-to-end</li>
-           <li><strong>Standardized templates:</strong> 80% of partners fit standard configurations, reducing custom work</li>
-           <li><strong>Automated status updates:</strong> Partners see real-time progress, reducing check-in overhead</li>
-         </ul>
-         
-         <h3>Results</h3>
-         <div class="modal-stats">
-           <div class="modal-stat">
-             <div class="modal-stat-value">35%</div>
-             <div class="modal-stat-label">Faster Onboarding</div>
-           </div>
-           <div class="modal-stat">
-             <div class="modal-stat-value">30 days</div>
-             <div class="modal-stat-label">New Average</div>
-           </div>
-           <div class="modal-stat">
-             <div class="modal-stat-value">+18 NPS</div>
-             <div class="modal-stat-label">Partner Satisfaction</div>
-           </div>
-         </div>
-         
-         <p>Beyond the numbers, the process improvement created a blueprint that's been adapted for other operational workflows across the organization.</p>
-      <div class="st-tags"><span class="tag">Process Improvement</span><span class="tag">Lean Six Sigma</span><span class="tag">Case Study</span></div>
+      <p class="st-meta">Healthcare operations · method</p>
+      <p>Most goal systems quietly measure effort. Teams report what they did, status
+         becomes the deliverable, and green means busy. It reads as accountability and
+         tells you almost nothing, because there is no way to work out what to stop.</p>
+      <p>The version I write asks each team to name what it is changing and to carry the
+         number that shows it. Green means moved. A version of this went to a COO and into
+         the following year's operating plan.</p>
+      <figure class="st-fig">
+        <svg viewBox="0 0 620 208" role="img" aria-label="A goal system that reports activity, redrawn as one that reports outcomes">
+  <rect class="d-box" x="0" y="34" width="290" height="150" rx="2"/>
+  <rect class="d-fill" x="316" y="34" width="304" height="150" rx="2"/>
+  <text class="d-mono" x="14" y="22">BEFORE</text>
+  <text class="d-mono" x="330" y="22">AFTER</text>
+  <text class="d-lab" x="14" y="58">Managing activity</text>
+  <text class="d-lab" x="330" y="58">Managing outcomes</text>
+  <text class="d-mut" x="14" y="86">Every team lists what it did</text><text class="d-mut" x="330" y="86">Every team names what it is changing</text><text class="d-mut" x="14" y="112">Status is the deliverable</text><text class="d-mut" x="330" y="112">The number is the deliverable</text><text class="d-mut" x="14" y="138">Green means busy</text><text class="d-mut" x="330" y="138">Green means moved</text><text class="d-mut" x="14" y="164">Nobody can tell what to stop</text><text class="d-mut" x="330" y="164">Stopping is a decision you can make</text>
+  <path class="d-arrow" d="M298 105 l7 4 -7 4z"/>
+</svg>
+        <figcaption>The hard part is never the format. Measuring outcomes tells you what to stop, and stopping things is where the disagreements are.</figcaption>
+      </figure>
     </div>
   </details>
+
   <details class="study">
     <summary>
-      <span class="st-t">Building & Shipping My First App</span>
+      <span class="st-t">Making an opportunity sellable</span>
       <span class="st-open">Read</span>
     </summary>
     <div class="st-body">
-<div style="text-align: center; margin-bottom: 2rem;">
-            <a href="https://play.google.com/store/apps/details?id=com.mirrorapp.reflection&pli=1" target="_blank" style="display: inline-flex; align-items: center; gap: 0.5rem; background: var(--navy); color: var(--white); padding: 0.9rem 2rem; border-radius: 4px; text-decoration: none; font-weight: 600; transition: all 0.3s;">
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
-                <path d="M3,20.5V3.5C3,2.91 3.34,2.39 3.84,2.15L13.69,12L3.84,21.85C3.34,21.6 3,21.09 3,20.5M16.81,15.12L6.05,21.34L14.54,12.85L16.81,15.12M20.16,10.81C20.5,11.08 20.75,11.5 20.75,12C20.75,12.5 20.53,12.9 20.18,13.18L17.89,14.5L15.39,12L17.89,9.5L20.16,10.81M6.05,2.66L16.81,8.88L14.54,11.15L6.05,2.66Z"/>
-              </svg>
-              Download Mirror on Google Play
-            </a>
-          </div>
-          
-         <h3>The Idea</h3>
-         <p>Mirror started as a personal experiment: could I build a tool that helps people reflect more meaningfully on their lives, using AI as a thoughtful companion rather than just a chatbot?</p>
-         
-         <p>As someone who values mindfulness but struggles with consistency, I wanted to create something that would make reflection feel natural, not like another task on the to-do list.</p>
-         
-         <div class="modal-highlight">
-           The goal wasn't to build another journaling app—it was to create a space for genuine self-discovery, powered by AI that listens more than it talks.
-         </div>
-         
-         <h3>The Product</h3>
-         <p>Mirror is a spiritual-reflection tool with three core features:</p>
-         <ul>
-           <li><strong>Daily Prompts:</strong> Thoughtful questions tailored to your current life context, not generic inspirational quotes</li>
-           <li><strong>Pattern Recognition:</strong> AI that identifies themes across your reflections over time, surfacing insights you might miss</li>
-           <li><strong>Privacy-First Architecture:</strong> All data encrypted end-to-end; the AI learns your patterns without storing your actual entries</li>
-         </ul>
-         
-          <h3>From Idea to Revenue</h3>
-          <p>The app is now live on Google Play and generating revenue through Meta Network Ads. Shipping something from scratch taught me more about product development than years of managing other people's products.</p>
-          
-         <h3>What I Learned</h3>
-         <p>Building Mirror taught me more about product development than any course could:</p>
-         <ul>
-           <li><strong>Start with the job-to-be-done:</strong> Users don't want an app—they want to feel more self-aware</li>
-           <li><strong>Simplicity is hard:</strong> I cut 60% of my initial features to focus on what actually mattered</li>
-           <li><strong>Shipping beats perfection:</strong> The version I launched wasn't the version I imagined, but it was real</li>
-            <li><strong>Monetization validates value:</strong> People paying for your product is the ultimate product-market fit signal</li>
-         </ul>
-         
-         <div class="modal-stats">
-           <div class="modal-stat">
-             <div class="modal-stat-value">3mo</div>
-             <div class="modal-stat-label">Dev Time</div>
-           </div>
-           <div class="modal-stat">
-              <div class="modal-stat-value">1</div>
-              <div class="modal-stat-label">Apps Shipped</div>
-              <div class="modal-stat-value">Live</div>
-              <div class="modal-stat-label">On Play Store</div>
-           </div>
-           <div class="modal-stat">
-              <div class="modal-stat-value">∞</div>
-              <div class="modal-stat-label">Lessons Learned</div>
-              <div class="modal-stat-value">✓</div>
-              <div class="modal-stat-label">Monetizing</div>
-           </div>
-         </div>
-         
-         <h3>The Business Operations Connection</h3>
-         <p>You might wonder why a business operations leader is building apps. For me, it's about staying close to the craft. Understanding how products actually get built—the tradeoffs, the technical constraints, the user research—makes me a better partner to product and engineering teams.</p>
-         
-         <p>Plus, there's something deeply satisfying about creating something from scratch that actually helps people.</p>
-         
-         <div class="modal-highlight">
-           The skills transfer both ways: my operational mindset helped me scope ruthlessly and ship on time, while the product experience gave me new empathy for the teams I support.
-         </div>
-      <div class="st-tags"><span class="tag">Product</span><span class="tag">Strategy</span><span class="tag">App Development</span><span class="tag">AI</span></div>
+      <p class="st-meta">Google · publisher partnerships</p>
+      <p>Sellers already had the list. That was never the constraint. What they could not
+         do was tell a publisher what the opportunity was worth, so it kept losing to
+         pitches that arrived with a number attached.</p>
+      <h3>Measure it, do not argue it</h3>
+      <p>Impact Experiments, the incrementality framework inside Ad Manager 360, produced a
+         measured figure per publisher rather than an estimate. A publisher will argue with
+         a projection. They will not argue with their own incrementality result.</p>
+      <h3>One number, three places it had never been</h3>
+      <p>Into the internal performance view, so sellers could finally book credit for the
+         work. Into the client conversation, as a figure a publisher would accept. And onto
+         a leaderboard, because I built the custom CRM and product views that did not exist
+         and turned pitching it into a contest.</p>
+      <p>I timed the launch to the week the case study cleared legal and client review, so
+         sellers got the proof they had been asking for and a reason to use it in the same
+         week. Pipeline movement on that opportunity ran 256% against prior quarters.</p>
+      <figure class="st-fig">
+        <svg viewBox="0 0 620 300" role="img" aria-label="A measured dollar figure per publisher unlocked three uses: the internal performance view, the client conversation, and a live leaderboard">
+  <text class="d-mono" x="0" y="18">THE CONSTRAINT</text>
+  <text class="d-mut" x="0" y="42">Sellers already had the list.</text>
+  <text class="d-lab" x="0" y="64" fill="var(--warm)">They could not price it.</text>
+  <rect x="0" y="88" width="300" height="100" rx="3" fill="var(--accent)" opacity=".12"/>
+  <rect x="0" y="88" width="4" height="100" rx="2" fill="var(--accent)"/>
+  <text class="d-num" x="20" y="126">A measured $ figure</text>
+  <text class="d-mut" x="20" y="150">per publisher, from Impact Experiments</text>
+  <text class="d-mut" x="20" y="170">in Ad Manager 360. Not an estimate.</text>
+  <path class="d-acc" d="M300 138 C340 138 340 72 372 72" opacity=".55"/><rect x="372" y="46" width="248" height="54" rx="3" fill="var(--accent)" opacity=".08"/><text class="d-lab" x="388" y="70">The internal performance view</text><text class="d-mut" x="388" y="88">sellers could finally book credit for it</text><path class="d-acc" d="M300 138 C340 138 340 146 372 146" opacity=".55"/><rect x="372" y="120" width="248" height="54" rx="3" fill="var(--accent)" opacity=".08"/><text class="d-lab" x="388" y="144">The client conversation</text><text class="d-mut" x="388" y="162">a figure a publisher would accept</text><path class="d-acc" d="M300 138 C340 138 340 220 372 220" opacity=".55"/><rect x="372" y="194" width="248" height="54" rx="3" fill="var(--accent)" opacity=".08"/><text class="d-lab" x="388" y="218">A live leaderboard</text><text class="d-mut" x="388" y="236">the contest that made it a priority</text>
+  <line x1="0" y1="232" x2="620" y2="232" stroke="var(--line)"/>
+  <text class="d-numw" x="0" y="266">256%</text>
+  <text class="d-mut" x="86" y="266">pipeline movement vs prior quarters</text>
+  <text class="d-num" x="360" y="266">$40M</text>
+  <text class="d-mut" x="440" y="266">against target</text>
+</svg>
+        <figcaption>Quantifying it is what unlocked everything else. Nothing downstream was possible while the number did not exist.</figcaption>
+      </figure>
     </div>
   </details>
 </section>
