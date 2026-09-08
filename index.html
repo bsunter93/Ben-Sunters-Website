@@ -83,7 +83,15 @@ section{padding:var(--gap) 0;border-top:1px solid var(--hair)}
 .tinted{background:var(--tint);border-top:1px solid var(--line)}
 section:first-of-type{border-top:0}
 h2{font:600 clamp(26px,3.4vw,34px)/1.15 var(--display);letter-spacing:-.015em;margin-bottom:10px}
-.cred{font-size:15px;color:var(--on-deep-mut)}
+.arc{list-style:none;display:grid;grid-template-columns:repeat(auto-fit,minmax(186px,1fr));
+  gap:0;margin:30px 0 0;padding:0;border-top:1px solid rgba(255,255,255,.16)}
+.arc li{position:relative;padding:17px 22px 0 0}
+.arc li:before{content:"";position:absolute;top:-1px;left:0;right:22px;height:3px;background:var(--co)}
+.arc b{display:block;font:600 15px/1.3 var(--sans);color:#fff}
+.arc span{display:block;margin-top:4px;font:500 11px/1 var(--mono);letter-spacing:.1em;color:var(--co)}
+.arc em{display:block;margin-top:9px;font:400 12.5px/1.5 var(--sans);font-style:normal;
+  color:var(--on-deep-mut);max-width:30ch}
+@media (max-width:560px){.arc li{padding-right:0}.arc li:before{right:0}}
 .lede{max-width:var(--measure);color:var(--muted);font-size:16px;margin:0 0 40px}
 
 /* ── masthead ────────────────────────────────────────────────────────────── */
@@ -137,10 +145,11 @@ h1{font:600 clamp(38px,6.4vw,60px)/1.04 var(--display);letter-spacing:-.028em;ma
   box-shadow:0 6px 22px rgba(0,0,0,.28)}
 
 .figures{display:flex;flex-wrap:wrap;gap:0;margin:38px 0 30px;border-top:1px solid rgba(255,255,255,.15)}
-.figure{flex:1 1 160px;padding:18px 22px 16px 0;border-right:1px solid rgba(255,255,255,.1)}
+.figure{flex:1 1 172px;padding:20px 26px 18px 0;border-right:1px solid rgba(255,255,255,.1)}
+.figure+.figure{padding-left:26px}
 .figure:last-child{border-right:0}
-.figure b{display:block;font:600 clamp(24px,3.2vw,30px)/1 var(--display);color:var(--warm-bright);letter-spacing:-.02em}
-.figure span{display:block;margin-top:7px;font:400 12.5px/1.45 var(--sans);color:var(--on-deep-mut);max-width:24ch}
+.figure b{display:block;font:600 clamp(25px,3vw,31px)/1 var(--display);color:var(--warm-bright);letter-spacing:-.02em}
+.figure span{display:block;margin-top:9px;font:400 12.5px/1.5 var(--sans);color:var(--on-deep-mut);max-width:26ch}
 
 .links{display:flex;flex-wrap:wrap;gap:10px}
 .btn{
@@ -449,8 +458,14 @@ footer{padding:26px 0 44px;border-top:1px solid var(--hair);
          trust numbers they can watch being maintained, and centralising siloed reporting
          surfaces what nobody could see apart. I build the software too, so it maintains
          itself.</p>
-      <p class="cred">A <strong>$26.5B merger</strong> at Accenture. A <strong>$B
-         partnerships business</strong> at Google. A new line of business at Included Health.</p>
+      <ol class="arc">
+        <li style="--co:var(--sage)"><b>Accenture</b><span>2016 – 2021</span>
+            <em>$26.5B telecom merger. 24 workstreams under 16 VPs.</em></li>
+        <li style="--co:var(--warm-bright)"><b>Google</b><span>2022 – 2025</span>
+            <em>$B Americas partnerships. Planning, and publisher GTM.</em></li>
+        <li style="--co:#7FD1C8"><b>Included Health</b><span>2026</span>
+            <em>A new line of business, and the cost programme behind it.</em></li>
+      </ol>
     </div>
     <img class="portrait" src="portrait.jpg" alt="Benjamin J. Sunter" width="172" height="172">
   </div>
@@ -476,7 +491,7 @@ footer{padding:26px 0 44px;border-top:1px solid var(--hair);
 
 <section id="work" class="wrap">
   <span class="eyebrow">Selected work</span>
-  <h2>Things I have built</h2>
+  <h2>Things I build on my own time</h2>
   <p class="lede">Operating systems, mostly. Some of them are documents and cadences, and
      some of them are software. The distinction matters less than whether they run without me.</p>
 
@@ -554,7 +569,7 @@ footer{padding:26px 0 44px;border-top:1px solid var(--hair);
 
 <section id="experience" class="wrap">
   <span class="eyebrow">Experience</span>
-  <h2>Where I have done it</h2>
+  <h2>Where I have done this</h2>
 
   <div class="jobs">
 
