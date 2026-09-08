@@ -83,6 +83,7 @@ section{padding:var(--gap) 0;border-top:1px solid var(--hair)}
 .tinted{background:var(--tint);border-top:1px solid var(--line)}
 section:first-of-type{border-top:0}
 h2{font:600 clamp(26px,3.4vw,34px)/1.15 var(--display);letter-spacing:-.015em;margin-bottom:10px}
+.cred{font-size:15px;color:var(--on-deep-mut)}
 .lede{max-width:var(--measure);color:var(--muted);font-size:16px;margin:0 0 40px}
 
 /* ── masthead ────────────────────────────────────────────────────────────── */
@@ -436,20 +437,13 @@ footer{padding:26px 0 44px;border-top:1px solid var(--hair);
   <div class="hero-grid">
     <div>
       <h1>I build the system<br>every function plans from.</h1>
-      <p>Industrial engineer turned operations leader. The job is usually the same shape:
-         sit between functions that depend on each other and do not naturally talk, build
-         the plan and the reporting they all work from, and keep those two locked together
-         so nobody drifts off the plan or spends a quarter measuring the wrong thing.</p>
-      <p>Holding that source of truth is the whole advantage. Teams trust numbers they can
-         watch being maintained. The system forces conversations across lines people had
-         been avoiding, because the work no longer adds up without them. And pulling
-         siloed reporting into one place almost always surfaces gaps, risks and openings
-         that nobody could see while the pieces sat apart.</p>
-      <p>I have done it on a <strong>$26.5B telecom merger</strong> at Accenture, across a
-         <strong>$B partnerships business</strong> at Google, and on a new healthcare line
-         of business at Included Health. I build the software too, which matters more than
-         it sounds: it means the source of truth maintains itself instead of depending on
-         me to keep it alive.</p>
+      <p>I sit between functions that depend on each other and do not naturally talk, and
+         I hold the plan and the reporting they all work from. That is the advantage: teams
+         trust numbers they can watch being maintained, and centralising siloed reporting
+         surfaces what nobody could see apart. I build the software too, so it maintains
+         itself.</p>
+      <p class="cred">A <strong>$26.5B merger</strong> at Accenture. A <strong>$B
+         partnerships business</strong> at Google. A new line of business at Included Health.</p>
     </div>
     <img class="portrait" src="portrait.jpg" alt="Benjamin J. Sunter" width="172" height="172">
   </div>
@@ -487,38 +481,27 @@ footer{padding:26px 0 44px;border-top:1px solid var(--hair);
 
     <p class="proj-claim">Hiring broke in a way you can measure. The average open role
        now gets more than 300 applications, up from about 100 in 2021. AI made applying
-       almost free, but the number of people who can read those applications did not
-       change. A candidate today is about half as likely to get an interview as one five
-       years ago.</p>
+       almost free. The number of people who can read applications did not change.</p>
 
-    <p>The obvious answer, apply to more things faster, is what caused this, and it makes
-       the pile worse for everyone including the person reading it. So Career Ops does the
-       opposite. It does not write applications and it does not submit anything. It cuts
-       down how many roles are worth your time instead of sending more of them. It is open
-       source, so it is a method anyone can take rather than an edge one person keeps.</p>
+    <p>Applying to more things faster is what caused this, so Career Ops does the opposite.
+       It does not write or submit anything. It cuts down how many roles are worth your
+       time, and it is open source, so it is a method rather than an edge.</p>
 
-    <p>It watches 87 job boards and surfaces only roles that fit a written profile, then
-       ranks what is left by how recently each was posted. Fit is a gate, not a dial. You
-       either clear the bar for a role or you do not, and arriving early never fixes not
-       clearing it. But among the roles you do clear, getting there in the first week beats
-       clearing the bar by a wider margin, because a req with 300 applicants gets read
-       roughly in the order it arrived.</p>
+    <p>It watches 87 job boards, surfaces only what fits a written profile, and ranks by
+       how recently each role was posted. Fit is a gate, not a dial: you clear the bar or
+       you do not. Among roles you clear, week one beats clearing it by a wider margin,
+       because a req with 300 applicants gets read in arrival order. Fit, pay band,
+       employee sentiment and your history with that company are attached before you open
+       a posting. Status comes from your mail, not from you.</p>
 
-    <p>Everything you need to judge a role is attached before you open it: the fit read,
-       the published pay band, what employees say about working there, and whether you have
-       applied to that company before and what happened. Status comes from your mail
-       instead of from you typing it in, so the board stays right on its own.</p>
+    <p class="proj-note">It does not fix the real problem. Nothing on the candidate's side can;
+       the bottleneck is how many humans can read. It just stops
+       you spending attention on roles that were never going to answer. The hard bugs were all
+       the same: software stating something untrue with total confidence, and being
+       believed. Most of the work is teaching it to say when it does not know.</p>
 
-    <p class="proj-note">Two honest limits. It does not fix the real problem, and nothing
-       built on the candidate's side can, because the bottleneck is how many humans are
-       available to read. All it does is stop you spending attention on roles that were
-       never going to answer. And most of the hard bugs were the same: the software would
-       say something untrue with complete confidence, close a live application as rejected,
-       and get believed because it looked authoritative. Most of the work is teaching it to
-       admit when it does not know.</p>
-
-    <p class="proj-src">Application volume: Ashby, analysis of 100M+ submissions;
-       interview-rate decline: ZipRecruiter 2026 talent acquisition survey.</p>
+    <p class="proj-src">Application volume: Ashby, 100M+ submissions. Interview-rate
+       decline: ZipRecruiter 2026 talent acquisition survey.</p>
 
     <div class="tagrow">
       <span class="tag">Python</span><span class="tag">SQLite</span><span class="tag">Gmail API</span>
@@ -542,10 +525,8 @@ footer{padding:26px 0 44px;border-top:1px solid var(--hair);
     <figure class="sysfig" style="--co:var(--accent)">
       <span class="sysco">Method</span>
       <h4>Making a cost number travel, and arrive in time to matter</h4>
-      <span class="sub">A pattern I use on cost programmes. Three functions each own one
-        translation, so a number travels from an operator's initiative to a unit-cost target
-        without being renegotiated on the way. Then a loop puts it back in front of the
-        people who can actually act, while there is still time to act.</span>
+      <span class="sub">Three functions, one translation each, so a number travels from an
+        operator's initiative to a unit-cost target without being renegotiated on the way.</span>
       <svg viewBox="0 0 620 322" role="img" aria-label="A number travels from operators to workforce management to finance. Before, unit cost arrived once around month nine. Now it arrives every month.">
   <text class="d-mono" x="0" y="18">HOW ONE NUMBER TRAVELS</text>
   <rect x="0" y="34" width="196" height="54" rx="3" fill="var(--accent)" opacity=".1"/><rect x="0" y="34" width="4" height="54" rx="2" fill="var(--accent)"/><text class="d-lab" x="18" y="57">Operators</text><text class="d-mut" x="18" y="76">impact on AHT, visits per hour</text><path class="d-arrow" d="M200 57 l8 4 -8 4z"/><rect x="212" y="34" width="196" height="54" rx="3" fill="var(--warm)" opacity=".1"/><rect x="212" y="34" width="4" height="54" rx="2" fill="var(--warm)"/><text class="d-lab" x="230" y="57">Workforce mgmt</text><text class="d-mut" x="230" y="76">converted to FTE</text><path class="d-arrow" d="M412 57 l8 4 -8 4z"/><rect x="424" y="34" width="196" height="54" rx="3" fill="var(--sage)" opacity=".1"/><rect x="424" y="34" width="4" height="54" rx="2" fill="var(--sage)"/><text class="d-lab" x="442" y="57">Finance</text><text class="d-mut" x="442" y="76">converted to unit cost</text>
@@ -564,17 +545,15 @@ footer{padding:26px 0 44px;border-top:1px solid var(--hair);
   <text class="d-mut" x="72" y="277">plan, and the demand model that drives both.</text>
   <text class="d-mono" x="72" y="306">JAN</text><text class="d-mono" x="576" y="306">DEC</text>
 </svg>
-      <figcaption>The timing is the whole point. Where cost reporting lands once, late in
-        the year, the only levers left are hiring freezes and cuts. Moving the same
-        information to a monthly rhythm, in a room where separate orgs can trade off against
-        one shared goal, means operators still own their hiring decisions but find out early
-        enough to use something other than headcount.</figcaption>
+      <figcaption>Timing is the point. Cost reporting that lands once, late, leaves only
+        hiring freezes and cuts. Monthly, in a room where separate orgs can trade off against
+        one goal, operators find out early enough to use something other than headcount.</figcaption>
     </figure>
 
     <figure class="sysfig">
       <span class="sysco" style="--co:var(--accent)">Method</span>
       <h4>Goals that report outcomes instead of activity</h4>
-      <span class="sub">The shape of goal architecture I write. A version of this went to a
+      <span class="sub">The kind of goal architecture I write. A version of this went to a
         COO and into the following year's operating plan.</span>
       <svg viewBox="0 0 620 208" role="img" aria-label="A goal system that reports activity, redrawn as one that reports outcomes">
   <rect class="d-box" x="0" y="34" width="290" height="150" rx="2"/>
@@ -586,19 +565,16 @@ footer{padding:26px 0 44px;border-top:1px solid var(--hair);
   <text class="d-mut" x="14" y="86">Every team lists what it did</text><text class="d-mut" x="330" y="86">Every team names what it is changing</text><text class="d-mut" x="14" y="112">Status is the deliverable</text><text class="d-mut" x="330" y="112">The number is the deliverable</text><text class="d-mut" x="14" y="138">Green means busy</text><text class="d-mut" x="330" y="138">Green means moved</text><text class="d-mut" x="14" y="164">Nobody can tell what to stop</text><text class="d-mut" x="330" y="164">Stopping is a decision you can make</text>
   <path class="d-arrow" d="M298 105 l7 4 -7 4z"/>
 </svg>
-      <figcaption>Redrawn from memory, not a copy of the original. The hard part was never
-        the format. It was that measuring outcomes tells you what to stop, and stopping
-        things is where the disagreements are.</figcaption>
+      <figcaption>The hard part is never the format. Measuring outcomes tells you what to
+        stop, and stopping things is where the disagreements are.</figcaption>
     </figure>
 
     <figure class="sysfig">
       <span class="sysco" style="--co:var(--warm)">Google</span>
       <h4>Making an opportunity sellable</h4>
-      <span class="sub">The gap was never finding accounts. Sellers had the list and
-        could not tell a publisher what the opportunity was worth, so it kept losing to
-        pitches that arrived with a number attached. The fix was to measure the thing
-        rather than estimate it, using Impact Experiments, the incrementality framework
-        inside Ad Manager 360.</span>
+      <span class="sub">The gap was never finding accounts. Sellers had the list and could not
+        tell a publisher what the opportunity was worth, so it lost to pitches that arrived
+        with a number. The fix was to measure it, through Impact Experiments in Ad Manager 360.</span>
       <svg viewBox="0 0 620 300" role="img" aria-label="A measured dollar figure per publisher unlocked three uses: the internal performance view, the client conversation, and a live leaderboard">
   <text class="d-mono" x="0" y="18">THE CONSTRAINT</text>
   <text class="d-mut" x="0" y="42">Sellers already had the list.</text>
@@ -615,13 +591,10 @@ footer{padding:26px 0 44px;border-top:1px solid var(--hair);
   <text class="d-num" x="360" y="266">$40M</text>
   <text class="d-mut" x="440" y="266">against target</text>
 </svg>
-      <figcaption>Redrawn to show the sequence. That the number was measured rather than
-        modelled is the part that mattered: a publisher will argue with a projection and
-        will not argue with their own incrementality result. Once the figure existed it
-        could go into the internal performance view, into the client conversation, and
-        onto a leaderboard. The contest launched the same week the case study cleared
-        legal and client review, so the proof and the reason to use it landed
-        together.</figcaption>
+      <figcaption>Measured rather than modelled is what mattered: a publisher will argue
+        with a projection and will not argue with their own incrementality result. The
+        contest launched the same week the case study cleared review, so the proof and the
+        reason to use it landed together.</figcaption>
     </figure>
   </div>
 
