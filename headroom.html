@@ -12,7 +12,7 @@
 <meta property="og:type" content="website">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700&family=Archivo+Narrow:wght@500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700&family=Archivo+Narrow:wght@500;600;700&family=Overpass+Mono:wght@400;500;600;700&display=swap">
 <style>
 /* ── tokens ──────────────────────────────────────────────────────────────── */
 :root{
@@ -28,7 +28,9 @@
   --focus:#0E5C63;
   --display:'Archivo Narrow','Archivo',Helvetica,Arial,sans-serif;
   --sans:'Archivo',-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif;
-  --mono:'JetBrains Mono',ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
+  /* Overpass Mono descends from Highway Gothic, the FHWA road-sign lettering, so the
+     figures carry an infrastructure lineage rather than a code-editor one. */
+  --mono:'Overpass Mono',ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
   --rail:336px;
 }
 @media (prefers-color-scheme:dark){
@@ -152,8 +154,8 @@ details.grp[open]>summary:after{content:"\2013"}
 .stat:last-child{border-right:0}
 @media (max-width:620px){.stat{border-right:0;border-bottom:1px solid var(--hair);padding-right:0}
   .stat:last-child{border-bottom:0}}
-.stat b{display:block;font:600 clamp(30px,3.9vw,40px)/1 var(--display);color:var(--ink);
-  letter-spacing:-.02em;font-variant-numeric:tabular-nums}
+.stat b{display:block;font:600 clamp(28px,3.6vw,37px)/1 var(--mono);color:var(--ink);
+  letter-spacing:-.03em;font-variant-numeric:tabular-nums}
 .stat .k{display:block;font:500 10.5px/1 var(--mono);letter-spacing:.13em;text-transform:uppercase;
   color:var(--faint);margin-bottom:12px}
 .stat .d{display:block;font-size:12.5px;color:var(--muted);margin-top:9px;line-height:1.45;max-width:26ch}
