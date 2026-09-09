@@ -253,6 +253,8 @@ h1{font:600 clamp(36px,5.4vw,53px)/1.06 var(--display);letter-spacing:-.026em;ma
 .proj-note{border-left:2px solid var(--warm);padding-left:14px;color:var(--muted);
   font-size:15px;max-width:var(--measure)}
 .proj-src{margin:14px 0 0;font:400 12px/1.5 var(--sans);color:var(--muted);max-width:var(--measure)}
+.proj-fig{margin:20px 0 4px;padding:0}
+.proj-fig svg{width:100%;height:auto;display:block;overflow:visible}
 .demo{margin:22px 0}
 /* Live, not a screenshot behind a button. The screenshot was 938px wide and soft on
    any retina display, and once opened there was no way back. */
@@ -325,6 +327,14 @@ h1{font:600 clamp(36px,5.4vw,53px)/1.06 var(--display);letter-spacing:-.026em;ma
 .job li{position:relative;padding-left:17px;margin-bottom:10px;max-width:var(--measure);font-size:15.5px}
 .job li:before{content:"";position:absolute;left:0;top:10px;width:6px;height:1px;background:var(--line)}
 .job li b{color:var(--ink);font-weight:600}
+.job-more{margin-top:4px}
+.job-more>summary{list-style:none;cursor:pointer;font:500 11px/1 var(--mono);
+  letter-spacing:.09em;text-transform:uppercase;color:var(--co);padding:6px 0}
+.job-more>summary::-webkit-details-marker{display:none}
+.job-more>summary:hover{opacity:.7}
+.job-more:not([open])>summary:after{content:" +"}
+.job-more[open]>summary:after{content:" \2013"}
+.job-more ul{margin-top:8px}
 .job li .n{color:var(--co);font-weight:600;white-space:nowrap}
 .subrole{font:500 12.5px/1 var(--mono);color:var(--co);margin:20px 0 10px;
   letter-spacing:.03em;text-transform:uppercase;padding-left:11px;border-left:2px solid var(--hair)}
@@ -508,11 +518,34 @@ footer{padding:26px 0 44px;border-top:1px solid var(--hair);
     <p>Applying to more things faster is what caused this, so Career Ops does the opposite.
        It does not write or submit anything. It cuts down how many roles are worth your time.</p>
 
-    <p>It watches 87 job boards and surfaces only what fits a written profile. Fit is pass
-       or fail: you clear the bar for a role or you do not. Among the ones you clear it
-       ranks by how recently each was posted, because a req with 300 applicants gets read
-       in arrival order. Pay band, employee sentiment and your history with that company
-       are attached before you open a posting, and status comes from your mail, not from you.</p>
+    <figure class="proj-fig">
+      <svg viewBox="0 0 620 168" role="img" aria-label="87 job boards feed a pass-or-fail fit gate; whatever clears is banded by how recently it was posted, freshest first, and each row arrives with pay band, employee sentiment and your history with that company attached.">
+        <text class="d-mono" x="0" y="12">HOW A ROLE REACHES THE LIST</text>
+        <rect x="0" y="26" width="132" height="46" rx="3" fill="var(--accent)" opacity=".1"/>
+        <rect x="0" y="26" width="3" height="46" rx="2" fill="var(--accent)"/>
+        <text class="d-lab" x="14" y="46">87 job boards</text>
+        <text class="d-mut" x="14" y="63">ATS APIs and feeds</text>
+        <path class="d-arrow" d="M138 47 l8 4 -8 4z"/>
+        <rect x="154" y="26" width="150" height="46" rx="3" fill="var(--warm)" opacity=".12"/>
+        <rect x="154" y="26" width="3" height="46" rx="2" fill="var(--warm)"/>
+        <text class="d-lab" x="168" y="46">Fit: pass or fail</text>
+        <text class="d-mut" x="168" y="63">a gate, never a dial</text>
+        <path class="d-arrow" d="M310 47 l8 4 -8 4z"/>
+        <rect x="326" y="26" width="150" height="46" rx="3" fill="var(--plum)" opacity=".12"/>
+        <rect x="326" y="26" width="3" height="46" rx="2" fill="var(--plum)"/>
+        <text class="d-lab" x="340" y="46">Banded by age</text>
+        <text class="d-mut" x="340" y="63">freshest band first</text>
+        <path class="d-arrow" d="M482 47 l8 4 -8 4z"/>
+        <rect x="498" y="26" width="122" height="46" rx="3" fill="var(--accent)" opacity=".1"/>
+        <rect x="498" y="26" width="3" height="46" rx="2" fill="var(--accent)"/>
+        <text class="d-lab" x="512" y="46">Do next</text>
+        <text class="d-mut" x="512" y="63">what to open</text>
+        <text class="d-mut" x="0" y="100">Each row arrives with pay band, employee sentiment and your history with that</text>
+        <text class="d-mut" x="0" y="117">company already attached. Status comes from your mail, never from you.</text>
+        <line x1="0" y1="136" x2="620" y2="136" stroke="var(--line)"/>
+        <text class="d-mut" x="0" y="158">A req with 300 applicants is read in arrival order, so week one beats a better score in week six.</text>
+      </svg>
+    </figure>
 
     <p class="proj-note">It does not fix the real problem, and nothing on the candidate's side
        can: the bottleneck is how many humans can read. The hard bugs were all the same, software
@@ -602,12 +635,15 @@ footer{padding:26px 0 44px;border-top:1px solid var(--hair);
             reporting went from <span class="n">roughly half to complete</span> inside two weeks,
             which gave workforce management what it needed to convert initiatives into FTE
             impact, and closed planning cycles materially faster year over year.</li>
-        <li><b>Structural cost takeout.</b> Automated legacy manual outreach into warm inbound
-            routing, cutting labor by <span class="n">about two thirds</span> per case and surfacing several
-            million dollars of uncommitted opportunity.</li>
+        
         <li><b>Executive governance.</b> Authored the OKR and goal-setting architecture presented
             to the COO that moved the company from managing activity to managing outcomes, adopted into the following year’s operating plan.</li>
       </ul>
+      <details class="job-more"><summary>More from this role</summary>
+        <ul><li><b>Structural cost takeout.</b> Automated legacy manual outreach into warm inbound
+            routing, cutting labor by <span class="n">about two thirds</span> per case and surfacing several
+            million dollars of uncommitted opportunity.</li></ul>
+      </details>
     </div>
   </article>
 
@@ -641,9 +677,7 @@ footer{padding:26px 0 44px;border-top:1px solid var(--hair);
             <span class="n">nine figures</span> in incremental annual revenue.</li>
         <li><b>Quota.</b> <span class="n">234%</span> of H1 2025 sales quota at 92% client satisfaction; top regional
             performer.</li>
-        <li><b>Industry platform.</b> Google's selected speaker at a co-branded LiveRamp
-            executive summit in New York, briefing 20+ agency buyers on app addressability
-            and identity.</li>
+        
       </ul>
 
       <div class="subrole">Program Manager, Sellside Partnerships · Jan 2022 – Jul 2024</div>
@@ -651,12 +685,17 @@ footer{padding:26px 0 44px;border-top:1px solid var(--hair);
         <li><b>Business operations.</b> Ran annual planning, budget and execution governance for
             the $B Americas Sellside Partnerships business across 7 vertical teams, 20+ sub-teams
             and <span class="n">200+ stakeholders</span>.</li>
-        <li><b>Operational excellence.</b> Led the regional OpEx program, improving ARR per FTE
-            across the 200-person Americas organization by more than <span class="n">20% year over year</span> for three
-            years.</li>
+        
         <li><b>Execution governance.</b> Governed <span class="n">56 initiatives</span> across 4 core product areas
             through weekly cross-functional forums and VP QBRs.</li>
       </ul>
+      <details class="job-more"><summary>More from this role</summary>
+        <ul><li><b>Industry platform.</b> Google's selected speaker at a co-branded LiveRamp
+            executive summit in New York, briefing 20+ agency buyers on app addressability
+            and identity.</li><li><b>Operational excellence.</b> Led the regional OpEx program, improving ARR per FTE
+            across the 200-person Americas organization by more than <span class="n">20% year over year</span> for three
+            years.</li></ul>
+      </details>
     </div>
   </article>
 
