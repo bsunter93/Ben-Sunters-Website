@@ -559,11 +559,10 @@ footer{padding:26px 0 44px;border-top:1px solid var(--hair);
           <span class="proj-when">Shipped 2024</span>
         </div>
       </div>
-      <p>An AI reflection and journaling app I designed, built, shipped and monetised on my
-         own. The ad revenue runs through Meta Audience Network, so the SDK integration, the
-         fill rates and the revenue reporting were all mine. At Google I advised publishers
-         on that work; this is the one time I have been on their side of it. Still live,
-         still earning.</p>
+      <p>A small AI journaling app I built and shipped on my own. The ads run through Meta
+         Audience Network, so I did the SDK integration and read the fill rates and revenue
+         reports myself. Tiny next to the publishers I worked with at Google, but I had been
+         advising them on exactly this, and it helps to have done it once from their side.</p>
       <a class="playlink" href="https://play.google.com/store/apps/details?id=com.mirrorapp.reflection"
          rel="noopener">View on Google Play &rarr;</a>
     </div>
@@ -939,7 +938,7 @@ footer{padding:26px 0 44px;border-top:1px solid var(--hair);
       </div>
     </div>
     <div class="card">
-      <form class="subscribe" id="subscribe" method="post" target="bd-subscribe"
+      <form class="subscribe" id="subscribe" method="post" target="_blank"
             action="https://buttondown.com/api/emails/embed-subscribe/bensunter">
         <label for="sub-email">Occasional writing on operations, and what I am building.</label>
         <div class="subrow">
@@ -986,20 +985,37 @@ document.getElementById('yr').textContent = new Date().getFullYear();
   });
 })();
 
-// Email capture. ENDPOINT is empty until a provider is chosen, and until then the form
-// hands off to a pre-filled mail client rather than silently swallowing addresses.
-// Set it to a Buttondown / Formspree / ConvertKit POST URL and it submits directly.
-// Buttondown. The form action and target are in the markup, so with JavaScript off it
-// still posts and Buttondown's own confirmation page loads in a new tab. This only names
-// the window first, so the response lands in a popup instead of navigating away.
+// Buttondown. Their endpoint sends access-control-allow-origin:*, so the subscribe is
+// posted from here and answered in place. The previous version opened a named popup and
+// pointed it at the newsletter's landing page, and the form then posted into that same
+// named target, so the GET and the POST raced and the visitor was shown the landing page
+// rather than a confirmation. Action and method stay in the markup, so with JavaScript off
+// the form still posts and the reply opens in a new tab.
 (function(){
-  const f = document.getElementById('subscribe'), note = document.getElementById('subnote');
+  const f = document.getElementById('subscribe');
   if (!f) return;
-  f.addEventListener('submit', () => {
-    window.open('https://buttondown.com/bensunter', 'bd-subscribe',
-                'width=560,height=640,noopener');
-    note.hidden = false;
-    note.textContent = 'Confirm in the window that just opened.';
+  const note  = document.getElementById('subnote'),
+        input = f.querySelector('input'),
+        btn   = f.querySelector('button[type=submit]');
+  const say = msg => { note.hidden = false; note.textContent = msg; };
+  f.addEventListener('submit', async e => {
+    e.preventDefault();
+    const email = input.value.trim();
+    if (!email) return;
+    btn.disabled = true;
+    say('Sending\u2026');
+    try {
+      const r = await fetch(f.action, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+        body: new URLSearchParams({ email })
+      });
+      if (r.ok) { input.value = ''; say('Thanks. Check your inbox to confirm.'); }
+      else      { say('That did not go through. Try again, or just email me.'); }
+    } catch (err) {
+      say('That did not go through. Try again, or just email me.');
+    }
+    btn.disabled = false;
   });
 })();
 
