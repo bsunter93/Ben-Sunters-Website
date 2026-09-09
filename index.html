@@ -321,6 +321,10 @@ h1{font:600 clamp(36px,5.4vw,53px)/1.06 var(--display);letter-spacing:-.026em;ma
 .subrole{font:500 12.5px/1 var(--mono);color:var(--co);margin:20px 0 10px;
   letter-spacing:.03em;text-transform:uppercase;padding-left:11px;border-left:2px solid var(--hair)}
 .job--ih{--co:var(--accent)} .job--goog{--co:var(--warm)} .job--acn{--co:var(--plum)}
+/* Not an employer, so it carries a neutral rail and no metric strip. */
+.job--edu{--co:var(--muted)}
+.job--edu .org{margin-bottom:8px}
+.edu-certs{margin:0;font-size:14.5px;color:var(--muted);max-width:var(--measure)}
 
 
 /* Real marks, on a plate. A logo has its own ground and its own colours, and several
@@ -330,20 +334,6 @@ h1{font:600 clamp(36px,5.4vw,53px)/1.06 var(--display);letter-spacing:-.026em;ma
   background:#fff;border:1px solid var(--line);border-radius:2px;
   padding:7px 10px;margin-bottom:12px;height:36px}
 .joblogo img,.joblogo svg{height:21px;width:auto;display:block}
-.creds{display:flex;gap:14px;align-items:flex-start;margin-bottom:14px}
-.creds .joblogo{margin-bottom:0;flex:none;padding:6px;height:44px;width:44px}
-.creds .joblogo img{height:30px}
-.creds div{font-size:14.5px}
-.creds b{display:block;color:var(--ink);font-weight:600}
-.creds span{color:var(--muted);font-size:13.5px}
-.creds-row{display:flex;align-items:center;gap:24px;flex-wrap:wrap;
-  margin-top:30px;padding-top:22px;border-top:1px solid var(--hair)}
-.creds-row .creds{margin-bottom:0}
-/* Grouped left against a rule. Pushed apart with space-between it read as a row
-   with something deleted out of the middle. */
-.creds-more{margin:0;padding-left:24px;border-left:1px solid var(--line);
-  font:400 13px/1.5 var(--sans);color:var(--muted);max-width:44ch}
-@media (max-width:620px){.creds-more{padding-left:0;border-left:0}}
 .certs{margin:0;padding:0;list-style:none}
 .certs li{font-size:14.5px;padding:5px 0;color:var(--body);
   position:relative;padding-left:15px}
@@ -698,18 +688,17 @@ footer{padding:26px 0 44px;border-top:1px solid var(--hair);
             reports across 24 domain teams and a dozen vendors.</li>
       </ul>
     </div>
-  </article>
-  </div>
+    </article>
 
-  <div class="creds-row">
-    <div class="creds">
-      <span class="joblogo"><img src="uf-logo.png" alt="University of Florida" width="30" height="30" loading="lazy"></span>
-      <div>
-        <b>B.S. Industrial &amp; Systems Engineering</b>
-        <span>University of Florida, 2016</span>
-      </div>
+  <article class="job job--edu">
+    <div class="when">2016<br>Gainesville, FL</div>
+    <div>
+      <div class="joblogo"><img src="uf-logo.png" alt="University of Florida" width="21" height="21" loading="lazy"></div>
+      <h3>B.S. Industrial &amp; Systems Engineering</h3>
+      <div class="org">University of Florida</div>
+      <p class="edu-certs">Lean Six Sigma Green Belt &middot; Google Project Management Certificate</p>
     </div>
-    <p class="creds-more">Lean Six Sigma Green Belt &middot; Google Project Management Certificate</p>
+  </article>
   </div>
 </section>
 
