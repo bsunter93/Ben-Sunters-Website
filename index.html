@@ -336,10 +336,14 @@ h1{font:600 clamp(36px,5.4vw,53px)/1.06 var(--display);letter-spacing:-.026em;ma
 .creds div{font-size:14.5px}
 .creds b{display:block;color:var(--ink);font-weight:600}
 .creds span{color:var(--muted);font-size:13.5px}
-.creds-row{display:flex;align-items:center;justify-content:space-between;gap:22px;flex-wrap:wrap;
+.creds-row{display:flex;align-items:center;gap:24px;flex-wrap:wrap;
   margin-top:30px;padding-top:22px;border-top:1px solid var(--hair)}
 .creds-row .creds{margin-bottom:0}
-.creds-more{margin:0;font:400 13px/1.5 var(--sans);color:var(--muted)}
+/* Grouped left against a rule. Pushed apart with space-between it read as a row
+   with something deleted out of the middle. */
+.creds-more{margin:0;padding-left:24px;border-left:1px solid var(--line);
+  font:400 13px/1.5 var(--sans);color:var(--muted);max-width:44ch}
+@media (max-width:620px){.creds-more{padding-left:0;border-left:0}}
 .certs{margin:0;padding:0;list-style:none}
 .certs li{font-size:14.5px;padding:5px 0;color:var(--body);
   position:relative;padding-left:15px}
@@ -711,8 +715,9 @@ footer{padding:26px 0 44px;border-top:1px solid var(--hair);
 
 <section id="writing" class="wrap">
   <span class="eyebrow">Case studies</span>
-  <h2>How the work actually went</h2>
-  <p class="lede">Three systems, what was actually wrong before them, and what changed.</p>
+  <h2>How I think through a problem</h2>
+  <p class="lede">Three problems I owned: what was actually in the way, how I worked the
+     constraints, and where I got it wrong.</p>
 
   <article class="study">
     <div class="st-head">
