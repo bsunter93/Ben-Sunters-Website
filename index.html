@@ -932,7 +932,8 @@ footer{padding:26px 0 44px;border-top:1px solid var(--hair);
       </div>
     </div>
     <div class="card">
-      <form class="subscribe" id="subscribe" method="post" action="">
+      <form class="subscribe" id="subscribe" method="post" target="bd-subscribe"
+            action="https://buttondown.com/api/emails/embed-subscribe/bensunter">
         <label for="sub-email">Occasional writing on operations, and what I am building.</label>
         <div class="subrow">
           <input id="sub-email" name="email" type="email" required autocomplete="email"
@@ -981,20 +982,17 @@ document.getElementById('yr').textContent = new Date().getFullYear();
 // Email capture. ENDPOINT is empty until a provider is chosen, and until then the form
 // hands off to a pre-filled mail client rather than silently swallowing addresses.
 // Set it to a Buttondown / Formspree / ConvertKit POST URL and it submits directly.
-const SUBSCRIBE_ENDPOINT = "";
+// Buttondown. The form action and target are in the markup, so with JavaScript off it
+// still posts and Buttondown's own confirmation page loads in a new tab. This only names
+// the window first, so the response lands in a popup instead of navigating away.
 (function(){
   const f = document.getElementById('subscribe'), note = document.getElementById('subnote');
   if (!f) return;
-  if (SUBSCRIBE_ENDPOINT) f.action = SUBSCRIBE_ENDPOINT;
-  f.addEventListener('submit', e => {
-    if (SUBSCRIBE_ENDPOINT) return;                     // let the provider handle it
-    e.preventDefault();
-    const email = f.querySelector('input').value.trim();
-    if (!email) return;
+  f.addEventListener('submit', () => {
+    window.open('https://buttondown.com/bensunter', 'bd-subscribe',
+                'width=560,height=640,noopener');
     note.hidden = false;
-    note.textContent = 'Opening your mail app to confirm.';
-    location.href = 'mailto:sunterbb@gmail.com?subject=' + encodeURIComponent('Subscribe')
-      + '&body=' + encodeURIComponent('Please add ' + email + ' to your list.');
+    note.textContent = 'Confirm in the window that just opened.';
   });
 })();
 
