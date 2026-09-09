@@ -380,14 +380,22 @@ tr.hi td{background:var(--accent-soft);color:var(--ink)}
          cost-minimising plan covers demand <code>r / (r + 1)</code> of the time. At 3&times;
          that is the 75th percentile, not the 50th. Treating the forecast as the target
          quietly chooses a coin flip, and prices the two sides of it as though they matched.</p>
-      <p>Demand is taken as normal around your forecast, with the standard deviation set by
-         the error you entered. Expected shortfall and overage come from the standard normal
-         loss function, so the curve is exact rather than simulated.</p>
-      <p>Where it will mislead you: it is a single month in steady state, so a sharp ramp or
-         a seasonal peak needs its own run. It assumes your people are interchangeable, which
-         they are not once skills are specialised. And the short-versus-over ratio is a
-         judgement call carrying most of the weight, which is exactly why it sits in the
-         sensitivity list rather than buried in the method.</p>
+      <p>This does not assume demand is random. It assumes your forecast is good and misses
+         anyway, which is a different claim. Whatever you built the forecast from, history,
+         seasonality, market signal, third-party data, some error is left over, and that
+         leftover is what the error field describes. Build a better forecast and it shrinks,
+         and so does the buffer this recommends. Set it to zero and the model tells you to
+         staff to the forecast, which is the right answer for a forecast that never misses.</p>
+      <p>That residual is treated as normal around the forecast, and expected shortfall and
+         overage come from the standard normal loss function, so the curve is exact rather
+         than simulated.</p>
+      <p>Where it will mislead you: forecast error in operations is often skewed rather than
+         symmetric, because surges run further above plan than lulls run below it, and a
+         normal residual will understate the upside tail. It is a single month in steady
+         state, so a sharp ramp or a seasonal peak needs its own run. It assumes your people
+         are interchangeable, which they stop being once skills specialise. And the
+         short-versus-over ratio is a judgement call carrying most of the weight, which is
+         why it sits at the top of the sensitivity list rather than buried down here.</p>
       <p class="give">Take it. One file, no build step, no dependencies, no analytics, nothing
          sent anywhere. Save the page and it works offline. Change the numbers, copy the link,
          and the model travels with it.</p>
