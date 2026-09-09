@@ -127,6 +127,16 @@ h1{font:600 clamp(30px,4.4vw,44px)/1.08 var(--display);letter-spacing:-.022em}
 .suffixed{display:flex;align-items:center;gap:6px}
 .suffixed .sfx{font:400 12px/1 var(--mono);color:var(--faint);width:26px}
 /* min / hr toggle */
+/* Two inputs nobody knows off-hand, asked as a question anyone can answer. The mapped
+   figure is printed in every option, because a tool that hides the number it is using is
+   the thing this model exists to argue against. */
+.fc{margin-bottom:13px}
+.fc>label{display:block;font-size:13.5px;color:var(--body);line-height:1.35;margin-bottom:6px}
+.fc select{width:100%;font:400 13px/1.3 var(--sans);color:var(--ink);background:var(--sunk);
+  border:1px solid var(--line);border-radius:2px;padding:8px 9px}
+.fc select:focus{border-color:var(--focus);background:var(--surface)}
+.fc .exact{margin-top:7px}
+.approx{margin:-4px 0 13px;font:400 11.5px/1.45 var(--sans);color:var(--faint)}
 .seg{display:flex;border:1px solid var(--line);border-radius:2px;overflow:hidden}
 .seg button{font:500 11px/1 var(--mono);color:var(--muted);background:var(--sunk);border:0;
   padding:7px 8px;cursor:pointer}
@@ -290,14 +300,30 @@ tr.hi td{background:var(--accent-soft);color:var(--ink)}
           </span>
         </span>
       </div>
-      <div class="f">
-        <label for="i-err">Forecast error<span class="hint">Typical miss vs plan, plus or minus</span></label>
-        <span class="suffixed"><input type="number" id="i-err" min="0" max="90" step="1" value="18"><span class="sfx">%</span></span>
+      <div class="fc">
+        <label for="p-err">How wrong is the forecast, usually?</label>
+        <select id="p-err">
+          <option value="10">Tight. We land close. (&plusmn;10%)</option>
+          <option value="20">Typical. We miss by a bit. (&plusmn;20%)</option>
+          <option value="35">Lumpy. Demand swings a lot. (&plusmn;35%)</option>
+          <option value="">I know the number&hellip;</option>
+        </select>
+        <span class="suffixed exact" id="x-err" hidden>
+          <input type="number" id="i-err" min="0" max="90" step="1" value="18"><span class="sfx">%</span></span>
       </div>
-      <div class="f">
-        <label for="i-ratio">Short vs over<span class="hint" id="h-ratio">Being one person short costs this many times what being one person over costs</span></label>
-        <span class="suffixed"><input type="number" id="i-ratio" min="1" max="20" step="0.5" value="4"><span class="sfx">&times;</span></span>
+      <div class="fc">
+        <label for="p-ratio">When you are short, what happens?</label>
+        <select id="p-ratio">
+          <option value="1.5">The work just waits. We catch up. (1.5&times;)</option>
+          <option value="3">Backlog builds and people work over. (3&times;)</option>
+          <option value="5">We miss commitments and lose customers. (5&times;)</option>
+          <option value="">I know the number&hellip;</option>
+        </select>
+        <span class="suffixed exact" id="x-ratio" hidden>
+          <input type="number" id="i-ratio" min="1" max="20" step="0.5" value="4"><span class="sfx">&times;</span></span>
       </div>
+      <p class="approx">Both of these set an approximate figure, and the answer moves with them.
+         Pick "I know the number" if you have measured your own.</p>
     </div>
 
     <details class="grp">
@@ -494,10 +520,10 @@ function loss(k){return pdf(k)-k*(1-cdf(k));} // E[(X-k)+] for standard normal
 
 /* ── state ─────────────────────────────────────────────────────────────── */
 var PRESETS={
-  ops:{n:'Service operations',unit:'requests',volume:4200,err:18,handle:45,hu:'min',hours:173,shrink:28,occ:82,cost:95000,ratio:4,attr:18,hire:45,ramp:60},
-  support:{n:'Support desk',unit:'tickets',volume:22000,err:15,handle:12,hu:'min',hours:173,shrink:32,occ:85,cost:78000,ratio:3,attr:34,hire:30,ramp:45},
-  claims:{n:'Claims and back office',unit:'claims',volume:12000,err:10,handle:22,hu:'min',hours:173,shrink:24,occ:88,cost:72000,ratio:2,attr:20,hire:35,ramp:50},
-  services:{n:'Professional services',unit:'engagements',volume:40,err:25,handle:60,hu:'hr',hours:173,shrink:18,occ:75,cost:165000,ratio:2,attr:16,hire:60,ramp:75}
+  ops:{n:'Service operations',unit:'requests',volume:4200,err:20,handle:45,hu:'min',hours:173,shrink:28,occ:82,cost:95000,ratio:3,attr:18,hire:45,ramp:60},
+  support:{n:'Support desk',unit:'tickets',volume:22000,err:10,handle:12,hu:'min',hours:173,shrink:32,occ:85,cost:78000,ratio:3,attr:34,hire:30,ramp:45},
+  claims:{n:'Claims and back office',unit:'claims',volume:12000,err:10,handle:22,hu:'min',hours:173,shrink:24,occ:88,cost:72000,ratio:1.5,attr:20,hire:35,ramp:50},
+  services:{n:'Professional services',unit:'engagements',volume:40,err:35,handle:60,hu:'hr',hours:173,shrink:18,occ:75,cost:165000,ratio:1.5,attr:16,hire:60,ramp:75}
 };
 var KEYS=['unit','volume','err','handle','hu','hours','shrink','occ','cost','ratio','attr','hire','ramp'];
 var S=Object.assign({},PRESETS.ops); delete S.n;
@@ -763,10 +789,28 @@ function writeForm(){
   ['volume','err','handle','hours','shrink','occ','cost','ratio','attr','hire','ramp'].forEach(function(k){
     F[k].value=S[k];
   });
-  $('u-min').setAttribute('aria-pressed',String(S.hu==='min'));
+    $('u-min').setAttribute('aria-pressed',String(S.hu==='min'));
   $('u-hr').setAttribute('aria-pressed',String(S.hu==='hr'));
+  if(PICK) PICK.forEach(syncPicker);
 }
 Object.keys(F).forEach(function(k){F[k].addEventListener('input',readForm);});
+
+/* Plain-language pickers for the two inputs nobody knows off-hand. They set the numeric
+   field rather than replacing it, so everything downstream, including the shareable URL,
+   is unchanged. Choosing "I know the number" reveals the field itself. */
+var PICK=[{sel:'p-err',inp:'i-err',ex:'x-err'},{sel:'p-ratio',inp:'i-ratio',ex:'x-ratio'}];
+function syncPicker(pk){
+  var sel=$(pk.sel), v=parseFloat(F[pk.inp==='i-err'?'err':'ratio'].value);
+  var hit=[].slice.call(sel.options).filter(function(o){return o.value!=='' && parseFloat(o.value)===v;});
+  sel.value = hit.length ? hit[0].value : '';
+  $(pk.ex).hidden = !!hit.length;
+}
+PICK.forEach(function(pk){
+  $(pk.sel).addEventListener('change',function(){
+    if(this.value===''){ $(pk.ex).hidden=false; $(pk.inp).focus(); return; }
+    $(pk.ex).hidden=true; $(pk.inp).value=this.value; readForm();
+  });
+});
 $('u-min').addEventListener('click',function(){if(S.hu==='min')return;S.hu='min';S.handle=Math.round(S.handle*60*10)/10;writeForm();render();});
 $('u-hr').addEventListener('click',function(){if(S.hu==='hr')return;S.hu='hr';S.handle=Math.round(S.handle/60*100)/100;writeForm();render();});
 
