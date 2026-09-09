@@ -12,27 +12,31 @@
 <meta property="og:type" content="website">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600&family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700&family=Archivo+Narrow:wght@500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap">
 <style>
 /* ── tokens ──────────────────────────────────────────────────────────────── */
 :root{
-  --paper:#FAF9F7; --surface:#FFFFFF; --sunk:#F2F4F3;
-  --ink:#14171C; --body:#33383F; --muted:#5B6068; --faint:#868C94;
-  --line:#E1E4E2; --hair:#EDEFEE;
+  /* Drafting paper, not a product surface: buff ground, faint blue rule, a sheet on top.
+     Engineering graph paper is why the grid reads blue rather than grey. */
+  --paper:#F7F4ED; --surface:#FCFAF6; --sunk:#F1EDE3;
+  --grid:#AEC3D2; --grid-soft:#D2DEE7;
+  --ink:#16181B; --body:#33383F; --muted:#5B6068; --faint:#8A8F96;
+  --line:#D6CFC1; --hair:#E6E0D4;
   --accent:#0E5C63; --accent-soft:#0E5C6314; --on-accent:#FFFFFF;
   --over:#00779B;  --over-fill:#00779B24;
   --short:#9A5A06; --short-fill:#9A5A0626;
   --focus:#0E5C63;
-  --display:'Fraunces',Georgia,'Times New Roman',serif;
-  --sans:'IBM Plex Sans',-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif;
-  --mono:'IBM Plex Mono',ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
+  --display:'Archivo Narrow','Archivo',Helvetica,Arial,sans-serif;
+  --sans:'Archivo',-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif;
+  --mono:'JetBrains Mono',ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
   --rail:336px;
 }
 @media (prefers-color-scheme:dark){
   :root:not([data-theme="light"]){
-    --paper:#101317; --surface:#171B20; --sunk:#141A1D;
+    --paper:#101317; --surface:#161A1F; --sunk:#131A1E;
+    --grid:#2B3F4B; --grid-soft:#1E2A32;
     --ink:#E9E7E2; --body:#C3C6CB; --muted:#8B9098; --faint:#767C84;
-    --line:#252A31; --hair:#1C2126;
+    --line:#2A2F36; --hair:#1C2126;
     --accent:#4FB3AE; --accent-soft:#4FB3AE1A; --on-accent:#0B1013;
     --over:#1093B8;  --over-fill:#1093B830;
     --short:#C08438; --short-fill:#C0843830;
@@ -40,9 +44,10 @@
   }
 }
 :root[data-theme="dark"]{
-  --paper:#101317; --surface:#171B20; --sunk:#141A1D;
+  --paper:#101317; --surface:#161A1F; --sunk:#131A1E;
+  --grid:#2B3F4B; --grid-soft:#1E2A32;
   --ink:#E9E7E2; --body:#C3C6CB; --muted:#8B9098; --faint:#767C84;
-  --line:#252A31; --hair:#1C2126;
+  --line:#2A2F36; --hair:#1C2126;
   --accent:#4FB3AE; --accent-soft:#4FB3AE1A; --on-accent:#0B1013;
   --over:#1093B8;  --over-fill:#1093B830;
   --short:#C08438; --short-fill:#C0843830;
@@ -52,8 +57,16 @@
 /* ── base ────────────────────────────────────────────────────────────────── */
 *{box-sizing:border-box}
 html{-webkit-text-size-adjust:100%}
-body{margin:0;background:var(--paper);color:var(--body);
-  font:400 15px/1.6 var(--sans);-webkit-font-smoothing:antialiased}
+/* The ground is ruled paper: 96px major over 24px minor, the way engineering paper is
+   ruled. Background-image only, so it costs nothing and prints as a flat sheet. */
+body{margin:0;color:var(--body);font:400 15px/1.6 var(--sans);-webkit-font-smoothing:antialiased;
+  background-color:var(--paper);
+  background-image:
+    linear-gradient(var(--grid) 1px,transparent 1px),
+    linear-gradient(90deg,var(--grid) 1px,transparent 1px),
+    linear-gradient(var(--grid-soft) 1px,transparent 1px),
+    linear-gradient(90deg,var(--grid-soft) 1px,transparent 1px);
+  background-size:96px 96px,96px 96px,24px 24px,24px 24px}
 h1,h2,h3{margin:0;color:var(--ink)}
 :focus-visible{outline:2px solid var(--focus);outline-offset:2px;border-radius:2px}
 @media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
@@ -169,6 +182,7 @@ svg.chart{width:100%;min-width:420px;height:auto;display:block;touch-action:pan-
 .tk{font:400 11px var(--mono);fill:var(--faint)}
 .axt{font:500 10px var(--mono);letter-spacing:.11em;fill:var(--faint);text-transform:uppercase}
 .mk{font:500 11px var(--mono);fill:var(--ink)}
+.dim{font:600 10.5px var(--mono);fill:var(--muted);letter-spacing:.04em}
 .tip{position:absolute;pointer-events:none;opacity:0;transition:opacity .1s;
   background:var(--surface);border:1px solid var(--line);border-radius:3px;padding:9px 11px;
   font:400 12px/1.5 var(--sans);color:var(--body);box-shadow:0 4px 14px rgba(0,0,0,.09);
@@ -208,8 +222,23 @@ tr.hi td{background:var(--accent-soft);color:var(--ink)}
 .method code{font:400 12.5px var(--mono);color:var(--accent);background:var(--accent-soft);
   padding:2px 5px;border-radius:2px}
 .give{border-left:2px solid var(--short);padding-left:15px;color:var(--muted);font-size:14.5px}
+/* An engineering drawing signs itself in a ruled block, not a byline. Same information
+   a footer would carry, in the form the discipline uses. */
 .foot{max-width:1240px;margin:0 auto;padding:0 clamp(16px,3vw,28px) 60px;
   font-size:12.5px;color:var(--faint)}
+.tblock{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:0;
+  border:1px solid var(--line);background:var(--surface);margin:0 0 14px}
+.tblock>div{padding:9px 12px;border-right:1px solid var(--hair);border-bottom:1px solid var(--hair)}
+.tblock>div:nth-child(3n){border-right:0}
+.tblock>div:nth-child(n+4){border-bottom:0}
+.tblock dt{font:600 9.5px/1 var(--mono);letter-spacing:.16em;text-transform:uppercase;
+  color:var(--faint);margin:0 0 5px}
+.tblock dd{margin:0;font:500 13px/1.3 var(--display);letter-spacing:.01em;color:var(--ink)}
+@media (max-width:620px){.tblock{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .tblock>div:nth-child(3n){border-right:1px solid var(--hair)}
+  .tblock>div:nth-child(2n){border-right:0}
+  .tblock>div:nth-child(n+4){border-bottom:1px solid var(--hair)}
+  .tblock>div:nth-last-child(-n+2){border-bottom:0}}
 .foot a{color:var(--muted)}
 .sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
 </style>
@@ -404,8 +433,16 @@ tr.hi td{background:var(--accent-soft);color:var(--ink)}
 </main>
 
 <footer class="foot">
-  <p>Built by <a href="/">Ben Sunter</a>. MIT licensed, use it however you like.
-     <span id="src"></span></p>
+  <div class="tblock">
+    <div><dt>Model</dt><dd>Staffing headroom</dd></div>
+    <div><dt>Method</dt><dd>Newsvendor &middot; Edgeworth, 1888</dd></div>
+    <div><dt>Units</dt><dd>FTE, per month</dd></div>
+    <div><dt>Drawn</dt><dd>B. Sunter</dd></div>
+    <div><dt>Rev</dt><dd><span id="rev">2026.09</span></dd></div>
+    <div><dt>Sheet</dt><dd>1 of 1</dd></div>
+  </div>
+  <p>Runs entirely in your browser. MIT licensed, use it however you like.
+     <a href="/">bensunter.com</a> <span id="src"></span></p>
 </footer>
 
 <script>
@@ -616,6 +653,30 @@ function draw(r){
       (x>W-150?'end':'middle')+'" fill="'+cls+'">'+label+'</text>';
   }
 
+  /* A drawing states a distance it wants you to read with extension lines, an arrowed
+     dimension line between them, and the value sitting on it. The buffer is the whole
+     point of this chart, so it gets that treatment instead of being a gap between two
+     dashed rules that the reader has to measure by eye. */
+  function dimension(a,b){
+    if(Math.abs(b-a)<0.05) return '';
+    var x1=X(a), x2=X(b), y=T+34, ext=8, s='';
+    if(x1>x2){var t=x1;x1=x2;x2=t;}
+    s+='<line x1="'+x1.toFixed(1)+'" y1="'+(y-ext)+'" x2="'+x1.toFixed(1)+'" y2="'+(y+ext)+
+       '" stroke="var(--faint)" stroke-width="1"/>';
+    s+='<line x1="'+x2.toFixed(1)+'" y1="'+(y-ext)+'" x2="'+x2.toFixed(1)+'" y2="'+(y+ext)+
+       '" stroke="var(--faint)" stroke-width="1"/>';
+    s+='<line x1="'+x1.toFixed(1)+'" y1="'+y+'" x2="'+x2.toFixed(1)+'" y2="'+y+
+       '" stroke="var(--faint)" stroke-width="1"/>';
+    s+='<path d="M'+(x1+7).toFixed(1)+' '+(y-3.5)+'L'+x1.toFixed(1)+' '+y+'L'+(x1+7).toFixed(1)+
+       ' '+(y+3.5)+'z" fill="var(--faint)"/>';
+    s+='<path d="M'+(x2-7).toFixed(1)+' '+(y-3.5)+'L'+x2.toFixed(1)+' '+y+'L'+(x2-7).toFixed(1)+
+       ' '+(y+3.5)+'z" fill="var(--faint)"/>';
+    var mid=(x1+x2)/2, txt='+'+fte(Math.abs(b-a))+' FTE';
+    s+='<rect x="'+(mid-30)+'" y="'+(y-9)+'" width="60" height="18" fill="var(--surface)"/>';
+    s+='<text class="dim" x="'+mid.toFixed(1)+'" y="'+(y+4)+'" text-anchor="middle">'+txt+'</text>';
+    return s;
+  }
+
   svg.innerHTML=
     '<title id="chart-t">Expected monthly cost of missing the forecast at each headcount. '+
       'The curve bottoms at '+fte(r.rec)+' people, not at the '+fte(r.m)+' the forecast implies.</title>'+
@@ -628,6 +689,7 @@ function draw(r){
     g+
     marker(r.m,'forecast','var(--faint)',4)+
     marker(r.rec,'cheapest plan','var(--accent)',20)+
+    dimension(r.m,r.rec)+
     '<text class="axt" x="'+L+'" y="'+(H-8)+'">People on the team &rarr;</text>'+
     '<text class="axt" x="'+L+'" y="16">Expected waste, $ per month</text>'+
     '<rect id="hit" x="'+L+'" y="'+T+'" width="'+(W-L-R)+'" height="'+(H-T-B)+'" fill="transparent"/>';
