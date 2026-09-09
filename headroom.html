@@ -1,0 +1,772 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Staffing Headroom</title>
+<meta name="description" content="A capacity model that tells you how many people you need, how wrong that number probably is, and what the error costs in each direction.">
+<meta name="color-scheme" content="light dark">
+<link rel="icon" href="favicon.svg">
+<meta property="og:title" content="Staffing Headroom">
+<meta property="og:description" content="Staffing to the forecast is staffing to a coin flip. This shows you what the coin flip costs.">
+<meta property="og:type" content="website">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600&family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600&display=swap">
+<style>
+/* ── tokens ──────────────────────────────────────────────────────────────── */
+:root{
+  --paper:#FAF9F7; --surface:#FFFFFF; --sunk:#F2F4F3;
+  --ink:#14171C; --body:#33383F; --muted:#5B6068; --faint:#868C94;
+  --line:#E1E4E2; --hair:#EDEFEE;
+  --accent:#0E5C63; --accent-soft:#0E5C6314; --on-accent:#FFFFFF;
+  --over:#00779B;  --over-fill:#00779B24;
+  --short:#9A5A06; --short-fill:#9A5A0626;
+  --focus:#0E5C63;
+  --display:'Fraunces',Georgia,'Times New Roman',serif;
+  --sans:'IBM Plex Sans',-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif;
+  --mono:'IBM Plex Mono',ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
+  --rail:336px;
+}
+@media (prefers-color-scheme:dark){
+  :root:not([data-theme="light"]){
+    --paper:#101317; --surface:#171B20; --sunk:#141A1D;
+    --ink:#E9E7E2; --body:#C3C6CB; --muted:#8B9098; --faint:#767C84;
+    --line:#252A31; --hair:#1C2126;
+    --accent:#4FB3AE; --accent-soft:#4FB3AE1A; --on-accent:#0B1013;
+    --over:#1093B8;  --over-fill:#1093B830;
+    --short:#C08438; --short-fill:#C0843830;
+    --focus:#4FB3AE;
+  }
+}
+:root[data-theme="dark"]{
+  --paper:#101317; --surface:#171B20; --sunk:#141A1D;
+  --ink:#E9E7E2; --body:#C3C6CB; --muted:#8B9098; --faint:#767C84;
+  --line:#252A31; --hair:#1C2126;
+  --accent:#4FB3AE; --accent-soft:#4FB3AE1A; --on-accent:#0B1013;
+  --over:#1093B8;  --over-fill:#1093B830;
+  --short:#C08438; --short-fill:#C0843830;
+  --focus:#4FB3AE;
+}
+
+/* ── base ────────────────────────────────────────────────────────────────── */
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--paper);color:var(--body);
+  font:400 15px/1.6 var(--sans);-webkit-font-smoothing:antialiased}
+h1,h2,h3{margin:0;color:var(--ink)}
+:focus-visible{outline:2px solid var(--focus);outline-offset:2px;border-radius:2px}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+.num{font-family:var(--mono);font-variant-numeric:tabular-nums}
+
+/* ── masthead ────────────────────────────────────────────────────────────── */
+.top{border-bottom:1px solid var(--line);background:var(--surface)}
+.top-in{max-width:1240px;margin:0 auto;padding:16px clamp(16px,3vw,28px);
+  display:flex;align-items:center;gap:18px;flex-wrap:wrap}
+.back{font:500 12px/1 var(--mono);letter-spacing:.06em;color:var(--muted);
+  text-decoration:none;border-bottom:1px solid var(--line);padding-bottom:3px}
+.back:hover{color:var(--accent);border-color:var(--accent)}
+.top-sp{flex:1}
+.tbtn{font:500 12px/1 var(--mono);letter-spacing:.05em;color:var(--muted);background:none;
+  border:1px solid var(--line);border-radius:2px;padding:8px 11px;cursor:pointer}
+.tbtn:hover{color:var(--accent);border-color:var(--accent)}
+
+/* ── header ──────────────────────────────────────────────────────────────── */
+.head{max-width:1240px;margin:0 auto;padding:clamp(28px,4vw,44px) clamp(16px,3vw,28px) 0}
+.eyebrow{font:500 11px/1 var(--mono);letter-spacing:.14em;text-transform:uppercase;
+  color:var(--accent);display:flex;align-items:center;gap:9px;margin-bottom:16px}
+.eyebrow:before{content:"";width:22px;height:2px;background:var(--short);flex:none}
+h1{font:600 clamp(30px,4.4vw,44px)/1.08 var(--display);letter-spacing:-.022em}
+.sub{max-width:62ch;margin:14px 0 0;font-size:16.5px;color:var(--muted);text-wrap:pretty}
+
+/* preset chips */
+.presets{display:flex;gap:8px;flex-wrap:wrap;margin:26px 0 0;padding:0;list-style:none}
+.chip{font:500 12.5px/1 var(--sans);color:var(--body);background:var(--surface);
+  border:1px solid var(--line);border-radius:2px;padding:9px 13px;cursor:pointer}
+.chip:hover{border-color:var(--accent);color:var(--accent)}
+.chip[aria-pressed="true"]{background:var(--accent);border-color:var(--accent);color:var(--on-accent)}
+
+/* ── shell ───────────────────────────────────────────────────────────────── */
+.shell{max-width:1240px;margin:0 auto;padding:26px clamp(16px,3vw,28px) 72px;
+  display:grid;grid-template-columns:var(--rail) minmax(0,1fr);gap:clamp(20px,2.4vw,34px);
+  align-items:start}
+@media (max-width:940px){.shell{grid-template-columns:minmax(0,1fr)}}
+
+/* ── input rail ──────────────────────────────────────────────────────────── */
+.rail{position:sticky;top:18px;background:var(--surface);border:1px solid var(--line);
+  border-radius:3px;padding:4px 18px 18px}
+@media (max-width:940px){.rail{position:static}}
+.grp{border-top:1px solid var(--hair);padding:16px 0 4px}
+.grp:first-of-type{border-top:0}
+.grp>h2{font:500 10.5px/1 var(--mono);letter-spacing:.14em;text-transform:uppercase;
+  color:var(--faint);margin-bottom:14px}
+.f{display:grid;grid-template-columns:1fr auto;align-items:center;gap:10px;margin-bottom:13px}
+.f>label{font-size:13.5px;color:var(--body);line-height:1.35}
+.f .hint{display:block;font-size:11.5px;color:var(--faint);line-height:1.4;margin-top:2px}
+.f input[type=text],.f input[type=number]{width:106px;font:500 13.5px/1 var(--mono);
+  font-variant-numeric:tabular-nums;text-align:right;color:var(--ink);background:var(--sunk);
+  border:1px solid var(--line);border-radius:2px;padding:8px 9px}
+.f input[type=text]{text-align:left}
+.f input:focus{border-color:var(--focus);background:var(--surface)}
+.suffixed{display:flex;align-items:center;gap:6px}
+.suffixed .sfx{font:400 12px/1 var(--mono);color:var(--faint);width:26px}
+/* min / hr toggle */
+.seg{display:flex;border:1px solid var(--line);border-radius:2px;overflow:hidden}
+.seg button{font:500 11px/1 var(--mono);color:var(--muted);background:var(--sunk);border:0;
+  padding:7px 8px;cursor:pointer}
+.seg button+button{border-left:1px solid var(--line)}
+.seg button[aria-pressed="true"]{background:var(--accent);color:var(--on-accent)}
+details.grp>summary{list-style:none;cursor:pointer;font:500 10.5px/1 var(--mono);
+  letter-spacing:.14em;text-transform:uppercase;color:var(--faint);
+  display:flex;justify-content:space-between;align-items:center;padding-bottom:4px}
+details.grp>summary::-webkit-details-marker{display:none}
+details.grp>summary:hover{color:var(--accent)}
+details.grp>summary:after{content:"+";font-size:13px}
+details.grp[open]>summary{margin-bottom:14px}
+details.grp[open]>summary:after{content:"\2013"}
+.railfoot{display:flex;gap:8px;margin-top:16px;padding-top:15px;border-top:1px solid var(--hair)}
+.railfoot button{flex:1;font:500 12px/1 var(--sans);color:var(--muted);background:var(--sunk);
+  border:1px solid var(--line);border-radius:2px;padding:10px 8px;cursor:pointer}
+.railfoot button:hover{color:var(--accent);border-color:var(--accent)}
+
+/* ── answer ──────────────────────────────────────────────────────────────── */
+.answer{background:var(--surface);border:1px solid var(--line);border-radius:3px;
+  padding:clamp(20px,2.6vw,30px)}
+.ansgrid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:0;
+  border-top:1px solid var(--hair)}
+@media (max-width:620px){.ansgrid{grid-template-columns:1fr;gap:0}}
+.stat{padding:20px 22px 20px 0;border-right:1px solid var(--hair)}
+.stat:last-child{border-right:0}
+@media (max-width:620px){.stat{border-right:0;border-bottom:1px solid var(--hair);padding-right:0}
+  .stat:last-child{border-bottom:0}}
+.stat b{display:block;font:600 clamp(30px,3.9vw,40px)/1 var(--display);color:var(--ink);
+  letter-spacing:-.02em;font-variant-numeric:tabular-nums}
+.stat .k{display:block;font:500 10.5px/1 var(--mono);letter-spacing:.13em;text-transform:uppercase;
+  color:var(--faint);margin-bottom:12px}
+.stat .d{display:block;font-size:12.5px;color:var(--muted);margin-top:9px;line-height:1.45;max-width:26ch}
+.stat.lead b{color:var(--accent)}
+.verdict{margin:0 0 4px;font:400 clamp(16.5px,1.9vw,19px)/1.5 var(--display);color:var(--ink);
+  max-width:56ch;text-wrap:pretty}
+.verdict em{font-style:normal;color:var(--short);font-weight:600}
+
+/* ── panels ──────────────────────────────────────────────────────────────── */
+.panel{background:var(--surface);border:1px solid var(--line);border-radius:3px;
+  padding:clamp(18px,2.4vw,26px);margin-top:18px}
+.phead{display:flex;align-items:baseline;justify-content:space-between;gap:14px;flex-wrap:wrap;
+  margin-bottom:6px}
+.phead h2{font:600 17px/1.25 var(--display);letter-spacing:-.012em}
+.pnote{margin:0 0 20px;font-size:13.5px;color:var(--muted);max-width:64ch}
+.legend{display:flex;gap:16px;flex-wrap:wrap;list-style:none;margin:0;padding:0}
+.legend li{display:flex;align-items:center;gap:7px;font:400 12px/1 var(--sans);color:var(--muted)}
+.sw{width:11px;height:11px;border-radius:2px;flex:none}
+.sw.o{background:var(--over)} .sw.s{background:var(--short)}
+
+/* chart */
+.chartwrap{position:relative;overflow-x:auto}
+svg.chart{width:100%;min-width:420px;height:auto;display:block;touch-action:pan-y}
+.gl{stroke:var(--hair);stroke-width:1}
+.ax{stroke:var(--line);stroke-width:1}
+.tk{font:400 11px var(--mono);fill:var(--faint)}
+.axt{font:500 10px var(--mono);letter-spacing:.11em;fill:var(--faint);text-transform:uppercase}
+.mk{font:500 11px var(--mono);fill:var(--ink)}
+.tip{position:absolute;pointer-events:none;opacity:0;transition:opacity .1s;
+  background:var(--surface);border:1px solid var(--line);border-radius:3px;padding:9px 11px;
+  font:400 12px/1.5 var(--sans);color:var(--body);box-shadow:0 4px 14px rgba(0,0,0,.09);
+  white-space:nowrap;z-index:5}
+.tip b{color:var(--ink);font-weight:600}
+.tip .r{display:flex;justify-content:space-between;gap:14px}
+.tip .r i{font-style:normal;color:var(--muted)}
+
+/* table view */
+.tbtoggle{font:500 11.5px/1 var(--mono);color:var(--muted);background:none;border:0;
+  cursor:pointer;padding:0;border-bottom:1px solid var(--line)}
+.tbtoggle:hover{color:var(--accent);border-color:var(--accent)}
+table{border-collapse:collapse;width:100%;margin-top:16px;font-size:13px}
+th,td{text-align:right;padding:7px 10px;border-bottom:1px solid var(--hair);
+  font-variant-numeric:tabular-nums;font-family:var(--mono);font-weight:400}
+th{font:500 10.5px/1 var(--mono);letter-spacing:.1em;text-transform:uppercase;color:var(--faint)}
+th:first-child,td:first-child{text-align:left}
+tr.hi td{background:var(--accent-soft);color:var(--ink)}
+
+/* sensitivity */
+.sens{list-style:none;margin:0;padding:0;display:grid;gap:11px}
+.sens li{display:grid;grid-template-columns:minmax(120px,1.1fr) minmax(0,2.4fr) 60px;
+  align-items:center;gap:12px;font-size:13.5px}
+@media (max-width:520px){.sens li{grid-template-columns:1fr 46px;gap:5px}
+  .sens .bar{grid-column:1/-1}}
+.sens .nm{color:var(--body)}
+.bar{height:9px;background:var(--sunk);border-radius:2px;overflow:hidden}
+.bar span{display:block;height:100%;background:var(--accent);border-radius:2px}
+.sens .v{font:500 12.5px/1 var(--mono);font-variant-numeric:tabular-nums;color:var(--muted);
+  text-align:right}
+
+/* method / give */
+.method{margin-top:18px}
+.method h2{font:600 17px/1.25 var(--display);letter-spacing:-.012em;margin-bottom:12px}
+.method p{max-width:66ch;font-size:14.5px;margin:0 0 12px;color:var(--body)}
+.method p:last-child{margin-bottom:0}
+.method code{font:400 12.5px var(--mono);color:var(--accent);background:var(--accent-soft);
+  padding:2px 5px;border-radius:2px}
+.give{border-left:2px solid var(--short);padding-left:15px;color:var(--muted);font-size:14.5px}
+.foot{max-width:1240px;margin:0 auto;padding:0 clamp(16px,3vw,28px) 60px;
+  font-size:12.5px;color:var(--faint)}
+.foot a{color:var(--muted)}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+</style>
+</head>
+<body>
+
+<header class="top"><div class="top-in">
+  <a class="back" href="/">&larr; bensunter.com</a>
+  <span class="top-sp"></span>
+  <button class="tbtn" id="share" type="button">Copy link to this model</button>
+  <button class="tbtn" id="theme" type="button" aria-label="Switch theme" title="Switch theme">Theme</button>
+</div></header>
+
+<div class="head">
+  <p class="eyebrow">Capacity planning</p>
+  <h1>Staffing Headroom</h1>
+  <p class="sub">Every staffing plan is built on a forecast, and every forecast is wrong.
+     This works out how many people the forecast implies, then how many you should actually
+     hire once you account for the fact that being short and being over do not cost the same.
+     Nothing you type leaves your browser.</p>
+  <ul class="presets" id="presets"></ul>
+</div>
+
+<main class="shell">
+
+  <!-- ── inputs ─────────────────────────────────────────────────────────── -->
+  <form class="rail" id="rail" autocomplete="off">
+    <h2 class="sr">Inputs</h2>
+
+    <div class="grp">
+      <h2>Demand</h2>
+      <div class="f">
+        <label for="i-unit">What you count</label>
+        <input type="text" id="i-unit" maxlength="18" value="cases">
+      </div>
+      <div class="f">
+        <label for="i-volume">Volume per month<span class="hint" id="h-vol">cases arriving</span></label>
+        <input type="number" id="i-volume" min="1" step="1" value="4200">
+      </div>
+      <div class="f">
+        <label for="i-err">Forecast error<span class="hint">Typical miss vs plan, plus or minus</span></label>
+        <span class="suffixed"><input type="number" id="i-err" min="0" max="90" step="1" value="18"><span class="sfx">%</span></span>
+      </div>
+    </div>
+
+    <div class="grp">
+      <h2>The work</h2>
+      <div class="f">
+        <label for="i-handle">Handle time each</label>
+        <span class="suffixed">
+          <input type="number" id="i-handle" min="0.1" step="1" value="45">
+          <span class="seg" role="group" aria-label="Handle time unit">
+            <button type="button" id="u-min" aria-pressed="true">min</button>
+            <button type="button" id="u-hr" aria-pressed="false">hr</button>
+          </span>
+        </span>
+      </div>
+      <div class="f">
+        <label for="i-hours">Paid hours per person<span class="hint">Per month, before anything is taken out</span></label>
+        <input type="number" id="i-hours" min="1" step="1" value="173">
+      </div>
+      <div class="f">
+        <label for="i-shrink">Shrinkage<span class="hint">Leave, sick, training, meetings, admin</span></label>
+        <span class="suffixed"><input type="number" id="i-shrink" min="0" max="80" step="1" value="28"><span class="sfx">%</span></span>
+      </div>
+      <div class="f">
+        <label for="i-occ">Target occupancy<span class="hint">Share of remaining time actually on the work</span></label>
+        <span class="suffixed"><input type="number" id="i-occ" min="10" max="100" step="1" value="82"><span class="sfx">%</span></span>
+      </div>
+    </div>
+
+    <div class="grp">
+      <h2>What it costs</h2>
+      <div class="f">
+        <label for="i-cost">Fully loaded cost<span class="hint">Per person, per year</span></label>
+        <input type="number" id="i-cost" min="1000" step="1000" value="95000">
+      </div>
+      <div class="f">
+        <label for="i-ratio">Short vs over<span class="hint" id="h-ratio">Being one person short costs this many times what being one person over costs</span></label>
+        <span class="suffixed"><input type="number" id="i-ratio" min="1" max="20" step="0.5" value="4"><span class="sfx">&times;</span></span>
+      </div>
+    </div>
+
+    <details class="grp" id="hiringgrp">
+      <summary>Hiring reality</summary>
+      <div class="f">
+        <label for="i-attr">Annual attrition</label>
+        <span class="suffixed"><input type="number" id="i-attr" min="0" max="90" step="1" value="18"><span class="sfx">%</span></span>
+      </div>
+      <div class="f">
+        <label for="i-hire">Days to hire<span class="hint">Req open to accepted offer</span></label>
+        <input type="number" id="i-hire" min="0" step="1" value="45">
+      </div>
+      <div class="f">
+        <label for="i-ramp">Days to productive<span class="hint">Start date to carrying a full load</span></label>
+        <input type="number" id="i-ramp" min="0" step="1" value="60">
+      </div>
+    </details>
+
+    <div class="railfoot">
+      <button type="button" id="copy">Copy summary</button>
+      <button type="button" id="reset">Reset</button>
+    </div>
+  </form>
+
+  <!-- ── results ────────────────────────────────────────────────────────── -->
+  <div>
+    <section class="answer" aria-live="polite">
+      <p class="verdict" id="verdict"></p>
+      <div class="ansgrid">
+        <div class="stat">
+          <span class="k">Forecast says</span>
+          <b class="num" id="s-base">–</b>
+          <span class="d" id="d-base"></span>
+        </div>
+        <div class="stat lead">
+          <span class="k">Hire to</span>
+          <b class="num" id="s-rec">–</b>
+          <span class="d" id="d-rec"></span>
+        </div>
+        <div class="stat">
+          <span class="k">The gap is worth</span>
+          <b class="num" id="s-save">–</b>
+          <span class="d" id="d-save"></span>
+        </div>
+      </div>
+    </section>
+
+    <section class="panel">
+      <div class="phead">
+        <h2>What being wrong costs</h2>
+        <ul class="legend">
+          <li><span class="sw s"></span>Cost of being short</li>
+          <li><span class="sw o"></span>Cost of being over</li>
+        </ul>
+      </div>
+      <p class="pnote">Expected cost per month of missing, at every headcount you could pick.
+         Not the payroll, which you owe either way. Just the waste. The curve is lopsided
+         because the two mistakes are not priced the same, and its low point is almost never
+         where the forecast lands.</p>
+      <div class="chartwrap" id="cw">
+        <svg class="chart" id="chart" viewBox="0 0 720 344" role="img" aria-labelledby="chart-t"></svg>
+        <div class="tip" id="tip"></div>
+      </div>
+      <p style="margin:16px 0 0"><button class="tbtoggle" id="tbtoggle" type="button" aria-expanded="false">Show the numbers</button></p>
+      <div id="tblhold" hidden></div>
+    </section>
+
+    <section class="panel">
+      <div class="phead"><h2>What moves this answer most</h2></div>
+      <p class="pnote">If each input were 10% off, this is how far the recommendation would
+         move. Spend your evidence on the top of the list. The rest you can estimate.</p>
+      <ul class="sens" id="sens"></ul>
+    </section>
+
+    <section class="panel">
+      <div class="phead"><h2>Holding the number</h2></div>
+      <p class="pnote" id="pipeline" style="margin-bottom:0"></p>
+    </section>
+
+    <section class="panel method">
+      <h2>How it works</h2>
+      <p>Effective hours per person are paid hours less shrinkage, times occupancy. Divide
+         the month's work by that and you get the headcount the forecast implies. That part
+         is arithmetic and your spreadsheet already does it.</p>
+      <p>The rest is the newsvendor problem, which is a hundred years old and still the right
+         tool. If being short costs <code>r</code> times what being over costs, the
+         cost-minimising plan covers demand <code>r / (r + 1)</code> of the time. At 3&times;
+         that is the 75th percentile, not the 50th. Treating the forecast as the target
+         quietly chooses a coin flip, and prices the two sides of it as though they matched.</p>
+      <p>Demand is taken as normal around your forecast, with the standard deviation set by
+         the error you entered. Expected shortfall and overage come from the standard normal
+         loss function, so the curve is exact rather than simulated.</p>
+      <p>Where it will mislead you: it is a single month in steady state, so a sharp ramp or
+         a seasonal peak needs its own run. It assumes your people are interchangeable, which
+         they are not once skills are specialised. And the short-versus-over ratio is a
+         judgement call carrying most of the weight, which is exactly why it sits in the
+         sensitivity list rather than buried in the method.</p>
+      <p class="give">Take it. One file, no build step, no dependencies, no analytics, nothing
+         sent anywhere. Save the page and it works offline. Change the numbers, copy the link,
+         and the model travels with it.</p>
+    </section>
+  </div>
+</main>
+
+<footer class="foot">
+  <p>Built by <a href="/">Ben Sunter</a>. MIT licensed, use it however you like.
+     <span id="src"></span></p>
+</footer>
+
+<script>
+(function(){
+"use strict";
+
+/* ── theme ─────────────────────────────────────────────────────────────── */
+var root=document.documentElement;
+try{var sv=localStorage.getItem('hr-theme'); if(sv==='light'||sv==='dark') root.setAttribute('data-theme',sv);}catch(e){}
+document.getElementById('theme').addEventListener('click',function(){
+  var dark=root.getAttribute('data-theme')==='dark'||
+    (!root.hasAttribute('data-theme')&&matchMedia('(prefers-color-scheme: dark)').matches);
+  var next=dark?'light':'dark';
+  root.setAttribute('data-theme',next);
+  try{localStorage.setItem('hr-theme',next);}catch(e){}
+  draw();
+});
+
+/* ── maths ─────────────────────────────────────────────────────────────── */
+var SQ2PI=Math.sqrt(2*Math.PI);
+function pdf(z){return Math.exp(-z*z/2)/SQ2PI;}
+function cdf(z){ // Abramowitz & Stegun 7.1.26 on erf
+  var s=z<0?-1:1, x=Math.abs(z)/Math.SQRT2;
+  var t=1/(1+0.3275911*x);
+  var y=1-(((((1.061405429*t-1.453152027)*t)+1.421413741)*t-0.284496736)*t+0.254829592)*t*Math.exp(-x*x);
+  return 0.5*(1+s*y);
+}
+function invNorm(p){ // Acklam
+  if(p<=0)return -8; if(p>=1)return 8;
+  var a=[-39.69683028665376,220.9460984245205,-275.9285104469687,138.3577518672690,-30.66479806614716,2.506628277459239],
+      b=[-54.47609879822406,161.5858368580409,-155.6989798598866,66.80131188771972,-13.28068155288572],
+      c=[-0.007784894002430293,-0.3223964580411365,-2.400758277161838,-2.549732539343734,4.374664141464968,2.938163982698783],
+      d=[0.007784695709041462,0.3224671290700398,2.445134137142996,3.754408661907416],
+      pl=0.02425,q,r;
+  if(p<pl){q=Math.sqrt(-2*Math.log(p));
+    return (((((c[0]*q+c[1])*q+c[2])*q+c[3])*q+c[4])*q+c[5])/((((d[0]*q+d[1])*q+d[2])*q+d[3])*q+1);}
+  if(p>1-pl){q=Math.sqrt(-2*Math.log(1-p));
+    return -(((((c[0]*q+c[1])*q+c[2])*q+c[3])*q+c[4])*q+c[5])/((((d[0]*q+d[1])*q+d[2])*q+d[3])*q+1);}
+  q=p-0.5; r=q*q;
+  return (((((a[0]*r+a[1])*r+a[2])*r+a[3])*r+a[4])*r+a[5])*q/(((((b[0]*r+b[1])*r+b[2])*r+b[3])*r+b[4])*r+1);
+}
+function loss(k){return pdf(k)-k*(1-cdf(k));} // E[(X-k)+] for standard normal
+
+/* ── state ─────────────────────────────────────────────────────────────── */
+var PRESETS={
+  care:{n:'Care management',unit:'cases',volume:4200,err:18,handle:45,hu:'min',hours:173,shrink:28,occ:82,cost:95000,ratio:4,attr:18,hire:45,ramp:60},
+  support:{n:'Support desk',unit:'tickets',volume:22000,err:15,handle:12,hu:'min',hours:173,shrink:32,occ:85,cost:78000,ratio:3,attr:34,hire:30,ramp:45},
+  claims:{n:'Claims and back office',unit:'claims',volume:12000,err:10,handle:22,hu:'min',hours:173,shrink:24,occ:88,cost:72000,ratio:2,attr:20,hire:35,ramp:50},
+  services:{n:'Professional services',unit:'engagements',volume:40,err:25,handle:60,hu:'hr',hours:173,shrink:18,occ:75,cost:165000,ratio:2,attr:16,hire:60,ramp:75}
+};
+var KEYS=['unit','volume','err','handle','hu','hours','shrink','occ','cost','ratio','attr','hire','ramp'];
+var S=Object.assign({},PRESETS.care); delete S.n;
+
+var $=function(id){return document.getElementById(id);};
+var F={unit:$('i-unit'),volume:$('i-volume'),err:$('i-err'),handle:$('i-handle'),
+  hours:$('i-hours'),shrink:$('i-shrink'),occ:$('i-occ'),cost:$('i-cost'),
+  ratio:$('i-ratio'),attr:$('i-attr'),hire:$('i-hire'),ramp:$('i-ramp')};
+
+/* ── model ─────────────────────────────────────────────────────────────── */
+function model(s){
+  var handleH=s.hu==='hr'?s.handle:s.handle/60;
+  var effH=Math.max(1e-6,s.hours*(1-s.shrink/100)*(s.occ/100));
+  var m=s.volume*handleH/effH;                 // FTE implied by the forecast
+  var sd=Math.max(1e-9,m*s.err/100);
+  var cr=s.ratio/(s.ratio+1);
+  var z=invNorm(cr);
+  var rec=m+z*sd;
+  var Co=s.cost/12, Cu=s.ratio*Co;
+  function cost(N){
+    var k=(N-m)/sd;
+    var eShort=sd*loss(k);                     // E[(need - N)+]
+    var eOver=eShort+(N-m);                    // E[(N - need)+]
+    return {short:Cu*eShort, over:Co*eOver, total:Cu*eShort+Co*eOver};
+  }
+  return {m:m,sd:sd,rec:rec,z:z,cr:cr,Co:Co,Cu:Cu,effH:effH,handleH:handleH,
+          cost:cost,costBase:cost(m).total,costRec:cost(rec).total};
+}
+
+/* ── formatting ────────────────────────────────────────────────────────── */
+function fte(v){return (Math.round(v*10)/10).toFixed(1);}
+function money(v){
+  var a=Math.abs(v);
+  if(a>=1e6)return '$'+(v/1e6).toFixed(a>=1e7?1:2)+'M';
+  if(a>=1e3)return '$'+Math.round(v/1e3)+'k';
+  return '$'+Math.round(v);
+}
+function plural(u){return u;}
+
+/* ── render ────────────────────────────────────────────────────────────── */
+var showTable=false;
+function render(){
+  var r=model(S), u=S.unit||'units';
+  $('h-vol').textContent=u+' arriving';
+  $('s-base').textContent=fte(r.m);
+  $('s-rec').textContent=fte(r.rec);
+  var save=r.costBase-r.costRec;
+  $('s-save').textContent=money(save)+'/mo';
+
+  $('d-base').textContent='people, if the forecast lands exactly. It covers you about half the time.';
+  var pct=Math.round(r.cr*100);
+  $('d-rec').textContent='people. Enough to cover demand '+pct+'% of months, which is where the two costs balance.';
+  $('d-save').textContent='less expected waste per month than staffing to the forecast, or '+money(save*12)+' a year.';
+
+  var buf=r.rec-r.m;
+  var bufTxt=buf>=0.05?('<em>'+fte(buf)+' more</em> than the forecast asks for'):
+              buf<=-0.05?('<em>'+fte(-buf)+' fewer</em> than the forecast asks for'):
+              'exactly what the forecast asks for';
+  $('verdict').innerHTML='Hire <em>'+fte(r.rec)+'</em> people, which is '+bufTxt+
+    '. At '+S.ratio+'&times;, being short hurts enough that carrying the extra is the cheaper mistake.';
+  if(Math.abs(S.ratio-1)<1e-9){
+    $('verdict').innerHTML='Hire <em>'+fte(r.rec)+'</em> people. At 1&times; the two mistakes cost '+
+      'the same, so the forecast is the right target and no buffer is justified.';
+  }
+
+  /* sensitivity: +10% on each input, measure the move in the recommendation */
+  var vars=[['volume','Demand volume'],['handle','Handle time'],['shrink','Shrinkage'],
+            ['occ','Occupancy'],['hours','Paid hours'],['err','Forecast error'],['ratio','Short vs over']];
+  var rows=vars.map(function(v){
+    var s2=Object.assign({},S); s2[v[0]]=S[v[0]]*1.1;
+    if(v[0]==='occ'&&s2.occ>100)s2.occ=100;
+    var d=(model(s2).rec-r.rec)/r.rec*100;
+    return {nm:v[1],d:d};
+  }).sort(function(a,b){return Math.abs(b.d)-Math.abs(a.d);});
+  var mx=Math.max.apply(null,rows.map(function(x){return Math.abs(x.d);}))||1;
+  $('sens').innerHTML=rows.map(function(x){
+    return '<li><span class="nm">'+x.nm+'</span>'+
+      '<span class="bar"><span style="width:'+Math.max(2,Math.abs(x.d)/mx*100)+'%"></span></span>'+
+      '<span class="v">'+(x.d>0?'+':'')+x.d.toFixed(1)+'%</span></li>';
+  }).join('');
+
+  /* pipeline */
+  var ma=1-Math.pow(1-Math.min(0.89,S.attr/100),1/12);
+  var perMo=r.rec*ma, lead=(S.hire+S.ramp)/30.4, inflight=perMo*lead;
+  $('pipeline').innerHTML='At '+S.attr+'% annual attrition you lose about <b>'+(Math.round(perMo*10)/10).toFixed(1)+
+    '</b> people a month. With '+(S.hire+S.ramp)+' days from open req to fully productive, you need roughly <b>'+
+    (Math.round(inflight*10)/10).toFixed(1)+'</b> hires in flight at all times just to hold '+fte(r.rec)+
+    '. Recruiting slower than that is a headcount cut you did not decide to make.';
+
+  draw(r);
+  if(showTable) table(r);
+  syncHash();
+}
+
+/* ── chart ─────────────────────────────────────────────────────────────── */
+var LAST=null;
+function draw(r){
+  r=r||LAST||model(S); LAST=r;
+  /* T is deep so the two marker labels sit clear of the axis caption above them. */
+  var svg=$('chart'), W=720,H=344, L=68,R=22,T=46,B=52;
+  /* Frame the decision, not the disaster. Walking out to a fixed number of standard
+     deviations puts a half-million-dollar point on the left edge and squashes the whole
+     U into the bottom of the plot. Instead grow outward from the optimum until the cost
+     is a few times the minimum, which keeps the shape readable at any set of inputs. */
+  var cap=r.costRec*3.2, step=Math.max(r.sd/40,1e-6);
+  var gLo=Math.max(0,r.m-4*r.sd), gHi=r.m+4*r.sd;
+  var lo=r.rec, hi=r.rec;
+  while(lo-step>gLo&&r.cost(lo).total<cap)lo-=step;
+  while(hi+step<gHi&&r.cost(hi).total<cap)hi+=step;
+  lo=Math.max(0,Math.min(lo,r.m-0.45*r.sd));   /* always keep both markers in frame */
+  hi=Math.max(hi,r.m+0.45*r.sd);
+  if(hi-lo<1){lo=Math.max(0,r.m-1);hi=r.m+1;}
+  var N=90, pts=[];
+  for(var i=0;i<=N;i++){var x=lo+(hi-lo)*i/N; var c=r.cost(x); pts.push({x:x,s:c.short,o:c.over,t:c.total});}
+  var ymax=Math.max.apply(null,pts.map(function(p){return p.t;}))||1;
+  ymax=ymax*1.08;
+  var X=function(v){return L+(v-lo)/(hi-lo)*(W-L-R);};
+  var Y=function(v){return H-B-(v/ymax)*(H-T-B);};
+
+  function tickStep(span,target){
+    var raw=span/target, mag=Math.pow(10,Math.floor(Math.log10(raw))), n=raw/mag;
+    return (n<1.5?1:n<3?2:n<7?5:10)*mag;
+  }
+  var xs=tickStep(hi-lo,6), ys=tickStep(ymax,4);
+  var g='',gy='';
+  for(var yv=0;yv<=ymax;yv+=ys){
+    gy+='<line class="gl" x1="'+L+'" y1="'+Y(yv).toFixed(1)+'" x2="'+(W-R)+'" y2="'+Y(yv).toFixed(1)+'"/>'+
+        '<text class="tk" x="'+(L-10)+'" y="'+(Y(yv)+4).toFixed(1)+'" text-anchor="end">'+money(yv)+'</text>';
+  }
+  var x0=Math.ceil(lo/xs)*xs;
+  for(var xv=x0;xv<=hi;xv+=xs){
+    g+='<text class="tk" x="'+X(xv).toFixed(1)+'" y="'+(H-B+20)+'" text-anchor="middle">'+Math.round(xv)+'</text>';
+  }
+
+  // stacked areas: short on the bottom, over on top
+  var pShort='M'+X(pts[0].x).toFixed(1)+','+Y(0).toFixed(1);
+  pts.forEach(function(p){pShort+='L'+X(p.x).toFixed(1)+','+Y(p.s).toFixed(1);});
+  pShort+='L'+X(pts[pts.length-1].x).toFixed(1)+','+Y(0).toFixed(1)+'Z';
+
+  var pOver='';
+  pts.forEach(function(p,i){pOver+=(i?'L':'M')+X(p.x).toFixed(1)+','+Y(p.s).toFixed(1);});
+  for(var j=pts.length-1;j>=0;j--){pOver+='L'+X(pts[j].x).toFixed(1)+','+Y(pts[j].t).toFixed(1);}
+  pOver+='Z';
+
+  var pTot='';
+  pts.forEach(function(p,i){pTot+=(i?'L':'M')+X(p.x).toFixed(1)+','+Y(p.t).toFixed(1);});
+  var pShortLine='';
+  pts.forEach(function(p,i){pShortLine+=(i?'L':'M')+X(p.x).toFixed(1)+','+Y(p.s).toFixed(1);});
+
+  // markers
+  function marker(v,label,cls,dy){
+    if(v<lo||v>hi)return '';
+    var x=X(v), c=r.cost(v).total;
+    return '<line x1="'+x.toFixed(1)+'" y1="'+T+'" x2="'+x.toFixed(1)+'" y2="'+(H-B)+
+      '" stroke="'+cls+'" stroke-width="1.5" stroke-dasharray="4 3" opacity=".75"/>'+
+      '<circle cx="'+x.toFixed(1)+'" cy="'+Y(c).toFixed(1)+'" r="4.5" fill="'+cls+
+      '" stroke="var(--surface)" stroke-width="2"/>'+
+      '<text class="mk" x="'+x.toFixed(1)+'" y="'+(T+dy)+'" text-anchor="'+
+      (x>W-150?'end':'middle')+'" fill="'+cls+'">'+label+'</text>';
+  }
+
+  svg.innerHTML=
+    '<title id="chart-t">Expected monthly cost of missing the forecast at each headcount. '+
+      'The curve bottoms at '+fte(r.rec)+' people, not at the '+fte(r.m)+' the forecast implies.</title>'+
+    gy+
+    '<path d="'+pShort+'" fill="var(--short-fill)"/>'+
+    '<path d="'+pOver+'" fill="var(--over-fill)"/>'+
+    '<path d="'+pShortLine+'" fill="none" stroke="var(--short)" stroke-width="2"/>'+
+    '<path d="'+pTot+'" fill="none" stroke="var(--over)" stroke-width="2"/>'+
+    '<line class="ax" x1="'+L+'" y1="'+(H-B)+'" x2="'+(W-R)+'" y2="'+(H-B)+'"/>'+
+    g+
+    marker(r.m,'forecast','var(--faint)',4)+
+    marker(r.rec,'cheapest plan','var(--accent)',20)+
+    '<text class="axt" x="'+L+'" y="'+(H-8)+'">People on the team &rarr;</text>'+
+    '<text class="axt" x="'+L+'" y="16">Expected waste, $ per month</text>'+
+    '<rect id="hit" x="'+L+'" y="'+T+'" width="'+(W-L-R)+'" height="'+(H-T-B)+'" fill="transparent"/>';
+
+  // hover
+  var wrap=$('cw'), tip=$('tip');
+  var hit=svg.querySelector('#hit');
+  function move(ev){
+    var b=svg.getBoundingClientRect();
+    var px=(ev.clientX-b.left)/b.width*W;
+    var v=lo+(px-L)/(W-L-R)*(hi-lo);
+    if(v<lo||v>hi){tip.style.opacity=0;return;}
+    var c=r.cost(v);
+    tip.innerHTML='<b>'+fte(v)+' people</b>'+
+      '<div class="r"><i>Short</i><span>'+money(c.short)+'</span></div>'+
+      '<div class="r"><i>Over</i><span>'+money(c.over)+'</span></div>'+
+      '<div class="r"><i><b>Total</b></i><span><b>'+money(c.total)+'</b></span></div>';
+    tip.style.opacity=1;
+    var wb=wrap.getBoundingClientRect();
+    var lx=ev.clientX-wb.left+14, ty=ev.clientY-wb.top-10;
+    if(lx+tip.offsetWidth>wb.width-4)lx=ev.clientX-wb.left-tip.offsetWidth-14;
+    tip.style.left=lx+'px'; tip.style.top=Math.max(0,ty)+'px';
+  }
+  hit.addEventListener('pointermove',move);
+  hit.addEventListener('pointerleave',function(){tip.style.opacity=0;});
+}
+
+/* ── table view ────────────────────────────────────────────────────────── */
+function table(r){
+  var lo=Math.max(0,r.m-2.5*r.sd), hi=r.m+3*r.sd, rows='';
+  var step=(hi-lo)/14;
+  var best=Math.round((r.rec-lo)/step);
+  for(var i=0;i<=14;i++){
+    var x=lo+step*i, c=r.cost(x);
+    rows+='<tr'+(i===best?' class="hi"':'')+'><td>'+fte(x)+'</td><td>'+money(c.short)+
+      '</td><td>'+money(c.over)+'</td><td>'+money(c.total)+'</td></tr>';
+  }
+  $('tblhold').innerHTML='<table><caption class="sr">Expected monthly cost of missing, by headcount</caption>'+
+    '<thead><tr><th>People</th><th>Short</th><th>Over</th><th>Total</th></tr></thead><tbody>'+rows+'</tbody></table>';
+}
+$('tbtoggle').addEventListener('click',function(){
+  showTable=!showTable;
+  $('tblhold').hidden=!showTable;
+  this.setAttribute('aria-expanded',String(showTable));
+  this.textContent=showTable?'Hide the numbers':'Show the numbers';
+  if(showTable)table(LAST||model(S));
+});
+
+/* ── inputs ────────────────────────────────────────────────────────────── */
+function readForm(){
+  S.unit=F.unit.value.trim()||'units';
+  ['volume','err','handle','hours','shrink','occ','cost','ratio','attr','hire','ramp'].forEach(function(k){
+    var v=parseFloat(F[k].value);
+    if(!isNaN(v)&&isFinite(v))S[k]=v;
+  });
+  if(S.volume<=0)S.volume=1; if(S.handle<=0)S.handle=0.1;
+  if(S.hours<=0)S.hours=1; if(S.ratio<1)S.ratio=1;
+  if(S.occ<=0)S.occ=1; if(S.occ>100)S.occ=100;
+  if(S.shrink<0)S.shrink=0; if(S.shrink>80)S.shrink=80;
+  if(S.err<0)S.err=0;
+  render();
+}
+function writeForm(){
+  F.unit.value=S.unit;
+  ['volume','err','handle','hours','shrink','occ','cost','ratio','attr','hire','ramp'].forEach(function(k){
+    F[k].value=S[k];
+  });
+  $('u-min').setAttribute('aria-pressed',String(S.hu==='min'));
+  $('u-hr').setAttribute('aria-pressed',String(S.hu==='hr'));
+}
+Object.keys(F).forEach(function(k){F[k].addEventListener('input',readForm);});
+$('u-min').addEventListener('click',function(){if(S.hu==='min')return;S.hu='min';S.handle=Math.round(S.handle*60*10)/10;writeForm();render();});
+$('u-hr').addEventListener('click',function(){if(S.hu==='hr')return;S.hu='hr';S.handle=Math.round(S.handle/60*100)/100;writeForm();render();});
+
+/* presets */
+var pl=$('presets');
+Object.keys(PRESETS).forEach(function(k){
+  var li=document.createElement('li');
+  var b=document.createElement('button');
+  b.type='button'; b.className='chip'; b.textContent=PRESETS[k].n;
+  b.setAttribute('aria-pressed','false'); b.dataset.k=k;
+  b.addEventListener('click',function(){
+    var p=Object.assign({},PRESETS[k]); delete p.n;
+    S=Object.assign(S,p);
+    [].forEach.call(pl.querySelectorAll('.chip'),function(c){c.setAttribute('aria-pressed',String(c===b));});
+    writeForm(); render();
+  });
+  li.appendChild(b); pl.appendChild(li);
+});
+pl.querySelector('.chip').setAttribute('aria-pressed','true');
+
+$('reset').addEventListener('click',function(){
+  S=Object.assign({},PRESETS.care); delete S.n;
+  [].forEach.call(pl.querySelectorAll('.chip'),function(c,i){c.setAttribute('aria-pressed',String(i===0));});
+  writeForm(); render();
+});
+
+/* ── summary + link ────────────────────────────────────────────────────── */
+function summaryText(){
+  var r=model(S), save=r.costBase-r.costRec;
+  return 'Staffing Headroom\n'+
+   '\nDemand      '+S.volume+' '+S.unit+'/month, plus or minus '+S.err+'%'+
+   '\nHandle time '+S.handle+' '+S.hu+' each'+
+   '\nCapacity    '+S.hours+' paid hrs, '+S.shrink+'% shrinkage, '+S.occ+'% occupancy'+
+   '\nCost        '+money(S.cost)+'/yr loaded, short costs '+S.ratio+'x over'+
+   '\n'+
+   '\nForecast implies   '+fte(r.m)+' people'+
+   '\nRecommended plan   '+fte(r.rec)+' people (covers demand '+Math.round(r.cr*100)+'% of months)'+
+   '\nExpected saving    '+money(save)+'/month vs staffing to the forecast'+
+   '\n\n'+location.href;
+}
+function flash(btn,txt){var o=btn.textContent;btn.textContent=txt;setTimeout(function(){btn.textContent=o;},1400);}
+$('copy').addEventListener('click',function(){
+  var b=this;
+  try{navigator.clipboard.writeText(summaryText()).then(function(){flash(b,'Copied');},function(){flash(b,'Press Cmd+C');});}
+  catch(e){flash(b,'Press Cmd+C');}
+});
+$('share').addEventListener('click',function(){
+  var b=this;
+  try{navigator.clipboard.writeText(location.href).then(function(){flash(b,'Link copied');},function(){flash(b,'Copy from the bar');});}
+  catch(e){flash(b,'Copy from the bar');}
+});
+
+/* ── url state, so a configured model travels ──────────────────────────── */
+function syncHash(){
+  var p=KEYS.map(function(k){return k+'='+encodeURIComponent(S[k]);}).join('&');
+  try{history.replaceState(null,'','#'+p);}catch(e){}
+}
+function readHash(){
+  if(!location.hash||location.hash.length<3)return false;
+  var got=false;
+  location.hash.slice(1).split('&').forEach(function(kv){
+    var i=kv.indexOf('='); if(i<0)return;
+    var k=kv.slice(0,i), v=decodeURIComponent(kv.slice(i+1));
+    if(KEYS.indexOf(k)<0)return;
+    if(k==='unit'||k==='hu'){S[k]=v;got=true;}
+    else{var n=parseFloat(v); if(!isNaN(n)&&isFinite(n)){S[k]=n;got=true;}}
+  });
+  return got;
+}
+
+/* ── go ────────────────────────────────────────────────────────────────── */
+if(readHash()){[].forEach.call(pl.querySelectorAll('.chip'),function(c){c.setAttribute('aria-pressed','false');});}
+writeForm();
+render();
+addEventListener('resize',function(){draw();});
+})();
+</script>
+</body>
+</html>
