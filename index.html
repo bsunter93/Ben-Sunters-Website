@@ -1043,5 +1043,24 @@ if (vids.length && 'IntersectionObserver' in window) {
   vids.forEach(v => io.observe(v));
 }
 </script>
+
+<!-- Firebase Analytics, feeding GA4 property G-5DBXQV4RT2. Restored: it was on the
+     previous site and the rebuild dropped it, so a week of traffic went unrecorded.
+     The apiKey here identifies the project rather than authorising anything, which is
+     why Firebase publishes it in client code. -->
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/12.12.0/firebase-app.js";
+  import { getAnalytics } from "https://www.gstatic.com/firebasejs/12.12.0/firebase-analytics.js";
+  const firebaseConfig = {
+    apiKey: "AIzaSyAzcJkc4l8ExO91r8yl1UdT15_9oR6e-JU",
+    authDomain: "website-7a1e6.firebaseapp.com",
+    projectId: "website-7a1e6",
+    storageBucket: "website-7a1e6.firebasestorage.app",
+    messagingSenderId: "243930387281",
+    appId: "1:243930387281:web:5585cda4a723f87477f970",
+    measurementId: "G-5DBXQV4RT2"
+  };
+  try { getAnalytics(initializeApp(firebaseConfig)); } catch (e) {}
+</script>
 </body>
 </html>
