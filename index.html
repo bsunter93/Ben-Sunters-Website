@@ -43,7 +43,7 @@
     --ink:#E9E7E2; --body:#C3C6CB; --muted:#8B9098;
     --line:#252A31; --hair:#1C2126;
     --accent:#4FB3AE; --accent-soft:#4FB3AE1A;
-    --warm:#E0A33C; --warm-bright:#E0A33C; --warm-soft:#E0A33C1A;
+    --warm:#CFA470; --warm-bright:#E0A33C; --warm-soft:#CFA4701A;
     --sage:#71A588;
   }
 }
@@ -53,7 +53,7 @@
   --ink:#E9E7E2; --body:#C3C6CB; --muted:#8B9098;
   --line:#252A31; --hair:#1C2126;
   --accent:#4FB3AE; --accent-soft:#4FB3AE1A;
-  --warm:#E0A33C; --warm-bright:#E0A33C; --warm-soft:#E0A33C1A;
+  --warm:#CFA470; --warm-bright:#E0A33C; --warm-soft:#CFA4701A;
   --sage:#71A588;
 }
 *{box-sizing:border-box}
@@ -303,11 +303,11 @@ h1{font:600 clamp(36px,5.4vw,53px)/1.06 var(--display);letter-spacing:-.026em;ma
 .job .org{font:500 13.5px/1.4 var(--sans);color:var(--co);margin-bottom:15px}
 .job ul{margin:0;padding:0;list-style:none}
 .job li{position:relative;padding-left:17px;margin-bottom:10px;max-width:var(--measure);font-size:15.5px}
-.job li:before{content:"";position:absolute;left:0;top:9px;width:7px;height:2px;background:var(--co)}
+.job li:before{content:"";position:absolute;left:0;top:10px;width:6px;height:1px;background:var(--line)}
 .job li b{color:var(--ink);font-weight:600}
 .job li .n{color:var(--co);font-weight:600;white-space:nowrap}
 .subrole{font:500 12.5px/1 var(--mono);color:var(--co);margin:20px 0 10px;
-  letter-spacing:.03em;text-transform:uppercase;padding-left:11px;border-left:2px solid var(--co)}
+  letter-spacing:.03em;text-transform:uppercase;padding-left:11px;border-left:2px solid var(--hair)}
 .job--ih{--co:var(--accent)} .job--goog{--co:var(--warm)} .job--acn{--co:var(--sage)}
 
 
@@ -453,14 +453,13 @@ footer{padding:26px 0 44px;border-top:1px solid var(--hair);
   <div class="hero-grid">
     <div>
       <h1>I turn strategy into a plan every function actually runs.</h1>
-      <p>Most of the job is getting Product, Finance, GTM and Engineering to commit to one
-         set of numbers, and then keeping them moving against it when priorities collide and
-         somebody has to give. I plan with those teams rather than at them, which is the
-         only version that survives contact with a quarter.</p>
-      <p>The system is how it holds. I build the source of truth everyone plans from, and
-         the software underneath it, so it stays current without depending on me. Putting
-         siloed reporting in one place also surfaces the risks and openings nobody could
-         see while the pieces sat apart.</p>
+      <p>Most of the job is getting Product, Finance, GTM and Engineering to agree on one
+         set of numbers, then keeping everyone moving against them when priorities change.
+         I plan with those teams instead of handing them a plan. That is the only kind
+         anyone follows.</p>
+      <p>Then I build the thing they all work from, and the software behind it so it stays
+         current on its own. Pulling reporting out of separate teams and into one place
+         usually turns up problems and openings nobody could see before.</p>
       <ol class="arc">
         <li style="--co:var(--sage)"><b>Accenture</b><span>2016 – 2021</span>
             <em>$26.5B telecom merger. 24 workstreams under 16 VPs.</em></li>
@@ -513,8 +512,7 @@ footer{padding:26px 0 44px;border-top:1px solid var(--hair);
        time, and it is open source, so it is a method rather than an edge.</p>
 
     <p>It watches 87 job boards, surfaces only what fits a written profile, and ranks by
-       how recently each role was posted. Fit is a gate, not a dial: you clear the bar or
-       you do not. Among roles you clear, week one beats clearing it by a wider margin,
+       how recently each role was posted. Fit is pass or fail. You clear the bar for a role or you do not. Among roles you clear, week one beats clearing it by a wider margin,
        because a req with 300 applicants gets read in arrival order. Fit, pay band,
        employee sentiment and your history with that company are attached before you open
        a posting. Status comes from your mail, not from you.</p>
@@ -555,11 +553,10 @@ footer{padding:26px 0 44px;border-top:1px solid var(--hair);
           <span class="proj-when">Shipped 2024</span>
         </div>
       </div>
-      <p>An AI reflection and journaling app, designed, built, shipped and monetised end
-         to end. Shipping was not the test. The test was whether I could take something
-         from idea to a live product that made real money, on my own, without asking
-         anyone for permission or budget. Ad monetisation runs through Meta Audience
-         Network. It is still live on Google Play and still earning.</p>
+      <p>An AI reflection and journaling app, designed, built, shipped and monetised on
+         my own. Shipping was not the test. The test was whether I could get something from
+         an idea to a live product that actually made money. Ad monetisation runs through
+         Meta Audience Network. It is still on Google Play and still earning.</p>
       <div class="appshot">
         <video src="mirror-demo.mp4" poster="mirror-poster.jpg" muted loop playsinline
                preload="none" controls aria-label="Mirror app demo"></video>
@@ -589,8 +586,9 @@ footer{padding:26px 0 44px;border-top:1px solid var(--hair);
       </div>
       <ul>
         <li><b>Zero to one.</b> Built a new line of business from white paper to a
-            live offering in <span class="n">27 days</span>, then scaled it across an enterprise book,
-            replacing manual operations with a digital-first model in five months.</li>
+            live offering in <span class="n">27 days</span>, then spent the next
+            <span class="n">five months</span> scaling it across an enterprise book and replacing
+            its manual operations with a digital-first model.</li>
         <li><b>Cost-of-revenue portfolio.</b> Took ownership of a fragmented multi-million-dollar workstream
             and shipped its operating cadence in seven days. Quantified initiative-impact
             reporting went from <span class="n">roughly half to complete</span> inside two weeks,
@@ -765,9 +763,8 @@ footer{padding:26px 0 44px;border-top:1px solid var(--hair);
          Technology org, and the designs sat.</p>
       <p>And it was not a scheduled pause. At several points it was genuinely unclear
          whether the deal would survive review at all, which is a different job from
-         running a programme with a known end state. You are building something that may
-         never be switched on, and you still have to keep several hundred people moving
-         as though it will be.</p>
+         running a programme with a known end state. You are building something that might never
+         launch, and several hundred people still have to work on it like it will.</p>
       <h3>Why a pause is expensive</h3>
       <p>Months passed and the world moved underneath the designs. A call to an API that
          had since been deprecated. A data feed from a vendor team that had been
@@ -776,8 +773,8 @@ footer{padding:26px 0 44px;border-top:1px solid var(--hair);
          level designs re-checked against what was now true, with more than 150 project
          managers, senior managers, directors and architects pulled through it.</p>
       <p>Those flaws would have surfaced anyway, in unit testing and BVT, at far higher
-         cost. An estimated $2M of remediation avoided, because an architecture view shows in an
-         hour what testing finds over a month.</p>
+         cost. An estimated $2M of remediation avoided. These are easy to spot in a design
+         review and expensive to find in testing.</p>
       <h3>Sixteen VPs and no authority over any of them</h3>
       <p>Data. I built the reporting that showed where work was actually stuck and whose
          team it was sitting on. Nobody had that view before. Those reports went up to the
@@ -814,8 +811,8 @@ footer{padding:26px 0 44px;border-top:1px solid var(--hair);
   <text class="d-mut" x="18" y="210">A call to an API deprecated in the meantime. A vendor data feed repurposed for something else.</text>
   <line x1="0" y1="248" x2="620" y2="248" stroke="var(--line)"/>
   <text class="d-num" x="0" y="282">~$2M</text>
-  <text class="d-mut" x="94" y="282">of test remediation avoided, because an architecture view shows in an hour</text>
-  <text class="d-mut" x="94" y="296">what unit testing and BVT find over a month.</text>
+  <text class="d-mut" x="94" y="282">of test remediation avoided. Easy to spot in a design review,</text>
+  <text class="d-mut" x="94" y="296">expensive to find in testing.</text>
 </svg>
         <figcaption>A review gate is only worth having if it catches something. This one
           paid for itself on drift that nobody introduced: the designs were right when
