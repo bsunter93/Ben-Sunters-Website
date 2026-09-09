@@ -106,10 +106,11 @@ h2{font:600 clamp(26px,3.4vw,34px)/1.15 var(--display);letter-spacing:-.015em;ma
    which is the only state where a pale bar over deep petrol looked like a seam. */
 .masthead{
   position:sticky;top:0;z-index:20;
-  background:color-mix(in srgb,var(--paper) 88%,transparent);
-  backdrop-filter:saturate(180%) blur(10px);
-  border-bottom:1px solid var(--hair);
-  transition:background .25s ease,border-color .25s ease;
+  background:color-mix(in srgb,var(--paper) 95%,transparent);
+  backdrop-filter:saturate(180%) blur(12px);
+  border-bottom:1px solid var(--line);
+  box-shadow:0 8px 20px -18px rgba(0,0,0,.55);
+  transition:background .25s ease,border-color .25s ease,box-shadow .25s ease;
 }
 .masthead .wrap{display:flex;align-items:center;gap:20px;height:60px}
 .mark{display:flex;align-items:baseline;gap:9px;margin-right:auto;
@@ -129,7 +130,7 @@ h2{font:600 clamp(26px,3.4vw,34px)/1.15 var(--display);letter-spacing:-.015em;ma
 .over-band .theme-btn{color:var(--on-deep-mut)}
 .over-band .theme-btn:hover{color:#fff;border-color:rgba(255,255,255,.3)}
 
-.masthead.over-band{background:transparent;backdrop-filter:none;border-bottom-color:transparent}
+.masthead.over-band{background:transparent;backdrop-filter:none;border-bottom-color:transparent;box-shadow:none}
 .over-band .mark{color:var(--on-deep)}
 .over-band nav a{color:var(--on-deep-mut)}
 .over-band nav a:hover{color:#fff}
