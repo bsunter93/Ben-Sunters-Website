@@ -19,7 +19,7 @@
   /* Drafting paper, not a product surface: buff ground, faint blue rule, a sheet on top.
      Engineering graph paper is why the grid reads blue rather than grey. */
   --paper:#F7F4ED; --surface:#FCFAF6; --sunk:#F1EDE3;
-  --grid:#E4E8E7; --grid-soft:#F0EEE7;
+  --grid:#F0F1EE; --grid-soft:#F5F3EC;
   --ink:#16181B; --body:#33383F; --muted:#5B6068; --faint:#8A8F96;
   --line:#D6CFC1; --hair:#E6E0D4;
   --accent:#0E5C63; --accent-soft:#0E5C6314; --on-accent:#FFFFFF;
@@ -36,7 +36,7 @@
 @media (prefers-color-scheme:dark){
   :root:not([data-theme="light"]){
     --paper:#101317; --surface:#161A1F; --sunk:#131A1E;
-    --grid:#191F24; --grid-soft:#141A1E;
+    --grid:#14191D; --grid-soft:#12171B;
     --ink:#E9E7E2; --body:#C3C6CB; --muted:#8B9098; --faint:#767C84;
     --line:#2A2F36; --hair:#1C2126;
     --accent:#4FB3AE; --accent-soft:#4FB3AE1A; --on-accent:#0B1013;
@@ -47,7 +47,7 @@
 }
 :root[data-theme="dark"]{
   --paper:#101317; --surface:#161A1F; --sunk:#131A1E;
-  --grid:#191F24; --grid-soft:#141A1E;
+  --grid:#14191D; --grid-soft:#12171B;
   --ink:#E9E7E2; --body:#C3C6CB; --muted:#8B9098; --faint:#767C84;
   --line:#2A2F36; --hair:#1C2126;
   --accent:#4FB3AE; --accent-soft:#4FB3AE1A; --on-accent:#0B1013;
@@ -109,8 +109,9 @@ h1{font:600 clamp(30px,4.4vw,44px)/1.08 var(--display);letter-spacing:-.022em}
 
 /* ── input rail ──────────────────────────────────────────────────────────── */
 .rail{position:sticky;top:18px;background:var(--surface);border:1px solid var(--line);
-  border-radius:3px;padding:4px 18px 18px}
-@media (max-width:940px){.rail{position:static}}
+  border-radius:3px;padding:4px 18px 18px;
+  max-height:calc(100vh - 36px);overflow-y:auto;overscroll-behavior:contain}
+@media (max-width:940px){.rail{position:static;max-height:none;overflow:visible}}
 .grp{border-top:1px solid var(--hair);padding:16px 0 4px}
 .grp:first-of-type{border-top:0}
 .grp>h2{font:500 10.5px/1 var(--mono);letter-spacing:.14em;text-transform:uppercase;
@@ -270,24 +271,15 @@ tr.hi td{background:var(--accent-soft);color:var(--ink)}
   <form class="rail" id="rail" autocomplete="off">
     <h2 class="sr">Inputs</h2>
 
+    <!-- The four that decide the answer. Everything else has a real industry default and
+         moves the recommendation far less, so it folds away. A tool that argues for the
+         smallest ask that works should not open with eleven fields. -->
     <div class="grp">
-      <h2>Demand</h2>
-      <div class="f">
-        <label for="i-unit">What you count</label>
-        <input type="text" id="i-unit" maxlength="18" value="cases">
-      </div>
+      <h2>What the month looks like</h2>
       <div class="f">
         <label for="i-volume">Volume per month<span class="hint" id="h-vol">cases arriving</span></label>
         <input type="number" id="i-volume" min="1" step="1" value="4200">
       </div>
-      <div class="f">
-        <label for="i-err">Forecast error<span class="hint">Typical miss vs plan, plus or minus</span></label>
-        <span class="suffixed"><input type="number" id="i-err" min="0" max="90" step="1" value="18"><span class="sfx">%</span></span>
-      </div>
-    </div>
-
-    <div class="grp">
-      <h2>The work</h2>
       <div class="f">
         <label for="i-handle">Handle time each</label>
         <span class="suffixed">
@@ -298,6 +290,18 @@ tr.hi td{background:var(--accent-soft);color:var(--ink)}
           </span>
         </span>
       </div>
+      <div class="f">
+        <label for="i-err">Forecast error<span class="hint">Typical miss vs plan, plus or minus</span></label>
+        <span class="suffixed"><input type="number" id="i-err" min="0" max="90" step="1" value="18"><span class="sfx">%</span></span>
+      </div>
+      <div class="f">
+        <label for="i-ratio">Short vs over<span class="hint" id="h-ratio">Being one person short costs this many times what being one person over costs</span></label>
+        <span class="suffixed"><input type="number" id="i-ratio" min="1" max="20" step="0.5" value="4"><span class="sfx">&times;</span></span>
+      </div>
+    </div>
+
+    <details class="grp">
+      <summary>Capacity assumptions</summary>
       <div class="f">
         <label for="i-hours">Paid hours per person<span class="hint">Per month, before anything is taken out</span></label>
         <input type="number" id="i-hours" min="1" step="1" value="173">
@@ -310,19 +314,19 @@ tr.hi td{background:var(--accent-soft);color:var(--ink)}
         <label for="i-occ">Target occupancy<span class="hint">Share of remaining time actually on the work</span></label>
         <span class="suffixed"><input type="number" id="i-occ" min="10" max="100" step="1" value="82"><span class="sfx">%</span></span>
       </div>
-    </div>
+      <div class="f">
+        <label for="i-unit">What you count</label>
+        <input type="text" id="i-unit" maxlength="18" value="cases">
+      </div>
+    </details>
 
-    <div class="grp">
-      <h2>What it costs</h2>
+    <details class="grp">
+      <summary>Cost</summary>
       <div class="f">
         <label for="i-cost">Fully loaded cost<span class="hint">Per person, per year</span></label>
         <input type="number" id="i-cost" min="1000" step="1000" value="95000">
       </div>
-      <div class="f">
-        <label for="i-ratio">Short vs over<span class="hint" id="h-ratio">Being one person short costs this many times what being one person over costs</span></label>
-        <span class="suffixed"><input type="number" id="i-ratio" min="1" max="20" step="0.5" value="4"><span class="sfx">&times;</span></span>
-      </div>
-    </div>
+    </details>
 
     <details class="grp" id="hiringgrp">
       <summary>Hiring reality</summary>
