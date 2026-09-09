@@ -177,9 +177,14 @@ h1{font:600 clamp(36px,5.4vw,53px)/1.06 var(--display);letter-spacing:-.026em;ma
 /* Was a labelled, tinted callout. A section headed "what I got wrong" announces the
    humility before the reader gets to judge it; the same paragraphs land better as an
    unlabelled closing note under the case studies. */
-.closing{margin-top:32px;padding-top:26px;border-top:1px solid var(--hair)}
-.closing p{margin:0 0 13px;max-width:var(--measure);font-size:15.5px;color:var(--body)}
-.closing p:last-child{margin-bottom:0}
+/* Sits after three bordered cards with no card of its own, so without some treatment it
+   reads as body copy nobody styled. Not another card, which would make it a fourth case
+   study, and not a label, which is what it was just freed from. The display face marks it
+   as the author talking rather than another exhibit, and the indent puts it in the same
+   optical column as the prose inside the cards above. */
+.closing{margin:36px 0 0;padding:30px 20px 0;border-top:1px solid var(--line)}
+.closing p{margin:0 0 16px;max-width:56ch;font:400 17px/1.62 var(--display);color:var(--body)}
+.closing p:last-child{margin-bottom:0;color:var(--ink)}
 
 .subscribe{margin:0 0 20px;padding-bottom:18px;border-bottom:1px solid var(--hair)}
 .subscribe label{display:block;font-size:13.5px;color:var(--muted);margin-bottom:9px}
