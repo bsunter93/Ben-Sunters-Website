@@ -32,7 +32,11 @@
   --line:#E1E4E2; --hair:#ECEFED;
   --accent:#0E5C63; --accent-soft:#0E5C6312;
   --warm:#8A4E05; --warm-bright:#E0A33C; --warm-soft:#9E5A0614;
-  --sage:#3F6B54;
+  --plum:#733F83; --plum-soft:#733F8314;
+  /* Bright steps. The deep band is dark in BOTH themes, so anything drawn on it
+     takes these and they are never redefined below. The ink tokens above are for
+     paper; using an ink on the band is what made the Accenture bar 2:1 and invisible. */
+  --accent-bright:#7FD1C8; --plum-bright:#C18ED1;
   --display:'Fraunces',Georgia,'Times New Roman',serif;
   --sans:'IBM Plex Sans',-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif;
   --mono:'IBM Plex Mono',ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
@@ -46,7 +50,7 @@
     --line:#252A31; --hair:#1C2126;
     --accent:#4FB3AE; --accent-soft:#4FB3AE1A;
     --warm:#CFA470; --warm-bright:#E0A33C; --warm-soft:#CFA4701A;
-    --sage:#71A588;
+    --plum:#B469CA; --plum-soft:#B469CA1A;
   }
 }
 :root[data-theme="dark"]{
@@ -56,7 +60,7 @@
   --line:#252A31; --hair:#1C2126;
   --accent:#4FB3AE; --accent-soft:#4FB3AE1A;
   --warm:#CFA470; --warm-bright:#E0A33C; --warm-soft:#CFA4701A;
-  --sage:#71A588;
+  --plum:#B469CA; --plum-soft:#B469CA1A;
 }
 *{box-sizing:border-box}
 html{scroll-behavior:smooth}
@@ -95,11 +99,6 @@ h2{font:600 clamp(26px,3.4vw,34px)/1.15 var(--display);letter-spacing:-.015em;ma
   color:var(--on-deep-mut);max-width:30ch}
 @media (max-width:560px){.arc li{padding-right:0}.arc li:before{right:0}}
 .lede{max-width:var(--measure);color:var(--muted);font-size:16px;margin:0 0 40px}
-.pullquote{padding:clamp(48px,6vw,76px) 0}
-.pullquote blockquote{max-width:36ch;margin:0;text-wrap:balance;
-  font:400 clamp(21px,2.7vw,29px)/1.34 var(--display);letter-spacing:-.015em;color:var(--ink)}
-.pullquote blockquote:before{content:"";display:block;width:38px;height:2px;
-  background:var(--warm);margin-bottom:26px}
 
 /* ── masthead ────────────────────────────────────────────────────────────── */
 /* Solid by default, so it is readable with no JavaScript and on every section below
@@ -222,7 +221,7 @@ h1{font:600 clamp(36px,5.4vw,53px)/1.06 var(--display);letter-spacing:-.026em;ma
 .project{border-top:2px solid transparent}
 .projects .project:nth-child(1){border-top-color:var(--warm)}
 .projects .project:nth-child(2){border-top-color:var(--accent)}
-.projects .project:nth-child(3){border-top-color:var(--sage)}
+.projects .project:nth-child(3){border-top-color:var(--plum)}
 .project p{margin:0;font-size:14.5px;color:var(--muted)}
 .project video{margin-top:14px;border:1px solid var(--line);border-radius:2px;background:#000}
 
@@ -296,7 +295,7 @@ h1{font:600 clamp(36px,5.4vw,53px)/1.06 var(--display);letter-spacing:-.026em;ma
    than one undifferentiated wall. --co is set per article and everything reads it. */
 .jobs{position:relative;margin-top:8px;padding-left:26px}
 .jobs:before{content:"";position:absolute;left:4px;top:14px;bottom:14px;width:2px;
-  background:linear-gradient(var(--accent),var(--warm) 52%,var(--sage))}
+  background:linear-gradient(var(--accent),var(--warm) 52%,var(--plum))}
 .job{position:relative;display:grid;grid-template-columns:158px minmax(0,1fr);
   gap:clamp(16px,3vw,40px);padding:32px 0}
 .job+.job{border-top:1px solid var(--hair)}
@@ -321,7 +320,7 @@ h1{font:600 clamp(36px,5.4vw,53px)/1.06 var(--display);letter-spacing:-.026em;ma
 .job li .n{color:var(--co);font-weight:600;white-space:nowrap}
 .subrole{font:500 12.5px/1 var(--mono);color:var(--co);margin:20px 0 10px;
   letter-spacing:.03em;text-transform:uppercase;padding-left:11px;border-left:2px solid var(--hair)}
-.job--ih{--co:var(--accent)} .job--goog{--co:var(--warm)} .job--acn{--co:var(--sage)}
+.job--ih{--co:var(--accent)} .job--goog{--co:var(--warm)} .job--acn{--co:var(--plum)}
 
 
 /* Real marks, on a plate. A logo has its own ground and its own colours, and several
@@ -337,10 +336,14 @@ h1{font:600 clamp(36px,5.4vw,53px)/1.06 var(--display);letter-spacing:-.026em;ma
 .creds div{font-size:14.5px}
 .creds b{display:block;color:var(--ink);font-weight:600}
 .creds span{color:var(--muted);font-size:13.5px}
+.creds-row{display:flex;align-items:center;justify-content:space-between;gap:22px;flex-wrap:wrap;
+  margin-top:30px;padding-top:22px;border-top:1px solid var(--hair)}
+.creds-row .creds{margin-bottom:0}
+.creds-more{margin:0;font:400 13px/1.5 var(--sans);color:var(--muted)}
 .certs{margin:0;padding:0;list-style:none}
 .certs li{font-size:14.5px;padding:5px 0;color:var(--body);
   position:relative;padding-left:15px}
-.certs li:before{content:"";position:absolute;left:0;top:11px;width:7px;height:2px;background:var(--sage)}
+.certs li:before{content:"";position:absolute;left:0;top:11px;width:7px;height:2px;background:var(--plum)}
 
 
 /* ── mirror demo, case studies, personal ─────────────────────────────────── */
@@ -348,21 +351,24 @@ h1{font:600 clamp(36px,5.4vw,53px)/1.06 var(--display);letter-spacing:-.026em;ma
 .appshot video{width:auto;max-height:300px;border-radius:12px;
   border:1px solid var(--line);background:#000;box-shadow:0 3px 14px rgba(0,0,0,.16)}
 
-.study{border:1px solid var(--line);border-radius:2px;background:var(--surface);margin-bottom:12px}
-.study+.study{margin-top:0}
-.study>summary{list-style:none;cursor:pointer;padding:18px 20px;display:flex;
-  align-items:baseline;gap:14px;flex-wrap:wrap}
-.study>summary::-webkit-details-marker{display:none}
-.study>summary:hover .st-t{color:var(--accent)}
+.study{border:1px solid var(--line);border-radius:2px;background:var(--surface);
+  padding:22px 20px 20px;margin-bottom:14px}
+.st-head{display:flex;align-items:baseline;gap:14px;flex-wrap:wrap;margin-bottom:9px}
 .st-t{font:600 17px/1.3 var(--display);color:var(--ink);letter-spacing:-.01em;flex:1 1 240px}
-.st-d{font:400 11.5px/1 var(--mono);color:var(--muted);letter-spacing:.04em}
 .st-kind{font:500 10.5px/1 var(--mono);letter-spacing:.13em;text-transform:uppercase;
   color:var(--muted);flex:0 0 auto;min-width:142px}
 @media (max-width:640px){.st-kind{flex-basis:100%;min-width:0;margin-bottom:-6px}}
-.st-open{font:500 12px/1 var(--mono);color:var(--accent);letter-spacing:.05em}
-.study[open]>summary{border-bottom:1px solid var(--hair)}
-.study[open] .st-open:after{content:" \2013"} .study:not([open]) .st-open:after{content:" +"}
-.st-body{padding:20px}
+/* The takeaway and the diagram are what a skimmer gets. The prose is opt-in, because
+   most people will not open it and the point has to survive that. */
+.st-take{margin:0 0 4px;font:400 16.5px/1.55 var(--sans);color:var(--ink);max-width:62ch}
+.st-more{margin-top:20px;border-top:1px solid var(--hair);padding-top:13px}
+.st-more>summary{list-style:none;cursor:pointer;font:500 11.5px/1 var(--mono);
+  letter-spacing:.06em;text-transform:uppercase;color:var(--accent)}
+.st-more>summary::-webkit-details-marker{display:none}
+.st-more>summary:hover{opacity:.7}
+.st-more:not([open])>summary:after{content:" +"}
+.st-more[open]>summary:after{content:" \2013"}
+.st-body{padding:14px 0 0}
 .st-body h3{font:600 12px/1 var(--mono);letter-spacing:.1em;text-transform:uppercase;
   color:var(--accent);margin:20px 0 9px}
 .st-body h3:first-child{margin-top:0}
@@ -376,7 +382,7 @@ h1{font:600 clamp(36px,5.4vw,53px)/1.06 var(--display);letter-spacing:-.026em;ma
 
 .st-meta{font:500 11px/1 var(--mono);letter-spacing:.12em;text-transform:uppercase;
   color:var(--accent);margin:0 0 18px}
-.st-fig{margin:24px 0 0;padding:22px 0 0;border-top:1px solid var(--hair)}
+.st-fig{margin:18px 0 0;padding:0}
 .st-fig svg{width:100%;height:auto;display:block;overflow:visible}
 .st-fig figcaption{margin-top:16px;font:400 13px/1.6 var(--sans);color:var(--muted);
   max-width:var(--measure)}
@@ -393,7 +399,8 @@ h1{font:600 clamp(36px,5.4vw,53px)/1.06 var(--display);letter-spacing:-.026em;ma
 .facts li:first-child:before{top:8px}
 .facts li:nth-child(1):before{background:var(--accent)}
 .facts li:nth-child(2):before{background:var(--warm)}
-.facts li:nth-child(3):before{background:var(--sage)}
+.facts li:nth-child(3):before{background:var(--plum)}
+.facts li:nth-child(4):before{background:var(--accent)}
 .facts b{color:var(--ink);font-weight:600}
 
 
@@ -408,25 +415,6 @@ h1{font:600 clamp(36px,5.4vw,53px)/1.06 var(--display);letter-spacing:-.026em;ma
 .jobfig span{display:block;margin-top:6px;font:400 11.5px/1.4 var(--sans);color:var(--muted)}
 @media (max-width:520px){.jobfig{flex:1 1 100%;padding-right:0}
   .jobfig+.jobfig{border-left:0;border-top:1px solid var(--hair);padding-left:0}}
-
-/* ── capabilities ────────────────────────────────────────────────────────── */
-/* Was three bulleted keyword lists, which is a format that exists for résumé
-   parsers rather than people. A line of plain English says what the column means,
-   and the keywords become chips underneath: denser than one-per-row, and they carry
-   the column's colour so the section has some. */
-.caps{display:grid;grid-template-columns:repeat(auto-fit,minmax(258px,1fr));gap:34px}
-.cap h3{font:500 11px/1 var(--mono);letter-spacing:.13em;text-transform:uppercase;
-  color:var(--ink);margin-bottom:14px;padding-bottom:11px;border-bottom:2px solid var(--co)}
-.cap--a{--co:var(--accent)} .cap--b{--co:var(--warm)} .cap--c{--co:var(--sage)}
-.cap p{margin:0 0 15px;font-size:15px;color:var(--body);max-width:42ch}
-.chips{display:flex;flex-wrap:wrap;gap:6px}
-.chip{font:400 11.5px/1 var(--mono);color:var(--co);padding:6px 9px;border-radius:2px;
-  /* neutral first, tinted where color-mix is understood */
-  background:var(--hair);border:1px solid var(--line);
-  background:color-mix(in srgb,var(--co) 9%,transparent);
-  border-color:color-mix(in srgb,var(--co) 22%,transparent)}
-.cap ul{margin:0;padding:0;list-style:none}
-.cap li{font-size:14.5px;padding:5px 0;color:var(--body)}
 
 /* ── contact ─────────────────────────────────────────────────────────────── */
 .contact-grid{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,320px);
@@ -449,7 +437,6 @@ footer{padding:26px 0 44px;border-top:1px solid var(--hair);
     <nav>
       <a href="#work">Work</a>
       <a href="#experience">Experience</a>
-      <a href="#capabilities">Capabilities</a>
       <a href="#writing">Case studies</a>
       <a href="#contact" class="nav-cta">Contact</a>
       <button type="button" id="theme" class="theme-btn" aria-label="Switch theme" title="Switch theme">
@@ -477,11 +464,11 @@ footer{padding:26px 0 44px;border-top:1px solid var(--hair);
          current on its own. Pulling reporting out of separate teams and into one place
          usually turns up problems and openings nobody could see before.</p>
       <ol class="arc">
-        <li style="--co:var(--sage)"><b>Accenture</b><span>2016 – 2021</span>
+        <li style="--co:var(--plum-bright)"><b>Accenture</b><span>2016 – 2021</span>
             <em>$26.5B telecom merger. 24 workstreams under 16 VPs.</em></li>
         <li style="--co:var(--warm-bright)"><b>Google</b><span>2022 – 2025</span>
             <em>$B Americas partnerships. Planning, and publisher GTM.</em></li>
-        <li style="--co:#7FD1C8"><b>Included Health</b><span>2026</span>
+        <li style="--co:var(--accent-bright)"><b>Included Health</b><span>2026</span>
             <em>A new line of business, and the cost programme behind it.</em></li>
       </ol>
     </div>
@@ -525,20 +512,18 @@ footer{padding:26px 0 44px;border-top:1px solid var(--hair);
        almost free. The number of people who can read applications did not change.</p>
 
     <p>Applying to more things faster is what caused this, so Career Ops does the opposite.
-       It does not write or submit anything. It cuts down how many roles are worth your
-       time, and it is open source, so it is a method rather than an edge.</p>
+       It does not write or submit anything. It cuts down how many roles are worth your time.</p>
 
-    <p>It watches 87 job boards, surfaces only what fits a written profile, and ranks by
-       how recently each role was posted. Fit is pass or fail. You clear the bar for a role or you do not. Among roles you clear, week one beats clearing it by a wider margin,
-       because a req with 300 applicants gets read in arrival order. Fit, pay band,
-       employee sentiment and your history with that company are attached before you open
-       a posting. Status comes from your mail, not from you.</p>
+    <p>It watches 87 job boards and surfaces only what fits a written profile. Fit is pass
+       or fail: you clear the bar for a role or you do not. Among the ones you clear it
+       ranks by how recently each was posted, because a req with 300 applicants gets read
+       in arrival order. Pay band, employee sentiment and your history with that company
+       are attached before you open a posting, and status comes from your mail, not from you.</p>
 
-    <p class="proj-note">It does not fix the real problem. Nothing on the candidate's side can;
-       the bottleneck is how many humans can read. It just stops
-       you spending attention on roles that were never going to answer. The hard bugs were all
-       the same: software stating something untrue with total confidence, and being
-       believed. Most of the work is teaching it to say when it does not know.</p>
+    <p class="proj-note">It does not fix the real problem, and nothing on the candidate's side
+       can: the bottleneck is how many humans can read. The hard bugs were all the same, software
+       stating something untrue with total confidence and being believed. Most of the work is
+       teaching it to say when it does not know.</p>
 
     <p class="proj-src">Application volume: Ashby, 100M+ submissions. Interview-rate
        decline: ZipRecruiter 2026 talent acquisition survey.</p>
@@ -558,9 +543,8 @@ footer{padding:26px 0 44px;border-top:1px solid var(--hair);
          applications are fictional.</p>
     </div>
     <p class="proj-give">If you are running a search of your own, take it. It runs locally
-       against your own Gmail, nothing leaves your machine, and the profile it scores
-       against is a file you write. Clone it, fill in <code>config.yaml</code>, point it at
-       your inbox. The README covers the rest.</p>
+       against your own Gmail and nothing leaves your machine. Clone it, fill in
+       <code>config.yaml</code>, point it at your inbox. The README covers the rest.</p>
     <a class="btn" href="https://github.com/bsunter93/careerops" rel="noopener">View on GitHub</a>
   </div>
 
@@ -570,14 +554,12 @@ footer{padding:26px 0 44px;border-top:1px solid var(--hair);
       <span class="proj-kind">Planning tool</span>
       <h3>Staffing Headroom</h3>
       <span class="proj-when">Built 2026 · Open source</span>
-      <p style="margin-top:11px">A capacity model for the question every operations team has
-         to answer out loud: how many people do we need. It works out the headcount your
-         forecast implies, which is arithmetic, and then the headcount you should actually
-         hire, which is not. Being short and being over almost never cost the same, so the
-         cheapest plan is rarely the forecast. That second number is the one no spreadsheet
-         gives you.</p>
-      <p style="margin-top:10px">One file, no backend, no analytics. Change the numbers, copy
-         the link, and the model travels with it.</p>
+      <p style="margin-top:11px">How many people do we need. Working out the headcount a forecast
+         implies is arithmetic. Working out the one you should actually hire is not, because
+         being short and being over never cost the same, so the cheapest plan is rarely the
+         forecast itself.</p>
+      <p style="margin-top:10px">One file, no backend. Change the numbers, copy the link, and
+         the model travels with it.</p>
       <a class="playlink" href="headroom.html">Open the model &rarr;</a>
     </div>
     <div class="project">
@@ -589,10 +571,10 @@ footer{padding:26px 0 44px;border-top:1px solid var(--hair);
           <span class="proj-when">Shipped 2024</span>
         </div>
       </div>
-      <p>An AI reflection and journaling app. I designed it, built it, shipped it and wired
-         up the ads myself, mostly to find out whether I could get something from an idea
-         to a live product that made real money. Monetisation runs through Meta Audience
-         Network. It is still on Google Play and still earning.</p>
+      <p>An AI reflection and journaling app. I designed it, built it, shipped it and wired up
+         the ads myself, mostly to find out whether I could get an idea to a live product
+         that made real money. Monetisation runs through Meta Audience Network. Still on
+         Google Play, still earning.</p>
       <div class="appshot">
         <video src="mirror-demo.mp4" poster="mirror-poster.jpg" muted loop playsinline
                preload="none" controls aria-label="Mirror app demo"></video>
@@ -601,11 +583,6 @@ footer{padding:26px 0 44px;border-top:1px solid var(--hair);
          rel="noopener">View on Google Play &rarr;</a>
     </div>
   </div>
-</section>
-
-<section class="pullquote wrap">
-  <blockquote>A forecast that arrives after the hiring decision is just a record of
-    what happened.</blockquote>
 </section>
 
 <section id="experience" class="wrap">
@@ -719,6 +696,17 @@ footer{padding:26px 0 44px;border-top:1px solid var(--hair);
     </div>
   </article>
   </div>
+
+  <div class="creds-row">
+    <div class="creds">
+      <span class="joblogo"><img src="uf-logo.png" alt="University of Florida" width="30" height="30" loading="lazy"></span>
+      <div>
+        <b>B.S. Industrial &amp; Systems Engineering</b>
+        <span>University of Florida, 2016</span>
+      </div>
+    </div>
+    <p class="creds-more">Lean Six Sigma Green Belt &middot; Google Project Management Certificate</p>
+  </div>
 </section>
 
 <section id="writing" class="wrap">
@@ -726,14 +714,37 @@ footer{padding:26px 0 44px;border-top:1px solid var(--hair);
   <h2>How the work actually went</h2>
   <p class="lede">Three systems, what was actually wrong before them, and what changed.</p>
 
-  <details class="study">
-    <summary>
+  <article class="study">
+    <div class="st-head">
       <span class="st-kind">Cost &amp; forecasting</span>
       <span class="st-t">Making a cost number travel, and arrive in time to matter</span>
-      <span class="st-open">Read</span>
-    </summary>
-    <div class="st-body">
-      <p class="st-meta">Healthcare operations · method</p>
+    </div>
+    <p class="st-meta">Healthcare operations · method</p>
+    <p class="st-take">Unit cost used to arrive from finance around month nine, when the only lever left was people. It became a number three orgs signed and saw every month.</p>
+    <figure class="st-fig">
+        <svg viewBox="0 0 620 322" role="img" aria-label="A number travels from operators to workforce management to finance. Before, unit cost arrived once around month nine. Now it arrives every month.">
+  <text class="d-mono" x="0" y="18">HOW ONE NUMBER TRAVELS</text>
+  <rect x="0" y="34" width="196" height="54" rx="3" fill="var(--accent)" opacity=".1"/><rect x="0" y="34" width="4" height="54" rx="2" fill="var(--accent)"/><text class="d-lab" x="18" y="57">Operators</text><text class="d-mut" x="18" y="76">impact on AHT, visits per hour</text><path class="d-arrow" d="M200 57 l8 4 -8 4z"/><rect x="212" y="34" width="196" height="54" rx="3" fill="var(--warm)" opacity=".1"/><rect x="212" y="34" width="4" height="54" rx="2" fill="var(--warm)"/><text class="d-lab" x="230" y="57">Workforce mgmt</text><text class="d-mut" x="230" y="76">converted to FTE</text><path class="d-arrow" d="M412 57 l8 4 -8 4z"/><rect x="424" y="34" width="196" height="54" rx="3" fill="var(--plum)" opacity=".1"/><rect x="424" y="34" width="4" height="54" rx="2" fill="var(--plum)"/><text class="d-lab" x="442" y="57">Finance</text><text class="d-mut" x="442" y="76">converted to unit cost</text>
+  <text class="d-mono" x="0" y="130">WHEN OPERATORS ACTUALLY SEE IT</text>
+
+  <text class="d-mono" x="0" y="167" fill="var(--warm)">BEFORE</text>
+  <line x1="72" y1="163" x2="608" y2="163" stroke="var(--line)" stroke-width="2"/>
+  <circle cx="452" cy="163" r="7.5" fill="var(--warm)"/>
+  <text class="d-mut" x="72" y="190">Arrived once, around month nine. By then the only levers left were a</text>
+  <text class="d-mut" x="72" y="208">hiring freeze and cuts.</text>
+
+  <text class="d-mono" x="0" y="236" fill="var(--accent)">AFTER</text>
+  <line x1="72" y1="232" x2="608" y2="232" stroke="var(--accent)" stroke-width="2" opacity=".4"/>
+  <circle cx="72" cy="232" r="5.5" fill="var(--accent)"/><circle cx="120" cy="232" r="5.5" fill="var(--accent)"/><circle cx="168" cy="232" r="5.5" fill="var(--accent)"/><circle cx="216" cy="232" r="5.5" fill="var(--accent)"/><circle cx="264" cy="232" r="5.5" fill="var(--accent)"/><circle cx="312" cy="232" r="5.5" fill="var(--accent)"/><circle cx="360" cy="232" r="5.5" fill="var(--accent)"/><circle cx="408" cy="232" r="5.5" fill="var(--accent)"/><circle cx="456" cy="232" r="5.5" fill="var(--accent)"/><circle cx="504" cy="232" r="5.5" fill="var(--accent)"/><circle cx="552" cy="232" r="5.5" fill="var(--accent)"/><circle cx="600" cy="232" r="5.5" fill="var(--accent)"/>
+  <text class="d-mut" x="72" y="259">Every month, with the year still ahead. Levers: initiative mix, staffing</text>
+  <text class="d-mut" x="72" y="277">plan, and the demand model that drives both.</text>
+  <text class="d-mono" x="72" y="306">JAN</text><text class="d-mono" x="576" y="306">DEC</text>
+</svg>
+        <figcaption>Timing is the point. Decisions get made before risks land rather than after.</figcaption>
+      </figure>
+    <details class="st-more">
+      <summary>How it went</summary>
+      <div class="st-body">
       <h3>Before</h3>
       <p>Forecasts were badly wrong, teams hired against them, and then either shrink went
          up or they were overstaffed and had to cut. Cost reporting arrived from finance
@@ -752,38 +763,53 @@ footer{padding:26px 0 44px;border-top:1px solid var(--hair);
          they can trade off against each other, one service line carrying another's miss.
          It ties into demand modelling, which sits upstream of every staffing decision and
          is the largest single driver of cost.</p>
-      <figure class="st-fig">
-        <svg viewBox="0 0 620 322" role="img" aria-label="A number travels from operators to workforce management to finance. Before, unit cost arrived once around month nine. Now it arrives every month.">
-  <text class="d-mono" x="0" y="18">HOW ONE NUMBER TRAVELS</text>
-  <rect x="0" y="34" width="196" height="54" rx="3" fill="var(--accent)" opacity=".1"/><rect x="0" y="34" width="4" height="54" rx="2" fill="var(--accent)"/><text class="d-lab" x="18" y="57">Operators</text><text class="d-mut" x="18" y="76">impact on AHT, visits per hour</text><path class="d-arrow" d="M200 57 l8 4 -8 4z"/><rect x="212" y="34" width="196" height="54" rx="3" fill="var(--warm)" opacity=".1"/><rect x="212" y="34" width="4" height="54" rx="2" fill="var(--warm)"/><text class="d-lab" x="230" y="57">Workforce mgmt</text><text class="d-mut" x="230" y="76">converted to FTE</text><path class="d-arrow" d="M412 57 l8 4 -8 4z"/><rect x="424" y="34" width="196" height="54" rx="3" fill="var(--sage)" opacity=".1"/><rect x="424" y="34" width="4" height="54" rx="2" fill="var(--sage)"/><text class="d-lab" x="442" y="57">Finance</text><text class="d-mut" x="442" y="76">converted to unit cost</text>
-  <text class="d-mono" x="0" y="130">WHEN OPERATORS ACTUALLY SEE IT</text>
+      </div>
+    </details>
+  </article>
 
-  <text class="d-mono" x="0" y="167" fill="var(--warm)">BEFORE</text>
-  <line x1="72" y1="163" x2="608" y2="163" stroke="var(--line)" stroke-width="2"/>
-  <circle cx="452" cy="163" r="7.5" fill="var(--warm)"/>
-  <text class="d-mut" x="72" y="190">Arrived once, around month nine. By then the only levers left were a</text>
-  <text class="d-mut" x="72" y="208">hiring freeze and cuts.</text>
-
-  <text class="d-mono" x="0" y="236" fill="var(--accent)">AFTER</text>
-  <line x1="72" y1="232" x2="608" y2="232" stroke="var(--accent)" stroke-width="2" opacity=".4"/>
-  <circle cx="72" cy="232" r="5.5" fill="var(--accent)"/><circle cx="120" cy="232" r="5.5" fill="var(--accent)"/><circle cx="168" cy="232" r="5.5" fill="var(--accent)"/><circle cx="216" cy="232" r="5.5" fill="var(--accent)"/><circle cx="264" cy="232" r="5.5" fill="var(--accent)"/><circle cx="312" cy="232" r="5.5" fill="var(--accent)"/><circle cx="360" cy="232" r="5.5" fill="var(--accent)"/><circle cx="408" cy="232" r="5.5" fill="var(--accent)"/><circle cx="456" cy="232" r="5.5" fill="var(--accent)"/><circle cx="504" cy="232" r="5.5" fill="var(--accent)"/><circle cx="552" cy="232" r="5.5" fill="var(--accent)"/><circle cx="600" cy="232" r="5.5" fill="var(--accent)"/>
-  <text class="d-mut" x="72" y="259">Every month, with the year still ahead. Levers: initiative mix, staffing</text>
-  <text class="d-mut" x="72" y="277">plan, and the demand model that drives both.</text>
-  <text class="d-mono" x="72" y="306">JAN</text><text class="d-mono" x="576" y="306">DEC</text>
-</svg>
-        <figcaption>Timing is the point. Decisions get made before risks land rather than after.</figcaption>
-      </figure>
-    </div>
-  </details>
-
-  <details class="study">
-    <summary>
+  <article class="study">
+    <div class="st-head">
       <span class="st-kind">Program governance</span>
       <span class="st-t">Building a PMO for a deal that had not closed yet</span>
-      <span class="st-open">Read</span>
-    </summary>
-    <div class="st-body">
-      <p class="st-meta">Accenture · $26.5B telecom merger · 2018 – 2020</p>
+    </div>
+    <p class="st-meta">Accenture · $26.5B telecom merger · 2018 – 2020</p>
+    <p class="st-take">Several hundred people kept building through months of regulatory hold, on a deal that might not have survived review at all.</p>
+    <figure class="st-fig">
+        <svg viewBox="0 0 620 300" role="img" aria-label="Designs went as far as the law allowed, sat through months of regulatory hold, then passed an architecture review that caught drift before testing did">
+  <text class="d-mono" x="0" y="18">WHAT THE DEAL DID TO THE WORK</text>
+  <rect x="0" y="32" width="150" height="58" rx="3" fill="var(--accent)" opacity=".12"/>
+  <rect x="0" y="32" width="4" height="58" rx="2" fill="var(--accent)"/>
+  <text class="d-lab" x="16" y="55">Design and build</text>
+  <text class="d-mut" x="16" y="74">synthetic data only</text>
+  <path class="d-arrow" d="M158 57 l8 4 -8 4z"/>
+  <rect x="176" y="32" width="268" height="58" rx="3" fill="var(--warm)" opacity=".14"/>
+  <rect x="176" y="32" width="4" height="58" rx="2" fill="var(--warm)"/>
+  <text class="d-lab" x="192" y="55">Months on hold</text>
+  <text class="d-mut" x="192" y="74">FCC, DOJ and the businesses renegotiating terms</text>
+  <path class="d-arrow" d="M452 57 l8 4 -8 4z"/>
+  <rect x="470" y="32" width="150" height="58" rx="3" fill="var(--accent)" opacity=".12"/>
+  <rect x="470" y="32" width="4" height="58" rx="2" fill="var(--accent)"/>
+  <text class="d-lab" x="486" y="55">Approval</text>
+  <text class="d-mut" x="486" y="74">teams come back</text>
+  <text class="d-mut" x="0" y="112">Engineers and PMs reallocated across the wider org. Designs sat, and quietly went stale.</text>
+
+  <text class="d-mono" x="0" y="152">THE REVIEW BEFORE ANYONE RESTARTED</text>
+  <rect x="0" y="166" width="620" height="56" rx="3" fill="var(--plum)" opacity=".12"/>
+  <rect x="0" y="166" width="4" height="56" rx="2" fill="var(--plum)"/>
+  <text class="d-lab" x="18" y="190">Re-check every architecture, design and test plan with a dependency on the other party</text>
+  <text class="d-mut" x="18" y="210">A call to an API deprecated in the meantime. A vendor data feed repurposed for something else.</text>
+  <line x1="0" y1="248" x2="620" y2="248" stroke="var(--line)"/>
+  <text class="d-num" x="0" y="282">~$2M</text>
+  <text class="d-mut" x="94" y="282">of test remediation avoided. Easy to spot in a design review,</text>
+  <text class="d-mut" x="94" y="296">expensive to find in testing.</text>
+</svg>
+        <figcaption>A review gate is only worth having if it catches something. This one
+          paid for itself on drift that nobody introduced: the designs were right when
+          they were written, and the pause is what made them wrong.</figcaption>
+      </figure>
+    <details class="st-more">
+      <summary>How it went</summary>
+      <div class="st-body">
       <p>Nothing was broken here. Nothing existed yet. The client was standing up a PMO
          ahead of the merger and my team was on the ground floor, building the machinery
          that the next five years of integration work would run on.</p>
@@ -818,66 +844,18 @@ footer{padding:26px 0 44px;border-top:1px solid var(--hair);
          to port every report across. I had never used Power BI, and it is different enough
          from Tableau in both capability and interface that it was not a translation job. I
          learned it on the fly and got the reporting back up.</p>
-      <figure class="st-fig">
-        <svg viewBox="0 0 620 300" role="img" aria-label="Designs went as far as the law allowed, sat through months of regulatory hold, then passed an architecture review that caught drift before testing did">
-  <text class="d-mono" x="0" y="18">WHAT THE DEAL DID TO THE WORK</text>
-  <rect x="0" y="32" width="150" height="58" rx="3" fill="var(--accent)" opacity=".12"/>
-  <rect x="0" y="32" width="4" height="58" rx="2" fill="var(--accent)"/>
-  <text class="d-lab" x="16" y="55">Design and build</text>
-  <text class="d-mut" x="16" y="74">synthetic data only</text>
-  <path class="d-arrow" d="M158 57 l8 4 -8 4z"/>
-  <rect x="176" y="32" width="268" height="58" rx="3" fill="var(--warm)" opacity=".14"/>
-  <rect x="176" y="32" width="4" height="58" rx="2" fill="var(--warm)"/>
-  <text class="d-lab" x="192" y="55">Months on hold</text>
-  <text class="d-mut" x="192" y="74">FCC, DOJ and the businesses renegotiating terms</text>
-  <path class="d-arrow" d="M452 57 l8 4 -8 4z"/>
-  <rect x="470" y="32" width="150" height="58" rx="3" fill="var(--accent)" opacity=".12"/>
-  <rect x="470" y="32" width="4" height="58" rx="2" fill="var(--accent)"/>
-  <text class="d-lab" x="486" y="55">Approval</text>
-  <text class="d-mut" x="486" y="74">teams come back</text>
-  <text class="d-mut" x="0" y="112">Engineers and PMs reallocated across the wider org. Designs sat, and quietly went stale.</text>
+      </div>
+    </details>
+  </article>
 
-  <text class="d-mono" x="0" y="152">THE REVIEW BEFORE ANYONE RESTARTED</text>
-  <rect x="0" y="166" width="620" height="56" rx="3" fill="var(--sage)" opacity=".12"/>
-  <rect x="0" y="166" width="4" height="56" rx="2" fill="var(--sage)"/>
-  <text class="d-lab" x="18" y="190">Re-check every architecture, design and test plan with a dependency on the other party</text>
-  <text class="d-mut" x="18" y="210">A call to an API deprecated in the meantime. A vendor data feed repurposed for something else.</text>
-  <line x1="0" y1="248" x2="620" y2="248" stroke="var(--line)"/>
-  <text class="d-num" x="0" y="282">~$2M</text>
-  <text class="d-mut" x="94" y="282">of test remediation avoided. Easy to spot in a design review,</text>
-  <text class="d-mut" x="94" y="296">expensive to find in testing.</text>
-</svg>
-        <figcaption>A review gate is only worth having if it catches something. This one
-          paid for itself on drift that nobody introduced: the designs were right when
-          they were written, and the pause is what made them wrong.</figcaption>
-      </figure>
-    </div>
-  </details>
-
-  <details class="study">
-    <summary>
+  <article class="study">
+    <div class="st-head">
       <span class="st-kind">Go to market</span>
       <span class="st-t">Making an opportunity sellable</span>
-      <span class="st-open">Read</span>
-    </summary>
-    <div class="st-body">
-      <p class="st-meta">Google · publisher partnerships</p>
-      <p>Sellers already had the list. That was never the constraint. What they could not
-         do was tell a publisher what the opportunity was worth, so it kept losing to
-         pitches that arrived with a number attached.</p>
-      <h3>Measure it, do not argue it</h3>
-      <p>Impact Experiments, the incrementality framework inside Ad Manager 360, produced a
-         measured figure per publisher rather than an estimate. A publisher will argue with
-         a projection. They will not argue with their own incrementality result.</p>
-      <h3>One number, three places it had never been</h3>
-      <p>Into the internal performance view, so sellers could finally book credit for the
-         work. Into the client conversation, as a figure a publisher would accept. And onto
-         a leaderboard, because I built the custom CRM and product views that did not exist
-         and turned pitching it into a contest.</p>
-      <p>I timed the launch to the week the case study cleared legal and client review, so
-         sellers got the proof they had been asking for and a reason to use it in the same
-         week. Pipeline movement on that opportunity ran 256% against prior quarters.</p>
-      <figure class="st-fig">
+    </div>
+    <p class="st-meta">Google · publisher partnerships</p>
+    <p class="st-take">Sellers already had the list. What they could not do was tell a publisher what it was worth, so it kept losing to pitches that arrived with a number.</p>
+    <figure class="st-fig">
         <svg viewBox="0 0 620 300" role="img" aria-label="A measured dollar figure per publisher unlocked three uses: the internal performance view, the client conversation, and a live leaderboard">
   <text class="d-mono" x="0" y="18">THE CONSTRAINT</text>
   <text class="d-mut" x="0" y="42">Sellers already had the list.</text>
@@ -896,8 +874,27 @@ footer{padding:26px 0 44px;border-top:1px solid var(--hair);
 </svg>
         <figcaption>Quantifying it is what unlocked everything else. Nothing downstream was possible while the number did not exist.</figcaption>
       </figure>
-    </div>
-  </details>
+    <details class="st-more">
+      <summary>How it went</summary>
+      <div class="st-body">
+      <p>Sellers already had the list. That was never the constraint. What they could not
+         do was tell a publisher what the opportunity was worth, so it kept losing to
+         pitches that arrived with a number attached.</p>
+      <h3>Measure it, do not argue it</h3>
+      <p>Impact Experiments, the incrementality framework inside Ad Manager 360, produced a
+         measured figure per publisher rather than an estimate. A publisher will argue with
+         a projection. They will not argue with their own incrementality result.</p>
+      <h3>One number, three places it had never been</h3>
+      <p>Into the internal performance view, so sellers could finally book credit for the
+         work. Into the client conversation, as a figure a publisher would accept. And onto
+         a leaderboard, because I built the custom CRM and product views that did not exist
+         and turned pitching it into a contest.</p>
+      <p>I timed the launch to the week the case study cleared legal and client review, so
+         sellers got the proof they had been asking for and a reason to use it in the same
+         week. Pipeline movement on that opportunity ran 256% against prior quarters.</p>
+      </div>
+    </details>
+  </article>
 
   <aside class="admission">
     <span class="eyebrow">What I got wrong</span>
@@ -915,47 +912,19 @@ footer{padding:26px 0 44px;border-top:1px solid var(--hair);
   </aside>
 </section>
 
-<section id="capabilities" class="wrap tinted">
-  <span class="eyebrow">Capabilities</span>
-  <h2>What I bring</h2>
-  <div class="caps">
-    <div class="cap cap--a">
-      <h3>Strategy &amp; operations</h3>
-      <p>How a company plans, sets goals, and runs the meetings where decisions get made
-         instead of just reported.</p>
-      <div class="chips"><span class="chip">Business operations</span><span class="chip">Operational excellence</span><span class="chip">Lean / Six Sigma</span><span class="chip">Governance design</span><span class="chip">Annual planning</span><span class="chip">Rhythm of business</span><span class="chip">GTM strategy</span><span class="chip">Sales operations</span><span class="chip">ROI &amp; unit-cost modelling</span><span class="chip">Executive advisory</span></div>
-    </div>
-    <div class="cap cap--b">
-      <h3>Data &amp; systems</h3>
-      <p>I write the queries and build the tools myself instead of handing it off. It keeps
-         the analysis honest and the turnaround short.</p>
-      <div class="chips"><span class="chip">SQL</span><span class="chip">BigQuery</span><span class="chip">Python</span><span class="chip">Looker</span><span class="chip">Tableau</span><span class="chip">CRM &amp; pipeline integration</span><span class="chip">Executive KPI dashboards</span><span class="chip">Financial modelling</span><span class="chip">Capacity modelling</span><span class="chip">AI &amp; agentic automation</span></div>
-    </div>
-    <div class="cap cap--c">
-      <h3>Leadership &amp; credentials</h3>
-      <div class="creds">
-        <span class="joblogo"><img src="uf-logo.png" alt="University of Florida" width="30" height="30" loading="lazy"></span>
-        <div>
-          <b>B.S. Industrial &amp; Systems Engineering</b>
-          <span>University of Florida, 2016</span>
-        </div>
-      </div>
-      <div class="chips"><span class="chip">Lean Six Sigma Green Belt</span><span class="chip">Google PM Certificate</span><span class="chip">VP &amp; C-level advisory</span><span class="chip">Cross-functional leadership, 20+ teams</span><span class="chip">$26.5B programme scale</span><span class="chip">4 direct reports</span></div>
-    </div>
-  </section>
-
-
 <section id="personal" class="wrap tinted">
   <span class="eyebrow">Beyond work</span>
   <h2>A few things about me</h2>
   <div class="personal-grid">
     <ul class="facts">
-      <li><b>Married, two kids.</b> Most weekends involve being outdoors somewhere in
-          Colorado: hiking, camping, or just letting the kids wear themselves out.</li>
-      <li><b>Former college cheerleader at Florida.</b> It taught me teamwork, trust,
-          and that a lot of the job is lifting other people up.</li>
-      <li><b>I build things with my hands.</b> Garden beds, home improvement, whatever
-          needs doing. There is a clarity in craftsmanship that carries over.</li>
+      <li><b>Married, two kids.</b> Weekends are usually outside somewhere in Colorado,
+          hiking or camping or just letting them run until they are tired.</li>
+      <li><b>I cheered at Florida for four seasons.</b> Mostly that meant catching people,
+          in The Swamp, on Saturdays, in front of a full stadium.</li>
+      <li><b>Still training.</b> Current squat is 495. It is the longest-running project
+          I have and the only one with no stakeholders.</li>
+      <li><b>I build things that are not software too.</b> Garden beds, home improvement,
+          whatever the house needs next.</li>
     </ul>
     <img src="hiking.jpg" alt="Hiking in Colorado" loading="lazy">
   </div>
