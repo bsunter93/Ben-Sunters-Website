@@ -398,15 +398,14 @@ h1{font:600 clamp(36px,5.4vw,53px)/1.06 var(--display);letter-spacing:-.026em;ma
   max-width:var(--measure)}
 .st-tags{display:flex;flex-wrap:wrap;gap:6px;margin-top:16px}
 
-/* Three photos, one per fact above: the squad, the training, the weekends. */
-.photostrip{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));
-  gap:clamp(14px,2vw,22px);margin-top:34px}
+/* Two photos. Better a pair that both hold up than a third that does not. */
+.photostrip{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));
+  gap:clamp(16px,2.2vw,24px);margin-top:34px;max-width:760px}
 @media (max-width:760px){.photostrip{grid-template-columns:1fr}}
 .photostrip figure{margin:0}
 .photostrip img{width:100%;height:auto;aspect-ratio:1/1;object-fit:cover;border-radius:2px;
   border:1px solid var(--line);background:var(--sunk)}
 .photostrip img.top{object-position:center top}
-.photostrip img.leftish{object-position:25% 50%}
 .photostrip figcaption{margin-top:9px;font:400 12.5px/1.5 var(--sans);color:var(--muted)}
 .facts{margin:0;padding:0;list-style:none;max-width:var(--measure)}
 .facts li{padding:14px 0 14px 17px;border-top:1px solid var(--hair);position:relative;font-size:15.5px}
@@ -977,11 +976,6 @@ footer{padding:26px 0 44px;border-top:1px solid var(--hair);
       <img class="top" src="cheer.jpg" width="800" height="925" loading="lazy"
            alt="Ben Sunter holding a cheerleader overhead on one arm during a game at Ben Hill Griffin Stadium">
       <figcaption>The Swamp, 2012. Catching people for a living, briefly.</figcaption>
-    </figure>
-    <figure>
-      <img class="leftish" src="atlas.jpg" width="776" height="684" loading="lazy"
-           alt="Ben Sunter lifting an atlas stone at a strongman competition">
-      <figcaption>Atlas stones.</figcaption>
     </figure>
     <figure>
       <img src="hiking.jpg" width="900" height="506" loading="lazy"
