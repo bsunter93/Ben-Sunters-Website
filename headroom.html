@@ -451,13 +451,13 @@ function loss(k){return pdf(k)-k*(1-cdf(k));} // E[(X-k)+] for standard normal
 
 /* ── state ─────────────────────────────────────────────────────────────── */
 var PRESETS={
-  care:{n:'Care management',unit:'cases',volume:4200,err:18,handle:45,hu:'min',hours:173,shrink:28,occ:82,cost:95000,ratio:4,attr:18,hire:45,ramp:60},
+  ops:{n:'Service operations',unit:'requests',volume:4200,err:18,handle:45,hu:'min',hours:173,shrink:28,occ:82,cost:95000,ratio:4,attr:18,hire:45,ramp:60},
   support:{n:'Support desk',unit:'tickets',volume:22000,err:15,handle:12,hu:'min',hours:173,shrink:32,occ:85,cost:78000,ratio:3,attr:34,hire:30,ramp:45},
   claims:{n:'Claims and back office',unit:'claims',volume:12000,err:10,handle:22,hu:'min',hours:173,shrink:24,occ:88,cost:72000,ratio:2,attr:20,hire:35,ramp:50},
   services:{n:'Professional services',unit:'engagements',volume:40,err:25,handle:60,hu:'hr',hours:173,shrink:18,occ:75,cost:165000,ratio:2,attr:16,hire:60,ramp:75}
 };
 var KEYS=['unit','volume','err','handle','hu','hours','shrink','occ','cost','ratio','attr','hire','ramp'];
-var S=Object.assign({},PRESETS.care); delete S.n;
+var S=Object.assign({},PRESETS.ops); delete S.n;
 
 var $=function(id){return document.getElementById(id);};
 var F={unit:$('i-unit'),volume:$('i-volume'),err:$('i-err'),handle:$('i-handle'),
@@ -720,7 +720,7 @@ Object.keys(PRESETS).forEach(function(k){
 pl.querySelector('.chip').setAttribute('aria-pressed','true');
 
 $('reset').addEventListener('click',function(){
-  S=Object.assign({},PRESETS.care); delete S.n;
+  S=Object.assign({},PRESETS.ops); delete S.n;
   [].forEach.call(pl.querySelectorAll('.chip'),function(c,i){c.setAttribute('aria-pressed',String(i===0));});
   writeForm(); render();
 });
