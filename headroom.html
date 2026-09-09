@@ -58,6 +58,7 @@
 
 /* ── base ────────────────────────────────────────────────────────────────── */
 *{box-sizing:border-box}
+[hidden]{display:none!important}
 html{-webkit-text-size-adjust:100%}
 /* The ground is ruled paper: 96px major over 24px minor, the way engineering paper is
    ruled. Background-image only, so it costs nothing and prints as a flat sheet. */
@@ -95,7 +96,11 @@ h1{font:600 clamp(30px,4.4vw,44px)/1.08 var(--display);letter-spacing:-.022em}
 .sub{max-width:62ch;margin:14px 0 0;font-size:16.5px;color:var(--muted);text-wrap:pretty}
 
 /* preset chips */
-.presets{display:flex;gap:8px;flex-wrap:wrap;margin:26px 0 0;padding:0;list-style:none}
+.presetlab{margin:26px 0 9px;font:500 10.5px/1 var(--mono);letter-spacing:.14em;
+  text-transform:uppercase;color:var(--faint)}
+.presetlab span{display:block;margin-top:5px;font:400 12.5px/1.45 var(--sans);
+  letter-spacing:0;text-transform:none;color:var(--muted);max-width:56ch}
+.presets{display:flex;gap:8px;flex-wrap:wrap;margin:0;padding:0;list-style:none}
 .chip{font:500 12.5px/1 var(--sans);color:var(--body);background:var(--surface);
   border:1px solid var(--line);border-radius:2px;padding:9px 13px;cursor:pointer}
 .chip:hover{border-color:var(--accent);color:var(--accent)}
@@ -132,10 +137,12 @@ h1{font:600 clamp(30px,4.4vw,44px)/1.08 var(--display);letter-spacing:-.022em}
    the thing this model exists to argue against. */
 .fc{margin-bottom:13px}
 .fc>label{display:block;font-size:13.5px;color:var(--body);line-height:1.35;margin-bottom:6px}
+.fc .hint{display:block;font-size:11.5px;color:var(--faint);line-height:1.4;margin-top:3px}
+.exlab{font:400 11.5px/1.4 var(--sans);color:var(--faint);flex:1}
 .fc select{width:100%;font:400 13px/1.3 var(--sans);color:var(--ink);background:var(--sunk);
   border:1px solid var(--line);border-radius:2px;padding:8px 9px}
 .fc select:focus{border-color:var(--focus);background:var(--surface)}
-.fc .exact{margin-top:7px}
+.fc .exact{margin-top:8px;gap:8px}
 .approx{margin:-4px 0 13px;font:400 11.5px/1.45 var(--sans);color:var(--faint)}
 .seg{display:flex;border:1px solid var(--line);border-radius:2px;overflow:hidden}
 .seg button{font:500 11px/1 var(--mono);color:var(--muted);background:var(--sunk);border:0;
@@ -272,6 +279,7 @@ tr.hi td{background:var(--accent-soft);color:var(--ink)}
      This works out how many people the forecast implies, then how many you should actually
      hire once you account for the fact that being short and being over do not cost the same.
      Nothing you type leaves your browser.</p>
+  <p class="presetlab">Start from a scenario<span>Loads typical numbers for that kind of work. Change anything after.</span></p>
   <ul class="presets" id="presets"></ul>
 </div>
 
@@ -291,7 +299,7 @@ tr.hi td{background:var(--accent-soft);color:var(--ink)}
         <input type="number" id="i-volume" min="1" step="1" value="4200">
       </div>
       <div class="f">
-        <label for="i-handle">Handle time each</label>
+        <label for="i-handle">Handle time each<span class="hint">Worked time per item, start to finish</span></label>
         <span class="suffixed">
           <input type="number" id="i-handle" min="0.1" step="1" value="45">
           <span class="seg" role="group" aria-label="Handle time unit">
@@ -301,7 +309,8 @@ tr.hi td{background:var(--accent-soft);color:var(--ink)}
         </span>
       </div>
       <div class="fc">
-        <label for="p-err">How wrong is the forecast, usually?</label>
+        <label for="p-err">How wrong is the forecast, usually?
+          <span class="hint">How far real volume lands from plan in an average month, over or under.</span></label>
         <select id="p-err">
           <option value="10">Tight. We land close. (&plusmn;10%)</option>
           <option value="20">Typical. We miss by a bit. (&plusmn;20%)</option>
@@ -309,10 +318,14 @@ tr.hi td{background:var(--accent-soft);color:var(--ink)}
           <option value="">I know the number&hellip;</option>
         </select>
         <span class="suffixed exact" id="x-err" hidden>
+          <span class="exlab">Typical miss, either way</span>
           <input type="number" id="i-err" min="0" max="90" step="1" value="18"><span class="sfx">%</span></span>
       </div>
       <div class="fc">
-        <label for="p-ratio">When you are short, what happens?</label>
+        <label for="p-ratio">When you are short, what happens?
+          <span class="hint">Sets how much worse one person short is than one person spare.
+          At 3&times;, a month you are understaffed costs three times what an equally
+          overstaffed month costs.</span></label>
         <select id="p-ratio">
           <option value="1.5">The work just waits. We catch up. (1.5&times;)</option>
           <option value="3">Backlog builds and people work over. (3&times;)</option>
@@ -320,10 +333,11 @@ tr.hi td{background:var(--accent-soft);color:var(--ink)}
           <option value="">I know the number&hellip;</option>
         </select>
         <span class="suffixed exact" id="x-ratio" hidden>
+          <span class="exlab">Short costs this much more than spare</span>
           <input type="number" id="i-ratio" min="1" max="20" step="0.5" value="4"><span class="sfx">&times;</span></span>
       </div>
-      <p class="approx">Both of these set an approximate figure, and the answer moves with them.
-         Pick "I know the number" if you have measured your own.</p>
+      <p class="approx">These two move the answer most. Each choice sets the figure shown in
+         brackets; pick "I know the number" to type your own.</p>
     </div>
 
     <details class="grp">
