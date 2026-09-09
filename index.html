@@ -114,6 +114,8 @@ h2{font:600 clamp(26px,3.4vw,34px)/1.15 var(--display);letter-spacing:-.015em;ma
 .masthead .wrap{display:flex;align-items:center;gap:20px;height:60px}
 .mark{display:flex;align-items:baseline;gap:9px;margin-right:auto;
   font:600 15px/1 var(--display);color:var(--ink);letter-spacing:-.01em}
+.mark{text-decoration:none;color:inherit}
+.mark:hover{color:var(--accent)}
 .mark:after{content:"";width:6px;height:6px;border-radius:50%;background:var(--warm)}
 .masthead nav{display:flex;align-items:center;gap:20px}
 .masthead nav a{font:500 13px/1 var(--sans);color:var(--muted);transition:color .18s ease}
@@ -421,11 +423,11 @@ footer{padding:26px 0 44px;border-top:1px solid var(--hair);
   display:flex;justify-content:space-between;flex-wrap:wrap;gap:10px}
 </style>
 </head>
-<body>
+<body id="top">
 
 <header class="masthead">
   <div class="wrap">
-    <span class="mark">Benjamin J. Sunter</span>
+    <a class="mark" href="#top" aria-label="Back to top">Benjamin J. Sunter</a>
     <nav>
       <a href="#work">Work</a>
       <a href="#experience">Experience</a>
