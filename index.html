@@ -605,14 +605,21 @@ footer{padding:26px 0 44px;border-top:1px solid var(--hair);
 
     <span class="eyebrow" style="margin-top:34px">Why this one holds up</span>
     <div class="props">
-      <p>Something that reads your mail and guesses what each message means takes an
-         afternoon. Knowing how often it's wrong is the slow part: 886 real emails, labelled
-         by hand, replayed against every change.</p>
-      <p>Status comes out of an event log rather than a field you fill in, so fixing a rule
-         repairs the old records too. And <code>drift</code> checks whether anything stored
-         has quietly stopped agreeing with the rules that produced it. That's the piece I'd
-         keep if I could only keep one.</p>
-      <p>A full run reads about twelve thousand postings and pays a model for five.</p>
+      <p>The part that reads my inbox and works out what each email means came together
+         fast. Working out how often it got that wrong took far longer, and there was no
+         clever way around it, so I sat down and labelled 886 of them by hand. Every change
+         I make now gets replayed against all 886 before I'll trust it.</p>
+      <p>I never type a status in anywhere. It gets worked out from the emails themselves,
+         which sounds minor until you fix a rule and watch a year of old records quietly
+         correct themselves. If I could keep one piece of this and throw the rest away it
+         would be <code>drift</code>, which goes back through everything already stored and
+         tells me where the data and the rules that produced it have come apart. That is
+         where most of the real bugs turned out to be hiding.</p>
+      <p>A full run pulls about twelve thousand postings off 103 boards, and almost none of
+         that costs anything, since the filtering is pattern matching and arithmetic. Only a
+         handful survive to reach a model, which reads those properly and tells me where I
+         genuinely match and where I would be bluffing. It checks the pay band too, which
+         rules out more of them than you would expect.</p>
     </div>
 
     <div class="receipts">
