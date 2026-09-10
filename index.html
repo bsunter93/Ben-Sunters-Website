@@ -1115,7 +1115,7 @@ if (vids.length && 'IntersectionObserver' in window) {
      why Firebase publishes it in client code. -->
 <script type="module">
   import { initializeApp } from "https://www.gstatic.com/firebasejs/12.12.0/firebase-app.js";
-  import { getAnalytics } from "https://www.gstatic.com/firebasejs/12.12.0/firebase-analytics.js";
+  import { getAnalytics, logEvent } from "https://www.gstatic.com/firebasejs/12.12.0/firebase-analytics.js";
   const firebaseConfig = {
     apiKey: "AIzaSyAzcJkc4l8ExO91r8yl1UdT15_9oR6e-JU",
     authDomain: "website-7a1e6.firebaseapp.com",
@@ -1125,7 +1125,22 @@ if (vids.length && 'IntersectionObserver' in window) {
     appId: "1:243930387281:web:5585cda4a723f87477f970",
     measurementId: "G-5DBXQV4RT2"
   };
-  try { getAnalytics(initializeApp(firebaseConfig)); } catch (e) {}
+  try {
+    const an = getAnalytics(initializeApp(firebaseConfig));
+    // Count departures to the tools from here, rather than putting a tracker on the
+    // tools themselves. headroom.html promises in print that it carries no analytics
+    // and sends nothing anywhere; that promise stays literally true, and this page,
+    // which already measures itself, records that someone left for it. Anyone who
+    // types the URL, opens a saved copy, or follows a link shared privately is not
+    // counted, so the number is a floor rather than a total.
+    document.addEventListener("click", (e) => {
+      const a = e.target.closest('a.playlink, a[href$=".html"]');
+      if (!a) return;
+      const dest = (a.getAttribute("href") || "").replace(/^\.?\//, "");
+      if (!dest || dest === "index.html") return;
+      try { logEvent(an, "tool_open", { tool: dest }); } catch (_) {}
+    }, { passive: true });
+  } catch (e) {}
 </script>
 </body>
 </html>
