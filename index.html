@@ -568,11 +568,11 @@ footer{padding:26px 0 44px;border-top:1px solid var(--hair);
     </div>
 
     <p class="proj-claim">Hiring broke in a way you can measure. The average open role
-       now gets more than 300 applications, up from about 100 in 2021. AI made applying
-       almost free. The number of people who can read applications did not change.</p>
+       gets more than 300 applications now, up from about 100 in 2021. Applying got almost
+       free. Reading didn't.</p>
 
-    <p>Applying faster is what caused this, so Career Ops does the opposite. It writes
-       nothing and submits nothing. It cuts down how many roles are worth reading.</p>
+    <p>Applying faster is what caused this, so this does the opposite. It writes nothing
+       and submits nothing. It just cuts down how many roles are worth your time.</p>
 
     <figure class="proj-fig">
       <svg viewBox="0 0 620 168" role="img" aria-label="103 job boards across four ATS APIs are ranked cheapest filter first, banded by how recently each role was posted, freshest band first, and each row arrives with pay band, employee sentiment and your history with that company attached.">
@@ -605,25 +605,14 @@ footer{padding:26px 0 44px;border-top:1px solid var(--hair);
 
     <span class="eyebrow" style="margin-top:34px">Why this one holds up</span>
     <div class="props">
-      <p><b>It has a measured error rate.</b> Anything that reads mail and decides what it
-         means can be built in an afternoon. Knowing how often it is wrong takes 886 real
-         messages labelled by hand and replayed on every change. Three guards run, and they
-         catch different things: one day three regressions passed the corpus completely clean
-         and only the unit suite caught them.</p>
-      <p><b>State accumulates, so a fix reaches backwards.</b> Status is derived from an
-         append-only event log, never typed in, and ranked so a late acknowledgement cannot
-         demote an interview. Every corrective rule ships with its retroactive half. Three
-         acknowledgements had collapsed onto one application, leaving two of them shown as
-         never acknowledged, until the rule that caused it changed and the history rebuilt
-         itself.</p>
-      <p><b>It audits its own stored answers.</b> <code>drift</code> asks one question: does a
-         value in the database still equal what the current code would derive from the same
-         source? Fix a rule and the fix reaches new rows while everything already stored keeps
-         the old answer, and nothing errors. That shape cost six real bugs in a single day
-         before there was a command that could find it.</p>
-      <p><b>It is cheap on purpose.</b> A run pulls roughly twelve thousand postings, matches a
-         few hundred against the gates, and pays a model for a handful. The tiers exist because
-         one payer publishes 19,443 reqs, and a model call per posting does not survive that.</p>
+      <p>Something that reads your mail and guesses what each message means takes an
+         afternoon. Knowing how often it's wrong is the slow part: 886 real emails, labelled
+         by hand, replayed against every change.</p>
+      <p>Status comes out of an event log rather than a field you fill in, so fixing a rule
+         repairs the old records too. And <code>drift</code> checks whether anything stored
+         has quietly stopped agreeing with the rules that produced it. That's the piece I'd
+         keep if I could only keep one.</p>
+      <p>A full run reads about twelve thousand postings and pays a model for five.</p>
     </div>
 
     <div class="receipts">
@@ -639,14 +628,13 @@ OK   unapplied alias
 <span class="flag">     468</span>  stored   "Operational Excellence Program Manager"
           derived  "Program Manager"</pre>
     </div>
-    <p class="rc-cap">Both run on demand. The corpus is real mail, so it ships gitignored. The
-       open finding is left open on purpose: the stored title is the better one, and healing it
-       would teach the check to prefer the shorter answer.</p>
+    <p class="rc-cap">Real runs, not screenshots. The one open finding stays open on purpose:
+       the stored title is the better one.</p>
 
-    <p class="proj-note">It does not fix the real problem, and nothing on the candidate's side
-       can: the bottleneck is how many humans can read. The hard bugs were all the same, software
-       stating something untrue with total confidence and being believed. Most of the work is
-       teaching it to say when it does not know.</p>
+    <p class="proj-note">It doesn't fix the real problem, and nothing on the candidate's side
+       can. The bottleneck is how many humans can read. The hard bugs were all the same shape:
+       software saying something untrue with total confidence and being believed. Most of the
+       work was teaching it to admit when it doesn't know.</p>
 
     <p class="proj-src">Application volume: Ashby, 100M+ submissions. Interview-rate
        decline: ZipRecruiter 2026 talent acquisition survey.</p>
@@ -660,12 +648,11 @@ OK   unapplied alias
          application below is invented.</span></p>
       <iframe src="careerops-demo.html" loading="lazy"
               title="Career Ops dashboard demo, running on synthetic data"></iframe>
-      <p class="demo-note">Fully interactive: filter, sort, open any row. This is a demo:
-         every company, role and application in it is fictional.</p>
+      <p class="demo-note">Filter, sort, open any row.</p>
     </div>
-    <p class="proj-give">Take it if it is useful. A two-minute path runs on synthetic data
-       with no credentials; the full setup reads your own Gmail locally and nothing leaves your
-       machine. The README has the steps.</p>
+    <p class="proj-give">Take it if it's useful. There's a two-minute path with no
+       credentials, and a full setup that reads your Gmail locally. Nothing leaves your
+       machine. Steps are in the README.</p>
     <a class="btn" href="https://github.com/bsunter93/careerops" rel="noopener">View on GitHub</a>
   </div>
 
