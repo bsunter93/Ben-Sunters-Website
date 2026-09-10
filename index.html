@@ -254,6 +254,17 @@ h1{font:600 clamp(36px,5.4vw,53px)/1.06 var(--display);letter-spacing:-.026em;ma
 .proj-note{border-left:2px solid var(--warm);padding-left:14px;color:var(--muted);
   font-size:15px;max-width:var(--measure)}
 .proj-src{margin:14px 0 0;font:400 12px/1.5 var(--sans);color:var(--muted);max-width:var(--measure)}
+.props{margin:24px 0 0}
+.props p{margin:0 0 14px;max-width:var(--measure)}
+.props b{color:var(--ink);font-weight:600}
+.props code{font:400 13px/1 var(--mono);color:var(--accent);background:var(--accent-soft);
+  padding:2px 5px;border-radius:2px}
+.receipts{margin:18px 0 0;max-width:74ch;border:1px solid var(--line);border-radius:3px;
+  background:var(--tint);padding:15px 17px;overflow-x:auto}
+.receipts pre{margin:0;font:400 12px/1.75 var(--mono);color:var(--body);white-space:pre}
+.receipts .cmd{color:var(--accent);font-weight:500}
+.receipts .flag{color:var(--warm);font-weight:500}
+.rc-cap{margin:10px 0 0;font:400 12.5px/1.55 var(--sans);color:var(--muted);max-width:var(--measure)}
 .proj-fig{margin:20px 0 4px;padding:0}
 .proj-fig svg{width:100%;height:auto;display:block;overflow:visible}
 .demo{margin:22px 0}
@@ -560,37 +571,77 @@ footer{padding:26px 0 44px;border-top:1px solid var(--hair);
        now gets more than 300 applications, up from about 100 in 2021. AI made applying
        almost free. The number of people who can read applications did not change.</p>
 
-    <p>Applying to more things faster is what caused this, so Career Ops does the opposite.
-       It does not write or submit anything. It cuts down how many roles are worth your time.</p>
+    <p>Applying faster is what caused this, so Career Ops does the opposite. It writes
+       nothing and submits nothing. It cuts down how many roles are worth reading.</p>
 
     <figure class="proj-fig">
-      <svg viewBox="0 0 620 168" role="img" aria-label="87 job boards feed a pass-or-fail fit gate; whatever clears is banded by how recently it was posted, freshest first, and each row arrives with pay band, employee sentiment and your history with that company attached.">
+      <svg viewBox="0 0 620 168" role="img" aria-label="103 job boards across four ATS APIs are ranked cheapest filter first, banded by how recently each role was posted, freshest band first, and each row arrives with pay band, employee sentiment and your history with that company attached.">
         <text class="d-mono" x="0" y="12">HOW A ROLE REACHES THE LIST</text>
         <rect x="0" y="26" width="132" height="46" rx="3" fill="var(--accent)" opacity=".1"/>
         <rect x="0" y="26" width="3" height="46" rx="2" fill="var(--accent)"/>
         <text class="d-lab" x="14" y="46">103 job boards</text>
-        <text class="d-mut" x="14" y="63">Greenhouse, Ashby, Lever, Workday</text>
+        <text class="d-mut" x="14" y="63">four ATS APIs</text>
         <path class="d-arrow" d="M138 47 l8 4 -8 4z"/>
-        <rect x="154" y="26" width="150" height="46" rx="3" fill="var(--warm)" opacity=".12"/>
+        <rect x="154" y="26" width="156" height="46" rx="3" fill="var(--warm)" opacity=".12"/>
         <rect x="154" y="26" width="3" height="46" rx="2" fill="var(--warm)"/>
         <text class="d-lab" x="168" y="46">Ranked, then read</text>
-        <text class="d-mut" x="168" y="63">cheap filters before costly ones</text>
-        <path class="d-arrow" d="M310 47 l8 4 -8 4z"/>
-        <rect x="326" y="26" width="150" height="46" rx="3" fill="var(--plum)" opacity=".12"/>
-        <rect x="326" y="26" width="3" height="46" rx="2" fill="var(--plum)"/>
-        <text class="d-lab" x="340" y="46">Banded by age</text>
-        <text class="d-mut" x="340" y="63">freshest band first</text>
-        <path class="d-arrow" d="M482 47 l8 4 -8 4z"/>
-        <rect x="498" y="26" width="122" height="46" rx="3" fill="var(--accent)" opacity=".1"/>
-        <rect x="498" y="26" width="3" height="46" rx="2" fill="var(--accent)"/>
-        <text class="d-lab" x="512" y="46">Do next</text>
-        <text class="d-mut" x="512" y="63">what to open</text>
-        <text class="d-mut" x="0" y="100">Each row arrives with pay band, employee sentiment and your history with that</text>
-        <text class="d-mut" x="0" y="117">company already attached. Status comes from your mail, never from you.</text>
+        <text class="d-mut" x="168" y="63">cheap filters first</text>
+        <path class="d-arrow" d="M316 47 l8 4 -8 4z"/>
+        <rect x="332" y="26" width="124" height="46" rx="3" fill="var(--plum)" opacity=".12"/>
+        <rect x="332" y="26" width="3" height="46" rx="2" fill="var(--plum)"/>
+        <text class="d-lab" x="346" y="46">Banded by age</text>
+        <text class="d-mut" x="346" y="63">freshest first</text>
+        <path class="d-arrow" d="M462 47 l8 4 -8 4z"/>
+        <rect x="478" y="26" width="104" height="46" rx="3" fill="var(--accent)" opacity=".1"/>
+        <rect x="478" y="26" width="3" height="46" rx="2" fill="var(--accent)"/>
+        <text class="d-lab" x="492" y="46">Do next</text>
+        <text class="d-mut" x="492" y="63">what to open</text>
+        <text class="d-mut" x="0" y="100">Greenhouse, Ashby, Lever and Workday. Each row arrives with pay band, employee</text>
+        <text class="d-mut" x="0" y="117">sentiment and your history with that company attached. Status comes from your mail.</text>
         <line x1="0" y1="136" x2="620" y2="136" stroke="var(--line)"/>
         <text class="d-mut" x="0" y="158">A req with 300 applicants is read in arrival order, so week one beats a better score in week six.</text>
       </svg>
     </figure>
+
+    <span class="eyebrow" style="margin-top:34px">Why this one holds up</span>
+    <div class="props">
+      <p><b>It has a measured error rate.</b> Anything that reads mail and decides what it
+         means can be built in an afternoon. Knowing how often it is wrong takes 886 real
+         messages labelled by hand and replayed on every change. Three guards run, and they
+         catch different things: one day three regressions passed the corpus completely clean
+         and only the unit suite caught them.</p>
+      <p><b>State accumulates, so a fix reaches backwards.</b> Status is derived from an
+         append-only event log, never typed in, and ranked so a late acknowledgement cannot
+         demote an interview. Every corrective rule ships with its retroactive half. Three
+         acknowledgements had collapsed onto one application, leaving two of them shown as
+         never acknowledged, until the rule that caused it changed and the history rebuilt
+         itself.</p>
+      <p><b>It audits its own stored answers.</b> <code>drift</code> asks one question: does a
+         value in the database still equal what the current code would derive from the same
+         source? Fix a rule and the fix reaches new rows while everything already stored keeps
+         the old answer, and nothing errors. That shape cost six real bugs in a single day
+         before there was a command that could find it.</p>
+      <p><b>It is cheap on purpose.</b> A run pulls roughly twelve thousand postings, matches a
+         few hundred against the gates, and pays a model for a handful. The tiers exist because
+         one payer publishes 19,443 reqs, and a model call per posting does not survive that.</p>
+    </div>
+
+    <div class="receipts">
+<pre><span class="cmd">$ careerops corpus</span>
+checked 886: 886 agree, 0 drift, 0 regressions
+
+<span class="cmd">$ careerops drift</span>
+OK   event type                 OK   title without a role
+<span class="flag">--   event role: 1</span>              OK   outreach-only application
+OK   unread pay band            OK   flat scoring signal
+OK   unapplied alias
+
+<span class="flag">     468</span>  stored   "Operational Excellence Program Manager"
+          derived  "Program Manager"</pre>
+    </div>
+    <p class="rc-cap">Both run on demand. The corpus is real mail, so it ships gitignored. The
+       open finding is left open on purpose: the stored title is the better one, and healing it
+       would teach the check to prefer the shorter answer.</p>
 
     <p class="proj-note">It does not fix the real problem, and nothing on the candidate's side
        can: the bottleneck is how many humans can read. The hard bugs were all the same, software
@@ -612,10 +663,9 @@ footer{padding:26px 0 44px;border-top:1px solid var(--hair);
       <p class="demo-note">Fully interactive: filter, sort, open any row. This is a demo:
          every company, role and application in it is fictional.</p>
     </div>
-    <p class="proj-give">If you are running a search of your own, take it. There is a
-       two-minute path that needs no credentials at all, and a full setup that reads your
-       own Gmail locally, where nothing leaves your machine. Budget half an hour for that
-       one; Google's OAuth screens are the tedious part. The README has the steps.</p>
+    <p class="proj-give">Take it if it is useful. A two-minute path runs on synthetic data
+       with no credentials; the full setup reads your own Gmail locally and nothing leaves your
+       machine. The README has the steps.</p>
     <a class="btn" href="https://github.com/bsunter93/careerops" rel="noopener">View on GitHub</a>
   </div>
 
@@ -908,8 +958,8 @@ footer{padding:26px 0 44px;border-top:1px solid var(--hair);
   <text class="d-mono" x="0" y="152">THE REVIEW BEFORE ANYONE RESTARTED</text>
   <rect x="0" y="166" width="620" height="56" rx="3" fill="var(--plum)" opacity=".12"/>
   <rect x="0" y="166" width="4" height="56" rx="2" fill="var(--plum)"/>
-  <text class="d-lab" x="18" y="190">Re-check every architecture, design and test plan with a dependency on the other party</text>
-  <text class="d-mut" x="18" y="210">A call to an API deprecated in the meantime. A vendor data feed repurposed for something else.</text>
+  <text class="d-lab" x="18" y="190">Re-check every architecture, design and test plan</text>
+  <text class="d-mut" x="18" y="210">Anything depending on the other party. An API deprecated, a vendor feed repurposed.</text>
   <line x1="0" y1="248" x2="620" y2="248" stroke="var(--line)"/>
   <text class="d-num" x="0" y="282">~$2M</text>
   <text class="d-mut" x="94" y="282">of test remediation avoided. Easy to spot in a design review,</text>
@@ -982,7 +1032,7 @@ footer{padding:26px 0 44px;border-top:1px solid var(--hair);
   <text class="d-num" x="20" y="126">A measured $ figure</text>
   <text class="d-mut" x="20" y="150">per publisher, from Impact Experiments</text>
   <text class="d-mut" x="20" y="170">in Ad Manager 360. Not an estimate.</text>
-  <path class="d-acc" d="M300 138 C340 138 340 72 372 72" opacity=".55"/><rect x="372" y="46" width="248" height="54" rx="3" fill="var(--accent)" opacity=".08"/><text class="d-lab" x="388" y="70">The internal performance view</text><text class="d-mut" x="388" y="88">sellers could finally book credit for it</text><path class="d-acc" d="M300 138 C340 138 340 146 372 146" opacity=".55"/><rect x="372" y="120" width="248" height="54" rx="3" fill="var(--accent)" opacity=".08"/><text class="d-lab" x="388" y="144">The client conversation</text><text class="d-mut" x="388" y="162">a figure a publisher would accept</text><path class="d-acc" d="M300 138 C340 138 340 220 372 220" opacity=".55"/><rect x="372" y="194" width="248" height="54" rx="3" fill="var(--accent)" opacity=".08"/><text class="d-lab" x="388" y="218">A live leaderboard</text><text class="d-mut" x="388" y="236">the contest that made it a priority</text>
+  <path class="d-acc" d="M300 138 C340 138 340 72 372 72" opacity=".55"/><rect x="372" y="46" width="248" height="54" rx="3" fill="var(--accent)" opacity=".08"/><text class="d-lab" x="388" y="70">The internal performance view</text><text class="d-mut" x="388" y="88">sellers could book credit for it</text><path class="d-acc" d="M300 138 C340 138 340 146 372 146" opacity=".55"/><rect x="372" y="120" width="248" height="54" rx="3" fill="var(--accent)" opacity=".08"/><text class="d-lab" x="388" y="144">The client conversation</text><text class="d-mut" x="388" y="162">a figure a publisher would accept</text><path class="d-acc" d="M300 138 C340 138 340 220 372 220" opacity=".55"/><rect x="372" y="194" width="248" height="54" rx="3" fill="var(--accent)" opacity=".08"/><text class="d-lab" x="388" y="218">A live leaderboard</text><text class="d-mut" x="388" y="236">the contest that made it a priority</text>
   <line x1="0" y1="274" x2="620" y2="274" stroke="var(--line)"/>
   <text class="d-numw" x="0" y="308">256%</text>
   <text class="d-mut" x="94" y="308">pipeline movement vs prior quarters</text>
