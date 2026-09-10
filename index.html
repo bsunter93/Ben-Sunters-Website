@@ -568,8 +568,8 @@ footer{padding:26px 0 44px;border-top:1px solid var(--hair);
     </div>
 
     <p class="proj-claim">Hiring broke in a way you can measure. The average open role
-       gets more than 300 applications now, up from about 100 in 2021. Applying got almost
-       free. Reading didn't.</p>
+       gets more than 300 applications now, up from about 100 in 2021. AI made applying
+       almost free. It did nothing for the people who have to read them.</p>
 
     <p>Applying faster is what caused this, so this does the opposite. It writes nothing
        and submits nothing. It just cuts down how many roles are worth your time.</p>
@@ -605,21 +605,20 @@ footer{padding:26px 0 44px;border-top:1px solid var(--hair);
 
     <span class="eyebrow" style="margin-top:34px">Why this one holds up</span>
     <div class="props">
-      <p>The part that reads my inbox and works out what each email means came together
-         fast. Working out how often it got that wrong took far longer, and there was no
-         clever way around it, so I sat down and labelled 886 of them by hand. Every change
-         I make now gets replayed against all 886 before I'll trust it.</p>
-      <p>I never type a status in anywhere. It gets worked out from the emails themselves,
-         which sounds minor until you fix a rule and watch a year of old records quietly
-         correct themselves. If I could keep one piece of this and throw the rest away it
-         would be <code>drift</code>, which goes back through everything already stored and
-         tells me where the data and the rules that produced it have come apart. That is
-         where most of the real bugs turned out to be hiding.</p>
-      <p>A full run pulls about twelve thousand postings off 103 boards, and almost none of
-         that costs anything, since the filtering is pattern matching and arithmetic. Only a
-         handful survive to reach a model, which reads those properly and tells me where I
-         genuinely match and where I would be bluffing. It checks the pay band too, which
-         rules out more of them than you would expect.</p>
+      <p>Every morning it reads about twelve thousand postings across 103 boards, throws
+         away almost all of them for almost nothing, and leaves a handful worth reading
+         properly. That much is easy to build, and easy to trust for about a week.</p>
+      <p>The harder problem is that a system like this quietly starts lying to you. A rule
+         written in March stops matching the mail that arrives in September, nothing errors,
+         and the dashboard still looks perfectly healthy. So most of the work went into
+         making it doubt itself. There are 886 real emails I labelled by hand that every
+         change gets replayed against, and a command called <code>drift</code> that walks
+         back through everything already stored and reports where the data and the rules
+         that produced it have come apart.</p>
+      <p>The useful part is that fixes travel backwards as well as forwards. Repairing a
+         rule repairs a year of old records rather than just the next email, so it gets more
+         accurate the longer it runs. It isn't playing back what someone typed into it. It
+         has been checking its own work for months.</p>
     </div>
 
     <div class="receipts">
