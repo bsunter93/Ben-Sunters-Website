@@ -449,6 +449,18 @@ h1{font:600 clamp(36px,5.4vw,53px)/1.06 var(--display);letter-spacing:-.026em;ma
 /* Per-role figures. The same device as the hero, one scale down, in the employer's
    color. The bullets are for reading; this strip is for the ten seconds before
    anyone decides to read them. */
+/* Three tiers per role: what it covered, what came out of it, and how. A reader
+   scanning for scale should not have to infer it from prose, and the bullets stop
+   carrying two jobs at once. Labels stay neutral because the figures already take the
+   company's colour. */
+.jobsec{font:500 9.5px/1 var(--mono);letter-spacing:.15em;text-transform:uppercase;
+  color:var(--muted);margin:0 0 9px}
+.jobsec+.jobfigs{margin-top:0}
+.scope{display:flex;flex-wrap:wrap;gap:6px;margin:0 0 20px}
+.job .scope li{font:500 11px/1.35 var(--mono);color:var(--body);background:var(--tint);
+  border:1px solid var(--hair);border-radius:2px;padding:5px 9px;margin:0;
+  padding-left:9px;max-width:none;font-size:11px}
+.job .scope li:before{content:none}
 .jobfigs{display:flex;flex-wrap:wrap;margin:0 0 18px;
   border-top:1px solid var(--hair);border-bottom:1px solid var(--hair)}
 .jobfig{flex:1 1 128px;padding:12px 18px 12px 0}
@@ -653,11 +665,21 @@ footer{padding:26px 0 44px;border-top:1px solid var(--hair);
       <div class="joblogo"><img src="ih-logo.png" alt="Included Health" width="98" height="21" loading="lazy"></div>
       <h3>Business Operations Manager</h3>
       <div class="org">Included Health</div>
+            <p class="jobsec">Scope</p>
+      <ul class="scope">
+        <li>New line of business</li>
+        <li>Cost-of-revenue portfolio</li>
+        <li>OKR architecture</li>
+        <li>Enterprise book</li>
+        <li>Workforce planning</li>
+      </ul>
+      <p class="jobsec">Impact</p>
       <div class="jobfigs">
         <div class="jobfig"><b>27 days</b><span>White paper to live offering</span></div>
         <div class="jobfig"><b>5 months</b><span>Manual operations to digital-first</span></div>
         <div class="jobfig"><b>Two thirds</b><span>Labor cut per case on outreach</span></div>
       </div>
+      <p class="jobsec">Details</p>
       <ul>
         <li><b>Zero to one.</b> Built a new line of business from white paper to a
             live offering in <span class="n">27 days</span>, then spent the next
@@ -693,12 +715,22 @@ footer{padding:26px 0 44px;border-top:1px solid var(--hair);
 </svg></div>
       <h3>Google Global Partnerships</h3>
       <div class="org">First Party Data Solutions Consultant · Program Manager, Sellside Partnerships</div>
+            <p class="jobsec">Scope</p>
+      <ul class="scope">
+        <li>7 vertical teams</li>
+        <li>20+ sub-teams</li>
+        <li>200+ stakeholders</li>
+        <li>56 initiatives</li>
+        <li>30+ Fortune 100 publishers</li>
+      </ul>
+      <p class="jobsec">Impact</p>
       <div class="jobfigs">
         <div class="jobfig"><b>8-figure</b><span>Incremental revenue from the targeting system</span></div>
         <div class="jobfig"><b>234%</b><span>Of H1 2025 quota, top regional performer</span></div>
         <div class="jobfig"><b>$B</b><span>Americas business under one planning cadence</span></div>
       </div>
 
+      <p class="jobsec">Details</p>
       <div class="subrole">First Party Data Solutions Consultant · Jul 2024 – Dec 2025</div>
       <ul>
         <li><b>Pipeline analytics to revenue.</b> Built the SQL and Looker layer joining sales
@@ -738,11 +770,21 @@ footer{padding:26px 0 44px;border-top:1px solid var(--hair);
       <div class="joblogo"><img src="accenture-logo.png" alt="Accenture" width="80" height="21" loading="lazy"></div>
       <h3>Program Manager</h3>
       <div class="org">Accenture</div>
+            <p class="jobsec">Scope</p>
+      <ul class="scope">
+        <li>16 VPs</li>
+        <li>60+ projects</li>
+        <li>150+ delivery teams</li>
+        <li>11,000+ user stories</li>
+        <li>4 direct reports</li>
+      </ul>
+      <p class="jobsec">Impact</p>
       <div class="jobfigs">
         <div class="jobfig"><b>$26.5B</b><span>Telecom merger integration</span></div>
         <div class="jobfig"><b>24</b><span>Workstreams under 16 VPs</span></div>
         <div class="jobfig"><b>190+</b><span>Applications retired in 12 months</span></div>
       </div>
+      <p class="jobsec">Details</p>
       <ul>
         <li><b>Merger integration.</b> Engagement lead on a <span class="n">$26.5B</span> telecom merger, governing 24
             workstreams under 16 VPs and the integrated plan for 60+ projects through design,
