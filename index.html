@@ -609,17 +609,20 @@ footer{padding:26px 0 44px;border-top:1px solid var(--hair);
       <p>Every morning it reads about twelve thousand postings across 103 boards, throws
          away almost all of them for almost nothing, and leaves a handful worth reading
          properly. That much is easy to build, and easy to trust for about a week.</p>
-      <p>The harder problem is that a system like this quietly starts lying to you. A rule
-         written in March stops matching the mail that arrives in September, nothing errors,
-         and the dashboard still looks perfectly healthy. So most of the work went into
-         making it doubt itself. There are 886 real emails I labelled by hand that every
-         change gets replayed against, and a command called <code>drift</code> that walks
-         back through everything already stored and reports where the data and the rules
-         that produced it have come apart.</p>
-      <p>The useful part is that fixes travel backwards as well as forwards. Repairing a
-         rule repairs a year of old records rather than just the next email, so the history
-         behind every decision gets more accurate the longer it runs, which is roughly the
-         opposite of how a spreadsheet ages.</p>
+      <p>Then it quietly starts lying to you. A rule written in March stops matching the
+         mail that arrives in September, nothing errors, and the dashboard still looks
+         perfectly healthy. Mine filed a live interview invitation as a routine
+         acknowledgement.</p>
+      <p>So most of the work went into making it doubt itself. There are 886 real emails I
+         labelled by hand that every change has to clear, and a command called
+         <code>drift</code> that goes back through everything already stored and reports
+         where the data and the rules that produced it have come apart. I can tell you what
+         it still gets wrong. Most of these can't, because they were demoed once and never
+         measured again.</p>
+      <p>Fixes travel backwards too. Repairing a rule repairs a year of old records rather
+         than just the next email, so the history gets more accurate the longer it runs.
+         Which is the same reason I wouldn't trust a dashboard nobody has reconciled against
+         the source in six months.</p>
     </div>
 
     <div class="receipts">
