@@ -9,7 +9,7 @@
   --line:#E1E4E2; --hair:#ECEFED;
   --accent:#0E5C63; --accent-soft:#0E5C6312;
   --warm:#8A4E05; --warm-bright:#E0A33C; --warm-soft:#9E5A0614;
-  --plum:#733F83; --plum-soft:#733F8314;
+  --plum:#733F83; --plum-soft:#733F8314; --steel:#2C5A7A;
   /* Bright steps. The deep band is dark in BOTH themes, so anything drawn on it
      takes these and they are never redefined below. The ink tokens above are for
      paper; using an ink on the band is what made the Accenture bar 2:1 and invisible. */
@@ -27,7 +27,7 @@
     --line:#252A31; --hair:#1C2126;
     --accent:#4FB3AE; --accent-soft:#4FB3AE1A;
     --warm:#CFA470; --warm-bright:#E0A33C; --warm-soft:#CFA4701A;
-    --plum:#B469CA; --plum-soft:#B469CA1A;
+    --plum:#B469CA; --plum-soft:#B469CA1A; --steel:#6FA5C9;
   }
 }
 :root[data-theme="dark"]{
@@ -37,7 +37,7 @@
   --line:#252A31; --hair:#1C2126;
   --accent:#4FB3AE; --accent-soft:#4FB3AE1A;
   --warm:#CFA470; --warm-bright:#E0A33C; --warm-soft:#CFA4701A;
-  --plum:#B469CA; --plum-soft:#B469CA1A;
+  --plum:#B469CA; --plum-soft:#B469CA1A; --steel:#6FA5C9;
 }
 *{box-sizing:border-box}
 html{scroll-behavior:smooth}
@@ -209,11 +209,7 @@ h1{font:600 clamp(36px,5.4vw,53px)/1.06 var(--display);letter-spacing:-.026em;ma
 .projects .project:nth-child(1){border-top-color:var(--warm)}
 .projects .project:nth-child(2){border-top-color:var(--accent)}
 .projects .project:nth-child(3){border-top-color:var(--plum)}
-/* The unbuilt one reads as a placeholder rather than a fourth shipped thing: dashed rule,
-   recessive title, no link to follow. */
-.projects .project.stub{border-top-color:var(--line);border-top-style:dashed;
-  background:var(--tint)}
-.project.stub h3{color:var(--muted)}
+.projects .project:nth-child(4){border-top-color:var(--steel)}
 .project p{margin:0;font-size:14.5px;color:var(--muted)}
 .project video{margin-top:14px;border:1px solid var(--line);border-radius:2px;background:#000}
 
