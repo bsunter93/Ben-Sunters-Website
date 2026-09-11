@@ -1,0 +1,478 @@
+/* ── tokens ──────────────────────────────────────────────────────────────── */
+/* Three colors doing three jobs, not decoration: petrol for structure and links,
+   marigold for figures and emphasis (warm against the cool so numbers carry), and a
+   deep petrol ground for the two bands that give the page weight. */
+:root{
+  --paper:#FAF9F7; --surface:#FFFFFF; --tint:#F1F4F3;
+  --deep:#0B3A40; --on-deep:#E6F0EE; --on-deep-mut:#9FBCB8;
+  --ink:#14171C; --body:#33383F; --muted:#5B6068;
+  --line:#E1E4E2; --hair:#ECEFED;
+  --accent:#0E5C63; --accent-soft:#0E5C6312;
+  --warm:#8A4E05; --warm-bright:#E0A33C; --warm-soft:#9E5A0614;
+  --plum:#733F83; --plum-soft:#733F8314;
+  /* Bright steps. The deep band is dark in BOTH themes, so anything drawn on it
+     takes these and they are never redefined below. The ink tokens above are for
+     paper; using an ink on the band is what made the Accenture bar 2:1 and invisible. */
+  --accent-bright:#7FD1C8; --plum-bright:#C18ED1;
+  --display:'Fraunces',Georgia,'Times New Roman',serif;
+  --sans:'IBM Plex Sans',-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif;
+  --mono:'IBM Plex Mono',ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
+  --measure:64ch; --gap:clamp(56px,7vw,104px);
+}
+@media (prefers-color-scheme:dark){
+  :root:not([data-theme="light"]){
+    --paper:#101317; --surface:#171B20; --tint:#141A1D;
+    --deep:#0A2F35; --on-deep:#DCEAE8; --on-deep-mut:#8FADA9;
+    --ink:#E9E7E2; --body:#C3C6CB; --muted:#8B9098;
+    --line:#252A31; --hair:#1C2126;
+    --accent:#4FB3AE; --accent-soft:#4FB3AE1A;
+    --warm:#CFA470; --warm-bright:#E0A33C; --warm-soft:#CFA4701A;
+    --plum:#B469CA; --plum-soft:#B469CA1A;
+  }
+}
+:root[data-theme="dark"]{
+  --paper:#101317; --surface:#171B20; --tint:#141A1D;
+  --deep:#0A2F35; --on-deep:#DCEAE8; --on-deep-mut:#8FADA9;
+  --ink:#E9E7E2; --body:#C3C6CB; --muted:#8B9098;
+  --line:#252A31; --hair:#1C2126;
+  --accent:#4FB3AE; --accent-soft:#4FB3AE1A;
+  --warm:#CFA470; --warm-bright:#E0A33C; --warm-soft:#CFA4701A;
+  --plum:#B469CA; --plum-soft:#B469CA1A;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+@media (prefers-reduced-motion:reduce){html{scroll-behavior:auto} *{animation:none!important;transition:none!important}}
+body{
+  margin:0; background:var(--paper); color:var(--body);
+  font:400 16.5px/1.65 var(--sans); -webkit-font-smoothing:antialiased;
+  font-variant-numeric:tabular-nums;
+}
+img,video{max-width:100%;display:block}
+a{color:var(--accent);text-decoration:none}
+a:hover{text-decoration:underline;text-underline-offset:3px}
+:focus-visible{outline:2px solid var(--accent);outline-offset:3px;border-radius:2px}
+h1,h2,h3{color:var(--ink);text-wrap:balance;margin:0}
+
+/* padding-inline, not the padding shorthand. As `padding:0 clamp(...)` this also set
+   padding-block to 0, and being a class it outranked `section{padding:var(--gap) 0}`,
+   so every section carrying .wrap lost its vertical rhythm entirely. */
+.wrap{max-width:1020px;margin:0 auto;padding-inline:clamp(20px,5vw,44px)}
+.eyebrow{
+  font:500 11px/1 var(--mono); letter-spacing:.13em; text-transform:uppercase;
+  color:var(--accent); display:flex; align-items:center; gap:9px; margin-bottom:18px;
+}
+.eyebrow:before{content:"";width:22px;height:2px;background:var(--warm);flex:none}
+section{padding:var(--gap) 0;border-top:1px solid var(--hair)}
+.tinted{background:var(--tint);border-top:1px solid var(--line)}
+section:first-of-type{border-top:0}
+h2{font:600 clamp(26px,3.4vw,34px)/1.15 var(--display);letter-spacing:-.015em;margin-bottom:10px}
+.arc{list-style:none;display:grid;grid-template-columns:repeat(auto-fit,minmax(186px,1fr));
+  gap:0;margin:30px 0 0;padding:0;border-top:1px solid rgba(255,255,255,.16)}
+.arc li{position:relative;padding:17px 22px 0 0}
+.arc li:before{content:"";position:absolute;top:-1px;left:0;right:22px;height:3px;background:var(--co)}
+.arc b{display:block;font:600 15px/1.3 var(--sans);color:#fff}
+.arc span{display:block;margin-top:4px;font:500 11px/1 var(--mono);letter-spacing:.1em;color:var(--co)}
+.arc em{display:block;margin-top:9px;font:400 12.5px/1.5 var(--sans);font-style:normal;
+  color:var(--on-deep-mut);max-width:30ch}
+@media (max-width:560px){.arc li{padding-right:0}.arc li:before{right:0}}
+.lede{max-width:var(--measure);color:var(--muted);font-size:16px;margin:0 0 40px}
+
+/* ── masthead ────────────────────────────────────────────────────────────── */
+/* Solid by default, so it is readable with no JavaScript and on every section below
+   the fold. While the hero band is still behind it, it goes transparent and inverts,
+   which is the only state where a pale bar over deep petrol looked like a seam. */
+.masthead{
+  position:sticky;top:0;z-index:20;
+  background:color-mix(in srgb,var(--paper) 95%,transparent);
+  backdrop-filter:saturate(180%) blur(12px);
+  border-bottom:1px solid var(--line);
+  box-shadow:0 8px 20px -18px rgba(0,0,0,.55);
+  transition:background .25s ease,border-color .25s ease,box-shadow .25s ease;
+}
+.masthead .wrap{display:flex;align-items:center;gap:20px;height:60px}
+.mark{display:flex;align-items:baseline;gap:9px;margin-right:auto;
+  font:600 15px/1 var(--display);color:var(--ink);letter-spacing:-.01em}
+.mark{text-decoration:none;color:inherit}
+.mark:hover{color:var(--accent)}
+.mark:after{content:"";width:6px;height:6px;border-radius:50%;background:var(--warm)}
+.masthead nav{display:flex;align-items:center;gap:20px}
+.masthead nav a{font:500 13px/1 var(--sans);color:var(--muted);transition:color .18s ease}
+.masthead nav a:hover{color:var(--ink);text-decoration:none}
+.nav-cta{border:1px solid var(--line);border-radius:2px;padding:7px 13px;color:var(--ink)!important}
+.nav-cta:hover{border-color:var(--accent);color:var(--accent)!important}
+.theme-btn{display:inline-flex;align-items:center;justify-content:center;width:30px;height:30px;
+  padding:0;cursor:pointer;color:var(--muted);background:none;border:1px solid transparent;
+  border-radius:2px}
+.theme-btn:hover{color:var(--ink);border-color:var(--line)}
+.over-band .theme-btn{color:var(--on-deep-mut)}
+.over-band .theme-btn:hover{color:#fff;border-color:rgba(255,255,255,.3)}
+
+.masthead.over-band{background:transparent;backdrop-filter:none;border-bottom-color:transparent;box-shadow:none}
+.over-band .mark{color:var(--on-deep)}
+.over-band nav a{color:var(--on-deep-mut)}
+.over-band nav a:hover{color:#fff}
+.over-band .nav-cta{border-color:rgba(255,255,255,.3);color:var(--on-deep)!important}
+.over-band .nav-cta:hover{border-color:var(--warm-bright);color:var(--warm-bright)!important}
+@media (max-width:660px){.masthead nav a:not(.nav-cta){display:none}}
+@media (prefers-reduced-motion:reduce){.masthead,.masthead nav a{transition:none}}
+
+/* ── hero ────────────────────────────────────────────────────────────────── */
+.band{background:var(--deep);color:var(--on-deep);border-top:0}
+.band h1,.band h2{color:var(--on-deep)}
+.band p{color:var(--on-deep)}
+.hero{padding-top:clamp(52px,7vw,84px);padding-bottom:clamp(44px,6vw,72px);border-top:0}
+.hero-grid{display:grid;grid-template-columns:minmax(0,1fr) 172px;gap:clamp(28px,5vw,56px);align-items:start}
+@media (max-width:720px){.hero-grid{grid-template-columns:1fr}.portrait{order:-1;width:112px}}
+h1{font:600 clamp(36px,5.4vw,53px)/1.06 var(--display);letter-spacing:-.026em;margin-bottom:22px}
+.hero p{max-width:58ch;font-size:18px;color:var(--on-deep);margin:0 0 14px}
+.hero p strong{color:#fff;font-weight:600}
+.portrait{width:172px;aspect-ratio:1;border-radius:3px;object-fit:cover;
+  outline:1px solid rgba(255,255,255,.22);outline-offset:0;
+  box-shadow:0 6px 22px rgba(0,0,0,.28)}
+
+
+.links{display:flex;flex-wrap:wrap;gap:10px}
+.btn{
+  display:inline-flex;align-items:center;gap:7px;padding:8px 15px;border-radius:2px;
+  font:500 13.5px/1 var(--sans);border:1px solid var(--line);color:var(--body);background:var(--surface);
+}
+.btn:hover{border-color:var(--accent);color:var(--accent);text-decoration:none}
+.btn.solid{background:var(--ink);border-color:var(--ink);color:var(--paper)}
+.btn.solid:hover{background:var(--accent);border-color:var(--accent);color:#fff}
+.band .btn{background:transparent;border-color:rgba(255,255,255,.28);color:var(--on-deep)}
+.band .btn:hover{border-color:var(--warm-bright);color:var(--warm-bright)}
+.band .btn.solid{background:var(--warm-bright);border-color:var(--warm-bright);color:#26180A}
+.band .btn.solid:hover{background:#fff;border-color:#fff;color:var(--deep)}
+
+
+/* ── hero meta, closing note, subscribe ──────────────────────────────────── */
+.meta{list-style:none;margin:26px 0 24px;padding:0;display:grid;gap:9px;max-width:62ch}
+.meta li{font:400 14px/1.5 var(--sans);color:var(--on-deep)}
+.meta span{display:inline-block;min-width:64px;font:500 10.5px/1.5 var(--mono);
+  letter-spacing:.12em;text-transform:uppercase;color:var(--warm-bright);
+  margin-right:12px;vertical-align:1px}
+
+/* Set apart rather than buried in the prose. Everything else on this page is a win, and
+   a page of only wins reads as a brochure. */
+/* Was a labeled, tinted callout. A section headed "what I got wrong" announces the
+   humility before the reader gets to judge it; the same paragraphs land better as an
+   unlabeled closing note under the case studies. */
+/* Sits after three bordered cards with no card of its own, so without some treatment it
+   reads as body copy nobody styled. Not another card, which would make it a fourth case
+   study, and not a label, which is what it was just freed from. The display face marks it
+   as the author talking rather than another exhibit, and the indent puts it in the same
+   optical column as the prose inside the cards above. */
+.closing{margin:36px 0 0;padding:30px 20px 0;border-top:1px solid var(--line)}
+/* Named for the rule, not the mistake. "What I got wrong" announced the humility before
+   the reader could judge it; the passage still needed something to orient against. */
+.closing h3{font:600 12px/1 var(--mono);letter-spacing:.1em;text-transform:uppercase;
+  color:var(--accent);margin:0 0 14px}
+.closing p{margin:0 0 16px;max-width:56ch;font:400 17px/1.62 var(--display);color:var(--body)}
+.closing p:last-child{margin-bottom:0;color:var(--ink)}
+
+.subscribe{margin:0 0 20px;padding-bottom:18px;border-bottom:1px solid var(--hair)}
+.subscribe label{display:block;font-size:13.5px;color:var(--muted);margin-bottom:9px}
+.subrow{display:flex;gap:7px}
+.subrow input{flex:1 1 auto;min-width:0;font:400 14px/1 var(--sans);color:var(--ink);
+  background:var(--paper);border:1px solid var(--line);border-radius:2px;padding:9px 11px}
+.subrow input:focus{outline:2px solid var(--accent);outline-offset:1px;border-color:var(--accent)}
+.subrow button{flex:none;font:500 13px/1 var(--sans);cursor:pointer;
+  background:var(--ink);color:var(--paper);border:1px solid var(--ink);
+  border-radius:2px;padding:9px 14px}
+.subrow button:hover{background:var(--accent);border-color:var(--accent);color:#fff}
+.subnote{margin:9px 0 0;font-size:13px;color:var(--muted)}
+
+/* ── work ────────────────────────────────────────────────────────────────── */
+.lead-project{
+  border:1px solid var(--line);border-left:3px solid var(--accent);
+  background:var(--surface);padding:clamp(22px,3.4vw,32px);border-radius:2px;
+}
+.lead-project h3{font:600 22px/1.25 var(--display);letter-spacing:-.015em;margin-bottom:6px;color:var(--accent)}
+.tagrow{display:flex;flex-wrap:wrap;gap:7px;margin:16px 0 20px}
+.tag{font:400 11.5px/1 var(--mono);color:var(--accent);background:var(--accent-soft);
+  border:1px solid var(--accent-soft);padding:5px 8px;border-radius:2px}
+.lead-project p{max-width:var(--measure);margin:0 0 12px}
+
+/* Four cards, so the grid is pinned to two columns rather than left to auto-fit, which
+   at this wrap width lands on three and strands the fourth alone across a full row. */
+.projects{display:grid;grid-template-columns:1fr;gap:1px;
+  background:var(--hair);border:1px solid var(--hair);margin-top:24px;border-radius:2px;overflow:hidden}
+@media (min-width:700px){.projects{grid-template-columns:1fr 1fr}}
+.project{background:var(--surface);padding:22px}
+.project h3{font:600 15.5px/1.3 var(--sans);margin-bottom:7px}
+.appmark{display:flex;align-items:center;gap:11px;margin-bottom:11px}
+.appmark img{width:40px;height:40px;border-radius:9px;flex:none;
+  box-shadow:0 1px 3px rgba(0,0,0,.18)}
+.appmark h3{margin:0}
+.playlink{display:inline-block;margin-top:12px;font:500 13px/1 var(--sans)}
+.project{border-top:2px solid transparent}
+.projects .project:nth-child(1){border-top-color:var(--warm)}
+.projects .project:nth-child(2){border-top-color:var(--accent)}
+.projects .project:nth-child(3){border-top-color:var(--plum)}
+/* The unbuilt one reads as a placeholder rather than a fourth shipped thing: dashed rule,
+   recessive title, no link to follow. */
+.projects .project.stub{border-top-color:var(--line);border-top-style:dashed;
+  background:var(--tint)}
+.project.stub h3{color:var(--muted)}
+.project p{margin:0;font-size:14.5px;color:var(--muted)}
+.project video{margin-top:14px;border:1px solid var(--line);border-radius:2px;background:#000}
+
+
+.shot{margin:22px 0 0;padding:0}
+.shot img{width:100%;border:1px solid var(--line);border-radius:2px;display:block;
+  background:var(--surface)}
+.shot figcaption{margin-top:10px;font:400 13px/1.5 var(--sans);color:var(--muted);
+  max-width:var(--measure)}
+.project video{width:100%;aspect-ratio:16/10;object-fit:cover}
+
+
+/* ── project heads, demo embed ───────────────────────────────────────────── */
+.proj-head{display:flex;align-items:baseline;gap:14px;flex-wrap:wrap;margin-bottom:10px}
+.proj-when{font:400 11.5px/1 var(--mono);color:var(--muted);letter-spacing:.03em}
+.proj-kind{display:block;font:500 10.5px/1 var(--mono);letter-spacing:.13em;
+  text-transform:uppercase;color:var(--muted);margin-bottom:10px}
+.proj-give{margin:18px 0 0;font-size:15px;color:var(--muted);max-width:var(--measure)}
+.proj-give code{font:400 13px/1 var(--mono);color:var(--accent);background:var(--accent-soft);
+  padding:2px 5px;border-radius:2px}
+.proj-claim{font:400 17px/1.55 var(--sans);color:var(--ink);max-width:60ch;margin:0 0 14px}
+.proj-note{border-left:2px solid var(--warm);padding-left:14px;color:var(--muted);
+  font-size:15px;max-width:var(--measure)}
+.proj-src{margin:14px 0 0;font:400 12px/1.5 var(--sans);color:var(--muted);max-width:var(--measure)}
+.props{margin:24px 0 0}
+.props p{margin:0 0 14px;max-width:var(--measure)}
+.props b{color:var(--ink);font-weight:600}
+.props code{font:400 13px/1 var(--mono);color:var(--accent);background:var(--accent-soft);
+  padding:2px 5px;border-radius:2px}
+.receipts{margin:18px 0 0;max-width:74ch;border:1px solid var(--line);border-radius:3px;
+  background:var(--tint);padding:15px 17px;overflow-x:auto}
+.receipts pre{margin:0;font:400 12px/1.75 var(--mono);color:var(--body);white-space:pre}
+.receipts .cmd{color:var(--accent);font-weight:500}
+.receipts .flag{color:var(--warm);font-weight:500}
+.rc-cap{margin:10px 0 0;font:400 12.5px/1.55 var(--sans);color:var(--muted);max-width:var(--measure)}
+.proj-fig{margin:20px 0 4px;padding:0}
+.proj-fig svg{width:100%;height:auto;display:block;overflow:visible}
+.demo{margin:22px 0}
+/* Live, not a screenshot behind a button. The screenshot was 938px wide and soft on
+   any retina display, and once opened there was no way back. */
+/* The label rides on top of the frame like a title bar. Under it, people scroll past
+   the dashboard first and only learn it is fake afterwards. */
+.demo .demo-flag{display:flex;align-items:baseline;gap:11px;flex-wrap:wrap;margin:0;
+  padding:10px 14px;border:1px solid var(--line);border-bottom:0;border-radius:2px 2px 0 0;
+  background:var(--warm-soft)}
+.demo .demo-flag b{font:500 10.5px/1 var(--mono);letter-spacing:.15em;text-transform:uppercase;
+  color:var(--warm);flex:none}
+.demo .demo-flag span{font:400 12.5px/1.4 var(--sans);color:var(--body)}
+.demo iframe{width:100%;height:min(78vh,760px);border:1px solid var(--line);
+  border-radius:0 0 2px 2px;background:var(--surface);display:block}
+.demo-note{margin:9px 0 0;font:400 12.5px/1.5 var(--sans);color:var(--muted)}
+
+
+/* ── system diagrams ─────────────────────────────────────────────────────── */
+/* Drawn rather than screenshotted, so they take theme tokens and stay sharp. These
+   are redrawn from memory to show how each system was put together; none is a copy
+   of anything belonging to a former employer. */
+.systems{display:grid;gap:1px;background:var(--hair);border:1px solid var(--hair);
+  border-radius:2px;margin-top:24px;overflow:hidden}
+.sysfig{background:var(--surface);padding:30px clamp(20px,3.4vw,34px) 28px;margin:0}
+.sysco{display:block;font:500 10.5px/1 var(--mono);letter-spacing:.14em;
+  text-transform:uppercase;color:var(--co,var(--accent));margin-bottom:9px}
+.sysfig h4{font:600 19px/1.3 var(--sans);color:var(--ink);margin:0 0 3px}
+.sysfig .sub{display:block;font:400 14.5px/1.6 var(--sans);color:var(--muted);
+  margin-bottom:18px;max-width:64ch}
+.sysfig svg{width:100%;height:auto;display:block;overflow:visible}
+.sysfig figcaption{margin-top:18px;font:400 13.5px/1.6 var(--sans);color:var(--muted);
+  max-width:var(--measure)}
+.d-box{fill:var(--surface);stroke:var(--line)}
+.d-fill{fill:var(--accent-soft);stroke:var(--accent)}
+.d-warm{fill:var(--warm-soft);stroke:var(--warm)}
+.d-lab{fill:var(--ink);font:600 14px var(--sans)}
+.d-mut{fill:var(--body);font:400 12.5px var(--sans)}
+.d-mono{fill:var(--muted);font:500 11px var(--mono);letter-spacing:.12em}
+.d-num{fill:var(--accent);font:600 22px var(--display)}
+.d-numw{fill:var(--warm);font:600 22px var(--display)}
+.d-line{stroke:var(--line);fill:none}
+.d-acc{stroke:var(--accent);fill:none}
+.d-arrow{fill:var(--muted)}
+
+/* ── experience ──────────────────────────────────────────────────────────── */
+/* A timeline, so it is drawn as one: a continuous spine with a node per employer.
+   Each employer carries its own color through its node, dates, bullets and figures,
+   which is what makes three long entries readable as three distinct places rather
+   than one undifferentiated wall. --co is set per article and everything reads it. */
+.jobs{position:relative;margin-top:8px;padding-left:26px}
+.jobs:before{content:"";position:absolute;left:4px;top:14px;bottom:14px;width:2px;
+  background:linear-gradient(var(--accent),var(--warm) 52%,var(--plum))}
+.job{position:relative;display:grid;grid-template-columns:158px minmax(0,1fr);
+  gap:clamp(16px,3vw,40px);padding:32px 0}
+.job+.job{border-top:1px solid var(--hair)}
+.job:before{content:"";position:absolute;left:-26px;top:40px;width:10px;height:10px;
+  border-radius:50%;background:var(--co);box-shadow:0 0 0 4px var(--paper)}
+.tinted .job:before{box-shadow:0 0 0 4px var(--tint)}
+@media (max-width:720px){
+  .jobs{padding-left:20px}
+  .jobs:before{left:1px}
+  .job{grid-template-columns:1fr;gap:10px}
+  .job:before{left:-20px;top:36px}
+}
+.when{font:400 12.5px/1.5 var(--mono);color:var(--muted);padding-top:2px;
+  border-left:2px solid var(--co);padding-left:11px}
+.when b{display:block;color:var(--co);font-weight:600;font-size:12.5px;letter-spacing:.02em}
+.job h3{font:600 18px/1.3 var(--sans);margin-bottom:3px}
+.job .org{font:500 13.5px/1.4 var(--sans);color:var(--co);margin-bottom:15px}
+.job ul{margin:0;padding:0;list-style:none}
+.job li{position:relative;padding-left:17px;margin-bottom:10px;max-width:var(--measure);font-size:15.5px}
+.job li:before{content:"";position:absolute;left:0;top:10px;width:6px;height:1px;background:var(--line)}
+.job li b{color:var(--ink);font-weight:600}
+.job-more{margin-top:4px}
+.job-more>summary{list-style:none;cursor:pointer;font:500 11px/1 var(--mono);
+  letter-spacing:.09em;text-transform:uppercase;color:var(--co);padding:6px 0}
+.job-more>summary::-webkit-details-marker{display:none}
+.job-more>summary:hover{opacity:.7}
+.job-more:not([open])>summary:after{content:" +"}
+.job-more[open]>summary:after{content:" \2013"}
+.job-more ul{margin-top:8px}
+.job li .n{color:var(--co);font-weight:600;white-space:nowrap}
+.subrole{font:500 12.5px/1 var(--mono);color:var(--co);margin:20px 0 10px;
+  letter-spacing:.03em;text-transform:uppercase;padding-left:11px;border-left:2px solid var(--hair)}
+.job--ih{--co:var(--accent)} .job--goog{--co:var(--warm)} .job--acn{--co:var(--plum)}
+/* Not an employer, so it carries a neutral rail and no metric strip. */
+.job--edu{--co:var(--muted)}
+.job--edu .org{margin-bottom:8px}
+.edu-certs{margin:0;font-size:14.5px;color:var(--muted);max-width:var(--measure)}
+
+
+/* Real marks, on a plate. A logo has its own ground and its own colors, and several
+   of these are dark ink that would vanish on the dark theme, so each sits on a small
+   white card that reads the same in both. */
+.joblogo{display:inline-flex;align-items:center;justify-content:center;
+  background:#fff;border:1px solid var(--line);border-radius:2px;
+  padding:7px 10px;margin-bottom:12px;height:36px}
+.joblogo img,.joblogo svg{height:21px;width:auto;display:block}
+.certs{margin:0;padding:0;list-style:none}
+.certs li{font-size:14.5px;padding:5px 0;color:var(--body);
+  position:relative;padding-left:15px}
+.certs li:before{content:"";position:absolute;left:0;top:11px;width:7px;height:2px;background:var(--plum)}
+
+
+/* ── case studies, personal ──────────────────────────────────────────────── */
+
+/* Three studies stacked 14px apart behind identical borders read as one wall, and the
+   boundary between them is easy to scroll straight past. The rule across the top of each
+   card is the divider and the colour at once, so it costs no extra element, and the whole
+   study folds to its title so three of them can be scanned in one screen. Open by
+   default: the takeaway and the diagram are the point, and a page that opens closed
+   shows nothing. */
+.study{border:1px solid var(--line);border-top:2px solid var(--line);border-radius:2px;
+  background:var(--surface);padding:0 20px;margin-bottom:clamp(26px,3.4vw,42px);
+  scroll-margin-top:78px}
+/* The frame is deliberately colourless. Each study already carries three colour
+   systems inside it: the diagram encodes running against on-hold, the pull-quote is
+   plum, the headline figure is accent. A hue on the card competed with all of them
+   while encoding nothing, and the section read as decorated rather than structured.
+   The space and the fold do the separating; colour stays where it means something. */
+.study--a,.study--b,.study--c{--c:var(--accent)}
+.st-wrap>summary{list-style:none;cursor:pointer;padding:19px 26px 0 0;position:relative;
+  display:flex;align-items:baseline;gap:14px;flex-wrap:wrap}
+.st-wrap>summary::-webkit-details-marker{display:none}
+.st-wrap>summary:focus-visible{outline:2px solid var(--c);outline-offset:3px}
+.st-wrap>summary:hover .st-t{color:var(--c)}
+/* Pinned rather than pushed: the title is a flex item that grows, so it leaves no free
+   space for margin-left:auto to consume and the marker ended up against the text. */
+.st-fold{position:absolute;right:0;top:20px;font:400 17px/1 var(--mono);
+  color:var(--faint);transition:color .12s}
+.st-wrap>summary:hover .st-fold{color:var(--c)}
+.st-wrap:not([open])>summary{padding-bottom:19px}
+.st-wrap:not([open]) .st-fold:before{content:"+"}
+.st-wrap[open] .st-fold:before{content:"\2212"}
+.st-inner{padding:9px 0 20px}
+.st-head{display:flex;align-items:baseline;gap:14px;flex-wrap:wrap;margin-bottom:9px}
+.st-t{font:600 17px/1.3 var(--display);color:var(--ink);letter-spacing:-.01em;flex:1 1 240px}
+.st-kind{font:500 10.5px/1 var(--mono);letter-spacing:.13em;text-transform:uppercase;
+  color:var(--muted);flex:0 0 auto;min-width:142px}
+@media (max-width:640px){.st-kind{flex-basis:100%;min-width:0;margin-bottom:-6px}}
+/* The takeaway and the diagram are what a skimmer gets. The prose is opt-in, because
+   most people will not open it and the point has to survive that. */
+.st-take{margin:0 0 4px;font:400 16.5px/1.55 var(--sans);color:var(--ink);max-width:62ch}
+.st-more{margin-top:20px;border-top:1px solid var(--hair);padding-top:13px}
+.st-more>summary{list-style:none;cursor:pointer;font:500 11.5px/1 var(--mono);
+  letter-spacing:.06em;text-transform:uppercase;color:var(--accent)}
+.st-more>summary::-webkit-details-marker{display:none}
+.st-more>summary:hover{opacity:.7}
+.st-more:not([open])>summary:after{content:" +"}
+.st-more[open]>summary:after{content:" \2013"}
+.st-body{padding:14px 0 0}
+.st-body h3{font:600 12px/1 var(--mono);letter-spacing:.1em;text-transform:uppercase;
+  color:var(--accent);margin:20px 0 9px}
+.st-body h3:first-child{margin-top:0}
+.st-body p{max-width:var(--measure);margin:0 0 12px;font-size:15.5px}
+.st-body ul{margin:0 0 12px;padding-left:18px;max-width:var(--measure)}
+.st-body li{font-size:15.5px;margin-bottom:6px}
+.st-body strong{color:var(--ink)}
+.modal-highlight{border-left:3px solid var(--warm);background:var(--warm-soft);
+  padding:12px 16px;margin:0 0 14px;font:400 15.5px/1.55 var(--display);
+  color:var(--ink);max-width:var(--measure)}
+
+.st-meta{font:500 11px/1 var(--mono);letter-spacing:.12em;text-transform:uppercase;
+  color:var(--accent);margin:0 0 18px}
+.st-fig{margin:18px 0 0;padding:0}
+.st-fig svg{width:100%;height:auto;display:block;overflow:visible}
+.st-fig figcaption{margin-top:16px;font:400 13px/1.6 var(--sans);color:var(--muted);
+  max-width:var(--measure)}
+.st-tags{display:flex;flex-wrap:wrap;gap:6px;margin-top:16px}
+
+/* Two photos. Better a pair that both hold up than a third that does not. */
+.photostrip{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));
+  gap:clamp(16px,2.2vw,24px);margin-top:34px;max-width:760px}
+@media (max-width:760px){.photostrip{grid-template-columns:1fr}}
+.photostrip figure{margin:0}
+.photostrip img{width:100%;height:auto;aspect-ratio:1/1;object-fit:cover;border-radius:2px;
+  border:1px solid var(--line);background:var(--tint)}
+.photostrip img.top{object-position:center top}
+.photostrip figcaption{margin-top:9px;font:400 12.5px/1.5 var(--sans);color:var(--muted)}
+.facts{margin:0;padding:0;list-style:none;max-width:var(--measure)}
+.facts li{padding:14px 0 14px 17px;border-top:1px solid var(--hair);position:relative;font-size:15.5px}
+.facts li:first-child{border-top:0;padding-top:0}
+.facts li:before{content:"";position:absolute;left:0;top:22px;width:8px;height:2px}
+.facts li:first-child:before{top:8px}
+.facts li:nth-child(1):before{background:var(--accent)}
+.facts li:nth-child(2):before{background:var(--warm)}
+.facts li:nth-child(3):before{background:var(--plum)}
+.facts li:nth-child(4):before{background:var(--accent)}
+.facts b{color:var(--ink);font-weight:600}
+
+
+/* Per-role figures. The same device as the hero, one scale down, in the employer's
+   color. The bullets are for reading; this strip is for the ten seconds before
+   anyone decides to read them. */
+/* Three tiers per role: what it covered, what came out of it, and how. A reader
+   scanning for scale should not have to infer it from prose, and the bullets stop
+   carrying two jobs at once. Labels stay neutral because the figures already take the
+   company's colour. */
+.jobsec{font:500 9.5px/1 var(--mono);letter-spacing:.15em;text-transform:uppercase;
+  color:var(--muted);margin:0 0 9px}
+.jobsec+.jobfigs{margin-top:0}
+.scope{display:flex;flex-wrap:wrap;gap:6px;margin:0 0 20px}
+.job .scope li{font:500 11px/1.35 var(--mono);color:var(--body);background:var(--tint);
+  border:1px solid var(--hair);border-radius:2px;padding:5px 9px;margin:0;
+  padding-left:9px;max-width:none;font-size:11px}
+.job .scope li:before{content:none}
+.jobfigs{display:flex;flex-wrap:wrap;margin:0 0 18px;
+  border-top:1px solid var(--hair);border-bottom:1px solid var(--hair)}
+.jobfig{flex:1 1 128px;padding:12px 18px 12px 0}
+.jobfig+.jobfig{border-left:1px solid var(--hair);padding-left:18px}
+.jobfig b{display:block;font:600 21px/1 var(--display);color:var(--co);letter-spacing:-.02em}
+.jobfig span{display:block;margin-top:6px;font:400 11.5px/1.4 var(--sans);color:var(--muted)}
+@media (max-width:520px){.jobfig{flex:1 1 100%;padding-right:0}
+  .jobfig+.jobfig{border-left:0;border-top:1px solid var(--hair);padding-left:0}}
+
+/* ── contact ─────────────────────────────────────────────────────────────── */
+.contact-grid{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,320px);
+  gap:clamp(28px,5vw,60px);align-items:start}
+@media (max-width:760px){.contact-grid{grid-template-columns:1fr}}
+.card{border:1px solid var(--line);border-top:3px solid var(--warm);background:var(--surface);padding:22px;border-radius:2px}
+.card dl{margin:0;display:grid;grid-template-columns:auto 1fr;gap:9px 16px;font-size:14.5px}
+.card dt{font:500 11px/1.6 var(--mono);letter-spacing:.1em;text-transform:uppercase;color:var(--accent)}
+.card dd{margin:0}
+footer{padding:26px 0 44px;border-top:1px solid var(--hair);
+  font:400 12.5px/1.6 var(--mono);color:var(--muted);
+  display:flex;justify-content:space-between;flex-wrap:wrap;gap:10px}

@@ -1,0 +1,198 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Career Ops</title>
+<meta name="description" content="A job pipeline that reads twelve thousand postings a morning, checks its own rules against 886 hand-labelled emails, and repairs a year of stored records when one of them turns out to be wrong.">
+<meta name="author" content="Benjamin J. Sunter">
+<link rel="canonical" href="https://bensunter.com/careerops.html">
+<meta property="og:title" content="Career Ops">
+<meta property="og:description" content="Most tools like this are demoed once and never measured again. This one can tell you what it still gets wrong.">
+<meta property="og:url" content="https://bensunter.com/careerops.html">
+<meta property="og:type" content="website">
+<meta property="og:image" content="https://bensunter.com/og-card.jpg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="icon" href="favicon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<meta name="theme-color" content="#0B3A40">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600&family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600&display=swap">
+<link rel="stylesheet" href="site.css">
+<style>
+/* The project page is the write-up on its own, so the card chrome that framed it on the
+   home page comes off and the paragraph measure moves onto the page body instead. */
+.backlink{display:inline-flex;align-items:center;gap:7px;font:500 13px/1 var(--sans);
+  color:var(--muted);margin-bottom:26px}
+.backlink:hover{color:var(--accent)}
+.projpage{padding-top:clamp(38px,5vw,58px);padding-bottom:clamp(56px,7vw,88px)}
+.projpage h1{font:600 clamp(30px,4.2vw,42px)/1.1 var(--display);letter-spacing:-.022em;
+  margin-bottom:12px}
+.projmeta{display:flex;align-items:baseline;gap:14px;flex-wrap:wrap;margin-bottom:30px}
+.projbody > p{max-width:var(--measure);margin:0 0 12px}
+</style>
+</head>
+<body id="top">
+
+<header class="masthead">
+  <div class="wrap">
+    <a class="mark" href="index.html">Benjamin J. Sunter</a>
+    <nav>
+      <a href="index.html#work">Work</a>
+      <a href="index.html#experience">Experience</a>
+      <a href="index.html#writing">Case studies</a>
+      <a href="index.html#contact" class="nav-cta">Contact</a>
+      <button type="button" id="theme" class="theme-btn" aria-label="Switch theme" title="Switch theme">
+        <svg viewBox="0 0 24 24" width="15" height="15" aria-hidden="true" fill="none"
+             stroke="currentColor" stroke-width="1.9" stroke-linecap="round">
+          <circle cx="12" cy="12" r="4.2"/><path d="M12 2.2v2M12 19.8v2M2.2 12h2M19.8 12h2
+          M5 5l1.4 1.4M17.6 17.6L19 19M19 5l-1.4 1.4M6.4 17.6L5 19"/>
+        </svg>
+      </button>
+    </nav>
+  </div>
+</header>
+
+<main>
+<section class="wrap projpage">
+  <a class="backlink" href="index.html#work">&larr; Selected work</a>
+  <span class="proj-kind">Pipeline tooling</span>
+  <h1>Career Ops</h1>
+  <div class="projmeta">
+    <span class="proj-when">Built 2026 · Open source</span>
+  </div>
+
+  <div class="projbody">
+    <p class="proj-claim">Hiring broke in a way you can measure. The average open role
+       gets more than 300 applications now, up from about 100 in 2021. AI made applying
+       almost free. It did nothing for the people who have to read them.</p>
+
+    <p>Since applying faster is what caused the pile-up, Career Ops goes the other way. It
+       never writes or submits anything. What it does is cut down how many roles are worth
+       your time in the first place.</p>
+
+    <figure class="proj-fig">
+      <svg viewBox="0 0 620 168" role="img" aria-label="103 job boards across four ATS APIs are ranked cheapest filter first, banded by how recently each role was posted, freshest band first, and each row arrives with pay band, employee sentiment and your history with that company attached.">
+        <text class="d-mono" x="0" y="12">HOW A ROLE REACHES THE LIST</text>
+        <rect x="0" y="26" width="132" height="46" rx="3" fill="var(--accent)" opacity=".1"/>
+        <rect x="0" y="26" width="3" height="46" rx="2" fill="var(--accent)"/>
+        <text class="d-lab" x="14" y="46">103 job boards</text>
+        <text class="d-mut" x="14" y="63">four ATS APIs</text>
+        <path class="d-arrow" d="M138 47 l8 4 -8 4z"/>
+        <rect x="154" y="26" width="156" height="46" rx="3" fill="var(--warm)" opacity=".12"/>
+        <rect x="154" y="26" width="3" height="46" rx="2" fill="var(--warm)"/>
+        <text class="d-lab" x="168" y="46">Ranked, then read</text>
+        <text class="d-mut" x="168" y="63">cheap filters first</text>
+        <path class="d-arrow" d="M316 47 l8 4 -8 4z"/>
+        <rect x="332" y="26" width="124" height="46" rx="3" fill="var(--plum)" opacity=".12"/>
+        <rect x="332" y="26" width="3" height="46" rx="2" fill="var(--plum)"/>
+        <text class="d-lab" x="346" y="46">Banded by age</text>
+        <text class="d-mut" x="346" y="63">freshest first</text>
+        <path class="d-arrow" d="M462 47 l8 4 -8 4z"/>
+        <rect x="478" y="26" width="104" height="46" rx="3" fill="var(--accent)" opacity=".1"/>
+        <rect x="478" y="26" width="3" height="46" rx="2" fill="var(--accent)"/>
+        <text class="d-lab" x="492" y="46">Do next</text>
+        <text class="d-mut" x="492" y="63">what to open</text>
+        <text class="d-mut" x="0" y="100">Greenhouse, Ashby, Lever and Workday. Each row arrives with pay band, employee</text>
+        <text class="d-mut" x="0" y="117">sentiment and your history with that company attached. Status comes from your mail.</text>
+        <line x1="0" y1="136" x2="620" y2="136" stroke="var(--line)"/>
+        <text class="d-mut" x="0" y="158">A req with 300 applicants is read in arrival order, so week one beats a better score in week six.</text>
+      </svg>
+    </figure>
+
+    <span class="eyebrow" style="margin-top:34px">Why this one holds up</span>
+    <div class="props">
+      <p>Every morning it reads about twelve thousand postings across 103 boards, throws
+         away almost all of them for almost nothing, and leaves a handful worth reading
+         properly. That much is easy to build, and easy to trust for about a week.</p>
+      <p>Then it quietly starts lying to you. A rule written in March stops matching the
+         mail that arrives in September, nothing errors, and the dashboard still looks
+         perfectly healthy. Mine filed a live interview invitation as a routine
+         acknowledgement.</p>
+      <p>So most of the work went into making it doubt itself. There are 886 real emails I
+         labelled by hand that every change has to clear, and a command called
+         <code>drift</code> that goes back through everything already stored and reports
+         where the data and the rules that produced it have come apart. I can tell you what
+         it still gets wrong. Most of these can't, because they were demoed once and never
+         measured again.</p>
+      <p>Fixes travel backwards too. Repairing a rule repairs a year of old records rather
+         than just the next email, so the history gets more accurate the longer it runs.
+         Which is the same reason I wouldn't trust a dashboard nobody has reconciled against
+         the source in six months.</p>
+    </div>
+
+    <div class="receipts">
+<pre><span class="cmd">$ careerops corpus</span>
+checked 886: 886 agree, 0 drift, 0 regressions
+
+<span class="cmd">$ careerops drift</span>
+OK   event type                 OK   title without a role
+<span class="flag">--   event role: 1</span>              OK   outreach-only application
+OK   unread pay band            OK   flat scoring signal
+OK   unapplied alias
+
+<span class="flag">     468</span>  stored   "Operational Excellence Program Manager"
+          derived  "Program Manager"</pre>
+    </div>
+    <p class="rc-cap">Both of those are actual output. The one open finding is staying open,
+       because the stored title happens to be the better of the two.</p>
+
+    <p class="proj-note">It doesn't fix the real problem, and nothing on the candidate's side
+       can. The bottleneck is how many humans can read. The hard bugs were all the same shape:
+       software saying something untrue with total confidence and being believed. Most of the
+       work was teaching it to admit when it doesn't know.</p>
+
+    <p class="proj-src">Application volume: Ashby, 100M+ submissions. Interview-rate
+       decline: ZipRecruiter 2026 talent acquisition survey.</p>
+
+    <div class="tagrow">
+      <span class="tag">Python</span><span class="tag">SQLite</span><span class="tag">Gmail API</span>
+      <span class="tag">Anthropic API</span><span class="tag">Event sourcing</span><span class="tag">Open source</span>
+    </div>
+    <div class="demo" id="demo">
+      <p class="demo-flag"><b>Demo</b> <span>Synthetic data. Every company, role and
+         application below is invented.</span></p>
+      <iframe src="careerops-demo.html" loading="lazy"
+              title="Career Ops dashboard demo, running on synthetic data"></iframe>
+      <p class="demo-note">Filter, sort, open any row.</p>
+    </div>
+    <p class="proj-give">Take it if it's useful. There's a two-minute path with no
+       credentials, and a full setup that reads your Gmail locally. Nothing leaves your
+       machine. Steps are in the README.</p>
+    <a class="btn" href="https://github.com/bsunter93/careerops" rel="noopener">View on GitHub</a>
+  </div>
+</section>
+</main>
+
+<footer class="wrap">
+  <span>© <span id="yr">2026</span> Benjamin J. Sunter</span>
+  <span>Denver, Colorado</span>
+</footer>
+
+<script>
+document.getElementById('yr').textContent = new Date().getFullYear();
+
+// Theme, same contract as the home page: the OS decides unless a click pins one, and a
+// pinned choice persists. Reads are wrapped because a private window can throw on access
+// rather than hand back null.
+(function(){
+  const root = document.documentElement, btn = document.getElementById('theme');
+  const get = k => { try { return localStorage.getItem(k); } catch (e) { return null; } };
+  const set = (k, v) => { try { localStorage.setItem(k, v); } catch (e) {} };
+  const saved = get('theme');
+  if (saved === 'light' || saved === 'dark') root.setAttribute('data-theme', saved);
+  if (!btn) return;
+  btn.addEventListener('click', () => {
+    const dark = root.getAttribute('data-theme') === 'dark' ||
+      (!root.hasAttribute('data-theme') &&
+       matchMedia('(prefers-color-scheme: dark)').matches);
+    const next = dark ? 'light' : 'dark';
+    root.setAttribute('data-theme', next); set('theme', next);
+  });
+})();
+</script>
+</body>
+</html>
