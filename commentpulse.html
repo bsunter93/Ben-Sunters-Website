@@ -91,6 +91,8 @@ button{font:inherit;color:inherit}
 .iconbtn{background:transparent;border:1px solid var(--rule);border-radius:5px;
   width:32px;height:32px;display:grid;place-items:center;cursor:pointer;color:var(--muted)}
 .iconbtn:hover{border-color:var(--accent);color:var(--accent)}
+.srclink{font:500 12.5px/1 var(--sans);color:var(--muted);text-decoration:none}
+.srclink:hover{color:var(--accent);text-decoration:underline}
 
 /* ── intro ────────────────────────────────────────────────────────────── */
 .intro{padding:clamp(30px,4.6vw,52px) 0 6px}
@@ -252,6 +254,7 @@ footer li{margin-bottom:5px}
       <span>Every comment in a Google Sheet, with its tab and its cell</span>
     </div>
     <div class="spacer"></div>
+    <a class="srclink" href="https://github.com/bsunter93/commentpulse" rel="noopener">Source</a>
     <button type="button" class="iconbtn" id="theme" aria-label="Switch colour theme" title="Switch theme">
       <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor"
            stroke-width="1.9" stroke-linecap="round" aria-hidden="true">
@@ -374,6 +377,14 @@ footer li{margin-bottom:5px}
         <li>Times shown in your local timezone.</li>
         <li>CSV exports UTC.</li>
         <li>Works on Excel workbooks too.</li>
+      </ul>
+    </div>
+    <div>
+      <h4>Source</h4>
+      <ul style="list-style:none;padding:0">
+        <li><a href="https://github.com/bsunter93/commentpulse" rel="noopener">GitHub</a>, MIT</li>
+        <li><a href="selftest.html">Run the test suite</a></li>
+        <li><a href="index.html">Benjamin J. Sunter</a></li>
       </ul>
     </div>
   </div>
