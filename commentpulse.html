@@ -1,0 +1,1076 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>CommentPulse</title>
+<meta name="description" content="Pull every comment thread out of a Google Sheet, with its tab, its cell and its replies. Runs in your browser. Nothing is uploaded.">
+<meta name="author" content="Benjamin J. Sunter">
+<meta name="color-scheme" content="light dark">
+<link rel="canonical" href="https://bensunter.com/commentpulse.html">
+<meta property="og:title" content="CommentPulse">
+<meta property="og:description" content="Google Sheets keeps comments where you cannot sort them, count them, or hand them to anyone. Drop the workbook here and get every thread back in order.">
+<meta property="og:url" content="https://bensunter.com/commentpulse.html">
+<meta property="og:type" content="website">
+<link rel="icon" href="favicon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<meta name="theme-color" content="#1F5F5B">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Newsreader:opsz,wght@6..72,400;6..72,500;6..72,600&family=Public+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap">
+<style>
+/* ── tokens ───────────────────────────────────────────────────────────────
+   A ledger, not a dashboard. Warm paper ground, a ruled coordinate gutter on
+   the left, threads hanging off it. Newsreader carries the document lineage,
+   JetBrains Mono makes cell refs read as coordinates rather than as words. */
+:root{
+  --paper:#FBFAF7; --surface:#FFFFFF; --sunk:#F4F2EC; --raise:#FFFFFF;
+  --ink:#191C20; --body:#3E434A; --muted:#6E757E; --faint:#969CA4;
+  --rule:#E5E1D8; --hair:#EFECE4;
+  --accent:#1F5F5B; --accent-soft:#1F5F5B12; --accent-ink:#164743; --on-accent:#FFFFFF;
+  --open:#9A5A06;     --open-soft:#9A5A0614;
+  --closed:#3F6B4E;   --closed-soft:#3F6B4E12;
+  --alert:#9B2C2C;    --alert-soft:#9B2C2C10;
+  --note:#8A5A00;     --note-soft:#B9861C1F; --note-rule:#D7B067;
+  --focus:#1F5F5B;
+  --display:'Newsreader',Georgia,'Times New Roman',serif;
+  --sans:'Public Sans',-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif;
+  --mono:'JetBrains Mono',ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
+  --gutter:132px;
+  --shadow:0 1px 2px rgba(25,28,32,.05), 0 4px 14px rgba(25,28,32,.04);
+}
+@media (prefers-color-scheme:dark){
+  :root:not([data-theme="light"]){
+    --paper:#101315; --surface:#171B1E; --sunk:#141719; --raise:#1B2024;
+    --ink:#ECEAE5; --body:#C5C9CE; --muted:#8D949B; --faint:#747B82;
+    --rule:#282D32; --hair:#1F2428;
+    --accent:#5FB3AC; --accent-soft:#5FB3AC16; --accent-ink:#8ACCC6; --on-accent:#0A1211;
+    --open:#D79B4A;   --open-soft:#D79B4A18;
+    --closed:#79B58C; --closed-soft:#79B58C16;
+    --alert:#E28A8A;  --alert-soft:#E28A8A14;
+    --note:#DFB264; --note-soft:#DFB2641A; --note-rule:#7A5F27;
+    --focus:#5FB3AC;
+    --shadow:0 1px 2px rgba(0,0,0,.3), 0 4px 14px rgba(0,0,0,.22);
+  }
+}
+:root[data-theme="dark"]{
+  --paper:#101315; --surface:#171B1E; --sunk:#141719; --raise:#1B2024;
+  --ink:#ECEAE5; --body:#C5C9CE; --muted:#8D949B; --faint:#747B82;
+  --rule:#282D32; --hair:#1F2428;
+  --accent:#5FB3AC; --accent-soft:#5FB3AC16; --accent-ink:#8ACCC6; --on-accent:#0A1211;
+  --open:#D79B4A;   --open-soft:#D79B4A18;
+  --closed:#79B58C; --closed-soft:#79B58C16;
+  --alert:#E28A8A;  --alert-soft:#E28A8A14;
+  --note:#DFB264; --note-soft:#DFB2641A; --note-rule:#7A5F27;
+  --focus:#5FB3AC;
+  --shadow:0 1px 2px rgba(0,0,0,.3), 0 4px 14px rgba(0,0,0,.22);
+}
+
+*{box-sizing:border-box}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+body{
+  margin:0; background:var(--paper); color:var(--body);
+  font:400 15.5px/1.62 var(--sans); -webkit-font-smoothing:antialiased;
+  font-variant-numeric:tabular-nums;
+}
+h1,h2,h3{color:var(--ink);margin:0;text-wrap:balance}
+a{color:var(--accent);text-decoration-thickness:1px;text-underline-offset:2px}
+:focus-visible{outline:2px solid var(--focus);outline-offset:2px;border-radius:2px}
+button{font:inherit;color:inherit}
+.wrap{max-width:1080px;margin:0 auto;padding-inline:clamp(18px,4vw,36px)}
+
+/* ── masthead ─────────────────────────────────────────────────────────── */
+.top{border-bottom:1px solid var(--rule);background:var(--surface)}
+.top .wrap{display:flex;align-items:center;gap:16px;height:60px}
+.brand{display:flex;align-items:baseline;gap:10px;min-width:0}
+.brand b{font:600 20px/1 var(--display);letter-spacing:-.012em;color:var(--ink)}
+.brand span{font:400 12.5px/1 var(--sans);color:var(--muted);white-space:nowrap;
+  overflow:hidden;text-overflow:ellipsis}
+@media (max-width:640px){.brand span{display:none}}
+.spacer{flex:1}
+.iconbtn{background:transparent;border:1px solid var(--rule);border-radius:5px;
+  width:32px;height:32px;display:grid;place-items:center;cursor:pointer;color:var(--muted)}
+.iconbtn:hover{border-color:var(--accent);color:var(--accent)}
+
+/* ── intro ────────────────────────────────────────────────────────────── */
+.intro{padding:clamp(30px,4.6vw,52px) 0 6px}
+.intro h1{font:500 clamp(30px,4.4vw,42px)/1.1 var(--display);letter-spacing:-.02em;max-width:19ch}
+.intro p{max-width:60ch;margin:14px 0 0;font-size:16.5px;color:var(--body)}
+.intro .sheetsonly{display:inline-flex;align-items:center;gap:8px;margin-top:18px;
+  font:500 12px/1 var(--mono);letter-spacing:.04em;color:var(--note);
+  background:var(--note-soft);border:1px solid var(--note-rule);border-radius:3px;padding:7px 10px}
+
+/* ── drop zone ────────────────────────────────────────────────────────── */
+.dropwrap{display:grid;grid-template-columns:minmax(0,1.25fr) minmax(0,1fr);
+  gap:clamp(18px,2.6vw,30px);align-items:stretch;margin:26px 0 6px}
+@media (max-width:820px){.dropwrap{grid-template-columns:1fr}}
+.drop{border:2px dashed var(--rule);border-radius:8px;background:var(--surface);
+  padding:clamp(26px,3.4vw,38px) 26px;text-align:center;cursor:pointer;
+  transition:border-color .14s,background .14s;display:flex;flex-direction:column;
+  align-items:center;justify-content:center;gap:12px;min-height:216px}
+.drop:hover,.drop:focus-visible{border-color:var(--accent);background:var(--accent-soft)}
+.drop.over{border-color:var(--accent);background:var(--accent-soft);border-style:solid}
+.drop svg{color:var(--accent)}
+.drop b{display:block;font:600 17px/1.3 var(--sans);color:var(--ink)}
+.drop small{display:block;font-size:13.5px;color:var(--muted);max-width:38ch}
+.drop .or{font-size:13px;color:var(--faint)}
+.btn{display:inline-flex;align-items:center;gap:7px;border:1px solid var(--rule);
+  background:var(--surface);color:var(--ink);border-radius:5px;padding:8px 14px;
+  font:500 13.5px/1 var(--sans);cursor:pointer;white-space:nowrap}
+.btn:hover{border-color:var(--accent);color:var(--accent)}
+.btn.solid{background:var(--accent);border-color:var(--accent);color:var(--on-accent)}
+.btn.solid:hover{background:var(--accent-ink);border-color:var(--accent-ink);color:var(--on-accent)}
+.btn[disabled]{opacity:.45;cursor:not-allowed}
+
+.howto{background:var(--sunk);border:1px solid var(--hair);border-radius:8px;
+  padding:22px 24px}
+.howto h2{font:600 11px/1 var(--mono);letter-spacing:.14em;text-transform:uppercase;
+  color:var(--muted);margin-bottom:14px}
+.howto ol{margin:0;padding-left:0;list-style:none;counter-reset:s}
+.howto li{counter-increment:s;position:relative;padding-left:28px;margin-bottom:10px;
+  font-size:14px;color:var(--body)}
+.howto li:last-child{margin-bottom:0}
+.howto li:before{content:counter(s);position:absolute;left:0;top:1px;width:19px;height:19px;
+  border-radius:50%;background:var(--accent);color:var(--on-accent);
+  font:600 11px/19px var(--mono);text-align:center}
+.howto kbd{font:500 12.5px/1 var(--mono);background:var(--surface);border:1px solid var(--rule);
+  border-radius:3px;padding:2px 5px;color:var(--ink)}
+.privacy{margin-top:16px;padding-top:14px;border-top:1px solid var(--rule);
+  font-size:13px;color:var(--muted)}
+.privacy b{color:var(--ink);font-weight:600}
+
+/* ── status line ──────────────────────────────────────────────────────── */
+.status{margin:18px 0 0;font-size:14px;min-height:1px}
+.status.err{color:var(--alert);background:var(--alert-soft);border:1px solid var(--alert);
+  border-radius:6px;padding:12px 14px}
+.status.err b{display:block;color:var(--alert);font-weight:600;margin-bottom:3px}
+
+/* ── example banner ───────────────────────────────────────────────────── */
+.sample{display:flex;align-items:center;gap:12px;flex-wrap:wrap;
+  background:var(--note-soft);border:1px solid var(--note-rule);border-left-width:3px;
+  border-radius:5px;padding:11px 14px;margin:0 0 20px;font-size:13.5px;color:var(--body)}
+.sample b{font:600 10.5px/1 var(--mono);letter-spacing:.14em;text-transform:uppercase;
+  color:var(--note)}
+
+/* ── results ──────────────────────────────────────────────────────────── */
+.results{padding:8px 0 72px}
+.filebar{display:flex;align-items:baseline;gap:10px;flex-wrap:wrap;margin-bottom:14px}
+.filebar h2{font:500 22px/1.25 var(--display);letter-spacing:-.012em}
+.filebar .meta{font:400 12.5px/1 var(--mono);color:var(--muted)}
+
+.tally{display:flex;gap:1px;background:var(--hair);border:1px solid var(--hair);
+  border-radius:7px;overflow:hidden;margin-bottom:20px;flex-wrap:wrap}
+.tally div{background:var(--surface);padding:13px 18px;flex:1 1 128px}
+.tally dt{font:500 10.5px/1 var(--mono);letter-spacing:.13em;text-transform:uppercase;
+  color:var(--muted);margin-bottom:6px}
+.tally dd{margin:0;font:600 21px/1 var(--display);color:var(--ink)}
+.tally dd.open{color:var(--open)} .tally dd.closed{color:var(--closed)}
+
+.controls{display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin-bottom:6px;
+  padding-bottom:18px;border-bottom:1px solid var(--rule)}
+.field{display:flex;flex-direction:column;gap:5px}
+.field label{font:500 10px/1 var(--mono);letter-spacing:.12em;text-transform:uppercase;
+  color:var(--faint)}
+select,input[type=search]{font:400 13.5px/1 var(--sans);color:var(--ink);
+  background:var(--surface);border:1px solid var(--rule);border-radius:5px;padding:8px 10px;
+  min-width:132px;height:34px}
+input[type=search]{min-width:186px}
+.seg{display:inline-flex;border:1px solid var(--rule);border-radius:5px;overflow:hidden;height:34px}
+.seg button{background:var(--surface);border:0;border-right:1px solid var(--rule);
+  padding:0 12px;font:500 12.5px/1 var(--sans);color:var(--muted);cursor:pointer}
+.seg button:last-child{border-right:0}
+.seg button[aria-pressed=true]{background:var(--accent);color:var(--on-accent)}
+.controls .spacer{flex:1;min-width:0}
+.exports{display:flex;gap:8px;align-self:flex-end}
+
+.count{margin:16px 0 4px;font:400 12.5px/1 var(--mono);color:var(--muted)}
+
+/* ── the ledger ───────────────────────────────────────────────────────── */
+.tabgroup{margin-top:30px}
+.tabhead{display:flex;align-items:center;gap:12px;margin-bottom:2px;
+  padding-bottom:9px;border-bottom:2px solid var(--accent)}
+.tabhead h3{font:600 12px/1 var(--mono);letter-spacing:.13em;text-transform:uppercase;
+  color:var(--accent)}
+.tabhead em{font:400 12px/1 var(--mono);font-style:normal;color:var(--faint)}
+
+.thread{display:grid;grid-template-columns:var(--gutter) minmax(0,1fr);
+  gap:0 22px;padding:18px 0;border-bottom:1px solid var(--hair);align-items:start}
+@media (max-width:700px){
+  .thread{grid-template-columns:1fr;gap:10px}
+  .gut{flex-direction:row!important;align-items:center!important;gap:10px!important}
+}
+.gut{display:flex;flex-direction:column;gap:7px;align-items:flex-start;
+  padding-top:2px;flex-wrap:wrap}
+.cell{font:700 15px/1 var(--mono);color:var(--accent);letter-spacing:-.01em}
+.pill{display:inline-flex;align-items:center;gap:6px;font:500 10.5px/1 var(--mono);
+  letter-spacing:.09em;text-transform:uppercase;border-radius:99px;padding:5px 9px 5px 7px;
+  border:1px solid transparent}
+.pill .dot{width:7px;height:7px;border-radius:50%;flex:none}
+.pill.open{color:var(--open);background:var(--open-soft);border-color:var(--open)}
+.pill.open .dot{background:var(--open)}
+.pill.closed{color:var(--closed);background:var(--closed-soft);border-color:var(--closed)}
+.pill.closed .dot{background:transparent;border:2px solid var(--closed);width:9px;height:9px}
+.ago{font:400 11.5px/1.4 var(--mono);color:var(--faint)}
+
+.posts{min-width:0}
+.post{min-width:0}
+.byline{display:flex;align-items:baseline;gap:9px;flex-wrap:wrap;margin-bottom:3px}
+.who{font:600 14px/1.4 var(--sans);color:var(--ink)}
+.when{font:400 11.5px/1.4 var(--mono);color:var(--faint)}
+.text{margin:0;color:var(--body);font-size:14.8px;line-height:1.6;
+  overflow-wrap:anywhere;white-space:pre-wrap}
+.replies{margin:12px 0 0;padding:0 0 0 18px;border-left:2px solid var(--rule);
+  display:flex;flex-direction:column;gap:13px}
+.replies .who{font-size:13.5px}
+.replies .text{font-size:14.2px;color:var(--muted)}
+mark{background:var(--note-soft);color:var(--ink);border-radius:2px;padding:0 2px}
+
+.empty{text-align:center;padding:64px 20px;border:1px dashed var(--rule);border-radius:8px;
+  background:var(--surface);margin-top:24px}
+.empty b{display:block;font:500 19px/1.3 var(--display);color:var(--ink);margin-bottom:8px}
+.empty p{margin:0 auto;max-width:46ch;font-size:14.5px;color:var(--muted)}
+
+/* ── footer ───────────────────────────────────────────────────────────── */
+footer{border-top:1px solid var(--rule);background:var(--surface);padding:26px 0 40px}
+footer .wrap{display:flex;gap:26px;flex-wrap:wrap;justify-content:space-between;
+  font-size:13px;color:var(--muted)}
+footer .known{max-width:62ch}
+footer .known h4{font:500 10.5px/1 var(--mono);letter-spacing:.13em;text-transform:uppercase;
+  color:var(--faint);margin:0 0 8px}
+footer ul{margin:0;padding-left:17px}
+footer li{margin-bottom:5px}
+.sr{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;
+  clip:rect(0 0 0 0);white-space:nowrap;border:0}
+</style>
+</head>
+<body>
+
+<header class="top">
+  <div class="wrap">
+    <div class="brand">
+      <b>CommentPulse</b>
+      <span>Every comment in a Google Sheet, with its tab and its cell</span>
+    </div>
+    <div class="spacer"></div>
+    <button type="button" class="iconbtn" id="theme" aria-label="Switch colour theme" title="Switch theme">
+      <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor"
+           stroke-width="1.9" stroke-linecap="round" aria-hidden="true">
+        <circle cx="12" cy="12" r="4.2"/><path d="M12 2.4v2M12 19.6v2M2.4 12h2M19.6 12h2
+        M5.1 5.1l1.4 1.4M17.5 17.5l1.4 1.4M18.9 5.1l-1.4 1.4M6.5 17.5l-1.4 1.4"/>
+      </svg>
+    </button>
+  </div>
+</header>
+
+<main>
+<section class="wrap intro" id="setup">
+  <h1>Comment threads, out of the spreadsheet and into a list.</h1>
+  <p>Google Sheets keeps comments where you cannot sort them, count them, or hand them to
+     anyone. Drop an exported workbook here and every thread comes back in order, with the
+     tab and cell it sits on, its replies, and whether it was resolved.</p>
+  <span class="sheetsonly">SPREADSHEETS ONLY &middot; .XLSX &middot; DOCS AND SLIDES NOT YET SUPPORTED</span>
+
+  <div class="dropwrap">
+    <div class="drop" id="drop" role="button" tabindex="0"
+         aria-describedby="dropdesc">
+      <svg viewBox="0 0 24 24" width="30" height="30" fill="none" stroke="currentColor"
+           stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <path d="M12 15.5V4m0 0L8.2 7.8M12 4l3.8 3.8"/>
+        <path d="M3.5 14.5v3.2A2.3 2.3 0 0 0 5.8 20h12.4a2.3 2.3 0 0 0 2.3-2.3v-3.2"/>
+      </svg>
+      <b>Drop your .xlsx here</b>
+      <small id="dropdesc">Or drop several at once. Files are read in this browser tab and
+        never leave your machine.</small>
+      <span class="or">or</span>
+      <span class="btn">Choose a file</span>
+      <input type="file" id="file" accept=".xlsx,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+             multiple class="sr">
+    </div>
+
+    <div class="howto">
+      <h2>Getting the file</h2>
+      <ol>
+        <li>Open your sheet in Google Sheets.</li>
+        <li><kbd>File</kbd> &rarr; <kbd>Download</kbd> &rarr; <kbd>Microsoft Excel (.xlsx)</kbd></li>
+        <li>Drop the downloaded file on the left.</li>
+      </ol>
+      <p class="privacy"><b>Nothing is uploaded.</b> There is no account, no sign-in and no
+        server. The file is unzipped and read by this page, in your browser. Close the tab
+        and it is gone.</p>
+    </div>
+  </div>
+
+  <div class="status" id="status" role="status" aria-live="polite"></div>
+</section>
+
+<section class="wrap results" id="results" hidden>
+  <div class="sample" id="samplebanner" hidden>
+    <b>Example</b>
+    <span>Invented data, so you can see the shape of it. Drop your own file to replace it.</span>
+  </div>
+
+  <div class="filebar">
+    <h2 id="fileName">&nbsp;</h2>
+    <span class="meta" id="fileMeta"></span>
+  </div>
+
+  <dl class="tally" id="tally"></dl>
+
+  <div class="controls">
+    <div class="field">
+      <label for="fTab">Tab</label>
+      <select id="fTab"><option value="">All tabs</option></select>
+    </div>
+    <div class="field">
+      <label for="fWho">Person</label>
+      <select id="fWho"><option value="">Anyone</option></select>
+    </div>
+    <div class="field">
+      <label id="statusLabel">Status</label>
+      <div class="seg" role="group" aria-labelledby="statusLabel">
+        <button type="button" data-st="" aria-pressed="true">All</button>
+        <button type="button" data-st="open" aria-pressed="false">Open</button>
+        <button type="button" data-st="resolved" aria-pressed="false">Resolved</button>
+      </div>
+    </div>
+    <div class="field">
+      <label for="fQ">Search</label>
+      <input type="search" id="fQ" placeholder="Text, author, cell&hellip;">
+    </div>
+    <div class="field">
+      <label for="fSort">Order</label>
+      <select id="fSort">
+        <option value="pos">Tab, then cell</option>
+        <option value="new">Newest activity</option>
+        <option value="old">Oldest first</option>
+      </select>
+    </div>
+    <div class="spacer"></div>
+    <div class="exports">
+      <button type="button" class="btn" id="dlCsv">Download CSV</button>
+      <button type="button" class="btn" id="cpMd">Copy Markdown</button>
+    </div>
+  </div>
+
+  <p class="count" id="count"></p>
+  <div id="ledger"></div>
+</section>
+</main>
+
+<footer>
+  <div class="wrap">
+    <div class="known">
+      <h4>What this cannot tell you</h4>
+      <ul>
+        <li><b>When a thread was resolved, or by whom.</b> The export stores resolution as a
+            yes or no and nothing else, so those columns are absent rather than blank.</li>
+        <li><b>Deleted comments and emoji reactions.</b> Not present in the export.</li>
+        <li><b>Email addresses.</b> Display names only.</li>
+      </ul>
+    </div>
+    <div>
+      <h4>Notes</h4>
+      <ul style="list-style:none;padding:0">
+        <li>Times shown in your local timezone.</li>
+        <li>CSV exports UTC.</li>
+        <li>Works on Excel workbooks too.</li>
+      </ul>
+    </div>
+  </div>
+</footer>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+<script>
+(function () {
+  'use strict';
+
+  // ── namespaces ──────────────────────────────────────────────────────────
+  var NS = {
+    rel:  'http://schemas.openxmlformats.org/package/2006/relationships',
+    main: 'http://schemas.openxmlformats.org/spreadsheetml/2006/main',
+    r:    'http://schemas.openxmlformats.org/officeDocument/2006/relationships',
+    tc:   'http://schemas.microsoft.com/office/spreadsheetml/2018/threadedcomments'
+  };
+  var REL_SHEET  = 'http://schemas.openxmlformats.org/officeDocument/2006/relationships/worksheet';
+  var REL_THREAD = 'http://schemas.microsoft.com/office/2017/10/relationships/threadedComment';
+
+  // ── small helpers ───────────────────────────────────────────────────────
+  var $ = function (s) { return document.querySelector(s); };
+
+  // Relationship targets are relative to the directory of the part that owns
+  // the .rels file, so `xl/_rels/workbook.xml.rels` resolves against `xl/`.
+  function resolvePath(baseDir, target) {
+    if (!target) return '';
+    if (target.charAt(0) === '/') return target.slice(1);
+    var parts = baseDir.split('/').filter(Boolean);
+    target.split('/').forEach(function (seg) {
+      if (!seg || seg === '.') return;
+      if (seg === '..') parts.pop(); else parts.push(seg);
+    });
+    return parts.join('/');
+  }
+  function dirOf(path) {
+    var i = path.lastIndexOf('/');
+    return i < 0 ? '' : path.slice(0, i + 1);
+  }
+  function relsPathFor(partPath) {
+    return dirOf(partPath) + '_rels/' + partPath.slice(dirOf(partPath).length) + '.rels';
+  }
+
+  function parseXml(text) {
+    var doc = new DOMParser().parseFromString(text, 'application/xml');
+    if (doc.getElementsByTagName('parsererror').length) throw new Error('Malformed XML');
+    return doc;
+  }
+
+  // The export writes dT without a timezone marker. It is UTC: the same comment
+  // reads 19:42:15.655 here and 19:42:15.655Z from the Drive API. Parsed as local
+  // time every timestamp is silently hours wrong, so the Z is appended explicitly.
+  function toUtcIso(dT) {
+    if (!dT) return null;
+    var s = String(dT).trim();
+    if (!/[Zz]$|[+-]\d\d:?\d\d$/.test(s)) s += 'Z';
+    var d = new Date(s);
+    return isNaN(d.getTime()) ? null : d.toISOString();
+  }
+
+  // A1 -> {col, row} so threads sort in reading order rather than lexically,
+  // which would otherwise put B10 before B9.
+  function cellSort(ref) {
+    var first = String(ref || '').split(':')[0];
+    var m = /^([A-Za-z]+)?(\d+)?/.exec(first) || [];
+    var letters = (m[1] || '').toUpperCase(), col = 0;
+    for (var i = 0; i < letters.length; i++) col = col * 26 + (letters.charCodeAt(i) - 64);
+    return { row: parseInt(m[2] || '0', 10), col: col };
+  }
+
+  // GUIDs are regenerated on every export, so identity has to come from content
+  // that does not change. cyrb53 is deterministic and fast; this is a dedupe and
+  // join key, not a security primitive.
+  function hash53(str) {
+    var h1 = 0xdeadbeef, h2 = 0x41c6ce57, ch;
+    for (var i = 0; i < str.length; i++) {
+      ch = str.charCodeAt(i);
+      h1 = Math.imul(h1 ^ ch, 2654435761);
+      h2 = Math.imul(h2 ^ ch, 1597334677);
+    }
+    h1 = Math.imul(h1 ^ (h1 >>> 16), 2246822507) ^ Math.imul(h2 ^ (h2 >>> 13), 3266489909);
+    h2 = Math.imul(h2 ^ (h2 >>> 16), 2246822507) ^ Math.imul(h1 ^ (h1 >>> 13), 3266489909);
+    return (4294967296 * (2097151 & h2) + (h1 >>> 0)).toString(36);
+  }
+
+  function esc(s) {
+    return String(s == null ? '' : s).replace(/[&<>"']/g, function (c) {
+      return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c];
+    });
+  }
+  function fmtWhen(iso) {
+    if (!iso) return '';
+    var d = new Date(iso);
+    return d.toLocaleString(undefined,
+      { year: 'numeric', month: 'short', day: 'numeric', hour: 'numeric', minute: '2-digit' });
+  }
+  function ago(iso) {
+    if (!iso) return '';
+    var s = (Date.now() - new Date(iso).getTime()) / 1000;
+    if (s < 90) return 'just now';
+    var mins = s / 60; if (mins < 60) return Math.round(mins) + 'm ago';
+    var hrs = mins / 60; if (hrs < 24) return Math.round(hrs) + 'h ago';
+    var days = hrs / 24; if (days < 31) return Math.round(days) + 'd ago';
+    var mo = days / 30.44; if (mo < 12) return Math.round(mo) + 'mo ago';
+    return Math.round(mo / 12) + 'y ago';
+  }
+  function plural(n, one, many) { return n + ' ' + (n === 1 ? one : (many || one + 's')); }
+
+  // ── the parser ──────────────────────────────────────────────────────────
+  // Only the parts we need are decompressed. A workbook with a handful of
+  // comments can still be tens of megabytes of cell data.
+  function readPart(zip, path) {
+    var f = zip.file(path);
+    return f ? f.async('string') : Promise.resolve(null);
+  }
+
+  function parseWorkbook(zip, fileName) {
+    var out = { fileName: fileName, threads: [], tabs: [], warnings: [] };
+
+    return readPart(zip, '[Content_Types].xml').then(function (ct) {
+      if (ct == null) throw new Error('NOT_XLSX');
+      return readPart(zip, 'xl/workbook.xml');
+    }).then(function (wbXml) {
+      if (wbXml == null) throw new Error('NOT_XLSX');
+      var wb = parseXml(wbXml);
+      var sheetEls = wb.getElementsByTagNameNS(NS.main, 'sheet');
+      var sheets = [];
+      for (var i = 0; i < sheetEls.length; i++) {
+        sheets.push({
+          name: sheetEls[i].getAttribute('name') || ('Sheet ' + (i + 1)),
+          rid:  sheetEls[i].getAttributeNS(NS.r, 'id'),
+          order: i
+        });
+      }
+      return readPart(zip, 'xl/_rels/workbook.xml.rels').then(function (relXml) {
+        var map = {};
+        if (relXml) {
+          var rels = parseXml(relXml).getElementsByTagNameNS(NS.rel, 'Relationship');
+          for (var j = 0; j < rels.length; j++) {
+            var t = rels[j].getAttribute('Type');
+            if (t === REL_SHEET) {
+              map[rels[j].getAttribute('Id')] =
+                resolvePath('xl/', rels[j].getAttribute('Target'));
+            }
+          }
+        }
+        // Deliberately keyed off the relationship id rather than the file number.
+        // In a fresh workbook sheet1 happens to map to threadedComment1, so the
+        // naive version looks correct until a sheet is deleted or reordered, at
+        // which point every comment is attributed to the wrong tab, silently.
+        sheets.forEach(function (s) { s.part = map[s.rid] || null; });
+        return sheets;
+      });
+    }).then(function (sheets) {
+      return readPart(zip, 'xl/persons/person.xml').then(function (pXml) {
+        var people = {};
+        if (pXml) {
+          var ps = parseXml(pXml).getElementsByTagNameNS(NS.tc, 'person');
+          for (var i = 0; i < ps.length; i++) {
+            people[ps[i].getAttribute('id')] = ps[i].getAttribute('displayName') || 'Unknown';
+          }
+        }
+        return { sheets: sheets, people: people };
+      });
+    }).then(function (ctx) {
+      var jobs = ctx.sheets.map(function (sheet) {
+        if (!sheet.part) return Promise.resolve(null);
+        return readPart(zip, relsPathFor(sheet.part)).then(function (relXml) {
+          if (!relXml) return null;
+          var rels = parseXml(relXml).getElementsByTagNameNS(NS.rel, 'Relationship'), target = null;
+          for (var i = 0; i < rels.length; i++) {
+            if (rels[i].getAttribute('Type') === REL_THREAD) {
+              target = resolvePath(dirOf(sheet.part), rels[i].getAttribute('Target'));
+              break;
+            }
+          }
+          if (!target) return null;
+          return readPart(zip, target).then(function (tcXml) {
+            return tcXml ? { sheet: sheet, xml: tcXml } : null;
+          });
+        });
+      });
+      return Promise.all(jobs).then(function (found) {
+        return { found: found, people: ctx.people, sheets: ctx.sheets };
+      });
+    }).then(function (ctx) {
+      ctx.found.forEach(function (hit) {
+        if (!hit) return;
+        var els = parseXml(hit.xml).getElementsByTagNameNS(NS.tc, 'threadedComment');
+        var roots = {}, kids = [];
+        for (var i = 0; i < els.length; i++) {
+          var el = els[i];
+          var textEl = el.getElementsByTagNameNS(NS.tc, 'text')[0];
+          var rec = {
+            id:      el.getAttribute('id'),
+            parent:  el.getAttribute('parentId'),
+            ref:     el.getAttribute('ref') || '',
+            at:      toUtcIso(el.getAttribute('dT')),
+            done:    el.getAttribute('done') === '1',
+            who:     ctx.people[el.getAttribute('personId')] || 'Unknown',
+            text:    textEl ? (textEl.textContent || '') : ''
+          };
+          if (rec.parent) kids.push(rec); else roots[rec.id] = rec;
+        }
+        Object.keys(roots).forEach(function (id) {
+          var r = roots[id];
+          var replies = kids.filter(function (k) { return k.parent === id; })
+                            .sort(function (a, b) { return (a.at || '').localeCompare(b.at || ''); });
+          var last = replies.length ? replies[replies.length - 1].at : r.at;
+          out.threads.push({
+            key:       hash53([hit.sheet.name, r.ref, r.at, r.who, r.text].join('|')),
+            file:      fileName,
+            tab:       hit.sheet.name,
+            tabOrder:  hit.sheet.order,
+            ref:       r.ref,
+            sortKey:   cellSort(r.ref),
+            status:    r.done ? 'resolved' : 'open',
+            who:       r.who,
+            openedAt:  r.at,
+            lastAt:    last,
+            text:      r.text,
+            replies:   replies.map(function (k) { return { who: k.who, at: k.at, text: k.text }; })
+          });
+        });
+        // An orphaned reply means its root was not in this part. Never silently drop it.
+        var orphans = kids.filter(function (k) { return !roots[k.parent]; });
+        if (orphans.length) {
+          out.warnings.push(plural(orphans.length, 'reply', 'replies') +
+            ' on ' + hit.sheet.name + ' had no parent comment and were skipped.');
+        }
+      });
+      out.tabs = ctx.sheets.map(function (s) { return s.name; });
+      return out;
+    });
+  }
+
+  // ── state ───────────────────────────────────────────────────────────────
+  var DATA = { files: [], threads: [], isSample: false };
+  var FILTER = { tab: '', who: '', status: '', q: '', sort: 'pos' };
+
+  // ── rendering ───────────────────────────────────────────────────────────
+  function visible() {
+    var q = FILTER.q.trim().toLowerCase();
+    var list = DATA.threads.filter(function (t) {
+      if (FILTER.tab && t.tab !== FILTER.tab) return false;
+      if (FILTER.status && t.status !== FILTER.status) return false;
+      if (FILTER.who) {
+        var inThread = t.who === FILTER.who ||
+          t.replies.some(function (r) { return r.who === FILTER.who; });
+        if (!inThread) return false;
+      }
+      if (q) {
+        var hay = [t.text, t.who, t.ref, t.tab]
+          .concat(t.replies.map(function (r) { return r.text + ' ' + r.who; })).join(' ').toLowerCase();
+        if (hay.indexOf(q) < 0) return false;
+      }
+      return true;
+    });
+    list.sort(function (a, b) {
+      if (FILTER.sort === 'new') return (b.lastAt || '').localeCompare(a.lastAt || '');
+      if (FILTER.sort === 'old') return (a.openedAt || '').localeCompare(b.openedAt || '');
+      if (a.file !== b.file) return a.file.localeCompare(b.file);
+      if (a.tabOrder !== b.tabOrder) return a.tabOrder - b.tabOrder;
+      if (a.sortKey.row !== b.sortKey.row) return a.sortKey.row - b.sortKey.row;
+      return a.sortKey.col - b.sortKey.col;
+    });
+    return list;
+  }
+
+  function highlight(text) {
+    var q = FILTER.q.trim();
+    if (!q) return esc(text);
+    var safe = q.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+    return esc(text).replace(new RegExp('(' + safe + ')', 'gi'), '<mark>$1</mark>');
+  }
+
+  function threadHtml(t) {
+    var multiFile = DATA.files.length > 1;
+    return '' +
+      '<article class="thread">' +
+        '<div class="gut">' +
+          '<span class="cell">' + esc(t.ref || '·') + '</span>' +
+          '<span class="pill ' + (t.status === 'resolved' ? 'closed' : 'open') + '">' +
+            '<span class="dot"></span>' + (t.status === 'resolved' ? 'Resolved' : 'Open') +
+          '</span>' +
+          '<span class="ago">' + esc(ago(t.lastAt)) +
+            (multiFile ? '<br>' + esc(t.file) : '') + '</span>' +
+        '</div>' +
+        '<div class="posts">' +
+          '<div class="post">' +
+            '<div class="byline"><span class="who">' + esc(t.who) + '</span>' +
+              '<span class="when">' + esc(fmtWhen(t.openedAt)) + '</span></div>' +
+            '<p class="text">' + highlight(t.text) + '</p>' +
+          '</div>' +
+          (t.replies.length
+            ? '<div class="replies">' + t.replies.map(function (r) {
+                return '<div class="post">' +
+                  '<div class="byline"><span class="who">' + esc(r.who) + '</span>' +
+                    '<span class="when">' + esc(fmtWhen(r.at)) + '</span></div>' +
+                  '<p class="text">' + highlight(r.text) + '</p></div>';
+              }).join('') + '</div>'
+            : '') +
+        '</div>' +
+      '</article>';
+  }
+
+  function render() {
+    var list = visible();
+    var total = DATA.threads.length;
+
+    $('#count').textContent = list.length === total
+      ? plural(total, 'thread')
+      : list.length + ' of ' + plural(total, 'thread') + ' shown';
+
+    if (!list.length) {
+      $('#ledger').innerHTML =
+        '<div class="empty"><b>Nothing matches those filters</b>' +
+        '<p>Try clearing the search box or switching the status back to All.</p></div>';
+      return;
+    }
+
+    var html = '', lastTab = null;
+    var grouped = FILTER.sort === 'pos';
+    list.forEach(function (t) {
+      if (grouped && t.tab !== lastTab) {
+        if (lastTab !== null) html += '</div>';
+        var n = list.filter(function (x) { return x.tab === t.tab; }).length;
+        html += '<div class="tabgroup"><div class="tabhead"><h3>' + esc(t.tab) + '</h3>' +
+                '<em>' + plural(n, 'thread') + '</em></div>';
+        lastTab = t.tab;
+      }
+      html += threadHtml(t);
+    });
+    if (grouped && lastTab !== null) html += '</div>';
+    $('#ledger').innerHTML = html;
+  }
+
+  function renderTally() {
+    var open = DATA.threads.filter(function (t) { return t.status === 'open'; }).length;
+    var resolved = DATA.threads.length - open;
+    var tabs = {}, people = {};
+    DATA.threads.forEach(function (t) {
+      tabs[t.tab] = true; people[t.who] = true;
+      t.replies.forEach(function (r) { people[r.who] = true; });
+    });
+    var cells = [
+      ['Threads', DATA.threads.length, ''],
+      ['Open', open, 'open'],
+      ['Resolved', resolved, 'closed'],
+      ['Tabs', Object.keys(tabs).length, ''],
+      ['People', Object.keys(people).length, '']
+    ];
+    $('#tally').innerHTML = cells.map(function (c) {
+      return '<div><dt>' + c[0] + '</dt><dd class="' + c[2] + '">' + c[1] + '</dd></div>';
+    }).join('');
+  }
+
+  function renderFilterOptions() {
+    var tabs = [], people = [];
+    DATA.threads.forEach(function (t) {
+      if (tabs.indexOf(t.tab) < 0) tabs.push(t.tab);
+      if (people.indexOf(t.who) < 0) people.push(t.who);
+      t.replies.forEach(function (r) { if (people.indexOf(r.who) < 0) people.push(r.who); });
+    });
+    people.sort();
+    $('#fTab').innerHTML = '<option value="">All tabs</option>' +
+      tabs.map(function (t) { return '<option>' + esc(t) + '</option>'; }).join('');
+    $('#fWho').innerHTML = '<option value="">Anyone</option>' +
+      people.map(function (p) { return '<option>' + esc(p) + '</option>'; }).join('');
+  }
+
+  function show(result) {
+    DATA.threads = result.threads;
+    DATA.files = result.files;
+    DATA.isSample = !!result.isSample;
+
+    $('#samplebanner').hidden = !DATA.isSample;
+    $('#fileName').textContent = DATA.files.length === 1
+      ? DATA.files[0] : plural(DATA.files.length, 'workbook');
+    var tabCount = {}; DATA.threads.forEach(function (t) { tabCount[t.tab] = true; });
+    $('#fileMeta').textContent = plural(DATA.threads.length, 'thread') + ' · ' +
+      plural(Object.keys(tabCount).length, 'tab');
+
+    renderTally();
+    renderFilterOptions();
+    render();
+    $('#results').hidden = false;
+  }
+
+  // ── status messages ─────────────────────────────────────────────────────
+  function say(msg, isError) {
+    var el = $('#status');
+    el.className = 'status' + (isError ? ' err' : '');
+    el.innerHTML = msg;
+  }
+  function clearSay() { $('#status').className = 'status'; $('#status').innerHTML = ''; }
+
+  var ERRORS = {
+    NOT_XLSX: ['That does not look like an .xlsx workbook',
+      'It may be a .csv, a .numbers file, or a Google file that was not exported. ' +
+      'In Google Sheets use File, then Download, then Microsoft Excel (.xlsx).'],
+    NOT_ZIP: ['That file could not be opened',
+      'An .xlsx is a zip archive. This one is either corrupt or is a different format ' +
+      'with the wrong extension.']
+  };
+
+  // ── file handling ───────────────────────────────────────────────────────
+  function handleFiles(fileList) {
+    var files = Array.prototype.slice.call(fileList).filter(function (f) {
+      return /\.xlsx$/i.test(f.name) || /spreadsheetml/.test(f.type);
+    });
+    var rejected = fileList.length - files.length;
+
+    if (!files.length) {
+      var e = ERRORS.NOT_XLSX;
+      say('<b>' + e[0] + '</b>' + e[1], true);
+      return;
+    }
+
+    say('Reading ' + plural(files.length, 'file') + '…');
+
+    var jobs = files.map(function (f) {
+      return JSZip.loadAsync(f)
+        .catch(function () { throw new Error('NOT_ZIP'); })
+        .then(function (zip) { return parseWorkbook(zip, f.name); })
+        .then(function (r) { return { ok: true, result: r, name: f.name }; })
+        .catch(function (err) { return { ok: false, name: f.name, code: err.message }; });
+    });
+
+    Promise.all(jobs).then(function (results) {
+      var threads = [], names = [], warnings = [], failed = [];
+      results.forEach(function (r) {
+        if (!r.ok) { failed.push(r); return; }
+        threads = threads.concat(r.result.threads);
+        warnings = warnings.concat(r.result.warnings);
+        names.push(r.name);
+      });
+
+      if (!names.length) {
+        var code = failed[0] && ERRORS[failed[0].code] ? failed[0].code : 'NOT_ZIP';
+        say('<b>' + ERRORS[code][0] + '</b>' + ERRORS[code][1], true);
+        return;
+      }
+
+      if (!threads.length) {
+        say('<b>No comment threads found in ' + esc(names.join(', ')) + '</b>' +
+            'The workbook opened correctly, so this usually means it genuinely has no ' +
+            'comments, or that what it has are old-style cell notes rather than comment ' +
+            'threads. Notes are a different feature and are not included in the export.', true);
+        $('#results').hidden = true;
+        return;
+      }
+
+      var notes = [];
+      if (failed.length) {
+        notes.push('<b>' + plural(failed.length, 'file') + ' could not be read</b>' +
+          failed.map(function (f) { return esc(f.name); }).join(', ') +
+          '. The rest were loaded.');
+      }
+      if (rejected) notes.push(plural(rejected, 'file') + ' skipped: not an .xlsx.');
+      warnings.forEach(function (w) { notes.push(esc(w)); });
+
+      if (notes.length) say(notes.join('<br>'), failed.length > 0); else clearSay();
+
+      show({ threads: threads, files: names, isSample: false });
+      $('#results').scrollIntoView({ behavior: 'smooth', block: 'start' });
+    });
+  }
+
+  // ── exports ─────────────────────────────────────────────────────────────
+  function rows() {
+    var out = [];
+    visible().forEach(function (t) {
+      var days = t.openedAt
+        ? Math.max(0, Math.round((Date.now() - new Date(t.openedAt).getTime()) / 864e5)) : '';
+      var people = [t.who].concat(t.replies.map(function (r) { return r.who; }))
+        .filter(function (v, i, a) { return a.indexOf(v) === i; }).join('; ');
+      var base = {
+        file_name: t.file, tab: t.tab, cell: t.ref, thread_key: t.key,
+        thread_status: t.status, opened_at_utc: t.openedAt || '',
+        last_activity_at_utc: t.lastAt || '', reply_count: t.replies.length,
+        days_open: days, participants: people
+      };
+      function row(seq, type, who, at, text) {
+        var r = {};
+        r.file_name = base.file_name; r.tab = base.tab; r.cell = base.cell;
+        r.thread_key = base.thread_key; r.seq = seq; r.post_type = type;
+        r.author = who; r.created_at_utc = at || ''; r.content = text;
+        r.thread_status = base.thread_status; r.opened_at_utc = base.opened_at_utc;
+        r.last_activity_at_utc = base.last_activity_at_utc;
+        r.reply_count = base.reply_count; r.days_open = base.days_open;
+        r.participants = base.participants;
+        return r;
+      }
+      out.push(row(0, 'comment', t.who, t.openedAt, t.text));
+      t.replies.forEach(function (r, i) {
+        out.push(row(i + 1, 'reply', r.who, r.at, r.text));
+      });
+    });
+    return out;
+  }
+
+  function toCsv() {
+    var data = rows();
+    if (!data.length) return '';
+    var cols = Object.keys(data[0]);
+    function cell(v) {
+      var s = v == null ? '' : String(v);
+      return /[",\n\r]/.test(s) ? '"' + s.replace(/"/g, '""') + '"' : s;
+    }
+    return cols.join(',') + '\r\n' +
+      data.map(function (r) {
+        return cols.map(function (c) { return cell(r[c]); }).join(',');
+      }).join('\r\n');
+  }
+
+  function toMarkdown() {
+    var list = visible(), byTab = {}, order = [];
+    list.forEach(function (t) {
+      if (!byTab[t.tab]) { byTab[t.tab] = []; order.push(t.tab); }
+      byTab[t.tab].push(t);
+    });
+    var lines = ['# Comment threads', '',
+      DATA.files.join(', ') + ' · ' + plural(list.length, 'thread') +
+      ' · exported ' + new Date().toLocaleDateString(), ''];
+    order.forEach(function (tab) {
+      lines.push('## ' + tab, '');
+      byTab[tab].forEach(function (t) {
+        lines.push('### ' + (t.ref || '(no cell)') + ' · ' +
+          (t.status === 'resolved' ? 'Resolved' : 'Open'));
+        lines.push('**' + t.who + '** · ' + fmtWhen(t.openedAt), '');
+        lines.push(t.text.split('\n').map(function (l) { return '> ' + l; }).join('\n'), '');
+        t.replies.forEach(function (r) {
+          lines.push('- **' + r.who + '** · ' + fmtWhen(r.at) + ': ' +
+            r.text.replace(/\n+/g, ' '));
+        });
+        if (t.replies.length) lines.push('');
+      });
+    });
+    return lines.join('\n');
+  }
+
+  function download(name, text, mime) {
+    var blob = new Blob(['﻿' + text], { type: mime + ';charset=utf-8' });
+    var url = URL.createObjectURL(blob), a = document.createElement('a');
+    a.href = url; a.download = name;
+    document.body.appendChild(a); a.click(); a.remove();
+    setTimeout(function () { URL.revokeObjectURL(url); }, 1500);
+  }
+
+  // ── sample data ─────────────────────────────────────────────────────────
+  // Invented, and labelled as such on screen. A tool that opens empty shows
+  // nothing about what it does.
+  function sample() {
+    var d = function (daysAgo, h) {
+      return new Date(Date.now() - daysAgo * 864e5 + (h || 0) * 36e5).toISOString();
+    };
+    var raw = [
+      ['Launch Readiness', 'B7', 'open', 'Priya Raman', 11,
+        'Legal sign-off is the blocker here, not the integration. Redlines came back Tuesday and nobody has routed them.',
+        [['Marcus Webb', 9, 'Routing today. Counsel says 48 hours once it lands.'],
+         ['Priya Raman', 4, 'Still nothing. Moving this to at-risk unless it clears by Friday.']]],
+      ['Launch Readiness', 'C7', 'open', 'Dana Okafor', 10,
+        'Who owns this row now? Original owner moved teams in July and it has been unassigned since.', []],
+      ['Launch Readiness', 'D12', 'resolved', 'Sam Whitfield', 17,
+        'This says 92 percent but the source query filters out cancelled orders. Real number is closer to 87.',
+        [['Priya Raman', 16, 'Good catch. Query updated, figure now matches the warehouse.']]],
+      ['Launch Readiness', 'B19', 'open', 'Marcus Webb', 6,
+        'Dependency on the billing migration is not reflected anywhere in this plan. If that slips, so does this.',
+        [['Dana Okafor', 5, 'Adding it to the risk tab so it is at least visible.']]],
+      ['Launch Readiness', 'F3', 'resolved', 'Ines Carvalho', 21,
+        'Date format is inconsistent down this column, some ISO and some US. Sorting is wrong as a result.',
+        [['Sam Whitfield', 20, 'Normalised to ISO.'], ['Ines Carvalho', 20, 'Confirmed, thanks.']]],
+      ['Launch Readiness', 'H8', 'open', 'Tobias Lund', 3,
+        'Marked green but the underlying test suite has been failing since the 2nd. Green here is not green in reality.', []],
+      ['Open Risks', 'A4', 'open', 'Dana Okafor', 14,
+        'No owner listed for the migration dry run. This is the third week it has been blank.',
+        [['Marcus Webb', 13, 'I will take it for now, but it needs a permanent owner.']]],
+      ['Open Risks', 'A9', 'open', 'Priya Raman', 8,
+        'Severity is subjective across the teams filling this in. One team calls a two-day slip critical, another calls a two-week slip moderate.',
+        [['Tobias Lund', 7, 'Suggest we define the bands at the top of the tab.'],
+         ['Dana Okafor', 6, 'Drafted something in row 2. Shout if it is wrong.']]],
+      ['Open Risks', 'C15', 'resolved', 'Marcus Webb', 25,
+        'Duplicate of the risk on row 11. Closing this one.', []],
+      ['Open Risks', 'B22', 'open', 'Ines Carvalho', 2,
+        'Mitigation column is empty for every high-severity row. That is the column that actually matters.', []],
+      ['Regional Detail', 'E5', 'open', 'Tobias Lund', 5,
+        'APAC numbers are a month behind the others because the source report runs on a different cadence. Worth a footnote so nobody compares them directly.',
+        [['Sam Whitfield', 4, 'Added a note in E1.']]],
+      ['Regional Detail', 'G11', 'resolved', 'Sam Whitfield', 30,
+        'Currency conversion looks like it used spot rate rather than the planning rate.',
+        [['Ines Carvalho', 29, 'Corrected to the planning rate across the tab.']]]
+    ];
+    var tabOrder = {};
+    var threads = raw.map(function (r) {
+      if (!(r[0] in tabOrder)) tabOrder[r[0]] = Object.keys(tabOrder).length;
+      var replies = r[6].map(function (x) {
+        return { who: x[0], at: d(x[1]), text: x[2] };
+      });
+      return {
+        key: hash53(r.slice(0, 6).join('|')),
+        file: 'Q3-launch-tracker.xlsx',
+        tab: r[0], tabOrder: tabOrder[r[0]], ref: r[1], sortKey: cellSort(r[1]),
+        status: r[2], who: r[3], openedAt: d(r[4]),
+        lastAt: replies.length ? replies[replies.length - 1].at : d(r[4]),
+        text: r[5], replies: replies
+      };
+    });
+    return { threads: threads, files: ['Q3-launch-tracker.xlsx'], isSample: true };
+  }
+
+  // ── wiring ──────────────────────────────────────────────────────────────
+  var drop = $('#drop'), input = $('#file');
+  drop.addEventListener('click', function () { input.click(); });
+  drop.addEventListener('keydown', function (e) {
+    if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); input.click(); }
+  });
+  input.addEventListener('change', function () {
+    if (input.files && input.files.length) handleFiles(input.files);
+    input.value = '';
+  });
+  ['dragenter', 'dragover'].forEach(function (ev) {
+    drop.addEventListener(ev, function (e) { e.preventDefault(); drop.classList.add('over'); });
+  });
+  ['dragleave', 'drop'].forEach(function (ev) {
+    drop.addEventListener(ev, function (e) { e.preventDefault(); drop.classList.remove('over'); });
+  });
+  drop.addEventListener('drop', function (e) {
+    if (e.dataTransfer && e.dataTransfer.files.length) handleFiles(e.dataTransfer.files);
+  });
+  // A file dropped outside the target would otherwise navigate away and lose everything.
+  ['dragover', 'drop'].forEach(function (ev) {
+    window.addEventListener(ev, function (e) { e.preventDefault(); });
+  });
+
+  $('#fTab').addEventListener('change', function () { FILTER.tab = this.value; render(); });
+  $('#fWho').addEventListener('change', function () { FILTER.who = this.value; render(); });
+  $('#fSort').addEventListener('change', function () { FILTER.sort = this.value; render(); });
+  var qTimer;
+  $('#fQ').addEventListener('input', function () {
+    var v = this.value;
+    clearTimeout(qTimer);
+    qTimer = setTimeout(function () { FILTER.q = v; render(); }, 110);
+  });
+  document.querySelectorAll('.seg button').forEach(function (b) {
+    b.addEventListener('click', function () {
+      document.querySelectorAll('.seg button').forEach(function (x) {
+        x.setAttribute('aria-pressed', String(x === b));
+      });
+      FILTER.status = b.dataset.st;
+      render();
+    });
+  });
+
+  $('#dlCsv').addEventListener('click', function () {
+    var csv = toCsv();
+    if (!csv) return;
+    var stamp = new Date().toISOString().slice(0, 10);
+    download('comments-' + stamp + '.csv', csv, 'text/csv');
+  });
+  $('#cpMd').addEventListener('click', function () {
+    var md = toMarkdown(), btn = this, was = btn.textContent;
+    function done(msg) {
+      btn.textContent = msg;
+      setTimeout(function () { btn.textContent = was; }, 1600);
+    }
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(md).then(function () { done('Copied'); },
+        function () { download('comments.md', md, 'text/markdown'); done('Downloaded'); });
+    } else {
+      download('comments.md', md, 'text/markdown');
+      done('Downloaded');
+    }
+  });
+
+  (function theme() {
+    var root = document.documentElement, btn = $('#theme');
+    var get = function (k) { try { return localStorage.getItem(k); } catch (e) { return null; } };
+    var set = function (k, v) { try { localStorage.setItem(k, v); } catch (e) {} };
+    var saved = get('cp-theme');
+    if (saved === 'light' || saved === 'dark') root.setAttribute('data-theme', saved);
+    btn.addEventListener('click', function () {
+      var dark = root.getAttribute('data-theme') === 'dark' ||
+        (!root.hasAttribute('data-theme') && matchMedia('(prefers-color-scheme: dark)').matches);
+      var next = dark ? 'light' : 'dark';
+      root.setAttribute('data-theme', next); set('cp-theme', next);
+    });
+  })();
+
+  // Test seam. The fixture suite in selftest.html drives the real parser through
+  // this rather than a copy of it, so the tests cannot drift from the shipped code.
+  window.__cp = { parseWorkbook: parseWorkbook, cellSort: cellSort,
+                  toUtcIso: toUtcIso, hash53: hash53, resolvePath: resolvePath,
+                  show: show, toCsv: toCsv, toMarkdown: toMarkdown, sample: sample };
+
+  show(sample());
+})();
+</script>
+</body>
+</html>

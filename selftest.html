@@ -1,0 +1,115 @@
+<meta charset="utf-8">
+<title>CommentPulse self-test</title>
+<style>body{font:13px/1.55 ui-monospace,Menlo,monospace;padding:20px;background:#fff;color:#111}
+.p{color:#0a7a3c}.f{color:#b00020;font-weight:700}h2{font-size:14px;margin:18px 0 6px}
+iframe{width:0;height:0;border:0;position:absolute;left:-9999px}</style>
+<h1 id="head">running…</h1>
+<pre id="out"></pre>
+<iframe id="app" src="commentpulse.html"></iframe>
+<script>
+var lines=[],fails=0;
+function ok(name,cond,got){ if(cond){lines.push('<span class="p">PASS</span>  '+name);}
+  else{fails++;lines.push('<span class="f">FAIL</span>  '+name+'   got: '+JSON.stringify(got));} }
+function eq(name,a,b){ ok(name, JSON.stringify(a)===JSON.stringify(b), a); }
+
+function grab(url){ return fetch(url).then(function(r){return r.blob();}); }
+
+// selftest.html's own load event fires only after the iframe has loaded, so the
+// seam is already there. Attaching another load listener here would never fire.
+window.addEventListener('load', function(){
+  var fr=document.getElementById('app');
+  (function(){
+    var cp=fr.contentWindow.__cp, JSZip=fr.contentWindow.JSZip;
+    if(!cp||!JSZip){ document.getElementById('head').textContent='SEAM MISSING'; return; }
+
+    // --- pure helpers ---
+    eq('toUtcIso appends Z', cp.toUtcIso('2026-09-11T19:25:31.00'), '2026-09-11T19:25:31.000Z');
+    eq('toUtcIso keeps existing Z', cp.toUtcIso('2026-09-11T19:25:31.655Z'), '2026-09-11T19:25:31.655Z');
+    eq('toUtcIso null on junk', cp.toUtcIso('not a date'), null);
+    var b9=cp.cellSort('B9'), b10=cp.cellSort('B10');
+    ok('B9 sorts before B10 numerically', b9.row < b10.row, [b9,b10]);
+    eq('AA1 column index is 27', cp.cellSort('AA1').col, 27);
+    eq('range ref uses first cell', cp.cellSort('C5:D9').row, 5);
+    eq('rels target resolves up a level',
+       cp.resolvePath('xl/worksheets/','../threadedComments/threadedComment1.xml'),
+       'xl/threadedComments/threadedComment1.xml');
+    ok('hash is stable', cp.hash53('a|b|c')===cp.hash53('a|b|c'), cp.hash53('a|b|c'));
+    ok('hash differs on change', cp.hash53('a|b|c')!==cp.hash53('a|b|d'), null);
+
+    function run(file){ return grab('fixtures/'+file).then(function(b){
+      return JSZip.loadAsync(b).then(function(z){ return cp.parseWorkbook(z,file); }); }); }
+
+    run('test-a.xlsx').then(function(A){
+      eq('A: three root threads', A.threads.length, 3);
+      var byRef={}; A.threads.forEach(function(t){ byRef[t.tab+'!'+t.ref]=t; });
+      ok('A: A1 thread is on Plan', !!byRef['Plan!A1'], Object.keys(byRef));
+      eq('A: A1 has two replies', byRef['Plan!A1'].replies.length, 2);
+      eq('A: replies in time order', byRef['Plan!A1'].replies.map(function(r){return r.text;}),
+         ['first reply','second reply']);
+      eq('A: reply author resolved from person.xml', byRef['Plan!A1'].replies[0].who, 'Rui Alves');
+      eq('A: done=1 maps to resolved', byRef['Plan!B10'].status, 'resolved');
+      eq('A: done=0 maps to open', byRef['Plan!A1'].status, 'open');
+      eq('A: B9 lives on Risks', byRef['Risks!B9'].tab, 'Risks');
+      eq('A: lastAt tracks newest reply', byRef['Plan!A1'].lastAt, '2026-09-03T09:15:00.000Z');
+      ok('A: legacy comments1.xml ignored',
+         A.threads.every(function(t){ return t.text.indexOf('LEGACY')<0; }), null);
+      eq('A: orphan reply warned, not dropped silently', A.warnings.length, 1);
+      ok('A: warning names the tab', /Risks/.test(A.warnings[0]||''), A.warnings);
+      return run('test-b.xlsx');
+    }).then(function(B){
+      // Names, rIds and file numbers are all deliberately misaligned here. A parser
+      // that matches sheet1 to threadedComment1 gets every one of these wrong.
+      var m={}; B.threads.forEach(function(t){ m[t.tab]=t.text; });
+      eq('B: Alpha attribution', m.Alpha, 'belongs to Alpha');
+      eq('B: Beta attribution',  m.Beta,  'belongs to Beta');
+      eq('B: Gamma attribution', m.Gamma, 'belongs to Gamma');
+      return run('test-c.xlsx');
+    }).then(function(C){
+      eq('C: valid workbook with no comments yields zero threads', C.threads.length, 0);
+      eq('C: and no warnings', C.warnings.length, 0);
+      return JSZip.loadAsync(new Blob(['definitely not a zip'])).then(
+        function(){ return 'loaded'; }, function(){ return 'rejected'; });
+    }).then(function(r){
+      eq('non-zip input is rejected', r, 'rejected');
+
+      // --- exports, driven through the real page state ---
+      var nasty = {
+        key:'k1', file:'w.xlsx', tab:'Tab, "One"', tabOrder:0, ref:'A1',
+        sortKey:cp.cellSort('A1'), status:'open', who:"O'Brien, Pat",
+        openedAt:'2026-09-01T10:00:00.000Z', lastAt:'2026-09-02T10:00:00.000Z',
+        text:'He said "ship it", then\nadded a comma, here.',
+        replies:[{who:'Lee', at:'2026-09-02T10:00:00.000Z', text:'ok'}]
+      };
+      cp.show({threads:[nasty], files:['w.xlsx'], isSample:false});
+      var csv = cp.toCsv(), rows = csv.split('\r\n');
+      eq('CSV header is the agreed schema', rows[0],
+        'file_name,tab,cell,thread_key,seq,post_type,author,created_at_utc,content,' +
+        'thread_status,opened_at_utc,last_activity_at_utc,reply_count,days_open,participants');
+      eq('CSV emits one row per post plus header', rows.length, 3);
+      ok('CSV doubles embedded quotes', csv.indexOf('""ship it""') > -1, rows[1]);
+      ok('CSV quotes a field containing a comma', csv.indexOf('"Tab, ""One"""') > -1, rows[1]);
+      ok('CSV quotes a field containing a newline',
+         csv.indexOf('"He said ""ship it"", then\nadded a comma, here."') > -1, rows[1]);
+      ok('CSV keeps timestamps in UTC', csv.indexOf('2026-09-01T10:00:00.000Z') > -1, rows[1]);
+      ok('CSV omits resolved_at, which the format cannot supply',
+         rows[0].indexOf('resolved_at') < 0, rows[0]);
+
+      var md = cp.toMarkdown();
+      ok('Markdown groups by tab', md.indexOf('## Tab, "One"') > -1, md.slice(0,200));
+      ok('Markdown heads each thread with cell and status',
+         md.indexOf('### A1 · Open') > -1, md.slice(0,400));
+      ok('Markdown quotes the comment body', md.indexOf('> He said "ship it", then') > -1, null);
+      ok('Markdown lists replies', md.indexOf('- **Lee**') > -1, null);
+
+      cp.show(cp.sample());   // leave the page as a visitor finds it
+      var f=fails;
+      document.getElementById('head').textContent =
+        f ? (f+' FAILING') : 'ALL '+lines.length+' PASS';
+      document.getElementById('out').innerHTML=lines.join('\n');
+    }).catch(function(e){
+      document.getElementById('head').textContent='ERROR '+e.message;
+      document.getElementById('out').innerHTML=lines.join('\n')+'\n\nEXCEPTION: '+e.stack;
+    });
+  })();
+});
+</script>
