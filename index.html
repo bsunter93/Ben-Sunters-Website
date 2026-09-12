@@ -32,7 +32,7 @@
       <a href="#work">Work</a>
       <a href="#experience">Experience</a>
       <a href="#writing">Case studies</a>
-      <a href="#opinions">Opinions</a>
+      <a href="#opinions">Writing</a>
       <a href="#contact" class="nav-cta">Contact</a>
       <button type="button" id="theme" class="theme-btn" aria-label="Switch theme" title="Switch theme">
         <svg viewBox="0 0 24 24" width="15" height="15" aria-hidden="true" fill="none"
@@ -51,12 +51,15 @@
   <div class="hero-grid">
     <div>
       <h1>I turn strategy into a plan every function actually runs.</h1>
-      <p>Most of the job is getting Product, Finance, GTM and Engineering to agree on one
-         set of numbers, then keeping everyone moving against them when priorities change.
-         I plan with those teams instead of handing them a plan.</p>
-      <p>Then I build the thing they all work from, and the software behind it so it stays
-         current on its own. Pulling reporting out of separate teams and into one place
-         usually turns up problems and openings nobody could see before.</p>
+      <p>Business operations and strategy lead. Ten years getting Product, Finance, GTM and
+         Engineering onto one set of numbers, then building the cadence, the reporting, and the
+         software that keep everyone moving against them. Accenture, Google, Included Health.</p>
+      <ul class="proof" aria-label="Proof points">
+        <li><b>$26.5B</b><span>merger integration, 24 workstreams under 16 VPs</span></li>
+        <li><b>$B</b><span>Americas business run on one planning cadence</span></li>
+        <li><b>8 figures</b><span>incremental revenue from a targeting system I built</span></li>
+        <li><b>27 days</b><span>from white paper to a live line of business</span></li>
+      </ul>
       <ol class="arc">
         <li style="--co:var(--plum-bright)"><b>Accenture</b><span>2016 – 2021</span>
             <em>$26.5B telecom merger. 24 workstreams under 16 VPs.</em></li>
@@ -84,98 +87,77 @@
   </div>
 </section></div>
 
-<section id="work" class="wrap">
-  <span class="eyebrow">Selected work</span>
-  <h2>Operating systems I build</h2>
-  <p class="lede">Some are documents and cadences. Some are software. All of them come back to
-     the same question: how do you make a messy organization easier to run?</p>
-
-  <div class="lead-project" id="simulator">
-    <a class="lead-image" href="simulator/"><img src="og-simulator.jpg" alt="Operating Model Simulator: a chart of one team's monthly workload against what it can handle, over capacity from February to May until ten hires land in June" width="1200" height="630" loading="lazy"></a>
-    <span class="proj-kind">Interactive model</span>
-    <h3>Operating Model Simulator</h3>
-    <span class="proj-when">Built 2026 · Open source</span>
-    <p style="margin-top:11px">Can this organization actually execute the plan? Most plans have
-       the revenue target, the headcount, and the budget, and still cannot be run, because the
-       work does not arrive when the people do. This is a month-by-month model of a fictional
-       company's operating plan: strategy into work, work into hours, hours into people. It shows which team
-       hits its capacity limit first and in which month, which initiative launches are at risk,
-       and what each fix actually changes, on what date, for how much.</p>
-    <p>Under the hood it is a deterministic team-by-month engine covering demand, capacity,
-       workforce, portfolio, and cost, with Erlang C for the queueing question, break-even
-       thresholds found by rerunning the model until the answer flips, and 86 automated tests
-       that pin every relationship. Open source, and it runs on your own numbers.</p>
-    <p>Pick a scenario, turn levers on, and every number recomputes. No conclusion on the pages
-       is written by hand. A seven-step walkthrough asks which lever you would try and shows
-       what it does. Then put your own numbers in: every team, workload, and hire is editable,
-       or import the whole model as JSON.</p>
-    <div class="tagrow">
-      <span class="tag">Capacity and workforce</span><span class="tag">Initiative sequencing</span>
-      <span class="tag">Scenarios and levers</span><span class="tag">Decision record</span>
-      <span class="tag">Pods vs pooled</span><span class="tag">No login, nothing uploaded</span>
+<section id="bring" class="wrap">
+  <span class="eyebrow">What I bring</span>
+  <h2>Four things, every time</h2>
+  <div class="bring">
+    <div class="bring-item">
+      <h3>A plan the functions actually sign</h3>
+      <p>One set of numbers across Product, Finance, GTM and Engineering, planned with the teams
+         rather than handed to them. Annual planning and budget for a $B business; the OKR
+         architecture a COO adopted into the next year's operating plan.</p>
     </div>
-    <a class="playlink" href="simulator/">Open the simulator &rarr;</a>
-    <a class="playlink" style="margin-left:18px" href="https://github.com/bsunter93/operating-model-simulator" rel="noopener">Source &rarr;</a>
+    <div class="bring-item">
+      <h3>Governance that scales past one room</h3>
+      <p>56 initiatives across four product areas through weekly forums and VP QBRs. 24 merger
+         workstreams under 16 VPs, none of whom reported to me.</p>
+    </div>
+    <div class="bring-item">
+      <h3>Reporting that changes decisions</h3>
+      <p>The SQL and Looker layer that joined pipeline to product adoption and drove eight-figure
+         incremental revenue. A Tableau compliance layer across 60+ projects and 11,000+ user
+         stories. One number, put in front of the people who needed it.</p>
+    </div>
+    <div class="bring-item">
+      <h3>The tooling, when it does not exist</h3>
+      <p>When the system a plan needs is not there, I build it: an operating model simulator,
+         a job-search pipeline with 886 hand-labeled tests, a comment extractor, a staffing model.
+         All open source, all below.</p>
+    </div>
+  </div>
+</section>
+
+<section id="work" class="wrap">
+  <span class="eyebrow">Start here</span>
+  <h2>Three things to look at</h2>
+  <p class="lede">Each one is an operating system I built and shipped. Together they cover the same
+     question from three sides: how do you make a messy organization easier to run?</p>
+  <div class="trio">
+    <a class="trio-card" href="simulator/">
+      <img src="og-simulator.jpg" alt="Operating Model Simulator: a team's monthly work against what it can handle" width="1200" height="630" loading="lazy">
+      <span class="proj-kind">Interactive model</span>
+      <h3>Operating Model Simulator</h3>
+      <p>Can this organization actually execute the plan? A month-by-month model of a fictional
+         company: which team hits its capacity limit first, which initiatives are at risk, and
+         what each fix changes, on what date, for how much. Runs on your own numbers too.</p>
+      <span class="playlink">Open the simulator &rarr;</span>
+    </a>
+    <a class="trio-card" href="pods-or-pooled.html">
+      <img src="og-pods.jpg" alt="Half a Day of Nothing" width="1200" height="630" loading="lazy">
+      <span class="proj-kind">Writing · 6 min</span>
+      <h3>Half a Day of Nothing</h3>
+      <p>When to centralize support and when to run pods, with a number in the argument for once:
+         ten dedicated pods need 40 people, one pool needs 24, and the one-off work would have to
+         take 73% longer before that flips. Queueing theory, pointed at operating model design.</p>
+      <span class="playlink">Read it &rarr;</span>
+    </a>
+    <a class="trio-card" href="careerops.html">
+      <span class="proj-kind">Pipeline tooling · Open source</span>
+      <h3>Career Ops</h3>
+      <p>Any system that reads your mail and decides what each message means will quietly start
+         lying to you. This one doubts itself: 886 hand-labeled messages every change has to
+         clear, and a command that re-reads a year of records and reports where they and the
+         rules have come apart. Fixes travel backwards.</p>
+      <span class="playlink">Read the write-up &rarr;</span>
+    </a>
   </div>
 
-  <div class="projects" style="margin-top:22px">
-    <div class="project">
-      <span class="proj-kind">Pipeline tooling</span>
-      <h3>Career Ops</h3>
-      <span class="proj-when">Built 2026 · Open source</span>
-      <p style="margin-top:11px">Any system that reads your mail and decides what each message
-         means will quietly start lying to you. A rule written in March stops matching the mail
-         that arrives in September, nothing errors, and the dashboard still looks healthy. So
-         most of the work went into making this one doubt itself: 886 hand-labeled messages
-         every change has to clear, and a command that re-reads a year of stored records and
-         reports where they and the rules have come apart.</p>
-      <p style="margin-top:10px">Fixes travel backwards. Repairing a rule repairs the history,
-         not just the next email.</p>
-      <a class="playlink" href="careerops.html">Read the write-up &rarr;</a>
-    </div>
-    <div class="project">
-      <span class="proj-kind">Browser tool</span>
-      <h3>CommentPulse</h3>
-      <span class="proj-when">Built 2026 · Open source</span>
-      <p style="margin-top:11px">Google Sheets keeps comments where you cannot sort them, count
-         them, or hand them to anyone. Drop in the workbook you already downloaded and every
-         thread comes back in order, with the tab and cell it sits on, its replies, and whether
-         it was resolved. CSV or markdown out.</p>
-      <p style="margin-top:10px">No sign-in and nothing uploaded, which matters because the few
-         tools that do part of this all need an extension or an admin-approved add-on. Mapping a
-         comment back to the right tab is the part that silently goes wrong, so there is a test
-         fixture built to break it.</p>
-      <a class="playlink" href="commentpulse.html">Open the tool &rarr;</a>
-    </div>
-    <div class="project">
-      <span class="proj-kind">Planning tool</span>
-      <h3>Staffing Headroom</h3>
-      <span class="proj-when">Built 2026 · Open source</span>
-      <p style="margin-top:11px">How many people do we need. The headcount a forecast implies is
-         a division problem, and every spreadsheet already does it. The headcount you should
-         actually hire is arithmetic too, just over two inputs nobody keeps: how far the
-         forecast usually misses, and how much worse being short is than being over. Given
-         those, the cheapest plan is rarely the forecast itself.</p>
-      <p style="margin-top:10px">One file, no backend. Change the numbers, copy the link, and
-         the model travels with it.</p>
-      <a class="playlink" href="headroom.html">Open the model &rarr;</a>
-    </div>
-    <div class="project">
-      <div class="appmark">
-        <img src="mirror-icon.png" alt="Mirror app icon" width="40" height="40" loading="lazy">
-        <div>
-          <span class="proj-kind">Consumer app</span>
-          <h3>Mirror</h3>
-          <span class="proj-when">Shipped 2024</span>
-        </div>
-      </div>
-      <p>A small AI journaling app I built and shipped on my own. The ads run through Meta
-         Audience Network, so I did the SDK integration and read the fill rates and revenue
-         reports myself. Tiny next to the publishers I worked with at Google, but I had been
-         advising them on exactly this, and it helps to have done it once from their side.</p>
-      <a class="playlink" href="https://play.google.com/store/apps/details?id=com.mirrorapp.reflection"
-         rel="noopener">View on Google Play &rarr;</a>
-    </div>
+  <div class="also">
+    <span class="also-l">Also built</span>
+    <a href="commentpulse.html"><b>CommentPulse</b> pulls every comment thread out of a Google Sheets export, in order, with tab, cell, replies and resolution. No sign-in, nothing uploaded.</a>
+    <a href="headroom.html"><b>Staffing Headroom</b> turns a forecast, how far it usually misses, and the cost of being short into the number you should actually hire.</a>
+    <a href="smallest-ask.html"><b>The smallest ask that works</b> a one-minute note on why a 42-field form became one.</a>
+    <a href="https://play.google.com/store/apps/details?id=com.mirrorapp.reflection" rel="noopener"><b>Mirror</b> a small AI journaling app I built and shipped, ads and all. On Google Play.</a>
   </div>
 </section>
 
@@ -586,7 +568,7 @@
 </section>
 
 <section id="opinions" class="wrap">
-  <span class="eyebrow">Opinions</span>
+  <span class="eyebrow">Writing</span>
   <h2>Questions I keep coming back to</h2>
   <p class="lede">Operating problems that usually get settled by instinct. These are the ones
      where I went and did the math. Short, and each has something you can play with.</p>
