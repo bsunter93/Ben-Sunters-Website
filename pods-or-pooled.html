@@ -143,6 +143,17 @@ details.method ul{padding-left:19px}
 .ch .axt{font:400 12px/1 var(--sans);fill:var(--muted)}
 .ch .ovh{font:600 13px/1 var(--sans);fill:var(--ink)}
 .ch .ovd{font:400 12.5px/1 var(--sans);fill:var(--muted)}
+
+/* the application guide: numbered so the order reads as an order, because step
+   three is where most people can stop and they need to see that coming. */
+.howto-steps{margin:26px 0 8px;padding:0;list-style:none;counter-reset:hs}
+.howto-steps li{counter-increment:hs;position:relative;padding-left:44px;margin-bottom:17px;
+  font-size:16.5px;line-height:1.62;color:var(--body)}
+.howto-steps li:last-child{margin-bottom:0}
+.howto-steps li:before{content:counter(hs);position:absolute;left:0;top:2px;
+  width:26px;height:26px;border-radius:50%;background:var(--accent);color:var(--paper);
+  font:600 13px/26px var(--mono);text-align:center}
+.howto-steps b{color:var(--ink);font-weight:600}
 </style>
 </head>
 <body>
@@ -160,6 +171,7 @@ details.method ul{padding-left:19px}
       <a href="#try">Try it</a>
       <a href="#price">What it cannot price</a>
       <a href="#map">One chart</a>
+      <a href="#run">Run it</a>
     </nav>
     <div class="prog" id="prog"></div>
   </div>
@@ -357,6 +369,28 @@ details.method ul{padding-left:19px}
     when one client is big enough to keep a team busy <em>and</em> almost nothing you do for
     them is reusable.</figcaption>
 </figure>
+
+<h2 id="run">How to actually run this</h2>
+<p>An afternoon, if your ticket data is not a disaster. You can stop at step three.</p>
+
+<ol class="howto-steps">
+  <li><b>Pull 90 days of requests by client.</b> Your ticket system already has this. Resolved
+      items, grouped by account.</li>
+  <li><b>Turn volume into people.</b> Count times average handle time, divided by the hours one
+      person actually works in that window. That is the bottom axis of the chart above.</li>
+  <li><b>Tag fifty tickets reusable or not.</b> Fifty, not ninety days of them. Enough to tell 20%
+      from 70%. <b>If reuse comes back high, stop here</b>, centralize the build, and the rest of
+      this barely matters.</li>
+  <li><b>Estimate the penalty on the bespoke part.</b> Compare handle time when somebody who knew
+      the account picked it up against somebody who did not. If assignment has always been
+      dedicated, guess, then move the slider above and see whether the answer changes at all.
+      Usually it does not.</li>
+  <li><b>Put each client on the chart.</b> Load along the bottom, reuse up the side. Most will land
+      well inside pool, and the ones that do not will be obvious.</li>
+  <li><b>Price the premium on the ones that do not.</b> Headcount difference times loaded cost,
+      against the revenue on the accounts you would be moving into a queue. That is the number you
+      take into the room.</li>
+</ol>
 
 <div class="endnote">
   <p>There is a harder question sitting under all of this. Is the work genuinely bespoke, or has
