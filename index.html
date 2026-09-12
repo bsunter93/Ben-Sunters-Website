@@ -99,8 +99,12 @@
        the revenue target, the headcount, and the budget, and still cannot be run, because the
        work does not arrive when the people do. This is a month-by-month model of a fictional
        company's operating plan: strategy into work, work into hours, hours into people. It shows which team
-       runs out first, in which month, which initiative cannot start when the plan says it will,
+       hits its capacity limit first and in which month, which initiative launches are at risk,
        and what each fix actually changes, on what date, for how much.</p>
+    <p>Under the hood it is a deterministic team-by-month engine covering demand, capacity,
+       workforce, portfolio, and cost, with Erlang C for the queueing question, break-even
+       thresholds found by rerunning the model until the answer flips, and 86 automated tests
+       that pin every relationship. Open source, and it runs on your own numbers.</p>
     <p>Pick a scenario, turn levers on, and every number recomputes. No conclusion on the pages
        is written by hand. A seven-step walkthrough asks which lever you would try and shows
        what it does. Then put your own numbers in: every team, workload, and hire is editable,
