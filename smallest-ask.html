@@ -1,0 +1,122 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>The Smallest Ask That Works</title>
+<meta name="description" content="I built intake the way I needed it rather than the way anyone would fill it in, then blamed the stakeholders when nobody used it.">
+<meta name="author" content="Benjamin J. Sunter">
+<meta name="color-scheme" content="light dark">
+<link rel="canonical" href="https://bensunter.com/smallest-ask.html">
+<meta property="og:title" content="The Smallest Ask That Works">
+<meta property="og:description" content="Forty-two fields, three of them ever read. My skill ceiling had turned into everybody else's overhead.">
+<meta property="og:url" content="https://bensunter.com/smallest-ask.html">
+<meta property="og:type" content="article">
+<meta property="og:image" content="https://bensunter.com/og-ask.jpg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="icon" href="favicon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<meta name="theme-color" content="#0B3A40">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600&family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600&display=swap">
+<link rel="stylesheet" href="site.css">
+<style>
+.reading{max-width:680px;margin:0 auto;padding-inline:clamp(18px,5vw,32px)}
+.artbar{position:sticky;top:0;z-index:30;background:color-mix(in srgb,var(--paper) 94%,transparent);
+  backdrop-filter:saturate(180%) blur(12px);border-bottom:1px solid var(--line)}
+.artbar .inner{max-width:1020px;margin:0 auto;padding-inline:clamp(18px,5vw,32px);
+  display:flex;align-items:center;justify-content:space-between;gap:18px;height:54px}
+.artbar a{font:600 14px/1 var(--display);color:var(--ink);text-decoration:none}
+.artbar a:hover{color:var(--accent)}
+.artbar .kind{font:500 11px/1 var(--mono);letter-spacing:.14em;text-transform:uppercase;color:var(--faint)}
+.arthead{padding:clamp(36px,6vw,64px) 0 4px}
+.arthead .kicker{display:flex;align-items:center;gap:9px;font:500 10.5px/1 var(--mono);
+  letter-spacing:.14em;text-transform:uppercase;color:var(--muted);margin-bottom:16px}
+.arthead .kicker:before{content:"";width:20px;height:2px;background:var(--warm)}
+.arthead h1{font:600 clamp(31px,5vw,45px)/1.08 var(--display);letter-spacing:-.024em}
+.arthead .by{margin-top:20px;font:400 12.5px/1 var(--mono);color:var(--faint)}
+.reading p{font-size:17.5px;line-height:1.7;margin:0 0 19px}
+.reading p.open{font-size:20px;line-height:1.58;color:var(--ink)}
+.reading strong{color:var(--ink);font-weight:600}
+figure.ch{margin:30px 0 32px;padding:0}
+figure.ch .frame{border:1px solid var(--line);border-radius:6px;background:var(--surface);
+  padding:16px 10px 10px;overflow-x:auto}
+figure.ch svg{width:100%;height:auto;display:block;min-width:500px;overflow:visible}
+figure.ch figcaption{margin-top:11px;font:400 13.5px/1.55 var(--sans);color:var(--muted)}
+.ch .hd{font:600 12px/1 var(--mono);letter-spacing:.1em;fill:var(--ink)}
+.ch .lab{font:400 13px/1 var(--sans);fill:var(--body)}
+.ch .occ2{font:400 12.5px/1 var(--sans);fill:var(--muted)}
+.pull{font:600 clamp(20px,2.6vw,25px)/1.4 var(--display);color:var(--ink);
+  border-left:3px solid var(--warm);padding:6px 0 6px 22px;margin:34px 0}
+.artfoot{border-top:1px solid var(--line);margin-top:52px;padding:26px 0 60px}
+.artfoot .reading{display:flex;gap:20px;flex-wrap:wrap;justify-content:space-between;
+  font-size:13.5px;color:var(--muted)}
+</style>
+</head>
+<body>
+
+<div class="artbar">
+  <div class="inner">
+    <a href="index.html">&larr; Benjamin J. Sunter</a>
+    <span class="kind">1 minute</span>
+  </div>
+</div>
+
+<main>
+<header class="reading arthead">
+  <div class="kicker">Operating notes</div>
+  <h1>The smallest ask that works</h1>
+  <p class="by">Benjamin J. Sunter &middot; Sep 2026</p>
+</header>
+
+<article class="reading">
+<p class="open">Early on I built intake the way I needed it rather than the way anyone would
+   fill it in.</p>
+
+<p>I have seen a support request form run past a dozen pages, asking about the ask, the
+   person, the account and everything else under the sun, where half of what it collected was
+   never read by the person processing the request. It was there in case someone needed it.
+   This was at Google, where the CRM already held most of those answers.</p>
+
+<figure class="ch">
+  <div class="frame">
+<svg viewBox="0 0 760 330" role="img" aria-label="A grid of 42 form fields, of which three are highlighted as actually read by the person processing the request. Below it, a single field: account ID."><text class="hd" x="40" y="26">THE FORM I BUILT</text><text class="occ2" x="40" y="44">42 fields, twelve pages</text><rect x="40" y="58" width="104" height="20" rx="3" fill="var(--muted)" opacity="0.16"/><rect x="158" y="58" width="104" height="20" rx="3" fill="var(--muted)" opacity="0.16"/><rect x="276" y="58" width="104" height="20" rx="3" fill="var(--muted)" opacity="0.16"/><rect x="394" y="58" width="104" height="20" rx="3" fill="var(--muted)" opacity="0.16"/><rect x="512" y="58" width="104" height="20" rx="3" fill="var(--accent)" opacity="1.0"/><rect x="630" y="58" width="104" height="20" rx="3" fill="var(--muted)" opacity="0.16"/><rect x="40" y="91" width="104" height="20" rx="3" fill="var(--muted)" opacity="0.16"/><rect x="158" y="91" width="104" height="20" rx="3" fill="var(--muted)" opacity="0.16"/><rect x="276" y="91" width="104" height="20" rx="3" fill="var(--muted)" opacity="0.16"/><rect x="394" y="91" width="104" height="20" rx="3" fill="var(--muted)" opacity="0.16"/><rect x="512" y="91" width="104" height="20" rx="3" fill="var(--muted)" opacity="0.16"/><rect x="630" y="91" width="104" height="20" rx="3" fill="var(--accent)" opacity="1.0"/><rect x="40" y="124" width="104" height="20" rx="3" fill="var(--muted)" opacity="0.16"/><rect x="158" y="124" width="104" height="20" rx="3" fill="var(--muted)" opacity="0.16"/><rect x="276" y="124" width="104" height="20" rx="3" fill="var(--muted)" opacity="0.16"/><rect x="394" y="124" width="104" height="20" rx="3" fill="var(--muted)" opacity="0.16"/><rect x="512" y="124" width="104" height="20" rx="3" fill="var(--muted)" opacity="0.16"/><rect x="630" y="124" width="104" height="20" rx="3" fill="var(--muted)" opacity="0.16"/><rect x="40" y="157" width="104" height="20" rx="3" fill="var(--muted)" opacity="0.16"/><rect x="158" y="157" width="104" height="20" rx="3" fill="var(--muted)" opacity="0.16"/><rect x="276" y="157" width="104" height="20" rx="3" fill="var(--muted)" opacity="0.16"/><rect x="394" y="157" width="104" height="20" rx="3" fill="var(--muted)" opacity="0.16"/><rect x="512" y="157" width="104" height="20" rx="3" fill="var(--muted)" opacity="0.16"/><rect x="630" y="157" width="104" height="20" rx="3" fill="var(--muted)" opacity="0.16"/><rect x="40" y="190" width="104" height="20" rx="3" fill="var(--muted)" opacity="0.16"/><rect x="158" y="190" width="104" height="20" rx="3" fill="var(--muted)" opacity="0.16"/><rect x="276" y="190" width="104" height="20" rx="3" fill="var(--muted)" opacity="0.16"/><rect x="394" y="190" width="104" height="20" rx="3" fill="var(--accent)" opacity="1.0"/><rect x="512" y="190" width="104" height="20" rx="3" fill="var(--muted)" opacity="0.16"/><rect x="630" y="190" width="104" height="20" rx="3" fill="var(--muted)" opacity="0.16"/><rect x="40" y="223" width="104" height="20" rx="3" fill="var(--muted)" opacity="0.16"/><rect x="158" y="223" width="104" height="20" rx="3" fill="var(--muted)" opacity="0.16"/><rect x="276" y="223" width="104" height="20" rx="3" fill="var(--muted)" opacity="0.16"/><rect x="394" y="223" width="104" height="20" rx="3" fill="var(--muted)" opacity="0.16"/><rect x="512" y="223" width="104" height="20" rx="3" fill="var(--muted)" opacity="0.16"/><rect x="630" y="223" width="104" height="20" rx="3" fill="var(--muted)" opacity="0.16"/><rect x="40" y="256" width="104" height="20" rx="3" fill="var(--muted)" opacity="0.16"/><rect x="158" y="256" width="104" height="20" rx="3" fill="var(--muted)" opacity="0.16"/><rect x="276" y="256" width="104" height="20" rx="3" fill="var(--muted)" opacity="0.16"/><rect x="394" y="256" width="104" height="20" rx="3" fill="var(--muted)" opacity="0.16"/><rect x="512" y="256" width="104" height="20" rx="3" fill="var(--muted)" opacity="0.16"/><rect x="630" y="256" width="104" height="20" rx="3" fill="var(--muted)" opacity="0.16"/><rect x="764" y="58" width="12" height="12" rx="2" fill="var(--accent)"/><text class="lab" x="782" y="68">read by the person</text><text class="lab" x="782" y="84">processing the request</text><rect x="764" y="104" width="12" height="12" rx="2" fill="var(--muted)" opacity=".16"/><text class="lab" x="782" y="114">collected in case</text><text class="lab" x="782" y="130">somebody needed it</text><text class="occ2" x="782" y="160">Most of it already sat</text><text class="occ2" x="782" y="176">in the CRM.</text><line x1="40" y1="311" x2="720" y2="311" stroke="var(--hair)"/><text class="hd" x="40" y="345">THE FORM NOW</text><rect x="40" y="359" width="104" height="20" rx="3" fill="var(--accent)" opacity="1.0"/><text class="lab" x="160" y="373">Account ID. Everything else populates itself.</text></svg>
+  </div>
+  <figcaption>Every field costs somebody thirty seconds. Multiply that by everyone who ever
+    files a request, then compare it to how often the answer gets looked at.</figcaption>
+</figure>
+
+<p>Those forms did not get adopted, and for a while I put that down to the stakeholders.</p>
+
+<p class="pull">It was mine. I was asking people to type things because I could not pull them
+   myself, so my skill ceiling turned into their overhead.</p>
+
+<p>Now the ask is the smallest one that still works. An account ID, and the rest populates
+   from the records system. The only free text left is the thing no system holds, like whether
+   there is history with a partner worth knowing before you walk in.</p>
+
+<p>Learning to query the data myself was less about the analysis than about not making twenty
+   other people pay for what I could not do.</p>
+</article>
+</main>
+
+<footer class="artfoot">
+  <div class="reading">
+    <span>&copy; <span id="yr">2026</span> Benjamin J. Sunter</span>
+    <span><a href="index.html#opinions">More opinions</a> &middot; <a href="index.html#contact">Get in touch</a></span>
+  </div>
+</footer>
+
+<script>
+document.getElementById('yr').textContent = new Date().getFullYear();
+(function () {
+  var root = document.documentElement, saved;
+  try { saved = localStorage.getItem('theme'); } catch (e) { saved = null; }
+  if (saved === 'light' || saved === 'dark') root.setAttribute('data-theme', saved);
+})();
+</script>
+</body>
+</html>
