@@ -191,6 +191,8 @@ h1{font:600 clamp(36px,5.4vw,53px)/1.06 var(--display);letter-spacing:-.026em;ma
   background:var(--surface);padding:clamp(22px,3.4vw,32px);border-radius:2px;
 }
 .lead-project h3{font:600 22px/1.25 var(--display);letter-spacing:-.015em;margin-bottom:6px;color:var(--accent)}
+.lead-image{display:block;margin:-4px 0 20px;border-radius:3px;overflow:hidden;border:1px solid var(--line)}
+.lead-image img{display:block;width:100%;height:auto}
 .tagrow{display:flex;flex-wrap:wrap;gap:7px;margin:16px 0 20px}
 .tag{font:400 11.5px/1 var(--mono);color:var(--accent);background:var(--accent-soft);
   border:1px solid var(--accent-soft);padding:5px 8px;border-radius:2px}
