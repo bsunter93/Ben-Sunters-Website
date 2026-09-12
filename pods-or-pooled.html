@@ -128,7 +128,7 @@ details.method ul{padding-left:19px}
     <a class="home" href="index.html">&larr; <span>Benjamin J. Sunter</span></a>
     <nav class="secs" id="secs">
       <a href="#question">The question</a>
-      <a href="#number">One number</a>
+      <a href="#number">Two numbers</a>
       <a href="#why">Why</a>
       <a href="#reuse">The second force</a>
       <a href="#rule">The rule</a>
@@ -167,11 +167,12 @@ details.method ul{padding-left:19px}
 
 <p>Both are defensible. Only one is right for your numbers, and which one changes as you grow.</p>
 
-<h2 id="number">Start with one number</h2>
-<p>A shared person will be slower on anything that needs client-specific knowledge. Call that
-   the <strong>context penalty</strong>. It is the entire case for pods, so it is worth putting a
-   number on.</p>
-<p>How big does it have to be before pods are actually cheaper?</p>
+<h2 id="number">The two numbers that decide it</h2>
+<p>Two numbers settle this. The first is how much work each client actually generates, measured
+   in people rather than tickets. The second is how much slower a shared person is on anything
+   that needs client-specific knowledge. Call that the <strong>context penalty</strong>, because
+   it is the entire case for pods.</p>
+<p>So: how big does the penalty have to be before pods are actually cheaper?</p>
 <figure class="ch">
   <div class="frame">
 <svg viewBox="0 0 760 430" role="img" aria-label="A curve falling from 150 percent at one person of work per client to 13 percent at thirty-two. A dashed line at 30 percent, where most teams guess the penalty sits, stays below the curve until about eight people of work per client and rises above it after that."><rect x="62" y="40" width="672" height="328" fill="var(--surface)"/><line x1="62" y1="368.0" x2="734" y2="368.0" stroke="var(--hair)" stroke-width="1"/><text class="ax" x="53" y="372.0" text-anchor="end">0%</text><line x1="62" y1="316.8" x2="734" y2="316.8" stroke="var(--hair)" stroke-width="1"/><text class="ax" x="53" y="320.8" text-anchor="end">25%</text><line x1="62" y1="265.5" x2="734" y2="265.5" stroke="var(--hair)" stroke-width="1"/><text class="ax" x="53" y="269.5" text-anchor="end">50%</text><line x1="62" y1="214.2" x2="734" y2="214.2" stroke="var(--hair)" stroke-width="1"/><text class="ax" x="53" y="218.2" text-anchor="end">75%</text><line x1="62" y1="163.0" x2="734" y2="163.0" stroke="var(--hair)" stroke-width="1"/><text class="ax" x="53" y="167.0" text-anchor="end">100%</text><line x1="62" y1="111.8" x2="734" y2="111.8" stroke="var(--hair)" stroke-width="1"/><text class="ax" x="53" y="115.8" text-anchor="end">125%</text><line x1="62" y1="60.5" x2="734" y2="60.5" stroke="var(--hair)" stroke-width="1"/><text class="ax" x="53" y="64.5" text-anchor="end">150%</text><path d="M62.0 60.5 L196.4 218.3 L330.8 245.0 L465.2 308.6 L599.6 327.0 L734.0 341.4 L734.0 368.0 L62.0 368.0 Z" fill="var(--accent)" opacity=".10"/><path d="M62.0 60.5 L196.4 218.3 L330.8 245.0 L465.2 308.6 L599.6 327.0 L734.0 341.4" fill="none" stroke="var(--accent)" stroke-width="2.5" stroke-linejoin="round"/><line x1="62" y1="306.5" x2="734" y2="306.5" stroke="var(--warm)" stroke-width="2" stroke-dasharray="5 4"/><text class="lab" x="68" y="297.5" fill="var(--warm)">What most teams guess: about 30%</text><line x1="457.8" y1="40" x2="457.8" y2="368" stroke="var(--muted)" stroke-width="1" stroke-dasharray="2 4"/><circle cx="62.0" cy="60.5" r="4.5" fill="var(--accent)" stroke="var(--surface)" stroke-width="2"/><text class="val" x="62.0" y="47.5" text-anchor="middle">150%</text><circle cx="196.4" cy="218.3" r="4.5" fill="var(--accent)" stroke="var(--surface)" stroke-width="2"/><text class="val" x="196.4" y="205.3" text-anchor="middle">73%</text><circle cx="330.8" cy="245.0" r="4.5" fill="var(--accent)" stroke="var(--surface)" stroke-width="2"/><text class="val" x="330.8" y="232.0" text-anchor="middle">60%</text><circle cx="465.2" cy="308.6" r="4.5" fill="var(--accent)" stroke="var(--surface)" stroke-width="2"/><text class="val" x="465.2" y="295.6" text-anchor="middle">29%</text><circle cx="599.6" cy="327.0" r="4.5" fill="var(--accent)" stroke="var(--surface)" stroke-width="2"/><text class="val" x="599.6" y="314.0" text-anchor="middle">20%</text><circle cx="734.0" cy="341.4" r="4.5" fill="var(--accent)" stroke="var(--surface)" stroke-width="2"/><text class="val" x="734.0" y="328.4" text-anchor="middle">13%</text><text class="ax" x="62.0" y="388" text-anchor="middle">1</text><text class="ax" x="196.4" y="388" text-anchor="middle">2</text><text class="ax" x="330.8" y="388" text-anchor="middle">4</text><text class="ax" x="465.2" y="388" text-anchor="middle">8</text><text class="ax" x="599.6" y="388" text-anchor="middle">16</text><text class="ax" x="734.0" y="388" text-anchor="middle">32</text><text class="ax" x="398.0" y="412" text-anchor="middle">How many people’s worth of work each client generates</text><text class="ax" x="16" y="204.0" text-anchor="middle" transform="rotate(-90 16 204.0)">Penalty needed for pods to win</text><text class="reg" x="78" y="352" fill="var(--accent)">POOLING WINS IN HERE</text><text class="reg" x="720" y="62" text-anchor="end" fill="var(--muted)">PODS WIN UP HERE</text></svg>
@@ -190,15 +191,23 @@ details.method ul{padding-left:19px}
 <p>Pooled people are not working any faster. Dedicated people are just spending more of the day waiting.</p>
 <figure class="ch">
   <div class="frame">
-<svg viewBox="0 0 760 340" role="img" aria-label="Grouped bars comparing headcount. At one person of work per client, ten pods need 30 people at 33 percent occupancy while one pooled team needs 13 at 77 percent. The gap narrows as clients grow: at eight per client it is 110 versus 86."><rect x="62" y="30" width="672" height="246" fill="var(--surface)"/><line x1="62" y1="276.0" x2="734" y2="276.0" stroke="var(--hair)"/><text class="ax" x="53" y="280.0" text-anchor="end">0</text><line x1="62" y1="214.5" x2="734" y2="214.5" stroke="var(--hair)"/><text class="ax" x="53" y="218.5" text-anchor="end">30</text><line x1="62" y1="153.0" x2="734" y2="153.0" stroke="var(--hair)"/><text class="ax" x="53" y="157.0" text-anchor="end">60</text><line x1="62" y1="91.5" x2="734" y2="91.5" stroke="var(--hair)"/><text class="ax" x="53" y="95.5" text-anchor="end">90</text><line x1="62" y1="30.0" x2="734" y2="30.0" stroke="var(--hair)"/><text class="ax" x="53" y="34.0" text-anchor="end">120</text><rect x="107.0" y="214.5" width="34" height="61.5" fill="var(--warm)" rx="3"/><rect x="151.0" y="249.3" width="34" height="26.7" fill="var(--accent)" rx="3"/><text class="val" x="124.0" y="206.5" text-anchor="middle">30</text><text class="val" x="168.0" y="241.3" text-anchor="middle">13</text><text class="occ" x="124.0" y="268.0" text-anchor="middle">33%</text><text class="occ" x="168.0" y="268.0" text-anchor="middle" fill="#fff">77%</text><text class="ax" x="146.0" y="297" text-anchor="middle">1 per client</text><rect x="275.0" y="194.0" width="34" height="82.0" fill="var(--warm)" rx="3"/><rect x="319.0" y="226.8" width="34" height="49.2" fill="var(--accent)" rx="3"/><text class="val" x="292.0" y="186.0" text-anchor="middle">40</text><text class="val" x="336.0" y="218.8" text-anchor="middle">24</text><text class="occ" x="292.0" y="268.0" text-anchor="middle">50%</text><text class="occ" x="336.0" y="268.0" text-anchor="middle" fill="#fff">83%</text><text class="ax" x="314.0" y="297" text-anchor="middle">2 per client</text><rect x="443.0" y="132.5" width="34" height="143.5" fill="var(--warm)" rx="3"/><rect x="487.0" y="183.8" width="34" height="92.2" fill="var(--accent)" rx="3"/><text class="val" x="460.0" y="124.5" text-anchor="middle">70</text><text class="val" x="504.0" y="175.8" text-anchor="middle">45</text><text class="occ" x="460.0" y="268.0" text-anchor="middle">57%</text><text class="occ" x="504.0" y="268.0" text-anchor="middle" fill="#fff">89%</text><text class="ax" x="482.0" y="297" text-anchor="middle">4 per client</text><rect x="611.0" y="50.5" width="34" height="225.5" fill="var(--warm)" rx="3"/><rect x="655.0" y="99.7" width="34" height="176.3" fill="var(--accent)" rx="3"/><text class="val" x="628.0" y="42.5" text-anchor="middle">110</text><text class="val" x="672.0" y="91.7" text-anchor="middle">86</text><text class="occ" x="628.0" y="268.0" text-anchor="middle">73%</text><text class="occ" x="672.0" y="268.0" text-anchor="middle" fill="#fff">93%</text><text class="ax" x="650.0" y="297" text-anchor="middle">8 per client</text><rect x="62" y="314" width="11" height="11" fill="var(--warm)" rx="2"/><text class="lab" x="79" y="323">Ten pods</text><rect x="158" y="314" width="11" height="11" fill="var(--accent)" rx="2"/><text class="lab" x="175" y="323">One pooled team</text><text class="lab" x="734" y="323" text-anchor="end" fill="var(--muted)">% inside each bar is how busy those people actually are</text></svg>
+<svg viewBox="0 0 760 352" role="img" aria-label="Total headcount for ten clients. At one person of work per client, ten pods add up to 30 people at 33 percent occupancy while a single pooled team of 13 covers the same work at 77 percent. At eight per client it is 110 against 86."><rect x="62" y="30" width="672" height="246" fill="var(--surface)"/><line x1="62" y1="276.0" x2="734" y2="276.0" stroke="var(--hair)"/><text class="ax" x="53" y="280.0" text-anchor="end">0</text><line x1="62" y1="214.5" x2="734" y2="214.5" stroke="var(--hair)"/><text class="ax" x="53" y="218.5" text-anchor="end">30</text><line x1="62" y1="153.0" x2="734" y2="153.0" stroke="var(--hair)"/><text class="ax" x="53" y="157.0" text-anchor="end">60</text><line x1="62" y1="91.5" x2="734" y2="91.5" stroke="var(--hair)"/><text class="ax" x="53" y="95.5" text-anchor="end">90</text><line x1="62" y1="30.0" x2="734" y2="30.0" stroke="var(--hair)"/><text class="ax" x="53" y="34.0" text-anchor="end">120</text><rect x="107.0" y="214.5" width="34" height="61.5" fill="var(--warm)" rx="3"/><rect x="151.0" y="249.3" width="34" height="26.7" fill="var(--accent)" rx="3"/><text class="val" x="124.0" y="206.5" text-anchor="middle">30</text><text class="val" x="168.0" y="241.3" text-anchor="middle">13</text><text class="occ" x="124.0" y="268.0" text-anchor="middle">33%</text><text class="occ" x="168.0" y="268.0" text-anchor="middle" fill="#fff">77%</text><text class="ax" x="146.0" y="297" text-anchor="middle">1 per client</text><rect x="275.0" y="194.0" width="34" height="82.0" fill="var(--warm)" rx="3"/><rect x="319.0" y="226.8" width="34" height="49.2" fill="var(--accent)" rx="3"/><text class="val" x="292.0" y="186.0" text-anchor="middle">40</text><text class="val" x="336.0" y="218.8" text-anchor="middle">24</text><text class="occ" x="292.0" y="268.0" text-anchor="middle">50%</text><text class="occ" x="336.0" y="268.0" text-anchor="middle" fill="#fff">83%</text><text class="ax" x="314.0" y="297" text-anchor="middle">2 per client</text><rect x="443.0" y="132.5" width="34" height="143.5" fill="var(--warm)" rx="3"/><rect x="487.0" y="183.8" width="34" height="92.2" fill="var(--accent)" rx="3"/><text class="val" x="460.0" y="124.5" text-anchor="middle">70</text><text class="val" x="504.0" y="175.8" text-anchor="middle">45</text><text class="occ" x="460.0" y="268.0" text-anchor="middle">57%</text><text class="occ" x="504.0" y="268.0" text-anchor="middle" fill="#fff">89%</text><text class="ax" x="482.0" y="297" text-anchor="middle">4 per client</text><rect x="611.0" y="50.5" width="34" height="225.5" fill="var(--warm)" rx="3"/><rect x="655.0" y="99.7" width="34" height="176.3" fill="var(--accent)" rx="3"/><text class="val" x="628.0" y="42.5" text-anchor="middle">110</text><text class="val" x="672.0" y="91.7" text-anchor="middle">86</text><text class="occ" x="628.0" y="268.0" text-anchor="middle">73%</text><text class="occ" x="672.0" y="268.0" text-anchor="middle" fill="#fff">93%</text><text class="ax" x="650.0" y="297" text-anchor="middle">8 per client</text><text class="ax" x="62" y="18">Total people needed, ten clients</text><rect x="62" y="308" width="11" height="11" fill="var(--warm)" rx="2"/><text class="lab" x="79" y="317">Ten pods added together</text><rect x="250" y="308" width="11" height="11" fill="var(--accent)" rx="2"/><text class="lab" x="267" y="317">One pooled team of that size</text><text class="occ2" x="62" y="338">The % inside each bar is how much of the day those people spend handling something.</text></svg>
   </div>
   <figcaption>Same work, same service level, two structures. The percentage inside each bar is
     how much of the day those people are actually handling something.</figcaption>
 </figure>
 
-<p>A pod of four covering two people's worth of work runs at <strong>50% occupancy</strong>.
-   The pooled team does the same work at 83%. Put that on a clock and it stops being a
-   percentage.</p>
+<p>Work does not arrive evenly. Two people's worth of work does not mean two people can cover
+   it, because in some hours three requests land at once and somebody has to be free to pick
+   them up. Hitting a service level means buying spare capacity on purpose. For a single pod
+   that is <strong>four people to cover two people's worth of work</strong>: two doing it, two
+   absorbing the randomness.</p>
+<p>Pool all ten clients and you need <strong>24 people for twenty people's worth of work, not
+   40</strong>. The randomness now cancels itself out, because one client's quiet hour covers
+   another client's bad one. Every pod was buying its own insurance. The pooled team buys it
+   once.</p>
+<p>Which shows up as occupancy. The pod runs at 50%, the pooled team at 83%. Put that on a
+   clock and it stops being a percentage.</p>
 
 <figure class="ch">
   <div class="frame">
@@ -239,7 +248,7 @@ details.method ul{padding-left:19px}
 
 <figure class="ch">
   <div class="frame">
-<svg viewBox="0 0 760 230" role="img" aria-label="A bar of all the work, 70 percent built once and reused, 30 percent one off. Only the one-off slice is slower for a shared person. Thirty percent of the work times forty percent slower on it gives a real penalty of twelve percent."><text class="hd" x="40" y="30">All the work your team does</text><rect x="40" y="56" width="420.0" height="48" rx="4" fill="var(--accent)" opacity=".20"/><rect x="460.0" y="56" width="180.0" height="48" rx="4" fill="var(--warm)"/><text class="lab" x="250.0" y="86" text-anchor="middle" fill="var(--accent)">Built once, reused &#183; 70%</text><text class="lab" x="550.0" y="86" text-anchor="middle" fill="#fff">One-off &#183; 30%</text><path d="M460.0 111 L460.0 118 L640 118 L640 111" fill="none" stroke="var(--warm)" stroke-width="1.5"/><line x1="550.0" y1="118" x2="550.0" y2="130" stroke="var(--warm)" stroke-width="1.5"/><text class="val" x="550.0" y="148" text-anchor="middle" fill="var(--warm)">only this part is slower</text><rect x="40" y="168" width="600" height="44" rx="5" fill="var(--tint)"/><text class="eqp" x="60" y="196">30%</text><text class="eqs" x="120" y="196">of the work</text><text class="eqp" x="228" y="196">&#215;</text><text class="eqp" x="258" y="196">40%</text><text class="eqs" x="318" y="196">slower on it</text><text class="eqp" x="432" y="196">=</text><text class="eqbig" x="464" y="200">12%</text><text class="eqs" x="540" y="196">your real penalty</text></svg>
+<svg viewBox="0 0 760 252" role="img" aria-label="Working out your real context penalty. A bar of all the work, 70 percent reusable and 30 percent one off. Only the one-off slice is slower for a shared person. Thirty percent times forty percent gives a real penalty of twelve percent."><text class="hd" x="40" y="26">WORKING OUT YOUR REAL CONTEXT PENALTY</text><text class="occ2" x="40" y="46">an example team, 70% of whose work is reusable</text><rect x="40" y="78" width="420.0" height="48" rx="4" fill="var(--accent)" opacity=".20"/><rect x="460.0" y="78" width="180.0" height="48" rx="4" fill="var(--warm)"/><text class="lab" x="250.0" y="108" text-anchor="middle" fill="var(--accent)">Built once, reused &#183; 70%</text><text class="lab" x="550.0" y="108" text-anchor="middle" fill="#fff">One-off &#183; 30%</text><path d="M460.0 133 L460.0 140 L640 140 L640 133" fill="none" stroke="var(--warm)" stroke-width="1.5"/><line x1="550.0" y1="140" x2="550.0" y2="152" stroke="var(--warm)" stroke-width="1.5"/><text class="val" x="550.0" y="170" text-anchor="middle" fill="var(--warm)">only this part is slower</text><rect x="40" y="190" width="600" height="44" rx="5" fill="var(--tint)"/><text class="eqp" x="60" y="218">30%</text><text class="eqs" x="120" y="218">of the work</text><text class="eqp" x="228" y="218">&#215;</text><text class="eqp" x="258" y="218">40%</text><text class="eqs" x="318" y="218">slower on it</text><text class="eqp" x="432" y="218">=</text><text class="eqbig" x="464" y="222">12%</text><text class="eqs" x="540" y="218">your real penalty</text></svg>
   </div>
   <figcaption>Then hold that number up against the curve from earlier. Twelve is a long way
     under seventy-three.</figcaption>
@@ -278,10 +287,28 @@ details.method ul{padding-left:19px}
     <p class="vsay" id="say"></p>
   </div>
 </div>
-<h2 id="caveats">Three things that would change my mind</h2>
-<p>A model that only ever argues one way is advocacy, so here is what I have not told you.</p>
-<p><strong>Do your clients peak at the same time?</strong> Almost nobody checks, and in
-   partnerships work the peaks line up more often than not.</p>
+<h2 id="caveats">Caveats and assumptions</h2>
+<p>Four places this gets weaker, and the first one can undo the whole argument.</p>
+<p><strong>Does the team only do reactive work?</strong> This is the one that matters most.
+   Everything above assumes the day is interrupt-driven, so a gap between requests is genuinely
+   idle. If your team also carries a roadmap, an annual plan, or project work they pick up
+   between tickets, then that spare capacity is not spare. It is absorbing the other half of
+   their job, and the case for pooling weakens sharply or disappears. A business intelligence
+   pod with its own backlog is not sitting at 50% doing nothing. It is at 50% on tickets and
+   the rest on the roadmap.</p>
+
+<p><strong>Do the people have decision rights?</strong> Queueing theory prices a request as
+   handling time and nothing else. It has no way to charge you for a pooled person who has to
+   find whoever owns that client before they can make a call. That is a second queue sitting
+   invisibly behind the first, and it is worst on exactly the decisions you most want made
+   quickly. If your people are deciding rather than processing, the real context penalty is
+   higher than the one you would estimate from handle time, and the latency cost never shows up
+   in the headcount at all.</p>
+
+<p><strong>Does client demand spike at the same time?</strong> If all ten spike at quarter end
+   you are staffing the coincident peak either way. Sophisticated clients often do know their
+   own seasonality and will tell you, which makes this answerable rather than guesswork. It is
+   still rarely checked before a reorg.</p>
 
 <figure class="ch">
   <div class="frame">
@@ -293,11 +320,15 @@ details.method ul{padding-left:19px}
 <p><strong>You cannot run people at 93%.</strong> The arithmetic will happily pool you to an
    occupancy no human sustains, and you pay for it in attrition rather than headcount. Cap it
    around 85% and some of the advantage goes back.</p>
-<p><strong>Central teams turn into queues.</strong> This is the real failure mode. A backlog forms,
-   everything is urgent, account teams quietly start building their own spreadsheets, and now you
-   have decentralization happening anyway with both cost structures attached. The fix is not pods.
-   It is pushing the reusable layer out as self-serve so the team builds capability instead of
-   filling orders.</p>
+<p><strong>Central teams turn into queues.</strong> A backlog forms, everything is urgent,
+   account teams quietly start building their own spreadsheets, and now you have decentralization
+   happening anyway with both cost structures attached.</p>
+<p>Pods are not the fix. Two things are. Push the reusable layer out as self-serve so the team
+   builds capability instead of filling orders. And put in a prioritization and decision-making
+   system that every function has actually signed up to, with stated mechanics for how something
+   jumps the queue and who gets to say so. Without that, centralizing does not remove the
+   arguing, it just moves all of it onto one team who now have to referee it. That deserves its
+   own piece and will get one.</p>
 
 <div class="endnote">
   <p>The uncomfortable version of this question is not whether to centralize. It is this: is our

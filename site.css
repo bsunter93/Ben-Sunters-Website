@@ -51,6 +51,9 @@ img,video{max-width:100%;display:block}
 a{color:var(--accent);text-decoration:none}
 a:hover{text-decoration:underline;text-underline-offset:3px}
 :focus-visible{outline:2px solid var(--accent);outline-offset:3px;border-radius:2px}
+/* Fraunces carries a WONK axis that swashes the f and g, which reads as a rendering
+   fault rather than a flourish at heading sizes. Pin it off. */
+h1,h2,h3,.post-body h3{font-variation-settings:"WONK" 0,"SOFT" 0}
 h1,h2,h3{color:var(--ink);text-wrap:balance;margin:0}
 
 /* padding-inline, not the padding shorthand. As `padding:0 clamp(...)` this also set
