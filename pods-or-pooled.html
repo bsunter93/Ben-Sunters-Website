@@ -4,12 +4,12 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Half a Day of Nothing</title>
-<meta name="description" content="When a support function should sit central and when it should split into pods. The answer is arithmetic, it is specific to your numbers, and for most teams it points harder one way than they expect.">
+<meta name="description" content="When a support function should sit central and when it should split into pods. The answer is math, it is specific to your numbers, and for most teams it points harder one way than they expect.">
 <meta name="author" content="Benjamin J. Sunter">
 <meta name="color-scheme" content="light dark">
 <link rel="canonical" href="https://bensunter.com/pods-or-pooled.html">
 <meta property="og:title" content="Half a Day of Nothing">
-<meta property="og:description" content="Your shared person would have to be 73% slower on every single request before dedicated pods become cheaper. Most teams guess the penalty is 30%.">
+<meta property="og:description" content="A shared person would have to be 73% slower on every single request before dedicated pods get cheaper. Most people guess thirty. Here is where the number comes from.">
 <meta property="og:url" content="https://bensunter.com/pods-or-pooled.html">
 <meta property="og:type" content="article">
 <meta property="og:image" content="https://bensunter.com/og-pods.jpg">
@@ -183,16 +183,19 @@ details.method ul{padding-left:19px}
   <div class="kicker">Queueing theory, pointed at operating model design</div>
   <h1>Half a Day of Nothing</h1>
   <p class="stand">When a support function should sit central, and when it should split into
-     dedicated pods. There is an actual answer to this. It is arithmetic, it is specific to your
-     numbers, and for most teams it points harder in one direction than they expect.</p>
+     dedicated pods. Companies flip between the two every few years and the debate almost
+     never has a number in it. So I worked one out, and it surprised me.</p>
   <p class="by">Benjamin J. Sunter &middot; 6 minute read</p>
 </header>
 
 <article class="reading">
 
 <h2 id="question">The question</h2>
-<p>This decision gets made in a room, on instinct, and it lands wherever the most senior
-   person already was. On the numbers below, it is worth about sixteen people.</p>
+<p>I keep watching companies flip between these two setups every couple of years, and I do
+   not think either side is being unreasonable. The debate just runs on instinct, so it ends
+   up wherever the most senior person in the room already was. Nobody brings a number.</p>
+<p>So I sat down and worked one out. On the setup below it came to about sixteen people,
+   which is a lot more than I expected.</p>
 <p>Picture ten clients, each with support written into the contract. Give every client a named person who learns their quirks. Or build one shared team that covers everything and shares what they learn.</p>
 <figure class="ch">
   <div class="frame">
@@ -205,14 +208,18 @@ details.method ul{padding-left:19px}
 <p>Before any of the math, the objection that usually comes first, and it is a fair one. When
    a client has a real emergency, nobody wants to be handed to whoever happens to be free and
    start explaining from the beginning. A dedicated pod buys them somebody who already knows,
-   and that is worth something real. The arithmetic below does not price it, which is why
+   and that is worth something real. The math below does not price it, which is why
    <a href="#price">there is a section near the end</a> that tries to.</p>
-<p>It is still worth doing the arithmetic first, because it is the only way to find out what
+<p>It is still worth doing the math first, because it is the only way to find out what
    that is costing you.</p>
 <p class="jump"><a href="#try">Or skip the argument and go straight to the calculator &rarr;</a></p>
 
 <h2 id="number">The two numbers that decide it</h2>
-<p>Two numbers settle it. How much work each client generates, counted in people rather than tickets. And how much slower a shared person is on anything needing client-specific knowledge. Call that the <strong>context penalty</strong>. It is the entire case for pods.</p>
+<p>It comes down to two numbers, and you probably know both of them roughly already. The
+   first is how much work each client generates, counted in people rather than tickets. The
+   second is how much slower a shared person is on anything that needs client-specific
+   knowledge. That second one is the whole case for pods, so it is the one worth pinning
+   down. Call it the <strong>context penalty</strong>.</p>
 <p>So: how big does the penalty have to be before pods are actually cheaper?</p>
 <figure class="ch">
   <div class="frame">
@@ -223,7 +230,7 @@ details.method ul{padding-left:19px}
 
 <p>At two people's worth of work per client, a shared person would have to take <strong>73%
    longer</strong>. Not on the awkward tickets. On every single request, all day, forever.</p>
-<p>That sounds broken. It breaks down like this. Each client sends enough work to keep two
+<p>That looked wrong to me too, so here is where it comes from. Each client sends enough work to keep two
    people busy, but two people cannot cover it. Requests arrive in clumps, so somebody has to
    be free when three land at once. A pod needs four: <strong>two working and two in
    reserve</strong>. Ten of those is twenty working and twenty in reserve. <strong>Forty
@@ -235,12 +242,12 @@ details.method ul{padding-left:19px}
    buy ten separate times. The shared team only gives that back by getting slow enough to
    need forty anyway, and 73% is how slow that is.</p>
 <p>So almost none of it is about how fast anybody works. It is ten small teams each buying their own reserve, against one team that buys it once.</p>
-<p>Ask a room to guess the penalty and you get twenty or thirty percent. At thirty, you are
-   still nine people better off pooling.</p>
+<p>When I have asked people to guess that number, I usually hear twenty or thirty percent.
+   Even at thirty, you are nine people better off pooling.</p>
 
 <h2 id="why">Why the gap is so big</h2>
-<p>Pooled people are not working any faster. Dedicated people are just spending more of the day
-   waiting.</p>
+<p>None of this is because pooled people work faster. Dedicated people just spend more of the
+   day waiting.</p>
 <p>Those sixteen people were reserve, sitting in ten separate places waiting for a clump that
    mostly did not come.</p>
 <figure class="ch">
@@ -281,14 +288,14 @@ details.method ul{padding-left:19px}
 
 <div class="rule">
   <span class="rule-tag">The burnout tax</span>
-  <p><strong>I would not pool past about 85% occupancy.</strong> The arithmetic will take you to 93% and the service level still looks fine on paper. You pay in attrition instead of headcount, which is slower to spot and dearer to fix.</p>
+  <p><strong>I would not pool past about 85% occupancy.</strong> The math will take you to 93% and the service level still looks fine on paper. You pay in attrition instead of headcount, which is slower to spot and dearer to fix.</p>
 </div>
 
 <h2 id="reuse">The second force, which is bigger</h2>
 <p>There is something else going on, and in some functions it dwarfs everything above.</p>
-<p>Think about a reporting team. Somebody structures the query once, builds the report once,
-   then filters it per client. The second client costs almost nothing. The tenth costs almost
-   nothing. Split that into pods and ten people each build the same thing.</p>
+<p>Think about a reporting team. Somebody structures the query once and builds the report
+   once, then filters it per client, so the second client costs almost nothing and neither
+   does the tenth. Split that into pods and ten people end up building the same thing.</p>
 <figure class="ch">
   <div class="frame">
 <svg viewBox="0 0 706 510" role="img" aria-label="One row of fifteen squares for a central team that builds each report once, 375 hours. Ten rows of fifteen squares for ten pods that each build the same fifteen reports, 3,075 hours, 8.2 times as much."><text class="hd" x="40" y="26">ONE CENTRAL TEAM</text><text class="occ2" x="40" y="44">builds each report once</text><rect x="40" y="58" width="26" height="26" rx="3" fill="var(--accent)" opacity="1.0"/><rect x="70" y="58" width="26" height="26" rx="3" fill="var(--accent)" opacity="1.0"/><rect x="100" y="58" width="26" height="26" rx="3" fill="var(--accent)" opacity="1.0"/><rect x="130" y="58" width="26" height="26" rx="3" fill="var(--accent)" opacity="1.0"/><rect x="160" y="58" width="26" height="26" rx="3" fill="var(--accent)" opacity="1.0"/><rect x="190" y="58" width="26" height="26" rx="3" fill="var(--accent)" opacity="1.0"/><rect x="220" y="58" width="26" height="26" rx="3" fill="var(--accent)" opacity="1.0"/><rect x="250" y="58" width="26" height="26" rx="3" fill="var(--accent)" opacity="1.0"/><rect x="280" y="58" width="26" height="26" rx="3" fill="var(--accent)" opacity="1.0"/><rect x="310" y="58" width="26" height="26" rx="3" fill="var(--accent)" opacity="1.0"/><rect x="340" y="58" width="26" height="26" rx="3" fill="var(--accent)" opacity="1.0"/><rect x="370" y="58" width="26" height="26" rx="3" fill="var(--accent)" opacity="1.0"/><rect x="400" y="58" width="26" height="26" rx="3" fill="var(--accent)" opacity="1.0"/><rect x="430" y="58" width="26" height="26" rx="3" fill="var(--accent)" opacity="1.0"/><rect x="460" y="58" width="26" height="26" rx="3" fill="var(--accent)" opacity="1.0"/><text class="tot" x="506" y="78">375 hours</text><line x1="40" y1="108" x2="666" y2="108" stroke="var(--hair)"/><text class="hd" x="40" y="138">TEN PODS</text><text class="occ2" x="40" y="156">each build the same fifteen reports</text><rect x="40" y="170" width="26" height="26" rx="3" fill="var(--warm)" opacity="0.9"/><rect x="70" y="170" width="26" height="26" rx="3" fill="var(--warm)" opacity="0.9"/><rect x="100" y="170" width="26" height="26" rx="3" fill="var(--warm)" opacity="0.9"/><rect x="130" y="170" width="26" height="26" rx="3" fill="var(--warm)" opacity="0.9"/><rect x="160" y="170" width="26" height="26" rx="3" fill="var(--warm)" opacity="0.9"/><rect x="190" y="170" width="26" height="26" rx="3" fill="var(--warm)" opacity="0.9"/><rect x="220" y="170" width="26" height="26" rx="3" fill="var(--warm)" opacity="0.9"/><rect x="250" y="170" width="26" height="26" rx="3" fill="var(--warm)" opacity="0.9"/><rect x="280" y="170" width="26" height="26" rx="3" fill="var(--warm)" opacity="0.9"/><rect x="310" y="170" width="26" height="26" rx="3" fill="var(--warm)" opacity="0.9"/><rect x="340" y="170" width="26" height="26" rx="3" fill="var(--warm)" opacity="0.9"/><rect x="370" y="170" width="26" height="26" rx="3" fill="var(--warm)" opacity="0.9"/><rect x="400" y="170" width="26" height="26" rx="3" fill="var(--warm)" opacity="0.9"/><rect x="430" y="170" width="26" height="26" rx="3" fill="var(--warm)" opacity="0.9"/><rect x="460" y="170" width="26" height="26" rx="3" fill="var(--warm)" opacity="0.9"/><rect x="40" y="200" width="26" height="26" rx="3" fill="var(--warm)" opacity="0.9"/><rect x="70" y="200" width="26" height="26" rx="3" fill="var(--warm)" opacity="0.9"/><rect x="100" y="200" width="26" height="26" rx="3" fill="var(--warm)" opacity="0.9"/><rect x="130" y="200" width="26" height="26" rx="3" fill="var(--warm)" opacity="0.9"/><rect x="160" y="200" width="26" height="26" rx="3" fill="var(--warm)" opacity="0.9"/><rect x="190" y="200" width="26" height="26" rx="3" fill="var(--warm)" opacity="0.9"/><rect x="220" y="200" width="26" height="26" rx="3" fill="var(--warm)" opacity="0.9"/><rect x="250" y="200" width="26" height="26" rx="3" fill="var(--warm)" opacity="0.9"/><rect x="280" y="200" width="26" height="26" rx="3" fill="var(--warm)" opacity="0.9"/><rect x="310" y="200" width="26" height="26" rx="3" fill="var(--warm)" opacity="0.9"/><rect x="340" y="200" width="26" height="26" rx="3" fill="var(--warm)" opacity="0.9"/><rect x="370" y="200" width="26" height="26" rx="3" fill="var(--warm)" opacity="0.9"/><rect x="400" y="200" width="26" height="26" rx="3" fill="var(--warm)" opacity="0.9"/><rect x="430" y="200" width="26" height="26" rx="3" fill="var(--warm)" opacity="0.9"/><rect x="460" y="200" width="26" height="26" rx="3" fill="var(--warm)" opacity="0.9"/><rect x="40" y="230" width="26" height="26" rx="3" fill="var(--warm)" opacity="0.9"/><rect x="70" y="230" width="26" height="26" rx="3" fill="var(--warm)" opacity="0.9"/><rect x="100" y="230" width="26" height="26" rx="3" fill="var(--warm)" opacity="0.9"/><rect x="130" y="230" width="26" height="26" rx="3" fill="var(--warm)" opacity="0.9"/><rect x="160" y="230" width="26" height="26" rx="3" fill="var(--warm)" opacity="0.9"/><rect x="190" y="230" width="26" height="26" rx="3" fill="var(--warm)" opacity="0.9"/><rect x="220" y="230" width="26" height="26" rx="3" fill="var(--warm)" opacity="0.9"/><rect x="250" y="230" width="26" height="26" rx="3" fill="var(--warm)" opacity="0.9"/><rect x="280" y="230" width="26" height="26" rx="3" fill="var(--warm)" opacity="0.9"/><rect x="310" y="230" width="26" height="26" rx="3" fill="var(--warm)" opacity="0.9"/><rect x="340" y="230" width="26" height="26" rx="3" fill="var(--warm)" opacity="0.9"/><rect x="370" y="230" width="26" height="26" rx="3" fill="var(--warm)" opacity="0.9"/><rect x="400" y="230" width="26" height="26" rx="3" fill="var(--warm)" opacity="0.9"/><rect x="430" y="230" width="26" height="26" rx="3" fill="var(--warm)" opacity="0.9"/><rect x="460" y="230" width="26" height="26" rx="3" fill="var(--warm)" opacity="0.9"/><rect x="40" y="260" width="26" height="26" rx="3" fill="var(--warm)" opacity="0.9"/><rect x="70" y="260" width="26" height="26" rx="3" fill="var(--warm)" opacity="0.9"/><rect x="100" y="260" width="26" height="26" rx="3" fill="var(--warm)" opacity="0.9"/><rect x="130" y="260" width="26" height="26" rx="3" fill="var(--warm)" opacity="0.9"/><rect x="160" y="260" width="26" height="26" rx="3" fill="var(--warm)" opacity="0.9"/><rect x="190" y="260" width="26" height="26" rx="3" fill="var(--warm)" opacity="0.9"/><rect x="220" y="260" width="26" height="26" rx="3" fill="var(--warm)" opacity="0.9"/><rect x="250" y="260" width="26" height="26" rx="3" fill="var(--warm)" opacity="0.9"/><rect x="280" y="260" width="26" height="26" rx="3" fill="var(--warm)" opacity="0.9"/><rect x="310" y="260" width="26" height="26" rx="3" fill="var(--warm)" opacity="0.9"/><rect x="340" y="260" width="26" height="26" rx="3" fill="var(--warm)" opacity="0.9"/><rect x="370" y="260" width="26" height="26" rx="3" fill="var(--warm)" opacity="0.9"/><rect x="400" y="260" width="26" height="26" rx="3" fill="var(--warm)" opacity="0.9"/><rect x="430" y="260" width="26" height="26" rx="3" fill="var(--warm)" opacity="0.9"/><rect x="460" y="260" width="26" height="26" rx="3" fill="var(--warm)" opacity="0.9"/><rect x="40" y="290" width="26" height="26" rx="3" fill="var(--warm)" opacity="0.9"/><rect x="70" y="290" width="26" height="26" rx="3" fill="var(--warm)" opacity="0.9"/><rect x="100" y="290" width="26" height="26" rx="3" fill="var(--warm)" opacity="0.9"/><rect x="130" y="290" width="26" height="26" rx="3" fill="var(--warm)" opacity="0.9"/><rect x="160" y="290" width="26" height="26" rx="3" fill="var(--warm)" opacity="0.9"/><rect x="190" y="290" width="26" height="26" rx="3" fill="var(--warm)" opacity="0.9"/><rect x="220" y="290" width="26" height="26" rx="3" fill="var(--warm)" opacity="0.9"/><rect x="250" y="290" width="26" height="26" rx="3" fill="var(--warm)" opacity="0.9"/><rect x="280" y="290" width="26" height="26" rx="3" fill="var(--warm)" opacity="0.9"/><rect x="310" y="290" width="26" height="26" rx="3" fill="var(--warm)" opacity="0.9"/><rect x="340" y="290" width="26" height="26" rx="3" fill="var(--warm)" opacity="0.9"/><rect x="370" y="290" width="26" height="26" rx="3" fill="var(--warm)" opacity="0.9"/><rect x="400" y="290" width="26" height="26" rx="3" fill="var(--warm)" opacity="0.9"/><rect x="430" y="290" width="26" height="26" rx="3" fill="var(--warm)" opacity="0.9"/><rect x="460" y="290" width="26" height="26" rx="3" fill="var(--warm)" opacity="0.9"/><rect x="40" y="320" width="26" height="26" rx="3" fill="var(--warm)" opacity="0.9"/><rect x="70" y="320" width="26" height="26" rx="3" fill="var(--warm)" opacity="0.9"/><rect x="100" y="320" width="26" height="26" rx="3" fill="var(--warm)" opacity="0.9"/><rect x="130" y="320" width="26" height="26" rx="3" fill="var(--warm)" opacity="0.9"/><rect x="160" y="320" width="26" height="26" rx="3" fill="var(--warm)" opacity="0.9"/><rect x="190" y="320" width="26" height="26" rx="3" fill="var(--warm)" opacity="0.9"/><rect x="220" y="320" width="26" height="26" rx="3" fill="var(--warm)" opacity="0.9"/><rect x="250" y="320" width="26" height="26" rx="3" fill="var(--warm)" opacity="0.9"/><rect x="280" y="320" width="26" height="26" rx="3" fill="var(--warm)" opacity="0.9"/><rect x="310" y="320" width="26" height="26" rx="3" fill="var(--warm)" opacity="0.9"/><rect x="340" y="320" width="26" height="26" rx="3" fill="var(--warm)" opacity="0.9"/><rect x="370" y="320" width="26" height="26" rx="3" fill="var(--warm)" opacity="0.9"/><rect x="400" y="320" width="26" height="26" rx="3" fill="var(--warm)" opacity="0.9"/><rect x="430" y="320" width="26" height="26" rx="3" fill="var(--warm)" opacity="0.9"/><rect x="460" y="320" width="26" height="26" rx="3" fill="var(--warm)" opacity="0.9"/><rect x="40" y="350" width="26" height="26" rx="3" fill="var(--warm)" opacity="0.9"/><rect x="70" y="350" width="26" height="26" rx="3" fill="var(--warm)" opacity="0.9"/><rect x="100" y="350" width="26" height="26" rx="3" fill="var(--warm)" opacity="0.9"/><rect x="130" y="350" width="26" height="26" rx="3" fill="var(--warm)" opacity="0.9"/><rect x="160" y="350" width="26" height="26" rx="3" fill="var(--warm)" opacity="0.9"/><rect x="190" y="350" width="26" height="26" rx="3" fill="var(--warm)" opacity="0.9"/><rect x="220" y="350" width="26" height="26" rx="3" fill="var(--warm)" opacity="0.9"/><rect x="250" y="350" width="26" height="26" rx="3" fill="var(--warm)" opacity="0.9"/><rect x="280" y="350" width="26" height="26" rx="3" fill="var(--warm)" opacity="0.9"/><rect x="310" y="350" width="26" height="26" rx="3" fill="var(--warm)" opacity="0.9"/><rect x="340" y="350" width="26" height="26" rx="3" fill="var(--warm)" opacity="0.9"/><rect x="370" y="350" width="26" height="26" rx="3" fill="var(--warm)" opacity="0.9"/><rect x="400" y="350" width="26" height="26" rx="3" fill="var(--warm)" opacity="0.9"/><rect x="430" y="350" width="26" height="26" rx="3" fill="var(--warm)" opacity="0.9"/><rect x="460" y="350" width="26" height="26" rx="3" fill="var(--warm)" opacity="0.9"/><rect x="40" y="380" width="26" height="26" rx="3" fill="var(--warm)" opacity="0.9"/><rect x="70" y="380" width="26" height="26" rx="3" fill="var(--warm)" opacity="0.9"/><rect x="100" y="380" width="26" height="26" rx="3" fill="var(--warm)" opacity="0.9"/><rect x="130" y="380" width="26" height="26" rx="3" fill="var(--warm)" opacity="0.9"/><rect x="160" y="380" width="26" height="26" rx="3" fill="var(--warm)" opacity="0.9"/><rect x="190" y="380" width="26" height="26" rx="3" fill="var(--warm)" opacity="0.9"/><rect x="220" y="380" width="26" height="26" rx="3" fill="var(--warm)" opacity="0.9"/><rect x="250" y="380" width="26" height="26" rx="3" fill="var(--warm)" opacity="0.9"/><rect x="280" y="380" width="26" height="26" rx="3" fill="var(--warm)" opacity="0.9"/><rect x="310" y="380" width="26" height="26" rx="3" fill="var(--warm)" opacity="0.9"/><rect x="340" y="380" width="26" height="26" rx="3" fill="var(--warm)" opacity="0.9"/><rect x="370" y="380" width="26" height="26" rx="3" fill="var(--warm)" opacity="0.9"/><rect x="400" y="380" width="26" height="26" rx="3" fill="var(--warm)" opacity="0.9"/><rect x="430" y="380" width="26" height="26" rx="3" fill="var(--warm)" opacity="0.9"/><rect x="460" y="380" width="26" height="26" rx="3" fill="var(--warm)" opacity="0.9"/><rect x="40" y="410" width="26" height="26" rx="3" fill="var(--warm)" opacity="0.9"/><rect x="70" y="410" width="26" height="26" rx="3" fill="var(--warm)" opacity="0.9"/><rect x="100" y="410" width="26" height="26" rx="3" fill="var(--warm)" opacity="0.9"/><rect x="130" y="410" width="26" height="26" rx="3" fill="var(--warm)" opacity="0.9"/><rect x="160" y="410" width="26" height="26" rx="3" fill="var(--warm)" opacity="0.9"/><rect x="190" y="410" width="26" height="26" rx="3" fill="var(--warm)" opacity="0.9"/><rect x="220" y="410" width="26" height="26" rx="3" fill="var(--warm)" opacity="0.9"/><rect x="250" y="410" width="26" height="26" rx="3" fill="var(--warm)" opacity="0.9"/><rect x="280" y="410" width="26" height="26" rx="3" fill="var(--warm)" opacity="0.9"/><rect x="310" y="410" width="26" height="26" rx="3" fill="var(--warm)" opacity="0.9"/><rect x="340" y="410" width="26" height="26" rx="3" fill="var(--warm)" opacity="0.9"/><rect x="370" y="410" width="26" height="26" rx="3" fill="var(--warm)" opacity="0.9"/><rect x="400" y="410" width="26" height="26" rx="3" fill="var(--warm)" opacity="0.9"/><rect x="430" y="410" width="26" height="26" rx="3" fill="var(--warm)" opacity="0.9"/><rect x="460" y="410" width="26" height="26" rx="3" fill="var(--warm)" opacity="0.9"/><rect x="40" y="440" width="26" height="26" rx="3" fill="var(--warm)" opacity="0.9"/><rect x="70" y="440" width="26" height="26" rx="3" fill="var(--warm)" opacity="0.9"/><rect x="100" y="440" width="26" height="26" rx="3" fill="var(--warm)" opacity="0.9"/><rect x="130" y="440" width="26" height="26" rx="3" fill="var(--warm)" opacity="0.9"/><rect x="160" y="440" width="26" height="26" rx="3" fill="var(--warm)" opacity="0.9"/><rect x="190" y="440" width="26" height="26" rx="3" fill="var(--warm)" opacity="0.9"/><rect x="220" y="440" width="26" height="26" rx="3" fill="var(--warm)" opacity="0.9"/><rect x="250" y="440" width="26" height="26" rx="3" fill="var(--warm)" opacity="0.9"/><rect x="280" y="440" width="26" height="26" rx="3" fill="var(--warm)" opacity="0.9"/><rect x="310" y="440" width="26" height="26" rx="3" fill="var(--warm)" opacity="0.9"/><rect x="340" y="440" width="26" height="26" rx="3" fill="var(--warm)" opacity="0.9"/><rect x="370" y="440" width="26" height="26" rx="3" fill="var(--warm)" opacity="0.9"/><rect x="400" y="440" width="26" height="26" rx="3" fill="var(--warm)" opacity="0.9"/><rect x="430" y="440" width="26" height="26" rx="3" fill="var(--warm)" opacity="0.9"/><rect x="460" y="440" width="26" height="26" rx="3" fill="var(--warm)" opacity="0.9"/><text class="tot" x="506" y="190">3,075 hours</text><text class="big" x="506" y="252">8.2x</text><text class="occ2" x="40" y="494">One square is one report, built once by one person.</text></svg>
@@ -305,9 +312,9 @@ details.method ul{padding-left:19px}
 </div>
 
 <h2 id="meet">Where the two forces meet</h2>
-<p>Put the two together and you get one number you can do in your head.
-   <strong>Reusable work carries no context penalty at all.</strong> A query does not care
-   whose data it is filtering, so the slowdown only ever applies to the one-off part.</p>
+<p>Put the two together and you get one number you can do in your head. <strong>Reusable work
+   does not carry a context penalty</strong>, because a query does not care whose data it is
+   filtering. The slowdown only ever applies to the one-off part.</p>
 <figure class="ch">
   <div class="frame">
 <svg viewBox="0 0 760 252" role="img" aria-label="Working out your real context penalty. A bar of all the work, 70 percent reusable and 30 percent one off. Only the one-off slice is slower for a shared person. Thirty percent times forty percent gives a real penalty of twelve percent."><text class="hd" x="40" y="26">WORKING OUT YOUR REAL CONTEXT PENALTY</text><text class="occ2" x="40" y="46">an example team, 70% of whose work is reusable</text><rect x="40" y="78" width="420.0" height="48" rx="4" fill="var(--accent)" opacity=".20"/><rect x="460.0" y="78" width="180.0" height="48" rx="4" fill="var(--warm)"/><text class="lab" x="250.0" y="108" text-anchor="middle" fill="var(--accent)">Built once, reused &#183; 70%</text><text class="lab" x="550.0" y="108" text-anchor="middle" fill="#fff">One-off &#183; 30%</text><path d="M460.0 133 L460.0 140 L640 140 L640 133" fill="none" stroke="var(--warm)" stroke-width="1.5"/><line x1="550.0" y1="140" x2="550.0" y2="152" stroke="var(--warm)" stroke-width="1.5"/><text class="val" x="550.0" y="170" text-anchor="middle" fill="var(--warm)">only this part is slower</text><rect x="40" y="190" width="600" height="44" rx="5" fill="var(--tint)"/><text class="eqp" x="60" y="218">30%</text><text class="eqs" x="120" y="218">of the work</text><text class="eqp" x="228" y="218">&#215;</text><text class="eqp" x="258" y="218">40%</text><text class="eqs" x="318" y="218">slower on it</text><text class="eqp" x="432" y="218">=</text><text class="eqbig" x="464" y="222">12%</text><text class="eqs" x="540" y="218">your real penalty</text></svg>
@@ -318,8 +325,7 @@ details.method ul{padding-left:19px}
 <p>Say a third of the work is one-off, and a shared person is 40% slower on that part. Then
    the penalty you actually pay is 40% of a third. <strong>About 12%.</strong></p>
 <p>The crossover for a client this size was <strong>73%</strong>. Twelve is nowhere near it,
-   so you pool. That is the entire calculation, and it is the one the sliders below are
-   doing.</p>
+   so you pool. That is all the calculation is, and it is what the sliders below are doing.</p>
 
 <h2 id="try">Try it with your numbers</h2>
 <div class="calc">
@@ -355,8 +361,8 @@ details.method ul{padding-left:19px}
   </div>
 </div>
 <h2 id="price">What the math cannot price</h2>
-<p>Everything above is about cost. Three things sit outside it, and any one of them can be worth
-   more than the headcount it saves.</p>
+<p>Everything above is about cost, and cost is the easy part to measure. Three things sit
+   outside it, and any one of them can be worth more than the headcount it saves.</p>
 <p><strong>Somebody to call.</strong> When a deal is on the line, nobody wants to start from the beginning with a stranger. A pod buys a named person, for the client and for your own account team. That is worth something real even when it is worth nothing on a spreadsheet.</p>
 <p><strong>Switching cost.</strong> The model assumes a request takes the same time whatever came before it. A pooled operator jumping from a regulatory edge case to an onboarding setup to a broken pipeline before lunch is paying a recovery penalty. Handling time never moved. It shows up as errors and rework, and there is no line for either.</p>
 <p><strong>Whose emergency wins.</strong> In a pod, priority is local and obvious. You have one
@@ -364,7 +370,7 @@ details.method ul{padding-left:19px}
    together is a judgement call somebody makes in public, every time.</p>
 <div class="rule">
   <span class="rule-tag">If you want the pod</span>
-  <p><strong>Buy the pod as a premium, with a number on it.</strong> None of this makes pods cheaper. It makes cost one axis instead of the only one. Work out what pooling saves you in people, then what one churned account is worth. If the saving is sixteen people and one account is worth more than sixteen, the arithmetic has told you to buy the pod. Then call it insurance and budget it as insurance. Argued as efficiency, it loses.</p>
+  <p><strong>Buy the pod as a premium, with a number on it.</strong> None of this makes pods cheaper. It makes cost one axis instead of the only one. Work out what pooling saves you in people, then what one churned account is worth. If the saving is sixteen people and one account is worth more than sixteen, the numbers have told you to buy the pod. Then call it insurance and budget it as insurance. Argued as efficiency, it loses.</p>
 </div>
 
 <div class="rule">
@@ -373,22 +379,22 @@ details.method ul{padding-left:19px}
 </div>
 
 <h2 id="map">The whole argument, on one chart</h2>
-<p>Two questions place any function on this. How much work does one client generate, and how
-   much of the work gets built once and reused. The line between the regions is the crossover
-   math from earlier, not a judgement call.</p>
+<p>Two questions put any function somewhere on this. How much work does one client generate,
+   and how much of the work gets built once and reused. The line between the two regions is
+   the crossover math from earlier rather than my opinion, which is the only reason I trust
+   it.</p>
 
 <figure class="ch">
   <div class="frame">
 <svg viewBox="0 0 780 560" role="img" aria-label="A field with work per client along the bottom and share of reusable work up the side. A computed boundary separates a large pool-it region from a dedicate region in the bottom right, where one client generates more than about six people of work and almost none of it is reusable. Example functions are plotted: reporting and tier-one questions sit deep in pool, regulatory filings and enterprise escalation sit in dedicate."><rect x="76" y="54" width="674" height="330" fill="var(--surface)"/><line x1="76" y1="384.0" x2="750" y2="384.0" stroke="var(--hair)"/><text class="ax" x="66" y="388.0" text-anchor="end">0%</text><line x1="76" y1="301.5" x2="750" y2="301.5" stroke="var(--hair)"/><text class="ax" x="66" y="305.5" text-anchor="end">25%</text><line x1="76" y1="219.0" x2="750" y2="219.0" stroke="var(--hair)"/><text class="ax" x="66" y="223.0" text-anchor="end">50%</text><line x1="76" y1="136.5" x2="750" y2="136.5" stroke="var(--hair)"/><text class="ax" x="66" y="140.5" text-anchor="end">75%</text><line x1="76" y1="54.0" x2="750" y2="54.0" stroke="var(--hair)"/><text class="ax" x="66" y="58.0" text-anchor="end">100%</text><text class="ax" x="76.0" y="404" text-anchor="middle">1</text><text class="ax" x="210.8" y="404" text-anchor="middle">2</text><text class="ax" x="345.6" y="404" text-anchor="middle">4</text><text class="ax" x="480.4" y="404" text-anchor="middle">8</text><text class="ax" x="615.2" y="404" text-anchor="middle">16</text><text class="ax" x="750.0" y="404" text-anchor="middle">32</text><path d="M424.5 375.8 L480.4 293.2 L615.2 219.0 L750.0 161.2 L750 384 L424.5 384 Z" fill="var(--warm)" opacity=".13"/><path d="M424.5 375.8 L480.4 293.2 L615.2 219.0 L750.0 161.2" fill="none" stroke="var(--warm)" stroke-width="2.5" stroke-linejoin="round"/><text class="reg" x="94" y="80" fill="var(--accent)">POOL IT</text><text class="regsub" x="94" y="97">one team, shared context</text><text class="reg" x="734" y="350" text-anchor="end" fill="var(--warm)">DEDICATE</text><text class="regsub" x="734" y="367" text-anchor="end">a named pod per client</text><circle cx="154.9" cy="120.0" r="5" fill="var(--accent)" stroke="var(--surface)" stroke-width="2"/><text class="fn" x="168.9" y="108.0" text-anchor="start">Reporting &amp; dashboards</text><circle cx="229.3" cy="202.5" r="5" fill="var(--accent)" stroke="var(--surface)" stroke-width="2"/><text class="fn" x="243.3" y="190.5" text-anchor="start">Tier-1 questions</text><circle cx="314.0" cy="225.6" r="5" fill="var(--accent)" stroke="var(--surface)" stroke-width="2"/><text class="fn" x="328.0" y="213.6" text-anchor="start">Billing operations</text><circle cx="389.0" cy="258.6" r="5" fill="var(--accent)" stroke="var(--surface)" stroke-width="2"/><text class="fn" x="403.0" y="246.6" text-anchor="start">Onboarding</text><circle cx="210.8" cy="324.6" r="5" fill="var(--accent)" stroke="var(--surface)" stroke-width="2"/><text class="fn" x="224.8" y="312.6" text-anchor="start">Incident response</text><circle cx="523.8" cy="337.8" r="5" fill="var(--warm)" stroke="var(--surface)" stroke-width="2"/><text class="fn" x="509.8" y="325.8" text-anchor="end">Regulatory filings</text><circle cx="602.6" cy="354.3" r="5" fill="var(--warm)" stroke="var(--surface)" stroke-width="2"/><text class="fn" x="588.6" y="374.3" text-anchor="end">Enterprise escalation</text><circle cx="658.6" cy="285.0" r="5" fill="var(--warm)" stroke="var(--surface)" stroke-width="2"/><text class="fn" x="644.6" y="273.0" text-anchor="end">Custom integration</text><text class="axt" x="413.0" y="428" text-anchor="middle">How many people’s worth of work ONE client generates</text><text class="axt" x="22" y="219.0" text-anchor="middle" transform="rotate(-90 22 219.0)">Share of the work that is built once and reused</text><line x1="36" y1="440" x2="750" y2="440" stroke="var(--line)"/><text class="hd" x="36" y="460">TWO THINGS THAT OVERRIDE THE CHART</text><rect x="36" y="472" width="3" height="34" rx="2" fill="var(--warm)"/><text class="ovh" x="50" y="486">Does the pod have a roadmap?</text><text class="ovd" x="50" y="503">If the gaps are filled with real work, the pooling saving shrinks and you can sit further right.</text><rect x="36" y="516" width="3" height="34" rx="2" fill="var(--warm)"/><text class="ovh" x="50" y="530">Can you afford to lose the account?</text><text class="ovd" x="50" y="547">If not, buy the pod anyway. Call it insurance, put a number on it, and stop arguing efficiency.</text></svg>
   </div>
   <figcaption>The boundary is computed. The dots are illustrative, so put your own functions on
-    it rather than trusting mine. Note how much of the field says pool: dedicating only pays
-    when one client is big enough to keep a team busy <em>and</em> almost nothing you do for
-    them is reusable.</figcaption>
+    it rather than trusting mine. What struck me was how much of the field says pool. Dedicating only pays when one client is big enough to keep a team busy <em>and</em> almost nothing you do for them is reusable, which is a narrower corner than I thought before I drew it.</figcaption>
 </figure>
 
 <h2 id="run">How to actually run this</h2>
-<p>An afternoon, if your ticket data is not a disaster. You can stop at step three.</p>
+<p>This is roughly an afternoon if your ticket data is not a disaster, and most people can
+   stop at step three.</p>
 
 <ol class="howto-steps">
   <li><b>Pull 90 days of requests by client.</b> Your ticket system already has this. Resolved
@@ -400,8 +406,8 @@ details.method ul{padding-left:19px}
       this barely matters.</li>
   <li><b>Estimate the penalty on the bespoke part.</b> Compare handle time when somebody who knew
       the account picked it up against somebody who did not. If assignment has always been
-      dedicated, guess, then move the slider above and see whether the answer changes at all.
-      Usually it does not.</li>
+      dedicated you will have to guess, which is fine. Move the slider above and see whether
+      your guess even changes the answer. Usually it does not.</li>
   <li><b>Put each client on the chart.</b> Load along the bottom, reuse up the side. Most will land
       well inside pool, and the ones that do not will be obvious.</li>
   <li><b>Price the premium on the ones that do not.</b> Headcount difference times loaded cost,
