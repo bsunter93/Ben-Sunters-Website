@@ -200,7 +200,7 @@ details.method ul{padding-left:19px}
   <div class="frame">
 <svg viewBox="0 0 760 430" role="img" aria-label="A curve falling from 150 percent at one person of work per client to 13 percent at thirty-two. A dashed line at 30 percent, where most teams guess the penalty sits, stays below the curve until about eight people of work per client and rises above it after that."><rect x="62" y="40" width="672" height="328" fill="var(--surface)"/><line x1="62" y1="368.0" x2="734" y2="368.0" stroke="var(--hair)" stroke-width="1"/><text class="ax" x="53" y="372.0" text-anchor="end">0%</text><line x1="62" y1="316.8" x2="734" y2="316.8" stroke="var(--hair)" stroke-width="1"/><text class="ax" x="53" y="320.8" text-anchor="end">25%</text><line x1="62" y1="265.5" x2="734" y2="265.5" stroke="var(--hair)" stroke-width="1"/><text class="ax" x="53" y="269.5" text-anchor="end">50%</text><line x1="62" y1="214.2" x2="734" y2="214.2" stroke="var(--hair)" stroke-width="1"/><text class="ax" x="53" y="218.2" text-anchor="end">75%</text><line x1="62" y1="163.0" x2="734" y2="163.0" stroke="var(--hair)" stroke-width="1"/><text class="ax" x="53" y="167.0" text-anchor="end">100%</text><line x1="62" y1="111.8" x2="734" y2="111.8" stroke="var(--hair)" stroke-width="1"/><text class="ax" x="53" y="115.8" text-anchor="end">125%</text><line x1="62" y1="60.5" x2="734" y2="60.5" stroke="var(--hair)" stroke-width="1"/><text class="ax" x="53" y="64.5" text-anchor="end">150%</text><path d="M62.0 60.5 L196.4 218.3 L330.8 245.0 L465.2 308.6 L599.6 327.0 L734.0 341.4 L734.0 368.0 L62.0 368.0 Z" fill="var(--accent)" opacity=".10"/><path d="M62.0 60.5 L196.4 218.3 L330.8 245.0 L465.2 308.6 L599.6 327.0 L734.0 341.4" fill="none" stroke="var(--accent)" stroke-width="2.5" stroke-linejoin="round"/><line x1="62" y1="306.5" x2="734" y2="306.5" stroke="var(--warm)" stroke-width="2" stroke-dasharray="5 4"/><text class="lab" x="68" y="297.5" fill="var(--warm)">What most teams guess: about 30%</text><line x1="457.8" y1="40" x2="457.8" y2="368" stroke="var(--muted)" stroke-width="1" stroke-dasharray="2 4"/><circle cx="62.0" cy="60.5" r="4.5" fill="var(--accent)" stroke="var(--surface)" stroke-width="2"/><text class="val" x="62.0" y="47.5" text-anchor="middle">150%</text><circle cx="196.4" cy="218.3" r="4.5" fill="var(--accent)" stroke="var(--surface)" stroke-width="2"/><text class="val" x="196.4" y="205.3" text-anchor="middle">73%</text><circle cx="330.8" cy="245.0" r="4.5" fill="var(--accent)" stroke="var(--surface)" stroke-width="2"/><text class="val" x="330.8" y="232.0" text-anchor="middle">60%</text><circle cx="465.2" cy="308.6" r="4.5" fill="var(--accent)" stroke="var(--surface)" stroke-width="2"/><text class="val" x="465.2" y="295.6" text-anchor="middle">29%</text><circle cx="599.6" cy="327.0" r="4.5" fill="var(--accent)" stroke="var(--surface)" stroke-width="2"/><text class="val" x="599.6" y="314.0" text-anchor="middle">20%</text><circle cx="734.0" cy="341.4" r="4.5" fill="var(--accent)" stroke="var(--surface)" stroke-width="2"/><text class="val" x="734.0" y="328.4" text-anchor="middle">13%</text><text class="ax" x="62.0" y="388" text-anchor="middle">1</text><text class="ax" x="196.4" y="388" text-anchor="middle">2</text><text class="ax" x="330.8" y="388" text-anchor="middle">4</text><text class="ax" x="465.2" y="388" text-anchor="middle">8</text><text class="ax" x="599.6" y="388" text-anchor="middle">16</text><text class="ax" x="734.0" y="388" text-anchor="middle">32</text><text class="ax" x="398.0" y="412" text-anchor="middle">How many people’s worth of work each client generates</text><text class="ax" x="16" y="204.0" text-anchor="middle" transform="rotate(-90 16 204.0)">Penalty needed for pods to win</text><text class="reg" x="78" y="352" fill="var(--accent)">POOLING WINS IN HERE</text><text class="reg" x="720" y="62" text-anchor="end" fill="var(--muted)">PODS WIN UP HERE</text></svg>
   </div>
-  <figcaption>Read it like a waterline. If your real penalty sits below the curve, pooling is cheaper. Above it, pods are. The dashed line is what people guess when you ask them cold.</figcaption>
+  <figcaption>Read it like a waterline. If your real penalty sits below the curve, pooling is cheaper. Above it, pods are. The dashed line is what people guess when you ask them cold. Modeled throughout at 80% of requests answered inside two minutes; move that target and every number here moves with it.</figcaption>
 </figure>
 
 <p>At two people's worth of work per client, a shared person would have to take <strong>73%
@@ -216,10 +216,7 @@ details.method ul{padding-left:19px}
    waiting.</p>
 <p>Work does not arrive evenly. Two people's worth of work does not mean two people can cover
    it, because in some hours three requests land at once and somebody has to be free to pick
-   them up. Hitting a service level means buying spare capacity on purpose. The target used
-   throughout here is <strong>80% of requests answered within two minutes</strong>, which is
-   ordinary for a support desk. Move that target and every number on this page moves with it.
-   For a single pod that is <strong>four people to cover two people's worth of work</strong>:
+   them up. Hitting that service level means buying spare capacity on purpose. For a single pod that is <strong>four people to cover two people's worth of work</strong>:
    two doing it, two absorbing the randomness.</p>
 <p>Pool all ten clients and you need <strong>24 people for twenty people's worth of work, not
    40</strong>. The randomness now cancels itself out, because one client's quiet hour covers
@@ -242,7 +239,7 @@ details.method ul{padding-left:19px}
 </figure>
 
 <div class="rule">
-  <span class="rule-tag">In practice</span>
+  <span class="rule-tag">If you run pods</span>
   <p><strong>Pods only cost you when the gap is empty.</strong> That half-day is only waste if nothing fills it. Give a pod a roadmap, a backlog, an improvement queue, and hold them to it, and the same 50% is the other half of their job. A business intelligence pod with its own build queue is not idle between tickets, and most of the case for pooling them goes away. The version that genuinely costs you is a pod with nothing to do while it waits. Shrink is the thing to minimize, not headcount.</p>
 </div>
 
@@ -257,12 +254,12 @@ details.method ul{padding-left:19px}
 </figure>
 
 <div class="rule">
-  <span class="rule-tag">In practice</span>
+  <span class="rule-tag">Check the calendar</span>
   <p><strong>Check the timing before you bank the saving.</strong> Sophisticated clients usually know their own seasonality and will tell you if you ask. If everyone spikes at quarter end you are staffing the coincident peak either way, and roughly half the pooling advantage disappears before you have hired anyone.</p>
 </div>
 
 <div class="rule">
-  <span class="rule-tag">In practice</span>
+  <span class="rule-tag">The burnout tax</span>
   <p><strong>Do not pool past about 85% occupancy.</strong> The arithmetic will happily take you to 93% and the service level will still look fine on paper. You pay for it in attrition instead of headcount, which is slower to notice and far more expensive to fix.</p>
 </div>
 
@@ -282,7 +279,7 @@ details.method ul{padding-left:19px}
    build step: reporting, templates, playbooks, onboarding material, QA rubrics, tooling, the
    deck somebody rebuilds every quarter.</p>
 <div class="rule">
-  <span class="rule-tag">In practice</span>
+  <span class="rule-tag">The standard failure</span>
   <p><strong>Centralize the build, not the queue.</strong> The standard failure of a central team is that it becomes a backlog where everything is urgent, and account teams quietly go back to building their own spreadsheets. Two things prevent it. Push the reusable layer out as self-serve so the team builds capability rather than filling orders. And agree prioritization mechanics every function has actually signed up to, including who gets to jump the queue and who says so. Without that, centralizing does not remove the arguing, it moves all of it onto one team who now have to referee it. That deserves its own piece and will get one.</p>
 </div>
 
@@ -337,20 +334,17 @@ details.method ul{padding-left:19px}
    stranger. A dedicated pod buys a named person, for the client and for your own account team,
    and that is worth something real even when it is worth nothing on a spreadsheet.</p>
 <p><strong>Switching cost.</strong> Erlang C assumes handling time is independent of whatever
-   came before it. A pooled operator moving from a regulatory edge case for one client, to an
-   onboarding setup for another, to a broken pipeline for a third, all before lunch, is paying a
-   recovery penalty rather than a handling one. It shows up as errors and rework, and the model
-   has no line for either.</p>
+   came before it. A pooled operator jumping from a regulatory edge case to an onboarding setup to a broken pipeline before lunch is paying a recovery penalty. Handling time never moved. It shows up as errors and rework, and the model has no line for either.</p>
 <p><strong>Whose emergency wins.</strong> In a pod, priority is local and obvious. You have one
    client, so you work on their most urgent thing. In a pool, two critical requests arriving
    together is a judgement call somebody makes in public, every time.</p>
 <div class="rule">
-  <span class="rule-tag">In practice</span>
+  <span class="rule-tag">If you want the pod</span>
   <p><strong>Buy the pod as a premium, with a number on it.</strong> None of this makes pods cheaper. It makes cost one axis rather than the only one. Work out what pooling actually saves in people, then work out what one churned account is worth. If the saving is sixteen people and one enterprise account is worth more than sixteen, the arithmetic has just told you to buy the pod. Then call it what it is, insurance, and put it in the budget as insurance. Argued as an efficiency play it loses.</p>
 </div>
 
 <div class="rule">
-  <span class="rule-tag">In practice</span>
+  <span class="rule-tag">The second queue</span>
   <p><strong>Whoever picks it up should be able to decide it.</strong> The model charges you for handling time and nothing else. It cannot see a pooled person who has to go and find whoever owns that client before they can answer. That is a second queue behind the first, and it bites hardest on the calls you most want made fast. Either the person taking the ticket can decide, or your real context penalty is a long way above anything a stopwatch would tell you.</p>
 </div>
 
