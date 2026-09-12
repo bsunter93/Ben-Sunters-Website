@@ -1,0 +1,145 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Privacy</title>
+<meta name="description" content="What Career Ops does with your data. It runs on your own machine, and your mail never leaves it.">
+<meta name="author" content="Benjamin J. Sunter">
+<meta name="color-scheme" content="light dark">
+<link rel="canonical" href="https://bensunter.com/privacy.html">
+<meta name="robots" content="index,follow">
+<link rel="icon" href="favicon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<meta name="theme-color" content="#0B3A40">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600&family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600&display=swap">
+<link rel="stylesheet" href="site.css">
+<style>
+.reading{max-width:680px;margin:0 auto;padding-inline:clamp(18px,5vw,32px)}
+.artbar{position:sticky;top:0;z-index:30;background:color-mix(in srgb,var(--paper) 94%,transparent);
+  backdrop-filter:saturate(180%) blur(12px);border-bottom:1px solid var(--line)}
+.artbar .inner{max-width:1020px;margin:0 auto;padding-inline:clamp(18px,5vw,32px);
+  display:flex;align-items:center;justify-content:space-between;gap:18px;height:54px}
+.artbar a{font:600 14px/1 var(--display);color:var(--ink);text-decoration:none}
+.artbar a:hover{color:var(--accent)}
+.artbar .kind{font:500 11px/1 var(--mono);letter-spacing:.14em;text-transform:uppercase;color:var(--muted)}
+.arthead{padding:clamp(36px,6vw,64px) 0 4px}
+.arthead .kicker{display:flex;align-items:center;gap:9px;font:500 10.5px/1 var(--mono);
+  letter-spacing:.14em;text-transform:uppercase;color:var(--muted);margin-bottom:16px}
+.arthead .kicker:before{content:"";width:20px;height:2px;background:var(--warm)}
+.arthead h1{font:600 clamp(31px,5vw,45px)/1.08 var(--display);letter-spacing:-.024em}
+.arthead .by{margin-top:20px;font:400 12.5px/1 var(--mono);color:var(--muted)}
+.reading p{font-size:17px;line-height:1.7;margin:0 0 19px}
+.reading p.open{font-size:19px;line-height:1.58;color:var(--ink)}
+.reading h2{font:600 22px/1.25 var(--display);letter-spacing:-.012em;margin:36px 0 12px}
+.reading strong{color:var(--ink);font-weight:600}
+.reading ul{margin:0 0 19px;padding-left:22px;font-size:17px;line-height:1.7}
+.reading li{margin:0 0 9px}
+.pull{font:600 clamp(19px,2.4vw,23px)/1.4 var(--display);color:var(--ink);
+  border-left:3px solid var(--warm);padding:6px 0 6px 22px;margin:32px 0}
+.artfoot{border-top:1px solid var(--line);margin-top:52px;padding:26px 0 60px}
+.artfoot .reading{display:flex;gap:20px;flex-wrap:wrap;justify-content:space-between;
+  font-size:13.5px;color:var(--muted)}
+</style>
+</head>
+<body>
+
+<div class="artbar">
+  <div class="inner">
+    <a href="index.html">&larr; Benjamin J. Sunter</a>
+    <span class="kind">Privacy</span>
+  </div>
+</div>
+
+<main>
+<header class="reading arthead">
+  <div class="kicker">Career Ops</div>
+  <h1>Privacy</h1>
+  <p class="by">Updated September 2026</p>
+</header>
+
+<article class="reading">
+
+<p class="open">Career Ops is an open source tool that runs on your own computer. It reads
+your Gmail to find the mail your job applications generate, and it keeps what it finds in a
+database on your own disk. There is no server, no account, and nothing for me to collect.</p>
+
+<p>I am the developer. I also happen to be its only user, but because the code is public
+anyone can run their own copy, so here is exactly what it does with data.</p>
+
+<h2>What it reads</h2>
+
+<p>Career Ops asks Google for one permission, <strong>gmail.readonly</strong>. That is read
+access to your mail, and it is the narrowest scope that lets the tool do its job. It cannot
+send mail, delete mail, or change anything in your account.</p>
+
+<p>It does not read your whole mailbox. It runs a search restricted to the mail an
+application generates: messages from applicant tracking systems, and messages whose subject
+matches phrases like an application confirmation or an interview request. Personal mail
+that does not match is never fetched.</p>
+
+<h2>Where it goes</h2>
+
+<p>Onto your disk, and nowhere else. Matching messages are stored in a local SQLite database
+next to the program, alongside the companies and roles the tool works out from them. The
+classification that decides whether a message is an acknowledgement, a rejection, or noise
+runs entirely on your machine, with no network call.</p>
+
+<p class="pull">Your mail is never transmitted to me, to this website, or to any third party.</p>
+
+<p>I have no access to it. There is no telemetry, no analytics, no crash reporting, and no
+hosted component of any kind. If you delete the database file, the data is gone.</p>
+
+<h2>The one thing that does leave</h2>
+
+<p>If you configure an API key, Career Ops uses a language model to score how well a job fits
+you and to research companies. Those requests contain <strong>the text of public job postings
+and the profile you wrote about yourself</strong>, and they go to the API provider you
+configured, which for the default configuration is Anthropic. Their terms govern what happens
+to that request.</p>
+
+<p>The contents of your email are not part of those requests. If you set no API key, the tool
+makes no calls to a language model at all, and the rest of it still works.</p>
+
+<h2>Other traffic</h2>
+
+<p>To find open roles, Career Ops fetches public job boards directly, the same pages you could
+open in a browser. Those employers see an ordinary web request. No identifying information
+about you is attached.</p>
+
+<h2>Revoking access</h2>
+
+<p>You can withdraw the Gmail permission at any time from your
+<a href="https://myaccount.google.com/permissions" rel="noopener">Google account permissions
+page</a>. The tool stops working immediately; nothing already on your disk is affected. To
+remove the stored credential locally, delete the <code>token.json</code> file.</p>
+
+<h2>Contact</h2>
+
+<p>Questions about any of this go to
+<a href="mailto:sunterbb@gmail.com">sunterbb@gmail.com</a>. The source is on
+<a href="https://github.com/bsunter93/careerops" rel="noopener">GitHub</a>, so you are welcome
+to check that this page is accurate rather than take my word for it.</p>
+
+</article>
+</main>
+
+<footer class="artfoot">
+  <div class="reading">
+    <span>&copy; <span id="yr">2026</span> Benjamin J. Sunter</span>
+    <span><a href="index.html">Home</a> &middot; <a href="index.html#contact">Get in touch</a></span>
+  </div>
+</footer>
+
+<script>
+document.getElementById('yr').textContent = new Date().getFullYear();
+(function () {
+  var root = document.documentElement, saved;
+  try { saved = localStorage.getItem('theme'); } catch (e) { saved = null; }
+  if (saved === 'light' || saved === 'dark') root.setAttribute('data-theme', saved);
+})();
+</script>
+</body>
+</html>
