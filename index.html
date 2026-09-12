@@ -677,13 +677,20 @@ document.getElementById('yr').textContent = new Date().getFullYear();
 
 // The bar inverts while the hero band is behind it. Solid is the default in CSS, so
 // this only ever removes chrome; with JS off or broken the bar stays readable.
+//
+// The test has to be genuine overlap, not "the band is somewhere below". At the top of
+// the page the band starts exactly where the masthead ends, so it is not behind the bar
+// at all; the old bottom > height test was true there anyway, which made the bar go
+// transparent over light paper while the links kept their pale on-deep colour. In dark
+// mode the paper hid it. In light mode the whole header disappeared.
 (function(){
   const mh = document.querySelector('.masthead'), band = document.querySelector('.band');
   if (!mh || !band) return;
   let queued = false;
   const sync = () => {
     queued = false;
-    mh.classList.toggle('over-band', band.getBoundingClientRect().bottom > mh.offsetHeight);
+    const r = band.getBoundingClientRect(), h = mh.offsetHeight;
+    mh.classList.toggle('over-band', r.top < h && r.bottom > 0);
   };
   addEventListener('scroll', () => { if (!queued) { queued = true; requestAnimationFrame(sync); } },
                    { passive: true });
