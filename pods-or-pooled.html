@@ -133,6 +133,7 @@ details.method ul{padding-left:19px}
       <a href="#reuse">The second force</a>
       <a href="#rule">The rule</a>
       <a href="#try">Try it</a>
+      <a href="#price">What it cannot price</a>
       <a href="#caveats">Caveats</a>
     </nav>
     <div class="prog" id="prog"></div>
@@ -146,7 +147,7 @@ details.method ul{padding-left:19px}
   <p class="stand">When a support function should sit central, and when it should split into
      dedicated pods. There is an actual answer to this. It is arithmetic, it is specific to your
      numbers, and for most teams it points harder in one direction than they expect.</p>
-  <p class="by">Benjamin J. Sunter &middot; 5 minute read</p>
+  <p class="by">Benjamin J. Sunter &middot; 6 minute read</p>
 </header>
 
 <article class="reading">
@@ -199,8 +200,7 @@ details.method ul{padding-left:19px}
 
 <p>Work does not arrive evenly. Two people's worth of work does not mean two people can cover
    it, because in some hours three requests land at once and somebody has to be free to pick
-   them up. Hitting a service level means buying spare capacity on purpose. For a single pod
-   that is <strong>four people to cover two people's worth of work</strong>: two doing it, two
+   them up. Hitting a service level means buying spare capacity on purpose. The target used throughout here is <strong>80% of requests answered within two minutes</strong>, which is ordinary for a support desk. Move that target and every number on this page moves with it. For a single pod that is <strong>four people to cover two people's worth of work</strong>: two doing it, two
    absorbing the randomness.</p>
 <p>Pool all ten clients and you need <strong>24 people for twenty people's worth of work, not
    40</strong>. The randomness now cancels itself out, because one client's quiet hour covers
@@ -287,15 +287,42 @@ details.method ul{padding-left:19px}
     <p class="vsay" id="say"></p>
   </div>
 </div>
+<h2 id="price">What the math cannot price</h2>
+<p>Everything above is about cost. Three things sit outside it, and any one of them can be worth
+   more than the headcount it saves.</p>
+
+<p><strong>Somebody to call.</strong> When a deal is on the line or an enterprise client has a
+   genuine emergency, they do not want to land in an anonymous queue and rebuild context with a
+   stranger. A dedicated pod buys a named person, for the client and for your own account team,
+   and that is worth something real even when it is worth nothing on a spreadsheet.</p>
+<p>You can size it, though. Work out what pooling actually saves you in people, then work out
+   what one churned account is worth. If the saving is sixteen people and one enterprise account
+   is worth more than sixteen people, the arithmetic has just told you to buy the pod.</p>
+
+<p><strong>Switching cost.</strong> Erlang C assumes handling time is independent of whatever
+   came before it. A pooled operator moving from a regulatory edge case for one client, to an
+   onboarding setup for another, to a broken pipeline for a third, all before lunch, is not
+   really paying a handling penalty. They are paying a recovery penalty, and it shows up as
+   errors and rework. The model has no line for either.</p>
+
+<p><strong>Whose emergency wins.</strong> In a pod, priority is local and obvious. You have one
+   client, so you work on their most urgent thing. In a pool, two critical requests arriving
+   together is a judgement call somebody has to make in public, every time. Without agreed triage
+   mechanics that decays into whoever escalates loudest, which is the same failure as the queue
+   problem below and it is why the governance is not optional.</p>
+
+<p>None of this makes pods cheaper. It makes cost one axis rather than the only one.
+   <strong>If you want dedicated cover, have it. Fund it as a relationship and risk premium with
+   a number attached, rather than as an efficiency play, because as an efficiency play it
+   usually loses.</strong></p>
+
 <h2 id="caveats">Caveats and assumptions</h2>
 <p>Five places this gets weaker, and the first one can undo the whole argument.</p>
 <p><strong>Does the team only do reactive work?</strong> This is the one that matters most.
    Everything above assumes the day is interrupt-driven, so a gap between requests is genuinely
    idle. If your team also carries a roadmap, an annual plan, or project work they pick up
    between tickets, then that spare capacity is not spare. It is absorbing the other half of
-   their job, and the case for pooling weakens sharply or disappears. A business intelligence
-   pod with its own backlog is not sitting at 50% doing nothing. It is at 50% on tickets and
-   the rest on the roadmap.</p>
+   their job, and the case for pooling weakens sharply or disappears. A business intelligence pod with its own backlog spends that other 50% on the roadmap rather than staring at the wall.</p>
 
 <p><strong>Do the people have decision rights?</strong> Queueing theory prices a request as
    handling time and nothing else. It has no way to charge you for a pooled person who has to
@@ -331,9 +358,7 @@ details.method ul{padding-left:19px}
    own piece and will get one.</p>
 
 <div class="endnote">
-  <p>The uncomfortable version of this question is not whether to centralize. It is this: is our
-     work genuinely bespoke, or have we just never built anything twice? That one is answerable
-     from your own ticket history, and it is where I would start.</p>
+  <p>There is a harder question sitting under all of this. Is the work genuinely bespoke, or has nobody ever built anything twice? That one is answerable from your own ticket history, and it is where I would start.</p>
 </div>
 
 <details class="method">
