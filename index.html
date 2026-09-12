@@ -32,6 +32,7 @@
       <a href="#work">Work</a>
       <a href="#experience">Experience</a>
       <a href="#writing">Case studies</a>
+      <a href="#reading">Writing</a>
       <a href="#contact" class="nav-cta">Contact</a>
       <button type="button" id="theme" class="theme-btn" aria-label="Switch theme" title="Switch theme">
         <svg viewBox="0 0 24 24" width="15" height="15" aria-hidden="true" fill="none"
@@ -97,7 +98,7 @@
       <p style="margin-top:11px">Any system that reads your mail and decides what each message
          means will quietly start lying to you. A rule written in March stops matching the mail
          that arrives in September, nothing errors, and the dashboard still looks healthy. So
-         most of the work went into making this one doubt itself: 886 hand-labelled messages
+         most of the work went into making this one doubt itself: 886 hand-labeled messages
          every change has to clear, and a command that re-reads a year of stored records and
          reports where they and the rules have come apart.</p>
       <p style="margin-top:10px">Fixes travel backwards. Repairing a rule repairs the history,
@@ -313,9 +314,9 @@
   <span class="eyebrow">Case studies</span>
   <h2>Three problems, up close</h2>
   <p class="lede">What was actually in the way, how I worked the constraints, and where I
-     got it wrong.</p>
+     got it wrong. Open whichever one is relevant to you.</p>
 
-  <article class="study study--a">
+  <article class="study study--a" id="study-cost">
     <details class="st-wrap" open>
       <summary class="st-head">
       <span class="st-kind">Cost &amp; forecasting</span>
@@ -386,8 +387,8 @@
     </details>
   </article>
 
-  <article class="study study--b">
-    <details class="st-wrap" open>
+  <article class="study study--b" id="study-merger">
+    <details class="st-wrap">
       <summary class="st-head">
       <span class="st-kind">Program governance</span>
       <span class="st-t">Building a PMO for a deal that had not closed yet</span>
@@ -472,8 +473,8 @@
     </details>
   </article>
 
-  <article class="study study--c">
-    <details class="st-wrap" open>
+  <article class="study study--c" id="study-reporting">
+    <details class="st-wrap">
       <summary class="st-head">
       <span class="st-kind">Go to market</span>
       <span class="st-t">Making an opportunity sellable</span>
@@ -552,6 +553,26 @@
   </div>
 </section>
 
+<section id="reading" class="wrap">
+  <span class="eyebrow">Writing</span>
+  <h2>Arguments with the arithmetic done</h2>
+  <p class="lede">Operating questions people usually settle by instinct, worked through with
+     real numbers instead. Each one is short and has something you can click.</p>
+
+  <a class="post" href="pods-or-pooled.html">
+    <span class="post-kind">Operating model design</span>
+    <div class="post-body">
+      <h3>Half a Day of Nothing</h3>
+      <p>When a support function should sit central and when it should split into dedicated
+         pods. Your shared person would have to be 73% slower on every single request before
+         pods become cheaper, and almost nobody guesses anywhere near that. The number moves
+         with client size, which is the part worth knowing.</p>
+      <span class="post-go">Read it &rarr;</span>
+    </div>
+    <span class="post-meta">4 min<br><span>Sep 2026</span></span>
+  </a>
+</section>
+
 <section id="personal" class="wrap tinted">
   <span class="eyebrow">Beyond work</span>
   <h2>A few things about me</h2>
@@ -623,6 +644,22 @@
 <script>
 document.getElementById('yr').textContent = new Date().getFullYear();
 
+// A case study is foldable, so a deep link has to open the one it points at,
+// otherwise the browser scrolls to a closed summary and the visitor sees nothing.
+(function(){
+  function reveal(hash){
+    if (!hash || hash.length < 2) return;
+    let el;
+    try { el = document.querySelector(hash); } catch (e) { return; }
+    if (!el) return;
+    let d = el.closest('details') || el.querySelector('details');
+    if (d) d.open = true;
+    requestAnimationFrame(() => el.scrollIntoView({ block: 'start' }));
+  }
+  reveal(location.hash);
+  addEventListener('hashchange', () => reveal(location.hash));
+})();
+
 // Theme. Default follows the OS; a click pins the other one and it sticks. Stored
 // reads are wrapped because a private window can throw on access rather than return null.
 (function(){
@@ -681,7 +718,7 @@ document.getElementById('yr').textContent = new Date().getFullYear();
 // The test has to be genuine overlap, not "the band is somewhere below". At the top of
 // the page the band starts exactly where the masthead ends, so it is not behind the bar
 // at all; the old bottom > height test was true there anyway, which made the bar go
-// transparent over light paper while the links kept their pale on-deep colour. In dark
+// transparent over light paper while the links kept their pale on-deep color. In dark
 // mode the paper hid it. In light mode the whole header disappeared.
 (function(){
   const mh = document.querySelector('.masthead'), band = document.querySelector('.band');

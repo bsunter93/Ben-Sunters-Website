@@ -472,3 +472,25 @@ h1{font:600 clamp(36px,5.4vw,53px)/1.06 var(--display);letter-spacing:-.026em;ma
 footer{padding:26px 0 44px;border-top:1px solid var(--hair);
   font:400 12.5px/1.6 var(--mono);color:var(--muted);
   display:flex;justify-content:space-between;flex-wrap:wrap;gap:10px}
+
+/* ── writing index ───────────────────────────────────────────────────────
+   Built as a list that reads correctly with one entry and still reads
+   correctly with twelve, so it never needs rebuilding as the count grows. */
+.post{display:grid;grid-template-columns:150px minmax(0,1fr) 78px;gap:0 24px;
+  align-items:start;padding:26px 0;border-top:1px solid var(--line);
+  border-bottom:1px solid var(--line);text-decoration:none;color:inherit}
+.post + .post{border-top:0}
+.post:hover{background:var(--tint)}
+.post:hover h3{color:var(--accent)}
+.post-kind{font:500 10.5px/1.5 var(--mono);letter-spacing:.12em;text-transform:uppercase;
+  color:var(--muted);padding-top:5px}
+.post-body h3{font:600 23px/1.2 var(--display);letter-spacing:-.016em;margin-bottom:9px;
+  transition:color .15s ease}
+.post-body p{margin:0;font-size:15.5px;color:var(--muted);max-width:58ch}
+.post-go{display:inline-block;margin-top:13px;font:500 13px/1 var(--sans);color:var(--accent)}
+.post-meta{font:400 11.5px/1.6 var(--mono);color:var(--faint);text-align:right;padding-top:5px}
+@media (max-width:760px){
+  .post{grid-template-columns:1fr;gap:8px;padding:22px 0}
+  .post-meta{text-align:left;padding-top:0}
+  .post-kind{padding-top:0}
+}
