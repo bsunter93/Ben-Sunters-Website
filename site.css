@@ -494,3 +494,30 @@ footer{padding:26px 0 44px;border-top:1px solid var(--hair);
   .post-meta{text-align:left;padding-top:0}
   .post-kind{padding-top:0}
 }
+
+/* ── experience: one obvious disclosure per role ──────────────────────────
+   The detail bullets are the bulk of this section and they are also the part a
+   skimming reader can skip. Folding them is only safe if the control reads as a
+   real button, so it gets a border, a fill, a count of what is inside and a
+   chevron. A bare summary marker would lose people, and losing people here is
+   the whole risk. */
+.job-detail{margin-top:20px}
+.job-open{
+  display:flex;align-items:center;gap:11px;cursor:pointer;list-style:none;
+  border:1.5px solid var(--accent);border-radius:5px;background:var(--accent-soft);
+  padding:13px 16px;font:600 13.5px/1 var(--sans);color:var(--accent);
+  transition:background .14s ease,color .14s ease;
+}
+.job-open::-webkit-details-marker{display:none}
+.job-open::marker{content:""}
+.job-open:hover,.job-open:focus-visible{background:var(--accent);color:var(--paper)}
+.jo-label{flex:1}
+.jo-count{font:500 11.5px/1 var(--mono);opacity:.75;letter-spacing:.04em}
+.jo-chev{width:0;height:0;flex:none;
+  border-left:6px solid currentColor;border-top:4.5px solid transparent;
+  border-bottom:4.5px solid transparent;transition:transform .16s ease}
+.job-detail[open] .jo-chev{transform:rotate(90deg)}
+.job-detail[open] .job-open{background:transparent;color:var(--muted);border-color:var(--line)}
+.job-detail[open] .job-open:hover{color:var(--accent);border-color:var(--accent)}
+.jd-body{padding-top:4px}
+@media (prefers-reduced-motion:reduce){.jo-chev,.job-open{transition:none}}
