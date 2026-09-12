@@ -155,6 +155,18 @@ details.method ul{padding-left:19px}
   width:26px;height:26px;border-radius:50%;background:var(--accent);color:var(--paper);
   font:600 13px/26px var(--mono);text-align:center}
 .howto-steps b{color:var(--ink);font-weight:600}
+
+/* Three percentages on this page mean three different things. This sits on the
+   hinge between the penalty and the occupancy sections so nobody conflates them. */
+.defs{display:grid;grid-template-columns:1fr 1fr;gap:0 30px;margin:34px 0 6px;
+  padding:20px 22px;background:var(--tint);border-top:2px solid var(--accent);border-radius:0 0 5px 5px}
+.defs-t{display:block;font:500 10.5px/1 var(--mono);letter-spacing:.14em;text-transform:uppercase;
+  color:var(--accent);margin-bottom:8px}
+.defs p{margin:0;font-size:15px;line-height:1.55;color:var(--body);max-width:none}
+.defs-note{grid-column:1 / -1;margin-top:16px!important;padding-top:14px;
+  border-top:1px solid var(--line);color:var(--muted)!important;font-size:14.5px!important}
+@media (max-width:640px){.defs{grid-template-columns:1fr;gap:20px}
+  .defs-note{margin-top:4px!important}}
 </style>
 </head>
 <body>
@@ -244,6 +256,21 @@ details.method ul{padding-left:19px}
 <p>So almost none of it is about how fast anybody works. It is ten small teams each buying their own reserve, against one team that buys it once.</p>
 <p>Most estimates of that penalty land around twenty or thirty percent. Even at thirty, you
    are nine people better off pooling.</p>
+
+<div class="defs">
+  <div>
+    <span class="defs-t">Context penalty</span>
+    <p>How much longer a request takes when whoever picks it up does not know the client.
+       The 73% above is this.</p>
+  </div>
+  <div>
+    <span class="defs-t">Occupancy</span>
+    <p>How much of the working day somebody spends actually handling requests rather than
+       waiting. The 50% and 83% below are this.</p>
+  </div>
+  <p class="defs-note">Two different things, and they move independently. A team can be busy
+     all day and still slow on a client it does not know.</p>
+</div>
 
 <h2 id="why">Why the gap is so big</h2>
 <p>None of this is because pooled people work faster. Dedicated people just spend more of the
