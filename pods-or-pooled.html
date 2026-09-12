@@ -276,14 +276,21 @@ details.method ul{padding-left:19px}
 </div>
 
 <h2 id="meet">Where the two forces meet</h2>
-<p>The two forces meet here, and it lands on something you can work out on a napkin.
-   <strong>Reusable work carries no context penalty at all.</strong></p>
+<p>Put the two together and you get one number you can do in your head.
+   <strong>Reusable work carries no context penalty at all.</strong> A query does not care
+   whose data it is filtering, so the slowdown only ever applies to the one-off part.</p>
 <figure class="ch">
   <div class="frame">
 <svg viewBox="0 0 760 252" role="img" aria-label="Working out your real context penalty. A bar of all the work, 70 percent reusable and 30 percent one off. Only the one-off slice is slower for a shared person. Thirty percent times forty percent gives a real penalty of twelve percent."><text class="hd" x="40" y="26">WORKING OUT YOUR REAL CONTEXT PENALTY</text><text class="occ2" x="40" y="46">an example team, 70% of whose work is reusable</text><rect x="40" y="78" width="420.0" height="48" rx="4" fill="var(--accent)" opacity=".20"/><rect x="460.0" y="78" width="180.0" height="48" rx="4" fill="var(--warm)"/><text class="lab" x="250.0" y="108" text-anchor="middle" fill="var(--accent)">Built once, reused &#183; 70%</text><text class="lab" x="550.0" y="108" text-anchor="middle" fill="#fff">One-off &#183; 30%</text><path d="M460.0 133 L460.0 140 L640 140 L640 133" fill="none" stroke="var(--warm)" stroke-width="1.5"/><line x1="550.0" y1="140" x2="550.0" y2="152" stroke="var(--warm)" stroke-width="1.5"/><text class="val" x="550.0" y="170" text-anchor="middle" fill="var(--warm)">only this part is slower</text><rect x="40" y="190" width="600" height="44" rx="5" fill="var(--tint)"/><text class="eqp" x="60" y="218">30%</text><text class="eqs" x="120" y="218">of the work</text><text class="eqp" x="228" y="218">&#215;</text><text class="eqp" x="258" y="218">40%</text><text class="eqs" x="318" y="218">slower on it</text><text class="eqp" x="432" y="218">=</text><text class="eqbig" x="464" y="222">12%</text><text class="eqs" x="540" y="218">your real penalty</text></svg>
   </div>
-  <figcaption>Then hold that number up against the curve from earlier. Twelve is a long way under seventy-three.</figcaption>
+  <figcaption>Only the one-off slice is slower, so that is the only slice the penalty applies to.</figcaption>
 </figure>
+
+<p>Say a third of the work is one-off, and a shared person is 40% slower on that part. Then
+   the penalty you actually pay is 40% of a third. <strong>About 12%.</strong></p>
+<p>The crossover for a client this size was <strong>73%</strong>. Twelve is nowhere near it,
+   so you pool. That is the entire calculation, and it is the one the sliders below are
+   doing.</p>
 
 <h2 id="try">Try it with your numbers</h2>
 <div class="calc">
