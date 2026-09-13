@@ -548,11 +548,34 @@
          team it was sitting on. Nobody had that view before. Those reports went up to the
          CIO, and that is what did the work: once a VP knows the row with their name on it
          is read two levels above them, they push each other and nobody has to be chased.</p>
+      <h3>Why deployments kept missing their dates</h3>
+      <p>On-time launch deployments sat around 74%. The causes were not technical. Teams
+         were miscommunicating, documentation was wrong, and every team tracked milestones
+         its own way. More than a dozen vendor teams were on the program and none of their
+         tracking was standardized, so there was no way to see real status without asking
+         each of them and taking the answer on faith.</p>
+      <p>That gap is why I learned SQL and built automated reporting in Tableau. With
+         dozens of teams updating constantly, a near real-time view was the only thing that
+         would hold: code drop status by release, by parent initiative, and by team and
+         function, with links through to where the design and development artifacts
+         actually lived in Jira.</p>
+      <p>On top of the view I put a standardized process with defined acceptance gates,
+         each one requiring sign-off from the teams a drop affected, and used the report as
+         the source of truth teams aligned against. On-time deployments went from 74% to
+         over 95% in under three months.</p>
       <h3>Every report, ported to a tool I had never used</h3>
       <p>Mid-quarter, the client switched licensing from Tableau to Power BI and asked me
          to port every report across. I had never used Power BI, and it is different enough
          from Tableau in both capability and interface that it was not a translation job. I
          learned it on the fly and got the reporting back up.</p>
+      <h3>What I got wrong</h3>
+      <p>I should have standardized intake at the start. By the time I could see that the
+         existing reporting was insufficient and was itself enabling the misses, more than
+         a dozen vendor teams had each built their own ad hoc tracking and none of it
+         talked to anything else. The job stopped being defining a standard and became
+         meeting each team one at a time and building a translation layer back from
+         whatever they had already committed to. None of that would have been necessary if
+         I had set the format before the teams built their own.</p>
       </div>
     </details>
       </div>
