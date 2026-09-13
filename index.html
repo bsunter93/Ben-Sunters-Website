@@ -31,8 +31,8 @@
     <nav>
       <a href="#work">Work</a>
       <a href="#experience">Experience</a>
-      <a href="#writing">Case studies</a>
-      <a href="#opinions">Writing</a>
+      <a href="#case-studies">Case studies</a>
+      <a href="#writing">Writing</a>
       <a href="#contact" class="nav-cta">Contact</a>
       <button type="button" id="menu" class="menu-btn" aria-label="Menu" aria-expanded="false" aria-controls="mobile-nav">
         <svg viewBox="0 0 24 24" width="17" height="17" aria-hidden="true" fill="none"
@@ -58,8 +58,8 @@
   <a href="#method">How I work</a>
   <a href="#bring">What I bring</a>
   <a href="#experience">Experience</a>
-  <a href="#writing">Case studies</a>
-  <a href="#opinions">Writing</a>
+  <a href="#case-studies">Case studies</a>
+  <a href="#writing">Writing</a>
   <a href="#contact">Contact</a>
   <a href="Benjamin-Sunter-Resume.pdf">Resume (PDF)</a>
 </nav>
@@ -107,8 +107,7 @@
 <section id="method" class="wrap">
   <span class="eyebrow">How I work</span>
   <h2>Five steps, in order</h2>
-  <p class="lede">The same sequence on a merger, a cost program and an annual planning cycle.
-     The simulator below is this method running end to end on a fictional company's numbers.</p>
+  <p class="lede">The same sequence on a merger, a cost program and an annual planning cycle.</p>
   <ol class="method">
     <li><b>Frame</b><p>Name the decision actually being made, and who owns it.</p></li>
     <li><b>Model</b><p>Turn the ambiguity into constraints, resources, dependencies and dates.</p></li>
@@ -116,6 +115,8 @@
     <li><b>Intervene</b><p>Compare the options on impact, on cost, and on when the effect lands.</p></li>
     <li><b>Operationalize</b><p>Hand it over as ownership, cadence, and a number that keeps arriving.</p></li>
   </ol>
+  <p class="method-handoff">The simulator below is this method running end to end, on a fictional
+     company's numbers. <a href="simulator/">Open it &rarr;</a></p>
 </section>
 
 <section id="bring" class="wrap">
@@ -128,7 +129,7 @@
         <path d="M9.5 8 L24 22 M9.5 17 L24 22 M9.5 27 L24 22 M9.5 36 L24 22" fill="none" stroke="currentColor" stroke-width="1.3" opacity=".55"/>
         <rect x="24" y="19" width="16" height="6" rx="1.5"/>
       </svg>
-      <div class="bring-stat"><b>$B</b><span>planned on one set of numbers</span></div>
+      <div class="bring-stat"><b>200+</b><span>stakeholders, one annual plan</span></div>
       <h3>A plan the functions actually sign</h3>
       <p>Built with the teams rather than handed to them. Annual planning and budget for a $B business; the OKR
          architecture a COO adopted into the next year's operating plan.</p>
@@ -142,7 +143,7 @@
         <rect x="4" y="36" width="5" height="5" rx="1"/><rect x="12" y="36" width="5" height="5" rx="1"/><rect x="20" y="36" width="5" height="5" rx="1"/><rect x="28" y="36" width="5" height="5" rx="1"/><rect x="36" y="36" width="5" height="5" rx="1"/></g>
         <rect x="20" y="20" width="13" height="13" rx="1.5"/>
       </svg>
-      <div class="bring-stat"><b>56</b><span>initiatives · 24 workstreams · 16 VPs</span></div>
+      <div class="bring-stat"><b>56</b><span>initiatives across 4 product areas</span></div>
       <h3>Governance that scales past one room</h3>
       <p>Fifty-six initiatives across four product areas, through weekly forums and VP QBRs. On
          the merger, none of the 16 VPs reported to me.</p>
@@ -153,10 +154,11 @@
         <path d="M5 21 L14 15 L23 17 L36 6" fill="none" stroke="currentColor" stroke-width="2"/>
         <circle cx="36" cy="6" r="3"/>
       </svg>
-      <div class="bring-stat"><b>8 figures</b><span>incremental revenue from one report</span></div>
+      <div class="bring-stat"><b>11,000+</b><span>user stories under one view</span></div>
       <h3>Reporting that changes decisions</h3>
-      <p>The SQL and Looker layer that joined pipeline to product adoption. A Tableau compliance layer across 60+ projects and 11,000+ user
-         stories. </p>
+      <p>The SQL and Looker layer that joined pipeline to product adoption, and the eight
+         figures of incremental revenue that came off it. A Tableau compliance layer across
+         60+ projects.</p>
     </div>
     <div class="bring-item" style="--co:var(--steel)">
       <svg class="bring-ico" viewBox="0 0 44 44" width="44" height="44" aria-hidden="true">
@@ -173,20 +175,22 @@
 
 <section id="work" class="wrap">
   <span class="eyebrow">Start here</span>
-  <h2>Three things to look at</h2>
-  <p class="lede">Three things I built and shipped, all open source. </p>
+  <h2>Three things I built</h2>
+  <p class="lede">When the system a plan needs does not exist, I do not wait for a software
+     team. Three I built, shipped and open sourced.</p>
   <div class="trio">
     <a class="trio-card" href="simulator/">
       <img src="og-simulator.jpg" alt="Operating Model Simulator: a team's monthly work against what it can handle" width="1200" height="630" loading="lazy">
-      <span class="proj-kind">Interactive model</span>
+      <span class="proj-kind">Systems thinking · Interactive model</span>
       <h3>Operating Model Simulator</h3>
       <p>Can this organization actually execute the plan? A month-by-month model of a fictional
          company: which team hits its capacity limit first, which initiatives are at risk, and
-         what each fix changes, on what date, for how much. Runs on your own numbers too.</p>
+         what each fix changes, on what date, for how much. Runs on your own numbers too.
+         I built it because it is how I actually work.</p>
       <span class="playlink">Open the simulator &rarr;</span>
     </a>
     <a class="trio-card" href="careerops.html">
-      <span class="proj-kind">Pipeline tooling · Open source</span>
+      <span class="proj-kind">Automation and data integrity · Open source</span>
       <h3>Career Ops</h3>
       <p>Any system that reads your mail and decides what each message means will quietly start
          lying to you. This one doubts itself: 886 hand-labeled messages every change has to
@@ -194,7 +198,7 @@
       <span class="playlink">Read the write-up &rarr;</span>
     </a>
     <a class="trio-card" href="commentpulse.html">
-      <span class="proj-kind">Browser tool · Open source</span>
+      <span class="proj-kind">Operational tooling · Open source</span>
       <h3>CommentPulse</h3>
       <p>Google Sheets keeps comments where you cannot sort, count, or export them. Drop in the workbook you already downloaded and every thread comes back in
          order, with the tab and cell it sits on, its replies, and whether it was resolved. No
@@ -222,6 +226,8 @@
       <div class="joblogo"><img src="ih-logo.png" alt="Included Health" width="98" height="21" loading="lazy"></div>
       <h3>Business Operations Manager</h3>
       <div class="org">Included Health</div>
+      <p class="jobwhy"><span>Here to solve</span>Stand up a new line of business, and make the cost of
+         running the work visible early enough in the year to act on it.</p>
             <p class="jobsec">Scope</p>
       <ul class="scope">
         <li>New line of business</li>
@@ -279,6 +285,8 @@
 </svg></div>
       <h3>Google Global Partnerships</h3>
       <div class="org">First Party Data Solutions Consultant · Program Manager, Sellside Partnerships</div>
+      <p class="jobwhy"><span>Here to solve</span>Get a fragmented regional partnerships
+         organization planning, selling and reporting as one business.</p>
             <p class="jobsec">Scope</p>
       <ul class="scope">
         <li>7 vertical teams</li>
@@ -341,6 +349,8 @@
       <div class="joblogo"><img src="accenture-logo.png" alt="Accenture" width="80" height="21" loading="lazy"></div>
       <h3>Program Manager</h3>
       <div class="org">Accenture</div>
+      <p class="jobwhy"><span>Here to solve</span>Build the operating machinery five years of
+         integration would run on, before the deal had closed.</p>
             <p class="jobsec">Scope</p>
       <ul class="scope">
         <li>16 VPs</li>
@@ -391,7 +401,7 @@
   </div>
 </section>
 
-<section id="writing" class="wrap">
+<section id="case-studies" class="wrap">
   <span class="eyebrow">Case studies</span>
   <h2>Three problems, up close</h2>
   <p class="lede">What was actually in the way, how I worked the constraints, and where I
@@ -439,7 +449,7 @@
         <figcaption>A gap you can see in January is a plan. The same gap in October is a headcount cut.</figcaption>
       </figure>
     <details class="st-more">
-      <summary>How it went</summary>
+      <summary>How it went, and what I got wrong</summary>
       <div class="st-body">
       <h3>Before</h3>
       <p>An $18M cost-of-revenue target, and only about half the initiatives under it had
@@ -469,7 +479,7 @@
   </article>
 
   <article class="study study--b" id="study-merger">
-    <details class="st-wrap">
+    <details class="st-wrap" open>
       <summary class="st-head">
       <span class="st-kind">Program governance</span>
       <span class="st-t">Building a PMO for a deal that had not closed yet</span>
@@ -511,7 +521,7 @@
           they were written, and the pause is what made them wrong.</figcaption>
       </figure>
     <details class="st-more">
-      <summary>How it went</summary>
+      <summary>How it went, and what I got wrong</summary>
       <div class="st-body">
       <p>Nothing was broken here. Nothing existed yet. The client was standing up a PMO
          ahead of the merger and my team was on the ground floor, building the machinery
@@ -577,7 +587,7 @@
   </article>
 
   <article class="study study--c" id="study-reporting">
-    <details class="st-wrap">
+    <details class="st-wrap" open>
       <summary class="st-head">
       <span class="st-kind">Go to market</span>
       <span class="st-t">Making an opportunity sellable</span>
@@ -606,7 +616,7 @@
         <figcaption>Until the number existed, sellers were arguing about a figure nobody had produced.</figcaption>
       </figure>
     <details class="st-more">
-      <summary>How it went</summary>
+      <summary>How it went, and what I got wrong</summary>
       <div class="st-body">
       <p>Sellers already had the list. That was never the constraint. What they could not
          do was tell a publisher what the opportunity was worth, so it kept losing to
@@ -647,7 +657,7 @@
 
 </section>
 
-<section id="opinions" class="wrap">
+<section id="writing" class="wrap">
   <span class="eyebrow">Writing</span>
   <h2>Questions I keep coming back to</h2>
   <p class="lede">Operating problems that usually get settled by instinct. These are the ones where I did the math. Each has something you can play with.</p>
@@ -708,9 +718,10 @@
   <div class="contact-grid">
     <div>
       <h2>Let's talk</h2>
-      <p class="lede" style="margin-bottom:22px">I am always glad to talk with teams working on
-        strategy and operations problems, particularly the messy cross-functional kind that
-        arrive without a clear owner. </p>
+      <p class="lede" style="margin-bottom:22px">If you need someone to take an ambiguous
+        cross-functional problem, structure it, put numbers on it and leave behind the cadence
+        that keeps it moving, that is the work I want. Particularly the kind that arrives
+        without a clear owner.</p>
       <div class="links">
         <a class="btn solid" href="mailto:sunterbb@gmail.com">sunterbb@gmail.com</a>
         <a class="btn" href="https://www.linkedin.com/in/benjamin-sunter" rel="noopener">LinkedIn</a>
