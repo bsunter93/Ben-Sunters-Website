@@ -65,6 +65,9 @@ h1,h2,h3{color:var(--ink);text-wrap:balance;margin:0}
   color:var(--accent); display:flex; align-items:center; gap:9px; margin-bottom:18px;
 }
 .eyebrow:before{content:"";width:22px;height:2px;background:var(--warm);flex:none}
+.eyebrow b{font-weight:600;color:var(--warm);letter-spacing:.1em;flex:none}
+.eyebrow b:after{content:"";display:inline-block;width:1px;height:9px;margin:0 0 -1px 9px;
+  background:var(--line);vertical-align:baseline}
 section{padding:var(--gap) 0;border-top:1px solid var(--hair)}
 .tinted{background:var(--tint);border-top:1px solid var(--line)}
 section:first-of-type{border-top:0}
