@@ -45,6 +45,12 @@
       <a href="index.html#experience">Experience</a>
       <a href="index.html#writing">Case studies</a>
       <a href="index.html#contact" class="nav-cta">Contact</a>
+      <button type="button" id="menu" class="menu-btn" aria-label="Menu" aria-expanded="false" aria-controls="mobile-nav">
+        <svg viewBox="0 0 24 24" width="17" height="17" aria-hidden="true" fill="none"
+             stroke="currentColor" stroke-width="1.9" stroke-linecap="round">
+          <path d="M4 7h16M4 12h16M4 17h16"/>
+        </svg>
+      </button>
       <button type="button" id="theme" class="theme-btn" aria-label="Switch theme" title="Switch theme">
         <svg viewBox="0 0 24 24" width="15" height="15" aria-hidden="true" fill="none"
              stroke="currentColor" stroke-width="1.9" stroke-linecap="round">
@@ -55,6 +61,16 @@
     </nav>
   </div>
 </header>
+
+<nav id="mobile-nav" class="mobile-nav" hidden aria-label="Sections">
+  <a href="index.html#work">Work</a>
+  <a href="index.html#bring">What I bring</a>
+  <a href="index.html#experience">Experience</a>
+  <a href="index.html#writing">Case studies</a>
+  <a href="index.html#opinions">Writing</a>
+  <a href="index.html#contact">Contact</a>
+  <a href="Benjamin-Sunter-Resume.pdf">Resume (PDF)</a>
+</nav>
 
 <main>
 <section class="wrap projpage">
@@ -173,6 +189,30 @@ OK   unapplied alias
 
 <script>
 document.getElementById('yr').textContent = new Date().getFullYear();
+
+// Below 660px the section links are hidden, so without this there is no way back to the
+// home page's sections except the browser. Same panel as the home page.
+(function () {
+  var btn = document.getElementById('menu'), panel = document.getElementById('mobile-nav');
+  if (!btn || !panel) return;
+  var head = document.querySelector('.masthead');
+  function setOpen(open) {
+    if (open && head) panel.style.top = Math.round(head.getBoundingClientRect().bottom) + 'px';
+    panel.hidden = !open;
+    btn.setAttribute('aria-expanded', open ? 'true' : 'false');
+  }
+  btn.addEventListener('click', function (e) { e.stopPropagation(); setOpen(panel.hidden); });
+  panel.addEventListener('click', function (e) { if (e.target.tagName === 'A') setOpen(false); });
+  document.addEventListener('click', function (e) {
+    if (!panel.hidden && !panel.contains(e.target) && e.target !== btn) setOpen(false);
+  });
+  document.addEventListener('keydown', function (e) {
+    if (e.key === 'Escape' && !panel.hidden) { setOpen(false); btn.focus(); }
+  });
+  window.addEventListener('resize', function () {
+    if (window.innerWidth > 660 && !panel.hidden) setOpen(false);
+  });
+})();
 
 // Theme, same contract as the home page: the OS decides unless a click pins one, and a
 // pinned choice persists. Reads are wrapped because a private window can throw on access

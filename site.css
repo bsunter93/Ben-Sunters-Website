@@ -564,3 +564,28 @@ footer{padding:26px 0 44px;border-top:1px solid var(--hair);
 .also a:hover{text-decoration:none;color:var(--ink)}
 .also a b{color:var(--ink);font-weight:600;margin-right:6px}
 @media (max-width:640px){.also{grid-template-columns:1fr}.also-l{grid-row:auto}}
+
+/* ── mobile navigation ─────────────────────────────────────────────────── */
+.menu-btn{display:none;align-items:center;justify-content:center;width:32px;height:32px;
+  padding:0;border:1px solid transparent;border-radius:2px;background:transparent;
+  color:var(--muted);cursor:pointer}
+.menu-btn:hover{color:var(--ink);border-color:var(--line)}
+.menu-btn[aria-expanded="true"]{color:var(--ink);border-color:var(--line)}
+.over-band .menu-btn{color:var(--on-deep-mut)}
+.over-band .menu-btn:hover,.over-band .menu-btn[aria-expanded="true"]{color:#fff;border-color:rgba(255,255,255,.3)}
+.mobile-nav{display:none}
+@media (max-width:660px){
+  .menu-btn{display:inline-flex}
+  /* The three controls have to fit beside the name at 375px or the name wraps. */
+  .masthead .wrap{gap:12px}
+  .masthead nav{gap:12px}
+  .mark{font-size:14px;white-space:nowrap}
+  .mobile-nav{display:block;position:fixed;top:61px;left:0;right:0;z-index:60;
+    background:var(--surface);border-bottom:1px solid var(--line);
+    box-shadow:0 10px 30px rgba(0,0,0,.16);padding:6px 0}
+  .mobile-nav[hidden]{display:none}
+  .mobile-nav a{display:block;padding:13px clamp(20px,5vw,44px);
+    font:500 15px/1 var(--sans);color:var(--ink);border-bottom:1px solid var(--hair)}
+  .mobile-nav a:last-child{border-bottom:0;color:var(--accent)}
+  .mobile-nav a:hover,.mobile-nav a:focus-visible{background:var(--tint);text-decoration:none}
+}

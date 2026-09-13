@@ -34,6 +34,12 @@
       <a href="#writing">Case studies</a>
       <a href="#opinions">Writing</a>
       <a href="#contact" class="nav-cta">Contact</a>
+      <button type="button" id="menu" class="menu-btn" aria-label="Menu" aria-expanded="false" aria-controls="mobile-nav">
+        <svg viewBox="0 0 24 24" width="17" height="17" aria-hidden="true" fill="none"
+             stroke="currentColor" stroke-width="1.9" stroke-linecap="round">
+          <path d="M4 7h16M4 12h16M4 17h16"/>
+        </svg>
+      </button>
       <button type="button" id="theme" class="theme-btn" aria-label="Switch theme" title="Switch theme">
         <svg viewBox="0 0 24 24" width="15" height="15" aria-hidden="true" fill="none"
              stroke="currentColor" stroke-width="1.9" stroke-linecap="round">
@@ -46,6 +52,16 @@
 </header>
 
 <main>
+
+<nav id="mobile-nav" class="mobile-nav" hidden aria-label="Sections">
+  <a href="#work">Work</a>
+  <a href="#bring">What I bring</a>
+  <a href="#experience">Experience</a>
+  <a href="#writing">Case studies</a>
+  <a href="#opinions">Writing</a>
+  <a href="#contact">Contact</a>
+  <a href="Benjamin-Sunter-Resume.pdf">Resume (PDF)</a>
+</nav>
 
 <div class="band"><section class="hero wrap">
   <div class="hero-grid">
@@ -694,6 +710,38 @@
 
 <script>
 document.getElementById('yr').textContent = new Date().getFullYear();
+
+// Below 660px the section links are hidden, so without this there is no way to
+// navigate except scrolling. Panel, not a drawer: it is seven links.
+(function () {
+  var btn = document.getElementById('menu'), panel = document.getElementById('mobile-nav');
+  if (!btn || !panel) return;
+  var head = document.querySelector('.masthead');
+  function setOpen(open) {
+    // The masthead grows if the name wraps, so read its real bottom rather than
+    // trusting the CSS fallback, otherwise the panel slides under the header.
+    if (open && head) panel.style.top = Math.round(head.getBoundingClientRect().bottom) + 'px';
+    panel.hidden = !open;
+    btn.setAttribute('aria-expanded', open ? 'true' : 'false');
+  }
+  btn.addEventListener('click', function (e) {
+    e.stopPropagation();
+    setOpen(panel.hidden);
+  });
+  panel.addEventListener('click', function (e) {
+    if (e.target.tagName === 'A') setOpen(false);
+  });
+  document.addEventListener('click', function (e) {
+    if (!panel.hidden && !panel.contains(e.target) && e.target !== btn) setOpen(false);
+  });
+  document.addEventListener('keydown', function (e) {
+    if (e.key === 'Escape' && !panel.hidden) { setOpen(false); btn.focus(); }
+  });
+  // A resize past the breakpoint leaves the panel stranded open over the desktop layout.
+  window.addEventListener('resize', function () {
+    if (window.innerWidth > 660 && !panel.hidden) setOpen(false);
+  });
+})();
 
 // A case study is foldable, so a deep link has to open the one it points at,
 // otherwise the browser scrolls to a closed summary and the visitor sees nothing.
