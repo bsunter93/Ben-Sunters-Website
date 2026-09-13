@@ -1,0 +1,175 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Add-on privacy</title>
+<meta name="description" content="What Comment Export for Sheets does with your data. It runs inside your Google account and sends nothing anywhere.">
+<meta name="author" content="Benjamin J. Sunter">
+<meta name="color-scheme" content="light dark">
+<link rel="canonical" href="https://bensunter.com/addon-privacy.html">
+<meta name="robots" content="index,follow">
+<link rel="icon" href="favicon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<meta name="theme-color" content="#0B3A40">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600&family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600&display=swap">
+<link rel="stylesheet" href="site.css">
+<style>
+.reading{max-width:680px;margin:0 auto;padding-inline:clamp(18px,5vw,32px)}
+.artbar{position:sticky;top:0;z-index:30;background:color-mix(in srgb,var(--paper) 94%,transparent);
+  backdrop-filter:saturate(180%) blur(12px);border-bottom:1px solid var(--line)}
+.artbar .inner{max-width:1020px;margin:0 auto;padding-inline:clamp(18px,5vw,32px);
+  display:flex;align-items:center;justify-content:space-between;gap:18px;height:54px}
+.artbar a{font:600 14px/1 var(--display);color:var(--ink);text-decoration:none}
+.artbar a:hover{color:var(--accent)}
+.artbar .kind{font:500 11px/1 var(--mono);letter-spacing:.14em;text-transform:uppercase;color:var(--muted)}
+.arthead{padding:clamp(36px,6vw,64px) 0 4px}
+.arthead .kicker{display:flex;align-items:center;gap:9px;font:500 10.5px/1 var(--mono);
+  letter-spacing:.14em;text-transform:uppercase;color:var(--muted);margin-bottom:16px}
+.arthead .kicker:before{content:"";width:20px;height:2px;background:var(--warm)}
+.arthead h1{font:600 clamp(31px,5vw,45px)/1.08 var(--display);letter-spacing:-.024em}
+.arthead .by{margin-top:20px;font:400 12.5px/1 var(--mono);color:var(--muted)}
+.reading p{font-size:17px;line-height:1.7;margin:0 0 19px}
+.reading p.open{font-size:19px;line-height:1.58;color:var(--ink)}
+.reading h2{font:600 22px/1.25 var(--display);letter-spacing:-.012em;margin:36px 0 12px}
+.reading strong{color:var(--ink);font-weight:600}
+.reading ul{margin:0 0 19px;padding-left:22px;font-size:17px;line-height:1.7}
+.reading li{margin:0 0 9px}
+.pull{font:600 clamp(19px,2.4vw,23px)/1.4 var(--display);color:var(--ink);
+  border-left:3px solid var(--warm);padding:6px 0 6px 22px;margin:32px 0}
+.artfoot{border-top:1px solid var(--line);margin-top:52px;padding:26px 0 60px}
+.artfoot .reading{display:flex;gap:20px;flex-wrap:wrap;justify-content:space-between;
+  font-size:13.5px;color:var(--muted)}
+</style>
+</head>
+<body>
+
+<div class="artbar">
+  <div class="inner">
+    <a href="index.html">&larr; Benjamin J. Sunter</a>
+    <span class="kind">Add-on privacy</span>
+  </div>
+</div>
+
+<main>
+<header class="reading arthead">
+  <div class="kicker">Comment Export for Sheets</div>
+  <h1>Privacy</h1>
+  <p class="by">Updated September 2026</p>
+</header>
+
+<article class="reading">
+
+<p class="open">Comment Export for Sheets&trade; reads the comments in a spreadsheet you
+open it in, and writes them into a tab in that same spreadsheet. Nothing is sent anywhere
+else. There is no server behind it, no account, and no database, so there is nothing for me
+to collect and nothing for me to lose.</p>
+
+<p>I am the developer, and I have written this page to describe exactly what the add-on
+does rather than to cover myself. If any of it turns out to be inaccurate, tell me and I
+will correct it.</p>
+
+<h2>What it asks for</h2>
+
+<p>The add-on requests three permissions, and these are the narrowest ones that let it
+work:</p>
+
+<ul>
+<li><strong>See, edit, create and delete only the specific Google Drive files you use this
+    app with</strong> (<code>drive.file</code>). This is granted one file at a time, by you,
+    when you press <em>Grant access to this file</em>. The add-on cannot see any other file
+    in your Drive, and it is never given broad Drive access.</li>
+<li><strong>View and manage the spreadsheet this application is used in</strong>
+    (<code>spreadsheets.currentonly</code>). This is what lets it write the results tab back
+    into the spreadsheet you are in.</li>
+<li><strong>Connect to an external service</strong> (<code>script.external_request</code>).
+    The only address it ever contacts is <code>googleapis.com</code>, Google's own API, to
+    ask for a copy of the spreadsheet you granted access to. It contacts no other host.</li>
+</ul>
+
+<p class="pull">The add-on has no server of its own. There is no address your data could be
+sent to, because I do not operate one.</p>
+
+<h2>What it actually does when you press the button</h2>
+
+<ul>
+<li>It asks Google's Drive API to export the spreadsheet you granted access to.</li>
+<li>It reads the comment records out of that export. This happens inside Google Apps Script,
+    running under your own account, on Google's infrastructure.</li>
+<li>It writes a tab named <strong>Comment Export</strong> into the same spreadsheet,
+    containing the sheet and cell each comment sits on, who wrote it, when, whether it is
+    resolved, and its replies.</li>
+<li>The copy it worked from is discarded when the run ends.</li>
+</ul>
+
+<p>Your comments never leave your Google account. They go from your spreadsheet, through
+Google's own infrastructure, back into your spreadsheet.</p>
+
+<h2>What I collect</h2>
+
+<p><strong>Nothing.</strong> I have no analytics in this add-on, no error reporting service,
+no usage tracking, no mailing list signup, and no way to see who has installed it beyond the
+aggregate install count that Google shows every developer on the Marketplace. I cannot see
+your spreadsheets, your comments, your name, or your email address.</p>
+
+<h2>What is stored</h2>
+
+<p>Nothing outside your own spreadsheet. The add-on keeps no database and writes no
+settings. The only thing it leaves behind is the <strong>Comment Export</strong> tab, which
+is yours, sits in your file, and which you can delete like any other tab.</p>
+
+<h2>Sharing</h2>
+
+<p>There is nothing to share. No data is sold, rented, transferred, or disclosed to anyone,
+because none is collected in the first place.</p>
+
+<h2>Google API Services User Data Policy</h2>
+
+<p>Comment Export for Sheets&trade; use and transfer of information received from Google APIs
+adheres to the <a href="https://developers.google.com/terms/api-services-user-data-policy"
+rel="noopener">Google API Services User Data Policy</a>, including the Limited Use
+requirements.</p>
+
+<h2>Revoking access</h2>
+
+<p>You can remove the add-on at any time from the Google Workspace Marketplace, and you can
+review or revoke its permissions at any time at <a
+href="https://myaccount.google.com/permissions" rel="noopener">your Google account
+permissions page</a>. Revoking access takes effect immediately.</p>
+
+<h2>Children</h2>
+
+<p>The add-on is a tool for working with spreadsheets and is not directed at children.</p>
+
+<h2>Changes</h2>
+
+<p>If the add-on ever starts doing something this page does not describe, this page changes
+first. The date at the top is when it was last revised.</p>
+
+<h2>Contact</h2>
+
+<p>Benjamin J. Sunter, Denver, Colorado. <a href="mailto:sunterbb@gmail.com">sunterbb@gmail.com</a>.
+Questions and corrections both welcome.</p>
+
+</article>
+</main>
+
+<footer class="artfoot">
+  <div class="reading">
+    <span>&copy; <span id="yr">2026</span> Benjamin J. Sunter</span>
+    <span><a href="index.html">Home</a> &middot; <a href="index.html#contact">Get in touch</a></span>
+  </div>
+</footer>
+
+<script>
+document.getElementById('yr').textContent = new Date().getFullYear();
+(function () {
+  var root = document.documentElement, saved;
+  try { saved = localStorage.getItem('theme'); } catch (e) { saved = null; }
+  if (saved === 'light' || saved === 'dark') root.setAttribute('data-theme', saved);
+})();
+</script>
+</body>
+</html>
