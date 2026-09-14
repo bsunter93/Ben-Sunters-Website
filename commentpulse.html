@@ -243,6 +243,9 @@ footer ul{margin:0;padding-left:17px}
 footer li{margin-bottom:5px}
 .sr{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;
   clip:rect(0 0 0 0);white-space:nowrap;border:0}
+.addon-note{margin:16px 0 0;padding:13px 16px;border-left:3px solid var(--accent);
+  background:var(--accent-soft);border-radius:2px;font-size:14.5px;line-height:1.6;max-width:70ch}
+.addon-note b{color:var(--ink)}
 </style>
 </head>
 <body>
@@ -272,6 +275,11 @@ footer li{margin-bottom:5px}
      anyone. Drop an exported workbook here and every thread comes back in order, with the
      tab and cell it sits on, its replies, and whether it was resolved.</p>
   <span class="sheetsonly">SPREADSHEETS ONLY &middot; .XLSX &middot; DOCS AND SLIDES NOT YET SUPPORTED</span>
+
+  <p class="addon-note"><b>There is now an add-on that does this inside Sheets</b>, with no
+     download step: press a button and the comments land in a tab of the spreadsheet you are
+     already in. It is submitted to the Google Workspace Marketplace and in review.
+     <a href="comment-export.html">How it works &rarr;</a></p>
 
   <div class="dropwrap">
     <div class="drop" id="drop" role="button" tabindex="0"
