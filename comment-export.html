@@ -1,0 +1,129 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Comment Export for Sheets</title>
+<meta name="description" content="A Google Sheets add-on that writes every comment in a spreadsheet to a sortable tab: sheet, cell, author, date, resolved status and replies.">
+<meta name="author" content="Benjamin J. Sunter">
+<meta name="color-scheme" content="light dark">
+<link rel="canonical" href="https://bensunter.com/comment-export.html">
+<meta name="robots" content="index,follow">
+<link rel="icon" href="favicon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<meta name="theme-color" content="#0B3A40">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600&family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600&display=swap">
+<link rel="stylesheet" href="site.css">
+<style>
+.reading{max-width:680px;margin:0 auto;padding-inline:clamp(18px,5vw,32px)}
+.artbar{position:sticky;top:0;z-index:30;background:color-mix(in srgb,var(--paper) 94%,transparent);
+  backdrop-filter:saturate(180%) blur(12px);border-bottom:1px solid var(--line)}
+.artbar .inner{max-width:1020px;margin:0 auto;padding-inline:clamp(18px,5vw,32px);
+  display:flex;align-items:center;justify-content:space-between;gap:18px;height:54px}
+.artbar a{font:600 14px/1 var(--display);color:var(--ink);text-decoration:none}
+.artbar a:hover{color:var(--accent)}
+.artbar .kind{font:500 11px/1 var(--mono);letter-spacing:.14em;text-transform:uppercase;color:var(--muted)}
+.arthead{padding:clamp(36px,6vw,64px) 0 4px}
+.arthead .kicker{display:flex;align-items:center;gap:9px;font:500 10.5px/1 var(--mono);
+  letter-spacing:.14em;text-transform:uppercase;color:var(--muted);margin-bottom:16px}
+.arthead .kicker:before{content:"";width:20px;height:2px;background:var(--warm)}
+.arthead h1{font:600 clamp(31px,5vw,45px)/1.08 var(--display);letter-spacing:-.024em}
+.arthead .by{margin-top:20px;font:400 12.5px/1 var(--mono);color:var(--muted)}
+.reading p{font-size:17px;line-height:1.7;margin:0 0 19px}
+.reading p.open{font-size:19px;line-height:1.58;color:var(--ink)}
+.reading h2{font:600 22px/1.25 var(--display);letter-spacing:-.012em;margin:36px 0 12px}
+.reading strong{color:var(--ink);font-weight:600}
+.reading ul{margin:0 0 19px;padding-left:22px;font-size:17px;line-height:1.7}
+.reading li{margin:0 0 9px}
+.pull{font:600 clamp(19px,2.4vw,23px)/1.4 var(--display);color:var(--ink);
+  border-left:3px solid var(--warm);padding:6px 0 6px 22px;margin:32px 0}
+.artfoot{border-top:1px solid var(--line);margin-top:52px;padding:26px 0 60px}
+.artfoot .reading{display:flex;gap:20px;flex-wrap:wrap;justify-content:space-between;
+  font-size:13.5px;color:var(--muted)}
+</style>
+</head>\n<body>\n\n<div class="artbar">\n  <div class="inner">\n    <a href="index.html">&larr; Benjamin J. Sunter</a>\n    <span class="kind">Google Sheets add-on</span>\n  </div>\n</div>\n\n<main>\n<header class="reading arthead">\n  <div class="kicker">Comment Export</div>\n  <h1>Every comment in your spreadsheet, as a tab</h1>\n  <p class="by">A Google Sheets add-on</p>\n</header>\n\n<article class="reading">\n\n<p class="open">Google Sheets keeps comments somewhere you cannot sort them, count them,
+or get them out. If your review cycle happens in the comments, there is no way to answer
+"how many are still open" or "which ones are on the forecast tab" without opening them one
+at a time.</p>
+
+<p>This is a Google Workspace add-on that puts them all in a tab.</p>
+
+<h2>What it writes</h2>
+
+<p>Press one button and it adds a sheet called <strong>Comment Export</strong> to your
+spreadsheet, one row per comment thread:</p>
+
+<ul>
+<li><strong>Sheet</strong> and <strong>Cell</strong>, so you know where the comment lives</li>
+<li><strong>Status</strong>, open or resolved</li>
+<li><strong>Author</strong> and <strong>Date</strong></li>
+<li><strong>Comment</strong>, and the full <strong>reply thread</strong> beneath it</li>
+</ul>
+
+<p>It arrives with a filter already applied and the header frozen, in the order the comments
+appear in the spreadsheet: tab by tab, then down the rows. From there it is ordinary
+spreadsheet data. Sort it, pivot it, download it as CSV, or paste it into a status update.</p>
+
+<p class="pull">Rerunning it refreshes the tab in place. It never modifies, resolves or
+deletes your actual comments.</p>
+
+<h2>Who it is for</h2>
+
+<p>Anyone whose review process lives in the comments. Finance teams closing a budget,
+analysts working through data quality, operations teams running a planning cycle. The
+people who need to work down a list of open threads rather than read them one at a time.</p>
+
+<h2>Privacy</h2>
+
+<p>There is no server behind this. Access is granted <strong>one file at a time</strong>,
+so it never asks for permission to your Drive, and the only address it can contact is
+Google's own Drive API, which is enforced by the add-on's manifest rather than promised in
+prose. Your comments go from your spreadsheet, through Google's infrastructure, back into
+your spreadsheet. No analytics, no account, no retention.</p>
+
+<p>The <a href="addon-privacy.html">privacy policy</a> and <a href="addon-terms.html">terms
+of service</a> describe exactly what it does and what it does not.</p>
+
+<h2>Worth knowing</h2>
+
+<ul>
+<li>It reads <strong>comments</strong>. Notes are a separate Sheets feature and do not
+    appear.</li>
+<li>Google caps the export it relies on at 10MB, so a very large workbook may not run. You
+    get a clear message rather than a silent failure.</li>
+<li>It is free. There is no paid tier.</li>
+</ul>
+
+<h2>How I built it</h2>
+
+<p>Google's comments API will tell you what a comment says but not where it lives: the
+anchor it returns is an opaque range id that resolves to nothing you can reach. The
+spreadsheet's own .xlsx export does carry the sheet and the cell, so the add-on asks Drive
+for that export and reads the comment records straight out of it. Everything runs inside
+Apps Script, under your account.</p>
+
+<p>Built in an evening, which was only possible because the hard part, the parsing, already
+existed in <a href="commentpulse.html">CommentPulse</a>, a browser tool I had written for
+the same problem a few weeks earlier.</p>
+</article>
+</main>
+
+<footer class="artfoot">
+  <div class="reading">
+    <span>&copy; <span id="yr">2026</span> Benjamin J. Sunter</span>
+    <span><a href="index.html">Home</a> &middot; <a href="index.html#contact">Get in touch</a></span>
+  </div>
+</footer>
+
+<script>
+document.getElementById('yr').textContent = new Date().getFullYear();
+(function () {
+  var root = document.documentElement, saved;
+  try { saved = localStorage.getItem('theme'); } catch (e) { saved = null; }
+  if (saved === 'light' || saved === 'dark') root.setAttribute('data-theme', saved);
+})();
+</script>
+</body>
+</html>
