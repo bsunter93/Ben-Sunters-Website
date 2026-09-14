@@ -42,6 +42,10 @@
 .artfoot{border-top:1px solid var(--line);margin-top:52px;padding:26px 0 60px}
 .artfoot .reading{display:flex;gap:20px;flex-wrap:wrap;justify-content:space-between;
   font-size:13.5px;color:var(--muted)}
+.ce-shot{margin:30px 0 34px}
+.ce-shot img{width:100%;height:auto;display:block;border:1px solid var(--line);border-radius:3px}
+.ce-shot figcaption{margin-top:10px;font:400 13px/1.5 var(--sans);color:var(--muted)}
+.ce-cta{display:flex;gap:10px;flex-wrap:wrap;margin:26px 0 0}
 </style>
 </head>
 <body>
@@ -68,6 +72,11 @@ or get them out. If your review cycle happens in the comments, there is no way t
 at a time.</p>
 
 <p>This is a Google Workspace add-on that puts them all in a tab.</p>
+
+<figure class="ce-shot">
+  <img src="comment-export-shot.png" alt="A spreadsheet with a Comment Export tab open, listing each comment thread by sheet, cell, status, author, date, comment and replies, with the add-on panel on the right" width="1280" height="800" loading="lazy">
+  <figcaption>The tab it writes. Filter on, header frozen, in the order the spreadsheet reads.</figcaption>
+</figure>
 
 <h2>What it writes</h2>
 
@@ -126,6 +135,17 @@ Apps Script, under your account.</p>
 <p>Built in an evening, which was only possible because the hard part, the parsing, already
 existed in <a href="commentpulse.html">CommentPulse</a>, a browser tool I had written for
 the same problem a few weeks earlier.</p>
+
+<h2>The source</h2>
+
+<p>Open source, MIT, at <a href="https://github.com/bsunter93/comment-export-for-sheets"
+rel="noopener">github.com/bsunter93/comment-export-for-sheets</a>. Three files. The README
+documents the opaque comment anchor and the part-numbering trap in the xlsx export, because
+neither is written down anywhere I could find and both cost me an evening.</p>
+
+<p class="ce-cta"><a class="btn solid" href="https://github.com/bsunter93/comment-export-for-sheets"
+rel="noopener">View the source</a> <a class="btn" href="addon-privacy.html">Privacy</a>
+<a class="btn" href="addon-terms.html">Terms</a></p>
 </article>
 </main>
 
