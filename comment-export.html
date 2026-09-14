@@ -15,6 +15,15 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600&family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600&display=swap">
+<meta property="og:title" content="Comment Export for Sheets">
+<meta property="og:description" content="Every comment in your spreadsheet, as a tab you can sort: sheet, cell, author, date, resolved status and replies.">
+<meta property="og:url" content="https://bensunter.com/comment-export.html">
+<meta property="og:type" content="article">
+<meta property="og:image" content="https://bensunter.com/og-comment-export.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="A Comment Export tab listing comment threads by sheet, cell, status, author and comment, beside the add-on's icon.">
+<meta name="twitter:card" content="summary_large_image">
 <link rel="stylesheet" href="site.css">
 <style>
 .reading{max-width:680px;margin:0 auto;padding-inline:clamp(18px,5vw,32px)}
@@ -42,6 +51,8 @@
 .artfoot{border-top:1px solid var(--line);margin-top:52px;padding:26px 0 60px}
 .artfoot .reading{display:flex;gap:20px;flex-wrap:wrap;justify-content:space-between;
   font-size:13.5px;color:var(--muted)}
+.ce-mark{width:22px;height:22px;border-radius:5px;display:block}
+.arthead .kicker:before{display:none}
 .ce-shot{margin:30px 0 34px}
 .ce-shot img{width:100%;height:auto;display:block;border:1px solid var(--line);border-radius:3px}
 .ce-shot figcaption{margin-top:10px;font:400 13px/1.5 var(--sans);color:var(--muted)}
@@ -59,7 +70,7 @@
 
 <main>
 <header class="reading arthead">
-  <div class="kicker">Comment Export</div>
+  <div class="kicker"><img class="ce-mark" src="comment-export-icon.png" alt="" width="22" height="22">Comment Export</div>
   <h1>Every comment in your spreadsheet, as a tab</h1>
   <p class="by">A Google Sheets add-on</p>
 </header>
