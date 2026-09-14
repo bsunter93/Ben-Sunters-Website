@@ -627,3 +627,29 @@ footer{padding:26px 0 44px;border-top:1px solid var(--hair);
   .mobile-nav a:last-child{border-bottom:0;color:var(--accent)}
   .mobile-nav a:hover,.mobile-nav a:focus-visible{background:var(--tint);text-decoration:none}
 }
+
+/* ── case study teasers on the homepage ───────────────────────────────────── */
+/* The studies moved to their own page. These have to carry the result and the mistake,
+   not just a title, or the candor goes back to being invisible, which is the exact
+   problem opening the folds was meant to solve. */
+.cs-cards{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:18px;margin-top:28px}
+@media (max-width:900px){.cs-cards{grid-template-columns:1fr}}
+.cs-card{display:flex;flex-direction:column;background:var(--surface);border:1px solid var(--line);
+  border-top:3px solid var(--accent);border-radius:2px;padding:20px 22px 22px;color:var(--body);
+  text-decoration:none}
+.cs-card:nth-child(2){border-top-color:var(--warm)}
+.cs-card:nth-child(3){border-top-color:var(--plum)}
+.cs-card:hover{text-decoration:none;border-color:var(--accent)}
+.cs-kind{display:block;font:500 10.5px/1 var(--mono);letter-spacing:.13em;text-transform:uppercase;
+  color:var(--muted);margin-bottom:10px}
+.cs-card h3{font:600 17px/1.3 var(--display);color:var(--ink);margin:0 0 9px;letter-spacing:-.01em}
+.cs-card p{margin:0 0 13px;font-size:14px;line-height:1.55;color:var(--body)}
+.cs-figs{margin:0 0 13px}
+.cs-figs b{display:block;font:600 21px/1.1 var(--display);color:var(--ink);letter-spacing:-.01em}
+.cs-figs span{display:block;margin-top:4px;font:500 10.5px/1.4 var(--mono);letter-spacing:.06em;
+  text-transform:uppercase;color:var(--muted)}
+.cs-wrong{border-left:2px solid var(--warm);padding-left:12px;font-size:13.5px!important;
+  color:var(--muted)!important;flex:1}
+.cs-wrong b{color:var(--ink);font-weight:600}
+.cs-card .playlink{margin-top:14px;color:var(--accent)}
+.cs-card:hover .playlink{text-decoration:underline;text-underline-offset:3px}
