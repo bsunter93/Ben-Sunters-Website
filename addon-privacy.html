@@ -35,6 +35,7 @@
 .reading p.open{font-size:19px;line-height:1.58;color:var(--ink)}
 .reading h2{font:600 22px/1.25 var(--display);letter-spacing:-.012em;margin:36px 0 12px}
 .reading strong{color:var(--ink);font-weight:600}
+.reading code{overflow-wrap:anywhere}
 .reading ul{margin:0 0 19px;padding-left:22px;font-size:17px;line-height:1.7}
 .reading li{margin:0 0 9px}
 .pull{font:600 clamp(19px,2.4vw,23px)/1.4 var(--display);color:var(--ink);
@@ -57,7 +58,7 @@
 <header class="reading arthead">
   <div class="kicker">Comment Export for Sheets</div>
   <h1>Privacy</h1>
-  <p class="by">Updated September 2026</p>
+  <p class="by">Updated 15 September 2026</p>
 </header>
 
 <article class="reading">
@@ -124,6 +125,50 @@ is yours, sits in your file, and which you can delete like any other tab.</p>
 
 <p>There is nothing to share. No data is sold, rented, transferred, or disclosed to anyone,
 because none is collected in the first place.</p>
+
+<h2>How the data is protected</h2>
+
+<p>The add-on processes the contents of a spreadsheet you grant it, which may include
+sensitive information. This section sets out the specific measures that protect it.</p>
+
+<p><strong>Encryption in transit.</strong> Every request the add-on makes is HTTPS over TLS
+to <code>googleapis.com</code>. Unencrypted HTTP is not used and is not reachable: the
+manifest's <code>urlFetchWhitelist</code> pins the only address the add-on may contact to
+<code>https://www.googleapis.com/drive/v3/files/</code>, and Google Apps Script refuses any
+outbound request to any other host. This restriction is enforced by the platform rather than
+by my code, so it holds even if the code were altered or defective.</p>
+
+<p><strong>Encryption at rest.</strong> Your spreadsheet, and the tab the add-on writes into
+it, stay in Google Drive and are encrypted at rest by Google. No copy is held anywhere else,
+because there is nowhere else: I operate no server, no database and no storage of any
+kind.</p>
+
+<p><strong>Access control.</strong> The add-on runs inside Google Apps Script under your own
+account, using an OAuth token issued to you, and it can reach only the individual files you
+have granted through <code>drive.file</code>. It is never given broad Drive access. Neither
+I nor anyone else can run it on your behalf or read anything it processes. There are no
+developer accounts, administrative consoles or support tools with access to your content,
+because there is no system to log in to.</p>
+
+<p><strong>Retention and deletion.</strong> The exported copy of your spreadsheet exists
+only in memory, for the duration of a single execution, and is discarded when that execution
+ends. Nothing is retained. There is no backup, archive, log or cache of your content.
+Revoking access takes effect immediately and leaves nothing behind but the
+<strong>Comment Export</strong> tab in your own file, which you can delete like any other
+tab.</p>
+
+<p><strong>Secure development.</strong> The add-on requests the narrowest scopes that let it
+work, two of which are non-sensitive and scoped to a single file at a time. The complete
+source is published at <a href="https://github.com/bsunter93/comment-export-for-sheets"
+rel="noopener">github.com/bsunter93/comment-export-for-sheets</a>, so every claim on this
+page can be checked against the code rather than taken on trust. It uses no third party
+libraries and loads no external code at runtime.</p>
+
+<p><strong>Incident response.</strong> Because no user content is collected, transmitted to
+me, or stored outside your own Google account, there is no store of data that could be
+breached. If a security issue is found in the add-on itself, report it to
+<a href="mailto:sunterbb@gmail.com">sunterbb@gmail.com</a>. I will acknowledge it, publish a
+corrected version, and describe the issue and its scope on this page.</p>
 
 <h2>Google API Services User Data Policy</h2>
 
