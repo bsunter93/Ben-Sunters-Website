@@ -120,6 +120,34 @@ spreadsheet data. Sort it, pivot it, download it as CSV, or paste it into a stat
 <p class="pull">Rerunning it refreshes the tab in place. It never modifies, resolves or
 deletes your actual comments.</p>
 
+<h2>The use I did not see coming</h2>
+
+<p>Sorting is the obvious reason. The one that turned out to matter more is context.</p>
+
+<p>A spreadsheet's cells carry its numbers. Its comments carry the argument about those
+numbers: why this assumption, what the pushback was, which figure is still contested and
+who contested it. That commentary is very often the only written record of how the model
+arrived at what it says, and it sits in a sidebar that nothing else can read.</p>
+
+<p>Which means that when you hand a spreadsheet to a language model, you hand over the
+what and keep back the why. It sees 4.2% and not the three people who spent a week arguing
+about whether 4.2% was defensible.</p>
+
+<p>The failure is quiet, which is the problem. Copy the cells and paste them into a chat
+and the comments do not come with them. Upload the <code>.xlsx</code> and the comment
+records are technically inside the file, but the usual ways of reading one return the
+values and nothing else. Export to CSV or PDF and they are gone. In every case you get an
+answer, confidently, from a spreadsheet that has been stripped of its reasoning, and
+nothing tells you that happened.</p>
+
+<p>Writing the threads into a tab fixes it at the source. The discussion becomes ordinary
+rows: copy them, download them as CSV, attach them, paste them in alongside the numbers
+they belong to. The decision history stops being trapped in the file.</p>
+
+<p>The same property is what makes the unglamorous uses work. Once the threads are rows
+they are searchable, filterable and archivable, and a review cycle that happened in
+comments leaves something behind instead of evaporating when the quarter closes.</p>
+
 <h2>Who it is for</h2>
 
 <p>Anyone whose review process lives in the comments. Finance teams closing a budget,
