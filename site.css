@@ -113,7 +113,15 @@ h2{font:600 clamp(26px,3.4vw,34px)/1.15 var(--display);letter-spacing:-.015em;ma
 .over-band .theme-btn{color:var(--on-deep-mut)}
 .over-band .theme-btn:hover{color:#fff;border-color:rgba(255,255,255,.3)}
 
-.masthead.over-band{background:transparent;backdrop-filter:none;border-bottom-color:transparent;box-shadow:none}
+/* This state is only ever active mid-scroll: at rest the band starts below the header,
+   so `over-band` never applies at scroll 0. It therefore needs a plate. With
+   `background:transparent` the hero copy ran straight through the name and the nav on
+   the first scroll gesture, on every viewport. The plate is the band's own colour, so
+   it stays invisible where the two meet and only separates once the page moves. */
+.masthead.over-band{background:color-mix(in srgb,var(--deep) 92%,transparent);
+  backdrop-filter:saturate(180%) blur(12px);
+  border-bottom-color:rgba(255,255,255,.14);
+  box-shadow:0 8px 20px -18px rgba(0,0,0,.8)}
 .over-band .mark{color:var(--on-deep)}
 .over-band nav a{color:var(--on-deep-mut)}
 .over-band nav a:hover{color:#fff}
@@ -128,13 +136,17 @@ h2{font:600 clamp(26px,3.4vw,34px)/1.15 var(--display);letter-spacing:-.015em;ma
 .band p{color:var(--on-deep)}
 .hero{padding-top:clamp(52px,7vw,84px);padding-bottom:clamp(44px,6vw,72px);border-top:0}
 .hero-grid{display:grid;grid-template-columns:minmax(0,1fr) 172px;gap:clamp(28px,5vw,56px);align-items:start}
-@media (max-width:720px){.hero-grid{grid-template-columns:1fr}.portrait{order:-1;width:112px}}
 h1{font:600 clamp(36px,5.4vw,53px)/1.06 var(--display);letter-spacing:-.026em;margin-bottom:22px}
 .hero p{max-width:58ch;font-size:18px;color:var(--on-deep);margin:0 0 14px}
 .hero p strong{color:#fff;font-weight:600}
-.portrait{width:172px;aspect-ratio:1;border-radius:3px;object-fit:cover;
+.portrait{width:172px;height:auto;aspect-ratio:1;border-radius:3px;object-fit:cover;
   outline:1px solid rgba(255,255,255,.22);outline-offset:0;
   box-shadow:0 6px 22px rgba(0,0,0,.28)}
+/* Single column on a phone, portrait above the headline and smaller. This block has to
+   stay BELOW the .portrait base rule: a media query adds no specificity, so while it sat
+   above, the 172px base width won and phones got a portrait 44% of the screen wide
+   sitting on top of the h1. Do not move it back up. */
+@media (max-width:720px){.hero-grid{grid-template-columns:1fr}.portrait{order:-1;width:112px}}
 
 
 .links{display:flex;flex-wrap:wrap;gap:10px}
@@ -589,6 +601,14 @@ footer{padding:26px 0 44px;border-top:1px solid var(--hair);
 .trio-card{display:flex;flex-direction:column;background:var(--surface);border:1px solid var(--line);border-top:3px solid var(--accent);border-radius:2px;padding:0 0 20px;color:var(--body);text-decoration:none}
 .trio-card:hover{text-decoration:none;border-color:var(--accent)}
 .trio-card img{display:block;width:100%;height:auto;border-bottom:1px solid var(--line)}
+/* The simulator is the only card carrying a shot, and with the image first its title sat
+   156px below the other two: the row read as misaligned rather than featured. Ordering the
+   image after the copy puts all three titles on the same line and turns the shot into a
+   preview directly above the link. The cards are equal-height already, so this moves the
+   slack rather than adding any. */
+.trio-card>*{order:1}
+.trio-card img{order:2;border-bottom:0;border-top:1px solid var(--line)}
+.trio-card .playlink{order:3;margin-top:16px}
 .trio-card .proj-kind{margin:18px 22px 0}
 .trio-card h3{font:600 20px/1.25 var(--display);color:var(--ink);margin:6px 22px 8px;letter-spacing:-.01em}
 .trio-card p{margin:0 22px 14px;font-size:14px;line-height:1.55;color:var(--body);flex:1}
@@ -604,6 +624,12 @@ footer{padding:26px 0 44px;border-top:1px solid var(--hair);
 @media (max-width:640px){.also{grid-template-columns:1fr}.also-l{grid-row:auto}}
 
 /* ── mobile navigation ─────────────────────────────────────────────────── */
+.skip{position:absolute;left:-9999px;top:0;z-index:100;
+  padding:11px 18px;background:var(--surface);color:var(--ink);
+  border:1px solid var(--accent);border-radius:2px;
+  font:500 14px/1 var(--sans);text-decoration:none}
+.skip:focus{left:12px;top:12px}
+
 .menu-btn{display:none;align-items:center;justify-content:center;width:32px;height:32px;
   padding:0;border:1px solid transparent;border-radius:2px;background:transparent;
   color:var(--muted);cursor:pointer}
