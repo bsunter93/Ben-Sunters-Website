@@ -3,11 +3,11 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>How capacity breaks | Benjamin J. Sunter</title>
-<meta name="description" content="A year of one fictional company's plan, running. Where capacity breaks, in which month, and what one lever actually changes.">
+<title>What one efficiency is worth | Benjamin J. Sunter</title>
+<meta name="description" content="One support tool, followed all the way through an operating model: the team it helps, the teams downstream, the hire it makes unnecessary, and what that is worth.">
 <link rel="canonical" href="https://bensunter.com/simulator-flow.html">
-<meta property="og:title" content="How capacity breaks">
-<meta property="og:description" content="A year of a fictional company's plan, running. Every number computed by the same engine that runs the simulator.">
+<meta property="og:title" content="What one efficiency is worth">
+<meta property="og:description" content="One support tool, followed through a whole operating model to the hire it cancels. Every number computed by the engine behind the simulator.">
 <meta property="og:url" content="https://bensunter.com/simulator-flow.html">
 <meta property="og:type" content="website">
 <meta property="og:image" content="https://bensunter.com/og-simulator.jpg">
@@ -19,85 +19,61 @@
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600&family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600&display=swap">
 <link rel="stylesheet" href="site.css">
 <style>
-/* ── the flow board ──────────────────────────────────────────────────────────
-   Every figure on this board comes from the same engine that runs the simulator,
-   exported from the Atlas Systems fixture. Nothing here is written by hand, which
-   is the whole point: the animation is only worth showing if it is true.
-   Colours are the site's own tokens, lifted for a dark ground rather than swapped
-   for a different palette.                                                     */
-.flow{
-  --f-ground:#0B3A40; --f-grid:rgba(255,255,255,.055);
-  --f-panel:rgba(255,255,255,.045); --f-edge:rgba(255,255,255,.11);
-  --f-text:#E6F0EE; --f-mut:#9FBCB8;
-  --f-ok:#63B682; --f-watch:#E0A33C; --f-over:#E4695C; --f-flow:#7FD4CE;
-  position:relative; background:var(--f-ground); border-radius:3px;
-  border:1px solid rgba(255,255,255,.09); overflow:hidden;
-  container-type:inline-size;
+/* ── the chain board ─────────────────────────────────────────────────────────
+   One efficiency, followed from the tool that buys it to the money it frees.
+
+   The first version of this file animated four teams' capacity meters side by side.
+   It showed where a plan breaks and never showed anything causing anything, which is
+   the wrong thing to show: an operating model earns its keep because the parts are
+   connected. So this is a chain, not a dashboard.
+
+   Every figure is exported from the engine, including the two it could not compute
+   until this was built: what one team's efficiency does to the teams downstream of
+   it, and which hire that makes unnecessary.                                      */
+.chain{
+  --c-ground:#0B3A40; --c-edge:rgba(255,255,255,.11);
+  --c-text:#E6F0EE; --c-mut:#9FBCB8;
+  --c-ok:#63B682; --c-warn:#E0A33C; --c-over:#E4695C; --c-live:#7FD4CE;
+  position:relative;background:var(--c-ground);border:1px solid rgba(255,255,255,.09);
+  border-radius:3px;overflow:hidden;container-type:inline-size;
+  font-family:var(--sans,'IBM Plex Sans',system-ui,sans-serif)
 }
-.flow canvas{display:block;width:100%;height:auto}
+.chain canvas{display:block;width:100%;height:auto}
+.c-hud{position:absolute;inset:0;pointer-events:none}
+.c-top{position:absolute;top:0;left:0;right:0;padding:13px 16px;display:flex;
+  justify-content:space-between;align-items:flex-start;gap:14px}
+.c-title b{display:block;font:600 15px/1.2 var(--display,'Fraunces',Georgia,serif);color:var(--c-text)}
+.c-title span{display:block;margin-top:3px;font:500 9.5px/1.5 var(--mono,'IBM Plex Mono',monospace);
+  letter-spacing:.14em;text-transform:uppercase;color:var(--c-mut)}
+.c-step{font:500 9.5px/1.5 var(--mono,'IBM Plex Mono',monospace);letter-spacing:.12em;
+  text-transform:uppercase;color:var(--c-mut);text-align:right;white-space:nowrap}
 
-/* HUD lives in the DOM, not the canvas, so the type stays crisp and uses the
-   site's own faces instead of canvas-rendered approximations. */
-.f-hud{position:absolute;inset:0;pointer-events:none;font-family:var(--sans,'IBM Plex Sans',system-ui,sans-serif)}
-.f-top{position:absolute;top:0;left:0;right:0;display:flex;align-items:flex-start;
-  justify-content:space-between;gap:14px;padding:13px 16px}
-.f-title b{display:block;font:600 15px/1.2 var(--display,'Fraunces',Georgia,serif);color:var(--f-text);letter-spacing:-.01em}
-.f-title span{display:block;font:500 9.5px/1.5 var(--mono,'IBM Plex Mono',monospace);letter-spacing:.14em;
-  text-transform:uppercase;color:var(--f-mut);margin-top:3px}
-.f-kpis{display:flex;gap:18px;text-align:right}
-.f-kpi b{display:block;font:600 17px/1 var(--display,'Fraunces',Georgia,serif);color:var(--f-text);
-  font-variant-numeric:tabular-nums lining-nums}
-.f-kpi span{display:block;font:500 8.5px/1.4 var(--mono,'IBM Plex Mono',monospace);letter-spacing:.11em;
-  text-transform:uppercase;color:var(--f-mut);margin-top:4px}
-.f-kpi.hot b{color:var(--f-over)}
-/* the binding team is a name, not a figure, so it takes the sans face and a size
-   that lets the longest of them sit on one line */
-#k-bind{font:600 12px/1.35 var(--sans,'IBM Plex Sans',system-ui,sans-serif);max-width:104px;margin-left:auto}
+/* One caption at a time, in a sentence. A number that has to be decoded is a number
+   nobody reads. */
+.c-say{position:absolute;left:16px;right:16px;bottom:50px;padding:11px 14px;border-radius:3px;
+  background:rgba(11,58,64,.9);border:1px solid var(--c-edge);border-left:2px solid var(--c-live);
+  opacity:0;transform:translateY(5px);transition:opacity .4s ease,transform .4s ease}
+.c-say.on{opacity:1;transform:none}
+.c-say.win{border-left-color:var(--c-ok)} .c-say.warn{border-left-color:var(--c-warn)}
+.c-say p{margin:0;font:400 13.5px/1.55 inherit;color:var(--c-text);max-width:80ch}
+.c-say b{font-weight:600} .c-say em{font-style:normal;color:var(--c-mut)}
 
-/* One banner slot. Phases swap the text rather than stacking overlays, so the
-   board never has two things shouting at once. */
-.f-note{position:absolute;left:16px;right:16px;bottom:52px;display:flex;gap:10px;align-items:flex-start;
-  padding:10px 13px;border-radius:3px;background:rgba(11,58,64,.86);
-  border:1px solid var(--f-edge);border-left:2px solid var(--f-mut);
-  opacity:0;transform:translateY(5px);transition:opacity .45s ease,transform .45s ease}
-.f-note.on{opacity:1;transform:none}
-.f-note.alert{border-left-color:var(--f-over)}
-.f-note.lever{border-left-color:var(--f-watch)}
-.f-note.land{border-left-color:var(--f-ok)}
-.f-note i{flex:none;width:7px;height:7px;border-radius:50%;margin-top:6px;background:var(--f-mut)}
-.f-note.alert i{background:var(--f-over)} .f-note.lever i{background:var(--f-watch)}
-.f-note.land i{background:var(--f-ok)}
-.f-note p{margin:0;font:400 13px/1.5 inherit;color:var(--f-text);max-width:70ch}
-.f-note p b{font-weight:600}
-.f-note p em{font-style:normal;color:var(--f-mut)}
+.c-ctl{position:absolute;right:14px;bottom:13px;display:flex;align-items:center;gap:10px;pointer-events:auto}
+.c-bar{width:148px;height:3px;background:rgba(255,255,255,.16);border-radius:2px;overflow:hidden}
+.c-bar i{display:block;height:100%;width:0;background:var(--c-live)}
+.c-btn{display:inline-flex;align-items:center;justify-content:center;height:25px;min-width:25px;
+  padding:0 7px;background:transparent;border:1px solid var(--c-edge);border-radius:3px;
+  color:var(--c-mut);font:500 10.5px/1 var(--mono,'IBM Plex Mono',monospace);cursor:pointer}
+.c-btn:hover{color:var(--c-text);border-color:rgba(255,255,255,.3)}
+.c-btn svg{width:9px;height:9px;fill:currentColor}
+@container (max-width:620px){ .c-say{bottom:46px;padding:9px 11px} .c-say p{font-size:12.5px}
+  .c-bar{width:70px} .c-step{display:none} }
+.chain-cap{margin:10px 0 0;font-size:13.5px;line-height:1.55;color:var(--muted)}
 
-.f-controls{position:absolute;right:14px;bottom:13px;display:flex;align-items:center;gap:10px;pointer-events:auto}
-.f-scrub{width:150px;height:3px;background:rgba(255,255,255,.16);border-radius:2px;overflow:hidden}
-.f-scrub i{display:block;height:100%;width:0;background:var(--f-flow)}
-.f-btn{display:inline-flex;align-items:center;justify-content:center;height:25px;min-width:25px;padding:0 7px;
-  background:transparent;border:1px solid var(--f-edge);border-radius:3px;color:var(--f-mut);
-  font:500 10.5px/1 var(--mono,'IBM Plex Mono',monospace);cursor:pointer}
-.f-btn:hover{color:var(--f-text);border-color:rgba(255,255,255,.3)}
-.f-btn svg{width:9px;height:9px;fill:currentColor}
-.f-phase{font:500 9px/1 var(--mono,'IBM Plex Mono',monospace);letter-spacing:.1em;text-transform:uppercase;
-  color:var(--f-mut);min-width:64px;text-align:right}
-
-@container (max-width:640px){
-  .f-kpis{gap:12px}
-  .f-kpi:nth-child(n+3){display:none}
-  .f-note{bottom:48px;padding:8px 11px}
-  .f-note p{font-size:12px}
-  .f-scrub{width:78px}
-}
-@media (prefers-reduced-motion:reduce){
-  .f-note{transition:none}
-}
-.flow-cap{margin:10px 0 0;font-size:13.5px;line-height:1.55;color:var(--muted)}
-
-/* ?embed=1 strips the page down to the board so the simulator can iframe this file
-   rather than keeping a second copy of the animation. */
+/* ?embed=1 strips the page to the board, so the simulator can iframe this file rather
+   than keeping a second copy of the animation. */
 body.embed .masthead,body.embed footer,body.embed .eyebrow,
-body.embed h1,body.embed .lede,body.embed .flow-cap,body.embed .skip{display:none}
+body.embed h1,body.embed .lede,body.embed .chain-cap,body.embed .skip{display:none}
 body.embed{background:transparent}
 body.embed main>section{padding:0;border:0}
 body.embed .wrap{padding:0;max-width:none}
@@ -105,7 +81,6 @@ body.embed .wrap{padding:0;max-width:none}
 </head>
 <body id="top">
 <a class="skip" href="#main">Skip to content</a>
-
 <header class="masthead">
   <div class="wrap">
     <a class="mark" href="index.html" aria-label="Benjamin J. Sunter, home">Benjamin J. Sunter</a>
@@ -118,296 +93,248 @@ body.embed .wrap{padding:0;max-width:none}
 
 <main id="main">
 <section class="wrap">
-  <span class="eyebrow">The operating model, running</span>
-  <h1 style="max-width:20ch">How capacity breaks.</h1>
-  <p class="lede">One fictional company's plan for a year, played out month by month. Every
-     number on the board is computed by the same engine that runs
-     <a href="simulator/">the simulator</a>, from the same fixture. None of it is written by hand.</p>
+  <span class="eyebrow">One efficiency, followed all the way through</span>
+  <h1 style="max-width:22ch">What is one efficiency actually worth?</h1>
+  <p class="lede">A support team buys a tool that resolves fifteen percent of its cases
+     without a person. That part is easy to measure. What happens to the teams downstream,
+     to the hire already sitting in the plan, and to the money, is the part an operating
+     model exists to answer. Every number here is computed by the engine behind
+     <a href="simulator/">the simulator</a>.</p>
 
-  <div class="flow" id="flow">
-    <canvas id="fcv" width="1000" height="420" role="img"
-      aria-label="An animation of Atlas Systems' 2027 plan. Four of its eight teams go over capacity during the year. Implementation peaks at 96 percent utilisation in May, 9.6 people short. Moving 5 people from Customer Operations lowers that peak to 87 percent and leaves the other three teams unchanged."></canvas>
-    <div class="f-hud">
-      <div class="f-top">
-        <div class="f-title"><b id="f-co">Atlas Systems</b><span id="f-sub">2027 plan · fictional</span></div>
-        <div class="f-kpis">
-          <div class="f-kpi"><b id="k-month">Jan</b><span>Month</span></div>
-          <div class="f-kpi" id="k-over-w"><b id="k-over">0</b><span>Over capacity</span></div>
-          <div class="f-kpi"><b id="k-peak">77%</b><span>Peak load</span></div>
-          <div class="f-kpi"><b id="k-bind">&mdash;</b><span>Binding team</span></div>
-        </div>
+  <div class="chain" id="chain">
+    <canvas id="ccv" width="1180" height="420" role="img"
+      aria-label="A causal chain. A 1.2 million dollar self-service tool removes 15% of hands-on hours in Consumer Operations, taking that team from 89% to 82% of the capacity it can sustain. Because 6% of its cases escalate to Consumer Support and 1.3% become Data Platform defect work, both of those teams fall too, from 81% to 80% and from 92% to 91%. Without twelve extra people Consumer Operations would have peaked at 96% on the base plan but only 82% with the tool, so those twelve hires are no longer needed. Headcount ends at 652 instead of 663, revenue at risk falls from 23.08 to 22.36 million dollars, and the tool costs 0.19 million net in its first year."></canvas>
+    <div class="c-hud">
+      <div class="c-top">
+        <div class="c-title"><b>Atlas Systems</b><span>2027 plan &middot; fictional company, real arithmetic</span></div>
+        <div class="c-step" id="c-step">1 of 5 &middot; The tool</div>
       </div>
-      <div class="f-note" id="f-note"><i></i><p id="f-note-t"></p></div>
-      <div class="f-controls">
-        <span class="f-phase" id="f-phase">Steady</span>
-        <div class="f-scrub"><i id="f-prog"></i></div>
-        <button class="f-btn" id="f-play" aria-label="Pause">
-          <svg id="f-icon" viewBox="0 0 10 10" aria-hidden="true"><rect x="1" y="1" width="2.6" height="8"/><rect x="6.4" y="1" width="2.6" height="8"/></svg>
+      <div class="c-say" id="c-say"><p id="c-say-t"></p></div>
+      <div class="c-ctl">
+        <div class="c-bar"><i id="c-prog"></i></div>
+        <button class="c-btn" id="c-play" aria-label="Pause">
+          <svg id="c-icon" viewBox="0 0 10 10" aria-hidden="true"><rect x="1" y="1" width="2.6" height="8"/><rect x="6.4" y="1" width="2.6" height="8"/></svg>
         </button>
-        <button class="f-btn" id="f-speed" aria-label="Playback speed">1&times;</button>
+        <button class="c-btn" id="c-speed" aria-label="Playback speed">1&times;</button>
       </div>
     </div>
   </div>
-  <p class="flow-cap">Atlas Systems is invented. The arithmetic is not: change the fixture and
-     this board changes with it. <a href="simulator/">Run it on your own numbers &rarr;</a></p>
+  <p class="chain-cap">Atlas Systems is invented. The arithmetic is not, and neither is the
+     awkward part at the end: four teams are still over capacity when this is done. One good
+     decision is one good decision. <a href="simulator/">Run it on your own numbers &rarr;</a></p>
 </section>
 </main>
 
-<footer class="wrap">
-  <p>&copy; 2026 Benjamin J. Sunter</p>
-</footer>
+<footer class="wrap"><p>&copy; 2026 Benjamin J. Sunter</p></footer>
 
 <script>
-if(new URLSearchParams(location.search).has('embed')) document.body.classList.add('embed');
+if (new URLSearchParams(location.search).has('embed')) document.body.classList.add('embed');
 </script>
+<script src="chain-data.js"></script>
 <script>
-/* The board reads one exported object. It is produced by running the engine over the
-   Atlas fixture, so the only way to change what you see here is to change the model. */
-const DATA = {
- company:"Atlas Systems", target:0.80,
- months:["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"],
- teams:[
-  {name:"Implementation",      fte:50,
-   base:[.77,.81,.86,.91,.96,.84,.78,.75,.79,.78,.68,.60],
-   fixed:[.77,.74,.78,.83,.87,.77,.72,.69,.73,.72,.63,.56], peak:.96, peakMonth:"May", short:9.6, fixedPeak:.87},
-  {name:"Consumer Operations", fte:148,
-   base:[.62,.66,.71,.82,.86,.89,.84,.80,.83,.85,.76,.68],
-   fixed:[.62,.66,.71,.82,.86,.89,.84,.80,.83,.85,.76,.68], peak:.89, peakMonth:"Jun", short:12.2, fixedPeak:.89},
-  {name:"Data Platform",       fte:54,
-   base:[.64,.69,.74,.84,.88,.92,.86,.81,.84,.86,.77,.69],
-   fixed:[.64,.69,.74,.84,.88,.92,.86,.81,.84,.86,.77,.69], peak:.92, peakMonth:"Jun", short:7.6, fixedPeak:.92},
-  {name:"Consumer Support",    fte:64,
-   base:[.58,.61,.64,.70,.74,.80,.77,.75,.78,.81,.73,.66],
-   fixed:[.58,.61,.64,.70,.74,.80,.77,.75,.78,.81,.73,.66], peak:.81, peakMonth:"Oct", short:2.2, fixedPeak:.81}
- ],
- within:["Enterprise Sales","Customer Operations","Enterprise Support","Platform Engineering"]
-};
-
 (function(){
-  const cv=document.getElementById('fcv'), ctx=cv.getContext('2d');
-  const wrap=document.getElementById('flow');
-  const el=id=>document.getElementById(id);
+  const cv=document.getElementById('ccv'), ctx=cv.getContext('2d');
+  const wrap=document.getElementById('chain'), el=id=>document.getElementById(id);
   const reduced=matchMedia('(prefers-reduced-motion:reduce)').matches;
+  const C=window.CHAIN;
+  const money=n=>'$'+(n/1e6).toFixed(2)+'M';
+  const pc=n=>Math.round(n*100)+'%';
 
-  /* Two layouts, not one scaled down. Squeezing the wide board into a phone produced a
-     348x146 strip with four lanes in it, which is a picture of a chart rather than a
-     chart. Narrow gets its own geometry: no intake or delivered columns, and the meter
-     sits under the team name instead of beside it. */
-  const WIDE={W:1000,H:420,narrow:false,TOP:104,LANE_H:62,GAP:12,
-              LANE_X0:228,LANE_X1:700,METER_X:716,METER_W:196,NAME_Y:24,FTE_Y:41,METER_MID:true};
-  const NARROW={W:560,H:590,narrow:true,TOP:86,LANE_H:112,GAP:14,
-              LANE_X0:26,LANE_X1:534,METER_X:26,METER_W:436,NAME_Y:30,FTE_Y:50,METER_MID:false};
-  let L=WIDE;
-  const T=DATA.teams.length;
-
-  /* ── timeline ─────────────────────────────────────────────────────────────
-     Twelve real months, then the lever, then the same year again with it on.
-     Phase boundaries are seconds into the loop at 1x.                        */
-  const PH=[
-    {id:'steady', t:0.0,  to:2.5,  label:'Steady'},
-    {id:'build',  t:2.5,  to:9.5,  label:'Constraint'},
-    {id:'lever',  t:9.5,  to:12.5, label:'Lever'},
-    {id:'after',  t:12.5, to:16.5, label:'Rebalancing'},
-    {id:'land',   t:16.5, to:21.0, label:'Result'}
+  /* Five links. Each is a thing the one before it caused. */
+  const STEPS=[
+    {k:'tool', label:'The tool',            t:0,    to:3.6},
+    {k:'team', label:'The team it helps',   t:3.6,  to:7.8},
+    {k:'down', label:'Everyone downstream', t:7.8,  to:12.2},
+    {k:'hire', label:'The hire',            t:12.2, to:16.8},
+    {k:'cash', label:'The money',           t:16.8, to:23.0}
   ];
-  const LOOP=21.0;
-  const PEAK_M=4;                            // May, the month Implementation peaks
+  const LOOP=23.0;
 
-  const NOTES={
-    build:{cls:'alert', html:'<b>Implementation goes over capacity in Feb</b> and peaks at <b>96%</b> in May, <b>9.6 people short</b>. <em>Three other teams go over in the same year.</em>'},
-    lever:{cls:'lever', html:'<b>Lever applied:</b> move 5 people from Customer Operations to Implementation. <em>One of five levers the model carries.</em>'},
-    after:{cls:'land',  html:'Implementation’s peak falls from <b>96%</b> to <b>87%</b>, and Feb and Mar come back under the line.'},
-    land: {cls:'',      html:'It is still over in April and May, and <b>the other three bars have not moved at all.</b> <em>A lever aimed at one team fixes one team.</em>'}
+  const SAY={
+    tool:{cls:'', html:`<b>${C.tool.name}.</b> ${money(C.tool.cost)} to build, and
+      <b>${C.tool.lagMonths} months</b> before a single case touches it.
+      <em>Nothing improves on the day you decide.</em>`},
+    team:{cls:'win', html:`It takes <b>${pc(C.tool.cut)} of the hands-on hours</b> out of
+      ${C.origin.team}. Their busiest month falls from <b>${pc(C.origin.peakBase)} to
+      ${pc(C.origin.peakTool)}</b>, back inside what ${C.origin.fte} people can sustain.`},
+    down:{cls:'win', html:`<b>Fewer cases handled means fewer cases passed on.</b>
+      ${C.downstream[0].team} drops to <b>${pc(C.downstream[0].peakTool)}</b> and
+      ${C.downstream[1].team} to <b>${pc(C.downstream[1].peakTool)}</b>, and nobody on either
+      team did anything differently. <em>A spreadsheet of one team never shows you this.</em>`},
+    hire:{cls:'win', html:`The plan already had <b>${C.hire.headcount} people</b> arriving in
+      ${C.hire.landsMonth}. Without them ${C.origin.team} would have hit
+      <b>${pc(C.hire.peakWithoutHireBase)}</b> on the old plan, but only
+      <b>${pc(C.hire.peakWithoutHireTool)}</b> with the tool. <b>So they are not hired.</b>`},
+    cash:{cls:'warn', html:`<b>${C.money.fteBase-C.money.fteTool} fewer people, permanently.</b>
+      Revenue at risk falls to <b>${money(C.money.riskTool)}</b>, and the tool costs
+      <b>${money(C.money.costTool-C.money.costBase)} net</b> in year one, nothing after that.
+      <em>And ${C.money.overTool} teams are still over capacity: this fixed one thing, not the plan.</em>`}
   };
 
-  let t0=performance.now(), paused=false, speed=1, elapsed=0, last=t0;
-  const particles=[];
+  let elapsed=0, paused=false, speed=1, last=performance.now();
+  const stepAt=s=>{for(const p of STEPS) if(s>=p.t&&s<p.to) return p; return STEPS[STEPS.length-1];};
+  const idxOf=st=>STEPS.indexOf(st);
+  const easeAt=(s,st)=>{const r=(s-st.t)/(st.to-st.t);
+    return r<0?0:r>1?1:(r<.5?2*r*r:1-Math.pow(-2*r+2,2)/2);};
+  const lerp=(a,b,t)=>a+(b-a)*t;
 
-  function phaseAt(s){ for(const p of PH) if(s>=p.t&&s<p.to) return p; return PH[PH.length-1]; }
+  const WIDE={W:1180,H:420,narrow:false}, NARROW={W:620,H:790,narrow:true};
+  let L=WIDE;
 
-  /* Month position climbs to the peak and then holds. Replaying the whole year in
-     each phase buried the moment that matters: by December nothing is over capacity, so
-     a lever shown there looks like it fixed nothing. */
-  function monthAt(s,ph){
-    if(ph.id==='steady') return 0;
-    if(ph.id==='build')  return Math.min(PEAK_M,(s-ph.t)/(ph.to-ph.t)*PEAK_M);
-    return PEAK_M;
+  const rr=(x,y,w,h,r)=>{ctx.beginPath();ctx.roundRect(x,y,w,h,r);};
+  const text=(s,x,y,f,c)=>{ctx.font=f;ctx.fillStyle=c;ctx.fillText(s,x,y);};
+
+  /* One visual grammar for every team, so it only has to be learned once: a bar, and the
+     line it is not supposed to cross. */
+  function bar(x,y,w,util,cap,live){
+    ctx.fillStyle='rgba(255,255,255,.10)'; rr(x,y,w,9,2); ctx.fill();
+    const col=util>cap?'#E4695C':(util>cap-0.06?'#E0A33C':'#63B682');
+    ctx.fillStyle=col; rr(x,y,Math.max(3,Math.min(1,util)*w),9,2); ctx.fill();
+    const cx=x+cap*w;
+    ctx.strokeStyle='rgba(255,255,255,.5)'; ctx.lineWidth=1.3;
+    ctx.beginPath(); ctx.moveTo(cx,y-4); ctx.lineTo(cx,y+13); ctx.stroke();
+    text(pc(util), x+w+10, y+9, '600 14px Fraunces,Georgia,serif', col);
+    if(live){ ctx.fillStyle='rgba(127,212,206,.9)'; ctx.fillRect(x+Math.min(1,util)*w-1,y-2,2,13); }
   }
-  /* The lever does not cut to a different frame. It crossfades the same month from the
-     base plan to the plan with the lever on, so one bar falls and the others visibly
-     do not. That is the whole point of the ending. */
-  function blendAt(s,ph){
-    if(ph.id==='after') return (s-ph.t)/(ph.to-ph.t);
-    return ph.id==='land'?1:0;
+  function card(x,y,w,h,on){
+    ctx.fillStyle=on?'rgba(255,255,255,.07)':'rgba(255,255,255,.035)';
+    ctx.strokeStyle=on?'rgba(127,212,206,.5)':'rgba(255,255,255,.10)';
+    ctx.lineWidth=1; rr(x,y,w,h,3); ctx.fill(); ctx.stroke();
   }
-
-  function util(team,m,blend){
-    const i=Math.floor(m), f=m-i;
-    const at=a=>i>=11?a[11]:a[i]+(a[i+1]-a[i])*f;
-    return at(team.base)*(1-blend)+at(team.fixed)*blend;
+  function arrow(x1,y1,x2,y2,live){
+    ctx.strokeStyle=live?'rgba(127,212,206,.75)':'rgba(255,255,255,.16)';
+    ctx.lineWidth=1.3; ctx.beginPath(); ctx.moveTo(x1,y1);
+    if(Math.abs(y2-y1)<1){ ctx.lineTo(x2-7,y2); ctx.stroke();
+      ctx.fillStyle=live?'rgba(127,212,206,.85)':'rgba(255,255,255,.22)';
+      ctx.beginPath(); ctx.moveTo(x2-7,y2-4); ctx.lineTo(x2,y2); ctx.lineTo(x2-7,y2+4); ctx.fill();
+    } else { ctx.lineTo(x1,y2-7); ctx.stroke();
+      ctx.fillStyle=live?'rgba(127,212,206,.85)':'rgba(255,255,255,.22)';
+      ctx.beginPath(); ctx.moveTo(x1-4,y2-7); ctx.lineTo(x1,y2); ctx.lineTo(x1+4,y2-7); ctx.fill(); }
   }
-  const statusOf=u=>u>1?'over':u>DATA.target?'watch':u>=DATA.target-0.05?'near':'ok';
-  const COL={ok:'#63B682',near:'#63B682',watch:'#E0A33C',over:'#E4695C'};
-
-  function laneY(i){ return L.TOP+i*(L.LANE_H+L.GAP); }
-
-  /* Particles are work in motion. Emission tracks utilisation, and anything a team
-     cannot absorb this month slows and pools in the bay ahead of it. It is a
-     depiction of pressure, not a queueing simulation, and the meters carry the
-     actual numbers. */
-  function emit(i,u){
-    const y=laneY(i)+(L.narrow?L.LANE_H-16:L.LANE_H/2);
-    particles.push({i,x:L.LANE_X0,y:y+(Math.random()*12-6),v:0.9+Math.random()*0.5,held:false});
-  }
-
-  function step(dt,m,blend){
-    for(let i=0;i<T;i++){
-      const u=util(DATA.teams[i],m,blend);
-      if(Math.random()<dt*(2.2+u*7)) emit(i,u);
-    }
-    for(let k=particles.length-1;k>=0;k--){
-      const p=particles[k], u=util(DATA.teams[p.i],m,blend);
-      const over=Math.max(0,u-DATA.target);
-      const gate=L.LANE_X0+(L.LANE_X1-L.LANE_X0)*0.32+over*(L.LANE_X1-L.LANE_X0)*1.6;        // the further over capacity, the earlier work stalls
-      let v=p.v*150;
-      if(p.x>gate && over>0.005) v*=Math.max(0.05,1-over*9);
-      p.x+=v*dt;
-      if(p.x>L.LANE_X1+20) particles.splice(k,1);
-    }
-    if(particles.length>1400) particles.splice(0,particles.length-1400);
-  }
-
-  function rr(x,y,w,h,r){ctx.beginPath();ctx.roundRect(x,y,w,h,r);}
 
   function draw(s){
-    const ph=phaseAt(s), m=monthAt(s,ph), blend=blendAt(s,ph);
-    const W=L.W,H=L.H;
-    ctx.clearRect(0,0,W,H);
-    ctx.fillStyle='#0B3A40'; ctx.fillRect(0,0,W,H);
+    const st=stepAt(s), i=idxOf(st), e=easeAt(s,st), wide=!L.narrow;
+    ctx.clearRect(0,0,L.W,L.H);
+    ctx.fillStyle='#0B3A40'; ctx.fillRect(0,0,L.W,L.H);
+    ctx.strokeStyle='rgba(255,255,255,.05)';
+    for(let x=0;x<L.W;x+=25){ctx.beginPath();ctx.moveTo(x+.5,0);ctx.lineTo(x+.5,L.H);ctx.stroke();}
+    for(let y=0;y<L.H;y+=25){ctx.beginPath();ctx.moveTo(0,y+.5);ctx.lineTo(L.W,y+.5);ctx.stroke();}
 
-    ctx.strokeStyle='rgba(255,255,255,.055)'; ctx.lineWidth=1;
-    for(let x=0;x<W;x+=25){ctx.beginPath();ctx.moveTo(x+.5,0);ctx.lineTo(x+.5,H);ctx.stroke();}
-    for(let y=0;y<H;y+=25){ctx.beginPath();ctx.moveTo(0,y+.5);ctx.lineTo(W,y+.5);ctx.stroke();}
+    const cw=L.W-40;
+    const boxes = wide
+      ? {tool:{x:26,y:96,w:178,h:152}, team:{x:246,y:96,w:252,h:152},
+         down:{x:540,y:96,w:266,h:152}, hire:{x:848,y:96,w:152,h:152},
+         cash:{x:1042,y:96,w:114,h:152}}
+      : {tool:{x:20,y:92,w:cw,h:86},  team:{x:20,y:200,w:cw,h:118},
+         down:{x:20,y:340,w:cw,h:160},hire:{x:20,y:522,w:cw,h:96},
+         cash:{x:20,y:640,w:cw,h:104}};
+    const B=boxes;
 
-    // intake: only the wide board has room for it
-    if(!L.narrow){
-    ctx.fillStyle='rgba(255,255,255,.045)'; ctx.strokeStyle='rgba(255,255,255,.11)';
-    rr(28,L.TOP,150,T*(L.LANE_H+L.GAP)-L.GAP,3); ctx.fill(); ctx.stroke();
-    ctx.fillStyle='#9FBCB8'; ctx.font='500 9.5px "IBM Plex Mono",monospace';
-    ctx.fillText('DEMAND',44,L.TOP+22);
-    ctx.fillStyle='#E6F0EE'; ctx.font='600 15px Fraunces,Georgia,serif';
-    ctx.fillText('4 initiatives',44,L.TOP+46);
-    ctx.fillStyle='#9FBCB8'; ctx.font='400 11px "IBM Plex Sans",sans-serif';
-    ctx.fillText('plus the run',44,L.TOP+64);
-    ctx.fillText('the business',44,L.TOP+79);
-    ctx.fillText('already does',44,L.TOP+94);
+    // 1 the tool
+    card(B.tool.x,B.tool.y,B.tool.w,B.tool.h,true);
+    text('THE TOOL',B.tool.x+14,B.tool.y+24,'500 9.5px "IBM Plex Mono",monospace','#9FBCB8');
+    text(money(C.tool.cost),B.tool.x+14,B.tool.y+56,'600 24px Fraunces,Georgia,serif','#E6F0EE');
+    text('self-service auto-resolution',B.tool.x+14,B.tool.y+76,'400 12px "IBM Plex Sans",sans-serif','#9FBCB8');
+    text('lands in '+C.tool.lagMonths+' months',B.tool.x+14,B.tool.y+(wide?122:96),
+      '500 11px "IBM Plex Mono",monospace',i>=1?'#63B682':'#E0A33C');
+
+    // 2 the team it helps
+    card(B.team.x,B.team.y,B.team.w,B.team.h,i>=1);
+    text('THE TEAM IT HELPS',B.team.x+14,B.team.y+24,'500 9.5px "IBM Plex Mono",monospace','#9FBCB8');
+    text(C.origin.team,B.team.x+14,B.team.y+48,'600 15px "IBM Plex Sans",sans-serif','#E6F0EE');
+    text(C.origin.fte+' people · busiest month',B.team.x+14,B.team.y+68,'400 11.5px "IBM Plex Sans",sans-serif','#9FBCB8');
+    bar(B.team.x+14,B.team.y+88,B.team.w-74,
+        i<1?C.origin.peakBase:lerp(C.origin.peakBase,C.origin.peakTool,i===1?e:1),C.origin.cap,i===1);
+    text('the line is what they can sustain',B.team.x+14,B.team.y+120,'500 10px "IBM Plex Mono",monospace','rgba(255,255,255,.45)');
+
+    // 3 downstream
+    card(B.down.x,B.down.y,B.down.w,B.down.h,i>=2);
+    text('EVERYONE DOWNSTREAM',B.down.x+14,B.down.y+24,'500 9.5px "IBM Plex Mono",monospace','#9FBCB8');
+    C.downstream.forEach((d,k)=>{
+      const y=B.down.y+44+k*(wide?54:62);
+      text(d.team,B.down.x+14,y+10,'600 13px "IBM Plex Sans",sans-serif','#E6F0EE');
+      text(d.why,B.down.x+14,y+26,'400 10.5px "IBM Plex Sans",sans-serif','#9FBCB8');
+      bar(B.down.x+14,y+34,B.down.w-80,
+          i<2?d.peakBase:lerp(d.peakBase,d.peakTool,i===2?e:1),d.cap,i===2);
+    });
+
+    // 4 the hire
+    card(B.hire.x,B.hire.y,B.hire.w,B.hire.h,i>=3);
+    text('THE HIRE',B.hire.x+14,B.hire.y+24,'500 9.5px "IBM Plex Mono",monospace','#9FBCB8');
+    const dropped=i>3||(i===3&&e>0.5);
+    text(C.hire.headcount+' people',B.hire.x+14,B.hire.y+54,'600 21px Fraunces,Georgia,serif',
+      dropped?'#63B682':'#E6F0EE');
+    if(dropped){
+      ctx.strokeStyle='#63B682'; ctx.lineWidth=1.7;
+      ctx.beginPath(); ctx.moveTo(B.hire.x+12,B.hire.y+47); ctx.lineTo(B.hire.x+106,B.hire.y+47); ctx.stroke();
+      text('no longer needed',B.hire.x+14,B.hire.y+(wide?104:78),'600 13px "IBM Plex Sans",sans-serif','#63B682');
+      text('the work went away',B.hire.x+14,B.hire.y+(wide?121:94),'400 10.5px "IBM Plex Sans",sans-serif','#9FBCB8');
+    } else {
+      text('due in '+C.hire.landsMonth,B.hire.x+14,B.hire.y+(wide?104:78),'400 11.5px "IBM Plex Sans",sans-serif','#9FBCB8');
+      text('the plan hires them',B.hire.x+14,B.hire.y+(wide?121:94),'400 11.5px "IBM Plex Sans",sans-serif','#9FBCB8');
     }
 
-    let over=0, peak=0, worst=null, worstU=0;
-    for(let i=0;i<T;i++){
-      const tm=DATA.teams[i], u=util(tm,m,blend), st=statusOf(u), y=laneY(i);
-      if(u>DATA.target) over++;
-      if(u>worstU){worstU=u; worst=tm.name;}
-      peak=Math.max(peak,u);
+    // 5 the money
+    card(B.cash.x,B.cash.y,B.cash.w,B.cash.h,i>=4);
+    text('THE MONEY',B.cash.x+14,B.cash.y+24,'500 9.5px "IBM Plex Mono",monospace','#9FBCB8');
+    const hc=i<4?C.money.fteBase:Math.round(lerp(C.money.fteBase,C.money.fteTool,e));
+    text(String(hc),B.cash.x+14,B.cash.y+56,'600 24px Fraunces,Georgia,serif',i>=4?'#63B682':'#E6F0EE');
+    text('people at year end',B.cash.x+14,B.cash.y+74,'400 11px "IBM Plex Sans",sans-serif','#9FBCB8');
+    const rk=i<4?C.money.riskBase:lerp(C.money.riskBase,C.money.riskTool,e);
+    text(money(rk),B.cash.x+14,B.cash.y+(wide?106:96),'600 15px Fraunces,Georgia,serif',i>=4?'#63B682':'#E6F0EE');
+    text('revenue at risk',B.cash.x+14,B.cash.y+(wide?123:113),'400 11px "IBM Plex Sans",sans-serif','#9FBCB8');
 
-      // lane
-      ctx.fillStyle='rgba(255,255,255,.028)'; ctx.strokeStyle='rgba(255,255,255,.08)';
-      rr(L.LANE_X0-12,y,(L.narrow?L.W-28:(L.METER_X+L.METER_W+52))-(L.LANE_X0-12),L.LANE_H,3);
-      ctx.fill(); ctx.stroke();
-
-      // name + fte
-      ctx.fillStyle='#E6F0EE'; ctx.font='600 13px "IBM Plex Sans",sans-serif';
-      ctx.fillText(tm.name,L.LANE_X0,y+L.NAME_Y);
-      ctx.fillStyle='#9FBCB8'; ctx.font='500 10px "IBM Plex Mono",monospace';
-      ctx.fillText(tm.fte+' FTE',L.LANE_X0,y+L.FTE_Y);
-
-      // meter
-      const mx=L.METER_X, mw=L.METER_W, my=L.METER_MID?y+L.LANE_H/2-5:y+L.FTE_Y+16;
-      ctx.fillStyle='rgba(255,255,255,.10)'; rr(mx,my,mw,10,2); ctx.fill();
-      ctx.fillStyle=COL[st]; rr(mx,my,Math.max(3,Math.min(1,u)*mw),10,2); ctx.fill();
-      // the capacity line is the thing being crossed, so it is drawn on top
-      const tx=mx+DATA.target*mw;
-      ctx.strokeStyle='rgba(255,255,255,.55)'; ctx.lineWidth=1.4;
-      ctx.beginPath(); ctx.moveTo(tx,my-4); ctx.lineTo(tx,my+14); ctx.stroke();
-      ctx.fillStyle=COL[st]; ctx.font='600 13px Fraunces,Georgia,serif';
-      ctx.fillText(Math.round(u*100)+'%',mx+mw+12,my+10);
-      if(i===0){ ctx.fillStyle='rgba(255,255,255,.5)'; ctx.font='500 8px "IBM Plex Mono",monospace';
-                 ctx.fillText('CAPACITY '+Math.round(DATA.target*100)+'%',tx-35,my-9); }
+    // the links themselves: causation has a direction and the board should say so
+    const seq=[B.tool,B.team,B.down,B.hire,B.cash];
+    for(let k=0;k<4;k++){
+      const a=seq[k], b=seq[k+1], live=i>=k+1;
+      if(wide) arrow(a.x+a.w, a.y+76, b.x, b.y+76, live);
+      else     arrow(a.x+a.w/2, a.y+a.h, b.x+b.w/2, b.y, live);
+    }
+    if(i>0&&i<5){
+      const a=seq[i-1], b=seq[i];
+      const x = wide ? lerp(a.x+a.w,b.x,e) : a.x+a.w/2;
+      const y = wide ? a.y+76 : lerp(a.y+a.h,b.y,e);
+      ctx.fillStyle='#7FD4CE'; ctx.beginPath(); ctx.arc(x,y,3.3,0,Math.PI*2); ctx.fill();
     }
 
-    // work in motion, over the lanes rather than under them
-    for(const p of particles){
-      const u=util(DATA.teams[p.i],m,blend);
-      ctx.globalAlpha=.62; ctx.fillStyle=statusOf(u)==='over'||statusOf(u)==='watch'?'#E0A33C':'#7FD4CE';
-      ctx.fillRect(p.x,p.y,3.2,3.2);
-    }
-    ctx.globalAlpha=1;
-
-    // delivered
-    ctx.fillStyle='rgba(255,255,255,.045)'; ctx.strokeStyle='rgba(255,255,255,.11)';
-    if(!L.narrow){ rr(W-60,L.TOP,34,T*(L.LANE_H+L.GAP)-L.GAP,3); ctx.fill(); ctx.stroke();
-    ctx.save(); ctx.translate(W-36,L.TOP+(T*(L.LANE_H+L.GAP)-L.GAP)/2); ctx.rotate(-Math.PI/2);
-    ctx.fillStyle='#9FBCB8'; ctx.font='500 9.5px "IBM Plex Mono",monospace';
-    ctx.textAlign='center'; ctx.fillText('DELIVERED',0,0); ctx.restore(); ctx.textAlign='left'; }
-
-    // footnote: the four teams that never break
-    ctx.fillStyle='rgba(255,255,255,.34)'; ctx.font='400 10.5px "IBM Plex Sans",sans-serif';
-    ctx.fillText('Within capacity all year: '+DATA.within.join(' · '),28,H-22);
-
-    // HUD
-    el('k-month').textContent=DATA.months[Math.round(m)];
-    el('k-over').textContent=over;
-    el('k-peak').textContent=Math.round(peak*100)+'%';
-    el('k-bind').textContent=worst||'\u2014';
-    el('k-over-w').classList.toggle('hot',over>0);
-    el('f-phase').textContent=ph.label;
-    el('f-prog').style.width=(s/LOOP*100)+'%';
-
-    const note=NOTES[ph.id], box=el('f-note');
-    if(note){ if(box.dataset.k!==ph.id){box.dataset.k=ph.id; el('f-note-t').innerHTML=note.html;
-      box.className='f-note on '+note.cls;} }
-    else { box.className='f-note'; box.dataset.k=''; }
+    el('c-step').textContent=(i+1)+' of 5 · '+st.label;
+    el('c-prog').style.width=(s/LOOP*100)+'%';
+    const say=SAY[st.k], box=el('c-say');
+    if(box.dataset.k!==st.k){ box.dataset.k=st.k; el('c-say-t').innerHTML=say.html;
+      box.className='c-say on '+say.cls; }
   }
 
   function frame(now){
     const dt=Math.min(.05,(now-last)/1000); last=now;
-    if(!paused){ elapsed=(elapsed+dt*speed)%LOOP;
-      const ph=phaseAt(elapsed); step(dt*speed,monthAt(elapsed,ph),blendAt(elapsed,ph)); }
+    if(!paused) elapsed=(elapsed+dt*speed)%LOOP;
     draw(elapsed);
     requestAnimationFrame(frame);
   }
 
-  // controls
-  const icon=el('f-icon');
+  const icon=el('c-icon');
   const PAUSE='<rect x="1" y="1" width="2.6" height="8"/><rect x="6.4" y="1" width="2.6" height="8"/>';
   const PLAY='<path d="M2 1l7 4-7 4z"/>';
-  function setPaused(p){ paused=p; icon.innerHTML=p?PLAY:PAUSE;
-    el('f-play').setAttribute('aria-label',p?'Play':'Pause'); }
-  el('f-play').onclick=()=>setPaused(!paused);
-  el('f-speed').onclick=e=>{ speed=speed===1?2:1; e.currentTarget.innerHTML=speed+'&times;'; };
+  const setPaused=p=>{paused=p;icon.innerHTML=p?PLAY:PAUSE;
+    el('c-play').setAttribute('aria-label',p?'Play':'Pause');};
+  el('c-play').onclick=()=>setPaused(!paused);
+  el('c-speed').onclick=ev=>{speed=speed===1?2:1;ev.currentTarget.innerHTML=speed+'&times;';};
 
-  // Nothing animates while it is off screen: this is a background tab's battery.
   if('IntersectionObserver' in window){
-    new IntersectionObserver(es=>es.forEach(e=>{ if(!e.isIntersecting) paused=true;
+    new IntersectionObserver(es=>es.forEach(en=>{ if(!en.isIntersecting) paused=true;
       else if(!reduced&&icon.innerHTML===PAUSE) paused=false; }),{threshold:.15}).observe(wrap);
   }
-  if(reduced){ elapsed=PH[4].t+1; setPaused(true); }   // land on the result, still
+  if(reduced){ elapsed=STEPS[4].t+3; setPaused(true); }
 
-  // canvas resolution follows the element and the display
   function size(){
     const r=wrap.getBoundingClientRect(), d=Math.min(2,devicePixelRatio||1);
-    const next=r.width<560?NARROW:WIDE;
-    if(next!==L){ L=next; particles.length=0; }
+    L = r.width<620 ? NARROW : WIDE;
     cv.width=Math.round(r.width*d); cv.height=Math.round(r.width*(L.H/L.W)*d);
     ctx.setTransform(cv.width/L.W,0,0,cv.width/L.W,0,0);
-    if(paused) draw(elapsed);
+    draw(elapsed);
   }
   addEventListener('resize',size);
-  size();
-  /* Paint the first frame synchronously. Waiting for the first animation frame leaves
-     the board blank in any context that throttles or suspends rAF: a background tab, a
-     reduced-motion session that starts paused, a screenshot taken on load. */
-  draw(elapsed);
+  size();                      // paints the first frame; rAF alone leaves it blank
   requestAnimationFrame(frame);
 })();
 </script>
