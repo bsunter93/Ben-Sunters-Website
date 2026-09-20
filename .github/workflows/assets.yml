@@ -1,0 +1,41 @@
+# The simulator is built in another repo and its dist/ is copied in here by hand. The way
+# that goes wrong is a half-copy: index.html naming a bundle whose file did not come with
+# it, which serves a blank page and looks like the app is broken rather than the copy.
+name: Pages are whole
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  assets:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Every local asset an HTML page names is actually here
+        run: |
+          fail=0
+          while IFS= read -r page; do
+            dir=$(dirname "$page")
+            # src= and href= targets that are local files, not URLs, anchors or data URIs
+            grep -o -E '(src|href)="[^"#?:]+\.(js|css|jpg|jpeg|png|svg|webp|ico|woff2?)"' "$page" \
+              | sed -E 's/.*="([^"]+)"/\1/' | sort -u | while IFS= read -r ref; do
+                case "$ref" in
+                  /*) target=".${ref}" ;;
+                  *)  target="${dir}/${ref}" ;;
+                esac
+                if [ ! -f "$target" ]; then
+                  echo "::error file=${page}::names ${ref}, which is not in the repo"
+                  echo "MISSING" >> /tmp/missing
+                fi
+              done
+          done < <(find . -name '*.html' -not -path './.git/*')
+          if [ -s /tmp/missing ]; then
+            echo "Some pages name files that were not committed. A half-copied build does this."
+            exit 1
+          fi
+          echo "Every page's local assets are present."
