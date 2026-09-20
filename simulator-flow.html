@@ -93,6 +93,14 @@
   .f-note{transition:none}
 }
 .flow-cap{margin:10px 0 0;font-size:13.5px;line-height:1.55;color:var(--muted)}
+
+/* ?embed=1 strips the page down to the board so the simulator can iframe this file
+   rather than keeping a second copy of the animation. */
+body.embed .masthead,body.embed footer,body.embed .eyebrow,
+body.embed h1,body.embed .lede,body.embed .flow-cap,body.embed .skip{display:none}
+body.embed{background:transparent}
+body.embed main>section{padding:0;border:0}
+body.embed .wrap{padding:0;max-width:none}
 </style>
 </head>
 <body id="top">
@@ -149,6 +157,9 @@
   <p>&copy; 2026 Benjamin J. Sunter</p>
 </footer>
 
+<script>
+if(new URLSearchParams(location.search).has('embed')) document.body.classList.add('embed');
+</script>
 <script>
 /* The board reads one exported object. It is produced by running the engine over the
    Atlas fixture, so the only way to change what you see here is to change the model. */
