@@ -141,13 +141,16 @@ if (new URLSearchParams(location.search).has('embed')) document.body.classList.a
   const pc=n=>Math.round(n*100)+'%';
 
   /* Five links. Each is a thing the one before it caused. */
+  /* Each link also happens in a month. A board about a year that never shows the year
+     leaves you guessing how far apart "lands in three months" and "due in May" are. */
   const STEPS=[
-    {k:'tool', label:'The tool',            t:0,    to:3.6},
-    {k:'team', label:'The team it helps',   t:3.6,  to:7.8},
-    {k:'down', label:'Everyone downstream', t:7.8,  to:12.2},
-    {k:'hire', label:'The hire',            t:12.2, to:16.8},
-    {k:'cash', label:'The money',           t:16.8, to:23.0}
+    {k:'tool', label:'The tool',            t:0,    to:3.6,  m:0},
+    {k:'team', label:'The team it helps',   t:3.6,  to:7.8,  m:3},
+    {k:'down', label:'Everyone downstream', t:7.8,  to:12.2, m:4},
+    {k:'hire', label:'The hire',            t:12.2, to:16.8, m:4},
+    {k:'cash', label:'The money',           t:16.8, to:23.0, m:11}
   ];
+  const MONTH_NAMES=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
   const LOOP=23.0;
 
   const SAY={
@@ -283,6 +286,21 @@ if (new URLSearchParams(location.search).has('embed')) document.body.classList.a
     const rk=i<4?C.money.riskBase:lerp(C.money.riskBase,C.money.riskTool,e);
     text(money(rk),B.cash.x+14,B.cash.y+(wide?106:96),'600 15px Fraunces,Georgia,serif',i>=4?'#63B682':'#E6F0EE');
     text('revenue at risk',B.cash.x+14,B.cash.y+(wide?123:113),'400 11px "IBM Plex Sans",sans-serif','#9FBCB8');
+
+    // the year, along the bottom, with everything up to this link already spent
+    {
+      const yw = L.W - 52, yx = 26, yy = L.H - (L.narrow ? 44 : 46), cw = yw / 12;
+      for (let k = 0; k < 12; k++) {
+        const x = yx + k * cw;
+        const isNow = k === st.m, isPast = k < st.m;
+        ctx.fillStyle = isNow ? '#E0A33C' : isPast ? 'rgba(127,212,206,.45)' : 'rgba(255,255,255,.12)';
+        rr(x, isNow ? yy - 1 : yy, cw - 3, isNow ? 5 : 3, 1.5); ctx.fill();
+        text(MONTH_NAMES[k], x, yy + 15,
+             (isNow ? '600' : '500') + ' 8.5px "IBM Plex Mono",monospace',
+             isNow ? '#E6F0EE' : isPast ? '#9FBCB8' : 'rgba(255,255,255,.28)');
+      }
+      text('THE PLAN YEAR', yx, yy - 9, '500 8px "IBM Plex Mono",monospace', 'rgba(255,255,255,.35)');
+    }
 
     // the links themselves: causation has a direction and the board should say so
     const seq=[B.tool,B.team,B.down,B.hire,B.cash];
