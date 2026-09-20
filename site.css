@@ -557,7 +557,7 @@ footer{padding:26px 0 44px;border-top:1px solid var(--hair);
 .bring-stat b{font:600 26px/1 var(--display);color:var(--co);letter-spacing:-.01em}
 .bring-stat span{font:500 11px/1.3 var(--mono);letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
 .bring-item h3{font:600 16px/1.3 var(--sans);color:var(--ink);margin:2px 0 0}
-.bring-item p{margin:0;font-size:14px;line-height:1.55;color:var(--body)}
+.bring-item p{margin:0;font-size:15px;line-height:1.6;color:var(--body)}
 @media (max-width:640px){.bring{grid-template-columns:1fr}}
 
 /* ── how I work: the method spine ────────────────────────────────────────── */
@@ -611,7 +611,7 @@ footer{padding:26px 0 44px;border-top:1px solid var(--hair);
 .trio-card .playlink{order:3;margin-top:16px}
 .trio-card .proj-kind{margin:18px 22px 0}
 .trio-card h3{font:600 20px/1.25 var(--display);color:var(--ink);margin:6px 22px 8px;letter-spacing:-.01em}
-.trio-card p{margin:0 22px 14px;font-size:14px;line-height:1.55;color:var(--body);flex:1}
+.trio-card p{margin:0 22px 14px;font-size:15px;line-height:1.6;color:var(--body);flex:1}
 .trio-card .playlink{margin:0 22px;color:var(--accent)}
 .trio-card:hover .playlink{text-decoration:underline;text-underline-offset:3px}
 .trio-card:nth-child(2){border-top-color:var(--warm)}
@@ -669,7 +669,7 @@ footer{padding:26px 0 44px;border-top:1px solid var(--hair);
 .cs-kind{display:block;font:500 10.5px/1 var(--mono);letter-spacing:.13em;text-transform:uppercase;
   color:var(--muted);margin-bottom:10px}
 .cs-card h3{font:600 17px/1.3 var(--display);color:var(--ink);margin:0 0 9px;letter-spacing:-.01em}
-.cs-card p{margin:0 0 13px;font-size:14px;line-height:1.55;color:var(--body)}
+.cs-card p{margin:0 0 13px;font-size:15px;line-height:1.6;color:var(--body)}
 .cs-figs{margin:0 0 13px}
 .cs-figs b{display:block;font:600 21px/1.1 var(--display);color:var(--ink);letter-spacing:-.01em}
 .cs-figs span{display:block;margin-top:4px;font:500 10.5px/1.4 var(--mono);letter-spacing:.06em;
@@ -679,3 +679,14 @@ footer{padding:26px 0 44px;border-top:1px solid var(--hair);
 .cs-wrong b{color:var(--ink);font-weight:600}
 .cs-card .playlink{margin-top:14px;color:var(--accent)}
 .cs-card:hover .playlink{text-decoration:underline;text-underline-offset:3px}
+
+/* ── typographic polish ──────────────────────────────────────────────────── */
+/* Card headings sat on two lines with a single word stranded on the second. Balance
+   splits them evenly instead; it degrades to normal wrapping where unsupported. */
+.trio-card h3,.cs-card h3,.bring-item h3,.wr-card h3{text-wrap:balance}
+
+/* The page is mostly figures, and rows of them are meant to be read against each
+   other: four proof points, three impact numbers per role. Proportional digits make
+   those columns ragged. Tabular digits line them up, which is the difference between
+   a number and a table of numbers. */
+.proof b,.jobfig b,.bring-item .n,.cs-fig,.arc span{font-variant-numeric:tabular-nums lining-nums}
