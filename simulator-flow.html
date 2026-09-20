@@ -126,13 +126,13 @@ body.embed .wrap{padding:0;max-width:none}
 
   <div class="flow" id="flow">
     <canvas id="fcv" width="1000" height="420" role="img"
-      aria-label="An animation of Atlas Systems' 2027 plan. Four of its eight teams go over their capacity target during the year. Implementation peaks at 96 percent utilisation in May, 9.6 people short. Moving 5 people from Customer Operations lowers that peak to 87 percent and leaves the other three teams unchanged."></canvas>
+      aria-label="An animation of Atlas Systems' 2027 plan. Four of its eight teams go over capacity during the year. Implementation peaks at 96 percent utilisation in May, 9.6 people short. Moving 5 people from Customer Operations lowers that peak to 87 percent and leaves the other three teams unchanged."></canvas>
     <div class="f-hud">
       <div class="f-top">
         <div class="f-title"><b id="f-co">Atlas Systems</b><span id="f-sub">2027 plan · fictional</span></div>
         <div class="f-kpis">
           <div class="f-kpi"><b id="k-month">Jan</b><span>Month</span></div>
-          <div class="f-kpi" id="k-over-w"><b id="k-over">0</b><span>Over target</span></div>
+          <div class="f-kpi" id="k-over-w"><b id="k-over">0</b><span>Over capacity</span></div>
           <div class="f-kpi"><b id="k-peak">77%</b><span>Peak load</span></div>
           <div class="f-kpi"><b id="k-bind">&mdash;</b><span>Binding team</span></div>
         </div>
@@ -214,7 +214,7 @@ const DATA = {
   const PEAK_M=4;                            // May, the month Implementation peaks
 
   const NOTES={
-    build:{cls:'alert', html:'<b>Implementation crosses its capacity target in Feb</b> and peaks at <b>96%</b> in May, <b>9.6 people short</b>. <em>Three other teams go over in the same year.</em>'},
+    build:{cls:'alert', html:'<b>Implementation goes over capacity in Feb</b> and peaks at <b>96%</b> in May, <b>9.6 people short</b>. <em>Three other teams go over in the same year.</em>'},
     lever:{cls:'lever', html:'<b>Lever applied:</b> move 5 people from Customer Operations to Implementation. <em>One of five levers the model carries.</em>'},
     after:{cls:'land',  html:'Implementation’s peak falls from <b>96%</b> to <b>87%</b>, and Feb and Mar come back under the line.'},
     land: {cls:'',      html:'It is still over in April and May, and <b>the other three bars have not moved at all.</b> <em>A lever aimed at one team fixes one team.</em>'}
@@ -226,7 +226,7 @@ const DATA = {
   function phaseAt(s){ for(const p of PH) if(s>=p.t&&s<p.to) return p; return PH[PH.length-1]; }
 
   /* Month position climbs to the peak and then holds. Replaying the whole year in
-     each phase buried the moment that matters: by December nothing is over target, so
+     each phase buried the moment that matters: by December nothing is over capacity, so
      a lever shown there looks like it fixed nothing. */
   function monthAt(s,ph){
     if(ph.id==='steady') return 0;
@@ -268,7 +268,7 @@ const DATA = {
     for(let k=particles.length-1;k>=0;k--){
       const p=particles[k], u=util(DATA.teams[p.i],m,blend);
       const over=Math.max(0,u-DATA.target);
-      const gate=L.LANE_X0+(L.LANE_X1-L.LANE_X0)*0.32+over*(L.LANE_X1-L.LANE_X0)*1.6;        // the further over target, the earlier work stalls
+      const gate=L.LANE_X0+(L.LANE_X1-L.LANE_X0)*0.32+over*(L.LANE_X1-L.LANE_X0)*1.6;        // the further over capacity, the earlier work stalls
       let v=p.v*150;
       if(p.x>gate && over>0.005) v*=Math.max(0.05,1-over*9);
       p.x+=v*dt;
@@ -325,14 +325,14 @@ const DATA = {
       const mx=L.METER_X, mw=L.METER_W, my=L.METER_MID?y+L.LANE_H/2-5:y+L.FTE_Y+16;
       ctx.fillStyle='rgba(255,255,255,.10)'; rr(mx,my,mw,10,2); ctx.fill();
       ctx.fillStyle=COL[st]; rr(mx,my,Math.max(3,Math.min(1,u)*mw),10,2); ctx.fill();
-      // the target line is the thing being crossed, so it is drawn on top
+      // the capacity line is the thing being crossed, so it is drawn on top
       const tx=mx+DATA.target*mw;
       ctx.strokeStyle='rgba(255,255,255,.55)'; ctx.lineWidth=1.4;
       ctx.beginPath(); ctx.moveTo(tx,my-4); ctx.lineTo(tx,my+14); ctx.stroke();
       ctx.fillStyle=COL[st]; ctx.font='600 13px Fraunces,Georgia,serif';
       ctx.fillText(Math.round(u*100)+'%',mx+mw+12,my+10);
       if(i===0){ ctx.fillStyle='rgba(255,255,255,.5)'; ctx.font='500 8px "IBM Plex Mono",monospace';
-                 ctx.fillText('TARGET '+Math.round(DATA.target*100)+'%',tx-27,my-9); }
+                 ctx.fillText('CAPACITY '+Math.round(DATA.target*100)+'%',tx-35,my-9); }
     }
 
     // work in motion, over the lanes rather than under them

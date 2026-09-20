@@ -90,6 +90,34 @@
        never writes or submits anything. What it does is cut down how many roles are worth
        your time in the first place.</p>
 
+    <div class="does">
+      <div>
+        <p class="does-h">What it does</p>
+        <ul>
+          <li>Reads about twelve thousand postings a morning and throws away almost all of them.</li>
+          <li>Works out what happened to every application by reading my mail, so I record nothing by hand.</li>
+          <li>Keeps the record straight: what I sent, what came back, and when.</li>
+        </ul>
+      </div>
+      <div>
+        <p class="does-h">What it does not do</p>
+        <ul>
+          <li>It never writes an application and never submits one. Applying still happens in a browser.</li>
+          <li>It does not guess. Roughly half of what it reads it refuses to judge, and hands to me.</li>
+          <li>It does not get you a job. The bottleneck is how many people can read, and nothing here changes that.</li>
+        </ul>
+      </div>
+    </div>
+
+    <p class="demo-lead">Here is what it produces. Filter it, sort it, open any row.</p>
+    <div class="demo" id="demo">
+      <p class="demo-flag"><b>Demo</b> <span>Synthetic data. Every company, role and
+         application below is invented.</span></p>
+      <iframe src="careerops-demo.html" loading="lazy"
+              title="Career Ops dashboard demo, running on synthetic data"></iframe>
+      <p class="demo-note">Filter, sort, open any row.</p>
+    </div>
+
     <figure class="proj-fig">
       <svg viewBox="0 0 620 168" role="img" aria-label="103 job boards across four ATS APIs are ranked cheapest filter first, banded by how recently each role was posted, freshest band first, and each row arrives with pay band, employee sentiment and your history with that company attached.">
         <text class="d-mono" x="0" y="12">HOW A ROLE REACHES THE LIST</text>
@@ -156,6 +184,15 @@ OK   unapplied alias
     <p class="rc-cap">Both of those are actual output. The one open finding is staying open,
        because the stored title happens to be the better of the two.</p>
 
+    <p class="proj-honest"><b>What that 886 is, and what it is not.</b> It is a regression
+       gate, not an accuracy score. I labelled those messages myself after seeing what the
+       classifier made of them, and fixed the code until the two agreed, so it reports 100%
+       by construction. What it proves is that a change did not break something that used to
+       work. What it cannot tell me is how often the thing is right about mail it has never
+       seen. That number does not exist yet. Getting it means labelling a held-out sample
+       blind, before looking at the verdict, which is an afternoon's work and the next thing
+       I will do to this. Until then the honest claim is the gate, not the score.</p>
+
     <p class="proj-note">It doesn't fix the real problem, and nothing on the candidate's side
        can. The bottleneck is how many humans can read. The hard bugs all came down to one thing: software saying something untrue with total confidence and being believed. Most of the
        work was teaching it to admit when it doesn't know.</p>
@@ -166,13 +203,6 @@ OK   unapplied alias
     <div class="tagrow">
       <span class="tag">Python</span><span class="tag">SQLite</span><span class="tag">Gmail API</span>
       <span class="tag">Anthropic API</span><span class="tag">Event sourcing</span><span class="tag">Open source</span>
-    </div>
-    <div class="demo" id="demo">
-      <p class="demo-flag"><b>Demo</b> <span>Synthetic data. Every company, role and
-         application below is invented.</span></p>
-      <iframe src="careerops-demo.html" loading="lazy"
-              title="Career Ops dashboard demo, running on synthetic data"></iframe>
-      <p class="demo-note">Filter, sort, open any row.</p>
     </div>
     <p class="proj-give">Take it if it's useful. There's a two-minute path with no
        credentials, and a full setup that reads your Gmail locally. Nothing leaves your

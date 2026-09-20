@@ -690,3 +690,30 @@ footer{padding:26px 0 44px;border-top:1px solid var(--hair);
    those columns ragged. Tabular digits line them up, which is the difference between
    a number and a table of numbers. */
 .proof b,.jobfig b,.bring-item .n,.cs-fig,.arc span{font-variant-numeric:tabular-nums lining-nums}
+
+/* ── project page: plain-language pair, and the honest reading ───────────────
+   The Career Ops page used to open with philosophy, run a terminal session, and
+   put the working demo second from the bottom. A reader who did not already know
+   what the thing was met a command line before they met the product. These two
+   blocks front the page instead. */
+.does{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:24px 34px;
+  margin:26px 0 30px;padding:20px 22px;background:var(--surface);
+  border:1px solid var(--line);border-radius:2px}
+.does-h{margin:0 0 9px;font:500 10.5px/1 var(--mono);letter-spacing:.13em;
+  text-transform:uppercase;color:var(--muted)}
+.does ul{margin:0;padding:0;list-style:none}
+.does li{position:relative;padding-left:16px;margin-bottom:9px;font-size:15px;
+  line-height:1.55;color:var(--body)}
+.does li:last-child{margin-bottom:0}
+.does li:before{content:"";position:absolute;left:0;top:10px;width:7px;height:1px;
+  background:var(--line)}
+@media (max-width:660px){.does{grid-template-columns:1fr;gap:20px;padding:18px}}
+
+.demo-lead{margin:0 0 10px;font-size:15px;line-height:1.55;color:var(--body)}
+
+/* The claim and its caveat sit together. Separating them is how a number starts
+   meaning more than it should. */
+.proj-honest{margin:18px 0 26px;padding:14px 16px;background:var(--tint);
+  border-left:2px solid var(--warm);border-radius:0 2px 2px 0;
+  font-size:14.5px;line-height:1.6;color:var(--body);max-width:var(--measure)}
+.proj-honest b{color:var(--ink);font-weight:600}
