@@ -717,3 +717,34 @@ footer{padding:26px 0 44px;border-top:1px solid var(--hair);
   border-left:2px solid var(--warm);border-radius:0 2px 2px 0;
   font-size:14.5px;line-height:1.6;color:var(--body);max-width:var(--measure)}
 .proj-honest b{color:var(--ink);font-weight:600}
+
+/* ── the two you can run, and the two you can read ──────────────────────────
+   Every card ended in the same coloured line of text, so a live application and a page
+   of writing were the same object to the eye. The one that launches something carries a
+   button; the ones that open an essay stay links and say so. The chip on the kind line
+   does the grouping the section could not: two simulators, two tools, whatever order
+   they happen to sit in. */
+.proj-kind b{display:inline-block;margin-right:9px;padding:3px 7px;border-radius:3px;
+  font:600 9.5px/1 var(--mono);letter-spacing:.11em;text-transform:uppercase;
+  vertical-align:baseline}
+.pk-app{background:var(--accent);color:var(--paper)}
+.pk-tool{background:var(--tint);color:var(--muted);box-shadow:inset 0 0 0 1px var(--line)}
+/* the write-up links: a destination, drawn as one */
+.trio-card .playlink{display:inline-flex;align-items:center;gap:6px;align-self:flex-start;
+  padding:8px 14px;border:1px solid var(--line);border-radius:999px;
+  background:var(--paper);color:var(--body);font-weight:500}
+.trio-card:hover .playlink{text-decoration:none;border-color:var(--accent);color:var(--accent)}
+/* the one that launches an application */
+.trio-card .playlink-app{background:var(--accent);border-color:var(--accent);color:var(--paper);
+  font-weight:600}
+.trio-card:hover .playlink-app{background:var(--accent);border-color:var(--accent);
+  color:var(--paper);filter:brightness(1.08)}
+/* the other live tool, in the also-built row */
+.also-app b::after{content:"Run it";display:inline-block;margin-left:8px;padding:2px 6px;
+  border-radius:3px;background:var(--accent);color:var(--paper);
+  font:600 8.5px/1.25 var(--mono);letter-spacing:.1em;text-transform:uppercase;
+  vertical-align:1px}
+/* The copy used to stretch to fill the card, which pushed the two shorter cards' buttons
+   to the floor and left 170px of nothing above them. Letting the content sit at its own
+   height puts that space below the button, where it reads as padding. */
+.trio-card p{flex:none}
