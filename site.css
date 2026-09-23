@@ -73,7 +73,7 @@ section{padding:var(--gap) 0;border-top:1px solid var(--hair)}
 section:first-of-type{border-top:0}
 h2{font:600 clamp(26px,3.4vw,34px)/1.15 var(--display);letter-spacing:-.015em;margin-bottom:10px}
 .arc{list-style:none;display:grid;grid-template-columns:repeat(auto-fit,minmax(186px,1fr));
-  gap:0;margin:30px 0 0;padding:0;border-top:1px solid rgba(255,255,255,.16)}
+  gap:0;margin:24px 0 0;padding:0;border-top:1px solid rgba(255,255,255,.16)}
 .arc li{position:relative;padding:17px 22px 0 0}
 .arc li:before{content:"";position:absolute;top:-1px;left:0;right:22px;height:3px;background:var(--co)}
 .arc b{display:block;font:600 15px/1.3 var(--sans);color:#fff}
@@ -93,7 +93,14 @@ h2{font:600 clamp(26px,3.4vw,34px)/1.15 var(--display);letter-spacing:-.015em;ma
   backdrop-filter:saturate(180%) blur(12px);
   border-bottom:1px solid var(--line);
   box-shadow:0 8px 20px -18px rgba(0,0,0,.55);
-  transition:background .25s ease,border-color .25s ease,box-shadow .25s ease;
+  /* `background` is deliberately NOT transitioned. The two states carry opposite text
+     colours, and those flip in the same frame the class does, while a 250ms background
+     crossfade does not: during the band/paper handover the bar sat half-way between deep
+     petrol and paper with pale on-deep text on it, and the nav and the Contact pill went
+     illegible every time the hero left the viewport. Fastest on a phone, where the flick
+     scroll crosses the boundary at speed. Swapping the plate in one frame costs nothing
+     visually and has no mid-state to get wrong. */
+  transition:border-color .25s ease,box-shadow .25s ease;
 }
 .masthead .wrap{display:flex;align-items:center;gap:20px;height:60px}
 .mark{display:flex;align-items:baseline;gap:9px;margin-right:auto;
@@ -118,7 +125,7 @@ h2{font:600 clamp(26px,3.4vw,34px)/1.15 var(--display);letter-spacing:-.015em;ma
    `background:transparent` the hero copy ran straight through the name and the nav on
    the first scroll gesture, on every viewport. The plate is the band's own colour, so
    it stays invisible where the two meet and only separates once the page moves. */
-.masthead.over-band{background:color-mix(in srgb,var(--deep) 92%,transparent);
+.masthead.over-band{background:var(--deep);
   backdrop-filter:saturate(180%) blur(12px);
   border-bottom-color:rgba(255,255,255,.14);
   box-shadow:0 8px 20px -18px rgba(0,0,0,.8)}
@@ -134,7 +141,19 @@ h2{font:600 clamp(26px,3.4vw,34px)/1.15 var(--display);letter-spacing:-.015em;ma
 .band{background:var(--deep);color:var(--on-deep);border-top:0}
 .band h1,.band h2{color:var(--on-deep)}
 .band p{color:var(--on-deep)}
-.hero{padding-top:clamp(52px,7vw,84px);padding-bottom:clamp(44px,6vw,72px);border-top:0}
+/* The band is tuned to clear a 768px viewport so the buttons stay above the fold; the
+   availability line added 40px, so the padding gives it back. Re-measure .hero .links
+   against innerHeight before adding anything else to this band. */
+.hero{padding-top:clamp(38px,4.8vw,60px);padding-bottom:clamp(28px,3.2vw,40px);border-top:0}
+/* The page said Included Health 2026 in the arc and "that is the work I want" 700px
+   down in Contact, and left the reader to infer the rest. One line, above the h1, in
+   the mono the eyebrows already use so it reads as a status and not a headline. */
+.hero .avail{display:inline-flex;align-items:center;gap:8px;margin:0 0 12px;
+  padding:5px 12px 5px 10px;border:1px solid rgba(255,255,255,.22);border-radius:999px;
+  font:500 11px/1.45 var(--mono);letter-spacing:.09em;text-transform:uppercase;
+  color:var(--on-deep)}
+.avail-dot{width:7px;height:7px;border-radius:50%;background:var(--warm-bright);flex:none}
+@media (max-width:420px){.hero .avail{letter-spacing:.06em;font-size:10.5px}}
 .hero-grid{display:grid;grid-template-columns:minmax(0,1fr) 172px;gap:clamp(28px,5vw,56px);align-items:start}
 h1{font:600 clamp(36px,5.4vw,53px)/1.06 var(--display);letter-spacing:-.026em;margin-bottom:22px}
 .hero p{max-width:58ch;font-size:18px;color:var(--on-deep);margin:0 0 14px}
@@ -156,6 +175,9 @@ h1{font:600 clamp(36px,5.4vw,53px)/1.06 var(--display);letter-spacing:-.026em;ma
 }
 .btn:hover{border-color:var(--accent);color:var(--accent);text-decoration:none}
 .btn.solid{background:var(--ink);border-color:var(--ink);color:var(--paper)}
+/* Contact only: the email and LinkedIn buttons close the page, so they carry more than
+   the hero's row of four. */
+.btn-lg{padding:12px 20px;font-size:15px}
 .btn.solid:hover{background:var(--accent);border-color:var(--accent);color:#fff}
 .band .btn{background:transparent;border-color:rgba(255,255,255,.28);color:var(--on-deep)}
 .band .btn:hover{border-color:var(--warm-bright);color:var(--warm-bright)}
@@ -183,14 +205,19 @@ h1{font:600 clamp(36px,5.4vw,53px)/1.06 var(--display);letter-spacing:-.026em;ma
 .closing p{margin:0 0 16px;max-width:56ch;font:400 17px/1.62 var(--display);color:var(--body)}
 .closing p:last-child{margin-bottom:0;color:var(--ink)}
 
-.subscribe{margin:0 0 20px;padding-bottom:18px;border-bottom:1px solid var(--hair)}
+/* It sat above the details with a filled ink button, so the heaviest element in the
+   Contact section was the newsletter. Nobody reading this page to hire him is
+   subscribing. Moved under the details, hairline above instead of below, and the button
+   is now outlined: the mailto in the left column is the only solid control in the
+   section. */
+.subscribe{margin:20px 0 0;padding-top:18px;border-top:1px solid var(--hair)}
 .subscribe label{display:block;font-size:13.5px;color:var(--muted);margin-bottom:9px}
 .subrow{display:flex;gap:7px}
 .subrow input{flex:1 1 auto;min-width:0;font:400 14px/1 var(--sans);color:var(--ink);
   background:var(--paper);border:1px solid var(--line);border-radius:2px;padding:9px 11px}
 .subrow input:focus{outline:2px solid var(--accent);outline-offset:1px;border-color:var(--accent)}
 .subrow button{flex:none;font:500 13px/1 var(--sans);cursor:pointer;
-  background:var(--ink);color:var(--paper);border:1px solid var(--ink);
+  background:var(--surface);color:var(--body);border:1px solid var(--line);
   border-radius:2px;padding:9px 14px}
 .subrow button:hover{background:var(--accent);border-color:var(--accent);color:#fff}
 .subnote{margin:9px 0 0;font-size:13px;color:var(--muted)}
@@ -364,6 +391,12 @@ h1{font:600 clamp(36px,5.4vw,53px)/1.06 var(--display);letter-spacing:-.026em;ma
   background:#fff;border:1px solid var(--line);border-radius:2px;
   padding:7px 10px;margin-bottom:12px;height:36px}
 .joblogo img,.joblogo svg{height:21px;width:auto;display:block}
+/* The education row carries no mark. 21px is a wordmark height: it suits Google,
+   Included Health and Accenture, which are wide and mostly letterforms. The UF source
+   is a 42px mascot crest, so it rendered as a smudge at 21px and, tried at 28, 32 and
+   40px, only became a larger soft smudge: the art needs roughly 60px to resolve and
+   there is no source that size. The org line already says University of Florida.
+   Restore a mark here only with a real wordmark asset. */
 .certs{margin:0;padding:0;list-style:none}
 .certs li{font-size:14.5px;padding:5px 0;color:var(--body);
   position:relative;padding-left:15px}
@@ -543,7 +576,7 @@ footer{padding:26px 0 44px;border-top:1px solid var(--hair);
 @media (prefers-reduced-motion:reduce){.jo-chev,.job-open{transition:none}}
 
 /* ── proof strip in the hero ───────────────────────────────────────────── */
-.proof{list-style:none;margin:22px 0 0;padding:18px 0 0;border-top:1px solid rgba(255,255,255,.16);display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px 28px;max-width:560px}
+.proof{list-style:none;margin:18px 0 0;padding:14px 0 0;border-top:1px solid rgba(255,255,255,.16);display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px 28px;max-width:560px}
 .proof b{display:block;font:600 24px/1.05 var(--display);color:#fff;letter-spacing:-.01em}
 .proof span{display:block;margin-top:5px;font:400 12.5px/1.45 var(--sans);color:var(--on-deep-mut)}
 
@@ -596,8 +629,47 @@ footer{padding:26px 0 44px;border-top:1px solid var(--hair);
 .method-handoff a{font-weight:500;white-space:nowrap}
 
 /* ── start here: the trio, and the also-built list ─────────────────────── */
-.trio{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:18px;margin-top:28px}
-@media (max-width:860px){.trio{grid-template-columns:1fr}}
+/* Was three equal columns. The simulator is the only one of the three with a shot and
+   roughly twice the copy, so it ran ~500px while the two tools ended around 280px and
+   sat in white space for the rest of the row: it read as one real project beside two
+   afterthoughts. Ordering the image last (below) aligned the titles but could not fix
+   the floor. Featuring the simulator full width and pairing the two tools underneath
+   gives each card a row whose height it actually fills. */
+.feature{margin-top:28px}
+.duo{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:18px;margin-top:18px}
+@media (max-width:860px){.duo{grid-template-columns:1fr}}
+.duo .trio-card:nth-child(1){border-top-color:var(--warm)}
+.duo .trio-card:nth-child(2){border-top-color:var(--plum)}
+
+/* The feature: copy in the left column, the shot filling the right for the card's full
+   height. It keeps the .trio-card skin, so hover, borders and the playlink pill are the
+   same object the pair below uses. */
+.feature .trio-card--feature{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,42%);
+  grid-template-rows:auto auto 1fr auto;padding:0;align-items:start}
+.feature .trio-card--feature>.proj-kind{grid-column:1;grid-row:1}
+.feature .trio-card--feature>h3{grid-column:1;grid-row:2;font-size:25px}
+.feature .trio-card--feature>p{grid-column:1;grid-row:3;max-width:52ch}
+/* align-self:flex-start on the base rule is the block axis in a grid, so the pill
+   stretched the width of the column. justify-self is the inline one. */
+.feature .trio-card--feature>.playlink{grid-column:1;grid-row:4;justify-self:start;
+  margin-bottom:22px}
+.feature .trio-card--feature>img{grid-column:2;grid-row:1 / -1;align-self:stretch;
+  width:100%;height:100%;object-fit:cover;object-position:left top;
+  border:0;border-left:1px solid var(--line)}
+/* Stacked on a phone. `>*` is a class-plus-universal selector and scores below the
+   `>img` rule above it, so a blanket `>*{grid-column:1}` did NOT move the image: it kept
+   grid-column:2, which grid honours by creating an implicit second column even though
+   the explicit template here is a single 1fr. The card then rendered two columns on a
+   390px screen with the copy crushed into 145px. The image needs its own reset at its
+   own specificity. */
+@media (max-width:860px){
+  .feature .trio-card--feature{grid-template-columns:1fr;grid-template-rows:auto;padding-bottom:0}
+  .feature .trio-card--feature>*{grid-column:1;grid-row:auto}
+  .feature .trio-card--feature>h3{font-size:21px}
+  .feature .trio-card--feature>.playlink{margin-bottom:20px}
+  .feature .trio-card--feature>img{grid-column:1;grid-row:auto;height:auto;
+    border-left:0;border-top:1px solid var(--line)}
+}
 .trio-card{display:flex;flex-direction:column;background:var(--surface);border:1px solid var(--line);border-top:3px solid var(--accent);border-radius:2px;padding:0 0 20px;color:var(--body);text-decoration:none}
 .trio-card:hover{text-decoration:none;border-color:var(--accent)}
 .trio-card img{display:block;width:100%;height:auto;border-bottom:1px solid var(--line)}
@@ -614,8 +686,7 @@ footer{padding:26px 0 44px;border-top:1px solid var(--hair);
 .trio-card p{margin:0 22px 14px;font-size:15px;line-height:1.6;color:var(--body);flex:1}
 .trio-card .playlink{margin:0 22px;color:var(--accent)}
 .trio-card:hover .playlink{text-decoration:underline;text-underline-offset:3px}
-.trio-card:nth-child(2){border-top-color:var(--warm)}
-.trio-card:nth-child(3){border-top-color:var(--plum)}
+
 .also{margin-top:26px;display:grid;grid-template-columns:110px minmax(0,1fr);gap:6px 18px;align-items:baseline}
 .also-l{font:500 10.5px/1.6 var(--mono);letter-spacing:.13em;text-transform:uppercase;color:var(--muted);grid-row:1 / span 2}
 .also a{font-size:14px;line-height:1.5;color:var(--body);padding:4px 0;border-bottom:1px solid var(--hair)}
