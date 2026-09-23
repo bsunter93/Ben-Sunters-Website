@@ -183,6 +183,12 @@ spreadsheet's own .xlsx export does carry the sheet and the cell, so the add-on 
 for that export and reads the comment records straight out of it. Everything runs inside
 Apps Script, under your account.</p>
 
+<p>That is also why other tools do not carry it. Add-ons exist that export Sheets comments,
+and the closest one reports the text or the content of the commented cell rather than its
+reference. Content cannot locate anything, since <code>4.2%</code> might sit in fifty
+places. The cell reference is the field that makes an export usable, and it is the one the
+documented API will not give you.</p>
+
 <p>Built in an evening, which was only possible because the hard part, the parsing, already
 existed.</p>
 
