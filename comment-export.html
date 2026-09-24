@@ -60,6 +60,7 @@
 .ce-shot figcaption{margin-top:10px;font:400 13px/1.5 var(--sans);color:var(--muted)}
 .ce-cta{display:flex;gap:10px;flex-wrap:wrap;margin:26px 0 0}
 </style>
+<script>try{var t=localStorage.getItem('theme');if(t==='light'||t==='dark')document.documentElement.setAttribute('data-theme',t)}catch(e){}</script>
 </head>
 <body>
 
@@ -79,12 +80,12 @@
 
 <article class="reading">
 
-<p class="open">Google Sheets keeps comments somewhere you cannot sort them, count them,
-or get them out. If your review cycle happens in the comments, there is no way to answer
+<p class="open">Google Sheets keeps comments somewhere you can't sort them, count them,
+or get them out. If your review cycle happens in the comments, there's no way to answer
 "how many are still open" or "which ones are on the forecast tab" without opening them one
 at a time.</p>
 
-<p>This is a Google Workspace add-on that puts them all in a tab. There is also a
+<p>This is a Google Workspace add-on that puts them all in a tab. There's also a
 <a href="commentpulse.html">browser version</a> that needs no install, which is what I built
 first.</p>
 
@@ -114,83 +115,81 @@ spreadsheet, one row per comment thread:</p>
 </ul>
 
 <p>It arrives with a filter already applied and the header frozen, in the order the comments
-appear in the spreadsheet: tab by tab, then down the rows. From there it is ordinary
+appear in the spreadsheet: tab by tab, then down the rows. From there it's ordinary
 spreadsheet data. Sort it, pivot it, download it as CSV, or paste it into a status update.</p>
 
-<p class="pull">Rerunning it refreshes the tab in place. It never modifies, resolves or
-deletes your actual comments.</p>
+<p class="pull">Rerunning it refreshes the tab in place. It never edits, resolves or
+deletes the comments themselves.</p>
 
-<h2>The use I did not see coming</h2>
+<h2>The use I didn't expect</h2>
 
-<p>Sorting is the obvious reason. The one that turned out to matter more is context.</p>
+<p>Sorting is the obvious reason to use it. The one that ended up mattering more is context.</p>
 
 <p>A spreadsheet's cells carry its numbers. Its comments carry the argument about those
 numbers: why this assumption, what the pushback was, which figure is still contested and
-who contested it. That commentary is very often the only written record of how the model
-arrived at what it says, and it sits in a sidebar that nothing else can read.</p>
+who contested it. That's often the only written record of how the model got to its
+numbers, and it sits in a sidebar nothing else can read.</p>
 
-<p>Which means that when you hand a spreadsheet to a language model, you hand over the
-what and keep back the why. It sees 4.2% and not the three people who spent a week arguing
-about whether 4.2% was defensible.</p>
+<p>So when you give a spreadsheet to a language model, it gets the numbers and none of the
+reasoning. It sees 4.2%, but not the three people who spent a week arguing about whether
+4.2% was defensible.</p>
 
-<p>The failure is quiet, which is the problem. Copy the cells and paste them into a chat
-and the comments do not come with them. Upload the <code>.xlsx</code> and the comment
-records are technically inside the file, but the usual ways of reading one return the
-values and nothing else. Export to CSV or PDF and they are gone. In every case you get an
-answer, confidently, from a spreadsheet that has been stripped of its reasoning, and
-nothing tells you that happened.</p>
+<p>And nothing warns you. Copy the cells and paste them into a chat and the comments don't
+come with them. Upload the <code>.xlsx</code> and the comment records are technically
+inside the file, but the usual ways of reading one return the values and nothing else.
+Export to CSV or PDF and they're gone. Either way you get a confident answer from a
+spreadsheet that's been stripped of its reasoning.</p>
 
-<p>Writing the threads into a tab fixes it at the source. The discussion becomes ordinary
-rows: copy them, download them as CSV, attach them, paste them in alongside the numbers
-they belong to. The decision history stops being trapped in the file.</p>
+<p>Writing the threads into a tab fixes that. The discussion becomes ordinary rows you can
+copy, download as CSV, attach, or paste in next to the numbers they belong to.</p>
 
-<p>The same property is what makes the unglamorous uses work. Once the threads are rows
-they are searchable, filterable and archivable, and a review cycle that happened in
-comments leaves something behind instead of evaporating when the quarter closes.</p>
+<p>It helps with the everyday uses too. Once the threads are rows you can search, filter
+and archive them, so a review cycle that happened in comments still leaves a record after
+the quarter closes.</p>
 
-<h2>Who it is for</h2>
+<h2>Who it's for</h2>
 
-<p>Anyone whose review process lives in the comments. Finance teams closing a budget,
-analysts working through data quality, operations teams running a planning cycle. The
-people who need to work down a list of open threads rather than read them one at a time.</p>
+<p>Anyone whose review process lives in the comments: finance teams closing a budget,
+analysts working through data quality, operations teams running a planning cycle. People
+who'd rather work down a list of open threads than open them one at a time.</p>
 
 <h2>Privacy</h2>
 
-<p>There is no server behind this. Access is granted <strong>one file at a time</strong>,
+<p>There's no server behind this. Access is granted <strong>one file at a time</strong>,
 so it never asks for permission to your Drive, and the only address it can contact is
-Google's own Drive API, which is enforced by the add-on's manifest rather than promised in
-prose. Your comments go from your spreadsheet, through Google's infrastructure, back into
+Google's own Drive API. The add-on's manifest enforces that, so it's more than a promise
+on a page. Your comments go from your spreadsheet, through Google's infrastructure, back into
 your spreadsheet. No analytics, no account, no retention.</p>
 
 <p>The <a href="addon-privacy.html">privacy policy</a> and <a href="addon-terms.html">terms
-of service</a> describe exactly what it does and what it does not.</p>
+of service</a> spell out exactly what it does and doesn't do.</p>
 
-<h2>Worth knowing</h2>
+<h2>Good to know</h2>
 
 <ul>
-<li>It reads <strong>comments</strong>. Notes are a separate Sheets feature and do not
+<li>It reads <strong>comments</strong>. Notes are a separate Sheets feature and don't
     appear.</li>
-<li>Google caps the export it relies on at 10MB, so a very large workbook may not run. You
-    get a clear message rather than a silent failure.</li>
-<li>It is free. There is no paid tier.</li>
+<li>Google caps the export it relies on at 10MB, so a very large workbook may not run. If
+    that happens, you get a clear message.</li>
+<li>It's free. There's no paid tier.</li>
 </ul>
 
 <h2>How I built it</h2>
 
-<p>Google's comments API will tell you what a comment says but not where it lives: the
-anchor it returns is an opaque range id that resolves to nothing you can reach. The
+<p>Google's comments API tells you what a comment says but not where it is: the anchor
+it returns is an opaque range id that doesn't point to anything you can reach. The
 spreadsheet's own .xlsx export does carry the sheet and the cell, so the add-on asks Drive
 for that export and reads the comment records straight out of it. Everything runs inside
 Apps Script, under your account.</p>
 
-<p>That is also why other tools do not carry it. Add-ons exist that export Sheets comments,
-and the closest one reports the text or the content of the commented cell rather than its
-reference. Content cannot locate anything, since <code>4.2%</code> might sit in fifty
-places. The cell reference is the field that makes an export usable, and it is the one the
-documented API will not give you.</p>
+<p>That's also why other tools leave it out. There are add-ons that export Sheets
+comments, and the closest one reports the text or content of the commented cell instead of
+its reference. Content can't locate anything, since <code>4.2%</code> might sit in fifty
+places. The cell reference is what makes an export usable, and the documented API won't
+give it to you.</p>
 
-<p>Built in an evening, which was only possible because the hard part, the parsing, already
-existed.</p>
+<p>I built it in an evening. That was only possible because the hard part, the parsing,
+already existed.</p>
 
 <h2>The browser version</h2>
 
@@ -198,9 +197,10 @@ existed.</p>
 same job as a web page: download your sheet as .xlsx, drop it in, and the threads come back
 in order. Nothing is uploaded, there is no sign-in, and it needs no permission from anyone.</p>
 
-<p>It is still there and still the right answer in two cases. If your Workspace admin blocks
-add-ons, it is the only version you can run. And if you just want the list once, without
-granting access to anything, dropping a file is faster than installing software.</p>
+<p>It's still there, and it's still the better choice in two cases. If your Workspace admin
+blocks add-ons, it's the only version you can run. And if you just want the list once
+without granting access to anything, dropping in a file is faster than installing
+software.</p>
 
 <p class="ce-cta" style="margin-bottom:6px"><a class="btn" href="commentpulse.html">Open the browser tool</a></p>
 
@@ -208,8 +208,8 @@ granting access to anything, dropping a file is faster than installing software.
 
 <p>Open source, MIT, at <a href="https://github.com/bsunter93/comment-export-for-sheets"
 rel="noopener">github.com/bsunter93/comment-export-for-sheets</a>. Three files. The README
-documents the opaque comment anchor and the part-numbering trap in the xlsx export, because
-neither is written down anywhere I could find and both cost me an evening.</p>
+covers the opaque comment anchor and the part-numbering trap in the xlsx export. I couldn't
+find either written down anywhere, and both cost me an evening.</p>
 
 <p class="ce-cta"><a class="btn solid" href="https://github.com/bsunter93/comment-export-for-sheets"
 rel="noopener">Add-on source</a> <a class="btn" href="https://github.com/bsunter93/commentpulse"

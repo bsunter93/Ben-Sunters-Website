@@ -43,6 +43,7 @@
 .artfoot .reading{display:flex;gap:20px;flex-wrap:wrap;justify-content:space-between;
   font-size:13.5px;color:var(--muted)}
 </style>
+<script>try{var t=localStorage.getItem('theme');if(t==='light'||t==='dark')document.documentElement.setAttribute('data-theme',t)}catch(e){}</script>
 </head>
 <body>
 
@@ -66,19 +67,19 @@
 your Gmail to find the mail your job applications generate, and it keeps what it finds in a
 database on your own disk. There is no server, no account, and nothing for me to collect.</p>
 
-<p>I am the developer. I also happen to be its only user, but because the code is public
-anyone can run their own copy, so here is exactly what it does with data.</p>
+<p>I'm the developer, and so far its only user. The code is public, though, so anyone can
+run their own copy. Here's exactly what it does with data.</p>
 
 <h2>What it reads</h2>
 
-<p>Career Ops asks Google for one permission, <strong>gmail.readonly</strong>. That is read
-access to your mail, and it is the narrowest scope that lets the tool do its job. It cannot
+<p>Career Ops asks Google for one permission, <strong>gmail.readonly</strong>. That's read
+access to your mail, and it's the narrowest scope that lets the tool do its job. It can't
 send mail, delete mail, or change anything in your account.</p>
 
-<p>It does not read your whole mailbox. It runs a search restricted to the mail an
+<p>It doesn't read your whole mailbox. It runs a search restricted to the mail an
 application generates: messages from applicant tracking systems, and messages whose subject
 matches phrases like an application confirmation or an interview request. Personal mail
-that does not match is never fetched.</p>
+that doesn't match is never fetched.</p>
 
 <h2>Where it goes</h2>
 
@@ -92,7 +93,7 @@ runs entirely on your machine, with no network call.</p>
 <p>I have no access to it. There is no telemetry, no analytics, no crash reporting, and no
 hosted component of any kind. If you delete the database file, the data is gone.</p>
 
-<h2>The one thing that does leave</h2>
+<h2>What does leave your machine</h2>
 
 <p>If you configure an API key, Career Ops uses a language model to score how well a job fits
 you and to research companies. Those requests contain <strong>the text of public job postings
@@ -100,7 +101,7 @@ and the profile you wrote about yourself</strong>, and they go to the API provid
 configured, which for the default configuration is Anthropic. Their terms govern what happens
 to that request.</p>
 
-<p>The contents of your email are not part of those requests. If you set no API key, the tool
+<p>The contents of your email aren't part of those requests. If you set no API key, the tool
 makes no calls to a language model at all, and the rest of it still works.</p>
 
 <h2>Other traffic</h2>
@@ -120,8 +121,8 @@ remove the stored credential locally, delete the <code>token.json</code> file.</
 
 <p>Questions about any of this go to
 <a href="mailto:sunterbb@gmail.com">sunterbb@gmail.com</a>. The source is on
-<a href="https://github.com/bsunter93/careerops" rel="noopener">GitHub</a>, so you are welcome
-to check that this page is accurate rather than take my word for it.</p>
+<a href="https://github.com/bsunter93/careerops" rel="noopener">GitHub</a>, so you're welcome
+to check this page against the code yourself.</p>
 
 </article>
 </main>

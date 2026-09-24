@@ -55,8 +55,7 @@ h2{font-size:11px;text-transform:uppercase;letter-spacing:1.1px;color:var(--mute
    margin:22px 0 0;padding-bottom:6px;border-bottom:1px solid var(--line);
    display:flex;align-items:center;gap:8px}
 h2 b{color:var(--accent);font-weight:600}
-/* Rows stretch so the two list panels match height; charts opt out with align-self,
-   because stretching a fixed-ratio chart just adds dead space under it. */
+/* Rows stretch so the two list panels match height; charts opt out with align-self. */
 .grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;align-items:stretch}
 
 .panel.list{display:flex;flex-direction:column}
@@ -82,8 +81,7 @@ svg{display:block;width:100%;max-width:100%;height:auto;overflow:visible}
 .act.good .bar{background:var(--good)} .act .bar{background:var(--accent)}
 .act.quiet .bar{background:var(--line)}
 .act .bar{width:2px;align-self:stretch;flex:none;border-radius:2px}
-/* One line per row: the whole decision list has to sit in a quadrant cell, so the
-   location and the score reasoning move into the drill-down where there is room. */
+/* One line per row so the list fits its panel; details live in the drill-down. */
 .act-w{border-bottom:1px solid var(--grid)} .act-w:last-child{border-bottom:0}
 .act{padding:7px 6px;margin:0 -6px;cursor:pointer}
 .act:hover{background:var(--soft)}
@@ -114,12 +112,8 @@ svg{display:block;width:100%;max-width:100%;height:auto;overflow:visible}
 .act-g{font:600 9.5px var(--mono);text-transform:uppercase;letter-spacing:.9px;color:var(--faint);
   margin:11px 0 3px;padding:0}
 .act-g:first-child{margin-top:0}
-/* Never let the list blow out the quadrant; it scrolls inside its own panel. */
-/* macOS uses OVERLAY scrollbars: they take no layout width and hide at rest, so a
-   scrollable panel looks truncated. Setting `scrollbar-width` opts into that native
-   path in Chrome 121+, which then ignores ::-webkit-scrollbar entirely. So the standard
-   properties are deliberately NOT set here: the webkit pseudo-elements are what force a
-   classic, always-visible bar that reserves its own gutter. */
+/* Lists scroll inside their own panel. Webkit scrollbar styles keep the bar visible
+   on macOS; don't add scrollbar-width, or Chrome ignores them. */
 #actions{min-height:220px;overflow-y:scroll;overflow-x:hidden;margin-right:-4px}
 #c-recent::-webkit-scrollbar{width:10px;-webkit-appearance:none}
 #c-recent::-webkit-scrollbar-track{background:var(--grid)}
@@ -147,8 +141,7 @@ svg{display:block;width:100%;max-width:100%;height:auto;overflow:visible}
 .tr-t{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:var(--muted)}
 .tr-d{font:400 11px var(--mono);flex:none}
 .dd-act{display:flex;gap:14px;align-items:center;flex-wrap:wrap;margin-top:10px;padding-left:19px}
-/* The others copy text; this one runs a build. It is the only action here with a
-   consequence, so it is the only one that looks like a control rather than a link. */
+/* The only action that runs a build, so it's styled as a button, not a link. */
 .dd-act button.gen{border:1px solid var(--accent);border-radius:var(--r-ctl);
   padding:3px 9px;color:var(--accent);background:none}
 .dd-act button.gen:hover{background:var(--accent);color:var(--panel);text-decoration:none}
@@ -224,7 +217,7 @@ text.hit{text-decoration:underline;text-decoration-color:var(--line);text-underl
 #sticky.filtered .sep,#sticky.filtered #sk-clr{display:block}
 #sticky:not(.filtered) .sep,#sticky:not(.filtered) #sk-clr,
 #sticky:not(.filtered) #sk-go{display:none}
-/* Panels fold to their title rather than disappearing: nothing is ever off the page. */
+/* Panels fold to their title instead of disappearing. */
 .panel>.fold{position:absolute;right:12px;top:12px;background:none;border:0;color:var(--faint);
   font:600 15px var(--mono);cursor:pointer;padding:0 4px;line-height:1}
 .panel>.fold:hover{color:var(--accent)}
@@ -265,10 +258,10 @@ ul.k{margin:4px 0 10px;padding-left:15px} ul.k li{font-size:12px;margin-bottom:3
 
 <section id="s-overview">
 <div class="grid">
-  <div class="panel list"><h3>Recent activity</h3><div class="cap">The last things that moved, newest first. Portal-recorded outcomes are excluded: their date is when they were logged. Click a row for the table.</div><div id="c-recent"></div></div>
+  <div class="panel list"><h3>Recent activity</h3><div class="cap">The last things that moved, newest first. Outcomes recorded from a portal are left out, since their date is when they were logged. Click a row for the table.</div><div id="c-recent"></div></div>
   <div class="panel list dn" id="s-next"><h3>Do next</h3><div class="cap" id="dncap"></div><div id="actions"></div></div>
   <div class="panel chart"><h3>Weekly activity</h3><div class="cap">Last 12 weeks.<span id="wkpace"></span></div><div id="c-weekly"></div></div>
-  <div class="panel chart"><h3>By company</h3><div class="cap">Companies with 2+ applications, by what is still alive. Click any segment to filter.</div><div id="c-co"></div></div>
+  <div class="panel chart"><h3>By company</h3><div class="cap">Companies with 2+ applications, by what's still alive. Click any segment to filter.</div><div id="c-co"></div></div>
 </div>
 </section>
 
@@ -319,11 +312,9 @@ document.getElementById('stamp').textContent =
   `${D.apps.length} records · ${T.submitted} submitted · generated ${new Date().toLocaleString()}`;
 
 // ---------- exec summary ----------
-// Four cards, each a headline number over a microchart of the full chart further down.
-// The summary is meant to be read at a glance, so the microcharts carry no text and no
-// axes: shape only. The detailed version of each stays in Analysis for the actual read.
+// Four headline cards, meant to be read at a glance.
 const P=D.pace, fit80=D.apps.filter(a=>a.status==='prospect'&&a.fit_score>=80).length;
-// Rolling 7 days against the 7 before it. Signed, because the direction is the point.
+// Rolling 7 days against the 7 before it, with a sign to show direction.
 const sgn=n=>(n>0?'+':n<0?'\u2212':'\u00b1')+Math.abs(n);
 const dchip=(n,unit)=>`<span class="dl ${n>0?'up':n<0?'down':'flat'}">${sgn(n)} ${esc(unit)}</span>`;
 
@@ -332,13 +323,13 @@ const HERO=[
    'Applications that got past an automated acknowledgement \u2014 recruiter contact, assessment, interview or offer \u2014 divided by all applications ever submitted. Prospects are excluded.',
    dchip(P.delta.advanced,'advanced vs prior 7d')],
   ['', T.live, 'Active', `${T.dormant} dormant \u00b7 ${T.rejected} rejected`,
-   `Submitted, not rejected, and with some activity in the last ${D.stale_days} days. Applications quiet longer than that are counted as dormant instead.`,
+   `Submitted, not rejected, and with some activity in the last ${D.stale_days} days. Anything quiet longer than that counts as dormant.`,
    dchip(P.delta.replies,'replies vs prior 7d')],
   ['', P.cur.sent, 'Sent, last 7 days', `${P.cur.replies} replies back`,
-   `Applications submitted in the last seven days, against the seven before it (${P.prev.sent} sent, ${P.prev.replies} replies). Rolling windows, not calendar weeks: the current week is partial six days out of seven and would always look like a collapse. Your average over the last four completed weeks is ${P.avg4} per week.`,
+   `Applications submitted in the last seven days, against the seven before it (${P.prev.sent} sent, ${P.prev.replies} replies). These are rolling windows, since a partial calendar week would always look like a drop. Your average over the last four completed weeks is ${P.avg4} per week.`,
    dchip(P.delta.sent,'vs prior 7d')],
   ['', T.prospects, 'Prospects', `${fit80} scored 80+`,
-   'Roles found by the board scan and scored against your profile that you have not applied to. Never counted as applications.',
+   "Roles the board scan found and scored against your profile that you haven't applied to. They're never counted as applications.",
    ''],
 ];
 const HERO_F=[
@@ -433,8 +424,8 @@ function chips(){
       + `<span class="chip" style="border-style:dashed"><b>Reset all</b><button data-x="all">&times;</button></span>`
     : '';
   el('chips').innerHTML = html;
-  // The charts sit far above the table. Rather than dragging the page down on every
-  // click, the sticky bar reports what the click did and offers the jump once.
+  // The charts are far above the table, so the sticky bar shows the active filters
+  // and offers a jump down instead of scrolling on every click.
   el('stickychips').innerHTML = c.length
     ? c.map(([k,t])=>`<span class="chip"><b>${esc(t)}</b><button data-x="${k}" title="Remove">&times;</button></span>`).join('')
     : '';
@@ -488,8 +479,7 @@ function readHash(){
   hashLock=false; return true;
 }
 
-// Panels fold to their heading. Collapsed is still on the page and still one click away,
-// which a tab is not. State persists so the layout stays how it was left.
+// Panels fold to their heading and remember whether they were open.
 (function(){
   let shut=[]; try{shut=JSON.parse(localStorage.getItem('co.shut')||'[]')}catch(e){}
   document.querySelectorAll('#s-analysis .panel').forEach(pn=>{
@@ -572,9 +562,7 @@ CHARTS.push(function(){
 });
 
 // ---------- by company ----------
-// The bar is CURRENT state, stacked: active, dormant, closed. Where a thread is still
-// alive is the actionable question; "ever advanced" is history, so it rides in the label
-// where it informs without dominating.
+// Bars show current state, stacked: active, dormant, closed. "Ever advanced" goes in the label.
 CHARTS.push(function(){
   const host=document.getElementById('c-co');
   const d=D.companies;
@@ -614,27 +602,21 @@ CHARTS.push(function(){
 });
 
 // ---------- action queue ----------
-// One merged decision list: what is live, what to apply to next, then housekeeping.
-// A row opens in place. Making it filter the table instead meant clicking a company,
-// being sent elsewhere, and clicking the same company again to see anything.
+// One list: what's live, what to apply to next, then housekeeping. Rows open in place.
 const acts=[];
 const push=(o)=>acts.push(o);
 const inPlay=D.apps.filter(a=>['interview','offer'].includes(a.status)&&a.activity==='active')
   .sort((a,b)=>(b.last_event||'').localeCompare(a.last_event||''));
 if(inPlay.length) push({group:'In play', note:'Live conversations. Keep these moving.'});
 inPlay.forEach(a=>push({a,c:'good',co:a.company,ro:a.role,val:a.days_quiet,unit:'d'}));
-// Posting age is the primary driver, not fit. A hiring manager screening the first 200
-// of 6,000 applicants means a 145-day-old req is closed in practice however good the
-// match is. Band by age, rank by fit inside the band, and never let a stale 85 outrank
-// a fresh 78.
+// Band by posting age first, then rank by fit inside the band. An old req is usually
+// closed in practice, so a stale 85 never outranks a fresh 78.
 const AGE_BAND=a=>{const d=a.posted_age;
   return d==null?3 : d<=7?0 : d<=21?1 : d<=45?2 : 3;};
 const BAND_LABEL=['posted this week','posted 1-3 weeks ago','posted 3-6 weeks ago','stale or unknown'];
 const snoozed=D.apps.filter(a=>a.status==='prospect'&&a.fit_score>=D.act_score&&a.snoozed);
-// Cut at a band boundary, never inside one. A flat slice at 8 ended mid "1-3 weeks",
-// so which 20-day-old reqs you saw depended on how many were posted this week rather
-// than on anything about them. Take roughly eight, then finish whichever band that
-// lands in, with a hard ceiling so a busy week cannot turn the list into the table.
+// Take about eight, then finish whichever band that lands in, capped so a busy week
+// can't turn the list into the whole table.
 const DN_TARGET=8, DN_MAX=16;
 const ranked=D.apps.filter(a=>a.status==='prospect'&&a.fit_score>=D.act_score&&!a.snoozed)
   .sort((a,b)=>AGE_BAND(a)-AGE_BAND(b) || b.fit_score-a.fit_score);
@@ -654,8 +636,8 @@ nextUp.forEach(a=>{
   push({a,c:'',co:a.company,ro:a.role,val:a.fit_score,fit:true,
         age:a.posted_age==null?null:a.posted_age,
         lock:L&&L.used>=L.cap
-          ?`${a.company} caps applicants at ${L.cap} applications per ${L.days} days and you have used ${L.used}. A slot reopens ${L.opens}.`
-          :L?`${a.company} caps applicants at ${L.cap} per ${L.days} days. You have used ${L.used}.`:null,
+          ?`${a.company} caps applicants at ${L.cap} applications per ${L.days} days and you've used ${L.used}. A slot reopens ${L.opens}.`
+          :L?`${a.company} caps applicants at ${L.cap} per ${L.days} days. You've used ${L.used}.`:null,
         locked:!!(L&&L.used>=L.cap)});});
 const stale=D.apps.filter(a=>a.activity==='dormant');
 if(stale.length||T.review) push({group:'Housekeeping'});
@@ -699,9 +681,8 @@ document.getElementById('actions').addEventListener('click',e=>{
   const b=e.target.closest('.dd-act button'); if(!b) return;
   e.stopPropagation();
   const row=b.closest('.act-w').querySelector('.act'); const o=acts[+row.dataset.i];
-  // Generate resume. Talks to `careerops serve` on localhost; falls back to copying
-  // the command when it is not running, or when the page is served over https and the
-  // browser blocks the call to http://127.0.0.1 before it leaves (mixed content).
+  // Generate resume via `careerops serve` on localhost. If that can't be reached (not
+  // running, or blocked as mixed content over https), copy the command instead.
   if(b.classList.contains('gen')){
     const id=b.dataset.app, cmd=`careerops resume ${id} --verify`;
     const restore=(html,ms)=>setTimeout(()=>{b.innerHTML=html;b.disabled=false;},ms);
@@ -747,8 +728,7 @@ document.getElementById('actions').addEventListener('keydown',e=>{
   const host=document.getElementById('c-recent'); if(!host) return;
   const rows=D.recent||[];
   if(!rows.length){host.innerHTML='<div class="muted small">Nothing yet. Run sync, or record a submission with <code>careerops apply &lt;id&gt;</code>.</div>';return;}
-  // Keyed on the application's status, not on event types: the row reports where
-  // something stands, not what last landed in the inbox.
+  // Keyed on the application's status, so each row shows where things stand.
   const LABEL={applied:'applied', acked:'acknowledged', in_process:'in process',
                interview:'interview', offer:'offer', rejection:'rejected',
                rejected:'rejected', withdrawn:'withdrawn', prospect:'prospect'};
@@ -774,9 +754,7 @@ document.getElementById('actions').addEventListener('keydown',e=>{
 })();
 
 // ---------- drill-downs ----------
-// Sentiment has no section of its own. It is wanted in exactly two moments: deciding
-// where to apply, and reviewing somewhere already applied. Both are rows, so it lives as
-// a drill-down on the row it describes rather than a list you have to cross-reference.
+// Sentiment lives as a drill-down on the row it describes.
 const RATE_HUE=v=>v>=4.2?'good':v>=3.7?'seq3':v>=3.2?'warning':'serious';
 
 function sentimentHTML(co){
@@ -795,14 +773,14 @@ function sentimentHTML(co){
     +`</div></details>`;
 }
 
-// A suggestion to apply somewhere means more beside what happened the last thirteen times.
+// Who the role reports to, when the posting says.
 function contactHTML(a){
   if(!a.reports_to) return '';
   const q=encodeURIComponent(`"${a.reports_to}" ${a.company}`);
-  return `<details class="dd"><summary><span class="dd-k">Who you would report to</span>`
+  return `<details class="dd"><summary><span class="dd-k">Who you'd report to</span>`
     +`<span class="dd-v muted">${esc(a.reports_to)}</span></summary><div class="dd-b">`
-    +`<p class="int-li" style="padding-left:0">The posting names the reporting line, which is `
-    +`the person to reach rather than an unnamed hiring manager.</p>`
+    +`<p class="int-li" style="padding-left:0">The posting names who this role reports to. `
+    +`That's the person to reach out to.</p>`
     +`<div class="int-src"><a href="https://www.linkedin.com/search/results/people/?keywords=${q}" `
     +`target="_blank" rel="noopener">find them on LinkedIn</a></div></div></details>`;
 }
@@ -869,8 +847,7 @@ function view(){
       <td class="num">${q1}</td></tr>`;}).join('')
     ||'<tr><td colspan="7" class="muted">No records match these filters.</td></tr>';
 }
-// One delegated tooltip for every [data-t] on the page, so a warning icon in Do next
-// and a rating chip in the table share the same affordance.
+// One shared tooltip for every [data-t] on the page.
 document.addEventListener('mouseover',e=>{
   const el=e.target.closest?.('[data-t]'); if(!el) return;
   tip.textContent=el.dataset.t; tip.style.opacity=1;

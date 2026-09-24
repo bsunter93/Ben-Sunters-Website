@@ -86,7 +86,7 @@ h2{font:600 clamp(26px,3.4vw,34px)/1.15 var(--display);letter-spacing:-.015em;ma
 .arc span{display:block;margin-top:4px;font:500 11px/1 var(--mono);letter-spacing:.1em;color:var(--co)}
 .arc em{display:block;margin-top:9px;font:400 12.5px/1.5 var(--sans);font-style:normal;
   color:var(--on-deep-mut);max-width:30ch}
-@media (max-width:560px){.arc li{padding-right:0}.arc li:before{right:0}}
+@media (max-width:560px){.arc li{padding:17px 0 18px}.arc li:before{right:0}}
 .lede{max-width:var(--measure);color:var(--muted);font-size:16px;margin:0 0 40px}
 
 /* ── masthead ────────────────────────────────────────────────────────────── */
@@ -147,13 +147,9 @@ h2{font:600 clamp(26px,3.4vw,34px)/1.15 var(--display);letter-spacing:-.015em;ma
 .band{background:var(--deep);color:var(--on-deep);border-top:0}
 .band h1,.band h2{color:var(--on-deep)}
 .band p{color:var(--on-deep)}
-/* The band is tuned to clear a 768px viewport so the buttons stay above the fold; the
-   availability line added 40px, so the padding gives it back. Re-measure .hero .links
-   against innerHeight before adding anything else to this band. */
+/* Keep the hero buttons above the fold on a 768px-tall screen. */
 .hero{padding-top:clamp(38px,4.8vw,60px);padding-bottom:clamp(28px,3.2vw,40px);border-top:0}
-/* The page said Included Health 2026 in the arc and "that is the work I want" 700px
-   down in Contact, and left the reader to infer the rest. One line, above the h1, in
-   the mono the eyebrows already use so it reads as a status and not a headline. */
+/* Availability line above the h1. */
 .hero .avail{display:inline-flex;align-items:center;gap:8px;margin:0 0 12px;
   padding:5px 12px 5px 10px;border:1px solid rgba(255,255,255,.22);border-radius:999px;
   font:500 11px/1.45 var(--mono);letter-spacing:.09em;text-transform:uppercase;
@@ -167,14 +163,12 @@ h1{font:600 clamp(36px,5.4vw,53px)/1.06 var(--display);letter-spacing:-.026em;ma
 .portrait{width:172px;height:auto;aspect-ratio:1;border-radius:3px;object-fit:cover;
   outline:1px solid rgba(255,255,255,.22);outline-offset:0;
   box-shadow:0 6px 22px rgba(0,0,0,.28)}
-/* Single column on a phone, portrait above the headline and smaller. This block has to
-   stay BELOW the .portrait base rule: a media query adds no specificity, so while it sat
-   above, the 172px base width won and phones got a portrait 44% of the screen wide
-   sitting on top of the h1. Do not move it back up. */
+/* Phone: single column, smaller portrait. Must stay below the .portrait base rule. */
 @media (max-width:720px){.hero-grid{grid-template-columns:1fr}.portrait{order:-1;width:112px}}
 
 
 .links{display:flex;flex-wrap:wrap;gap:10px}
+.hero .links{margin-top:30px}
 .btn{
   display:inline-flex;align-items:center;gap:7px;padding:8px 15px;border-radius:2px;
   font:500 13.5px/1 var(--sans);border:1px solid var(--line);color:var(--body);background:var(--surface);
@@ -506,7 +500,7 @@ h1{font:600 clamp(36px,5.4vw,53px)/1.06 var(--display);letter-spacing:-.026em;ma
 .jobsec{font:500 9.5px/1 var(--mono);letter-spacing:.15em;text-transform:uppercase;
   color:var(--muted);margin:0 0 9px}
 .jobsec+.jobfigs{margin-top:0}
-.scope{display:flex;flex-wrap:wrap;gap:6px;margin:0 0 20px}
+.job .scope{display:flex;flex-wrap:wrap;gap:6px;margin:0 0 22px}
 .job .scope li{font:500 11px/1.35 var(--mono);color:var(--body);background:var(--tint);
   border:1px solid var(--hair);border-radius:2px;padding:5px 9px;margin:0;
   padding-left:9px;max-width:none;font-size:11px}
