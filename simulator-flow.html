@@ -4,10 +4,10 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>What one efficiency is worth | Benjamin J. Sunter</title>
-<meta name="description" content="One support tool, followed all the way through an operating model: the team it helps, the teams downstream, the hire it makes unnecessary, and what that is worth.">
+<meta name="description" content="One support tool, followed all the way through an operating model: the team it helps, the teams downstream, the hire it makes unnecessary, and the money.">
 <link rel="canonical" href="https://bensunter.com/simulator-flow.html">
 <meta property="og:title" content="What one efficiency is worth">
-<meta property="og:description" content="One support tool, followed through a whole operating model to the hire it cancels. Every number computed by the engine behind the simulator.">
+<meta property="og:description" content="One support tool, followed through a whole operating model to the hire it cancels. Every number comes from the engine behind the simulator.">
 <meta property="og:url" content="https://bensunter.com/simulator-flow.html">
 <meta property="og:type" content="website">
 <meta property="og:image" content="https://bensunter.com/og-simulator.jpg">
@@ -20,16 +20,8 @@
 <link rel="stylesheet" href="site.css">
 <style>
 /* ── the chain board ─────────────────────────────────────────────────────────
-   One efficiency, followed from the tool that buys it to the money it frees.
-
-   The first version of this file animated four teams' capacity meters side by side.
-   It showed where a plan breaks and never showed anything causing anything, which is
-   the wrong thing to show: an operating model earns its keep because the parts are
-   connected. So this is a chain, not a dashboard.
-
-   Every figure is exported from the engine, including the two it could not compute
-   until this was built: what one team's efficiency does to the teams downstream of
-   it, and which hire that makes unnecessary.                                      */
+   One efficiency, followed from the tool to the money it frees. All figures come
+   from the engine (chain-data.js).                                                */
 .chain{
   --c-ground:#0B3A40; --c-edge:rgba(255,255,255,.11);
   --c-text:#E6F0EE; --c-mut:#9FBCB8;
@@ -48,8 +40,7 @@
 .c-step{font:500 9.5px/1.5 var(--mono,'IBM Plex Mono',monospace);letter-spacing:.12em;
   text-transform:uppercase;color:var(--c-mut);text-align:right;white-space:nowrap}
 
-/* One caption at a time, in a sentence. A number that has to be decoded is a number
-   nobody reads. */
+/* One plain-sentence caption at a time. */
 .c-say{position:absolute;left:16px;right:16px;bottom:50px;padding:11px 14px;border-radius:3px;
   background:rgba(11,58,64,.9);border:1px solid var(--c-edge);border-left:2px solid var(--c-live);
   opacity:0;transform:translateY(5px);transition:opacity .4s ease,transform .4s ease}
@@ -93,12 +84,12 @@ body.embed .wrap{padding:0;max-width:none}
 
 <main id="main">
 <section class="wrap">
-  <span class="eyebrow">One efficiency, followed all the way through</span>
-  <h1 style="max-width:22ch">What is one efficiency actually worth?</h1>
+  <span class="eyebrow">Worked example</span>
+  <h1 style="max-width:22ch">What one efficiency is worth</h1>
   <p class="lede">A support team buys a tool that resolves fifteen percent of its cases
-     without a person. That part is easy to measure. What happens to the teams downstream,
-     to the hire already sitting in the plan, and to the money, is the part an operating
-     model exists to answer. Every number here is computed by the engine behind
+     without a person. That part is easy to measure. The harder question is what happens to
+     the teams downstream, to the hire already in the plan, and to the money. That's what an
+     operating model is for. Every number here comes from the engine behind
      <a href="simulator/">the simulator</a>.</p>
 
   <div class="chain" id="chain">
@@ -119,9 +110,9 @@ body.embed .wrap{padding:0;max-width:none}
       </div>
     </div>
   </div>
-  <p class="chain-cap">Atlas Systems is invented. The arithmetic is not, and neither is the
-     awkward part at the end: four teams are still over capacity when this is done. One good
-     decision is one good decision. <a href="simulator/">Run it on your own numbers &rarr;</a></p>
+  <p class="chain-cap">Atlas Systems is made up, but the arithmetic is real, including the
+     awkward part at the end: four teams are still over capacity when this is done.
+     <a href="simulator/">Run it on your own numbers &rarr;</a></p>
 </section>
 </main>
 
@@ -140,9 +131,7 @@ if (new URLSearchParams(location.search).has('embed')) document.body.classList.a
   const money=n=>'$'+(n/1e6).toFixed(2)+'M';
   const pc=n=>Math.round(n*100)+'%';
 
-  /* Five links. Each is a thing the one before it caused. */
-  /* Each link also happens in a month. A board about a year that never shows the year
-     leaves you guessing how far apart "lands in three months" and "due in May" are. */
+  /* Five steps, each caused by the one before; m is the plan-year month it lands in. */
   const STEPS=[
     {k:'tool', label:'The tool',            t:0,    to:3.6,  m:0},
     {k:'team', label:'The team it helps',   t:3.6,  to:7.8,  m:3},
@@ -156,22 +145,22 @@ if (new URLSearchParams(location.search).has('embed')) document.body.classList.a
   const SAY={
     tool:{cls:'', html:`<b>${C.tool.name}.</b> ${money(C.tool.cost)} to build, and
       <b>${C.tool.lagMonths} months</b> before a single case touches it.
-      <em>Nothing improves on the day you decide.</em>`},
+      <em>Nothing improves until then.</em>`},
     team:{cls:'win', html:`It takes <b>${pc(C.tool.cut)} of the hands-on hours</b> out of
       ${C.origin.team}. Their busiest month falls from <b>${pc(C.origin.peakBase)} to
       ${pc(C.origin.peakTool)}</b>, back inside what ${C.origin.fte} people can sustain.`},
     down:{cls:'win', html:`<b>Fewer cases handled means fewer cases passed on.</b>
       ${C.downstream[0].team} drops to <b>${pc(C.downstream[0].peakTool)}</b> and
       ${C.downstream[1].team} to <b>${pc(C.downstream[1].peakTool)}</b>, and nobody on either
-      team did anything differently. <em>A spreadsheet of one team never shows you this.</em>`},
+      team did anything differently. <em>A single-team spreadsheet won't show you this.</em>`},
     hire:{cls:'win', html:`The plan already had <b>${C.hire.headcount} people</b> arriving in
       ${C.hire.landsMonth}. Without them ${C.origin.team} would have hit
       <b>${pc(C.hire.peakWithoutHireBase)}</b> on the old plan, but only
-      <b>${pc(C.hire.peakWithoutHireTool)}</b> with the tool. <b>So they are not hired.</b>`},
+      <b>${pc(C.hire.peakWithoutHireTool)}</b> with the tool. <b>So they're not hired.</b>`},
     cash:{cls:'warn', html:`<b>${C.money.fteBase-C.money.fteTool} fewer people, permanently.</b>
       Revenue at risk falls to <b>${money(C.money.riskTool)}</b>, and the tool costs
       <b>${money(C.money.costTool-C.money.costBase)} net</b> in year one, nothing after that.
-      <em>And ${C.money.overTool} teams are still over capacity: this fixed one thing, not the plan.</em>`}
+      <em>And ${C.money.overTool} teams are still over capacity: this fixes one thing, not the whole plan.</em>`}
   };
 
   let elapsed=0, paused=false, speed=1, last=performance.now();
@@ -187,8 +176,7 @@ if (new URLSearchParams(location.search).has('embed')) document.body.classList.a
   const rr=(x,y,w,h,r)=>{ctx.beginPath();ctx.roundRect(x,y,w,h,r);};
   const text=(s,x,y,f,c)=>{ctx.font=f;ctx.fillStyle=c;ctx.fillText(s,x,y);};
 
-  /* One visual grammar for every team, so it only has to be learned once: a bar, and the
-     line it is not supposed to cross. */
+  /* Same visual for every team: a bar, and the capacity line it shouldn't cross. */
   function bar(x,y,w,util,cap,live){
     ctx.fillStyle='rgba(255,255,255,.10)'; rr(x,y,w,9,2); ctx.fill();
     const col=util>cap?'#E4695C':(util>cap-0.06?'#E0A33C':'#63B682');
@@ -302,7 +290,7 @@ if (new URLSearchParams(location.search).has('embed')) document.body.classList.a
       text('THE PLAN YEAR', yx, yy - 9, '500 8px "IBM Plex Mono",monospace', 'rgba(255,255,255,.35)');
     }
 
-    // the links themselves: causation has a direction and the board should say so
+    // arrows between the steps
     const seq=[B.tool,B.team,B.down,B.hire,B.cash];
     for(let k=0;k<4;k++){
       const a=seq[k], b=seq[k+1], live=i>=k+1;

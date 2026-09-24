@@ -10,7 +10,7 @@
 <link rel="icon" href="favicon.svg">
 <link rel="canonical" href="https://bensunter.com/headroom.html">
 <meta property="og:title" content="Staffing Headroom">
-<meta property="og:description" content="Staffing to the forecast is staffing to a coin flip. This shows you what the coin flip costs.">
+<meta property="og:description" content="Staffing to the forecast covers you about half the time. This shows what that costs.">
 <meta property="og:url" content="https://bensunter.com/headroom.html">
 <meta property="og:type" content="website">
 <meta property="og:image" content="https://bensunter.com/og-headroom.jpg">
@@ -24,8 +24,7 @@
 <style>
 /* ── tokens ──────────────────────────────────────────────────────────────── */
 :root{
-  /* Drafting paper, not a product surface: buff ground, faint blue rule, a sheet on top.
-     Engineering graph paper is why the grid reads blue rather than gray. */
+  /* Drafting-paper palette: buff ground, faint blue grid, a sheet on top. */
   --paper:#F7F4ED; --surface:#FCFAF6; --sunk:#F1EDE3;
   --grid:#F0F1EE; --grid-soft:#F5F3EC;
   --ink:#16181B; --body:#33383F; --muted:#5B6068; --faint:#8A8F96;
@@ -36,8 +35,7 @@
   --focus:#0E5C63;
   --display:'Archivo Narrow','Archivo',Helvetica,Arial,sans-serif;
   --sans:'Archivo',-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif;
-  /* Overpass Mono descends from Highway Gothic, the FHWA road-sign lettering, so the
-     figures carry an infrastructure lineage rather than a code-editor one. */
+  /* Overpass Mono, derived from Highway Gothic road-sign lettering. */
   --mono:'Overpass Mono',ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
   --rail:336px;
 }
@@ -68,8 +66,7 @@
 *{box-sizing:border-box}
 [hidden]{display:none!important}
 html{-webkit-text-size-adjust:100%}
-/* The ground is ruled paper: 96px major over 24px minor, the way engineering paper is
-   ruled. Background-image only, so it costs nothing and prints as a flat sheet. */
+/* Ruled-paper background: 96px major grid over 24px minor. */
 body{margin:0;color:var(--body);font:400 15px/1.6 var(--sans);-webkit-font-smoothing:antialiased;
   background-color:var(--paper);
   background-image:
@@ -140,9 +137,7 @@ h1{font:600 clamp(30px,4.4vw,44px)/1.08 var(--display);letter-spacing:-.022em}
 .suffixed{display:flex;align-items:center;gap:6px}
 .suffixed .sfx{font:400 12px/1 var(--mono);color:var(--faint);width:26px}
 /* min / hr toggle */
-/* Two inputs nobody knows off-hand, asked as a question anyone can answer. The mapped
-   figure is printed in every option, because a tool that hides the number it is using is
-   the thing this model exists to argue against. */
+/* Plain-language pickers; each option shows the number it maps to. */
 .fc{margin-bottom:13px}
 .fc>label{display:block;font-size:13.5px;color:var(--body);line-height:1.35;margin-bottom:6px}
 .fc .hint{display:block;font-size:11.5px;color:var(--faint);line-height:1.4;margin-top:3px}
@@ -250,8 +245,7 @@ tr.hi td{background:var(--accent-soft);color:var(--ink)}
 .method code{font:400 12.5px var(--mono);color:var(--accent);background:var(--accent-soft);
   padding:2px 5px;border-radius:2px}
 .give{border-left:2px solid var(--short);padding-left:15px;color:var(--muted);font-size:14.5px}
-/* An engineering drawing signs itself in a ruled block, not a byline. Same information
-   a footer would carry, in the form the discipline uses. */
+/* Footer as an engineering-drawing title block. */
 .foot{max-width:1240px;margin:0 auto;padding:0 clamp(16px,3vw,28px) 60px;
   font-size:12.5px;color:var(--faint)}
 .tblock{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:0;
@@ -283,10 +277,10 @@ tr.hi td{background:var(--accent-soft);color:var(--ink)}
 <div class="head">
   <p class="eyebrow">Capacity planning</p>
   <h1>Staffing Headroom</h1>
-  <p class="sub">Every staffing plan is built on a forecast, and every forecast is wrong.
-     This works out how many people the forecast implies, then how many you should actually
-     hire once you account for the fact that being short and being over do not cost the same.
-     Nothing you type leaves your browser.</p>
+  <p class="sub">Every staffing plan starts from a forecast, and every forecast misses.
+     This works out how many people the forecast implies, then how many you should hire,
+     given that being short and being over don't cost the same. Nothing you type leaves
+     your browser.</p>
   <p class="presetlab">Start from a scenario<span>Loads typical numbers for that kind of work. Change anything after.</span></p>
   <ul class="presets" id="presets"></ul>
 </div>
@@ -297,9 +291,7 @@ tr.hi td{background:var(--accent-soft);color:var(--ink)}
   <form class="rail" id="rail" autocomplete="off">
     <h2 class="sr">Inputs</h2>
 
-    <!-- The four that decide the answer. Everything else has a real industry default and
-         moves the recommendation far less, so it folds away. A tool that argues for the
-         smallest ask that works should not open with eleven fields. -->
+    <!-- The four inputs that move the answer most. The rest have defaults and fold away. -->
     <div class="grp">
       <h2>What the month looks like</h2>
       <div class="f">
@@ -330,9 +322,9 @@ tr.hi td{background:var(--accent-soft);color:var(--ink)}
           <input type="number" id="i-err" min="0" max="90" step="1" value="18"><span class="sfx">%</span></span>
       </div>
       <div class="fc">
-        <label for="p-ratio">When you are short, what happens?
+        <label for="p-ratio">What happens when you're short?
           <span class="hint">Sets how much worse one person short is than one person spare.
-          At 3&times;, a month you are understaffed costs three times what an equally
+          At 3&times;, a month you're understaffed costs three times what an equally
           overstaffed month costs.</span></label>
         <select id="p-ratio">
           <option value="1.5">The work just waits. We catch up. (1.5&times;)</option>
@@ -359,7 +351,7 @@ tr.hi td{background:var(--accent-soft);color:var(--ink)}
         <span class="suffixed"><input type="number" id="i-shrink" min="0" max="80" step="1" value="28"><span class="sfx">%</span></span>
       </div>
       <div class="f">
-        <label for="i-occ">Target occupancy<span class="hint">Share of remaining time actually on the work</span></label>
+        <label for="i-occ">Target occupancy<span class="hint">Share of remaining time spent on the work</span></label>
         <span class="suffixed"><input type="number" id="i-occ" min="10" max="100" step="1" value="82"><span class="sfx">%</span></span>
       </div>
       <div class="f">
@@ -414,7 +406,7 @@ tr.hi td{background:var(--accent-soft);color:var(--ink)}
           <span class="d" id="d-rec"></span>
         </div>
         <div class="stat">
-          <span class="k">The gap is worth</span>
+          <span class="k">The gap saves</span>
           <b class="num" id="s-save">–</b>
           <span class="d" id="d-save"></span>
         </div>
@@ -429,10 +421,10 @@ tr.hi td{background:var(--accent-soft);color:var(--ink)}
           <li><span class="sw o"></span>Cost of being over</li>
         </ul>
       </div>
-      <p class="pnote">Expected cost per month of missing, at every headcount you could pick.
-         Not the payroll, which you owe either way. Just the waste. The curve is lopsided
-         because the two mistakes are not priced the same, and its low point is almost never
-         where the forecast lands.</p>
+      <p class="pnote">The expected monthly cost of missing, at every headcount you could
+         pick. This is just the waste, not payroll, which you pay either way. The curve is
+         lopsided because the two mistakes don't cost the same, and its low point is almost
+         never where the forecast lands.</p>
       <div class="chartwrap" id="cw">
         <svg class="chart" id="chart" viewBox="0 0 720 344" role="img" aria-labelledby="chart-t"></svg>
         <div class="tip" id="tip"></div>
@@ -444,12 +436,12 @@ tr.hi td{background:var(--accent-soft);color:var(--ink)}
     <section class="panel">
       <div class="phead"><h2>What moves this answer most</h2></div>
       <p class="pnote">If each input were 10% off, this is how far the recommendation would
-         move. Spend your evidence on the top of the list. The rest you can estimate.</p>
+         move. Put your effort into getting the top of the list right. You can estimate the rest.</p>
       <ul class="sens" id="sens"></ul>
     </section>
 
     <section class="panel">
-      <div class="phead"><h2>Holding the number</h2></div>
+      <div class="phead"><h2>Keeping the team at that size</h2></div>
       <p class="pnote" id="pipeline" style="margin-bottom:0"></p>
     </section>
 
@@ -458,30 +450,31 @@ tr.hi td{background:var(--accent-soft);color:var(--ink)}
       <p>Effective hours per person are paid hours less shrinkage, times occupancy. Divide
          the month's work by that and you get the headcount the forecast implies. Your
          spreadsheet already does that part.</p>
-      <p>The rest is the newsvendor problem, which is a hundred years old and still the right
-         tool. If being short costs <code>r</code> times what being over costs, the
+      <p>The rest is the newsvendor problem, which is a hundred years old and still works.
+         If being short costs <code>r</code> times what being over costs, the
          cost-minimizing plan covers demand <code>r / (r + 1)</code> of the time. At 3&times;
-         that is the 75th percentile, not the 50th. Treating the forecast as the target
-         quietly chooses a coin flip, and prices the two sides of it as though they matched.</p>
-      <p>This does not assume demand is random. It assumes your forecast is good and misses
-         anyway, which is a different claim. Whatever you built the forecast from, history,
-         seasonality, market signal, third-party data, some error is left over, and that
-         leftover is what the error field describes. Build a better forecast and it shrinks,
-         and so does the buffer this recommends. Set it to zero and the model tells you to
-         staff to the forecast, which is the right answer for a forecast that never misses.</p>
+         that's the 75th percentile, not the 50th. Staffing to the forecast means covering
+         demand half the time, and treating both kinds of miss as if they cost the same.</p>
+      <p>This doesn't assume demand is random. It assumes your forecast is good and still
+         misses. Whatever you built it from (history, seasonality, market signal, third-party
+         data), some error is left over, and that's what the error field describes. A better
+         forecast shrinks it, and the buffer shrinks with it. Set it to zero and the model
+         tells you to staff to the forecast, which is right for a forecast that never
+         misses.</p>
       <p>That residual is treated as normal around the forecast, and expected shortfall and
          overage come from the standard normal loss function, so the curve is exact rather
          than simulated.</p>
-      <p>Where it will mislead you: forecast error in operations is often skewed rather than
-         symmetric, because surges run further above plan than lulls run below it, and a
-         normal residual will understate the upside tail. It is a single month in steady
-         state, so a sharp ramp or a seasonal peak needs its own run. It assumes your people
-         are interchangeable, which they stop being once skills specialize. And the
-         short-versus-over ratio is a judgment call carrying most of the weight, which is
-         why it sits at the top of the sensitivity list rather than buried down here.</p>
-      <p class="give">Take it. One file, no build step, no dependencies, no analytics, nothing
-         sent anywhere. Save the page and it works offline. Change the numbers, copy the link,
-         and the model travels with it.</p>
+      <p>Where it can mislead you: forecast error in operations is often skewed, because
+         surges run further above plan than lulls run below it, so a normal residual will
+         understate the upside tail. It models a single month in steady state, so a sharp
+         ramp or a seasonal peak needs its own run. It assumes your people are
+         interchangeable, which stops being true once skills specialize. And the
+         short-versus-over ratio is a judgment call that carries most of the weight, which
+         is why it sits at the top of the sensitivity list.</p>
+      <p class="give">Take it if it's useful. It's one file with no build step, no
+         dependencies and no analytics, and nothing is sent anywhere. Save the page and it
+         works offline. Change the numbers and copy the link, and your settings go with
+         it.</p>
     </section>
   </div>
 </main>
@@ -633,7 +626,7 @@ function render(){
   $('pipeline').innerHTML='At '+S.attr+'% annual attrition you lose about <b>'+(Math.round(perMo*10)/10).toFixed(1)+
     '</b> people a month. With '+(S.hire+S.ramp)+' days from open req to fully productive, you need roughly <b>'+
     (Math.round(inflight*10)/10).toFixed(1)+'</b> hires in flight at all times just to hold '+fte(r.rec)+
-    '. Recruiting slower than that is a headcount cut you did not decide to make.';
+    '. If recruiting falls behind that, you\'re cutting headcount without meaning to.';
 
   draw(r);
   if(showTable) table(r);
@@ -646,10 +639,8 @@ function draw(r){
   r=r||LAST||model(S); LAST=r;
   /* T is deep so the two marker labels sit clear of the axis caption above them. */
   var svg=$('chart'), W=720,H=344, L=68,R=22,T=46,B=52;
-  /* Frame the decision, not the disaster. Walking out to a fixed number of standard
-     deviations puts a half-million-dollar point on the left edge and squashes the whole
-     U into the bottom of the plot. Instead grow outward from the optimum until the cost
-     is a few times the minimum, which keeps the shape readable at any set of inputs. */
+  /* Grow the x-range outward from the optimum until cost hits a few times the minimum,
+     so the U stays readable for any inputs. */
   var cap=r.costRec*3.2, step=Math.max(r.sd/40,1e-6);
   var gLo=Math.max(0,r.m-4*r.sd), gHi=r.m+4*r.sd;
   var lo=r.rec, hi=r.rec;
@@ -707,10 +698,7 @@ function draw(r){
       (x>W-150?'end':'middle')+'" fill="'+cls+'">'+label+'</text>';
   }
 
-  /* A drawing states a distance it wants you to read with extension lines, an arrowed
-     dimension line between them, and the value sitting on it. The buffer is the whole
-     point of this chart, so it gets that treatment instead of being a gap between two
-     dashed rules that the reader has to measure by eye. */
+  /* Drafting-style dimension line labeling the buffer between forecast and plan. */
   function dimension(a,b){
     if(Math.abs(b-a)<0.05) return '';
     var x1=X(a), x2=X(b), y=T+34, ext=8, s='';
@@ -817,9 +805,8 @@ function writeForm(){
 }
 Object.keys(F).forEach(function(k){F[k].addEventListener('input',readForm);});
 
-/* Plain-language pickers for the two inputs nobody knows off-hand. They set the numeric
-   field rather than replacing it, so everything downstream, including the shareable URL,
-   is unchanged. Choosing "I know the number" reveals the field itself. */
+/* Pickers write to the numeric field, so the shareable URL is unchanged.
+   "I know the number" reveals the field. */
 var PICK=[{sel:'p-err',inp:'i-err',ex:'x-err'},{sel:'p-ratio',inp:'i-ratio',ex:'x-ratio'}];
 function syncPicker(pk){
   var sel=$(pk.sel), v=parseFloat(F[pk.inp==='i-err'?'err':'ratio'].value);

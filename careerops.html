@@ -4,11 +4,11 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Career Ops | Benjamin J. Sunter</title>
-<meta name="description" content="A job pipeline that reads twelve thousand postings a morning, checks its own rules against 886 hand-labeled emails, and repairs a year of stored records when one of them turns out to be wrong.">
+<meta name="description" content="A job pipeline that reads twelve thousand postings a morning, checks its rules against 886 hand-labeled emails, and fixes a year of stored records when a rule turns out to be wrong.">
 <meta name="author" content="Benjamin J. Sunter">
 <link rel="canonical" href="https://bensunter.com/careerops.html">
 <meta property="og:title" content="Career Ops">
-<meta property="og:description" content="Most tools like this are demoed once and never measured again. This one can tell you what it still gets wrong.">
+<meta property="og:description" content="A job-search pipeline I built and keep measuring. I can tell you what it still gets wrong.">
 <meta property="og:url" content="https://bensunter.com/careerops.html">
 <meta property="og:type" content="website">
 <meta property="og:image" content="https://bensunter.com/og-card.jpg">
@@ -23,8 +23,7 @@
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600&family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600&display=swap">
 <link rel="stylesheet" href="site.css">
 <style>
-/* The project page is the write-up on its own, so the card chrome that framed it on the
-   home page comes off and the paragraph measure moves onto the page body instead. */
+/* Standalone project page: no card chrome, paragraph measure set on the body. */
 .backlink{display:inline-flex;align-items:center;gap:7px;font:500 13px/1 var(--sans);
   color:var(--muted);margin-bottom:26px}
 .backlink:hover{color:var(--accent)}
@@ -86,9 +85,8 @@
        gets more than 300 applications now, up from about 100 in 2021. AI made applying
        almost free. It did nothing for the people who have to read them.</p>
 
-    <p>Since applying faster is what caused the pile-up, Career Ops goes the other way. It
-       never writes or submits anything. What it does is cut down how many roles are worth
-       your time in the first place.</p>
+    <p>Applying faster is what caused the pile-up, so Career Ops goes the other way. It
+       never writes or submits anything. It narrows down which roles deserve your time.</p>
 
     <div class="does">
       <div>
@@ -100,16 +98,16 @@
         </ul>
       </div>
       <div>
-        <p class="does-h">What it does not do</p>
+        <p class="does-h">What it doesn't do</p>
         <ul>
-          <li>It never writes an application and never submits one. Applying still happens in a browser.</li>
-          <li>It does not guess. Roughly half of what it reads it refuses to judge, and hands to me.</li>
-          <li>It does not get you a job. The bottleneck is how many people can read, and nothing here changes that.</li>
+          <li>It never writes or submits an application. Applying still happens in a browser.</li>
+          <li>It doesn't guess. Roughly half of what it reads, it won't judge. It hands those to me.</li>
+          <li>It won't get you a job. The bottleneck is how many people can read applications, and nothing here changes that.</li>
         </ul>
       </div>
     </div>
 
-    <p class="demo-lead">Here is what it produces. Filter it, sort it, open any row.</p>
+    <p class="demo-lead">Here's what it produces. Filter it, sort it, open any row.</p>
     <div class="demo" id="demo">
       <p class="demo-flag"><b>Demo</b> <span>Synthetic data. Every company, role and
          application below is invented.</span></p>
@@ -147,25 +145,25 @@
       </svg>
     </figure>
 
-    <span class="eyebrow" style="margin-top:34px">Why this one holds up</span>
+    <span class="eyebrow" style="margin-top:34px">How I keep it accurate</span>
     <div class="props">
-      <p>Every morning it reads about twelve thousand postings across 103 boards, throws
-         away almost all of them for almost nothing, and leaves a handful worth reading
-         properly. That much is easy to build, and easy to trust for about a week.</p>
-      <p>Then it quietly starts lying to you. A rule written in March stops matching the
-         mail that arrives in September, nothing errors, and the dashboard still looks
-         perfectly healthy. Mine filed a live interview invitation as a routine
+      <p>Every morning it reads about twelve thousand postings across 103 boards, cheaply
+         throws away almost all of them, and leaves a handful to read properly. That part
+         is easy to build, and easy to trust for about a week.</p>
+      <p>Then it starts getting things wrong without telling you. A rule written in March
+         stops matching the mail that arrives in September, nothing errors, and the
+         dashboard still looks fine. Mine filed a live interview invitation as a routine
          acknowledgement.</p>
-      <p>So most of the work went into making it doubt itself. There are 886 real emails I
-         labeled by hand that every change has to clear, and a command called
-         <code>drift</code> that goes back through everything already stored and reports
-         where the data and the rules that produced it have come apart. I can tell you what
-         it still gets wrong. Most of these can't, because they were demoed once and never
-         measured again.</p>
-      <p>Fixes travel backwards too. Repairing a rule repairs a year of old records rather
-         than just the next email, so the history gets more accurate the longer it runs.
-         Which is the same reason I wouldn't trust a dashboard nobody has reconciled against
-         the source in six months.</p>
+      <p>So most of my time went into checking it. There are 886 real emails I labeled by
+         hand that every change has to pass, and a command called <code>drift</code> that
+         goes back through everything already stored and reports where the data and the
+         rules that produced it no longer agree. I can tell you what it still gets wrong.
+         Most tools like this can't, because they were demoed once and never measured
+         again.</p>
+      <p>Fixes apply backwards too. When I repair a rule, it repairs a year of old records,
+         not just the next email, so the history gets more accurate the longer it runs.
+         It's also why I wouldn't trust a dashboard nobody has reconciled against the
+         source in six months.</p>
     </div>
 
     <div class="receipts">
@@ -181,21 +179,22 @@ OK   unapplied alias
 <span class="flag">     468</span>  stored   "Operational Excellence Program Manager"
           derived  "Program Manager"</pre>
     </div>
-    <p class="rc-cap">Both of those are actual output. The one open finding is staying open,
-       because the stored title happens to be the better of the two.</p>
+    <p class="rc-cap">Both of those are real output. The one open finding is staying open,
+       because the stored title is the better of the two.</p>
 
-    <p class="proj-honest"><b>What that 886 is, and what it is not.</b> It is a regression
-       gate, not an accuracy score. I labelled those messages myself after seeing what the
+    <p class="proj-honest"><b>What the 886 means, and what it doesn't.</b> It's a regression
+       gate, not an accuracy score. I labeled those messages myself after seeing what the
        classifier made of them, and fixed the code until the two agreed, so it reports 100%
-       by construction. What it proves is that a change did not break something that used to
-       work. What it cannot tell me is how often the thing is right about mail it has never
-       seen. That number does not exist yet. Getting it means labelling a held-out sample
-       blind, before looking at the verdict, which is an afternoon's work and the next thing
-       I will do to this. Until then the honest claim is the gate, not the score.</p>
+       by design. It shows that a change didn't break something that used to work. It can't
+       tell me how often it's right about mail it has never seen. I don't have that number
+       yet. Getting it means labeling a held-out sample blind, before looking at the verdict.
+       That's an afternoon's work and the next thing I'll do. Until then, the gate is all
+       I'm claiming.</p>
 
     <p class="proj-note">It doesn't fix the real problem, and nothing on the candidate's side
-       can. The bottleneck is how many humans can read. The hard bugs all came down to one thing: software saying something untrue with total confidence and being believed. Most of the
-       work was teaching it to admit when it doesn't know.</p>
+       can. The hard bugs all had the same cause: software saying something untrue with total
+       confidence, and being believed. Most of the work was teaching it to say when it
+       doesn't know.</p>
 
     <p class="proj-src">Application volume: Ashby, 100M+ submissions. Interview-rate
        decline: ZipRecruiter 2026 talent acquisition survey.</p>
@@ -221,8 +220,7 @@ OK   unapplied alias
 <script>
 document.getElementById('yr').textContent = new Date().getFullYear();
 
-// Below 660px the section links are hidden, so without this there is no way back to the
-// home page's sections except the browser. Same panel as the home page.
+// Mobile menu for widths below 660px, where the section links are hidden. Same panel as the home page.
 (function () {
   var btn = document.getElementById('menu'), panel = document.getElementById('mobile-nav');
   if (!btn || !panel) return;
@@ -245,9 +243,8 @@ document.getElementById('yr').textContent = new Date().getFullYear();
   });
 })();
 
-// Theme, same contract as the home page: the OS decides unless a click pins one, and a
-// pinned choice persists. Reads are wrapped because a private window can throw on access
-// rather than hand back null.
+// Theme: follows the OS unless a click pins one, and the choice persists. Storage calls
+// are wrapped because private windows can throw.
 (function(){
   const root = document.documentElement, btn = document.getElementById('theme');
   const get = k => { try { return localStorage.getItem(k); } catch (e) { return null; } };
