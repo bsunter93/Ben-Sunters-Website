@@ -782,3 +782,25 @@ footer{padding:26px 0 44px;border-top:1px solid var(--hair);
    to the floor and left 170px of nothing above them. Letting the content sit at its own
    height puts that space below the button, where it reads as padding. */
 .trio-card p{flex:none}
+
+/* ── quieter labels ──────────────────────────────────────────────────────
+   Small labels are plain sentence-case sans in a muted colour. Monospace is kept for
+   code and terminal output, where it means something. */
+.eyebrow{font:600 13px/1.2 var(--sans);letter-spacing:0;text-transform:none}
+.eyebrow b{display:none}
+.proj-kind,.cs-kind,.post-kind,.also-l,.sysco,.st-kind,.st-meta,.does-h,.jobsec,
+.jobwhy span,.cs-figs span,.card dt,.closing h3,.st-body h3,.demo .demo-flag b{
+  font-family:var(--sans);letter-spacing:0;text-transform:none}
+.proj-kind,.cs-kind,.post-kind,.also-l,.st-kind{font-size:13px;font-weight:500;line-height:1.3}
+.jobwhy span{font-size:12.5px;font-weight:600;line-height:1.3;margin-bottom:3px}
+.jobsec{font-size:12.5px;font-weight:600}
+.cs-figs span{font-size:12.5px;font-weight:400;line-height:1.4}
+.card dt{font-size:13px;font-weight:600}
+.st-meta{font-size:13px;font-weight:500}
+.st-body h3,.closing h3{font-size:14px;font-weight:600;color:var(--ink)}
+.proj-kind b,.also-app b::after{font-family:var(--sans);letter-spacing:0;text-transform:none;
+  font-size:11px;font-weight:600;padding:2px 7px;border-radius:999px}
+.arc span,.when,.post-meta,.jo-count,.job .scope li,.proj-when,.subrole{font-family:var(--sans);letter-spacing:0}
+.subrole{text-transform:none;font-size:13.5px;font-weight:600}
+footer.wrap{font-family:var(--sans);letter-spacing:0}
+.job .scope li{font-size:12.5px}
