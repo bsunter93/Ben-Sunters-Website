@@ -584,39 +584,12 @@ footer{padding:26px 0 44px;border-top:1px solid var(--hair);
 .bring-item p{margin:0;font-size:15px;line-height:1.6;color:var(--body)}
 @media (max-width:640px){.bring{grid-template-columns:1fr}}
 
-/* ── how I work: the method spine ────────────────────────────────────────── */
-/* Deliberately the quietest block on the page. #bring carries icons and figures;
-   this is the sequence those figures came out of, so it gets numerals and hairlines
-   and nothing else. Adding a second grid of cards here is what would make the top of
-   the page read as noise. */
-.method{
-  list-style:none; counter-reset:step; margin:22px 0 0; padding:0;
-  display:grid; grid-template-columns:repeat(auto-fit,minmax(168px,1fr)); gap:0;
-  border-top:1px solid var(--line);
-}
-.method li{counter-increment:step;position:relative;padding:20px 20px 6px 0}
-.method li+li{padding-left:20px;border-left:1px solid var(--hair)}
-.method li:before{
-  content:"0" counter(step); display:block;
-  font:600 clamp(21px,2.7vw,29px)/1 var(--display); letter-spacing:-.02em;
-  color:var(--warm); margin-bottom:12px;
-}
-.method b{display:block;font:600 16.5px/1.3 var(--sans);color:var(--ink)}
-.method p{margin:7px 0 0;font-size:13.5px;line-height:1.55;color:var(--body);max-width:28ch}
-/* Below the wrap point the columns stack, so the top rule that separated them turns
-   into a per-row rule instead; otherwise five steps run together as one paragraph. */
-@media (max-width:720px){
-  .method{grid-template-columns:1fr;border-top:0}
-  .method li{padding:14px 0;border-top:1px solid var(--hair)}
-  .method li+li{padding-left:0;border-left:0}
-  .method li:first-child{border-top:0;padding-top:4px}
-  .method li:before{font-size:20px;margin-bottom:8px}
-}
-/* The step list ends by handing the reader to the artifact that runs it, so the
-   simulator arrives as the method demonstrated rather than as the first project. */
-.method-handoff{margin:26px 0 0;padding-top:18px;border-top:1px solid var(--line);
-  font:400 15.5px/1.6 var(--sans);color:var(--ink);max-width:var(--measure)}
-.method-handoff a{font-weight:500;white-space:nowrap}
+/* ── how I work: one line under #bring ──────────────────────────────────── */
+.method-line{scroll-margin-top:84px;margin:22px 0 0;padding:16px 20px;border-left:3px solid var(--warm);
+  background:var(--tint);font:400 15px/1.65 var(--sans);color:var(--body);max-width:none}
+.method-line b{color:var(--ink);font-weight:600}
+.method-line a{font-weight:500}
+.jd-body .jd-brief{margin-top:16px}
 
 /* ── start here: the trio, and the also-built list ─────────────────────── */
 /* Was three equal columns. The simulator is the only one of the three with a shot and
