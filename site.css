@@ -149,13 +149,6 @@ h2{font:600 clamp(26px,3.4vw,34px)/1.15 var(--display);letter-spacing:-.015em;ma
 .band p{color:var(--on-deep)}
 /* Keep the hero buttons above the fold on a 768px-tall screen. */
 .hero{padding-top:clamp(38px,4.8vw,60px);padding-bottom:clamp(28px,3.2vw,40px);border-top:0}
-/* Availability line above the h1. */
-.hero .avail{display:inline-flex;align-items:center;gap:8px;margin:0 0 12px;
-  padding:5px 12px 5px 10px;border:1px solid rgba(255,255,255,.22);border-radius:999px;
-  font:500 11px/1.45 var(--mono);letter-spacing:.09em;text-transform:uppercase;
-  color:var(--on-deep)}
-.avail-dot{width:7px;height:7px;border-radius:50%;background:var(--warm-bright);flex:none}
-@media (max-width:420px){.hero .avail{letter-spacing:.06em;font-size:10.5px}}
 .hero-grid{display:grid;grid-template-columns:minmax(0,1fr) 172px;gap:clamp(28px,5vw,56px);align-items:start}
 h1{font:600 clamp(36px,5.4vw,53px)/1.06 var(--display);letter-spacing:-.026em;margin-bottom:22px}
 .hero p{max-width:58ch;font-size:18px;color:var(--on-deep);margin:0 0 14px}
