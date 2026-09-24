@@ -318,7 +318,7 @@ h1{font:600 clamp(36px,5.4vw,53px)/1.06 var(--display);letter-spacing:-.026em;ma
 .d-warm{fill:var(--warm-soft);stroke:var(--warm)}
 .d-lab{fill:var(--ink);font:600 14px var(--sans)}
 .d-mut{fill:var(--body);font:400 12.5px var(--sans)}
-.d-mono{fill:var(--muted);font:500 11px var(--mono);letter-spacing:.12em}
+.d-mono{fill:var(--muted);font:600 13px var(--sans)}
 .d-num{fill:var(--accent);font:600 22px var(--display)}
 .d-numw{fill:var(--warm);font:600 22px var(--display)}
 .d-line{stroke:var(--line);fill:none}
@@ -608,7 +608,7 @@ footer{padding:26px 0 44px;border-top:1px solid var(--hair);
    height. It keeps the .trio-card skin, so hover, borders and the playlink pill are the
    same object the pair below uses. */
 .feature .trio-card--feature{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,42%);
-  grid-template-rows:auto auto 1fr auto;padding:0;align-items:start}
+  grid-template-rows:auto auto auto 1fr;padding:0;align-items:start}
 .feature .trio-card--feature>.proj-kind{grid-column:1;grid-row:1}
 .feature .trio-card--feature>h3{grid-column:1;grid-row:2;font-size:25px}
 .feature .trio-card--feature>p{grid-column:1;grid-row:3;max-width:52ch}
@@ -804,3 +804,16 @@ footer{padding:26px 0 44px;border-top:1px solid var(--hair);
 .subrole{text-transform:none;font-size:13.5px;font-weight:600}
 footer.wrap{font-family:var(--sans);letter-spacing:0}
 .job .scope li{font-size:12.5px}
+
+/* ── case studies and articles, one list ─────────────────────────────── */
+.anchor{display:block;position:relative;top:-110px;visibility:hidden}
+.post-kind{display:flex;flex-direction:column;align-items:flex-start;gap:8px}
+.post-tag{display:inline-block;padding:2px 9px;border-radius:999px;font:600 11.5px/1.5 var(--sans)}
+.tag-cs{background:var(--accent-soft);color:var(--accent);box-shadow:inset 0 0 0 1px color-mix(in srgb,var(--accent) 30%,transparent)}
+.tag-art{background:var(--warm-soft);color:var(--warm);box-shadow:inset 0 0 0 1px color-mix(in srgb,var(--warm) 30%,transparent)}
+.post-fig{margin:12px 0 0!important;color:var(--body)!important;font-size:14.5px!important}
+.post-fig b{font:600 19px/1 var(--display);color:var(--ink);margin-right:4px}
+.post-wrong{margin:10px 0 0!important;padding-left:12px;border-left:2px solid var(--warm);
+  font-size:14px!important;color:var(--muted)!important}
+.post-wrong b{color:var(--ink);font-weight:600}
+@media (max-width:640px){.post-kind{flex-direction:row;align-items:center;flex-wrap:wrap;gap:8px}}
