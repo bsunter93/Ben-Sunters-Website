@@ -16,7 +16,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600&family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600&display=swap">
 <meta property="og:title" content="Case studies">
-<meta property="og:description" content="A cost number that arrived too late to matter, a PMO for a deal that had not closed, and an opportunity nobody could price. What was in the way, and where I got it wrong.">
+<meta property="og:description" content="A cost number that arrived too late to use, a PMO for a deal that hadn't closed, and an opportunity nobody could price. What was in the way, and where I got it wrong.">
 <meta property="og:url" content="https://bensunter.com/case-studies.html">
 <meta property="og:type" content="article">
 <meta property="og:image" content="https://bensunter.com/og-card.jpg">
@@ -51,7 +51,7 @@
 .artfoot .reading{display:flex;gap:20px;flex-wrap:wrap;justify-content:space-between;
   font-size:13.5px;color:var(--muted)}
 
-/* Unfolded: this page is only the studies, so nothing is hidden behind a disclosure. */
+/* Studies shown fully expanded on this page. */
 .cs-wrap{max-width:1020px;margin:0 auto;padding-inline:clamp(18px,5vw,32px)}
 .st-more-h{font:600 18px/1.3 var(--sans);color:var(--ink);margin:30px 0 10px;
   padding-top:20px;border-top:1px solid var(--line)}
@@ -59,6 +59,7 @@
 .st-head{display:block;cursor:default}
 .st-more>.st-body{display:block}
 </style>
+<script>try{var t=localStorage.getItem('theme');if(t==='light'||t==='dark')document.documentElement.setAttribute('data-theme',t)}catch(e){}</script>
 </head>
 <body>
 
@@ -73,7 +74,7 @@
 <header class="reading arthead">
   <div class="kicker">04 &middot; Deep dives</div>
   <h1>Three problems, up close</h1>
-  <p class="by">What was actually in the way, how I worked the constraints, and where I
+  <p class="by">What was in the way, how I worked around the constraints, and where I
      got it wrong.</p>
 </header>
 
@@ -83,12 +84,12 @@
     <div class="st-wrap">
       <div class="st-head">
       <span class="st-kind">Cost &amp; forecasting</span>
-      <span class="st-t">Making a cost number travel, and arrive in time to matter</span>
+      <span class="st-t">Getting the cost number to people while they could still use it</span>
       
       </div>
       <div class="st-inner">
     <p class="st-meta">Service operations · method</p>
-    <p class="st-take">Unit cost used to arrive from finance late in the year, when the only lever left was people. It became a number three functions signed and saw every month.</p>
+    <p class="st-take">Unit cost used to arrive from finance late in the year, when the only lever left was people. I turned it into a number three functions signed off on and saw every month.</p>
     <figure class="st-fig">
         <svg viewBox="0 0 620 410" role="img" aria-label="A number travels from operators to workforce management to finance. Initiatives with quantified impact went from 54 percent to 100 percent. Before, unit cost arrived once late in the year. Now it arrives every month.">
   <text class="d-mono" x="0" y="18">HOW ONE NUMBER TRAVELS</text>
@@ -101,9 +102,9 @@
   <rect x="104" y="152" width="400" height="13" rx="2" fill="var(--accent)" opacity=".55"/>
   <text class="d-mono" x="0" y="162" fill="var(--accent)">AFTER</text>
   <text class="d-lab" x="516" y="163">100%</text>
-  <text class="d-mut" x="104" y="184">Two weeks. The rest had been sized by assertion.</text>
+  <text class="d-mut" x="104" y="184">Took two weeks. The rest had been sized on someone's say-so.</text>
 
-  <text class="d-mono" x="0" y="220">WHEN OPERATORS ACTUALLY SEE IT</text>
+  <text class="d-mono" x="0" y="220">WHEN OPERATORS SEE IT</text>
 
   <text class="d-mono" x="0" y="257" fill="var(--warm)">BEFORE</text>
   <line x1="72" y1="253" x2="608" y2="253" stroke="var(--line)" stroke-width="2"/>
@@ -118,32 +119,31 @@
   <text class="d-mut" x="72" y="367">plan, and the demand model that drives both.</text>
   <text class="d-mono" x="72" y="396">JAN</text><text class="d-mono" x="576" y="396">DEC</text>
 </svg>
-        <figcaption>A gap you can see in January is a plan. The same gap in October is a headcount cut.</figcaption>
+        <figcaption>Spot a gap in January and there's time to plan around it. Spot it in October and it usually means cutting headcount.</figcaption>
       </figure>
     <div class="st-more">
       <h3 class="st-more-h">How it went, and what I got wrong</h3>
       <div class="st-body">
       <h3>Before</h3>
       <p>An $18M cost-of-revenue target, and only about half the initiatives under it had
-         impact anyone had quantified. The rest were sized by assertion. Forecasts drove
+         impact anyone had quantified. The rest were sized on someone's say-so. Forecasts drove
          hiring, hiring drove cost, and the cost reporting arrived from finance late enough
          in the year that the only lever left was headcount. Engineering and operations
          barely spoke, even though operators depended on engineering delivery to hit their
          numbers.</p>
-      <h3>One number everyone signs</h3>
+      <h3>One number everyone signs off on</h3>
       <p>Operators size their own initiatives in their own metrics. Workforce management
          turns that into FTE, and finance turns FTE into unit cost against the annual goal.
          Every handoff gets cross-examined and signed, including by engineering where
-         delivery is a dependency, so nothing enters the chain unowned.</p>
+         delivery is a dependency, so every number has an owner.</p>
       <p>Coverage of quantified impact went from 54% to 100% inside two weeks, and the
          cadence holding it up, weekly execution pulses with monthly forecast and
          workforce-model locks, was running in seven days.</p>
       <h3>What I got wrong</h3>
-      <p>I built the complete version first and the one-screen version second, which is
-         backwards. A number a decision-maker cannot hold in their head does not travel
-         however correct it is, and correctness was the part I found interesting. I got to
-         the summary late, and by then people had already decided the whole thing was
-         heavy.</p>
+      <p>I built the complete version first and the one-screen summary second, which was
+         backwards. If a decision-maker can't hold a number in their head, it doesn't matter
+         how correct it is, and correctness was the part I found interesting. By the time I
+         got to the summary, people had already decided the whole thing was heavy.</p>
       </div>
     </div>
       </div>
@@ -154,7 +154,7 @@
     <div class="st-wrap">
       <div class="st-head">
       <span class="st-kind">Program governance</span>
-      <span class="st-t">Building a PMO for a deal that had not closed yet</span>
+      <span class="st-t">Building a PMO for a deal that hadn't closed yet</span>
       
       </div>
       <div class="st-inner">
@@ -177,7 +177,7 @@
   <rect x="470" y="32" width="4" height="58" rx="2" fill="var(--accent)"/>
   <text class="d-lab" x="486" y="55">Approval</text>
   <text class="d-mut" x="486" y="74">teams come back</text>
-  <text class="d-mut" x="0" y="112">Engineers and PMs reallocated across the wider org. Designs sat, and quietly went stale.</text>
+  <text class="d-mut" x="0" y="112">Engineers and PMs reallocated across the wider org. Designs sat and went stale.</text>
 
   <text class="d-mono" x="0" y="152">THE REVIEW BEFORE ANYONE RESTARTED</text>
   <rect x="0" y="166" width="620" height="56" rx="3" fill="var(--plum)" opacity=".12"/>
@@ -189,15 +189,15 @@
   <text class="d-mut" x="94" y="282">of test remediation avoided. Easy to spot in a design review,</text>
   <text class="d-mut" x="94" y="296">expensive to find in testing.</text>
 </svg>
-        <figcaption>The review paid for itself on drift that nobody introduced: the designs were right when
-          they were written, and the pause is what made them wrong.</figcaption>
+        <figcaption>Nobody made a mistake here. The designs were right when they were written, and the
+          months on hold made them out of date.</figcaption>
       </figure>
     <div class="st-more">
       <h3 class="st-more-h">How it went, and what I got wrong</h3>
       <div class="st-body">
-      <p>Nothing was broken here. Nothing existed yet. The client was standing up a PMO
-         ahead of the merger and my team was on the ground floor, building the machinery
-         that the next five years of integration work would run on.</p>
+      <p>Nothing was broken here, because nothing existed yet. The client was setting up a
+         PMO ahead of the merger, and my team was there from the start, building the processes
+         the next five years of integration work would run on.</p>
       <h3>What the deal did to the work</h3>
       <p>Terms were renegotiated several times with the FCC, the DOJ and the businesses,
          and the whole program sat on hold for months. Until approval, there was a hard
@@ -205,53 +205,51 @@
          never production data from the other party. Once initiatives had gone as far as
          the law allowed, engineers and PMs were reallocated across the wider Product and
          Technology org, and the designs sat.</p>
-      <p>And it was not a scheduled pause. At several points it was genuinely unclear
-         whether the deal would survive review at all, which is a different job from
-         running a program with a known end state. You are building something that might never
-         launch, and several hundred people still have to work on it like it will.</p>
+      <p>It wasn't a planned pause, either. At several points nobody knew whether the deal
+         would survive review at all. That's a different job from running a program with a
+         known end state: you're building something that might never launch, and several
+         hundred people still have to work on it as if it will.</p>
       <h3>Why a pause is expensive</h3>
-      <p>Months passed and the world moved underneath the designs. A call to an API that
+      <p>Months passed and things changed under the designs. A call to an API that
          had since been deprecated. A data feed from a vendor team that had been
          repurposed. So before anyone restarted, the designs went back through a joint
          architecture review board: 52 projects reassessed over three months, high and low
          level designs re-checked against what was now true, with more than 150 project
          managers, senior managers, directors and architects pulled through it.</p>
-      <p>Those flaws would have surfaced anyway, in unit testing and BVT, at far higher
-         cost. An estimated $2M of remediation avoided. These are easy to spot in a design
-         review and expensive to find in testing.</p>
+      <p>Those flaws would have turned up anyway in unit testing and BVT, at far higher
+         cost. The review avoided an estimated $2M of remediation.</p>
       <h3>Sixteen VPs and no authority over any of them</h3>
-      <p>Data. I built the reporting that showed where work was actually stuck and whose
-         team it was sitting on. Nobody had that view before. Those reports went up to the
-         CIO, and that is what did the work: once a VP knows the row with their name on it
-         is read two levels above them, they push each other and nobody has to be chased.</p>
+      <p>What I had was data. I built reporting that showed where work was stuck and whose
+         team it was sitting with. Nobody had that view before. The reports went up to the
+         CIO, and that did most of the work: once a VP knows the row with their name on it
+         gets read two levels up, they push each other and nobody needs chasing.</p>
       <h3>Why deployments kept missing their dates</h3>
-      <p>On-time launch deployments sat around 74%. The causes were not technical. Teams
+      <p>On-time launch deployments sat around 74%. The causes weren't technical. Teams
          were miscommunicating, documentation was wrong, and every team tracked milestones
          its own way. More than a dozen vendor teams were on the program and none of their
          tracking was standardized, so there was no way to see real status without asking
          each of them and taking the answer on faith.</p>
       <p>That gap is why I learned SQL and built automated reporting in Tableau. With
          dozens of teams updating constantly, a near real-time view was the only thing that
-         would hold: code drop status by release, by parent initiative, and by team and
+         would keep up: code drop status by release, by parent initiative, and by team and
          function, with links through to where the design and development artifacts
-         actually lived in Jira.</p>
+         lived in Jira.</p>
       <p>On top of the view I put a standardized process with defined acceptance gates,
          each one requiring sign-off from the teams a drop affected, and used the report as
          the source of truth teams aligned against. On-time deployments went from 74% to
          over 95% in under three months.</p>
-      <h3>Every report, ported to a tool I had never used</h3>
+      <h3>Porting every report to a tool I'd never used</h3>
       <p>Mid-quarter, the client switched licensing from Tableau to Power BI and asked me
-         to port every report across. I had never used Power BI, and it is different enough
-         from Tableau in both capability and interface that it was not a translation job. I
-         learned it on the fly and got the reporting back up.</p>
+         to port every report across. I'd never used Power BI, and it's different enough
+         from Tableau that it wasn't a straight translation. I learned it as I went and got
+         the reporting back up.</p>
       <h3>What I got wrong</h3>
-      <p>I should have standardized intake at the start. By the time I could see that the
-         existing reporting was insufficient and was itself enabling the misses, more than
-         a dozen vendor teams had each built their own ad hoc tracking and none of it
-         talked to anything else. The job stopped being defining a standard and became
-         meeting each team one at a time and building a translation layer back from
-         whatever they had already committed to. None of that would have been necessary if
-         I had set the format before the teams built their own.</p>
+      <p>I should have standardized intake at the start. By the time I saw that the
+         existing reporting wasn't good enough, and was part of why dates were missed, more
+         than a dozen vendor teams had each built their own ad hoc tracking, and none of it
+         talked to anything else. So I spent the time meeting each team one at a time and
+         building a translation layer from whatever they'd already committed to. If I'd set
+         the format before the teams built their own, none of that would have been needed.</p>
       </div>
     </div>
       </div>
@@ -262,17 +260,17 @@
     <div class="st-wrap">
       <div class="st-head">
       <span class="st-kind">Go to market</span>
-      <span class="st-t">Making an opportunity sellable</span>
+      <span class="st-t">Giving sellers a number they could pitch</span>
       
       </div>
       <div class="st-inner">
     <p class="st-meta">Google · publisher partnerships</p>
-    <p class="st-take">Sellers already had the list. What they could not do was tell a publisher what it was worth, so it kept losing to pitches that arrived with a number.</p>
+    <p class="st-take">Sellers already had the list. What they couldn't do was tell a publisher what it was worth, so it kept losing to pitches that came with a number.</p>
     <figure class="st-fig">
         <svg viewBox="0 0 620 352" role="img" aria-label="A measured dollar figure per publisher unlocked three uses: the internal performance view, the client conversation, and a live leaderboard">
   <text class="d-mono" x="0" y="18">THE CONSTRAINT</text>
   <text class="d-mut" x="0" y="42">Sellers already had the list.</text>
-  <text class="d-lab" x="0" y="64" fill="var(--warm)">They could not price it.</text>
+  <text class="d-lab" x="0" y="64" fill="var(--warm)">They couldn't price it.</text>
   <rect x="0" y="88" width="300" height="100" rx="3" fill="var(--accent)" opacity=".12"/>
   <rect x="0" y="88" width="4" height="100" rx="2" fill="var(--accent)"/>
   <text class="d-num" x="20" y="126">A measured $ figure</text>
@@ -281,46 +279,46 @@
   <path class="d-acc" d="M300 138 C340 138 340 72 372 72" opacity=".55"/><rect x="372" y="46" width="248" height="54" rx="3" fill="var(--accent)" opacity=".08"/><text class="d-lab" x="388" y="70">The internal performance view</text><text class="d-mut" x="388" y="88">sellers could book credit for it</text><path class="d-acc" d="M300 138 C340 138 340 146 372 146" opacity=".55"/><rect x="372" y="120" width="248" height="54" rx="3" fill="var(--accent)" opacity=".08"/><text class="d-lab" x="388" y="144">The client conversation</text><text class="d-mut" x="388" y="162">a figure a publisher would accept</text><path class="d-acc" d="M300 138 C340 138 340 220 372 220" opacity=".55"/><rect x="372" y="194" width="248" height="54" rx="3" fill="var(--accent)" opacity=".08"/><text class="d-lab" x="388" y="218">A live leaderboard</text><text class="d-mut" x="388" y="236">the contest that made it a priority</text>
   <line x1="0" y1="274" x2="620" y2="274" stroke="var(--line)"/>
   <text class="d-numw" x="0" y="308">256%</text>
-  <text class="d-mut" x="94" y="308">pipeline movement vs prior quarters</text>
+  <text class="d-mut" x="94" y="308">peak quarter-over-quarter pipeline velocity</text>
   <text class="d-num" x="0" y="342">8-figure</text>
   <text class="d-mut" x="94" y="342">incremental revenue growth vs target</text>
 </svg>
-        <figcaption>Until the number existed, sellers were arguing about a figure nobody had produced.</figcaption>
+        <figcaption>Before this, sellers were arguing over a figure nobody had produced.</figcaption>
       </figure>
     <div class="st-more">
       <h3 class="st-more-h">How it went, and what I got wrong</h3>
       <div class="st-body">
-      <p>Sellers already had the list. That was never the constraint. What they could not
-         do was tell a publisher what the opportunity was worth, so it kept losing to
-         pitches that arrived with a number attached.</p>
-      <h3>Measure it, do not argue it</h3>
-      <p>Impact Experiments, the incrementality framework inside Ad Manager 360, produced a
-         measured figure per publisher rather than an estimate. A publisher will argue with
-         a projection. They will not argue with their own incrementality result.</p>
-      <h3>Between the people who had the evidence and the people who needed it</h3>
+      <p>The list was never the problem. Sellers had it. What they couldn't do was tell a
+         publisher what the opportunity was worth, so it kept losing to pitches that came
+         with a number attached.</p>
+      <h3>Getting a measured number</h3>
+      <p>Impact Experiments, the incrementality framework inside Ad Manager 360, gave us a
+         measured figure for each publisher. Publishers will argue with a projection. They
+         won't argue with their own incrementality result.</p>
+      <h3>Connecting the evidence to the people selling</h3>
       <p>The measurement sat with product and pGTM. The publisher relationships sat with
          sales. Neither group was going to build the other's artifact, so pGTM asked me to
-         build it. I ran the publisher meetings, took what came out of them back to
+         do it. I ran the publisher meetings, took what came out of them back to
          product, and built the case study
          jointly with them, so it carried product's evidence in language a seller could put
-         straight into a pitch. Sales stopped having to translate it, and started opening
-         conversations they had been skipping.</p>
-      <h3>One number, three places it had never been</h3>
-      <p>Into the internal performance view, so sellers could finally book credit for the
-         work. Into the client conversation, as a figure a publisher would accept. And onto
-         a leaderboard, because I built the custom CRM and product views that did not exist
-         and turned pitching it into a contest.</p>
+         straight into a pitch. Sales didn't have to translate it anymore, and started opening
+         conversations they'd been skipping.</p>
+      <h3>Putting the number to work</h3>
+      <p>It went into the internal performance view, so sellers could book credit for the
+         work, and into the client conversation as a figure a publisher would accept. I also
+         built the custom CRM and product views that didn't exist yet, and used them for a
+         leaderboard that turned pitching it into a contest.</p>
       <p>I timed the launch to the week the case study cleared legal and client review, so
          sellers got the proof they had been asking for and a reason to use it in the same
-         week. Pipeline movement on that opportunity ran 256% against prior quarters.</p>
+         week. That opportunity hit a peak of 256% quarter-over-quarter pipeline velocity.</p>
       <h3>What I got wrong</h3>
       <p>I pointed the queries at AMS, the region I managed, because that was the problem
          in front of me. Within days of release, EMEA and APAC asked for their own
          versions. Repointing a query from one region to global is a small change and I
-         made it quickly. What I had not planned for was validation. I had no data access
+         made it quickly. What I hadn't planned for was validation. I had no data access
          outside my own region, and for data this sensitive the access review is long, so
-         two regions ran on output I could not check until it cleared. It held up. I was
-         not in a position to confirm that at the time.</p>
+         two regions ran on output I couldn't check until it cleared. It held up, but I
+         couldn't confirm that at the time.</p>
       </div>
     </div>
       </div>
