@@ -9,7 +9,7 @@
 <meta name="color-scheme" content="light dark">
 <link rel="canonical" href="https://bensunter.com/commentpulse.html">
 <meta property="og:title" content="CommentPulse">
-<meta property="og:description" content="Google Sheets keeps comments where you cannot sort them, count them, or hand them to anyone. Drop the workbook here and get every thread back in order.">
+<meta property="og:description" content="Google Sheets keeps comments where you can't sort them, count them, or hand them to anyone. Drop the workbook here and get every thread back in order.">
 <meta property="og:url" content="https://bensunter.com/commentpulse.html">
 <meta property="og:image" content="https://bensunter.com/og-commentpulse.png">
 <meta property="og:image:width" content="1200">
@@ -25,9 +25,8 @@
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Newsreader:opsz,wght@6..72,400;6..72,500;6..72,600&family=Public+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap">
 <style>
 /* ── tokens ───────────────────────────────────────────────────────────────
-   A ledger, not a dashboard. Warm paper ground, a ruled coordinate gutter on
-   the left, threads hanging off it. Newsreader carries the document lineage,
-   JetBrains Mono makes cell refs read as coordinates rather than as words. */
+   Warm paper background, a cell-ref gutter on the left, threads beside it.
+   Newsreader for headings, JetBrains Mono for cell refs. */
 :root{
   --paper:#FBFAF7; --surface:#FFFFFF; --sunk:#F4F2EC; --raise:#FFFFFF;
   --ink:#191C20; --body:#3E434A; --muted:#6E757E; --faint:#969CA4;
@@ -279,14 +278,14 @@ footer li{margin-bottom:5px}
 <main>
 <section class="wrap intro" id="setup">
   <h1>Comment threads, out of the spreadsheet and into a list.</h1>
-  <p>Google Sheets keeps comments where you cannot sort them, count them, or hand them to
+  <p>Google Sheets keeps comments where you can't sort them, count them, or hand them to
      anyone. Drop an exported workbook here and every thread comes back in order, with the
      tab and cell it sits on, its replies, and whether it was resolved.</p>
   <span class="sheetsonly">SPREADSHEETS ONLY &middot; .XLSX &middot; DOCS AND SLIDES NOT YET SUPPORTED</span>
 
-  <p class="addon-note"><b>There is now an add-on that does this inside Sheets</b>, with no
-     download step: press a button and the comments land in a tab of the spreadsheet you are
-     already in. It is live on the <a href="https://workspace.google.com/marketplace/app/comment_export_for_sheets/856300539801" rel="noopener">Google Workspace
+  <p class="addon-note"><b>There's now an add-on that does this inside Sheets</b>, with no
+     download step: press a button and the comments land in a tab of the spreadsheet you're
+     already in. It's live on the <a href="https://workspace.google.com/marketplace/app/comment_export_for_sheets/856300539801" rel="noopener">Google Workspace
      Marketplace</a>. <a href="comment-export.html">How it works &rarr;</a></p>
 
   <div class="dropwrap">
@@ -315,7 +314,7 @@ footer li{margin-bottom:5px}
       </ol>
       <p class="privacy"><b>Nothing is uploaded.</b> There is no account, no sign-in and no
         server. The file is unzipped and read by this page, in your browser. Close the tab
-        and it is gone.</p>
+        and it's gone.</p>
     </div>
   </div>
 
@@ -379,10 +378,10 @@ footer li{margin-bottom:5px}
 <footer>
   <div class="wrap">
     <div class="known">
-      <h4>What this cannot tell you</h4>
+      <h4>What this can't tell you</h4>
       <ul>
         <li><b>When a thread was resolved, or by whom.</b> The export stores resolution as a
-            yes or no and nothing else, so those columns are absent rather than blank.</li>
+            yes or no and nothing else, so those columns are left out.</li>
         <li><b>Deleted comments and emoji reactions.</b> Not present in the export.</li>
         <li><b>Email addresses.</b> Display names only.</li>
       </ul>
@@ -450,9 +449,8 @@ footer li{margin-bottom:5px}
     return doc;
   }
 
-  // The export writes dT without a timezone marker. It is UTC: the same comment
-  // reads 19:42:15.655 here and 19:42:15.655Z from the Drive API. Parsed as local
-  // time every timestamp is silently hours wrong, so the Z is appended explicitly.
+  // The export writes dT with no timezone, but it's UTC (it matches the Drive API
+  // timestamp), so append the Z before parsing.
   function toUtcIso(dT) {
     if (!dT) return null;
     var s = String(dT).trim();
@@ -461,8 +459,7 @@ footer li{margin-bottom:5px}
     return isNaN(d.getTime()) ? null : d.toISOString();
   }
 
-  // A1 -> {col, row} so threads sort in reading order rather than lexically,
-  // which would otherwise put B10 before B9.
+  // A1 -> {col, row} so threads sort in reading order (B9 before B10).
   function cellSort(ref) {
     var first = String(ref || '').split(':')[0];
     var m = /^([A-Za-z]+)?(\d+)?/.exec(first) || [];
@@ -471,9 +468,8 @@ footer li{margin-bottom:5px}
     return { row: parseInt(m[2] || '0', 10), col: col };
   }
 
-  // GUIDs are regenerated on every export, so identity has to come from content
-  // that does not change. cyrb53 is deterministic and fast; this is a dedupe and
-  // join key, not a security primitive.
+  // GUIDs change on every export, so the thread key is a cyrb53 hash of its content.
+  // Used for dedupe and joins only, not security.
   function hash53(str) {
     var h1 = 0xdeadbeef, h2 = 0x41c6ce57, ch;
     for (var i = 0; i < str.length; i++) {
@@ -510,8 +506,7 @@ footer li{margin-bottom:5px}
   function plural(n, one, many) { return n + ' ' + (n === 1 ? one : (many || one + 's')); }
 
   // ── the parser ──────────────────────────────────────────────────────────
-  // Only the parts we need are decompressed. A workbook with a handful of
-  // comments can still be tens of megabytes of cell data.
+  // Only decompress the parts we need; the cell data can be tens of megabytes.
   function readPart(zip, path) {
     var f = zip.file(path);
     return f ? f.async('string') : Promise.resolve(null);
@@ -547,10 +542,8 @@ footer li{margin-bottom:5px}
             }
           }
         }
-        // Deliberately keyed off the relationship id rather than the file number.
-        // In a fresh workbook sheet1 happens to map to threadedComment1, so the
-        // naive version looks correct until a sheet is deleted or reordered, at
-        // which point every comment is attributed to the wrong tab, silently.
+        // Map by relationship id, not file number: sheet1 and threadedComment1
+        // stop lining up once a tab is deleted or reordered.
         sheets.forEach(function (s) { s.part = map[s.rid] || null; });
         return sheets;
       });
@@ -625,7 +618,7 @@ footer li{margin-bottom:5px}
             replies:   replies.map(function (k) { return { who: k.who, at: k.at, text: k.text }; })
           });
         });
-        // An orphaned reply means its root was not in this part. Never silently drop it.
+        // Replies whose parent isn't in this part get reported, not dropped.
         var orphans = kids.filter(function (k) { return !roots[k.parent]; });
         if (orphans.length) {
           out.warnings.push(plural(orphans.length, 'reply', 'replies') +
@@ -799,11 +792,11 @@ footer li{margin-bottom:5px}
   function clearSay() { $('#status').className = 'status'; $('#status').innerHTML = ''; }
 
   var ERRORS = {
-    NOT_XLSX: ['That does not look like an .xlsx workbook',
-      'It may be a .csv, a .numbers file, or a Google file that was not exported. ' +
+    NOT_XLSX: ["That doesn't look like an .xlsx workbook",
+      "It may be a .csv, a .numbers file, or a Google file that wasn't exported. " +
       'In Google Sheets use File, then Download, then Microsoft Excel (.xlsx).'],
     NOT_ZIP: ['That file could not be opened',
-      'An .xlsx is a zip archive. This one is either corrupt or is a different format ' +
+      "An .xlsx is a zip archive. This one's either corrupt or a different format " +
       'with the wrong extension.']
   };
 
@@ -847,16 +840,15 @@ footer li{margin-bottom:5px}
 
       if (!threads.length) {
         say('<b>No comment threads found in ' + esc(names.join(', ')) + '</b>' +
-            'The workbook opened correctly, so this usually means it genuinely has no ' +
-            'comments, or that what it has are old-style cell notes rather than comment ' +
-            'threads. Notes are a different feature and are not included in the export.', true);
+            'The workbook opened fine, so it probably has no comments, or only has ' +
+            "old-style cell notes. Notes are a separate feature and aren't in the export.", true);
         $('#results').hidden = true;
         return;
       }
 
       var notes = [];
       if (failed.length) {
-        notes.push('<b>' + plural(failed.length, 'file') + ' could not be read</b>' +
+        notes.push('<b>' + plural(failed.length, 'file') + " couldn't be read</b>" +
           failed.map(function (f) { return esc(f.name); }).join(', ') +
           '. The rest were loaded.');
       }
@@ -952,8 +944,7 @@ footer li{margin-bottom:5px}
   }
 
   // ── sample data ─────────────────────────────────────────────────────────
-  // Invented, and labeled as such on screen. A tool that opens empty shows
-  // nothing about what it does.
+  // Invented data, labeled as such on screen, so the page doesn't open empty.
   function sample() {
     var d = function (daysAgo, h) {
       return new Date(Date.now() - daysAgo * 864e5 + (h || 0) * 36e5).toISOString();
@@ -1031,7 +1022,7 @@ footer li{margin-bottom:5px}
   drop.addEventListener('drop', function (e) {
     if (e.dataTransfer && e.dataTransfer.files.length) handleFiles(e.dataTransfer.files);
   });
-  // A file dropped outside the target would otherwise navigate away and lose everything.
+  // Stop a file dropped outside the target from navigating away.
   ['dragover', 'drop'].forEach(function (ev) {
     window.addEventListener(ev, function (e) { e.preventDefault(); });
   });
@@ -1090,8 +1081,7 @@ footer li{margin-bottom:5px}
     });
   })();
 
-  // Test seam. The fixture suite in selftest.html drives the real parser through
-  // this rather than a copy of it, so the tests cannot drift from the shipped code.
+  // Test hook: selftest.html runs the real parser through this.
   window.__cp = { parseWorkbook: parseWorkbook, cellSort: cellSort,
                   toUtcIso: toUtcIso, hash53: hash53, resolvePath: resolvePath,
                   show: show, toCsv: toCsv, toMarkdown: toMarkdown, sample: sample };

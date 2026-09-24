@@ -68,9 +68,8 @@ open it in, and writes them into a tab in that same spreadsheet. Nothing is sent
 else. There is no server behind it, no account, and no database, so there is nothing for me
 to collect and nothing for me to lose.</p>
 
-<p>I am the developer, and I have written this page to describe exactly what the add-on
-does rather than to cover myself. If any of it turns out to be inaccurate, tell me and I
-will correct it.</p>
+<p>I'm the developer, and this page describes exactly what the add-on does. If any of it
+turns out to be wrong, tell me and I'll correct it.</p>
 
 <h2>What it asks for</h2>
 
@@ -84,23 +83,23 @@ work:</p>
     in your Drive, and it is never given broad Drive access.</li>
 <li><strong>View and manage the spreadsheet this application is used in</strong>
     (<code>spreadsheets.currentonly</code>). This is what lets it write the results tab back
-    into the spreadsheet you are in.</li>
+    into the spreadsheet you're in.</li>
 <li><strong>Connect to an external service</strong> (<code>script.external_request</code>).
     The only address it ever contacts is <code>googleapis.com</code>, Google's own API, to
     ask for a copy of the spreadsheet you granted access to. It contacts no other host.</li>
 </ul>
 
 <p class="pull">The add-on has no server of its own. There is no address your data could be
-sent to, because I do not operate one.</p>
+sent to, because I don't operate one.</p>
 
-<h2>What it actually does when you press the button</h2>
+<h2>What happens when you press the button</h2>
 
 <ul>
 <li>It asks Google's Drive API to export the spreadsheet you granted access to.</li>
 <li>It reads the comment records out of that export. This happens inside Google Apps Script,
     running under your own account, on Google's infrastructure.</li>
 <li>It writes a tab named <strong>Comment Export</strong> into the same spreadsheet,
-    containing the sheet and cell each comment sits on, who wrote it, when, whether it is
+    containing the sheet and cell each comment sits on, who wrote it, when, whether it's
     resolved, and its replies.</li>
 <li>The copy it worked from is discarded when the run ends.</li>
 </ul>
@@ -132,7 +131,7 @@ because none is collected in the first place.</p>
 sensitive information. This section sets out the specific measures that protect it.</p>
 
 <p><strong>Encryption in transit.</strong> Every request the add-on makes is HTTPS over TLS
-to <code>googleapis.com</code>. Unencrypted HTTP is not used and is not reachable: the
+to <code>googleapis.com</code>. Unencrypted HTTP isn't used and isn't reachable: the
 manifest's <code>urlFetchWhitelist</code> pins the only address the add-on may contact to
 <code>https://www.googleapis.com/drive/v3/files/</code>, and Google Apps Script refuses any
 outbound request to any other host. This restriction is enforced by the platform rather than
@@ -140,7 +139,7 @@ by my code, so it holds even if the code were altered or defective.</p>
 
 <p><strong>Encryption at rest.</strong> Your spreadsheet, and the tab the add-on writes into
 it, stay in Google Drive and are encrypted at rest by Google. No copy is held anywhere else,
-because there is nowhere else: I operate no server, no database and no storage of any
+because there's nowhere else: I operate no server, no database and no storage of any
 kind.</p>
 
 <p><strong>Access control.</strong> The add-on runs inside Google Apps Script under your own
@@ -148,7 +147,7 @@ account, using an OAuth token issued to you, and it can reach only the individua
 have granted through <code>drive.file</code>. It is never given broad Drive access. Neither
 I nor anyone else can run it on your behalf or read anything it processes. There are no
 developer accounts, administrative consoles or support tools with access to your content,
-because there is no system to log in to.</p>
+because there's no system to log in to.</p>
 
 <p><strong>Retention and deletion.</strong> The exported copy of your spreadsheet exists
 only in memory, for the duration of a single execution, and is discarded when that execution
@@ -165,7 +164,7 @@ page can be checked against the code rather than taken on trust. It uses no thir
 libraries and loads no external code at runtime.</p>
 
 <p><strong>Incident response.</strong> Because no user content is collected, transmitted to
-me, or stored outside your own Google account, there is no store of data that could be
+me, or stored outside your own Google account, there's no store of data that could be
 breached. If a security issue is found in the add-on itself, report it to
 <a href="mailto:sunterbb@gmail.com">sunterbb@gmail.com</a>. I will acknowledge it, publish a
 corrected version, and describe the issue and its scope on this page.</p>
@@ -190,7 +189,7 @@ permissions page</a>. Revoking access takes effect immediately.</p>
 
 <h2>Changes</h2>
 
-<p>If the add-on ever starts doing something this page does not describe, this page changes
+<p>If the add-on ever starts doing something this page doesn't describe, this page changes
 first. The date at the top is when it was last revised.</p>
 
 <h2>Contact</h2>
