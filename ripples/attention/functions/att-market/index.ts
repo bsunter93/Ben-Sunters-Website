@@ -19,7 +19,8 @@
 //                (each key every 7 days).
 //   edgar        SEC EDGAR full-text search counts per month. Implemented but DISABLED (sec.efts.enabled=false and the
 //                att.ts RED list blocks sec.gov): SEC requires an owner contact email in the User-Agent.
-//   backfill     att_jobs: {params:{source:'finra.api', files:true}} mirrors up to 400 trading days (newest first);
+//   backfill     att_jobs: {params:{source:'finra.api', files:true}} mirrors up to 400 trading days (newest first), stopping
+//                at the Query API retention floor (~1 year; detected from 3 empty days below the oldest mirrored day);
 //                {params:{source:'finra.shvol'}, keys} backfills tickers with one API query per 3 tickers;
 //                {params:{source:'usasp.spend'}, keys} walks 3-month windows back 24 months per key.
 //   ping         no outbound calls.
@@ -31,7 +32,7 @@ import {
 } from "./att.ts";
 
 const FN = "att-market";
-const MARKET_VERSION = "2026-09-25.m6";
+const MARKET_VERSION = "2026-09-25.m7";
 const BUCKET = "att-raw";
 const FINRA_URL = "https://api.finra.org/data/group/otcMarket/name/regShoDaily";
 const FINRA_FIELDS = ["tradeReportDate", "securitiesInformationProcessorSymbolIdentifier", "shortParQuantity",
@@ -110,7 +111,7 @@ function failNote(run: Run, host: string): string {
 async function settleJobs(run: Run, doneKeys: Set<string> | "all", delayS = 90, host?: string) {
   const ids = run.jobIds();
   if (!ids.length || run.dryRun) return;
-  if (host && run.skipped.some((x) => x.host === host && /daily_budget_spent|host_killed/.test(x.reason))) {
+  if (host && run.skipped.some((x) => x.host === host && /daily_budget_spent|host_killed|slow_host_stop/.test(x.reason))) {
     const t = new Date();
     delayS = Math.max(delayS, Math.ceil((Date.UTC(t.getUTCFullYear(), t.getUTCMonth(), t.getUTCDate() + 1, 0, 10) - t.getTime()) / 1000));
   }
@@ -139,7 +140,7 @@ const normMem = new Map<string, string>();
 function norm(s: string): string {
   const c = normMem.get(s);
   if (c !== undefined) return c;
-  const v = s.toLowerCase().normalize("NFKD").replace(/[̀-ͯ]/g, "").replace(/[^\p{L}\p{N}]+/gu, " ").trim();
+  const v = s.toLowerCase().normalize("NFKD").replace(/[\u0300-\u036f]/g, "").replace(/[^\p{L}\p{N}]+/gu, " ").trim();
   if (normMem.size < 100_000) normMem.set(s, v);
   return v;
 }
@@ -335,6 +336,9 @@ async function polymarket(run: Run) {
   rows.push(...tRows);
   rows.push({ source: "poly.mkt", key: "__total__", metric: "vol24h", day, value: r2(totalVol), aux: mk.length,
     meta: { coverage: seen, partial: !fetchedOk || run.partial } });
+  // one snapshot per day: a complete crawl replaces any earlier vol24h rows of the same day (never mixed with them)
+  let cleared: number | null = null;
+  if (fetchedOk && !run.partial && !run.dryRun) cleared = Number(await rpc(run, "att_market_clear_day", { p_source: "poly.mkt", p_day: day }) ?? 0);
   const ing = await ingest(run, rows);
 
   // CLOB daily price history for markets of topic-mapped events (and markets whose own title maps)
@@ -379,7 +383,7 @@ async function polymarket(run: Run) {
   const nCand = await marketCandidates(run, "poly.mkt", day,
     keepEv.map((e, i) => ({ key: `e:${e.id}`, title: e.title, vol: e.vol, created: e.created, topic_id: evTopic.get(i) ?? null })),
     cfg, "ALL", cfg.poly_new_usd, cfg.poly_new_usd / 10);
-  run.extra.polymarket = { day, pages, seen, sports_skipped: sports, short_lived_skipped: short, markets: keepMk.length, events: keepEv.length,
+  run.extra.polymarket = { day, cleared, pages, seen, sports_skipped: sports, short_lived_skipped: short, markets: keepMk.length, events: keepEv.length,
     topics: tRows.length, clob_markets: clobOk, price_rows: clobRows, candidates: nCand, matcher_terms: matcher.patterns };
   run.source({ source: "poly.mkt", status: fetchedOk ? "ok" : "partial", keys: keepMk.length + keepEv.length + tRows.length,
     rows: Number(ing?.rows ?? 0) + priceRows.length, ms: Date.now() - t0 });
@@ -393,7 +397,11 @@ async function polymarket(run: Run) {
 interface KalshiCrawl {
   day: string; cursor: string; pages: number; seen: number; sports: number; short: number; totalVol: number;
   events: number; topics: Record<string, { vol: number; oi: number; n: number }>; complete: boolean; runs: number;
+  started?: string; updated?: string;
 }
+/** A crawl whose last chunk is older than this is not continued: the cursor may have expired and its sums would mix
+ *  two snapshots hours apart. The day is restarted from page 1 and that day's earlier Kalshi rows are cleared. */
+const KALSHI_STALE_MS = 2 * 3600e3;
 async function kalshi(run: Run) {
   const t0 = Date.now();
   const cfg = await mcfg(run);
@@ -402,9 +410,17 @@ async function kalshi(run: Run) {
   if (!src?.enabled) { run.source({ source: "kalshi.mkt", status: "disabled", note: src?.reason ?? null }); return; }
   if (!(await hostLease(run, "api.elections.kalshi.com"))) { run.source({ source: "kalshi.mkt", status: "host_busy" }); return; }
   const prev = (await stateGet("kalshi.crawl")) as KalshiCrawl | null;
-  const st: KalshiCrawl = prev && prev.day === day && run.params?.restart !== true ? prev
-    : { day, cursor: "", pages: 0, seen: 0, sports: 0, short: 0, totalVol: 0, events: 0, topics: {}, complete: false, runs: 0 };
-  if (st.complete) { run.source({ source: "kalshi.mkt", status: "ok", note: `crawl for ${day} already complete` }); return; }
+  const sameDay = !!prev && prev.day === day;
+  const fresh = sameDay && !!prev!.updated && Date.now() - Date.parse(prev!.updated!) < KALSHI_STALE_MS;
+  if (sameDay && prev!.complete && run.params?.restart !== true) {
+    run.source({ source: "kalshi.mkt", status: "ok", note: `crawl for ${day} already complete` }); return;
+  }
+  const resume = sameDay && fresh && run.params?.restart !== true;
+  const st: KalshiCrawl = resume ? prev!
+    : { day, cursor: "", pages: 0, seen: 0, sports: 0, short: 0, totalVol: 0, events: 0, topics: {}, complete: false, runs: 0,
+        started: new Date().toISOString() };
+  // restarting a day that already has rows from an older (stale or explicitly restarted) crawl: clear them first
+  const clearFirst = !resume && sameDay;
   const matcher = await buildMatcher(run);
   type Ev = { ticker: string; title: string; vol: number; oi: number; n: number; created: string | null };
   const evs: Ev[] = [];
@@ -475,13 +491,16 @@ async function kalshi(run: Run) {
   }
   rows.push({ source: "kalshi.mkt", key: "__total__", metric: "vol24h", day, value: r2(st.totalVol), aux: st.events,
     meta: { coverage: st.seen, partial: !st.complete } });
+  let cleared: number | null = null;
+  if (clearFirst && !run.dryRun) cleared = Number(await rpc(run, "att_market_clear_day", { p_source: "kalshi.mkt", p_day: day }) ?? 0);
   const ing = await ingest(run, rows);
   const nCand = await marketCandidates(run, "kalshi.mkt", day,
     keepEv.map((e, i) => ({ key: `ev:${e.ticker}`, title: e.title, vol: e.vol, created: e.created, topic_id: evTopic.get(i) ?? null })),
     cfg, "US", cfg.kalshi_new_contracts, cfg.kalshi_new_contracts / 10);
+  st.updated = new Date().toISOString();
   if (!run.dryRun) await stateSet("kalshi.crawl", st);
   if (!st.complete) run.nextCursor = { pages_done: st.pages };
-  run.extra.kalshi = { day, chunk_pages: pages, pages_total: st.pages, runs: st.runs, complete: st.complete, seen: st.seen,
+  run.extra.kalshi = { day, restarted: !resume, cleared, started: st.started ?? null, chunk_pages: pages, pages_total: st.pages, runs: st.runs, complete: st.complete, seen: st.seen,
     sports_skipped: st.sports, short_lived_skipped: st.short, events: keepEv.length, markets: keepMk.length,
     topics: Object.keys(st.topics).length, candidates: nCand, matcher_terms: matcher.patterns };
   run.source({ source: "kalshi.mkt", status: fetchedOk ? (st.complete ? "ok" : "partial") : "partial", keys: rows.length,
@@ -739,7 +758,16 @@ function tickerRows(day: string, agg: DayAgg, keys: WatchKey[]): ObsRow[] {
   }
   return rows;
 }
-interface FinraState { pages_per_day?: number; nodata?: string[]; last_day?: string; cand_day?: string }
+interface FinraState {
+  pages_per_day?: number; last_day?: string; cand_day?: string;
+  /** trading days the API answered with no rows (unknown closures, days past retention); kept for the whole target
+   *  window (<= finra_days entries) so they are never asked for again, pruned below the window / the floor */
+  nodata?: string[];
+  /** oldest day the Query API still serves (retention edge, ~1 year): detected when the trading days right before the
+   *  oldest mirrored day come back empty; the file backfill targets only days >= floor */
+  floor?: string;
+}
+const FLOOR_EMPTY_RUN = 3; // consecutive empty trading days below the oldest mirrored day = retention edge
 
 async function finraKeys(run: Run): Promise<WatchKey[]> {
   const { data, error } = await db.rpc("att_watchlist", { p_source: "finra.shvol", p_limit: 5000, p_slice: null, p_nslices: 3 });
@@ -747,6 +775,11 @@ async function finraKeys(run: Run): Promise<WatchKey[]> {
   return ((data ?? []) as WatchKey[]).filter((k) => /^[A-Z0-9.\-]{1,10}$/i.test(k.key));
 }
 
+function pruneNodata(days: string[], cfg: Cfg, st: FinraState): string[] {
+  const oldest = tradingDaysBack(latestPublished(), cfg.finra_days).at(-1)!;
+  const lo = [oldest, st.floor ?? ""].sort().at(-1)!;
+  return [...new Set(days)].filter((d) => d >= lo).sort();
+}
 /** Mirror a list of days (newest first) within this run's budget; updates ring, ingests tickers. */
 async function mirrorDays(run: Run, days: string[], cfg: Cfg, st: FinraState, keys: WatchKey[], maxDays: number) {
   const done: Array<[string, DayAgg]> = [];
@@ -763,7 +796,7 @@ async function mirrorDays(run: Run, days: string[], cfg: Cfg, st: FinraState, ke
     rows += Number(r?.rows ?? 0);
     done.push([d, agg]);
   }
-  if (empty.length) st.nodata = [...new Set([...(st.nodata ?? []), ...empty])].sort().slice(-50);
+  if (empty.length) st.nodata = pruneNodata([...(st.nodata ?? []), ...empty], cfg, st);
   return { done, empty, rows };
 }
 
@@ -788,7 +821,11 @@ async function finra(run: Run) {
   else {
     const res = await mirrorDays(run, [want], cfg, st, keys, 1);
     mirrored = res.done.map(([d]) => d);
-    if (res.empty.length) note = "no rows yet (holiday or not yet published)";
+    if (res.empty.length) {
+      note = "no rows yet (holiday or not yet published)";
+      // a recent day may simply be late: only days older than 5 calendar days are remembered as "no data"
+      if (addDays(want, 5) >= today()) st.nodata = (st.nodata ?? []).filter((d) => d !== want);
+    }
     if (res.done.length) ring = ringMerge(ring, res.done, cfg.finra_ring_days);
     if (res.done.length) await ringSave(run, ring);
   }
@@ -808,7 +845,7 @@ async function finraFilesBackfill(run: Run, cfg: Cfg) {
   if (!(await hostLease(run, "api.finra.org"))) { run.source({ source: "finra.shvol", status: "host_busy" }); await settleJobs(run, new Set(), 120); return; }
   const st = ((await stateGet("finra.state")) ?? {}) as FinraState;
   const have = await mirroredDays(run);
-  const target = tradingDaysBack(latestPublished(), cfg.finra_days);
+  const target = tradingDaysBack(latestPublished(), cfg.finra_days).filter((d) => !st.floor || d >= st.floor);
   const nodata = new Set(st.nodata ?? []);
   const missing = target.filter((d) => !have.has(d) && !nodata.has(d));
   const keys = await finraKeys(run);
@@ -816,6 +853,18 @@ async function finraFilesBackfill(run: Run, cfg: Cfg) {
   let ring = await ringLoad(run);
   const res = await mirrorDays(run, missing, cfg, st, keys, cfg.finra_bf_days_per_run);
   if (res.done.length) { ring = ringMerge(ring, res.done, cfg.finra_ring_days); await ringSave(run, ring); }
+  // retention edge: the FLOOR_EMPTY_RUN trading days right below the oldest mirrored day all answered "no rows"
+  const allHave = [...have, ...res.done.map(([d]) => d)].sort();
+  let floorSet: string | null = null;
+  if (allHave.length) {
+    const below = tradingDaysBack(addDays(allHave[0], -1), FLOOR_EMPTY_RUN);
+    const nd = new Set(st.nodata ?? []);
+    if (below.every((d) => nd.has(d)) && st.floor !== allHave[0]) {
+      st.floor = allHave[0];
+      floorSet = st.floor;
+      st.nodata = pruneNodata(st.nodata ?? [], cfg, st);
+    }
+  }
   // screen the newest mirrored day once its baseline is long enough (the daily run does this from then on)
   const newest = [...have, ...res.done.map(([d]) => d)].sort().at(-1);
   let cand = null;
@@ -824,17 +873,20 @@ async function finraFilesBackfill(run: Run, cfg: Cfg) {
     if (cand.baseline_days >= 28) st.cand_day = newest;
   }
   if (!run.dryRun) await stateSet("finra.state", st);
-  const left = missing.length - res.done.length - res.empty.length;
+  const tried = new Set([...res.done.map(([d]) => d), ...res.empty]);
+  const left = missing.filter((d) => !tried.has(d) && (!st.floor || d >= st.floor)).length;
   run.extra.finra_backfill = { mirrored: res.done.map(([d]) => d), empty: res.empty, have: have.size + res.done.length,
-    missing_left: left, ring_days: ring.days.length, ring_tickers: ring.syms.length, screen: cand, pages_per_day: st.pages_per_day };
+    missing_left: left, floor: st.floor ?? null, floor_set: floorSet, nodata: (st.nodata ?? []).length, ring_days: ring.days.length, ring_tickers: ring.syms.length, screen: cand, pages_per_day: st.pages_per_day };
   if (left > 0) run.partial = true;
   run.source({ source: "finra.shvol", status: left > 0 ? "partial" : "ok", rows: res.rows, ms: Date.now() - t0,
-    note: `${have.size + res.done.length}/${target.length} trading days mirrored` });
+    note: `${have.size + res.done.length}/${target.filter((d) => !st.floor || d >= st.floor).length} trading days mirrored` +
+      (st.floor ? ` (API retention floor ${st.floor})` : "") });
   await settleJobs(run, left > 0 ? new Set() : "all", 60, "api.finra.org");
 }
 
 async function finraKeysBackfill(run: Run, cfg: Cfg) {
   const t0 = Date.now();
+  const st = ((await stateGet("finra.state")) ?? {}) as FinraState;
   const keys = (Array.isArray(run.body?.keys) ? run.body.keys : []) as Array<{ key: string; metric?: string; topic_id?: number }>;
   const from = String(run.body?.backfill?.from ?? addDays(today(), -400));
   const to = String(run.body?.backfill?.to ?? addDays(today(), -1));
@@ -875,8 +927,11 @@ async function finraKeysBackfill(run: Run, cfg: Cfg) {
       const sym = String(k.key).toUpperCase();
       if (!chunk.includes(sym)) continue;
       const m = agg.get(sym) ?? new Map();
-      // every trading day in the window gets a value (0 when the ticker had no reported volume)
-      for (let d = prevTradingDay(to); d >= from; d = prevTradingDay(addDays(d, -1))) {
+      // Zeros only inside the ticker's own reported span: before its first reported day (older than the Query API's
+      // ~1-year retention, before the listing, or before the retention floor) there is NO observation, not a 0.
+      const first = [...m.keys()].sort()[0];
+      const lo = [from, first ?? "9999-12-31", st.floor ?? ""].sort().at(-1)!;
+      for (let d = prevTradingDay(to); d >= lo; d = prevTradingDay(addDays(d, -1))) {
         const a = m.get(d);
         out.push({ source: "finra.shvol", key: k.key, metric: k.metric || "n", day: d, value: a ? Math.round(a.t) : 0,
           aux: a && a.t > 0 ? a.s / a.t : null, topic_id: k.topic_id ?? null });
@@ -901,6 +956,23 @@ function monthStart(d: string, back = 0): string {
 function monthEnd(start: string): string { return addDays(monthStart(start, -1), -1); }
 /** the last politeFetch failed on a network timeout (not a block): the caller may move on to the next key */
 const timedOut = (run: Run) => /timed out|timeout/i.test(run.errors.at(-1) ?? "");
+// Repeated timeouts mean the host is struggling: after USASP_SLOW_STOP timeouts in one UTC day (counted across all runs
+// in att_state 'usasp.slow') no further USAspending request is made until the next UTC day, as for a 429/503.
+const USASP_HOST = "api.usaspending.gov";
+const USASP_SLOW_STOP = 3;
+async function usaspSlowStopped(run: Run): Promise<boolean> {
+  const s = (await stateGet("usasp.slow")) as { day?: string; n?: number } | null;
+  if (s?.day === today() && Number(s.n ?? 0) >= USASP_SLOW_STOP) { run.skip(USASP_HOST, "slow_host_stop"); return true; }
+  return false;
+}
+/** record one timeout; true when the host is now stopped for the day */
+async function usaspTimeout(run: Run): Promise<boolean> {
+  const s = (await stateGet("usasp.slow")) as { day?: string; n?: number } | null;
+  const n = (s?.day === today() ? Number(s.n ?? 0) : 0) + 1;
+  if (!run.dryRun) await stateSet("usasp.slow", { day: today(), n });
+  if (n >= USASP_SLOW_STOP) { run.skip(USASP_HOST, "slow_host_stop"); run.partial = true; return true; }
+  return false;
+}
 async function usaspQuery(run: Run, term: string, start: string, end: string): Promise<MonthVal[] | null> {
   const res = await politeFetch(run, USASP_URL, {
     source: "usasp.spend", method: "POST", timeoutMs: 55_000,
@@ -939,6 +1011,10 @@ async function usaspending(run: Run) {
   const src = await sourceInfo("usasp.spend");
   if (!src?.enabled) { run.source({ source: "usasp.spend", status: "disabled", note: src?.reason ?? null }); return; }
   const d0 = today();
+  if (await usaspSlowStopped(run)) {
+    run.source({ source: "usasp.spend", status: "slow_host_stop", note: `${USASP_SLOW_STOP}+ timeouts today`, ms: Date.now() - t0 });
+    return;
+  }
   const keys = (await watchlist(run, "usasp.spend")).filter((k) => k.key.length >= 3);
   const rot = ((await stateGet("usasp.rot")) ?? { last: {} }) as { last: Record<string, string> };
   rot.last ??= {};
@@ -954,7 +1030,8 @@ async function usaspending(run: Run) {
     const vals = await usaspQuery(run, k.key, start, end);
     if (vals === null) {
       // a slow keyword (e.g. a country name) times out: skip it until its next rotation, stop after 2 in a run
-      if (!timedOut(run) || ++timeouts >= 2) { run.partial = true; break; }
+      if (!timedOut(run)) { run.partial = true; break; }
+      if ((await usaspTimeout(run)) || ++timeouts >= 2) { run.partial = true; break; }
       rot.last[k.key] = d0;
       continue;
     }
@@ -976,6 +1053,11 @@ async function usaspBackfill(run: Run, cfg: Cfg) {
   const keys = (Array.isArray(run.body?.keys) ? run.body.keys : []) as Array<{ key: string; topic_id?: number }>;
   const d0 = today();
   const floor = monthStart(d0, cfg.usasp_backfill_months);
+  if (await usaspSlowStopped(run)) {
+    run.source({ source: "usasp.spend", status: "slow_host_stop", note: `${USASP_SLOW_STOP}+ timeouts today`, ms: Date.now() - t0 });
+    await settleJobs(run, new Set(), 300, USASP_HOST);
+    return;
+  }
   const bf = ((await stateGet("usasp.bf")) ?? {}) as Record<string, string>; // key -> oldest window start fetched
   const doneKeys = new Set<string>();
   let rows = 0, calls = 0, stop = false, timeouts = 0;
@@ -986,7 +1068,10 @@ async function usaspBackfill(run: Run, cfg: Cfg) {
       if (run.outOfTime(15_000)) { stop = true; run.partial = true; break; }
       const end = monthEnd(monthStart(next, -2));
       const vals = await usaspQuery(run, k.key, next, end);
-      if (vals === null && timedOut(run) && ++timeouts < 2) { bf[k.key] = next; next = monthStart(next, 3); continue; }
+      if (vals === null && timedOut(run)) {
+        if ((await usaspTimeout(run)) || ++timeouts >= 2) { stop = true; run.partial = true; break; }
+        bf[k.key] = next; next = monthStart(next, 3); continue;
+      }
       if (vals === null) { stop = true; run.partial = true; break; }
       calls++;
       const r = await ingest(run, usaspRows(k, vals, ""));
