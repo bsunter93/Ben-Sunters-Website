@@ -4,7 +4,8 @@
 // collector ships its own copy of this file as ./att.ts next to index.ts and imports it with `import ... from "./att.ts"`.
 // The canonical copy lives in ripples/attention/functions/_shared/att.ts. Keep copies byte-identical (ATT_VERSION).
 //
-// Provides: token check, the honest User-Agent, a robots.txt cache in ripples.att_state (24 h TTL; unreachable = deny),
+// Provides: token check, the honest User-Agent, a robots.txt cache in ripples.att_state (24 h TTL; unreachable = deny;
+// skipped for Wikimedia documented APIs and the OWNER D-11 documented-API allow-list, currently only efts.sec.gov),
 // a per-host serial queue with spacing plus a cross-isolate host lease (one run per host at a time), the RED-source
 // denylist, the kill switch (429/503: rest of the UTC day; 401/403/sign-in redirect: permanent until the owner clears it),
 // manual redirect handling (every hop re-checked; credentials never cross origins), central per-run caps AND per-day
@@ -16,7 +17,7 @@
 // contact email (Vault 'sec_contact_email') is added to the User-Agent ONLY for requests to sec.gov hosts (secUa).
 import { createClient, type SupabaseClient } from "jsr:@supabase/supabase-js@2";
 
-export const ATT_VERSION = "2026-09-25.4";
+export const ATT_VERSION = "2026-09-25.5";
 export const UA = "ripples-research/0.2 (+https://bensunter.com/ripples/methods/)";
 /** The contact page named in UA. Wikimedia (§7.1) requires a UA "that includes a contact": the contact gate refuses
  *  requests in scope (att_config.contact_gate.scope: 'wikimedia' | 'all') while this page does not answer 2xx. */
@@ -143,6 +144,15 @@ export function isWikimediaApi(u: URL): boolean {
   }
   return false;
 }
+
+// Documented-API hosts exempt from the robots.txt check (DEMARCATION §7.1 logic; OWNER D-11, 2026-09-25).
+// Exact host match only, no subdomains or patterns. efts.sec.gov is SEC's documented full-text search API published for
+// automated access under the SEC fair-access policy (declared UA with contact, <= 10 req/s); only its robots.txt answers
+// 403. Every other rule still applies: RED/kill/lease checks, stop on 429/503 from the API (rest of UTC day), permanent
+// kill on 401/403 from the API itself, the per-source spacing floor and per-run/per-day caps, and the contact email in
+// the UA for sec.gov hosts only. Add a host here ONLY with a new owner decision.
+const DOCUMENTED_API_HOSTS: ReadonlySet<string> = new Set(["efts.sec.gov"]);
+export function isDocumentedApiHost(h: string): boolean { return DOCUMENTED_API_HOSTS.has(h.toLowerCase()); }
 
 /** Any Wikimedia-family host (quiet window, run caps). */
 export function isWikimediaHost(h: string): boolean {
@@ -439,7 +449,7 @@ export async function hostLease(run: Run, host: string): Promise<boolean> {
 // ---------------------------------------------------------------- polite fetch
 export interface FetchOpts extends RequestInit {
   source: string;         // REQUIRED att_sources id: enabled check, host check, spacing floor, per-run cap, per-day budget, kill attribution
-  robots?: boolean;       // true forces a robots check; false is ignored except on Wikimedia documented APIs
+  robots?: boolean;       // true forces a robots check; false is ignored except on Wikimedia / D-11 documented APIs
   spacingMs?: number;     // can only RAISE the source's spacing_ms floor (default floor 5000, DEMARCATION Q6)
   timeoutMs?: number;     // default 30 s, capped by the run's remaining wall time
   aqsRetry?: boolean;     // Wikimedia AQS only: at most ONE retry after 5 s on a 429 per run (lead decision §7.3)
@@ -509,8 +519,11 @@ async function preflight(run: Run, u: URL, o: FetchOpts, src: SourceRow): Promis
   if (g && (g.scope === "all" || isWikimediaHost(host)) && !(await contactOk(run))) return "ua_contact_unreachable";
   if (!(await hostLease(run, host))) return run.killed.get(host) ?? "host_busy";
   const wm = isWikimediaApi(u);
-  // robots: always for non-Wikimedia-API URLs; for Wikimedia APIs only if the source requires it or the caller forces it
-  const needRobots = !wm || o.robots === true || src.robots_required === true;
+  // robots: always for non-Wikimedia-API URLs; for Wikimedia APIs only if the source requires it or the caller forces it.
+  // Documented-API hosts (OWNER D-11 allow-list, exact host) skip robots unless the caller forces it; the owner decision
+  // overrides the source's robots_required flag for these hosts only.
+  const docApi = isDocumentedApiHost(host);
+  const needRobots = docApi ? o.robots === true : (!wm || o.robots === true || src.robots_required === true);
   if (needRobots && !(await robotsAllowed(run, u))) return "robots_disallow";
   return null;
 }

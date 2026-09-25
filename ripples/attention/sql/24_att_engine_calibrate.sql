@@ -104,7 +104,7 @@ end $$;
 -- ---------------------------------------------------------------------------------------------------------------------
 create or replace function ripples.att_spikein(p_as_of date, p_per_channel int default 25) returns jsonb
 language plpgsql security definer set search_path = '' as $$
-declare r record; delta float8; lagv int; hl float8; ar real[]; i int; t0 date; i0 int; v_kind text; l int; sdj jsonb; s jsonb; zs float8;
+declare r record; v_delta float8; lagv int; v_hl float8; ar real[]; i int; t0 date; i0 int; v_kind text; l int; sdj jsonb; s jsonb; zs float8;
         p float8; hit boolean; sd real; mu real; d date; n_d int; ex int; tv float8; out jsonb := '[]'::jsonb; done int;
 begin
   create temp table if not exists _sp (channel text, delta float8, lag int, hl float8, tested int default 0, hits int default 0, primary key (channel, delta, lag, hl)) on commit drop;
@@ -125,12 +125,12 @@ begin
     -- a clean past onset (deterministic), ≥ 140 d after the array start and ≥ 60 d before its end
     i0 := 140 + (abs(hashtext(r.series_id::text || p_as_of::text)) % greatest(1, r.n - 200));
     t0 := r.from_day + (i0 - 1);
-    foreach delta in array array[1, 2, 3, 5] loop
+    foreach v_delta in array array[1, 2, 3, 5] loop
       foreach lagv in array array[0, 1, 3, 7] loop
-        foreach hl in array array[1, 3, 7] loop
+        foreach v_hl in array array[1, 3, 7] loop
           ar := r.ar;
           for i in i0 + lagv .. least(r.n, i0 + lagv + 30) loop
-            if ar[i] is not null then ar[i] := ar[i] + delta * exp(-ln(2) * (i - i0 - lagv) / hl); end if;
+            if ar[i] is not null then ar[i] := ar[i] + v_delta * exp(-ln(2) * (i - i0 - lagv) / v_hl); end if;
           end loop;
           s := ripples.att_win_stat(ar, r.resid, r.from_day, r.n, t0, l, v_kind, 1, case when v_kind = 'car' then ripples.att_rho1(ar, r.from_day, r.n, t0) else 0 end, t0 + l, r.att);
           zs := case when (s ->> 'S') is null then null else ((s ->> 'S')::float8 - mu) / sd end;
@@ -145,7 +145,7 @@ begin
           end loop;
           p := case when n_d = 0 then null else (1 + ex)::float8 / (1 + n_d) end;
           hit := zs is not null and zs >= 3 and p is not null and p <= 0.05;
-          insert into _sp(channel, delta, lag, hl, tested, hits) values (r.channel, delta, lagv, hl, 1, hit::int)
+          insert into _sp(channel, delta, lag, hl, tested, hits) values (r.channel, v_delta, lagv, v_hl, 1, hit::int)
           on conflict (channel, delta, lag, hl) do update set tested = _sp.tested + 1, hits = _sp.hits + excluded.hits;
         end loop;
       end loop;
