@@ -139,7 +139,7 @@ const normMem = new Map<string, string>();
 function norm(s: string): string {
   const c = normMem.get(s);
   if (c !== undefined) return c;
-  const v = s.toLowerCase().normalize("NFKD").replace(/[\u0300-\u036f]/g, "").replace(/[^\p{L}\p{N}]+/gu, " ").trim();
+  const v = s.toLowerCase().normalize("NFKD").replace(/[̀-ͯ]/g, "").replace(/[^\p{L}\p{N}]+/gu, " ").trim();
   if (normMem.size < 100_000) normMem.set(s, v);
   return v;
 }
