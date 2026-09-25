@@ -334,3 +334,39 @@ on conflict (key) do nothing;
 -- the non-English Mastodon instance (DEMARCATION §3: mstdn.jp official API, G)
 update ripples.att_sources set hosts = array(select distinct unnest(hosts || array['mstdn.jp']))
  where source in ('masto.tags', 'masto.trends') and not ('mstdn.jp' = any(hosts));
+
+-- ================================================================ migration `att_social_cron` (applied separately)
+-- Jetstream catch-up needs more than one connection per 5 min while a lag or the one-off buffer replay exists.
+-- DEMARCATION Q6: Jetstream publishes no limit -> default 1 request / 5 s per host; one websocket per minute is far below.
+update ripples.att_sources
+   set per_day_cap = 600,
+       reason = 'Q6: no published limit (default 1 req/5 s per host); one websocket per run, <= 288 scheduled + catch-up runs (<= 1/min) while lagging or replaying the 36 h buffer'
+ where source = 'bsky.jet';
+
+-- §3.4 cron rows for att-social (UTC)
+select cron.schedule('att-jetstream', '1-56/5 * * * *',
+  $$select public.call_collector('att-social', '{"mode":"jetstream"}'::jsonb)$$);
+-- catch-up: every other minute while the live lane lags > 30 min, or while the one-off buffer replay (jet.bf) is pending
+select cron.schedule('att-jetstream-catchup', '* * * * *', $$
+  select public.call_collector('att-social',
+           case when coalesce((select (v->>'cursor')::bigint from ripples.att_state where k = 'jet.cursor'), 0)
+                     < (extract(epoch from now()) * 1e6)::bigint - 1800000000
+                then '{"mode":"jetstream"}' else '{"mode":"jetstream","params":{"lane":"backfill"}}' end::jsonb)
+  where extract(minute from now())::int % 5 <> 1
+    and (coalesce((select (v->>'cursor')::bigint from ripples.att_state where k = 'jet.cursor'), 0)
+           < (extract(epoch from now()) * 1e6)::bigint - 1800000000
+         or exists (select 1 from ripples.att_state where k = 'jet.bf'
+                     and (v->>'cursor')::bigint < (v->>'until')::bigint))
+$$);
+select cron.schedule('att-mastodon-1', '5 6,18 * * *',
+  $$select public.call_collector('att-social', '{"mode":"mastodon","params":{"slice":1}}'::jsonb)$$);
+select cron.schedule('att-mastodon-2', '11 6,18 * * *',
+  $$select public.call_collector('att-social', '{"mode":"mastodon","params":{"slice":2}}'::jsonb)$$);
+select cron.schedule('att-mastodon-3', '17 6,18 * * *',
+  $$select public.call_collector('att-social', '{"mode":"mastodon","params":{"slice":3}}'::jsonb)$$);
+select cron.schedule('att-hn', '6 0,6,12,18 * * *',
+  $$select public.call_collector('att-social', '{"mode":"hn"}'::jsonb)$$);
+select cron.schedule('att-stackex', '8 6 * * *',
+  $$select public.call_collector('att-social', '{"mode":"stackex"}'::jsonb)$$);
+-- backfill jobs (hn.algolia / se.api) are dispatched by att-backfill (ripples.att_tick('backfill')) once live:
+select ripples.att_fn_live('att-social', true);

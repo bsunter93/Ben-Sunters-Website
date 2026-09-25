@@ -284,7 +284,7 @@ class WsClient {
 }
 
 // ------------------------------------------------------------------ mode: jetstream (bsky.jet)
-interface JetState { cursor: number; at?: string; lag_s?: number; host?: string; posts?: number; stream_min?: number }
+interface JetState { cursor: number; until?: number; at?: string; lag_s?: number; host?: string; posts?: number; stream_min?: number }
 interface JetHealth { fails: number; fail_until?: string; last_error?: string; host?: string }
 interface Bucket { n: number; hll: Sketch; keyN: Int32Array; keyH: Map<number, Sketch> }
 
@@ -294,7 +294,21 @@ async function modeJetstream(run: Run) {
   const cfg = await socialCfg();
   const src = await sourceInfo(SRC);
   if (!src?.enabled) { run.source({ source: SRC, status: "disabled" }); return; }
-  const maxMin = Math.min(10, Math.max(0.25, Number(run.params.max_stream_min ?? cfg.jet_max_stream_min ?? 10)));
+  // lanes: 'live' follows the present (state jet.cursor); 'backfill' replays the Jetstream buffer from jet.bf.cursor up
+  // to jet.bf.until (= where the live lane started), so the two never overlap and nothing is counted twice.
+  const lane = run.params.lane === "backfill" ? "backfill" : "live";
+  const stateKey = lane === "live" ? "jet.cursor" : "jet.bf";
+  const st = (await stateGet(stateKey)) as JetState | null;
+  if (lane === "backfill" && !(typeof st?.cursor === "number" && typeof st?.until === "number" && st.cursor < st.until)) {
+    run.source({ source: SRC, status: "ok", note: "backfill lane: nothing to replay" });
+    return;
+  }
+  const lagNow = typeof st?.cursor === "number" ? (Date.now() * 1000 - st.cursor) / 1e6 : 0;
+  // normal runs stream <= 10 min (§3.3); catch-up (lag > 30 min, or the backfill lane) may stream up to
+  // jet_catchup_max_min (default 20) — the processing budget still stops the run first if needed
+  const catchup = lane === "backfill" || lagNow > 1800;
+  const capMin = catchup ? Math.min(30, Number(cfg.jet_catchup_max_min ?? 20)) : 10;
+  const maxMin = Math.min(capMin, Math.max(0.25, Number(run.params.max_stream_min ?? (catchup ? capMin : cfg.jet_max_stream_min ?? 10))));
   const procBudget = Math.max(100, Number(run.params.proc_ms ?? cfg.jet_proc_ms ?? 1100));
   const readWallMs = Math.max(5000, run.timeLeft() - 30000);
   const health = ((await stateGet("jet.health")) ?? { fails: 0 }) as JetHealth;
@@ -317,11 +331,10 @@ async function modeJetstream(run: Run) {
   if (g <= 0) { run.partial = true; run.source({ source: SRC, status: "budget_exhausted" }); return; }
   run.reqBySource[SRC] = (run.reqBySource[SRC] ?? 0) + 1;
 
-  const st = (await stateGet("jet.cursor")) as JetState | null;
   const startNowUs = Date.now() * 1000;
   const backMin = Number(run.params.start_back_min ?? cfg.jet_start_back_min ?? 10);
   const cursorFrom = typeof st?.cursor === "number" ? st.cursor : Math.floor(startNowUs - backMin * 60e6);
-  const stopAtUs = Math.min(cursorFrom + maxMin * 60e6, startNowUs - 5e6);
+  const stopAtUs = Math.min(cursorFrom + maxMin * 60e6, startNowUs - 5e6, lane === "backfill" ? st!.until! : Infinity);
   if (stopAtUs <= cursorFrom + 1e6) { run.source({ source: SRC, status: "ok", note: "already at live edge" }); return; }
 
   const keys = await socialKeys(run, SRC);
@@ -340,7 +353,7 @@ async function modeJetstream(run: Run) {
     if (ti < 0) return;
     let t = 0;
     for (let i = ti + 10; i < m.length; i++) { const c = m.charCodeAt(i); if (c < 48 || c > 57) break; t = t * 10 + (c - 48); }
-    if (t >= stopAtUs) { stop = t >= startNowUs - 5e6 ? "live_edge" : "window"; return; }
+    if (t >= stopAtUs) { stop = lane === "backfill" && stopAtUs === st!.until ? "lane_done" : t >= startNowUs - 5e6 ? "live_edge" : "window"; return; }
     nMsgs++;
     if (!firstT) firstT = t;
     lastT = t;
@@ -444,7 +457,7 @@ async function modeJetstream(run: Run) {
 
   // ---- next cursor and coverage
   let nextCursor: number;
-  if (stop === "window" || stop === "live_edge") nextCursor = stopAtUs;
+  if (stop === "window" || stop === "live_edge" || stop === "lane_done") nextCursor = stopAtUs;
   else nextCursor = lastT ? lastT + 1 : cursorFrom;
   let coverFrom = cursorFrom;
   let gapNote: string | null = null;
@@ -497,7 +510,7 @@ async function modeJetstream(run: Run) {
   Object.assign(run.extra, {
     cursor_from: cursorFrom, cursor_to: nextCursor, posts: nPosts, messages: nMsgs, stream_min: streamMin, lag_s: lagS,
     stop, proc_ms: Math.round(procMs), keys: nk, patterns: npat, keys_matched: matchedKeys.size, top_keys: top,
-    hashtags_seen: tagAgg.size, social_version: SOCIAL_VERSION, host, ...(gapNote ? { gap: gapNote } : {}),
+    hashtags_seen: tagAgg.size, social_version: SOCIAL_VERSION, host, lane, catchup, ...(gapNote ? { gap: gapNote } : {}),
   });
 
   if (run.dryRun) {
@@ -510,10 +523,13 @@ async function modeJetstream(run: Run) {
     await stateSet("jet.health", { fails: (health.fails ?? 0) + 1, host, last_error: `no messages (${stop})` });
     return;
   }
-  const newState: JetState = { cursor: nextCursor, at: new Date().toISOString(), lag_s: lagS, host, posts: nPosts, stream_min: streamMin };
+  const newState: JetState = {
+    cursor: nextCursor, ...(lane === "backfill" ? { until: st!.until } : {}), at: new Date().toISOString(), lag_s: lagS, host,
+    posts: nPosts, stream_min: streamMin,
+  };
   const { data, error } = await db.rpc("att_social_accum", {
     p_rows: rows,
-    p_state: { k: "jet.cursor", v: newState, expect: typeof st?.cursor === "number" ? st.cursor : null },
+    p_state: { k: stateKey, v: newState, expect: typeof st?.cursor === "number" ? st.cursor : null },
     p_tags: { source: SRC, rows: tagRows },
   });
   if (error) {
@@ -528,12 +544,12 @@ async function modeJetstream(run: Run) {
   if (Array.isArray(d?.rejected) && d!.rejected.length) run.rejected.push(...d!.rejected.slice(0, 20));
   run.extra.tags_upserted = d?.tags ?? 0;
   if ((health.fails ?? 0) > 0 || health.host !== host) await stateSet("jet.health", { fails: 0, host });
-  if (lagS > 6 * 3600) run.extra.lag_alert = true; // §8: lag > 6 h
+  if (lane === "live" && lagS > 6 * 3600) run.extra.lag_alert = true; // §8: lag > 6 h
 
   // hashtag discovery candidates (burst z vs trailing 7 days), about once an hour and after each day rolls over
   const lastDay = tsDay(Math.floor((nextCursor - 1) / 1e6));
   const prevState = st?.cursor ? tsDay(Math.floor(st.cursor / 1e6)) : lastDay;
-  if (new Date().getUTCMinutes() < 5 || prevState !== lastDay || run.params.candidates === true) {
+  if (lane === "live" && (new Date().getUTCMinutes() < 5 || prevState !== lastDay || run.params.candidates === true)) {
     const dd = prevState !== lastDay ? [prevState, lastDay] : [lastDay];
     for (const day of dd) {
       const { data: c, error: ce } = await db.rpc("att_social_tag_cands", { p_source: SRC, p_day: day, p_limit: 100, p_min_distinct: 50 });
@@ -541,7 +557,7 @@ async function modeJetstream(run: Run) {
       else { run.extra[`candidates_${day}`] = c; run.rows.candidates += Number((c as any)?.rows ?? 0); }
     }
   }
-  const partial = stop !== "window" && stop !== "live_edge";
+  const partial = stop !== "window" && stop !== "live_edge" && stop !== "lane_done";
   if (partial) run.partial = true;
   run.nextCursor = nextCursor;
   run.source({ source: SRC, status: partial ? "partial" : "ok", keys: nk, rows: (d?.daily ?? 0) + (d?.hourly ?? 0), ms: Date.now() - t0, note: `stop=${stop}` });

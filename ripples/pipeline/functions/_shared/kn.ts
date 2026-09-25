@@ -7,12 +7,12 @@
 //    ripples.config.wm_daily_cap per as_of through ripples.runs.wm_calls)
 //  * 429/503: AQS (wikimedia.org REST) gets one retry after 5 s; everything else stops the source for this run
 //    (no retry within the run). A stopped job reports failure and is requeued by SQL after a pause.
-//  * MediaWiki Action API (/w/api.php): maxlag=5, one request at a time and >= 1.1 s apart, a maxlag or
+//  * MediaWiki Action API (/w/api.php): maxlag=5, one request at a time with a gap (SPACING), a maxlag or
 //    ratelimited error stops the host for the run. AQS is paced at <= 5 requests/s (see SPACING).
 //  * auth: x-collector-token checked with public.check_collector_token (verify_jwt is off by design).
 import { createClient } from "jsr:@supabase/supabase-js@2";
 
-export const KN_VERSION = "2026-09-25.3";
+export const KN_VERSION = "2026-09-25.4";
 export const db = createClient(Deno.env.get("SUPABASE_URL")!, Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!, {
   auth: { persistSession: false },
 });
@@ -34,8 +34,9 @@ export const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms));
 
 // Per-host pacing inside an isolate: minimum spacing between request starts. The Supabase egress IP is shared, so
 // Wikimedia sees all of our traffic as one client: AQS (wikimedia.org) <= 5 requests/s, MediaWiki Action API
-// (/w/api.php on Wikipedia and Wikidata) one request per 1.1 s (DEMARCATION §7.1 "serial"), others 5/s. The SQL
-// dispatcher runs one job at a time, so these are also the pipeline-wide rates.
+// (/w/api.php on Wikipedia and Wikidata) serial with a gap (DEMARCATION §7.1 "one request at a time"), others 5/s.
+// The SQL dispatcher runs one job at a time, so these are also the pipeline-wide rates. Tunable per job from
+// ripples.config.pipeline.api_spacing_ms / aqs_spacing_ms (floors 300 ms / 50 ms).
 export const SPACING: Record<string, number> = { aqs: 200, api: 1100, other: 200 };
 const nextSlot = new Map<string, number>();
 async function pace(key: string, ms: number) {
@@ -310,6 +311,10 @@ export function serve(work: (body: any, b: Budget) => Promise<unknown>) {
     if (!ok) return new Response("forbidden", { status: 403 });
     const body = await req.json().catch(() => ({}));
     const jobId: number | null = body?.job?.id ?? null;
+    // pacing is tunable from ripples.config.pipeline (api_spacing_ms / aqs_spacing_ms), never below the floors
+    const cfg = body?.cfg ?? {};
+    if (Number(cfg.api_spacing_ms) > 0) SPACING.api = Math.max(300, Number(cfg.api_spacing_ms));
+    if (Number(cfg.aqs_spacing_ms) > 0) SPACING.aqs = Math.max(50, Number(cfg.aqs_spacing_ms));
     const b = new Budget(Math.max(1, Math.min(100, Number(body?.budget ?? 100))));
     const task = (async () => {
       try {

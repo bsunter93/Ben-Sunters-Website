@@ -553,6 +553,10 @@ async function thirdeye(run: Run) {
 
 // ------------------------------------------------------------ mode: sitemaps
 interface Item { day: string; text: string; kws: string[] }
+// section labels and function words that publishers put in news:keywords (not discoverable entities)
+const KW_SKIP = new Set(["the", "and", "for", "with", "from", "news", "live", "video", "videos", "opinion", "analysis",
+  "latest", "update", "updates", "world", "world news", "us news", "uk news", "us", "uk", "media", "politics", "business",
+  "sport", "sports", "lifestyle", "entertainment", "culture", "technology", "science", "health", "travel", "fox news"]);
 async function fetchSitemap(run: Run, outlet: string, url: string): Promise<{ items: Item[]; urls: number; status: string; note?: string }> {
   const host = new URL(url).hostname;
   const res = await politeFetch(run, url, { source: "news.sitemap", timeoutMs: 30_000 });
@@ -626,7 +630,7 @@ async function sitemaps(run: Run) {
       }
       for (const k of it.kws) {
         const nk = norm(k);
-        if (nk.length < 3) continue;
+        if (nk.length < 3 || KW_SKIP.has(nk)) continue;
         const s = kwStats.get(nk) ?? { label: k, outlets: new Set<string>(), n: 0 };
         s.outlets.add(g.o); s.n++; kwStats.set(nk, s);
       }
@@ -691,5 +695,18 @@ async function backfill(run: Run) {
 
 serve(FN, {
   gkg, thirdeye, sitemaps, backfill,
-  ping: async (run: Run) => { run.extra.pong = true; run.extra.wall_ms = WALL_MS; },
+  ping: async (run: Run) => {
+    run.extra.pong = true;
+    run.extra.wall_ms = WALL_MS;
+    // deployed-source fingerprint (lets the owner check the copies are byte-identical to ripples/attention/functions)
+    const sha: Record<string, string> = {};
+    for (const f of ["index.ts", "att.ts"]) {
+      try {
+        const b = await Deno.readFile(new URL(`./${f}`, import.meta.url));
+        const h = new Uint8Array(await crypto.subtle.digest("SHA-256", b));
+        sha[f] = [...h].map((x) => x.toString(16).padStart(2, "0")).join("");
+      } catch (e) { sha[f] = `unreadable: ${String(e).slice(0, 80)}`; }
+    }
+    run.extra.sha256 = sha;
+  },
 });
