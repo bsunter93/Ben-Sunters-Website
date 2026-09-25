@@ -288,7 +288,8 @@ begin
     from ripples.att_hop_tests t join _fin f on f.hop_id = t.hop_id and f.look_no = t.look_no;
   v_seq := ripples.att_ledger_append(p_as_of, 'resolve', jsonb_build_object('as_of', p_as_of, 'm', m, 'library', p_library),
              jsonb_build_object('as_of', p_as_of, 'tiers', tiers, 'line', jsonb_build_object('tested', n_tested, 'moved', n_moved, 'measured', n_meas, 'expected_flukes', round(sum_f::numeric, 3), 'sum_p', round(sum_p::numeric, 3))));
-  perform ripples.att_state_set('engine.day.' || p_as_of, jsonb_build_object('tested', n_tested, 'moved', n_moved, 'measured', n_meas, 'expected_flukes', round(sum_f::numeric, 3),
+  -- the day line: live runs own 'engine.day.<as_of>' (the site's day line); library / reconstructed runs write 'engine.libday.<as_of>'
+  perform ripples.att_state_set(case when p_library then 'engine.libday.' else 'engine.day.' end || p_as_of, jsonb_build_object('tested', n_tested, 'moved', n_moved, 'measured', n_meas, 'expected_flukes', round(sum_f::numeric, 3),
                                 'sum_p', round(sum_p::numeric, 3), 'flat', n_flat, 'watching', n_watch, 'retracted', n_retract, 'ledger_seq', v_seq, 'warming', warming));
   -- event status and cascade payloads for every event touched today
   for e in select distinct event_id from _fin union select distinct event_id from _nf loop
