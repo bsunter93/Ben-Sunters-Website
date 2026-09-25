@@ -24,3 +24,6 @@ select cron.alter_job((select jobid from cron.job where jobname = 'att-jetstream
     and ((lagging and coalesce((ripples.att_social_jet_budget('live')->>'ok')::boolean, false))
       or (not lagging and replay and coalesce((ripples.att_social_jet_budget('backfill')->>'ok')::boolean, false)))
 $cmd$);
+
+-- migration att_social_tag_ok_definer: hard rule 7 (every att function SECURITY DEFINER, search_path '')
+alter function ripples.att_social_tag_ok(text) security definer;

@@ -17,9 +17,10 @@
 import { politeFetch, type Run, serve, stateGet, stateSet, db, jobsDone, WALL_MS } from "./att.ts";
 
 const FN = "att-news";
-const NEWS_VERSION = "2026-09-25.n4"; // n2: GKG 404 parking + min file age; sequential sitemaps. n3: size-normalised
+const NEWS_VERSION = "2026-09-25.n5"; // n2: GKG 404 parking + min file age; sequential sitemaps. n3: size-normalised
 // GKG burst baseline; network brands excluded from Third Eye. n4: GKG entity minimisation (photo/byline credits,
-// outlet breadth, boilerplate labels) for candidates and edges; parked-file retry by file age; brand-free sitemap keywords
+// outlet breadth, boilerplate labels) for candidates and edges; parked-file retry by file age; brand-free sitemap keywords.
+// n5: photo credits detected as V1-only ("ghost") names
 const GKG_BASE = "https://data.gdeltproject.org/gdeltv2/";
 const THIRDEYE = "https://archive.org/services/third-eye.php";
 const OUTLETS: Record<string, string> = {
