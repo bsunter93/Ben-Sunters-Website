@@ -87,7 +87,7 @@ h2{font:600 clamp(26px,3.4vw,34px)/1.15 var(--display);letter-spacing:-.015em;ma
 .arc em{display:block;margin-top:9px;font:400 12.5px/1.5 var(--sans);font-style:normal;
   color:var(--on-deep-mut);max-width:30ch}
 @media (max-width:560px){.arc li{padding:17px 0 18px}.arc li:before{right:0}}
-.lede{max-width:var(--measure);color:var(--muted);font-size:16px;margin:0 0 40px}
+.lede{max-width:var(--measure);color:var(--muted);font-size:16px;margin:0 0 40px;text-wrap:balance}
 
 /* ── masthead ────────────────────────────────────────────────────────────── */
 /* Solid by default, so it is readable with no JavaScript and on every section below
@@ -522,7 +522,7 @@ footer{padding:26px 0 44px;border-top:1px solid var(--hair);
 /* ── writing index ───────────────────────────────────────────────────────
    Built as a list that reads correctly with one entry and still reads
    correctly with twelve, so it never needs rebuilding as the count grows. */
-.post{display:grid;grid-template-columns:150px minmax(0,1fr) 78px;gap:0 24px;
+.post{display:grid;grid-template-columns:150px minmax(0,1fr) 112px;gap:0 24px;
   align-items:start;padding:26px 0;border-top:1px solid var(--line);
   border-bottom:1px solid var(--line);text-decoration:none;color:inherit}
 .post + .post{border-top:0}
