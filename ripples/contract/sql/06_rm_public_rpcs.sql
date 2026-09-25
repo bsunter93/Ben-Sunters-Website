@@ -1212,7 +1212,7 @@ language sql volatile security definer set search_path = '' as $$
 $$;
 
 -- ---------------------------------------------------------------------------------------------------------------------
--- 10. Contract test: every RPC's live output vs the fixture shapes (keys and JSON types; null matches anything)
+-- 10. Contract test: every RPC's live output vs the fixture shapes (keys and JSON types; null matches anything) + coverage + synthetic line
 -- ---------------------------------------------------------------------------------------------------------------------
 drop function if exists ripples.rm_shape_diff(jsonb, jsonb, text, text[]);
 -- p_maps: object paths with data-dependent keys (each value is compared with the fixture's first value);
@@ -1248,25 +1248,68 @@ begin
   end if;
 end $$;
 
+-- Coverage of a shape check: every fixture leaf that the live output actually filled ('compared') or left null / empty
+-- ('vacuous'). rm_shape_diff treats null as a wildcard, so a diff-free result on thin data proves little; the vacuous list says
+-- exactly which fields went unchecked. Arrays: a path counts as compared if any of the first 25 live elements fills it.
+create or replace function ripples.rm_shape_cover(p_exp jsonb, p_act jsonb, p_path text default '$', p_maps text[] default '{}') returns table(path text, state text)
+language plpgsql stable set search_path = '' as $$
+declare k text; te text := jsonb_typeof(p_exp); ta text := jsonb_typeof(p_act); x jsonb;
+begin
+  if p_exp is null or te = 'null' then return; end if;
+  if p_act is null or ta = 'null' then path := p_path; state := 'vacuous'; return next; return; end if;
+  if te <> ta then return; end if;                                   -- a type mismatch is rm_shape_diff's to report
+  if te = 'object' then
+    if p_path = any (p_maps) then
+      if not exists (select 1 from jsonb_each(p_act)) then path := p_path; state := 'vacuous'; return next; return; end if;
+      for x in select value from jsonb_each(p_act) limit 1 loop
+        return query select * from ripples.rm_shape_cover((select value from jsonb_each(p_exp) limit 1), x, p_path || '.*', p_maps);
+      end loop;
+      return;
+    end if;
+    for k in select jsonb_object_keys(p_exp) loop
+      if p_act ? k then return query select * from ripples.rm_shape_cover(p_exp -> k, p_act -> k, p_path || '.' || k, p_maps); end if;
+    end loop;
+  elsif te = 'array' then
+    if jsonb_array_length(p_exp) = 0 then return; end if;
+    if jsonb_array_length(p_act) = 0 then path := p_path || '[]'; state := 'vacuous'; return next; return; end if;
+    return query select q.path, case when bool_or(q.state = 'compared') then 'compared' else 'vacuous' end
+                   from (select c.path, c.state
+                           from (select a.value from jsonb_array_elements(p_act) with ordinality a(value, i) where a.i <= 25) a2,
+                                lateral ripples.rm_shape_cover(p_exp -> 0, a2.value, p_path || '[]', p_maps) c) q
+                  group by q.path;
+  else
+    path := p_path; state := 'compared'; return next;
+  end if;
+end $$;
+
+-- The contract test. Part 1 diffs every RPC's live output against its fixture and reports how much of each fixture the live
+-- data actually exercised. Part 2 builds a synthetic line from the cascade fixture inside a rolled-back block (Measured, Likely,
+-- retracted, provisional depth-2, flat stubs, a rate-unit Measured stop, a closed-window Watching stop, an open one, and an
+-- unnamed QID stop with a child) and checks the CascadePayload shape strictly plus the wording rules. Service-only; volatile
+-- because part 2 writes and then rolls back (nothing persists, no ledger row, no sequence is used).
+drop function if exists ripples.rm_contract_test();
 create or replace function ripples.rm_contract_test() returns jsonb
-language plpgsql stable security definer set search_path = '' as $$
-declare r jsonb := '[]'::jsonb; ev bigint; ev_old bigint; hop bigint; wk text; d date; diffs jsonb; fname text; act jsonb; fx jsonb;
+language plpgsql volatile security definer set search_path = '' as $$
+declare r jsonb := '[]'::jsonb; ev bigint; ev_old bigint; hop bigint; wk text; d date; diffs jsonb; fname text; act jsonb; fx jsonb; cov jsonb;
         maps text[] := array['$.math.z_by_source', '$.math.weights', '$.q5_luck.placebo', '$.ripple_of_week.math.z_by_source'];
+        -- keys added after 2026-09-26: absent from versions frozen earlier (and from week editions that embed them)
+        later text[] := array['window_closed', 'held_back', 'window_close', 'biggest_basis', 'biggest_window_days', 'listed_lines_sum'];
+        syn_id bigint := 8999999999999001; syn jsonb; sc jsonb; syn_err text; syn_diffs jsonb; syn_cov jsonb; asserts jsonb := '[]'::jsonb; base jsonb; n0 jsonb;
+        t date := (now() at time zone 'utc')::date; nd jsonb;
 begin
   select day into d from ripples.rm_days order by day desc limit 1;
-  select v.event_id into ev from ripples.att_cascade_versions v join ripples.att_events e using (event_id)
+  select v.event_id into ev from ripples.rm_public_versions v join ripples.att_events e using (event_id)
    order by (select count(*) from jsonb_array_elements(v.payload -> 'nodes') n where n ->> 'tier' in ('measured','likely','retracted')) desc, v.version desc limit 1;
-  select v.event_id into ev_old from ripples.att_cascade_versions v where v.version = 1 and exists (select 1 from ripples.att_cascade_versions v2 where v2.event_id = v.event_id and v2.version = 2) limit 1;
-  select (n ->> 'hop_id')::bigint into hop from ripples.att_cascade_versions v, jsonb_array_elements(v.payload -> 'nodes') n
-   where v.event_id = ev and n ->> 'tier' in ('measured','likely','retracted') order by (n ->> 'tier') = 'measured' desc limit 1;
-  if hop is null then
-    select (n ->> 'hop_id')::bigint into hop from ripples.att_cascade_versions v, jsonb_array_elements(v.payload -> 'nodes') n where v.event_id = ev limit 1;
-  end if;
+  select v.event_id into ev_old from ripples.rm_public_versions v
+   where exists (select 1 from ripples.rm_public_versions v2 where v2.event_id = v.event_id and v2.version > v.version) limit 1;
+  select (n ->> 'hop_id')::bigint into hop from ripples.rm_public_versions v, jsonb_array_elements(v.payload -> 'nodes') n
+   where v.event_id = ev and v.version = (select max(v2.version) from ripples.rm_public_versions v2 where v2.event_id = ev)
+   order by n ->> 'tier' in ('measured','likely','retracted') desc, (n ->> 'tier') = 'measured' desc limit 1;
   select week into wk from ripples.att_week_editions order by week desc limit 1;
   for fname, act in
     select 'shocks.json', public.rm_shocks(d)
     union all select 'cascade-1201.json', public.rm_cascade(ev, null)
-    union all select 'cascade-1201-v2.json', case when ev_old is not null then public.rm_cascade(ev_old, 1) end
+    union all select 'cascade-1201-v2.json', case when ev_old is not null then public.rm_cascade(ev_old, (select min(v.version) from ripples.rm_public_versions v where v.event_id = ev_old)) end
     union all select 'hop-9001.json', public.rm_hop(hop)
     union all select 'calibration.json', public.rm_calibration()
     union all select 'lands-real_world.json', public.rm_lands('real_world', 3650)
@@ -1276,11 +1319,77 @@ begin
   loop
     select f.payload into fx from ripples.rm_contract_fixtures f where f.name = fname;
     if fname = 'calibration.json' then fx := fx - 'archive'; act := act - 'archive'; end if;   -- the archive section is WS-E's (att_archive_calibration)
-    select coalesce(jsonb_agg(x), '[]'::jsonb) into diffs from ripples.rm_shape_diff(fx, act, '$', maps, array['restored']) x;
-    r := r || jsonb_build_object('fixture', fname, 'has_fixture', fx is not null, 'has_output', act is not null and jsonb_typeof(act) <> 'null', 'diffs', diffs);
+    select coalesce(jsonb_agg(x), '[]'::jsonb) into diffs
+      from ripples.rm_shape_diff(fx, act, '$', maps, case when fname in ('cascade-1201-v2.json', 'week-2026-39.json', 'shocks.json') then array['restored'] || later else array['restored'] end) x;
+    select jsonb_build_object('compared', count(*) filter (where c.state = 'compared'), 'vacuous', count(*) filter (where c.state = 'vacuous'),
+                              'vacuous_sample', coalesce((jsonb_agg(c.path order by c.path) filter (where c.state = 'vacuous')) -> 0, 'null'::jsonb),
+                              'vacuous_paths', coalesce(jsonb_agg(c.path order by c.path) filter (where c.state = 'vacuous'), '[]'::jsonb))
+      into cov from ripples.rm_shape_cover(fx, act, '$', maps) c;
+    r := r || jsonb_build_object('fixture', fname, 'has_fixture', fx is not null, 'has_output', act is not null and jsonb_typeof(act) <> 'null', 'diffs', diffs,
+                                 'coverage', jsonb_build_object('compared', cov -> 'compared', 'vacuous', cov -> 'vacuous',
+                                                                'vacuous_paths', (select coalesce(jsonb_agg(p), '[]'::jsonb) from (select p from jsonb_array_elements(cov -> 'vacuous_paths') p limit 12) z)));
   end loop;
+
+  -- ---- part 2: synthetic line, rolled back ----
+  select f.payload into base from ripples.rm_contract_fixtures f where f.name = 'cascade-1201.json';
+  n0 := base -> 'nodes' -> 0;
+  syn := jsonb_build_object('as_of', t, 'status', 'running', 'method', '6.0', 'event', base -> 'event', 'denominators', base -> 'denominators',
+           'weakest_tier', base -> 'weakest_tier', 'depth', base -> 'depth', 'flat', base -> 'flat', 'route_ideas', base -> 'route_ideas',
+           'control', base -> 'control', 'rivals', base -> 'rivals',
+           'nodes', (base -> 'nodes')
+             || jsonb_build_array(
+                  n0 || jsonb_build_object('hop_id', 99001, 'node', 'syn:rate', 'label', 'Synthetic rate series', 'unit', 'points', 'rho', 0.4, 'rho_lo', 0.2, 'rho_hi', 0.6),
+                  n0 || jsonb_build_object('hop_id', 99002, 'node', 'syn:closed', 'label', 'Synthetic closed window', 'tier', 'watching', 'tier_reason', 'waiting_series',
+                                           'window_close', t - 3, 'due', t + 2, 'p_hat', 0.2, 'rho', null),
+                  n0 || jsonb_build_object('hop_id', 99003, 'node', 'syn:open', 'label', 'Synthetic open window', 'tier', 'watching', 'tier_reason', null,
+                                           'window_close', t + 5, 'due', t + 5, 'p_hat', 0.2, 'rho', null),
+                  n0 || jsonb_build_object('hop_id', 99004, 'node', 'Q999999999999', 'label', 'Q999999999999', 'tier', 'watching', 'window_close', t + 5, 'rho', null),
+                  n0 || jsonb_build_object('hop_id', 99005, 'node', 'syn:child', 'label', 'Synthetic child', 'tier', 'watching', 'depth', 2, 'parent_hop', 99004,
+                                           'window_close', t + 5, 'rho', null)));
+  begin
+    insert into ripples.att_events(event_id, as_of, label, family, role, onset, sensitive, reconstructed, status)
+    values (syn_id, t, 'Synthetic contract line', coalesce(base -> 'event' ->> 'family', 'hazard.storm'), 'real', t - 5, false, false, 'running');
+    insert into ripples.att_cascades(event_id, payload, denominators) values (syn_id, syn, syn -> 'denominators');
+    sc := ripples.rm_cascade_content(syn_id, t);
+    sc := (sc - '_label_hold') || ripples.rm_share_text(sc, 3)
+          || jsonb_build_object('version', 3, 'published_at', '2026-01-01T00:00:00Z', 'payload_hash', 'synthetic', 'grown_since', jsonb_build_object('version', 2, 'stops_added', 1),
+                                'grown_to', null, 'ledger', jsonb_build_object('seq', 1, 'chain_hash', 'synthetic'));
+    raise exception using errcode = 'P0001', message = 'rm_contract_test rollback';
+  exception when others then
+    if sqlerrm <> 'rm_contract_test rollback' then syn_err := sqlerrm; end if;
+  end;
+  if sc is not null then
+    select coalesce(jsonb_agg(x), '[]'::jsonb) into syn_diffs from ripples.rm_shape_diff(base, sc, '$', maps, '{}') x;
+    select jsonb_build_object('compared', count(*) filter (where c.state = 'compared'), 'vacuous', count(*) filter (where c.state = 'vacuous'),
+                              'vacuous_paths', coalesce(jsonb_agg(c.path order by c.path) filter (where c.state = 'vacuous'), '[]'::jsonb))
+      into syn_cov from ripples.rm_shape_cover(base, sc, '$', maps) c;
+    select x into nd from jsonb_array_elements(sc -> 'nodes') x where (x ->> 'hop_id')::int = 99001;
+    asserts := asserts || jsonb_build_object('check', 'rate stop reads in points, never as a multiple', 'ok', nd ->> 'sentence' like '%0.40 points above its normal%' and nd ->> 'sentence' not like '%×%', 'got', nd ->> 'sentence');
+    select x into nd from jsonb_array_elements(sc -> 'nodes') x where (x ->> 'hop_id')::int = 99002;
+    asserts := asserts || jsonb_build_object('check', 'closed Watching window reads in the past tense and is not due', 'ok',
+                 (nd ->> 'window_closed')::boolean and nd ->> 'sentence' like '%window closed%' and nd ->> 'sentence' not like '%closes%'
+                 and nd ->> 'sentence' not like '%We expect%' and (nd ->> 'due') is null, 'got', nd ->> 'sentence');
+    select x into nd from jsonb_array_elements(sc -> 'nodes') x where (x ->> 'hop_id')::int = 99003;
+    asserts := asserts || jsonb_build_object('check', 'open Watching window keeps the ENGINE §8 template', 'ok',
+                 not (nd ->> 'window_closed')::boolean and nd ->> 'sentence' like '%Window closes%' and nd ->> 'sentence' like '%We expect a move by then%', 'got', nd ->> 'sentence');
+    asserts := asserts || jsonb_build_object('check', 'an unnamed QID stop and its child are held back, not shown', 'ok',
+                 (sc -> 'held_back' ->> 'stops')::int = 2 and not exists (select 1 from jsonb_array_elements(sc -> 'nodes') x where (x ->> 'hop_id')::int in (99004, 99005)),
+                 'got', sc -> 'held_back');
+    asserts := asserts || jsonb_build_object('check', 'no raw identifier anywhere in public text', 'ok', cardinality(ripples.rm_label_leaks(sc)) = 0, 'got', to_jsonb(ripples.rm_label_leaks(sc)));
+    select x into nd from jsonb_array_elements(sc -> 'nodes') x where x ->> 'tier' = 'measured' and (x ->> 'hop_id')::int <> 99001 limit 1;
+    asserts := asserts || jsonb_build_object('check', 'Measured sentence carries both fluke labels and the footer', 'ok',
+                 nd ->> 'sentence' like '%A random pairing looks this strong about 1 in%' and nd ->> 'sentence' like '%turn out to be flukes about 1 in%'
+                 and nd ->> 'sentence' like '%Measured movement, not proof of cause.%' and nd ->> 'sentence' not similar to '%(caused|drove|because of)%', 'got', nd ->> 'sentence');
+    asserts := asserts || jsonb_build_object('check', 'the rolled-back rows are gone', 'ok',
+                 not exists (select 1 from ripples.att_events where event_id = syn_id) and not exists (select 1 from ripples.att_cascades where event_id = syn_id), 'got', null);
+  end if;
   return jsonb_build_object('day', d, 'event', ev, 'event_old', ev_old, 'hop', hop, 'week', wk, 'results', r,
-                            'ok', not exists (select 1 from jsonb_array_elements(r) x where jsonb_array_length(x -> 'diffs') > 0 or not (x ->> 'has_output')::boolean));
+                            'live_ok', not exists (select 1 from jsonb_array_elements(r) x where jsonb_array_length(x -> 'diffs') > 0 or not (x ->> 'has_output')::boolean),
+                            'live_vacuous', (select sum((x -> 'coverage' ->> 'vacuous')::int) from jsonb_array_elements(r) x),
+                            'synthetic', jsonb_build_object('error', syn_err, 'diffs', coalesce(syn_diffs, '[]'::jsonb), 'coverage', syn_cov, 'asserts', asserts),
+                            'ok', not exists (select 1 from jsonb_array_elements(r) x where jsonb_array_length(x -> 'diffs') > 0 or not (x ->> 'has_output')::boolean)
+                                  and syn_err is null and sc is not null and jsonb_array_length(coalesce(syn_diffs, '[]'::jsonb)) = 0
+                                  and not exists (select 1 from jsonb_array_elements(asserts) a where not (a ->> 'ok')::boolean));
 end $$;
 
 -- ---------------------------------------------------------------------------------------------------------------------
@@ -1333,6 +1442,19 @@ language sql stable security definer set search_path = '' as $$
    order by 1, 2
 $$;
 revoke execute on function ripples.rm_grant_audit() from public, anon, authenticated;
+-- Self-healing: revoke whatever the audit lists (run by every publish; returns how many grants it removed)
+create or replace function ripples.rm_enforce_grants() returns int
+language plpgsql security definer set search_path = '' as $$
+declare r record; n int := 0;
+begin
+  for r in select distinct a.fn from ripples.rm_grant_audit() a loop
+    execute format('revoke execute on function %s from public, anon, authenticated', r.fn);
+    n := n + 1;
+  end loop;
+  return n;
+end $$;
+revoke execute on function ripples.rm_enforce_grants() from public, anon, authenticated;
+grant execute on function ripples.rm_enforce_grants() to service_role;
 
 -- ---------------------------------------------------------------------------------------------------------------------
 -- 12. Cron (ENGINE §10.3: att-publish-cascades 08:25 and 08:40, after att-finalize-engine 08:20). Migration wsc_rm_publish_cron.
