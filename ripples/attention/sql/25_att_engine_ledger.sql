@@ -120,7 +120,8 @@ begin
     for r in
       select c.qid, c.title, c.linked, c.median_views, c.category
       from ripples.candidates c
-      where c.as_of = p_as_of and c.root_qid = v_qid and c.depth = 1 and coalesce(c.linked, true)
+      where c.root_qid = v_qid and c.depth = 1 and coalesce(c.linked, true)
+        and c.as_of = (select max(c3.as_of) from ripples.candidates c3 where c3.root_qid = v_qid and c3.as_of between p_as_of - 2 and p_as_of)   -- the seed day's outlink set
         and coalesce(c.median_views, 0) >= 300 and c.qid <> v_qid
         and not exists (select 1 from ripples.blocklist b where b.qid = c.qid)
         and not exists (select 1 from ripples.articles a where a.qid = c.qid and (a.is_disambig or a.is_list or a.blocked))
@@ -140,9 +141,9 @@ begin
     select ed.source, t.qid, ed.pmi, ed.n, (ed.pmi - st.mu) / nullif(st.sd, 0) pmi_z, ripples.att_series_channel(s0.series_id) ch
     from ripples.att_edges ed
     join ripples.att_topics t on t.topic_id = ed.to_topic and t.qid is not null
-    join (select source, avg(pmi) mu, stddev_samp(pmi) sd from ripples.att_edges where period between p_as_of - 90 and p_as_of and pmi is not null group by source) st on st.source = ed.source
+    join (select source, avg(pmi) mu, stddev_samp(pmi) sd from ripples.att_edges where period between v_onset - 90 and v_onset - 1 and pmi is not null group by source) st on st.source = ed.source
     left join lateral (select series_id from ripples.att_series s where s.source = ed.source limit 1) s0 on true
-    where ed.from_topic = v_topic and ed.period between p_as_of - 90 and p_as_of and ed.pmi is not null
+    where ed.from_topic = v_topic and ed.period between v_onset - 90 and v_onset - 1 and ed.pmi is not null   -- ENGINE §6: the 90 days before onset, never post-onset co-coverage
       and ripples.att_source_kappa(ed.source) >= 0.3
     order by (ed.pmi - st.mu) / nullif(st.sd, 0) desc nulls last
   loop
@@ -322,6 +323,8 @@ begin
                             'new_nodes', n_new_nodes, 'frozen_hash', v_hash, 'ledger_seq', v_seq);
 end $$;
 
+alter table ripples.att_hop_candidates add column if not exists freeze_proven boolean not null default true;   -- false for the hops of a re-frozen batch (excluded from calibration)
+
 -- Repair: re-freeze a batch whose rows changed after its freeze (only ever needed after the pre-rollback harness deleted fixture rows
 -- out of shared day batches on 2026-09-25). Appends a superseding 'freeze' row and marks the old row superseded; nothing is deleted.
 create or replace function ripples.att_refreeze(p_old_hash text, p_reason text) returns jsonb
@@ -336,7 +339,7 @@ begin
   if v_new = p_old_hash then return jsonb_build_object('ok', true, 'note', 'batch already recomputes'); end if;
   v_seq := ripples.att_ledger_append(v_day, 'freeze', jsonb_build_object('as_of', v_day, 'm', m, 'refreeze_of', v_old, 'reason', p_reason),
                                      ripples.att_freeze_payload(v_day, false, p_old_hash));
-  update ripples.att_hop_candidates set frozen_hash = v_new where frozen_hash = p_old_hash;
+  update ripples.att_hop_candidates set frozen_hash = v_new, freeze_proven = false where frozen_hash = p_old_hash;
   update ripples.att_ledger set ref = ref || jsonb_build_object('superseded_by', v_seq) where seq = v_old;
   return jsonb_build_object('ok', true, 'day', v_day, 'old_seq', v_old, 'new_seq', v_seq, 'rows', m);
 end $$;
@@ -665,13 +668,106 @@ begin
 end $$;
 
 -- ---------------------------------------------------------------------------------------------------------------------
+-- 8. Recompute (fix 4c): after a change to att_zvec or to the placebo null, every pre-registered look is re-run through the
+--    unchanged pre-registration (frozen candidates, weights, looks, hashes and ledger rows are untouched; only test rows are
+--    discarded). A ledger 'calibration' row records the reason. State in att_state 'engine.recompute'; stepper via cron.
+-- ---------------------------------------------------------------------------------------------------------------------
+create or replace function ripples.att_recompute_reset(p_reason text) returns jsonb
+language plpgsql security definer set search_path = '' as $$
+declare v_seq bigint; n_tests int; groups jsonb; live jsonb;
+begin
+  select count(*) into n_tests from ripples.att_hop_tests;
+  v_seq := ripples.att_ledger_append(current_date, 'calibration', jsonb_build_object('recompute', true, 'reason', p_reason),
+             jsonb_build_object('day', current_date, 'recompute', true, 'reason', p_reason, 'tests_discarded', n_tests,
+                                'frozen_candidates', (select count(*) from ripples.att_hop_candidates where frozen_hash is not null),
+                                'freeze_head', (select max(seq) from ripples.att_ledger where kind = 'freeze')));
+  delete from ripples.att_hop_tests;
+  delete from ripples.att_placebo_top;
+  delete from ripples.att_placebo_draws;
+  delete from ripples.att_fluke_bins;
+  delete from ripples.att_sd_null;
+  update ripples.att_hop_registry set resolved_at = null, hit = null, final_tier = null;
+  update ripples.att_hop_candidates set status = 'queued' where frozen_hash is not null and status <> 'skipped';
+  delete from ripples.att_state where k like 'engine.day.%' or k like 'engine.libday.%';
+  select coalesce(jsonb_agg(jsonb_build_object('event_id', e.event_id, 'label', e.label) order by e.onset desc, e.event_id), '[]'::jsonb) into groups
+    from ripples.att_events e where e.reconstructed and e.role in ('library','positive_control')
+     and e.event_id in (select coalesce(m.matched_to, c.event_id) from ripples.att_hop_candidates c join ripples.att_events m on m.event_id = c.event_id
+                        where c.frozen_hash is not null);   -- one group per real event: itself plus its decoys
+  select coalesce(jsonb_agg(distinct as_of order by as_of), '[]'::jsonb) into live from ripples.att_hop_candidates where not reconstructed and frozen_hash is not null;
+  perform ripples.att_state_set('engine.recompute', jsonb_build_object('reason', p_reason, 'started', now(), 'ledger_seq', v_seq, 'tests_discarded', n_tests,
+                                'groups', groups, 'next', 0, 'live_days', live, 'live_done', false, 'looks_ran', 0));
+  return jsonb_build_object('ledger_seq', v_seq, 'tests_discarded', n_tests, 'groups', jsonb_array_length(groups), 'live_days', live);
+end $$;
+
+create or replace function ripples.att_recompute_step(p_budget_s int default 600) returns jsonb
+language plpgsql security definer set search_path = '' as $$
+declare st jsonb := ripples.att_state_get('engine.recompute'); t0 timestamptz := clock_timestamp(); ev bigint; d date; last_look date;
+        n_ran int := 0; r jsonb; i int; n_groups int; ld date; zv jsonb := ripples.att_state_get('zvec.run'); done int := 0;
+begin
+  if st is null or st ? 'finished' then return jsonb_build_object('idle', true); end if;
+  if zv is null or not (zv ? 'finished') or (zv ->> 'day') <> (current_date - 1)::text then
+    return jsonb_build_object('waiting', 'zvec rebuild', 'zvec', zv - 'sources' - 'pending' - 'done');
+  end if;
+  if not coalesce((st ->> 'live_done')::boolean, false) then
+    for ld in select x::date from jsonb_array_elements_text(st -> 'live_days') x order by 1 loop
+      r := ripples.att_engine_run_due(ld, 100000, false, p_budget_s); n_ran := n_ran + (r ->> 'ran')::int;
+      perform ripples.att_finalize(ld, false); perform ripples.att_chain_decide(ld);
+    end loop;
+    st := st || jsonb_build_object('live_done', true, 'live_ran', n_ran, 'looks_ran', coalesce((st ->> 'looks_ran')::int, 0) + n_ran);
+    perform ripples.att_state_set('engine.recompute', st);
+    return jsonb_build_object('live_ran', n_ran, 'seconds', round(extract(epoch from clock_timestamp() - t0)::numeric, 1));
+  end if;
+  n_groups := jsonb_array_length(st -> 'groups'); i := (st ->> 'next')::int;
+  while i < n_groups and clock_timestamp() - t0 < make_interval(secs => p_budget_s) loop
+    ev := (st -> 'groups' -> i ->> 'event_id')::bigint;
+    last_look := null;
+    for d in select distinct l from ripples.att_hop_candidates c join ripples.att_events e on e.event_id = c.event_id, unnest(c.looks) l
+             where c.frozen_hash is not null and c.reconstructed and (e.event_id = ev or e.matched_to = ev) and l <= current_date order by 1 loop
+      r := ripples.att_engine_run_due(d, 100000, true); n_ran := n_ran + (r ->> 'ran')::int; last_look := d;
+    end loop;
+    if last_look is not null then perform ripples.att_finalize(last_look, true); perform ripples.att_chain_decide(last_look); end if;
+    perform ripples.att_build_cascade(ev, coalesce(last_look, current_date));
+    i := i + 1; done := done + 1;
+    st := st || jsonb_build_object('next', i, 'looks_ran', coalesce((st ->> 'looks_ran')::int, 0) + n_ran,
+                                   'last', jsonb_build_object('event_id', ev, 'last_look', last_look, 'at', now()));
+    n_ran := 0;
+    perform ripples.att_state_set('engine.recompute', st);
+  end loop;
+  if i >= n_groups then
+    st := st || jsonb_build_object('finished', now());
+    perform ripples.att_state_set('engine.recompute', st);
+  end if;
+  return jsonb_build_object('groups_done', done, 'next', i, 'of', n_groups, 'finished', st ? 'finished', 'seconds', round(extract(epoch from clock_timestamp() - t0)::numeric, 1));
+end $$;
+
+create or replace function ripples.att_recompute_step_locked(p_budget_s int default 600) returns jsonb
+language plpgsql security definer set search_path = '' as $$
+declare r jsonb;
+begin
+  if not pg_try_advisory_lock(hashtext('ripples.att_recompute_step')) then return jsonb_build_object('skipped', 'another stepper holds the lock'); end if;
+  begin
+    r := ripples.att_recompute_step(p_budget_s);
+  exception when others then
+    perform pg_advisory_unlock(hashtext('ripples.att_recompute_step'));
+    raise;
+  end;
+  perform pg_advisory_unlock(hashtext('ripples.att_recompute_step'));
+  return r;
+end $$;
+-- On demand only (never part of the daily schedule):
+--   select ripples.att_recompute_reset('<reason>');
+--   select cron.schedule('att-recompute', '* * * * *', $$set statement_timeout = '15min'; select ripples.att_recompute_step_locked(600)$$);
+--   ... until att_state 'engine.recompute' carries 'finished'; then cron.unschedule('att-recompute').
+
+-- ---------------------------------------------------------------------------------------------------------------------
 -- 7. Cron (UTC). pg_cron sessions inherit the 2-minute statement_timeout, so the long engine steps raise it explicitly.
---    att-zvec-a/b/c 05:50–07:20 · att-pick-events 07:31 · att-freeze 07:34 · att-engine-tick 07:35–08:18 (≤ 40 looks/min) ·
+--    att-zvec-a/b/c 05:50–07:20 · att-zvec-wiki 07:29 (wiki.pv/wiki.media after the 07:21–07:27 pageview collectors) · att-pick-events 07:37 ·
+--    att-freeze 07:39 · att-engine-tick 07:40–08:18 (≤ 40 looks/min) ·
 --    att-finalize-engine 08:20 · att-expand 08:45 · att-calibrate-engine Sunday 09:10 · att-engine-retention 09:40 ·
 --    att-library-run every 2 min outside the morning window (WS-E archive + decoy backfill).
 -- ---------------------------------------------------------------------------------------------------------------------
 do $$ declare j record; begin
-  for j in select jobid, jobname from cron.job where jobname in ('att-zvec','att-zvec-once','att-test-once','att-zvec-a','att-zvec-b','att-zvec-c','att-pick-events','att-freeze',
+  for j in select jobid, jobname from cron.job where jobname in ('att-zvec','att-zvec-once','att-test-once','att-zvec-a','att-zvec-b','att-zvec-c','att-zvec-wiki','att-pick-events','att-freeze',
                                                                  'att-engine-tick-a','att-engine-tick-b','att-finalize-engine','att-expand','att-calibrate-engine','att-engine-retention','att-library-run') loop
     perform cron.unschedule(j.jobid);
   end loop;
@@ -679,9 +775,10 @@ end $$;
 select cron.schedule('att-zvec-a', '50-59 5 * * *', $$set statement_timeout = '110s'; select ripples.att_zvec_step_locked(current_date - 1, 75)$$);
 select cron.schedule('att-zvec-b', '* 6 * * *',     $$set statement_timeout = '110s'; select ripples.att_zvec_step_locked(current_date - 1, 75)$$);
 select cron.schedule('att-zvec-c', '0-20 7 * * *',  $$set statement_timeout = '110s'; select ripples.att_zvec_step_locked(current_date - 1, 75)$$);
-select cron.schedule('att-pick-events', '31 7 * * *', $$select ripples.att_pick_events_cron(current_date)$$);
-select cron.schedule('att-freeze', '34 7 * * *', $$set statement_timeout = '20min'; select ripples.att_pick_events_cron(current_date); select ripples.att_freeze_candidates(current_date)$$);
-select cron.schedule('att-engine-tick-a', '35-59 7 * * *', $$set statement_timeout = '110s'; select ripples.att_engine_tick_locked(current_date, 40, 50)$$);
+select cron.schedule('att-zvec-wiki', '29 7 * * *', $$set statement_timeout = '12min'; select ripples.att_build_zvec(current_date - 1, array['wiki.pv','wiki.media'])$$);
+select cron.schedule('att-pick-events', '37 7 * * *', $$select ripples.att_pick_events_cron(current_date)$$);
+select cron.schedule('att-freeze', '39 7 * * *', $$set statement_timeout = '20min'; select ripples.att_pick_events_cron(current_date); select ripples.att_freeze_candidates(current_date)$$);
+select cron.schedule('att-engine-tick-a', '40-59 7 * * *', $$set statement_timeout = '110s'; select ripples.att_engine_tick_locked(current_date, 40, 50)$$);
 select cron.schedule('att-engine-tick-b', '0-18 8 * * *',  $$set statement_timeout = '110s'; select ripples.att_engine_tick_locked(current_date, 40, 50)$$);
 select cron.schedule('att-finalize-engine', '20 8 * * *', $$set statement_timeout = '25min'; select ripples.att_finalize(current_date); select ripples.att_chain_decide(current_date)$$);
 select cron.schedule('att-expand', '45 8 * * *', $$set statement_timeout = '10min'; select ripples.att_expand(current_date)$$);

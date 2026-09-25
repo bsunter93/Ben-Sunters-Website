@@ -34,7 +34,7 @@ begin
         and ripples.att_nb_midp_z(5000, 3, null) > 6;
   res := ripples._att_t(res, 'T1 NB mid-p z (Poisson centre, tail, overdispersion, underflow)', ok,
            jsonb_build_object('z_5_5', ripples.att_nb_midp_z(5, 5, null), 'z_15_5', ripples.att_nb_midp_z(15, 5, null), 'z_15_5_r2', ripples.att_nb_midp_z(15, 5, 2), 'z_5000_3', ripples.att_nb_midp_z(5000, 3, null)));
-  ok := ripples.att_holiday('2025-11-27') = 'us_thanksgiving' and ripples.att_holiday('2025-12-25') = 'xmas_week' and ripples.att_holiday('2026-04-03') = 'uk_goodfriday'
+  ok := ripples.att_holiday('2025-11-27') = 'us_thanksgiving' and ripples.att_holiday('2025-12-25') = 'us_xmas' and ripples.att_holiday('2025-12-27') = 'xmas_week' and ripples.att_holiday('2026-04-03') = 'uk_goodfriday'
         and ripples.att_holiday('2026-07-03') = 'us_july4' and ripples.att_holiday('2026-09-25') = '' and ripples.att_easter(2026) = '2026-04-05';
   res := ripples._att_t(res, 'T1 holidays', ok, jsonb_build_object('thx', ripples.att_holiday('2025-11-27'), 'easter26', ripples.att_easter(2026)));
 

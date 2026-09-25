@@ -47,7 +47,7 @@ begin
   create temp table _fb on commit drop as
   select t.hop_id, c.role, ripples.att_s_bin(t.t_stat) s_bin, t.h_bin, (t.q_w <= 0.20) pass
   from ripples.att_hop_tests t join ripples.att_hop_candidates c on c.hop_id = t.hop_id
-  where t.look_day between p_as_of - 90 and p_as_of and t.t_stat is not null and t.q_w is not null and c.role in ('real','decoy') and not c.reconstructed
+  where t.look_day between p_as_of - 90 and p_as_of and t.t_stat is not null and t.q_w is not null and c.role in ('real','decoy') and not c.reconstructed and c.freeze_proven
     and t.look_no = (select max(look_no) from ripples.att_hop_tests t2 where t2.hop_id = t.hop_id and t2.q_w is not null and t2.look_day <= p_as_of);
   select count(*) into v_decoy_total from _fb where role = 'decoy';
   warming := v_decoy_total < 500;
@@ -140,7 +140,9 @@ begin
 
   -- top-100 by T (only hops that can still matter: date p ≤ 0.05): extend the date family to 2,000 draws (compact rows, 7-day retention)
   for r in select hop_id, look_no, t_stat, s_pre from _fin where p_bh <= 0.05 order by t_stat desc nulls last limit top_n loop
-    ext := ripples.att_run_placebos(r.hop_id, 'date', top_draws, r.look_no, r.t_stat, true, coalesce(r.s_pre, 0) < 2);
+    -- T_h and the pre-trend gate are recomputed in float8 through the identical code path (the stored t_stat is float4: the hop's own
+    -- shift-0 draw could round below it and not count as an exceedance)
+    ext := ripples.att_run_placebos(r.hop_id, 'date', top_draws, r.look_no, null, true, null);
     if (ext ->> 'n')::int >= 30 then
       update ripples.att_hop_tests t set p_date = (ext ->> 'p')::real, n_date = (ext ->> 'n')::int,
              placebo = coalesce(t.placebo, '{}'::jsonb) || jsonb_build_object('date', ext - 't_h'),
@@ -213,7 +215,7 @@ begin
     -- BH implied; BH itself runs on the date family, the only one with the 2,000-draw resolution
     if coalesce(r.p_h, 1) > q_meas then fails := array_append(fails, 'a placebo family disagrees'); end if;
     if not (r.q_w <= q_meas) then fails := array_append(fails, 'q above 0.05');
-    elsif not v_final_agree then fails := array_append(fails, 'final look not reached'); end if;
+    elsif not (v_final_agree or r.is_final) then fails := array_append(fails, 'final look not reached'); end if;
     cs := coalesce(r.common_shock, false);
     gate_lik := coalesce(r.p_h, 1) <= q_lik;
     -- tier assignment with hysteresis (promote at q ≤ 0.05, demote at q > 0.10). Interim looks grant at most Likely (provisional) at

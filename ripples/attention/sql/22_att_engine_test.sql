@@ -260,14 +260,20 @@ end $$;
 create or replace function ripples.att_date_draws(p_hop bigint, p_max int) returns date[]
 language plpgsql stable security definer set search_path = '' as $$
 declare c record; lo date; hi date; hist_from date; n_long int; d date; out date[] := '{}'; season date[] := '{}'; rest date[] := '{}';
-        known date[]; v_l int; seas boolean; k int; first_all date; first_any date;
+        known date[]; v_l int; seas boolean; k int; first_all date; first_any date; ev record; lag_real int; eff date;
 begin
   select * into c from ripples.att_hop_candidates where hop_id = p_hop;
+  select * into ev from ripples.att_events where event_id = c.event_id;
+  -- the pool ends 30 d + L before the hop's OWN onset: a decoy inherits the matched real's as_of − onset lag, applied to its own onset
+  lag_real := case when ev.role = 'decoy' and ev.matched_to is not null
+                   then (select greatest(0, m.as_of - m.onset) from ripples.att_events m where m.event_id = ev.matched_to)
+                   else greatest(0, c.as_of - c.onset) end;
+  eff := least(c.as_of, c.onset + coalesce(lag_real, 0));
   select min(z.from_day), count(*) filter (where z.n > 1000) into hist_from, n_long
     from ripples.att_node_series ns join ripples.att_zvec z on z.series_id = ns.series_id where ns.node = c.node and z.grain = 'day';
   v_l := coalesce(c.window_close - c.onset, 7);
-  hi := c.as_of - 30 - v_l;
-  lo := case when n_long > 0 then greatest(hist_from + 112, c.as_of - 2555) else c.as_of - 730 end;
+  hi := eff - 30 - v_l;
+  lo := case when n_long > 0 then greatest(hist_from + 112, eff - 2555) else eff - 730 end;
   -- start where the bundle actually has an abnormal response (young series): every series valid if that leaves ≥ 60 days, else any series
   select max(f), min(f) into first_all, first_any
     from (select z.from_day + (min(u.o) - 1)::int f from ripples.att_node_series ns join ripples.att_zvec z on z.series_id = ns.series_id
@@ -277,9 +283,12 @@ begin
     lo := greatest(lo, case when hi - first_all >= 60 then first_all else coalesce(first_any, first_all) end);
   end if;
   seas := exists (select 1 from ripples.att_node_series ns where ns.node = c.node and ns.channel in ('PHYS','ECON'));
-  -- known onsets of the parent topic / node topic (real events) → excluded ±30 d
-  select coalesce(array_agg(e.onset), '{}') into known from ripples.att_events e
-   where e.role = 'real' and (e.topic_id = c.u_topic or e.topic_id = c.v_topic);
+  -- known onsets (real, library and positive-control events) of the parent topic — through matched_to for a decoy — and of the node
+  -- topic are excluded ±30 d (ENGINE §5.1)
+  select coalesce(array_agg(distinct e.onset), '{}') into known from ripples.att_events e
+   where e.role in ('real','library','positive_control')
+     and (e.topic_id in (c.u_topic, c.v_topic) or e.event_id = ev.matched_to
+          or (ev.matched_to is not null and e.topic_id = (select m.topic_id from ripples.att_events m where m.event_id = ev.matched_to)));
   d := lo;
   while d <= hi loop
     if not exists (select 1 from unnest(known) kk(x) where abs(d - kk.x) < 30) then

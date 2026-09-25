@@ -382,13 +382,16 @@ language sql immutable strict set search_path = '' as $$
 $$;
 
 -- Holiday code for a day ('' when none): US federal (observed), UK bank holidays, Christmas/New Year week (ENGINE §3.2).
+-- Fix 4a: Christmas Day and New Year's Day carry their own codes (us_xmas / us_newyear); Dec 24, 26–31 are 'xmas_week'.
 -- att_holiday_rule is the rule; att_holidays is generated from it once (2012–2031) and att_holiday is the fast lookup.
 create or replace function ripples.att_holiday_rule(d date) returns text
 language plpgsql immutable strict set search_path = '' as $$
 declare y int := extract(year from d)::int; m int := extract(month from d)::int; dd int := extract(day from d)::int;
         dow int := extract(dow from d)::int; e date; obs date;
 begin
-  if (m = 12 and dd >= 24) or (m = 1 and dd <= 1) then return 'xmas_week'; end if;
+  if m = 12 and dd = 25 then return 'us_xmas'; end if;
+  if m = 1 and dd = 1 then return 'us_newyear'; end if;
+  if (m = 12 and dd >= 24) then return 'xmas_week'; end if;
   foreach obs in array array[make_date(y,1,1), make_date(y,6,19), make_date(y,7,4), make_date(y,11,11), make_date(y,12,25)] loop
     if d = obs or (extract(dow from obs) = 6 and d = obs - 1) or (extract(dow from obs) = 0 and d = obs + 1) then
       return case obs when make_date(y,1,1) then 'us_newyear' when make_date(y,6,19) then 'us_juneteenth'
@@ -410,10 +413,10 @@ begin
   if m = 12 and dd = 26 then return 'uk_boxing'; end if;
   return '';
 end $$;
+delete from ripples.att_holidays;   -- fix 4a: regenerated (Christmas Day / New Year's Day carry their own codes)
 insert into ripples.att_holidays(day, code)
 select d::date, ripples.att_holiday_rule(d::date) from generate_series('2012-01-01'::date, '2031-12-31'::date, interval '1 day') d
-where ripples.att_holiday_rule(d::date) <> ''
-on conflict (day) do nothing;
+where ripples.att_holiday_rule(d::date) <> '';
 create or replace function ripples.att_holiday(d date) returns text
 language sql stable strict set search_path = '' as $$
   select coalesce((select code from ripples.att_holidays h where h.day = d), '')
@@ -463,7 +466,9 @@ begin
   left join ripples.att_series ts on v_kind = 'share' and ts.source = s.source and ts.metric = s.metric and ts.geo = s.geo and ts.key = '__total__'
   left join ripples.attention_obs t on t.series_id = ts.series_id and t.day = o.day
   left join ripples.att_holidays hd on hd.day = o.day
-  where s.source = p_source and s.key <> '__total__' and o.day between p_day - 365 and p_day
+  where s.source = p_source and s.key <> '__total__' and o.value is not null
+    and (o.day between p_day - 365 and p_day
+         or (o.day between p_day - 2555 and p_day and exists (select 1 from ripples.att_holidays h2 where h2.day between o.day - 7 and o.day + 7)))
     and (v_kind <> 'share' or t.value > 0);
   create index if not exists _zw_idx on _zw (series_id, day);
   analyze _zw;
@@ -471,21 +476,21 @@ begin
   with r as (
     select a.series_id, a.day, a.x - (select percentile_cont(0.5) within group (order by b.x) from _zw b
                                         where b.series_id = a.series_id and b.day between a.day - 3 and a.day + 3) as res
-    from _zw a where a.x is not null and a.h = ''),
+    from _zw a where a.x is not null and a.h = '' and a.day > p_day - 365),
   w as (select extract(dow from day)::int dow, percentile_cont(0.5) within group (order by res) eff, count(*) cnt from r group by 1)
   insert into ripples.att_weekday(source, geo, dow, holiday, effect, as_of)
   select p_source, 'ALL', w.dow, '', w.eff, p_day from w where w.cnt >= 20
   on conflict (source, geo, dow, holiday) do update set effect = excluded.effect, as_of = excluded.as_of;
   get diagnostics v_rows = row_count;
-  -- holiday effect: residual against the centred 15-day median of non-holiday days; shrunk towards 0 with prior weight 8
+  -- holiday effect: residual against the centred 15-day median of non-holiday days, over the full history; shrunk towards 0 with prior weight 2
   with r as (
     select a.series_id, a.day, a.h,
            a.x - (select percentile_cont(0.5) within group (order by b.x) from _zw b
                   where b.series_id = a.series_id and b.day between a.day - 7 and a.day + 7 and b.h = '') as res
     from _zw a where a.x is not null and a.h <> ''),
-  hh as (select h, percentile_cont(0.5) within group (order by res) eff, count(*) cnt from r group by h)
+  hh as (select h, percentile_cont(0.5) within group (order by res) eff, count(*) cnt from r where res is not null group by h)
   insert into ripples.att_weekday(source, geo, dow, holiday, effect, as_of)
-  select p_source, 'ALL', 0, hh.h, hh.eff * hh.cnt / (hh.cnt + 8.0), p_day from hh where hh.cnt >= 3
+  select p_source, 'ALL', 0, hh.h, hh.eff * hh.cnt / (hh.cnt + 2.0), p_day from hh where hh.cnt >= 2
   on conflict (source, geo, dow, holiday) do update set effect = excluded.effect, as_of = excluded.as_of;
   return v_rows;
 end $$;
@@ -501,7 +506,7 @@ declare
   v_total bigint; v_agg bigint; cfg jsonb := coalesce(ripples._att_cfg('engine'), '{}'::jsonb);
   v_days int := coalesce((cfg->>'zvec_days')::int, 420); v_long int := coalesce((cfg->>'zvec_days_long')::int, 2555);
   v_ar real[]; v_res real[]; v_aragg real[]; v_sigma real; v_b real; v_kappa real; v_base real; v_lam real;
-  v_sxy float8; v_sxx float8; v_np int; v_n90 int; v_beta float8; gpool float8[]; hpool jsonb; v_nb_all int; v_minb int;
+  v_sxy float8; v_sxx float8; v_np int; v_n90 int; v_beta float8; gpool float8[]; hpool jsonb; v_nb_all int; v_minb int; v_sigw int;
 begin
   select se.*, src.grain into s from ripples.att_series se join ripples.att_sources src on src.source = se.source where se.series_id = p_series;
   if not found then return null; end if;
@@ -511,7 +516,8 @@ begin
   select coalesce(m.same_dow, false) into v_same from ripples.att_engine_source_map m where m.source = s.source;
   v_same := coalesce(v_same, false);
   v_minb := case when v_same then 8 else 28 end;   -- same-weekday baselines hold ~13 points; 8 is the floor there
-  select min(day), max(day), count(*) into v_first, v_last, v_nobs from ripples.attention_obs where series_id = p_series and day <= p_day;
+  v_sigw := case when v_same then 371 else 111 end; -- σ window start: same-weekday residuals over a year (≈ 50 points), else B itself
+  select min(day), max(day), count(*) into v_first, v_last, v_nobs from ripples.attention_obs where series_id = p_series and day <= p_day and value is not null;
   if v_nobs is null or v_nobs < 28 or v_last < p_day - 60 then return null; end if;
   v_n := case when v_first <= p_day - 1095 then v_long else v_days end;
   v_from := p_day - v_n + 1;
@@ -527,22 +533,31 @@ begin
     from generate_series(0, 6) d(dow) left join ripples.att_weekday w on w.source = s.source and w.geo = 'ALL' and w.dow = d.dow and w.holiday = '';
   select coalesce(jsonb_object_agg(holiday, effect), '{}'::jsonb) into hpool from ripples.att_weekday where source = s.source and geo = 'ALL' and holiday <> '';
 
+  -- days on which the source collected anything (session cache per source): a rank / share series with no row on such a day is
+  -- uncharted / zero; on any other day it is simply missing (null), never a zero
+  create temp table if not exists _zsd (source text, day date, primary key (source, day)) on commit drop;
+  if v_kind in ('rank','share') and not exists (select 1 from _zsd where source = s.source) then
+    insert into _zsd select s.source, o.day from ripples.attention_obs o join ripples.att_series x on x.series_id = o.series_id
+      where x.source = s.source and o.day >= p_day - v_long - 475 group by o.day on conflict do nothing;
+  end if;
+
   create temp table if not exists _zs (i int, day date, dow int, n float8, x float8, xt float8, m float8, yhat float8, sigma float8,
                                        lam float8, mu float8, var_n float8, nb int, z float8, r float8, h text, primary key (i)) on commit drop;
   truncate _zs;
-  -- 1. transform over [from − 475, p_day] (475 = 364 year-ago + 111 baseline)
+  -- 1. transform over [from − 475, p_day] (475 = 364 year-ago + 111 baseline); a missing observation is null (ENGINE §3.1)
   insert into _zs(i, day, dow, n, x, h)
   select (g.day::date - v_from + 1), g.day::date, extract(dow from g.day)::int, o.value,
-         case v_kind when 'count' then ln(1 + greatest(o.value, 0))
-                     when 'share' then case when t.value > 0 then ln((greatest(o.value, 0) + 0.5) / t.value * 1e6) end
-                     when 'rank' then case when o.value between 1 and 100 then ln(101 - o.value) else 0 end
-                     when 'index' then ln(1 + greatest(o.value, 0))
+         case v_kind when 'count' then case when o.value is not null then ln(1 + greatest(o.value, 0)) end
+                     when 'share' then case when t.value > 0 and (o.value is not null or sd.day is not null) then ln((coalesce(greatest(o.value, 0), 0) + 0.5) / t.value * 1e6) end
+                     when 'rank' then case when o.value between 1 and 100 then ln(101 - o.value) when o.value is not null or sd.day is not null then 0 end
+                     when 'index' then case when o.value is not null then ln(1 + greatest(o.value, 0)) end
                      when 'level' then case when o.value > 0 then ln(o.value) end
                      else o.value end,
          coalesce(hd.code, '')
   from generate_series(v_from - 475, p_day, interval '1 day') g(day)
   left join ripples.attention_obs o on o.series_id = p_series and o.day = g.day::date
   left join ripples.attention_obs t on v_total is not null and t.series_id = v_total and t.day = g.day::date
+  left join _zsd sd on v_kind in ('rank','share') and sd.source = s.source and sd.day = g.day::date
   left join ripples.att_holidays hd on hd.day = g.day::date;
   analyze _zs;
 
@@ -581,14 +596,18 @@ begin
     group by a.i) q
   where q.i = z.i;
   update _zs set m = null where i >= 1 and coalesce(nb, 0) < v_minb;
+  -- σ: 1.4826·MAD of the residuals against the baseline (ENGINE §3.4: B against the day's own median); same-weekday series use a
+  -- year of same-weekday residuals, each against its own day's baseline median (inside B: the current median)
   update _zs z set sigma = greatest(
-      coalesce((select 1.4826 * percentile_cont(0.5) within group (order by abs(b.xt - z.m)) from _zs b
-                where b.i between z.i - 111 and z.i - 21 and b.xt is not null and (not v_same or b.dow = z.dow)), 0),
+      coalesce((select 1.4826 * percentile_cont(0.5) within group (order by abs(b.xt - case when v_same then coalesce(b.m, z.m) else z.m end)) from _zs b
+                where b.i between z.i - v_sigw and z.i - 21 and b.xt is not null and (not v_same or b.dow = z.dow)
+                  and (b.i between z.i - 111 and z.i - 21 or b.m is not null)), 0),
       case when v_kind in ('count','share') then greatest(1 / sqrt(coalesce(z.lam, 0) + 1), 0.02)
            when v_kind = 'level' then 0.005 when v_kind = 'rate' then 0.01 else 0.02 end)
   where z.i >= 1 and z.m is not null;
 
-  -- 5. growth: Theil–Sen restricted to same-weekday pairs 5–9 weeks apart inside B, on a weekly grid; applied only if |b|·60 > σ
+  -- 5. growth: Theil–Sen restricted to same-weekday pairs 5–9 weeks apart inside B, on a weekly grid; applied only if |b|·60 > σ;
+  --    needs ≥ 20 pairs from ≥ 40 distinct start days (≥ 8 same-weekday), so a half-empty window never extrapolates
   create temp table if not exists _zsl (i int primary key, b float8) on commit drop;
   truncate _zsl;
   insert into _zsl(i, b)
@@ -597,7 +616,7 @@ begin
   join _zs a on a.i between g.i - 111 and g.i - 21 and a.xt is not null and (not v_same or a.dow = g.dow)
   cross join (values (35),(42),(49),(56),(63)) d(k)
   join _zs b on b.i = a.i + d.k and b.i <= g.i - 21 and b.xt is not null
-  group by g.i having count(*) >= 20;
+  group by g.i having count(*) >= 20 and count(distinct a.i) >= (case when v_same then 8 else 40 end);
   update _zs z set yhat = case when abs(sl.b) * 60 > z.sigma then z.m + sl.b * 66 else z.m end
   from (select z2.i, (select b from _zsl where _zsl.i <= z2.i order by _zsl.i desc limit 1) b from _zs z2 where z2.i >= 1) sl
   where sl.i = z.i and z.m is not null and sl.b is not null;

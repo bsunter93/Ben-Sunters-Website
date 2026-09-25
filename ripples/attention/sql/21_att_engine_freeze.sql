@@ -8,12 +8,23 @@
 --   att_mech_edges           : from_node 'Q…' or 'family:hazard.storm'; to_node 'Q…' or 'source:key'; etype MAP/WD/MECH; sign; strength; meta.demean
 
 -- ---------------------------------------------------------------------------------------------------------------------
--- 1. Ledger (chained from ripples.ledger head at cutover; extensions.digest exactly as SPEC §10)
+-- 1. Ledger (chained from a stored genesis hash — the ripples.ledger head at cutover, kept in att_state 'engine.ledger.genesis';
+--    extensions.digest exactly as SPEC §10). Fix 4b: every freeze payload is kept verbatim in att_freeze_snapshots.
 -- ---------------------------------------------------------------------------------------------------------------------
+-- (6)(7) ledger genesis + freeze snapshots
+create table if not exists ripples.att_freeze_snapshots (
+  payload_hash text primary key, seq bigint not null, day date not null, payload jsonb not null, created_at timestamptz not null default now());
+alter table ripples.att_freeze_snapshots enable row level security;
+revoke all on table ripples.att_freeze_snapshots from anon, authenticated, public;
+insert into ripples.att_state(k, v)
+select 'engine.ledger.genesis', jsonb_build_object('prev_hash', prev_hash, 'seq', seq, 'noted', now()) from ripples.att_ledger order by seq limit 1
+on conflict (k) do nothing;
+
+
 create or replace function ripples.att_ledger_head() returns text
 language sql stable set search_path = '' as $$
   select coalesce((select chain_hash from ripples.att_ledger order by seq desc limit 1),
-                  (select chain_hash from ripples.ledger order by seq desc limit 1),
+                  (select v ->> 'prev_hash' from ripples.att_state where k = 'engine.ledger.genesis'),
                   repeat('0', 64))
 $$;
 
@@ -24,9 +35,16 @@ begin
   lock table ripples.att_ledger in share row exclusive mode;
   ph := encode(extensions.digest(ripples._canon(p_payload)::text, 'sha256'), 'hex');
   prev := ripples.att_ledger_head();
+  if not exists (select 1 from ripples.att_ledger) then
+    insert into ripples.att_state(k, v) values ('engine.ledger.genesis', jsonb_build_object('prev_hash', prev, 'noted', now())) on conflict (k) do nothing;
+  end if;
   ch := encode(extensions.digest(prev || ph, 'sha256'), 'hex');
   insert into ripples.att_ledger(day, kind, ref, payload_hash, prev_hash, chain_hash)
   values (p_day, p_kind, coalesce(p_ref, '{}'::jsonb), ph, prev, ch) returning seq into v_seq;
+  -- every freeze payload is kept verbatim, so a batch can be shown unchanged later (not only re-hashed)
+  if p_kind = 'freeze' then
+    insert into ripples.att_freeze_snapshots(payload_hash, seq, day, payload) values (ph, v_seq, p_day, p_payload) on conflict (payload_hash) do nothing;
+  end if;
   return v_seq;
 end $$;
 
@@ -401,24 +419,35 @@ $$;
 -- A freeze row superseded by a later re-freeze (ref.superseded_by, see att_refreeze) is skipped; the superseding row is verified instead.
 create or replace function ripples.att_ledger_verify() returns jsonb
 language plpgsql stable security definer set search_path = '' as $$
-declare l record; prev text; bad jsonb := '[]'::jsonb; cnt int := 0; v_day date; recomputed text;
+declare l record; prev text; bad jsonb := '[]'::jsonb; cnt int := 0; v_day date; recomputed text; n_snap int := 0; n_freeze int := 0; snap jsonb;
 begin
-  prev := coalesce((select chain_hash from ripples.ledger order by seq desc limit 1), repeat('0', 64));
+  prev := coalesce((select v ->> 'prev_hash' from ripples.att_state where k = 'engine.ledger.genesis'), repeat('0', 64));
   for l in select * from ripples.att_ledger order by seq loop
     cnt := cnt + 1;
     if l.prev_hash <> prev or l.chain_hash <> encode(extensions.digest(l.prev_hash || l.payload_hash, 'sha256'), 'hex') then
       bad := bad || jsonb_build_object('seq', l.seq, 'why', 'chain');
     end if;
     if l.kind = 'freeze' and not (l.ref ? 'superseded_by') then
+      n_freeze := n_freeze + 1;
       v_day := (l.ref ->> 'as_of')::date;
       recomputed := ripples.att_freeze_hash(v_day, false, l.payload_hash);
       if recomputed <> l.payload_hash then
         bad := bad || jsonb_build_object('seq', l.seq, 'why', 'freeze_recompute', 'day', v_day);
       end if;
+      select payload into snap from ripples.att_freeze_snapshots where payload_hash = l.payload_hash;
+      if snap is not null then
+        n_snap := n_snap + 1;
+        if encode(extensions.digest(ripples._canon(snap)::text, 'sha256'), 'hex') <> l.payload_hash then
+          bad := bad || jsonb_build_object('seq', l.seq, 'why', 'snapshot_hash');
+        end if;
+      end if;
     end if;
     prev := l.chain_hash;
   end loop;
   return jsonb_build_object('ok', jsonb_array_length(bad) = 0, 'rows', cnt, 'head', ripples.att_ledger_head(), 'bad', bad,
+                            'freeze_batches', n_freeze, 'freeze_snapshots', n_snap,
+                            'unproven_batches', (select count(*) from ripples.att_ledger where kind = 'freeze' and ref ? 'refreeze_of'),
+                            'unproven_hops', (select count(*) from ripples.att_hop_candidates where not freeze_proven),
                             'tests_without_candidate', (select count(*) from ripples.att_hop_tests t where not exists (select 1 from ripples.att_hop_candidates c where c.hop_id = t.hop_id and c.frozen_hash is not null)),
                             'candidates_without_freeze_row', (select count(*) from ripples.att_hop_candidates c where c.frozen_hash is not null
                                                               and not exists (select 1 from ripples.att_ledger g where g.kind = 'freeze' and g.payload_hash = c.frozen_hash)));

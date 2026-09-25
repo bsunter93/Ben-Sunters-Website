@@ -85,7 +85,7 @@ begin
   for r in
     select z.series_id, e.onset, e.family, ripples.att_series_channel(z.series_id) ch
     from ripples.att_zvec z join ripples.att_series s on s.series_id = z.series_id
-    join ripples.att_events e on e.role = 'real' and e.topic_id is distinct from s.topic_id and e.onset <= p_as_of - 40 and e.onset >= z.from_day + 120
+    join ripples.att_events e on e.role in ('real','library','positive_control') and e.topic_id is distinct from s.topic_id and e.onset <= p_as_of - 40 and e.onset >= z.from_day + 120
     where z.grain = 'day' and z.kappa >= 0.5 and s.key <> '__total__' and (s.topic_id is null or exists (select 1 from ripples.att_topics t where t.topic_id = s.topic_id and t.in_panel))
       and not exists (select 1 from ripples.att_hop_candidates c where c.event_id = e.event_id and c.v_topic = s.topic_id)
     order by encode(extensions.digest(z.series_id::text || e.event_id::text || p_as_of::text, 'sha256'), 'hex')
@@ -160,11 +160,12 @@ end $$;
 -- 4. Decoy realised FDR, breaker, replication / dose / route, prior refit, Receipts, re-fire
 -- ---------------------------------------------------------------------------------------------------------------------
 -- Latest finalised look per hop (helper view)
+drop view if exists ripples.att_hop_latest;
 create or replace view ripples.att_hop_latest with (security_invoker = true) as
   select distinct on (t.hop_id) t.*, c.role, c.event_id, c.path_type, c.depth, c.node, c.prior, c.reconstructed, c.parent_hop,
          coalesce((select k from jsonb_each(t.s_by_channel) e(k, v) where (v ->> 'zhat')::float8 >= 3
                    order by (select cs.kind from ripples.att_channel_stat cs where cs.channel = k) = 'outcome' desc, (v ->> 'zhat')::float8 desc limit 1),
-                  c.channels[1], 'none') best_channel
+                  c.channels[1], 'none') best_channel, c.freeze_proven
   from ripples.att_hop_tests t join ripples.att_hop_candidates c on c.hop_id = t.hop_id
   where t.tier is not null
   order by t.hop_id, t.look_no desc;
@@ -175,7 +176,7 @@ drop function if exists ripples.att_decoy_fdr(date, int);
 create or replace function ripples.att_decoy_fdr(p_as_of date, p_days int default 28, p_scope text default 'live') returns jsonb
 language sql stable security definer set search_path = '' as $$
   with h as (
-    select * from ripples.att_hop_latest where look_day between p_as_of - p_days and p_as_of and role in ('real','decoy','library','positive_control')
+    select * from ripples.att_hop_latest where look_day between p_as_of - p_days and p_as_of and role in ('real','decoy','library','positive_control') and freeze_proven
       and (p_scope = 'all' or (p_scope = 'live' and not reconstructed) or (p_scope = 'library' and reconstructed))),
   ev as (
     select count(distinct event_id) filter (where role = 'decoy') decoy_events, count(distinct event_id) filter (where role <> 'decoy') real_events from h),
@@ -250,7 +251,7 @@ begin
   y := p_y;
   for k in 1..p_perm loop
     for i in reverse n..2 loop
-      seed := (seed * 6364136223846793005 + 1442695040888963407) % 9223372036854775807;
+      seed := (seed * 1103515245 + 12345) % 2147483648;   -- 31-bit LCG: the product stays inside bigint
       j := 1 + (abs(seed) % i)::int;
       tmp := y[i]; y[i] := y[j]; y[j] := tmp;
     end loop;
@@ -434,9 +435,9 @@ begin
   -- negative controls vs decoys (trailing 90 days; live and library runs both count, they share the code path): pass = Likely+.
   -- The rule is registered as the single att_controls 'negative' row (ENGINE §10.2), updated with every run.
   -- resolved (final-look) hops only: an interim 'watching' look is not an outcome; depth-1 decoys, since negative controls are depth-1 nodes
-  select count(*), count(*) filter (where tier in ('likely','measured')) into n_neg, k_neg from ripples.att_hop_latest where role = 'negative_control' and is_final and look_day >= current_date - 90;
+  select count(*), count(*) filter (where tier in ('likely','measured')) into n_neg, k_neg from ripples.att_hop_latest where role = 'negative_control' and is_final and look_day >= current_date - 90 and freeze_proven;
   select count(*), count(*) filter (where h.tier in ('likely','measured')) into n_dec, k_dec from ripples.att_hop_latest h join ripples.att_hop_candidates c on c.hop_id = h.hop_id
-   where h.role = 'decoy' and c.depth = 1 and h.is_final and h.look_day >= current_date - 90;
+   where h.role = 'decoy' and c.depth = 1 and h.is_final and h.look_day >= current_date - 90 and c.freeze_proven;
   w := ripples.att_wilson(k_dec, n_dec);
   neg_ok := n_neg = 0 or n_dec = 0 or (k_neg::float8 / n_neg between (w ->> 'lo')::float8 and (w ->> 'hi')::float8);
   neg := jsonb_build_object('pass_rate', case when n_neg > 0 then k_neg::float8 / n_neg end, 'n', n_neg, 'passes', k_neg, 'decoy_n', n_dec, 'decoy_passes', k_dec,
@@ -458,12 +459,21 @@ end $$;
 -- ---------------------------------------------------------------------------------------------------------------------
 create or replace function ripples.att_calibrate(p_as_of date default current_date - 1) returns jsonb
 language plpgsql security definer set search_path = '' as $$
-declare ks jsonb; power jsonb; fdr jsonb; brk jsonb; rep jsonb; pri jsonb; rc jsonb; payload jsonb; v_seq bigint; t0 timestamptz := clock_timestamp();
+declare ks jsonb; power jsonb; arsc jsonb; fdr jsonb; brk jsonb; rep jsonb; pri jsonb; rc jsonb; payload jsonb; v_seq bigint; t0 timestamptz := clock_timestamp();
         receipts jsonb; refire jsonb; retr jsonb; ctrl jsonb; ks_bad boolean; mv jsonb; head text;
 begin
   ks := ripples.att_calibrate_ks(p_as_of, 500);
   ks_bad := (ks ->> 'p') is not null and (ks ->> 'p')::float8 < 0.01;
   power := ripples.att_spikein(p_as_of, 25);
+  -- empirical daily AR scale per channel (1.4826·MAD and sd over the last 2 years, median across a deterministic 1-in-3 sample of series):
+  -- the spike-in's "+δσ" is in nominal z units; this says what one unit is worth on real series
+  select coalesce(jsonb_agg(jsonb_build_object('channel', ch, 'series', n, 'mad', round(mad::numeric, 2), 'sd', round(sd::numeric, 2)) order by ch), '[]'::jsonb) into arsc
+  from (select ch, count(*) n, percentile_cont(0.5) within group (order by mad) mad, percentile_cont(0.5) within group (order by sd) sd
+        from (select ripples.att_series_channel(z.series_id) ch, z.series_id,
+                     1.4826 * percentile_cont(0.5) within group (order by abs(u.v)) mad, stddev_samp(u.v) sd
+              from ripples.att_zvec z join ripples.att_series s on s.series_id = z.series_id, unnest(z.ar[greatest(1, z.n - 729):z.n]) u(v)
+              where z.grain = 'day' and z.kappa >= 0.5 and s.key <> '__total__' and z.series_id % 3 = 0 and u.v is not null
+              group by z.series_id) x group by ch) y;
   fdr := ripples.att_decoy_fdr(p_as_of, 28);
   brk := ripples.att_breaker_update(p_as_of, ks_bad);
   rep := ripples.att_replication_refresh(p_as_of);
@@ -486,12 +496,12 @@ begin
   select jsonb_build_object('positive', coalesce(jsonb_agg(jsonb_build_object('name', spec ->> 'name', 'passed', passed, 'last_run', last_run, 'measured', detail -> 'measured') order by id) filter (where kind = 'positive'), '[]'::jsonb),
                             'negative', (select jsonb_build_object('pass_rate', case when count(*) > 0 then round((count(*) filter (where tier in ('likely','measured')))::numeric / count(*), 4) end, 'n', count(*),
                                                                    'decoy_rate', (select round((count(*) filter (where tier in ('likely','measured')))::numeric / nullif(count(*), 0), 4) from ripples.att_hop_latest where role = 'decoy' and not reconstructed and look_day >= p_as_of - 90))
-                                         from ripples.att_hop_latest where role = 'negative_control' and not reconstructed and look_day >= p_as_of - 90))
+                                         from ripples.att_hop_latest where role = 'negative_control' and not reconstructed and look_day >= p_as_of - 90 and freeze_proven))
     into ctrl from ripples.att_controls;
   select coalesce(jsonb_agg(jsonb_build_object('seq', seq, 'day', day, 'hash', payload_hash, 'ref', ref) order by seq), '[]'::jsonb) into mv from ripples.att_ledger where kind = 'model_version';
   head := ripples.att_ledger_head();
   payload := jsonb_build_object('v', 2, 'as_of', p_as_of, 'method', coalesce(ripples._att_cfg('engine') ->> 'method', '6.0'),
-    'decoy_fdr', fdr - 'as_of' - 'days', 'null_ks', ks, 'power', power, 'controls', ctrl, 'receipts', receipts, 'refire', refire,
+    'decoy_fdr', fdr - 'as_of' - 'days', 'null_ks', ks, 'power', power, 'ar_scale', arsc, 'controls', ctrl, 'receipts', receipts, 'refire', refire,
     'breaker', brk -> 'open', 'retractions', retr, 'ledger', jsonb_build_object('head', head, 'seq', (select max(seq) from ripples.att_ledger)),
     'model_versions', mv, 'priors', pri, 'fluke_bins', (select coalesce(jsonb_agg(jsonb_build_object('s_bin', s_bin, 'h_bin', h_bin, 'f', f, 'decoy_tested', decoy_tested, 'real_tested', real_tested, 'warming', warming) order by s_bin, h_bin), '[]'::jsonb)
                                                           from ripples.att_fluke_bins where as_of = (select max(as_of) from ripples.att_fluke_bins)),
