@@ -1,0 +1,29 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "board.schema.json",
+  "title": "BoardPayload (ripples_board / v1/board/latest.json)",
+  "type": "object", "additionalProperties": false,
+  "required": ["n", "date", "trends"],
+  "properties": {
+    "n": {"type": "integer"},
+    "date": {"$ref": "defs.schema.json#/$defs/date"},
+    "trends": {"type": "array", "items": {
+      "type": "object", "additionalProperties": false,
+      "required": ["qid", "title", "emoji", "category", "splash_multiple", "biggest_in_days", "wake_k", "wake_of",
+                   "quadrant", "sensitive", "spark", "cross"],
+      "properties": {
+        "qid": {"$ref": "defs.schema.json#/$defs/qid"},
+        "title": {"type": "string"},
+        "emoji": {"$ref": "defs.schema.json#/$defs/emoji"},
+        "category": {"$ref": "defs.schema.json#/$defs/category"},
+        "splash_multiple": {"type": "number", "minimum": 0},
+        "biggest_in_days": {"type": ["integer", "null"]},
+        "wake_k": {"type": "integer", "minimum": 0, "maximum": 20},
+        "wake_of": {"type": "integer", "minimum": 0, "maximum": 20},
+        "quadrant": {"enum": ["big_wave", "sleeper", "belly_flop", "ripple", null]},
+        "sensitive": {"type": "boolean"},
+        "spark": {"$ref": "defs.schema.json#/$defs/spark", "maxItems": 30},
+        "cross": {"$ref": "defs.schema.json#/$defs/cross"}
+      }}}
+  }
+}

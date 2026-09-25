@@ -1,0 +1,328 @@
+{
+ "_comment": "TEST sample: latest.json as it looks once a puzzle is published (puzzle = fixture payload)",
+ "date": "2026-09-25",
+ "n": 0,
+ "next_at": "2026-09-26T07:30:00+00:00",
+ "puzzle": {
+  "callit": {
+   "options": [
+    {
+     "desc": "TEST Call It option (resolved: hit)",
+     "emoji": "🎬",
+     "qid": "Q999990041",
+     "title": "Test Call Option Hit"
+    },
+    {
+     "desc": "TEST Call It option (resolved: miss)",
+     "emoji": "🎬",
+     "qid": "Q999990042",
+     "title": "Test Call Option Miss"
+    },
+    {
+     "desc": "TEST Call It option (pending)",
+     "emoji": "🏛",
+     "qid": "Q999990043",
+     "title": "Test Call Option Pending One"
+    },
+    {
+     "desc": "TEST Call It option (pending)",
+     "emoji": "🧬",
+     "qid": "Q999990044",
+     "title": "Test Call Option Pending Two"
+    }
+   ],
+   "window_end": "2026-10-01",
+   "window_start": "2026-09-25"
+  },
+  "data_date": "2026-09-24",
+  "date": "2026-09-25",
+  "final": {
+   "mag_max": 100,
+   "mag_min": 1.5,
+   "round": 3
+  },
+  "from_date": null,
+  "headline": {
+   "source": "template",
+   "text": "TEST fixture puzzle: three hops of made-up data"
+  },
+  "kind": "fixture",
+  "method": "5.0",
+  "n": 0,
+  "rounds": [
+   {
+    "answer_h": "7a5b0e342a06472d5863f017f92ccd03921cb594506b5aac41868d8c6a5153d7",
+    "continues": true,
+    "i": 1,
+    "options": [
+     {
+      "desc": "TEST decoy: a calm linked place page",
+      "emoji": "📍",
+      "id": "a",
+      "qid": "Q999990011",
+      "title": "Test Decoy Place A"
+     },
+     {
+      "desc": "TEST decoy: a calm linked film page",
+      "emoji": "🎬",
+      "id": "b",
+      "qid": "Q999990012",
+      "title": "Test Decoy Film B"
+     },
+     {
+      "desc": "TEST answer: a linked place page that spiked",
+      "emoji": "📍",
+      "id": "c",
+      "qid": "Q999990013",
+      "title": "Test Answer Place One"
+     },
+     {
+      "desc": "TEST decoy: another calm linked place page",
+      "emoji": "📍",
+      "id": "d",
+      "qid": "Q999990014",
+      "title": "Test Decoy Place D"
+     }
+    ],
+    "parent": {
+     "emoji": "👤",
+     "qid": "Q999990001",
+     "title": "Test Seed Article"
+    },
+    "seed": null
+   },
+   {
+    "answer_h": "44a8b673e55e0471b2398bfb86eb5d266243faab49d275162021a235f0e798b9",
+    "continues": true,
+    "i": 2,
+    "options": [
+     {
+      "desc": "TEST answer: a linked film page that spiked alongside",
+      "emoji": "🎬",
+      "id": "a",
+      "qid": "Q999990021",
+      "title": "Test Answer Film Two"
+     },
+     {
+      "desc": "TEST decoy: a calm linked film page",
+      "emoji": "🎬",
+      "id": "b",
+      "qid": "Q999990022",
+      "title": "Test Decoy Film E"
+     },
+     {
+      "desc": "TEST decoy: another calm linked film page",
+      "emoji": "🎬",
+      "id": "c",
+      "qid": "Q999990023",
+      "title": "Test Decoy Film F"
+     },
+     {
+      "desc": "TEST decoy: a calm linked music page",
+      "emoji": "🎵",
+      "id": "d",
+      "qid": "Q999990024",
+      "title": "Test Decoy Music G"
+     }
+    ],
+    "parent": {
+     "emoji": "📍",
+     "qid": "Q999990013",
+     "title": "Test Answer Place One"
+    },
+    "seed": null
+   },
+   {
+    "answer_h": "5bbb4d4a0a95f2488b93aed57f3139246a4ade005f1a033fa3d615d4b5e4169a",
+    "continues": false,
+    "i": 3,
+    "options": [
+     {
+      "desc": "TEST decoy: a calm linked sports page",
+      "emoji": "🏅",
+      "id": "a",
+      "qid": "Q999990031",
+      "title": "Test Decoy Sport H"
+     },
+     {
+      "desc": "TEST decoy: another calm linked sports page",
+      "emoji": "🏅",
+      "id": "b",
+      "qid": "Q999990032",
+      "title": "Test Decoy Sport I"
+     },
+     {
+      "desc": "TEST decoy: a calm linked biography",
+      "emoji": "👤",
+      "id": "c",
+      "qid": "Q999990033",
+      "title": "Test Decoy Person J"
+     },
+     {
+      "desc": "TEST answer: a linked sports page that spiked after",
+      "emoji": "🏅",
+      "id": "d",
+      "qid": "Q999990034",
+      "title": "Test Answer Sport Three"
+     }
+    ],
+    "parent": {
+     "emoji": "🎵",
+     "qid": "Q999990002",
+     "title": "Test Second Seed"
+    },
+    "seed": {
+     "biggest_in_days": 400,
+     "emoji": "🎵",
+     "multiple": 18.5,
+     "qid": "Q999990002",
+     "title": "Test Second Seed"
+    }
+   }
+  ],
+  "seed": {
+   "badges": [
+    "gtrends:US",
+    "bsky"
+   ],
+   "baseline": {
+    "from": "2026-06-02",
+    "median": 2100,
+    "to": "2026-08-31"
+   },
+   "biggest_in_days": 1240,
+   "biggest_since_records": false,
+   "category": "person",
+   "cross": [
+    {
+     "label": "TEST: Google Trends US search spike",
+     "multiple": 12.0,
+     "source": "gtrends",
+     "when": "before",
+     "z": null
+    },
+    {
+     "label": "TEST: trending on Bluesky",
+     "multiple": null,
+     "source": "bsky",
+     "when": "alongside",
+     "z": null
+    }
+   ],
+   "desc": "TEST fixture seed article (not real data)",
+   "emoji": "👤",
+   "langs": 6,
+   "multiple": 41.2,
+   "onset": "2026-09-21",
+   "qid": "Q999990001",
+   "spark": [
+    2058,
+    2179,
+    1929,
+    2089,
+    2403,
+    2003,
+    1942,
+    1963,
+    1795,
+    2380,
+    2098,
+    2122,
+    2183,
+    1973,
+    1917,
+    1942,
+    2137,
+    2331,
+    2470,
+    2110,
+    1836,
+    2096,
+    2004,
+    2156,
+    2152,
+    2591,
+    2038,
+    1941,
+    1689,
+    2109,
+    2498,
+    2170,
+    2141,
+    1926,
+    2051,
+    2359,
+    1951,
+    2140,
+    2220,
+    1968,
+    2171,
+    1950,
+    1977,
+    2253,
+    2048,
+    2089,
+    2333,
+    2155,
+    1792,
+    2066,
+    2056,
+    2081,
+    2218,
+    2209,
+    2004,
+    2360,
+    2022,
+    1925,
+    2055,
+    2282,
+    2484,
+    1975,
+    2146,
+    2346,
+    2257,
+    2038,
+    2015,
+    2307,
+    2005,
+    1928,
+    2353,
+    1963,
+    2148,
+    2075,
+    1931,
+    2308,
+    1864,
+    2214,
+    2131,
+    2382,
+    2063,
+    1994,
+    1765,
+    2051,
+    1948,
+    1972,
+    89176,
+    61794,
+    42809,
+    30377
+   ],
+   "title": "Test Seed Article",
+   "why": [
+    {
+     "source": "Example News (TEST)",
+     "title": "TEST news headline one (fixture)",
+     "url": "https://example.com/test-news-1"
+    },
+    {
+     "source": "Example Daily (TEST)",
+     "title": "TEST news headline two (fixture)",
+     "url": "https://example.com/test-news-2"
+    }
+   ]
+  },
+  "status": "fixture",
+  "v": 1
+ },
+ "status": "published"
+}

@@ -1,0 +1,14 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "latest.schema.json",
+  "title": "Latest pointer (ripples_latest / v1/latest.json)",
+  "type": "object", "additionalProperties": false,
+  "required": ["n", "date", "status", "puzzle", "next_at"],
+  "properties": {
+    "n": {"type": ["integer", "null"], "description": "null only when no live puzzle has ever been published"},
+    "date": {"$ref": "defs.schema.json#/$defs/date"},
+    "status": {"enum": ["published", "delayed"]},
+    "puzzle": {"anyOf": [{"type": "null"}, {"$ref": "puzzle.schema.json"}]},
+    "next_at": {"type": "string", "description": "ISO timestamp of the next 07:30 UTC rollover"}
+  }
+}

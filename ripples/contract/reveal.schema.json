@@ -1,0 +1,58 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "reveal.schema.json",
+  "title": "RevealPayload (ripples_reveal / v1/reveal/{n}.json)",
+  "type": "object", "additionalProperties": false,
+  "required": ["v", "n", "rounds", "end", "final_multiple"],
+  "properties": {
+    "v": {"const": 1},
+    "n": {"type": "integer"},
+    "rounds": {"type": "array", "minItems": 1, "maxItems": 4, "items": {
+      "type": "object", "additionalProperties": false,
+      "required": ["i", "answer", "answer_qid", "options", "evidence", "caption", "shared_trigger_stop"],
+      "properties": {
+        "i": {"type": "integer", "minimum": 1, "maximum": 4},
+        "answer": {"$ref": "defs.schema.json#/$defs/optionId"},
+        "answer_qid": {"$ref": "defs.schema.json#/$defs/qid"},
+        "options": {"type": "array", "minItems": 4, "maxItems": 4, "items": {
+          "type": "object", "additionalProperties": false,
+          "required": ["id", "qid", "url", "multiple", "z", "calm", "spark", "median", "lag_days", "timing"],
+          "properties": {
+            "id": {"$ref": "defs.schema.json#/$defs/optionId"},
+            "qid": {"$ref": "defs.schema.json#/$defs/qid"},
+            "url": {"$ref": "defs.schema.json#/$defs/wikiUrl"},
+            "multiple": {"type": "number", "minimum": 0},
+            "z": {"type": "number"},
+            "calm": {"type": "boolean"},
+            "spark": {"$ref": "defs.schema.json#/$defs/spark", "minItems": 90, "maxItems": 90},
+            "median": {"type": "number", "minimum": 0},
+            "lag_days": {"type": ["integer", "null"]},
+            "timing": {"enum": ["after", "alongside", null]}
+          }}},
+        "evidence": {
+          "type": "object", "additionalProperties": false,
+          "required": ["linked", "clickstream", "fluke", "fluke_1_in", "fluke_warming", "p_time", "placebos", "split_ok", "badge", "cross"],
+          "properties": {
+            "linked": {"type": "boolean"},
+            "clickstream": {"anyOf": [{"type": "null"}, {
+              "type": "object", "additionalProperties": false, "required": ["month", "clicks", "rank"],
+              "properties": {"month": {"$ref": "defs.schema.json#/$defs/month"}, "clicks": {"type": "integer", "minimum": 0},
+                             "rank": {"type": "integer", "minimum": 1}}}]},
+            "fluke": {"type": ["number", "null"], "minimum": 0, "maximum": 1},
+            "fluke_1_in": {"type": ["integer", "null"], "minimum": 1, "maximum": 50},
+            "fluke_warming": {"type": "boolean"},
+            "p_time": {"type": ["number", "null"], "minimum": 0, "maximum": 1},
+            "placebos": {"type": ["integer", "null"], "minimum": 0},
+            "split_ok": {"type": ["boolean", "null"]},
+            "badge": {"enum": ["flowed", "spiked_after"]},
+            "cross": {"$ref": "defs.schema.json#/$defs/cross"}
+          }
+        },
+        "caption": {"anyOf": [{"type": "null"}, {"$ref": "defs.schema.json#/$defs/sourcedText"}]},
+        "shared_trigger_stop": {"type": "boolean"}
+      }}},
+    "end": {"type": "object", "additionalProperties": false, "required": ["reason", "text"],
+            "properties": {"reason": {"enum": ["evidence_ended", "max_rounds", "fresh_ripples"]}, "text": {"type": "string"}}},
+    "final_multiple": {"type": "number", "minimum": 0}
+  }
+}

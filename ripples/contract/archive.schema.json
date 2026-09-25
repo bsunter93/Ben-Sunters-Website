@@ -1,0 +1,20 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "archive.schema.json",
+  "title": "Archive list (ripples_archive / v1/archive.json)",
+  "type": "array",
+  "items": {
+    "type": "object", "additionalProperties": false,
+    "required": ["n", "date", "from_date", "kind", "seed_title", "seed_emoji", "rounds", "path"],
+    "properties": {
+      "n": {"type": "integer"},
+      "date": {"$ref": "defs.schema.json#/$defs/date"},
+      "from_date": {"$ref": "defs.schema.json#/$defs/dateOrNull"},
+      "kind": {"enum": ["live", "practice", "fixture"]},
+      "seed_title": {"type": ["string", "null"]},
+      "seed_emoji": {"type": ["string", "null"]},
+      "rounds": {"type": "integer", "minimum": 0, "maximum": 4},
+      "path": {"type": "string"}
+    }
+  }
+}
