@@ -705,7 +705,7 @@ declare st jsonb := ripples.att_state_get('engine.recompute'); t0 timestamptz :=
         n_ran int := 0; r jsonb; i int; n_groups int; ld date; zv jsonb := ripples.att_state_get('zvec.run'); done int := 0;
 begin
   if st is null or st ? 'finished' then return jsonb_build_object('idle', true); end if;
-  if zv is null or not (zv ? 'finished') or (zv ->> 'day') <> (current_date - 1)::text then
+  if zv is null or not (zv ? 'finished') or (zv ->> 'day')::date < (st ->> 'started')::date - 1 then   -- the rebuild the reset waited for (may span midnight)
     return jsonb_build_object('waiting', 'zvec rebuild', 'zvec', zv - 'sources' - 'pending' - 'done');
   end if;
   if not coalesce((st ->> 'live_done')::boolean, false) then
