@@ -1,0 +1,172 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Knock-On methods and track record</title>
+<meta name="description" content="How Knock-On measures a knock-on: baselines, thresholds, time-shift placebos, decoy fluke rates, safety rules, the public ledger and the track record, including misses.">
+<link rel="canonical" href="https://bensunter.com/ripples/methods/">
+<meta property="og:title" content="Knock-On: methods and track record">
+<meta property="og:description" content="Every right answer is a measured spike. Every wrong answer is a real page that stayed flat. Here is how, with the misses.">
+<meta property="og:url" content="https://bensunter.com/ripples/methods/">
+<meta property="og:type" content="article">
+<meta property="og:image" content="https://kffkasnzqcddpystszch.supabase.co/functions/v1/ripples-og?v=brand">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<meta name="theme-color" content="#0B3A40">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600&family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600&display=swap">
+<link rel="stylesheet" href="/ripples/app.css">
+<style>
+.doc h2{margin:30px 0 8px}.doc h3{margin:18px 0 6px}
+.doc p,.doc li{font-size:15.5px;line-height:1.6}.doc ul,.doc ol{padding-left:20px}.doc li{margin:4px 0}
+.doc table{width:100%;border-collapse:collapse;font-size:14px;margin:8px 0 12px}
+.doc th,.doc td{text-align:left;padding:8px 6px;border-top:1px solid var(--line);vertical-align:top}
+.doc th{font:500 11px/1.3 var(--mono);letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}
+.tw{overflow-x:auto}.kv{font-family:var(--mono);font-size:13px;overflow-wrap:anywhere}
+.live{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:14px 16px;margin:10px 0}
+.pass{color:var(--ok);font-weight:600}.fail{color:var(--bad);font-weight:600}
+.lede{font-size:17px;color:var(--body)}
+</style>
+<script>try{var t=localStorage.getItem('ko.theme')||localStorage.getItem('theme');if(t==='light'||t==='dark')document.documentElement.setAttribute('data-theme',t)}catch(e){}</script>
+</head>
+<body>
+<header class="bar"><div class="w">
+  <p class="brand"><a href="/ripples/">Knock-On <span>play</span></a></p>
+  <button type="button" id="theme" class="ib" aria-label="Switch theme"><svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"><circle cx="12" cy="12" r="4.2"/><path d="M12 2.2v2M12 19.8v2M2.2 12h2M19.8 12h2M5 5l1.4 1.4M17.6 17.6L19 19M19 5l-1.4 1.4M6.4 17.6L5 19"/></svg></button>
+</div></header>
+<main class="w doc">
+<p class="micro">Measured attention, not proof of cause.</p>
+<h1 style="font:600 34px/1.1 var(--display);margin:14px 0 10px">Methods and track record</h1>
+<p class="lede">Knock-On is a daily game built on a measurement engine called <em>Today's Ripples</em>. Every right answer is a page whose Wikipedia readers spiked after its parent. Every wrong answer is a real linked page that stayed flat. This page says exactly how that is decided, and prints the misses.</p>
+<p class="sm muted">Method version 5.0. The numbers on the game come only from SQL over public data. AI-written captions are labelled and can never add hops, numbers or options.</p>
+
+<h2>Track record (live)</h2>
+<div id="track" class="live" aria-live="polite"><p class="muted">Loading the track record…</p></div>
+<div id="health" class="live" aria-live="polite"><p class="muted">Loading pipeline status…</p></div>
+
+<h2>What gets measured</h2>
+<ul>
+  <li><b>Views.</b> Daily Wikipedia pageviews, <code>agent=user</code>, all access methods, on a log scale: x = ln(1 + views).</li>
+  <li><b>Baseline.</b> For a reference day τ, the 91 days from τ−111 to τ−21. m = median of x; s = max(0.1, 1.4826 × MAD); z = (x − m) / s. "Normal readers" means e<sup>m</sup> − 1 a day. The seed card shades this window on its sparkline.</li>
+  <li><b>Seed.</b> A page that appeared in a seed source (Wikipedia most-read lists, Google Trends daily RSS) in the last 3 days, resolves to an English Wikipedia article, has an onset (first day in the last 10 with z ≥ 3, in a run that reaches z ≥ 5), a peak of at least 3× normal, passes the safety filter, was not a puzzle seed in the last 30 days, and is not only a Main Page feature.</li>
+  <li><b>Biggest day in N days.</b> N counts back to the most recent earlier day with at least as many views as the peak. With no such day, it says "since records began" (July 2015).</li>
+</ul>
+
+<h2>How a hop is tested</h2>
+<p>Candidates are fixed per parent <em>before any testing</em>: the parent's top 20 clickstream destinations for the latest month, then its live outlinks with a 60-day median of at least 300 views a day, capped at 60. Disambiguation, list, date and year pages, the parent itself and blocklisted pages are excluded.</p>
+<div class="tw"><table>
+<tr><th>Test</th><th>Rule</th></tr>
+<tr><td>Spike</td><td>S = the highest z in the 4 days from the parent's onset. Passes at S ≥ 3 and a peak of at least 1.5× normal.</td></tr>
+<tr><td>Timing</td><td>The candidate's own onset is the first day in [τp−7, τp+3] with z ≥ 3. Earlier than the parent: rejected. Same day: "alongside". Later: "spiked after".</td></tr>
+<tr><td>Time-shift placebo</td><td>The same test repeated at fake onsets 3, 4, … about 38 weeks earlier. p = (1 + weeks that did as well) / (1 + weeks tested), at best about 0.026.</td></tr>
+<tr><td>Fluke meter</td><td>Every day, 8 calm pages (|z| &lt; 1 for 14 days), matched to the real seeds on size and topic, are given a seed's onset and expanded with identical code. Anything they pass is a fluke by construction. Per strength band of S, the fluke rate f = (decoy pass rate) / (real pass rate) over the last 90 days, shown as "about 1 in K".</td></tr>
+<tr><td>Shown hop</td><td>Spike and timing pass, p ≤ 0.10 and f ≤ 0.20.</td></tr>
+<tr><td>Answer hop</td><td>p ≤ 0.05 and f ≤ 0.10; up at least 1.3× on both desktop and mobile; not a Main Page feature within a day of its onset; and at depth 2 or more, no shared-trigger flag (it is not in the seed's own candidate set and is not an earlier-onset hop of another of today's seeds). A flagged hop stops the chain.</td></tr>
+</table></div>
+<p>While the decoy pool has fewer than 500 tests, the meter shows "warming up" and an answer hop needs p ≤ 0.05 anyway. The meter never combines odds across a chain.</p>
+
+<h2>Decoys: the wrong answers</h2>
+<p>Each round's three wrong options are real pages linked from the same parent that stayed calm: highest |z| under 1 and a peak under 1.25× normal since a week before the parent's onset, a normal readership within 0.5–2× the answer's, a different title stem, and at least two of the three in the answer's topic. If there aren't three calm siblings, that hop can't be a round. After you answer, you see their flat sparklines next to the spike.</p>
+
+<h2>Evidence labels</h2>
+<ul>
+  <li><b>📈 Spiked after / alongside</b> the timing test above.</li>
+  <li><b>👣 Readers clicked through</b> only when Wikipedia's monthly clickstream has the exact parent → answer link in its top 20 for the latest month. It is the only label that talks about readers moving between pages.</li>
+  <li><b>🔗 Linked from</b> the parent's article links to it.</li>
+  <li><b>📱💻 Desktop and mobile</b> the rise shows on both.</li>
+  <li><b>🎲 Fluke meter</b> as above, or "warming up".</li>
+  <li><b>Also on other channels</b> corroboration badges from other public sources. They are not part of the measurement and never change a result.</li>
+  <li><b>Players' picks</b> what other players chose, labelled players' picks and shown at 30 or more players. Crowd numbers are never evidence.</li>
+  <li><b>AI-written context</b> an optional caption by Claude, hedged and about attention only.</li>
+</ul>
+
+<h2>Chains, rounds and Call It</h2>
+<p>Chains are ranked by confidence first: the number of answer hops, then the summed log fluke odds; topic jumps only break ties. A chain of 3+ hops becomes the puzzle (capped at 4). A 2-hop chain is topped up with "fresh ripples", single hops from other seeds, shown as a · break. With fewer than 3 rounds the puzzle comes from the reserve bank of the last 14 days and shows its real date. With nothing at all, the page says it is delayed. There is no padding: the chain ends where the evidence ends.</p>
+<p><b>Call It</b> offers 4 calm pages linked from round 1's seed, each with a median of at least 2,000 views a day, so this site's own traffic can't move them. A call hits when any day in the 7-day window reaches z ≥ 3 against a baseline frozen on the puzzle date and at least 1.5× normal. <b>The Model v0 (base rate)</b> is the historical hit rate of such pages, adjusted by clickstream rank when that data exists. Crowd and Model are shown as raw counts until 200 calls resolve; Brier scores and skill come after that, printed even if skill ≤ 0.</p>
+
+<h2>The Board</h2>
+<p>Splash is a seed's peak multiple. Wake is how many of a fixed set of 20 linked pages (clickstream top 20, else top outlinks) passed the shown-hop test. Big Wave: splash ≥ 10 and wake ≥ 3. Sleeper: splash under 10, wake ≥ 3. Belly Flop: splash ≥ 10, wake 0, at least 15 tested. Ripple: everything else. Natural disasters appear without a label or nickname.</p>
+
+<h2>Safety</h2>
+<p>Excluded from seeds, options and Call It: people who died in the last 60 days; violence, crime events, terrorism, war and battles, mass-casualty disasters, suicide, sexual or adult topics and hate; titles like "Death of", "Killing of", "Shooting of", massacres, attacks and bombings; living private individuals; and a manual blocklist. An optional daily AI review can veto a puzzle before 07:20 UTC, never add to it.</p>
+
+<h2>The ledger</h2>
+<p>Each published puzzle is hashed (puzzle, reveal and Call It odds, without captions) and chained to the previous row, so nobody, including us, can quietly change a past answer. The chain is public at <a href="https://kffkasnzqcddpystszch.supabase.co/storage/v1/object/public/ripples/v1/ledger.json">ledger.json</a>; the current head is in the track record above.</p>
+
+<h2>v1 post-mortem: 0 of 120</h2>
+<p>An earlier version of this project published 120 cross-signal "discoveries". Re-run with a corrected out-of-sample test and placebo controls, <b>0 of 120 survived</b>. Randomly paired signals look like noise; hypothesis-driven pairs did better, but the headline hits came from testing many pairs without controls. v5 is built around that lesson: candidate sets fixed before testing, time-shift placebos on every hop, decoy starting pages to measure the false-pass rate, a stop rule for shared triggers, a monthly re-grade against real clickstream, and a hash-chained ledger.</p>
+
+<h2>Data sources and licences</h2>
+<div class="tw"><table>
+<tr><th>Source</th><th>Use</th><th>Licence</th></tr>
+<tr><td>Wikimedia pageviews, links, most-read and clickstream</td><td>all measurements</td><td>CC0 / open</td></tr>
+<tr><td>Wikidata</td><td>topics, dates of death, safety</td><td>CC0</td></tr>
+<tr><td>Wikipedia short descriptions</td><td>option subtitles</td><td>CC BY-SA</td></tr>
+<tr><td>Google Trends daily RSS</td><td>seed discovery, "why it's trending" links</td><td>official feed</td></tr>
+<tr><td>Google Trends "Trending Now" internal endpoint</td><td>seed enrichment, free game only</td><td><span class="tag">unofficial</span> never in open data</td></tr>
+<tr><td>Bluesky trends</td><td>badge only</td><td>public API</td></tr>
+</table></div>
+<p>The open data files (<code>v1/data/</code>) contain Wikimedia-derived fields only, under CC BY 4.0. See <a href="/ripples/pro/#data">Open data</a>.</p>
+
+<h2>Privacy</h2>
+<p>We store a hashed random ID, a daily-salted hash of your IP (for rate limits; the salt is deleted after the day), your picks and your country. No accounts. Waitlist emails are stored only for that list and cannot be read back through the site. Streaks, history and calls live in your browser's local storage.</p>
+
+<h2>Changelog</h2>
+<ul>
+  <li><b>v5.0 (launch, #1 on 26 Sep 2026)</b> Knock-On replaces the private "Today's Ripples" v4 page. Automatic discovery replaces hand-written cascades. The Ripple Index score and all dollar figures are retired from public view. New: decoy fluke meter, time-shift placebos, shared-trigger stop rule, Call It with The Model v0, the Board, the public ledger.</li>
+</ul>
+<p style="margin-top:30px"><a class="btn" href="/ripples/">Play today's chain</a></p>
+</main>
+<footer class="foot"><div class="w">
+  <nav><a href="/ripples/">Play</a><a href="/ripples/archive/">Archive</a><a href="/ripples/pro/">Pro</a><a href="/ripples/pro/#data">Open data</a></nav>
+  <p><b>Measured attention, not proof of cause.</b> By <a href="/">Ben Sunter</a>.</p>
+</div></footer>
+<script type="module">
+import * as C from '/ripples/config.js';
+import { fmtInt, fmtMonth, fmtDate } from '/ripples/lib.js';
+const $ = id => document.getElementById(id);
+const h = (t, a, ...k) => { const e = document.createElement(t); if (a) for (const x in a) e.setAttribute(x, a[x]); for (const c of k.flat()) if (c != null && c !== '') e.append(c.nodeType ? c : String(c)); return e; };
+const get = async u => { try { const r = await fetch(u); return r.ok ? await r.json() : undefined; } catch (e) { return undefined; } };
+const rpc = fn => get(`${C.SB_URL}/rest/v1/rpc/${fn}?apikey=${C.SB_KEY}`);
+$('theme').onclick = () => { const r = document.documentElement, d = r.getAttribute('data-theme') === 'dark' || (!r.hasAttribute('data-theme') && matchMedia('(prefers-color-scheme: dark)').matches); r.setAttribute('data-theme', d ? 'light' : 'dark'); try { localStorage.setItem('ko.theme', d ? 'light' : 'dark'); } catch (e) {} };
+const pf = (ok, txt) => h('span', { class: ok ? 'pass' : 'fail' }, ok ? 'PASS ' : 'FAIL ', txt);
+const pc = x => (x == null ? '–' : Math.round(x * 100) + '%');
+(async () => {
+  let t = await get(`${C.STORAGE}/track.json`);
+  if (!t) t = await rpc('ripples_track_record');
+  const el = $('track');
+  if (!t) { el.replaceChildren(h('p', null, 'No track record yet. It starts with puzzle #1 (26 Sep 2026); Call It results resolve 8 days after each puzzle.')); }
+  else {
+    const c = t.callit || {}, out = [h('h3', null, 'Call It: crowd vs The Model v0 (base rate)')];
+    out.push(h('p', null, `${fmtInt(c.resolved || 0)} calls resolved. Crowd: ${fmtInt((c.crowd || {}).hits || 0)} hits from ${fmtInt((c.crowd || {}).calls || 0)} calls. Model: ${fmtInt((c.model || {}).hits || 0)} hits.`,
+      c.show_rates && c.model && c.model.brier != null ? ` Model Brier score ${c.model.brier.toFixed(3)}.` : ' Rates and Brier scores are shown once 200 calls have resolved.',
+      c.climatology_rate != null ? ` Base rate: ${pc(c.climatology_rate)}.` : ''));
+    const rg = t.regrade || [];
+    out.push(h('h3', null, 'Monthly clickstream re-grade, misses included'));
+    out.push(rg.length ? h('ul', null, rg.map(r => h('li', null, `${fmtMonth(r.month)}: ${r.clicked_through} of ${r.hops} answer hops had readers clicking through from the parent`))) : h('p', { class: 'muted' }, 'No month re-graded yet. The first re-grade runs after the next monthly clickstream release.'));
+    const b = t.backfill;
+    out.push(h('h3', null, 'Launch gates (30-day reconstructed backfill)'));
+    if (b) out.push(h('ul', null,
+      h('li', null, pf(b.yield_3plus >= 0.8, `G1 yield: ${pc(b.yield_3plus)} of ${b.days} days made a 3+ round puzzle (gate 80%)`)),
+      h('li', null, pf(b.chain_2plus >= 0.5, `G1 chains: ${pc(b.chain_2plus)} of days had a continuous 2+ hop chain (gate 50%)`)),
+      h('li', null, pf(b.median_fluke <= 0.1, `G2 null health: median fluke rate of answer hops ${b.median_fluke == null ? '–' : b.median_fluke.toFixed(3)} (gate 0.10)`)),
+      h('li', null, 'G2 also needs a decoy pool of 500+ tests; G3 quality is a hand review of 10 practice puzzles (gate 7 of 10). Neither is in this live feed yet.')));
+    else out.push(h('p', { class: 'muted' }, 'Backfill results not published yet.'));
+    const lg = t.ledger;
+    out.push(h('h3', null, 'Ledger'), lg && lg.head ? h('p', null, `${fmtInt(lg.n)} puzzles over ${fmtInt(lg.days)} days. Head hash: `, h('span', { class: 'kv' }, lg.head)) : h('p', { class: 'muted' }, 'No puzzle ledgered yet.'));
+    el.replaceChildren(...out);
+  }
+  const hl = await rpc('ripples_health');
+  $('health').replaceChildren(h('h3', null, 'Pipeline status'), hl ? h('p', null,
+    hl.latest_n ? `Latest puzzle #${hl.latest_n}, published ${hl.published_at ? fmtDate(hl.published_at.slice(0, 10)) + ' ' + hl.published_at.slice(11, 16) + ' UTC' : '–'}. ` : 'No live puzzle yet. ',
+    hl.stale ? 'Status: behind schedule. ' : 'Status: on time. ',
+    hl.stage ? `Today's stage: ${hl.stage}. ` : '', hl.wm_calls != null ? `Wikimedia calls today: ${fmtInt(hl.wm_calls)}. ` : '', hl.errors ? `Errors: ${hl.errors}. ` : '',
+    `Clickstream data: ${hl.clickstream_month ? fmtMonth(hl.clickstream_month) : 'not loaded yet'}.`) : h('p', { class: 'muted' }, 'Status unavailable right now.'));
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,695 @@
+// att-news — news and TV attention collector for the Ripples v5 attention layer (W7).
+// Modes (§3.3 / §7.3):
+//   gkg       one GDELT GKG 2.1 raw 15-minute file per run (lastupdate.txt, or the next file after att_state
+//             'gkg.state' while catching up). Stream-unzips it and counts, per registry term, the documents whose
+//             V1Persons / V1Organizations / V1Locations / AllNames (or V1Themes for theme keys) mention it, with the
+//             number of distinct source countries (ccTLD of SourceCommonName) as aux; a '__total__' series (documents);
+//             the top 200 surging entities (vs an EWMA baseline per file) as discovery candidates; and co-mention pairs
+//             where one side is an active topic as att_edges. Never calls the GDELT DOC API (RED for us).
+//   thirdeye  IA TV News Archive Third Eye chyrons (archive.org/services/third-eye.php?last=N). Chyron-minutes per
+//             registry term per channel for every complete hour in the window; same-hour term co-occurrence edges.
+//   sitemaps  BBC, NYT, Guardian and Fox news sitemaps: headline counts per registry term per day, number of outlets
+//             (aux), per-outlet totals, 'newsroom' co-mention edges, and cross-outlet news:keywords candidates.
+//   backfill  GKG history sampling is not enabled on the free tier (§3.6: GKG enters at 28 days like other warm-up
+//             sources); jobs are marked skipped.
+//   ping      no outbound calls.
+// Stored: counts, ranks and indices only. No headline, chyron or article text, no URLs, no personal data.
+import { politeFetch, type Run, serve, stateGet, stateSet, db, jobsDone, WALL_MS } from "./att.ts";
+
+const FN = "att-news";
+const GKG_BASE = "https://data.gdeltproject.org/gdeltv2/";
+const THIRDEYE = "https://archive.org/services/third-eye.php";
+const OUTLETS: Record<string, string> = {
+  bbc: "https://www.bbc.com/sitemaps/https-sitemap-com-news-1.xml",
+  nyt: "https://www.nytimes.com/sitemaps/new/news.xml.gz",
+  guardian: "https://www.theguardian.com/sitemaps/news.xml",
+  fox: "https://www.foxnews.com/sitemap.xml?type=news",
+};
+
+// ------------------------------------------------------------ text normalisation + term matcher
+const normMem = new Map<string, string>();
+/** lower case, accents stripped, every non letter/digit run -> one space. */
+export function norm(s: string): string {
+  const c = normMem.get(s);
+  if (c !== undefined) return c;
+  const v = s.toLowerCase().normalize("NFKD").replace(/[\u0300-\u036f]/g, "").replace(/[^\p{L}\p{N}]+/gu, " ").trim();
+  if (normMem.size < 200_000) normMem.set(s, v);
+  return v;
+}
+
+export interface Term { key: string; topic_id: number | null; active: boolean; key_type: string; match: any }
+/** Whole-word phrase matcher: patterns indexed by first token; text must be norm()-ed. " ~ " separates fields. */
+export class Matcher {
+  private byFirst = new Map<string, Array<[string, number]>>();
+  patterns = 0;
+  constructor(public terms: Term[]) {
+    terms.forEach((t, i) => {
+      if (t.key_type === "theme") return;
+      const aliases: string[] = Array.isArray(t.match?.aliases) ? t.match.aliases : [];
+      const seen = new Set<string>();
+      for (const raw of [t.key, ...aliases]) {
+        const p = norm(String(raw));
+        // too short / purely numeric patterns are noise in names and headlines
+        if (p.length < 3 || /^[\d ]+$/.test(p) || seen.has(p)) continue;
+        seen.add(p);
+        const first = p.split(" ")[0];
+        let arr = this.byFirst.get(first);
+        if (!arr) { arr = []; this.byFirst.set(first, arr); }
+        arr.push([" " + p + " ", i]);
+        this.patterns++;
+      }
+    });
+  }
+  match(t: string, out: Set<number>) {
+    if (!t) return;
+    const padded = " " + t + " ";
+    const seenTok = new Set<string>();
+    for (const tok of t.split(" ")) {
+      if (seenTok.has(tok)) continue;
+      seenTok.add(tok);
+      const c = this.byFirst.get(tok);
+      if (!c) continue;
+      for (const [p, i] of c) if (!out.has(i) && (p.length === tok.length + 2 || padded.includes(p))) out.add(i);
+    }
+  }
+}
+
+async function loadTerms(run: Run, source: string): Promise<Term[]> {
+  if (Array.isArray(run.body?.keys) && run.body.keys.length) {
+    return run.body.keys.map((k: any) => ({ key: String(k.key), topic_id: k.topic_id ?? null, active: k.active === true,
+      key_type: k.key_type ?? "term", match: k.match ?? {} }));
+  }
+  const { data, error } = await db.rpc("att_news_terms", { p_source: source, p_limit: 5000 });
+  if (error) throw new Error(`att_news_terms: ${error.message}`);
+  return (data ?? []) as Term[];
+}
+
+// ------------------------------------------------------------ small helpers
+const pad = (n: number) => String(n).padStart(2, "0");
+const hourIso = (ms: number) => new Date(Math.floor(ms / 3600e3) * 3600e3).toISOString().slice(0, 13) + ":00:00Z";
+const dayOf = (ms: number) => new Date(ms).toISOString().slice(0, 10);
+function gkgTsMs(f: string): number {
+  return Date.UTC(+f.slice(0, 4), +f.slice(4, 6) - 1, +f.slice(6, 8), +f.slice(8, 10), +f.slice(10, 12), +f.slice(12, 14));
+}
+function gkgName(ms: number): string {
+  const d = new Date(ms);
+  return `${d.getUTCFullYear()}${pad(d.getUTCMonth() + 1)}${pad(d.getUTCDate())}${pad(d.getUTCHours())}${pad(d.getUTCMinutes())}00`;
+}
+function failStatus(run: Run, host: string): string {
+  const s = run.skipped.filter((x) => x.host === host).map((x) => x.reason).join(",");
+  if (/robots/.test(s)) return "robots_disallow";
+  if (/host_killed_(429|503)/.test(s)) return "host_killed_429";
+  if (/budget|per_run_cap/.test(s)) return "budget_exhausted";
+  if (/disabled/.test(s)) return "disabled";
+  return "http_error";
+}
+function decodeXml(s: string): string {
+  return s.replace(/^<!\[CDATA\[/, "").replace(/\]\]>$/, "")
+    .replace(/&#x([0-9a-f]+);/gi, (_, h) => String.fromCodePoint(parseInt(h, 16)))
+    .replace(/&#(\d+);/g, (_, d) => String.fromCodePoint(+d))
+    .replace(/&quot;/g, '"').replace(/&apos;/g, "'").replace(/&lt;/g, "<").replace(/&gt;/g, ">").replace(/&amp;/g, "&");
+}
+async function rpcJson(run: Run, fn: string, args: Record<string, unknown>): Promise<any> {
+  const { data, error } = await db.rpc(fn, args);
+  if (error) { run.errors.push(`${fn}: ${error.message}`); return null; }
+  return data;
+}
+function noteIngest(run: Run, r: any, hourly = 0) {
+  if (!r) return;
+  const rows = Number(r.rows ?? 0);
+  const h = Number(r.hourly ?? Math.min(hourly, rows));
+  run.rows.obs_hourly += h;
+  run.rows.obs += Math.max(0, rows - h);
+  run.rows.series_new += Number(r.series_new ?? 0);
+  if (Array.isArray(r.rejected)) {
+    const bad = r.rejected.filter((x: any) => x?.reason !== "hourly_active_only");
+    if (bad.length) run.rejected.push(...bad.slice(0, 20));
+  }
+}
+async function accum(run: Run, batch: string, rows: any[]) {
+  if (!rows.length) return null;
+  if (run.dryRun) { run.dryRows.push(...rows.slice(0, Math.max(0, 50 - run.dryRows.length))); return { rows: rows.length }; }
+  const r = await rpcJson(run, "att_news_accum", { p_run: { run_id: run.runId }, p_batch: batch, p_rows: rows });
+  if (r?.dup) run.extra.duplicate_batch = batch;
+  noteIngest(run, r);
+  return r;
+}
+async function edgesAccum(run: Run, batch: string, rows: any[]) {
+  if (!rows.length || run.dryRun) return;
+  const r = await rpcJson(run, "att_news_edges_accum", { p_batch: batch, p_rows: rows });
+  run.rows.edges += Number(r?.rows ?? 0);
+}
+async function candidatesMerge(run: Run, rows: any[]) {
+  if (!rows.length || run.dryRun) return;
+  const r = await rpcJson(run, "att_news_candidates_merge", { p_rows: rows });
+  run.rows.candidates += Number(r?.rows ?? 0);
+}
+
+// ccTLD of an outlet domain -> ISO 3166 alpha-2 (generic TLDs -> null)
+const GENERIC = new Set(["com", "org", "net", "info", "biz", "gov", "edu", "mil", "int", "news", "tv", "fm", "io", "co",
+  "me", "ly", "am", "online", "site", "live", "today", "press", "media", "xyz", "blog", "app", "top", "club", "world"]);
+function countryOf(domain: string): string | null {
+  const i = domain.lastIndexOf(".");
+  if (i < 0) return null;
+  const tld = domain.slice(i + 1).toLowerCase();
+  if (tld.length !== 2 || GENERIC.has(tld)) return null;
+  return tld === "uk" ? "GB" : tld.toUpperCase();
+}
+
+// ------------------------------------------------------------ zip (single entry, deflate)
+function zipEntry(buf: Uint8Array): { start: number; csize: number; method: number } {
+  const dv = new DataView(buf.buffer, buf.byteOffset, buf.byteLength);
+  let eocd = -1;
+  for (let i = buf.length - 22; i >= Math.max(0, buf.length - 65557); i--) {
+    if (dv.getUint32(i, true) === 0x06054b50) { eocd = i; break; }
+  }
+  if (eocd < 0) throw new Error("zip: no end of central directory");
+  const cd = dv.getUint32(eocd + 16, true);
+  if (dv.getUint32(cd, true) !== 0x02014b50) throw new Error("zip: bad central directory");
+  const method = dv.getUint16(cd + 10, true);
+  const csize = dv.getUint32(cd + 20, true);
+  const loc = dv.getUint32(cd + 42, true);
+  if (dv.getUint32(loc, true) !== 0x04034b50) throw new Error("zip: bad local header");
+  const start = loc + 30 + dv.getUint16(loc + 26, true) + dv.getUint16(loc + 28, true);
+  return { start, csize, method };
+}
+
+/** Stream text lines out of a byte stream (TextDecoderStream + manual split; no quadratic concatenation). */
+async function forEachLine(stream: ReadableStream<any>, fn: (line: string) => void | false, stop: () => boolean) {
+  const reader = stream.pipeThrough(new TextDecoderStream()).getReader();
+  let carry = "";
+  try {
+    while (true) {
+      if (stop()) return false;
+      const { value, done } = await reader.read();
+      if (done) break;
+      const s = carry ? carry + value : value;
+      let start = 0, i: number;
+      while ((i = s.indexOf("\n", start)) >= 0) {
+        if (fn(s.slice(start, i)) === false) return false;
+        start = i + 1;
+      }
+      carry = s.slice(start);
+    }
+    if (carry) fn(carry);
+    return true;
+  } finally {
+    reader.cancel().catch(() => undefined);
+  }
+}
+
+// ------------------------------------------------------------ mode: gkg
+interface GkgState { last_file?: string; files?: number; gaps?: number }
+interface Ewma { n_files: number; b: Record<string, number> }
+const EWMA_ALPHA = 0.05;
+const EWMA_KEEP = 4000;
+const CAND_WARMUP_FILES = 4;
+
+async function gkg(run: Run) {
+  const SRC = "gdelt.gkg";
+  const HOST = "data.gdeltproject.org";
+  const t0 = Date.now();
+  const ms: Record<string, number> = {};
+  const st = ((await stateGet("gkg.state")) ?? {}) as GkgState;
+  let file: string | null = typeof run.params.file === "string" && /^\d{14}$/.test(run.params.file) ? run.params.file : null;
+  let viaState = false;
+  if (!file && st.last_file) {
+    // catch-up: the next file after the saved one, if GDELT has certainly published it (> 20 min old) and the gap
+    // is short enough to be worth closing (< 6 h); otherwise take the latest file from lastupdate.txt
+    const nextMs = gkgTsMs(st.last_file) + 15 * 60e3;
+    const age = Date.now() - nextMs;
+    if (age > 20 * 60e3 && age < 6 * 3600e3) { file = gkgName(nextMs); viaState = true; }
+  }
+  if (!file) {
+    const r = await politeFetch(run, GKG_BASE + "lastupdate.txt", { source: SRC, timeoutMs: 15_000 });
+    if (!r) { run.source({ source: SRC, status: failStatus(run, HOST), note: "lastupdate.txt not fetched" }); return; }
+    if (!r.ok) { await r.body?.cancel(); run.source({ source: SRC, status: "http_error", note: `lastupdate ${r.status}` }); return; }
+    const txt = await r.text();
+    const m = txt.match(/(\d{14})\.gkg\.csv\.zip/);
+    if (!m) { run.errors.push("lastupdate.txt: no gkg file"); run.source({ source: SRC, status: "http_error" }); return; }
+    file = m[1];
+    if (st.last_file && file <= st.last_file) {
+      run.extra.file = file;
+      run.source({ source: SRC, status: "ok", keys: 0, rows: 0, ms: Date.now() - t0, note: "no new file" });
+      return;
+    }
+    if (st.last_file && gkgTsMs(file) - gkgTsMs(st.last_file) > 15 * 60e3) {
+      run.extra.gap_files = Math.round((gkgTsMs(file) - gkgTsMs(st.last_file)) / (15 * 60e3)) - 1;
+    }
+  }
+  run.extra.file = file;
+  ms.lookup = Date.now() - t0;
+
+  const terms = await loadTerms(run, SRC);
+  const matcher = new Matcher(terms);
+  const themeIdx = new Map<string, number>();
+  terms.forEach((t, i) => { if (t.key_type === "theme") themeIdx.set(t.key.toUpperCase(), i); });
+  ms.terms = Date.now() - t0 - ms.lookup;
+
+  // ---- download (one request)
+  const td = Date.now();
+  const res = await politeFetch(run, `${GKG_BASE}${file}.gkg.csv.zip`, { source: SRC, timeoutMs: 60_000 });
+  if (!res) { run.source({ source: SRC, status: failStatus(run, HOST), note: `file ${file} not fetched` }); return; }
+  if (res.status === 404 && viaState) {
+    await res.body?.cancel();
+    await stateSet("gkg.state", { ...st, last_file: file, gaps: (st.gaps ?? 0) + 1 });
+    run.source({ source: SRC, status: "ok", rows: 0, ms: Date.now() - t0, note: `file ${file} missing upstream (404); skipped` });
+    return;
+  }
+  if (!res.ok) { await res.body?.cancel(); run.source({ source: SRC, status: "http_error", note: `file ${file}: ${res.status}` }); return; }
+  const zip = new Uint8Array(await res.arrayBuffer());
+  ms.download = Date.now() - td;
+  run.extra.zip_bytes = zip.length;
+
+  // ---- parse
+  const tp = Date.now();
+  const ent = zipEntry(zip);
+  const raw = new Blob([zip.subarray(ent.start, ent.start + ent.csize)]).stream();
+  const stream = ent.method === 8 ? raw.pipeThrough(new DecompressionStream("deflate-raw")) : raw;
+
+  const nT = terms.length;
+  const termDocs = new Float64Array(nT);
+  const termCC: Array<Set<string> | undefined> = new Array(nT);
+  const totalCC = new Set<string>();
+  const entDocs = new Map<string, number>();      // normalized entity -> documents
+  const entLabel = new Map<string, string>();     // normalized -> display label (first seen)
+  const entKind = new Map<string, string>();
+  const pairs = new Map<string, number>();        // termIdx \u0001 entity -> documents
+  let N = 0, bad = 0, bytes = 0;
+  const matched = new Set<number>();
+  const docEnt = new Map<string, string>();       // per document: normalized -> kind
+
+  const addNames = (field: string | undefined, kind: string, mode: "list" | "allnames" | "loc") => {
+    if (!field) return;
+    let from = 0;
+    while (from <= field.length) {
+      let j = field.indexOf(";", from);
+      if (j < 0) j = field.length;
+      let nm = field.slice(from, j);
+      from = j + 1;
+      if (!nm) continue;
+      if (mode === "allnames") { const c = nm.lastIndexOf(","); if (c > 0) nm = nm.slice(0, c); }
+      else if (mode === "loc") { const p = nm.split("#"); nm = (p[1] ?? "").split(",")[0]; }
+      if (nm.length < 3 || nm.length > 80) continue;
+      const n = norm(nm);
+      if (n.length < 3) continue;
+      if (!docEnt.has(n)) {
+        docEnt.set(n, kind);
+        if (!entLabel.has(n) && mode !== "list") entLabel.set(n, nm.trim());
+      }
+    }
+  };
+
+  const ok = await forEachLine(stream, (line) => {
+    bytes += line.length;
+    const c = line.split("\t");
+    if (c.length < 24) { if (line) bad++; return; }
+    N++;
+    docEnt.clear();
+    matched.clear();
+    addNames(c[23], "name", "allnames");   // AllNames: proper-cased, offsets stripped
+    addNames(c[11], "person", "list");     // V1Persons
+    addNames(c[13], "org", "list");        // V1Organizations
+    addNames(c[9], "place", "loc");        // V1Locations (feature name before the first comma)
+    const cc = countryOf(c[3] ?? "");
+    if (cc) totalCC.add(cc);
+    // registry terms against the document's names (fields separated so phrases never span two names)
+    matcher.match([...docEnt.keys()].join(" ~ "), matched);
+    if (themeIdx.size && c[7]) for (const th of c[7].split(";")) { const i = themeIdx.get(th); if (i !== undefined) matched.add(i); }
+    for (const i of matched) {
+      termDocs[i]++;
+      if (cc) (termCC[i] ??= new Set()).add(cc);
+    }
+    // entity document counts (discovery) and co-mentions with active topics (hop evidence)
+    let k = 0;
+    for (const [n, kind] of docEnt) {
+      entDocs.set(n, (entDocs.get(n) ?? 0) + 1);
+      if (!entKind.has(n)) entKind.set(n, kind);
+      if (kind === "place" || ++k > 40) continue;
+      for (const i of matched) {
+        if (!terms[i].active) continue;
+        const pk = i + "\u0001" + n;
+        pairs.set(pk, (pairs.get(pk) ?? 0) + 1);
+      }
+    }
+  }, () => run.outOfTime(20_000));
+  ms.parse = Date.now() - tp;
+  run.extra.articles = N;
+  run.extra.entities = entDocs.size;
+  run.extra.text_chars = bytes;
+  if (bad) run.extra.bad_lines = bad;
+  if (!ok) {
+    // never write a partial file: counts would be wrong; the next run retries this file (state not advanced)
+    run.partial = true;
+    run.source({ source: SRC, status: "partial", ms: Date.now() - t0, note: `out of time after ${N} docs; nothing written` });
+    run.extra.ms = ms;
+    return;
+  }
+
+  // ---- write observations (daily for every watched term incl. zeros; hourly for active topics' hits)
+  const tw = Date.now();
+  const fileMs = gkgTsMs(file) - 60e3;   // the 15-minute window ending at the file timestamp
+  const day = dayOf(fileMs);
+  const hour = hourIso(fileMs);
+  const rows: any[] = [];
+  let hit = 0;
+  for (let i = 0; i < nT; i++) {
+    const t = terms[i];
+    const v = termDocs[i];
+    if (v > 0) hit++;
+    rows.push({ source: SRC, key: t.key, day, value: v, members: v > 0 ? [...(termCC[i] ?? [])] : [], topic_id: t.topic_id });
+    if (v > 0 && t.active) rows.push({ source: SRC, key: t.key, ts: hour, value: v, members: [...(termCC[i] ?? [])], topic_id: t.topic_id });
+  }
+  rows.push({ source: SRC, key: "__total__", day, value: N, members: [...totalCC] });
+  rows.push({ source: SRC, key: "__total__", ts: hour, value: N, members: [...totalCC] });
+  const r = await accum(run, `gkg:${file}`, rows);
+  run.extra.terms_hit = hit;
+
+  // ---- co-mention edges (at least one side active; top 25 per term with >= 2 shared documents)
+  const byTerm = new Map<number, Array<[string, number]>>();
+  for (const [pk, n] of pairs) {
+    if (n < 2) continue;
+    const s = pk.indexOf("\u0001");
+    const i = +pk.slice(0, s);
+    const e = pk.slice(s + 1);
+    // skip the term's own names (the entity is the topic itself)
+    const self = new Set<number>(); matcher.match(e, self);
+    if (self.has(i)) continue;
+    let a = byTerm.get(i); if (!a) { a = []; byTerm.set(i, a); }
+    a.push([e, n]);
+  }
+  const edges: any[] = [];
+  for (const [i, arr] of byTerm) {
+    arr.sort((x, y) => y[1] - x[1]);
+    for (const [e, n] of arr.slice(0, 25)) {
+      edges.push({ source: SRC, from_key: terms[i].key, to_key: e, day, n, from_topic: terms[i].topic_id, to_total: entDocs.get(e) ?? n });
+    }
+  }
+  await edgesAccum(run, `edges:gkg:${file}`, edges);
+  run.extra.pairs = edges.length;
+
+  // ---- discovery: surging entities vs an EWMA baseline of documents per file
+  const ew = ((await stateGet("gkg.ewma")) ?? { n_files: 0, b: {} }) as Ewma;
+  const cands: Array<{ n: string; z: number; c: number }> = [];
+  if (ew.n_files >= CAND_WARMUP_FILES) {
+    for (const [n, c] of entDocs) {
+      if (c < 5) continue;
+      const b = ew.b[n] ?? 0;
+      const z = (c - b) / Math.sqrt(b + 1);
+      if (z >= 3) cands.push({ n, z, c });
+    }
+    cands.sort((a, b) => b.z - a.z);
+  }
+  const top = cands.slice(0, 200);
+  const candRows = top.map((x, k) => ({
+    day, source: SRC, geo: "ALL", label: entLabel.get(x.n) ?? x.n, rank: k + 1, value: x.c,
+    evidence: Math.max(0, Math.min(1, x.z / 8)),
+    meta: { method: "gkg_burst_ewma", n_docs: x.c, k: entKind.get(x.n) ?? "name", q: Math.round(x.z * 100) / 100 },
+  }));
+  await candidatesMerge(run, candRows);
+  run.extra.candidates = candRows.length;
+
+  // EWMA update (only after a complete, newly written file)
+  if (!run.dryRun && !(r?.dup)) {
+    const nb: Record<string, number> = {};
+    for (const [n, b] of Object.entries(ew.b)) nb[n] = b * (1 - EWMA_ALPHA);
+    for (const [n, c] of entDocs) if (c >= 2 || nb[n] !== undefined) nb[n] = (nb[n] ?? 0) + EWMA_ALPHA * c;
+    const keep = Object.entries(nb).filter(([, b]) => b >= 0.05).sort((a, b) => b[1] - a[1]).slice(0, EWMA_KEEP);
+    await stateSet("gkg.ewma", { n_files: ew.n_files + 1, b: Object.fromEntries(keep.map(([n, b]) => [n, Math.round(b * 1000) / 1000])) });
+    if (!st.last_file || file > st.last_file) await stateSet("gkg.state", { ...st, last_file: file, files: (st.files ?? 0) + 1 });
+  }
+  ms.write = Date.now() - tw;
+  ms.total = Date.now() - t0;
+  run.extra.ms = ms;
+  run.source({ source: SRC, status: "ok", keys: nT, rows: Number(r?.rows ?? 0), ms: ms.total,
+    note: r?.dup ? `file ${file} already counted (batch dup)` : null });
+}
+
+// ------------------------------------------------------------ mode: thirdeye
+async function thirdeye(run: Run) {
+  const SRC = "ia.thirdeye";
+  const t0 = Date.now();
+  const st = ((await stateGet("thirdeye.state")) ?? {}) as { last_hour?: string; hours?: number };
+  const now = Date.now();
+  const curHour = Math.floor(now / 3600e3) * 3600e3;
+  let last = Math.max(1, Math.min(6, Number(run.params.last ?? 2)));
+  // if the previous run missed an hour, widen the window once (still one request)
+  if (st.last_hour && Date.parse(st.last_hour) < curHour - 2 * 3600e3) last = Math.min(6, Math.max(last, 3));
+  const url = `${THIRDEYE}?last=${last}`;
+  const res = await politeFetch(run, url, { source: SRC, timeoutMs: 30_000 });
+  if (!res) { run.source({ source: SRC, status: failStatus(run, "archive.org"), note: "not fetched" }); return; }
+  if (!res.ok) { await res.body?.cancel(); run.source({ source: SRC, status: "http_error", note: `http ${res.status}` }); return; }
+  const txt = await res.text();
+  const tDl = Date.now() - t0;
+  const lines = txt.split("\n");
+  // header (column names only) -> indexes; fall back to the observed layout (0 = time, 1 = channel, last = text)
+  const head = (lines[0] ?? "").toLowerCase().split("\t");
+  const looksHeader = !/^\d{4}-\d{2}-\d{2}/.test(lines[0] ?? "");
+  const iTime = looksHeader ? Math.max(0, head.findIndex((h) => /date|time/.test(h))) : 0;
+  const iChan = looksHeader ? Math.max(1, head.findIndex((h) => /chan|network|station/.test(h))) : 1;
+  const iTextH = looksHeader ? head.findIndex((h) => /text|chyron|caption/.test(h)) : -1;
+
+  const terms = await loadTerms(run, SRC);
+  const matcher = new Matcher(terms);
+
+  // hour -> channel -> term -> set of minutes
+  type HourAgg = { total: Map<string, Set<string>>; hits: Map<number, Map<string, Set<string>>> };
+  const hours = new Map<number, HourAgg>();
+  let minTs = Infinity, rowsN = 0;
+  const m = new Set<number>();
+  for (let li = looksHeader ? 1 : 0; li < lines.length; li++) {
+    const l = lines[li];
+    if (!l) continue;
+    const c = l.split("\t");
+    if (c.length < 3) continue;
+    const tRaw = (c[iTime] ?? "").trim();
+    const ts = Date.parse(tRaw.replace(" ", "T") + (/[zZ]|[+-]\d\d:?\d\d$/.test(tRaw) ? "" : "Z"));
+    if (!Number.isFinite(ts)) continue;
+    rowsN++;
+    if (ts < minTs) minTs = ts;
+    const ch = (c[iChan] ?? "").trim().toUpperCase().replace(/[^A-Z0-9_]/g, "").slice(0, 20) || "UNKNOWN";
+    const text = iTextH >= 0 ? c[iTextH] : c[c.length - 1];
+    const h = Math.floor(ts / 3600e3) * 3600e3;
+    const minute = String(Math.floor(ts / 60e3));
+    let agg = hours.get(h);
+    if (!agg) { agg = { total: new Map(), hits: new Map() }; hours.set(h, agg); }
+    let tot = agg.total.get(ch); if (!tot) { tot = new Set(); agg.total.set(ch, tot); }
+    tot.add(minute);
+    m.clear();
+    matcher.match(norm(text ?? ""), m);
+    for (const i of m) {
+      let byCh = agg.hits.get(i); if (!byCh) { byCh = new Map(); agg.hits.set(i, byCh); }
+      let mins = byCh.get(ch); if (!mins) { mins = new Set(); byCh.set(ch, mins); }
+      mins.add(minute);
+    }
+  }
+  run.extra.chyrons = rowsN;
+  if (run.params.peek === true) {
+    // structure only (no text leaves the function): header names, per-column average length, numeric share
+    const sample = lines.slice(looksHeader ? 1 : 0, 200).filter(Boolean).map((l) => l.split("\t"));
+    const ncol = Math.max(0, ...sample.map((c) => c.length));
+    run.extra.peek = {
+      header: looksHeader ? head.map((h) => h.slice(0, 30)) : null, iTime, iChan, iText: iTextH >= 0 ? iTextH : "last",
+      cols: Array.from({ length: ncol }, (_, j) => ({
+        avg_len: Math.round(sample.reduce((a, c) => a + (c[j]?.length ?? 0), 0) / Math.max(1, sample.length)),
+        numeric: Math.round(100 * sample.filter((c) => /^[\d.:\- ]+$/.test(c[j] ?? "")).length / Math.max(1, sample.length)),
+      })),
+    };
+  }
+  // complete hours only: fully inside the window and ended at least 2 minutes ago
+  const firstFull = Math.ceil((minTs - 90e3) / 3600e3) * 3600e3;
+  const complete = [...hours.keys()].filter((h) => h >= firstFull && h + 3600e3 <= now - 120e3).sort();
+  const channels = new Set<string>();
+  let written = 0, hitsTotal = 0;
+  for (const h of complete) {
+    const agg = hours.get(h)!;
+    const hIso = hourIso(h);
+    const day = dayOf(h);
+    const rows: any[] = [];
+    const hourly: any[] = [];
+    for (const ch of agg.total.keys()) channels.add(ch);
+    for (let i = 0; i < terms.length; i++) {
+      const byCh = agg.hits.get(i);
+      let v = 0;
+      const chs: string[] = [];
+      if (byCh) for (const [ch, mins] of byCh) { v += mins.size; chs.push(ch); rows.push({ source: SRC, key: terms[i].key, geo: ch, day, value: mins.size, topic_id: terms[i].topic_id }); }
+      if (v > 0) hitsTotal++;
+      rows.push({ source: SRC, key: terms[i].key, day, value: v, members: chs, topic_id: terms[i].topic_id });
+      if (v > 0 && terms[i].active) hourly.push({ source: SRC, key: terms[i].key, ts: hIso, value: v, aux: chs.length, topic_id: terms[i].topic_id });
+    }
+    let all = 0;
+    for (const [ch, mins] of agg.total) { all += mins.size; rows.push({ source: SRC, key: "__total__", geo: ch, day, value: mins.size }); }
+    rows.push({ source: SRC, key: "__total__", day, value: all, members: [...agg.total.keys()] });
+    hourly.push({ source: SRC, key: "__total__", ts: hIso, value: all, aux: agg.total.size });
+    const r = await accum(run, `thirdeye:${hIso.slice(0, 13)}`, rows);
+    if (r && !r.dup) written++;
+    // hourly values are complete per hour: plain overwrite through att_ingest
+    if (!run.dryRun) noteIngest(run, await rpcJson(run, "att_ingest", { p_run: { run_id: run.runId }, p_rows: hourly }));
+    // same-hour co-occurrence (tv family): shared chyron-minutes = sum over channels of min(minutes_a, minutes_b)
+    const act = [...agg.hits.keys()];
+    const edges: any[] = [];
+    for (const a of act) {
+      if (!terms[a].active) continue;
+      for (const b of act) {
+        if (a === b) continue;
+        let n = 0;
+        for (const [ch, ma] of agg.hits.get(a)!) { const mb = agg.hits.get(b)!.get(ch); if (mb) n += Math.min(ma.size, mb.size); }
+        if (n > 0) edges.push({ source: SRC, from_key: terms[a].key, to_key: terms[b].key, day, n, from_topic: terms[a].topic_id, to_topic: terms[b].topic_id });
+      }
+    }
+    await edgesAccum(run, `edges:thirdeye:${hIso.slice(0, 13)}`, edges);
+  }
+  if (complete.length && !run.dryRun) {
+    const lastH = hourIso(complete[complete.length - 1]);
+    if (!st.last_hour || lastH > st.last_hour) await stateSet("thirdeye.state", { last_hour: lastH, hours: (st.hours ?? 0) + written });
+  }
+  run.extra.channels = channels.size;
+  run.extra.hours = complete.map((h) => hourIso(h).slice(0, 13));
+  run.extra.terms_hit = hitsTotal;
+  run.extra.ms = { download: tDl, total: Date.now() - t0 };
+  run.source({ source: SRC, status: "ok", keys: terms.length, rows: run.rows.obs + run.rows.obs_hourly, ms: Date.now() - t0,
+    note: complete.length ? null : "no complete hour in window" });
+}
+
+// ------------------------------------------------------------ mode: sitemaps
+interface Item { day: string; text: string; kws: string[] }
+async function fetchSitemap(run: Run, outlet: string, url: string): Promise<{ items: Item[]; urls: number; status: string; note?: string }> {
+  const host = new URL(url).hostname;
+  const res = await politeFetch(run, url, { source: "news.sitemap", timeoutMs: 30_000 });
+  if (!res) return { items: [], urls: 0, status: failStatus(run, host) };
+  if (!res.ok) { await res.body?.cancel(); return { items: [], urls: 0, status: "http_error", note: `http ${res.status}` }; }
+  const buf = new Uint8Array(await res.arrayBuffer());
+  let xml: string;
+  if (buf[0] === 0x1f && buf[1] === 0x8b) {
+    xml = await new Response(new Blob([buf]).stream().pipeThrough(new DecompressionStream("gzip"))).text();
+  } else xml = new TextDecoder().decode(buf);
+  const items: Item[] = [];
+  let urls = 0;
+  let from = 0;
+  while (true) {
+    const a = xml.indexOf("<url>", from);
+    if (a < 0) break;
+    const b = xml.indexOf("</url>", a);
+    if (b < 0) break;
+    const blk = xml.slice(a, b);
+    from = b + 6;
+    urls++;
+    const tag = (t: string) => { const m = blk.match(new RegExp(`<${t}>([\\s\\S]*?)</${t}>`)); return m ? decodeXml(m[1].trim()) : ""; };
+    const pd = tag("news:publication_date") || tag("lastmod");
+    const ms = Date.parse(pd);
+    if (!Number.isFinite(ms)) continue;
+    const title = tag("news:title");
+    const kw = tag("news:keywords");
+    const kws = kw ? kw.split(/[,;]/).map((s) => s.trim()).filter((s) => s.length >= 3 && s.length <= 60) : [];
+    items.push({ day: dayOf(ms), text: norm(title) + (kws.length ? " ~ " + kws.map(norm).join(" ~ ") : ""), kws });
+  }
+  return { items, urls, status: "ok" };
+}
+
+async function sitemaps(run: Run) {
+  const SRC = "news.sitemap";
+  const t0 = Date.now();
+  const want: string[] = Array.isArray(run.params.outlets) ? run.params.outlets.filter((o: string) => o in OUTLETS) : Object.keys(OUTLETS);
+  const terms = await loadTerms(run, SRC);
+  const matcher = new Matcher(terms);
+  // outlets are different hosts: fetch in parallel (politeFetch keeps per-host serial spacing + host leases)
+  const got = await Promise.all(want.map(async (o) => ({ o, ...(await fetchSitemap(run, o, OUTLETS[o])) })));
+  const tFetch = Date.now() - t0;
+  const urls: Record<string, number> = {};
+  const cells: any[] = [];
+  const zeroFill = new Set<string>();
+  const kwStats = new Map<string, { label: string; outlets: Set<string>; n: number }>();
+  const pairN = new Map<string, { n: number; outlets: Set<string>; day: string }>();
+  const m = new Set<number>();
+  for (const g of got) {
+    urls[g.o] = g.urls;
+    run.source({ source: SRC, status: g.status, keys: g.status === "ok" ? terms.length : 0, rows: g.items.length, note: g.note ? `${g.o}: ${g.note}` : g.o });
+    if (g.status !== "ok") continue;
+    const perDay = new Map<string, Map<number, number>>();
+    const totals = new Map<string, number>();
+    for (const it of g.items) {
+      totals.set(it.day, (totals.get(it.day) ?? 0) + 1);
+      m.clear();
+      matcher.match(it.text, m);
+      let dm = perDay.get(it.day); if (!dm) { dm = new Map(); perDay.set(it.day, dm); }
+      for (const i of m) dm.set(i, (dm.get(i) ?? 0) + 1);
+      // newsroom co-mention: two registry terms in the same headline (one side active)
+      const hit = [...m];
+      for (const a of hit) {
+        if (!terms[a].active) continue;
+        for (const b of hit) {
+          if (a === b) continue;
+          const pk = `${it.day}\u0001${a}\u0001${b}`;
+          const p = pairN.get(pk) ?? { n: 0, outlets: new Set<string>(), day: it.day };
+          p.n++; p.outlets.add(g.o); pairN.set(pk, p);
+        }
+      }
+      for (const k of it.kws) {
+        const nk = norm(k);
+        if (nk.length < 3) continue;
+        const s = kwStats.get(nk) ?? { label: k, outlets: new Set<string>(), n: 0 };
+        s.outlets.add(g.o); s.n++; kwStats.set(nk, s);
+      }
+    }
+    for (const [day, dm] of perDay) {
+      zeroFill.add(day);
+      for (const [i, n] of dm) cells.push({ outlet: g.o, key: terms[i].key, day, n, topic_id: terms[i].topic_id });
+    }
+    for (const [day, n] of totals) cells.push({ outlet: g.o, key: "__total__", day, n });
+  }
+  // zero-fill every watched term for the days seen (outlet null = "write the cross-outlet total")
+  const today = dayOf(Date.now());
+  for (const day of zeroFill) {
+    if (day > today) continue;
+    for (const t of terms) cells.push({ outlet: null, key: t.key, day, n: 0, topic_id: t.topic_id });
+    cells.push({ outlet: null, key: "__total__", day, n: 0 });
+  }
+  const keep = cells.filter((c) => c.day <= today && c.day >= dayOf(Date.now() - 3 * 86400e3));
+  if (!run.dryRun && keep.length) {
+    noteIngest(run, await rpcJson(run, "att_news_sitemap_merge", { p_run: { run_id: run.runId }, p_rows: keep }));
+  } else if (run.dryRun) run.dryRows.push(...keep.filter((c) => c.n > 0).slice(0, 50));
+
+  // keywords seen in >= 2 outlets' keywords or headlines -> discovery candidates (rank-list evidence, §6.5)
+  if (kwStats.size) {
+    const kwTerms: Term[] = [...kwStats.keys()].map((k) => ({ key: k, topic_id: null, active: false, key_type: "term", match: {} }));
+    const km = new Matcher(kwTerms);
+    const outl = kwTerms.map(() => new Set<string>());
+    for (const g of got) for (const it of g.items) { m.clear(); km.match(it.text, m); for (const i of m) outl[i].add(g.o); }
+    const ranked = kwTerms.map((t, i) => ({ t, s: kwStats.get(t.key)!, o: new Set([...outl[i], ...kwStats.get(t.key)!.outlets]) }))
+      .filter((x) => x.o.size >= 2 && x.s.n >= 2)
+      .sort((a, b) => b.o.size - a.o.size || b.s.n - a.s.n)
+      .slice(0, 50);
+    const N = ranked.length;
+    await candidatesMerge(run, ranked.map((x, k) => ({
+      day: today, source: SRC, geo: "ALL", label: x.s.label, rank: k + 1, value: x.s.n,
+      evidence: Math.max(0, Math.min(1, 1 - Math.log(k + 1) / Math.log(N + 1))),
+      meta: { method: "sitemap_keywords", n_docs: x.s.n, q: x.o.size },
+    })));
+    run.extra.candidates = ranked.length;
+  }
+  const edges = [...pairN.entries()].filter(([, p]) => p.outlets.size >= 1).map(([pk, p]) => {
+    const parts = pk.split("\u0001");
+    const a = +parts[1], b = +parts[2];
+    return { source: SRC, from_key: terms[a].key, to_key: terms[b].key, period: p.day, grain: "day", n: p.n,
+      from_topic: terms[a].topic_id, to_topic: terms[b].topic_id, meta: { q: p.outlets.size } };
+  });
+  if (edges.length && !run.dryRun) {
+    const r = await rpcJson(run, "att_ingest_edges", { p_rows: edges });
+    run.rows.edges += Number(r?.rows ?? 0);
+  }
+  run.extra.urls = urls;
+  run.extra.ms = { fetch: tFetch, total: Date.now() - t0 };
+}
+
+// ------------------------------------------------------------ mode: backfill (not enabled)
+async function backfill(run: Run) {
+  const ids = run.jobIds();
+  if (ids.length && !run.dryRun) await jobsDone(ids, "skipped", "att-news backfill disabled: GKG history sampling is not cheap on the free tier (§3.6)");
+  run.body.job_ids = []; // already closed
+  run.source({ source: "gdelt.gkg", status: "disabled", note: "backfill disabled on free tier; GKG enters the score at 28 days" });
+}
+
+serve(FN, {
+  gkg, thirdeye, sitemaps, backfill,
+  ping: async (run: Run) => { run.extra.pong = true; run.extra.wall_ms = WALL_MS; },
+});

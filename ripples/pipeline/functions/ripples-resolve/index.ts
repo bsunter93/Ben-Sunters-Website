@@ -79,7 +79,14 @@ serve(async (body, b) => {
     const ts = [...new Set(ts0)];
     for (let i = 0; i < ts.length && b.left() > 12; i += 50) {
       const chunk = ts.slice(i, i + 50);
-      const ents = await wbEntities(b, { sites: `${lang}wiki`, titles: chunk.join("|"), props: "claims|sitelinks|descriptions|labels", languages: "en", redirects: "yes" });
+      let ents: Record<string, any>;
+      try {
+        ents = await wbEntities(b, { sites: `${lang}wiki`, titles: chunk.join("|"), props: "claims|sitelinks|descriptions|labels", languages: "en", redirects: "yes" });
+      } catch (e) {
+        if (b.stopped) throw e;                    // rate limited: stop the job
+        for (const t of chunk) titleRows.push({ lang, title: t, qid: null, title_en: null, status: "missing" });
+        continue;                                  // e.g. an unknown site code: skip that language only
+      }
       const bySite = new Map<string, any>();
       for (const e of Object.values(ents) as any[]) {
         const st = e?.sitelinks?.[`${lang}wiki`]?.title;

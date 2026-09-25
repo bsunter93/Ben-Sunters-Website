@@ -8,7 +8,7 @@
 //  kind split  : desktop vs mobile multiples (mobile = all-access - desktop) for answer-eligible hops
 //  kind refresh: Call It resolution series (baseline frozen at window_start)
 import {
-  actionApi, addDays, Budget, dayDiff, factsFor, hopTest, LIST_TITLE, logs, baseline, norm, pool, resolveClasses, rpc,
+  actionApi, addDays, Budget, dayDiff, factsFor, hopTest, LIST_TITLE, logs, baseline, norm, partialOf, pool, resolveClasses, rpc,
   seedScreen, series, serve, SKIP_TITLE,
 } from "./kn.ts";
 
@@ -19,7 +19,15 @@ async function screen(body: any, b: Budget) {
   const from = addDays(asOf, -129);
   const items: { qid: string; title: string }[] = body.items ?? [];
   const conc = Number(body.cfg?.aqs_concurrency ?? 4);
-  const res = await pool(items.slice(0, Math.max(0, b.left())), conc, async (it) => {
+  let res: any[];
+  try { res = await pool(items.slice(0, Math.max(0, b.left())), conc, screenOne); }
+  catch (e) {
+    // keep what was screened before the stop; the retried job only asks for the rest (SQL filters the payload)
+    const part = partialOf<any>(e);
+    if (part.length) await rpc("ripples_ingest_candidates", { p_job: j.id, p_rows: part });
+    throw e;
+  }
+  async function screenOne(it: { qid: string; title: string }) {
     const v = await series(b, it.title, from, asOf);
     if (!v) return null;
     const s = seedScreen(v, 129);
@@ -29,7 +37,7 @@ async function screen(body: any, b: Budget) {
       peak_multiple: r2(s.peak_multiple, 3), peak_day: day(s.peak_day), max_abs_z14: r2(s.max_abs_z14, 3),
       base_from: day(s.base - 111), base_to: day(s.base - 21), spark: v.slice(-90),
     };
-  });
+  }
   const rows = res.filter((x) => x && !(x instanceof Error));
   const errs = res.filter((x) => x instanceof Error).length;
   await rpc("ripples_ingest_candidates", { p_job: j.id, p_rows: rows });
@@ -84,11 +92,11 @@ async function expand(body: any, b: Budget) {
   const bad = (t: string) => SKIP_TITLE.test(t) || LIST_TITLE.test(t) || blocks.some((r) => r.test(t));
   const parentTitle = norm(j.parent_title);
 
-  // 1. live outlinks (ns 0), up to 4 requests (2000 links)
+  // 1. live outlinks (ns 0), up to 3 requests (1500 links)
   const links: string[] = [];
   let canonParent = parentTitle;
   let cont: Record<string, string> | null = {};
-  for (let k = 0; k < 4 && cont; k++) {
+  for (let k = 0; k < 3 && cont; k++) {
     const jj = await actionApi(b, "en.wikipedia.org", { action: "query", titles: parentTitle, redirects: "1", prop: "links", plnamespace: "0", pllimit: "max", ...cont });
     const p = (jj.query?.pages ?? [])[0];
     if (!p || p.missing) throw new Error(`parent page missing: ${parentTitle}`);
@@ -104,7 +112,7 @@ async function expand(body: any, b: Budget) {
   const maxCalls = Number(cfg.expand_prefilter_calls ?? 14);
   const room = Math.max(0, maxCalls * 50 - csTitles.length);
   if (out.length > room) out = out.sort((a, c) => fnv(a) - fnv(c)).slice(0, room);   // unbiased deterministic subset
-  const info = await prefilter(b, [...csTitles, ...out], Math.min(maxCalls + 4, Math.max(0, b.left() - 70)));
+  const info = await prefilter(b, [...csTitles, ...out], Math.min(maxCalls + 2, Math.max(0, b.left() - 70)));
   const seen = new Set<string>();
   const cands: any[] = [];
   const add = (t: string, csRow: { clicks: number; rank: number } | null) => {
@@ -186,7 +194,7 @@ async function split(body: any, b: Budget) {
   const j = body.job, asOf: string = j.as_of;
   const items: { parent_qid: string; qid: string; title: string; parent_onset: string }[] = body.items ?? [];
   const conc = Number(body.cfg?.aqs_concurrency ?? 4);
-  const res = await pool(items.slice(0, Math.floor(b.left() / 2)), Math.max(1, Math.floor(conc / 2)), async (it) => {
+  const one = async (it: { parent_qid: string; qid: string; title: string; parent_onset: string }) => {
     const from = addDays(it.parent_onset, -111);
     const [all, desk] = await Promise.all([series(b, it.title, from, asOf), series(b, it.title, from, asOf, "desktop")]);
     if (!all || !desk) return { parent_qid: it.parent_qid, qid: it.qid, mult_desktop: null, mult_mobile: null };
@@ -200,7 +208,14 @@ async function split(body: any, b: Budget) {
       return mx / Math.max(bl.med, 1);
     };
     return { parent_qid: it.parent_qid, qid: it.qid, mult_desktop: r2(mult(desk), 4), mult_mobile: r2(mult(mob), 4) };
-  });
+  };
+  let res: any[];
+  try { res = await pool(items.slice(0, Math.floor(b.left() / 2)), Math.max(1, Math.floor(conc / 2)), one); }
+  catch (e) {
+    const part = partialOf<any>(e);
+    if (part.length) await rpc("ripples_ingest_candidates", { p_job: j.id, p_rows: part });
+    throw e;
+  }
   const rows = res.filter((x) => x && !(x instanceof Error));
   await rpc("ripples_ingest_candidates", { p_job: j.id, p_rows: rows });
   return { split: rows.length, wm_calls: b.wm };

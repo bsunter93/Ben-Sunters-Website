@@ -1,0 +1,82 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Knock-On archive</title>
+<meta name="description" content="Every past Knock-On puzzle, plus reconstructed practice puzzles. One trend, where the internet went next, measured on Wikipedia.">
+<link rel="canonical" href="https://bensunter.com/ripples/archive/">
+<meta property="og:title" content="Knock-On archive">
+<meta property="og:description" content="Every past Knock-On chain. Measured attention, not proof of cause.">
+<meta property="og:url" content="https://bensunter.com/ripples/archive/">
+<meta property="og:type" content="website">
+<meta property="og:image" content="https://kffkasnzqcddpystszch.supabase.co/functions/v1/ripples-og?v=brand">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<meta name="theme-color" content="#0B3A40">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600&family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600&display=swap">
+<link rel="stylesheet" href="/ripples/app.css">
+<style>
+.al{list-style:none;margin:8px 0 0;padding:0}
+.al a{display:grid;grid-template-columns:auto 1fr auto;gap:2px 12px;align-items:center;padding:12px 4px;border-top:1px solid var(--hair);color:var(--body);text-decoration:none;min-height:56px}
+.al a:hover{background:var(--tint)}
+.al .no{font:600 18px/1 var(--display);color:var(--warm);min-width:3.2ch}
+.al b{color:var(--ink);font-weight:600}.al .pth{font-size:15px;letter-spacing:1px;white-space:nowrap}
+.al .d{grid-column:2/-1;font-size:12.5px;color:var(--muted)}
+.al .g{font-size:14px}
+</style>
+<script>try{var t=localStorage.getItem('ko.theme')||localStorage.getItem('theme');if(t==='light'||t==='dark')document.documentElement.setAttribute('data-theme',t)}catch(e){}</script>
+</head>
+<body>
+<header class="bar"><div class="w">
+  <p class="brand"><a href="/ripples/">Knock-On <span>archive</span></a></p>
+  <button type="button" id="theme" class="ib" aria-label="Switch theme"><svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"><circle cx="12" cy="12" r="4.2"/><path d="M12 2.2v2M12 19.8v2M2.2 12h2M19.8 12h2M5 5l1.4 1.4M17.6 17.6L19 19M19 5l-1.4 1.4M6.4 17.6L5 19"/></svg></button>
+</div></header>
+<main class="w">
+<p class="micro">Measured attention, not proof of cause.</p>
+<h1 style="font:600 34px/1.1 var(--display);margin:14px 0 10px">Archive</h1>
+<p class="sub">Past puzzles. Replaying an old one adds it to your history but crowd stats close after 7 days.</p>
+<section class="card" style="margin-top:14px"><p class="eb">Live puzzles</p><ul class="al" id="live" aria-live="polite"><li class="muted">Loading…</li></ul></section>
+<section class="card" style="margin-top:14px"><p class="eb">Practice · reconstructed</p>
+  <p class="sm muted">Built by running today's method over past days (a reconstructed backfill), not published on those days. They don't count toward your streak.</p>
+  <ul class="al" id="prac"><li class="muted">Loading…</li></ul></section>
+</main>
+<footer class="foot"><div class="w">
+  <nav><a href="/ripples/">Play</a><a href="/ripples/methods/">Methods &amp; track record</a><a href="/ripples/pro/">Pro</a></nav>
+  <p><b>Measured attention, not proof of cause.</b> By <a href="/">Ben Sunter</a>.</p>
+</div></footer>
+<script type="module">
+import * as C from '/ripples/config.js';
+import { fmtDate } from '/ripples/lib.js';
+const $ = id => document.getElementById(id);
+const h = (t, a, ...k) => { const e = document.createElement(t); if (a) for (const x in a) e.setAttribute(x, a[x]); for (const c of k.flat()) if (c != null && c !== '') e.append(c.nodeType ? c : String(c)); return e; };
+const get = async u => { try { const r = await fetch(u); return r.ok ? await r.json() : undefined; } catch (e) { return undefined; } };
+$('theme').onclick = () => { const r = document.documentElement, d = r.getAttribute('data-theme') === 'dark' || (!r.hasAttribute('data-theme') && matchMedia('(prefers-color-scheme: dark)').matches); r.setAttribute('data-theme', d ? 'light' : 'dark'); try { localStorage.setItem('ko.theme', d ? 'light' : 'dark'); } catch (e) {} };
+let hist = {};
+try { hist = JSON.parse(localStorage.getItem('ko.history') || '{}') || {}; } catch (e) {}
+(async () => {
+  const fix = new URLSearchParams(location.search).get('fixture') === '1';
+  let a = fix ? await get('/ripples/contract/fixtures/archive-fixture.json') : await get(`${C.STORAGE}/archive.json`);
+  if (!fix && !(a && a.length)) a = (await get(`${C.SB_URL}/rest/v1/rpc/ripples_archive?apikey=${C.SB_KEY}&p_limit=500&p_kind=all`)) || a;
+  a = a || [];
+  const row = e => {
+    const live = e.kind === 'live', me = hist[e.n];
+    const href = live ? `/ripples/${e.n}/` : e.kind === 'practice' ? `/ripples/?p=${e.n}` : '/ripples/?fixture=1';
+    return h('li', null, h('a', { href },
+      h('span', { class: 'no' }, live ? '#' + e.n : e.kind === 'practice' ? 'P' : 'T'),
+      h('span', null, `${e.seed_emoji} `, h('b', null, e.seed_title)),
+      h('span', { class: 'pth', 'aria-label': 'Emoji path' }, e.path),
+      h('span', { class: 'd' }, fmtDate(e.date), e.from_date ? ` · from ${fmtDate(e.from_date)}` : '', ` · ${e.rounds} rounds`,
+        e.kind === 'practice' ? ' · reconstructed' : e.kind === 'fixture' ? ' · TEST fixture' : '', me ? [' · you: ', h('span', { class: 'g' }, me.grid), ` ${me.score}/${me.max}`] : '')));
+  };
+  const L = a.filter(e => e.kind === 'live' || e.kind === 'fixture'), P = a.filter(e => e.kind === 'practice');
+  $('live').replaceChildren(...(L.length ? L.map(row) : [h('li', { class: 'muted' }, 'No live puzzles yet. #1 goes live Sat 26 Sep 2026 at 07:30 UTC.')]));
+  $('prac').replaceChildren(...(P.length ? P.map(row) : [h('li', { class: 'muted' }, 'No practice puzzles published yet.')]));
+})();
+</script>
+</body>
+</html>

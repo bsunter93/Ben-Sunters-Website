@@ -12,34 +12,36 @@ language sql immutable set search_path = '' as $$
     when 'history_culture' then '🏛' else '🔹' end
 $$;
 
--- Keyword fallback on a Wikipedia short description or a Wikidata class label.
+-- Keyword fallback on a Wikipedia short description or a Wikidata class label (word-bounded; 's?' allows plurals).
 create or replace function ripples._text_category(p text) returns text
 language sql immutable set search_path = '' as $$
   select case
     when p is null or btrim(p) = '' then null
-    when p ~* '(^|[^a-z])(film|movie|television|tv series|tv program|sitcom|miniseries|soap opera|anime|animated series|web series|documentary|reality (show|series|competition)|talk show|game show|video game|actor|actress|filmmaker|film director|screenwriter|comedian|youtuber|streamer|media franchise|episode)' then 'film_tv'
-    when p ~* '(^|[^a-z])(song|single|album|band|singer|rapper|musician|composer|record label|music|disc jockey|dj|boy band|girl group|guitarist|drummer|pianist|opera|concert tour|mixtape|ep by)' then 'music'
-    when p ~* '(^|[^a-z])(football|soccer|basketball|baseball|cricket|rugby|tennis|golf|boxer|boxing|wrestl|athlete|olympic|racing|formula one|nascar|hockey|cyclist|swimmer|sprinter|sportsperson|sports|league|club season|championship|tournament|world cup|grand prix|mixed martial|ufc|chess player|esports|jockey|skater|gymnast|coach|quarterback|pitcher|striker|midfielder|goalkeeper|defender)' then 'sport'
-    when p ~* '(^|[^a-z])(disease|disorder|syndrome|infection|virus|bacteri|medication|drug|vaccine|protein|gene|enzyme|chemical|compound|element|mineral|physic|chemist|biolog|medical|medicine|species|genus|anatomy|symptom|therapy|psychology|mathemat|astronom|planet|star|galaxy|comet|asteroid|spacecraft|space probe|telescope|scientist|nutrient|vitamin)' then 'science_health'
-    when p ~* '(^|[^a-z])(software|app|website|web browser|operating system|programming|computer|smartphone|internet|artificial intelligence|chatbot|social (media|network)|search engine|cryptocurrency|blockchain|semiconductor|processor|video game console|technology|file format|protocol|domain)' then 'tech'
-    when p ~* '(^|[^a-z])(company|corporation|conglomerate|business|brand|retailer|manufacturer|airline|bank|startup|chain|store|businessperson|entrepreneur|executive|ceo|investor|stock|economy|currency|product)' then 'business'
-    when p ~* '(^|[^a-z])(politician|election|political party|president|prime minister|minister|senator|governor|mayor|legislat|parliament|congress|court|judge|lawyer|law|act of|treaty|constitution|referendum|government|diplomat|monarch|king|queen|prince|princess|activist|civil servant)' then 'politics_law'
-    when p ~* '(^|[^a-z])(food|dish|cuisine|beverage|drink|cocktail|beer|wine|coffee|tea|dessert|snack|restaurant|chef|fruit|vegetable|cheese|bread|sauce|candy|spice)' then 'food_drink'
-    when p ~* '(^|[^a-z])(hurricane|typhoon|cyclone|storm|weather|climate|earthquake|volcano|river|mountain|lake|forest|animal|plant|bird|fish|mammal|insect|tree|flower|dog breed|cat breed|national park|natural)' then 'nature_weather'
-    when p ~* '(^|[^a-z])(city|town|village|country|capital|state of|province|county|region|district|municipality|island|neighbourhood|neighborhood|borough|street|airport|stadium|arena|building|bridge|tower|university|school|hotel|park|sovereign state|census-designated)' then 'place'
-    when p ~* '(^|[^a-z])(history|historical|empire|dynasty|ancient|medieval|century|religio|mytholog|deity|god|goddess|saint|church|temple|novel|book|poem|author|writer|poet|novelist|painter|painting|sculpt|artist|museum|philosoph|language|festival|holiday|tradition|culture|comic|manga|character|fictional)' then 'history_culture'
-    when p ~* '(^|[^a-z])(born [0-9]{4}|\([0-9]{4}[–-][0-9]{4}\)|person|people|family)' then 'person'
+    when p ~* '(^|[^a-z])(film|movie|television|tv series|tv program(me)?|sitcom|miniseries|soap opera|anime|animated series|web series|documentary|reality (show|series|competition)|talk show|game show|video game|actor|actress|filmmaker|film director|screenwriter|comedian|youtuber|streamer|media franchise|episode|film series|television channel)s?([^a-z]|$)' then 'film_tv'
+    when p ~* '(^|[^a-z])(song|single|album|band|singer|rapper|musician|composer|record label|music|musical group|disc jockey|boy band|girl group|guitarist|drummer|pianist|opera|concert tour|mixtape|ep|songwriter|record producer)s?([^a-z]|$)' then 'music'
+    when p ~* '(^|[^a-z])(football|soccer|basketball|baseball|cricket|rugby|tennis|golf|boxer|boxing|wrestl[a-z]*|athlete|olympics?|olympic games|racing|formula one|nascar|hockey|cyclist|swimmer|sprinter|sportsperson|sport|sports (team|club|league|season|event)|league|club season|championship|tournament|world cup|grand prix|mixed martial arts|ufc|chess player|esports|jockey|skater|gymnast|coach|quarterback|pitcher|striker|midfielder|goalkeeper|defender|footballer|cricketer|sports season)s?([^a-z]|$)' then 'sport'
+    when p ~* '(^|[^a-z])(disease|disorder|syndrome|infection|virus|bacteri[a-z]*|medication|drug|vaccine|protein|gene|enzyme|chemical compound|chemical element|chemical|compound|mineral|physic[a-z]*|chemist|chemistry|biolog[a-z]*|medical|medicine|species|genus|anatomy|symptom|therapy|psycholog[a-z]*|mathemat[a-z]*|astronom[a-z]*|planet|galaxy|comet|asteroid|spacecraft|space probe|telescope|scientist|nutrient|vitamin|taxon|hormone|neurotransmitter|physician)s?([^a-z]|$)' then 'science_health'
+    when p ~* '(^|[^a-z])(software|mobile app|web application|application|website|web browser|operating system|programming language|computer|smartphone|internet|artificial intelligence|chatbot|social (media|network|networking service)|search engine|cryptocurrency|blockchain|semiconductor|processor|video game console|technology|file format|protocol|online service|large language model)s?([^a-z]|$)' then 'tech'
+    when p ~* '(^|[^a-z])(company|corporation|conglomerate|business|brand|retailer|manufacturer|airline|bank|startup|restaurant chain|chain|store|businessperson|entrepreneur|executive|ceo|investor|stock exchange|economy|currency|product|enterprise|subsidiary)s?([^a-z]|$)' then 'business'
+    when p ~* '(^|[^a-z])(politician|election|political party|president|prime minister|minister|senator|governor|mayor|legislat[a-z]*|parliament|congress|court|judge|lawyer|law|act|treaty|constitution|referendum|government|diplomat|monarch|king|queen|prince|princess|activist|civil servant|bill|legal case|lawsuit|government agency|political)s?([^a-z]|$)' then 'politics_law'
+    when p ~* '(^|[^a-z])(food|dish|cuisine|beverage|drink|cocktail|beer|wine|coffee|tea|dessert|snack|restaurant|chef|fruit|vegetable|cheese|bread|sauce|candy|spice|confectionery)s?([^a-z]|$)' then 'food_drink'
+    when p ~* '(^|[^a-z])(hurricane|typhoon|tropical cyclone|cyclone|storm|weather|climate|earthquake|volcano|river|mountain|lake|forest|animal|plant|bird|fish|mammal|insect|tree|flower|dog breed|cat breed|breed|national park|natural phenomenon|wildfire|flood)s?([^a-z]|$)' then 'nature_weather'
+    when p ~* '(^|[^a-z])(city|town|village|country|capital|state|province|county|region|district|municipality|island|neighbourhood|neighborhood|borough|street|airport|stadium|arena|building|bridge|tower|university|school|hotel|park|sovereign state|census-designated place|human settlement|big city|metropolis|territory|commune|prefecture|sea|ocean|continent)s?([^a-z]|$)' then 'place'
+    when p ~* '(^|[^a-z])(history|historical|historical event|empire|dynasty|ancient|medieval|century|religio[a-z]*|mytholog[a-z]*|deity|god|goddess|saint|church|temple|novel|book|poem|author|writer|poet|novelist|painter|painting|sculpt[a-z]*|artist|museum|philosoph[a-z]*|language|festival|holiday|tradition|culture|comic|comics|manga|character|fictional character|literary work|written work|magazine|newspaper|artwork|holiday)s?([^a-z]|$)' then 'history_culture'
+    when p ~* '(^|[^a-z])(born [0-9]{4}|person|people|family)([^a-z]|$)' or p ~ '\([0-9]{4}[–-][0-9]{4}\)' then 'person'
     else null end
 $$;
 
--- Keyword safety flag on a class label (used only for auto-mapped classes).
+-- Keyword safety flag on a class label (auto-mapped classes only). Media genres ("crime film", "war novel",
+-- "disaster film") are never flagged by label.
 create or replace function ripples._text_flag(p text) returns text
 language sql immutable set search_path = '' as $$
   select case
     when p is null then null
-    when p ~* '(^|[^a-z])(war|wars|battle|military (operation|campaign|conflict|offensive)|armed conflict|terror|attack|bombing|shooting|massacre|murder|homicide|killing|assassination|genocide|war crime|suicide|mass murder|violence|riot|insurgency|crime|criminal|sexual|pornograph|erotic|hate group|hate crime|lynching|abuse|execution|kidnapping)' then 'block'
-    when p ~* '(^|[^a-z])(aviation accident|air crash|shipwreck|disaster|explosion|stampede|accident|collapse|derailment|epidemic|pandemic|famine)' then 'block'
-    when p ~* '(^|[^a-z])(earthquake|tropical cyclone|hurricane|typhoon|tornado|flood|wildfire|bushfire|tsunami|volcanic eruption|landslide|heat wave|storm|blizzard|drought|natural disaster|weather event)' then 'sensitive'
+    when p ~* '(^|[^a-z])(film|series|novel|fiction|genre|game|album|song|book|television|episode|character|comic|manga|anime|franchise|magazine|podcast|video|play|musical|show|literature|work)s?([^a-z]|$)' then null
+    when p ~* '(^|[^a-z])(war|civil war|battle|military (operation|campaign|conflict|offensive)|armed conflict|terrorism|terrorist attack|attack|bombing|shooting|mass shooting|massacre|murder|homicide|killing|assassination|genocide|war crime|suicide|suicide attack|mass murder|violence|riot|insurgency|crime|pornography|sexual violence|rape|hate group|hate crime|lynching|kidnapping|terrorist organi[sz]ation)s?([^a-z]|$)' then 'block'
+    when p ~* '(^|[^a-z])(aviation accident|aviation incident|air crash|shipwreck|disaster|explosion|stampede|accident|structural collapse|derailment|epidemic|pandemic|famine|mass casualty incident)s?([^a-z]|$)' then 'block'
+    when p ~* '(^|[^a-z])(earthquake|tropical cyclone|hurricane|typhoon|tornado|flood|wildfire|bushfire|tsunami|volcanic eruption|landslide|heat wave|storm|blizzard|drought|natural disaster|weather event|extratropical cyclone|cold wave)s?([^a-z]|$)' then 'sensitive'
     else null end
 $$;
 
@@ -372,6 +374,15 @@ begin
       'block_patterns', (select coalesce(jsonb_agg(title_pattern), '[]') from ripples.blocklist where title_pattern is not null and action = 'block'));
   elsif j.kind = 'collect' then
     body := body || jsonb_build_object('trending_now', coalesce((select value = 'true'::jsonb from ripples.config where key = 'gt_trending_now'), false));
+  elsif j.kind = 'screen' then
+    -- a retried screen job only fetches what is still missing (partial results are kept)
+    body := body || jsonb_build_object('items', (select coalesce(jsonb_agg(e), '[]') from jsonb_array_elements(j.payload->'items') e
+                                                  where not exists (select 1 from ripples.screen s where s.as_of = j.as_of and s.qid = e->>'qid')));
+  elsif j.kind = 'split' then
+    body := body || jsonb_build_object('items', (select coalesce(jsonb_agg(e), '[]') from jsonb_array_elements(j.payload->'items') e
+                                                  where exists (select 1 from ripples.candidates c where c.as_of = j.as_of and c.role = 'real'
+                                                                  and c.root_qid = j.root_qid and c.parent_qid = e->>'parent_qid'
+                                                                  and c.qid = e->>'qid' and c.split_ok is null)));
   end if;
   return body;
 end $$;
