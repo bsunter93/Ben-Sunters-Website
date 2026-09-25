@@ -17,10 +17,10 @@
 import { politeFetch, type Run, serve, stateGet, stateSet, db, jobsDone, WALL_MS } from "./att.ts";
 
 const FN = "att-news";
-const NEWS_VERSION = "2026-09-25.n5"; // n2: GKG 404 parking + min file age; sequential sitemaps. n3: size-normalised
+const NEWS_VERSION = "2026-09-25.n6"; // n2: GKG 404 parking + min file age; sequential sitemaps. n3: size-normalised
 // GKG burst baseline; network brands excluded from Third Eye. n4: GKG entity minimisation (photo/byline credits,
 // outlet breadth, boilerplate labels) for candidates and edges; parked-file retry by file age; brand-free sitemap keywords.
-// n5: photo credits detected as V1-only ("ghost") names
+// n5: photo credits detected as V1-only ("ghost") names. n6: bylines, credits and ghosts kept out of the EWMA baseline
 const GKG_BASE = "https://data.gdeltproject.org/gdeltv2/";
 const THIRDEYE = "https://archive.org/services/third-eye.php";
 const OUTLETS: Record<string, string> = {
@@ -558,6 +558,12 @@ async function gkgFile(run: Run, file: string, ctx: GkgCtx, st: GkgState, retry 
     return why === null;
   };
   const personLike = (n: string) => { const k = entKind.get(n); return k === "person" || k === "name"; };
+  /** Names that are never candidates or edge endpoints whatever their breadth (kept out of the EWMA baseline too). */
+  const creditLike = (n: string): boolean => {
+    const d = entDocs.get(n) ?? 0;
+    return bylines.has(n) || junkLabel(n) || isCreditMark(n) ||
+      (d > 0 && ((entCredit.get(n) ?? 0) / d > CREDIT_MAX_SHARE || (entGhost.get(n) ?? 0) / d > GHOST_MAX_SHARE));
+  };
 
   // ---- co-mention edges (at least one side active; top 25 per term with >= 2 shared documents)
   const byTerm = new Map<number, Array<[string, number]>>();
@@ -624,7 +630,11 @@ async function gkgFile(run: Run, file: string, ctx: GkgCtx, st: GkgState, retry 
   if (!run.dryRun && !(r?.dup)) {
     const nb: Record<string, number> = {};
     for (const [n, b] of Object.entries(ew.b)) nb[n] = b * (1 - EWMA_ALPHA);
-    for (const [n, c] of entDocs) if (c >= 2 || nb[n] !== undefined) nb[n] = (nb[n] ?? 0) + EWMA_ALPHA * c * per1k;
+    for (const [n, c] of entDocs) {
+      // minimisation: journalists' and photographers' names (bylines, credits, ghosts) are not kept in the baseline
+      if (creditLike(n)) { delete nb[n]; continue; }
+      if (c >= 2 || nb[n] !== undefined) nb[n] = (nb[n] ?? 0) + EWMA_ALPHA * c * per1k;
+    }
     const keep = Object.entries(nb).filter(([, b]) => b >= 0.05).sort((a, b) => b[1] - a[1]).slice(0, EWMA_KEEP);
     await stateSet("gkg.ewma", { n_files: ew.n_files + 1, unit: "per1k",
       b: Object.fromEntries(keep.map(([n, b]) => [n, Math.round(b * 1000) / 1000])) });
