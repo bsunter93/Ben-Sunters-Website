@@ -33,10 +33,9 @@ alter table ripples.att_hop_candidates
   add column if not exists frozen_at   timestamptz;
 
 do $$ begin
-  if not exists (select 1 from pg_constraint where conname = 'att_hop_candidates_role_check') then
-    alter table ripples.att_hop_candidates add constraint att_hop_candidates_role_check
-      check (role in ('real','decoy','fork_check','negative_control','positive_control'));
-  end if;
+  alter table ripples.att_hop_candidates drop constraint if exists att_hop_candidates_role_check;
+  alter table ripples.att_hop_candidates add constraint att_hop_candidates_role_check
+    check (role in ('real','decoy','library','fork_check','negative_control','positive_control'));
   -- the old PK (as_of,u_topic,v_topic) allowed one path per target; ENGINE §2.1 allows up to 3 paths per target.
   if exists (select 1 from pg_constraint where conname = 'att_hop_candidates_pkey'
              and conrelid = 'ripples.att_hop_candidates'::regclass
@@ -107,9 +106,8 @@ create table if not exists ripples.att_zvec (
   n         int not null,                   -- array length
   ar        real[] not null,                -- abnormal response (z − c_t), null where missing
   resid     real[] not null,                -- x̃_t − ŷ_t (log units for count/share/level/index; raw for rate)
-  sig       real[] not null,                -- σ_t (rolling)
   ar_agg    real[],                         -- aggregate-demeaned AR (regional series), null otherwise
-  sigma     real not null,                  -- σ on the last day
+  sigma     real not null,                  -- σ on the last day (ENGINE §10.2 stores σ as a scalar; the rolling σ_t array was dropped for the storage budget)
   trend_b   real, phi real, kappa real,
   demean    text not null default 'panel' check (demean in ('panel','aggregate','none')),
   agg_series bigint,
@@ -121,6 +119,8 @@ create table if not exists ripples.att_zvec (
   same_dow   boolean not null default false,
   refreshed timestamptz not null default now()
 );
+-- storage budget (ENGINE §9): the undemeaned z and the rolling σ_t arrays are not stored; raw z is reconstructed from att_zvec_ct
+alter table ripples.att_zvec drop column if exists zraw, drop column if exists sig;
 
 create table if not exists ripples.att_channel_stat (
   channel text primary key, kind text not null check (kind in ('attention','outcome')),
@@ -212,6 +212,7 @@ create table if not exists ripples.att_engine_source_map (   -- source → engin
   domain text not null,                           -- one of the 8 public domain codes
   metric_kinds jsonb not null default '{}'::jsonb -- per-metric value_kind overrides, e.g. {"p":"rate","vol24h":"count"}
 );
+create table if not exists ripples.att_holidays (day date primary key, code text not null);   -- generated from att_holiday_rule below
 create table if not exists ripples.att_common_days (         -- common_shock day flags (ENGINE §3.5)
   day date primary key, sources text[] not null default '{}', c_by_source jsonb not null default '{}'::jsonb,
   reason text not null default 'panel', as_of date not null default current_date
@@ -348,10 +349,11 @@ begin
   return x;
 end $$;
 
--- Negative-binomial (r = null → Poisson) mid-p upper tail: p = P(N > n) + ½P(N = n); returns z = Φ⁻¹(1 − p) (AS §6.1.5)
+-- Negative-binomial (r = null → Poisson) mid-p upper tail: p = P(N > n) + ½P(N = n); returns z = Φ⁻¹(1 − p) (AS §6.1.5).
+-- The pmf recursion stops once it underflows past the mode (the remaining tail mass is negligible).
 create or replace function ripples.att_nb_midp_z(n float8, mu float8, r float8) returns float8
 language plpgsql immutable set search_path = '' as $$
-declare k int := 0; pk float8; cum float8 := 0; nn int := greatest(0, floor(n))::int; p float8; ratio float8; lim int;
+declare k int := 0; pk float8; cum float8 := 0; nn int := greatest(0, floor(n))::int; p float8; lim int; early boolean := false;
 begin
   if mu is null or mu <= 0 then return null; end if;
   if r is not null and r <= 0 then r := null; end if;
@@ -361,9 +363,9 @@ begin
     cum := cum + pk;
     if r is null then pk := pk * mu/(k+1); else pk := pk * ((k + r)/(k + 1.0)) * (mu/(r+mu)); end if;
     k := k + 1;
+    if pk < 1e-280 and k > mu then early := true; exit; end if;
   end loop;
-  -- now pk = P(N = nn), cum = P(N < nn)
-  p := 1 - cum - pk/2.0;
+  p := case when early then 1 - cum else 1 - cum - pk/2.0 end;
   p := least(greatest(p, 1e-12), 1 - 1e-12);
   return ripples.att_norm_inv(1 - p);
 end $$;
@@ -379,23 +381,20 @@ language sql immutable strict set search_path = '' as $$
                           from (select y % 19 a, y/100 b, y % 100 c, (y/100)/4 d, (y/100) % 4 e, (y/100 + 8)/25 f, (y/100 - (y/100 + 8)/25 + 1)/3 g) q0) q1) q2) q3) q4
 $$;
 
--- Holiday code for a day ('' when none): US federal (observed), UK bank holidays, Christmas/New Year week (ENGINE §3.2)
-create or replace function ripples.att_holiday(d date) returns text
+-- Holiday code for a day ('' when none): US federal (observed), UK bank holidays, Christmas/New Year week (ENGINE §3.2).
+-- att_holiday_rule is the rule; att_holidays is generated from it once (2012–2031) and att_holiday is the fast lookup.
+create or replace function ripples.att_holiday_rule(d date) returns text
 language plpgsql immutable strict set search_path = '' as $$
 declare y int := extract(year from d)::int; m int := extract(month from d)::int; dd int := extract(day from d)::int;
         dow int := extract(dow from d)::int; e date; obs date;
-  -- nth weekday helper inline
 begin
-  -- Christmas / New Year week dominates
   if (m = 12 and dd >= 24) or (m = 1 and dd <= 1) then return 'xmas_week'; end if;
-  -- fixed-date US holidays with observed shifts
   foreach obs in array array[make_date(y,1,1), make_date(y,6,19), make_date(y,7,4), make_date(y,11,11), make_date(y,12,25)] loop
     if d = obs or (extract(dow from obs) = 6 and d = obs - 1) or (extract(dow from obs) = 0 and d = obs + 1) then
       return case obs when make_date(y,1,1) then 'us_newyear' when make_date(y,6,19) then 'us_juneteenth'
                       when make_date(y,7,4) then 'us_july4' when make_date(y,11,11) then 'us_veterans' else 'us_xmas' end;
     end if;
   end loop;
-  -- moving US holidays
   if m = 1 and dow = 1 and dd between 15 and 21 then return 'us_mlk'; end if;
   if m = 2 and dow = 1 and dd between 15 and 21 then return 'us_presidents'; end if;
   if m = 5 and dow = 1 and dd >= 25 then return 'us_memorial'; end if;
@@ -403,7 +402,6 @@ begin
   if m = 10 and dow = 1 and dd between 8 and 14 then return 'us_columbus'; end if;
   if m = 11 and dow = 4 and dd between 22 and 28 then return 'us_thanksgiving'; end if;
   if m = 11 and dow = 5 and dd between 23 and 29 then return 'us_blackfriday'; end if;
-  -- UK bank holidays
   e := ripples.att_easter(y);
   if d = e - 2 then return 'uk_goodfriday'; end if;
   if d = e + 1 then return 'uk_eastermon'; end if;
@@ -412,6 +410,14 @@ begin
   if m = 12 and dd = 26 then return 'uk_boxing'; end if;
   return '';
 end $$;
+insert into ripples.att_holidays(day, code)
+select d::date, ripples.att_holiday_rule(d::date) from generate_series('2012-01-01'::date, '2031-12-31'::date, interval '1 day') d
+where ripples.att_holiday_rule(d::date) <> ''
+on conflict (day) do nothing;
+create or replace function ripples.att_holiday(d date) returns text
+language sql stable strict set search_path = '' as $$
+  select coalesce((select code from ripples.att_holidays h where h.day = d), '')
+$$;
 
 -- ---------------------------------------------------------------------------------------------------------------------
 -- 5. att_zvec build (ENGINE §3.1–3.5)
@@ -436,132 +442,134 @@ language sql stable set search_path = '' as $$
   where s.series_id = p_series
 $$;
 
--- Pooled weekday and holiday effects per source (AS §6.1.2), written to att_weekday (geo 'ALL', holiday '' = weekday rows)
+-- Pooled weekday and holiday effects per source (AS §6.1.2), written to att_weekday (geo 'ALL'; holiday '' = weekday rows)
 create or replace function ripples.att_zvec_weekday(p_source text, p_day date) returns int
 language plpgsql security definer set search_path = '' as $$
-declare v_kind text; n int := 0;
+declare v_kind text; v_rows int := 0;
 begin
   select coalesce(m.value_kind, s.value_kind) into v_kind
     from ripples.att_sources s left join ripples.att_engine_source_map m on m.source = s.source where s.source = p_source;
-  create temp table if not exists _zw (series_id bigint, day date, x float8) on commit drop;
+  create temp table if not exists _zw (series_id bigint, day date, x float8, h text) on commit drop;
   truncate _zw;
   insert into _zw
   select o.series_id, o.day,
          case v_kind when 'count' then ln(1 + greatest(o.value, 0)) when 'share' then ln((greatest(o.value,0) + 0.5) / nullif(t.value, 0) * 1e6)
                      when 'rank' then case when o.value between 1 and 100 then ln(101 - o.value) else 0 end
                      when 'index' then ln(1 + greatest(o.value, 0)) when 'level' then case when o.value > 0 then ln(o.value) end
-                     else o.value end
+                     else o.value end,
+         coalesce(hd.code, '')
   from ripples.attention_obs o
   join ripples.att_series s on s.series_id = o.series_id
   left join ripples.att_series ts on v_kind = 'share' and ts.source = s.source and ts.metric = s.metric and ts.geo = s.geo and ts.key = '__total__'
   left join ripples.attention_obs t on t.series_id = ts.series_id and t.day = o.day
+  left join ripples.att_holidays hd on hd.day = o.day
   where s.source = p_source and s.key <> '__total__' and o.day between p_day - 365 and p_day
     and (v_kind <> 'share' or t.value > 0);
   create index if not exists _zw_idx on _zw (series_id, day);
   analyze _zw;
-  -- residual against a centred 7-day median (15-day for holidays, holiday excluded by symmetry of the window)
+  -- weekday effect: median residual against a centred 7-day median (pooled over the source's series, last 365 d)
   with r as (
     select a.series_id, a.day, a.x - (select percentile_cont(0.5) within group (order by b.x) from _zw b
                                         where b.series_id = a.series_id and b.day between a.day - 3 and a.day + 3) as res
-    from _zw a where a.x is not null),
-  w as (
-    select extract(dow from day)::int dow, percentile_cont(0.5) within group (order by res) eff, count(*) n from r
-    where ripples.att_holiday(day) = '' group by 1)
+    from _zw a where a.x is not null and a.h = ''),
+  w as (select extract(dow from day)::int dow, percentile_cont(0.5) within group (order by res) eff, count(*) cnt from r group by 1)
   insert into ripples.att_weekday(source, geo, dow, holiday, effect, as_of)
-  select p_source, 'ALL', dow, '', eff, p_day from w where n >= 20
+  select p_source, 'ALL', w.dow, '', w.eff, p_day from w where w.cnt >= 20
   on conflict (source, geo, dow, holiday) do update set effect = excluded.effect, as_of = excluded.as_of;
-  get diagnostics n = row_count;
+  get diagnostics v_rows = row_count;
+  -- holiday effect: residual against the centred 15-day median of non-holiday days; shrunk towards 0 with prior weight 8
   with r as (
-    select a.series_id, a.day, ripples.att_holiday(a.day) h,
+    select a.series_id, a.day, a.h,
            a.x - (select percentile_cont(0.5) within group (order by b.x) from _zw b
-                  where b.series_id = a.series_id and b.day between a.day - 7 and a.day + 7 and ripples.att_holiday(b.day) = '') as res
-    from _zw a where a.x is not null and ripples.att_holiday(a.day) <> ''),
-  hh as (select h, percentile_cont(0.5) within group (order by res) eff, count(*) n from r group by h)
+                  where b.series_id = a.series_id and b.day between a.day - 7 and a.day + 7 and b.h = '') as res
+    from _zw a where a.x is not null and a.h <> ''),
+  hh as (select h, percentile_cont(0.5) within group (order by res) eff, count(*) cnt from r group by h)
   insert into ripples.att_weekday(source, geo, dow, holiday, effect, as_of)
-  select p_source, 'ALL', 0, h, eff * n / (n + 8.0), p_day from hh where n >= 3     -- shrunk towards 0 (prior weight 8)
+  select p_source, 'ALL', 0, hh.h, hh.eff * hh.cnt / (hh.cnt + 8.0), p_day from hh where hh.cnt >= 3
   on conflict (source, geo, dow, holiday) do update set effect = excluded.effect, as_of = excluded.as_of;
-  return n;
+  return v_rows;
 end $$;
 
--- One series → one att_zvec row. p_phi is the (already shrunk) year-ago coefficient to apply (0 = none).
--- Returns jsonb with year-ago sums {"sxy","sxx","n"} so the driver can refit φ per source.
+-- One daily series → one att_zvec row. p_phi is the (already shrunk) year-ago coefficient to apply (0 = none).
+-- Returns {"sxy","sxx","n","nobs"}: year-ago sums so the driver can fit φ per source (robustly: trailing 3 years, |r| < 1, no holidays).
+-- Deviations from ENGINE §3.3 recorded in the workstream report: Theil–Sen on same-weekday pairs 5–9 weeks apart on a weekly grid;
+-- baseline days with < 28 (same-weekday: < 8) observed points get no z; the year-ago term is skipped on holidays.
 create or replace function ripples.att_zvec_series(p_series bigint, p_day date, p_phi float8 default 0) returns jsonb
 language plpgsql security definer set search_path = '' as $$
 declare
   s record; v_kind text; v_chan text; v_same boolean; v_n int; v_from date; v_first date; v_last date; v_nobs int;
   v_total bigint; v_agg bigint; cfg jsonb := coalesce(ripples._att_cfg('engine'), '{}'::jsonb);
   v_days int := coalesce((cfg->>'zvec_days')::int, 420); v_long int := coalesce((cfg->>'zvec_days_long')::int, 2555);
-  v_ar real[]; v_res real[]; v_sig real[]; v_aragg real[]; v_sigma real; v_b real; v_kappa real; v_base real; v_lam real;
-  v_sxy float8; v_sxx float8; v_np int; v_n90 int; v_beta float8; gpool float8[]; hpool jsonb;
+  v_ar real[]; v_res real[]; v_aragg real[]; v_sigma real; v_b real; v_kappa real; v_base real; v_lam real;
+  v_sxy float8; v_sxx float8; v_np int; v_n90 int; v_beta float8; gpool float8[]; hpool jsonb; v_nb_all int; v_minb int;
 begin
   select se.*, src.grain into s from ripples.att_series se join ripples.att_sources src on src.source = se.source where se.series_id = p_series;
-  if not found or s.key = '__total__' then return null; end if;
-  if s.grain not in ('day','hour') then return null; end if;   -- weekly/monthly series: att_zvec_series_periodic
+  if not found then return null; end if;
+  if s.grain not in ('day','hour') then return null; end if;
   v_kind := ripples.att_series_kind(p_series);
   v_chan := ripples.att_series_channel(p_series);
   select coalesce(m.same_dow, false) into v_same from ripples.att_engine_source_map m where m.source = s.source;
   v_same := coalesce(v_same, false);
+  v_minb := case when v_same then 8 else 28 end;   -- same-weekday baselines hold ~13 points; 8 is the floor there
   select min(day), max(day), count(*) into v_first, v_last, v_nobs from ripples.attention_obs where series_id = p_series and day <= p_day;
   if v_nobs is null or v_nobs < 28 or v_last < p_day - 60 then return null; end if;
   v_n := case when v_first <= p_day - 1095 then v_long else v_days end;
   v_from := p_day - v_n + 1;
-  if v_kind = 'share' then
+  if v_kind = 'share' and s.key <> '__total__' then
     select series_id into v_total from ripples.att_series t where t.source = s.source and t.metric = s.metric and t.geo = s.geo and t.key = '__total__';
   end if;
+  if v_kind = 'share' and s.key = '__total__' then v_kind := 'count'; end if;
   select agg.series_id into v_agg
     from ripples.att_engine_source_map m join ripples.att_series agg on agg.source = s.source and agg.metric = s.metric and agg.key = m.agg_key
     where m.source = s.source and s.key <> m.agg_key limit 1;
 
-  -- pooled weekday / holiday effects
   select array_agg(coalesce(w.effect, 0) order by d.dow) into gpool
     from generate_series(0, 6) d(dow) left join ripples.att_weekday w on w.source = s.source and w.geo = 'ALL' and w.dow = d.dow and w.holiday = '';
   select coalesce(jsonb_object_agg(holiday, effect), '{}'::jsonb) into hpool from ripples.att_weekday where source = s.source and geo = 'ALL' and holiday <> '';
 
   create temp table if not exists _zs (i int, day date, dow int, n float8, x float8, xt float8, m float8, yhat float8, sigma float8,
-                                       lam float8, mu float8, var_n float8, nb int, z float8, primary key (i)) on commit drop;
+                                       lam float8, mu float8, var_n float8, nb int, z float8, r float8, h text, primary key (i)) on commit drop;
   truncate _zs;
-  -- 1. transform over [from − 364 − 111, p_day]
-  insert into _zs(i, day, dow, n, x)
-  select (g.day - v_from + 1), g.day, extract(dow from g.day)::int, o.value,
+  -- 1. transform over [from − 475, p_day] (475 = 364 year-ago + 111 baseline)
+  insert into _zs(i, day, dow, n, x, h)
+  select (g.day::date - v_from + 1), g.day::date, extract(dow from g.day)::int, o.value,
          case v_kind when 'count' then ln(1 + greatest(o.value, 0))
                      when 'share' then case when t.value > 0 then ln((greatest(o.value, 0) + 0.5) / t.value * 1e6) end
                      when 'rank' then case when o.value between 1 and 100 then ln(101 - o.value) else 0 end
                      when 'index' then ln(1 + greatest(o.value, 0))
                      when 'level' then case when o.value > 0 then ln(o.value) end
-                     else o.value end
+                     else o.value end,
+         coalesce(hd.code, '')
   from generate_series(v_from - 475, p_day, interval '1 day') g(day)
-  left join ripples.attention_obs o on o.series_id = p_series and o.day = g.day
-  left join ripples.attention_obs t on v_total is not null and t.series_id = v_total and t.day = g.day;
+  left join ripples.attention_obs o on o.series_id = p_series and o.day = g.day::date
+  left join ripples.attention_obs t on v_total is not null and t.series_id = v_total and t.day = g.day::date
+  left join ripples.att_holidays hd on hd.day = g.day::date;
+  analyze _zs;
 
   -- 2. weekday (shrunk to pooled, prior weight 8) and holiday adjustment
-  with own as (
+  with own as materialized (
     select a.dow, count(*) m_k,
            percentile_cont(0.5) within group (order by a.x - (select percentile_cont(0.5) within group (order by b.x) from _zs b
                                                                   where b.i between a.i - 3 and a.i + 3 and b.x is not null)) g_hat
-    from _zs a where a.x is not null and a.day > p_day - 365 and ripples.att_holiday(a.day) = '' group by a.dow),
-  gam as (select d.dow, (coalesce(o.m_k, 0) * coalesce(o.g_hat, 0) + 8 * gpool[d.dow + 1]) / (coalesce(o.m_k, 0) + 8) g
+    from _zs a where a.x is not null and a.day > p_day - 365 and a.h = '' group by a.dow),
+  gam as materialized (select d.dow, (coalesce(o.m_k, 0) * coalesce(o.g_hat, 0) + 8 * gpool[d.dow + 1]) / (coalesce(o.m_k, 0) + 8) g
           from generate_series(0, 6) d(dow) left join own o on o.dow = d.dow)
-  update _zs z set xt = z.x - gam.g - coalesce((hpool ->> ripples.att_holiday(z.day))::float8, 0)
+  update _zs z set xt = z.x - gam.g - coalesce((hpool ->> z.h)::float8, 0)
   from gam where gam.dow = z.dow and z.x is not null;
 
-  -- 3. year-ago term: r_t = x̃_t − m_t (m = rolling baseline median, same-weekday for PHYS/ECON); apply φ̃ to x̃
-  with bl as (
-    select a.i, (select percentile_cont(0.5) within group (order by b.xt) from _zs b
-                 where b.i between a.i - 111 and a.i - 21 and b.xt is not null and (not v_same or b.dow = a.dow)) m
-    from _zs a where a.xt is not null and a.i >= -363),
-  r as (select z.i, z.xt - bl.m r from _zs z join bl on bl.i = z.i where bl.m is not null),
-  pr as (select a.i, a.r r_t, b.r r_y from r a join r b on b.i = a.i - 364)
-  select coalesce(sum(r_t * r_y), 0), coalesce(sum(r_y * r_y), 0), count(*) into v_sxy, v_sxx, v_np from pr;
+  -- 3. year-ago term: r_t = x̃_t − m_t (rolling baseline median; same-weekday for PHYS/ECON); φ̃ applied off holidays only
+  update _zs z set r = z.xt - (select percentile_cont(0.5) within group (order by b.xt) from _zs b
+                               where b.i between z.i - 111 and z.i - 21 and b.xt is not null and (not v_same or b.dow = z.dow))
+  where z.xt is not null and z.i >= -363;
+  select coalesce(sum(a.r * b.r), 0), coalesce(sum(b.r * b.r), 0), count(*) into v_sxy, v_sxx, v_np
+    from _zs a join _zs b on b.i = a.i - 364
+    where a.r is not null and b.r is not null and a.i >= greatest(1, v_n - 1095) and abs(a.r) < 1 and abs(b.r) < 1 and a.h = '' and b.h = '';
   if p_phi <> 0 and v_nobs >= 400 then
-    with bl as (
-      select a.i, (select percentile_cont(0.5) within group (order by b.xt) from _zs b
-                   where b.i between a.i - 111 and a.i - 21 and b.xt is not null and (not v_same or b.dow = a.dow)) m
-      from _zs a where a.xt is not null and a.i >= -363),
-    r as (select z.i, z.xt - bl.m r from _zs z join bl on bl.i = z.i where bl.m is not null)
-    update _zs z set xt = z.xt - p_phi * r.r from r where r.i = z.i - 364 and z.i >= 1;
+    update _zs z set xt = z.xt - p_phi * b.r from _zs b
+     where b.i = z.i - 364 and b.r is not null and z.i >= 1 and z.xt is not null and z.h = '' and b.h = '' and abs(b.r) < 1;
   end if;
 
-  -- 4. baseline stats per day t ≥ 1: B = [t−111, t−21] observed (same-weekday for PHYS/ECON)
+  -- 4. baseline stats per day t ≥ 1: B = [t−111, t−21] observed (same-weekday for PHYS/ECON); scale floors (ENGINE §3.4)
   update _zs z set m = q.m, lam = q.lam, mu = q.mu_n, var_n = q.var_n, nb = q.nb
   from (
     select a.i,
@@ -572,7 +580,7 @@ begin
     where a.i >= 1
     group by a.i) q
   where q.i = z.i;
-  -- scale floors (ENGINE §3.4): σ = max(1.4826·MAD, floor by kind)
+  update _zs set m = null where i >= 1 and coalesce(nb, 0) < v_minb;
   update _zs z set sigma = greatest(
       coalesce((select 1.4826 * percentile_cont(0.5) within group (order by abs(b.xt - z.m)) from _zs b
                 where b.i between z.i - 111 and z.i - 21 and b.xt is not null and (not v_same or b.dow = z.dow)), 0),
@@ -580,23 +588,23 @@ begin
            when v_kind = 'level' then 0.005 when v_kind = 'rate' then 0.01 else 0.02 end)
   where z.i >= 1 and z.m is not null;
 
-  -- 5. growth: Theil–Sen on B restricted to same-weekday pairs 5–9 weeks apart, on a weekly grid, applied only if |b|·60 > σ
-  with grid as (select i, dow, m, sigma from _zs where i >= 1 and m is not null and (v_n - i) % 7 = 0),
-  sl as (select g.i, percentile_cont(0.5) within group (order by (b.xt - a.xt) / (b.i - a.i)) b
-         from grid g join _zs a on a.i between g.i - 111 and g.i - 21 and a.xt is not null and (not v_same or a.dow = g.dow)
-                     join _zs b on b.i - a.i in (35, 42, 49, 56, 63) and b.i <= g.i - 21 and b.xt is not null and (not v_same or b.dow = g.dow)
-         group by g.i),
-  ap as (select z.i, (select sl.b from sl where sl.i <= z.i order by sl.i desc limit 1) b from _zs z where z.i >= 1)
-  update _zs z set yhat = case when abs(ap.b) * 60 > z.sigma then z.m + ap.b * (z.i - (z.i - 66)) else z.m end
-  from ap where ap.i = z.i and z.m is not null;
+  -- 5. growth: Theil–Sen restricted to same-weekday pairs 5–9 weeks apart inside B, on a weekly grid; applied only if |b|·60 > σ
+  create temp table if not exists _zsl (i int primary key, b float8) on commit drop;
+  truncate _zsl;
+  insert into _zsl(i, b)
+  select g.i, percentile_cont(0.5) within group (order by (b.xt - a.xt) / d.k)
+  from (select i, dow from _zs where i >= 1 and m is not null and (v_n - i) % 7 = 0) g
+  join _zs a on a.i between g.i - 111 and g.i - 21 and a.xt is not null and (not v_same or a.dow = g.dow)
+  cross join (values (35),(42),(49),(56),(63)) d(k)
+  join _zs b on b.i = a.i + d.k and b.i <= g.i - 21 and b.xt is not null
+  group by g.i having count(*) >= 20;
+  update _zs z set yhat = case when abs(sl.b) * 60 > z.sigma then z.m + sl.b * 66 else z.m end
+  from (select z2.i, (select b from _zsl where _zsl.i <= z2.i order by _zsl.i desc limit 1) b from _zs z2 where z2.i >= 1) sl
+  where sl.i = z.i and z.m is not null and sl.b is not null;
   update _zs set yhat = m where i >= 1 and yhat is null and m is not null;
-  select b into v_b from (
-    with grid as (select i, dow from _zs where i = v_n)
-    select percentile_cont(0.5) within group (order by (b.xt - a.xt) / (b.i - a.i)) b
-    from grid g join _zs a on a.i between g.i - 111 and g.i - 21 and a.xt is not null and (not v_same or a.dow = g.dow)
-                join _zs b on b.i - a.i in (35, 42, 49, 56, 63) and b.i <= g.i - 21 and b.xt is not null and (not v_same or b.dow = g.dow)) q;
+  select b into v_b from _zsl order by i desc limit 1;
 
-  -- 6. z: robust, or NB mid-p when a count source has λ̂ < 10 (μ_t = mean(n_B)·e^{γ}; γ folded into x̃ so use mean(n_B) directly)
+  -- 6. z: robust, or NB mid-p when a count source has λ̂ < 10
   update _zs z set z = case
       when z.xt is null or z.yhat is null then null
       when v_kind = 'count' and z.lam < 10 then
@@ -605,41 +613,42 @@ begin
       else (z.xt - z.yhat) / z.sigma end
   where z.i >= 1;
 
-  -- 7. arrays (index 1 = v_from). ar = z for now; panel demeaning is applied by the driver (c_t needs the whole source).
-  select array_agg(z::real order by i), array_agg((xt - yhat)::real order by i), array_agg(sigma::real order by i)
-    into v_ar, v_res, v_sig from _zs where i >= 1;
+  -- 7. arrays (index 1 = v_from). ar = raw z for now; panel demeaning (att_zvec_demean) sets ar = raw − c_t.
+  select array_agg(z::real order by i), array_agg((xt - yhat)::real order by i)
+    into v_ar, v_res from _zs where i >= 1;
   select sigma, lam into v_sigma, v_lam from _zs where i = v_n;
   if v_sigma is null then select sigma, lam into v_sigma, v_lam from _zs where i >= 1 and sigma is not null order by i desc limit 1; end if;
   if v_sigma is null then return null; end if;
   select count(*) into v_n90 from _zs where i > v_n - 90 and x is not null;
-  select nb into v_kappa from _zs where i = v_n;
-  v_kappa := case when coalesce(v_kappa, 0) < 28 then 0 else least(1, v_kappa / 90.0) end;
+  select count(*) into v_nb_all from _zs where i between v_n - 111 and v_n - 21 and xt is not null;
+  v_kappa := case when coalesce(v_nb_all, 0) < 28 then 0 else least(1, v_nb_all / 90.0) end;
   select percentile_cont(0.5) within group (order by x) into v_base from _zs where i > v_n - 91 and x is not null;
 
-  -- 8. regional aggregate demeaning: β over the trailing 364 days of z against the aggregate's stored ar
+  -- 8. regional aggregate demeaning: β over the trailing 364 days of z against the aggregate's raw (undemeaned) z
   if v_agg is not null then
     select (sum(a.z * g.z) - count(*) * avg(a.z) * avg(g.z)) / nullif(sum(g.z * g.z) - count(*) * avg(g.z) * avg(g.z), 0)
       into v_beta
-      from _zs a join (select zv.from_day + (u.o - 1)::int as day, u.z from ripples.att_zvec zv, unnest(zv.ar) with ordinality u(z, o) where zv.series_id = v_agg) g
+      from _zs a join (select zv.from_day + (u.o - 1)::int as day, u.z from ripples.att_zvec zv, unnest(ripples.att_zvec_rawz(zv.series_id)) with ordinality u(z, o) where zv.series_id = v_agg) g
         on g.day = a.day
       where a.i > v_n - 364 and a.z is not null and g.z is not null;
     if v_beta is not null then
       select array_agg((a.z - v_beta * g.z)::real order by a.i) into v_aragg
-        from _zs a left join (select zv.from_day + (u.o - 1)::int as day, u.z from ripples.att_zvec zv, unnest(zv.ar) with ordinality u(z, o) where zv.series_id = v_agg) g
+        from _zs a left join (select zv.from_day + (u.o - 1)::int as day, u.z from ripples.att_zvec zv, unnest(ripples.att_zvec_rawz(zv.series_id)) with ordinality u(z, o) where zv.series_id = v_agg) g
           on g.day = a.day where a.i >= 1;
     end if;
   end if;
 
-  insert into ripples.att_zvec(series_id, from_day, grain, n, ar, resid, sig, ar_agg, sigma, trend_b, phi, kappa, demean, agg_series,
+  -- ar is written undemeaned (demean 'none' / 'aggregate'); att_zvec_demean subtracts c_t for panel sources afterwards
+  insert into ripples.att_zvec(series_id, from_day, grain, n, ar, resid, ar_agg, sigma, trend_b, phi, kappa, demean, agg_series,
                                value_kind, base_level, lam, n_obs, n_obs_90, same_dow, refreshed)
-  values (p_series, v_from, 'day', v_n, v_ar, v_res, v_sig, v_aragg, v_sigma, v_b, p_phi, v_kappa,
-          case when v_agg is not null and v_aragg is not null then 'aggregate' else 'panel' end, v_agg,
-          v_kind, v_base, v_lam, v_nobs, v_n90, v_same, now())
+  values (p_series, v_from, 'day', v_n, v_ar, v_res, v_aragg, v_sigma, v_b, p_phi, v_kappa,
+          case when v_agg is not null and v_aragg is not null then 'aggregate' else 'none' end, v_agg,
+          v_kind, v_base, v_lam, v_nobs, v_n90, v_same, clock_timestamp())
   on conflict (series_id) do update set from_day = excluded.from_day, grain = excluded.grain, n = excluded.n, ar = excluded.ar,
-    resid = excluded.resid, sig = excluded.sig, ar_agg = excluded.ar_agg, sigma = excluded.sigma, trend_b = excluded.trend_b,
+    resid = excluded.resid, ar_agg = excluded.ar_agg, sigma = excluded.sigma, trend_b = excluded.trend_b,
     phi = excluded.phi, kappa = excluded.kappa, demean = excluded.demean, agg_series = excluded.agg_series, value_kind = excluded.value_kind,
     base_level = excluded.base_level, lam = excluded.lam, n_obs = excluded.n_obs, n_obs_90 = excluded.n_obs_90, same_dow = excluded.same_dow,
-    refreshed = now();
+    refreshed = clock_timestamp();
   return jsonb_build_object('sxy', v_sxy, 'sxx', v_sxx, 'n', v_np, 'nobs', v_nobs);
 end $$;
 
@@ -647,20 +656,23 @@ end $$;
 -- z = x̃ / (1.4826·MAD of residuals over the prior 36 months). One array element per period.
 create or replace function ripples.att_zvec_series_periodic(p_series bigint, p_day date) returns jsonb
 language plpgsql security definer set search_path = '' as $$
-declare s record; v_kind text; v_from date; v_n int; v_ar real[]; v_res real[]; v_sig real[]; v_sigma real; v_nobs int; v_kappa real; v_base real;
+declare s record; v_kind text; v_from date; v_n int; v_ar real[]; v_res real[]; v_sigma real; v_nobs int; v_kappa real; v_base real; v_w int;
 begin
   select se.*, src.grain into s from ripples.att_series se join ripples.att_sources src on src.source = se.source where se.series_id = p_series;
   if not found or s.grain not in ('week','month') then return null; end if;
   v_kind := ripples.att_series_kind(p_series);
+  v_w := case when s.grain = 'month' then 36 else 156 end;
   create temp table if not exists _zp (i int primary key, day date, x float8, xt float8, yhat float8, sigma float8, z float8) on commit drop;
   truncate _zp;
   if s.grain = 'month' then
-    v_from := date_trunc('month', p_day)::date - interval '119 months'; v_n := 120;
+    v_from := (date_trunc('month', p_day)::date - interval '119 months')::date; v_n := 120;
     insert into _zp(i, day, x)
     select g.i, (v_from + make_interval(months => g.i - 1))::date, case v_kind when 'level' then case when o.value > 0 then ln(o.value) end
                                                                         when 'count' then ln(1 + greatest(o.value, 0)) when 'rate' then o.value else ln(1 + greatest(o.value, 0)) end
     from generate_series(1, 120) g(i)
-    left join ripples.attention_obs o on o.series_id = p_series and date_trunc('month', o.day)::date = (v_from + make_interval(months => g.i - 1))::date;
+    left join lateral (select value from ripples.attention_obs o where o.series_id = p_series
+                       and o.day >= (v_from + make_interval(months => g.i - 1))::date and o.day < (v_from + make_interval(months => g.i))::date
+                       order by o.day desc limit 1) o on true;
   else
     v_from := p_day - 7 * 259; v_n := 260;
     insert into _zp(i, day, x)
@@ -672,43 +684,84 @@ begin
   end if;
   select count(*) into v_nobs from _zp where x is not null;
   if v_nobs < 12 then return null; end if;
-  -- month-of-year effect (median residual against a 13-period centred median), weekly: week-of-year bucket
   with res as (
     select a.i, a.day, a.x - (select percentile_cont(0.5) within group (order by b.x) from _zp b where b.i between a.i - 6 and a.i + 6 and b.x is not null) r
     from _zp a where a.x is not null),
   moy as (select extract(month from day)::int k, percentile_cont(0.5) within group (order by r) eff, count(*) n from res group by 1)
   update _zp z set xt = z.x - coalesce((select eff from moy where moy.k = extract(month from z.day)::int and moy.n >= 3), 0) where z.x is not null;
-  -- local linear trend on the prior 36 periods (months) / 156 (weeks): OLS on the window, residual scale = MAD
-  update _zp z set yhat = q.yhat, sigma = q.sigma from (
+  update _zp z set yhat = q.yhat from (
     select a.i,
-           (avg(b.xt) + (sum((b.i - a.i) * b.xt) - count(*) * avg(b.i - a.i) * avg(b.xt)) / nullif(sum((b.i - a.i)^2) - count(*) * avg(b.i - a.i)^2, 0) * (0 - avg(b.i - a.i))) yhat,
-           null::float8 sigma
-    from _zp a join _zp b on b.i between a.i - (case when s.grain = 'month' then 36 else 156 end) and a.i - 1 and b.xt is not null
+           avg(b.xt) + ((sum((b.i - a.i) * b.xt) - count(*) * avg(b.i - a.i) * avg(b.xt)) / nullif(sum((b.i - a.i)^2) - count(*) * avg(b.i - a.i)^2, 0)) * (0 - avg(b.i - a.i)) yhat
+    from _zp a join _zp b on b.i between a.i - v_w and a.i - 1 and b.xt is not null
     where a.xt is not null group by a.i having count(*) >= 6) q where q.i = z.i;
   update _zp z set sigma = greatest(coalesce((select 1.4826 * percentile_cont(0.5) within group (order by abs(b.xt - z.yhat)) from _zp b
-                                              where b.i between z.i - (case when s.grain = 'month' then 36 else 156 end) and z.i - 1 and b.xt is not null), 0),
+                                              where b.i between z.i - v_w and z.i - 1 and b.xt is not null), 0),
                                     case v_kind when 'rate' then 0.01 when 'level' then 0.005 else 0.02 end)
   where z.yhat is not null;
   update _zp set z = (xt - yhat) / sigma where yhat is not null and sigma is not null;
-  select array_agg(z::real order by i), array_agg((xt - yhat)::real order by i), array_agg(sigma::real order by i) into v_ar, v_res, v_sig from _zp;
+  select array_agg(z::real order by i), array_agg((xt - yhat)::real order by i) into v_ar, v_res from _zp;
   select sigma into v_sigma from _zp where sigma is not null order by i desc limit 1;
   if v_sigma is null then return null; end if;
   v_kappa := case when v_nobs < 12 then 0 else least(1, v_nobs / 36.0) end;
   select percentile_cont(0.5) within group (order by x) into v_base from _zp where x is not null and i > v_n - 12;
-  insert into ripples.att_zvec(series_id, from_day, grain, n, ar, resid, sig, sigma, kappa, demean, value_kind, base_level, n_obs, n_obs_90, refreshed)
-  values (p_series, v_from, s.grain, v_n, v_ar, v_res, v_sig, v_sigma, v_kappa, 'none', v_kind, v_base, v_nobs, v_nobs, now())
+  insert into ripples.att_zvec(series_id, from_day, grain, n, ar, resid, sigma, kappa, demean, value_kind, base_level, n_obs, n_obs_90, refreshed)
+  values (p_series, v_from, s.grain, v_n, v_ar, v_res, v_sigma, v_kappa, 'none', v_kind, v_base, v_nobs, v_nobs, now())
   on conflict (series_id) do update set from_day = excluded.from_day, grain = excluded.grain, n = excluded.n, ar = excluded.ar, resid = excluded.resid,
-    sig = excluded.sig, sigma = excluded.sigma, kappa = excluded.kappa, demean = 'none', value_kind = excluded.value_kind, base_level = excluded.base_level,
+    sigma = excluded.sigma, kappa = excluded.kappa, demean = 'none', value_kind = excluded.value_kind, base_level = excluded.base_level,
     n_obs = excluded.n_obs, n_obs_90 = excluded.n_obs_90, refreshed = now();
   return jsonb_build_object('nobs', v_nobs);
 end $$;
 
--- Nightly driver (cron att-zvec 05:50). Rebuilds every eligible series (≥ 28 observed days, data within 60 days),
--- fits φ per source (shrunk n/(n+50)), applies panel demeaning c_t (sources with ≥ 50 panel series) and writes common_shock days.
+-- Raw (undemeaned) z of a series: ar + c_t for panel-demeaned rows (c_t from att_zvec_ct), ar otherwise. Replaces the stored zraw.
+create or replace function ripples.att_zvec_rawz(p_series bigint) returns real[]
+language sql stable set search_path = '' as $$
+  select case when z.demean = 'panel' then
+           (select array_agg((u.z + coalesce(ct.c, 0))::real order by u.o)
+              from unnest(z.ar) with ordinality u(z, o)
+              left join ripples.att_zvec_ct ct on ct.source = s.source and ct.day = z.from_day + (u.o - 1)::int)
+         else z.ar end
+  from ripples.att_zvec z join ripples.att_series s on s.series_id = z.series_id where z.series_id = p_series
+$$;
+
+-- Panel demeaning (ENGINE §3.5): c_t = median raw z over the source's panel series on day t (only with ≥ 50 panel series); ar = raw − c_t.
+-- Idempotent without a stored zraw: rows already marked 'panel' are un-demeaned with the previous c_t before the new c_t is computed.
+create or replace function ripples.att_zvec_demean(p_source text, p_day date) returns int
+language plpgsql security definer set search_path = '' as $$
+declare n_panel int; v_rows int := 0;
+begin
+  create temp table if not exists _zd (series_id bigint primary key, from_day date, raw real[], in_panel boolean) on commit drop;
+  truncate _zd;
+  insert into _zd
+  select z.series_id, z.from_day, ripples.att_zvec_rawz(z.series_id), coalesce(t.in_panel, false)
+  from ripples.att_zvec z join ripples.att_series s on s.series_id = z.series_id left join ripples.att_topics t on t.topic_id = s.topic_id
+  where s.source = p_source and z.grain = 'day';
+  select count(*) into n_panel from _zd where in_panel;
+  delete from ripples.att_zvec_ct where source = p_source;
+  if n_panel < 50 then
+    update ripples.att_zvec z set ar = d.raw, demean = 'none' from _zd d where d.series_id = z.series_id and z.demean = 'panel';
+    return 0;
+  end if;
+  insert into ripples.att_zvec_ct(source, day, c, n_panel)
+  select p_source, d.from_day + (u.o - 1)::int, percentile_cont(0.5) within group (order by u.z), count(*)
+  from _zd d cross join lateral unnest(d.raw) with ordinality u(z, o)
+  where d.in_panel and u.z is not null
+  group by 2 having count(*) >= 50;
+  update ripples.att_zvec z set ar = q.ar, demean = 'panel'
+  from (select d.series_id, array_agg((u.z - coalesce(ct.c, 0))::real order by u.o) ar
+        from _zd d cross join lateral unnest(d.raw) with ordinality u(z, o)
+        left join ripples.att_zvec_ct ct on ct.source = p_source and ct.day = d.from_day + (u.o - 1)::int
+        group by d.series_id) q
+  where q.series_id = z.series_id;
+  get diagnostics v_rows = row_count;
+  return v_rows;
+end $$;
+
+-- Synchronous driver (tests, small sources). Fits φ per source (≥ 200 year-ago pairs, clamped to [0, 1], shrunk n/(n+50) per series),
+-- applies panel demeaning and writes common_shock days.
 create or replace function ripples.att_build_zvec(p_day date default current_date - 1, p_sources text[] default null) returns jsonb
 language plpgsql security definer set search_path = '' as $$
 declare r record; src record; j jsonb; n_ser int := 0; n_src int := 0; v_phi float8; t0 timestamptz := clock_timestamp();
-        sxy float8; sxx float8; nser int; c_days int := 0;
+        sxy float8; sxx float8; nser int; npairs int; c_days int := 0;
 begin
   for src in
     select s.source, s.grain, coalesce(m.channel, 'READ') channel
@@ -721,28 +774,25 @@ begin
     n_src := n_src + 1;
     if src.grain in ('day','hour') then
       perform ripples.att_zvec_weekday(src.source, p_day);
-      -- pass 1 (φ = 0) collects year-ago sums; the shrunk φ̃_k = φ̂_s · n_k/(n_k + 50) is applied in pass 2 to ≥ 400-day series
-      sxy := 0; sxx := 0; nser := 0;
+      sxy := 0; sxx := 0; nser := 0; npairs := 0;
       for r in select series_id from ripples.att_series where source = src.source and key <> '__total__' and last_day >= p_day - 60 loop
         j := ripples.att_zvec_series(r.series_id, p_day, 0);
         if j is not null then
           n_ser := n_ser + 1;
-          if (j->>'nobs')::int >= 400 and (j->>'n')::int >= 200 then sxy := sxy + (j->>'sxy')::float8; sxx := sxx + (j->>'sxx')::float8; nser := nser + 1; end if;
+          if (j->>'nobs')::int >= 400 then sxy := sxy + (j->>'sxy')::float8; sxx := sxx + (j->>'sxx')::float8; nser := nser + 1; npairs := npairs + (j->>'n')::int; end if;
         end if;
       end loop;
-      v_phi := case when sxx > 0 and nser > 0 then least(greatest(sxy / sxx, -1), 1) else 0 end;
-      perform ripples.att_state_set('zvec.phi.' || src.source, jsonb_build_object('phi', v_phi, 'series', nser, 'day', p_day));
+      v_phi := case when sxx > 0 and npairs >= 200 then least(greatest(sxy / sxx, 0), 1) else 0 end;
+      perform ripples.att_state_set('zvec.phi.' || src.source, jsonb_build_object('phi', v_phi, 'series', nser, 'pairs', npairs, 'day', p_day));
       if v_phi <> 0 then
         for r in select z.series_id, z.n_obs from ripples.att_zvec z join ripples.att_series s using (series_id)
-                  where s.source = src.source and z.n_obs >= 400 and z.refreshed >= t0 loop
+                  where s.source = src.source and z.n_obs >= 400 and z.grain = 'day' and s.key <> '__total__' loop
           perform ripples.att_zvec_series(r.series_id, p_day, v_phi * r.n_obs / (r.n_obs + 50.0));
         end loop;
       end if;
-      -- __total__ series get a zvec too (needed as aggregates / for sparks), never as targets
       for r in select series_id from ripples.att_series where source = src.source and key = '__total__' and last_day >= p_day - 60 loop
         perform ripples.att_zvec_series(r.series_id, p_day, 0);
       end loop;
-      -- panel demeaning: c_t = median z over the source's panel series on day t, only with ≥ 50 panel series
       perform ripples.att_zvec_demean(src.source, p_day);
     else
       for r in select series_id from ripples.att_series where source = src.source and last_day >= p_day - 120 loop
@@ -751,13 +801,14 @@ begin
       end loop;
     end if;
   end loop;
-  -- common_shock flags: |c_t| ≥ 1.5 on any panel source with ≥ 50 series (registered market-wide/holiday days come from att_config 'common_days')
-  with c as (select day, source, c from ripples.att_zvec_ct where day between p_day - 420 and p_day),
+  with c as (select day, source, c from ripples.att_zvec_ct where day between p_day - 2555 and p_day),
   f as (select day, array_agg(source order by source) sources, jsonb_object_agg(source, round(c::numeric, 3)) cs from c where abs(c) >= 1.5 group by day)
   insert into ripples.att_common_days(day, sources, c_by_source, reason, as_of)
   select day, sources, cs, 'panel', p_day from f
   on conflict (day) do update set sources = excluded.sources, c_by_source = excluded.c_by_source, as_of = excluded.as_of;
   get diagnostics c_days = row_count;
+  delete from ripples.att_common_days d where d.reason = 'panel' and d.as_of < p_day
+     and not exists (select 1 from ripples.att_zvec_ct c where c.day = d.day and abs(c.c) >= 1.5);
   insert into ripples.att_common_days(day, sources, c_by_source, reason, as_of)
   select d::date, '{}', '{}'::jsonb, 'registered', p_day
   from jsonb_array_elements_text(coalesce(ripples._att_cfg('common_days'), '[]'::jsonb)) d
@@ -766,33 +817,125 @@ begin
                             'seconds', round(extract(epoch from clock_timestamp() - t0)::numeric, 1));
 end $$;
 
-create or replace function ripples.att_zvec_demean(p_source text, p_day date) returns int
+-- Chunked nightly build (cron att-zvec, every minute 05:50–07:20): each call works ≤ p_budget_s seconds; state in att_state 'zvec.run'.
+-- ~1.5k series take ~25 minutes of DB time (0.5–2 s per series), inside the statement_timeout of pg_cron.
+create or replace function ripples.att_build_zvec_step(p_day date default current_date - 1, p_budget_s int default 90) returns jsonb
 language plpgsql security definer set search_path = '' as $$
-declare n_panel int; n int := 0;
+declare st jsonb; t0 timestamptz := clock_timestamp(); j jsonb; n_done int := 0; v_phi float8;
+        v_src text; v_stage text; sxy float8; sxx float8; nser int; npairs int; v_sid bigint;
 begin
-  -- the panel = series of in_panel topics; fall back to all topic-linked series of the source when no panel topics are keyed there
-  select count(*) into n_panel from ripples.att_zvec z join ripples.att_series s using (series_id) join ripples.att_topics t on t.topic_id = s.topic_id
-   where s.source = p_source and t.in_panel and z.grain = 'day';
-  if n_panel < 50 then
-    delete from ripples.att_zvec_ct where source = p_source;
-    return 0;
+  st := coalesce(ripples.att_state_get('zvec.run'), '{}'::jsonb);
+  if (st ->> 'day') is distinct from p_day::text then
+    st := jsonb_build_object('day', p_day, 'started', now(), 'sources', (
+            select coalesce(jsonb_agg(s.source order by (s.grain in ('day','hour')) desc, s.source), '[]'::jsonb)
+            from ripples.att_sources s left join ripples.att_engine_source_map m on m.source = s.source
+            where s.enabled and coalesce(m.channel, '') <> 'MONEY'
+              and exists (select 1 from ripples.att_series x where x.source = s.source and x.last_day >= p_day - 60)),
+          'done', '[]'::jsonb, 'cur', null, 'stage', null, 'pending', '[]'::jsonb, 'sxy', 0, 'sxx', 0, 'nser', 0, 'npairs', 0, 'series', 0);
+    perform ripples.att_state_set('zvec.run', st);
   end if;
-  delete from ripples.att_zvec_ct where source = p_source;
-  insert into ripples.att_zvec_ct(source, day, c, n_panel)
-  select p_source, z.from_day + (u.o - 1)::int, percentile_cont(0.5) within group (order by u.z), count(*)
-  from ripples.att_zvec z join ripples.att_series s using (series_id) join ripples.att_topics t on t.topic_id = s.topic_id,
-       unnest(z.ar) with ordinality u(z, o)
-  where s.source = p_source and t.in_panel and z.grain = 'day' and u.z is not null
-  group by 2 having count(*) >= 50;
-  -- ar := z − c_t for every series of the source (ar currently holds the raw z from att_zvec_series)
-  update ripples.att_zvec z set ar = q.ar, demean = case when z.demean = 'aggregate' then 'aggregate' else 'panel' end
-  from (select z.series_id, array_agg((u.z - coalesce(ct.c, 0))::real order by u.o) ar
-        from ripples.att_zvec z join ripples.att_series s using (series_id), unnest(z.ar) with ordinality u(z, o)
-        left join ripples.att_zvec_ct ct on ct.source = p_source and ct.day = z.from_day + (u.o - 1)::int
-        where s.source = p_source and z.grain = 'day' group by z.series_id) q
-  where q.series_id = z.series_id;
-  get diagnostics n = row_count;
-  return n;
+  if st ? 'finished' then return st - 'sources' - 'pending'; end if;
+
+  while clock_timestamp() - t0 < make_interval(secs => p_budget_s) loop
+    v_src := st ->> 'cur';
+    if v_src is null then
+      select x into v_src from jsonb_array_elements_text(st -> 'sources') x where not (st -> 'done') ? x limit 1;
+      if v_src is null then
+        with c as (select day, source, c from ripples.att_zvec_ct),
+        f as (select day, array_agg(source order by source) sources, jsonb_object_agg(source, round(c::numeric, 3)) cs from c where abs(c) >= 1.5 group by day)
+        insert into ripples.att_common_days(day, sources, c_by_source, reason, as_of)
+        select day, sources, cs, 'panel', p_day from f
+        on conflict (day) do update set sources = excluded.sources, c_by_source = excluded.c_by_source, as_of = excluded.as_of;
+        delete from ripples.att_common_days d where d.reason = 'panel' and d.as_of < p_day
+           and not exists (select 1 from ripples.att_zvec_ct c where c.day = d.day and abs(c.c) >= 1.5);
+        insert into ripples.att_common_days(day, sources, c_by_source, reason, as_of)
+        select d::date, '{}', '{}'::jsonb, 'registered', p_day
+        from jsonb_array_elements_text(coalesce(ripples._att_cfg('common_days'), '[]'::jsonb)) d
+        on conflict (day) do update set reason = 'registered';
+        st := st || jsonb_build_object('finished', now());
+        perform ripples.att_state_set('zvec.run', st);
+        return st - 'sources' - 'pending';
+      end if;
+      select s.grain into v_stage from ripples.att_sources s where s.source = v_src;
+      if v_stage in ('day','hour') then
+        perform ripples.att_zvec_weekday(v_src, p_day);
+        st := st || jsonb_build_object('cur', v_src, 'stage', 'pass1', 'sxy', 0, 'sxx', 0, 'nser', 0, 'npairs', 0,
+               'pending', (select coalesce(jsonb_agg(series_id order by series_id), '[]'::jsonb) from ripples.att_series
+                           where source = v_src and key <> '__total__' and last_day >= p_day - 60));
+      else
+        st := st || jsonb_build_object('cur', v_src, 'stage', 'periodic',
+               'pending', (select coalesce(jsonb_agg(series_id order by series_id), '[]'::jsonb) from ripples.att_series
+                           where source = v_src and last_day >= p_day - 120));
+      end if;
+      perform ripples.att_state_set('zvec.run', st);
+      continue;
+    end if;
+    v_stage := st ->> 'stage';
+    if jsonb_array_length(st -> 'pending') = 0 then
+      if v_stage = 'pass1' then
+        sxy := (st ->> 'sxy')::float8; sxx := (st ->> 'sxx')::float8; nser := (st ->> 'nser')::int; npairs := coalesce((st ->> 'npairs')::int, 0);
+        v_phi := case when sxx > 0 and npairs >= 200 then least(greatest(sxy / sxx, 0), 1) else 0 end;
+        perform ripples.att_state_set('zvec.phi.' || v_src, jsonb_build_object('phi', v_phi, 'series', nser, 'pairs', npairs, 'day', p_day));
+        st := st || jsonb_build_object('stage', 'pass2', 'phi', v_phi,
+               'pending', case when v_phi <> 0 then (select coalesce(jsonb_agg(z.series_id order by z.series_id), '[]'::jsonb)
+                                                     from ripples.att_zvec z join ripples.att_series s using (series_id)
+                                                     where s.source = v_src and z.n_obs >= 400 and z.grain = 'day' and s.key <> '__total__') else '[]'::jsonb end);
+      elsif v_stage = 'pass2' then
+        st := st || jsonb_build_object('stage', 'totals',
+               'pending', (select coalesce(jsonb_agg(series_id order by series_id), '[]'::jsonb) from ripples.att_series
+                           where source = v_src and key = '__total__' and last_day >= p_day - 60));
+      elsif v_stage = 'totals' then
+        perform ripples.att_zvec_demean(v_src, p_day);
+        st := st || jsonb_build_object('cur', null, 'stage', null, 'done', (st -> 'done') || to_jsonb(v_src));
+      else
+        st := st || jsonb_build_object('cur', null, 'stage', null, 'done', (st -> 'done') || to_jsonb(v_src));
+      end if;
+      perform ripples.att_state_set('zvec.run', st);
+      continue;
+    end if;
+    v_sid := (st -> 'pending' ->> 0)::bigint;
+    if v_stage = 'pass1' then
+      j := ripples.att_zvec_series(v_sid, p_day, 0);
+      if j is not null then
+        st := st || jsonb_build_object('series', (st ->> 'series')::int + 1);
+        if (j->>'nobs')::int >= 400 then
+          st := st || jsonb_build_object('sxy', (st ->> 'sxy')::float8 + (j->>'sxy')::float8, 'sxx', (st ->> 'sxx')::float8 + (j->>'sxx')::float8,
+                                         'nser', (st ->> 'nser')::int + 1, 'npairs', coalesce((st ->> 'npairs')::int, 0) + (j->>'n')::int);
+        end if;
+      end if;
+    elsif v_stage = 'pass2' then
+      select n_obs into nser from ripples.att_zvec where series_id = v_sid;
+      perform ripples.att_zvec_series(v_sid, p_day, (st ->> 'phi')::float8 * nser / (nser + 50.0));
+    elsif v_stage = 'totals' then
+      perform ripples.att_zvec_series(v_sid, p_day, 0);
+    else
+      perform ripples.att_zvec_series_periodic(v_sid, p_day);
+    end if;
+    st := st || jsonb_build_object('pending', (st -> 'pending') - 0);
+    n_done := n_done + 1;
+    if n_done % 10 = 0 then perform ripples.att_state_set('zvec.run', st); end if;
+  end loop;
+  perform ripples.att_state_set('zvec.run', st);
+  return jsonb_build_object('day', p_day, 'cur', st ->> 'cur', 'stage', st ->> 'stage', 'done', jsonb_array_length(st -> 'done'),
+                            'of', jsonb_array_length(st -> 'sources'), 'series_this_call', n_done, 'pending', jsonb_array_length(st -> 'pending'));
+end $$;
+
+-- One stepper at a time (advisory lock); overlapping cron fires return immediately
+create or replace function ripples.att_zvec_step_locked(p_day date default current_date - 1, p_budget_s int default 90) returns jsonb
+language plpgsql security definer set search_path = '' as $$
+declare r jsonb;
+begin
+  if not pg_try_advisory_lock(hashtext('ripples.att_build_zvec_step')) then
+    return jsonb_build_object('skipped', 'another stepper holds the lock');
+  end if;
+  begin
+    r := ripples.att_build_zvec_step(p_day, p_budget_s);
+  exception when others then
+    perform pg_advisory_unlock(hashtext('ripples.att_build_zvec_step'));
+    raise;
+  end;
+  perform pg_advisory_unlock(hashtext('ripples.att_build_zvec_step'));
+  return r;
 end $$;
 
 -- Convenience: AR value of a series on a day (null outside the array / missing)

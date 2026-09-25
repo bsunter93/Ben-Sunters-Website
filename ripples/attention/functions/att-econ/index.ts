@@ -3,25 +3,35 @@
 // §9 (API budget), §10.3 (edge-function additions); OWNER_DECISIONS D-7 (keys via public.att_secret only), D-9 (NOAA).
 //
 // Modes (body.mode):
-//   fred        FRED series/observations for the configured national series (rates, FX, commodities, claims) and all
-//               53 <ST>ICLAIMS state initial-claims series. Daily series every day; weekly series on Thu/Fri or when
-//               stale. Stored: source fred / metric rate|level|count / geo US|US-XX / key = FRED id; meta.vintage =
-//               realtime_start of the value held; weekly series also meta.released = first-release date
-//               (output_type=4). Third-party series (Cboe VIX, S&P 500, ICE BofA, Freddie Mac) are never requested.
-//   calendar    FRED release/dates for CPI, Employment Situation, FOMC press release, UI weekly claims, GDP, PCE
-//               (past + scheduled) -> ripples.att_release_dates (release looks, att_family_calendar).
-//   eia_930     EIA API v2 electricity/rto/daily-region-data, type D (demand, MWh) for every respondent (~65 balancing
-//               authorities + regions + US48), each in its local timezone. Backfill from 2015-07-01.
-//   eia_prices  EIA API v2: WTI / Brent / jet fuel spot (daily), Henry Hub spot (daily), retail regular gasoline by PADD
-//               and on-highway diesel (weekly).
-//   bls_ces     BLS API v2: CES all-employee SA series (supersectors + ~260 industries), monthly.
-//   bls_cpi     BLS API v2: ~45 CPI-U item indexes (SA where published, NSA fallback), monthly.
-//   dol_claims  DOL ETA ar539.csv: weekly state initial claims (ic) and continued weeks claimed (cw).
+//   fred        FRED series/observations for the configured national series (rates, FX, commodities, claims) and the
+//               51 <ST>ICLAIMS state initial-claims series (50 states + DC; FRED has no PRICLAIMS). Daily series every
+//               day; weekly series on Thu/Fri or when stale. Daily market series (not revised): source fred, output_type=1,
+//               meta.vintage = realtime_start. Weekly series (revised): FIRST-RELEASE values only (ALFRED output_type=4),
+//               sources fred.claims (ICSA, ICNSA, CCSA, <ST>ICLAIMS) / fred.weekly (GASREGW, GASDESW), meta.rt = 'first',
+//               meta.vintage = meta.released = first-release date. Third-party series (Cboe VIX, S&P 500, ICE BofA,
+//               Freddie Mac) are never requested.
+//   calendar    FRED release/dates for CPI, Employment Situation, UI weekly claims, GDP, PCE (past + scheduled) and the
+//               FOMC meeting calendar from federalreserve.gov -> ripples.att_release_dates (release looks, calendar).
+//   eia_930     EIA-930 Hourly Electric Grid Monitor keyless six-month bulk CSVs (www.eia.gov): local-day demand (MWh)
+//               per balancing authority (metric demand), net generation per BA (metric netgen, incl. generation-only
+//               BAs) and a lower-48 demand sum (key US48). Daily = current half-year file; backfill = one file per run
+//               from 2015 H2 (api.eia.gov is not used: its robots.txt answered 403 -> host killed, DEMARCATION Q3).
+//               Energy prices (WTI, Brent, Henry Hub, jet fuel, retail gasoline/diesel) come through their FRED mirrors.
+//   bls_ces     BLS CES all-employee SA series (supersectors + ~260 industries), monthly, via their FRED mirrors
+//               (api.bls.gov robots.txt disallows "/": the keyed BLS API is ORANGE* and unused). FIRST-RELEASE values
+//               (ALFRED output_type=4; meta.rt = 'first', meta.released = first-release date): reconstructed release-look
+//               tests never read benchmark or seasonal-factor revisions. The daily mode only refreshes series the
+//               backfill already holds, once per release window.
+//   bls_cpi     ~45 BLS CPI-U item indexes (SA where published, NSA fallback), monthly, via FRED mirrors, first releases.
+//   dol_claims  DOL ETA ar539.csv: weekly state initial claims (ic) and continued weeks claimed (cw), plus key US (sum of
+//               the 50 states + DC, the regional-demeaning aggregate).
 //   noaa        NOAA CDO v2 GHCN-Daily TMAX/TMIN (metric temp: value = TMAX degC, aux = TMIN degC) and PRCP (mm) for
 //               ~70 first-order stations; daily update (last 14 days) or backfill (params.from, default 2019-01-01).
-//   census_bfs  Census Business Formation Statistics weekly business applications (national + state), CSV route.
-//   backfill    params.source in (fred | eia.930 | eia.prices | bls.ces | bls.cpi_items | dol.claims | noaa.ghcnd |
-//               census.bfs): resumable full history (att_state 'econ.bf.<source>').
+//   census_bfs  Census Business Formation Statistics weekly business applications (BA_NSA, national + state) from the
+//               weekly CSVs listed in att_config.econ.bfs_urls (Year/Week rows -> week-ending Saturday).
+//   backfill    params.source in (fred | fred_rt | eia.930 | bls.ces | bls.cpi_items | dol.claims | noaa.ghcnd |
+//               census.bfs): resumable full history (att_state 'econ.bf.<source>'). fred_rt re-reads the weekly series
+//               once as first releases (one call each; att_state 'econ.fred.rt').
 //   probe       params.url (+ params.source, params.key_param): one GET through politeFetch, returns status + a short
 //               scrubbed head. For endpoint discovery only.
 //   ping        no requests.
@@ -30,11 +40,12 @@
 import { addDays, db, errMsg, ingest, type ObsRow, politeFetch, type Run, serve, stateGet, stateSet } from "./att.ts";
 import { getJson, getText, r4, scrubStr, secret, todayUtc, wrap } from "./wsa.ts";
 
-export const ECON_VERSION = "2026-09-25.e1";
+export const ECON_VERSION = "2026-09-25.e4";
 
 // ------------------------------------------------------------------ series catalogues
 type Kind = "rate" | "level" | "count";
-interface FredS { id: string; kind: Kind; weekly?: boolean; geo?: string }
+/** src = the att_sources id the rows are stored under (weekly series: week-grain sources, first-release values). */
+interface FredS { id: string; kind: Kind; weekly?: boolean; geo?: string; src?: "fred" | "fred.claims" | "fred.weekly" }
 const FRED_NATIONAL: FredS[] = [
   { id: "DGS3MO", kind: "rate" }, { id: "DGS2", kind: "rate" }, { id: "DGS5", kind: "rate" }, { id: "DGS10", kind: "rate" },
   { id: "DGS30", kind: "rate" }, { id: "T10YIE", kind: "rate" }, { id: "T5YIE", kind: "rate" }, { id: "T10Y2Y", kind: "rate" },
@@ -43,17 +54,22 @@ const FRED_NATIONAL: FredS[] = [
   { id: "DEXCAUS", kind: "level" }, { id: "DEXMXUS", kind: "level" }, { id: "DEXCHUS", kind: "level" },
   { id: "DTWEXBGS", kind: "level" },
   { id: "DCOILWTICO", kind: "level" }, { id: "DCOILBRENTEU", kind: "level" }, { id: "DHHNGSP", kind: "level" },
-  { id: "ICSA", kind: "count", weekly: true }, { id: "ICNSA", kind: "count", weekly: true }, { id: "CCSA", kind: "count", weekly: true },
-  { id: "GASREGW", kind: "level", weekly: true },
+  { id: "DJFUELUSGULF", kind: "level" }, { id: "GASDESW", kind: "level", weekly: true, src: "fred.weekly" },
+  { id: "ICSA", kind: "count", weekly: true, src: "fred.claims" }, { id: "ICNSA", kind: "count", weekly: true, src: "fred.claims" },
+  { id: "CCSA", kind: "count", weekly: true, src: "fred.claims" },
+  { id: "GASREGW", kind: "level", weekly: true, src: "fred.weekly" },
 ];
 export const STATES = ["AL","AK","AZ","AR","CA","CO","CT","DE","DC","FL","GA","HI","ID","IL","IN","IA","KS","KY","LA","ME","MD",
   "MA","MI","MN","MS","MO","MT","NE","NV","NH","NJ","NM","NY","NC","ND","OH","OK","OR","PA","PR","RI","SC","SD","TN","TX","UT",
   "VT","VA","WA","WV","WI","WY"];
-const FRED_ALL: FredS[] = [...FRED_NATIONAL, ...STATES.map((s) => ({ id: `${s}ICLAIMS`, kind: "count" as Kind, weekly: true, geo: `US-${s}` }))];
+// FRED carries no Puerto Rico claims series (PRICLAIMS answers 400): PR state claims come from dol.claims only.
+const FRED_STATES = STATES.filter((s) => s !== "PR");
+const FRED_ALL: FredS[] = [...FRED_NATIONAL,
+  ...FRED_STATES.map((s) => ({ id: `${s}ICLAIMS`, kind: "count" as Kind, weekly: true, geo: `US-${s}`, src: "fred.claims" as const }))];
+const FRED_WEEKLY = FRED_ALL.filter((s) => s.weekly);
 const FRED_RELEASES: Record<string, { id: number; name: RegExp }> = {
   cpi: { id: 10, name: /consumer price index/i },
   jobs: { id: 50, name: /employment situation/i },
-  fomc: { id: 101, name: /fomc/i },
   claims: { id: 180, name: /unemployment insurance weekly claims/i },
   gdp: { id: 53, name: /gross domestic product/i },
   pce: { id: 54, name: /personal income and outlays/i },
@@ -91,6 +107,14 @@ CES7071310001 CES7071320001 CES7071390001 CES7072110001 CES7072120001 CES7072130
 CES8081110001 CES8081120001 CES8081130001 CES8081140001 CES8081210001 CES8081220001 CES8081230001 CES8081290001 CES8081310001
 CES8081320001 CES8081330001 CES8081340001 CES8081390001`.split(/\s+/).filter(Boolean);
 const CES_ALL = [...CES_TOP, ...CES_DETAIL];
+// FRED publishes the CES supersector totals under mnemonic ids, not their BLS ids (checked 2026-09-25: the BLS ids answer
+// 400 "series does not exist"). Stored under the BLS id with meta.ref = 'fred:<id>'.
+const CES_FRED_ALIAS: Record<string, string> = {
+  CES0000000001: "PAYEMS", CES0500000001: "USPRIV", CES1000000001: "USMINE", CES2000000001: "USCONS", CES3000000001: "MANEMP",
+  CES3100000001: "DMANEMP", CES3200000001: "NDMANEMP", CES4000000001: "USTPU", CES4142000001: "USWTRADE", CES4200000001: "USTRADE",
+  CES5000000001: "USINFO", CES5500000001: "USFIRE", CES6000000001: "USPBS", CES6500000001: "USEHS", CES7000000001: "USLAH",
+  CES8000000001: "USSERV", CES9000000001: "USGOVT",
+};
 // CPI-U item codes (U.S. city average). SA prefix CUSR0000, NSA fallback CUUR0000.
 const CPI_ITEMS = ["SA0","SA0L1E","SAF11","SAF111","SAF112","SEFC","SEFF","SEFG","SEFH","SEFJ","SAF113","SEFK","SEFL","SEFP01",
   "SEFR","SAF116","SEFV","SAH1","SEHA","SEHC","SEHB","SEHF01","SEHF02","SEHE","SEHG","SAH3","SAA","SETA01","SETA02","SETB01",
@@ -112,28 +136,6 @@ export const NOAA_STATIONS: Array<[string, string]> = [
   ["USW00012960","TX"],["USW00003927","TX"],["USW00013904","TX"],["USW00012921","TX"],["USW00023044","TX"],["USW00024127","UT"],
   ["USW00014742","VT"],["USW00013740","VA"],["USW00013737","VA"],["USW00024233","WA"],["USW00024157","WA"],["USW00013866","WV"],
   ["USW00014839","WI"],["USW00024018","WY"],
-];
-
-// EIA-930 respondents: local timezone for the daily aggregate (EIA publishes daily sums per timezone). Default Eastern.
-const EIA_TZ: Record<string, string> = {
-  ERCO: "Central", TEX: "Central", MISO: "Central", MIDW: "Central", SWPP: "Central", CENT: "Central", SPA: "Central",
-  AECI: "Central", TVA: "Central", TEN: "Central", EEI: "Central", SOCO: "Central",
-  CISO: "Pacific", CAL: "Pacific", BANC: "Pacific", LDWP: "Pacific", IID: "Pacific", TIDC: "Pacific", BPAT: "Pacific",
-  NW: "Pacific", PACW: "Pacific", PGE: "Pacific", PSEI: "Pacific", SCL: "Pacific", TPWR: "Pacific", AVA: "Pacific",
-  CHPD: "Pacific", DOPD: "Pacific", GCPD: "Pacific", GRID: "Pacific", AVRN: "Pacific", NEVP: "Pacific",
-  PACE: "Mountain", PSCO: "Mountain", WACM: "Mountain", IPCO: "Mountain", NWMT: "Mountain", WAUW: "Mountain",
-  EPE: "Mountain", PNM: "Mountain", GWA: "Mountain", WWA: "Mountain",
-  AZPS: "Arizona", SRP: "Arizona", TEPC: "Arizona", WALC: "Arizona", DEAA: "Arizona", HGMA: "Arizona", GRIF: "Arizona",
-  GRMA: "Arizona", SW: "Arizona",
-};
-const EIA = "https://api.eia.gov/v2";
-const EIA_PRICE_ROUTES: Array<{ route: string; freq: "daily" | "weekly"; series: string[]; geo: Record<string, string> }> = [
-  { route: "petroleum/pri/spt", freq: "daily", series: ["RWTC", "RBRTE", "EER_EPJK_PF4_RGC_DPG"], geo: {} },
-  { route: "natural-gas/pri/fut", freq: "daily", series: ["RNGWHHD"], geo: {} },
-  { route: "petroleum/pri/gnd", freq: "weekly",
-    series: ["EMM_EPMR_PTE_NUS_DPG", "EMM_EPMR_PTE_R10_DPG", "EMM_EPMR_PTE_R20_DPG", "EMM_EPMR_PTE_R30_DPG",
-      "EMM_EPMR_PTE_R40_DPG", "EMM_EPMR_PTE_R50_DPG", "EMM_EPMR_PTE_SCA_DPG", "EMD_EPD2D_PTE_NUS_DPG"],
-    geo: { R10: "PADD1", R20: "PADD2", R30: "PADD3", R40: "PADD4", R50: "PADD5", SCA: "US-CA" } },
 ];
 
 // ------------------------------------------------------------------ small helpers
@@ -159,24 +161,44 @@ async function fredObs(run: Run, key: string, id: string, from: string, initial:
   if (!j) return null;
   return Array.isArray(j.observations) ? j.observations : [];
 }
+/** One FRED series. Weekly (revised) series: first-release values only (one output_type=4 call). Daily market series:
+ *  output_type=1 (they are not revised). */
 async function fredOne(run: Run, key: string, s: FredS, from: string): Promise<number | null> {
-  const obs = await fredObs(run, key, s.id, from, false);
+  const first = s.weekly === true;
+  const obs = await fredObs(run, key, s.id, from, first);
   if (obs === null) return null;
-  const released = new Map<string, string>();
-  if (s.weekly) {
-    const ini = await fredObs(run, key, s.id, from, true);
-    for (const o of ini ?? []) if (isDay(o?.date) && isDay(o?.realtime_start)) released.set(o.date, o.realtime_start);
-  }
   const rows: ObsRow[] = [];
   for (const o of obs) {
     const v = num(o?.value);
     if (!isDay(o?.date) || v === null) continue; // "." = missing (holiday)
-    const meta: Record<string, unknown> = { vintage: String(o.realtime_start ?? "") };
-    if (released.has(o.date)) meta.released = released.get(o.date);
-    rows.push({ source: "fred", key: s.id, metric: s.kind, geo: s.geo ?? "US", day: o.date, value: v, meta });
+    const rs = isDay(o?.realtime_start) ? String(o.realtime_start) : "";
+    const meta: Record<string, unknown> = first ? { rt: "first", vintage: rs, released: rs } : { vintage: rs };
+    rows.push({ source: s.src ?? "fred", key: s.id, metric: s.kind, geo: s.geo ?? "US", day: o.date, value: v, meta });
   }
   await ingest(run, rows);
   return rows.length;
+}
+/** Backfill 'fred_rt': re-read every weekly series once as first releases (rows stored before 2026-09-25 e4 held the
+ *  latest revised values). One call per series; cursor att_state 'econ.fred.rt' {id: day}. */
+async function modeFredRt(run: Run) {
+  const t0 = Date.now();
+  const key = await secret(run, "fred_api_key");
+  if (!key) return noKey(run, "fred.claims", "fred_api_key");
+  const cfg = await cfgEcon();
+  const state = await st<Record<string, string>>("econ.fred.rt", {});
+  let done = 0, rows = 0, fails = 0;
+  for (const s of FRED_WEEKLY) {
+    if (state[s.id] && run.params.force !== true) continue;
+    if (run.outOfTime(8000) || run.skipped.some((x) => x.host === "api.stlouisfed.org")) { run.partial = true; break; }
+    const n = await fredOne(run, key, s, String(cfg.fred_from ?? "2016-01-01"));
+    if (n === null) { fails++; continue; }
+    state[s.id] = todayUtc(); done++; rows += n;
+    await stSet(run, "econ.fred.rt", state);
+  }
+  const left = FRED_WEEKLY.filter((s) => !state[s.id]).length;
+  if (left) { run.partial = true; run.nextCursor = { source: "fred_rt", left }; }
+  run.extra.fred_rt = { fetched: done, rows, fails, left, of: FRED_WEEKLY.length };
+  run.source({ source: "fred.claims", status: fails && !done ? "http_error" : run.partial ? "partial" : "ok", keys: done, rows, ms: Date.now() - t0 });
 }
 async function modeFred(run: Run, backfill = false) {
   const t0 = Date.now();
@@ -234,6 +256,35 @@ async function modeCalendar(run: Run) {
     }
     out[code] = { id: r.id, name, dates: rows.length, first: rows[0]?.date ?? null, last: rows.at(-1)?.date ?? null };
   }
+  // FOMC meeting (decision) dates: FRED's "FOMC Press Release" release is daily, so the Board's own calendar page is
+  // parsed (source fed.fomc; decision day = last day of each meeting). Past and scheduled meetings as published.
+  if (!run.outOfTime(15_000)) {
+    const res = await getText(run, "fed.fomc", "https://www.federalreserve.gov/monetarypolicy/fomccalendars.htm", { accept: "text/html" }, 30_000);
+    if (res) {
+      const html = await res.text();
+      const months = ["january","february","march","april","may","june","july","august","september","october","november","december"];
+      const rows: Array<{ release: string; date: string }> = [];
+      const secs = html.split(/(?=\b(20\d{2}) FOMC Meetings)/);
+      for (const sec of secs) {
+        const y = /^(20\d{2}) FOMC Meetings/.exec(sec)?.[1];
+        if (!y) continue;
+        const re = /fomc-meeting__month[^>]*>\s*(?:<strong>)?\s*([A-Za-z\/]+)\s*(?:<\/strong>)?\s*<\/div>\s*<div[^>]*fomc-meeting__date[^>]*>\s*([0-9]{1,2}(?:\s*-\s*[0-9]{1,2})?)/g;
+        let m: RegExpExecArray | null;
+        while ((m = re.exec(sec))) {
+          const mon = m[1].toLowerCase().split("/").pop()!;
+          const mi = months.findIndex((x) => x.startsWith(mon.slice(0, 3)));
+          const last = Number(m[2].split("-").pop()!.trim());
+          if (mi < 0 || !(last >= 1 && last <= 31)) continue;
+          rows.push({ release: "fomc", date: `${y}-${String(mi + 1).padStart(2, "0")}-${String(last).padStart(2, "0")}` });
+        }
+      }
+      if (rows.length && !run.dryRun) {
+        const { data, error } = await db.rpc("att_release_upsert", { p_rows: rows });
+        if (error) run.errors.push(`att_release_upsert(fomc): ${error.message}`); else total += Number(data ?? 0);
+      }
+      out.fomc = { meetings: rows.length, first: rows.map((r) => r.date).sort()[0] ?? null, last: rows.map((r) => r.date).sort().at(-1) ?? null };
+    }
+  }
   if (!run.dryRun) {
     const { data, error } = await db.rpc("att_econ_apply_releases");
     if (error) run.errors.push(`att_econ_apply_releases: ${error.message}`); else out.applied = data;
@@ -242,205 +293,243 @@ async function modeCalendar(run: Run) {
   run.source({ source: "fred", status: run.partial ? "partial" : "ok", keys: Object.keys(out).length, rows: total, ms: Date.now() - t0, note: "release calendars" });
 }
 
-// ================================================================== EIA
-function eiaUrl(route: string, key: string, p: Array<[string, string]>): string {
-  const q = new URLSearchParams([["api_key", key], ...p]);
-  return `${EIA}/${route}/data/?${q}`;
-}
-async function eiaRespondents(run: Run, key: string): Promise<Array<{ id: string; name: string }>> {
-  const cached = await st<{ at?: string; list?: Array<{ id: string; name: string }> }>("econ.eia930.respondents", {});
-  if (cached.list?.length && cached.at && cached.at >= addDays(todayUtc(), -30)) return cached.list;
-  const j = await getJson(run, "eia.930", `${EIA}/electricity/rto/daily-region-data/facet/respondent?${new URLSearchParams({ api_key: key })}`);
-  const list = (Array.isArray(j?.response?.facets) ? j.response.facets : [])
-    .map((f: any) => ({ id: String(f?.id ?? ""), name: String(f?.name ?? "").slice(0, 80) }))
-    .filter((f: { id: string }) => /^[A-Z0-9]{2,6}$/.test(f.id));
-  if (list.length) await stSet(run, "econ.eia930.respondents", { at: todayUtc(), list });
-  return list;
-}
-async function eia930Fetch(run: Run, key: string, ids: string[], tz: string, from: string, to: string): Promise<{ rows: number; ok: boolean }> {
-  let offset = 0, rows = 0;
-  for (let page = 0; page < 20; page++) {
-    const p: Array<[string, string]> = [["frequency", "daily"], ["data[0]", "value"], ["facets[type][]", "D"], ["facets[timezone][]", tz],
-      ...ids.map((id) => ["facets[respondent][]", id] as [string, string]), ["start", from], ["end", to],
-      ["sort[0][column]", "period"], ["sort[0][direction]", "asc"], ["offset", String(offset)], ["length", "5000"]];
-    const j = await getJson(run, "eia.930", eiaUrl("electricity/rto/daily-region-data", key, p), {}, 90_000);
-    if (!j) return { rows, ok: false };
-    const data = Array.isArray(j?.response?.data) ? j.response.data : [];
-    const out: ObsRow[] = [];
-    for (const d of data) {
-      const v = num(d?.value);
-      const day = String(d?.period ?? "");
-      if (!isDay(day) || v === null || v <= 0) continue; // zero/negative demand = reporting gap, not a value
-      out.push({ source: "eia.930", key: String(d.respondent), metric: "demand", geo: "US", day, value: v });
-    }
-    await ingest(run, out);
-    rows += out.length;
-    const total = Number(j?.response?.total ?? 0);
-    offset += data.length;
-    if (!data.length || offset >= total) break;
-    if (run.outOfTime(15_000)) { run.partial = true; return { rows, ok: false }; }
+// ================================================================== EIA-930 (keyless six-month bulk files on www.eia.gov)
+// api.eia.gov answered 403 on robots.txt (2026-09-25) -> treated as disallow (DEMARCATION Q3) and killed permanently by
+// att.ts. Q3: "the operator documents another channel -> use that channel": EIA publishes the Hourly Electric Grid
+// Monitor as keyless six-month CSVs (www.eia.gov/electricity/gridmonitor/sixMonthFiles/, robots allowed). One file per
+// half-year, one row per BA-hour; we keep only the local-day sum of hourly demand per BA (MWh), preferring EIA's
+// "Demand (MW) (Adjusted)" column when the file has it. Days with < 20 reported hours are dropped.
+const EIA_BULK = "https://www.eia.gov/electricity/gridmonitor/sixMonthFiles";
+function halves(fromY: number, fromH: 1 | 2, to: Date): string[] {
+  const out: string[] = [];
+  const toY = to.getUTCFullYear(), toH = to.getUTCMonth() < 6 ? 1 : 2;
+  for (let y = fromY, h = fromH; y < toY || (y === toY && h <= toH); h === 1 ? (h = 2) : (h = 1, y++)) {
+    out.push(`EIA930_BALANCE_${y}_${h === 1 ? "Jan_Jun" : "Jul_Dec"}.csv`);
   }
-  return { rows, ok: true };
+  return out;
+}
+/** Fields 0..maxIdx of a CSV line (quotes honoured, thousands separators inside quotes kept). */
+function csvFields(line: string, maxIdx: number): string[] {
+  const out: string[] = [];
+  let i = 0;
+  const n = line.length;
+  while (i <= n && out.length <= maxIdx) {
+    if (line.charCodeAt(i) === 34) {
+      const j = line.indexOf('"', i + 1);
+      const e = j < 0 ? n : j;
+      out.push(line.slice(i + 1, e));
+      i = line.indexOf(",", e) < 0 ? n + 1 : line.indexOf(",", e) + 1;
+    } else {
+      const j = line.indexOf(",", i);
+      const e = j < 0 ? n : j;
+      out.push(line.slice(i, e));
+      i = e + 1;
+    }
+  }
+  return out;
+}
+async function eiaBulkFile(run: Run, name: string): Promise<{ rows: number; ok: boolean; bas: number; gen_bas?: number; days: number; col: string }> {
+  const res = await getText(run, "eia.930", `${EIA_BULK}/${name}`, { accept: "text/csv,*/*" }, 100_000);
+  if (!res || !res.body) return { rows: 0, ok: false, bas: 0, days: 0, col: "" };
+  const reader = res.body.pipeThrough(new TextDecoderStream()).getReader();
+  const sums = new Map<string, number>(), hours = new Map<string, number>();
+  const gsum = new Map<string, number>(), ghours = new Map<string, number>();
+  let buf = "", header: string[] | null = null, iBa = 0, iDate = 1, iDem = -1, iAdj = -1, iNg = -1, iNgAdj = -1, maxIdx = 0, complete = true;
+  const handle = (line: string) => {
+    if (!line) return;
+    if (!header) {
+      header = csvFields(line, 200).map((h) => h.trim().toLowerCase());
+      iBa = header.indexOf("balancing authority"); iDate = header.indexOf("data date");
+      iDem = header.indexOf("demand (mw)"); iAdj = header.indexOf("demand (mw) (adjusted)");
+      iNg = header.indexOf("net generation (mw)"); iNgAdj = header.indexOf("net generation (mw) (adjusted)");
+      maxIdx = Math.max(iBa, iDate, iDem, iAdj, iNg, iNgAdj);
+      return;
+    }
+    const f = csvFields(line, maxIdx);
+    const ba = f[iBa], dt = f[iDate];
+    if (!ba || !dt) return;
+    const k = `${ba}|${dt}`;
+    // net generation (every BA, including generation-only BAs that report no demand)
+    const gRaw = (iNgAdj >= 0 && f[iNgAdj]) ? f[iNgAdj] : (iNg >= 0 ? f[iNg] : "");
+    if (gRaw) {
+      const g = Number(gRaw.replace(/,/g, ""));
+      if (Number.isFinite(g)) { gsum.set(k, (gsum.get(k) ?? 0) + g); ghours.set(k, (ghours.get(k) ?? 0) + 1); }
+    }
+    const raw = (iAdj >= 0 && f[iAdj]) ? f[iAdj] : f[iDem];
+    if (!raw) return;
+    const v = Number(raw.replace(/,/g, ""));
+    if (!Number.isFinite(v) || v < 0) return;
+    sums.set(k, (sums.get(k) ?? 0) + v);
+    hours.set(k, (hours.get(k) ?? 0) + 1);
+  };
+  while (true) {
+    const { value, done } = await reader.read();
+    if (done) break;
+    buf += value;
+    let i: number, start = 0;
+    while ((i = buf.indexOf("\n", start)) >= 0) { handle(buf.slice(start, i).replace(/\r$/, "")); start = i + 1; }
+    buf = buf.slice(start);
+    if (run.outOfTime(15_000)) { complete = false; await reader.cancel().catch(() => undefined); break; }
+  }
+  if (buf && complete) handle(buf.replace(/\r$/, ""));
+  if (!header || iBa < 0 || iDate < 0 || iDem < 0) { run.errors.push(`eia.930 ${name}: unexpected header`); return { rows: 0, ok: false, bas: 0, days: 0, col: "" }; }
+  if (!complete) { run.partial = true; return { rows: 0, ok: false, bas: 0, days: 0, col: "" }; }
+  const out: ObsRow[] = [];
+  const bas = new Set<string>(), days = new Set<string>();
+  const us = new Map<string, { v: number; n: number }>();
+  for (const [k, v] of sums) {
+    const h = hours.get(k) ?? 0;
+    if (h < 20) continue;
+    const [ba, dt] = k.split("|");
+    const day = parseUsDate(dt);
+    if (!day || !/^[A-Z0-9]{2,6}$/.test(ba)) continue;
+    out.push({ source: "eia.930", key: ba, metric: "demand", geo: "US", day, value: Math.round(v), aux: h });
+    bas.add(ba); days.add(day);
+    const u = us.get(day) ?? { v: 0, n: 0 }; u.v += v; u.n++; us.set(day, u);
+  }
+  // Lower-48 aggregate for regional demeaning (ENGINE §3.5): sum over BAs of local-day demand, only days where >= 90% of
+  // the file's BAs reported (local-day boundaries differ by up to 3 h across timezones: an approximation, stated in meta).
+  // Key 'US48' = the aggregate key WS-B's att_engine_source_map expects (agg_key); it is this BA sum, not EIA's own US48 region row.
+  const nBa = bas.size;
+  for (const [day, u] of us) if (u.n >= 0.9 * nBa) out.push({ source: "eia.930", key: "US48", metric: "demand", geo: "US", day, value: Math.round(u.v), aux: u.n, meta: { method: "sum_ba_local_days" } });
+  // Net generation per BA-day (>= 20 hours). Days with a non-positive daily total are skipped (log-level series); rare
+  // and limited to small generation-only BAs.
+  const gbas = new Set<string>();
+  for (const [k, g] of gsum) {
+    const h = ghours.get(k) ?? 0;
+    if (h < 20 || !(g > 0)) continue;
+    const [ba, dt] = k.split("|");
+    const day = parseUsDate(dt);
+    if (!day || !/^[A-Z0-9]{2,6}$/.test(ba)) continue;
+    out.push({ source: "eia.930", key: ba, metric: "netgen", geo: "US", day, value: Math.round(g), aux: h });
+    gbas.add(ba);
+  }
+  await ingest(run, out, 2000);
+  return { rows: out.length, ok: true, bas: nBa, gen_bas: gbas.size, days: days.size, col: iAdj >= 0 ? "adjusted" : "demand" };
 }
 async function modeEia930(run: Run, backfill = false) {
   const t0 = Date.now();
-  const key = await secret(run, "eia_api_key");
-  if (!key) return noKey(run, "eia.930", "eia_api_key");
-  const cfg = await cfgEcon();
-  const resp = await eiaRespondents(run, key);
-  if (!resp.length) { run.source({ source: "eia.930", status: "http_error", note: "no respondent list" }); return; }
-  const today = todayUtc();
-  const bf = await st<Record<string, string>>("econ.bf.eia.930", {});
-  let rows = 0, done = 0;
-  if (backfill) {
-    const from = String(run.params.from ?? cfg.eia930_from ?? "2015-07-01");
-    for (const r of resp) {
-      if (bf[r.id]) continue;
-      if (run.outOfTime(25_000)) { run.partial = true; break; }
-      const res = await eia930Fetch(run, key, [r.id], EIA_TZ[r.id] ?? "Eastern", from, today);
-      rows += res.rows;
-      if (!res.ok) { run.partial = true; break; }
-      bf[r.id] = today; done++;
-      await stSet(run, "econ.bf.eia.930", bf);
-    }
-    const left = resp.filter((r) => !bf[r.id]).length;
-    if (left) { run.partial = true; run.nextCursor = { source: "eia.930", left }; }
-    run.extra.eia930 = { respondents: resp.length, backfilled_now: done, left };
-  } else {
-    const from = addDays(today, -Number(run.params.days ?? 10));
-    const byTz = new Map<string, string[]>();
-    for (const r of resp) { const tz = EIA_TZ[r.id] ?? "Eastern"; byTz.set(tz, [...(byTz.get(tz) ?? []), r.id]); }
-    for (const [tz, ids] of byTz) {
-      if (run.outOfTime(10_000)) { run.partial = true; break; }
-      const res = await eia930Fetch(run, key, ids, tz, from, today);
-      rows += res.rows; done += ids.length;
-      if (!res.ok) run.partial = true;
-    }
-    run.extra.eia930 = { respondents: resp.length, updated: done };
+  const now = new Date();
+  const all = halves(2015, 2, now);
+  // v2: files are re-read once so that net generation (added in e3) is backfilled too
+  const bf = await st<{ done?: string[]; v?: number }>("econ.bf.eia.930", {});
+  const done = new Set(bf.v === 2 ? (bf.done ?? []) : []);
+  let todo: string[];
+  if (backfill) todo = all.filter((f) => !done.has(f)).reverse(); // newest first: positive controls (2023-2024) early
+  else {
+    todo = [all[all.length - 1]];
+    const dayOfHalf = (now.getTime() - Date.UTC(now.getUTCFullYear(), now.getUTCMonth() < 6 ? 0 : 6, 1)) / 86400000;
+    if (dayOfHalf < 14 && all.length > 1) todo.unshift(all[all.length - 2]);
   }
-  run.source({ source: "eia.930", status: run.partial ? "partial" : "ok", keys: done, rows, ms: Date.now() - t0 });
+  const files: unknown[] = [];
+  let rows = 0;
+  for (const f of todo) {
+    if (run.outOfTime(60_000)) { run.partial = true; break; }
+    const r = await eiaBulkFile(run, f);
+    files.push({ file: f, ...r });
+    rows += r.rows;
+    if (!r.ok) { run.partial = true; break; }
+    if (backfill || f !== all[all.length - 1]) { done.add(f); await stSet(run, "econ.bf.eia.930", { v: 2, done: [...done].sort() }); }
+    if (backfill) break; // one ~100 MB file per run (CPU budget)
+  }
+  const left = all.filter((f) => !done.has(f)).length;
+  if (backfill && left) { run.partial = true; run.nextCursor = { source: "eia.930", files_left: left }; }
+  run.extra.eia930 = { files, left: backfill ? left : undefined };
+  run.source({ source: "eia.930", status: run.partial ? "partial" : "ok", rows, ms: Date.now() - t0 });
 }
 
-async function modeEiaPrices(run: Run, backfill = false) {
-  const t0 = Date.now();
-  const key = await secret(run, "eia_api_key");
-  if (!key) return noKey(run, "eia.prices", "eia_api_key");
-  const today = todayUtc();
-  const from = backfill ? String(run.params.from ?? "2016-01-01") : addDays(today, -30);
-  let rows = 0, calls = 0;
-  const seen: Record<string, number> = {};
-  for (const r of EIA_PRICE_ROUTES) {
-    let offset = 0;
-    for (let page = 0; page < 10; page++) {
-      if (run.outOfTime(8000)) { run.partial = true; break; }
-      const p: Array<[string, string]> = [["frequency", r.freq], ["data[0]", "value"], ...r.series.map((s) => ["facets[series][]", s] as [string, string]),
-        ["start", from], ["end", today], ["sort[0][column]", "period"], ["sort[0][direction]", "asc"], ["offset", String(offset)], ["length", "5000"]];
-      const j = await getJson(run, "eia.prices", eiaUrl(r.route, key, p), {}, 60_000);
-      calls++;
-      if (!j) { run.partial = true; break; }
-      const data = Array.isArray(j?.response?.data) ? j.response.data : [];
-      const out: ObsRow[] = [];
-      for (const d of data) {
-        const v = num(d?.value), day = String(d?.period ?? ""), s = String(d?.series ?? "");
-        if (!isDay(day) || v === null || !r.series.includes(s)) continue;
-        const reg = /_(R10|R20|R30|R40|R50|SCA)_/.exec(s)?.[1];
-        out.push({ source: "eia.prices", key: s, metric: "usd", geo: reg ? r.geo[reg] : "US", day, value: v });
-        seen[s] = (seen[s] ?? 0) + 1;
-      }
-      await ingest(run, out);
-      rows += out.length;
-      offset += data.length;
-      if (!data.length || offset >= Number(j?.response?.total ?? 0)) break;
-    }
-  }
-  run.extra.eia_prices = { calls, per_series: seen, missing: EIA_PRICE_ROUTES.flatMap((r) => r.series).filter((s) => !seen[s]) };
-  run.source({ source: "eia.prices", status: run.partial ? "partial" : "ok", keys: Object.keys(seen).length, rows, ms: Date.now() - t0 });
-}
-
-// ================================================================== BLS
-async function blsQuery(run: Run, key: string, ids: string[], y0: number, y1: number): Promise<any | null> {
-  const res = await politeFetch(run, "https://api.bls.gov/publicAPI/v2/timeseries/data/", {
-    source: "bls.ces", method: "POST", timeoutMs: 60_000,
-    headers: { "content-type": "application/json", accept: "application/json" },
-    body: JSON.stringify({ seriesid: ids, startyear: String(y0), endyear: String(y1), registrationkey: key,
-      catalog: false, calculations: false, annualaverage: false }),
-  });
-  if (!res) return null;
-  if (!res.ok) { await res.body?.cancel(); run.errors.push(`bls: http ${res.status}`); return null; }
-  const j = await res.json().catch(() => null);
-  if (!j) { run.errors.push("bls: bad json"); return null; }
-  if (j.status !== "REQUEST_SUCCEEDED") run.errors.push(`bls: ${scrubStr(String(j.status))} ${scrubStr(JSON.stringify(j.message ?? []).slice(0, 200))}`);
-  return j;
-}
-function blsRows(j: any, source: string, metric: string): { rows: ObsRow[]; got: Set<string> } {
-  const rows: ObsRow[] = [];
-  const got = new Set<string>();
-  for (const s of Array.isArray(j?.Results?.series) ? j.Results.series : []) {
-    const id = String(s?.seriesID ?? "");
-    for (const d of Array.isArray(s?.data) ? s.data : []) {
-      const m = /^M(0[1-9]|1[0-2])$/.exec(String(d?.period ?? ""));
-      const v = num(d?.value);
-      if (!m || v === null) continue;
-      const prelim = Array.isArray(d?.footnotes) && d.footnotes.some((f: any) => f?.code === "P");
-      rows.push({ source, key: id, metric, geo: "US", day: `${d.year}-${m[1]}-01`, value: v, ...(prelim ? { meta: { prelim: true } } : {}) });
-      got.add(id);
-    }
-  }
-  return { rows, got };
-}
+// ================================================================== BLS series via their FRED mirrors
+// api.bls.gov/robots.txt is "Disallow: /" (checked 2026-09-25) -> the keyed BLS API is ORANGE* and not used without an
+// owner decision + a runtime override. FRED republishes the BLS CES / CPI series under the same ids (public domain), so
+// bls.ces / bls.cpi_items are fetched through the FRED API (fetch source fred, bucket fred) and stored under their BLS
+// source ids. Monthly series are refreshed only once per release window (att_release_dates) or when > 35 days stale, so
+// the FRED bucket stays within 300 calls/day. meta.released = the ALFRED first-release date (the SQL release calendar is
+// only a fallback for rows without it).
 async function modeBls(run: Run, which: "ces" | "cpi", backfill = false) {
   const t0 = Date.now();
   const source = which === "ces" ? "bls.ces" : "bls.cpi_items";
-  const key = await secret(run, "bls_api_key");
-  if (!key) return noKey(run, source, "bls_api_key");
+  const key = await secret(run, "fred_api_key");
+  if (!key) return noKey(run, source, "fred_api_key");
   const cfg = await cfgEcon();
-  const y1 = new Date().getUTCFullYear();
-  const y0 = backfill ? Number(cfg.bls_from_year ?? 2016) : y1 - 1;
+  const today = todayUtc();
   const stKey = `econ.bls.${which}`;
-  const s = await st<{ nsa?: string[]; missing?: string[]; done_at?: string }>(stKey, {});
-  let rows = 0;
-  const missing: string[] = [];
+  const s = await st<{ fetched?: Record<string, string>; nsa?: string[]; missing?: string[] }>(stKey, {});
+  const fetched = s.fetched ?? {}, nsa = new Set(s.nsa ?? []), missing = new Set(s.missing ?? []);
+  // release window: the day of and the 2 days after a jobs (CES) / CPI release
+  const rel = which === "ces" ? "jobs" : "cpi";
+  const { data: near, error: nerr } = await db.rpc("att_release_near", { p_release: rel, p_days: 2 });
+  if (nerr) run.errors.push(`att_release_near: ${nerr.message}`);
+  const inWindow = near === true;
+  const ids = which === "ces" ? CES_ALL : CPI_ITEMS.map((c) => (nsa.has(c) ? `CUUR0000${c}` : `CUSR0000${c}`));
+  // CES: FRED mirrors only part of the CES detail. One series/search call per page (<= 4 pages, refreshed every 30 days)
+  // lists the CES "all employees" ids FRED carries, so absent ids cost no request (budget: fred bucket).
+  let avail: Set<string> | null = null;
   if (which === "ces") {
-    for (let i = 0; i < CES_ALL.length; i += 50) {
-      if (run.outOfTime(10_000)) { run.partial = true; break; }
-      const ids = CES_ALL.slice(i, i + 50);
-      const j = await blsQuery(run, key, ids, y0, y1);
-      if (!j) { run.partial = true; break; }
-      const r = blsRows(j, source, "emp");
-      await ingest(run, r.rows);
-      rows += r.rows.length;
-      for (const id of ids) if (!r.got.has(id)) missing.push(id);
+    const av = await st<{ at?: string; ids?: string[] }>("econ.bls.ces.avail", {});
+    if (av.at && av.at >= addDays(today, -30) && Array.isArray(av.ids) && av.ids.length) avail = new Set(av.ids);
+    else if (!run.skipped.some((x) => x.host === "api.stlouisfed.org")) {
+      const found: string[] = [];
+      let ok = true;
+      for (let off = 0; off < 4000; off += 1000) {
+        const q = new URLSearchParams({ search_text: "CES*01", search_type: "series_id", api_key: key, file_type: "json", limit: "1000", offset: String(off) });
+        const j = await getJson(run, "fred", `${FRED}/series/search?${q}`);
+        if (!j) { ok = false; break; }
+        const ss = Array.isArray(j.seriess) ? j.seriess : [];
+        for (const x of ss) { const sid = String(x?.id ?? ""); if (/^CES\d{8}01$/.test(sid)) found.push(sid); }
+        if (ss.length < 1000) break;
+      }
+      if (ok && found.length) { avail = new Set(found); await stSet(run, "econ.bls.ces.avail", { at: today, ids: [...avail].sort(), n: avail.size }); }
     }
-    await stSet(run, stKey, { missing, done_at: todayUtc() });
-  } else {
-    // SA first; items without SA data are re-requested as NSA (remembered in state)
-    const nsa = new Set(s.nsa ?? []);
-    const sa = CPI_ITEMS.filter((c) => !nsa.has(c)).map((c) => `CUSR0000${c}`);
-    const j = await blsQuery(run, key, sa, y0, y1);
-    if (j) {
-      const r = blsRows(j, source, "index");
-      await ingest(run, r.rows);
-      rows += r.rows.length;
-      for (const id of sa) if (!r.got.has(id)) nsa.add(id.slice(8));
-    } else run.partial = true;
-    const nsaIds = [...nsa].map((c) => `CUUR0000${c}`);
-    if (nsaIds.length && !run.outOfTime(10_000)) {
-      const j2 = await blsQuery(run, key, nsaIds, y0, y1);
-      if (j2) {
-        const r = blsRows(j2, source, "index");
-        await ingest(run, r.rows);
-        rows += r.rows.length;
-        for (const id of nsaIds) if (!r.got.has(id)) missing.push(id);
-      } else run.partial = true;
-    }
-    await stSet(run, stKey, { nsa: [...nsa].sort(), missing, done_at: todayUtc() });
   }
+  let rows = 0, done = 0, wanted = 0, notOnFred = 0;
+  for (const id of ids) {
+    const alias = which === "ces" ? CES_FRED_ALIAS[id] : undefined;
+    if (alias && missing.has(id)) missing.delete(id); // recorded missing before the alias map existed
+    if (!alias && avail && !avail.has(id)) { if (!missing.has(id)) { missing.add(id); notOnFred++; } continue; }
+    if (missing.has(id) && run.params.force !== true) continue;
+    const last = fetched[id];
+    if (!backfill && !last && run.params.force !== true) continue; // never fetched: left to the budget-guarded backfill drain
+    const stale = !last || last < addDays(today, -35);
+    if (!backfill && !stale && !(inWindow && last < addDays(today, -3)) && run.params.force !== true) continue; // once per release window
+    if (backfill && last && run.params.force !== true) continue;
+    wanted++;
+    if (run.outOfTime(8000) || run.skipped.some((x) => x.host === "api.stlouisfed.org")) { run.partial = true; continue; }
+    const from = backfill || !last ? String(cfg.fred_from ?? "2016-01-01") : addDays(today, -400);
+    // first releases only (ALFRED output_type=4): value as first published + its release date
+    const q = new URLSearchParams({ series_id: alias ?? id, api_key: key, file_type: "json", observation_start: from, limit: "100000",
+      output_type: "4", realtime_start: "1776-07-04", realtime_end: "9999-12-31" });
+    const res = await politeFetch(run, `${FRED}/series/observations?${q}`, { source: "fred", headers: { accept: "application/json" }, timeoutMs: 30_000 });
+    if (!res) { run.partial = true; continue; }
+    if (res.status === 400 || res.status === 404) {
+      await res.body?.cancel();
+      // SA CPI item not on FRED -> try the NSA id next run; a CES id without a FRED mirror is recorded as missing
+      if (which === "cpi" && id.startsWith("CUSR")) nsa.add(id.slice(8)); else missing.add(id);
+      continue;
+    }
+    if (!res.ok) { await res.body?.cancel(); run.errors.push(`fred(${source}) ${id}: http ${res.status}`); continue; }
+    const j = await res.json().catch(() => null);
+    const out: ObsRow[] = [];
+    for (const o of Array.isArray(j?.observations) ? j.observations : []) {
+      const v = num(o?.value);
+      if (!isDay(o?.date) || v === null) continue;
+      const rs = isDay(o?.realtime_start) ? String(o.realtime_start) : "";
+      out.push({ source, key: id, metric: which === "ces" ? "emp" : "index", geo: "US", day: o.date, value: v,
+        meta: { rt: "first", vintage: rs, released: rs, sa: !id.startsWith("CUUR") && !id.startsWith("CEU"), ...(alias ? { ref: `fred:${alias}` } : {}) } });
+    }
+    rows += (await ingest(run, out)).rows;
+    fetched[id] = today; done++;
+    await stSet(run, stKey, { fetched, nsa: [...nsa].sort(), missing: [...missing].sort() });
+  }
+  await stSet(run, stKey, { fetched, nsa: [...nsa].sort(), missing: [...missing].sort() });
   if (!run.dryRun) {
     const { error } = await db.rpc("att_econ_apply_releases");
     if (error) run.errors.push(`att_econ_apply_releases: ${error.message}`);
   }
-  run.extra[`bls_${which}`] = { rows, missing: missing.slice(0, 60), n_missing: missing.length, years: [y0, y1] };
-  run.source({ source, status: run.partial ? "partial" : "ok", keys: which === "ces" ? CES_ALL.length - missing.length : CPI_ITEMS.length - missing.length, rows, ms: Date.now() - t0 });
+  const pending = wanted - done;
+  if (pending > 0) { run.partial = true; run.nextCursor = { source, pending }; }
+  run.extra[`bls_${which}`] = { rows, fetched_now: done, pending, nsa: [...nsa], missing: [...missing].slice(0, 40), n_missing: missing.size,
+    not_on_fred_now: notOnFred, fred_ces_ids: avail ? avail.size : undefined, n_fetched: Object.keys(fetched).length, via: "FRED mirror" };
+  run.source({ source, status: run.partial ? "partial" : "ok", keys: done, rows, ms: Date.now() - t0 });
 }
 
 // ================================================================== DOL ETA 539 (weekly claims by state)
@@ -491,8 +580,23 @@ async function modeDol(run: Run, backfill = false) {
     run.source({ source: "dol.claims", status: "parse_error", ms: Date.now() - t0 });
     return;
   }
+  // 'US' = sum over the 50 states + DC (PR / VI excluded), weeks where all 51 reported: the aggregate key of
+  // att_engine_source_map (regional demeaning, ENGINE §3.5).
+  const agg = new Map<string, { v: number; n: number }>();
+  for (const r of out) {
+    if (r.key === "PR" || r.key === "VI") continue;
+    const k = `${r.metric}|${r.day}`;
+    const a = agg.get(k) ?? { v: 0, n: 0 }; a.v += r.value; a.n++; agg.set(k, a);
+  }
+  let nUs = 0;
+  for (const [k, a] of agg) {
+    if (a.n < 51) continue;
+    const [metric, day] = k.split("|");
+    out.push({ source: "dol.claims", key: "US", metric, geo: "US", day, value: a.v, aux: a.n, meta: { method: "sum_50_states_dc" } });
+    nUs++;
+  }
   await ingest(run, out);
-  run.extra.dol = { header: hdr.slice(0, 30), lines, rows: out.length, from, columns: { ic: "c3", cw: "c8" } };
+  run.extra.dol = { header: hdr.slice(0, 30), lines, rows: out.length, us_rows: nUs, from, columns: { ic: "c3", cw: "c8" } };
   run.source({ source: "dol.claims", status: run.partial ? "partial" : "ok", keys: new Set(out.map((r) => r.key)).size, rows: out.length, ms: Date.now() - t0 });
 }
 
@@ -533,8 +637,9 @@ async function modeNoaa(run: Run, backfill = false) {
   const token = await secret(run, "noaa_cdo_token");
   if (!token) return noKey(run, "noaa.ghcnd", "noaa_cdo_token");
   const cfg = await cfgEcon();
-  const stateOf = new Map(NOAA_STATIONS);
-  const all = NOAA_STATIONS.map(([s]) => s);
+  const list: Array<[string, string]> = Array.isArray(cfg.noaa_stations) && cfg.noaa_stations.length ? cfg.noaa_stations : NOAA_STATIONS;
+  const stateOf = new Map(list);
+  const all = list.map(([s]) => s);
   let rows = 0, pages = 0;
   if (!backfill) {
     const to = todayUtc(), from = addDays(to, -Number(run.params.days ?? 14));
@@ -581,6 +686,12 @@ async function modeNoaa(run: Run, backfill = false) {
 // ================================================================== Census BFS (weekly business applications)
 // Weekly CSVs published with each Thursday release. The file layout is discovered from the header: a date/week column
 // plus one column per geography (or long format geo,value). Only counts of business applications (BA) are stored.
+function bfsWeekEnd(y: number, w: number): string | null {
+  if (!(y >= 2000 && y <= 2100 && w >= 1 && w <= 53)) return null;
+  const jan1 = Date.UTC(y, 0, 1);
+  const firstSat = jan1 + ((6 - new Date(jan1).getUTCDay() + 7) % 7) * 86400000;
+  return new Date(firstSat + (w - 1) * 7 * 86400000).toISOString().slice(0, 10);
+}
 async function modeBfs(run: Run, backfill = false) {
   const t0 = Date.now();
   const cfg = await cfgEcon();
@@ -596,23 +707,28 @@ async function modeBfs(run: Run, backfill = false) {
     if (run.outOfTime(10_000)) { run.partial = true; break; }
     const res = await getText(run, "census.bfs", u, { accept: "text/csv,*/*" });
     if (!res) { run.partial = true; continue; }
-    const txt = (await res.text()).replace(/^﻿/, "");
+    const txt = (await res.text()).replace(/^\uFEFF/, "");
     const lines = txt.split(/\r?\n/).filter((l) => l.trim());
     const split = (l: string) => l.match(/("([^"]|"")*"|[^,]*)(,|$)/g)!.map((x) => x.replace(/,$/, "").replace(/^"|"$/g, "").trim()).slice(0, -1);
     const hdr = split(lines[0]).map((h) => h.toLowerCase());
     notes.push({ url_path: new URL(u).pathname, header: hdr.slice(0, 12), n: lines.length - 1 });
     const iDate = hdr.findIndex((h) => /week.*end|date|period|time/.test(h));
+    const iYear = hdr.indexOf("year"), iWeek = hdr.indexOf("week");
     const iGeo = hdr.findIndex((h) => /^(geo|state|geography|region)$/.test(h));
     const iVal = hdr.findIndex((h) => /^(ba|value|business applications|ba_nsa|ba_ba)$/.test(h));
     const out: ObsRow[] = [];
     for (const l of lines.slice(1)) {
       const f = split(l);
-      const day = parseUsDate(f[iDate] ?? "") ?? (isDay(f[iDate]) ? f[iDate] : null);
+      // weekly files carry Year + Week (no date): day = week-ending Saturday, week 1 = the week ending on the year's first
+      // Saturday (Census BFS weekly convention as we read it; meta.ref keeps year-week so the mapping can be audited)
+      const yw = iDate < 0 && iYear >= 0 && iWeek >= 0 ? bfsWeekEnd(Number(f[iYear]), Number(f[iWeek])) : null;
+      const day = yw ?? parseUsDate(f[iDate] ?? "") ?? (isDay(f[iDate]) ? f[iDate] : null);
       if (!day || day < from) continue;
-      if (iGeo >= 0 && iVal >= 0) {
-        const g = (f[iGeo] ?? "").toUpperCase(); const v = num(f[iVal]);
+      const ref = yw ? { ref: `${f[iYear]}-W${f[iWeek]}` } : undefined;
+      if (iVal >= 0) {
+        const g = iGeo >= 0 ? (f[iGeo] ?? "").toUpperCase() : "US"; const v = num(f[iVal]);
         if (v === null || !/^([A-Z]{2}|US)$/.test(g)) continue;
-        out.push({ source: "census.bfs", key: g, metric: "ba", geo: g === "US" ? "US" : `US-${g}`, day, value: v });
+        out.push({ source: "census.bfs", key: g, metric: "ba", geo: g === "US" ? "US" : `US-${g}`, day, value: v, meta: ref });
       } else {
         hdr.forEach((h, i) => {
           if (i === iDate) return;
@@ -636,7 +752,7 @@ async function modeProbe(run: Run) {
   if (!url || !source) { run.errors.push("probe needs params.url and params.source"); return; }
   let u = url;
   const kp = run.params.key_param ? String(run.params.key_param) : null;
-  const kn: Record<string, string> = { "eia.930": "eia_api_key", "eia.prices": "eia_api_key", fred: "fred_api_key",
+  const kn: Record<string, string> = { fred: "fred_api_key",
     "census.bfs": "census_api_key", "noaa.ghcnd": "noaa_cdo_token" };
   const headers: Record<string, string> = {};
   if (kp || run.params.key_header) {
@@ -675,8 +791,8 @@ async function modeBackfill(run: Run) {
   const src = String(run.params.source ?? "");
   switch (src) {
     case "fred": return await modeFred(run, true);
+    case "fred_rt": return await modeFredRt(run);
     case "eia.930": return await modeEia930(run, true);
-    case "eia.prices": return await modeEiaPrices(run, true);
     case "bls.ces": return await modeBls(run, "ces", true);
     case "bls.cpi_items": return await modeBls(run, "cpi", true);
     case "dol.claims": return await modeDol(run, true);
@@ -690,7 +806,6 @@ serve("att-econ", {
   fred: wrap((r) => modeFred(r, false)),
   calendar: wrap(modeCalendar),
   eia_930: wrap((r) => modeEia930(r, false)),
-  eia_prices: wrap((r) => modeEiaPrices(r, false)),
   bls_ces: wrap((r) => modeBls(r, "ces", false)),
   bls_cpi: wrap((r) => modeBls(r, "cpi", false)),
   dol_claims: wrap((r) => modeDol(r, false)),

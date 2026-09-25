@@ -23,8 +23,9 @@
 //                movers (new to the top 1k, or a rank jump >= max(20, 25%)) against the previous top-1k, which att_state keeps
 //                only as one-way 12-hex SHA-256 digests in rank order (no readable domain list is stored).
 //   npm          npm downloads: bulk range (<= 128 unscoped packages per call; scoped packages one by one) for the last
-//                7 days for registered + reference packages, the all-packages '__total__' normaliser, and a 400-day
-//                single-package backfill for any key without history.
+//                30 days (charts.npm.days) for registered + reference packages, the all-packages '__total__' normaliser
+//                (its outage days listed in att_state 'charts.npm.gaps'), and a 400-day single-package backfill for any
+//                key without history.
 //   pypi         pypistats overall?mirrors=false (180 days per call) for registered + reference packages.
 //   backfill     Merged backfill jobs from att_tick: params.source in npm.dl | pypi.dl | anilist | gh.stars.
 //   ping         No outbound requests.
@@ -38,7 +39,7 @@ import {
 } from "./att.ts";
 
 const FN = "att-charts";
-export const CHARTS_VERSION = "2026-09-25.c8";
+export const CHARTS_VERSION = "2026-09-25.c9";
 
 // ------------------------------------------------------------------ helpers
 type Cfg = Record<string, any>;
@@ -679,7 +680,10 @@ const NPM = "https://api.npmjs.org/downloads/range";
 /**
  * npm reports days it has not computed (the last 1-3 days, and occasional outage days) as 0 downloads for every package.
  * A 0 is therefore treated as missing (not stored) for '__total__' and for any package whose 75th percentile in the
- * response is above 100/day; small packages keep genuine zeros. Missing days are filled by the next runs' 7-day window.
+ * response is above 100/day; small packages keep genuine zeros. Missing days are refilled by the next runs' window
+ * (config npm.days, default 30: the same number of requests as a 7-day window, so a day npm recomputes late is picked up).
+ * Days on which '__total__' is 0 inside a fully computed window are npm-side outage days; they are listed (days only, no
+ * values) in att_state 'charts.npm.gaps' so share-transform consumers skip them instead of dividing by a missing total.
  */
 function npmRows(run: Run, pkg: string, j: any, topic: number | null): ObsRow[] {
   const days = ((j?.downloads ?? []) as any[])
@@ -716,6 +720,23 @@ function npmNeedsBackfill(run: Run, firstDay: string | null, lastBackfill: strin
   if (lastBackfill && lastBackfill > addDays(run.asOf, -30)) return false;
   return !firstDay || firstDay > addDays(run.asOf, -(bfDays - 1) + 30);
 }
+/** Zero days of the '__total__' response that are older than npm's 3-day computing lag = npm outage days. */
+function npmTotalGaps(run: Run, j: any): string[] {
+  const lag = addDays(run.asOf, -3);
+  return ((j?.downloads ?? []) as any[])
+    .filter((d) => typeof d?.day === "string" && d.day <= lag && Number(d?.downloads) === 0).map((d) => d.day as string);
+}
+/** Merge gap days into att_state 'charts.npm.gaps' (sorted, last 400 days); days that now have a value are removed. */
+async function npmRecordGaps(run: Run, gaps: string[], filled: string[], winFrom: string) {
+  if (run.dryRun) return;
+  const st = ((await stateGet("charts.npm.gaps")) ?? {}) as { days?: string[] };
+  const keep = new Set((st.days ?? []).filter((d) => typeof d === "string" && d >= addDays(run.asOf, -400)));
+  for (const d of filled) keep.delete(d);
+  for (const d of gaps) keep.add(d);
+  const days = [...keep].sort();
+  await stateSet("charts.npm.gaps", { days, as_of: run.asOf, window_from: winFrom,
+    note: "npm reported 0 for the all-packages total on these days (source outage, older than the 3-day lag); npm.dl __total__ has no row for them" });
+}
 function npmPruneState(run: Run, st: Record<string, string>): Record<string, string> {
   const out: Record<string, string> = {};
   for (const [k, d] of Object.entries(st)) if (typeof d === "string" && d > addDays(run.asOf, -30)) out[k] = d;
@@ -727,7 +748,7 @@ async function modeNpm(run: Run) {
   const nc = c.cfg.npm ?? {};
   const keys = await npmKeys(run, c);
   const pkgs = [...keys.keys()].filter(validNpm);
-  const days = Number(nc.days ?? 7);
+  const days = Math.max(7, Math.min(90, Number(nc.days ?? 30)));
   const from = addDays(run.asOf, -(days - 1)), to = run.asOf;
   let rows = 0, calls = 0;
   const host = "api.npmjs.org";
@@ -736,7 +757,13 @@ async function modeNpm(run: Run) {
   {
     const j = await getJson(run, `${NPM}/${from}:${to}`, { source: "npm.dl" });
     calls++;
-    if (j) rows += (await ingest(run, npmRows(run, "__total__", j, null))).rows;
+    if (j) {
+      const tr = npmRows(run, "__total__", j, null);
+      rows += (await ingest(run, tr)).rows;
+      const gaps = npmTotalGaps(run, j);
+      await npmRecordGaps(run, gaps, tr.map((r) => String(r.day)), from);
+      run.extra.npm_total_gaps = gaps.length;
+    }
   }
   // 2) bulk unscoped (<= 128 per call), then scoped one by one
   const unscoped = pkgs.filter((p) => !p.startsWith("@")), scoped = pkgs.filter((p) => p.startsWith("@"));

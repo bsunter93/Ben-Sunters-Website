@@ -17,11 +17,18 @@
 import { politeFetch, type Run, serve, stateGet, stateSet, db, jobsDone, WALL_MS } from "./att.ts";
 
 const FN = "att-news";
-const NEWS_VERSION = "2026-09-25.n7"; // n2: GKG 404 parking + min file age; sequential sitemaps. n3: size-normalised
+const NEWS_VERSION = "2026-09-25.n9"; // n2: GKG 404 parking + min file age; sequential sitemaps. n3: size-normalised
 // GKG burst baseline; network brands excluded from Third Eye. n4: GKG entity minimisation (photo/byline credits,
 // outlet breadth, boilerplate labels) for candidates and edges; parked-file retry by file age; brand-free sitemap keywords.
 // n5: photo credits detected as V1-only ("ghost") names. n6: bylines, credits and ghosts kept out of the EWMA baseline.
 // n7: contributor lines ("AP writers Jane Doe and John Roe contributed") detected as article-tail names; ghost share 0.3
+// n8: registry-term counts pass a per-document screen (the document's own bylines, credit-only, ghost and tail-only
+// names, the outlet's own brand) and a kind-aware name matcher; entity kind by vote across fields; phrase fragments,
+// bare titles and title-prefixed duplicates dropped; person-like candidates need 5 outlets; cold-start floor for z.
+// n9: a V1-only ("ghost") name drops a term hit only when that name is a credit across the whole file (acronyms such as
+// "CNN" and forms such as "United States" are often missing from AllNames); kind vote favours places; title stubs
+// ("Sir Mark", "Republican President George") dropped; a person-like candidate or edge endpoint needs 10 outlets, or 5
+// outlets in at least 2 source countries (a private individual in a syndicated local story stays out).
 const GKG_BASE = "https://data.gdeltproject.org/gdeltv2/";
 const THIRDEYE = "https://archive.org/services/third-eye.php";
 const OUTLETS: Record<string, string> = {
@@ -43,15 +50,22 @@ export function norm(s: string): string {
 }
 
 export interface Term { key: string; topic_id: number | null; active: boolean; key_type: string; match: any }
+/** Registry kind of a term (match.kind from att_news_terms): place | person | work | other | unknown. */
+export const termKind = (t: Term): string => String(t.match?.kind ?? "unknown");
+/** Per-document name context for matchNames (GKG): V1Persons and V1Locations names of the document. */
+export interface NameCtx { persons: Set<string>; locs: Set<string> }
 /** Whole-word phrase matcher: patterns indexed by first token; text must be norm()-ed. " ~ " separates fields. */
 export class Matcher {
-  private byFirst = new Map<string, Array<[string, number]>>();
+  private byFirst = new Map<string, Array<[string, number, boolean]>>();
+  private kinds: string[];
   patterns = 0;
   constructor(public terms: Term[]) {
+    this.kinds = terms.map(termKind);
     terms.forEach((t, i) => {
       if (t.key_type === "theme") return;
       const aliases: string[] = Array.isArray(t.match?.aliases) ? t.match.aliases : [];
       const seen = new Set<string>();
+      const kind = this.kinds[i];
       for (const raw of [t.key, ...aliases]) {
         const p = norm(String(raw));
         // too short / purely numeric patterns are noise in names and headlines
@@ -60,11 +74,13 @@ export class Matcher {
         const first = p.split(" ")[0];
         let arr = this.byFirst.get(first);
         if (!arr) { arr = []; this.byFirst.set(first, arr); }
-        arr.push([" " + p + " ", i]);
+        // a one-word pattern of a person, work or organisation must be a whole GKG name (see matchNames)
+        arr.push([" " + p + " ", i, !p.includes(" ") && kind !== "place" && kind !== "unknown"]);
         this.patterns++;
       }
     });
   }
+  /** Free text (headlines, chyrons): whole-word phrase match. */
   match(t: string, out: Set<number>) {
     if (!t) return;
     const padded = " " + t + " ";
@@ -75,6 +91,39 @@ export class Matcher {
       const c = this.byFirst.get(tok);
       if (!c) continue;
       for (const [p, i] of c) if (!out.has(i) && (p.length === tok.length + 2 || padded.includes(p))) out.add(i);
+    }
+  }
+  /**
+   * GKG names (n8), each matched on its own, with the registry kind deciding which names may count:
+   *  - a one-word pattern of a person, work or organisation ("julia", "cnn") must be the whole name, and not the short
+   *    form of a longer person name in the same document ("Julia" beside V1Persons "julia roberts");
+   *  - a place counts only through names that are not V1Persons names ("Jordan" in "Michael Jordan");
+   *  - a person, work or organisation counts only through names that are not V1Locations features ("Victoria", the
+   *    Australian state, is not Queen Victoria). Terms of unknown kind keep the plain phrase match.
+   */
+  matchNames(names: Iterable<string>, out: Set<number>, cx: NameCtx) {
+    for (const nm of names) {
+      const padded = " " + nm + " ";
+      const isLoc = cx.locs.has(nm), isPerson = cx.persons.has(nm);
+      const seenTok = new Set<string>();
+      for (const tok of nm.split(" ")) {
+        if (seenTok.has(tok)) continue;
+        seenTok.add(tok);
+        const c = this.byFirst.get(tok);
+        if (!c) continue;
+        for (const [p, i, whole] of c) {
+          if (out.has(i)) continue;
+          const kind = this.kinds[i];
+          if (kind === "place" ? isPerson : kind !== "unknown" && isLoc) continue;
+          if (whole) {
+            if (nm !== tok) continue;
+            let short = false;
+            for (const o of cx.persons) if (o !== nm && (o.startsWith(nm + " ") || o.endsWith(" " + nm))) { short = true; break; }
+            if (short) continue;
+            out.add(i);
+          } else if (p.length === tok.length + 2 || padded.includes(p)) out.add(i);
+        }
+      }
     }
   }
 }
@@ -209,7 +258,10 @@ interface GkgState { last_file?: string; files?: number; gaps?: number; pending?
 /** EWMA baseline of each entity's documents per 1000 documents in a file (unit "per1k"; older states were per file). */
 interface Ewma { n_files: number; b: Record<string, number>; unit?: string }
 const EWMA_ALPHA = 0.05;
-const EWMA_KEEP = 4000;
+const EWMA_KEEP = 6000;
+/** Cold start (n8): an entity outside the baseline is expected at no less than this rate (documents per 1000) or the
+ *  lowest baseline kept, whichever is higher; its candidates are marked method "..._cold". */
+const EWMA_COLD_FLOOR = 0.25;
 const CAND_WARMUP_FILES = 4;
 // Entity minimisation (n4). A GKG name only becomes a discovery candidate or an edge endpoint when it is reported by
 // several outlets and is not mostly a credit: photo and syndication credits ("(AP Photo/Jane Doe)", "Getty Images",
@@ -224,7 +276,10 @@ const CAND_WARMUP_FILES = 4;
 // entries) the last TAIL_K names within TAIL_CHARS of the last offset are its "tail"; an entity that sits in the tail of
 // more than TAIL_MAX_SHARE of its documents is treated as a credit.
 const CAND_MIN_OUTLETS = 3;        // distinct SourceCommonName in this file
-const EDGE_MIN_OUTLETS = 2;        // org edge endpoints; person-like names need CAND_MIN_OUTLETS
+const PERSON_MIN_OUTLETS = 5;      // person-like names (V1Persons, or AllNames-only): candidates and edge endpoints
+const PERSON_WIDE_OUTLETS = 10;    // ... and either this many outlets or PERSON_MIN_COUNTRIES source countries (ccTLDs):
+const PERSON_MIN_COUNTRIES = 2;    // a private individual in a syndicated local story should not become a stored name
+const EDGE_MIN_OUTLETS = 2;        // org and place edge endpoints; person-like names need PERSON_MIN_OUTLETS
 const CREDIT_MAX_SHARE = 0.25;     // an entity whose mentions are > 25% credit-context is a credit
 const CREDIT_WINDOW = 60;          // characters between a credit marker and a name (AllNames offsets)
 const GHOST_MAX_SHARE = 0.3;       // V1Persons/V1Organizations-only in more than 30% of its documents -> credit
@@ -252,7 +307,58 @@ const JUNK_LABEL = new RegExp([
   "(^| )(contact email|more information|privacy (notice|policy)|terms of (service|use)|cookie|subscribe|sign up)( |$)",
   "(^| )(read more|click here|share this|help someone|donating proceeds|sale notice|plaintiff deadline)( |$)",
   "^(\\S+( \\S+)?) \\1$",                                    // doubled names ("stacker stacker")
+  // phrase fragments picked up as names ("Biggest Protests Ireland Has Ever Seen"): verbs and adverbs, or 7+ words
+  "(^| )(has|have|had|is|are|was|were|would|could|should|ever|never|been|being|says|said|does|did|not)( |$)",
+  "^(\\S+ ){6,}\\S+$",
+  // bare titles and anonymous roles are not entities ("Prime Minister", "Garvaghy Road Resident")
+  "^(the )?(prime minister|president|vice president|minister|first minister|foreign minister|justice minister|chancellor|governor|mayor|senator|premier|secretary|secretary of state|chief executive|spokesperson|spokesman|spokeswoman)$",
+  "(^| )(resident|residents|spokesperson|spokesman|spokeswoman|official|officials|source|sources|victim|witness|neighbour|neighbor)$",
 ].join("|"));
+/** Role words that prefix a person's name ("Justice Minister Naomi Long", "Inspector Simon Ager"); PREFIX_WORD adds the
+ *  party, office and truncation words GKG leaves in front of names ("Republican President George", "State Marco Rubio"). */
+const TITLE_WORD = new Set(["president", "minister", "chancellor", "governor", "mayor", "senator", "sen", "rep",
+  "representative", "gov", "premier", "secretary", "judge", "justice", "inspector", "detective", "sergeant", "sgt",
+  "officer", "constable", "chief", "superintendent", "commissioner", "sheriff", "deputy", "captain", "capt", "general",
+  "gen", "colonel", "col", "lieutenant", "lt", "coach", "dr", "doctor", "professor", "prof", "mr", "mrs", "ms", "sir",
+  "dame", "lord", "lady", "king", "queen", "prince", "princess", "pope", "father", "rev", "reverend", "councillor",
+  "councilor", "councilman", "councilwoman", "leader", "chairman", "chairwoman", "chair", "ceo", "director", "manager"]);
+const PREFIX_WORD = new Set([...TITLE_WORD, "state", "republican", "democratic", "democrat", "labour", "conservative",
+  "police", "former", "acting", "then", "the", "us", "federal", "metropolitan", "vice", "prime", "foreign", "defence",
+  "defense", "interior", "finance", "health", "home", "attorney", "district", "county", "city", "head", "first", "lead"]);
+/** A title-prefixed variant of a name that is also present on its own: returns that name, else null. */
+export function titleBase(n: string, has: (x: string) => boolean): string | null {
+  const w = n.split(" ");
+  for (let k = 1; k <= 5 && w.length - k >= 2; k++) {
+    if (!PREFIX_WORD.has(w[k - 1])) break;
+    const r = w.slice(k).join(" ");
+    if (has(r)) return r;
+  }
+  return null;
+}
+// royal and religious titles name public figures by given name ("Prince Harry", "King Charles", "Pope Leo")
+const NOT_STUB = new Set(["general", "gen", "chief", "director", "manager", "leader", "chair", "chairman", "father", "doctor",
+  "king", "queen", "prince", "princess", "pope"]);
+/** Title plus a single given name ("sir mark", "police commissioner sir mark", "republican president george"). */
+export function titleStub(n: string): boolean {
+  const w = n.split(" ");
+  // "General Motors", "Chief Keef", "Prince Harry": company, stage and royal names are not stubs
+  if (w.length < 2 || !TITLE_WORD.has(w[w.length - 2]) || NOT_STUB.has(w[w.length - 2])) return false;
+  for (let k = 0; k < w.length - 1; k++) if (!PREFIX_WORD.has(w[k])) return false;
+  return true;
+}
+/** The outlet's brand from its domain ("edition.cnn.com" -> "cnn", "bbc.co.uk" -> "bbc", "foxnews.com" -> "foxnews"). */
+export function outletBrand(domain: string): string {
+  const p = domain.toLowerCase().replace(/^www\./, "").split(".").filter(Boolean);
+  if (p.length > 1) p.pop();
+  if (p.length > 1 && GENERIC.has(p[p.length - 1])) p.pop();
+  return p[p.length - 1] ?? "";
+}
+/** An outlet naming itself ("CNN" on cnn.com, "Fox News" on foxnews.com) is not attention to that outlet. */
+export function selfBrand(n: string, brand: string): boolean {
+  if (brand.length < 2) return false;
+  const c = n.replace(/ /g, "");
+  return c === brand || c === brand + "news" || brand === c + "news" || c === "the" + brand;
+}
 export function junkLabel(n: string): boolean { return JUNK_LABEL.test(n); }
 export function isCreditMark(n: string): boolean { return CREDIT_MARK.has(n) || CREDIT_TOKEN.test(n); }
 
@@ -401,9 +507,10 @@ async function gkgFile(run: Run, file: string, ctx: GkgCtx, st: GkgState, retry 
   const totalCC = new Set<string>();
   const entDocs = new Map<string, number>();      // normalized entity -> documents
   const entLabel = new Map<string, string>();     // normalized -> display label (first seen)
-  const entKind = new Map<string, string>();
+  const entKindN = new Map<string, [number, number, number]>();   // normalized -> documents as V1Persons / V1Organizations / V1Locations
   const pairs = new Map<string, number>();        // termIdx \u0001 entity -> documents
-  const entOutlets = new Map<string, string[]>(); // normalized -> first CAND_MIN_OUTLETS distinct outlets
+  const entOutlets = new Map<string, string[]>(); // normalized -> first PERSON_WIDE_OUTLETS distinct outlets
+  const entCC = new Map<string, string[]>();      // normalized -> first PERSON_MIN_COUNTRIES source countries
   const entCredit = new Map<string, number>();    // normalized -> documents where it appears as a credit/byline
   const entGhost = new Map<string, number>();     // normalized -> documents where it is a V1-only name (see GHOST_MAX_SHARE)
   const entTail = new Map<string, number>();      // normalized -> documents where it closes a long article (see TAIL_*)
@@ -415,6 +522,19 @@ async function gkgFile(run: Run, file: string, ctx: GkgCtx, st: GkgState, retry 
   const docAll = new Set<string>();               // per document: AllNames (normalized)
   const docGhost = new Set<string>();             // per document: V1Persons/V1Organizations names missing from AllNames
   const docTail = new Set<string>();              // per document: the last AllNames names of a long article
+  const docTailIdx = new Set<number>();           // ... as indexes into anN
+  const docPersons = new Set<string>();           // per document: V1Persons names
+  const docOrgs = new Set<string>();              // per document: V1Organizations names
+  const docLoc = new Set<string>();               // per document: V1Locations feature names
+  const docAuthors = new Set<string>();           // per document: its own <PAGE_AUTHORS>
+  const docOcc = new Map<string, [number, number, number]>();  // per document: AllNames occurrences [all, credit, tail]
+  const nameCx: NameCtx = { persons: docPersons, locs: docLoc };
+  const termNames: string[] = [];
+  // registry-term screen (n8): documents a term lost to the screen, by reason (reported in dry runs)
+  const scr = { byline: 0, self: 0, credit: 0, ghost: 0, tail: 0, ghost_kept: 0 };
+  // hits lost only to a ghost name are provisional: term -> ghost name -> [documents, countries]; decided per file (n9)
+  const ghostHits = new Map<number, Map<string, [number, Set<string>]>>();
+  const dryTerms = run.dryRun ? { raw: new Float64Array(nT), why: new Map<number, Record<string, number>>() } : null;
   const anN: string[] = [];                        // per document: AllNames (normalized) and offsets
   const anO: number[] = [];
   const probe: string[] = run.dryRun && Array.isArray(run.params.probe) ? run.params.probe.map((x: unknown) => norm(String(x))).slice(0, 10) : [];
@@ -437,7 +557,8 @@ async function gkgFile(run: Run, file: string, ctx: GkgCtx, st: GkgState, retry 
       const n = norm(nm);
       if (n.length < 3) continue;
       if (mode === "allnames") docAll.add(n);
-      else if (mode === "list" && !docAll.has(n)) docGhost.add(n);
+      else if (mode === "list") { if (!docAll.has(n)) docGhost.add(n); (kind === "person" ? docPersons : docOrgs).add(n); }
+      else docLoc.add(n);
       if (!docEnt.has(n)) {
         docEnt.set(n, kind);
         if (!entLabel.has(n) && mode !== "list") entLabel.set(n, nm.trim());
@@ -456,21 +577,32 @@ async function gkgFile(run: Run, file: string, ctx: GkgCtx, st: GkgState, retry 
     docAll.clear();
     docGhost.clear();
     docTail.clear();
+    docTailIdx.clear();
+    docPersons.clear(); docOrgs.clear(); docLoc.clear(); docAuthors.clear(); docOcc.clear();
     anN.length = 0; anO.length = 0;
     addNames(c[23], "name", "allnames");   // AllNames: proper-cased, offsets stripped
     if (anN.length >= TAIL_MIN_NAMES) {
       // the article's closing names (contributor lines); AllNames is in text order, but sort defensively
       const idx = anO.map((_, j) => j).sort((a, b) => anO[b] - anO[a]);
       const last = anO[idx[0]];
-      for (let t = 0; t < TAIL_K && t < idx.length && anO[idx[t]] >= last - TAIL_CHARS; t++) docTail.add(anN[idx[t]]);
+      for (let t = 0; t < TAIL_K && t < idx.length && anO[idx[t]] >= last - TAIL_CHARS; t++) { docTail.add(anN[idx[t]]); docTailIdx.add(idx[t]); }
     }
     // credit context: names within CREDIT_WINDOW characters of a credit marker ("AP Photo", "Getty Images", ...)
     let marks = 0;
+    const near = new Uint8Array(anN.length);
     for (let a = 0; a < anN.length; a++) {
       if (!isCreditMark(anN[a])) continue;
       marks++;
+      near[a] = 1;
       docCredit.add(anN[a]);
-      for (let b = 0; b < anN.length; b++) if (b !== a && Math.abs(anO[b] - anO[a]) <= CREDIT_WINDOW) docCredit.add(anN[b]);
+      for (let b = 0; b < anN.length; b++) if (b !== a && Math.abs(anO[b] - anO[a]) <= CREDIT_WINDOW) { docCredit.add(anN[b]); near[b] = 1; }
+    }
+    for (let b = 0; b < anN.length; b++) {
+      let o = docOcc.get(anN[b]);
+      if (!o) { o = [0, 0, 0]; docOcc.set(anN[b], o); }
+      o[0]++;
+      if (near[b]) o[1]++;
+      if (docTailIdx.has(b)) o[2]++;
     }
     // bylines (Extras <PAGE_AUTHORS>): journalists' names are never discovery candidates or edge endpoints
     const ex = c[26];
@@ -480,7 +612,7 @@ async function gkgFile(run: Run, file: string, ctx: GkgCtx, st: GkgState, retry 
         const i1 = ex.indexOf("</PAGE_AUTHORS>", i0);
         for (const au of ex.slice(i0 + 14, i1 < 0 ? undefined : i1).split(/[,;|]| and /)) {
           const na = norm(au);
-          if (na.length >= 3) { bylines.add(na); docCredit.add(na); }
+          if (na.length >= 3) { bylines.add(na); docCredit.add(na); docAuthors.add(na); }
         }
       }
     }
@@ -499,8 +631,48 @@ async function gkgFile(run: Run, file: string, ctx: GkgCtx, st: GkgState, retry 
     const outlet = c[3] ?? "";
     const cc = countryOf(outlet);
     if (cc) totalCC.add(cc);
-    // registry terms against the document's names (fields separated so phrases never span two names)
-    matcher.match([...docEnt.keys()].join(" ~ "), matched);
+    // registry terms against the document's names, after the screen (n8): the document's own bylines, the outlet's own
+    // brand, credit markers, V1-only "ghost" names and names that only occur in credit context or in the closing
+    // contributor lines are not attention to that name
+    const brand = outletBrand(outlet);
+    termNames.length = 0;
+    const cut: Array<[string, keyof typeof scr]> = [];
+    for (const n of docEnt.keys()) {
+      let why: keyof typeof scr | null = null;
+      if (docAuthors.has(n)) why = "byline";
+      else if (selfBrand(n, brand)) why = "self";
+      else if (isCreditMark(n)) why = "credit";
+      else if (docAll.size && docGhost.has(n)) why = "ghost";
+      else {
+        const o = docOcc.get(n);
+        if (o && o[0] > 0) { if (o[1] === o[0]) why = "credit"; else if (o[2] === o[0] && !docLoc.has(n)) why = "tail"; }
+      }
+      if (why) cut.push([n, why]); else termNames.push(n);
+    }
+    matcher.matchNames(termNames, matched, nameCx);
+    if (cut.length) {
+      // count a screened document once per term, under the first reason that removed it
+      const lost = new Set<number>();
+      for (const [n, why] of cut) {
+        const m1 = new Set<number>(); matcher.matchNames([n], m1, nameCx);
+        for (const i of m1) if (!matched.has(i) && !lost.has(i)) {
+          lost.add(i);
+          if (why === "ghost") {
+            let g = ghostHits.get(i); if (!g) { g = new Map(); ghostHits.set(i, g); }
+            let v = g.get(n); if (!v) { v = [0, new Set()]; g.set(n, v); }
+            v[0]++; if (cc) v[1].add(cc);
+            continue;
+          }
+          scr[why]++;
+          if (dryTerms) { const w = dryTerms.why.get(i) ?? {}; w[why] = (w[why] ?? 0) + 1; dryTerms.why.set(i, w); }
+        }
+      }
+    }
+    if (dryTerms) {
+      // the pre-n8 count (every name, plain phrase match) for comparison
+      const m0 = new Set<number>(); matcher.match([...docEnt.keys()].join(" ~ "), m0);
+      for (const i of m0) dryTerms.raw[i]++;
+    }
     if (themeIdx.size && c[7]) for (const th of c[7].split(";")) { const i = themeIdx.get(th); if (i !== undefined) matched.add(i); }
     for (const i of matched) {
       termDocs[i]++;
@@ -524,13 +696,18 @@ async function gkgFile(run: Run, file: string, ctx: GkgCtx, st: GkgState, retry 
     let k = 0;
     for (const [n, kind] of docEnt) {
       entDocs.set(n, (entDocs.get(n) ?? 0) + 1);
-      if (!entKind.has(n)) entKind.set(n, kind);
+      let kv = entKindN.get(n);
+      if (!kv) { kv = [0, 0, 0]; entKindN.set(n, kv); }
+      if (docPersons.has(n)) kv[0]++;
+      if (docOrgs.has(n)) kv[1]++;
+      if (docLoc.has(n)) kv[2]++;
       if (docCredit.has(n)) entCredit.set(n, (entCredit.get(n) ?? 0) + 1);
       if (docGhost.has(n)) entGhost.set(n, (entGhost.get(n) ?? 0) + 1);
       if (docTail.has(n)) entTail.set(n, (entTail.get(n) ?? 0) + 1);
       const ol = entOutlets.get(n);
       if (!ol) entOutlets.set(n, [outlet]);
-      else if (ol.length < CAND_MIN_OUTLETS && !ol.includes(outlet)) ol.push(outlet);
+      else if (ol.length < PERSON_WIDE_OUTLETS && !ol.includes(outlet)) ol.push(outlet);
+      if (cc) { const cl = entCC.get(n); if (!cl) entCC.set(n, [cc]); else if (cl.length < PERSON_MIN_COUNTRIES && !cl.includes(cc)) cl.push(cc); }
       if (kind === "place" || ++k > 40) continue;
       for (const i of matched) {
         if (!terms[i].active) continue;
@@ -544,6 +721,26 @@ async function gkgFile(run: Run, file: string, ctx: GkgCtx, st: GkgState, retry 
     // never write a partial file: counts would be wrong; the next run retries this file (state not advanced)
     run.partial = true;
     return { file, status: "partial", note: `out of time after ${N} docs; nothing written`, ms };
+  }
+
+  /** Names that are never candidates or edge endpoints whatever their breadth (kept out of the EWMA baseline too). */
+  const creditLike = (n: string): boolean => {
+    const d = entDocs.get(n) ?? 0;
+    return bylines.has(n) || junkLabel(n) || isCreditMark(n) ||
+      (d > 0 && ((entCredit.get(n) ?? 0) / d > CREDIT_MAX_SHARE || (entGhost.get(n) ?? 0) / d > GHOST_MAX_SHARE ||
+        (entTail.get(n) ?? 0) / d > TAIL_MAX_SHARE));
+  };
+  // provisional ghost hits: a ghost name drops the hit only if it is a multi-word name that is a credit across the file
+  // (photo credits); otherwise AllNames simply missed it ("CNN", "United States") and the hit counts
+  for (const [i, g] of ghostHits) for (const [n, [docs, ccs]] of g) {
+    if (n.includes(" ") && creditLike(n)) {
+      scr.ghost += docs;
+      if (dryTerms) { const w = dryTerms.why.get(i) ?? {}; w.ghost = (w.ghost ?? 0) + docs; dryTerms.why.set(i, w); }
+      continue;
+    }
+    scr.ghost_kept += docs;
+    termDocs[i] += docs;
+    if (ccs.size) { const t = (termCC[i] ??= new Set()); for (const c of ccs) t.add(c); }
   }
 
   // ---- write observations (daily for every watched term incl. zeros; hourly for active topics' hits)
@@ -565,28 +762,37 @@ async function gkgFile(run: Run, file: string, ctx: GkgCtx, st: GkgState, retry 
   const r = await accum(run, `gkg:${file}`, rows);
 
   // ---- entity minimisation (n4): credits, bylines, single-outlet names and site furniture never leave the function
-  const drop = { credit: 0, ghost: 0, tail: 0, byline: 0, outlets: 0, junk: 0 };
-  const eligible = (n: string, minOutlets: number, count = true): boolean => {
+  const drop = { credit: 0, ghost: 0, tail: 0, byline: 0, outlets: 0, junk: 0, dup: 0, local: 0 };
+  const eligible = (n: string, minOutlets: number, count = true, person = false): boolean => {
     const d = entDocs.get(n) ?? 0;
     let why: keyof typeof drop | null = null;
     if (bylines.has(n)) why = "byline";
     else if (d > 0 && (entCredit.get(n) ?? 0) / d > CREDIT_MAX_SHARE) why = "credit";
     else if (d > 0 && (entGhost.get(n) ?? 0) / d > GHOST_MAX_SHARE) why = "ghost";
     else if (d > 0 && (entTail.get(n) ?? 0) / d > TAIL_MAX_SHARE) why = "tail";
-    else if (junkLabel(n) || isCreditMark(n)) why = "junk";
+    else if (junkLabel(n) || isCreditMark(n) || titleStub(n)) why = "junk";
+    else if (titleBase(n, (x) => entDocs.has(x)) !== null) why = "dup";
     else if ((entOutlets.get(n)?.length ?? 0) < minOutlets) why = "outlets";
+    else if (person && (entOutlets.get(n)?.length ?? 0) < PERSON_WIDE_OUTLETS &&
+      (entCC.get(n)?.length ?? 0) < PERSON_MIN_COUNTRIES) why = "local";
     if (why && count) drop[why]++;
     return why === null;
   };
-  const personLike = (n: string) => { const k = entKind.get(n); return k === "person" || k === "name"; };
-  /** Names that are never candidates or edge endpoints whatever their breadth (kept out of the EWMA baseline too). */
-  const creditLike = (n: string): boolean => {
-    const d = entDocs.get(n) ?? 0;
-    return bylines.has(n) || junkLabel(n) || isCreditMark(n) ||
-      (d > 0 && ((entCredit.get(n) ?? 0) / d > CREDIT_MAX_SHARE || (entGhost.get(n) ?? 0) / d > GHOST_MAX_SHARE ||
-        (entTail.get(n) ?? 0) / d > TAIL_MAX_SHARE));
+  /** Kind by vote across the fields the name appeared in (a stray V1Persons "los angeles" does not make a person). */
+  const kindOf = (n: string): string => {
+    const v = entKindN.get(n);
+    if (!v) return "name";
+    const [p, o, l] = v;
+    // GDELT's person extractor also tags city names ("los angeles" of "Los Angeles Lakers"); a name that is a
+    // V1Locations feature in a fifth of its documents is a place
+    if (l > 0 && (l >= p && l >= o || l >= 0.2 * (entDocs.get(n) ?? 0))) return "place";
+    if (p > 0 && p >= o) return "person";
+    return o > 0 ? "org" : "name";
   };
-
+  const personLike = (n: string) => { const k = kindOf(n); return k === "person" || k === "name"; };
+  /** Candidate / edge-endpoint breadth test (persons: 5 outlets and 2 countries, or 10 outlets). */
+  const wideEnough = (n: string, other: number, count = true) =>
+    personLike(n) ? eligible(n, PERSON_MIN_OUTLETS, count, true) : eligible(n, other, count);
   // ---- co-mention edges (at least one side active; top 25 per term with >= 2 shared documents)
   const byTerm = new Map<number, Array<[string, number]>>();
   const edgeOk = new Map<string, boolean>();
@@ -596,7 +802,7 @@ async function gkgFile(run: Run, file: string, ctx: GkgCtx, st: GkgState, retry 
     const i = +pk.slice(0, s);
     const e = pk.slice(s + 1);
     let ok = edgeOk.get(e);
-    if (ok === undefined) { ok = eligible(e, personLike(e) ? CAND_MIN_OUTLETS : EDGE_MIN_OUTLETS, false); edgeOk.set(e, ok); }
+    if (ok === undefined) { ok = wideEnough(e, EDGE_MIN_OUTLETS, false); edgeOk.set(e, ok); }
     if (!ok) continue;
     // skip the term's own names (the entity is the topic itself)
     const self = new Set<number>(); matcher.match(e, self);
@@ -622,29 +828,44 @@ async function gkgFile(run: Run, file: string, ctx: GkgCtx, st: GkgState, retry 
     for (const n of Object.keys(ew.b)) ew.b[n] = ew.b[n] * per1k;
     ew.unit = "per1k";
   }
-  const cands: Array<{ n: string; z: number; c: number; e: number }> = [];
+  const cands: Array<{ n: string; z: number; c: number; e: number; cold: boolean }> = [];
   if (ew.n_files >= CAND_WARMUP_FILES && N > 0) {
+    // an entity outside the baseline (never seen, or pruned below the lowest kept value) is expected at the floor
+    const vals = Object.values(ew.b);
+    let bmin = Infinity;
+    for (const v of vals) if (v < bmin) bmin = v;
+    const floor = Math.max(EWMA_COLD_FLOOR, vals.length >= EWMA_KEEP * 0.95 && bmin < Infinity ? bmin : 0);
     for (const [n, c] of entDocs) {
       if (c < 5) continue;
-      const e = (ew.b[n] ?? 0) * N / 1000;   // expected documents in this file
+      const b = ew.b[n];
+      const e = Math.max(b ?? 0, floor) * N / 1000;   // expected documents in this file
       const z = (c - e) / Math.sqrt(e + 1);
-      if (z >= 3 && eligible(n, CAND_MIN_OUTLETS)) cands.push({ n, z, c, e });
+      if (z >= 3 && wideEnough(n, CAND_MIN_OUTLETS)) cands.push({ n, z, c, e, cold: b === undefined });
     }
     cands.sort((a, b) => b.z - a.z);
   }
   const top = cands.slice(0, 200);
   const candRows = top.map((x, k) => ({
-    day, source: SRC, geo: "ALL", label: entLabel.get(x.n) ?? x.n, rank: k + 1, value: x.c,
-    evidence: Math.max(0, Math.min(1, x.z / 8)),
-    meta: { method: "gkg_burst_ewma_v2", n_docs: x.c, k: entKind.get(x.n) ?? "name", q: Math.round(x.z * 100) / 100 },
+    day, source: SRC, geo: "ALL", label: entLabel.get(x.n) ?? x.n.replace(/(^| )(\p{L})/gu, (_m, a, b) => a + b.toUpperCase()),
+    rank: k + 1, value: x.c, evidence: Math.max(0, Math.min(1, x.z / 8)),
+    meta: { method: x.cold ? "gkg_burst_ewma_v3_cold" : "gkg_burst_ewma_v3", n_docs: x.c, k: kindOf(x.n), q: Math.round(x.z * 100) / 100 },
   }));
   await candidatesMerge(run, candRows);
   if (run.dryRun) {
     // dry-run diagnostics go to the HTTP response only (dry_rows are not persisted in att_runs)
     run.dryRows.push({ candidates_preview: candRows.slice(0, 60).map((r) => `${r.label} (${r.value})`) });
     run.dryRows.push({ edges_preview: edges.slice(0, 40).map((e) => `${e.from_key} -> ${e.to_key} (${e.n})`) });
+    // registry terms: stored (screened) count vs the pre-n8 count, with the documents the screen removed by reason
+    const tl: Array<Record<string, unknown>> = [];
+    for (let i = 0; i < nT; i++) if (dryTerms!.raw[i] > 0 || termDocs[i] > 0)
+      tl.push({ key: terms[i].key, kind: termKind(terms[i]), stored: termDocs[i], pre_n8: dryTerms!.raw[i], screened: dryTerms!.why.get(i) ?? {} });
+    tl.sort((a, b) => (b.pre_n8 as number) - (a.pre_n8 as number));
+    run.dryRows.push({ term_screen: tl.slice(0, Number(run.params.term_rows ?? 40)) });
+    const want = Array.isArray(run.params.terms) ? new Set(run.params.terms.map((x: unknown) => String(x))) : null;
+    if (want) run.dryRows.push({ term_screen_selected: tl.filter((x) => want.has(String(x.key))) });
     probe.forEach((p, q) => run.dryRows.push({ probe: p, docs: probeOut[q].docs, credit_docs: probeOut[q].credit, ghost_docs: probeOut[q].ghost, tail_docs: probeOut[q].tail,
-      byline: probeOut[q].byline, outlets: probeOut[q].outlets.size, eligible: eligible(p, CAND_MIN_OUTLETS, false),
+      byline: probeOut[q].byline, outlets: probeOut[q].outlets.size, kind: kindOf(p), kind_votes: entKindN.get(p) ?? null,
+      countries: entCC.get(p)?.length ?? 0, eligible: wideEnough(p, CAND_MIN_OUTLETS, false), cold: ew.b[p] === undefined,
       ctx: probeOut[q].ctx }));
   }
 
@@ -672,7 +893,8 @@ async function gkgFile(run: Run, file: string, ctx: GkgCtx, st: GkgState, retry 
   ms.total = Date.now() - t0;
   return { file, status: "ok", note: r?.dup ? "already counted (batch dup)" : undefined, rows: Number(r?.rows ?? 0),
     zip_bytes: zipBytes, articles: N, entities: entDocs.size, text_chars: bytes, bad_lines: bad, terms_hit: hit,
-    pairs: edges.length, candidates: candRows.length, credit_docs: creditDocs, bylines: bylines.size, dropped: drop, ms };
+    pairs: edges.length, candidates: candRows.length, credit_docs: creditDocs, bylines: bylines.size, dropped: drop,
+    term_screen: scr, ms };
 }
 
 // ------------------------------------------------------------ mode: thirdeye

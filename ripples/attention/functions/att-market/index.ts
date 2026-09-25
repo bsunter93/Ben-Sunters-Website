@@ -32,7 +32,7 @@ import {
 } from "./att.ts";
 
 const FN = "att-market";
-const MARKET_VERSION = "2026-09-25.m7";
+const MARKET_VERSION = "2026-09-25.m8";
 const BUCKET = "att-raw";
 const FINRA_URL = "https://api.finra.org/data/group/otcMarket/name/regShoDaily";
 const FINRA_FIELDS = ["tradeReportDate", "securitiesInformationProcessorSymbolIdentifier", "shortParQuantity",
@@ -106,14 +106,16 @@ function failNote(run: Run, host: string): string {
 /**
  * Finish merged backfill jobs ourselves (per key) so a partial run is picked up again soon: att.ts would requeue every
  * job with a 1 h delay. Jobs whose payload keys are all in doneKeys are marked done; the rest are requeued after delayS,
- * or at 00:10 UTC tomorrow when the host is closed for the day (daily budget spent, host killed).
+ * or at 10:05 UTC tomorrow when the host is closed for the day (daily budget spent, host killed): the budget and the
+ * day kill reset at 00:00 UTC, but att_tick('backfill') (cron att-backfill) only runs every 2 min from 10:00 to
+ * 23:58 UTC, so 10:05 is the first time the job can actually run.
  */
 async function settleJobs(run: Run, doneKeys: Set<string> | "all", delayS = 90, host?: string) {
   const ids = run.jobIds();
   if (!ids.length || run.dryRun) return;
   if (host && run.skipped.some((x) => x.host === host && /daily_budget_spent|host_killed|slow_host_stop/.test(x.reason))) {
     const t = new Date();
-    delayS = Math.max(delayS, Math.ceil((Date.UTC(t.getUTCFullYear(), t.getUTCMonth(), t.getUTCDate() + 1, 0, 10) - t.getTime()) / 1000));
+    delayS = Math.max(delayS, Math.ceil((Date.UTC(t.getUTCFullYear(), t.getUTCMonth(), t.getUTCDate() + 1, 10, 5) - t.getTime()) / 1000));
   }
   let done: number[] = [];
   let rest: number[] = [];
@@ -140,7 +142,7 @@ const normMem = new Map<string, string>();
 function norm(s: string): string {
   const c = normMem.get(s);
   if (c !== undefined) return c;
-  const v = s.toLowerCase().normalize("NFKD").replace(/[\u0300-\u036f]/g, "").replace(/[^\p{L}\p{N}]+/gu, " ").trim();
+  const v = s.toLowerCase().normalize("NFKD").replace(/[̀-ͯ]/g, "").replace(/[^\p{L}\p{N}]+/gu, " ").trim();
   if (normMem.size < 100_000) normMem.set(s, v);
   return v;
 }
@@ -1046,6 +1048,11 @@ async function usaspending(run: Run) {
     ms: Date.now() - t0 });
 }
 
+// A backfill window that times out is not skipped for good: it is remembered in att_state 'usasp.bfgap'
+// (key -> {window start -> failed attempts}) and retried first on the key's next backfill pass. A key's job is done
+// only when every window back to the floor has been fetched or has failed USASP_GAP_TRIES times (then it is a known,
+// logged gap: run.extra.usasp_backfill.gave_up).
+const USASP_GAP_TRIES = 3;
 async function usaspBackfill(run: Run, cfg: Cfg) {
   const t0 = Date.now();
   const src = await sourceInfo("usasp.spend");
@@ -1058,31 +1065,55 @@ async function usaspBackfill(run: Run, cfg: Cfg) {
     await settleJobs(run, new Set(), 300, USASP_HOST);
     return;
   }
-  const bf = ((await stateGet("usasp.bf")) ?? {}) as Record<string, string>; // key -> oldest window start fetched
+  const bf = ((await stateGet("usasp.bf")) ?? {}) as Record<string, string>; // key -> oldest window start walked
+  const gaps = ((await stateGet("usasp.bfgap")) ?? {}) as Record<string, Record<string, number>>;
   const doneKeys = new Set<string>();
-  let rows = 0, calls = 0, stop = false, timeouts = 0;
+  const gaveUp: string[] = [];
+  let rows = 0, calls = 0, stop = false, timeouts = 0, retried = 0, filled = 0;
+  /** one 3-month window. walked: the window was fetched or its timeout is now tracked in gaps (the walk may move past
+   *  it); cont: the run may continue. A block (429/503/403 kill, budget) is neither: the window is re-walked later. */
+  const fetchWindow = async (k: { key: string; topic_id?: number }, start: string, isGap: boolean):
+    Promise<{ walked: boolean; cont: boolean }> => {
+    const end = monthEnd(monthStart(start, -2));
+    const vals = await usaspQuery(run, k.key, start, end);
+    if (vals === null && timedOut(run)) {
+      const g = (gaps[k.key] ??= {});
+      g[start] = (g[start] ?? 0) + 1;
+      if (g[start] >= USASP_GAP_TRIES) gaveUp.push(`${k.key}@${start}`);
+      if ((await usaspTimeout(run)) || ++timeouts >= 2) { run.partial = true; return { walked: true, cont: false }; }
+      return { walked: true, cont: true };
+    }
+    if (vals === null) { run.partial = true; return { walked: false, cont: false }; }
+    calls++;
+    if (isGap) { filled++; delete gaps[k.key]?.[start]; if (gaps[k.key] && !Object.keys(gaps[k.key]).length) delete gaps[k.key]; }
+    const r = await ingest(run, usaspRows(k, vals, ""));
+    rows += Number(r?.rows ?? 0);
+    return { walked: true, cont: true };
+  };
   for (const k of keys) {
     if (stop) break;
+    // 1. retry this key's earlier timed-out windows (oldest attempt count first)
+    const open = Object.entries(gaps[k.key] ?? {}).filter(([w, n]) => n < USASP_GAP_TRIES && w >= floor).map(([w]) => w).sort();
+    for (const w of open) {
+      if (run.outOfTime(15_000)) { stop = true; run.partial = true; break; }
+      retried++;
+      if (!(await fetchWindow(k, w, true)).cont) { stop = true; break; }
+    }
+    if (stop) break;
+    // 2. walk further back
     let next = bf[k.key] ? monthStart(bf[k.key], 3) : monthStart(d0, 5); // the rotation covers the newest 3 months
     while (next >= floor) {
       if (run.outOfTime(15_000)) { stop = true; run.partial = true; break; }
-      const end = monthEnd(monthStart(next, -2));
-      const vals = await usaspQuery(run, k.key, next, end);
-      if (vals === null && timedOut(run)) {
-        if ((await usaspTimeout(run)) || ++timeouts >= 2) { stop = true; run.partial = true; break; }
-        bf[k.key] = next; next = monthStart(next, 3); continue;
-      }
-      if (vals === null) { stop = true; run.partial = true; break; }
-      calls++;
-      const r = await ingest(run, usaspRows(k, vals, ""));
-      rows += Number(r?.rows ?? 0);
-      bf[k.key] = next;
-      next = monthStart(next, 3);
+      const r = await fetchWindow(k, next, false);
+      if (r.walked) { bf[k.key] = next; next = monthStart(next, 3); } // a timed-out window is tracked in gaps, not lost
+      if (!r.cont) { stop = true; break; }
     }
-    if (next < floor) doneKeys.add(k.key);
+    const pending = Object.entries(gaps[k.key] ?? {}).some(([w, n]) => n < USASP_GAP_TRIES && w >= floor);
+    if (next < floor && !pending) doneKeys.add(k.key);
   }
-  if (!run.dryRun) await stateSet("usasp.bf", bf);
-  run.extra.usasp_backfill = { keys: keys.length, done: doneKeys.size, calls, rows, floor };
+  if (!run.dryRun) { await stateSet("usasp.bf", bf); await stateSet("usasp.bfgap", gaps); }
+  run.extra.usasp_backfill = { keys: keys.length, done: doneKeys.size, calls, rows, floor, gap_retries: retried, gaps_filled: filled,
+    gave_up: gaveUp.slice(0, 20) };
   run.source({ source: "usasp.spend", status: doneKeys.size === keys.length ? "ok" : "partial", keys: keys.length, rows, ms: Date.now() - t0 });
   await settleJobs(run, doneKeys, 300, "api.usaspending.gov");
 }

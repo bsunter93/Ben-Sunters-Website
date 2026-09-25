@@ -33,3 +33,18 @@ delete from ripples.attention_obs o
  using ripples.att_series s
  where s.series_id = o.series_id and s.source = 'finra.shvol' and s.key <> '__total__' and o.value = 0
    and o.day < (select min(o2.day) from ripples.attention_obs o2 where o2.series_id = s.series_id and o2.value > 0);
+
+-- ---- applied 2026-09-25 ~18:03 UTC with function version 2026-09-25.m7 (deploy v9). Result: META 275 -> 251 obs,
+-- 0 zeros, first day 2025-09-25 (the 24 false zeros for 2025-08-21..2025-09-24 removed). att_market_clear_day was tested
+-- inside a rolled-back block (kalshi.mkt 2026-09-25: 250 rows before, 250 cleared, 0 after; rolled back).
+-- m7 code changes (functions/att-market/index.ts):
+--   * finraKeysBackfill: zeros only from the ticker's first reported day (and >= finra.state.floor); nothing before.
+--   * finraFilesBackfill: finra.state.nodata no longer truncated to 50 (kept for the whole target window); retention
+--     floor finra.state.floor set when the 3 trading days right below the oldest mirrored day are all empty; target and
+--     missing_left count only days >= floor, so the job finishes (att_jobs 'done') at the retention edge.
+--   * finra daily: a day that is still unpublished (< 5 calendar days old) is not remembered as nodata.
+--   * USAspending: timeouts counted per UTC day across runs in att_state 'usasp.slow'; at 3 the host is stopped for the
+--     rest of the UTC day (no request from rotation or backfill; backfill jobs deferred to 00:10 UTC).
+--   * Kalshi: a same-day crawl whose last chunk is older than 2 h is restarted from page 1 and that day's earlier
+--     kalshi.mkt vol24h rows + candidates are cleared first (no stitching of snapshots hours apart, no stale cursor).
+--   * Polymarket: a complete snapshot replaces the day's earlier vol24h rows + candidates (price series untouched).

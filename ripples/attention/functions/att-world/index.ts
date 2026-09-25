@@ -39,7 +39,7 @@ import {
   addDays, configGet, errMsg, ingest, ingestCandidates, type ObsRow, politeFetch, type Run, serve, stateGet, stateSet,
 } from "./att.ts";
 
-export const WORLD_VERSION = "2026-09-25.w2";
+export const WORLD_VERSION = "2026-09-25.w3";
 
 type Sub = "tsa" | "usgs" | "iem" | "fema" | "gdacs" | "mta" | "hiringlab" | "citibike";
 const SUBS: Sub[] = ["tsa", "usgs", "iem", "fema", "gdacs", "mta", "hiringlab", "citibike"];
@@ -787,8 +787,25 @@ async function runSubs(run: Run, subs: Sub[], backfill: boolean) {
     let from = typeof bf.from === "string" ? bf.from : addDays(to, -(c0.backfill_days - 1));
     if (s === "tsa" && backfill) from = minD(from, `${c0.tsa.first_year}-01-01`);
     const c: Ctx = { cfg: c0, backfill, from, to };
+    const skip0 = run.skipped.length, src0 = run.sources.length;
     try { await HANDLERS[s](run, c); }
     catch (e) { run.errors.push(`${s}: ${errMsg(e)}`); run.source({ source: SRC[s], status: "http_error", note: errMsg(e).slice(0, 200) }); }
+    labelBudgetStop(run, SRC[s], skip0, src0);
+  }
+}
+/**
+ * A request refused by politeFetch's per-run cap or per-day budget returns null, which the handlers cannot tell apart
+ * from an HTTP failure. Relabel such reports 'budget_exhausted' (the label att-wiki/att-market/att-news use) and name
+ * the cap in the note, so a run stopped by a budget is never reported as 'http_error'.
+ */
+function labelBudgetStop(run: Run, src: string, skip0: number, src0: number) {
+  const stop = run.skipped.slice(skip0).find((x) => x.reason === `per_run_cap:${src}` || x.reason === `daily_budget_spent:${src}`);
+  if (!stop) return;
+  run.partial = true;
+  for (const r of run.sources.slice(src0)) {
+    if (r.source !== src) continue;
+    if (r.status === "http_error" || (r.status === "partial" && src !== "citibike.trips")) r.status = "budget_exhausted";
+    r.note = [r.note, `stopped by ${stop.reason}`].filter(Boolean).join("; ");
   }
 }
 function pickSubs(run: Run, dflt: Sub[]): Sub[] {

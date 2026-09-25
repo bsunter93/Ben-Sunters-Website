@@ -24,24 +24,31 @@ Spec: `ATTENTION_STACK.md` §3 and §7, with `DEMARCATION.md` §7 lead decisions
 | `sql/12_att_social_fixes.sql` | Migration `att_social_fixes3`: facet hashtags pass the strict identifier screen before storage (no `*.bsky.social` / personal-domain tags); orphan run closed |
 | `sql/17_att_social_fixes4.sql` | Migration `att_social_fixes4`: `att_social_tag_ok` (stored hashtags: no `.` `@` `/` `:` `\\` whitespace/control chars, <= 40 chars) wired into `att_social_accum`, offending tags deleted; `att_social_jet_budget(lane)` (syncs today's bsky.jet `att_budget` cap to `att_sources.per_day_cap`, live-lane reserve = remaining 5-min slots today + 12); today's frozen 288 cap raised to 600 |
 | `sql/17b_att_social_jet_cron_gate.sql` | Migration `att_social_jet_cron_gate`: both Jetstream crons call `att_social_jet_budget` first, so no edge call is made when the budget is spent/killed, and the buffer-replay lane only runs above the live reserve |
+| `sql/19_att_social_fixes5.sql` | Migrations `att_social_fixes5` + `att_social_fixes5b` (verifier advisories): hashtag k-anonymity floor, a new `att_social_tags` row needs >= 3 distinct authors (HLL) in the run, existing rows below it or without a sketch deleted; bsky.jet `per_day_cap` 600 -> 432 (288 scheduled per ATTENTION_STACK 3.5 + 144 catch-up, recorded as a deviation in `att_sources.reason`); triggers on `att_state` copy any kill of one Jetstream host to its sister host (no failover after 401/403/429/503), never let a day kill replace a permanent one, and lift copies when the killed host is unkilled; `att_social_jet_budget` refuses while any bsky.jet host has an active kill |
 | `functions/att-social/index.ts` (+ `att.ts` copy) | Social collector (SOCIAL_VERSION 2026-09-25.s4): `jetstream`, `mastodon`, `hn`, `stackex`, `backfill` (hn.algolia, se.api), `ping`. s4: backfill dispatches whose host is closed for the UTC day (daily budget spent, day/permanent kill) requeue their jobs for 00:10 UTC next day instead of +1 h |
 | `sql/14_att_market.sql` | Migration `att_market_support` (att-market): source row `finra.api` (FINRA Query API, DEMARCATION Q3 channel), `att_config.market`, meta keys, `att_topic_terms`, `att_series_stats` (+ public wrappers, service_role only), usasp.spend / sec.efts term keys for non-people topics, the FINRA file backfill job |
 | `sql/14b_att_market_jobs.sql` | Migration `att_market_jobs`: `att_market_jobs(ids)` (per-job keys for per-key completion of merged backfill jobs) |
+| `sql/14e_att_market_fixes2.sql` | Migrations `att_market_fixes2` / `att_market_fixes2b`: seed `usasp.bfgap` with windows lost to timeouts before m8 and requeue those keys' jobs, close orphan run 525, queued att-market jobs to 10:05 UTC |
 | `sql/14c_att_market_cron.sql` | Migration `att_market_cron`: `att-finra` 06:02, `att-predmkts` 06:03, `att-kalshi` 06:04 (+ `att-kalshi-2/3/4` 06:06/06:08/06:10), `att-usasp` 07:27, `att-edgar` 07:26 (inactive), `att_fn_live('att-market')`; plus the ops record of the first-day changes (config, budget row, clean-ups, temporary FINRA backfill cron) |
-| `functions/att-market/index.ts` (+ `att.ts` copy) | Money / institutional collector (MARKET_VERSION 2026-09-25.m6): `finra`, `polymarket`, `kalshi`, `usaspending`, `edgar` (disabled), `backfill`, `ping`. See "att-market" below |
+| `sql/14d_att_market_fixes.sql` | Migration `att_market_fixes` (after verification): `att_market_clear_day(source, day)` (poly.mkt / kalshi.mkt vol24h + candidates of one day; service_role only) and removal of the false FINRA ticker zeros before each series' first reported day; m7 change log |
+| `functions/att-market/index.ts` (+ `att.ts` copy) | Money / institutional collector (MARKET_VERSION 2026-09-25.m8, deploy v10): `finra`, `polymarket`, `kalshi`, `usaspending`, `edgar` (disabled), `backfill`, `ping`. See "att-market" below |
 | `sql/15_att_charts.sql` | Migration `att_charts_collector` (att-charts): `att_config.charts` (per-mode settings, free/pro list sizes, npm/pypi reference panels), meta keys `kind/feed/score/n_geos/list`, `att_charts_prev` (previous snapshot per metric/geo), `att_charts_series_info` (+ public wrappers, service_role only) |
 | `sql/15b_att_charts_cron.sql` | Migrations `att_charts_cron` + `att_charts_cron2`: `att-apple-1..6` 06:10/12/14/16/18/20, `att-steamspy` 06:12, `att-hf` 06:13, `att-github` 06:14, `att-openlibrary` 06:15, `att-anilist` 06:17, `att-npm` 06:18, `att-pypi` 06:19, `att-tranco` 06:19 |
 | `sql/15c_att_charts_ops_2026-09-25.sql` | Operational record for att-charts (tranco caps, ChatGPT SDK keys, Apple robots cache fix, `att_fn_live('att-charts')`) |
 | `sql/15d_att_budget_refund_fix.sql` | Migration `att_budget_refund_fix` (core fix found by att-charts): `att_budget.killed`; `att_budget_refund` refuses refunds only for kill-spent buckets (it used to refuse whenever used = cap, so a chunk that took the whole day's cap was never refunded); `att_host_kill` sets `killed` |
 | `sql/15e_att_ident_npm_scoped.sql` | Migration `att_ident_npm_scoped`: `_att_ident_like` no longer rejects scoped npm package keys (`@scope/name`, source `npm.dl` only) as handles |
 | `sql/15f_att_charts_fixes.sql` | Migration `att_charts_fixes_c8`: `att_charts_prune` (+ public wrapper, service_role only) deletes same-day rows of items that dropped off a snapshot list on a re-run; converts `att_state['charts.tranco.top']` from a readable top-1000 domain list to 12-hex SHA-256 digests |
-| `functions/att-charts/index.ts` (+ `att.ts` copy) | Charts / builder / consumption collector (CHARTS_VERSION 2026-09-25.c8): `apple`, `steamspy`, `github`, `hf`, `anilist`, `openlibrary`, `tranco`, `npm`, `pypi`, `backfill` (npm.dl, pypi.dl, anilist, gh.stars), `ping`. See "att-charts" below |
+| `sql/15g_att_charts_ledger_npm_gaps.sql` | Migration `att_charts_ledger_npm_gaps`: `att_config.charts.npm.days` 7 -> 30 (same request count); seeds `att_state['charts.npm.gaps']` (npm outage days of `__total__`); ops ledger `att_state['ledger:att-charts.ops']` (the 15c robots-cache deletion, the 15c/15d budget recounts, the c1 anilist spacing shortfall; policy: no further manual robots/budget edits) |
+| `functions/att-charts/index.ts` (+ `att.ts` copy) | Charts / builder / consumption collector (CHARTS_VERSION 2026-09-25.c9): `apple`, `steamspy`, `github`, `hf`, `anilist`, `openlibrary`, `tranco`, `npm`, `pypi`, `backfill` (npm.dl, pypi.dl, anilist, gh.stars), `ping`. See "att-charts" below |
 | `sql/16_att_world.sql` | Migration `att_world_sources` (att-world): DEMARCATION Q6 budgets / hosts / `backfill_fn` for tsa.pax, usgs.eq, iem.warn, fema.decl, gdacs, mta.ridership, citibike.trips (virtual-host bucket `tripdata.s3.amazonaws.com`), hiringlab.postings (`raw.githubusercontent.com` only) |
 | `sql/16b_att_world_cron.sql` | Migration `att_world_cron`: `att-world` 06:21 (tsa, usgs, iem, fema, gdacs, mta), `att-world-files` 06:22 (hiringlab, citibike), `att-world-pm` 13:41 (tsa, mta), `att_fn_live('att-world')` |
-| `functions/att-world/index.ts` (+ `att.ts` copy) | World / real-economy collector (WORLD_VERSION 2026-09-25.w1): `tsa`, `usgs`, `iem`, `fema`, `gdacs`, `mta`, `citibike`, `hiringlab`, `all`, `backfill`, `ping`. See "att-world" below |
+| `sql/16c_att_world_fixes.sql` | Migration `att_world_fixes`: self-removing cron `att-world-citibike-cap` (`7,27,47 * * * *`) resets `citibike.trips` per_day_cap 30 -> 4 (and today's `att_budget` row) once `world.bf.citibike.trips` is complete (at the latest 2026-09-28); Citi Bike virtual-host ledger entry (`att_sources.license_note`, `att_state['ledger:citibike.trips']`); run 599 relabelled `budget_exhausted` |
+| `sql/16d_att_world_citibike_done.sql` | Data-only fix (execute_sql): `citibike.trips` reason text after the Citi Bike JC backfill completed (13 months, JC-202508..JC-202608) |
+| `functions/att-world/index.ts` (+ `att.ts` copy) | World / real-economy collector (WORLD_VERSION 2026-09-25.w3): `tsa`, `usgs`, `iem`, `fema`, `gdacs`, `mta`, `citibike`, `hiringlab`, `all`, `backfill`, `ping`. See "att-world" below |
 | `sql/16_att_wiki.sql` | Migrations `att_wiki_collector` + `att_wiki_plan_signal_history` (att-wiki): wiki.* source rows (1 req/s, `wiki.media` hosts + `wikipedia.org`, `wiki.cs` in the `wikimedia` bucket, robots required), `att_config.wiki`, planners `att_wiki_pv_plan` / `att_wiki_media_plan`, `att_wiki_mirror_signals`, `att_wiki_topcc_reach` / `_prev`, `att_wiki_media_keys`, `att_wiki_jobs(_sweep)`, `att_wiki_calls_today`, `att_wiki_progress` (+ public wrappers, service_role only) |
 | `sql/16b_att_wiki_cron.sql` | Migration `att_wiki_cron`: `att-topcc` 06:23 (+09:23, 13:23), `att-wiki-pv-1/2/3` 07:21/24/27, `att-wiki-pv-pm` :07 10-23, `att-media` 07:30 (+12:37), `att-clickstream` 10:31 on the 7th; `att_fn_live('att-wiki')` |
-| `functions/att-wiki/index.ts` (+ `att.ts` copy) | Wikimedia collector (WIKI_VERSION 2026-09-25.w1): `top_country`, `pageviews`, `mediarequests`, `clickstream_small`, `backfill` (wiki.pv), `ping`. See "att-wiki" below |
+| `sql/16c_att_wiki_fixes.sql` | Migration `att_wiki_fixes_coverage_media_daycap` (att-wiki verifier fixes): coverage-based `att_wiki_pv_plan` (gappy series re-fetched), `att_wiki_progress.with_400d_complete`, `att_wiki_media_plan` + `qid`, `wiki.media` hosts = wikimedia.org + www.wikidata.org, `att_config.wiki.action_api_ok = false`, `_att_bucket('src:<source>')` = per-source day cap |
+| `functions/att-wiki/index.ts` (+ `att.ts` copy) | Wikimedia collector (WIKI_VERSION 2026-09-25.w2): `top_country`, `pageviews`, `mediarequests`, `clickstream_small`, `backfill` (wiki.pv), `ping`. See "att-wiki" below |
 | `functions/_shared/att.ts` | Canonical shared runtime for every `att-*` edge function |
 | `functions/att-registry/index.ts` (+ `att.ts` copy) | Topic registry function: `resolve`, `bootstrap`, `panel`, `ping` |
 
@@ -130,6 +137,10 @@ After a collector is deployed and tested, add it to the tick's allow-list so que
 
 ## Ledger overrides (record in the DEMARCATION §6.7 ledger; the owner confirms)
 
+* **Citi Bike trip archive via `tripdata.s3.amazonaws.com`** (att-world, 2026-09-25): the virtual-host address of the
+  public bucket (robots.txt 404) instead of path-style `s3.amazonaws.com` (robots.txt 403 AccessDenied, S3's generic
+  answer for the bucket-less root). Full entry in `att_state['ledger:citibike.trips']`; see "att-world" below.
+
 * **Wikidata `wbgetentities` (`www.wikidata.org/w/api.php`)** is used by `att-registry` under the DEMARCATION §7.1
   lead decision (GREEN with conditions: honest UA with a contact URL, `maxlag=5`, serial requests, no retry after
   429/503). ATTENTION_STACK §0 rule 5 still lists it as policy-D1-pending and the §3 matrix row still says R; §7.1
@@ -172,7 +183,7 @@ with budget left, or the one-off buffer replay lane `jet.bf` is unfinished and t
 2. Review any permanent kill (`select k, v from ripples.att_state where k like 'kill:%' and v->>'permanent' = 'true'`)
    and clear it only after review: `select ripples.att_host_unkill('<host>');`.
 3. Provide a contact email to enable SEC EDGAR (UA, `att_sources.enabled`, and the `isRed()` SEC entry all change).
-4. Confirm the two ledger overrides above.
+4. Confirm the ledger overrides above (Wikidata wbgetentities, budgets, Citi Bike virtual-host bucket).
 
 ## Probe functions to delete (owner action)
 
@@ -233,7 +244,7 @@ stubbed or deleted like the probes above.)
   `ripples._att_clean_meta(jsonb)`.
 * `att_ingest*` sanitise `meta` (allow-list `att_config.meta_allow`; add keys there if a collector needs one).
 
-## att-market (W7 money + institutional collector, 2026-09-25, MARKET_VERSION 2026-09-25.m6)
+## att-market (W7 money + institutional collector, 2026-09-25, MARKET_VERSION 2026-09-25.m8)
 
 **Sources and what is stored** (counts / volumes / prices only; titles are used transiently for topic matching and as
 `att_trend_candidates` labels; nothing raw is published; Storage bucket `att-raw` is private, no storage policies):
@@ -241,11 +252,11 @@ stubbed or deleted like the probes above.)
 | Mode (cron UTC) | Source rows | Series (source / metric / key) | Notes |
 |---|---|---|---|
 | `finra` (06:02) | fetch `finra.api`, ingest `finra.shvol` | `finra.shvol/n/<TICKER>` value = total off-exchange volume (all TRF facilities), aux = short share; `__total__` (aux = market short share, meta coverage = tickers) | Previous trading day (NYSE holiday calendar 2024-2027) from the FINRA Query API `regShoDaily` (~28.5k rows = 6 pages of 5,000, sorted by symbol/facility/market). Consolidated day mirrored to `att-raw/finra/YYYYMMDD.txt.gz` (CNMS layout `Date|Symbol|ShortVolume|ShortExemptVolume|TotalVolume|Market`). Rolling baseline `att-raw/finra/_ring.bin` (90 trading days x ~19k tickers, float32). Abnormal-volume top 50: robust z of ln(1+v) vs the ticker's own t-77..t-15 trading days (>= 28 obs, median >= 50k shares), ratio >= 3 and z >= 4 -> `att_trend_candidates(source finra.shvol, geo US, label = ticker, meta {k:ticker, z, ratio})`. Active once 28 baseline days exist (i.e. after ~43 mirrored trading days) |
-| `backfill` `{source:'finra.api', files:true}` (job `finra:files`) | same | same, per mirrored day | 400 trading days newest first, 3 days (18 requests) per run, requeued 60 s later; 00:10 UTC next day once the daily budget (500) is spent |
-| `backfill` `{source:'finra.shvol', keys}` | same | ticker series, 400 days | One date-range API query per 3 tickers (new registry tickers get history at once); META done (275 trading days) |
-| `polymarket` (06:03) | `poly.mkt` | `m:<id>/vol24h` (aux liquidity), `e:<event id>/vol24h` (aux openInterest), `topic:<topic_id>/vol24h` (aux OI, meta n_mkts), `__total__`, `m:<id>/p` (CLOB daily price, topic-linked) | Gamma `/markets` by volume24hr, 100 per page (API cap), 15 pages, down to $1k; sports/esports excluded (sportsMarketType, gameStartTime, sports fee type, event league/gameId, league/game regex); recurring short-horizon markets (open -> end < 2 days) excluded; topic match = whole-word registry terms (`att_topic_terms`); CLOB `prices-history` full history once per mapped market, then 1 week |
-| `kalshi` (06:04, 06:06, 06:08, 06:10) | `kalshi.mkt` | `ev:<event_ticker>/vol24h` (aux open interest, meta n_mkts), `m:<market ticker>/vol24h`, `topic:<id>`, `__total__` | `/events?status=open&with_nested_markets=true`: ~14.6k open events = ~73 pages of 200 (~270 MB JSON) - too much CPU for one worker (one HTTP 546), so the crawl is split into 25-page runs with cursor + day sums in `att_state['kalshi.crawl']`. Category Sports and short-horizon events skipped; `*_fp` strings parsed; per run the 80 busiest events and 40 busiest markets |
-| `usaspending` (07:27) | `usasp.spend` | `<term>/usd` monthly obligations (day = 1st of month, meta monthly[, partial]) | spending_over_time by keyword over the current + 2 previous months; fiscal months mapped to calendar months; each of the 51 keys every 7 days (<= 12 per run); a keyword that times out (55 s) is skipped until its next turn, 2 timeouts end the run. Backfill jobs walk 3-month windows back 24 months |
+| `backfill` `{source:'finra.api', files:true}` (job `finra:files`) | same | same, per mirrored day | Up to 400 trading days newest first, 3 days (18 requests) per run, requeued 60 s later; 10:05 UTC next day once the daily budget (500) is spent (att-backfill only runs 10:00-23:58 UTC). The Query API keeps only ~1 year (first day 2025-09-25): empty days are kept in `finra.state.nodata` for the whole window (never re-requested) and when the 3 trading days right below the oldest mirrored day are empty, `finra.state.floor` is set and the job finishes (~250 trading days) |
+| `backfill` `{source:'finra.shvol', keys}` | same | ticker series, 400 days | One date-range API query per 3 tickers (new registry tickers get history at once). Zeros are written only from the ticker's own first reported day on (never before the API's retention edge); META: 251 trading days 2025-09-25..2026-09-24 |
+| `polymarket` (06:03) | `poly.mkt` | `m:<id>/vol24h` (aux liquidity), `e:<event id>/vol24h` (aux openInterest), `topic:<topic_id>/vol24h` (aux OI, meta n_mkts), `__total__`, `m:<id>/p` (CLOB daily price, topic-linked) | Gamma `/markets` by volume24hr, 100 per page (API cap), 15 pages, down to $1k; sports/esports excluded (sportsMarketType, gameStartTime, sports fee type, event league/gameId, league/game regex); recurring short-horizon markets (open -> end < 2 days) excluded; a complete snapshot replaces the day's earlier vol24h rows (one snapshot per day, `att_market_clear_day`); topic match = whole-word registry terms (`att_topic_terms`); CLOB `prices-history` full history once per mapped market, then 1 week |
+| `kalshi` (06:04, 06:06, 06:08, 06:10) | `kalshi.mkt` | `ev:<event_ticker>/vol24h` (aux open interest, meta n_mkts), `m:<market ticker>/vol24h`, `topic:<id>`, `__total__` | `/events?status=open&with_nested_markets=true`: ~14.6k open events = ~73 pages of 200 (~270 MB JSON) - too much CPU for one worker (one HTTP 546), so the crawl is split into 25-page runs with cursor + day sums in `att_state['kalshi.crawl']`. A same-day crawl whose last chunk is > 2 h old is not continued: it restarts from page 1 and first clears that day's kalshi.mkt vol24h rows and candidates (`att_market_clear_day`), so a day is never stitched from snapshots hours apart. Category Sports and short-horizon events skipped; `*_fp` strings parsed; per run the 80 busiest events and 40 busiest markets |
+| `usaspending` (07:27) | `usasp.spend` | `<term>/usd` monthly obligations (day = 1st of month, meta monthly[, partial]) | spending_over_time by keyword over the current + 2 previous months; fiscal months mapped to calendar months; each of the 51 keys every 7 days (<= 12 per run); a keyword that times out (55 s) is skipped until its next turn, 2 timeouts end the run, and 3 timeouts in one UTC day (all runs, `att_state['usasp.slow']`) stop the host until the next UTC day (treated like a 503). Backfill jobs walk 3-month windows back 24 months; a window that times out is kept in `att_state['usasp.bfgap']` and retried first on the key's next backfill pass (the job stays open until it is fetched or has failed 3 times, then it is a logged gap, `extra.usasp_backfill.gave_up`) |
 | `edgar` (07:26, cron inactive) | `sec.efts` (DISABLED) | `<term>/n` monthly filing counts | Implemented; refused while `sec.efts.enabled=false` and while att.ts lists sec.gov as RED (needs owner contact email) |
 
 Discovery candidates (poly/kalshi): event volume24hr >= 3 x trailing 7-day mean of our own saved series, or an event
@@ -259,13 +270,14 @@ the public `regShoDaily` dataset) is row `finra.api` (yellow, 1 req / 5 s, 20 pe
 
 **Jobs:** merged backfill jobs are settled per key by the function (`att_market_jobs` + `att_jobs_done`), so a partial
 run is retried within minutes instead of att.ts's 1 h requeue, and a host that is closed for the day (budget spent or
-killed) waits until 00:10 UTC. The `finra:files` job has priority 6 so ticker / USAspending jobs (5) go first.
+killed) waits until 10:05 UTC next day: budgets and day kills reset at 00:00 UTC, but `att-backfill`
+(`att_tick('backfill')`) only runs `*/2 10-23`, so that is the first time the job can run. The `finra:files` job has priority 6 so ticker / USAspending jobs (5) go first.
 
 **Platform note:** `public.call_collector` goes through pg_net, which here dispatches the next batch only after the
 current one returns; a 110 s run therefore delays other queued collector calls by up to ~2 min. All att-market modes
 stay within the 110 s wall budget.
 
-## att-charts (W7 charts / builder / consumption collector, 2026-09-25, CHARTS_VERSION 2026-09-25.c8)
+## att-charts (W7 charts / builder / consumption collector, 2026-09-25, CHARTS_VERSION 2026-09-25.c9)
 
 Stores ranks and counts only (labels = item / repo / package names for `att_trend_candidates`; no owners, handles or
 text). List sizes come from `att_config.charts.<mode>.limit.{free,pro}` under `att_config.profile`.
@@ -291,6 +303,13 @@ not computed yet as 0 for every package; zeros are not stored for `__total__` or
 **npm backfill coverage (c8):** a key needs its 400-day fetch only while its first stored day is later than window
 start + 30 days AND it was not backfilled in the last 30 days (`att_state['charts.npm.backfilled']`). c7 counted rows,
 so `__total__` (349 rows after dropping zero days) was refetched over 400 days on every run.
+**npm outage days (c9):** the daily window is 30 days (`charts.npm.days`; same number of requests as 7), so a day npm
+recomputes late is refilled. Days older than the 3-day lag on which npm's all-packages total is 0 are npm outages; they
+are listed (days only) in `att_state['charts.npm.gaps']` so the share transform skips them rather than dividing by a
+missing normaliser. The list was seeded from stored data (48 days in the 400-day window, e.g. 2026-08-30..09-04,
+09-07/08, 09-15, 09-17).
+**Ops ledger:** manual interventions are recorded in `att_state['ledger:att-charts.ops']` (15g). Policy from c9: no
+hand edits of robots cache entries or `att_budget` rows; an unavoidable override is appended to the ledger first.
 **One list per day (c8):** apple, steamspy, gh.search, hf, anilist trending and openlibrary are snapshot lists; after a
 fully ingested re-run on the same as_of day, `att_charts_prune` deletes that day's rows for items no longer on the list
 (c7 left a stale gh.search row: 51 series for a top 50 on 2026-09-24).
@@ -304,7 +323,7 @@ row, and six cron slots (06:10-06:20) cover 25 feeds. Daily cap 35 requests.
 chunk had taken the whole day's cap, which spent gh.search / steamspy / ol.trending / tranco.rank for the day after a
 single request) and `sql/15e` (scoped npm packages were rejected as `@handles`).
 
-## att-world (W7 world / real-economy collector, 2026-09-25, WORLD_VERSION 2026-09-25.w1)
+## att-world (W7 world / real-economy collector, 2026-09-25, WORLD_VERSION 2026-09-25.w3)
 
 Counts, levels and indices only. Response bodies are read transiently (IEM rows carry forecaster names, FEMA rows county
 names, Citi Bike rows station names and ride ids): none of it is stored. No NWS `api.weather.gov` call exists (RED in
@@ -321,7 +340,7 @@ Mesonet, Iowa State University", "Citi Bike System Data", USGS, TSA, MTA/NY Open
 | `gdacs` | `gdacs` (5 s, 2/4) | `www.gdacs.org/xml/rss.xml` | per type `EQ/TC/FL/VO/DR/WF/__all__`: `n` (current events, aux = orange+red), `pop` (population in orange/red events); `ev:<type><id> / alert` (alert score, aux = population) | none (warm-up) |
 | `mta` | `mta.ridership` (5 s, 5/10) | Socrata `data.ny.gov/resource/sayj-mze2.json` | key = mode slug (`subway`, `bus`, `lirr`, `mnr`, `sir`, `aar`, `bt`, `cbd_entries`, `crz_entries`); geo US-NY | 2020-03-01 onwards; daily re-reads 21 days |
 | `hiringlab` | `hiringlab.postings` (5 s, 4/8) | `raw.githubusercontent.com/hiring-lab/job_postings_tracker/master/US/{aggregate_job_postings_US,job_postings_by_sector_US}.csv` with `If-None-Match` | sector slug x metric `total`/`new` (index, 2020-02-01 = 100); `__total__` from the aggregate file (value = SA, aux = NSA); geo US | 420 days; afterwards only when upstream changed (304 otherwise), last 60 days re-written |
-| `citibike` | `citibike.trips` (5 s, 8/20) | `tripdata.s3.amazonaws.com` (bucket listing + `JC-YYYYMM-citibike-tripdata[.csv].zip`) | `jc / n / US-NJ` (trips started per local day, aux = member trips) | 420 days of monthly JC files (2 per run); new month after the 6th |
+| `citibike` | `citibike.trips` (5 s, 8/4; 30/day only during the one-off backfill) | `tripdata.s3.amazonaws.com` (bucket listing + `JC-YYYYMM-citibike-tripdata[.csv].zip`) | `jc / n / US-NJ` (trips started per local day, aux = member trips) | 420 days of monthly JC files (2 per run); new month after the 6th |
 | `all` | - | the above in sequence (`params.only`) | - | - |
 | `backfill` | - | `params.source` = att_sources id | resumable (`att_state['world.bf.<source>']`, `next_cursor`) | - |
 
@@ -330,8 +349,14 @@ Mesonet, Iowa State University", "Citi Bike System Data", USGS, TSA, MTA/NY Open
 (`att_state['world.citibike'].nyc`). Jersey City files (1-3 MB) are processed fully in memory (central-directory zip
 parse + `DecompressionStream('deflate-raw')`). NYC daily trips need a GitHub Action (stream-unzip) if wanted later.
 
-**Bucket host.** `s3.amazonaws.com/robots.txt` answers 403 (path-style host; att.ts would kill the host permanently), so
-the bucket is addressed virtual-host style (`tripdata.s3.amazonaws.com`), whose `robots.txt` is a normal 404 (allowed).
+**Bucket host (ledger decision, 2026-09-25; owner to confirm).** `s3.amazonaws.com/robots.txt` answers 403
+AccessDenied (sha256 `c72db483...`): S3's generic response for the bucket-less root of the path-style host, not a bot
+barrier, but att.ts would treat it as a permanent kill. The bucket is therefore addressed virtual-host style
+(`tripdata.s3.amazonaws.com`), whose `robots.txt` is a normal S3 404 NoSuchKey (sha256 `bf1b20d0...`, allowed). Both
+addresses reach the same public bucket that Citi Bike links from its System Data page (DEMARCATION Q3: documented
+channel). Terms: Citi Bike Data License Agreement (citibikenyc.com/data-sharing-policy), no use of its trademarks.
+Recorded in `att_sources.license_note` and `att_state['ledger:citibike.trips']` (robots snapshots, terms, paths,
+decision, re-check 2026-12-24).
 
 **Discovery candidates** (`att_trend_candidates`, day = as_of): USGS events of the last 3 days with felt >= 50, sig >= 600 or
 PAGER orange/red (label "<region> earthquake", meta k = event id); FEMA declarations of the last 3 days (named hurricanes /
@@ -340,8 +365,11 @@ the last 10 days ("Cyclone <Name>", volcano name, or "<year> <country> <type>").
 candidates (their labels would not resolve to articles); att_score can z-score `iem.warn` directly.
 
 **Budgets.** `sql/16` rows (DEMARCATION Q6, 1 request / 5 s where no limit is published, IEM 1 / 10 s); the per-day caps
-cover the daily calls plus the one-off backfill (citibike.trips was raised to 30/day on 2026-09-25 for the 14-month JC
-backfill, applied directly to the row and today's `att_budget` row). Every request goes through `politeFetch`: robots.txt
+cover the daily calls plus the one-off backfill (citibike.trips was raised to 30/day on 2026-09-25 for the 13-month JC
+backfill; the cron job `att-world-citibike-cap` from `sql/16c` puts the row back to 4/day, lowers that day's
+`att_budget` row, and unschedules itself once the backfill is complete, at the latest on 2026-09-28; it fired at 19:07 UTC on 2026-09-25).
+**Status labels (w3):** a source stopped by `per_run_cap:<source>` or `daily_budget_spent:<source>` is reported
+`budget_exhausted` (note names the cap), never `http_error`; run 599 (IEM backfill) was relabelled in `sql/16c`. Every request goes through `politeFetch`: robots.txt
 checked for every host (tsa.gov, fema.gov, data.ny.gov, gdacs.org, mesonet 200 with no matching disallow; usgs.gov,
 raw.githubusercontent.com, tripdata bucket 404 = allowed).
 
@@ -351,33 +379,37 @@ raw.githubusercontent.com, tripdata bucket 404 = allowed).
 **Backfill (2026-09-25, direct `call_collector` runs 593-616):** tsa.pax 2,824 days (2019-01-01..2026-09-24, 8 pages);
 mta.ridership 2,398 days x 9 modes (2020-03-01..2026-09-23); fema.decl 420 days x 16 keys (1,989 records); usgs.eq 420 days
 (4 windows x 2 queries) + 762 per-event felt series; iem.warn 420 days x 14 keys (14 windows, two runs); hiringlab.postings
-414 days x 96 series (2025-08-01..2026-09-18). citibike.trips: JC months are drained 2 per run by the queued job
-`world:citibike.trips` (att_tick 'backfill', off-peak).
+414 days x 96 series (2025-08-01..2026-09-18). citibike.trips: complete on 2026-09-25 18:57 UTC, 13 JC months
+(JC-202508..JC-202608) = 395 days (2025-08-01..2026-08-31; the 420-day window starts 2025-08-01 and the 2026-09 file is
+not published until October); the last 5 months came from direct runs 787, 789 and 791 (2 + 2 + 1 files, 8 requests; day budget 21 used), after which
+`world.bf.citibike.trips.complete = true` and the cap cron reset the source to 4/day and unscheduled itself (19:07 UTC).
 
 **Retention caveat.** TSA (2019+) and MTA (2020+) keep more than 400 days on purpose (same-weekday baselines across
 years). These series have no topic link; if `att_retention()` trims unlinked series to 400 days it should exempt
 `tsa.pax` and `mta.ridership` (not implemented by att-world; `att_retention` does not exist yet).
 
-**Known limitations (att-world w2).** GDACS labels numbered depressions literally ("Cyclone One"); USGS labels use the
+**Known limitations (att-world w3).** GDACS labels numbered depressions literally ("Cyclone One"); USGS labels use the
 ComCat place region ("Sun Valley, Nevada earthquake") and may not resolve to an article; USGS per-event felt series
 (felt >= 25) add ~2 series/day (762 for the 420-day backfill); GDACS snapshots are stored under as_of (run date - 1) like
 the other snapshot collectors.
 
-## att-wiki (W7 Wikimedia collector, 2026-09-25, WIKI_VERSION 2026-09-25.w1)
+## att-wiki (W7 Wikimedia collector, 2026-09-25, WIKI_VERSION 2026-09-25.w2)
 
 Every request goes through `politeFetch` with a `wiki.*` source, so all of them draw on the shared **`wikimedia`
 bucket (1,500/day attention share, `att_config.budgets.wikimedia`)**, charged per request (unspent chunk units refunded),
 refused 06:30-07:20 UTC (quiet window), refused while the UA contact page is not 2xx (contact gate), serial per host at
 >= 1 s (after the 2026-09-25 429 at ~4 req/s from the shared Supabase IP), one AQS 429 retry per run, then the host is
-stopped for the UTC day. Only ranks, counts and indices are stored.
+stopped for the UTC day. Only ranks, counts and indices are stored. A source's own `per_day_cap` is enforced as well
+when it draws on the shared bucket (`wiki.cs`: 3/day, charged on the per-source bucket `src:wiki.cs`).
 
 | Mode (cron UTC) | Source | What is stored |
 |---|---|---|
 | `top_country` (06:23, 09:23, 13:23) | `wiki.topcc` | AQS `top-per-country/{CC}/all-access/{y}/{m}/{d}` for the 45 countries in `att_config.wiki.countries` (previous UTC day; resumable in `att_state['topcc.day:<day>']`, a 404 country is retried at most 3 times). Registry titles: `wiki.topcc / rank / <CC> / <lang>:<Title>` (value = rank, aux = `views_ceil`). **Reach** (§6.2): `wiki.topcc / reach / ALL / <lang>:<Title>` = number of fetched countries whose top 1,000 contains the title (aux = summed views_ceil, meta.coverage = countries fetched), written for every registry title incl. zeros (`att_wiki_topcc_reach`). Discovery candidates: rank <= 200, SKIP rules applied, **not evergreen** = views >= 2x the median of the title's level in that country's previous 3 lists (absence counts as that list's rank-1000 threshold, an upper bound): `att_trend_candidates(source wiki.topcc, geo CC, label, rank, value = views_ceil, evidence = 1 - ln(rank)/ln(N+1), meta {lang, ratio, new, method})`. Needs prior snapshots (`att_state['topcc.snap:<CC>:<day>']`, kept 5 days), so candidates start on the second collected day. Rows hidden by Wikimedia's privacy threshold are never reconstructed |
-| `pageviews` (07:21, 07:24, 07:27; :07 10-23) | `wiki.pv` | AQS per-article (all-access, agent=user) for registry titles (`att_wiki_pv_plan`): **first sight = one call for 420 days** (zero-filled), then incremental from `last_day + 1`; active topics daily, panel-only every `panel_every_days` (free 2, pro 1); priority active-first > active-incr > panel-first > panel-incr, stalest first. Titles that are `public.signals` rows are **mirrored from `public.signal_obs` in SQL** (no request) once their history reaches 400 days. A first-sight 404 is remembered in `att_state['wiki.pv.nodata']` and retried after 7 days. Each run also closes queued backfill jobs that no longer need a fetch (`att_wiki_jobs_sweep`) |
+| `pageviews` (07:21, 07:24, 07:27; :07 10-23) | `wiki.pv` | AQS per-article (all-access, agent=user) for registry titles (`att_wiki_pv_plan`): **first sight = one call for 420 days** (zero-filled), then incremental from `last_day + 1`. A series is complete only if it has **every day** from `as_of - 400` to its last day; a gappy series (e.g. mirrored from `public.signal_obs` with holes, or an older core-build series) is re-planned as one full-window AQS call, which zero-fills correctly (holes in `signal_obs` are never zero-filled in SQL, because they may be collection gaps); active topics daily, panel-only every `panel_every_days` (free 2, pro 1); priority active-first > active-incr > panel-first > panel-incr, stalest first. Titles that are `public.signals` rows are **mirrored from `public.signal_obs` in SQL** (no request) once their mirrored history is complete for 400 days. A first-sight 404 is remembered in `att_state['wiki.pv.nodata']` and retried after 7 days. Each run also closes queued backfill jobs that no longer need a fetch (`att_wiki_jobs_sweep`) |
 | `backfill` (att_tick, */2 10-23) | `wiki.pv` | Same fetch for the merged job keys (`first` only); jobs are settled per key: done, or requeued to 10:05 UTC next day (budget spent / 429 kill), +6 h (contact gate / permanent kill), +3 min (time, run cap) |
-| `mediarequests` (07:30, 12:37) | `wiki.media` | Lead image per active topic (free profile; `media_scope.pro = all` adds the panel) via the Action API `prop=pageimages&piprop=original&pilicense=free` (50 titles/call, maxlag=5, >= 1.1 s) -> key `commons:<File>` / `<wiki>:<File>`, `match.path` = upload path; no free image -> `att_state['wiki.media.none']` (re-checked after 30 days). Then AQS `mediarequests/per-file/all-referers/user/<path>/daily` (420 days on first sight, then every 3 days). **Deferred while any active topic still lacks its pageview history**; soft cap `media_day_cap` = 200 requests/day inside the shared bucket |
+| `mediarequests` (07:30, 12:37) | `wiki.media` | Lead image per active topic (free profile; `media_scope.pro = all` adds the panel) = the topic's Wikidata **P18** claim from `www.wikidata.org/wiki/Special:EntityData/<QID>.json` (a `/wiki/` path, robots.txt checked; body streamed and read only up to the end of the P18 claim; preferred rank first, deprecated ignored; max `entitydata_max_mb`; one call per topic, at most half of the day's media allowance) -> key `commons:<File_name>`, `match.path` = `/wikipedia/commons/<md5[0]>/<md5[0..2]>/<File_name>`. The Action API route (`prop=pageimages`, 50 titles/call, maxlag=5) runs **only if the owner sets `att_config.wiki.action_api_ok = true`** and adds `wikipedia.org` to `att_sources.wiki.media.hosts` (DEMARCATION §7.1 vs §0 / matrix row 200); no free image -> `att_state['wiki.media.none']` (re-checked after 30 days). Then AQS `mediarequests/per-file/all-referers/user/<path>/daily` (420 days on first sight, then every 3 days). **Deferred while any active topic still lacks its pageview history**; soft cap `media_day_cap` = 200 requests/day inside the shared bucket |
 | `clickstream_small` (10:31 on the 7th) | `wiki.cs` | HEAD on `dumps.wikimedia.org/other/clickstream/<month>/clickstream-<wiki>-<month>.tsv.gz` (robots.txt checked) for `cs_wikis` (pt, pl, zh). Only a file <= `cs_max_mb` (8 MB compressed) is streamed (edges touching registry titles: top 20 out-edges, `other-*` in-edges, in-edges n >= 50 -> `att_edges` grain month). Every published clickstream file is far larger than that, so in practice each wiki is reported `github_action_only:<wiki>:<MB>` and **clickstream stays GitHub-Action-only** (`ripples-clickstream.yml`, SPEC) |
 
-Progress: `select ripples.att_wiki_progress();` (registry keys by plan state, first-sight backlog, keys with >= 400 days,
+Progress: `select ripples.att_wiki_progress();` (registry keys by plan state, first-sight backlog, `with_400d_complete` = every
+one of the last 400 days present (`with_400d_span_only` for comparison), `gappy_series`, `topcc_countries_latest`,
 the wikimedia bucket for today and later, topcc series, media keys). No request is made by it.

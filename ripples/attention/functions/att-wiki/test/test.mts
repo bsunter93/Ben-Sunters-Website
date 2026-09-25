@@ -1,10 +1,12 @@
 // Mock test suite for att-wiki (fake fetch + in-memory RPC stub). Run: node --experimental-transform-types test.mts
 import { gzipSync } from "node:zlib";
+import { createHash } from "node:crypto";
 let handler: ((req: Request) => Promise<Response>) | null = null;
 (globalThis as any).Deno = { env: { get: () => "http://x" }, serve: (h: any) => { handler = h; } };
 const S: any = await import("./stub.mts");
 await import("./index.mts");
 const A: any = await import("./att.mts");
+const W: any = await import("./index.mts");
 
 type H = (url: string, init: any) => Response | Promise<Response>;
 const log: Array<{ url: string; t: number; method: string; headers: Record<string, string> }> = [];
@@ -22,14 +24,14 @@ const base = { enabled: true, grade: "green", per_day_cap: null, budget_bucket: 
 function resetSources(spacing = 1000) {
   S.sources["wiki.topcc"] = { ...base, source: "wiki.topcc", per_run_cap: 60, spacing_ms: spacing, hosts: ["wikimedia.org"], value_kind: "rank" };
   S.sources["wiki.pv"] = { ...base, source: "wiki.pv", per_run_cap: 200, spacing_ms: spacing, hosts: ["wikimedia.org"] };
-  S.sources["wiki.media"] = { ...base, source: "wiki.media", per_run_cap: 150, spacing_ms: spacing, hosts: ["wikimedia.org", "wikipedia.org"] };
-  S.sources["wiki.cs"] = { ...base, source: "wiki.cs", per_run_cap: 3, spacing_ms: 100, hosts: ["dumps.wikimedia.org"], robots_required: true };
+  S.sources["wiki.media"] = { ...base, source: "wiki.media", per_run_cap: 150, spacing_ms: spacing, hosts: ["wikimedia.org", "www.wikidata.org"] };
+  S.sources["wiki.cs"] = { ...base, source: "wiki.cs", per_run_cap: 3, per_day_cap: 3, spacing_ms: 100, hosts: ["dumps.wikimedia.org"], robots_required: true };
 }
 function reset(budget = 1500, spacing = 1000) {
   for (const k of Object.keys(S.state)) delete S.state[k];
   for (const o of [S.taken, S.refunded, S.rpcData]) for (const k of Object.keys(o)) delete o[k];
   for (const a of [S.ingested, S.cands, S.edges, S.jobsDone, S.calls, log]) a.length = 0;
-  S.budgets.wikimedia = budget;
+  S.budgets.wikimedia = budget; S.budgets["src:wiki.cs"] = 3;
   S.config.wm_quiet_utc = null; S.config.contact_gate = { enabled: false };
   S.config.wiki = { countries: ["US", "GB", "DE", "JP", "XX"], topcc_max_tries: 3, topcc_hist_days: 3, topcc_cand_max_rank: 200,
     topcc_cand_min_ratio: 2, pv_days: 420, pv_max_articles: 400, media_day_cap: 200, cs_wikis: ["ptwiki"], cs_max_mb: 8 };
@@ -39,7 +41,7 @@ async function call(body: any) {
   const res = await handler!(new Request("http://x/att-wiki", { method: "POST", headers: { "x-collector-token": "t" }, body: JSON.stringify(body) }));
   return await res.json();
 }
-const wmCalls = () => log.filter((l) => /(^https:\/\/wikimedia\.org\/|wikipedia\.org\/w\/api\.php)/.test(l.url));
+const wmCalls = () => log.filter((l) => /(^https:\/\/wikimedia\.org\/|wikipedia\.org\/w\/api\.php|^https:\/\/www\.wikidata\.org\/wiki\/Special:EntityData\/)/.test(l.url));
 const budgetOk = () => (S.taken.wikimedia ?? 0) - (S.refunded.wikimedia ?? 0) === wmCalls().length;
 
 // ------------------------------------------------------------ fixtures
@@ -203,6 +205,7 @@ const prevSnap = (cc: string) => ({ thr: 300, t: ["en|Main_Page", "en|Evergreen_
        { kind: "resolve", topic_id: 23, project: "en.wikipedia", title: "Redirect_Src" }]
     : [{ kind: "first", topic_id: 21, key: "commons:Foo bar.jpg", path: "/wikipedia/commons/a/ab/Foo bar.jpg", from_day: "2025-07-31" }];
   S.rpcData.att_wiki_media_keys = (a: any) => { keysArg = a.p_rows; return { keys: 2, none: 1 }; };
+  S.config.wiki.action_api_ok = true; S.sources["wiki.media"].hosts = ["wikimedia.org", "wikipedia.org"]; // owner opt-in (§7.1)
   route = (u) => {
     if (u.includes("en.wikipedia.org/w/api.php")) return json({ query: {
       normalized: [{ from: "Foo_Bar", to: "Foo Bar" }, { from: "No_Image", to: "No Image" }, { from: "Redirect_Src", to: "Redirect Src" }],
@@ -214,7 +217,7 @@ const prevSnap = (cc: string) => ({ thr: 300, t: ["en|Main_Page", "en|Evergreen_
   };
   const o = await call({ mode: "mediarequests", as_of: DAY });
   const api = log.find((l) => l.url.includes("/w/api.php"));
-  check("media: pageimages lookup uses the Action API with maxlag=5, free images only, 50-title batch, no robots", !!api && new URL(api.url).searchParams.get("maxlag") === "5" && new URL(api.url).searchParams.get("pilicense") === "free" && !log.some((l) => l.url.endsWith("robots.txt")), api?.url);
+  check("media (owner opt-in action_api_ok): pageimages lookup uses the Action API with maxlag=5, free images only, 50-title batch, no robots", !!api && new URL(api.url).searchParams.get("maxlag") === "5" && new URL(api.url).searchParams.get("pilicense") === "free" && !log.some((l) => l.url.endsWith("robots.txt")), api?.url);
   check("media: keys registered (commons + local, via normalize/redirect) and no-image remembered",
     JSON.stringify(keysArg) === JSON.stringify([{ topic_id: 21, key: "commons:Foo bar.jpg", path: "/wikipedia/commons/a/ab/Foo bar.jpg" }, { topic_id: 22, none: true }, { topic_id: 23, key: "en:Local.png", path: "/wikipedia/en/c/cd/Local.png" }]),
     JSON.stringify(keysArg));
@@ -223,6 +226,69 @@ const prevSnap = (cc: string) => ({ thr: 300, t: ["en|Main_Page", "en|Evergreen_
   const rows = S.ingested.filter((r: any) => r.source === "wiki.media");
   check("media: 421 daily rows, zero-filled, topic linked", rows.length === 421 && rows.at(-1).value === 12 && rows.at(-2).value === 11 && rows[0].value === 0 && rows[0].topic_id === 21, `n=${rows.length}`);
   check("media: spacing >= 1.1 s for the Action API call, budget = requests", budgetOk() && o.wikimedia_calls === 2, `calls=${o.wikimedia_calls}`);
+}
+
+
+// ============================================================ 5b. mediarequests default: Wikidata EntityData P18 (no Action API)
+{
+  const md5ok = ["", "abc", "Foo_bar.jpg", "Tōkyō_タワー.jpg", "x".repeat(200)].every((t) => W.md5hex(t) === createHash("md5").update(t, "utf8").digest("hex"));
+  check("md5: matches node crypto (ascii, unicode, multi-block)", md5ok);
+  const cp = W.commonsPath("Douglas adams portrait cropped.jpg");
+  const h = createHash("md5").update("Douglas_adams_portrait_cropped.jpg").digest("hex");
+  check("commonsPath: underscores + md5 path", cp.key === "commons:Douglas_adams_portrait_cropped.jpg" && cp.path === `/wikipedia/commons/${h[0]}/${h.slice(0, 2)}/Douglas_adams_portrait_cropped.jpg`, JSON.stringify(cp));
+}
+function snak(p: string, v: string) { return { snaktype: "value", property: p, hash: "abc123", datavalue: { value: v, type: "string" }, datatype: "commonsMedia" }; }
+function stmt(p: string, v: string, rank: string) {
+  return { mainsnak: snak(p, v), type: "statement", qualifiers: { P580: [{ snaktype: "value", property: "P580", hash: "d1", datavalue: { value: { time: "+2001" }, type: "time" } }], P2096: [{ snaktype: "value", property: "P2096", hash: "d2", datavalue: { value: { text: "cap \"quoted\"", language: "en" }, type: "monolingualtext" } }] },
+    "qualifiers-order": ["P580", "P2096"], id: "Q1$x", rank, references: [{ hash: "r", snaks: { P143: [{ snaktype: "value", property: "P143" }] } }] };
+}
+function entity(qid: string, claims: Record<string, unknown[]>) {
+  return JSON.stringify({ entities: { [qid]: { type: "item", id: qid, labels: { en: { language: "en", value: "L \"P18\":[{\"mainsnak\":" } },
+    descriptions: {}, aliases: {}, claims, sitelinks: { enwiki: { site: "enwiki", title: "X" } } } } });
+}
+function chunked(s: string, size = 7) {
+  const b = new TextEncoder().encode(s); let i = 0;
+  return new ReadableStream({ pull(c) { if (i >= b.length) { c.close(); return; } c.enqueue(b.slice(i, i + size)); i += size; } });
+}
+{
+  reset(1500, 50);
+  S.rpcData.att_wiki_pv_plan = () => [];
+  S.rpcData.att_wiki_calls_today = () => 0;
+  let planCall = 0, keysArg: any = null;
+  S.rpcData.att_wiki_media_plan = () => (++planCall === 1)
+    ? [{ kind: "resolve", topic_id: 41, project: "en.wikipedia", title: "A", qid: "Q41" }, { kind: "resolve", topic_id: 42, project: "en.wikipedia", title: "B", qid: "Q42" },
+       { kind: "resolve", topic_id: 43, project: "en.wikipedia", title: "C", qid: null }, { kind: "resolve", topic_id: 44, project: "en.wikipedia", title: "D", qid: "Q44" }]
+    : [];
+  S.rpcData.att_wiki_media_keys = (a: any) => { keysArg = a.p_rows; return { keys: 1, none: 2 }; };
+  const e41 = entity("Q41", { P31: [stmt("P31", "ignored.jpg", "normal")], P18: [stmt("P18", "Old pic.jpg", "normal"), stmt("P18", "Best pic é.jpg", "preferred"), stmt("P18", "Bad.jpg", "deprecated")], P19: [stmt("P19", "Later.jpg", "normal")] });
+  const e42 = entity("Q42", { P31: [stmt("P31", "x.jpg", "normal")] });
+  route = (u) => {
+    if (u === "https://www.wikidata.org/robots.txt") return new Response("User-agent: *\nAllow: /wiki/Special:EntityData\nDisallow: /w/\nDisallow: /wiki/Special:\n", { status: 200 });
+    if (u.endsWith("/Q41.json")) return new Response(chunked(e41), { status: 200 });
+    if (u.endsWith("/Q42.json")) return new Response(chunked(e42, 5), { status: 200 });
+    if (u.endsWith("/Q44.json")) return new Response("missing", { status: 404 });
+    return new Response("", { status: 404 });
+  };
+  const o = await call({ mode: "mediarequests", as_of: DAY });
+  const h = createHash("md5").update("Best_pic_é.jpg").digest("hex");
+  check("media default: EntityData P18 (preferred rank) resolved, no-P18 and 404 remembered, no Action API call",
+    JSON.stringify(keysArg) === JSON.stringify([{ topic_id: 41, key: "commons:Best_pic_é.jpg", path: `/wikipedia/commons/${h[0]}/${h.slice(0, 2)}/Best_pic_é.jpg` }, { topic_id: 42, none: true }, { topic_id: 44, none: true }])
+      && !log.some((l) => l.url.includes("/w/api.php")) && o.lookup_via === "wikidata_entitydata_p18" && o.no_qid === 1,
+    JSON.stringify(keysArg) + " " + JSON.stringify({ via: o.lookup_via, nq: o.no_qid }));
+  check("media default: robots.txt checked for the EntityData path, honest UA, budget = requests",
+    log[0]?.url === "https://www.wikidata.org/robots.txt" && log.filter((l) => l.url.includes("EntityData")).every((l) => l.headers["user-agent"] === A.UA) && budgetOk() && o.wikimedia_calls === 3,
+    `first=${log[0]?.url} calls=${o.wikimedia_calls} taken=${S.taken.wikimedia} ref=${S.refunded.wikimedia}`);
+}
+{
+  reset(1500, 50);
+  S.rpcData.att_wiki_pv_plan = () => [];
+  S.rpcData.att_wiki_calls_today = () => 0;
+  S.rpcData.att_wiki_media_plan = () => [{ kind: "resolve", topic_id: 41, project: "en.wikipedia", title: "A", qid: "Q41" }];
+  route = (u) => u.endsWith("robots.txt") ? new Response("User-agent: *\nDisallow: /wiki/Special:\n", { status: 200 }) : json({});
+  const realNow = Date.now; Date.now = () => realNow() + 25 * 3600e3; // expire the 24 h in-memory robots cache
+  const o = await call({ mode: "mediarequests", as_of: DAY });
+  Date.now = realNow;
+  check("media default: robots.txt disallow -> no EntityData request", !log.some((l) => l.url.includes("EntityData")) && /^robots_disallow/.test(o.stop ?? ""), o.stop);
 }
 
 // ============================================================ 6. clickstream_small
@@ -249,6 +315,23 @@ const prevSnap = (cc: string) => ({ thr: 300, t: ["en|Main_Page", "en|Evergreen_
   const o = await call({ mode: "clickstream_small", as_of: DAY, params: { month: "2026-08" } });
   const e = S.edges.map((x: any) => `${x.from_key}>${x.to_key}:${x.n}`).sort().join(",");
   check("clickstream: small file streamed, only registry edges kept", e === "Foo>Bar:120,Foo>Baz:60,other-search>Foo:500" && S.edges.every((x: any) => x.period === "2026-08-01" && x.grain === "month" && x.geo === "pt.wikipedia"), e);
+}
+
+
+{
+  // per_day_cap of a source inside the shared bucket (wiki.cs 3/day in 'wikimedia'): 1 unit left today -> 1 HEAD, then stop
+  reset(1500, 50);
+  S.budgets["src:wiki.cs"] = 1;
+  route = (u, init) => {
+    if (u.endsWith("robots.txt")) return new Response("User-agent: *\nAllow: /\n", { status: 200 });
+    if (init?.method === "HEAD") return new Response(null, { status: 200, headers: { "content-length": String(60 * 1048576) } });
+    return new Response("no", { status: 200 });
+  };
+  const o = await call({ mode: "clickstream_small", as_of: DAY, params: { month: "2026-08", wikis: ["ptwiki", "plwiki"] } });
+  const heads = log.filter((l) => l.method === "HEAD");
+  check("wiki.cs per_day_cap enforced inside the shared bucket (src:wiki.cs)", heads.length === 1 && /^daily_budget_spent:src:wiki\.cs/.test(o.sources?.[0]?.note ?? "") &&
+    (S.taken["src:wiki.cs"] ?? 0) - (S.refunded["src:wiki.cs"] ?? 0) === 1 && S.budgets.wikimedia === 1499,
+    `heads=${heads.length} note=${o.sources?.[0]?.note} src=${S.taken["src:wiki.cs"]}/${S.refunded["src:wiki.cs"] ?? 0} wm=${S.budgets.wikimedia}`);
 }
 
 // ============================================================ 7. ping + auth

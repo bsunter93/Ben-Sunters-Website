@@ -9,137 +9,7 @@
 //  {"mode":"date","date":"YYYY-MM-DD","job":{...}}
 //                                    backfill: top-per-country + per-project top (10 languages) for the date and
 //                                    feed/featured for date and date+1. No Google, no Bluesky.
-//
-// Compliance gate for the non-Wikimedia hosts of mode "trends" (added 2026-09-25 by the attention compliance audit,
-// ATTENTION_STACK §0 hard rules 2 and 3, DEMARCATION §7.3):
-//   * robots.txt is checked before trends.google.com / public.api.bsky.app are called (24 h cache in att_state
-//     'kn.robots:<origin>'; robots.txt that answers 401/403/429/5xx or cannot be reached = deny);
-//   * the shared att kill switch (att_state 'kill:<host>') is honoured;
-//   * a 429/503 stops the host for the rest of the run AND the UTC day (att_host_kill), a 401/403 stops it permanently
-//     until the owner clears it (no retry after 403). Previously the loop moved on to the next geo on the same host.
-import { addDays, Budget, db, kfetch, norm, rpc, serve, sleep, SKIP_TITLE, Stop, UA } from "./kn.ts";
-
-export const COLLECT_GATE_VERSION = "2026-09-25.g1";
-const ROBOTS_TOKEN = "knockon";
-const ROBOTS_TTL_MS = 24 * 3600 * 1000;
-type Rule = [boolean, string];
-
-function parseRobots(txt: string): Rule[] {
-  type G = { agents: string[]; rules: Rule[] };
-  const groups: G[] = [];
-  let cur: G | null = null;
-  let lastAgent = false;
-  for (const raw of txt.split(/\r?\n/)) {
-    const line = raw.replace(/#.*$/, "").trim();
-    const i = line.indexOf(":");
-    if (!line || i < 0) continue;
-    const k = line.slice(0, i).trim().toLowerCase();
-    const v = line.slice(i + 1).trim();
-    if (k === "user-agent") {
-      if (!cur || !lastAgent) { cur = { agents: [], rules: [] }; groups.push(cur); }
-      cur.agents.push(v.toLowerCase());
-      lastAgent = true;
-      continue;
-    }
-    lastAgent = false;
-    if (cur && (k === "allow" || k === "disallow") && v !== "") cur.rules.push([k === "allow", v]);
-  }
-  const mine = groups.filter((g) => g.agents.some((a) => a !== "*" && a.split("/")[0] === ROBOTS_TOKEN));
-  return (mine.length ? mine : groups.filter((g) => g.agents.includes("*"))).flatMap((g) => g.rules);
-}
-function robotsAllows(rules: Rule[], pathAndQuery: string): boolean {
-  let best = -1, allow = true;
-  for (const [a, p] of rules) {
-    const anchored = p.endsWith("$");
-    const body = anchored ? p.slice(0, -1) : p;
-    const re = "^" + body.split("*").map((s) => s.replace(/[.+?^${}()|[\]\\]/g, "\\$&")).join(".*") + (anchored ? "$" : "");
-    let hit = false;
-    try { hit = new RegExp(re).test(pathAndQuery); } catch { hit = false; }
-    if (hit && (p.length > best || (p.length === best && a))) { best = p.length; allow = a; }
-  }
-  return allow;
-}
-
-interface Gate { stopped: Map<string, string>; robots: Map<string, { deny_all: boolean; rules: Rule[] }> }
-async function stateGet(k: string): Promise<any> {
-  const { data, error } = await db.rpc("att_state_get", { p_k: k });
-  if (error) throw new Error(`att_state_get: ${error.message}`);
-  return data;
-}
-async function hostKilled(host: string): Promise<string | null> {
-  const k = await stateGet(`kill:${host}`).catch(() => ({ permanent: true, status: 0 })); // unreadable = stop (fail safe)
-  if (!k) return null;
-  if (k.permanent === true || (k.until && Date.parse(k.until) > Date.now())) return `host_killed_${k.status ?? "?"}`;
-  return null;
-}
-async function killHost(g: Gate, host: string, status: number, source: string) {
-  g.stopped.set(host, `stopped_${status}`);
-  const reason = status === 401 || status === 403 ? `http_${status}` : null;
-  const { error } = await db.rpc("att_host_kill", { p_host: host, p_status: status, p_source: source, p_reason: reason });
-  if (error) console.error("att_host_kill failed", host, error.message);
-}
-async function robotsOk(g: Gate, b: Budget, u: URL): Promise<boolean> {
-  let e = g.robots.get(u.origin);
-  if (!e) {
-    const key = `kn.robots:${u.origin}`;
-    const cached = await stateGet(key).catch(() => null);
-    if (cached && Date.now() - Number(cached.fetched_at ?? 0) < ROBOTS_TTL_MS) e = cached;
-    else {
-      let status = 0, entry = { deny_all: true, rules: [] as Rule[] };
-      try {
-        b.other++;
-        const res = await fetch(`${u.origin}/robots.txt`, { headers: { "User-Agent": UA }, redirect: "manual", signal: AbortSignal.timeout(10_000) });
-        status = res.status;
-        if (res.ok) entry = { deny_all: false, rules: parseRobots((await res.text()).slice(0, 512_000)) };
-        else {
-          await res.body?.cancel();
-          // no robots.txt (404/410/other 4xx) = allowed; 401/403/429/3xx/5xx = deny (DEMARCATION Q3)
-          entry = { deny_all: !(status >= 400 && status < 500 && ![401, 403, 429].includes(status)), rules: [] };
-        }
-      } catch (_e) { entry = { deny_all: true, rules: [] }; }
-      e = entry;
-      const { error } = await db.rpc("att_state_set", { p_k: key, p_v: { ...entry, status, fetched_at: Date.now() } });
-      if (error) console.error("att_state_set failed", key, error.message);
-    }
-    g.robots.set(u.origin, e!);
-  }
-  return !e!.deny_all && robotsAllows(e!.rules, u.pathname + u.search);
-}
-/** kfetch for a non-Wikimedia host with robots, kill switch and stop rules. null = not fetched / host stopped. */
-async function gatedFetch(g: Gate, b: Budget, url: string, source: string): Promise<{ res: Response | null; why?: string }> {
-  const u = new URL(url);
-  const host = u.hostname.toLowerCase();
-  if (g.stopped.has(host)) return { res: null, why: g.stopped.get(host) };
-  const killed = await hostKilled(host);
-  if (killed) { g.stopped.set(host, killed); return { res: null, why: killed }; }
-  if (!(await robotsOk(g, b, u))) { g.stopped.set(host, "robots_disallow"); return { res: null, why: "robots_disallow" }; }
-  let res: Response;
-  try { res = await kfetch(b, url); } catch (e) {
-    if (e instanceof Stop) {
-      const m = String(e.message).match(/\b(429|503)\b/);
-      await killHost(g, host, m ? Number(m[1]) : 429, source);
-      return { res: null, why: g.stopped.get(host) };
-    }
-    throw e;
-  }
-  if (res.status === 401 || res.status === 403) {
-    await res.body?.cancel();
-    await killHost(g, host, res.status, source);
-    return { res: null, why: g.stopped.get(host) };
-  }
-  if (res.redirected) {
-    // a redirect off the host, or to a login / consent / "sorry" page, is a barrier (DEMARCATION Q2): stop permanently
-    const f = new URL(res.url);
-    const barrier = /(^|\/)(login|signin|sign-in|accounts?|consent|sorry|captcha|challenge)(\/|$|\?|\.)/i.test(f.pathname) ||
-      /^(accounts|consent|login|signin)\./i.test(f.hostname);
-    if (barrier || f.hostname.toLowerCase() !== host) {
-      await res.body?.cancel();
-      if (barrier) await killHost(g, host, 403, source); else g.stopped.set(host, "cross_host_redirect");
-      return { res: null, why: barrier ? "redirect_to_barrier" : "cross_host_redirect" };
-    }
-  }
-  return { res };
-}
+import { addDays, Budget, kfetch, norm, rpc, serve, sleep, SKIP_TITLE } from "./kn.ts";
 
 const RSS_GEOS: Record<string, string> = { US: "en", GB: "en", IN: "en", BR: "pt", DE: "de", JP: "ja", MX: "es", NG: "en" };
 const COUNTRIES = ["US", "GB", "IN", "CA", "AU", "DE", "FR", "BR", "MX", "JP"];
@@ -157,16 +27,12 @@ async function trends(b: Budget) {
   const rows: any[] = [];
   const out: Record<string, unknown> = {};
   const today = new Date().toISOString().slice(0, 10);
-  const g: Gate = { stopped: new Map(), robots: new Map() };
-  out.gate = COLLECT_GATE_VERSION;
   let first = true;
   for (const [geo, lang] of Object.entries(RSS_GEOS)) {
-    if (g.stopped.has("trends.google.com")) { out[geo] = `skipped: ${g.stopped.get("trends.google.com")}`; continue; }
     if (!first) await sleep(1000);            // serial, 1 request/s
     first = false;
     try {
-      const { res, why } = await gatedFetch(g, b, `https://trends.google.com/trending/rss?geo=${geo}`, "gt.rss");
-      if (!res) { out[geo] = `skipped: ${why}`; continue; }
+      const res = await kfetch(b, `https://trends.google.com/trending/rss?geo=${geo}`);
       if (!res.ok) { out[geo] = `http ${res.status}`; await res.body?.cancel(); continue; }
       const xml = await res.text();
       const items = xml.split("<item>").slice(1).map((s) => s.split("</item>")[0]);
@@ -186,9 +52,8 @@ async function trends(b: Budget) {
   }
   try {
     await sleep(1000);
-    const { res, why } = await gatedFetch(g, b, "https://public.api.bsky.app/xrpc/app.bsky.unspecced.getTrends?limit=25", "bsky.trends");
-    if (!res) out.bsky = `skipped: ${why}`;
-    else if (res.ok) {
+    const res = await kfetch(b, "https://public.api.bsky.app/xrpc/app.bsky.unspecced.getTrends?limit=25");
+    if (res.ok) {
       const j = await res.json();
       (j.trends ?? []).forEach((t: any, i: number) => {
         const q = String(t.displayName ?? t.topic ?? "").trim();

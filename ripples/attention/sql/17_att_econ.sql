@@ -230,3 +230,111 @@ language sql security definer set search_path = '' as $$ select ripples.att_econ
 revoke all on function ripples.att_release_upsert(jsonb), ripples.att_econ_apply_releases(), ripples.att_econ_coverage(),
   public.att_release_upsert(jsonb), public.att_econ_apply_releases() from public, anon, authenticated;
 grant execute on function public.att_release_upsert(jsonb), public.att_econ_apply_releases() to service_role;
+
+-- =====================================================================================================================
+-- Addendum (migration att_econ_sources_2, 2026-09-25 ~18:30 UTC), after the first live requests:
+-- * api.eia.gov/robots.txt answered 403 -> DEMARCATION Q3 "treat as disallow"; att.ts killed the host permanently.
+--   Q3 alternative channel: EIA-930 keyless six-month bulk CSVs on www.eia.gov (robots allowed). EIA spot/retail
+--   prices come through their FRED mirrors (DCOILWTICO, DCOILBRENTEU, DHHNGSP, DJFUELUSGULF, GASREGW, GASDESW);
+--   the eia.prices row is disabled (kept, no data dropped). Using the keyed EIA API v2 would be an ORANGE* owner decision
+--   plus a runtime override in att.ts (neither exists).
+-- * api.bls.gov/robots.txt is "User-agent: * / Disallow: /" -> the keyed BLS API is ORANGE*; bls.ces and bls.cpi_items are
+--   fetched through their FRED mirrors (same series ids, public domain) with the FRED key and bucket.
+-- * FOMC meeting dates: FRED's "FOMC Press Release" release is daily (unusable), so the Board's calendar page is parsed
+--   (source fed.fomc, www.federalreserve.gov, robots checked).
+update ripples.att_sources set hosts = array['www.eia.gov'], per_run_cap = 3, per_day_cap = 30, spacing_ms = 5000,
+  budget_bucket = null, needs_secret = null,
+  reason = 'EIA-930 Hourly Electric Grid Monitor six-month bulk CSVs on www.eia.gov (keyless, public domain; ~100 MB each). api.eia.gov robots.txt answered 403 (treated as disallow, DEMARCATION Q3; host killed 2026-09-25) -> operator-documented bulk channel. Q6: no published limit -> 1 req/5 s; daily = current half-year file, backfill = one file per run'
+ where source = 'eia.930';
+update ripples.att_sources set enabled = false,
+  reason = 'Disabled 2026-09-25: api.eia.gov robots.txt 403 (DEMARCATION Q3). Spot and retail prices are collected through their FRED mirrors (source fred: DCOILWTICO, DCOILBRENTEU, DHHNGSP, DJFUELUSGULF, GASREGW, GASDESW). Re-enable only with an owner ORANGE* decision and an att.ts override'
+ where source = 'eia.prices';
+update ripples.att_sources set hosts = array['api.stlouisfed.org'], budget_bucket = 'fred', needs_secret = 'fred_api_key',
+  attribution = 'U.S. Bureau of Labor Statistics, Current Employment Statistics (via FRED, Federal Reserve Bank of St. Louis)',
+  reason = 'api.bls.gov robots.txt disallows / (DEMARCATION Q3: keyed API = ORANGE*, not used). Same BLS series ids fetched through the FRED API (public domain); monthly series refreshed around release days only'
+ where source = 'bls.ces';
+update ripples.att_sources set hosts = array['api.stlouisfed.org'], budget_bucket = 'fred', needs_secret = 'fred_api_key',
+  attribution = 'U.S. Bureau of Labor Statistics, Consumer Price Index (via FRED, Federal Reserve Bank of St. Louis)',
+  reason = 'api.bls.gov robots.txt disallows / (DEMARCATION Q3: keyed API = ORANGE*, not used). CPI-U item indexes fetched through the FRED API (SA id, NSA fallback); refreshed around CPI release days only'
+ where source = 'bls.cpi_items';
+insert into ripples.att_sources (source, family, channel, grade, value_kind, grain, enabled, reason, tier, attribution,
+  license_note, per_run_cap, per_day_cap, spacing_ms, hosts, robots_required, backfill_fn, engine_channel) values
+ ('fed.fomc', 'fed', 'institutional', 'green', 'count', 'day', true,
+  'Board of Governors FOMC meeting calendar page (one HTML page per calendar refresh; no observations stored, dates only). Q6: 1 req/5 s',
+  'ship', 'Board of Governors of the Federal Reserve System, FOMC meeting calendars', 'Public domain (U.S. government)',
+  2, 4, 5000, array['www.federalreserve.gov'], true, 'att-econ', 'ECON')
+on conflict (source) do update set hosts = excluded.hosts, reason = excluded.reason, enabled = excluded.enabled,
+  per_run_cap = excluded.per_run_cap, per_day_cap = excluded.per_day_cap, engine_channel = excluded.engine_channel;
+update ripples.att_config set value = value || '{"eia": 30}'::jsonb, updated_at = now() where key = 'budgets';
+
+create or replace function ripples.att_release_near(p_release text, p_days int default 2) returns boolean
+language sql stable security definer set search_path = '' as $$
+  select exists (select 1 from ripples.att_release_dates
+                  where release = p_release
+                    and release_date between (now() at time zone 'utc')::date - greatest(0, least(p_days, 14))
+                                         and (now() at time zone 'utc')::date);
+$$;
+create or replace function public.att_release_near(p_release text, p_days int default 2) returns boolean
+language sql stable security definer set search_path = '' as $$ select ripples.att_release_near(p_release, p_days) $$;
+revoke all on function ripples.att_release_near(text, int), public.att_release_near(text, int) from public, anon, authenticated;
+grant execute on function public.att_release_near(text, int) to service_role;
+
+-- Addendum (migration att_econ_apply_releases_fix): UPDATE ... FROM cannot LATERAL-reference the target table.
+create or replace function ripples.att_econ_apply_releases() returns jsonb
+language plpgsql security definer set search_path = '' as $$
+declare n_ces int; n_cpi int;
+begin
+  with x as (
+    select o.series_id, o.day,
+           (select min(rd.release_date) from ripples.att_release_dates rd
+             where rd.release = 'jobs' and rd.release_date > (o.day + interval '1 month' - interval '1 day')::date) d
+      from ripples.attention_obs o join ripples.att_series s using (series_id)
+     where s.source = 'bls.ces')
+  update ripples.attention_obs o set meta = coalesce(o.meta, '{}'::jsonb) || jsonb_build_object('released', x.d::text)
+    from x where o.series_id = x.series_id and o.day = x.day and x.d is not null
+     and (o.meta->>'released') is distinct from x.d::text;
+  get diagnostics n_ces = row_count;
+  with x as (
+    select o.series_id, o.day,
+           (select min(rd.release_date) from ripples.att_release_dates rd
+             where rd.release = 'cpi' and rd.release_date > (o.day + interval '1 month' - interval '1 day')::date) d
+      from ripples.attention_obs o join ripples.att_series s using (series_id)
+     where s.source = 'bls.cpi_items')
+  update ripples.attention_obs o set meta = coalesce(o.meta, '{}'::jsonb) || jsonb_build_object('released', x.d::text)
+    from x where o.series_id = x.series_id and o.day = x.day and x.d is not null
+     and (o.meta->>'released') is distinct from x.d::text;
+  get diagnostics n_cpi = row_count;
+  return jsonb_build_object('bls.ces', n_ces, 'bls.cpi_items', n_cpi);
+end $$;
+revoke all on function ripples.att_econ_apply_releases() from public, anon, authenticated;
+
+-- =====================================================================================================================
+-- Cron (migration att_econ_cron). Daily collectors + self-terminating backfill drains (the SQL guard makes no edge call
+-- once a backfill is complete; budgets and host leases still apply inside the function).
+select cron.schedule('att-econ-fred',     '31 6 * * *',  $$select public.call_collector('att-econ', '{"mode":"fred"}'::jsonb)$$);
+select cron.schedule('att-econ-fred-2',   '41 6 * * *',  $$select public.call_collector('att-econ', '{"mode":"fred"}'::jsonb)$$);
+select cron.schedule('att-econ-eia',      '15 11 * * *', $$select public.call_collector('att-econ', '{"mode":"eia_930"}'::jsonb)$$);
+select cron.schedule('att-econ-noaa',     '20 12 * * *', $$select public.call_collector('att-econ', '{"mode":"noaa"}'::jsonb)$$);
+select cron.schedule('att-econ-ces',      '45 13 * * *', $$select public.call_collector('att-econ', '{"mode":"bls_ces"}'::jsonb)$$);
+select cron.schedule('att-econ-cpi',      '49 13 * * *', $$select public.call_collector('att-econ', '{"mode":"bls_cpi"}'::jsonb)$$);
+select cron.schedule('att-econ-dol',      '5 14 * * 4',  $$select public.call_collector('att-econ', '{"mode":"dol_claims"}'::jsonb)$$);
+select cron.schedule('att-econ-calendar', '5 5 * * 1',   $$select public.call_collector('att-econ', '{"mode":"calendar"}'::jsonb)$$);
+-- backfill drains
+select cron.schedule('att-econ-bf-eia', '*/4 * * * *', $$
+  select public.call_collector('att-econ', '{"mode":"backfill","params":{"source":"eia.930"}}'::jsonb)
+   where coalesce((select jsonb_array_length(v->'done') from ripples.att_state where k = 'econ.bf.eia.930'), 0) < 23 $$);
+select cron.schedule('att-econ-bf-noaa', '1-59/3 * * * *', $$
+  select public.call_collector('att-econ', '{"mode":"backfill","params":{"source":"noaa.ghcnd"}}'::jsonb)
+   where not coalesce((select (v->>'complete')::boolean from ripples.att_state where k = 'econ.bf.noaa.ghcnd'), false) $$);
+select cron.schedule('att-econ-bf-fred', '*/6 * * * *', $$
+  select public.call_collector('att-econ', '{"mode":"backfill","params":{"source":"fred"}}'::jsonb)
+   where coalesce((select count(*) from jsonb_object_keys(coalesce((select v from ripples.att_state where k = 'econ.fred.fetched'), '{}'::jsonb))), 0) < 78 $$);
+select cron.schedule('att-econ-bf-ces', '3-59/6 * * * *', $$
+  select public.call_collector('att-econ', '{"mode":"backfill","params":{"source":"bls.ces"}}'::jsonb)
+   where coalesce((select count(*) from jsonb_object_keys(coalesce((select v->'fetched' from ripples.att_state where k = 'econ.bls.ces'), '{}'::jsonb))), 0)
+       + coalesce((select jsonb_array_length(v->'missing') from ripples.att_state where k = 'econ.bls.ces'), 0) < 279 $$);
+select cron.schedule('att-econ-bf-cpi', '5-59/12 * * * *', $$
+  select public.call_collector('att-econ', '{"mode":"backfill","params":{"source":"bls.cpi_items"}}'::jsonb)
+   where coalesce((select count(*) from jsonb_object_keys(coalesce((select v->'fetched' from ripples.att_state where k = 'econ.bls.cpi'), '{}'::jsonb))), 0)
+       + coalesce((select jsonb_array_length(v->'missing') from ripples.att_state where k = 'econ.bls.cpi'), 0) < 46 $$);
+select ripples.att_fn_live('att-econ');

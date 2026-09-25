@@ -12,10 +12,13 @@
 //                                 already collected as public.signals (those are mirrored in SQL, no request): one call
 //                                 per article; full 420-day history on first sight, then incremental from last_day + 1.
 //                                 Active topics daily, panel-only topics every att_config.wiki.panel_every_days.
-//   mediarequests     wiki.media  Commons file requests for each active topic's free lead image. The image is resolved
-//                                 with the MediaWiki Action API (prop=pageimages, 50 titles per call, maxlag=5); topics
-//                                 without a free lead image are remembered and skipped for 30 days. Deferred while any
-//                                 active topic still lacks its pageview history (histories take the budget first).
+//   mediarequests     wiki.media  Commons file requests for each active topic's lead image. The image is the topic's
+//                                 Wikidata P18 claim, read from Special:EntityData/<QID>.json (a /wiki/ path: robots.txt
+//                                 is checked; streamed, stops at the P18 claim; one call per topic). The MediaWiki Action
+//                                 API route (prop=pageimages, 50 titles per call, maxlag=5) is used ONLY if the owner sets
+//                                 att_config.wiki.action_api_ok = true (DEMARCATION §7.1 vs §0 / matrix row 200) and adds
+//                                 wikipedia.org to the source's hosts. Topics without an image are remembered and skipped
+//                                 for 30 days. Deferred while any active topic still lacks its pageview history.
 //   clickstream_small wiki.cs     Monthly clickstream for small wikis, only if the compressed file is <= cs_max_mb
 //                                 (HEAD check). Every current clickstream wiki is far larger, so they are reported as
 //                                 GitHub-Action-only (ripples-clickstream.yml) and nothing is downloaded.
@@ -23,29 +26,31 @@
 //                                 jobs are settled per key (done / requeued with a sensible not_before).
 //   ping                          no requests.
 //
+// att_sources.per_day_cap is enforced even for sources inside the shared bucket (wiki.cs: 3/day): get() also charges
+// the per-source day bucket 'src:<source>' for every request made.
 // Every Wikimedia request goes through att.ts politeFetch: honest UA (+Api-User-Agent), shared 'wikimedia' budget
 // (1,500/day attention share; charged per request, unspent units refunded), per-source per-run caps, >= 1 s serial
 // spacing per host, the 06:30-07:20 UTC quiet window, the UA contact gate, and the kill switch (429/503: host stopped
 // for the UTC day after at most one AQS retry per run; 401/403: permanent). Only counts, ranks and indices are stored.
 import {
   serve, politeFetch, wikiApiJson, ingest, ingestCandidates, ingestEdges, watchlist, stateGet, stateSet, configGet,
-  db, addDays, compact, lines, type Run, type ObsRow,
+  sourceInfo, takeBudget, db, addDays, compact, lines, type Run, type ObsRow,
 } from "./att.ts";
 
-const WIKI_VERSION = "2026-09-25.w1";
+const WIKI_VERSION = "2026-09-25.w2";
 const AQS = "https://wikimedia.org/api/rest_v1/metrics";
 
 // ---------------------------------------------------------------- config
 interface WikiCfg {
   countries: string[]; topcc_access: string; topcc_max_tries: number; topcc_hist_days: number;
   topcc_cand_max_rank: number; topcc_cand_min_ratio: number; pv_days: number; pv_max_articles: number;
-  media_day_cap: number; cs_wikis: string[]; cs_max_mb: number;
+  media_day_cap: number; cs_wikis: string[]; cs_max_mb: number; action_api_ok: boolean; entitydata_max_mb: number;
 }
 const DEFAULTS: WikiCfg = {
   countries: ["US", "GB", "CA", "AU", "IN", "DE", "FR", "ES", "IT", "BR", "MX", "JP"],
   topcc_access: "all-access", topcc_max_tries: 3, topcc_hist_days: 3, topcc_cand_max_rank: 200,
   topcc_cand_min_ratio: 2, pv_days: 420, pv_max_articles: 400, media_day_cap: 200,
-  cs_wikis: ["ptwiki", "plwiki", "zhwiki"], cs_max_mb: 8,
+  cs_wikis: ["ptwiki", "plwiki", "zhwiki"], cs_max_mb: 8, action_api_ok: false, entitydata_max_mb: 12,
 };
 async function wikiCfg(): Promise<WikiCfg> {
   const c = (await configGet("wiki").catch(() => null)) as Partial<WikiCfg> | null;
@@ -64,6 +69,28 @@ function median(a: number[]): number {
 const HARD_STOP = /^(host_killed|host_busy|host_lease_error|wm_quiet_window|ua_contact_unreachable|daily_budget_spent|per_run_cap|source_disabled|unknown_source|host_not_in_source|robots_disallow|red_source|wikimedia_(maxlag|ratelimited))/;
 
 /**
+ * att_sources.per_day_cap for a source that draws on a shared bucket (wiki.cs: 3/day inside 'wikimedia'). politeFetch
+ * charges only the shared bucket, so the per-source day bucket 'src:<source>' (SQL _att_bucket: cap = per_day_cap) is
+ * charged here: one unit before the request, then settled to the number of requests actually made (redirect hops
+ * included; unspent units refunded). Returns a stop reason when the day's per-source cap is spent.
+ */
+async function withSourceDayCap<T>(run: Run, source: string, host: string, fn: () => Promise<T>): Promise<T | { stop: string }> {
+  const s = await sourceInfo(source).catch(() => null);
+  if (!s || s.per_day_cap == null || !s.budget_bucket || s.budget_bucket === source) return await fn();
+  const b = `src:${source}`;
+  const held = await takeBudget(b, 1).catch(() => 0);
+  if (held <= 0) { run.partial = true; run.skip(host, `daily_budget_spent:${b}`); return { stop: `daily_budget_spent:${b}` }; }
+  const before = run.reqBySource[source] ?? 0;
+  try {
+    return await fn();
+  } finally {
+    const made = (run.reqBySource[source] ?? 0) - before;
+    if (made < held) await db.rpc("att_budget_refund", { p_bucket: b, p_n: held - made });
+    else if (made > held) await takeBudget(b, made - held).catch(() => 0);
+  }
+}
+
+/**
  * One request through politeFetch. Returns the Response, or {stop} when this run must stop using the host (kill,
  * budget, cap, quiet window, contact gate, lease), or {soft} for a one-off failure (network error, bad redirect).
  */
@@ -71,7 +98,9 @@ async function get(run: Run, url: string, source: string, init: Record<string, u
   Promise<Response | { stop: string } | { soft: string }> {
   const nSkip = run.skipped.length, nErr = run.errors.length;
   const host = new URL(url).hostname.toLowerCase();
-  const res = await politeFetch(run, url, { source, aqsRetry: host === "wikimedia.org", ...init });
+  const res = await withSourceDayCap(run, source, host,
+    () => politeFetch(run, url, { source, aqsRetry: host === "wikimedia.org", ...init }));
+  if (isStop(res)) return res;
   if (res) return res;
   const skip = run.skipped.slice(nSkip).map((s) => s.reason).find((r) => HARD_STOP.test(r));
   if (skip) return { stop: skip };
@@ -329,10 +358,122 @@ async function backfill(run: Run) {
 }
 
 // ---------------------------------------------------------------- mediarequests
-interface MediaPlan { kind: string; topic_id: number; project: string | null; title: string | null; key: string | null;
-  path: string | null; series_id: number | null; from_day: string | null; last_day: string | null }
+interface MediaPlan { kind: string; topic_id: number; project: string | null; title: string | null; qid: string | null;
+  key: string | null; path: string | null; series_id: number | null; from_day: string | null; last_day: string | null }
 
-async function resolveImages(run: Run, items: MediaPlan[]) {
+/** MD5 (hex) of a UTF-8 string: Commons upload paths are /<md5[0]>/<md5[0..2]>/<File_name>. WebCrypto has no MD5. */
+const MD5_S = [7, 12, 17, 22, 5, 9, 14, 20, 4, 11, 16, 23, 6, 10, 15, 21];
+const MD5_K = Array.from({ length: 64 }, (_, i) => Math.floor(Math.abs(Math.sin(i + 1)) * 2 ** 32) >>> 0);
+export function md5hex(str: string): string {
+  const bytes = new TextEncoder().encode(str);
+  const len = bytes.length;
+  const buf = new Uint8Array((((len + 8) >> 6) + 1) * 64);
+  buf.set(bytes);
+  buf[len] = 0x80;
+  const dv = new DataView(buf.buffer);
+  dv.setUint32(buf.length - 8, (len * 8) >>> 0, true);
+  dv.setUint32(buf.length - 4, Math.floor((len * 8) / 2 ** 32), true);
+  let a0 = 0x67452301, b0 = 0xefcdab89, c0 = 0x98badcfe, d0 = 0x10325476;
+  for (let off = 0; off < buf.length; off += 64) {
+    let A = a0, B = b0, C = c0, D = d0;
+    for (let i = 0; i < 64; i++) {
+      let F: number, g: number;
+      if (i < 16) { F = (B & C) | (~B & D); g = i; }
+      else if (i < 32) { F = (D & B) | (~D & C); g = (5 * i + 1) % 16; }
+      else if (i < 48) { F = B ^ C ^ D; g = (3 * i + 5) % 16; }
+      else { F = C ^ (B | ~D); g = (7 * i) % 16; }
+      F = (F + A + MD5_K[i] + dv.getUint32(off + g * 4, true)) >>> 0;
+      A = D; D = C; C = B;
+      const sh = MD5_S[(i >> 4) * 4 + (i % 4)];
+      B = (B + ((F << sh) | (F >>> (32 - sh)))) >>> 0;
+    }
+    a0 = (a0 + A) >>> 0; b0 = (b0 + B) >>> 0; c0 = (c0 + C) >>> 0; d0 = (d0 + D) >>> 0;
+  }
+  const out = new DataView(new ArrayBuffer(16));
+  [a0, b0, c0, d0].forEach((w, i) => out.setUint32(i * 4, w, true));
+  return [...new Uint8Array(out.buffer)].map((b) => b.toString(16).padStart(2, "0")).join("");
+}
+
+/** Commons file name (P18 value) -> { key, upload path } as used by AQS mediarequests. */
+export function commonsPath(file: string): { key: string; path: string } | null {
+  let name = file.trim().replaceAll(" ", "_");
+  if (!name || name.includes("/") || name.length > 240) return null;
+  name = name[0].toUpperCase() + name.slice(1);
+  const h = md5hex(name);
+  return { key: `commons:${name}`, path: `/wikipedia/commons/${h[0]}/${h.slice(0, 2)}/${name}` };
+}
+
+const P18_START = '"P18":[{"mainsnak":';
+const P18_END = /\],"P\d+":\[\{"mainsnak":|"sitelinks":/;
+const P18_SNAK = /"mainsnak":\{"snaktype":"value","property":"P18",(?:"hash":"[0-9a-f]+",)?"datavalue":\{"value":"((?:[^"\\]|\\.)*)","type":"string"\}(?:.*?"rank":"(preferred|normal|deprecated)")?/gs;
+
+/**
+ * Stream a Special:EntityData JSON body and return the P18 file name (preferred rank first, deprecated ignored).
+ * CPU-lean: only a 32-char carry is kept until the P18 claim starts; reading stops at the end of that claim, at
+ * "sitelinks" (claims come before sitelinks: no P18), or at maxBytes (undecided).
+ */
+export async function p18FromEntityData(res: Response, maxBytes: number): Promise<{ file: string | null; decided: boolean }> {
+  if (!res.body) return { file: null, decided: false };
+  const reader = res.body.pipeThrough(new TextDecoderStream()).getReader();
+  let carry = "", seg: string | null = null, n = 0, decided = false, ended = false;
+  try {
+    while (true) {
+      const { value, done } = await reader.read();
+      if (done) { ended = true; break; }
+      n += value.length;
+      if (seg === null) {
+        const s = carry + value;
+        const i = s.indexOf(P18_START);
+        if (i >= 0) seg = s.slice(i);
+        else if (s.includes('"sitelinks":')) { decided = true; break; }
+        else carry = s.slice(-32);
+      } else seg += value;
+      if (seg !== null) {
+        const e = seg.slice(P18_START.length).search(P18_END);
+        if (e >= 0) { seg = seg.slice(0, e + P18_START.length); break; }
+        if (seg.length > 256_000) break;
+      }
+      if (n > maxBytes) return { file: null, decided: false };
+    }
+  } finally {
+    await reader.cancel().catch(() => undefined);
+  }
+  if (seg === null) return { file: null, decided: decided || ended };
+  let best: string | null = null, bestRank = -1;
+  for (const m of seg.matchAll(P18_SNAK)) {
+    const rank = m[2] === "preferred" ? 2 : m[2] === "deprecated" ? -1 : 1;
+    if (rank > bestRank) {
+      try { best = JSON.parse(`"${m[1]}"`) as string; bestRank = rank; } catch { /* malformed escape: skip */ }
+    }
+  }
+  return { file: bestRank >= 0 ? best : null, decided: true };
+}
+
+/** Lead image = Wikidata P18 via Special:EntityData/<QID>.json (robots.txt checked by politeFetch; one call per topic). */
+async function resolveViaEntityData(run: Run, items: MediaPlan[], maxCalls: number, maxBytes: number) {
+  const out: Array<Record<string, unknown>> = [];
+  let calls = 0, stop: string | null = null, noQid = 0, undecided = 0;
+  for (const it of items) {
+    if (!it.qid || !/^Q[0-9]+$/.test(it.qid)) { noQid++; continue; }
+    if (calls >= maxCalls) { run.partial = true; stop = "media_day_cap"; break; }
+    if (run.outOfTime(15000)) { run.partial = true; stop = "out_of_time"; break; }
+    const r = await get(run, `https://www.wikidata.org/wiki/Special:EntityData/${it.qid}.json`, "wiki.media");
+    if (isStop(r)) { stop = r.stop; run.partial = true; break; }
+    if (isSoft(r)) continue;
+    calls++;
+    if (r.status === 404) { await r.body?.cancel(); out.push({ topic_id: it.topic_id, none: true }); continue; }
+    if (!r.ok) { await r.body?.cancel(); run.errors.push(`EntityData ${it.qid} http ${r.status}`); continue; }
+    const p = await p18FromEntityData(r, maxBytes);
+    if (!p.decided) { undecided++; continue; }
+    const cp = p.file ? commonsPath(p.file) : null;
+    if (cp) out.push({ topic_id: it.topic_id, key: cp.key, path: cp.path });
+    else out.push({ topic_id: it.topic_id, none: true }); // no image: re-check in 30 days
+  }
+  return { out, calls, stop, noQid, undecided };
+}
+
+/** Lead image via the Action API (prop=pageimages, 50 titles per call). Only when att_config.wiki.action_api_ok. */
+async function resolveViaPageImages(run: Run, items: MediaPlan[], maxCalls: number) {
   const byProject = new Map<string, MediaPlan[]>();
   for (const it of items) if (it.project && it.title) (byProject.get(it.project) ?? byProject.set(it.project, []).get(it.project)!).push(it);
   const out: Array<Record<string, unknown>> = [];
@@ -340,6 +481,7 @@ async function resolveImages(run: Run, items: MediaPlan[]) {
   for (const [project, list] of byProject) {
     const lang = project.split(".")[0];
     for (let i = 0; i < list.length; i += 50) {
+      if (calls >= maxCalls) { run.partial = true; stop = "media_day_cap"; break; }
       if (run.outOfTime(20000)) { run.partial = true; stop = "out_of_time"; break; }
       const chunk = list.slice(i, i + 50);
       const u = new URL(`https://${lang}.wikipedia.org/w/api.php`);
@@ -373,12 +515,21 @@ async function resolveImages(run: Run, items: MediaPlan[]) {
     }
     if (stop) break;
   }
+  return { out, calls, stop, noQid: 0, undecided: 0 };
+}
+
+async function resolveImages(run: Run, items: MediaPlan[], cfg: WikiCfg, maxCalls: number) {
+  const via = cfg.action_api_ok === true ? "action_api_pageimages" : "wikidata_entitydata_p18";
+  const r = via === "action_api_pageimages"
+    ? await resolveViaPageImages(run, items, maxCalls)
+    : await resolveViaEntityData(run, items, maxCalls, Math.max(1, cfg.entitydata_max_mb) * 1048576);
   let reg: unknown = null;
-  if (out.length && !run.dryRun) {
-    const { data, error } = await db.rpc("att_wiki_media_keys", { p_rows: out });
+  if (r.out.length && !run.dryRun) {
+    const { data, error } = await db.rpc("att_wiki_media_keys", { p_rows: r.out });
     if (error) run.errors.push(`att_wiki_media_keys: ${error.message}`); else reg = data;
   }
-  return { calls, stop, resolved: out.filter((o) => o.key).length, none: out.filter((o) => o.none).length, reg };
+  return { via, calls: r.calls, stop: r.stop, resolved: r.out.filter((o) => o.key).length,
+    none: r.out.filter((o) => o.none).length, no_qid: r.noQid, undecided: r.undecided, reg };
 }
 
 async function mediarequests(run: Run) {
@@ -400,9 +551,10 @@ async function mediarequests(run: Run) {
     return;
   }
   const plan1 = ((await db.rpc("att_wiki_media_plan", { p_as_of: to, p_limit: 2000 })).data ?? []) as MediaPlan[];
-  const res = await resolveImages(run, plan1.filter((p) => p.kind === "resolve").slice(0, Math.max(0, (allowance - 10) * 50)));
+  // lookups get at most half of today's allowance so file histories also progress
+  const res = await resolveImages(run, plan1.filter((p) => p.kind === "resolve"), cfg, Math.floor(allowance / 2));
   allowance -= res.calls;
-  let stop = res.stop, calls = 0, fetched = 0, hasTo = false;
+  let stop = res.stop === "media_day_cap" ? null : res.stop, calls = 0, fetched = 0, hasTo = false;
   let rows: ObsRow[] = [];
   if (!stop) {
     const plan2 = ((await db.rpc("att_wiki_media_plan", { p_as_of: to, p_limit: 2000 })).data ?? []) as MediaPlan[];
@@ -439,8 +591,9 @@ async function mediarequests(run: Run) {
     }
   }
   if (rows.length) await ingest(run, rows);
-  run.extra = { ...run.extra, wiki_version: WIKI_VERSION, wikimedia_calls: res.calls + calls, lookup_calls: res.calls,
-    images_resolved: res.resolved, no_free_image: res.none, files_fetched: fetched, stop };
+  run.extra = { ...run.extra, wiki_version: WIKI_VERSION, wikimedia_calls: res.calls + calls, lookup_via: res.via,
+    lookup_calls: res.calls, images_resolved: res.resolved, no_image: res.none, no_qid: res.no_qid,
+    lookup_undecided: res.undecided, files_fetched: fetched, stop };
   run.source({ source: "wiki.media", status: srcStatus(stop && stop !== "media_day_cap" ? stop : null, run.partial),
     keys: fetched, rows: run.rows.obs, ms: Date.now() - t0, note: stop });
 }
