@@ -11,7 +11,7 @@ the W1 contract shapes (`../contract/*.schema.json`) and never touches v4 object
 | `functions/ripples-collect/index.ts` | `{"mode":"trends"}` Google Trends RSS (8 geos, serial 1/s) + Bluesky `getTrends`; `{"mode":"daily"}` top-per-country (10) + featured feed; `{"mode":"date"}` backfill (adds per-project top for 10 languages) |
 | `functions/ripples-resolve/index.ts` | titles/queries -> enwiki title, QID, short description, P31, P570, sitelinks; unknown classes -> labels + P279 |
 | `functions/ripples-expand/index.ts` | job kinds `screen`, `expand`, `history`, `split`, `refresh` (the statistics run here) |
-| `sql/01..09_*.sql`, `sql/12..17_*.sql` | the migrations in the order they were applied. Replaying them on a W1 database reproduces the deployed W2 functions (`tools/fn_md5.py` prints the md5 of every function body; compare with the query in its docstring) |
+| `sql/01..09_*.sql`, `sql/12..20_*.sql` | the migrations in the order they were applied. Replaying them on a W1 database reproduces the deployed W2 functions (`tools/fn_md5.py` prints the md5 of every function body; compare with the query in its docstring) |
 | `sql/10_seed_data.sql` | category-map seed (231 verified classes), blocklist class QIDs, config keys |
 | `sql/11_cron.sql` | the three pg_cron jobs |
 | `sql/12_ripples_v5_pipeline_yield.sql` | decoy reserve (`candidates.extra`), monotone pooling of fluke bins, description-based safety patterns, seed baseline floor |
@@ -21,6 +21,8 @@ the W1 contract shapes (`../contract/*.schema.json`) and never touches v4 object
 | `sql/16_ripples_v5_pipeline_decoy_quality.sql` | decoys must read "views normal" (window multiple >= 0.67); flattest recent series preferred |
 | `sql/17_ripples_v5_pipeline_stop_flag.sql` | `shared_trigger_stop` only on the round where the chain actually stopped |
 | `sql/18_ripples_v5_pipeline_verifier_fixes.sql` | fixes after the independent verifier: SPEC fluke warm-up (500), safety re-check of humans inside every run (stage `recheck`, `ripples._fresh`), dispatch order (live first, depth 1 of seeds and decoys before deeper beams), seed reuse per run kind, flat 90-day decoy sparklines, Board belly-flop rule, `spiked_alongside` badge and neutral headline, EXECUTE revoked from PUBLIC on all helpers. Applied as two migrations (`ripples_v5_pipeline_verifier_fixes`, `..._b`); the three large functions are patched in place, whitespace-tolerant |
+| `sql/19_ripples_v5_pipeline_date_seeds.sql` | calendar-day articles ("September 23") are `is_list`, so never seeds, options, Call It or Board rows |
+| `sql/20_ripples_v5_pipeline_recheck_deadline.sql` | practice runs: the re-check stage ends at 24 min, so a practice day always finishes within 25 min |
 | `sql/test_acceptance.sql` | the acceptance queries |
 | `category-map.json` | the seeded class -> category / safety-flag map (labels fetched from Wikidata) |
 
@@ -56,7 +58,7 @@ collect_daily -> resolve -> screen -> seeds -> expand -> recheck -> build -> don
   shared-trigger witness or Board wake neighbour (`set_rank` is null); they can only be picked as calm decoys.
 * **recheck** (live: when the expand queue is empty and it is >= 06:58, or at the 07:16 expand cut-off) the same
   safety re-check for every human that can be shown: real seeds, calm or passing candidates, reserve-bank pages. At
-  the 07:20 hard deadline (practice: 26 min) the build starts regardless; `ripples._fresh(qid, as_of)` makes a human
+  the 07:20 hard deadline (practice: 24 min) the build starts regardless; `ripples._fresh(qid, as_of)` makes a human
   whose facts were not re-fetched during this run ineligible as seed, option, Call It option or Board row.
 * **build** `ripples_update_fluke`, `ripples_build_puzzle`, `ripples_resolve_calls(current_date)`.
 

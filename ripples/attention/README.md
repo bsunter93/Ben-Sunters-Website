@@ -33,6 +33,9 @@ Spec: `ATTENTION_STACK.md` §3 and §7, with `DEMARCATION.md` §7 lead decisions
 | `sql/15d_att_budget_refund_fix.sql` | Migration `att_budget_refund_fix` (core fix found by att-charts): `att_budget.killed`; `att_budget_refund` refuses refunds only for kill-spent buckets (it used to refuse whenever used = cap, so a chunk that took the whole day's cap was never refunded); `att_host_kill` sets `killed` |
 | `sql/15e_att_ident_npm_scoped.sql` | Migration `att_ident_npm_scoped`: `_att_ident_like` no longer rejects scoped npm package keys (`@scope/name`, source `npm.dl` only) as handles |
 | `functions/att-charts/index.ts` (+ `att.ts` copy) | Charts / builder / consumption collector (CHARTS_VERSION 2026-09-25.c7): `apple`, `steamspy`, `github`, `hf`, `anilist`, `openlibrary`, `tranco`, `npm`, `pypi`, `backfill` (npm.dl, pypi.dl, anilist, gh.stars), `ping`. See "att-charts" below |
+| `sql/16_att_world.sql` | Migration `att_world_sources` (att-world): DEMARCATION Q6 budgets / hosts / `backfill_fn` for tsa.pax, usgs.eq, iem.warn, fema.decl, gdacs, mta.ridership, citibike.trips (virtual-host bucket `tripdata.s3.amazonaws.com`), hiringlab.postings (`raw.githubusercontent.com` only) |
+| `sql/16b_att_world_cron.sql` | Migration `att_world_cron`: `att-world` 06:21 (tsa, usgs, iem, fema, gdacs, mta), `att-world-files` 06:22 (hiringlab, citibike), `att-world-pm` 13:41 (tsa, mta), `att_fn_live('att-world')` |
+| `functions/att-world/index.ts` (+ `att.ts` copy) | World / real-economy collector (WORLD_VERSION 2026-09-25.w1): `tsa`, `usgs`, `iem`, `fema`, `gdacs`, `mta`, `citibike`, `hiringlab`, `all`, `backfill`, `ping`. See "att-world" below |
 | `functions/_shared/att.ts` | Canonical shared runtime for every `att-*` edge function |
 | `functions/att-registry/index.ts` (+ `att.ts` copy) | Topic registry function: `resolve`, `bootstrap`, `panel`, `ping` |
 
@@ -287,3 +290,38 @@ row, and six cron slots (06:10-06:20) cover 25 feeds. Daily cap 35 requests.
 **Core fixes made while building att-charts (both att_ objects):** `sql/15d` (budget refunds were refused whenever a
 chunk had taken the whole day's cap, which spent gh.search / steamspy / ol.trending / tranco.rank for the day after a
 single request) and `sql/15e` (scoped npm packages were rejected as `@handles`).
+
+## att-world (W7 world / real-economy collector, 2026-09-25, WORLD_VERSION 2026-09-25.w1)
+
+Counts, levels and indices only. Response bodies are read transiently (IEM rows carry forecaster names, FEMA rows county
+names, Citi Bike rows station names and ride ids): none of it is stored. No NWS `api.weather.gov` call exists (RED in
+`isRed()`; IEM is the documented substitute). Attribution strings live in `att_sources.attribution` (FEMA non-endorsement
+notice, "Indeed Hiring Lab ... (CC BY 4.0)", "GDACS, European Commission Joint Research Centre", "Iowa Environmental
+Mesonet, Iowa State University", "Citi Bike System Data", USGS, TSA, MTA/NY Open Data).
+
+| Mode | Source (spacing, run/day cap) | Endpoint | Series (source / metric / geo / key) | History |
+|---|---|---|---|---|
+| `tsa` | `tsa.pax` (5 s, 10/20) | `www.tsa.gov/travel/passenger-volumes` (current year) + `/<year>` pages | `tsa.pax / n / US / checkpoint` (travellers screened) | 2019-01-01 onwards (same-weekday baselines) |
+| `usgs` | `usgs.eq` (5 s, 8/20) | ComCat `fdsnws/event/1/query` geojson, `minfelt=1` and `minmagnitude=4.5` | `felt` (sum of DYFI responses, aux = felt events), `m45` (count, aux = max mag), `sig` (sig >= 600 count, aux = max sig), `ev:<eventid> / felt` for events with >= 25 DYFI responses (aux = mag); geo ALL | 420 days, 105-day windows; the daily run re-reads 30 days (DYFI counts grow) |
+| `iem` | `iem.warn` (10 s, 8/40) | IEM API `/api/1/vtec/sbw_interval.json?begints&endts` | key = VTEC `ph_sig` (`TO.W`, `SV.W`, `FF.W`, `MA.W`, `SQ.W`, `FA.Y` ...) + `__total__` (all warnings), distinct wfo/phen/sig/eventid/year per issuance UTC day; zero-filled; geo US | 420 days, 30-day windows |
+| `fema` | `fema.decl` (5 s, 5/10) | OpenFEMA `v2/DisasterDeclarationsSummaries` (`$select`, `$filter`, `$top=10000`) | `all`, `DR`, `EM`, `FM`, `it:<incident type>`: distinct disasters declared per day (aux = designated areas); zero-filled; geo US | 420 days; daily re-reads 30 days |
+| `gdacs` | `gdacs` (5 s, 2/4) | `www.gdacs.org/xml/rss.xml` | per type `EQ/TC/FL/VO/DR/WF/__all__`: `n` (current events, aux = orange+red), `pop` (population in orange/red events); `ev:<type><id> / alert` (alert score, aux = population) | none (warm-up) |
+| `mta` | `mta.ridership` (5 s, 5/10) | Socrata `data.ny.gov/resource/sayj-mze2.json` | key = mode slug (`subway`, `bus`, `lirr`, `mnr`, `sir`, `aar`, `bt`, `cbd_entries`, `crz_entries`); geo US-NY | 2020-03-01 onwards; daily re-reads 21 days |
+| `hiringlab` | `hiringlab.postings` (5 s, 4/8) | `raw.githubusercontent.com/hiring-lab/job_postings_tracker/master/US/{aggregate_job_postings_US,job_postings_by_sector_US}.csv` with `If-None-Match` | sector slug x metric `total`/`new` (index, 2020-02-01 = 100); `__total__` from the aggregate file (value = SA, aux = NSA); geo US | 420 days; afterwards only when upstream changed (304 otherwise), last 60 days re-written |
+| `citibike` | `citibike.trips` (5 s, 8/20) | `tripdata.s3.amazonaws.com` (bucket listing + `JC-YYYYMM-citibike-tripdata[.csv].zip`) | `jc / n / US-NJ` (trips started per local day, aux = member trips) | 420 days of monthly JC files (2 per run); new month after the 6th |
+| `all` | - | the above in sequence (`params.only`) | - | - |
+| `backfill` | - | `params.source` = att_sources id | resumable (`att_state['world.bf.<source>']`, `next_cursor`) | - |
+
+**Citi Bike NYC is partial by design.** The NYC monthly archive is ~1 GB per month (977 MB for 2026-08), far beyond the
+110 s wall / edge CPU budget, so it is never downloaded; `citibike` always reports `status: partial` with the file size
+(`att_state['world.citibike'].nyc`). Jersey City files (1-3 MB) are processed fully in memory (central-directory zip
+parse + `DecompressionStream('deflate-raw')`). NYC daily trips need a GitHub Action (stream-unzip) if wanted later.
+
+**Bucket host.** `s3.amazonaws.com/robots.txt` answers 403 (path-style host; att.ts would kill the host permanently), so
+the bucket is addressed virtual-host style (`tripdata.s3.amazonaws.com`), whose `robots.txt` is a normal 404 (allowed).
+
+**Discovery candidates** (`att_trend_candidates`, day = as_of): USGS events of the last 3 days with felt >= 50, sig >= 600 or
+PAGER orange/red (label "<region> earthquake", meta k = event id); FEMA declarations of the last 3 days (named hurricanes /
+named fires, otherwise "<year> <State> <incident type>", geo US-<state>); GDACS orange/red current events that started in
+the last 10 days ("Cyclone <Name>", volcano name, or "<year> <country> <type>"). IEM warning surges are not emitted as
+candidates (their labels would not resolve to articles); att_score can z-score `iem.warn` directly.

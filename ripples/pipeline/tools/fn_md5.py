@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """md5 of every W2 function body as defined by replaying the migration files sql/01..09 and sql/12+ in order: within each
-file the definitions it contains, then the in-place patches it applies (07-09, 13, 15, 17 and 18); the last definition
+file the definitions it contains, then the in-place patches it applies (07-09, 13, 15, 17, 18, 19 and 20); the last definition
 wins. 10_seed_data and 11_cron define no functions. Compare with the live database:
 
   select n.nspname || '.' || p.proname, md5(btrim(regexp_replace(regexp_replace(p.prosrc, '--[^\n]*', '', 'g'), '\s+', ' ', 'g')))
@@ -49,6 +49,14 @@ PATCHES = {  # file prefix -> [(function, old, new)] exactly as the guarded in-p
         ('ripples._render',
          'st_stop := exists (',
          "st_stop := not coalesce((p_rounds->i->>'continues')::boolean, false) and exists ("),
+    ],
+    '20': [
+        ('ripples._tick_run', 'make_interval(mins => dl + 4)', 'make_interval(mins => dl + 2)'),
+    ],
+    '19': [
+        ('ripples._refresh_articles',
+         "or r.title_en ~ '^[0-9]{4}s? in ',",
+         "or r.title_en ~ '^[0-9]{4}s? in '\n                    or r.title_en ~ '^(January|February|March|April|May|June|July|August|September|October|November|December) [0-9]{1,2}$',"),
     ],
     '18': [
         ('ripples._render',
