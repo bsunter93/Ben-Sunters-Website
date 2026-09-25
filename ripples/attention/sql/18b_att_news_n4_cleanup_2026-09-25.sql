@@ -16,3 +16,13 @@ delete from ripples.att_trend_candidates
      'new york times', 'the new york times', 'nyt', 'guardian', 'the guardian', 'her', 'his', 'age', 'people', 'women',
      'men', 'children', 'youth', 'students', 'schools', 'abc news', 'cbs news', 'nbc news', 'sky news');
 commit;
+
+-- Second pass, 18:05 UTC (run with execute_sql). The 17:55 production run used n5, which still let AP contributor
+-- lines ("Associated Press writers ... contributed") and a photo credit whose V1Persons ghost share was 41% through
+-- (292 edges, 169 candidates from file 20260925164500). n7 (deployed 18:04, version 9) screens article-tail names and
+-- uses a ghost share of 0.3; its dry run on the same file rejects all of them. The pre-n7 rows are deleted so every
+-- stored GKG candidate and edge has passed the n7 screen. GKG edges for 2026-09-25 cover files from 18:00 UTC on.
+begin;
+delete from ripples.att_edges where source = 'gdelt.gkg' and period <= date '2026-09-25';
+delete from ripples.att_trend_candidates where source = 'gdelt.gkg' and day <= date '2026-09-25';
+commit;
