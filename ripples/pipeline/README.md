@@ -17,6 +17,8 @@ the W1 contract shapes (`../contract/*.schema.json`) and never touches v4 object
 | `sql/12_ripples_v5_pipeline_yield.sql` | decoy reserve (`candidates.extra`), monotone pooling of fluke bins, description-based safety patterns, seed baseline floor |
 | `sql/13_ripples_v5_pipeline_warmup.sql` | fluke meter "warming up" until `config.pipeline.fluke_warm_min_decoy` (2000) pooled decoy tests |
 | `sql/14_ripples_v5_pipeline_run_day.sql` | `ripples_run_day`: reset also clears the unpublished practice puzzle; a finished day is reported, not rerun |
+| `sql/15_ripples_v5_pipeline_delayed_row.sql` | a rebuild that ends `delayed` removes the unpublished practice row / marks a `built` live row `delayed` |
+| `sql/16_ripples_v5_pipeline_decoy_quality.sql` | decoys must read "views normal" (window multiple >= 0.67); flattest recent series preferred |
 | `sql/test_acceptance.sql` | the acceptance queries |
 | `category-map.json` | the seeded class -> category / safety-flag map (labels fetched from Wikidata) |
 
@@ -91,7 +93,9 @@ other-language article and < 20 views/day. Seeds also need a baseline median >= 
 
 Answer-eligible = pass_raw, p_time <= 0.05, f <= 0.10 (or warming), split_ok, not a Main Page feature within ±1 day,
 linked, safe (no sensitive topics), no shared trigger at depth >= 2; usable as a round only with 3 calm, linked,
-safe siblings (median 0.5-2x the answer's, different title stem, >= 2 of 3 in the answer's category). Chains are
+safe siblings (median 0.5-2x the answer's, different title stem, >= 2 of 3 in the answer's category, and window
+multiple >= `config.pipeline.decoy_min_multiple` 0.67 so a page in post-hype decay is never shown as "views normal";
+same-category first, then the flattest last-30-days spark, then the closest median). Chains are
 ranked by length, Σ log10(1/f) (p_time while warming), category jumps, biggest-in-days, onset recency.
 >= 3-hop chain -> the chain (<= 4 rounds); 2-hop -> + 1-2 fresh ripples; else 3-4 fresh ripples; else the reserve
 bank (unused compositions from the last 14 days, `from_date` set); else `delayed` (no puzzle row).

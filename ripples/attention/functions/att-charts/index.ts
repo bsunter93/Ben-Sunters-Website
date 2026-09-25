@@ -33,11 +33,11 @@
 // Only ranks, counts and indices are stored; no descriptions, artwork, authors' handles or personal data.
 import {
   addDays, ATT_VERSION, configGet, db, errMsg, type FetchOpts, ingest, ingestCandidates, type ObsRow,
-  politeFetch, type Run, serve, stateGet, stateSet, watchlist, type WatchKey,
+  politeFetch, type Run, serve, sleep, sourceInfo, stateGet, stateSet, watchlist, type WatchKey,
 } from "./att.ts";
 
 const FN = "att-charts";
-export const CHARTS_VERSION = "2026-09-25.c1";
+export const CHARTS_VERSION = "2026-09-25.c2";
 
 // ------------------------------------------------------------------ helpers
 type Cfg = Record<string, any>;
@@ -56,39 +56,65 @@ function lim(c: Ctx, x: any, dflt: number): number {
 const unixDay = (d: string) => Math.floor(Date.parse(d + "T00:00:00Z") / 1000);
 const dayOfUnix = (s: number) => new Date(s * 1000).toISOString().slice(0, 10);
 
-/** Request timing per source, for the "spacing respected" evidence (gap between consecutive completions). */
-function timing(run: Run, source: string, t: number) {
-  const tm = ((run.extra.timing ??= {}) as Record<string, { n: number; last: number; min_gap_ms: number | null }>);
-  const e = (tm[source] ??= { n: 0, last: 0, min_gap_ms: null });
-  if (e.last) {
-    const gap = t - e.last;
-    e.min_gap_ms = e.min_gap_ms === null ? gap : Math.min(e.min_gap_ms, gap);
+/**
+ * Pacing on top of politeFetch: att.ts already enforces a start-to-start gap >= att_sources.spacing_ms per host; this
+ * collector additionally waits spacing_ms from the END of the previous response on the same host before the next call
+ * (end-to-start, stricter), and records the smallest idle gap per source as evidence ("spacing respected").
+ */
+const pace = new WeakMap<Run, Map<string, number>>();
+async function paceWait(run: Run, source: string, host: string): Promise<number | null> {
+  const m = pace.get(run) ?? new Map<string, number>();
+  pace.set(run, m);
+  const s = await sourceInfo(source).catch(() => null);
+  const sp = typeof s?.spacing_ms === "number" ? s.spacing_ms : 5000;
+  const last = m.get(host);
+  if (last !== undefined) {
+    const wait = last + sp - Date.now();
+    if (wait > 0) {
+      if (run.timeLeft() - wait < 5000) { run.partial = true; return null; } // no time left to wait: stop, never rush
+      await sleep(wait);
+    }
   }
-  e.last = t;
+  return sp;
+}
+function paceDone(run: Run, source: string, host: string, tStart: number, sp: number) {
+  const m = pace.get(run)!;
+  const last = m.get(host);
+  const tm = ((run.extra.timing ??= {}) as Record<string, { n: number; spacing_ms: number; min_idle_gap_ms: number | null }>);
+  const e = (tm[source] ??= { n: 0, spacing_ms: sp, min_idle_gap_ms: null });
+  if (last !== undefined) {
+    const gap = tStart - last;
+    e.min_idle_gap_ms = e.min_idle_gap_ms === null ? gap : Math.min(e.min_idle_gap_ms, gap);
+  }
   e.n++;
+  m.set(host, Date.now());
 }
 
 /** JSON through politeFetch. soft: a 404/410 is a note (unknown package), not a run error. */
 async function getJson(run: Run, url: string, o: FetchOpts & { soft?: boolean }): Promise<any | null> {
+  const host = new URL(url).hostname.toLowerCase();
+  const sp = await paceWait(run, o.source, host);
+  if (sp === null) return null;
+  const tStart = Date.now();
   const res = await politeFetch(run, url, { timeoutMs: 30_000, ...o, headers: { Accept: "application/json", ...(o.headers as Record<string, string> ?? {}) } });
-  if (res) timing(run, o.source, Date.now());
   if (!res) return null;
   // stay below published rate limits: when the provider says <= 1 request is left, stop using the host for this run
   // (GitHub reports an exhausted limit as 403, which att.ts treats as a permanent kill, so never reach it)
   const rem = res.headers.get("x-ratelimit-remaining");
   if (rem !== null && rem !== "" && Number(rem) <= 1) {
-    const h = new URL(url).hostname.toLowerCase();
-    run.killed.set(h, "ratelimit_reserve");
-    run.skip(h, "ratelimit_reserve");
+    run.killed.set(host, "ratelimit_reserve");
+    run.skip(host, "ratelimit_reserve");
     run.partial = true;
   }
   if (!res.ok) {
     await res.body?.cancel();
+    paceDone(run, o.source, host, tStart, sp);
     const msg = `${o.source} ${new URL(url).pathname.slice(0, 80)}: http ${res.status}`;
     if (o.soft && (res.status === 404 || res.status === 410)) note(run, msg); else run.errors.push(msg);
     return null;
   }
   try { return await res.json(); } catch (e) { run.errors.push(`${o.source}: bad json ${errMsg(e)}`); return null; }
+  finally { paceDone(run, o.source, host, tStart, sp); }
 }
 function note(run: Run, s: string) {
   const n = ((run.extra.notes ??= []) as string[]);
@@ -168,7 +194,20 @@ async function seriesInfo(run: Run, source: string, metric: string, keys: string
   for (const r of (data ?? []) as Array<{ key: string; n_days: number }>) out.set(r.key, Math.max(out.get(r.key) ?? 0, r.n_days));
   return out;
 }
-async function writeCands(run: Run, cands: Cand[]) {
+/** One candidate per (day, source, geo, label) per run: the same item on two lists (e.g. an HF model and a space, or
+ *  an AniList anime and its manga) keeps the higher evidence instead of the later list overwriting it. */
+const candSeen = new WeakMap<Run, Map<string, number>>();
+async function writeCands(run: Run, all: Cand[]) {
+  const seen = candSeen.get(run) ?? new Map<string, number>();
+  candSeen.set(run, seen);
+  const cands: Cand[] = [];
+  for (const c of all) {
+    const k = `${c.day}|${c.source}|${c.geo}|${c.label}`;
+    const prev = seen.get(k);
+    if (prev !== undefined && prev >= c.evidence) continue;
+    seen.set(k, c.evidence);
+    cands.push(c);
+  }
   if (!cands.length) return;
   const r = await ingestCandidates(run, cands as unknown as Record<string, unknown>[]);
   run.extra.candidates = Number(run.extra.candidates ?? 0) + (r.rows ?? 0);
@@ -490,8 +529,10 @@ async function modeTranco(run: Run) {
   const keys = await watchlist(run, "tranco.rank", 5000);
   const want = new Map<string, WatchKey>();
   for (const k of keys) want.set(k.key.toLowerCase(), k);
+  const sp = (await paceWait(run, "tranco.rank", "tranco-list.eu")) ?? 5000;
+  const tStart = Date.now();
   const res = await politeFetch(run, "https://tranco-list.eu/top-1m.csv.zip", { source: "tranco.rank", timeoutMs: 90_000 });
-  if (res) timing(run, "tranco.rank", Date.now());
+  if (res) paceDone(run, "tranco.rank", "tranco-list.eu", tStart, sp);
   if (!res || !res.ok || !res.body) {
     if (res) { await res.body?.cancel(); run.errors.push(`tranco: http ${res.status}`); }
     run.source({ source: "tranco.rank", status: "http_error", ms: Date.now() - t0 });
@@ -606,6 +647,7 @@ async function modeNpm(run: Run) {
   const from = addDays(run.asOf, -(days - 1)), to = run.asOf;
   let rows = 0, calls = 0;
   const host = "api.npmjs.org";
+  const missing = new Set<string>(); // unknown packages: no 400-day backfill call is spent on them
   // 1) '__total__' (all packages) normaliser
   {
     const j = await getJson(run, `${NPM}/${from}:${to}`, { source: "npm.dl" });
@@ -623,7 +665,10 @@ async function modeNpm(run: Run) {
     if (!j) continue;
     const obs: ObsRow[] = [];
     if (part.length === 1) obs.push(...npmRows(run, part[0], j, keys.get(part[0]) ?? null));
-    else for (const p of part) if (j[p]) obs.push(...npmRows(run, p, j[p], keys.get(p) ?? null)); else note(run, `npm: no data for ${p}`);
+    else for (const p of part) {
+      if (j[p]) obs.push(...npmRows(run, p, j[p], keys.get(p) ?? null));
+      else { missing.add(p); note(run, `npm: no data for ${p}`); }
+    }
     rows += (await ingest(run, obs)).rows;
   }
   for (const p of scoped) {
@@ -631,11 +676,12 @@ async function modeNpm(run: Run) {
     const j = await getJson(run, `${NPM}/${from}:${to}/${p}`, { source: "npm.dl", soft: true });
     calls++;
     if (j) rows += (await ingest(run, npmRows(run, p, j, keys.get(p) ?? null))).rows;
+    else if (!blocked(run, host)) missing.add(p);
   }
   // 3) 400-day history for keys that do not have it yet (reference packages; registered keys also get backfill jobs)
   const bfDays = Number(nc.backfill_days ?? 400);
   const info = await seriesInfo(run, "npm.dl", "n", ["__total__", ...pkgs]);
-  const need = ["__total__", ...pkgs].filter((p) => (info.get(p) ?? 0) < bfDays - 30);
+  const need = ["__total__", ...pkgs].filter((p) => !missing.has(p) && (info.get(p) ?? 0) < bfDays - 30);
   let backfilled = 0;
   for (const p of need) {
     if (run.outOfTime(8000) || blocked(run, host)) { run.partial = true; break; }

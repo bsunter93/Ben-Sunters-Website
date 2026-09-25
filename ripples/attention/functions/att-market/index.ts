@@ -31,11 +31,11 @@ import {
 } from "./att.ts";
 
 const FN = "att-market";
-const MARKET_VERSION = "2026-09-25.m1";
+const MARKET_VERSION = "2026-09-25.m2";
 const BUCKET = "att-raw";
 const FINRA_URL = "https://api.finra.org/data/group/otcMarket/name/regShoDaily";
 const FINRA_FIELDS = ["tradeReportDate", "securitiesInformationProcessorSymbolIdentifier", "shortParQuantity",
-  "shortExemptParQuantity", "totalParQuantity", "reportingFacilityCode"];
+  "shortExemptParQuantity", "totalParQuantity", "reportingFacilityCode", "marketCode"];
 const GAMMA = "https://gamma-api.polymarket.com";
 const CLOB = "https://clob.polymarket.com";
 const KALSHI = "https://api.elections.kalshi.com/trade-api/v2";
@@ -44,9 +44,9 @@ const EFTS_URL = "https://efts.sec.gov/LATEST/search-index";
 
 // ------------------------------------------------------------ config
 const DEFAULTS = {
-  poly_page: 500, poly_max_pages: 6, poly_min_vol24: 1000, poly_max_markets: 300, poly_max_events: 150,
+  poly_page: 100, poly_max_pages: 15, poly_min_vol24: 1000, poly_max_markets: 300, poly_max_events: 150,
   poly_clob_max: 60, poly_new_usd: 250000,
-  kalshi_page: 200, kalshi_max_pages: 40, kalshi_max_events: 200, kalshi_max_markets: 100,
+  kalshi_page: 200, kalshi_max_pages: 100, kalshi_max_events: 200, kalshi_max_markets: 100,
   kalshi_min_mkt_vol24: 1000, kalshi_new_contracts: 250000,
   cand_ratio: 3, cand_top: 30,
   finra_page: 5000, finra_days: 400, finra_ring_days: 90, finra_liq_floor: 50000,
@@ -97,11 +97,16 @@ function failNote(run: Run, host: string): string {
 }
 /**
  * Finish merged backfill jobs ourselves (per key) so a partial run is picked up again soon: att.ts would requeue every
- * job with a 1 h delay. Jobs whose payload keys are all in doneKeys are marked done; the rest are requeued after delayS.
+ * job with a 1 h delay. Jobs whose payload keys are all in doneKeys are marked done; the rest are requeued after delayS,
+ * or at 00:10 UTC tomorrow when the host is closed for the day (daily budget spent, host killed).
  */
-async function settleJobs(run: Run, doneKeys: Set<string> | "all", delayS = 90) {
+async function settleJobs(run: Run, doneKeys: Set<string> | "all", delayS = 90, host?: string) {
   const ids = run.jobIds();
   if (!ids.length || run.dryRun) return;
+  if (host && run.skipped.some((x) => x.host === host && /daily_budget_spent|host_killed/.test(x.reason))) {
+    const t = new Date();
+    delayS = Math.max(delayS, Math.ceil((Date.UTC(t.getUTCFullYear(), t.getUTCMonth(), t.getUTCDate() + 1, 0, 10) - t.getTime()) / 1000));
+  }
   let done: number[] = [];
   let rest: number[] = [];
   if (doneKeys === "all") done = ids;
@@ -327,9 +332,14 @@ async function polymarket(run: Run) {
   let clobOk = 0, clobRows = 0;
   const priceRows: ObsRow[] = [];
   const minDay = addDays(day, -400);
+  // full daily history once per market (new price series), afterwards only the last week
+  const have = clobList.length ? await rpc(run, "att_series_stats", { p_source: "poly.mkt", p_metric: "p",
+    p_keys: clobList.map(({ m }) => `m:${m.id}`), p_from: addDays(day, -7), p_to: day }) as Array<{ key: string; n: number }> | null : [];
+  const known = new Set((have ?? []).filter((x) => x.n > 0).map((x) => x.key));
   for (const { m, tid } of clobList) {
     if (run.outOfTime(8000)) { run.partial = true; break; }
-    const res = await politeFetch(run, `${CLOB}/prices-history?market=${encodeURIComponent(m.token!)}&interval=max&fidelity=1440`,
+    const interval = known.has(`m:${m.id}`) ? "1w" : "max";
+    const res = await politeFetch(run, `${CLOB}/prices-history?market=${encodeURIComponent(m.token!)}&interval=${interval}&fidelity=1440`,
       { source: "poly.mkt", headers: { accept: "application/json" }, timeoutMs: 15_000 });
     if (!res) break;
     if (!res.ok) { await res.body?.cancel(); continue; }
@@ -485,7 +495,7 @@ function addRow(agg: DayAgg, seen: Set<string>, r: any) {
   const sym = String(r?.securitiesInformationProcessorSymbolIdentifier ?? "").trim().toUpperCase();
   if (!sym) return;
   const fac = String(r?.reportingFacilityCode ?? "?");
-  const k = `${sym}|${fac}|${r?.tradeReportDate ?? ""}`;
+  const k = `${sym}|${fac}|${r?.marketCode ?? ""}|${r?.tradeReportDate ?? ""}`;
   if (seen.has(k)) return; // defensive: paging overlap must not double count
   seen.add(k);
   const a = agg.get(sym) ?? { s: 0, se: 0, t: 0, f: "" };
@@ -502,7 +512,7 @@ async function finraDay(run: Run, day: string, cfg: Cfg, st: FinraState): Promis
     const p = await finraPage(run, {
       limit: cfg.finra_page, offset, fields: FINRA_FIELDS,
       compareFilters: [{ compareType: "EQUAL", fieldName: "tradeReportDate", fieldValue: day }],
-      sortFields: ["securitiesInformationProcessorSymbolIdentifier", "reportingFacilityCode"],
+      sortFields: ["securitiesInformationProcessorSymbolIdentifier", "reportingFacilityCode", "marketCode"],
     });
     if (!p) return null;
     pages++;
@@ -513,13 +523,16 @@ async function finraDay(run: Run, day: string, cfg: Cfg, st: FinraState): Promis
   }
   if (!agg.size) return "empty";
   st.pages_per_day = pages;
-  if (Number.isFinite(total) && seen.size < total) run.errors.push(`finra ${day}: ${seen.size} distinct rows of ${total}`);
+  if (Number.isFinite(total) && seen.size < total) {
+    const d = (run.extra.finra_dupes ??= []) as unknown[];
+    d.push({ day, distinct: seen.size, total }); // rows the API repeated across pages (counted once)
+  }
   return agg;
 }
 function pagesNeeded(run: Run, st: FinraState): boolean {
   const need = Math.max(1, st.pages_per_day ?? 8);
   const used = run.reqBySource["finra.api"] ?? 0;
-  return used + need <= 20 && run.timeLeft() > need * 7000 + 12_000;
+  return used + need <= 20 && run.timeLeft() > need * 5500 + 10_000; // ~5 s spacing per page + ingest/upload
 }
 
 // ---- mirror files
@@ -764,7 +777,7 @@ async function finraFilesBackfill(run: Run, cfg: Cfg) {
   if (left > 0) run.partial = true;
   run.source({ source: "finra.shvol", status: left > 0 ? "partial" : "ok", rows: res.rows, ms: Date.now() - t0,
     note: `${have.size + res.done.length}/${target.length} trading days mirrored` });
-  await settleJobs(run, left > 0 ? new Set() : "all", 60);
+  await settleJobs(run, left > 0 ? new Set() : "all", 60, "api.finra.org");
 }
 
 async function finraKeysBackfill(run: Run, cfg: Cfg) {
@@ -786,7 +799,7 @@ async function finraKeysBackfill(run: Run, cfg: Cfg) {
         limit: cfg.finra_page, offset, fields: FINRA_FIELDS,
         domainFilters: [{ fieldName: "securitiesInformationProcessorSymbolIdentifier", values: chunk }],
         dateRangeFilters: [{ fieldName: "tradeReportDate", startDate: from, endDate: to }],
-        sortFields: ["tradeReportDate", "securitiesInformationProcessorSymbolIdentifier", "reportingFacilityCode"],
+        sortFields: ["tradeReportDate", "securitiesInformationProcessorSymbolIdentifier", "reportingFacilityCode", "marketCode"],
       });
       if (!p) { ok = false; break; }
       for (const r of p.rows) {
@@ -821,7 +834,7 @@ async function finraKeysBackfill(run: Run, cfg: Cfg) {
   }
   run.extra.finra_keys_backfill = { keys: syms.length, done: doneKeys.size, from, to, rows };
   run.source({ source: "finra.shvol", status: doneKeys.size === syms.length ? "ok" : "partial", keys: syms.length, rows, ms: Date.now() - t0 });
-  await settleJobs(run, doneKeys, 120);
+  await settleJobs(run, doneKeys, 120, "api.finra.org");
 }
 
 // ============================================================ USAspending
@@ -924,7 +937,7 @@ async function usaspBackfill(run: Run, cfg: Cfg) {
   if (!run.dryRun) await stateSet("usasp.bf", bf);
   run.extra.usasp_backfill = { keys: keys.length, done: doneKeys.size, calls, rows, floor };
   run.source({ source: "usasp.spend", status: doneKeys.size === keys.length ? "ok" : "partial", keys: keys.length, rows, ms: Date.now() - t0 });
-  await settleJobs(run, doneKeys, 300);
+  await settleJobs(run, doneKeys, 300, "api.usaspending.gov");
 }
 
 // ============================================================ SEC EDGAR full-text search (DISABLED: needs owner email)

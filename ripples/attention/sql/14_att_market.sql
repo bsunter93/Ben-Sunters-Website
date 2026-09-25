@@ -127,3 +127,5 @@ on conflict do nothing;
 -- ---------------------------------------------------------------- FINRA file backfill (mirror + ring baseline)
 select ripples.att_job_enqueue('backfill', 'att-market',
   '{"mode":"backfill","params":{"source":"finra.api","files":true}}'::jsonb, 4, 'finra:files', null, null);
+-- (priority lowered to 6 right after the first test so ticker and USAspending jobs (5) are not starved:)
+update ripples.att_jobs set priority = 6 where dedupe_key = 'finra:files' and status = 'queued';
