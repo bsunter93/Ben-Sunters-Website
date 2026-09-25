@@ -93,9 +93,11 @@ create table if not exists ripples.rate_limits (
 );
 
 create table if not exists ripples.salts (
-  day  date primary key,
-  salt text not null
+  day     date primary key,
+  salt    text not null,   -- client salt (client_hash for puzzles dated `day`); deleted after ~9 days
+  ip_salt text             -- IP salt for UTC day `day`; nulled once the day is over (ripples._purge_salts)
 );
+alter table ripples.salts add column if not exists ip_salt text;
 
 create table if not exists ripples.copy (
   n          int  not null,
@@ -113,8 +115,11 @@ create table if not exists ripples.ledger (
   payload_hash text not null,
   prev_hash    text not null,
   chain_hash   text not null,
-  created_at   timestamptz not null default now()
+  created_at   timestamptz not null default now(),
+  seq          bigint generated always as identity   -- write order; the chain follows seq, not n
 );
+alter table ripples.ledger add column if not exists seq bigint generated always as identity;
+create unique index if not exists ledger_seq on ripples.ledger (seq);
 
 -- RLS on, no policies; nothing for anon/authenticated/public
 alter table ripples.config      enable row level security;
@@ -159,7 +164,8 @@ language sql stable security definer set search_path = '' as $$
   select (ripples._current_date() - ripples._epoch())::int
 $$;
 
--- Daily salt, created lazily (volatile: may insert).
+-- Daily salt, created lazily (volatile: may insert). Used for client_hash (salted by puzzle date).
+-- Creating a new day's row also runs the salt retention purge.
 create or replace function ripples._salt(p_day date default null) returns text
 language plpgsql volatile security definer set search_path = '' as $$
 declare d date := coalesce(p_day, (now() at time zone 'utc')::date); s text;
@@ -169,11 +175,40 @@ begin
     insert into ripples.salts(day, salt)
     values (d, encode(extensions.gen_random_bytes(16), 'hex'))
     on conflict (day) do nothing;
+    perform ripples._purge_salts();
     select salt into s from ripples.salts where day = d;
   end if;
   return s;
 end $$;
 
+-- Salt retention (SPEC 12.12): the IP salt lives for its UTC day only; the puzzle-date (client) salt
+-- is kept while plays for that puzzle can still arrive (current-7 .. current, plus a day of margin).
+create or replace function ripples._purge_salts() returns void
+language plpgsql volatile security definer set search_path = '' as $$
+declare today date := (now() at time zone 'utc')::date;
+begin
+  update ripples.salts set ip_salt = null where ip_salt is not null and day < today;
+  delete from ripples.salts where day < today - 9;
+end $$;
+
+-- sha256(today's IP salt || '|' || client IP). The IP salt is separate from the client salt and is
+-- nulled by _purge_salts() once its UTC day is over, so stored ip_hash values cannot be reversed later.
+create or replace function ripples._ip_hash() returns text
+language plpgsql volatile security definer set search_path = '' as $$
+declare d date := (now() at time zone 'utc')::date; s text;
+begin
+  select ip_salt into s from ripples.salts where day = d;
+  if s is null then
+    insert into ripples.salts(day, salt, ip_salt)
+    values (d, encode(extensions.gen_random_bytes(16), 'hex'), encode(extensions.gen_random_bytes(16), 'hex'))
+    on conflict (day) do update set ip_salt = coalesce(ripples.salts.ip_salt, excluded.ip_salt);
+    perform ripples._purge_salts();
+    select ip_salt into s from ripples.salts where day = d;
+  end if;
+  return encode(extensions.digest(s || '|' || ripples._ip(), 'sha256'), 'hex');
+end $$;
+
+-- client_hash only (salted with the puzzle date). IP hashes use ripples._ip_hash().
 create or replace function ripples._hash(p text, p_day date default null) returns text
 language sql volatile security definer set search_path = '' as $$
   select encode(extensions.digest(ripples._salt(p_day) || '|' || coalesce(p, ''), 'sha256'), 'hex')

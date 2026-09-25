@@ -1,174 +1,56 @@
--- Knock-On v5 / W1: migration ripples_v5_public_rpcs
--- Public read/write RPCs (anon) + service-only og_data / publish_bundle.
--- Every function: SECURITY DEFINER, search_path = '', fully-qualified names.
+-- Knock-On v5 / W1: migration ripples_v5_w1_verifier_fixes (applied after 01-03)
+-- Ledger: write only at publish, chain in write order (seq), hash a copy-free canonical form the public
+-- can recompute. Salts: separate IP salt, purged after its day; client salts purged after 9 days.
+-- Join: a paid price intent is never downgraded by 'free'. Call It closes at 00:00 UTC after window_start.
+-- og_data.past uses the 07:30 UTC rollover. Grants audit helper. Function bodies below are identical to
+-- sql/01 and sql/02 (which remain the full, current definitions).
+alter table ripples.salts  add column if not exists ip_salt text;
+alter table ripples.ledger add column if not exists seq bigint generated always as identity;
+create unique index if not exists ledger_seq on ripples.ledger (seq);
 
--- ======================= internal helpers =======================
-create or replace function ripples._categories() returns text[]
-language sql immutable set search_path = '' as $$
-  select array['person','place','film_tv','music','sport','science_health','tech','business',
-               'politics_law','food_drink','nature_weather','history_culture','other']
-$$;
-
--- category from the fixed category emoji (VS16 ignored)
-create or replace function ripples._cat(p_emoji text) returns text
-language sql immutable set search_path = '' as $$
-  select case replace(coalesce(p_emoji, ''), U&'\FE0F', '')
-    when '👤' then 'person'        when '📍' then 'place'          when '🎬' then 'film_tv'
-    when '🎵' then 'music'         when '🏅' then 'sport'          when '🧬' then 'science_health'
-    when '💻' then 'tech'          when '🏢' then 'business'       when '⚖'  then 'politics_law'
-    when '🍎' then 'food_drink'    when '🌦' then 'nature_weather' when '🏛' then 'history_culture'
-    when '🔹' then 'other'         else null end
-$$;
-
-create or replace function ripples._wiki_url(p_title text) returns text
-language sql immutable set search_path = '' as $$
-  select case when p_title is null then null else
-    'https://en.wikipedia.org/wiki/' ||
-    replace(replace(replace(replace(replace(p_title, '%', '%25'), ' ', '_'), '?', '%3F'), '#', '%23'), '"', '%22')
-  end
-$$;
-
--- Visibility: live = published and puzzle_date <= current puzzle date (07:30 UTC rollover);
--- practice = built/published; fixture = n 0 only.
-create or replace function ripples._visible(p_n int) returns boolean
-language sql stable security definer set search_path = '' as $$
-  select exists (
-    select 1 from ripples.puzzles p
-     where p.n = p_n and (
-          (p.kind = 'live'     and p.status = 'published' and p.puzzle_date <= ripples._current_date())
-       or (p.kind = 'practice' and p.status in ('built', 'published'))
-       or (p.kind = 'fixture'  and p.n = 0)))
-$$;
-
-create or replace function ripples._latest_live_n() returns int
-language sql stable security definer set search_path = '' as $$
-  select max(n) from ripples.puzzles
-   where kind = 'live' and status = 'published' and puzzle_date <= ripples._current_date()
-$$;
-
--- PuzzlePayload with copy overlay (ai/template headline from ripples.copy; fixture is never overlaid)
-create or replace function ripples._puzzle_json(p_n int) returns jsonb
-language plpgsql stable security definer set search_path = '' as $$
-declare r ripples.puzzles; h record; out jsonb;
+-- Salt retention (SPEC 12.12): the IP salt lives for its UTC day only; the puzzle-date (client) salt
+-- is kept while plays for that puzzle can still arrive (current-7 .. current, plus a day of margin).
+create or replace function ripples._purge_salts() returns void
+language plpgsql volatile security definer set search_path = '' as $$
+declare today date := (now() at time zone 'utc')::date;
 begin
-  select * into r from ripples.puzzles where n = p_n;
-  if not found or r.payload is null then return null; end if;
-  out := r.payload;
-  if r.kind <> 'fixture' then
-    select c.text, c.source into h from ripples.copy c
-     where c.n = p_n and c.kind = 'headline' and coalesce(c.i, 0) = 0;
-    if found then
-      out := jsonb_set(out, '{headline}', jsonb_build_object('text', h.text, 'source', h.source), true);
-    end if;
+  update ripples.salts set ip_salt = null where ip_salt is not null and day < today;
+  delete from ripples.salts where day < today - 9;
+end $$;
+
+-- Daily salt, created lazily (volatile: may insert). Used for client_hash (salted by puzzle date).
+-- Creating a new day's row also runs the salt retention purge.
+create or replace function ripples._salt(p_day date default null) returns text
+language plpgsql volatile security definer set search_path = '' as $$
+declare d date := coalesce(p_day, (now() at time zone 'utc')::date); s text;
+begin
+  select salt into s from ripples.salts where day = d;
+  if s is null then
+    insert into ripples.salts(day, salt)
+    values (d, encode(extensions.gen_random_bytes(16), 'hex'))
+    on conflict (day) do nothing;
+    perform ripples._purge_salts();
+    select salt into s from ripples.salts where day = d;
   end if;
-  return out;
+  return s;
 end $$;
 
--- RevealPayload with caption overlay from ripples.copy (fixture never overlaid)
-create or replace function ripples._reveal_json(p_n int) returns jsonb
-language plpgsql stable security definer set search_path = '' as $$
-declare r ripples.puzzles; rounds jsonb;
+-- sha256(today's IP salt || '|' || client IP). The IP salt is separate from the client salt and is
+-- nulled by _purge_salts() once its UTC day is over, so stored ip_hash values cannot be reversed later.
+create or replace function ripples._ip_hash() returns text
+language plpgsql volatile security definer set search_path = '' as $$
+declare d date := (now() at time zone 'utc')::date; s text;
 begin
-  select * into r from ripples.puzzles where n = p_n;
-  if not found or r.reveal is null then return null; end if;
-  if r.kind = 'fixture' or not exists (select 1 from ripples.copy c where c.n = p_n and c.kind = 'caption') then
-    return r.reveal;
+  select ip_salt into s from ripples.salts where day = d;
+  if s is null then
+    insert into ripples.salts(day, salt, ip_salt)
+    values (d, encode(extensions.gen_random_bytes(16), 'hex'), encode(extensions.gen_random_bytes(16), 'hex'))
+    on conflict (day) do update set ip_salt = coalesce(ripples.salts.ip_salt, excluded.ip_salt);
+    perform ripples._purge_salts();
+    select ip_salt into s from ripples.salts where day = d;
   end if;
-  select coalesce(jsonb_agg(
-           case when c.text is not null
-                then t.e || jsonb_build_object('caption', jsonb_build_object('text', c.text, 'source', c.source))
-                else t.e end
-           order by t.ord), '[]'::jsonb)
-    into rounds
-    from jsonb_array_elements(r.reveal -> 'rounds') with ordinality as t(e, ord)
-    left join ripples.copy c on c.n = p_n and c.kind = 'caption' and c.i = (t.e ->> 'i')::int;
-  return jsonb_set(r.reveal, '{rounds}', rounds);
+  return encode(extensions.digest(s || '|' || ripples._ip(), 'sha256'), 'hex');
 end $$;
-
--- CallItPayload (no visibility check)
-create or replace function ripples._callit_json(p_n int) returns jsonb
-language plpgsql stable security definer set search_path = '' as $$
-declare minp int := coalesce((ripples._cfg('min_players') #>> '{}')::int, 30);
-        total int; ws date; we date; opts jsonb; r ripples.puzzles;
-begin
-  select * into r from ripples.puzzles where n = p_n;
-  select min(window_start), max(window_end) into ws, we from ripples.callit where n = p_n;
-  if ws is null then return null; end if;
-  select count(*) into total from ripples.calls where n = p_n;
-  select jsonb_agg(jsonb_build_object(
-           'qid', c.qid, 'title', c.title, 'emoji', c.emoji,
-           'model_p', c.model_p,
-           'crowd_pct', case when total >= minp
-                             then round(100.0 * (select count(*) from ripples.calls k where k.n = p_n and k.qid = c.qid) / total)::int
-                             end,
-           'outcome', c.outcome,
-           'max_z', case when c.outcome <> 'pending' then c.max_z end,
-           'url', case when c.outcome <> 'pending' then ripples._wiki_url(c.title) end)
-         order by coalesce(o.ord, 99), c.qid)
-    into opts
-    from ripples.callit c
-    left join lateral (
-      select x.ord from jsonb_array_elements(coalesce(r.payload #> '{callit,options}', '[]'::jsonb)) with ordinality as x(e, ord)
-       where x.e ->> 'qid' = c.qid limit 1) o on true
-   where c.n = p_n;
-  return jsonb_build_object(
-    'n', p_n, 'window_start', ws, 'window_end', we, 'resolves_on', ws + 8,
-    'model', coalesce(ripples._cfg('model_label') #>> '{}', 'v0 base rate'),
-    'options', coalesce(opts, '[]'::jsonb));
-end $$;
-
--- StatsPayload. p_you is passed through; arrays only when players >= min_players.
-create or replace function ripples._stats(p_n int, p_you jsonb default null) returns jsonb
-language plpgsql stable security definer set search_path = '' as $$
-declare minp int := coalesce((ripples._cfg('min_players') #>> '{}')::int, 30);
-        players int; nr int; mx int; rounds jsonb; hist jsonb; magx numeric;
-begin
-  select count(*) into players from ripples.plays where n = p_n;
-  if players < minp then
-    return jsonb_build_object('n', p_n, 'players', players, 'shown', false, 'rounds', null,
-                              'score_hist', null, 'mag_median_x', null, 'you', p_you);
-  end if;
-  select jsonb_array_length(payload -> 'rounds') into nr from ripples.puzzles where n = p_n;
-  nr := coalesce(nr, 0);
-  mx := 2 * nr + 2;
-  select jsonb_agg(x.o order by x.i) into rounds from (
-    select g.i, jsonb_build_object(
-      'i', g.i,
-      'first_try_pct', round(100.0 * count(*) filter (where p.codes[g.i] = 2) / players)::int,
-      'found_pct',     round(100.0 * count(*) filter (where p.codes[g.i] >= 1) / players)::int,
-      'split', jsonb_build_object(
-         'a', round(100.0 * count(*) filter (where p.picks -> (g.i - 1) ->> 0 = 'a') / players)::int,
-         'b', round(100.0 * count(*) filter (where p.picks -> (g.i - 1) ->> 0 = 'b') / players)::int,
-         'c', round(100.0 * count(*) filter (where p.picks -> (g.i - 1) ->> 0 = 'c') / players)::int,
-         'd', round(100.0 * count(*) filter (where p.picks -> (g.i - 1) ->> 0 = 'd') / players)::int)) o
-    from generate_series(1, nr) g(i) cross join ripples.plays p
-   where p.n = p_n group by g.i) x;
-  select jsonb_agg(coalesce(s.cnt, 0) order by g.sc) into hist
-    from generate_series(0, mx) g(sc)
-    left join (select score, count(*) cnt from ripples.plays where n = p_n group by score) s on s.score = g.sc;
-  select round(power(10::numeric, percentile_cont(0.5) within group (order by mag_err)::numeric), 1)
-    into magx from ripples.plays where n = p_n and mag_err is not null;
-  return jsonb_build_object('n', p_n, 'players', players, 'shown', true, 'rounds', coalesce(rounds, '[]'::jsonb),
-                            'score_hist', hist, 'mag_median_x', magx, 'you', p_you);
-end $$;
-
--- archive row
-create or replace function ripples._archive_row(r ripples.puzzles) returns jsonb
-language sql stable security definer set search_path = '' as $$
-  select jsonb_build_object(
-    'n', r.n, 'date', r.puzzle_date, 'from_date', r.from_date, 'kind', r.kind,
-    'seed_title', r.payload #>> '{seed,title}', 'seed_emoji', r.payload #>> '{seed,emoji}',
-    'rounds', coalesce(jsonb_array_length(r.payload -> 'rounds'), 0),
-    'path', coalesce(r.payload #>> '{seed,emoji}', '') || coalesce((
-      select string_agg(
-               case when coalesce((rd.e ->> 'continues')::boolean, true) then ''
-                    else '·' || coalesce(rd.e #>> '{seed,emoji}', rd.e #>> '{parent,emoji}', '') end
-               || coalesce((select o ->> 'emoji' from jsonb_array_elements(rd.e -> 'options') o
-                             where o ->> 'id' = (select a ->> 'option_id' from jsonb_array_elements(r.answers) a
-                                                  where (a ->> 'i')::int = (rd.e ->> 'i')::int limit 1) limit 1), '?'),
-               '' order by rd.ord)
-        from jsonb_array_elements(r.payload -> 'rounds') with ordinality rd(e, ord)), ''))
-$$;
 
 -- Canonical JSON for hashing: every number is round-tripped through float8 (15 significant digits,
 -- plain notation), so a JSON file re-serialised by JS/Python hashes the same as the stored jsonb.
@@ -262,142 +144,6 @@ language sql stable security definer set search_path = '' as $$
      and pg_catalog.has_function_privilege(r.rolname, p.oid, 'EXECUTE')
    order by 1, 2
 $$;
-
--- ======================= public read RPCs (anon) =======================
-create or replace function public.ripples_latest() returns jsonb
-language plpgsql stable security definer set search_path = '' as $$
-declare cur date := ripples._current_date(); ln int; r ripples.puzzles;
-        next_at timestamptz := (((now() at time zone 'utc') - interval '7 hours 30 minutes')::date + 1 + time '07:30') at time zone 'utc';
-begin
-  ln := ripples._latest_live_n();
-  if ln is null then
-    return jsonb_build_object('n', null, 'date', cur, 'status', 'delayed', 'puzzle', null, 'next_at', next_at);
-  end if;
-  select * into r from ripples.puzzles where n = ln;
-  return jsonb_build_object('n', r.n, 'date', r.puzzle_date,
-    'status', case when r.puzzle_date >= cur then 'published' else 'delayed' end,
-    'puzzle', ripples._puzzle_json(r.n), 'next_at', next_at);
-end $$;
-
-create or replace function public.ripples_puzzle(p_n int) returns jsonb
-language sql stable security definer set search_path = '' as $$
-  select case when ripples._visible(p_n) then ripples._puzzle_json(p_n) end
-$$;
-
-create or replace function public.ripples_reveal(p_n int) returns jsonb
-language sql stable security definer set search_path = '' as $$
-  select case when ripples._visible(p_n) then ripples._reveal_json(p_n) end
-$$;
-
-create or replace function public.ripples_stats(p_n int) returns jsonb
-language sql stable security definer set search_path = '' as $$
-  select case when ripples._visible(p_n) then ripples._stats(p_n, null) end
-$$;
-
-create or replace function public.ripples_callit(p_n int) returns jsonb
-language sql stable security definer set search_path = '' as $$
-  select case when ripples._visible(p_n) then ripples._callit_json(p_n) end
-$$;
-
-create or replace function public.ripples_board(p_n int default null) returns jsonb
-language sql stable security definer set search_path = '' as $$
-  select case when ripples._visible(x.n) then (select p.board from ripples.puzzles p where p.n = x.n) end
-    from (select coalesce(p_n, ripples._latest_live_n()) as n) x
-$$;
-
-create or replace function public.ripples_archive(p_limit int default 60, p_kind text default 'live') returns jsonb
-language sql stable security definer set search_path = '' as $$
-  select coalesce(jsonb_agg(ripples._archive_row(p) order by (p.kind = 'live') desc, p.n desc), '[]'::jsonb)
-    from ripples.puzzles p
-   where p.n in (
-     select q.n from ripples.puzzles q
-      where ripples._visible(q.n)
-        and (case coalesce(p_kind, 'live')
-               when 'all' then q.kind in ('live', 'practice')
-               else q.kind = coalesce(p_kind, 'live') end)
-      order by (q.kind = 'live') desc, q.n desc
-      limit greatest(1, least(coalesce(p_limit, 60), 500)))
-$$;
-
-create or replace function public.ripples_brief(p_days int default 7, p_category text default null) returns jsonb
-language plpgsql stable security definer set search_path = '' as $$
-declare d int := greatest(1, least(coalesce(p_days, 7), 60));
-        cur date := ripples._current_date();
-        f date; t date; items jsonb; intro jsonb; recon boolean := false; lo int; hi int;
-begin
-  if p_category is not null and not (p_category = any (ripples._categories())) then
-    return jsonb_build_object('from', cur - d, 'to', cur - 1, 'category', null, 'intro', null,
-                              'reconstructed', false, 'items', '[]'::jsonb);
-  end if;
-  -- live puzzles strictly before today's (never spoil the current puzzle)
-  f := cur - d; t := cur - 1;
-  select min(n), max(n) into lo, hi from ripples.puzzles
-   where kind = 'live' and status = 'published' and puzzle_date between f and t;
-  if lo is null then
-    -- nothing live yet: fall back to reconstructed practice puzzles, labeled as such
-    select max(n) into hi from ripples.puzzles where kind = 'practice' and status in ('built','published');
-    if hi is not null then
-      lo := hi - d + 1; recon := true;
-      select min(puzzle_date), max(puzzle_date) into f, t from ripples.puzzles
-       where kind = 'practice' and n between lo and hi;
-    end if;
-  end if;
-  select coalesce(jsonb_agg(it.o order by it.n desc, it.i), '[]'::jsonb) into items from (
-    select p.n, (rd.e ->> 'i')::int as i, jsonb_build_object(
-      'n', p.n, 'date', p.puzzle_date,
-      'seed_title', coalesce(rd.e #>> '{seed,title}', p.payload #>> '{seed,title}'),
-      'hop_title', op.o ->> 'title',
-      'category', ripples._cat(op.o ->> 'emoji'),
-      'emoji', op.o ->> 'emoji',
-      'multiple', (rv.o ->> 'multiple')::numeric,
-      'fluke_1_in', (rr.e #>> '{evidence,fluke_1_in}')::int,
-      'lag_days', (rv.o ->> 'lag_days')::int,
-      'timing', rv.o ->> 'timing') as o
-    from ripples.puzzles p
-    cross join lateral jsonb_array_elements(p.payload -> 'rounds') rd(e)
-    cross join lateral (select z.v ->> 'option_id' as oid from jsonb_array_elements(p.answers) z(v)
-                        where (z.v ->> 'i')::int = (rd.e ->> 'i')::int limit 1) ans
-    cross join lateral (select y.v as o from jsonb_array_elements(rd.e -> 'options') y(v) where y.v ->> 'id' = ans.oid limit 1) op
-    left join lateral (select x.v as e from jsonb_array_elements(p.reveal -> 'rounds') x(v)
-                        where (x.v ->> 'i')::int = (rd.e ->> 'i')::int limit 1) rr on true
-    left join lateral (select y.v as o from jsonb_array_elements(rr.e -> 'options') y(v) where y.v ->> 'id' = ans.oid limit 1) rv on true
-   where p.n between lo and hi
-     and ((not recon and p.kind = 'live' and p.status = 'published' and p.puzzle_date between f and t)
-       or (recon and p.kind = 'practice' and p.status in ('built','published')))
-     and (p_category is null or ripples._cat(op.o ->> 'emoji') = p_category)) it;
-  select jsonb_build_object('text', c.text, 'source', c.source) into intro
-    from ripples.copy c where c.kind = 'brief_intro' and c.n between coalesce(lo, 0) and coalesce(hi, -1)
-   order by c.n desc, c.created_at desc limit 1;
-  return jsonb_build_object('from', f, 'to', t, 'category', p_category, 'intro', intro,
-                            'reconstructed', recon, 'items', items);
-end $$;
-
-create or replace function public.ripples_health() returns jsonb
-language plpgsql stable security definer set search_path = '' as $$
-declare ln int; r ripples.puzzles; st text; wm int; er int; cm date; cur date := ripples._current_date();
-begin
-  ln := ripples._latest_live_n();
-  if ln is not null then select * into r from ripples.puzzles where n = ln; end if;
-  if to_regclass('ripples.runs') is not null then
-    begin
-      execute 'select stage::text, wm_calls::int, errors::int from ripples.runs order by as_of desc limit 1'
-        into st, wm, er;
-    exception when others then st := null; wm := null; er := null;
-    end;
-  end if;
-  if to_regclass('ripples.clickstream') is not null then
-    begin
-      execute 'select max(month)::date from ripples.clickstream' into cm;
-    exception when others then cm := null;
-    end;
-  end if;
-  return jsonb_build_object(
-    'latest_n', ln, 'published_at', r.published_at,
-    'stale', (ln is null or r.puzzle_date < cur),
-    'expected_n', (cur - ripples._epoch())::int,
-    'stage', st, 'wm_calls', wm, 'errors', er,
-    'clickstream_month', to_char(cm, 'YYYY-MM'));
-end $$;
 
 -- ======================= public write RPCs (anon) =======================
 create or replace function public.ripples_submit_play(p_client text, p_n int, p_picks jsonb, p_mag numeric)
