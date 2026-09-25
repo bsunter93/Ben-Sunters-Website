@@ -5,6 +5,10 @@
 // brand card with status 200. Card data comes from the service-only RPC ripples_og_data(n) (board rows from
 // ripples_board(n)), read with SUPABASE_SERVICE_ROLE_KEY from the function env.
 // Test mode: &b64=1 returns the PNG as base64 text, only with a valid x-collector-token header.
+// Render budget: the brand card (every invalid, unknown or not-yet-visible request) is rendered once per isolate
+// and reused. Other cards are cached per isolate by canonical key (variant, n, clamped s) for up to 5 minutes, so
+// distinct query strings that mean the same card (s=4 vs s=99, extra params) cost one render. The number of
+// renderable non-brand cards is bounded by ~8 per visible puzzle.
 import satori from "npm:satori@0.10.14";
 import { Resvg, initWasm } from "npm:@resvg/resvg-wasm@2.6.2";
 import { createClient } from "jsr:@supabase/supabase-js@2";
@@ -382,21 +386,21 @@ async function rpc(fn: string, args: Record<string, unknown>): Promise<any> {
   return data;
 }
 
-type Plan = { el: El; variant: string; maxAge: number };
+type Plan = { el: El; variant: string; maxAge: number; key: string };
 async function plan(p: Req): Promise<Plan> {
-  const brand = (maxAge: number): Plan => ({ el: brandCard(), variant: "brand", maxAge });
+  const brand = (maxAge: number): Plan => ({ el: brandCard(), variant: "brand", maxAge, key: "brand" });
   if (p.bad) return brand(3600);
   let v = p.v ?? (p.n === null ? "brand" : p.s !== null ? "result" : "teaser");
   if (v === "brand") return brand(86400);
   if (v === "board") {
     const board = await rpc("ripples_board", { p_n: p.n });
     if (!board) return brand(300);
-    return { el: boardCard(board), variant: "board", maxAge: 3600 };
+    return { el: boardCard(board), variant: "board", maxAge: 3600, key: `board:${board.n ?? p.n}:${board.date ?? ""}` };
   }
   if (v === "latest") {
     const og = await rpc("ripples_og_data", { p_n: null }) as Og | null;
     if (!og) return brand(300);
-    return { el: teaserCard(og, null), variant: "latest", maxAge: 3600 };
+    return { el: teaserCard(og, null), variant: "latest", maxAge: 3600, key: `latest:${og.n}` };
   }
   if (p.n === null) return brand(3600);
   const og = await rpc("ripples_og_data", { p_n: p.n }) as Og | null;
@@ -422,13 +426,35 @@ async function plan(p: Req): Promise<Plan> {
     for (const r of Array.isArray(rv?.rounds) ? rv.rounds : []) {
       if (r && Number.isInteger(r.i)) fl.set(r.i, { fluke_1_in: r.evidence?.fluke_1_in ?? null, fluke_warming: r.evidence?.fluke_warming === true });
     }
-    return { el: revealCard(og, fl), variant: "reveal", maxAge };
+    return { el: revealCard(og, fl), variant: "reveal", maxAge, key: `reveal:${og.n}` };
   }
   if (v === "result") {
     const R = og.R || og.rounds.length;
-    return { el: teaserCard(og, Math.min(p.s!, R)), variant: "result", maxAge };
+    const s = Math.min(p.s!, R);
+    return { el: teaserCard(og, s), variant: "result", maxAge, key: `result:${og.n}:${s}:${maxAge}` };
   }
-  return { el: teaserCard(og, null), variant: "teaser", maxAge };
+  return { el: teaserCard(og, null), variant: "teaser", maxAge, key: `teaser:${og.n}:${maxAge}` };
+}
+
+// ---------- per-isolate render cache ----------
+const RENDER_TTL_MS = 300_000, RENDER_MAX = 48;
+let brandPng: Promise<Uint8Array> | null = null;
+const renderCache = new Map<string, { at: number; png: Promise<Uint8Array> }>();
+function cachedRender(pl: Plan): Promise<Uint8Array> {
+  if (pl.key === "brand") {
+    brandPng ??= render(brandCard());
+    brandPng.catch(() => { brandPng = null; });
+    return brandPng;
+  }
+  const now = Date.now();
+  const hit = renderCache.get(pl.key);
+  if (hit && now - hit.at < RENDER_TTL_MS) return hit.png;
+  const png = render(pl.el);
+  renderCache.delete(pl.key);
+  renderCache.set(pl.key, { at: now, png });
+  png.catch(() => renderCache.delete(pl.key));
+  while (renderCache.size > RENDER_MAX) renderCache.delete(renderCache.keys().next().value!);
+  return png;
 }
 
 const CORS = { "Access-Control-Allow-Origin": "*", "Access-Control-Allow-Methods": "GET, OPTIONS", "Access-Control-Allow-Headers": "x-collector-token" };
@@ -442,12 +468,12 @@ Deno.serve(async (req: Request) => {
   let pl: Plan;
   try { pl = await plan(p); } catch (e) {
     console.error("og data error", String(e));
-    pl = { el: brandCard(), variant: "brand", maxAge: 300 };
+    pl = { el: brandCard(), variant: "brand", maxAge: 300, key: "brand" };
   }
   let png: Uint8Array;
-  try { png = await render(pl.el); } catch (e) {
+  try { png = await cachedRender(pl); } catch (e) {
     console.error("render error", pl.variant, String(e));
-    try { png = await render(brandCard()); pl = { ...pl, variant: "brand", maxAge: 300 }; }
+    try { png = await cachedRender({ el: brandCard(), variant: "brand", maxAge: 300, key: "brand" }); pl = { ...pl, variant: "brand", maxAge: 300, key: "brand" }; }
     catch (e2) { return new Response("render unavailable", { status: 503, headers: { ...CORS, "Cache-Control": "no-store", "Content-Type": "text/plain" } }); }
   }
   const headers: Record<string, string> = {

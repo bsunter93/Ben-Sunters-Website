@@ -10,7 +10,8 @@
 // but it only becomes visible at the 07:30 rollover (ripples._current_date). While it is not yet visible
 // (bundle.latest.n < n) this function writes NO per-puzzle file for it: no puzzle/reveal/callit/board/{n}.json,
 // no data/{date}.json|.csv (the CSV carries the answer column) and no OG PNGs. It only refreshes latest.json
-// (still yesterday's, with next_at = today 07:30), archive, track, ledger and older Call It files. From 07:30 to
+// (still yesterday's, with next_at = today 07:30), archive, track, ledger and older Call It files, and it removes
+// board/latest.json (so the client reads ripples_board, which follows the rollover). From 07:30 to
 // the 07:45 run the client falls back to the RPCs: app.js getLatest() re-reads ripples_latest once next_at has
 // passed, and load() falls back to the RPC for any missing Storage object. The 07:45 run then mirrors everything.
 import { createClient } from "jsr:@supabase/supabase-js@2";
@@ -123,9 +124,19 @@ Deno.serve(async (req: Request) => {
       if (!ce && c) ups.push({ path: `${P}callit/${k}.json`, body: json(c), type: "application/json", cache: 300 });
     }
   }
-  // board/latest.json = the latest VISIBLE live board (same rule as latest.json); never a fixture/practice board
-  const { data: latestBoard } = await db.rpc("ripples_board", { p_n: null });
-  if (latestBoard) ups.push({ path: P + "board/latest.json", body: json(latestBoard), type: "application/json", cache: 300 });
+  // board/latest.json = the latest VISIBLE live board (same rule as latest.json); never a fixture/practice board.
+  // Staged run: REMOVE it instead, so from the 07:30 rollover until the 07:45 run the client's load() falls back to
+  // ripples_board() (which follows the rollover) rather than serving yesterday's board from Storage. Its 300 s cache
+  // expires by 07:30.
+  let boardRemoved = false;
+  if (staged) {
+    const { error: re } = await db.storage.from(BUCKET).remove([P + "board/latest.json"]);
+    boardRemoved = !re;
+    if (re) console.error("remove board/latest.json", re.message);
+  } else {
+    const { data: latestBoard } = await db.rpc("ripples_board", { p_n: null });
+    if (latestBoard) ups.push({ path: P + "board/latest.json", body: json(latestBoard), type: "application/json", cache: 300 });
+  }
   ups.push({ path: P + "archive.json", body: json(bundle.archive ?? []), type: "application/json", cache: 300 });
   ups.push({ path: P + "track.json", body: json(bundle.track ?? null), type: "application/json", cache: 300 });
   // ledger rows in write order, exactly the shape `validate.py --ledger-chain ledger.json` reads; head = last row
@@ -165,6 +176,7 @@ Deno.serve(async (req: Request) => {
   const res = {
     ok: errors.length === 0, n, kind, date: bundle.date ?? null, latest_status: bundle.latest?.status ?? null,
     staged, // true = published but not yet visible: per-puzzle files, open data and OG PNGs deferred to the next run
+    board_latest_removed: boardRemoved,
     uploaded: ups.map((u) => u.path).filter((p) => !errors.some((e) => e.startsWith(p + ":"))),
     og: og.ok, og_skipped: og.err, errors, ledger_head: bundle.ledger_head ?? null,
     ms: Math.round(performance.now() - t0),
