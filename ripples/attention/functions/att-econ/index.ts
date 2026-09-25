@@ -21,7 +21,8 @@
 //               (api.bls.gov robots.txt disallows "/": the keyed BLS API is ORANGE* and unused). FIRST-RELEASE values
 //               (ALFRED output_type=4; meta.rt = 'first', meta.released = first-release date): reconstructed release-look
 //               tests never read benchmark or seasonal-factor revisions. The daily mode only refreshes series the
-//               backfill already holds, once per release window.
+//               backfill already holds, once per release window. Series stored before e4 (revised values, relabelled
+//               meta.rt = 'latest') are re-read once as first releases by the backfill drain (state econ.bls.ces.rt).
 //   bls_cpi     ~45 BLS CPI-U item indexes (SA where published, NSA fallback), monthly, via FRED mirrors, first releases.
 //   dol_claims  DOL ETA ar539.csv: weekly state initial claims (ic) and continued weeks claimed (cw), plus key US (sum of
 //               the 50 states + DC, the regional-demeaning aggregate).
@@ -40,7 +41,7 @@
 import { addDays, db, errMsg, ingest, type ObsRow, politeFetch, type Run, serve, stateGet, stateSet } from "./att.ts";
 import { getJson, getText, r4, scrubStr, secret, todayUtc, wrap } from "./wsa.ts";
 
-export const ECON_VERSION = "2026-09-25.e4";
+export const ECON_VERSION = "2026-09-25.e5";
 
 // ------------------------------------------------------------------ series catalogues
 type Kind = "rate" | "level" | "count";
@@ -453,8 +454,11 @@ async function modeBls(run: Run, which: "ces" | "cpi", backfill = false) {
   const cfg = await cfgEcon();
   const today = todayUtc();
   const stKey = `econ.bls.${which}`;
-  const s = await st<{ fetched?: Record<string, string>; nsa?: string[]; missing?: string[] }>(stKey, {});
+  const s = await st<{ fetched?: Record<string, string>; nsa?: string[]; missing?: string[]; rt?: string[] }>(stKey, {});
   const fetched = s.fetched ?? {}, nsa = new Set(s.nsa ?? []), missing = new Set(s.missing ?? []);
+  // rt = ids whose FULL history was read as first releases (e5). Series fetched before e4 hold revised values
+  // (meta.rt = 'latest'); the backfill drain re-reads them once as first releases.
+  const rt = new Set(s.rt ?? []);
   // release window: the day of and the 2 days after a jobs (CES) / CPI release
   const rel = which === "ces" ? "jobs" : "cpi";
   const { data: near, error: nerr } = await db.rpc("att_release_near", { p_release: rel, p_days: 2 });
@@ -491,7 +495,7 @@ async function modeBls(run: Run, which: "ces" | "cpi", backfill = false) {
     if (!backfill && !last && run.params.force !== true) continue; // never fetched: left to the budget-guarded backfill drain
     const stale = !last || last < addDays(today, -35);
     if (!backfill && !stale && !(inWindow && last < addDays(today, -3)) && run.params.force !== true) continue; // once per release window
-    if (backfill && last && run.params.force !== true) continue;
+    if (backfill && last && rt.has(id) && run.params.force !== true) continue;
     wanted++;
     if (run.outOfTime(8000) || run.skipped.some((x) => x.host === "api.stlouisfed.org")) { run.partial = true; continue; }
     const from = backfill || !last ? String(cfg.fred_from ?? "2016-01-01") : addDays(today, -400);
@@ -518,9 +522,10 @@ async function modeBls(run: Run, which: "ces" | "cpi", backfill = false) {
     }
     rows += (await ingest(run, out)).rows;
     fetched[id] = today; done++;
-    await stSet(run, stKey, { fetched, nsa: [...nsa].sort(), missing: [...missing].sort() });
+    if (from <= String(cfg.fred_from ?? "2016-01-01")) rt.add(id);
+    await stSet(run, stKey, { fetched, nsa: [...nsa].sort(), missing: [...missing].sort(), rt: [...rt].sort() });
   }
-  await stSet(run, stKey, { fetched, nsa: [...nsa].sort(), missing: [...missing].sort() });
+  await stSet(run, stKey, { fetched, nsa: [...nsa].sort(), missing: [...missing].sort(), rt: [...rt].sort() });
   if (!run.dryRun) {
     const { error } = await db.rpc("att_econ_apply_releases");
     if (error) run.errors.push(`att_econ_apply_releases: ${error.message}`);
@@ -528,7 +533,8 @@ async function modeBls(run: Run, which: "ces" | "cpi", backfill = false) {
   const pending = wanted - done;
   if (pending > 0) { run.partial = true; run.nextCursor = { source, pending }; }
   run.extra[`bls_${which}`] = { rows, fetched_now: done, pending, nsa: [...nsa], missing: [...missing].slice(0, 40), n_missing: missing.size,
-    not_on_fred_now: notOnFred, fred_ces_ids: avail ? avail.size : undefined, n_fetched: Object.keys(fetched).length, via: "FRED mirror" };
+    not_on_fred_now: notOnFred, fred_ces_ids: avail ? avail.size : undefined, n_fetched: Object.keys(fetched).length,
+    n_first_release_full: rt.size, via: "FRED mirror" };
   run.source({ source, status: run.partial ? "partial" : "ok", keys: done, rows, ms: Date.now() - t0 });
 }
 

@@ -417,7 +417,7 @@ language plpgsql security definer set search_path = '' as $$
 declare c record; cfg jsonb := coalesce(ripples._att_cfg('engine'), '{}'::jsonb); bc int := coalesce((cfg ->> 'bc_stop')::int, 10);
         t_h float8 := p_t; v_end date; bundle jsonb; agg boolean; dd date[]; ll bigint[]; td jsonb; n_draw int; i int; res jsonb; tp date;
         exceed int := 0; n_done int := 0; p float8; gates boolean; stopped boolean := false; tv float8; ids bigint[]; gate boolean := p_gate;
-        ts real[] := '{}';
+        ts real[] := '{}'; n_gated int := 0;
 begin
   select * into c from ripples.att_hop_candidates where hop_id = p_hop_id;
   v_end := c.looks[least(greatest(p_look, 1), cardinality(c.looks))] - 1;
@@ -449,11 +449,12 @@ begin
     end if;
     tv := (res ->> 'T')::float8;
     continue when tv is null;
-    n_done := n_done + 1;
     gates := (not gate) or coalesce((res ->> 's_pre')::float8, 0) < 2;
-    if tv >= t_h and gates then exceed := exceed + 1; end if;
     if p_keep_rows then ts := ts || (case when gates then tv else -tv - 1000 end)::real; end if;   -- gated-out draws stored negative-offset
-    if exceed >= bc and not p_keep_rows then stopped := true; exit; end if;
+    if not gates then n_gated := n_gated + 1; continue; end if;   -- outside the conditional null (already moving): neither a draw nor an exceedance
+    n_done := n_done + 1;
+    if tv >= t_h then exceed := exceed + 1; end if;
+    if exceed >= bc and n_done >= 30 and not p_keep_rows then stopped := true; exit; end if;   -- ≥ 30 draws before stopping: p keeps ≥ 1/31 resolution and no family is lost to an early stop
   end loop;
   if p_keep_rows and n_done > 0 then
     insert into ripples.att_placebo_top(hop_id, look_no, kind, as_of, t_h, n, exceed, gated, t_stats)
@@ -461,8 +462,9 @@ begin
     on conflict (hop_id, look_no, kind) do update set t_h = excluded.t_h, n = excluded.n, exceed = excluded.exceed, gated = excluded.gated,
       t_stats = excluded.t_stats, as_of = excluded.as_of, created_at = now();
   end if;
-  p := case when n_done = 0 then null when stopped then bc::float8 / n_done else (1 + exceed)::float8 / (1 + n_done) end;
-  return jsonb_build_object('family', p_family, 'n', n_done, 'available', n_draw, 'exceed', exceed, 'p', p, 'stopped', stopped, 't_h', t_h, 'gated', gate);
+  -- Besag–Clifford: p = h/l when the loop stopped at the h-th exceedance; a stop at the 30-draw floor with more exceedances is a fixed-n estimate
+  p := case when n_done = 0 then null when stopped and exceed = bc then bc::float8 / n_done else (1 + exceed)::float8 / (1 + n_done) end;
+  return jsonb_build_object('family', p_family, 'n', n_done, 'available', n_draw, 'exceed', exceed, 'p', p, 'stopped', stopped, 't_h', t_h, 'gated', gate, 'n_gated', n_gated);
 end $$;
 
 -- ---------------------------------------------------------------------------------------------------------------------

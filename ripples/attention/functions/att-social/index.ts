@@ -12,7 +12,8 @@
 //              registry hashtags in rotation (masto.tags).
 //   hn         HN Algolia strict (typoTolerance=false, advancedSyntax=true, quoted phrase): stories+comments per term
 //              per day for the last `hn_days` complete days (rotation), plus the '__total__' normaliser.
-//   stackex    Stack Exchange (unkeyed quota, honours `backoff`, stops on throttle): question counts per term per
+//   stackex    Stack Exchange (app key 'stackexchange_key' from Vault at run time, appended as &key= to
+//              api.stackexchange.com requests only; honours `backoff`, stops on throttle): question counts per term per
 //              relevant site (att_config 'se.sites_by_category'), plus per-site '__total__' questions per day.
 //   backfill   400-day history for merged backfill jobs: params.source = 'hn.algolia' | 'se.api'. Resumable per key.
 //   ping       no outbound requests; reports version.
@@ -20,12 +21,12 @@
 // The Jetstream websocket is opened by a minimal RFC 6455 client over TLS so the honest User-Agent is sent and the
 // upgrade status is visible (401/403 -> permanent kill, 429/503 -> day kill); the same checks run before it.
 import {
-  ATT_VERSION, addDays, configGet, db, errMsg, hostKilled, hostLease, isRed, killHost, politeFetch, robotsAllowed,
+  ATT_VERSION, addDays, attSecret, configGet, db, errMsg, hostKilled, hostLease, isRed, killHost, politeFetch, robotsAllowed,
   type Run, serve, sourceInfo, stateGet, stateSet, takeBudget, UA, ymd, type ObsRow, ingest, ingestCandidates,
 } from "./att.ts";
 
 const FN = "att-social";
-export const SOCIAL_VERSION = "2026-09-25.s4";
+export const SOCIAL_VERSION = "2026-09-25.s5";
 
 // ------------------------------------------------------------------ small helpers
 const DAY_S = 86400;
@@ -812,10 +813,10 @@ async function hnTotalsBackfill(run: Run, maxCalls: number) {
   if (!run.dryRun && got < dayTs(doneFrom)) await stateSet("hn.total.bf", { done_from: tsDay(got), at: new Date().toISOString() });
 }
 
-// ------------------------------------------------------------------ Stack Exchange (unkeyed quota)
+// ------------------------------------------------------------------ Stack Exchange (keyed quota: 10,000/day)
 const SE = "https://api.stackexchange.com/2.3";
 const SE_FILTER_INCLUDE = ".backoff;.has_more;.items;.quota_remaining;.total;question.creation_date";
-interface SeCtx { filter: string | null; backoffUntil: number; stop: string | null; quota: number | null; minQuota: number }
+interface SeCtx { filter: string | null; backoffUntil: number; stop: string | null; quota: number | null; minQuota: number; key: string | null }
 async function seGet(run: Run, ctx: SeCtx, path: string, params: Record<string, string>): Promise<any | null> {
   if (ctx.stop) return null;
   if (ctx.backoffUntil > Date.now()) {
@@ -823,7 +824,10 @@ async function seGet(run: Run, ctx: SeCtx, path: string, params: Record<string, 
     if (w > 15000 || run.timeLeft() - w < 8000) { ctx.stop = "backoff"; run.partial = true; return null; }
     await new Promise((r) => setTimeout(r, w));
   }
-  const res = await politeFetch(run, `${SE}${path}?${new URLSearchParams(params)}`, { source: "se.api" });
+  // the app key only ever goes to api.stackexchange.com (SE is a fixed https://api.stackexchange.com base)
+  const q = new URLSearchParams(params);
+  if (ctx.key) q.set("key", ctx.key);
+  const res = await politeFetch(run, `${SE}${path}?${q}`, { source: "se.api" });
   if (!res) { ctx.stop = "not_fetched"; return null; }
   const j = await res.json().catch(() => null);
   if (j && typeof j.backoff === "number" && j.backoff > 0) {
@@ -845,7 +849,9 @@ async function seGet(run: Run, ctx: SeCtx, path: string, params: Record<string, 
 }
 async function seContext(run: Run, cfg: Record<string, any>): Promise<SeCtx> {
   const b = (await stateGet("se.backoff")) as { until?: string } | null;
-  const ctx: SeCtx = { filter: null, backoffUntil: b?.until ? Date.parse(b.until) : 0, stop: null, quota: null, minQuota: Number(cfg.se_min_quota ?? 20) };
+  const ctx: SeCtx = { filter: null, backoffUntil: b?.until ? Date.parse(b.until) : 0, stop: null, quota: null, minQuota: Number(cfg.se_min_quota ?? 20),
+    key: await attSecret(run, "stackexchange_key") };
+  run.extra.se_keyed = ctx.key !== null;
   const f = (await stateGet("se.filter")) as { filter?: string; include?: string } | null;
   if (f?.filter && f.include === SE_FILTER_INCLUDE) ctx.filter = f.filter;
   else {
@@ -1084,7 +1090,7 @@ async function backfillSe(run: Run, from: string, to: string) {
     if (allDone) doneKeys.push(k.key); else { run.partial = true; break; }
   }
   if (!ctx.stop && !run.outOfTime(15000)) await seTotalsBackfill(run, ctx, [...new Set(Object.values(map).flat().map(String))], 10);
-  await bfDone(run, skipKeys, "skipped", "se.api: no relevant Stack Exchange site for this topic category (unkeyed quota)");
+  await bfDone(run, skipKeys, "skipped", "se.api: no relevant Stack Exchange site for this topic category");
   await bfDone(run, doneKeys, "done");
   if (ctx.stop === "quota_low" && !run.skipped.some((x) => x.host === "api.stackexchange.com")) run.skip("api.stackexchange.com", "daily_budget_spent:se.api(quota_low)");
   await deferIfHostClosed(run, "api.stackexchange.com");

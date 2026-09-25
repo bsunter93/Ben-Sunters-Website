@@ -2,7 +2,7 @@
 -- Covers: transforms (Φ, Φ⁻¹, NB mid-p, holidays), window statistic and CAR scaling, sd_null, weighted BH (pure), frozen BH weights and
 -- the bit-identical freeze hash, tier logic on a synthetic fixture with known injected effects (recall, null uniformity, decoy FDR),
 -- attention-only cap, MONEY/IO zero tests, placebo shift-0 identity, retraction, ledger chaining (incl. a tamper check in a savepoint).
--- The synthetic fixture lives in source 'test.synth' (tier 'test') and is removed at the end unless p_cleanup = false.
+-- The synthetic fixture lives in source 'test.synth' (tier 'test') inside a sub-transaction that is rolled back at the end unless p_cleanup = false.
 
 -- pure weighted BH (Genovese–Roeder–Wasserman): q_(i) = min_{j ≥ i} m · p_(j) / (w_(j) · j), clamped to 1; returned in input order
 create or replace function ripples.att_bh_q(p_p float8[], p_w float8[]) returns float8[]
@@ -24,7 +24,7 @@ language plpgsql security definer set search_path = '' as $$
 declare res jsonb := '[]'::jsonb; ok boolean; j jsonb; arr real[]; s jsonb; s2 jsonb; q float8[]; t0 date := current_date - 45; i int; k int;
         v_ev bigint; run jsonb; n_inj_meas int; n_null_likely int; n_decoy_meas int; n_decoy_tested int; ps float8[] := '{}';
         ks jsonb; v_hop bigint; v_look smallint; a jsonb; b jsonb; lv jsonb; h record; fin jsonb; ledger_ok boolean; tamper jsonb;
-        v_sid bigint; nser int := 60; v_recomp text; bad_keys jsonb;
+        v_sid bigint; nser int := 80; v_recomp text; bad_keys jsonb;
 begin
   -- T1 transforms
   ok := abs(ripples.att_norm_inv(0.975) - 1.959964) < 1e-4 and abs(ripples.att_norm_cdf(1.96) - 0.9750021) < 1e-5
@@ -65,14 +65,17 @@ begin
   ok := ok and q[1] < q[2] and abs(q[1] - 2 * 0.02 / 5 / 1) < 1e-9;
   res := ripples._att_t(res, 'T4 weighted BH step-up (pure)', ok, jsonb_build_object('q_unweighted', s, 'q_weighted', to_jsonb(q)));
 
-  -- T5 frozen weights: every frozen day sums to m within 1e-3, weights in [0.2, 5]·(m/Σ), and the hash recomputes bit-identically
+  -- T5 every ledger freeze batch (not superseded) recomputes bit-identically and its frozen weights sum to its m (batches re-frozen by
+  -- att_refreeze keep their original weights and are exempt from the weight sum)
   ok := true;
-  for h in select as_of, count(*) m, sum(bh_weight) sw, min(frozen_hash) fh from ripples.att_hop_candidates where frozen_hash is not null group by as_of loop
-    v_recomp := ripples.att_freeze_hash(h.as_of, false);
-    ok := ok and abs(h.sw - h.m) < 1e-2 * greatest(1, h.m) and v_recomp = h.fh;
+  for h in select l.seq, l.payload_hash fh, (l.ref ->> 'as_of')::date as_of, (l.ref ? 'refreeze_of') refrozen from ripples.att_ledger l
+           where l.kind = 'freeze' and not (l.ref ? 'superseded_by') loop
+    v_recomp := ripples.att_freeze_hash(h.as_of, false, h.fh);
+    ok := ok and v_recomp = h.fh
+          and (h.refrozen or abs((select sum(bh_weight) - count(*) from ripples.att_hop_candidates c where c.frozen_hash = h.fh)) < 1e-2 * greatest(1, (select count(*) from ripples.att_hop_candidates c where c.frozen_hash = h.fh)));
   end loop;
-  res := ripples._att_t(res, 'T5 frozen BH weights sum to m and every frozen hash recomputes bit-identically', ok,
-           (select jsonb_agg(jsonb_build_object('as_of', x.as_of, 'm', x.m, 'sum_w', x.sw)) from (select as_of, count(*) m, round(sum(bh_weight)::numeric, 3) sw from ripples.att_hop_candidates where frozen_hash is not null group by as_of) x));
+  res := ripples._att_t(res, 'T5 every frozen batch recomputes bit-identically and its BH weights sum to m', ok,
+           (select jsonb_agg(jsonb_build_object('as_of', x.as_of, 'batches', x.b, 'm', x.m)) from (select as_of, count(distinct frozen_hash) b, count(*) m from ripples.att_hop_candidates where frozen_hash is not null group by as_of) x));
   ok := not exists (select 1 from ripples.att_hop_tests t where not exists (select 1 from ripples.att_hop_candidates c where c.hop_id = t.hop_id and c.frozen_hash is not null));
   res := ripples._att_t(res, 'T5 no att_hop_tests row without a frozen candidate', ok, null);
 
@@ -82,8 +85,11 @@ begin
         and not exists (select 1 from ripples.att_hop_tests where tier = 'measured' and attention_only);
   res := ripples._att_t(res, 'T6 MONEY zero tests, IO zero tests, attention-only never Measured', ok, null);
 
-  -- T7 synthetic fixture: source test.synth (PHYS, level), 50 null series + 10 with an injected +0.3 log-unit response for 7 days after t0,
-  -- 1,200 days of history (exercises the long-array path and gives the date family its daily draws); targets: 10 null (s01–s10) + 10 injected (s51–s60)
+  -- T7–T12 run on a synthetic fixture inside a sub-transaction that is rolled back at the end (p_cleanup = true): no fixture rows,
+  -- ledger entries or freeze batches persist, so the live ledger stays bit-identical. The results (res) survive the rollback.
+  begin
+  -- T7 synthetic fixture: source test.synth (PHYS, level), 70 null series + 10 with an injected +0.3 log-unit response for 7 days after t0,
+  -- 1,200 days of history (long-array path, daily date draws); targets: 10 null (s01–s10) + 10 injected (s71–s80); the 60 untargeted nulls form the topic pool
   insert into ripples.att_sources(source, family, channel, grade, value_kind, grain, history_from, quality, enabled, reason, needs_secret, policy_d1, tier,
                                   attribution, license_note, per_run_cap, per_day_cap, spacing_ms, budget_bucket, hosts, robots_required, backfill_fn)
   values ('test.synth', 'test', 'physical', 'green', 'level', 'day', current_date - 1200, 1, true, 'engine test fixture', null, false, 'test', 'synthetic', 'none', null, null, 0, null, '{}', false, null)
@@ -91,7 +97,7 @@ begin
   insert into ripples.att_engine_source_map(source, channel, value_kind, same_dow, agg_key, domain) values ('test.synth', 'PHYS', 'level', false, null, 'real_world') on conflict (source) do nothing;
   insert into ripples.att_families(family, label, scheduled, mapper) values ('test.synth', 'Synthetic test family', false,
     (select jsonb_agg(jsonb_build_object('node', 'test.synth:s' || lpad(g::text, 2, '0'), 'sign', 1, 'template', 'test_injected'))
-       from (select g from generate_series(1, 10) g union all select g from generate_series(51, 60) g) x))
+       from (select g from generate_series(1, 10) g union all select g from generate_series(71, 80) g) x))
   on conflict (family) do update set mapper = excluded.mapper;
   perform setseed(0.7);
   for i in 1..nser loop
@@ -101,13 +107,13 @@ begin
     insert into ripples.attention_obs(series_id, day, value)
     select v_sid, d::date,
            exp(5 + 0.15 * sin(extract(dow from d) * 0.9) + 0.05 * (random() * 2 - 1) * 1.7
-               + case when i > 50 and d::date between t0 and t0 + 6 then 0.30 else 0 end)
+               + case when i > 70 and d::date between t0 and t0 + 6 then 0.30 else 0 end)
     from generate_series(current_date - 1200, current_date - 1, interval '1 day') d;
   end loop;
   perform ripples.att_build_zvec(current_date - 1, array['test.synth']);
   v_ev := ripples.att_library_event(null, 'Synthetic shock', 'test.synth', t0, 'library');
   run := ripples.att_run_library(v_ev);
-  select count(*) filter (where hl.tier = 'measured' and hl.node >= 'test.synth:s51'), count(*) filter (where hl.tier in ('likely','measured') and hl.node <= 'test.synth:s10')
+  select count(*) filter (where hl.tier = 'measured' and hl.node >= 'test.synth:s71'), count(*) filter (where hl.tier in ('likely','measured') and hl.node <= 'test.synth:s10')
     into n_inj_meas, n_null_likely from ripples.att_hop_latest hl where hl.event_id = v_ev;
   select count(*), count(*) filter (where hl.tier = 'measured') into n_decoy_tested, n_decoy_meas
     from ripples.att_hop_latest hl join ripples.att_events e on e.event_id = hl.event_id where e.matched_to = v_ev and e.role = 'decoy' and hl.t_stat is not null;
@@ -166,26 +172,58 @@ begin
         and not exists (select 1 from ripples.att_cascades c where c.payload::text ~* '\m(caused|drove|because of)\M');
   res := ripples._att_t(res, 'T12 no payload contains a chain probability or a causal claim', ok, jsonb_build_object('bad_keys', bad_keys));
 
-  -- cleanup of the fixture (events, candidates, series, source) unless kept for inspection
-  if p_cleanup then
-    delete from ripples.att_placebo_top where hop_id in (select hop_id from ripples.att_hop_candidates where event_id in (select event_id from ripples.att_events where family = 'test.synth'));
-    delete from ripples.att_cascades where event_id in (select event_id from ripples.att_events where family = 'test.synth');
-    delete from ripples.att_hop_registry where hop_id in (select hop_id from ripples.att_hop_candidates where event_id in (select event_id from ripples.att_events where family = 'test.synth'));
-    delete from ripples.att_placebo_draws where hop_id in (select hop_id from ripples.att_hop_candidates where event_id in (select event_id from ripples.att_events where family = 'test.synth'));
-    delete from ripples.att_hop_tests where hop_id in (select hop_id from ripples.att_hop_candidates where event_id in (select event_id from ripples.att_events where family = 'test.synth'));
-    delete from ripples.att_hop_candidates where event_id in (select event_id from ripples.att_events where family = 'test.synth');
-    delete from ripples.att_cand_stage where event_id in (select event_id from ripples.att_events where family = 'test.synth');
-    delete from ripples.att_events where family = 'test.synth';
-    delete from ripples.att_node_series where node like 'test.synth:%';
-    delete from ripples.att_topics where label_key like 'node:test.synth:%' or label_key like 'library:synthetic-shock:%' or (label_key like 'decoy:%' and label like 'Synthetic shock%');
-    delete from ripples.att_series where source = 'test.synth';      -- cascades to attention_obs, att_zvec, att_sd_null, att_node_series
-    delete from ripples.att_zvec_ct where source = 'test.synth';
-    delete from ripples.att_weekday where source = 'test.synth';
-    delete from ripples.att_state st where st.k = 'zvec.phi.test.synth';
-    delete from ripples.att_families where family = 'test.synth';
-    delete from ripples.att_engine_source_map where source = 'test.synth';
-    delete from ripples.att_sources where source = 'test.synth';
-  end if;
+    if p_cleanup then raise exception using errcode = 'P0999', message = 'fixture rollback'; end if;
+  exception when sqlstate 'P0999' then null;
+  end;
   return jsonb_build_object('ok', not exists (select 1 from jsonb_array_elements(res) r where not (r ->> 'ok')::boolean), 'tests', res);
 end $$;
 revoke all on function ripples.att_test_engine(boolean) from anon, authenticated, public;
+
+-- ---------------------------------------------------------------------------------------------------------------------
+-- On-demand runners. The harness takes ~8 minutes, longer than the 2-minute statement_timeout the MCP/pg_cron sessions
+-- inherit, so it is run by a request flag polled by a short-lived pg_cron loop:
+--   select ripples.att_state_set('engine.test.request', '{"status":"pending"}');
+--   select cron.schedule('att-test-loop', '* * * * *', $$set statement_timeout = '90min'; select ripples.att_test_runner()$$);
+-- The result lands in att_state 'engine.test' (tests[] + ok + seconds); unschedule the loop when done. Same shape for the
+-- deploy gate (att_run_controls) via 'engine.controls.request' / 'engine.controls' / att-controls-loop. Neither loop is
+-- part of the daily schedule; nothing here writes secrets or key names.
+create or replace function ripples.att_test_runner() returns jsonb
+language plpgsql security definer set search_path = '' as $$
+declare req jsonb := coalesce(ripples.att_state_get('engine.test.request'), '{}'::jsonb); r jsonb; ctx text; t0 timestamptz := clock_timestamp();
+begin
+  if coalesce(req ->> 'status', '') <> 'pending' then return jsonb_build_object('idle', true); end if;
+  if not pg_try_advisory_lock(hashtext('ripples.att_test_runner')) then return jsonb_build_object('skipped', 'running'); end if;
+  begin
+    r := ripples.att_test_engine(true);
+    perform ripples.att_state_set('engine.test', r || jsonb_build_object('at', now(), 'seconds', round(extract(epoch from clock_timestamp() - t0)::numeric, 1)));
+    perform ripples.att_state_set('engine.test.request', jsonb_build_object('status', 'done', 'at', now()));
+  exception when others or query_canceled then
+    get stacked diagnostics ctx = pg_exception_context;
+    perform ripples.att_state_set('engine.test', jsonb_build_object('error', sqlerrm, 'state', sqlstate, 'ctx', left(ctx, 800), 'at', now(),
+                                                                    'seconds', round(extract(epoch from clock_timestamp() - t0)::numeric, 1)));
+    perform ripples.att_state_set('engine.test.request', jsonb_build_object('status', 'failed', 'at', now()));
+  end;
+  perform pg_advisory_unlock(hashtext('ripples.att_test_runner'));
+  return coalesce(ripples.att_state_get('engine.test'), '{}'::jsonb) - 'tests';
+end $$;
+revoke all on function ripples.att_test_runner() from anon, authenticated, public;
+
+create or replace function ripples.att_controls_runner() returns jsonb
+language plpgsql security definer set search_path = '' as $$
+declare req jsonb := coalesce(ripples.att_state_get('engine.controls.request'), '{}'::jsonb); r jsonb; ctx text; t0 timestamptz := clock_timestamp();
+begin
+  if coalesce(req ->> 'status', '') <> 'pending' then return jsonb_build_object('idle', true); end if;
+  if not pg_try_advisory_lock(hashtext('ripples.att_controls_runner')) then return jsonb_build_object('skipped', 'running'); end if;
+  begin
+    r := ripples.att_run_controls(false);
+    perform ripples.att_state_set('engine.controls', r || jsonb_build_object('at', now(), 'seconds', round(extract(epoch from clock_timestamp() - t0)::numeric, 1)));
+    perform ripples.att_state_set('engine.controls.request', jsonb_build_object('status', 'done', 'at', now()));
+  exception when others or query_canceled then
+    get stacked diagnostics ctx = pg_exception_context;
+    perform ripples.att_state_set('engine.controls', jsonb_build_object('error', sqlerrm, 'state', sqlstate, 'ctx', left(ctx, 800), 'at', now()));
+    perform ripples.att_state_set('engine.controls.request', jsonb_build_object('status', 'failed', 'at', now()));
+  end;
+  perform pg_advisory_unlock(hashtext('ripples.att_controls_runner'));
+  return coalesce(ripples.att_state_get('engine.controls'), '{}'::jsonb) - 'positive';
+end $$;
+revoke all on function ripples.att_controls_runner() from anon, authenticated, public;

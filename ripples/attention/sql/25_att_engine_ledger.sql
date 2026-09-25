@@ -51,8 +51,10 @@ begin
   v_tgt := coalesce(case when e.role = 'decoy' and e.matched_to is not null then (select topic_id from ripples.att_events where event_id = e.matched_to) end, e.topic_id);
   v_map_from := coalesce(case when e.role = 'decoy' and e.matched_to is not null and p_depth = 1 then (select qid from ripples.att_events where event_id = e.matched_to) end, v_from);
 
+  -- The family mapper and the mechanism library are event-level: they only apply at depth 1. Deeper hops follow edges from the
+  -- parent node (MAP / WD / WIKI / co-coverage), never the event's own target list again.
   k := 0;
-  for it in select x from ripples.att_families f, jsonb_array_elements(f.mapper) x where f.family = v_family loop
+  for it in select x from ripples.att_families f, jsonb_array_elements(f.mapper) x where f.family = v_family and p_depth = 1 loop
     for nd in select * from ripples.att_resolve_targets(it, v_tgt) loop
       exit when k >= coalesce((caps ->> 'P-MAP')::int, 25);
       insert into ripples.att_cand_stage(as_of, event_id, role, parent_hop, depth, u_topic, node, path, path_type, sign, prior, onset, template, rank_in_path, aware, jumps)
@@ -74,7 +76,7 @@ begin
   end loop;
 
   k := 0;
-  for r in select t.* from ripples.att_mech_templates t where t.family = v_family order by t.template loop
+  for r in select t.* from ripples.att_mech_templates t where t.family = v_family and p_depth = 1 order by t.template loop
     for nd in select * from ripples.att_resolve_targets(r.target_pattern, v_tgt) loop
       exit when k >= coalesce((caps ->> 'P-MECH')::int, 10);
       insert into ripples.att_cand_stage(as_of, event_id, role, parent_hop, depth, u_topic, node, path, path_type, sign, prior, onset, template, rank_in_path, aware, jumps)
@@ -152,6 +154,13 @@ begin
             'P-COM', 0, null, v_onset, array[r.ch], k, least(1, r.pmi_z / 5.0), 0);
     k := k + 1; n := n + 1;
   end loop;
+  -- never re-propose a node this event already tests (any depth) nor the parent node itself (no self-loops)
+  if p_depth > 1 then
+    delete from ripples.att_cand_stage s
+     where s.as_of = p_as_of and s.event_id = p_event and s.parent_hop is not distinct from p_parent_hop and s.depth = p_depth
+       and (s.node = v_from or exists (select 1 from ripples.att_hop_candidates c where c.event_id = p_event and c.node = s.node));
+    get diagnostics k = row_count; n := n - k;
+  end if;
   return n;
 end $$;
 
@@ -167,27 +176,41 @@ language sql stable security definer set search_path = '' as $$
   order by encode(extensions.digest(p_event::text || ':' || node, 'sha256'), 'hex') limit p_n
 $$;
 
-create or replace function ripples.att_freeze_candidates(p_as_of date, p_library boolean default false) returns jsonb
+-- Freeze one batch: the whole live day (p_events null) or, in library mode, one event with its decoys (p_events). Every batch has its
+-- own frozen_hash and ledger 'freeze' row, so a batch recomputes bit-identically whatever else is frozen on the same as_of day.
+drop function if exists ripples.att_freeze_candidates(date, boolean);
+create or replace function ripples.att_freeze_candidates(p_as_of date, p_library boolean default false, p_events bigint[] default null) returns jsonb
 language plpgsql security definer set search_path = '' as $$
 declare e record; r record; cfg jsonb := coalesce(ripples._att_cfg('engine'), '{}'::jsonb); n_stage int := 0; n_ins int := 0; n_new_nodes int := 0;
         v_hash text; v_seq bigint; m int; v_mean float8; v_events int := 0; ch text; v_chs text[]; v_avail text[]; v_l int; v_looks date[];
         v_close date; v_prior float8; v_pi_min float8 := coalesce((cfg->>'pi_min')::float8, 0.05); v_hardcap int := coalesce((cfg->>'hard_cap_tests')::int, 1600);
-        v_tchan text; v_h float8; n_neg int := 0; v_frozen_before int; pe jsonb;
+        v_tchan text; v_h float8; n_neg int := 0; v_frozen_before int; pe jsonb; scope bigint[];
 begin
-  select count(*) into v_frozen_before from ripples.att_hop_candidates where as_of = p_as_of and frozen_hash is not null;
-  if v_frozen_before > 0 then
-    return jsonb_build_object('as_of', p_as_of, 'already_frozen', v_frozen_before,
-                              'frozen_hash', (select frozen_hash from ripples.att_hop_candidates where as_of = p_as_of and frozen_hash is not null limit 1));
+  -- scope: the events this batch freezes (never one that already has frozen rows)
+  if p_events is null then
+    select count(*) into v_frozen_before from ripples.att_hop_candidates where as_of = p_as_of and frozen_hash is not null and reconstructed = p_library;
+    if v_frozen_before > 0 then
+      return jsonb_build_object('as_of', p_as_of, 'already_frozen', v_frozen_before,
+                                'frozen_hash', (select frozen_hash from ripples.att_hop_candidates where as_of = p_as_of and frozen_hash is not null and reconstructed = p_library limit 1));
+    end if;
+    select coalesce(array_agg(event_id), '{}') into scope from ripples.att_events
+     where as_of = p_as_of and role in ('real','decoy','library','positive_control') and coalesce(reconstructed, false) = p_library;
+  else
+    -- an event may be frozen on several days (depth-1 on its own day, depth-2 children the next morning): one batch per (event, day)
+    select coalesce(array_agg(ev.event_id), '{}') into scope from ripples.att_events ev
+     where ev.event_id = any(p_events) and coalesce(ev.reconstructed, false) = p_library
+       and not exists (select 1 from ripples.att_hop_candidates c where c.event_id = ev.event_id and c.as_of = p_as_of and c.frozen_hash is not null);
+    if cardinality(scope) = 0 then return jsonb_build_object('as_of', p_as_of, 'already_frozen', true, 'events', 0); end if;
   end if;
-  delete from ripples.att_cand_stage where as_of = p_as_of and depth = 1 and role <> 'fork_check';
+  delete from ripples.att_cand_stage where as_of = p_as_of and depth = 1 and role <> 'fork_check' and event_id = any(scope);
 
-  for e in select * from ripples.att_events where as_of = p_as_of and role in ('real','decoy','library','positive_control') and coalesce(reconstructed, false) = p_library order by event_id loop
+  for e in select * from ripples.att_events where event_id = any(scope) and as_of = p_as_of order by event_id loop   -- depth-1 on the event's own day
     v_events := v_events + 1;
     n_stage := n_stage + ripples.att_gen_candidates(e.event_id, p_as_of);
   end loop;
-  select n_stage + count(*) into n_stage from ripples.att_cand_stage where as_of = p_as_of and (depth >= 2 or role = 'fork_check');
+  select n_stage + count(*) into n_stage from ripples.att_cand_stage where as_of = p_as_of and (depth >= 2 or role = 'fork_check') and event_id = any(scope);
 
-  for e in select * from ripples.att_events where as_of = p_as_of and role in ('real','library','positive_control') and coalesce(reconstructed, false) = p_library loop
+  for e in select * from ripples.att_events where event_id = any(scope) and as_of = p_as_of and role in ('real','library','positive_control') loop
     for r in select * from ripples.att_negative_pool(e.event_id, p_as_of, 3) as t(node) loop
       insert into ripples.att_cand_stage(as_of, event_id, role, depth, u_topic, node, path, path_type, sign, onset, rank_in_path, aware, jumps)
       values (p_as_of, e.event_id, 'negative_control', 1, coalesce(e.topic_id, ripples.att_node_topic(r.node)), r.node,
@@ -198,10 +221,10 @@ begin
 
   delete from ripples.att_cand_stage s using (
     select ctid, row_number() over (partition by as_of, event_id, parent_hop, node, path_type, role order by rank_in_path) rn
-    from ripples.att_cand_stage where as_of = p_as_of) d
+    from ripples.att_cand_stage where as_of = p_as_of and event_id = any(scope)) d
   where s.ctid = d.ctid and d.rn > 1;
 
-  for r in select distinct node from ripples.att_cand_stage where as_of = p_as_of loop
+  for r in select distinct node from ripples.att_cand_stage where as_of = p_as_of and event_id = any(scope) loop
     if ripples.att_node_topic(r.node) is null then
       if r.node ~ '^Q[0-9]+$' and n_new_nodes < 60 then
         perform ripples.att_register_topic(r.node, coalesce((select p->>'title' from ripples.att_cand_stage s, jsonb_array_elements(s.path) p
@@ -213,14 +236,14 @@ begin
         values (r.node, 'unslotted:' || r.node, r.node, 'en', 'dormant', false, 'hop', jsonb_build_object('unslotted', p_as_of))
         on conflict do nothing;
       else
-        delete from ripples.att_cand_stage where as_of = p_as_of and node = r.node;
+        delete from ripples.att_cand_stage where as_of = p_as_of and node = r.node and event_id = any(scope);
         continue;
       end if;
     end if;
     perform ripples.att_node_bundle(r.node);
   end loop;
 
-  for r in select s.* from ripples.att_cand_stage s where s.as_of = p_as_of order by s.event_id, s.depth, s.path_type, s.rank_in_path loop
+  for r in select s.* from ripples.att_cand_stage s where s.as_of = p_as_of and s.event_id = any(scope) order by s.event_id, s.depth, s.path_type, s.rank_in_path loop
     if ripples.att_node_topic(r.node) is null then continue; end if;
     select array_agg(distinct ns.channel order by ns.channel) into v_chs
       from ripples.att_node_series ns where ns.node = r.node and not (ns.channel = any(r.excluded_ch));
@@ -254,36 +277,37 @@ begin
             (v_prior * (1 - v_prior) * (0.5 + 0.5 * v_h))::real, r.node, r.onset, r.sign, p_library);
     n_ins := n_ins + 1;
   end loop;
-  delete from ripples.att_cand_stage where as_of = p_as_of;
+  delete from ripples.att_cand_stage where as_of = p_as_of and event_id = any(scope);
 
   delete from ripples.att_hop_candidates c using (
     select hop_id, row_number() over (partition by as_of, event_id, parent_hop, node order by prior desc, hop_id) rn
-    from ripples.att_hop_candidates where as_of = p_as_of and frozen_hash is null) d
+    from ripples.att_hop_candidates where as_of = p_as_of and frozen_hash is null and event_id = any(scope)) d
   where c.hop_id = d.hop_id and d.rn > 3;
   delete from ripples.att_hop_candidates c using (
     select hop_id, row_number() over (partition by as_of, event_id order by (role = 'negative_control') desc, voi desc, hop_id) rn
-    from ripples.att_hop_candidates where as_of = p_as_of and frozen_hash is null) d
+    from ripples.att_hop_candidates where as_of = p_as_of and frozen_hash is null and event_id = any(scope)) d
   where c.hop_id = d.hop_id and d.rn > coalesce((cfg -> 'caps' ->> 'event')::int, 60) + 3;
-  select count(*) into m from ripples.att_hop_candidates where as_of = p_as_of and frozen_hash is null;
+  select count(*) into m from ripples.att_hop_candidates where as_of = p_as_of and frozen_hash is null and event_id = any(scope);
   if m > v_hardcap then
     delete from ripples.att_hop_candidates c using (
       select hop_id, row_number() over (order by (path_type in ('P-WIKI','P-COM')) desc, voi asc, hop_id desc) rn
-      from ripples.att_hop_candidates where as_of = p_as_of and frozen_hash is null and role <> 'negative_control') d
+      from ripples.att_hop_candidates where as_of = p_as_of and frozen_hash is null and event_id = any(scope) and role <> 'negative_control') d
     where c.hop_id = d.hop_id and d.rn <= m - v_hardcap;
   end if;
-  update ripples.att_hop_candidates set status = 'skipped' where as_of = p_as_of and frozen_hash is null and prior < v_pi_min and role <> 'negative_control';
+  update ripples.att_hop_candidates set status = 'skipped' where as_of = p_as_of and frozen_hash is null and event_id = any(scope) and prior < v_pi_min and role <> 'negative_control';
 
-  select count(*), avg(prior) into m, v_mean from ripples.att_hop_candidates where as_of = p_as_of and frozen_hash is null;
+  -- BH weights, frozen before data are read: w = clamp(π / mean π, 0.2, 5), renormalised to Σ w = m over the batch
+  select count(*), avg(prior) into m, v_mean from ripples.att_hop_candidates where as_of = p_as_of and frozen_hash is null and event_id = any(scope);
   if m = 0 then return jsonb_build_object('as_of', p_as_of, 'events', v_events, 'frozen', 0); end if;
-  update ripples.att_hop_candidates set bh_weight = least(5, greatest(0.2, prior / nullif(v_mean, 0))) where as_of = p_as_of and frozen_hash is null;
+  update ripples.att_hop_candidates set bh_weight = least(5, greatest(0.2, prior / nullif(v_mean, 0))) where as_of = p_as_of and frozen_hash is null and event_id = any(scope);
   update ripples.att_hop_candidates c set bh_weight = (c.bh_weight * m / s.tot)::real
-    from (select sum(bh_weight) tot from ripples.att_hop_candidates where as_of = p_as_of and frozen_hash is null) s
-   where c.as_of = p_as_of and c.frozen_hash is null;
+    from (select sum(bh_weight) tot from ripples.att_hop_candidates where as_of = p_as_of and frozen_hash is null and event_id = any(scope)) s
+   where c.as_of = p_as_of and c.frozen_hash is null and c.event_id = any(scope);
 
-  v_hash := ripples.att_freeze_hash(p_as_of, true);
-  v_seq := ripples.att_ledger_append(p_as_of, 'freeze', jsonb_build_object('as_of', p_as_of, 'm', m, 'events', v_events, 'library', p_library),
-                                     ripples.att_freeze_payload(p_as_of, true));
-  update ripples.att_hop_candidates set frozen_hash = v_hash, frozen_at = now() where as_of = p_as_of and frozen_hash is null;
+  v_hash := ripples.att_freeze_hash(p_as_of, true, null, scope);
+  v_seq := ripples.att_ledger_append(p_as_of, 'freeze', jsonb_build_object('as_of', p_as_of, 'm', m, 'events', v_events, 'library', p_library, 'event_ids', to_jsonb(scope)),
+                                     ripples.att_freeze_payload(p_as_of, true, null, scope));
+  update ripples.att_hop_candidates set frozen_hash = v_hash, frozen_at = now() where as_of = p_as_of and frozen_hash is null and event_id = any(scope);
   for e in select distinct c.event_id from ripples.att_hop_candidates c where c.as_of = p_as_of and c.frozen_hash = v_hash order by 1 loop
     v_seq := ripples.att_ledger_append(p_as_of, 'register', jsonb_build_object('event_id', e.event_id),
       (select coalesce(jsonb_agg(jsonb_build_object('hop_id', c.hop_id, 'window_close', c.window_close, 'p_hat', ripples.att_base_rate(c.hop_id)) order by c.hop_id), '[]'::jsonb)
@@ -296,6 +320,25 @@ begin
   end loop;
   return jsonb_build_object('as_of', p_as_of, 'events', v_events, 'staged', n_stage, 'frozen', m, 'negative_controls', n_neg,
                             'new_nodes', n_new_nodes, 'frozen_hash', v_hash, 'ledger_seq', v_seq);
+end $$;
+
+-- Repair: re-freeze a batch whose rows changed after its freeze (only ever needed after the pre-rollback harness deleted fixture rows
+-- out of shared day batches on 2026-09-25). Appends a superseding 'freeze' row and marks the old row superseded; nothing is deleted.
+create or replace function ripples.att_refreeze(p_old_hash text, p_reason text) returns jsonb
+language plpgsql security definer set search_path = '' as $$
+declare v_day date; v_old bigint; v_new text; v_seq bigint; m int;
+begin
+  select seq, (ref ->> 'as_of')::date into v_old, v_day from ripples.att_ledger where kind = 'freeze' and payload_hash = p_old_hash;
+  if v_old is null then return jsonb_build_object('error', 'no such freeze row'); end if;
+  select count(*) into m from ripples.att_hop_candidates where frozen_hash = p_old_hash;
+  if m = 0 then return jsonb_build_object('error', 'no rows carry that hash'); end if;
+  v_new := ripples.att_freeze_hash(v_day, false, p_old_hash);
+  if v_new = p_old_hash then return jsonb_build_object('ok', true, 'note', 'batch already recomputes'); end if;
+  v_seq := ripples.att_ledger_append(v_day, 'freeze', jsonb_build_object('as_of', v_day, 'm', m, 'refreeze_of', v_old, 'reason', p_reason),
+                                     ripples.att_freeze_payload(v_day, false, p_old_hash));
+  update ripples.att_hop_candidates set frozen_hash = v_new where frozen_hash = p_old_hash;
+  update ripples.att_ledger set ref = ref || jsonb_build_object('superseded_by', v_seq) where seq = v_old;
+  return jsonb_build_object('ok', true, 'day', v_day, 'old_seq', v_old, 'new_seq', v_seq, 'rows', m);
 end $$;
 
 -- Topic family (ENGINE §5.1): same source and kind, same baseline decile, coverage Jaccard ≥ 0.8; when the source holds fewer than 30
@@ -322,7 +365,9 @@ begin
     from cand, me
     where cand.series_id <> s.series_id
       and least(cand.n_obs_90, s.n_obs_90)::float8 / greatest(cand.n_obs_90, s.n_obs_90, 1) >= 0.8
-      and cand.series_id not in (select ns2.series_id from ripples.att_node_series ns2 where ns2.node = c.node);
+      and cand.series_id not in (select ns2.series_id from ripples.att_node_series ns2 where ns2.node = c.node)
+      -- series that are themselves frozen targets of the same event (any path) are hypothesised responders, not a null reference
+      and cand.series_id not in (select ns3.series_id from ripples.att_node_series ns3 join ripples.att_hop_candidates c3 on c3.node = ns3.node where c3.event_id = c.event_id);
     ps := ps || jsonb_build_object(s.series_id::text, jsonb_build_object('channel', s.channel, 'pool', to_jsonb(pool)));
     n_min := least(coalesce(n_min, cardinality(pool)), cardinality(pool));
   end loop;
@@ -422,7 +467,7 @@ begin
     n_dec := n_dec + ripples.att_library_decoys(e2.event_id);
   end loop;
   for a in select distinct e.as_of from ripples.att_events e where e.event_id = p_event or e.matched_to = p_event order by 1 loop
-    fr := ripples.att_freeze_candidates(a, true);
+    fr := ripples.att_freeze_candidates(a, true, (select array_agg(e.event_id) from ripples.att_events e where (e.event_id = p_event or e.matched_to = p_event) and e.as_of = a));
   end loop;
   for d in select distinct l from ripples.att_hop_candidates c join ripples.att_events e on e.event_id = c.event_id, unnest(c.looks) l
            where c.reconstructed and (e.event_id = p_event or e.matched_to = p_event) and l <= current_date order by 1 loop
@@ -434,7 +479,7 @@ begin
   if last_look is not null then perform ripples.att_chain_decide(last_look); end if;
   ex := ripples.att_expand(coalesce(last_look, ev.as_of), true);
   if (ex ->> 'children')::int > 0 then
-    fr2 := ripples.att_freeze_candidates(coalesce(last_look, ev.as_of) + 1, true);
+    fr2 := ripples.att_freeze_candidates(coalesce(last_look, ev.as_of) + 1, true, (select array_agg(e.event_id) from ripples.att_events e where e.event_id = p_event or e.matched_to = p_event));
     for d in select distinct l from ripples.att_hop_candidates c, unnest(c.looks) l where c.as_of = coalesce(last_look, ev.as_of) + 1 and c.reconstructed and l <= current_date order by 1 loop
       r := ripples.att_engine_run_due(d, 100000, true);
       n_ran := n_ran + (r ->> 'ran')::int;

@@ -158,7 +158,7 @@ begin
   from (select f.*, coalesce(f.bh_weight, 1) * m / sum(coalesce(f.bh_weight, 1)) over () w from _fin f) x;
   create temp table _q on commit drop as
   select hop_id, look_no, least(1, min(m * pw / rk) over (order by rk desc rows between unbounded preceding and current row)) q_w, w from _bh;
-  update ripples.att_hop_tests t set q_w = q.q_w, detail = coalesce(t.detail, '{}'::jsonb) || jsonb_build_object('bh', jsonb_build_object('m', m, 'weight', round(q.w::numeric, 4), 'p_bh', f.p_bh))
+  update ripples.att_hop_tests t set q_w = q.q_w, q = q.q_w, detail = coalesce(t.detail, '{}'::jsonb) || jsonb_build_object('bh', jsonb_build_object('m', m, 'weight', round(q.w::numeric, 4), 'p_bh', f.p_bh))
     from _q q join _fin f on f.hop_id = q.hop_id and f.look_no = q.look_no where q.hop_id = t.hop_id and q.look_no = t.look_no;
 
   -- fluke bins need today's q_w; H-tercile from the day's family

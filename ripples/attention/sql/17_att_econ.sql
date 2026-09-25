@@ -338,3 +338,133 @@ select cron.schedule('att-econ-bf-cpi', '5-59/12 * * * *', $$
    where coalesce((select count(*) from jsonb_object_keys(coalesce((select v->'fetched' from ripples.att_state where k = 'econ.bls.cpi'), '{}'::jsonb))), 0)
        + coalesce((select jsonb_array_length(v->'missing') from ripples.att_state where k = 'econ.bls.cpi'), 0) < 46 $$);
 select ripples.att_fn_live('att-econ');
+
+-- =====================================================================================================================
+-- Addendum (migration att_wsa_r2_econ, 2026-09-25 ~20:40 UTC) — verifier round 2 fixes (outcome data)
+-- 1. Real-time vintages. Revised series now store FIRST-RELEASE values (ALFRED, FRED API output_type=4): the value as
+--    first published, meta.rt = 'first', meta.vintage = meta.released = the first-release date. Reconstructed tests
+--    therefore never read later revisions (benchmark / seasonal-factor revisions). Applies to the weekly claims and
+--    weekly fuel-price series (new sources below) and to bls.ces / bls.cpi_items. Daily market series (Treasury yields,
+--    breakevens, FX, WTI / Brent / Henry Hub / jet fuel spot) are not revised and keep output_type=1 (meta.vintage =
+--    fetch-time realtime_start). dol.claims (ETA 539 file) holds the values as currently published (revised) and is kept
+--    as a cross-check only: it is no longer an engine target (it duplicated fred <ST>ICLAIMS, see 18 addendum).
+-- 2. Weekly FRED series move to week-grain sources so the engine's periodic path computes kappa for them (the daily path
+--    gave kappa < 0.3 at 13 observations per 90 days): fred.claims (JOBS: ICSA, ICNSA, CCSA, 51 <ST>ICLAIMS) and
+--    fred.weekly (ECON: GASREGW, GASDESW). Same series ids / observations; only att_series.source changes.
+-- 3. EIA-930: the orphaned US48SUM series (2020-07 .. 2022-12, earlier key of the lower-48 sum) is merged into US48
+--    (days US48 lacks) and removed; same method (sum of BA local-day demand).
+-- 4. FRED budget: backfill drains start only after the 06:31 / 06:41 daily runs and stop 60 calls short of the cap
+--    (att_econ_fred_ok); CPI drains before CES; CES drains pause during a jobs-release window.
+update ripples.att_config set value = (select to_jsonb(array_agg(distinct x order by x)) from (
+    select jsonb_array_elements_text(value) x union all select 'rt') z), updated_at = now()
+ where key = 'meta_allow';
+
+insert into ripples.att_sources (source, family, channel, grade, value_kind, grain, history_from, enabled, reason,
+  needs_secret, tier, attribution, license_note, per_run_cap, per_day_cap, spacing_ms, budget_bucket, hosts,
+  robots_required, backfill_fn, engine_channel) values
+ ('fred.claims', 'fred', 'institutional', 'green', 'count', 'week', '2016-01-01', true,
+  'Weekly unemployment-insurance claims via the FRED API (fetch source fred, bucket fred): ICSA, ICNSA, CCSA and 51 <ST>ICLAIMS. FIRST-RELEASE values (ALFRED output_type=4, meta.rt=first, meta.released=first-release date). Week grain. The engine''s state-claims target (dol.claims is a cross-check only)',
+  'fred_api_key', 'ship', 'U.S. Department of Labor, Employment and Training Administration, weekly claims (via FRED/ALFRED, Federal Reserve Bank of St. Louis)',
+  'Public domain (U.S. government); FRED terms of use', 60, null, 1500, 'fred', array['api.stlouisfed.org'], true, 'att-econ', 'JOBS'),
+ ('fred.weekly', 'fred', 'money', 'green', 'level', 'week', '2016-01-01', true,
+  'Weekly EIA retail gasoline and diesel prices via the FRED API (GASREGW, GASDESW); first-release values (ALFRED output_type=4). Week grain',
+  'fred_api_key', 'ship', 'U.S. Energy Information Administration, Gasoline and Diesel Fuel Update (via FRED/ALFRED, Federal Reserve Bank of St. Louis)',
+  'Public domain (U.S. government); FRED terms of use', 60, null, 1500, 'fred', array['api.stlouisfed.org'], true, 'att-econ', 'ECON')
+on conflict (source) do update set family = excluded.family, channel = excluded.channel, grade = excluded.grade,
+  value_kind = excluded.value_kind, grain = excluded.grain, history_from = excluded.history_from, enabled = excluded.enabled,
+  reason = excluded.reason, needs_secret = excluded.needs_secret, tier = excluded.tier, attribution = excluded.attribution,
+  license_note = excluded.license_note, per_run_cap = excluded.per_run_cap, spacing_ms = excluded.spacing_ms,
+  budget_bucket = excluded.budget_bucket, hosts = excluded.hosts, robots_required = excluded.robots_required,
+  backfill_fn = excluded.backfill_fn, engine_channel = excluded.engine_channel;
+insert into ripples.att_engine_source_map(source, channel, value_kind, same_dow, agg_key, domain, metric_kinds) values
+  ('fred.claims', 'JOBS', 'count', false, 'ICNSA', 'jobs', '{"count":"count"}'),
+  ('fred.weekly', 'ECON', 'level', false, null, 'economy', '{"level":"level"}')
+on conflict (source) do nothing;
+update ripples.att_series set source = 'fred.claims'
+ where source = 'fred' and (key ~ '^[A-Z]{2}ICLAIMS$' or key in ('ICSA', 'ICNSA', 'CCSA'));
+update ripples.att_series set source = 'fred.weekly' where source = 'fred' and key in ('GASREGW', 'GASDESW');
+-- stale daily-path z rows of the moved series (rebuilt on the periodic path)
+delete from ripples.att_zvec z using ripples.att_series s where s.series_id = z.series_id and s.source in ('fred.claims', 'fred.weekly');
+update ripples.att_sources set reason = reason || ' Weekly claims and fuel-price series moved to fred.claims / fred.weekly (week grain, first-release values) on 2026-09-25.'
+ where source = 'fred' and reason not like '%fred.claims%';
+update ripples.att_sources set reason = 'U.S. DOL ETA weekly claims file ar539.csv (keyless open data): state initial (ic) and continued (cw) claims as CURRENTLY published (revised values). Cross-check only: the engine''s state-claims target is fred.claims <ST>ICLAIMS (same DOL data, first-release values), so the two are never counted as agreeing sources. One download per week'
+ where source = 'dol.claims';
+
+-- 3. EIA-930 US48SUM -> US48
+insert into ripples.attention_obs(series_id, day, value, aux, meta)
+select (select series_id from ripples.att_series where source = 'eia.930' and key = 'US48' and metric = 'demand'),
+       o.day, o.value, o.aux, coalesce(o.meta, '{}'::jsonb) || '{"method":"sum_ba_local_days"}'::jsonb
+  from ripples.attention_obs o join ripples.att_series s using (series_id)
+ where s.source = 'eia.930' and s.key = 'US48SUM' and s.metric = 'demand'
+   and exists (select 1 from ripples.att_series where source = 'eia.930' and key = 'US48' and metric = 'demand')
+on conflict (series_id, day) do nothing;
+delete from ripples.attention_obs o using ripples.att_series s where s.series_id = o.series_id and s.source = 'eia.930' and s.key = 'US48SUM';
+delete from ripples.att_series where source = 'eia.930' and key = 'US48SUM';
+
+-- CES / CPI rows that carry their ALFRED first-release date keep it (the calendar-derived date is a fallback only)
+create or replace function ripples.att_econ_apply_releases() returns jsonb
+language plpgsql security definer set search_path = '' as $$
+declare n_ces int; n_cpi int;
+begin
+  with x as (
+    select o.series_id, o.day,
+           (select min(rd.release_date) from ripples.att_release_dates rd
+             where rd.release = 'jobs' and rd.release_date > (o.day + interval '1 month' - interval '1 day')::date) d
+      from ripples.attention_obs o join ripples.att_series s using (series_id)
+     where s.source = 'bls.ces' and coalesce(o.meta->>'rt', '') <> 'first')
+  update ripples.attention_obs o set meta = coalesce(o.meta, '{}'::jsonb) || jsonb_build_object('released', x.d::text)
+    from x where o.series_id = x.series_id and o.day = x.day and x.d is not null
+     and (o.meta->>'released') is distinct from x.d::text;
+  get diagnostics n_ces = row_count;
+  with x as (
+    select o.series_id, o.day,
+           (select min(rd.release_date) from ripples.att_release_dates rd
+             where rd.release = 'cpi' and rd.release_date > (o.day + interval '1 month' - interval '1 day')::date) d
+      from ripples.attention_obs o join ripples.att_series s using (series_id)
+     where s.source = 'bls.cpi_items' and coalesce(o.meta->>'rt', '') <> 'first')
+  update ripples.attention_obs o set meta = coalesce(o.meta, '{}'::jsonb) || jsonb_build_object('released', x.d::text)
+    from x where o.series_id = x.series_id and o.day = x.day and x.d is not null
+     and (o.meta->>'released') is distinct from x.d::text;
+  get diagnostics n_cpi = row_count;
+  return jsonb_build_object('bls.ces', n_ces, 'bls.cpi_items', n_cpi);
+end $$;
+revoke all on function ripples.att_econ_apply_releases() from public, anon, authenticated;
+
+-- 4. FRED budget guard for the backfill drains
+create or replace function ripples.att_econ_fred_ok(p_margin int default 60) returns boolean
+language sql stable security definer set search_path = '' as $$
+  select coalesce((select b.used < b.cap - greatest(0, p_margin) and not b.killed from ripples.att_budget b
+                    where b.day = (now() at time zone 'utc')::date and b.bucket = 'fred'), true)
+$$;
+revoke all on function ripples.att_econ_fred_ok(int) from public, anon, authenticated;
+
+select cron.alter_job((select jobid from cron.job where jobname = 'att-econ-bf-cpi'), schedule := '5-59/6 7-23 * * *', command := $$
+  select public.call_collector('att-econ', '{"mode":"backfill","params":{"source":"bls.cpi_items"}}'::jsonb)
+   where ripples.att_econ_fred_ok(60)
+     and coalesce((select count(*) from jsonb_object_keys(coalesce((select v->'fetched' from ripples.att_state where k = 'econ.bls.cpi'), '{}'::jsonb))), 0)
+       + coalesce((select jsonb_array_length(v->'missing') from ripples.att_state where k = 'econ.bls.cpi'), 0) < 46 $$);
+-- weekly first-release refetch (one call per weekly series, once): runs after CPI is complete
+select cron.schedule('att-econ-bf-fredrt', '2-59/6 7-23 * * *', $$
+  select public.call_collector('att-econ', '{"mode":"backfill","params":{"source":"fred_rt"}}'::jsonb)
+   where ripples.att_econ_fred_ok(60)
+     and coalesce((select count(*) from jsonb_object_keys(coalesce((select v->'fetched' from ripples.att_state where k = 'econ.bls.cpi'), '{}'::jsonb))), 0)
+       + coalesce((select jsonb_array_length(v->'missing') from ripples.att_state where k = 'econ.bls.cpi'), 0) >= 46
+     and coalesce((select count(*) from jsonb_object_keys(coalesce((select v from ripples.att_state where k = 'econ.fred.rt'), '{}'::jsonb))), 0) < 56 $$);
+select cron.alter_job((select jobid from cron.job where jobname = 'att-econ-bf-ces'), schedule := '3-59/6 7-23 * * *', command := $$
+  select public.call_collector('att-econ', '{"mode":"backfill","params":{"source":"bls.ces"}}'::jsonb)
+   where ripples.att_econ_fred_ok(60) and not ripples.att_release_near('jobs', 2)
+     and coalesce((select count(*) from jsonb_object_keys(coalesce((select v from ripples.att_state where k = 'econ.fred.rt'), '{}'::jsonb))), 0) >= 56
+     and coalesce((select count(*) from jsonb_object_keys(coalesce((select v->'fetched' from ripples.att_state where k = 'econ.bls.ces'), '{}'::jsonb))), 0)
+       + coalesce((select jsonb_array_length(v->'missing') from ripples.att_state where k = 'econ.bls.ces'), 0) < 279 $$);
+-- CES rows fetched before first-release storage (15 series, latest values) are re-fetched as first releases by the drain:
+-- their 'fetched' marks are cleared so the drain picks them up (the rows are overwritten in place, same series ids).
+update ripples.att_state set v = jsonb_set(v, '{fetched}', '{}'::jsonb), updated_at = now() where k = 'econ.bls.ces';
+
+-- Addendum (migration att_wsa_r2_cron_cleanup, 2026-09-25 ~20:40 UTC): completed backfill drains no longer need a pg_cron
+-- slot every few minutes (one 'job startup timeout' was logged on att-econ-bf-noaa while the worker pool was busy).
+-- NOAA GHCN-Daily (econ.bf.noaa.ghcnd complete) and the FRED backfill (77 of 77 series) are done; the daily collectors
+-- keep them current. Re-schedule from the definitions above if a full re-read is ever needed.
+select cron.unschedule('att-econ-bf-noaa') where exists (select 1 from cron.job where jobname = 'att-econ-bf-noaa')
+   and coalesce((select (v->>'complete')::boolean from ripples.att_state where k = 'econ.bf.noaa.ghcnd'), false);
+select cron.unschedule('att-econ-bf-fred') where exists (select 1 from cron.job where jobname = 'att-econ-bf-fred')
+   and coalesce((select count(*) from jsonb_object_keys(coalesce((select v from ripples.att_state where k = 'econ.fred.fetched'), '{}'::jsonb))), 0) >= 77;

@@ -627,3 +627,436 @@ language sql stable security definer set search_path = '' as $$
        and s.metric = case when s.source = 'eia.930' then 'demand' else s.metric end) b on true
 $$;
 select ripples.att_controls_seed();
+
+-- =====================================================================================================================
+-- Addendum (migration att_wsa_r2_library, 2026-09-25 ~20:50 UTC) — verifier round 2 fixes (event library, controls)
+-- 1. Positive controls are in neither set (ENGINE §5.7) and have no library twin: a library event of the same family
+--    within 14 days of a control's onset that shares a state (or, for stateless families, any), or a named storm with the
+--    control's name in the same year, is not stored (att_library_upsert skips it) and existing ones are deleted
+--    (att_library_sweep / att_library_recluster_storms). This removes the six FEMA Helene events and the FEMA Milton event.
+--    Deletion (not a flag) because WS-B's prior refit / replication select role = 'library' by onset only.
+-- 2. One storm = one event. Named storms (FEMA titles 'Hurricane X', 'Tropical Storm X', 'Remnants of ... X',
+--    'Post-Tropical Cyclone X', '(Super) Typhoon X'; GDACS 'Tropical Cyclone X-yy') get the canonical slug
+--    'storm-<name>-<year>' in att-library and are merged here: states unioned, onset = earliest, magnitude = combined
+--    designated areas (FEMA) or the larger value, defined_by unioned. Floods / wildfires / winter storms that carry a storm
+--    name (e.g. 'Remnants of Hurricane Ida' flooding) merge into the storm event too (one physical event).
+-- 3. Selection on the outcome is recorded and excluded. att_family_events.defined_by = the sources whose data selected or
+--    shaped the event (fema.decl, usgs.eq, noaa.ghcnd, gdacs); proposing_ch = the engine channels of those sources that
+--    are also tested targets of the family (fema.decl -> INST for every FEMA-derived hazard event). Per ENGINE §2.4 the
+--    proposing channel cannot count as the response: WS-B must add proposing_ch to excluded_ch for every candidate of a
+--    library event (follow-up; not enforceable from WS-A objects). Sources that define events but are no target of any
+--    family (noaa.ghcnd after the MAP removal, gdacs, usgs.eq after quake_felt_reports was removed) give no channel.
+-- 4. set_note records why an event is in / out of each set.
+alter table ripples.att_family_events add column if not exists defined_by text[] not null default '{}';
+alter table ripples.att_family_events add column if not exists proposing_ch text[] not null default '{}';
+alter table ripples.att_family_events add column if not exists set_note text;
+
+create or replace function ripples.att_family_target_sources(p_family text) returns text[]
+language sql stable set search_path = '' as $$
+  select coalesce(array_agg(distinct src order by src), '{}') from (
+    select split_part(n, ':', 1) src from ripples.att_mech_templates t
+      cross join lateral jsonb_array_elements_text(coalesce(t.target_pattern->'nodes', '[]'::jsonb)) n
+     where t.family = p_family and t.channel <> 'MONEY'
+    union all
+    select split_part(p, ':', 1) from ripples.att_mech_templates t
+      cross join lateral jsonb_array_elements_text(
+        (case when t.target_pattern ? 'pattern' then jsonb_build_array(t.target_pattern->'pattern') else '[]'::jsonb end)
+        || coalesce(t.target_pattern->'patterns', '[]'::jsonb)) p
+     where t.family = p_family and t.channel <> 'MONEY'
+    union all
+    select s from ripples.att_mech_templates t
+      cross join lateral jsonb_array_elements_text(
+        (case when t.target_pattern ? 'source' then jsonb_build_array(t.target_pattern->'source') else '[]'::jsonb end)
+        || coalesce(t.target_pattern->'sources', '[]'::jsonb) || coalesce(t.target_pattern->'also', '[]'::jsonb)) s
+     where t.family = p_family and t.channel <> 'MONEY') z
+  where src is not null and src <> ''
+$$;
+
+create or replace function ripples.att_proposing_channels(p_family text, p_defined_by text[]) returns text[]
+language sql stable set search_path = '' as $$
+  select coalesce(array_agg(distinct s.engine_channel order by s.engine_channel), '{}')
+    from ripples.att_sources s
+   where s.source = any(coalesce(p_defined_by, '{}')) and s.source = any(ripples.att_family_target_sources(p_family))
+$$;
+
+-- canonical storm name from a FEMA / GDACS label (null when the label names no storm)
+create or replace function ripples.att_storm_name(p_label text) returns text
+language sql immutable set search_path = '' as $$
+  select case when n is null or n in ('AND','THE','OF','SEASON','SEVERE','STORMS','STORM','FLOODING','WINDS','REMNANTS','HURRICANE',
+                                      'TROPICAL','DEPRESSION','CYCLONE','TYPHOON','SUPER','POST') then null else lower(n) end
+  from (select (regexp_match(upper(coalesce(p_label, '')),
+    '(?:POST-TROPICAL (?:STORM|CYCLONE)|REMNANTS OF(?: (?:HURRICANE|TROPICAL STORM|TROPICAL DEPRESSION|TYPHOON|SUPER TYPHOON))?|HURRICANE|TROPICAL STORM|TROPICAL DEPRESSION|SUPER TYPHOON|TYPHOON|TROPICAL CYCLONE)\s+([A-Z]{3,})\M'))[1] n) z
+$$;
+
+-- positive control this library event duplicates (same family; onset within 14 days and shared state, or both stateless;
+-- or, for storms, the same storm name in the same year)
+create or replace function ripples.att_control_overlap(p_family text, p_onset date, p_states text[], p_storm text default null) returns bigint
+language sql stable set search_path = '' as $$
+  select e.event_id
+    from ripples.att_events e left join ripples.att_topics t on t.topic_id = e.topic_id
+   where e.role = 'positive_control' and e.family = p_family
+     and ((p_storm is not null and extract(year from e.onset) = extract(year from p_onset)
+           and lower(e.label) ~ ('\m' || p_storm || '\M') and abs(e.onset - p_onset) <= 30)
+          or (abs(e.onset - p_onset) <= 14
+              and ((cardinality(coalesce(p_states, '{}')) = 0 and jsonb_typeof(t.meta->'state') is distinct from 'array')
+                   or exists (select 1 from jsonb_array_elements_text(case when jsonb_typeof(t.meta->'state') = 'array' then t.meta->'state' else '[]'::jsonb end) x
+                               where x = any(coalesce(p_states, '{}'))))))
+   order by abs(e.onset - p_onset) limit 1
+$$;
+
+-- library source -> defining sources (for rows written before defined_by existed)
+create or replace function ripples.att_lib_defined_by(p_lib_source text) returns text[]
+language sql immutable set search_path = '' as $$
+  select array_remove(array[
+    case when p_lib_source ilike '%OpenFEMA%' then 'fema.decl' end,
+    case when p_lib_source ilike '%GDACS%' then 'gdacs' end,
+    case when p_lib_source ilike 'USGS%' then 'usgs.eq' end,
+    case when p_lib_source ilike 'noaa.ghcnd%' then 'noaa.ghcnd' end], null)
+$$;
+
+create or replace function ripples._att_library_delete(p_ids bigint[]) returns int
+language plpgsql security definer set search_path = '' as $$
+declare n int; v_topics bigint[];
+begin
+  -- never delete an event the engine already froze candidates for or published (none of the library events as of 2026-09-25)
+  select coalesce(array_agg(e.event_id), '{}') into p_ids from ripples.att_events e
+   where e.event_id = any(p_ids) and e.role = 'library'
+     and not exists (select 1 from ripples.att_hop_candidates c where c.event_id = e.event_id)
+     and not exists (select 1 from ripples.att_cascades c where c.event_id = e.event_id);
+  select coalesce(array_agg(distinct topic_id), '{}') into v_topics from ripples.att_events where event_id = any(p_ids);
+  delete from ripples.att_family_events where event_id = any(p_ids);
+  delete from ripples.att_events where event_id = any(p_ids);
+  get diagnostics n = row_count;
+  delete from ripples.att_topics t where t.topic_id = any(v_topics) and t.label_key like 'lib:%'
+     and not exists (select 1 from ripples.att_events e where e.topic_id = t.topic_id)
+     and not exists (select 1 from ripples.att_series s where s.topic_id = t.topic_id)
+     and not exists (select 1 from ripples.att_keys k where k.topic_id = t.topic_id)
+     and not exists (select 1 from ripples.att_hop_candidates c where c.u_topic = t.topic_id or c.v_topic = t.topic_id);
+  return n;
+end $$;
+
+create or replace function ripples.att_library_upsert(p_rows jsonb) returns jsonb
+language plpgsql security definer set search_path = '' as $$
+declare r jsonb; v_topic bigint; v_ev bigint; v_states text[]; v_meta jsonb; v_slug text; v_onset date; v_fam text; v_role text;
+        v_qid text; v_label text; v_ins boolean; v_mag real; n_new int := 0; n_upd int := 0; n_top int := 0; n_skip int := 0;
+        n_ctrl int := 0; skipped jsonb := '[]'::jsonb; v_merge boolean; v_def text[]; v_pch text[]; v_storm text; v_ctrl bigint;
+        v_old record; v_note text; v_cut date := coalesce((ripples._att_cfg('engine') ->> 'prior_cutoff')::date, date '2026-01-01');
+begin
+  for r in select * from jsonb_array_elements(coalesce(p_rows, '[]'::jsonb)) loop
+    v_slug := lower(r->>'slug'); v_fam := r->>'family'; v_role := coalesce(r->>'role', 'library');
+    v_qid := nullif(upper(r->>'qid'), ''); v_label := left(btrim(r->>'label'), 200); v_mag := (r->>'magnitude')::real;
+    v_onset := case when r->>'onset' ~ '^\d{4}-\d{2}-\d{2}$' then (r->>'onset')::date end;
+    v_storm := nullif(lower(r->>'storm'), '');
+    if v_slug is null or v_slug !~ '^[a-z0-9][a-z0-9._-]{2,120}$' or v_onset is null or coalesce(v_label, '') = ''
+       or v_onset < date '2019-01-01' or v_onset >= current_date
+       or not exists (select 1 from ripples.att_families f where f.family = v_fam) or v_role not in ('library', 'positive_control')
+       or (v_qid is not null and v_qid !~ '^Q[0-9]+$') then
+      n_skip := n_skip + 1;
+      if jsonb_array_length(skipped) < 10 then skipped := skipped || jsonb_build_object('slug', v_slug, 'why', 'invalid'); end if;
+      continue;
+    end if;
+    v_merge := coalesce((r->>'merge')::boolean, false);
+    select e.event_id, e.onset, e.magnitude, e.label, e.topic_id, fe.defined_by into v_old
+      from ripples.att_events e left join ripples.att_family_events fe using (event_id) where e.slug = 'lib-' || v_slug;
+    select coalesce(array_agg(distinct upper(x) order by upper(x)) filter (where upper(x) ~ '^[A-Z]{2}$'), '{}') into v_states
+      from (select jsonb_array_elements_text(coalesce(r->'states', '[]'::jsonb)) x
+            union all
+            select jsonb_array_elements_text(t.meta->'state') from ripples.att_topics t
+             where v_merge and t.label_key = 'lib:' || v_slug and jsonb_typeof(t.meta->'state') = 'array') z;
+    select coalesce(array_agg(distinct x order by x), '{}') into v_def
+      from (select jsonb_array_elements_text(case when jsonb_typeof(r->'defined_by') = 'array' then r->'defined_by' else '[]'::jsonb end) x
+            union all select unnest(ripples.att_lib_defined_by(r->>'source'))
+            union all select unnest(case when v_merge then coalesce(v_old.defined_by, '{}') else '{}' end)) z
+     where x ~ '^[a-z0-9.]{2,40}$';
+    if v_merge and v_old.event_id is not null then
+      v_onset := least(v_onset, v_old.onset);
+      v_mag := greatest(v_mag, v_old.magnitude);
+      if coalesce((r->>'label_weak')::boolean, false) then v_label := v_old.label; end if;
+    end if;
+    -- positive controls: no library twin (ENGINE §5.7)
+    if v_role = 'library' then
+      v_ctrl := ripples.att_control_overlap(v_fam, v_onset, v_states, v_storm);
+      if v_ctrl is not null then
+        n_ctrl := n_ctrl + 1;
+        if v_old.event_id is not null then perform ripples._att_library_delete(array[v_old.event_id]); end if;
+        if jsonb_array_length(skipped) < 10 then skipped := skipped || jsonb_build_object('slug', v_slug, 'why', 'positive_control_overlap', 'control', v_ctrl); end if;
+        continue;
+      end if;
+    end if;
+    v_pch := ripples.att_proposing_channels(v_fam, v_def);
+    v_meta := jsonb_strip_nulls(jsonb_build_object('library', true, 'family', v_fam, 'lib_source', r->>'source', 'lib_ref', r->>'ref',
+               'storm', v_storm, 'defined_by', to_jsonb(v_def), 'proposing_ch', to_jsonb(v_pch),
+               'state', case when cardinality(v_states) > 0 then to_jsonb(v_states) end,
+               'ba', case when cardinality(v_states) > 0 then to_jsonb(ripples.att_state_bas(v_states)) end));
+    v_topic := null;
+    if v_qid is not null then select topic_id into v_topic from ripples.att_topics where qid = v_qid limit 1; end if;
+    if v_topic is null then
+      select topic_id into v_topic from ripples.att_topics where label_key = 'lib:' || v_slug;
+      if v_topic is null then
+        insert into ripples.att_topics(qid, label_key, label, title_en, lang, category, status, in_panel, origin, meta)
+        values (v_qid, 'lib:' || v_slug, v_label, null, 'en',
+                coalesce(r->>'category', case when v_fam like 'hazard.%' then 'hazard' when v_fam like 'tech.%' then 'tech'
+                  when v_fam like 'policy.%' then 'policy' when v_fam = 'media.game' then 'games' else 'film_tv' end),
+                'dormant', false, 'manual', v_meta)
+        on conflict do nothing returning topic_id into v_topic;
+        if v_topic is not null then n_top := n_top + 1;
+        else select topic_id into v_topic from ripples.att_topics where label_key = 'lib:' || v_slug limit 1; end if;
+      else
+        update ripples.att_topics set meta = meta || v_meta, label = v_label
+         where topic_id = v_topic and coalesce((meta->>'library')::boolean, false);
+      end if;
+    end if;
+    begin
+      insert into ripples.att_events(as_of, topic_id, qid, label, family, role, onset, magnitude, sensitive, slug, reconstructed, status)
+      values (v_onset + 1, v_topic, v_qid, v_label, v_fam, v_role, v_onset, v_mag, false, 'lib-' || v_slug, true, 'ended')
+      on conflict (slug) do update set label = excluded.label, family = excluded.family, onset = excluded.onset, as_of = excluded.as_of,
+         magnitude = excluded.magnitude, topic_id = excluded.topic_id, qid = excluded.qid, role = excluded.role
+      returning event_id, (xmax = 0) into v_ev, v_ins;
+    exception when unique_violation then
+      n_skip := n_skip + 1;
+      if jsonb_array_length(skipped) < 10 then skipped := skipped || jsonb_build_object('slug', v_slug, 'why', 'as_of/topic/role taken'); end if;
+      continue;
+    end;
+    if v_ins then n_new := n_new + 1; else n_upd := n_upd + 1; end if;
+    v_note := case when v_role <> 'library' then 'positive control: in neither set (ENGINE §5.7)'
+                   when v_onset < v_cut then 'prior set (onset < prior_cutoff)' else 'replication set (onset >= prior_cutoff)' end
+              || case when cardinality(v_pch) > 0 then '; proposing channel(s) ' || array_to_string(v_pch, ',') || ' must be excluded from the response (ENGINE §2.4)' else '' end;
+    insert into ripples.att_family_events(event_id, family, onset, magnitude, in_prior_set, in_replication_set, defined_by, proposing_ch, set_note)
+    values (v_ev, v_fam, v_onset, v_mag, v_role = 'library' and v_onset < v_cut, v_role = 'library' and v_onset >= v_cut, v_def, v_pch, v_note)
+    on conflict (event_id) do update set family = excluded.family, onset = excluded.onset, magnitude = excluded.magnitude,
+       in_prior_set = excluded.in_prior_set, in_replication_set = excluded.in_replication_set, defined_by = excluded.defined_by,
+       proposing_ch = excluded.proposing_ch, set_note = excluded.set_note;
+  end loop;
+  return jsonb_build_object('new', n_new, 'updated', n_upd, 'topics_new', n_top, 'skipped', n_skip, 'control_overlap', n_ctrl,
+                            'skipped_sample', skipped);
+end $$;
+
+-- merge existing FEMA / GDACS events of the same named storm into one canonical event 'lib-storm-<name>-<year>'
+create or replace function ripples.att_library_recluster_storms() returns jsonb
+language plpgsql security definer set search_path = '' as $$
+declare g record; v_keep bigint; v_ctrl bigint; n_groups int := 0; n_merged int := 0; n_ctrl int := 0; v_states text[]; v_def text[];
+        v_slug text; v_label text; v_topic bigint; v_mag real; v_refs text; v_srcs text; v_kind text;
+        v_cut date := coalesce((ripples._att_cfg('engine') ->> 'prior_cutoff')::date, date '2026-01-01');
+begin
+  drop table if exists pg_temp._st;
+  create temp table _st on commit drop as
+  select e.event_id, e.topic_id, e.onset, e.magnitude, e.family, e.label, e.slug, t.meta tmeta,
+         ripples.att_storm_name(e.label) nm, extract(year from e.onset)::int yr
+    from ripples.att_events e join ripples.att_topics t on t.topic_id = e.topic_id
+   where e.role = 'library' and e.family like 'hazard.%' and ripples.att_storm_name(e.label) is not null;
+  for g in select nm, yr, array_agg(event_id order by (slug = 'lib-storm-' || nm || '-' || yr) desc, onset, event_id) ids,
+                  min(onset) onset, count(*) n
+             from _st group by nm, yr loop
+    n_groups := n_groups + 1;
+    v_ctrl := ripples.att_control_overlap('hazard.storm', g.onset, '{}', g.nm);
+    if v_ctrl is not null then
+      n_ctrl := n_ctrl + ripples._att_library_delete(g.ids);
+      continue;
+    end if;
+    v_slug := 'storm-' || g.nm || '-' || g.yr;
+    if g.n = 1 and (select slug from _st where event_id = g.ids[1]) = 'lib-' || v_slug then continue; end if;
+    v_keep := g.ids[1];
+    select coalesce(array_agg(distinct x order by x), '{}') into v_states
+      from _st s cross join lateral jsonb_array_elements_text(case when jsonb_typeof(s.tmeta->'state') = 'array' then s.tmeta->'state' else '[]'::jsonb end) x
+     where s.event_id = any(g.ids) and x ~ '^[A-Z]{2}$';
+    select coalesce(array_agg(distinct x order by x), '{}') into v_def
+      from _st s cross join lateral unnest(ripples.att_lib_defined_by(s.tmeta->>'lib_source')
+                                           || coalesce((select array_agg(y) from jsonb_array_elements_text(case when jsonb_typeof(s.tmeta->'defined_by') = 'array' then s.tmeta->'defined_by' else '[]'::jsonb end) y), '{}')) x
+     where s.event_id = any(g.ids);
+    select round(ln(1 + sum(greatest(exp(coalesce(s.magnitude, 0)) - 1, 0)))::numeric, 3)::real,
+           string_agg(distinct s.tmeta->>'lib_ref', ';'), string_agg(distinct split_part(coalesce(s.tmeta->>'lib_source', ''), ' ', 1), '+'),
+           case when bool_or(upper(s.label) ~ 'HURRICANE') then 'Hurricane' when bool_or(upper(s.label) ~ 'TYPHOON') then 'Typhoon'
+                when bool_or(upper(s.label) ~ 'TROPICAL CYCLONE') then 'Tropical cyclone' else 'Tropical storm' end
+      into v_mag, v_refs, v_srcs, v_kind
+      from _st s where s.event_id = any(g.ids);
+    v_label := v_kind || ' ' || initcap(g.nm) || ' (' || g.yr || ')';
+    select topic_id into v_topic from _st where event_id = v_keep;
+    -- drop the other events first (frees their slugs / topics)
+    perform ripples._att_library_delete(g.ids[2:]);
+    n_merged := n_merged + g.n - 1;
+    update ripples.att_topics t set label_key = 'lib:' || v_slug, label = v_label,
+           meta = t.meta || jsonb_strip_nulls(jsonb_build_object('family', 'hazard.storm', 'storm', g.nm, 'lib_source', v_srcs, 'lib_ref', left(v_refs, 200),
+                    'defined_by', to_jsonb(v_def), 'proposing_ch', to_jsonb(ripples.att_proposing_channels('hazard.storm', v_def)),
+                    'state', case when cardinality(v_states) > 0 then to_jsonb(v_states) end,
+                    'ba', case when cardinality(v_states) > 0 then to_jsonb(ripples.att_state_bas(v_states)) end))
+     where t.topic_id = v_topic and not exists (select 1 from ripples.att_topics x where x.label_key = 'lib:' || v_slug and x.topic_id <> v_topic);
+    update ripples.att_events set slug = 'lib-' || v_slug, label = v_label, onset = g.onset, as_of = g.onset + 1, magnitude = v_mag,
+           family = 'hazard.storm'
+     where event_id = v_keep and not exists (select 1 from ripples.att_events x where x.slug = 'lib-' || v_slug and x.event_id <> v_keep);
+    update ripples.att_family_events set family = 'hazard.storm', onset = g.onset, magnitude = v_mag, defined_by = v_def,
+           proposing_ch = ripples.att_proposing_channels('hazard.storm', v_def),
+           in_prior_set = g.onset < v_cut, in_replication_set = g.onset >= v_cut
+     where event_id = v_keep;
+  end loop;
+  return jsonb_build_object('storm_groups', n_groups, 'merged_away', n_merged, 'deleted_control_twins', n_ctrl);
+end $$;
+
+-- sweep: defined_by / proposing_ch for every library event, control twins removed, set flags and notes recomputed
+create or replace function ripples.att_library_sweep() returns jsonb
+language plpgsql security definer set search_path = '' as $$
+declare n_ctrl int := 0; n_upd int; v_ids bigint[];
+        v_cut date := coalesce((ripples._att_cfg('engine') ->> 'prior_cutoff')::date, date '2026-01-01');
+begin
+  select coalesce(array_agg(e.event_id), '{}') into v_ids
+    from ripples.att_events e join ripples.att_topics t on t.topic_id = e.topic_id
+   where e.role = 'library'
+     and ripples.att_control_overlap(e.family, e.onset,
+           coalesce((select array_agg(x) from jsonb_array_elements_text(case when jsonb_typeof(t.meta->'state') = 'array' then t.meta->'state' else '[]'::jsonb end) x), '{}'),
+           coalesce(t.meta->>'storm', ripples.att_storm_name(e.label))) is not null;
+  n_ctrl := ripples._att_library_delete(v_ids);
+  update ripples.att_family_events fe
+     set defined_by = d.def, proposing_ch = ripples.att_proposing_channels(fe.family, d.def),
+         in_prior_set = e.role = 'library' and fe.onset < v_cut, in_replication_set = e.role = 'library' and fe.onset >= v_cut,
+         set_note = case when e.role <> 'library' then 'positive control: in neither set (ENGINE §5.7)'
+                         when fe.onset < v_cut then 'prior set (onset < prior_cutoff)' else 'replication set (onset >= prior_cutoff)' end
+                    || case when cardinality(ripples.att_proposing_channels(fe.family, d.def)) > 0
+                            then '; proposing channel(s) ' || array_to_string(ripples.att_proposing_channels(fe.family, d.def), ',')
+                                 || ' must be excluded from the response (ENGINE §2.4)' else '' end
+    from ripples.att_events e join ripples.att_topics t on t.topic_id = e.topic_id
+    cross join lateral (select coalesce(array_agg(distinct x order by x), '{}') def from (
+        select unnest(ripples.att_lib_defined_by(t.meta->>'lib_source')) x
+        union all select jsonb_array_elements_text(case when jsonb_typeof(t.meta->'defined_by') = 'array' then t.meta->'defined_by' else '[]'::jsonb end)) z) d
+   where e.event_id = fe.event_id;
+  get diagnostics n_upd = row_count;
+  update ripples.att_topics t set meta = t.meta || jsonb_build_object('defined_by', to_jsonb(fe.defined_by), 'proposing_ch', to_jsonb(fe.proposing_ch))
+    from ripples.att_events e join ripples.att_family_events fe using (event_id)
+   where e.topic_id = t.topic_id and t.label_key like 'lib:%'
+     and (t.meta->'defined_by' is distinct from to_jsonb(fe.defined_by) or t.meta->'proposing_ch' is distinct from to_jsonb(fe.proposing_ch));
+  return jsonb_build_object('control_twins_deleted', n_ctrl, 'family_events_updated', n_upd,
+    'by_defined_by', (select jsonb_object_agg(k, n) from (select coalesce(nullif(array_to_string(defined_by, '+'), ''), 'calendar/curated') k, count(*) n
+                                                          from ripples.att_family_events group by 1) z));
+end $$;
+
+-- NOAA-derived heat waves / cold snaps: defined_by noaa.ghcnd (NOAA is no tested target after the MAP removal)
+create or replace function ripples.att_library_noaa_extremes(p_force boolean default false) returns jsonb
+language plpgsql security definer set search_path = '' as $$
+declare v_rows jsonb;
+begin
+  if not p_force and not coalesce((select (v->>'complete')::boolean from ripples.att_state where k = 'econ.bf.noaa.ghcnd'), false) then
+    return jsonb_build_object('skipped', 'noaa backfill incomplete');
+  end if;
+  with x as (
+    select s.key stn, substr(s.geo, 4) st, o.day, o.value tmax
+      from ripples.att_series s join ripples.attention_obs o using (series_id)
+     where s.source = 'noaa.ghcnd' and s.metric = 'temp' and o.day >= date '2019-01-01'),
+  clim as (
+    select stn, extract(month from day)::int m,
+           percentile_cont(0.95) within group (order by tmax) p95, percentile_cont(0.05) within group (order by tmax) p05
+      from x where day < date '2026-01-01' group by 1, 2 having count(*) >= 60),
+  flag as (
+    select x.stn, x.st, x.day,
+           (x.tmax >= c.p95 and x.tmax >= 30) hot, (x.tmax <= c.p05 and x.tmax <= 5) cold
+      from x join clim c on c.stn = x.stn and c.m = extract(month from x.day)::int),
+  runs as (
+    select kind, stn, st, day, grp from (
+      select 'heat' kind, stn, st, day, day - (row_number() over (partition by stn order by day))::int grp from flag where hot
+      union all
+      select 'cold', stn, st, day, day - (row_number() over (partition by stn order by day))::int from flag where cold) z),
+  runlen as (select kind, stn, st, grp, count(*) n from runs group by 1, 2, 3, 4),
+  inrun as (
+    select r.kind, r.day, r.stn, r.st from runs r join runlen l using (kind, stn, st, grp)
+     where l.n >= case r.kind when 'heat' then 3 else 2 end),
+  daily as (select kind, day, count(distinct stn) n, array_agg(distinct st) sts from inrun group by 1, 2 having count(distinct stn) >= 5),
+  seq as (select *, case when day - lag(day) over (partition by kind order by day) <= 3 then 0 else 1 end brk from daily),
+  ev as (select *, sum(brk) over (partition by kind order by day) eid from seq),
+  agg as (
+    select kind, eid, min(day) onset, max(day) last_day, max(n) peak,
+           (select array_agg(distinct s order by s) from ev e2 cross join lateral unnest(e2.sts) s where e2.kind = ev.kind and e2.eid = ev.eid) states
+      from ev group by kind, eid)
+  select jsonb_agg(jsonb_build_object(
+           'slug', kind || '-' || to_char(onset, 'YYYY-MM-DD'),
+           'label', case kind when 'heat' then 'Heat wave' else 'Cold snap' end || ' ' || to_char(onset, 'YYYY-MM-DD') || ' (' || array_length(states, 1) || ' states)',
+           'family', 'hazard.' || kind, 'onset', onset, 'states', to_jsonb(states), 'magnitude', round(ln(peak)::numeric, 3),
+           'defined_by', jsonb_build_array('noaa.ghcnd'),
+           'source', 'noaa.ghcnd station panel', 'ref', 'peak ' || peak || ' stations, through ' || last_day) order by onset)
+    into v_rows from agg where onset < current_date - 3;
+  return ripples.att_library_upsert(coalesce(v_rows, '[]'::jsonb));
+end $$;
+
+-- positive-control baseline: + whether the node's source can hold history before 2026 at all
+create or replace function ripples.att_controls_baseline() returns jsonb
+language sql stable security definer set search_path = '' as $$
+  with nodes as (
+    select c.id, coalesce(c.spec->>'name', c.spec->>'slug') control, (c.spec->>'onset')::date onset, n.node, n.src
+      from ripples.att_controls c
+      cross join lateral (
+        select coalesce(x->>'node', x #>> '{}') node, 'expect' src from jsonb_array_elements(coalesce(c.spec->'expect', '[]'::jsonb)) x
+        union
+        select x->>'node', 'wsa_expect' from jsonb_array_elements(coalesce(c.spec->'wsa_expect', '[]'::jsonb)) x) n
+     where c.kind = 'positive')
+  select coalesce(jsonb_agg(jsonb_build_object('control', control, 'node', node, 'list', src, 'onset', onset,
+           'baseline_days', b.n, 'post_days', b.p, 'ok', coalesce(b.n, 0) >= 90,
+           'history', case when split_part(node, ':', 1) in ('pypi.dl', 'hf.trending')
+                           then 'none_available: ' || case split_part(node, ':', 1) when 'pypi.dl' then 'pypistats keeps 180 days'
+                                                         else 'Hugging Face trending is a live snapshot' end end)
+           order by onset, control, node), '[]'::jsonb)
+  from nodes
+  left join lateral (
+    select count(distinct o.day) filter (where o.day between nodes.onset - 120 and nodes.onset - 1) n,
+           count(distinct o.day) filter (where o.day between nodes.onset and nodes.onset + 30) p
+      from ripples.att_series s join ripples.attention_obs o using (series_id)
+     where s.source = split_part(nodes.node, ':', 1) and s.key = substr(nodes.node, length(split_part(nodes.node, ':', 1)) + 2)
+       and s.metric = case when s.source = 'eia.930' then 'demand' else s.metric end) b on true
+$$;
+
+revoke all on function ripples.att_family_target_sources(text), ripples.att_proposing_channels(text, text[]), ripples.att_storm_name(text),
+  ripples.att_control_overlap(text, date, text[], text), ripples.att_lib_defined_by(text), ripples._att_library_delete(bigint[]),
+  ripples.att_library_upsert(jsonb), ripples.att_library_recluster_storms(), ripples.att_library_sweep(),
+  ripples.att_library_noaa_extremes(boolean), ripples.att_controls_baseline() from public, anon, authenticated;
+
+-- daily: recluster + sweep before the graph rebuild (05:40)
+select cron.schedule('att-lib-sweep', '33 5 * * *', $$select ripples.att_library_recluster_storms(); select ripples.att_library_sweep()$$);
+-- the wikidata budget row of 2026-09-25 was created before the bucket was raised to 550 (att_config.budgets)
+update ripples.att_budget set cap = 550 where day = date '2026-09-25' and bucket = 'wikidata' and cap = 300;
+
+-- =====================================================================================================================
+-- Addendum (migration att_wsa_r2_zvec_catchup, 2026-09-25 ~20:15 UTC): one-off z / kappa catch-up for sources whose
+-- series arrived after the 05:50 nightly att_build_zvec run (census.bfs, kalshi.mkt price history, eia.930 netgen and
+-- late BAs, the new week-grain fred.claims / fred.weekly), through WS-B's own per-series builders. The nightly run
+-- recomputes them with the full two-pass method. The cron job removed itself once every eligible series was tried.
+create or replace function ripples._wsa_zvec_catchup(p_budget_s int default 45) returns jsonb
+language plpgsql security definer set search_path = '' as $$
+declare t0 timestamptz := clock_timestamp(); r record; n int := 0; v_day date := current_date - 1; st jsonb; tried jsonb; v_left int;
+begin
+  if not pg_try_advisory_lock(hashtext('ripples._wsa_zvec_catchup')) then return '{"skipped":"locked"}'::jsonb; end if;
+  st := coalesce(ripples.att_state_get('wsa.zvec.catchup'), '{}'::jsonb);
+  tried := coalesce(st->'tried', '[]'::jsonb);
+  for r in select s.series_id, s.source, src.grain from ripples.att_series s join ripples.att_sources src using (source)
+            where s.source = any(array['census.bfs','fred.claims','fred.weekly','kalshi.mkt','eia.930'])
+              and s.key <> '__total__' and s.last_day >= v_day - 120
+              and not exists (select 1 from ripples.att_zvec z where z.series_id = s.series_id)
+              and not tried @> to_jsonb(s.series_id)
+            order by s.source, s.series_id loop
+    exit when clock_timestamp() - t0 > make_interval(secs => p_budget_s);
+    if r.grain in ('week','month') then
+      perform ripples.att_zvec_series_periodic(r.series_id, v_day);
+    else
+      if not (st ? ('wk:' || r.source)) then
+        perform ripples.att_zvec_weekday(r.source, v_day);
+        st := st || jsonb_build_object('wk:' || r.source, true);
+      end if;
+      perform ripples.att_zvec_series(r.series_id, v_day, 0);
+    end if;
+    tried := tried || to_jsonb(r.series_id);
+    n := n + 1;
+  end loop;
+  st := st || jsonb_build_object('tried', tried, 'at', now());
+  perform ripples.att_state_set('wsa.zvec.catchup', st);
+  select count(*) into v_left from ripples.att_series s
+   where s.source = any(array['census.bfs','fred.claims','fred.weekly','kalshi.mkt','eia.930'])
+     and s.key <> '__total__' and s.last_day >= v_day - 120
+     and not exists (select 1 from ripples.att_zvec z where z.series_id = s.series_id) and not tried @> to_jsonb(s.series_id);
+  perform pg_advisory_unlock(hashtext('ripples._wsa_zvec_catchup'));
+  if v_left = 0 then perform cron.unschedule('wsa-zvec-catchup'); end if;
+  return jsonb_build_object('series', n, 'left', v_left);
+end $$;
+revoke all on function ripples._wsa_zvec_catchup(int) from public, anon, authenticated;
+select cron.schedule('wsa-zvec-catchup', '* * * * *', $c$select ripples._wsa_zvec_catchup(45)$c$);
+
+-- run once after the r2 migrations (2026-09-25 ~20:20 UTC, execute_sql):
+--   select ripples.att_family_sync('v6.0');                 -- 40 templates, MONEY without WS-B primary key
+--   select ripples.att_library_recluster_storms();          -- 73 storm groups, 20 duplicates merged, 7 control twins deleted
+--   select ripples.att_library_sweep();                     -- 1 more control twin deleted, defined_by / proposing_ch set
+--   update ripples.att_events ... 'Hurricane ' -> 'Typhoon ' for canonical storms whose states are only GU / MP / AS
+--   select ripples.att_library_noaa_extremes();             -- 85 heat / cold events; 2 skipped as twins of the Texas heat dome control
+--   select ripples.att_build_graph('v6.0');                 -- ledger model_version row (graph + template + prior hashes)

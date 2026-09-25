@@ -17,7 +17,7 @@
 import { politeFetch, type Run, serve, stateGet, stateSet, db, jobsDone, WALL_MS } from "./att.ts";
 
 const FN = "att-news";
-const NEWS_VERSION = "2026-09-25.n9"; // n2: GKG 404 parking + min file age; sequential sitemaps. n3: size-normalised
+const NEWS_VERSION = "2026-09-25.n10"; // n2: GKG 404 parking + min file age; sequential sitemaps. n3: size-normalised
 // GKG burst baseline; network brands excluded from Third Eye. n4: GKG entity minimisation (photo/byline credits,
 // outlet breadth, boilerplate labels) for candidates and edges; parked-file retry by file age; brand-free sitemap keywords.
 // n5: photo credits detected as V1-only ("ghost") names. n6: bylines, credits and ghosts kept out of the EWMA baseline.
@@ -29,6 +29,11 @@ const NEWS_VERSION = "2026-09-25.n9"; // n2: GKG 404 parking + min file age; seq
 // "CNN" and forms such as "United States" are often missing from AllNames); kind vote favours places; title stubs
 // ("Sir Mark", "Republican President George") dropped; a person-like candidate or edge endpoint needs 10 outlets, or 5
 // outlets in at least 2 source countries (a private individual in a syndicated local story stays out).
+// n10 (privacy): a GKG name is stored in readable form (discovery candidate, edge endpoint, EWMA baseline key) only when
+// it resolves to a Wikidata QID / Wikipedia article (ripples.att_topics and the resolve path's ripples.title_map, via
+// att_news_qid_names) or is an organisation or place by kind vote. Other (person-like) names are dropped from
+// candidates and edges and kept in the EWMA baseline only as a salted SHA-256 digest (rate tracking). Date fragments
+// ("Sunday September") and quote-edged labels (song titles, "Will Follow'") are junk.
 const GKG_BASE = "https://data.gdeltproject.org/gdeltv2/";
 const THIRDEYE = "https://archive.org/services/third-eye.php";
 const OUTLETS: Record<string, string> = {
@@ -44,7 +49,7 @@ const normMem = new Map<string, string>();
 export function norm(s: string): string {
   const c = normMem.get(s);
   if (c !== undefined) return c;
-  const v = s.toLowerCase().normalize("NFKD").replace(/[\u0300-\u036f]/g, "").replace(/[^\p{L}\p{N}]+/gu, " ").trim();
+  const v = s.toLowerCase().normalize("NFKD").replace(/[̀-ͯ]/g, "").replace(/[^\p{L}\p{N}]+/gu, " ").trim();
   if (normMem.size < 200_000) normMem.set(s, v);
   return v;
 }
@@ -256,7 +261,7 @@ async function forEachLine(stream: ReadableStream<any>, fn: (line: string) => vo
 interface Pending { first: string; last: string; n: number }
 interface GkgState { last_file?: string; files?: number; gaps?: number; pending?: Record<string, Pending> }
 /** EWMA baseline of each entity's documents per 1000 documents in a file (unit "per1k"; older states were per file). */
-interface Ewma { n_files: number; b: Record<string, number>; unit?: string }
+interface Ewma { n_files: number; b: Record<string, number>; h?: Record<string, number>; unit?: string; v?: number }
 const EWMA_ALPHA = 0.05;
 const EWMA_KEEP = 6000;
 /** Cold start (n8): an entity outside the baseline is expected at no less than this rate (documents per 1000) or the
@@ -360,6 +365,60 @@ export function selfBrand(n: string, brand: string): boolean {
   return c === brand || c === brand + "news" || brand === c + "news" || c === "the" + brand;
 }
 export function junkLabel(n: string): boolean { return JUNK_LABEL.test(n); }
+// n10 junk: date fragments and quote-edged labels
+const DATE_FULL = new Set(["monday", "tuesday", "wednesday", "thursday", "friday", "saturday", "sunday", "january",
+  "february", "march", "april", "may", "june", "july", "august", "september", "october", "november", "december"]);
+const DATE_WORD = new Set([...DATE_FULL, "jan", "feb", "mar", "apr", "jun", "jul", "aug", "sep", "sept", "oct", "nov", "dec",
+  "mon", "tue", "tues", "wed", "thu", "thur", "thurs", "fri", "sat", "sun", "today", "yesterday", "tomorrow", "tonight",
+  "morning", "afternoon", "evening", "night", "week", "weekend", "last", "next", "this", "early", "late", "mid", "of",
+  "the", "on", "st", "nd", "rd", "th"]);
+/** A norm()-ed name made only of date words and numbers, with at least one full weekday or month ("sunday september"). */
+export function dateFragment(n: string): boolean {
+  const w = n.split(" ").filter(Boolean);
+  return w.length > 0 && w.some((x) => DATE_FULL.has(x)) && w.every((x) => DATE_WORD.has(x) || /^\d{1,4}(st|nd|rd|th)?$/.test(x));
+}
+const QUOTE_CH = "'\"‘’‚‛“”„«»`´";
+/** A raw label that starts or ends with a quote mark: a song/film title or quotation fragment ("With Or Without You'"). */
+export function quoteEdged(label: string): boolean {
+  const t = label.trim();
+  return t.length > 0 && (QUOTE_CH.includes(t[0]) || QUOTE_CH.includes(t[t.length - 1]));
+}
+
+// ------------------------------------------------------------ n10 privacy: resolvable names + salted digests
+const QID_TTL_MS = 30 * 60e3;
+let qidMem: { at: number; m: Map<string, string> } | null = null;
+/** norm()-ed name -> QID for every label/title with a QID (att_topics + title_map). Empty on error (nothing readable). */
+async function qidNames(run: Run): Promise<Map<string, string>> {
+  if (qidMem && Date.now() - qidMem.at < QID_TTL_MS) return qidMem.m;
+  const { data, error } = await db.rpc("att_news_qid_names");
+  const m = new Map<string, string>();
+  if (error) { run.errors.push(`att_news_qid_names: ${error.message}`); return m; }
+  for (const x of (Array.isArray(data) ? data : [])) {
+    if (!Array.isArray(x) || typeof x[0] !== "string" || typeof x[1] !== "string") continue;
+    const n = norm(x[0]);
+    if (n.length >= 3 && !m.has(n)) m.set(n, x[1]);
+  }
+  qidMem = { at: Date.now(), m };
+  return m;
+}
+/** Per-deployment random salt for name digests (att_state 'gkg.salt'; created once). */
+async function gkgSalt(): Promise<string> {
+  const s = (await stateGet("gkg.salt")) as { salt?: string } | null;
+  if (typeof s?.salt === "string" && s.salt.length >= 32) return s.salt;
+  const b = crypto.getRandomValues(new Uint8Array(32));
+  const salt = [...b].map((x) => x.toString(16).padStart(2, "0")).join("");
+  await stateSet("gkg.salt", { salt, created_at: new Date().toISOString() });
+  return salt;
+}
+const enc = new TextEncoder();
+/** Salted digest key of a norm()-ed name ("h:" + 16 hex of SHA-256(salt 0x01 name)). */
+async function nameDigests(salt: string, names: Iterable<string>): Promise<Map<string, string>> {
+  const arr = [...names];
+  const out = new Map<string, string>();
+  const dg = await Promise.all(arr.map((n) => crypto.subtle.digest("SHA-256", enc.encode(salt + "\u0001" + n))));
+  dg.forEach((d, i) => out.set(arr[i], "h:" + [...new Uint8Array(d).subarray(0, 8)].map((x) => x.toString(16).padStart(2, "0")).join("")));
+  return out;
+}
 export function isCreditMark(n: string): boolean { return CREDIT_MARK.has(n) || CREDIT_TOKEN.test(n); }
 
 interface GkgCtx { terms: Term[]; matcher: Matcher; themeIdx: Map<string, number>; latest: string; forced: boolean }
@@ -762,7 +821,7 @@ async function gkgFile(run: Run, file: string, ctx: GkgCtx, st: GkgState, retry 
   const r = await accum(run, `gkg:${file}`, rows);
 
   // ---- entity minimisation (n4): credits, bylines, single-outlet names and site furniture never leave the function
-  const drop = { credit: 0, ghost: 0, tail: 0, byline: 0, outlets: 0, junk: 0, dup: 0, local: 0 };
+  const drop = { credit: 0, ghost: 0, tail: 0, byline: 0, outlets: 0, junk: 0, dup: 0, local: 0, private: 0, date: 0, quoted: 0 };
   const eligible = (n: string, minOutlets: number, count = true, person = false): boolean => {
     const d = entDocs.get(n) ?? 0;
     let why: keyof typeof drop | null = null;
@@ -793,6 +852,17 @@ async function gkgFile(run: Run, file: string, ctx: GkgCtx, st: GkgState, retry 
   /** Candidate / edge-endpoint breadth test (persons: 5 outlets and 2 countries, or 10 outlets). */
   const wideEnough = (n: string, other: number, count = true) =>
     personLike(n) ? eligible(n, PERSON_MIN_OUTLETS, count, true) : eligible(n, other, count);
+  // n10 privacy: readable only when QID-resolvable, or an organisation / place; plus date / quote junk
+  const qids = await qidNames(run);
+  const readable = (n: string) => qids.has(n) || !personLike(n);
+  const storable = (n: string, count = true): boolean => {
+    let why: "private" | "date" | "quoted" | null = null;
+    if (dateFragment(n)) why = "date";
+    else if (quoteEdged(entLabel.get(n) ?? n)) why = "quoted";
+    else if (!readable(n)) why = "private";
+    if (why && count) drop[why]++;
+    return why === null;
+  };
   // ---- co-mention edges (at least one side active; top 25 per term with >= 2 shared documents)
   const byTerm = new Map<number, Array<[string, number]>>();
   const edgeOk = new Map<string, boolean>();
@@ -802,7 +872,7 @@ async function gkgFile(run: Run, file: string, ctx: GkgCtx, st: GkgState, retry 
     const i = +pk.slice(0, s);
     const e = pk.slice(s + 1);
     let ok = edgeOk.get(e);
-    if (ok === undefined) { ok = wideEnough(e, EDGE_MIN_OUTLETS, false); edgeOk.set(e, ok); }
+    if (ok === undefined) { ok = wideEnough(e, EDGE_MIN_OUTLETS, false) && storable(e, false); edgeOk.set(e, ok); }
     if (!ok) continue;
     // skip the term's own names (the entity is the topic itself)
     const self = new Set<number>(); matcher.match(e, self);
@@ -821,33 +891,48 @@ async function gkgFile(run: Run, file: string, ctx: GkgCtx, st: GkgState, retry 
 
   // ---- discovery: surging entities vs an EWMA baseline of each entity's share of the file's documents
   // (files range from ~900 to ~1500 documents, so a per-file count baseline flags every big name in a big file)
-  const ew = ((await stateGet("gkg.ewma")) ?? { n_files: 0, b: {}, unit: "per1k" }) as Ewma;
+  const ew = ((await stateGet("gkg.ewma")) ?? { n_files: 0, b: {}, h: {}, unit: "per1k", v: 2 }) as Ewma;
   const per1k = N > 0 ? 1000 / N : 0;
   if (ew.unit !== "per1k") {
     // one-off conversion of a per-file baseline (approximated with this file's size)
     for (const n of Object.keys(ew.b)) ew.b[n] = ew.b[n] * per1k;
     ew.unit = "per1k";
   }
+  // n10: baseline keys are readable names (QID-resolvable, organisations, places) in b, other names as salted digests in h
+  const salt = await gkgSalt();
+  ew.h ??= {};
+  if (ew.v !== 2) {
+    // one-off: a legacy key has no kind any more, so only QID-resolvable names stay readable; the rest become digests
+    const legacy = Object.keys(ew.b).filter((n) => !qids.has(n));
+    const lh = await nameDigests(salt, legacy);
+    for (const n of legacy) { const k = lh.get(n)!; ew.h![k] = (ew.h![k] ?? 0) + ew.b[n]; delete ew.b[n]; }
+    ew.v = 2;
+    if (!run.dryRun) await stateSet("gkg.ewma", ew);
+    run.extra.ewma_converted = { readable: Object.keys(ew.b).length, digests: Object.keys(ew.h!).length };
+  }
+  const dig = await nameDigests(salt, entDocs.keys());
+  const baseOf = (n: string): number | undefined =>
+    readable(n) ? (ew.b[n] ?? ew.h![dig.get(n)!]) : ew.h![dig.get(n)!];
   const cands: Array<{ n: string; z: number; c: number; e: number; cold: boolean }> = [];
   if (ew.n_files >= CAND_WARMUP_FILES && N > 0) {
     // an entity outside the baseline (never seen, or pruned below the lowest kept value) is expected at the floor
-    const vals = Object.values(ew.b);
+    const vals = [...Object.values(ew.b), ...Object.values(ew.h!)];
     let bmin = Infinity;
     for (const v of vals) if (v < bmin) bmin = v;
     const floor = Math.max(EWMA_COLD_FLOOR, vals.length >= EWMA_KEEP * 0.95 && bmin < Infinity ? bmin : 0);
     for (const [n, c] of entDocs) {
       if (c < 5) continue;
-      const b = ew.b[n];
+      const b = baseOf(n);
       const e = Math.max(b ?? 0, floor) * N / 1000;   // expected documents in this file
       const z = (c - e) / Math.sqrt(e + 1);
-      if (z >= 3 && wideEnough(n, CAND_MIN_OUTLETS)) cands.push({ n, z, c, e, cold: b === undefined });
+      if (z >= 3 && wideEnough(n, CAND_MIN_OUTLETS) && storable(n)) cands.push({ n, z, c, e, cold: b === undefined });
     }
     cands.sort((a, b) => b.z - a.z);
   }
   const top = cands.slice(0, 200);
   const candRows = top.map((x, k) => ({
     day, source: SRC, geo: "ALL", label: entLabel.get(x.n) ?? x.n.replace(/(^| )(\p{L})/gu, (_m, a, b) => a + b.toUpperCase()),
-    rank: k + 1, value: x.c, evidence: Math.max(0, Math.min(1, x.z / 8)),
+    rank: k + 1, value: x.c, evidence: Math.max(0, Math.min(1, x.z / 8)), qid: qids.get(x.n) ?? null,
     meta: { method: x.cold ? "gkg_burst_ewma_v3_cold" : "gkg_burst_ewma_v3", n_docs: x.c, k: kindOf(x.n), q: Math.round(x.z * 100) / 100 },
   }));
   await candidatesMerge(run, candRows);
@@ -865,22 +950,34 @@ async function gkgFile(run: Run, file: string, ctx: GkgCtx, st: GkgState, retry 
     if (want) run.dryRows.push({ term_screen_selected: tl.filter((x) => want.has(String(x.key))) });
     probe.forEach((p, q) => run.dryRows.push({ probe: p, docs: probeOut[q].docs, credit_docs: probeOut[q].credit, ghost_docs: probeOut[q].ghost, tail_docs: probeOut[q].tail,
       byline: probeOut[q].byline, outlets: probeOut[q].outlets.size, kind: kindOf(p), kind_votes: entKindN.get(p) ?? null,
-      countries: entCC.get(p)?.length ?? 0, eligible: wideEnough(p, CAND_MIN_OUTLETS, false), cold: ew.b[p] === undefined,
+      countries: entCC.get(p)?.length ?? 0, eligible: wideEnough(p, CAND_MIN_OUTLETS, false) && storable(p, false), cold: baseOf(p) === undefined,
       ctx: probeOut[q].ctx }));
   }
 
   // EWMA update (only after a complete, newly written file)
   if (!run.dryRun && !(r?.dup)) {
-    const nb: Record<string, number> = {};
+    const nb: Record<string, number> = {};   // readable keys
+    const nh: Record<string, number> = {};   // salted digests
     for (const [n, b] of Object.entries(ew.b)) nb[n] = b * (1 - EWMA_ALPHA);
+    for (const [h, b] of Object.entries(ew.h!)) nh[h] = b * (1 - EWMA_ALPHA);
     for (const [n, c] of entDocs) {
+      const h = dig.get(n)!;
       // minimisation: journalists' and photographers' names (bylines, credits, ghosts) are not kept in the baseline
-      if (creditLike(n)) { delete nb[n]; continue; }
-      if (c >= 2 || nb[n] !== undefined) nb[n] = (nb[n] ?? 0) + EWMA_ALPHA * c * per1k;
+      if (creditLike(n)) { delete nb[n]; delete nh[h]; continue; }
+      if (readable(n)) {
+        if (nh[h] !== undefined) { nb[n] = (nb[n] ?? 0) + nh[h]; delete nh[h]; }
+        if (c >= 2 || nb[n] !== undefined) nb[n] = (nb[n] ?? 0) + EWMA_ALPHA * c * per1k;
+      } else {
+        if (nb[n] !== undefined) { nh[h] = (nh[h] ?? 0) + nb[n]; delete nb[n]; }
+        if (c >= 2 || nh[h] !== undefined) nh[h] = (nh[h] ?? 0) + EWMA_ALPHA * c * per1k;
+      }
     }
-    const keep = Object.entries(nb).filter(([, b]) => b >= 0.05).sort((a, b) => b[1] - a[1]).slice(0, EWMA_KEEP);
-    await stateSet("gkg.ewma", { n_files: ew.n_files + 1, unit: "per1k",
-      b: Object.fromEntries(keep.map(([n, b]) => [n, Math.round(b * 1000) / 1000])) });
+    const keep = [...Object.entries(nb).map(([k, b]) => [k, b, 0] as const), ...Object.entries(nh).map(([k, b]) => [k, b, 1] as const)]
+      .filter(([, b]) => b >= 0.05).sort((a, b) => b[1] - a[1]).slice(0, EWMA_KEEP);
+    const r3 = (b: number) => Math.round(b * 1000) / 1000;
+    await stateSet("gkg.ewma", { n_files: ew.n_files + 1, unit: "per1k", v: 2,
+      b: Object.fromEntries(keep.filter((x) => x[2] === 0).map(([n, b]) => [n, r3(b)])),
+      h: Object.fromEntries(keep.filter((x) => x[2] === 1).map(([n, b]) => [n, r3(b)])) });
   }
   if (!run.dryRun && !ctx.forced) {
     const cur = ((await stateGet("gkg.state")) ?? st) as GkgState;

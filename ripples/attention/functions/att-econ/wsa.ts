@@ -2,52 +2,25 @@
 // att-library). Canonical copy: functions/att-econ/wsa.ts; the other functions ship byte-identical copies next to
 // index.ts (the Supabase MCP deploy uploads only listed files).
 //
-// Key hygiene (OWNER D-7 / D-10): keys are read ONLY at run time through public.att_secret(name) (service_role), kept in
-// memory for the run, and every string that leaves the function (att_runs.detail via run.errors / run.skipped /
-// run.extra / run.sources) is scrubbed of the key values and of any `api_key=` / `apikey=` / `token=` /
-// `registrationkey` / `key=` query parameters before Run.finish() writes it. Keys never go into rows, meta, payloads or
-// logs; no console.log of URLs anywhere.
-import { db, errMsg, politeFetch, type Run } from "./att.ts";
+// Key hygiene (OWNER D-7 / D-10): keys are read ONLY at run time through public.att_secret(name) (service_role) via the
+// shared att.ts attSecret (ATT_VERSION >= 2026-09-25.4), kept in memory for the run, and every string that leaves the
+// function is scrubbed of the key values and of any `api_key=` / `apikey=` / `token=` / `registrationkey` / `key=` query
+// parameters: att.ts Run.finish() calls run.scrub() itself; wrap() also scrubs (idempotent). One secret registry (att.ts)
+// serves both, so a key read through either path is scrubbed everywhere. Keys never go into rows, meta, payloads or logs;
+// no console.log of URLs anywhere.
+import { attSecret, errMsg, politeFetch, type Run, scrubStr as attScrubStr } from "./att.ts";
 
-export const WSA_VERSION = "2026-09-25.a1";
-
-const SECRETS = new Set<string>();
-const SECRET_PARAM = /((?:api_?key|apikey|registrationkey|token|key|access_token)=)[^&\s"'<>)]+/gi;
+export const WSA_VERSION = "2026-09-25.a2";
 
 /** Read a Vault secret via public.att_secret (service_role). null when absent (collectors must then no-op cleanly). */
 export async function secret(run: Run, name: string): Promise<string | null> {
   if (run.params?.simulate_missing_key === true) return null; // test hook: exercise the no-key path without touching Vault
-  const { data, error } = await db.rpc("att_secret", { p_name: name });
-  if (error) { run.errors.push(`att_secret(${name}) failed`); return null; }
-  const v = typeof data === "string" && data.trim() ? data.trim() : null;
-  if (v) SECRETS.add(v);
-  return v;
+  return await attSecret(run, name);
 }
 
-export function scrubStr(s: string): string {
-  let out = s;
-  for (const k of SECRETS) if (k.length >= 4) out = out.split(k).join("***");
-  return out.replace(SECRET_PARAM, "$1***");
-}
-function scrubAny(v: unknown): unknown {
-  if (typeof v === "string") return scrubStr(v);
-  if (Array.isArray(v)) return v.map(scrubAny);
-  if (v && typeof v === "object") {
-    const o: Record<string, unknown> = {};
-    for (const [k, x] of Object.entries(v as Record<string, unknown>)) o[k] = scrubAny(x);
-    return o;
-  }
-  return v;
-}
-/** Remove key material from everything Run.finish() will persist or return. */
-export function scrub(run: Run) {
-  run.errors = run.errors.map(scrubStr);
-  run.skipped = run.skipped.map((s) => ({ host: scrubStr(s.host), reason: scrubStr(s.reason) }));
-  run.extra = scrubAny(run.extra) as Record<string, unknown>;
-  run.sources = scrubAny(run.sources) as typeof run.sources;
-  run.rejected = scrubAny(run.rejected) as unknown[];
-  run.nextCursor = scrubAny(run.nextCursor);
-}
+export const scrubStr = attScrubStr;
+/** Remove key material from everything Run.finish() will persist or return (delegates to att.ts Run.scrub). */
+export function scrub(run: Run) { run.scrub(); }
 /** Wrap a mode handler: exceptions become run.errors, and the run is always scrubbed before finish(). */
 export function wrap(f: (run: Run) => Promise<void>) {
   return async (run: Run) => {

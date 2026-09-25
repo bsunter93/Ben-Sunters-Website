@@ -11,7 +11,9 @@
 //   steamspy     SteamSpy top100in2weeks (1 request): yesterday's peak CCU per appid (metric 'ccu', aux = rank).
 //   github       GitHub search: repos created in the last 7 days by stars (gh.search 'new7d' rank + 'stars' level,
 //                keyed by numeric repo id; owner handles are never stored), and stargazers_count for registered repos
-//                (gh.stars 'total', with 'n' = stars gained when yesterday's total exists). Unauthenticated limits.
+//                (gh.stars 'total', with 'n' = stars gained when yesterday's total exists). Authenticated with the
+//                read-only PAT (Vault 'github_token', read at run time) sent ONLY to api.github.com; budgets stay under
+//                the authenticated limits (search 25/min of 30, core ~4000/h of 5000; spacing in att_sources).
 //   hf           Hugging Face trending models / spaces / datasets (sort=trendingScore): rank, aux = trendingScore,
 //                keyed by the opaque Hub object id.
 //   anilist      AniList GraphQL: TRENDING_DESC lists for anime and manga (isAdult:false; rank, aux = trending) and the
@@ -34,12 +36,12 @@
 // anilist trending, openlibrary trending) also emit their top 10 ('top'). Candidate labels are item names only.
 // Only ranks, counts and indices are stored; no descriptions, artwork, authors' handles or personal data.
 import {
-  addDays, ATT_VERSION, configGet, db, errMsg, type FetchOpts, ingest, ingestCandidates, type ObsRow,
+  addDays, ATT_VERSION, attSecret, configGet, db, errMsg, type FetchOpts, ingest, ingestCandidates, type ObsRow,
   politeFetch, type Run, serve, sleep, sourceInfo, stateGet, stateSet, watchlist, type WatchKey,
 } from "./att.ts";
 
 const FN = "att-charts";
-export const CHARTS_VERSION = "2026-09-25.c9";
+export const CHARTS_VERSION = "2026-09-25.c10";
 
 // ------------------------------------------------------------------ helpers
 type Cfg = Record<string, any>;
@@ -97,13 +99,26 @@ async function getJson(run: Run, url: string, o: FetchOpts & { soft?: boolean })
   const host = new URL(url).hostname.toLowerCase();
   const sp = await paceWait(run, o.source, host);
   if (sp === null) return null;
+  const headers: Record<string, string> = { Accept: "application/json", ...(o.headers as Record<string, string> ?? {}) };
+  // GitHub PAT: only for https://api.github.com (politeFetch also strips Authorization on any cross-origin redirect)
+  if (host === GH && new URL(url).protocol === "https:") {
+    const tok = await attSecret(run, "github_token");
+    if (tok) headers.Authorization = `Bearer ${tok}`;
+  }
   const tStart = Date.now();
-  const res = await politeFetch(run, url, { timeoutMs: 30_000, ...o, headers: { Accept: "application/json", ...(o.headers as Record<string, string> ?? {}) } });
+  const res = await politeFetch(run, url, { timeoutMs: 30_000, ...o, headers });
   if (!res) return null;
-  // stay below published rate limits: when the provider says <= 1 request is left, stop using the host for this run
-  // (GitHub reports an exhausted limit as 403, which att.ts treats as a permanent kill, so never reach it)
+  // stay below published rate limits: when the provider's remaining quota reaches the reserve, stop using the host
+  // for this run (GitHub reports an exhausted limit as 403, which att.ts treats as a permanent kill, so never reach it)
   const rem = res.headers.get("x-ratelimit-remaining");
-  if (rem !== null && rem !== "" && Number(rem) <= 1) {
+  const rlLimit = Number(res.headers.get("x-ratelimit-limit") ?? NaN);
+  if (host === GH) {
+    const gr = ((run.extra.gh_rate ??= {}) as Record<string, unknown>);
+    gr[res.headers.get("x-ratelimit-resource") ?? "?"] = { limit: Number.isFinite(rlLimit) ? rlLimit : null, remaining: rem === null ? null : Number(rem),
+      authenticated: "Authorization" in headers };
+  }
+  const reserve = Number.isFinite(rlLimit) && rlLimit >= 1000 ? 100 : 1;
+  if (rem !== null && rem !== "" && Number(rem) <= reserve) {
     run.killed.set(host, "ratelimit_reserve");
     run.skip(host, "ratelimit_reserve");
     run.partial = true;

@@ -24,13 +24,15 @@
 //   npm_bf      npm daily downloads (att-charts semantics: zero = not computed for busy packages) for the control
 //               packages from 2022-06-01 up to each series' first stored day, <= 540 days per request.
 //   hn_bf       HN Algolia strict daily mention counts (att-social's exact query parameters) for the control terms and
-//               windows, plus '__total__' for those days; resumable per term.
+//               windows, plus '__total__' for those days; resumable per term. Daily cap HN_BF_DAY_CAP = 300 requests
+//               across all runs of a UTC day (ENGINE §9 "HN 300" for new series; att_state 'lib.bf.hn.day'), on top of
+//               the shared hn.algolia bucket.
 //   ping        no requests.
 // Every request goes through politeFetch with the owning source (hosts, robots, budgets, kill switch).
 import { addDays, db, ingest, type ObsRow, politeFetch, type Run, serve, stateGet, stateSet } from "./att.ts";
 import { getJson, todayUtc, wrap } from "./wsa.ts";
 
-export const LIBRARY_VERSION = "2026-09-25.l3";
+export const LIBRARY_VERSION = "2026-09-25.l4";
 
 // ------------------------------------------------------------------ helpers
 async function st<T>(k: string, dflt: T): Promise<T> { return ((await stateGet(k).catch(() => null)) ?? dflt) as T; }
@@ -460,9 +462,25 @@ const HN_WINDOWS: Array<{ term: string; from: string; to: string }> = [
   { term: "llama", from: "2024-01-10", to: "2024-06-15" },
   { term: "deepseek", from: "2024-10-15", to: "2025-03-15" },
 ];
+const HN_BF_DAY_CAP = 300; // ENGINE §9: HN 300 requests/day for new-series backfills
 async function modeHnBf(run: Run) {
   const t0 = Date.now();
-  const maxCalls = Number(run.params.max_calls ?? 60);
+  const today = new Date().toISOString().slice(0, 10);
+  const day = await st<{ day?: string; calls?: number }>("lib.bf.hn.day", {});
+  const usedToday = day.day === today ? Number(day.calls ?? 0) : 0;
+  const maxCalls = Math.max(0, Math.min(Number(run.params.max_calls ?? 60), HN_BF_DAY_CAP - usedToday));
+  if (maxCalls <= 0) {
+    run.extra.hn = { calls: 0, used_today: usedToday, day_cap: HN_BF_DAY_CAP, note: "daily cap reached; resumes next UTC day" };
+    run.source({ source: "hn.algolia", status: "skipped", rows: 0, note: `hn_bf daily cap ${HN_BF_DAY_CAP} reached (${usedToday} used)` });
+    return;
+  }
+  try {
+    await hnBfBody(run, t0, maxCalls, (n) => stSet(run, "lib.bf.hn.day", { day: today, calls: usedToday + n }));
+  } finally {
+    run.extra.hn_day = { day: today, used_before: usedToday, day_cap: HN_BF_DAY_CAP };
+  }
+}
+async function hnBfBody(run: Run, t0: number, maxCalls: number, saveCalls: (n: number) => Promise<void>) {
   const state = await st<Record<string, { done_from?: number; complete?: boolean }>>("lib.bf.hn", {});
   let calls = 0, rows = 0;
   const report: Record<string, unknown> = {};
@@ -479,6 +497,7 @@ async function modeHnBf(run: Run) {
     rows += (await ingest(run, out)).rows;
     state[w.term] = { done_from: r.doneFrom, complete: r.complete };
     await stSet(run, "lib.bf.hn", state);
+    await saveCalls(calls);
     report[w.term] = { calls: r.calls, days: r.counts.size, complete: r.complete };
     if (!r.complete) run.partial = true;
   }
@@ -505,10 +524,12 @@ async function modeHnBf(run: Run) {
       const doneFrom = out.length ? dayTs(out[out.length - 1].day!) : (ts.done_from ?? b0);
       state[tk] = { done_from: doneFrom, complete: d < w.from };
       await stSet(run, "lib.bf.hn", state);
+      await saveCalls(calls);
       report[tk] = { days: out.length, complete: d < w.from };
       if (d >= w.from) run.partial = true;
     }
   }
+  await saveCalls(calls);
   run.extra.hn = { calls, rows, windows: report };
   run.source({ source: "hn.algolia", status: run.partial ? "partial" : "ok", rows, ms: Date.now() - t0 });
 }

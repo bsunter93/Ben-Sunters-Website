@@ -11,9 +11,12 @@
 // budgets charged inside politeFetch (att_take_budget, chunked, unspent units refunded), a spacing floor per source, the
 // Wikimedia quiet window, the UA contact gate, ingest via att_ingest / att_ingest_edges / att_ingest_candidates, the run
 // log (att_runs), job completion, and the §7.3 request/response contract through serve().
+// Keys (OWNER D-5 / D-7 / D-10): Vault secrets are read ONLY at run time through public.att_secret (attSecret), kept in
+// memory, and scrubbed (values and key-like query parameters) from everything Run.finish() persists or returns. The SEC
+// contact email (Vault 'sec_contact_email') is added to the User-Agent ONLY for requests to sec.gov hosts (secUa).
 import { createClient, type SupabaseClient } from "jsr:@supabase/supabase-js@2";
 
-export const ATT_VERSION = "2026-09-25.3";
+export const ATT_VERSION = "2026-09-25.4";
 export const UA = "ripples-research/0.2 (+https://bensunter.com/ripples/methods/)";
 /** The contact page named in UA. Wikimedia (§7.1) requires a UA "that includes a contact": the contact gate refuses
  *  requests in scope (att_config.contact_gate.scope: 'wikimedia' | 'all') while this page does not answer 2xx. */
@@ -59,7 +62,6 @@ const RED: RegExp[] = [
   /(^|\.)boxofficemojo\.com$/, /^play\.google\.com$/, /(^|\.)flixpatrol\.com$/, /(^|\.)stocktwits\.com$/,
   /(^|\.)tradestie\.com$/, /(^|\.)opensky-network\.org$/, /^radar\.cloudflare\.com$/, /(^|\.)duckduckgo\.com$/,
   /^completion\.amazon\.[a-z.]+$/, /^autosug\.ebay\.com$/, /(^|\.)ebay\.com$/, /(^|\.)amazon\.[a-z.]+$/,
-  /^(efts|www|data)\.sec\.gov$/, // disabled: SEC requires an owner contact email in the UA
   // DEMARCATION §3 matrix R rows (terms bans, barriers, robots disallow) — listed so the denylist is auditable
   /(^|\.)goodreads\.com$/, /^trends\.pinterest\.com$/, /(^|\.)x\.com$/, /(^|\.)twitter\.com$/, /(^|\.)twimg\.com$/,
   /^data\.indeed\.com$/, /^files\.tmdb\.org$/, /^data\.commoncrawl\.org$/, /^itunes\.apple\.com$/,
@@ -85,6 +87,51 @@ export function isRed(u: URL): boolean {
   const h = u.hostname.toLowerCase();
   if (RED.some((r) => r.test(h))) return true;
   return RED_PATH.some(([hr, pr]) => hr.test(h) && pr.test(u.pathname));
+}
+
+// ---------------------------------------------------------------- secrets (OWNER D-5 / D-7 / D-10)
+const SECRET_VALUES = new Set<string>();
+const SECRET_PARAM = /((?:api_?key|apikey|registrationkey|access_token|token|key)=)[^&\s"'<>)]+/gi;
+/** Read a Vault secret via public.att_secret (service_role only). null when absent. The value is never logged. */
+export async function attSecret(run: Run, name: string): Promise<string | null> {
+  if (run.secretMem.has(name)) return run.secretMem.get(name)!;
+  const { data, error } = await db.rpc("att_secret", { p_name: name });
+  if (error) { run.errors.push(`att_secret(${name}) failed`); return null; }
+  const v = typeof data === "string" && data.trim() ? data.trim() : null;
+  if (v) SECRET_VALUES.add(v);
+  run.secretMem.set(name, v);
+  return v;
+}
+/** Remove secret values and key-like query parameters from a string. */
+export function scrubStr(s: string): string {
+  let out = s;
+  for (const k of SECRET_VALUES) if (k.length >= 4) out = out.split(k).join("***");
+  return out.replace(SECRET_PARAM, "$1***");
+}
+function scrubAny(v: unknown): unknown {
+  if (typeof v === "string") return scrubStr(v);
+  if (Array.isArray(v)) return v.map(scrubAny);
+  if (v && typeof v === "object") {
+    const o: Record<string, unknown> = {};
+    for (const [k, x] of Object.entries(v as Record<string, unknown>)) o[k] = scrubAny(x);
+    return o;
+  }
+  return v;
+}
+/** SEC hosts (sec.gov and subdomains): the only hosts that receive the owner contact email in the User-Agent. */
+export function isSecHost(h: string): boolean { return /(^|\.)sec\.gov$/i.test(h); }
+const EMAIL_RE = /^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$/;
+/**
+ * User-Agent for a host: the email-free UA everywhere except sec.gov hosts, which get UA + the owner contact email read
+ * from Vault at run time (SEC fair-access policy). null = SEC host but no usable contact email (the request is not made).
+ */
+async function uaFor(run: Run, host: string): Promise<string | null> {
+  if (!isSecHost(host)) return UA;
+  if (run.secUa === undefined) {
+    const e = await attSecret(run, "sec_contact_email");
+    run.secUa = e && EMAIL_RE.test(e) ? `ripples-research/0.2 (+${CONTACT_URL}; ${e})` : null;
+  }
+  return run.secUa;
 }
 
 // Wikimedia documented APIs: robots.txt is not applied (DEMARCATION §7.1 lead decision); maxlag=5 on the Action API.
@@ -164,10 +211,12 @@ async function loadRobots(run: Run, origin: string, host: string): Promise<Robot
   if (mem && Date.now() - mem.fetched_at < ROBOTS_TTL_MS) return mem;
   const cached = await stateGet(`robots:${origin}`) as RobotsEntry | null;
   if (cached && Date.now() - cached.fetched_at < ROBOTS_TTL_MS) { robotsMem.set(origin, cached); return cached; }
+  const ua = await uaFor(run, host);
+  if (!ua) return { status: 0, fetched_at: Date.now(), deny_all: true, rules: [] }; // SEC host without contact: not cached
   let entry: RobotsEntry;
   try {
     const res = await serial(host, DEFAULT_SPACING_MS, () =>
-      fetch(`${origin}/robots.txt`, { headers: { "User-Agent": UA }, redirect: "manual", signal: AbortSignal.timeout(10_000) }));
+      fetch(`${origin}/robots.txt`, { headers: { "User-Agent": ua }, redirect: "manual", signal: AbortSignal.timeout(10_000) }));
     run.count(host, res.status);
     if (res.ok) {
       const txt = (await res.text()).slice(0, 512_000);
@@ -179,7 +228,7 @@ async function loadRobots(run: Run, origin: string, host: string): Promise<Robot
       const next = loc ? new URL(loc, `${origin}/robots.txt`) : null;
       if (next && next.hostname.toLowerCase() === host.toLowerCase() && next.pathname === "/robots.txt" && !isRed(next)) {
         const r2 = await serial(host, DEFAULT_SPACING_MS, () =>
-          fetch(next, { headers: { "User-Agent": UA }, redirect: "manual", signal: AbortSignal.timeout(10_000) }));
+          fetch(next, { headers: { "User-Agent": ua }, redirect: "manual", signal: AbortSignal.timeout(10_000) }));
         run.count(host, r2.status);
         if (r2.ok) entry = { status: r2.status, fetched_at: Date.now(), deny_all: false, rules: parseRobots((await r2.text()).slice(0, 512_000)) };
         else {
@@ -501,9 +550,13 @@ export async function politeFetch(run: Run, url: string, o: FetchOpts): Promise<
     const host = u.hostname.toLowerCase();
     const wm = isWikimediaApi(u);
     if (wm && u.pathname.startsWith("/w/api.php") && !u.searchParams.has("maxlag")) u.searchParams.set("maxlag", "5");
+    // per hop: the contact email goes only to sec.gov hosts; any other host (incl. a redirect off SEC) gets the plain UA
+    const ua = await uaFor(run, host);
+    if (!ua) { run.skip(host, "sec_contact_missing"); return null; }
+    headers.set("User-Agent", ua);
     const why = await preflight(run, u, o, src);
     if (why) { run.skip(host, why); return null; }
-    if (wm) headers.set("Api-User-Agent", UA); else headers.delete("Api-User-Agent");
+    if (wm) headers.set("Api-User-Agent", ua); else headers.delete("Api-User-Agent");
     const remaining = run.timeLeft() - 1500;
     if (remaining <= 0) { run.partial = true; return null; }
     // per-run cap and per-day budget are charged for EVERY request made (redirect hops and the AQS retry included)
@@ -704,6 +757,8 @@ export class Run {
   contactGate: { url: string; scope: string; ttl_ok_h: number; ttl_fail_h: number } | null = null;
   contactVerdict: boolean | null = null;
   quiet: { from: string; to: string } | null = null;
+  secretMem = new Map<string, string | null>(); // Vault secrets read this run (values never persisted)
+  secUa: string | null | undefined = undefined; // UA with the SEC contact email (sec.gov hosts only); null = unavailable
   partial = false;
   nextCursor: unknown = null;
   extra: Record<string, unknown> = {};
@@ -779,6 +834,16 @@ export class Run {
       ...this.extra,
     };
   }
+  /** Remove key material from everything finish() persists or returns. */
+  scrub() {
+    this.errors = this.errors.map(scrubStr);
+    this.skipped = this.skipped.map((s) => ({ host: scrubStr(s.host), reason: scrubStr(s.reason) }));
+    this.extra = scrubAny(this.extra) as Record<string, unknown>;
+    this.sources = scrubAny(this.sources) as SourceReport[];
+    this.rejected = scrubAny(this.rejected) as unknown[];
+    this.nextCursor = scrubAny(this.nextCursor);
+    if (this.dryRows.length) this.dryRows = scrubAny(this.dryRows) as unknown[];
+  }
   async finish() {
     // give back budget units taken in a chunk (or reserved by budget().take()) but never spent on a request
     for (const b of new Set([...Object.keys(this.pool), ...Object.keys(this.reserved)])) {
@@ -795,6 +860,7 @@ export class Run {
       if (error) this.errors.push(`att_host_lease_release: ${error.message}`);
       this.leases.clear();
     }
+    this.scrub();
     const out = this.result();
     if (this.runId) {
       await db.rpc("att_run_finish", { p_run: this.runId, p_result: { ...out, extra: this.extra, dry_rows: undefined } });

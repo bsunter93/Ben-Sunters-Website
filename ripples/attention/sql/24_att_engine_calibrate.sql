@@ -68,12 +68,13 @@ begin
     res := ripples.att_hop_stat_b(bundle, dd[k], dd[k] + (p_end - p_onset), 0, '{}', null, false);
     tv := (res ->> 'T')::float8;
     continue when tv is null;
+    continue when gate and coalesce((res ->> 's_pre')::float8, 0) >= 2;   -- gated-out draw: neither a draw nor an exceedance (same rule as att_run_placebos)
     n := n + 1;
-    if tv >= t_h and ((not gate) or coalesce((res ->> 's_pre')::float8, 0) < 2) then exceed := exceed + 1; end if;
-    if exceed >= bc then stopped := true; exit; end if;
+    if tv >= t_h then exceed := exceed + 1; end if;
+    if exceed >= bc and n >= 30 then stopped := true; exit; end if;   -- ≥ 30 draws before stopping (same rule as att_run_placebos)
   end loop;
   if n < 30 then return jsonb_build_object('p', null, 'reason', 'few draws', 'n', n); end if;
-  return jsonb_build_object('p', case when stopped then bc::float8 / n else (1 + exceed)::float8 / (1 + n) end, 'n', n, 't', t_h, 'exceed', exceed);
+  return jsonb_build_object('p', case when stopped and exceed = bc then bc::float8 / n else (1 + exceed)::float8 / (1 + n) end, 'n', n, 't', t_h, 'exceed', exceed);
 end $$;
 
 create or replace function ripples.att_calibrate_ks(p_as_of date, p_n int default 500) returns jsonb

@@ -17,8 +17,10 @@
 //                interest), per busy market, per topic, '__total__' (the *_fp fields are strings and are parsed).
 //   usaspending  USAspending spending_over_time by keyword, 3-month windows (monthly obligations), rotating keys
 //                (each key every 7 days).
-//   edgar        SEC EDGAR full-text search counts per month. Implemented but DISABLED (sec.efts.enabled=false and the
-//                att.ts RED list blocks sec.gov): SEC requires an owner contact email in the User-Agent.
+//   edgar        SEC EDGAR full-text search (efts.sec.gov) filing counts per month for registry terms (sec.efts), rotating
+//                keys (each key every 7 days). SEC fair access: att.ts adds the owner contact email (Vault
+//                'sec_contact_email', read at run time) to the User-Agent for sec.gov hosts ONLY; spacing 500 ms (<= 2
+//                req/s against SEC's published 10 req/s); per-run and per-day caps from att_sources.
 //   backfill     att_jobs: {params:{source:'finra.api', files:true}} mirrors up to 400 trading days (newest first), stopping
 //                at the Query API retention floor (~1 year; detected from 3 empty days below the oldest mirrored day);
 //                {params:{source:'finra.shvol'}, keys} backfills tickers with one API query per 3 tickers;
@@ -32,7 +34,7 @@ import {
 } from "./att.ts";
 
 const FN = "att-market";
-const MARKET_VERSION = "2026-09-25.m8";
+const MARKET_VERSION = "2026-09-25.m9";
 const BUCKET = "att-raw";
 const FINRA_URL = "https://api.finra.org/data/group/otcMarket/name/regShoDaily";
 const FINRA_FIELDS = ["tradeReportDate", "securitiesInformationProcessorSymbolIdentifier", "shortParQuantity",
@@ -1118,7 +1120,7 @@ async function usaspBackfill(run: Run, cfg: Cfg) {
   await settleJobs(run, doneKeys, 300, "api.usaspending.gov");
 }
 
-// ============================================================ SEC EDGAR full-text search (DISABLED: needs owner email)
+// ============================================================ SEC EDGAR full-text search (sec.efts)
 async function edgarCount(run: Run, term: string, start: string, end: string): Promise<number | null> {
   const q = encodeURIComponent(`"${term}"`);
   const res = await politeFetch(run, `${EFTS_URL}?q=${q}&dateRange=custom&startdt=${start}&enddt=${end}`,
@@ -1134,7 +1136,7 @@ async function edgar(run: Run) {
   const cfg = await mcfg(run);
   const src = await sourceInfo("sec.efts");
   if (!src?.enabled) {
-    run.source({ source: "sec.efts", status: "disabled", note: src?.reason ?? "needs owner contact email" });
+    run.source({ source: "sec.efts", status: "disabled", note: src?.reason ?? "disabled in att_sources" });
     return;
   }
   const d0 = today();
@@ -1144,20 +1146,25 @@ async function edgar(run: Run) {
   const cutoff = addDays(d0, -cfg.edgar_rotation_days);
   const due = keys.filter((k) => !rot.last[k.key] || rot.last[k.key] <= cutoff).slice(0, cfg.edgar_max_keys);
   const rows: ObsRow[] = [];
+  let done = 0;
   for (const k of due) {
-    if (run.outOfTime(10_000)) { run.partial = true; break; }
+    if (run.outOfTime(10_000) || run.killed.has("efts.sec.gov")) { run.partial = true; break; }
+    let ok = true;
     for (const back of [1, 0]) { // last complete month, then the current (partial) month
       const s = monthStart(d0, back), e = back ? monthEnd(s) : d0;
       const n = await edgarCount(run, k.key, s, e);
-      if (n === null) break;
+      if (n === null) { ok = false; break; }
       rows.push({ source: "sec.efts", key: k.key, metric: "n", day: s, value: n, topic_id: k.topic_id ?? null,
         meta: back ? { monthly: true } : { monthly: true, partial: true } });
     }
+    if (!ok) { run.partial = true; if (run.skipped.some((x) => x.host === "efts.sec.gov")) break; continue; }
     rot.last[k.key] = d0;
+    done++;
   }
   const r = await ingest(run, rows);
   if (!run.dryRun) await stateSet("edgar.rot", rot);
-  run.source({ source: "sec.efts", status: "ok", keys: due.length, rows: Number(r?.rows ?? 0), ms: Date.now() - t0 });
+  run.source({ source: "sec.efts", status: done < due.length ? "partial" : "ok", keys: done, rows: Number(r?.rows ?? 0),
+    ms: Date.now() - t0, note: `${done}/${due.length} due keys (${keys.length} registered)` });
 }
 
 // ============================================================ backfill router
@@ -1167,7 +1174,7 @@ async function backfill(run: Run) {
   if (source === "finra.api" && run.params?.files) return await finraFilesBackfill(run, cfg);
   if (source === "finra.shvol" || source === "finra.api") return await finraKeysBackfill(run, cfg);
   if (source === "usasp.spend") return await usaspBackfill(run, cfg);
-  const note = source === "sec.efts" ? "sec.efts disabled (needs owner contact email)"
+  const note = source === "sec.efts" ? "sec.efts: no backfill (edgar mode keeps a rolling monthly window)"
     : source === "poly.mkt" || source === "kalshi.mkt" ? "warm-up source: volume has no history (price history is fetched in polymarket mode)"
     : `no backfill for source '${source}'`;
   run.source({ source: source || "?", status: "skipped", note });
