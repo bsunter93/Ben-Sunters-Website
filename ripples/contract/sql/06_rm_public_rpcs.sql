@@ -1114,39 +1114,54 @@ end $$;
 -- returned as text (jsonb::text) so re-publishing writes byte-identical files.
 create or replace function public.rm_publish_bundle_v2(p_as_of date default null, p_events bigint[] default null, p_full boolean default false) returns jsonb
 language plpgsql volatile security definer set search_path = '' as $$
-declare d date := coalesce(p_as_of, (now() at time zone 'utc')::date); fr jsonb; touched bigint[]; casc jsonb; hops jsonb; lands jsonb := '{}'::jsonb;
-        dom text; wk text := to_char(d, 'IYYY-IW'); feed jsonb;
+declare d date := coalesce(p_as_of, (now() at time zone 'utc')::date); fr jsonb; touched bigint[]; newev bigint[]; casc jsonb; hops jsonb; lands jsonb := '{}'::jsonb;
+        dom text; wk text := to_char(d, 'IYYY-IW'); feed jsonb; withdraw jsonb; n_grants int; hop_ids bigint[]; hop_cap int := 400; n_hops_all int;
 begin
+  n_grants := ripples.rm_enforce_grants();   -- re-revoke anything rm_grant_audit lists (e.g. an older SQL file re-applied)
   fr := ripples.att_publish_cascades(d, p_events);
-  -- lines whose files are (re)written: new versions, running lines, or everything with p_full
-  select coalesce(array_agg(distinct v.event_id), '{}') into touched
-    from ripples.att_cascade_versions v join ripples.att_events e on e.event_id = v.event_id and e.role in ('real','library','positive_control')
-   where p_full or v.event_id in (select (x ->> 'event_id')::bigint from jsonb_array_elements(fr -> 'lines') x where (x ->> 'unchanged') = 'false')
-      or (v.payload ->> 'status' = 'running' and v.version = (select max(v2.version) from ripples.att_cascade_versions v2 where v2.event_id = v.event_id));
+  select coalesce(array_agg(distinct (x ->> 'event_id')::bigint), '{}') into newev from jsonb_array_elements(fr -> 'lines') x where (x ->> 'unchanged') = 'false';
+  -- lines whose files are (re)written: new versions, running lines, lines with a frozen file missing from Storage (a failed or
+  -- interrupted upload is retried on every run until it lands), lines with a version withheld in the last two days, or all with p_full
+  with lat as (select distinct on (v.event_id) v.event_id, v.version, v.payload from ripples.rm_public_versions v
+                 join ripples.att_events e on e.event_id = v.event_id and e.role in ('real','library','positive_control')
+                order by v.event_id, v.version desc)
+  select coalesce(array_agg(lat.event_id order by lat.event_id), '{}') into touched from lat
+   where p_full or lat.event_id = any (newev) or lat.payload ->> 'status' = 'running'
+      or not exists (select 1 from storage.objects o where o.bucket_id = 'ripples' and o.name = 'v2/cascade/' || lat.event_id || '.json')
+      or exists (select 1 from ripples.rm_public_versions v where v.event_id = lat.event_id
+                    and not exists (select 1 from storage.objects o where o.bucket_id = 'ripples' and o.name = 'v2/cascade/' || v.event_id || '/v' || v.version || '.json'))
+      or exists (select 1 from ripples.rm_version_audit a where a.event_id = lat.event_id and a.withheld and a.checked_at > now() - interval '2 days');
   select coalesce(jsonb_agg(jsonb_build_object(
            'event_id', t.id, 'latest', public.rm_cascade(t.id, null)::text,
            'versions', (select jsonb_agg(jsonb_build_object('version', v.version, 'published_at', v.published_at,
                                                             'stops', ripples.rm_stops(v.payload), 'status', v.payload ->> 'status',
                                                             'measured', (v.payload -> 'denominators' ->> 'measured')::int,
-                                                            'new', v.event_id in (select (x ->> 'event_id')::bigint from jsonb_array_elements(fr -> 'lines') x
-                                                                                   where (x ->> 'unchanged') = 'false' and (x ->> 'version')::int = v.version),
-                                                            'text', case when p_full or v.event_id in (select (x ->> 'event_id')::bigint from jsonb_array_elements(fr -> 'lines') x
-                                                                                   where (x ->> 'unchanged') = 'false' and (x ->> 'version')::int = v.version) then v.payload::text end)
+                                                            'new', v.event_id = any (newev) and v.version = (select max(v3.version) from ripples.att_cascade_versions v3 where v3.event_id = v.event_id),
+                                                            'text', case when p_full or (v.event_id = any (newev) and v.version = (select max(v3.version) from ripples.att_cascade_versions v3 where v3.event_id = v.event_id))
+                                                                           or not exists (select 1 from storage.objects o where o.bucket_id = 'ripples'
+                                                                                            and o.name = 'v2/cascade/' || v.event_id || '/v' || v.version || '.json')
+                                                                         then v.payload::text end)
                                            order by v.version)
-                          from ripples.att_cascade_versions v where v.event_id = t.id),
+                          from ripples.rm_public_versions v where v.event_id = t.id),
+           -- calendars only for windows that are still open (a closed window is never re-announced)
            'watching', (select coalesce(jsonb_agg(jsonb_build_object('hop_id', n -> 'hop_id', 'label', n ->> 'label', 'window_close', n ->> 'window_close', 'due', n ->> 'due')), '[]'::jsonb)
-                          from jsonb_array_elements((select v.payload from ripples.att_cascade_versions v where v.event_id = t.id order by v.version desc limit 1) -> 'nodes') n
-                         where (n ->> 'tier' = 'watching' or coalesce((n ->> 'provisional')::boolean, false)) and (n ->> 'window_close')::date >= d)) order by t.id), '[]'::jsonb)
+                          from jsonb_array_elements((select v.payload from ripples.rm_public_versions v where v.event_id = t.id order by v.version desc limit 1) -> 'nodes') n
+                         where (n ->> 'tier' = 'watching' or coalesce((n ->> 'provisional')::boolean, false)) and (n ->> 'window_close')::date >= d
+                           and not coalesce((n ->> 'window_closed')::boolean, false))) order by t.id), '[]'::jsonb)
     into casc from unnest(touched) t(id);
+  -- HopEvidence mirror: at most hop_cap hops per run; hops of lines with a new version first, then the least recently mirrored
+  with lat as (select distinct on (v.event_id) v.event_id, v.payload from ripples.rm_public_versions v where v.event_id = any (touched) order by v.event_id, v.version desc),
+  h as (select distinct lat.event_id, (n ->> 'hop_id')::bigint id from lat, jsonb_array_elements(lat.payload -> 'nodes') n
+        union
+        select distinct lat.event_id, (n ->> 'hop_id')::bigint from lat, jsonb_array_elements(coalesce(lat.payload -> 'flat', '[]'::jsonb)) n),
+  hh as (select h.id, bool_or(h.event_id = any (newev)) is_new, min(m.mirrored_at) at
+           from h left join ripples.rm_hop_mirrored m on m.hop_id = h.id group by h.id)
+  select count(*)::int, (select array_agg(x.id order by x.id) from (select hh2.id from hh hh2 order by (p_full or hh2.is_new) desc, hh2.at nulls first, hh2.id limit hop_cap) x)
+    into n_hops_all, hop_ids from hh;
   select coalesce(jsonb_agg(jsonb_build_object('hop_id', h.id, 'json', ripples.rm_hop_evidence(h.id)::text, 'csv', ripples.rm_hop_csv(h.id)) order by h.id), '[]'::jsonb)
-    into hops
-    from (select distinct (n ->> 'hop_id')::bigint id
-            from ripples.att_cascade_versions v, jsonb_array_elements(v.payload -> 'nodes') n
-           where v.event_id = any (touched) and v.version = (select max(v2.version) from ripples.att_cascade_versions v2 where v2.event_id = v.event_id)
-          union
-          select distinct (n ->> 'hop_id')::bigint
-            from ripples.att_cascade_versions v, jsonb_array_elements(coalesce(v.payload -> 'flat', '[]'::jsonb)) n
-           where v.event_id = any (touched) and v.version = (select max(v2.version) from ripples.att_cascade_versions v2 where v2.event_id = v.event_id)) h;
+    into hops from unnest(coalesce(hop_ids, '{}')) h(id);
+  insert into ripples.rm_hop_mirrored(hop_id, mirrored_at) select h.id, now() from unnest(coalesce(hop_ids, '{}')) h(id)
+  on conflict (hop_id) do update set mirrored_at = excluded.mirrored_at;
   foreach dom in array array['reading','chatter','markets','builders','real_world','jobs','institutions','stuff'] loop
     lands := lands || jsonb_build_object(dom, public.rm_lands(dom, 30)::text);
   end loop;
@@ -1154,13 +1169,39 @@ begin
                                                'slug', v.payload -> 'event' ->> 'slug', 'published_at', v.published_at, 'stops', ripples.rm_stops(v.payload),
                                                'status', v.payload ->> 'status', 'reconstructed', (v.payload -> 'event' ->> 'reconstructed')::boolean,
                                                'text', v.payload ->> 'text_plain') order by v.published_at desc, v.event_id), '[]'::jsonb)
-    into feed from (select * from ripples.att_cascade_versions order by published_at desc limit 50) v;
+    into feed from (select * from ripples.rm_public_versions order by published_at desc limit 50) v;
+  -- Storage objects that must not stay public: withheld versions (JSON + card), lines with no public version, hops that are no
+  -- longer on a public line, calendars of windows that have closed, feeds of lines with no public version
+  with lat as (select distinct on (v.event_id) v.event_id, v.payload from ripples.rm_public_versions v
+                 join ripples.att_events e on e.event_id = v.event_id and e.role in ('real','library','positive_control')
+                order by v.event_id, v.version desc),
+  ph as (select (n ->> 'hop_id')::bigint id from lat, jsonb_array_elements(lat.payload -> 'nodes') n
+         union select (n ->> 'hop_id')::bigint from lat, jsonb_array_elements(coalesce(lat.payload -> 'flat', '[]'::jsonb)) n),
+  ow as (select lat.event_id, (n ->> 'hop_id')::bigint id from lat, jsonb_array_elements(lat.payload -> 'nodes') n
+          where (n ->> 'tier' = 'watching' or coalesce((n ->> 'provisional')::boolean, false)) and (n ->> 'window_close')::date >= d
+            and not coalesce((n ->> 'window_closed')::boolean, false)),
+  wv as (select a.event_id, a.version from ripples.rm_version_audit a where a.withheld),
+  o as (select o.name, substring(o.name from '^v2/[a-z]+/(?:line-|hop-|stop-)?([0-9]+)')::bigint id1 from storage.objects o
+         where o.bucket_id = 'ripples' and o.name ~ '^v2/(cascade|feed|hop|og|ics)/')
+  select coalesce(jsonb_agg(o.name order by o.name), '[]'::jsonb) into withdraw from (
+    select o.name from o
+     where (o.name ~ '^v2/cascade/[0-9]+/v[0-9]+\.json$' and exists (select 1 from wv where o.name = 'v2/cascade/' || wv.event_id || '/v' || wv.version || '.json'))
+        or (o.name ~ '^v2/og/line-[0-9]+-v[0-9]+\.png$' and exists (select 1 from wv where o.name = 'v2/og/line-' || wv.event_id || '-v' || wv.version || '.png'))
+        or (o.name ~ '^v2/cascade/[0-9]+\.json$' and o.id1 not in (select lat.event_id from lat))
+        or (o.name ~ '^v2/feed/line-[0-9]+\.xml$' and o.id1 not in (select lat.event_id from lat))
+        or (o.name ~ '^v2/hop/[0-9]+\.(json|csv)$' and o.id1 not in (select ph.id from ph))
+        or (o.name ~ '^v2/og/stop-[0-9]+\.png$' and o.id1 not in (select ph.id from ph))
+        or (o.name ~ '^v2/ics/hop-[0-9]+\.ics$' and o.id1 not in (select ow.id from ow))
+        or (o.name ~ '^v2/ics/line-[0-9]+\.ics$' and o.id1 not in (select ow.event_id from ow))
+     limit 2000) o;
   return jsonb_build_object('as_of', d, 'freeze', fr - 'lines', 'lines_frozen', jsonb_array_length(fr -> 'lines'),
+    'held', (select coalesce(jsonb_agg(jsonb_build_object('event_id', x -> 'event_id', 'held', x -> 'held')), '[]'::jsonb) from jsonb_array_elements(fr -> 'lines') x where x ? 'held'),
+    'grants_fixed', n_grants,
     'shocks', (select payload::text from ripples.rm_days where day = d), 'shocks_day', d,
-    'cascades', casc, 'hops', hops, 'lands', lands,
+    'cascades', casc, 'hops', hops, 'hops_deferred', greatest(coalesce(n_hops_all, 0) - coalesce(cardinality(hop_ids), 0), 0), 'lands', lands,
     'archive', public.rm_archive(null, null)::text, 'calibration', public.rm_calibration()::text,
     'week', jsonb_build_object('week', wk, 'text', public.rm_week(wk)::text), 'health', public.rm_health()::text,
-    'feed', feed, 'open_data', ripples.rm_open_data(d),
+    'feed', feed, 'open_data', ripples.rm_open_data(d), 'withdraw', withdraw,
     'shock_card', (select jsonb_build_object('event_id', x -> 'event_id', 'version', x -> 'version') from ripples.rm_days r, jsonb_array_elements(r.payload -> 'shocks') with ordinality y(x, o)
                     where r.day = d and not (x ->> 'sensitive')::boolean order by o limit 1) );
 end $$;
