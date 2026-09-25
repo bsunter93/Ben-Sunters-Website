@@ -212,10 +212,16 @@ const CAND_WARMUP_FILES = 4;
 // Entity minimisation (n4). A GKG name only becomes a discovery candidate or an edge endpoint when it is reported by
 // several outlets and is not mostly a credit: photo and syndication credits ("(AP Photo/Jane Doe)", "Getty Images",
 // "Tribune Content Agency") and bylines (Extras <PAGE_AUTHORS>) name journalists and photographers, not news.
+// Photo credits rarely sit next to an AllNames credit marker ("AP" is too short for AllNames), but they have a
+// fingerprint: GDELT's person/organisation extractor reports the full name (V1Persons "julia demaree nikhinson") while
+// AllNames has no such name in that document (at most a truncated "Julia Demaree"). A V1Persons/V1Organizations name
+// missing from the document's AllNames is a "ghost" there (and so is an AllNames name that is its leading words); an
+// entity that is a ghost in more than GHOST_MAX_SHARE of its documents is treated as a credit.
 const CAND_MIN_OUTLETS = 3;        // distinct SourceCommonName in this file
 const EDGE_MIN_OUTLETS = 2;        // org edge endpoints; person-like names need CAND_MIN_OUTLETS
 const CREDIT_MAX_SHARE = 0.25;     // an entity whose mentions are > 25% credit-context is a credit
 const CREDIT_WINDOW = 60;          // characters between a credit marker and a name (AllNames offsets)
+const GHOST_MAX_SHARE = 0.5;       // V1Persons/V1Organizations-only in more than half of its documents -> credit
 const CREDIT_MARK = new Set(["ap", "ap photo", "ap photos", "associated press", "the associated press", "the associated", "reuters",
   "reuters photo", "getty", "getty images", "afp", "afp via getty images", "afp photo", "pa", "pa media", "pa wire",
   "pa images", "epa", "epa efe", "efe", "shutterstock", "alamy", "alamy stock photo", "nurphoto", "sipa", "sipa usa",
@@ -389,15 +395,18 @@ async function gkgFile(run: Run, file: string, ctx: GkgCtx, st: GkgState, retry 
   const pairs = new Map<string, number>();        // termIdx \u0001 entity -> documents
   const entOutlets = new Map<string, string[]>(); // normalized -> first CAND_MIN_OUTLETS distinct outlets
   const entCredit = new Map<string, number>();    // normalized -> documents where it appears as a credit/byline
+  const entGhost = new Map<string, number>();     // normalized -> documents where it is a V1-only name (see GHOST_MAX_SHARE)
   const bylines = new Set<string>();              // names in any document's <PAGE_AUTHORS>
   let N = 0, bad = 0, bytes = 0, creditDocs = 0;
   const matched = new Set<number>();
   const docEnt = new Map<string, string>();       // per document: normalized -> kind
   const docCredit = new Set<string>();            // per document: names in credit context
+  const docAll = new Set<string>();               // per document: AllNames (normalized)
+  const docGhost = new Set<string>();             // per document: V1Persons/V1Organizations names missing from AllNames
   const anN: string[] = [];                        // per document: AllNames (normalized) and offsets
   const anO: number[] = [];
   const probe: string[] = run.dryRun && Array.isArray(run.params.probe) ? run.params.probe.map((x: unknown) => norm(String(x))).slice(0, 10) : [];
-  const probeOut = probe.map(() => ({ docs: 0, credit: 0, byline: false, outlets: new Set<string>(), ctx: [] as string[][] }));
+  const probeOut = probe.map(() => ({ docs: 0, credit: 0, ghost: 0, byline: false, outlets: new Set<string>(), ctx: [] as string[][] }));
 
   const addNames = (field: string | undefined, kind: string, mode: "list" | "allnames" | "loc") => {
     if (!field) return;
@@ -415,6 +424,8 @@ async function gkgFile(run: Run, file: string, ctx: GkgCtx, st: GkgState, retry 
       if (nm.length < 3 || nm.length > 80) continue;
       const n = norm(nm);
       if (n.length < 3) continue;
+      if (mode === "allnames") docAll.add(n);
+      else if (mode === "list" && !docAll.has(n)) docGhost.add(n);
       if (!docEnt.has(n)) {
         docEnt.set(n, kind);
         if (!entLabel.has(n) && mode !== "list") entLabel.set(n, nm.trim());
@@ -430,6 +441,8 @@ async function gkgFile(run: Run, file: string, ctx: GkgCtx, st: GkgState, retry 
     docEnt.clear();
     matched.clear();
     docCredit.clear();
+    docAll.clear();
+    docGhost.clear();
     anN.length = 0; anO.length = 0;
     addNames(c[23], "name", "allnames");   // AllNames: proper-cased, offsets stripped
     // credit context: names within CREDIT_WINDOW characters of a credit marker ("AP Photo", "Getty Images", ...)
@@ -455,6 +468,14 @@ async function gkgFile(run: Run, file: string, ctx: GkgCtx, st: GkgState, retry 
     if (marks) creditDocs++;
     addNames(c[11], "person", "list");     // V1Persons
     addNames(c[13], "org", "list");        // V1Organizations
+    if (docGhost.size) {
+      // not a ghost when an AllNames name contains it ("donald trump" in "president donald trump")
+      const padAll = [...docAll].map((x) => " " + x + " ");
+      for (const g of [...docGhost]) { const pg = " " + g + " "; if (padAll.some((x) => x.includes(pg))) docGhost.delete(g); }
+      // an AllNames name that is the leading words of a ghost ("julia demaree" of "julia demaree nikhinson") is one too
+      const gs = [...docGhost];
+      for (const x of docAll) for (const g of gs) if (g.length > x.length && g.startsWith(x + " ")) { docGhost.add(x); break; }
+    }
     addNames(c[9], "place", "loc");        // V1Locations (feature name before the first comma)
     const outlet = c[3] ?? "";
     const cc = countryOf(outlet);
@@ -471,6 +492,7 @@ async function gkgFile(run: Run, file: string, ctx: GkgCtx, st: GkgState, retry 
       const po = probeOut[q];
       po.docs++; po.outlets.add(outlet);
       if (docCredit.has(probe[q])) po.credit++;
+      if (docGhost.has(probe[q])) po.ghost++;
       if (bylines.has(probe[q])) po.byline = true;
       if (po.ctx.length < 3) {
         const k0 = anN.indexOf(probe[q]);
@@ -484,6 +506,7 @@ async function gkgFile(run: Run, file: string, ctx: GkgCtx, st: GkgState, retry 
       entDocs.set(n, (entDocs.get(n) ?? 0) + 1);
       if (!entKind.has(n)) entKind.set(n, kind);
       if (docCredit.has(n)) entCredit.set(n, (entCredit.get(n) ?? 0) + 1);
+      if (docGhost.has(n)) entGhost.set(n, (entGhost.get(n) ?? 0) + 1);
       const ol = entOutlets.get(n);
       if (!ol) entOutlets.set(n, [outlet]);
       else if (ol.length < CAND_MIN_OUTLETS && !ol.includes(outlet)) ol.push(outlet);
@@ -521,12 +544,13 @@ async function gkgFile(run: Run, file: string, ctx: GkgCtx, st: GkgState, retry 
   const r = await accum(run, `gkg:${file}`, rows);
 
   // ---- entity minimisation (n4): credits, bylines, single-outlet names and site furniture never leave the function
-  const drop = { credit: 0, byline: 0, outlets: 0, junk: 0 };
+  const drop = { credit: 0, ghost: 0, byline: 0, outlets: 0, junk: 0 };
   const eligible = (n: string, minOutlets: number, count = true): boolean => {
     const d = entDocs.get(n) ?? 0;
     let why: keyof typeof drop | null = null;
     if (bylines.has(n)) why = "byline";
     else if (d > 0 && (entCredit.get(n) ?? 0) / d > CREDIT_MAX_SHARE) why = "credit";
+    else if (d > 0 && (entGhost.get(n) ?? 0) / d > GHOST_MAX_SHARE) why = "ghost";
     else if (junkLabel(n) || isCreditMark(n)) why = "junk";
     else if ((entOutlets.get(n)?.length ?? 0) < minOutlets) why = "outlets";
     if (why && count) drop[why]++;
@@ -590,7 +614,7 @@ async function gkgFile(run: Run, file: string, ctx: GkgCtx, st: GkgState, retry 
     // dry-run diagnostics go to the HTTP response only (dry_rows are not persisted in att_runs)
     run.dryRows.push({ candidates_preview: candRows.slice(0, 60).map((r) => `${r.label} (${r.value})`) });
     run.dryRows.push({ edges_preview: edges.slice(0, 40).map((e) => `${e.from_key} -> ${e.to_key} (${e.n})`) });
-    probe.forEach((p, q) => run.dryRows.push({ probe: p, docs: probeOut[q].docs, credit_docs: probeOut[q].credit,
+    probe.forEach((p, q) => run.dryRows.push({ probe: p, docs: probeOut[q].docs, credit_docs: probeOut[q].credit, ghost_docs: probeOut[q].ghost,
       byline: probeOut[q].byline, outlets: probeOut[q].outlets.size, eligible: eligible(p, CAND_MIN_OUTLETS, false),
       ctx: probeOut[q].ctx }));
   }

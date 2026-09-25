@@ -161,12 +161,14 @@ returns `stale_later_days`: later days whose pooled fluke rates included the old
 `ripples_ingest_articles(jsonb)`, `ripples_ingest_trends(jsonb)`, `ripples_job_done(bigint, boolean, text, int, jsonb)`.
 `ripples._grant_audit()` returns zero rows.
 
-## Verified runs (2026-09-25)
+## Verified runs (2026-09-25, after sql/18-21, oldest day first)
 
-| as_of | n | took | Wikimedia calls | jobs (failed) | result |
-|---|---|---|---|---|---|
-| 2026-09-24 | -1 | 15 m 42 s | 2,224 | 45 (0) | built: 3 rounds (Resident Evil (2026 film) -> Army of the Dead -> Sucker Punch · fresh ripple Cindy Crawford -> Gia Carangi), 4 Call It options, Board of 12 |
-| 2026-09-23 | -2 | 22 m 03 s (practice deadline) | 1,164 | 33 (0; 8 skipped at the deadline) | delayed: every usable hop came from one seed; AQS was slow after four full runs that day |
+| as_of | n | took | Wikimedia calls | jobs (failed) | pooled decoy tests | result |
+|---|---|---|---|---|---|---|
+| 2026-09-23 | -2 | 20 m 22 s | 1,648 | 33 (0; 5 of 5 decoy jobs done) | 292 (warming) | delayed: 0 usable hops when it ran (sql/18's 2.0 spark cap); a rebuild under sql/21's rule gives 1 usable hop |
+| 2026-09-24 | -1 | 11 m 42 s | 1,882 | 40 (0; 8 of 8 decoy jobs done) | 732 (meter live) | delayed: 1 usable hop (Gia Carangi); f = 0 (S >= 10), 0.129 (S 4-10), 0.171 (S 3-4) |
 
-The exported puzzle, reveal, board and Call It JSON of n = -1 pass `../contract/tools/validate.py` (schemas and
-`--wording`) with md5s equal to the RPC output (`validate.py --md5`).
+Under the SPEC gates (meter live at >= 500 decoy tests) and flat-decoy rule neither test day yields 3 rounds; the
+limiting factor after the fluke gate is the supply of 3 calm, linked, median-matched siblings per hop. Even with the
+fluke gate dropped and no sparkline rule, 2026-09-24 has 5 usable hops from only 2 seeds (no 3-round composition).
+The earlier n = -1 puzzle (3 rounds) existed only because the warm-up threshold was 2000.
