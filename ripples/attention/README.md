@@ -32,7 +32,7 @@ Spec: `ATTENTION_STACK.md` §3 and §7, with `DEMARCATION.md` §7 lead decisions
 | `sql/15c_att_charts_ops_2026-09-25.sql` | Operational record for att-charts (tranco caps, ChatGPT SDK keys, Apple robots cache fix, `att_fn_live('att-charts')`) |
 | `sql/15d_att_budget_refund_fix.sql` | Migration `att_budget_refund_fix` (core fix found by att-charts): `att_budget.killed`; `att_budget_refund` refuses refunds only for kill-spent buckets (it used to refuse whenever used = cap, so a chunk that took the whole day's cap was never refunded); `att_host_kill` sets `killed` |
 | `sql/15e_att_ident_npm_scoped.sql` | Migration `att_ident_npm_scoped`: `_att_ident_like` no longer rejects scoped npm package keys (`@scope/name`, source `npm.dl` only) as handles |
-| `functions/att-charts/index.ts` (+ `att.ts` copy) | Charts / builder / consumption collector (CHARTS_VERSION 2026-09-25.c6): `apple`, `steamspy`, `github`, `hf`, `anilist`, `openlibrary`, `tranco`, `npm`, `pypi`, `backfill` (npm.dl, pypi.dl, anilist, gh.stars), `ping`. See "att-charts" below |
+| `functions/att-charts/index.ts` (+ `att.ts` copy) | Charts / builder / consumption collector (CHARTS_VERSION 2026-09-25.c7): `apple`, `steamspy`, `github`, `hf`, `anilist`, `openlibrary`, `tranco`, `npm`, `pypi`, `backfill` (npm.dl, pypi.dl, anilist, gh.stars), `ping`. See "att-charts" below |
 | `functions/_shared/att.ts` | Canonical shared runtime for every `att-*` edge function |
 | `functions/att-registry/index.ts` (+ `att.ts` copy) | Topic registry function: `resolve`, `bootstrap`, `panel`, `ping` |
 
@@ -254,6 +254,30 @@ killed) waits until 00:10 UTC. The `finra:files` job has priority 6 so ticker / 
 **Platform note:** `public.call_collector` goes through pg_net, which here dispatches the next batch only after the
 current one returns; a 110 s run therefore delays other queued collector calls by up to ~2 min. All att-market modes
 stay within the 110 s wall budget.
+
+## att-charts (W7 charts / builder / consumption collector, 2026-09-25, CHARTS_VERSION 2026-09-25.c7)
+
+Stores ranks and counts only (labels = item / repo / package names for `att_trend_candidates`; no owners, handles or
+text). List sizes come from `att_config.charts.<mode>.limit.{free,pro}` under `att_config.profile`.
+
+| Mode (cron UTC) | Source (spacing, run/day cap) | Series | Discovery |
+|---|---|---|---|
+| `apple` (06:10-06:20, 6 slots) | `apple.rss` (5 s, 20/35) | rank per item (metric = feed, key = Apple id, geo = storefront us/gb/in/br/jp); 25 feeds (apps top-free/top-paid, music most-played, podcasts top, books top-free), 50 each | `new` + `jump` (>= 20 places) vs the previous snapshot; from day 2 |
+| `steamspy` (06:12) | `steamspy` (2 s, 5/5) | top100in2weeks: yesterday's peak CCU per appid (metric `ccu`, aux = rank) | `new` / `jump`, from day 2 |
+| `github` (06:14) | `gh.search` (12 s, 8/8), `gh.stars` (5 s, 25/25), unauthenticated | new repos (created in the last 7 days) by stars, keyed by numeric repo id; stargazer counts for registered repos | top 10 + velocity; stars/forks > 50 halves the evidence (star-farm guard) |
+| `hf` (06:13) | `hf.trending` (1.5 s, 60/100) | trending models / spaces / datasets, keyed by `_id` (label without owner) | top 10 per list |
+| `anilist` (06:17) | `anilist` (4 s, 25/150) | TRENDING_DESC anime + manga (isAdult:false; rank, aux = trending); per-media `mediaTrends` (metric `n`) for registered titles and the top 10 (8 aliases per query) | top 10 |
+| `openlibrary` (06:15) | `ol.trending` (5 s, 5/5) | trending daily | top 10 |
+| `tranco` (06:19) | `tranco.rank` (5 s, 2/2: list download + its redirect hop; /api never used) | streams the daily top-1M zip (local-header parser + `DecompressionStream('deflate-raw')`); keeps ranks for registered domains only | top-1k movers (new to the top 1k, or a jump >= max(20, 25%)) vs the previous list in `att_state`, from day 2 |
+| `npm` (06:18) | `npm.dl` (5 s, 20/80) | range downloads; bulk for unscoped, one call per scoped package; 400-day backfill jobs | - |
+| `pypi` (06:19) | `pypi.dl` (5 s, 20/30) | pypistats `overall?mirrors=false`, 180 days per call | - |
+| `backfill` (via `att_tick`) | as above | npm.dl, pypi.dl, anilist, gh.stars (stargazer timestamps only for repos with <= 2000 stars) | - |
+
+Evidence for discovery = 1 - ln(rank)/ln(N+1). Candidates are deduplicated per run (max evidence). **Pacing** is
+end-to-start: the run records `detail.timing[source].min_idle_gap_ms`. A host whose `x-ratelimit-remaining` drops to
+<= 1 is dropped for the run, so GitHub never reaches a 403 (a permanent kill). **Reference panels:** npm (12 packages)
+and pypi (8 packages) are stored as normaliser series with no topic link. **npm gap days:** npm reports days it has
+not computed yet as 0 for every package; c7 does not store zeros for `__total__` or for packages whose p75 > 100.
 
 **Apple feed host.** `rss.marketingtools.apple.com` (robots.txt 200, no rules). The legacy `rss.applemarketingtools.com`
 301-redirects robots.txt to another host, which att.ts treats as a deny. Apple answers slowly (~8 s) and sometimes 504;

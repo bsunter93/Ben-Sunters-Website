@@ -13,7 +13,7 @@
 //  * auth: x-collector-token checked with public.check_collector_token (verify_jwt is off by design).
 import { createClient } from "jsr:@supabase/supabase-js@2";
 
-export const KN_VERSION = "2026-09-25.6";
+export const KN_VERSION = "2026-09-25.7";
 export const db = createClient(Deno.env.get("SUPABASE_URL")!, Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!, {
   auth: { persistSession: false },
 });
@@ -244,8 +244,18 @@ export function factsFromEntity(e: any): Facts | null {
   for (const c of claims["P570"] ?? []) {
     const t: string | undefined = c.mainsnak?.datavalue?.value?.time;
     const prec: number | undefined = c.mainsnak?.datavalue?.value?.precision;
+    // day precision: that day. Month or year precision: the LAST possible day of that month / year, so an imprecise
+    // recent death is never treated as older than it may be (SPEC 5.4 excludes deaths within 60 days).
     if (t && (prec ?? 11) >= 11) { const m = t.match(/^\+?(\d{4,})-(\d{2})-(\d{2})/); if (m) { dod = `${m[1].slice(-4)}-${m[2]}-${m[3]}`; break; } }
-    else if (t) { const m = t.match(/^\+?(\d{4,})-(\d{2})/); if (m) { dod = `${m[1].slice(-4)}-${m[2] === "00" ? "01" : m[2]}-01`; break; } }
+    else if (t) {
+      const m = t.match(/^\+?(\d{4,})-(\d{2})/);
+      if (m) {
+        const y = Number(m[1].slice(-4)), mo = prec === 10 && m[2] !== "00" ? Number(m[2]) : 12;
+        const last = new Date(Date.UTC(y, mo, 0)).getUTCDate();
+        dod = `${m[1].slice(-4)}-${String(mo).padStart(2, "0")}-${String(last).padStart(2, "0")}`;
+        break;
+      }
+    }
   }
   const sl = e.sitelinks ?? {};
   const wikis = Object.keys(sl).filter((k) => /wiki$/.test(k) && !/^(commons|species|meta|wikidata|mediawiki|sources|outreach|abstract)wiki$/.test(k));

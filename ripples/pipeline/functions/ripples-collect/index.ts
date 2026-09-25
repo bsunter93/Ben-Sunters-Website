@@ -2,7 +2,8 @@
 //  {"mode":"trends"}                 hourly: Google Trends RSS for 8 geos (serial, 1 request/s) + Bluesky getTrends
 //  {"mode":"daily","date":"YYYY-MM-DD","job":{...}}
 //                                    06:10 stage collect_daily: Wikimedia top-per-country (10 countries) for `date`
-//                                    (= as_of) and feed/featured for as_of and as_of+1 ("yesterday and today").
+//                                    (= as_of; a country whose list is still 404 falls back to as_of-1) and
+//                                    feed/featured for as_of and as_of+1 ("yesterday and today").
 //                                    The Google Trends "Trending Now" internal endpoint is NOT called: DEMARCATION
 //                                    §7.2 graded it RED, so it is always skipped (RSS is the official path).
 //  {"mode":"date","date":"YYYY-MM-DD","job":{...}}
@@ -109,12 +110,22 @@ async function daily(b: Budget, date: string, backfill: boolean, trendingNow: bo
   out.trending_now = backfill ? "skipped (backfill)" : `skipped (RED under DEMARCATION §7.2; flag=${trendingNow})`;
   for (const c of COUNTRIES) {
     try {
-      const res = await kfetch(b, `https://wikimedia.org/api/rest_v1/metrics/pageviews/top-per-country/${c}/all-access/${y}/${mo}/${d}`, {}, { aqs: true });
+      let day = date;
+      let res = await kfetch(b, `https://wikimedia.org/api/rest_v1/metrics/pageviews/top-per-country/${c}/all-access/${y}/${mo}/${d}`, {}, { aqs: true });
+      if (res.status === 404 && !backfill) {
+        // live 06:10: some countries' lists for yesterday are published late. Fall back to the day before (still inside
+        // the 3-day seed window, SPEC 5.2); the per-project lists (public.wiki_top) and the featured feed cover the rest.
+        await res.body?.cancel();
+        day = addDays(date, -1);
+        const [y2, m2, d2] = day.split("-");
+        res = await kfetch(b, `https://wikimedia.org/api/rest_v1/metrics/pageviews/top-per-country/${c}/all-access/${y2}/${m2}/${d2}`, {}, { aqs: true });
+      }
       if (!res.ok) { out[c] = `http ${res.status}`; await res.body?.cancel(); continue; }
       const j = await res.json();
-      const r = wikiRows(j.items?.[0]?.articles ?? [], "topcountry", c, date);
+      const r = wikiRows(j.items?.[0]?.articles ?? [], "topcountry", c, day);
       rows.push(...r);
       out[c] = r.length;
+      if (day !== date) out[`${c} day`] = day;
     } catch (e) { out[c] = "error: " + (e instanceof Error ? e.message : String(e)); if (b.stopped) break; }
   }
   if (backfill) {

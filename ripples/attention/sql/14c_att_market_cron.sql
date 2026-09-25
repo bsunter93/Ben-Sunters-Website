@@ -52,3 +52,5 @@ select cron.schedule('att-kalshi-4', '10 6 * * *', $$select public.call_collecto
 --       and coalesce((select used from ripples.att_budget where bucket = 'finra.api' and day = current_date), 0) < 470$$);
 --   select cron.unschedule('att-finra-bf-temp');
 --   update ripples.att_jobs set priority = 6, not_before = now() where dedupe_key = 'finra:files' and status = 'queued';
+--   (done 2026-09-25 ~16:52 UTC: 64 trading days mirrored (2026-06-25..09-24), ring 22,258 tickers, finra.api 388/500
+--    used; job finra:files (id 2086) queued again at priority 6 and continues via att_tick('backfill').)

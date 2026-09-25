@@ -44,7 +44,7 @@
             "p_time": {"type": ["number", "null"], "minimum": 0, "maximum": 1},
             "placebos": {"type": ["integer", "null"], "minimum": 0},
             "split_ok": {"type": ["boolean", "null"]},
-            "badge": {"enum": ["flowed", "spiked_after"]},
+            "badge": {"enum": ["flowed", "spiked_after", "spiked_alongside"]},
             "cross": {"$ref": "defs.schema.json#/$defs/cross"}
           }
         },

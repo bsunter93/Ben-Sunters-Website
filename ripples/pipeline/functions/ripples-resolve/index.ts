@@ -7,6 +7,7 @@
 //    description, disambiguation flag.
 //  * other languages: Wikidata wbgetentities by sitelink (50 titles/request) -> QID -> enwiki sitelink.
 //  * facts: wbgetentities (50 ids/request) -> P31, P570, sitelinks; unknown P31 classes -> labels + P279 parents.
+// {"recheck":["Q..."],"phase":"seeds|build"}: forced facts refresh for the SPEC 5.4 safety re-check (see recheck()).
 // Writes: ripples_ingest_articles (title_map, articles, category_map). SQL computes category, sensitive and blocked.
 import { actionApi, Budget, factsFor, kfetch, norm, resolveClasses, rpc, serve, wbEntities, factsFromEntity, type Facts } from "./kn.ts";
 
@@ -43,7 +44,35 @@ async function enQuery(b: Budget, titles: string[]): Promise<Map<string, EnInfo>
   return out;
 }
 
+// Safety re-check (SPEC 5.4 in daily running): re-fetch P31, P570, sitelinks and the enwiki short description of the
+// given QIDs regardless of age (2 requests per 50 QIDs). A QID whose enwiki page is gone is not refreshed, so SQL keeps
+// treating it as unchecked (ripples._fresh) and never shows it.
+async function recheck(b: Budget, qids: string[]) {
+  const facts = await factsFor(b, qids);
+  const titles = [...new Set([...facts.values()].map((f) => f.enwiki).filter((t): t is string => !!t))];
+  const en = await enQuery(b, titles);
+  const arts: any[] = [];
+  let gone = 0;
+  for (const q of qids) {
+    const f = facts.get(q);
+    const e = f?.enwiki ? en.get(f.enwiki) : undefined;
+    if (!f || !e || e.missing) { gone++; continue; }
+    arts.push({ qid: q, title_en: e.title_en, short_desc: e.desc ?? f.desc, p31: f.p31, date_of_death: f.date_of_death,
+                is_disambig: e.disambig, sitelinks: f.sitelinks });
+  }
+  let classes = 0;
+  if (arts.length) {
+    const r = await rpc("ripples_ingest_articles", { p_rows: { articles: arts } });
+    const unknown = (r?.unknown_classes ?? []) as string[];
+    if (unknown.length && b.left() > 4) classes = await resolveClasses(b, unknown);
+  }
+  return { recheck: qids.length, refreshed: arts.length, not_refreshed: gone, classes, wm_calls: b.wm };
+}
+
 serve(async (body, b) => {
+  if (Array.isArray(body?.recheck)) {
+    return await recheck(b, [...new Set((body.recheck as unknown[]).map(String).filter((q) => /^Q\d+$/.test(q)))]);
+  }
   const items: { lang: string; title: string }[] = (body.items ?? []).map((x: any) => ({ lang: String(x.lang), title: norm(String(x.title)) }));
   const queries: { lang: string; q: string }[] = (body.queries ?? []).map((x: any) => ({ lang: String(x.lang ?? "en"), q: String(x.q) }));
   const titleRows: any[] = [];

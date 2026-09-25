@@ -95,3 +95,82 @@ select n, qid, title, baseline_median, model_p, window_start, window_end from ri
 
 -- Grants: every W2 service function is executable by service_role only
 select * from ripples._grant_audit();
+
+-- ---------------------------------------------------------------------------------------------------------------
+-- Checks added with sql/18 (independent verifier findings)
+
+-- V1. SPEC 5.2 fluke gate: warm-up threshold is 500 pooled decoy tests; every answer has f <= 0.10 unless the meter was
+--     warming (then p_time <= 0.05), and the reveal's fluke fields agree with fluke_rates.
+select (select value->>'fluke_warm_min_decoy' from ripples.config where key = 'pipeline') warm_min,
+       (select value->>'fluke_gate_fallback' from ripples.config where key = 'pipeline') fallback;
+with p as (select * from ripples.puzzles where n = -1)
+select (r->>'i')::int i, r->>'answer_qid' qid, c.s_stat, fl.f, fl.warming, c.p_time,
+       (fl.warming and c.p_time <= 0.05) or (not fl.warming and fl.f <= 0.10) as answer_gate_ok,
+       r->'evidence'->>'fluke' reveal_fluke, r->'evidence'->>'fluke_warming' reveal_warming,
+       (select decoy_tested from ripples.fluke_rates f where f.as_of = p.data_date limit 1) pooled_decoy_tested
+  from p cross join lateral jsonb_array_elements(p.reveal->'rounds') r
+  join lateral (select * from ripples.candidates c where c.as_of = p.data_date and c.role = 'real' and c.qid = r->>'answer_qid'
+                   and c.parent_qid = (select x->'parent'->>'qid' from jsonb_array_elements(p.payload->'rounds') x where x->>'i' = r->>'i')) c on true
+  cross join lateral ripples._fluke(p.data_date, c.s_stat) fl order by 1;
+
+-- V2. SPEC 12.3: every decoy's 90-day sparkline reads flat: max day <= min(2.0, answer multiple) x its baseline median
+with p as (select * from ripples.puzzles where n = -1)
+select (r->>'i')::int i, o->>'qid' qid, (o->>'median')::numeric median,
+       (select max(v::numeric) from jsonb_array_elements_text(o->'spark') v) spark_max,
+       round((select max(v::numeric) from jsonb_array_elements_text(o->'spark') v) / greatest((o->>'median')::numeric, 1), 2) peak_ratio,
+       (select (a->>'multiple')::numeric from jsonb_array_elements(r->'options') a where a->>'id' = r->>'answer') answer_multiple
+  from p cross join lateral jsonb_array_elements(p.reveal->'rounds') r cross join lateral jsonb_array_elements(r->'options') o
+ where o->>'id' <> r->>'answer' order by 1, 2;
+
+-- V3. SPEC 5.4 in daily running: every human seed / option / Call It article was re-checked during the run
+with p as (select * from ripples.puzzles where n = -1),
+q as (select p.payload->'seed'->>'qid' qid from p
+      union select r->'seed'->>'qid' from p, jsonb_array_elements(p.payload->'rounds') r where r->'seed' <> 'null'
+      union select o->>'qid' from p, jsonb_array_elements(p.payload->'rounds') r, jsonb_array_elements(r->'options') o
+      union select o->>'qid' from p, jsonb_array_elements(p.payload->'callit'->'options') o)
+select count(*) articles, count(*) filter (where a.is_human) humans,
+       count(*) filter (where a.is_human and a.updated_at < ru.started_at) humans_not_rechecked,
+       count(*) filter (where not ripples._safe(a.qid, p.data_date, null, true)) unsafe
+  from q join ripples.articles a using (qid) cross join p join ripples.runs ru on ru.as_of = p.data_date;
+select as_of, stage, detail->'recheck_seed_jobs' seed_jobs, detail->'recheck_build_jobs' build_jobs,
+       (select jsonb_agg(j.result) from ripples.jobs j where j.as_of = r.as_of and j.kind = 'resolve' and j.payload ? 'recheck') results
+  from ripples.runs r where as_of = '2026-09-24';
+-- (b) a death year in the short description counts before Wikidata has P570 (rolled back)
+do $$
+declare a boolean; b boolean;
+begin
+  perform public.ripples_ingest_articles(jsonb_build_object('articles', jsonb_build_array(jsonb_build_object(
+    'qid', 'Q999999902', 'title_en', 'Test Person Desc Only', 'short_desc', 'Test actor (1950–2026)',
+    'p31', jsonb_build_array('Q5'), 'date_of_death', null, 'sitelinks', 40))));
+  a := ripples._safe('Q999999902', current_date - 1, 5000);
+  update ripples.articles set short_desc = 'Test actor (1950–2019)' where qid = 'Q999999902';
+  b := ripples._safe('Q999999902', current_date - 1, 5000);
+  raise exception 'V3b safe_with_2026_death_year=% (expect false) safe_with_2019_death_year=% (expect true)', a, b;
+end $$;
+
+-- V4. wording: badge follows timing (lag 0 -> spiked_alongside unless flowed); headline has no "next"
+with p as (select * from ripples.puzzles where n = -1)
+select (r->>'i')::int i, r->'evidence'->>'badge' badge,
+       (select a->>'timing' from jsonb_array_elements(r->'options') a where a->>'id' = r->>'answer') timing,
+       p.payload->'headline'->>'text' headline
+  from p cross join lateral jsonb_array_elements(p.reveal->'rounds') r order by 1;
+
+-- V5. Board vs puzzle: no puzzle seed (round 1's or a fresh ripple's) is a belly_flop
+with p as (select * from ripples.puzzles where n = -1),
+s as (select p.payload->'seed'->>'qid' qid from p union select r->'seed'->>'qid' from p, jsonb_array_elements(p.payload->'rounds') r where r->'seed' <> 'null')
+select t->>'title' title, t->>'quadrant' quadrant, t->>'wake_k' wake_k, t->>'wake_of' wake_of
+  from p cross join lateral jsonb_array_elements(p.board->'trends') t where t->>'qid' in (select qid from s);
+
+-- V6. dispatch: decoy depth-1 expand jobs were not skipped; no deeper real beam started before the last depth-1 job
+select as_of,
+       count(*) filter (where kind = 'expand' and role = 'decoy') decoy_jobs,
+       count(*) filter (where kind = 'expand' and role = 'decoy' and status = 'done') decoy_done,
+       count(*) filter (where kind = 'expand' and depth = 1 and status = 'skipped') depth1_skipped,
+       (select min(started_at) from ripples.jobs x where x.as_of = j.as_of and x.kind = 'expand' and x.depth >= 2)
+         >= max(started_at) filter (where kind = 'expand' and depth = 1) depth_order_ok
+  from ripples.jobs j where as_of in ('2026-09-23', '2026-09-24') group by as_of order by as_of;
+
+-- V7. EXECUTE on W2 helpers: nobody but postgres / service_role
+select p.oid::regprocedure fn, p.proacl from pg_proc p
+ where p.pronamespace = 'ripples'::regnamespace and p.proname like '\_%'
+   and (p.proacl is null or has_function_privilege('anon', p.oid, 'EXECUTE') or has_function_privilege('authenticated', p.oid, 'EXECUTE'));
