@@ -1,4 +1,5 @@
--- 16_att_wiki (W7 att-wiki, 2026-09-25, applied as migration att_wiki_collector)
+-- 16_att_wiki (W7 att-wiki, 2026-09-25, applied as migration att_wiki_collector; the att_wiki_pv_plan 'signal' rule
+-- below was then re-applied as migration att_wiki_plan_signal_history: short signal histories get one AQS fetch)
 -- ATTENTION_STACK §3.3 att-wiki: wiki.topcc (top-per-country), wiki.pv (AQS per-article), wiki.media (Commons
 -- mediarequests), wiki.cs (clickstream, small wikis only). Every attention Wikimedia call draws on the shared
 -- 'wikimedia' bucket (att_config.budgets.wikimedia = 1500/day), charged inside att.ts politeFetch; the quiet window
