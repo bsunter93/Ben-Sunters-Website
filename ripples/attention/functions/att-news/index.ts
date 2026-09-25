@@ -17,10 +17,11 @@
 import { politeFetch, type Run, serve, stateGet, stateSet, db, jobsDone, WALL_MS } from "./att.ts";
 
 const FN = "att-news";
-const NEWS_VERSION = "2026-09-25.n6"; // n2: GKG 404 parking + min file age; sequential sitemaps. n3: size-normalised
+const NEWS_VERSION = "2026-09-25.n7"; // n2: GKG 404 parking + min file age; sequential sitemaps. n3: size-normalised
 // GKG burst baseline; network brands excluded from Third Eye. n4: GKG entity minimisation (photo/byline credits,
 // outlet breadth, boilerplate labels) for candidates and edges; parked-file retry by file age; brand-free sitemap keywords.
-// n5: photo credits detected as V1-only ("ghost") names. n6: bylines, credits and ghosts kept out of the EWMA baseline
+// n5: photo credits detected as V1-only ("ghost") names. n6: bylines, credits and ghosts kept out of the EWMA baseline.
+// n7: contributor lines ("AP writers Jane Doe and John Roe contributed") detected as article-tail names; ghost share 0.3
 const GKG_BASE = "https://data.gdeltproject.org/gdeltv2/";
 const THIRDEYE = "https://archive.org/services/third-eye.php";
 const OUTLETS: Record<string, string> = {
@@ -218,11 +219,19 @@ const CAND_WARMUP_FILES = 4;
 // AllNames has no such name in that document (at most a truncated "Julia Demaree"). A V1Persons/V1Organizations name
 // missing from the document's AllNames is a "ghost" there (and so is an AllNames name that is its leading words); an
 // entity that is a ghost in more than GHOST_MAX_SHARE of its documents is treated as a credit.
+// Contributor lines ("Associated Press writers Jane Doe in Washington and John Roe contributed to this report") close
+// the article, and AllNames keeps the names but not the credit words. In a long article (>= TAIL_MIN_NAMES AllNames
+// entries) the last TAIL_K names within TAIL_CHARS of the last offset are its "tail"; an entity that sits in the tail of
+// more than TAIL_MAX_SHARE of its documents is treated as a credit.
 const CAND_MIN_OUTLETS = 3;        // distinct SourceCommonName in this file
 const EDGE_MIN_OUTLETS = 2;        // org edge endpoints; person-like names need CAND_MIN_OUTLETS
 const CREDIT_MAX_SHARE = 0.25;     // an entity whose mentions are > 25% credit-context is a credit
 const CREDIT_WINDOW = 60;          // characters between a credit marker and a name (AllNames offsets)
-const GHOST_MAX_SHARE = 0.5;       // V1Persons/V1Organizations-only in more than half of its documents -> credit
+const GHOST_MAX_SHARE = 0.3;       // V1Persons/V1Organizations-only in more than 30% of its documents -> credit
+const TAIL_MIN_NAMES = 8;
+const TAIL_K = 4;
+const TAIL_CHARS = 200;
+const TAIL_MAX_SHARE = 0.6;
 const CREDIT_MARK = new Set(["ap", "ap photo", "ap photos", "associated press", "the associated press", "the associated", "reuters",
   "reuters photo", "getty", "getty images", "afp", "afp via getty images", "afp photo", "pa", "pa media", "pa wire",
   "pa images", "epa", "epa efe", "efe", "shutterstock", "alamy", "alamy stock photo", "nurphoto", "sipa", "sipa usa",
@@ -397,6 +406,7 @@ async function gkgFile(run: Run, file: string, ctx: GkgCtx, st: GkgState, retry 
   const entOutlets = new Map<string, string[]>(); // normalized -> first CAND_MIN_OUTLETS distinct outlets
   const entCredit = new Map<string, number>();    // normalized -> documents where it appears as a credit/byline
   const entGhost = new Map<string, number>();     // normalized -> documents where it is a V1-only name (see GHOST_MAX_SHARE)
+  const entTail = new Map<string, number>();      // normalized -> documents where it closes a long article (see TAIL_*)
   const bylines = new Set<string>();              // names in any document's <PAGE_AUTHORS>
   let N = 0, bad = 0, bytes = 0, creditDocs = 0;
   const matched = new Set<number>();
@@ -404,10 +414,11 @@ async function gkgFile(run: Run, file: string, ctx: GkgCtx, st: GkgState, retry 
   const docCredit = new Set<string>();            // per document: names in credit context
   const docAll = new Set<string>();               // per document: AllNames (normalized)
   const docGhost = new Set<string>();             // per document: V1Persons/V1Organizations names missing from AllNames
+  const docTail = new Set<string>();              // per document: the last AllNames names of a long article
   const anN: string[] = [];                        // per document: AllNames (normalized) and offsets
   const anO: number[] = [];
   const probe: string[] = run.dryRun && Array.isArray(run.params.probe) ? run.params.probe.map((x: unknown) => norm(String(x))).slice(0, 10) : [];
-  const probeOut = probe.map(() => ({ docs: 0, credit: 0, ghost: 0, byline: false, outlets: new Set<string>(), ctx: [] as string[][] }));
+  const probeOut = probe.map(() => ({ docs: 0, credit: 0, ghost: 0, tail: 0, byline: false, outlets: new Set<string>(), ctx: [] as string[][] }));
 
   const addNames = (field: string | undefined, kind: string, mode: "list" | "allnames" | "loc") => {
     if (!field) return;
@@ -444,8 +455,15 @@ async function gkgFile(run: Run, file: string, ctx: GkgCtx, st: GkgState, retry 
     docCredit.clear();
     docAll.clear();
     docGhost.clear();
+    docTail.clear();
     anN.length = 0; anO.length = 0;
     addNames(c[23], "name", "allnames");   // AllNames: proper-cased, offsets stripped
+    if (anN.length >= TAIL_MIN_NAMES) {
+      // the article's closing names (contributor lines); AllNames is in text order, but sort defensively
+      const idx = anO.map((_, j) => j).sort((a, b) => anO[b] - anO[a]);
+      const last = anO[idx[0]];
+      for (let t = 0; t < TAIL_K && t < idx.length && anO[idx[t]] >= last - TAIL_CHARS; t++) docTail.add(anN[idx[t]]);
+    }
     // credit context: names within CREDIT_WINDOW characters of a credit marker ("AP Photo", "Getty Images", ...)
     let marks = 0;
     for (let a = 0; a < anN.length; a++) {
@@ -494,6 +512,7 @@ async function gkgFile(run: Run, file: string, ctx: GkgCtx, st: GkgState, retry 
       po.docs++; po.outlets.add(outlet);
       if (docCredit.has(probe[q])) po.credit++;
       if (docGhost.has(probe[q])) po.ghost++;
+      if (docTail.has(probe[q])) po.tail++;
       if (bylines.has(probe[q])) po.byline = true;
       if (po.ctx.length < 3) {
         const k0 = anN.indexOf(probe[q]);
@@ -508,6 +527,7 @@ async function gkgFile(run: Run, file: string, ctx: GkgCtx, st: GkgState, retry 
       if (!entKind.has(n)) entKind.set(n, kind);
       if (docCredit.has(n)) entCredit.set(n, (entCredit.get(n) ?? 0) + 1);
       if (docGhost.has(n)) entGhost.set(n, (entGhost.get(n) ?? 0) + 1);
+      if (docTail.has(n)) entTail.set(n, (entTail.get(n) ?? 0) + 1);
       const ol = entOutlets.get(n);
       if (!ol) entOutlets.set(n, [outlet]);
       else if (ol.length < CAND_MIN_OUTLETS && !ol.includes(outlet)) ol.push(outlet);
@@ -545,13 +565,14 @@ async function gkgFile(run: Run, file: string, ctx: GkgCtx, st: GkgState, retry 
   const r = await accum(run, `gkg:${file}`, rows);
 
   // ---- entity minimisation (n4): credits, bylines, single-outlet names and site furniture never leave the function
-  const drop = { credit: 0, ghost: 0, byline: 0, outlets: 0, junk: 0 };
+  const drop = { credit: 0, ghost: 0, tail: 0, byline: 0, outlets: 0, junk: 0 };
   const eligible = (n: string, minOutlets: number, count = true): boolean => {
     const d = entDocs.get(n) ?? 0;
     let why: keyof typeof drop | null = null;
     if (bylines.has(n)) why = "byline";
     else if (d > 0 && (entCredit.get(n) ?? 0) / d > CREDIT_MAX_SHARE) why = "credit";
     else if (d > 0 && (entGhost.get(n) ?? 0) / d > GHOST_MAX_SHARE) why = "ghost";
+    else if (d > 0 && (entTail.get(n) ?? 0) / d > TAIL_MAX_SHARE) why = "tail";
     else if (junkLabel(n) || isCreditMark(n)) why = "junk";
     else if ((entOutlets.get(n)?.length ?? 0) < minOutlets) why = "outlets";
     if (why && count) drop[why]++;
@@ -562,7 +583,8 @@ async function gkgFile(run: Run, file: string, ctx: GkgCtx, st: GkgState, retry 
   const creditLike = (n: string): boolean => {
     const d = entDocs.get(n) ?? 0;
     return bylines.has(n) || junkLabel(n) || isCreditMark(n) ||
-      (d > 0 && ((entCredit.get(n) ?? 0) / d > CREDIT_MAX_SHARE || (entGhost.get(n) ?? 0) / d > GHOST_MAX_SHARE));
+      (d > 0 && ((entCredit.get(n) ?? 0) / d > CREDIT_MAX_SHARE || (entGhost.get(n) ?? 0) / d > GHOST_MAX_SHARE ||
+        (entTail.get(n) ?? 0) / d > TAIL_MAX_SHARE));
   };
 
   // ---- co-mention edges (at least one side active; top 25 per term with >= 2 shared documents)
@@ -621,7 +643,7 @@ async function gkgFile(run: Run, file: string, ctx: GkgCtx, st: GkgState, retry 
     // dry-run diagnostics go to the HTTP response only (dry_rows are not persisted in att_runs)
     run.dryRows.push({ candidates_preview: candRows.slice(0, 60).map((r) => `${r.label} (${r.value})`) });
     run.dryRows.push({ edges_preview: edges.slice(0, 40).map((e) => `${e.from_key} -> ${e.to_key} (${e.n})`) });
-    probe.forEach((p, q) => run.dryRows.push({ probe: p, docs: probeOut[q].docs, credit_docs: probeOut[q].credit, ghost_docs: probeOut[q].ghost,
+    probe.forEach((p, q) => run.dryRows.push({ probe: p, docs: probeOut[q].docs, credit_docs: probeOut[q].credit, ghost_docs: probeOut[q].ghost, tail_docs: probeOut[q].tail,
       byline: probeOut[q].byline, outlets: probeOut[q].outlets.size, eligible: eligible(p, CAND_MIN_OUTLETS, false),
       ctx: probeOut[q].ctx }));
   }
