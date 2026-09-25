@@ -85,7 +85,7 @@ seed = {
     ],
     'badges': ['gtrends:US', 'bsky'],
     'cross': [
-        {'source': 'gtrends', 'label': 'TEST: Google Trends US search spike', 'multiple': 12.0, 'z': None, 'when': 'before'},
+        {'source': 'gtrends', 'label': 'TEST: listed in Google Trends daily trending searches (US)', 'multiple': None, 'z': None, 'when': 'before'},
         {'source': 'bsky', 'label': 'TEST: trending on Bluesky', 'multiple': None, 'z': None, 'when': 'alongside'},
     ],
 }
@@ -174,7 +174,7 @@ reveal = {
                       'split_ok': True, 'badge': 'spiked_after',
                       'cross': [{'source': 'mastodon', 'label': 'TEST: trending hashtag on Mastodon', 'multiple': 4.5,
                                  'z': None, 'when': 'alongside'}]},
-         'caption': {'text': 'TEST AI caption: readers of the second test seed may also have looked up this sports page.',
+         'caption': {'text': 'TEST AI caption: this sports page and the second test seed likely drew attention from the same news story.',
                      'source': 'ai'},
          'shared_trigger_stop': False},
     ],
@@ -191,7 +191,7 @@ def board_row(qid, title, cat, splash, big, wake, quad, sensitive=False, cross=N
 
 board = {'n': N, 'date': d(PUZZLE_DATE), 'trends': [
     board_row('Q999990001', 'Test Seed Article', 'person', 41.2, 1240, 5, 'big_wave',
-              cross=[{'source': 'gtrends', 'label': 'TEST: Google Trends US search spike', 'multiple': 12.0, 'z': None, 'when': 'before'}]),
+              cross=[{'source': 'gtrends', 'label': 'TEST: listed in Google Trends daily trending searches (US)', 'multiple': None, 'z': None, 'when': 'before'}]),
     board_row('Q999990002', 'Test Second Seed', 'music', 18.5, 400, 3, 'big_wave'),
     board_row('Q999990051', 'Test Board Sleeper', 'science_health', 6.1, 95, 4, 'sleeper'),
     board_row('Q999990052', 'Test Board Belly Flop', 'tech', 22.0, 610, 0, 'belly_flop'),
