@@ -17,8 +17,9 @@
 import { politeFetch, type Run, serve, stateGet, stateSet, db, jobsDone, WALL_MS } from "./att.ts";
 
 const FN = "att-news";
-const NEWS_VERSION = "2026-09-25.n3"; // n2: GKG 404 parking + min file age; sequential sitemaps. n3: size-normalised
-// GKG burst baseline; network brands excluded from Third Eye
+const NEWS_VERSION = "2026-09-25.n4"; // n2: GKG 404 parking + min file age; sequential sitemaps. n3: size-normalised
+// GKG burst baseline; network brands excluded from Third Eye. n4: GKG entity minimisation (photo/byline credits,
+// outlet breadth, boilerplate labels) for candidates and edges; parked-file retry by file age; brand-free sitemap keywords
 const GKG_BASE = "https://data.gdeltproject.org/gdeltv2/";
 const THIRDEYE = "https://archive.org/services/third-eye.php";
 const OUTLETS: Record<string, string> = {
@@ -208,6 +209,36 @@ interface Ewma { n_files: number; b: Record<string, number>; unit?: string }
 const EWMA_ALPHA = 0.05;
 const EWMA_KEEP = 4000;
 const CAND_WARMUP_FILES = 4;
+// Entity minimisation (n4). A GKG name only becomes a discovery candidate or an edge endpoint when it is reported by
+// several outlets and is not mostly a credit: photo and syndication credits ("(AP Photo/Jane Doe)", "Getty Images",
+// "Tribune Content Agency") and bylines (Extras <PAGE_AUTHORS>) name journalists and photographers, not news.
+const CAND_MIN_OUTLETS = 3;        // distinct SourceCommonName in this file
+const EDGE_MIN_OUTLETS = 2;        // org edge endpoints; person-like names need CAND_MIN_OUTLETS
+const CREDIT_MAX_SHARE = 0.25;     // an entity whose mentions are > 25% credit-context is a credit
+const CREDIT_WINDOW = 60;          // characters between a credit marker and a name (AllNames offsets)
+const CREDIT_MARK = new Set(["ap", "ap photo", "ap photos", "associated press", "the associated press", "the associated", "reuters",
+  "reuters photo", "getty", "getty images", "afp", "afp via getty images", "afp photo", "pa", "pa media", "pa wire",
+  "pa images", "epa", "epa efe", "efe", "shutterstock", "alamy", "alamy stock photo", "nurphoto", "sipa", "sipa usa",
+  "zuma", "zuma press", "imagn", "imagn images", "usa today sports", "usa today network", "pool", "pool photo",
+  "photo", "photos", "image", "images", "credit", "image credit", "photo credit", "courtesy", "file photo",
+  "photographer", "staff photographer", "tribune content agency", "tribune news service", "tns", "cq roll call",
+  "bloomberg via getty images", "the canadian press", "canadian press", "aap", "aap image", "anadolu",
+  "anadolu agency", "xinhua", "kyodo", "yonhap", "dpa", "ansa", "press association", "wire", "handout"]);
+const CREDIT_TOKEN = /(^| )(photo|photos|getty|shutterstock|alamy|nurphoto|imagn|handout)( |$)/;
+/** Labels that are site furniture, credits or bylines rather than entities (checked on norm()-ed labels). */
+const JUNK_LABEL = new RegExp([
+  "(^| )(photo|photos|getty|image|images|shutterstock|alamy|imagn|handout)( |$)",
+  "(^| )(content agency|news service|news agency|newswire|wire service|press release|image credit|photo credit)( |$)",
+  "(^| )(staff )?(writer|reporter|correspondent|photographer|contributor|columnist|editor)$",
+  "[a-z](writer|reporter|photographer)$",                      // byline glued to the next word: "jane doewriter"
+  "(^| )(whatsapp|facebook|instagram|youtube|linkedin|twitter|tiktok|telegram|podcast network)( |$)",
+  "(^| )(website access|online edition|print edition|latest edition|headline news|daily headlines|newsletter)( |$)",
+  "(^| )(contact email|more information|privacy (notice|policy)|terms of (service|use)|cookie|subscribe|sign up)( |$)",
+  "(^| )(read more|click here|share this|help someone|donating proceeds|sale notice|plaintiff deadline)( |$)",
+  "^(\\S+( \\S+)?) \\1$",                                    // doubled names ("stacker stacker")
+].join("|"));
+export function junkLabel(n: string): boolean { return JUNK_LABEL.test(n); }
+export function isCreditMark(n: string): boolean { return CREDIT_MARK.has(n) || CREDIT_TOKEN.test(n); }
 
 interface GkgCtx { terms: Term[]; matcher: Matcher; themeIdx: Map<string, number>; latest: string; forced: boolean }
 interface GkgOut { file: string; status: "ok" | "pending" | "deferred" | "failed" | "partial"; note?: string; [k: string]: unknown }
@@ -217,15 +248,24 @@ const GKG_MAX_BEHIND_MS = 6 * 3600e3;   // further behind than this: jump to the
 // lastupdate.txt can list a file a few minutes before its zip is served, and the CDN then keeps answering 404 for that
 // URL for ~45-60 min (observed 2026-09-25: 7 files, each 404 for 3-4 runs, then 200). So: never request a file younger
 // than GKG_MIN_AGE_MS; a 404 parks the file in gkg.state.pending and the walk moves on; a parked file is retried once
-// GKG_RETRY_AFTER_MS has passed since its last 404 (one retry per run) and counted as a gap after GKG_GIVE_UP_MS.
+// due (see gkgRetryDue) and counted as a gap after GKG_GIVE_UP_MS. Parked files observed on 2026-09-25 were served from
+// 49-64 min after their timestamp whatever time they were first requested, so (n4) retries follow the file's age
+// (retries at ~+40 and ~+55 min, then every ~30 min) rather than a fixed 50 min after the last 404, and each run takes
+// the walk's new file first and uses its spare slot for a due retry.
 const GKG_MIN_AGE_MS = 8 * 60e3;
-const GKG_RETRY_AFTER_MS = 50 * 60e3;
+const GKG_RETRY_MIN_AGE_MS = 39 * 60e3;   // a parked file is not retried before it is this old
+const GKG_RETRY_GAP_MS = 14 * 60e3;       // ... nor sooner than this after its last 404
+const GKG_RETRY_GAP_LATE_MS = 29 * 60e3;  // ... nor, once it has had 3 404s, sooner than this
 const GKG_GIVE_UP_MS = 4 * 3600e3;
+export function gkgRetryDue(file: string, p: Pending, now: number): boolean {
+  const since = now - Date.parse(p.last);
+  return now - gkgTsMs(file) >= GKG_RETRY_MIN_AGE_MS && since >= (p.n >= 3 ? GKG_RETRY_GAP_LATE_MS : GKG_RETRY_GAP_MS);
+}
 
 async function gkg(run: Run) {
   const t0 = Date.now();
   const forced = typeof run.params.file === "string" && /^\d{14}$/.test(run.params.file) ? run.params.file as string : null;
-  // up to 2 files per run (3 requests with lastupdate.txt): a parked retry and/or the walk towards the latest file
+  // up to 2 files per run (3 requests with lastupdate.txt): the walk's next file first, then a due parked retry
   const maxFiles = forced ? 1 : Math.max(1, Math.min(2, Number(run.params.max_files ?? 2)));
   let latest = forced;
   if (!forced) {
@@ -252,31 +292,40 @@ async function gkg(run: Run) {
   terms.forEach((t, i) => { if (t.key_type === "theme") themeIdx.set(t.key.toUpperCase(), i); });
   const ctx: GkgCtx = { terms, matcher: new Matcher(terms), themeIdx, latest: latest!, forced: forced !== null };
   const outs: GkgOut[] = [];
-  let retried = false;
+  const tried = new Set<string>();
+  let walkDone = false;
   for (let k = 0; k < maxFiles; k++) {
     const st = ((await stateGet("gkg.state")) ?? {}) as GkgState;
-    let file: string;
+    let file: string | null = null;
     let retry = false;
     if (forced) file = forced;
     else {
-      const due = retried ? [] : Object.entries(st.pending ?? {})
-        .filter(([, p]) => Date.now() - Date.parse(p.last) >= GKG_RETRY_AFTER_MS).map(([f]) => f).sort();
-      if (due.length) { file = due[0]; retry = true; retried = true; }
-      else if (!st.last_file || gkgTsMs(ctx.latest) - gkgTsMs(st.last_file) > GKG_MAX_BEHIND_MS) {
-        if (st.last_file) run.extra.gap_files = Math.round((gkgTsMs(ctx.latest) - gkgTsMs(st.last_file)) / (15 * 60e3)) - 1;
-        file = ctx.latest;
-      } else {
-        const next = gkgName(gkgTsMs(st.last_file) + 15 * 60e3);
-        if (next > ctx.latest) { if (k === 0) run.extra.note = "no new file"; break; }
-        file = next;
+      // 1) the walk towards the latest listed file (freshest data first)
+      if (!walkDone) {
+        let next: string;
+        if (!st.last_file || gkgTsMs(ctx.latest) - gkgTsMs(st.last_file) > GKG_MAX_BEHIND_MS) {
+          if (st.last_file) run.extra.gap_files = Math.round((gkgTsMs(ctx.latest) - gkgTsMs(st.last_file)) / (15 * 60e3)) - 1;
+          next = ctx.latest;
+        } else next = gkgName(gkgTsMs(st.last_file) + 15 * 60e3);
+        if (next > ctx.latest) { walkDone = true; run.extra.note = "no new file"; }
+        else if (Date.now() - gkgTsMs(next) < GKG_MIN_AGE_MS) { walkDone = true; run.extra.note = `${next} younger than ${GKG_MIN_AGE_MS / 60e3} min; next run`; }
+        else file = next;
       }
-      if (!retry && Date.now() - gkgTsMs(file) < GKG_MIN_AGE_MS) { run.extra.note = `${file} younger than ${GKG_MIN_AGE_MS / 60e3} min; next run`; break; }
+      // 2) otherwise a parked file whose retry is due (oldest first)
+      if (!file) {
+        const now = Date.now();
+        const due = Object.entries(st.pending ?? {}).filter(([f, p]) => !tried.has(f) && gkgRetryDue(f, p, now))
+          .map(([f]) => f).sort();
+        if (!due.length) break;
+        file = due[0]; retry = true;
+      }
     }
     if (k > 0 && run.outOfTime(40_000)) { run.partial = true; break; }
+    tried.add(file);
     const out = await gkgFile(run, file, ctx, st, retry);
     outs.push(out);
     if (forced) break;
-    if (out.status === "ok" || out.status === "deferred" || (out.status === "pending" && retry)) continue;
+    if (out.status === "ok" || out.status === "deferred" || out.status === "pending") continue;
     break;
   }
   run.extra.files = outs;
@@ -284,7 +333,13 @@ async function gkg(run: Run) {
   run.extra.file = outs.length ? outs[outs.length - 1].file : null;
   const st2 = ((await stateGet("gkg.state")) ?? {}) as GkgState;
   run.extra.pending = Object.keys(st2.pending ?? {});
-  if (!forced && st2.last_file && st2.last_file < ctx.latest) { run.partial = true; run.nextCursor = { gkg_behind_files: Math.round((gkgTsMs(ctx.latest) - gkgTsMs(st2.last_file)) / (15 * 60e3)) }; }
+  // partial = this run left work it could have done: listed files old enough to fetch that the walk has not reached.
+  // Waiting for a file younger than GKG_MIN_AGE_MS, or for a parked file GDELT has not served yet, is not partial.
+  if (!forced && st2.last_file && st2.last_file < ctx.latest) {
+    let behind = 0;
+    for (let t = gkgTsMs(st2.last_file) + 15 * 60e3; t <= gkgTsMs(ctx.latest); t += 15 * 60e3) if (Date.now() - t >= GKG_MIN_AGE_MS) behind++;
+    if (behind > 0) { run.partial = true; run.nextCursor = { gkg_behind_files: behind }; }
+  }
   const bad = outs.find((o) => o.status === "failed");
   run.source({
     source: GKG_SRC, status: bad ? failStatus(run, GKG_HOST) : outs.some((o) => o.status === "partial") ? "partial" : "ok",
@@ -310,8 +365,8 @@ async function gkgFile(run: Run, file: string, ctx: GkgCtx, st: GkgState, retry 
     pend[file] = { first: p?.first ?? nowIso, last: nowIso, n: (p?.n ?? 0) + 1 };
     // park the file and move the walk past it (a retry leaves last_file alone)
     if (!run.dryRun) await stateSet("gkg.state", { ...st, pending: pend, last_file: retry || (st.last_file && st.last_file > file) ? st.last_file : file });
-    return retry ? { file, status: "pending", note: `still 404 (try ${pend[file].n}); retried after ${GKG_RETRY_AFTER_MS / 60e3} min` }
-      : { file, status: "deferred", note: `listed but 404; parked, retried after ${GKG_RETRY_AFTER_MS / 60e3} min` };
+    return retry ? { file, status: "pending", note: `still 404 (try ${pend[file].n})` }
+      : { file, status: "deferred", note: `listed but 404; parked, retried from ${GKG_RETRY_MIN_AGE_MS / 60e3} min after the file time` };
   }
   if (!res.ok) { await res.body?.cancel(); return { file, status: "failed", note: `http ${res.status}` }; }
   const zip = new Uint8Array(await res.arrayBuffer());
@@ -332,9 +387,17 @@ async function gkgFile(run: Run, file: string, ctx: GkgCtx, st: GkgState, retry 
   const entLabel = new Map<string, string>();     // normalized -> display label (first seen)
   const entKind = new Map<string, string>();
   const pairs = new Map<string, number>();        // termIdx \u0001 entity -> documents
-  let N = 0, bad = 0, bytes = 0;
+  const entOutlets = new Map<string, string[]>(); // normalized -> first CAND_MIN_OUTLETS distinct outlets
+  const entCredit = new Map<string, number>();    // normalized -> documents where it appears as a credit/byline
+  const bylines = new Set<string>();              // names in any document's <PAGE_AUTHORS>
+  let N = 0, bad = 0, bytes = 0, creditDocs = 0;
   const matched = new Set<number>();
   const docEnt = new Map<string, string>();       // per document: normalized -> kind
+  const docCredit = new Set<string>();            // per document: names in credit context
+  const anN: string[] = [];                        // per document: AllNames (normalized) and offsets
+  const anO: number[] = [];
+  const probe: string[] = run.dryRun && Array.isArray(run.params.probe) ? run.params.probe.map((x: unknown) => norm(String(x))).slice(0, 10) : [];
+  const probeOut = probe.map(() => ({ docs: 0, credit: 0, byline: false, outlets: new Set<string>(), ctx: [] as string[][] }));
 
   const addNames = (field: string | undefined, kind: string, mode: "list" | "allnames" | "loc") => {
     if (!field) return;
@@ -345,8 +408,10 @@ async function gkgFile(run: Run, file: string, ctx: GkgCtx, st: GkgState, retry 
       let nm = field.slice(from, j);
       from = j + 1;
       if (!nm) continue;
-      if (mode === "allnames") { const c = nm.lastIndexOf(","); if (c > 0) nm = nm.slice(0, c); }
+      let off = -1;
+      if (mode === "allnames") { const c = nm.lastIndexOf(","); if (c > 0) { off = +nm.slice(c + 1); nm = nm.slice(0, c); } }
       else if (mode === "loc") { const p = nm.split("#"); nm = (p[1] ?? "").split(",")[0]; }
+      if (mode === "allnames" && off >= 0 && nm.length >= 2 && nm.length <= 80) { anN.push(norm(nm)); anO.push(off); }
       if (nm.length < 3 || nm.length > 80) continue;
       const n = norm(nm);
       if (n.length < 3) continue;
@@ -364,11 +429,35 @@ async function gkgFile(run: Run, file: string, ctx: GkgCtx, st: GkgState, retry 
     N++;
     docEnt.clear();
     matched.clear();
+    docCredit.clear();
+    anN.length = 0; anO.length = 0;
     addNames(c[23], "name", "allnames");   // AllNames: proper-cased, offsets stripped
+    // credit context: names within CREDIT_WINDOW characters of a credit marker ("AP Photo", "Getty Images", ...)
+    let marks = 0;
+    for (let a = 0; a < anN.length; a++) {
+      if (!isCreditMark(anN[a])) continue;
+      marks++;
+      docCredit.add(anN[a]);
+      for (let b = 0; b < anN.length; b++) if (b !== a && Math.abs(anO[b] - anO[a]) <= CREDIT_WINDOW) docCredit.add(anN[b]);
+    }
+    // bylines (Extras <PAGE_AUTHORS>): journalists' names are never discovery candidates or edge endpoints
+    const ex = c[26];
+    if (ex) {
+      const i0 = ex.indexOf("<PAGE_AUTHORS>");
+      if (i0 >= 0) {
+        const i1 = ex.indexOf("</PAGE_AUTHORS>", i0);
+        for (const au of ex.slice(i0 + 14, i1 < 0 ? undefined : i1).split(/[,;|]| and /)) {
+          const na = norm(au);
+          if (na.length >= 3) { bylines.add(na); docCredit.add(na); }
+        }
+      }
+    }
+    if (marks) creditDocs++;
     addNames(c[11], "person", "list");     // V1Persons
     addNames(c[13], "org", "list");        // V1Organizations
     addNames(c[9], "place", "loc");        // V1Locations (feature name before the first comma)
-    const cc = countryOf(c[3] ?? "");
+    const outlet = c[3] ?? "";
+    const cc = countryOf(outlet);
     if (cc) totalCC.add(cc);
     // registry terms against the document's names (fields separated so phrases never span two names)
     matcher.match([...docEnt.keys()].join(" ~ "), matched);
@@ -377,11 +466,27 @@ async function gkgFile(run: Run, file: string, ctx: GkgCtx, st: GkgState, retry 
       termDocs[i]++;
       if (cc) (termCC[i] ??= new Set()).add(cc);
     }
+    for (let q = 0; q < probe.length; q++) {
+      if (!docEnt.has(probe[q])) continue;
+      const po = probeOut[q];
+      po.docs++; po.outlets.add(outlet);
+      if (docCredit.has(probe[q])) po.credit++;
+      if (bylines.has(probe[q])) po.byline = true;
+      if (po.ctx.length < 3) {
+        const k0 = anN.indexOf(probe[q]);
+        if (k0 >= 0) po.ctx.push(anN.map((x, j) => [x, anO[j] - anO[k0]] as [string, number])
+          .filter(([, d]) => Math.abs(d) <= 120).map(([x, d]) => `${d}:${x}`));
+      }
+    }
     // entity document counts (discovery) and co-mentions with active topics (hop evidence)
     let k = 0;
     for (const [n, kind] of docEnt) {
       entDocs.set(n, (entDocs.get(n) ?? 0) + 1);
       if (!entKind.has(n)) entKind.set(n, kind);
+      if (docCredit.has(n)) entCredit.set(n, (entCredit.get(n) ?? 0) + 1);
+      const ol = entOutlets.get(n);
+      if (!ol) entOutlets.set(n, [outlet]);
+      else if (ol.length < CAND_MIN_OUTLETS && !ol.includes(outlet)) ol.push(outlet);
       if (kind === "place" || ++k > 40) continue;
       for (const i of matched) {
         if (!terms[i].active) continue;
@@ -415,13 +520,31 @@ async function gkgFile(run: Run, file: string, ctx: GkgCtx, st: GkgState, retry 
   rows.push({ source: SRC, key: "__total__", ts: hour, value: N, members: [...totalCC] });
   const r = await accum(run, `gkg:${file}`, rows);
 
+  // ---- entity minimisation (n4): credits, bylines, single-outlet names and site furniture never leave the function
+  const drop = { credit: 0, byline: 0, outlets: 0, junk: 0 };
+  const eligible = (n: string, minOutlets: number, count = true): boolean => {
+    const d = entDocs.get(n) ?? 0;
+    let why: keyof typeof drop | null = null;
+    if (bylines.has(n)) why = "byline";
+    else if (d > 0 && (entCredit.get(n) ?? 0) / d > CREDIT_MAX_SHARE) why = "credit";
+    else if (junkLabel(n) || isCreditMark(n)) why = "junk";
+    else if ((entOutlets.get(n)?.length ?? 0) < minOutlets) why = "outlets";
+    if (why && count) drop[why]++;
+    return why === null;
+  };
+  const personLike = (n: string) => { const k = entKind.get(n); return k === "person" || k === "name"; };
+
   // ---- co-mention edges (at least one side active; top 25 per term with >= 2 shared documents)
   const byTerm = new Map<number, Array<[string, number]>>();
+  const edgeOk = new Map<string, boolean>();
   for (const [pk, n] of pairs) {
     if (n < 2) continue;
     const s = pk.indexOf("\u0001");
     const i = +pk.slice(0, s);
     const e = pk.slice(s + 1);
+    let ok = edgeOk.get(e);
+    if (ok === undefined) { ok = eligible(e, personLike(e) ? CAND_MIN_OUTLETS : EDGE_MIN_OUTLETS, false); edgeOk.set(e, ok); }
+    if (!ok) continue;
     // skip the term's own names (the entity is the topic itself)
     const self = new Set<number>(); matcher.match(e, self);
     if (self.has(i)) continue;
@@ -452,7 +575,7 @@ async function gkgFile(run: Run, file: string, ctx: GkgCtx, st: GkgState, retry 
       if (c < 5) continue;
       const e = (ew.b[n] ?? 0) * N / 1000;   // expected documents in this file
       const z = (c - e) / Math.sqrt(e + 1);
-      if (z >= 3) cands.push({ n, z, c, e });
+      if (z >= 3 && eligible(n, CAND_MIN_OUTLETS)) cands.push({ n, z, c, e });
     }
     cands.sort((a, b) => b.z - a.z);
   }
@@ -460,10 +583,17 @@ async function gkgFile(run: Run, file: string, ctx: GkgCtx, st: GkgState, retry 
   const candRows = top.map((x, k) => ({
     day, source: SRC, geo: "ALL", label: entLabel.get(x.n) ?? x.n, rank: k + 1, value: x.c,
     evidence: Math.max(0, Math.min(1, x.z / 8)),
-    meta: { method: "gkg_burst_ewma", n_docs: x.c, k: entKind.get(x.n) ?? "name", q: Math.round(x.z * 100) / 100,
-      expected: Math.round(x.e * 10) / 10 },
+    meta: { method: "gkg_burst_ewma_v2", n_docs: x.c, k: entKind.get(x.n) ?? "name", q: Math.round(x.z * 100) / 100 },
   }));
   await candidatesMerge(run, candRows);
+  if (run.dryRun) {
+    // dry-run diagnostics go to the HTTP response only (dry_rows are not persisted in att_runs)
+    run.dryRows.push({ candidates_preview: candRows.slice(0, 60).map((r) => `${r.label} (${r.value})`) });
+    run.dryRows.push({ edges_preview: edges.slice(0, 40).map((e) => `${e.from_key} -> ${e.to_key} (${e.n})`) });
+    probe.forEach((p, q) => run.dryRows.push({ probe: p, docs: probeOut[q].docs, credit_docs: probeOut[q].credit,
+      byline: probeOut[q].byline, outlets: probeOut[q].outlets.size, eligible: eligible(p, CAND_MIN_OUTLETS, false),
+      ctx: probeOut[q].ctx }));
+  }
 
   // EWMA update (only after a complete, newly written file)
   if (!run.dryRun && !(r?.dup)) {
@@ -485,7 +615,7 @@ async function gkgFile(run: Run, file: string, ctx: GkgCtx, st: GkgState, retry 
   ms.total = Date.now() - t0;
   return { file, status: "ok", note: r?.dup ? "already counted (batch dup)" : undefined, rows: Number(r?.rows ?? 0),
     zip_bytes: zipBytes, articles: N, entities: entDocs.size, text_chars: bytes, bad_lines: bad, terms_hit: hit,
-    pairs: edges.length, candidates: candRows.length, ms };
+    pairs: edges.length, candidates: candRows.length, credit_docs: creditDocs, bylines: bylines.size, dropped: drop, ms };
 }
 
 // ------------------------------------------------------------ mode: thirdeye
@@ -626,7 +756,10 @@ interface Item { day: string; text: string; kws: string[] }
 // section labels and function words that publishers put in news:keywords (not discoverable entities)
 const KW_SKIP = new Set(["the", "and", "for", "with", "from", "news", "live", "video", "videos", "opinion", "analysis",
   "latest", "update", "updates", "world", "world news", "us news", "uk news", "us", "uk", "media", "politics", "business",
-  "sport", "sports", "lifestyle", "entertainment", "culture", "technology", "science", "health", "travel", "fox news"]);
+  "sport", "sports", "lifestyle", "entertainment", "culture", "technology", "science", "health", "travel", "fox news",
+  // n4: outlet and network brands (a publisher tagging a rival network is not a discovery), pronouns, bare nouns
+  "bbc", "bbc news", "new york times", "the new york times", "nyt", "guardian", "the guardian", "fox", "fox business",
+  "her", "his", "she", "they", "our", "age", "people", "women", "men", "children", "youth", "students", "schools"]);
 async function fetchSitemap(run: Run, outlet: string, url: string): Promise<{ items: Item[]; urls: number; status: string; note?: string }> {
   const host = new URL(url).hostname;
   const res = await politeFetch(run, url, { source: "news.sitemap", timeoutMs: 30_000 });
@@ -702,7 +835,7 @@ async function sitemaps(run: Run) {
       }
       for (const k of it.kws) {
         const nk = norm(k);
-        if (nk.length < 3 || KW_SKIP.has(nk)) continue;
+        if (nk.length < 3 || KW_SKIP.has(nk) || TV_BRANDS.has(nk)) continue;
         const s = kwStats.get(nk) ?? { label: k, outlets: new Set<string>(), n: 0 };
         s.outlets.add(g.o); s.n++; kwStats.set(nk, s);
       }
