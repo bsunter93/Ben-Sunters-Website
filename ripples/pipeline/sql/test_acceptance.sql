@@ -113,7 +113,7 @@ select (r->>'i')::int i, r->>'answer_qid' qid, c.s_stat, fl.f, fl.warming, c.p_t
                    and c.parent_qid = (select x->'parent'->>'qid' from jsonb_array_elements(p.payload->'rounds') x where x->>'i' = r->>'i')) c on true
   cross join lateral ripples._fluke(p.data_date, c.s_stat) fl order by 1;
 
--- V2. SPEC 12.3: every decoy's 90-day sparkline reads flat: max day <= min(2.0, answer multiple) x its baseline median
+-- V2. SPEC 12.3: every decoy's 90-day sparkline reads flat: max day < min(3.0, 0.75 x answer multiple) x its baseline median
 with p as (select * from ripples.puzzles where n = -1)
 select (r->>'i')::int i, o->>'qid' qid, (o->>'median')::numeric median,
        (select max(v::numeric) from jsonb_array_elements_text(o->'spark') v) spark_max,

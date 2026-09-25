@@ -11,7 +11,7 @@ the W1 contract shapes (`../contract/*.schema.json`) and never touches v4 object
 | `functions/ripples-collect/index.ts` | `{"mode":"trends"}` Google Trends RSS (8 geos, serial 1/s) + Bluesky `getTrends`; `{"mode":"daily"}` top-per-country (10) + featured feed; `{"mode":"date"}` backfill (adds per-project top for 10 languages) |
 | `functions/ripples-resolve/index.ts` | titles/queries -> enwiki title, QID, short description, P31, P570, sitelinks; unknown classes -> labels + P279 |
 | `functions/ripples-expand/index.ts` | job kinds `screen`, `expand`, `history`, `split`, `refresh` (the statistics run here) |
-| `sql/01..09_*.sql`, `sql/12..20_*.sql` | the migrations in the order they were applied. Replaying them on a W1 database reproduces the deployed W2 functions (`tools/fn_md5.py` prints the md5 of every function body; compare with the query in its docstring) |
+| `sql/01..09_*.sql`, `sql/12..21_*.sql` | the migrations in the order they were applied. Replaying them on a W1 database reproduces the deployed W2 functions (`tools/fn_md5.py` prints the md5 of every function body; compare with the query in its docstring) |
 | `sql/10_seed_data.sql` | category-map seed (231 verified classes), blocklist class QIDs, config keys |
 | `sql/11_cron.sql` | the three pg_cron jobs |
 | `sql/12_ripples_v5_pipeline_yield.sql` | decoy reserve (`candidates.extra`), monotone pooling of fluke bins, description-based safety patterns, seed baseline floor |
@@ -23,6 +23,7 @@ the W1 contract shapes (`../contract/*.schema.json`) and never touches v4 object
 | `sql/18_ripples_v5_pipeline_verifier_fixes.sql` | fixes after the independent verifier: SPEC fluke warm-up (500), safety re-check of humans inside every run (stage `recheck`, `ripples._fresh`), dispatch order (live first, depth 1 of seeds and decoys before deeper beams), seed reuse per run kind, flat 90-day decoy sparklines, Board belly-flop rule, `spiked_alongside` badge and neutral headline, EXECUTE revoked from PUBLIC on all helpers. Applied as two migrations (`ripples_v5_pipeline_verifier_fixes`, `..._b`); the three large functions are patched in place, whitespace-tolerant |
 | `sql/19_ripples_v5_pipeline_date_seeds.sql` | calendar-day articles ("September 23") are `is_list`, so never seeds, options, Call It or Board rows |
 | `sql/20_ripples_v5_pipeline_recheck_deadline.sql` | practice runs: the re-check stage ends at 24 min, so a practice day always finishes within 25 min |
+| `sql/21_ripples_v5_pipeline_decoy_spark.sql` | decoy 90-day sparkline rule becomes min(3.0, 0.75 x answer multiple) x normal (sql/18's flat 2.0 cap left no usable hop on the test days) |
 | `sql/test_acceptance.sql` | the acceptance queries |
 | `category-map.json` | the seeded class -> category / safety-flag map (labels fetched from Wikidata) |
 
@@ -111,8 +112,10 @@ Answer-eligible = pass_raw, p_time <= 0.05, f <= 0.10 (or warming), split_ok, no
 linked, safe (no sensitive topics), no shared trigger at depth >= 2; usable as a round only with 3 calm, linked,
 safe siblings (median 0.5-2x the answer's, different title stem, >= 2 of 3 in the answer's category, and window
 multiple >= `config.pipeline.decoy_min_multiple` 0.67 so a page in post-hype decay is never shown as "views normal";
-the whole 90-day sparkline shown after the reveal must read flat: no day above
-min(`config.pipeline.decoy_max_spark_ratio` 2.0, the answer's multiple) x the decoy's baseline median (SPEC 12.3);
+the whole 90-day sparkline shown after the reveal must read flat: no day reaches
+min(`config.pipeline.decoy_max_spark_ratio` 3.0, `decoy_max_spark_frac` 0.75 x the answer's multiple) x the decoy's
+baseline median, so no decoy day is at 3x normal or more and the answer's peak always stands at least a third above
+every decoy day on W5's shared "x normal" scale (SPEC 12.3);
 same-category first, then the flattest spark, then the closest median). Chains are
 ranked by length, Σ log10(1/f) (p_time while warming), category jumps, biggest-in-days, onset recency.
 >= 3-hop chain -> the chain (<= 4 rounds); 2-hop -> + 1-2 fresh ripples; else 3-4 fresh ripples; else the reserve
