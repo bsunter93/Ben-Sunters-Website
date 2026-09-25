@@ -29,3 +29,12 @@ update ripples.att_sources set per_run_cap = 4, per_day_cap = 8, spacing_ms = 50
   hosts = array['raw.githubusercontent.com'],
   reason = 'Q6: no published limit -> 1 req/5 s; conditional GET (If-None-Match) so the 12 MB CSV is only downloaded when upstream changed; api.github.com not used'
  where source = 'hiringlab.postings';
+
+-- Operational change (2026-09-25 ~17:05 UTC, applied directly): citibike.trips per-day cap 20 -> 30 so the one-off
+-- 14-month Jersey City backfill (list + 2 files per run) completes within a day; today's att_budget row updated too.
+update ripples.att_sources set per_day_cap = 30,
+  reason = 'Q6: no published limit -> 1 req/5 s; bucket listing + JC monthly files (1-3 MB, 2 per run; 30/day covers the one-off 14-month backfill). NYC monthly files are ~1 GB: too large for the 110 s / CPU budget, reported partial'
+ where source = 'citibike.trips';
+update ripples.att_budget set cap = 30 where bucket = 'citibike.trips' and day = date '2026-09-25';
+-- Queued once (drained by att_tick('backfill')):
+-- select ripples.att_job_enqueue('backfill', 'att-world', '{"mode":"backfill","params":{"source":"citibike.trips"}}'::jsonb, 6, 'world:citibike.trips');

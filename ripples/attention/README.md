@@ -325,3 +325,27 @@ PAGER orange/red (label "<region> earthquake", meta k = event id); FEMA declarat
 named fires, otherwise "<year> <State> <incident type>", geo US-<state>); GDACS orange/red current events that started in
 the last 10 days ("Cyclone <Name>", volcano name, or "<year> <country> <type>"). IEM warning surges are not emitted as
 candidates (their labels would not resolve to articles); att_score can z-score `iem.warn` directly.
+
+**Budgets.** `sql/16` rows (DEMARCATION Q6, 1 request / 5 s where no limit is published, IEM 1 / 10 s); the per-day caps
+cover the daily calls plus the one-off backfill (citibike.trips was raised to 30/day on 2026-09-25 for the 14-month JC
+backfill, applied directly to the row and today's `att_budget` row). Every request goes through `politeFetch`: robots.txt
+checked for every host (tsa.gov, fema.gov, data.ny.gov, gdacs.org, mesonet 200 with no matching disallow; usgs.gov,
+raw.githubusercontent.com, tripdata bucket 404 = allowed).
+
+**State.** `att_state`: `world.bf.<source>` (backfill cursors), `world.hiringlab` (ETags, latest day), `world.citibike`
+(months done, NYC file size), `world.iem.keys`, `world.fema.types` (zero-fill key sets).
+
+**Backfill (2026-09-25, direct `call_collector` runs 593-616):** tsa.pax 2,824 days (2019-01-01..2026-09-24, 8 pages);
+mta.ridership 2,398 days x 9 modes (2020-03-01..2026-09-23); fema.decl 420 days x 16 keys (1,989 records); usgs.eq 420 days
+(4 windows x 2 queries) + 762 per-event felt series; iem.warn 420 days x 14 keys (14 windows, two runs); hiringlab.postings
+414 days x 96 series (2025-08-01..2026-09-18). citibike.trips: JC months are drained 2 per run by the queued job
+`world:citibike.trips` (att_tick 'backfill', off-peak).
+
+**Retention caveat.** TSA (2019+) and MTA (2020+) keep more than 400 days on purpose (same-weekday baselines across
+years). These series have no topic link; if `att_retention()` trims unlinked series to 400 days it should exempt
+`tsa.pax` and `mta.ridership` (not implemented by att-world; `att_retention` does not exist yet).
+
+**Known limitations (att-world w2).** GDACS labels numbered depressions literally ("Cyclone One"); USGS labels use the
+ComCat place region ("Sun Valley, Nevada earthquake") and may not resolve to an article; USGS per-event felt series
+(felt >= 25) add ~2 series/day (762 for the 420-day backfill); GDACS snapshots are stored under as_of (run date - 1) like
+the other snapshot collectors.

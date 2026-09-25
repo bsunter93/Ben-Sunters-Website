@@ -368,7 +368,7 @@ async function resolveImages(run: Run, items: MediaPlan[]) {
         try { if (src) { const su = new URL(src); if (su.hostname === "upload.wikimedia.org") path = decodeURIComponent(su.pathname); } } catch { path = null; }
         const m = path ? /^\/wikipedia\/([a-z0-9-]+)\/[0-9a-f]\/[0-9a-f]{2}\/([^/]+)$/.exec(path) : null;
         if (m) out.push({ topic_id: c.topic_id, key: `${m[1]}:${m[2]}`, path });
-        else if (pg && !pg.missing && !pg.invalid) out.push({ topic_id: c.topic_id, none: true });
+        else out.push({ topic_id: c.topic_id, none: true }); // no free lead image (or page missing): re-check in 30 days
       }
     }
     if (stop) break;
