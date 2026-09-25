@@ -12,13 +12,14 @@ decisions the spec left open. Supabase project `kffkasnzqcddpystszch`.
 | `puzzle.schema.json` `reveal.schema.json` `stats.schema.json` `callit.schema.json` `board.schema.json` `archive.schema.json` `brief.schema.json` `latest.schema.json` `health.schema.json` `og-data.schema.json` `answers.schema.json` | strict JSON Schemas (additionalProperties false) |
 | `fixtures/puzzle-0.json` `reveal-0.json` `board-0.json` `callit-0.json` `stats-0.json` `archive-fixture.json` `og-data-0.json` `answers-0.json` | byte-for-byte mirrors of the DB fixture n=0 (see md5 check below) |
 | `fixtures/latest.json` | `latest.json` as it looks before launch (delayed, puzzle null) |
-| `fixtures/*.sample*.json` | synthetic UI-state samples, **not** DB output: `stats-0.sample-shown.json` (≥30 players), `latest.sample-published.json`, `brief.sample.json`, `health.sample.json`. Their `_comment` key is ignored by the validator |
+| `fixtures/*.sample*.json` | synthetic UI-state samples, **not** DB output: `stats-0.sample-shown.json` (≥30 players, invented counts), `latest.sample-published.json`, `brief.sample.json`, `health.sample.json`. Their `_comment` key is ignored by the validator. **Never ship them, load them at runtime or fall back to them** (SPEC 12.6/12.11: invented counts). They are for local UI development only; `validate.py --no-samples <site dir>` fails if a shipped file references one |
 | `tools/build_fixture.py` | regenerates every fixture file and `sql/03_fixture_n0.sql` deterministically |
-| `tools/validate.py` | dependency-free validator: schemas + semantic cross-checks + `--md5` in Postgres `jsonb::text` form |
+| `tools/validate.py` | dependency-free validator: schemas + semantic cross-checks (incl. SPEC 12.1 wording) + `--md5` in Postgres `jsonb::text` form + `--ledger-hash/--ledger-chain` + `--wording` lint + `--no-samples` ship guard |
 | `sql/01_ripples_v5_core.sql` `sql/02_ripples_v5_public_rpcs.sql` | the full, current definitions of every deployed W1 object (all 40 function bodies md5-verified against `pg_proc.prosrc`) |
 | `sql/03_fixture_n0.sql` | the fixture insert |
-| `sql/04_ripples_v5_w1_fixes.sql` | net effect of the follow-up migrations `ripples_v5_w1_verifier_fixes` + `ripples_v5_w1_publish_cutoff` (ledger, salts, join price, Call It window, og past, publish cutoff, grant audit). A fresh install runs 01, 02, 03, 04; 04 is idempotent |
-| `rpc-smoke.sql` | 94 checks over every RPC incl. error paths + a live-puzzle lifecycle. **Safe to re-run at any time, also after launch**: both parts run in subtransactions that are aborted on purpose, so nothing (plays, calls, waitlist, rate limits, salts, statuses, ledger) is committed |
+| `sql/04_ripples_v5_w1_fixes.sql` | net effect of the follow-up migrations `ripples_v5_w1_verifier_fixes` + `ripples_v5_w1_publish_cutoff` (ledger, salts, join price, Call It window, og past, publish cutoff, grant audit). A fresh install runs 01, 02, 03, 04, 05; 04 and 05 are idempotent |
+| `sql/05_ripples_v5_w1_fixes2.sql` | net effect of migration `ripples_v5_w1_verifier_fixes_2`: `_canon` pins `extra_float_digits = 0`; `payload.status` served from the row (and hashed that way); Call It closes at the earlier of the puzzle period's end and 00:00 UTC after `window_start`; `publish_bundle(explicit n)` applies the 07:20 cutoff (`too_early`). Bodies identical to sql/02 (and sql/04 where re-declared) |
+| `rpc-smoke.sql` | 98 checks over every RPC incl. error paths + a live-puzzle lifecycle. **Safe to re-run at any time, also after launch**: both parts run in subtransactions that are aborted on purpose, so nothing (plays, calls, waitlist, rate limits, salts, statuses, ledger) is committed |
 
 ```
 python3 ripples/contract/tools/validate.py                      # all fixtures + cross-checks + md5 list
@@ -27,7 +28,17 @@ python3 ripples/contract/tools/validate.py --md5 ripples/contract/fixtures/revea
 -- in SQL:  select md5(public.ripples_reveal(0)::text);            -- must equal the line above
 python3 ripples/contract/tools/validate.py --ledger-hash 12 puzzle/12.json reveal/12.json callit/12.json
 python3 ripples/contract/tools/validate.py --ledger-chain ledger.json [puzzle_dir reveal_dir callit_dir]
+python3 ripples/contract/tools/validate.py --wording puzzle/12.json reveal/12.json    # SPEC 12.1 lint (W2, W6)
+python3 ripples/contract/tools/validate.py --no-samples ripples/                      # no synthetic sample ships
 ```
+
+**Wording lint (SPEC 12.1).** `--wording` (and the full run, on the fixture) checks every `text`/`label` string
+(headline, captions, intro, `end.text`, `cross` labels) for the banned causal wording — `cause(d/s)`, `drove/drive(s/n)/driving`,
+`flood(ed) into`, `a flood of`, `sent readers/traffic`, `went from X to Y` — on **every** round, flowed or not, and
+for reader-flow words (`readers`, `clicked`, `followed`, `went on to`, …) in the caption of any round whose badge
+is not `flowed`. Text whose `source` is `wikipedia` (a short description of the subject, e.g. "Disease caused
+by …") is exempt. W2 templates and W6 AI copy must pass it; W6's `ripples_ingest_copy` should reject the same
+patterns (the regexes are `CAUSAL_RE` / `FLOW_RE` in `tools/validate.py`).
 
 **Fixture drift.** The fixture accepts anonymous plays and calls (for testing), so `stats-0.json` /
 `callit-0.json` equal the DB only while `ripples.plays`/`ripples.calls` have no n=0 rows, and `og-data-0.json`
@@ -39,6 +50,13 @@ only while the fixture date (2026-09-25) is the current puzzle date (`past` flip
 `BoardPayload.trends[].cross` are arrays of
 `{"source":"gtrends|bsky|mastodon|gdelt_tv|autocomplete|polymarket|…","label":"text","multiple":num|null,"z":num|null,"when":"before|alongside|after"|null}`.
 Producers emit `[]` until the attention layer fills them. The key is **required** (may be empty).
+
+**Scope (needs lead sign-off).** This extension is not in SPEC §10.2, and SPEC §14 puts GDELT corroboration and
+multi-channel "moved in order" out of scope for v5 (§5.1 limits Bluesky to a badge). Until the lead confirms that
+the attention layer (W7) supersedes §14: W5 renders `cross` items only as small corroboration badges ("also
+spiked on …"), never as evidence for the measured hop, never as an ordering or causal claim, and never with a
+number that is not in the item; `when` is a timing label only. The fixture's items (`gtrends`, `bsky`,
+`gdelt_tv`, `mastodon`) are illustrative and labelled TEST.
 
 **Licensing (SPEC 12.9).** `cross` items can carry non-Wikimedia data (Google Trends, Bluesky, Mastodon,
 GDELT, Polymarket...). So `v1/puzzle/*`, `v1/reveal/*`, `v1/board/*` and `v1/latest.json` are **not** open data
@@ -54,6 +72,10 @@ trending searches"), with `multiple: null` unless a licensed numeric source exis
 * **practice** (n<0): visible when `status in ('built','published')`.
 * **fixture**: n=0 only, always visible, never returned by `ripples_latest`, `ripples_board(null)`, `ripples_brief`, `ripples_archive('live'|'all')`.
 * Table constraint: live ⇒ n>0, practice ⇒ n<0, fixture ⇒ n=0 (and only the fixture has status `fixture`).
+* **`PuzzlePayload.status` is served from the row**, not from the stored payload: `ripples_puzzle`, `ripples_latest`
+  and `publish_bundle` overlay `status = ripples.puzzles.status`, so a payload W2 stored as `"built"` reads
+  `"published"` once published. The ledger hashes the same overlaid value (always `"published"` for a ledgered row).
+  W2 may write any valid value; `"built"` is recommended.
 
 ## Public RPCs (anon + authenticated; GET for STABLE, POST for VOLATILE)
 
@@ -68,7 +90,7 @@ trending searches"), with `multiple: null` unless a licensed numeric source exis
 | `ripples_brief(p_days 7, p_category null)` | Live answer hops with `puzzle_date` in `[current−days, current−1]` (today's puzzle never appears). If no live puzzle is in range, falls back to the newest reconstructed practice puzzles and sets `"reconstructed": true` (extension — label it on the page). Unknown category → empty items. `intro` = newest `brief_intro` copy in range |
 | `ripples_health()` | `{latest_n,published_at,stale,expected_n,stage,wm_calls,errors,clickstream_month}`; `stage/wm_calls/errors` read `ripples.runs` (W2), `clickstream_month` reads `ripples.clickstream` (W3) when those tables exist |
 | `ripples_submit_play(p_client,p_n,p_picks,p_mag)` | see below |
-| `ripples_submit_call(p_client,p_n,p_qid)` | `{"ok":true,"split":[{qid,pct}]|null}` (split only at ≥30 calls). Closes at 00:00 UTC after `window_start` |
+| `ripples_submit_call(p_client,p_n,p_qid)` | `{"ok":true,"split":[{qid,pct}]|null}` (split only at ≥30 calls). Closes at `closes_at` = the earlier of the puzzle period's end (07:30 UTC on `puzzle_date + 1`) and 00:00 UTC after `window_start` (see below) |
 | `ripples_join(p_email,p_role,p_price,p_topics,p_source)` | always `{"ok":true}` |
 
 `ripples_track_record()` is W3's; `publish_bundle` calls it if it exists.
@@ -81,10 +103,20 @@ trending searches"), with `multiple: null` unless a licensed numeric source exis
 * The fixture n=0 accepts plays (for testing); practice puzzles do not.
 
 ### ripples_submit_call
-`invalid` (bad client, QID not `^Q\d+$`, or not one of that n's Call It options), `closed` (invisible/practice n, or live and UTC date > `window_start`), `rate_limited` (20/IP/day). One call per client per n; later calls are ignored.
-Calls close at 00:00 UTC after `window_start`, because the first window day's pageviews become public soon after
-(no look-ahead for the crowd in the Crowd-vs-Model record). **W2 must set `window_start >= puzzle_date`** (the
-spec example uses `window_start = puzzle_date`); a window that starts before the puzzle date is closed on arrival.
+`invalid` (bad client, QID not `^Q\d+$`, or not one of that n's Call It options), `closed` (invisible/practice n, or live and `now() >= closes_at`), `rate_limited` (20/IP/day). One call per client per n; later calls are ignored.
+
+**Call It close time.** `closes_at = least((puzzle_date + 1) 07:30 UTC, (window_start + 1) 00:00 UTC)`:
+* never after the puzzle's own period (the next puzzle takes over at the 07:30 UTC rollover), and
+* never after the first window day has ended, because its daily pageviews become public soon after (no
+  look-ahead for the crowd in the Crowd-vs-Model record).
+
+With the spec's `window_start = puzzle_date` this is 00:00 UTC, so **Call It is closed for the last 7.5 h of
+every puzzle period (8 pm–3:30 am US Eastern)**. **Recommended to W2 (needs lead sign-off, it shifts SPEC §5.3.7's
+window by one day): `window_start = puzzle_date + 1`, `window_end = puzzle_date + 7`** (still 7 days, resolves
+on `window_start + 8`). Then calls stay open for the whole puzzle period, and the first window day starts after
+the puzzle is built, so the only overlap is the first 7.5 h of window day 1 (its daily total is not public until
+after the close). Either way **W5 must compute `closes_at` with the formula above** from `puzzle.date` and
+`callit.window_start` and show a "Calls closed" state (and handle the `closed` error) instead of a dead button.
 
 ### ripples_join enums (anything else → silently ignored, still `{"ok":true}`)
 * email: lower-cased, trimmed, ≤254, `local@domain.tld` regex.
@@ -98,6 +130,7 @@ spec example uses `window_start = puzzle_date`); a window that starts before the
 * `ripples_publish_bundle(p_n default null)` → `{n,kind,date,latest,puzzle,reveal,callit,board,archive,track,csv_rows,recent_callit,ledger_head,ledger}`.
   * null n → newest live puzzle with status built/published and `puzzle_date <= (UTC now − 7h20m)::date`, i.e. today's puzzle only from 07:20 UTC (the veto deadline) on. The 07:25 run pre-stages today's files; `latest` flips at 07:30 and is rewritten by the 07:45 run. An earlier call re-publishes yesterday's (idempotent) and can never publish/ledger a puzzle that may still be vetoed.
   * live/practice: sets `status='published'`, `published_at`. Fixture: never changes status. `vetoed`/`delayed` with explicit n → error `not_publishable`.
+  * explicit n: the same 07:20 cutoff applies. A **built** live puzzle dated after `(UTC now − 7h20m)::date` → error `too_early` (no status change, no ledger row), so an explicit call can't lock a puzzle against a veto or ledger it early. Already-published puzzles can be re-bundled at any time. W4 should still call it with null.
   * live only: writes the ledger row if missing (this is the **only** place a ledger row is written) and returns `csv_rows` (`date,n,round,parent,answer,multiple,z,lag_days,fluke,p_time,category`; Wikimedia-derived only). Fixture/practice → `csv_rows: []`.
   * `archive` = `ripples_archive(500,'all')`; `recent_callit` = `[{n,callit}]` for the last 8 published live puzzles (for rewriting `v1/callit/{n}.json`); `track` = `ripples_track_record()` or null.
   * `ledger_head` = `chain_hash` of the most recently written ledger row (null before the first); `ledger` = every row `[{n,day,payload_hash,prev_hash,chain_hash}]` in write order. **W4: write it to `v1/ledger.json`** so anyone can run `validate.py --ledger-chain`.
@@ -118,7 +151,11 @@ spec example uses `window_start = puzzle_date`); a window that starts before the
   `", "` / `": "` separators) with every number round-tripped through float8 (15 significant digits, plain
   notation: `3.80`→`3.8`, `7.0`→`7`, `1e-7`→`0.0000001`). `tools/validate.py --ledger-hash` implements it; the SQL
   side is `ripples._ledger_input(n)` / `ripples._canon(jsonb)`. Checked equal on the fixture (`5dca09ff…`) and in the
-  smoke lifecycle after an AI copy overlay.
+  smoke lifecycle after an AI copy overlay. P's `status` is the row status (as served), i.e. `"published"`.
+* **Session-independent.** `ripples._canon` runs with `set extra_float_digits = 0` (float8 text = `%.15g`, which is
+  what `validate.py` uses), so a row written or verified from a session with another setting (pgjdbc/npgsql use 3)
+  hashes identically even for numbers with >15 significant digits. Smoke-tested: a row written at efd=3 for a
+  reveal with `p_time = 0.02564102564102564103` verifies at efd=0 and efd=1. Producers may still round.
 * **Chain**: `chain_hash = sha256(prev_hash || payload_hash)` (hex text concatenation); `prev_hash` = chain_hash
   of the **most recently written** row (`ripples.ledger.seq`, write order), 64 zeros for the first row. Publishing
   out of n order (e.g. a delayed puzzle) still yields one linear chain.
@@ -138,6 +175,8 @@ grant  execute on function public.<fn>(<args>) to service_role;
 Then check: `select * from ripples._grant_audit();` must return **zero rows** (it lists every `public.ripples_*`
 function that anon/authenticated can execute other than the 12 W1 public RPCs and W3's `ripples_track_record`).
 `rpc-smoke.sql` includes this check. Functions in schema `ripples` are safe (no schema usage for anon).
+The audit only covers names starting `ripples_`: **a service function in `public` with any other name must be
+revoked the same way and is not flagged**, so name every public v5 function `ripples_*`.
 
 ## Privacy (SPEC §12.12)
 * `client_hash = sha256(salt(puzzle_date) || '|' || client_id)` via `ripples._hash(text, day)`: salted with the

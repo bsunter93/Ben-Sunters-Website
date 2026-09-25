@@ -125,7 +125,7 @@ async function fetchFacts(run: Run, lang: string, titles: string[], qids: string
   const jobs: Array<{ kind: "titles" | "ids"; list: string[] }> = [];
   for (let i = 0; i < titles.length; i += 20) jobs.push({ kind: "titles", list: titles.slice(i, i + 20) });
   for (let i = 0; i < qids.length; i += 20) jobs.push({ kind: "ids", list: qids.slice(i, i + 20) });
-  const b = budget(run, "wikidata", Math.max(1, Math.min(10, jobs.length)));
+  const b = budget(run, "wikidata.api", Math.max(1, Math.min(10, jobs.length)));
   for (const j of jobs) {
     if (run.outOfTime(8000) || !(await b.take())) { run.partial = true; break; }
     const p = new URLSearchParams({
@@ -202,7 +202,7 @@ async function modeResolve(run: Run) {
   const items: Item[] = Array.isArray(run.body?.items) ? run.body.items : [];
   const t0 = Date.now();
   const r = await registerItems(run, items.slice(0, 400));
-  run.source({ source: "wikidata", status: run.partial ? "partial" : "ok", keys: items.length, rows: r.registered, ms: Date.now() - t0 });
+  run.source({ source: "wikidata.api", status: run.partial ? "partial" : "ok", keys: items.length, rows: r.registered, ms: Date.now() - t0 });
   run.extra.registered = r.registered;
   run.extra.missing = r.missing;
   if (r.done < items.length) run.partial = true;
@@ -218,7 +218,7 @@ async function modeBootstrap(run: Run) {
     title: c.title, lang: c.lang, origin: c.origin === "cascade" ? "cascade" : "trend", status: "active",
     meta: { boot: c.origin, boot_rank: c.rnk },
   })));
-  run.source({ source: "wikidata", status: run.partial ? "partial" : "ok", keys: cands.length, rows: r.registered, ms: Date.now() - t0 });
+  run.source({ source: "wikidata.api", status: run.partial ? "partial" : "ok", keys: cands.length, rows: r.registered, ms: Date.now() - t0 });
   run.extra.candidates = cands.length;
   run.extra.registered = r.registered;
   run.extra.missing = r.missing;

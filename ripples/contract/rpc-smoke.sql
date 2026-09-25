@@ -328,7 +328,9 @@ $smoke$;
 -- Inside it: clears live puzzles/ledger/copy, moves config.epoch so that a synthetic live n=20 is "today", then
 -- checks visibility, publish_bundle (status, ledger at publish only, rebuild before publish, chain in write order,
 -- public recomputation of payload_hash, _ledger_verify), csv rows, copy overlay, brief, archive, og_data.past,
--- health, the closed windows for submit_play/submit_call, and not_publishable for vetoed puzzles.
+-- health, the closed windows for submit_play/submit_call (Call It closes at the earlier of the puzzle period's end and
+-- 00:00 UTC after window_start), not_publishable for vetoed puzzles, too_early for an explicit n before the 07:20 cutoff,
+-- payload.status served from the row, and ledger hashes that do not depend on the session's extra_float_digits.
 -- Note: identity values (ledger.seq) consumed inside the aborted block are not reused; gaps are harmless.
 -- ---------------------------------------------------------------------------------------------
 do $life$
@@ -348,12 +350,12 @@ begin
     select * into fx from ripples.puzzles where n = 0;
     insert into ripples.puzzles (n, kind, puzzle_date, data_date, status, payload, reveal, board, answers, final_multiple)
     select k.n, 'live', cur + (k.n - 20), cur + (k.n - 21), k.st,
-           fx.payload || jsonb_build_object('n', k.n, 'kind', 'live', 'status', 'published',
+           fx.payload || jsonb_build_object('n', k.n, 'kind', 'live', 'status', case when k.st = 'published' then 'published' else 'built' end,
                                             'date', cur + (k.n - 20), 'data_date', cur + (k.n - 21)),
            fx.reveal || jsonb_build_object('n', k.n), fx.board || jsonb_build_object('n', k.n), fx.answers, fx.final_multiple
-      from (values (10, 'published'), (19, 'built'), (20, 'built'), (21, 'published'), (18, 'vetoed')) k(n, st);
+      from (values (10, 'published'), (19, 'built'), (20, 'built'), (21, 'published'), (18, 'vetoed'), (22, 'built')) k(n, st);
     insert into ripples.callit (n, qid, title, emoji, category, baseline_median, model_p, window_start, window_end, outcome)
-    select k.n, c.qid, c.title, c.emoji, c.category, c.baseline_median, c.model_p, utc_today + (k.n - 20), utc_today + (k.n - 14), 'pending'
+    select k.n, c.qid, c.title, c.emoji, c.category, c.baseline_median, c.model_p, cur + (k.n - 20) + 1, cur + (k.n - 20) + 7, 'pending'
       from ripples.callit c, (values (19), (20)) k(n) where c.n = 0;
 
     v := public.ripples_latest();
@@ -365,8 +367,33 @@ begin
       'pass', ripples._ledger_write(20) is null and not exists (select 1 from ripples.ledger where n = 20), 'detail', null);
     -- simulate a veto-triggered rebuild of n=20 after build: the ledger must certify the final payload
     update ripples.puzzles set payload = jsonb_set(payload, '{seed,title}', '"Test Rebuilt Seed"') where n = 20;
+    -- a >15-significant-digit numeric (e.g. an unrounded numeric division) must hash the same in every session
+    update ripples.puzzles set reveal = jsonb_set(reveal, '{rounds,0,evidence,p_time}', '0.02564102564102564103'::jsonb) where n = 20;
     b := public.ripples_publish_bundle(19);
+    perform set_config('extra_float_digits', '3', true);        -- pgjdbc/npgsql-style session while writing the row
     b := public.ripples_publish_bundle(20);
+    perform set_config('extra_float_digits', '0', true);
+    ok := (ripples._ledger_verify()->>'ok')::boolean and ripples._canon('{"f":0.025641025641025641}')::text = '{"f": 0.0256410256410256}';
+    perform set_config('extra_float_digits', '1', true);
+    ok := ok and (ripples._ledger_verify()->>'ok')::boolean and ripples._canon('{"f":0.025641025641025641}')::text = '{"f": 0.0256410256410256}'
+             and (select l.payload_hash from ripples.ledger l where l.n = 20)
+                 = encode(extensions.digest(ripples._ledger_input(20)::text, 'sha256'), 'hex');
+    perform set_config('extra_float_digits', '0', true);
+    res := res || jsonb_build_object('chk', 'ledger/_canon independent of extra_float_digits (row written at efd=3 verifies at efd=0 and efd=1; 0.025641025641025641 -> 0.0256410256410256)',
+      'pass', ok, 'detail', ripples._ledger_verify()::text);
+    res := res || jsonb_build_object('chk', 'payload.status is served from the row: stored ''built'' payload reads ''published'' after publish (puzzle, latest, bundle)',
+      'pass', (select payload->>'status' from ripples.puzzles where n = 20) = 'built'
+              and public.ripples_puzzle(20)->>'status' = 'published' and b #>> '{puzzle,status}' = 'published'
+              and public.ripples_latest() #>> '{puzzle,status}' = 'published'
+              and ripples._ledger_input(20) #>> '{puzzle,status}' = 'published',
+      'detail', public.ripples_puzzle(20)->>'status');
+    begin
+      perform public.ripples_publish_bundle(22); ok := false; msg := 'no error';
+    exception when others then ok := (sqlerrm = 'too_early'); msg := sqlerrm;
+    end;
+    res := res || jsonb_build_object('chk', 'publish_bundle(explicit n) of a built live puzzle dated after the 07:20 cutoff raises too_early; no status change, no ledger row',
+      'pass', ok and (select status from ripples.puzzles where n = 22) = 'built' and not exists (select 1 from ripples.ledger where n = 22),
+      'detail', msg);
     select * into l19 from ripples.ledger where n = 19;
     select * into l20 from ripples.ledger where n = 20;
     res := res || jsonb_build_object('chk', 'publish_bundle(20) marks published; latest=20 published',
@@ -471,12 +498,22 @@ begin
     end;
     res := res || jsonb_build_object('chk', 'submit_play on a future puzzle raises closed', 'pass', ok, 'detail', msg);
     v := public.ripples_submit_call('lifecycleClient_000001', 20, 'Q999990041');
-    res := res || jsonb_build_object('chk', 'submit_call while UTC date = window_start ok', 'pass', v->>'ok' = 'true', 'detail', v::text);
+    res := res || jsonb_build_object('chk', 'submit_call on the current puzzle with window_start = puzzle_date + 1: open (whole puzzle period)',
+      'pass', v->>'ok' = 'true', 'detail', v::text);
     begin
       perform public.ripples_submit_call('lifecycleClient_000002', 19, 'Q999990041'); ok := false; msg := 'no error';
     exception when others then ok := (sqlerrm = 'closed'); msg := sqlerrm;
     end;
-    res := res || jsonb_build_object('chk', 'submit_call once the UTC date is past window_start raises closed (no day-1 look-ahead)', 'pass', ok, 'detail', msg);
+    res := res || jsonb_build_object('chk', 'submit_call on yesterday''s puzzle raises closed (its period ended at the 07:30 UTC rollover, even though window_start + 1 is later)',
+      'pass', ok, 'detail', msg);
+    -- spec convention window_start = puzzle_date: closes at 00:00 UTC after puzzle_date (expected result depends on the clock)
+    update ripples.callit set window_start = cur, window_end = cur + 6 where n = 20 and qid = 'Q999990041';
+    begin
+      perform public.ripples_submit_call('lifecycleClient_000003', 20, 'Q999990041'); ok := true; msg := 'open';
+    exception when others then ok := (sqlerrm = 'closed'); msg := sqlerrm;
+    end;
+    res := res || jsonb_build_object('chk', 'submit_call with window_start = puzzle_date closes at 00:00 UTC after it (open iff UTC date = puzzle date)',
+      'pass', ok and ((msg = 'open') = (utc_today = cur)), 'detail', msg || ' utc_today=' || utc_today || ' cur=' || cur);
 
     raise exception 'rollback_lifecycle';
   exception when others then
@@ -488,7 +525,7 @@ begin
   select 'lifecycle: ' || (r->>'chk'), (r->>'pass')::boolean, left(r->>'detail', 200) from jsonb_array_elements(res) r;
   insert into _smoke(chk, pass, detail) values ('lifecycle rolled back (epoch restored, no synthetic rows, no ledger rows)',
     ripples._epoch() = date '2026-09-25'
-    and not exists (select 1 from ripples.puzzles where n in (10, 18, 19, 20, 21) and payload->>'seed' like '%Test Seed Article%')
+    and not exists (select 1 from ripples.puzzles where n in (10, 18, 19, 20, 21, 22) and payload->>'seed' like '%Test Seed Article%')
     and not exists (select 1 from ripples.ledger where n in (10, 19, 20))
     and not exists (select 1 from ripples.copy where text like 'TEST ai %' or text = 'TEST brief intro'), null);
 end

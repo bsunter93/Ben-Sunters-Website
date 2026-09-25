@@ -9,6 +9,12 @@
   python3 ripples/contract/tools/validate.py --ledger-chain LEDGER.json [PUZZLE_DIR REVEAL_DIR CALLIT_DIR]
         # check prev/chain linkage of a ledger rows file ([{n,payload_hash,prev_hash,chain_hash}] in write order,
         # e.g. publish_bundle.ledger); with the three dirs, also recompute every payload_hash from {dir}/{n}.json
+  python3 ripples/contract/tools/validate.py --wording FILE [FILE...]
+        # SPEC 12.1 wording lint on any Puzzle/Reveal/Brief/Board JSON (or a JSON list of them): banned causal
+        # words ("caused", "drove", "flooded into", "went from X to Y", ...) in every text/label field, and
+        # reader-flow words ("readers", "clicked", ...) in the caption of any round whose badge is not "flowed"
+  python3 ripples/contract/tools/validate.py --no-samples DIR
+        # fails if any file under DIR references a synthetic fixtures/*.sample*.json file (they must never ship)
 
 Supports the JSON-Schema subset used by the contract: type (incl. lists), const, enum, pattern,
 minLength/maxLength, minimum/maximum, required, properties, additionalProperties:false, items,
@@ -221,6 +227,45 @@ FIXTURES = [
 ]
 
 
+# SPEC 12.1: never "caused", "flooded into", "drove" or "went from X to Y" as a claim (checked on EVERY round,
+# headline, intro, end text and cross label, flowed or not).
+CAUSAL_RE = re.compile(
+    r"\b(caus(e|es|ed|ing)|dr(o|i)ve[ns]?|driving|flood(s|ed|ing)?\s+(in)?to|a flood of|"
+    r"sen(t|ds?|ding) (readers|traffic|people|visitors)|went from\b[^.;:!?]{1,80}?\bto)\b", re.I)
+# only a flowed (clickstream-edge) round may use reader-flow language
+FLOW_RE = re.compile(
+    r"\b(readers?|clicked|clicks?|click(ed)? through|looked up|went on to|moved (on )?to|followed|navigat\w*)\b", re.I)
+
+
+def wording_errors(doc, where=''):
+    """Lint every 'text'/'label' string in doc; round captions also get the reader-flow rule."""
+    errs = []
+
+    def walk(o, path, flowed):
+        if isinstance(o, dict):
+            if isinstance(o.get('evidence'), dict) and 'caption' in o:   # a reveal round
+                flowed = o['evidence'].get('badge') == 'flowed'
+            # a Wikipedia short description (caption source "wikipedia") describes the subject itself
+            # ("Disease caused by ..."), not reader flow, so it is exempt
+            wiki = o.get('source') == 'wikipedia'
+            for k, v in o.items():
+                if k in ('text', 'label') and isinstance(v, str) and not wiki:
+                    hits = [m.group(0) for m in CAUSAL_RE.finditer(v)]
+                    if hits:
+                        errs.append(f'{where}{path}.{k}: banned causal wording {hits}: {v!r}')
+                    if path.endswith('.caption') and flowed is False:
+                        m = FLOW_RE.search(v)
+                        if m:
+                            errs.append(f'{where}{path}.{k}: reader-flow wording {m.group(0)!r} in a non-flowed round: {v!r}')
+                elif k not in ('text', 'label'):
+                    walk(v, f'{path}.{k}', flowed)
+        elif isinstance(o, list):
+            for j, x in enumerate(o):
+                walk(x, f'{path}[{j}]', flowed)
+    walk(doc, '$', None)
+    return errs
+
+
 def cross_checks(fx):
     """Semantic checks mirroring spec 5.2/7/12 on puzzle+reveal+answers."""
     errs = []
@@ -273,11 +318,9 @@ def cross_checks(fx):
             errs.append(f'round {i}: flowed badge requires a clickstream edge')
         if rr['evidence']['fluke_warming'] is False and rr['evidence']['fluke'] is None:
             errs.append(f'round {i}: fluke is required unless warming up')
-        # SPEC 12.1: only a flowed (clickstream) round may carry reader-flow language
-        cap = (rr.get('caption') or {}).get('text') or ''
-        if rr['evidence']['badge'] != 'flowed' and re.search(
-                r'\b(readers?|clicked|clicks?|click(ed)? through|looked up|went on to|moved (on )?to|followed|navigat\w*)\b', cap, re.I):
-            errs.append(f'round {i}: reader-flow wording in the caption of a non-flowed round: {cap!r}')
+    # SPEC 12.1 wording on every fixture document (causal words anywhere; reader-flow only on flowed rounds)
+    for name, doc in fx.items():
+        errs.extend(wording_errors(doc, f'{name}: '))
     # honesty: every fixture title says Test
     def titles(o):
         if isinstance(o, dict):
@@ -296,7 +339,46 @@ def cross_checks(fx):
     return errs
 
 
+SAMPLE_RE = re.compile(r'[\w.-]*\.sample[\w.-]*\.json|sample-shown|sample-published')
+
+
+def no_samples(root):
+    errs = []
+    for d, dirs, files in os.walk(root):
+        dirs[:] = [x for x in dirs if x not in ('.git', 'node_modules', '__pycache__')
+                   and os.path.abspath(os.path.join(d, x)) != ROOT]          # the contract itself may list them
+        for fn in files:
+            fp = os.path.join(d, fn)
+            if SAMPLE_RE.search(fn):
+                errs.append(f'{fp}: a synthetic sample file is inside the shipped tree')
+                continue
+            try:
+                with open(fp, encoding='utf-8') as f:
+                    txt = f.read()
+            except (UnicodeDecodeError, OSError):
+                continue
+            m = SAMPLE_RE.search(txt)
+            if m:
+                errs.append(f'{fp}: references synthetic sample {m.group(0)!r}')
+    return errs
+
+
 def main(argv):
+    if len(argv) >= 3 and argv[1] == '--wording':
+        errs = []
+        for fp in argv[2:]:
+            with open(fp, encoding='utf-8') as f:
+                errs.extend(wording_errors(json.load(f), f'{fp}: '))
+        for e in errs:
+            print('FAIL', e)
+        print('OK' if not errs else f'{len(errs)} error(s)')
+        return 1 if errs else 0
+    if len(argv) == 3 and argv[1] == '--no-samples':
+        errs = no_samples(argv[2])
+        for e in errs:
+            print('FAIL', e)
+        print('OK' if not errs else f'{len(errs)} error(s)')
+        return 1 if errs else 0
     if len(argv) == 6 and argv[1] == '--ledger-hash':
         docs = []
         for fp in argv[3:6]:
@@ -336,7 +418,7 @@ def main(argv):
             print('   ', e)
     errs = cross_checks(fx)
     total += len(errs)
-    print(('PASS' if not errs else 'FAIL'), 'semantic cross-checks (answer_h, decoys calm, categories, Test titles)')
+    print(('PASS' if not errs else 'FAIL'), 'semantic cross-checks (answer_h, decoys calm, categories, Test titles, SPEC 12.1 wording)')
     for e in errs:
         print('   ', e)
     print('\nmd5 of jsonb::text form (compare with select md5(<rpc>::text)):')
