@@ -39,7 +39,7 @@ import {
   addDays, configGet, errMsg, ingest, ingestCandidates, type ObsRow, politeFetch, type Run, serve, stateGet, stateSet,
 } from "./att.ts";
 
-export const WORLD_VERSION = "2026-09-25.w1";
+export const WORLD_VERSION = "2026-09-25.w2";
 
 type Sub = "tsa" | "usgs" | "iem" | "fema" | "gdacs" | "mta" | "hiringlab" | "citibike";
 const SUBS: Sub[] = ["tsa", "usgs", "iem", "fema", "gdacs", "mta", "hiringlab", "citibike"];
@@ -329,7 +329,7 @@ async function subUsgs(run: Run, c: Ctx) {
     if (best.size) await ingestCandidates(run, [...best.values()]);
     run.extra.usgs_candidates = best.size;
   }
-  run.source({ source: src, status: ok ? (run.partial && c.backfill ? "partial" : "ok") : "http_error", keys: 3, rows, ms: Date.now() - t0, note: `${windows} window(s)` });
+  run.source({ source: src, status: ok ? (run.partial && c.backfill ? "partial" : "ok") : (run.partial ? "partial" : "http_error"), keys: 3, rows, ms: Date.now() - t0, note: `${windows} window(s)` });
 }
 
 // ------------------------------------------------------------------ IEM storm-based warnings
@@ -389,7 +389,7 @@ async function subIem(run: Run, c: Ctx) {
     if (cursorTo >= c.from) run.nextCursor = { source: src, next_to: cursorTo };
   }
   if (!run.dryRun) await stateSet("world.iem.keys", [...known].sort()).catch(() => undefined);
-  run.source({ source: src, status: ok ? (run.partial && c.backfill ? "partial" : "ok") : "http_error", keys: known.size + 1, rows, ms: Date.now() - t0, note: `${windows} window(s)` });
+  run.source({ source: src, status: ok ? (run.partial && c.backfill ? "partial" : "ok") : (run.partial ? "partial" : "http_error"), keys: known.size + 1, rows, ms: Date.now() - t0, note: `${windows} window(s)` });
 }
 
 // ------------------------------------------------------------------ OpenFEMA
@@ -754,7 +754,8 @@ async function subCitibike(run: Run, c: Ctx) {
   }
   // NYC: record the size of the latest monthly file; it is far beyond the edge-function budget, so it is not fetched
   let nycNote = "";
-  const nyc = await s3List(run, `${lastMonth.replace("-", "")}-citibike`);
+  const nycSeen = (st.nyc as { key?: string } | undefined)?.key?.startsWith(lastMonth.replace("-", "")) === true;
+  const nyc = nycSeen ? null : await s3List(run, `${lastMonth.replace("-", "")}-citibike`); // once per month
   if (nyc && nyc.length) {
     const mb = Math.round(nyc[0].size / 1048576);
     nycNote = `NYC ${nyc[0].key} ${mb} MB > ${cc.max_zip_mb} MB cap: not processed (partial)`;
@@ -767,6 +768,7 @@ async function subCitibike(run: Run, c: Ctx) {
     if (!complete) { run.partial = true; run.nextCursor = { source: src, months_done: Object.keys(done).length }; }
   }
   run.extra.citibike = { files, months_done: Object.keys(done).length, missing, nyc: st.nyc ?? null };
+  if (!nycNote && st.nyc) nycNote = `NYC ${(st.nyc as any).key} ${(st.nyc as any).mb} MB > ${cc.max_zip_mb} MB cap: not processed (partial)`;
   run.source({ source: src, status: "partial", keys: 1, rows, ms: Date.now() - t0,
     note: `JC ${files} file(s) this run; ${nycNote || "NYC monthly archive (~1 GB) not processed"}` });
 }
