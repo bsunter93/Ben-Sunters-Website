@@ -200,8 +200,10 @@ begin
                                                                 order by t.o), '[]'::jsonb)
                                        from jsonb_array_elements(rv -> 'rounds') with ordinality t(e, o)));
   end if;
-  return ripples._canon(jsonb_build_object('n', p_n, 'puzzle', coalesce(r.payload, 'null'::jsonb) - 'headline',
-                                           'reveal', coalesce(rv, 'null'::jsonb), 'callit', cl));
+  return ripples._canon(jsonb_build_object(
+    'n', p_n,
+    'puzzle', case when jsonb_typeof(r.payload) = 'object' then r.payload - 'headline' else r.payload end,
+    'reveal', rv, 'callit', cl));
 end $$;
 
 -- Hash-chained ledger row, written ONLY for a live puzzle whose status is 'published' (called by
