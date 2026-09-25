@@ -55,8 +55,10 @@ end $$;
 
 -- Canonical JSON for hashing: every number is round-tripped through float8 (15 significant digits,
 -- plain notation), so a JSON file re-serialised by JS/Python hashes the same as the stored jsonb.
+-- extra_float_digits is pinned to 0 (float8 text = %.15g) so the hash never depends on the caller's session
+-- (pgjdbc/npgsql set 3, which would give shortest-round-trip 17-digit output and a different hash).
 create or replace function ripples._canon(p jsonb) returns jsonb
-language plpgsql immutable set search_path = '' as $$
+language plpgsql immutable set search_path = '' set extra_float_digits = 0 as $$
 begin
   return case jsonb_typeof(p)
     when 'object' then coalesce((select jsonb_object_agg(e.k, ripples._canon(e.v)) from jsonb_each(p) e(k, v)), '{}'::jsonb)
@@ -69,6 +71,7 @@ end $$;
 -- What the ledger commits to, reconstructable from the PUBLIC files v1/puzzle/{n}.json, v1/reveal/{n}.json
 -- and v1/callit/{n}.json: the puzzle without "headline", the reveal with "caption" removed from every round
 -- (copy is overlaid and may arrive after publish), and the Call It [qid, model_p] pairs ordered by qid (byte order).
+-- "status" is taken from the row (as _puzzle_json serves it), so it is always "published" for a ledgered row.
 create or replace function ripples._ledger_input(p_n int) returns jsonb
 language plpgsql stable security definer set search_path = '' as $$
 declare r ripples.puzzles; cl jsonb; rv jsonb;
@@ -85,7 +88,8 @@ begin
   end if;
   return ripples._canon(jsonb_build_object(
     'n', p_n,
-    'puzzle', case when jsonb_typeof(r.payload) = 'object' then r.payload - 'headline' else r.payload end,
+    'puzzle', case when jsonb_typeof(r.payload) = 'object'
+                   then (r.payload - 'headline') || jsonb_build_object('status', r.status) else r.payload end,
     'reveal', rv, 'callit', cl));
 end $$;
 
@@ -217,8 +221,14 @@ begin
   if not found or not ripples._visible(p_n) or r.kind = 'practice' then raise exception 'closed'; end if;
   select * into c from ripples.callit where n = p_n and qid = p_qid;
   if not found then raise exception 'invalid'; end if;
-  -- calls close at 00:00 UTC after window_start: from then on day-1 pageviews are public (no look-ahead)
-  if r.kind = 'live' and (now() at time zone 'utc')::date > c.window_start then raise exception 'closed'; end if;
+  -- calls close at the EARLIER of (a) the end of the puzzle's period (07:30 UTC rollover on puzzle_date + 1) and
+  -- (b) 00:00 UTC after window_start, when the first window day's daily pageviews become public (no look-ahead).
+  -- With window_start = puzzle_date (+0) that is 00:00 UTC; with window_start = puzzle_date + 1 (recommended to
+  -- W2) calls stay open for the whole puzzle period.
+  if r.kind = 'live' and now() >= least(((r.puzzle_date + 1) + time '07:30') at time zone 'utc',
+                                        ((c.window_start + 1)::timestamp) at time zone 'utc') then
+    raise exception 'closed';
+  end if;
   iph := ripples._ip_hash();
   if not ripples._rate('call:' || iph, 20) then raise exception 'rate_limited'; end if;
   insert into ripples.calls(n, client_hash, qid)
@@ -315,6 +325,12 @@ begin
     select * into r from ripples.puzzles where n = nn;
     if not found then raise exception 'not_found'; end if;
     if r.status in ('vetoed', 'delayed') then raise exception 'not_publishable'; end if;
+    -- the same 07:20 UTC veto cutoff applies to an explicit n: a built live puzzle dated after the UTC date as of
+    -- 07:20 is still in review, so it can't be published (ledgered, locked against a veto) early
+    if r.kind = 'live' and r.status = 'built'
+       and r.puzzle_date > ((now() at time zone 'utc') - interval '7 hours 20 minutes')::date then
+      raise exception 'too_early';
+    end if;
     if r.kind in ('live', 'practice') and (r.status = 'built' or r.published_at is null) then
       update ripples.puzzles set status = 'published', published_at = coalesce(published_at, now()) where n = nn;
     end if;
