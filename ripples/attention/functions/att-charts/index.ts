@@ -214,7 +214,8 @@ async function writeCands(run: Run, all: Cand[]) {
 }
 
 // ------------------------------------------------------------------ apple (apple.rss)
-const APPLE_HOST = "rss.marketingtools.apple.com";
+// rss.applemarketingtools.com serves the v2 feeds (probe-verified); rss.marketingtools.apple.com is only the builder UI
+const APPLE_HOST = "rss.applemarketingtools.com";
 async function modeApple(run: Run) {
   const t0 = Date.now();
   const c = await ctx();
