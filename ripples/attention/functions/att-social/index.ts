@@ -25,7 +25,7 @@ import {
 } from "./att.ts";
 
 const FN = "att-social";
-export const SOCIAL_VERSION = "2026-09-25.s5";
+export const SOCIAL_VERSION = "2026-09-25.s4";
 
 // ------------------------------------------------------------------ small helpers
 const DAY_S = 86400;
@@ -284,9 +284,7 @@ class WsClient {
 }
 
 // ------------------------------------------------------------------ mode: jetstream (bsky.jet)
-/** Hashtags kept for discovery: <= 40 code points, no '.', '@', '/', ':', '\\', whitespace or control chars. */
-const TAG_OK = (t: string) => [...t].length <= 40 && !/[.@\/:\\\s\p{Cc}]/u.test(t);
-interface JetState { cursor: number; until?: number; defer_until?: string; at?: string; lag_s?: number; host?: string; posts?: number; stream_min?: number }
+interface JetState { cursor: number; until?: number; at?: string; lag_s?: number; host?: string; posts?: number; stream_min?: number }
 interface JetHealth { fails: number; fail_until?: string; last_error?: string; host?: string }
 interface Bucket { n: number; hll: Sketch; keyN: Int32Array; keyH: Map<number, Sketch> }
 
@@ -333,21 +331,6 @@ async function modeJetstream(run: Run) {
   const cursorFrom = typeof st?.cursor === "number" ? st.cursor : Math.floor(startNowUs - backMin * 60e6);
   const stopAtUs = Math.min(cursorFrom + maxMin * 60e6, startNowUs - 5e6, lane === "backfill" ? st!.until! : Infinity);
   if (stopAtUs <= cursorFrom + 1e6) { run.source({ source: SRC, status: "ok", note: "already at live edge" }); return; }
-  // budget gate (syncs today's cap to att_sources.per_day_cap): the buffer-replay lane may only spend units above the
-  // live reserve (remaining 5-min slots today + 12), so it can never starve the live cadence; when refused it is
-  // deferred to the next UTC day and the catch-up cron stops calling.
-  const { data: jb, error: jbe } = await db.rpc("att_social_jet_budget", { p_lane: lane });
-  if (jbe) throw new Error(`att_social_jet_budget: ${jbe.message}`);
-  const gate = (jb ?? {}) as { ok?: boolean; left?: number; reserve?: number; cap?: number; used?: number };
-  if (!gate.ok) {
-    run.partial = true;
-    if (lane === "backfill" && !run.dryRun) {
-      const d = new Date(); d.setUTCHours(24, 5, 0, 0);
-      await stateSet(stateKey, { ...st, defer_until: d.toISOString() });
-    }
-    run.source({ source: SRC, status: "budget_exhausted", note: `lane ${lane}: used ${gate.used}/${gate.cap}, reserve ${gate.reserve}` });
-    return;
-  }
   const g = await takeBudget(SRC, 1); // one websocket connection = one unit of the daily cap
   run.granted += g;
   if (g <= 0) { run.partial = true; run.source({ source: SRC, status: "budget_exhausted" }); return; }
@@ -399,8 +382,6 @@ async function modeJetstream(run: Run) {
           if (!tag || tag.length > 64) continue;
           const km = tagMap.get(tag);
           if (km) for (const k of km) hit.add(k);
-          // storage screen (hard rule 4): nothing domain-, URL-, handle- or sentence-like is kept for discovery
-          if (!TAG_OK(tag)) continue;
           const tk = day + "\t" + tag;
           let ta = tagAgg.get(tk);
           if (!ta) { ta = { day, tag, n: 0, sk: null }; tagAgg.set(tk, ta); }

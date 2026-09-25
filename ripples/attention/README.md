@@ -22,6 +22,8 @@ Spec: `ATTENTION_STACK.md` §3 and §7, with `DEMARCATION.md` §7 lead decisions
 | `sql/10_att_social.sql` | Migration(s) for att-social: `att_social_acc` (HLL registers per series bucket), `att_social_tags` (daily facet hashtags, 8-day retention), `_att_hll_merge/_est/_union`, `att_social_keys`, `att_social_accum` (adds counts + merges HLL + saves the Jetstream cursor in one transaction), `att_social_tag_cands`, `att_social_bf_done`, source rows/budgets, cron rows |
 | `sql/11_att_social_ops_2026-09-25.sql` | Operational record for att-social (Jetstream buffer replay lane, proc budget, HN re-run, se.api job deferral) |
 | `sql/12_att_social_fixes.sql` | Migration `att_social_fixes3`: facet hashtags pass the strict identifier screen before storage (no `*.bsky.social` / personal-domain tags); orphan run closed |
+| `sql/17_att_social_fixes4.sql` | Migration `att_social_fixes4`: `att_social_tag_ok` (stored hashtags: no `.` `@` `/` `:` `\\` whitespace/control chars, <= 40 chars) wired into `att_social_accum`, offending tags deleted; `att_social_jet_budget(lane)` (syncs today's bsky.jet `att_budget` cap to `att_sources.per_day_cap`, live-lane reserve = remaining 5-min slots today + 12); today's frozen 288 cap raised to 600 |
+| `sql/17b_att_social_jet_cron_gate.sql` | Migration `att_social_jet_cron_gate`: both Jetstream crons call `att_social_jet_budget` first, so no edge call is made when the budget is spent/killed, and the buffer-replay lane only runs above the live reserve |
 | `functions/att-social/index.ts` (+ `att.ts` copy) | Social collector (SOCIAL_VERSION 2026-09-25.s4): `jetstream`, `mastodon`, `hn`, `stackex`, `backfill` (hn.algolia, se.api), `ping`. s4: backfill dispatches whose host is closed for the UTC day (daily budget spent, day/permanent kill) requeue their jobs for 00:10 UTC next day instead of +1 h |
 | `sql/14_att_market.sql` | Migration `att_market_support` (att-market): source row `finra.api` (FINRA Query API, DEMARCATION Q3 channel), `att_config.market`, meta keys, `att_topic_terms`, `att_series_stats` (+ public wrappers, service_role only), usasp.spend / sec.efts term keys for non-people topics, the FINRA file backfill job |
 | `sql/14b_att_market_jobs.sql` | Migration `att_market_jobs`: `att_market_jobs(ids)` (per-job keys for per-key completion of merged backfill jobs) |
@@ -153,8 +155,9 @@ After a collector is deployed and tested, add it to the tick's allow-list so que
 
 Collector crons (§3.4) are owned by the collector builders.
 
-att-social crons: `att-jetstream` `1-56/5 * * * *` (live lane); `att-jetstream-catchup` `* * * * *` (no-op unless the
-live cursor lags > 30 min or the one-off buffer replay lane `jet.bf` is unfinished); `att-mastodon-1/2/3` `5/11/17 6,18 * * *`
+att-social crons: `att-jetstream` `1-56/5 * * * *` (live lane; skipped when `att_social_jet_budget('live')` says the
+bsky.jet budget is spent/killed); `att-jetstream-catchup` `* * * * *` (no edge call unless the live cursor lags > 30 min
+with budget left, or the one-off buffer replay lane `jet.bf` is unfinished and the budget left exceeds the live reserve); `att-mastodon-1/2/3` `5/11/17 6,18 * * *`
 (three key slices); `att-hn` `6 0-8/2 * * *`; `att-stackex` `8 6 * * *`. HN / Stack Exchange 400-day backfills run through
 `att_tick('backfill')` (`att-backfill`).
 

@@ -5,8 +5,8 @@
 --    a) today's row raised to the configured cap;
 --    b) ripples.att_social_jet_budget(lane) syncs the bsky.jet row cap to att_sources.per_day_cap and keeps a
 --       live-lane reserve (remaining 5-min slots today + 12): the buffer-replay lane may only spend units above it;
---    c) the catch-up cron no longer invokes the edge function when the bsky.jet budget is spent/killed or the
---       replay lane is deferred (jet.bf.defer_until).
+--    c) the catch-up cron no longer invokes the edge function when the bsky.jet budget is spent/killed.
+--    NOTE: the cron commands at the end of this file were superseded by 17b_att_social_jet_cron_gate.sql.
 -- 2) Hashtag screen tightened: tags containing '.', '@', '/', ':', whitespace, control chars or a backslash, or
 --    longer than 40 chars, are never stored; existing ones deleted.
 
