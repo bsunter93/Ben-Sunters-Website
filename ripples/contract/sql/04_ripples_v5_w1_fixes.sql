@@ -1,4 +1,5 @@
--- Knock-On v5 / W1: migration ripples_v5_w1_verifier_fixes (applied after 01-03)
+-- Knock-On v5 / W1: migrations ripples_v5_w1_verifier_fixes + ripples_v5_w1_publish_cutoff (applied after 01-03;
+-- the second one only re-created ripples_publish_bundle with the 07:20 cutoff for p_n null). This file = their net effect.
 -- Ledger: write only at publish, chain in write order (seq), hash a copy-free canonical form the public
 -- can recompute. Salts: separate IP salt, purged after its day; client salts purged after 9 days.
 -- Join: a paid price intent is never downgraded by 'free'. Call It closes at 00:00 UTC after window_start.
@@ -303,8 +304,11 @@ declare nn int := p_n; r ripples.puzzles; track jsonb; csv jsonb := '[]'::jsonb;
 begin
   perform ripples._purge_salts();
   if nn is null then
+    -- newest live puzzle dated <= the UTC date as of 07:20 (the veto deadline): the 07:25 run pre-stages today's
+    -- puzzle, but an earlier call can never publish (and so ledger / lock against a veto) a puzzle still in review
     select n into nn from ripples.puzzles
-     where kind = 'live' and status in ('built', 'published') and puzzle_date <= (now() at time zone 'utc')::date
+     where kind = 'live' and status in ('built', 'published')
+       and puzzle_date <= ((now() at time zone 'utc') - interval '7 hours 20 minutes')::date
      order by n desc limit 1;
   end if;
   if nn is not null then
@@ -373,31 +377,11 @@ end $$;
 
 -- ======================= grants =======================
 revoke execute on all functions in schema ripples from public, anon, authenticated;
-
-revoke execute on function public.ripples_latest()                              from public, anon, authenticated;
-revoke execute on function public.ripples_puzzle(int)                           from public, anon, authenticated;
-revoke execute on function public.ripples_reveal(int)                           from public, anon, authenticated;
-revoke execute on function public.ripples_stats(int)                            from public, anon, authenticated;
-revoke execute on function public.ripples_callit(int)                           from public, anon, authenticated;
-revoke execute on function public.ripples_board(int)                            from public, anon, authenticated;
-revoke execute on function public.ripples_archive(int, text)                    from public, anon, authenticated;
-revoke execute on function public.ripples_brief(int, text)                      from public, anon, authenticated;
-revoke execute on function public.ripples_health()                              from public, anon, authenticated;
 revoke execute on function public.ripples_submit_play(text, int, jsonb, numeric) from public, anon, authenticated;
 revoke execute on function public.ripples_submit_call(text, int, text)          from public, anon, authenticated;
 revoke execute on function public.ripples_join(text, text, text, text[], text)  from public, anon, authenticated;
 revoke execute on function public.ripples_og_data(int)                          from public, anon, authenticated;
 revoke execute on function public.ripples_publish_bundle(int)                   from public, anon, authenticated;
-
-grant execute on function public.ripples_latest()                               to anon, authenticated, service_role;
-grant execute on function public.ripples_puzzle(int)                            to anon, authenticated, service_role;
-grant execute on function public.ripples_reveal(int)                            to anon, authenticated, service_role;
-grant execute on function public.ripples_stats(int)                             to anon, authenticated, service_role;
-grant execute on function public.ripples_callit(int)                            to anon, authenticated, service_role;
-grant execute on function public.ripples_board(int)                             to anon, authenticated, service_role;
-grant execute on function public.ripples_archive(int, text)                     to anon, authenticated, service_role;
-grant execute on function public.ripples_brief(int, text)                       to anon, authenticated, service_role;
-grant execute on function public.ripples_health()                               to anon, authenticated, service_role;
 grant execute on function public.ripples_submit_play(text, int, jsonb, numeric) to anon, authenticated, service_role;
 grant execute on function public.ripples_submit_call(text, int, text)           to anon, authenticated, service_role;
 grant execute on function public.ripples_join(text, text, text, text[], text)   to anon, authenticated, service_role;

@@ -4,6 +4,11 @@
   python3 ripples/contract/tools/validate.py                 # validate every fixture + cross-checks
   python3 ripples/contract/tools/validate.py SCHEMA FILE     # validate one JSON file against one schema
   python3 ripples/contract/tools/validate.py --md5 FILE      # md5 of the file in Postgres jsonb::text form
+  python3 ripples/contract/tools/validate.py --ledger-hash N PUZZLE.json REVEAL.json CALLIT.json
+        # recompute a ledger payload_hash from the PUBLIC files v1/puzzle/N.json, v1/reveal/N.json, v1/callit/N.json
+  python3 ripples/contract/tools/validate.py --ledger-chain LEDGER.json [PUZZLE_DIR REVEAL_DIR CALLIT_DIR]
+        # check prev/chain linkage of a ledger rows file ([{n,payload_hash,prev_hash,chain_hash}] in write order,
+        # e.g. publish_bundle.ledger); with the three dirs, also recompute every payload_hash from {dir}/{n}.json
 
 Supports the JSON-Schema subset used by the contract: type (incl. lists), const, enum, pattern,
 minLength/maxLength, minimum/maximum, required, properties, additionalProperties:false, items,
@@ -132,6 +137,79 @@ def pg_md5(v):
     return hashlib.md5(pg_canon(v).encode('utf-8')).hexdigest()
 
 
+# ---------- ledger (mirrors ripples._canon / ripples._ledger_input in SQL) ----------
+def _num15(x):
+    # Postgres to_jsonb(x::float8): 15 significant digits, plain notation, no trailing zeros
+    from decimal import Decimal
+    d = Decimal('%.15g' % float(x))
+    if d == 0:
+        return 0
+    t = format(d, 'f')
+    if '.' in t:
+        t = t.rstrip('0').rstrip('.')
+    return _Raw(t)
+
+
+class _Raw(str):
+    pass
+
+
+def ledger_canon(v):
+    if isinstance(v, bool) or v is None or isinstance(v, str):
+        return v
+    if isinstance(v, (int, float)):
+        return _num15(v)
+    if isinstance(v, dict):
+        return {k: ledger_canon(x) for k, x in v.items()}
+    if isinstance(v, list):
+        return [ledger_canon(x) for x in v]
+    raise TypeError(type(v))
+
+
+def _canon_text(v):
+    if isinstance(v, _Raw):
+        return str(v)
+    if isinstance(v, dict):
+        keys = sorted(v.keys(), key=lambda k: (len(k.encode('utf-8')), k.encode('utf-8')))
+        return '{' + ', '.join(json.dumps(k, ensure_ascii=False) + ': ' + _canon_text(v[k]) for k in keys) + '}'
+    if isinstance(v, list):
+        return '[' + ', '.join(_canon_text(x) for x in v) + ']'
+    return json.dumps(v, ensure_ascii=False)
+
+
+def ledger_payload_hash(n, puzzle, reveal, callit):
+    """payload_hash from the public puzzle/reveal/callit JSON: drop puzzle.headline and every reveal round's
+    caption (copy is overlaid after publish), Call It = [[qid, model_p]] sorted by qid (byte order)."""
+    pz = dict(puzzle) if isinstance(puzzle, dict) else puzzle
+    if isinstance(pz, dict):
+        pz.pop('headline', None)
+    rv = dict(reveal) if isinstance(reveal, dict) else reveal
+    if isinstance(rv, dict) and isinstance(rv.get('rounds'), list):
+        rv['rounds'] = [{k: x for k, x in r.items() if k != 'caption'} if isinstance(r, dict) else r for r in rv['rounds']]
+    opts = (callit or {}).get('options') or []
+    cl = [[o['qid'], o.get('model_p')] for o in sorted(opts, key=lambda o: o['qid'].encode('utf-8'))]
+    doc = {'n': n, 'puzzle': pz, 'reveal': rv, 'callit': cl}
+    return hashlib.sha256(_canon_text(ledger_canon(doc)).encode('utf-8')).hexdigest()
+
+
+def ledger_chain_check(rows, dirs=None):
+    errs, prev = [], '0' * 64
+    for r in rows:
+        if r['prev_hash'] != prev:
+            errs.append(f"n={r['n']}: prev_hash does not equal the previous row's chain_hash")
+        if hashlib.sha256((r['prev_hash'] + r['payload_hash']).encode()).hexdigest() != r['chain_hash']:
+            errs.append(f"n={r['n']}: chain_hash != sha256(prev_hash || payload_hash)")
+        if dirs:
+            docs = []
+            for d in dirs:
+                with open(os.path.join(d, f"{r['n']}.json"), encoding='utf-8') as f:
+                    docs.append(json.load(f))
+            if ledger_payload_hash(r['n'], *docs) != r['payload_hash']:
+                errs.append(f"n={r['n']}: payload_hash does not match the public files")
+        prev = r['chain_hash']
+    return errs
+
+
 FIXTURES = [
     ('puzzle.schema.json', 'puzzle-0.json'), ('reveal.schema.json', 'reveal-0.json'),
     ('board.schema.json', 'board-0.json'), ('callit.schema.json', 'callit-0.json'),
@@ -195,6 +273,11 @@ def cross_checks(fx):
             errs.append(f'round {i}: flowed badge requires a clickstream edge')
         if rr['evidence']['fluke_warming'] is False and rr['evidence']['fluke'] is None:
             errs.append(f'round {i}: fluke is required unless warming up')
+        # SPEC 12.1: only a flowed (clickstream) round may carry reader-flow language
+        cap = (rr.get('caption') or {}).get('text') or ''
+        if rr['evidence']['badge'] != 'flowed' and re.search(
+                r'\b(readers?|clicked|clicks?|click(ed)? through|looked up|went on to|moved (on )?to|followed|navigat\w*)\b', cap, re.I):
+            errs.append(f'round {i}: reader-flow wording in the caption of a non-flowed round: {cap!r}')
     # honesty: every fixture title says Test
     def titles(o):
         if isinstance(o, dict):
@@ -214,6 +297,21 @@ def cross_checks(fx):
 
 
 def main(argv):
+    if len(argv) == 6 and argv[1] == '--ledger-hash':
+        docs = []
+        for fp in argv[3:6]:
+            with open(fp, encoding='utf-8') as f:
+                docs.append(json.load(f))
+        print(ledger_payload_hash(int(argv[2]), *docs))
+        return 0
+    if len(argv) in (3, 6) and argv[1] == '--ledger-chain':
+        with open(argv[2], encoding='utf-8') as f:
+            rows = json.load(f)
+        errs = ledger_chain_check(rows, argv[3:6] if len(argv) == 6 else None)
+        for e in errs:
+            print('FAIL', e)
+        print('OK' if not errs else f'{len(errs)} error(s)', f'({len(rows)} rows, head {rows[-1]["chain_hash"] if rows else None})')
+        return 1 if errs else 0
     if len(argv) == 3 and argv[1] == '--md5':
         with open(argv[2], encoding='utf-8') as f:
             d = json.load(f)

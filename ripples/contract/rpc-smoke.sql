@@ -1,6 +1,8 @@
 -- Knock-On v5 / W1: RPC smoke test. Run as postgres (Supabase SQL editor / MCP execute_sql).
--- Exercises every W1 RPC including error paths, prints one row per check, and cleans up after itself
--- (removes its plays/calls for n=0, its rate-limit rows and its example.com waitlist rows).
+-- Exercises every W1 RPC including error paths and prints one row per check. SAFE TO RE-RUN AT ANY TIME,
+-- including after launch: both parts run inside subtransactions that are aborted on purpose, so no play,
+-- call, waitlist, rate-limit, salt, status or ledger change is ever committed (results are carried out of
+-- the aborted block in a variable). Only the session-local temp table _smoke is written.
 -- Expected: every row has pass = true.
 create temp table if not exists _smoke(k serial, chk text, pass boolean, detail text);
 truncate _smoke;
@@ -15,87 +17,92 @@ declare
   ip_c text := '203.0.113.9';
   good jsonb := '[["c"],["b","a"],["a","b"]]';   -- fixture answers: c, a, d  -> codes 2,1,0
   hdr text;
-  procedure_ok boolean;
+  acc pg_temp._smoke[] := '{}';
+  before text := (select concat_ws(',', (select count(*) from ripples.plays), (select count(*) from ripples.calls),
+                   (select count(*) from ripples.waitlist), (select count(*) from ripples.rate_limits),
+                   (select count(*) from ripples.ledger), (select count(*) from ripples.salts),
+                   (select string_agg(n || ':' || status, ';' order by n) from ripples.puzzles)));
 begin
+ begin   -- everything below runs in a subtransaction that is aborted at the end (nothing is committed)
   -- ---------------- read RPCs ----------------
   v := public.ripples_puzzle(0);
-  insert into _smoke(chk, pass, detail) values ('puzzle(0) n=0, 3 rounds, kind fixture',
-    v->>'n' = '0' and jsonb_array_length(v->'rounds') = 3 and v->>'kind' = 'fixture', left(v::text, 60));
-  insert into _smoke(chk, pass, detail) values ('puzzle(0) has no answers (no answer/answer_qid/multiple keys)',
-    v::text !~ '"answer"|"answer_qid"|"multiple": 6.2', null);
-  insert into _smoke(chk, pass, detail) values ('answer_h = sha256(n|i|qid) for every round',
+  acc := acc || row(null, 'puzzle(0) n=0, 3 rounds, kind fixture',
+    v->>'n' = '0' and jsonb_array_length(v->'rounds') = 3 and v->>'kind' = 'fixture', left(v::text, 60))::pg_temp._smoke;
+  acc := acc || row(null, 'puzzle(0) has no answers (no answer/answer_qid/multiple keys)',
+    v::text !~ '"answer"|"answer_qid"|"multiple": 6.2', null)::pg_temp._smoke;
+  acc := acc || row(null, 'answer_h = sha256(n|i|qid) for every round',
     (select bool_and(r->>'answer_h' = encode(extensions.digest('0|' || (r->>'i') || '|' || (a->>'qid'), 'sha256'), 'hex'))
        from jsonb_array_elements(v->'rounds') r
-       join jsonb_array_elements((select answers from ripples.puzzles where n = 0)) a on (a->>'i') = (r->>'i')), null);
-  insert into _smoke(chk, pass, detail) values ('answer_h differs from every decoy hash',
+       join jsonb_array_elements((select answers from ripples.puzzles where n = 0)) a on (a->>'i') = (r->>'i')), null)::pg_temp._smoke;
+  acc := acc || row(null, 'answer_h differs from every decoy hash',
     not exists (select 1 from jsonb_array_elements(v->'rounds') r, jsonb_array_elements(r->'options') o,
                        jsonb_array_elements((select answers from ripples.puzzles where n = 0)) a
                  where (a->>'i') = (r->>'i') and o->>'qid' <> a->>'qid'
-                   and encode(extensions.digest('0|' || (r->>'i') || '|' || (o->>'qid'), 'sha256'), 'hex') = r->>'answer_h'), null);
+                   and encode(extensions.digest('0|' || (r->>'i') || '|' || (o->>'qid'), 'sha256'), 'hex') = r->>'answer_h'), null)::pg_temp._smoke;
   v := public.ripples_reveal(0);
-  insert into _smoke(chk, pass, detail) values ('reveal(0) has 3 rounds and final_multiple 3.8',
-    jsonb_array_length(v->'rounds') = 3 and (v->>'final_multiple')::numeric = 3.8, null);
-  insert into _smoke(chk, pass, detail) values ('puzzle/reveal of unknown n are null',
-    public.ripples_puzzle(987654) is null and public.ripples_reveal(987654) is null and public.ripples_puzzle(-987654) is null, null);
+  acc := acc || row(null, 'reveal(0) has 3 rounds and final_multiple 3.8',
+    jsonb_array_length(v->'rounds') = 3 and (v->>'final_multiple')::numeric = 3.8, null)::pg_temp._smoke;
+  acc := acc || row(null, 'puzzle/reveal of unknown n are null',
+    public.ripples_puzzle(987654) is null and public.ripples_reveal(987654) is null and public.ripples_puzzle(-987654) is null, null)::pg_temp._smoke;
   v := public.ripples_latest();
-  insert into _smoke(chk, pass, detail) values ('latest() never returns the fixture',
-    coalesce(v->>'n', '') <> '0' and coalesce(v #>> '{puzzle,kind}', '') <> 'fixture', v::text);
-  insert into _smoke(chk, pass, detail) values ('latest() delayed + puzzle null when no live puzzle is published',
+  acc := acc || row(null, 'latest() never returns the fixture',
+    coalesce(v->>'n', '') <> '0' and coalesce(v #>> '{puzzle,kind}', '') <> 'fixture', v::text)::pg_temp._smoke;
+  acc := acc || row(null, 'latest() delayed + puzzle null when no live puzzle is published',
     exists (select 1 from ripples.puzzles where kind = 'live' and status = 'published')
-    or (v->>'status' = 'delayed' and v->'puzzle' = 'null'::jsonb), v::text);
+    or (v->>'status' = 'delayed' and v->'puzzle' = 'null'::jsonb), v::text)::pg_temp._smoke;
   v := public.ripples_callit(0);
-  insert into _smoke(chk, pass, detail) values ('callit(0): 4 options, 1 hit, 1 miss, 2 pending; urls only when resolved',
+  acc := acc || row(null, 'callit(0): 4 options, 1 hit, 1 miss, 2 pending; urls only when resolved',
     jsonb_array_length(v->'options') = 4
     and (select count(*) from jsonb_array_elements(v->'options') o where o->>'outcome' = 'hit') = 1
     and (select count(*) from jsonb_array_elements(v->'options') o where o->>'outcome' = 'miss') = 1
     and (select bool_and((o->>'outcome' = 'pending') = (o->'url' = 'null'::jsonb)) from jsonb_array_elements(v->'options') o),
-    null);
+    null)::pg_temp._smoke;
   v := public.ripples_board(0);
-  insert into _smoke(chk, pass, detail) values ('board(0): all 4 quadrants + a sensitive row with quadrant null',
+  acc := acc || row(null, 'board(0): all 4 quadrants + a sensitive row with quadrant null',
     (select count(distinct t->>'quadrant') from jsonb_array_elements(v->'trends') t where t->>'quadrant' is not null) = 4
-    and exists (select 1 from jsonb_array_elements(v->'trends') t where (t->>'sensitive')::boolean and t->'quadrant' = 'null'::jsonb), null);
-  insert into _smoke(chk, pass, detail) values ('board(null) is null or a live board (never the fixture)',
-    coalesce(public.ripples_board(null)->>'n', 'x') <> '0', null);
+    and exists (select 1 from jsonb_array_elements(v->'trends') t where (t->>'sensitive')::boolean and t->'quadrant' = 'null'::jsonb), null)::pg_temp._smoke;
+  acc := acc || row(null, 'board(null) is null or a live board (never the fixture)',
+    coalesce(public.ripples_board(null)->>'n', 'x') <> '0', null)::pg_temp._smoke;
   v := public.ripples_archive(60, 'fixture');
-  insert into _smoke(chk, pass, detail) values ('archive(fixture) path', v->0->>'path' = '👤📍🎬·🎵🏅', v->0->>'path');
-  insert into _smoke(chk, pass, detail) values ('archive(live) excludes fixture',
-    not exists (select 1 from jsonb_array_elements(public.ripples_archive(500, 'all')) a where a->>'kind' = 'fixture'), null);
+  acc := acc || row(null, 'archive(fixture) path', v->0->>'path' = '👤📍🎬·🎵🏅', v->0->>'path')::pg_temp._smoke;
+  acc := acc || row(null, 'archive(live) excludes fixture',
+    not exists (select 1 from jsonb_array_elements(public.ripples_archive(500, 'all')) a where a->>'kind' = 'fixture'), null)::pg_temp._smoke;
   v := public.ripples_brief(7, null);
-  insert into _smoke(chk, pass, detail) values ('brief(7) shape', v ?& array['from','to','category','intro','reconstructed','items'], null);
-  insert into _smoke(chk, pass, detail) values ('brief(bad category) is empty',
-    jsonb_array_length(public.ripples_brief(7, 'not_a_category')->'items') = 0, null);
+  acc := acc || row(null, 'brief(7) shape', v ?& array['from','to','category','intro','reconstructed','items'], null)::pg_temp._smoke;
+  acc := acc || row(null, 'brief(bad category) is empty',
+    jsonb_array_length(public.ripples_brief(7, 'not_a_category')->'items') = 0, null)::pg_temp._smoke;
   v := public.ripples_health();
-  insert into _smoke(chk, pass, detail) values ('health shape',
-    v ?& array['latest_n','published_at','stale','stage','wm_calls','errors','clickstream_month'], v::text);
+  acc := acc || row(null, 'health shape',
+    v ?& array['latest_n','published_at','stale','stage','wm_calls','errors','clickstream_month'], v::text)::pg_temp._smoke;
   v := public.ripples_og_data(0);
-  insert into _smoke(chk, pass, detail) values ('og_data(0): R=3, answer multiples present',
-    (v->>'R')::int = 3 and (v #>> '{rounds,0,multiple}')::numeric = 6.2 and (v #>> '{rounds,2,multiple}')::numeric = 3.8, null);
+  acc := acc || row(null, 'og_data(0): R=3, answer multiples present',
+    (v->>'R')::int = 3 and (v #>> '{rounds,0,multiple}')::numeric = 6.2 and (v #>> '{rounds,2,multiple}')::numeric = 3.8, null)::pg_temp._smoke;
 
-  -- ---------------- stats ----------------
+  -- ---------------- stats (fixture plays/calls are cleared inside the aborted subtransaction) ----------------
   delete from ripples.plays where n = 0;
   delete from ripples.calls where n = 0;
   v := public.ripples_stats(0);
-  insert into _smoke(chk, pass, detail) values ('stats(0) shown=false below min_players, arrays null',
-    v->>'shown' = 'false' and v->'rounds' = 'null'::jsonb and v->'score_hist' = 'null'::jsonb and v->'you' = 'null'::jsonb, v::text);
+  acc := acc || row(null, 'stats(0) shown=false below min_players, arrays null',
+    v->>'shown' = 'false' and v->'rounds' = 'null'::jsonb and v->'score_hist' = 'null'::jsonb and v->'you' = 'null'::jsonb, v::text)::pg_temp._smoke;
 
   -- ---------------- submit_play ----------------
   perform set_config('request.headers', json_build_object('cf-connecting-ip', ip_a, 'cf-ipcountry', 'gb')::text, true);
   select count(*) into c from ripples.plays where n = 0;
   v := public.ripples_submit_play(cli1, 0, good, 3.8);
   select count(*) into c2 from ripples.plays where n = 0;
-  insert into _smoke(chk, pass, detail) values ('submit_play valid inserts 1 row; server score 2+1+0+2=5 of 8',
-    c2 = c + 1 and (v #>> '{you,score}')::int = 5 and (v #>> '{you,max}')::int = 8, v::text);
-  insert into _smoke(chk, pass, detail) values ('plays row stores hashes + country, not raw ids',
+  acc := acc || row(null, 'submit_play valid inserts 1 row; server score 2+1+0+2=5 of 8',
+    c2 = c + 1 and (v #>> '{you,score}')::int = 5 and (v #>> '{you,max}')::int = 8, v::text)::pg_temp._smoke;
+  acc := acc || row(null, 'plays row stores hashes + country, not raw ids',
     exists (select 1 from ripples.plays where n = 0 and client_hash ~ '^[0-9a-f]{64}$' and ip_hash ~ '^[0-9a-f]{64}$'
-             and country = 'GB' and codes = '{2,1,0}' and client_hash <> cli1), null);
+             and country = 'GB' and codes = '{2,1,0}' and client_hash <> cli1), null)::pg_temp._smoke;
   v2 := public.ripples_submit_play(cli1, 0, good, 3.8);
   select count(*) into c from ripples.plays where n = 0;
-  insert into _smoke(chk, pass, detail) values ('duplicate submit_play inserts 0 rows, same players count',
-    c = c2 and v2->'players' = v->'players', v2->>'players');
+  acc := acc || row(null, 'duplicate submit_play inserts 0 rows, same players count',
+    c = c2 and v2->'players' = v->'players', v2->>'players')::pg_temp._smoke;
   -- a different second answer does not change the stored play
   v2 := public.ripples_submit_play(cli1, 0, '[["a","c"],["a"],["d"]]', 10);
-  insert into _smoke(chk, pass, detail) values ('duplicate with different picks keeps the first score',
-    (v2 #>> '{you,score}')::int = 5, v2->>'you');
+  acc := acc || row(null, 'duplicate with different picks keeps the first score',
+    (v2 #>> '{you,score}')::int = 5, v2->>'you')::pg_temp._smoke;
 
   foreach hdr in array array[
       '[["c"],["a"]]',                 -- wrong round count
@@ -111,27 +118,27 @@ begin
       ok := false; msg := 'no error';
     exception when others then ok := (sqlerrm = 'invalid'); msg := sqlerrm;
     end;
-    insert into _smoke(chk, pass, detail) values ('submit_play malformed picks ' || hdr || ' raises invalid', ok, msg);
+    acc := acc || row(null, 'submit_play malformed picks ' || hdr || ' raises invalid', ok, msg)::pg_temp._smoke;
   end loop;
   foreach hdr in array array['short', 'has space in it xxxxxxxxxx', repeat('x', 65)] loop
     begin
       perform public.ripples_submit_play(hdr, 0, good, 3.8); ok := false; msg := 'no error';
     exception when others then ok := (sqlerrm = 'invalid'); msg := sqlerrm;
     end;
-    insert into _smoke(chk, pass, detail) values ('submit_play bad client regex raises invalid', ok, msg);
+    acc := acc || row(null, 'submit_play bad client regex raises invalid', ok, msg)::pg_temp._smoke;
   end loop;
   foreach hdr in array array['1.49', '100.01', '-3'] loop
     begin
       perform public.ripples_submit_play(cli2, 0, good, hdr::numeric); ok := false; msg := 'no error';
     exception when others then ok := (sqlerrm = 'invalid'); msg := sqlerrm;
     end;
-    insert into _smoke(chk, pass, detail) values ('submit_play p_mag ' || hdr || ' raises invalid', ok, msg);
+    acc := acc || row(null, 'submit_play p_mag ' || hdr || ' raises invalid', ok, msg)::pg_temp._smoke;
   end loop;
   begin
     perform public.ripples_submit_play(cli2, 987654, good, 3.8); ok := false; msg := 'no error';
   exception when others then ok := (sqlerrm = 'closed'); msg := sqlerrm;
   end;
-  insert into _smoke(chk, pass, detail) values ('submit_play unknown/unpublished n raises closed', ok, msg);
+  acc := acc || row(null, 'submit_play unknown/unpublished n raises closed', ok, msg)::pg_temp._smoke;
 
   -- rate limit: IP b makes 20 accepted calls (distinct clients), the 21st raises rate_limited
   perform set_config('request.headers', json_build_object('x-forwarded-for', ip_b || ', 10.0.0.1')::text, true);
@@ -142,13 +149,13 @@ begin
     perform public.ripples_submit_play('smokeRate_00000021', 0, good, 2.0); ok := false; msg := 'no error';
   exception when others then ok := (sqlerrm = 'rate_limited'); msg := sqlerrm;
   end;
-  insert into _smoke(chk, pass, detail) values ('21st submit_play from one IP hash (x-forwarded-for) raises rate_limited', ok, msg);
-  insert into _smoke(chk, pass, detail) values ('rate_limited call inserted nothing',
-    not exists (select 1 from ripples.plays p where p.n = 0 and p.client_hash = ripples._hash('smokeRate_00000021', (select puzzle_date from ripples.puzzles where n = 0))), null);
+  acc := acc || row(null, '21st submit_play from one IP hash (x-forwarded-for) raises rate_limited', ok, msg)::pg_temp._smoke;
+  acc := acc || row(null, 'rate_limited call inserted nothing',
+    not exists (select 1 from ripples.plays p where p.n = 0 and p.client_hash = ripples._hash('smokeRate_00000021', (select puzzle_date from ripples.puzzles where n = 0))), null)::pg_temp._smoke;
   -- a different IP is unaffected
   perform set_config('request.headers', json_build_object('cf-connecting-ip', ip_c)::text, true);
   v := public.ripples_submit_play('smokeRate_OTHER_IP_01', 0, good, 2.0);
-  insert into _smoke(chk, pass, detail) values ('other IP still accepted', v ? 'players', v->>'players');
+  acc := acc || row(null, 'other IP still accepted', v ? 'players', v->>'players')::pg_temp._smoke;
 
   -- 22 players now < 30: still hidden. Add 8 more to cross min_players and check shown=true + percentile
   perform set_config('request.headers', json_build_object('cf-connecting-ip', ip_a)::text, true);
@@ -156,33 +163,33 @@ begin
     perform public.ripples_submit_play('smokeShown_' || lpad(i::text, 8, '0'), 0, '[["a","b"],["b","c"],["a","b"]]', 90);
   end loop;
   v := public.ripples_stats(0);
-  insert into _smoke(chk, pass, detail) values ('stats(0) shown=true at >= 30 players with rounds/score_hist/median',
+  acc := acc || row(null, 'stats(0) shown=true at >= 30 players with rounds/score_hist/median',
     v->>'shown' = 'true' and (v->>'players')::int >= 30 and jsonb_array_length(v->'rounds') = 3
-    and jsonb_array_length(v->'score_hist') = 9 and v->'mag_median_x' <> 'null'::jsonb and v->'you' = 'null'::jsonb, left(v::text, 200));
+    and jsonb_array_length(v->'score_hist') = 9 and v->'mag_median_x' <> 'null'::jsonb and v->'you' = 'null'::jsonb, left(v::text, 200))::pg_temp._smoke;
   v := public.ripples_submit_play(cli1, 0, good, 3.8);
-  insert into _smoke(chk, pass, detail) values ('duplicate at >=30 players returns percentile',
-    (v #>> '{you,percentile}') is not null, v->>'you');
+  acc := acc || row(null, 'duplicate at >=30 players returns percentile',
+    (v #>> '{you,percentile}') is not null, v->>'you')::pg_temp._smoke;
 
   -- ---------------- submit_call ----------------
   perform set_config('request.headers', json_build_object('cf-connecting-ip', ip_a)::text, true);
   v := public.ripples_submit_call(cli1, 0, 'Q999990043');
   select count(*) into c from ripples.calls where n = 0;
-  insert into _smoke(chk, pass, detail) values ('submit_call valid -> ok, 1 row, split null below min',
-    v->>'ok' = 'true' and v->'split' = 'null'::jsonb and c = 1, v::text);
+  acc := acc || row(null, 'submit_call valid -> ok, 1 row, split null below min',
+    v->>'ok' = 'true' and v->'split' = 'null'::jsonb and c = 1, v::text)::pg_temp._smoke;
   v := public.ripples_submit_call(cli1, 0, 'Q999990044');
   select count(*) into c2 from ripples.calls where n = 0;
-  insert into _smoke(chk, pass, detail) values ('second call by same client is ignored (one per client per n)',
-    c2 = 1 and (select qid from ripples.calls where n = 0) = 'Q999990043', null);
+  acc := acc || row(null, 'second call by same client is ignored (one per client per n)',
+    c2 = 1 and (select qid from ripples.calls where n = 0) = 'Q999990043', null)::pg_temp._smoke;
   begin
     perform public.ripples_submit_call(cli2, 0, 'Q42'); ok := false; msg := 'no error';
   exception when others then ok := (sqlerrm = 'invalid'); msg := sqlerrm;
   end;
-  insert into _smoke(chk, pass, detail) values ('submit_call with a QID that is not an option raises invalid', ok, msg);
+  acc := acc || row(null, 'submit_call with a QID that is not an option raises invalid', ok, msg)::pg_temp._smoke;
   begin
     perform public.ripples_submit_call(cli2, 0, 'not-a-qid'); ok := false; msg := 'no error';
   exception when others then ok := (sqlerrm = 'invalid'); msg := sqlerrm;
   end;
-  insert into _smoke(chk, pass, detail) values ('submit_call malformed QID raises invalid', ok, msg);
+  acc := acc || row(null, 'submit_call malformed QID raises invalid', ok, msg)::pg_temp._smoke;
   perform set_config('request.headers', json_build_object('cf-connecting-ip', ip_c)::text, true);
   for i in 1..19 loop   -- ip_c: 20 allowed per day
     perform public.ripples_submit_call('smokeCall_' || lpad(i::text, 8, '0'), 0, 'Q999990041');
@@ -192,110 +199,151 @@ begin
     perform public.ripples_submit_call('smokeCall_00000021', 0, 'Q999990041'); ok := false; msg := 'no error';
   exception when others then ok := (sqlerrm = 'rate_limited'); msg := sqlerrm;
   end;
-  insert into _smoke(chk, pass, detail) values ('21st submit_call from one IP raises rate_limited', ok, msg);
+  acc := acc || row(null, '21st submit_call from one IP raises rate_limited', ok, msg)::pg_temp._smoke;
   v := public.ripples_callit(0);
-  insert into _smoke(chk, pass, detail) values ('callit crowd_pct appears once calls >= min_players (21 calls < 30 -> null)',
-    (select bool_and(o->'crowd_pct' = 'null'::jsonb) from jsonb_array_elements(v->'options') o), null);
+  acc := acc || row(null, 'callit crowd_pct appears once calls >= min_players (21 calls < 30 -> null)',
+    (select bool_and(o->'crowd_pct' = 'null'::jsonb) from jsonb_array_elements(v->'options') o), null)::pg_temp._smoke;
 
   -- ---------------- join ----------------
   perform set_config('request.headers', json_build_object('cf-connecting-ip', '198.51.100.20')::text, true);
   select count(*) into c from ripples.waitlist;
   v := public.ripples_join('not-an-email', null, 'free', null, 'smoke');
   select count(*) into c2 from ripples.waitlist;
-  insert into _smoke(chk, pass, detail) values ('join(not-an-email) -> {"ok":true}, no row', v = '{"ok":true}'::jsonb and c2 = c, v::text);
+  acc := acc || row(null, 'join(not-an-email) -> {"ok":true}, no row', v = '{"ok":true}'::jsonb and c2 = c, v::text)::pg_temp._smoke;
   v := public.ripples_join('  Smoke.Test+W1@Example.COM ', 'creator', 'radar5', array['music','tech'], 'smoke');
   select count(*) into c2 from ripples.waitlist;
-  insert into _smoke(chk, pass, detail) values ('join(valid) -> {"ok":true}, 1 row, email lowercased+trimmed',
+  acc := acc || row(null, 'join(valid) -> {"ok":true}, 1 row, email lowercased+trimmed',
     v = '{"ok":true}'::jsonb and c2 = c + 1
-    and exists (select 1 from ripples.waitlist where email_norm = 'smoke.test+w1@example.com' and price = 'radar5'), v::text);
+    and exists (select 1 from ripples.waitlist where email_norm = 'smoke.test+w1@example.com' and price = 'radar5'), v::text)::pg_temp._smoke;
   v := public.ripples_join('smoke.test+w1@example.com', null, 'report149', null, 'smoke');
   select count(*) into c from ripples.waitlist;
-  insert into _smoke(chk, pass, detail) values ('join upsert on email_norm (no duplicate, price updated, role kept)',
-    c = c2 and exists (select 1 from ripples.waitlist where email_norm = 'smoke.test+w1@example.com' and price = 'report149' and role = 'creator'), null);
+  acc := acc || row(null, 'join upsert on email_norm (no duplicate, price updated, role kept)',
+    c = c2 and exists (select 1 from ripples.waitlist where email_norm = 'smoke.test+w1@example.com' and price = 'report149' and role = 'creator'), null)::pg_temp._smoke;
   v := public.ripples_join('smoke.bad.enum@example.com', 'ceo', 'free', null, 'smoke');
   v2 := public.ripples_join('smoke.bad.topic@example.com', null, 'free', array['crypto'], 'smoke');
-  insert into _smoke(chk, pass, detail) values ('join with bad role / topic -> ok but no row',
+  acc := acc || row(null, 'join with bad role / topic -> ok but no row',
     v = '{"ok":true}'::jsonb and v2 = '{"ok":true}'::jsonb
-    and not exists (select 1 from ripples.waitlist where email_norm in ('smoke.bad.enum@example.com', 'smoke.bad.topic@example.com')), null);
+    and not exists (select 1 from ripples.waitlist where email_norm in ('smoke.bad.enum@example.com', 'smoke.bad.topic@example.com')), null)::pg_temp._smoke;
   -- 5 per IP per day: this IP has used 5 now; the 6th valid email is silently dropped
   v := public.ripples_join('smoke.sixth@example.com', null, 'free', null, 'smoke');
-  insert into _smoke(chk, pass, detail) values ('6th join from one IP is silently dropped (still ok:true)',
-    v = '{"ok":true}'::jsonb and not exists (select 1 from ripples.waitlist where email_norm = 'smoke.sixth@example.com'), null);
-  insert into _smoke(chk, pass, detail) values ('no public ripples_* function result contains an email address',
+  acc := acc || row(null, '6th join from one IP is silently dropped (still ok:true)',
+    v = '{"ok":true}'::jsonb and not exists (select 1 from ripples.waitlist where email_norm = 'smoke.sixth@example.com'), null)::pg_temp._smoke;
+  perform set_config('request.headers', json_build_object('cf-connecting-ip', '198.51.100.21')::text, true);
+  v := public.ripples_join('smoke.test+w1@example.com', 'player', 'free', null, 'smoke');
+  v2 := public.ripples_join('smoke.test+w1@example.com', null, null, null, 'smoke');
+  acc := acc || row(null, 'join: a later free/null-price signup never downgrades a paid intent (price test data kept)',
+    exists (select 1 from ripples.waitlist where email_norm = 'smoke.test+w1@example.com' and price = 'report149' and role = 'player'), null)::pg_temp._smoke;
+  acc := acc || row(null, 'no public ripples_* function result contains an email address',
     (public.ripples_latest()::text || coalesce(public.ripples_puzzle(0)::text, '') || coalesce(public.ripples_reveal(0)::text, '')
      || coalesce(public.ripples_stats(0)::text, '') || coalesce(public.ripples_callit(0)::text, '') || coalesce(public.ripples_board(0)::text, '')
      || public.ripples_archive(500, 'all')::text || public.ripples_brief(60, null)::text || public.ripples_health()::text)
-    !~ '[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[a-z]{2,}', null);
+    !~ '[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[a-z]{2,}', null)::pg_temp._smoke;
 
   -- ---------------- permissions ----------------
   execute 'set local role anon';
   begin perform 1 from ripples.plays limit 1; ok := false; msg := 'readable';
   exception when insufficient_privilege then ok := true; msg := sqlerrm; end;
   execute 'reset role';
-  insert into _smoke(chk, pass, detail) values ('anon: select ripples.plays -> permission denied', ok, msg);
+  acc := acc || row(null, 'anon: select ripples.plays -> permission denied', ok, msg)::pg_temp._smoke;
   execute 'set local role anon';
   begin perform 1 from ripples.waitlist limit 1; ok := false; msg := 'readable';
   exception when insufficient_privilege then ok := true; msg := sqlerrm; end;
   execute 'reset role';
-  insert into _smoke(chk, pass, detail) values ('anon: select ripples.waitlist -> permission denied', ok, msg);
+  acc := acc || row(null, 'anon: select ripples.waitlist -> permission denied', ok, msg)::pg_temp._smoke;
   execute 'set local role anon';
   begin perform public.ripples_publish_bundle(0); ok := false; msg := 'callable';
   exception when insufficient_privilege then ok := true; msg := sqlerrm; end;
   execute 'reset role';
-  insert into _smoke(chk, pass, detail) values ('anon: ripples_publish_bundle(0) -> permission denied', ok, msg);
+  acc := acc || row(null, 'anon: ripples_publish_bundle(0) -> permission denied', ok, msg)::pg_temp._smoke;
   execute 'set local role anon';
   begin perform public.ripples_og_data(0); ok := false; msg := 'callable';
   exception when insufficient_privilege then ok := true; msg := sqlerrm; end;
   execute 'reset role';
-  insert into _smoke(chk, pass, detail) values ('anon: ripples_og_data(0) -> permission denied', ok, msg);
+  acc := acc || row(null, 'anon: ripples_og_data(0) -> permission denied', ok, msg)::pg_temp._smoke;
   execute 'set local role authenticated';
   begin perform ripples._hash('x'); ok := false; msg := 'callable';
   exception when insufficient_privilege then ok := true; msg := sqlerrm; end;
   execute 'reset role';
-  insert into _smoke(chk, pass, detail) values ('authenticated: internal ripples._hash -> permission denied', ok, msg);
+  acc := acc || row(null, 'authenticated: internal ripples._hash -> permission denied', ok, msg)::pg_temp._smoke;
   execute 'set local role anon';
   begin v := public.ripples_puzzle(0); ok := v->>'n' = '0'; msg := 'ok';
   exception when others then ok := false; msg := sqlerrm; end;
   execute 'reset role';
-  insert into _smoke(chk, pass, detail) values ('anon: ripples_puzzle(0) works', ok, msg);
+  acc := acc || row(null, 'anon: ripples_puzzle(0) works', ok, msg)::pg_temp._smoke;
 
   -- ---------------- publish_bundle (service) on the fixture ----------------
   v := public.ripples_publish_bundle(0);
-  insert into _smoke(chk, pass, detail) values ('publish_bundle(0): keys, fixture stays status fixture, no csv, no ledger',
+  acc := acc || row(null, 'publish_bundle(0): keys, fixture stays status fixture, no csv, no ledger',
     v ?& array['latest','puzzle','reveal','callit','board','archive','track','csv_rows']
     and v #>> '{puzzle,n}' = '0' and jsonb_array_length(v->'csv_rows') = 0
     and (select status from ripples.puzzles where n = 0) = 'fixture'
-    and not exists (select 1 from ripples.ledger where n = 0), null);
+    and not exists (select 1 from ripples.ledger where n = 0), null)::pg_temp._smoke;
   v := public.ripples_publish_bundle(null);
-  insert into _smoke(chk, pass, detail) values ('publish_bundle(null) with no live puzzle: latest delayed',
+  acc := acc || row(null, 'publish_bundle(null) with no live puzzle: latest delayed',
     exists (select 1 from ripples.puzzles where kind = 'live')
-    or (v->'puzzle' = 'null'::jsonb and v #>> '{latest,status}' = 'delayed'), left(v::text, 120));
+    or (v->'puzzle' = 'null'::jsonb and v #>> '{latest,status}' = 'delayed'), left(v::text, 120))::pg_temp._smoke;
 
-  -- ---------------- cleanup ----------------
-  delete from ripples.plays where n = 0;
-  delete from ripples.calls where n = 0;
-  delete from ripples.waitlist where email_norm like 'smoke%@example.com';
-  delete from ripples.rate_limits
-   where day = (now() at time zone 'utc')::date
-     and bucket in (select b || ripples._hash(ip) from unnest(array['play:','call:','join:']) b,
-                    unnest(array[ip_a, ip_b, ip_c, '198.51.100.20']) ip);
+  -- ---------------- ledger / grants / privacy ----------------
+  acc := acc || row(null, 'ledger: _ledger_write on the fixture (not live+published) writes nothing, returns null',
+    ripples._ledger_write(0) is null and not exists (select 1 from ripples.ledger where n = 0), null)::pg_temp._smoke;
+  acc := acc || row(null, 'publish_bundle returns ledger_head + ledger rows',
+    v ? 'ledger_head' and jsonb_typeof(public.ripples_publish_bundle(0)->'ledger') = 'array', null)::pg_temp._smoke;
+  acc := acc || row(null, 'grant audit: no service-only public.ripples_* function is executable by anon/authenticated',
+    not exists (select 1 from ripples._grant_audit()),
+    (select string_agg(fn || ' ' || role, '; ') from ripples._grant_audit()))::pg_temp._smoke;
+  perform set_config('request.headers', json_build_object('cf-connecting-ip', ip_a)::text, true);
+  acc := acc || row(null, 'ip_hash = sha256(today''s ip_salt | ip), ip_salt differs from the client salt',
+    ripples._ip_hash() = encode(extensions.digest((select ip_salt from ripples.salts where day = (now() at time zone 'utc')::date)
+                                                  || '|' || ip_a, 'sha256'), 'hex')
+    and (select ip_salt <> salt from ripples.salts where day = (now() at time zone 'utc')::date), null)::pg_temp._smoke;
+  insert into ripples.salts(day, salt, ip_salt) values
+    ((now() at time zone 'utc')::date - 1,  'smoke_old_salt', 'smoke_old_ip_salt'),
+    ((now() at time zone 'utc')::date - 12, 'smoke_ancient_salt', 'smoke_ancient_ip_salt')
+  on conflict (day) do update set salt = excluded.salt, ip_salt = excluded.ip_salt;
+  perform ripples._purge_salts();
+  acc := acc || row(null, 'salt retention: yesterday''s ip_salt nulled (client salt kept); salts older than 9 days deleted',
+    (select ip_salt is null and salt = 'smoke_old_salt' from ripples.salts where day = (now() at time zone 'utc')::date - 1)
+    and not exists (select 1 from ripples.salts where day = (now() at time zone 'utc')::date - 12)
+    and (select ip_salt is not null from ripples.salts where day = (now() at time zone 'utc')::date), null)::pg_temp._smoke;
+
+  raise exception 'rollback_smoke';
+ exception when others then
+  if sqlerrm <> 'rollback_smoke' then
+    acc := acc || row(null, 'part 1 aborted unexpectedly', false, sqlerrm)::pg_temp._smoke;
+  end if;
+ end;
+  insert into _smoke(chk, pass, detail) select a.chk, a.pass, a.detail from unnest(acc) a;
+  insert into _smoke(chk, pass, detail) values ('part 1 rolled back: plays/calls/waitlist/rate_limits/ledger/salts counts and puzzle statuses unchanged',
+    before = (select concat_ws(',', (select count(*) from ripples.plays), (select count(*) from ripples.calls),
+                   (select count(*) from ripples.waitlist), (select count(*) from ripples.rate_limits),
+                   (select count(*) from ripples.ledger), (select count(*) from ripples.salts),
+                   (select string_agg(n || ':' || status, ';' order by n) from ripples.puzzles)))
+    and not exists (select 1 from ripples.waitlist where email_norm like 'smoke%@example.com'), before);
 end
 $smoke$;
 
 
 -- ---------------------------------------------------------------------------------------------
 -- Part 2: live-puzzle lifecycle, fully rolled back (a subtransaction is aborted on purpose at the end).
--- Temporarily moves config.epoch so that a synthetic live n=20 is "today", then checks visibility,
--- publish_bundle (status, ledger chain, csv rows), copy overlay, brief, archive, og_data, health,
--- the closed window for submit_play/submit_call, and not_publishable for vetoed puzzles.
+-- Inside it: clears live puzzles/ledger/copy, moves config.epoch so that a synthetic live n=20 is "today", then
+-- checks visibility, publish_bundle (status, ledger at publish only, rebuild before publish, chain in write order,
+-- public recomputation of payload_hash, _ledger_verify), csv rows, copy overlay, brief, archive, og_data.past,
+-- health, the closed windows for submit_play/submit_call, and not_publishable for vetoed puzzles.
+-- Note: identity values (ledger.seq) consumed inside the aborted block are not reused; gaps are harmless.
 -- ---------------------------------------------------------------------------------------------
 do $life$
 declare
   res jsonb := '[]'; v jsonb; b jsonb; cur date := ripples._current_date(); fx ripples.puzzles; ok boolean; msg text;
-  l19 ripples.ledger; l20 ripples.ledger;
-  procedure_dummy int;
+  l19 ripples.ledger; l20 ripples.ledger; l10 ripples.ledger; pub jsonb; utc_today date := (now() at time zone 'utc')::date;
 begin
   begin
+    -- clean slate inside the aborted subtransaction, so the lifecycle also runs safely after launch
+    delete from ripples.ledger;
+    delete from ripples.copy    where n <> 0;
+    delete from ripples.callit  where n <> 0;
+    delete from ripples.plays   where n <> 0;
+    delete from ripples.calls   where n <> 0;
+    delete from ripples.puzzles where kind = 'live';
     update ripples.config set value = to_jsonb((cur - 20)::text) where key = 'epoch';
     select * into fx from ripples.puzzles where n = 0;
     insert into ripples.puzzles (n, kind, puzzle_date, data_date, status, payload, reveal, board, answers, final_multiple)
@@ -305,7 +353,7 @@ begin
            fx.reveal || jsonb_build_object('n', k.n), fx.board || jsonb_build_object('n', k.n), fx.answers, fx.final_multiple
       from (values (10, 'published'), (19, 'built'), (20, 'built'), (21, 'published'), (18, 'vetoed')) k(n, st);
     insert into ripples.callit (n, qid, title, emoji, category, baseline_median, model_p, window_start, window_end, outcome)
-    select k.n, c.qid, c.title, c.emoji, c.category, c.baseline_median, c.model_p, cur + (k.n - 20), cur + (k.n - 14), 'pending'
+    select k.n, c.qid, c.title, c.emoji, c.category, c.baseline_median, c.model_p, utc_today + (k.n - 20), utc_today + (k.n - 14), 'pending'
       from ripples.callit c, (values (19), (20)) k(n) where c.n = 0;
 
     v := public.ripples_latest();
@@ -313,6 +361,10 @@ begin
       'pass', public.ripples_puzzle(20) is null and public.ripples_puzzle(21) is null and v->>'n' = '10' and v->>'status' = 'delayed',
       'detail', v->>'n');
 
+    res := res || jsonb_build_object('chk', 'ledger: _ledger_write on a BUILT puzzle writes nothing (ledger is written at publish only)',
+      'pass', ripples._ledger_write(20) is null and not exists (select 1 from ripples.ledger where n = 20), 'detail', null);
+    -- simulate a veto-triggered rebuild of n=20 after build: the ledger must certify the final payload
+    update ripples.puzzles set payload = jsonb_set(payload, '{seed,title}', '"Test Rebuilt Seed"') where n = 20;
     b := public.ripples_publish_bundle(19);
     b := public.ripples_publish_bundle(20);
     select * into l19 from ripples.ledger where n = 19;
@@ -331,18 +383,17 @@ begin
       'pass', jsonb_array_length(b->'recent_callit') = 2
               and not exists (select 1 from jsonb_array_elements(b->'archive') a where a->>'n' in ('21', '0', '18')),
       'detail', (select string_agg(a->>'n', ',') from jsonb_array_elements(b->'archive') a));
-    res := res || jsonb_build_object('chk', 'ledger: payload_hash and chain_hash recompute; n20.prev = n19.chain; genesis prev = 64 zeros',
+    res := res || jsonb_build_object('chk', 'ledger: payload_hash = sha256(_ledger_input) of the FINAL (rebuilt) payload; n20.prev = n19.chain; genesis prev = 64 zeros; ledger_head = n20',
       'pass', l19.prev_hash = repeat('0', 64) and l20.prev_hash = l19.chain_hash
               and l20.chain_hash = encode(extensions.digest(l20.prev_hash || l20.payload_hash, 'sha256'), 'hex')
-              and l20.payload_hash = encode(extensions.digest(jsonb_build_object('n', 20,
-                    'payload', (select payload from ripples.puzzles where n = 20), 'reveal', (select reveal from ripples.puzzles where n = 20),
-                    'callit', (select jsonb_agg(jsonb_build_array(qid, model_p) order by qid) from ripples.callit where n = 20))::text, 'sha256'), 'hex')
-              and b->>'ledger_head' = l20.chain_hash,
+              and l20.payload_hash = encode(extensions.digest(ripples._ledger_input(20)::text, 'sha256'), 'hex')
+              and ripples._ledger_input(20) #>> '{puzzle,seed,title}' = 'Test Rebuilt Seed'
+              and b->>'ledger_head' = l20.chain_hash and jsonb_array_length(b->'ledger') = 2,
       'detail', l20.chain_hash);
     v := public.ripples_publish_bundle(null);
-    res := res || jsonb_build_object('chk', 'publish_bundle(null) picks the newest built/published live puzzle dated <= UTC today',
+    res := res || jsonb_build_object('chk', 'publish_bundle(null) picks the newest built/published live puzzle dated <= UTC date as of 07:20',
       'pass', (v->>'n')::int = (select max(n) from ripples.puzzles where kind = 'live' and status in ('built', 'published')
-                                   and puzzle_date <= (now() at time zone 'utc')::date)
+                                   and puzzle_date <= ((now() at time zone 'utc') - interval '7 hours 20 minutes')::date)
               and v #>> '{latest,n}' = '20',
       'detail', v->>'n');
     b := public.ripples_publish_bundle(20);
@@ -358,6 +409,29 @@ begin
     insert into ripples.copy (n, i, kind, text, source) values
       (20, null, 'headline', 'TEST ai headline', 'ai'), (20, 2, 'caption', 'TEST ai caption for round 2', 'ai'),
       (0, null, 'headline', 'TEST must not overlay fixture', 'ai'), (19, null, 'brief_intro', 'TEST brief intro', 'ai');
+    -- public verifiability: rebuild the ledger input from the PUBLISHED (copy-overlaid) JSON only
+    pub := ripples._canon(jsonb_build_object(
+      'n', 20,
+      'puzzle', public.ripples_puzzle(20) - 'headline',
+      'reveal', jsonb_set(public.ripples_reveal(20), '{rounds}',
+                  (select jsonb_agg(t.e - 'caption' order by t.o) from jsonb_array_elements(public.ripples_reveal(20)->'rounds') with ordinality t(e, o))),
+      'callit', (select jsonb_agg(jsonb_build_array(o->>'qid', o->'model_p') order by o->>'qid' collate "C")
+                   from jsonb_array_elements(public.ripples_callit(20)->'options') o)));
+    res := res || jsonb_build_object('chk', 'ledger: payload_hash recomputes from the public puzzle/reveal/callit JSON even after AI copy overlay',
+      'pass', encode(extensions.digest(pub::text, 'sha256'), 'hex') = l20.payload_hash
+              and public.ripples_puzzle(20) #>> '{headline,source}' = 'ai', 'detail', null);
+    -- out-of-order write: an older published puzzle (n=10) chains from the newest ROW, not from a lower n
+    msg := (select chain_hash from ripples.ledger order by seq desc limit 1);   -- head before the out-of-order write
+    perform ripples._ledger_write(10);
+    select * into l10 from ripples.ledger where n = 10;
+    res := res || jsonb_build_object('chk', 'ledger: out-of-order write (older n=10) chains from the most recent row, not from a lower n; _ledger_verify ok',
+      'pass', l10.prev_hash = msg and l10.prev_hash <> repeat('0', 64) and (ripples._ledger_verify()->>'ok')::boolean
+              and (ripples._ledger_verify()->>'rows')::int = (select count(*) from ripples.ledger) and ripples._ledger_verify()->>'head' = l10.chain_hash,
+      'detail', ripples._ledger_verify()::text);
+    update ripples.puzzles set payload = jsonb_set(payload, '{seed,title}', '"Test Tampered"') where n = 19;
+    res := res || jsonb_build_object('chk', 'ledger: _ledger_verify flags a payload changed after its row was written',
+      'pass', ripples._ledger_verify()->'bad' = '[19]'::jsonb, 'detail', ripples._ledger_verify()::text);
+    update ripples.puzzles set payload = jsonb_set(payload, '{seed,title}', to_jsonb(fx.payload #>> '{seed,title}')) where n = 19;
     v := public.ripples_puzzle(20);
     res := res || jsonb_build_object('chk', 'copy overlay: ai headline + round-2 caption replace template; fixture untouched',
       'pass', v #>> '{headline,source}' = 'ai' and public.ripples_reveal(20) #>> '{rounds,1,caption,source}' = 'ai'
@@ -375,6 +449,8 @@ begin
       'detail', jsonb_array_length(v->'items'));
     v := public.ripples_og_data(null);
     res := res || jsonb_build_object('chk', 'og_data(null) -> latest live n=20', 'pass', v->>'n' = '20', 'detail', v->>'n');
+    res := res || jsonb_build_object('chk', 'og_data.past follows the 07:30 UTC rollover: current n=20 false, n=19 true',
+      'pass', v->>'past' = 'false' and public.ripples_og_data(19)->>'past' = 'true', 'detail', null);
     v := public.ripples_health();
     res := res || jsonb_build_object('chk', 'health: latest_n 20, stale false', 'pass', v->>'latest_n' = '20' and v->>'stale' = 'false', 'detail', v::text);
     v := public.ripples_board(null);
@@ -395,14 +471,12 @@ begin
     end;
     res := res || jsonb_build_object('chk', 'submit_play on a future puzzle raises closed', 'pass', ok, 'detail', msg);
     v := public.ripples_submit_call('lifecycleClient_000001', 20, 'Q999990041');
-    res := res || jsonb_build_object('chk', 'submit_call on today''s puzzle ok', 'pass', v->>'ok' = 'true', 'detail', v::text);
-    if (now() at time zone 'utc')::date > cur then
-      begin
-        perform public.ripples_submit_call('lifecycleClient_000001', 19, 'Q999990041'); ok := false; msg := 'no error';
-      exception when others then ok := (sqlerrm = 'closed'); msg := sqlerrm;
-      end;
-      res := res || jsonb_build_object('chk', 'submit_call after the window start (+1 day grace) raises closed', 'pass', ok, 'detail', msg);
-    end if;
+    res := res || jsonb_build_object('chk', 'submit_call while UTC date = window_start ok', 'pass', v->>'ok' = 'true', 'detail', v::text);
+    begin
+      perform public.ripples_submit_call('lifecycleClient_000002', 19, 'Q999990041'); ok := false; msg := 'no error';
+    exception when others then ok := (sqlerrm = 'closed'); msg := sqlerrm;
+    end;
+    res := res || jsonb_build_object('chk', 'submit_call once the UTC date is past window_start raises closed (no day-1 look-ahead)', 'pass', ok, 'detail', msg);
 
     raise exception 'rollback_lifecycle';
   exception when others then
@@ -415,7 +489,7 @@ begin
   insert into _smoke(chk, pass, detail) values ('lifecycle rolled back (epoch restored, no synthetic rows, no ledger rows)',
     ripples._epoch() = date '2026-09-25'
     and not exists (select 1 from ripples.puzzles where n in (10, 18, 19, 20, 21) and payload->>'seed' like '%Test Seed Article%')
-    and not exists (select 1 from ripples.ledger l join ripples.puzzles p on p.n = l.n where p.kind = 'fixture')
+    and not exists (select 1 from ripples.ledger where n in (10, 19, 20))
     and not exists (select 1 from ripples.copy where text like 'TEST ai %' or text = 'TEST brief intro'), null);
 end
 $life$;

@@ -557,8 +557,11 @@ declare nn int := p_n; r ripples.puzzles; track jsonb; csv jsonb := '[]'::jsonb;
 begin
   perform ripples._purge_salts();
   if nn is null then
+    -- newest live puzzle dated <= the UTC date as of 07:20 (the veto deadline): the 07:25 run pre-stages today's
+    -- puzzle, but an earlier call can never publish (and so ledger / lock against a veto) a puzzle still in review
     select n into nn from ripples.puzzles
-     where kind = 'live' and status in ('built', 'published') and puzzle_date <= (now() at time zone 'utc')::date
+     where kind = 'live' and status in ('built', 'published')
+       and puzzle_date <= ((now() at time zone 'utc') - interval '7 hours 20 minutes')::date
      order by n desc limit 1;
   end if;
   if nn is not null then

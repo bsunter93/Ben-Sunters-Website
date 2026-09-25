@@ -457,16 +457,18 @@ begin
      where status = 'queued' and not_before <= now() and fn is not null and fn = any(v_live) and kind = any(v_kinds)
      order by priority, id limit 1 for update skip locked;
     exit when not found;
-    if j.kind = 'backfill' and j.batch_key is not null then
+    if j.kind in ('backfill','resolve') and j.batch_key is not null then
+      -- merge queued jobs with the same fn + batch_key: their 'keys' (backfill) or 'items' (resolve) arrays are concatenated
       with b as (
         select id, payload from ripples.att_jobs
          where (id = j.id) or (status = 'queued' and not_before <= now() and fn = j.fn and batch_key = j.batch_key)
          order by (id = j.id) desc, priority, id limit v_batch for update skip locked)
-      select array_agg(b.id), coalesce(jsonb_agg(k.v), '[]'::jsonb)
+      select array_agg(b.id),
+             coalesce((select jsonb_agg(k.v) from b b2, jsonb_array_elements(coalesce(b2.payload->(case when j.kind = 'resolve' then 'items' else 'keys' end), '[]'::jsonb)) k(v)), '[]'::jsonb)
         into v_ids, v_keys
-        from b left join lateral jsonb_array_elements(coalesce(b.payload->'keys', '[]'::jsonb)) k(v) on true;
-      select array_agg(distinct x) into v_ids from unnest(v_ids) x;
-      v_payload := j.payload || jsonb_build_object('keys', v_keys, 'job_id', j.id, 'job_ids', to_jsonb(v_ids));
+        from b;
+      v_payload := j.payload || jsonb_build_object(case when j.kind = 'resolve' then 'items' else 'keys' end, v_keys,
+                                                   'job_id', j.id, 'job_ids', to_jsonb(v_ids));
     else
       v_ids := array[j.id];
       v_payload := j.payload || jsonb_build_object('job_id', j.id, 'job_ids', to_jsonb(v_ids));
