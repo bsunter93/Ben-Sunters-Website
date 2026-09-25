@@ -5,14 +5,15 @@
 //  * every request sends User-Agent (and Api-User-Agent on Wikimedia) "KnockOn/5.0 (https://bensunter.com/ripples/methods/)"
 //  * every Wikimedia request is counted against the job's budget (<=100 per job; the tick also enforces the
 //    ripples.config.wm_daily_cap per as_of through ripples.runs.wm_calls)
-//  * 429/503: AQS (wikimedia.org REST) gets one retry after 5 s; everything else stops the source for this run
-//    (no retry within the run). A stopped job reports failure and is requeued by SQL after a pause.
+//  * 429/503: AQS (wikimedia.org REST) gets one retry (after Retry-After when <= 20 s, else 5 s); everything else
+//    stops the source for this run (no retry within the run). A stopped job reports failure and SQL requeues it
+//    after the server's Retry-After (ripples_job_done).
 //  * MediaWiki Action API (/w/api.php): maxlag=5, one request at a time with a gap (SPACING), a maxlag or
 //    ratelimited error stops the host for the run. AQS is paced at <= 5 requests/s (see SPACING).
 //  * auth: x-collector-token checked with public.check_collector_token (verify_jwt is off by design).
 import { createClient } from "jsr:@supabase/supabase-js@2";
 
-export const KN_VERSION = "2026-09-25.4";
+export const KN_VERSION = "2026-09-25.5";
 export const db = createClient(Deno.env.get("SUPABASE_URL")!, Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!, {
   auth: { persistSession: false },
 });
@@ -66,7 +67,8 @@ export async function kfetch(b: Budget, url: string, init: RequestInit = {}, opt
     if (res.status === 429 || res.status === 503) {
       const ra = res.headers.get("retry-after");
       await res.body?.cancel();
-      if (opts.aqs && attempt === 0 && b.wm < b.max) { await sleep(5000); continue; }
+      // AQS: one retry, after the server's Retry-After when it is short (<= 20 s), else after 5 s
+      if (opts.aqs && attempt === 0 && b.wm < b.max) { await sleep(ra && Number(ra) > 0 && Number(ra) <= 20 ? Number(ra) * 1000 : 5000); continue; }
       const why = `${u.hostname}${api ? " api" : ""} ${res.status}${ra ? ` retry-after=${ra}` : ""}`;
       if (wm) b.stopped = why;
       throw new Stop(why);

@@ -1,0 +1,113 @@
+# Knock-On v5 pipeline (W2): collect, resolve, expand, test, build
+
+Automatic discovery for the daily puzzle (SPEC §5). Supabase project `kffkasnzqcddpystszch`. Everything writes to
+the W1 contract shapes (`../contract/*.schema.json`) and never touches v4 objects.
+
+## Layout
+
+| Path | What |
+|---|---|
+| `functions/_shared/kn.ts` | shared edge runtime (auth, UA, pacing, budgets, 429 handling, AQS series, SPEC §5.2 statistics, Wikidata facts). Deployed as a byte-identical `kn.ts` copy next to each `index.ts` |
+| `functions/ripples-collect/index.ts` | `{"mode":"trends"}` Google Trends RSS (8 geos, serial 1/s) + Bluesky `getTrends`; `{"mode":"daily"}` top-per-country (10) + featured feed; `{"mode":"date"}` backfill (adds per-project top for 10 languages) |
+| `functions/ripples-resolve/index.ts` | titles/queries -> enwiki title, QID, short description, P31, P570, sitelinks; unknown classes -> labels + P279 |
+| `functions/ripples-expand/index.ts` | job kinds `screen`, `expand`, `history`, `split`, `refresh` (the statistics run here) |
+| `sql/01..09_*.sql` | the migrations in the order they were applied. Replaying 01..09 on a W1 database reproduces the deployed W2 functions (verified by md5 of `pg_proc.prosrc`, see the W2 report) |
+| `sql/10_seed_data.sql` | category-map seed (231 verified classes), blocklist class QIDs, config keys |
+| `sql/11_cron.sql` | the three pg_cron jobs |
+| `sql/test_acceptance.sql` | the acceptance queries |
+| `category-map.json` | the seeded class -> category / safety-flag map (labels fetched from Wikidata) |
+
+All edge functions are deployed with `verify_jwt: false` and check `x-collector-token` against the vault secret
+through `public.check_collector_token`. SQL calls them only through `public.call_collector(fn, payload)`.
+
+## Flow (one `ripples.runs` row per `as_of`)
+
+```
+collect_daily -> resolve -> screen -> seeds -> expand -> build -> done | delayed | failed
+```
+
+* **collect_daily** (live: from 06:10 UTC) one `collect` job: top-per-country for `as_of` (and, for practice/backfill
+  runs, per-project top for 10 languages) + `feed/featured` for `as_of` and `as_of+1`. The Google Trends "Trending
+  Now" internal endpoint is never called (DEMARCATION §7.2 graded it RED; RSS is the official path).
+* **resolve** (live: from 06:25, after v4's `wiki-top-daily`) enqueues `resolve` jobs for every unresolved title in
+  the seed sources of `[as_of-2, as_of+1]` (top-per-country ranks <= 100, en <= 200; per-project top <= 60;
+  featured; `public.wiki_top`) and every Google Trends query.
+* **screen** 130-day series for the top 240 seed-source articles (by number of sources, then rank) plus up to 80
+  decoy-pool titles (calm candidates of the last 7 days, else steady en top-per-country ranks 101-200): onset test and
+  the 14-day calm check.
+* **seeds** `ripples_pick_seeds(as_of)`: 12 real seeds (onset, peak multiple >= 3, safe, not used in 30 days, not a
+  Main-Page-only spike) and up to 8 decoy epicenters (|z| < 1 over the last 14 days, matched on baseline-median decile
+  and category). Depth-1 `expand` jobs for both roles (identical code), one `history` job.
+* **expand** jobs; after every finished depth the tick enqueues `split` checks for pre-eligible hops and a beam of 2
+  deeper parents per root (real only, depth <= 4).
+* **build** (live: when the queue is empty and it is >= 06:58, or at the 07:20 deadline) `ripples_update_fluke`,
+  `ripples_build_puzzle`, `ripples_resolve_calls(current_date)`.
+
+Dispatch: `ripples._dispatch` runs **one job at a time** (`config.pipeline.max_running_total = 1`) and chains the
+next job from `ripples_job_done`, so the pipeline is serial; `ripples_tick` (cron) is the watchdog: it advances
+stages, requeues jobs stuck in `running` for > 5 minutes (at most 3 attempts) and dispatches up to 6 per call.
+Every job gets a Wikimedia budget of <= 100 requests, capped so that `runs.wm_calls` never passes
+`config.wm_daily_cap` (6,000); calls are counted from `ripples_job_done`.
+
+## Politeness (SPEC §5.1, DEMARCATION §7)
+
+* `User-Agent: KnockOn/5.0 (https://bensunter.com/ripples/methods/)` (+ `Api-User-Agent`) on every request.
+* AQS (wikimedia.org REST): <= 5 requests/s (`aqs_spacing_ms` 200), one retry after 5 s on 429/503, then the job
+  stops and is requeued 3 minutes later. Action API (`/w/api.php`, Wikipedia and Wikidata): `maxlag=5`, one request
+  at a time with a 600 ms gap (`api_spacing_ms`, floor 300); any 429/503/maxlag stops the job (no retry in the run).
+* The shared Supabase egress IP was rate-limited by AQS and the Action API when two jobs overlapped (first test run);
+  with one job at a time and the spacing above the second test run had no 429s.
+
+## Statistics (SPEC §5.2, in `kn.ts`)
+
+`x = ln(1+views)`; baseline for day t = median/MAD of `x[t-111..t-21]`, `s = max(0.1, 1.4826·MAD)`. Seed onset = first
+day in `[as_of-10, as_of]` with z >= 3 (baseline for that day) in a run of z >= 3 days reaching z >= 5. Hop test at the
+parent onset `tp`: S = max z over `[tp, min(tp+3, as_of)]`, onset = first z >= 3 day in `[tp-7, tp+3]`,
+`multiple = max views / e^m - 1`, `pass_raw = S >= 3 and multiple >= 1.5 and lag >= 0`; time-shift placebo at
+`tp - 7k` (k >= 3 while the fake baseline fits in the 400-day series, 38 placebos typically),
+`p_time = (1 + #{S' >= S}) / (1 + K)`; calm = max |z| over `[tp-7, as_of]` < 1 and multiple < 1.25.
+Split: multiples of the desktop series and of (all-access - desktop). Fluke rate per S-bin pooled over 90 days
+(`fluke_rates`: `d_*` = the day's own counts, the rest pooled); "warming up" while `decoy_tested < 500`.
+
+## Puzzle composition (`ripples_build_puzzle`)
+
+Answer-eligible = pass_raw, p_time <= 0.05, f <= 0.10 (or warming), split_ok, not a Main Page feature within ±1 day,
+linked, safe (no sensitive topics), no shared trigger at depth >= 2; usable as a round only with 3 calm, linked,
+safe siblings (median 0.5-2x the answer's, different title stem, >= 2 of 3 in the answer's category). Chains are
+ranked by length, Σ log10(1/f) (p_time while warming), category jumps, biggest-in-days, onset recency.
+>= 3-hop chain -> the chain (<= 4 rounds); 2-hop -> + 1-2 fresh ripples; else 3-4 fresh ripples; else the reserve
+bank (unused compositions from the last 14 days, `from_date` set); else `delayed` (no puzzle row).
+Template copy (`source = 'template'`) is written to `ripples.copy`; W1's overlay lets W6's AI copy replace it.
+All `cross` arrays are `[]` (the attention layer fills them later).
+
+Call It: 4 calm, linked, safe depth-1 neighbours of round 1's seed with median >= 2,000/day, not options, <= 2 per
+category; `model_p = config.callit_climatology (0.08) × config.callit_cs_mult[top5|top20|none] (1.0)`; window
+`puzzle_date + config.callit_window_offset (0)` .. +6.
+
+## Running a past day (W3 backfill, tests)
+
+```sql
+select public.ripples_run_day('2026-09-24', 'practice');          -- returns at once
+select stage, wm_calls, errors, detail from ripples.runs where as_of = '2026-09-24';   -- poll
+select public.ripples_run_day('2026-09-24', 'practice', true);    -- p_reset: wipe that day's pipeline rows and rerun
+```
+`ripples_run_day` registers the run and starts the transient pg_cron job `ripples-run-day` (every 20 s,
+`select public.ripples_tick()`), which unschedules itself once no practice run is active. Practice n =
+`as_of - epoch` (negative); dates on or after the epoch are rejected. Run backfill days one at a time.
+
+## Cron
+
+| job | schedule | command |
+|---|---|---|
+| `ripples-trends-hourly` | `7 * * * *` | `select public.call_collector('ripples-collect', '{"mode":"trends"}'::jsonb)` |
+| `ripples-tick` | `* 6-8 * * *` | `select public.ripples_tick()` |
+| `ripples-retention` | `50 3 * * *` | `select public.ripples_retention()` |
+| `ripples-run-day` | `20 seconds` (transient) | `select public.ripples_tick()` |
+
+## Service functions (EXECUTE revoked from public, anon, authenticated; granted to service_role)
+
+`ripples_tick()`, `ripples_pick_seeds(date)`, `ripples_update_fluke(date)`, `ripples_build_puzzle(date, text)`,
+`ripples_resolve_calls(date)`, `ripples_retention()`, `ripples_run_day(date, text, boolean)`,
+`ripples_ingest_candidates(bigint, jsonb)`, `ripples_ingest_seed_history(bigint, jsonb)`,
+`ripples_ingest_articles(jsonb)`, `ripples_ingest_trends(jsonb)`, `ripples_job_done(bigint, boolean, text, int, jsonb)`.
+`ripples._grant_audit()` returns zero rows.

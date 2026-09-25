@@ -205,61 +205,84 @@ const EWMA_ALPHA = 0.05;
 const EWMA_KEEP = 4000;
 const CAND_WARMUP_FILES = 4;
 
-async function gkg(run: Run) {
-  const SRC = "gdelt.gkg";
-  const HOST = "data.gdeltproject.org";
-  const t0 = Date.now();
-  const ms: Record<string, number> = {};
-  const st = ((await stateGet("gkg.state")) ?? {}) as GkgState;
-  let file: string | null = typeof run.params.file === "string" && /^\d{14}$/.test(run.params.file) ? run.params.file : null;
-  let viaState = false;
-  if (!file && st.last_file) {
-    // catch-up: the next file after the saved one, if GDELT has certainly published it (> 20 min old) and the gap
-    // is short enough to be worth closing (< 6 h); otherwise take the latest file from lastupdate.txt
-    const nextMs = gkgTsMs(st.last_file) + 15 * 60e3;
-    const age = Date.now() - nextMs;
-    if (age > 20 * 60e3 && age < 6 * 3600e3) { file = gkgName(nextMs); viaState = true; }
-  }
-  if (!file) {
-    const r = await politeFetch(run, GKG_BASE + "lastupdate.txt", { source: SRC, timeoutMs: 15_000 });
-    if (!r) { run.source({ source: SRC, status: failStatus(run, HOST), note: "lastupdate.txt not fetched" }); return; }
-    if (!r.ok) { await r.body?.cancel(); run.source({ source: SRC, status: "http_error", note: `lastupdate ${r.status}` }); return; }
-    const txt = await r.text();
-    const m = txt.match(/(\d{14})\.gkg\.csv\.zip/);
-    if (!m) { run.errors.push("lastupdate.txt: no gkg file"); run.source({ source: SRC, status: "http_error" }); return; }
-    file = m[1];
-    if (st.last_file && file <= st.last_file) {
-      run.extra.file = file;
-      run.source({ source: SRC, status: "ok", keys: 0, rows: 0, ms: Date.now() - t0, note: "no new file" });
-      return;
-    }
-    if (st.last_file && gkgTsMs(file) - gkgTsMs(st.last_file) > 15 * 60e3) {
-      run.extra.gap_files = Math.round((gkgTsMs(file) - gkgTsMs(st.last_file)) / (15 * 60e3)) - 1;
-    }
-  }
-  run.extra.file = file;
-  ms.lookup = Date.now() - t0;
+interface GkgCtx { terms: Term[]; matcher: Matcher; themeIdx: Map<string, number>; latest: string; forced: boolean }
+interface GkgOut { file: string; status: "ok" | "pending" | "failed" | "partial"; note?: string; [k: string]: unknown }
+const GKG_SRC = "gdelt.gkg";
+const GKG_HOST = "data.gdeltproject.org";
+const GKG_MAX_BEHIND_MS = 6 * 3600e3;   // further behind than this: jump to the latest file (the gap is recorded)
+const GKG_MISSING_AFTER_MS = 3600e3;    // a listed-but-404 file older than this vs latest is treated as missing upstream
 
-  const terms = await loadTerms(run, SRC);
-  const matcher = new Matcher(terms);
+async function gkg(run: Run) {
+  const t0 = Date.now();
+  const forced = typeof run.params.file === "string" && /^\d{14}$/.test(run.params.file) ? run.params.file as string : null;
+  // catch-up: up to 2 files per run (3 requests with lastupdate.txt) until the state reaches the latest file
+  const maxFiles = forced ? 1 : Math.max(1, Math.min(2, Number(run.params.max_files ?? 2)));
+  let latest = forced;
+  if (!forced) {
+    // lastupdate.txt is the authority on what is published (file names run ahead of the wall clock)
+    const r = await politeFetch(run, GKG_BASE + "lastupdate.txt", { source: GKG_SRC, timeoutMs: 15_000 });
+    if (!r) { run.source({ source: GKG_SRC, status: failStatus(run, GKG_HOST), note: "lastupdate.txt not fetched" }); return; }
+    if (!r.ok) { await r.body?.cancel(); run.source({ source: GKG_SRC, status: "http_error", note: `lastupdate ${r.status}` }); return; }
+    const m = (await r.text()).match(/(\d{14})\.gkg\.csv\.zip/);
+    if (!m) { run.errors.push("lastupdate.txt: no gkg file"); run.source({ source: GKG_SRC, status: "http_error" }); return; }
+    latest = m[1];
+  }
+  run.extra.latest = latest;
+  const terms = await loadTerms(run, GKG_SRC);
   const themeIdx = new Map<string, number>();
   terms.forEach((t, i) => { if (t.key_type === "theme") themeIdx.set(t.key.toUpperCase(), i); });
-  ms.terms = Date.now() - t0 - ms.lookup;
-
-  // ---- download (one request)
-  const td = Date.now();
-  const res = await politeFetch(run, `${GKG_BASE}${file}.gkg.csv.zip`, { source: SRC, timeoutMs: 60_000 });
-  if (!res) { run.source({ source: SRC, status: failStatus(run, HOST), note: `file ${file} not fetched` }); return; }
-  if (res.status === 404 && viaState) {
-    await res.body?.cancel();
-    await stateSet("gkg.state", { ...st, last_file: file, gaps: (st.gaps ?? 0) + 1 });
-    run.source({ source: SRC, status: "ok", rows: 0, ms: Date.now() - t0, note: `file ${file} missing upstream (404); skipped` });
-    return;
+  const ctx: GkgCtx = { terms, matcher: new Matcher(terms), themeIdx, latest: latest!, forced: forced !== null };
+  const outs: GkgOut[] = [];
+  for (let k = 0; k < maxFiles; k++) {
+    const st = ((await stateGet("gkg.state")) ?? {}) as GkgState;
+    let file: string;
+    if (forced) file = forced;
+    else if (!st.last_file || gkgTsMs(ctx.latest) - gkgTsMs(st.last_file) > GKG_MAX_BEHIND_MS) {
+      if (st.last_file) run.extra.gap_files = Math.round((gkgTsMs(ctx.latest) - gkgTsMs(st.last_file)) / (15 * 60e3)) - 1;
+      file = ctx.latest;
+    } else {
+      const next = gkgName(gkgTsMs(st.last_file) + 15 * 60e3);
+      if (next > ctx.latest) { if (k === 0) run.extra.note = "no new file"; break; }
+      file = next;
+    }
+    if (k > 0 && run.outOfTime(40_000)) { run.partial = true; break; }
+    const out = await gkgFile(run, file, ctx, st);
+    outs.push(out);
+    if (out.status !== "ok" || forced) break;
   }
-  if (!res.ok) { await res.body?.cancel(); run.source({ source: SRC, status: "http_error", note: `file ${file}: ${res.status}` }); return; }
+  run.extra.files = outs;
+  const done = outs.filter((o) => o.status === "ok");
+  run.extra.file = outs.length ? outs[outs.length - 1].file : null;
+  const st2 = ((await stateGet("gkg.state")) ?? {}) as GkgState;
+  if (!forced && st2.last_file && st2.last_file < ctx.latest) { run.partial = true; run.nextCursor = { gkg_behind_files: Math.round((gkgTsMs(ctx.latest) - gkgTsMs(st2.last_file)) / (15 * 60e3)) }; }
+  const bad = outs.find((o) => o.status === "failed");
+  run.source({
+    source: GKG_SRC, status: bad ? failStatus(run, GKG_HOST) : outs.some((o) => o.status === "partial") ? "partial" : "ok",
+    keys: terms.length, rows: done.reduce((a, o) => a + Number(o.rows ?? 0), 0), ms: Date.now() - t0,
+    note: outs.map((o) => `${o.file}:${o.status}${o.note ? " " + o.note : ""}`).join("; ") || String(run.extra.note ?? ""),
+  });
+}
+
+async function gkgFile(run: Run, file: string, ctx: GkgCtx, st: GkgState): Promise<GkgOut> {
+  const SRC = GKG_SRC;
+  const { terms, matcher, themeIdx } = ctx;
+  const t0 = Date.now();
+  const ms: Record<string, number> = {};
+  // ---- download (one request)
+  const res = await politeFetch(run, `${GKG_BASE}${file}.gkg.csv.zip`, { source: SRC, timeoutMs: 60_000 });
+  if (!res) return { file, status: "failed", note: "not fetched" };
+  if (res.status === 404) {
+    await res.body?.cancel();
+    if (!ctx.forced && gkgTsMs(ctx.latest) - gkgTsMs(file) >= GKG_MISSING_AFTER_MS) {
+      await stateSet("gkg.state", { ...st, last_file: file, gaps: (st.gaps ?? 0) + 1 });
+      return { file, status: "ok", note: "missing upstream (404), skipped", rows: 0 };
+    }
+    return { file, status: "pending", note: "listed but not yet downloadable (404); retried next run" };
+  }
+  if (!res.ok) { await res.body?.cancel(); return { file, status: "failed", note: `http ${res.status}` }; }
   const zip = new Uint8Array(await res.arrayBuffer());
-  ms.download = Date.now() - td;
-  run.extra.zip_bytes = zip.length;
+  ms.download = Date.now() - t0;
+  const zipBytes = zip.length;
 
   // ---- parse
   const tp = Date.now();
@@ -334,16 +357,10 @@ async function gkg(run: Run) {
     }
   }, () => run.outOfTime(20_000));
   ms.parse = Date.now() - tp;
-  run.extra.articles = N;
-  run.extra.entities = entDocs.size;
-  run.extra.text_chars = bytes;
-  if (bad) run.extra.bad_lines = bad;
   if (!ok) {
     // never write a partial file: counts would be wrong; the next run retries this file (state not advanced)
     run.partial = true;
-    run.source({ source: SRC, status: "partial", ms: Date.now() - t0, note: `out of time after ${N} docs; nothing written` });
-    run.extra.ms = ms;
-    return;
+    return { file, status: "partial", note: `out of time after ${N} docs; nothing written`, ms };
   }
 
   // ---- write observations (daily for every watched term incl. zeros; hourly for active topics' hits)
@@ -363,7 +380,6 @@ async function gkg(run: Run) {
   rows.push({ source: SRC, key: "__total__", day, value: N, members: [...totalCC] });
   rows.push({ source: SRC, key: "__total__", ts: hour, value: N, members: [...totalCC] });
   const r = await accum(run, `gkg:${file}`, rows);
-  run.extra.terms_hit = hit;
 
   // ---- co-mention edges (at least one side active; top 25 per term with >= 2 shared documents)
   const byTerm = new Map<number, Array<[string, number]>>();
@@ -386,7 +402,6 @@ async function gkg(run: Run) {
     }
   }
   await edgesAccum(run, `edges:gkg:${file}`, edges);
-  run.extra.pairs = edges.length;
 
   // ---- discovery: surging entities vs an EWMA baseline of documents per file
   const ew = ((await stateGet("gkg.ewma")) ?? { n_files: 0, b: {} }) as Ewma;
@@ -407,7 +422,6 @@ async function gkg(run: Run) {
     meta: { method: "gkg_burst_ewma", n_docs: x.c, k: entKind.get(x.n) ?? "name", q: Math.round(x.z * 100) / 100 },
   }));
   await candidatesMerge(run, candRows);
-  run.extra.candidates = candRows.length;
 
   // EWMA update (only after a complete, newly written file)
   if (!run.dryRun && !(r?.dup)) {
@@ -416,13 +430,15 @@ async function gkg(run: Run) {
     for (const [n, c] of entDocs) if (c >= 2 || nb[n] !== undefined) nb[n] = (nb[n] ?? 0) + EWMA_ALPHA * c;
     const keep = Object.entries(nb).filter(([, b]) => b >= 0.05).sort((a, b) => b[1] - a[1]).slice(0, EWMA_KEEP);
     await stateSet("gkg.ewma", { n_files: ew.n_files + 1, b: Object.fromEntries(keep.map(([n, b]) => [n, Math.round(b * 1000) / 1000])) });
-    if (!st.last_file || file > st.last_file) await stateSet("gkg.state", { ...st, last_file: file, files: (st.files ?? 0) + 1 });
+  }
+  if (!run.dryRun && !ctx.forced && (!st.last_file || file > st.last_file)) {
+    await stateSet("gkg.state", { ...st, last_file: file, files: (st.files ?? 0) + 1 });
   }
   ms.write = Date.now() - tw;
   ms.total = Date.now() - t0;
-  run.extra.ms = ms;
-  run.source({ source: SRC, status: "ok", keys: nT, rows: Number(r?.rows ?? 0), ms: ms.total,
-    note: r?.dup ? `file ${file} already counted (batch dup)` : null });
+  return { file, status: "ok", note: r?.dup ? "already counted (batch dup)" : undefined, rows: Number(r?.rows ?? 0),
+    zip_bytes: zipBytes, articles: N, entities: entDocs.size, text_chars: bytes, bad_lines: bad, terms_hit: hit,
+    pairs: edges.length, candidates: candRows.length, ms };
 }
 
 // ------------------------------------------------------------ mode: thirdeye

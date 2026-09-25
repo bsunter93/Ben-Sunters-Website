@@ -372,7 +372,7 @@ begin
 
   -- 5. reserve bank: newest unused valid composition from the last 14 days (its real date is shown as from_date)
   select c.* into resv from ripples.chains c
-   where c.used_n is null and c.kind = p_kind and c.as_of between p_as_of - 14 and p_as_of - 1 and jsonb_array_length(c.rounds) >= 3
+   where c.used_n is null and (c.kind = p_kind or p_kind = 'live') and c.as_of between p_as_of - 14 and p_as_of - 1 and jsonb_array_length(c.rounds) >= 3
      and not (c.root_qid = any(excl))
      and not exists (select 1 from jsonb_array_elements(c.rounds) r
                       where not exists (select 1 from ripples.candidates x where x.as_of = c.as_of and x.role = 'real'

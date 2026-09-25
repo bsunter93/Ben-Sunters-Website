@@ -95,9 +95,21 @@ Deno.serve(async (req: Request) => {
     if (bundle.board) ups.push({ path: `${P}board/${n}.json`, body: json(bundle.board), type: "application/json", cache: 3600 });
   }
   // rewrite the Call It files of the last 8 published live puzzles (outcomes resolve on day +8)
+  const cdone = new Set<number>(n !== null ? [n] : []);
+  let top: number | null = kind === "live" ? n : null;
   for (const rc of bundle.recent_callit ?? []) {
     if (rc && Number.isInteger(rc.n) && rc.callit && rc.n !== n) {
       ups.push({ path: `${P}callit/${rc.n}.json`, body: json(rc.callit), type: "application/json", cache: 300 });
+    }
+    if (rc && Number.isInteger(rc.n)) { cdone.add(rc.n); if (top === null || rc.n > top) top = rc.n; }
+  }
+  // bundle.recent_callit covers n..n-7. Also rewrite n-8 and n-9 (public ripples_callit: visible puzzles only), so a
+  // resolution that lands after the 08:30 run, or is retried the next day, still reaches Storage.
+  if (top !== null) {
+    for (const k of [top - 8, top - 9]) {
+      if (k <= 0 || cdone.has(k)) continue;
+      const { data: c, error: ce } = await db.rpc("ripples_callit", { p_n: k });
+      if (!ce && c) ups.push({ path: `${P}callit/${k}.json`, body: json(c), type: "application/json", cache: 300 });
     }
   }
   // board/latest.json = the latest VISIBLE live board (same rule as latest.json); never a fixture/practice board

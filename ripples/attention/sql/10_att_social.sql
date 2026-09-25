@@ -148,6 +148,9 @@ begin
       insert into ripples.att_social_tags(day, source, tag, n, reg)
       select t.day, p_tags->>'source', t.tag, t.n, t.reg from t
       join ripples.att_sources s on s.source = p_tags->>'source' and s.enabled
+      -- size guard: a tag seen once in a run is only added to a row that already exists
+      where t.n >= 2 or exists (select 1 from ripples.att_social_tags x
+                                where x.day = t.day and x.source = p_tags->>'source' and x.tag = t.tag)
       on conflict (day, source, tag) do update
         set n = ripples.att_social_tags.n + excluded.n,
             reg = ripples._att_hll_merge(ripples.att_social_tags.reg, excluded.reg)
@@ -163,6 +166,8 @@ begin
    where (bucket like 'h:%' and updated_at < now() - interval '12 hours')
       or updated_at < now() - interval '3 days';
   delete from ripples.att_social_tags where day < (now() at time zone 'utc')::date - 8;
+  -- completed days (older than the 36 h Jetstream buffer) keep only tags with >= 5 posts (baseline for burst z)
+  delete from ripples.att_social_tags where day < (now() at time zone 'utc')::date - 2 and n < 5;
 
   drop table if exists pg_temp._sa;
   drop table if exists pg_temp._sb;
@@ -172,12 +177,12 @@ end $$;
 -- ---------------------------------------------------------------- hashtag burst candidates (§4 bsky.jet row, §6.5)
 -- Burst z of today's (coverage-projected) count against the trailing 7 days (robust: median/MAD of ln(1+n), Poisson
 -- floor), distinct authors >= p_min_distinct; evidence = clamp(z/8, 0, 1). Needs >= 3 baseline days with >= 50%
--- stream coverage; before that (warm-up) the top tags by distinct authors get rank evidence x 0.5 (meta.method=rank_warmup).
+-- stream coverage; before that (warm-up) no candidates are written.
 create or replace function ripples.att_social_tag_cands(p_source text, p_day date, p_limit int default 100,
                                                        p_min_distinct int default 50)
 returns jsonb
 language plpgsql security definer set search_path = '' as $$
-declare v_cov double precision; v_base int; v_rows jsonb; v_res jsonb; v_method text;
+declare v_cov double precision; v_base int; v_rows jsonb; v_res jsonb;
 begin
   select o.value into v_cov
   from ripples.att_series s join ripples.attention_obs o on o.series_id = s.series_id
@@ -189,60 +194,45 @@ begin
   from ripples.att_series s join ripples.attention_obs o on o.series_id = s.series_id
   where s.source = p_source and s.metric = 's' and s.key = '__coverage__'
     and o.day between p_day - 7 and p_day - 1 and o.value >= 43200;
-
-  if v_base >= 3 then
-    v_method := 'burst_z';
-    with today as (
-      select t.tag, t.n, t.n * 86400.0 / v_cov as n_proj, ripples._att_hll_est(t.reg) as dist
-      from ripples.att_social_tags t
-      where t.day = p_day and t.source = p_source
-      order by t.n desc limit 3000),
-    okdays as (
-      select o.day from ripples.att_series s join ripples.attention_obs o on o.series_id = s.series_id
-      where s.source = p_source and s.metric = 's' and s.key = '__coverage__'
-        and o.day between p_day - 7 and p_day - 1 and o.value >= 43200),
-    base as (
-      select td.tag, od.day, coalesce(b.n, 0) * 86400.0 / greatest(c.value, 1) as n
-      from today td cross join okdays od
-      join ripples.att_series cs on cs.source = p_source and cs.metric = 's' and cs.key = '__coverage__'
-      join ripples.attention_obs c on c.series_id = cs.series_id and c.day = od.day
-      left join ripples.att_social_tags b on b.source = p_source and b.day = od.day and b.tag = td.tag),
-    stats as (
-      select tag, percentile_cont(0.5) within group (order by ln(1 + n)) as m,
-             percentile_cont(0.5) within group (order by n) as lam
-      from base group by tag),
-    mad as (
-      select b.tag, percentile_cont(0.5) within group (order by abs(ln(1 + b.n) - s.m)) as mad
-      from base b join stats s using (tag) group by b.tag),
-    z as (
-      select td.tag, td.n, td.dist, (ln(1 + td.n_proj) - s.m)
-               / greatest(1.4826 * md.mad, 1 / sqrt(s.lam + 1), 0.02) as z
-      from today td join stats s using (tag) join mad md using (tag)
-      where td.dist >= p_min_distinct),
-    top as (select *, row_number() over (order by z desc) as rk from z where z >= 3 order by z desc limit p_limit)
-    select coalesce(jsonb_agg(jsonb_build_object(
-             'day', p_day, 'source', p_source, 'geo', 'ALL', 'label', '#' || tag, 'rank', rk, 'value', n,
-             'evidence', least(1, greatest(0, z / 8)),
-             'meta', jsonb_build_object('method', 'burst_z', 'k', round(z::numeric, 2), 'n_posts', n,
-                                        'coverage', round((v_cov / 86400)::numeric, 3)))), '[]'::jsonb)
-      into v_rows from top;
-  else
-    v_method := 'rank_warmup';
-    with today as (
-      select t.tag, t.n, ripples._att_hll_est(t.reg) as dist
-      from ripples.att_social_tags t where t.day = p_day and t.source = p_source
-      order by t.n desc limit 3000),
-    top as (select *, row_number() over (order by dist desc, n desc) as rk from today
-            where dist >= p_min_distinct order by dist desc, n desc limit p_limit)
-    select coalesce(jsonb_agg(jsonb_build_object(
-             'day', p_day, 'source', p_source, 'geo', 'ALL', 'label', '#' || tag, 'rank', rk, 'value', n,
-             'evidence', 0.5 * (1 - ln(rk) / ln(p_limit + 1)),
-             'meta', jsonb_build_object('method', 'rank_warmup', 'rank', rk, 'n_posts', n,
-                                        'coverage', round((v_cov / 86400)::numeric, 3)))), '[]'::jsonb)
-      into v_rows from top;
+  -- warm-up: without >= 3 half-covered baseline days a burst cannot be told from an evergreen tag (#art, #news),
+  -- so no candidates are written (§6.5 burst evidence only)
+  if v_base < 3 then
+    return jsonb_build_object('rows', 0, 'reason', 'warming_up', 'baseline_days', v_base, 'coverage_s', v_cov);
   end if;
+  with today as (
+    select t.tag, t.n, t.n * 86400.0 / v_cov as n_proj, ripples._att_hll_est(t.reg) as dist
+    from ripples.att_social_tags t
+    where t.day = p_day and t.source = p_source
+    order by t.n desc limit 3000),
+  okdays as (
+    select o.day, o.value as cov from ripples.att_series s join ripples.attention_obs o on o.series_id = s.series_id
+    where s.source = p_source and s.metric = 's' and s.key = '__coverage__'
+      and o.day between p_day - 7 and p_day - 1 and o.value >= 43200),
+  base as (
+    select td.tag, od.day, coalesce(b.n, 0) * 86400.0 / greatest(od.cov, 1) as n
+    from today td cross join okdays od
+    left join ripples.att_social_tags b on b.source = p_source and b.day = od.day and b.tag = td.tag),
+  stats as (
+    select tag, percentile_cont(0.5) within group (order by ln(1 + n)) as m,
+           percentile_cont(0.5) within group (order by n) as lam
+    from base group by tag),
+  mad as (
+    select b.tag, percentile_cont(0.5) within group (order by abs(ln(1 + b.n) - s.m)) as mad
+    from base b join stats s using (tag) group by b.tag),
+  z as (
+    select td.tag, td.n, td.dist, (ln(1 + td.n_proj) - s.m)
+             / greatest(1.4826 * md.mad, 1 / sqrt(s.lam + 1), 0.02) as z
+    from today td join stats s using (tag) join mad md using (tag)
+    where td.dist >= p_min_distinct),
+  top as (select *, row_number() over (order by z desc) as rk from z where z >= 3 order by z desc limit p_limit)
+  select coalesce(jsonb_agg(jsonb_build_object(
+           'day', p_day, 'source', p_source, 'geo', 'ALL', 'label', '#' || tag, 'rank', rk, 'value', n,
+           'evidence', least(1, greatest(0, z / 8)),
+           'meta', jsonb_build_object('method', 'burst_z', 'k', round(z::numeric, 2), 'n_posts', n,
+                                      'coverage', round((v_cov / 86400)::numeric, 3)))), '[]'::jsonb)
+    into v_rows from top;
   v_res := ripples.att_ingest_candidates(v_rows);
-  return v_res || jsonb_build_object('method', v_method, 'baseline_days', v_base, 'coverage_s', v_cov);
+  return v_res || jsonb_build_object('method', 'burst_z', 'baseline_days', v_base, 'coverage_s', v_cov);
 end $$;
 
 -- ---------------------------------------------------------------- watchlist with activity, category and hashtags
@@ -364,7 +354,9 @@ select cron.schedule('att-mastodon-2', '11 6,18 * * *',
   $$select public.call_collector('att-social', '{"mode":"mastodon","params":{"slice":2}}'::jsonb)$$);
 select cron.schedule('att-mastodon-3', '17 6,18 * * *',
   $$select public.call_collector('att-social', '{"mode":"mastodon","params":{"slice":3}}'::jsonb)$$);
-select cron.schedule('att-hn', '6 0,6,12,18 * * *',
+-- ~125 terms per run (140-request cap at 750 ms); 5 runs cover the ~665 registry terms daily, all outside the
+-- 10:00-23:59 backfill window so the hn.algolia.com lease is free
+select cron.schedule('att-hn', '6 0-8/2 * * *',
   $$select public.call_collector('att-social', '{"mode":"hn"}'::jsonb)$$);
 select cron.schedule('att-stackex', '8 6 * * *',
   $$select public.call_collector('att-social', '{"mode":"stackex"}'::jsonb)$$);

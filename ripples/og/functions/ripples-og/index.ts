@@ -221,6 +221,8 @@ function seedBlock(og: Og, wide: boolean): El[] {
     h("div", { flexDirection: "column", gap: 6, marginTop: 14 }, [
       h("div", { fontSize: 50, fontWeight: 800, color: C.gold, lineHeight: 1.1 }, big),
       sub ? h("div", { fontSize: 27, color: C.cream }, sub) : null,
+      // SPEC 12.2: every number names its baseline window
+      mult(og.seed.multiple) ? h("div", { fontSize: 19, color: C.muted }, "× normal = peak daily Wikipedia views vs the page's own 91-day baseline") : null,
     ].filter(Boolean)),
   ];
 }
@@ -252,26 +254,34 @@ function teaserCard(og: Og, s: number | null): El {
   ]);
 }
 
-function revealCard(og: Og): El {
+// fluke meter per hop (SPEC 12.4): "1 in N chance" from reveal evidence.fluke_1_in, else "warming up"
+type Fluke = { fluke_1_in: number | null; fluke_warming: boolean };
+function flukeLabel(f: Fluke | undefined): string {
+  const k = Number(f?.fluke_1_in);
+  if (f && !f.fluke_warming && Number.isFinite(k) && k >= 1) return `fluke 1 in ${Math.round(k).toLocaleString("en-US")}`;
+  return "fluke: warming up";
+}
+function revealCard(og: Og, fl: Map<number, Fluke>): El {
   const rows: El[] = [];
-  const row = (lead: El | null, emoji: string, title: string, m: string, isSeed: boolean) =>
+  const row = (lead: El | null, emoji: string, title: string, m: string, isSeed: boolean, fluke: string) =>
     h("div", { alignItems: "center", width: "100%", height: 62, borderBottom: `1px solid ${C.line}`, gap: 16 }, [
       h("div", { width: 92, justifyContent: "flex-end", alignItems: "center", gap: 8 }, lead ? [lead] : []),
       h("div", { fontSize: 38 }, emoji || "🔹"),
-      h("div", { fontSize: isSeed ? 36 : 32, fontWeight: 800, color: C.cream, flexGrow: 1, maxWidth: 740 }, title),
-      h("div", { fontSize: 32, fontWeight: 800, color: C.gold, width: 210, justifyContent: "flex-end" }, m ? `${m} normal` : ""),
+      h("div", { fontSize: isSeed ? 34 : 30, fontWeight: 800, color: C.cream, flexGrow: 1, flexShrink: 1, maxWidth: 490 }, title),
+      h("div", { fontSize: 30, fontWeight: 800, color: C.gold, width: 220, flexShrink: 0, justifyContent: "flex-end", whiteSpace: "nowrap" }, m ? `${m} normal` : ""),
+      h("div", { fontSize: 20, color: C.muted, width: 180, flexShrink: 0, justifyContent: "flex-end", whiteSpace: "nowrap" }, fluke),
     ]);
-  rows.push(row(h("div", { fontSize: 16, color: C.muted, letterSpacing: 2, fontWeight: 800 }, "SEED"), og.seed.emoji, clip(og.seed.title, 44), mult(og.seed.multiple), true));
+  rows.push(row(h("div", { fontSize: 16, color: C.muted, letterSpacing: 2, fontWeight: 800 }, "SEED"), og.seed.emoji, clip(og.seed.title, 30), mult(og.seed.multiple), true, ""));
   for (const r of og.rounds.slice(0, 4)) {
     const lead = r.continues
       ? arrow()
       : h("div", { alignItems: "center", gap: 6 }, [h("div", { width: 10, height: 10, borderRadius: 5, background: C.muted }, ""), h("div", { fontSize: 26 }, r.seed_emoji ?? "🔹"), arrow(26)]);
-    rows.push(row(lead, r.emoji, clip(r.title, 44), mult(r.multiple), false));
+    rows.push(row(lead, r.emoji, clip(r.title, 30), mult(r.multiple), false, flukeLabel(fl.get(r.i))));
   }
   return frame(og.kind, [
     header(`KNOCK-ON #${og.n} · THE TRAIL`, fmtDate(og.date), og),
     h("div", { flexDirection: "column", width: "100%" }, rows),
-    h("div", { fontSize: 20, color: C.muted, lineHeight: 1.35, maxWidth: 1080 }, "× normal = peak daily Wikipedia views vs the page's own 91-day baseline. Each answer is linked from its parent page and spiked after or alongside it. A dot marks a fresh ripple from another of the day's trends."),
+    h("div", { fontSize: 20, color: C.muted, lineHeight: 1.35, maxWidth: 1080 }, "× normal = peak daily Wikipedia views vs the page's own 91-day baseline. Each answer is linked from its parent page and spiked after or alongside it. Fluke 1 in N = about 1 in N passes like this are chance. A dot marks a fresh ripple."),
     footer(),
   ]);
 }
@@ -304,7 +314,7 @@ function boardCard(board: any): El {
       ]),
       ...(rows.length ? rows : [h("div", { fontSize: 30, color: C.muted, paddingTop: 20 }, "No board rows today.")]),
     ]),
-    h("div", { fontSize: 20, color: C.muted, lineHeight: 1.35, maxWidth: 1080 }, "Splash = peak daily Wikipedia views vs the page's own 91-day baseline. Wake = how many of 20 linked pages spiked after it."),
+    h("div", { fontSize: 20, color: C.muted, lineHeight: 1.35, maxWidth: 1080 }, "Splash = peak daily Wikipedia views vs the page's own 91-day baseline. Wake = how many of 20 linked pages spiked after or alongside it."),
     footer(),
   ]);
 }
@@ -391,12 +401,29 @@ async function plan(p: Req): Promise<Plan> {
   if (p.n === null) return brand(3600);
   const og = await rpc("ripples_og_data", { p_n: p.n }) as Og | null;
   if (!og || !og.seed) return brand(300); // not visible (future, unpublished, vetoed) or unknown n
-  const maxAge = og.past ? 86400 : 3600;
+  let maxAge = og.past ? 86400 : 3600;
   if (v === "result" && p.s === null) v = "teaser";
   // never spoil a puzzle that is still current. The fixture (n=0, TEST data whose answers are published in the
   // repo's contract fixtures) is exempt so the reveal card can be tested before any live puzzle has passed.
-  if (v === "reveal" && !og.past && og.kind !== "fixture") v = "teaser";
-  if (v === "reveal") return { el: revealCard(og), variant: "reveal", maxAge };
+  // A live puzzle also needs a NEWER live puzzle to be served: on a delayed day ripples_latest() keeps serving
+  // yesterday's puzzle as playable ("Here's yesterday's"), so its reveal must wait even though its date has passed.
+  if (v === "reveal" && og.kind !== "fixture") {
+    let ok = og.past;
+    if (ok && og.kind === "live") {
+      const lt = await rpc("ripples_latest", {});
+      ok = Number.isInteger(lt?.n) && Number(lt.n) > og.n;
+    }
+    if (!ok) { v = "teaser"; maxAge = 300; } // short cache: the reveal URL becomes a reveal once the next puzzle is out
+  }
+  if (v === "reveal") {
+    // deno-lint-ignore no-explicit-any
+    const rv: any = await rpc("ripples_reveal", { p_n: og.n }).catch(() => null);
+    const fl = new Map<number, Fluke>();
+    for (const r of Array.isArray(rv?.rounds) ? rv.rounds : []) {
+      if (r && Number.isInteger(r.i)) fl.set(r.i, { fluke_1_in: r.evidence?.fluke_1_in ?? null, fluke_warming: r.evidence?.fluke_warming === true });
+    }
+    return { el: revealCard(og, fl), variant: "reveal", maxAge };
+  }
   if (v === "result") {
     const R = og.R || og.rounds.length;
     return { el: teaserCard(og, Math.min(p.s!, R)), variant: "result", maxAge };

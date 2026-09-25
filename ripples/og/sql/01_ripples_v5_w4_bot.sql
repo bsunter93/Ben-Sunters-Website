@@ -31,7 +31,10 @@ begin
    order by p.n desc limit 1;
   if tn is not null then
     og := public.ripples_og_data(tn);
-    if og is null or coalesce((og ->> 'past')::boolean, false) is not true then tn := null; og := null; end if;
+    -- also require a NEWER live puzzle to be served: on a delayed day ripples_latest() keeps serving yesterday's
+    -- puzzle as playable, so its answers must not be posted yet
+    if og is null or coalesce((og ->> 'past')::boolean, false) is not true
+       or coalesce(ripples._latest_live_n(), -2147483648) <= tn then tn := null; og := null; end if;
   end if;
   if tn is not null then
     select jsonb_build_object('text', c.text, 'source', c.source) into soc

@@ -25,7 +25,7 @@ import {
 } from "./att.ts";
 
 const FN = "att-social";
-export const SOCIAL_VERSION = "2026-09-25.s2";
+export const SOCIAL_VERSION = "2026-09-25.s3";
 
 // ------------------------------------------------------------------ small helpers
 const DAY_S = 86400;
@@ -676,8 +676,11 @@ async function hnQuery(run: Run, term: string | null, a: number, b: number, hits
     tags: "(story,comment)", numericFilters: `created_at_i>=${a},created_at_i<${b}`, hitsPerPage: String(hitsPerPage),
     // strict: exact quoted phrase, no typos, no prefix matching ("jev" must not match "jevons"), no plural folding
     typoTolerance: "false", advancedSyntax: "true", queryType: "prefixNone", ignorePlurals: "false",
-    removeStopWords: "false", removeWordsIfNoResults: "none", attributesToRetrieve: "created_at_i", attributesToHighlight: "",
-    attributesToSnippet: "", analytics: "false",
+    removeStopWords: "false", removeWordsIfNoResults: "none", attributesToRetrieve: "created_at_i",
+    // text fields only: an author name (e.g. user "jev") or a username prefix must not count as a mention
+    restrictSearchableAttributes: "title,story_text,comment_text,url",
+    attributesToHighlight: run.params.debug === true ? "title,story_text,comment_text,url" : "", attributesToSnippet: "",
+    analytics: "false",
   });
   q.set("query", term === null ? "" : hnTerm(term));
   const res = await politeFetch(run, `${HN}?${q}`, { source: "hn.algolia" });
@@ -686,6 +689,16 @@ async function hnQuery(run: Run, term: string | null, a: number, b: number, hits
   const j = await res.json().catch(() => null);
   if (!j || typeof j.nbHits !== "number") { run.errors.push("hn.algolia bad json"); return null; }
   const times = Array.isArray(j.hits) ? j.hits.map((h: any) => Number(h?.created_at_i)).filter((x: number) => Number.isFinite(x)) : [];
+  if (run.params.debug === true && term !== null && Array.isArray(j.hits)) {
+    // diagnostics only: which attribute and which words matched (never the text itself)
+    const dbg = (run.extra.hn_debug ??= {}) as Record<string, unknown>;
+    if (!dbg[term]) {
+      dbg[term] = { nbHits: j.nbHits, params_echo: typeof j.params === "string" ? j.params.slice(0, 400) : null,
+        matches: j.hits.slice(0, 5).map((h: any) => Object.entries(h?._highlightResult ?? {})
+          .filter(([, v]: [string, any]) => v?.matchLevel && v.matchLevel !== "none")
+          .map(([k, v]: [string, any]) => ({ attr: k, words: v.matchedWords, full: v.fullyHighlighted ?? null }))) };
+    }
+  }
   return { nbHits: j.nbHits, times, exhaustive: j.exhaustiveNbHits !== false && j.exhaustive?.nbHits !== false };
 }
 /**

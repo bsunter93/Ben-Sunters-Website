@@ -84,6 +84,7 @@ declare r record; k int := 0; c record; tflag text; treason text; bq text;
 begin
   for r in select * from ripples.articles where qid = any(p_qids) loop
     select * into c from ripples._classify(r.p31, r.short_desc);
+    tflag := null; treason := null; bq := null;
     select b.action, b.reason into tflag, treason from ripples.blocklist b
      where b.title_pattern is not null and r.title_en ~* b.title_pattern order by (b.action = 'block') desc limit 1;
     select b.reason into bq from ripples.blocklist b where b.qid = r.qid and b.action = 'block' limit 1;
@@ -181,7 +182,7 @@ begin
      where x.class_qid ~ '^Q[0-9]+$'
   ), up as (
     insert into ripples.category_map (class_qid, category, label, parents, flag, flag_reason, source)
-    select class_qid, coalesce(ripples._text_category(label), 'other'), left(label, 200), coalesce(parents, '{}'),
+    select distinct on (class_qid) class_qid, coalesce(ripples._text_category(label), 'other'), left(label, 200), coalesce(parents, '{}'),
            ripples._text_flag(label), case when ripples._text_flag(label) is not null then 'label: ' || left(label, 100) end, 'auto'
       from c
     on conflict (class_qid) do update set label = coalesce(ripples.category_map.label, excluded.label),
@@ -224,7 +225,7 @@ begin
      where x.lang is not null and x.title is not null and x.status in ('ok','missing','no_en','no_match')
   ), up as (
     insert into ripples.title_map (lang, title, qid, title_en, status, resolved_at)
-    select distinct on (lang, title) lang, left(title, 300), case when qid ~ '^Q[0-9]+$' then qid end, title_en, status, now() from t
+    select distinct on (lang, left(title, 300)) lang, left(title, 300), case when qid ~ '^Q[0-9]+$' then qid end, title_en, status, now() from t
     on conflict (lang, title) do update set qid = excluded.qid, title_en = excluded.title_en, status = excluded.status, resolved_at = now()
     returning qid
   )
@@ -275,7 +276,7 @@ begin
   if not found then raise exception 'unknown job %', p_job; end if;
   if j.kind = 'screen' then
     insert into ripples.screen (as_of, qid, title, median_views, onset, z_peak, peak_multiple, peak_day, max_abs_z14, base_from, base_to, spark)
-    select j.as_of, x.qid, x.title, x.median_views, x.onset, x.z_peak, x.peak_multiple, x.peak_day, x.max_abs_z14, x.base_from, x.base_to, x.spark
+    select distinct on (x.qid) j.as_of, x.qid, x.title, x.median_views, x.onset, x.z_peak, x.peak_multiple, x.peak_day, x.max_abs_z14, x.base_from, x.base_to, x.spark
       from jsonb_to_recordset(coalesce(p_rows, '[]')) as x(qid text, title text, median_views numeric, onset date, z_peak numeric,
            peak_multiple numeric, peak_day date, max_abs_z14 numeric, base_from date, base_to date, spark int[])
      where x.qid ~ '^Q[0-9]+$'
@@ -287,7 +288,7 @@ begin
   elsif j.kind = 'expand' then
     insert into ripples.candidates (as_of, role, root_qid, depth, parent_qid, qid, title, cs_rank, cs_clicks, set_rank, linked,
       median_views, s_stat, onset_lag, multiple, p_time, n_placebo, pass_raw, calm, max_abs_z, spark, main_page, category, job_id)
-    select j.as_of, j.role, j.root_qid, j.depth, j.parent_qid, x.qid, x.title, x.cs_rank, x.cs_clicks, x.set_rank, coalesce(x.linked, true),
+    select distinct on (x.qid) j.as_of, j.role, j.root_qid, j.depth, j.parent_qid, x.qid, x.title, x.cs_rank, x.cs_clicks, x.set_rank, coalesce(x.linked, true),
            x.median_views, x.s_stat, x.onset_lag, x.multiple, x.p_time, x.n_placebo, coalesce(x.pass_raw, false), coalesce(x.calm, false),
            x.max_abs_z, x.spark,
            -- Main Page feature (TFA / DYK / On this day / In the news) within ±1 day of the candidate's onset

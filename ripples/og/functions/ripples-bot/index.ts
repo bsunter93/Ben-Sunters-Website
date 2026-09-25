@@ -1,9 +1,14 @@
-// ripples-bot: posts yesterday's Knock-On reveal card to Bluesky (SPEC §5.5, 07:35 UTC). Token-gated
-// (x-collector-token). A no-op returning {"skipped":true} unless BOTH vault secrets bsky_handle and
-// bsky_app_password exist. Never posts a puzzle that is still current: the target comes from
-// ripples_bot_context(), which only returns a live, published puzzle dated the day before the current puzzle
-// date whose ripples_og_data(n).past is true. One post per n (ripples.bot_posts claim).
-// POST {"dry_run": true} builds the post (text, facets, image check) without logging in or posting.
+// ripples-bot: builds (and, from v5.1, posts) yesterday's Knock-On reveal card for Bluesky (SPEC §5.5). Token-gated
+// (x-collector-token).
+// DEFERRED (OWNER_DECISIONS D-3): automated Bluesky posting is deferred to v5.1; the owner posts by hand for the
+// first 14 days. POSTING_ENABLED is false, so a normal call always returns {"skipped":true} and nothing is
+// scheduled. {"dry_run": true} builds the post text, facets, alt text and checks the reveal PNG, so the owner can
+// copy it for a manual post. Turning posting on in v5.1 = set POSTING_ENABLED = true, redeploy, add the two vault
+// secrets bsky_handle + bsky_app_password, and add a cron job (none exists in v5.0).
+// Never targets a puzzle that is still current: ripples_bot_context() only returns a live, published puzzle dated
+// the day before the current puzzle date, whose ripples_og_data(n).past is true AND that is older than the live
+// puzzle ripples_latest() is serving (on a delayed day yesterday's puzzle stays playable, so it has no target).
+// One post per n (ripples.bot_posts claim).
 import { createClient } from "jsr:@supabase/supabase-js@2";
 
 const SB_URL = Deno.env.get("SUPABASE_URL")!;
@@ -11,6 +16,7 @@ const db = createClient(SB_URL, Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!, { au
 const ENTRYWAY = "https://bsky.social";
 const LINK = "bensunter.com/ripples";
 const MAX_GRAPHEMES = 300;
+const POSTING_ENABLED = false; // D-3: deferred to v5.1 (see header)
 // SPEC §12.1 wording lint (same patterns as ripples/contract/tools/validate.py CAUSAL_RE / FLOW_RE). AI social copy
 // that trips either falls back to the template, which never uses them.
 const CAUSAL_RE = /\b(caus(e|es|ed|ing)|dr(o|i)ve[ns]?|driving|flood(s|ed|ing)?\s+(in)?to|a flood of|sen(t|ds?|ding) (readers|traffic|people|visitors)|went from\b[^.;:!?]{1,80}?\bto)\b/i;
@@ -38,7 +44,7 @@ function templateText(og: Og): string {
   let chain = parts.join("");
   const budget = MAX_GRAPHEMES - graphemes(head) - graphemes(tail) - 1;
   if (graphemes(chain) > budget) chain = clipG(chain, budget);
-  return `${head}${chain}.${tail}`;
+  return `${head}${chain}${chain.endsWith("…") ? "" : "."}${tail}`;
 }
 function socialText(s: string): string {
   const tail = `\n${LINK}`;
@@ -70,6 +76,10 @@ Deno.serve(async (req: Request) => {
 
   const { data: ctx, error } = await db.rpc("ripples_bot_context");
   if (error) return Response.json({ ok: false, error: error.message }, { status: 500 });
+  if (!dry && !POSTING_ENABLED) {
+    console.log("ripples-bot skipped: automated posting deferred to v5.1 (OWNER_DECISIONS D-3); use dry_run");
+    return Response.json({ skipped: true, reason: "deferred_v5_1", has_secrets: ctx.has_secrets === true });
+  }
   if (!ctx.has_secrets && !dry) {
     console.log("ripples-bot skipped: no vault secrets bsky_handle / bsky_app_password");
     return Response.json({ skipped: true, reason: "no_secrets" });
