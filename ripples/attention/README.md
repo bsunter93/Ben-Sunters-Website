@@ -34,7 +34,8 @@ Spec: `ATTENTION_STACK.md` §3 and §7, with `DEMARCATION.md` §7 lead decisions
 | `sql/15c_att_charts_ops_2026-09-25.sql` | Operational record for att-charts (tranco caps, ChatGPT SDK keys, Apple robots cache fix, `att_fn_live('att-charts')`) |
 | `sql/15d_att_budget_refund_fix.sql` | Migration `att_budget_refund_fix` (core fix found by att-charts): `att_budget.killed`; `att_budget_refund` refuses refunds only for kill-spent buckets (it used to refuse whenever used = cap, so a chunk that took the whole day's cap was never refunded); `att_host_kill` sets `killed` |
 | `sql/15e_att_ident_npm_scoped.sql` | Migration `att_ident_npm_scoped`: `_att_ident_like` no longer rejects scoped npm package keys (`@scope/name`, source `npm.dl` only) as handles |
-| `functions/att-charts/index.ts` (+ `att.ts` copy) | Charts / builder / consumption collector (CHARTS_VERSION 2026-09-25.c7): `apple`, `steamspy`, `github`, `hf`, `anilist`, `openlibrary`, `tranco`, `npm`, `pypi`, `backfill` (npm.dl, pypi.dl, anilist, gh.stars), `ping`. See "att-charts" below |
+| `sql/15f_att_charts_fixes.sql` | Migration `att_charts_fixes_c8`: `att_charts_prune` (+ public wrapper, service_role only) deletes same-day rows of items that dropped off a snapshot list on a re-run; converts `att_state['charts.tranco.top']` from a readable top-1000 domain list to 12-hex SHA-256 digests |
+| `functions/att-charts/index.ts` (+ `att.ts` copy) | Charts / builder / consumption collector (CHARTS_VERSION 2026-09-25.c8): `apple`, `steamspy`, `github`, `hf`, `anilist`, `openlibrary`, `tranco`, `npm`, `pypi`, `backfill` (npm.dl, pypi.dl, anilist, gh.stars), `ping`. See "att-charts" below |
 | `sql/16_att_world.sql` | Migration `att_world_sources` (att-world): DEMARCATION Q6 budgets / hosts / `backfill_fn` for tsa.pax, usgs.eq, iem.warn, fema.decl, gdacs, mta.ridership, citibike.trips (virtual-host bucket `tripdata.s3.amazonaws.com`), hiringlab.postings (`raw.githubusercontent.com` only) |
 | `sql/16b_att_world_cron.sql` | Migration `att_world_cron`: `att-world` 06:21 (tsa, usgs, iem, fema, gdacs, mta), `att-world-files` 06:22 (hiringlab, citibike), `att-world-pm` 13:41 (tsa, mta), `att_fn_live('att-world')` |
 | `functions/att-world/index.ts` (+ `att.ts` copy) | World / real-economy collector (WORLD_VERSION 2026-09-25.w1): `tsa`, `usgs`, `iem`, `fema`, `gdacs`, `mta`, `citibike`, `hiringlab`, `all`, `backfill`, `ping`. See "att-world" below |
@@ -264,7 +265,7 @@ killed) waits until 00:10 UTC. The `finra:files` job has priority 6 so ticker / 
 current one returns; a 110 s run therefore delays other queued collector calls by up to ~2 min. All att-market modes
 stay within the 110 s wall budget.
 
-## att-charts (W7 charts / builder / consumption collector, 2026-09-25, CHARTS_VERSION 2026-09-25.c7)
+## att-charts (W7 charts / builder / consumption collector, 2026-09-25, CHARTS_VERSION 2026-09-25.c8)
 
 Stores ranks and counts only (labels = item / repo / package names for `att_trend_candidates`; no owners, handles or
 text). List sizes come from `att_config.charts.<mode>.limit.{free,pro}` under `att_config.profile`.
@@ -277,7 +278,7 @@ text). List sizes come from `att_config.charts.<mode>.limit.{free,pro}` under `a
 | `hf` (06:13) | `hf.trending` (1.5 s, 60/100) | trending models / spaces / datasets, keyed by `_id` (label without owner) | top 10 per list |
 | `anilist` (06:17) | `anilist` (4 s, 25/150) | TRENDING_DESC anime + manga (isAdult:false; rank, aux = trending); per-media `mediaTrends` (metric `n`) for registered titles and the top 10 (8 aliases per query) | top 10 |
 | `openlibrary` (06:15) | `ol.trending` (5 s, 5/5) | trending daily | top 10 |
-| `tranco` (06:19) | `tranco.rank` (5 s, 2/2: list download + its redirect hop; /api never used) | streams the daily top-1M zip (local-header parser + `DecompressionStream('deflate-raw')`); keeps ranks for registered domains only | top-1k movers (new to the top 1k, or a jump >= max(20, 25%)) vs the previous list in `att_state`, from day 2 |
+| `tranco` (06:19) | `tranco.rank` (5 s, 2/2: list download + its redirect hop; /api never used) | streams the daily top-1M zip (local-header parser + `DecompressionStream('deflate-raw')`); keeps ranks for registered domains only | top-1k movers (new to the top 1k, or a jump >= max(20, 25%)) vs the previous top 1k, which `att_state` keeps only as one-way 12-hex SHA-256 digests in rank order (no readable domain list); from day 2 |
 | `npm` (06:18) | `npm.dl` (5 s, 20/80) | range downloads; bulk for unscoped, one call per scoped package; 400-day backfill jobs | - |
 | `pypi` (06:19) | `pypi.dl` (5 s, 20/30) | pypistats `overall?mirrors=false`, 180 days per call | - |
 | `backfill` (via `att_tick`) | as above | npm.dl, pypi.dl, anilist, gh.stars (stargazer timestamps only for repos with <= 2000 stars) | - |
@@ -286,7 +287,13 @@ Evidence for discovery = 1 - ln(rank)/ln(N+1). Candidates are deduplicated per r
 end-to-start: the run records `detail.timing[source].min_idle_gap_ms`. A host whose `x-ratelimit-remaining` drops to
 <= 1 is dropped for the run, so GitHub never reaches a 403 (a permanent kill). **Reference panels:** npm (12 packages)
 and pypi (8 packages) are stored as normaliser series with no topic link. **npm gap days:** npm reports days it has
-not computed yet as 0 for every package; c7 does not store zeros for `__total__` or for packages whose p75 > 100.
+not computed yet as 0 for every package; zeros are not stored for `__total__` or for packages whose p75 > 100.
+**npm backfill coverage (c8):** a key needs its 400-day fetch only while its first stored day is later than window
+start + 30 days AND it was not backfilled in the last 30 days (`att_state['charts.npm.backfilled']`). c7 counted rows,
+so `__total__` (349 rows after dropping zero days) was refetched over 400 days on every run.
+**One list per day (c8):** apple, steamspy, gh.search, hf, anilist trending and openlibrary are snapshot lists; after a
+fully ingested re-run on the same as_of day, `att_charts_prune` deletes that day's rows for items no longer on the list
+(c7 left a stale gh.search row: 51 series for a top 50 on 2026-09-24).
 
 **Apple feed host.** `rss.marketingtools.apple.com` (robots.txt 200, no rules). The legacy `rss.applemarketingtools.com`
 301-redirects robots.txt to another host, which att.ts treats as a deny. Apple answers slowly (~8 s) and sometimes 504;
