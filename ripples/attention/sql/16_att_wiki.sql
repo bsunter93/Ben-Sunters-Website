@@ -61,7 +61,8 @@ $$;
 -- p_keys [{key,geo}]: every requested key with its state (first|incr|done|signal|nodata|inactive).
 -- first  = no series, or the series starts later than as_of - (pv_days - 20)  -> one call for the full history
 -- incr   = series behind as_of (active: daily; panel-only: every panel_every_days) -> one call from last_day + 1
--- signal = title is a public.signals row (collect-wikipedia collects it; mirrored by att_wiki_mirror_signals)
+-- signal = title is a public.signals row (collect-wikipedia collects it; mirrored by att_wiki_mirror_signals) and the
+--          mirrored series already reaches back pv_days - 20 days (shorter signal histories get one AQS 'first' fetch)
 create or replace function ripples.att_wiki_pv_plan(p_as_of date, p_limit int default 500, p_keys jsonb default null)
 returns table(key text, geo text, topic_id bigint, series_id bigint, from_day date, kind text, prio int,
               last_day date, first_day date, act boolean)
@@ -90,7 +91,7 @@ begin
     left join ripples.att_series sr on sr.source = 'wiki.pv' and sr.metric = 'n' and sr.geo = r.geo and sr.key = r.key),
   c as (
     select s.*, case
-      when s.sig then 'signal'
+      when s.sig and s.first_day is not null and s.first_day <= p_as_of - (v_days - 20) then 'signal'
       when v_nodata ? (s.geo || '|' || s.key)
            and (v_nodata->>(s.geo || '|' || s.key))::date > p_as_of - v_retry then 'nodata'
       when s.series_id is null or s.first_day is null or s.first_day > p_as_of - (v_days - 20) then 'first'
