@@ -468,3 +468,20 @@ select cron.unschedule('att-econ-bf-noaa') where exists (select 1 from cron.job 
    and coalesce((select (v->>'complete')::boolean from ripples.att_state where k = 'econ.bf.noaa.ghcnd'), false);
 select cron.unschedule('att-econ-bf-fred') where exists (select 1 from cron.job where jobname = 'att-econ-bf-fred')
    and coalesce((select count(*) from jsonb_object_keys(coalesce((select v from ripples.att_state where k = 'econ.fred.fetched'), '{}'::jsonb))), 0) >= 77;
+
+-- =====================================================================================================================
+-- Addendum (verifier round 3, 2026-09-25 ~20:55 UTC; execute_sql) — vintage honesty, CPI drain start
+-- 1. Rows that are NOT first prints are labelled as such. Every fred.claims / fred.weekly / bls.ces row stored before
+--    att-econ e4 holds the LATEST REVISED value (vintage 2026-09-25) although it carried meta.released: 30,239 + 1,120 +
+--    1,919 rows. Relabelled: meta.rt = 'latest', meta.released removed and kept as meta.first_print_day (the day the first
+--    estimate for that period was published; its value is not stored). Release-look tests must read rt = 'first' only.
+--      update ripples.attention_obs o set meta = (coalesce(o.meta,'{}') - 'released') || jsonb_strip_nulls(jsonb_build_object(
+--        'rt','latest','vintage',coalesce(o.meta->>'vintage','2026-09-25'),'first_print_day',o.meta->>'released'))
+--        from ripples.att_series s where s.series_id = o.series_id and s.source in ('fred.claims','fred.weekly','bls.ces')
+--          and coalesce(o.meta->>'rt','') <> 'first';
+--    The fred_rt drain (weekly series) and the bls.ces drain (att-econ e5 re-reads series whose full history is not yet
+--    first-release, state econ.bls.ces.rt) replace them with rt = 'first' rows.
+-- 2. att_sources.reason for fred.claims, fred.weekly, bls.ces, bls.cpi_items and dol.claims rewritten to state the
+--    vintage row by row and the current status (they previously claimed first-release values for all rows).
+-- 3. CPI drain may start at 00:05 UTC (it needs ~46 of the 300 fred calls; the daily FRED runs at 06:31/06:41 keep > 200):
+--      select cron.alter_job(job_id := (select jobid from cron.job where jobname = 'att-econ-bf-cpi'), schedule := '5-59/6 0-23 * * *');

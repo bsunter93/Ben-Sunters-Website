@@ -89,12 +89,13 @@ begin
   -- ledger entries or freeze batches persist, so the live ledger stays bit-identical. The results (res) survive the rollback.
   begin
   -- T7 synthetic fixture: source test.synth (PHYS, level), 70 null series + 10 with an injected +0.3 log-unit response for 7 days after t0,
-  -- 1,200 days of history (long-array path, daily date draws); targets: 10 null (s01–s10) + 10 injected (s71–s80); the 60 untargeted nulls form the topic pool
+  -- 1,200 days of history (long-array path, daily date draws); iid log-noise, no weekly pattern (a weekly pattern with a plain baseline
+  -- puts most placebo windows behind the pre-trend gate); targets: 10 null (s01–s10) + 10 injected (s71–s80); the 60 untargeted nulls form the topic pool
   insert into ripples.att_sources(source, family, channel, grade, value_kind, grain, history_from, quality, enabled, reason, needs_secret, policy_d1, tier,
                                   attribution, license_note, per_run_cap, per_day_cap, spacing_ms, budget_bucket, hosts, robots_required, backfill_fn)
   values ('test.synth', 'test', 'physical', 'green', 'level', 'day', current_date - 1200, 1, true, 'engine test fixture', null, false, 'test', 'synthetic', 'none', null, null, 0, null, '{}', false, null)
   on conflict (source) do nothing;
-  insert into ripples.att_engine_source_map(source, channel, value_kind, same_dow, agg_key, domain) values ('test.synth', 'PHYS', 'level', false, null, 'real_world') on conflict (source) do nothing;
+  insert into ripples.att_engine_source_map(source, channel, value_kind, same_dow, agg_key, domain) values ('test.synth', 'PHYS', 'level', false, null, 'real_world') on conflict (source) do update set same_dow = excluded.same_dow;
   insert into ripples.att_families(family, label, scheduled, mapper) values ('test.synth', 'Synthetic test family', false,
     (select jsonb_agg(jsonb_build_object('node', 'test.synth:s' || lpad(g::text, 2, '0'), 'sign', 1, 'template', 'test_injected'))
        from (select g from generate_series(1, 10) g union all select g from generate_series(71, 80) g) x))
@@ -106,7 +107,7 @@ begin
     delete from ripples.attention_obs where series_id = v_sid;
     insert into ripples.attention_obs(series_id, day, value)
     select v_sid, d::date,
-           exp(5 + 0.15 * sin(extract(dow from d) * 0.9) + 0.05 * (random() * 2 - 1) * 1.7
+           exp(5 + 0.05 * (random() * 2 - 1) * 1.7
                + case when i > 70 and d::date between t0 and t0 + 6 then 0.30 else 0 end)
     from generate_series(current_date - 1200, current_date - 1, interval '1 day') d;
   end loop;

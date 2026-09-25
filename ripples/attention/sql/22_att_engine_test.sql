@@ -481,8 +481,8 @@ begin
   select ns.series_id into pv from ripples.att_node_series ns join ripples.att_zvec z on z.series_id = ns.series_id
     where ns.node = c.node and z.kappa >= 0.3 and z.grain = 'day' order by (ns.channel in ('PHYS','ECON','PM','BLD','CONS','JOBS','INST')) desc, z.kappa desc limit 1;
   if pu is null or pv is null or pu = pv then return jsonb_build_object('checked', false); end if;
-  select from_day, n, ar into zu from ripples.att_zvec where series_id = pu and grain = 'day';
-  select from_day, n, ar into zv from ripples.att_zvec where series_id = pv and grain = 'day';
+  select z.from_day, z.n, z.ar into zu from ripples.att_zvec z where z.series_id = pu and z.grain = 'day';
+  select z.from_day, z.n, z.ar into zv from ripples.att_zvec z where z.series_id = pv and z.grain = 'day';
   if zu.n is null or zv.n is null then return jsonb_build_object('checked', false); end if;
   lmax := coalesce(c.window_close - c.onset, 7);
   d0 := c.onset - 28; d1 := least(c.onset + lmax, p_end);

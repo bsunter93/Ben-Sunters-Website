@@ -46,8 +46,8 @@ $$;
 -- ---------------------------------------------------------------------------------------------------------------------
 create or replace function ripples.att_heldout_p(p_series bigint, p_onset date, p_end date, p_draws int default 200) returns jsonb
 language plpgsql security definer set search_path = '' as $$
-declare bundle jsonb; b record; res jsonb; t_h float8; d date; tv float8; exceed int := 0; n int := 0; lo date; hi date; stopped boolean := false;
-        cfg jsonb := coalesce(ripples._att_cfg('engine'), '{}'::jsonb); bc int := coalesce((cfg ->> 'bc_stop')::int, 10); dd date[] := '{}'; k int; gate boolean;
+declare bundle jsonb; b record; res jsonb; t_h float8; d date; tv float8; exceed int := 0; n int := 0; lo date; hi date;
+        dd date[] := '{}'; k int; gate boolean;
 begin
   perform ripples.att_hb_load(array[p_series]);
   select * into b from _hb where series_id = p_series;
@@ -71,10 +71,11 @@ begin
     continue when gate and coalesce((res ->> 's_pre')::float8, 0) >= 2;   -- gated-out draw: neither a draw nor an exceedance (same rule as att_run_placebos)
     n := n + 1;
     if tv >= t_h then exceed := exceed + 1; end if;
-    if exceed >= bc and n >= 30 then stopped := true; exit; end if;   -- ≥ 30 draws before stopping (same rule as att_run_placebos)
   end loop;
+  -- calibration p is the fixed-n estimate (1+exceed)/(1+n): no Besag–Clifford stop here, so the held-out p keeps the 1/(n+1) resolution
+  -- a uniformity (KS) check needs; the hop tests' sequential p is the same quantity truncated early
   if n < 30 then return jsonb_build_object('p', null, 'reason', 'few draws', 'n', n); end if;
-  return jsonb_build_object('p', case when stopped and exceed = bc then bc::float8 / n else (1 + exceed)::float8 / (1 + n) end, 'n', n, 't', t_h, 'exceed', exceed);
+  return jsonb_build_object('p', (1 + exceed)::float8 / (1 + n), 'n', n, 't', t_h, 'exceed', exceed);
 end $$;
 
 create or replace function ripples.att_calibrate_ks(p_as_of date, p_n int default 500) returns jsonb
@@ -432,8 +433,10 @@ begin
   end loop;
   -- negative controls vs decoys (trailing 90 days; live and library runs both count, they share the code path): pass = Likely+.
   -- The rule is registered as the single att_controls 'negative' row (ENGINE §10.2), updated with every run.
-  select count(*), count(*) filter (where tier in ('likely','measured')) into n_neg, k_neg from ripples.att_hop_latest where role = 'negative_control' and look_day >= current_date - 90;
-  select count(*), count(*) filter (where tier in ('likely','measured')) into n_dec, k_dec from ripples.att_hop_latest where role = 'decoy' and look_day >= current_date - 90;
+  -- resolved (final-look) hops only: an interim 'watching' look is not an outcome; depth-1 decoys, since negative controls are depth-1 nodes
+  select count(*), count(*) filter (where tier in ('likely','measured')) into n_neg, k_neg from ripples.att_hop_latest where role = 'negative_control' and is_final and look_day >= current_date - 90;
+  select count(*), count(*) filter (where h.tier in ('likely','measured')) into n_dec, k_dec from ripples.att_hop_latest h join ripples.att_hop_candidates c on c.hop_id = h.hop_id
+   where h.role = 'decoy' and c.depth = 1 and h.is_final and h.look_day >= current_date - 90;
   w := ripples.att_wilson(k_dec, n_dec);
   neg_ok := n_neg = 0 or n_dec = 0 or (k_neg::float8 / n_neg between (w ->> 'lo')::float8 and (w ->> 'hi')::float8);
   neg := jsonb_build_object('pass_rate', case when n_neg > 0 then k_neg::float8 / n_neg end, 'n', n_neg, 'passes', k_neg, 'decoy_n', n_dec, 'decoy_passes', k_dec,

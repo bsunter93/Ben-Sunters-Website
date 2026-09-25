@@ -973,3 +973,398 @@ language sql stable security definer set search_path = '' as $$
      where etype = 'MAP' and valid_to is null and prop = 'P414' and (to_node like 'twelvedata:%' or to_node like 'alphavantage:%')
      order by 1 limit greatest(0, least(p_max, 60))) z;
 $$;
+
+-- =====================================================================================================================
+-- Addendum (migration att_wsa_r3_graph, 2026-09-25 ~21:30 UTC) — verifier round 3 fixes (look-ahead, preregistration)
+-- 1. valid_from = REGISTRATION date, never back-dated. Round 2 set valid_from on MAP / MECH edges to the target series'
+--    first observation (MECH as early as 2016-01-01) although every v6.0 template and map was written on 2026-09-25
+--    with the library and positive-control events visible; ENGINE §3.9 linkage ("a MECH / MAP edge registered before
+--    onset") would then pass for every historical event by construction. Now: valid_from = the day the edge entered the
+--    live graph (insert default current_date; the reopen day for an edge that was closed and comes back), for MAP, MECH
+--    and WD alike (structural facts included). meta.first_built = first registration day; meta.data_from = first
+--    observation of the target (informational only); meta.evidence states the consequence. Every library / control /
+--    backtest result for an event with onset <= valid_from is RETROSPECTIVE.
+-- 2. Preregistration cutoff (att_state 'prereg:<version>'): the day the current template set AND the current library
+--    selection rules (SQL function sources + _att_library_rules(), which records the att-library TS thresholds) were
+--    registered. It moves to the current day whenever either hash changes (att_prereg_check, called by att_build_graph
+--    and att_library_sweep). att_family_events (trigger, see 19_att_families.sql r3): in_replication_set = library event
+--    with onset > cutoff (prospective); the 126 events with onset in [prior_cutoff, cutoff] move to in_retro_holdout
+--    ("held out from the prior fit, NOT preregistered"); evidence_mode = retrospective | prospective.
+-- 3. att_mech_edges_asof(day, version): the graph as it was registered on a day (valid_from <= day and not yet closed),
+--    for WS-B's freeze (t_u - 1).
+-- 4. MAP naics_price (curated att_naics_price): an industry -> the price series of its own output (CPI item indexes,
+--    FRED energy prices). Built only to series that exist; CPI edges appear when the CPI drain lands.
+
+create table if not exists ripples.att_naics_price (
+  prefix text primary key, nodes text[] not null, note text not null
+);
+alter table ripples.att_naics_price enable row level security;
+revoke all on ripples.att_naics_price from public, anon, authenticated;
+insert into ripples.att_naics_price(prefix, nodes, note) values
+ ('11',  array['bls.cpi_items:CUSR0000SAF113','bls.cpi_items:CUUR0000SAF113','bls.cpi_items:CUSR0000SAF112','bls.cpi_items:CUUR0000SAF112'], 'farm output -> CPI fruits & vegetables, meats/poultry/fish/eggs'),
+ ('21',  array['fred:DCOILWTICO'], 'mining, oil and gas -> WTI crude spot'),
+ ('211', array['fred:DCOILWTICO','fred:DCOILBRENTEU','fred:DHHNGSP','bls.cpi_items:CUSR0000SEHE','bls.cpi_items:CUUR0000SEHE'], 'oil and gas extraction -> crude / Henry Hub spot, CPI fuel oil'),
+ ('22',  array['bls.cpi_items:CUSR0000SEHF','bls.cpi_items:CUUR0000SEHF','bls.cpi_items:CUSR0000SEHF01','bls.cpi_items:CUUR0000SEHF01','bls.cpi_items:CUSR0000SEHF02','bls.cpi_items:CUUR0000SEHF02','bls.cpi_items:CUSR0000SEHG','bls.cpi_items:CUUR0000SEHG'], 'utilities -> CPI energy services, electricity, piped gas, water/sewer/trash'),
+ ('31',  array['bls.cpi_items:CUSR0000SAF11','bls.cpi_items:CUUR0000SAF11','bls.cpi_items:CUSR0000SAF116','bls.cpi_items:CUUR0000SAF116','bls.cpi_items:CUSR0000SAA','bls.cpi_items:CUUR0000SAA'], 'food, beverage, textile manufacturing -> CPI food at home, alcoholic beverages, apparel'),
+ ('324', array['bls.cpi_items:CUSR0000SETB01','bls.cpi_items:CUUR0000SETB01','bls.cpi_items:CUSR0000SS47014','bls.cpi_items:CUUR0000SS47014','bls.cpi_items:CUSR0000SEHE','bls.cpi_items:CUUR0000SEHE','fred.weekly:GASREGW','fred.weekly:GASDESW','fred:DJFUELUSGULF'], 'petroleum refining -> CPI gasoline, fuel oil; retail gasoline / diesel; Gulf Coast jet fuel'),
+ ('334', array['bls.cpi_items:CUSR0000SEEE01','bls.cpi_items:CUUR0000SEEE01','bls.cpi_items:CUSR0000SERA01','bls.cpi_items:CUUR0000SERA01'], 'computer and electronic products -> CPI computers, televisions'),
+ ('336', array['bls.cpi_items:CUSR0000SETA01','bls.cpi_items:CUUR0000SETA01','bls.cpi_items:CUSR0000SETC','bls.cpi_items:CUUR0000SETC'], 'transportation equipment -> CPI new vehicles, vehicle parts'),
+ ('44',  array['bls.cpi_items:CUSR0000SETA01','bls.cpi_items:CUUR0000SETA01','bls.cpi_items:CUSR0000SETA02','bls.cpi_items:CUUR0000SETA02','bls.cpi_items:CUSR0000SAF11','bls.cpi_items:CUUR0000SAF11'], 'retail (vehicle dealers, food stores) -> CPI new / used vehicles, food at home'),
+ ('481', array['bls.cpi_items:CUSR0000SETG01','bls.cpi_items:CUUR0000SETG01'], 'air transportation -> CPI airline fares'),
+ ('524', array['bls.cpi_items:CUSR0000SETE','bls.cpi_items:CUUR0000SETE'], 'insurance -> CPI motor vehicle insurance'),
+ ('53',  array['bls.cpi_items:CUSR0000SAH1','bls.cpi_items:CUUR0000SAH1','bls.cpi_items:CUSR0000SEHA','bls.cpi_items:CUUR0000SEHA','bls.cpi_items:CUSR0000SEHC','bls.cpi_items:CUUR0000SEHC'], 'real estate and rental -> CPI shelter, rent, owners'' equivalent rent'),
+ ('61',  array['bls.cpi_items:CUSR0000SEEB01','bls.cpi_items:CUUR0000SEEB01'], 'educational services -> CPI college tuition'),
+ ('62',  array['bls.cpi_items:CUSR0000SAM','bls.cpi_items:CUUR0000SAM'], 'health care -> CPI medical care'),
+ ('621', array['bls.cpi_items:CUSR0000SEMC01','bls.cpi_items:CUUR0000SEMC01'], 'ambulatory care -> CPI physicians'' services'),
+ ('622', array['bls.cpi_items:CUSR0000SEMD','bls.cpi_items:CUUR0000SEMD'], 'hospitals -> CPI hospital services'),
+ ('71',  array['bls.cpi_items:CUSR0000SAR','bls.cpi_items:CUUR0000SAR'], 'arts, entertainment, recreation -> CPI recreation'),
+ ('721', array['bls.cpi_items:CUSR0000SEHB','bls.cpi_items:CUUR0000SEHB'], 'accommodation -> CPI lodging away from home'),
+ ('722', array['bls.cpi_items:CUSR0000SEFV','bls.cpi_items:CUUR0000SEFV'], 'food services -> CPI food away from home'),
+ ('811', array['bls.cpi_items:CUSR0000SETD','bls.cpi_items:CUUR0000SETD'], 'repair and maintenance -> CPI vehicle maintenance and repair'),
+ ('812', array['bls.cpi_items:CUSR0000SAG1','bls.cpi_items:CUUR0000SAG1'], 'personal services -> CPI personal care')
+on conflict (prefix) do update set nodes = excluded.nodes, note = excluded.note;
+
+-- library selection rules that live in the att-library edge function (TS). Bump 'version' whenever that code changes.
+create or replace function ripples._att_library_rules() returns jsonb
+language sql immutable set search_path = '' as $$
+  select '{"version":"lib-rules-2026-09-25.r3","fema":"DisasterDeclarationsSummaries by year; FEMA incident type -> family; same (type,title) with begin dates within 7 days = one event; named storms -> storm-<name>-<year>","usgs":"felt reports >= 1000, 2019+","gdacs":"storm events, 2019+","noaa_extremes":"att_library_noaa_extremes (SQL)","macro":"att_library_macro (SQL calendar)","curated":"att_library_curated (SQL, 68 dates, not verified against primary sources)","control_twin":"att_control_overlap (SQL): same family, onset within 14 days and shared state, or same storm name and year within 30 days","prior_cutoff":"2026-01-01"}'::jsonb
+$$;
+
+create or replace function ripples.att_prereg_cutoff(p_version text default 'v6.0') returns date
+language sql stable security definer set search_path = '' as $$
+  select coalesce((select (v->>'cutoff')::date from ripples.att_state where k = 'prereg:' || p_version),
+                  (now() at time zone 'utc')::date)
+$$;
+
+-- moves the preregistration cutoff to today when the template set or the library selection rules changed
+create or replace function ripples.att_prereg_check(p_version text default 'v6.0') returns jsonb
+language plpgsql security definer set search_path = '' as $$
+declare v_tpl text; v_rules text; v_prev jsonb; v_day date := (now() at time zone 'utc')::date; n int := 0;
+begin
+  select encode(extensions.digest(coalesce(string_agg(template || '|' || family || '|' || target_pattern::text || '|' || sign || '|' || channel
+           || '|' || coalesce(l_days::text, ''), E'\n' order by template), ''), 'sha256'), 'hex')
+    into v_tpl from ripples.att_mech_templates where version = p_version;
+  select encode(extensions.digest(ripples._att_library_rules()::text || E'\n' || coalesce(string_agg(p.proname || ':' || md5(p.prosrc), E'\n' order by p.proname), ''), 'sha256'), 'hex')
+    into v_rules
+    from pg_proc p join pg_namespace n2 on n2.oid = p.pronamespace
+   where n2.nspname = 'ripples' and p.proname in ('att_library_upsert', 'att_library_recluster_storms', 'att_library_noaa_extremes',
+                                                   'att_library_macro', 'att_library_curated', 'att_control_overlap', 'att_storm_name',
+                                                   'att_lib_defined_by', 'att_proposing_channels', 'att_family_target_sources');
+  select v into v_prev from ripples.att_state where k = 'prereg:' || p_version;
+  if v_prev is null or v_prev->>'templates_hash' is distinct from v_tpl or v_prev->>'rules_hash' is distinct from v_rules then
+    insert into ripples.att_state(k, v) values ('prereg:' || p_version,
+      jsonb_build_object('cutoff', v_day, 'templates_hash', v_tpl, 'rules_hash', v_rules, 'rules', ripples._att_library_rules(),
+        'set_at', now(), 'previous_cutoff', v_prev->'cutoff',
+        'meaning', 'events with onset > cutoff are prospective (templates and library selection rules fixed before onset); onset <= cutoff is retrospective'))
+    on conflict (k) do update set v = excluded.v, updated_at = now();
+    update ripples.att_family_events set onset = onset;  -- trigger recomputes the sets against the new cutoff
+    get diagnostics n = row_count;
+    return jsonb_build_object('cutoff', v_day, 'moved', true, 'family_events_reflagged', n);
+  end if;
+  return jsonb_build_object('cutoff', v_prev->>'cutoff', 'moved', false);
+end $$;
+
+create or replace function ripples.att_mech_edges_asof(p_day date, p_version text default 'v6.0')
+returns setof ripples.att_mech_edges
+language sql stable security definer set search_path = '' as $$
+  select * from ripples.att_mech_edges m
+   where m.version = p_version and m.valid_from <= p_day and (m.valid_to is null or m.valid_to > p_day)
+$$;
+revoke all on function ripples._att_library_rules(), ripples.att_prereg_cutoff(text), ripples.att_prereg_check(text),
+  ripples.att_mech_edges_asof(date, text) from public, anon, authenticated;
+
+-- att_build_graph r3 (applied as migration att_wsa_r3_build_graph: a DO block patching the r2 body hunk by hunk; the
+-- resulting definition is exactly this one, minus comments, which the migration tool strips).
+create or replace function ripples.att_build_graph(p_version text default 'v6.0') returns jsonb
+language plpgsql security definer set search_path = '' as $$
+declare
+  v_counts jsonb; v_hash text; v_tpl text; v_pri text; v_prev jsonb; v_seq bigint := null; v_closed int; v_up int; v_vf int;
+  v_into int; v_struct int; v_pre jsonb;
+begin
+  update ripples.att_geo_nodes g
+     set qid_status = case when (c.claims->'P300') @> to_jsonb(array[g.geo]) then 'verified' else 'mismatch' end
+    from ripples.att_wd_claims c
+   where c.qid = g.qid and c.status = 'ok' and c.claims ? 'P300';
+
+  -- series nodes of ENABLED sources (an edge to a node without such a series is dead and is not built)
+  drop table if exists pg_temp._g_nodes;
+  create temp table _g_nodes on commit drop as
+    select s.source || ':' || s.key as node, bool_or(src.engine_channel = 'MONEY') money
+      from ripples.att_series s join ripples.att_sources src on src.source = s.source
+     where src.enabled
+     group by 1;
+  create index on _g_nodes (node);
+  drop table if exists pg_temp._e;
+  create temp table _e (from_node text, to_node text, etype text, prop text, template text, sign smallint, strength real, meta jsonb) on commit drop;
+
+  -- 1. MECH: static targets (with series)
+  insert into _e
+  select 'family:' || t.family, n.node, 'MECH', null, t.template, t.sign, 1.0,
+         jsonb_strip_nulls(jsonb_build_object('channel', t.channel, 'l_days', t.l_days, 'geo_filter', t.target_pattern->'geo_filter',
+           'demean', t.target_pattern->>'demean', 'agg', t.target_pattern->>'agg', 'builder', 'att_build_graph',
+           'hindsight', 'template v6.0 authored 2026-09-25 with the library and control events visible'))
+    from ripples.att_mech_templates t
+    cross join lateral jsonb_array_elements_text(coalesce(t.target_pattern->'nodes', '[]'::jsonb)) n(node)
+   where t.version = p_version and exists (select 1 from _g_nodes x where x.node = n.node);
+  -- 1b. MECH: balancing-authority pattern
+  insert into _e
+  select 'family:' || t.family, replace(t.target_pattern->>'pattern', '{BA}', b.ba), 'MECH', null, t.template, t.sign, 1.0,
+         jsonb_strip_nulls(jsonb_build_object('channel', t.channel, 'l_days', t.l_days, 'geo_from', 'place_ba',
+           'demean', t.target_pattern->>'demean', 'agg', t.target_pattern->>'agg', 'builder', 'att_build_graph',
+           'hindsight', 'template v6.0 authored 2026-09-25 with the library and control events visible'))
+    from ripples.att_mech_templates t
+    cross join (select distinct unnest(bas) ba from ripples.att_geo_nodes) b
+   where t.version = p_version and t.target_pattern->>'pattern' like '%{BA}%'
+     and exists (select 1 from _g_nodes x where x.node = replace(t.target_pattern->>'pattern', '{BA}', b.ba));
+  -- 1c. MECH: state patterns ({ST})
+  insert into _e
+  select 'family:' || t.family, replace(p.pat, '{ST}', substr(g.geo, 4)), 'MECH', null, t.template, t.sign, 1.0,
+         jsonb_strip_nulls(jsonb_build_object('channel', t.channel, 'l_days', t.l_days, 'geo_from', 'place_state',
+           'demean', t.target_pattern->>'demean', 'agg', t.target_pattern->>'agg', 'builder', 'att_build_graph',
+           'hindsight', 'template v6.0 authored 2026-09-25 with the library and control events visible'))
+    from ripples.att_mech_templates t
+    cross join lateral (select t.target_pattern->>'pattern' as pat
+                        union all select x from jsonb_array_elements_text(coalesce(t.target_pattern->'patterns', '[]'::jsonb)) x) p
+    cross join ripples.att_geo_nodes g
+   where t.version = p_version and p.pat like '%{ST}%'
+     and exists (select 1 from _g_nodes x where x.node = replace(p.pat, '{ST}', substr(g.geo, 4)));
+
+  -- 2. MAP: geography -> regional outcome series
+  insert into _e
+  select 'geo:' || g.geo, 'eia.930:' || b.ba, 'MAP', null, null, 0, 1.0,
+         jsonb_build_object('kind', 'state_ba', 'channel', 'PHYS', 'primary', b.ord = 1, 'builder', 'att_build_graph')
+    from ripples.att_geo_nodes g cross join lateral unnest(g.bas) with ordinality b(ba, ord)
+   where exists (select 1 from _g_nodes x where x.node = 'eia.930:' || b.ba);
+  insert into _e
+  select distinct on (s.geo, s.source, s.key) 'geo:' || s.geo, s.source || ':' || s.key, 'MAP', null, null, 0, 1.0,
+         jsonb_build_object('kind', 'state_series', 'channel', src.engine_channel, 'builder', 'att_build_graph')
+    from ripples.att_series s join ripples.att_sources src on src.source = s.source
+   where src.enabled and s.geo ~ '^US-[A-Z]{2}$' and s.geo in (select geo from ripples.att_geo_nodes)
+     and ((s.source = 'fred.claims' and s.key ~ '^[A-Z]{2}ICLAIMS$')
+          or (s.source = 'fema.decl' and s.key like 'st:%')
+          or s.source in ('census.bfs', 'mta.ridership', 'citibike.trips'));
+  insert into _e
+  select g.qid, 'geo:' || g.geo, 'MAP', 'P300', null, 0, 1.0,
+         jsonb_build_object('kind', 'qid_geo', 'structural', true, 'qid_status', g.qid_status, 'builder', 'att_build_graph')
+    from ripples.att_geo_nodes g where g.qid ~ '^Q[0-9]+$' and g.qid_status <> 'mismatch';
+
+  -- 3. MAP: topic -> its own outcome series (enabled sources, MONEY excluded)
+  insert into _e
+  select distinct t.qid, s.source || ':' || s.key, 'MAP', null, null, 0, 1.0,
+         jsonb_build_object('kind', 'topic_series', 'channel', src.engine_channel, 'builder', 'att_build_graph')
+    from ripples.att_series s
+    join ripples.att_topics t on t.topic_id = s.topic_id
+    join ripples.att_sources src on src.source = s.source
+    join ripples.att_channel_stat c on c.channel = src.engine_channel
+   where c.kind = 'outcome' and c.active and src.enabled and t.qid ~ '^Q[0-9]+$';
+
+  -- 4. MAP: industry crosswalks
+  insert into _e
+  select 'naics:' || n.n4, 'bls.ces:' || n.ces, 'MAP', null, null, 0, 1.0,
+         jsonb_build_object('kind', 'naics_ces', 'channel', 'JOBS', 'builder', 'att_build_graph')
+    from ripples.att_naics_ces n where exists (select 1 from _g_nodes x where x.node = 'bls.ces:' || n.ces);
+  insert into _e
+  select 'naics:' || m.prefix, 'hiringlab.postings:' || h.s, 'MAP', null, null, 0, 1.0,
+         jsonb_build_object('kind', 'naics_hiringlab', 'channel', 'JOBS', 'curated', true, 'builder', 'att_build_graph')
+    from ripples.att_naics_map m cross join lateral unnest(m.hl_sectors) h(s)
+   where exists (select 1 from _g_nodes x where x.node = 'hiringlab.postings:' || h.s);
+  insert into _e
+  select distinct 'naics:' || m.prefix, x.node, 'MAP', null, null, 0, 1.0,
+         jsonb_build_object('kind', 'naics_etf', 'channel', 'MONEY', 'curated', true, 'builder', 'att_build_graph')
+    from ripples.att_naics_map m cross join lateral unnest(m.etfs) e(s)
+    join _g_nodes x on x.node in ('alphavantage:' || e.s, 'twelvedata:' || e.s);
+  insert into _e
+  select distinct on (b.code) 'bea:' || b.code, 'naics:' || m.prefix, 'MAP', null, null, 0, 1.0,
+         jsonb_build_object('kind', 'bea_naics', 'structural', true, 'builder', 'att_build_graph')
+    from (select distinct substr(from_node, 5) code from ripples.att_mech_edges where etype = 'IO' and from_node like 'bea:%') b
+    join ripples.att_naics_map m on b.code like m.prefix || '%'
+   order by b.code, length(m.prefix) desc;
+
+  -- 4b. MAP: industry -> price series of its output (curated, att_naics_price; only to series that exist)
+  insert into _e
+  select distinct 'naics:' || p.prefix, x.node, 'MAP', null, null, 0, 1.0,
+         jsonb_build_object('kind', 'naics_price', 'channel', src.engine_channel, 'curated', true, 'note', p.note, 'builder', 'att_build_graph')
+    from ripples.att_naics_price p
+    join _g_nodes x on x.node = any(p.nodes)
+    join ripples.att_sources src on src.source = split_part(x.node, ':', 1)
+   where not x.money;
+
+  -- 5. Wikidata: WD edges and identifier MAP edges (identifier edges only to nodes with series)
+  insert into _e
+  select c.qid, v.val, 'WD', p.prop, null, 0, 0.6, jsonb_build_object('depth', c.depth, 'builder', 'att_build_graph')
+    from ripples.att_wd_claims c
+    cross join lateral jsonb_each(c.claims) p(prop, vals)
+    join ripples.att_wd_props w on w.prop = p.prop and w.kind = 'wd'
+    cross join lateral jsonb_array_elements_text(case when jsonb_typeof(p.vals) = 'array' then p.vals else '[]'::jsonb end) v(val)
+   where c.status = 'ok' and v.val ~ '^Q[0-9]+$' and v.val <> c.qid;
+  insert into _e
+  select distinct c.qid, x.node, 'MAP', 'P414', null, 0, 1.0,
+         jsonb_build_object('kind', 'ticker', 'exchange', t->>'v', 'channel', 'MONEY', 'builder', 'att_build_graph')
+    from ripples.att_wd_claims c
+    cross join lateral jsonb_array_elements(case when jsonb_typeof(c.claims->'P414') = 'array' then c.claims->'P414' else '[]'::jsonb end) t
+    join _g_nodes x on x.node in ('alphavantage:' || upper(t->>'t'), 'twelvedata:' || upper(t->>'t'))
+   where c.status = 'ok' and t->>'v' in ('Q13677','Q82059') and upper(t->>'t') ~ '^[A-Z][A-Z0-9.\-]{0,9}$';
+  insert into _e
+  select distinct c.qid, s.source || ':' || s.key, 'MAP', p.prop, null, 0, 1.0,
+         jsonb_build_object('kind', 'identifier', 'builder', 'att_build_graph')
+    from ripples.att_wd_claims c
+    cross join lateral (values ('P1733', 'steamspy'), ('P8729', 'anilist')) p(prop, source)
+    cross join lateral jsonb_array_elements_text(case when jsonb_typeof(c.claims->p.prop) = 'array' then c.claims->p.prop else '[]'::jsonb end) v(val)
+    join ripples.att_series s on s.source = p.source and s.key = v.val
+   where c.status = 'ok';
+  insert into _e
+  select distinct c.qid, s.source || ':' || s.key, 'MAP', 'P856', null, 0, 1.0, jsonb_build_object('kind', 'domain', 'builder', 'att_build_graph')
+    from ripples.att_wd_claims c
+    cross join lateral jsonb_array_elements_text(case when jsonb_typeof(c.claims->'P856') = 'array' then c.claims->'P856' else '[]'::jsonb end) v(val)
+    join ripples.att_series s on s.source = 'tranco.rank'
+     and s.key = regexp_replace(lower(substring(v.val from '^[a-z]+://([^/:?#]+)')), '^www\.', '')
+   where c.status = 'ok';
+  insert into _e
+  select distinct c.qid, x.node, 'MAP', 'P452', null, 0, 1.0,
+         jsonb_build_object('kind', 'industry_keyword', 'industry', i.qid, 'curated', true, 'builder', 'att_build_graph')
+    from ripples.att_wd_claims c
+    cross join lateral jsonb_array_elements_text(case when jsonb_typeof(c.claims->'P452') = 'array' then c.claims->'P452' else '[]'::jsonb end) v(val)
+    join ripples.att_wd_claims i on i.qid = v.val and i.label_en is not null
+    join (values
+      ('software|computer program|saas|cloud comput', array['hiringlab.postings:software_development','IGV']),
+      ('artificial intelligence|machine learning', array['hiringlab.postings:software_development','SMH']),
+      ('semiconductor|integrated circuit|microchip', array['hiringlab.postings:electrical_engineering','SMH']),
+      ('automotive|motor vehicle|car manufactur|electric vehicle', array['hiringlab.postings:mechanical_engineering','XLY']),
+      ('airline|aviation|air transport', array['hiringlab.postings:aviation','JETS']),
+      ('bank|financial service', array['hiringlab.postings:banking_and_finance','KRE']),
+      ('insurance', array['hiringlab.postings:insurance','KIE']),
+      ('petroleum|oil and gas|natural gas|oil industry', array['hiringlab.postings:installation_and_maintenance','XLE']),
+      ('electric utility|electric power|electricity', array['hiringlab.postings:electrical_engineering','XLU']),
+      ('retail|e-commerce|supermarket', array['hiringlab.postings:retail','XRT']),
+      ('pharmaceutical|biotechnology|drug', array['hiringlab.postings:scientific_research_and_development','IBB']),
+      ('film|entertainment|television|broadcast|mass media', array['hiringlab.postings:arts_and_entertainment','XLC']),
+      ('restaurant|fast food|food service', array['hiringlab.postings:food_preparation_and_service','PEJ']),
+      ('hotel|hospitality|tourism|travel', array['hiringlab.postings:hospitality_and_tourism','PEJ']),
+      ('construction|homebuild|real estate development', array['hiringlab.postings:construction','ITB']),
+      ('telecommunication', array['hiringlab.postings:it_infrastructure_operations_and_support','XLC']),
+      ('health care|hospital|medical', array['hiringlab.postings:nursing','XLV']),
+      ('mining|metal', array['hiringlab.postings:installation_and_maintenance','XME']),
+      ('logistics|shipping|freight|trucking|delivery', array['hiringlab.postings:logistic_support','IYT']),
+      ('social media|internet|social network', array['hiringlab.postings:software_development','XLC'])
+    ) kw(pattern, nodes) on lower(i.label_en) ~ kw.pattern
+    cross join lateral unnest(kw.nodes) k(n)
+    join _g_nodes x on x.node in (k.n, 'alphavantage:' || k.n, 'twelvedata:' || k.n)
+   where c.status = 'ok';
+
+  -- 5b. IO route ideas reachable from the family node (render-only, never tested)
+  insert into _e
+  select from_node, to_node, 'IO', null, template, 0, strength, meta from (
+    select 'family:' || fi.family from_node, r.to_node, 'route:family:' || fi.bea || '>' || coalesce(r.meta->>'via', r.template) template,
+           r.strength,
+           jsonb_build_object('route_idea', true, 'family_industry', 'bea:' || fi.bea, 'via', r.meta->>'via', 'leontief', r.meta->'leontief',
+             'text', coalesce(r.meta->>'label', fi.bea) || ' -> ' || coalesce(r.meta->>'via_label', r.meta->>'via', '?') || ' (input-output link)',
+             'status', 'hypothesis, not measured', 'src', 'BEA 2017 IO table, (I - A)^-1',
+             'render_only', true, 'never_test', true, 'builder', 'att_build_graph') meta,
+           row_number() over (partition by fi.family order by r.strength desc, r.to_node) rn,
+           row_number() over (partition by fi.family, r.to_node order by r.strength desc) rn_to
+      from ripples.att_family_industries fi
+      join ripples.att_mech_edges r on r.from_node = 'bea:' || fi.bea and r.etype = 'IO' and r.valid_to is null
+       and coalesce((r.meta->>'route_idea')::boolean, false) and r.meta->>'builder' = 'att_load_io') z
+   where rn_to = 1;
+  delete from _e e where e.etype = 'IO' and (e.from_node, e.to_node) not in (
+    select from_node, to_node from (select from_node, to_node, row_number() over (partition by from_node order by strength desc, to_node) rn
+                                      from _e where etype = 'IO') q where rn <= 5);
+
+  -- 6. upsert live edges; close edges the builder no longer produces (MAP / MECH / WD / its own IO route ideas)
+  insert into ripples.att_mech_edges(from_node, to_node, etype, prop, template, sign, strength, meta, version)
+  select distinct on (from_node, to_node, etype, coalesce(prop, ''), coalesce(template, ''))
+         from_node, to_node, etype, prop, template, sign, strength, meta, p_version
+    from _e where from_node is not null and to_node is not null and from_node <> to_node
+   order by from_node, to_node, etype, coalesce(prop, ''), coalesce(template, ''), strength desc
+  on conflict (from_node, to_node, etype, coalesce(prop, ''), coalesce(template, ''), version) do update
+    set sign = excluded.sign, strength = excluded.strength,
+        meta = excluded.meta || jsonb_strip_nulls(jsonb_build_object('first_built', ripples.att_mech_edges.meta->'first_built',
+                                                                     'valid_from_basis', ripples.att_mech_edges.meta->'valid_from_basis',
+                                                                     'data_from', ripples.att_mech_edges.meta->'data_from',
+                                                                     'evidence', ripples.att_mech_edges.meta->'evidence')),
+        valid_from = case when ripples.att_mech_edges.valid_to is not null then current_date else ripples.att_mech_edges.valid_from end,
+        valid_to = null
+   where ripples.att_mech_edges.valid_to is not null
+      or (ripples.att_mech_edges.meta - 'first_built' - 'valid_from_basis' - 'data_from' - 'evidence') is distinct from excluded.meta
+      or ripples.att_mech_edges.sign is distinct from excluded.sign or ripples.att_mech_edges.strength is distinct from excluded.strength;
+  get diagnostics v_up = row_count;
+  update ripples.att_mech_edges m set valid_to = current_date
+   where m.version = p_version and m.valid_to is null and m.etype in ('MAP','MECH','WD','IO') and m.meta->>'builder' = 'att_build_graph'
+     and not exists (select 1 from _e e where e.from_node = m.from_node and e.to_node = m.to_node and e.etype = m.etype
+                        and coalesce(e.prop, '') = coalesce(m.prop, '') and coalesce(e.template, '') = coalesce(m.template, ''));
+  get diagnostics v_closed = row_count;
+
+  -- 7. valid_from = REGISTRATION date (round 3): the day the edge entered the live graph (column default current_date on
+  --    insert; the reopen day when a closed edge comes back). It is never back-dated. meta.first_built keeps the first
+  --    registration day, meta.data_from the first observation day of the target series (informational only: it says when
+  --    the target data existed, not when the mechanism was registered). An event with onset before valid_from can only be
+  --    a retrospective (hindsight) test; ENGINE §3.9 "registered before onset" holds only for onset > valid_from.
+  drop table if exists pg_temp._fo;
+  create temp table _fo on commit drop as
+    select s.source || ':' || s.key node, min(f.d) d
+      from ripples.att_series s
+      cross join lateral (select o.day d from ripples.attention_obs o where o.series_id = s.series_id order by o.day limit 1) f
+     where (s.source || ':' || s.key) in (select to_node from ripples.att_mech_edges
+                                            where version = p_version and valid_to is null and etype in ('MAP','MECH') and meta->>'builder' = 'att_build_graph')
+     group by 1;
+  update ripples.att_mech_edges m
+     set meta = m.meta || jsonb_build_object('data_from', f.d)
+    from _fo f
+   where m.version = p_version and m.valid_to is null and m.etype in ('MAP','MECH') and m.meta->>'builder' = 'att_build_graph'
+     and f.node = m.to_node and m.meta->>'data_from' is distinct from f.d::text;
+  update ripples.att_mech_edges m
+     set meta = m.meta || jsonb_build_object('valid_from_basis', 'registered',
+                  'first_built', coalesce(m.meta->>'first_built', m.valid_from::text),
+                  'evidence', 'registered ' || m.valid_from || ' (v6.0 templates / maps authored 2026-09-25 with the library and control '
+                              || 'events visible): a test of an event with onset <= valid_from is retrospective, never "registered before onset"')
+   where m.version = p_version and m.valid_to is null and m.etype in ('MAP','MECH','WD') and m.meta->>'builder' = 'att_build_graph'
+     and (m.meta->>'valid_from_basis' is distinct from 'registered' or m.meta->>'evidence' not like 'registered ' || m.valid_from || ' %');
+  get diagnostics v_vf = row_count;
+
+  -- 8. counts, hashes, ledger
+  select jsonb_object_agg(k, n) into v_counts from (
+    select etype || coalesce('.' || (meta->>'kind'), '') k, count(*) n from ripples.att_mech_edges
+     where version = p_version and valid_to is null group by 1) z;
+  select count(*) filter (where m.etype = 'MAP' and not coalesce((m.meta->>'structural')::boolean, false)
+                            and coalesce(m.meta->>'channel', '') <> 'MONEY' and exists (select 1 from _g_nodes x where x.node = m.to_node)),
+         count(*) filter (where m.etype = 'MAP' and coalesce((m.meta->>'structural')::boolean, false))
+    into v_into, v_struct
+    from ripples.att_mech_edges m where m.version = p_version and m.valid_to is null;
+  v_counts := v_counts || jsonb_build_object('map_into_series', v_into, 'map_structural', v_struct);
+  select encode(extensions.digest(coalesce(string_agg(from_node || '|' || to_node || '|' || etype || '|' || coalesce(prop, '') || '|'
+           || coalesce(template, '') || '|' || sign || '|' || strength || '|' || valid_from, E'\n'
+           order by from_node, to_node, etype, coalesce(prop, ''), coalesce(template, '')), ''), 'sha256'), 'hex')
+    into v_hash from ripples.att_mech_edges where version = p_version and valid_to is null;
+  select encode(extensions.digest(coalesce(string_agg(template || '|' || family || '|' || target_pattern::text || '|' || sign || '|' || channel
+           || '|' || coalesce(l_days::text, ''), E'\n' order by template), ''), 'sha256'), 'hex')
+    into v_tpl from ripples.att_mech_templates where version = p_version;
+  select encode(extensions.digest(coalesce(string_agg(etype || '|' || channel || '|' || family || '|' || prior, E'\n'
+           order by etype, channel, family), ''), 'sha256'), 'hex')
+    into v_pri from ripples.att_edge_priors where version = 'v6.0-seed';
+  select v into v_prev from ripples.att_state where k = 'graph.hash:' || p_version;
+  if v_prev is null or v_prev->>'graph_hash' is distinct from v_hash or v_prev->>'templates_hash' is distinct from v_tpl
+     or v_prev->>'priors_hash' is distinct from v_pri then
+    v_seq := ripples._att_ledger_append_wsa((now() at time zone 'utc')::date, 'model_version',
+      jsonb_build_object('object', 'mech_graph', 'version', p_version, 'graph_hash', v_hash, 'templates_hash', v_tpl,
+                         'priors_hash', v_pri, 'prior_cutoff', '2026-01-01', 'counts', v_counts,
+                         'hash_formula', 'sha256 over live edges: from|to|etype|prop|template|sign|strength|valid_from, ordered',
+                         'valid_from_basis', 'registered'),
+      encode(extensions.digest(v_hash || '|' || v_tpl || '|' || v_pri, 'sha256'), 'hex'));
+    insert into ripples.att_state(k, v) values ('graph.hash:' || p_version,
+      jsonb_build_object('graph_hash', v_hash, 'templates_hash', v_tpl, 'priors_hash', v_pri, 'ledger_seq', v_seq, 'at', now(), 'counts', v_counts))
+    on conflict (k) do update set v = excluded.v, updated_at = now();
+  end if;
+  v_pre := ripples.att_prereg_check(p_version);
+  return jsonb_build_object('version', p_version, 'prereg', v_pre, 'upserted', v_up, 'closed', v_closed, 'registration_meta_set', v_vf, 'counts', v_counts,
+    'graph_hash', v_hash, 'templates_hash', v_tpl, 'priors_hash', v_pri, 'ledger_seq', v_seq,
+    'ledger', case when v_seq is null then 'unchanged' else 'appended' end);
+end $$;
+revoke all on function ripples.att_build_graph(text) from public, anon, authenticated;
+
+-- One-off statements run on 2026-09-25 ~20:50 UTC after the r3 migrations (execute_sql):
+--   update ripples.att_mech_edges m set valid_from = (m.meta->>'first_built')::date
+--    where m.version = 'v6.0' and m.meta->>'builder' = 'att_build_graph' and m.etype in ('MAP','MECH','WD')
+--      and m.meta->>'first_built' ~ '^\d{4}-\d{2}-\d{2}$' and m.valid_from is distinct from (m.meta->>'first_built')::date;
+--      -> 1,516 edges moved from back-dated valid_from (2015-07-01 .. 2026-09-24) to their registration day 2026-09-25
+--   select ripples.att_prereg_check('v6.0');   -> cutoff 2026-09-25, 1,241 family events re-flagged
+--   select ripples.att_family_sync('v6.0'), ripples.att_build_graph('v6.0');   -> ledger seq 463, graph hash bf0c3937...

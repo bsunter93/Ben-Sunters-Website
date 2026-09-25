@@ -1060,3 +1060,61 @@ select cron.schedule('wsa-zvec-catchup', '* * * * *', $c$select ripples._wsa_zve
 --   update ripples.att_events ... 'Hurricane ' -> 'Typhoon ' for canonical storms whose states are only GU / MP / AS
 --   select ripples.att_library_noaa_extremes();             -- 85 heat / cold events; 2 skipped as twins of the Texas heat dome control
 --   select ripples.att_build_graph('v6.0');                 -- ledger model_version row (graph + template + prior hashes)
+
+-- =====================================================================================================================
+-- Addendum (migration att_wsa_r3_library_sets, 2026-09-25 ~20:50 UTC) — verifier round 3: preregistration, retrospective
+-- 1. in_replication_set now means PROSPECTIVE: a library event with onset > the preregistration cutoff
+--    (ripples.att_prereg_cutoff('v6.0'), att_state 'prereg:v6.0', set by att_prereg_check in 18_att_mech_graph.sql: the day
+--    the current template set and library selection rules were registered; it moves whenever either changes). The 126
+--    events with onset in [prior_cutoff 2026-01-01, cutoff 2026-09-25] were chosen / thresholded / clustered with their
+--    outcomes visible (USGS felt >= 1000 after seeing 1,220 events, FEMA 7-day clustering, templates written 2026-09-25):
+--    they move to in_retro_holdout = "held out from the prior fit, NOT preregistered, not a replication".
+-- 2. evidence_mode = 'retrospective' (onset <= cutoff: every library and positive-control event today) | 'prospective'.
+-- 3. One trigger computes in_prior_set / in_replication_set / in_retro_holdout / evidence_mode / set_note for every write,
+--    whatever the writer (att_library_upsert, recluster, sweep, noaa extremes), so no path can mark a hindsight event as a
+--    replication. att_library_sweep calls att_prereg_check first (daily 05:33).
+alter table ripples.att_family_events add column if not exists in_retro_holdout boolean not null default false;
+alter table ripples.att_family_events add column if not exists evidence_mode text not null default 'retrospective';
+
+create or replace function ripples._att_family_events_sets() returns trigger
+language plpgsql security definer set search_path = '' as $$
+declare v_role text; v_lib boolean;
+        v_cut date := coalesce((ripples._att_cfg('engine') ->> 'prior_cutoff')::date, date '2026-01-01');
+        v_pre date := ripples.att_prereg_cutoff('v6.0');
+begin
+  select role into v_role from ripples.att_events where event_id = new.event_id;
+  v_lib := coalesce(v_role, 'library') = 'library';
+  new.in_prior_set := v_lib and new.onset < v_cut;
+  new.in_replication_set := v_lib and new.onset >= v_cut and new.onset > v_pre;
+  new.in_retro_holdout := v_lib and new.onset >= v_cut and new.onset <= v_pre;
+  new.evidence_mode := case when new.onset > v_pre then 'prospective' else 'retrospective' end;
+  new.set_note := case
+      when not v_lib then 'positive control: in neither set (ENGINE §5.7); retrospective (templates registered ' || v_pre || ')'
+      when new.onset < v_cut then 'prior set (onset < prior_cutoff ' || v_cut || '); retrospective: templates and library selection rules were registered '
+                                  || v_pre || ' with these events visible'
+      when new.onset <= v_pre then 'retrospective hold-out, NOT a replication: onset >= prior_cutoff ' || v_cut || ' but <= preregistration cutoff '
+                                  || v_pre || ' (templates, USGS/FEMA selection rules and clustering were chosen with these events visible); report as "not preregistered"'
+      else 'replication set: onset after the preregistration cutoff ' || v_pre || ' (prospective)' end
+    || case when cardinality(coalesce(new.proposing_ch, '{}')) > 0
+            then '; proposing channel(s) ' || array_to_string(new.proposing_ch, ',') || ' must be excluded from the response (ENGINE §2.4)' else '' end;
+  return new;
+end $$;
+revoke all on function ripples._att_family_events_sets() from public, anon, authenticated;
+drop trigger if exists att_family_events_sets on ripples.att_family_events;
+create trigger att_family_events_sets before insert or update on ripples.att_family_events
+  for each row execute function ripples._att_family_events_sets();
+
+-- att_library_sweep: 'perform ripples.att_prereg_check(''v6.0'');' inserted as the first statement (DO block patch)
+do $mig$
+declare d text;
+begin
+  d := pg_get_functiondef('ripples.att_library_sweep()'::regprocedure);
+  if position('perform ripples.att_prereg_check' in d) = 0 then
+    d := regexp_replace(d, E'\nbegin\n', E'\nbegin\n  perform ripples.att_prereg_check(''v6.0'');\n');
+    execute d;
+  end if;
+end $mig$;
+
+-- One-off (execute_sql, 2026-09-25 ~20:57 UTC): HN new-series backfill day counter seeded from att_runs (7 hn_bf runs x 60
+-- calls = 420 on 2026-09-25, above ENGINE §9 "HN 300"); att-library l4 enforces HN_BF_DAY_CAP = 300 per UTC day from it.
+--   insert into ripples.att_state(k, v) values ('lib.bf.hn.day', '{"day":"2026-09-25","calls":420}') on conflict (k) do update ...
