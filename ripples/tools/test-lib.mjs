@@ -29,10 +29,13 @@ const base = { n: puzzle.n, seedTitle: puzzle.seed.title, path };
 // 1. All correct, streak 5, slider exact.
 eq('scenario 1: all correct, streak 5', L.shareText({ ...base, codes: [2, 2, 2], streak: 5, guess: 3.8, actual }),
   'Knock-On #0 · Test Seed Article\n👤→📍→🎬 · 🎵→🏅\n🟩🟩🟩 8/8 🔥5\n📏 last hop within 1.0×\nbensunter.com/ripples/0/3');
-// 2. Mixed, fresh-ripple break, streak 1 (no suffix), slider within 3× (1 point, line shown).
-eq('scenario 2: mixed', L.shareText({ ...base, codes: [2, 1, 0], streak: 1, guess: 6, actual }),
-  'Knock-On #0 · Test Seed Article\n👤→📍→🎬 · 🎵→🏅\n🟩🟨🟥 4/8\n📏 last hop within 1.6×\nbensunter.com/ripples/0/1');
-// 3. All missed, slider outside 3×: mag line omitted.
+// 2. Mixed, fresh-ripple break, streak 1 (no suffix), slider within 1.5× (2 points, line shown).
+eq('scenario 2: mixed', L.shareText({ ...base, codes: [2, 1, 0], streak: 1, guess: 5, actual }),
+  'Knock-On #0 · Test Seed Article\n👤→📍→🎬 · 🎵→🏅\n🟩🟨🟥 5/8\n📏 last hop within 1.3×\nbensunter.com/ripples/0/1');
+// 2b. D-2: within 2× but not 1.5× scores 1 point and the mag line is omitted.
+eq('scenario 2b: within 2x, no line', L.shareText({ ...base, codes: [2, 1, 0], streak: 2, guess: 6, actual }),
+  'Knock-On #0 · Test Seed Article\n👤→📍→🎬 · 🎵→🏅\n🟩🟨🟥 4/8 🔥2\nbensunter.com/ripples/0/1');
+// 3. All missed, slider outside 3× (and 2×): mag line omitted, 0 slider points.
 eq('scenario 3: missed, slider outside 3x', L.shareText({ ...base, codes: [0, 0, 0], streak: 0, guess: 50, actual }),
   'Knock-On #0 · Test Seed Article\n👤→📍→🎬 · 🎵→🏅\n🟥🟥🟥 0/8\nbensunter.com/ripples/0/0');
 // SPEC §3 illustrative example (4 rounds, all continuing). The spec's 6/10 is illustrative and
@@ -45,9 +48,19 @@ eq('practice url', L.shareText({ n: -3, seedTitle: 'X', path: '👤→📍', cod
 eq('scoreRound first', L.scoreRound(['c'], 'c'), 2);
 eq('scoreRound second', L.scoreRound(['a', 'c'], 'c'), 1);
 eq('scoreRound miss', L.scoreRound(['a', 'b'], 'c'), 0);
-eq('magPoints 1.5x', L.magPoints(5.6, 3.8), 2);
-eq('magPoints 1.6x', L.magPoints(6, 3.8), 1);
+// OWNER_DECISIONS D-2: 2 within 1.5×, 1 within 2× (was 3×), else 0.
+eq('magPoints 1.47x', L.magPoints(5.6, 3.8), 2);
+eq('magPoints 1.58x', L.magPoints(6, 3.8), 1);
+eq('magPoints 1.97x', L.magPoints(7.5, 3.8), 1);
+eq('magPoints 2.1x', L.magPoints(8, 3.8), 0);
+eq('magPoints 2.1x under', L.magPoints(1.8, 3.8), 0);
 eq('magPoints 3.1x', L.magPoints(12, 3.8), 0);
+eq('magLine 1.497x shown', L.magLine(5.69, 3.8), '📏 last hop within 1.5×');
+// log10(1.5) = 0.17609 > 0.176, so exactly 1.5× (and 1.50–1.549×) scores 1 point and the line is omitted.
+eq('magLine exactly 1.5x omitted', L.magLine(5.7, 3.8), '');
+eq('magPoints exactly 1.5x = 1', L.magPoints(5.7, 3.8), 1);
+eq('magLine 1.54x omitted', L.magLine(3.8 * 1.54, 3.8), '');
+eq('magLine 1.6x omitted', L.magLine(6, 3.8), '');
 eq('maxScore', L.maxScore(4), 10);
 eq('gridEmoji', L.gridEmoji([2, 1, 0, 2]), '🟩🟨🟥🟩');
 eq('fmtMultiple small', L.fmtMultiple(6.2), '6.2×');
@@ -86,5 +99,30 @@ eq('rarity: rarest first-try round', L.rarityLine(st, [2, 2, 2]), 'Only 9% of pl
 eq('rarity: not rare is omitted', L.rarityLine(st, [2, 0, 0]), '');
 eq('rarity: found at all', L.rarityLine(st, [0, 0, 1]), 'Only 35% of players found round 3');
 eq('rarity hidden under 30', L.rarityLine({ shown: false, rounds: null }, [2, 2, 2]), '');
+// Cross badges (contract extension): corroboration wording, numbers only from the item.
+const xs = [puzzle.seed.cross[0], reveal.rounds[0].evidence.cross[0], reveal.rounds[2].evidence.cross[0]].map(L.crossText);
+eq('cross listing', xs[0], 'Also on Google Trends: TEST: listed in Google Trends daily trending searches (US) · earlier');
+eq('cross z only', xs[1], 'Also spiked on TV news: TEST: mentioned on TV news captions · later');
+eq('cross multiple', xs[2], 'Also spiked on Mastodon: TEST: trending hashtag on Mastodon · 4.5× · same day');
+eq('cross no causal words', xs.some(x => /caus|drove|flood/i.test(x)), false);
+
+// Backup code round trip (D-3) and rejection of junk.
+const hist = { 12: { grid: '🟩🟨🟥', score: 5, max: 8, mag: 4.2, s: 1, picks: [['a']] }, 13: { grid: '🟩🟩🟩🟩', score: 10, max: 10, mag: 3, s: 4 }, [-3]: { grid: '🟩', score: 2, max: 4 } };
+const code = L.encodeBackup(hist, { 12: 'Q42', 13: 'bad' });
+const back = L.decodeBackup(code);
+eq('backup prefix', code.slice(0, 4), 'KO1.');
+eq('backup restores live history', JSON.stringify(Object.keys(back.hist)), '["12","13"]');
+eq('backup grid', back.hist[13].grid, '🟩🟩🟩🟩');
+eq('backup drops bad calls', JSON.stringify(back.calls), '{"12":"Q42"}');
+eq('backup junk', L.decodeBackup('KO1.<script>'), null);
+eq('backup wrong prefix', L.decodeBackup('hello'), null);
+
+// Calendar event: CRLF, UTC times, escaped text, folded lines.
+const ics = L.icsEvent({ uid: 'ko-call-12', start: Date.parse('2026-10-15T08:00:00Z'), title: 'Knock-On: your call on A, B; C resolves', url: 'https://bensunter.com/ripples/12/?src=ics', now: Date.parse('2026-10-07T09:00:00Z') });
+eq('ics start', ics.includes('\r\nDTSTART:20261015T080000Z\r\n'), true);
+eq('ics escape', ics.includes('SUMMARY:Knock-On: your call on A\\, B\\; C resolves'), true);
+eq('ics fold', ics.split('\r\n').every(l => l.length <= 75), true);
+eq('ics ends', ics.endsWith('END:VCALENDAR\r\n'), true);
+
 console.log(`${passes} passed, ${fails} failed`);
 process.exit(fails ? 1 : 0);

@@ -25,7 +25,7 @@ import {
 } from "./att.ts";
 
 const FN = "att-social";
-export const SOCIAL_VERSION = "2026-09-25.s3";
+export const SOCIAL_VERSION = "2026-09-25.s4";
 
 // ------------------------------------------------------------------ small helpers
 const DAY_S = 86400;
@@ -990,6 +990,25 @@ async function bfDone(run: Run, keys: string[], status: "done" | "skipped" | "fa
   if (error) run.errors.push(`att_social_bf_done: ${error.message}`);
 }
 
+/** Next UTC day at 00:10, when the daily budgets reset and day kills expire. */
+function nextUtcDayIso(): string { const d = new Date(); d.setUTCHours(24, 10, 0, 0); return d.toISOString(); }
+/**
+ * If the source's host is closed for the rest of the UTC day (daily budget spent, 429/503 day kill, permanent kill),
+ * requeue this dispatch's remaining jobs for the next UTC day instead of letting Run.finish() requeue them for +1 h
+ * (att_tick would otherwise keep dispatching no-op runs every 2 min). Jobs already marked done/skipped are untouched.
+ */
+async function deferIfHostClosed(run: Run, host: string): Promise<void> {
+  const hit = run.skipped.find((s) => s.host === host && /^(daily_budget_spent|host_killed_)/.test(s.reason));
+  const ids = run.jobIds();
+  if (!hit || !ids.length || run.dryRun) return;
+  const until = nextUtcDayIso();
+  const { data, error } = await db.rpc("att_jobs_done", { p_jobs: ids, p_status: "requeue", p_error: `deferred: ${hit.reason}`, p_not_before: until });
+  if (error) { run.errors.push(`att_jobs_done(defer): ${error.message}`); return; }
+  // Run.finish() must not requeue them again with the default +1 h
+  if (run.body && typeof run.body === "object") { run.body.job_ids = []; delete run.body.job_id; }
+  run.extra.deferred = { jobs: Number(data ?? 0), until, reason: hit.reason };
+}
+
 async function modeBackfill(run: Run) {
   const source = String(run.params.source ?? "");
   const bf = run.body?.backfill ?? {};
@@ -1030,6 +1049,7 @@ async function backfillHn(run: Run, from: string, to: string) {
     } else { run.partial = true; break; }
   }
   await bfDone(run, doneKeys, "done");
+  await deferIfHostClosed(run, "hn.algolia.com");
   Object.assign(run.extra, { keys_in: keys.length, keys_complete: completed, window: [from, to], social_version: SOCIAL_VERSION });
   run.source({ source: "hn.algolia", status: run.partial ? "partial" : "ok", keys: completed, rows: rowsN, ms: Date.now() - t0 });
 }
@@ -1066,6 +1086,8 @@ async function backfillSe(run: Run, from: string, to: string) {
   if (!ctx.stop && !run.outOfTime(15000)) await seTotalsBackfill(run, ctx, [...new Set(Object.values(map).flat().map(String))], 10);
   await bfDone(run, skipKeys, "skipped", "se.api: no relevant Stack Exchange site for this topic category (unkeyed quota)");
   await bfDone(run, doneKeys, "done");
+  if (ctx.stop === "quota_low" && !run.skipped.some((x) => x.host === "api.stackexchange.com")) run.skip("api.stackexchange.com", "daily_budget_spent:se.api(quota_low)");
+  await deferIfHostClosed(run, "api.stackexchange.com");
   Object.assign(run.extra, { keys_in: keys.length, keys_done: doneKeys.length, keys_skipped: skipKeys.length, stop: ctx.stop, social_version: SOCIAL_VERSION });
   run.source({ source: "se.api", status: ctx.stop === "throttle_violation" ? "host_killed_429" : run.partial ? "partial" : "ok",
     keys: doneKeys.length, rows: rowsN, ms: Date.now() - t0, note: ctx.stop });

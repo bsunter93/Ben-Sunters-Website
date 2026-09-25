@@ -1,0 +1,25 @@
+BEGIN:VCALENDAR
+VERSION:2.0
+PRODID:-//bensunter.com//Knock-On//EN
+CALSCALE:GREGORIAN
+X-WR-CALNAME:Knock-On daily
+BEGIN:VEVENT
+UID:knock-on-daily-1900@bensunter.com
+DTSTAMP:20260925T000000Z
+DTSTART:20260926T190000
+DURATION:PT10M
+RRULE:FREQ=DAILY
+SUMMARY:Knock-On: today's chain is up
+DESCRIPTION:A new chain goes live every day at 07:30 UTC\, so at 19:00 your
+ time today's is up anywhere from UTC-12 to UTC+11:30. Further east (e.g. N
+ ew Zealand) it goes live at 19:30 or later local time. https://bensunter.c
+ om/ripples/?src=ics\nTo stop these reminders\, delete this event.
+URL:https://bensunter.com/ripples/?src=ics
+TRANSP:TRANSPARENT
+BEGIN:VALARM
+ACTION:DISPLAY
+DESCRIPTION:Knock-On: today's chain is up
+TRIGGER:PT0M
+END:VALARM
+END:VEVENT
+END:VCALENDAR

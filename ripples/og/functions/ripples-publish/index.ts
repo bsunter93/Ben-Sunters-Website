@@ -5,6 +5,14 @@
 // POST {"n": 12}     -> ripples_publish_bundle(12) (explicit n; also used for fixture n=0 / practice n<0 tests)
 // POST {"prerender": false} skips the OG PNG pre-render.
 // Idempotent: every object is upserted; re-running only refreshes files (late captions, callit outcomes).
+//
+// Staging (07:25 run, SPEC §12 no early spoilers): publish_bundle marks today's live puzzle published from 07:20,
+// but it only becomes visible at the 07:30 rollover (ripples._current_date). While it is not yet visible
+// (bundle.latest.n < n) this function writes NO per-puzzle file for it: no puzzle/reveal/callit/board/{n}.json,
+// no data/{date}.json|.csv (the CSV carries the answer column) and no OG PNGs. It only refreshes latest.json
+// (still yesterday's, with next_at = today 07:30), archive, track, ledger and older Call It files. From 07:30 to
+// the 07:45 run the client falls back to the RPCs: app.js getLatest() re-reads ripples_latest once next_at has
+// passed, and load() falls back to the RPC for any missing Storage object. The 07:45 run then mirrors everything.
 import { createClient } from "jsr:@supabase/supabase-js@2";
 
 const SB_URL = Deno.env.get("SUPABASE_URL")!;
@@ -85,10 +93,13 @@ Deno.serve(async (req: Request) => {
 
   const n: number | null = bundle.n;
   const kind: string | null = bundle.kind;
+  // staged = today's live puzzle is published (ledgered, locked against a veto) but not visible until 07:30
+  const latestN = Number.isInteger(bundle.latest?.n) ? bundle.latest.n as number : null;
+  const staged = kind === "live" && n !== null && (latestN === null || latestN < n);
   const ups: Up[] = [];
   // latest.json is always the real latest (delayed + previous puzzle, or delayed + null before launch)
   ups.push({ path: P + "latest.json", body: json(bundle.latest), type: "application/json", cache: 60 });
-  if (n !== null && bundle.puzzle) {
+  if (n !== null && bundle.puzzle && !staged) {
     ups.push({ path: `${P}puzzle/${n}.json`, body: json(bundle.puzzle), type: "application/json", cache: 3600 });
     if (bundle.reveal) ups.push({ path: `${P}reveal/${n}.json`, body: json(bundle.reveal), type: "application/json", cache: 3600 });
     if (bundle.callit) ups.push({ path: `${P}callit/${n}.json`, body: json(bundle.callit), type: "application/json", cache: 300 });
@@ -123,7 +134,7 @@ Deno.serve(async (req: Request) => {
   // open data (CC BY 4.0): live puzzles only, Wikimedia-derived columns only (csv_rows never carries cross/Google data)
   const rows: Record<string, unknown>[] = Array.isArray(bundle.csv_rows) ? bundle.csv_rows : [];
   let dataDate: string | null = null;
-  if (kind === "live" && n !== null && rows.length) {
+  if (kind === "live" && n !== null && rows.length && !staged) {
     dataDate = String(bundle.date);
     const cite = `Knock-On / Today's Ripples, bensunter.com/ripples, ${dataDate}, method v5.0`;
     const doc = {
@@ -147,12 +158,13 @@ Deno.serve(async (req: Request) => {
   }
 
   let og: { ok: string[]; err: string[] } = { ok: [], err: [] };
-  if (n !== null && b?.prerender !== false) {
+  if (n !== null && !staged && b?.prerender !== false) {
     const R = Array.isArray(bundle.puzzle?.rounds) ? bundle.puzzle.rounds.length : 4;
     og = await prerender(n, R);
   }
   const res = {
     ok: errors.length === 0, n, kind, date: bundle.date ?? null, latest_status: bundle.latest?.status ?? null,
+    staged, // true = published but not yet visible: per-puzzle files, open data and OG PNGs deferred to the next run
     uploaded: ups.map((u) => u.path).filter((p) => !errors.some((e) => e.startsWith(p + ":"))),
     og: og.ok, og_skipped: og.err, errors, ledger_head: bundle.ledger_head ?? null,
     ms: Math.round(performance.now() - t0),

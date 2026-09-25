@@ -84,6 +84,14 @@
   <li><b>AI-written context</b> an optional caption by Claude, hedged and about attention only.</li>
 </ul>
 
+<h2>Scoring</h2>
+<ul>
+  <li><b>Rounds.</b> 🟩 first try 2 points, 🟨 second try 1, 🟥 missed 0. A miss shows the answer and you carry on along the real path.</li>
+  <li><b>Final guess.</b> On a log slider from 1.5× to 100×, with no default. The error is e = |log10(guess ÷ actual)|: 2 points within 1.5× (e ≤ 0.176), 1 point within 2× (e ≤ 0.301), otherwise 0. The share text adds "📏 last hop within x×" only for a 2-point guess.</li>
+  <li><b>Maximum</b> 2 × rounds + 2. The server re-scores every play from the stored answers before it counts toward players' picks.</li>
+  <li><b>Answer check.</b> Your browser checks a pick against a SHA-256 hash of the answer, so nothing is sent until you finish. It stops a glance, not a determined cheat, which is one more reason players' picks are never evidence.</li>
+</ul>
+
 <h2>Chains, rounds and Call It</h2>
 <p>Chains are ranked by confidence first: the number of answer hops, then the summed log fluke odds; topic jumps only break ties. A chain of 3+ hops becomes the puzzle (capped at 4). A 2-hop chain is topped up with "fresh ripples", single hops from other seeds, shown as a · break. With fewer than 3 rounds the puzzle comes from the reserve bank of the last 14 days and shows its real date. With nothing at all, the page says it is delayed. There is no padding: the chain ends where the evidence ends.</p>
 <p><b>Call It</b> offers 4 calm pages linked from round 1's seed, each with a median of at least 2,000 views a day, so this site's own traffic can't move them. A call hits when any day in the 7-day window reaches z ≥ 3 against a baseline frozen on the puzzle date and at least 1.5× normal. <b>The Model v0 (base rate)</b> is the historical hit rate of such pages, adjusted by clickstream rank when that data exists. Crowd and Model are shown as raw counts until 200 calls resolve; Brier scores and skill come after that, printed even if skill ≤ 0.</p>
@@ -107,8 +115,7 @@
 <tr><td>Wikidata</td><td>topics, dates of death, safety</td><td>CC0</td></tr>
 <tr><td>Wikipedia short descriptions</td><td>option subtitles</td><td>CC BY-SA</td></tr>
 <tr><td>Google Trends daily RSS</td><td>seed discovery, "why it's trending" links</td><td>official feed</td></tr>
-<tr><td>Google Trends "Trending Now" internal endpoint</td><td>seed enrichment, free game only</td><td><span class="tag">unofficial</span> never in open data</td></tr>
-<tr><td>Bluesky trends</td><td>badge only</td><td>public API</td></tr>
+<tr><td>Bluesky, Mastodon, GDELT TV news, search autocomplete, Polymarket</td><td>"also spiked on …" corroboration badges only, shown when present; never part of a measurement, a score or an answer</td><td>each channel's public feed or API; never in open data</td></tr>
 </table></div>
 <p>The open data files (<code>v1/data/</code>) contain Wikimedia-derived fields only, under CC BY 4.0. See <a href="/ripples/pro/#data">Open data</a>.</p>
 
@@ -117,7 +124,7 @@
 
 <h2>Changelog</h2>
 <ul>
-  <li><b>v5.0 (launch, #1 on 26 Sep 2026)</b> Knock-On replaces the private "Today's Ripples" v4 page. Automatic discovery replaces hand-written cascades. The Ripple Index score and all dollar figures are retired from public view. New: decoy fluke meter, time-shift placebos, shared-trigger stop rule, Call It with The Model v0, the Board, the public ledger.</li>
+  <li><b>v5.0 (launch, #1 on 26 Sep 2026)</b> Knock-On replaces the private "Today's Ripples" v4 page. Automatic discovery replaces hand-written cascades. The Ripple Index score and all dollar figures are retired from public view. New: decoy fluke meter, time-shift placebos, shared-trigger stop rule, Call It with The Model v0, the Board, the public ledger. The final-guess scoring band for 1 point is within 2× (the draft spec said 3×).</li>
 </ul>
 <p style="margin-top:30px"><a class="btn" href="/ripples/">Play today's chain</a></p>
 </main>

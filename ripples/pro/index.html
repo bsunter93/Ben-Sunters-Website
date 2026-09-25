@@ -45,13 +45,14 @@
 <section class="card" id="radar">
   <p class="eb">Radar · waitlist</p>
   <h2>Radar: an email when a trend starts spiking pages in your topics</h2>
-  <p>Not open yet. No charge today. Tell us what you'd pay and which topics you watch; we'll email you once when it opens. Radar alerts will be fulfilled by hand at first.</p>
+  <p class="price">$49<span class="sm muted" style="font:400 15px var(--sans)">/mo · planned, price being tested</span></p>
+  <p>Not open yet and no charge today. Tell us what you'd pay and which topics you watch; we'll email you once when it opens. Radar alerts will be fulfilled by hand at first.</p>
   <form id="wl" class="jf">
     <label for="em">Email</label><input type="email" id="em" required maxlength="254" autocomplete="email" placeholder="you@example.com">
     <label for="role">Role</label>
     <select id="role"><option value="">Choose (optional)</option><option value="creator">Creator</option><option value="newsletter">Newsletter writer</option><option value="pr_comms">PR / comms</option><option value="seo_content">SEO / content</option><option value="journalist">Journalist</option><option value="researcher">Researcher</option><option value="brand">Brand</option><option value="analyst">Analyst</option><option value="player">Just playing</option><option value="other">Other</option></select>
     <label for="price">What would you pay?</label>
-    <select id="price"><option value="free">Free only</option><option value="radar5">$5/mo, Founding Radar</option><option value="radar19">$19/mo, Radar Creator</option><option value="team149">$149/mo, Radar Team</option><option value="report149">$149 one-off report</option><option value="partner500">$500 design partner</option><option value="api">API keys and webhooks</option></select>
+    <select id="price"><option value="free">Free only</option><option value="radar49">$49/mo, Radar (planned)</option><option value="team149">$149/mo, Radar Team (planned)</option><option value="report149">$149 one-off report</option><option value="partner500">$500 design partner</option><option value="api">API keys and webhooks</option></select>
     <fieldset><legend>Topics (optional)</legend><div class="chips wrapchips" id="topics"></div></fieldset>
     <button class="btn wide" type="submit">Join the waitlist</button>
     <p class="xs muted">We store your email, role, price choice and topics for this list only, plus a daily-salted hash of your IP for rate limits. Emails cannot be read back through the site.</p>
@@ -74,6 +75,13 @@
   <a class="btn" id="buy-partner" href="#">Become a design partner</a>
 </section>
 </div>
+
+<section class="card" id="support" hidden>
+  <p class="eb">Support</p>
+  <h2>Support Knock-On</h2>
+  <p>Pay what you want, from $2. It unlocks nothing: the game, the Board, the archive and the open data stay free.</p>
+  <a class="btn" id="buy-support" href="#" target="_blank" rel="noopener">Support Knock-On</a>
+</section>
 
 <section class="card" id="brief">
   <p class="eb">Sample weekly brief · live</p>
@@ -102,8 +110,9 @@
   <div class="tw"><table>
     <tr><th>Offer</th><th>Price</th><th>Status</th></tr>
     <tr><td>Game, Board, archive, open data</td><td>free</td><td>live</td></tr>
-    <tr><td>Founding Radar</td><td>$5/mo</td><td id="r5">planned, price being tested</td></tr>
-    <tr><td>Radar Creator / Team</td><td>$19 / $149 per month</td><td>planned, price being tested</td></tr>
+    <tr><td>Support Knock-On</td><td>pay what you want, from $2</td><td id="sup-st">not open yet; unlocks nothing</td></tr>
+    <tr><td>Radar</td><td>$49/mo</td><td>planned, price being tested</td></tr>
+    <tr><td>Radar Team</td><td>$149/mo</td><td>planned, price being tested</td></tr>
     <tr><td>Custom Ripple Report</td><td>$149 one-off</td><td>live, concierge</td></tr>
     <tr><td>Design partner</td><td>$500 / 60 days</td><td>live, concierge</td></tr>
   </table></div>
@@ -128,14 +137,14 @@ $('buy-report').href = C.STRIPE.report149 || mail('Knock-On Custom Ripple Report
 $('buy-partner').href = C.STRIPE.partner500 || mail('Knock-On design partner ($500 / 60 days)');
 if (!C.STRIPE.report149) $('buy-report').textContent = 'Email to order';
 if (!C.STRIPE.partner500) $('buy-partner').textContent = 'Email to apply';
-if (C.STRIPE.radar5) $('r5').textContent = 'presale, refundable, fulfilled by hand';
+if (C.STRIPE.support) { $('sup-st').textContent = 'live; unlocks nothing, the game stays free'; $('support').hidden = false; $('buy-support').href = C.STRIPE.support; }
 const topics = new Set();
 for (const c of Object.keys(CATS)) $('topics').append(h('button', { type: 'button', class: 'chip', 'aria-pressed': 'false' }, `${CATS[c]} ${CAT_NAMES[c]}`));
 [...$('topics').children].forEach((b, i) => b.onclick = () => { const c = Object.keys(CATS)[i], on = !topics.has(c); on ? topics.add(c) : topics.delete(c); b.setAttribute('aria-pressed', on); });
 $('apiwl').onclick = () => { $('price').value = 'api'; };
 $('wl').addEventListener('submit', async e => {
   e.preventDefault();
-  const body = { p_email: $('em').value.trim(), p_role: $('role').value || null, p_price: $('price').value, p_topics: topics.size ? [...topics] : null, p_source: 'pro' };
+  const pr = $('price').value, body = { p_email: $('em').value.trim(), p_role: $('role').value || null, p_price: pr, p_topics: topics.size ? [...topics] : null, p_source: 'pro' };
   try { await fetch(`${C.SB_URL}/rest/v1/rpc/ripples_join`, { method: 'POST', headers: { apikey: C.SB_KEY, 'Content-Type': 'application/json' }, body: JSON.stringify(body) }); } catch (e) {}
   $('wl').replaceChildren(h('p', { class: 'sub', role: 'status' }, "Saved. No charge. We'll email you once when Radar opens."));
 });
@@ -153,7 +162,7 @@ async function brief() {
   out.replaceChildren(
     h('p', { class: 'xs muted' }, `${fmtDate(b.from)} – ${fmtDate(b.to)}`, b.reconstructed ? [' · ', h('span', { class: 'tag' }, 'reconstructed'), ' practice data: no live puzzles in this window yet'] : ''),
     b.intro && b.intro.text ? h('p', { class: 'quote' }, b.intro.text, b.intro.source === 'ai' ? h('span', { class: 'tag' }, 'AI-written') : '') : '',
-    items.length ? h('div', null, items.map(i => h('div', { class: 'bi' }, `${i.emoji} `, h('b', null, i.hop_title), ` spiked ${fmtTiming(i.lag_days, i.timing)} ${i.seed_title} · ${fmtMultiple(i.multiple)} normal · `,
+    items.length ? h('div', null, items.map(i => h('div', { class: 'bi' }, `${i.emoji} `, h('b', null, i.hop_title), ` spiked ${i.parent_title ? `${fmtTiming(i.lag_days, i.timing)} ${i.parent_title}, in the chain from ${i.seed_title}` : `in the chain from ${i.seed_title}`} · ${fmtMultiple(i.multiple)} normal · `,
       i.fluke_1_in ? `fluke about 1 in ${i.fluke_1_in >= 50 ? '50+' : i.fluke_1_in}` : 'fluke meter warming up', h('span', { class: 'xs muted' }, ` · ${i.n > 0 ? '#' + i.n : 'practice'} ${fmtDate(i.date)}`))))
       : h('p', { class: 'muted' }, c ? 'No measured hops in this topic in the last 7 days.' : 'No measured hops in the last 7 days yet. The first live puzzle is #1 on Sat 26 Sep.'));
 }

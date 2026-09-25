@@ -20,3 +20,9 @@ delete from ripples.attention_obs o using ripples.att_series s
  where s.series_id = o.series_id and s.source = 'hn.algolia' and s.key <> '__total__'
    and o.day between '2026-09-22' and '2026-09-24';
 select ripples.att_state_set('hn.rot', '{"off":0}');
+
+-- 4) (retry session, ~15:05 UTC) se.api backfill dispatches were no-ops every 2 min once the se.api daily budget was
+--    spent (Run.finish requeued them for +1 h). att-social s4 now defers them to the next UTC day itself
+--    (deferIfHostClosed); the 216 jobs already queued for today were deferred once by hand:
+update ripples.att_jobs set not_before = '2026-09-26 00:10:00+00', error = 'deferred: daily_budget_spent:se.api (ops 2026-09-25)'
+ where fn = 'att-social' and status = 'queued' and payload->'params'->>'source' = 'se.api' and not_before < '2026-09-26';

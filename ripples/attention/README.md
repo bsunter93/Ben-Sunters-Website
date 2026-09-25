@@ -19,6 +19,10 @@ Spec: `ATTENTION_STACK.md` §3 and §7, with `DEMARCATION.md` §7 lead decisions
 | `sql/09_att_news.sql` | Migration `att_news_collector` (att-news): budgets for gdelt.gkg / ia.thirdeye / news.sitemap, news.sitemap term keys (+ copy trigger from gdelt.gkg), `att_news_acc` / `att_news_batches` / `att_news_cells`, `att_news_terms`, `att_news_accum`, `att_news_sitemap_merge`, `att_news_edges_accum`, `att_news_candidates_merge` (+ public wrappers, service_role only) |
 | `sql/09b_att_news_cron.sql` | Migration `att_news_cron`: cron rows `att-gkg`, `att-thirdeye`, `att-sitemaps` |
 | `functions/att-news/index.ts` (+ `att.ts` copy, `README.md`) | News/TV collector: `gkg`, `thirdeye`, `sitemaps`, `backfill` (disabled), `ping` |
+| `sql/10_att_social.sql` | Migration(s) for att-social: `att_social_acc` (HLL registers per series bucket), `att_social_tags` (daily facet hashtags, 8-day retention), `_att_hll_merge/_est/_union`, `att_social_keys`, `att_social_accum` (adds counts + merges HLL + saves the Jetstream cursor in one transaction), `att_social_tag_cands`, `att_social_bf_done`, source rows/budgets, cron rows |
+| `sql/11_att_social_ops_2026-09-25.sql` | Operational record for att-social (Jetstream buffer replay lane, proc budget, HN re-run, se.api job deferral) |
+| `sql/12_att_social_fixes.sql` | Migration `att_social_fixes3`: facet hashtags pass the strict identifier screen before storage (no `*.bsky.social` / personal-domain tags); orphan run closed |
+| `functions/att-social/index.ts` (+ `att.ts` copy) | Social collector (SOCIAL_VERSION 2026-09-25.s4): `jetstream`, `mastodon`, `hn`, `stackex`, `backfill` (hn.algolia, se.api), `ping`. s4: backfill dispatches whose host is closed for the UTC day (daily budget spent, day/permanent kill) requeue their jobs for 00:10 UTC next day instead of +1 h |
 | `functions/_shared/att.ts` | Canonical shared runtime for every `att-*` edge function |
 | `functions/att-registry/index.ts` (+ `att.ts` copy) | Topic registry function: `resolve`, `bootstrap`, `panel`, `ping` |
 
@@ -132,6 +136,11 @@ After a collector is deployed and tested, add it to the tick's allow-list so que
 | `att-registry` | `52 9 * * *` | `att_registry_maintain()` (30-day idle trends -> dormant) + `att-registry {"mode":"bootstrap"}` |
 
 Collector crons (§3.4) are owned by the collector builders.
+
+att-social crons: `att-jetstream` `1-56/5 * * * *` (live lane); `att-jetstream-catchup` `* * * * *` (no-op unless the
+live cursor lags > 30 min or the one-off buffer replay lane `jet.bf` is unfinished); `att-mastodon-1/2/3` `5/11/17 6,18 * * *`
+(three key slices); `att-hn` `6 0-8/2 * * *`; `att-stackex` `8 6 * * *`. HN / Stack Exchange 400-day backfills run through
+`att_tick('backfill')` (`att-backfill`).
 
 ## Owner actions
 

@@ -11,11 +11,11 @@ export function scoreRound(picks, answerId) {
   return picks[1] === answerId ? 1 : 0;
 }
 export const magErr = (guess, actual) => Math.abs(Math.log10(guess / actual));
-// SPEC §7: 2 points within 1.5× (e ≤ 0.176), 1 point within 3× (e ≤ 0.477).
+// SPEC §7 as amended by OWNER_DECISIONS D-2: 2 points within 1.5× (e ≤ 0.176), 1 point within 2× (e ≤ 0.301).
 export function magPoints(guess, actual) {
   if (!(guess > 0) || !(actual > 0)) return 0;
   const e = magErr(guess, actual);
-  return e <= 0.176 ? 2 : e <= 0.477 ? 1 : 0;
+  return e <= 0.176 ? 2 : e <= 0.301 ? 1 : 0;
 }
 export const magX = (guess, actual) => Math.pow(10, magErr(guess, actual));
 export const maxScore = rounds => 2 * rounds + 2;
@@ -25,8 +25,7 @@ export function totalScore(codes, magPts) {
 export const gridEmoji = codes => codes.map(c => SQUARES[c]).join('');
 export const firstTries = codes => codes.filter(c => c === 2).length;
 
-// Rounds as the share path sees them: [{continues, seedEmoji, emoji, title}] from the puzzle
-// plus the answer option id of each round (known on the client after hashing).
+// Rounds as the share path sees them, from the puzzle plus each round's answer id (found by hashing).
 export function chainFromPuzzle(puzzle, answerIds) {
   return puzzle.rounds.map((r, k) => {
     const o = r.options.find(x => x.id === answerIds[k]) || {};
@@ -34,8 +33,7 @@ export function chainFromPuzzle(puzzle, answerIds) {
     return { i: r.i, continues: !fresh, seedEmoji: fresh ? r.seed.emoji : null, seedTitle: fresh ? r.seed.title : null, emoji: o.emoji || '🔹', title: o.title || '', qid: o.qid, id: o.id, parent: r.parent };
   });
 }
-// SPEC §3 {path}: seed emoji, each answer emoji joined with →; a fresh ripple is joined with ' · ' and
-// starts with that round's seed emoji, e.g. 👤→📍→🎬 · 🎵→🏅
+// SPEC §3 {path}, e.g. 👤→📍→🎬 · 🎵→🏅 (a fresh ripple is joined with ' · ' and starts with its seed emoji).
 export function pathEmoji(seedEmoji, chain) {
   let out = seedEmoji;
   chain.forEach((r, k) => {
@@ -46,8 +44,8 @@ export function pathEmoji(seedEmoji, chain) {
 }
 export function magLine(guess, actual) {
   if (!(guess > 0) || !(actual > 0)) return '';
-  const x = magX(guess, actual);
-  return x <= 3 ? `📏 last hop within ${x.toFixed(1)}×` : '';
+  // D-2: the line appears only for a 2-point guess (e ≤ 0.176, the same test the server uses), so it never overstates.
+  return magPoints(guess, actual) === 2 ? `📏 last hop within ${magX(guess, actual).toFixed(1)}×` : '';
 }
 // SPEC §3 exactly. Blank lines are omitted.
 export function shareText({ n, seedTitle, path, codes, streak = 0, guess = null, actual = null }) {
@@ -103,8 +101,7 @@ export function percentileLine(you) {
   if (!you || you.percentile == null) return '';
   return `You scored higher than ${fmtPct(you.percentile)} of players`;
 }
-// Crowd rarity, only when it is actually rare (< 50%), from players' picks (≥30 players only):
-// the rarest round the player found first try, else the round the fewest players found at all.
+// Crowd rarity from players' picks (≥30 players), only when < 50%: rarest first-try find, else rarest find.
 export function rarityLine(stats, codes) {
   if (!stats || !stats.shown || !stats.rounds) return '';
   const low = (k, ok) => stats.rounds.filter(r => r[k] != null && r[k] < 50 && ok(r)).sort((a, b) => a[k] - b[k])[0];
@@ -169,4 +166,43 @@ export function streakFrom(doneNs, upto) {
   let k = set.has(upto) ? upto : upto - 1, c = 0;
   while (set.has(k)) { c++; k--; }
   return c;
+}
+
+// Cross-channel corroboration badge (contract extension). Never evidence; numbers only if the item has them.
+const XSRC = { gtrends: 'Google Trends', bsky: 'Bluesky', mastodon: 'Mastodon', gdelt_tv: 'TV news', autocomplete: 'search autocomplete', polymarket: 'Polymarket' };
+export function crossText(x) {
+  if (!x || !x.label) return '';
+  const src = XSRC[x.source] || x.source || 'another channel', measured = x.multiple != null || x.z != null;
+  return `${measured ? 'Also spiked on' : 'Also on'} ${src}: ${x.label}${x.multiple != null ? ' · ' + fmtMultiple(x.multiple) : ''}${WHEN[x.when] ? ' · ' + WHEN[x.when] : ''}`;
+}
+const WHEN = { before: 'earlier', alongside: 'same day', after: 'later' };
+
+// Streak backup code (D-3): 'KO1.' + base64url(utf8 JSON) of ko.history + ko.calls.
+const b64u = s => btoa(Array.from(new TextEncoder().encode(s), b => String.fromCharCode(b)).join('')).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
+export function encodeBackup(hist, calls) {
+  const h = {};
+  Object.keys(hist || {}).map(Number).filter(n => n > 0).sort((a, b) => b - a).slice(0, 60)
+    .forEach(n => { const e = hist[n]; h[n] = { grid: e.grid, score: e.score, max: e.max, mag: e.mag, s: e.s }; });
+  return 'KO1.' + b64u(JSON.stringify({ h, c: calls || {} }));
+}
+export function decodeBackup(code) {
+  try {
+    const m = String(code).trim().match(/^KO1\.([A-Za-z0-9_-]{8,20000})$/);
+    if (!m) return null;
+    const bin = atob(m[1].replace(/-/g, '+').replace(/_/g, '/'));
+    const o = JSON.parse(new TextDecoder().decode(Uint8Array.from(bin, c => c.charCodeAt(0))));
+    const hist = {}, calls = {};
+    for (const n in o.h || {}) { const e = o.h[n]; if (+n > 0 && e && typeof e.grid === 'string' && /^[🟩🟨🟥]{1,8}$/u.test(e.grid)) hist[+n] = { grid: e.grid, score: +e.score || 0, max: +e.max || 0, mag: +e.mag || null, s: +e.s || 0 }; }
+    for (const n in o.c || {}) if (+n > 0 && /^Q\d+$/.test(o.c[n])) calls[+n] = o.c[n];
+    return { hist, calls };
+  } catch (e) { return null; }
+}
+
+// One-off calendar event (RFC 5545), UTC start, 15 min, alarm at start.
+const icsT = ms => new Date(ms).toISOString().replace(/[-:]/g, '').replace(/\.\d{3}/, '');
+const icsEsc = s => String(s).replace(/[\\;,]/g, m => '\\' + m).replace(/\r?\n/g, '\\n');
+export function icsEvent({ uid, start, title, url, desc = '', now = Date.now() }) {
+  return ['BEGIN:VCALENDAR', 'VERSION:2.0', 'PRODID:-//bensunter.com//Knock-On//EN', 'BEGIN:VEVENT', `UID:${uid}@bensunter.com`, `DTSTAMP:${icsT(now)}`,
+    `DTSTART:${icsT(start)}`, `DTEND:${icsT(start + 9e5)}`, `SUMMARY:${icsEsc(title)}`, `DESCRIPTION:${icsEsc(desc ? desc + ' ' + url : url)}`, `URL:${url}`,
+    'BEGIN:VALARM', 'ACTION:DISPLAY', `DESCRIPTION:${icsEsc(title)}`, 'TRIGGER:PT0M', 'END:VALARM', 'END:VEVENT', 'END:VCALENDAR', ''].map(l => l.replace(/(.{74})(?=.)/gu, '$1\r\n ')).join('\r\n');
 }

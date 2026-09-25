@@ -3,7 +3,9 @@
 // here exactly as SPEC §5.2, summaries written through the service RPCs.
 //  kind screen : 130-day series for shortlisted seed-source articles -> onset test + calm check (decoy pool)
 //  kind expand : parent's outlinks (prop=links) + 60-day prop=pageviews prefilter (+ clickstream top 20 when loaded),
-//                fixed candidate set capped at 60, 400-day series per candidate, hop test, time-shift placebo, calm flag
+//                fixed candidate set capped at 60, 400-day series per candidate, hop test, time-shift placebo, calm flag;
+//                then, with the leftover budget (real parents only), a decoy reserve of median-matched outlinks
+//                outside the fixed set (stored with extra = true: never tested for fluke counts, never a hop)
 //  kind history: seed's full series since 2015-07-01 -> "biggest day in N days"
 //  kind split  : desktop vs mobile multiples (mobile = all-access - desktop) for answer-eligible hops
 //  kind refresh: Call It resolution series (baseline frozen at window_start)
@@ -147,14 +149,56 @@ async function expand(body: any, b: Budget) {
   });
   const rows = res.filter((x) => x && !(x instanceof Error)) as any[];
   const errs = res.filter((x) => x instanceof Error).map((e) => (e as Error).message).slice(0, 3);
-  const ing = await rpc("ripples_ingest_candidates", { p_job: j.id, p_rows: rows.map(({ desc: _d, ...r }) => r) });
+
+  // 3b. decoy reserve (real parents only; never counted as tested, never a hop, never in the Board's wake set):
+  //     other outlinks of this parent whose 60-day median lies within [0.5, 2]x of a promising hop's baseline median
+  //     (pass_raw with p_time <= 0.05), tested with the identical hop test so the round can offer 3 calm, linked,
+  //     median-matched siblings (SPEC 5.2 "Calm"). Uses only the budget left over by the fixed candidate set.
+  let extraRows: any[] = [];
+  const promising = rows.filter((r) => r.pass_raw && r.p_time <= 0.05);
+  const extraMax = Math.min(Number(cfg.extra_decoys_max ?? 30), Math.max(0, b.left() - 6));
+  if (j.role === "real" && cfg.extra_decoys !== false && promising.length && extraMax > 0) {
+    const inSet = new Set(set.map((c) => c.qid));
+    const meds = promising.map((r) => Math.max(1, Number(r.median_views)));
+    const pick = new Map<string, { qid: string; title: string; d: number }>();
+    for (const [t, p] of info) {
+      if (!p.qid || p.disambig || bad(p.title) || p.title === canonParent || inSet.has(p.qid) || p.qid === j.parent_qid || p.qid === j.root_qid) continue;
+      if (!(linkSet.has(t) || linkSet.has(p.title)) || p.median60 === null || p.median60 < 1) continue;
+      const d = Math.min(...meds.map((m) => Math.abs(Math.log(p.median60! / m))));
+      if (d > Math.log(2.2)) continue;
+      const prev = pick.get(p.qid);
+      if (!prev || d < prev.d) pick.set(p.qid, { qid: p.qid, title: p.title, d });
+    }
+    const todo = [...pick.values()].sort((x, y) => x.d - y.d || (x.qid < y.qid ? -1 : 1)).slice(0, extraMax);
+    try {
+      const er = await pool(todo, conc, async (c) => {
+        const v = await series(b, c.title, from, asOf);
+        if (!v) return null;
+        const h = hopTest(v, tp, a);
+        if (!h) return null;
+        return {
+          qid: c.qid, title: c.title, cs_rank: null, cs_clicks: null, set_rank: null, linked: true, extra: true,
+          median_views: r2(h.median_views, 2), s_stat: r2(h.s_stat, 4), onset_lag: h.onset_lag, multiple: r2(h.multiple, 4),
+          p_time: r2(h.p_time, 5), n_placebo: h.n_placebo, pass_raw: h.pass_raw, calm: h.calm, max_abs_z: r2(h.max_abs_z, 4),
+          spark: h.pass_raw || h.calm ? v.slice(-90) : null,
+        };
+      });
+      extraRows = er.filter((x) => x && !(x instanceof Error)) as any[];
+    } catch (e) {
+      // keep what was tested; the fixed set is already complete. An AQS stop only ends the AQS source for this job
+      // (no further AQS calls follow), so the Wikidata facts below may still run.
+      extraRows = partialOf<any>(e);
+      if (b.stopped && /wikimedia\.org/.test(b.stopped) && !/api/.test(b.stopped)) b.stopped = null;
+    }
+  }
+  const ing = await rpc("ripples_ingest_candidates", { p_job: j.id, p_rows: [...rows.map(({ desc: _d, ...r }) => r), ...extraRows] });
 
   // 4. Wikidata facts for pass/calm candidates not yet (or long ago) resolved
   const need: string[] = (ing?.need_articles ?? []) as string[];
   let classes = 0, arts = 0;
   if (need.length && b.left() > 1) {
     const facts = await factsFor(b, need.slice(0, 50 * Math.max(1, Math.min(2, b.left() - 1))));
-    const byQ = new Map(rows.map((r) => [r.qid, r]));
+    const byQ = new Map<string, any>([...extraRows.map((r) => [r.qid, { ...r, desc: [...info.values()].find((p) => p.qid === r.qid)?.desc ?? null }] as [string, any]), ...rows.map((r) => [r.qid, r] as [string, any])]);
     const artRows = [...facts.values()].map((f) => ({
       qid: f.qid, title_en: byQ.get(f.qid)?.title ?? f.enwiki ?? f.label, short_desc: byQ.get(f.qid)?.desc ?? f.desc, p31: f.p31,
       date_of_death: f.date_of_death, is_disambig: false, sitelinks: f.sitelinks,
@@ -167,7 +211,8 @@ async function expand(body: any, b: Budget) {
     }
   }
   return { links: links.length, pool: csTitles.length + out.length, set: set.length, tested: rows.length, pass_raw: rows.filter((r) => r.pass_raw).length,
-    calm: rows.filter((r) => r.calm).length, series_errors: errs, articles: arts, classes, wm_calls: b.wm };
+    calm: rows.filter((r) => r.calm).length, extra_tested: extraRows.length, extra_calm: extraRows.filter((r) => r.calm).length,
+    series_errors: errs, articles: arts, classes, wm_calls: b.wm };
 }
 
 async function history(body: any, b: Budget) {

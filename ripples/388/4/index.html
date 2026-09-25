@@ -20,6 +20,7 @@
 <meta name="twitter:image" content="https://kffkasnzqcddpystszch.supabase.co/functions/v1/ripples-og?n=388&amp;s=4">
 <link rel="icon" href="/favicon.svg" type="image/svg+xml">
 <link rel="apple-touch-icon" href="/apple-touch-icon.png">
+<link rel="manifest" href="/ripples/manifest.webmanifest">
 <meta name="theme-color" content="#0B3A40">
 <link rel="preconnect" href="https://kffkasnzqcddpystszch.supabase.co" crossorigin>
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -58,7 +59,7 @@
 <footer class="foot"><div class="w">
   <nav><a href="/ripples/methods/">Methods &amp; track record</a><a href="/ripples/archive/">Archive</a><a href="/ripples/pro/">Pro</a><a href="/ripples/pro/#data">Open data</a></nav>
   <p><b>Measured attention, not proof of cause.</b> Every number is daily Wikipedia readers against the page's own 91-day baseline; wrong answers are real linked pages that stayed calm.</p>
-  <p>Sources: Wikimedia pageviews, links and clickstream (CC0 / open), Wikidata (CC0), Google Trends daily RSS (official feed), Bluesky trends (badge only), Google Trends "Trending Now" internal endpoint <span class="tag">unofficial</span> (free game only, never in open data). <span id="cs">Clickstream data: not loaded yet.</span></p>
+  <p>Sources: Wikimedia pageviews, links and clickstream (CC0 / open), Wikidata (CC0), Google Trends daily RSS (official feed). Other-channel badges (Bluesky, Mastodon, GDELT TV, search autocomplete, Polymarket) are corroboration only: not measured, never in open data. <span id="cs">Clickstream data: not loaded yet.</span></p>
   <p>Privacy: we store a hashed random ID, a daily-salted hash of your IP (for rate limits; the salt is deleted after the day), your picks and your country; no accounts. Waitlist emails are stored only for that list and can't be read back through the site.</p>
   <p>By <a href="/">Ben Sunter</a> · method v5.0</p>
 </div></footer>
@@ -80,6 +81,12 @@
     <li><b>AI-written context</b> a caption written by Claude. It never adds hops or numbers.</li>
   </ul>
   <p><a href="/ripples/methods/">Full method and thresholds</a></p>
+  <details id="restore"><summary>Restore your streak from a backup code</summary>
+    <label for="rscode" class="sm">Paste the code from your other device</label>
+    <input id="rscode" type="text" autocomplete="off" spellcheck="false" placeholder="KO1.…">
+    <button type="button" id="rsgo" class="btn ghost wide" style="margin-top:8px">Restore</button>
+    <p id="rsout" class="sm" role="status"></p>
+  </details>
   <form method="dialog"><button class="btn wide">Got it</button></form>
 </dialog>
 <div id="toast" role="status" aria-live="polite"></div>

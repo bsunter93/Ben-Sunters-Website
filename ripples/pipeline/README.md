@@ -11,9 +11,12 @@ the W1 contract shapes (`../contract/*.schema.json`) and never touches v4 object
 | `functions/ripples-collect/index.ts` | `{"mode":"trends"}` Google Trends RSS (8 geos, serial 1/s) + Bluesky `getTrends`; `{"mode":"daily"}` top-per-country (10) + featured feed; `{"mode":"date"}` backfill (adds per-project top for 10 languages) |
 | `functions/ripples-resolve/index.ts` | titles/queries -> enwiki title, QID, short description, P31, P570, sitelinks; unknown classes -> labels + P279 |
 | `functions/ripples-expand/index.ts` | job kinds `screen`, `expand`, `history`, `split`, `refresh` (the statistics run here) |
-| `sql/01..09_*.sql` | the migrations in the order they were applied. Replaying 01..09 on a W1 database reproduces the deployed W2 functions (verified by md5 of `pg_proc.prosrc`, see the W2 report) |
+| `sql/01..09_*.sql`, `sql/12_*.sql` | the migrations in the order they were applied. Replaying them on a W1 database reproduces the deployed W2 functions (`tools/fn_md5.py` prints the md5 of every function body; compare with the query in its docstring) |
 | `sql/10_seed_data.sql` | category-map seed (231 verified classes), blocklist class QIDs, config keys |
 | `sql/11_cron.sql` | the three pg_cron jobs |
+| `sql/12_ripples_v5_pipeline_yield.sql` | decoy reserve (`candidates.extra`), monotone pooling of fluke bins, description-based safety patterns, seed baseline floor |
+| `sql/13_ripples_v5_pipeline_warmup.sql` | fluke meter "warming up" until `config.pipeline.fluke_warm_min_decoy` (2000) pooled decoy tests |
+| `sql/14_ripples_v5_pipeline_run_day.sql` | `ripples_run_day`: reset also clears the unpublished practice puzzle; a finished day is reported, not rerun |
 | `sql/test_acceptance.sql` | the acceptance queries |
 | `category-map.json` | the seeded class -> category / safety-flag map (labels fetched from Wikidata) |
 
@@ -39,7 +42,11 @@ collect_daily -> resolve -> screen -> seeds -> expand -> build -> done | delayed
   Main-Page-only spike) and up to 8 decoy epicenters (|z| < 1 over the last 14 days, matched on baseline-median decile
   and category). Depth-1 `expand` jobs for both roles (identical code), one `history` job.
 * **expand** jobs; after every finished depth the tick enqueues `split` checks for pre-eligible hops and a beam of 2
-  deeper parents per root (real only, depth <= 4).
+  deeper parents per root (real only, depth <= 4). With the budget left after the fixed candidate set, a real
+  parent's job also tests a **decoy reserve**: up to 30 other outlinks of the same parent whose 60-day median is
+  within about 0.5-2x of a promising hop's (pass_raw, p_time <= 0.05) baseline median, with the identical hop test.
+  They are stored with `candidates.extra = true`, never counted in fluke rates, never a hop, beam parent,
+  shared-trigger witness or Board wake neighbour (`set_rank` is null); they can only be picked as calm decoys.
 * **build** (live: when the queue is empty and it is >= 06:58, or at the 07:20 deadline) `ripples_update_fluke`,
   `ripples_build_puzzle`, `ripples_resolve_calls(current_date)`.
 
@@ -67,7 +74,18 @@ parent onset `tp`: S = max z over `[tp, min(tp+3, as_of)]`, onset = first z >= 3
 `tp - 7k` (k >= 3 while the fake baseline fits in the 400-day series, 38 placebos typically),
 `p_time = (1 + #{S' >= S}) / (1 + K)`; calm = max |z| over `[tp-7, as_of]` < 1 and multiple < 1.25.
 Split: multiples of the desktop series and of (all-access - desktop). Fluke rate per S-bin pooled over 90 days
-(`fluke_rates`: `d_*` = the day's own counts, the rest pooled); "warming up" while `decoy_tested < 500`.
+(`fluke_rates`: `d_*` = the day's own counts, the rest pooled).
+Adjacent S-bins that violate "a stronger spike is no more fluky" (or have no real passes) are pooled by summing
+their counts (pool-adjacent-violators); `fluke_rates.fluke_bins` records the pooled range (e.g. `6-10..10+`).
+The meter is "warming up" while the pooled decoy pool has fewer than `config.pipeline.fluke_warm_min_decoy` tests
+(2000; SPEC says 500, but 660 tests gave an S >= 6 estimate resting on 4 decoy passes). While warming a hop needs
+p_time <= 0.05 and the reveal shows `fluke_warming: true`, `fluke: null`. W3's 30-day backfill (~15k decoy tests)
+ends the warm-up for every later day.
+
+Safety (SPEC §5.4) is `ripples._safe` + `articles.blocked`: class flags (category_map / blocklist class QIDs), title
+patterns, and `blocklist.desc_pattern` on the enwiki short description (people known for killing or violent crime,
+murder / massacre / terrorism / suicide topics, pornographic performers), deaths within 60 days, living people with no
+other-language article and < 20 views/day. Seeds also need a baseline median >= `config.pipeline.seed_min_median` (50).
 
 ## Puzzle composition (`ripples_build_puzzle`)
 
@@ -89,7 +107,9 @@ category; `model_p = config.callit_climatology (0.08) × config.callit_cs_mult[t
 ```sql
 select public.ripples_run_day('2026-09-24', 'practice');          -- returns at once
 select stage, wm_calls, errors, detail from ripples.runs where as_of = '2026-09-24';   -- poll
-select public.ripples_run_day('2026-09-24', 'practice', true);    -- p_reset: wipe that day's pipeline rows and rerun
+select public.ripples_run_day('2026-09-24', 'practice', true);    -- p_reset: wipe that day's pipeline rows (and its
+                                                                  -- unpublished practice puzzle) and rerun; without it a
+                                                                  -- finished day is only reported
 ```
 `ripples_run_day` registers the run and starts the transient pg_cron job `ripples-run-day` (every 20 s,
 `select public.ripples_tick()`), which unschedules itself once no practice run is active. Practice n =

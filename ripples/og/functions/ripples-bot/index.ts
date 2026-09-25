@@ -1,10 +1,10 @@
 // ripples-bot: builds (and, from v5.1, posts) yesterday's Knock-On reveal card for Bluesky (SPEC §5.5). Token-gated
 // (x-collector-token).
 // DEFERRED (OWNER_DECISIONS D-3): automated Bluesky posting is deferred to v5.1; the owner posts by hand for the
-// first 14 days. POSTING_ENABLED is false, so a normal call always returns {"skipped":true} and nothing is
-// scheduled. {"dry_run": true} builds the post text, facets, alt text and checks the reveal PNG, so the owner can
-// copy it for a manual post. Turning posting on in v5.1 = set POSTING_ENABLED = true, redeploy, add the two vault
-// secrets bsky_handle + bsky_app_password, and add a cron job (none exists in v5.0).
+// first 14 days. POSTING_ENABLED is false, so a normal call (including the daily 07:35 cron job ripples-bot-daily)
+// always returns {"skipped":true,"reason":"deferred_v5_1"} and posts nothing. {"dry_run": true} builds the post text,
+// facets, alt text and checks the reveal PNG, so the owner can copy it for a manual post. Turning posting on in v5.1 =
+// set POSTING_ENABLED = true, redeploy, and add the two vault secrets bsky_handle + bsky_app_password.
 // Never targets a puzzle that is still current: ripples_bot_context() only returns a live, published puzzle dated
 // the day before the current puzzle date, whose ripples_og_data(n).past is true AND that is older than the live
 // puzzle ripples_latest() is serving (on a delayed day yesterday's puzzle stays playable, so it has no target).

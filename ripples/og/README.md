@@ -12,7 +12,8 @@ is in `../contract/README.md`.
 | `functions/ripples-bot/index.ts` | `ripples-bot`, verify_jwt false, token-gated | posts yesterday's reveal card to Bluesky; `{"skipped":true}` without vault secrets |
 | `functions/probe-gone/index.ts` | deployed over `probe-og`, `probe-og2`, `probe-sources` | 410 `gone` stubs |
 | `sql/01_ripples_v5_w4_bot.sql` | migration `ripples_v5_w4_bot` (applied) | `ripples.bot_posts`, `public.ripples_bot_context()`, `public.ripples_bot_log(...)` (service_role only) |
-| `sql/02_ripples_v5_w4_cron.sql` | **not applied yet, see Owner actions** | the four pg_cron jobs |
+| `sql/02_ripples_v5_w4_cron.sql` | migration `ripples_v5_w4_cron` (applied 2026-09-25) | the four pg_cron jobs (SPEC §5.5); migration `ripples_v5_w4_cron_spec4` removed an earlier extra `ripples-publish-0731` |
+| `sql/03_ripples_v5_w4_bot_guard.sql` | migration `ripples_v5_w4_bot_guard` (applied) | `ripples_bot_context()`: no target while yesterday's puzzle is still being served |
 
 The MCP deploy uploads only the files listed in the call, so each function is a single self-contained `index.ts`.
 Redeploy with `deploy_edge_function` (name = the function, `verify_jwt: false`, one file `index.ts`).
@@ -64,7 +65,8 @@ Redeploy with `deploy_edge_function` (name = the function, `verify_jwt: false`, 
 
 Checked renders from this build (fixture n=0): `scratchpad/v5/og_check_teaser_v1.png`, `og_check_result_s2_v1.png`,
 `og_check_hacked_v1.png` (n=abc&text=HACKED → brand), `og_check_reveal_v2.png`, `og_check_board_v2.png`,
-`og_check_brand_v2.png`.
+`og_check_brand_v2.png`. Re-checked 2026-09-25 against the deployed build: `og_check_teaser_r3.png`,
+`og_check_result_s2_r3.png`, `og_check_hacked_r3.png`, `og_check_reveal_r3.png`, `og_check_board_r3.png`.
 
 ## ripples-publish
 
@@ -97,14 +99,26 @@ Notes for readers of these files:
   with jsonb `=`, not md5. The ledger hash is unaffected (it canonicalises numbers through float8).
 * A missing object returns HTTP 400 with `{"statusCode":"404","error":"not_found"}`; treat any non-200 as missing and
   fall back to the RPC.
-* Today's `puzzle/{n}.json` and `reveal/{n}.json` are written by the 07:25 run, 5 minutes before `latest.json` flips.
-  The reveal file is public by design (SPEC §7: anti-glance only).
-* The fixture test run left `v1/puzzle/0.json`, `reveal/0.json`, `callit/0.json`, `board/0.json` and
-  `v1/og/0.png`, `0-s0..3.png` in the bucket. They are TEST data (every title says "Test"); nothing links to them.
+* **Staged 07:25 run (no early spoilers, SPEC §12).** The 07:25 run marks today's puzzle published and ledgers it,
+  but the puzzle only becomes visible at the 07:30 rollover. While `latest.n < n` the response says `"staged":true`
+  and the run writes **no** per-puzzle file for today: no `puzzle|reveal|callit|board/{n}.json`, no
+  `data/{date}.json|.csv` (the CSV has the answer column) and no OG PNGs. It refreshes only `latest.json` (still
+  yesterday's, `next_at` = today 07:30), archive, track, ledger and older Call It files. From 07:30 to 07:45 the client
+  reads the RPCs: `getLatest()` re-reads `ripples_latest` once `next_at` has passed, and `load()` falls back to the RPC
+  for any missing file. The 07:45 run mirrors everything. (`board/latest.json` still shows yesterday's board until
+  07:45, because it exists and has no `next_at`.)
+* The fixture files (`v1/*/0.json`, `v1/og/0*.png`) are in the production bucket because W4 acceptance requires
+  publishing n=0 under `v1/`. They are TEST data (every title says "Test", watermark on every card) and nothing links
+  to them. Remove them with the Storage dashboard if unwanted; the next fixture test re-creates them.
 
 ## ripples-bot
 
 `POST …/functions/v1/ripples-bot` with the token (`call_collector('ripples-bot','{}')`), daily at 07:35 UTC.
+* **Posting is off (OWNER_DECISIONS D-3, deferred to v5.1).** `POSTING_ENABLED = false`, so every normal call,
+  including the 07:35 cron job, returns `{"skipped":true,"reason":"deferred_v5_1"}` and posts nothing. The owner posts
+  by hand for the first 14 days; `{"dry_run":true}` gives the ready-made text, alt text and reveal image check.
+  To switch on in v5.1: set `POSTING_ENABLED = true`, redeploy, add the two vault secrets. The rest of this section
+  describes the behaviour once switched on.
 * Reads `ripples_bot_context()`: the vault secrets `bsky_handle` + `bsky_app_password` (returned only when both
   exist), the target = the live **published** puzzle dated the day before the current puzzle date whose
   `ripples_og_data(n).past` is true (so it never posts a puzzle that is still current), today's `social` copy, and
@@ -125,7 +139,7 @@ Notes for readers of these files:
   error and lets the next run retry. A claim older than 10 minutes can be re-claimed.
 * `{"dry_run": true}` builds text, facets, alt and fetches the image without logging in or posting (works without secrets).
 
-## pg_cron (UTC), in `sql/02_ripples_v5_w4_cron.sql`
+## pg_cron (UTC), in `sql/02_ripples_v5_w4_cron.sql` (applied)
 
 | Job | Schedule | Command |
 |---|---|---|
@@ -143,9 +157,9 @@ Notes for readers of these files:
   `x-collector-token` from the vault, then check `substring(decode(content,'base64') from 1 for 8)` = `\x89PNG…` and
   the IHDR width/height at bytes 17–24.
 * **Bot dry run**: `select public.call_collector('ripples-bot', '{"dry_run":true}'::jsonb);`
-* **Enable the bot**: add vault secrets `bsky_handle` (e.g. `knockon.bsky.social`) and `bsky_app_password` (an app
-  password, not the account password): `select vault.create_secret('<value>', 'bsky_handle');` etc. Remove either to
-  stop posting.
+* **Enable the bot (v5.1, D-3)**: set `POSTING_ENABLED = true` in `functions/ripples-bot/index.ts` and redeploy, then add
+  vault secrets `bsky_handle` (e.g. `knockon.bsky.social`) and `bsky_app_password` (an app password, not the account
+  password): `select vault.create_secret('<value>', 'bsky_handle');` etc. Remove either secret to stop posting.
 * **Probe cleanup**: `probe-og`, `probe-og2` and `probe-sources` now return **410 gone** (verify_jwt false so the 410
   is visible). The Supabase MCP has no delete tool: **the owner must delete them in the dashboard** (Edge Functions →
   function → Delete), together with `probe-cors` (already a 410 stub). `probe-att-*` and `probe-holes-*` belong to the
@@ -153,8 +167,8 @@ Notes for readers of these files:
 
 ## Owner actions
 
-1. Apply `sql/02_ripples_v5_w4_cron.sql` (the four cron jobs). The build session's permission classifier refused
-   to create persistent scheduled jobs without the owner's go-ahead, so this has not been run. Until it is, nothing
-   publishes to Storage automatically (the page still works from the RPC fallback).
-2. Delete `probe-og`, `probe-og2`, `probe-sources` and `probe-cors` in the dashboard.
-3. Optional: create the Bluesky account and the two vault secrets to switch the bot on.
+1. Delete `probe-og`, `probe-og2`, `probe-sources` and `probe-cors` in the dashboard (the MCP has no delete tool).
+2. For v5.1 only: create the Bluesky account, add vault secrets `bsky_handle` + `bsky_app_password`, and set
+   `POSTING_ENABLED = true` in `ripples-bot`.
+3. The cron jobs are live. To pause publishing: `select cron.unschedule('ripples-publish-0725');` (etc.). Without the
+   publish jobs no live puzzle is ever marked `published`, so the page stays on "delayed".

@@ -17,6 +17,8 @@
 import { politeFetch, type Run, serve, stateGet, stateSet, db, jobsDone, WALL_MS } from "./att.ts";
 
 const FN = "att-news";
+const NEWS_VERSION = "2026-09-25.n3"; // n2: GKG 404 parking + min file age; sequential sitemaps. n3: size-normalised
+// GKG burst baseline; network brands excluded from Third Eye
 const GKG_BASE = "https://data.gdeltproject.org/gdeltv2/";
 const THIRDEYE = "https://archive.org/services/third-eye.php";
 const OUTLETS: Record<string, string> = {
@@ -32,7 +34,7 @@ const normMem = new Map<string, string>();
 export function norm(s: string): string {
   const c = normMem.get(s);
   if (c !== undefined) return c;
-  const v = s.toLowerCase().normalize("NFKD").replace(/[̀-ͯ]/g, "").replace(/[^\p{L}\p{N}]+/gu, " ").trim();
+  const v = s.toLowerCase().normalize("NFKD").replace(/[\u0300-\u036f]/g, "").replace(/[^\p{L}\p{N}]+/gu, " ").trim();
   if (normMem.size < 200_000) normMem.set(s, v);
   return v;
 }
@@ -199,26 +201,43 @@ async function forEachLine(stream: ReadableStream<any>, fn: (line: string) => vo
 }
 
 // ------------------------------------------------------------ mode: gkg
-interface GkgState { last_file?: string; files?: number; gaps?: number }
-interface Ewma { n_files: number; b: Record<string, number> }
+interface Pending { first: string; last: string; n: number }
+interface GkgState { last_file?: string; files?: number; gaps?: number; pending?: Record<string, Pending> }
+/** EWMA baseline of each entity's documents per 1000 documents in a file (unit "per1k"; older states were per file). */
+interface Ewma { n_files: number; b: Record<string, number>; unit?: string }
 const EWMA_ALPHA = 0.05;
 const EWMA_KEEP = 4000;
 const CAND_WARMUP_FILES = 4;
 
 interface GkgCtx { terms: Term[]; matcher: Matcher; themeIdx: Map<string, number>; latest: string; forced: boolean }
-interface GkgOut { file: string; status: "ok" | "pending" | "failed" | "partial"; note?: string; [k: string]: unknown }
+interface GkgOut { file: string; status: "ok" | "pending" | "deferred" | "failed" | "partial"; note?: string; [k: string]: unknown }
 const GKG_SRC = "gdelt.gkg";
 const GKG_HOST = "data.gdeltproject.org";
 const GKG_MAX_BEHIND_MS = 6 * 3600e3;   // further behind than this: jump to the latest file (the gap is recorded)
-const GKG_MISSING_AFTER_MS = 3600e3;    // a listed-but-404 file older than this vs latest is treated as missing upstream
+// lastupdate.txt can list a file a few minutes before its zip is served, and the CDN then keeps answering 404 for that
+// URL for ~45-60 min (observed 2026-09-25: 7 files, each 404 for 3-4 runs, then 200). So: never request a file younger
+// than GKG_MIN_AGE_MS; a 404 parks the file in gkg.state.pending and the walk moves on; a parked file is retried once
+// GKG_RETRY_AFTER_MS has passed since its last 404 (one retry per run) and counted as a gap after GKG_GIVE_UP_MS.
+const GKG_MIN_AGE_MS = 8 * 60e3;
+const GKG_RETRY_AFTER_MS = 50 * 60e3;
+const GKG_GIVE_UP_MS = 4 * 3600e3;
 
 async function gkg(run: Run) {
   const t0 = Date.now();
   const forced = typeof run.params.file === "string" && /^\d{14}$/.test(run.params.file) ? run.params.file as string : null;
-  // catch-up: up to 2 files per run (3 requests with lastupdate.txt) until the state reaches the latest file
+  // up to 2 files per run (3 requests with lastupdate.txt): a parked retry and/or the walk towards the latest file
   const maxFiles = forced ? 1 : Math.max(1, Math.min(2, Number(run.params.max_files ?? 2)));
   let latest = forced;
   if (!forced) {
+    // give up on parked files that never appeared (recorded as gaps)
+    const st0 = ((await stateGet("gkg.state")) ?? {}) as GkgState;
+    const pend = { ...(st0.pending ?? {}) };
+    const lost = Object.keys(pend).filter((f) => Date.now() - Date.parse(pend[f].first) > GKG_GIVE_UP_MS);
+    if (lost.length && !run.dryRun) {
+      for (const f of lost) delete pend[f];
+      await stateSet("gkg.state", { ...st0, pending: pend, gaps: (st0.gaps ?? 0) + lost.length });
+      run.extra.given_up = lost;
+    }
     // lastupdate.txt is the authority on what is published (file names run ahead of the wall clock)
     const r = await politeFetch(run, GKG_BASE + "lastupdate.txt", { source: GKG_SRC, timeoutMs: 15_000 });
     if (!r) { run.source({ source: GKG_SRC, status: failStatus(run, GKG_HOST), note: "lastupdate.txt not fetched" }); return; }
@@ -233,27 +252,38 @@ async function gkg(run: Run) {
   terms.forEach((t, i) => { if (t.key_type === "theme") themeIdx.set(t.key.toUpperCase(), i); });
   const ctx: GkgCtx = { terms, matcher: new Matcher(terms), themeIdx, latest: latest!, forced: forced !== null };
   const outs: GkgOut[] = [];
+  let retried = false;
   for (let k = 0; k < maxFiles; k++) {
     const st = ((await stateGet("gkg.state")) ?? {}) as GkgState;
     let file: string;
+    let retry = false;
     if (forced) file = forced;
-    else if (!st.last_file || gkgTsMs(ctx.latest) - gkgTsMs(st.last_file) > GKG_MAX_BEHIND_MS) {
-      if (st.last_file) run.extra.gap_files = Math.round((gkgTsMs(ctx.latest) - gkgTsMs(st.last_file)) / (15 * 60e3)) - 1;
-      file = ctx.latest;
-    } else {
-      const next = gkgName(gkgTsMs(st.last_file) + 15 * 60e3);
-      if (next > ctx.latest) { if (k === 0) run.extra.note = "no new file"; break; }
-      file = next;
+    else {
+      const due = retried ? [] : Object.entries(st.pending ?? {})
+        .filter(([, p]) => Date.now() - Date.parse(p.last) >= GKG_RETRY_AFTER_MS).map(([f]) => f).sort();
+      if (due.length) { file = due[0]; retry = true; retried = true; }
+      else if (!st.last_file || gkgTsMs(ctx.latest) - gkgTsMs(st.last_file) > GKG_MAX_BEHIND_MS) {
+        if (st.last_file) run.extra.gap_files = Math.round((gkgTsMs(ctx.latest) - gkgTsMs(st.last_file)) / (15 * 60e3)) - 1;
+        file = ctx.latest;
+      } else {
+        const next = gkgName(gkgTsMs(st.last_file) + 15 * 60e3);
+        if (next > ctx.latest) { if (k === 0) run.extra.note = "no new file"; break; }
+        file = next;
+      }
+      if (!retry && Date.now() - gkgTsMs(file) < GKG_MIN_AGE_MS) { run.extra.note = `${file} younger than ${GKG_MIN_AGE_MS / 60e3} min; next run`; break; }
     }
     if (k > 0 && run.outOfTime(40_000)) { run.partial = true; break; }
-    const out = await gkgFile(run, file, ctx, st);
+    const out = await gkgFile(run, file, ctx, st, retry);
     outs.push(out);
-    if (out.status !== "ok" || forced) break;
+    if (forced) break;
+    if (out.status === "ok" || out.status === "deferred" || (out.status === "pending" && retry)) continue;
+    break;
   }
   run.extra.files = outs;
   const done = outs.filter((o) => o.status === "ok");
   run.extra.file = outs.length ? outs[outs.length - 1].file : null;
   const st2 = ((await stateGet("gkg.state")) ?? {}) as GkgState;
+  run.extra.pending = Object.keys(st2.pending ?? {});
   if (!forced && st2.last_file && st2.last_file < ctx.latest) { run.partial = true; run.nextCursor = { gkg_behind_files: Math.round((gkgTsMs(ctx.latest) - gkgTsMs(st2.last_file)) / (15 * 60e3)) }; }
   const bad = outs.find((o) => o.status === "failed");
   run.source({
@@ -263,7 +293,7 @@ async function gkg(run: Run) {
   });
 }
 
-async function gkgFile(run: Run, file: string, ctx: GkgCtx, st: GkgState): Promise<GkgOut> {
+async function gkgFile(run: Run, file: string, ctx: GkgCtx, st: GkgState, retry = false): Promise<GkgOut> {
   const SRC = GKG_SRC;
   const { terms, matcher, themeIdx } = ctx;
   const t0 = Date.now();
@@ -273,11 +303,15 @@ async function gkgFile(run: Run, file: string, ctx: GkgCtx, st: GkgState): Promi
   if (!res) return { file, status: "failed", note: "not fetched" };
   if (res.status === 404) {
     await res.body?.cancel();
-    if (!ctx.forced && gkgTsMs(ctx.latest) - gkgTsMs(file) >= GKG_MISSING_AFTER_MS) {
-      await stateSet("gkg.state", { ...st, last_file: file, gaps: (st.gaps ?? 0) + 1 });
-      return { file, status: "ok", note: "missing upstream (404), skipped", rows: 0 };
-    }
-    return { file, status: "pending", note: "listed but not yet downloadable (404); retried next run" };
+    if (ctx.forced) return { file, status: "failed", note: "http 404" };
+    const nowIso = new Date(Date.now()).toISOString();
+    const pend = { ...(st.pending ?? {}) };
+    const p = pend[file];
+    pend[file] = { first: p?.first ?? nowIso, last: nowIso, n: (p?.n ?? 0) + 1 };
+    // park the file and move the walk past it (a retry leaves last_file alone)
+    if (!run.dryRun) await stateSet("gkg.state", { ...st, pending: pend, last_file: retry || (st.last_file && st.last_file > file) ? st.last_file : file });
+    return retry ? { file, status: "pending", note: `still 404 (try ${pend[file].n}); retried after ${GKG_RETRY_AFTER_MS / 60e3} min` }
+      : { file, status: "deferred", note: `listed but 404; parked, retried after ${GKG_RETRY_AFTER_MS / 60e3} min` };
   }
   if (!res.ok) { await res.body?.cancel(); return { file, status: "failed", note: `http ${res.status}` }; }
   const zip = new Uint8Array(await res.arrayBuffer());
@@ -403,15 +437,22 @@ async function gkgFile(run: Run, file: string, ctx: GkgCtx, st: GkgState): Promi
   }
   await edgesAccum(run, `edges:gkg:${file}`, edges);
 
-  // ---- discovery: surging entities vs an EWMA baseline of documents per file
-  const ew = ((await stateGet("gkg.ewma")) ?? { n_files: 0, b: {} }) as Ewma;
-  const cands: Array<{ n: string; z: number; c: number }> = [];
-  if (ew.n_files >= CAND_WARMUP_FILES) {
+  // ---- discovery: surging entities vs an EWMA baseline of each entity's share of the file's documents
+  // (files range from ~900 to ~1500 documents, so a per-file count baseline flags every big name in a big file)
+  const ew = ((await stateGet("gkg.ewma")) ?? { n_files: 0, b: {}, unit: "per1k" }) as Ewma;
+  const per1k = N > 0 ? 1000 / N : 0;
+  if (ew.unit !== "per1k") {
+    // one-off conversion of a per-file baseline (approximated with this file's size)
+    for (const n of Object.keys(ew.b)) ew.b[n] = ew.b[n] * per1k;
+    ew.unit = "per1k";
+  }
+  const cands: Array<{ n: string; z: number; c: number; e: number }> = [];
+  if (ew.n_files >= CAND_WARMUP_FILES && N > 0) {
     for (const [n, c] of entDocs) {
       if (c < 5) continue;
-      const b = ew.b[n] ?? 0;
-      const z = (c - b) / Math.sqrt(b + 1);
-      if (z >= 3) cands.push({ n, z, c });
+      const e = (ew.b[n] ?? 0) * N / 1000;   // expected documents in this file
+      const z = (c - e) / Math.sqrt(e + 1);
+      if (z >= 3) cands.push({ n, z, c, e });
     }
     cands.sort((a, b) => b.z - a.z);
   }
@@ -419,7 +460,8 @@ async function gkgFile(run: Run, file: string, ctx: GkgCtx, st: GkgState): Promi
   const candRows = top.map((x, k) => ({
     day, source: SRC, geo: "ALL", label: entLabel.get(x.n) ?? x.n, rank: k + 1, value: x.c,
     evidence: Math.max(0, Math.min(1, x.z / 8)),
-    meta: { method: "gkg_burst_ewma", n_docs: x.c, k: entKind.get(x.n) ?? "name", q: Math.round(x.z * 100) / 100 },
+    meta: { method: "gkg_burst_ewma", n_docs: x.c, k: entKind.get(x.n) ?? "name", q: Math.round(x.z * 100) / 100,
+      expected: Math.round(x.e * 10) / 10 },
   }));
   await candidatesMerge(run, candRows);
 
@@ -427,12 +469,17 @@ async function gkgFile(run: Run, file: string, ctx: GkgCtx, st: GkgState): Promi
   if (!run.dryRun && !(r?.dup)) {
     const nb: Record<string, number> = {};
     for (const [n, b] of Object.entries(ew.b)) nb[n] = b * (1 - EWMA_ALPHA);
-    for (const [n, c] of entDocs) if (c >= 2 || nb[n] !== undefined) nb[n] = (nb[n] ?? 0) + EWMA_ALPHA * c;
+    for (const [n, c] of entDocs) if (c >= 2 || nb[n] !== undefined) nb[n] = (nb[n] ?? 0) + EWMA_ALPHA * c * per1k;
     const keep = Object.entries(nb).filter(([, b]) => b >= 0.05).sort((a, b) => b[1] - a[1]).slice(0, EWMA_KEEP);
-    await stateSet("gkg.ewma", { n_files: ew.n_files + 1, b: Object.fromEntries(keep.map(([n, b]) => [n, Math.round(b * 1000) / 1000])) });
+    await stateSet("gkg.ewma", { n_files: ew.n_files + 1, unit: "per1k",
+      b: Object.fromEntries(keep.map(([n, b]) => [n, Math.round(b * 1000) / 1000])) });
   }
-  if (!run.dryRun && !ctx.forced && (!st.last_file || file > st.last_file)) {
-    await stateSet("gkg.state", { ...st, last_file: file, files: (st.files ?? 0) + 1 });
+  if (!run.dryRun && !ctx.forced) {
+    const cur = ((await stateGet("gkg.state")) ?? st) as GkgState;
+    const pend = { ...(cur.pending ?? {}) };
+    delete pend[file];
+    await stateSet("gkg.state", { ...cur, pending: pend, files: (cur.files ?? 0) + 1,
+      last_file: !cur.last_file || file > cur.last_file ? file : cur.last_file });
   }
   ms.write = Date.now() - tw;
   ms.total = Date.now() - t0;
@@ -442,6 +489,9 @@ async function gkgFile(run: Run, file: string, ctx: GkgCtx, st: GkgState): Promi
 }
 
 // ------------------------------------------------------------ mode: thirdeye
+const TV_BRANDS = new Set(["cnn", "cnn international", "fox", "fox news", "fox news channel", "msnbc", "ms now", "msnow",
+  "bbc", "bbc news", "bbc one", "bbc world news", "cnbc", "abc", "abc news", "cbs", "cbs news", "nbc", "nbc news", "pbs",
+  "sky news", "newsmax", "c span", "bloomberg television", "al jazeera"]);
 async function thirdeye(run: Run) {
   const SRC = "ia.thirdeye";
   const t0 = Date.now();
@@ -465,7 +515,11 @@ async function thirdeye(run: Run) {
   const iChan = looksHeader ? Math.max(1, head.findIndex((h) => /chan|network|station/.test(h))) : 1;
   const iTextH = looksHeader ? head.findIndex((h) => /text|chyron|caption/.test(h)) : -1;
 
-  const terms = await loadTerms(run, SRC);
+  // a network's own name is on its screen all day (logos, tickers, promos): those terms are not counted on Third Eye
+  const allTerms = await loadTerms(run, SRC);
+  const terms = allTerms.filter((t) => ![t.key, ...(Array.isArray(t.match?.aliases) ? t.match.aliases : [])]
+    .some((x: unknown) => TV_BRANDS.has(norm(String(x)))));
+  if (terms.length < allTerms.length) run.extra.brand_terms_skipped = allTerms.length - terms.length;
   const matcher = new Matcher(terms);
 
   // hour -> channel -> term -> set of minutes
@@ -612,8 +666,10 @@ async function sitemaps(run: Run) {
   const want: string[] = Array.isArray(run.params.outlets) ? run.params.outlets.filter((o: string) => o in OUTLETS) : Object.keys(OUTLETS);
   const terms = await loadTerms(run, SRC);
   const matcher = new Matcher(terms);
-  // outlets are different hosts: fetch in parallel (politeFetch keeps per-host serial spacing + host leases)
-  const got = await Promise.all(want.map(async (o) => ({ o, ...(await fetchSitemap(run, o, OUTLETS[o])) })));
+  // one outlet at a time: parallel politeFetch calls each drew a budget chunk before any was spent, which filled the
+  // day's news.sitemap budget on the first run (and att_budget_refund keeps a bucket at its cap spent). ~1 s per outlet.
+  const got: Array<{ o: string; items: Item[]; urls: number; status: string; note?: string }> = [];
+  for (const o of want) got.push({ o, ...(await fetchSitemap(run, o, OUTLETS[o])) });
   const tFetch = Date.now() - t0;
   const urls: Record<string, number> = {};
   const cells: any[] = [];
@@ -714,15 +770,6 @@ serve(FN, {
   ping: async (run: Run) => {
     run.extra.pong = true;
     run.extra.wall_ms = WALL_MS;
-    // deployed-source fingerprint (lets the owner check the copies are byte-identical to ripples/attention/functions)
-    const sha: Record<string, string> = {};
-    for (const f of ["index.ts", "att.ts"]) {
-      try {
-        const b = await Deno.readFile(new URL(`./${f}`, import.meta.url));
-        const h = new Uint8Array(await crypto.subtle.digest("SHA-256", b));
-        sha[f] = [...h].map((x) => x.toString(16).padStart(2, "0")).join("");
-      } catch (e) { sha[f] = `unreadable: ${String(e).slice(0, 80)}`; }
-    }
-    run.extra.sha256 = sha;
+    run.extra.news_version = NEWS_VERSION;
   },
 });

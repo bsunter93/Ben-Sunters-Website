@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
-"""md5 of every W2 function body as defined by replaying sql/01..09 in order (last definition wins, then the guarded
-in-place patches of 07-09). Compare with the live database:
+"""md5 of every W2 function body as defined by replaying the migration files sql/01..09 and sql/12+ in order (last
+definition wins, then the guarded in-place patches of 07-09; 10_seed_data and 11_cron define no functions). Compare with the live database:
 
   select n.nspname || '.' || p.proname, md5(btrim(regexp_replace(regexp_replace(p.prosrc, '--[^\n]*', '', 'g'), '\s+', ' ', 'g')))
     from pg_proc p join pg_namespace n on n.oid = p.pronamespace
@@ -11,8 +11,8 @@ import hashlib, os, re, sys
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 SQL = os.path.join(os.path.dirname(HERE), 'sql')
-FILES = sorted(f for f in os.listdir(SQL) if re.match(r'0\d_.*\.sql$', f))
-PATCHES = [  # (function, old, new) exactly as in sql/07-09
+FILES = sorted(f for f in os.listdir(SQL) if re.match(r'\d\d_.*\.sql$', f) and not f.startswith(('10_', '11_')))
+PATCHES = [  # (function, old, new) exactly as in sql/07-09 and sql/13
     ('public.ripples_build_puzzle', 'c.used_n is null and c.kind = p_kind and c.as_of between',
      "c.used_n is null and (c.kind = p_kind or p_kind = 'live') and c.as_of between"),
     ('ripples._enqueue_resolve', "(t.source = 'topcountry' and t.rank <= 100)",
@@ -23,6 +23,8 @@ PATCHES = [  # (function, old, new) exactly as in sql/07-09
      "      if (live and t >= time '07:20') or (not live and now() - r.started_at > make_interval(mins => ripples._pcfg('practice_deadline_min', 22)::int)) then"),
     ('public.ripples_job_done', "case when p_err like 'rate_limited%' then interval '3 minutes' else interval '30 seconds' end",
      "case when p_err like 'rate_limited%' then make_interval(secs => greatest(30, coalesce(substring(p_err from 'retry-after=([0-9]+)')::int, 55) + 5)) else interval '30 seconds' end"),
+    ('ripples._fluke', 'r.decoy_tested < 500 or r.fluke is null',
+     "r.decoy_tested < ripples._pcfg('fluke_warm_min_decoy', 500) or r.fluke is null"),
 ]
 FN = re.compile(r"create or replace function\s+([a-z_]+\.[a-z_0-9]+)\s*\(.*?\bas \$\$(.*?)\$\$", re.S | re.I)
 
