@@ -23,6 +23,16 @@ Spec: `ATTENTION_STACK.md` §3 and §7, with `DEMARCATION.md` §7 lead decisions
 | `sql/11_att_social_ops_2026-09-25.sql` | Operational record for att-social (Jetstream buffer replay lane, proc budget, HN re-run, se.api job deferral) |
 | `sql/12_att_social_fixes.sql` | Migration `att_social_fixes3`: facet hashtags pass the strict identifier screen before storage (no `*.bsky.social` / personal-domain tags); orphan run closed |
 | `functions/att-social/index.ts` (+ `att.ts` copy) | Social collector (SOCIAL_VERSION 2026-09-25.s4): `jetstream`, `mastodon`, `hn`, `stackex`, `backfill` (hn.algolia, se.api), `ping`. s4: backfill dispatches whose host is closed for the UTC day (daily budget spent, day/permanent kill) requeue their jobs for 00:10 UTC next day instead of +1 h |
+| `sql/14_att_market.sql` | Migration `att_market_support` (att-market): source row `finra.api` (FINRA Query API, DEMARCATION Q3 channel), `att_config.market`, meta keys, `att_topic_terms`, `att_series_stats` (+ public wrappers, service_role only), usasp.spend / sec.efts term keys for non-people topics, the FINRA file backfill job |
+| `sql/14b_att_market_jobs.sql` | Migration `att_market_jobs`: `att_market_jobs(ids)` (per-job keys for per-key completion of merged backfill jobs) |
+| `sql/14c_att_market_cron.sql` | Migration `att_market_cron`: `att-finra` 06:02, `att-predmkts` 06:03, `att-kalshi` 06:04 (+ `att-kalshi-2/3/4` 06:06/06:08/06:10), `att-usasp` 07:27, `att-edgar` 07:26 (inactive), `att_fn_live('att-market')`; plus the ops record of the first-day changes (config, budget row, clean-ups, temporary FINRA backfill cron) |
+| `functions/att-market/index.ts` (+ `att.ts` copy) | Money / institutional collector (MARKET_VERSION 2026-09-25.m6): `finra`, `polymarket`, `kalshi`, `usaspending`, `edgar` (disabled), `backfill`, `ping`. See "att-market" below |
+| `sql/15_att_charts.sql` | Migration `att_charts_collector` (att-charts): `att_config.charts` (per-mode settings, free/pro list sizes, npm/pypi reference panels), meta keys `kind/feed/score/n_geos/list`, `att_charts_prev` (previous snapshot per metric/geo), `att_charts_series_info` (+ public wrappers, service_role only) |
+| `sql/15b_att_charts_cron.sql` | Migrations `att_charts_cron` + `att_charts_cron2`: `att-apple-1..6` 06:10/12/14/16/18/20, `att-steamspy` 06:12, `att-hf` 06:13, `att-github` 06:14, `att-openlibrary` 06:15, `att-anilist` 06:17, `att-npm` 06:18, `att-pypi` 06:19, `att-tranco` 06:19 |
+| `sql/15c_att_charts_ops_2026-09-25.sql` | Operational record for att-charts (tranco caps, ChatGPT SDK keys, Apple robots cache fix, `att_fn_live('att-charts')`) |
+| `sql/15d_att_budget_refund_fix.sql` | Migration `att_budget_refund_fix` (core fix found by att-charts): `att_budget.killed`; `att_budget_refund` refuses refunds only for kill-spent buckets (it used to refuse whenever used = cap, so a chunk that took the whole day's cap was never refunded); `att_host_kill` sets `killed` |
+| `sql/15e_att_ident_npm_scoped.sql` | Migration `att_ident_npm_scoped`: `_att_ident_like` no longer rejects scoped npm package keys (`@scope/name`, source `npm.dl` only) as handles |
+| `functions/att-charts/index.ts` (+ `att.ts` copy) | Charts / builder / consumption collector (CHARTS_VERSION 2026-09-25.c6): `apple`, `steamspy`, `github`, `hf`, `anilist`, `openlibrary`, `tranco`, `npm`, `pypi`, `backfill` (npm.dl, pypi.dl, anilist, gh.stars), `ping`. See "att-charts" below |
 | `functions/_shared/att.ts` | Canonical shared runtime for every `att-*` edge function |
 | `functions/att-registry/index.ts` (+ `att.ts` copy) | Topic registry function: `resolve`, `bootstrap`, `panel`, `ping` |
 
@@ -212,3 +222,44 @@ stubbed or deleted like the probes above.)
   `att_host_lease_release(p_run) -> int`; SQL only: `ripples.att_host_unkill(host)`, `ripples.att_host_killed(host)`,
   `ripples._att_clean_meta(jsonb)`.
 * `att_ingest*` sanitise `meta` (allow-list `att_config.meta_allow`; add keys there if a collector needs one).
+
+## att-market (W7 money + institutional collector, 2026-09-25, MARKET_VERSION 2026-09-25.m6)
+
+**Sources and what is stored** (counts / volumes / prices only; titles are used transiently for topic matching and as
+`att_trend_candidates` labels; nothing raw is published; Storage bucket `att-raw` is private, no storage policies):
+
+| Mode (cron UTC) | Source rows | Series (source / metric / key) | Notes |
+|---|---|---|---|
+| `finra` (06:02) | fetch `finra.api`, ingest `finra.shvol` | `finra.shvol/n/<TICKER>` value = total off-exchange volume (all TRF facilities), aux = short share; `__total__` (aux = market short share, meta coverage = tickers) | Previous trading day (NYSE holiday calendar 2024-2027) from the FINRA Query API `regShoDaily` (~28.5k rows = 6 pages of 5,000, sorted by symbol/facility/market). Consolidated day mirrored to `att-raw/finra/YYYYMMDD.txt.gz` (CNMS layout `Date|Symbol|ShortVolume|ShortExemptVolume|TotalVolume|Market`). Rolling baseline `att-raw/finra/_ring.bin` (90 trading days x ~19k tickers, float32). Abnormal-volume top 50: robust z of ln(1+v) vs the ticker's own t-77..t-15 trading days (>= 28 obs, median >= 50k shares), ratio >= 3 and z >= 4 -> `att_trend_candidates(source finra.shvol, geo US, label = ticker, meta {k:ticker, z, ratio})`. Active once 28 baseline days exist (i.e. after ~43 mirrored trading days) |
+| `backfill` `{source:'finra.api', files:true}` (job `finra:files`) | same | same, per mirrored day | 400 trading days newest first, 3 days (18 requests) per run, requeued 60 s later; 00:10 UTC next day once the daily budget (500) is spent |
+| `backfill` `{source:'finra.shvol', keys}` | same | ticker series, 400 days | One date-range API query per 3 tickers (new registry tickers get history at once); META done (275 trading days) |
+| `polymarket` (06:03) | `poly.mkt` | `m:<id>/vol24h` (aux liquidity), `e:<event id>/vol24h` (aux openInterest), `topic:<topic_id>/vol24h` (aux OI, meta n_mkts), `__total__`, `m:<id>/p` (CLOB daily price, topic-linked) | Gamma `/markets` by volume24hr, 100 per page (API cap), 15 pages, down to $1k; sports/esports excluded (sportsMarketType, gameStartTime, sports fee type, event league/gameId, league/game regex); recurring short-horizon markets (open -> end < 2 days) excluded; topic match = whole-word registry terms (`att_topic_terms`); CLOB `prices-history` full history once per mapped market, then 1 week |
+| `kalshi` (06:04, 06:06, 06:08, 06:10) | `kalshi.mkt` | `ev:<event_ticker>/vol24h` (aux open interest, meta n_mkts), `m:<market ticker>/vol24h`, `topic:<id>`, `__total__` | `/events?status=open&with_nested_markets=true`: ~14.6k open events = ~73 pages of 200 (~270 MB JSON) - too much CPU for one worker (one HTTP 546), so the crawl is split into 25-page runs with cursor + day sums in `att_state['kalshi.crawl']`. Category Sports and short-horizon events skipped; `*_fp` strings parsed; per run the 80 busiest events and 40 busiest markets |
+| `usaspending` (07:27) | `usasp.spend` | `<term>/usd` monthly obligations (day = 1st of month, meta monthly[, partial]) | spending_over_time by keyword over the current + 2 previous months; fiscal months mapped to calendar months; each of the 51 keys every 7 days (<= 12 per run); a keyword that times out (55 s) is skipped until its next turn, 2 timeouts end the run. Backfill jobs walk 3-month windows back 24 months |
+| `edgar` (07:26, cron inactive) | `sec.efts` (DISABLED) | `<term>/n` monthly filing counts | Implemented; refused while `sec.efts.enabled=false` and while att.ts lists sec.gov as RED (needs owner contact email) |
+
+Discovery candidates (poly/kalshi): event volume24hr >= 3 x trailing 7-day mean of our own saved series, or an event
+opened in the last 3 days with >= $250k (Kalshi: >= 250k contracts) and no history; evidence = clamp(log10 ratio).
+
+**DEMARCATION Q3 decision (ledger):** `cdn.finra.org/robots.txt` answers 403 (S3-style), which Q3 treats as
+disallowing; att.ts killed the host permanently on 2026-09-25 15:14 UTC. Q3: "the operator documents another channel ->
+use that channel and grade it separately": the FINRA Query API (`api.finra.org`, robots.txt 404, anonymous access to
+the public `regShoDaily` dataset) is row `finra.api` (yellow, 1 req / 5 s, 20 per run, 500 per day). Nothing uses
+`cdn.finra.org` any more; leave it killed.
+
+**Jobs:** merged backfill jobs are settled per key by the function (`att_market_jobs` + `att_jobs_done`), so a partial
+run is retried within minutes instead of att.ts's 1 h requeue, and a host that is closed for the day (budget spent or
+killed) waits until 00:10 UTC. The `finra:files` job has priority 6 so ticker / USAspending jobs (5) go first.
+
+**Platform note:** `public.call_collector` goes through pg_net, which here dispatches the next batch only after the
+current one returns; a 110 s run therefore delays other queued collector calls by up to ~2 min. All att-market modes
+stay within the 110 s wall budget.
+
+**Apple feed host.** `rss.marketingtools.apple.com` (robots.txt 200, no rules). The legacy `rss.applemarketingtools.com`
+301-redirects robots.txt to another host, which att.ts treats as a deny. Apple answers slowly (~8 s) and sometimes 504;
+a failed feed is retried by a later run (max `charts.apple.max_tries` = 3 per day), a run stops after two failures in a
+row, and six cron slots (06:10-06:20) cover 25 feeds. Daily cap 35 requests.
+
+**Core fixes made while building att-charts (both att_ objects):** `sql/15d` (budget refunds were refused whenever a
+chunk had taken the whole day's cap, which spent gh.search / steamspy / ol.trending / tranco.rank for the day after a
+single request) and `sql/15e` (scoped npm packages were rejected as `@handles`).

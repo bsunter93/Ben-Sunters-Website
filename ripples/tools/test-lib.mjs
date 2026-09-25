@@ -103,7 +103,9 @@ eq('rarity hidden under 30', L.rarityLine({ shown: false, rounds: null }, [2, 2,
 const xs = [puzzle.seed.cross[0], reveal.rounds[0].evidence.cross[0], reveal.rounds[2].evidence.cross[0]].map(L.crossText);
 eq('cross listing', xs[0], 'Also on Google Trends: TEST: listed in Google Trends daily trending searches (US) · earlier');
 eq('cross z only', xs[1], 'Also spiked on TV news: TEST: mentioned on TV news captions · later');
-eq('cross multiple', xs[2], 'Also spiked on Mastodon: TEST: trending hashtag on Mastodon · 4.5× · same day');
+eq('cross multiple not printed', xs[2], 'Also spiked on Mastodon: TEST: trending hashtag on Mastodon · same day');
+eq('cross never prints a number', xs.some(x => /\d(\.\d)?×|z ?=/.test(x)), false);
+eq('cross autocomplete tagged unofficial', L.crossText({ source: 'autocomplete', label: 'TEST', multiple: null, z: null, when: null }), 'Also on search autocomplete (unofficial): TEST');
 eq('cross no causal words', xs.some(x => /caus|drove|flood/i.test(x)), false);
 
 // Backup code round trip (D-3) and rejection of junk.
@@ -123,6 +125,13 @@ eq('ics start', ics.includes('\r\nDTSTART:20261015T080000Z\r\n'), true);
 eq('ics escape', ics.includes('SUMMARY:Knock-On: your call on A\\, B\\; C resolves'), true);
 eq('ics fold', ics.split('\r\n').every(l => l.length <= 75), true);
 eq('ics ends', ics.endsWith('END:VCALENDAR\r\n'), true);
+// Non-ASCII titles: fold by octets (RFC 5545 §3.1), never splitting a character; unfolding restores the text.
+const title2 = 'Knock-On: 🎬 Zoë Saldaña → Évora café, 東京タワー 🗼 résout ' + '✓'.repeat(40);
+const ics2 = L.icsEvent({ uid: 'ko-call-13', start: Date.parse('2026-10-16T08:00:00Z'), title: title2, url: 'https://bensunter.com/ripples/13/?src=ics', now: Date.parse('2026-10-08T09:00:00Z') });
+eq('ics fold octets', ics2.split('\r\n').every(l => Buffer.byteLength(l, 'utf8') <= 75), true);
+eq('ics fold no split char', ics2.includes('\uFFFD'), false);
+eq('ics unfold', ics2.replace(/\r\n /g, '').includes('SUMMARY:' + title2.replace(/,/g, '\\,') + '\r\n'), true);
+eq('ics fold ascii still 75', Math.max(...ics.split('\r\n').map(l => l.length)) <= 75, true);
 
 console.log(`${passes} passed, ${fails} failed`);
 process.exit(fails ? 1 : 0);

@@ -37,7 +37,7 @@ import {
 } from "./att.ts";
 
 const FN = "att-charts";
-export const CHARTS_VERSION = "2026-09-25.c2";
+export const CHARTS_VERSION = "2026-09-25.c7";
 
 // ------------------------------------------------------------------ helpers
 type Cfg = Record<string, any>;
@@ -214,34 +214,48 @@ async function writeCands(run: Run, all: Cand[]) {
 }
 
 // ------------------------------------------------------------------ apple (apple.rss)
-// rss.applemarketingtools.com serves the v2 feeds (probe-verified); rss.marketingtools.apple.com is only the builder UI
-const APPLE_HOST = "rss.applemarketingtools.com";
+// Apple's current feed host. The legacy rss.applemarketingtools.com 301-redirects everything (robots.txt included) to it,
+// and att.ts treats a cross-host robots.txt redirect as a deny, so the canonical host is used directly. Overridable via
+// att_config charts.apple.host (must be one of att_sources['apple.rss'].hosts, which politeFetch enforces anyway).
+const APPLE_HOSTS = ["rss.marketingtools.apple.com", "rss.applemarketingtools.com"];
 async function modeApple(run: Run) {
   const t0 = Date.now();
   const c = await ctx();
   const ac = c.cfg.apple ?? {};
+  const APPLE_HOST: string = APPLE_HOSTS.includes(ac.host) ? ac.host : APPLE_HOSTS[0];
   const geos: string[] = run.params.geos ?? ac.geos ?? ["us", "gb", "in", "br", "jp"];
   const allFeeds: Array<{ code: string; path: string; type: string }> = ac.feeds ?? [];
   const feeds = Array.isArray(run.params.feeds) ? allFeeds.filter((f) => run.params.feeds.includes(f.code)) : allFeeds;
   const n = lim(c, ac.limit, 50);
   const dc = c.cfg.discovery ?? {};
-  const st = ((await stateGet("charts.apple")) ?? {}) as { day?: string; done?: string[] };
+  const st = ((await stateGet("charts.apple")) ?? {}) as { day?: string; done?: string[]; tries?: Record<string, number> };
   const done = new Set<string>(st.day === run.asOf ? st.done ?? [] : []);
+  const tries: Record<string, number> = st.day === run.asOf ? { ...(st.tries ?? {}) } : {};
+  const maxTries = Number(ac.max_tries ?? 2);
+  const save = async () => { if (!run.dryRun) await stateSet("charts.apple", { day: run.asOf, done: [...done], tries }); };
   const prev = prevRanks(await prevSnap(run, "apple.rss", feeds.map((f) => f.code)), (r) => r.value);
-  let rows = 0, fed = 0, cands = 0;
+  let rows = 0, fed = 0, cands = 0, failStreak = 0;
   const todo = geos.flatMap((g) => feeds.map((f) => ({ g, f })));
   for (const { g, f } of todo) {
     const id = `${g}/${f.code}`;
     if (done.has(id)) continue;
     if (run.outOfTime(9000) || blocked(run, APPLE_HOST)) { run.partial = true; break; }
+    // two failures in a row (5xx / timeout) = the feed service is struggling: leave it alone for the rest of this run
+    if (failStreak >= 2) { run.partial = true; run.skip(APPLE_HOST, "server_errors_backoff"); break; }
     const url = `https://${APPLE_HOST}/api/v2/${g}/${f.path}/${n}/${f.type}.json`;
-    const j = await getJson(run, url, { source: "apple.rss", soft: true });
+    const errsBefore = run.errors.length;
+    const j = await getJson(run, url, { source: "apple.rss", soft: true, timeoutMs: 45_000 });
     if (!j) {
       if (blocked(run, APPLE_HOST)) { run.partial = true; break; }
-      // a feed that does not exist for a storefront (404) or fails once is marked done for the day (no retry loop)
-      note(run, `apple ${id}: no data`);
-      done.add(id);
-      if (!run.dryRun) await stateSet("charts.apple", { day: run.asOf, done: [...done] });
+      if (run.outOfTime(9000)) { run.partial = true; break; }
+      // 404 (feed not offered in this storefront): done for the day. Network error / timeout: retried by a later run
+      // (not a 429/503/403, so not a retry storm), at most charts.apple.max_tries attempts per feed per day.
+      const transient = run.errors.length > errsBefore;
+      if (transient) failStreak++;
+      tries[id] = (tries[id] ?? 0) + 1;
+      if (!transient || tries[id] >= maxTries) { done.add(id); note(run, `apple ${id}: no data (${transient ? "gave up after " + tries[id] + " tries" : "not offered"})`); }
+      else note(run, `apple ${id}: transient failure, retry next run`);
+      await save();
       continue;
     }
     const results: any[] = Array.isArray(j?.feed?.results) ? j.feed.results : [];
@@ -256,8 +270,9 @@ async function modeApple(run: Run) {
     await writeCands(run, cs);
     cands += cs.length;
     fed++;
+    failStreak = 0;
     done.add(id);
-    if (!run.dryRun) await stateSet("charts.apple", { day: run.asOf, done: [...done] });
+    await save();
   }
   const left = todo.length - done.size;
   if (left > 0) { run.partial = true; run.nextCursor = { remaining: left }; }
@@ -615,11 +630,22 @@ async function modeTranco(run: Run) {
 
 // ------------------------------------------------------------------ npm (npm.dl)
 const NPM = "https://api.npmjs.org/downloads/range";
+/**
+ * npm reports days it has not computed (the last 1-3 days, and occasional outage days) as 0 downloads for every package.
+ * A 0 is therefore treated as missing (not stored) for '__total__' and for any package whose 75th percentile in the
+ * response is above 100/day; small packages keep genuine zeros. Missing days are filled by the next runs' 7-day window.
+ */
 function npmRows(run: Run, pkg: string, j: any, topic: number | null): ObsRow[] {
+  const days = ((j?.downloads ?? []) as any[])
+    .filter((d) => typeof d?.day === "string" && Number.isFinite(Number(d?.downloads)) && d.day <= run.asOf);
+  const vals = days.map((d) => Number(d.downloads)).sort((a, b) => a - b);
+  const p75 = vals.length ? vals[Math.floor(vals.length * 0.75)] : 0;
+  const dropZero = pkg === "__total__" || p75 > 100;
   const out: ObsRow[] = [];
-  for (const d of (j?.downloads ?? []) as any[]) {
-    if (typeof d?.day !== "string" || !Number.isFinite(Number(d?.downloads)) || d.day > run.asOf) continue;
-    out.push({ source: "npm.dl", key: pkg, day: d.day, value: Number(d.downloads), topic_id: topic });
+  for (const d of days) {
+    const v = Number(d.downloads);
+    if (v === 0 && dropZero) continue;
+    out.push({ source: "npm.dl", key: pkg, day: d.day, value: v, topic_id: topic });
   }
   return out;
 }

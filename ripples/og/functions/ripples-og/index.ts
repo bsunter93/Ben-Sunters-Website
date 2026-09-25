@@ -9,6 +9,10 @@
 // and reused. Other cards are cached per isolate by canonical key (variant, n, clamped s) for up to 5 minutes, so
 // distinct query strings that mean the same card (s=4 vs s=99, extra params) cost one render. The number of
 // renderable non-brand cards is bounded by ~8 per visible puzzle.
+// Stored cards: once the plan confirms a card is visible, teaser/result/latest cards and the brand card are served
+// from the PNGs ripples-publish pre-rendered into Storage (v1/og/{n}.png, {n}-s{s}.png, brand.png) when present, so
+// a cold isolate does not load the WASM/fonts or render at all. &fresh=1 with a valid x-collector-token (the publish
+// pre-render) bypasses Storage. Response header X-Card-Source says storage|render.
 import satori from "npm:satori@0.10.14";
 import { Resvg, initWasm } from "npm:@resvg/resvg-wasm@2.6.2";
 import { createClient } from "jsr:@supabase/supabase-js@2";
@@ -42,7 +46,9 @@ const NOTO: Record<string, [string, string]> = {
   "unknown": ["Noto Sans", "noto-sans@5/files/noto-sans-latin-ext-700-normal.woff"],
 };
 
-const db = createClient(Deno.env.get("SUPABASE_URL")!, Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!, {
+const SB_URL = Deno.env.get("SUPABASE_URL")!;
+const OG_STORE = `${SB_URL}/storage/v1/object/public/ripples/v1/og/`;
+const db = createClient(SB_URL, Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!, {
   auth: { persistSession: false },
 });
 
@@ -386,9 +392,10 @@ async function rpc(fn: string, args: Record<string, unknown>): Promise<any> {
   return data;
 }
 
-type Plan = { el: El; variant: string; maxAge: number; key: string };
+// stored = file name under v1/og/ that holds exactly this card (pre-rendered by ripples-publish)
+type Plan = { el: El; variant: string; maxAge: number; key: string; stored?: string };
 async function plan(p: Req): Promise<Plan> {
-  const brand = (maxAge: number): Plan => ({ el: brandCard(), variant: "brand", maxAge, key: "brand" });
+  const brand = (maxAge: number): Plan => ({ el: brandCard(), variant: "brand", maxAge, key: "brand", stored: "brand.png" });
   if (p.bad) return brand(3600);
   let v = p.v ?? (p.n === null ? "brand" : p.s !== null ? "result" : "teaser");
   if (v === "brand") return brand(86400);
@@ -400,7 +407,7 @@ async function plan(p: Req): Promise<Plan> {
   if (v === "latest") {
     const og = await rpc("ripples_og_data", { p_n: null }) as Og | null;
     if (!og) return brand(300);
-    return { el: teaserCard(og, null), variant: "latest", maxAge: 3600, key: `latest:${og.n}` };
+    return { el: teaserCard(og, null), variant: "latest", maxAge: 3600, key: `latest:${og.n}`, stored: `${og.n}.png` };
   }
   if (p.n === null) return brand(3600);
   const og = await rpc("ripples_og_data", { p_n: p.n }) as Og | null;
@@ -431,9 +438,9 @@ async function plan(p: Req): Promise<Plan> {
   if (v === "result") {
     const R = og.R || og.rounds.length;
     const s = Math.min(p.s!, R);
-    return { el: teaserCard(og, s), variant: "result", maxAge, key: `result:${og.n}:${s}:${maxAge}` };
+    return { el: teaserCard(og, s), variant: "result", maxAge, key: `result:${og.n}:${s}:${maxAge}`, stored: `${og.n}-s${s}.png` };
   }
-  return { el: teaserCard(og, null), variant: "teaser", maxAge, key: `teaser:${og.n}:${maxAge}` };
+  return { el: teaserCard(og, null), variant: "teaser", maxAge, key: `teaser:${og.n}:${maxAge}`, stored: `${og.n}.png` };
 }
 
 // ---------- per-isolate render cache ----------
@@ -457,6 +464,15 @@ function cachedRender(pl: Plan): Promise<Uint8Array> {
   return png;
 }
 
+async function fromStore(name: string): Promise<Uint8Array | null> {
+  try {
+    const r = await fetch(OG_STORE + name);
+    if (!r.ok || r.headers.get("content-type") !== "image/png") { await r.body?.cancel(); return null; }
+    const u = new Uint8Array(await r.arrayBuffer());
+    return u.length > 24 && u[0] === 0x89 && u[1] === 0x50 && u[2] === 0x4e && u[3] === 0x47 ? u : null;
+  } catch { return null; }
+}
+
 const CORS = { "Access-Control-Allow-Origin": "*", "Access-Control-Allow-Methods": "GET, OPTIONS", "Access-Control-Allow-Headers": "x-collector-token" };
 
 Deno.serve(async (req: Request) => {
@@ -468,26 +484,33 @@ Deno.serve(async (req: Request) => {
   let pl: Plan;
   try { pl = await plan(p); } catch (e) {
     console.error("og data error", String(e));
-    pl = { el: brandCard(), variant: "brand", maxAge: 300, key: "brand" };
+    pl = { el: brandCard(), variant: "brand", maxAge: 300, key: "brand", stored: "brand.png" };
   }
-  let png: Uint8Array;
-  try { png = await cachedRender(pl); } catch (e) {
+  const token = req.headers.get("x-collector-token") ?? "";
+  let authed: boolean | null = null;
+  const isAuthed = async () => {
+    if (authed === null) { authed = false; if (token) { try { authed = (await rpc("check_collector_token", { t: token })) === true; } catch { authed = false; } } }
+    return authed;
+  };
+  const fresh = url.searchParams.get("fresh") === "1" && await isAuthed();
+  let png: Uint8Array | null = null;
+  let source = "render";
+  if (pl.stored && !fresh) { png = await fromStore(pl.stored); if (png) source = "storage"; }
+  if (!png) try { png = await cachedRender(pl); } catch (e) {
     console.error("render error", pl.variant, String(e));
-    try { png = await cachedRender({ el: brandCard(), variant: "brand", maxAge: 300, key: "brand" }); pl = { ...pl, variant: "brand", maxAge: 300, key: "brand" }; }
+    try { png = await cachedRender({ el: brandCard(), variant: "brand", maxAge: 300, key: "brand" }); pl = { ...pl, variant: "brand", maxAge: 300, key: "brand", stored: undefined }; }
     catch (e2) { return new Response("render unavailable", { status: 503, headers: { ...CORS, "Cache-Control": "no-store", "Content-Type": "text/plain" } }); }
   }
   const headers: Record<string, string> = {
     ...CORS,
     "X-Card-Variant": pl.variant,
+    "X-Card-Source": source,
     "X-Render-Ms": String(Math.round(performance.now() - t0)),
   };
   if (url.searchParams.get("b64") === "1") {
-    const token = req.headers.get("x-collector-token") ?? "";
-    let ok = false;
-    if (token) { try { ok = (await rpc("check_collector_token", { t: token })) === true; } catch { ok = false; } }
-    if (ok) return new Response(b64(png), { headers: { ...headers, "Content-Type": "text/plain", "Cache-Control": "no-store" } });
+    if (await isAuthed()) return new Response(b64(png as Uint8Array), { headers: { ...headers, "Content-Type": "text/plain", "Cache-Control": "no-store" } });
   }
-  return new Response(req.method === "HEAD" ? null : png, {
+  return new Response(req.method === "HEAD" ? null : png as Uint8Array, {
     headers: { ...headers, "Content-Type": "image/png", "Cache-Control": `public, max-age=${pl.maxAge}` },
   });
 });

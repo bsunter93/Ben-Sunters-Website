@@ -97,7 +97,7 @@ trending searches"), with `multiple: null` unless a licensed numeric source exis
 
 ### ripples_submit_play
 * Errors (PostgREST 400, `message` = code): `invalid` (client not `^[A-Za-z0-9_-]{16,64}$`; picks not an array of length R; a round not 1–2 distinct ids in a–d; a second pick after a correct first pick; `p_mag` outside 1.5–100), `closed` (unknown/invisible n, practice n, or live n outside `current−7..current`), `rate_limited` (21st call from one IP-hash per UTC day; invalid calls are not counted).
-* Scoring on the server from `ripples.puzzles.answers` and `final_multiple`: codes 2/1/0 per round; slider `e=|log10(guess/actual)|` → 2 if e≤0.176, 1 if e≤0.477; max = 2R+2.
+* Scoring on the server from `ripples.puzzles.answers` and `final_multiple`: codes 2/1/0 per round; slider `e=|log10(guess/actual)|` → 2 if e≤0.176, 1 if e≤0.301 (owner decision D-2: within 2×); max = 2R+2.
 * One row per `(n, client_hash)`; a duplicate returns current stats with the **stored** score.
 * `you = {score,max,percentile}`; `percentile` (share below + half of ties, 0–100) is `null` below 30 players.
 * The fixture n=0 accepts plays (for testing); practice puzzles do not.
@@ -121,7 +121,7 @@ after the close). Either way **W5 must compute `closes_at` with the formula abov
 ### ripples_join enums (anything else → silently ignored, still `{"ok":true}`)
 * email: lower-cased, trimmed, ≤254, `local@domain.tld` regex.
 * `p_role`: `player creator newsletter pr_comms seo_content journalist researcher brand analyst other` or null.
-* `p_price`: `free radar5 radar19 team149 report149 partner500 api` (null → free).
+* `p_price`: `free radar5 radar19 radar49 team149 report149 partner500 api support` (null → free; `radar49` and `support` added for owner decision D-1).
 * `p_topics`: subset of the 13 categories. `p_source`: `^[a-z0-9_-]{1,32}$` or null.
 * 5 attempts per IP per day (all attempts count). Upsert on `email_norm`: role/topics take the latest non-null value; **price takes the latest paid tier and is never downgraded by a later `free`/null signup** (keeps the two-button price test's intent data); source keeps the first. No function ever returns an email.
 

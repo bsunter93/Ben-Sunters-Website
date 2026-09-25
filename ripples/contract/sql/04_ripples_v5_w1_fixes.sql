@@ -189,7 +189,7 @@ begin
   end loop;
   if r.final_multiple is not null and r.final_multiple > 0 then
     e := abs(log(10::numeric, p_mag / r.final_multiple));
-    magpts := case when e <= 0.176 then 2 when e <= 0.477 then 1 else 0 end;
+    magpts := case when e <= 0.176 then 2 when e <= 0.301 then 1 else 0 end;
   end if;
   pts := pts + magpts; mx := 2 * nr + 2;
 
@@ -259,7 +259,7 @@ begin
   then return ok; end if;
   if p_role is not null and p_role not in ('player','creator','newsletter','pr_comms','seo_content',
                                            'journalist','researcher','brand','analyst','other') then return ok; end if;
-  if coalesce(p_price, 'free') not in ('free','radar5','radar19','team149','report149','partner500','api') then return ok; end if;
+  if coalesce(p_price, 'free') not in ('free','radar5','radar19','radar49','team149','report149','partner500','api','support') then return ok; end if;
   if p_topics is not null and (cardinality(p_topics) > 13 or not (p_topics <@ ripples._categories())) then return ok; end if;
   if p_source is not null and p_source !~ '^[a-z0-9_-]{1,32}$' then return ok; end if;
   insert into ripples.waitlist(email_norm, role, price, topics, source, ip_hash)

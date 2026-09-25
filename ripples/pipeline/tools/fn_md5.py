@@ -12,7 +12,7 @@ import hashlib, os, re, sys
 HERE = os.path.dirname(os.path.abspath(__file__))
 SQL = os.path.join(os.path.dirname(HERE), 'sql')
 FILES = sorted(f for f in os.listdir(SQL) if re.match(r'\d\d_.*\.sql$', f) and not f.startswith(('10_', '11_')))
-PATCHES = [  # (function, old, new) exactly as in sql/07-09, sql/13 and sql/15
+PATCHES = [  # (function, old, new) exactly as in sql/07-09, sql/13, sql/15 and sql/17
     ('public.ripples_build_puzzle', 'c.used_n is null and c.kind = p_kind and c.as_of between',
      "c.used_n is null and (c.kind = p_kind or p_kind = 'live') and c.as_of between"),
     ('ripples._enqueue_resolve', "(t.source = 'topcountry' and t.rank <= 100)",
@@ -27,6 +27,7 @@ PATCHES = [  # (function, old, new) exactly as in sql/07-09, sql/13 and sql/15
      "r.decoy_tested < ripples._pcfg('fluke_warm_min_decoy', 500) or r.fluke is null"),
     ('public.ripples_build_puzzle', "\n  return jsonb_build_object('n', v_n, 'status', 'delayed', 'hops'",
      "\n  if p_kind = 'practice' then\n    if exists (select 1 from ripples.puzzles z where z.n = v_n and z.kind = 'practice' and z.status <> 'published') then\n      delete from ripples.callit z where z.n = v_n;\n      delete from ripples.copy z where z.n = v_n;\n      delete from ripples.puzzles z where z.n = v_n;\n    end if;\n  else\n    update ripples.puzzles z set status = 'delayed' where z.n = v_n and z.kind = 'live' and z.status = 'built';\n  end if;\n  return jsonb_build_object('n', v_n, 'status', 'delayed', 'hops'"),
+    ('ripples._render', 'st_stop := exists (', "st_stop := not coalesce((p_rounds->i->>'continues')::boolean, false) and exists ("),
 ]
 FN = re.compile(r"create or replace function\s+([a-z_]+\.[a-z_0-9]+)\s*\(.*?\bas \$\$(.*?)\$\$", re.S | re.I)
 

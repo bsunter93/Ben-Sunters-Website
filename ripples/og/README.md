@@ -40,7 +40,20 @@ Redeploy with `deploy_edge_function` (name = the function, `verify_jwt: false`, 
 * **Headers**: `image/png`; `Cache-Control: public, max-age=86400` when the puzzle has passed, `max-age=3600`
   otherwise (brand for bad input 3600, `v=brand` 86400, and **300** when a valid n is not visible yet or the data read
   failed, so a crawler does not keep a brand card for a puzzle that goes live minutes later);
-  `Access-Control-Allow-Origin: *`; `X-Card-Variant` (the variant actually rendered) and `X-Render-Ms`.
+  `Access-Control-Allow-Origin: *`; `X-Card-Variant` (the variant actually rendered), `X-Card-Source`
+  (`storage` or `render`) and `X-Render-Ms`.
+* **Render budget (the endpoint is public and not rate-limited).** Every request is planned first (RPC visibility
+  checks, cheap). Then:
+  * teaser, result, latest and brand cards are served from the PNGs `ripples-publish` pre-rendered into Storage
+    (`v1/og/{n}.png`, `v1/og/{n}-s{s}.png`, `v1/og/brand.png`) when the file exists. No WASM, fonts or render run.
+    The bytes are identical to a fresh render (md5 checked against the verifier's renders).
+  * Otherwise the card is rendered and cached per isolate: the brand card once per isolate, other cards by canonical
+    key (variant, n, clamped s) for 5 minutes (at most 48 entries).
+  * So every invalid, unknown or not-yet-visible URL costs one RPC plus one Storage read. Only reveal and board cards
+    of visible puzzles (about 2 per puzzle) always render on a cold isolate. Each distinct URL is still one request
+    to the function (the CDN keys on the full URL); there is no rate limit.
+  * `&fresh=1` bypasses Storage only with a valid `x-collector-token`. `ripples-publish` uses it so that it
+    re-renders rather than copying the stored file it is replacing.
 * **Test mode**: `&b64=1` returns the PNG as base64 `text/plain` (no-store) only when the `x-collector-token` header
   matches the vault secret (`check_collector_token`); without it the parameter is ignored and a PNG is returned.
 * **Stack**: `npm:satori@0.10.14` + `npm:@resvg/resvg-wasm@2.6.2`; WASM and full Inter v3.19 Regular + ExtraBold from
@@ -49,7 +62,7 @@ Redeploy with `deploy_edge_function` (name = the function, `verify_jwt: false`, 
   missing emoji → blank, never tofu). Scripts Inter lacks (JP, SC, KR, Devanagari, Arabic, Hebrew, Thai, Bengali,
   Tamil, symbols, math) load a Noto Sans subset from `cdn.jsdelivr.net/npm/@fontsource/…@5` on demand (file names
   taken from the jsDelivr package listings; the Arabic, Hebrew, Thai, Devanagari, Bengali, Tamil, symbols and math
-  files fetched 200 `font/woff`; no non-Latin title has been rendered yet because no such data exists). Cold render ≈ 0.8–1.1 s, warm ≈ 0.5 s.
+  files fetched 200 `font/woff`; no non-Latin title has been rendered yet because no such data exists). Cold render ≈ 0.8–1.1 s, warm ≈ 0.5 s; a card served from Storage ≈ 0.25–0.65 s; a warm cached brand card ≈ 0.1 s (measured over pg_net, 2026-09-25).
 * If rendering fails the function retries with the brand card; only if that also fails (jsDelivr unreachable) does it
   return 503 `no-store`.
 
@@ -74,22 +87,23 @@ Checked renders from this build (fixture n=0): `scratchpad/v5/og_check_teaser_v1
 Body `{}` → `ripples_publish_bundle(null)`; `{"n": 12}` → explicit n (fixture `0` / practice `n<0` for tests);
 `{"prerender": false}` skips PNGs. Errors from the bundle: `too_early` / `not_publishable` / `not_found` → 409
 `{"ok":false,"error":…}`; a bad `n` → 400; a wrong token → 403. Returns
-`{ok,n,kind,date,latest_status,uploaded[],og[],og_skipped[],errors[],ledger_head,ms}` (207 if any upload failed).
+`{ok,n,kind,date,latest_status,staged,board_latest_removed,uploaded[],og[],og_skipped[],errors[],ledger_head,ms}`
+(207 if any upload failed).
 
 ### Storage layout (bucket `ripples`, public, CDN-cached)
 
 | Path | Written when | Cache-Control |
 |---|---|---|
-| `v1/latest.json` | every run: `bundle.latest` (always the real latest: delayed + previous puzzle, or `n:null` before launch) | `max-age=60` |
+| `v1/latest.json` | every run: `bundle.latest` = `ripples_latest()` (always the real latest: delayed + previous puzzle, or `n:null` before launch). Shape `{n,date,puzzle,status,next_at}`; `date` is the current puzzle date | `max-age=60` |
 | `v1/puzzle/{n}.json`, `v1/reveal/{n}.json` | bundle has a puzzle | 3600 |
 | `v1/callit/{n}.json` | that n, plus the last 8 published live puzzles (`recent_callit`), rewritten every run until resolved | 300 |
 | `v1/board/{n}.json` | that n's board (any kind) | 3600 |
-| `v1/board/latest.json` | `ripples_board(null)`: the latest **visible live** board. Never a fixture/practice board. Absent before launch | 300 |
+| `v1/board/latest.json` | `ripples_board(null)`: the latest **visible live** board. Never a fixture/practice board. **Absent** before launch, and **deleted** by the staged 07:25 run until the 07:45 run rewrites it. While it is absent, `load()` falls back to `ripples_board()` | 300 |
 | `v1/archive.json` | every run (`ripples_archive(500,'all')`) | 300 |
 | `v1/track.json` | every run (`ripples_track_record()`, `null` until W3 deploys it) | 300 |
 | `v1/ledger.json` | every run: `bundle.ledger`, a plain array in write order, i.e. exactly what `validate.py --ledger-chain ledger.json` reads | 300 |
 | `v1/data/{date}.json`, `v1/data/{date}.csv`, `v1/data/index.json` | live puzzles with `csv_rows` only. **CC BY 4.0**, Wikimedia-derived columns only: `date,n,round,parent,answer,multiple,z,lag_days,fluke,p_time,category`; the JSON adds `license`, `citation`, `columns`, `rows` | 3600 / 300 |
-| `v1/og/{n}.png`, `v1/og/{n}-s{0..R}.png` | pre-rendered by calling `ripples-og` over HTTP (each render gets its own isolate and CPU budget). A render that comes back as the brand card (puzzle not visible yet, e.g. the 07:25 run before the 07:30 rollover) is **not stored**; the 07:45 run stores it | 3600 |
+| `v1/og/{n}.png`, `v1/og/{n}-s{0..R}.png`, `v1/og/brand.png` | pre-rendered by calling `ripples-og?…&fresh=1` with the token over HTTP (each render gets its own isolate and CPU budget). A render that comes back as the brand card (puzzle not visible yet, e.g. the 07:25 run before the 07:30 rollover) is **not stored**; the 07:45 run stores it | 3600 |
 
 Only `v1/data/*` is open data. `puzzle/`, `reveal/`, `board/`, `latest.json` can carry non-Wikimedia `cross` items and
 are **not** CC BY (contract README, SPEC 12.9).
@@ -103,10 +117,11 @@ Notes for readers of these files:
   but the puzzle only becomes visible at the 07:30 rollover. While `latest.n < n` the response says `"staged":true`
   and the run writes **no** per-puzzle file for today: no `puzzle|reveal|callit|board/{n}.json`, no
   `data/{date}.json|.csv` (the CSV has the answer column) and no OG PNGs. It refreshes only `latest.json` (still
-  yesterday's, `next_at` = today 07:30), archive, track, ledger and older Call It files. From 07:30 to 07:45 the client
+  yesterday's, `next_at` = today 07:30), archive, track, ledger and older Call It files, and it **deletes**
+  `board/latest.json` (`"board_latest_removed":true`). From 07:30 to 07:45 the client
   reads the RPCs: `getLatest()` re-reads `ripples_latest` once `next_at` has passed, and `load()` falls back to the RPC
-  for any missing file. The 07:45 run mirrors everything. (`board/latest.json` still shows yesterday's board until
-  07:45, because it exists and has no `next_at`.)
+  for any missing file. That includes `board/latest.json`, so the board follows the rollover through
+  `ripples_board()`. The deleted file's 300 s CDN cache runs out by 07:30. The 07:45 run mirrors everything.
 * The fixture files (`v1/*/0.json`, `v1/og/0*.png`) are in the production bucket because W4 acceptance requires
   publishing n=0 under `v1/`. They are TEST data (every title says "Test", watermark on every card) and nothing links
   to them. Remove them with the Storage dashboard if unwanted; the next fixture test re-creates them.
@@ -162,7 +177,9 @@ Notes for readers of these files:
   password): `select vault.create_secret('<value>', 'bsky_handle');` etc. Remove either secret to stop posting.
 * **Probe cleanup**: `probe-og`, `probe-og2` and `probe-sources` now return **410 gone** (verify_jwt false so the 410
   is visible). The Supabase MCP has no delete tool: **the owner must delete them in the dashboard** (Edge Functions →
-  function → Delete), together with `probe-cors` (already a 410 stub). `probe-att-*` and `probe-holes-*` belong to the
+  function → Delete), together with `probe-cors`. Its deployed source (v2, read with `get_edge_function`) is
+  `Deno.serve(() => new Response('gone', { status: 410 }))`. It keeps verify_jwt true, so an anonymous GET gets a 401
+  from the gateway before it reaches the stub. `probe-att-*` and `probe-holes-*` belong to the
   attention team and were left untouched.
 
 ## Owner actions

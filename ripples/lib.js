@@ -25,7 +25,7 @@ export function totalScore(codes, magPts) {
 export const gridEmoji = codes => codes.map(c => SQUARES[c]).join('');
 export const firstTries = codes => codes.filter(c => c === 2).length;
 
-// Rounds as the share path sees them, from the puzzle plus each round's answer id (found by hashing).
+// Rounds as the share path sees them (answers found by hashing).
 export function chainFromPuzzle(puzzle, answerIds) {
   return puzzle.rounds.map((r, k) => {
     const o = r.options.find(x => x.id === answerIds[k]) || {};
@@ -44,7 +44,7 @@ export function pathEmoji(seedEmoji, chain) {
 }
 export function magLine(guess, actual) {
   if (!(guess > 0) || !(actual > 0)) return '';
-  // D-2: the line appears only for a 2-point guess (e ≤ 0.176, the same test the server uses), so it never overstates.
+  // D-2: only for a 2-point guess (same test as the server).
   return magPoints(guess, actual) === 2 ? `📏 last hop within ${magX(guess, actual).toFixed(1)}×` : '';
 }
 // SPEC §3 exactly. Blank lines are omitted.
@@ -101,7 +101,7 @@ export function percentileLine(you) {
   if (!you || you.percentile == null) return '';
   return `You scored higher than ${fmtPct(you.percentile)} of players`;
 }
-// Crowd rarity from players' picks (≥30 players), only when < 50%: rarest first-try find, else rarest find.
+// Crowd rarity from players' picks (≥30 players), only when < 50%.
 export function rarityLine(stats, codes) {
   if (!stats || !stats.shown || !stats.rounds) return '';
   const low = (k, ok) => stats.rounds.filter(r => r[k] != null && r[k] < 50 && ok(r)).sort((a, b) => a[k] - b[k])[0];
@@ -125,7 +125,7 @@ export function fmtCountdown(ms) {
   const m = Math.max(0, Math.ceil(ms / 6e4)), h = Math.floor(m / 60);
   return h ? `${h}h ${String(m % 60).padStart(2, '0')}m` : `${m}m`;
 }
-// Call It closes at the earlier of 07:30 UTC on puzzle_date+1 and 00:00 UTC after window_start (contract README).
+// Call It closes at min(07:30 UTC on date+1, 00:00 UTC after window_start).
 export function callClosesAt(puzzleDate, windowStart) {
   return Math.min(Date.parse(addDays(puzzleDate, 1) + 'T07:30:00Z'), Date.parse(addDays(windowStart, 1) + 'T00:00:00Z'));
 }
@@ -168,12 +168,11 @@ export function streakFrom(doneNs, upto) {
   return c;
 }
 
-// Cross-channel corroboration badge (contract extension). Never evidence; numbers only if the item has them.
-const XSRC = { gtrends: 'Google Trends', bsky: 'Bluesky', mastodon: 'Mastodon', gdelt_tv: 'TV news', autocomplete: 'search autocomplete', polymarket: 'Polymarket' };
+// Cross-channel badge: never evidence, never a number (its baseline isn't ours, §12.2).
+const XSRC = { gtrends: 'Google Trends', bsky: 'Bluesky', mastodon: 'Mastodon', gdelt_tv: 'TV news', autocomplete: 'search autocomplete (unofficial)', polymarket: 'Polymarket' };
 export function crossText(x) {
   if (!x || !x.label) return '';
-  const src = XSRC[x.source] || x.source || 'another channel', measured = x.multiple != null || x.z != null;
-  return `${measured ? 'Also spiked on' : 'Also on'} ${src}: ${x.label}${x.multiple != null ? ' · ' + fmtMultiple(x.multiple) : ''}${WHEN[x.when] ? ' · ' + WHEN[x.when] : ''}`;
+  return `${x.multiple != null || x.z != null ? 'Also spiked on' : 'Also on'} ${XSRC[x.source] || x.source || 'another channel'}: ${x.label}${WHEN[x.when] ? ' · ' + WHEN[x.when] : ''}`;
 }
 const WHEN = { before: 'earlier', alongside: 'same day', after: 'later' };
 
@@ -201,8 +200,10 @@ export function decodeBackup(code) {
 // One-off calendar event (RFC 5545), UTC start, 15 min, alarm at start.
 const icsT = ms => new Date(ms).toISOString().replace(/[-:]/g, '').replace(/\.\d{3}/, '');
 const icsEsc = s => String(s).replace(/[\\;,]/g, m => '\\' + m).replace(/\r?\n/g, '\\n');
+// Fold at 75 octets, never inside a UTF-8 sequence.
+const fold = l => { let o = '', k = 0; for (const c of l) { const b = new TextEncoder().encode(c).length; if (k + b > 75) o += '\r\n ', k = 1; o += c; k += b; } return o; };
 export function icsEvent({ uid, start, title, url, desc = '', now = Date.now() }) {
   return ['BEGIN:VCALENDAR', 'VERSION:2.0', 'PRODID:-//bensunter.com//Knock-On//EN', 'BEGIN:VEVENT', `UID:${uid}@bensunter.com`, `DTSTAMP:${icsT(now)}`,
     `DTSTART:${icsT(start)}`, `DTEND:${icsT(start + 9e5)}`, `SUMMARY:${icsEsc(title)}`, `DESCRIPTION:${icsEsc(desc ? desc + ' ' + url : url)}`, `URL:${url}`,
-    'BEGIN:VALARM', 'ACTION:DISPLAY', `DESCRIPTION:${icsEsc(title)}`, 'TRIGGER:PT0M', 'END:VALARM', 'END:VEVENT', 'END:VCALENDAR', ''].map(l => l.replace(/(.{74})(?=.)/gu, '$1\r\n ')).join('\r\n');
+    'BEGIN:VALARM', 'ACTION:DISPLAY', `DESCRIPTION:${icsEsc(title)}`, 'TRIGGER:PT0M', 'END:VALARM', 'END:VEVENT', 'END:VCALENDAR', ''].map(fold).join('\r\n');
 }

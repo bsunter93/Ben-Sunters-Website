@@ -31,7 +31,7 @@ import {
 } from "./att.ts";
 
 const FN = "att-market";
-const MARKET_VERSION = "2026-09-25.m2";
+const MARKET_VERSION = "2026-09-25.m6";
 const BUCKET = "att-raw";
 const FINRA_URL = "https://api.finra.org/data/group/otcMarket/name/regShoDaily";
 const FINRA_FIELDS = ["tradeReportDate", "securitiesInformationProcessorSymbolIdentifier", "shortParQuantity",
@@ -46,7 +46,7 @@ const EFTS_URL = "https://efts.sec.gov/LATEST/search-index";
 const DEFAULTS = {
   poly_page: 100, poly_max_pages: 15, poly_min_vol24: 1000, poly_max_markets: 300, poly_max_events: 150,
   poly_clob_max: 60, poly_new_usd: 250000,
-  kalshi_page: 200, kalshi_max_pages: 100, kalshi_max_events: 200, kalshi_max_markets: 100,
+  kalshi_page: 200, kalshi_max_pages: 100, kalshi_pages_per_run: 25, kalshi_chunk_events: 80, kalshi_chunk_markets: 40,
   kalshi_min_mkt_vol24: 1000, kalshi_new_contracts: 250000,
   cand_ratio: 3, cand_top: 30,
   finra_page: 5000, finra_days: 400, finra_ring_days: 90, finra_liq_floor: 50000,
@@ -75,6 +75,13 @@ const clamp01 = (x: number) => Math.max(0, Math.min(1, x));
 /** Day a rolling-24h snapshot belongs to: the UTC date of (now - 12 h), i.e. where most of the window lies. */
 const snapDay = (run: Run) => (typeof run.body?.as_of === "string" ? run.body.as_of : ymd(new Date(Date.now() - 12 * 3600e3)));
 const today = () => ymd(new Date());
+/** Recurring short-horizon markets (15-minute / daily BTC, daily weather, ...) open and settle within 2 days: they are
+ *  counted in '__total__' but get no series of their own and never become discovery candidates. */
+const SHORT_MS = 2 * 86400e3;
+function shortLived(start: unknown, end: unknown): boolean {
+  const a = Date.parse(String(start ?? "")), b = Date.parse(String(end ?? ""));
+  return Number.isFinite(a) && Number.isFinite(b) && b - a < SHORT_MS;
+}
 function median(a: number[]): number {
   if (!a.length) return NaN;
   const s = [...a].sort((x, y) => x - y);
@@ -136,15 +143,20 @@ function norm(s: string): string {
   if (normMem.size < 100_000) normMem.set(s, v);
   return v;
 }
+// Whole-word matching of registry terms (label, term keys, aliases >= 4 chars). Single-word titles are kept: in the
+// first runs they mapped real markets (Kalshi Rotten Tomatoes markets for the films "Digger" / "Primetime" / "Monster").
+// Topics without a category are matched on multi-word terms only.
 class Matcher {
   private byFirst = new Map<string, Array<[string, number]>>();
   patterns = 0;
-  constructor(readonly topics: Array<{ topic_id: number; terms: string[] }>) {
+  constructor(readonly topics: Array<{ topic_id: number; terms: string[]; category?: string | null }>) {
     topics.forEach((t, i) => {
       const seen = new Set<string>();
+      const oneWord = !!t.category;
       for (const raw of t.terms ?? []) {
         const p = norm(String(raw));
         if (p.length < 4 || /^[\d ]+$/.test(p) || seen.has(p)) continue;
+        if (!oneWord && !p.includes(" ")) continue;
         seen.add(p);
         const first = p.split(" ")[0];
         let arr = this.byFirst.get(first);
@@ -173,7 +185,8 @@ class Matcher {
 }
 async function buildMatcher(run: Run): Promise<Matcher> {
   const data = await rpc(run, "att_topic_terms", { p_limit: 5000 });
-  return new Matcher(((data ?? []) as Array<{ topic_id: number; terms: string[] }>).filter((t) => Array.isArray(t.terms)));
+  return new Matcher(((data ?? []) as Array<{ topic_id: number; terms: string[]; category: string | null }>)
+    .filter((t) => Array.isArray(t.terms)));
 }
 
 // ------------------------------------------------------------ discovery candidates for market events
@@ -262,7 +275,7 @@ async function polymarket(run: Run) {
   type Ev = { id: string; title: string; vol: number; oi: number; created: string | null; sports: boolean };
   const markets: Mk[] = [];
   const events = new Map<string, Ev>();
-  let pages = 0, seen = 0, sports = 0, totalVol = 0, fetchedOk = true;
+  let pages = 0, seen = 0, sports = 0, short = 0, totalVol = 0, fetchedOk = true;
   for (let page = 0; page < cfg.poly_max_pages; page++) {
     if (run.outOfTime(25_000)) { run.partial = true; break; }
     const url = `${GAMMA}/markets?active=true&closed=false&order=volume24hr&ascending=false&limit=${cfg.poly_page}&offset=${page * cfg.poly_page}`;
@@ -291,6 +304,11 @@ async function polymarket(run: Run) {
       }
       if (sp) { sports++; continue; }
       totalVol += vol;
+      if (shortLived(m.startDate ?? ev0?.startDate, m.endDate ?? ev0?.endDate)) {
+        short++;
+        if (ev0?.id) events.get(String(ev0.id))!.sports = true; // drop the short-lived event as well
+        continue;
+      }
       markets.push({ id: String(m.id), title: String(m.question ?? ""), vol, liq: num(m.liquidityNum ?? m.liquidity),
         token: firstToken(m.clobTokenIds), ev: ev0?.id ? String(ev0.id) : null });
     }
@@ -301,7 +319,7 @@ async function polymarket(run: Run) {
     return;
   }
   const evList = [...events.values()].filter((e) => !e.sports && e.vol > 0).sort((a, b) => b.vol - a.vol);
-  // a market in a sports event is sports even if the market itself looked neutral
+  // a market in a sports (or short-lived) event is excluded even if the market itself looked neutral
   const sportsEv = new Set([...events.values()].filter((e) => e.sports).map((e) => e.id));
   const mk = markets.filter((m) => !m.ev || !sportsEv.has(m.ev)).sort((a, b) => b.vol - a.vol);
   const keepMk = mk.slice(0, cfg.poly_max_markets);
@@ -361,28 +379,42 @@ async function polymarket(run: Run) {
   const nCand = await marketCandidates(run, "poly.mkt", day,
     keepEv.map((e, i) => ({ key: `e:${e.id}`, title: e.title, vol: e.vol, created: e.created, topic_id: evTopic.get(i) ?? null })),
     cfg, "ALL", cfg.poly_new_usd, cfg.poly_new_usd / 10);
-  run.extra.polymarket = { day, pages, seen, sports_skipped: sports, markets: keepMk.length, events: keepEv.length,
+  run.extra.polymarket = { day, pages, seen, sports_skipped: sports, short_lived_skipped: short, markets: keepMk.length, events: keepEv.length,
     topics: tRows.length, clob_markets: clobOk, price_rows: clobRows, candidates: nCand, matcher_terms: matcher.patterns };
   run.source({ source: "poly.mkt", status: fetchedOk ? "ok" : "partial", keys: keepMk.length + keepEv.length + tRows.length,
     rows: Number(ing?.rows ?? 0) + priceRows.length, ms: Date.now() - t0 });
 }
 
 // ============================================================ kalshi
+// The open-event crawl (~73 pages of 200 events with nested markets, ~270 MB of JSON) does not fit one worker's CPU
+// budget, so it is split over several runs (cron 06:04 / 06:06 / 06:08 / 06:10): each run reads up to
+// kalshi_pages_per_run pages from the cursor saved in att_state 'kalshi.crawl', writes the busiest events and markets
+// of its chunk, and accumulates the topic sums and the '__total__' normaliser for the day.
+interface KalshiCrawl {
+  day: string; cursor: string; pages: number; seen: number; sports: number; short: number; totalVol: number;
+  events: number; topics: Record<string, { vol: number; oi: number; n: number }>; complete: boolean; runs: number;
+}
 async function kalshi(run: Run) {
   const t0 = Date.now();
   const cfg = await mcfg(run);
   const day = snapDay(run);
   const src = await sourceInfo("kalshi.mkt");
   if (!src?.enabled) { run.source({ source: "kalshi.mkt", status: "disabled", note: src?.reason ?? null }); return; }
+  if (!(await hostLease(run, "api.elections.kalshi.com"))) { run.source({ source: "kalshi.mkt", status: "host_busy" }); return; }
+  const prev = (await stateGet("kalshi.crawl")) as KalshiCrawl | null;
+  const st: KalshiCrawl = prev && prev.day === day && run.params?.restart !== true ? prev
+    : { day, cursor: "", pages: 0, seen: 0, sports: 0, short: 0, totalVol: 0, events: 0, topics: {}, complete: false, runs: 0 };
+  if (st.complete) { run.source({ source: "kalshi.mkt", status: "ok", note: `crawl for ${day} already complete` }); return; }
   const matcher = await buildMatcher(run);
   type Ev = { ticker: string; title: string; vol: number; oi: number; n: number; created: string | null };
   const evs: Ev[] = [];
   const mkts: Array<{ ticker: string; vol: number; oi: number }> = [];
-  let cursor = "", pages = 0, seen = 0, sports = 0, totalVol = 0, complete = false, fetchedOk = true;
-  for (let p = 0; p < cfg.kalshi_max_pages; p++) {
+  let pages = 0, fetchedOk = true;
+  const maxPages = Math.min(cfg.kalshi_pages_per_run, Math.max(0, cfg.kalshi_max_pages - st.pages));
+  for (let p = 0; p < maxPages; p++) {
     if (run.outOfTime(20_000)) { run.partial = true; break; }
     const url = `${KALSHI}/events?status=open&with_nested_markets=true&limit=${cfg.kalshi_page}` +
-      (cursor ? `&cursor=${encodeURIComponent(cursor)}` : "");
+      (st.cursor ? `&cursor=${encodeURIComponent(st.cursor)}` : "");
     const res = await politeFetch(run, url, { source: "kalshi.mkt", headers: { accept: "application/json" }, timeoutMs: 30_000 });
     if (!res) { fetchedOk = pages > 0; run.partial = true; break; }
     if (!res.ok) { run.errors.push(`kalshi http ${res.status}`); await res.body?.cancel(); fetchedOk = pages > 0; break; }
@@ -391,48 +423,69 @@ async function kalshi(run: Run) {
     pages++;
     const list = Array.isArray(j?.events) ? j.events : [];
     for (const e of list) {
-      seen++;
-      if (/sport/i.test(String(e?.category ?? ""))) { sports++; continue; }
+      st.seen++;
+      if (/sport/i.test(String(e?.category ?? ""))) { st.sports++; continue; }
       const ms = Array.isArray(e?.markets) ? e.markets : [];
-      let vol = 0, oi = 0, created: string | null = null;
+      let vol = 0, oi = 0, created: string | null = null, close: string | null = null;
+      const busy: Array<{ ticker: string; vol: number; oi: number }> = [];
       for (const m of ms) {
         const v = num(m?.volume_24h_fp ?? m?.volume_24h);
         const o = num(m?.open_interest_fp ?? m?.open_interest);
         vol += v; oi += o;
-        const ct = typeof m?.created_time === "string" ? m.created_time : null;
+        const ct = typeof m?.open_time === "string" ? m.open_time : typeof m?.created_time === "string" ? m.created_time : null;
         if (ct && (!created || ct < created)) created = ct;
-        if (v >= cfg.kalshi_min_mkt_vol24 && m?.ticker) mkts.push({ ticker: String(m.ticker), vol: v, oi: o });
+        const cl = typeof m?.close_time === "string" ? m.close_time : null;
+        if (cl && (!close || cl > close)) close = cl;
+        if (v >= cfg.kalshi_min_mkt_vol24 && m?.ticker) busy.push({ ticker: String(m.ticker), vol: v, oi: o });
       }
-      totalVol += vol;
+      st.totalVol += vol;
+      if (shortLived(created, close)) { st.short++; continue; }
+      mkts.push(...busy);
       if (vol <= 0 && oi < 1000) continue;
+      st.events++;
       evs.push({ ticker: String(e.event_ticker), title: [e.title, e.sub_title].filter(Boolean).join(" "), vol, oi, n: ms.length, created });
     }
-    cursor = typeof j?.cursor === "string" ? j.cursor : "";
-    if (!cursor || !list.length) { complete = true; break; }
+    st.cursor = typeof j?.cursor === "string" ? j.cursor : "";
+    if (!st.cursor || !list.length) { st.complete = true; break; }
   }
+  st.pages += pages;
+  st.runs++;
+  if (!st.complete && st.pages >= cfg.kalshi_max_pages) st.complete = true; // safety stop; __total__ stays flagged partial
   if (!pages) { run.source({ source: "kalshi.mkt", status: failNote(run, "api.elections.kalshi.com"), ms: Date.now() - t0 }); return; }
   evs.sort((a, b) => b.vol - a.vol || b.oi - a.oi);
   mkts.sort((a, b) => b.vol - a.vol);
-  const keepEv = evs.slice(0, cfg.kalshi_max_events);
-  const keepMk = mkts.slice(0, cfg.kalshi_max_markets);
+  const keepEv = evs.slice(0, cfg.kalshi_chunk_events);
+  const keepMk = mkts.slice(0, cfg.kalshi_chunk_markets);
   const evTopic = new Map<number, number>();
-  const tRows = topicRows("kalshi.mkt", day, keepEv.map((e) => ({ vol: e.vol, oi: e.oi, title: e.title })), matcher,
+  const chunkTopics = topicRows("kalshi.mkt", day, keepEv.map((e) => ({ vol: e.vol, oi: e.oi, title: e.title })), matcher,
     (i, tid) => { if (!evTopic.has(i)) evTopic.set(i, tid); });
+  for (const t of chunkTopics) { // accumulate the day's topic sums over the chunks
+    const k = String(t.topic_id);
+    const a = st.topics[k] ?? { vol: 0, oi: 0, n: 0 };
+    a.vol += t.value; a.oi += Number(t.aux ?? 0); a.n += Number((t.meta as { n_mkts?: number } | null)?.n_mkts ?? 0);
+    st.topics[k] = a;
+  }
   const rows: ObsRow[] = [];
   keepEv.forEach((e, i) => rows.push({ source: "kalshi.mkt", key: `ev:${e.ticker}`, metric: "vol24h", day, value: r2(e.vol),
     aux: r2(e.oi), topic_id: evTopic.get(i) ?? null, meta: { n_mkts: e.n } }));
   for (const m of keepMk) rows.push({ source: "kalshi.mkt", key: `m:${m.ticker}`, metric: "vol24h", day, value: r2(m.vol), aux: r2(m.oi) });
-  rows.push(...tRows);
-  rows.push({ source: "kalshi.mkt", key: "__total__", metric: "vol24h", day, value: r2(totalVol), aux: evs.length,
-    meta: { coverage: seen, partial: !complete } });
+  for (const [tid, a] of Object.entries(st.topics)) {
+    rows.push({ source: "kalshi.mkt", key: `topic:${tid}`, metric: "vol24h", day, value: r2(a.vol), aux: r2(a.oi),
+      topic_id: Number(tid), meta: { n_mkts: a.n, partial: !st.complete } });
+  }
+  rows.push({ source: "kalshi.mkt", key: "__total__", metric: "vol24h", day, value: r2(st.totalVol), aux: st.events,
+    meta: { coverage: st.seen, partial: !st.complete } });
   const ing = await ingest(run, rows);
   const nCand = await marketCandidates(run, "kalshi.mkt", day,
     keepEv.map((e, i) => ({ key: `ev:${e.ticker}`, title: e.title, vol: e.vol, created: e.created, topic_id: evTopic.get(i) ?? null })),
     cfg, "US", cfg.kalshi_new_contracts, cfg.kalshi_new_contracts / 10);
-  run.extra.kalshi = { day, pages, complete, seen, sports_skipped: sports, events: keepEv.length, markets: keepMk.length,
-    topics: tRows.length, candidates: nCand, matcher_terms: matcher.patterns };
-  run.source({ source: "kalshi.mkt", status: complete && fetchedOk ? "ok" : "partial", keys: rows.length,
-    rows: Number(ing?.rows ?? 0), ms: Date.now() - t0 });
+  if (!run.dryRun) await stateSet("kalshi.crawl", st);
+  if (!st.complete) run.nextCursor = { pages_done: st.pages };
+  run.extra.kalshi = { day, chunk_pages: pages, pages_total: st.pages, runs: st.runs, complete: st.complete, seen: st.seen,
+    sports_skipped: st.sports, short_lived_skipped: st.short, events: keepEv.length, markets: keepMk.length,
+    topics: Object.keys(st.topics).length, candidates: nCand, matcher_terms: matcher.patterns };
+  run.source({ source: "kalshi.mkt", status: fetchedOk ? (st.complete ? "ok" : "partial") : "partial", keys: rows.length,
+    rows: Number(ing?.rows ?? 0), ms: Date.now() - t0, note: st.complete ? null : "crawl continues in the next run" });
 }
 
 // ============================================================ FINRA (Query API regShoDaily)
@@ -799,7 +852,8 @@ async function finraKeysBackfill(run: Run, cfg: Cfg) {
         limit: cfg.finra_page, offset, fields: FINRA_FIELDS,
         domainFilters: [{ fieldName: "securitiesInformationProcessorSymbolIdentifier", values: chunk }],
         dateRangeFilters: [{ fieldName: "tradeReportDate", startDate: from, endDate: to }],
-        sortFields: ["tradeReportDate", "securitiesInformationProcessorSymbolIdentifier", "reportingFacilityCode", "marketCode"],
+        // no sortFields: the API sorts only when the partition key (tradeReportDate) is an EQUAL filter; 3 tickers x
+        // ~275 trading days x <= 4 facilities fits one 5,000-row page, and addRow de-duplicates across pages anyway
       });
       if (!p) { ok = false; break; }
       for (const r of p.rows) {
@@ -845,9 +899,11 @@ function monthStart(d: string, back = 0): string {
   return ymd(dt);
 }
 function monthEnd(start: string): string { return addDays(monthStart(start, -1), -1); }
+/** the last politeFetch failed on a network timeout (not a block): the caller may move on to the next key */
+const timedOut = (run: Run) => /timed out|timeout/i.test(run.errors.at(-1) ?? "");
 async function usaspQuery(run: Run, term: string, start: string, end: string): Promise<MonthVal[] | null> {
   const res = await politeFetch(run, USASP_URL, {
-    source: "usasp.spend", method: "POST", timeoutMs: 30_000,
+    source: "usasp.spend", method: "POST", timeoutMs: 55_000,
     headers: { "content-type": "application/json", accept: "application/json" },
     body: JSON.stringify({ group: "month", filters: { keywords: [term], time_period: [{ start_date: start, end_date: end }] } }),
   });
@@ -892,18 +948,23 @@ async function usaspending(run: Run) {
     .sort((a, b) => (rot.last[a.key] ?? "").localeCompare(rot.last[b.key] ?? ""));
   const maxKeys = Math.max(1, Math.min(cfg.usasp_max_keys, Math.ceil(keys.length / Math.max(1, cfg.usasp_rotation_days)) + 4));
   const start = monthStart(d0, 2), end = d0, partialMonth = monthStart(d0);
-  let rows = 0, fetched = 0;
+  let rows = 0, fetched = 0, timeouts = 0;
   for (const k of due.slice(0, forced ? due.length : maxKeys)) {
     if (run.outOfTime(15_000)) { run.partial = true; break; }
     const vals = await usaspQuery(run, k.key, start, end);
-    if (vals === null) { run.partial = true; break; }
+    if (vals === null) {
+      // a slow keyword (e.g. a country name) times out: skip it until its next rotation, stop after 2 in a run
+      if (!timedOut(run) || ++timeouts >= 2) { run.partial = true; break; }
+      rot.last[k.key] = d0;
+      continue;
+    }
     fetched++;
     rot.last[k.key] = d0;
     const r = await ingest(run, usaspRows(k, vals, partialMonth));
     rows += Number(r?.rows ?? 0);
   }
   if (!run.dryRun) await stateSet("usasp.rot", rot);
-  run.extra.usaspending = { keys: keys.length, due: due.length, fetched, window: [start, end], rows };
+  run.extra.usaspending = { keys: keys.length, due: due.length, fetched, timeouts, window: [start, end], rows };
   run.source({ source: "usasp.spend", status: fetched ? "ok" : failNote(run, "api.usaspending.gov"), keys: fetched, rows,
     ms: Date.now() - t0 });
 }
@@ -917,7 +978,7 @@ async function usaspBackfill(run: Run, cfg: Cfg) {
   const floor = monthStart(d0, cfg.usasp_backfill_months);
   const bf = ((await stateGet("usasp.bf")) ?? {}) as Record<string, string>; // key -> oldest window start fetched
   const doneKeys = new Set<string>();
-  let rows = 0, calls = 0, stop = false;
+  let rows = 0, calls = 0, stop = false, timeouts = 0;
   for (const k of keys) {
     if (stop) break;
     let next = bf[k.key] ? monthStart(bf[k.key], 3) : monthStart(d0, 5); // the rotation covers the newest 3 months
@@ -925,6 +986,7 @@ async function usaspBackfill(run: Run, cfg: Cfg) {
       if (run.outOfTime(15_000)) { stop = true; run.partial = true; break; }
       const end = monthEnd(monthStart(next, -2));
       const vals = await usaspQuery(run, k.key, next, end);
+      if (vals === null && timedOut(run) && ++timeouts < 2) { bf[k.key] = next; next = monthStart(next, 3); continue; }
       if (vals === null) { stop = true; run.partial = true; break; }
       calls++;
       const r = await ingest(run, usaspRows(k, vals, ""));

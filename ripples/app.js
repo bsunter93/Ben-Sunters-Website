@@ -47,7 +47,7 @@ function countUp(el, to, fmt) {
   requestAnimationFrame(step);
 }
 
-// ---------- data ----------
+// == data
 async function getJSON(url) {
   try { const r = await fetch(url); return r.ok ? await r.json() : undefined; } catch (e) { return undefined; }
 }
@@ -87,7 +87,7 @@ function clientId() {
   return c;
 }
 
-// ---------- state ----------
+// == state
 const S = { P: null, n: null, ans: [], picks: [], codes: [], k: 0, lock: false, guess: null, st: null, you: null, rv: null, rvP: null, latest: null, hist: ls.get('ko.history', {}), calls: ls.get('ko.calls', {}), streak: 0 };
 const live = () => !FIX && S.P && S.P.kind === 'live';
 const R = () => S.P.rounds.length;
@@ -108,7 +108,7 @@ function computeStreak() {
   p.title = `Streak: ${S.streak} puzzle${S.streak === 1 ? '' : 's'} in a row`;
 }
 
-// ---------- boot ----------
+// == boot
 async function boot() {
   ui();
   const dn = document.body.dataset.n, ds = document.body.dataset.s, pn = q.get('p');
@@ -160,12 +160,15 @@ function missing(n) {
 }
 
 function prelaunch(l) {
-  const next = Math.max(Date.parse(l.next_at) || L.nextRollover(), Date.parse(L.addDays(C.EPOCH, 1) + 'T07:30:00Z')), d = L.isoDay(next), n1 = Math.max(1, L.puzzleNoForDate(d, C.EPOCH));
+  const next = Math.max(Date.parse(l.next_at) || 0, L.nextRollover(), Date.parse(L.addDays(C.EPOCH, 1) + 'T07:30:00Z')), d = L.isoDay(next), n1 = Math.max(1, L.puzzleNoForDate(d, C.EPOCH));
+  // §12.5: a missed launch day gets a delayed banner.
+  const late = L.puzzleNoForDate(L.currentPuzzleDate(), C.EPOCH);
+  if (late > 0) banner(`Knock-On #${late} is delayed: it isn't published yet, and nothing stands in for it.`);
   $('no').textContent = '#' + n1;
   $('date').textContent = fmtD(d);
   const cd = h('p', { class: 'count', 'data-cd': next }, L.fmtCountdown(next - Date.now()));
   $('seed').removeAttribute('aria-busy');
-  put($('seed'), hp('eb', 'Starts soon'),
+  put($('seed'), hp('eb', late > 0 ? 'Delayed' : 'Starts soon'),
     h('h2', null, `Knock-On #${n1} goes live ${fmtD(d, true)}, 07:30 UTC`), cd,
     h('ol', { class: 'steps' },
       h('li', null, "Every morning: one real trend, measured on Wikipedia's daily readers."),
@@ -178,7 +181,7 @@ function prelaunch(l) {
   tick();
 }
 
-// ---------- seed ----------
+// == seed
 function crossRow(items) {
   if (!items || !items.length) return null;
   return [hp('xlab', 'Other channels · corroboration only, not part of the measurement'),
@@ -214,7 +217,7 @@ function renderSeed() {
       badges.length ? h('ul', { class: 'bdgs' }, badges) : null, crossRow(sd.cross)) : null);
 }
 
-// ---------- rounds ----------
+// == rounds
 function trail(upto) {
   const c = chain(), out = [h('li', null, S.P.seed.emoji, h('b', null, S.P.seed.title))];
   for (let k = 0; k < upto; k++) {
@@ -325,7 +328,7 @@ function nextBtn(k) {
   return h('div', { class: 'nextrow' }, h('button', { class: 'btn wide', onclick: () => (last ? renderFinal() : renderRound(k + 1)) }, last ? 'Last question →' : 'Next round →'));
 }
 
-// ---------- final slider ----------
+// == final slider
 function finalInfo() {
   const fr = (S.P.final && S.P.final.round) || R(), c = chain()[fr - 1], rr = S.rv && S.rv.rounds.find(x => x.i === fr);
   const opt = rr && rr.options.find(o => o.id === S.ans[fr - 1]);
@@ -404,7 +407,7 @@ async function restore(hh) {
   renderCallit();
 }
 
-// ---------- result + share ----------
+// == result + share
 function renderResult() {
   const P = S.P, c = chain(), f = finalInfo(), a = f.actual;
   const pts = L.magPoints(S.guess, a), score = L.totalScore(S.codes, pts), max = L.maxScore(R());
@@ -463,7 +466,7 @@ async function copyText(text) {
   toast(ok ? 'Copied: paste it anywhere' : 'Select the text below to copy it');
 }
 
-// ---------- Call It ----------
+// == Call It
 function callitTeaser() {
   if (S.P.callit && S.P.callit.options && S.P.callit.options.length) put($('callit'), h('div', { class: 'card' }, hp('eb', 'Call It'), hp('sub', 'Finish the chain to call which quiet page spikes next.')));
 }
@@ -521,13 +524,13 @@ async function record() {
     if (oc === 'hit') hit++;
     return hs('bdg', oc === 'hit' ? `🎯 #${n} called it` : oc === 'miss' ? `✗ #${n} missed` : `⏳ #${n} pending`);
   });
-  // The Call It that resolved today (window_start + 8 = this puzzle's date): every option's outcome.
+  // Call It resolved today (window_start + 8 = this date).
   const lo = last && (last.options || []).filter(o => o.outcome !== 'pending');
   put(el, ns.length ? hs('xs muted w100', `Your calls: ${hit} of ${res} resolved called`) : null, ...chips,
     lo && lo.length ? [hs('xs muted w100', `Just resolved, Call It from #${rn}:`), lo.map(o => hs('bdg', `${o.outcome === 'hit' ? '🎯' : '·'} ${o.emoji} ${o.title} ${o.outcome === 'hit' ? 'spiked' : 'stayed calm'}`))] : null);
 }
 
-// ---------- tomorrow: reminders + price test (OWNER_DECISIONS D-1, D-3) ----------
+// == tomorrow: reminders + price test (OWNER_DECISIONS D-1, D-3)
 const done2 = () => Object.keys(S.hist).filter(n => +n > 0).length >= 2;
 const standalone = () => matchMedia('(display-mode: standalone)').matches || navigator.standalone === true;
 function a2hs() {
@@ -579,7 +582,7 @@ function restoreFrom(code, out) {
   setTimeout(() => location.reload(), 700);
 }
 
-// ---------- board ----------
+// == board
 const QN = { big_wave: 'Big Wave', sleeper: 'Sleeper', belly_flop: 'Belly Flop', ripple: 'Ripple' };
 async function board() {
   const dn = document.body.dataset.n || q.get('p');
@@ -621,7 +624,7 @@ async function board() {
     chips, svg, hp('cap', 'Wake k of 20 on the vertical axis. Measured attention, not proof of cause.'), list));
 }
 
-// ---------- practice: which spiked harder? ----------
+// == practice: which spiked harder?
 function practice() {
   const out = h('div'), btn = h('button', { class: 'btn ghost wide', onclick: () => startPractice(out, btn) }, 'Play practice');
   put($('practice'), h('div', { class: 'card' }, hp('eb', 'Practice'), h('h2', null, 'Which spiked harder?'),
@@ -665,7 +668,7 @@ async function startPractice(out, btn) {
   round();
 }
 
-// ---------- chrome ----------
+// == chrome
 async function health() {
   if (FIX) return;
   const hl = await rpc('ripples_health');

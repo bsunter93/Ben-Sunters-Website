@@ -55,16 +55,19 @@ async function listData(): Promise<string[]> {
   return data.map((o) => o.name).filter((n) => /^\d{4}-\d{2}-\d{2}\.json$/.test(n)).map((n) => n.slice(0, 10));
 }
 
-async function prerender(n: number, R: number): Promise<{ ok: string[]; err: string[] }> {
+// &fresh=1 + the collector token makes ripples-og render instead of serving the stored copy it is about to replace.
+async function prerender(n: number, R: number, token: string): Promise<{ ok: string[]; err: string[] }> {
   const ok: string[] = [], err: string[] = [];
-  const jobs: { q: string; path: string }[] = [{ q: `n=${n}`, path: `${P}og/${n}.png` }];
+  const jobs: { q: string; path: string; brand?: boolean }[] = [{ q: `n=${n}`, path: `${P}og/${n}.png` }];
+  // the brand card (served by ripples-og for every invalid / not-yet-visible request) is stored too
+  jobs.push({ q: "v=brand", path: `${P}og/brand.png`, brand: true });
   for (let s = 0; s <= Math.min(4, R); s++) jobs.push({ q: `n=${n}&s=${s}`, path: `${P}og/${n}-s${s}.png` });
   await pool(jobs, 3, async (j) => {
     try {
-      const r = await fetch(`${SB_URL}/functions/v1/ripples-og?${j.q}`);
+      const r = await fetch(`${SB_URL}/functions/v1/ripples-og?${j.q}&fresh=1`, { headers: { "x-collector-token": token } });
       const variant = r.headers.get("x-card-variant") ?? "";
       if (!r.ok || r.headers.get("content-type") !== "image/png") { err.push(`${j.path}: og ${r.status}`); return; }
-      if (variant === "brand") { err.push(`${j.path}: og returned the brand card (puzzle not visible yet), not stored`); await r.body?.cancel(); return; }
+      if (variant === "brand" && !j.brand) { err.push(`${j.path}: og returned the brand card (puzzle not visible yet), not stored`); await r.body?.cancel(); return; }
       const png = new Uint8Array(await r.arrayBuffer());
       const e = await upload({ path: j.path, body: png, type: "image/png", cache: 3600 });
       if (e) err.push(e); else ok.push(j.path);
@@ -171,7 +174,7 @@ Deno.serve(async (req: Request) => {
   let og: { ok: string[]; err: string[] } = { ok: [], err: [] };
   if (n !== null && !staged && b?.prerender !== false) {
     const R = Array.isArray(bundle.puzzle?.rounds) ? bundle.puzzle.rounds.length : 4;
-    og = await prerender(n, R);
+    og = await prerender(n, R, token);
   }
   const res = {
     ok: errors.length === 0, n, kind, date: bundle.date ?? null, latest_status: bundle.latest?.status ?? null,

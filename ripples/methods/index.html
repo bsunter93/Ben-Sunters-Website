@@ -79,7 +79,7 @@
   <li><b>🔗 Linked from</b> the parent's article links to it.</li>
   <li><b>📱💻 Desktop and mobile</b> the rise shows on both.</li>
   <li><b>🎲 Fluke meter</b> as above, or "warming up".</li>
-  <li><b>Also on other channels</b> corroboration badges from other public sources. They are not part of the measurement and never change a result.</li>
+  <li><b>Also on other channels</b> corroboration badges from other public sources. They are not part of the measurement, show no numbers and never change a result (<a href="#sources">sources and licences</a>).</li>
   <li><b>Players' picks</b> what other players chose, labelled players' picks and shown at 30 or more players. Crowd numbers are never evidence.</li>
   <li><b>AI-written context</b> an optional caption by Claude, hedged and about attention only.</li>
 </ul>
@@ -108,15 +108,22 @@
 <h2>v1 post-mortem: 0 of 120</h2>
 <p>An earlier version of this project published 120 cross-signal "discoveries". Re-run with a corrected out-of-sample test and placebo controls, <b>0 of 120 survived</b>. Randomly paired signals look like noise; hypothesis-driven pairs did better, but the headline hits came from testing many pairs without controls. v5 is built around that lesson: candidate sets fixed before testing, time-shift placebos on every hop, decoy starting pages to measure the false-pass rate, a stop rule for shared triggers, a monthly re-grade against real clickstream, and a hash-chained ledger.</p>
 
-<h2>Data sources and licences</h2>
+<h2 id="sources">Data sources and licences</h2>
 <div class="tw"><table>
 <tr><th>Source</th><th>Use</th><th>Licence</th></tr>
 <tr><td>Wikimedia pageviews, links, most-read and clickstream</td><td>all measurements</td><td>CC0 / open</td></tr>
 <tr><td>Wikidata</td><td>topics, dates of death, safety</td><td>CC0</td></tr>
 <tr><td>Wikipedia short descriptions</td><td>option subtitles</td><td>CC BY-SA</td></tr>
 <tr><td>Google Trends daily RSS</td><td>seed discovery, "why it's trending" links</td><td>official feed</td></tr>
-<tr><td>Bluesky, Mastodon, GDELT TV news, search autocomplete, Polymarket</td><td>"also spiked on …" corroboration badges only, shown when present; never part of a measurement, a score or an answer</td><td>each channel's public feed or API; never in open data</td></tr>
+<tr><td>Bluesky post counts (Jetstream)</td><td>corroboration badge</td><td>open protocol; counts only</td></tr>
+<tr><td>Bluesky trending topics</td><td>corroboration badge</td><td><b>unofficial</b>: unspecced endpoint; nothing paid depends on it</td></tr>
+<tr><td>Mastodon trends and hashtags</td><td>corroboration badge</td><td>public instance APIs, each instance's terms</td></tr>
+<tr><td>TV news captions (Internet Archive Third Eye)</td><td>corroboration badge</td><td><b>unofficial</b>: public page, no stated licence; not used in anything paid</td></tr>
+<tr><td>GDELT news files</td><td>corroboration badge</td><td>open; cite GDELT</td></tr>
+<tr><td>Polymarket, Kalshi</td><td>corroboration badge</td><td>public APIs, no redistribution licence: derived signals only</td></tr>
+<tr><td>Search autocomplete</td><td><b>not used</b></td><td><b>unofficial</b>: Google and Bing suggest endpoints are undocumented, so we don't call them; only a licensed reseller, if the owner approves one</td></tr>
 </table></div>
+<p>Corroboration badges ("also on …", "also spiked on …") appear only when the pipeline attaches one. They show no numbers, because another channel's count has its own baseline, not the one on this page. They never change a measurement, a score or an answer, and they never enter paid features or the open data.</p>
 <p>The open data files (<code>v1/data/</code>) contain Wikimedia-derived fields only, under CC BY 4.0. See <a href="/ripples/pro/#data">Open data</a>.</p>
 
 <h2>Privacy</h2>

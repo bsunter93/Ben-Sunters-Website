@@ -11,7 +11,7 @@ the W1 contract shapes (`../contract/*.schema.json`) and never touches v4 object
 | `functions/ripples-collect/index.ts` | `{"mode":"trends"}` Google Trends RSS (8 geos, serial 1/s) + Bluesky `getTrends`; `{"mode":"daily"}` top-per-country (10) + featured feed; `{"mode":"date"}` backfill (adds per-project top for 10 languages) |
 | `functions/ripples-resolve/index.ts` | titles/queries -> enwiki title, QID, short description, P31, P570, sitelinks; unknown classes -> labels + P279 |
 | `functions/ripples-expand/index.ts` | job kinds `screen`, `expand`, `history`, `split`, `refresh` (the statistics run here) |
-| `sql/01..09_*.sql`, `sql/12_*.sql` | the migrations in the order they were applied. Replaying them on a W1 database reproduces the deployed W2 functions (`tools/fn_md5.py` prints the md5 of every function body; compare with the query in its docstring) |
+| `sql/01..09_*.sql`, `sql/12..17_*.sql` | the migrations in the order they were applied. Replaying them on a W1 database reproduces the deployed W2 functions (`tools/fn_md5.py` prints the md5 of every function body; compare with the query in its docstring) |
 | `sql/10_seed_data.sql` | category-map seed (231 verified classes), blocklist class QIDs, config keys |
 | `sql/11_cron.sql` | the three pg_cron jobs |
 | `sql/12_ripples_v5_pipeline_yield.sql` | decoy reserve (`candidates.extra`), monotone pooling of fluke bins, description-based safety patterns, seed baseline floor |
@@ -19,6 +19,7 @@ the W1 contract shapes (`../contract/*.schema.json`) and never touches v4 object
 | `sql/14_ripples_v5_pipeline_run_day.sql` | `ripples_run_day`: reset also clears the unpublished practice puzzle; a finished day is reported, not rerun |
 | `sql/15_ripples_v5_pipeline_delayed_row.sql` | a rebuild that ends `delayed` removes the unpublished practice row / marks a `built` live row `delayed` |
 | `sql/16_ripples_v5_pipeline_decoy_quality.sql` | decoys must read "views normal" (window multiple >= 0.67); flattest recent series preferred |
+| `sql/17_ripples_v5_pipeline_stop_flag.sql` | `shared_trigger_stop` only on the round where the chain actually stopped |
 | `sql/test_acceptance.sql` | the acceptance queries |
 | `category-map.json` | the seeded class -> category / safety-flag map (labels fetched from Wikidata) |
 
@@ -135,3 +136,13 @@ select public.ripples_run_day('2026-09-24', 'practice', true);    -- p_reset: wi
 `ripples_ingest_candidates(bigint, jsonb)`, `ripples_ingest_seed_history(bigint, jsonb)`,
 `ripples_ingest_articles(jsonb)`, `ripples_ingest_trends(jsonb)`, `ripples_job_done(bigint, boolean, text, int, jsonb)`.
 `ripples._grant_audit()` returns zero rows.
+
+## Verified runs (2026-09-25)
+
+| as_of | n | took | Wikimedia calls | jobs (failed) | result |
+|---|---|---|---|---|---|
+| 2026-09-24 | -1 | 15 m 42 s | 2,224 | 45 (0) | built: 3 rounds (Resident Evil (2026 film) -> Army of the Dead -> Sucker Punch · fresh ripple Cindy Crawford -> Gia Carangi), 4 Call It options, Board of 12 |
+| 2026-09-23 | -2 | 22 m 03 s (practice deadline) | 1,164 | 33 (0; 8 skipped at the deadline) | delayed: every usable hop came from one seed; AQS was slow after four full runs that day |
+
+The exported puzzle, reveal, board and Call It JSON of n = -1 pass `../contract/tools/validate.py` (schemas and
+`--wording`) with md5s equal to the RPC output (`validate.py --md5`).
