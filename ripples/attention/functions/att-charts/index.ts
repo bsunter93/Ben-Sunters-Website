@@ -20,7 +20,8 @@
 //   openlibrary  Open Library trending/daily (rank).
 //   tranco       Tranco daily top-1M zip (list download only; /api is disallowed): streamed through a zip local-header
 //                parser + DecompressionStream('deflate-raw'); keeps ranks only for registered domains and the top-1k
-//                movers (new to the top 1k, or a rank jump >= max(20, 25%)) against the previous list kept in att_state.
+//                movers (new to the top 1k, or a rank jump >= max(20, 25%)) against the previous top-1k, which att_state keeps
+//                only as one-way 12-hex SHA-256 digests in rank order (no readable domain list is stored).
 //   npm          npm downloads: bulk range (<= 128 unscoped packages per call; scoped packages one by one) for the last
 //                7 days for registered + reference packages, the all-packages '__total__' normaliser, and a 400-day
 //                single-package backfill for any key without history.
@@ -37,7 +38,7 @@ import {
 } from "./att.ts";
 
 const FN = "att-charts";
-export const CHARTS_VERSION = "2026-09-25.c7";
+export const CHARTS_VERSION = "2026-09-25.c8";
 
 // ------------------------------------------------------------------ helpers
 type Cfg = Record<string, any>;
@@ -194,6 +195,34 @@ async function seriesInfo(run: Run, source: string, metric: string, keys: string
   for (const r of (data ?? []) as Array<{ key: string; n_days: number }>) out.set(r.key, Math.max(out.get(r.key) ?? 0, r.n_days));
   return out;
 }
+/** First stored day per key (null = no rows). Coverage is judged by span, not by row count: series that drop
+ *  uncomputed zero days (npm '__total__') never reach a row-count threshold. */
+async function seriesFirst(run: Run, source: string, metric: string, keys: string[]) {
+  const out = new Map<string, string | null>();
+  if (!keys.length) return out;
+  const { data, error } = await db.rpc("att_charts_series_info", { p_source: source, p_metric: metric, p_keys: keys });
+  if (error) { run.errors.push(`att_charts_series_info: ${error.message}`); return out; }
+  for (const r of (data ?? []) as Array<{ key: string; first_day: string | null }>) {
+    const cur = out.get(r.key);
+    if (r.first_day && (!cur || r.first_day < cur)) out.set(r.key, r.first_day);
+    else if (cur === undefined) out.set(r.key, r.first_day ?? null);
+  }
+  return out;
+}
+/**
+ * Snapshot lists (one rank list per metric/geo per as_of day): after a successful re-run on the same as_of day, rows
+ * written by an earlier run for items that have since dropped off the list are removed, so a day holds exactly one
+ * list (no duplicate ranks). keep = every key of the current list; an empty list never prunes.
+ */
+async function pruneList(run: Run, source: string, metric: string, geo: string, keep: string[]) {
+  if (run.dryRun || !keep.length) return 0;
+  const { data, error } = await db.rpc("att_charts_prune",
+    { p_source: source, p_day: run.asOf, p_metric: metric, p_geo: geo, p_keep: keep });
+  if (error) { run.errors.push(`att_charts_prune: ${error.message}`); return 0; }
+  const n = Number(data ?? 0);
+  if (n > 0) { run.extra.pruned = Number(run.extra.pruned ?? 0) + n; note(run, `${source} ${metric}/${geo}: pruned ${n} stale same-day rows`); }
+  return n;
+}
 /** One candidate per (day, source, geo, label) per run: the same item on two lists (e.g. an HF model and a space, or
  *  an AniList anime and its manga) keeps the higher evidence instead of the later list overwriting it. */
 const candSeen = new WeakMap<Run, Map<string, number>>();
@@ -265,6 +294,7 @@ async function modeApple(run: Run) {
     const obs: ObsRow[] = items.map((x) => ({ source: "apple.rss", metric: f.code, geo, key: x.key, day: run.asOf, value: x.rank }));
     const r = await ingest(run, obs);
     rows += r.rows;
+    if (items.length && r.rows >= obs.length) await pruneList(run, "apple.rss", f.code, geo, items.map((x) => x.key));
     const cs = discover(run, "apple.rss", geo, f.code, items, prev.get(`${f.code}|${geo}`) ?? null,
       { velocity: false, topK: 0, jumpMin: dc.jump_min ?? 20 });
     await writeCands(run, cs);
@@ -295,6 +325,7 @@ async function modeSteamspy(run: Run) {
   const items: Item[] = apps.map((a, i) => ({ key: String(a.appid), label: String(a.name ?? ""), rank: i + 1, score: Number(a.ccu) }));
   const obs: ObsRow[] = items.map((x) => ({ source: "steamspy", metric: "ccu", key: x.key, day: run.asOf, value: x.score!, aux: x.rank }));
   const r = await ingest(run, obs);
+  if (r.rows >= obs.length) await pruneList(run, "steamspy", "ccu", "ALL", items.map((x) => x.key));
   const prev = prevRanks(await prevSnap(run, "steamspy", ["ccu"]), (p) => p.aux);
   const cs = discover(run, "steamspy", "ALL", "top100in2weeks", items, prev.get("ccu|ALL") ?? null,
     { velocity: false, topK: 0, jumpMin: c.cfg.discovery?.jump_min ?? 20 });
@@ -329,6 +360,7 @@ async function modeGithub(run: Run) {
       obs.push({ source: "gh.search", metric: "stars", key, day: run.asOf, value: stars, aux: forks });
     });
     const r = await ingest(run, obs);
+    if (r.rows >= obs.length) for (const m of ["new7d", "stars"]) await pruneList(run, "gh.search", m, "ALL", items.map((x) => x.key));
     const prev = prevRanks(await prevSnap(run, "gh.search", ["new7d"]), (p) => p.value);
     const cs = discover(run, "gh.search", "ALL", "new7d", items, prev.get("new7d|ALL") ?? null,
       { velocity: true, topK: dc.top_k ?? 10, jumpMin: dc.jump_min ?? 20 });
@@ -387,6 +419,7 @@ async function modeHf(run: Run) {
     }).filter((x: Item) => x.label);
     const obs: ObsRow[] = items.map((x) => ({ source: "hf.trending", metric: list, key: x.key, day: run.asOf, value: x.rank, aux: x.score ?? null }));
     const r = await ingest(run, obs);
+    if (r.rows >= obs.length) await pruneList(run, "hf.trending", list, "ALL", items.map((x) => x.key));
     const cs = discover(run, "hf.trending", "ALL", list, items, prev.get(`${list}|ALL`) ?? null,
       { velocity: true, topK: dc.top_k ?? 10, jumpMin: dc.jump_min ?? 20 });
     await writeCands(run, cs);
@@ -446,6 +479,7 @@ async function modeAnilist(run: Run) {
       rank: i + 1, score: Number.isFinite(Number(m.trending)) ? Number(m.trending) : null })).filter((x) => /^\d+$/.test(x.key));
     const obs: ObsRow[] = items.map((x) => ({ source: "anilist", metric, key: x.key, day: run.asOf, value: x.rank, aux: x.score ?? null }));
     const r = await ingest(run, obs);
+    if (r.rows >= obs.length) await pruneList(run, "anilist", metric, "ALL", items.map((x) => x.key));
     const cs = discover(run, "anilist", "ALL", metric, items, prev.get(`${metric}|ALL`) ?? null,
       { velocity: true, topK, jumpMin: dc.jump_min ?? 20 });
     await writeCands(run, cs);
@@ -486,6 +520,7 @@ async function modeOpenlibrary(run: Run) {
     .filter((x) => /^OL\d+W$/.test(x.key));
   const obs: ObsRow[] = items.map((x) => ({ source: "ol.trending", metric: "daily", key: x.key, day: run.asOf, value: x.rank }));
   const r = await ingest(run, obs);
+  if (r.rows >= obs.length) await pruneList(run, "ol.trending", "daily", "ALL", items.map((x) => x.key));
   const prev = prevRanks(await prevSnap(run, "ol.trending", ["daily"]), (p) => p.value);
   const cs = discover(run, "ol.trending", "ALL", "daily", items, prev.get("daily|ALL") ?? null,
     { velocity: true, topK: dc.top_k ?? 10, jumpMin: dc.jump_min ?? 20 });
@@ -537,6 +572,13 @@ async function zipFirstEntry(res: Response): Promise<{ stream: ReadableStream<an
   return { stream: raw.pipeThrough(new DecompressionStream("deflate-raw")), name, sized };
 }
 
+/** 12-hex (48-bit) SHA-256 digest of a lower-cased domain: the one-way key of the top-1k snapshot in att_state. */
+async function domHash(d: string): Promise<string> {
+  const b = new Uint8Array(await crypto.subtle.digest("SHA-256", new TextEncoder().encode(d.toLowerCase())));
+  let s = "";
+  for (let i = 0; i < 6; i++) s += b[i].toString(16).padStart(2, "0");
+  return s;
+}
 async function modeTranco(run: Run) {
   const t0 = Date.now();
   const c = await ctx();
@@ -596,32 +638,36 @@ async function modeTranco(run: Run) {
   const obs: ObsRow[] = [];
   for (const [dom, rank] of found) obs.push({ source: "tranco.rank", key: dom, day: run.asOf, value: rank, topic_id: want.get(dom)?.topic_id ?? null });
 
-  // top-1k movers against the previous list (att_state 'charts.tranco.top': {day, list, prev:{day, list}})
-  const st = ((await stateGet("charts.tranco.top")) ?? {}) as { day?: string; list?: string[]; prev?: { day: string; list: string[] } };
-  const base = st.day && st.day < run.asOf ? { day: st.day, list: st.list ?? [] } : (st.prev && st.prev.day < run.asOf ? st.prev : null);
+  // top-1k movers against the previous snapshot. att_state 'charts.tranco.top' = {day, h, prev:{day, h}} where h is the
+  // top-1k in rank order as 12-hex SHA-256 digests of the domain (no readable domain list is kept; only the domains
+  // that become movers or are registered are stored, as rank series).
+  const st = ((await stateGet("charts.tranco.top")) ?? {}) as { day?: string; h?: string; prev?: { day: string; h: string } };
+  const base = st.day && st.day < run.asOf && st.h ? { day: st.day, h: st.h } : (st.prev && st.prev.day < run.asOf && st.prev.h ? st.prev : null);
+  const topH = await Promise.all(top.map(domHash));
   let movers: Item[] = [];
-  if (base && base.list?.length) {
+  if (base) {
     const pr = new Map<string, number>();
-    base.list.forEach((d, i) => pr.set(d, i + 1));
+    for (let i = 0; i * 12 < base.h.length; i++) { const h = base.h.slice(i * 12, i * 12 + 12); if (!pr.has(h)) pr.set(h, i + 1); }
     const jm = Number(tc.jump_min ?? 20), jf = Number(tc.jump_frac ?? 0.25);
     const all: Array<Item & { mag: number }> = [];
     top.forEach((d, i) => {
-      const rank = i + 1, p = pr.get(d);
+      const rank = i + 1, p = pr.get(topH[i]);
       if (p === undefined) all.push({ key: d, label: d, rank, mag: 1e9 - rank });
       else if (p - rank >= Math.max(jm, jf * p)) all.push({ key: d, label: d, rank, mag: (p - rank) / p });
     });
     movers = all.sort((a, b) => b.mag - a.mag).slice(0, Number(tc.max_movers ?? 100)).sort((a, b) => a.rank - b.rank);
     for (const m of movers) if (!found.has(m.key)) obs.push({ source: "tranco.rank", key: m.key, day: run.asOf, value: m.rank });
     const prevMap = new Map<string, number>();
-    for (const m of movers) if (pr.has(m.key)) prevMap.set(m.key, pr.get(m.key)!);
+    const hOf = new Map<string, string>(top.map((d, i) => [d, topH[i]]));
+    for (const m of movers) { const p = pr.get(hOf.get(m.key) ?? ""); if (p !== undefined) prevMap.set(m.key, p); }
     // discover() treats keys missing from prevMap as 'new' and applies jump_min to the rest (movers already filtered)
     const cs = discover(run, "tranco.rank", "ALL", "top1k", movers, prevMap, { velocity: false, topK: 0, jumpMin: jm });
     await writeCands(run, cs);
   }
   const r = await ingest(run, obs);
   if (!run.dryRun && complete) {
-    const keep = st.day === run.asOf ? st.prev : (st.day ? { day: st.day, list: st.list ?? [] } : undefined);
-    await stateSet("charts.tranco.top", { day: run.asOf, list: top, ...(keep ? { prev: keep } : {}) });
+    const keep = st.day === run.asOf ? st.prev : (st.day && st.h ? { day: st.day, h: st.h } : undefined);
+    await stateSet("charts.tranco.top", { day: run.asOf, h: topH.join(""), ...(keep ? { prev: keep } : {}) });
   }
   run.extra.movers = movers.length;
   run.source({ source: "tranco.rank", status: complete ? "ok" : "partial", keys: found.size + movers.length, rows: r.rows,
@@ -663,6 +709,17 @@ async function npmBackfillOne(run: Run, pkg: string, topic: number | null, from:
   if (!j) return -1;
   const r = await ingest(run, npmRows(run, pkg, j, topic));
   return r.rows;
+}
+/** true when the stored history of a key does not yet reach back to (window start + 30 days) and no 400-day fetch
+ *  was made for it in the last 30 days. */
+function npmNeedsBackfill(run: Run, firstDay: string | null, lastBackfill: string | undefined, bfDays: number): boolean {
+  if (lastBackfill && lastBackfill > addDays(run.asOf, -30)) return false;
+  return !firstDay || firstDay > addDays(run.asOf, -(bfDays - 1) + 30);
+}
+function npmPruneState(run: Run, st: Record<string, string>): Record<string, string> {
+  const out: Record<string, string> = {};
+  for (const [k, d] of Object.entries(st)) if (typeof d === "string" && d > addDays(run.asOf, -30)) out[k] = d;
+  return out;
 }
 async function modeNpm(run: Run) {
   const t0 = Date.now();
@@ -707,14 +764,20 @@ async function modeNpm(run: Run) {
   }
   // 3) 400-day history for keys that do not have it yet (reference packages; registered keys also get backfill jobs)
   const bfDays = Number(nc.backfill_days ?? 400);
-  const info = await seriesInfo(run, "npm.dl", "n", ["__total__", ...pkgs]);
-  const need = ["__total__", ...pkgs].filter((p) => !missing.has(p) && (info.get(p) ?? 0) < bfDays - 30);
+  // Coverage = first stored day, not row count ('__total__' drops npm's uncomputed zero days, so its row count stays
+  // below any count threshold and it would be refetched every day). A key counts as covered when its history starts
+  // within 30 days of the 400-day window start, or when it was backfilled in the last 30 days (young packages whose
+  // history is simply shorter: att_state 'charts.npm.backfilled' = {pkg: day}).
+  const first = await seriesFirst(run, "npm.dl", "n", ["__total__", ...pkgs]);
+  const bfState = ((await stateGet("charts.npm.backfilled")) ?? {}) as Record<string, string>;
+  const need = ["__total__", ...pkgs].filter((p) => !missing.has(p) && npmNeedsBackfill(run, first.get(p) ?? null, bfState[p], bfDays));
   let backfilled = 0;
   for (const p of need) {
     if (run.outOfTime(8000) || blocked(run, host)) { run.partial = true; break; }
     const n = await npmBackfillOne(run, p, keys.get(p) ?? null, addDays(run.asOf, -(bfDays - 1)), run.asOf);
-    if (n >= 0) { rows += n; backfilled++; }
+    if (n >= 0) { rows += n; backfilled++; bfState[p] = run.asOf; }
   }
+  if (backfilled && !run.dryRun) await stateSet("charts.npm.backfilled", npmPruneState(run, bfState));
   run.extra.npm = { packages: pkgs.length, calls_daily: calls, backfilled, backfill_pending: need.length - backfilled };
   run.source({ source: "npm.dl", status: run.partial ? "partial" : "ok", keys: pkgs.length + 1, rows, ms: Date.now() - t0,
     note: `${unscoped.length} bulk + ${scoped.length} scoped; ${backfilled}/${need.length} 400-day backfills` });
@@ -767,14 +830,19 @@ async function modeBackfill(run: Run) {
   let rows = 0, done = 0, skipped = 0;
   const c = await ctx();
   if (source === "npm.dl") {
-    const info = await seriesInfo(run, source, "n", keys.map((k) => k.key));
+    const first = await seriesFirst(run, source, "n", keys.map((k) => k.key));
+    const bfState = ((await stateGet("charts.npm.backfilled")) ?? {}) as Record<string, string>;
+    const reach = addDays(from, Math.min(30, Math.max(0, span - 1)));
     for (const k of keys) {
-      if ((info.get(k.key) ?? 0) >= Math.min(span, 400) - 30) { skipped++; continue; }
+      const f0 = first.get(k.key) ?? null;
+      const recent = bfState[k.key] && bfState[k.key] > addDays(run.asOf, -30);
+      if ((f0 && f0 <= reach) || recent) { skipped++; continue; }
       if (!validNpm(k.key)) { note(run, `npm: invalid package ${k.key}`); skipped++; continue; }
       if (run.outOfTime(8000) || blocked(run, "api.npmjs.org")) { run.partial = true; break; }
       const n = await npmBackfillOne(run, k.key, k.topic_id ?? null, from, to);
-      if (n >= 0) { rows += n; done++; }
+      if (n >= 0) { rows += n; done++; bfState[k.key] = run.asOf; }
     }
+    if (done && !run.dryRun) await stateSet("charts.npm.backfilled", npmPruneState(run, bfState));
   } else if (source === "pypi.dl") {
     const info = await seriesInfo(run, source, "n", keys.map((k) => k.key.toLowerCase()));
     for (const k of keys) {
