@@ -16,6 +16,9 @@ Spec: `ATTENTION_STACK.md` §3 and §7, with `DEMARCATION.md` §7 lead decisions
 | `sql/06_ops_adjustments_2026-09-25.sql` | Operational record (AQS 429, spacing, panel pool) |
 | `sql/07_attention_stack_core_hardening.sql` | Migration `attention_stack_core_hardening` (post-verification): permanent 401/403 kills, host lease, 1 job per fn/host in `att_tick`, quiet window for `wikidata`, `run_caps`, meta allow-list, DEMARCATION Q6 budgets |
 | `sql/08_attention_stack_core_fixes2.sql` | Migration `attention_stack_core_fixes2` (second verification round): `wikidata.api` source row, `att_budget_refund`, `att_config.contact_gate`, identifier screen `_att_ident_like` on ingest keys / edge keys / candidate labels, `_att_alias_ok`, extended SKIP rules + `att_registry_maintain` retiring SKIP pages |
+| `sql/09_att_news.sql` | Migration `att_news_collector` (att-news): budgets for gdelt.gkg / ia.thirdeye / news.sitemap, news.sitemap term keys (+ copy trigger from gdelt.gkg), `att_news_acc` / `att_news_batches` / `att_news_cells`, `att_news_terms`, `att_news_accum`, `att_news_sitemap_merge`, `att_news_edges_accum`, `att_news_candidates_merge` (+ public wrappers, service_role only) |
+| `sql/09b_att_news_cron.sql` | Migration `att_news_cron`: cron rows `att-gkg`, `att-thirdeye`, `att-sitemaps` |
+| `functions/att-news/index.ts` (+ `att.ts` copy, `README.md`) | News/TV collector: `gkg`, `thirdeye`, `sitemaps`, `backfill` (disabled), `ping` |
 | `functions/_shared/att.ts` | Canonical shared runtime for every `att-*` edge function |
 | `functions/att-registry/index.ts` (+ `att.ts` copy) | Topic registry function: `resolve`, `bootstrap`, `panel`, `ping` |
 

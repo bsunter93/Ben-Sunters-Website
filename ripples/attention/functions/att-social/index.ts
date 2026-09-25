@@ -25,7 +25,7 @@ import {
 } from "./att.ts";
 
 const FN = "att-social";
-export const SOCIAL_VERSION = "2026-09-25.s1";
+export const SOCIAL_VERSION = "2026-09-25.s2";
 
 // ------------------------------------------------------------------ small helpers
 const DAY_S = 86400;
@@ -326,16 +326,15 @@ async function modeJetstream(run: Run) {
   // one replay at a time across all invocations (both Jetstream hosts share one cursor)
   if (!(await hostLease(run, "jetstream.bsky.network"))) { run.source({ source: SRC, status: "partial", note: "another jetstream run holds the lease" }); return; }
   if (!(await robotsAllowed(run, httpsUrl))) { run.skip(host, "robots_disallow"); run.source({ source: SRC, status: "robots_disallow" }); return; }
-  const g = await takeBudget(SRC, 1); // one websocket connection = one unit of the daily cap (288)
-  run.granted += g;
-  if (g <= 0) { run.partial = true; run.source({ source: SRC, status: "budget_exhausted" }); return; }
-  run.reqBySource[SRC] = (run.reqBySource[SRC] ?? 0) + 1;
-
   const startNowUs = Date.now() * 1000;
   const backMin = Number(run.params.start_back_min ?? cfg.jet_start_back_min ?? 10);
   const cursorFrom = typeof st?.cursor === "number" ? st.cursor : Math.floor(startNowUs - backMin * 60e6);
   const stopAtUs = Math.min(cursorFrom + maxMin * 60e6, startNowUs - 5e6, lane === "backfill" ? st!.until! : Infinity);
   if (stopAtUs <= cursorFrom + 1e6) { run.source({ source: SRC, status: "ok", note: "already at live edge" }); return; }
+  const g = await takeBudget(SRC, 1); // one websocket connection = one unit of the daily cap
+  run.granted += g;
+  if (g <= 0) { run.partial = true; run.source({ source: SRC, status: "budget_exhausted" }); return; }
+  run.reqBySource[SRC] = (run.reqBySource[SRC] ?? 0) + 1;
 
   const keys = await socialKeys(run, SRC);
   const { ac, tagMap, npat } = matcherFor(keys);
@@ -675,7 +674,9 @@ function hnTerm(term: string): string {
 async function hnQuery(run: Run, term: string | null, a: number, b: number, hitsPerPage: number): Promise<HnRes | null> {
   const q = new URLSearchParams({
     tags: "(story,comment)", numericFilters: `created_at_i>=${a},created_at_i<${b}`, hitsPerPage: String(hitsPerPage),
-    typoTolerance: "false", advancedSyntax: "true", attributesToRetrieve: "created_at_i", attributesToHighlight: "",
+    // strict: exact quoted phrase, no typos, no prefix matching ("jev" must not match "jevons"), no plural folding
+    typoTolerance: "false", advancedSyntax: "true", queryType: "prefixNone", ignorePlurals: "false",
+    removeStopWords: "false", removeWordsIfNoResults: "none", attributesToRetrieve: "created_at_i", attributesToHighlight: "",
     attributesToSnippet: "", analytics: "false",
   });
   q.set("query", term === null ? "" : hnTerm(term));

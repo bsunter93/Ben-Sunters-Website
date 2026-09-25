@@ -51,7 +51,7 @@ begin
   with src as (
     select t.lang, t.query title, min(t.rank) rk, count(*) n from ripples.trend_obs t
      where t.day between p_as_of - 2 and p_as_of + 1 and t.lang ~ '^[a-z]{2,3}$'
-       and ((t.source = 'topcountry' and t.rank <= 100) or (t.source = 'wikitop' and t.rank <= 60) or t.source = 'featured')
+       and ((t.source = 'topcountry' and (t.rank <= 100 or (t.lang = 'en' and t.rank <= 200))) or (t.source = 'wikitop' and t.rank <= 60) or t.source = 'featured')
      group by 1, 2
     union all
     select split_part(w.project, '.', 1), replace(w.article, '_', ' '), min(w.rank), count(*) from public.wiki_top w
