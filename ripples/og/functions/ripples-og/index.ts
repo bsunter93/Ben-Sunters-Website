@@ -1,34 +1,38 @@
-// ripples-og: Knock-On share cards (SPEC §9). Public GET, verify_jwt = false.
+// ripples-og: Ripple Map share cards (EXPERIENCE §7, ART_DIRECTION §5). Public GET, verify_jwt = false.
 //
-// Input is IDs only: n (int -60..9999), s (int 0..4), v (teaser|result|reveal|board|latest|brand).
-// Every other query parameter is ignored; no free text ever reaches a card. Anything invalid renders the
-// brand card with status 200. Card data comes from the service-only RPC ripples_og_data(n) (board rows from
-// ripples_board(n)), read with SUPABASE_SERVICE_ROLE_KEY from the function env.
-// Test mode: &b64=1 returns the PNG as base64 text, only with a valid x-collector-token header.
-// Render budget: the brand card (every invalid, unknown or not-yet-visible request) is rendered once per isolate
-// and reused. Other cards are cached per isolate by canonical key (variant, n, clamped s) for up to 5 minutes, so
-// distinct query strings that mean the same card (s=4 vs s=99, extra params) cost one render. The number of
-// renderable non-brand cards is bounded by ~8 per visible puzzle.
-// Stored cards: once the plan confirms a card is visible, teaser/result/latest cards and the brand card are served
-// from the PNGs ripples-publish pre-rendered into Storage (v1/og/{n}.png, {n}-s{s}.png, brand.png) when present, so
-// a cold isolate does not load the WASM/fonts or render at all. &fresh=1 with a valid x-collector-token (the publish
-// pre-render) bypasses Storage. Response header X-Card-Source says storage|render.
+// GET …/functions/v1/ripples-og?v={brand|line|stop|shock|week}&e={event_id}&k={version}&h={hop_id}&w={yyyyww}
+//   * Inputs are integers only (e, k, h, w); v is a fixed word. Every other parameter is ignored; no free text reaches a card.
+//   * Anything invalid, unknown, not public (decoys, unpublished lines, negative controls) or sensitive-for-this-card renders the
+//     brand card with status 200. The v5 variants (teaser, result, reveal, board, latest, or any `n`/`s` request) now render the
+//     brand card too: the daily puzzle is retired (EXPERIENCE §9) and its unfurls fall back to the evergreen card.
+//   * line: the frozen version k (or the latest version when k is absent); stop: the hop's evidence card; shock: the line's
+//     shock ticket (never for sensitive shocks: quiet mode); week: the week's Ripple of the week staircase.
+// Data: the public contracts (rm_cascade, rm_hop, rm_week) read with the service key; cards.ts turns them into elements.
+// Stored cards: ripples-publish pre-renders PNGs into Storage v2/og/ (brand.png, line-{e}-v{k}.png, stop-{h}.png,
+// week-{yyyy-ww}.png); a request for a card that exists there is served from Storage without loading fonts or rendering.
+// &fresh=1 with a valid x-collector-token bypasses Storage (ripples-publish uses it); &b64=1 with the token returns base64.
+// Fonts: the ART §2.2 static TTFs (Anybody 800/900, IBM Plex Sans 500/700), fetched from their pinned Google Fonts URLs and
+// checked against the SHA-256 of the files in art/final/fonts/; on a mismatch or fetch failure the @fontsource static WOFFs of the
+// same families are used and the response carries X-Font-Source: fallback.
 import satori from "npm:satori@0.10.14";
 import { Resvg, initWasm } from "npm:@resvg/resvg-wasm@2.6.2";
 import { createClient } from "jsr:@supabase/supabase-js@2";
+import { brandCard, H, lineCard, shockCard, stopCard, W, weekCard, type El } from "./cards.ts";
 
-const W = 1200, H = 630;
-const C = {
-  ground: "#0B3A40", deep: "#082C31", gold: "#E0A33C", cream: "#F4EEE1", muted: "#A9C2C0",
-  line: "rgba(244,238,225,0.18)", tile: "rgba(244,238,225,0.08)",
-};
-const FOOTER = "bensunter.com/ripples · Measured attention, not proof of cause.";
-const FONT_REG = "https://cdn.jsdelivr.net/gh/rsms/inter@v3.19/docs/font-files/Inter-Regular.woff";
-const FONT_XB = "https://cdn.jsdelivr.net/gh/rsms/inter@v3.19/docs/font-files/Inter-ExtraBold.woff";
 const WASM = "https://cdn.jsdelivr.net/npm/@resvg/resvg-wasm@2.6.2/index_bg.wasm";
 const TWEMOJI = "https://cdn.jsdelivr.net/gh/jdecked/twemoji@latest/assets/svg/";
 const FS = "https://cdn.jsdelivr.net/npm/@fontsource/";
-// Noto Sans fallbacks for scripts Inter v3.19 lacks (Inter covers Latin, Latin-ext, Greek, Cyrillic, Vietnamese).
+const FONTS: { name: string; weight: 500 | 700 | 800 | 900; url: string; sha256: string; fallback: string }[] = [
+  { name: "Anybody", weight: 800, url: "https://fonts.gstatic.com/s/anybody/v13/VuJbdNvK2Ib2ppdWYq311GH32hxIv0sd5grncSUi2F_Wim4JV2fPrg.ttf",
+    sha256: "70c6bbbcedec7d1b7daa697725248ef10764a6d24accf70b723755aa60e4158f", fallback: "anybody@5/files/anybody-latin-800-normal.woff" },
+  { name: "Anybody", weight: 900, url: "https://fonts.gstatic.com/s/anybody/v13/VuJbdNvK2Ib2ppdWYq311GH32hxIv0sd5grncSUi2F_Wim4JfmfPrg.ttf",
+    sha256: "eff587175f88e97197744d5ff8094778892a20e0dc9430900f03e133e793b1b0", fallback: "anybody@5/files/anybody-latin-900-normal.woff" },
+  { name: "Plex", weight: 500, url: "https://fonts.gstatic.com/s/ibmplexsans/v23/zYXGKVElMYYaJe8bpLHnCwDKr932-G7dytD-Dmu1swZSAXcomDVmadSD2FlzAA.ttf",
+    sha256: "6f7a8c4219e021ff7c9131bc5f1f7af97bcd1436a59578d444a8cb92e9791742", fallback: "ibm-plex-sans@5/files/ibm-plex-sans-latin-500-normal.woff" },
+  { name: "Plex", weight: 700, url: "https://fonts.gstatic.com/s/ibmplexsans/v23/zYXGKVElMYYaJe8bpLHnCwDKr932-G7dytD-Dmu1swZSAXcomDVmadSDDV5zAA.ttf",
+    sha256: "e129a20e8ff7c907ffd07124b573e88c323b7b18afc934d4aa539a3e0f2fe100", fallback: "ibm-plex-sans@5/files/ibm-plex-sans-latin-700-normal.woff" },
+];
+// Noto Sans for scripts the Latin faces lack (satori asks per segment)
 const NOTO: Record<string, [string, string]> = {
   "ja-JP": ["Noto Sans JP", "noto-sans-jp@5/files/noto-sans-jp-japanese-700-normal.woff"],
   "zh-CN": ["Noto Sans SC", "noto-sans-sc@5/files/noto-sans-sc-chinese-simplified-700-normal.woff"],
@@ -47,26 +51,43 @@ const NOTO: Record<string, [string, string]> = {
 };
 
 const SB_URL = Deno.env.get("SUPABASE_URL")!;
-const OG_STORE = `${SB_URL}/storage/v1/object/public/ripples/v1/og/`;
-const db = createClient(SB_URL, Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!, {
-  auth: { persistSession: false },
-});
+const OG_STORE = `${SB_URL}/storage/v1/object/public/ripples/v2/og/`;
+const db = createClient(SB_URL, Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!, { auth: { persistSession: false } });
 
-// ---------- per-isolate caches ----------
-let ready: Promise<[ArrayBuffer, ArrayBuffer]> | null = null;
+// ---------- per-isolate assets ----------
+type FontDef = { name: string; data: ArrayBuffer; weight: 500 | 700 | 800 | 900; style: "normal" };
+let ready: Promise<{ fonts: FontDef[]; source: string }> | null = null;
+async function sha256(buf: ArrayBuffer): Promise<string> {
+  const d = new Uint8Array(await crypto.subtle.digest("SHA-256", buf));
+  return Array.from(d).map((b) => b.toString(16).padStart(2, "0")).join("");
+}
 function init() {
   ready ??= (async () => {
-    const [wasm, r, b] = await Promise.all([fetch(WASM), fetch(FONT_REG), fetch(FONT_XB)]);
-    if (!wasm.ok || !r.ok || !b.ok) throw new Error(`asset fetch ${wasm.status}/${r.status}/${b.status}`);
+    const wasm = await fetch(WASM);
+    if (!wasm.ok) throw new Error(`wasm ${wasm.status}`);
     await initWasm(wasm);
-    return [await r.arrayBuffer(), await b.arrayBuffer()] as [ArrayBuffer, ArrayBuffer];
+    let source = "pinned";
+    const fonts = await Promise.all(FONTS.map(async (f) => {
+      try {
+        const r = await fetch(f.url);
+        if (r.ok) {
+          const buf = await r.arrayBuffer();
+          if (await sha256(buf) === f.sha256) return { name: f.name, data: buf, weight: f.weight, style: "normal" as const };
+          console.error("font hash mismatch", f.name, f.weight);
+        } else await r.body?.cancel();
+      } catch (e) { console.error("font fetch", f.name, String(e)); }
+      source = "fallback";
+      const r2 = await fetch(FS + f.fallback);
+      if (!r2.ok) throw new Error(`font fallback ${r2.status}`);
+      return { name: f.name, data: await r2.arrayBuffer(), weight: f.weight, style: "normal" as const };
+    }));
+    return { fonts, source };
   })();
   ready.catch(() => { ready = null; });
   return ready;
 }
 const emojiCache = new Map<string, Promise<string>>();
 const fontCache = new Map<string, Promise<ArrayBuffer | null>>();
-
 function twemojiCode(seg: string): string {
   const cps = Array.from(seg).map((c) => c.codePointAt(0)!);
   const keep = cps.includes(0x200d) ? cps : cps.filter((c) => c !== 0xfe0f);
@@ -87,9 +108,7 @@ function loadEmoji(seg: string): Promise<string> {
   return emojiCache.get(code)!;
 }
 function loadFont(path: string): Promise<ArrayBuffer | null> {
-  if (!fontCache.has(path)) {
-    fontCache.set(path, fetch(FS + path).then((r) => (r.ok ? r.arrayBuffer() : null)).catch(() => null));
-  }
+  if (!fontCache.has(path)) fontCache.set(path, fetch(FS + path).then((r) => (r.ok ? r.arrayBuffer() : null)).catch(() => null));
   return fontCache.get(path)!;
 }
 // deno-lint-ignore no-explicit-any
@@ -97,266 +116,13 @@ async function loadAdditionalAsset(code: string, segment: string): Promise<any> 
   if (code === "emoji") return await loadEmoji(segment);
   const pick = NOTO[code] ?? NOTO.unknown;
   const data = await loadFont(pick[1]);
-  if (!data) return [];
-  return [{ name: pick[0], data, weight: 700, style: "normal" }];
+  return data ? [{ name: pick[0], data, weight: 700, style: "normal" }] : [];
 }
-
-// ---------- tiny element helper ----------
-type El = { type: string; props: Record<string, unknown> };
-// deno-lint-ignore no-explicit-any
-const h = (type: string, style: Record<string, unknown> = {}, children?: any, extra: Record<string, unknown> = {}): El =>
-  ({ type, props: { ...extra, style: type === "div" ? { display: "flex", ...style } : style, children } });
-
-const clip = (s: unknown, max: number): string => {
-  const t = String(s ?? "").replace(/[\u0000-\u001f\u007f-\u009f]/g, " ").replace(/\s+/g, " ").trim();
-  const a = Array.from(t);
-  return a.length > max ? a.slice(0, max - 1).join("").trimEnd() + "…" : t;
-};
-const mult = (x: unknown): string => {
-  const v = Number(x);
-  if (!isFinite(v) || v <= 0) return "";
-  return (v >= 10 ? String(Math.round(v)) : v.toFixed(1).replace(/\.0$/, "")) + "×";
-};
-const MON = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
-const DOW = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
-const fmtDate = (d: unknown): string => {
-  const m = /^(\d{4})-(\d{2})-(\d{2})$/.exec(String(d ?? ""));
-  if (!m) return "";
-  const dt = new Date(Date.UTC(+m[1], +m[2] - 1, +m[3]));
-  return `${DOW[dt.getUTCDay()]} ${dt.getUTCDate()} ${MON[dt.getUTCMonth()]} ${dt.getUTCFullYear()}`;
-};
-const titleSize = (t: string, wide = false): number => {
-  const n = Array.from(t).length;
-  if (n <= 16) return wide ? 76 : 70;
-  if (n <= 24) return wide ? 64 : 58;
-  if (n <= 34) return 50;
-  if (n <= 46) return 42;
-  return 36;
-};
-
-// ---------- shared pieces ----------
-const arrow = (w = 34) =>
-  h("svg", {}, [h("path", {}, undefined, { d: `M2 12 H${w - 8} M${w - 18} 3 L${w - 5} 12 L${w - 18} 21`, stroke: C.gold, "stroke-width": 4, fill: "none", "stroke-linecap": "round", "stroke-linejoin": "round" })],
-    { width: w, height: 24, viewBox: `0 0 ${w} 24` });
-
-type Og = {
-  n: number; kind: string; status?: string; date: string; from_date: string | null; past: boolean; R: number;
-  seed: { title: string; emoji: string; biggest_in_days: number | null; since_records: boolean; multiple: number; langs?: number };
-  rounds: { i: number; continues: boolean; seed_emoji: string | null; emoji: string; title: string; multiple: number }[];
-};
-
-function watermark(kind: string): El | null {
-  if (kind !== "fixture" && kind !== "practice") return null;
-  const word = kind === "fixture" ? "TEST" : "PRACTICE";
-  return h("div", {
-    position: "absolute", left: 0, top: 0, width: W, height: H, alignItems: "center", justifyContent: "center",
-  }, h("div", { fontSize: kind === "fixture" ? 300 : 190, fontWeight: 800, color: "rgba(244,238,225,0.06)", transform: "rotate(-14deg)", letterSpacing: 12 }, word));
-}
-function badge(og: { kind: string; from_date?: string | null }): El | null {
-  let t = "";
-  if (og.kind === "fixture") t = "TEST · fixture data";
-  else if (og.kind === "practice") t = "PRACTICE · reconstructed";
-  else if (og.from_date) t = `From ${fmtDate(og.from_date)}`;
-  if (!t) return null;
-  return h("div", { border: `2px solid ${C.gold}`, color: C.gold, borderRadius: 999, padding: "6px 18px", fontSize: 22, fontWeight: 800, letterSpacing: 2 }, t);
-}
-function header(left: string, sub: string, og: { kind: string; from_date?: string | null } | null): El {
-  const b = og ? badge(og) : null;
-  return h("div", { justifyContent: "space-between", alignItems: "center", width: "100%" }, [
-    h("div", { alignItems: "baseline", gap: 14 }, [
-      h("div", { fontSize: 26, fontWeight: 800, letterSpacing: 5, color: C.gold }, left),
-      sub ? h("div", { fontSize: 24, color: C.muted }, sub) : null,
-    ].filter(Boolean)),
-    b ?? h("div", {}, ""),
-  ]);
-}
-const footer = (): El =>
-  h("div", { borderTop: `2px solid ${C.line}`, paddingTop: 18, width: "100%", fontSize: 23, color: C.muted, justifyContent: "space-between" }, [
-    h("div", {}, FOOTER),
-  ]);
-function frame(kind: string, children: (El | null)[]): El {
-  const wm = watermark(kind);
-  return h("div", { width: W, height: H, background: C.ground, color: C.cream, fontFamily: "Inter", position: "relative" }, [
-    wm,
-    h("div", { position: "absolute", left: 0, top: 0, width: W, height: H, flexDirection: "column", justifyContent: "space-between", padding: "46px 60px 40px" },
-      children.filter(Boolean)),
-  ].filter(Boolean));
-}
-
-// path tiles: seed, then per round an emoji over a "?" box; a fresh ripple is joined with " · " and starts with its seed emoji
-function pathTiles(og: Og): El {
-  const tiles: El[] = [];
-  const nTiles = 1 + og.rounds.length + og.rounds.filter((r) => !r.continues).length;
-  const tw = nTiles > 6 ? 70 : 84, th = nTiles > 6 ? 84 : 98, es = nTiles > 6 ? 30 : 36;
-  const seedTile = (emoji: string, label: string) =>
-    h("div", { width: tw, height: th, borderRadius: 16, background: C.tile, border: `2px solid ${C.line}`, flexDirection: "column", alignItems: "center", justifyContent: "center", gap: 6 }, [
-      h("div", { fontSize: es }, emoji || "🔹"),
-      h("div", { fontSize: 15, color: C.muted, letterSpacing: 2, fontWeight: 800 }, label),
-    ]);
-  const qTile = (emoji: string) =>
-    h("div", { width: tw, height: th, borderRadius: 16, border: `3px solid ${C.gold}`, flexDirection: "column", alignItems: "center", justifyContent: "center", gap: 2 }, [
-      h("div", { fontSize: es - 4 }, emoji || "🔹"),
-      h("div", { fontSize: es + 4, fontWeight: 800, color: C.gold, lineHeight: 1 }, "?"),
-    ]);
-  tiles.push(seedTile(og.seed.emoji, "SEED"));
-  for (const r of og.rounds) {
-    if (!r.continues) {
-      tiles.push(h("div", { width: 12, height: 12, borderRadius: 6, background: C.muted, margin: "0 6px" }, ""));
-      tiles.push(seedTile(r.seed_emoji ?? "🔹", "NEW"));
-    }
-    tiles.push(arrow());
-    tiles.push(qTile(r.emoji));
-  }
-  return h("div", { alignItems: "center", gap: 10 }, tiles);
-}
-
-function seedBlock(og: Og, wide: boolean): El[] {
-  const title = clip(og.seed.title, 60);
-  const big = og.seed.since_records
-    ? "Biggest day since records began"
-    : og.seed.biggest_in_days
-    ? `Biggest day in ${Number(og.seed.biggest_in_days).toLocaleString("en-US")} days`
-    : `${mult(og.seed.multiple)} its normal readers`;
-  const langs = Number(og.seed.langs ?? 0);
-  const sub = [
-    mult(og.seed.multiple) ? `${mult(og.seed.multiple)} its normal Wikipedia readers` : "",
-    langs > 1 ? `${langs} languages` : "",
-    og.seed.since_records ? "records from Jul 2015" : "",
-  ].filter(Boolean).join(" · ");
-  return [
-    h("div", { alignItems: "center", gap: 22, maxWidth: wide ? 1080 : 760 }, [
-      h("div", { fontSize: 70 }, og.seed.emoji || "🔹"),
-      h("div", { fontSize: titleSize(title, wide), fontWeight: 800, lineHeight: 1.05, color: C.cream, maxWidth: wide ? 980 : 660 }, title),
-    ]),
-    h("div", { flexDirection: "column", gap: 6, marginTop: 14 }, [
-      h("div", { fontSize: 50, fontWeight: 800, color: C.gold, lineHeight: 1.1 }, big),
-      sub ? h("div", { fontSize: 27, color: C.cream }, sub) : null,
-      // SPEC 12.2: every number names its baseline window
-      mult(og.seed.multiple) ? h("div", { fontSize: 19, color: C.muted }, "× normal = peak daily Wikipedia views vs the page's own 91-day baseline") : null,
-    ].filter(Boolean)),
-  ];
-}
-
-// ---------- variants ----------
-function teaserCard(og: Og, s: number | null): El {
-  const R = og.R || og.rounds.length;
-  const right = s === null
-    ? h("div", { flexDirection: "column", alignItems: "flex-end", width: 300 }, [
-        h("div", { fontSize: 34, fontWeight: 800, color: C.cream, textAlign: "right", lineHeight: 1.15 }, "Where did the internet go next?"),
-        h("div", { fontSize: 22, color: C.muted, marginTop: 10, textAlign: "right" }, `${R} rounds · wrong answers stayed flat`),
-      ])
-    : h("div", { flexDirection: "column", alignItems: "flex-end", width: 300 }, [
-        h("div", { alignItems: "baseline", gap: 10 }, [
-          h("div", { fontSize: 110, fontWeight: 800, color: C.gold, lineHeight: 1 }, String(s)),
-          h("div", { fontSize: 44, fontWeight: 800, color: C.cream }, `of ${R}`),
-        ]),
-        h("div", { fontSize: 28, color: C.cream, marginTop: 4 }, `Found ${s} of ${R} first try`),
-        h("div", { fontSize: 22, color: C.muted, marginTop: 8 }, "Can you beat it?"),
-      ]);
-  return frame(og.kind, [
-    header(`KNOCK-ON #${og.n}`, fmtDate(og.date), og),
-    h("div", { justifyContent: "space-between", alignItems: "center", width: "100%" }, [
-      h("div", { flexDirection: "column", width: 780 }, seedBlock(og, false)),
-      right,
-    ]),
-    pathTiles(og),
-    footer(),
-  ]);
-}
-
-// fluke meter per hop (SPEC 12.4): "1 in N chance" from reveal evidence.fluke_1_in, else "warming up"
-type Fluke = { fluke_1_in: number | null; fluke_warming: boolean };
-function flukeLabel(f: Fluke | undefined): string {
-  const k = Number(f?.fluke_1_in);
-  if (f && !f.fluke_warming && Number.isFinite(k) && k >= 1) return `fluke 1 in ${Math.round(k).toLocaleString("en-US")}`;
-  return "fluke: warming up";
-}
-function revealCard(og: Og, fl: Map<number, Fluke>): El {
-  const rows: El[] = [];
-  const row = (lead: El | null, emoji: string, title: string, m: string, isSeed: boolean, fluke: string) =>
-    h("div", { alignItems: "center", width: "100%", height: 62, borderBottom: `1px solid ${C.line}`, gap: 16 }, [
-      h("div", { width: 92, justifyContent: "flex-end", alignItems: "center", gap: 8 }, lead ? [lead] : []),
-      h("div", { fontSize: 38 }, emoji || "🔹"),
-      h("div", { fontSize: isSeed ? 34 : 30, fontWeight: 800, color: C.cream, flexGrow: 1, flexShrink: 1, maxWidth: 490 }, title),
-      h("div", { fontSize: 30, fontWeight: 800, color: C.gold, width: 220, flexShrink: 0, justifyContent: "flex-end", whiteSpace: "nowrap" }, m ? `${m} normal` : ""),
-      h("div", { fontSize: 20, color: C.muted, width: 180, flexShrink: 0, justifyContent: "flex-end", whiteSpace: "nowrap" }, fluke),
-    ]);
-  rows.push(row(h("div", { fontSize: 16, color: C.muted, letterSpacing: 2, fontWeight: 800 }, "SEED"), og.seed.emoji, clip(og.seed.title, 30), mult(og.seed.multiple), true, ""));
-  for (const r of og.rounds.slice(0, 4)) {
-    const lead = r.continues
-      ? arrow()
-      : h("div", { alignItems: "center", gap: 6 }, [h("div", { width: 10, height: 10, borderRadius: 5, background: C.muted }, ""), h("div", { fontSize: 26 }, r.seed_emoji ?? "🔹"), arrow(26)]);
-    rows.push(row(lead, r.emoji, clip(r.title, 30), mult(r.multiple), false, flukeLabel(fl.get(r.i))));
-  }
-  return frame(og.kind, [
-    header(`KNOCK-ON #${og.n} · THE TRAIL`, fmtDate(og.date), og),
-    h("div", { flexDirection: "column", width: "100%" }, rows),
-    h("div", { fontSize: 20, color: C.muted, lineHeight: 1.35, maxWidth: 1080 }, "× normal = peak daily Wikipedia views vs the page's own 91-day baseline. Each answer is linked from its parent page and spiked after or alongside it. Fluke 1 in N = about 1 in N passes like this are chance. A dot marks a fresh ripple."),
-    footer(),
-  ]);
-}
-
-const QUAD: Record<string, string> = { big_wave: "Big Wave", sleeper: "Sleeper", belly_flop: "Belly Flop", ripple: "Ripple" };
-// deno-lint-ignore no-explicit-any
-function boardCard(board: any): El {
-  // sensitive rows are never shown on a card (no nicknames or game framing on sensitive topics)
-  // deno-lint-ignore no-explicit-any
-  const trends = (Array.isArray(board?.trends) ? board.trends : []).filter((t: any) => t && !t.sensitive && t.quadrant)
-    // deno-lint-ignore no-explicit-any
-    .sort((a: any, b: any) => Number(b.splash_multiple) - Number(a.splash_multiple)).slice(0, 5);
-  const kind = Number(board?.n) === 0 ? "fixture" : Number(board?.n) < 0 ? "practice" : "live";
-  const cell = (t: string, w: number, st: Record<string, unknown> = {}) => h("div", { width: w, justifyContent: "flex-end", fontSize: 18, color: C.muted, letterSpacing: 2, fontWeight: 800, ...st }, t);
-  // deno-lint-ignore no-explicit-any
-  const rows = trends.map((t: any) =>
-    h("div", { alignItems: "center", width: "100%", height: 66, borderBottom: `1px solid ${C.line}`, gap: 16 }, [
-      h("div", { fontSize: 36, width: 50 }, t.emoji || "🔹"),
-      h("div", { fontSize: 32, fontWeight: 800, color: C.cream, width: 560 }, clip(t.title, 34)),
-      h("div", { fontSize: 32, fontWeight: 800, color: C.gold, width: 120, justifyContent: "flex-end" }, mult(t.splash_multiple)),
-      h("div", { fontSize: 30, fontWeight: 800, color: C.cream, width: 110, justifyContent: "flex-end" }, `${Number(t.wake_k)}/${Number(t.wake_of ?? 20)}`),
-      h("div", { width: 190, justifyContent: "flex-end" }, h("div", { border: `2px solid ${C.gold}`, borderRadius: 999, padding: "4px 14px", fontSize: 20, fontWeight: 800, color: C.gold }, QUAD[t.quadrant] ?? "")),
-    ])
-  );
-  return frame(kind, [
-    header("KNOCK-ON · TODAY'S BOARD", fmtDate(board?.date), { kind, from_date: null }),
-    h("div", { flexDirection: "column", width: "100%" }, [
-      h("div", { alignItems: "center", width: "100%", gap: 16, paddingBottom: 6 }, [
-        cell("", 50), cell("TREND", 560, { justifyContent: "flex-start" }), cell("SPLASH", 120), cell("WAKE", 110), cell("", 190),
-      ]),
-      ...(rows.length ? rows : [h("div", { fontSize: 30, color: C.muted, paddingTop: 20 }, "No board rows today.")]),
-    ]),
-    h("div", { fontSize: 20, color: C.muted, lineHeight: 1.35, maxWidth: 1080 }, "Splash = peak daily Wikipedia views vs the page's own 91-day baseline. Wake = how many of 20 linked pages spiked after or alongside it."),
-    footer(),
-  ]);
-}
-
-function brandCard(): El {
-  const demo: Og = { n: 0, kind: "live", date: "", from_date: null, past: false, R: 3,
-    seed: { title: "", emoji: "👤", biggest_in_days: null, since_records: false, multiple: 0 },
-    rounds: [{ i: 1, continues: true, seed_emoji: null, emoji: "📍", title: "", multiple: 0 },
-             { i: 2, continues: true, seed_emoji: null, emoji: "🎬", title: "", multiple: 0 },
-             { i: 3, continues: true, seed_emoji: null, emoji: "🍎", title: "", multiple: 0 }] };
-  return frame("live", [
-    header("KNOCK-ON", "a daily game from Today's Ripples", null),
-    h("div", { flexDirection: "column", gap: 18, maxWidth: 1040 }, [
-      h("div", { fontSize: 72, fontWeight: 800, lineHeight: 1.05, color: C.cream }, "One trend. Where did the internet go next?"),
-      h("div", { fontSize: 30, color: C.muted, lineHeight: 1.3 }, "Every right answer is a measured spike. Every wrong answer is a real page that stayed flat."),
-    ]),
-    pathTiles(demo),
-    footer(),
-  ]);
-}
-
-// ---------- rendering ----------
+let fontSource = "pinned";
 async function render(el: El): Promise<Uint8Array> {
-  const [regular, bold] = await init();
-  const svg = await satori(el as never, {
-    width: W, height: H,
-    fonts: [
-      { name: "Inter", data: regular, weight: 400, style: "normal" },
-      { name: "Inter", data: bold, weight: 800, style: "normal" },
-    ],
-    loadAdditionalAsset,
-  });
+  const { fonts, source } = await init();
+  fontSource = source;
+  const svg = await satori(el as never, { width: W, height: H, fonts, loadAdditionalAsset });
   return new Resvg(svg, { fitTo: { mode: "width", value: W } }).render().asPng();
 }
 function b64(u8: Uint8Array): string {
@@ -365,22 +131,30 @@ function b64(u8: Uint8Array): string {
   return btoa(s);
 }
 
-// ---------- params ----------
-const VARIANTS = new Set(["teaser", "result", "reveal", "board", "brand", "latest"]);
-type Req = { n: number | null; s: number | null; v: string | null; bad: boolean };
+// ---------- params: integers only ----------
+const VARIANTS = new Set(["brand", "line", "stop", "shock", "week"]);
+const LEGACY = new Set(["teaser", "result", "reveal", "board", "latest"]);
+type Req = { v: string; e: number | null; k: number | null; h: number | null; w: string | null; bad: boolean };
+function int(s: string | null, max: number): number | null | undefined {   // undefined = malformed
+  if (s === null) return null;
+  if (!/^\d{1,15}$/.test(s)) return undefined;
+  const n = Number(s);
+  return n >= 1 && n <= max ? n : undefined;
+}
 function parse(url: URL): Req {
-  const rn = url.searchParams.get("n"), rs = url.searchParams.get("s"), rv = url.searchParams.get("v");
-  const out: Req = { n: null, s: null, v: null, bad: false };
-  if (rn !== null) {
-    if (!/^-?\d{1,4}$/.test(rn)) out.bad = true;
-    else { const n = parseInt(rn, 10); if (n < -60 || n > 9999) out.bad = true; else out.n = n === 0 ? 0 : n; }
-  }
-  if (rs !== null) {
-    if (!/^\d{1,2}$/.test(rs)) out.bad = true;
-    else out.s = Math.min(4, Math.max(0, parseInt(rs, 10)));
-  }
-  if (rv !== null) {
-    if (!VARIANTS.has(rv)) out.bad = true; else out.v = rv;
+  const q = url.searchParams;
+  const rv = q.get("v");
+  const out: Req = { v: "brand", e: null, k: null, h: null, w: null, bad: false };
+  if (rv !== null && !VARIANTS.has(rv) && !LEGACY.has(rv)) out.bad = true;
+  if (rv !== null && VARIANTS.has(rv)) out.v = rv;
+  if (q.get("n") !== null || q.get("s") !== null || (rv !== null && LEGACY.has(rv))) { out.v = "brand"; return out; }
+  const e = int(q.get("e"), 9e15), k = int(q.get("k"), 9999), hh = int(q.get("h"), 9e15), w = int(q.get("w"), 999999);
+  if (e === undefined || k === undefined || hh === undefined || w === undefined) { out.bad = true; return out; }
+  out.e = e; out.k = k; out.h = hh;
+  if (w !== null) {
+    const s = String(w).padStart(6, "0"), wk = Number(s.slice(4));
+    if (wk < 1 || wk > 53) { out.bad = true; return out; }
+    out.w = `${s.slice(0, 4)}-${s.slice(4)}`;
   }
   return out;
 }
@@ -392,55 +166,39 @@ async function rpc(fn: string, args: Record<string, unknown>): Promise<any> {
   return data;
 }
 
-// stored = file name under v1/og/ that holds exactly this card (pre-rendered by ripples-publish)
 type Plan = { el: El; variant: string; maxAge: number; key: string; stored?: string };
+const brand = (maxAge: number): Plan => ({ el: brandCard(), variant: "brand", maxAge, key: "brand", stored: "brand.png" });
 async function plan(p: Req): Promise<Plan> {
-  const brand = (maxAge: number): Plan => ({ el: brandCard(), variant: "brand", maxAge, key: "brand", stored: "brand.png" });
   if (p.bad) return brand(3600);
-  let v = p.v ?? (p.n === null ? "brand" : p.s !== null ? "result" : "teaser");
-  if (v === "brand") return brand(86400);
-  if (v === "board") {
-    const board = await rpc("ripples_board", { p_n: p.n });
-    if (!board) return brand(300);
-    return { el: boardCard(board), variant: "board", maxAge: 3600, key: `board:${board.n ?? p.n}:${board.date ?? ""}` };
+  if (p.v === "brand") return brand(86400);
+  if (p.v === "line") {
+    if (p.e === null) return brand(3600);
+    const c = await rpc("rm_cascade", { p_event: p.e, p_version: p.k });
+    if (!c || !c.event) return brand(300);
+    const k = c.version as number;
+    // a frozen version never changes (immutable cache); the latest-version URL follows new versions (1 h)
+    return { el: lineCard(c), variant: "line", maxAge: p.k !== null ? 31536000 : 3600, key: `line:${p.e}:${k}`, stored: `line-${p.e}-v${k}.png` };
   }
-  if (v === "latest") {
-    const og = await rpc("ripples_og_data", { p_n: null }) as Og | null;
-    if (!og) return brand(300);
-    return { el: teaserCard(og, null), variant: "latest", maxAge: 3600, key: `latest:${og.n}`, stored: `${og.n}.png` };
+  if (p.v === "stop") {
+    if (p.h === null) return brand(3600);
+    const hop = await rpc("rm_hop", { p_hop: p.h });
+    if (!hop || !hop.node) return brand(300);
+    return { el: stopCard(hop), variant: "stop", maxAge: 3600, key: `stop:${p.h}:${hop.tier}`, stored: `stop-${p.h}.png` };
   }
-  if (p.n === null) return brand(3600);
-  const og = await rpc("ripples_og_data", { p_n: p.n }) as Og | null;
-  if (!og || !og.seed) return brand(300); // not visible (future, unpublished, vetoed) or unknown n
-  let maxAge = og.past ? 86400 : 3600;
-  if (v === "result" && p.s === null) v = "teaser";
-  // never spoil a puzzle that is still current. The fixture (n=0, TEST data whose answers are published in the
-  // repo's contract fixtures) is exempt so the reveal card can be tested before any live puzzle has passed.
-  // A live puzzle also needs a NEWER live puzzle to be served: on a delayed day ripples_latest() keeps serving
-  // yesterday's puzzle as playable ("Here's yesterday's"), so its reveal must wait even though its date has passed.
-  if (v === "reveal" && og.kind !== "fixture") {
-    let ok = og.past;
-    if (ok && og.kind === "live") {
-      const lt = await rpc("ripples_latest", {});
-      ok = Number.isInteger(lt?.n) && Number(lt.n) > og.n;
-    }
-    if (!ok) { v = "teaser"; maxAge = 300; } // short cache: the reveal URL becomes a reveal once the next puzzle is out
+  if (p.v === "shock") {
+    if (p.e === null) return brand(3600);
+    const c = await rpc("rm_cascade", { p_event: p.e, p_version: null });
+    if (!c || !c.event || c.event.sensitive) return brand(c ? 86400 : 300);   // quiet mode: never a shock card for a sensitive shock
+    return { el: shockCard(c), variant: "shock", maxAge: 3600, key: `shock:${p.e}:${c.version}` };
   }
-  if (v === "reveal") {
-    // deno-lint-ignore no-explicit-any
-    const rv: any = await rpc("ripples_reveal", { p_n: og.n }).catch(() => null);
-    const fl = new Map<number, Fluke>();
-    for (const r of Array.isArray(rv?.rounds) ? rv.rounds : []) {
-      if (r && Number.isInteger(r.i)) fl.set(r.i, { fluke_1_in: r.evidence?.fluke_1_in ?? null, fluke_warming: r.evidence?.fluke_warming === true });
-    }
-    return { el: revealCard(og, fl), variant: "reveal", maxAge, key: `reveal:${og.n}` };
+  if (p.v === "week") {
+    if (p.w === null) return brand(3600);
+    const wk = await rpc("rm_week", { p_week: p.w });
+    if (!wk || (!wk.ripple_of_week && (wk.edition === null || wk.edition === undefined))) return brand(300);   // no edition yet
+    const ev = wk.ripple_of_week?.event?.event_id ?? 0;
+    return { el: weekCard(wk), variant: "week", maxAge: 3600, key: `week:${p.w}:${ev}:${wk.ripple_of_week?.version ?? 0}`, stored: `week-${p.w}.png` };
   }
-  if (v === "result") {
-    const R = og.R || og.rounds.length;
-    const s = Math.min(p.s!, R);
-    return { el: teaserCard(og, s), variant: "result", maxAge, key: `result:${og.n}:${s}:${maxAge}`, stored: `${og.n}-s${s}.png` };
-  }
-  return { el: teaserCard(og, null), variant: "teaser", maxAge, key: `teaser:${og.n}:${maxAge}`, stored: `${og.n}.png` };
+  return brand(3600);
 }
 
 // ---------- per-isolate render cache ----------
@@ -463,7 +221,6 @@ function cachedRender(pl: Plan): Promise<Uint8Array> {
   while (renderCache.size > RENDER_MAX) renderCache.delete(renderCache.keys().next().value!);
   return png;
 }
-
 async function fromStore(name: string): Promise<Uint8Array | null> {
   try {
     const r = await fetch(OG_STORE + name);
@@ -473,7 +230,7 @@ async function fromStore(name: string): Promise<Uint8Array | null> {
   } catch { return null; }
 }
 
-const CORS = { "Access-Control-Allow-Origin": "*", "Access-Control-Allow-Methods": "GET, OPTIONS", "Access-Control-Allow-Headers": "x-collector-token" };
+const CORS = { "Access-Control-Allow-Origin": "*", "Access-Control-Allow-Methods": "GET, HEAD, OPTIONS", "Access-Control-Allow-Headers": "x-collector-token" };
 
 Deno.serve(async (req: Request) => {
   if (req.method === "OPTIONS") return new Response(null, { status: 204, headers: CORS });
@@ -482,10 +239,7 @@ Deno.serve(async (req: Request) => {
   const url = new URL(req.url);
   const p = parse(url);
   let pl: Plan;
-  try { pl = await plan(p); } catch (e) {
-    console.error("og data error", String(e));
-    pl = { el: brandCard(), variant: "brand", maxAge: 300, key: "brand", stored: "brand.png" };
-  }
+  try { pl = await plan(p); } catch (e) { console.error("og data error", String(e)); pl = brand(300); }
   const token = req.headers.get("x-collector-token") ?? "";
   let authed: boolean | null = null;
   const isAuthed = async () => {
@@ -498,19 +252,17 @@ Deno.serve(async (req: Request) => {
   if (pl.stored && !fresh) { png = await fromStore(pl.stored); if (png) source = "storage"; }
   if (!png) try { png = await cachedRender(pl); } catch (e) {
     console.error("render error", pl.variant, String(e));
-    try { png = await cachedRender({ el: brandCard(), variant: "brand", maxAge: 300, key: "brand" }); pl = { ...pl, variant: "brand", maxAge: 300, key: "brand", stored: undefined }; }
-    catch (e2) { return new Response("render unavailable", { status: 503, headers: { ...CORS, "Cache-Control": "no-store", "Content-Type": "text/plain" } }); }
+    try { png = await cachedRender(brand(300)); pl = { ...brand(300), stored: undefined }; }
+    catch { return new Response("render unavailable", { status: 503, headers: { ...CORS, "Cache-Control": "no-store", "Content-Type": "text/plain" } }); }
   }
   const headers: Record<string, string> = {
-    ...CORS,
-    "X-Card-Variant": pl.variant,
-    "X-Card-Source": source,
+    ...CORS, "X-Card-Variant": pl.variant, "X-Card-Source": source, "X-Font-Source": source === "render" ? fontSource : "stored",
     "X-Render-Ms": String(Math.round(performance.now() - t0)),
   };
-  if (url.searchParams.get("b64") === "1") {
-    if (await isAuthed()) return new Response(b64(png as Uint8Array), { headers: { ...headers, "Content-Type": "text/plain", "Cache-Control": "no-store" } });
+  if (url.searchParams.get("b64") === "1" && await isAuthed()) {
+    return new Response(b64(png as Uint8Array), { headers: { ...headers, "Content-Type": "text/plain", "Cache-Control": "no-store" } });
   }
-  return new Response(req.method === "HEAD" ? null : png as Uint8Array, {
-    headers: { ...headers, "Content-Type": "image/png", "Cache-Control": `public, max-age=${pl.maxAge}` },
+  return new Response(req.method === "HEAD" ? null : png as unknown as BodyInit, {
+    headers: { ...headers, "Content-Type": "image/png", "Cache-Control": `public, max-age=${pl.maxAge}${pl.maxAge >= 31536000 ? ", immutable" : ""}` },
   });
 });

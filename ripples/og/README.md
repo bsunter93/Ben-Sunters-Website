@@ -189,3 +189,30 @@ Notes for readers of these files:
    `POSTING_ENABLED = true` in `ripples-bot`.
 3. The cron jobs are live. To pause publishing: `select cron.unschedule('ripples-publish-0725');` (etc.). Without the
    publish jobs no live puzzle is ever marked `published`, so the page stays on "delayed".
+
+---
+
+# Ripple Map v6 (WS-C, 2026-09-25): what replaced the puzzle cards
+
+The v5 sections above describe the retired puzzle surface. From v6:
+
+| Path | Deployed as | What |
+|---|---|---|
+| `functions/ripples-og/index.ts` + `cards.ts` | `ripples-og` (v8), verify_jwt false | Ripple Map cards: `v=brand|line|stop|shock|week`, integer inputs `e`, `k`, `h`, `w` (yyyyww). Every v5 variant (`teaser/result/reveal/board/latest`, any `n`/`s`) and every invalid, unknown, unpublished, decoy or sensitive-for-this-card request renders the brand card (200). `cards.ts` is pure (no Deno APIs) and renders identically in a Node harness |
+| `functions/ripples-publish/index.ts` + `v2.ts` | `ripples-publish` (v7), token-gated | `POST {"v2": true, "as_of"?, "events"?, "full"?, "prerender"?}` mirrors `rm_publish_bundle_v2` to Storage `ripples/v2/` (see `contract/fixtures/v2/README.md` for every path and cache header), writes RSS feeds, `.ics` calendars, open data and pre-renders OG PNGs. The v1 puzzle path is unchanged and dormant |
+| cron `rm-publish-0825`, `rm-publish-0840` | `contract/sql/06_rm_public_rpcs.sql` §12 | the two daily v2 publish runs after `att-finalize-engine` (08:20) |
+
+**Fonts.** ART §2.2's static TTFs (Anybody 800/900, IBM Plex Sans 500/700) are the exact files Google Fonts serves for
+`Anybody:wght@800|900` and `IBM Plex Sans:wght@500|700` (byte-identical to `art/final/fonts/og-*.ttf`, md5 checked). The function
+fetches those pinned `fonts.gstatic.com` URLs and verifies their SHA-256 before use; on a mismatch it falls back to the
+@fontsource static WOFFs of the same families and says so in `X-Font-Source: fallback`. Twemoji as before.
+
+**Cards** (1200×630, flat colour, top strip y 40–84, footer "bensunter.com/ripples ▪ Consistent with, never proof of cause."):
+Line (petrol: title, metro strip of tiles — solid Measured, halftone Likely, dashed Watching — and one meta line; a bordered
+RECONSTRUCTED stamp on archive lines; frozen per version at `v2/og/line-{e}-v{k}.png`, `Cache-Control: immutable`), Stop (white:
+the multiple as a marigold flap, the ×-its-normal band chart with the window in marigold, tier pips, "lookalikes ≈ 1 in N"),
+Shock of the day (marigold; never for sensitive shocks), Week (the staircase, lanes labelled), Brand (evergreen).
+
+**Checks run 2026-09-25.** Every card 33–68 KB (limit 300 KB). A fresh `&fresh=1` re-render of a frozen line card is
+byte-identical to the stored PNG (md5 = Storage eTag), and a re-publish with `full: true` left all 18 frozen objects untouched.
+Local renders: `scratchpad/wsc/og_*.png` via `harness/render.mjs` (satori 0.10.14 + resvg-wasm 2.6.2, same versions).

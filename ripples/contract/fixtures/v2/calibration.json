@@ -1,0 +1,170 @@
+{
+ "v": 2,
+ "as_of": "2026-09-27",
+ "power": [
+  {
+   "lag": 0,
+   "delta": 1,
+   "recall": 0.0,
+   "tested": 20,
+   "channel": "BLD",
+   "half_life": 1
+  }
+ ],
+ "ledger": {
+  "seq": 18820,
+  "head": "fixture000000000000000000000000000000000000000000000000000000000"
+ },
+ "method": "6.0",
+ "priors": {
+  "as_of": "2026-09-25",
+  "cells": 0,
+  "cutoff": "2026-01-01",
+  "version": "6.0-20260925"
+ },
+ "refire": [
+  {
+   "n": 1,
+   "hits": 0,
+   "route": "na",
+   "family": "hazard.flood",
+   "p_dose": null,
+   "channel": "JOBS",
+   "one_off": false,
+   "edge_class": "flood_claims"
+  }
+ ],
+ "breaker": [],
+ "null_ks": {
+  "n": 500,
+  "p": 0.41,
+  "hist": [
+   25,
+   25,
+   25,
+   25,
+   25,
+   25,
+   25,
+   25,
+   25,
+   25,
+   25,
+   25,
+   25,
+   25,
+   25,
+   25,
+   25,
+   25,
+   25,
+   25
+  ],
+  "stat": 0.03,
+  "tried": 500
+ },
+ "controls": {
+  "negative": {
+   "n": 90,
+   "pass_rate": 0.078,
+   "decoy_rate": 0.168
+  },
+  "positive": [
+   {
+    "name": "Helene → TSA / FEMA / IEM",
+    "passed": true,
+    "last_run": "2026-09-27",
+    "measured": [
+     "tsa.pax:checkpoint"
+    ]
+   }
+  ]
+ },
+ "p_floors": {
+  "date": 0.0004997501249375312,
+  "link": 0.004975124378109453,
+  "topic": 0.0033222591362126247,
+  "date_default": 0.004975124378109453
+ },
+ "receipts": {
+  "hits": 1,
+  "brier": null,
+  "resolved": 18,
+  "registered": 304,
+  "reliability": null,
+  "base_rate_hits": 2.8,
+  "show_reliability": false
+ },
+ "day_lines": [
+  {
+   "day": "2026-09-25",
+   "line": {
+    "flat": 17,
+    "moved": 1,
+    "sum_p": 12.854,
+    "tested": 25,
+    "warming": true,
+    "measured": 0,
+    "watching": 7,
+    "retracted": 0,
+    "ledger_seq": 135,
+    "expected_flukes": 0
+   }
+  }
+ ],
+ "decoy_fdr": {
+  "cells": [
+   {
+    "n": 0,
+    "hi": null,
+    "lo": null,
+    "cell": "P-MAP×PM",
+    "rate": null,
+    "event_rate": null,
+    "real_tested": 4,
+    "decoy_tested": 0,
+    "real_measured": 0,
+    "decoy_measured": 0
+   }
+  ],
+  "scope": "live",
+  "overall": {
+   "n": 80,
+   "hi": 0.0327147480830444,
+   "lo": 0,
+   "rate": 0,
+   "event_rate": null,
+   "real_events": 11,
+   "real_tested": 132,
+   "decoy_events": 8,
+   "decoy_tested": 80,
+   "real_measured": 0,
+   "decoy_measured": 0
+  }
+ },
+ "fluke_bins": [],
+ "retractions": [
+  {
+   "hop_id": 9006,
+   "date": "2026-09-25",
+   "reason": "a later data revision pushed it below the bar"
+  }
+ ],
+ "model_versions": [
+  {
+   "day": "2026-09-25",
+   "ref": {
+    "object": "mech_graph",
+    "version": "v6.0",
+    "note": "free-form per model_version row (WS-B)"
+   },
+   "seq": 1,
+   "hash": "311c3b20733954706b90339db0a1ae72b26f28058c5ba51253ed8ca6759a96ab"
+  }
+ ],
+ "archive": {
+  "as_of": "2026-09-27",
+  "label": "reconstructed archive (retrospective)",
+  "note": "section written by WS-E att_archive_calibration; shape owned there"
+ }
+}

@@ -1,5 +1,7 @@
 // ripples-publish: mirrors the day's public JSON to Storage (SPEC §5.5, §10 Storage). Token-gated
 // (x-collector-token, checked against the vault secret; verify_jwt is off by design, like the collectors).
+// v6 (WS-C): POST {"v2": true, ...} publishes the Ripple Map to Storage v2/ (see v2.ts); the v1 puzzle path below is unchanged
+// and dormant once the puzzle crons are retired (WS-F decommission audit).
 //
 // POST {}            -> ripples_publish_bundle(null): the newest live puzzle dated <= (UTC now - 7h20m)
 // POST {"n": 12}     -> ripples_publish_bundle(12) (explicit n; also used for fixture n=0 / practice n<0 tests)
@@ -15,6 +17,7 @@
 // the 07:45 run the client falls back to the RPCs: app.js getLatest() re-reads ripples_latest once next_at has
 // passed, and load() falls back to the RPC for any missing Storage object. The 07:45 run then mirrors everything.
 import { createClient } from "jsr:@supabase/supabase-js@2";
+import { publishV2 } from "./v2.ts";
 
 const SB_URL = Deno.env.get("SUPABASE_URL")!;
 const db = createClient(SB_URL, Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!, { auth: { persistSession: false } });
@@ -35,7 +38,7 @@ function toCsv(rows: Record<string, unknown>[]): string {
 const json = (x: unknown) => JSON.stringify(x);
 
 async function upload(u: Up): Promise<string | null> {
-  const body = new Blob([u.body], { type: u.type });
+  const body = new Blob([u.body as BlobPart], { type: u.type });
   const { error } = await db.storage.from(BUCKET).upload(u.path, body, { upsert: true, contentType: u.type, cacheControl: String(u.cache) });
   return error ? `${u.path}: ${error.message}` : null;
 }
@@ -83,6 +86,11 @@ Deno.serve(async (req: Request) => {
   if (authed !== true) return new Response("forbidden", { status: 403 });
   // deno-lint-ignore no-explicit-any
   const b: any = await req.json().catch(() => ({}));
+  // Ripple Map v6 (WS-C): POST {"v2": true, "as_of"?: "YYYY-MM-DD", "events"?: [ids], "full"?: bool, "prerender"?: bool} → v2.ts
+  if (b && b.v2 === true) {
+    const r = await publishV2(db, SB_URL, token, b);
+    return Response.json(r.body, { status: r.status });
+  }
   let pn: number | null = null;
   if (b && b.n !== undefined && b.n !== null) {
     if (!Number.isInteger(b.n) || b.n < -60 || b.n > 9999) return Response.json({ ok: false, error: "invalid n" }, { status: 400 });
