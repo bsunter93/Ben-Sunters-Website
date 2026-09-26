@@ -168,7 +168,7 @@ export function assemble() {
 
   /* the far shore: the world rule the story layer flags as a Blind Spot; Milton is not in that pool and has not been tested on it */
   const p10 = pat.p10;
-  const fell = g10.filter(e => e.d < 0).length;
+  const fell = Math.round((1 - p10.share_positive) * p10.n_events);   // share_positive is the engine's own count over the 23 de-clustered events
   const shore = {
     id: 'biz_rule', kind: 'pattern', domain: di('business'), lag_days: 28, far_shore: true, tier: 'pattern', strength: p10.strength,
     num: '−3.2%', short: 'new businesses', title: 'New-business applications in hit states', unit: 'over 4 weeks, across 23 hurricanes',
