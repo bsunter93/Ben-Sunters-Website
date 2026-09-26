@@ -364,3 +364,58 @@ revoke all on function ripples.rm_story_public_control(bigint) from public, anon
 -- on every published pond, tier honesty (effects' tiers = the published version's node tiers; Measured only where the gate says so),
 -- and that no control other than the allowlisted one appears.
 -- rm_grant_audit(): 'rm_pond' added to the anon allowlist.
+
+create or replace function ripples.rm_pond_contract_test() returns jsonb
+language plpgsql stable security definer set search_path = '' as $$
+declare fx jsonb; fxi jsonb; idx jsonb; flag jsonb; diffs jsonb := '[]'; idiffs jsonb; cov jsonb; r record; j jsonb; nulls jsonb := '[]'; bad_tier jsonb := '[]';
+        bad_gate jsonb := '[]'; bad_ctl jsonb := '[]'; n int := 0; opt text[] := array['contrast','chart','watching','pattern_next','story','fluke','replication','story_replication','ref'];
+begin
+  select payload - '_comment' into fx from ripples.rm_contract_fixtures where name = 'pond.json';
+  select payload - '_comment' into fxi from ripples.rm_contract_fixtures where name = 'pond-index.json';
+  idx := public.rm_pond(null);
+  select coalesce(jsonb_agg(x), '[]') into idiffs from ripples.rm_shape_diff(fxi, idx, '$', '{}', '{}') x;
+  flag := public.rm_pond(idx ->> 'flagship');
+  select jsonb_build_object('compared', count(*) filter (where c.state = 'compared'), 'vacuous', count(*) filter (where c.state = 'vacuous'),
+                            'vacuous_paths', coalesce((select jsonb_agg(p) from (select c2.path p from ripples.rm_shape_cover(fx, flag) c2 where c2.state = 'vacuous' order by 1 limit 12) z), '[]'))
+    into cov from ripples.rm_shape_cover(fx, flag) c;
+  for r in select x ->> 'slug' slug, (x ->> 'event_id')::bigint e from jsonb_array_elements(idx -> 'ponds') x limit 60 loop
+    n := n + 1;
+    j := public.rm_pond(r.slug);
+    if j is null then nulls := nulls || to_jsonb(r.slug); continue; end if;
+    diffs := diffs || coalesce((select jsonb_agg(r.slug || ' ' || x) from ripples.rm_shape_diff(ripples.rm_strip(fx, array['ref']), ripples.rm_strip(j, array['ref']), '$', '{}', opt) x), '[]');
+    -- every effect carries exactly the published version's tier, and only Likely-or-better
+    bad_tier := bad_tier || coalesce((select jsonb_agg(r.slug || ' h' || (ef ->> 'hop_id'))
+       from jsonb_array_elements(j -> 'effects') ef
+      where ef ->> 'tier' not in ('measured','likely')
+         or ef ->> 'tier' is distinct from (select nd ->> 'tier' from ripples.rm_public_versions v, jsonb_array_elements(v.payload -> 'nodes') nd
+                                              where v.event_id = r.e and (nd ->> 'hop_id') = (ef ->> 'hop_id') order by v.version desc limit 1)), '[]');
+    -- a Measured effect only where the forecast gate says Measured
+    bad_gate := bad_gate || coalesce((select jsonb_agg(r.slug || ' h' || (ef ->> 'hop_id')) from jsonb_array_elements(j -> 'effects') ef
+      where ef ->> 'tier' = 'measured' and ripples.att_ce_gate((ef ->> 'hop_id')::bigint, 'measured') ->> 'tier' <> 'measured'), '[]');
+    if coalesce((j -> 'event' ->> 'is_control')::boolean, false) and not ripples.rm_story_public_control(r.e) then bad_ctl := bad_ctl || to_jsonb(r.slug); end if;
+    if exists (select 1 from jsonb_array_elements(j -> 'flats') f where f ->> 'tier' <> 'flat') then bad_tier := bad_tier || to_jsonb(r.slug || ' flats'); end if;
+  end loop;
+  return jsonb_build_object('has_fixture', fx is not null and fxi is not null, 'ponds', n, 'flagship', idx ->> 'flagship', 'index_diffs', idiffs, 'diffs', diffs,
+    'coverage', cov, 'null_or_leaking', nulls, 'tier_mismatch', bad_tier, 'measured_without_gate', bad_gate, 'control_not_allowlisted', bad_ctl,
+    'ok', fx is not null and fxi is not null and flag is not null and jsonb_array_length(idiffs) = 0 and jsonb_array_length(diffs) = 0 and jsonb_array_length(nulls) = 0
+          and jsonb_array_length(bad_tier) = 0 and jsonb_array_length(bad_gate) = 0 and jsonb_array_length(bad_ctl) = 0);
+end $$;
+revoke all on function ripples.rm_pond_contract_test() from public, anon, authenticated;
+
+-- grant allowlist: rm_pond is a public read RPC (rm_enforce_grants() would revoke it otherwise). Keeps ENGINE 6.3's
+-- rm_patterns63 / rm_hunches (migration att_engine_63_p3b_grant_audit_allowlist) — reinstated in rm_integration_p4b after p4 overwrote them.
+create or replace function ripples.rm_grant_audit() returns table(fn text, role text)
+language sql stable security definer set search_path = '' as $$
+  select p.oid::regprocedure::text, r.rolname::text
+    from pg_catalog.pg_proc p cross join (values ('anon'), ('authenticated')) r(rolname)
+   where p.pronamespace = 'public'::regnamespace
+     and (p.proname like 'rm\_%' or p.proname like 'ripples\_%')
+     and p.proname not in ('rm_shocks','rm_cascade','rm_hop','rm_lands','rm_archive','rm_week','rm_calibration','rm_health','rm_event',
+                           'ripples_latest','ripples_puzzle','ripples_reveal','ripples_callit','ripples_board','ripples_archive',
+                           'ripples_brief','ripples_health','ripples_join','ripples_track_record',
+                           'rm_patterns','rm_hop_fx62','rm_patterns63','rm_hunches',
+                           'rm_stories',
+                           'rm_pond')
+     and pg_catalog.has_function_privilege(r.rolname, p.oid, 'EXECUTE')
+   order by 1, 2
+$$;

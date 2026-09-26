@@ -1581,7 +1581,9 @@ language sql stable security definer set search_path = '' as $$
                            'ripples_latest','ripples_puzzle','ripples_reveal','ripples_callit','ripples_board','ripples_archive',
                            'ripples_brief','ripples_health','ripples_join','ripples_track_record',
                            'rm_patterns','rm_hop_fx62',          -- engine 6.2 public reads (30_att_engine_62_pooled_regional.sql)
-                           'rm_stories')                          -- story layer public read (31_att_story_layer.sql)
+                           'rm_patterns63','rm_hunches',         -- engine 6.3 public reads (migration att_engine_63_p3b_grant_audit_allowlist)
+                           'rm_stories',                          -- story layer public read (31_att_story_layer.sql)
+                           'rm_pond')                             -- pond payloads / index (07_rm_pond_integration.sql)
      and pg_catalog.has_function_privilege(r.rolname, p.oid, 'EXECUTE')
    order by 1, 2
 $$;
