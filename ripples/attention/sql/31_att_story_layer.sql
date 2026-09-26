@@ -47,8 +47,13 @@ create table if not exists ripples.att_story_candidates (
   watching        jsonb,                             -- {window_close, next_look, days_to_resolve, p_hat, expected_1_in}
   replication     jsonb,                             -- {n_similar, n_seen, n_strict, example_event_ids, strength, effect_pct, grid_id, regional:{...}}
   sensitivity     jsonb,                             -- {quiet, family, is_control}
+  copy            jsonb,                             -- D-16: {story_sentence, short_title, conversation_hook, share_line} (tier-honest templates; null when a node has no public name)
+  travel          jsonb,                             -- D-16: {domains_crossed, days, depth}
+  first_seen      timestamptz not null default now(),-- share identity: when this story first existed (kept across refreshes)
   refreshed_at    timestamptz not null default now()
 );
+alter table ripples.att_story_candidates add column if not exists copy jsonb, add column if not exists travel jsonb,
+  add column if not exists first_seen timestamptz not null default now();
 create index if not exists att_story_candidates_event_idx on ripples.att_story_candidates (event_id);
 create index if not exists att_story_candidates_feat_idx on ripples.att_story_candidates (featurable, story_score desc);
 create table if not exists ripples.att_story_featured (   -- what the home list showed, for novelty (14-day memory)
@@ -61,10 +66,11 @@ revoke all on ripples.att_story_candidates, ripples.att_story_featured from anon
 insert into ripples.att_config (key, value) values ('story', jsonb_build_object(
   'version', '1.0',
   'weights', jsonb_build_object(
-    'temporal_coherence', 0.15, 'mechanism_coherence', 0.15, 'evidence_at_transitions', 0.20, 'domain_diversity', 0.10,
-    'surprise', 0.10, 'magnitude', 0.10, 'replication', 0.08, 'independent_confirmations', 0.05, 'visual_clarity', 0.04, 'novelty', 0.03),
-  'penalties', jsonb_build_object('common_cause_risk', 0.10, 'length_per_hop', 0.04, 'branching_noise', 0.05),
-  'gates', jsonb_build_object('temporal_min', 0.5, 'mechanism_min', 0.4, 'novelty_days', 14, 'ghost_min_expected', 3, 'collapse_min_p_hat', 0.15),
+    'temporal_coherence', 0.13, 'mechanism_coherence', 0.13, 'evidence_at_transitions', 0.18, 'domain_diversity', 0.08,
+    'surprise', 0.08, 'counterintuitiveness', 0.12, 'magnitude', 0.08, 'replication', 0.08, 'independent_confirmations', 0.05, 'visual_clarity', 0.04, 'novelty', 0.03),
+  -- D-16: counterintuitive findings are favoured disproportionately; unsurprising strong links (hurricane → FEMA) stay available but not hero
+  'penalties', jsonb_build_object('common_cause_risk', 0.10, 'length_per_hop', 0.04, 'branching_noise', 0.05, 'unsurprising', 0.10),
+  'gates', jsonb_build_object('temporal_min', 0.5, 'mechanism_min', 0.4, 'novelty_days', 14, 'ghost_min_expected', 3, 'collapse_min_p_hat', 0.15, 'unsurprising_below', 0.3),
   'scales', jsonb_build_object('effect_full_scale_logpts', 0.25, 'points_full_scale', 1.0, 'diversity_full_at', 3),
   'note', 'story_score orders survivors; it can never change p, q, tier, attribution or wording. Coherence gates exclude regardless of score.'))
 on conflict (key) do nothing;
@@ -122,9 +128,68 @@ language sql immutable set search_path = '' as $$
   select least(1, greatest(0, s.v
            - coalesce((p_cfg -> 'penalties' ->> 'common_cause_risk')::float8, 0) * coalesce((p_fields ->> 'common_cause_risk')::float8, 0)
            - coalesce((p_cfg -> 'penalties' ->> 'length_per_hop')::float8, 0) * greatest(0, coalesce((p_fields ->> 'length')::float8, 1) - 1)
-           - coalesce((p_cfg -> 'penalties' ->> 'branching_noise')::float8, 0) * coalesce((p_fields ->> 'branching_noise')::float8, 0)))::real
+           - coalesce((p_cfg -> 'penalties' ->> 'branching_noise')::float8, 0) * coalesce((p_fields ->> 'branching_noise')::float8, 0)
+           - case when coalesce((p_fields ->> 'counterintuitiveness')::float8, 1) < coalesce((p_cfg -> 'gates' ->> 'unsurprising_below')::float8, 0.3)
+                  then coalesce((p_cfg -> 'penalties' ->> 'unsurprising')::float8, 0) else 0 end))::real
   from s
 $$;
+-- D-16 story copy: the "aha sentence", short title, conversation hook and share line. Deterministic templates from story fields; tier-honest verbs
+-- (Measured: "showed up in"; Likely: "may have shown up in" / "consistent with"; Watching: "might be showing up in"; dead end: "never showed up in").
+-- Never a causal verb. Pure.
+create or replace function ripples.att_story_copy(p_kind text, p_archetype text, p_tier text, p_event_label text, p_family_word text, p_hero_label text, p_hero_domain text,
+                                                  p_lag_days int, p_travel jsonb, p_rep jsonb, p_watch jsonb, p_quiet boolean, p_url text) returns jsonb
+language plpgsql immutable set search_path = '' as $$
+declare verb text; when_ text; sent text; title text; hook text; share text; dom text := ripples.rm_domain_word(p_hero_domain); n_dom int; days int; depth int;
+begin
+  n_dom := coalesce((p_travel ->> 'domains_crossed')::int, 1); days := (p_travel ->> 'days')::int; depth := coalesce((p_travel ->> 'depth')::int, 1);
+  when_ := case when p_lag_days is null then 'later' when p_lag_days = 0 then 'the same day' when p_lag_days = 1 then 'a day later'
+                when p_lag_days >= 21 then round(p_lag_days / 7.0) || ' weeks later' else p_lag_days || ' days later' end;
+  verb := case p_kind when 'non_event' then 'never showed up in' when 'watching' then 'might be showing up in'
+               else case when p_tier = 'measured' then 'showed up in' else 'may have shown up in' end end;
+  if p_kind = 'pattern' then
+    sent := format('Across %s past %s, %s %s: %s.', p_rep ->> 'n_similar', lower(p_family_word), p_hero_label,
+                   case when coalesce((p_rep ->> 'effect')::numeric, 0) >= 0 then 'rose' else 'fell' end,
+                   case when (p_rep ->> 'unit') = 'raw' then (p_rep ->> 'effect') || ' raw units' else abs((p_rep ->> 'effect')::numeric) || '%' end || ' vs unaffected regions');
+    title := p_family_word || ' → ' || p_hero_label;
+    hook := 'Seen across ' || (p_rep ->> 'n_similar') || ' past events, not one.';
+    share := title || ' · ' || (p_rep ->> 'effect') || case when (p_rep ->> 'unit') = 'raw' then ' raw' else '%' end || ' across ' || (p_rep ->> 'n_similar') || ' past events · a pattern, never proof of cause · ' || coalesce(p_url, '');
+  elsif p_kind = 'non_event' and p_archetype = 'Ghost' then
+    sent := format('%s was expected to ripple outward. Every path we watched stayed flat.', p_event_label);
+    title := p_event_label || ': the ripple that died';
+    hook := 'Everybody expected a ripple. Nothing moved.';
+    share := title || ' · ' || coalesce(p_travel ->> 'expected_stops', '?') || ' expected stops, none moved · ' || coalesce(p_url, '');
+  elsif p_kind = 'non_event' then
+    sent := format('After %s, %s %s %s. We expected a move about 1 in %s times; the window closed flat.', p_event_label, dom, verb, p_hero_label, coalesce(p_watch ->> 'expected_1_in', '?'));
+    title := p_event_label || ' → ' || p_hero_label || ': dead end';
+    hook := 'The expected move never came.';
+    share := title || ' · stayed flat · ' || coalesce(p_url, '');
+  elsif p_kind = 'watching' then
+    sent := format('%s %s %s. Too early to tell: the window closes in %s days.', p_event_label, verb, p_hero_label, coalesce(p_watch ->> 'days_to_resolve', '?'));
+    title := p_event_label || ' → ' || p_hero_label || '?';
+    hook := format('Similar %s: a move by then about 1 in %s times.', lower(p_family_word) || 's', coalesce(p_watch ->> 'expected_1_in', '?'));
+    share := title || ' · still being watched, closes in ' || coalesce(p_watch ->> 'days_to_resolve', '?') || ' days · ' || coalesce(p_url, '');
+  else
+    sent := case when n_dom >= 2 and depth >= 2 then format('%s didn''t stop at %s — %s it %s %s, %s domains away.', p_event_label, lower(dom), when_, verb, p_hero_label, n_dom)
+                 when p_archetype = 'Blind Spot' then format('%s %s %s — not where a %s usually lands.', p_event_label, verb, p_hero_label, lower(p_family_word))
+                 when p_archetype = 'Delay' then format('Nothing, nothing, then %s: %s %s %s.', when_, p_event_label, verb, p_hero_label)
+                 when p_archetype = 'Funnel' then format('%s %s %s from several directions at once.', p_event_label, verb, p_hero_label)
+                 when p_archetype in ('Echo','Branch') then format('%s %s %s — and %s other domains answered.', p_event_label, verb, p_hero_label, n_dom - 1)
+                 when p_archetype = 'Bounce' then format('%s %s %s — in the opposite direction from the one we registered.', p_event_label, verb, p_hero_label)
+                 when p_archetype = 'Shared Stop' then format('%s and another event both reached %s. A shared stop, not a chain.', p_event_label, p_hero_label)
+                 else format('%s %s %s %s.', p_event_label, when_, verb, p_hero_label) end;
+    title := p_event_label || ' → ' || p_hero_label;
+    hook := case when p_rep is not null and coalesce((p_rep ->> 'n_seen')::int, 0) > 0 then format('Seen after %s of %s similar events.', p_rep ->> 'n_seen', p_rep ->> 'n_similar')
+                 when p_lag_days is not null and p_lag_days >= 7 then format('The surprising part: it showed up %s.', when_)
+                 when n_dom >= 2 then format('It crossed %s domains.', n_dom)
+                 when p_tier = 'measured' then 'Measured, and it survived the lookalike test.'
+                 else 'Probably linked; a fluke isn''t ruled out.' end;
+    share := title || ' · ' || case when p_tier = 'measured' then 'Measured' when p_tier = 'likely' then 'Likely' else p_tier end
+             || case when days is not null then ' · ' || days || case when days = 1 then ' day' else ' days' end else '' end
+             || case when n_dom >= 2 then ' · ' || n_dom || ' domains' else '' end || ' · consistent with, never proof of cause · ' || coalesce(p_url, '');
+  end if;
+  if p_quiet then hook := null; end if;   -- quiet mode: no playful hook on sensitive events
+  return jsonb_build_object('story_sentence', sent, 'short_title', title, 'conversation_hook', hook, 'share_line', share);
+end $$;
 -- coherence gate: featurable only if both coherences pass and every node has a public name
 create or replace function ripples.att_story_gate(p_fields jsonb, p_cfg jsonb) returns text
 language sql immutable set search_path = '' as $$
