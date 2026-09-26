@@ -24,8 +24,10 @@
 <link rel="preload" href="/ripples/fonts/anybody-latin-var.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="preconnect" href="https://kffkasnzqcddpystszch.supabase.co" crossorigin>
 <link rel="stylesheet" href="/ripples/dist/app.css">
-<script>try{var t=localStorage.getItem('ko.theme');if(t==='light'||t==='dark')document.documentElement.setAttribute('data-theme',t)}catch(e){}</script>
+<script>document.documentElement.classList.add('js');try{var t=localStorage.getItem('ko.theme');if(t==='light'||t==='dark')document.documentElement.setAttribute('data-theme',t)}catch(e){}</script>
 <script type="module" src="/ripples/dist/app.js"></script>
+<link rel="modulepreload" href="/ripples/dist/chunk.js">
+<link rel="modulepreload" href="/ripples/dist/lists.js">
 </head>
 <body data-route="lands">
 <a class="skip" href="#main">Skip to the list</a>

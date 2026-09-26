@@ -97,7 +97,7 @@ const deps = (f, seen = new Set()) => {
   for (const m of t.matchAll(/(?:from|import)\s*"\.\/([\w.-]+\.js)"/g)) deps(m[1], seen);
   return seen;
 };
-const dyn = name => readdirSync(dist).find(f => f.startsWith(name + '-') && f.endsWith('.js'));
+const dyn = name => readdirSync(dist).find(f => f === name + '.js' || (f.startsWith(name + '-') && f.endsWith('.js')));
 const routeJs = { 'index.html': [], 'line/index.html': ['line'], 'week/index.html': ['line'], 'map/index.html': ['lists'], 'lands/index.html': ['lists'], 'archive/index.html': ['lists'], 'methods/index.html': ['lists'] };
 let js = 0;
 for (const [shell, extra] of Object.entries(routeJs)) {
