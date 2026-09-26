@@ -22,7 +22,7 @@
 import { addDays, db, errMsg, ingest, type ObsRow, type Run, serve, stateGet, stateSet } from "./att.ts";
 import { getText, todayUtc, wrap } from "./wsa.ts";
 
-export const INFRA_VERSION = "2026-09-26.i1";
+export const INFRA_VERSION = "2026-09-26.i2";
 
 async function st<T>(k: string, dflt: T): Promise<T> { return ((await stateGet(k).catch(() => null)) ?? dflt) as T; }
 async function stSet(run: Run, k: string, v: unknown) { if (!run.dryRun) await stateSet(k, v).catch((e) => run.errors.push(`state ${k}: ${errMsg(e)}`)); }
@@ -190,11 +190,15 @@ async function modeBlsWsp(run: Run) {
   let hi = -1, cols: string[] = [];
   for (let i = 0; i < Math.min(rowsA.length, 30); i++) {
     const c = (rowsA[i] ?? []).map((x) => String(x ?? "").trim().toLowerCase());
-    if (c.some((x) => x.includes("organization")) && c.some((x) => x.includes("start"))) { hi = i; cols = c; break; }
+    if (c.some((x) => x.includes("organization")) && c.some((x) => /begin|start/.test(x))) { hi = i; cols = c; break; }
   }
-  if (hi < 0) { run.errors.push("bls.wsp: header row not found"); run.source({ source: "bls.wsp", status: "parse_error", ms: Date.now() - t0 }); return; }
+  if (hi < 0) {
+    run.extra.bls_wsp = { first_rows: rowsA.slice(0, 8).map((r) => (r ?? []).slice(0, 10).map((x) => String(x ?? "").slice(0, 40))), sheets: wb.SheetNames };
+    run.errors.push("bls.wsp: header row not found"); run.source({ source: "bls.wsp", status: "parse_error", ms: Date.now() - t0 }); return;
+  }
   const ix = (re: RegExp) => cols.findIndex((c) => re.test(c));
-  const cOrg = ix(/organization/), cState = ix(/^state/), cStart = ix(/start/), cEnd = ix(/end/), cWorkers = ix(/workers|number/), cInd = ix(/industry|naics/);
+  const cOrg = ix(/organization/), cState = ix(/^states?\b/), cStart = ix(/begin|start/), cEnd = ix(/\bend/), cWorkers = ix(/workers/), cInd = ix(/industry|naics/);
+  if (cOrg < 0 || cStart < 0 || cWorkers < 0) { run.extra.bls_wsp = { header: cols }; run.errors.push("bls.wsp: expected columns missing"); run.source({ source: "bls.wsp", status: "parse_error", ms: Date.now() - t0 }); return; }
   const minWorkers = Number(run.params.min_workers ?? 1000);
   const lib: Record<string, unknown>[] = [];
   let seen = 0;
