@@ -115,3 +115,23 @@ select cron.schedule('att-youtube-3', '43 7 * * *',
 -- 28-day raw-cache safety net (see ripples.att_yt_raw_cleanup above).
 select cron.schedule('att-youtube-raw-cleanup', '11 3 * * *',
   $$select ripples.att_yt_raw_cleanup(28)$$);
+
+-- Retention tightening (migration att_youtube_obs_retention): view-count-derived observations
+-- (views_top50, velocity_median) are treated as YouTube API data under the 30-day rule and are
+-- deleted after 28 days; only our own counts (entrants, topic_hits) persist longer.
+create or replace function ripples.att_yt_raw_cleanup(p_keep_days integer default 28)
+returns integer language sql security definer set search_path to '' as $function$
+  with d as (
+    delete from ripples.att_state
+    where k like 'yt.raw%' and updated_at < now() - make_interval(days => greatest(1, p_keep_days))
+    returning 1
+  ), o as (
+    delete from ripples.attention_obs a
+    using ripples.att_series s
+    where s.series_id = a.series_id and s.source = 'yt.api'
+      and s.metric in ('views_top50', 'velocity_median')
+      and a.day < current_date - greatest(1, p_keep_days)
+    returning 1
+  )
+  select ((select count(*) from d) + (select count(*) from o))::int
+$function$;
