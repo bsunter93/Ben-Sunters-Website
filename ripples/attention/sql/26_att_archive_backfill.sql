@@ -606,7 +606,7 @@ do $$ declare j record; begin
   for j in select jobid from cron.job where jobname in ('att-archive-run','att-week-edition','att-wse-looks') loop perform cron.unschedule(j.jobid); end loop;
 end $$;
 select cron.schedule('att-archive-run', '1-59/2 * * * *', $$set statement_timeout = '30min'; select ripples.att_archive_step_locked()$$);
--- att-wse-looks (ops): the committed look stepper of §2b, every minute outside 05:40–08:50; unschedule once wse.looks_step is idle
--- and nothing reconstructed is pending (the archive driver then runs one event at a time through att_run_library).
-select cron.schedule('att-wse-looks', '* * * * *', $$set statement_timeout = '4min'; select ripples.att_archive_looks_step(50)$$);
+-- att-wse-looks (ops, 2026-09-26 00:20–00:52 UTC): ran the §2b stepper every minute (2,888 looks committed). Retired at 00:53 when
+-- the engine owners folded the same chunking into att_recompute_step (pending reconstructed looks first, earliest day, committed
+-- per call) and re-reset the recompute. Not scheduled by this file; att_archive_looks_step stays available for manual use.
 select cron.schedule('att-week-edition', '5 9 * * 1', $$set statement_timeout = '5min'; select ripples.att_week_edition(to_char(current_date - 7, 'IYYY-IW'))$$);

@@ -1,7 +1,8 @@
 -- Unit + fixture tests for the Ripple Map cascade engine (WS-B). Run: select ripples.att_test_engine();  (service_role)
--- Covers: transforms (Φ, Φ⁻¹, NB mid-p, holidays), window statistic and CAR scaling, sd_null, weighted BH (pure), frozen BH weights and
+-- Covers: transforms (Φ, Φ⁻¹, NB mid-p, holidays), window statistic and CAR scaling, sd_null (6.1: robust pre-onset, degenerate exclusion), weighted BH (pure), frozen BH weights and
 -- the bit-identical freeze hash, tier logic on a synthetic fixture with known injected effects (recall, null uniformity, decoy FDR),
--- attention-only cap, MONEY/IO zero tests, placebo shift-0 identity, retraction, ledger chaining (incl. a tamper check in a savepoint).
+-- attention-only cap, MONEY/IO zero tests, placebo shift-0 identity, settled-hop re-examination + propagation (T9), ledger chaining (incl. a tamper
+-- check in a savepoint), holidays as common days (T14), geo filters (T15), frozen L (T16), batch versions / dedupe / BH input (T17), the Thanksgiving-week storm stop case (T18).
 -- The synthetic fixture lives in source 'test.synth' (tier 'test') inside a sub-transaction that is rolled back at the end unless p_cleanup = false.
 
 -- pure weighted BH (Genovese–Roeder–Wasserman): q_(i) = min_{j ≥ i} m · p_(j) / (w_(j) · j), clamped to 1; returned in input order
@@ -25,6 +26,7 @@ declare res jsonb := '[]'::jsonb; ok boolean; j jsonb; arr real[]; s jsonb; s2 j
         v_ev bigint; run jsonb; n_inj_meas int; n_null_likely int; n_decoy_meas int; n_decoy_tested int; ps float8[] := '{}';
         ks jsonb; v_hop bigint; v_look smallint; a jsonb; b jsonb; lv jsonb; h record; fin jsonb; ledger_ok boolean; tamper jsonb;
         v_sid bigint; nser int := 80; v_recomp text; bad_keys jsonb;
+        v_q_before real; v_child bigint; j2 jsonb; j3 jsonb; v_ev2 bigint; run2 jsonb; v_topic2 bigint; n_meas2 int; n_tested2 int; v_sub record;
 begin
   -- T1 transforms
   ok := abs(ripples.att_norm_inv(0.975) - 1.959964) < 1e-4 and abs(ripples.att_norm_cdf(1.96) - 0.9750021) < 1e-5
@@ -64,6 +66,45 @@ begin
   q := ripples.att_bh_q(array[0.02, 0.01], array[5, 0.2]);
   ok := ok and q[1] < q[2] and abs(q[1] - 2 * 0.02 / 5 / 1) < 1e-9;
   res := ripples._att_t(res, 'T4 weighted BH step-up (pure)', ok, jsonb_build_object('q_unweighted', s, 'q_weighted', to_jsonb(q)));
+
+  -- T13 (B2) null scale: (a) iid noise → CAR sd floored at 1.0, peak floored at 0.5 when quieter; (b) a dormant series (zeros + 3 spikes) is
+  -- degenerate (excluded); (c) a quiet series with a huge later regime: the null keyed on an onset inside the quiet part never sees the regime
+  perform setseed(0.42);
+  select array_agg(((random() * 2 - 1) * 0.6)::real order by g) into arr from generate_series(1, 1200) g;
+  j := ripples.att_sd_null_calc(arr, '2022-01-01', 1200, 7, 'car', 1);
+  select array_agg((case when g in (300, 700, 1100) then 12.0 else 0.0 end)::real order by g) into arr from generate_series(1, 1200) g;
+  j2 := ripples.att_sd_null_calc(arr, '2022-01-01', 1200, 2, 'peak', 1);
+  perform setseed(0.11);
+  select array_agg((case when g <= 600 then (random() * 2 - 1) * 1.7 else (random() * 2 - 1) * 40 end)::real order by g) into arr from generate_series(1, 1200) g;
+  j3 := ripples.att_sd_null_calc(arr, '2022-01-01', 1200, 7, 'car', 1, '2022-01-01'::date + 560, false);
+  s := ripples.att_sd_null_calc(arr, '2022-01-01', 1200, 7, 'car', 1);
+  ok := (j ->> 'sd')::float8 = 1.0 and (j ->> 'floored')::boolean
+        and (j2 ->> 'sd') is null and j2 ->> 'reason' = 'degenerate'
+        and (j3 ->> 'sd')::float8 < 1.5 and (s ->> 'sd')::float8 > 5 and (j3 ->> 'to')::date <= '2022-01-01'::date + 560 - 7 - 30 - 7;
+  res := ripples._att_t(res, 'T13 null scale: robust MAD with floors, degenerate series excluded, pre-onset windows only', ok, jsonb_build_object('iid', j, 'dormant', j2, 'pre_onset', j3 - 'from', 'whole_array', s - 'from' - 'to'));
+
+  -- T14 (B4) holidays are common-shock days: Thanksgiving ± 1, Black Friday, Christmas week, July 4 observed
+  ok := (select count(*) from ripples.att_common_days where day in ('2025-11-26', '2025-11-27', '2025-11-28', '2025-12-26', '2026-07-03', '2024-11-28')) = 6
+        and not exists (select 1 from ripples.att_common_days where day = '2025-11-12');   -- an ordinary Wednesday is not flagged
+  res := ripples._att_t(res, 'T14 US federal holidays ± 1 d, Black Friday and Christmas week are registered common-shock days', ok,
+           (select jsonb_agg(jsonb_build_object('day', day, 'reason', reason) order by day) from ripples.att_common_days where day between '2025-11-25' and '2025-11-29'));
+
+  -- T15 (B4) geo_filter: an NYC transit item is proposed for a New York event, not for a Florida one, and not for an event without state meta
+  insert into ripples.att_topics(qid, label_key, label, lang, status, in_panel, origin, meta)
+  values (null, 'test:geo:ny', 'test NY event', 'en', 'panel', false, 'cascade', '{"state": ["NY", "NJ"], "family": "hazard.storm"}'::jsonb),
+         (null, 'test:geo:fl', 'test FL event', 'en', 'panel', false, 'cascade', '{"state": ["FL"], "family": "hazard.storm"}'::jsonb),
+         (null, 'test:geo:none', 'test no-geo event', 'en', 'panel', false, 'cascade', '{"family": "hazard.storm"}'::jsonb);
+  ok := (select count(*) from ripples.att_resolve_targets('{"node":"mta.ridership:subway","geo_filter":["US-NY","US-NJ","US-CT"],"sign":-1}'::jsonb, (select topic_id from ripples.att_topics where label_key = 'test:geo:ny'))) = 1
+        and (select count(*) from ripples.att_resolve_targets('{"node":"mta.ridership:subway","geo_filter":["US-NY","US-NJ","US-CT"],"sign":-1}'::jsonb, (select topic_id from ripples.att_topics where label_key = 'test:geo:fl'))) = 0
+        and (select count(*) from ripples.att_resolve_targets('{"node":"mta.ridership:subway","geo_filter":["US-NY","US-NJ","US-CT"],"sign":-1}'::jsonb, (select topic_id from ripples.att_topics where label_key = 'test:geo:none'))) = 0
+        and (select count(*) from ripples.att_resolve_targets('{"node":"tsa.pax:checkpoint","sign":-1}'::jsonb, (select topic_id from ripples.att_topics where label_key = 'test:geo:fl'))) = 1;
+  res := ripples._att_t(res, 'T15 geo_filter honoured in target resolution (state ∩ filter; no state meta → not proposed)', ok, null);
+  delete from ripples.att_topics where label_key like 'test:geo:%';
+
+  -- T16 (S5) look schedule follows the frozen per-channel L: a template L = 7 on INST gives one look at +8; L = 90 gives +31/+61/+91
+  ok := ripples.att_look_dates('INST', '2025-11-26', 7) = array['2025-12-04'::date] and ripples.att_look_dates('INST', '2025-11-26', 90) = array['2025-12-27'::date, '2026-01-26', '2026-02-25']
+        and ripples.att_hop_l('INST', 'storm_nws_warnings') = 7 and ripples.att_hop_l('INST', 'storm_fema_decl') = 90 and ripples.att_hop_l('PHYS', null) = 7;
+  res := ripples._att_t(res, 'T16 template L honoured per channel at freeze (INST 7 → one look at +8; INST 90 → +31/+61/+91)', ok, null);
 
   -- T5 every ledger freeze batch (not superseded) recomputes bit-identically and its frozen weights sum to its m (batches re-frozen by
   -- att_refreeze keep their original weights and are exempt from the weight sum)
@@ -139,15 +180,38 @@ begin
   ok := abs((a ->> 'T')::float8 - (b ->> 'T')::float8) < 1e-9;
   res := ripples._att_t(res, 'T8 placebo draw at shift 0 equals the real statistic (identical code path)', ok, jsonb_build_object('T_real', a ->> 'T', 'T_shift0', b ->> 'T'));
 
-  -- T9 retraction: publish the top hop, then flag its onset as a common-shock day and re-finalise → retracted + ledger row
+  -- T9 (engine 6.1, B5) retraction of a SETTLED hop: publish the top hop, register its onset as a common-shock day, then run the nightly
+  -- re-examination. The settled look keeps its q_w (nothing is nulled or rewritten); att_reexamine writes a new look row (look_no ≥ 100)
+  -- through att_engine_job and att_finalize's retraction branch, appends the ledger row, and the retraction propagates to a child hop.
   insert into ripples.att_hop_registry(hop_id, window_close, p_hat, family, path_type, channel) select v_hop, window_close, 0.2, 'test.synth', path_type, 'PHYS' from ripples.att_hop_candidates where hop_id = v_hop
   on conflict (hop_id) do nothing;
   update ripples.att_hop_registry set published_tier = 'measured', published_at = now() where hop_id = v_hop;
-  update ripples.att_hop_tests set common_shock = true, q_w = null where hop_id = v_hop and look_no = v_look;
-  fin := ripples.att_finalize((select look_day from ripples.att_hop_tests where hop_id = v_hop and look_no = v_look), true);
-  ok := (select tier from ripples.att_hop_tests where hop_id = v_hop and look_no = v_look) = 'retracted'
-        and exists (select 1 from ripples.att_ledger where kind = 'retract' and (ref ->> 'hop_id')::bigint = v_hop);
-  res := ripples._att_t(res, 'T9 retraction on a later common-shock flag (struck through, ledger row)', ok, jsonb_build_object('tier', (select tier from ripples.att_hop_tests where hop_id = v_hop and look_no = v_look), 'reason', (select retract_reason from ripples.att_hop_tests where hop_id = v_hop and look_no = v_look)));
+  v_q_before := (select q_w from ripples.att_hop_tests where hop_id = v_hop and look_no = v_look);
+  -- a depth-2 child of the published hop, Likely at its final look (its batch is synthetic: no ledger freeze row, never a calibration input)
+  insert into ripples.att_hop_candidates(as_of, u_topic, v_topic, proposed_by, edge, status, event_id, role, parent_hop, depth, path, path_type, prior, bh_weight, channels, excluded_ch,
+                                         window_close, looks, voi, node, onset, sign, reconstructed, frozen_hash, frozen_at, freeze_proven, engine_version)
+  select c.as_of, c.u_topic, c.v_topic, c.proposed_by, c.edge, 'tested', c.event_id, 'library', v_hop, 2, c.path, c.path_type, c.prior, c.bh_weight, c.channels, c.excluded_ch,
+         c.window_close + 7, array[c.window_close + 8], c.voi, c.node, c.onset + 7, c.sign, true, 'test-child-' || v_hop, now(), false, '6.1'
+  from ripples.att_hop_candidates c where c.hop_id = v_hop returning hop_id into v_child;
+  insert into ripples.att_hop_tests(hop_id, look_no, as_of, u_topic, v_topic, t_u, look_day, is_final, t_stat, fluke, q_w, tier, tier_reason, flags, detail)
+  select v_child, 1, c.as_of, c.u_topic, c.v_topic, c.onset, c.looks[1], true, 4.0, 0.02, 0.05, 'likely', 'test child', '{}', '{"n_out3": 1}'::jsonb
+  from ripples.att_hop_candidates c where c.hop_id = v_child;
+  insert into ripples.att_common_days(day, sources, c_by_source, reason, as_of)
+  select c.onset, '{}', '{}'::jsonb, 'registered', current_date from ripples.att_hop_candidates c where c.hop_id = v_hop
+  on conflict (day) do update set reason = 'registered';
+  fin := ripples.att_reexamine(current_date, true, 600);
+  ok := (select tier from ripples.att_hop_tests where hop_id = v_hop and look_no >= 100 order by look_no desc limit 1) = 'retracted'
+        and (select q_w from ripples.att_hop_tests where hop_id = v_hop and look_no = v_look) = v_q_before and v_q_before is not null
+        and (select tier from ripples.att_hop_tests where hop_id = v_hop and look_no = v_look) <> 'retracted'
+        and exists (select 1 from ripples.att_ledger where kind = 'retract' and (ref ->> 'hop_id')::bigint = v_hop)
+        and (select tier from ripples.att_hop_tests where hop_id = v_child order by look_no desc limit 1) = 'retracted'
+        and (select tier_reason from ripples.att_hop_tests where hop_id = v_child order by look_no desc limit 1) = 'previous step retracted'
+        and exists (select 1 from ripples.att_ledger where kind = 'retract' and (ref ->> 'hop_id')::bigint = v_child);
+  res := ripples._att_t(res, 'T9 settled-hop re-examination retracts on a later common-shock flag without touching the settled look; the retraction propagates to the child', ok,
+           jsonb_build_object('reexam', fin - 'finalize', 'tier_new', (select tier from ripples.att_hop_tests where hop_id = v_hop and look_no >= 100 order by look_no desc limit 1),
+                              'reason', (select retract_reason from ripples.att_hop_tests where hop_id = v_hop and look_no >= 100 order by look_no desc limit 1),
+                              'q_settled_before', v_q_before, 'q_settled_after', (select q_w from ripples.att_hop_tests where hop_id = v_hop and look_no = v_look),
+                              'child_tier', (select tier from ripples.att_hop_tests where hop_id = v_child order by look_no desc limit 1)));
 
   -- T10 ledger chaining and a tamper check inside a savepoint
   lv := ripples.att_ledger_verify();
@@ -172,6 +236,35 @@ begin
   ok := jsonb_array_length(bad_keys) = 0
         and not exists (select 1 from ripples.att_cascades c where c.payload::text ~* '\m(caused|drove|because of)\M');
   res := ripples._att_t(res, 'T12 no payload contains a chain probability or a causal claim', ok, jsonb_build_object('bad_keys', bad_keys));
+
+  -- T17 (6.1) the fixture's frozen batch carries the frozen per-channel L, the engine and graph versions, has no duplicate (event, parent, node,
+  -- sign) candidates (S3), and every finalised look was BH-scored on p_h (S1)
+  ok := not exists (select 1 from ripples.att_hop_candidates c where c.event_id = v_ev and c.role = 'library' and (c.l_by_channel is null or c.engine_version <> '6.1' or c.graph_version is null))
+        and (select l_by_channel ->> 'PHYS' from ripples.att_hop_candidates where hop_id = v_hop) = '7'
+        and not exists (select 1 from ripples.att_hop_candidates c where c.event_id = v_ev and c.role <> 'negative_control' group by c.as_of, c.event_id, c.parent_hop, c.node, c.sign having count(*) > 1)
+        and not exists (select 1 from ripples.att_hop_tests t join ripples.att_hop_candidates c on c.hop_id = t.hop_id where c.event_id = v_ev and t.q_w is not null and t.look_no < 100
+                        and abs((t.detail -> 'bh' ->> 'p_bh')::float8 - t.fluke::float8) > 1e-6)
+        and (select every(sign <> 0) from ripples.att_hop_candidates c where c.event_id = v_ev and c.role = 'negative_control');
+  res := ripples._att_t(res, 'T17 frozen L / versions on the batch, no duplicate paths, BH input = p_h, signed negative controls', ok,
+           (select jsonb_build_object('l_by_channel', l_by_channel, 'engine_version', engine_version, 'graph_version', left(graph_version, 12)) from ripples.att_hop_candidates where hop_id = v_hop));
+
+  -- T18 (B4, the audit's stop case) a storm with onset in Thanksgiving week 2025 over New York proposes the NYC transit targets (geo filter)
+  -- and can NEVER reach Measured: the onset and the window's peak sit on registered common-shock days. Real data, real code path.
+  v_ev2 := ripples.att_library_event(null, 'Test Thanksgiving-week storm (NY)', 'hazard.storm', '2025-11-26', 'library',
+                                     '{"state": ["NY", "NJ"], "ba": ["NYIS"]}'::jsonb);
+  run2 := ripples.att_run_library(v_ev2);
+  select count(*) filter (where hl.tier = 'measured'), count(*) filter (where hl.t_stat is not null) into n_meas2, n_tested2
+    from ripples.att_hop_latest hl join ripples.att_events e on e.event_id = hl.event_id where e.event_id = v_ev2 or e.matched_to = v_ev2;
+  select hl.node, hl.tier, hl.tier_reason, hl.flags, hl.t_stat, hl.common_shock into v_sub
+    from ripples.att_hop_latest hl where hl.event_id = v_ev2 and hl.node = 'mta.ridership:subway' order by hl.look_no desc limit 1;
+  ok := n_meas2 = 0 and n_tested2 > 0
+        and exists (select 1 from ripples.att_hop_candidates c where c.event_id = v_ev2 and c.node = 'mta.ridership:subway')
+        and coalesce(v_sub.tier, 'watching') <> 'measured'
+        and (v_sub.t_stat is null or coalesce(v_sub.common_shock, false))
+        and (select count(*) from ripples.att_common_days where day between '2025-11-26' and '2025-11-28') = 3;
+  res := ripples._att_t(res, 'T18 Thanksgiving-week storm over New York: NYC transit proposed, common-shock flagged, never Measured (real data)', ok,
+           jsonb_build_object('measured', n_meas2, 'tested', n_tested2, 'subway', to_jsonb(v_sub), 'run', run2 - 'freeze' - 'depth2',
+                              'nodes', (select jsonb_agg(jsonb_build_object('node', hl.node, 'tier', hl.tier, 'T', round(hl.t_stat::numeric, 2), 'flags', hl.flags) order by hl.node) from ripples.att_hop_latest hl where hl.event_id = v_ev2)));
 
     if p_cleanup then raise exception using errcode = 'P0999', message = 'fixture rollback'; end if;
   exception when sqlstate 'P0999' then null;

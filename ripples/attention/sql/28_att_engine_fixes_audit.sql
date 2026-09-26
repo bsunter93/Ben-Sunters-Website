@@ -114,7 +114,7 @@ $$;
 -- (US federal holidays ± 1 day, Christmas week, Black Friday). A hop whose onset or window-peak day is listed cannot be Measured.
 create or replace function ripples.att_common_days_refresh(p_day date default current_date - 1) returns jsonb
 language plpgsql security definer set search_path = '' as $$
-declare n_panel int := 0; n_hol int := 0; n_reg int := 0;
+declare v_np int := 0; n_hol int := 0; n_reg int := 0;
 begin
   with c as (select day, source, c, frac2, n_panel from ripples.att_zvec_ct where day between p_day - 2555 and p_day),
   f as (select day, array_agg(source order by source) sources,
@@ -123,7 +123,7 @@ begin
   insert into ripples.att_common_days(day, sources, c_by_source, reason, as_of)
   select day, sources, cs, 'panel', p_day from f
   on conflict (day) do update set sources = excluded.sources, c_by_source = excluded.c_by_source, reason = 'panel', as_of = excluded.as_of;
-  get diagnostics n_panel = row_count;
+  get diagnostics v_np = row_count;
   delete from ripples.att_common_days d where d.reason = 'panel' and d.as_of < p_day
      and not exists (select 1 from ripples.att_zvec_ct c where c.day = d.day and (abs(c.c) >= 1.5 or (coalesce(c.frac2, 0) >= 0.3 and c.n_panel >= 50)));
   insert into ripples.att_common_days(day, sources, c_by_source, reason, as_of)
@@ -137,7 +137,7 @@ begin
         union select h.day, h.code from ripples.att_holidays h where h.code in ('xmas_week', 'us_blackfriday')) x
   on conflict (day) do nothing;
   get diagnostics n_hol = row_count;
-  return jsonb_build_object('day', p_day, 'panel', n_panel, 'registered', n_reg, 'holiday_new', n_hol, 'total', (select count(*) from ripples.att_common_days));
+  return jsonb_build_object('day', p_day, 'panel', v_np, 'registered', n_reg, 'holiday_new', n_hol, 'total', (select count(*) from ripples.att_common_days));
 end $$;
 
 -- B2: robust null scale of the window statistic. Windows start every day (every 3 days on arrays > 1,000 long) from from + 112, and, when the
@@ -1069,7 +1069,7 @@ begin
   for i in 1..cardinality(keys) loop
     for j in 1..cardinality(keys) loop
       den := den + (ch -> keys[i] ->> 'w')::float8 * (ch -> keys[j] ->> 'w')::float8
-                 * coalesce((select r from _hr where a = keys[i] and b = keys[j]), ripples.att_channel_r(keys[i], keys[j]));
+                 * coalesce((select h.r from _hr h where h.a = keys[i] and h.b = keys[j]), ripples.att_channel_r(keys[i], keys[j]));
     end loop;
   end loop;
   t := case when den > 0 then num / sqrt(den) end;
