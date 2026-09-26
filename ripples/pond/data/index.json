@@ -1,20 +1,17 @@
 {
  "v": 1,
- "note": "pond payloads: live = v2/ Storage path tried first (published by the integration step, rm_pond_payload(event_id)); file = the local snapshot",
+ "note": "pond payloads come from v2/pond/index.json (live) or data/pond/index.json (snapshot). Entries here add aliases and editorial overlays; an overlay never touches tiers or numbers.",
  "events": [
   {
-   "slug": "lib-control-hurricane-milton-2024",
+   "slug": "hurricane-milton-positive-control-213",
    "aliases": [
     "milton",
-    "hurricane-milton"
+    "hurricane-milton",
+    "lib-control-hurricane-milton-2024"
    ],
    "event_id": 213,
-   "label": "Hurricane Milton",
-   "file": "data/milton.json",
-   "live": "pond/213.json",
-   "version": 3,
-   "flagship": true,
-   "sensitive": true
+   "overlay": "data/milton.json",
+   "flagship": true
   }
  ]
 }

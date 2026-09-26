@@ -45,15 +45,91 @@
     registry: () => load('registry', null, 'data/index.json'),
     stories: async () => { const q = new URLSearchParams(location.search); if (q.get('data') === 'fixture') return load('stories-fx', null, '../contract/fixtures/v2/stories.json').then(d => (d._fixture = true, d)); return load('stories', 'stories.json', 'data/stories.json'); },
     patterns: () => load('patterns', 'patterns.json', 'data/patterns.json'),
+    pondIndex: () => load('pond-index', 'pond/index.json', 'data/pond/index.json'),
     async pond(slug) {
-      const reg = await data.registry(); const ev = reg.events.find(e => e.slug === slug || (e.aliases || []).includes(slug));
-      if (ev) { try { return await load('pond:' + ev.slug, ev.live, ev.file); } catch { /* snapshot missing */ } }
-      // no published pond payload: build one from the story layer (watching floats, dead-end reeds, any measured / likely pads)
-      const S = await data.stories(); const items = S.featured.filter(s => s.event && s.event.slug === slug);
-      if (!items.length) return null;
-      const P = fromStories(items, reg); P._src = 'stories'; return P;
+      const [idx, reg] = await Promise.all([data.pondIndex(), data.registry().catch(() => ({ events: [] }))]);
+      if (!slug || slug === 'flagship') slug = idx.flagship;
+      const alias = (reg.events || []).find(e => (e.aliases || []).includes(slug)); if (alias) slug = alias.slug;
+      const row = (idx.ponds || []).find(p => p.slug === slug);
+      let P = null;
+      if (row) { try { P = await load('pond:' + slug, 'pond/' + slug + '.json', 'data/pond/' + slug + '.json'); } catch { P = null; } }
+      if (!P) {   // no published pond payload: build one from the story layer (watching floats, dead-end reeds, any measured / likely pads)
+        const S = await data.stories(); const items = S.featured.filter(s => s.event && s.event.slug === slug);
+        if (!items.length) return null;
+        P = fromStories(items, reg); P._src = 'stories';
+      }
+      // editorial overlay (hand-written mechanism copy, donor chart line, forecast panel) keyed by slug; never touches tiers or numbers
+      const ov = (reg.events || []).find(e => e.slug === slug && e.overlay);
+      if (ov) { try { const O = await load('overlay:' + slug, null, ov.overlay); P = overlay(P, O); } catch { /* overlay missing */ } }
+      return normalize(P, row);
     }
   };
+
+  /* ---------- normalize any pond payload: fill display numbers from engine fields, never invent, drop warming-up calibration text ---------- */
+  const WARM = /\s*(Links|Decoy links) like this turn out to be flukes about 1 in 1 times\.?/g;
+  const pct = r => { const v = Math.round((r - 1) * 100); return (v > 0 ? '+' : v < 0 ? '−' : '') + Math.abs(v) + '%'; };
+  function normalize(P, row) {
+    P.event = P.event || {};
+    if (P.event.magnitude != null && P.event.magnitude > 1) P.event.magnitude = null;   // a raw family magnitude, not the 0..1 stone scale
+    if (P.event.name) P.event.name = P.event.name.replace(/ \(positive control\)$/, '');
+    P.event.is_control = !!(P.event.is_control || (P.event.role === 'positive_control'));
+    if (P.honesty && P.honesty.quiet == null) P.honesty.quiet = !!P.event.sensitive;
+    (P.effects || []).forEach(e => {
+      const g = e.engine || {}, rho = e.rho ?? (g.rho && typeof g.rho === 'object' ? g.rho.shrunk : g.rho) ?? (e.num && /×$/.test(e.num) ? parseFloat(e.num) : null);
+      e.rho = rho;
+      if (!e.num && rho != null) e.num = rho.toFixed(2) + '×';
+      // the one number people can feel: percent against its own normal (CX fix 2); the ratio stays in the drawers
+      e.num_pct = rho != null ? pct(rho) : (e.chart && e.chart.peak && e.chart.peak.t != null ? pct(e.chart.peak.t) : null);
+      e.num_pct_kind = rho != null ? 'effect' : (e.chart && e.chart.peak ? 'peak' : null);
+      if (e.magnitude == null) e.magnitude = rho != null ? Math.min(1, Math.abs(Math.log(rho)) / 0.25) : (e.chart && e.chart.peak && e.chart.peak.t ? Math.min(1, Math.abs(Math.log(e.chart.peak.t)) / 0.25) : 0.25);
+      if (e.lag_days == null) e.lag_days = e.lag_from_event_days ?? (e.chart && e.chart.peak && e.chart.onset ? Math.max(0, Math.round((new Date(e.chart.peak.d) - new Date(e.chart.onset)) / 864e5)) : 1);
+      if (e.lag_from_event_days == null) e.lag_from_event_days = e.lag_days;
+      if (!e.lag_text || e.lag_text === 'after') e.lag_text = e.lag_days === 0 ? 'the same day' : e.lag_days === 1 ? 'the day after' : `${e.lag_days} days after`;
+      if (!e.short) e.short = e.title || e.name || e.node;
+      if (!e.title) e.title = e.short;
+      if (!e.published) e.published = { tier: e.tier, engine_tier: e.engine_tier || e.tier, reason: e.tier_reason || null, text: TIER[e.tier] || e.tier, detail: TIER[e.tier] || e.tier };
+      if (!e.published.text) e.published.text = e.published.reason ? `${TIER[e.published.tier]}, ${e.published.reason}` : TIER[e.published.tier];
+      if (!e.published.detail) e.published.detail = e.published.reason ? `${TIER[e.published.engine_tier]} by the engine; ${e.published.reason}` : TIER[e.published.tier];
+      if (e.plain) e.plain = e.plain.replace(WARM, '').replace(/ \(positive control\)/g, '');
+      if (e.headline) e.headline = e.headline.replace(/ \(positive control\)/g, '');
+      if (e.fluke && e.fluke.text) e.fluke.text = e.fluke.text.replace(WARM, '');
+      if (e.mechanism) e.mechanism = e.mechanism.filter(m => m && m.step);
+      if (!e.id) e.id = 'h' + e.hop_id;
+    });
+    ['flats', 'untested'].forEach(k => (P[k] || []).forEach((n, i) => { if (!n.id) n.id = 'h' + (n.hop_id || k + i); if (n.plain) n.plain = n.plain.replace(/ \(positive control\)/g, ''); if (n.lag_days == null) n.lag_days = 7; }));
+    if (P.story) { ['story_sentence', 'short_title', 'share_line', 'headline', 'hook'].forEach(k => { if (P.story[k]) P.story[k] = P.story[k].replace(/ \(positive control\)/g, ''); }); if (P.story.tier == null && row) P.story.tier = null; }
+    if (P.travel && P.travel.domains == null && P.travel.domains_crossed != null) P.travel.domains = P.travel.domains_crossed;
+    P.stops = row && row.stops ? row.stops : { measured: (P.effects || []).filter(e => (e.published || e).tier === 'measured').length, likely: (P.effects || []).filter(e => (e.published || e).tier === 'likely').length, watching: (P.untested || []).length, flat: (P.flats || []).length };
+    return P;
+  }
+  /* editorial overlay: only fields the live payload leaves empty (mechanism why, how, mind, place, strength, donor chart line, forecast panel, replication strip, lag wording) */
+  function overlay(P, O) {
+    const byHop = {}; (O.effects || []).forEach(e => { byHop[e.hop_id] = e; });
+    (P.effects || []).forEach(e => {
+      const o = byHop[e.hop_id]; if (!o) return;
+      ['how', 'mind', 'lag_text', 'label_side', 'short_label', 'unit_plain', 'forecast'].forEach(k => { if (e[k] == null && o[k] != null) e[k] = o[k]; });
+      if (o.mechanism && (!e.mechanism || e.mechanism.every(m => !m.why))) e.mechanism = o.mechanism;
+      if (o.unit && (!e.unit || e.unit === 'its normal')) e.unit = o.unit;
+      if (o.short && e.short === e.title) e.short = o.short;
+      if (o.plain && o.plain.length > (e.plain || '').length) e.plain_long = o.plain;
+      if (o.chart && o.chart.series && e.chart && e.chart.series && e.chart.series.every(s => s.o == null)) { const m = {}; o.chart.series.forEach(s => { m[s.d] = s.o; }); e.chart.series.forEach(s => { if (m[s.d] != null) s.o = m[s.d]; }); if (o.chart.peak) e.chart.peak = { ...e.chart.peak, ...o.chart.peak }; if (o.chart.landfall) e.chart.landfall = o.chart.landfall; e.chart.donors = true; }
+      if (o.replication && o.replication.all && e.replication && !e.replication.all) e.replication = { ...e.replication, ...o.replication };
+      if (o.contrast && !e.contrast) e.contrast = o.contrast;
+      if (o.engine && e.engine) ['exceed_topic', 'exceed_link', 'bh', 'f_note', 'fails', 'n_series', 'band'].forEach(k => { if (e.engine[k] == null && o.engine[k] != null) e.engine[k] = o.engine[k]; });
+      if (o.ledger) e.ledger = { ...o.ledger, ...e.ledger };
+    });
+    const oflat = {}; (O.flats || []).forEach(f => { oflat[f.hop_id] = f; });
+    (P.flats || []).forEach(f => { const o = oflat[f.hop_id]; if (o && o.name && o.name.length < f.name.length) f.short_name = o.name; });
+    if (O.event) ['place', 'strength', 'landfall', 'registered'].forEach(k => { if (P.event[k] == null && O.event[k] != null) P.event[k] = O.event[k]; });
+    if (O.story) { if (!P.story.hook && O.story.hook) P.story.hook = O.story.hook; if (!P.story.conversation_hook && O.story.conversation_hook && !(P.honesty && P.honesty.quiet)) P.story.conversation_hook = O.story.conversation_hook; }
+    if (O.travel && O.travel.usual_reach && P.travel) P.travel.usual_reach = O.travel.usual_reach;
+    if (O.rivals && O.rivals.length && !(P.rivals || []).length) P.rivals = O.rivals;
+    if (O.calibration && !P.calibration) P.calibration = O.calibration;
+    if (O.ledger && (!P.ledger || !P.ledger.length)) P.ledger = O.ledger;
+    if (O.links && O.links.csv && (!P.links || !P.links.csv || /^v2\//.test(P.links.csv))) { P.links = P.links || {}; P.links.csv_local = O.links.csv; }
+    P.overlay = { from: 'data/milton.json', fields: 'mechanism copy, donor chart line, forecast panel, replication strip, rival stone' };
+    return P;
+  }
 
   /* ---------- the story -> pond adapter: a graph node becomes a pad, a float or a reed by its tier; edges chain only when mediation is supported ---------- */
   function fromStories(items, reg) {
@@ -216,5 +292,5 @@
   }
   function countdown(close) { const d = daysUntil(close); return d > 1 ? `${d} days` : d === 1 ? '1 day' : d === 0 ? 'today' : `closed ${-d} day${d === -1 ? '' : 's'} ago`; }
 
-  global.RM = { $, esc, ls, reduce, compact, ROOT, CANON, SITE, STORAGE, DOMAINS, DLABEL, RINGS, TIER, KINDS, fmtDay, fmtDayY, today, daysUntil, ord, data, fromStories, travelText, tierGlyph, tierPill, archTag, archText, ARCH, url, storyHref, nav, track, analytics, sawRipple, watchAll, watched, toggleWatch, setWatchVersion, seen, noteSeen, gone, toast, copy, shareText, sendObj, frozen, thumb, winBar, countdown };
+  global.RM = { $, esc, ls, reduce, compact, ROOT, CANON, SITE, STORAGE, DOMAINS, DLABEL, RINGS, TIER, KINDS, fmtDay, fmtDayY, today, daysUntil, ord, pct, data, fromStories, normalize, overlay, travelText, tierGlyph, tierPill, archTag, archText, ARCH, url, storyHref, nav, track, analytics, sawRipple, watchAll, watched, toggleWatch, setWatchVersion, seen, noteSeen, gone, toast, copy, shareText, sendObj, frozen, thumb, winBar, countdown };
 })(window);
