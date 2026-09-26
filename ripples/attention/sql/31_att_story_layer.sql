@@ -917,3 +917,34 @@ begin
 end $$;
 revoke all on function ripples.rm_story_contract_test() from anon, authenticated, public;
 grant execute on function ripples.rm_story_contract_test() to service_role;
+
+-- ---------------------------------------------------------------------------------------------
+-- p7 (2026-09-26, orchestrator): per-event cap + fluke-sentence warming fix
+-- 1. ripples.att_story_cap_per_event(p_dead_ends 2, p_watching 3): flips featurable -> false
+--    (exclude_reason 'per_event_cap') for dead ends / Watching stops beyond the cap per event, so one
+--    event (e.g. Milton's 12 dead ends) can't crowd stories.json. Never touches tiers/evidence.
+--    pg_cron: att-story-cap-1 08:52, att-story-cap-2 09:19/09:39 (after each att-story-refresh run).
+--    First run: 47 capped (non_event featurable 18 -> 4, watching 114 -> 81).
+-- 2. ripples.rm_sentence (06): Measured sentence says "The fluke rate for links like this is still
+--    being calibrated." when f1 is null OR f1 <= 1 OR node f_warming (was "flukes about 1 in 1 times").
+--    rm_contract_test still ok. Applied as migrations att_story_per_event_cap, rm_sentence_fluke_warming.
+create or replace function ripples.att_story_cap_per_event(p_dead_ends int default 2, p_watching int default 3)
+returns jsonb language plpgsql security definer set search_path to '' as $f$
+declare n_capped int;
+begin
+  with ranked as (
+    select story_id, story_kind,
+           row_number() over (partition by event_id, story_kind order by story_score desc nulls last, story_id) rk
+    from ripples.att_story_candidates
+    where featurable and story_kind in ('non_event','watching')
+  ), cap as (
+    update ripples.att_story_candidates c
+       set featurable = false, exclude_reason = 'per_event_cap'
+      from ranked r
+     where c.story_id = r.story_id
+       and ((r.story_kind = 'non_event' and r.rk > p_dead_ends) or (r.story_kind = 'watching' and r.rk > p_watching))
+    returning 1)
+  select count(*) into n_capped from cap;
+  return jsonb_build_object('capped', n_capped);
+end $f$;
+revoke all on function ripples.att_story_cap_per_event(int,int) from public, anon, authenticated;

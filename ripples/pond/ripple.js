@@ -29,6 +29,8 @@
   const U0 = (P.untested || [])[0] || null, F0 = (P.flats || [])[0] || null, S = (P.shore || [])[0] || null;
   const hero = E ? { kind: 'effect', o: E } : U0 ? { kind: 'untested', o: U0 } : F0 ? { kind: 'flat', o: F0 } : null;
   const stopParam = q.get('stop');
+  const N = (P.story && P.story.next) || {};
+  const domKey = i => (P.domain_keys || [])[i] || null;
   const tierWord = e => e.published ? TIER[e.published.tier] : TIER[e.tier];          // the published tier is exactly what the gate returned
   const tierLine = e => e.published && e.published.reason ? e.published.text : tierWord(e);
   const NUMW = ['No', 'One', 'Two', 'Three', 'Four', 'Five', 'Six', 'Seven', 'Eight', 'Nine', 'Ten', 'Eleven', 'Twelve'];
@@ -240,8 +242,6 @@
   const glyph = t => `<svg aria-hidden="true"><use href="#g-${t === 'measured' ? 'measured' : t === 'likely' || t === 'contrast' ? 'half' : t === 'pattern' ? 'rule' : t === 'flat' ? 'flat' : 'dotted'}"/></svg>`;
 
   /* ---------- Follow this: the rabbit hole (every stop points to the next thing) ---------- */
-  const N = (P.story && P.story.next) || {};
-  const domKey = i => (P.domain_keys || [])[i] || null;
   function followLinks(o, kind) {
     const L = [];
     const dk = o && o.domain != null ? domKey(o.domain) : null, dl = dk ? RM.DLABEL[dk] || dk : null;

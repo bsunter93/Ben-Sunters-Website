@@ -96,6 +96,8 @@
       if (e.mechanism) e.mechanism = e.mechanism.filter(m => m && m.step);
       if (!e.id) e.id = 'h' + e.hop_id;
     });
+    (P.filtered || []).forEach(b => { if (b.domain == null) { const i = (P.domain_keys || []).indexOf('institutions'); b.domain = i >= 0 ? i : Math.max(0, (P.domains || []).length - 1); } if (b.magnitude == null) b.magnitude = .5; if (b.lag_days == null) b.lag_days = 1; });
+    (P.rivals || []).forEach(r => { if (r.days_before == null) r.days_before = 7; });
     ['flats', 'untested'].forEach(k => (P[k] || []).forEach((n, i) => { if (!n.id) n.id = 'h' + (n.hop_id || k + i); if (n.plain) n.plain = n.plain.replace(/ \(positive control\)/g, ''); if (n.lag_days == null) n.lag_days = 7; }));
     if (P.story) { ['story_sentence', 'short_title', 'share_line', 'headline', 'hook'].forEach(k => { if (P.story[k]) P.story[k] = P.story[k].replace(/ \(positive control\)/g, ''); }); if (P.story.tier == null && row) P.story.tier = null; }
     if (P.travel && P.travel.domains == null && P.travel.domains_crossed != null) P.travel.domains = P.travel.domains_crossed;
