@@ -1,0 +1,74 @@
+# Ripple Map WS-G: nightly second estimator (OWNER_DECISIONS D-12). BigQuery AI.CAUSAL_EFFECT over Likely/Measured
+# hops plus placebo (decoy) and control hops; results written back to Supabase through public.att_ce_ingest.
+# Keyless auth via Workload Identity Federation (D-8). Dry-run first; aborts if the estimate exceeds 5 GiB.
+name: Ripples causal effect (BigQuery)
+
+on:
+  schedule:
+    - cron: "17 3 * * *"   # 03:17 UTC, off-peak; after the previous morning's engine finalize (08:20 UTC)
+  workflow_dispatch:
+    inputs:
+      as_of:
+        description: "As-of date YYYY-MM-DD (blank = today UTC)"
+        required: false
+        default: ""
+      max_units:
+        description: "Max (hop, series) units this run"
+        required: false
+        default: "400"
+      decoy_sample:
+        description: "Decoy (placebo) hops sampled this run"
+        required: false
+        default: "120"
+      dry_run_only:
+        description: "Only dry-run and log bytes"
+        type: boolean
+        required: false
+        default: false
+
+permissions:
+  contents: read
+  id-token: write
+
+concurrency:
+  group: ripples-causal-effect
+  cancel-in-progress: false
+
+jobs:
+  causal-effect:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    env:
+      SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+      SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+      IN_AS_OF: ${{ inputs.as_of }}
+      IN_MAX_UNITS: ${{ inputs.max_units || '400' }}
+      IN_DECOY_SAMPLE: ${{ inputs.decoy_sample || '120' }}
+      IN_DRY_RUN_ONLY: ${{ inputs.dry_run_only && 'true' || 'false' }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - id: auth
+        uses: google-github-actions/auth@v2
+        with:
+          workload_identity_provider: ${{ vars.GCP_WIF_PROVIDER }}
+          service_account: ${{ vars.GCP_SA_EMAIL }}
+
+      - uses: google-github-actions/setup-gcloud@v2
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install BigQuery client
+        run: pip install --quiet -r ripples/tools/bq/requirements.txt
+
+      - name: Run AI.CAUSAL_EFFECT
+        working-directory: ripples/tools/bq
+        run: |
+          set -euo pipefail
+          args=(--project ripple-509716 --dataset ripples_ce --location US --max-gib 5
+                --max-units "${IN_MAX_UNITS}" --decoy-sample "${IN_DECOY_SAMPLE}")
+          if [[ -n "${IN_AS_OF}" ]]; then args+=(--as-of "${IN_AS_OF}"); fi
+          if [[ "${IN_DRY_RUN_ONLY}" == "true" ]]; then args+=(--dry-run-only); fi
+          python causal_effect.py "${args[@]}"

@@ -51,7 +51,7 @@ export const DOMAIN_WORD: Record<string, string> = {
 export type Node = {
   hop_id: number; depth: number; parent_hop: number | null; label: string; domain: string; kind: string; tier: string;
   provisional?: boolean; attention_ripple?: boolean; rho?: number | null; lag_days?: number | null; onset?: string | null;
-  p_1_in?: number | null; spark?: (number | null)[] | null; unit?: string; retracted?: unknown;
+  p_1_in?: number | null; spark?: (number | null)[] | null; unit?: string; retracted?: unknown; window_closed?: boolean;
 };
 export type Cascade = {
   event: { event_id: number; slug: string; label: string; emoji: string; family: string; sensitive: boolean; reconstructed: boolean;
@@ -138,7 +138,8 @@ function track(len: number, dashed: boolean, ink: string): El {
 function stripStops(c: Cascade): { stations: Node[]; watching: Node[]; extra: number } {
   const stations = c.nodes.filter((n) => n.tier === "measured" || n.tier === "likely")
     .sort((a, b) => (a.depth - b.depth) || String(a.onset ?? "").localeCompare(String(b.onset ?? "")) || a.hop_id - b.hop_id);
-  const watching = c.nodes.filter((n) => n.tier === "watching");
+  // a closed window is not "still watching": it is never drawn as an upcoming (dashed) stop
+  const watching = c.nodes.filter((n) => n.tier === "watching" && !n.window_closed);
   const maxTiles = 6;
   const s = stations.slice(0, maxTiles);
   const wv = watching.slice(0, Math.max(0, Math.min(2, maxTiles - s.length)));
@@ -232,17 +233,23 @@ export function stopCard(p: Hop): El {
   const unit = p.q1_normal?.unit ?? "x";
   const lag = p.headline.lag_days;
   const lagTxt = lag === null || lag === undefined ? "after" : Math.round(lag) === 0 ? "the same day as" : `+${Math.round(lag)} ${Math.round(lag) === 1 ? "day" : "days"} after`;
-  const tierWord = (TIER_WORD[p.tier] ?? p.tier) + (p.provisional ? " (provisional)" : "");
+  const retracted = p.tier === "retracted";
+  const tierWord = (TIER_WORD[p.tier] ?? p.tier) + (retracted && p.retracted?.date ? ` ${fmtDate(p.retracted.date)}` : "") + (p.provisional ? " (provisional)" : "");
+  // rates are differences in points: the flap shows the size, the words say above / below (never "+0.40 pts its normal")
+  const pts = unit === "points" && p.headline.rho !== null && p.headline.rho !== undefined;
+  const normalWords = pts ? `${Number(p.headline.rho) < 0 ? "below" : "above"} its normal, ${lagTxt}` : `its normal, ${lagTxt}`;
   const luck = p.q5_luck?.p_1_in ? `lookalikes ≈ 1 in ${p.q5_luck.p_1_in}` : "";
   const title = clip(p.node.label, 34);
   return frame(C.white, [
     topStrip(C.petrol, C.marigold, rightTag(C.petrol, clip(p.event.label, 22), !!p.event.reconstructed)),
     h("div", { position: "absolute", left: 60, right: 60, top: 106, fontFamily: "Anybody", fontWeight: 900, fontSize: Array.from(title).length > 22 ? 54 : 64, color: C.petrol, lineHeight: 1.02 }, title),
     h("div", { position: "absolute", left: 60, right: 60, top: 190, alignItems: "center", gap: 28 }, [
-      h("div", { background: C.marigold, border: `3px solid ${C.petrol}`, borderRadius: 10, padding: "4px 22px", fontFamily: "Anybody", fontWeight: 900, fontSize: 96, color: C.petrol, lineHeight: 1.1, alignItems: "flex-start" },
-        p.headline.rho === null || p.headline.rho === undefined ? "—" : multEls(p.headline.rho, unit, 96)),
+      // a retracted stop keeps its old number visible but struck through, on a grey flap (the tier line says "Retracted {date}")
+      h("div", { background: retracted ? C.band : C.marigold, border: `3px solid ${C.petrol}`, borderRadius: 10, padding: "4px 22px", fontFamily: "Anybody", fontWeight: 900, fontSize: 96,
+                 color: C.petrol, lineHeight: 1.1, alignItems: "flex-start", textDecoration: retracted ? "line-through" : "none" },
+        p.headline.rho === null || p.headline.rho === undefined ? "—" : pts ? Math.abs(Number(p.headline.rho)).toFixed(2) + " pts" : multEls(p.headline.rho, unit, 96)),
       h("div", { flexDirection: "column", fontFamily: "Plex", fontWeight: 700, fontSize: 40, color: C.petrol, lineHeight: 1.15, maxWidth: 640 }, [
-        h("div", {}, `its normal, ${lagTxt}`),
+        h("div", {}, normalWords),
         h("div", { alignItems: "center", gap: 10 }, [h("div", {}, p.event.emoji || "🔹"), h("div", {}, clip(p.parent.label, 26))]),
       ]),
     ]),
@@ -251,7 +258,7 @@ export function stopCard(p: Hop): El {
       : h("div", { position: "absolute", left: 100, top: 400, fontFamily: "Plex", fontWeight: 500, fontSize: 30, color: C.ink3 }, "Series chart on the evidence card"),
     h("div", { position: "absolute", left: 60, right: 60, top: 512, alignItems: "center", gap: 24, fontFamily: "Plex", fontWeight: 700, fontSize: 36, color: C.petrol }, [
       pips(p.tier, C.petrol),
-      h("div", { textDecoration: p.tier === "retracted" ? "line-through" : "none" }, tierWord),
+      h("div", {}, tierWord),
       luck ? h("div", { width: 10, height: 10, background: C.marigold, border: `2px solid ${C.petrol}` }, "") : null,
       luck ? h("div", {}, luck) : null,
     ].filter(Boolean)),
@@ -262,7 +269,7 @@ export function stopCard(p: Hop): El {
 // ---------- Shock of the day (marigold ground, petrol ink). Never for sensitive shocks (the caller serves brand) ----------
 export function shockCard(c: Cascade): El {
   const meas = c.nodes.filter((n) => n.tier === "measured");
-  const watch = c.nodes.filter((n) => n.tier === "watching").slice(0, Math.max(0, 5 - meas.length));
+  const watch = c.nodes.filter((n) => n.tier === "watching" && !n.window_closed).slice(0, Math.max(0, 5 - meas.length));
   const title = clip(c.event.label, 30);
   const sp = (c.event.spark ?? []).filter((v): v is number => v !== null && isFinite(v));
   // needle-kick trace along the bottom (ART teaser trace): the event's own ×normal, flat then the kick

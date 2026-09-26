@@ -10,6 +10,11 @@
 // 5. OG PNGs pre-rendered through ripples-og (&fresh=1 with the collector token): the brand card, each new line version, the stop
 //    cards of lines that changed, the day's shock card (never for a sensitive shock) and the week card. A PNG over 300 KB is not
 //    stored and fails the run (status 500, listed in `oversize`).
+// 6. Retry and withdrawal (after the 2026-09-26 verification): the bundle sends the text of every public frozen version whose
+//    v{k}.json is missing from Storage (checked against storage.objects), so a failed or interrupted upload is retried by every
+//    later run until it lands; and it lists `withdraw` paths — withheld versions (raw identifiers in public labels) with their
+//    cards, lines with no public version, hops no longer on a public line, and calendars of windows that have closed — which
+//    this run removes. Withheld versions stay frozen in the database and the ledger; they are just never served.
 // deno-lint-ignore-file no-explicit-any
 import type { SupabaseClient } from "jsr:@supabase/supabase-js@2";
 
@@ -84,12 +89,16 @@ export async function publishV2(db: SupabaseClient, sbUrl: string, token: string
     ups.push({ path: `${P}shocks/${day}.json`, body: bundle.shocks, type: J, cache: C3600 });
   }
   const newVersions: { e: number; k: number }[] = [];
+  const retried: string[] = [];
   const changedEvents = new Set<number>();
   for (const c of bundle.cascades ?? []) {
     if (c.latest) ups.push({ path: `${P}cascade/${c.event_id}.json`, body: c.latest, type: J, cache: C300 });
     const vs: any[] = c.versions ?? [];
     for (const v of vs) {
-      if (v.text) ups.push({ path: `${P}cascade/${c.event_id}/v${v.version}.json`, body: v.text, type: J, cache: IMM, frozen: true });
+      if (v.text) {
+        ups.push({ path: `${P}cascade/${c.event_id}/v${v.version}.json`, body: v.text, type: J, cache: IMM, frozen: true });
+        if (!v.new) retried.push(`${c.event_id}/v${v.version}`);   // missing from Storage (or full): uploaded again
+      }
       if (v.new) { newVersions.push({ e: c.event_id, k: v.version }); changedEvents.add(c.event_id); }
     }
     // per-line feed: one item per version
@@ -207,9 +216,20 @@ export async function publishV2(db: SupabaseClient, sbUrl: string, token: string
       } catch (e) { og.err.push(`${j.name}: ${String(e)}`); }
     });
   }
+  // ---- withdrawal: objects that must not stay public (computed in SQL from storage.objects; paths only under v2/) ----
+  const withdraw: string[] = (Array.isArray(bundle.withdraw) ? bundle.withdraw : [])
+    .filter((x: unknown) => typeof x === "string" && /^v2\/(cascade|feed|hop|og|ics)\/[A-Za-z0-9._\/-]+$/.test(x as string));
+  let removed = 0;
+  for (let i = 0; i < withdraw.length; i += 100) {
+    const chunk = withdraw.slice(i, i + 100);
+    const { data, error } = await db.storage.from(BUCKET).remove(chunk);
+    if (error) errors.push(`remove: ${error.message}`); else removed += (data ?? []).length;
+  }
   const ok = errors.length === 0 && og.oversize.length === 0 && og.err.length === 0;
   const res = {
     ok, as_of: day, freeze: bundle.freeze, lines_frozen: bundle.lines_frozen, new_versions: newVersions,
+    frozen_retried: retried.length, held: bundle.held ?? [], grants_fixed: bundle.grants_fixed ?? 0,
+    hops: (bundle.hops ?? []).length, hops_deferred: bundle.hops_deferred ?? 0, withdrawn: removed,
     uploaded: ups.length - errors.length - kept.length, frozen_kept: kept.length, errors, og,
     ms: Math.round(performance.now() - t0),
   };

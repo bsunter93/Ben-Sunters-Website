@@ -1,0 +1,549 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Ripple Map Summary</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:ital,wght@0,400;0,500;0,600;0,700;1,400&family=IBM+Plex+Serif:wght@500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --ink:#1c2426; --ink-2:#4a5558; --ink-3:#7b8588; --hair:#dfe4e4; --rule:#c9d0d0;
+  --teal:#0e5f5a; --teal-bg:#eaf3f2; --bar:#a8651f; --sunk:#f5f7f7;
+  --tbd-bg:#fff0c4; --tbd-ink:#6b4300; --tbd-edge:#d19a1f;
+  --petrol:#0B3A40; --marigold:#F2AE2E;
+}
+*{box-sizing:border-box}
+html{background:#fff}
+body{margin:0 auto;max-width:7in;padding:36px 16px 64px;background:#fff;color:var(--ink);
+  font-family:"IBM Plex Sans",system-ui,sans-serif;font-size:9.5pt;line-height:1.5;
+  -webkit-print-color-adjust:exact;print-color-adjust:exact;font-kerning:normal}
+@media print{body{padding:0;max-width:none}}
+h1{font-family:"IBM Plex Serif",Georgia,serif;font-weight:600;font-size:23pt;line-height:1.15;margin:0 0 6px;letter-spacing:-.005em}
+.lede{font-size:11pt;line-height:1.55;color:var(--ink-2);max-width:6.1in;margin:0 0 10px}
+.meta{font-family:"IBM Plex Mono",monospace;font-size:7.6pt;color:var(--ink-3);margin:0 0 6px}
+.draft{font-family:"IBM Plex Mono",monospace;font-size:7.6pt;color:var(--tbd-ink);background:var(--tbd-bg);
+  border-left:3px solid var(--tbd-edge);padding:5px 9px;margin:10px 0 4px}
+h2{font-family:"IBM Plex Mono",monospace;font-size:7.8pt;font-weight:600;letter-spacing:.22em;text-transform:uppercase;
+  color:var(--teal);margin:20px 0 9px;padding-bottom:6px;border-bottom:1px solid var(--hair);break-after:avoid}
+h2.part{font-size:8.2pt}
+h3{font-family:"IBM Plex Serif",Georgia,serif;font-weight:600;font-size:11pt;margin:15px 0 5px;break-after:avoid}
+h4{font-size:9.6pt;font-weight:700;margin:12px 0 3px;break-after:avoid}
+p{margin:0 0 8px;max-width:6.3in}
+p.wide{max-width:none}
+ul,ol{margin:0 0 8px;padding-left:17px;max-width:6.3in}
+li{margin:0 0 3px}
+li::marker{color:var(--ink-3)}
+strong{font-weight:700}
+code{font-family:"IBM Plex Mono",monospace;font-size:.86em;background:var(--teal-bg);color:#123c3a;padding:.5px 4px;border-radius:2px;white-space:nowrap}
+.claim{border-left:3px solid var(--bar);padding:1px 0 1px 13px;margin:9px 0;max-width:6.1in}
+.claim p{margin:0}
+.muted{color:var(--ink-2)}
+.small{font-size:8.4pt;color:var(--ink-2)}
+.tbd{font-family:"IBM Plex Mono",monospace;font-size:.84em;font-weight:500;background:var(--tbd-bg);color:var(--tbd-ink);
+  border:1px dashed var(--tbd-edge);border-radius:2px;padding:0 3px;white-space:normal;box-decoration-break:clone;-webkit-box-decoration-break:clone}
+.stats{display:grid;grid-template-columns:repeat(4,1fr);border-top:1px solid var(--hair);border-bottom:1px solid var(--hair);margin:6px 0 12px}
+.stats > div{padding:9px 10px 9px 0;border-right:1px solid var(--hair);min-width:0}
+.stats > div + div{padding-left:10px}
+.stats > div:last-child{border-right:0}
+.stats .n{font-family:"IBM Plex Mono",monospace;font-size:13pt;font-weight:600;line-height:1.3;display:block;min-height:1.3em}
+.stats .n .tbd{font-size:7.4pt;display:inline-block;line-height:1.35}
+.stats .l{font-family:"IBM Plex Mono",monospace;font-size:6.9pt;letter-spacing:.08em;text-transform:uppercase;color:var(--ink-3);display:block;margin-top:3px}
+table{width:100%;border-collapse:collapse;margin:4px 0 12px;font-size:8.4pt;line-height:1.45}
+thead{display:table-header-group}
+th{font-family:"IBM Plex Mono",monospace;font-weight:500;font-size:6.9pt;letter-spacing:.1em;text-transform:uppercase;color:var(--ink-3);
+  text-align:left;padding:5px 8px 6px 0;border-bottom:1px solid var(--rule);vertical-align:bottom}
+td{padding:6px 10px 6px 0;border-bottom:1px solid var(--hair);vertical-align:top}
+tr{break-inside:avoid}
+td.num,th.num{text-align:right;font-family:"IBM Plex Mono",monospace;padding-right:0}
+td.tier{font-family:"IBM Plex Mono",monospace;font-size:7.8pt;white-space:nowrap}
+td b{font-weight:600}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:26px;margin:6px 0 8px}
+.two ul{margin:0}
+.kv{width:100%;font-size:8.8pt}
+.kv td{padding:5px 0;border-bottom:1px solid var(--hair)}
+.kv td:last-child{text-align:right;font-family:"IBM Plex Mono",monospace;padding-left:8px}
+figure{margin:8px 0 12px;break-inside:avoid}
+figcaption{font-size:7.8pt;color:var(--ink-2);border-top:1px solid var(--hair);padding-top:5px;margin-top:4px}
+.pb{break-before:page}
+.avoid{break-inside:avoid}
+.eq{font-family:"IBM Plex Mono",monospace;font-size:8.2pt;background:var(--sunk);padding:6px 10px;margin:4px 0 9px;border-radius:2px;max-width:6.3in}
+.tag{font-family:"IBM Plex Mono",monospace;font-size:7pt;letter-spacing:.06em;text-transform:uppercase;color:var(--ink-3)}
+.reg{columns:2;column-gap:24px;font-size:8pt;padding-left:18px;max-width:none}
+.reg li{break-inside:avoid;margin-bottom:2px}
+</style>
+</head>
+<body>
+
+<header>
+<h1>Ripple Map</h1>
+<p class="lede">A public explorer that traces where today's upstream shocks show up downstream (travel, grid demand, downloads, jobless claims, prediction markets, institutions), with a statistical test, a placebo control and a denominator on every hop.</p>
+<p class="meta">Executive and technical summary · Knock⌃On · Benjamin J. Sunter · bensunter.com/ripples · method v6.0 · <span class="tbd">{{TBD: document date and build commit}}</span></p>
+<div class="draft">DRAFT. Every {{TBD: …}} value must be read from the final build before this is shared. Thresholds, caps and schedules are method v6.0 as specified; <span class="tbd">{{TBD: confirm built SQL matches method v6.0 constants}}</span>.</div>
+</header>
+
+<!-- ============================ EXECUTIVE SUMMARY ============================ -->
+
+<h2>1 · What it is and the thesis</h2>
+<p>Each day the Ripple Map picks the day's upstream shocks (a hurricane, a heat wave, a model release, a macro release, a policy decision) and draws each as a <strong>line</strong>. A <strong>stop</strong> is a downstream series in another domain that moved against its own weekday and seasonal normal, after the shock, by more than placebo pairings explain. Lines grow for weeks as slower channels report. It is an interactive explorer: no scores or streaks, and not an investment tool.</p>
+<p><strong>Thesis: uncover hidden downstream impacts of upstream events, with statistical attribution.</strong></p>
+<div class="claim"><p><strong>Hidden impact lives in outcome series, not attention.</strong> v5's Wikipedia hops were sound but obvious: on 2026-09-23, 82 of 716 real candidates passed against 5 of 292 decoys, almost all celebrity co-reads. v6 targets outcomes (travel, grid, claims, downloads, markets, filings); attention-only hops are capped at Likely.</p></div>
+<div class="claim"><p><strong>A link is only worth showing with its denominator.</strong> In v1, 0 of 120 "discoveries" survived a placebo test. Every line prints paths tested, paths moved, expected flukes, and a decoy "control ripple" run through identical code. The copy says "consistent with", never "caused".</p></div>
+
+<h2>2 · Why now</h2>
+<ul>
+<li><strong>Outcome data is free, official and keyed.</strong> FRED, BLS, EIA, Census and NOAA keys are in Vault: hourly grid demand for ~65 regions since 2015, daily air travellers since 2019, weekly state claims.</li>
+<li><strong>A second estimator exists, and the plumbing is built.</strong> BigQuery's preview <code>AI.CAUSAL_EFFECT</code> gives independent counterfactuals; collectors, ledger and publishing carry over from v4 and v5.</li>
+<li><strong>Nobody publishes the null.</strong> Second-order commentary is plentiful and narrative; a dated, denominated record of what actually showed up does not exist.</li>
+</ul>
+
+<h2>3 · Market gap</h2>
+<table>
+<thead><tr><th style="width:38%">Product</th><th>Where it stops</th></tr></thead>
+<tbody>
+<tr><td>Ripple News (iOS, AI ripple explainers)</td><td>Narrative only; no baseline, placebo or null</td></tr>
+<tr><td>TickerTrends; Kalshi, Polymarket</td><td>First order, one domain; prices, not attribution</td></tr>
+<tr><td>RavenPack, Dataminr, Permutable AI</td><td>News to prices and alerts; no published denominators</td></tr>
+<tr><td>Futures Platform; Interos, Everstream</td><td>Scenario wheels or one supply-chain domain; enterprise-only</td></tr>
+<tr><td>ForecastBench, LEAF</td><td>Academic benchmarks, not a product</td></tr>
+</tbody>
+</table>
+<p class="small">None covers more than two of: live events, cascades past the second order, per-hop placebo tests, public denominators. Risks: markets listing knock-on contracts; foresight vendors adding verification. <span class="tbd">{{TBD: re-verify competitors and prices}}</span></p>
+
+<h2>4 · What is built</h2>
+<div class="stats">
+<div><span class="n"><span class="tbd">{{TBD: n sources}}</span></span><span class="l">Sources live</span></div>
+<div><span class="n"><span class="tbd">{{TBD: n series}}</span></span><span class="l">Series stored</span></div>
+<div><span class="n"><span class="tbd">{{TBD: n tests / 7 d}}</span></span><span class="l">Hops tested, 7 days</span></div>
+<div><span class="n"><span class="tbd">{{TBD: n Measured}}</span></span><span class="l">Measured hops</span></div>
+</div>
+<p>Collectors, mechanism graph, SQL engine, ledger, publishing, share cards and the Ripple Map; the explorer, archive and open data are free. Lines published <span class="tbd">{{TBD: n live / n reconstructed lines}}</span>. Workstream status: §8; gates: §14.</p>
+
+<h2>5 · Honest limits</h2>
+<ul>
+<li><strong>Consistent with, not caused.</strong> No effect shares, dollar or job amounts, chain probabilities, or claims outside the (mostly US) measured geography.</li>
+<li><strong>Slow channels are slow.</strong> Jobs and institutions take 28–90 days; the cold-start hero is a labelled <em>reconstructed</em> line.</li>
+<li><strong>Warm-up.</strong> News, TV, Bluesky, charts and Kalshi had 0–2 days of history on 2026-09-25; they cannot support Measured until κ ≥ 0.5.</li>
+<li><strong>Equities are derived-only</strong> (<span class="tbd">{{TBD: equities collector enabled or disabled at launch}}</span>); input-output links failed as evidence (t = −1.52).</li>
+<li><strong>Thin margins.</strong> Database 307 of 400 MB at audit, 370–390 MB projected; one operator.</li>
+</ul>
+
+<h2>6 · Business model and price test</h2>
+<table>
+<thead><tr><th style="width:36%">Offer · price</th><th>Status and decision rule</th></tr></thead>
+<tbody>
+<tr><td>Support · pay what you want, from $2</td><td>Hidden until the Stripe link exists; unlocks nothing; &lt; 0.3% paying after 30 days → footer link</td></tr>
+<tr><td>Report $149 · design partner $500 / 60 days</td><td>Live, concierge, refundable; "5 slots" is literal; orders count toward the B2B clock</td></tr>
+<tr><td>Radar alerts · $49 / month</td><td>Planned; refundable deposits from day 15; build only after ≥ 10 card-backed</td></tr>
+<tr><td>Publisher pilot · $300–1,000 / mo (est.)</td><td>Conversations only; one signed pilot in 60 days justifies an embed</td></tr>
+</tbody>
+</table>
+<p><strong>Kill clocks.</strong> Day 60 (<span class="tbd">{{TBD: launch + 60 date}}</span>): fewer than 2 card-backed actions ends B2B work. Day 90 (<span class="tbd">{{TBD: launch + 90 date}}</span>): below <span class="tbd">{{TBD: day-90 audience threshold}}</span> means portfolio mode, with 30 days' notice and the archive kept up.</p>
+
+<h2>7 · Owner asks</h2>
+<ul>
+<li><strong>Blocking:</strong> publish <code>/ripples/methods/</code> or add a contact to both User-Agents (its 404 keeps the Wikimedia gate shut); merge the build branch.</li>
+<li><strong>Soon:</strong> Supabase Pro before 330 MB; Stripe links in <code>config.js</code>. <strong>Later:</strong> the shared-IP 429 rule; delete 14 <code>probe-*</code> functions; clickstream secrets, YouTube key; permission emails and legal review before any paid tier.</li>
+</ul>
+
+<!-- ============================ TECHNICAL ============================ -->
+
+<h2 class="pb">8 · Architecture</h2>
+<p><strong>Postgres is the engine; everything the public sees is a projection.</strong> Collectors write daily aggregates. The engine runs as SQL under <code>pg_cron</code> between 05:50 and 08:45 UTC and writes an append-only, hash-chained ledger. The publisher then freezes versioned JSON, pre-renders share cards, and regenerates static stubs on GitHub Pages. No request from a visitor ever reaches a source.</p>
+<figure>
+<svg viewBox="0 0 672 318" width="100%" role="img" aria-label="Architecture: sources feed a Postgres engine, which writes a ledger and frozen versions, which are projected to static JSON, share cards, pages and feeds" style="font-family:'IBM Plex Sans',sans-serif">
+  <defs>
+    <marker id="ah" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="6" markerHeight="6" orient="auto"><path d="M0,0 L8,4 L0,8 z" fill="#8a9496"/></marker>
+  </defs>
+  <g font-family="IBM Plex Mono, monospace" font-size="7.2" letter-spacing="1.2" fill="#7b8588">
+    <text x="0" y="10">SOURCES</text><text x="182" y="10">ENGINE · POSTGRES + PG_CRON (UTC)</text>
+    <text x="436" y="10">STATE OF RECORD</text><text x="566" y="10">PROJECTIONS</text>
+  </g>
+  <!-- sources -->
+  <g font-size="8.6">
+    <g><rect x="0" y="20" width="160" height="36" fill="#eef2f3"/><rect x="0" y="20" width="3" height="36" fill="#0B3A40"/>
+      <text x="9" y="34" font-weight="600" fill="#1c2426">Attention collectors</text><text x="9" y="47" font-size="7.2" fill="#5d686b">Wikipedia · HN · SE · Bluesky · GDELT · TV</text></g>
+    <g><rect x="0" y="62" width="160" height="36" fill="#eef2f3"/><rect x="0" y="62" width="3" height="36" fill="#0B3A40"/>
+      <text x="9" y="76" font-weight="600" fill="#1c2426">Outcome collectors</text><text x="9" y="89" font-size="7.2" fill="#5d686b">TSA · MTA · EIA-930 · FRED/BLS · DOL · FEMA</text></g>
+    <g><rect x="0" y="104" width="160" height="36" fill="#eef2f3"/><rect x="0" y="104" width="3" height="36" fill="#0B3A40"/>
+      <text x="9" y="118" font-weight="600" fill="#1c2426">Markets and builders</text><text x="9" y="131" font-size="7.2" fill="#5d686b">Polymarket · Kalshi · npm · PyPI · equities (z)</text></g>
+    <g><rect x="0" y="146" width="160" height="36" fill="#eef2f3"/><rect x="0" y="146" width="3" height="36" fill="#0B3A40"/>
+      <text x="9" y="160" font-weight="600" fill="#1c2426">Discovery feeds</text><text x="9" y="173" font-size="7.2" fill="#5d686b">Trends RSS · wiki top lists · hazard feeds</text></g>
+    <g><rect x="0" y="188" width="160" height="36" fill="#f2f2f2"/><rect x="0" y="188" width="3" height="36" fill="#a3aaac"/>
+      <text x="9" y="202" font-weight="600" fill="#1c2426">Mechanism inputs</text><text x="9" y="215" font-size="7.2" fill="#5d686b">Wikidata · mechanism library · BEA IO (ideas)</text></g>
+    <g><rect x="0" y="238" width="160" height="44" fill="#fdf6e8" stroke="#d19a1f" stroke-dasharray="3 2"/>
+      <text x="9" y="253" font-weight="600" fill="#1c2426">BigQuery (keyless, WIF)</text><text x="9" y="265" font-size="7.2" fill="#5d686b">AI.CAUSAL_EFFECT second opinion</text><text x="9" y="276" font-size="7.2" fill="#5d686b">public pageviews backfill</text></g>
+  </g>
+  <!-- connectors sources -> engine -->
+  <g fill="none" stroke="#8a9496" stroke-width=".9">
+    <path d="M160,38 C171,38 170,120 180,120"/><path d="M160,80 C171,80 170,120 180,120"/>
+    <path d="M160,122 L180,122"/><path d="M160,164 C171,164 170,124 180,124"/>
+    <path d="M160,206 C171,206 170,126 180,126" stroke-dasharray="2 2"/>
+  </g>
+  <path d="M160,260 C172,260 170,207 180,207" fill="none" stroke="#d19a1f" stroke-width=".9" stroke-dasharray="3 2" marker-end="url(#ah)"/>
+  <!-- engine -->
+  <rect x="182" y="20" width="232" height="262" fill="#f4f1f6"/>
+  <rect x="182" y="20" width="3" height="262" fill="#6d4a86"/>
+  <g font-size="8.4" fill="#1c2426">
+    <g font-family="IBM Plex Mono, monospace" font-size="7.2" fill="#6d4a86">
+      <text x="192" y="37">05:50</text><text x="192" y="74">07:31</text><text x="192" y="111">07:34</text><text x="192" y="148">07:35</text>
+      <text x="192" y="185">08:20</text><text x="192" y="222">08:25</text><text x="192" y="259">Sun</text>
+    </g>
+    <text x="234" y="37" font-weight="600">Build baselines</text><text x="234" y="48" font-size="7.2" fill="#5d686b">abnormal-response arrays per series</text>
+    <line x1="190" x2="408" y1="56" y2="56" stroke="#e1dbe6"/>
+    <text x="234" y="74" font-weight="600">Pick events</text><text x="234" y="85" font-size="7.2" fill="#5d686b">12 real shocks + 8 matched decoys</text>
+    <line x1="190" x2="408" y1="93" y2="93" stroke="#e1dbe6"/>
+    <text x="234" y="111" font-weight="600">Freeze candidates, then hash</text><text x="234" y="122" font-size="7.2" fill="#5d686b">paths, priors, BH weights, looks, before any data</text>
+    <line x1="190" x2="408" y1="130" y2="130" stroke="#e1dbe6"/>
+    <text x="234" y="148" font-weight="600">Test hops × 3 placebo families</text><text x="234" y="159" font-size="7.2" fill="#5d686b">batched until 08:18 · hard cap 1,600 tests/day</text>
+    <line x1="190" x2="408" y1="167" y2="167" stroke="#e1dbe6"/>
+    <text x="234" y="185" font-weight="600">Finalize</text><text x="234" y="196" font-size="7.2" fill="#5d686b">weighted BH · tiers · chaining · retraction</text>
+    <line x1="190" x2="408" y1="204" y2="204" stroke="#e1dbe6"/>
+    <text x="234" y="222" font-weight="600">Publish, then expand</text><text x="234" y="233" font-size="7.2" fill="#5d686b">versions frozen · depth 2–3 frozen next day</text>
+    <line x1="190" x2="408" y1="241" y2="241" stroke="#e1dbe6"/>
+    <text x="234" y="259" font-weight="600">Calibrate (weekly)</text><text x="234" y="270" font-size="7.2" fill="#5d686b">decoy FDR · KS · power · controls · breaker</text>
+  </g>
+  <!-- engine -> record -->
+  <g fill="none" stroke="#8a9496" stroke-width=".9">
+    <path d="M414,108 C425,108 424,52 436,52" marker-end="url(#ah)"/>
+    <path d="M414,190 C425,190 424,124 436,124" marker-end="url(#ah)"/>
+    <path d="M414,262 C425,262 424,206 436,206" marker-end="url(#ah)"/>
+  </g>
+  <!-- record -->
+  <g font-size="8.4" fill="#1c2426">
+    <rect x="436" y="20" width="114" height="64" fill="#f6efe7"/><rect x="436" y="20" width="3" height="64" fill="#a8651f"/>
+    <text x="445" y="35" font-weight="600">Ledger</text><text x="445" y="47" font-size="7.2" fill="#5d686b">append-only, hash-chained</text>
+    <text x="445" y="58" font-size="7.2" fill="#5d686b">freeze · register · resolve</text><text x="445" y="69" font-size="7.2" fill="#5d686b">retract · breaker · control</text>
+    <rect x="436" y="92" width="114" height="64" fill="#f6efe7"/><rect x="436" y="92" width="3" height="64" fill="#a8651f"/>
+    <text x="445" y="107" font-weight="600">Cascade versions</text><text x="445" y="119" font-size="7.2" fill="#5d686b">frozen on every publish</text>
+    <text x="445" y="130" font-size="7.2" fill="#5d686b">payload hash per version</text><text x="445" y="141" font-size="7.2" fill="#5d686b">never re-rendered</text>
+    <rect x="436" y="164" width="114" height="64" fill="#f6efe7"/><rect x="436" y="164" width="3" height="64" fill="#a8651f"/>
+    <text x="445" y="179" font-weight="600">Calibration (public)</text><text x="445" y="191" font-size="7.2" fill="#5d686b">weekly Receipts payload</text>
+    <text x="445" y="202" font-size="7.2" fill="#5d686b">FDR · KS · power · track</text><text x="445" y="213" font-size="7.2" fill="#5d686b">record · retractions</text>
+  </g>
+  <g fill="none" stroke="#8a9496" stroke-width=".9">
+    <path d="M550,124 C560,124 558,40 568,40" marker-end="url(#ah)"/><path d="M550,124 C560,124 558,88 568,88" marker-end="url(#ah)"/>
+    <path d="M550,124 L568,136" marker-end="url(#ah)"/><path d="M550,124 C560,124 558,184 568,184" marker-end="url(#ah)"/>
+    <path d="M550,196 C560,196 558,232 568,232" marker-end="url(#ah)"/>
+  </g>
+  <!-- projections -->
+  <g font-size="8.4" fill="#1c2426">
+    <rect x="568" y="20" width="104" height="38" fill="#eef2f3"/><rect x="568" y="20" width="3" height="38" fill="#0B3A40"/>
+    <text x="577" y="35" font-weight="600">Storage v2 JSON</text><text x="577" y="47" font-size="7.2" fill="#5d686b">RPC fallback, same shapes</text>
+    <rect x="568" y="68" width="104" height="38" fill="#eef2f3"/><rect x="568" y="68" width="3" height="38" fill="#0B3A40"/>
+    <text x="577" y="83" font-weight="600">Share cards</text><text x="577" y="95" font-size="7.2" fill="#5d686b">pre-rendered OG PNGs</text>
+    <rect x="568" y="116" width="104" height="38" fill="#eef2f3"/><rect x="568" y="116" width="3" height="38" fill="#0B3A40"/>
+    <text x="577" y="131" font-weight="600">Ripple Map pages</text><text x="577" y="143" font-size="7.2" fill="#5d686b">static stubs, GitHub Pages</text>
+    <rect x="568" y="164" width="104" height="38" fill="#eef2f3"/><rect x="568" y="164" width="3" height="38" fill="#0B3A40"/>
+    <text x="577" y="179" font-weight="600">Feeds and data</text><text x="577" y="191" font-size="7.2" fill="#5d686b">RSS · .ics · CSV (CC BY)</text>
+    <rect x="568" y="212" width="104" height="38" fill="#eef2f3"/><rect x="568" y="212" width="3" height="38" fill="#0B3A40"/>
+    <text x="577" y="227" font-weight="600">Methods, Receipts</text><text x="577" y="239" font-size="7.2" fill="#5d686b">gates, calibration, ledger</text>
+  </g>
+  <text x="0" y="306" font-size="7.4" fill="#7b8588">Grey inputs propose routes and never count as evidence. The dashed estimator is a second opinion: Measured requires it to agree.</text>
+</svg>
+<figcaption>Projections are disposable and can be regenerated. Nothing downstream of the ledger is ever the record, and a published version is never edited; corrections become new versions or retractions.</figcaption>
+</figure>
+
+<h3>The daily run</h3>
+<table>
+<thead><tr><th style="width:15%">UTC</th><th style="width:27%">Step</th><th style="width:34%">Does</th><th>Replayable</th></tr></thead>
+<tbody>
+<tr><td class="tier">05:50</td><td><code>att_build_zvec</code></td><td>Rebuilds 420-day abnormal-response arrays for series with new data</td><td>Yes, pure function of stored observations</td></tr>
+<tr><td class="tier">07:31</td><td><code>att_pick_events</code></td><td>12 real shocks and 8 decoy epicentres, with families and sensitivity flags</td><td>Yes, deterministic given the day's attention scores</td></tr>
+<tr><td class="tier">07:34</td><td><code>att_freeze_candidates</code></td><td>Writes the day's test family and its hash to the ledger</td><td>Verifiable: the hash must recompute from stored candidates</td></tr>
+<tr><td class="tier">07:35–08:18</td><td><code>att_test_hop</code>, placebos</td><td>Single-hop test plus date, link and topic placebos through identical code</td><td>Yes; draws are seeded</td></tr>
+<tr><td class="tier">08:20</td><td><code>att_finalize</code></td><td>Weighted BH, tiers, fluke rates, attribution share, chaining, retractions</td><td>Yes; writes <code>resolve</code> and <code>retract</code> ledger rows</td></tr>
+<tr><td class="tier">08:25, 08:40</td><td><code>att_publish_cascades</code></td><td>Freezes versions, mirrors JSON, renders share cards, regenerates stubs</td><td>Idempotent</td></tr>
+<tr><td class="tier">08:45</td><td><code>att_expand</code></td><td>Proposes depth 2–3 children of Likely-or-better hops, frozen the next morning</td><td>Yes</td></tr>
+<tr><td class="tier">08:50</td><td>Freshness watchdog</td><td>Fails loudly if <code>v2/shocks/latest.json</code> is stale</td><td>n/a</td></tr>
+<tr><td class="tier">Nightly</td><td>BigQuery second opinion</td><td>Exports Likely and Measured series, runs <code>AI.CAUSAL_EFFECT</code>, writes effects back</td><td>Yes; dry-run bytes logged</td></tr>
+</tbody>
+</table>
+
+<h3>Build status by workstream</h3>
+<table>
+<thead><tr><th style="width:9%">WS</th><th style="width:45%">Scope</th><th>Status</th></tr></thead>
+<tbody>
+<tr><td class="tier">A</td><td>Outcome data and mechanism graph: EIA-930, FRED/BLS, DOL, NOAA, market backfills, Wikidata claims, family library</td><td><span class="tbd">{{TBD: WS-A status}}</span></td></tr>
+<tr><td class="tier">B</td><td>Engine core: baselines, freeze, test, placebos, weighted BH, tiers, chaining, retraction, ledger, calibration</td><td><span class="tbd">{{TBD: WS-B status}}</span></td></tr>
+<tr><td class="tier">C</td><td>Public RPCs, publish to Storage, feeds, share-card variants, static stubs</td><td><span class="tbd">{{TBD: WS-C status}}</span></td></tr>
+<tr><td class="tier">D</td><td>Ripple Map front end (home, line, evidence sheet, map, lands, week, archive, Receipts); v5 game surfaces cut</td><td><span class="tbd">{{TBD: WS-D status}}</span></td></tr>
+<tr><td class="tier">E</td><td>Reconstructed archive, positive controls, launch content</td><td><span class="tbd">{{TBD: WS-E status}}</span></td></tr>
+<tr><td class="tier">F</td><td>Integration, calibration proof, launch gates, decommission audit, watchdog</td><td><span class="tbd">{{TBD: WS-F status}}</span></td></tr>
+<tr><td class="tier">BQ</td><td>Nightly <code>AI.CAUSAL_EFFECT</code> Action and pageview backfill (D-12)</td><td><span class="tbd">{{TBD: BigQuery Action status}}</span></td></tr>
+</tbody>
+</table>
+
+<h2>9 · Data sources</h2>
+<p>Every source has a row in the source registry with a tier, a kill switch and the surfaces it may feed. Turning a source off removes its data from every page on the next build.</p>
+<table>
+<thead><tr><th style="width:19%">Source</th><th style="width:28%">Gives</th><th style="width:37%">Known weakness</th><th>Licence tier</th></tr></thead>
+<tbody>
+<tr><td>Wikipedia pageviews (REST; BigQuery public)</td><td>Daily readers per article, all languages, 2015 on</td><td>Attention, not behaviour; REST is rate-limited (429 on 2026-09-25); bot spikes</td><td class="tier">G · CC0</td></tr>
+<tr><td>Hacker News, Stack Exchange</td><td>Builder chatter by term, 400-day history</td><td>Term ambiguity; Stack Exchange volume has fallen sharply, so shares are used, not counts</td><td class="tier">G / Y</td></tr>
+<tr><td>Bluesky Jetstream, Mastodon</td><td>Counts of all public posts by term</td><td>Two days of history at audit; 36-hour replay buffer; spam</td><td class="tier">G / Y</td></tr>
+<tr><td>GDELT raw files, news sitemaps, IA TV</td><td>News and TV coverage; co-mention edges</td><td>0–2 days stored; a channel that proposed a link cannot confirm it</td><td class="tier">G / Y</td></tr>
+<tr><td>Google Trends RSS</td><td>Discovery of trending terms by country</td><td>No series until the Trends API alpha is granted</td><td class="tier">Y</td></tr>
+<tr><td>Polymarket, Kalshi</td><td>Prediction-market prices and volume</td><td>Thin markets; volume has no history; Kalshi 1 day stored</td><td class="tier">Y</td></tr>
+<tr><td>npm, PyPI, GitHub, Hugging Face</td><td>Builder adoption: downloads, stars, trending</td><td>CI-bot inflation; PyPI capped at 180 days; GitHub and HF are snapshots</td><td class="tier">G / Y</td></tr>
+<tr><td>TSA, MTA, Citi Bike</td><td>Daily air travellers (2019 on), NYC transit, bike trips</td><td>Air travel is national only; transit is New York only</td><td class="tier">G</td></tr>
+<tr><td>EIA-930 (bulk CSV)</td><td>Hourly grid demand, ~65 balancing authorities, 2015 on</td><td><code>api.eia.gov</code> robots.txt returned 403, so bulk files only and EIA price series are off</td><td class="tier">G · public domain</td></tr>
+<tr><td>FRED (incl. BLS series), DOL claims</td><td>Rates, FX, spreads, CES jobs, CPI items, weekly state claims</td><td>Third-party series are derived-only; monthly lag; revisions (vintages stored)</td><td class="tier">O key / G</td></tr>
+<tr><td>NOAA CDO (GHCN-Daily)</td><td>Station weather for heat, cold and storm baselines</td><td>5 req/s and 10,000/day; station gaps</td><td class="tier">O token / G</td></tr>
+<tr><td>FEMA, NWS warnings (IEM), USGS, GDACS</td><td>Declarations, warnings, felt reports: shocks and institutional responses</td><td>US-centric; declarations lag events</td><td class="tier">G</td></tr>
+<tr><td>USAspending, SEC EDGAR full-text</td><td>Federal spending terms; filings that mention an event</td><td>Monthly grain; EDGAR capped at 200 requests/day</td><td class="tier">G</td></tr>
+<tr><td>Indeed Hiring Lab</td><td>Job postings for 47 US sectors</td><td>Sector level only, no geography; attribution required</td><td class="tier">G · CC BY</td></tr>
+<tr><td>Twelve Data, Alpha Vantage</td><td>Sector ETF moves, stored as derived z-scores</td><td>25 calls/day on Alpha Vantage; raw prices never republished; no tickers in open data</td><td class="tier">O* (D-10)</td></tr>
+<tr><td>AniList, Apple charts, Steam, Open Library, Tranco</td><td>Consumption ranks and charts</td><td>One-day snapshots; need about 90 days; AniList is non-commercial above a revenue cap</td><td class="tier">Y</td></tr>
+<tr><td>Wikidata EntityData</td><td>Typed relations (about 22 whitelisted properties)</td><td>Coverage is uneven outside companies and places</td><td class="tier">G · CC0</td></tr>
+<tr><td>BEA 2017 input-output</td><td>Industry route ideas</td><td>Failed as evidence (t = −1.52); never tested, shown grey</td><td class="tier">G · ideas only</td></tr>
+</tbody>
+</table>
+<p class="small">Tiers: G green (official or open), Y yellow (no barrier but undocumented, non-commercial or third-party; derived use only), O issued key, O* keyed API on a host whose robots.txt disallows the path, allowed by owner decision. Coverage at launch: <span class="tbd">{{TBD: n series with ≥ 90 days per channel}}</span>.</p>
+
+<h2>10 · The cascade engine</h2>
+<p><strong>A typed mechanism graph decides what to test. An event study with three placebo families decides whether the downstream series moved. Replication across past events of the same family decides how much to trust a class of link.</strong> Candidates are frozen and hashed before any post-onset number is read, which closes the forking path that produced v1's 0 of 120.</p>
+
+<h3>Objects</h3>
+<ul>
+<li><strong>Series and channels.</strong> Every series belongs to a channel, and every channel is either <em>attention</em> (reading, search, social, news, TV) or <em>outcome</em> (prediction markets, builders, consumption, physical world, jobs, institutions, economy). Each channel has a fixed statistic and clock, and the statistic is never chosen per hop.</li>
+<li><strong>Shocks.</strong> The onset is the first day an attention run crosses its threshold. Scheduled events (FOMC, CPI, jobs report, forecast landfalls, announced releases) are registered <em>before</em> they happen. Each shock gets a family: hazard, tech, policy, media, person or other.</li>
+<li><strong>Decoys.</strong> Eight a day, matched to real shocks on family, baseline decile and date, and calm over the previous 14 days. They go through the same generation, tests, looks and chaining. Every tier a decoy earns is false by construction.</li>
+<li><strong>Candidate paths.</strong> Family mappers (for example storm → state → air travel, grid demand, claims, warnings), the mechanism library, Wikidata neighbours, capped Wikipedia outlinks (attention-only) and co-mentions, with at most 60 per event. Input-output links generate no tests.</li>
+</ul>
+
+<h3>Baselines</h3>
+<p>Each series is compared only with itself. Counts are logged and platform totals become shares. Weekday effects are shrunk toward the source's pooled effect, and holidays are removed. A year-ago term is fitted where there are at least 400 days of history; for travel, grid and transit it is the main seasonal control, restricted to the same weekday.</p>
+<div class="eq">AR<sub>t</sub> = (x̃<sub>t</sub> − ŷ<sub>t</sub>) / σ − c<sub>t</sub> &nbsp;·&nbsp; baseline B = [t<sub>p</sub> − 111, t<sub>p</sub> − 21]</div>
+<p>σ is a robust scale (1.4826·MAD, with floors for low counts). ŷ adds a Theil–Sen growth term only when growth over 60 days exceeds σ, so steady adoption growth does not read as impact. The common-shock term c<sub>t</sub> subtracts the day's median z across a source's panel. Regional series are demeaned against their national aggregate. The per-channel statistic is a window peak (attention, markets, daily economics), a cumulative abnormal response scaled for autocorrelation (builders, consumption, physical), or the z of the first release covering the window (jobs, monthly institutions and prices).</p>
+
+<h3>Placebo families</h3>
+<table>
+<thead><tr><th style="width:15%">Family</th><th style="width:36%">Draws</th><th style="width:25%">Absorbs</th><th>Known weakness</th></tr></thead>
+<tbody>
+<tr><td><b>Date</b></td><td>200 weekday-aligned fake onsets of the real pair over 2 years (up to 7 for long series); always t−364 and t−371; 40% season-matched for physical and economic series</td><td>The series' own spikiness, seasonality, autocorrelation and repeated looks</td><td>Needs history; a new series cannot reach Measured</td></tr>
+<tr><td><b>Link</b></td><td>Up to 200 real events from other families within ±7 days, paired with the same downstream series</td><td>"It spikes after anything": heavy-news weeks, common tides</td><td>Sparse in quiet weeks; floor about 0.005</td></tr>
+<tr><td><b>Topic</b></td><td>Up to 300 random series of the same source, kind and baseline decile, tested at the real onset</td><td>"Everything of this type moved that day"</td><td>Limited by panel size on the free tier; floor about 0.003</td></tr>
+</tbody>
+</table>
+<p>A hop's p is the <em>maximum</em> over families with at least 30 draws, and a hop with fewer than two families available is capped at Likely. Besag–Clifford sequential stopping ends a family after 10 exceedances. The top 100 hops by score extend the date family to 2,000 draws, which lowers their floor to 0.0005.</p>
+
+<h3>Multiple testing and tiers</h3>
+<p>One weighted Benjamini–Hochberg run per day covers real and decoy hops together. Weights come from path priors (clamped to 0.2–5 and renormalised) and are frozen in the ledger at 07:34, before any data is read. Priors are fitted only on events before a fixed cutoff (2026-01-01). Replication statistics use only events after it, and positive controls are excluded from both.</p>
+<table>
+<thead><tr><th style="width:15%">Tier</th><th style="width:55%">Requires</th><th>Card says</th></tr></thead>
+<tbody>
+<tr><td class="tier"><b>Measured</b></td><td>q<sub>w</sub> ≤ 0.05 at the pre-registered <em>final</em> look; an outcome channel at ž ≥ 3; two independent channels, or one outcome channel plus independent linkage; lag ≥ 0; no common-shock day; no pre-trend; attribution share ≥ 0.5; leave-one-source-out holds; all sources κ ≥ 0.5; parent Measured; cell not circuit-broken</td><td>"Consistent with a ripple from …; measured movement, not proof of cause"</td></tr>
+<tr><td class="tier"><b>Likely</b></td><td>q<sub>w</sub> ≤ 0.20 at any look, or exactly one Measured condition failing (named on the card), or q<sub>w</sub> ≤ 0.01 at an interim look (provisional)</td><td>"Probably linked; a fluke isn't ruled out" plus the failing condition</td></tr>
+<tr><td class="tier"><b>Watching</b></td><td>Pre-registered with its window open; shows the due date and the base rate for its family</td><td>"The mechanism exists; no measurable move yet"</td></tr>
+<tr><td class="tier">Stayed flat</td><td>Window closed and it never reached Likely; counted in the denominators and drawn as a grey stub</td><td>"⊥ N stayed flat"</td></tr>
+<tr><td class="tier">Retracted</td><td>Was Likely or Measured; struck through with a reason and date; never deleted</td><td>"Retracted {date}: {reason}"</td></tr>
+</tbody>
+</table>
+<p>Two fluke numbers are shown, each with its own label. The placebo p reads "a random pairing looks this strong about 1 in N times". The decoy-calibrated fluke rate f is decoy passes ÷ real passes, binned by strength and hiddenness over 90 days, and reads "links like this turn out to be flukes about 1 in K times". Effect sizes are shrunk for the winner's curse and shown with an 80% interval; the raw peak appears only in the math drawer.</p>
+
+<h3>Chaining</h3>
+<ul>
+<li><strong>Only Likely-or-better hops get children</strong>, frozen the next morning. Order must hold (t<sub>u</sub> ≤ t<sub>v</sub> ≤ t<sub>w</sub>); a violation marks <code>common_cause</code> and cuts the chain.</li>
+<li><strong>Fork test.</strong> The engine also tests u → w directly. If the direct path arrives no later or is at least 80% as strong, w is drawn as a sibling, not a grandchild.</li>
+<li><strong>Mediation.</strong> w is drawn as v's child only with a reader-flow edge, a positive partial lag after removing u, or a mechanism edge that u → w lacks.</li>
+<li><strong>Route verification.</strong> With 8 or more past family events, a permutation test (10k shuffles) marks a route solid or dashed.</li>
+<li><strong>Nothing is multiplied along a chain for display.</strong> The line shows its weakest-link tier and "expected false links along this line: Σf". The public depth is at most 3, and depth 3 is collapsed under "if the previous step holds".</li>
+</ul>
+
+<h3>Evolution and retraction</h3>
+<p>Each channel has pre-registered looks: daily for attention, +3/+7 for physical, +7/+14 for builders and consumption, and each release to +28 or +90 for jobs, institutions and monthly prices. Measured is granted only at the final look. Tiers change with hysteresis: promote at q<sub>w</sub> ≤ 0.05, demote above 0.10. A published hop is retracted when data revisions or recalibration push it past 0.10, when a later common-shock or holiday flag covers its onset, when a rival event or the fork test wins, when hourly data reverses the order, or when the circuit breaker trips. After a hop is published, its attention evidence is frozen, so our own publicity cannot upgrade it.</p>
+
+<h3>Calibration proof</h3>
+<div class="stats">
+<div><span class="n"><span class="tbd">{{TBD: decoy FDR rate [lo–hi]}}</span></span><span class="l">Decoy realised FDR</span></div>
+<div><span class="n"><span class="tbd">{{TBD: KS p on 500 held-out pairs}}</span></span><span class="l">Null uniformity</span></div>
+<div><span class="n"><span class="tbd">{{TBD: spike-in recall at +2σ, lag 1}}</span></span><span class="l">Power, spike-in</span></div>
+<div><span class="n"><span class="tbd">{{TBD: positive controls passed, n of 5}}</span></span><span class="l">Positive controls</span></div>
+</div>
+<ol>
+<li><strong>Decoy realised FDR</strong> per path-type × channel cell and overall, with a Wilson interval. If a cell runs above 2 × 0.05 for 14 days, the circuit breaker demotes every Measured badge in it and shows a banner.</li>
+<li><strong>Null uniformity.</strong> Each week, 500 held-out random pairs are tested, and the KS statistic and a 20-bin p histogram are published.</li>
+<li><strong>Power by spike-in.</strong> Synthetic responses of 1, 2, 3 and 5σ at lags 0, 1, 3 and 7 are injected into copies of real series, and recall is published by channel. The site never claims "no effect" beyond this curve.</li>
+<li><strong>Positive controls</strong>, re-run on every engine deploy: Hurricanes Helene and Milton (2024) → air travel, FEMA and warnings; the ChatGPT launch → npm <code>openai</code> and HN; the July 2023 Texas heat dome → ERCOT demand; open-model releases → downloads. Each must reach Measured or the deploy is blocked. Result: <span class="tbd">{{TBD: tier and q per positive control}}</span>.</li>
+<li><strong>Negative controls.</strong> For each event, three series its family rules out (npm <code>react</code> for a hurricane). Their pass rate must match the decoys'. Result: <span class="tbd">{{TBD: negative-control pass rate vs decoy rate}}</span>.</li>
+<li><strong>The Receipts.</strong> Every Watching hop is pre-registered with a base rate. Raw counts are shown until 200 have resolved, then a reliability diagram and a Brier score against climatology. Status: <span class="tbd">{{TBD: Receipts registered / resolved / came true}}</span>.</li>
+</ol>
+
+<h3>Second opinion: BigQuery AI.CAUSAL_EFFECT</h3>
+<p><strong>What it is.</strong> A preview function that fits a univariate ARIMA_PLUS counterfactual for one intervention timestamp. It returns the absolute and relative effect with pointwise bounds and a p-value, and runs many series in parallel through <code>id_cols</code>. <strong>What it is not.</strong> It does no discovery, has no controls for common shocks, no multiple-testing control and no mechanism paths, so it cannot replace the engine.</p>
+<ul>
+<li><strong>How it is used.</strong> A nightly GitHub Action authenticates keylessly through Workload Identity Federation. It exports Likely and Measured series to dataset <code>ripples_ce</code>, runs the function, and stores the relative effect, interval and p-value in Supabase.</li>
+<li><strong>Measured requires agreement.</strong> The effect sign must match, and the interval must exclude 0 at the pre-registered horizon.</li>
+<li><strong>Calibrated before it counts.</strong> It is run first on placebo events and the positive and negative controls, and its decoy false-positive rate is published: <span class="tbd">{{TBD: CAUSAL_EFFECT decoy false-positive rate}}</span>. Agreement with the engine on Measured hops: <span class="tbd">{{TBD: engine vs CAUSAL_EFFECT agreement rate, n hops}}</span>.</li>
+<li><strong>Wording.</strong> The card never says "probability of causal effect"; it says "vs forecast (range)".</li>
+<li><strong>Cost guard.</strong> A 204.8 GiB/day quota cap and a $10 budget alert; every query prunes partitions and logs its dry-run byte estimate. Typical nightly scan: <span class="tbd">{{TBD: BigQuery GiB scanned per nightly run}}</span>. Status: see §8.</li>
+</ul>
+
+<table>
+<thead><tr><th style="width:24%">Component</th><th style="width:36%">Guards against</th><th>Known weakness</th></tr></thead>
+<tbody>
+<tr><td>Freeze and hash at 07:34</td><td>Choosing tests after seeing data</td><td>Series backfilled later wait a day, and some candidates resolve as <code>waiting_series</code></td></tr>
+<tr><td>Year-ago and weekday terms</td><td>Seasonal moves read as impact</td><td>Needs 400 days; most attention series fall back to weekday-only</td></tr>
+<tr><td>Three placebo families</td><td>Spiky series, busy weeks, sector-wide days</td><td>Topic family is limited by panel size; p floors differ by family</td></tr>
+<tr><td>Attribution share</td><td>Two shocks in one week claiming the same move</td><td>Only rivals with a registered path compete; unregistered causes are invisible</td></tr>
+<tr><td>Decoy fluke rate f</td><td>Overstated confidence on far-fetched links</td><td>Warming up until each cell has enough decoy tests; Measured then needs p ≤ 0.02</td></tr>
+<tr><td>Hiddenness ranking</td><td>Featuring the obvious</td><td>Could favour noise; halved automatically if featured hops replicate worse</td></tr>
+</tbody>
+</table>
+
+<h2>11 · Sourcing rules and demarcation</h2>
+<p><strong>Creative means more independent, legitimate signals, not grey access.</strong> Each source and path is graded by a written decision test (official channel? any barrier? robots.txt? terms? personal data? published rate limit?), and the answers are recorded in the ledger.</p>
+<table>
+<thead><tr><th style="width:12%">Tier</th><th style="width:40%">Meaning</th><th style="width:16%">Free product</th><th>Paid product</th></tr></thead>
+<tbody>
+<tr><td class="tier"><b>GREEN</b></td><td>Official or openly licensed; no barrier; robots.txt allows; terms permit</td><td>Yes</td><td>Yes, within the licence</td></tr>
+<tr><td class="tier"><b>YELLOW</b></td><td>Reachable and allowed, but undocumented, non-commercial or third-party data</td><td>Derived only, kill switch</td><td>No, until licensed or permitted in writing</td></tr>
+<tr><td class="tier"><b>ORANGE</b></td><td>Permission obtained: an issued key, approval or contract</td><td>Per agreement</td><td>Only under a commercial agreement</td></tr>
+<tr><td class="tier"><b>ORANGE*</b></td><td>A documented keyed API on a host whose robots.txt disallows it; owner decision in the ledger</td><td>Per agreement</td><td>Per agreement</td></tr>
+<tr><td class="tier"><b>RED</b></td><td>A barrier was hit, robots.txt disallows with no key route, or the terms ban it</td><td>No request at all</td><td>No</td></tr>
+</tbody>
+</table>
+<h4>Hard rules</h4>
+<ul>
+<li><strong>Honest identity.</strong> A declared User-Agent with a contact URL; no browser UA, no spoofed headers, no cookies.</li>
+<li><strong>robots.txt is honoured</strong> for every unkeyed path. A robots.txt that cannot be reached counts as a deny.</li>
+<li><strong>Stop, don't retry.</strong> A 429 or 503 stops the host until the next UTC midnight and halves the next day's cap. A 401 or 403, or a redirect to a login or challenge page, stops it until the owner clears it.</li>
+<li><strong>No circumvention</strong>: no CAPTCHA or challenge solving, no proxies or IP rotation, no key or account rotation, no logged-in scraping.</li>
+<li><strong>Aggregates only.</strong> Counts, ranks and our own z-scores; no post text, handles or article bodies.</li>
+<li><strong>Documented exceptions.</strong> Wikimedia's Action API (the operator's bot policy invites it) and SEC EDGAR full-text search (a published fair-access API, capped at 2 req/s and 200/day) skip the robots.txt check. Every other rule still applies to them.</li>
+</ul>
+<p><strong>Audit, 2026-09-25: PASS after three fixes.</strong> All outbound requests from the attention layer pass through one polite-fetch path. It applies the RED denylist, source and host checks, the kill switch, host leases, robots.txt, budgets, the Wikimedia quiet window and the contact gate. The three violations were in the older pipeline and one cron schedule: robots.txt was unchecked on the Trends RSS and Bluesky trend calls, failed jobs were requeued after a 403 or 429, and one Wikidata job ran inside the quiet window. All three are fixed. Final re-audit after last deploys: <span class="tbd">{{TBD: re-run RED grep and per-host audit on final build}}</span>.</p>
+<p class="small">The demarcation map is an engineering risk map, not legal advice; a lawyer should review it before any paid launch.</p>
+
+<h2>12 · Security and privacy</h2>
+<table>
+<thead><tr><th style="width:22%">Area</th><th style="width:48%">Control</th><th>Known weakness</th></tr></thead>
+<tbody>
+<tr><td>Secrets</td><td>API keys live in Supabase Vault and are read server-side through a <code>service_role</code>-only accessor; never in the repo, logs or payloads. <span class="tbd">{{TBD: n secrets in Vault}}</span></td><td>A single project holds every key; rotation is manual</td></tr>
+<tr><td>Scoped credentials</td><td>The EDGAR contact goes only to sec.gov hosts; the read-only GitHub token only to api.github.com</td><td>Enforced in code, not by the network</td></tr>
+<tr><td>Google Cloud</td><td>No service-account keys (blocked by org policy). Workload Identity Federation is restricted to this repository; the service account holds only BigQuery job-user and data-viewer</td><td>A compromised workflow in the repo could run queries up to the quota cap</td></tr>
+<tr><td>Database</td><td>RLS on every table. Public RPCs are <code>STABLE</code>, <code>SECURITY DEFINER</code>, <code>search_path = ''</code>, take IDs only, and are granted by revoke-then-grant</td><td>Advisor WARNs for intentionally public RPCs; final advisor run <span class="tbd">{{TBD: final Supabase advisor ERROR / WARN counts}}</span></td></tr>
+<tr><td>Collected data</td><td>Aggregates only. Bluesky account IDs are used only inside in-memory HyperLogLog sketches and are never stored</td><td>Trends RSS news items (headline, publisher, URL) are stored internally as third-party text</td></tr>
+<tr><td>Visitors</td><td>No accounts and no tracking pixels. A hashed client ID with a daily salt, plus country. localStorage holds only theme, last-visit time and private hunches</td><td>The waitlist stores emails; there is no sending service yet, and the copy says so</td></tr>
+<tr><td>Integrity</td><td>A hash-chained ledger, frozen versions with payload hashes, and a daily frozen-set hash that must recompute</td><td>Tamper-evident, not tamper-proof; the chain head is not yet anchored outside the database</td></tr>
+</tbody>
+</table>
+
+<h2>13 · Honesty guardrails</h2>
+<div class="two">
+<div>
+<h4 style="margin-top:0">We can claim</h4>
+<ul>
+<li>Timing: the stop moved after the shock, with the lag</li>
+<li>Size against the series' own weekday and seasonal normal, shrunk, with an interval</li>
+<li>Rarity against calibrated placebos</li>
+<li>How many independent channels agree</li>
+<li>A named mechanism, labelled by its source</li>
+<li>Replication across past events of the same family</li>
+<li>The day's and the line's denominators</li>
+</ul>
+</div>
+<div>
+<h4 style="margin-top:0">We never claim</h4>
+<ul>
+<li>"Caused", "drove", "because of", "flooded into"</li>
+<li>A share of an effect, dollar or job amounts, individual behaviour</li>
+<li>Any probability for a whole chain</li>
+<li>Input-output links as evidence</li>
+<li>Tickers, trades or price forecasts</li>
+<li>"No effect" beyond the published power curve</li>
+<li>A headline pointing at a Watching or Likely stop</li>
+</ul>
+</div>
+</div>
+<ul>
+<li><strong>Numbers come only from SQL.</strong> AI-written text, if the daily Routine is ever approved, is limited to labelled mechanism captions and never adds a hop, number or tier.</li>
+<li><strong>The failures stay on screen.</strong> Stubs for stops that stayed flat, lines that went nowhere, the control ripple, retractions, failed gates and the v1 post-mortem.</li>
+<li><strong>Published cards never change.</strong> Shared links point to frozen versions, and a note says how much the line has grown since.</li>
+<li><strong>Quiet mode for harm.</strong> Hazards with casualties get neutral copy, no animation and no teaser card; the data is still shown.</li>
+<li><strong>Reconstructed lines are labelled</strong> on every surface, and they are excluded from live denominators.</li>
+</ul>
+
+<h2>14 · Launch gates</h2>
+<p>Positive controls block an engine deploy. Every other failing gate is printed on <code>/ripples/methods/</code> with its automatic fallback, as the v5 precedent required.</p>
+<table>
+<thead><tr><th style="width:32%">Gate</th><th style="width:40%">Criterion</th><th>Result</th></tr></thead>
+<tbody>
+<tr><td>G1 Positive controls</td><td>All Measured on the reconstructed archive</td><td><span class="tbd">{{TBD: G1 per-control result}}</span></td></tr>
+<tr><td>G2 Negative controls</td><td>Pass rate within the decoy Wilson interval</td><td><span class="tbd">{{TBD: G2 pass/fail}}</span></td></tr>
+<tr><td>G3 Decoy FDR</td><td>Realised FDR ≤ 0.10 over the backfill, upper Wilson bound ≤ 0.15</td><td><span class="tbd">{{TBD: G3 rate, bound}}</span></td></tr>
+<tr><td>G4 Null uniformity</td><td>KS p ≥ 0.05 on 500 held-out pairs</td><td><span class="tbd">{{TBD: G4 p}}</span></td></tr>
+<tr><td>G5 Outcome channels</td><td>Every Measured hop has one; no attention-only hop in the top-10 spotlight</td><td><span class="tbd">{{TBD: G5 pass/fail}}</span></td></tr>
+<tr><td>G6 Freeze integrity</td><td>Daily frozen hash recomputes; no test without a frozen candidate</td><td><span class="tbd">{{TBD: G6 pass/fail, days checked}}</span></td></tr>
+<tr><td>G7 Copy audit</td><td>No chain probability, ticker, dollar figure or causal verb in any payload, stub or alt text</td><td><span class="tbd">{{TBD: G7 pass/fail}}</span></td></tr>
+<tr><td>G8 Budgets</td><td>DB ≤ 300 MB target; tick done by 08:18; ≤ 2k edge invocations/day</td><td><span class="tbd">{{TBD: G8 MB, finish time, invocations}}</span></td></tr>
+<tr><td>G9 Three live days</td><td>End-to-end 05:50 → 08:45 including publish, stubs and share cards</td><td><span class="tbd">{{TBD: G9 n of 3 green}}</span></td></tr>
+<tr><td>G10 Front-end budget</td><td>Shell ≤ 120 KB; LCP ≤ 1.5 s on 4G; hero and button above the fold at 360 × 640</td><td><span class="tbd">{{TBD: G10 KB, LCP}}</span></td></tr>
+<tr><td>G11 Decommission</td><td>v5 game RPCs revoked, puzzle crons off, no points, streaks, crowd or countdown anywhere</td><td><span class="tbd">{{TBD: G11 pass/fail}}</span></td></tr>
+<tr><td>G12 Watchdog</td><td>Fires on a deliberately deleted <code>latest.json</code></td><td><span class="tbd">{{TBD: G12 pass/fail}}</span></td></tr>
+</tbody>
+</table>
+<p class="small">G8's 300 MB target predates the backfills; the audit measured 307 MB against a 400 MB plan limit. <span class="tbd">{{TBD: confirm DB size gate threshold for launch}}</span>.</p>
+
+<h2>15 · Roadmap</h2>
+<table>
+<thead><tr><th style="width:22%">When</th><th style="width:40%">What</th><th>Depends on</th></tr></thead>
+<tbody>
+<tr><td>Launch <span class="tbd">{{TBD: launch date}}</span></td><td>Ripple Map v6.0 with the reconstructed archive as the cold-start hero; owner posts by hand for 14 days</td><td>Gates, merge, methods page live</td></tr>
+<tr><td>From 2026-10-23</td><td>Hour-resolved lag claims (30 days of hourly data)</td><td>Hourly collectors stay up</td></tr>
+<tr><td>Launch day 15</td><td>Radar refundable-deposit test</td><td>Stripe link, explicit refund terms</td></tr>
+<tr><td>Collection day 28–90</td><td>Warm-up sources start counting (news, TV, Bluesky, charts, Kalshi); co-mention edges not before about 2026-12-24</td><td>Uninterrupted collection</td></tr>
+<tr><td>Launch day 60 / 90</td><td>B2B clock / audience clock decisions</td><td>Card-backed actions; audience metric</td></tr>
+<tr><td>v6.1</td><td>Per-line GIF/MP4, automated Bluesky posting, publisher embed, web push</td><td>ffmpeg in an Action; a signed pilot for the embed</td></tr>
+<tr><td>When keys land</td><td>Measured reader flow (clickstream), search history (Trends alpha), video attention (YouTube)</td><td>Owner asks in §7</td></tr>
+<tr><td>200 resolved Receipts</td><td>Reliability diagram and Brier score replace raw counts</td><td>Time</td></tr>
+<tr><td>Quarterly</td><td>Refit path priors by moving the cutoff forward one quarter</td><td>Library growth</td></tr>
+<tr><td>Before any paid tier</td><td>Move YELLOW-NC sources off paid surfaces; legal review; licences as revenue appears</td><td>Revenue</td></tr>
+</tbody>
+</table>
+
+<h2>Appendix</h2>
+<h3>A · Symbols</h3>
+<table>
+<thead><tr><th style="width:14%">Symbol</th><th>Meaning</th></tr></thead>
+<tbody>
+<tr><td class="tier">AR, σ</td><td>Abnormal response against the series' own baseline, and its robust scale</td></tr>
+<tr><td class="tier">ž, T<sub>h</sub></td><td>Channel statistic scaled by its own placebo spread; correlation-weighted combination across channels</td></tr>
+<tr><td class="tier">p<sub>h</sub></td><td>Placebo p: the maximum over the date, link and topic families ("a random pairing looks this strong 1 in N")</td></tr>
+<tr><td class="tier">q<sub>w</sub></td><td>Weighted Benjamini–Hochberg adjusted value over the day's looks, real and decoy together</td></tr>
+<tr><td class="tier">f</td><td>Decoy-calibrated fluke rate by strength × hiddenness bin ("flukes about 1 in K")</td></tr>
+<tr><td class="tier">κ</td><td>Source coverage weight: 0 until day 28, then n/90; 0.3 to contribute, 0.5 for Measured</td></tr>
+<tr><td>ρ̃</td><td>Shrunk multiple of normal, shown with an 80% interval</td></tr>
+<tr><td class="tier">H</td><td>Hiddenness from pre-onset structure only; orders Likely-or-better hops and never enters the test</td></tr>
+</tbody>
+</table>
+<h3>B · Public interfaces</h3>
+<p class="wide small">RPCs (anon execute, read-only): <code>rm_shocks</code>, <code>rm_cascade</code>, <code>rm_hop</code>, <code>rm_lands</code>, <code>rm_archive</code>, <code>rm_week</code>, <code>rm_calibration</code>, <code>rm_health</code>. Storage: <code>v2/shocks/</code>, <code>v2/cascade/{id}/v{k}.json</code> (immutable), <code>v2/hop/{id}.json</code> and <code>.csv</code>, <code>v2/calibration.json</code>, <code>v2/og/</code>, <code>v2/feed/</code>, <code>v2/ics/</code>, <code>v2/data/{date}.csv</code> (CC BY, GREEN-derived fields only). Routes: <code>/ripples/</code>, <code>/line/{slug}/</code>, <code>/line/{slug}/v{k}/</code>, <code>/stop/{hop_id}/</code>, <code>/map/</code>, <code>/lands/{domain}/</code>, <code>/week/</code>, <code>/archive/</code>, <code>/methods/</code>, <code>/pro/</code>.</p>
+<h3>C · Sources for this document</h3>
+<p class="wide small">OWNER_DECISIONS (D-1 to D-12), ENGINE_SPEC (method 6.0), EXPERIENCE_SPEC, ATTENTION_STACK, DEMARCATION, INVENTORY (2026-09-25), VIRAL_PLAYBOOK §6–7, ART_DIRECTION, judges' scoring, and the attention-layer compliance audit (2026-09-25, 20:10–20:40 UTC).</p>
+<h3>D · Values to verify before sharing</h3>
+<ol class="reg" id="tbd-register"></ol>
+
+<script>
+(function(){
+  var out = document.getElementById('tbd-register'), seen = {}, sec = 'Header';
+  var walker = document.createTreeWalker(document.body, NodeFilter.SHOW_ELEMENT);
+  while (walker.nextNode()) {
+    var el = walker.currentNode;
+    if (el.tagName === 'H2') sec = '§' + el.textContent.split('·')[0].trim();
+    if (el.classList && el.classList.contains('tbd')) {
+      var t = el.textContent.replace(/^\{\{TBD:\s*/,'').replace(/\}\}$/,'').trim();
+      var key = sec + '|' + t;
+      if (seen[key]) continue; seen[key] = 1;
+      var li = document.createElement('li');
+      var b = document.createElement('span'); b.className = 'tag'; b.textContent = sec + '  ';
+      li.appendChild(b); li.appendChild(document.createTextNode(t)); out.appendChild(li);
+    }
+  }
+  if (!out.children.length) { var li = document.createElement('li'); li.textContent = 'None remaining.'; out.appendChild(li); }
+})();
+</script>
+</body>
+</html>

@@ -20,7 +20,8 @@ import { createClient } from "jsr:@supabase/supabase-js@2";
 import { brandCard, H, lineCard, shockCard, stopCard, W, weekCard, type El } from "./cards.ts";
 
 const WASM = "https://cdn.jsdelivr.net/npm/@resvg/resvg-wasm@2.6.2/index_bg.wasm";
-const TWEMOJI = "https://cdn.jsdelivr.net/gh/jdecked/twemoji@latest/assets/svg/";
+// pinned (was @latest, which resolved to 17.0.3 on 2026-09-26; same bytes) so a re-render years later draws the same emoji
+const TWEMOJI = "https://cdn.jsdelivr.net/gh/jdecked/twemoji@17.0.3/assets/svg/";
 const FS = "https://cdn.jsdelivr.net/npm/@fontsource/";
 const FONTS: { name: string; weight: 500 | 700 | 800 | 900; url: string; sha256: string; fallback: string }[] = [
   { name: "Anybody", weight: 800, url: "https://fonts.gstatic.com/s/anybody/v13/VuJbdNvK2Ib2ppdWYq311GH32hxIv0sd5grncSUi2F_Wim4JV2fPrg.ttf",

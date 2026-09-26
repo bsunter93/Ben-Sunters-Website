@@ -16,7 +16,9 @@
 //   * <script type="application/json" id="rm-data"> is inserted before </head> (the page reads it before any fetch);
 //   * the no-JS list replaces whatever sits between <!--rm:nojs--> and <!--/rm:nojs-->, or is inserted after <body…>;
 //   * <body> gets data-route / data-event / data-version / data-hop / data-domain / data-week attributes.
-// --clean-numbered removes the v5 numbered share stubs ripples/{n}/ (the daily puzzle is retired, EXPERIENCE §9).
+// --clean-numbered removes the v5 numbered share stubs ripples/{n}/ (the daily puzzle is retired, EXPERIENCE §9). It refuses to run
+//   until the WS-D shell ripples/line/index.html exists: the live v5 frontend (lib.js share URLs, app.js .ics links, archive/)
+//   still links to /ripples/{n}/, so the directories go only in the same release as the v6 shell (--force overrides).
 // --check validates every stub written: its own head, ≤ 300 KB, a no-JS list, the footer line; exits 1 on any failure.
 import { existsSync, mkdirSync, readdirSync, readFileSync, rmSync, statSync, writeFileSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
@@ -41,8 +43,10 @@ async function get(path) {
     // fixtures layout: the fixture files stand in for the Storage paths
     const map = { 'archive.json': 'archive.json', 'shocks/latest.json': 'shocks.json' };
     let f = map[path];
-    if (!f && /^cascade\/\d+\.json$/.test(path)) f = 'cascade-1201.json';
-    if (!f && /^cascade\/\d+\/v\d+\.json$/.test(path)) f = /v2\.json$/.test(path) ? 'cascade-1201-v2.json' : /v3\.json$/.test(path) ? 'cascade-1201.json' : null;
+    // only event 1201 has cascade fixtures; the other archive rows (3069, 3121, 138) have none and are skipped, so the
+    // stub count is the number of distinct files actually written
+    if (!f && path === 'cascade/1201.json') f = 'cascade-1201.json';
+    if (!f && /^cascade\/1201\/v\d+\.json$/.test(path)) f = /v2\.json$/.test(path) ? 'cascade-1201-v2.json' : /v3\.json$/.test(path) ? 'cascade-1201.json' : null;
     if (!f && /^hop\/\d+\.json$/.test(path)) f = path === 'hop/9006.json' ? 'hop-9006-retracted.json' : 'hop-9001.json';
     if (!f && /^lands\/real_world\.json$/.test(path)) f = 'lands-real_world.json';
     if (!f && /^week\/2026-39\.json$/.test(path)) f = 'week-2026-39.json';
@@ -66,6 +70,13 @@ const mult = (x, unit = 'x') => {
   if (unit === 'points') return (v >= 0 ? '+' : '') + v.toFixed(2) + ' pts';
   return v < 1 ? v.toFixed(2) + '×' : v < 10 ? v.toFixed(1).replace(/\.0$/, '') + '×' : Math.round(v) + '×';
 };
+// "0.91× its normal" / "0.40 points above its normal": a rate's rho is a difference in points, never a multiple
+const relNormal = (x, unit, tail) => {
+  const v = Number(x);
+  if (x === null || x === undefined || !isFinite(v)) return '';
+  if (unit === 'points') return `${Math.abs(v).toFixed(2)} ${Math.abs(v).toFixed(2) === '1.00' ? 'point' : 'points'} ${v < 0 ? 'below' : 'above'} ${tail}`;
+  return `${mult(v)} ${tail}`;
+};
 const clip = (s, n) => { const a = Array.from(String(s ?? '')); return a.length > n ? a.slice(0, n - 1).join('') + '…' : a.join(''); };
 const MON = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
 const fmtDate = (d) => { const m = /^(\d{4})-(\d{2})-(\d{2})/.exec(String(d ?? '')); return m ? `${+m[3]} ${MON[+m[2] - 1]} ${m[1]}` : ''; };
@@ -79,9 +90,10 @@ function lineMeta(c) {
 }
 function stopItem(n, href) {
   const t = TIER_WORD[n.tier] || n.tier;
-  const m = n.rho !== null && n.rho !== undefined ? ` ${mult(n.rho, n.unit)} its normal` : '';
+  const m = n.rho !== null && n.rho !== undefined ? ` ${relNormal(n.rho, n.unit, 'its normal')}` : '';
   const dom = DOMAIN_WORD[n.domain] || n.domain;
-  const extra = [n.provisional ? 'provisional' : '', n.attention_ripple ? 'attention ripple' : '', n.tier === 'watching' && n.window_close ? `window closes ${fmtDate(n.window_close)}` : '',
+  const extra = [n.provisional ? 'provisional' : '', n.attention_ripple ? 'attention ripple' : '',
+    n.tier === 'watching' && n.window_close ? (n.window_closed ? `window closed ${fmtDate(n.window_close)}` : `window closes ${fmtDate(n.window_close)}`) : '',
     n.retracted ? `retracted ${fmtDate(n.retracted.date)}` : ''].filter(Boolean).join('; ');
   return `<li><a href="${esc(href)}"><b>${esc(n.label)}</b></a> <span>(${esc(dom)})</span>: <b>${esc(t)}</b>${esc(m)}${extra ? ` <span>(${esc(extra)})</span>` : ''}.` +
     (n.sentence ? ` <span>${esc(n.sentence)}</span>` : '') + `</li>`;
@@ -96,6 +108,7 @@ function lineNoJs(c, k, latestK) {
 <p>${c.event.reconstructed ? '<b>From the archive, reconstructed.</b> ' : ''}Shock started ${esc(fmtDate(c.event.onset))}. ${esc(lineMeta(c))}.${k && latestK && k < latestK ? ` This is version ${k}; the line has grown since. <a href="${esc(base)}">See the live line</a>.` : ''}</p>
 ${stops.length ? `<ol class="rm-stops">${stops.map((n) => stopItem(n, `${base}stop/${n.hop_id}/`)).join('\n')}</ol>` : '<p>No stop yet.</p>'}
 ${flat.length ? `<p>${flat.length} ${flat.length === 1 ? 'path' : 'paths'} stayed flat: ${esc(flat.slice(0, 12).map((f) => f.label).join(', '))}${flat.length > 12 ? ', …' : ''}.</p>` : ''}
+${c.held_back && (c.held_back.stops || c.held_back.flat) ? `<p>${esc(c.held_back.stops + c.held_back.flat)} more tested ${c.held_back.stops + c.held_back.flat === 1 ? 'path is' : 'paths are'} not listed yet: ${esc(c.held_back.reason)}.</p>` : ''}
 <p>Tested ${esc(d.tested ?? 0)} paths; ${esc(d.moved ?? 0)} moved; ${esc(d.measured ?? 0)} Measured; about ${esc(d.expected_false_links ?? 0)} expected false links. The control ripple (a page that wasn't trending): ${esc(c.control?.stops?.measured ?? 0)} Measured, ${esc(c.control?.stops?.likely ?? 0)} Likely.</p>
 <p><b>${esc(FOOT)}</b> <a href="/ripples/methods/">How we test</a>.</p>
 </section>`;
@@ -107,7 +120,7 @@ function hopNoJs(h, c) {
     `<h1 id="rm-h">${esc(h.node.label)}</h1>`,
     `<p>${h.event.reconstructed ? '<b>From the archive, reconstructed.</b> ' : ''}A stop on <a href="${esc(base)}">${esc(h.event.emoji || '')} ${esc(h.event.label)}</a> (${esc(DOMAIN_WORD[h.node.domain] || h.node.domain)}). Tier: <b>${esc(TIER_WORD[h.tier] || h.tier)}</b>${h.provisional ? ' (provisional)' : ''}.</p>`,
     h.sentence ? `<p>${esc(h.sentence)}</p>` : '',
-    h.headline?.rho !== null && h.headline?.rho !== undefined ? `<p>${esc(mult(h.headline.rho, h.q1_normal?.unit))} its own normal (interval ${esc(mult(h.headline.rho_lo, h.q1_normal?.unit))} to ${esc(mult(h.headline.rho_hi, h.q1_normal?.unit))}), ${h.headline.lag_days === null || h.headline.lag_days === undefined ? '' : `${esc(Math.round(h.headline.lag_days))} day(s) after ${esc(h.parent?.label)}`}.</p>` : '',
+    h.headline?.rho !== null && h.headline?.rho !== undefined ? `<p>${h.tier === 'retracted' ? 'Before the retraction: ' : ''}${esc(relNormal(h.headline.rho, h.q1_normal?.unit, 'its own normal'))} (interval ${esc(mult(h.headline.rho_lo, h.q1_normal?.unit))} to ${esc(mult(h.headline.rho_hi, h.q1_normal?.unit))}), ${h.headline.lag_days === null || h.headline.lag_days === undefined ? '' : `${esc(Math.round(h.headline.lag_days))} day(s) after ${esc(h.parent?.label)}`}.</p>` : '',
     q5.p_1_in ? `<p>Lookalikes: a random pairing looks this strong about 1 in ${esc(q5.p_1_in)} times.</p>` : '',
     q5.f_1_in ? `<p>Fluke rate: links this strong from decoy starts turn out to be flukes about 1 in ${esc(q5.f_1_in)} times.</p>` : (q5.f_warming ? '<p>Fluke rate: still warming up.</p>' : ''),
     h.q3_who ? `<p>${esc(h.q3_who.agree)} of ${esc(h.q3_who.of)} independent sources agree.</p>` : '',
@@ -174,9 +187,11 @@ function stub(route, head, data, nojs, attrs) {
 const written = [];
 function write(rel, html) {
   const dir = join(ROOT, rel);
+  const f = join(rel, 'index.html');
+  if (written.includes(f)) throw new Error(`${f} written twice (two routes map to one slug)`);
   mkdirSync(dir, { recursive: true });
   writeFileSync(join(dir, 'index.html'), html);
-  written.push(join(rel, 'index.html'));
+  written.push(f);
 }
 function check(file) {
   const html = readFileSync(join(ROOT, file), 'utf8');
@@ -196,6 +211,10 @@ function check(file) {
 
 // ---------- main ----------
 if (args['clean-numbered']) {
+  if (!existsSync(join(ROOT, 'line', 'index.html')) && !args.force) {
+    console.error('refusing --clean-numbered: ripples/line/index.html (the WS-D shell) does not exist yet, and the v5 frontend still links to /ripples/{n}/. Ship both together, or pass --force.');
+    process.exit(2);
+  }
   let n = 0;
   for (const d of readdirSync(ROOT)) if (/^\d+$/.test(d) && statSync(join(ROOT, d)).isDirectory()) { rmSync(join(ROOT, d), { recursive: true, force: true }); n++; }
   console.log(`removed ${n} numbered v5 stub directories`);
@@ -225,9 +244,14 @@ for (const a of archive) {
     const h = await get(`hop/${n.hop_id}.json`);
     if (!h || !h.node) continue;
     const t = `${h.node.label}: ${TIER_WORD[h.tier] || h.tier} stop on ${c.event.label}`;
-    const d = `${h.headline?.rho !== null && h.headline?.rho !== undefined ? `${mult(h.headline.rho, h.q1_normal?.unit)} its own normal. ` : ''}${h.q5_luck?.p_1_in ? `Lookalikes about 1 in ${h.q5_luck.p_1_in}. ` : ''}Measured movement, not proof of cause.`;
+    // a retracted stop leads with the retraction, never with its old numbers
+    const rt = h.tier === 'retracted' || h.retracted ? `Retracted ${fmtDate(h.retracted?.date)}${h.retracted?.reason ? `: ${h.retracted.reason}` : ''}. ` : '';
+    const size = h.headline?.rho !== null && h.headline?.rho !== undefined ? `${rt ? 'Before the retraction: ' : ''}${relNormal(h.headline.rho, h.q1_normal?.unit, 'its own normal')}. ` : '';
+    const d = `${rt}${size}${h.q5_luck?.p_1_in && !rt ? `Lookalikes about 1 in ${h.q5_luck.p_1_in}. ` : ''}Measured movement, not proof of cause.`;
     write(`line/${slug}/stop/${n.hop_id}`, stub('line', { title: t, desc: d.length >= 20 ? d : `${d} ${FOOT}`, canonical: `${SITE}/line/${slug}/stop/${n.hop_id}/`,
-      url: `${SITE}/line/${slug}/stop/${n.hop_id}/`, image: `${OG}?v=stop&h=${n.hop_id}`, alt: `${h.node.label}: ${TIER_WORD[h.tier] || h.tier}${h.headline?.rho !== null && h.headline?.rho !== undefined ? `, ${mult(h.headline.rho, h.q1_normal?.unit)} its normal` : ''}, after ${c.event.label}. Measured movement, not proof of cause.` },
+      url: `${SITE}/line/${slug}/stop/${n.hop_id}/`, image: `${OG}?v=stop&h=${n.hop_id}`,
+      alt: rt ? `${h.node.label}: ${rt}A stop on ${c.event.label}. Measured movement, not proof of cause.`
+        : `${h.node.label}: ${TIER_WORD[h.tier] || h.tier}${h.headline?.rho !== null && h.headline?.rho !== undefined ? `, ${relNormal(h.headline.rho, h.q1_normal?.unit, 'its normal')}` : ''}, after ${c.event.label}. Measured movement, not proof of cause.` },
       h, hopNoJs(h, c), { route: 'stop', event: c.event.event_id, hop: n.hop_id }));
     stops++;
   }
@@ -238,7 +262,7 @@ for (const d of DOMAINS) {
   const hops = l?.hops || [];
   const word = DOMAIN_WORD[d];
   const nojs = `<section class="rm-nojs" aria-labelledby="rm-h">\n<h1 id="rm-h">What's been moving ${esc(word)}?</h1>\n` +
-    (hops.length ? `<ol>${hops.map((x) => `<li><a href="/ripples/line/${esc(x.slug)}/stop/${esc(x.hop_id)}/"><b>${esc(x.label)}</b></a>: ${esc(TIER_WORD[x.tier] || x.tier)}${x.rho !== null && x.rho !== undefined ? ` ${esc(mult(x.rho))} its normal` : ''}, after ${esc(x.emoji || '')} ${esc(x.event_label)}${x.reconstructed ? ' (reconstructed)' : ''}.</li>`).join('\n')}</ol>`
+    (hops.length ? `<ol>${hops.map((x) => `<li><a href="/ripples/line/${esc(x.slug)}/stop/${esc(x.hop_id)}/"><b>${esc(x.label)}</b></a>: ${esc(TIER_WORD[x.tier] || x.tier)}${x.rho !== null && x.rho !== undefined ? ` ${esc(relNormal(x.rho, x.unit, 'its normal'))}` : ''}, after ${esc(x.emoji || '')} ${esc(x.event_label)}${x.reconstructed ? ' (reconstructed)' : ''}.</li>`).join('\n')}</ol>`
       : '<p>No Measured or Likely stop in this domain in the last 30 days.</p>') +
     `\n<p><b>${esc(FOOT)}</b></p>\n</section>`;
   write(`lands/${d}`, stub('lands', { title: `What's been moving ${word}? Ripple Map`, desc: `Stops in ${word} that moved after an upstream shock in the last 30 days. ${FOOT}`,

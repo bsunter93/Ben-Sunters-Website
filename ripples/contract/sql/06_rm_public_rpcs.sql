@@ -1011,6 +1011,7 @@ language sql stable security definer set search_path = '' as $$
         'hop_id', (n ->> 'hop_id')::bigint, 'event_id', event_id, 'slug', p -> 'event' ->> 'slug', 'event_label', p -> 'event' ->> 'label', 'emoji', p -> 'event' ->> 'emoji',
         'node', n ->> 'node', 'label', n ->> 'label', 'domain', n ->> 'domain', 'tier', n ->> 'tier', 'provisional', (n ->> 'provisional')::boolean,
         'attention_ripple', (n ->> 'attention_ripple')::boolean, 'rho', n -> 'rho', 'rho_lo', n -> 'rho_lo', 'rho_hi', n -> 'rho_hi', 'lag_days', n -> 'lag_days',
+        'unit', coalesce(n ->> 'unit', 'x'),
         'onset', n ->> 'onset', 'reconstructed', (p -> 'event' ->> 'reconstructed')::boolean, 'sensitive', (p -> 'event' ->> 'sensitive')::boolean,
         'retracted', n -> 'retracted')
       order by (n ->> 'tier') = 'measured' desc, n ->> 'onset' desc, (n ->> 'hop_id')::bigint) from (select * from h limit 200) h2), '[]'::jsonb)) end
