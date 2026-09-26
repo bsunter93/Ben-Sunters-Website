@@ -149,9 +149,9 @@ begin
   update ripples.att_archive_plan set attempts = attempts + 1 where event_id = p.event_id;
   begin
     r := ripples.att_run_library(p.event_id);
-  exception when others then
+  exception when others or query_canceled then   -- a statement timeout is recorded too (the attempt counter survives)
     update ripples.att_archive_plan set status = case when attempts >= 3 then 'failed' else 'queued' end,
-           result = jsonb_build_object('error', left(sqlerrm, 300), 'at', now()) where event_id = p.event_id;
+           result = jsonb_build_object('error', left(sqlerrm, 300), 'state', sqlstate, 'at', now()) where event_id = p.event_id;
     return jsonb_build_object('event_id', p.event_id, 'error', left(sqlerrm, 300));
   end;
   update ripples.att_archive_plan set status = 'done', ran_at = now(),

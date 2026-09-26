@@ -58,7 +58,7 @@ export function rel(x, unit = 'x', tail = 'its normal') {
 }
 export const oneIn = n => (fin(n) && Number(n) >= 1 ? `1 in ${fmtInt(n)}` : '');
 // A multiple read as a percentage, so 0.91× reads as a signal: "9% fewer" / "240% more". A caption only, never a flap;
-// empty for rates in points and for moves under 1%.
+// empty for a rate (its unit is a difference, not a multiple) and for moves under 1%.
 export function pctGloss(x, unit = 'x') {
   if (!fin(x) || unit === 'points') return '';
   const v = Number(x), p = v < 1 ? Math.round((1 - v) * 100) : Math.round((v - 1) * 100);

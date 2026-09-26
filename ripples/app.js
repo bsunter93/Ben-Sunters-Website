@@ -55,7 +55,7 @@ function heroTicket(S0, archive) {
   // the staircase (signature B) replaces the seed chart once the cascade arrives; its height is reserved so nothing shifts
   const stage = h('div', { class: 'tk-stage' + (stops >= 2 ? ' tall' : '') }, hasChart ? svg : null);
   add(tk,
-    h('p', { class: 'tk-top' }, h('span', { class: 'tag' }, hero.reconstructed ? 'From the archive, reconstructed' : visits() < 2 ? 'Ripple of the week ▪ shock → where it showed up' : 'Ripple of the week'), hero.version ? h('span', { class: 'ver' }, 'v' + hero.version) : null),
+    h('p', { class: 'tk-top' }, h('span', { class: 'tag' }, hero.reconstructed ? 'From the archive, reconstructed' : 'Ripple of the week'), !hero.reconstructed && visits() < 2 ? h('span', { class: 'tag2' }, 'shock → where it showed up') : null, hero.version ? h('span', { class: 'ver' }, 'v' + hero.version) : null),
     h('div', { class: 'tk-body' },
       h('div', { class: 'tk-row' }, h('span', { class: 'tk-emo', 'aria-hidden': 'true' }, em(s.emoji || '🌀')), h('h1', { class: 'tk-title', id: 'hero-t' }, hero.title)),
       h('p', { class: 'tk-hook' }, hero.headline),
@@ -66,6 +66,7 @@ function heroTicket(S0, archive) {
     h('div', { class: 'tk-foot' }, meta.length ? h('p', { class: 'tk-meta' }, meta) : null, h('a', { class: 'btn', href: L.lineUrl(hero.slug) + (ls.get('ko.hide_middle') === '1' ? '?hide=1' : '') }, 'Trace the line')));
   // "?" tiles hide only the stops between the shock and that Measured stop; they flip once through domain icons (not in quiet mode)
   D.cascade(hero.event_id).then(c => {
+    if (!c || L.stopCount(c) < 2) { if (!hasChart) stage.remove(); else stage.classList.remove('tall'); }
     if (!c) return;
     const mid = st.hop_id ? L.ancestors(c, st.hop_id) : [];
     const trk = path.children[1];
@@ -80,7 +81,7 @@ function heroTicket(S0, archive) {
     import('./line.js').then(m => {
       const entries = L.lineOrder(c).filter(e => e.depth < 3).slice(0, 6);
       const still = RM || quiet;
-      const sc = m.staircase(c, entries, { all: still, cls: 'tk', caption: still ? 'Each lane: one stop against its own normal, on one shared scale.' : 'Replaying the line: each lane is one stop against its own normal.' });
+      const sc = m.staircase(c, entries, { all: still, cls: 'tk', narrow: true, caption: still ? 'Each lane: one stop against its own normal, on one shared scale.' : 'Replaying the line: each lane is one stop against its own normal.' });
       sc.fig.setAttribute('role', 'img'); sc.fig.setAttribute('aria-label', `${hero.title}: ${L.plural(L.stopCount(c), 'stop')} drawn as a staircase, each against its own normal.`);
       sc.fig.addEventListener('click', () => { sc.stopLoop && sc.stopLoop(); location.href = L.lineUrl(hero.slug); });
       stage.replaceChildren(sc.fig); stage.classList.add('tall');

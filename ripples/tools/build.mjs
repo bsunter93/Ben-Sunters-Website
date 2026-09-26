@@ -10,7 +10,7 @@ import { fileURLToPath } from 'node:url';
 import { join } from 'node:path';
 
 const root = fileURLToPath(new URL('..', import.meta.url));
-export const SOURCES = ['app.js', 'ui.js', 'line.js', 'lists.js', 'help.js', 'lib.js', 'config.js', 'app.css'];
+export const SOURCES = ['app.js', 'ui.js', 'line.js', 'evidence.js', 'lists.js', 'help.js', 'lib.js', 'config.js', 'app.css'];
 export const SHELLS = ['index.html', 'line/index.html', 'map/index.html', 'lands/index.html', 'week/index.html', 'archive/index.html', 'methods/index.html'];
 export const srcHash = () => createHash('sha256').update(SOURCES.map(f => readFileSync(join(root, f), 'utf8')).join('\n/*--*/\n')).digest('hex').slice(0, 16);
 
