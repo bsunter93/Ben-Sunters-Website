@@ -33,6 +33,11 @@ export const SQL = {
           from ripples.att_hop_tests t where t.is_final and t.hop_id in (select hop_id from ripples.att_hop_candidates where event_id = ${EVENT}) order by t.hop_id, t.look_no desc;`,
   // the published tier is whatever the forecast gate returns for the engine tier (never overridden here)
   gate: `select h.hop_id, ripples.att_ce_gate(h.hop_id, t.tier) gate from ripples.att_hop_candidates h join ripples.att_hop_latest t using(hop_id) where h.event_id = ${EVENT};`,
+  // the independent forecast check (BigQuery, model ce-arima-1): per-series counterfactual effect, verdict, calibration on decoys and controls
+  ce: `select (select row_to_json(v) from ripples.att_ce_hop_verdict v where v.hop_id = 6101) verdict,
+              (select json_agg(json_build_object('series_id', r.series_id, 'key', s.key, 'model_version', r.model_version, 'horizon_days', r.horizon_days, 'onset', r.onset, 'pre_days', r.pre_days, 'n_pre', r.n_pre, 'n_post', r.n_post, 'exp_sign', r.exp_sign, 'abs_effect', r.abs_effect, 'rel_effect', r.rel_effect, 'rel_lo', r.rel_lo, 'rel_hi', r.rel_hi, 'p_value', r.p_value, 'confidence', r.confidence, 'status', r.status, 'run_id', r.run_id) order by r.series_id) from ripples.att_ce_results r left join ripples.att_series s on s.series_id = r.series_id where r.hop_id = 6101) results,
+              (select json_agg(row_to_json(c)) from ripples.att_ce_calibration c) calibration,
+              (select row_to_json(x) from (select run_id, kind, started_at, finished_at, status, billed_bytes, rows_written, gh_run from ripples.att_ce_runs order by started_at desc limit 1) x) run;`,
   // the engine's own normal band and spark for the Measured hop, from the cascade payload
   cascade_nodes: `select jsonb_path_query(payload, '$.nodes[*]') node from ripples.att_cascades where event_id = ${EVENT};`,
   // engine 6.2 regional contrast for the storm (grid 8 = hurricane -> eia.930 demand), incl. the 41 in-time placebo contrasts
@@ -102,7 +107,13 @@ export function assemble() {
   // published.text is the only tier wording allowed in headlines, share copy and aria-labels: the gated tier, never the engine tier (D-14/D-16).
   // published.detail (engine tier + gate reason) is evidence-layer copy for the stop card chip and drawers.
   const published = { tier: G.tier, engine_tier: G.engine_tier, reason: G.reason, mode: G.mode, ce: G.ce,
-    text: G.reason ? `${TIERW[G.tier]}, ${G.reason}` : TIERW[G.tier], detail: G.reason ? `${TIERW[G.engine_tier]} by the engine; ${G.reason}` : TIERW[G.tier] };
+    text: G.reason ? `${TIERW[G.tier]}, ${G.reason}` : TIERW[G.tier], detail: G.reason ? `${TIERW[G.engine_tier]} by the engine; ${G.reason}` : (G.ce && G.ce.state === 'agree' ? `${TIERW[G.tier]}: the engine and an independent forecast model agree` : TIERW[G.tier]) };
+  /* --- the third independent check: an ARIMA forecast of each series from 120 pre-days, against the 8 days after onset (BigQuery, run ${live.ce_6101?.run?.run_id}) --- */
+  const CE = live.ce_6101 || null;
+  const forecast = CE ? { state: CE.verdict.state, model: CE.results[0].model_version, horizon_days: CE.verdict.horizon_days, n_agree: CE.verdict.n_agree, n_eligible: CE.verdict.n_eligible, evaluated_at: CE.verdict.evaluated_at, run: CE.run.gh_run,
+    series: CE.results.map(x => ({ series_id: x.series_id, key: x.key, pre_days: x.pre_days, post_days: x.n_post, effect_pct: r(x.rel_effect * 100, 1), lo_pct: r(x.rel_lo * 100, 1), hi_pct: r(x.rel_hi * 100, 1), p: r(x.p_value, 3), p_odds: oneIn(x.p_value) })),
+    calibration: CE.calibration, text: `An independent forecast model agrees: ${CE.verdict.n_agree} of ${CE.verdict.n_eligible} series ran below their own forecast for the ${CE.verdict.horizon_days} days after onset (${CE.results.map(x => `${r(x.rel_effect * 100, 1)}% [${r(x.rel_lo * 100, 1)}, ${r(x.rel_hi * 100, 1)}]`).join(' and ')}).`,
+    calib_text: `The same model raised a false alarm on ${CE.calibration.find(c => c.role === 'decoy').hops_sig} of ${CE.calibration.find(c => c.role === 'decoy').hops_evaluated} decoy links and agreed with the engine on ${CE.calibration.find(c => c.role === 'positive_control').hops_agree} of ${CE.calibration.find(c => c.role === 'positive_control').hops_evaluated} positive controls.` } : null;
 
   /* --- the regional contrast (engine 6.2.1) on the same grids, secondary evidence on the same card --- */
   const pre = daily.filter(x => x.day >= '2024-09-09' && x.day <= '2024-10-06');
@@ -141,19 +152,20 @@ export function assemble() {
     headline: 'Duke Energy Florida demand, 0.89× its normal for the week after landfall',
     plain: `Duke Energy Florida, the utility for the Gulf coast where Milton came ashore, drew 0.89× its normal for the week from ${fmtDay(H.onset)}. On ${fmtDay(worst.day)}, the day after landfall, it drew ${Math.round(worst.fpc * 100)}% of normal. Together with Florida Power & Light the two grids ran ${Math.abs(contrast.effect_pct).toFixed(0)}% below 51 regions the storm never touched.`,
     sources: { agree: H.channels.agree, of: H.channels.of, text: '1 of 1 channels agree (EIA-930 hourly demand, physical channel); no attention or economic channel was registered for this series' },
+    forecast,
     mechanism: [
       { step: 'Wind and flooding knock out power to millions of customers', why: 'Demand that cannot be served is not recorded as demand.', source: 'mechanism library v6.0, template storm_grid_demand' },
       { step: 'Businesses and homes that still have power go dark or empty', why: 'Evacuations and closures cut load even where lines hold.', source: 'mechanism library v6.0' },
       { step: 'Demand climbs back as crews restore lines', why: 'The series returns toward its band over the following two weeks.', source: 'EIA-930, this series' }
     ],
     how: `The engine compared the seven days from ${fmtDay(H.onset)} with the series' own robust normal (T ${H.t_stat.toFixed(2)}), then re-ran the test on ${H.n_date.toLocaleString()} fake dates for the same series: ${H.exceed_date} came out this strong (about 1 in ${dateOdds}). On ${H.n_topic} other series at the real date, none did (1 in ${topicOdds}). Separately, the regional contrast put Florida's two grids against 51 unaffected regions and 41 pseudo-storms: none came close.`,
-    mind: 'A reporting gap at the utility on those days, or a cold snap that hit Florida but not the donor regions, would make us re-check the size. Pre-trends were flat (p 0.42) and a synthetic control agrees in sign. The independent forecast model has not evaluated this series yet; until it does, the published word is Likely.',
+    mind: forecast && forecast.state === 'agree' ? 'A reporting gap at the utility on those days, or a cold snap that hit Florida but not the donor regions, would make us re-check the size. Pre-trends were flat (p 0.42), a synthetic control agrees in sign, and the independent forecast model agrees on both series. A retraction of the EIA-930 hourly data for those days would reopen the finding.' : 'A reporting gap at the utility on those days, or a cold snap that hit Florida but not the donor regions, would make us re-check the size. Pre-trends were flat (p 0.42) and a synthetic control agrees in sign. The independent forecast model has not evaluated this series yet; until it does, the published word is Likely.',
     fluke: { n: H.n_date, hits: H.exceed_date, text: `About 1 in ${dateOdds} fake dates produce a move this big.` },
     replication,
     chart: { kind: 'series', grain: 'day', onset, landfall, observed_onset: H.onset, series: daily.map(x => ({ d: x.day, t: x.fpc, o: x.o, mwh: x.mwh })),
       band: { lo: H.band.lo, hi: H.band.hi, note: H.band.note + ' (the engine’s own band for this series)' },
       pre_window: ['2024-09-09', '2024-10-06'], post_window: [H.onset, '2024-10-16'], peak: { d: worst.day, t: worst.fpc, o: worst.o } },
-    ledger: { register_seq: 859, freeze_seq: 932, model_seq: [931, 957], calibration_seq: 958, control_seq: 994, resolve_seq: 998, frozen_hash: misc.grid8.frozen_hash, head: live.ledger_head, cascade_head: live.cascade.ledger_head },
+    ledger: { register_seq: 859, freeze_seq: 932, model_seq: [931, 957], calibration_seq: 958, control_seq: 994, resolve_seq: 998, publish_seq: 1001, frozen_hash: misc.grid8.frozen_hash, head: live.ledger_head, cascade_head: live.cascade.ledger_head },
     label_side: 'auto'
   };
 
@@ -186,10 +198,10 @@ export function assemble() {
 
   const helene = misc.helene;
   return {
-    v: 2, version: 2, snapshot_at: live.queried_at, engine: { method_hop: H.engine_version, method_contrast: '6.2.1', batch: misc.grid8.batch, gate_mode: G.mode },
+    v: 2, version: 3, snapshot_at: live.queried_at, engine: { method_hop: H.engine_version, method_contrast: '6.2.1', batch: misc.grid8.batch, gate_mode: G.mode },
     honesty: {
       measured_engine: 1, measured_published: G.tier === 'measured' ? 1 : 0, likely_published: G.tier === 'likely' ? 1 : 0, flats: flats.length, controls_flat: controls.filter(c => c.tier === 'flat').length, watching: untested.length, chains: live.children_of_milton,
-      note: `One stop reached the engine's top tier (6.1.2 single-event test) and is published as ${TIERW[G.tier]} because the forecast gate returned "${G.reason}". Headline and share copy carry only the published tier. Twelve pre-registered series stayed flat, three negative controls stayed flat, one is still waiting for its series. No second-order hop exists for this storm, so no chain is drawn.`,
+      note: `One stop reached the engine's top tier (6.1.2 single-event test) and is published as ${TIERW[G.tier]}${G.reason ? ` because the forecast gate returned "${G.reason}"` : ' because the independent forecast check agrees (2 of 2 series)'}. Headline and share copy carry only the published tier. Twelve pre-registered series stayed flat, three negative controls stayed flat, one is still waiting for its series. No second-order hop exists for this storm, so no chain is drawn.`,
       quiet: ev.sensitive, quiet_note: 'Milton is flagged sensitive: sober copy, no celebration language; the reveal stays because it is disclosure, not reward.'
     },
     event: { id: ev.event_id, slug: ev.slug, name: 'Hurricane Milton', sub: `landfall ${fmtDay(landfall)}; engine onset ${fmtDay(onset)}`, place: 'Siesta Key, Florida', date: fmtDay(landfall), onset, landfall, registered: ev.as_of,
@@ -215,15 +227,16 @@ export function assemble() {
     filtered: [{ name: 'Columbus Day, 14 Oct', domain: di('institutions'), lag_days: 7, magnitude: 0.5, kind: 'holiday', days: misc.common_days.filter(c => c.holiday === 'us_columbus').map(c => c.day),
       note: 'A holiday inside the seven-day window. Common to Florida and the donor regions, so the contrast cancels it; the single-event engine drops the day.' }],
     watching: { hop_id: W.hop_id, name: NODE[W.node].label, window_start: ev.as_of, window_close: W.window_close, prior: W.p_hat, status: W.tier_reason,
-      text: 'Two things are still open on this storm: the forecast model’s check of the grid stop (that decides Measured), and the extreme-wind-warning series, which is still being backfilled. Watch this ripple and we keep the change for you on this device.' },
+      text: forecast && forecast.state === 'agree' ? 'One thing is still open on this storm: the extreme-wind-warning series, which is still being backfilled. Watch this ripple and we keep the change for you on this device.' : 'Two things are still open on this storm: the forecast model’s check of the grid stop (that decides Measured), and the extreme-wind-warning series, which is still being backfilled. Watch this ripple and we keep the change for you on this device.' },
     pattern_next: { ...pat.p17, url: '../lands/real_world/' },
     calibration: misc.calibration,
-    ledger: [...misc.ledger, ...live.ledger_new.filter(l => l.seq === 994)], ledger_head: live.ledger_head,
+    ledger: [...misc.ledger, ...live.ledger_new.filter(l => l.seq === 994 || l.seq === 1001)], ledger_head: live.ledger_head,
     analytics: { kinds: live.rm_event_whitelist },
     links: { site: 'https://bensunter.com/ripples/pond/', csv: 'data/milton-grid-daily.csv', method: 'https://bensunter.com/ripples/methods/' },
     changelog: [
       { version: 1, at: '2026-09-26', text: 'First snapshot: regional contrast on grid demand; 12 pre-registered series untested; world rule for the far shore.' },
-      { version: 2, at: '2026-09-26', text: 'Engine 6.1.2 ran the queued tests: Duke Energy Florida demand is Measured by the engine (published Likely, forecast check pending); 12 series stayed flat; extreme-wind warnings still waiting.' }
+      { version: 2, at: '2026-09-26', text: 'Engine 6.1.2 ran the queued tests: Duke Energy Florida demand is Measured by the engine (published Likely, forecast check pending); 12 series stayed flat; extreme-wind warnings still waiting.' },
+      ...(forecast && forecast.state === 'agree' ? [{ version: 3, at: '2026-09-26', text: 'The independent forecast check agreed on both grid series, so Duke Energy Florida demand is now published as Measured. Extreme-wind warnings still waiting.' }] : [])
     ]
   };
 }

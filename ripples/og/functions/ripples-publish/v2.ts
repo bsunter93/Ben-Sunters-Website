@@ -15,6 +15,7 @@
 //    later run until it lands; and it lists `withdraw` paths — withheld versions (raw identifiers in public labels) with their
 //    cards, lines with no public version, hops no longer on a public line, and calendars of windows that have closed — which
 //    this run removes. Withheld versions stay frozen in the database and the ledger; they are just never served.
+// 7. Story layer and pond (2026-09-26 integration): v2/stories.json, v2/patterns.json, v2/pond/index.json, v2/pond/{slug}.json (see storyFiles).
 // deno-lint-ignore-file no-explicit-any
 import type { SupabaseClient } from "jsr:@supabase/supabase-js@2";
 
@@ -68,6 +69,36 @@ async function pool<T, R>(items: T[], k: number, fn: (x: T) => Promise<R>): Prom
   await Promise.all(Array.from({ length: Math.min(k, items.length) }, async () => {
     while (i < items.length) { const j = i++; out[j] = await fn(items[j]); }
   }));
+  return out;
+}
+
+// v2/stories.json (public.rm_stories: the story layer's featured list, archive-wide), v2/patterns.json (public.rm_patterns: 6.2 world
+// rules), v2/pond/index.json + v2/pond/{slug}.json (public.rm_pond: the pond page's payload per public line; the RPC returns null when a
+// line is not public or any raw identifier would leak, and such a slug is skipped and its file removed).
+async function storyFiles(db: SupabaseClient, ups: Up[], J: string, cache: string) {
+  const out = { stories: 0, patterns: 0, index: false, written: new Set<string>(), skipped: [] as string[], removed: 0, errors: [] as string[] };
+  const st = await db.rpc("rm_stories", { p_limit: 50, p_days: 36500, p_kind: null });
+  if (st.error) out.errors.push(`rm_stories: ${st.error.message}`);
+  else if (st.data) { ups.push({ path: P + "stories.json", body: JSON.stringify(st.data), type: J, cache }); out.stories = (st.data.featured ?? []).length; }
+  const pt = await db.rpc("rm_patterns", {});
+  if (pt.error) out.errors.push(`rm_patterns: ${pt.error.message}`);
+  else if (pt.data) { ups.push({ path: P + "patterns.json", body: JSON.stringify(pt.data), type: J, cache }); out.patterns = Array.isArray(pt.data) ? pt.data.length : 0; }
+  const ix = await db.rpc("rm_pond", { p_slug: null });
+  if (ix.error || !ix.data) { out.errors.push(`rm_pond index: ${ix.error?.message ?? "empty"}`); return out; }
+  const slugs: string[] = (ix.data.ponds ?? []).map((p: any) => p.slug).filter((s: unknown) => typeof s === "string" && /^[a-z0-9-]+$/.test(s as string));
+  const got = await pool(slugs, 4, async (slug) => {
+    const r = await db.rpc("rm_pond", { p_slug: slug });
+    return { slug, data: r.error ? null : r.data, err: r.error?.message };
+  });
+  for (const g of got) {
+    if (!g.data) { out.skipped.push(`${g.slug}: ${g.err ?? "not public or leaking"}`); continue; }
+    ups.push({ path: `${P}pond/${g.slug}.json`, body: JSON.stringify(g.data), type: J, cache });
+    out.written.add(g.slug);
+  }
+  // the index lists only ponds that were actually written
+  const idx = { ...ix.data, ponds: (ix.data.ponds ?? []).filter((p: any) => out.written.has(p.slug)) };
+  ups.push({ path: P + "pond/index.json", body: JSON.stringify(idx), type: J, cache });
+  out.index = true;
   return out;
 }
 
@@ -152,6 +183,9 @@ export async function publishV2(db: SupabaseClient, sbUrl: string, token: string
     ups.push({ path: `${P}data/${day}.json`, body: JSON.stringify(od), type: J, cache: C3600 });
   }
 
+  // story layer + 6.2 world rules + pond payloads (separate RPCs: each call stays well inside the API statement timeout)
+  const ponds = await storyFiles(db, ups, J, C300);
+
   const errors: string[] = [];
   const kept: string[] = [];
   const upload = async (u: Up): Promise<void> => {
@@ -163,6 +197,7 @@ export async function publishV2(db: SupabaseClient, sbUrl: string, token: string
     }
   };
   await pool(ups, 8, upload);
+  errors.push(...ponds.errors);
 
   // data/index.json from the bucket listing
   if (od) {
@@ -216,6 +251,15 @@ export async function publishV2(db: SupabaseClient, sbUrl: string, token: string
       } catch (e) { og.err.push(`${j.name}: ${String(e)}`); }
     });
   }
+  // pond payloads that are no longer public (line withdrawn, off-limits, or leaking) are removed
+  if (ponds.index) {
+    const { data: pl } = await db.storage.from(BUCKET).list(P + "pond", { limit: 1000 });
+    const stale = (pl ?? []).map((o) => o.name).filter((n) => /^[a-z0-9-]+\.json$/.test(n) && n !== "index.json" && !ponds.written.has(n.slice(0, -5)));
+    if (stale.length) {
+      const { error } = await db.storage.from(BUCKET).remove(stale.map((n) => P + "pond/" + n));
+      if (error) errors.push(`pond remove: ${error.message}`); else ponds.removed = stale.length;
+    }
+  }
   // ---- withdrawal: objects that must not stay public (computed in SQL from storage.objects; paths only under v2/) ----
   const withdraw: string[] = (Array.isArray(bundle.withdraw) ? bundle.withdraw : [])
     .filter((x: unknown) => typeof x === "string" && /^v2\/(cascade|feed|hop|og|ics)\/[A-Za-z0-9._\/-]+$/.test(x as string));
@@ -230,6 +274,7 @@ export async function publishV2(db: SupabaseClient, sbUrl: string, token: string
     ok, as_of: day, freeze: bundle.freeze, lines_frozen: bundle.lines_frozen, new_versions: newVersions,
     frozen_retried: retried.length, held: bundle.held ?? [], grants_fixed: bundle.grants_fixed ?? 0,
     hops: (bundle.hops ?? []).length, hops_deferred: bundle.hops_deferred ?? 0, withdrawn: removed,
+    stories: ponds.stories, patterns: ponds.patterns, ponds: ponds.written.size, ponds_skipped: ponds.skipped, ponds_removed: ponds.removed,
     uploaded: ups.length - errors.length - kept.length, frozen_kept: kept.length, errors, og,
     ms: Math.round(performance.now() - t0),
   };
