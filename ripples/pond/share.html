@@ -47,7 +47,7 @@ body{background:#2A3234;padding:40px;display:grid;gap:40px;justify-items:start;o
     <div class="brand"><svg viewBox="0 0 24 24" aria-hidden="true"><ellipse cx="12" cy="12" rx="3" ry="2.4" fill="#C8B48E"/><circle cx="12" cy="12" r="6.5" fill="none" stroke="#A9EAD9" stroke-width="1.2"/><circle cx="12" cy="12" r="10.5" fill="none" stroke="#A9EAD9" stroke-width="1.2" opacity=".45"/></svg>Ripple Map</div>
     <h1>Hurricane Milton hit Florida. <span class="q">The next day the Gulf-coast grid ran at 0.89× normal for a week; the rest of the country didn’t move.</span></h1>
     <div class="big num">0.89×<small>normal; −20% vs 51 unaffected regions</small></div>
-    <div class="trust"><span class="half">Likely: Measured by the engine, forecast check pending</span><span>1 in 412 by chance</span><span>12 series stayed flat</span></div>
+    <div class="trust"><span class="half">Likely, forecast check pending</span><span>1 in 412 by chance</span><span>12 series stayed flat</span></div>
     <div class="foot"><span class="cta">Trace the ripple</span><span class="reach"><span class="num">1</span> domain · <span class="num">7</span> days · 1st-order<small>how far it travelled</small></span></div>
   </div>
   <svg class="pond" id="pond-land" aria-hidden="true"></svg>
@@ -62,7 +62,7 @@ body{background:#2A3234;padding:40px;display:grid;gap:40px;justify-items:start;o
   <div class="copy">
     <h1>Hurricane Milton hit Florida. <span class="q">The next day the Gulf-coast grid ran at 0.89× normal for a week; the rest of the country didn’t move.</span></h1>
     <div class="big num">0.89×<small>normal; −20% vs unaffected regions</small></div>
-    <div class="trust"><span class="half">Likely: Measured by the engine, forecast check pending</span><span>1 in 412 by chance</span><span>12 series stayed flat</span></div>
+    <div class="trust"><span class="half">Likely, forecast check pending</span><span>1 in 412 by chance</span><span>12 series stayed flat</span></div>
     <div class="foot"><span class="cta">What else did Milton touch?</span><span class="reach"><span class="num">1</span> domain · <span class="num">7</span> days · 1st-order</span></div>
   </div>
 </div>
@@ -74,6 +74,7 @@ fetch('data/milton.json').then(r => r.json()).then(P => {
   P.untested.forEach(u => { u.offset = 0; });
   Pond.render(document.getElementById('pond-land'), { ...P, rivals: [], filtered: [] }, { reduceMotion: true, viewBox: [-500, -500, 1000, 1000] });
   Pond.render(document.getElementById('pond-port'), { ...P, rivals: [], filtered: [] }, { reduceMotion: true, viewBox: [-560, -430, 1120, 860] });
+  window.__shareTier = P.effects[0].published.tier;
   document.body.dataset.ready = '1';
 });
 </script>

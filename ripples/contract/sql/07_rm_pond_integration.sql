@@ -55,7 +55,7 @@ $$;
 
 create or replace function ripples.rm_pond_payload(p_event bigint) returns jsonb
 language plpgsql stable security definer set search_path = '' as $$
-declare ev ripples.att_events; pv record; P jsonb; eff jsonb := '[]'; flats jsonb := '[]'; unt jsonb := '[]'; ctl jsonb := '[]'; shore jsonb := '[]';
+declare ev ripples.att_events; pv record; pl jsonb; eff jsonb := '[]'; flats jsonb := '[]'; unt jsonb := '[]'; ctl jsonb := '[]'; shore jsonb := '[]';
         n jsonb; t record; g jsonb; reg record; cand record; st record; fx jsonb; ch jsonb; rep jsonb; keys text[]; dom_order text[] :=
         array['real_world','institutions','jobs','markets','business','builders','stuff','reading','chatter'];
         used text[] := '{}'; out jsonb; story jsonb; travel jsonb; honesty jsonb; watching jsonb; nm text; lab text; name text; sid bigint;
@@ -65,16 +65,16 @@ begin
   select * into ev from ripples.att_events where event_id = p_event;
   if not found or not ripples.rm_is_public(p_event) or coalesce(ripples.att_story_off_limits(p_event), false) then return null; end if;
   select v.version, v.payload, v.published_at into pv from ripples.rm_public_versions v where v.event_id = p_event order by v.version desc limit 1;
-  P := pv.payload;
-  lab := P -> 'event' ->> 'label';
+  pl := pv.payload;
+  lab := pl -> 'event' ->> 'label';
   name := regexp_replace(lab, '\s*\(positive control\)$', '');
-  quiet := coalesce((P -> 'event' ->> 'sensitive')::boolean, ripples.rm_sensitive(p_event));
+  quiet := coalesce((pl -> 'event' ->> 'sensitive')::boolean, ripples.rm_sensitive(p_event));
   select s.* into st from ripples.att_story_candidates s where s.event_id = p_event and s.story_kind = 'cascade' and s.exclude_reason is null
    order by s.featurable desc, s.story_score desc, s.story_id limit 1;
   hero_hop := st.hero_stop;
 
   -- effects: every Likely-or-better stop of the published version (tier = the published, gated tier)
-  for n in select x from jsonb_array_elements(coalesce(P -> 'nodes', '[]')) x where x ->> 'tier' in ('measured','likely')
+  for n in select x from jsonb_array_elements(coalesce(pl -> 'nodes', '[]')) x where x ->> 'tier' in ('measured','likely')
            order by (x ->> 'tier' = 'measured') desc, ((x ->> 'hop_id')::bigint = hero_hop) desc, (x ->> 'hop_id')::bigint loop
     select * into t from ripples.att_hop_latest l where l.hop_id = (n ->> 'hop_id')::bigint;
     select * into reg from ripples.att_hop_registry r where r.hop_id = (n ->> 'hop_id')::bigint;
@@ -145,7 +145,7 @@ begin
                                       'text', case when g ->> 'reason' is not null then initcap(coalesce(t.tier, '')) || ' by the engine; ' || (g ->> 'reason')
                                                    else initcap(n ->> 'tier') end),
       'tier_reason', n -> 'tier_reason',
-      'engine', jsonb_build_object('version', coalesce(t.detail ->> 'engine_version', P ->> 'method'), 't_stat', round(t.t_stat::numeric, 3), 'p_date', t.p_date, 'n_date', t.n_date,
+      'engine', jsonb_build_object('version', coalesce(t.detail ->> 'engine_version', pl ->> 'method'), 't_stat', round(t.t_stat::numeric, 3), 'p_date', t.p_date, 'n_date', t.n_date,
                                    'exceed_date', case when t.p_date is not null and t.n_date is not null then round(t.p_date * t.n_date) end,
                                    'p_topic', t.p_topic, 'n_topic', t.n_topic, 'p_link', t.p_link, 'n_link', t.n_link, 'q', t.q, 'q_w', t.q_w, 'fluke', t.fluke,
                                    'f', t.f, 'f_bin', t.f_bin, 'f_warming', n -> 'f_warming',
@@ -154,7 +154,7 @@ begin
                                    'look_day', t.look_day, 'resolved_at', reg.resolved_at, 'chain', t.detail -> 'chain'),
       'contrast', fx, 'kind', 'pad', 'far_shore', false,
       'parent', case when n ->> 'parent_hop' is null then 'event' else 'h' || (n ->> 'parent_hop') end,
-      'mediation_supported', coalesce((st.fields ->> 'mediation_supported')::boolean, false) and st.hero_stop = (n ->> 'hop_id')::bigint, 'common_cause', '[]'::jsonb,
+      'mediation_supported', (n ->> 'parent_hop') is not null and coalesce((st.fields ->> 'mediation_supported')::boolean, false) and st.hero_stop = (n ->> 'hop_id')::bigint, 'common_cause', '[]'::jsonb,
       'num', case when rho is null then null when unit = 'x' then to_char(rho, 'FM990.00') || '×' else to_char(rho, 'SG990.00') || ' pts' end,
       'short', n ->> 'label', 'title', n ->> 'label', 'unit', case when unit = 'x' then 'its normal' else 'points vs its normal' end,
       'headline', case when st.hero_stop = (n ->> 'hop_id')::bigint then st.copy ->> 'story_sentence' else split_part(n ->> 'sentence', '. ', 1) || '.' end,
@@ -167,12 +167,12 @@ begin
       'replication', coalesce(fx -> 'replication', rep),
       'story_replication', rep,
       'chart', ch,
-      'ledger', jsonb_build_object('register_seq', reg.ledger_seq, 'test_seq', t.ledger_seq, 'version_seq', P -> 'ledger' -> 'seq', 'frozen_hash', cand.frozen_hash),
+      'ledger', jsonb_build_object('register_seq', reg.ledger_seq, 'test_seq', t.ledger_seq, 'version_seq', pl -> 'ledger' -> 'seq', 'frozen_hash', cand.frozen_hash),
       'label_side', 'auto');
   end loop;
 
   -- flats: pre-registered stops whose window closed with no move (the published version's `flat`), with their own test
-  for n in select x from jsonb_array_elements(coalesce(P -> 'flat', '[]')) x order by (x ->> 'hop_id')::bigint loop
+  for n in select x from jsonb_array_elements(coalesce(pl -> 'flat', '[]')) x order by (x ->> 'hop_id')::bigint loop
     select * into t from ripples.att_hop_latest l where l.hop_id = (n ->> 'hop_id')::bigint;
     select * into cand from ripples.att_hop_candidates c where c.hop_id = (n ->> 'hop_id')::bigint;
     select * into reg from ripples.att_hop_registry r where r.hop_id = (n ->> 'hop_id')::bigint;
@@ -187,7 +187,7 @@ begin
   end loop;
 
   -- untested / watching: stops the engine has no verdict on yet (window open, or waiting for data)
-  for n in select x from jsonb_array_elements(coalesce(P -> 'nodes', '[]')) x where x ->> 'tier' = 'watching' or coalesce((x ->> 'provisional')::boolean, false)
+  for n in select x from jsonb_array_elements(coalesce(pl -> 'nodes', '[]')) x where x ->> 'tier' = 'watching' or coalesce((x ->> 'provisional')::boolean, false)
            order by (x ->> 'window_close') nulls last, (x ->> 'hop_id')::bigint loop
     select * into cand from ripples.att_hop_candidates c where c.hop_id = (n ->> 'hop_id')::bigint;
     used := used || coalesce(n ->> 'domain', 'reading');
@@ -235,12 +235,12 @@ begin
                   'tier', st.tier, 'engine_tier', st.engine_tier, 'featurable', st.featurable, 'score', round(st.story_score::numeric, 3),
                   'story_sentence', st.copy ->> 'story_sentence', 'conversation_hook', case when quiet then null else st.copy ->> 'conversation_hook' end,
                   'short_title', st.copy ->> 'short_title', 'share_line', st.copy ->> 'share_line', 'derived_by', 'story layer (att_story_candidates)')
-                else jsonb_build_object('story_id', null, 'archetype', null, 'archetypes', '[]'::jsonb, 'tier', P ->> 'weakest_tier', 'engine_tier', null, 'featurable', false, 'score', null,
-                  'story_sentence', coalesce(eff -> 0 ->> 'plain', P ->> 'text_plain'), 'conversation_hook', null,
-                  'short_title', name || coalesce(' → ' || (eff -> 0 ->> 'title'), ''), 'share_line', P ->> 'text_plain',
+                else jsonb_build_object('story_id', null, 'archetype', null, 'archetypes', '[]'::jsonb, 'tier', pl ->> 'weakest_tier', 'engine_tier', null, 'featurable', false, 'score', null,
+                  'story_sentence', coalesce(eff -> 0 ->> 'plain', pl ->> 'text_plain'), 'conversation_hook', null,
+                  'short_title', name || coalesce(' → ' || (eff -> 0 ->> 'title'), ''), 'share_line', pl ->> 'text_plain',
                   'derived_by', 'rm_pond_payload (no story-layer cascade row for this event)') end;
   travel := coalesce(st.travel, jsonb_build_object('domains_crossed', (select count(distinct x ->> 'domain_key') from jsonb_array_elements(eff) x),
-                                                   'days', (select max((x ->> 'lag_days')::int) from jsonb_array_elements(eff) x), 'depth', coalesce((P ->> 'depth')::int, 0)));
+                                                   'days', (select max((x ->> 'lag_days')::int) from jsonb_array_elements(eff) x), 'depth', coalesce((pl ->> 'depth')::int, 0)));
   select jsonb_build_object('hop_id', x -> 'hop_id', 'name', x -> 'name', 'window_start', ev.as_of, 'window_close', x -> 'window_close', 'prior', x -> 'prior',
                             'status', x -> 'status', 'open', not coalesce((x ->> 'window_closed')::boolean, false),
                             'text', case when coalesce((x ->> 'window_closed')::boolean, false)
@@ -256,16 +256,16 @@ begin
     'control_note', case when ev.role = 'positive_control' then 'A known-effect test case (positive control): the engine is checked on storms like this one, where a move is expected. Published as an archive line with its real, gated tiers.' end);
 
   out := jsonb_build_object('v', 2, 'version', pv.version, 'snapshot_at', to_char(now() at time zone 'utc', 'YYYY-MM-DD"T"HH24:MI:SS"Z"'), 'source', 'rm_pond_payload',
-    'engine', jsonb_build_object('method_hop', P ->> 'method', 'method_contrast', case when exists (select 1 from jsonb_array_elements(eff) x where x -> 'contrast' <> 'null') then '6.2.1' end,
+    'engine', jsonb_build_object('method_hop', pl ->> 'method', 'method_contrast', case when exists (select 1 from jsonb_array_elements(eff) x where x -> 'contrast' <> 'null') then '6.2.1' end,
                                  'gate_mode', coalesce(ripples._att_cfg('ce') ->> 'gate_mode', 'enforce')),
     'honesty', honesty,
-    'event', jsonb_build_object('id', ev.event_id, 'slug', P -> 'event' ->> 'slug', 'name', name, 'label', lab, 'emoji', P -> 'event' ->> 'emoji', 'family', ev.family,
+    'event', jsonb_build_object('id', ev.event_id, 'slug', pl -> 'event' ->> 'slug', 'name', name, 'label', lab, 'emoji', pl -> 'event' ->> 'emoji', 'family', ev.family,
                                 'sub', 'engine onset ' || to_char(ev.onset, 'FMDD Mon YYYY'), 'onset', ev.onset, 'registered', ev.as_of, 'date', to_char(ev.onset, 'FMDD Mon YYYY'),
-                                'magnitude', P -> 'event' -> 'magnitude_x', 'magnitude_note', case when P -> 'event' -> 'magnitude_x' = 'null' or P -> 'event' -> 'magnitude_x' is null then 'not scored; the stone is drawn at the default size' end,
+                                'magnitude', pl -> 'event' -> 'magnitude_x', 'magnitude_note', case when pl -> 'event' -> 'magnitude_x' = 'null' or pl -> 'event' -> 'magnitude_x' is null then 'not scored; the stone is drawn at the default size' end,
                                 'sensitive', quiet, 'role', case when ev.role = 'positive_control' then 'positive_control' else ev.role end,
                                 'reconstructed', ev.reconstructed, 'is_control', ev.role = 'positive_control',
-                                'cascade', jsonb_build_object('version', pv.version, 'status', P ->> 'status', 'weakest_tier', P -> 'weakest_tier', 'denominators', P -> 'denominators',
-                                                              'payload_hash', P ->> 'payload_hash', 'published_at', P ->> 'published_at', 'ledger', P -> 'ledger', 'baseline', P -> 'event' -> 'baseline', 'method', P ->> 'method'),
+                                'cascade', jsonb_build_object('version', pv.version, 'status', pl ->> 'status', 'weakest_tier', pl -> 'weakest_tier', 'denominators', pl -> 'denominators',
+                                                              'payload_hash', pl ->> 'payload_hash', 'published_at', pl ->> 'published_at', 'ledger', pl -> 'ledger', 'baseline', pl -> 'event' -> 'baseline', 'method', pl ->> 'method'),
                                 'label', true),
     'story', story, 'travel', travel,
     'domains', to_jsonb(array(select coalesce(ripples.rm_domain_word(k), initcap(replace(k, '_', ' '))) from unnest(keys) k)), 'domain_keys', to_jsonb(keys),
@@ -274,8 +274,8 @@ begin
     'controls', ctl, 'untested', unt, 'shore', shore,
     'rivals', coalesce((select jsonb_agg(jsonb_build_object('name', r ->> 'label', 'event_id', r -> 'event_id', 'note', r ->> 'note',
                                                             'slug', case when ripples.rm_is_public((r ->> 'event_id')::bigint) then ripples.rm_slug((r ->> 'event_id')::bigint) end))
-                        from jsonb_array_elements(coalesce(P -> 'rivals', '[]')) r), '[]'),
-    'filtered', coalesce((select jsonb_agg(jsonb_build_object('name', initcap(replace(regexp_replace(cd.c_by_source ->> 'holiday', '^us_', ''), '_', ' ')) || ', ' || to_char(cd.day, 'FMDD Mon'),
+                        from jsonb_array_elements(coalesce(pl -> 'rivals', '[]')) r), '[]'),
+    'filtered', coalesce((select jsonb_agg(jsonb_build_object('name', initcap(replace(regexp_replace(cd.c_by_source ->> 'holiday', '^us_', ''), '_', ' ')) || ' (US holiday), ' || to_char(cd.day, 'FMDD Mon'),
                                                               'kind', 'holiday', 'days', jsonb_build_array(cd.day), 'lag_days', cd.day - ev.onset,
                                                               'note', 'A holiday inside the first week. The engine drops common-shock days from its tests.') order by cd.day)
                           from ripples.att_common_days cd where cd.day between ev.onset and ev.onset + 7 and cd.c_by_source ->> 'holiday' is not null), '[]'),
@@ -286,7 +286,7 @@ begin
     'ledger', coalesce((select jsonb_agg(jsonb_build_object('seq', l.seq, 'day', l.day, 'kind', l.kind, 'ref', l.ref, 'payload_hash', l.payload_hash, 'chain_hash', l.chain_hash) order by l.seq)
                           from ripples.att_ledger l where l.ref ->> 'event_id' = p_event::text or l.seq = any (reg_seqs)), '[]'),
     'ledger_head', (select jsonb_build_object('seq', l.seq, 'chain_hash', l.chain_hash) from ripples.att_ledger l order by l.seq desc limit 1),
-    'links', jsonb_build_object('site', 'https://bensunter.com/ripples/pond/?e=' || (P -> 'event' ->> 'slug'), 'line', 'https://bensunter.com/ripples/line/' || (P -> 'event' ->> 'slug') || '/',
+    'links', jsonb_build_object('site', 'https://bensunter.com/ripples/pond/?e=' || (pl -> 'event' ->> 'slug'), 'line', 'https://bensunter.com/ripples/line/' || (pl -> 'event' ->> 'slug') || '/',
                                 'cascade', 'v2/cascade/' || p_event || '.json', 'csv', case when jsonb_array_length(eff) > 0 then 'v2/hop/' || (eff -> 0 ->> 'hop_id') || '.csv' end,
                                 'method', 'https://bensunter.com/ripples/methods/'),
     'changelog', coalesce((select jsonb_agg(jsonb_build_object('version', v.version, 'at', to_char(v.published_at at time zone 'utc', 'YYYY-MM-DD'), 'text', v.payload ->> 'text_plain') order by v.version)

@@ -99,7 +99,10 @@ export function assemble() {
   const worst = daily.reduce((a, b) => b.fpc < a.fpc ? b : a);
   const dateOdds = oneIn(H.p_date), topicOdds = oneIn(H.p_topic);
   const effectPct = r((H.rho_shrunk - 1) * 100, 0);
-  const published = { tier: G.tier, engine_tier: G.engine_tier, reason: G.reason, mode: G.mode, ce: G.ce, text: G.reason ? `${TIERW[G.engine_tier]} by the engine; ${G.reason}` : TIERW[G.tier] };
+  // published.text is the only tier wording allowed in headlines, share copy and aria-labels: the gated tier, never the engine tier (D-14/D-16).
+  // published.detail (engine tier + gate reason) is evidence-layer copy for the stop card chip and drawers.
+  const published = { tier: G.tier, engine_tier: G.engine_tier, reason: G.reason, mode: G.mode, ce: G.ce,
+    text: G.reason ? `${TIERW[G.tier]}, ${G.reason}` : TIERW[G.tier], detail: G.reason ? `${TIERW[G.engine_tier]} by the engine; ${G.reason}` : TIERW[G.tier] };
 
   /* --- the regional contrast (engine 6.2.1) on the same grids, secondary evidence on the same card --- */
   const pre = daily.filter(x => x.day >= '2024-09-09' && x.day <= '2024-10-06');
@@ -186,7 +189,7 @@ export function assemble() {
     v: 2, version: 2, snapshot_at: live.queried_at, engine: { method_hop: H.engine_version, method_contrast: '6.2.1', batch: misc.grid8.batch, gate_mode: G.mode },
     honesty: {
       measured_engine: 1, measured_published: G.tier === 'measured' ? 1 : 0, likely_published: G.tier === 'likely' ? 1 : 0, flats: flats.length, controls_flat: controls.filter(c => c.tier === 'flat').length, watching: untested.length, chains: live.children_of_milton,
-      note: `One stop is Measured by the engine (6.1.2 single-event test) and published as ${TIERW[G.tier]} because the forecast gate returned "${G.reason}". Twelve pre-registered series stayed flat, three negative controls stayed flat, one is still waiting for its series. No second-order hop exists for this storm, so no chain is drawn.`,
+      note: `One stop reached the engine's top tier (6.1.2 single-event test) and is published as ${TIERW[G.tier]} because the forecast gate returned "${G.reason}". Headline and share copy carry only the published tier. Twelve pre-registered series stayed flat, three negative controls stayed flat, one is still waiting for its series. No second-order hop exists for this storm, so no chain is drawn.`,
       quiet: ev.sensitive, quiet_note: 'Milton is flagged sensitive: sober copy, no celebration language; the reveal stays because it is disclosure, not reward.'
     },
     event: { id: ev.event_id, slug: ev.slug, name: 'Hurricane Milton', sub: `landfall ${fmtDay(landfall)}; engine onset ${fmtDay(onset)}`, place: 'Siesta Key, Florida', date: fmtDay(landfall), onset, landfall, registered: ev.as_of,

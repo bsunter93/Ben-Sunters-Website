@@ -36,7 +36,8 @@
 
   /* ---------- hero copy (from the story fields in the snapshot) ---------- */
   /* the hook copy is static in index.html so nothing shifts on load; it is checked against the snapshot and rewritten only if stale */
-  const H1 = { hook: $('#h1').innerHTML, traced: `One storm.<br>One ripple, measured.<br><span class="quiet">${flatsWord(P.flats.length)} things that stayed flat.</span>` };
+  // tier-driven headline: the word Measured appears only when the gated published tier is measured
+  const H1 = { hook: $('#h1').innerHTML, traced: E.published.tier === 'measured' ? `One storm.<br>One ripple, measured.<br><span class="quiet">${flatsWord(P.flats.length)} things that stayed flat.</span>` : `One storm.<br>One ripple.<br><span class="quiet">${flatsWord(P.flats.length)} things that stayed flat.</span>` };
   const trustWant = `1 in ${Math.round(1 / E.engine.p_date)}`;
   if (!$('#trust').textContent.includes(trustWant) || !$('#trust').textContent.includes(esc(tierLine(E)))) $('#trust').innerHTML = `<b>${esc(tierLine(E))}.</b> ${E.engine.exceed_date} of ${E.engine.n_date.toLocaleString()} fake dates come close (<span class="num">${trustWant}</span>), and Florida moved against ${E.contrast.n_donors} regions the storm missed. <span class="no">Passed after ${E.replication.n_seen} of ${E.replication.n_similar} similar storms tested.</span>`;
   if (!$('#reach').textContent.includes(`${P.travel.days} days`)) $('#reach').innerHTML = `<span class="num">${P.travel.domains}</span> domain · <span class="num">${P.travel.days}</span> days · 1st-order<small>How far the ripple travelled. ${esc(P.travel.usual_reach)}.</small>`;
@@ -193,7 +194,7 @@
     const r = e.replication;
     body.innerHTML = `
       <p class="crumb">${esc(P.domains[e.domain])}, ${esc(e.lag_text)}. This ripple <b>forks straight from the storm</b>: no chain through another stop is claimed.</p>
-      <span class="chip ${esc(e.tier)}">${glyph(e.tier)}${esc(tierWord(e))}${e.published.reason ? `<em>${esc(TIER[e.engine_tier])} by the engine; ${esc(e.published.reason)}</em>` : ''}</span>
+      <span class="chip ${esc(e.tier)}">${glyph(e.tier)}${esc(tierWord(e))}${e.published.reason ? `<em>${esc(e.published.detail)}</em>` : ''}</span>
       <h2>${esc(e.title)}</h2>
       <div class="big num">${esc(e.num)}<small>${esc(e.unit)}</small></div>
       <p class="find">${esc(e.plain)}</p>
@@ -280,6 +281,7 @@
   /* ---------- send ---------- */
   const url = P.links.site;
   const shareText = () => `${P.story.story_sentence}\n${P.story.conversation_hook}\n${P.story.share_line}\n${url}`;
+  window.__pond = { publishedTier: E.published.tier, shareText };   // read by tools/shoot.mjs for the tier-wording guard
   let tt; function toast(msg) { const t = $('#toast'); t.textContent = msg; t.classList.add('on'); clearTimeout(tt); tt = setTimeout(() => t.classList.remove('on'), 2400); }
   function copy(text) { const ok = () => toast('Copied. Paste it anywhere.'); if (navigator.clipboard && window.isSecureContext) return navigator.clipboard.writeText(text).then(ok, () => fallbackCopy(text, ok)); fallbackCopy(text, ok); }
   function fallbackCopy(text, ok) { const ta = document.createElement('textarea'); ta.value = text; ta.setAttribute('aria-hidden', 'true'); ta.style.cssText = 'position:fixed;top:-100px;opacity:0'; document.body.append(ta); ta.select(); try { document.execCommand('copy'); ok(); } catch { toast('Select the text to copy it'); } ta.remove(); }

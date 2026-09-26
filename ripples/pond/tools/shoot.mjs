@@ -63,6 +63,13 @@ const issues = [];
       await p.focus('#pond .effect'); await p.screenshot({ path: join(OUT, `${tag}-13-focus.png`) });
       const aria = await p.evaluate(() => [...document.querySelectorAll('#pond [tabindex="0"]')].map(g => g.getAttribute('aria-label')).filter(x => !x));
       if (aria.length) issues.push('a11y: markers without aria-label ' + aria.length);
+      // trust-gradient guard (D-14/D-16): no "measured" in headline, hero tier line, share text, OG meta or marker aria-labels unless the gated published tier is measured
+      const tg = await p.evaluate(() => ({ tier: window.__pond.publishedTier, texts: {
+        h1: document.querySelector('#h1').textContent, trust: document.querySelector('#trust').textContent, tracedSub: document.querySelector('#traced-sub').textContent,
+        share: window.__pond.shareText(), title: document.title, ogTitle: document.querySelector('meta[property="og:title"]').content, ogDesc: document.querySelector('meta[property="og:description"]').content, desc: document.querySelector('meta[name="description"]').content,
+        aria: [...document.querySelectorAll('#pond [aria-label]')].map(g => g.getAttribute('aria-label')).join(' | ') } }));
+      if (tg.tier !== 'measured') for (const [k, v] of Object.entries(tg.texts)) if (/\bmeasured\b/i.test(v)) issues.push(`trust gradient: "${k}" says measured while published tier is ${tg.tier}: ${v.slice(0, 120)}`);
+      console.log('trust-gradient guard: published tier', tg.tier, '-', Object.keys(tg.texts).length, 'surfaces checked');
       // budget
       const bytes = await p.evaluate(async () => { let t = 0; for (const f of ['pond.js', 'app.js', 'pond.css', 'app.css']) t += (await (await fetch(f)).text()).length; return t; });
       console.log('JS+CSS bytes', bytes, bytes > 150 * 1024 ? 'OVER BUDGET' : 'ok');
@@ -85,6 +92,8 @@ const issues = [];
   {
     const ctx = await browser.newContext({ viewport: { width: 1300, height: 2100 } });
     const p = await mkpage(ctx, 'share'); await p.goto(BASE + 'share.html'); await p.waitForSelector('body[data-ready="1"]'); await settle(p, 900);
+    const sg = await p.evaluate(() => ({ tier: window.__shareTier, text: document.querySelector('#land').textContent + ' ' + document.querySelector('#port').textContent }));
+    if (sg.tier !== 'measured' && /\bmeasured\b/i.test(sg.text)) issues.push('trust gradient: share cards say measured while published tier is ' + sg.tier);
     await p.locator('#land').screenshot({ path: join(HERE, '..', 'og', 'milton.png') });
     await p.locator('#port').screenshot({ path: join(HERE, '..', 'og', 'milton-portrait.png') });
     await p.locator('#land').screenshot({ path: join(OUT, 'share-1200x630.png') });
