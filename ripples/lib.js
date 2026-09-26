@@ -43,7 +43,7 @@ export function num(x) {
   if (v < 10) return v.toFixed(1).replace(/\.0$/, '');
   return String(Math.round(v));
 }
-// a rate series' rho is a difference in points, never a multiple (fixtures README "Units")
+// a rate series' rho is a difference (percentage or probability), never a multiple (fixtures README "Units")
 export function mult(x, unit = 'x') {
   if (!fin(x)) return '';
   const v = Number(x);
@@ -107,7 +107,8 @@ export function parseRoute(path, ds = {}) {
   else if (/\/ripples\/archive\/$/.test(p)) r.route = 'archive';
   else if (/\/ripples\/methods\/$/.test(p)) r.route = 'methods';
   // stub attributes (gen-stubs.mjs) win: data-route/event/version/hop/domain/week
-  if (ds.route) r.route = ds.route;
+  // the bare /line/ shell (data-route=lines) also serves line URLs when a host falls back to it: the path wins then
+  if (ds.route && !(ds.route === 'lines' && r.route !== 'home')) r.route = ds.route;
   if (ds.event) r.event = +ds.event;
   if (ds.version && r.route !== 'line') r.version = +ds.version;
   if (ds.version && r.route === 'line' && /\/v\d+\/$/.test(p)) r.version = +ds.version;

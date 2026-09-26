@@ -1,137 +1,157 @@
-// node ripples/tools/test-lib.mjs  (exits non-zero on any failure)
-// Checks lib.js against the W1 fixture: SPEC §3 share text byte for byte, scoring and helpers.
-import { readFileSync } from 'node:fs';
+// node ripples/tools/test-lib.mjs [--fold]   (exits non-zero on any failure)
+// Ripple Map v6 (WS-D): lib.js against the WS-C v2 fixtures, the copy rules, the performance budget (EXPERIENCE §11) and,
+// with --fold, the 360 × 640 fold check in headless Chromium (needs the global `playwright` package; skipped if absent).
+import { readFileSync, readdirSync, statSync, existsSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
+import { join, extname } from 'node:path';
+import { createServer } from 'node:http';
+import { createRequire } from 'node:module';
 import * as L from '../lib.js';
 
 const root = fileURLToPath(new URL('..', import.meta.url));
-const fx = f => JSON.parse(readFileSync(root + 'contract/fixtures/' + f, 'utf8'));
-const puzzle = fx('puzzle-0.json'), reveal = fx('reveal-0.json');
+const FX = join(root, 'contract/fixtures/v2/');
+const fx = f => JSON.parse(readFileSync(FX + f, 'utf8'));
 let fails = 0, passes = 0;
 const eq = (name, got, want) => {
-  if (got === want) { passes++; return; }
-  fails++; console.error(`FAIL ${name}\n  got:  ${JSON.stringify(got)}\n  want: ${JSON.stringify(want)}`);
+  const g = JSON.stringify(got), w = JSON.stringify(want);
+  if (g === w) { passes++; return; }
+  fails++; console.error(`FAIL ${name}\n  got:  ${g}\n  want: ${w}`);
 };
+const ok = (name, cond, info = '') => { if (cond) passes++; else { fails++; console.error(`FAIL ${name} ${info}`); } };
 
-// Answers come from the client-side hash check, not from the reveal file.
-const answers = [];
-for (const r of puzzle.rounds) answers.push(await L.findAnswer(puzzle.n, r));
-eq('answers via answer_h', answers.join(''), reveal.rounds.map(r => r.answer).join(''));
-eq('answerCheck negative', await L.answerCheck(0, 1, 'Q999990011', puzzle.rounds[0].answer_h), false);
-eq('sha256Hex', await L.sha256Hex('abc'), 'ba7816bf8f01cfea414140de5dae2223b00361a396177a9cb410ff61f20015ad');
+// ---------- lib against the fixtures ----------
+const c = fx('cascade-1201.json'), v2 = fx('cascade-1201-v2.json'), hop = fx('hop-9001.json'), ret = fx('hop-9006-retracted.json'), shocks = fx('shocks.json');
+const order = L.lineOrder(c);
+eq('line order: outcome stations by onset, child after parent, attention ripple after, Watching last',
+  order.map(e => `${e.n.hop_id}:${e.depth}`), ['9001:1', '9004:2', '9006:1', '9002:1', '9003:1', '9005:1']);
+eq('all three tiers + retracted present in order', [...new Set(order.map(e => e.n.tier))].sort(), ['likely', 'measured', 'retracted', 'watching']);
+eq('counts', L.counts(c), { measured: 1, likely: 3, watching: 1, retracted: 1, flat: 3 });
+eq('stop count = Measured + Likely', L.stopCount(c), 4);
+eq('line meta', L.lineMeta(c), ['4 stops', '3 domains', '3 days', 'still running']);
+eq('line end: running', L.lineEnd(c), 'Line ends here for now.');
+eq('line end: nowhere', L.lineEnd({ status: 'nowhere', denominators: { tested: 12 } }), 'Went nowhere: 12 paths tested, none moved.');
+eq('line end: ended', L.lineEnd({ status: 'ended' }), 'Line ends: nothing downstream passed.');
+eq('stop sentence (Measured)', L.plainParts(L.stopSentence(c.nodes[0], 'Hurricane Polo')), 'US air travellers ran 0.91× its normal, +1 day after Hurricane Polo.');
+eq('stop sentence (same day)', L.plainParts(L.stopSentence(c.nodes[3], 'US air travellers')), 'Florida grid demand ran 0.84× its normal, the same day as US air travellers.');
+eq('stop sentence (retracted)', L.plainParts(L.stopSentence(c.nodes[5], 'x')), 'Retracted 25 Sep: a later data revision pushed it below the bar.');
+eq('stop sentence (Watching)', L.plainParts(L.stopSentence(c.nodes[4], 'x')), 'Florida jobless claims: no measurable move yet.');
+eq('stop sentence (closed window, past tense)', L.plainParts(L.stopSentence({ ...c.nodes[4], window_closed: true }, 'x')), 'Florida jobless claims: its window closed 20 Oct. The result is pending.');
+eq('points unit is never a multiple', L.plainParts(L.stopSentence({ ...c.nodes[0], unit: 'points', rho: 0.4 }, 'P')), 'US air travellers ran +0.40 points above its normal, +1 day after P.');
+eq('rel points', L.rel(-0.4, 'points'), '0.40 points below its normal');
+eq('evidence headline (shrunk + interval)', L.evidenceHeadline(hop), 'US air travellers at 0.91× [0.88–0.95] its normal, consistent with Hurricane Polo 1 day earlier.');
+// ENGINE §8: the two fluke labels, exactly
+eq('lookalikes label', L.lookalikes(58), 'A random pairing looks this strong about 1 in 58 times.');
+eq('fluke-rate label', L.flukeRate(20, false), 'Links this strong from decoy starts turn out to be flukes about 1 in 20 times.');
+ok('fixture sentence carries both labels verbatim', c.nodes[0].sentence.includes(L.lookalikes(58)) && c.nodes[0].sentence.includes('Links like this turn out to be flukes about 1 in 20 times.'));
+eq('fluke warming', L.flukeRate(null, true), 'Fluke rate still warming up: too few decoy links this strong yet.');
+eq('placebo strip', (({ n, exceed, lit }) => ({ n, exceed, lit }))(L.placeboStrip(hop.q5_luck.placebo)), { n: 2429, exceed: 39, lit: 3 });
+eq('fluke meter tiles', [L.flukeTiles(20), L.flukeTiles(250), L.flukeTiles(null)], [20, 0, 0]);
+eq('grown since (v2 → v3)', L.grownSince(v2, c), { version: 3, stops_added: 1 });
+eq('grown since same version', L.grownSince(c, c), null);
+eq('day line not available', L.dayLine({ source: 'not available', tested: null }), null);
+eq('day line', L.dayLine(shocks.line), { tested: 612, moved: 23, measured: 4, expected: 0.7 });
+eq('biggest (days since higher)', L.biggest(shocks.shocks[0]), 'Biggest day in 410 days');
+eq('biggest (window)', L.biggest(shocks.shocks[3]), 'Highest in the 400 days we store');
+eq('biggest (no data)', L.biggest({ biggest_basis: 'no_data' }), '');
+eq('ancestors of a depth-2 stop', L.ancestors(c, 9004).map(n => n.hop_id), [9001]);
+eq('route: line', L.parseRoute('/ripples/line/hurricane-polo-1201/'), { route: 'line', slug: 'hurricane-polo-1201', event: 1201 });
+eq('route: version', L.parseRoute('/ripples/line/hurricane-polo-1201/v2/'), { route: 'line', slug: 'hurricane-polo-1201', event: 1201, version: 2 });
+eq('route: stop', L.parseRoute('/ripples/line/hurricane-polo-1201/stop/9001/'), { route: 'stop', slug: 'hurricane-polo-1201', event: 1201, hop: 9001 });
+eq('route: shell fallback keeps the path', L.parseRoute('/ripples/line/x-7/', { route: 'lines' }).route, 'line');
+eq('route: stub attrs win', L.parseRoute('/ripples/line/x-7/stop/9/', { route: 'stop', event: '7', hop: '9' }).hop, 9);
+eq('route: lands', L.parseRoute('/ripples/lands/real_world/'), { route: 'lands', domain: 'real_world' });
+eq('route: week', L.parseRoute('/ripples/week/2026-39/'), { route: 'week', week: '2026-39' });
+eq('iso week', [L.isoWeek('2026-09-26'), L.isoWeek('2027-01-01')], ['2026-39', '2026-53']);
+eq('week range', L.weekRange('2026-39'), { from: '2026-09-21', to: '2026-09-27' });
+eq('multiples', [L.mult(0.914), L.mult(3.42), L.mult(12.4), L.mult(null)], ['0.91×', '3.4×', '12×', '']);
+eq('eight domains', L.DOMAINS.length, 8);
+eq('share line uses the frozen text', L.shareLine(c), c.text_share);
+ok('stop share has URL inside text and the disclaimer', /consistent with, not proof of cause\nhttps:\/\/bensunter\.com\/ripples\/line\/hurricane-polo-1201\/stop\/9001\/$/.test(L.shareStop(hop)));
+ok('retracted stop share leads with the retraction', L.shareStop(ret).includes('Retracted: retracted 25 Sep'));
+const X = L.xScale(28, 0, 100);
+ok('x scale: linear to +7 then log', Math.abs(X(7) - 60) < 1e-9 && X(3.5) - X(0) === (X(7) - X(0)) / 2 && X(28) === 100 && X(14) < 100);
 
-const chain = L.chainFromPuzzle(puzzle, answers);
-const path = L.pathEmoji(puzzle.seed.emoji, chain);
-eq('path with fresh-ripple break', path, '👤→📍→🎬 · 🎵→🏅');
-const actual = reveal.final_multiple;
-const base = { n: puzzle.n, seedTitle: puzzle.seed.title, path };
+// ---------- copy rules over the built site (the files WS-D ships) ----------
+const SHIP = ['index.html', 'app.js', 'ui.js', 'line.js', 'lists.js', 'app.css', 'lib.js', 'config.js', 'line/index.html', 'map/index.html', 'lands/index.html', 'week/index.html', 'archive/index.html', 'methods/index.html', 'manifest.webmanifest', 'remind.ics'];
+const BANNED = [[/\bcaused\b/i, 'caused'], [/\bdrove\b/i, 'drove'], [/because of/i, 'because of'], [/passes like this are chance/i, 'passes like this are chance'],
+  [/streak/i, 'streak'], [/🟩|🟨|🟥/u, 'share squares'], [/Knock-?⌃?On #\d|#\d+ ?(answer|puzzle)|puzzle #\d/i, '#N numbering'], [/\$[A-Z]{1,5}\b|\b(NASDAQ|NYSE)\b/, 'ticker symbol'],
+  [/flooded into/i, 'flooded into'], [/chance this is chance/i, 'chance this is chance']];
+// "points" is banned as a game score; the only allowed uses are the rate unit ("0.40 points above its normal") and its code token
+const pointsOk = s => s.replace(/(point|points) (above|below|against) (its|their) (own )?normal/g, '').replace(/'points'|"points"|=== 'points'|unit: 'points'|points'\)|\? 'point' : 'points'|'1\.00' \? 'point'/g, '');
+for (const f of SHIP) {
+  const p = join(root, f); if (!existsSync(p)) { ok(`ships ${f}`, false); continue; }
+  const s = readFileSync(p, 'utf8');
+  for (const [re, name] of BANNED) ok(`${f}: no ${name}`, !re.test(s), (s.match(re) || [])[0]);
+  ok(`${f}: no game points`, !/\bpoints\b|\b\d+ point\b/i.test(pointsOk(s)), (pointsOk(s).match(/.{30}(\bpoints\b|\b\d+ point\b).{30}/i) || [])[0]);
+}
 
-// 1. All correct, streak 5, slider exact.
-eq('scenario 1: all correct, streak 5', L.shareText({ ...base, codes: [2, 2, 2], streak: 5, guess: 3.8, actual }),
-  'Knock-On #0 · Test Seed Article\n👤→📍→🎬 · 🎵→🏅\n🟩🟩🟩 8/8 🔥5\n📏 last hop within 1.0×\nbensunter.com/ripples/0/3');
-// 2. Mixed, fresh-ripple break, streak 1 (no suffix), slider within 1.5× (2 points, line shown).
-eq('scenario 2: mixed', L.shareText({ ...base, codes: [2, 1, 0], streak: 1, guess: 5, actual }),
-  'Knock-On #0 · Test Seed Article\n👤→📍→🎬 · 🎵→🏅\n🟩🟨🟥 5/8\n📏 last hop within 1.3×\nbensunter.com/ripples/0/1');
-// 2b. D-2: within 2× but not 1.5× scores 1 point and the mag line is omitted.
-eq('scenario 2b: within 2x, no line', L.shareText({ ...base, codes: [2, 1, 0], streak: 2, guess: 6, actual }),
-  'Knock-On #0 · Test Seed Article\n👤→📍→🎬 · 🎵→🏅\n🟩🟨🟥 4/8 🔥2\nbensunter.com/ripples/0/1');
-// 3. All missed, slider outside 3× (and 2×): mag line omitted, 0 slider points.
-eq('scenario 3: missed, slider outside 3x', L.shareText({ ...base, codes: [0, 0, 0], streak: 0, guess: 50, actual }),
-  'Knock-On #0 · Test Seed Article\n👤→📍→🎬 · 🎵→🏅\n🟥🟥🟥 0/8\nbensunter.com/ripples/0/0');
-// SPEC §3 illustrative example (4 rounds, all continuing). The spec's 6/10 is illustrative and
-// inconsistent (🟩🟨🟩🟥 = 5, plus 2 for a guess within 1.4× = 7), so the arithmetic is asserted.
-eq('spec example', L.shareText({ n: 12, seedTitle: 'Lizzie Borden', path: '👤→📍→🎬→🍎', codes: [2, 1, 2, 0], streak: 3, guess: 1.4 * 5, actual: 5 }),
-  'Knock-On #12 · Lizzie Borden\n👤→📍→🎬→🍎\n🟩🟨🟩🟥 7/10 🔥3\n📏 last hop within 1.4×\nbensunter.com/ripples/12/2');
-eq('practice url', L.shareText({ n: -3, seedTitle: 'X', path: '👤→📍', codes: [2], guess: null }).split('\n').pop(), 'bensunter.com/ripples/?p=-3');
+// ---------- budget (EXPERIENCE §11): per route, shell HTML + CSS + every JS file it loads ≤ 120 KB uncompressed ----------
+const size = f => statSync(join(root, f)).size;
+const { srcHash } = await import('./build.mjs');
+const dist = join(root, 'dist');
+const banner = f => (readFileSync(join(dist, f), 'utf8').match(/Ripple Map ([0-9a-f]{16})/) || [])[1];
+ok('dist/ is built from the current sources (run node ripples/tools/build.mjs)', banner('app.js') === srcHash() && banner('app.css') === srcHash(), `${banner('app.js')} vs ${srcHash()}`);
+const deps = (f, seen = new Set()) => {
+  if (seen.has(f)) return seen; seen.add(f);
+  const t = readFileSync(join(dist, f), 'utf8');
+  for (const m of t.matchAll(/(?:from|import)\s*"\.\/([\w.-]+\.js)"/g)) deps(m[1], seen);
+  return seen;
+};
+const dyn = name => readdirSync(dist).find(f => f.startsWith(name + '-') && f.endsWith('.js'));
+const routeJs = { 'index.html': [], 'line/index.html': ['line'], 'week/index.html': ['line'], 'map/index.html': ['lists'], 'lands/index.html': ['lists'], 'archive/index.html': ['lists'], 'methods/index.html': ['lists'] };
+let js = 0;
+for (const [shell, extra] of Object.entries(routeJs)) {
+  const files = deps('app.js'); for (const x of extra) deps(dyn(x), files);
+  const bytes = [...files].reduce((a, f) => a + statSync(join(dist, f)).size, 0);
+  const tot = size(shell) + size('dist/app.css') + bytes; js = Math.max(js, bytes);
+  ok(`budget ${shell}: ${(tot / 1024).toFixed(1)} KB ≤ 120 KB`, tot <= 120 * 1024, `${tot}`);
+}
+ok('no external JS in shells', SHIP.filter(f => f.endsWith('.html')).every(f => !/<script[^>]+src="https?:/i.test(readFileSync(join(root, f), 'utf8'))));
+ok('fonts self-hosted', !/fonts\.googleapis|fonts\.gstatic/.test(SHIP.filter(f => /html|css$/.test(f)).map(f => readFileSync(join(root, f), 'utf8')).join('')));
+for (const [f, max] of [['shocks.json', 40], ['cascade-1201.json', 80], ['hop-9001.json', 40]]) ok(`payload ${f} ≤ ${max} KB`, size('contract/fixtures/v2/' + f) <= max * 1024);
+console.log(`budget: largest JS set ${(js / 1024).toFixed(1)} KB, CSS ${(size('dist/app.css') / 1024).toFixed(1)} KB`);
 
-// Scoring (SPEC §7).
-eq('scoreRound first', L.scoreRound(['c'], 'c'), 2);
-eq('scoreRound second', L.scoreRound(['a', 'c'], 'c'), 1);
-eq('scoreRound miss', L.scoreRound(['a', 'b'], 'c'), 0);
-// OWNER_DECISIONS D-2: 2 within 1.5×, 1 within 2× (was 3×), else 0.
-eq('magPoints 1.47x', L.magPoints(5.6, 3.8), 2);
-eq('magPoints 1.58x', L.magPoints(6, 3.8), 1);
-eq('magPoints 1.97x', L.magPoints(7.5, 3.8), 1);
-eq('magPoints 2.1x', L.magPoints(8, 3.8), 0);
-eq('magPoints 2.1x under', L.magPoints(1.8, 3.8), 0);
-eq('magPoints 3.1x', L.magPoints(12, 3.8), 0);
-eq('magLine 1.497x shown', L.magLine(5.69, 3.8), '📏 last hop within 1.5×');
-// log10(1.5) = 0.17609 > 0.176, so exactly 1.5× (and 1.50–1.549×) scores 1 point and the line is omitted.
-eq('magLine exactly 1.5x omitted', L.magLine(5.7, 3.8), '');
-eq('magPoints exactly 1.5x = 1', L.magPoints(5.7, 3.8), 1);
-eq('magLine 1.54x omitted', L.magLine(3.8 * 1.54, 3.8), '');
-eq('magLine 1.6x omitted', L.magLine(6, 3.8), '');
-eq('maxScore', L.maxScore(4), 10);
-eq('gridEmoji', L.gridEmoji([2, 1, 0, 2]), '🟩🟨🟥🟩');
-eq('fmtMultiple small', L.fmtMultiple(6.2), '6.2×');
-eq('fmtMultiple big', L.fmtMultiple(41.2), '41×');
-eq('fmtMultiple 1dp', L.fmtMultiple(1.04), '1.0×');
-eq('fmtBiggestIn', L.fmtBiggestIn(puzzle.seed), 'Biggest day in 1,240 days');
-eq('fmtBiggestIn records', L.fmtBiggestIn({ biggest_since_records: true }), 'Biggest day since records began, Jul 2015');
-eq('fmtTiming +1', L.fmtTiming(1, 'after'), '+1 day after');
-eq('fmtTiming 0', L.fmtTiming(0, 'alongside'), 'alongside');
-eq('fmtFluke', L.fmtFluke(reveal.rounds[0].evidence), 'About 1 in 12 passes like this are chance');
-eq('fmtFluke 50+', L.fmtFluke(reveal.rounds[1].evidence), 'About 1 in 50+ passes like this are chance');
-eq('fmtFluke warming', L.fmtFluke(reveal.rounds[2].evidence), 'Fluke meter warming up');
-eq('percentileLine', L.percentileLine({ percentile: 82 }), 'You scored higher than 82% of players');
-eq('percentileLine null', L.percentileLine({ percentile: null }), '');
-eq('puzzleNoForDate launch', L.puzzleNoForDate('2026-09-26', '2026-09-25'), 1);
-eq('puzzleNoForDate', L.puzzleNoForDate('2026-10-07', '2026-09-25'), 12);
-eq('currentPuzzleDate before 07:30', L.currentPuzzleDate(Date.parse('2026-09-26T07:29:00Z')), '2026-09-25');
-eq('currentPuzzleDate after 07:30', L.currentPuzzleDate(Date.parse('2026-09-26T07:30:00Z')), '2026-09-26');
-eq('timeToNext', L.timeToNext(Date.parse('2026-09-25T05:00:00Z')), 2.5 * 36e5);
-eq('timeToNext wraps', L.timeToNext(Date.parse('2026-09-25T08:00:00Z')), 23.5 * 36e5);
-eq('fmtCountdown', L.fmtCountdown(14 * 36e5 + 22 * 6e4), '14h 22m');
-eq('callClosesAt spec window', new Date(L.callClosesAt('2026-09-25', '2026-09-25')).toISOString(), '2026-09-26T00:00:00.000Z');
-eq('callClosesAt shifted window', new Date(L.callClosesAt('2026-09-25', '2026-09-26')).toISOString(), '2026-09-26T07:30:00.000Z');
-eq('slider ends', [L.magFromPos(0), Math.round(L.magFromPos(1))].join(), '1.5,100');
-eq('slider inverse', Math.round(L.posFromMag(L.magFromPos(0.37)) * 1000), 370);
-eq('streak', L.streakFrom([3, 4, 5, 7], 7), 1);
-eq('streak unplayed today', L.streakFrom([3, 4, 5], 6), 3);
-eq('sparkWindow', JSON.stringify(L.sparkWindow(90, '2026-09-24', puzzle.seed.baseline.from, puzzle.seed.baseline.to)), '[0,65]');
-eq('bellyFlop', L.bellyFlopText({ title: 'T', splash_multiple: 22, quadrant: 'belly_flop', sensitive: false }), '💥 Belly Flop: T. 22× normal readers, no measured wake on Wikipedia. bensunter.com/ripples/');
-eq('bellyFlop sensitive', L.bellyFlopText({ title: 'T', splash_multiple: 22, quadrant: 'belly_flop', sensitive: true }), '');
-
-eq('fmtDate', L.fmtDate('2026-09-25'), 'Fri 25 Sep');
-eq('fmtMonth', L.fmtMonth('2026-08'), 'Aug 2026');
-const st = { shown: true, rounds: [{ i: 1, first_try_pct: 62, found_pct: 88 }, { i: 2, first_try_pct: 41, found_pct: 70 }, { i: 3, first_try_pct: 9, found_pct: 35 }] };
-eq('rarity: rarest first-try round', L.rarityLine(st, [2, 2, 2]), 'Only 9% of players found round 3 first try');
-eq('rarity: not rare is omitted', L.rarityLine(st, [2, 0, 0]), '');
-eq('rarity: found at all', L.rarityLine(st, [0, 0, 1]), 'Only 35% of players found round 3');
-eq('rarity hidden under 30', L.rarityLine({ shown: false, rounds: null }, [2, 2, 2]), '');
-// Cross badges (contract extension): corroboration wording, numbers only from the item.
-const xs = [puzzle.seed.cross[0], reveal.rounds[0].evidence.cross[0], reveal.rounds[2].evidence.cross[0]].map(L.crossText);
-eq('cross listing', xs[0], 'Also on Google Trends: TEST: listed in Google Trends daily trending searches (US) · earlier');
-eq('cross z only', xs[1], 'Also spiked on TV news: TEST: mentioned on TV news captions · later');
-eq('cross multiple not printed', xs[2], 'Also spiked on Mastodon: TEST: trending hashtag on Mastodon · same day');
-eq('cross never prints a number', xs.some(x => /\d(\.\d)?×|z ?=/.test(x)), false);
-eq('cross autocomplete tagged unofficial', L.crossText({ source: 'autocomplete', label: 'TEST', multiple: null, z: null, when: null }), 'Also on search autocomplete (unofficial): TEST');
-eq('cross no causal words', xs.some(x => /caus|drove|flood/i.test(x)), false);
-
-// Backup code round trip (D-3) and rejection of junk.
-const hist = { 12: { grid: '🟩🟨🟥', score: 5, max: 8, mag: 4.2, s: 1, picks: [['a']] }, 13: { grid: '🟩🟩🟩🟩', score: 10, max: 10, mag: 3, s: 4 }, [-3]: { grid: '🟩', score: 2, max: 4 } };
-const code = L.encodeBackup(hist, { 12: 'Q42', 13: 'bad' });
-const back = L.decodeBackup(code);
-eq('backup prefix', code.slice(0, 4), 'KO1.');
-eq('backup restores live history', JSON.stringify(Object.keys(back.hist)), '["12","13"]');
-eq('backup grid', back.hist[13].grid, '🟩🟩🟩🟩');
-eq('backup drops bad calls', JSON.stringify(back.calls), '{"12":"Q42"}');
-eq('backup junk', L.decodeBackup('KO1.<script>'), null);
-eq('backup wrong prefix', L.decodeBackup('hello'), null);
-
-// Calendar event: CRLF, UTC times, escaped text, folded lines.
-const ics = L.icsEvent({ uid: 'ko-call-12', start: Date.parse('2026-10-15T08:00:00Z'), title: 'Knock-On: your call on A, B; C resolves', url: 'https://bensunter.com/ripples/12/?src=ics', now: Date.parse('2026-10-07T09:00:00Z') });
-eq('ics start', ics.includes('\r\nDTSTART:20261015T080000Z\r\n'), true);
-eq('ics escape', ics.includes('SUMMARY:Knock-On: your call on A\\, B\\; C resolves'), true);
-eq('ics fold', ics.split('\r\n').every(l => l.length <= 75), true);
-eq('ics ends', ics.endsWith('END:VCALENDAR\r\n'), true);
-// Non-ASCII titles: fold by octets (RFC 5545 §3.1), never splitting a character; unfolding restores the text.
-const title2 = 'Knock-On: 🎬 Zoë Saldaña → Évora café, 東京タワー 🗼 résout ' + '✓'.repeat(40);
-const ics2 = L.icsEvent({ uid: 'ko-call-13', start: Date.parse('2026-10-16T08:00:00Z'), title: title2, url: 'https://bensunter.com/ripples/13/?src=ics', now: Date.parse('2026-10-08T09:00:00Z') });
-eq('ics fold octets', ics2.split('\r\n').every(l => Buffer.byteLength(l, 'utf8') <= 75), true);
-eq('ics fold no split char', ics2.includes('\uFFFD'), false);
-eq('ics unfold', ics2.replace(/\r\n /g, '').includes('SUMMARY:' + title2.replace(/,/g, '\\,') + '\r\n'), true);
-eq('ics fold ascii still 75', Math.max(...ics.split('\r\n').map(l => l.length)) <= 75, true);
+// ---------- fold (headless Chromium, 360 × 640) ----------
+if (process.argv.includes('--fold')) {
+  let pw = null;
+  try { pw = createRequire(import.meta.url)('playwright'); } catch (e) { try { pw = createRequire('/opt/node22/lib/node_modules/')('playwright'); } catch (e2) { pw = null; } }
+  if (!pw) console.log('fold: skipped (playwright not installed)');
+  else {
+    const site = join(root, '..');
+    const types = { '.html': 'text/html', '.js': 'text/javascript', '.css': 'text/css', '.json': 'application/json', '.woff2': 'font/woff2', '.svg': 'image/svg+xml', '.png': 'image/png', '.webmanifest': 'application/manifest+json' };
+    const srv = createServer((q, r) => {
+      let u = decodeURIComponent(q.url.split('?')[0]);
+      // every /ripples/line/…/ URL falls back to the line shell, the way a host 404 fallback would
+      if (/^\/ripples\/line\/.+\/$/.test(u) && !existsSync(join(site, u, 'index.html'))) u = '/ripples/line/';
+      let f = join(site, u); if (u.endsWith('/')) f = join(f, 'index.html');
+      if (!existsSync(f)) { r.writeHead(404); r.end(); return; }
+      r.writeHead(200, { 'Content-Type': types[extname(f)] || 'application/octet-stream' }); r.end(readFileSync(f));
+    }).listen(0);
+    const port = srv.address().port;
+    const MAP = { 'shocks/latest.json': 'shocks.json', 'cascade/1201.json': 'cascade-1201.json', 'archive.json': 'archive.json' };
+    const exe = ['/opt/pw-browsers/chromium-1194/chrome-linux/chrome'].find(existsSync);
+    const b = await pw.chromium.launch(exe ? { executablePath: exe } : {});
+    for (const motion of ['no-preference', 'reduce']) {
+      const ctx = await b.newContext({ viewport: { width: 360, height: 640 }, reducedMotion: motion });
+      await ctx.route('https://kffkasnzqcddpystszch.supabase.co/**', rt => {
+        const m = rt.request().url().split('/ripples/v2/')[1];
+        const f = m && MAP[m.split('?')[0]];
+        return f ? rt.fulfill({ status: 200, contentType: 'application/json', body: readFileSync(FX + f, 'utf8') }) : rt.fulfill({ status: 404, body: '{}' });
+      });
+      const pg = await ctx.newPage();
+      await pg.goto(`http://127.0.0.1:${port}/ripples/`, { waitUntil: 'networkidle' });
+      const home = await pg.evaluate(() => { const t = document.querySelector('.hero'), bt = document.querySelector('.hero .btn'); return { t: t && t.getBoundingClientRect().top, b: bt && bt.getBoundingClientRect().bottom, sw: document.documentElement.scrollWidth }; });
+      ok(`fold (${motion}): hero ticket and Trace button above 640`, home.t != null && home.t >= 0 && home.b != null && home.b <= 640, JSON.stringify(home));
+      ok(`fold (${motion}): no horizontal scroll on home at 360`, home.sw <= 360, String(home.sw));
+      await pg.goto(`http://127.0.0.1:${port}/ripples/line/hurricane-polo-1201/`, { waitUntil: 'networkidle' });
+      const line = await pg.evaluate(() => { const s = document.querySelector('.stop'), k = s && s.querySelector('.say'); return { top: s && s.getBoundingClientRect().top, say: k && k.getBoundingClientRect().top, sw: document.documentElement.scrollWidth }; });
+      ok(`fold (${motion}): first stop card visible without scrolling`, line.top != null && line.top < 640 && line.say < 640, JSON.stringify(line));
+      ok(`fold (${motion}): no horizontal scroll on the line at 360`, line.sw <= 360, String(line.sw));
+      await ctx.close();
+    }
+    await b.close(); srv.close();
+  }
+}
 
 console.log(`${passes} passed, ${fails} failed`);
 process.exit(fails ? 1 : 0);

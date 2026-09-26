@@ -23,9 +23,9 @@
 <meta name="theme-color" content="#0B3A40">
 <link rel="preload" href="/ripples/fonts/anybody-latin-var.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="preconnect" href="https://kffkasnzqcddpystszch.supabase.co" crossorigin>
-<link rel="stylesheet" href="/ripples/app.css">
+<link rel="stylesheet" href="/ripples/dist/app.css">
 <script>try{var t=localStorage.getItem('ko.theme');if(t==='light'||t==='dark')document.documentElement.setAttribute('data-theme',t)}catch(e){}</script>
-<script type="module" src="/ripples/app.js"></script>
+<script type="module" src="/ripples/dist/app.js"></script>
 </head>
 <body data-route="methods">
 <a class="skip" href="#main">Skip to the method</a>
@@ -74,7 +74,7 @@
 <h2>Could it be luck? Two numbers, two labels</h2>
 <p><b>Lookalikes.</b> "A random pairing looks this strong about 1 in N times." Each stop is re-run with identical code on fake dates (at least 200, always including the same days last year), fake starts (other events the same week) and fake pages (series of the same type). N comes from the family that makes the stop look least rare.</p>
 <p><b>Fluke rate.</b> "Links this strong from decoy starts turn out to be flukes about 1 in K times." Every day eight calm pages that weren't trending go through the same candidate generation, tests and looks. Anything they pass is false by construction; K compares their pass rate with the real one, over the last 90 days, per strength band. Until enough decoys exist the card says "warming up" and Measured needs an extra-strict test.</p>
-<p>Neither number is "the chance this is chance". On top of both, one weighted Benjamini–Hochberg procedure runs over every final look each day, with decoys inside the same run, and every page prints its denominators: paths tested, how many moved, how many are Measured, and how many false links to expect. The home page shows the control ripple beside the real lines every day.</p>
+<p>Neither number is the probability that a stop is false. On top of both, one weighted Benjamini–Hochberg procedure runs over every final look each day, with decoys inside the same run, and every page prints its denominators: paths tested, how many moved, how many are Measured, and how many false links to expect. The home page shows the control ripple beside the real lines every day.</p>
 
 <h2>Looks, retractions and ageing</h2>
 <p>Attention channels are looked at daily; real-world travel at +3 and +7 days; builders at +7 and +14; weekly jobless claims at each release to +28; monthly series at each release to +90. An interim look can grant at most Likely (provisional). Measured is granted only at the final look. Once a stop is published as Likely or better, its attention evidence is frozen, so our own publicity can't feed it.</p>
@@ -107,7 +107,7 @@
 
 <h2>Changelog</h2>
 <ul class="b">
-<li><b>v6.0 (Ripple Map).</b> The daily puzzle, points, streaks and crowd numbers are retired. The home page is now today's shocks and where they rippled: a mechanism graph proposes, an event study with three placebo families tests, and replication across past events of the same kind decides how much to trust a route. In v6.0, Markets means prediction markets, rates and prices; no stock appears on the map.</li>
+<li><b>v6.0 (Ripple Map).</b> The daily puzzle, its scores and its crowd numbers are retired. The home page is now today's shocks and where they rippled: a mechanism graph proposes, an event study with three placebo families tests, and replication across past events of the same kind decides how much to trust a route. In v6.0, Markets means prediction markets, rates and prices; no stock appears on the map.</li>
 <li><b>v5.0.</b> Knock-On launched as a daily attention puzzle with decoy fluke rates, time-shift placebos and the public ledger.</li>
 </ul>
 </article>
