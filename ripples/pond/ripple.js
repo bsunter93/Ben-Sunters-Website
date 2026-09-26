@@ -38,7 +38,7 @@
   const src = P._src === 'live' ? 'live engine data' : P._src === 'stories' ? 'story layer, live' : `engine snapshot ${(P.snapshot_at || '').slice(0, 10)}`;
 
   /* ---------- hero copy (from the story and published fields; the frontend composes only the connective tissue) ---------- */
-  $('#kicker').innerHTML = `${esc(name)} <span class="num">${esc(ev.date || fmtDayY(ev.onset))}</span> <span class="tag-src">${esc(src)}${quiet ? ', shown quietly' : ''}</span>`;
+  $('#kicker').innerHTML = `${esc(name)} <span class="num">${esc(ev.date || fmtDayY(ev.onset))}</span> <span class="tag-src">${esc(src)}${quiet ? ', shown quietly' : ''}</span>${ev.is_control ? `<span class="tag-src" title="${esc((P.honesty && P.honesty.control_note) || 'A known-effect test case')}">known-effect test case</span>` : ''}`;
   if (P.story && (P.story.archetype || P.story.kind === 'cascade')) $('#arch').innerHTML = RM.archTag(P.story.archetype) + (P.story.archetype ? `<small style="font-size:12px;color:var(--text-3);margin-left:8px">${esc(RM.archText(P.story.archetype))} A story label, not evidence.</small>` : '');
   const hook = (P.story && P.story.hook) || (hero ? hero.kind === 'effect' ? `${hero.o.lag_text ? hero.o.lag_text[0].toUpperCase() + hero.o.lag_text.slice(1) : 'Afterwards'}, something moved in ${hero.o.short}.` : hero.kind === 'untested' ? `Something is still being watched in ${hero.o.name}.` : `The expected move in ${hero.o.name} never came.` : 'Nothing has resolved yet.');
   const H1 = { hook: `${esc(name)}. <span class="quiet">${esc(hook)}</span>` };
@@ -48,12 +48,14 @@
     : nWatch ? `One ${noun}.<br>${numw(nWatch)} open question${nWatch === 1 ? '' : 's'}.<br><span class="quiet">${nFlat ? `${numw(nFlat)} thing${nFlat === 1 ? '' : 's'} that stayed flat.` : 'The rings are still travelling.'}</span>`
     : `One ${noun}.<br>The pond stayed still.<br><span class="quiet">${numw(nFlat)} thing${nFlat === 1 ? '' : 's'} that stayed flat.</span>`;
   $('#h1').innerHTML = H1.hook;
+  const feel = e => e.num_pct ? `${e.num_pct} ${e.unit_plain || (e.num_pct_kind === 'peak' ? `${e.short} at its peak, vs its normal` : `${e.short}, vs its normal`)}` : `${e.short}: size not yet published`;
   function trustLine() {
     if (!hero) return 'Nothing has been tested yet.';
     const o = hero.o;
     if (hero.kind === 'effect') {
-      if (o.engine) return `<b>${esc(tierLine(o))}.</b> ${o.engine.exceed_date} of ${o.engine.n_date.toLocaleString()} fake dates come close (<span class="num">1 in ${Math.round(1 / o.engine.p_date)}</span>)${o.contrast ? `, and Florida moved against ${o.contrast.n_donors} regions the storm missed` : ''}.${o.forecast && o.forecast.state === 'agree' ? ' An independent forecast model agrees.' : ''} ${o.replication ? `<span class="no">Passed after ${o.replication.n_seen} of ${o.replication.n_similar} similar storms tested.</span>` : ''}`;
-      return `<b>${esc(tierLine(o))}.</b> ${o.fluke ? esc(o.fluke.text) : 'Not yet tested against lookalikes.'}${o.sources ? ` ${esc(o.sources.text)}.` : ''} ${o.replication && o.replication.wording ? `<span class="no">${esc(o.replication.wording[0].toUpperCase() + o.replication.wording.slice(1))}.</span>` : ''}`;
+      // plain words for novices (CX fix 3): one sentence per check, the statistics stay in the card
+      if (o.engine && o.engine.n_date) return `<b>${esc(tierLine(o))}.</b> We re-ran the test on ${o.engine.n_date.toLocaleString()} random days: only ${o.engine.exceed_date} looked this strong.${o.contrast ? ` And the ${o.contrast.n_donors} regions the storm missed didn’t move.` : ''}${o.forecast && o.forecast.state === 'agree' ? ' An independent forecast model agrees.' : o.published.reason ? ` ${esc(o.published.reason[0].toUpperCase() + o.published.reason.slice(1))}.` : ''}`;
+      return `<b>${esc(tierLine(o))}.</b> ${o.fluke ? esc(o.fluke.text) : 'Not yet tested against lookalikes.'}${o.published.reason ? ` ${esc(o.published.reason[0].toUpperCase() + o.published.reason.slice(1))}.` : ''} ${o.replication && o.replication.wording ? `<span class="no">${esc(o.replication.wording[0].toUpperCase() + o.replication.wording.slice(1))}.</span>` : ''}`;
     }
     if (hero.kind === 'untested') return `<b>Watching.</b> Too early to tell: the window closes ${fmtDayY(o.window_close)} (${RM.countdown(o.window_close)}).${o.watch && o.watch.expected_1_in ? ` Similar ${noun}s: a move by then about 1 in ${o.watch.expected_1_in} times.` : o.prior != null ? ` Registered prior: ${Math.round(o.prior * 100)}%.` : ''}`;
     return `<b>Stayed flat.</b> ${o.prior != null ? `Expected to move about 1 in ${Math.round(1 / o.prior)} times; the` : 'The'} window closed ${fmtDayY(o.window_close)} without a detectable move.`;
@@ -107,27 +109,37 @@
     const side = compact ? -1 : (p.x >= 0 ? 1 : -1), lx = p.x + side * 44, anchor = side > 0 ? 'start' : 'end';
     const mk = (cls, y, txt) => { const t = document.createElementNS(NS, 'text'); t.setAttribute('class', 'rv ' + cls); t.setAttribute('x', lx); t.setAttribute('y', p.y + y); t.setAttribute('text-anchor', anchor); t.textContent = txt; rv.appendChild(t); return t; };
     const isE = hero.kind === 'effect';
-    const num = mk('rv-num', -6, ''), what = mk('rv-what', 18, isE ? o.short : o.name), lag = mk('rv-lag', 40, isE ? o.lag_text : hero.kind === 'untested' ? `window closes ${fmtDay(o.window_close)}` : `window closed ${fmtDay(o.window_close)}`), tier = mk('rv-tier', 60, isE ? (compact && o.published && o.published.reason ? `${tierWord(o)}: ${o.published.reason}` : tierLine(o)) : hero.kind === 'untested' ? 'Watching, too early to tell' : 'Stayed flat');
+    const num = mk('rv-num', -6, ''), what = mk('rv-what', 18, isE ? (o.unit_plain || o.short) : o.name), lag = mk('rv-lag', 40, isE ? o.lag_text : hero.kind === 'untested' ? `window closes ${fmtDay(o.window_close)}` : `window closed ${fmtDay(o.window_close)}`), tier = mk('rv-tier', 60, isE ? (compact && o.published && o.published.reason ? `${tierWord(o)}: ${o.published.reason}` : tierLine(o)) : hero.kind === 'untested' ? 'Watching, too early to tell' : 'Stayed flat');
     // D-15 timeline: shock 0, line 250 ms, stop 500, count-up 800, lag 1100, tier 1300, settle 1600
     const hit = reduce ? 0 : pond.ringDelay(p.r) * 1000;   // the ring front reaches the stop (~0.5 s)
     const Tm = reduce ? [0, 0, 0, 0, 0] : [hit + 300, 500, hit + 600, hit + 800, hit + 1100];
-    if (isE) {
-      const isRatio = o.num.endsWith('×'), target_v = parseFloat(o.num.replace(/[^\d.\-]/g, '')) * (o.num.startsWith('−') || o.num.startsWith('-') ? -1 : 1);
-      const prefix = isRatio ? '' : target_v < 0 ? '−' : '+', suffix = isRatio ? '×' : o.num.endsWith('%') ? '%' : '';
+    if (isE && o.num_pct) {
+      const target_v = parseInt(o.num_pct.replace(/[^\d]/g, ''), 10) * (o.num_pct.startsWith('−') ? -1 : 1), prefix = target_v < 0 ? '−' : '+';
       const t0 = performance.now() + Tm[0];
-      function tick(now) { const k = Math.min(1, Math.max(0, (now - t0) / Tm[1])); const v = isRatio ? 1 + (target_v - 1) * (1 - Math.pow(1 - k, 3)) : Math.abs(target_v) * (1 - Math.pow(1 - k, 3)); num.textContent = prefix + (isRatio ? v.toFixed(2) : Math.round(v)) + suffix; if (k < 1) requestAnimationFrame(tick); }
-      if (reduce) num.textContent = o.num; else requestAnimationFrame(tick);
-    } else { num.textContent = hero.kind === 'untested' ? '?' : 'flat'; }
+      function tick(now) { const k = Math.min(1, Math.max(0, (now - t0) / Tm[1])); const v = Math.abs(target_v) * (1 - Math.pow(1 - k, 3)); num.textContent = prefix + Math.round(v) + '%'; if (k < 1) requestAnimationFrame(tick); }
+      if (reduce) num.textContent = o.num_pct; else requestAnimationFrame(tick);
+    } else { num.textContent = hero.kind === 'untested' ? '?' : isE ? '?' : 'flat'; }
     setTimeout(() => lag.classList.add('on'), Tm[2]);
-    setTimeout(() => tier.classList.add('on'), Tm[3]);
-    setTimeout(() => { Sv.classList.add('settling'); Sv.classList.remove('revealing'); rv.remove(); open(o.id, hero.kind); }, Tm[4] + (reduce ? 10 : 500));
+    // the headline changes only after the tier lands (CX fix 1); the number stays pinned on the water; the card is one tap away
+    setTimeout(() => { tier.classList.add('on'); $('#h1').innerHTML = H1.traced; }, Tm[3]);
+    setTimeout(() => { Sv.classList.add('settling'); Sv.classList.remove('revealing'); rv.classList.add('pinned'); afterReveal(); }, Tm[4] + (reduce ? 10 : 500));
+  }
+  /* after the reveal: the flats right under the pond (the counter-intuitive part), and one button to the evidence */
+  function afterReveal() {
+    const a = $('#after'); if (!a || a.dataset.on) return; a.dataset.on = '1'; a.hidden = false;
+    const o = hero && hero.o;
+    a.innerHTML = `<div class="after-row"><button class="btn primary" type="button" id="btn-evidence">${hero ? hero.kind === 'effect' ? 'See the evidence' : hero.kind === 'untested' ? 'See the window' : 'See why it stayed flat' : 'See the pond'}<svg width="14" height="14" aria-hidden="true"><use href="#i-arrow"/></svg></button>${nFlat ? `<span class="after-k">${nFlat === 1 ? 'One thing' : numw(nFlat) + ' things'} everyone might expect to move stayed flat:</span>` : nWatch ? `<span class="after-k">${nWatch} series still being watched:</span>` : ''}</div>
+      ${nFlat ? `<div class="after-chips">${P.flats.slice(0, 8).map(f => `<button type="button" data-open="${esc(f.id)}" data-kind="flat"><svg aria-hidden="true"><use href="#k-grass"/></svg>${esc(f.short_name || f.name)}</button>`).join('')}${nFlat > 8 ? `<button type="button" data-scroll="stopped">and ${nFlat - 8} more</button>` : ''}</div>` : nWatch ? `<div class="after-chips">${P.untested.slice(0, 6).map(u => `<button type="button" data-open="${esc(u.id)}" data-kind="untested"><svg aria-hidden="true"><use href="#k-float"/></svg>${esc(u.name)}<small>${RM.countdown(u.window_close)}</small></button>`).join('')}</div>` : ''}`;
+    if (o) $('#btn-evidence').addEventListener('click', () => open(o.id, hero.kind));
+    a.querySelectorAll('[data-open]').forEach(b => b.addEventListener('click', () => open(b.dataset.open, b.dataset.kind)));
+    a.querySelectorAll('[data-scroll]').forEach(b => b.addEventListener('click', () => $('#' + b.dataset.scroll).scrollIntoView({ behavior: reduce ? 'auto' : 'smooth' })));
   }
   function rebind(Sv) {
     const bind = (sel, kind) => Sv.querySelectorAll(sel).forEach(g => { g.addEventListener('click', () => open(g.dataset.id, kind)); g.addEventListener('keydown', ev => { if (ev.key === 'Enter' || ev.key === ' ') { ev.preventDefault(); open(g.dataset.id, kind); } }); if (kind === 'effect') pond.nodes[g.dataset.id] = g; });
     bind('.effect', 'effect'); bind('.shore-mark', 'shore'); bind('.float', 'untested'); bind('.grass', 'flat');
   }
   $('#btn-trace').addEventListener('click', trace);
-  if (location.hash === '#traced' || stopParam) { document.body.classList.remove('hook'); svg.classList.remove('hook'); $('#h1').innerHTML = H1.traced; }
+  if (location.hash === '#traced' || stopParam) { document.body.classList.remove('hook'); svg.classList.remove('hook'); $('#h1').innerHTML = H1.traced; afterReveal(); }
 
   /* ---------- charts (actual vs normal range, direct labels, no chartjunk) ---------- */
   function seriesChart(e, w = 420, h = 170, mini = false) {
@@ -159,7 +171,7 @@
     return s + '</svg>';
   }
   function luckPanel(e) {
-    if (!e.engine) return `<p>${e.fluke ? esc(e.fluke.text) : 'This stop has not been tested against lookalikes yet.'}${e.fluke && e.fluke.f_1_in ? ` Decoy links this strong turn out to be flukes about 1 in ${e.fluke.f_1_in} times.` : ''} The full placebo families (fake dates, other series, random links) arrive with this event's pond payload.</p>`;
+    if (!e.engine || !e.engine.n_date || e.engine.exceed_topic == null) return `<p>${e.fluke ? esc(e.fluke.text) : 'This stop has not been tested against lookalikes yet.'}${e.fluke && e.fluke.f_1_in ? ` Decoy links this strong turn out to be flukes about 1 in ${e.fluke.f_1_in} times.` : ''} The full placebo families (fake dates, other series, random links) arrive with this event's pond payload.</p>`;
     const g = e.engine, fam = [
       { name: `${g.n_date.toLocaleString()} fake dates, same series`, n: g.n_date, hits: g.exceed_date, p: g.p_date },
       { name: `${g.n_topic} other series, same date`, n: g.n_topic, hits: g.exceed_topic, p: g.p_topic },
@@ -177,7 +189,7 @@
       sv += `<line class="you" x1="${rx}" x2="${rx}" y1="4" y2="${h - 20}"/><text class="lab strong" x="${rx - 6}" y="12" text-anchor="end">this storm, ${Math.round(real)} pts</text><text class="lab" x="0" y="${h - 5}">${c.in_time.n} pseudo-storms, same dates in other years</text><text class="lab" x="${w - 20}" y="${h - 5}" text-anchor="end">bigger gap →</text></svg>`;
       tail = `<h4>And against the rest of the country</h4>${sv}<p>${c.in_time.n_bigger === 0 ? 'None' : c.in_time.n_bigger} of the ${c.in_time.n} pseudo-storms came close (in-time p ${c.p_time}). Against ${c.n_donors} unaffected regions shuffled into 30 fake Floridas, the real pair ranked first: about <b>1 in ${c.p_space_odds}</b>.</p>`;
     }
-    return `<div class="luck"><div class="pfs" role="list" aria-label="Placebo families for the single-event test">${rows}</div><p>The engine's single-event test: T ${g.t_stat.toFixed(2)}, corrected over ${g.bh.m} tests (q ${g.q_w.toFixed(3)}). A random date on this series looks this strong about <b>1 in ${Math.round(1 / g.p_date)}</b> times.</p>${tail}</div>`;
+    return `<div class="luck"><div class="pfs" role="list" aria-label="Placebo families for the single-event test">${rows}</div><p>The engine's single-event test: T ${g.t_stat.toFixed(2)}${g.bh ? `, corrected over ${g.bh.m} tests` : ''} (q ${g.q_w.toFixed(3)}). A random date on this series looks this strong about <b>1 in ${Math.round(1 / g.p_date)}</b> times.${g.f === 1 ? ' The calibrated fluke rate for this T bin is still warming up (too few decoys), so no fluke odds are quoted here.' : ''}</p>${tail}</div>`;
   }
   /* the third independent check: an ARIMA forecast of each series, per-series effect with its interval */
   function forecastPanel(e) {
@@ -189,7 +201,7 @@
     if (r.all) {
       const pips = r.all.map(s => `<i class="${s.pass ? '' : s.effect_pct < 0 ? 'dir' : 'no'}" title="${esc(s.label)} ${s.year}: ${s.effect_pct}%"></i>`).join('');
       return `<div class="repl"><span class="pips" aria-hidden="true">${pips}</span><span>Passed after <b class="num">${r.n_seen} of ${r.n_similar}</b> past storms tested; <span class="num">${r.n_same_direction}</span> moved the same way</span></div>
-      <p style="font-size:13px;color:var(--muted);margin-top:6px">${r.examples.map(x => `${esc(x.label)}, ${x.effect_pct}%`).join('; ')}. ${esc(r.family.note)} <a href="#past" data-scroll="past" style="color:var(--accent-ink);font-weight:500">Flip through them</a>.</p>`;
+      <p style="font-size:13px;color:var(--muted);margin-top:6px">${r.examples.map(x => `${esc(x.label)}, ${x.effect_pct}%`).join('; ')}. ${esc(r.family && r.family.note ? r.family.note : 'Most past storms were mapped to multi-state grid operators, where a landfall is a rounding error; the storms measured on a Florida utility are the ones that pass.')} <a href="#past" data-scroll="past" style="color:var(--accent-ink);font-weight:500">Flip through them</a>.</p>`;
     }
     const n = r.n_similar || 0, k = r.n_seen || 0, pips = Array.from({ length: Math.min(n, 40) }, (_, i) => `<i class="${i < k ? '' : 'no'}"></i>`).join('');
     return `<div class="repl"><span class="pips" aria-hidden="true">${pips}</span><span>${esc(r.wording ? r.wording[0].toUpperCase() + r.wording.slice(1) : `Seen after ${k} of ${n} similar events`)}</span></div>${r.examples && r.examples.length ? `<p style="font-size:13px;color:var(--muted);margin-top:6px">For example ${r.examples.map(x => esc(x.label)).join('; ')}.</p>` : ''}`;
@@ -206,24 +218,24 @@
     const row = (k, v, h) => `<dt>${k}</dt><dd${h ? ' class="h"' : ''}>${v}</dd>`;
     const g = e.engine;
     return `<details class="drawer"><summary>The single-event test (engine ${esc(g.version)})</summary><dl class="dl">
-      ${row('Series', e.node + ' (hop ' + e.hop_id + ')')}${row('Observed onset', fmtDayY(e.onset_observed) + ', lag ' + e.lag_from_event_days + ' d from the event')}${row('Effect (shrunk)', g.rho.shrunk.toFixed(3) + '× [' + g.rho.lo.toFixed(3) + ', ' + g.rho.hi.toFixed(3) + ']; raw ' + g.rho.raw.toFixed(3))}
-      ${row('Peak day', g.rho.peak_day + ', ' + Math.round(e.chart.peak.t * 100) + '% of normal')}${row('T statistic', g.t_stat.toFixed(3))}${row('Fake dates', `${g.exceed_date} of ${g.n_date} (p ${g.p_date.toFixed(4)})`)}${row('Other series', `${g.exceed_topic} of ${g.n_topic} (p ${g.p_topic})`)}${row('Random links', `${g.exceed_link} of ${g.n_link} (p ${g.p_link.toFixed(3)})`)}
-      ${row('BH (m ' + g.bh.m + ', weight ' + g.bh.weight + ')', 'q ' + g.q_w.toFixed(4))}${row('Channels', g.channels.agree + ' of ' + g.channels.of + ' (' + g.channels.names.join(', ') + ')')}${row('Fluke-rate bin', `T ${g.f_bin}: reads ${g.f}`)}${row('Flags / fails', (g.flags.join(', ') || 'none') + ' / ' + (g.fails.join(', ') || 'none'))}
-      ${row('Engine tier', TIER[e.engine_tier])}${row('Forecast gate', `${e.published.tier} (${e.published.reason || 'agrees'}; mode ${e.published.mode}; state ${e.published.ce.state}${e.published.ce.n_agree != null ? `, ${e.published.ce.n_agree} of ${e.published.ce.n_eligible} series agree` : ''})`)}</dl><p>${esc(g.f_note)}</p></details>
+      ${row('Series', e.node + ' (hop ' + e.hop_id + ')')}${row('Observed onset', fmtDayY(e.onset_observed) + ', lag ' + e.lag_from_event_days + ' d from the event')}${g.rho && typeof g.rho === 'object' && g.rho.shrunk != null ? row('Effect (shrunk)', g.rho.shrunk.toFixed(3) + '× [' + g.rho.lo.toFixed(3) + ', ' + g.rho.hi.toFixed(3) + ']' + (g.rho.raw != null ? '; raw ' + g.rho.raw.toFixed(3) : '')) : row('Effect', e.num || 'not yet published')}
+      ${e.chart && e.chart.peak ? row('Peak day', fmtDayY(e.chart.peak.d) + ', ' + Math.round(e.chart.peak.t * 100) + '% of normal') : ''}${g.t_stat != null ? row('T statistic', g.t_stat.toFixed(3)) : ''}${g.n_date ? row('Fake dates', `${g.exceed_date} of ${g.n_date} (p ${g.p_date.toFixed(4)})`) : ''}${g.n_topic ? row('Other series', `${g.exceed_topic ?? '–'} of ${g.n_topic} (p ${g.p_topic})`) : ''}${g.n_link ? row('Random links', `${g.exceed_link ?? '–'} of ${g.n_link} (p ${g.p_link.toFixed(3)})`) : ''}
+      ${g.bh ? row('BH (m ' + g.bh.m + ', weight ' + g.bh.weight + ')', 'q ' + g.q_w.toFixed(4)) : row('Corrected q', g.q_w != null ? g.q_w.toFixed(4) : '–')}${g.channels ? row('Channels', g.channels.agree + ' of ' + g.channels.of + (g.channels.names ? ' (' + g.channels.names.join(', ') + ')' : '')) : ''}${row('Fluke-rate bin', `T ${g.f_bin}: reads ${g.f}${g.f === 1 ? ' (warming up: too few decoys in this bin yet)' : ''}`)}${row('Flags / fails', ((g.flags || []).join(', ') || 'none') + ' / ' + ((g.fails || []).join(', ') || 'none'))}
+      ${row('Engine tier', TIER[e.engine_tier])}${e.published.ce ? row('Forecast gate', `${e.published.tier} (${e.published.reason || 'agrees'}; mode ${e.published.mode}; state ${e.published.ce.state}${e.published.ce.n_agree != null ? `, ${e.published.ce.n_agree} of ${e.published.ce.n_eligible} series agree` : ''})`) : ''}</dl>${g.f_note ? `<p>${esc(g.f_note)}</p>` : ''}</details>
       ${c ? `<details class="drawer"><summary>The regional contrast (engine 6.2.1)</summary><dl class="dl">
       ${row('Treated regions', c.treated.join(' + ') + ' (Florida)')}${row('Donor regions', c.n_donors)}${row('Window', `${c.window.pre_days} d before, ${c.window.post_days} d after ${fmtDayY(c.window.onset)}`)}
       ${row('Treated change alone', c.treated_only_pct + '%')}${row('Contrast (treated − donors)', c.d_logpts + ' log pts = ' + c.effect_pct + '%')}${row('Centred on in-time median', c.d_centred + ' log pts')}
       ${row('Robust se (1.4826 · MAD)', c.se)}${row('z', c.z)}${row('Peak day', fmtDayY(e.chart.peak.d) + ', Florida ' + Math.round(e.chart.peak.t * 100) + '% vs donors ' + Math.round(e.chart.peak.o * 100) + '%')}
-      </dl><p>${P.links.csv ? `<a href="${esc(ROOT + P.links.csv)}" download>Download the daily series (CSV)</a>. ` : ''}Values are each region’s demand divided by its own mean over ${fmtDay(e.chart.pre_window[0])}–${fmtDay(e.chart.pre_window[1])}.</p></details>
+      </dl><p>${P.links && (P.links.csv_local || P.links.csv) ? `<a href="${esc(P.links.csv_local ? ROOT + P.links.csv_local : RM.STORAGE + P.links.csv)}" download>Download the daily series (CSV)</a>. ` : ''}Values are each region’s demand divided by its own mean over ${fmtDay(e.chart.pre_window[0])}–${fmtDay(e.chart.pre_window[1])}.</p></details>
       <details class="drawer"><summary>Baseline, lag and pre-trends</summary><dl class="dl">${row('Baseline', 'season-matched: the same dates in every other panel year, never after the event')}${row('Lag', `${e.lag_days} days to the peak gap; the pre-registered window has no lag`)}
       ${row('Leads (3 blocks before onset)', c.leads.join(', '))}${row('Pre-trend p', c.p_pre + ' (flat: p ≥ 0.10)')}</dl></details>
       <details class="drawer"><summary>Placebos, synthetic control, multiple testing</summary><dl class="dl">${row('In-space p (30 fake Floridas)', `${c.p_space} (1 in ${c.p_space_odds})`)}${row('In-time p (' + c.in_time.n + ' pseudo-storms)', c.p_time)}
       ${row('Synthetic control', `${c.synth_d} log pts, same sign; RMSPE ratio ${c.synth_ratio}, rank p ${c.synth_p}`)}${e.replication && e.replication.family ? row('Family q (24 hurricanes, BH)', e.replication.family.q + ' — ' + e.replication.family.strength) : ''}
       ${P.calibration ? row('Decoy false-alarm rate (120 sets)', `${Math.round(P.calibration.decoy_fp_rate * 1000) / 10}% [${P.calibration.wilson.map(x => Math.round(x * 1000) / 10).join(', ')}]`) : ''}</dl></details>` : ''}
       ${e.forecast ? `<details class="drawer"><summary>The forecast check (BigQuery, ${esc(e.forecast.model)})</summary><dl class="dl">${e.forecast.series.map(s => row(`Series ${s.series_id}`, `${s.effect_pct}% [${s.lo_pct}, ${s.hi_pct}], p ${s.p}`)).join('')}${row('Verdict', `${e.forecast.state}: ${e.forecast.n_agree} of ${e.forecast.n_eligible} series`)}${e.forecast.calibration.map(c => row(`Calibration, ${c.role.replace('_', ' ')}`, `${c.hops_sig} of ${c.hops_evaluated} significant, ${c.hops_agree} agree`)).join('')}${row('Run', esc(e.forecast.run))}</dl></details>` : ''}
-      <details class="drawer"><summary>Ledger and provenance</summary><dl class="dl">${row('Hop id', e.hop_id)}${row('Registered', `seq ${L.register_seq}, ${fmtDayY(led[0].day)}`)}${row('Register hash', led[0].payload_hash, 1)}
-      ${row('Grid frozen', `seq ${L.freeze_seq}, batch ${esc(P.engine.batch)}`)}${row('Grid hash', L.frozen_hash, 1)}${row('Model versions', L.model_seq.join(', ') + ' (6.2, 6.2.1)')}${row('Calibration', 'seq ' + L.calibration_seq)}${row('Control audit', `seq ${L.control_seq}`)}${row('Resolved', `seq ${L.resolve_seq}, ${fmtDayY(g.resolved_at.slice(0, 10))}`)}${L.publish_seq ? row('Version published', `seq ${L.publish_seq}`) : ''}${row('Cascade ledger head', L.cascade_head, 1)}
-      ${row('Chain head', `seq ${L.head.seq}`)}${row('Head hash', L.head.chain_hash, 1)}${c ? row('Computed', c.computed_at.slice(0, 16).replace('T', ' ') + ' UTC') : ''}</dl><p><a href="${ROOT}how/">How Ripple Map knows</a>.</p></details>`;
+      <details class="drawer"><summary>Ledger and provenance</summary><dl class="dl">${row('Hop id', e.hop_id)}${L.register_seq ? row('Registered', `seq ${L.register_seq}${led && led[0] ? ', ' + fmtDayY(led[0].day) : ''}`) : ''}${led && led[0] && led[0].payload_hash ? row('Register hash', led[0].payload_hash, 1) : ''}
+      ${L.freeze_seq ? row('Grid frozen', `seq ${L.freeze_seq}${P.engine && P.engine.batch ? ', batch ' + esc(P.engine.batch) : ''}`) : ''}${L.frozen_hash ? row('Frozen hash', L.frozen_hash, 1) : ''}${L.model_seq ? row('Model versions', L.model_seq.join(', ') + ' (6.2, 6.2.1)') : ''}${L.calibration_seq ? row('Calibration', 'seq ' + L.calibration_seq) : ''}${L.control_seq ? row('Control audit', `seq ${L.control_seq}`) : ''}${L.resolve_seq ? row('Resolved', `seq ${L.resolve_seq}${g.resolved_at ? ', ' + fmtDayY(g.resolved_at.slice(0, 10)) : ''}`) : ''}${L.publish_seq || L.version_seq ? row('Version published', `seq ${L.publish_seq || L.version_seq}`) : ''}${L.cascade_head ? row('Cascade ledger head', L.cascade_head, 1) : ''}
+      ${P.ledger_head ? row('Chain head', `seq ${P.ledger_head.seq}`) + row('Head hash', P.ledger_head.chain_hash, 1) : ''}${c && c.computed_at ? row('Computed', c.computed_at.slice(0, 16).replace('T', ' ') + ' UTC') : ''}</dl><p><a href="${ROOT}how/">How Ripple Map knows</a>.</p></details>`;
   }
   const glyph = t => `<svg aria-hidden="true"><use href="#g-${t === 'measured' ? 'measured' : t === 'likely' || t === 'contrast' ? 'half' : t === 'pattern' ? 'rule' : t === 'flat' ? 'flat' : 'dotted'}"/></svg>`;
 
@@ -271,24 +283,24 @@
     const e = P.effects.find(x => x.id === id); if (!e) return; current = id; currentKind = 'effect'; RM.track('stop_open');
     const r = e.replication, g = e.engine, chain = e.parent && e.parent !== 'event' && e.mediation_supported;
     const parentE = chain ? P.effects.find(x => x.id === e.parent) : null;
-    const agree = g ? `<span><i></i>Moved unusually after the ${noun}: ${g.exceed_date} of ${g.n_date.toLocaleString()} fake dates come close</span>${e.contrast ? `<span><i></i>Moved against ${e.contrast.n_donors} unaffected regions, pre-trends flat</span>` : ''}<span><i class="${e.sources && e.sources.agree > 1 ? '' : 'o'}"></i>${esc(e.sources.text)}</span>${r ? `<span><i class="${r.n_seen ? '' : 'o'}"></i>Passed after ${r.n_seen} of ${r.n_similar} similar ${noun}s tested</span>` : ''}<span><i class="${e.forecast && e.forecast.state === 'agree' ? '' : 'o'}"></i>Independent forecast model: ${esc(e.published.ce ? e.published.ce.state : 'not run')}</span>`
+    const agree = g ? `<span><i></i>Moved unusually after the ${noun}: ${g.exceed_date} of ${g.n_date.toLocaleString()} fake dates come close</span>${e.contrast ? `<span><i></i>Moved against ${e.contrast.n_donors} unaffected regions, pre-trends flat</span>` : ''}${e.sources ? `<span><i class="${e.sources.agree > 1 ? '' : 'o'}"></i>${esc(e.sources.text)}</span>` : ''}${r && r.n_similar ? `<span><i class="${r.n_seen ? '' : 'o'}"></i>Passed after ${r.n_seen} of ${r.n_similar} similar ${noun}s tested</span>` : ''}<span><i class="${(e.forecast && e.forecast.state === 'agree') || (e.published.ce && e.published.ce.state === 'agree') ? '' : 'o'}"></i>Independent forecast model: ${esc(e.published.ce ? e.published.ce.state === 'agree' ? `agrees (${e.published.ce.n_agree} of ${e.published.ce.n_eligible} series)` : e.published.ce.state : 'not run')}</span>`
       : `${e.fluke ? `<span><i></i>${esc(e.fluke.text)}</span>` : '<span><i class="o"></i>Not yet tested against lookalikes</span>'}${e.sources ? `<span><i class="${e.sources.agree > 1 ? '' : 'o'}"></i>${esc(e.sources.text)}</span>` : ''}${r && r.wording ? `<span><i class="${r.n_seen ? '' : 'o'}"></i>${esc(r.wording[0].toUpperCase() + r.wording.slice(1))}</span>` : ''}${e.published.reason ? `<span><i class="o"></i>Forecast gate: ${esc(e.published.reason)}</span>` : ''}`;
     body.innerHTML = `
       <p class="crumb">${esc(P.domains[e.domain])}, ${esc(e.lag_text || '')}. ${chain ? `This stop is reached <b>through ${esc(parentE ? parentE.short : e.parent)}</b>: the engine's mediation check supports the chain.` : `This ripple <b>forks straight from the ${noun}</b>: no chain through another stop is claimed.`}</p>
       <span class="chip ${esc(tierOf(e))}">${glyph(tierOf(e))}${esc(tierWord(e))}${e.published.reason || (e.published.detail && e.published.detail !== tierWord(e)) ? `<em>${esc(e.published.reason ? e.published.detail : e.published.detail.replace(/^[^:]+:\s*/, ''))}</em>` : ''}</span>
       <h2>${esc(e.title)}</h2>
-      <div class="big num">${esc(e.num)}<small>${esc(e.unit || '')}</small></div>
-      <p class="find">${esc(e.plain)}</p>
+      <div class="big num">${esc(e.num_pct || e.num || '?')}<small>${esc(e.unit_plain || (e.num_pct_kind === 'peak' ? 'at its peak, vs its normal' : e.unit || 'vs its normal'))}${e.num && e.num_pct ? ` · ${esc(e.num)} its normal` : ''}</small></div>
+      <p class="find">${esc(e.plain_long || e.plain)}</p>
       <div class="agree">${agree}</div>
       <div class="why"><button class="btn primary" type="button" data-why>Why?</button>${shareBtns(e, 'stop')}<button class="btn" type="button" data-watch aria-pressed="${watched()}">${watched() ? 'Watching' : 'Watch'}</button></div>
       ${e.chart && e.chart.series ? `<div class="chart">${seriesChart(e)}</div><div class="legend"><span><i class="l"></i>${esc(e.short_label || e.title)}</span>${e.contrast ? `<span><i class="l2"></i>${e.contrast.n_donors} unaffected regions</span>` : ''}<span><i></i>The engine's normal band (±1.28σ)</span></div>` : ''}
-      <div class="sect" id="why"><h3>Why? How the ripple got there</h3>${e.mechanism ? `<ul class="steps">${e.mechanism.map((m, i) => `<li><i class="${i === 0 ? 'f' : ''}"></i><span>${esc(m.step)}<small>${esc(m.why)} Source: ${esc(m.source)}.</small></span></li>`).join('')}</ul>` : e.why && e.why.length ? `<ul class="steps">${e.why.map((w, i) => `<li><i class="${i === 0 ? 'f' : ''}"></i><span>${esc(w[0].toUpperCase() + w.slice(1))}</span></li>`).join('')}</ul><p style="font-size:13px;color:var(--muted)">The named mechanism steps arrive with the event's pond payload.</p>` : '<p>A mechanism from the library links this stop to the event; its steps are not published for this stop yet.</p>'}</div>
+      <div class="sect" id="why"><h3>Why? How the ripple got there</h3>${e.mechanism ? `<ul class="steps">${e.mechanism.map((m, i) => `<li><i class="${i === 0 ? 'f' : ''}"></i><span>${esc(m.step)}<small>${m.why ? esc(m.why) + ' ' : ''}${m.source ? 'Source: ' + esc(m.source) + '.' : ''}</small></span></li>`).join('')}</ul>` : e.why && e.why.length ? `<ul class="steps">${e.why.map((w, i) => `<li><i class="${i === 0 ? 'f' : ''}"></i><span>${esc(w[0].toUpperCase() + w.slice(1))}</span></li>`).join('')}</ul><p style="font-size:13px;color:var(--muted)">The named mechanism steps arrive with the event's pond payload.</p>` : '<p>A mechanism from the library links this stop to the event; its steps are not published for this stop yet.</p>'}</div>
       <div class="sect" id="luck"><h3>Could it be luck?</h3>${luckPanel(e)}${e.how ? `<p style="margin-top:8px">${esc(e.how)}</p>` : ''}</div>
       ${forecastPanel(e)}
       ${e.mind ? `<div class="sect"><h3>What would change our mind</h3><p>${esc(e.mind)}</p></div>` : ''}
       ${r ? `<div class="sect" id="seen"><h3>Seen before?</h3>${replicationRow(r)}</div>` : ''}
       ${P.watching ? watchRow() : ''}
-      <div class="sect"><h3>In plain words</h3><p><b>${esc(tierWord(e))}.</b> ${g ? `The engine’s own test calls this ${esc(TIER[e.engine_tier])}: the series moved, ${g.n_date.toLocaleString()} fake dates say it is not the calendar${e.contrast ? `, and ${e.contrast.n_donors} unaffected regions say it is not the country` : ''}. ${e.published.reason ? `<b>Published as ${esc(tierWord(e))}</b> because the independent forecast model has not yet checked it (${esc(e.published.reason)}). When it agrees, the word becomes Measured; if it disagrees, it stays Likely.` : e.forecast && e.forecast.state === 'agree' ? `<b>Published as Measured</b> because an independent forecast model agrees on ${e.forecast.n_agree} of ${e.forecast.n_eligible} series.` : ''}` : esc(P.story && P.story.tier_wording ? P.story.tier_wording : '')} Consistent with, never proof of cause.</p></div>
+      <div class="sect"><h3>In plain words</h3><p><b>${esc(tierWord(e))}.</b> ${g && g.n_date ? `The engine’s own test calls this ${esc(TIER[e.engine_tier])}: the series moved, ${g.n_date.toLocaleString()} fake dates say it is not the calendar${e.contrast ? `, and ${e.contrast.n_donors} unaffected regions say it is not the country` : ''}. ${e.published.reason ? `<b>Published as ${esc(tierWord(e))}</b> because the independent forecast model has not yet checked it (${esc(e.published.reason)}). When it agrees, the word becomes Measured; if it disagrees, it stays Likely.` : e.published.ce && e.published.ce.state === 'agree' ? `<b>Published as ${esc(tierWord(e))}</b> because an independent forecast model agrees on ${e.published.ce.n_agree} of ${e.published.ce.n_eligible} series.` : ''}` : tierOf(e) === 'likely' ? 'Well supported by the engine’s test, but not yet Measured: the final look or the forecast check is still to come, and a fluke is not ruled out.' : esc(P.story && P.story.tier_wording ? P.story.tier_wording : '')} Consistent with, never proof of cause.</p></div>
       <div class="sect" id="deep"><h3>Deep evidence</h3>${drawers(e)}</div>
       <div class="sect more"><h3>This wasn’t the end</h3>${followLinks(e, 'effect')}</div>`;
     wire(); highlight(id); showPanel();
@@ -318,7 +330,7 @@
     const others = P.untested.filter(x => x.id !== id);
     body.innerHTML = `
       <p class="crumb">${esc(P.domains[u.domain])}, window ${RM.daysUntil(u.window_close) >= 0 ? 'closes' : 'closed'} ${fmtDayY(u.window_close)}. Registered before anyone looked.</p>
-      <span class="chip watching">${glyph('watching')}Watching<em>${u.hop_id ? `hop ${u.hop_id}, ` : ''}${esc(String(u.status || 'open').replace('_', ' '))}</em></span>
+      <span class="chip watching">${glyph('watching')}Watching<em>${esc(String(u.status || 'window open').replace(/_/g, ' '))}</em></span>
       <h2>${esc(u.name)}</h2>
       <div class="flat-hero">Too early to tell.</div>
       <p class="find">${esc(u.plain)}</p>
@@ -333,7 +345,7 @@
   function openFlat(id) {
     const n = (P.flats || []).find(x => x.id === id); if (!n) return; current = id; currentKind = 'flat'; RM.track('stop_open');
     const others = P.flats.filter(x => x.id !== id);
-    body.innerHTML = `<p class="crumb">${esc(P.domains[n.domain])}, window to ${fmtDayY(n.window_close)}. Checked in advance, on purpose.</p><span class="chip flat">${glyph('flat')}Stayed flat<em>${n.hop_id ? `hop ${n.hop_id}` : 'dead end'}</em></span>
+    body.innerHTML = `<p class="crumb">${esc(P.domains[n.domain])}, window to ${fmtDayY(n.window_close)}. Checked in advance, on purpose.</p><span class="chip flat">${glyph('flat')}Stayed flat<em>a dead end, disclosed</em></span>
       <div class="flat-hero">The ripple stopped here.</div><h2 style="margin-top:0">${esc(n.name)}</h2><p class="find">${esc(n.plain)}</p>
       <div class="why">${shareBtns(n, 'dead')}</div>
       ${n.mechanism ? `<div class="sect"><h3>Why it was registered</h3><p>${esc(n.mechanism.replace('->', '→'))}. Source: mechanism library v6.0.</p></div>` : n.story && n.story.why ? `<div class="sect"><h3>Why it was registered</h3><ul class="steps">${n.story.why.map((w, i) => `<li><i class="${i === 0 ? 'f' : ''}"></i><span>${esc(w[0].toUpperCase() + w.slice(1))}</span></li>`).join('')}</ul></div>` : `<div class="sect"><h3>Why it was registered</h3><p>Mapped from the ${noun} family: every ${noun} gets this series checked. Source: family mapper.</p></div>`}
@@ -368,14 +380,16 @@
   /* ---------- send / share: canonical frozen objects (D-16) ---------- */
   const canonRipple = RM.url.canon.ripple(P.event.slug), st = P.story || {};
   function objFor(id, kind) {
-    if (kind === 'ripple' || !id) return { title: st.short_title || name, sentence: st.story_sentence, hook: quiet ? null : st.conversation_hook, line: st.share_line, url: RM.frozen(canonRipple, P.version), tier: E ? tierOf(E) : (U0 ? 'watching' : 'flat') };
-    if (kind === 'stop') { const e = P.effects.find(x => x.id === id); return { title: `${name} → ${e.title}`, sentence: e.headline + '.', hook: quiet ? null : (e.fluke ? e.fluke.text : null), line: `${name} → ${e.short} · ${e.num} ${e.unit || ''} · ${tierLine(e)} · consistent with, never proof of cause`, url: RM.frozen(RM.url.canon.stop(P.event.slug, e.hop_id || e.id), P.version), tier: tierOf(e) }; }
+    // short (CX fix 8): the story sentence, one number, the tier, the frozen url
+    if (kind === 'ripple' || !id) return { title: st.short_title || name, sentence: st.story_sentence, hook: E ? `${feel(E)}${nFlat ? `; ${nFlat} things stayed flat` : ''}. ${tierLine(E)}, never proof of cause.` : (quiet ? null : st.conversation_hook), line: null, url: RM.frozen(canonRipple, P.version), tier: E ? tierOf(E) : (U0 ? 'watching' : 'flat') };
+    if (kind === 'stop') { const e = P.effects.find(x => x.id === id); return { title: `${name} → ${e.title}`, sentence: `${name} → ${e.short}: ${feel(e)}.`, hook: `${tierLine(e)}, never proof of cause.`, line: null, url: RM.frozen(RM.url.canon.stop(P.event.slug, e.hop_id || e.id), P.version), tier: tierOf(e) }; }
     if (kind === 'rule') { const s = P.shore.find(x => x.id === id); return { title: s.title, sentence: s.story ? s.story.story_sentence : s.plain, hook: `Seen across ${s.pattern.n_events} past ${noun}s, not one.`, line: `${s.headline} · ${s.pattern.strength} · a pattern, never proof of cause`, url: RM.url.canon.pattern(s.pattern.id), tier: s.pattern.strength }; }
     if (kind === 'watching') { const u = P.untested.find(x => x.id === id); return { title: `${name} → ${u.name}?`, sentence: `${name} might be showing up in ${u.name}. Too early to tell: the window closes ${fmtDayY(u.window_close)}.`, hook: null, line: `${name} → ${u.name}? · still being watched · closes ${fmtDayY(u.window_close)}`, url: RM.frozen(RM.url.canon.stop(P.event.slug, u.hop_id || u.id), P.version), tier: 'watching' }; }
     const n = P.flats.find(x => x.id === id); return { title: `${name} → ${n.name}: dead end`, sentence: `${name} was expected to ripple into ${n.name}. It didn't: the window closed ${fmtDayY(n.window_close)} without a detectable move.`, hook: null, line: `${name} → ${n.name}: dead end · stayed flat`, url: RM.frozen(RM.url.canon.stop(P.event.slug, n.hop_id || n.id), P.version), tier: 'flat' };
   }
   function sendObject(id, kind) { RM.sendObj(objFor(id, kind)); }
   $('#btn-send').addEventListener('click', () => sendObject(null, 'ripple'));
+  const bsh = $('#btn-send-hook'); if (bsh) bsh.addEventListener('click', () => sendObject(null, 'ripple'));
   $('#btn-share').addEventListener('click', () => { RM.track('share_tap'); RM.copy(objFor(null, 'ripple').url); });
   // read by tools/shoot.mjs for the tier-wording guard: every share surface with the tier that governs it
   window.__pond = { publishedTier: E ? tierOf(E) : (U0 ? 'watching' : 'flat'), shareText: () => RM.shareText(objFor(null, 'ripple')),
@@ -394,14 +408,16 @@
   (function gone() {
     const VK = 'rm.pond.seen.' + P.event.slug;
     const seen = RM.ls.json(VK, null), w = RM.watchAll()[WID];
-    const from = w ? w.version : seen ? seen.version : null;
-    if (from != null && (w || from < P.version)) {
-      const since = (P.changelog || []).filter(c => c.version > from);
+    const from = w ? w.version : seen ? seen.version : null, wasTier = (w && w.tier) || (seen && seen.tier), nowTier = E ? tierOf(E) : (U0 ? 'watching' : 'flat');
+    if (from != null && (w || from < P.version || (wasTier && wasTier !== nowTier))) {
       const box = $('#gone'); box.hidden = false;
-      box.innerHTML = `<div><b>While you were gone</b><span>${since.length ? since.map(c => `${esc(c.text)} (v${c.version}, ${fmtDay(c.at)})`).join(' ') : from < P.version ? `This ripple moved from v${from} to v${P.version}.` : `Nothing has changed on this ripple since ${fmtDay((w && w.seen_at) || seen.at)}.${nWatch ? ` ${nWatch} series ${nWatch === 1 ? 'is' : 'are'} still being watched.` : ''} Snapshot v${P.version}.`}</span></div>`;
+      // a replayed moment, not a changelog (CX fix 6)
+      const changed = wasTier && wasTier !== nowTier;
+      box.innerHTML = `<div><b>Since you last looked</b><span>${changed ? `${esc(TIER[wasTier] || wasTier)} → ${esc(TIER[nowTier] || nowTier)}${nowTier === 'measured' ? ': the independent forecast check agreed, so the pad is now solid.' : nowTier === 'flat' ? ': the window closed without a move.' : '.'}` : from < P.version ? `This ripple has grown since ${fmtDay((w && w.seen_at) || seen.at)}.` : `Nothing has changed since ${fmtDay((w && w.seen_at) || seen.at)}.${nWatch ? ` ${nWatch} series ${nWatch === 1 ? 'is' : 'are'} still being watched.` : ''}`}</span>${changed || from < P.version ? `<button class="btn" type="button" id="btn-showme" style="margin-left:auto;padding:5px 12px;font-size:13px">Show me</button>` : ''}</div>`;
+      const sm = $('#btn-showme'); if (sm) sm.addEventListener('click', () => { document.body.classList.add('hook'); $('#h1').innerHTML = H1.hook; trace(); });
     }
-    RM.ls.set(VK, JSON.stringify({ version: P.version, at: RM.today() }));
-    if (w) RM.setWatchVersion(WID, P.version);
+    RM.ls.set(VK, JSON.stringify({ version: P.version, at: RM.today(), tier: nowTier }));
+    if (w) { RM.setWatchVersion(WID, P.version); const all = RM.watchAll(); if (all[WID]) { all[WID].tier = nowTier; RM.ls.set('rm.watch', JSON.stringify(all)); } }
   })();
   /* banners: landed here (Wander), grown since shared (frozen version), fixture data */
   (function banners() {
@@ -425,8 +441,8 @@
     </div></li>`;
   const effectCards = P.effects.map(e => `<li><button class="card" type="button" data-open="${esc(e.id)}" data-kind="effect">
       <div class="k"><span class="step">${glyph(tierOf(e))}${esc(tierLine(e))}</span><span>${esc(P.domains[e.domain])}, ${esc(e.lag_text || '')}</span></div>
-      <div class="n num">${esc(e.num)}<small>${esc(e.unit || '')}</small></div>
-      <p class="f">${esc(e.plain.split('. ')[0])}.</p>
+      <div class="n num">${esc(e.num_pct || e.num || '?')}<small>${esc(e.unit_plain || (e.num_pct_kind === 'peak' ? 'at its peak, vs its normal' : 'vs its normal'))}</small></div>
+      <p class="f">${esc((e.plain_long || e.plain).split('. ')[0])}.</p>
       ${e.chart && e.chart.series ? `<div class="spark chart">${seriesChart(e, 320, 56, true)}</div>` : ''}
       <div class="foot"><span>${e.mediation_supported && e.parent !== 'event' ? 'A chain: mediation supported' : `Forks straight from the ${noun}`}</span><span class="open">See the evidence</span></div>
     </button></li>`).join('');
@@ -455,7 +471,7 @@
       Pond.render(sv, { event: { name: label, magnitude: .5, label: false }, domains: P.domains, rings: P.rings, effects: pass ? [{ id: 'c', domain: E.domain, lag_days: E.lag_days, magnitude: Math.min(1, Math.abs(pct) / 25), tier: 'likely', kind: 'pad', num: '', short: '', headline: '', plain: '' }] : [], flats: pass ? [] : [{ name: E.short, domain: E.domain, lag_days: E.lag_days }] }, { thumb: true, reduceMotion: true, viewBox: [-470, -470, 940, 940] });
       card.insertAdjacentHTML('beforeend', `<div class="pn">${esc(label.replace(/^(Hurricane|Tropical storm) /, ''))}<small class="num">${year}</small></div><div class="ps"><b>${pct > 0 ? '+' : ''}${pct}%</b> ${pass ? 'passed' : 'no pass'}</div>`); return card; };
     R.all.forEach(s => row.appendChild(mini(s.label, s.year, s.effect_pct, s.pass, false)));
-    row.prepend(mini(name.replace(/^Hurricane /, ''), String(ev.onset).slice(0, 4), E.contrast.effect_pct, true, true));
+    if (E.contrast) row.prepend(mini(name.replace(/^Hurricane /, ''), String(ev.onset).slice(0, 4), E.contrast.effect_pct, true, true));
   }
 
   /* the ripple stopped here: honest when there are no flats */
@@ -467,7 +483,13 @@
   /* one more: the next best real story (a world rule in another family), plus where events like it usually reach */
   const NX = P.pattern_next;
   let om = '';
-  if (NX) om += `<div><h3>This wasn’t the end</h3><p class="lead">One more. A different kind of ${noun === 'storm' ? 'weather' : 'event'}: what the engine finds when it pools every ${esc(NX.event_label.toLowerCase())} since 2015.</p>
+  try {
+    const idx = await RM.data.pondIndex();
+    const next = (idx.ponds || []).filter(p => p.slug !== P.event.slug && (p.stops.measured + p.stops.likely > 0)).sort((a, b) => (b.stops.measured * 3 + b.stops.likely) - (a.stops.measured * 3 + a.stops.likely))[0] || (idx.ponds || []).find(p => p.slug !== P.event.slug);
+    if (next) { const nn = next.name.replace(/ \(positive control\)$/, ''), moved = next.stops.measured + next.stops.likely, tease = moved ? `${moved} thing${moved === 1 ? '' : 's'} moved and ${next.stops.flat} stayed flat. Which?` : `${next.stops.watching} series are being watched. Nothing has resolved yet.`;
+      om += `<div><h3>This wasn’t the end</h3><p class="lead">One more. Another stone, another pond.</p><a class="card" href="${RM.url.ripple(next.slug)}" data-onemore><div class="k"><span class="step">${esc(RM.DLABEL[next.family] || next.family.replace(/^hazard\./, '').replace(/^tech\./, '').replace(/^policy\./, '').replace(/_/g, ' '))}</span><span>${fmtDayY(next.onset)}</span></div><p class="big-p">${esc(nn)}${/\d{4}\)$/.test(nn) || /\d{4}-\d\d-\d\d/.test(nn) ? '' : ' hits'}. ${esc(tease)}</p><div class="foot"><span>${next.is_control ? 'A known-effect test case' : next.sensitive ? 'Shown quietly' : 'A live line'}</span><span class="open">Trace it</span></div></a></div>`; }
+  } catch { /* no index */ }
+  if (NX) om += `<div><h3>${om ? 'And a world rule' : 'This wasn’t the end'}</h3><p class="lead">${om ? '' : 'One more. '}A different kind of ${noun === 'storm' ? 'weather' : 'event'}: what the engine finds when it pools every ${esc(NX.event_label.toLowerCase())} since 2015.</p>
       <a class="card" href="${RM.url.pattern(NX.id)}" data-onemore><div class="k"><span class="step">${glyph('pattern')}${esc(NX.strength)}</span><span>${NX.n_events} ${esc(NX.event_label.toLowerCase())}</span></div>
       <p class="big-p">${esc(NX.story.story_sentence)}</p>
       <p style="font-size:14px;color:var(--ink-2);margin:6px 0 0">Confidence interval ${NX.ci[0]}% to ${NX.ci[1]}%; ${esc(NX.fluke_note)}. Largest: ${NX.examples.map(x => `${esc(x.label.replace(/ \(\d+ states\)/, ''))} +${Math.round((Math.exp(x.d) - 1) * 100)}%`).join('; ')}.</p>

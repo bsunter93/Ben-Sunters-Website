@@ -1,0 +1,42 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Wander: Ripple Map</title>
+<meta name="description" content="Land on an interesting ripple or world rule, instantly. Never a dead end.">
+<meta name="robots" content="noindex">
+<meta name="theme-color" content="#0F1516">
+<link rel="icon" href="../../icon-192.png">
+<link rel="stylesheet" href="../app.css">
+<link rel="stylesheet" href="../site.css">
+<style>.page{min-height:60vh}.page h1{font-size:28px}</style>
+</head>
+<body>
+<header class="top"></header>
+<main class="page"><p class="eyebrow">Wander</p><h1 id="h1">Picking a pond…</h1><p class="lead" id="lead">Weighted by story rank; never a control-only or attention-only story; no repeats of the last five.</p><div id="fallback"></div></main>
+<script src="../site.js"></script>
+<script>
+(async function () {
+  const { $, esc } = RM; RM.nav('wander'); RM.analytics('pond_wander'); RM.track('wander');
+  let S; try { S = await RM.data.stories(); } catch { S = { featured: [] }; }
+  const recent = RM.ls.json('rm.wander.recent', []);
+  const ok = s => !s.is_control && (s.kind === 'pattern' || (s.event && s.event.slug)) && (s.kind !== 'watching' || (s.watching && RM.daysUntil(s.watching.window_close) >= 0));
+  const pool = (S.featured || []).filter(ok).filter(s => !recent.includes(s.story_id));
+  const w = s => Math.max(0.05, ((s.scores && s.scores.story) || 0.2)) * (s.kind === 'cascade' || s.kind === 'pattern' ? 1.6 : s.kind === 'non_event' ? 0.8 : 0.5);
+  let pick = null;
+  if (pool.length) { const tot = pool.reduce((a, s) => a + w(s), 0); let r = Math.random() * tot; for (const s of pool) { r -= w(s); if (r <= 0) { pick = s; break; } } pick = pick || pool[pool.length - 1]; }
+  if (pick) {
+    RM.ls.set('rm.wander.recent', JSON.stringify([pick.story_id, ...recent].slice(0, 5)));
+    const href = RM.storyHref(pick) + '&landed=1';
+    $('#h1').textContent = pick.short_title; $('#lead').textContent = pick.story_sentence;
+    location.replace(href);
+  } else {
+    $('#h1').textContent = 'Nothing new to wander to right now.';
+    $('#lead').textContent = 'You have seen the last five. Here is the pond with the most on it.';
+    $('#fallback').innerHTML = `<a class="btn primary" href="${RM.ROOT}r/">Open the flagship ripple</a>`;
+  }
+})();
+</script>
+</body>
+</html>

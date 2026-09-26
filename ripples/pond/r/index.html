@@ -41,6 +41,17 @@
 .lede .follow a{background:var(--bank-2);border-color:var(--line);color:var(--text)}
 .lede .follow small{color:var(--text-3)}.lede .follow .go{color:var(--sand)}
 .shore .follow a{max-width:520px}
+/* after the reveal: the number stays on the water, the flats sit right under it */
+.pond .reveal.pinned .rv-lag,.pond .reveal.pinned .rv-tier{opacity:1}
+.after{margin:6px 0 0;display:grid;gap:8px}
+.after-row{display:flex;align-items:center;gap:14px;flex-wrap:wrap}
+.after-k{font-size:14px;color:var(--text-2)}
+.after-chips{display:flex;flex-wrap:wrap;gap:6px}
+.after-chips button{font-size:13px;color:var(--text-2);background:var(--bank-2);border:1px dashed var(--line-2);border-radius:999px;padding:6px 11px;display:inline-flex;align-items:center;gap:6px;min-height:34px}
+.after-chips button:hover{border-color:var(--text-2);color:var(--text)}
+.after-chips svg{width:14px;height:12px}
+.after-chips small{color:var(--text-3)}
+@media (max-width:900px){.after{margin:10px 8px 0}.pond-list{display:none!important}.after-chips button{min-height:44px;padding:8px 13px;font-size:14px}}
 </style>
 </head>
 <body class="hook">
@@ -78,7 +89,7 @@
     <h1 id="h1"></h1>
     <p class="trust hook-h" id="trust"></p>
     <p class="reach hook-h" id="reach"></p>
-    <div class="actions hook-h"><button class="btn primary big-btn" id="btn-trace" type="button">Trace it<svg width="14" height="14" aria-hidden="true"><use href="#i-arrow"/></svg></button></div>
+    <div class="actions hook-h"><button class="btn primary big-btn" id="btn-trace" type="button">Trace it<svg width="14" height="14" aria-hidden="true"><use href="#i-arrow"/></svg></button><button class="btn" id="btn-send-hook" type="button"><svg width="16" height="16" aria-hidden="true"><use href="#i-send"/></svg>Send this</button></div>
 
     <p class="sub traced-h" id="traced-sub"></p>
     <div class="actions traced-h"><button class="btn primary" id="btn-send" type="button"><svg width="16" height="16" aria-hidden="true"><use href="#i-send"/></svg>Send this</button><button class="btn" id="btn-share" type="button">Share</button><button class="btn" id="btn-watch" type="button"><svg width="16" height="16" aria-hidden="true"><use href="#i-eye"/></svg>Watch this ripple</button></div>
@@ -101,6 +112,7 @@
 
   <div class="stage">
     <div class="pond-box"><svg id="pond" role="group" aria-label="The pond"></svg></div>
+    <div class="after" id="after" hidden aria-label="What moved and what stayed flat"></div>
     <ol class="pond-list traced-h" id="pond-list" aria-label="Things on the pond"></ol>
     <p class="hint traced-h">Click a pad for the evidence. Hover the reeds to see what stayed flat.</p>
   </div>

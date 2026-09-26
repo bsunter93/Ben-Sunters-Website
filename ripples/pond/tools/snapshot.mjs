@@ -148,7 +148,7 @@ export function assemble() {
       rho: { shrunk: H.rho_shrunk, lo: H.rho_lo, hi: H.rho_hi, raw: H.rho_raw, peak: H.rho_peak, peak_day: H.peak_day, unit: 'x' }, band: H.band,
       channels: H.channels, n_series: H.n_series, common_shock: H.common_shock, reversed: H.reversed, lag_ok: H.lag_ok, flags: H.flags, fails: H.fails, look_day: H.look_day, resolved_at: H.resolved_at, chain: null },
     contrast, kind: 'pad', far_shore: false, parent: 'event', mediation_supported: false, common_cause: [],
-    num: '0.89×', short: 'grid demand', title: 'Duke Energy Florida electricity demand', unit: 'its normal, the week after landfall',
+    num: '0.89×', short: 'grid demand', short_label: 'Duke Florida', title: 'Duke Energy Florida electricity demand', unit: 'its normal, the week after landfall', unit_plain: 'power use, the week after landfall',
     headline: 'Duke Energy Florida demand, 0.89× its normal for the week after landfall',
     plain: `Duke Energy Florida, the utility for the Gulf coast where Milton came ashore, drew 0.89× its normal for the week from ${fmtDay(H.onset)}. On ${fmtDay(worst.day)}, the day after landfall, it drew ${Math.round(worst.fpc * 100)}% of normal. Together with Florida Power & Light the two grids ran ${Math.abs(contrast.effect_pct).toFixed(0)}% below 51 regions the storm never touched.`,
     sources: { agree: H.channels.agree, of: H.channels.of, text: '1 of 1 channels agree (EIA-930 hourly demand, physical channel); no attention or economic channel was registered for this series' },

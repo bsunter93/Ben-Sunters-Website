@@ -143,7 +143,7 @@
     const T = opts.timing === 'slow' ? [0.9, 1.5] : [0.25, 0.6];
     const ringDelay = r => T[0] + (r / R0) * T[1];
     const placer = makePlacer(vb, R0);
-    const fs = compact ? { lbl: 21, tier: 17 } : { lbl: 15, tier: 12 };
+    const fs = compact ? { lbl: 42, tier: 30 } : { lbl: 15, tier: 12 };   // compact: 960-unit viewBox on a 390 px phone, so 42 units = 17 px
 
     /* defs */
     const defs = el('defs', {}, svg);
@@ -256,6 +256,7 @@
     (P.flats || P.nulls || []).forEach((n, i) => {
       const p = pos(n.domain, n.lag_days, n._off || 0);
       const bed = reeds(gG, p.x, p.y, 100 + i, p.a);
+      if (compact) bed.querySelector('.hit').setAttribute('r', 54);
       bed.setAttribute('tabindex', '0'); bed.setAttribute('role', 'button');
       bed.setAttribute('aria-label', `${n.name}: checked, stayed inside its normal range. The ripple stopped here.`);
       bed.dataset.name = n.name; bed.dataset.id = n.id || ('flat' + i);
@@ -271,11 +272,11 @@
     Object.values(byDom).forEach(list => list.forEach((u, j) => {
       const spread = (j - (list.length - 1) / 2) * (SW / (list.length + 1)) * .9;
       const p = pos(u.domain, u.lag_days, spread); u._pos = p;
-      const m = floatMarker(gU, p.x, p.y, compact ? 11 : 8.5);
+      const m = floatMarker(gU, p.x, p.y, compact ? 14 : 8.5);
       m.setAttribute('tabindex', '0'); m.setAttribute('role', 'button'); m.dataset.id = u.id;
       m.setAttribute('aria-label', `${u.name}: pre-registered, window closed ${u.window_close}, test not yet run.`);
       el('title', {}, m, `${u.name}: pre-registered, untested`);
-      el('circle', { cx: 0, cy: 0, r: 16, class: 'hit' }, m);
+      el('circle', { cx: 0, cy: 0, r: compact ? 54 : 16, class: 'hit' }, m);
       placer.reserve(p.x, p.y, 20, 20);
     }));
 
@@ -308,8 +309,8 @@
         el('tspan', { class: 'lbl-num' }, t, s.num + ' '); el('tspan', {}, t, s.short);
         el('text', { x: f1(best.lx), y: f1(best.ly) + 16, class: 'lbl-tier', 'text-anchor': best.anchor }, lab, `World rule across ${s.pattern.n_events} hurricanes`);
       } else if (compact && !thumb) {
-        el('circle', { cx: f1(p.x + 18), cy: f1(p.y - 18), r: 17, class: 'badge' }, lab);
-        el('text', { x: f1(p.x + 18), y: f1(p.y - 12), class: 'badge-num', 'text-anchor': 'middle' }, lab, 'R');
+        el('circle', { cx: f1(p.x + 22), cy: f1(p.y - 22), r: 26, class: 'badge' }, lab);
+        el('text', { x: f1(p.x + 22), y: f1(p.y - 13), class: 'badge-num', 'text-anchor': 'middle' }, lab, 'R');
       }
       const open = () => opts.onSelect && opts.onSelect(s.id, 'shore');
       wrap.addEventListener('click', open);
@@ -331,7 +332,7 @@
         el('path', { d: cd, class: 'crest', 'stroke-width': f1((1.4 + 3.2 * e.magnitude) * dr.crest), style: `opacity:${.95 * dr.crest}` }, wrap);
       }
       if (e.tier === 'watching' || e.tier === 'contrast') el('circle', { cx: 0, cy: 0, r: p.r, class: 'watch-ring', style: `--r:${f1(p.r)}` }, wrap);
-      el('circle', { cx: f1(p.x), cy: f1(p.y), r: size + 14, class: 'hit' }, wrap);
+      el('circle', { cx: f1(p.x), cy: f1(p.y), r: compact ? Math.max(size + 14, 54) : size + 14, class: 'hit' }, wrap);   // 54 units = 22 px radius on a phone: a 44 px tap target
       if (e.kind === 'duck') duck(wrap, p.x, p.y, 0.8 + e.magnitude * .6, p.a); else lilyPad(wrap, p.x, p.y, size, e.tier);
       if (e.far_shore) {
         const foam = el('g', { class: 'foam' }, wrap);
@@ -339,8 +340,8 @@
       }
       const lab = el('g', { class: 'label', style: `animation-delay:${(ringDelay(p.r) + .35).toFixed(2)}s` }, wrap);
       if (compact && !thumb) {
-        el('circle', { cx: f1(p.x + size * .7 + 4), cy: f1(p.y - size * .7 - 4), r: 17, class: 'badge' }, lab);
-        el('text', { x: f1(p.x + size * .7 + 4), y: f1(p.y - size * .7 + 2), class: 'badge-num', 'text-anchor': 'middle' }, lab, String(i + 1));
+        el('circle', { cx: f1(p.x + size * .7 + 10), cy: f1(p.y - size * .7 - 10), r: 26, class: 'badge' }, lab);
+        el('text', { x: f1(p.x + size * .7 + 10), y: f1(p.y - size * .7 - 1), class: 'badge-num', 'text-anchor': 'middle' }, lab, String(i + 1));
       } else if (!thumb) {
         const sub = e.published && e.published.reason ? `${TIER[e.tier]}: ${e.published.reason}` : e.tier === 'contrast' ? 'Regional contrast passed, not yet Measured' : e.far_shore ? `${TIER[e.tier]}, reached the far shore` : e.tier === 'watching' && e.watch ? `Watching, resolves in ${e.watch.days_left} days` : (e.lag_days < 0 ? `${TIER[e.tier]}, ${-e.lag_days} days before` : TIER[e.tier]);
         const best = placer.place(p.x, p.y, size + 12, [{ text: e.num + ' ' + e.short, size: fs.lbl }, { text: sub, size: fs.tier }], e.label_side || 'auto');

@@ -1,0 +1,74 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Lands: Ripple Map</title>
+<meta name="description" content="What's been moving Jobs? The eight lands of the pond, and everything that reached each one.">
+<meta name="theme-color" content="#0F1516">
+<link rel="icon" href="../../icon-192.png">
+<link rel="stylesheet" href="../pond.css">
+<link rel="stylesheet" href="../app.css">
+<link rel="stylesheet" href="../site.css">
+<style>
+.lands{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;list-style:none;margin:0;padding:0}
+.lands a{display:block;border:1px solid var(--line);border-radius:16px;padding:14px 16px;min-height:96px}
+.lands a[aria-current="true"],.lands a:hover{border-color:var(--sand)}
+.lands b{display:block;font-size:18px;letter-spacing:-.01em;margin-bottom:4px}
+.lands small{color:var(--text-3);font-size:12.5px;display:block}
+.stops{list-style:none;margin:0;padding:0;display:grid;gap:8px}
+.stops li{display:grid;grid-template-columns:1fr auto;gap:10px;align-items:center;border:1px solid var(--line);border-radius:14px;padding:12px 14px}
+.stops b{display:block;font-size:16px;letter-spacing:-.01em}
+.stops small{color:var(--text-3);font-size:12.5px}
+.stops .r{text-align:right;font-size:13px;color:var(--text-2)}
+.stops .r a{color:var(--sand);display:block;margin-top:4px}
+@media (max-width:1180px){.lands{grid-template-columns:1fr 1fr}}
+@media (max-width:900px){.lands{grid-template-columns:1fr 1fr}.lands a{min-height:0}}
+</style>
+</head>
+<body>
+<header class="top"></header>
+<main class="page">
+  <p class="eyebrow">Lands</p>
+  <h1 id="h1">What’s been moving where?</h1>
+  <p class="lead" id="lead">The pond has eight shores. Pick one to see every stop that reached it, by event, with its tier.</p>
+  <ul class="lands" id="lands"></ul>
+  <section class="sec" id="land" hidden>
+    <div class="head"><h2 id="land-h"></h2><span id="land-sub" style="font-size:13px;color:var(--text-3)"></span></div>
+    <p class="lead" id="land-lead"></p>
+    <ul class="stops" id="stops"></ul>
+  </section>
+</main>
+<footer><div><span>Consistent with, never proof of cause. Tier words are the engine's, after the forecast gate.</span></div></footer>
+<script src="../pond.js"></script>
+<script src="../site.js"></script>
+<script>
+(async function () {
+  const { $, esc, fmtDayY, TIER } = RM; RM.nav('lands'); RM.analytics('pond_lands');
+  const q = new URLSearchParams(location.search), d = q.get('d'), stopQ = q.get('stop');
+  let S; try { S = await RM.data.stories(); } catch { S = { featured: [] }; }
+  // every stop the story layer knows, by domain
+  const stops = [];
+  (S.featured || []).forEach(s => (s.graph && s.graph.nodes || []).forEach(n => { if (!stops.some(x => x.hop_id === n.hop_id)) stops.push({ ...n, s }); }));
+  const byDom = {}; stops.forEach(n => { (byDom[n.domain] = byDom[n.domain] || []).push(n); });
+  const rank = { measured: 4, likely: 3, watching: 2, flat: 1 };
+  const L = RM.DOMAINS.filter(([k]) => k !== 'business' || byDom.business);
+  $('#lands').innerHTML = L.map(([k, l]) => { const ns = byDom[k] || []; const m = ns.filter(n => n.tier === 'measured').length, li = ns.filter(n => n.tier === 'likely').length, w = ns.filter(n => n.tier === 'watching').length, f = ns.filter(n => n.tier === 'flat').length;
+    return `<li><a href="?d=${k}"${d === k ? ' aria-current="true"' : ''}><b>${esc(l)}</b><small>${ns.length ? [m ? `${m} measured` : '', li ? `${li} likely` : '', w ? `${w} watched` : '', f ? `${f} stayed flat` : ''].filter(Boolean).join(' · ') : 'nothing has reached here yet'}</small></a></li>`; }).join('');
+  if (d) {
+    const ns = (byDom[d] || []).slice().sort((a, b) => (rank[b.tier] || 0) - (rank[a.tier] || 0) || ((b.s.scores && b.s.scores.story) || 0) - ((a.s.scores && a.s.scores.story) || 0));
+    const label = RM.DLABEL[d] || d;
+    document.title = `What’s been moving ${label}? Ripple Map`;
+    $('#h1').textContent = `What’s been moving ${label}?`;
+    $('#land').hidden = false; $('#land-h').textContent = label; $('#land-sub').textContent = `${ns.length} stop${ns.length === 1 ? '' : 's'} from ${new Set(ns.map(n => n.s.event ? n.s.event.slug : '')).size} events`;
+    $('#land-lead').textContent = ns.length ? `Every series in ${label} that an event was registered to reach, with what happened: moved (Measured or Likely), still being watched, or stayed flat.` : `Nothing registered for ${label} has resolved yet.`;
+    const hl = n => stopQ && n.label.toLowerCase().includes(stopQ.toLowerCase());
+    $('#stops').innerHTML = ns.length ? ns.map(n => `<li${hl(n) ? ' style="border-color:var(--sand)"' : ''}><div><b>${esc(n.label)}</b><small>after ${esc((n.s.event ? n.s.event.label : '').replace(/ \(positive control\)$/, ''))}${n.s.is_control ? ' (a known-effect test case)' : ''}${n.lag_days != null ? ` · ${n.lag_days} days later` : ''}${n.window_close ? ` · window ${RM.daysUntil(n.window_close) >= 0 ? 'closes' : 'closed'} ${fmtDayY(n.window_close)}` : ''}</small></div><div class="r">${RM.tierPill(n.tier, n.s.demoted && n.s.gate_reason && n.s.hero && n.s.hero.hop_id === n.hop_id ? `${TIER[n.tier]}, ${n.s.gate_reason}` : null)}${n.rho != null ? `<div>${esc(RM.pct(n.rho))} vs its normal</div>` : ''}<a href="${RM.url.stop(n.s.event.slug, n.hop_id)}">Open the stop</a></div></li>`).join('') : '';
+    if (!ns.length) $('#stops').outerHTML = `<div class="empty"><b>Quiet shore.</b> When a ripple reaches ${esc(label)} it will be listed here with its tier and date.</div>`;
+  } else {
+    $('#lead').textContent = `The pond has ${L.length} shores. Pick one to see every stop that reached it, by event, with its tier.`;
+  }
+})();
+</script>
+</body>
+</html>

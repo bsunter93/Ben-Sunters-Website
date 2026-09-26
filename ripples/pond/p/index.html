@@ -1,0 +1,153 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<!--META-->
+<title>A world rule: Ripple Map</title>
+<meta name="description" content="A pattern across many past events, with every past event you can flip through. A pattern, never proof of cause.">
+<meta property="og:type" content="article">
+<meta property="og:title" content="A world rule: Ripple Map">
+<meta property="og:image" content="https://bensunter.com/ripples/pond/og/pattern-10.png">
+<meta property="og:image:width" content="1200"><meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<!--/META-->
+<meta name="theme-color" content="#0F1516">
+<link rel="icon" href="../../icon-192.png">
+<link rel="stylesheet" href="../pond.css">
+<link rel="stylesheet" href="../app.css">
+<link rel="stylesheet" href="../site.css">
+<style>
+body.loading main{visibility:hidden}
+.rule-hero{display:grid;grid-template-columns:440px 1fr;gap:24px;align-items:center}
+.rule-hero .big-n{font-size:72px;line-height:.95;letter-spacing:-.045em;font-weight:650;color:var(--sand);margin:10px 0 2px;font-variant-numeric:tabular-nums}
+.rule-hero .big-n small{display:block;font-size:16px;letter-spacing:-.01em;color:var(--text);font-weight:500;margin-top:6px}
+.rule-hero .stage svg{max-height:calc(100vh - 160px)}
+.strip{display:flex;gap:10px;overflow-x:auto;padding:2px 0 8px;scrollbar-width:none}
+.strip::-webkit-scrollbar{display:none}
+.pc{flex:0 0 150px;background:var(--bank-2);border:1px solid var(--line);border-radius:14px;padding:8px 8px 10px;text-align:left;color:var(--text);scroll-snap-align:start}
+.pc.no{opacity:.72}
+.pc svg{display:block;width:100%;height:auto;border-radius:10px}
+.pc .pn{display:flex;justify-content:space-between;align-items:baseline;font-size:13px;font-weight:500;margin:8px 2px 0;gap:4px}
+.pc .pn small{color:var(--text-2);font-weight:400;font-size:11.5px}
+.pc .ps{font-size:12px;color:var(--text-2);margin:1px 2px 0}
+.pc .ps b{color:var(--num);font-weight:600}
+.pc.no .ps b{color:var(--text-2)}
+.pc[aria-current="true"]{border-color:var(--sand)}
+.bars{display:flex;gap:3px;align-items:flex-end;height:64px;margin-top:10px}
+.bars i{flex:1;background:var(--line-2);border-radius:2px 2px 0 0}
+.bars i.m{background:var(--sand)}
+.facts{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}
+.facts div{border:1px solid var(--line);border-radius:14px;padding:12px 14px;font-size:13px;color:var(--text-2)}
+.facts b{display:block;color:var(--text);font-size:20px;font-weight:600;letter-spacing:-.02em;margin-bottom:2px;font-variant-numeric:tabular-nums}
+.dl{display:grid;grid-template-columns:auto 1fr;gap:4px 14px;font-size:13.5px;color:var(--text-2)}
+.dl dt{color:var(--text-3)}.dl dd{margin:0;color:var(--text);font-variant-numeric:tabular-nums}
+@media (max-width:1180px){.rule-hero{grid-template-columns:380px 1fr}.facts{grid-template-columns:1fr 1fr}}
+@media (max-width:900px){.rule-hero{grid-template-columns:1fr}.rule-hero .stage{order:-1;margin:0 -8px}.rule-hero .big-n{font-size:56px}.facts{grid-template-columns:1fr 1fr}}
+</style>
+</head>
+<body class="loading">
+<svg width="0" height="0" style="position:absolute" aria-hidden="true"><symbol id="i-send" viewBox="0 0 16 16"><path d="M8 10V2M5 5l3-3 3 3M3 8v5.5h10V8" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></symbol><symbol id="i-eye" viewBox="0 0 16 16"><path d="M1.5 8s2.5-4.5 6.5-4.5S14.5 8 14.5 8 12 12.5 8 12.5 1.5 8 1.5 8Z" fill="none" stroke="currentColor" stroke-width="1.5"/><circle cx="8" cy="8" r="2" fill="currentColor"/></symbol></svg>
+<header class="top"></header>
+<main class="page">
+  <div id="banners"></div>
+  <section class="rule-hero" aria-label="The world rule">
+    <div class="lede">
+      <p class="eyebrow">A world rule</p>
+      <div id="tags" style="margin-bottom:10px"></div>
+      <h1 id="h1"></h1>
+      <div class="big-n" id="bign"></div>
+      <p class="trust" id="trust"></p>
+      <p class="reach" id="reach"></p>
+      <div class="actions"><button class="btn primary" id="btn-send" type="button"><svg width="16" height="16" aria-hidden="true"><use href="#i-send"/></svg>Send this</button><button class="btn" id="btn-share" type="button">Share</button><button class="btn" id="btn-watch" type="button"><svg width="16" height="16" aria-hidden="true"><use href="#i-eye"/></svg>Watch this rule</button></div>
+      <p id="note" style="font-size:12.5px;color:var(--text-3);margin:14px 0 0;max-width:46ch"></p>
+    </div>
+    <div class="stage"><svg id="pond" class="pond" role="img"></svg></div>
+  </section>
+
+  <section class="sec" id="repl">
+    <div class="head"><h2 id="repl-h"></h2><span id="repl-sub" style="font-size:13px;color:var(--text-3)"></span></div>
+    <p class="lead" id="repl-lead"></p>
+    <div class="strip" id="strip"></div>
+    <div id="bars-box"></div>
+  </section>
+
+  <section class="sec"><h2>How sure?</h2><p class="lead" id="sure"></p><div class="facts" id="facts"></div></section>
+  <section class="sec"><h2>The raw numbers</h2><dl class="dl" id="raw"></dl><p style="font-size:13px;color:var(--text-3);margin-top:10px" id="ledger"></p></section>
+  <section class="sec"><h2>Follow this</h2><div class="follow dark" id="follow"></div></section>
+</main>
+<footer><div><span>A pattern across past events is not evidence about any one event. Consistent with, never proof of cause.</span><span id="foot"></span></div></footer>
+<script src="../pond.js"></script>
+<script src="../site.js"></script>
+<script>
+(async function () {
+  const { $, esc, fmtDayY, ROOT, compact } = RM; RM.nav('now'); RM.analytics('pond_pattern');
+  const q = new URLSearchParams(location.search), id = parseInt(q.get('id') || (location.hash.match(/#p(\d+)/) || [])[1] || '10', 10);
+  let Pt, S, M; try { [Pt, S] = await Promise.all([RM.data.patterns(), RM.data.stories()]); } catch { Pt = { patterns: [] }; S = { featured: [] }; }
+  const list = Pt.patterns || Pt; const p = list.find(x => x.id === id);
+  document.body.classList.remove('loading');
+  if (!p) { $('#h1').textContent = 'No such rule.'; $('#trust').innerHTML = `Rules that cleared the bar: ${list.filter(x => /pattern$/.test(x.strength)).map(x => `<a href="?id=${x.id}" style="color:var(--sand)">${esc(x.headline.split(':')[0])}</a>`).join(', ') || 'none yet'}.`; return; }
+  const st = (S.featured || []).find(s => s.kind === 'pattern' && s.pattern && s.pattern.id === id);
+  // every past event on the rule: the Milton snapshot carries the full per-storm list for rules 10 (shore) and 17 (pattern_next); sample_events otherwise
+  try { M = await RM.data.registry().then(r => { const o = (r.events || []).find(e => e.overlay); return o ? fetch(ROOT + o.overlay).then(x => x.json()) : null; }); } catch { M = null; }
+  let all = null, examples = p.sample_events || [];
+  if (M) { const sh = (M.shore || []).find(s => s.pattern && s.pattern.id === id); if (sh && sh.pattern.all) all = sh.pattern.all; else if (M.pattern_next && M.pattern_next.id === id && M.pattern_next.examples) examples = M.pattern_next.examples.map(x => ({ label: x.label, onset: x.onset, effect: Math.round((Math.exp(x.d) - 1) * 1000) / 10, p_space: x.p_space, quiet: true })); }
+  const noun = p.event_label.toLowerCase(), sing = noun.replace(/s$/, ''), verb = p.effect > 0 ? 'rose' : 'fell', strength = p.strength;
+  const sentence = st ? st.story_sentence : `Across ${p.n_events} past ${noun}, ${p.outcome_label} ${verb}: ${Math.abs(p.effect)}% vs unaffected regions.`;
+  document.title = `${p.event_label} → ${p.outcome_label}: Ripple Map`;
+  $('#tags').innerHTML = RM.tierPill(strength) + ' ' + (st && st.archetype ? RM.archTag(st.archetype) : '');
+  $('#h1').innerHTML = `${esc(p.event_label)} → ${esc(p.outcome_label)}. <span class="quiet">${esc(sentence.replace(/^Across [^,]+, /, '').replace(/^\w/, c => c.toUpperCase()))}</span>`;
+  $('#bign').innerHTML = `${p.effect > 0 ? '+' : '−'}${Math.abs(p.effect)}${p.unit === 'pct' ? '%' : ''}<small>${esc(p.outcome_label)} in the hit ${p.geo_kind === 'state' ? 'states' : 'regions'}, over ${p.window.post} ${p.window.grain}${p.window.post === 1 ? '' : 's'}, against ${p.geo_kind === 'state' ? 'states' : 'regions'} the ${sing} missed</small>`;
+  $('#trust').innerHTML = `<b>${esc(strength[0].toUpperCase() + strength.slice(1))}.</b> Pooled across ${p.n_events} past ${noun}${p.n_clustered_out ? ` (${p.n_clustered_out} overlapping ones merged)` : ''}. 300 fake pools at the same dates in other years produced an effect this large about 1 in ${Math.round(1 / p.p_placebo)} times; ${esc(p.fluke_note)}.`;
+  $('#reach').innerHTML = `<span class="num">${Math.round(p.share_positive * 100)}%</span> of ${noun} moved the expected way · <span class="num">${p.n_regional_pass}</span> passed the regional test on their own<small>Seen after many events, which is what a rule is. It says nothing about the next ${sing} until that one is tested.</small>`;
+  $('#note').textContent = `Affected vs unaffected ${p.geo_kind === 'state' ? 'states' : 'regions'}, season-matched placebos (engine 6.2.1, ledger seq ${p.ledger_seq}). Confidence interval ${p.ci[0]}% to ${p.ci[1]}%${p.ci[1] >= 0 && p.effect < 0 || p.ci[0] <= 0 && p.effect > 0 ? ': the near end touches zero' : ''}.`;
+  // the pond: a stone the size of the median event, one far-shore pad at the window's lag, reeds for the share that did not move
+  const doms = ['Real world', p.outcome_label.includes('business') ? 'Business' : p.outcome_label.includes('claims') || p.outcome_label.includes('jobless') ? 'Jobs' : p.outcome_label.includes('grid') || p.outcome_label.includes('demand') ? 'Real world' : 'Institutions', 'Jobs', 'Markets', 'Institutions'].filter((d, i, a) => a.indexOf(d) === i);
+  const lag = p.window.grain === 'week' ? p.window.post * 7 : p.window.post;
+  const sv = $('#pond');
+  Pond.render(sv, { event: { name: p.event_label, sub: `${p.n_events} of them, pooled`, magnitude: p.pond && p.pond.stone != null ? p.pond.stone : .5 }, domains: doms, rings: RM.RINGS, ringLabelAngle: -30,
+    effects: [{ id: 'rule', domain: doms.indexOf(doms[1]), lag_days: lag, magnitude: p.pond && p.pond.ripple != null ? p.pond.ripple : Math.min(1, Math.abs(p.effect) / 25), tier: 'likely', kind: 'pad', far_shore: p.pond && p.pond.reach === 1, num: `${p.effect > 0 ? '+' : '−'}${Math.abs(p.effect)}%`, short: p.outcome_label, headline: `${p.outcome_label}, ${p.effect}% across ${p.n_events} past ${noun}`, plain: sentence, label_side: 'left' }],
+    flats: Math.round((1 - p.share_positive) * 5) ? Array.from({ length: Math.round((1 - p.share_positive) * 5) }, (_, i) => ({ name: `${Math.round((1 - p.share_positive) * 100)}% moved the other way`, domain: doms.indexOf(doms[1]), lag_days: lag, offset: (i - 1) * 12 })) : [] }, { compact, reduceMotion: true, viewBox: compact ? [-480, -480, 960, 960] : [-560, -470, 1120, 940] });
+  sv.setAttribute('aria-label', `A pond for the rule: a stone the size of a typical ${sing}, one half-filled pad at ${p.window.post} ${p.window.grain}s reading ${p.effect}% ${p.outcome_label}, and reeds for the ${Math.round((1 - p.share_positive) * 100)}% of events that moved the other way.`);
+  sv.querySelectorAll('[tabindex]').forEach(g => g.removeAttribute('tabindex'));
+  // the replication strip
+  const rows = all ? all.map(x => ({ label: x.label, year: x.year, effect: x.effect_pct, pass: x.pass })) : examples.map(x => ({ label: x.label.replace(/ \(\d{4}\)$/, ''), year: String(x.onset).slice(0, 4), effect: x.effect, pass: x.p_space != null && x.p_space <= 0.05 }));
+  $('#repl-h').textContent = all ? `Every ${sing}, one by one` : `${examples.length} of the ${p.n_events} ${noun}, one by one`;
+  $('#repl-sub').textContent = all ? `${rows.filter(r => r.pass).length} of ${rows.length} passed the regional test alone` : `the strongest examples; the full per-event list arrives with the next publish`;
+  $('#repl-lead').textContent = `A half pad means that ${sing} passed the regional contrast on its own; reeds mean it did not, whichever way ${p.outcome_label} moved. The rule is the pool of all of them, not any one.`;
+  const strip = $('#strip');
+  rows.forEach(r => { const c = document.createElement('div'); c.className = 'pc' + (r.pass ? '' : ' no'); c.setAttribute('role', 'img'); c.setAttribute('aria-label', `${r.label} ${r.year}: ${p.outcome_label} ${r.effect}%, ${r.pass ? 'regional test passed' : 'no pass'}`);
+    const s2 = document.createElementNS('http://www.w3.org/2000/svg', 'svg'); c.appendChild(s2);
+    Pond.render(s2, { event: { name: r.label, magnitude: .5, label: false }, domains: doms, rings: RM.RINGS, effects: r.pass ? [{ id: 'c', domain: doms.indexOf(doms[1]), lag_days: lag, magnitude: Math.min(1, Math.abs(r.effect) / 25), tier: 'likely', kind: 'pad', num: '', short: '', headline: '', plain: '' }] : [], flats: r.pass ? [] : [{ name: p.outcome_label, domain: doms.indexOf(doms[1]), lag_days: lag }] }, { thumb: true, reduceMotion: true, viewBox: [-470, -470, 940, 940] });
+    c.insertAdjacentHTML('beforeend', `<div class="pn">${esc(r.label.replace(/^(Hurricane|Tropical storm|Cold snap|Heat wave) /, ''))}<small class="num">${esc(r.year)}</small></div><div class="ps"><b>${r.effect > 0 ? '+' : ''}${r.effect}%</b> ${r.pass ? 'passed' : 'no pass'}</div>`); strip.appendChild(c); });
+  if (all) { const bars = all.slice().sort((a, b) => a.effect_pct - b.effect_pct); $('#bars-box').innerHTML = `<div class="bars" aria-hidden="true">${bars.map(b => `<i style="height:${Math.round(Math.min(100, Math.abs(b.effect_pct) / 25 * 100))}%;${Math.sign(b.effect_pct) !== Math.sign(p.effect) ? 'opacity:.35' : ''}" class="${b.pass ? 'm' : ''}" title="${esc(b.label)} ${b.effect_pct}%"></i>`).join('')}</div><p style="font-size:12.5px;color:var(--text-3);margin-top:6px">${bars.length} ${noun} sorted by effect. Sand bars passed the regional test alone; faint bars moved the other way.</p>`; }
+  // how sure
+  $('#sure').textContent = `Three things have to hold at once: the pooled effect has the expected sign, 300 placebo pools built from the same dates in other years rarely match it, and it survives correction across the ${Pt.pool ? Pt.pool.pairs : 25} pairs that were frozen before anyone looked.`;
+  $('#facts').innerHTML = `<div><b>${p.n_events}</b>past ${noun} pooled${p.n_clustered_out ? `, ${p.n_clustered_out} overlapping merged` : ''}</div><div><b>1 in ${Math.round(1 / p.p_placebo)}</b>fake pools this strong (placebo p ${p.p_placebo.toFixed(3)})</div><div><b>q ${p.q != null ? p.q.toFixed(3) : '–'}</b>after correction over the frozen pairs${p.q == null ? ' (a sanity check, not a finding)' : ''}</div><div><b>${p.n_pretrend_flat} of ${p.n_events}</b>had flat pre-trends</div>`;
+  $('#raw').innerHTML = [['Pooled effect', `${p.effect_logpts} log pts = ${p.effect}${p.unit === 'pct' ? '%' : ''}`], ['95% CI', `${p.ci[0]} to ${p.ci[1]}`], ['I²', p.i2], ['Dose–response', p.dose ? `slope ${p.dose.slope_per_unit} per unit, p ${p.dose.p.toFixed(2)}` : '–'], ['Window', `${p.window.pre} ${p.window.grain}s before, ${p.window.post} after, lag ${p.window.lag}`], ['Design', p.design], ['Outcome series', p.outcome], ['Geography', p.geo_kind], ['Family', `${p.family}${p.sub ? ' / ' + p.sub : ''}`], ['Computed', p.computed_at.slice(0, 16).replace('T', ' ') + ' UTC']].map(([k, v]) => `<dt>${esc(k)}</dt><dd>${esc(v)}</dd>`).join('');
+  $('#ledger').innerHTML = `Grid frozen in the ledger at seq ${p.ledger_seq} before the discovery numbers were read. <a href="${ROOT}how/" style="color:var(--sand)">How Ripple Map knows</a>.`;
+  // follow this
+  const nx = st && st.next ? st.next : {};
+  const others = list.filter(x => x.id !== id && /pattern$/.test(x.strength));
+  const withEvent = (S.featured || []).find(s => s.kind === 'cascade' && s.event && s.event.family === p.family && !s.is_control) || (S.featured || []).find(s => s.kind === 'cascade' && s.event && s.event.family === p.family);
+  $('#follow').innerHTML = [
+    withEvent ? `<a href="${RM.storyHref(withEvent)}">A live ${sing} on the same test: ${esc(withEvent.event.label.replace(/ \(positive control\)$/, ''))}<small>${esc(withEvent.story_sentence)}</small><span class="go">Trace</span></a>` : '',
+    ...others.map(o => `<a href="${RM.url.pattern(o.id)}">${esc(o.event_label)} → ${esc(o.outcome_label)}<small>${esc(o.strength)} across ${o.n_events} past events</small><span class="go">Rule</span></a>`),
+    nx.same_domain ? `<a href="${RM.url.land(nx.same_domain.domain)}">What’s been moving ${esc(RM.DLABEL[nx.same_domain.domain] || nx.same_domain.domain)}?<small>Every stop in that land</small><span class="go">Land</span></a>` : '',
+    `<a href="${RM.url.wander()}" data-wander>Wander<small>Land somewhere interesting</small><span class="go">Jump</span></a>`].join('');
+  document.querySelectorAll('[data-wander]').forEach(a => a.addEventListener('click', () => RM.track('wander')));
+  // send / share / watch
+  const canon = RM.url.canon.pattern(p.id);
+  const obj = () => ({ title: `${p.event_label} → ${p.outcome_label}`, sentence, hook: (st && st.conversation_hook) || `Seen across ${p.n_events} past ${noun}, not one.`, line: `${strength} · a pattern, never proof of cause`, url: canon });
+  $('#btn-send').addEventListener('click', () => RM.sendObj(obj()));
+  $('#btn-share').addEventListener('click', () => { RM.track('share_tap'); RM.copy(canon); });
+  const WID = 'pattern:' + p.id, wb = $('#btn-watch');
+  const sync = () => { wb.setAttribute('aria-pressed', RM.watched(WID)); wb.lastChild.textContent = RM.watched(WID) ? 'Watching this rule' : 'Watch this rule'; };
+  wb.addEventListener('click', () => { const on = RM.toggleWatch(WID, { kind: 'pattern', title: `${p.event_label} → ${p.outcome_label}`, version: p.ledger_seq, url: RM.url.pattern(p.id), tier: strength }); sync(); RM.toast(on ? 'Watching. Kept on this device.' : 'No longer watching.'); }); sync();
+  if (q.get('landed')) $('#banners').innerHTML = `<div class="banner landed"><b>You landed here.</b><span>A rule, not a single event: ${esc(sentence)}</span><a class="x" href="${RM.url.wander()}">Wander again</a></div>`;
+  window.__pond = { publishedTier: strength, shareText: () => RM.shareText(obj()), objects: () => [{ id: 'pattern:' + p.id, tier: strength, surfaces: { h1: $('#h1').textContent, trust: $('#trust').textContent, share: RM.shareText(obj()), title: document.title, aria: sv.getAttribute('aria-label') } }] };
+  $('#foot').textContent = `${Pt._src === 'live' ? 'Live' : 'Snapshot'} rm_patterns, engine 6.2.1.`;
+})();
+</script>
+</body>
+</html>

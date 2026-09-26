@@ -1,0 +1,106 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>How Ripple Map knows</title>
+<meta name="description" content="Eight steps from a candidate to a published ripple, the words we use, and the kill log. Consistent with, never proof of cause.">
+<meta name="theme-color" content="#0F1516">
+<link rel="icon" href="../../icon-192.png">
+<link rel="stylesheet" href="../pond.css">
+<link rel="stylesheet" href="../app.css">
+<link rel="stylesheet" href="../site.css">
+<style>
+.kill{list-style:none;margin:0;padding:0;display:grid;gap:6px}
+.kill li{display:grid;grid-template-columns:1fr auto;gap:10px;align-items:baseline;border-bottom:1px solid var(--line);padding:9px 0;font-size:14.5px}
+.kill small{display:block;color:var(--text-3);font-size:12.5px}
+.kill .why{color:var(--text-2);font-size:13px;text-align:right;white-space:nowrap}
+</style>
+</head>
+<body>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <symbol id="k-stone" viewBox="0 0 30 22"><ellipse cx="15" cy="12" rx="8" ry="6.5" fill="#2A2F33" stroke="#5F676E"/><path d="M11 9q3-3 7-1" fill="none" stroke="#A2ABB2" stroke-linecap="round"/></symbol>
+  <symbol id="k-ring" viewBox="0 0 30 22"><circle cx="15" cy="11" r="4" fill="none" stroke="#A9EAD9" stroke-width="1.2"/><circle cx="15" cy="11" r="9" fill="none" stroke="#A9EAD9" stroke-width="1.2" opacity=".6"/></symbol>
+  <symbol id="k-pad" viewBox="0 0 30 22"><path d="M15 11 L21 4 A8 8 0 1 0 21 18 Z" fill="#6DBE9C" stroke="#8DDCBB" stroke-width="1.2" stroke-linejoin="round"/></symbol>
+  <symbol id="k-pad-half" viewBox="0 0 30 22"><path d="M15 11 L21 4 A8 8 0 1 0 21 18 Z" fill="#17453F" stroke="#8DDCBB" stroke-width="1.4" stroke-linejoin="round"/></symbol>
+  <symbol id="k-float" viewBox="0 0 30 22"><circle cx="15" cy="11" r="6" fill="none" stroke="#A7B5B1" stroke-width="1.2" stroke-dasharray="2.2 2.6"/><circle cx="15" cy="11" r="1.5" fill="#A7B5B1"/></symbol>
+  <symbol id="k-crest" viewBox="0 0 30 22"><path d="M2 16 Q8 5 15 16 T28 16" fill="none" stroke="#A9EAD9" stroke-width="2.4" stroke-linecap="round"/><path d="M2 20 Q8 16 15 20 T28 20" fill="none" stroke="#A9EAD9" stroke-width="1" stroke-linecap="round" opacity=".6"/></symbol>
+  <symbol id="k-grass" viewBox="0 0 30 22"><g fill="#4FA37F"><path d="M9 20 Q7 12 11 4 Q11 12 10.5 20Z"/><path d="M14 20 Q13 11 15 3 Q16 11 15 20Z"/><path d="M19 20 Q19 11 22 5 Q21 12 20 20Z"/></g><ellipse cx="15" cy="3" rx="1" ry="2.4" fill="#C8B48E"/></symbol>
+  <symbol id="k-shore" viewBox="0 0 30 22"><path d="M2 15 Q10 9 18 13 T30 11 L30 22 L2 22Z" fill="#0F1516" stroke="#C8B48E" stroke-width="1.2"/><ellipse cx="22" cy="17" rx="4" ry="1.8" fill="#C8B48E"/><ellipse cx="22.5" cy="14.5" rx="2.8" ry="1.4" fill="#C8B48E"/></symbol>
+  <symbol id="k-boulder" viewBox="0 0 30 22"><path d="M8 17 L6 10 L11 4 L19 3 L24 8 L23 16 Z" fill="#28333A" stroke="#4C5A61" stroke-linejoin="round"/><path d="M2 20 q5-3 8 0 M20 20 q5-3 8 0" fill="none" stroke="#A9EAD9" stroke-width="1.1" stroke-linecap="round"/></symbol>
+  <symbol id="k-rival" viewBox="0 0 30 22"><ellipse cx="9" cy="11" rx="4" ry="3.2" fill="#3B3F44" stroke="#5F676E"/><ellipse cx="21" cy="11" rx="4" ry="3.2" fill="#2A2F33" stroke="#5F676E"/><circle cx="9" cy="11" r="8" fill="none" stroke="#A9EAD9" stroke-dasharray="2 2" opacity=".7"/><circle cx="21" cy="11" r="8" fill="none" stroke="#A9EAD9" opacity=".7"/></symbol>
+  <symbol id="k-chain" viewBox="0 0 30 22"><circle cx="5" cy="11" r="3" fill="#2A2F33" stroke="#5F676E"/><path d="M8 11 H13" stroke="#A9EAD9" stroke-width="1.6"/><path d="M14 11 L19 4 A7 7 0 1 0 19 18 Z" fill="#6DBE9C" transform="translate(2 0) scale(.7) translate(4 4)"/><path d="M22 11 H27" stroke="#A9EAD9" stroke-width="1.6" stroke-dasharray="2 2"/></symbol>
+</svg>
+<header class="top"></header>
+<main class="page">
+  <p class="eyebrow">Methods</p>
+  <h1>How Ripple Map knows. <span class="quiet">Eight steps, then a word we are allowed to use.</span></h1>
+  <p class="lead">The engine decides what may be <em>said</em>; the story layer only decides what is shown first, and can never upgrade a tier. Every number on a page traces to a sequence number in a hash-chained ledger. Consistent with, never proof of cause.</p>
+
+  <section class="sec" id="steps"><h2>The eight steps</h2>
+    <ol class="steps8">
+      <li><div><h3>Find the candidate</h3><p>A shock happens (a storm, a release, a policy date). A mechanism library, Wikidata links and family maps propose which series it could reach. This stage is permissive on purpose: discovery is allowed to be messy.</p></div></li>
+      <li><div><h3>Freeze the hypothesis</h3><p>Before anyone looks at the outcome, the series, its window, the expected sign and a prior are written to the ledger. A rule chosen after looking is disclosed as exactly that.</p></div></li>
+      <li><div><h3>Measure the move</h3><p>The series is compared with its own season-matched normal: the same dates in every other year, never after the event. The move is a ratio to normal, shrunk toward zero.</p></div></li>
+      <li><div><h3>Test lookalikes</h3><p>The same test runs on hundreds of fake dates for the same series, on other series at the real date, and on random links. "About 1 in 412 fake dates look this strong" is that number.</p></div></li>
+      <li><div><h3>Compare independent sources</h3><p>Physical, attention and economic channels are counted separately. Where the shock is regional, the hit region is put against every region it missed, with in-space and in-time placebos and a synthetic control. An independent forecast model gets the last word on Measured.</p></div></li>
+      <li><div><h3>Replicate on similar past events</h3><p>"Seen after N of M similar events." The per-event flip-through is on every rule page, including the ones that did not move.</p></div></li>
+      <li><div><h3>Correct for multiple testing</h3><p>Benjamini–Hochberg across every frozen pair, plus a decoy false-alarm rate measured on links that cannot be real. A family of 25 is shown whole, never only the winner.</p></div></li>
+      <li><div><h3>Publish</h3><p>The gated tier, the frozen version and the ledger head go to the page, the share card and the OG image together. A retraction reaches every surface the same way. <a href="../../methods/">The full methods page</a> has the maths.</p></div></li>
+    </ol>
+  </section>
+
+  <section class="sec" id="tiers"><h2>The words we are allowed to use</h2>
+    <p class="lead">Colour is never the only channel: each tier is also a shape and a word. A lower tier may never look brighter than a higher one.</p>
+    <div class="tiers">
+      <div><b><svg style="width:30px;height:22px;vertical-align:-6px" aria-hidden="true"><use href="#k-pad"/></svg> Measured</b>The engine's top tier and the independent forecast check agree. Still consistent with, never proof of cause.</div>
+      <div><b><svg style="width:30px;height:22px;vertical-align:-6px" aria-hidden="true"><use href="#k-pad-half"/></svg> Likely</b>Well supported by the engine's test; the final look or the forecast check is still to come. A fluke is not ruled out.</div>
+      <div><b><svg style="width:30px;height:22px;vertical-align:-6px" aria-hidden="true"><use href="#k-float"/></svg> Watching</b>Registered, window still open. Too early to tell. "Similar events: a move by then about 1 in 5 times."</div>
+      <div><b><svg style="width:30px;height:22px;vertical-align:-6px" aria-hidden="true"><use href="#k-grass"/></svg> Stayed flat</b>The window closed without a detectable move. A dead end we disclose is a finding too.</div>
+    </div>
+  </section>
+
+  <section class="sec" id="glossary"><h2>Glossary</h2>
+    <p class="lead">The pond is a data display that happens to look like a pond. Every element encodes a field by a stated rule.</p>
+    <ul class="gloss">
+      <li><svg><use href="#k-stone"/></svg><div><b>Ripple</b><span>One event and everything it was registered to reach. The stone is the shock; bigger stone, bigger shock.</span></div></li>
+      <li><svg><use href="#k-ring"/></svg><div><b>Rings</b><span>Time after the event: Day 1, Week 1, Month 1, Month 3. A thing's distance from the stone is its lag; its angle is its land.</span></div></li>
+      <li><svg><use href="#k-pad"/></svg><div><b>Stop</b><span>A series the ripple reached. A lily pad on the water; its size and the wave at it are the size of the move.</span></div></li>
+      <li><svg><use href="#k-chain"/></svg><div><b>Branch</b><span>Event → A and event → B, drawn as a fork. A chain (event → A → B) is drawn only when the engine's mediation check supports it.</span></div></li>
+      <li><svg><use href="#k-crest"/></svg><div><b>Echo</b><span>Several shores moving at once after one stone. An archetype: a story label, never evidence.</span></div></li>
+      <li><svg><use href="#k-grass"/></svg><div><b>Dead end</b><span>A series we said in advance might move, and did not. Reeds absorb the wave. "The ripple that died."</span></div></li>
+      <li><svg><use href="#k-rival"/></svg><div><b>Common stop</b><span>Two stones, one stop: both moved after X. Drawn as a fork, never a chain, because a common cause is possible.</span></div></li>
+      <li><svg><use href="#k-shore"/></svg><div><b>Deep ripple</b><span>How far did it travel? Domains crossed, days elapsed, order (a 2nd-order ripple went through another stop). A property of the world, not a score.</span></div></li>
+      <li><svg><use href="#k-shore"/></svg><div><b>World rule</b><span>A pattern across many past events ("across 23 hurricanes…"). Drawn as a cairn on the far shore of an event's pond because it is not evidence about that event.</span></div></li>
+      <li><svg><use href="#k-boulder"/></svg><div><b>Boulder</b><span>A common shock the engine filtered out (a holiday, an election week). Ripples visibly bend around it.</span></div></li>
+      <li><svg><use href="#k-float"/></svg><div><b>Window</b><span>The dates, written down first, inside which a move counts. "Expected to resolve in 4 days" is the return loop.</span></div></li>
+      <li><svg><use href="#k-rival"/></svg><div><b>Second stone</b><span>Another event inside the window whose rings overlap. Shown so you can see what we could not cleanly separate.</span></div></li>
+    </ul>
+    <h3 style="font-size:16px;margin:22px 0 8px">Archetypes (story labels only)</h3>
+    <p style="font-size:14.5px;color:var(--text-2);max-width:70ch">Detour (the ripple reached a shore nobody was watching), Echo, Delay (nothing, then a late swell), Funnel (several stops on one shore), Bounce (a rise, then a reversal), Amplifier (small stone, big wave), Blind Spot (it moved where nobody was looking), Branch, Shared Stop, Dead end, Ghost (every expected stop stayed flat). The tag is chosen by the story layer from the evidence fields; the pond draws the same geometry whatever the tag says.</p>
+  </section>
+
+  <section class="sec" id="kill-log"><div class="head"><h2>The kill log</h2><span style="font-size:13px;color:var(--text-3)">every frozen pair, nulls included</span></div>
+    <p class="lead">Pairs that were tested and did not clear the bar, with why. A rule that survives is shown next to the ones that died.</p>
+    <ul class="kill" id="kill"></ul>
+    <p id="kill-note" style="font-size:13px;color:var(--text-3);margin-top:10px"></p>
+  </section>
+
+  <section class="sec"><h2>What we refuse to ship</h2>
+    <p style="font-size:15px;color:var(--text-2);max-width:70ch">A tier word stronger than the gate returned, on any surface. A chain drawn where mediation wasn't supported. A window or donor pool chosen after looking, unless disclosed as exactly that. A family of 25 where only the winner is shown. Causal verbs. Beauty that makes Likely feel like Measured. Celebration around a disaster. Hitting a target by lowering a bar.</p>
+  </section>
+</main>
+<footer><div><span>Ripple Map shows movement with timing evidence, never proof of cause. Confidence words are ours, not the data provider's.</span><span><a href="../../methods/">Full methods</a> · <a href="../../ops/">Ledger</a></span></div></footer>
+<script src="../site.js"></script>
+<script>
+(async function () {
+  const { $, esc } = RM; RM.nav('how'); RM.analytics('pond_how');
+  let Pt; try { Pt = await RM.data.patterns(); } catch { Pt = { patterns: [] }; }
+  const list = (Pt.patterns || Pt).slice().sort((a, b) => (a.q ?? 9) - (b.q ?? 9));
+  const why = p => p.is_check ? 'a pre-registered sanity check, not a finding' : p.strength === 'strong pattern' ? 'cleared the bar' : p.strength === 'pattern' ? 'cleared the bar (q ≤ 0.20)' : p.strength === 'hint' ? 'did not survive the multiple-comparison correction' : p.strength === 'unexpected direction' ? 'moved the other way' : p.strength === 'too few events' ? 'too few events' : 'no pattern';
+  $('#kill').innerHTML = list.map(p => `<li><div>${esc(p.event_label)} → ${esc(p.outcome_label)}<small>${p.n_events} past events · effect ${p.effect > 0 ? '+' : ''}${p.effect}${p.unit === 'pct' ? '%' : ''} · placebo p ${p.p_placebo.toFixed(3)}${p.q != null ? ` · q ${p.q.toFixed(3)}` : ''}${/pattern$/.test(p.strength) ? ` · <a href="${RM.url.pattern(p.id)}" style="color:var(--sand)">open the rule</a>` : ''}</small></div><span class="why">${RM.tierPill(p.strength, p.strength)}<br>${esc(why(p))}</span></li>`).join('');
+  $('#kill-note').textContent = `${list.length} pairs in this file (${Pt._src === 'live' ? 'live rm_patterns' : 'snapshot'}); the 6.2 grid froze 25 pairs at ledger seq 932, and ENGINE_62 lists every one of them with its q. Pairs below "hint" strength are published as nulls in the next release of this file.`;
+})();
+</script>
+</body>
+</html>
