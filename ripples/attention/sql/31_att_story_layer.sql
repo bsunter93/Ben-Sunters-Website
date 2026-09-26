@@ -216,6 +216,7 @@ create or replace function ripples.att_story_archetypes(p_kind text, p_fields js
 language sql immutable set search_path = '' as $$
   select array_remove(array[
     case when p_kind = 'ghost' then 'Ghost' end,
+    case when p_kind = 'non_event' then 'Dead end' end,      -- D-16 vocabulary; D-15 'Collapse' is the same object
     case when p_kind = 'non_event' then 'Collapse' end,
     case when p_kind in ('cascade','pattern') and coalesce((p_fields ->> 'shared_stop')::boolean, false) then 'Shared Stop' end,
     case when p_kind = 'cascade' and coalesce((p_fields ->> 'length')::int, 1) >= 2 and coalesce((p_fields ->> 'mediation_supported')::boolean, false)
@@ -262,7 +263,8 @@ $$;
 revoke all on function ripples.att_story_tier_score(text, boolean), ripples.att_story_edge_kind(jsonb, jsonb), ripples.att_story_public_tier(text, jsonb),
   ripples.att_story_mech_support(jsonb), ripples.att_story_lag_plaus(float8, int), ripples.att_story_effect_norm(float8, text, jsonb),
   ripples.att_story_score(jsonb, jsonb), ripples.att_story_gate(jsonb, jsonb), ripples.att_story_archetypes(text, jsonb, jsonb),
-  ripples.att_story_tier_wording(text, text), ripples.att_story_fields_doc() from anon, authenticated, public;
+  ripples.att_story_tier_wording(text, text), ripples.att_story_fields_doc(),
+  ripples.att_story_copy(text, text, text, text, text, text, text, int, jsonb, jsonb, jsonb, boolean, text) from anon, authenticated, public;
 
 -- ---------------------------------------------------------------------------------------------------------------------
 -- 3. Table-reading helpers
@@ -318,11 +320,14 @@ declare ev ripples.att_events; ws jsonb; cfg jsonb := ripples._att_cfg('story');
         excl text; tier_min text; tier_max text; ev_dom_likely int; funnel int; shared boolean; dir_unexp boolean; amp boolean; novelty real; share real;
         hero_lag float8; hero_l int; t ripples.att_hop_tests; c ripples.att_hop_candidates; chain jsonb; parent_onset date; l_days int; plaus real;
         tmpl text; expected_sign int; rho float8; pr jsonb; nd_min text; tier_rank int; r record; n_ghost int; ghost_hops bigint[]; wt jsonb;
-        window_open boolean; nxt date; p_hat real; kind text;
+        window_open boolean; nxt date; p_hat real; kind text; old_fs jsonb; counter real; travel jsonb; cp jsonb; fam_word text; hero_lbl text; url text;
 begin
   select * into ev from ripples.att_events where event_id = p_event;
   if not found or ev.role not in ('real','library','positive_control') then return 0; end if;
   select payload into ws from ripples.att_cascades where event_id = p_event;
+  select coalesce(jsonb_object_agg(story_id, first_seen), '{}'::jsonb) into old_fs from ripples.att_story_candidates where event_id = p_event;
+  select coalesce(f.label, ev.family) into fam_word from ripples.att_families f where f.family = ev.family;
+  fam_word := coalesce(fam_word, ev.family);
   delete from ripples.att_story_candidates where event_id = p_event;
   if ws is null then return 0; end if;
   quiet := ripples.rm_sensitive(p_event); is_ctl := ev.role = 'positive_control';
@@ -445,7 +450,12 @@ begin
     select min(x.t), max(x.t) into tier_min, tier_max from (select s ->> 'tier' t from jsonb_array_elements(sub) s) x;   -- alphabetical: likely < measured < watching; recomputed below by rank
     select (array['watching','likely','measured'])[min(rk)], (array['watching','likely','measured'])[max(rk)] into tier_min, tier_max
       from (select case s ->> 'tier' when 'measured' then 3 when 'likely' then 2 else 1 end rk from jsonb_array_elements(sub) s) x;
-    fields := jsonb_build_object(
+    -- D-16: counterintuitiveness (surprising destination / cross-domain) and "how far did it travel?"
+    counter := least(1, 0.5 * surprise + 0.5 * (case when fam_share <= 0.10 then 1 when fam_share <= 0.25 then 0.6 when fam_share <= 0.5 then 0.3 else 0 end));
+    travel := jsonb_build_object('domains_crossed', (select count(distinct d) from unnest(doms) d),
+                                 'days', (select max(greatest(0, coalesce((s ->> 'onset')::date - ev.onset, (s ->> 'lag_days')::int))) from jsonb_array_elements(sub) s),
+                                 'depth', len);
+    fields := jsonb_build_object('counterintuitiveness', round(counter::numeric, 3), 'travel', travel) || jsonb_build_object(
       'temporal_coherence', round(t_min::numeric, 3), 'mechanism_coherence', round(m_min::numeric, 3), 'evidence_at_transitions', round(ev_min::numeric, 3),
       'domain_diversity', (select count(distinct d) from unnest(doms) d), 'domain_diversity_scaled', least(1, (select count(distinct d) from unnest(doms) d)::float8 / coalesce((cfg -> 'scales' ->> 'diversity_full_at')::float8, 3)),
       'surprise', round(surprise::numeric, 3), 'family_domain_share', round(fam_share::numeric, 3), 'hidden', hero -> 'hidden',
@@ -470,8 +480,15 @@ begin
     nxt := (select min(d) from ripples.att_hop_candidates hc, unnest(hc.looks) d where hc.hop_id = (root ->> 'hop_id')::bigint and d >= today);
     select p_hat into p_hat from ripples.att_hop_registry where hop_id = (root ->> 'hop_id')::bigint;
     p_hat := coalesce(p_hat, (root ->> 'p_hat')::real);
+    hero_lbl := ripples.rm_label_resolve(hero ->> 'node', hero ->> 'label');
+    url := 'https://bensunter.com/ripples/line/' || ripples.rm_slug(p_event) || '/stop/' || hero_hop || '/';
+    wt := case when kind = 'watching' then jsonb_build_object('window_close', root -> 'window_close', 'next_look', nxt, 'days_to_resolve', greatest(0, (root ->> 'window_close')::date - today),
+                                                              'p_hat', p_hat, 'expected_1_in', ripples.rm_one_in(p_hat, 50), 'tier_reason', root -> 'tier_reason') end;
+    cp := case when hero_lbl is null then null else
+            ripples.att_story_copy(kind, arche[1], pub ->> 'tier', ev.label, fam_word, hero_lbl, ripples.rm_domain8(hero ->> 'domain'), (hero ->> 'lag_days')::int, travel,
+                                   case when rep is null then null else rep || jsonb_build_object('effect', rep -> 'effect_pct') end, wt, quiet, url) end;
     insert into ripples.att_story_candidates (story_id, story_kind, event_id, grid_id, root_hop, hop_ids, engine_tier, tier, gate, tier_min, tier_max, fields, graph,
-        archetype, archetypes, hero_stop, spine, branches, story_score, coherence_score, featurable, exclude_reason, watching, replication, sensitivity)
+        archetype, archetypes, hero_stop, spine, branches, story_score, coherence_score, featurable, exclude_reason, watching, replication, sensitivity, copy, travel, first_seen)
     values (kind || ':' || p_event || ':' || (root ->> 'hop_id'), kind, p_event, (rep ->> 'grid_id')::int, (root ->> 'hop_id')::bigint, hop_ids,
         root ->> 'tier', pub ->> 'tier', pub || jsonb_build_object('ce', gate -> 'ce'), tier_min, tier_max, fields,
         jsonb_build_object('nodes', (select jsonb_agg(jsonb_build_object('hop_id', (s ->> 'hop_id')::bigint, 'depth', coalesce((s ->> 'depth')::int, 1), 'node', s ->> 'node',
@@ -481,9 +498,8 @@ begin
                                       from jsonb_array_elements(sub) s), 'edges', edges),
         arche[1], coalesce(arche, '{}'), hero_hop, spine, branches, score, coh,
         excl is null and (kind = 'cascade' or (kind = 'watching' and p_hat is not null)), coalesce(excl, case when kind = 'watching' and p_hat is null then 'no pre-registered expectation' end),
-        case when kind = 'watching' then jsonb_build_object('window_close', root -> 'window_close', 'next_look', nxt, 'days_to_resolve', greatest(0, (root ->> 'window_close')::date - today),
-                                                            'p_hat', p_hat, 'expected_1_in', ripples.rm_one_in(p_hat, 50), 'tier_reason', root -> 'tier_reason') end,
-        rep, jsonb_build_object('quiet', quiet, 'family', ev.family, 'is_control', is_ctl));
+        wt, rep, jsonb_build_object('quiet', quiet, 'family', ev.family, 'is_control', is_ctl), cp, travel,
+        coalesce((old_fs ->> (kind || ':' || p_event || ':' || (root ->> 'hop_id')))::timestamptz, now()));
     n_written := n_written + 1;
   end loop;
 
