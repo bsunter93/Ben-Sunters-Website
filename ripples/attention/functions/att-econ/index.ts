@@ -339,14 +339,18 @@ function csvFields(line: string, maxIdx: number): string[] {
   }
   return out;
 }
-async function eiaBulkFile(run: Run, name: string): Promise<{ rows: number; ok: boolean; bas: number; gen_bas?: number; days: number; col: string; fuel_weeks?: number; fuel_cols?: number[]; fuel_days?: number }> {
+async function eiaBulkFile(run: Run, name: string): Promise<{ rows: number; ok: boolean; bas: number; gen_bas?: number; days: number; col: string; fuel_weeks?: number; fuel_cols?: number[][]; fuel_days?: number }> {
   const res = await getText(run, "eia.930", `${EIA_BULK}/${name}`, { accept: "text/csv,*/*" }, 100_000);
   if (!res || !res.body) return { rows: 0, ok: false, bas: 0, days: 0, col: "" };
   const reader = res.body.pipeThrough(new TextDecoderStream()).getReader();
   const sums = new Map<string, number>(), hours = new Map<string, number>();
   const gsum = new Map<string, number>(), ghours = new Map<string, number>();
   const fsum = new Map<string, number>(), fhours = new Map<string, number>(); // key `${fuel}|${ba}|${date}` (solar / wind)
-  let buf = "", header: string[] | null = null, iBa = 0, iDate = 1, iDem = -1, iAdj = -1, iNg = -1, iNgAdj = -1, iSol = -1, iWind = -1, maxIdx = 0, complete = true;
+  let buf = "", header: string[] | null = null, iBa = 0, iDate = 1, iDem = -1, iAdj = -1, iNg = -1, iNgAdj = -1, maxIdx = 0, complete = true;
+  // fuel columns: files up to 2023 carry one "Net Generation (MW) from Solar" column; newer files split it into
+  // "... from Solar with/without Integrated Battery Storage" (+ Imputed / Adjusted variants). All matching columns of the
+  // preferred variant (Adjusted when present) are summed per hour.
+  let iSol: number[] = [], iWind: number[] = [];
   const handle = (line: string) => {
     if (!line) return;
     if (!header) {
@@ -354,9 +358,13 @@ async function eiaBulkFile(run: Run, name: string): Promise<{ rows: number; ok: 
       iBa = header.indexOf("balancing authority"); iDate = header.indexOf("data date");
       iDem = header.indexOf("demand (mw)"); iAdj = header.indexOf("demand (mw) (adjusted)");
       iNg = header.indexOf("net generation (mw)"); iNgAdj = header.indexOf("net generation (mw) (adjusted)");
-      const pick = (fuel: string) => { const a = header!.indexOf(`net generation (mw) from ${fuel} (adjusted)`); return a >= 0 ? a : header!.indexOf(`net generation (mw) from ${fuel}`); };
-      iSol = pick("solar"); iWind = pick("wind");
-      maxIdx = Math.max(iBa, iDate, iDem, iAdj, iNg, iNgAdj, iSol, iWind);
+      const cols = (fuel: string, adj: boolean) => {
+        const re = new RegExp(`^net generation \\(mw\\) from ${fuel}( with(out)? integrated battery storage)?${adj ? " \\(adjusted\\)" : ""}$`);
+        return header!.map((h, i) => (re.test(h) ? i : -1)).filter((i) => i >= 0);
+      };
+      iSol = cols("solar", true); if (!iSol.length) iSol = cols("solar", false);
+      iWind = cols("wind", true); if (!iWind.length) iWind = cols("wind", false);
+      maxIdx = Math.max(iBa, iDate, iDem, iAdj, iNg, iNgAdj, ...iSol, ...iWind);
       return;
     }
     const f = csvFields(line, maxIdx);
@@ -369,10 +377,14 @@ async function eiaBulkFile(run: Run, name: string): Promise<{ rows: number; ok: 
       const g = Number(gRaw.replace(/,/g, ""));
       if (Number.isFinite(g)) { gsum.set(k, (gsum.get(k) ?? 0) + g); ghours.set(k, (ghours.get(k) ?? 0) + 1); }
     }
-    for (const [fuel, idx] of [["solar", iSol], ["wind", iWind]] as Array<[string, number]>) {
-      if (idx < 0 || !f[idx]) continue;
-      const x = Number(f[idx].replace(/,/g, ""));
-      if (!Number.isFinite(x)) continue; // night-time solar is reported as small negatives (station load): keep the hour, sum the value
+    for (const [fuel, idxs] of [["solar", iSol], ["wind", iWind]] as Array<[string, number[]]>) {
+      let x = 0, any = false;
+      for (const idx of idxs) {
+        if (!f[idx]) continue;
+        const v = Number(f[idx].replace(/,/g, ""));
+        if (Number.isFinite(v)) { x += v; any = true; } // night-time solar is reported as small negatives (station load): keep the hour, sum the value
+      }
+      if (!any) continue;
       const fk = `${fuel}|${k}`;
       fsum.set(fk, (fsum.get(fk) ?? 0) + x); fhours.set(fk, (fhours.get(fk) ?? 0) + 1);
     }
