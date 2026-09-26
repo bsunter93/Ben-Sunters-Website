@@ -15,10 +15,10 @@
 //    later run until it lands; and it lists `withdraw` paths — withheld versions (raw identifiers in public labels) with their
 //    cards, lines with no public version, hops no longer on a public line, and calendars of windows that have closed — which
 //    this run removes. Withheld versions stay frozen in the database and the ledger; they are just never served.
+// 7. Story layer and pond (2026-09-26 integration): v2/stories.json, v2/patterns.json, v2/pond/index.json, v2/pond/{slug}.json (see storyFiles).
 // 8. Statement timeout (API RPCs run under the 8 s authenticator timeout): freezing runs first in chunks through
 //    rm_publish_freeze_v2 (the bundle reuses that result), and HopEvidence is fetched in chunks through rm_publish_hops_v2 when the
 //    bundle returns `hop_ids` (att_config publish.hops_external).
-// 7. Story layer and pond (2026-09-26 integration): v2/stories.json, v2/patterns.json, v2/pond/index.json, v2/pond/{slug}.json (see storyFiles).
 // deno-lint-ignore-file no-explicit-any
 import type { SupabaseClient } from "jsr:@supabase/supabase-js@2";
 

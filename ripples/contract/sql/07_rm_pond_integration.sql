@@ -483,3 +483,8 @@ grant execute on function public.rm_publish_hops_v2(bigint[]) to service_role;
 insert into ripples.att_config(key, value) values ('publish', jsonb_build_object('hops_external', true,
   'note', 'ripples-publish fetches HopEvidence through rm_publish_hops_v2 in chunks; freezes through rm_publish_freeze_v2 in chunks'))
 on conflict (key) do update set value = ripples.att_config.value || excluded.value, updated_at = now();
+
+-- ---------------------------------------------------------------- p6: runtime tier guard in public.rm_pond (anchor-inserted before the leak check)
+--   if out is not null and exists (effect with tier 'measured' where att_ce_gate(hop, 'measured') ->> 'tier' <> 'measured') then return null;
+-- A payload is never served with a Measured word the gate no longer supports; the file is removed by the next publish and the next
+-- freeze re-versions the line with the demoted tier.

@@ -1,0 +1,20 @@
+{
+ "v": 1,
+ "note": "pond payloads: live = v2/ Storage path tried first (published by the integration step, rm_pond_payload(event_id)); file = the local snapshot",
+ "events": [
+  {
+   "slug": "lib-control-hurricane-milton-2024",
+   "aliases": [
+    "milton",
+    "hurricane-milton"
+   ],
+   "event_id": 213,
+   "label": "Hurricane Milton",
+   "file": "data/milton.json",
+   "live": "pond/213.json",
+   "version": 3,
+   "flagship": true,
+   "sensitive": true
+  }
+ ]
+}

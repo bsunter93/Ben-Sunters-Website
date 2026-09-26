@@ -212,6 +212,8 @@ export function assemble() {
       story_sentence: 'Hurricane Milton didn’t stop at the coast. The day after landfall, the Gulf-coast grid was drawing 0.89× its normal for a week, and 45% of it on the worst day, while 51 regions the storm missed did not move.',
       conversation_hook: 'The rest of the country didn’t budge. That is the whole trick: the test is Florida against 51 places the storm missed, then 1,646 fake dates.',
       short_title: 'Hurricane Milton → Duke Energy Florida demand',
+      hook: 'The day after landfall, something moved in Florida’s power grid.',
+      headline: `Hurricane Milton: the day after landfall, something moved in Florida’s power grid.`,
       share_line: `Hurricane Milton → Florida grid demand · 0.89× normal, −20% vs unaffected regions · ${published.text} · consistent with, never proof of cause`,
       derived_by: 'tools/snapshot.mjs (no story-layer row for this event on 2026-09-26)'
     },
