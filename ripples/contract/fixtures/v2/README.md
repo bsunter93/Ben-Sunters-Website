@@ -60,7 +60,15 @@ Public slugs are `{label-kebab}-{event_id}`; the trailing id is the key (`ripple
   "{n} more tested paths are not listed yet: waiting for a public name"). If a Likely-or-better stop has no name the line's next
   version is held instead. Names come from the article / topic titles or Wikidata labels (`att_wd_claims`, filled by WS-A's
   att-wikidata once its Wikimedia contact gate opens); the stop then appears in a new version.
-* **Withheld versions.** Versions frozen before 2026-09-26 whose public text carried raw QIDs are withheld: they stay frozen in the
+  The same rule covers source-local nodes (`source:key`): a bare key is an identifier, not a name (`e:1061358`, `topic:403`,
+  `DGS10`, `CISO`, `__total__`). Such a node is shown only under a curated name from `ripples.rm_node_names` (284 rows, each with
+  its `basis`, e.g. `fred:DGS10` → "10-year Treasury yield", `eia.930:CISO` → "California ISO power grid") or a WS-B label that
+  is not its own key; otherwise it is held back and counted like an unnamed QID. Polymarket event/market ids have no stored
+  title, so they are always held back.
+* **Due dates are never in the past when published.** A `due` that has already passed while the window is still open moves to
+  the next scheduled look on or after the publish day, or `null`. Frozen versions age, so clients still compare `due` with today.
+* **Withheld versions.** Versions whose public text carried raw identifiers (QIDs, or source keys since the second 2026-09-26
+  fix; the audit re-checks every public version whenever the guard learns a pattern) are withheld: they stay frozen in the
   database and the ledger (a `version_publish` row with `withheld: true`), but `rm_cascade(e, k)` returns `null` for them, their
   Storage files and cards are removed, and no stub, feed item or card points at them. Version numbers therefore have gaps
   (a line's first public version may be v3). `grown_since` compares with the previous **public** version.

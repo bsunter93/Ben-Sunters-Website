@@ -163,27 +163,10 @@ end $$;
 -- ---------------------------------------------------------------------------------------------------------------------
 -- 5. Read interface for the Ripple Map engine — attention_obs wins on overlap, else the cold array
 -- ---------------------------------------------------------------------------------------------------------------------
+-- attention_obs wins on any day it also has (by construction att_hist_arr never covers a day attention_obs already
+-- has, but DISTINCT ON makes that a guarantee of this function, not just of the planner): prio 0 (attention_obs)
+-- sorts first per day, so it wins the DISTINCT ON tie-break.
 create or replace function ripples.att_series_daily(p_series_id bigint, p_from date, p_to date)
-returns table(day date, value double precision)
-language sql stable security definer set search_path = '' as $$
-  select d.day, d.value
-  from (
-    select o.day, o.value, 0 as prio
-    from ripples.attention_obs o
-    where o.series_id = p_series_id and o.day between p_from and p_to
-    union all
-    select (h.start_day + (u.ord - 1))::date as day, u.v::double precision as value, 1 as prio
-    from ripples.att_hist_arr h
-    cross join lateral unnest(h.vals) with ordinality as u(v, ord)
-    where h.series_id = p_series_id
-      and (h.start_day + (u.ord - 1)) between p_from and p_to
-      and u.v is not null
-  ) d
-  order by d.day
-$$;
--- de-duplicate attention_obs-wins-on-overlap without a second table scan per row: DISTINCT ON, prio 0 (attention_obs)
--- sorts first per day.
-create or replace function ripples.att_series_daily(p_series_id bigint, p_from date, p_to date, p_prefer_obs boolean)
 returns table(day date, value double precision)
 language sql stable security definer set search_path = '' as $$
   select distinct on (d.day) d.day, d.value
@@ -192,11 +175,11 @@ language sql stable security definer set search_path = '' as $$
     from ripples.attention_obs o
     where o.series_id = p_series_id and o.day between p_from and p_to
     union all
-    select (h.start_day + (u.ord - 1))::date as day, u.v::double precision as value, 1 as prio
+    select (h.start_day + (u.ord - 1)::int)::date as day, u.v::double precision as value, 1 as prio
     from ripples.att_hist_arr h
     cross join lateral unnest(h.vals) with ordinality as u(v, ord)
     where h.series_id = p_series_id
-      and (h.start_day + (u.ord - 1)) between p_from and p_to
+      and (h.start_day + (u.ord - 1)::int) between p_from and p_to
       and u.v is not null
   ) d
   order by d.day, d.prio
@@ -212,11 +195,11 @@ language sql stable security definer set search_path = '' as $$
     from ripples.attention_obs o
     where o.series_id = any(p_series_ids) and o.day between p_from and p_to
     union all
-    select h.series_id, (h.start_day + (u.ord - 1))::date as day, u.v::double precision as value, 1 as prio
+    select h.series_id, (h.start_day + (u.ord - 1)::int)::date as day, u.v::double precision as value, 1 as prio
     from ripples.att_hist_arr h
     cross join lateral unnest(h.vals) with ordinality as u(v, ord)
     where h.series_id = any(p_series_ids)
-      and (h.start_day + (u.ord - 1)) between p_from and p_to
+      and (h.start_day + (u.ord - 1)::int) between p_from and p_to
       and u.v is not null
   ) d
   order by d.series_id, d.day, d.prio
@@ -245,7 +228,7 @@ declare f text;
 begin
   foreach f in array array[
     'ripples.att_hist_wiki_plan(date, int)', 'ripples.att_hist_wiki_upsert(jsonb)', 'ripples.att_hist_wiki_progress(date)',
-    'ripples.att_hist_wiki_autostop()', 'ripples.att_series_daily(bigint, date, date)', 'ripples.att_series_daily(bigint, date, date, boolean)',
+    'ripples.att_hist_wiki_autostop()', 'ripples.att_series_daily(bigint, date, date)',
     'ripples.att_series_daily_many(bigint[], date, date)',
     'public.att_series_daily(bigint, date, date)', 'public.att_series_daily_many(bigint[], date, date)',
     'public.att_hist_wiki_plan(date, int)', 'public.att_hist_wiki_upsert(jsonb)', 'public.att_hist_wiki_autostop()',

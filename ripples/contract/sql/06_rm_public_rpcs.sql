@@ -21,8 +21,10 @@
 --   * `reconstructed` is passed through on every event object, archive row, lands row and week line.
 --   * MONEY (tickers) is disabled in v6.0: nodes whose source's engine channel is MONEY are dropped from every public payload.
 --   * Words: "consistent with", never causal; the two fluke labels exactly as ENGINE §8. Numbers come from the engine tables.
---   * Public names: a stop is shown only under a human name. A node whose label is still a raw QID is held back (counted in
---     `held_back`) until a name exists; a Likely-or-better stop without a name holds the whole line's next version instead.
+--   * Public names: a stop is shown only under a human name. A node whose label is still a raw QID, or a source-local node whose
+--     label is its own key ('e:1061358', 'DGS10') and has no rm_node_names row, is held back (counted in `held_back`) until a
+--     name exists; a Likely-or-better stop without a name holds the whole line's next version instead. rm_label_leaks blocks
+--     any QID or source key left in public text before a version is frozen, and rm_audit_versions re-checks public versions.
 --   * ORDER: apply this file AFTER 04/05_ripples_v5_w1_fixes*.sql. Those older files grant ripples_submit_play/call to anon;
 --     re-applying them re-opens the v5 writes. rm_enforce_grants() (run by every publish) revokes whatever rm_grant_audit() lists.
 -- =====================================================================================================================
@@ -82,6 +84,7 @@ create table if not exists ripples.rm_version_audit (
   ledger_seq  bigint,
   primary key (event_id, version)
 );
+alter table ripples.rm_version_audit add column if not exists guard text;   -- rm_guard_version() the row was last checked under
 create table if not exists ripples.rm_publish_checked (       -- daily publish rotation (a per-run cap; oldest-checked first)
   event_id    bigint primary key,
   checked_at  timestamptz not null default now()
@@ -114,291 +117,29 @@ revoke all on ripples.rm_publish_set, ripples.rm_days, ripples.rm_publish_log, r
               ripples.rm_contract_fixtures, ripples.rm_version_audit, ripples.rm_publish_checked, ripples.rm_hop_mirrored,
               ripples.rm_node_names
   from public, anon, authenticated;
-insert into ripples.rm_node_names(node, label, basis) values
-  ('fred:DCOILBRENTEU', 'Brent crude oil price', 'FRED series DCOILBRENTEU'),
-  ('fred:DCOILWTICO', 'WTI crude oil price', 'FRED series DCOILWTICO'),
-  ('fred:DEXCAUS', 'Canadian dollars per US dollar', 'FRED series DEXCAUS'),
-  ('fred:DEXCHUS', 'Chinese yuan per US dollar', 'FRED series DEXCHUS'),
-  ('fred:DEXJPUS', 'Japanese yen per US dollar', 'FRED series DEXJPUS'),
-  ('fred:DEXMXUS', 'Mexican pesos per US dollar', 'FRED series DEXMXUS'),
-  ('fred:DEXUSEU', 'US dollars per euro', 'FRED series DEXUSEU'),
-  ('fred:DEXUSUK', 'US dollars per British pound', 'FRED series DEXUSUK'),
-  ('fred:DFF', 'Effective federal funds rate', 'FRED series DFF'),
-  ('fred:DGS10', '10-year Treasury yield', 'FRED series DGS10'),
-  ('fred:DGS2', '2-year Treasury yield', 'FRED series DGS2'),
-  ('fred:DGS30', '30-year Treasury yield', 'FRED series DGS30'),
-  ('fred:DGS3MO', '3-month Treasury bill yield', 'FRED series DGS3MO'),
-  ('fred:DGS5', '5-year Treasury yield', 'FRED series DGS5'),
-  ('fred:DHHNGSP', 'Henry Hub natural gas price', 'FRED series DHHNGSP'),
-  ('fred:DJFUELUSGULF', 'US Gulf Coast jet fuel price', 'FRED series DJFUELUSGULF'),
-  ('fred:DTWEXBGS', 'Broad US dollar index', 'FRED series DTWEXBGS'),
-  ('fred:SOFR', 'Secured overnight financing rate (SOFR)', 'FRED series SOFR'),
-  ('fred:T10Y2Y', '10-year minus 2-year Treasury spread', 'FRED series T10Y2Y'),
-  ('fred:T10YIE', '10-year breakeven inflation', 'FRED series T10YIE'),
-  ('fred:T5YIE', '5-year breakeven inflation', 'FRED series T5YIE'),
-  ('fred.weekly:GASREGW', 'US regular gasoline price (weekly)', 'FRED series GASREGW'),
-  ('fred.weekly:GASDESW', 'US diesel price (weekly)', 'FRED series GASDESW'),
-  ('fred.claims:ICSA', 'US initial jobless claims', 'FRED series ICSA'),
-  ('fred.claims:ICNSA', 'US initial jobless claims (not seasonally adjusted)', 'FRED series ICNSA'),
-  ('fred.claims:CCSA', 'US continuing jobless claims', 'FRED series CCSA'),
-  ('fred.claims:AKICLAIMS', 'Alaska initial jobless claims', 'FRED series AKICLAIMS'),
-  ('fred.claims:ALICLAIMS', 'Alabama initial jobless claims', 'FRED series ALICLAIMS'),
-  ('fred.claims:ARICLAIMS', 'Arkansas initial jobless claims', 'FRED series ARICLAIMS'),
-  ('fred.claims:AZICLAIMS', 'Arizona initial jobless claims', 'FRED series AZICLAIMS'),
-  ('fred.claims:CAICLAIMS', 'California initial jobless claims', 'FRED series CAICLAIMS'),
-  ('fred.claims:COICLAIMS', 'Colorado initial jobless claims', 'FRED series COICLAIMS'),
-  ('fred.claims:CTICLAIMS', 'Connecticut initial jobless claims', 'FRED series CTICLAIMS'),
-  ('fred.claims:DCICLAIMS', 'Washington, DC initial jobless claims', 'FRED series DCICLAIMS'),
-  ('fred.claims:DEICLAIMS', 'Delaware initial jobless claims', 'FRED series DEICLAIMS'),
-  ('fred.claims:FLICLAIMS', 'Florida initial jobless claims', 'FRED series FLICLAIMS'),
-  ('fred.claims:GAICLAIMS', 'Georgia initial jobless claims', 'FRED series GAICLAIMS'),
-  ('fred.claims:HIICLAIMS', 'Hawaii initial jobless claims', 'FRED series HIICLAIMS'),
-  ('fred.claims:IAICLAIMS', 'Iowa initial jobless claims', 'FRED series IAICLAIMS'),
-  ('fred.claims:IDICLAIMS', 'Idaho initial jobless claims', 'FRED series IDICLAIMS'),
-  ('fred.claims:ILICLAIMS', 'Illinois initial jobless claims', 'FRED series ILICLAIMS'),
-  ('fred.claims:INICLAIMS', 'Indiana initial jobless claims', 'FRED series INICLAIMS'),
-  ('fred.claims:KSICLAIMS', 'Kansas initial jobless claims', 'FRED series KSICLAIMS'),
-  ('fred.claims:KYICLAIMS', 'Kentucky initial jobless claims', 'FRED series KYICLAIMS'),
-  ('fred.claims:LAICLAIMS', 'Louisiana initial jobless claims', 'FRED series LAICLAIMS'),
-  ('fred.claims:MAICLAIMS', 'Massachusetts initial jobless claims', 'FRED series MAICLAIMS'),
-  ('fred.claims:MDICLAIMS', 'Maryland initial jobless claims', 'FRED series MDICLAIMS'),
-  ('fred.claims:MEICLAIMS', 'Maine initial jobless claims', 'FRED series MEICLAIMS'),
-  ('fred.claims:MIICLAIMS', 'Michigan initial jobless claims', 'FRED series MIICLAIMS'),
-  ('fred.claims:MNICLAIMS', 'Minnesota initial jobless claims', 'FRED series MNICLAIMS'),
-  ('fred.claims:MOICLAIMS', 'Missouri initial jobless claims', 'FRED series MOICLAIMS'),
-  ('fred.claims:MSICLAIMS', 'Mississippi initial jobless claims', 'FRED series MSICLAIMS'),
-  ('fred.claims:MTICLAIMS', 'Montana initial jobless claims', 'FRED series MTICLAIMS'),
-  ('fred.claims:NCICLAIMS', 'North Carolina initial jobless claims', 'FRED series NCICLAIMS'),
-  ('fred.claims:NDICLAIMS', 'North Dakota initial jobless claims', 'FRED series NDICLAIMS'),
-  ('fred.claims:NEICLAIMS', 'Nebraska initial jobless claims', 'FRED series NEICLAIMS'),
-  ('fred.claims:NHICLAIMS', 'New Hampshire initial jobless claims', 'FRED series NHICLAIMS'),
-  ('fred.claims:NJICLAIMS', 'New Jersey initial jobless claims', 'FRED series NJICLAIMS'),
-  ('fred.claims:NMICLAIMS', 'New Mexico initial jobless claims', 'FRED series NMICLAIMS'),
-  ('fred.claims:NVICLAIMS', 'Nevada initial jobless claims', 'FRED series NVICLAIMS'),
-  ('fred.claims:NYICLAIMS', 'New York initial jobless claims', 'FRED series NYICLAIMS'),
-  ('fred.claims:OHICLAIMS', 'Ohio initial jobless claims', 'FRED series OHICLAIMS'),
-  ('fred.claims:OKICLAIMS', 'Oklahoma initial jobless claims', 'FRED series OKICLAIMS'),
-  ('fred.claims:ORICLAIMS', 'Oregon initial jobless claims', 'FRED series ORICLAIMS'),
-  ('fred.claims:PAICLAIMS', 'Pennsylvania initial jobless claims', 'FRED series PAICLAIMS'),
-  ('fred.claims:PRICLAIMS', 'Puerto Rico initial jobless claims', 'FRED series PRICLAIMS'),
-  ('fred.claims:RIICLAIMS', 'Rhode Island initial jobless claims', 'FRED series RIICLAIMS'),
-  ('fred.claims:SCICLAIMS', 'South Carolina initial jobless claims', 'FRED series SCICLAIMS'),
-  ('fred.claims:SDICLAIMS', 'South Dakota initial jobless claims', 'FRED series SDICLAIMS'),
-  ('fred.claims:TNICLAIMS', 'Tennessee initial jobless claims', 'FRED series TNICLAIMS'),
-  ('fred.claims:TXICLAIMS', 'Texas initial jobless claims', 'FRED series TXICLAIMS'),
-  ('fred.claims:UTICLAIMS', 'Utah initial jobless claims', 'FRED series UTICLAIMS'),
-  ('fred.claims:VAICLAIMS', 'Virginia initial jobless claims', 'FRED series VAICLAIMS'),
-  ('fred.claims:VTICLAIMS', 'Vermont initial jobless claims', 'FRED series VTICLAIMS'),
-  ('fred.claims:WAICLAIMS', 'Washington state initial jobless claims', 'FRED series WAICLAIMS'),
-  ('fred.claims:WIICLAIMS', 'Wisconsin initial jobless claims', 'FRED series WIICLAIMS'),
-  ('fred.claims:WVICLAIMS', 'West Virginia initial jobless claims', 'FRED series WVICLAIMS'),
-  ('fred.claims:WYICLAIMS', 'Wyoming initial jobless claims', 'FRED series WYICLAIMS'),
-  ('fred.claims:GUICLAIMS', 'Guam initial jobless claims', 'FRED series GUICLAIMS'),
-  ('fred.claims:VIICLAIMS', 'US Virgin Islands initial jobless claims', 'FRED series VIICLAIMS'),
-  ('fred.claims:ASICLAIMS', 'American Samoa initial jobless claims', 'FRED series ASICLAIMS'),
-  ('fred.claims:MPICLAIMS', 'Northern Mariana Islands initial jobless claims', 'FRED series MPICLAIMS'),
-  ('bls.cpi_items:CUSR0000SAF11', 'US consumer prices: food at home', 'BLS CPI item CUSR0000SAF11'),
-  ('bls.cpi_items:CUSR0000SAF111', 'US consumer prices: cereals and bakery products', 'BLS CPI item CUSR0000SAF111'),
-  ('bls.cpi_items:CUSR0000SAF112', 'US consumer prices: meats, poultry, fish and eggs', 'BLS CPI item CUSR0000SAF112'),
-  ('bls.cpi_items:CUSR0000SAF113', 'US consumer prices: fruits and vegetables', 'BLS CPI item CUSR0000SAF113'),
-  ('bls.cpi_items:CUSR0000SAF116', 'US consumer prices: alcoholic beverages', 'BLS CPI item CUSR0000SAF116'),
-  ('bls.cpi_items:CUSR0000SAG1', 'US consumer prices: other goods', 'BLS CPI item CUSR0000SAG1'),
-  ('bls.cpi_items:CUSR0000SAH1', 'US consumer prices: shelter', 'BLS CPI item CUSR0000SAH1'),
-  ('bls.cpi_items:CUSR0000SAH3', 'US consumer prices: household furnishings and operations', 'BLS CPI item CUSR0000SAH3'),
-  ('bls.cpi_items:CUSR0000SEEE01', 'US consumer prices: computers and peripherals', 'BLS CPI item CUSR0000SEEE01'),
-  ('bls.cpi_items:CUSR0000SEFJ', 'US consumer prices: dairy products', 'BLS CPI item CUSR0000SEFJ'),
-  ('bls.cpi_items:CUSR0000SEFP01', 'US consumer prices: coffee', 'BLS CPI item CUSR0000SEFP01'),
-  ('bls.cpi_items:CUSR0000SEFR', 'US consumer prices: sugar and sweets', 'BLS CPI item CUSR0000SEFR'),
-  ('bls.cpi_items:CUSR0000SEFV', 'US consumer prices: food away from home', 'BLS CPI item CUSR0000SEFV'),
-  ('bls.cpi_items:CUSR0000SEGA', 'US consumer prices: tobacco products', 'BLS CPI item CUSR0000SEGA'),
-  ('bls.cpi_items:CUSR0000SEHA', 'US consumer prices: rent', 'BLS CPI item CUSR0000SEHA'),
-  ('bls.cpi_items:CUSR0000SEHB', 'US consumer prices: hotels and lodging away from home', 'BLS CPI item CUSR0000SEHB'),
-  ('bls.cpi_items:CUSR0000SEHC', 'US consumer prices: owners'' equivalent rent', 'BLS CPI item CUSR0000SEHC'),
-  ('bls.cpi_items:CUSR0000SEHE', 'US consumer prices: fuel oil and other fuels', 'BLS CPI item CUSR0000SEHE'),
-  ('bls.cpi_items:CUSR0000SEHF', 'US consumer prices: energy services', 'BLS CPI item CUSR0000SEHF'),
-  ('bls.cpi_items:CUSR0000SEHF01', 'US consumer prices: electricity', 'BLS CPI item CUSR0000SEHF01'),
-  ('bls.cpi_items:CUSR0000SEHF02', 'US consumer prices: piped gas service', 'BLS CPI item CUSR0000SEHF02'),
-  ('bls.cpi_items:CUSR0000SEHG', 'US consumer prices: water, sewer and trash service', 'BLS CPI item CUSR0000SEHG'),
-  ('bls.cpi_items:CUSR0000SEMD', 'US consumer prices: hospital services', 'BLS CPI item CUSR0000SEMD'),
-  ('bls.cpi_items:CUSR0000SETA01', 'US consumer prices: new vehicles', 'BLS CPI item CUSR0000SETA01'),
-  ('bls.cpi_items:CUSR0000SETA02', 'US consumer prices: used cars and trucks', 'BLS CPI item CUSR0000SETA02'),
-  ('bls.cpi_items:CUSR0000SETB01', 'US consumer prices: gasoline', 'BLS CPI item CUSR0000SETB01'),
-  ('bls.cpi_items:CUSR0000SETC', 'US consumer prices: motor vehicle parts', 'BLS CPI item CUSR0000SETC'),
-  ('bls.cpi_items:CUSR0000SETD', 'US consumer prices: vehicle maintenance and repair', 'BLS CPI item CUSR0000SETD'),
-  ('bls.cpi_items:CUSR0000SETG01', 'US consumer prices: airline fares', 'BLS CPI item CUSR0000SETG01'),
-  ('eia.930:AECI', 'Associated Electric Cooperative power grid', 'EIA-930 balancing authority AECI'),
-  ('eia.930:AVA', 'Avista power grid', 'EIA-930 balancing authority AVA'),
-  ('eia.930:AZPS', 'Arizona Public Service power grid', 'EIA-930 balancing authority AZPS'),
-  ('eia.930:BANC', 'Northern California (BANC) power grid', 'EIA-930 balancing authority BANC'),
-  ('eia.930:BPAT', 'Bonneville Power Administration power grid', 'EIA-930 balancing authority BPAT'),
-  ('eia.930:CHPD', 'Chelan County PUD power grid', 'EIA-930 balancing authority CHPD'),
-  ('eia.930:CISO', 'California ISO power grid', 'EIA-930 balancing authority CISO'),
-  ('eia.930:CPLE', 'Duke Energy Progress East power grid', 'EIA-930 balancing authority CPLE'),
-  ('eia.930:CPLW', 'Duke Energy Progress West power grid', 'EIA-930 balancing authority CPLW'),
-  ('eia.930:DOPD', 'Douglas County PUD power grid', 'EIA-930 balancing authority DOPD'),
-  ('eia.930:DUK', 'Duke Energy Carolinas power grid', 'EIA-930 balancing authority DUK'),
-  ('eia.930:EPE', 'El Paso Electric power grid', 'EIA-930 balancing authority EPE'),
-  ('eia.930:ERCO', 'ERCOT (Texas) power grid', 'EIA-930 balancing authority ERCO'),
-  ('eia.930:FMPP', 'Florida Municipal Power Pool power grid', 'EIA-930 balancing authority FMPP'),
-  ('eia.930:FPC', 'Duke Energy Florida power grid', 'EIA-930 balancing authority FPC'),
-  ('eia.930:FPL', 'Florida Power & Light power grid', 'EIA-930 balancing authority FPL'),
-  ('eia.930:GCPD', 'Grant County PUD power grid', 'EIA-930 balancing authority GCPD'),
-  ('eia.930:GVL', 'Gainesville Regional Utilities power grid', 'EIA-930 balancing authority GVL'),
-  ('eia.930:IID', 'Imperial Irrigation District power grid', 'EIA-930 balancing authority IID'),
-  ('eia.930:IPCO', 'Idaho Power power grid', 'EIA-930 balancing authority IPCO'),
-  ('eia.930:ISNE', 'ISO New England power grid', 'EIA-930 balancing authority ISNE'),
-  ('eia.930:JEA', 'JEA (Jacksonville) power grid', 'EIA-930 balancing authority JEA'),
-  ('eia.930:LDWP', 'Los Angeles Water and Power power grid', 'EIA-930 balancing authority LDWP'),
-  ('eia.930:LGEE', 'LG&E and KU (Kentucky) power grid', 'EIA-930 balancing authority LGEE'),
-  ('eia.930:MISO', 'Midcontinent ISO power grid', 'EIA-930 balancing authority MISO'),
-  ('eia.930:NEVP', 'Nevada Power power grid', 'EIA-930 balancing authority NEVP'),
-  ('eia.930:NWMT', 'NorthWestern Energy (Montana) power grid', 'EIA-930 balancing authority NWMT'),
-  ('eia.930:NYIS', 'New York ISO power grid', 'EIA-930 balancing authority NYIS'),
-  ('eia.930:PACE', 'PacifiCorp East power grid', 'EIA-930 balancing authority PACE'),
-  ('eia.930:PACW', 'PacifiCorp West power grid', 'EIA-930 balancing authority PACW'),
-  ('eia.930:PGE', 'Portland General Electric power grid', 'EIA-930 balancing authority PGE'),
-  ('eia.930:PJM', 'PJM Interconnection power grid', 'EIA-930 balancing authority PJM'),
-  ('eia.930:PNM', 'Public Service Company of New Mexico power grid', 'EIA-930 balancing authority PNM'),
-  ('eia.930:PSCO', 'Public Service Company of Colorado power grid', 'EIA-930 balancing authority PSCO'),
-  ('eia.930:PSEI', 'Puget Sound Energy power grid', 'EIA-930 balancing authority PSEI'),
-  ('eia.930:SC', 'Santee Cooper (South Carolina) power grid', 'EIA-930 balancing authority SC'),
-  ('eia.930:SCEG', 'Dominion Energy South Carolina power grid', 'EIA-930 balancing authority SCEG'),
-  ('eia.930:SCL', 'Seattle City Light power grid', 'EIA-930 balancing authority SCL'),
-  ('eia.930:SEC', 'Seminole Electric Cooperative power grid', 'EIA-930 balancing authority SEC'),
-  ('eia.930:SOCO', 'Southern Company power grid', 'EIA-930 balancing authority SOCO'),
-  ('eia.930:SPA', 'Southwestern Power Administration power grid', 'EIA-930 balancing authority SPA'),
-  ('eia.930:SRP', 'Salt River Project power grid', 'EIA-930 balancing authority SRP'),
-  ('eia.930:SWPP', 'Southwest Power Pool power grid', 'EIA-930 balancing authority SWPP'),
-  ('eia.930:TAL', 'City of Tallahassee power grid', 'EIA-930 balancing authority TAL'),
-  ('eia.930:TEC', 'Tampa Electric power grid', 'EIA-930 balancing authority TEC'),
-  ('eia.930:TEPC', 'Tucson Electric Power power grid', 'EIA-930 balancing authority TEPC'),
-  ('eia.930:TIDC', 'Turlock Irrigation District power grid', 'EIA-930 balancing authority TIDC'),
-  ('eia.930:TPWR', 'Tacoma Power power grid', 'EIA-930 balancing authority TPWR'),
-  ('eia.930:TVA', 'Tennessee Valley Authority power grid', 'EIA-930 balancing authority TVA'),
-  ('eia.930:WACM', 'WAPA Rocky Mountain power grid', 'EIA-930 balancing authority WACM'),
-  ('eia.930:WALC', 'WAPA Desert Southwest power grid', 'EIA-930 balancing authority WALC'),
-  ('eia.930:WAUW', 'WAPA Upper Great Plains West power grid', 'EIA-930 balancing authority WAUW'),
-  ('eia.930:US48', 'Lower-48 US power grid', 'EIA-930 region US48'),
-  ('iem.warn:__total__', 'NWS warnings and advisories issued (all types)', 'NWS VTEC code __total__ (Iowa Environmental Mesonet)'),
-  ('iem.warn:DS.W', 'NWS dust storm warnings issued', 'NWS VTEC code DS.W (Iowa Environmental Mesonet)'),
-  ('iem.warn:DS.Y', 'NWS blowing dust advisories issued', 'NWS VTEC code DS.Y (Iowa Environmental Mesonet)'),
-  ('iem.warn:EW.W', 'NWS extreme wind warnings issued', 'NWS VTEC code EW.W (Iowa Environmental Mesonet)'),
-  ('iem.warn:FA.W', 'NWS areal flood warnings issued', 'NWS VTEC code FA.W (Iowa Environmental Mesonet)'),
-  ('iem.warn:FA.Y', 'NWS areal flood advisories issued', 'NWS VTEC code FA.Y (Iowa Environmental Mesonet)'),
-  ('iem.warn:FF.W', 'NWS flash flood warnings issued', 'NWS VTEC code FF.W (Iowa Environmental Mesonet)'),
-  ('iem.warn:FL.A', 'NWS flood watches issued', 'NWS VTEC code FL.A (Iowa Environmental Mesonet)'),
-  ('iem.warn:FL.W', 'NWS flood warnings issued', 'NWS VTEC code FL.W (Iowa Environmental Mesonet)'),
-  ('iem.warn:FL.Y', 'NWS flood advisories issued', 'NWS VTEC code FL.Y (Iowa Environmental Mesonet)'),
-  ('iem.warn:MA.W', 'NWS special marine warnings issued', 'NWS VTEC code MA.W (Iowa Environmental Mesonet)'),
-  ('iem.warn:SQ.W', 'NWS snow squall warnings issued', 'NWS VTEC code SQ.W (Iowa Environmental Mesonet)'),
-  ('iem.warn:SV.W', 'NWS severe thunderstorm warnings issued', 'NWS VTEC code SV.W (Iowa Environmental Mesonet)'),
-  ('iem.warn:TO.W', 'NWS tornado warnings issued', 'NWS VTEC code TO.W (Iowa Environmental Mesonet)'),
-  ('fema.decl:all', 'FEMA disaster declarations (all types)', 'OpenFEMA, all declarations'),
-  ('fema.decl:DR', 'FEMA major disaster declarations', 'OpenFEMA declaration type DR'),
-  ('fema.decl:EM', 'FEMA emergency declarations', 'OpenFEMA declaration type EM'),
-  ('fema.decl:FM', 'FEMA fire management declarations', 'OpenFEMA declaration type FM'),
-  ('fema.decl:it:chemical', 'FEMA declarations for chemical incidents', 'OpenFEMA incident type chemical'),
-  ('fema.decl:it:earthquake', 'FEMA declarations for earthquakes', 'OpenFEMA incident type earthquake'),
-  ('fema.decl:it:fire', 'FEMA declarations for fires', 'OpenFEMA incident type fire'),
-  ('fema.decl:it:flood', 'FEMA declarations for floods', 'OpenFEMA incident type flood'),
-  ('fema.decl:it:hurricane', 'FEMA declarations for hurricanes', 'OpenFEMA incident type hurricane'),
-  ('fema.decl:it:other', 'FEMA declarations for other incidents', 'OpenFEMA incident type other'),
-  ('fema.decl:it:severe_storm', 'FEMA declarations for severe storms', 'OpenFEMA incident type severe_storm'),
-  ('fema.decl:it:straight_line_winds', 'FEMA declarations for straight-line winds', 'OpenFEMA incident type straight_line_winds'),
-  ('fema.decl:it:tropical_depression', 'FEMA declarations for tropical depressions', 'OpenFEMA incident type tropical_depression'),
-  ('fema.decl:it:tropical_storm', 'FEMA declarations for tropical storms', 'OpenFEMA incident type tropical_storm'),
-  ('fema.decl:it:typhoon', 'FEMA declarations for typhoons', 'OpenFEMA incident type typhoon'),
-  ('fema.decl:it:winter_storm', 'FEMA declarations for winter storms', 'OpenFEMA incident type winter_storm'),
-  ('fema.decl:st:AK', 'FEMA declarations in Alaska', 'OpenFEMA state AK'),
-  ('fema.decl:st:AL', 'FEMA declarations in Alabama', 'OpenFEMA state AL'),
-  ('fema.decl:st:AR', 'FEMA declarations in Arkansas', 'OpenFEMA state AR'),
-  ('fema.decl:st:AZ', 'FEMA declarations in Arizona', 'OpenFEMA state AZ'),
-  ('fema.decl:st:CA', 'FEMA declarations in California', 'OpenFEMA state CA'),
-  ('fema.decl:st:CO', 'FEMA declarations in Colorado', 'OpenFEMA state CO'),
-  ('fema.decl:st:CT', 'FEMA declarations in Connecticut', 'OpenFEMA state CT'),
-  ('fema.decl:st:DC', 'FEMA declarations in Washington, DC', 'OpenFEMA state DC'),
-  ('fema.decl:st:DE', 'FEMA declarations in Delaware', 'OpenFEMA state DE'),
-  ('fema.decl:st:FL', 'FEMA declarations in Florida', 'OpenFEMA state FL'),
-  ('fema.decl:st:GA', 'FEMA declarations in Georgia', 'OpenFEMA state GA'),
-  ('fema.decl:st:HI', 'FEMA declarations in Hawaii', 'OpenFEMA state HI'),
-  ('fema.decl:st:IA', 'FEMA declarations in Iowa', 'OpenFEMA state IA'),
-  ('fema.decl:st:ID', 'FEMA declarations in Idaho', 'OpenFEMA state ID'),
-  ('fema.decl:st:IL', 'FEMA declarations in Illinois', 'OpenFEMA state IL'),
-  ('fema.decl:st:IN', 'FEMA declarations in Indiana', 'OpenFEMA state IN'),
-  ('fema.decl:st:KS', 'FEMA declarations in Kansas', 'OpenFEMA state KS'),
-  ('fema.decl:st:KY', 'FEMA declarations in Kentucky', 'OpenFEMA state KY'),
-  ('fema.decl:st:LA', 'FEMA declarations in Louisiana', 'OpenFEMA state LA'),
-  ('fema.decl:st:MA', 'FEMA declarations in Massachusetts', 'OpenFEMA state MA'),
-  ('fema.decl:st:MD', 'FEMA declarations in Maryland', 'OpenFEMA state MD'),
-  ('fema.decl:st:ME', 'FEMA declarations in Maine', 'OpenFEMA state ME'),
-  ('fema.decl:st:MI', 'FEMA declarations in Michigan', 'OpenFEMA state MI'),
-  ('fema.decl:st:MN', 'FEMA declarations in Minnesota', 'OpenFEMA state MN'),
-  ('fema.decl:st:MO', 'FEMA declarations in Missouri', 'OpenFEMA state MO'),
-  ('fema.decl:st:MS', 'FEMA declarations in Mississippi', 'OpenFEMA state MS'),
-  ('fema.decl:st:MT', 'FEMA declarations in Montana', 'OpenFEMA state MT'),
-  ('fema.decl:st:NC', 'FEMA declarations in North Carolina', 'OpenFEMA state NC'),
-  ('fema.decl:st:ND', 'FEMA declarations in North Dakota', 'OpenFEMA state ND'),
-  ('fema.decl:st:NE', 'FEMA declarations in Nebraska', 'OpenFEMA state NE'),
-  ('fema.decl:st:NH', 'FEMA declarations in New Hampshire', 'OpenFEMA state NH'),
-  ('fema.decl:st:NJ', 'FEMA declarations in New Jersey', 'OpenFEMA state NJ'),
-  ('fema.decl:st:NM', 'FEMA declarations in New Mexico', 'OpenFEMA state NM'),
-  ('fema.decl:st:NV', 'FEMA declarations in Nevada', 'OpenFEMA state NV'),
-  ('fema.decl:st:NY', 'FEMA declarations in New York', 'OpenFEMA state NY'),
-  ('fema.decl:st:OH', 'FEMA declarations in Ohio', 'OpenFEMA state OH'),
-  ('fema.decl:st:OK', 'FEMA declarations in Oklahoma', 'OpenFEMA state OK'),
-  ('fema.decl:st:OR', 'FEMA declarations in Oregon', 'OpenFEMA state OR'),
-  ('fema.decl:st:PA', 'FEMA declarations in Pennsylvania', 'OpenFEMA state PA'),
-  ('fema.decl:st:PR', 'FEMA declarations in Puerto Rico', 'OpenFEMA state PR'),
-  ('fema.decl:st:RI', 'FEMA declarations in Rhode Island', 'OpenFEMA state RI'),
-  ('fema.decl:st:SC', 'FEMA declarations in South Carolina', 'OpenFEMA state SC'),
-  ('fema.decl:st:SD', 'FEMA declarations in South Dakota', 'OpenFEMA state SD'),
-  ('fema.decl:st:TN', 'FEMA declarations in Tennessee', 'OpenFEMA state TN'),
-  ('fema.decl:st:TX', 'FEMA declarations in Texas', 'OpenFEMA state TX'),
-  ('fema.decl:st:UT', 'FEMA declarations in Utah', 'OpenFEMA state UT'),
-  ('fema.decl:st:VA', 'FEMA declarations in Virginia', 'OpenFEMA state VA'),
-  ('fema.decl:st:VT', 'FEMA declarations in Vermont', 'OpenFEMA state VT'),
-  ('fema.decl:st:WA', 'FEMA declarations in Washington state', 'OpenFEMA state WA'),
-  ('fema.decl:st:WI', 'FEMA declarations in Wisconsin', 'OpenFEMA state WI'),
-  ('fema.decl:st:WV', 'FEMA declarations in West Virginia', 'OpenFEMA state WV'),
-  ('fema.decl:st:WY', 'FEMA declarations in Wyoming', 'OpenFEMA state WY'),
-  ('fema.decl:st:GU', 'FEMA declarations in Guam', 'OpenFEMA state GU'),
-  ('fema.decl:st:VI', 'FEMA declarations in US Virgin Islands', 'OpenFEMA state VI'),
-  ('fema.decl:st:AS', 'FEMA declarations in American Samoa', 'OpenFEMA state AS'),
-  ('fema.decl:st:MP', 'FEMA declarations in Northern Mariana Islands', 'OpenFEMA state MP'),
-  ('mta.ridership:aar', 'NYC Access-A-Ride trips', 'MTA ridership series aar'),
-  ('mta.ridership:bt', 'MTA bridge and tunnel crossings', 'MTA ridership series bt'),
-  ('mta.ridership:bus', 'NYC bus riders', 'MTA ridership series bus'),
-  ('mta.ridership:cbd_entries', 'Manhattan central business district entries', 'MTA ridership series cbd_entries'),
-  ('mta.ridership:crz_entries', 'Manhattan congestion zone entries', 'MTA ridership series crz_entries'),
-  ('mta.ridership:lirr', 'Long Island Rail Road riders', 'MTA ridership series lirr'),
-  ('mta.ridership:mnr', 'Metro-North riders', 'MTA ridership series mnr'),
-  ('mta.ridership:sir', 'Staten Island Railway riders', 'MTA ridership series sir'),
-  ('mta.ridership:subway', 'NYC subway riders', 'MTA ridership series subway'),
-  ('tsa.pax:checkpoint', 'US air travellers at TSA checkpoints', 'TSA checkpoint travel numbers'),
-  ('npm.dl:@anthropic-ai/sdk', 'npm downloads of @anthropic-ai/sdk', 'npm package @anthropic-ai/sdk'),
-  ('npm.dl:@modelcontextprotocol/sdk', 'npm downloads of @modelcontextprotocol/sdk', 'npm package @modelcontextprotocol/sdk'),
-  ('npm.dl:axios', 'npm downloads of axios', 'npm package axios'),
-  ('npm.dl:express', 'npm downloads of express', 'npm package express'),
-  ('npm.dl:langchain', 'npm downloads of langchain', 'npm package langchain'),
-  ('npm.dl:next', 'npm downloads of next', 'npm package next'),
-  ('npm.dl:ollama', 'npm downloads of ollama', 'npm package ollama'),
-  ('npm.dl:openai', 'npm downloads of openai', 'npm package openai'),
-  ('npm.dl:react', 'npm downloads of react', 'npm package react'),
-  ('npm.dl:svelte', 'npm downloads of svelte', 'npm package svelte'),
-  ('npm.dl:typescript', 'npm downloads of typescript', 'npm package typescript'),
-  ('npm.dl:vue', 'npm downloads of vue', 'npm package vue'),
-  ('pypi.dl:anthropic', 'PyPI downloads of anthropic', 'PyPI package anthropic'),
-  ('pypi.dl:fastapi', 'PyPI downloads of fastapi', 'PyPI package fastapi'),
-  ('pypi.dl:langchain', 'PyPI downloads of langchain', 'PyPI package langchain'),
-  ('pypi.dl:numpy', 'PyPI downloads of numpy', 'PyPI package numpy'),
-  ('pypi.dl:openai', 'PyPI downloads of openai', 'PyPI package openai'),
-  ('pypi.dl:requests', 'PyPI downloads of requests', 'PyPI package requests'),
-  ('pypi.dl:torch', 'PyPI downloads of torch', 'PyPI package torch'),
-  ('pypi.dl:transformers', 'PyPI downloads of transformers', 'PyPI package transformers'),
-  ('gh.stars:openai/openai-python', 'GitHub stars on openai/openai-python', 'GitHub repository openai/openai-python'),
-  ('hn.algolia:chatgpt', 'Hacker News posts mentioning ChatGPT', 'HN Search query chatgpt'),
-  ('se.api:chatgpt', 'Stack Exchange posts on ChatGPT', 'Stack Exchange query chatgpt'),
-  ('tranco.rank:chatgpt.com', 'Web popularity rank of chatgpt.com (Tranco)', 'Tranco domain chatgpt.com')
+-- seed (idempotent). Built as prefix || key so each family's wording is uniform and reviewable.
+with st(k, v) as (values ('AK','Alaska'), ('AL','Alabama'), ('AR','Arkansas'), ('AZ','Arizona'), ('CA','California'), ('CO','Colorado'), ('CT','Connecticut'), ('DC','Washington, DC'), ('DE','Delaware'), ('FL','Florida'), ('GA','Georgia'), ('HI','Hawaii'), ('IA','Iowa'), ('ID','Idaho'), ('IL','Illinois'), ('IN','Indiana'), ('KS','Kansas'), ('KY','Kentucky'), ('LA','Louisiana'), ('MA','Massachusetts'), ('MD','Maryland'), ('ME','Maine'), ('MI','Michigan'), ('MN','Minnesota'), ('MO','Missouri'), ('MS','Mississippi'), ('MT','Montana'), ('NC','North Carolina'), ('ND','North Dakota'), ('NE','Nebraska'), ('NH','New Hampshire'), ('NJ','New Jersey'), ('NM','New Mexico'), ('NV','Nevada'), ('NY','New York'), ('OH','Ohio'), ('OK','Oklahoma'), ('OR','Oregon'), ('PA','Pennsylvania'), ('PR','Puerto Rico'), ('RI','Rhode Island'), ('SC','South Carolina'), ('SD','South Dakota'), ('TN','Tennessee'), ('TX','Texas'), ('UT','Utah'), ('VA','Virginia'), ('VT','Vermont'), ('WA','Washington state'), ('WI','Wisconsin'), ('WV','West Virginia'), ('WY','Wyoming'), ('GU','Guam'), ('VI','US Virgin Islands'), ('AS','American Samoa'), ('MP','Northern Mariana Islands')),
+fred(k, v) as (values ('DCOILBRENTEU','Brent crude oil price'), ('DCOILWTICO','WTI crude oil price'), ('DEXCAUS','Canadian dollars per US dollar'), ('DEXCHUS','Chinese yuan per US dollar'), ('DEXJPUS','Japanese yen per US dollar'), ('DEXMXUS','Mexican pesos per US dollar'), ('DEXUSEU','US dollars per euro'), ('DEXUSUK','US dollars per British pound'), ('DFF','Effective federal funds rate'), ('DGS10','10-year Treasury yield'), ('DGS2','2-year Treasury yield'), ('DGS30','30-year Treasury yield'), ('DGS3MO','3-month Treasury bill yield'), ('DGS5','5-year Treasury yield'), ('DHHNGSP','Henry Hub natural gas price'), ('DJFUELUSGULF','US Gulf Coast jet fuel price'), ('DTWEXBGS','Broad US dollar index'), ('SOFR','Secured overnight financing rate (SOFR)'), ('T10Y2Y','10-year minus 2-year Treasury spread'), ('T10YIE','10-year breakeven inflation'), ('T5YIE','5-year breakeven inflation')),
+cpi(k, v) as (values ('SAF11','food at home'), ('SAF111','cereals and bakery products'), ('SAF112','meats, poultry, fish and eggs'), ('SAF113','fruits and vegetables'), ('SAF116','alcoholic beverages'), ('SAG1','other goods'), ('SAH1','shelter'), ('SAH3','household furnishings and operations'), ('SEEE01','computers and peripherals'), ('SEFJ','dairy products'), ('SEFP01','coffee'), ('SEFR','sugar and sweets'), ('SEFV','food away from home'), ('SEGA','tobacco products'), ('SEHA','rent'), ('SEHB','hotels and lodging away from home'), ('SEHC','owners'' equivalent rent'), ('SEHE','fuel oil and other fuels'), ('SEHF','energy services'), ('SEHF01','electricity'), ('SEHF02','piped gas service'), ('SEHG','water, sewer and trash service'), ('SEMD','hospital services'), ('SETA01','new vehicles'), ('SETA02','used cars and trucks'), ('SETB01','gasoline'), ('SETC','motor vehicle parts'), ('SETD','vehicle maintenance and repair'), ('SETG01','airline fares')),
+ba(k, v) as (values ('AECI','Associated Electric Cooperative'), ('AVA','Avista'), ('AZPS','Arizona Public Service'), ('BANC','Northern California (BANC)'), ('BPAT','Bonneville Power Administration'), ('CHPD','Chelan County PUD'), ('CISO','California ISO'), ('CPLE','Duke Energy Progress East'), ('CPLW','Duke Energy Progress West'), ('DOPD','Douglas County PUD'), ('DUK','Duke Energy Carolinas'), ('EPE','El Paso Electric'), ('ERCO','ERCOT (Texas)'), ('FMPP','Florida Municipal Power Pool'), ('FPC','Duke Energy Florida'), ('FPL','Florida Power & Light'), ('GCPD','Grant County PUD'), ('GVL','Gainesville Regional Utilities'), ('IID','Imperial Irrigation District'), ('IPCO','Idaho Power'), ('ISNE','ISO New England'), ('JEA','JEA (Jacksonville)'), ('LDWP','Los Angeles Water and Power'), ('LGEE','LG&E and KU (Kentucky)'), ('MISO','Midcontinent ISO'), ('NEVP','Nevada Power'), ('NWMT','NorthWestern Energy (Montana)'), ('NYIS','New York ISO'), ('PACE','PacifiCorp East'), ('PACW','PacifiCorp West'), ('PGE','Portland General Electric'), ('PJM','PJM Interconnection'), ('PNM','Public Service Company of New Mexico'), ('PSCO','Public Service Company of Colorado'), ('PSEI','Puget Sound Energy'), ('SC','Santee Cooper (South Carolina)'), ('SCEG','Dominion Energy South Carolina'), ('SCL','Seattle City Light'), ('SEC','Seminole Electric Cooperative'), ('SOCO','Southern Company'), ('SPA','Southwestern Power Administration'), ('SRP','Salt River Project'), ('SWPP','Southwest Power Pool'), ('TAL','City of Tallahassee'), ('TEC','Tampa Electric'), ('TEPC','Tucson Electric Power'), ('TIDC','Turlock Irrigation District'), ('TPWR','Tacoma Power'), ('TVA','Tennessee Valley Authority'), ('WACM','WAPA Rocky Mountain'), ('WALC','WAPA Desert Southwest'), ('WAUW','WAPA Upper Great Plains West')),
+warn(k, v) as (values ('__total__','NWS warnings and advisories issued (all types)'), ('DS.W','NWS dust storm warnings issued'), ('DS.Y','NWS blowing dust advisories issued'), ('EW.W','NWS extreme wind warnings issued'), ('FA.W','NWS areal flood warnings issued'), ('FA.Y','NWS areal flood advisories issued'), ('FF.W','NWS flash flood warnings issued'), ('FL.A','NWS flood watches issued'), ('FL.W','NWS flood warnings issued'), ('FL.Y','NWS flood advisories issued'), ('MA.W','NWS special marine warnings issued'), ('SQ.W','NWS snow squall warnings issued'), ('SV.W','NWS severe thunderstorm warnings issued'), ('TO.W','NWS tornado warnings issued')),
+inc(k, v) as (values ('chemical','chemical incidents'), ('earthquake','earthquakes'), ('fire','fires'), ('flood','floods'), ('hurricane','hurricanes'), ('other','other incidents'), ('severe_storm','severe storms'), ('straight_line_winds','straight-line winds'), ('tropical_depression','tropical depressions'), ('tropical_storm','tropical storms'), ('typhoon','typhoons'), ('winter_storm','winter storms')),
+mta(k, v) as (values ('aar','NYC Access-A-Ride trips'), ('bt','MTA bridge and tunnel crossings'), ('bus','NYC bus riders'), ('cbd_entries','Manhattan central business district entries'), ('crz_entries','Manhattan congestion zone entries'), ('lirr','Long Island Rail Road riders'), ('mnr','Metro-North riders'), ('sir','Staten Island Railway riders'), ('subway','NYC subway riders')),
+pkg(src, k) as (values ('npm.dl','@anthropic-ai/sdk'), ('npm.dl','@modelcontextprotocol/sdk'), ('npm.dl','axios'), ('npm.dl','express'), ('npm.dl','langchain'), ('npm.dl','next'), ('npm.dl','ollama'), ('npm.dl','openai'), ('npm.dl','react'), ('npm.dl','svelte'), ('npm.dl','typescript'), ('npm.dl','vue'), ('pypi.dl','anthropic'), ('pypi.dl','fastapi'), ('pypi.dl','langchain'), ('pypi.dl','numpy'), ('pypi.dl','openai'), ('pypi.dl','requests'), ('pypi.dl','torch'), ('pypi.dl','transformers')),
+one(node, label, basis) as (values ('fred.weekly:GASREGW','US regular gasoline price (weekly)','FRED series GASREGW'), ('fred.weekly:GASDESW','US diesel price (weekly)','FRED series GASDESW'), ('fred.claims:ICSA','US initial jobless claims','FRED series ICSA'), ('fred.claims:ICNSA','US initial jobless claims (not seasonally adjusted)','FRED series ICNSA'), ('fred.claims:CCSA','US continuing jobless claims','FRED series CCSA'), ('eia.930:US48','Lower-48 US power grid','EIA-930 region US48'), ('fema.decl:all','FEMA disaster declarations (all types)','OpenFEMA, all declarations'), ('fema.decl:DR','FEMA major disaster declarations','OpenFEMA declaration type DR'), ('fema.decl:EM','FEMA emergency declarations','OpenFEMA declaration type EM'), ('fema.decl:FM','FEMA fire management declarations','OpenFEMA declaration type FM'), ('tsa.pax:checkpoint','US air travellers at TSA checkpoints','TSA checkpoint travel numbers'), ('gh.stars:openai/openai-python','GitHub stars on openai/openai-python','GitHub repository openai/openai-python'), ('hn.algolia:chatgpt','Hacker News posts mentioning ChatGPT','HN Search query chatgpt'), ('se.api:chatgpt','Stack Exchange posts on ChatGPT','Stack Exchange query chatgpt'), ('tranco.rank:chatgpt.com','Web popularity rank of chatgpt.com (Tranco)','Tranco domain chatgpt.com'))
+insert into ripples.rm_node_names(node, label, basis)
+select node, label, basis from (
+  select 'fred:' || k, v, 'FRED series ' || k from fred
+  union all select 'fred.claims:' || k || 'ICLAIMS', v || ' initial jobless claims', 'FRED series ' || k || 'ICLAIMS' from st
+  union all select 'bls.cpi_items:CUSR0000' || k, 'US consumer prices: ' || v, 'BLS CPI item CUSR0000' || k from cpi
+  union all select 'eia.930:' || k, v || ' power grid', 'EIA-930 balancing authority ' || k from ba
+  union all select 'iem.warn:' || k, v, 'NWS VTEC code ' || k || ' (Iowa Environmental Mesonet)' from warn
+  union all select 'fema.decl:it:' || k, 'FEMA declarations for ' || v, 'OpenFEMA incident type ' || k from inc
+  union all select 'fema.decl:st:' || k, 'FEMA declarations in ' || v, 'OpenFEMA state ' || k from st
+  union all select 'mta.ridership:' || k, v, 'MTA ridership series ' || k from mta
+  union all select src || ':' || k, case src when 'npm.dl' then 'npm downloads of ' else 'PyPI downloads of ' end || k,
+                   case src when 'npm.dl' then 'npm package ' else 'PyPI package ' end || k from pkg
+  union all select node, label, basis from one) x(node, label, basis)
 on conflict (node) do update set label = excluded.label, basis = excluded.basis;
 -- The versions the public may see: every frozen version that the audit did not withhold
 create or replace view ripples.rm_public_versions with (security_invoker = true) as
@@ -908,16 +649,21 @@ end $$;
 -- ---------------------------------------------------------------------------------------------------------------------
 -- Audit every frozen version not yet audited (versions are immutable: once each). A version with a raw identifier in its public
 -- text is withheld and the withholding is written to the ledger (kind version_publish, withheld: true). Returns rows withheld now.
--- Audits every frozen version not yet withheld, on every run: new versions once, and public versions again whenever the guard
--- (rm_label_leaks) learns a new pattern, so a guard fix withholds versions frozen under the weaker guard. Idempotent.
+-- The leak guard's version. Bump it whenever rm_label_leaks learns a pattern: every public version is then re-checked once.
+create or replace function ripples.rm_guard_version() returns text
+language sql immutable set search_path = '' as $$
+  select '2026-09-26b'::text   -- b: source keys ('e:1061358', 'DGS10', 'topic:403'), not only QIDs
+$$;
+-- Audits every frozen version not yet withheld: new versions once, and public versions again whenever rm_guard_version()
+-- changes, so a guard fix withholds versions frozen under the weaker guard. Idempotent; steady state checks nothing.
 create or replace function ripples.rm_audit_versions() returns int
 language plpgsql security definer set search_path = '' as $$
-declare r record; n int := 0; l text[]; seq bigint;
+declare r record; n int := 0; l text[]; seq bigint; g text := ripples.rm_guard_version();
 begin
-  for r in select v.event_id, v.version, v.payload, a.event_id is not null audited
+  for r in select v.event_id, v.version, v.payload
              from ripples.att_cascade_versions v
              left join ripples.rm_version_audit a on a.event_id = v.event_id and a.version = v.version
-            where a.event_id is null or not a.withheld
+            where a.event_id is null or (not a.withheld and a.guard is distinct from g)
             order by v.event_id, v.version loop
     l := ripples.rm_label_leaks(r.payload);
     seq := null;
@@ -926,14 +672,12 @@ begin
                                        jsonb_build_object('event_id', r.event_id, 'version', r.version, 'withheld', true,
                                                           'reason', 'raw identifiers in public labels', 'leaks', cardinality(l)));
       n := n + 1;
-    elsif r.audited then
-      continue;
     end if;
-    insert into ripples.rm_version_audit(event_id, version, leaks, sample, withheld, reason, ledger_seq)
+    insert into ripples.rm_version_audit(event_id, version, leaks, sample, withheld, reason, ledger_seq, guard)
     values (r.event_id, r.version, cardinality(l), l[1:5], cardinality(l) > 0,
-            case when cardinality(l) > 0 then 'raw identifiers in public labels' end, seq)
+            case when cardinality(l) > 0 then 'raw identifiers in public labels' end, seq, g)
     on conflict (event_id, version) do update set leaks = excluded.leaks, sample = excluded.sample, withheld = excluded.withheld,
-                                                 reason = excluded.reason, ledger_seq = excluded.ledger_seq, checked_at = now();
+                                                 reason = excluded.reason, ledger_seq = excluded.ledger_seq, guard = excluded.guard, checked_at = now();
   end loop;
   return n;
 end $$;
@@ -977,7 +721,7 @@ begin
             'grown_to', null,
             'ledger', jsonb_build_object('seq', v_seq, 'chain_hash', (select l.chain_hash from ripples.att_ledger l where l.seq = v_seq)));
   insert into ripples.att_cascade_versions(event_id, version, payload, payload_hash) values (p_event, k, v_full, h);
-  insert into ripples.rm_version_audit(event_id, version, leaks, sample, withheld) values (p_event, k, 0, null, false) on conflict do nothing;
+  insert into ripples.rm_version_audit(event_id, version, leaks, sample, withheld, guard) values (p_event, k, 0, null, false, ripples.rm_guard_version()) on conflict do nothing;
   update ripples.att_cascades set version = k where event_id = p_event;
   -- ENGINE §7 "freezing after publication": record the published tier and the attention evidence at first Likely+ publication
   for n in select x from jsonb_array_elements(c -> 'nodes') x where x ->> 'tier' in ('likely','measured') loop
