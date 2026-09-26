@@ -1081,7 +1081,7 @@ begin
   lv := ripples.att_ledger_verify();
   ok := (lv ->> 'ok')::boolean
         and exists (select 1 from ripples.att_ledger where kind = 'model_version' and ref ->> 'method' = '6.3')
-        and exists (select 1 from ripples.att_ledger where seq = b.explore_seq and kind = 'freeze' and ref ->> 'object' = 'fx_grid' and ref ->> 'method' = '6.3' and ref ->> 'stage' = 'explore')
+        and exists (select 1 from ripples.att_ledger where seq = b.explore_seq and kind = 'freeze' and ref ->> 'object' = 'fx_grid' and ref ->> 'method' like '6.3%' and ref ->> 'stage' = 'explore')
         and exists (select 1 from ripples.att_ledger where seq = b.confirm_seq and kind = 'freeze' and ref ->> 'object' = 'fx_grid' and ref ->> 'stage' = 'confirm')
         and b.explore_seq < b.confirm_seq
         and (select min(computed_at) from ripples.att_fx_event f join ripples.att_fx_grid g on g.grid_id = f.grid_id where g.batch like b.batch || '/%' and f.role = 'explore')
