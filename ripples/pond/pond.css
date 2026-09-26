@@ -1,0 +1,134 @@
+/* Ripple Map: pond element styles. Colour tokens come from the page's :root. */
+.pond{display:block;width:100%;height:auto;overflow:visible;font-family:var(--font)}
+.pond .caustic{opacity:.10;mix-blend-mode:screen}
+.pond .shore-line{fill:none;stroke:var(--sand);stroke-width:2.5;opacity:.75}
+.pond .spoke{stroke:var(--ring);stroke-width:1;opacity:.10;stroke-dasharray:1 6;stroke-linecap:round}
+
+/* rings */
+.pond .ring{fill:none;stroke:var(--ring);stroke-width:1.6;opacity:.95;transform-origin:0 0}
+.pond .ring-glow{fill:none;stroke:var(--ring);stroke-width:16;opacity:.13;transform-origin:0 0}
+.pond .ring-label{font-size:12px;fill:var(--ring);font-variant-numeric:tabular-nums;paint-order:stroke;stroke:var(--water-deep);stroke-width:5px;stroke-linejoin:round;letter-spacing:.01em}
+
+/* rivals and boulders */
+.pond .rival-ring{fill:none;stroke:var(--ring);stroke-width:1;opacity:.28;stroke-dasharray:4 5;transform-origin:0 0}
+.pond .stone-body{fill:var(--stone);stroke:var(--stone-edge);stroke-width:1.2}
+.pond .stone-hi{fill:none;stroke:var(--stone-hi);stroke-width:1.3;stroke-linecap:round;opacity:.9}
+.pond .stone.rival .stone-body{fill:var(--stone-2)}
+.pond .well{fill:var(--water-deep);opacity:.9}
+.pond .splash{fill:none;stroke:var(--ring);stroke-width:2;opacity:0;transform-origin:0 0}
+.pond .wake{fill:var(--water-deep);opacity:.55}
+.pond .bend{fill:none;stroke:var(--ring);stroke-width:1.2;opacity:.6;stroke-linecap:round}
+.pond .boulder-body{fill:var(--boulder);stroke:var(--boulder-edge);stroke-width:1.2;stroke-linejoin:round}
+.pond .boulder-hi{fill:none;stroke:var(--stone-hi);stroke-width:1.2;stroke-linecap:round;opacity:.6}
+
+/* labels */
+.pond .domain-label{font-size:13.5px;fill:var(--sand);letter-spacing:.04em;opacity:.85}
+.pond .lbl{font-size:15px;fill:var(--text);font-weight:500;paint-order:stroke;stroke:var(--water-deep);stroke-width:5px;stroke-linejoin:round;stroke-opacity:.9}
+.pond .lbl-num{font-weight:650;fill:var(--num);font-variant-numeric:tabular-nums}
+.pond .lbl-tier{font-size:12px;fill:var(--text-2);paint-order:stroke;stroke:var(--water-deep);stroke-width:4px;stroke-linejoin:round;stroke-opacity:.9}
+.pond .lbl-tier.strong{fill:var(--text)}
+.pond .rival-label .lbl,.pond .boulder-label .lbl-tier{opacity:.85}
+.pond .grass-label{font-size:11px;fill:var(--text-2);opacity:0;transition:opacity .15s;paint-order:stroke;stroke:var(--water-deep);stroke-width:4px;stroke-linejoin:round}
+.pond .grass:hover .grass-label,.pond .grass:focus-visible .grass-label{opacity:1}
+.pond .grass:focus-visible,.pond .float:focus-visible,.pond .shore-mark:focus-visible{outline:none}
+.pond .grass:focus-visible .hit,.pond .float:focus-visible .hit,.pond .shore-mark:focus-visible .hit{stroke:var(--focus);stroke-width:2;stroke-dasharray:3 3}
+
+/* reeds: the honest nulls */
+.pond .grass{cursor:pointer}
+.pond .grass .leaf{fill:var(--grass);stroke:none;opacity:.92}
+.pond .grass .leaf:nth-child(odd){fill:var(--grass-2)}
+.pond .grass .seed{fill:var(--sand);opacity:.9}
+.pond .grass .reed-water{fill:none;stroke:var(--ring);stroke-width:1;opacity:.45}
+
+/* untested floats */
+.pond .float{cursor:pointer}
+.pond .float-ring{fill:transparent;stroke:var(--text-2);stroke-width:1.2;stroke-dasharray:2.2 2.6;opacity:.7}
+.pond .float-dot{fill:var(--text-2);opacity:.7}
+.pond .float:hover .float-ring,.pond .float.active .float-ring{stroke:var(--text);opacity:1}
+
+/* far-shore marks (world rules) */
+.pond .shore-mark{cursor:pointer}
+.pond .cairn ellipse{fill:var(--sand);stroke:var(--bank);stroke-width:1}
+.pond .shore-mark .lbl-num{fill:var(--sand)}
+
+/* effects */
+.pond .effect{cursor:pointer;outline:none}
+.pond .hit{fill:transparent}
+.pond .effect:focus-visible .hit{stroke:var(--focus);stroke-width:2;stroke-dasharray:3 3}
+.pond .crest{fill:none;stroke:#E6FFF7;stroke-linecap:round}
+.pond .crest-glow{stroke:var(--ring)}
+.pond .halo{fill:var(--ring);opacity:.16}
+.pond .effect.watching .crest{stroke-dasharray:3 4}
+.pond .watch-ring{fill:none;stroke:var(--ring);stroke-width:1;opacity:.35;stroke-dasharray:2 6;transform-origin:0 0}
+.pond .pad-body{fill:var(--pad);stroke:var(--pad-edge);stroke-width:1.4;stroke-linejoin:round}
+.pond .pad-vein{fill:none;stroke:var(--pad-vein);stroke-width:1;opacity:.8}
+.pond .pad-hi{fill:none;stroke:#fff;stroke-width:1;opacity:.35;stroke-linecap:round}
+.pond .pad.likely .pad-body,.pond .pad.contrast .pad-body{fill:var(--pad-soft);stroke-width:1.8}
+.pond .pad.likely .pad-vein,.pond .pad.contrast .pad-vein{opacity:.5;stroke:var(--pad-edge)}
+.pond .pad.likely .pad-hi,.pond .pad.contrast .pad-hi{opacity:.15}
+.pond .pad.watching .pad-body{fill:transparent;stroke-dasharray:3 3;stroke-width:1.6}
+.pond .pad.watching .pad-vein,.pond .pad.watching .pad-hi{opacity:0}
+.pond .pad.retracted .pad-body{fill:transparent;stroke:var(--text-2);opacity:.4}
+.pond .duck-body{fill:var(--duck);stroke:var(--duck-line);stroke-width:1.3;stroke-linejoin:round}
+.pond .duck-line{fill:none;stroke:var(--duck-line);stroke-width:1.3;stroke-linecap:round;stroke-linejoin:round}
+.pond .duck-eye{fill:var(--water-deep)}
+.pond .duck-water{fill:none;stroke:var(--ring);stroke-width:1;opacity:.6}
+.pond .effect.likely .duck-body{fill:var(--water-deep)}
+.pond .foam path{fill:none;stroke:var(--foam);stroke-width:2.2;stroke-linecap:round;opacity:.85}
+.pond .foam path:nth-child(2){stroke-width:1.5;opacity:.6}
+.pond .foam path:nth-child(3){stroke-width:1;opacity:.4}
+.pond .badge{fill:var(--water-deep);stroke:var(--text);stroke-width:1.2}
+.pond .badge-num{font-size:19px;font-weight:600;fill:var(--text);font-variant-numeric:tabular-nums}
+.pond .effect.dim,.pond .shore-mark.dim,.pond .float.dim{opacity:.35}
+.pond .effect.active .pad-body{stroke:var(--text);stroke-width:2.2}
+.pond .effect.active .lbl{fill:#fff}
+.pond .shock:focus-visible .stone-body{stroke:var(--focus);stroke-width:2}
+
+/* motion: the drop. Timeline origin is the stone's release; each thing reacts when the ring front reaches it (--d). */
+.pond:not(.reduce) .shock .stone{animation:stoneDrop .45s cubic-bezier(.4,0,1,1) both;transform-origin:0 0}
+.pond:not(.reduce) .shock .well{animation:wellIn .4s .3s ease-out both;transform-origin:0 0}
+.pond:not(.reduce) .splash{animation:splash .7s .3s ease-out both}
+.pond:not(.reduce) .ring,.pond:not(.reduce) .ring-glow{animation:ringOut .9s cubic-bezier(.2,.65,.25,1) both}
+.pond:not(.reduce) .ring-label{animation:fadeIn .4s both}
+.pond:not(.reduce) .rival-ring{animation:ringOut .9s cubic-bezier(.2,.65,.25,1) both}
+.pond:not(.reduce) .effect .crest,.pond:not(.reduce) .effect .crest-glow,.pond:not(.reduce) .effect .label,.pond:not(.reduce) .effect .foam,.pond:not(.reduce) .shore-mark .foam,.pond:not(.reduce) .shore-mark .label,.pond:not(.reduce) .shore-mark .cairn{animation:fadeIn .4s var(--d) both}
+.pond:not(.reduce) .effect .label,.pond:not(.reduce) .shore-mark .label{animation-delay:calc(var(--d) + .25s)}
+.pond:not(.reduce) .effect .foam path,.pond:not(.reduce) .shore-mark .foam path{animation:fadeIn .5s both}
+.pond:not(.reduce) .effect .pad{animation:padTilt 1s var(--d) cubic-bezier(.3,.7,.3,1) both}
+.pond:not(.reduce) .effect .duck{animation:duckBob 2.4s var(--d) ease-in-out both}
+.pond:not(.reduce) .effect.watching .watch-ring,.pond:not(.reduce) .effect.contrast .watch-ring{animation:watchTravel 4.5s calc(var(--d) + 1s) cubic-bezier(.2,.6,.4,1) infinite}
+.pond:not(.reduce) .grass,.pond:not(.reduce) .untested{animation:fadeIn .5s 1.1s both}
+.pond:not(.reduce) .rival-label,.pond:not(.reduce) .boulder-label,.pond:not(.reduce) .shock-label{animation:fadeIn .5s 1.4s both}
+@keyframes stoneDrop{from{transform:translateY(-60px) scale(1.8);opacity:0}60%{opacity:1}to{transform:none;opacity:1}}
+@keyframes wellIn{from{transform:scale(0);opacity:0}to{transform:scale(1);opacity:.9}}
+@keyframes splash{0%{transform:scale(.2);opacity:.9;stroke-width:4}100%{transform:scale(1.6);opacity:0;stroke-width:.5}}
+@keyframes ringOut{from{transform:scale(.05);opacity:0}30%{opacity:1}to{transform:scale(1)}}
+@keyframes fadeIn{from{opacity:0}to{opacity:1}}
+@keyframes padTilt{0%{transform-box:fill-box}20%{translate:0 -3px;rotate:-7deg}50%{translate:0 2px;rotate:5deg}80%{translate:0 -1px;rotate:-2deg}100%{translate:0 0;rotate:0deg}}
+@keyframes duckBob{0%,100%{translate:0 0;rotate:0deg}12%{translate:0 -6px;rotate:-9deg}30%{translate:0 3px;rotate:7deg}50%{translate:0 -3px;rotate:-4deg}70%{translate:0 1px;rotate:2deg}}
+@keyframes watchTravel{0%{transform:scale(.55);opacity:0}15%{opacity:.5}100%{transform:scale(1);opacity:0}}
+.pond .effect .pad,.pond .effect .duck{transform-box:fill-box;transform-origin:center}
+.pond.reduce .splash{display:none}
+.pond.reduce .watch-ring{opacity:.3}
+@media (prefers-reduced-motion:reduce){.pond *{animation:none!important}.pond .splash{display:none}}
+
+/* phone */
+.pond.compact .domain-label{font-size:22px}
+.pond.compact .ring-label{font-size:19px;stroke-width:7px}
+.pond.compact .lbl{font-size:21px}
+.pond.compact .lbl-tier{font-size:17px}
+.pond.compact .grass-label,.pond.compact .rival-label,.pond.compact .boulder-label{display:none}
+
+/* threads: fork = from the stone (no mediation shown), chain = mediation supported */
+.pond .thread{fill:none;stroke:var(--ring);stroke-width:1;opacity:.22;stroke-linecap:round}
+.pond .thread.chain{opacity:.7;stroke-width:1.6}
+.pond .thread.likely,.pond .thread.contrast{stroke-dasharray:5 4}
+.pond .thread.watching{stroke-dasharray:2 5;opacity:.18}
+.pond .thread.chain.likely{opacity:.5}
+.pond:not(.reduce) .thread{animation:fadeIn .5s both}
+
+/* thumbnails: shapes only */
+.pond.thumb .label,.pond.thumb .ring-label,.pond.thumb .domain-label,.pond.thumb .shock-label,.pond.thumb .grass-label,.pond.thumb .rival-label,.pond.thumb .boulder-label,.pond.thumb .thread{display:none}
+.pond.thumb .ring{stroke-width:2.5}.pond.thumb .ring-glow{stroke-width:24}
+.pond.thumb .shore-line{stroke-width:5}
+.pond.thumb .effect,.pond.thumb .grass,.pond.thumb .float{cursor:default}

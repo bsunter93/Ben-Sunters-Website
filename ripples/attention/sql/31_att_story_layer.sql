@@ -72,8 +72,13 @@ insert into ripples.att_config (key, value) values ('story', jsonb_build_object(
   'penalties', jsonb_build_object('common_cause_risk', 0.10, 'length_per_hop', 0.04, 'branching_noise', 0.05, 'unsurprising', 0.10),
   'gates', jsonb_build_object('temporal_min', 0.5, 'mechanism_min', 0.4, 'novelty_days', 14, 'ghost_min_expected', 3, 'collapse_min_p_hat', 0.15, 'unsurprising_below', 0.3),
   'scales', jsonb_build_object('effect_full_scale_logpts', 0.25, 'points_full_scale', 1.0, 'diversity_full_at', 3),
+  'off_limits_regex', '\m(killed|killing|murder|shooting|massacre|suicide|stabbing|victims?|died|death of|dies|funeral|obituary|rape|assault)\M',
+  'off_limits_families', '[]'::jsonb,
+  'sensitivity_note', 'quiet = quiet presentation only; off_limits = the only exclusion (deaths / violence involving individuals)',
   'note', 'story_score orders survivors; it can never change p, q, tier, attribution or wording. Coherence gates exclude regardless of score.'))
 on conflict (key) do nothing;
+update ripples.att_config set value = value || jsonb_build_object('off_limits_regex', '\m(killed|killing|murder|shooting|massacre|suicide|stabbing|victims?|died|death of|dies|funeral|obituary|rape|assault)\M', 'off_limits_families', '[]'::jsonb,
+  'sensitivity_note', 'quiet = quiet presentation only; off_limits = the only exclusion (deaths / violence involving individuals)') where key = 'story' and not value ? 'off_limits_regex';
 
 -- ---------------------------------------------------------------------------------------------------------------------
 -- 2. Pure helpers (no table reads unless stated)
@@ -288,6 +293,16 @@ language sql stable security definer set search_path = '' as $$
           from ripples.att_events x where x.family = e.family and x.role <> 'decoy' and x.magnitude is not null) end
        from ripples.att_events e where e.event_id = p_event))
 $$;
+-- Sensitivity policy (coordinator follow-up 2026-09-26): `sensitivity.quiet` (rm_sensitive: engine flag OR hazard.* family) means QUIET
+-- PRESENTATION (no celebratory copy / animation) and never exclusion: hurricanes stay candidates and replication examples. The only
+-- exclusion is an off-limits event: deaths or violence involving individuals (label regex) or a family listed in att_config story.off_limits_families.
+create or replace function ripples.att_story_off_limits(p_event bigint) returns boolean
+language sql stable security definer set search_path = '' as $$
+  select coalesce(e.label ~* coalesce(ripples._att_cfg('story') ->> 'off_limits_regex', '\m(killed|killing|murder|shooting|massacre|suicide|stabbing|victims?|died|death of|dies|funeral|obituary|rape|assault)\M'), false)
+         or e.family = any (coalesce(array(select jsonb_array_elements_text(ripples._att_cfg('story') -> 'off_limits_families')), '{}'))
+    from ripples.att_events e where e.event_id = p_event
+$$;
+revoke all on function ripples.att_story_off_limits(bigint) from anon, authenticated, public;
 -- 6.2 replication for (event, node): the frozen pair whose outcome source is the node's source (hurricane sub-pair preferred)
 create or replace function ripples.att_story_replication(p_event bigint, p_node text) returns jsonb
 language sql stable security definer set search_path = '' as $$
@@ -323,7 +338,7 @@ declare ev ripples.att_events; ws jsonb; cfg jsonb := ripples._att_cfg('story');
         excl text; tier_min text; tier_max text; ev_dom_likely int; funnel int; shared boolean; dir_unexp boolean; amp boolean; novelty real; share real;
         hero_lag float8; hero_l int; t ripples.att_hop_tests; c ripples.att_hop_candidates; chain jsonb; parent_onset date; l_days int; plaus real;
         tmpl text; expected_sign int; rho float8; pr jsonb; nd_min text; tier_rank int; r record; n_ghost int; ghost_hops bigint[]; wt jsonb;
-        window_open boolean; nxt date; v_phat real; kind text; pp bigint; wj jsonb; old_fs jsonb; counter real; travel jsonb; cp jsonb; fam_word text; hero_lbl text; url text;
+        window_open boolean; nxt date; v_phat real; kind text; pp bigint; wj jsonb; v_lag float8; v_onset date; v_off boolean; v_offl boolean; old_fs jsonb; counter real; travel jsonb; cp jsonb; fam_word text; hero_lbl text; url text;
 begin
   select * into ev from ripples.att_events where event_id = p_event;
   if not found or ev.role not in ('real','library','positive_control') then return 0; end if;
@@ -333,7 +348,8 @@ begin
   fam_word := coalesce(fam_word, ev.family);
   delete from ripples.att_story_candidates where event_id = p_event;
   if ws is null then return 0; end if;
-  quiet := ripples.rm_sensitive(p_event); is_ctl := ev.role = 'positive_control';
+  quiet := ripples.rm_sensitive(p_event); is_ctl := ev.role = 'positive_control';   -- sensitivity = QUIET presentation, never exclusion
+  v_offl := ripples.att_story_off_limits(p_event);                                     -- the only exclusion: deaths / violence involving individuals
   shock := ripples.att_story_shock_norm(p_event);
   nodes := coalesce(ws -> 'nodes', '[]'::jsonb);
   nn := jsonb_array_length(nodes); nflat := jsonb_array_length(coalesce(ws -> 'flat', '[]'::jsonb));
@@ -374,11 +390,15 @@ begin
       tmpl := c.path -> 0 ->> 'template';
       select mt.l_days into l_days from ripples.att_mech_templates mt where mt.template = tmpl;
       if l_days is null then select cs.l_days into l_days from ripples.att_channel_stat cs where cs.channel = c.channels[1]; end if;
-      plaus := ripples.att_story_lag_plaus((n ->> 'lag_days')::float8, l_days);
+      -- engine reads, in order: payload node.lag_days | att_hop_tests.lag_days | att_hop_tests.detail->>'lag_days' | t_v − t_u (lights up when the engine writes them)
+      v_lag := coalesce((n ->> 'lag_days')::float8, t.lag_days::float8, (t.detail ->> 'lag_days')::float8,
+                        (coalesce(t.t_v, (t.detail ->> 'onset')::date) - coalesce(t.t_u, c.onset))::float8);
+      plaus := ripples.att_story_lag_plaus(v_lag, l_days);
       if coalesce(t.reversed, false) or (t.flags is not null and ('reversed' = any (t.flags) or 'common_cause' = any (t.flags))) then plaus := 0; end if;
       if (n ->> 'parent_hop') is not null then
         select (s ->> 'onset')::date into parent_onset from jsonb_array_elements(sub) s where s ->> 'hop_id' = n ->> 'parent_hop';
-        if parent_onset is not null and (n ->> 'onset') is not null and (n ->> 'onset')::date < parent_onset then plaus := 0; end if;
+        v_onset := coalesce((n ->> 'onset')::date, t.t_v, (t.detail ->> 'onset')::date);
+        if parent_onset is not null and v_onset is not null and v_onset < parent_onset then plaus := 0; end if;
       end if;
       t_min := least(t_min, plaus);
       m_min := least(m_min, ripples.att_story_mech_support(c.path));
@@ -389,7 +409,7 @@ begin
         ccr := greatest(ccr, least(1, 0.5 * (case when coalesce((t.attribution ->> 'share')::float8, 1) < 0.5 then 1 else 0 end)
                                        + 0.5 * (case when coalesce(t.common_shock, false) then 1 else 0 end)));
       else
-        chain := t.detail -> 'chain';
+        chain := coalesce(t.detail -> 'chain', t.detail -> 'mediation');   -- engine record {fork_test, mediation_c}: att_hop_tests.detail->'chain' (fallback ->'mediation')
         k := ripples.att_story_edge_kind(chain, n -> 'fork_of');
         edges := edges || jsonb_build_object('from', case when k = 'chain' then to_jsonb((n ->> 'parent_hop')::bigint) else to_jsonb('event'::text) end,
                                              'to', (n ->> 'hop_id')::bigint, 'kind', k, 'engine_parent', (n ->> 'parent_hop')::bigint,
@@ -440,7 +460,7 @@ begin
     rho := (hero ->> 'rho')::float8;
     dir_unexp := expected_sign <> 0 and rho is not null and ((coalesce(hero ->> 'unit', 'x') = 'x' and ((expected_sign > 0 and rho < 1) or (expected_sign < 0 and rho > 1)))
                                                             or (hero ->> 'unit' = 'points' and sign(rho) = -expected_sign));
-    hero_lag := (hero ->> 'lag_days')::float8;
+    hero_lag := coalesce((hero ->> 'lag_days')::float8, t.lag_days::float8, (t.detail ->> 'lag_days')::float8);
     select mt.l_days into hero_l from ripples.att_mech_templates mt where mt.template = c.path -> 0 ->> 'template';
     if hero_l is null then select cs.l_days into hero_l from ripples.att_channel_stat cs where cs.channel = c.channels[1]; end if;
     clarity := (1 / (1 + noise)) * greatest(0, 1 - 0.15 * (len - 1)) * (case when labels_ok then 1 else 0.3 end);
@@ -480,6 +500,9 @@ begin
       excl := 'attention-only ripple (never the hero)';
     end if;
     if excl is null and (root ->> 'retracted') is not null and jsonb_typeof(root -> 'retracted') <> 'null' then excl := 'retracted'; end if;
+    -- D-16 scope: person → person/attention lines (celebrity → celebrity) are off the core vision (events → real-world downstream impacts)
+    if excl is null and ev.family = 'person' and ripples.rm_domain8(hero ->> 'domain') in ('reading','chatter') then excl := 'off_vision_person_attention'; end if;
+    if excl is null and v_offl then excl := 'off_limits'; end if;
     arche := ripples.att_story_archetypes(kind, fields, cfg);
     nxt := (select min(d) from ripples.att_hop_candidates hc, unnest(hc.looks) d where hc.hop_id = (root ->> 'hop_id')::bigint and d >= today);
     select rg.p_hat into v_phat from ripples.att_hop_registry rg where rg.hop_id = (root ->> 'hop_id')::bigint;
@@ -522,6 +545,7 @@ begin
       -- one event-level Ghost
       labels_ok := not exists (select 1 from ripples.att_hop_candidates c2 where c2.hop_id = any (ghost_hops) and ripples.rm_label_resolve(c2.node, ripples.att_node_label(c2.node)) is null);
       select avg(rg.p_hat) into v_phat from ripples.att_hop_registry rg where rg.hop_id = any (ghost_hops);
+      v_off := (ev.family = 'person' and not exists (select 1 from ripples.att_hop_candidates c2 where c2.hop_id = any (ghost_hops) and ripples.rm_domain8(ripples.rm_domain(c2.channels[1])) not in ('reading','chatter'))) or v_offl;
       fields := jsonb_build_object('temporal_coherence', 1, 'mechanism_coherence', 1, 'evidence_at_transitions', 0, 'domain_diversity', 0, 'surprise', round((1 - coalesce(v_phat, 0))::numeric, 3),
                                    'magnitude', 0, 'shock', round(coalesce(shock, 0.5)::numeric, 3), 'replication', 0, 'independent_confirmations', 0, 'branching_noise', round(noise::numeric, 3),
                                    'length', 1, 'visual_clarity', round((1 / (1 + noise))::numeric, 3), 'common_cause_risk', 0, 'mediation_supported', true, 'labels_ok', labels_ok,
@@ -540,7 +564,7 @@ begin
                              'edges', (select jsonb_agg(jsonb_build_object('from', 'event', 'to', h, 'kind', 'fork')) from unnest(ghost_hops) h)),
           'Ghost', array['Ghost'], ghost_hops[1], array[ghost_hops[1]], ghost_hops[2:],
           ripples.att_story_score(fields || jsonb_build_object('surprise', round((1 - coalesce(v_phat, 0))::numeric, 3)), cfg), 1,
-          labels_ok, case when not labels_ok then 'waiting for a public name' end,
+          labels_ok and not v_off, case when not labels_ok then 'waiting for a public name' when v_offl then 'off_limits' when v_off then 'off_vision_person_attention' end,
           jsonb_build_object('expected_1_in', ripples.rm_one_in(v_phat, 50), 'p_hat', v_phat, 'resolved', 'flat'), null,
           jsonb_build_object('quiet', quiet, 'family', ev.family, 'is_control', is_ctl), cp, travel, coalesce((old_fs ->> ('ghost:' || p_event))::timestamptz, now()));
       n_written := n_written + 1;
@@ -559,6 +583,8 @@ begin
                                      'shareability', round((0.1 + 0.2 * (case when lbl is not null then 1 else 0 end) + 0.1 * (case when rep is not null then 1 else 0 end) + 0.1 * (case when quiet then 0 else 1 end))::numeric, 3),
                                      'visual_density', nn + nflat, 'expected_p_hat', r.ph, 'counterintuitiveness', round((0.5 * (1 - fam_share) + 0.5 * r.ph)::numeric, 3));
         excl := ripples.att_story_gate(fields, cfg);
+        if excl is null and ev.family = 'person' and ripples.rm_domain8(ripples.rm_domain(r.channels[1])) in ('reading','chatter') then excl := 'off_vision_person_attention'; end if;
+        if excl is null and v_offl then excl := 'off_limits'; end if;
         travel := jsonb_build_object('domains_crossed', 0, 'days', null, 'depth', 0);
         url := 'https://bensunter.com/ripples/line/' || ripples.rm_slug(p_event) || '/stop/' || r.hop_id || '/';
         wt := jsonb_build_object('window_close', r.window_close, 'p_hat', r.ph, 'expected_1_in', ripples.rm_one_in(r.ph, 50), 'resolved', 'flat');
@@ -693,9 +719,9 @@ begin
     select * into fe from ripples.att_family_effects v where v.grid_id = s.grid_id;
     if not found then return null; end if;
     ex := coalesce((select jsonb_agg(jsonb_build_object('event_id', e.event_id, 'label', coalesce(ripples.rm_label_resolve(e.qid, e.label), e.label), 'onset', e.onset,
-                                                      'slug', case when ripples.rm_is_public(e.event_id) then ripples.rm_slug(e.event_id) end) order by e.onset desc)
+                                                      'slug', case when ripples.rm_is_public(e.event_id) then ripples.rm_slug(e.event_id) end, 'quiet', ripples.rm_sensitive(e.event_id)) order by e.onset desc)
                       from jsonb_array_elements_text(s.replication -> 'example_event_ids') x join ripples.att_events e on e.event_id = x::bigint
-                     where coalesce(e.sensitive, false) = false and not ripples.rm_raw_id(coalesce(ripples.rm_label_resolve(e.qid, e.label), e.label), e.qid)), '[]'::jsonb);
+                     where not ripples.att_story_off_limits(e.event_id) and not coalesce(ripples.rm_raw_id(coalesce(ripples.rm_label_resolve(e.qid, e.label), e.label), e.qid), false)   -- rm_raw_id is NULL when qid is null), '[]'::jsonb);
     headline := case when fe.sub = 'hurricane' then 'Hurricanes' else fe.family_label || 's' end || ' → ' || fe.outcome_label || ': ' || case when fe.pct >= 0 then '+' else '' end || fe.pct
                 || case when (s.replication ->> 'unit') = 'raw' then ' (raw units)' else '%' end || ' over ' || fe.post_n || ' ' || case fe.grain when 'week' then 'weeks' else 'days' end
                 || ', measured across ' || fe.n_events || ' past events';
@@ -755,9 +781,9 @@ begin
              'strength', s.replication ->> 'strength', 'effect', (s.replication ->> 'effect_pct')::numeric,
              'wording', 'moved in the expected direction after ' || (s.replication ->> 'n_seen') || ' of ' || (s.replication ->> 'n_similar') || ' similar events',
              'examples', coalesce((select jsonb_agg(jsonb_build_object('event_id', e.event_id, 'label', coalesce(ripples.rm_label_resolve(e.qid, e.label), e.label), 'onset', e.onset,
-                                                                   'slug', case when ripples.rm_is_public(e.event_id) then ripples.rm_slug(e.event_id) end) order by e.onset desc)
+                                                                   'slug', case when ripples.rm_is_public(e.event_id) then ripples.rm_slug(e.event_id) end, 'quiet', ripples.rm_sensitive(e.event_id)) order by e.onset desc)
                                     from jsonb_array_elements_text(s.replication -> 'example_event_ids') x join ripples.att_events e on e.event_id = x::bigint
-                                   where coalesce(e.sensitive, false) = false and not ripples.rm_raw_id(coalesce(ripples.rm_label_resolve(e.qid, e.label), e.label), e.qid)), '[]'::jsonb),
+                                   where not ripples.att_story_off_limits(e.event_id) and not coalesce(ripples.rm_raw_id(coalesce(ripples.rm_label_resolve(e.qid, e.label), e.label), e.qid), false)   -- rm_raw_id is NULL when qid is null), '[]'::jsonb),
              'this_event_regional', case when s.replication -> 'regional' is not null then jsonb_build_object('pass', (s.replication -> 'regional' ->> 'pass')::boolean, 'p_space', (s.replication -> 'regional' ->> 'p_space')::numeric) end) end;
   why := '[]'::jsonb;
   if (s.fields ->> 'mechanism_coherence')::float8 >= 0.9 then why := why || to_jsonb('a named mechanism at every step (mechanism library)'::text);

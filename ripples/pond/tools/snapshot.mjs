@@ -174,7 +174,7 @@ export function assemble() {
     num: '−3.2%', short: 'new businesses', title: 'New-business applications in hit states', unit: 'over 4 weeks, across 23 hurricanes',
     headline: 'Where hurricanes usually reach: fewer new businesses, four weeks on',
     plain: `Across 23 past hurricanes, applications to start a business in the hit states ran 3.2% below unaffected states over the following four weeks. Nobody pre-registered this for Milton, so Milton itself is untested on it: this is a rule about storms like it, not evidence about this storm.`,
-    pattern: { ...p10, fell_after: fell, of: g10.filter(e => e.d != null).length, examples: g10.filter(e => e.z <= -2.5).map(e => ({ label: e.label, effect_pct: pct(e.d), z: e.z })),
+    pattern: { ...p10, fell_after: fell, of: p10.n_events, examples: g10.filter(e => e.z <= -2.5).map(e => ({ label: e.label, effect_pct: pct(e.d), z: e.z })),
       all: g10.filter(e => e.d != null).map(e => ({ label: e.label.replace(/ \(\d{4}\)$/, ''), year: e.onset.slice(0, 4), effect_pct: pct(e.d), pass: e.p_space <= 0.05 && e.p_pre >= 0.10 && e.d < 0 })) },
     story: p10.story
   };
