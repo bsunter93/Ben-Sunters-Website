@@ -43,9 +43,20 @@ delete from ripples.att_sd_null;   -- the old whole-array cache is not a valid 6
 -- ---------------------------------------------------------------------------------------------------------------------
 -- 1. Engine config: method 6.1, graph as-of reads on
 -- ---------------------------------------------------------------------------------------------------------------------
-update ripples.att_config set value = value || jsonb_build_object('method', '6.1', 'graph_asof', true,
-  'method_note', '6.1 (2026-09-26): audit fixes B1-B5, S1/S3/S4/S5/S10/S11/S14/S17; BH on p_h; robust pre-onset null; season-matched placebos on every channel')
+update ripples.att_config set value = value || jsonb_build_object('method', '6.1.1', 'graph_asof', true, 'bh_min_draws', 200,
+  'method_note', '6.1.1 (2026-09-26): audit fixes B1-B5, S1/S3/S4/S5/S7/S10/S11/S14/S17; BH on the max over placebo families with >= 200 draws (families with >= 30 draws gate through p_h); library BH family = the frozen event group; common-shock panel rule = share of |z| >= 2 in excess of the source panel''s trailing-year median; robust pre-onset null; season-matched placebos on every channel')
  where key = 'engine';
+
+-- S1 (6.1.1): the BH input. A Besag–Clifford p from n draws has resolution 1/(n+1); a family that cannot resolve the Measured threshold
+-- (n < bh_min_draws) is a gate (p_h = max over families with ≥ 30 draws, unchanged) but not a BH input — feeding a 60-draw family into
+-- BH over hundreds of hops gives q ≥ m/(61·k) for every hop, i.e. Measured unreachable at any effect size. Falls back to p_h when no
+-- family resolves.
+create or replace function ripples.att_bh_input(p_date real, n_date int, p_topic real, n_topic int, p_link real, n_link int, p_h real, p_min int default 200)
+returns real language sql immutable set search_path = '' as $$
+  select coalesce(nullif(greatest(coalesce(case when n_date >= p_min then p_date end, 0), coalesce(case when n_topic >= p_min then p_topic end, 0),
+                                  coalesce(case when n_link >= p_min then p_link end, 0)), 0), p_h)
+$$;
+revoke all on function ripples.att_bh_input(real, int, real, int, real, int, real, int) from anon, authenticated, public;
 
 -- S17: FRED price and FX series are levels (ln y), not rates; the series metric already says which is which
 update ripples.att_engine_source_map set metric_kinds = coalesce(metric_kinds, '{}'::jsonb) || '{"level":"level","rate":"rate"}'::jsonb where source = 'fred';
@@ -116,16 +127,24 @@ create or replace function ripples.att_common_days_refresh(p_day date default cu
 language plpgsql security definer set search_path = '' as $$
 declare v_np int := 0; n_hol int := 0; n_reg int := 0;
 begin
-  with c as (select day, source, c, frac2, n_panel from ripples.att_zvec_ct where day between p_day - 2555 and p_day),
+  -- panel rule (B4, 6.1.1): a day is a common shock for a source panel when the share of its series with |z| ≥ 2 exceeds the panel's own
+  -- trailing-year median share by ≥ 0.30 (a calibrated panel sits near 0.05, so this is the audit's "≥ 30 %" rule; a heavy-tailed panel such
+  -- as wiki.pv, whose typical share is 0.32, would otherwise flag every day and switch Measured off), or the panel mean |c| ≥ 1.5
+  with b as (select source, coalesce(percentile_cont(0.5) within group (order by frac2), 0) base from ripples.att_zvec_ct
+              where day between p_day - 365 and p_day and frac2 is not null group by source),
+  c as (select z.day, z.source, z.c, z.frac2, z.n_panel, coalesce(b.base, 0) base from ripples.att_zvec_ct z left join b on b.source = z.source where z.day between p_day - 2555 and p_day),
   f as (select day, array_agg(source order by source) sources,
-               jsonb_object_agg(source, round(c::numeric, 3)) || jsonb_build_object('_frac2', jsonb_object_agg(source, round(coalesce(frac2, 0)::numeric, 3))) cs
-        from c where abs(c) >= 1.5 or (coalesce(frac2, 0) >= 0.3 and n_panel >= 50) group by day)
+               jsonb_object_agg(source, round(c::numeric, 3)) || jsonb_build_object('_frac2', jsonb_object_agg(source, round(coalesce(frac2, 0)::numeric, 3)),
+                                                                          '_base', jsonb_object_agg(source, round(base::numeric, 3))) cs
+        from c where abs(c) >= 1.5 or (coalesce(frac2, 0) - base >= 0.3 and n_panel >= 50) group by day)
   insert into ripples.att_common_days(day, sources, c_by_source, reason, as_of)
   select day, sources, cs, 'panel', p_day from f
   on conflict (day) do update set sources = excluded.sources, c_by_source = excluded.c_by_source, reason = 'panel', as_of = excluded.as_of;
   get diagnostics v_np = row_count;
   delete from ripples.att_common_days d where d.reason = 'panel' and d.as_of < p_day
-     and not exists (select 1 from ripples.att_zvec_ct c where c.day = d.day and (abs(c.c) >= 1.5 or (coalesce(c.frac2, 0) >= 0.3 and c.n_panel >= 50)));
+     and not exists (select 1 from ripples.att_zvec_ct c left join (select source, coalesce(percentile_cont(0.5) within group (order by frac2), 0) base from ripples.att_zvec_ct
+                                                                     where day between p_day - 365 and p_day and frac2 is not null group by source) b on b.source = c.source
+                      where c.day = d.day and (abs(c.c) >= 1.5 or (coalesce(c.frac2, 0) - coalesce(b.base, 0) >= 0.3 and c.n_panel >= 50)));
   insert into ripples.att_common_days(day, sources, c_by_source, reason, as_of)
   select d::date, '{}', '{}'::jsonb, 'registered', p_day
   from jsonb_array_elements_text(coalesce(ripples._att_cfg('common_days'), '[]'::jsonb)) d
@@ -962,6 +981,53 @@ begin
                             'new_nodes', n_new_nodes, 'frozen_hash', v_hash, 'ledger_seq', v_seq);
 end $$;
 
+-- 6.1.1: att_run_library finalizes inside the event group
+create or replace function ripples.att_run_library(p_event bigint) returns jsonb
+language plpgsql security definer set search_path = '' as $$
+declare ev record; fr jsonb; d date; fin jsonb; last_look date; ex jsonb; fr2 jsonb; fin2 jsonb; last2 date; n_ran int := 0; r jsonb; a date; n_dec int; e2 record;
+begin
+  select * into ev from ripples.att_events where event_id = p_event and reconstructed;
+  if not found then return jsonb_build_object('error', 'not a reconstructed event'); end if;
+  -- an event registered after its day was frozen (library collectors add events with past as_of) is processed on the next unfrozen day
+  if exists (select 1 from ripples.att_hop_candidates c where c.as_of = ev.as_of and c.frozen_hash is not null)
+     and not exists (select 1 from ripples.att_hop_candidates c where c.event_id = p_event) then
+    a := ev.as_of + 1;
+    while exists (select 1 from ripples.att_hop_candidates c where c.as_of = a and c.frozen_hash is not null) loop a := a + 1; end loop;
+    update ripples.att_events set as_of = a where event_id = p_event;
+    ev.as_of := a;
+  end if;
+  -- decoys for every library event sharing this day (the freeze is per day, so they must exist before it)
+  n_dec := 0;
+  for e2 in select event_id from ripples.att_events where reconstructed and role in ('library','positive_control') and as_of = ev.as_of loop
+    n_dec := n_dec + ripples.att_library_decoys(e2.event_id);
+  end loop;
+  for a in select distinct e.as_of from ripples.att_events e where e.event_id = p_event or e.matched_to = p_event order by 1 loop
+    fr := ripples.att_freeze_candidates(a, true, (select array_agg(e.event_id) from ripples.att_events e where (e.event_id = p_event or e.matched_to = p_event) and e.as_of = a));
+  end loop;
+  for d in select distinct l from ripples.att_hop_candidates c join ripples.att_events e on e.event_id = c.event_id, unnest(c.looks) l
+           where c.reconstructed and (e.event_id = p_event or e.matched_to = p_event) and l <= current_date order by 1 loop
+    r := ripples.att_engine_run_due(d, 100000, true);
+    n_ran := n_ran + (r ->> 'ran')::int;
+    last_look := d;
+  end loop;
+  fin := case when last_look is not null then ripples.att_finalize(last_look, true, false, (select array_agg(e.event_id) from ripples.att_events e where e.event_id = p_event or e.matched_to = p_event)) end;   -- BH family = this event group
+  if last_look is not null then perform ripples.att_chain_decide(last_look); end if;
+  ex := ripples.att_expand(coalesce(last_look, ev.as_of), true);
+  if (ex ->> 'children')::int > 0 then
+    fr2 := ripples.att_freeze_candidates(coalesce(last_look, ev.as_of) + 1, true, (select array_agg(e.event_id) from ripples.att_events e where e.event_id = p_event or e.matched_to = p_event));
+    for d in select distinct l from ripples.att_hop_candidates c, unnest(c.looks) l where c.as_of = coalesce(last_look, ev.as_of) + 1 and c.reconstructed and l <= current_date order by 1 loop
+      r := ripples.att_engine_run_due(d, 100000, true);
+      n_ran := n_ran + (r ->> 'ran')::int;
+      last2 := d;
+    end loop;
+    fin2 := case when last2 is not null then ripples.att_finalize(last2, true, false, (select array_agg(e.event_id) from ripples.att_events e where e.event_id = p_event or e.matched_to = p_event)) end;
+    if last2 is not null then perform ripples.att_chain_decide(last2); end if;
+  end if;
+  perform ripples.att_build_cascade(p_event, coalesce(last2, last_look, ev.as_of));
+  return jsonb_build_object('event_id', p_event, 'decoys_created', n_dec, 'freeze', fr - 'frozen_hash', 'looks_ran', n_ran, 'final_day', last_look, 'finalize', fin, 'expand', ex,
+                            'depth2', fr2 - 'frozen_hash', 'finalize2', fin2);
+end $$;
+
 -- B1: att_library_event with topic meta
 drop function if exists ripples.att_library_event(text, text, text, date, text);
 create or replace function ripples.att_library_event(p_qid text, p_label text, p_family text, p_onset date, p_role text default 'library', p_meta jsonb default null) returns bigint
@@ -1389,7 +1455,8 @@ end $$;
 
 -- S1/B3/B5/S5/S10: att_finalize
 drop function if exists ripples.att_finalize(date, boolean);
-create or replace function ripples.att_finalize(p_as_of date, p_library boolean default false, p_reexam boolean default false) returns jsonb
+drop function if exists ripples.att_finalize(date, boolean, boolean);
+create or replace function ripples.att_finalize(p_as_of date, p_library boolean default false, p_reexam boolean default false, p_events bigint[] default null) returns jsonb
 language plpgsql security definer set search_path = '' as $$
 declare cfg jsonb := coalesce(ripples._att_cfg('engine'), '{}'::jsonb);
         q_meas float8 := coalesce((cfg ->> 'q_measured')::float8, 0.05); q_lik float8 := coalesce((cfg ->> 'q_likely')::float8, 0.20);
@@ -1402,21 +1469,26 @@ declare cfg jsonb := coalesce(ripples._att_cfg('engine'), '{}'::jsonb);
         gate_lik boolean; v_at_final boolean;
         sum_f float8 := 0; sum_p float8 := 0; n_tested int := 0; n_moved int := 0; frozen jsonb; e record; sbc jsonb;
         prev_prov boolean; v_lbc jsonb; fam_p float8[]; fam_w float8[]; fam_q float8[]; fam_ids bigint[]; fam_i int; v_orig record;
+        v_bhmin int := coalesce((cfg ->> 'bh_min_draws')::int, 200);
 begin
   -- the day's family: every hop's latest look with a statistic that is not yet finalised, or that looked today
   drop table if exists _fin; drop table if exists _bh; drop table if exists _q; drop table if exists _nf;
   create temp table _fin on commit drop as
   select t.hop_id, t.look_no, t.t_stat, t.fluke p_h, t.p_date, t.n_date, t.s_pre, c.bh_weight, c.role, c.event_id, c.depth, c.parent_hop, c.path_type, c.channels, c.window_close, c.looks,
          t.is_final, t.look_day, c.prior,
-         -- S1 (engine 6.1): BH runs on p_h = max over the placebo families with ≥ 30 draws (ENGINE §5.2 as written; the more conservative input)
-         t.fluke p_bh
+         -- S1 (engine 6.1.1): BH runs on the max over the placebo families that RESOLVE the threshold (≥ bh_min_draws = 200 draws, floor ≤ 0.005);
+         -- every family with ≥ 30 draws stays a hard gate through p_h (a 60-draw family cannot certify below 1/61 and would only cap q)
+         ripples.att_bh_input(t.p_date, t.n_date, t.p_topic, t.n_topic, t.p_link, t.n_link, t.fluke, v_bhmin) p_bh
   from ripples.att_hop_tests t join ripples.att_hop_candidates c on c.hop_id = t.hop_id
   where t.t_stat is not null and t.fluke is not null and c.frozen_hash is not null and c.reconstructed = p_library and t.look_day <= p_as_of
     -- B5: re-examination rows (look_no ≥ 100) form their own run; the daily run never sees them
     and (case when p_reexam then t.look_no >= 100 and t.q_w is null and (t.detail ->> 'reexam_day')::date = p_as_of else t.look_no < 100 end)
     and t.look_no = (select max(look_no) from ripples.att_hop_tests t2 where t2.hop_id = t.hop_id and t2.t_stat is not null and t2.look_day <= p_as_of
                                 and (case when p_reexam then t2.look_no >= 100 else t2.look_no < 100 end))
-    and (p_reexam or t.q_w is null or t.look_day = p_as_of or exists (select 1 from ripples.att_hop_candidates c2 where c2.hop_id = c.hop_id and c2.as_of = p_as_of));
+    and (p_reexam or t.q_w is null or t.look_day = p_as_of or exists (select 1 from ripples.att_hop_candidates c2 where c2.hop_id = c.hop_id and c2.as_of = p_as_of))
+    -- library mode: the BH family is the event group (the event, its decoys and negatives, frozen together with weights summing to m);
+    -- unfinalised looks of other groups in a concurrent recompute never join it
+    and (p_events is null or c.event_id = any(p_events));
   select count(*) into m from _fin;
 
   -- looks with a statistic but no placebo family of ≥ 30 draws carry no p-value: they never enter BH and resolve as watching (interim)
@@ -1426,7 +1498,8 @@ begin
   select t.hop_id, t.look_no, t.is_final, t.look_day, c.window_close, c.event_id
   from ripples.att_hop_tests t join ripples.att_hop_candidates c on c.hop_id = t.hop_id
   where t.t_stat is not null and t.fluke is null and t.tier is null and c.frozen_hash is not null and c.reconstructed = p_library and t.look_day <= p_as_of
-    and (case when p_reexam then t.look_no >= 100 else t.look_no < 100 end);
+    and (case when p_reexam then t.look_no >= 100 else t.look_no < 100 end)
+    and (p_events is null or c.event_id = any(p_events));
   for r in select * from _nf loop
     v_tier := case when r.is_final or r.look_day >= r.window_close + 1 then 'flat' else 'watching' end;
     update ripples.att_hop_tests t set tier = v_tier, tier_reason = 'too few placebo draws',
@@ -1460,7 +1533,7 @@ begin
              fluke = greatest(coalesce(case when n_link >= 30 then p_link end, 0), coalesce(case when n_topic >= 30 then p_topic end, 0), (ext ->> 'p')::real),
              p_floor = least(coalesce(p_floor, 1), 1.0 / (1 + (ext ->> 'n')::int))
        where t.hop_id = r.hop_id and t.look_no = r.look_no;
-      update _fin f set p_h = t.fluke, p_bh = t.fluke, p_date = t.p_date, n_date = t.n_date from ripples.att_hop_tests t where t.hop_id = f.hop_id and t.look_no = f.look_no and f.hop_id = r.hop_id;
+      update _fin f set p_h = t.fluke, p_bh = ripples.att_bh_input(t.p_date, t.n_date, t.p_topic, t.n_topic, t.p_link, t.n_link, t.fluke, v_bhmin), p_date = t.p_date, n_date = t.n_date from ripples.att_hop_tests t where t.hop_id = f.hop_id and t.look_no = f.look_no and f.hop_id = r.hop_id;
     end if;
   end loop;
 
@@ -1616,7 +1689,8 @@ begin
       update ripples.att_hop_tests t set ledger_seq = v_seq where t.hop_id = r.hop_id and t.look_no = r.look_no;
     end if;
     -- B5: a demotion or retraction propagates to the hop's children ("if the previous step holds")
-    if prev_tier in ('likely','measured') and v_tier not in ('likely','measured') or (prev_tier = 'measured' and v_tier = 'likely') then
+    -- keyed on what the reader last saw: the published tier when the hop is published, else the previous look's tier
+    if coalesce(pub_tier, prev_tier) in ('likely','measured') and v_tier not in ('likely','measured') or (coalesce(pub_tier, prev_tier) = 'measured' and v_tier = 'likely') then
       n_retract := n_retract + ripples.att_propagate_parent(r.hop_id, v_tier, p_as_of);
     end if;
     -- registry resolution at the final look
@@ -2043,7 +2117,10 @@ begin
     ev := (st -> 'groups' -> i ->> 'event_id')::bigint;
     select max(l) into last_look from ripples.att_hop_candidates c join ripples.att_events e on e.event_id = c.event_id, unnest(c.looks) l
      where c.frozen_hash is not null and c.reconstructed and (e.event_id = ev or e.matched_to = ev) and l <= current_date;
-    if last_look is not null then perform ripples.att_finalize(last_look, true); perform ripples.att_chain_decide(last_look); end if;
+    if last_look is not null then
+      perform ripples.att_finalize(last_look, true, false, (select array_agg(e.event_id) from ripples.att_events e where e.event_id = ev or e.matched_to = ev));   -- BH family = the event group
+      perform ripples.att_chain_decide(last_look);
+    end if;
     perform ripples.att_build_cascade(ev, coalesce(last_look, current_date));
     i := i + 1; done := done + 1;
     st := st || jsonb_build_object('next', i, 'last', jsonb_build_object('event_id', ev, 'last_look', last_look, 'at', now()));

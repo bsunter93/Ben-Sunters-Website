@@ -20,7 +20,8 @@ language sql immutable set search_path = '' as $$
   select p_res || jsonb_build_object('test', p_name, 'ok', coalesce(p_ok, false), 'detail', p_detail)
 $$;
 
-create or replace function ripples.att_test_engine(p_cleanup boolean default true) returns jsonb
+drop function if exists ripples.att_test_engine(boolean);
+create or replace function ripples.att_test_engine(p_cleanup boolean default true, p_only text[] default null) returns jsonb
 language plpgsql security definer set search_path = '' as $$
 declare res jsonb := '[]'::jsonb; ok boolean; j jsonb; arr real[]; s jsonb; s2 jsonb; q float8[]; t0 date := current_date - 45; i int; k int;
         v_ev bigint; run jsonb; n_inj_meas int; n_null_likely int; n_decoy_meas int; n_decoy_tested int; ps float8[] := '{}';
@@ -80,7 +81,7 @@ begin
   s := ripples.att_sd_null_calc(arr, '2022-01-01', 1200, 7, 'car', 1);
   ok := (j ->> 'sd')::float8 = 1.0 and (j ->> 'floored')::boolean
         and (j2 ->> 'sd') is null and j2 ->> 'reason' = 'degenerate'
-        and (j3 ->> 'sd')::float8 < 1.5 and (s ->> 'sd')::float8 > 5 and (j3 ->> 'to')::date <= '2022-01-01'::date + 560 - 7 - 30 - 7;
+        and (j3 ->> 'sd')::float8 < 1.5 and (s ->> 'sd')::float8 > 2.5 * (j3 ->> 'sd')::float8 and (j3 ->> 'to')::date <= '2022-01-01'::date + 560 - 7 - 30 - 7;
   res := ripples._att_t(res, 'T13 null scale: robust MAD with floors, degenerate series excluded, pre-onset windows only', ok, jsonb_build_object('iid', j, 'dormant', j2, 'pre_onset', j3 - 'from', 'whole_array', s - 'from' - 'to'));
 
   -- T14 (B4) holidays are common-shock days: Thanksgiving ± 1, Black Friday, Christmas week, July 4 observed
@@ -108,15 +109,17 @@ begin
 
   -- T5 every ledger freeze batch (not superseded) recomputes bit-identically and its frozen weights sum to its m (batches re-frozen by
   -- att_refreeze keep their original weights and are exempt from the weight sum)
-  ok := true;
+  ok := (ripples.att_ledger_verify() ->> 'ok')::boolean;   -- chain + every registered verifier (covers non-candidate 'freeze' objects such as the 6.2 fx grid)
   for h in select l.seq, l.payload_hash fh, (l.ref ->> 'as_of')::date as_of, (l.ref ? 'refreeze_of') refrozen from ripples.att_ledger l
-           where l.kind = 'freeze' and not (l.ref ? 'superseded_by') loop
+           where l.kind = 'freeze' and not (l.ref ? 'superseded_by') and l.ref ? 'as_of' and not (l.ref ? 'object') loop
     v_recomp := ripples.att_freeze_hash(h.as_of, false, h.fh);
     ok := ok and v_recomp = h.fh
           and (h.refrozen or abs((select sum(bh_weight) - count(*) from ripples.att_hop_candidates c where c.frozen_hash = h.fh)) < 1e-2 * greatest(1, (select count(*) from ripples.att_hop_candidates c where c.frozen_hash = h.fh)));
   end loop;
   res := ripples._att_t(res, 'T5 every frozen batch recomputes bit-identically and its BH weights sum to m', ok,
-           (select jsonb_agg(jsonb_build_object('as_of', x.as_of, 'batches', x.b, 'm', x.m)) from (select as_of, count(distinct frozen_hash) b, count(*) m from ripples.att_hop_candidates where frozen_hash is not null group by as_of) x));
+           jsonb_build_object('ledger_verify', ripples.att_ledger_verify(),
+                              'other_freeze_objects', (select coalesce(jsonb_agg(jsonb_build_object('seq', seq, 'object', ref ->> 'object', 'method', ref ->> 'method')), '[]'::jsonb) from ripples.att_ledger where kind = 'freeze' and ref ? 'object'),
+                              'batches', (select jsonb_agg(jsonb_build_object('as_of', x.as_of, 'batches', x.b, 'm', x.m)) from (select as_of, count(distinct frozen_hash) b, count(*) m from ripples.att_hop_candidates where frozen_hash is not null group by as_of) x)));
   ok := not exists (select 1 from ripples.att_hop_tests t where not exists (select 1 from ripples.att_hop_candidates c where c.hop_id = t.hop_id and c.frozen_hash is not null));
   res := ripples._att_t(res, 'T5 no att_hop_tests row without a frozen candidate', ok, null);
 
@@ -171,7 +174,7 @@ begin
     if (j ->> 'p') is not null then ps := ps || (j ->> 'p')::float8; end if;
   end loop;
   ks := ripples.att_ks_uniform(ps);
-  ok := (ks ->> 'p')::float8 >= 0.05 and (select min(x) from unnest(ps) x) >= 1.0 / 201;
+  ok := (ks ->> 'p')::float8 >= 0.05 and (select min(x) from unnest(ps) x) >= 1::float8 / 201 - 1e-12;
   res := ripples._att_t(res, 'T7 null p-values uniform (KS p ≥ 0.05) and floored at 1/(N+1)', ok, ks - 'hist' || jsonb_build_object('min_p', (select min(x) from unnest(ps) x)));
   -- placebo shift 0 identity: the 'rival' code path at the hop's own onset gives the same T as the real path
   select hl.hop_id, hl.look_no into v_hop, v_look from ripples.att_hop_latest hl where hl.event_id = v_ev and hl.t_stat is not null order by hl.t_stat desc limit 1;
@@ -239,17 +242,18 @@ begin
 
   -- T17 (6.1) the fixture's frozen batch carries the frozen per-channel L, the engine and graph versions, has no duplicate (event, parent, node,
   -- sign) candidates (S3), and every finalised look was BH-scored on p_h (S1)
-  ok := not exists (select 1 from ripples.att_hop_candidates c where c.event_id = v_ev and c.role = 'library' and (c.l_by_channel is null or c.engine_version <> '6.1' or c.graph_version is null))
+  ok := not exists (select 1 from ripples.att_hop_candidates c where c.event_id = v_ev and c.role = 'library' and (c.l_by_channel is null or c.engine_version not like '6.1%' or c.graph_version is null))
         and (select l_by_channel ->> 'PHYS' from ripples.att_hop_candidates where hop_id = v_hop) = '7'
         and not exists (select 1 from ripples.att_hop_candidates c where c.event_id = v_ev and c.role <> 'negative_control' group by c.as_of, c.event_id, c.parent_hop, c.node, c.sign having count(*) > 1)
         and not exists (select 1 from ripples.att_hop_tests t join ripples.att_hop_candidates c on c.hop_id = t.hop_id where c.event_id = v_ev and t.q_w is not null and t.look_no < 100
-                        and abs((t.detail -> 'bh' ->> 'p_bh')::float8 - t.fluke::float8) > 1e-6)
+                        and abs((t.detail -> 'bh' ->> 'p_bh')::float8 - ripples.att_bh_input(t.p_date, t.n_date, t.p_topic, t.n_topic, t.p_link, t.n_link, t.fluke, coalesce((ripples._att_cfg('engine') ->> 'bh_min_draws')::int, 200))::float8) > 1e-6)
         and (select every(sign <> 0) from ripples.att_hop_candidates c where c.event_id = v_ev and c.role = 'negative_control');
-  res := ripples._att_t(res, 'T17 frozen L / versions on the batch, no duplicate paths, BH input = p_h, signed negative controls', ok,
+  res := ripples._att_t(res, 'T17 frozen L / versions on the batch, no duplicate paths, BH input = max over families with >= bh_min_draws draws (p_h fallback), signed negative controls', ok,
            (select jsonb_build_object('l_by_channel', l_by_channel, 'engine_version', engine_version, 'graph_version', left(graph_version, 12)) from ripples.att_hop_candidates where hop_id = v_hop));
 
   -- T18 (B4, the audit's stop case) a storm with onset in Thanksgiving week 2025 over New York proposes the NYC transit targets (geo filter)
   -- and can NEVER reach Measured: the onset and the window's peak sit on registered common-shock days. Real data, real code path.
+  if p_only is null or 'T18' = any(p_only) then
   v_ev2 := ripples.att_library_event(null, 'Test Thanksgiving-week storm (NY)', 'hazard.storm', '2025-11-26', 'library',
                                      '{"state": ["NY", "NJ"], "ba": ["NYIS"]}'::jsonb);
   run2 := ripples.att_run_library(v_ev2);
@@ -265,13 +269,14 @@ begin
   res := ripples._att_t(res, 'T18 Thanksgiving-week storm over New York: NYC transit proposed, common-shock flagged, never Measured (real data)', ok,
            jsonb_build_object('measured', n_meas2, 'tested', n_tested2, 'subway', to_jsonb(v_sub), 'run', run2 - 'freeze' - 'depth2',
                               'nodes', (select jsonb_agg(jsonb_build_object('node', hl.node, 'tier', hl.tier, 'T', round(hl.t_stat::numeric, 2), 'flags', hl.flags) order by hl.node) from ripples.att_hop_latest hl where hl.event_id = v_ev2)));
+  end if;
 
     if p_cleanup then raise exception using errcode = 'P0999', message = 'fixture rollback'; end if;
   exception when sqlstate 'P0999' then null;
   end;
   return jsonb_build_object('ok', not exists (select 1 from jsonb_array_elements(res) r where not (r ->> 'ok')::boolean), 'tests', res);
 end $$;
-revoke all on function ripples.att_test_engine(boolean) from anon, authenticated, public;
+revoke all on function ripples.att_test_engine(boolean, text[]) from anon, authenticated, public;
 
 -- ---------------------------------------------------------------------------------------------------------------------
 -- On-demand runners. The harness takes ~8 minutes, longer than the 2-minute statement_timeout the MCP/pg_cron sessions
@@ -288,7 +293,7 @@ begin
   if coalesce(req ->> 'status', '') <> 'pending' then return jsonb_build_object('idle', true); end if;
   if not pg_try_advisory_lock(hashtext('ripples.att_test_runner')) then return jsonb_build_object('skipped', 'running'); end if;
   begin
-    r := ripples.att_test_engine(true);
+    r := ripples.att_test_engine(true, case when req ? 'only' then (select array_agg(x) from jsonb_array_elements_text(req -> 'only') x) end);
     perform ripples.att_state_set('engine.test', r || jsonb_build_object('at', now(), 'seconds', round(extract(epoch from clock_timestamp() - t0)::numeric, 1)));
     perform ripples.att_state_set('engine.test.request', jsonb_build_object('status', 'done', 'at', now()));
   exception when others or query_canceled then
