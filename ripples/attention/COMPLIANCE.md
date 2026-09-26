@@ -165,6 +165,21 @@ The violations were all in the older Knock-On `ripples-*` pipeline and in one cr
 
 `att.ts` also enforces the window at run time for the `wikimedia` and `wikidata` buckets (`att_config.wm_quiet_utc`). The window is reserved for the Knock-On `ripples_tick` expand and build stages, which are the Wikimedia calls it protects.
 
+## YouTube Data API v3 (`att-youtube`, source `yt.api`, added 2026-09-26)
+
+**Terms.** Documented, keyed API only: `videos.list` with `chart=mostPopular` (1 unit/call). No `search.list` (100 units) is used. The YouTube API Services Terms "cached data" rule requires raw API data (view counts, etc.) to be refreshed or deleted within 30 days.
+- **Compliance:** the collector never writes a per-video row to any table. The only raw cache is two `ripples.att_state` rows (`yt.day` holding today's id→viewCount map, `yt.raw.prev` holding yesterday's), rotated once per UTC day, so the oldest raw number on disk is always under 48 hours old — well inside the 30-day cap. A daily cron (`att-youtube-raw-cleanup`, `ripples.att_yt_raw_cleanup(28)`) is a safety net that deletes any `yt.raw%` state row older than 28 days, in case the rotation ever stalls; in normal operation it deletes 0 rows because the rotation already keeps things far under that.
+- Only DERIVED aggregates are kept long-term in `ripples.attention_obs`: per region×category top-50 view-sum (`views_top50`), a new-entrant count (`entrants`), the median per-video view-gain since yesterday's snapshot of the same video ids (`velocity_median`), and a per-topic count of trending-chart title matches (`topic_hits`).
+- **No personal data.** No commenter or viewer identity of any kind is read or stored. Video/channel titles are read only in memory (for topic-keyword matching) and are never written to a table, row, or log — `att_runs` and `att_state` were grepped for the API key prefix (`AIza`) after a live run and found clean.
+
+**Demarcation.** Grade GREEN, `yt.api` source row (previously a disabled placeholder, now enabled). Serial requests through `politeFetch` (`spacing_ms=300`); robots.txt for `www.googleapis.com` is checked and cached like every other source. A 429, a 403 (including `quotaExceeded`), or a 503 hits the shared `att.ts` kill switch exactly like any other source: the host is killed for the rest of the run (permanently on 401/403, until UTC midnight on 429/503) and never retried in that run — no YouTube-specific code was needed for this.
+
+**Quota.** 40 regionCodes × 7 videoCategoryId buckets (`0`=all/omit, 10 Music, 20 Gaming, 24 Entertainment, 25 News & Politics, 28 Science & Technology, 17 Sports) = 280 `videos.list` calls/day = 280 quota units/day, verified live (see below). Capped at 3,000/day via `att_config.budgets.youtube` (a dedicated `att_sources.budget_bucket`), far under YouTube's 10,000 units/day project default and under the 3,000/day ceiling the owner set for this build.
+
+**Live verification (2026-09-26, run_id 1201).** `collect` ran all 280 combos in 89.4 s, 280/280 requests OK (`200`), 280 attention_obs rows, 280 new series, `partial:false`. Budget bucket `youtube`: 281/3000 used (includes 1 unit from an earlier `peek` probe). `ripples.att_state` rows `yt.day` (313.8 KB) and `yt.topic.day` (35 B) contained no leaked key material (`AIza` prefix grep = 0 hits), and neither did any `att_runs.detail` row for this function.
+
+**Storage footprint.** Raw cache: two `att_state` rows, ~310 KB each once both `yt.day` and `yt.raw.prev` exist (well under the 5 MB target). Derived series: 280 series rows so far (one per region×category×metric that has fired), growing by up to ~4 metrics × 280 combos + up to 52 topic rows per day as `entrants`/`velocity_median`/`topic_hits` start landing from day 2 onward — small numeric rows in `attention_obs`, the same shape as every other daily source in this system.
+
 ## Database size (limit 400 MB)
 
 **307 MB used, which is 77% of the limit.** At the att-news check at 15:14 it was 101 MB. Most of the growth came from today's backfills: att-econ added about 1.19 M rows in the last 2 h (NOAA is done; 7 EIA-930 files are left) and att-library FEMA added about 0.15 M rows.
