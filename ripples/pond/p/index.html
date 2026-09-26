@@ -14,9 +14,9 @@
 <!--/META-->
 <meta name="theme-color" content="#0F1516">
 <link rel="icon" href="../../icon-192.png">
-<link rel="stylesheet" href="../pond.css">
-<link rel="stylesheet" href="../app.css">
-<link rel="stylesheet" href="../site.css">
+<link rel="stylesheet" href="../pond.min.css">
+<link rel="stylesheet" href="../app.min.css">
+<link rel="stylesheet" href="../site.min.css">
 <style>
 body.loading main{visibility:hidden}
 .rule-hero{display:grid;grid-template-columns:440px 1fr;gap:24px;align-items:center}
@@ -77,8 +77,8 @@ body.loading main{visibility:hidden}
   <section class="sec"><h2>Follow this</h2><div class="follow dark" id="follow"></div></section>
 </main>
 <footer><div><span>A pattern across past events is not evidence about any one event. Consistent with, never proof of cause.</span><span id="foot"></span></div></footer>
-<script src="../pond.js"></script>
-<script src="../site.js"></script>
+<script src="../pond.min.js"></script>
+<script src="../site.min.js"></script>
 <script>
 (async function () {
   const { $, esc, fmtDayY, ROOT, compact } = RM; RM.nav('now'); RM.analytics('pond_pattern');
@@ -106,15 +106,15 @@ body.loading main{visibility:hidden}
   const lag = p.window.grain === 'week' ? p.window.post * 7 : p.window.post;
   const sv = $('#pond');
   Pond.render(sv, { event: { name: p.event_label, sub: `${p.n_events} of them, pooled`, magnitude: p.pond && p.pond.stone != null ? p.pond.stone : .5 }, domains: doms, rings: RM.RINGS, ringLabelAngle: -30,
-    effects: [{ id: 'rule', domain: doms.indexOf(doms[1]), lag_days: lag, magnitude: p.pond && p.pond.ripple != null ? p.pond.ripple : Math.min(1, Math.abs(p.effect) / 25), tier: 'likely', kind: 'pad', far_shore: p.pond && p.pond.reach === 1, num: `${p.effect > 0 ? '+' : '−'}${Math.abs(p.effect)}%`, short: p.outcome_label, headline: `${p.outcome_label}, ${p.effect}% across ${p.n_events} past ${noun}`, plain: sentence, label_side: 'left' }],
+    effects: [], shore: [{ id: 'rule', domain: doms.indexOf(doms[1]), lag_days: lag, far_shore: true, num: `${p.effect > 0 ? '+' : '−'}${Math.abs(p.effect)}%`, short: p.outcome_label, headline: `${p.outcome_label}, ${p.effect}% across ${p.n_events} past ${noun}`, plain: sentence, pattern: { n_events: p.n_events }, label_side: 'left' }],
     flats: Math.round((1 - p.share_positive) * 5) ? Array.from({ length: Math.round((1 - p.share_positive) * 5) }, (_, i) => ({ name: `${Math.round((1 - p.share_positive) * 100)}% moved the other way`, domain: doms.indexOf(doms[1]), lag_days: lag, offset: (i - 1) * 12 })) : [] }, { compact, reduceMotion: true, viewBox: compact ? [-480, -480, 960, 960] : [-560, -470, 1120, 940] });
-  sv.setAttribute('aria-label', `A pond for the rule: a stone the size of a typical ${sing}, one half-filled pad at ${p.window.post} ${p.window.grain}s reading ${p.effect}% ${p.outcome_label}, and reeds for the ${Math.round((1 - p.share_positive) * 100)}% of events that moved the other way.`);
+  sv.setAttribute('aria-label', `A pond for the rule: a stone the size of a typical ${sing}, a cairn on the far shore at ${p.window.post} ${p.window.grain}s reading ${p.effect}% ${p.outcome_label}, and reeds for the ${Math.round((1 - p.share_positive) * 100)}% of events that moved the other way.`);
   sv.querySelectorAll('[tabindex]').forEach(g => g.removeAttribute('tabindex'));
   // the replication strip
   const rows = all ? all.map(x => ({ label: x.label, year: x.year, effect: x.effect_pct, pass: x.pass })) : examples.map(x => ({ label: x.label.replace(/ \(\d{4}\)$/, ''), year: String(x.onset).slice(0, 4), effect: x.effect, pass: x.p_space != null && x.p_space <= 0.05 }));
   $('#repl-h').textContent = all ? `Every ${sing}, one by one` : `${examples.length} of the ${p.n_events} ${noun}, one by one`;
   $('#repl-sub').textContent = all ? `${rows.filter(r => r.pass).length} of ${rows.length} passed the regional test alone` : `the strongest examples; the full per-event list arrives with the next publish`;
-  $('#repl-lead').textContent = `A half pad means that ${sing} passed the regional contrast on its own; reeds mean it did not, whichever way ${p.outcome_label} moved. The rule is the pool of all of them, not any one.`;
+  $('#repl-lead').textContent = `A half pad means that ${sing} passed the regional contrast on its own (well supported, not Measured); reeds mean it did not, whichever way ${p.outcome_label} moved. The rule is the pool of all of them, not any one.`;
   const strip = $('#strip');
   rows.forEach(r => { const c = document.createElement('div'); c.className = 'pc' + (r.pass ? '' : ' no'); c.setAttribute('role', 'img'); c.setAttribute('aria-label', `${r.label} ${r.year}: ${p.outcome_label} ${r.effect}%, ${r.pass ? 'regional test passed' : 'no pass'}`);
     const s2 = document.createElementNS('http://www.w3.org/2000/svg', 'svg'); c.appendChild(s2);

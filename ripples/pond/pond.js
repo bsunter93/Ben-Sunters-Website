@@ -256,7 +256,7 @@
     (P.flats || P.nulls || []).forEach((n, i) => {
       const p = pos(n.domain, n.lag_days, n._off || 0);
       const bed = reeds(gG, p.x, p.y, 100 + i, p.a);
-      if (compact) bed.querySelector('.hit').setAttribute('r', 54);
+      if (compact) bed.querySelector('.hit').setAttribute('r', 58);
       bed.setAttribute('tabindex', '0'); bed.setAttribute('role', 'button');
       bed.setAttribute('aria-label', `${n.name}: checked, stayed inside its normal range. The ripple stopped here.`);
       bed.dataset.name = n.name; bed.dataset.id = n.id || ('flat' + i);
@@ -276,7 +276,7 @@
       m.setAttribute('tabindex', '0'); m.setAttribute('role', 'button'); m.dataset.id = u.id;
       m.setAttribute('aria-label', `${u.name}: pre-registered, window closed ${u.window_close}, test not yet run.`);
       el('title', {}, m, `${u.name}: pre-registered, untested`);
-      el('circle', { cx: 0, cy: 0, r: compact ? 54 : 16, class: 'hit' }, m);
+      el('circle', { cx: 0, cy: 0, r: compact ? 58 : 16, class: 'hit' }, m);
       placer.reserve(p.x, p.y, 20, 20);
     }));
 
@@ -304,10 +304,10 @@
       el('ellipse', { cx: 0, cy: 4, rx: 9, ry: 4 }, c); el('ellipse', { cx: 1, cy: -2, rx: 6.5, ry: 3.2 }, c); el('ellipse', { cx: -.5, cy: -7, rx: 4, ry: 2.4 }, c);
       const lab = el('g', { class: 'label', style: `animation-delay:${(ringDelay(p.r) + .35).toFixed(2)}s` }, wrap);
       if (!compact && !thumb) {
-        const best = placer.place(p.x, p.y, 36, [{ text: s.num + ' ' + s.short, size: fs.lbl }, { text: `World rule across ${s.pattern.n_events} hurricanes`, size: fs.tier }], s.label_side || 'auto', true);
+        const best = placer.place(p.x, p.y, 36, [{ text: s.num + ' ' + s.short, size: fs.lbl }, { text: `World rule across ${s.pattern.n_events} ${s.pattern.noun || 'events'}`, size: fs.tier }], s.label_side || 'auto', true);
         const t = el('text', { x: f1(best.lx), y: f1(best.ly), class: 'lbl', 'text-anchor': best.anchor }, lab);
         el('tspan', { class: 'lbl-num' }, t, s.num + ' '); el('tspan', {}, t, s.short);
-        el('text', { x: f1(best.lx), y: f1(best.ly) + 16, class: 'lbl-tier', 'text-anchor': best.anchor }, lab, `World rule across ${s.pattern.n_events} hurricanes`);
+        el('text', { x: f1(best.lx), y: f1(best.ly) + 16, class: 'lbl-tier', 'text-anchor': best.anchor }, lab, `World rule across ${s.pattern.n_events} ${s.pattern.noun || 'events'}`);
       } else if (compact && !thumb) {
         el('circle', { cx: f1(p.x + 22), cy: f1(p.y - 22), r: 26, class: 'badge' }, lab);
         el('text', { x: f1(p.x + 22), y: f1(p.y - 13), class: 'badge-num', 'text-anchor': 'middle' }, lab, 'R');
@@ -332,7 +332,7 @@
         el('path', { d: cd, class: 'crest', 'stroke-width': f1((1.4 + 3.2 * e.magnitude) * dr.crest), style: `opacity:${.95 * dr.crest}` }, wrap);
       }
       if (e.tier === 'watching' || e.tier === 'contrast') el('circle', { cx: 0, cy: 0, r: p.r, class: 'watch-ring', style: `--r:${f1(p.r)}` }, wrap);
-      el('circle', { cx: f1(p.x), cy: f1(p.y), r: compact ? Math.max(size + 14, 54) : size + 14, class: 'hit' }, wrap);   // 54 units = 22 px radius on a phone: a 44 px tap target
+      el('circle', { cx: f1(p.x), cy: f1(p.y), r: compact ? Math.max(size + 14, 58) : size + 14, class: 'hit' }, wrap);   // 54 units = 22 px radius on a phone: a 44 px tap target
       if (e.kind === 'duck') duck(wrap, p.x, p.y, 0.8 + e.magnitude * .6, p.a); else lilyPad(wrap, p.x, p.y, size, e.tier);
       if (e.far_shore) {
         const foam = el('g', { class: 'foam' }, wrap);
@@ -344,9 +344,10 @@
         el('text', { x: f1(p.x + size * .7 + 10), y: f1(p.y - size * .7 - 1), class: 'badge-num', 'text-anchor': 'middle' }, lab, String(i + 1));
       } else if (!thumb) {
         const sub = e.published && e.published.reason ? `${TIER[e.tier]}: ${e.published.reason}` : e.tier === 'contrast' ? 'Regional contrast passed, not yet Measured' : e.far_shore ? `${TIER[e.tier]}, reached the far shore` : e.tier === 'watching' && e.watch ? `Watching, resolves in ${e.watch.days_left} days` : (e.lag_days < 0 ? `${TIER[e.tier]}, ${-e.lag_days} days before` : TIER[e.tier]);
-        const best = placer.place(p.x, p.y, size + 12, [{ text: e.num + ' ' + e.short, size: fs.lbl }, { text: sub, size: fs.tier }], e.label_side || 'auto');
+        const numL = e.num_label != null ? e.num_label : (e.num || '');
+        const best = placer.place(p.x, p.y, size + 12, [{ text: (numL ? numL + ' ' : '') + e.short, size: fs.lbl }, { text: sub, size: fs.tier }], e.label_side || 'auto');
         const t = el('text', { x: f1(best.lx), y: f1(best.ly), class: 'lbl', 'text-anchor': best.anchor }, lab);
-        el('tspan', { class: 'lbl-num' }, t, e.num + ' '); el('tspan', {}, t, e.short);
+        if (numL) el('tspan', { class: 'lbl-num' }, t, numL + ' '); el('tspan', {}, t, e.short);
         el('text', { x: f1(best.lx), y: f1(best.ly) + 16, class: 'lbl-tier', 'text-anchor': best.anchor }, lab, sub);
       }
       nodes[e.id] = wrap;

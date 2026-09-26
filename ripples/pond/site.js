@@ -78,9 +78,11 @@
       const g = e.engine || {}, rho = e.rho ?? (g.rho && typeof g.rho === 'object' ? g.rho.shrunk : g.rho) ?? (e.num && /×$/.test(e.num) ? parseFloat(e.num) : null);
       e.rho = rho;
       if (!e.num && rho != null) e.num = rho.toFixed(2) + '×';
+      if (!e.num) e.num = '';
       // the one number people can feel: percent against its own normal (CX fix 2); the ratio stays in the drawers
       e.num_pct = rho != null ? pct(rho) : (e.chart && e.chart.peak && e.chart.peak.t != null ? pct(e.chart.peak.t) : null);
       e.num_pct_kind = rho != null ? 'effect' : (e.chart && e.chart.peak ? 'peak' : null);
+      e.num_label = rho != null ? e.num_pct : '';   // the one number on the water (CX fix 2); the ratio stays in the drawers
       if (e.magnitude == null) e.magnitude = rho != null ? Math.min(1, Math.abs(Math.log(rho)) / 0.25) : (e.chart && e.chart.peak && e.chart.peak.t ? Math.min(1, Math.abs(Math.log(e.chart.peak.t)) / 0.25) : 0.25);
       if (e.lag_days == null) e.lag_days = e.lag_from_event_days ?? (e.chart && e.chart.peak && e.chart.onset ? Math.max(0, Math.round((new Date(e.chart.peak.d) - new Date(e.chart.onset)) / 864e5)) : 1);
       if (e.lag_from_event_days == null) e.lag_from_event_days = e.lag_days;
@@ -241,7 +243,7 @@
   }
   /* diff the current story list against the last visit: new ripples, changes to watched items, resolved mysteries, new patterns */
   function gone(S, prev) {
-    if (!prev || !prev.items) return null;
+    if (!prev || !prev.items || !Object.keys(prev.items).length) return null;   // first visit: nothing to compare
     const out = [], w = watchAll();
     (S.featured || []).forEach(s => {
       const id = s.story_id, was = prev.items[id], v = s.share && s.share.version != null ? s.share.version : s.version;

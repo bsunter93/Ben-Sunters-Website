@@ -41,7 +41,7 @@
 
   /* ---------- hero copy (from the story and published fields; the frontend composes only the connective tissue) ---------- */
   $('#kicker').innerHTML = `${esc(name)} <span class="num">${esc(ev.date || fmtDayY(ev.onset))}</span> <span class="tag-src">${esc(src)}${quiet ? ', shown quietly' : ''}</span>${ev.is_control ? `<span class="tag-src" title="${esc((P.honesty && P.honesty.control_note) || 'A known-effect test case')}">known-effect test case</span>` : ''}`;
-  if (P.story && (P.story.archetype || P.story.kind === 'cascade')) $('#arch').innerHTML = RM.archTag(P.story.archetype) + (P.story.archetype ? `<small style="font-size:12px;color:var(--text-3);margin-left:8px">${esc(RM.archText(P.story.archetype))} A story label, not evidence.</small>` : '');
+  if (P.story && (P.story.archetype || P.story.kind === 'cascade')) $('#arch').innerHTML = RM.archTag(P.story.archetype) + (P.story.archetype ? `<small style="font-size:12px;color:var(--text-3)">${esc(RM.archText(P.story.archetype))} A story label, not evidence.</small>` : '');
   const hook = (P.story && P.story.hook) || (hero ? hero.kind === 'effect' ? `${hero.o.lag_text ? hero.o.lag_text[0].toUpperCase() + hero.o.lag_text.slice(1) : 'Afterwards'}, something moved in ${hero.o.short}.` : hero.kind === 'untested' ? `Something is still being watched in ${hero.o.name}.` : `The expected move in ${hero.o.name} never came.` : 'Nothing has resolved yet.');
   const H1 = { hook: `${esc(name)}. <span class="quiet">${esc(hook)}</span>` };
   const nMeasured = P.effects.filter(e => tierOf(e) === 'measured').length, nMoved = P.effects.length, nFlat = (P.flats || []).length, nWatch = (P.untested || []).length;
@@ -64,9 +64,9 @@
   }
   $('#trust').innerHTML = trustLine();
   const T = P.travel;
-  $('#reach').innerHTML = T && T.days != null ? `<span class="num">${T.domains}</span> domain${T.domains === 1 ? '' : 's'} · <span class="num">${T.days}</span> days · ${RM.ord(T.depth || 1)}-order<small>How far the ripple travelled.${T.usual_reach ? ' ' + esc(T.usual_reach[0].toUpperCase() + T.usual_reach.slice(1)) + '.' : ''}</small>` : `<span class="num">0</span> domains · nothing resolved yet<small>How far the ripple travelled. It has not reached a shore we can measure.</small>`;
+  $('#reach').innerHTML = T && T.days != null ? `<span class="num">${T.domains}</span> domain${T.domains === 1 ? '' : 's'} · <span class="num">${Math.max(T.days, E ? E.lag_days : 0)}</span> days · ${RM.ord(T.depth || 1)}-order<small>How far the ripple travelled.${T.usual_reach ? ' ' + esc(T.usual_reach[0].toUpperCase() + T.usual_reach.slice(1)) + '.' : ''}</small>` : `<span class="num">0</span> domains · nothing resolved yet<small>How far the ripple travelled. It has not reached a shore we can measure.</small>`;
   $('#traced-sub').textContent = P.story ? P.story.story_sentence : '';
-  $('#foot-src').innerHTML = P.engine ? `Engine ${esc(P.engine.method_hop)} tests${P.engine.method_contrast ? `, ${esc(P.engine.method_contrast)} regional contrasts` : ''}, batch ${esc(P.engine.batch)}. Ledger head seq ${P.ledger_head.seq}, ${esc(P.ledger_head.chain_hash.slice(0, 12))}… <a href="${ROOT}how/">How Ripple Map knows</a>.` : `${esc(P.source || 'story layer')}, version ${P.version}. <a href="${ROOT}how/">How Ripple Map knows</a>.`;
+  $('#foot-src').innerHTML = P.engine ? `Engine ${esc(P.engine.method_hop)} tests${P.engine.method_contrast ? `, ${esc(P.engine.method_contrast)} regional contrasts` : ''}${P.engine.batch ? `, batch ${esc(P.engine.batch)}` : ''}. Ledger head seq ${P.ledger_head.seq}, ${esc(P.ledger_head.chain_hash.slice(0, 12))}… <a href="${ROOT}how/">How Ripple Map knows</a>.` : `${esc(P.source || 'story layer')}, version ${P.version}. <a href="${ROOT}how/">How Ripple Map knows</a>.`;
   document.title = `${P.story ? P.story.short_title : name}: Ripple Map`;
 
   /* ---------- the pond ---------- */
@@ -82,7 +82,10 @@
     document.body.classList.remove('hook'); h1.innerHTML = H1.traced; renderFollow();
     const b = lede.offsetHeight, hb = h1.offsetHeight;
     document.body.classList.add('hook'); h1.innerHTML = H1.hook;
-    if (!compact) { lede.style.minHeight = Math.max(a, b) + 'px'; h1.style.minHeight = Math.max(ha, hb) + 'px'; }
+    if (!compact) lede.style.minHeight = Math.max(a, b) + 'px';
+    h1.style.minHeight = Math.max(ha, hb) + 'px';
+    // the after-reveal strip takes its space now and becomes visible when the tier lands
+    const af = $('#after'); af.classList.add('pending'); afterReveal(); af.dataset.on = ''; af.classList.add('pending');
   })();
   document.body.classList.remove('loading');
   RM.track('hero_view');
@@ -128,7 +131,7 @@
   }
   /* after the reveal: the flats right under the pond (the counter-intuitive part), and one button to the evidence */
   function afterReveal() {
-    const a = $('#after'); if (!a || a.dataset.on) return; a.dataset.on = '1'; a.hidden = false;
+    const a = $('#after'); if (!a) return; a.classList.remove('pending'); if (a.dataset.on) return; a.dataset.on = '1'; a.hidden = false;
     const o = hero && hero.o;
     a.innerHTML = `<div class="after-row"><button class="btn primary" type="button" id="btn-evidence">${hero ? hero.kind === 'effect' ? 'See the evidence' : hero.kind === 'untested' ? 'See the window' : 'See why it stayed flat' : 'See the pond'}<svg width="14" height="14" aria-hidden="true"><use href="#i-arrow"/></svg></button>${nFlat ? `<span class="after-k">${nFlat === 1 ? 'One thing' : numw(nFlat) + ' things'} everyone might expect to move stayed flat:</span>` : nWatch ? `<span class="after-k">${nWatch} series still being watched:</span>` : ''}</div>
       ${nFlat ? `<div class="after-chips">${P.flats.slice(0, 8).map(f => `<button type="button" data-open="${esc(f.id)}" data-kind="flat"><svg aria-hidden="true"><use href="#k-grass"/></svg>${esc(f.short_name || f.name)}</button>`).join('')}${nFlat > 8 ? `<button type="button" data-scroll="stopped">and ${nFlat - 8} more</button>` : ''}</div>` : nWatch ? `<div class="after-chips">${P.untested.slice(0, 6).map(u => `<button type="button" data-open="${esc(u.id)}" data-kind="untested"><svg aria-hidden="true"><use href="#k-float"/></svg>${esc(u.name)}<small>${RM.countdown(u.window_close)}</small></button>`).join('')}</div>` : ''}`;
@@ -147,57 +150,31 @@
   function seriesChart(e, w = 420, h = 170, mini = false) {
     const c = e.chart, Sr = c.series, m = { t: mini ? 6 : 24, r: mini ? 6 : 96, b: mini ? 4 : 22, l: mini ? 4 : 30 };
     const x = i => m.l + i / (Sr.length - 1) * (w - m.l - m.r);
-    const vals = Sr.flatMap(s => [s.t, s.o]).concat([c.band.lo, c.band.hi]);
+    const band0 = c.band && c.band.lo != null ? c.band : null, hasO = Sr.some(s => s.o != null);
+    const vals = Sr.flatMap(s => [s.t, hasO ? s.o : s.t]).concat(band0 ? [band0.lo, band0.hi] : [1]);
     let ymin = Math.min(...vals), ymax = Math.max(...vals); const pad = (ymax - ymin) * .1; ymin -= pad; ymax += pad;
     const y = v => h - m.b - (v - ymin) / (ymax - ymin) * (h - m.t - m.b);
     const idx = d => Sr.findIndex(s => s.d === d);
-    let band = `M${x(0)},${y(c.band.hi)}L${x(Sr.length - 1)},${y(c.band.hi)}L${x(Sr.length - 1)},${y(c.band.lo)}L${x(0)},${y(c.band.lo)}`;
-    let l1 = '', l2 = ''; Sr.forEach((s, i) => { l1 += (i ? 'L' : 'M') + x(i) + ',' + y(s.t); l2 += (i ? 'L' : 'M') + x(i) + ',' + y(s.o); });
+    let band = band0 ? `M${x(0)},${y(band0.hi)}L${x(Sr.length - 1)},${y(band0.hi)}L${x(Sr.length - 1)},${y(band0.lo)}L${x(0)},${y(band0.lo)}` : '';
+    let l1 = '', l2 = ''; Sr.forEach((s, i) => { l1 += (i ? 'L' : 'M') + x(i) + ',' + y(s.t); if (hasO && s.o != null) l2 += (l2 ? 'L' : 'M') + x(i) + ',' + y(s.o); });
     const pk = idx(c.peak.d), lf = idx(c.landfall || c.onset), pw = [idx(c.post_window[0]), idx(c.post_window[1])];
     const nd = e.contrast ? e.contrast.n_donors : null;
-    let s = `<svg viewBox="0 0 ${w} ${h}" role="img" aria-label="${esc(e.title)} against its own normal band${nd ? ` and ${nd} unaffected regions` : ''}, indexed to normal. On ${fmtDay(c.peak.d)} it sat at ${Math.round(c.peak.t * 100)}% of normal${nd ? ` while the other regions sat at ${Math.round(c.peak.o * 100)}%` : ''}.">`;
+    let s = `<svg viewBox="0 0 ${w} ${h}" role="img" aria-label="${esc(e.title)} against its own normal${band0 ? ' band' : ''}${nd && hasO ? ` and ${nd} unaffected regions` : ''}, indexed to normal. On ${fmtDay(c.peak.d)} it sat at ${Math.round(c.peak.t * 100)}% of normal${nd && c.peak.o != null ? ` while the other regions sat at ${Math.round(c.peak.o * 100)}%` : ''}.">`;
     s += `<rect class="win" x="${x(pw[0])}" y="${m.t - 4}" width="${x(pw[1]) - x(pw[0])}" height="${h - m.b - m.t + 4}"/>`;
-    s += `<path class="band" d="${band}Z"/>`;
+    if (band0) s += `<path class="band" d="${band}Z"/>`; else s += `<line class="onset" x1="${x(0)}" x2="${x(Sr.length - 1)}" y1="${y(1)}" y2="${y(1)}"/>`;
     s += `<line class="onset" x1="${x(lf)}" x2="${x(lf)}" y1="${m.t - 4}" y2="${h - m.b}"/>`;
-    s += `<path class="line2" d="${l2}"/><path class="line" d="${l1}"/><circle class="pk" cx="${x(pk)}" cy="${y(Sr[pk].t)}" r="3.5"/>`;
+    s += `${l2 ? `<path class="line2" d="${l2}"/>` : ''}<path class="line" d="${l1}"/><circle class="pk" cx="${x(pk)}" cy="${y(Sr[pk].t)}" r="3.5"/>`;
     if (!mini) {
       s += `<text class="lab strong" x="${x(lf)}" y="${m.t - 8}" text-anchor="middle">${c.landfall ? 'landfall' : 'onset'}</text>`;
       s += `<text class="lab acc" x="${x(pk) - 9}" y="${y(Sr[pk].t) + 4}" text-anchor="end">${Math.round(Sr[pk].t * 100)}% of normal, ${fmtDay(c.peak.d)}</text>`;
-      if (nd) s += `<text class="lab" x="${w - m.r + 8}" y="${y(Sr[Sr.length - 1].o) - 6}">${nd} other regions</text><text class="lab" x="${w - m.r + 8}" y="${y(Sr[Sr.length - 1].o) + 8}">(their normal)</text>`;
+      if (nd && hasO) s += `<text class="lab" x="${w - m.r + 8}" y="${y(Sr[Sr.length - 1].o) - 6}">${nd} other regions</text><text class="lab" x="${w - m.r + 8}" y="${y(Sr[Sr.length - 1].o) + 8}">(their normal)</text>`;
       s += `<text class="lab acc" x="${w - m.r + 8}" y="${y(Sr[Sr.length - 1].t) + 14}">${esc(e.short_label || 'this series')}</text>`;
-      s += `<text class="lab" x="${x(0) + 4}" y="${y(c.band.hi) - 4}">normal band</text>`;
+      s += band0 ? `<text class="lab" x="${x(0) + 4}" y="${y(band0.hi) - 4}">normal band</text>` : `<text class="lab" x="${x(0) + 4}" y="${y(1) - 4}">its normal</text>`;
       [1, .8, .6].forEach(v => { if (v > ymin && v < ymax) s += `<text class="lab" x="${m.l - 6}" y="${y(v) + 4}" text-anchor="end">${Math.round(v * 100)}%</text>`; });
       s += `<text class="lab" x="${m.l}" y="${h - 4}">${fmtDay(Sr[0].d)}</text><text class="lab" x="${w - m.r}" y="${h - 4}" text-anchor="end">${fmtDay(Sr[Sr.length - 1].d)}</text>`;
       s += `<text class="lab" x="${x(pw[1]) + 5}" y="${m.t + 8}">${(idx(c.post_window[1]) - idx(c.post_window[0]) + 1)}-day test window</text>`;
     }
     return s + '</svg>';
-  }
-  function luckPanel(e) {
-    if (!e.engine || !e.engine.n_date || e.engine.exceed_topic == null) return `<p>${e.fluke ? esc(e.fluke.text) : 'This stop has not been tested against lookalikes yet.'}${e.fluke && e.fluke.f_1_in ? ` Decoy links this strong turn out to be flukes about 1 in ${e.fluke.f_1_in} times.` : ''} The full placebo families (fake dates, other series, random links) arrive with this event's pond payload.</p>`;
-    const g = e.engine, fam = [
-      { name: `${g.n_date.toLocaleString()} fake dates, same series`, n: g.n_date, hits: g.exceed_date, p: g.p_date },
-      { name: `${g.n_topic} other series, same date`, n: g.n_topic, hits: g.exceed_topic, p: g.p_topic },
-      { name: `${g.n_link} random links`, n: g.n_link, hits: g.exceed_link, p: g.p_link }];
-    const rows = fam.map(f => `<div class="pf"><span>${esc(f.name)}</span><span class="pf-bar" aria-hidden="true"><i style="width:${Math.max(1.5, Math.min(100, f.hits / f.n * 100))}%"></i></span><b class="num">${f.hits} of ${f.n}</b><small>about 1 in ${Math.round(1 / f.p)}</small></div>`).join('');
-    let sv = '', tail = '';
-    if (e.contrast) {
-      const c = e.contrast, v = c.in_time.values_logpts.map(x => Math.abs(x - c.in_time.centre) * 100), real = Math.abs(c.d_logpts - c.in_time.centre) * 100;
-      const w = 420, h = 100, bins = 26, mx = Math.max(real * 1.08, Math.max(...v) * 1.1), cnt = new Array(bins).fill(0);
-      v.forEach(x => cnt[Math.min(bins - 1, Math.floor(x / mx * bins))]++);
-      const top = Math.max(...cnt), bw = (w - 20) / bins;
-      sv = `<svg viewBox="0 0 ${w} ${h}" role="img" aria-label="${c.in_time.n} pseudo-storms at the same date in other years: the size of the Florida-minus-donors gap each produced. The real storm's gap of ${Math.round(real)} points sits beyond every one of them.">`;
-      cnt.forEach((n, i) => { const bx = i * bw, bh = n / top * (h - 34); sv += `<rect class="bar ${i * mx / bins >= real ? 'tail' : ''}" x="${bx + 1}" y="${h - 20 - bh}" width="${bw - 2}" height="${bh}" rx="1.5"/>`; });
-      const rx = Math.min(w - 20, real / mx * (w - 20));
-      sv += `<line class="you" x1="${rx}" x2="${rx}" y1="4" y2="${h - 20}"/><text class="lab strong" x="${rx - 6}" y="12" text-anchor="end">this storm, ${Math.round(real)} pts</text><text class="lab" x="0" y="${h - 5}">${c.in_time.n} pseudo-storms, same dates in other years</text><text class="lab" x="${w - 20}" y="${h - 5}" text-anchor="end">bigger gap →</text></svg>`;
-      tail = `<h4>And against the rest of the country</h4>${sv}<p>${c.in_time.n_bigger === 0 ? 'None' : c.in_time.n_bigger} of the ${c.in_time.n} pseudo-storms came close (in-time p ${c.p_time}). Against ${c.n_donors} unaffected regions shuffled into 30 fake Floridas, the real pair ranked first: about <b>1 in ${c.p_space_odds}</b>.</p>`;
-    }
-    return `<div class="luck"><div class="pfs" role="list" aria-label="Placebo families for the single-event test">${rows}</div><p>The engine's single-event test: T ${g.t_stat.toFixed(2)}${g.bh ? `, corrected over ${g.bh.m} tests` : ''} (q ${g.q_w.toFixed(3)}). A random date on this series looks this strong about <b>1 in ${Math.round(1 / g.p_date)}</b> times.${g.f === 1 ? ' The calibrated fluke rate for this T bin is still warming up (too few decoys), so no fluke odds are quoted here.' : ''}</p>${tail}</div>`;
-  }
-  /* the third independent check: an ARIMA forecast of each series, per-series effect with its interval */
-  function forecastPanel(e) {
-    const f = e.forecast; if (!f) return '';
-    const lo = Math.min(...f.series.map(s => s.lo_pct), 0) - 3, hi = Math.max(...f.series.map(s => s.hi_pct), 0) + 3, X = v => (v - lo) / (hi - lo) * 100;
-    return `<div class="sect" id="forecast"><h3>An independent forecast model${f.state === 'agree' ? ' agrees' : f.state === 'pending' ? ' has not checked yet' : ' disagrees'}</h3><p>${esc(f.text)}</p><div class="fc">${f.series.map(s => `<div class="row"><span>Series ${s.series_id}, ${s.pre_days} days of history, ${s.post_days} days after onset</span><b>${s.effect_pct}% [${s.lo_pct}, ${s.hi_pct}]</b><div class="ci" role="img" aria-label="${s.effect_pct}% against the forecast, 95% interval ${s.lo_pct} to ${s.hi_pct}"><i style="left:${X(s.lo_pct)}%;width:${X(s.hi_pct) - X(s.lo_pct)}%"></i><em style="left:${X(0)}%"></em><b style="left:${X(s.effect_pct)}%"></b></div></div>`).join('')}<small>Zero is the model's own forecast (the thin line). Model ${esc(f.model)}, horizon ${f.horizon_days} days, evaluated ${fmtDayY(f.evaluated_at)}. ${esc(f.calib_text)}</small></div></div>`;
   }
   function replicationRow(r) {
     if (r.all) {
@@ -214,31 +191,11 @@
     return `<div class="sect" id="next"><h3>What happens next</h3><div class="win">${RM.winBar(w.window_start, w.window_close, `${fmtDayY(w.window_start)}, registered`, `${fmtDayY(w.window_close)}, window ${RM.daysUntil(w.window_close) >= 0 ? 'closes' : 'closed'}`)}
       <p style="margin-top:10px">${esc(w.text || '')} ${w.prior != null ? `Prior for ${esc(String(w.name || '').toLowerCase())}: <b class="num">${Math.round(w.prior * 100)}%</b>.` : ''}${wd && wd.expected_1_in ? ` Similar ${noun}s: a move by then about <b class="num">1 in ${wd.expected_1_in}</b> times. Next look ${fmtDayY(wd.next_look)}.` : ''}</p></div><div class="why keep"><button class="btn primary" type="button" data-watch>${watched() ? 'Watching this ripple' : 'Keep watching'}</button></div></div>`;
   }
-  function drawers(e) {
-    if (!e.engine) return `<details class="drawer"><summary>Where the numbers come from</summary><p>This stop is drawn from the story layer's public payload (story ${esc(e.story_id || '')}, version ${P.version}): tier, effect, lag and the placebo odds above. The series chart, the three placebo families, the regional contrast and the ledger sequence numbers arrive with the event's pond payload. Until then the card shows only what has been published.</p><p><a href="${ROOT}how/">How Ripple Map knows</a>.</p></details>`;
-    const c = e.contrast, L = e.ledger, led = P.ledger;
-    const row = (k, v, h) => `<dt>${k}</dt><dd${h ? ' class="h"' : ''}>${v}</dd>`;
-    const g = e.engine;
-    return `<details class="drawer"><summary>The single-event test (engine ${esc(g.version)})</summary><dl class="dl">
-      ${row('Series', e.node + ' (hop ' + e.hop_id + ')')}${row('Observed onset', fmtDayY(e.onset_observed) + ', lag ' + e.lag_from_event_days + ' d from the event')}${g.rho && typeof g.rho === 'object' && g.rho.shrunk != null ? row('Effect (shrunk)', g.rho.shrunk.toFixed(3) + '× [' + g.rho.lo.toFixed(3) + ', ' + g.rho.hi.toFixed(3) + ']' + (g.rho.raw != null ? '; raw ' + g.rho.raw.toFixed(3) : '')) : row('Effect', e.num || 'not yet published')}
-      ${e.chart && e.chart.peak ? row('Peak day', fmtDayY(e.chart.peak.d) + ', ' + Math.round(e.chart.peak.t * 100) + '% of normal') : ''}${g.t_stat != null ? row('T statistic', g.t_stat.toFixed(3)) : ''}${g.n_date ? row('Fake dates', `${g.exceed_date} of ${g.n_date} (p ${g.p_date.toFixed(4)})`) : ''}${g.n_topic ? row('Other series', `${g.exceed_topic ?? '–'} of ${g.n_topic} (p ${g.p_topic})`) : ''}${g.n_link ? row('Random links', `${g.exceed_link ?? '–'} of ${g.n_link} (p ${g.p_link.toFixed(3)})`) : ''}
-      ${g.bh ? row('BH (m ' + g.bh.m + ', weight ' + g.bh.weight + ')', 'q ' + g.q_w.toFixed(4)) : row('Corrected q', g.q_w != null ? g.q_w.toFixed(4) : '–')}${g.channels ? row('Channels', g.channels.agree + ' of ' + g.channels.of + (g.channels.names ? ' (' + g.channels.names.join(', ') + ')' : '')) : ''}${row('Fluke-rate bin', `T ${g.f_bin}: reads ${g.f}${g.f === 1 ? ' (warming up: too few decoys in this bin yet)' : ''}`)}${row('Flags / fails', ((g.flags || []).join(', ') || 'none') + ' / ' + ((g.fails || []).join(', ') || 'none'))}
-      ${row('Engine tier', TIER[e.engine_tier])}${e.published.ce ? row('Forecast gate', `${e.published.tier} (${e.published.reason || 'agrees'}; mode ${e.published.mode}; state ${e.published.ce.state}${e.published.ce.n_agree != null ? `, ${e.published.ce.n_agree} of ${e.published.ce.n_eligible} series agree` : ''})`) : ''}</dl>${g.f_note ? `<p>${esc(g.f_note)}</p>` : ''}</details>
-      ${c ? `<details class="drawer"><summary>The regional contrast (engine 6.2.1)</summary><dl class="dl">
-      ${row('Treated regions', c.treated.join(' + ') + ' (Florida)')}${row('Donor regions', c.n_donors)}${row('Window', `${c.window.pre_days} d before, ${c.window.post_days} d after ${fmtDayY(c.window.onset)}`)}
-      ${row('Treated change alone', c.treated_only_pct + '%')}${row('Contrast (treated − donors)', c.d_logpts + ' log pts = ' + c.effect_pct + '%')}${row('Centred on in-time median', c.d_centred + ' log pts')}
-      ${row('Robust se (1.4826 · MAD)', c.se)}${row('z', c.z)}${row('Peak day', fmtDayY(e.chart.peak.d) + ', Florida ' + Math.round(e.chart.peak.t * 100) + '% vs donors ' + Math.round(e.chart.peak.o * 100) + '%')}
-      </dl><p>${P.links && (P.links.csv_local || P.links.csv) ? `<a href="${esc(P.links.csv_local ? ROOT + P.links.csv_local : RM.STORAGE + P.links.csv)}" download>Download the daily series (CSV)</a>. ` : ''}Values are each region’s demand divided by its own mean over ${fmtDay(e.chart.pre_window[0])}–${fmtDay(e.chart.pre_window[1])}.</p></details>
-      <details class="drawer"><summary>Baseline, lag and pre-trends</summary><dl class="dl">${row('Baseline', 'season-matched: the same dates in every other panel year, never after the event')}${row('Lag', `${e.lag_days} days to the peak gap; the pre-registered window has no lag`)}
-      ${row('Leads (3 blocks before onset)', c.leads.join(', '))}${row('Pre-trend p', c.p_pre + ' (flat: p ≥ 0.10)')}</dl></details>
-      <details class="drawer"><summary>Placebos, synthetic control, multiple testing</summary><dl class="dl">${row('In-space p (30 fake Floridas)', `${c.p_space} (1 in ${c.p_space_odds})`)}${row('In-time p (' + c.in_time.n + ' pseudo-storms)', c.p_time)}
-      ${row('Synthetic control', `${c.synth_d} log pts, same sign; RMSPE ratio ${c.synth_ratio}, rank p ${c.synth_p}`)}${e.replication && e.replication.family ? row('Family q (24 hurricanes, BH)', e.replication.family.q + ' — ' + e.replication.family.strength) : ''}
-      ${P.calibration ? row('Decoy false-alarm rate (120 sets)', `${Math.round(P.calibration.decoy_fp_rate * 1000) / 10}% [${P.calibration.wilson.map(x => Math.round(x * 1000) / 10).join(', ')}]`) : ''}</dl></details>` : ''}
-      ${e.forecast ? `<details class="drawer"><summary>The forecast check (BigQuery, ${esc(e.forecast.model)})</summary><dl class="dl">${e.forecast.series.map(s => row(`Series ${s.series_id}`, `${s.effect_pct}% [${s.lo_pct}, ${s.hi_pct}], p ${s.p}`)).join('')}${row('Verdict', `${e.forecast.state}: ${e.forecast.n_agree} of ${e.forecast.n_eligible} series`)}${e.forecast.calibration.map(c => row(`Calibration, ${c.role.replace('_', ' ')}`, `${c.hops_sig} of ${c.hops_evaluated} significant, ${c.hops_agree} agree`)).join('')}${row('Run', esc(e.forecast.run))}</dl></details>` : ''}
-      <details class="drawer"><summary>Ledger and provenance</summary><dl class="dl">${row('Hop id', e.hop_id)}${L.register_seq ? row('Registered', `seq ${L.register_seq}${led && led[0] ? ', ' + fmtDayY(led[0].day) : ''}`) : ''}${led && led[0] && led[0].payload_hash ? row('Register hash', led[0].payload_hash, 1) : ''}
-      ${L.freeze_seq ? row('Grid frozen', `seq ${L.freeze_seq}${P.engine && P.engine.batch ? ', batch ' + esc(P.engine.batch) : ''}`) : ''}${L.frozen_hash ? row('Frozen hash', L.frozen_hash, 1) : ''}${L.model_seq ? row('Model versions', L.model_seq.join(', ') + ' (6.2, 6.2.1)') : ''}${L.calibration_seq ? row('Calibration', 'seq ' + L.calibration_seq) : ''}${L.control_seq ? row('Control audit', `seq ${L.control_seq}`) : ''}${L.resolve_seq ? row('Resolved', `seq ${L.resolve_seq}${g.resolved_at ? ', ' + fmtDayY(g.resolved_at.slice(0, 10)) : ''}`) : ''}${L.publish_seq || L.version_seq ? row('Version published', `seq ${L.publish_seq || L.version_seq}`) : ''}${L.cascade_head ? row('Cascade ledger head', L.cascade_head, 1) : ''}
-      ${P.ledger_head ? row('Chain head', `seq ${P.ledger_head.seq}`) + row('Head hash', P.ledger_head.chain_hash, 1) : ''}${c && c.computed_at ? row('Computed', c.computed_at.slice(0, 16).replace('T', ' ') + ' UTC') : ''}</dl><p><a href="${ROOT}how/">How Ripple Map knows</a>.</p></details>`;
-  }
+  /* the deep-evidence renderers load on the first card open (initial JS budget) */
+  let evP = null;
+  function ensureEvidence() { if (global_ev()) return Promise.resolve(); if (!evP) evP = new Promise((res, rej) => { const sc = document.createElement('script'); sc.src = ROOT + 'evidence' + (document.querySelector('script[src*="ripple.min.js"]') ? '.min' : '') + '.js'; sc.onload = res; sc.onerror = rej; document.head.appendChild(sc); }).then(() => window.RMEvidence.init({ P, TIER, esc, fmtDay, fmtDayY, ROOT })); return evP; }
+  function global_ev() { return !!window.RMEvidence && !!window.RMEvidence._ready; }
+  const luckPanel = e => window.RMEvidence.luckPanel(e), forecastPanel = e => window.RMEvidence.forecastPanel(e), drawers = e => window.RMEvidence.drawers(e);
   const glyph = t => `<svg aria-hidden="true"><use href="#g-${t === 'measured' ? 'measured' : t === 'likely' || t === 'contrast' ? 'half' : t === 'pattern' ? 'rule' : t === 'flat' ? 'flat' : 'dotted'}"/></svg>`;
 
   /* ---------- Follow this: the rabbit hole (every stop points to the next thing) ---------- */
@@ -279,11 +236,11 @@
     if (kind === 'flat') return openFlat(id);
   }
   const shareBtns = (o, kind) => `<button class="btn" type="button" data-send="${esc(o.id)}" data-send-kind="${kind}">Send this</button>`;
-  function openEffect(id) {
-    const e = P.effects.find(x => x.id === id); if (!e) return; current = id; currentKind = 'effect'; RM.track('stop_open');
+  async function openEffect(id) {
+    const e = P.effects.find(x => x.id === id); if (!e) return; await ensureEvidence(); current = id; currentKind = 'effect'; RM.track('stop_open');
     const r = e.replication, g = e.engine, chain = e.parent && e.parent !== 'event' && e.mediation_supported;
     const parentE = chain ? P.effects.find(x => x.id === e.parent) : null;
-    const agree = g ? `<span><i></i>Moved unusually after the ${noun}: ${g.exceed_date} of ${g.n_date.toLocaleString()} fake dates come close</span>${e.contrast ? `<span><i></i>Moved against ${e.contrast.n_donors} unaffected regions, pre-trends flat</span>` : ''}${e.sources ? `<span><i class="${e.sources.agree > 1 ? '' : 'o'}"></i>${esc(e.sources.text)}</span>` : ''}${r && r.n_similar ? `<span><i class="${r.n_seen ? '' : 'o'}"></i>Passed after ${r.n_seen} of ${r.n_similar} similar ${noun}s tested</span>` : ''}<span><i class="${(e.forecast && e.forecast.state === 'agree') || (e.published.ce && e.published.ce.state === 'agree') ? '' : 'o'}"></i>Independent forecast model: ${esc(e.published.ce ? e.published.ce.state === 'agree' ? `agrees (${e.published.ce.n_agree} of ${e.published.ce.n_eligible} series)` : e.published.ce.state : 'not run')}</span>`
+    const agree = g && g.n_date ? `<span><i></i>Moved unusually after the ${noun}: ${g.exceed_date} of ${g.n_date.toLocaleString()} fake dates come close</span>${e.contrast ? `<span><i></i>Moved against ${e.contrast.n_donors} unaffected regions, pre-trends flat</span>` : ''}${e.sources ? `<span><i class="${e.sources.agree > 1 ? '' : 'o'}"></i>${esc(e.sources.text)}</span>` : ''}${r && r.n_similar ? `<span><i class="${r.n_seen ? '' : 'o'}"></i>Passed after ${r.n_seen} of ${r.n_similar} similar ${noun}s tested</span>` : ''}<span><i class="${(e.forecast && e.forecast.state === 'agree') || (e.published.ce && e.published.ce.state === 'agree') ? '' : 'o'}"></i>Independent forecast model: ${esc(e.published.ce ? e.published.ce.state === 'agree' ? `agrees (${e.published.ce.n_agree} of ${e.published.ce.n_eligible} series)` : e.published.ce.state : 'not run')}</span>`
       : `${e.fluke ? `<span><i></i>${esc(e.fluke.text)}</span>` : '<span><i class="o"></i>Not yet tested against lookalikes</span>'}${e.sources ? `<span><i class="${e.sources.agree > 1 ? '' : 'o'}"></i>${esc(e.sources.text)}</span>` : ''}${r && r.wording ? `<span><i class="${r.n_seen ? '' : 'o'}"></i>${esc(r.wording[0].toUpperCase() + r.wording.slice(1))}</span>` : ''}${e.published.reason ? `<span><i class="o"></i>Forecast gate: ${esc(e.published.reason)}</span>` : ''}`;
     body.innerHTML = `
       <p class="crumb">${esc(P.domains[e.domain])}, ${esc(e.lag_text || '')}. ${chain ? `This stop is reached <b>through ${esc(parentE ? parentE.short : e.parent)}</b>: the engine's mediation check supports the chain.` : `This ripple <b>forks straight from the ${noun}</b>: no chain through another stop is claimed.`}</p>
@@ -293,7 +250,7 @@
       <p class="find">${esc(e.plain_long || e.plain)}</p>
       <div class="agree">${agree}</div>
       <div class="why"><button class="btn primary" type="button" data-why>Why?</button>${shareBtns(e, 'stop')}<button class="btn" type="button" data-watch aria-pressed="${watched()}">${watched() ? 'Watching' : 'Watch'}</button></div>
-      ${e.chart && e.chart.series ? `<div class="chart">${seriesChart(e)}</div><div class="legend"><span><i class="l"></i>${esc(e.short_label || e.title)}</span>${e.contrast ? `<span><i class="l2"></i>${e.contrast.n_donors} unaffected regions</span>` : ''}<span><i></i>The engine's normal band (±1.28σ)</span></div>` : ''}
+      ${e.chart && e.chart.series ? `<div class="chart">${seriesChart(e)}</div><div class="legend"><span><i class="l"></i>${esc(e.short_label || e.title)}</span>${e.contrast && e.chart.series.some(s => s.o != null) ? `<span><i class="l2"></i>${e.contrast.n_donors} unaffected regions</span>` : ''}${e.chart.band && e.chart.band.lo != null ? `<span><i></i>The engine's normal band (±1.28σ)</span>` : ''}</div>` : ''}
       <div class="sect" id="why"><h3>Why? How the ripple got there</h3>${e.mechanism ? `<ul class="steps">${e.mechanism.map((m, i) => `<li><i class="${i === 0 ? 'f' : ''}"></i><span>${esc(m.step)}<small>${m.why ? esc(m.why) + ' ' : ''}${m.source ? 'Source: ' + esc(m.source) + '.' : ''}</small></span></li>`).join('')}</ul>` : e.why && e.why.length ? `<ul class="steps">${e.why.map((w, i) => `<li><i class="${i === 0 ? 'f' : ''}"></i><span>${esc(w[0].toUpperCase() + w.slice(1))}</span></li>`).join('')}</ul><p style="font-size:13px;color:var(--muted)">The named mechanism steps arrive with the event's pond payload.</p>` : '<p>A mechanism from the library links this stop to the event; its steps are not published for this stop yet.</p>'}</div>
       <div class="sect" id="luck"><h3>Could it be luck?</h3>${luckPanel(e)}${e.how ? `<p style="margin-top:8px">${esc(e.how)}</p>` : ''}</div>
       ${forecastPanel(e)}
@@ -305,8 +262,8 @@
       <div class="sect more"><h3>This wasn’t the end</h3>${followLinks(e, 'effect')}</div>`;
     wire(); highlight(id); showPanel();
   }
-  function openShore(id) {
-    const s = (P.shore || []).find(x => x.id === id); if (!s) return; current = id; currentKind = 'shore'; RM.track('stop_open');
+  async function openShore(id) {
+    const s = (P.shore || []).find(x => x.id === id); if (!s) return; await ensureEvidence(); current = id; currentKind = 'shore'; RM.track('stop_open');
     const p = s.pattern;
     const pips = (p.all || []).map(x => `<i class="${x.pass ? '' : x.effect_pct < 0 ? 'dir' : 'no'}" title="${esc(x.label)} ${x.year}: ${x.effect_pct}%"></i>`).join('');
     body.innerHTML = `
@@ -383,7 +340,7 @@
     // short (CX fix 8): the story sentence, one number, the tier, the frozen url
     if (kind === 'ripple' || !id) return { title: st.short_title || name, sentence: st.story_sentence, hook: E ? `${feel(E)}${nFlat ? `; ${nFlat} things stayed flat` : ''}. ${tierLine(E)}, never proof of cause.` : (quiet ? null : st.conversation_hook), line: null, url: RM.frozen(canonRipple, P.version), tier: E ? tierOf(E) : (U0 ? 'watching' : 'flat') };
     if (kind === 'stop') { const e = P.effects.find(x => x.id === id); return { title: `${name} → ${e.title}`, sentence: `${name} → ${e.short}: ${feel(e)}.`, hook: `${tierLine(e)}, never proof of cause.`, line: null, url: RM.frozen(RM.url.canon.stop(P.event.slug, e.hop_id || e.id), P.version), tier: tierOf(e) }; }
-    if (kind === 'rule') { const s = P.shore.find(x => x.id === id); return { title: s.title, sentence: s.story ? s.story.story_sentence : s.plain, hook: `Seen across ${s.pattern.n_events} past ${noun}s, not one.`, line: `${s.headline} · ${s.pattern.strength} · a pattern, never proof of cause`, url: RM.url.canon.pattern(s.pattern.id), tier: s.pattern.strength }; }
+    if (kind === 'rule') { const s = P.shore.find(x => x.id === id); return { title: s.title, sentence: s.story ? s.story.story_sentence : s.plain, hook: `Seen across ${s.pattern.n_events} past ${noun}s, not one.`, line: `${s.pattern.strength} across ${s.pattern.n_events} past ${noun}s · a pattern, never proof of cause`, url: RM.url.canon.pattern(s.pattern.id), tier: s.pattern.strength }; }
     if (kind === 'watching') { const u = P.untested.find(x => x.id === id); return { title: `${name} → ${u.name}?`, sentence: `${name} might be showing up in ${u.name}. Too early to tell: the window closes ${fmtDayY(u.window_close)}.`, hook: null, line: `${name} → ${u.name}? · still being watched · closes ${fmtDayY(u.window_close)}`, url: RM.frozen(RM.url.canon.stop(P.event.slug, u.hop_id || u.id), P.version), tier: 'watching' }; }
     const n = P.flats.find(x => x.id === id); return { title: `${name} → ${n.name}: dead end`, sentence: `${name} was expected to ripple into ${n.name}. It didn't: the window closed ${fmtDayY(n.window_close)} without a detectable move.`, hook: null, line: `${name} → ${n.name}: dead end · stayed flat`, url: RM.frozen(RM.url.canon.stop(P.event.slug, n.hop_id || n.id), P.version), tier: 'flat' };
   }
@@ -491,8 +448,8 @@
   } catch { /* no index */ }
   if (NX) om += `<div><h3>${om ? 'And a world rule' : 'This wasn’t the end'}</h3><p class="lead">${om ? '' : 'One more. '}A different kind of ${noun === 'storm' ? 'weather' : 'event'}: what the engine finds when it pools every ${esc(NX.event_label.toLowerCase())} since 2015.</p>
       <a class="card" href="${RM.url.pattern(NX.id)}" data-onemore><div class="k"><span class="step">${glyph('pattern')}${esc(NX.strength)}</span><span>${NX.n_events} ${esc(NX.event_label.toLowerCase())}</span></div>
-      <p class="big-p">${esc(NX.story.story_sentence)}</p>
-      <p style="font-size:14px;color:var(--ink-2);margin:6px 0 0">Confidence interval ${NX.ci[0]}% to ${NX.ci[1]}%; ${esc(NX.fluke_note)}. Largest: ${NX.examples.map(x => `${esc(x.label.replace(/ \(\d+ states\)/, ''))} +${Math.round((Math.exp(x.d) - 1) * 100)}%`).join('; ')}.</p>
+      <p class="big-p">${esc(NX.story && NX.story.story_sentence ? NX.story.story_sentence : `Across ${NX.n_events} past ${NX.event_label.toLowerCase()}, ${NX.outcome_label} ${NX.effect > 0 ? 'rose' : 'fell'}: ${Math.abs(NX.effect)}% vs unaffected regions.`)}</p>
+      <p style="font-size:14px;color:var(--ink-2);margin:6px 0 0">Confidence interval ${NX.ci[0]}% to ${NX.ci[1]}%; ${esc(NX.fluke_note)}.${NX.examples ? ` Largest: ${NX.examples.map(x => `${esc(x.label.replace(/ \(\d+ states\)/, ''))} +${Math.round((Math.exp(x.d) - 1) * 100)}%`).join('; ')}.` : NX.sample_events ? ` For example ${NX.sample_events.slice(0, 3).map(x => `${esc(x.label.replace(/ \(\d+ states\)/, ''))} ${x.effect > 0 ? '+' : ''}${x.effect}%`).join('; ')}.` : ''}</p>
       <div class="foot"><span>A world rule, flip through every ${esc(NX.event_label.toLowerCase().replace(/s$/, ''))}</span><span class="open">Open the rule</span></div></a></div>`;
   else if (N.one_more) om += `<div><h3>This wasn’t the end</h3><p class="lead">One more.</p><a class="card" href="${N.one_more.story_id.startsWith('pattern:') ? RM.url.pattern(N.one_more.story_id.split(':')[1]) : ROOT + 'r/?e=' + encodeURIComponent(N.one_more.story_id.split(':')[1])}" data-onemore><div class="k"><span class="step">${N.one_more.story_id.startsWith('pattern:') ? glyph('pattern') + 'World rule' : 'Ripple'}</span>${N.one_more.archetype ? `<span>${esc(N.one_more.archetype)}</span>` : ''}</div><p class="big-p">${esc(N.one_more.short_title)}</p><div class="foot"><span>${N.one_more.story_id.startsWith('pattern:') ? 'Across many past events' : 'Another event'}</span><span class="open">Open</span></div></a></div>`;
   if (S && S.pattern.all) { const bars = S.pattern.all.slice().sort((a, b) => a.effect_pct - b.effect_pct);

@@ -51,8 +51,8 @@
     return `<li><a class="sc ${kind === 'pattern' ? 'rule' : kind === 'non_event' ? 'dead' : kind === 'watching' ? 'watching' : ''}" href="${href}">
       <div class="k">${RM.archTag(s.archetype)}${RM.tierPill(tier, s.demoted && s.gate_reason ? `${TIER[tier]}, ${s.gate_reason}` : null)}</div>
       <div class="thumb"><svg></svg></div>
-      <p class="s">${esc(s.story_sentence)}</p>
-      <div class="m"><span>${esc(travel)}${ev && ev.sensitive ? ' · quiet' : ''}</span><span class="go">${kind === 'pattern' ? 'Open the rule' : kind === 'watching' ? 'See the window' : 'Trace it'}</span></div></a></li>`;
+      <p class="s">${esc((s.story_sentence || '').replace(/ \(positive control\)/g, ''))}</p>
+      <div class="m"><span>${esc(travel)}${ev && ev.sensitive ? ' · quiet' : ''}${s.is_control ? ' · known-effect test case' : ''}</span><span class="go">${kind === 'pattern' ? 'Open the rule' : kind === 'watching' ? 'See the window' : 'Trace it'}</span></div></a></li>`;
   };
   const fill = (id, list, empty) => { const el = $(id); if (!list.length) { el.outerHTML = `<div class="empty">${empty}</div>`; return; } el.innerHTML = list.map(card).join(''); el.querySelectorAll('.thumb svg').forEach((sv, i) => RM.thumb(sv, list[i])); };
   fill('#cards', cardList, '<b>Nothing resolved yet.</b> When a stop reaches Likely or Measured it appears here.');
@@ -64,7 +64,7 @@
   if (!rules.length) rc.outerHTML = '<div class="empty"><b>No rule has cleared the bar yet.</b> Patterns need q ≤ 0.05 with the expected sign across enough past events.</div>';
   else {
     rc.innerHTML = rules.map(p => { const st = items.find(s => s.kind === 'pattern' && s.pattern.id === p.id); return `<li><a class="sc rule" href="${RM.url.pattern(p.id)}">
-      <div class="k">${RM.archTag(st ? st.archetype : null)}${RM.tierPill(p.strength)}</div>
+      <div class="k">${st && st.archetype ? RM.archTag(st.archetype) : '<span></span>'}${RM.tierPill(p.strength)}</div>
       <div class="thumb"><svg></svg></div>
       <p class="s">${esc(st ? st.story_sentence : `Across ${p.n_events} past ${p.event_label.toLowerCase()}, ${p.outcome_label} ${p.effect > 0 ? 'rose' : 'fell'}: ${Math.abs(p.effect)}% vs unaffected regions.`)}</p>
       <div class="m"><span>${p.n_events} past events · ${esc(p.fluke_note)}</span><span class="go">Flip through them</span></div></a></li>`; }).join('');
@@ -76,7 +76,7 @@
   const deadPick = []; const dseen = new Set(); dead.forEach(s => { if (deadPick.length < 4 && !dseen.has(s.event.slug)) { dseen.add(s.event.slug); deadPick.push(s); } }); dead.forEach(s => { if (deadPick.length < 4 && !deadPick.includes(s)) deadPick.push(s); });
   const dc = $('#dead-cards');
   if (!deadPick.length) dc.outerHTML = '<div class="empty"><b>No window has closed flat yet.</b> Every pre-registered series that stays inside its normal range will be shown here.</div>';
-  else dc.innerHTML = deadPick.map(s => `<li><a class="sc dead" href="${RM.storyHref(s)}"><div class="k">${RM.archTag('Dead end')}${RM.tierPill('flat')}</div><p class="s"><svg style="width:22px;height:16px;vertical-align:-2px;margin-right:4px" aria-hidden="true"><use href="#k-grass"/></svg>${esc(s.story_sentence)}</p><div class="m"><span>${s.watching && s.watching.expected_1_in ? `expected about 1 in ${s.watching.expected_1_in} times` : ''}${s.watching && s.watching.window_close ? ` · closed ${fmtDayY(s.watching.window_close)}` : ''}</span><span class="go">See why</span></div></a></li>`).join('');
+  else dc.innerHTML = deadPick.map(s => `<li><a class="sc dead" href="${RM.storyHref(s)}"><div class="k">${RM.archTag('Dead end')}${RM.tierPill('flat')}</div><p class="s"><svg style="width:22px;height:16px;vertical-align:-2px;margin-right:4px" aria-hidden="true"><use href="#k-grass"/></svg>${esc((s.story_sentence || '').replace(/ \(positive control\)/g, ''))}</p><div class="m"><span>${s.is_control ? 'known-effect test case · ' : ''}${s.watching && s.watching.expected_1_in ? `expected about 1 in ${s.watching.expected_1_in} times` : ''}${s.watching && s.watching.window_close ? ` · closed ${fmtDayY(s.watching.window_close)}` : ''}</span><span class="go">See why</span></div></a></li>`).join('');
 
   /* ---------- still being watched: nearest windows first, one per event first ---------- */
   const watching = items.filter(s => s.kind === 'watching' && s.watching && s.watching.window_close).sort((a, b) => new Date(a.watching.window_close) - new Date(b.watching.window_close) || score(b) - score(a));

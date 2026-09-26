@@ -17,6 +17,9 @@
 //               BAs) and a lower-48 demand sum (key US48). Daily = current half-year file; backfill = one file per run
 //               from 2015 H2 (api.eia.gov is not used: its robots.txt answered 403 -> host killed, DEMARCATION Q3).
 //               Energy prices (WTI, Brent, Henry Hub, jet fuel, retail gasoline/diesel) come through their FRED mirrors.
+//               e7 (ENGINE 6.3 second blind batch): net generation from SOLAR and WIND per BA from the same files, kept as
+//               WEEKLY sums (week-ending Saturday, >= 4 complete days) under metrics ng_solar / ng_wind (storage: ~2 MB, not
+//               ~25 MB of daily rows); the backfill state version is bumped to v3 so every file is re-read once.
 //   bls_ces     BLS CES all-employee SA series (supersectors + ~260 industries), monthly, via their FRED mirrors
 //               (api.bls.gov robots.txt disallows "/": the keyed BLS API is ORANGE* and unused). FIRST-RELEASE values
 //               (ALFRED output_type=4; meta.rt = 'first', meta.released = first-release date): reconstructed release-look
@@ -48,7 +51,7 @@
 import { addDays, db, errMsg, ingest, type ObsRow, politeFetch, type Run, serve, stateGet, stateSet } from "./att.ts";
 import { getJson, getText, r4, scrubStr, secret, todayUtc, wrap } from "./wsa.ts";
 
-export const ECON_VERSION = "2026-09-26.e6";
+export const ECON_VERSION = "2026-09-26.e7";
 
 // ------------------------------------------------------------------ series catalogues
 type Kind = "rate" | "level" | "count";
@@ -336,13 +339,14 @@ function csvFields(line: string, maxIdx: number): string[] {
   }
   return out;
 }
-async function eiaBulkFile(run: Run, name: string): Promise<{ rows: number; ok: boolean; bas: number; gen_bas?: number; days: number; col: string }> {
+async function eiaBulkFile(run: Run, name: string): Promise<{ rows: number; ok: boolean; bas: number; gen_bas?: number; days: number; col: string; fuel_weeks?: number }> {
   const res = await getText(run, "eia.930", `${EIA_BULK}/${name}`, { accept: "text/csv,*/*" }, 100_000);
   if (!res || !res.body) return { rows: 0, ok: false, bas: 0, days: 0, col: "" };
   const reader = res.body.pipeThrough(new TextDecoderStream()).getReader();
   const sums = new Map<string, number>(), hours = new Map<string, number>();
   const gsum = new Map<string, number>(), ghours = new Map<string, number>();
-  let buf = "", header: string[] | null = null, iBa = 0, iDate = 1, iDem = -1, iAdj = -1, iNg = -1, iNgAdj = -1, maxIdx = 0, complete = true;
+  const fsum = new Map<string, number>(), fhours = new Map<string, number>(); // key `${fuel}|${ba}|${date}` (solar / wind)
+  let buf = "", header: string[] | null = null, iBa = 0, iDate = 1, iDem = -1, iAdj = -1, iNg = -1, iNgAdj = -1, iSol = -1, iWind = -1, maxIdx = 0, complete = true;
   const handle = (line: string) => {
     if (!line) return;
     if (!header) {
@@ -350,7 +354,9 @@ async function eiaBulkFile(run: Run, name: string): Promise<{ rows: number; ok: 
       iBa = header.indexOf("balancing authority"); iDate = header.indexOf("data date");
       iDem = header.indexOf("demand (mw)"); iAdj = header.indexOf("demand (mw) (adjusted)");
       iNg = header.indexOf("net generation (mw)"); iNgAdj = header.indexOf("net generation (mw) (adjusted)");
-      maxIdx = Math.max(iBa, iDate, iDem, iAdj, iNg, iNgAdj);
+      const pick = (fuel: string) => { const a = header!.indexOf(`net generation (mw) from ${fuel} (adjusted)`); return a >= 0 ? a : header!.indexOf(`net generation (mw) from ${fuel}`); };
+      iSol = pick("solar"); iWind = pick("wind");
+      maxIdx = Math.max(iBa, iDate, iDem, iAdj, iNg, iNgAdj, iSol, iWind);
       return;
     }
     const f = csvFields(line, maxIdx);
@@ -362,6 +368,13 @@ async function eiaBulkFile(run: Run, name: string): Promise<{ rows: number; ok: 
     if (gRaw) {
       const g = Number(gRaw.replace(/,/g, ""));
       if (Number.isFinite(g)) { gsum.set(k, (gsum.get(k) ?? 0) + g); ghours.set(k, (ghours.get(k) ?? 0) + 1); }
+    }
+    for (const [fuel, idx] of [["solar", iSol], ["wind", iWind]] as Array<[string, number]>) {
+      if (idx < 0 || !f[idx]) continue;
+      const x = Number(f[idx].replace(/,/g, ""));
+      if (!Number.isFinite(x) || x < 0) continue;
+      const fk = `${fuel}|${k}`;
+      fsum.set(fk, (fsum.get(fk) ?? 0) + x); fhours.set(fk, (fhours.get(fk) ?? 0) + 1);
     }
     const raw = (iAdj >= 0 && f[iAdj]) ? f[iAdj] : f[iDem];
     if (!raw) return;
@@ -412,16 +425,35 @@ async function eiaBulkFile(run: Run, name: string): Promise<{ rows: number; ok: 
     out.push({ source: "eia.930", key: ba, metric: "netgen", geo: "US", day, value: Math.round(g), aux: h });
     gbas.add(ba);
   }
+  // Net generation from solar / wind per BA: daily sums (>= 20 hours) rolled up to WEEKLY sums (week-ending Saturday, >= 4 days).
+  const wk = new Map<string, { v: number; n: number }>();
+  for (const [fk, v] of fsum) {
+    if ((fhours.get(fk) ?? 0) < 20) continue;
+    const [fuel, ba, dt] = fk.split("|");
+    const day = parseUsDate(dt);
+    if (!day || !/^[A-Z0-9]{2,6}$/.test(ba)) continue;
+    const d = new Date(day + "T00:00:00Z");
+    const sat = new Date(d.getTime() + ((6 - d.getUTCDay() + 7) % 7) * 86400000).toISOString().slice(0, 10);
+    const wkey = `${fuel}|${ba}|${sat}`;
+    const w = wk.get(wkey) ?? { v: 0, n: 0 }; w.v += v; w.n++; wk.set(wkey, w);
+  }
+  const fout: ObsRow[] = [];
+  for (const [wkey, w] of wk) {
+    if (w.n < 4 || !(w.v > 0)) continue;
+    const [fuel, ba, sat] = wkey.split("|");
+    fout.push({ source: "eia.930", key: ba, metric: `ng_${fuel}`, geo: "US", day: sat, value: Math.round(w.v), aux: w.n, meta: { weekly: true, method: "sum_ba_local_days_week_ending_sat" } });
+  }
   await ingest(run, out, 2000);
-  return { rows: out.length, ok: true, bas: nBa, gen_bas: gbas.size, days: days.size, col: iAdj >= 0 ? "adjusted" : "demand" };
+  await ingest(run, fout, 2000);
+  return { rows: out.length + fout.length, ok: true, bas: nBa, gen_bas: gbas.size, days: days.size, col: iAdj >= 0 ? "adjusted" : "demand", fuel_weeks: fout.length };
 }
 async function modeEia930(run: Run, backfill = false) {
   const t0 = Date.now();
   const now = new Date();
   const all = halves(2015, 2, now);
-  // v2: files are re-read once so that net generation (added in e3) is backfilled too
+  // v3: files are re-read once so that solar / wind net generation (added in e7) is backfilled too
   const bf = await st<{ done?: string[]; v?: number }>("econ.bf.eia.930", {});
-  const done = new Set(bf.v === 2 ? (bf.done ?? []) : []);
+  const done = new Set(bf.v === 3 ? (bf.done ?? []) : []);
   let todo: string[];
   if (backfill) todo = all.filter((f) => !done.has(f)).reverse(); // newest first: positive controls (2023-2024) early
   else {
@@ -437,7 +469,7 @@ async function modeEia930(run: Run, backfill = false) {
     files.push({ file: f, ...r });
     rows += r.rows;
     if (!r.ok) { run.partial = true; break; }
-    if (backfill || f !== all[all.length - 1]) { done.add(f); await stSet(run, "econ.bf.eia.930", { v: 2, done: [...done].sort() }); }
+    if (backfill || f !== all[all.length - 1]) { done.add(f); await stSet(run, "econ.bf.eia.930", { v: 3, done: [...done].sort() }); }
     if (backfill) break; // one ~100 MB file per run (CPU budget)
   }
   const left = all.filter((f) => !done.has(f)).length;

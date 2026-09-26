@@ -2,12 +2,14 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
-<title>Milton share cards</title>
+<title>Ripple Map share cards</title>
 <meta name="robots" content="noindex">
 <link rel="icon" href="../icon-192.png">
-<link rel="stylesheet" href="pond.css">
-<link rel="stylesheet" href="app.css">
+<link rel="stylesheet" href="pond.min.css">
+<link rel="stylesheet" href="app.min.css">
 <style>
+/* Share objects (D-16): ripple, stop, pattern, dead end. ?o=ripple:<slug> | stop:<slug>:<hop> | pattern:<id> | dead:<slug>:<hop>
+   Each card is drawn from its own object's pond, so no two look alike; the tier word is the gated published tier only. */
 body{background:#2A3234;padding:40px;display:grid;gap:40px;justify-items:start;overflow:auto}
 .card{position:relative;background:var(--bank);overflow:hidden;display:grid;border:0;border-radius:0;padding:0;color:var(--text)}
 .card .pond{position:absolute}
@@ -15,14 +17,19 @@ body{background:#2A3234;padding:40px;display:grid;gap:40px;justify-items:start;o
 .trust{display:flex;gap:18px;font-size:15px;color:var(--text-2);flex-wrap:wrap;max-width:none;margin:0}
 .trust span{display:inline-flex;align-items:center;gap:7px}
 .trust span::before{content:"";width:6px;height:6px;border-radius:50%;background:var(--ring)}
-.trust span.half::before{background:linear-gradient(90deg,var(--pad-edge) 50%,transparent 50%);border:1.5px solid var(--pad-edge);width:8px;height:8px;box-sizing:border-box}
+.trust span.tier::before{width:9px;height:9px;box-sizing:border-box;background:var(--pad-edge)}
+.trust span.tier.likely::before{background:linear-gradient(90deg,var(--pad-edge) 50%,transparent 50%);border:1.5px solid var(--pad-edge)}
+.trust span.tier.watching::before{background:transparent;border:1.5px dashed var(--text-2)}
+.trust span.tier.flat::before{background:var(--grass)}
+.trust span.tier.pattern::before{background:var(--sand);border-radius:2px}
 .reach{font-size:15px;color:var(--text);margin:0}
 .reach small{display:inline;color:var(--text-3);margin-left:8px;font-size:13px}
 .cta{display:inline-flex;align-items:center;gap:8px;background:var(--text);color:var(--bank);border-radius:999px;padding:10px 18px;font-size:16px;font-weight:600;align-self:flex-start}
+.q{color:var(--text-2);font-weight:500}
+.kick{font-size:15px;color:var(--text-3)}
 #land{width:1200px;height:630px;grid-template-columns:600px 1fr}
 #land .copy{padding:44px 0 40px 48px;display:flex;flex-direction:column;gap:14px;z-index:2}
-#land h1{font-size:48px;line-height:1.02;letter-spacing:-.035em;font-weight:600;margin:6px 0 0;text-wrap:balance;max-width:none}
-#land h1 .q{color:var(--text-2);font-weight:500}
+#land h1{font-size:44px;line-height:1.04;letter-spacing:-.035em;font-weight:600;margin:6px 0 0;text-wrap:balance;max-width:none}
 #land .big{font-size:96px;line-height:.95;letter-spacing:-.05em;font-weight:650;color:var(--num);margin:4px 0 0}
 #land .big small{font-size:22px;letter-spacing:-.01em;color:var(--text);font-weight:500;margin-left:12px}
 #land .pond{width:780px;height:780px;right:-90px;top:-75px}
@@ -32,27 +39,29 @@ body{background:#2A3234;padding:40px;display:grid;gap:40px;justify-items:start;o
 #port .head{padding:56px 60px 0;display:flex;justify-content:space-between;align-items:center;z-index:2}
 #port .pond{position:relative;width:1080px;height:760px;margin-top:-20px}
 #port .copy{padding:0 60px 56px;display:flex;flex-direction:column;gap:16px;z-index:2}
-#port h1{font-size:60px;line-height:1;letter-spacing:-.04em;font-weight:600;margin:0;text-wrap:balance;max-width:none}
-#port h1 .q{color:var(--text-2);font-weight:500}
+#port h1{font-size:56px;line-height:1.02;letter-spacing:-.04em;font-weight:600;margin:0;text-wrap:balance;max-width:none}
 #port .big{font-size:120px;line-height:.95;letter-spacing:-.05em;font-weight:650;color:var(--num)}
 #port .big small{font-size:26px;letter-spacing:-.01em;color:var(--text);font-weight:500;margin-left:14px}
 #port .trust{font-size:18px}
 #port .foot{display:flex;justify-content:space-between;align-items:center;margin-top:6px}
 .pond .domain-label{font-size:17px}.pond .lbl{font-size:22px}.pond .lbl-tier{font-size:16px}.pond .ring-label{font-size:15px}
+.card.dead .big,.card.pattern .big{color:var(--sand)}
+.card.dead .big{color:var(--grass)}
+.card.watching .big{color:var(--text-2)}
 </style>
 </head>
 <body>
 <div class="card" id="land">
   <div class="copy">
     <div class="brand"><svg viewBox="0 0 24 24" aria-hidden="true"><ellipse cx="12" cy="12" rx="3" ry="2.4" fill="#C8B48E"/><circle cx="12" cy="12" r="6.5" fill="none" stroke="#A9EAD9" stroke-width="1.2"/><circle cx="12" cy="12" r="10.5" fill="none" stroke="#A9EAD9" stroke-width="1.2" opacity=".45"/></svg>Ripple Map</div>
-    <h1>Hurricane Milton hit Florida. <span class="q">The next day the Gulf-coast grid ran at 0.89× normal for a week; the rest of the country didn’t move.</span></h1>
-    <div class="big num">0.89×<small>normal; −20% vs 51 unaffected regions</small></div>
-    <div class="trust"><span class="half">Likely, forecast check pending</span><span>1 in 412 by chance</span><span>12 series stayed flat</span></div>
-    <div class="foot"><span class="cta">Trace the ripple</span><span class="reach"><span class="num">1</span> domain · <span class="num">7</span> days · 1st-order<small>how far it travelled</small></span></div>
+    <p class="kick" id="l-kick"></p>
+    <h1 id="l-h1"></h1>
+    <div class="big num" id="l-big"></div>
+    <div class="trust" id="l-trust"></div>
+    <div class="foot"><span class="cta" id="l-cta"></span><span class="reach" id="l-reach"></span></div>
   </div>
   <svg class="pond" id="pond-land" aria-hidden="true"></svg>
 </div>
-
 <div class="card" id="port">
   <div class="head">
     <div class="brand"><svg viewBox="0 0 24 24" aria-hidden="true"><ellipse cx="12" cy="12" rx="3" ry="2.4" fill="#C8B48E"/><circle cx="12" cy="12" r="6.5" fill="none" stroke="#A9EAD9" stroke-width="1.2"/><circle cx="12" cy="12" r="10.5" fill="none" stroke="#A9EAD9" stroke-width="1.2" opacity=".45"/></svg>Ripple Map</div>
@@ -60,23 +69,81 @@ body{background:#2A3234;padding:40px;display:grid;gap:40px;justify-items:start;o
   </div>
   <svg class="pond" id="pond-port" aria-hidden="true"></svg>
   <div class="copy">
-    <h1>Hurricane Milton hit Florida. <span class="q">The next day the Gulf-coast grid ran at 0.89× normal for a week; the rest of the country didn’t move.</span></h1>
-    <div class="big num">0.89×<small>normal; −20% vs unaffected regions</small></div>
-    <div class="trust"><span class="half">Likely, forecast check pending</span><span>1 in 412 by chance</span><span>12 series stayed flat</span></div>
-    <div class="foot"><span class="cta">What else did Milton touch?</span><span class="reach"><span class="num">1</span> domain · <span class="num">7</span> days · 1st-order</span></div>
+    <p class="kick" id="p-kick"></p>
+    <h1 id="p-h1"></h1>
+    <div class="big num" id="p-big"></div>
+    <div class="trust" id="p-trust"></div>
+    <div class="foot"><span class="cta" id="p-cta"></span><span class="reach" id="p-reach"></span></div>
   </div>
 </div>
-
-<script src="pond.js"></script>
+<script src="pond.min.js"></script>
+<script src="site.min.js"></script>
 <script>
-fetch('data/milton.json').then(r => r.json()).then(P => {
-  P.effects[0].label_side = 'left'; P.ringLabelAngle = 152;
-  P.untested.forEach(u => { u.offset = 0; });
-  Pond.render(document.getElementById('pond-land'), { ...P, rivals: [], filtered: [] }, { reduceMotion: true, viewBox: [-500, -500, 1000, 1000] });
-  Pond.render(document.getElementById('pond-port'), { ...P, rivals: [], filtered: [] }, { reduceMotion: true, viewBox: [-560, -430, 1120, 860] });
-  window.__shareTier = P.effects[0].published.tier;
+(async function () {
+  const { $, esc, fmtDayY, TIER } = RM;
+  const o = (new URLSearchParams(location.search).get('o') || 'ripple:flagship').split(':'), kind = o[0];
+  const set = (id, h) => { $('#l-' + id).innerHTML = h; $('#p-' + id).innerHTML = h; };
+  const tierSpan = (t, w) => `<span class="tier ${esc(t)}">${esc(w || TIER[t] || t)}</span>`;
+  let tier = 'watching', text = '';
+  const drawBoth = (P, optsL, optsP) => { Pond.render($('#pond-land'), P, { reduceMotion: true, viewBox: [-500, -500, 1000, 1000], ...optsL }); Pond.render($('#pond-port'), P, { reduceMotion: true, viewBox: [-560, -430, 1120, 860], ...optsP }); };
+  if (kind === 'pattern') {
+    const Pt = await RM.data.patterns(), p = (Pt.patterns || Pt).find(x => x.id === parseInt(o[1], 10));
+    const S = await RM.data.stories().catch(() => ({ featured: [] })), st = (S.featured || []).find(s => s.kind === 'pattern' && s.pattern && s.pattern.id === p.id);
+    const noun = p.event_label.toLowerCase(), sentence = st ? st.story_sentence : `Across ${p.n_events} past ${noun}, ${p.outcome_label} ${p.effect > 0 ? 'rose' : 'fell'}: ${Math.abs(p.effect)}% vs unaffected regions.`;
+    tier = p.strength; document.body.classList.add('pattern'); $('#land').classList.add('pattern'); $('#port').classList.add('pattern');
+    set('kick', `A world rule across ${p.n_events} past ${esc(noun)}`);
+    set('h1', `${esc(p.event_label)} → ${esc(p.outcome_label)}. <span class="q">${esc(sentence.replace(/^Across [^,]+, /, '').replace(/^\w/, c => c.toUpperCase()))}</span>`);
+    set('big', `${p.effect > 0 ? '+' : '−'}${Math.abs(p.effect)}%<small>over ${p.window.post} ${p.window.grain}s, vs ${p.geo_kind === 'state' ? 'states' : 'regions'} the ${esc(noun.replace(/s$/, ''))} missed</small>`);
+    set('trust', `${tierSpan('pattern', p.strength)}<span>1 in ${Math.round(1 / p.p_placebo)} fake pools this strong</span><span>${Math.round(p.share_positive * 100)}% of ${esc(noun)} moved the same way</span>`);
+    set('cta', 'Flip through every one'); set('reach', `${p.n_events} past events<small>a pattern, never proof of cause</small>`);
+    const doms = ['Real world', 'Business', 'Jobs', 'Markets', 'Institutions'], lag = p.window.grain === 'week' ? p.window.post * 7 : p.window.post;
+    const P = { event: { name: p.event_label, sub: `${p.n_events} of them, pooled`, magnitude: p.pond ? p.pond.stone : .5 }, domains: doms, rings: RM.RINGS, ringLabelAngle: -30, effects: [], shore: [{ id: 'rule', domain: 1, lag_days: lag, far_shore: true, num: `${p.effect > 0 ? '+' : '−'}${Math.abs(p.effect)}%`, short: p.outcome_label, headline: sentence, plain: '', pattern: { n_events: p.n_events }, label_side: 'left' }], flats: Array.from({ length: Math.round((1 - p.share_positive) * 5) }, (_, i) => ({ name: 'moved the other way', domain: 1, lag_days: lag, offset: (i - 1) * 12 })) };
+    drawBoth(P, {}, {});
+    text = $('#l-h1').textContent + ' ' + $('#l-trust').textContent;
+  } else {
+    const P = await RM.data.pond(o[1] === 'flagship' ? null : o[1]);
+    const rank = { measured: 3, likely: 2 };
+    const tierOf = e => e.published ? e.published.tier : e.tier;
+    const E = kind === 'stop' ? P.effects.find(e => String(e.hop_id) === o[2] || e.id === o[2]) : P.effects.slice().sort((a, b) => (rank[tierOf(b)] || 0) - (rank[tierOf(a)] || 0) || (b.magnitude || 0) - (a.magnitude || 0))[0];
+    const st = P.story || {}, name = P.event.name, nFlat = (P.flats || []).length, nWatch = (P.untested || []).length;
+    const dead = kind === 'dead' ? (P.flats || []).find(f => String(f.hop_id) === o[2] || f.id === o[2]) : null;
+    const wat = kind === 'watching' ? (P.untested || []).find(f => String(f.hop_id) === o[2] || f.id === o[2]) : null;
+    if (dead) {
+      tier = 'flat'; $('#land').classList.add('dead'); $('#port').classList.add('dead');
+      set('kick', `${esc(name)}, ${esc(fmtDayY(P.event.onset))}. The ripple that died.`);
+      set('h1', `${esc(name)} → ${esc(dead.name)}. <span class="q">Expected to move${dead.prior != null ? ` about 1 in ${Math.round(1 / dead.prior)} times` : ''}. It stayed flat.</span>`);
+      set('big', `flat<small>window closed ${esc(fmtDayY(dead.window_close))}, no detectable move</small>`);
+      set('trust', `${tierSpan('flat', 'Stayed flat')}<span>registered before anyone looked</span>${dead.t_stat != null ? `<span>${Math.round(dead.p_date * dead.n_date)} of ${dead.n_date} fake dates did as well</span>` : ''}`);
+      set('cta', 'See why it stayed flat'); set('reach', `${nFlat} things stayed flat on this ${name.startsWith('Hurricane') ? 'storm' : 'event'}<small>a dead end we disclose</small>`);
+      const Q = { ...P, effects: [], untested: [], shore: [], rivals: [], filtered: [], flats: [dead, ...P.flats.filter(f => f !== dead)].map((f, i) => ({ ...f, offset: i === 0 ? 0 : f.offset })) };
+      drawBoth(Q, {}, {});
+    } else if (wat) {
+      tier = 'watching'; $('#land').classList.add('watching'); $('#port').classList.add('watching');
+      set('kick', `${esc(name)}, ${esc(fmtDayY(P.event.onset))}. Still being watched.`);
+      set('h1', `${esc(name)} → ${esc(wat.name)}? <span class="q">Too early to tell.</span>`);
+      set('big', `?<small>window ${RM.daysUntil(wat.window_close) >= 0 ? 'closes' : 'closed'} ${esc(fmtDayY(wat.window_close))}</small>`);
+      set('trust', `${tierSpan('watching', 'Watching')}<span>registered before anyone looked</span>${wat.prior != null ? `<span>a move expected about 1 in ${Math.round(1 / wat.prior)} times</span>` : ''}`);
+      set('cta', 'Watch the window'); set('reach', `${nWatch} series open on this event<small>never proof of cause</small>`);
+      drawBoth({ ...P, effects: [], shore: [], rivals: [], filtered: [] }, {}, {});
+    } else if (E) {
+      tier = tierOf(E); $('#land').classList.add(tier); $('#port').classList.add(tier);
+      const feel = E.num_pct ? `${E.num_pct}` : '?', unit = E.unit_plain || (E.num_pct_kind === 'peak' ? `${E.short} at its peak, vs its normal` : `${E.short}, vs its normal`);
+      set('kick', `${esc(name)}, ${esc(fmtDayY(P.event.onset))}${P.event.is_control ? '. A known-effect test case' : ''}`);
+      set('h1', `${esc(st.hook ? name + '. ' : '')}<span class="q">${esc(st.hook || st.story_sentence || E.headline)}</span>`);
+      set('big', `${esc(feel)}<small>${esc(unit)}</small>`);
+      const odds = E.engine && E.engine.n_date ? `only ${E.engine.exceed_date} of ${E.engine.n_date.toLocaleString()} random days look like this` : E.fluke ? E.fluke.text.replace(/^About /, '').replace(/\.$/, '') : null;
+      set('trust', `${tierSpan(tier, E.published.text)}${odds ? `<span>${esc(odds)}</span>` : ''}${nFlat ? `<span>${nFlat} things stayed flat</span>` : ''}${E.published.ce && E.published.ce.state === 'agree' ? '<span>an independent forecast model agrees</span>' : ''}`);
+      set('cta', kind === 'stop' ? 'See the evidence' : 'Trace the ripple');
+      const T = P.travel; set('reach', T && T.days != null ? `<span class="num">${T.domains}</span> domain${T.domains === 1 ? '' : 's'} · <span class="num">${Math.max(T.days, E.lag_days)}</span> days · 1st-order<small>how far it travelled</small>` : '');
+      E.label_side = 'left'; P.ringLabelAngle = 152; (P.untested || []).forEach(u => { u.offset = 0; });
+      // the world rule stays on the bank as a cairn, visibly a separate object; no rivals or boulders on a card
+      drawBoth({ ...P, effects: kind === 'stop' ? [E] : P.effects, rivals: [], filtered: [] }, {}, {});
+    }
+    text = $('#l-h1').textContent + ' ' + $('#l-trust').textContent + ' ' + $('#l-big').textContent;
+  }
+  window.__shareTier = tier; window.__shareText = text;
   document.body.dataset.ready = '1';
-});
+})();
 </script>
 </body>
 </html>

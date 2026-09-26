@@ -1,5 +1,5 @@
 /* Ripple Map v1: shared page chrome (nav, page frames, story cards, banners). Tokens and the evidence panel live in app.css; the pond in pond.css. */
-.top{position:relative;inset:auto;z-index:5;border-bottom:1px solid var(--line)}
+.top{position:relative;inset:auto;z-index:5;border-bottom:1px solid var(--line);min-height:66px}
 .top-in{padding:16px 40px}
 .nav{gap:22px}
 .nav a{padding:6px 0;border-bottom:2px solid transparent}
@@ -8,6 +8,7 @@
 .menu{display:none}
 @media (max-width:900px){
   .top-in{padding:12px 16px}
+  .top{min-height:58px}
   .nav{display:flex;position:fixed;left:0;right:0;bottom:0;z-index:25;background:var(--bank-2);border-top:1px solid var(--line);justify-content:space-around;gap:0;padding:6px 8px calc(6px + env(safe-area-inset-bottom));font-size:12.5px}
   .nav a{padding:6px 6px;border-bottom:0;border-radius:8px}
   .nav a[aria-current="page"]{color:var(--text);background:var(--bank)}
