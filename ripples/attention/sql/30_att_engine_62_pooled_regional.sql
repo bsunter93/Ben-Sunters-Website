@@ -266,8 +266,8 @@ begin
       for j in 1..m loop g[j] := g[j] + res * xs[j][t]; end loop;
     end loop;
     tot := 0;
-    for j in 1..m loop w[j] := w[j] * exp(greatest(least(-eta * g[j], 20), -20)); tot := tot + w[j]; end loop;
-    for j in 1..m loop w[j] := w[j] / tot; end loop;
+    for j in 1..m loop w[j] := w[j] * exp(greatest(least(-eta * g[j], 10), -10)); tot := tot + w[j]; end loop;
+    for j in 1..m loop w[j] := greatest(w[j] / tot, 1e-30); end loop;   -- floor: weights never underflow float8 over the iterations
   end loop;
   rp := 0;
   for t in 1..pre loop pred := 0; for j in 1..m loop pred := pred + w[j] * xs[j][t]; end loop; rp := rp + (y[t] - pred)^2; end loop;
@@ -877,3 +877,119 @@ do $$ declare t text; begin
     execute format('revoke all on function %s from anon, authenticated, public', t);
   end loop;
 end $$;
+
+-- ---------------------------------------------------------------------------------------------------------------------
+-- 11. Live events: the hook computes the pre-registered contrast on the fly (frozen grid parameters, cached panel) for an event
+--     that has no frozen row (live events, positive-control fixtures); stored as role 'live' — it never enters the frozen pool.
+--     The event's hop also inherits an empirical-Bayes shrunken estimate: prior N(d_pool, τ²) × likelihood N(d_e, se_e²).
+-- ---------------------------------------------------------------------------------------------------------------------
+create or replace function ripples.att_fx_live_calc(p_grid int, p_event bigint) returns ripples.att_fx_event
+language plpgsql security definer set search_path = '' as $$
+declare g record; pan record; ev record; tr text[]; j jsonb; row ripples.att_fx_event; cfg jsonb := ripples._att_cfg('engine62');
+begin
+  select * into row from ripples.att_fx_event f where f.grid_id = p_grid and f.event_id = p_event and f.role in ('real', 'live') and f.decoy_set = 0 and f.computed_at is not null
+   order by (f.role = 'real') desc limit 1;
+  if found then return row; end if;
+  select * into g from ripples.att_fx_grid where grid_id = p_grid;
+  select * into pan from ripples.att_fx_panel p where p.source = g.source and p.metric = g.metric and p.geo_kind = g.geo_kind;
+  select e.onset, e.magnitude into ev from ripples.att_events e where e.event_id = p_event;
+  if not found or ev.onset is null then return null; end if;
+  tr := ripples.att_fx_treated(p_event, g.geo_kind, g.target_map);
+  select coalesce(array_agg(x), '{}') into tr from unnest(tr) x where x = any(pan.regions);
+  if cardinality(tr) = 0 then return null; end if;
+  -- the post window must be complete in the cached panel (weekly grains: lag + post observations after the onset)
+  if ripples.att_fx_idx(pan.days, ev.onset) is null or ripples.att_fx_idx(pan.days, ev.onset) + g.lag_n + g.post_n - 1 > pan.n then return null; end if;
+  j := ripples.att_fx_calc(pan.ps, pan.pc, pan.days, pan.regions, pan.grain, tr, ev.onset, g.pre_n, g.post_n, g.lag_n, g.synth,
+                           ((hashtext(p_grid || ':' || p_event || ':live') % 100000) / 100000.0)::float8, cfg);
+  insert into ripples.att_fx_event(grid_id, event_id, role, decoy_set, onset, treated, magnitude, n_treated, n_donors, d, d_treated, med, se, z, p_time, p_space, p_pre, lead,
+                                   synth_d, synth_p, synth_ratio, placebo_d, note, computed_at)
+  values (p_grid, p_event, 'live', 0, ev.onset, tr, ev.magnitude, (j ->> 'n_treated')::int, (j ->> 'n_donors')::int, (j ->> 'd')::real, (j ->> 'd_treated')::real,
+          (j ->> 'med')::real, (j ->> 'se')::real, (j ->> 'z')::real, (j ->> 'p_time')::real, (j ->> 'p_space')::real, (j ->> 'p_pre')::real,
+          (select array_agg(x::real) from jsonb_array_elements_text(coalesce(j -> 'lead', '[]'::jsonb)) x),
+          (j ->> 'synth_d')::real, (j ->> 'synth_p')::real, (j ->> 'synth_ratio')::real,
+          (select array_agg(x::real) from jsonb_array_elements_text(coalesce(j -> 'placebo_d', '[]'::jsonb)) x), j ->> 'note', now())
+  on conflict (grid_id, event_id, role, decoy_set) do update set d = excluded.d, d_treated = excluded.d_treated, med = excluded.med, se = excluded.se, z = excluded.z,
+    p_time = excluded.p_time, p_space = excluded.p_space, p_pre = excluded.p_pre, lead = excluded.lead, synth_d = excluded.synth_d, synth_p = excluded.synth_p,
+    synth_ratio = excluded.synth_ratio, placebo_d = excluded.placebo_d, note = excluded.note, n_treated = excluded.n_treated, n_donors = excluded.n_donors, computed_at = now()
+  returning * into row;
+  return row;
+end $$;
+
+-- hook v2: live computation + EB shrinkage (replaces the section-8 body; same signature and contract)
+create or replace function ripples.att_fx_hook(p_hop bigint, p_look int, p_fails text[]) returns text[]
+language plpgsql security definer set search_path = '' as $$
+declare c record; src text; rest text; ser record; g record; fe ripples.att_fx_event; po record; fails text[] := p_fails; cfg jsonb := ripples._att_cfg('engine62');
+        qm float8 := coalesce((cfg ->> 'q_measured')::float8, 0.05); ppre float8 := coalesce((cfg ->> 'p_pretrend')::float8, 0.10); kmin int := coalesce((cfg ->> 'k_min')::int, 8);
+        region text; reg_pass boolean := false; fam_state text := 'none'; ev jsonb := '{}'::jsonb; lifted text[] := '{}'; shrunk float8; shrunk_se float8;
+begin
+  select h.hop_id, h.event_id, h.node, h.sign into c from ripples.att_hop_candidates h where h.hop_id = p_hop;
+  if not found or c.event_id is null or c.node is null or c.node ~ '^Q[0-9]+$' then return p_fails; end if;
+  src := split_part(c.node, ':', 1); rest := substr(c.node, length(src) + 2);
+  select s.metric, s.geo, s.key into ser from ripples.att_series s where s.source = src and s.key = rest limit 1;
+  if not found then return p_fails; end if;
+  for g in select gr.* from ripples.att_fx_grid gr join ripples.att_events e on e.family = gr.family and e.event_id = c.event_id
+           join ripples.att_topics tp on tp.topic_id = e.topic_id
+           where gr.source = src and gr.metric = ser.metric and gr.ledger_seq is not null
+             and (gr.sub is null or (gr.sub = 'hurricane' and (tp.meta ? 'storm' or e.label ~* 'hurricane|tropical')))
+           order by (gr.sub is not null) desc, gr.grid_id loop
+    region := case g.geo_kind when 'state' then ser.geo else ser.key end;
+    fe := ripples.att_fx_live_calc(g.grid_id, c.event_id);
+    if fe.grid_id is not null and region = any(fe.treated) and fe.p_space is not null then
+      reg_pass := fe.p_space <= qm and coalesce(fe.p_pre, 0) >= ppre and (c.sign = 0 or sign(fe.d) = c.sign) and (fe.synth_d is null or sign(fe.synth_d) = sign(fe.d));
+      ev := ev || jsonb_build_object('grid_id', g.grid_id, 'pair', g.label, 'role', fe.role, 'region', region, 'd', fe.d, 'd_centred', fe.d - fe.med, 'z', fe.z, 'p_space', fe.p_space, 'p_pre', fe.p_pre,
+                                     'p_time', fe.p_time, 'synth_d', fe.synth_d, 'synth_p', fe.synth_p, 'n_donors', fe.n_donors, 'regional_pass', reg_pass,
+                                     'window', jsonb_build_object('pre', g.pre_n, 'post', g.post_n, 'lag', g.lag_n));
+    end if;
+    select * into po from ripples.att_fx_pool p where p.grid_id = g.grid_id and p.role = 'real' and p.decoy_set = 0;
+    if found and po.n_events >= kmin then
+      fam_state := case when (c.sign = 0 or sign(po.d) = c.sign) and po.p_placebo <= 0.05 then 'agrees' else 'disagrees' end;
+      ev := ev || jsonb_build_object('family', jsonb_build_object('grid_id', g.grid_id, 'n_events', po.n_events, 'd', po.d, 'se', po.se, 'tau2', po.tau2, 'i2', po.i2, 'p_placebo', po.p_placebo, 'q', po.q, 'strength', po.strength, 'state', fam_state,
+                                                                  'wording', 'measured across ' || po.n_events || ' past events'));
+      if fe.grid_id is not null and fe.se is not null then
+        -- empirical Bayes: posterior mean of this event's effect under the family prior N(d_pool, τ²)
+        shrunk := ((fe.d - fe.med) * coalesce(po.tau2, 0) + po.d * fe.se ^ 2) / nullif(coalesce(po.tau2, 0) + fe.se ^ 2, 0);
+        shrunk_se := sqrt(1 / (1 / greatest(fe.se ^ 2, 1e-9) + 1 / greatest(coalesce(po.tau2, 0), 1e-9)));
+        ev := ev || jsonb_build_object('shrunk', jsonb_build_object('d', shrunk, 'se', shrunk_se, 'note', 'this event''s own estimate shrunk toward the family pattern; the family result is not evidence about this event'));
+      end if;
+    elsif found then
+      fam_state := 'too few events';
+      ev := ev || jsonb_build_object('family', jsonb_build_object('grid_id', g.grid_id, 'n_events', po.n_events, 'state', fam_state));
+    end if;
+    exit;
+  end loop;
+  if ev = '{}'::jsonb then return p_fails; end if;
+  if reg_pass then
+    lifted := array(select x from unnest(fails) x where x in ('q above 0.05', 'a placebo family disagrees', 'one channel only', 'placebo families', 'final look not reached'));
+    fails := array(select x from unnest(fails) x where x not in ('q above 0.05', 'a placebo family disagrees', 'one channel only', 'placebo families', 'final look not reached'));
+  end if;
+  if fam_state = 'disagrees' then fails := array_append(fails, 'no pattern across ' || (ev #>> '{family,n_events}') || ' past events'); end if;
+  update ripples.att_hop_tests t set detail = coalesce(t.detail, '{}'::jsonb) || jsonb_build_object('fx62', ev || jsonb_build_object('lifted', to_jsonb(lifted), 'family_state', fam_state))
+   where t.hop_id = p_hop and t.look_no = p_look;
+  return fails;
+end $$;
+
+-- nightly panel refresh (all cached panels; ~1–3 s each) — cron att-fx62-panel 07:40 UTC, before finalize (08:20)
+create or replace function ripples.att_fx_panel_refresh() returns jsonb
+language plpgsql security definer set search_path = '' as $$
+declare p record; out jsonb := '[]'::jsonb;
+begin
+  for p in select source, metric, geo_kind from ripples.att_fx_panel order by 1, 2 loop
+    out := out || (ripples.att_fx_panel_build(p.source, p.metric, p.geo_kind) - 'regions');
+  end loop;
+  return out;
+end $$;
+
+do $$ declare t text; begin
+  for t in select p.oid::regprocedure::text from pg_proc p join pg_namespace n on n.oid = p.pronamespace
+           where n.nspname = 'ripples' and p.proname like 'att\_fx\_%' loop
+    execute format('revoke all on function %s from anon, authenticated, public', t);
+  end loop;
+end $$;
+
+-- Cron (UTC): the chunked runner every minute while the archive grid computes (unschedule when att_state 'engine62.run'.pending = 0),
+-- the panel refresh nightly.
+do $$ declare j record; begin
+  for j in select jobid from cron.job where jobname in ('att-fx62-panel') loop perform cron.unschedule(j.jobid); end loop;
+  perform cron.schedule('att-fx62-panel', '40 7 * * *', $c$set statement_timeout = '100s'; select ripples.att_fx_panel_refresh()$c$);
+end $$;
+-- select cron.schedule('att-fx62-step', '* * * * *', $$set statement_timeout = '100s'; select ripples.att_fx_step(45)$$);   -- job 187 on 2026-09-26
