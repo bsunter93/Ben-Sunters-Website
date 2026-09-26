@@ -124,3 +124,30 @@ tense after the window, held-back names, no raw identifiers, both fluke labels, 
 live diffs, the synthetic diffs and every assert to pass. `select * from ripples.rm_grant_audit();` must return zero rows; every
 publish also runs `ripples.rm_enforce_grants()`, which revokes anything the audit lists (e.g. after an older SQL file is
 re-applied) and reports the count as `grants_fixed`.
+
+## Stories (story layer, 2026-09-26; OWNER_DECISIONS D-14/D-15/D-16)
+
+| Page | Storage | RPC (anon) | Fixture |
+|---|---|---|---|
+| Home featured list, weekly edition supporting stories, Wander | (none yet; RPC only) | `rm_stories(p_limit default 12, p_days default 90, p_kind default null)` — `p_kind` ∈ `cascade`, `watching`, `non_event`, `pattern` | `stories.json` |
+
+`rm_stories` is a **separate RPC** (the existing payloads' contract test reports extra keys, so nothing was added to `rm_cascade`/`rm_hop`).
+It returns `{v, as_of, rule, featured[], counts, pool, note}`; every `featured[]` item has the same keys whatever its `kind` (`event`, `hero`,
+`pattern`, `watching`, `replication` are `null` where the kind has none). Binding reading rules:
+
+* `tier` is the **public** tier (engine tier after the BigQuery forecast gate); `engine_tier` is the engine's; when they differ `demoted` is
+  true and `gate_reason` says why. Story fields (`scores`, `archetype`, `story_sentence`, …) never change a tier — render the tier from `tier` only.
+* `graph.edges[].kind` is `chain` (event → A → B) **only** when the engine's mediation check supports A → B; otherwise `fork` (event → A,
+  event → B) and `mediation_supported` is false. Never draw a fork as a chain.
+* `story_sentence`, `short_title`, `conversation_hook` (null in quiet mode), `share_line` are first-class copy from the DB: use them for hero
+  copy, share text, OG metadata and the weekly headline; never compose them in the frontend.
+* `travel` = "How far did it travel?" (`domains_crossed`, `days`, `depth`). `next` = rabbit-hole pointers (`same_event`, `same_stop`,
+  `stop_connections`, `same_domain`, `one_more`). `share` = canonical `slug`, frozen line `version`, `created_at`, `grown_since`, `og`, `reopen`.
+* `archetype` ∈ Detour, Echo, Delay, Funnel, Bounce, Amplifier, Blind Spot, Branch, Shared Stop, Dead end (= Collapse), Ghost, or null
+  ("Ripple"); presentation label only. Watching stories carry no archetype; `watching` holds `window_close`, `next_look`, `days_to_resolve`,
+  `p_hat`, `expected_1_in` ("expected to resolve in N days; we expect a move about 1 in K times").
+* `kind = pattern` items are engine-6.2 family patterns (`pattern.*` mirrors `rm_patterns`); `kind = non_event` items are pre-registered expected
+  stops that stayed flat ("the ripple that died"); `is_control` items are never returned.
+
+Test: `select ripples.rm_story_contract_test();` (shape diff against `stories.json`, leak guard, causal-word lint, gate reasons) and
+`select ripples.att_test_story();` (T30–T37 invariants).

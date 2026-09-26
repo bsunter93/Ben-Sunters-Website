@@ -401,3 +401,115 @@ begin
   return jsonb_build_object('ok', (select bool_and((x ->> 'ok')::boolean) from jsonb_array_elements(res) x), 'tests', res);
 end $$;
 revoke all on function ripples.att_test_engine_62() from anon, authenticated, public;
+
+-- ---------------------------------------------------------------------------------------------------------------------
+-- Story layer (31_att_story_layer.sql): T30–T37. Run: select ripples.att_test_story();  (service_role; standalone, read-only)
+-- Invariants: story fields never alter an evidence tier; no 'chain' edge without mediation support; Likely / Watching never carry Measured
+-- wording; a gate-demoted hop is always shown demoted with the gate's reason; Non-Event (Ghost / Dead end) only for pre-registered expected
+-- effects that stayed flat; coherence gates exclude regardless of score; the public RPC matches its fixture and leaks nothing.
+-- ---------------------------------------------------------------------------------------------------------------------
+create or replace function ripples.att_test_story() returns jsonb
+language plpgsql security definer set search_path = '' as $$
+declare res jsonb := '[]'::jsonb; ok boolean; n_bad int; n_rows int; det jsonb; cfg jsonb := ripples._att_cfg('story'); s1 real; s2 real; s3 real; s4 real; j jsonb; t text;
+        today date := (now() at time zone 'utc')::date; ct jsonb; cp jsonb;
+begin
+  -- T30 story fields never alter an evidence tier: (a) engine_tier equals the root's tier in the engine's published cascade payload, tier equals
+  -- the pure gate mapping; (b) no story function writes to any engine table (static check on every att_story_* / rm_story_* body)
+  select count(*), count(*) filter (where not okk) into n_rows, n_bad from (
+    select s.story_id,
+           s.engine_tier = (select n ->> 'tier' from ripples.att_cascades c, jsonb_array_elements(c.payload -> 'nodes') n where c.event_id = s.event_id and (n ->> 'hop_id')::bigint = s.root_hop)
+           and s.tier = (ripples.att_story_public_tier(s.engine_tier, case when s.engine_tier = 'measured' then ripples.att_ce_gate(s.root_hop, 'measured') end) ->> 'tier') okk
+      from ripples.att_story_candidates s where s.story_kind in ('cascade','watching')) x;
+  select count(*) into n_bad from pg_proc p join pg_namespace ns on ns.oid = p.pronamespace
+   where ns.nspname = 'ripples' and (p.proname like 'att\_story\_%' or p.proname like 'rm\_story%' or p.proname like 'rm\_stories%')
+     and lower(pg_get_functiondef(p.oid)) ~ '(update|insert into|delete from)\s+ripples\.(att_hop_tests|att_hop_candidates|att_cascades|att_cascade_versions|att_hop_registry|att_ledger|att_fx_pool|att_fx_event|rm_public_versions)\M';
+  ok := n_bad = 0 and (n_rows = 0 or (select count(*) from ripples.att_story_candidates s where s.story_kind in ('cascade','watching')
+          and not (s.engine_tier = (select n ->> 'tier' from ripples.att_cascades c, jsonb_array_elements(c.payload -> 'nodes') n where c.event_id = s.event_id and (n ->> 'hop_id')::bigint = s.root_hop))) = 0);
+  res := ripples._att_t(res, 'T30 story fields never alter an evidence tier (engine payload = engine_tier; gate mapping = tier; no story function writes an engine table)', ok,
+                        jsonb_build_object('rows', n_rows, 'writers', n_bad));
+  -- T31 no 'chain' edge without mediation support: pure rule + every stored edge re-derived from the engine's chaining record
+  ok := ripples.att_story_edge_kind(null, null) = 'fork'
+        and ripples.att_story_edge_kind('{"fork_test": false, "mediation_c": true}', null) = 'chain'
+        and ripples.att_story_edge_kind('{"fork_test": true, "mediation_c": true}', null) = 'fork'
+        and ripples.att_story_edge_kind('{"fork_test": false}', null) = 'fork'
+        and ripples.att_story_edge_kind('{"fork_test": false, "mediation_c": true}', to_jsonb(1201)) = 'fork';
+  select count(*) into n_bad from ripples.att_story_candidates s, jsonb_array_elements(s.graph -> 'edges') e
+   where e ->> 'kind' = 'chain'
+     and ripples.att_story_edge_kind((select t.detail -> 'chain' from ripples.att_hop_tests t where t.hop_id = (e ->> 'to')::bigint and t.tier is not null order by t.look_no desc limit 1),
+                                     (select n -> 'fork_of' from ripples.att_cascades c, jsonb_array_elements(c.payload -> 'nodes') n where c.event_id = s.event_id and (n ->> 'hop_id')::bigint = (e ->> 'to')::bigint)) <> 'chain';
+  select count(*) into n_rows from ripples.att_story_candidates s, jsonb_array_elements(s.graph -> 'edges') e where e ->> 'kind' = 'chain';
+  ok := ok and n_bad = 0 and not exists (select 1 from ripples.att_story_candidates s where (s.fields ->> 'mediation_supported')::boolean
+                                          and exists (select 1 from jsonb_array_elements(s.graph -> 'edges') e where e ->> 'kind' <> 'chain' and e ->> 'from' <> 'event' and e ->> 'from' <> 'family'));
+  res := ripples._att_t(res, 'T31 no chain edge without engine mediation support (pure rule; every stored chain edge re-derived)', ok, jsonb_build_object('chain_edges', n_rows, 'unsupported', n_bad));
+  -- T32 Likely / Watching / dead-end stories never carry Measured wording; the copy verbs are tier-honest and never causal
+  cp := ripples.att_story_copy('cascade', 'Blind Spot', 'likely', 'Event X', 'Storm', 'Stop Y', 'jobs', 3, '{"domains_crossed": 1, "days": 3, "depth": 1}', null, null, false, 'u');
+  ok := ripples.att_story_tier_wording('likely') not like '%Measured%' and ripples.att_story_tier_wording('watching') not like '%Measured%'
+        and ripples.att_story_tier_wording('flat', 'non_event') not like '%Measured%' and ripples.att_story_tier_wording('measured') like 'Measured movement%'
+        and (cp ->> 'story_sentence') like '%may have shown up in%' and (cp ->> 'story_sentence') !~* '\m(caused|drove|because of)\M'
+        and (ripples.att_story_copy('watching', null, 'watching', 'Event X', 'Storm', 'Stop Y', 'jobs', null, '{}', null, '{"days_to_resolve": 4, "expected_1_in": 5}', false, 'u') ->> 'story_sentence') like '%might be showing up in%'
+        and (ripples.att_story_copy('non_event', 'Dead end', 'flat', 'Event X', 'Storm', 'Stop Y', 'jobs', null, '{}', null, '{"expected_1_in": 5}', false, 'u') ->> 'story_sentence') like '%window closed flat%'
+        and (ripples.att_story_copy('cascade', null, 'measured', 'Event X', 'Storm', 'Stop Y', 'jobs', 3, '{"domains_crossed": 1, "days": 3, "depth": 1}', null, null, false, 'u') ->> 'story_sentence') like '% showed up in %';
+  select count(*) into n_bad from ripples.att_story_candidates s
+   where s.tier <> 'measured' and ((s.copy ->> 'story_sentence') like '% showed up in %' and (s.copy ->> 'story_sentence') not like '%may have shown up in%'
+                                    or (s.copy ->> 'story_sentence') like '%Measured movement%' or (s.copy ->> 'share_line') like '%· Measured ·%'
+                                    or (s.copy ->> 'story_sentence') ~* '\m(caused|drove|because of|flooded into)\M');
+  ok := ok and n_bad = 0;
+  res := ripples._att_t(res, 'T32 Likely / Watching / dead-end stories never carry Measured wording; verbs tier-honest, never causal', ok, jsonb_build_object('bad_rows', n_bad, 'sample', cp ->> 'story_sentence'));
+  -- T33 a forecast-gate demotion is always shown at the demoted tier with the gate's reason (pure mapping + every stored row + the public list)
+  j := ripples.att_story_public_tier('measured', '{"tier": "likely", "reason": "forecast check pending", "engine_tier": "measured"}');
+  ok := j ->> 'tier' = 'likely' and (j ->> 'demoted')::boolean and j ->> 'reason' = 'forecast check pending'
+        and (ripples.att_story_public_tier('measured', '{"tier": "measured"}') ->> 'demoted')::boolean = false
+        and ripples.att_story_public_tier('likely', null) ->> 'tier' = 'likely' and ripples.att_story_public_tier('measured', null) ->> 'tier' = 'measured';
+  select count(*) into n_bad from ripples.att_story_candidates s where (s.gate ->> 'demoted')::boolean and (s.tier = 'measured' or s.gate ->> 'reason' is null);
+  ok := ok and n_bad = 0 and not exists (select 1 from jsonb_array_elements(public.rm_stories(50, 36500, null) -> 'featured') f
+                                          where (f ->> 'engine_tier') = 'measured' and (f ->> 'tier') <> 'measured' and (f ->> 'gate_reason') is null);
+  res := ripples._att_t(res, 'T33 gate demotion always shown demoted with the gate reason (mapping, table, public list)', ok, jsonb_build_object('bad_rows', n_bad, 'mapping', j));
+  -- T34 Non-Event (Ghost / Dead end) only for pre-registered expected effects (p_hat > 0) whose window closed with a flat final verdict
+  select count(*) into n_rows from ripples.att_story_candidates where story_kind = 'non_event';
+  select count(*) into n_bad from ripples.att_story_candidates s, unnest(s.hop_ids) h
+   where s.story_kind = 'non_event'
+     and not exists (select 1 from ripples.att_hop_registry r join ripples.att_hop_candidates c on c.hop_id = r.hop_id
+                      where r.hop_id = h and r.p_hat > 0 and c.window_close < today
+                        and (select t.tier from ripples.att_hop_tests t where t.hop_id = h and t.tier is not null order by t.look_no desc limit 1) = 'flat');
+  ok := n_bad = 0 and not exists (select 1 from ripples.att_story_candidates where story_kind = 'non_event' and (tier <> 'flat' or archetype not in ('Ghost', 'Dead end')))
+        and ripples.att_story_archetypes('non_event', '{}')[1] = 'Dead end' and ripples.att_story_archetypes('ghost', '{}')[1] = 'Ghost'
+        and ripples.att_story_archetypes('cascade', '{"evidence_at_transitions": 0.6}') is distinct from array['Dead end'];
+  res := ripples._att_t(res, 'T34 Non-Event stories only for pre-registered expected effects that stayed flat', ok, jsonb_build_object('non_events', n_rows, 'bad', n_bad));
+  -- T35 coherence gates exclude regardless of score; the score is pure, bounded, order-only and favours counterintuitive findings (D-16)
+  s1 := ripples.att_story_score('{"temporal_coherence": 1, "mechanism_coherence": 1, "evidence_at_transitions": 0.6, "surprise": 0.2, "counterintuitiveness": 0.2, "magnitude": 0.5}', cfg);
+  s2 := ripples.att_story_score('{"temporal_coherence": 1, "mechanism_coherence": 1, "evidence_at_transitions": 0.6, "surprise": 0.8, "counterintuitiveness": 0.9, "magnitude": 0.5}', cfg);
+  s3 := ripples.att_story_score('{"temporal_coherence": 1, "mechanism_coherence": 1, "evidence_at_transitions": 1, "surprise": 1, "counterintuitiveness": 1, "magnitude": 1, "replication": 1, "domain_diversity": 1, "independent_confirmations": 1, "visual_clarity": 1, "novelty": 1}', cfg);
+  s4 := ripples.att_story_score('{"temporal_coherence": 0, "mechanism_coherence": 0, "common_cause_risk": 1, "length": 4, "branching_noise": 1}', cfg);
+  ok := s2 > s1 and s3 <= 1 and s4 >= 0 and s3 > s2
+        and ripples.att_story_gate('{"temporal_coherence": 0.4, "mechanism_coherence": 1, "labels_ok": true}', cfg) = 'low temporal coherence'
+        and ripples.att_story_gate('{"temporal_coherence": 1, "mechanism_coherence": 0.3, "labels_ok": true}', cfg) like 'no mechanism%'
+        and ripples.att_story_gate('{"temporal_coherence": 1, "mechanism_coherence": 1, "labels_ok": false}', cfg) = 'waiting for a public name'
+        and ripples.att_story_gate('{"temporal_coherence": 1, "mechanism_coherence": 1, "labels_ok": true}', cfg) is null
+        and not exists (select 1 from ripples.att_story_candidates s where s.featurable and ((s.fields ->> 'temporal_coherence')::float8 < (cfg -> 'gates' ->> 'temporal_min')::float8
+                                                                                        or (s.fields ->> 'mechanism_coherence')::float8 < (cfg -> 'gates' ->> 'mechanism_min')::float8
+                                                                                        or not (s.fields ->> 'labels_ok')::boolean));
+  res := ripples._att_t(res, 'T35 coherence gates exclude regardless of score; score pure, bounded, counterintuitive favoured', ok, jsonb_build_object('unsurprising', s1, 'surprising', s2, 'max', s3, 'min', s4));
+  -- T36 the archetype rules are deterministic on fields (one example each of the merged D-14/D-15/D-16 list)
+  ok := ripples.att_story_archetypes('cascade', '{"length": 2, "mediation_supported": true, "domain_diversity": 2, "surprise": 0.7, "evidence_at_transitions": 1}')[1] = 'Detour'
+        and ripples.att_story_archetypes('cascade', '{"event_domains_likely": 3}')[1] = 'Branch'
+        and ripples.att_story_archetypes('cascade', '{"event_domains_likely": 2}')[1] = 'Echo'
+        and ripples.att_story_archetypes('cascade', '{"funnel_siblings": 3}')[1] = 'Funnel'
+        and ripples.att_story_archetypes('cascade', '{"direction_unexpected": true}')[1] = 'Bounce'
+        and ripples.att_story_archetypes('cascade', '{"magnitude": 0.9, "shock": 0.2}')[1] = 'Amplifier'
+        and ripples.att_story_archetypes('cascade', '{"evidence_at_transitions": 0.6, "surprise": 0.7}')[1] = 'Blind Spot'
+        and ripples.att_story_archetypes('cascade', '{"evidence_at_transitions": 0.6, "hero_lag_days": 9}')[1] = 'Delay'
+        and ripples.att_story_archetypes('cascade', '{"shared_stop": true, "event_domains_likely": 3}')[1] = 'Shared Stop'
+        and ripples.att_story_archetypes('watching', '{"evidence_at_transitions": 0.2, "surprise": 0.9}') = '{}'
+        and ripples.att_story_archetypes('cascade', '{"length": 2, "mediation_supported": false, "domain_diversity": 2, "surprise": 0.7}') is distinct from array['Detour'];
+  res := ripples._att_t(res, 'T36 archetype rules deterministic (Detour needs mediation; Watching has none)', ok, null);
+  -- T37 public contract: fixture shape, leak guard, no causal words, RLS on both tables, no anon grant on any story function, controls never featured
+  ct := ripples.rm_story_contract_test();
+  ok := (ct ->> 'ok')::boolean
+        and (select bool_and(c.relrowsecurity) from pg_class c join pg_namespace ns on ns.oid = c.relnamespace where ns.nspname = 'ripples' and c.relname in ('att_story_candidates', 'att_story_featured'))
+        and not exists (select 1 from ripples.rm_grant_audit() g where g.fn like '%story%')
+        and not exists (select 1 from jsonb_array_elements(public.rm_stories(50, 36500, null) -> 'featured') f where (f ->> 'is_control')::boolean);
+  res := ripples._att_t(res, 'T37 public rm_stories matches stories.json, leaks nothing, RLS on, no anon grants, controls never featured', ok,
+                        jsonb_build_object('diffs', ct -> 'diffs', 'leaks', ct -> 'leaks', 'coverage', ct -> 'coverage', 'causal_words', ct -> 'causal_words'));
+  return jsonb_build_object('ok', (select bool_and((x ->> 'ok')::boolean) from jsonb_array_elements(res) x), 'tests', res);
+end $$;
+revoke all on function ripples.att_test_story() from anon, authenticated, public;
