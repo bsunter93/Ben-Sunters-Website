@@ -186,29 +186,32 @@ end $$;
 -- ---------------------------------------------------------------------------------------------------------------------
 create or replace function ripples.att_archive_looks_step(p_budget_s int default 50) returns jsonb
 language plpgsql security definer set search_path = '' as $$
-declare d date; r jsonb; n_left int; now_t time := (now() at time zone 'utc')::time;
+declare d date; r jsonb; t0 timestamptz := clock_timestamp(); n_ran int := 0; n_days int := 0; last_day date; now_t time := (now() at time zone 'utc')::time;
 begin
   if now_t between time '05:40' and time '08:50' then return jsonb_build_object('skipped', 'nightly zvec / live morning window'); end if;
   if not pg_try_advisory_lock(hashtext('ripples.att_library_step')) then return jsonb_build_object('skipped', 'library lock held'); end if;
   begin
-    select min(u.d) into d
-      from ripples.att_hop_candidates c, unnest(c.looks) with ordinality u(d, o)
-     where c.frozen_hash is not null and c.status <> 'skipped' and c.reconstructed and u.d <= current_date
-       and not exists (select 1 from ripples.att_hop_tests t where t.hop_id = c.hop_id and t.look_no = u.o and (t.t_stat is not null or t.tier_reason = 'waiting_series'));
-    if d is null then
-      perform pg_advisory_unlock(hashtext('ripples.att_library_step'));
-      perform ripples.att_state_set('wse.looks_step', coalesce(ripples.att_state_get('wse.looks_step'), '{}'::jsonb) || jsonb_build_object('idle_at', now()));
-      return jsonb_build_object('idle', true);
-    end if;
-    r := ripples.att_engine_run_due(d, 100000, true, p_budget_s);
+    loop
+      exit when clock_timestamp() - t0 > make_interval(secs => p_budget_s);
+      select min(u.d) into d
+        from ripples.att_hop_candidates c, unnest(c.looks) with ordinality u(d, o)
+       where c.frozen_hash is not null and c.status <> 'skipped' and c.reconstructed and u.d <= current_date
+         and not exists (select 1 from ripples.att_hop_tests t where t.hop_id = c.hop_id and t.look_no = u.o and (t.t_stat is not null or t.tier_reason = 'waiting_series'));
+      exit when d is null;
+      exit when d is not distinct from last_day and coalesce((r ->> 'ran')::int, 0) = 0;   -- no progress on this day: stop, report
+      r := ripples.att_engine_run_due(d, 100000, true, greatest(1, p_budget_s - extract(epoch from clock_timestamp() - t0)::int));
+      n_ran := n_ran + (r ->> 'ran')::int; n_days := n_days + 1; last_day := d;
+    end loop;
   exception when others then
     perform pg_advisory_unlock(hashtext('ripples.att_library_step'));
     raise;
   end;
   perform pg_advisory_unlock(hashtext('ripples.att_library_step'));
   perform ripples.att_state_set('wse.looks_step', coalesce(ripples.att_state_get('wse.looks_step'), '{}'::jsonb)
-          || jsonb_build_object('day', d, 'last', r, 'at', now(), 'ran_total', coalesce((ripples.att_state_get('wse.looks_step') ->> 'ran_total')::int, 0) + (r ->> 'ran')::int));
-  return r || jsonb_build_object('day', d);
+          || jsonb_build_object('day', coalesce(d, last_day), 'idle', d is null, 'at', now(), 'last_ran', n_ran, 'days', n_days,
+                                'ran_total', coalesce((ripples.att_state_get('wse.looks_step') ->> 'ran_total')::int, 0) + n_ran));
+  return jsonb_build_object('ran', n_ran, 'days', n_days, 'day', coalesce(d, last_day), 'idle', d is null,
+                            'seconds', round(extract(epoch from clock_timestamp() - t0)::numeric, 1));
 end $$;
 
 -- ---------------------------------------------------------------------------------------------------------------------
