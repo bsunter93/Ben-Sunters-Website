@@ -101,7 +101,8 @@ begin
   with in_rows as (
     select (e.r->>'series_id')::bigint                                          as series_id,
            (e.r->>'start_day')::date                                           as start_day,
-           (select array_agg((x->>0)::int) from jsonb_array_elements(e.r->'vals') with ordinality x) as vals,
+           (select array_agg(nullif(x.val::text, 'null')::int order by x.ord)
+              from jsonb_array_elements(e.r->'vals') with ordinality as x(val, ord))  as vals,
            coalesce(e.r->'meta', '{}'::jsonb)                                   as meta
     from jsonb_array_elements(p_rows) e(r)
     where e.r->>'series_id' is not null and e.r->>'start_day' is not null and jsonb_typeof(e.r->'vals') = 'array'
