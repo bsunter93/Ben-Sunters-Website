@@ -88,6 +88,8 @@ export function weekRange(w) {
   return { from, to: addDays(from, 6) };
 }
 export const lagText = l => (!fin(l) ? '' : Number(l) === 0 ? 'the same day as' : `${plural(Math.round(Number(l)), 'day')} after`);
+// a look dated after the window closes reads the window's data after the fact: it is the final look, not a next one
+export const lookWord = (due, close) => (due && close && String(due) > String(close) ? 'Final look' : 'Next look');
 export const lagShort = l => (!fin(l) ? '' : Number(l) === 0 ? 'same day' : `+${Math.round(Number(l))} d`);
 
 // ---------- routes ----------
@@ -151,13 +153,14 @@ export function kidsOf(c) {
 }
 // The reading order of a line: depth-first, stations before Watching, subtrees kept next to their parent.
 // Below the shock every stop is shown; at a deeper fork the spine follows the strongest child (lowest q) and the other
-// station children fold into a track-switch chip (choice[parentHop] = hop_id re-routes the spine).
-export function lineOrder(c, choice = {}) {
+// station children fold into a track-switch chip (choice[parentHop] = hop_id re-routes the spine). Desktop passes
+// nofold and shows the branches side by side instead (EXPERIENCE §4.2).
+export function lineOrder(c, choice = {}, nofold = false) {
   const kids = kidsOf(c), out = [];
   const walk = (pid, depth) => {
     let ch = kids.get(pid) || [];
     let folded = [];
-    if (pid) {
+    if (pid && !nofold) {
       const st = ch.filter(isMoved);
       if (st.length > 1) {
         const pick = st.some(x => x.hop_id === choice[pid]) ? choice[pid] : st.slice().sort((a, b) => (a.q ?? 1) - (b.q ?? 1))[0].hop_id;
@@ -235,12 +238,20 @@ export function evidenceHeadline(h) {
 }
 // The two fluke numbers, two labels, never merged (ENGINE §8)
 export const lookalikes = p1 => (fin(p1) ? `A random pairing looks this strong about 1 in ${fmtInt(p1)} times.` : '');
-export const flukeRate = (f1, warming) => (warming ? 'Fluke rate still warming up: too few decoy links this strong yet.' : fin(f1) ? `Links this strong from decoy starts turn out to be flukes about 1 in ${fmtInt(f1)} times.` : '');
+// f is shown as 1 in ⌊1/f⌋, capped at "1 in 50+" (ENGINE §5.4); the label is ENGINE §8 verbatim
+export const flukeK = f1 => (!fin(f1) ? '' : Math.floor(Number(f1)) >= 50 ? '50+' : fmtInt(Math.floor(Number(f1))));
+export const flukeRate = (f1, warming) => (warming ? 'Fluke rate still warming up: too few decoy links this strong yet.' : fin(f1) ? `Links like this turn out to be flukes about 1 in ${flukeK(f1)} times.` : '');
 export function dayLine(line) {
   if (!line || line.source === 'not available' || !fin(line.tested)) return null;
   return { tested: line.tested, moved: line.moved, measured: line.measured, expected: line.expected_flukes };
 }
 export const expected = x => (fin(x) ? (Number(x) < 10 ? Number(x).toFixed(1).replace(/\.0$/, '') : fmtInt(x)) : '–');
+// Σ f over the Measured stops (ENGINE §5.3 "expected flukes among the Measured"): always phrased against the Measured count,
+// never against paths tested or moved. Null when nothing is Measured (then there is nothing to expect a fluke among).
+export function flukeClause(x, measured) {
+  if (!fin(measured) || Number(measured) <= 0 || !fin(x)) return null;
+  return Number(measured) === 1 ? `about ${expected(x)} expected to be a fluke` : `about ${expected(x)} of those ${fmtInt(measured)} expected to be flukes`;
+}
 export function biggest(s) {
   if (!s) return '';
   if (s.biggest_basis === 'days_since_higher' && fin(s.biggest_in_days)) return `Biggest day in ${fmtInt(s.biggest_in_days)} days`;
@@ -255,8 +266,8 @@ export function placeboStrip(pl, tiles = 200) {
   return { n, exceed: ex, lit: ex ? Math.max(1, Math.round((tiles * ex) / n)) : 0, tiles, fam };
 }
 export const FAM_WORD = { date: 'fake dates', link: 'fake starts', topic: 'fake pages' };
-// Fluke meter: K tiles with one marigold tile ("1 in K"); text only past 60
-export const flukeTiles = f1 => (fin(f1) && f1 >= 2 && f1 <= 60 ? Math.round(f1) : 0);
+// Fluke meter: K tiles with one marigold tile ("1 in K", K = ⌊1/f⌋); text only at the 50+ cap
+export const flukeTiles = f1 => (fin(f1) && f1 >= 2 && f1 < 50 ? Math.floor(f1) : 0);
 
 // ---------- share (text first; the URL sits inside the text, playbook §3.4) ----------
 export function shareLine(c) {

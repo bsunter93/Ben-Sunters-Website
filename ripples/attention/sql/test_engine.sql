@@ -85,7 +85,7 @@ begin
 
   -- T14 (B4) holidays are common-shock days: Thanksgiving ± 1, Black Friday, Christmas week, July 4 observed
   ok := (select count(*) from ripples.att_common_days where day in ('2025-11-26', '2025-11-27', '2025-11-28', '2025-12-26', '2026-07-03', '2024-11-28')) = 6
-        and not exists (select 1 from ripples.att_common_days where day = '2025-11-12');   -- an ordinary Wednesday is not flagged
+        and not exists (select 1 from ripples.att_common_days where day = '2025-11-19');   -- an ordinary Wednesday (no holiday within a day) is not flagged
   res := ripples._att_t(res, 'T14 US federal holidays ± 1 d, Black Friday and Christmas week are registered common-shock days', ok,
            (select jsonb_agg(jsonb_build_object('day', day, 'reason', reason) order by day) from ripples.att_common_days where day between '2025-11-25' and '2025-11-29'));
 

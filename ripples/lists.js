@@ -1,7 +1,7 @@
 // Ripple Map v6 list pages (WS-D): map, every line, archive, lands, week and the methods Receipts.
 import * as C from './config.js';
 import * as L from './lib.js';
-import { $, add, h, S, em, sep, joinSep, put, icon, IC, RM, desk, ls, today, INLINE, D, rpc, load, event, toast, copy, share, prefetchImg, shareImage, landing, flaps, countUp, tt_, pips, stamp, dtile, strip, legend, spark, theme, help, wander, chrome, visits, seedChart, getBip } from './ui.js';
+import { $, add, h, S, em, sep, joinSep, put, icon, IC, RM, desk, ls, today, INLINE, D, rpc, load, event, toast, copy, share, prefetchImg, shareImage, landing, flaps, countUp, tt_, pips, stamp, dtile, strip, legend, spark, theme, wander, chrome, visits, seedChart, getBip } from './ui.js';
 
 // ---------- LISTS: map, lines, archive, lands, week ----------
 export function lineRow(a, extra) {
@@ -77,7 +77,7 @@ export async function methodsPage() {
   const ksSvg = S('svg', { viewBox: '0 0 200 64', preserveAspectRatio: 'none', role: 'img', 'aria-label': `Histogram of ${ks.n || 0} held-out null p-values in 20 bins; a flat shape means the test is calibrated.` });
   const hist = ks.hist || [], hm = Math.max(1, ...hist);
   hist.forEach((v, i) => S('rect', { x: i * 10 + 1, y: 58 - (v / hm) * 54, width: 8, height: (v / hm) * 54, fill: 'var(--ink)', opacity: 0.8 }, ksSvg));
-  const tbl = (head, body) => h('div', { class: 'tw' }, h('table', { class: 't' }, h('thead', null, h('tr', null, head.map((t, i) => h('th', { scope: 'col', class: i && /tests|Measured|Size|Lag|Found|Tested|Seen|Of|Moved|flukes/.test(t) ? 'n' : null }, t)))), h('tbody', null, body)));
+  const tbl = (head, body) => h('div', { class: 'tw' }, h('table', { class: 't' }, h('thead', null, h('tr', null, head.map((t, i) => h('th', { scope: 'col', class: i && /tests|Measured|Size|Lag|Found|Tested|Seen|Of|Moved|flukes|Count/.test(t) ? 'n' : null }, t)))), h('tbody', null, body)));
   put(box,
     brk ? h('p', { class: 'brk', role: 'alert' }, 'Circuit breaker tripped: ', (cal.breaker || hl.breaker).map(b => b.cell || b).join(', '), '. Measured stops in those cells are shown as Likely until the cell recovers.') : null,
     h('p', { class: 'sm muted' }, `As of ${L.fmtDate(cal.as_of)}, method ${cal.method}. Every number here is read from the calibration file the engine publishes.`),
@@ -86,7 +86,8 @@ export async function methodsPage() {
       h('div', null, h('b', null, `${L.fmtInt(rc.hits)} of ${L.fmtInt(rc.resolved)}`), h('span', null, `Pre-registered calls resolved as a hit (${L.fmtInt(rc.registered)} registered; the base rate predicted ${rc.base_rate_hits ?? '–'})`)),
       h('div', null, h('b', null, ks.p != null ? ks.p : '–'), h('span', null, `Null check: KS p on ${L.fmtInt(ks.n)} held-out pairs (KS ${ks.stat ?? '–'}); we want p ≥ 0.05`)),
       h('div', null, h('b', null, pct(neg.pass_rate)), h('span', null, `Negative controls passing (decoy rate ${pct(neg.decoy_rate)}, n ${L.fmtInt(neg.n)})`))),
-    h('figure', { class: 'ks' }, ksSvg, h('figcaption', { class: 'xs muted' }, `Held-out null p-values in 20 bins, from 0 (left) to 1 (right). A flat row means the placebo test is calibrated.`)),
+    h('figure', { class: 'ks' }, ksSvg, h('figcaption', { class: 'xs muted' }, `Held-out null p-values in 20 bins, from 0 (left) to 1 (right). A flat row means the placebo test is calibrated.`),
+      hist.length ? h('details', null, h('summary', { class: 'lnk' }, 'The histogram as a table'), tbl(['p from', 'p to', 'Count'], hist.map((v, i) => h('tr', null, h('td', null, (i / 20).toFixed(2)), h('td', null, ((i + 1) / 20).toFixed(2)), h('td', { class: 'n' }, v))))) : null),
     rc.show_reliability ? null : h('p', { class: 'sm muted' }, 'Reliability and Brier scores appear once enough pre-registered calls resolve; until then only the raw counts are shown.'),
     h('h3', null, 'Positive controls'), tbl(['Control', 'Result', 'Last run'], (cal.controls?.positive || []).map(p => h('tr', null, h('td', null, p.name), h('td', null, p.passed ? 'passed' : 'not passed'), h('td', null, L.fmtDay(p.last_run))))),
     h('h3', null, 'Decoy false-pass rate by cell'), tbl(['Cell', 'Decoy tests', 'Decoy Measured', 'Real tests', 'Real Measured'], (cal.decoy_fdr?.cells || []).map(x => h('tr', null, h('td', null, x.cell), h('td', { class: 'n' }, x.decoy_tested), h('td', { class: 'n' }, x.decoy_measured), h('td', { class: 'n' }, x.real_tested), h('td', { class: 'n' }, x.real_measured)))),

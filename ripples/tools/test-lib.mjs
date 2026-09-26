@@ -41,11 +41,14 @@ eq('rel points', L.rel(-0.4, 'points'), '0.40 points below its normal');
 eq('evidence headline (shrunk + interval)', L.evidenceHeadline(hop), 'US air travellers at 0.91× [0.88–0.95] its normal, consistent with Hurricane Polo 1 day earlier.');
 // ENGINE §8: the two fluke labels, exactly
 eq('lookalikes label', L.lookalikes(58), 'A random pairing looks this strong about 1 in 58 times.');
-eq('fluke-rate label', L.flukeRate(20, false), 'Links this strong from decoy starts turn out to be flukes about 1 in 20 times.');
-ok('fixture sentence carries both labels verbatim', c.nodes[0].sentence.includes(L.lookalikes(58)) && c.nodes[0].sentence.includes('Links like this turn out to be flukes about 1 in 20 times.'));
+eq('fluke-rate label (ENGINE §8 verbatim)', L.flukeRate(20, false), 'Links like this turn out to be flukes about 1 in 20 times.');
+ok('fixture sentence carries both labels verbatim', c.nodes[0].sentence.includes(L.lookalikes(58)) && c.nodes[0].sentence.includes(L.flukeRate(20, false)));
+eq('fluke rate capped at 1 in 50+ (ENGINE §5.4)', [L.flukeRate(50, false), L.flukeRate(312, false), L.flukeRate(49.7, false)], ['Links like this turn out to be flukes about 1 in 50+ times.', 'Links like this turn out to be flukes about 1 in 50+ times.', 'Links like this turn out to be flukes about 1 in 49 times.']);
+eq('expected flukes are phrased against the Measured count', [L.flukeClause(0.7, 4), L.flukeClause(0.3, 1), L.flukeClause(0, 0), L.flukeClause(null, 3)], ['about 0.7 of those 4 expected to be flukes', 'about 0.3 expected to be a fluke', null, null]);
+eq('a look after the window closes is the final look', [L.lookWord('2026-09-29', '2026-09-28'), L.lookWord('2026-09-27', '2026-09-28'), L.lookWord('2026-09-29', null)], ['Final look', 'Next look', 'Next look']);
 eq('fluke warming', L.flukeRate(null, true), 'Fluke rate still warming up: too few decoy links this strong yet.');
 eq('placebo strip', (({ n, exceed, lit }) => ({ n, exceed, lit }))(L.placeboStrip(hop.q5_luck.placebo)), { n: 2429, exceed: 39, lit: 3 });
-eq('fluke meter tiles', [L.flukeTiles(20), L.flukeTiles(250), L.flukeTiles(null)], [20, 0, 0]);
+eq('fluke meter tiles', [L.flukeTiles(20), L.flukeTiles(50), L.flukeTiles(250), L.flukeTiles(null)], [20, 0, 0, 0]);
 eq('grown since (v2 → v3)', L.grownSince(v2, c), { version: 3, stops_added: 1 });
 eq('grown since same version', L.grownSince(c, c), null);
 eq('day line not available', L.dayLine({ source: 'not available', tested: null }), null);
@@ -72,7 +75,7 @@ const X = L.xScale(28, 0, 100);
 ok('x scale: linear to +7 then log', Math.abs(X(7) - 60) < 1e-9 && X(3.5) - X(0) === (X(7) - X(0)) / 2 && X(28) === 100 && X(14) < 100);
 
 // ---------- copy rules over the built site (the files WS-D ships) ----------
-const SHIP = ['index.html', 'app.js', 'ui.js', 'line.js', 'lists.js', 'app.css', 'lib.js', 'config.js', 'line/index.html', 'map/index.html', 'lands/index.html', 'week/index.html', 'archive/index.html', 'methods/index.html', 'manifest.webmanifest', 'remind.ics'];
+const SHIP = ['index.html', 'app.js', 'ui.js', 'line.js', 'lists.js', 'help.js', 'app.css', 'lib.js', 'config.js', 'line/index.html', 'map/index.html', 'lands/index.html', 'week/index.html', 'archive/index.html', 'methods/index.html', 'manifest.webmanifest', 'remind.ics'];
 const BANNED = [[/\bcaused\b/i, 'caused'], [/\bdrove\b/i, 'drove'], [/because of/i, 'because of'], [/passes like this are chance/i, 'passes like this are chance'],
   [/streak/i, 'streak'], [/🟩|🟨|🟥/u, 'share squares'], [/Knock-?⌃?On #\d|#\d+ ?(answer|puzzle)|puzzle #\d/i, '#N numbering'], [/\$[A-Z]{1,5}\b|\b(NASDAQ|NYSE)\b/, 'ticker symbol'],
   [/flooded into/i, 'flooded into'], [/chance this is chance/i, 'chance this is chance']];
@@ -84,6 +87,22 @@ for (const f of SHIP) {
   for (const [re, name] of BANNED) ok(`${f}: no ${name}`, !re.test(s), (s.match(re) || [])[0]);
   ok(`${f}: no game points`, !/\bpoints\b|\b\d+ point\b/i.test(pointsOk(s)), (pointsOk(s).match(/.{30}(\bpoints\b|\b\d+ point\b).{30}/i) || [])[0]);
 }
+
+// the whole deployable /ripples/ tree, not only the files above: no retired v5 numbered stubs (ripples/{n}/), and every page
+// and built file passes the same copy rules. Out of this sweep: tools/, contract/, attention/ (not served as pages), and pro/
+// and docs/, which are not WS-D pages (their v5 copy is a WS-F decommission item).
+const SKIP = new Set(['tools', 'contract', 'attention', 'pro', 'docs', 'node_modules']);
+ok('no v5 numbered stub directories ripples/{n}/', !readdirSync(root).some(d => /^\d+$/.test(d) && statSync(join(root, d)).isDirectory()), readdirSync(root).filter(d => /^\d+$/.test(d)).length + ' found');
+const walk = (d, out = []) => { for (const e of readdirSync(join(root, d), { withFileTypes: true })) { const r = d ? `${d}/${e.name}` : e.name; if (e.isDirectory()) { if (!(d === '' && SKIP.has(e.name))) walk(r, out); } else if (/\.(html|js|css)$/.test(e.name)) out.push(r); } return out; };
+const site = walk('').filter(f => !SHIP.includes(f) && !/^(og|pipeline|ops)\//.test(f));
+let siteBad = [];
+for (const f of site) {
+  const s = readFileSync(join(root, f), 'utf8');
+  for (const [re, name] of BANNED) if (re.test(s)) siteBad.push(`${f}: ${name}`);
+  if (/\bpoints\b|\b\d+ point\b/i.test(pointsOk(s))) siteBad.push(`${f}: game points`);
+  if (f.endsWith('.html') && /fonts\.googleapis|fonts\.gstatic|<script[^>]+src="https?:/i.test(s)) siteBad.push(`${f}: external font or script`);
+}
+ok(`whole /ripples/ tree (${site.length} more files): copy rules`, !siteBad.length, siteBad.slice(0, 5).join('; '));
 
 // ---------- budget (EXPERIENCE §11): per route, shell HTML + CSS + every JS file it loads ≤ 120 KB uncompressed ----------
 const size = f => statSync(join(root, f)).size;
@@ -103,7 +122,9 @@ let js = 0;
 for (const [shell, extra] of Object.entries(routeJs)) {
   const files = deps('app.js'); for (const x of extra) deps(dyn(x), files);
   const bytes = [...files].reduce((a, f) => a + statSync(join(dist, f)).size, 0);
-  const tot = size(shell) + size('dist/app.css') + bytes; js = Math.max(js, bytes);
+  const inl = /<style id="rm-css">/.test(readFileSync(join(root, shell), 'utf8'));
+  ok(`${shell}: CSS inlined from the current build`, inl && readFileSync(join(root, shell), 'utf8').includes(`Ripple Map ${srcHash()}: built from ripples/app.css`));
+  const tot = size(shell) + (inl ? 0 : size('dist/app.css')) + bytes; js = Math.max(js, bytes);
   ok(`budget ${shell}: ${(tot / 1024).toFixed(1)} KB ≤ 120 KB`, tot <= 120 * 1024, `${tot}`);
 }
 ok('no external JS in shells', SHIP.filter(f => f.endsWith('.html')).every(f => !/<script[^>]+src="https?:/i.test(readFileSync(join(root, f), 'utf8'))));

@@ -1,7 +1,7 @@
 // Ripple Map v6 line page (WS-D): the staircase, the stop cards and the evidence sheet. Loaded on /line/… routes and by /week/.
 import * as C from './config.js';
 import * as L from './lib.js';
-import { $, add, h, S, em, sep, joinSep, put, icon, IC, RM, desk, ls, today, INLINE, D, rpc, load, event, toast, copy, share, prefetchImg, shareImage, landing, flaps, countUp, tt_, pips, stamp, dtile, strip, legend, spark, theme, help, wander, chrome, visits, seedChart, getBip } from './ui.js';
+import { $, add, h, S, em, sep, joinSep, put, icon, IC, RM, desk, ls, today, INLINE, D, rpc, load, event, toast, copy, share, prefetchImg, shareImage, landing, flaps, countUp, tt_, pips, stamp, dtile, strip, legend, spark, theme, wander, chrome, visits, seedChart, getBip, axText } from './ui.js';
 
 // ---------- the staircase (one inline SVG; the Week card uses the same drawing) ----------
 export function staircase(c, entries, opts = {}) {
@@ -27,9 +27,14 @@ export function staircase(c, entries, opts = {}) {
     const gl = desk() ? 150 : 24, gr = 40, top = 8, bot = 18;
     const dEnd = Math.max(tD + 2, 10, ...lanes.map(l => l.due ?? -99).filter(d => d > -99 && d <= tD + 14));
     const X = L.xScale(dEnd, gl, W - gr);
-    const vis = l => l.pts.filter(p => p.d >= X.start && p.d <= X.end);
-    const ext = lanes.map(l => { const v = vis(l).map(p => L.log2(p.v)).concat(l.band ? l.band.hi.filter(p => p.d >= X.start).map(p => L.log2(p.v)) : []); return { up: Math.max(0, ...v), dn: Math.max(0, ...v.map(x => -x)) }; });
-    const n = lanes.length;
+    // By hop (desktop toggle): each lane keeps its own days but is centred on its own column, so the order reads left to right
+    const byHop = api.mode === 'hop', n = lanes.length;
+    const anchor = l => l.od ?? l.due ?? tD;
+    const colW = (W - gl - gr) / n, pxDay = colW / 5;
+    const cx = i => gl + colW * (i + 0.5);
+    const XL = i => (byHop ? (dd => cx(i) + (dd - anchor(lanes[i])) * pxDay) : X);
+    const vis = (l, i) => l.pts.filter(p => (byHop ? Math.abs(p.d - anchor(l)) <= 6 : p.d >= X.start && p.d <= X.end));
+    const ext = lanes.map((l, i) => { const v = vis(l, i).map(p => L.log2(p.v)).concat(l.band ? l.band.hi.filter(p => p.d >= X.start).map(p => L.log2(p.v)) : []); return { up: Math.max(0, ...v), dn: Math.max(0, ...v.map(x => -x)) }; });
     const layout = k => { const b = []; let y = top + Math.max(6, ext[0].up * k); b.push(y); for (let i = 1; i < n; i++) { y += Math.max(desk() ? 18 : 13, ext[i - 1].dn * k + ext[i].up * k * 0.4 + 5); b.push(y); } return { b, tot: y + ext[n - 1].dn * k + bot }; };
     let lo = 1, hi = 90, k = 1;
     for (let it = 0; it < 24; it++) { const m = (lo + hi) / 2; if (layout(m).tot <= H) { k = m; lo = m; } else hi = m; }
@@ -37,40 +42,44 @@ export function staircase(c, entries, opts = {}) {
     const slack = H - layout(k).tot; if (slack > 0) b = b.map((y, i) => y + (slack * (i + 0.5)) / n * 0.9);
     const grid = S('g', null, svg), body = S('g', null, svg), marks = S('g', null, svg);
     // x ticks and today
-    for (const t of X.ticks) { S('line', { x1: X(t), x2: X(t), y1: top, y2: H - bot + 2, stroke: 'var(--grid-card)', 'stroke-width': 1 }, grid); const tx = S('text', { x: X(t), y: H - 4, class: 'ax', 'text-anchor': 'middle' }, grid); tx.textContent = t === 0 ? 'd0' : '+' + t; }
-    const xt = X(tD); S('line', { x1: xt, x2: xt, y1: top, y2: H - bot + 2, stroke: 'var(--ink-3)', 'stroke-width': 1, opacity: 0.55 }, grid);
-    const tl = S('text', { x: Math.min(W - 4, xt + 3), y: top + 8, class: 'lane-lbl', 'text-anchor': xt > W - 40 ? 'end' : 'start' }, grid); tl.textContent = 'today';
+    if (byHop) lanes.forEach((l, i) => { S('line', { x1: cx(i), x2: cx(i), y1: top, y2: H - bot + 2, stroke: 'var(--grid-card)', 'stroke-width': 1 }, grid); const tx = S('text', { x: cx(i), y: H - 4, class: 'ax', 'text-anchor': 'middle' }, grid); tx.textContent = i ? String(i) : 'shock'; });
+    else {
+      for (const t of X.ticks) { S('line', { x1: X(t), x2: X(t), y1: top, y2: H - bot + 2, stroke: 'var(--grid-card)', 'stroke-width': 1 }, grid); const tx = S('text', { x: X(t), y: H - 4, class: 'ax', 'text-anchor': 'middle' }, grid); axText(tx, t === 0 ? 'd0' : '+' + t); }
+      const xt = X(tD); S('line', { x1: xt, x2: xt, y1: top, y2: H - bot + 2, stroke: 'var(--ink-3)', 'stroke-width': 1, opacity: 0.55 }, grid);
+      const tl = S('text', { x: Math.min(W - 4, xt + 3), y: top + 8, class: 'lane-lbl', 'text-anchor': xt > W - 40 ? 'end' : 'start' }, grid); tl.textContent = 'today';
+    }
     // scale key: one doubling
     const anyData = lanes.some(l => l.pts.length > 1);
     const kx = anyData ? W - gr + 14 : -99, ky = H - bot - 4;
     S('path', { d: `M${kx} ${ky}v${-k}m-3 0h6m-6 ${k}h6`, stroke: 'var(--ink-3)', 'stroke-width': 1.5, fill: 'none' }, grid);
-    const kt = S('text', { x: kx + 5, y: ky - k / 2 + 3, class: 'ax' }, grid); kt.textContent = '2×';
+    const kt = S('text', { x: kx + 5, y: ky - k / 2 + 3, class: 'ax' }, grid); axText(kt, '2×');
     const clipId = 'clp' + Math.random().toString(36).slice(2, 7);
     const cp = S('clipPath', { id: clipId }, S('defs', null, svg)); dayClip = S('rect', { x: 0, y: -40, width: W, height: H + 80 }, cp);
     body.setAttribute('clip-path', `url(#${clipId})`);
-    const P = (arr, y0) => arr.map((p, i) => `${i ? 'L' : 'M'}${X(p.d).toFixed(1)} ${(y0 - k * L.log2(p.v)).toFixed(1)}`).join('');
+    const P = (arr, y0, Xf = X) => arr.map((p, i) => `${i ? 'L' : 'M'}${Xf(p.d).toFixed(1)} ${(y0 - k * L.log2(p.v)).toFixed(1)}`).join('');
     api.X = X; api.W = W;
     const placed = [];
     lanes.forEach((l, i) => {
-      const y0 = b[i], g = S('g', { class: 'lane', opacity: l.shown || opts.all ? 1 : 0 }, body), n0 = l.n;
+      const y0 = b[i], g = S('g', { class: 'lane', opacity: l.shown || opts.all ? 1 : 0 }, body), n0 = l.n, Xi = XL(i);
       l.g = g; l.y0 = y0;
       S('line', { x1: gl, x2: W - gr, y1: y0, y2: y0, stroke: 'var(--grid-card)', 'stroke-width': 1 }, g);
       if (l.band) {
-        const lo2 = l.band.lo.filter(p => p.d >= X.start), hi2 = l.band.hi.filter(p => p.d >= X.start);
-        if (lo2.length > 1) S('path', { d: P(hi2, y0) + 'L' + lo2.slice().reverse().map(p => `${X(p.d).toFixed(1)} ${(y0 - k * L.log2(p.v)).toFixed(1)}`).join('L') + 'Z', fill: 'var(--band)' }, g);
+        const inb = p => (byHop ? Math.abs(p.d - anchor(l)) <= 6 : p.d >= X.start);
+        const lo2 = l.band.lo.filter(inb), hi2 = l.band.hi.filter(inb);
+        if (lo2.length > 1) S('path', { d: P(hi2, y0, Xi) + 'L' + lo2.slice().reverse().map(p => `${Xi(p.d).toFixed(1)} ${(y0 - k * L.log2(p.v)).toFixed(1)}`).join('L') + 'Z', fill: 'var(--band)' }, g);
       }
-      const pts = vis(l), cut = l.od ?? 1e9;
+      const pts = vis(l, i), cut = l.od ?? 1e9;
       const pre = pts.filter(p => p.d <= cut), post = pts.filter(p => p.d >= cut - 1);
       const flat = n0.tier === 'retracted', watch = n0.tier === 'watching';
       const col = flat ? 'var(--flat)' : 'var(--ink)';
-      l.pre = pre.length > 1 ? S('path', { d: P(pre, y0), fill: 'none', stroke: col, 'stroke-width': 1.75, 'stroke-linejoin': 'round', 'stroke-dasharray': watch ? '4 4' : null, class: flat ? 'lane-flat' : null }, g) : null;
-      l.post = post.length > 1 && l.od != null ? S('path', { d: P(post, y0), fill: 'none', stroke: l.shock ? 'var(--spike)' : col, 'stroke-width': l.shock ? 2.5 : 2, 'stroke-linejoin': 'round', 'stroke-linecap': 'round', class: l.shock ? 'lane-hot' : flat ? 'lane-flat' : null }, g) : null;
+      l.pre = pre.length > 1 ? S('path', { d: P(pre, y0, Xi), fill: 'none', stroke: col, 'stroke-width': 1.75, 'stroke-linejoin': 'round', 'stroke-dasharray': watch ? '4 4' : null, class: flat ? 'lane-flat' : null }, g) : null;
+      l.post = post.length > 1 && l.od != null ? S('path', { d: P(post, y0, Xi), fill: 'none', stroke: l.shock ? 'var(--spike)' : col, 'stroke-width': l.shock ? 2.5 : 2, 'stroke-linejoin': 'round', 'stroke-linecap': 'round', class: l.shock ? 'lane-hot' : flat ? 'lane-flat' : null }, g) : null;
       if (n0.attention_ripple) g.setAttribute('opacity', l.shown ? 0.5 : 0), l.att = true;
       // Watching: dashed track from today to the due date, hollow tile at the due date
       if (watch && l.due != null) {
-        const a = S('line', { x1: X(Math.min(tD, l.due)), x2: X(l.due), y1: y0, y2: y0, stroke: 'var(--ink)', 'stroke-width': 2, 'stroke-dasharray': '4 4', class: RM ? null : 'marching' }, g);
+        const a = S('line', { x1: Xi(byHop ? l.due - 3 : Math.min(tD, l.due)), x2: Xi(l.due), y1: y0, y2: y0, stroke: 'var(--ink)', 'stroke-width': 2, 'stroke-dasharray': '4 4', class: RM ? null : 'marching' }, g);
         void a;
-        if (l.due <= X.end) S('rect', { x: X(l.due) - 5, y: y0 - 5, width: 10, height: 10, rx: 2, fill: 'var(--card)', stroke: 'var(--ink)', 'stroke-width': 1.75 }, g);
+        if (byHop || l.due <= X.end) S('rect', { x: Xi(l.due) - 5, y: y0 - 5, width: 10, height: 10, rx: 2, fill: 'var(--card)', stroke: 'var(--ink)', 'stroke-width': 1.75 }, g);
         else S('path', { d: `M${X(X.end) + 2} ${y0 - 5}l6 5-6 5z`, fill: 'var(--ink)' }, g);
       }
       // lane label: icon (and the name on desktop)
@@ -78,41 +87,55 @@ export function staircase(c, entries, opts = {}) {
       lab.textContent = desk() ? `${l.shock ? c.event.emoji || '' : L.domIcon(n0.domain)} ${L.plainParts([{ t: n0.label }]).slice(0, 20)}` : l.shock ? c.event.emoji || '●' : L.domIcon(n0.domain);
       if (!desk()) lab.setAttribute('font-size', 11);
       // onset dot + connector from the parent's onset, with the lag as a small flap
-      if (l.od != null && l.od >= X.start) {
+      if (l.od != null && (byHop || l.od >= X.start)) {
         const par = l.shock ? null : lanes.findIndex(q => (n0.parent_hop ? q.n.hop_id === n0.parent_hop : q.shock));
         if (par != null && par >= 0 && lanes[par].od != null) {
-          const x1 = X(lanes[par].od), y1 = b[par], x2 = X(l.od), y2 = y0;
+          const x1 = XL(par)(lanes[par].od), y1 = b[par], x2 = Xi(l.od), y2 = y0;
           S('path', { d: `M${x1} ${y1}L${x2} ${y2}`, stroke: 'var(--ink)', 'stroke-width': 1.25, opacity: 0.45, fill: 'none' }, g);
           const lag = n0.lag_days != null ? (n0.lag_days === 0 ? '0 d' : `+${Math.round(n0.lag_days)} d`) : '';
           const mx = x2 + 7, my = y2 - 9, bw = lag.length * 6 + 6;
           if (lag && !placed.some(r => mx < r[0] + r[2] + 2 && mx + bw + 2 > r[0] && Math.abs(my - r[1]) < 15)) {
-            placed.push([mx, my, bw]);
-            S('rect', { x: mx, y: my - 7, width: bw, height: 14, rx: 2.5, fill: 'var(--marigold)' }, g);
-            const lt = S('text', { x: mx + 3, y: my + 4, class: 'ax', style: 'fill:#0B3A40' }, g); lt.textContent = lag;
+            const fr = S('rect', { x: mx, y: my - 7, width: bw, height: 14, rx: 2.5, fill: 'var(--marigold)' }, g);
+            const lt = S('text', { x: mx + 3, y: my + 4, class: 'ax', style: 'fill:#0B3A40' }, g); axText(lt, lag);
+            placed.push([mx, my, bw, fr, lt]);
           }
         }
-        l.dot = S('circle', { cx: X(l.od), cy: y0, r: l.shock ? 4.5 : 4, fill: l.shock ? 'var(--marigold)' : 'var(--card)', stroke: 'var(--ink)', 'stroke-width': 2 }, g);
+        l.dot = S('circle', { cx: Xi(l.od), cy: y0, r: l.shock ? 4.5 : 4, fill: l.shock ? 'var(--marigold)' : 'var(--card)', stroke: 'var(--ink)', 'stroke-width': 2 }, g);
       }
       l.val = null;
       if (l.shock && post.length) {
         const pk = post.reduce((a, p) => (p.v > a.v ? p : a), post[0]);
-        const st = S('text', { x: X(pk.d) + 7, y: y0 - k * L.log2(pk.v) + 4, class: 'ax', style: 'font-size:12px;fill:var(--marigold-ink);paint-order:stroke;stroke:var(--card);stroke-width:3px' }, g);
-        st.textContent = L.num(pk.v) + '×';
+        const st = S('text', { x: Xi(pk.d) + 7, y: y0 - k * L.log2(pk.v) + 4, class: 'ax', style: 'font-size:12px;fill:var(--marigold-ink);paint-order:stroke;stroke:var(--card);stroke-width:3px' }, g);
+        axText(st, L.num(pk.v) + '×');
       }
       if (!l.shock && post.length && n0.rho != null) {
         const ex = post.reduce((a, p) => (Math.abs(L.log2(p.v)) > Math.abs(L.log2(a.v)) ? p : a), post[0]);
-        const vt = S('text', { x: Math.min(W - gr + 2, X(ex.d) + 6), y: y0 - k * L.log2(ex.v) + (ex.v < 1 ? 12 : -4), class: 'ax', style: 'font-size:11px;paint-order:stroke;stroke:var(--card);stroke-width:3px', opacity: 0 }, g);
-        vt.textContent = L.mult(n0.rho, n0.unit); l.val = vt;
+        const vt = S('text', { x: Math.min(W - gr + 2, Xi(ex.d) + 6), y: y0 - k * L.log2(ex.v) + (ex.v < 1 ? 12 : -4), class: 'ax', style: 'font-size:11px;paint-order:stroke;stroke:var(--card);stroke-width:3px', opacity: 0 }, g);
+        axText(vt, L.mult(n0.rho, n0.unit)); l.val = vt;
+        // other places the value can sit if a lag flap is in the way: past the lane's last point, then above it
+        const lp = post[post.length - 1], ly = y0 - k * L.log2(lp.v);
+        l.valAlt = [[Math.min(W - gr + 2, Xi(lp.d) + 8), ly + 4], [Math.min(W - gr + 2, Xi(ex.d) + 6), y0 - k * L.log2(ex.v) - (ex.v < 1 ? 6 : 16)]];
       }
+    });
+    // the focused value label must never sit under a lag flap: try the other spots, else hide the clashing flaps while focused
+    const hit = (x, y, w) => placed.filter(r => x < r[0] + r[2] + 1 && x + w + 1 > r[0] && y - 10 < r[1] + 8 && y + 3 > r[1] - 8);
+    lanes.forEach(l => {
+      if (!l.val) return;
+      const w = l.val.textContent.length * 6.6 + 2, x0 = +l.val.getAttribute('x'), y0v = +l.val.getAttribute('y');
+      const spots = [[x0, y0v], ...(l.valAlt || [])];
+      const ok = spots.find(([x, y]) => !hit(x, y, w).length);
+      if (ok) { l.val.setAttribute('x', ok[0].toFixed(1)); l.val.setAttribute('y', ok[1].toFixed(1)); l.clash = []; }
+      else l.clash = hit(x0, y0v, w).flatMap(r => [r[3], r[4]]);
     });
     if (hot >= 0) api.focus(hot, true);
     void marks;
   };
   api.focus = (i, silent) => {
+    if (lanes[hot]) (lanes[hot].clash || []).forEach(e => e.removeAttribute('opacity'));
     const prev = lanes[hot]; if (prev && prev.post && !prev.shock) { prev.post.setAttribute('stroke', prev.n.tier === 'retracted' ? 'var(--flat)' : 'var(--ink)'); prev.post.setAttribute('stroke-width', 2); prev.post.classList.remove('lane-hot'); if (prev.val) prev.val.setAttribute('opacity', 0); if (prev.dot) prev.dot.setAttribute('fill', 'var(--card)'); }
     hot = i; const l = lanes[i]; if (!l) return;
     if (l.post && !l.shock && l.n.tier !== 'retracted') { l.post.setAttribute('stroke', 'var(--spike)'); l.post.setAttribute('stroke-width', 3); l.post.classList.add('lane-hot'); }
-    if (l.val) l.val.setAttribute('opacity', 1);
+    if (l.val) { l.val.setAttribute('opacity', 1); (l.clash || []).forEach(e => e.setAttribute('opacity', 0)); }
     if (l.dot && !l.shock) l.dot.setAttribute('fill', 'var(--marigold)');
     void silent;
   };
@@ -141,7 +164,9 @@ export function staircase(c, entries, opts = {}) {
 function stopCard(c, e, idx, total, sc, laneIdx) {
   const n = e.n, par = L.parentLabel(c, n), quiet = !!c.event.sensitive;
   const card = h('li', { class: `stop ${n.tier}${n.attention_ripple ? ' att' : ''}${e.depth > 1 ? ' d' + Math.min(3, e.depth) : ''}`, id: 'stop-' + n.hop_id, 'data-lane': laneIdx });
-  const kick = h('p', { class: 'kick' }, dtile(n), h('span', null, n.tier === 'watching' ? 'Watching' : `Stop ${idx} of ${total}`, sep(), L.domWord(n.domain)));
+  // "Stop k of N" counts Measured + Likely stops only (the same count the home ticket and board show, L.stopCount);
+  // Watching and Retracted stops are named by their tier instead of taking a number
+  const kick = h('p', { class: 'kick' }, dtile(n), h('span', null, idx && L.isMoved(n) ? `Stop ${idx} of ${total}` : L.tierWord(n.tier), sep(), L.domWord(n.domain)));
   const say = h('p', { class: 'say' });
   const parts = L.stopSentence(n, par);
   let firstFlap = null;
@@ -168,12 +193,12 @@ function stopCard(c, e, idx, total, sc, laneIdx) {
       const a = L.dayMs(c.event.onset), z = L.dayMs(n.window_close), t = Math.min(z, Math.max(a, L.dayMs(today())));
       const pct = Math.round(((t - a) / Math.max(1, z - a)) * 100);
       const duePct = n.due ? Math.round(((L.dayMs(n.due) - a) / Math.max(1, z - a)) * 100) : null;
-      card.append(h('div', { class: 'wt' }, h('p', { class: 'due' }, n.due ? `Next look ${L.fmtDate(n.due)}` : `Window closes ${L.fmtDate(n.window_close)}`),
+      card.append(h('div', { class: 'wt' }, h('p', { class: 'due' }, n.due ? `${L.lookWord(n.due, n.window_close)} ${L.fmtDate(n.due)}` : `Window closes ${L.fmtDate(n.window_close)}`),
         h('div', { class: 'track', role: 'img', 'aria-label': `Window ${pct}% gone: opened ${L.fmtDay(c.event.onset)}, closes ${L.fmtDay(n.window_close)}` }, h('i', { style: `width:${pct}%` }), duePct != null ? h('b', { style: `left:calc(${Math.min(99, duePct)}% - 1px)` }) : null),
         h('p', { class: 'lbls' }, h('span', null, `Shock ${L.fmtDay(c.event.onset)}`), h('span', null, `window closes ${L.fmtDay(n.window_close)}`))));
     }
     if (n.sentence) card.append(h('p', { class: 'eng' }, n.sentence));
-    if (!n.window_closed && n.due) card.append(h('p', { class: 'xs', style: 'margin-top:6px' }, h('a', { class: 'lnk', href: `${C.STORAGE}ics/hop-${n.hop_id}.ics`, download: `ripple-${n.hop_id}.ics` }, 'Add the next look to my calendar')));
+    if (!n.window_closed && n.due) card.append(h('p', { class: 'xs', style: 'margin-top:6px' }, h('a', { class: 'lnk', href: `${C.STORAGE}ics/hop-${n.hop_id}.ics`, download: `ripple-${n.hop_id}.ics` }, `Add the ${L.lookWord(n.due, n.window_close).toLowerCase()} to my calendar`)));
   } else if (n.tier === 'retracted' && n.sentence) {
     /* the reason is already the sentence */
   }
@@ -197,7 +222,7 @@ function shareBlock(c, frozenK) {
     h('div', { class: 'slip' }, h('small', null, 'What gets shared'), text),
     h('div', { class: 'btns' }, h('button', { class: 'btn', onclick: () => share(text, 'line') }, icon('share'), 'Share'),
       h('button', { class: 'btn sec', onclick: () => copy(text) }, icon('copy'), 'Copy text'),
-      c.event.sensitive ? null : h('button', { class: 'btn sec', onpointerenter: () => prefetchImg(og), onclick: () => shareImage(og, text, 'line', `ripple-${c.event.event_id}.png`) }, icon('img'), 'Share image')),
+      h('button', { class: 'btn sec', onpointerenter: () => prefetchImg(og), onclick: () => shareImage(og, text, 'line', `ripple-${c.event.event_id}.png`) }, icon('img'), 'Share image')),
     h('p', { class: 'xs muted', style: 'margin-top:8px' }, c.text_plain || ''));
 }
 function followBlock(c) {
@@ -221,7 +246,13 @@ export async function linePage(r) {
   const main = $('#main');
   const isStop = r.route === 'stop';
   let hopDoc = null, c = null;
-  if (isStop) { hopDoc = INLINE && INLINE.hop_id ? INLINE : await D.hop(r.hop); c = await D.cascade(r.event || hopDoc?.event?.event_id); }
+  if (isStop) {
+    hopDoc = INLINE && INLINE.hop_id ? INLINE : await D.hop(r.hop);
+    const cp = D.cascade(r.event || hopDoc?.event?.event_id);
+    // the deep-linked evidence opens at once; the line fills in underneath when it arrives
+    if (hopDoc && hopDoc.event) openSheet(hopDoc, { event: hopDoc.event, nodes: [], flat: [], method: hopDoc.math?.method }, null, false);
+    c = await cp;
+  }
   else c = INLINE && INLINE.event && (!r.version || INLINE.version === r.version) ? INLINE : await D.cascade(r.event, r.version);
   if (!c || !c.event) {
     put(main, h('div', { class: 'empty' }, r.version ? 'This version is not public. ' : 'This line is not published. ', h('a', { class: 'lnk', href: r.event ? L.lineUrl(r.slug || '') : '/ripples/map/' }, 'See the live map')));
@@ -232,10 +263,10 @@ export async function linePage(r) {
   const quiet = !!c.event.sensitive;
   const choice = {};
   const hideMid = ls.get('ko.hide_middle') === '1' || new URLSearchParams(location.search).get('hide') === '1';
-  const order = () => L.lineOrder(c, choice);
+  const order = () => L.lineOrder(c, choice, desk());
   let entries = order();
   const stations = entries.filter(e => L.isStation(e.n));
-  const total = stations.length;
+  const total = L.stopCount(c), shownMoved = entries.filter(e => e.depth < 3 && L.isMoved(e.n)).length;
   // header
   const meta = joinSep([`Began ${L.fmtDay(c.event.onset)}`, c.event.magnitude_x ? `${L.num(c.event.magnitude_x)}× its normal attention` : null, `day ${L.lineDays(c)}`, r.version ? `version ${r.version}, frozen` : L.STATUS[c.status], c.event.reconstructed ? 'reconstructed' : null]);
   const head = h('header', { class: 'lh mob' }, h('span', { class: 'tk-emo', 'aria-hidden': 'true' }, em(c.event.emoji || '🌀')), h('div', null, h('h1', null, c.event.label), h('p', { class: 'meta' }, meta)));
@@ -268,27 +299,41 @@ export async function linePage(r) {
   for (const e of entries) {
     if (e.depth >= 3) { d3.push(e); continue; }
     lane++;
-    const idx = L.isStation(e.n) ? ++k : 0;
+    const idx = L.isMoved(e.n) ? ++k : 0;
     const card = stopCard(c, e, idx, total, sc, lane);
     if (e.folded && e.folded.length) {
       const chips = h('div', { class: 'fork' }, e.folded.map(f => h('button', { class: 'sw', onclick: () => { choice[e.n.hop_id] = f.hop_id; rerender(); } }, h('span', { 'aria-hidden': 'true' }, '⑂'), `1 more branch: ${f.label}`)));
       card.append(chips);
     }
     const fs = flatStub(c, e.n.hop_id, `after ${e.n.label}`); if (fs) card.append(fs);
-    cards.push(card); list.append(card);
+    if (hideMid && L.isMoved(e.n) && idx > 1 && idx < shownMoved) {
+      card.classList.add('hid'); card.querySelector('.say')?.setAttribute('aria-hidden', 'true');
+      card.append(h('button', { class: 'btn sec sm rev', onclick: ev => { card.classList.remove('hid'); card.querySelector('.say')?.removeAttribute('aria-hidden'); ev.currentTarget.remove(); } }, 'Reveal this stop'));
+    }
+    cards.push(card);
+    // desktop: sibling branches below the same stop sit side by side (at most 3 shown, the rest behind "+N branches")
+    const sibs = desk() && e.depth === 2 ? entries.filter(x => x.depth === 2 && x.n.parent_hop === e.n.parent_hop) : [];
+    if (sibs.length > 1) {
+      let row = list.querySelector(`[data-kids="${e.n.parent_hop}"]`);
+      if (!row) { row = h('li', { class: 'kidrow', 'data-kids': e.n.parent_hop }, h('ol', { class: 'kids' })); list.append(row); }
+      const ol = row.firstChild, n = ol.children.length;
+      if (n >= 3) card.hidden = true;
+      ol.append(card);
+      if (n === 3) row.append(h('button', { class: 'sw', onclick: ev => { ol.querySelectorAll('[hidden]').forEach(x => { x.hidden = false; }); ev.currentTarget.remove(); } }, `+${sibs.length - 3} branches`));
+    } else list.append(card);
     if (e.depth === 1 && !entries.some(x => x.depth === 1 && L.isStation(x.n) && entries.indexOf(x) > entries.indexOf(e)) && L.isStation(e.n)) {
       const root = flatStub(c, null, `after ${c.event.label}`); if (root) list.append(h('li', { style: 'list-style:none' }, root));
     }
   }
   if (!stations.length) { const root = flatStub(c, null, `after ${c.event.label}`); if (root) list.prepend(h('li', { style: 'list-style:none' }, root)); }
   const tail = [];
-  if (d3.length) tail.push(h('details', { class: 'depth3' }, h('summary', { class: 'sw' }, `… if the previous step holds: ${L.plural(d3.length, 'more stop')}`), h('ol', null, d3.map(e => stopCard(c, e, 0, total, sc, -1)))));
+  if (d3.length) tail.push(h('details', { class: 'depth3' }, h('summary', { class: 'sw' }, `… if the previous step holds: ${L.plural(d3.length, 'more stop')}`), h('ol', null, d3.map(e => stopCard(c, e, L.isMoved(e.n) ? ++k : 0, total, sc, -1)))));
   if (c.held_back && (c.held_back.stops || c.held_back.flat)) tail.push(h('p', { class: 'held' }, `${L.plural(c.held_back.stops + c.held_back.flat, 'more tested path')} ${c.held_back.stops + c.held_back.flat === 1 ? 'is' : 'are'} not listed yet: ${c.held_back.reason}.`));
   for (const ri of c.route_ideas || []) tail.push(h('p', { class: 'idea' }, `Route idea, not measured: ${ri.text} (${ri.source}).`));
   tail.push(h('p', { class: 'lend' + (c.status === 'nowhere' ? ' nowhere' : '') }, L.lineEnd(c)));
   const den = c.denominators || {}, ctl = c.control?.stops;
   const denEl = h('div', { class: 'den' },
-    h('p', null, h('b', null, `Tested ${L.plural(den.tested ?? 0, 'path')} on this line`), sep(), `${L.fmtInt(den.moved ?? 0)} moved`, sep(), `${L.fmtInt(den.measured ?? 0)} Measured`, sep(), `about ${L.expected(den.expected_false_links)} expected false links`),
+    h('p', null, h('b', null, `Tested ${L.plural(den.tested ?? 0, 'path')} on this line`), sep(), `${L.fmtInt(den.moved ?? 0)} moved`, sep(), `${L.fmtInt(den.measured ?? 0)} Measured`, L.flukeClause(den.expected_false_links, den.measured) ? [sep(), L.flukeClause(den.expected_false_links, den.measured)] : null),
     ctl ? h('p', { style: 'margin-top:6px' }, `The control ripple (${c.control.label || "a page that wasn't trending"}, same tests): ${ctl.measured} Measured, ${ctl.likely} Likely, ${ctl.watching} Watching, ${ctl.flat} flat.`) : null,
     (c.rivals || []).length ? h('p', { style: 'margin-top:6px' }, 'Also active this week: ', c.rivals.map(x => x.label).join(', '), '. A stop shared with it could be a common cause.') : null,
     h('p', { class: 'xs', style: 'margin-top:6px' }, `Method ${c.method || C.METHOD}`, c.ledger?.seq ? [sep(), `ledger entry ${L.fmtInt(c.ledger.seq)}`] : null, sep(), h('a', { class: 'lnk', href: '/ripples/methods/' }, 'How we test')));
@@ -313,9 +358,10 @@ export async function linePage(r) {
   // desktop By hop / By day toggle
   const seg = h('span', { class: 'seg dsk-only', role: 'group', 'aria-label': 'Spacing' },
     h('button', { 'aria-pressed': 'false', onclick: ev => { toggleMode('hop', ev); } }, 'By hop'), h('button', { 'aria-pressed': 'true', onclick: ev => { toggleMode('day', ev); } }, 'By day'));
-  const toggleMode = (m, ev) => { [...seg.children].forEach(b => b.setAttribute('aria-pressed', String(b === ev.currentTarget))); sc.mode = m; sc.fig.classList.toggle('byhop', m === 'hop'); hopMode(sc, m === 'hop'); };
+  const toggleMode = (m, ev) => { [...seg.children].forEach(b => b.setAttribute('aria-pressed', String(b === ev.currentTarget))); sc.mode = m; sc.draw(); sc.showAll(); capTxt.textContent = m === 'hop' ? 'Each lane is one stop against its own normal, on one shared scale; lanes sit in the order the stops moved, 6 days either side of each onset.' : 'Each lane is one stop against its own normal, on one shared scale; x is days since the shock.'; };
   const cap = sc.fig.querySelector('figcaption');
-  put(cap, h('span', null, 'Each lane is one stop against its own normal, on one shared scale; x is days since the shock.'), h('span', { class: 'sp' }), desk() ? seg : null);
+  const capTxt = h('span', null, 'Each lane is one stop against its own normal, on one shared scale; x is days since the shock.');
+  put(cap, capTxt, h('span', { class: 'sp' }), desk() ? seg : null);
   // assemble
   const tsvg = S('svg', { class: 'tk-chart', role: 'img', 'aria-label': `${c.event.label}: attention against its own normal, peaking at ${L.num(c.event.magnitude_x)} times normal.` });
   const hasT = c.event.spark ? seedChart(tsvg, c.event.spark, quiet, L.num(c.event.magnitude_x) + '×') : false;
@@ -362,12 +408,14 @@ export async function linePage(r) {
     const a = ev.target.closest('a[data-hop]'); if (!a || ev.metaKey || ev.ctrlKey || ev.shiftKey) return;
     ev.preventDefault(); openSheet(+a.dataset.hop, c, a, true);
   });
-  if (isStop && hopDoc) openSheet(hopDoc, c, null, false);
+  if (isStop && hopDoc) {
+    if (sheetState && sheetState.hop === hopDoc.hop_id) {
+      // fill in what needed the line (the flat siblings' sparklines) without repainting the sheet
+      const fl = new Map((c.flat || []).map(f => [f.label, f]));
+      sheetState.el.querySelectorAll('.sibs li').forEach(li => { const f = fl.get(li.firstChild?.textContent); const old = li.querySelector('svg'); if (f && old) old.replaceWith(spark(f.spark, 64, 20)); });
+    } else openSheet(hopDoc, c, null, false);
+  }
   addEventListener('popstate', () => { if (!/\/stop\/\d+\/$/.test(location.pathname)) closeSheet(false); });
-}
-function hopMode(sc, on) {
-  // By hop: each lane shifted so its onset sits in its own column; reads the order, not the calendar
-  sc.lanes.forEach((l, i) => { if (!l.g || !sc.X) return; const dx = on && l.od != null ? (sc.X(0) + (i * (sc.W - sc.X(0) - 60)) / sc.lanes.length) - sc.X(l.od) : 0; l.g.style.transition = RM ? '' : 'transform 320ms cubic-bezier(.2,.8,.2,1)'; l.g.style.transform = `translateX(${dx}px)`; });
 }
 // ---------- evidence sheet ----------
 let sheetState = null;
@@ -390,11 +438,11 @@ function q1Chart(q, parentOnset) {
   const x = i => pl + (i / (n - 1)) * (W - pl - pr), y = v => pt + (1 - (L.log2(v) - L.log2(lo)) / (L.log2(hi) - L.log2(lo))) * (H - pt - pb);
   const P = (arr, a = 0) => arr.map((v, i) => (v > 0 ? `${i ? 'L' : 'M'}${x(i + a).toFixed(1)} ${y(v).toFixed(1)}` : '')).join('').replace(/^L/, 'M');
   if (q.window) S('rect', { x: x(q.window[0]), y: pt, width: Math.max(2, x(Math.min(n - 1, q.window[1])) - x(q.window[0])), height: H - pt - pb, fill: 'var(--spike-wash)' }, svg);
-  for (const g of [0.5, 1, 2, 4, 8].filter(v => v >= lo && v <= hi)) { S('line', { x1: pl, x2: W - pr, y1: y(g), y2: y(g), stroke: 'var(--grid-panel)' }, svg); const t = S('text', { x: pl - 4, y: y(g) + 3.5, 'text-anchor': 'end', 'font-size': 10, fill: 'var(--on-panel-3)', 'font-family': 'var(--display)', 'font-weight': 800 }, svg); t.textContent = g + '×'; }
+  for (const g of [0.5, 1, 2, 4, 8].filter(v => v >= lo && v <= hi)) { S('line', { x1: pl, x2: W - pr, y1: y(g), y2: y(g), stroke: 'var(--grid-panel)' }, svg); const t = S('text', { x: pl - 4, y: y(g) + 3.5, 'text-anchor': 'end', 'font-size': 10, fill: 'var(--on-panel-3)', 'font-family': 'var(--display)', 'font-weight': 800 }, svg); axText(t, g + '×'); }
   if (q.band_lo && q.band_hi) S('path', { d: P(q.band_hi) + 'L' + q.band_lo.map((v, i) => [x(i), y(v)]).reverse().map(p => p[0].toFixed(1) + ' ' + p[1].toFixed(1)).join('L') + 'Z', fill: 'rgba(234,243,240,.13)' }, svg);
-  if (q.last_year) S('path', { d: P(q.last_year), fill: 'none', stroke: 'var(--on-panel-3)', 'stroke-width': 1.25, opacity: 0.8 }, svg);
+  if (q.last_year) S('path', { d: P(q.last_year), fill: 'none', stroke: 'var(--on-panel-3)', 'stroke-width': 1, opacity: 0.55 }, svg);
   const oi = q.onset_index ?? n;
-  S('path', { d: P(s.slice(0, oi + 1)), fill: 'none', stroke: 'var(--on-panel)', 'stroke-width': 2, 'stroke-linejoin': 'round' }, svg);
+  S('path', { d: P(s.slice(0, oi + 1)), fill: 'none', stroke: 'var(--on-panel-2)', 'stroke-width': 1.5, 'stroke-linejoin': 'round' }, svg);
   if (oi < n) S('path', { d: P(s.slice(oi), oi), fill: 'none', stroke: 'var(--spike)', 'stroke-width': 2.75, 'stroke-linejoin': 'round', class: 'lane-hot' }, svg);
   if (q.onset_index != null) { S('line', { x1: x(oi), x2: x(oi), y1: pt, y2: H - pb, stroke: 'var(--event)', 'stroke-width': 1.25 }, svg); }
   const d0 = S('text', { x: pl, y: H - 5, 'font-size': 10.5, fill: 'var(--on-panel-3)', 'font-family': 'var(--sans)' }, svg); d0.textContent = L.fmtDay(q.from);
@@ -419,12 +467,14 @@ async function openSheet(hopOrDoc, c, opener, push) {
     if (e.shiftKey && document.activeElement === a) { e.preventDefault(); z.focus(); } else if (!e.shiftKey && document.activeElement === z) { e.preventDefault(); a.focus(); }
   };
   document.addEventListener('keydown', keyh, true);
-  sheetState = { el, scrim, opener, pushed: push, lineHref, keyh };
+  sheetState = { el, scrim, opener, pushed: push, lineHref, keyh, hop: hopId };
   if (push) history.pushState({ sheet: hopId }, '', L.stopUrl(c.event.slug, hopId));
   document.body.style.overflow = 'hidden';
-  put(el, h('div', { class: 'grab' }, h('b', null, node ? `${L.tierWord(node.tier)} stop, ${L.domWord(node.domain)}` : 'Evidence'), h('button', { class: 'xb', 'aria-label': 'Close the evidence', onclick: () => closeSheet() }, icon('x'))),
-    h('p', { class: 'ev-h', id: 'ev-t' }, node ? node.label : 'Loading the evidence…'));
-  requestAnimationFrame(() => { scrim.classList.add('on'); el.classList.add('on'); el.focus(); });
+  const info = node || (typeof hopOrDoc === 'object' ? { tier: hopOrDoc.tier, domain: hopOrDoc.node?.domain, label: hopOrDoc.node?.label } : null);
+  put(el, h('div', { class: 'grab' }, h('b', null, info ? `${L.tierWord(info.tier)} stop, ${L.domWord(info.domain)}` : 'Evidence'), h('button', { class: 'xb', 'aria-label': 'Close the evidence', onclick: () => closeSheet() }, icon('x'))),
+    h('p', { class: 'ev-h', id: 'ev-t' }, info ? info.label : 'Loading the evidence…'));
+  // a deep link lands with the sheet already open (no slide); a tap on the line slides it up
+  if (!push && !opener) { scrim.classList.add('on'); el.classList.add('on'); el.focus(); } else requestAnimationFrame(() => { scrim.classList.add('on'); el.classList.add('on'); el.focus(); });
   const d = typeof hopOrDoc === 'number' ? await D.hop(hopOrDoc) : hopOrDoc;
   if (!sheetState || sheetState.el !== el) return;
   if (!d || !d.node) { add(el, h('p', { class: 'qs' }, 'The evidence file is not published yet.')); return; }
@@ -441,7 +491,7 @@ function renderEvidence(el, d, c) {
   const ft = L.flukeTiles(q5.f_1_in);
   const meter = ft && !q5.f_warming ? h('div', { class: 'meter', role: 'img', 'aria-label': `One tile in ${ft} marked` }, Array.from({ length: ft }, (_, i) => h('i', { class: i === Math.floor(ft / 2) ? 'lit' : '' }))) : null;
   const flatById = new Map((c.flat || []).map(f => [f.label, f]));
-  const chan = ch => { const nod = ch.zhat == null || (ch.kappa != null && ch.kappa < 0.5); return h('div', { class: `ch ${ch.agree ? 'agree' : nod ? 'nodata' : ''}` }, ch.label || ch.code, h('small', null, ch.agree ? 'agrees' : nod ? 'still warming up' : "didn't move", ch.zhat != null ? `, ž ${Number(ch.zhat).toFixed(1)}` : '')); };
+  const chan = ch => { const nod = ch.zhat == null || (ch.kappa != null && ch.kappa < 0.5); return h('div', { class: `ch ${ch.agree ? 'agree' : nod ? 'nodata' : ''}` }, ch.label || ch.code, h('small', null, ch.agree ? 'agrees' : nod ? 'still warming up' : "didn't move", ch.zhat != null ? `, z ${Number(ch.zhat).toFixed(1)}` : '')); };
   const q1 = d.q1_normal ? q1Chart(d.q1_normal, q2.parent_onset) : null;
   const untested = x.rho == null && !d.retracted;
   const node = (c.nodes || []).find(n => n.hop_id === d.hop_id);
@@ -462,7 +512,7 @@ function renderEvidence(el, d, c) {
     d.q1_normal ? sec('Q1', 'Is this normal for it?', q1, h('p', { class: 'q1k' }, h('span', null, h('i', { style: 'background:var(--on-panel)' }), 'this series'), h('span', null, h('i', { style: 'background:var(--spike)' }), 'after the shock'), h('span', null, h('i', { style: 'background:rgba(234,243,240,.3);height:8px' }), 'its normal range'), h('span', null, h('i', { style: 'background:var(--on-panel-3);height:1.5px' }), 'same weeks last year')),
       h('p', null, `Its normal is measured over ${d.q1_normal.baseline ? L.daysBetween(d.q1_normal.baseline.from, d.q1_normal.baseline.to) + 1 : 91} days ending ${d.q1_normal.baseline ? L.fmtDay(d.q1_normal.baseline.to) : 'three weeks before the shock'}, matched by weekday${d.q1_normal.baseline?.year_ago_term ? ', with a year-ago term' : ''}. The faint line is the same weeks last year: the placebo you can see.`)) : null,
     untested ? h('section', { class: 'qs' }, h('h3', null, 'What we are waiting for'), h('p', null, d.sentence || ''),
-      d.look && d.look.window_close ? h('p', null, d.look.window_closed ? `Its window closed ${L.fmtDate(d.look.window_close)}.` : `Its window runs from ${L.fmtDate(q2.parent_onset)} to ${L.fmtDate(d.look.window_close)}. `, !d.look.window_closed && node?.due ? `Next look ${L.fmtDate(node.due)}.` : '') : null,
+      d.look && d.look.window_close ? h('p', null, d.look.window_closed ? `Its window closed ${L.fmtDate(d.look.window_close)}.` : `Its window runs from ${L.fmtDate(q2.parent_onset)} to ${L.fmtDate(d.look.window_close)}. `, !d.look.window_closed && (node?.due || d.look.next) ? `${L.lookWord(node?.due || d.look.next, d.look.window_close)} ${L.fmtDate(node?.due || d.look.next)}.` : '') : null,
       h('p', null, 'Nothing has moved yet, so there is no size, timing or luck check to show. The tests below run the moment a look finds a move.')) : null,
     untested ? null : sec('Q2', 'Did it move after, not before?',
       h('div', { class: 'ruler' }, h('span', { class: 'd' }, L.fmtDate(q2.parent_onset)), h('span', { class: 'ln', 'aria-hidden': 'true' }), h('span', { class: 'd' }, L.fmtDate(q2.node_onset)), h('span', { class: q2.order_ok ? 'ok' : '' }, q2.lag_days != null ? (q2.lag_days === 0 ? 'same day' : `+${L.plural(q2.lag_days, 'day')}`) : '', q2.order_ok ? ' ✓' : '')),
@@ -487,7 +537,7 @@ function renderEvidence(el, d, c) {
         q5.p != null ? ['Placebo p', `${q5.p}${q5.p_floor != null ? ` (floor ${q5.p_floor})` : ''}`] : null, q5.q != null ? ['q (weighted BH)', q5.q] : null,
         q5.bh && q5.bh.m != null ? ['BH', `rank ${q5.bh.rank} of ${q5.bh.m}, weight ${q5.bh.weight}`] : null, q5.f_bin ? ['Fluke bin', q5.f_bin] : null, untested ? null : ['ρ̂₁', m.rho1 ?? 'not stored'],
         ['Method', m.method || c.method], m.ledger ? ['Ledger', h('span', null, `entry ${m.ledger.seq} `, h('span', { class: 'hash' }, m.ledger.chain_hash))] : null, untested ? null : ['Failed conditions', (m.fails || []).join(', ') || 'none']]),
-      zRows.length ? h('div', { class: 'tw' }, h('table', { class: 't' }, h('thead', null, h('tr', null, ['Channel', 'ž', 'S', 'κ', 'weight', 'sources'].map(t => h('th', { scope: 'col' }, t)))), h('tbody', null, zRows))) : null,
+      zRows.length ? h('div', { class: 'tw' }, h('table', { class: 't' }, h('thead', null, h('tr', null, ['Channel', 'z (robust)', 'S', 'κ', 'weight', 'sources'].map(t => h('th', { scope: 'col' }, t)))), h('tbody', null, zRows))) : null,
       untested ? null : h('div', { class: 'tw' }, h('table', { class: 't' }, h('thead', null, h('tr', null, ['Placebo family', 'tested', 'as strong'].map(t => h('th', { scope: 'col' }, t)))), h('tbody', null, placebo.fam.map(f => h('tr', null, h('td', null, L.FAM_WORD[f.k]), h('td', { class: 'n' }, L.fmtInt(f.n)), h('td', { class: 'n' }, L.fmtInt(f.exceed))))))),
       (m.licences || []).length ? h('p', { class: 'xs', style: 'color:var(--on-panel-2)' }, 'Sources: ', m.licences.map(l => `${l.attribution} (${l.licence})`).join('; ')) : null,
       q1rows.length ? h('details', null, h('summary', null, 'Q1 chart as a table'), h('div', { class: 'tw' }, h('table', { class: 't' }, h('thead', null, h('tr', null, ['Day', '× normal', 'normal low', 'normal high', 'last year'].map(t => h('th', { scope: 'col' }, t)))), h('tbody', null, q1rows)))) : null,
@@ -513,7 +563,7 @@ export async function weekPage(r) {
   const entries = L.lineOrder(c).filter(e => e.depth < 3);
   const sc = staircase(c, entries, { all: true, cls: 'wk' });
   put(main, head,
-    h('section', { class: 'ticket hero grain', style: 'margin-top:14px' }, h('p', { class: 'tk-top' }, h('span', { class: 'tag' }, c.event.reconstructed ? 'Ripple of the week, reconstructed' : 'Ripple of the week'), h('span', { class: 'ver' }, 'v' + c.version)),
+    h('section', { class: 'ticket hero', style: 'margin-top:14px' }, h('p', { class: 'tk-top' }, h('span', { class: 'tag' }, c.event.reconstructed ? 'Ripple of the week, reconstructed' : 'Ripple of the week'), h('span', { class: 'ver' }, 'v' + c.version)),
       h('div', { class: 'tk-body' }, h('div', { class: 'tk-row' }, h('span', { class: 'tk-emo', 'aria-hidden': 'true' }, em(c.event.emoji)), h('h2', { class: 'tk-title' }, c.event.label)), h('p', { class: 'tk-sub' }, joinSep(L.lineMeta(c)))),
       h('div', { class: 'tk-foot' }, sc.fig, h('p', { class: 'xs', style: 'margin:10px 0' }, `The rule, published in advance: ${wk.rule}.${wk.qualified === false ? ' Nothing qualified this week, so this is the best single-stop line.' : ''}`), h('a', { class: 'btn', href: L.lineUrl(c.event.slug, c.version) }, 'Trace the line'))),
     h('ol', { class: 'sr' }, entries.map(e => h('li', null, `${e.n.label}: ${L.tierWord(e.n.tier)}${e.n.rho != null ? ', ' + L.rel(e.n.rho, e.n.unit) : ''}`))),

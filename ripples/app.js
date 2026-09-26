@@ -2,7 +2,7 @@
 // ripples/tools/gen-stubs.mjs) picks the renderer. Data: the stub's inlined #rm-data first, then Storage v2/, then the RPC.
 import * as C from './config.js';
 import * as L from './lib.js';
-import { $, add, h, S, em, sep, joinSep, put, icon, IC, RM, desk, ls, today, INLINE, D, rpc, load, event, toast, copy, share, prefetchImg, shareImage, landing, flaps, countUp, tt_, pips, stamp, dtile, strip, legend, spark, theme, help, wander, chrome, visits, seedChart, getBip } from './ui.js';
+import { $, add, h, S, em, sep, joinSep, put, icon, IC, RM, desk, ls, today, INLINE, D, rpc, load, event, toast, copy, share, prefetchImg, shareImage, landing, flaps, countUp, tt_, pips, stamp, dtile, strip, legend, spark, theme, wander, chrome, visits, seedChart, getBip } from './ui.js';
 
 // ---------- HOME ----------
 function heroTicket(S0, archive) {
@@ -12,11 +12,17 @@ function heroTicket(S0, archive) {
     // Cold start with nothing Measured anywhere: say so, and point at what is being watched (never pad a headline)
     const rows = (S0?.shocks || []);
     const due = rows.map(r => r.next_due).filter(d => d && d >= today()).sort()[0];
+    // the hook states only what the rows show: Measured and Likely counts are summed from the board, never assumed zero
+    const nM = rows.reduce((a, r) => a + (r.stops?.measured || 0), 0), nL = rows.reduce((a, r) => a + (r.stops?.likely || 0), 0);
+    const hook = !rows.length ? 'No lines are published yet.'
+      : nM ? `${L.plural(rows.length, 'line')} on the board, with ${L.plural(nM, 'Measured stop')} among them. None is picked as the headline today.`
+      : nL ? `${L.plural(rows.length, 'line')} on the board: ${L.plural(nL, 'Likely stop')} so far, none Measured yet.`
+      : `${L.plural(rows.length, 'line')} on the board, every stop still Watching or flat.`;
     tk.classList.add('cold');
     add(tk, h('p', { class: 'tk-top' }, h('span', { class: 'tag' }, 'Ripple of the week')),
       h('div', { class: 'tk-body' },
-        h('h1', { class: 'tk-title', id: 'hero-t' }, 'Nothing Measured yet'),
-        h('p', { class: 'tk-hook' }, rows.length ? `${L.plural(rows.length, 'line')} on the board, every stop still Watching or flat.` : 'No lines are published yet.'),
+        h('h1', { class: 'tk-title', id: 'hero-t' }, nM ? 'No headline today' : 'Nothing Measured yet'),
+        h('p', { class: 'tk-hook' }, hook),
         h('p', { class: 'tk-sub' }, 'A stop lands here only when it passes every test: its own normal, timing, two sources, and the fluke controls.'),
         h('div', { class: 'tk-path', 'aria-hidden': 'true' }, h('span', { class: 'dt shock' }, em(rows[0]?.emoji || '🌀')), h('span', { class: 'trk' }), h('span', { class: 'dt q' }, '?'), h('span', { class: 'lbl' }, due ? `Next result due ${L.fmtDay(due)}` : 'Waiting for the first result'))),
       h('div', { class: 'tk-perf', 'aria-hidden': 'true' }, h('span', { class: 'notch l' }), h('span', { class: 'notch r' })),
@@ -31,8 +37,10 @@ function heroTicket(S0, archive) {
   const st = hero.stop || {};
   const path = h('div', { class: 'tk-path', id: 'hero-path' }, h('span', { class: 'dt shock', 'aria-hidden': 'true' }, em(s.emoji || '🌀')), h('span', { class: 'trk', 'aria-hidden': 'true' }),
     h('span', { class: 'dt measured', 'aria-hidden': 'true' }, em(L.domIcon(st.domain))), h('span', { class: 'lbl' }, L.domWord(st.domain), h('br'), h('span', { style: 'font-weight:500' }, 'Measured')));
-  const stops = s.stops ? (s.stops.measured || 0) + (s.stops.likely || 0) : null;
-  const meta = joinSep([stops != null ? L.plural(stops, 'stop') : null, s.domains_reached ? L.plural(s.domains_reached.length, 'domain') : null, L.STATUS[s.status] || null, hero.reconstructed ? 'reconstructed' : null]);
+  // a live row carries stops as {measured, likely, …}; an archive row (reconstructed hero) carries a count and `domains`
+  const stops = typeof s.stops === 'number' ? s.stops : s.stops ? (s.stops.measured || 0) + (s.stops.likely || 0) : null;
+  const doms = s.domains_reached || s.domains;
+  const meta = joinSep([stops != null ? L.plural(stops, 'stop') : null, doms ? L.plural(doms.length, 'domain') : null, L.STATUS[s.status] || null, hero.reconstructed ? 'reconstructed' : null]);
   add(tk,
     h('p', { class: 'tk-top' }, h('span', { class: 'tag' }, hero.reconstructed ? 'From the archive, reconstructed' : 'Ripple of the week'), hero.version ? h('span', { class: 'ver' }, 'v' + hero.version) : null),
     h('div', { class: 'tk-body' },
@@ -58,10 +66,8 @@ function heroTicket(S0, archive) {
 }
 function depRow(s, fresh) {
   const st = s.stops || {};
-  const where = s.farthest_measured_domain ? [em(L.domIcon(s.farthest_measured_domain)), L.domWord(s.farthest_measured_domain)] : s.status === 'nowhere' ? ['went nowhere'] : ['watching'];
   const when = s.next_due && s.next_due >= today() ? `due ${L.fmtDay(s.next_due)}` : `since ${L.fmtDay(s.onset)}`;
   const dest = s.farthest_measured_domain ? h('span', { class: 'dest' }, h('span', null, em(L.domIcon(s.farthest_measured_domain)), ' ', L.domWord(s.farthest_measured_domain)), h('small', null, when)) : h('span', { class: 'dest wat' }, s.status === 'nowhere' ? 'went nowhere' : 'watching', h('small', null, when));
-  void where;
   return h('a', { class: 'dep' + (fresh ? ' new' : ''), href: L.lineUrl(s.slug) },
     h('span', { class: 'ic', 'aria-hidden': 'true' }, em(s.emoji || '▫️')),
     h('span', null, h('span', { class: 'nm' }, s.label, s.reconstructed ? h('span', { class: 'sr' }, ' (reconstructed)') : null), h('span', { class: 'sub' }, strip(st, 7, true), fresh ? [sep(), h('span', { class: 'hl' }, 'new')] : null)),
@@ -81,7 +87,7 @@ function board(S0, fresh) {
     h('span', { class: 'dest wat' }, 'the control'), h('span')));
   const dl = L.dayLine(S0?.line), ll = S0?.listed_lines_sum;
   el.append(legend(), h('p', { class: 'bd-foot' },
-    dl ? [h('b', null, `Tested ${L.fmtInt(dl.tested)} paths today`), sep(), `${L.fmtInt(dl.moved)} moved`, sep(), `about ${L.expected(dl.expected)} expected by chance`]
+    dl ? [h('b', null, `Tested ${L.fmtInt(dl.tested)} paths today`), sep(), `${L.fmtInt(dl.moved)} moved`, sep(), `${L.fmtInt(dl.measured ?? 0)} Measured`, L.flukeClause(dl.expected, dl.measured) ? [sep(), L.flukeClause(dl.expected, dl.measured)] : null]
       : [h('b', null, "Today's tests are not in yet.")],
     ll && ll.lines ? [h('br'), `On the ${L.plural(ll.lines, 'listed line')}, over all their days: ${L.fmtInt(ll.tested)} paths tested, ${L.fmtInt(ll.moved)} moved, ${L.fmtInt(ll.measured)} Measured.`] : null));
   return el;
@@ -113,7 +119,8 @@ function domChips(S0) {
   const order = [...L.DOMAINS].sort((a, b) => (reached.has(b) ? 1 : 0) - (reached.has(a) ? 1 : 0));
   return h('section', { class: 'sec', 'aria-labelledby': 'dom-t' }, h('h2', { class: 'h2', id: 'dom-t' }, 'Where lines landed lately'),
     h('p', { class: 'lede', style: 'margin:-4px 0 10px' }, 'Read the map backwards: what has been moving each part of life.'),
-    h('div', { class: 'chips' }, order.map(k => h('a', { class: 'chip' + (reached.has(k) ? '' : ' dim'), href: `/ripples/lands/${k}/` }, em(L.DOM[k].i), L.DOM[k].w))));
+    h('div', { class: 'chips' }, order.map(k => h('a', { class: 'chip' + (reached.has(k) ? '' : ' dim'), href: `/ripples/lands/${k}/` }, em(L.DOM[k].i), L.DOM[k].w))),
+    h('button', { class: 'row', id: 'a2hs', hidden: true, style: 'margin-top:14px;width:100%' }, h('span', { class: 'ic', 'aria-hidden': 'true' }, em('📲')), h('span', null, 'Add the Ripple Map to your home screen'), icon('chev', 'chev')));
 }
 async function home() {
   ls.set('ko.visits', String(visits() + 1));
@@ -131,7 +138,15 @@ async function home() {
   if (visits() >= 2 && getBip()) $('#a2hs') && ($('#a2hs').hidden = false);
 }
 // ---------- boot ----------
+// Deep-link fallback: the site's /404.html sends a line/stop/lands/week URL that has no static stub yet to the /line/ shell
+// as ?rm_path=…; put the real address back before routing (same origin, /ripples/ paths only)
+function restorePath() {
+  let q = null; try { q = new URLSearchParams(location.search).get('rm_path'); } catch (e) { q = null; }
+  if (!q || !/^\/ripples\/(line|lands|week)\/[^\s]*$/.test(q) || q.startsWith('//')) return;
+  try { const u = new URL(q, location.origin); if (u.origin === location.origin) history.replaceState(history.state, '', u.pathname + u.search + u.hash); } catch (e) { /* keep the shell's own URL */ }
+}
 async function boot() {
+  restorePath();
   chrome();
   const r = L.parseRoute(location.pathname, document.body.dataset);
   try {

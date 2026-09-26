@@ -38,7 +38,7 @@ const today = () => new Date().toISOString().slice(0, 10);
 // ---------- data: inline → Storage → RPC ----------
 const INLINE = (() => { try { const e = document.getElementById('rm-data'); return e ? JSON.parse(e.textContent) : null; } catch (e) { return null; } })();
 const memo = new Map();
-async function getJSON(u) { const r = await fetch(u, { credentials: 'omit' }); if (!r.ok) throw new Error(String(r.status)); return r.json(); }
+async function getJSON(u) { const r = await fetch(u); if (!r.ok) throw new Error(String(r.status)); return r.json(); }
 async function rpc(fn, args) {
   const r = await fetch(`${C.SB_URL}/rest/v1/rpc/${fn}`, { method: 'POST', credentials: 'omit', headers: { apikey: C.SB_KEY, 'Content-Type': 'application/json' }, body: JSON.stringify(args || {}) });
   if (!r.ok) throw new Error(String(r.status));
@@ -140,7 +140,7 @@ function dtile(n, cls = '') {
   return t;
 }
 function strip(st, max = 8, panel) {
-  const w = h('span', { class: 'strip' });
+  const w = h('span', { class: 'tstrip' });
   const seq = [...Array(st.measured || 0).fill('measured'), ...Array(st.likely || 0).fill('likely'), ...Array(st.watching || 0).fill('watching')];
   seq.slice(0, max).forEach(t => w.append(tt_(t)));
   if (seq.length > max) w.append(h('small', null, `+${seq.length - max}`));
@@ -157,31 +157,10 @@ function spark(vals, w = 64, hgt = 22, cls = 'lane-flat') {
   S('path', { d: v.map((x, i) => `${i ? 'L' : 'M'}${(i / (v.length - 1) * w).toFixed(1)} ${y(x).toFixed(1)}`).join(''), fill: 'none', stroke: 'var(--flat)', 'stroke-width': 1.75, 'stroke-linejoin': 'round', class: cls }, s);
   return s;
 }
-// ---------- chrome: theme, help, wander ----------
+// ---------- chrome: theme, wander (help is in help.js) ----------
 function theme() {
   const r = document.documentElement, dark = r.getAttribute('data-theme') === 'dark' || (!r.hasAttribute('data-theme') && matchMedia('(prefers-color-scheme: dark)').matches);
   r.setAttribute('data-theme', dark ? 'light' : 'dark'); ls.set('ko.theme', dark ? 'light' : 'dark');
-}
-function help() {
-  let d = $('#helpdlg');
-  if (!d) {
-    const hide = ls.get('ko.hide_middle') === '1';
-    d = h('dialog', { id: 'helpdlg', 'aria-labelledby': 'helpt' },
-      h('h2', { id: 'helpt' }, 'How to read the Ripple Map'),
-      h('p', null, 'Each upstream shock is a line. Each stop is a series in another part of life that moved against its own normal after the shock. We test many paths and show the ones that stayed flat too.'),
-      h('h3', null, 'Tiers'),
-      h('ul', null, ['measured', 'likely', 'watching', 'flat'].map(t => h('li', null, t === 'flat' ? h('b', { 'aria-hidden': 'true' }, '⊥') : tt_(t), h('span', null, h('b', null, L.TIER[t].w + '. '), L.TIER[t].def)))),
-      h('h3', null, 'Two fluke numbers, never merged'),
-      h('p', null, h('b', null, 'Lookalikes: '), '"A random pairing looks this strong about 1 in N times" compares the stop with fake dates, fake starts and fake pages.'),
-      h('p', null, h('b', null, 'Fluke rate: '), '"Links this strong from decoy starts turn out to be flukes about 1 in K times" comes from calm pages we run through the same tests every day.'),
-      h('h3', null, 'Domains'),
-      h('ul', null, L.DOMAINS.map(k => h('li', null, em(L.DOM[k].i), h('span', null, h('b', null, L.DOM[k].w + ': '), L.DOM[k].d)))),
-      h('label', { class: 'tog' }, h('input', { type: 'checkbox', checked: hide, onchange: e => { ls.set('ko.hide_middle', e.target.checked ? '1' : '0'); } }), 'Hide the middle stops until I open them'),
-      h('p', { class: 'xs' }, h('a', { href: '/ripples/methods/', class: 'lnk' }, 'Methods and receipts')),
-      h('form', { method: 'dialog' }, h('button', { class: 'btn sec' }, 'Got it')));
-    document.body.append(d);
-  }
-  d.showModal();
 }
 async function wander() {
   toast('Finding a Measured stop…');
@@ -196,9 +175,21 @@ async function wander() {
   if (!ms.length) { location.href = L.lineUrl(line.slug); return; }
   location.href = L.stopUrl(line.slug, ms[Math.floor(Math.random() * ms.length)].hop_id) + '?src=wander';
 }
+// Fonts (self-hosted, OFL): registered after first paint so they never delay it; swap in when they arrive (cached after).
+function fonts() {
+  try {
+    if (!window.FontFace || !document.fonts) return;
+    for (const [fam, file, d] of [['Anybody', 'anybody-latin-var.woff2', { weight: '100 900', stretch: '50% 150%' }], ['IBM Plex Sans', 'plex-sans-latin-var.woff2', { weight: '100 700' }]]) {
+      const f = new FontFace(fam, `url(/ripples/fonts/${file}) format("woff2")`, { ...d, display: 'swap' });
+      document.fonts.add(f); f.load().catch(() => {});
+    }
+  } catch (e) { /* the system fonts stay */ }
+}
 function chrome() {
+  requestAnimationFrame(() => setTimeout(fonts, 0));
   $('#theme')?.addEventListener('click', theme);
-  $('#help')?.addEventListener('click', help);
+  // the help dialog is loaded on first tap (it is not needed to draw any page)
+  $('#help')?.addEventListener('click', () => import('./help.js').then(m => m.help()));
   $('#wander')?.addEventListener('click', wander);
   const dt = $('#today'); if (dt && !dt.textContent.trim()) dt.textContent = L.fmtDate(today());
   if (!$('#toast')) document.body.append(h('div', { id: 'toast', role: 'status', 'aria-live': 'polite' }));
@@ -212,6 +203,10 @@ function a2hs() {
   const s = $('#a2hs'); if (s) s.addEventListener('click', () => { if (bip) { bip.prompt(); bip = null; s.hidden = true; } });
 }
 const visits = () => { const v = +(ls.get('ko.visits') || 0); return v; };
+// SVG axis labels: the display face draws + × − tiny next to its tall digits, so those three glyphs go in a sans tspan
+function axText(el, str) {
+  el.replaceChildren(...String(str).split(/([+×−])/).filter(Boolean).map(t => ('+×−'.includes(t) ? Object.assign(S('tspan', { class: 'ax-g' }), { textContent: t }) : document.createTextNode(t))));
+}
 function seedChart(svg, vals, quiet, peakLabel) {
   const W = 320, H = 84; svg.setAttribute('viewBox', `0 0 ${W} ${H}`); svg.setAttribute('preserveAspectRatio', 'none');
   const v = (vals || []).map(Number).filter(isFinite); if (v.length < 8) return false;
@@ -229,7 +224,7 @@ function seedChart(svg, vals, quiet, peakLabel) {
   const t = S('text', { x: 10, y: by - 2, 'font-size': 10.5, 'font-weight': 600, fill: 'var(--seed-line)', 'font-family': 'var(--sans)' }, svg); t.textContent = 'Its normal';
   const today = S('text', { x: x(v.length - 1), y: by + 1, 'font-size': 10.5, 'font-weight': 500, fill: 'var(--seed-line)', 'text-anchor': 'middle', opacity: 0.8, 'font-family': 'var(--sans)' }, svg); today.textContent = 'today';
   const dot = S('circle', { cx: x(pk), cy: y(v[pk]), r: 4.5, fill: 'var(--seed-line)', stroke: 'var(--marigold)', 'stroke-width': 2 }, svg);
-  const pl = S('text', { x: x(pk) + 9, y: y(v[pk]) + 6, 'font-size': 17, 'font-weight': 900, fill: 'var(--seed-line)', 'font-family': 'var(--display)' }, svg); pl.textContent = peakLabel;
+  const pl = S('text', { x: x(pk) + 9, y: y(v[pk]) + 6, 'font-size': 17, 'font-weight': 900, fill: 'var(--seed-line)', 'font-family': 'var(--display)' }, svg); axText(pl, peakLabel);
   void lbl;
   if (!RM && !quiet) {
     for (const [el, d0, dur, ease] of [[base, 150, 250, 'cubic-bezier(.2,.8,.2,1)'], [needle, 400, 150, 'ease-in']]) {
@@ -243,4 +238,4 @@ function seedChart(svg, vals, quiet, peakLabel) {
   return true;
 }
 
-export { $, add, h, S, em, sep, joinSep, put, icon, IC, RM, desk, ls, today, INLINE, D, rpc, load, event, toast, copy, share, prefetchImg, shareImage, landing, flaps, countUp, tt_, pips, stamp, dtile, strip, legend, spark, theme, help, wander, chrome, visits, seedChart, getBip };
+export { $, add, h, S, em, sep, joinSep, put, icon, IC, RM, desk, ls, today, INLINE, D, rpc, load, event, toast, copy, share, prefetchImg, shareImage, landing, flaps, countUp, tt_, pips, stamp, dtile, strip, legend, spark, theme, wander, chrome, visits, seedChart, getBip, axText };
