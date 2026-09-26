@@ -48,8 +48,29 @@ Public slugs are `{label-kebab}-{event_id}`; the trailing id is the key (`ripple
   **text_plain** is the accessible variant. Both are frozen with the version.
 * **sensitive** = the engine's flag OR any `hazard.*` family (quiet mode: no shock card, no playful copy, no Wander landing).
 * **hero** in ShockList is WS-E's `att_hero_pick` (live line with a Measured outcome stop, else the best reconstructed archive
-  line, labelled); `null` when neither exists. The day `line` is WS-B's finalize day line (`source: "engine day line"`) or, when
-  that key is absent, the sum over the listed lines (`source: "sum over listed lines"`).
+  line, labelled); `null` when neither exists. The day `line` is WS-B's finalize day line (`source: "engine day line"`); when that
+  key is absent every number in `line` is `null` and `source` is `"not available"` (render "today's tests are not in yet", never
+  a number). `listed_lines_sum` is a separate object: the sum of the listed lines' denominators over **all their days**, with
+  `lines` and a `scope` sentence. Never label it as today's tests.
+* **biggest_in_days** comes with `biggest_basis`: `days_since_higher` (the number is how long since the attention series was last
+  this high), `highest_in_window` (`biggest_in_days` is null and `biggest_window_days` says how many stored days it beats; render
+  "highest in the {n} days we store", never "a record"), or `no_data` (render nothing).
+* **Public names (added 2026-09-26).** A stop is shown only under a human name. A node whose label is still a raw Wikidata QID is
+  held back together with its subtree and counted in `held_back: {stops, flat, reason: "waiting for a public name"}` (render
+  "{n} more tested paths are not listed yet: waiting for a public name"). If a Likely-or-better stop has no name the line's next
+  version is held instead. Names come from the article / topic titles or Wikidata labels (`att_wd_claims`, filled by WS-A's
+  att-wikidata once its Wikimedia contact gate opens); the stop then appears in a new version.
+* **Withheld versions.** Versions frozen before 2026-09-26 whose public text carried raw QIDs are withheld: they stay frozen in the
+  database and the ledger (a `version_publish` row with `withheld: true`), but `rm_cascade(e, k)` returns `null` for them, their
+  Storage files and cards are removed, and no stub, feed item or card points at them. Version numbers therefore have gaps
+  (a line's first public version may be v3). `grown_since` compares with the previous **public** version.
+* **Closed windows.** Every node carries `window_closed` (its `window_close` is before the day the version was built). A closed
+  Watching stop reads in the past tense ("Its window closed {date} before enough data arrived to test it; the result is
+  pending." / "… with no measurable move so far; the final look is pending."), has `due: null`, is never in `next_due`, never
+  gets a calendar file, and is not drawn as an upcoming (dashed) stop on cards. HopEvidence `look` adds `window_close` and
+  `window_closed` (`next` is `null` once the window closed). Both keys are absent from versions frozen before 2026-09-26.
+* **Units.** `unit: "points"` (rate series: unemployment rate, a market's probability) means `rho` is a difference in points,
+  not a multiple: write "0.40 points above its normal", never "0.40×". Lands rows carry `unit` too.
 * **Node fields** beyond ENGINE §11: `unit` (`x` or `points` for rate series), `p_hat` (a Watching stop's pre-registered base
   rate), `path` (public wording, source-labelled; internal edge metadata never leaves the DB), `sentence` (ENGINE §8 template).
   Flat stubs carry `hop_id`, `rho` (window-average multiple) and a `spark`.
@@ -86,5 +107,12 @@ It replaces `<title>`, description, canonical, og:* and twitter:* (with `og:imag
 ## Tests
 
 `select ripples.rm_contract_test();` diffs every RPC's live output against these fixtures (loaded, arrays truncated, in
-`ripples.rm_contract_fixtures`): missing / extra keys and JSON type changes; `null` matches anything. `ok: true` is the
-acceptance. `select * from ripples.rm_grant_audit();` must return zero rows.
+`ripples.rm_contract_fixtures`): missing / extra keys and JSON type changes; `null` matches anything. Because a null matches
+anything, each result also carries `coverage: {compared, vacuous, vacuous_paths}`: the fixture fields the live data actually
+filled and the ones it left null or empty (unchecked). Part 2 (`synthetic`) builds a line from `cascade-1201.json` inside a
+rolled-back block (Measured, Likely, retracted, provisional depth-2, flat stubs, a rate-unit Measured stop, a closed and an
+open Watching window, an unnamed QID stop with a child), diffs it strictly and asserts the wording rules (points not ×, past
+tense after the window, held-back names, no raw identifiers, both fluke labels, rows gone after rollback). `ok: true` needs the
+live diffs, the synthetic diffs and every assert to pass. `select * from ripples.rm_grant_audit();` must return zero rows; every
+publish also runs `ripples.rm_enforce_grants()`, which revokes anything the audit lists (e.g. after an older SQL file is
+re-applied) and reports the count as `grants_fixed`.

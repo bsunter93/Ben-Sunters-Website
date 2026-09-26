@@ -198,14 +198,15 @@ The v5 sections above describe the retired puzzle surface. From v6:
 
 | Path | Deployed as | What |
 |---|---|---|
-| `functions/ripples-og/index.ts` + `cards.ts` | `ripples-og` (v8), verify_jwt false | Ripple Map cards: `v=brand|line|stop|shock|week`, integer inputs `e`, `k`, `h`, `w` (yyyyww). Every v5 variant (`teaser/result/reveal/board/latest`, any `n`/`s`) and every invalid, unknown, unpublished, decoy or sensitive-for-this-card request renders the brand card (200). `cards.ts` is pure (no Deno APIs) and renders identically in a Node harness |
-| `functions/ripples-publish/index.ts` + `v2.ts` | `ripples-publish` (v7), token-gated | `POST {"v2": true, "as_of"?, "events"?, "full"?, "prerender"?}` mirrors `rm_publish_bundle_v2` to Storage `ripples/v2/` (see `contract/fixtures/v2/README.md` for every path and cache header), writes RSS feeds, `.ics` calendars, open data and pre-renders OG PNGs. The v1 puzzle path is unchanged and dormant |
+| `functions/ripples-og/index.ts` + `cards.ts` | `ripples-og` (v9), verify_jwt false | Ripple Map cards: `v=brand|line|stop|shock|week`, integer inputs `e`, `k`, `h`, `w` (yyyyww). Every v5 variant (`teaser/result/reveal/board/latest`, any `n`/`s`) and every invalid, unknown, unpublished, decoy or sensitive-for-this-card request renders the brand card (200). `cards.ts` is pure (no Deno APIs) and renders identically in a Node harness |
+| `functions/ripples-publish/index.ts` + `v2.ts` | `ripples-publish` (v8), token-gated | `POST {"v2": true, "as_of"?, "events"?, "full"?, "prerender"?}` mirrors `rm_publish_bundle_v2` to Storage `ripples/v2/` (see `contract/fixtures/v2/README.md` for every path and cache header), writes RSS feeds, `.ics` calendars, open data and pre-renders OG PNGs. The v1 puzzle path is unchanged and dormant |
 | cron `rm-publish-0825`, `rm-publish-0840` | `contract/sql/06_rm_public_rpcs.sql` §12 | the two daily v2 publish runs after `att-finalize-engine` (08:20) |
 
 **Fonts.** ART §2.2's static TTFs (Anybody 800/900, IBM Plex Sans 500/700) are the exact files Google Fonts serves for
 `Anybody:wght@800|900` and `IBM Plex Sans:wght@500|700` (byte-identical to `art/final/fonts/og-*.ttf`, md5 checked). The function
 fetches those pinned `fonts.gstatic.com` URLs and verifies their SHA-256 before use; on a mismatch it falls back to the
-@fontsource static WOFFs of the same families and says so in `X-Font-Source: fallback`. Twemoji as before.
+@fontsource static WOFFs of the same families and says so in `X-Font-Source: fallback`. Twemoji is pinned to
+`jdecked/twemoji@17.0.3` (what `@latest` resolved to on 2026-09-26, same bytes), so a later re-render draws the same emoji.
 
 **Cards** (1200×630, flat colour, top strip y 40–84, footer "bensunter.com/ripples ▪ Consistent with, never proof of cause."):
 Line (petrol: title, metro strip of tiles — solid Measured, halftone Likely, dashed Watching — and one meta line; a bordered
@@ -216,3 +217,20 @@ Shock of the day (marigold; never for sensitive shocks), Week (the staircase, la
 **Checks run 2026-09-25.** Every card 33–68 KB (limit 300 KB). A fresh `&fresh=1` re-render of a frozen line card is
 byte-identical to the stored PNG (md5 = Storage eTag), and a re-publish with `full: true` left all 18 frozen objects untouched.
 Local renders: `scratchpad/wsc/og_*.png` via `harness/render.mjs` (satori 0.10.14 + resvg-wasm 2.6.2, same versions).
+
+**Changes after the 2026-09-26 verification.**
+* *Public names.* Line versions whose labels were raw Wikidata QIDs are withheld (`ripples.rm_version_audit`): the bundle lists
+  their `v{k}.json` and `line-{e}-v{k}.png` under `withdraw` and the publish run deletes them from Storage; `rm_cascade` and the
+  line card serve only public versions (a withheld `k` renders the brand card). New versions hold unnamed stops back
+  (`held_back`) instead of printing a QID.
+* *Retries.* A public frozen `v{k}.json` that is missing from Storage (checked in SQL against `storage.objects`) is re-sent by every
+  run until it lands (`frozen_retried` in the run result). Hops no longer on a public line, and calendars of windows that have
+  closed, are withdrawn too.
+* *Scale.* `att_publish_cascades` checks at most 150 lines per run (real lines of the last 30 days first, then the least recently
+  checked; the 08:40 run continues where 08:25 stopped; `candidates` / `deferred` in `rm_publish_log`), and the bundle mirrors at
+  most 400 HopEvidence files per run (new-version lines first, then least recently mirrored; `hops_deferred`).
+* *Cards.* The Stop card writes a rate (unit `points`) as "0.40 pts above its normal", never "+0.40 pts its normal"; a retracted
+  stop shows its old number struck through on a grey flap and "Retracted {date}" as the tier line. Closed Watching windows are no
+  longer drawn as upcoming (dashed) stops on the Line and Shock cards.
+* *Cache header.* Supabase Storage stores `cacheControl` as `max-age=N` only, so frozen objects carry `max-age=31536000` without
+  `immutable`; the `ripples-og` HTTP response for a frozen version adds `immutable`.

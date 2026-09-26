@@ -175,6 +175,43 @@ begin
 end $$;
 
 -- ---------------------------------------------------------------------------------------------------------------------
+-- 2b. Look stepper (ops, added 2026-09-26 00:20 UTC). WS-B's recompute (att_recompute_step) re-runs every pre-registered
+--     reconstructed look inside ONE transaction per call: its first group's att_engine_run_due(day) picks up every pending
+--     reconstructed look up to that day (7,289 looks after the fix-4 reset), which cannot finish inside a 15 (or 50) minute
+--     timeout on the 2,555-day arrays, never commits, and holds att_sd_null / att_hop_tests row locks that block every other
+--     engine call. This stepper runs the SAME function (att_engine_run_due, reconstructed = true) on the earliest pending look
+--     day, in committed chunks of p_budget_s seconds, so each hop's looks run in date order exactly as in the recompute. When
+--     nothing is pending, WS-B's att_recompute_step only has finalize / chain / cascade work left per group and fits its timeout.
+--     Nothing about a look, a threshold or a result changes; only the transaction boundaries do.
+-- ---------------------------------------------------------------------------------------------------------------------
+create or replace function ripples.att_archive_looks_step(p_budget_s int default 50) returns jsonb
+language plpgsql security definer set search_path = '' as $$
+declare d date; r jsonb; n_left int; now_t time := (now() at time zone 'utc')::time;
+begin
+  if now_t between time '05:40' and time '08:50' then return jsonb_build_object('skipped', 'nightly zvec / live morning window'); end if;
+  if not pg_try_advisory_lock(hashtext('ripples.att_library_step')) then return jsonb_build_object('skipped', 'library lock held'); end if;
+  begin
+    select min(u.d) into d
+      from ripples.att_hop_candidates c, unnest(c.looks) with ordinality u(d, o)
+     where c.frozen_hash is not null and c.status <> 'skipped' and c.reconstructed and u.d <= current_date
+       and not exists (select 1 from ripples.att_hop_tests t where t.hop_id = c.hop_id and t.look_no = u.o and (t.t_stat is not null or t.tier_reason = 'waiting_series'));
+    if d is null then
+      perform pg_advisory_unlock(hashtext('ripples.att_library_step'));
+      perform ripples.att_state_set('wse.looks_step', coalesce(ripples.att_state_get('wse.looks_step'), '{}'::jsonb) || jsonb_build_object('idle_at', now()));
+      return jsonb_build_object('idle', true);
+    end if;
+    r := ripples.att_engine_run_due(d, 100000, true, p_budget_s);
+  exception when others then
+    perform pg_advisory_unlock(hashtext('ripples.att_library_step'));
+    raise;
+  end;
+  perform pg_advisory_unlock(hashtext('ripples.att_library_step'));
+  perform ripples.att_state_set('wse.looks_step', coalesce(ripples.att_state_get('wse.looks_step'), '{}'::jsonb)
+          || jsonb_build_object('day', d, 'last', r, 'at', now(), 'ran_total', coalesce((ripples.att_state_get('wse.looks_step') ->> 'ran_total')::int, 0) + (r ->> 'ran')::int));
+  return r || jsonb_build_object('day', d);
+end $$;
+
+-- ---------------------------------------------------------------------------------------------------------------------
 -- 3. Labels: sensitive (quiet mode) for harmful hazards; reconstructed is already true on every library / control event
 -- ---------------------------------------------------------------------------------------------------------------------
 -- Quiet mode (EXPERIENCE §2, §8): hazards with harm render without flips, Shock-of-the-day cards or share GIFs. Every FEMA-declared
@@ -563,7 +600,10 @@ end $$;
 -- 9. Cron (UTC): the archive driver every 2 minutes outside 05:40–08:50; weekly edition Monday 09:05 for the week just closed
 -- ---------------------------------------------------------------------------------------------------------------------
 do $$ declare j record; begin
-  for j in select jobid from cron.job where jobname in ('att-archive-run','att-week-edition') loop perform cron.unschedule(j.jobid); end loop;
+  for j in select jobid from cron.job where jobname in ('att-archive-run','att-week-edition','att-wse-looks') loop perform cron.unschedule(j.jobid); end loop;
 end $$;
 select cron.schedule('att-archive-run', '1-59/2 * * * *', $$set statement_timeout = '30min'; select ripples.att_archive_step_locked()$$);
+-- att-wse-looks (ops): the committed look stepper of §2b, every minute outside 05:40–08:50; unschedule once wse.looks_step is idle
+-- and nothing reconstructed is pending (the archive driver then runs one event at a time through att_run_library).
+select cron.schedule('att-wse-looks', '* * * * *', $$set statement_timeout = '4min'; select ripples.att_archive_looks_step(50)$$);
 select cron.schedule('att-week-edition', '5 9 * * 1', $$set statement_timeout = '5min'; select ripples.att_week_edition(to_char(current_date - 7, 'IYYY-IW'))$$);
