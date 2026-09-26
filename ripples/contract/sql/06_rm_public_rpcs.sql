@@ -2,7 +2,9 @@
 -- 06_rm_public_rpcs.sql — WS-C (Ripple Map v6): public contracts, version freezing, publish bundle, count-only events
 --
 -- Supabase project kffkasnzqcddpystszch, schema `ripples` (service-only objects) + `public` (the rm_* RPCs).
--- Applied as migration `wsc_rm_public_rpcs` (+ addenda listed at the end of this file).
+-- Applied as migration `wsc_rm_public_rpcs` (+ addenda listed at the end of this file). Fixes after the 2026-09-26 verification:
+-- `wsc_fix_public_names_a`..`_e`, `wsc_fix_contract_test`, `wsc_fix_contract_test_b`, `wsc_fix_lands_unit` (public names / withheld
+-- versions, closed-window wording, rate units, frozen-file retry and withdrawal, per-run caps, coverage + synthetic contract test).
 --
 -- Contract: ENGINE_SPEC §11 (shapes), EXPERIENCE_SPEC §1/§3/§7 (routes, 8 domains, share text), OWNER_DECISIONS D-6/D-10.
 -- Fixtures (shape reference, synthetic numbers): ripples/contract/fixtures/v2/*.json. `ripples.rm_contract_test()` diffs every
