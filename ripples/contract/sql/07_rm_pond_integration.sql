@@ -215,10 +215,11 @@ begin
       'strength', pat ->> 'strength', 'num', case when (pat ->> 'effect')::float8 < 0 then '−' else '+' end || to_char(abs((pat ->> 'effect')::float8), 'FM990.0') || '%',
       'short', pat ->> 'outcome_label', 'title', pat ->> 'outcome_label', 'unit', 'across ' || (pat ->> 'n_events') || ' past events',
       'headline', pat ->> 'headline',
-      'plain', coalesce(pat -> 'story' ->> 'story_sentence', pat ->> 'headline') || ' This is a rule about events like this one, not evidence about this one'
+      'plain', coalesce((select sc.copy ->> 'story_sentence' from ripples.att_story_candidates sc where sc.story_id = 'pattern:' || (pat ->> 'id')), (pat ->> 'headline') || '.') || ' This is a rule about events like this one, not evidence about this one'
                || case when exists (select 1 from ripples.att_fx_event f where f.event_id = p_event and f.grid_id = (pat ->> 'id')::int and f.d is not null)
                        then '.' else ': this event was not tested on it.' end,
-      'pattern', pat, 'story', pat -> 'story');
+      'pattern', pat, 'story', (select jsonb_build_object('story_id', sc.story_id, 'archetype', sc.archetype, 'story_sentence', sc.copy ->> 'story_sentence')
+                                  from ripples.att_story_candidates sc where sc.story_id = 'pattern:' || (pat ->> 'id')));
   end loop;
   select x into pnext from jsonb_array_elements(coalesce(public.rm_patterns(null, 'strong pattern'), '[]')) x
    where x ->> 'family' is distinct from ev.family order by (x ->> 'q')::float8, (x ->> 'id')::int limit 1;
