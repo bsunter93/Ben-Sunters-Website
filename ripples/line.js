@@ -151,22 +151,30 @@ export function staircase(c, entries, opts = {}) {
     if (l.dot && !l.shock) l.dot.setAttribute('fill', 'var(--marigold)');
     void silent;
   };
+  // a lane is already there, faint; revealing brings it to full ink and draws its after-the-shock segment and onset dot
   api.reveal = (i, quiet) => {
     const l = lanes[i]; if (!l || l.shown) return; l.shown = true;
     if (!l.g) return;
-    const op = l.att ? 0.5 : 1;
-    if (RM || quiet) { l.g.animate([{ opacity: 0 }, { opacity: op }], { duration: 150, fill: 'forwards' }); l.g.setAttribute('opacity', op); return; }
+    const op = l.att ? 0.5 : 1, from = l.att ? 0.2 : 0.28;
     l.g.setAttribute('opacity', op);
-    let t = 0;
-    for (const [el, dur, ease] of [[l.pre, 420, 'cubic-bezier(.2,.8,.2,1)'], [l.post, 180, 'ease-in']]) {
-      if (!el) continue; const len = el.getTotalLength();
-      el.animate([{ strokeDasharray: `${len} ${len}`, strokeDashoffset: len }, { strokeDasharray: `${len} ${len}`, strokeDashoffset: 0 }], { duration: dur, delay: t, easing: ease, fill: 'backwards' });
-      t += dur;
-    }
-    if (l.dot) l.dot.animate([{ opacity: 0 }, { opacity: 1 }], { duration: 120, delay: Math.max(0, t - 200), fill: 'backwards' });
+    if (RM || quiet) { l.g.animate([{ opacity: from }, { opacity: op }], { duration: 150 }); return; }
+    l.g.animate([{ opacity: from }, { opacity: op }], { duration: 150, easing: 'ease-out' });
+    let t = 60;
+    if (l.post) { const len = l.post.getTotalLength(); l.post.animate([{ strokeDasharray: `${len} ${len}`, strokeDashoffset: len }, { strokeDasharray: `${len} ${len}`, strokeDashoffset: 0 }], { duration: 260, delay: t, easing: 'ease-in', fill: 'backwards' }); t += 260; }
+    if (l.dot) l.dot.animate([{ transform: 'scale(0)' }, { transform: 'scale(1.2)' }, { transform: 'scale(1)' }], { duration: 160, delay: Math.max(0, t - 120), fill: 'backwards', easing: 'cubic-bezier(.34,1.56,.64,1)' }), l.dot.style.transformOrigin = `${l.dot.getAttribute('cx')}px ${l.dot.getAttribute('cy')}px`, l.dot.style.transformBox = 'view-box';
   };
   api.setDay = d => { if (dayClip && api.X) dayClip.setAttribute('width', d == null ? api.W + 40 : Math.max(0, api.X(d) + 1)); };
   api.showAll = () => lanes.forEach(l => { l.shown = true; if (l.g) l.g.setAttribute('opacity', l.att ? 0.5 : 1); });
+  // Signature B: replay the staircase on a loop (lanes draw in order over ≈2.5 s, hold, repeat); off while the tab is hidden
+  let loopT = 0, loopQ = [];
+  const runOnce = () => {
+    loopQ.forEach(clearTimeout); loopQ = [];
+    lanes.forEach((l, i) => { if (i) { l.shown = false; if (l.g) l.g.setAttribute('opacity', l.att ? 0.2 : 0.28); } });
+    const n = lanes.length, step = Math.min(420, 2500 / Math.max(1, n - 1));
+    for (let i = 1; i < n; i++) loopQ.push(setTimeout(() => api.reveal(i, false), 200 + (i - 1) * step));
+  };
+  api.loop = (period = 6000) => { if (RM) { api.showAll(); return; } api.stopLoop(); runOnce(); loopT = setInterval(() => { if (!document.hidden) runOnce(); }, period); };
+  api.stopLoop = () => { clearInterval(loopT); loopT = 0; loopQ.forEach(clearTimeout); loopQ = []; api.showAll(); };
   lanes[0].shown = true;
   let rt; addEventListener('resize', () => { clearTimeout(rt); rt = setTimeout(() => { api.draw(); if (opts.all) api.showAll(); }, 150); });
   requestAnimationFrame(() => { api.draw(); if (opts.all) api.showAll(); });
@@ -184,6 +192,8 @@ function stopCard(c, e, idx, total, sc, laneIdx) {
   let firstFlap = null;
   for (const p of parts) {
     if (p.t) say.append(p.t);
+    else if (p.g) say.append(h('span', { class: 'gloss', 'aria-hidden': 'true' }, p.g));
+    else if (p.dir) say.append(h('span', { class: 'dir', 'aria-hidden': 'true' }, p.dir));
     else { const f = flaps(p.flap, null, p.flap.replace('×', ' times').replace('+', 'plus ')); say.append(f); if (!firstFlap) firstFlap = [f, p.flap]; }
   }
   const T = L.TIER[n.tier];
@@ -201,15 +211,25 @@ function stopCard(c, e, idx, total, sc, laneIdx) {
     const fr = L.flukeRate(n.f_1_in, n.f_warming); if (fr) card.append(h('p', { class: 'odds' }, fr));
   }
   if (n.tier === 'watching') {
+    // A Watching stop is a moment, not a caption: the countdown to the next look leads (flaps, the same voice as the
+    // Measured sentence), then the window track with the look marked, then the pre-registered base rate in words
+    const look = !n.window_closed ? (n.due || n.window_close) : null;
+    if (look) {
+      const dl = Math.max(0, L.daysBetween(today(), look));
+      const cnt = h('p', { class: 'say wait' }, flaps(String(dl), null, `${dl} days`), ` ${dl === 1 ? 'day' : 'days'} until the ${L.lookWord(n.due, n.window_close).toLowerCase()}${dl === 0 ? ': today' : ''}.`);
+      if (!firstFlap) firstFlap = [cnt.querySelector('.flaps') && cnt, String(dl)];
+      say.replaceWith(cnt); card._say = cnt;
+    }
     if (!n.window_closed && n.window_close) {
       const a = L.dayMs(c.event.onset), z = L.dayMs(n.window_close), t = Math.min(z, Math.max(a, L.dayMs(today())));
       const pct = Math.round(((t - a) / Math.max(1, z - a)) * 100);
       const duePct = n.due ? Math.round(((L.dayMs(n.due) - a) / Math.max(1, z - a)) * 100) : null;
-      card.append(h('div', { class: 'wt' }, h('p', { class: 'due' }, n.due ? `${L.lookWord(n.due, n.window_close)} ${L.fmtDate(n.due)}` : `Window closes ${L.fmtDate(n.window_close)}`),
-        h('div', { class: 'track', role: 'img', 'aria-label': `Window ${pct}% gone: opened ${L.fmtDay(c.event.onset)}, closes ${L.fmtDay(n.window_close)}` }, h('i', { style: `width:${pct}%` }), duePct != null ? h('b', { style: `left:calc(${Math.min(99, duePct)}% - 1px)` }) : null),
+      card.append(h('div', { class: 'wt' },
+        h('div', { class: 'track', role: 'img', 'aria-label': `Window ${pct}% gone: opened ${L.fmtDay(c.event.onset)}, closes ${L.fmtDay(n.window_close)}${n.due ? `; ${L.lookWord(n.due, n.window_close).toLowerCase()} ${L.fmtDay(n.due)}` : ''}` }, h('i', { style: `width:${pct}%` }),
+          duePct != null ? h('b', { style: `left:${Math.min(97, Math.max(3, duePct))}%` }, h('span', { class: 'cap' }), h('span', { class: 'dl' }, `${L.lookWord(n.due, n.window_close)} ${L.fmtDay(n.due)}`)) : null),
         h('p', { class: 'lbls' }, h('span', null, `Shock ${L.fmtDay(c.event.onset)}`), h('span', null, `window closes ${L.fmtDay(n.window_close)}`))));
     }
-    if (n.sentence) card.append(h('p', { class: 'eng' }, n.sentence));
+    if (n.sentence) card.append(h('p', { class: 'eng base' }, n.sentence));
     if (!n.window_closed && n.due) card.append(h('p', { class: 'xs', style: 'margin-top:6px' }, h('a', { class: 'lnk', href: `${C.STORAGE}ics/hop-${n.hop_id}.ics`, download: `ripple-${n.hop_id}.ics` }, `Add the ${L.lookWord(n.due, n.window_close).toLowerCase()} to my calendar`)));
   } else if (n.tier === 'retracted' && n.sentence) {
     /* the reason is already the sentence */
@@ -281,7 +301,7 @@ export async function linePage(r) {
   const stations = entries.filter(e => L.isStation(e.n));
   const total = L.stopCount(c), shownMoved = entries.filter(e => e.depth < 3 && L.isMoved(e.n)).length;
   // header
-  const meta = joinSep([`Began ${L.fmtDay(c.event.onset)}`, c.event.magnitude_x ? `${L.num(c.event.magnitude_x)}× its normal attention` : null, `day ${L.lineDays(c)}`, r.version ? `version ${r.version}, frozen` : L.STATUS[c.status], c.event.reconstructed ? 'reconstructed' : null]);
+  const meta = joinSep([`Began ${L.fmtDay(c.event.onset)}`, c.event.magnitude_x ? `${L.num(c.event.magnitude_x)}× its normal readers` : null, `day ${L.lineDays(c)}`, r.version ? `version ${r.version}, frozen` : L.STATUS[c.status], c.event.reconstructed ? 'reconstructed' : null]);
   const head = h('header', { class: 'lh mob' }, h('span', { class: 'tk-emo', 'aria-hidden': 'true' }, em(c.event.emoji || '🌀')), h('div', null, h('h1', null, c.event.label), h('p', { class: 'meta' }, meta)));
   const note = h('div', { id: 'grown' });
   // sticky strip + staircase
@@ -320,8 +340,9 @@ export async function linePage(r) {
     }
     const fs = flatStub(c, e.n.hop_id, `after ${e.n.label}`); if (fs) card.append(fs);
     if (hideMid && L.isMoved(e.n) && idx > 1 && idx < shownMoved) {
-      card.classList.add('hid'); card.querySelector('.say')?.setAttribute('aria-hidden', 'true');
-      card.append(h('button', { class: 'btn sec sm rev', onclick: ev => { card.classList.remove('hid'); card.querySelector('.say')?.removeAttribute('aria-hidden'); ev.currentTarget.remove(); } }, 'Reveal this stop'));
+      const hidEls = () => card.querySelectorAll('.say,.facts,.odds,.eng');
+      card.classList.add('hid'); hidEls().forEach(x => x.setAttribute('aria-hidden', 'true'));
+      card.append(h('button', { class: 'btn sec sm rev', onclick: ev => { card.classList.remove('hid'); hidEls().forEach(x => x.removeAttribute('aria-hidden')); ev.currentTarget.remove(); } }, 'Reveal this stop'));
     }
     cards.push(card);
     // desktop: sibling branches below the same stop sit side by side (at most 3 shown, the rest behind "+N branches")
@@ -352,21 +373,27 @@ export async function linePage(r) {
     h('p', { class: 'xs', style: 'margin-top:6px' }, `Method ${c.method || C.METHOD}`, c.ledger?.seq ? [sep(), `ledger entry ${L.fmtInt(c.ledger.seq)}`] : null, sep(), h('a', { class: 'lnk', href: '/ripples/methods/' }, 'How we test')));
   // replay scrubber: stops light as their onset day passes; 2.5 s end to end; any tap skips
   const dMax = L.lineDays(c), dMin = -3;
-  const rng = h('input', { type: 'range', min: dMin, max: dMax, value: dMax, step: 1, 'aria-label': 'Replay: day since the shock' });
+  const rng = h('input', { type: 'range', min: dMin, max: dMax, value: dMax, step: 1, 'aria-label': 'Replay: day since the shock', 'aria-valuetext': `day ${dMax} of ${dMax}` });
   const lbl = h('span', null, `Replay: day ${dMax}`);
   let playing = 0;
-  const setDay = d => {
-    sc.setDay(d); lbl.textContent = d < 0 ? `Replay: ${-d} days before` : `Replay: day ${d}`;
-    shownEntries.forEach((e, i) => { const on = e.n.onset ? L.daysBetween(c.event.onset, e.n.onset) <= d : d >= dMax; tiles[i]?.style.setProperty('opacity', on ? '1' : '.35'); });
+  const dayWord = d => { const r = Math.round(d); return r < 0 ? `${-r} ${-r === 1 ? 'day' : 'days'} before` : `day ${r}`; };
+  const setDay = (d, counting) => {
+    sc.setDay(d); const r = d == null ? dMax : Math.round(d); lbl.textContent = `Replay: ${dayWord(r)}`; rng.setAttribute('aria-valuetext', `${dayWord(r)} of ${dMax}`);
+    shownEntries.forEach((e, i) => {
+      const on = e.n.onset ? L.daysBetween(c.event.onset, e.n.onset) <= r : r >= dMax; tiles[i]?.style.setProperty('opacity', on ? '1' : '.35');
+      // play also replays the flap count-up on the card as its lane lights (once per pass)
+      if (counting && on && cards[i] && cards[i]._flap && !cards[i]._replayed) { cards[i]._replayed = true; countUp(cards[i]._flap[0], cards[i]._flap[1], quiet); }
+    });
   };
-  rng.addEventListener('input', () => { cancelAnimationFrame(playing); sc.showAll(); setDay(+rng.value); });
+  rng.addEventListener('input', () => { cancelAnimationFrame(playing); playing = 0; sc.showAll(); setDay(+rng.value); });
   const play = () => {
-    sc.showAll(); const t0 = performance.now();
-    const step = t => { const f = Math.min(1, (t - t0) / 2500), d = dMin + (dMax - dMin) * f; setDay(d); rng.value = Math.round(d); if (f < 1) playing = requestAnimationFrame(step); else setDay(null); };
+    sc.showAll(); const t0 = performance.now(); cards.forEach(cd => { cd._replayed = false; });
+    const step = t => { const f = Math.min(1, (t - t0) / 2500), d = dMin + (dMax - dMin) * f; setDay(d, true); rng.value = Math.round(d); if (f < 1) playing = requestAnimationFrame(step); else { playing = 0; setDay(null); } };
     if (RM) { setDay(null); return; }
     playing = requestAnimationFrame(step);
   };
   addEventListener('pointerdown', () => { if (playing) { cancelAnimationFrame(playing); playing = 0; setDay(null); rng.value = dMax; } }, true);
+  // the scrubber lives under the chart it drives (in the sticky block on phone), never 900 px below it
   const replay = h('div', { class: 'replay' }, h('button', { 'aria-label': 'Replay the line from the shock to today', onclick: e => { e.stopPropagation(); play(); } }, icon('play')), h('label', null, lbl, rng));
   // desktop By hop / By day toggle
   const seg = h('span', { class: 'seg dsk-only', role: 'group', 'aria-label': 'Spacing' },
@@ -375,18 +402,19 @@ export async function linePage(r) {
   const cap = sc.fig.querySelector('figcaption');
   const capTxt = h('span', null, 'Each lane is one stop against its own normal, on one shared scale; x is days since the shock.');
   put(cap, capTxt, h('span', { class: 'sp' }), desk() ? seg : null);
+  sc.fig.append(replay);
   // assemble
   const tsvg = S('svg', { class: 'tk-chart', role: 'img', 'aria-label': `${c.event.label}: attention against its own normal, peaking at ${L.num(c.event.magnitude_x)} times normal.` });
   const hasT = c.event.spark ? seedChart(tsvg, c.event.spark, quiet, L.num(c.event.magnitude_x) + '×') : false;
   const side = h('section', { class: 'ticket hero grain side', 'aria-labelledby': 'side-t' },
     h('p', { class: 'tk-top' }, h('span', { class: 'tag' }, c.event.reconstructed ? 'From the archive, reconstructed' : 'The line'), h('span', { class: 'ver' }, 'v' + c.version)),
-    h('div', { class: 'tk-body' }, h('div', { class: 'tk-row' }, h('span', { class: 'tk-emo', 'aria-hidden': 'true' }, em(c.event.emoji || '🌀')), h('h1', { class: 'tk-title', id: 'side-t' }, c.event.label)),
+    h('div', { class: 'tk-body' }, h('div', { class: 'tk-row' }, h('span', { class: 'tk-emo', 'aria-hidden': 'true' }, em(c.event.emoji || '🌀')), h('h2', { class: 'tk-title', id: 'side-t' }, c.event.label)),
       h('p', { class: 'tk-sub' }, meta.map(x => (x.nodeType ? x.cloneNode(true) : x))), hasT ? tsvg : null),
     h('div', { class: 'tk-perf', 'aria-hidden': 'true' }, h('span', { class: 'notch l' }), h('span', { class: 'notch r' })),
     h('div', { class: 'tk-foot' }, h('p', { class: 'tk-meta' }, joinSep(L.lineMeta(c))), h('button', { class: 'btn', onclick: () => share(L.shareLine(c), 'line') }, icon('share'), 'Share this line')));
   const aside = h('aside', null, head, note,
     h('div', { class: 'dsk' }, side, denEl.cloneNode(true)));
-  const body = h('div', null, h('div', { class: 'mob' }), stick, list, tail, h('div', { class: 'mob' }, denEl), replay, shareBlock(c, r.version), followBlock(c), waitlist());
+  const body = h('div', null, h('div', { class: 'mob' }), stick, list, tail, h('div', { class: 'mob' }, denEl), shareBlock(c, r.version), followBlock(c), waitlist());
   put(main, h('div', { class: 'line' }, aside, body));
   const rerender = () => { linePage(r); };
   // grown since shared (frozen version): compare with the live line
