@@ -595,11 +595,60 @@ language sql stable set search_path = '' as $$
                            where ns.node = p_node and cs.kind = 'outcome') then 'outcome' else 'attention' end
 $$;
 
+-- ---------------------------------------------------------------------------------------------------------------------
+-- 8b. Launch-GIF export: the renderer input (ripples/ops/launch/render_launch_gif.py) for one published archive line, straight
+--     from the frozen version and att_zvec (×normal = exp(resid), the same transform as att_spark). p_min_tier 'measured' is the
+--     launch rule; 'likely' / 'any' exist only to test the renderer and are never used for a launch asset.
+-- ---------------------------------------------------------------------------------------------------------------------
+create or replace function ripples.att_launch_line_json(p_event bigint, p_min_tier text default 'measured') returns jsonb
+language plpgsql stable security definer set search_path = '' as $$
+declare v record; ev record; stops jsonb := '[]'::jsonb; h record; z record; b jsonb; lo real := 0.8; hi real := 1.25; i0 int; i1 int; ser jsonb; dl jsonb;
+        pk real; pk_day int; x_to int := 7; lk text;
+begin
+  select * into ev from ripples.att_events where event_id = p_event;
+  select version, payload, true published into v from ripples.att_cascade_versions where event_id = p_event order by version desc limit 1;
+  if not found then   -- renderer tests only: a launch asset must come from a published version (the JSON says which)
+    select version, payload, false published into v from ripples.att_cascades where event_id = p_event;
+    if not found then return jsonb_build_object('error', 'no cascade payload'); end if;
+  end if;
+  for h in select l.*, c.sign, c.onset onset_day from ripples.att_hop_latest l join ripples.att_hop_candidates c on c.hop_id = l.hop_id
+            where l.event_id = p_event and l.depth = 1 and ripples.att_series_kind_of_node(l.node) = 'outcome'
+              and (l.tier = 'measured' or (p_min_tier = 'likely' and l.tier = 'likely') or (p_min_tier = 'any' and l.t_stat is not null))
+            order by (l.tier = 'measured') desc, (l.tier = 'likely') desc, l.t_stat desc nulls last, l.q_w limit 3 loop
+    b := null;
+    select k, val into lk, b from jsonb_each(h.s_by_channel) e(k, val) where (val ->> 'zhat')::float8 >= 3 order by (val ->> 'zhat')::float8 desc limit 1;
+    if b is null then select k, val into lk, b from jsonb_each(h.s_by_channel) e(k, val) order by (val ->> 'zhat')::float8 desc nulls last limit 1; end if;
+    select * into z from ripples.att_zvec where series_id = (b ->> 'best_series')::bigint;
+    if not found then continue; end if;
+    i0 := (h.onset_day - 21) - z.from_day + 1; i1 := (h.onset_day + greatest(7, coalesce((b ->> 'l')::int, 7)) + 3) - z.from_day + 1;
+    select jsonb_agg(case when z.resid[i] is null then null else round(exp(z.resid[i])::numeric, 3) end order by i) into ser from generate_series(greatest(1, i0), least(z.n, i1)) i;
+    select max(abs(ln(greatest(0.01, (x #>> '{}')::float8)))) into pk from jsonb_array_elements(ser) x where x <> 'null'::jsonb;
+    lo := least(lo, exp(-greatest(pk, 0.2) * 1.15)); hi := greatest(hi, exp(greatest(pk, 0.2) * 1.15));
+    x_to := greatest(x_to, greatest(7, coalesce((b ->> 'l')::int, 7)) + 3);
+    stops := stops || jsonb_build_object('hop_id', h.hop_id, 'label', coalesce(ripples.rm_label(h.node, null), ripples.att_node_label(h.node)),
+               'short', coalesce(ripples.rm_label(h.node, null), ripples.att_node_label(h.node)),
+               'tier', h.tier, 'rho', round(coalesce(h.rho_shrunk, 1)::numeric, 2), 'rho_lo', h.rho_lo, 'rho_hi', h.rho_hi, 'lag_days', coalesce(h.lag_days, 0),
+               'p_1_in', case when h.fluke > 0 then floor(1 / h.fluke)::int end, 'q', h.q_w,
+               'series', ser, 'from_day', greatest(1, i0) - (h.onset_day - z.from_day + 1),
+               'band_lo', round(exp(-1.28 * z.sigma)::numeric, 3), 'band_hi', round(exp(1.28 * z.sigma)::numeric, 3),
+               'peak', round(coalesce(h.rho_shrunk, 1)::numeric, 3), 'peak_day', coalesce(h.lag_days, 0));
+  end loop;
+  dl := v.payload -> 'denominators';
+  return jsonb_build_object('event_id', p_event, 'version', v.version, 'published', v.published, 'title', regexp_replace(ev.label, ' \(positive control\)$', ''), 'onset', ev.onset, 'reconstructed', ev.reconstructed, 'sensitive', ev.sensitive,
+    'kicker', format('Onset %s. %s paths tested, %s moved.', to_char(ev.onset, 'DD Mon YYYY'), dl ->> 'tested', dl ->> 'moved'),
+    'question', 'Where did it show up next?', 'sub', 'Each lane: the series against its own normal.',
+    'day_line', format('Tested %s paths, %s moved, ~%s expected flukes', dl ->> 'tested', dl ->> 'moved', coalesce(dl ->> 'expected_false_links', '0')),
+    'lookalike', case when jsonb_array_length(stops) > 0 and (stops -> 0 ->> 'p_1_in') is not null
+                      then format('A random pairing looks this strong about 1 in %s times.', stops -> 0 ->> 'p_1_in') else '' end,
+    'stops', stops, 'x_from', -21, 'x_to', x_to, 'y_lo', round(lo::numeric, 3), 'y_hi', round(hi::numeric, 3),
+    'grid', jsonb_build_array(0.5, 0.8, 1, 1.25, 2), 'min_tier', p_min_tier);
+end $$;
+
 do $$ declare t text; begin
   for t in select p.oid::regprocedure::text from pg_proc p join pg_namespace n on n.oid = p.pronamespace
            where n.nspname = 'ripples' and p.proname in ('att_archive_plan_build','att_archive_step','att_archive_step_locked','att_archive_sensitive',
              'att_archive_controls_fix','att_domain8','att_archive_freeze_version','att_archive_select','att_week_bounds','att_week_pick',
-             'att_week_edition','att_hero_pick','att_archive_calibration','att_series_kind_of_node') loop
+             'att_week_edition','att_hero_pick','att_archive_calibration','att_series_kind_of_node','att_launch_line_json','att_archive_looks_step','att_archive_priority') loop
     execute format('revoke all on function %s from anon, authenticated, public', t);
   end loop;
 end $$;
