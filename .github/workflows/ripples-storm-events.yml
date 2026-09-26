@@ -1,0 +1,86 @@
+# Ripple Map ENGINE 6.3: NOAA Storm Events state x week aggregates from bigquery-public-data.noaa_historic_severe_storms
+# into Supabase (source noaa.storms) through public.att_ingest. Only aggregates are stored (no event-level rows).
+# Keyless auth (OWNER_DECISIONS D-8). Every query is dry-run first; per-query and per-run byte caps, a per-run row cap and
+# a database-headroom guard apply. The "metrics" input switches between the 3-metric panel (default, ~1 MB/yr) and the
+# 7-metric panel (~2.5 MB/yr; owner option once the database plan has headroom).
+name: Ripples NOAA Storm Events aggregates (BigQuery)
+
+on:
+  schedule:
+    - cron: "17 3 * * 1"   # Mondays 03:17 UTC (NOAA updates the database monthly; the run is idempotent)
+  workflow_dispatch:
+    inputs:
+      date_from:
+        description: "From YYYY-MM-DD (default 2019-01-01)"
+        required: false
+        default: "2019-01-01"
+      date_to:
+        description: "To YYYY-MM-DD (blank = today minus 60 days)"
+        required: false
+        default: ""
+      metrics:
+        description: "core (n, damage, n_flood) or full (+ n_tornado, n_wind_hail, n_winter, n_heat_fire)"
+        required: false
+        default: "core"
+      max_rows:
+        description: "Max weekly rows written this run"
+        required: false
+        default: "60000"
+      max_gib_run:
+        description: "Max dry-run GiB this run"
+        required: false
+        default: "10"
+      dry_run_only:
+        description: "Only dry-run and log bytes"
+        type: boolean
+        required: false
+        default: false
+
+permissions:
+  contents: read
+  id-token: write
+
+concurrency:
+  group: ripples-storm-events
+  cancel-in-progress: false
+
+jobs:
+  aggregate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    env:
+      SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+      SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+      IN_FROM: ${{ inputs.date_from || '2019-01-01' }}
+      IN_TO: ${{ inputs.date_to }}
+      IN_METRICS: ${{ inputs.metrics || 'core' }}
+      IN_MAX_ROWS: ${{ inputs.max_rows || '60000' }}
+      IN_MAX_GIB_RUN: ${{ inputs.max_gib_run || '10' }}
+      IN_DRY_RUN_ONLY: ${{ inputs.dry_run_only && 'true' || 'false' }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - id: auth
+        uses: google-github-actions/auth@v2
+        with:
+          workload_identity_provider: ${{ vars.GCP_WIF_PROVIDER }}
+          service_account: ${{ vars.GCP_SA_EMAIL }}
+
+      - uses: google-github-actions/setup-gcloud@v2
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install BigQuery client
+        run: pip install --quiet -r ripples/tools/bq/requirements.txt
+
+      - name: Aggregate storm events
+        working-directory: ripples/tools/bq
+        run: |
+          set -euo pipefail
+          args=(--project ripple-509716 --location US --from "${IN_FROM}" --metrics "${IN_METRICS}"
+                --max-rows "${IN_MAX_ROWS}" --max-gib-run "${IN_MAX_GIB_RUN}" --max-gib-query 2)
+          if [[ -n "${IN_TO}" ]]; then args+=(--to "${IN_TO}"); fi
+          if [[ "${IN_DRY_RUN_ONLY}" == "true" ]]; then args+=(--dry-run-only); fi
+          python storm_events.py "${args[@]}"
