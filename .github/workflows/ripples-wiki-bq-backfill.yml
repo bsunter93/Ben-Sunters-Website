@@ -1,0 +1,81 @@
+# Ripple Map WS-G: backfill daily Wikipedia pageviews for tracked titles from bigquery-public-data.wikipedia
+# (OWNER_DECISIONS D-12) into the existing Supabase store through public.att_ingest. Only extends history backwards
+# (AQS stays for the daily top-up). Keyless auth (D-8). Every chunk is dry-run first; per-query, per-run byte caps and
+# a per-run row cap apply.
+name: Ripples Wikipedia backfill (BigQuery)
+
+on:
+  schedule:
+    - cron: "43 2 * * 0"   # Sundays 02:43 UTC, off-peak
+  workflow_dispatch:
+    inputs:
+      date_from:
+        description: "From YYYY-MM-DD (blank = to minus 420 days)"
+        required: false
+        default: ""
+      date_to:
+        description: "To YYYY-MM-DD (blank = today minus 2)"
+        required: false
+        default: ""
+      max_rows:
+        description: "Max daily rows written this run"
+        required: false
+        default: "40000"
+      max_gib_run:
+        description: "Max dry-run GiB this run (daily quota is 204.8 GiB)"
+        required: false
+        default: "100"
+      dry_run_only:
+        description: "Only dry-run and log bytes"
+        type: boolean
+        required: false
+        default: false
+
+permissions:
+  contents: read
+  id-token: write
+
+concurrency:
+  group: ripples-wiki-bq-backfill
+  cancel-in-progress: false
+
+jobs:
+  backfill:
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    env:
+      SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+      SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+      IN_FROM: ${{ inputs.date_from }}
+      IN_TO: ${{ inputs.date_to }}
+      IN_MAX_ROWS: ${{ inputs.max_rows || '40000' }}
+      IN_MAX_GIB_RUN: ${{ inputs.max_gib_run || '100' }}
+      IN_DRY_RUN_ONLY: ${{ inputs.dry_run_only && 'true' || 'false' }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - id: auth
+        uses: google-github-actions/auth@v2
+        with:
+          workload_identity_provider: ${{ vars.GCP_WIF_PROVIDER }}
+          service_account: ${{ vars.GCP_SA_EMAIL }}
+
+      - uses: google-github-actions/setup-gcloud@v2
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install BigQuery client
+        run: pip install --quiet -r ripples/tools/bq/requirements.txt
+
+      - name: Backfill pageviews
+        working-directory: ripples/tools/bq
+        run: |
+          set -euo pipefail
+          args=(--project ripple-509716 --location US --max-rows "${IN_MAX_ROWS}"
+                --max-gib-run "${IN_MAX_GIB_RUN}" --max-gib-query 25 --chunk-days 7)
+          if [[ -n "${IN_FROM}" ]]; then args+=(--from "${IN_FROM}"); fi
+          if [[ -n "${IN_TO}" ]]; then args+=(--to "${IN_TO}"); fi
+          if [[ "${IN_DRY_RUN_ONLY}" == "true" ]]; then args+=(--dry-run-only); fi
+          python wiki_backfill.py "${args[@]}"
