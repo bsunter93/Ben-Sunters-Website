@@ -993,3 +993,25 @@ do $$ declare j record; begin
   perform cron.schedule('att-fx62-panel', '40 7 * * *', $c$set statement_timeout = '100s'; select ripples.att_fx_panel_refresh()$c$);
 end $$;
 -- select cron.schedule('att-fx62-step', '* * * * *', $$set statement_timeout = '100s'; select ripples.att_fx_step(45)$$);   -- job 187 on 2026-09-26
+
+-- ---------------------------------------------------------------------------------------------------------------------
+-- 12. Ledger verifier: an fx_grid freeze row is verified against its kept snapshot, not recomputed as a hop batch.
+--     DEVIATION NOTE: this is the one edit to a 20–28 body besides the tier hook. att_ledger_verify (25) treats every kind='freeze' row as a
+--     hop batch (`att_freeze_hash(as_of)`), so the 6.2 grid freeze (ref.object = 'fx_grid', seq 932) would read as 'freeze_recompute' and flip
+--     the whole ledger to ok:false. Anchor-checked, idempotent, marked; the fx_grid row is still chain-verified and snapshot-hash-verified.
+-- ---------------------------------------------------------------------------------------------------------------------
+create or replace function ripples.att_fx_verify_install() returns jsonb
+language plpgsql security definer set search_path = '' as $$
+declare def text; anchor text := E'    if l.kind = \'freeze\' and not (l.ref ? \'superseded_by\') then\n      n_freeze := n_freeze + 1;\n      v_day := (l.ref ->> \'as_of\')::date;\n      recomputed := ripples.att_freeze_hash(v_day, false, l.payload_hash);';
+        hook text := E'    if l.kind = \'freeze\' and not (l.ref ? \'superseded_by\') then\n      n_freeze := n_freeze + 1;\n      v_day := (l.ref ->> \'as_of\')::date;\n      -- ENGINE 6.2 (30_att_engine_62): an fx_grid freeze is not a hop batch; it is verified by its snapshot hash below\n      recomputed := case when l.ref ->> \'object\' = \'fx_grid\' then l.payload_hash else ripples.att_freeze_hash(v_day, false, l.payload_hash) end;';
+        n int;
+begin
+  select pg_get_functiondef(p.oid) into def from pg_proc p join pg_namespace n2 on n2.oid = p.pronamespace where n2.nspname = 'ripples' and p.proname = 'att_ledger_verify';
+  if position('ENGINE 6.2 (30_att_engine_62)' in def) > 0 then return jsonb_build_object('installed', true, 'already', true); end if;
+  n := (length(def) - length(replace(def, anchor, ''))) / length(anchor);
+  if n <> 1 then return jsonb_build_object('installed', false, 'reason', 'anchor count ' || n); end if;
+  execute replace(def, anchor, hook);
+  return jsonb_build_object('installed', true, 'already', false);
+end $$;
+revoke all on function ripples.att_fx_verify_install() from anon, authenticated, public;
+select ripples.att_fx_verify_install();
