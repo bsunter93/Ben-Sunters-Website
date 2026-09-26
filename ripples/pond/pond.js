@@ -250,8 +250,11 @@
 
     /* grass beds: things checked that stayed flat */
     const gG = el('g', { class: 'grass-beds' }, svg);
+    const flatGroups = {};
+    (P.flats || P.nulls || []).forEach(n => { const k = n.domain + ':' + (n.lag_days > 45 ? 'far' : n.lag_days > 10 ? 'mid' : 'near'); (flatGroups[k] = flatGroups[k] || []).push(n); });
+    Object.values(flatGroups).forEach(list => list.forEach((n, j) => { n._off = n.offset ?? (list.length > 1 ? (j - (list.length - 1) / 2) * (SW / (list.length + 1)) * .9 : SW * .28); }));
     (P.flats || P.nulls || []).forEach((n, i) => {
-      const p = pos(n.domain, n.lag_days, n.offset || 0);
+      const p = pos(n.domain, n.lag_days, n._off || 0);
       const bed = reeds(gG, p.x, p.y, 100 + i, p.a);
       bed.setAttribute('tabindex', '0'); bed.setAttribute('role', 'button');
       bed.setAttribute('aria-label', `${n.name}: checked, stayed inside its normal range. The ripple stopped here.`);
@@ -339,7 +342,7 @@
         el('circle', { cx: f1(p.x + size * .7 + 4), cy: f1(p.y - size * .7 - 4), r: 17, class: 'badge' }, lab);
         el('text', { x: f1(p.x + size * .7 + 4), y: f1(p.y - size * .7 + 2), class: 'badge-num', 'text-anchor': 'middle' }, lab, String(i + 1));
       } else if (!thumb) {
-        const sub = e.tier === 'contrast' ? 'Regional contrast passed, not yet Measured' : e.far_shore ? `${TIER[e.tier]}, reached the far shore` : e.tier === 'watching' && e.watch ? `Watching, resolves in ${e.watch.days_left} days` : (e.lag_days < 0 ? `${TIER[e.tier]}, ${-e.lag_days} days before` : TIER[e.tier]);
+        const sub = e.published && e.published.reason ? `${TIER[e.tier]}: ${e.published.reason}` : e.tier === 'contrast' ? 'Regional contrast passed, not yet Measured' : e.far_shore ? `${TIER[e.tier]}, reached the far shore` : e.tier === 'watching' && e.watch ? `Watching, resolves in ${e.watch.days_left} days` : (e.lag_days < 0 ? `${TIER[e.tier]}, ${-e.lag_days} days before` : TIER[e.tier]);
         const best = placer.place(p.x, p.y, size + 12, [{ text: e.num + ' ' + e.short, size: fs.lbl }, { text: sub, size: fs.tier }], e.label_side || 'auto');
         const t = el('text', { x: f1(best.lx), y: f1(best.ly), class: 'lbl', 'text-anchor': best.anchor }, lab);
         el('tspan', { class: 'lbl-num' }, t, e.num + ' '); el('tspan', {}, t, e.short);

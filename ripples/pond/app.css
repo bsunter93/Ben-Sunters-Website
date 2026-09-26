@@ -205,6 +205,15 @@ footer div{max-width:1440px;margin:0 auto;padding:18px 40px 36px;display:flex;ju
 .luck .lab{font-size:12px;fill:var(--muted);font-weight:500}
 .luck .lab.strong{fill:var(--ink);font-weight:600}
 .luck p{margin:8px 0 0;font-size:14px;color:var(--ink-2)}
+.luck h4{font-size:13px;font-weight:500;color:var(--muted);margin:14px 0 6px}
+.pfs{display:grid;gap:6px;margin:2px 0 6px}
+.pf{display:grid;grid-template-columns:1fr 90px auto;gap:2px 10px;align-items:center;font-size:13px;color:var(--ink-2)}
+.pf b{color:var(--ink);font-weight:600;text-align:right}
+.pf small{grid-column:1/-1;font-size:12px;color:var(--muted);margin-top:-2px}
+.pf-bar{height:8px;background:var(--accent-band);border-radius:4px;overflow:hidden}
+.pf-bar i{display:block;height:100%;background:var(--heat);opacity:.8}
+.chip.likely{background:#E6EEEA;color:var(--accent-ink)}
+.chip.measured{background:var(--accent);color:#fff}.chip.measured em{color:rgba(255,255,255,.75)}
 .luck p b{color:var(--ink)}
 .repl{display:flex;align-items:center;gap:10px;font-size:14px;color:var(--ink-2);margin-top:8px;flex-wrap:wrap}
 .repl .pips{display:flex;gap:3px;flex-wrap:wrap}
@@ -294,3 +303,6 @@ details.drawer a{color:var(--accent-ink);font-weight:500}
   body.hook h1{font-size:38px}
   .chain{grid-template-columns:1fr 1fr}
 }
+
+/* phone reveal: the ring labels sit where the count-up lands */
+.pond.compact.revealing .ring-labels{visibility:hidden}

@@ -15,7 +15,7 @@ const issues = [];
   const browser = await chromium.launch({ executablePath: '/opt/pw-browsers/chromium-1194/chrome-linux/chrome' });
   const settle = async (p, ms = 1200) => { await p.evaluate(() => document.fonts.ready); await p.waitForTimeout(ms); };
   const hscroll = async (p, tag) => { const s = await p.evaluate(() => document.documentElement.scrollWidth - document.documentElement.clientWidth); if (s > 0) issues.push(`${tag}: horizontal scroll ${s}px`); };
-  const mkpage = async (ctx, tag) => { const p = await ctx.newPage(); p.on('pageerror', e => issues.push(`${tag}: pageerror ${e.message}`)); p.on('console', m => { if (m.type() === 'error') issues.push(`${tag}: console ${m.text()}`); }); return p; };
+  const mkpage = async (ctx, tag) => { const p = await ctx.newPage(); p.on('pageerror', e => issues.push(`${tag}: pageerror ${e.message}`)); p.on('console', m => { if (m.type() === 'error' && !/ERR_TUNNEL_CONNECTION_FAILED/.test(m.text())) issues.push(`${tag}: console ${m.text()}`); }); /* the analytics RPC cannot leave this sandbox */ return p; };
 
   for (const [tag, vp] of [['desktop', { width: 1440, height: 900 }], ['phone', { width: 390, height: 844 }]]) {
     const ctx = await browser.newContext({ viewport: vp, deviceScaleFactor: tag === 'phone' ? 2 : 1, isMobile: tag === 'phone', hasTouch: tag === 'phone' });
@@ -41,6 +41,9 @@ const issues = [];
     if (tag === 'desktop') { await p.evaluate(() => document.querySelector('.shore-mark').dispatchEvent(new MouseEvent('click', { bubbles: true }))); await p.waitForTimeout(600); await p.screenshot({ path: join(OUT, `${tag}-8-far-shore.png`) }); await p.keyboard.press('Escape'); await p.waitForTimeout(450); }
     await p.evaluate(() => document.querySelector('.float').dispatchEvent(new MouseEvent('click', { bubbles: true }))); await p.waitForTimeout(600);
     await p.screenshot({ path: join(OUT, `${tag}-9-untested.png`) });
+    await p.keyboard.press('Escape'); await p.waitForTimeout(450);
+    await p.evaluate(() => document.querySelector('g.grass').dispatchEvent(new MouseEvent('click', { bubbles: true }))); await p.waitForTimeout(600);
+    await p.screenshot({ path: join(OUT, `${tag}-9b-flat-card.png`) });
     await p.keyboard.press('Escape'); await p.waitForTimeout(450);
     await p.evaluate(() => document.querySelector('#shore').scrollIntoView()); await p.waitForTimeout(500);
     await p.screenshot({ path: join(OUT, `${tag}-10-shore.png`) }); await hscroll(p, tag + ' shore');

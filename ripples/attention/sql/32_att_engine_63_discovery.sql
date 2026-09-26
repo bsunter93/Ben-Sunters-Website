@@ -649,3 +649,225 @@ do $$ declare t text; begin
     execute format('revoke all on function %s from anon, authenticated, public', t);
   end loop;
 end $$;
+
+-- =====================================================================================================================
+-- P2b (migration att_engine_63_p2b_frozen_extents_model_version): att_fx63_batch.panel_extents (every panel's from / to /
+-- regions at exploration-freeze time) and att_fx63_confirm_events() reading the FROZEN extents, so a nightly panel refresh can
+-- never change the held-out candidate list between the two freezes. (The deployed bodies are the P2 ones with that change;
+-- see the migration.) Then: select ripples.att_fx63_model_version_register();   -- the 6.3 model_version row (rule pre-declared)
+-- =====================================================================================================================
+
+-- =====================================================================================================================
+-- P3 (migration att_engine_63_p3_public_view_cron): the internal view, the public read-only RPCs and the nightly panel cron.
+-- Public outputs follow the story layer's presentation rule: sensitive events are QUIET (quiet:true), never excluded; the only
+-- exclusion is ripples.att_story_off_limits(event_id).
+-- =====================================================================================================================
+drop view if exists ripples.att_fx63_patterns;
+create view ripples.att_fx63_patterns as
+  select s.batch, s.grid_id, s.decoy_set, g.family, f.label as family_label, g.sub, g.source, g.metric, g.geo_kind,
+         ripples.att_fx63_outcome_label(g.source, g.metric) as outcome_label, g.domain_event, g.domain_outcome, g.definitional, (g.bh_weight = 0) as is_check,
+         g.pre_n, g.post_n, g.lag_n, split_part(g.batch, '/', 2) as variant, pn.grain, case when pn.value_kind = 'rate' then 'raw' else 'pct' end as unit,
+         b.split_date, b.explore_seq, b.confirm_seq, b.calib_seq,
+         s.x_n, s.x_d, s.x_se, s.x_p, s.x_sign, s.x_ok, s.variant_best, s.rank, s.selected, s.reason,
+         s.c_n, s.c_d, s.c_se, s.c_ci_lo, s.c_ci_hi, s.c_tau2, s.c_i2, s.c_p, s.c_p_norm, s.c_q, s.c_sign_ok, s.c_n_clustered_out, s.c_n_regional_pass,
+         case when pn.value_kind = 'rate' then round(s.c_d::numeric, 2) else round((100 * (exp(s.c_d) - 1))::numeric, 1) end as c_pct,
+         case when pn.value_kind = 'rate' then round(s.c_ci_lo::numeric, 2) else round((100 * (exp(s.c_ci_lo) - 1))::numeric, 1) end as c_pct_lo,
+         case when pn.value_kind = 'rate' then round(s.c_ci_hi::numeric, 2) else round((100 * (exp(s.c_ci_hi) - 1))::numeric, 1) end as c_pct_hi,
+         case when pn.value_kind = 'rate' then round(s.x_d::numeric, 2) else round((100 * (exp(s.x_d) - 1))::numeric, 1) end as x_pct,
+         s.verdict, s.strength, s.domain_distance, s.expected_by_mechanism, s.computed_at
+    from ripples.att_fx63_select s
+    join ripples.att_fx_grid g on g.grid_id = s.grid_id
+    join ripples.att_fx63_batch b on b.batch = s.batch
+    join ripples.att_families f on f.family = g.family
+    left join ripples.att_fx_panel pn on pn.source = g.source and pn.metric = g.metric and pn.geo_kind = g.geo_kind;
+revoke all on ripples.att_fx63_patterns from anon, authenticated, public;
+
+-- sample events of a 6.3 pair for one role (confirm / explore): the 3 largest |z| after the overlap rule, quiet when sensitive,
+-- excluded only when off limits
+create or replace function ripples.att_fx63_sample_events(p_grid int, p_role text, p_limit int default 3) returns jsonb
+language sql stable security definer set search_path = '' as $$
+  select coalesce(jsonb_agg(jsonb_build_object('label', coalesce(ripples.rm_label_resolve(e.qid, e.label), e.label), 'onset', f.onset,
+                                               'effect', case when pn.value_kind = 'rate' then round((f.d - f.med)::numeric, 2) else round((100 * (exp(f.d - f.med) - 1))::numeric, 1) end,
+                                               'z', round(f.z::numeric, 2), 'p_space', f.p_space, 'stone', ripples.att_fx_shock_norm(e.event_id), 'quiet', coalesce(e.sensitive, false))
+                            order by abs(f.z) desc), '[]'::jsonb)
+    from (select f0.* from ripples.att_fx_event f0 where f0.grid_id = p_grid and f0.role = p_role and f0.decoy_set = 0 and f0.z is not null
+            and not exists (select 1 from ripples.att_fx_cluster_dups(p_grid, p_role, 0) d where d.event_id = f0.event_id) order by abs(f0.z) desc limit p_limit) f
+    join ripples.att_events e on e.event_id = f.event_id
+    join ripples.att_fx_grid g on g.grid_id = p_grid
+    left join ripples.att_fx_panel pn on pn.source = g.source and pn.metric = g.metric and pn.geo_kind = g.geo_kind
+   where not ripples.att_story_off_limits(e.event_id)
+$$;
+
+-- CONFIRMED patterns only (p_min 'confirmed' = q ≤ 0.05; 'weaker' adds q ≤ 0.20; 'all' adds the checks). Never a tier.
+create or replace function public.rm_patterns63(p_family text default null, p_min text default 'confirmed') returns jsonb
+language sql stable security definer set search_path = '' as $$
+  with ranked as (
+    select v.*, case v.strength when 'confirmed pattern' then 4 when 'confirmed pattern (weaker)' then 3 when 'check passed' then 1 else 0 end as rank_
+      from ripples.att_fx63_patterns v
+     where v.decoy_set = 0 and v.selected and v.confirm_seq is not null and v.c_n is not null
+       and not ripples.rm_node_hidden(v.source || ':' || v.metric)
+       and (p_family is null or v.family = p_family))
+  select coalesce(jsonb_agg(jsonb_build_object(
+    'id', r.grid_id, 'batch', r.batch, 'method', '6.3', 'family', r.family, 'family_label', r.family_label, 'sub', r.sub,
+    'event_label', case when r.sub = 'hurricane' then 'Hurricanes' else r.family_label || 's' end,
+    'outcome', r.source || ':' || r.metric, 'outcome_label', r.outcome_label, 'geo_kind', r.geo_kind,
+    'design', 'split sample: found on events before ' || r.split_date || ', confirmed on held-out events since; affected vs unaffected regions (difference-in-differences, in-space + in-time placebos), BH over the confirmation set',
+    'window', jsonb_build_object('pre', r.pre_n, 'post', r.post_n, 'lag', r.lag_n, 'grain', r.grain, 'variant', r.variant),
+    'unit', r.unit, 'effect', r.c_pct, 'ci', jsonb_build_array(r.c_pct_lo, r.c_pct_hi), 'effect_logpts', round(r.c_d::numeric, 4),
+    'n_events', r.c_n, 'n_clustered_out', r.c_n_clustered_out, 'i2', round(coalesce(r.c_i2, 0)::numeric, 2), 'p_placebo', r.c_p, 'p_norm', r.c_p_norm, 'q', r.c_q,
+    'sign', r.x_sign, 'sign_ok', r.c_sign_ok, 'n_regional_pass', r.c_n_regional_pass,
+    'exploration', jsonb_build_object('n_events', r.x_n, 'effect', r.x_pct, 'p_placebo', r.x_p, 'period', 'before ' || r.split_date),
+    'confirmation', jsonb_build_object('n_events', r.c_n, 'effect', r.c_pct, 'ci', jsonb_build_array(r.c_pct_lo, r.c_pct_hi), 'p_placebo', r.c_p, 'q', r.c_q, 'period', 'since ' || r.split_date),
+    'strength', r.strength, 'verdict', r.verdict, 'is_check', r.is_check, 'definitional', r.definitional,
+    'domain_distance', r.domain_distance, 'expected_by_mechanism', r.expected_by_mechanism, 'non_obvious', (r.domain_distance >= 1),
+    'pond', ripples.att_fx_pond(r.c_d, r.domain_event, r.domain_outcome, r.unit)
+            || jsonb_build_object('stone', (select percentile_cont(0.5) within group (order by ripples.att_fx_shock_norm(f.event_id)) from ripples.att_fx_event f where f.grid_id = r.grid_id and f.role = 'confirm' and f.magnitude is not null)),
+    'fluke_note', case r.strength when 'confirmed pattern' then 'found in one half of the archive and seen again in the other; about 1 in 20 findings at this level could be a fluke'
+                                  when 'confirmed pattern (weaker)' then 'found in one half of the archive and seen again in the other; about 1 in 5 findings at this level could be a fluke'
+                                  when 'check passed' then 'a pre-registered sanity check, not a finding' else null end,
+    'headline', case when r.sub = 'hurricane' then 'Hurricanes' else r.family_label || 's' end || ' → ' || r.outcome_label || ': ' || case when r.c_pct >= 0 then '+' else '' end || r.c_pct
+                || case when r.unit = 'pct' then '%' else ' (raw units)' end || ' over ' || r.post_n || ' ' || case r.grain when 'week' then 'weeks' when 'month' then 'months' else 'days' end
+                || case when r.lag_n > 0 then ', starting ' || r.lag_n || ' ' || case r.grain when 'week' then 'weeks' when 'month' then 'months' else 'days' end || ' after the event' else '' end
+                || ', seen again in ' || r.c_n || ' held-out events',
+    'wording', 'found in ' || r.x_n || ' events before ' || r.split_date || ', seen again in ' || r.c_n || ' events since',
+    'sample_events', ripples.att_fx63_sample_events(r.grid_id, 'confirm', 3),
+    'ledger', jsonb_build_object('explore_seq', r.explore_seq, 'confirm_seq', r.confirm_seq, 'calibration_seq', r.calib_seq), 'computed_at', r.computed_at
+  ) order by r.rank_ desc, coalesce(r.c_q, 1), r.c_p), '[]'::jsonb)
+  from ranked r
+  where r.rank_ >= case p_min when 'confirmed' then 4 when 'weaker' then 3 when 'all' then 1 else 4 end
+$$;
+revoke all on function public.rm_patterns63(text, text) from public;
+grant execute on function public.rm_patterns63(text, text) to anon, authenticated, service_role;
+
+-- HUNCHES: exploration hits that were not confirmed (or could not be tested). Labelled 'hunch'; never Likely / Measured / pattern.
+create or replace function public.rm_hunches(p_family text default null, p_limit int default 50) returns jsonb
+language sql stable security definer set search_path = '' as $$
+  select coalesce(jsonb_agg(jsonb_build_object(
+    'id', r.grid_id, 'batch', r.batch, 'method', '6.3', 'label', 'hunch', 'family', r.family, 'family_label', r.family_label, 'sub', r.sub,
+    'event_label', case when r.sub = 'hurricane' then 'Hurricanes' else r.family_label || 's' end,
+    'outcome', r.source || ':' || r.metric, 'outcome_label', r.outcome_label, 'geo_kind', r.geo_kind,
+    'window', jsonb_build_object('pre', r.pre_n, 'post', r.post_n, 'lag', r.lag_n, 'grain', r.grain, 'variant', r.variant), 'unit', r.unit,
+    'exploration', jsonb_build_object('n_events', r.x_n, 'effect', r.x_pct, 'p_placebo', r.x_p, 'period', 'before ' || r.split_date),
+    'held_out', case when r.c_n is not null then jsonb_build_object('n_events', r.c_n, 'effect', r.c_pct, 'ci', jsonb_build_array(r.c_pct_lo, r.c_pct_hi), 'p_placebo', r.c_p, 'q', r.c_q, 'sign_ok', r.c_sign_ok, 'period', 'since ' || r.split_date) end,
+    'status', r.verdict, 'strength', 'hunch',
+    'status_label', case when r.verdict = 'not replicated' then 'did not show up again in the held-out events'
+                         when r.verdict = 'reversed' then 'moved the other way in the held-out events'
+                         when r.verdict like 'too few held-out%' then 'not enough held-out events yet to test it'
+                         when r.verdict like 'not tested%' then 'a lead that was not tested (' || r.reason || ')'
+                         when r.verdict = 'confirmation pending' then 'held-out test pending' else r.verdict end,
+    'domain_distance', r.domain_distance, 'expected_by_mechanism', r.expected_by_mechanism, 'non_obvious', (r.domain_distance >= 1),
+    'note', 'an exploratory lead from one half of the archive that did not survive (or has not yet had) an out-of-sample test; not evidence about any event',
+    'sample_events', ripples.att_fx63_sample_events(r.grid_id, 'explore', 2),
+    'ledger', jsonb_build_object('explore_seq', r.explore_seq, 'confirm_seq', r.confirm_seq), 'computed_at', r.computed_at
+  ) order by (r.verdict = 'not replicated') desc, r.x_p), '[]'::jsonb)
+  from (select v.* from ripples.att_fx63_patterns v
+         where v.decoy_set = 0 and v.x_ok and v.strength = 'hunch' and not v.is_check
+           and not ripples.rm_node_hidden(v.source || ':' || v.metric)
+           and (p_family is null or v.family = p_family)
+         order by (v.verdict = 'not replicated') desc, v.x_p limit greatest(1, least(p_limit, 200))) r
+$$;
+revoke all on function public.rm_hunches(text, int) from public;
+grant execute on function public.rm_hunches(text, int) to anon, authenticated, service_role;
+
+do $$ declare t text; begin
+  for t in select p.oid::regprocedure::text from pg_proc p join pg_namespace n on n.oid = p.pronamespace
+           where n.nspname = 'ripples' and p.proname like 'att\_fx63\_%' loop
+    execute format('revoke all on function %s from anon, authenticated, public', t);
+  end loop;
+end $$;
+
+-- Cron (UTC): the 6.3 panels are rebuilt nightly AFTER the 6.2 refresh (07:40); the chunked runner is scheduled only while a batch
+-- computes (see the run log in ENGINE_63.md) and unscheduled afterwards.
+do $$ declare j record; begin
+  for j in select jobid from cron.job where jobname in ('att-fx63-panel') loop perform cron.unschedule(j.jobid); end loop;
+  perform cron.schedule('att-fx63-panel', '52 7 * * *', $c$set statement_timeout = '100s'; select ripples.att_fx63_panel_refresh()$c$);
+end $$;
+-- select cron.schedule('att-fx63-step', '* * * * *', $$set statement_timeout = '100s'; select ripples.att_fx63_step(50)$$);
+
+-- =====================================================================================================================
+-- P4 (migration att_engine_63_p4_minwage_family): NEW EVENT FAMILY policy.min_wage from the DOL state minimum-wage history as
+-- republished by FRED (STTMINWG<ST>, annual, "rate as of January 1", source U.S. Department of Labor; fetched first-release by
+-- att-econ mode fred_state through the documented keyed API — the DOL HTML page itself is not scraped).
+-- One event per January 1 (2016 →): treated = the states whose rate is higher than the prior January 1 by ≥ $0.05, EXCLUDING the
+-- states whose statutory effective dates are not January 1 in at least one year of 2015–2026 (DC, OR, NV: July 1; FL: Sept 30 from
+-- 2021; CT, DE, IL, VA, RI, MN, HI, AK, MD, MI: mid-year steps in some years) — for them a January-1 onset would be wrong. NY's
+-- December-31 steps count as January 1 (one day). Donors = every other state with a series, incl. the five federal-floor states
+-- without a state series (AL, LA, MS, SC, TN: no state minimum-wage law) which never move.
+-- N = 11 events → no held-out confirmation is possible (c_n_min = 8 per half); the family is registered for the archive and run as a
+-- clearly-labelled SINGLE-SAMPLE pre-registered test in its own batch (att_fx63_freeze_single), never a confirmed pattern.
+-- Expected direction (literature): employment effects near zero / small negative in the affected sectors, unemployment rate ≈ 0,
+-- claims ≈ 0 — recorded honestly as "no strong expectation" (sign 0).
+-- =====================================================================================================================
+insert into ripples.att_families(family, label, scheduled, mapper) values ('policy.min_wage', 'State minimum-wage increase', false, '[]'::jsonb) on conflict (family) do nothing;
+
+create or replace function ripples.att_fx63_minwage_register() returns jsonb
+language plpgsql security definer set search_path = '' as $$
+declare excl text[] := array['DC', 'OR', 'NV', 'FL', 'CT', 'DE', 'IL', 'VA', 'RI', 'MN', 'HI', 'AK', 'MD', 'MI'];
+        y int; r record; states text[]; incs float8[]; n_ev int := 0; v_topic bigint; lbl text; key text; mag real; out jsonb := '[]'::jsonb;
+begin
+  for y in 2016..extract(year from current_date)::int loop
+    select array_agg(x.st order by x.st), array_agg(x.inc order by x.st) into states, incs
+      from (select substr(s.geo, 4, 2) as st, (cur.value - prev.value) / nullif(prev.value, 0) as inc
+              from ripples.att_series s
+              join ripples.attention_obs cur on cur.series_id = s.series_id and cur.day = make_date(y, 1, 1)
+              join ripples.attention_obs prev on prev.series_id = s.series_id and prev.day = make_date(y - 1, 1, 1)
+             where s.source = 'fred.state' and s.metric = 'minwage' and s.geo ~ '^US-[A-Z]{2}$'
+               and cur.value >= prev.value + 0.05 and substr(s.geo, 4, 2) <> all(excl)) x;
+    continue when states is null or cardinality(states) < 2;
+    lbl := 'State minimum-wage increases, ' || y || '-01-01 (' || cardinality(states) || ' states)';
+    key := 'lib:minwage-' || y;
+    select percentile_cont(0.5) within group (order by v) into mag from unnest(incs) v;
+    insert into ripples.att_topics(qid, label_key, label, title_en, lang, category, status, in_panel, origin, meta)
+    values (null, key, lbl, lbl, 'en', 'policy', 'dormant', false, 'manual',
+            jsonb_build_object('state', to_jsonb(states), 'family', 'policy.min_wage', 'library', true, 'defined_by', jsonb_build_array('fred.state'),
+                               'lib_source', 'FRED STTMINWG<ST> (U.S. Department of Labor, state minimum wage as of January 1)', 'lib_ref', 'minwage-' || y,
+                               'excluded_non_jan1_states', to_jsonb(excl), 'median_increase', mag))
+    on conflict (label_key) do update set meta = excluded.meta, label = excluded.label returning topic_id into v_topic;
+    insert into ripples.att_events(as_of, topic_id, qid, label, family, role, onset, magnitude, sensitive, slug, reconstructed, status)
+    values (make_date(y, 1, 2), v_topic, null, lbl, 'policy.min_wage', 'library', make_date(y, 1, 1), mag, false, 'lib-minwage-' || y, true, 'ended')
+    on conflict (slug) do update set magnitude = excluded.magnitude, label = excluded.label;
+    n_ev := n_ev + 1;
+    out := out || jsonb_build_object('year', y, 'n_states', cardinality(states), 'median_increase', round(mag::numeric, 3));
+  end loop;
+  return jsonb_build_object('n_events', n_ev, 'events', out, 'excluded_states', to_jsonb(excl));
+end $$;
+
+-- single-sample pre-registered batch for a family whose archive is too small for a split (all events in role 'explore'; the
+-- exploration pool IS the result; labelled 'single-sample' by the reporting; its own BH family; never confirmed)
+create or replace function ripples.att_fx63_freeze_single(p_batch text, p_family text, p_pairs jsonb) returns jsonb
+language plpgsql security definer set search_path = '' as $$
+declare cfg jsonb := ripples._att_cfg('engine63'); s jsonb; g record; e record; tr text[]; n_x int := 0; n_g int := 0; payload jsonb; h text; v_seq bigint; pan record; ext jsonb;
+begin
+  if exists (select 1 from ripples.att_fx63_batch where batch = p_batch and explore_seq is not null) then return jsonb_build_object('batch', p_batch, 'already_frozen', true); end if;
+  select jsonb_object_agg(source || ':' || metric || ':' || geo_kind, jsonb_build_object('from', days[1], 'to', days[n], 'regions', to_jsonb(regions), 'n', n, 'grain', grain)) into ext from ripples.att_fx_panel;
+  insert into ripples.att_fx63_batch(batch, split_date, cfg, status, panel_extents, note) values (p_batch, '2100-01-01', cfg, 'single-sample', ext, 'single-sample pre-registered test: no held-out half (N too small)')
+  on conflict (batch) do nothing;
+  for s in select * from jsonb_array_elements(p_pairs) loop
+    continue when not exists (select 1 from ripples.att_fx_panel p where p.source = s ->> 'source' and p.metric = s ->> 'metric' and p.geo_kind = s ->> 'geo_kind');
+    insert into ripples.att_fx_grid(batch, family, sub, source, metric, geo_kind, pre_n, post_n, lag_n, expected_sign, synth, definitional, domain_event, domain_outcome, target_map, bh_weight, label, status)
+    values (p_batch || '/single', p_family, null, s ->> 'source', s ->> 'metric', s ->> 'geo_kind', (s ->> 'pre')::int, (s ->> 'post')::int, (s ->> 'lag')::int, coalesce((s ->> 'sign')::int, 0), false, false,
+            s ->> 'de', s ->> 'do', null, 1, p_family || ' → ' || (s ->> 'source') || ':' || (s ->> 'metric') || ' [single-sample]', 'fx63')
+    on conflict do nothing;
+    n_g := n_g + 1;
+  end loop;
+  for g in select * from ripples.att_fx_grid where batch = p_batch || '/single' order by grid_id loop
+    select * into pan from ripples.att_fx_panel p where p.source = g.source and p.metric = g.metric and p.geo_kind = g.geo_kind;
+    for e in select ev.event_id, ev.onset, ev.magnitude from ripples.att_events ev where ev.family = g.family and ev.role = 'library' and ev.onset between pan.days[1] and pan.days[pan.n] order by ev.onset loop
+      tr := ripples.att_fx_treated(e.event_id, g.geo_kind, g.target_map);
+      select coalesce(array_agg(x order by x), '{}') into tr from unnest(tr) x where x = any(pan.regions);
+      continue when cardinality(tr) = 0;
+      insert into ripples.att_fx_event(grid_id, event_id, role, decoy_set, onset, treated, magnitude) values (g.grid_id, e.event_id, 'explore', 0, e.onset, tr, e.magnitude) on conflict do nothing;
+      n_x := n_x + 1;
+    end loop;
+  end loop;
+  payload := jsonb_build_object('object', 'fx_grid', 'method', '6.3', 'stage', 'single', 'batch', p_batch, 'family', p_family, 'config', cfg, 'pairs', p_pairs,
+    'grid', (select jsonb_agg(jsonb_build_array(grid_id, family, source, metric, geo_kind, pre_n, post_n, lag_n, expected_sign) order by grid_id) from ripples.att_fx_grid where batch = p_batch || '/single'),
+    'events', (select jsonb_agg(jsonb_build_array(f.grid_id, f.event_id, f.onset, f.treated, f.magnitude) order by f.grid_id, f.event_id) from ripples.att_fx_event f join ripples.att_fx_grid g2 on g2.grid_id = f.grid_id where g2.batch = p_batch || '/single' and f.role = 'explore'),
+    'panel_extents', ext);
+  h := encode(extensions.digest(ripples._canon(payload)::text, 'sha256'), 'hex');
+  v_seq := ripples.att_ledger_append(current_date, 'freeze', jsonb_build_object('object', 'fx_grid', 'method', '6.3', 'stage', 'single', 'batch', p_batch, 'family', p_family, 'n_pairs', n_g, 'n_events', n_x), payload);
+  update ripples.att_fx_grid set frozen_hash = h, frozen_at = now() where batch = p_batch || '/single';
+  update ripples.att_fx63_batch set explore_seq = v_seq, explore_hash = h, updated_at = now() where batch = p_batch;
+  return jsonb_build_object('batch', p_batch, 'n_pairs', n_g, 'n_events', n_x, 'seq', v_seq);
+end $$;
+revoke all on function ripples.att_fx63_minwage_register(), ripples.att_fx63_freeze_single(text, text, jsonb) from anon, authenticated, public;

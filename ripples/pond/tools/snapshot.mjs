@@ -204,7 +204,7 @@ export function assemble() {
     domains: DOMAINS.map(d => d.label), domain_keys: DOMAINS.map(d => d.key),
     rings: [{ days: 1, r: 105, label: 'Day 1' }, { days: 7, r: 185, label: 'Week 1' }, { days: 30, r: 265, label: 'Month 1' }, { days: 90, r: 345, label: 'Month 3' }],
     effects: [grid],
-    flats, flats_note: `${flats.length} series the engine said in advance might move, and did not. Each carries its own fake-date test.`,
+    flats, flats_note: 'Each carries its own fake-date test, the same one the bright pad passed.',
     controls, untested, shore: [shore],
     rivals: [{ name: 'Hurricane Helene', event_id: helene.event_id, days_before: days(helene.onset, onset), magnitude: null, angle: 306, distance: 250,
       own_contrast: { effect_pct: pct(helene.grid8.d), p_space: r(helene.grid8.p_space, 3), pass: false, treated: helene.grid8.treated },

@@ -4,11 +4,11 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Hurricane Milton, traced</title>
-<meta name="description" content="Hurricane Milton didn't stop at the coast. The day after landfall, Florida's two big power grids were drawing a fifth less than regions the storm never touched. Consistent with, never proof of cause.">
+<meta name="description" content="Hurricane Milton didn't stop at the coast. The day after landfall, the Gulf-coast grid was drawing 0.89× its normal for a week while 51 regions the storm missed did not move. Consistent with, never proof of cause.">
 <link rel="canonical" href="https://bensunter.com/ripples/pond/">
 <meta property="og:type" content="article">
-<meta property="og:title" content="Hurricane Milton → Florida grid demand, −20% against unaffected regions">
-<meta property="og:description" content="The day after landfall, Florida's two big power grids were drawing a fifth less than 51 regions the storm never touched. Regional contrast passed, not yet Measured. Consistent with, never proof of cause.">
+<meta property="og:title" content="Hurricane Milton → Florida grid demand: 0.89× normal, −20% against unaffected regions">
+<meta property="og:description" content="The day after landfall, the Gulf-coast grid was drawing 0.89× its normal for a week while 51 regions the storm missed did not move. Measured by the engine, forecast check pending. Consistent with, never proof of cause.">
 <meta property="og:url" content="https://bensunter.com/ripples/pond/">
 <meta property="og:image" content="https://bensunter.com/ripples/pond/og/milton.png">
 <meta property="og:image:width" content="1200">
@@ -37,6 +37,7 @@
   <symbol id="g-measured" viewBox="0 0 14 14"><circle cx="7" cy="7" r="6" fill="currentColor"/></symbol>
   <symbol id="g-half" viewBox="0 0 14 14"><circle cx="7" cy="7" r="5.5" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="M7 1.5 A5.5 5.5 0 0 1 7 12.5Z" fill="currentColor"/></symbol>
   <symbol id="g-dotted" viewBox="0 0 14 14"><circle cx="7" cy="7" r="5.5" fill="none" stroke="currentColor" stroke-width="1.6" stroke-dasharray="2.4 2.4"/></symbol>
+  <symbol id="g-flat" viewBox="0 0 14 14"><g fill="currentColor"><path d="M4 13 Q3 8 5 3 Q5.5 8 5 13Z"/><path d="M7 13 Q6.5 7 7.5 2 Q8.5 7 8 13Z"/><path d="M10 13 Q10 8 11.5 4 Q11 9 10.8 13Z"/></g></symbol>
   <symbol id="g-rule" viewBox="0 0 14 14"><ellipse cx="7" cy="10.5" rx="5.5" ry="2.4" fill="currentColor"/><ellipse cx="7.4" cy="6.6" rx="3.8" ry="1.9" fill="currentColor"/><ellipse cx="6.8" cy="3.4" rx="2.4" ry="1.4" fill="currentColor"/></symbol>
   <symbol id="i-arrow" viewBox="0 0 14 14"><path d="M2 7h9M7.5 3.5L11 7l-3.5 3.5" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></symbol>
   <symbol id="i-send" viewBox="0 0 16 16"><path d="M8 10V2M5 5l3-3 3 3M3 8v5.5h10V8" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></symbol>
@@ -55,7 +56,7 @@
   <div class="lede">
     <p class="kicker" id="kicker">Hurricane Milton <span class="num">9 Oct 2024</span> <span class="tag">real engine data, snapshot 2026-09-26</span></p>
     <h1 id="h1">Hurricane Milton. <span class="quiet">The day after landfall, something moved in Florida’s power grid.</span></h1>
-    <p class="trust hook-h" id="trust"><b>Regional contrast passed.</b> Florida against 51 regions the storm missed. <span class="no">Not yet Measured: the single-event test is queued.</span> Passed after <span class="num">1 of 27</span> similar storms tested.</p>
+    <p class="trust hook-h" id="trust"><b>Likely: Measured by the engine; forecast check pending.</b> 3 of 1,646 fake dates come close (<span class="num">1 in 412</span>), and Florida moved against 51 regions the storm missed. <span class="no">Passed after 1 of 27 similar storms tested.</span></p>
     <p class="reach hook-h" id="reach"><span class="num">1</span> domain · <span class="num">7</span> days · 1st-order<small>How far the ripple travelled. Storms like it usually reach Business four weeks on (23-hurricane rule).</small></p>
     <div class="actions hook-h"><button class="btn primary big-btn" id="btn-trace" type="button">Trace it<svg width="14" height="14" aria-hidden="true"><use href="#i-arrow"/></svg></button></div>
 
@@ -68,7 +69,7 @@
         <li><svg><use href="#k-ring"/></svg><span><b>Rings</b> are time after the storm, a day to three months.</span></li>
         <li><svg><use href="#k-pad"/></svg><span><b>Lily pads</b> are things that moved. Solid means Measured; half-filled means well supported but not yet Measured.</span></li>
         <li><svg><use href="#k-crest"/></svg><span><b>Wave height</b> at a pad is how big the move was.</span></li>
-        <li><svg><use href="#k-float"/></svg><span><b>Dotted floats</b> are series we registered in advance and have not tested yet.</span></li>
+        <li><svg><use href="#k-float"/></svg><span><b>A dotted float</b> is a series still waiting for its verdict.</span></li>
         <li><svg><use href="#k-grass"/></svg><span><b>Reeds</b> absorb the wave: checked, stayed flat.</span></li>
         <li><svg><use href="#k-shore"/></svg><span><b>A cairn on the far shore</b> marks where storms like this one usually reach: a rule about many storms, not evidence about this one.</span></li>
         <li><svg><use href="#k-boulder"/></svg><span><b>A boulder</b> is a shock we filtered out; ripples bend around it.</span></li>
@@ -80,7 +81,7 @@
   <div class="stage">
     <div class="pond-box"><svg id="pond" role="group" aria-label="The pond: Hurricane Milton as a stone, its knock-on effects placed by domain and by time after landfall"></svg></div>
     <ol class="pond-list traced-h" id="pond-list" aria-label="Things on the pond"></ol>
-    <p class="hint traced-h">Click a pad for the evidence. Dotted floats are waiting for their test.</p>
+    <p class="hint traced-h">Click the pad for the evidence. Hover the reeds to see what stayed flat.</p>
   </div>
 </section>
 

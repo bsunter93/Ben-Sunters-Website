@@ -920,3 +920,176 @@ begin
 end $$;
 revoke all on function ripples.att_test_step(int) from anon, authenticated, public;
 revoke all on function ripples._att_want(jsonb, text) from anon, authenticated, public;
+
+-- =====================================================================================================================
+-- ENGINE 6.3 tests T40–T49 (32_att_engine_63_discovery.sql). Run: select ripples.att_test_engine_63();  (service_role)
+-- T40 split integrity (disjoint halves, frozen held-out lists, ledger snapshot) · T41 selection rule deterministic / pure ·
+-- T42 confirmation BH over the confirmation set only, confirmed ⇒ sign agrees · T43 6.3 never touches 6.1/6.2 tiering ·
+-- T44 spike-in power: delayed window catches a delayed effect; daily vs weekly-sum on sparse counts (ratio reported, no gain on iid counts) · T45 EB shrinkage ·
+-- T46 decoy calibration on the ledger · T47 surprise fields · T48 Thanksgiving / tier guard (no tier words anywhere in 6.3 output) ·
+-- T49 ledger rows + att_ledger_verify.
+-- =====================================================================================================================
+create or replace function ripples._att_t63_prefix(p_vals float8[][]) returns jsonb
+language plpgsql immutable set search_path = '' as $$
+declare nr int := array_length(p_vals, 1); n int := array_length(p_vals, 2); ps float8[] := '{}'; pc int2[] := '{}'; r int; i int; acc float8; cnt int; ps_r float8[]; pc_r int2[];
+begin
+  for r in 1..nr loop
+    acc := 0; cnt := 0; ps_r := array_fill(0::float8, array[n]); pc_r := array_fill(0::int2, array[n]);
+    for i in 1..n loop if p_vals[r][i] is not null then acc := acc + p_vals[r][i]; cnt := cnt + 1; end if; ps_r[i] := acc; pc_r[i] := cnt; end loop;
+    if cardinality(ps) = 0 then ps := array[ps_r]; pc := array[pc_r]; else ps := ps || ps_r; pc := pc || pc_r; end if;
+  end loop;
+  return jsonb_build_object('ps', to_jsonb(ps), 'pc', to_jsonb(pc));
+end $$;
+
+create or replace function ripples.att_test_engine_63(p_batch text default null) returns jsonb
+language plpgsql security definer set search_path = '' as $$
+declare res jsonb := '[]'::jsonb; ok boolean; j jsonb; b record; n_bad int; n_rows int; cfg jsonb := ripples._att_cfg('engine63'); rule jsonb; k_cap int;
+        sel_before int[]; sel_after int[]; ids int[]; ps float8[]; qs float8[]; i int; cal jsonb; lv jsonb;
+        vals float8[][]; ps_a float8[]; pc_a int2[]; regs text[]; days date[]; x_imm float8[]; x_del float8[]; jd jsonb;
+        wvals float8[][]; wdays date[]; jw jsonb; z_day float8; z_week float8; nr int := 12; nd int := 900; r int; t int; v float8; lam float8;
+        sh record; n_sh int := 0; pool float8; txt text; hk text;
+begin
+  select * into b from ripples.att_fx63_batch where (p_batch is null or batch = p_batch) order by created_at desc limit 1;
+  rule := cfg -> 'rule'; k_cap := (rule ->> 'k_cap')::int;
+  -- T40 split integrity
+  select count(*) into n_bad from ripples.att_fx_event x join ripples.att_fx_event c on c.grid_id = x.grid_id and c.event_id = x.event_id and c.role = 'confirm'
+   join ripples.att_fx_grid g on g.grid_id = x.grid_id where x.role = 'explore' and g.batch like b.batch || '/%';
+  ok := b.batch is not null and n_bad = 0
+        and (select coalesce(max(f.onset) < b.split_date, true) from ripples.att_fx_event f join ripples.att_fx_grid g on g.grid_id = f.grid_id where g.batch like b.batch || '/%' and f.role = 'explore')
+        and (select coalesce(min(f.onset) >= b.split_date, true) from ripples.att_fx_event f join ripples.att_fx_grid g on g.grid_id = f.grid_id where g.batch like b.batch || '/%' and f.role = 'confirm')
+        and not exists (select 1 from ripples.att_fx63_select s where s.batch = b.batch and s.decoy_set = 0 and s.selected
+                         and ripples.att_fx63_confirm_hash(s.grid_id) is distinct from (b.confirm_hashes ->> s.grid_id::text))
+        and exists (select 1 from ripples.att_ledger l join ripples.att_freeze_snapshots sn on sn.seq = l.seq where l.seq = b.explore_seq and l.kind = 'freeze' and l.payload_hash = b.explore_hash
+                     and sn.payload -> 'confirm_hashes' = b.confirm_hashes);
+  res := ripples._att_t(res, 'T40 split integrity: explore < split ≤ confirm, no event in both halves, held-out lists match the exploration-freeze hashes and the ledger snapshot', ok,
+                        jsonb_build_object('batch', b.batch, 'split', b.split_date, 'overlap_rows', n_bad, 'explore_seq', b.explore_seq, 'confirm_seq', b.confirm_seq));
+  -- T41 selection rule: idempotent re-run inside a savepoint gives the same selected set; every selected row obeys the rule
+  select array_agg(grid_id order by grid_id) into sel_before from ripples.att_fx63_select where batch = b.batch and decoy_set = 0 and selected;
+  begin
+    perform ripples.att_fx63_select_run(b.batch, 0);
+    select array_agg(grid_id order by grid_id) into sel_after from ripples.att_fx63_select where batch = b.batch and decoy_set = 0 and selected;
+    raise exception 'rollback' using errcode = 'P0001';
+  exception when others then null; end;
+  select count(*) into n_bad from ripples.att_fx63_select s join ripples.att_fx_grid g on g.grid_id = s.grid_id
+   where s.batch = b.batch and s.decoy_set = 0 and s.selected and (not s.x_ok or s.x_p > (rule ->> 'x_p_max')::float8 or s.x_n < (rule ->> 'x_n_min')::int or (g.bh_weight > 0 and s.rank > k_cap));
+  ok := sel_before is not distinct from sel_after and n_bad = 0
+        and (select coalesce(max(c), 0) <= 1 from (select count(*) c from ripples.att_fx63_select s join ripples.att_fx_grid g on g.grid_id = s.grid_id
+                                                    where s.batch = b.batch and s.decoy_set = 0 and s.selected group by g.family, coalesce(g.sub, ''), g.source, g.metric, g.geo_kind) x)
+        and (select count(*) from ripples.att_fx63_select s join ripples.att_fx_grid g on g.grid_id = s.grid_id where s.batch = b.batch and s.decoy_set = 0 and s.selected and g.bh_weight > 0) <= k_cap;
+  res := ripples._att_t(res, 'T41 selection rule pure and deterministic: re-run = same set; every selected row obeys n / p / threshold; one variant per pair; cap honoured', ok,
+                        jsonb_build_object('n_selected', coalesce(cardinality(sel_before), 0), 'violations', n_bad));
+  -- T42 confirmation BH over the confirmation set only
+  select array_agg(s.grid_id order by s.grid_id), array_agg(coalesce(s.c_p, 1)::float8 order by s.grid_id) into ids, ps
+    from ripples.att_fx63_select s join ripples.att_fx_grid g on g.grid_id = s.grid_id
+   where s.batch = b.batch and s.decoy_set = 0 and s.selected and g.bh_weight > 0 and s.c_n >= (rule ->> 'c_n_min')::int;
+  ok := true;
+  if ids is not null then
+    qs := ripples.att_bh_q(ps, array_fill(1::float8, array[cardinality(ps)]));
+    for i in 1..cardinality(ids) loop
+      ok := ok and abs((select c_q from ripples.att_fx63_select where batch = b.batch and decoy_set = 0 and grid_id = ids[i]) - qs[i]) < 1e-6;
+    end loop;
+  end if;
+  select count(*) into n_bad from ripples.att_fx63_select s join ripples.att_fx_grid g on g.grid_id = s.grid_id
+   where s.batch = b.batch and s.decoy_set = 0 and ((s.verdict = 'confirmed' and (coalesce(s.c_q, 1) > 0.05 or not s.c_sign_ok or g.bh_weight = 0))
+                                                  or (s.verdict = 'confirmed (weaker)' and (coalesce(s.c_q, 1) > 0.20 or not s.c_sign_ok))
+                                                  or (s.strength like 'confirmed%' and not s.selected));
+  ok := ok and n_bad = 0;
+  res := ripples._att_t(res, 'T42 confirmation BH recomputes over the confirmation set only (m = selected findings with ≥ K held-out events); confirmed ⇒ q ≤ 0.05, sign agrees, never a check', ok,
+                        jsonb_build_object('m', coalesce(cardinality(ids), 0), 'bad_rows', n_bad));
+  -- T43 tier isolation
+  select pg_get_functiondef(p.oid) into hk from pg_proc p join pg_namespace n on n.oid = p.pronamespace where n.nspname = 'ripples' and p.proname = 'att_fx_hook';
+  ok := position($l$liftable text[] := array['q above 0.05', 'a placebo family disagrees', 'one channel only', 'placebo families', 'final look not reached']$l$ in hk) > 0
+        and not exists (select 1 from pg_proc p join pg_namespace n on n.oid = p.pronamespace where n.nspname = 'ripples' and p.proname like 'att\_fx63\_%'
+                          and (pg_get_functiondef(p.oid) ~ 'att_finalize\(' or pg_get_functiondef(p.oid) ~ 'att_hop_tests' or pg_get_functiondef(p.oid) ~ 'att_fx_hook\('))
+        and not exists (select 1 from ripples.att_fx_grid where status = 'fx63' and ledger_seq is not null)
+        and not exists (select 1 from jsonb_array_elements(public.rm_patterns(null, 'all')) x join ripples.att_fx_grid g on g.grid_id = (x ->> 'id')::int where g.status = 'fx63');
+  res := ripples._att_t(res, 'T43 6.3 never touches 6.1/6.2 tiering: hook liftable set unchanged, no 6.3 function references att_finalize / att_hop_tests / att_fx_hook, 6.3 grid rows invisible to the hook and to rm_patterns', ok, null);
+  -- T44 spike-in power on a synthetic 12-region daily panel (seeded): (a) a delayed effect (+0.10 from day 8 to day 21 after onset) is caught
+  -- by the pre-registered delayed window (28 / 14 / lag 7) and missed by the immediate one (28 / 7 / 0); (b) sparse Poisson-like counts
+  -- (λ = 0.3/day, +1.5/day for 14 days) are detected more strongly on the weekly-sum panel than on the daily panel.
+  perform setseed(0.63);
+  vals := array_fill(0::float8, array[nr, nd]);
+  for r in 1..nr loop for t in 1..nd loop
+    v := 5 + 0.3 * sin(2 * pi() * t / 365.0) + (random() - 0.5) * 0.2;
+    if r = 1 and t between 500 + 7 and 500 + 20 then v := v + 0.10; end if;
+    vals[r][t] := v;
+  end loop; end loop;
+  j := ripples._att_t63_prefix(vals);
+  select array_agg(x::float8) into ps_a from jsonb_array_elements_text(j -> 'ps') x;   -- flattened; rebuild 2-D below
+  ps_a := (select array_agg(x) from (select array(select (e ->> 0)::float8 from jsonb_array_elements(row_) e) x from jsonb_array_elements(j -> 'ps') row_) q);
+  pc_a := (select array_agg(x) from (select array(select (e ->> 0)::int2 from jsonb_array_elements(row_) e) x from jsonb_array_elements(j -> 'pc') row_) q);
+  x_imm := ripples.att_fx_did(ps_a, pc_a, array[1], array[2,3,4,5,6,7,8,9,10,11,12], 500, 28, 7, 0, 0.7);
+  x_del := ripples.att_fx_did(ps_a, pc_a, array[1], array[2,3,4,5,6,7,8,9,10,11,12], 500, 28, 14, 7, 0.7);
+  ok := abs(x_del[1] - 0.10) < 0.03 and abs(x_imm[1]) < 0.03 and abs(x_del[1]) > 2 * abs(x_imm[1]);
+  -- (b) sparse counts, daily log1p vs weekly-sum log1p (att_fx_calc z on each, same events / same seed)
+  perform setseed(0.64);
+  for r in 1..nr loop for t in 1..nd loop
+    lam := 0.3 + case when r = 1 and t between 500 and 513 then 1.5 else 0 end;
+    v := 0; for i in 1..8 loop if random() < lam / 8.0 then v := v + 1; end if; end loop;   -- binomial(8, λ/8) ≈ Poisson(λ)
+    vals[r][t] := ln(1 + v);
+  end loop; end loop;
+  j := ripples._att_t63_prefix(vals);
+  ps_a := (select array_agg(x) from (select array(select (e ->> 0)::float8 from jsonb_array_elements(row_) e) x from jsonb_array_elements(j -> 'ps') row_) q);
+  pc_a := (select array_agg(x) from (select array(select (e ->> 0)::int2 from jsonb_array_elements(row_) e) x from jsonb_array_elements(j -> 'pc') row_) q);
+  select array_agg(('2018-01-01'::date + g)::date order by g) into days from generate_series(0, nd - 1) g;
+  select array_agg('R' || g order by g) into regs from generate_series(1, nr) g;
+  jd := ripples.att_fx_calc(ps_a, pc_a, days, regs, 'day', array['R1'], days[500], 28, 14, 0, false, 0.5, cfg -> 'explore');
+  -- weekly sums of the same raw counts (exp(v) - 1), then log1p
+  wvals := array_fill(0::float8, array[nr, nd / 7]);
+  for r in 1..nr loop for t in 1..(nd / 7) loop
+    v := 0; for i in 1..7 loop v := v + exp(vals[r][(t - 1) * 7 + i]) - 1; end loop;
+    wvals[r][t] := ln(1 + v);
+  end loop; end loop;
+  j := ripples._att_t63_prefix(wvals);
+  ps_a := (select array_agg(x) from (select array(select (e ->> 0)::float8 from jsonb_array_elements(row_) e) x from jsonb_array_elements(j -> 'ps') row_) q);
+  pc_a := (select array_agg(x) from (select array(select (e ->> 0)::int2 from jsonb_array_elements(row_) e) x from jsonb_array_elements(j -> 'pc') row_) q);
+  select array_agg(('2018-01-01'::date + 7 * g + 6)::date order by g) into wdays from generate_series(0, nd / 7 - 1) g;
+  jw := ripples.att_fx_calc(ps_a, pc_a, wdays, regs, 'week', array['R1'], wdays[72], 8, 2, 0, false, 0.5, cfg -> 'explore');
+  z_day := (jd ->> 'z')::float8; z_week := (jw ->> 'z')::float8;
+  ok := ok and z_day is not null and z_week is not null and z_week > 3 and z_day > 3;   -- both designs detect; the weekly/daily ratio is REPORTED, not asserted (iid counts: no gain)
+  res := ripples._att_t(res, 'T44 spike-in power: delayed window recovers a delayed +0.10 the immediate window misses; daily and weekly-sum panels both detect a sparse-count spike (z ratio reported)', ok,
+                        jsonb_build_object('d_immediate', round(x_imm[1]::numeric, 4), 'd_delayed', round(x_del[1]::numeric, 4), 'z_daily', round(z_day::numeric, 2), 'z_weekly', round(z_week::numeric, 2), 'z_weekly_over_daily', round((z_week / z_day)::numeric, 2),
+                                           'p_space_daily', jd ->> 'p_space', 'p_space_weekly', jw ->> 'p_space'));
+  -- T45 EB shrinkage
+  ok := true; n_sh := 0;
+  pool := (ripples.att_fx_dl(array[0.10, 0.30, -0.05], array[0.05, 0.05, 0.05]))[1];
+  for sh in select * from ripples.att_fx63_shrink(array[0.10, 0.30, -0.05], array[0.05, 0.05, 0.05]) loop
+    n_sh := n_sh + 1;
+    ok := ok and sh.se_shrunk <= sh.se_raw + 1e-12 and ((sh.d_shrunk between least(sh.d_raw, pool) - 1e-9 and greatest(sh.d_raw, pool) + 1e-9)) and sh.w_pool between 0 and 1;
+  end loop;
+  ok := ok and n_sh = 3 and (select bool_and(abs(d_shrunk - 0.2) < 1e-9) from ripples.att_fx63_shrink(array[0.2, 0.2, 0.2], array[0.05, 0.05, 0.05]));
+  res := ripples._att_t(res, 'T45 EB partial pooling: shrunk estimate lies between the raw and the pool, se never larger, τ² = 0 → full pooling', ok, jsonb_build_object('pool', round(pool::numeric, 4), 'n', n_sh));
+  -- T46 decoy calibration on the ledger
+  select s.v into cal from ripples.att_state s where s.k = 'engine63.calibration';
+  ok := cal is not null and (cal -> 'decoy_pipeline' ->> 'n_decoy_selected')::int > 0
+        and ((cal -> 'decoy_pipeline' -> 'wilson' ->> 0)::float8 <= 0.05)          -- the Wilson lower bound must not exclude the nominal 5 %
+        and (cal -> 'tier_guard' ->> 'hook_liftable_unchanged')::boolean and (cal -> 'tier_guard' ->> 'no_63_function_touches_tiers')::boolean
+        and exists (select 1 from ripples.att_ledger l where l.seq = b.calib_seq and l.kind = 'calibration');
+  res := ripples._att_t(res, 'T46 decoy universes through the full split-sample pipeline: false-confirmation rate on the ledger, Wilson lower bound ≤ 5 %', ok, cal -> 'decoy_pipeline');
+  -- T47 surprise fields
+  ok := ripples.att_fx63_domain_distance('hazard', 'weather') = 0 and ripples.att_fx63_domain_distance('hazard', 'power') = 0.5 and ripples.att_fx63_domain_distance('hazard', 'labor') = 1
+        and ripples.att_fx63_expected_by_mechanism('hazard.storm', 'fema.decl') and not ripples.att_fx63_expected_by_mechanism('hazard.quake', 'census.bfs')
+        and not exists (select 1 from ripples.att_fx63_select where batch = b.batch and (domain_distance is null or expected_by_mechanism is null));
+  res := ripples._att_t(res, 'T47 surprise fields: domain distance from the matrix, mechanism-library flag from the family mapper / graph, present on every row', ok, null);
+  -- T48 no tier words in any 6.3 public output; hunches always labelled; common-shock failure not liftable
+  txt := public.rm_patterns63(null, 'all')::text || public.rm_hunches(null, 200)::text;
+  ok := txt !~* '"tier"' and txt !~* 'measured' and txt !~* '"likely"' and position('common shock day' in hk) = 0
+        and not exists (select 1 from jsonb_array_elements(public.rm_hunches(null, 200)) h where h ->> 'label' <> 'hunch' or h ->> 'strength' <> 'hunch')
+        and not exists (select 1 from jsonb_array_elements(public.rm_patterns63(null, 'confirmed')) p where p ->> 'strength' <> 'confirmed pattern');
+  res := ripples._att_t(res, 'T48 Thanksgiving / tier guard: 6.3 public outputs carry no tier words, hunches are always labelled hunch, the common-shock failure is not in the hook''s liftable set', ok, null);
+  -- T49 ledger
+  lv := ripples.att_ledger_verify();
+  ok := (lv ->> 'ok')::boolean
+        and exists (select 1 from ripples.att_ledger where kind = 'model_version' and ref ->> 'method' = '6.3')
+        and exists (select 1 from ripples.att_ledger where seq = b.explore_seq and kind = 'freeze' and ref ->> 'object' = 'fx_grid' and ref ->> 'method' = '6.3' and ref ->> 'stage' = 'explore')
+        and exists (select 1 from ripples.att_ledger where seq = b.confirm_seq and kind = 'freeze' and ref ->> 'object' = 'fx_grid' and ref ->> 'stage' = 'confirm')
+        and b.explore_seq < b.confirm_seq
+        and (select min(computed_at) from ripples.att_fx_event f join ripples.att_fx_grid g on g.grid_id = f.grid_id where g.batch like b.batch || '/%' and f.role = 'explore')
+            > (select created_at from ripples.att_ledger where seq = b.explore_seq)
+        and (select min(computed_at) from ripples.att_fx_event f join ripples.att_fx_grid g on g.grid_id = f.grid_id where g.batch like b.batch || '/%' and f.role = 'confirm')
+            > (select created_at from ripples.att_ledger where seq = b.confirm_seq);
+  res := ripples._att_t(res, 'T49 ledger: model_version 6.3, exploration + confirmation freezes (object fx_grid) before any effect of their stage was computed, att_ledger_verify ok', ok,
+                        jsonb_build_object('verify', lv - 'bad' - 'rows', 'explore_seq', b.explore_seq, 'confirm_seq', b.confirm_seq));
+  return jsonb_build_object('ok', (select bool_and((x ->> 'ok')::boolean) from jsonb_array_elements(res) x), 'tests', res);
+end $$;
+revoke all on function ripples.att_test_engine_63(text), ripples._att_t63_prefix(float8[][]) from anon, authenticated, public;

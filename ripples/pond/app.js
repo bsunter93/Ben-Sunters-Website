@@ -14,12 +14,13 @@
      where the RPC allows; the rest wait for the kinds to be whitelisted server-side (see SLICE.md). Nothing personal leaves the page. */
   const SB = { url: 'https://kffkasnzqcddpystszch.supabase.co', key: 'sb_publishable_3UtNDc2vPbCIcG1t5K4YEQ_KUyTKucv' };
   function clientId() { let c = ls.get('ko.client'); if (!c) { const a = new Uint8Array(12); crypto.getRandomValues(a); c = btoa(String.fromCharCode(...a)).replace(/[+/=]/g, m => ({ '+': '-', '/': '_', '=': '' })[m]); ls.set('ko.client', c); } return c; }
-  const ALLOWED = { send: ['share_tap', 'pond_send'], landing: ['landing', 'pond'] };
+  let ALLOWED = new Set(['share_tap', 'landing', 'send', 'hero_view', 'trace', 'stop_open', 'why_open', 'luck_open', 'seen_before_open', 'one_more', 'watch', 'wander', 'second_ripple']);
   const depth = new Set();
   function track(kind) {
+    if (depth.has(kind) && kind !== 'stop_open' && kind !== 'one_more') return;   // one count per discovery step per visit
     depth.add(kind); ls.set('rm.pond.depth', JSON.stringify([...depth]));
-    const m = ALLOWED[kind]; if (!m || location.protocol === 'file:') return;
-    try { fetch(`${SB.url}/rest/v1/rpc/rm_event`, { method: 'POST', credentials: 'omit', keepalive: true, headers: { apikey: SB.key, 'Content-Type': 'application/json' }, body: JSON.stringify({ p_kind: m[0], p_src: m[1], p_client: clientId() }) }).catch(() => {}); } catch { /* never block */ }
+    if (!ALLOWED.has(kind) || location.protocol === 'file:') return;
+    try { fetch(`${SB.url}/rest/v1/rpc/rm_event`, { method: 'POST', credentials: 'omit', keepalive: true, headers: { apikey: SB.key, 'Content-Type': 'application/json' }, body: JSON.stringify({ p_kind: kind, p_src: 'pond_milton', p_client: clientId() }) }).catch(() => {}); } catch { /* never block */ }
   }
 
   /* ---------- data ---------- */
@@ -27,16 +28,17 @@
   try { P = await (await fetch('data/milton.json', { cache: 'no-cache' })).json(); }
   catch (e) { $('#h1').textContent = 'The snapshot did not load.'; $('#trust').textContent = 'Reload the page, or open data/milton.json to check it is being served.'; return; }
   const E = P.effects[0], S = P.shore[0];
+  if (P.analytics && P.analytics.kinds) ALLOWED = new Set(P.analytics.kinds);
   const TIER = window.Pond.TIER;
-  const tierWord = e => e.contrast && e.contrast.pass ? 'Regional contrast passed' : TIER[e.tier];
-  const drawTier = e => e.contrast && e.contrast.pass ? 'contrast' : e.tier;   // what the pond draws: never above the engine tier's evidence level
-  E.tier = drawTier(E);
+  const tierWord = e => e.published ? TIER[e.published.tier] : TIER[e.tier];          // the published tier is exactly what the gate returned
+  const tierLine = e => e.published && e.published.reason ? e.published.text : tierWord(e);
+  const flatsWord = n => ({ 12: 'Twelve', 11: 'Eleven', 13: 'Thirteen' }[n] || String(n));
 
   /* ---------- hero copy (from the story fields in the snapshot) ---------- */
   /* the hook copy is static in index.html so nothing shifts on load; it is checked against the snapshot and rewritten only if stale */
-  const H1 = { hook: $('#h1').innerHTML, traced: `One storm.<br>One ripple, measured against the rest of the country.<br><span class="quiet">${P.untested.length === 12 ? 'Twelve' : P.untested.length} things still waiting for their test.</span>` };
-  const trustWant = `${E.replication.n_seen} of ${E.replication.n_similar}`;
-  if (!$('#trust').textContent.includes(trustWant) || !$('#trust').textContent.includes(String(E.contrast.n_donors))) $('#trust').innerHTML = `<b>${esc(tierWord(E))}.</b> Florida against ${E.contrast.n_donors} regions the storm missed. <span class="no">Not yet Measured: the single-event test is queued.</span> Passed after <span class="num">${trustWant}</span> similar storms tested.`;
+  const H1 = { hook: $('#h1').innerHTML, traced: `One storm.<br>One ripple, measured.<br><span class="quiet">${flatsWord(P.flats.length)} things that stayed flat.</span>` };
+  const trustWant = `1 in ${Math.round(1 / E.engine.p_date)}`;
+  if (!$('#trust').textContent.includes(trustWant) || !$('#trust').textContent.includes(esc(tierLine(E)))) $('#trust').innerHTML = `<b>${esc(tierLine(E))}.</b> ${E.engine.exceed_date} of ${E.engine.n_date.toLocaleString()} fake dates come close (<span class="num">${trustWant}</span>), and Florida moved against ${E.contrast.n_donors} regions the storm missed. <span class="no">Passed after ${E.replication.n_seen} of ${E.replication.n_similar} similar storms tested.</span>`;
   if (!$('#reach').textContent.includes(`${P.travel.days} days`)) $('#reach').innerHTML = `<span class="num">${P.travel.domains}</span> domain · <span class="num">${P.travel.days}</span> days · 1st-order<small>How far the ripple travelled. ${esc(P.travel.usual_reach)}.</small>`;
   $('#traced-sub').textContent = P.story.story_sentence;
   $('#foot-src').textContent = `Sources: EIA-930 hourly demand, FEMA, NWS/IEM, TSA, DOL, Census BFS. Engine ${P.engine.method_hop} tests, ${P.engine.method_contrast} regional contrasts, batch ${P.engine.batch}. Ledger head ${P.ledger_head.chain_hash.slice(0, 12)}…`;
@@ -66,16 +68,16 @@
     const Sv = $('#pond'); rebind(Sv);
     const NS = 'http://www.w3.org/2000/svg';
     const rv = document.createElementNS(NS, 'g'); rv.setAttribute('class', 'reveal'); rv.setAttribute('aria-hidden', 'true'); Sv.appendChild(rv);
-    const side = p.x >= 0 ? 1 : -1, lx = p.x + side * 44, anchor = side > 0 ? 'start' : 'end';
+    const side = compact ? -1 : (p.x >= 0 ? 1 : -1), lx = p.x + side * 44, anchor = side > 0 ? 'start' : 'end';
     const mk = (cls, y, txt) => { const t = document.createElementNS(NS, 'text'); t.setAttribute('class', 'rv ' + cls); t.setAttribute('x', lx); t.setAttribute('y', p.y + y); t.setAttribute('text-anchor', anchor); t.textContent = txt; rv.appendChild(t); return t; };
-    const num = mk('rv-num', -6, ''), what = mk('rv-what', 18, E.short), lag = mk('rv-lag', 40, E.lag_text), tier = mk('rv-tier', 60, tierWord(E));
+    const num = mk('rv-num', -6, ''), what = mk('rv-what', 18, E.short), lag = mk('rv-lag', 40, E.lag_text), tier = mk('rv-tier', 60, compact && E.published && E.published.reason ? `${tierWord(E)}: ${E.published.reason}` : tierLine(E));
     // D-15 timeline: shock 0, line 250 ms, stop 500, count-up 800, lag 1100, tier 1300, settle 1600
     const hit = reduce ? 0 : pond.ringDelay(p.r) * 1000;   // the ring front reaches the pad (~0.5 s)
     const T = reduce ? [0, 0, 0, 0, 0] : [hit + 300, 500, hit + 600, hit + 800, hit + 1100];
-    const target_v = parseFloat(E.num.replace(/[^\d.\-]/g, '')) * (E.num.startsWith('−') || E.num.startsWith('-') ? -1 : 1);
-    const prefix = target_v < 0 ? '−' : '+', suffix = E.num.endsWith('%') ? '%' : '';
+    const isRatio = E.num.endsWith('×'), target_v = parseFloat(E.num.replace(/[^\d.\-]/g, '')) * (E.num.startsWith('−') || E.num.startsWith('-') ? -1 : 1);
+    const prefix = isRatio ? '' : target_v < 0 ? '−' : '+', suffix = isRatio ? '×' : E.num.endsWith('%') ? '%' : '';
     const t0 = performance.now() + T[0];
-    function tick(now) { const k = Math.min(1, Math.max(0, (now - t0) / T[1])); const v = Math.abs(target_v) * (1 - Math.pow(1 - k, 3)); num.textContent = prefix + Math.round(v) + suffix; if (k < 1) requestAnimationFrame(tick); }
+    function tick(now) { const k = Math.min(1, Math.max(0, (now - t0) / T[1])); const v = isRatio ? 1 + (target_v - 1) * (1 - Math.pow(1 - k, 3)) : Math.abs(target_v) * (1 - Math.pow(1 - k, 3)); num.textContent = prefix + (isRatio ? v.toFixed(2) : Math.round(v)) + suffix; if (k < 1) requestAnimationFrame(tick); }
     if (reduce) num.textContent = E.num; else requestAnimationFrame(tick);
     setTimeout(() => lag.classList.add('on'), T[2]);
     setTimeout(() => tier.classList.add('on'), T[3]);
@@ -99,19 +101,20 @@
     const y = v => h - m.b - (v - ymin) / (ymax - ymin) * (h - m.t - m.b);
     const idx = d => S.findIndex(s => s.d === d);
     // the normal range: the pre-window gap (treated minus donors) around the donor line, so a drop below the band is a drop the donors did not share
-    let band = ''; S.forEach((s, i) => band += (i ? 'L' : 'M') + x(i) + ',' + y(s.o + (c.band.hi - 1))); for (let i = S.length - 1; i >= 0; i--) band += 'L' + x(i) + ',' + y(S[i].o + (c.band.lo - 1));
+    let band = `M${x(0)},${y(c.band.hi)}L${x(S.length - 1)},${y(c.band.hi)}L${x(S.length - 1)},${y(c.band.lo)}L${x(0)},${y(c.band.lo)}`;
     let l1 = '', l2 = ''; S.forEach((s, i) => { l1 += (i ? 'L' : 'M') + x(i) + ',' + y(s.t); l2 += (i ? 'L' : 'M') + x(i) + ',' + y(s.o); });
     const pk = idx(c.peak.d), on = idx(c.onset), lf = idx(c.landfall), pw = [idx(c.post_window[0]), idx(c.post_window[1])];
-    let s = `<svg viewBox="0 0 ${w} ${h}" role="img" aria-label="${esc(e.title)}: Florida's two grids against 51 unaffected regions, both indexed to their own late-summer normal. At the peak on ${fmtDay(c.peak.d)} Florida sat at ${Math.round(c.peak.t * 100)}% of normal while the other regions sat at ${Math.round(c.peak.o * 100)}%.">`;
+    let s = `<svg viewBox="0 0 ${w} ${h}" role="img" aria-label="${esc(e.title)} against its own normal band and 51 unaffected regions, all indexed to their late-summer normal. On ${fmtDay(c.peak.d)} the utility sat at ${Math.round(c.peak.t * 100)}% of normal while the other regions sat at ${Math.round(c.peak.o * 100)}%.">`;
     s += `<rect class="win" x="${x(pw[0])}" y="${m.t - 4}" width="${x(pw[1]) - x(pw[0])}" height="${h - m.b - m.t + 4}"/>`;
     s += `<path class="band" d="${band}Z"/>`;
     s += `<line class="onset" x1="${x(lf)}" x2="${x(lf)}" y1="${m.t - 4}" y2="${h - m.b}"/>`;
     s += `<path class="line2" d="${l2}"/><path class="line" d="${l1}"/><circle class="pk" cx="${x(pk)}" cy="${y(S[pk].t)}" r="3.5"/>`;
     if (!mini) {
       s += `<text class="lab strong" x="${x(lf)}" y="${m.t - 8}" text-anchor="middle">landfall</text>`;
-      s += `<text class="lab acc" x="${x(pk) - 9}" y="${y(S[pk].t) + 4}" text-anchor="end">${Math.round((1 - S[pk].t / S[pk].o) * 100)}% below, ${fmtDay(c.peak.d)}</text>`;
+      s += `<text class="lab acc" x="${x(pk) - 9}" y="${y(S[pk].t) + 4}" text-anchor="end">${Math.round(S[pk].t * 100)}% of normal, ${fmtDay(c.peak.d)}</text>`;
       s += `<text class="lab" x="${w - m.r + 8}" y="${y(S[S.length - 1].o) - 6}">51 other regions</text><text class="lab" x="${w - m.r + 8}" y="${y(S[S.length - 1].o) + 8}">(their normal)</text>`;
-      s += `<text class="lab acc" x="${w - m.r + 8}" y="${y(S[S.length - 1].t) + 14}">Florida</text>`;
+      s += `<text class="lab acc" x="${w - m.r + 8}" y="${y(S[S.length - 1].t) + 14}">Duke Florida</text>`;
+      s += `<text class="lab" x="${x(0) + 4}" y="${y(c.band.hi) - 4}">normal band</text>`;
       [1, .8, .6].forEach(v => { if (v > ymin && v < ymax) s += `<text class="lab" x="${m.l - 6}" y="${y(v) + 4}" text-anchor="end">${Math.round(v * 100)}%</text>`; });
       s += `<text class="lab" x="${m.l}" y="${h - 4}">${fmtDay(S[0].d)}</text><text class="lab" x="${w - m.r}" y="${h - 4}" text-anchor="end">${fmtDay(S[S.length - 1].d)}</text>`;
       s += `<text class="lab" x="${x(pw[1]) + 5}" y="${m.t + 8}">7-day test window</text>`;
@@ -119,6 +122,11 @@
     return s + '</svg>';
   }
   function luckPanel(e) {
+    const g = e.engine, fam = [
+      { name: `${g.n_date.toLocaleString()} fake dates, same series`, n: g.n_date, hits: g.exceed_date, p: g.p_date },
+      { name: `${g.n_topic} other series, same date`, n: g.n_topic, hits: g.exceed_topic, p: g.p_topic },
+      { name: `${g.n_link} random links`, n: g.n_link, hits: g.exceed_link, p: g.p_link }];
+    const rows = fam.map(f => `<div class="pf"><span>${esc(f.name)}</span><span class="pf-bar" aria-hidden="true"><i style="width:${Math.max(1.5, Math.min(100, f.hits / f.n * 100))}%"></i></span><b class="num">${f.hits} of ${f.n}</b><small>about 1 in ${Math.round(1 / f.p)}</small></div>`).join('');
     const c = e.contrast, v = c.in_time.values_logpts.map(x => Math.abs(x - c.in_time.centre) * 100), real = Math.abs(c.d_logpts - c.in_time.centre) * 100;
     const w = 420, h = 100, bins = 26, mx = Math.max(real * 1.08, Math.max(...v) * 1.1), cnt = new Array(bins).fill(0);
     v.forEach(x => cnt[Math.min(bins - 1, Math.floor(x / mx * bins))]++);
@@ -127,7 +135,8 @@
     cnt.forEach((n, i) => { const bx = i * bw, bh = n / top * (h - 34); sv += `<rect class="bar ${i * mx / bins >= real ? 'tail' : ''}" x="${bx + 1}" y="${h - 20 - bh}" width="${bw - 2}" height="${bh}" rx="1.5"/>`; });
     const rx = Math.min(w - 20, real / mx * (w - 20));
     sv += `<line class="you" x1="${rx}" x2="${rx}" y1="4" y2="${h - 20}"/><text class="lab strong" x="${rx - 6}" y="12" text-anchor="end">this storm, ${Math.round(real)} pts</text><text class="lab" x="0" y="${h - 5}">${c.in_time.n} pseudo-storms, same dates in other years</text><text class="lab" x="${w - 20}" y="${h - 5}" text-anchor="end">bigger gap →</text></svg>`;
-    return `<div class="luck">${sv}<p>${c.in_time.n_bigger === 0 ? 'None' : c.in_time.n_bigger} of the ${c.in_time.n} pseudo-storms came close (in-time p ${c.p_time}). Against ${c.n_donors} unaffected regions shuffled into 30 fake Floridas, the real pair ranked first: about <b>1 in ${c.p_space_odds}</b>. Both placebo families agree, which is what the engine calls a strong regional pass.</p></div>`;
+    return `<div class="luck"><div class="pfs" role="list" aria-label="Placebo families for the single-event test">${rows}</div><p>The engine's single-event test: T ${g.t_stat.toFixed(2)}, corrected over ${g.bh.m} tests (q ${g.q_w.toFixed(3)}). A random date on this series looks this strong about <b>1 in ${Math.round(1 / g.p_date)}</b> times.</p>
+      <h4>And against the rest of the country</h4>${sv}<p>${c.in_time.n_bigger === 0 ? 'None' : c.in_time.n_bigger} of the ${c.in_time.n} pseudo-storms came close (in-time p ${c.p_time}). Against ${c.n_donors} unaffected regions shuffled into 30 fake Floridas, the real pair ranked first: about <b>1 in ${c.p_space_odds}</b>.</p></div>`;
   }
   function replicationRow(r) {
     const pips = r.all.map(s => `<i class="${s.pass ? '' : s.effect_pct < 0 ? 'dir' : 'no'}" title="${esc(s.label)} ${s.year}: ${s.effect_pct}%"></i>`).join('');
@@ -142,7 +151,13 @@
   function drawers(e) {
     const c = e.contrast, L = e.ledger, led = P.ledger;
     const row = (k, v, h) => `<dt>${k}</dt><dd${h ? ' class="h"' : ''}>${v}</dd>`;
-    return `<details class="drawer"><summary>The raw numbers</summary><dl class="dl">
+    const g = e.engine;
+    return `<details class="drawer"><summary>The single-event test (engine ${esc(g.version)})</summary><dl class="dl">
+      ${row('Series', e.node + ' (hop ' + e.hop_id + ')')}${row('Observed onset', fmtDayY(e.onset_observed) + ', lag ' + g.lag_from_event_days + ' d from the event')}${row('Effect (shrunk)', g.rho.shrunk.toFixed(3) + '\u00d7 [' + g.rho.lo.toFixed(3) + ', ' + g.rho.hi.toFixed(3) + ']; raw ' + g.rho.raw.toFixed(3))}
+      ${row('Peak day', g.rho.peak_day + ', ' + Math.round(e.chart.peak.t * 100) + '% of normal')}${row('T statistic', g.t_stat.toFixed(3))}${row('Fake dates', `${g.exceed_date} of ${g.n_date} (p ${g.p_date.toFixed(4)})`)}${row('Other series', `${g.exceed_topic} of ${g.n_topic} (p ${g.p_topic})`)}${row('Random links', `${g.exceed_link} of ${g.n_link} (p ${g.p_link.toFixed(3)})`)}
+      ${row('BH (m ' + g.bh.m + ', weight ' + g.bh.weight + ')', 'q ' + g.q_w.toFixed(4))}${row('Channels', g.channels.agree + ' of ' + g.channels.of + ' (' + g.channels.names.join(', ') + ')')}${row('Fluke-rate bin', `T ${g.f_bin}: reads ${g.f}`)}${row('Flags / fails', (g.flags.join(', ') || 'none') + ' / ' + (g.fails.join(', ') || 'none'))}
+      ${row('Engine tier', TIER[e.engine_tier])}${row('Forecast gate', `${e.published.tier} (${e.published.reason || 'agrees'}; mode ${e.published.mode}; state ${e.published.ce.state})`)}</dl><p>${esc(g.f_note)}</p></details>
+      <details class="drawer"><summary>The regional contrast (engine 6.2.1)</summary><dl class="dl">
       ${row('Treated regions', c.treated.join(' + ') + ' (Florida)')}${row('Donor regions', c.n_donors)}${row('Window', `${c.window.pre_days} d before, ${c.window.post_days} d after ${fmtDayY(c.window.onset)}`)}
       ${row('Treated change alone', c.treated_only_pct + '%')}${row('Contrast (treated − donors)', c.d_logpts + ' log pts = ' + c.effect_pct + '%')}${row('Centred on in-time median', c.d_centred + ' log pts')}
       ${row('Robust se (1.4826 · MAD)', c.se)}${row('z', c.z)}${row('Peak day', fmtDayY(e.chart.peak.d) + ', Florida ' + Math.round(e.chart.peak.t * 100) + '% vs donors ' + Math.round(e.chart.peak.o * 100) + '%')}
@@ -152,12 +167,12 @@
       <details class="drawer"><summary>Placebos, synthetic control, multiple testing</summary><dl class="dl">${row('In-space p (30 fake Floridas)', `${c.p_space} (1 in ${c.p_space_odds})`)}${row('In-time p (' + c.in_time.n + ' pseudo-storms)', c.p_time)}
       ${row('Synthetic control', `${c.synth_d} log pts, same sign; RMSPE ratio ${c.synth_ratio}, rank p ${c.synth_p}`)}${row('Family q (24 hurricanes, BH)', e.replication.family.q + ' — ' + e.replication.family.strength)}
       ${row('Decoy false-alarm rate (120 sets)', `${Math.round(P.calibration.decoy_fp_rate * 1000) / 10}% [${P.calibration.wilson.map(x => Math.round(x * 1000) / 10).join(', ')}]`)}</dl>
-      <p>The single-event test (engine ${P.engine.method_hop}) that gives Measured or Likely has not run on this hop; its channels, fluke rate and FDR q are therefore empty. The forecast gate has not evaluated it.</p></details>
-      <details class="drawer"><summary>Ledger and provenance</summary><dl class="dl">${row('Hop ids', e.hop_ids.join(', '))}${row('Registered', `seq ${L.register_seq}, ${fmtDayY(led[0].day)}`)}${row('Register hash', led[0].payload_hash, 1)}
-      ${row('Grid frozen', `seq ${L.freeze_seq}, batch ${esc(P.engine.batch)}`)}${row('Grid hash', L.frozen_hash, 1)}${row('Model versions', L.model_seq.join(', ') + ' (6.2, 6.2.1)')}${row('Calibration', 'seq ' + L.calibration_seq)}
+      </details>
+      <details class="drawer"><summary>Ledger and provenance</summary><dl class="dl">${row('Hop id', e.hop_id)}${row('Registered', `seq ${L.register_seq}, ${fmtDayY(led[0].day)}`)}${row('Register hash', led[0].payload_hash, 1)}
+      ${row('Grid frozen', `seq ${L.freeze_seq}, batch ${esc(P.engine.batch)}`)}${row('Grid hash', L.frozen_hash, 1)}${row('Model versions', L.model_seq.join(', ') + ' (6.2, 6.2.1)')}${row('Calibration', 'seq ' + L.calibration_seq)}${row('Control audit', `seq ${L.control_seq}: negative controls ok, positive controls not yet ok`)}${row('Resolved', `seq ${L.resolve_seq}, ${fmtDayY(g.resolved_at.slice(0, 10))}`)}${row('Cascade ledger head', L.cascade_head, 1)}
       ${row('Chain head', `seq ${L.head.seq}`)}${row('Head hash', L.head.chain_hash, 1)}${row('Computed', c.computed_at.slice(0, 16).replace('T', ' ') + ' UTC')}</dl><p><a href="${esc(P.links.method)}">How Ripple Map knows</a>.</p></details>`;
   }
-  const glyph = t => `<svg aria-hidden="true"><use href="#g-${t === 'measured' ? 'measured' : t === 'likely' || t === 'contrast' ? 'half' : t === 'pattern' ? 'rule' : 'dotted'}"/></svg>`;
+  const glyph = t => `<svg aria-hidden="true"><use href="#g-${t === 'measured' ? 'measured' : t === 'likely' || t === 'contrast' ? 'half' : t === 'pattern' ? 'rule' : t === 'flat' ? 'flat' : 'dotted'}"/></svg>`;
 
   /* ---------- the stop card ---------- */
   const panel = $('#panel'), body = $('#panel-body'), scrim = $('#scrim');
@@ -178,20 +193,20 @@
     const r = e.replication;
     body.innerHTML = `
       <p class="crumb">${esc(P.domains[e.domain])}, ${esc(e.lag_text)}. This ripple <b>forks straight from the storm</b>: no chain through another stop is claimed.</p>
-      <span class="chip contrast">${glyph('contrast')}${esc(tierWord(e))}<em>engine tier ${esc(TIER[P.effects[0].tier === 'contrast' ? 'watching' : e.tier])}, test queued</em></span>
+      <span class="chip ${esc(e.tier)}">${glyph(e.tier)}${esc(tierWord(e))}${e.published.reason ? `<em>${esc(TIER[e.engine_tier])} by the engine; ${esc(e.published.reason)}</em>` : ''}</span>
       <h2>${esc(e.title)}</h2>
       <div class="big num">${esc(e.num)}<small>${esc(e.unit)}</small></div>
       <p class="find">${esc(e.plain)}</p>
-      <div class="agree"><span><i></i>Moved against ${e.contrast.n_donors} unaffected regions, pre-trends flat</span><span><i class="o"></i>${esc(e.sources.text)}</span><span><i class="${r.n_seen ? '' : 'o'}"></i>Passed after ${r.n_seen} of ${r.n_similar} similar storms</span></div>
+      <div class="agree"><span><i></i>Moved unusually after the storm: ${e.engine.exceed_date} of ${e.engine.n_date.toLocaleString()} fake dates come close</span><span><i></i>Moved against ${e.contrast.n_donors} unaffected regions, pre-trends flat</span><span><i class="o"></i>${esc(e.sources.text)}</span><span><i class="${r.n_seen ? '' : 'o'}"></i>Passed after ${r.n_seen} of ${r.n_similar} similar storms tested</span><span><i class="o"></i>Forecast model: ${esc(e.published.ce.state)}</span></div>
       <div class="why"><button class="btn primary" type="button" data-why>Why?</button><button class="btn" type="button" data-send>Send this</button><button class="btn" type="button" data-watch aria-pressed="${watched()}">${watched() ? 'Watching' : 'Watch'}</button></div>
       <div class="chart">${seriesChart(e)}</div>
-      <div class="legend"><span><i class="l"></i>Florida (FPL + Duke Florida)</span><span><i class="l2"></i>51 unaffected regions</span><span><i></i>Normal gap before the storm</span></div>
+      <div class="legend"><span><i class="l"></i>Duke Energy Florida</span><span><i class="l2"></i>51 unaffected regions</span><span><i></i>The engine's normal band (±1.28σ)</span></div>
       <div class="sect" id="why"><h3>Why? How the ripple got there</h3><ul class="steps">${e.mechanism.map((m, i) => `<li><i class="${i === 0 ? 'f' : ''}"></i><span>${esc(m.step)}<small>${esc(m.why)} Source: ${esc(m.source)}.</small></span></li>`).join('')}</ul></div>
       <div class="sect" id="luck"><h3>Could it be luck?</h3>${luckPanel(e)}<p style="margin-top:8px">${esc(e.how)}</p></div>
       <div class="sect"><h3>What would change our mind</h3><p>${esc(e.mind)}</p></div>
       <div class="sect" id="seen"><h3>Seen before?</h3>${replicationRow(r)}</div>
       ${watchRow()}
-      <div class="sect"><h3>In plain words</h3><p><b>Regional contrast passed.</b> Florida’s grids fell while 51 regions the storm missed did not, and fake storms at the same dates in other years never produce a gap this size. <b>Not Measured.</b> Measured needs the single-event test and an independent forecast model to agree, and neither has run on this storm yet. Consistent with, never proof of cause.</p></div>
+      <div class="sect"><h3>In plain words</h3><p><b>${esc(tierWord(e))}.</b> The engine’s own test calls this Measured: the series moved, ${e.engine.n_date.toLocaleString()} fake dates say it is not the calendar, and 51 unaffected regions say it is not the country. ${e.published.reason ? `<b>Published as ${esc(tierWord(e))}</b> because the independent forecast model has not yet checked it (${esc(e.published.reason)}). When it agrees, the word becomes Measured; if it disagrees, it stays Likely.` : ''} Consistent with, never proof of cause.</p></div>
       <div class="sect" id="deep"><h3>Deep evidence</h3>${drawers(e)}</div>
       <div class="sect more"><h3>This wasn’t the end</h3><p>What else did Milton touch? Storms like it usually reach one more shore.</p><button class="btn" type="button" data-more="${S.id}" data-more-kind="shore">One more<svg width="14" height="14" aria-hidden="true"><use href="#i-arrow"/></svg></button></div>`;
     wire(); highlight(id); showPanel();
@@ -221,19 +236,25 @@
     const others = P.untested.filter(x => x.id !== id);
     body.innerHTML = `
       <p class="crumb">${esc(P.domains[u.domain])}, window closed ${fmtDayY(u.window_close)}. Registered before anyone looked.</p>
-      <span class="chip untested">${glyph('untested')}Pre-registered, untested<em>hop ${u.hop_id}</em></span>
+      <span class="chip watching">${glyph('watching')}Watching<em>hop ${u.hop_id}, ${esc(String(u.status).replace('_', ' '))}</em></span>
       <h2>${esc(u.name)}</h2>
-      <div class="flat-hero">Not tested yet.</div>
+      <div class="flat-hero">Too early to tell.</div>
       <p class="find">${esc(u.plain)}</p>
       ${u.mechanism ? `<div class="sect"><h3>Why it was registered</h3><p>${esc(u.mechanism.replace('->', '→'))}. Source: mechanism library v6.0, template ${esc(u.path_type === 'P-MECH' ? 'mechanism path' : 'family map')}.</p></div>` : `<div class="sect"><h3>Why it was registered</h3><p>Mapped from the storm family: every hurricane gets this series checked. Source: family mapper.</p></div>`}
-      <div class="sect"><h3>Why we show it</h3><p>Hiding an untested series would make the one bright pad look like the whole story. When the queued test runs, this float becomes a pad if it moved, reeds if it stayed flat, or stays dotted if the data cannot say. The engine’s cascade currently files it under “window closed, no move”; that is a bookkeeping word, not a measurement, so the pond does not draw reeds here.</p></div>
-      ${watchRow(u)}
-      <div class="sect"><h3>Also waiting</h3><div class="chips" style="display:flex;flex-wrap:wrap;gap:6px">${others.map(o => `<button type="button" class="btn" style="padding:4px 10px;font-size:12.5px;border-color:var(--pline-2);color:var(--ink-2)" data-more="${o.id}" data-more-kind="untested">${esc(o.name)}</button>`).join('')}</div></div>`;
+      <div class="sect"><h3>Why we show it</h3><p>Hiding an open question would make the one bright pad look like the whole story. When the series arrives, this float becomes a pad if it moved or reeds if it stayed flat. Its sibling series have all been resolved; this is the last one open.</p></div>
+      ${watchRow(u)}`;
     wire(); highlight(id); showPanel();
   }
   function openFlat(id) {
-    const n = (P.flats || []).find(x => x.id === id); if (!n) return; current = id; currentKind = 'flat';
-    body.innerHTML = `<p class="crumb">${esc(P.domains[n.domain])}. Checked in advance, on purpose.</p><span class="chip flat">${glyph('flat')}Stayed flat</span><div class="flat-hero">The ripple stopped here.</div><p class="find">${esc(n.name)} stayed inside its normal range for the whole window we pre-registered.</p>`;
+    const n = (P.flats || []).find(x => x.id === id); if (!n) return; current = id; currentKind = 'flat'; track('stop_open');
+    const others = P.flats.filter(x => x.id !== id);
+    body.innerHTML = `<p class="crumb">${esc(P.domains[n.domain])}, window to ${fmtDayY(n.window_close)}. Checked in advance, on purpose.</p><span class="chip flat">${glyph('flat')}Stayed flat<em>hop ${n.hop_id}</em></span>
+      <div class="flat-hero">The ripple stopped here.</div><h2 style="margin-top:0">${esc(n.name)}</h2><p class="find">${esc(n.plain)}</p>
+      ${n.mechanism ? `<div class="sect"><h3>Why it was registered</h3><p>${esc(n.mechanism.replace('->', '\u2192'))}. Source: mechanism library v6.0.</p></div>` : `<div class="sect"><h3>Why it was registered</h3><p>Mapped from the storm family: every hurricane gets this series checked. Source: family mapper.</p></div>`}
+      <div class="sect"><h3>How sure?</h3><p>The same test as the bright pad: the series against its own normal, then against fake dates. Test statistic <b class="num">${n.t_stat.toFixed(2)}</b>; ${Math.round(n.p_date * n.n_date)} of ${n.n_date} fake dates did as well or better; corrected q ${n.q_w.toFixed(2)}.${n.flags.length ? ' Flags: ' + esc(n.flags.join(', ').replace(/_/g, ' ')) + '.' : ''}</p></div>
+      <div class="sect"><h3>Why we show it</h3><p>${P.flats.length} reeds on this pond absorbed the wave. Without them, one bright pad would look like the storm touched everything. Three negative controls (${P.controls.map(c => esc(c.name.replace(' (control)', ''))).join(', ')}) also stayed flat, so a nationwide move could not pass as Florida\u2019s.</p></div>
+      <div class="sect"><h3>Also flat</h3><div class="chips" style="display:flex;flex-wrap:wrap;gap:6px">${others.map(o => `<button type="button" class="btn" style="padding:4px 10px;font-size:12.5px;border-color:var(--pline-2);color:var(--ink-2)" data-more="${o.id}" data-more-kind="flat">${esc(o.name)}</button>`).join('')}</div></div>
+      <div class="sect more"><h3>This wasn\u2019t the end</h3><p>Back to the one thing that moved.</p><button class="btn" type="button" data-more="${E.id}" data-more-kind="effect">One more<svg width="14" height="14" aria-hidden="true"><use href="#i-arrow"/></svg></button></div>`;
     wire(); highlight(id); showPanel();
   }
   function wire() {
@@ -294,10 +315,10 @@
       <div class="k"><span>The stone</span><span>${esc(P.event.strength)}</span></div>
       <div class="ev">${esc(P.event.name)} makes landfall</div>
       <p class="ev-sub">${esc(P.event.place)}, ${esc(P.event.date)}. Engine onset ${fmtDay(P.event.onset)}, the day it was registered.</p>
-      <div class="strip"><div>Shock size<b>not scored</b></div><div>Series registered<b class="num">${P.untested.length + 2}</b></div><div>Tested<b class="num">1</b></div><div>Measured<b class="num">${P.honesty.measured}</b></div></div>
+      <div class="strip"><div>Shock size<b>not scored</b></div><div>Series registered<b class="num">${P.flats.length + P.untested.length + 1}</b></div><div>Moved<b class="num">1</b></div><div>Stayed flat<b class="num">${P.flats.length}</b></div><div>Published tier<b>${esc(tierWord(E))}</b></div></div>
     </div></li>
     <li><button class="card" type="button" data-open="${E.id}" data-kind="effect">
-      <div class="k"><span class="step">${glyph('contrast')}${esc(tierWord(E))}</span><span>${esc(P.domains[E.domain])}, ${esc(E.lag_text)}</span></div>
+      <div class="k"><span class="step">${glyph(E.tier)}${esc(tierLine(E))}</span><span>${esc(P.domains[E.domain])}, ${esc(E.lag_text)}</span></div>
       <div class="n num">${esc(E.num)}<small>${esc(E.unit)}</small></div>
       <p class="f">${esc(E.plain.split('. ')[0])}.</p>
       <div class="spark chart">${seriesChart(E, 320, 56, true)}</div>
@@ -309,34 +330,35 @@
       <p class="f">${esc(S.story.story_sentence)} Milton itself is untested on this.</p>
       <div class="foot"><span>The far shore: a rule, not a Milton result</span><span class="open">See the rule</span></div>
     </button></li>
-    <li><div class="card wait"><div class="k"><span>Waiting for their test</span><span>${P.untested.length} series</span></div><p class="f" style="color:var(--ink-2)">Registered on ${fmtDay(P.event.cascade.baseline.to === '2024-09-16' ? '2024-10-08' : '2024-10-08')} 2024 with windows and priors written down first. Every window has closed; none has been scored.</p>
-      <div class="chips">${P.untested.map(u => `<button type="button" data-open="${u.id}" data-kind="untested"><svg aria-hidden="true"><use href="#k-float"/></svg>${esc(u.name)}</button>`).join('')}</div></div></li>
+    <li><div class="card wait"><div class="k"><span>The ripple stopped here</span><span>${P.flats.length} reeds</span></div><p class="f" style="color:var(--ink-2)">Registered on ${fmtDayY(P.event.registered)} with windows and priors written down first. Each was tested the same way as the bright pad and stayed inside its normal range.</p>
+      <div class="chips">${P.flats.map(u => `<button type="button" data-open="${u.id}" data-kind="flat"><svg aria-hidden="true"><use href="#k-grass"/></svg>${esc(u.name)}</button>`).join('')}</div></div></li>
+    <li><button class="card" type="button" data-open="${P.untested[0].id}" data-kind="untested"><div class="k"><span class="step">${glyph('watching')}Watching</span><span>${esc(P.domains[P.untested[0].domain])}</span></div><p class="f">${esc(P.untested[0].name)}: the engine is still waiting for the series. Too early to tell.</p><div class="foot"><span>Window closed ${fmtDayY(P.untested[0].window_close)}</span><span class="open">See the window</span></div></button></li>
     <li><div class="card note"><div class="k"><span>Rings that overlap</span><span>${P.rivals[0].days_before} days apart</span></div><p><b>${esc(P.rivals[0].name)}</b> came ashore ${P.rivals[0].days_before} days before Milton and sits inside the 28-day pre-window. ${esc(P.rivals[0].note.split('. ').slice(1).join('. '))}</p></div></li>
     <li><div class="card note"><div class="k"><span>Filtered out</span><span>1 boulder</span></div><p><b>${esc(P.filtered[0].name)}</b>: ${esc(P.filtered[0].note)}</p></div></li>`;
   chain.querySelectorAll('[data-open]').forEach(b => b.addEventListener('click', () => open(b.dataset.open, b.dataset.kind)));
 
   /* replication strip: tiny ponds for the 24 past hurricanes on the same test */
   $('#past-h').textContent = `Passed after ${E.replication.n_seen} of ${E.replication.n_similar} past storms`;
-  $('#past-lead').textContent = `The same grid-demand contrast, storm by storm since 2019. A half pad means the regional test passed; reeds mean it did not, whichever way demand moved. ${E.replication.family.note}`;
+  $('#past-lead').textContent = `The regional contrast on grid demand, storm by storm since 2019. A half pad means the regional test passed; reeds mean it did not, whichever way demand moved. ${E.replication.family.note}`;
   const row = $('#past-row');
   E.replication.all.forEach(st => {
     const card = document.createElement('div'); card.className = 'past-card' + (st.pass ? '' : ' no'); card.setAttribute('role', 'img'); card.setAttribute('aria-label', `${st.label} ${st.year}: grid demand ${st.effect_pct}% against unaffected regions, ${st.pass ? 'regional test passed' : 'no pass'}`);
     const sv = document.createElementNS('http://www.w3.org/2000/svg', 'svg'); card.appendChild(sv);
     Pond.render(sv, { event: { name: st.label, magnitude: .5, label: false }, domains: P.domains, rings: P.rings,
-      effects: st.pass ? [{ id: 'c', domain: E.domain, lag_days: E.lag_days, magnitude: Math.min(1, Math.abs(st.effect_pct) / 25), tier: 'contrast', kind: 'pad', num: '', short: '', headline: '', plain: '' }] : [],
+      effects: st.pass ? [{ id: 'c', domain: E.domain, lag_days: E.lag_days, magnitude: Math.min(1, Math.abs(st.effect_pct) / 25), tier: 'likely', kind: 'pad', num: '', short: '', headline: '', plain: '' }] : [],
       flats: st.pass ? [] : [{ name: 'Grid demand', domain: E.domain, lag_days: E.lag_days }] }, { thumb: true, reduceMotion: true, viewBox: [-470, -470, 940, 940] });
     card.insertAdjacentHTML('beforeend', `<div class="pn">${esc(st.label.replace(/^(Hurricane|Tropical storm) /, ''))}<small class="num">${st.year}</small></div><div class="ps"><b>${st.effect_pct > 0 ? '+' : ''}${st.effect_pct}%</b> ${st.pass ? 'passed' : 'no pass'}</div>`);
     row.appendChild(card);
   });
   const me = document.createElement('div'); me.className = 'past-card'; me.setAttribute('aria-current', 'true'); me.setAttribute('role', 'img'); me.setAttribute('aria-label', `Milton 2024: ${E.contrast.effect_pct}%, regional test passed`);
   const msv = document.createElementNS('http://www.w3.org/2000/svg', 'svg'); me.appendChild(msv);
-  Pond.render(msv, { event: { name: 'Milton', magnitude: .5, label: false }, domains: P.domains, rings: P.rings, effects: [{ id: 'c', domain: E.domain, lag_days: E.lag_days, magnitude: E.magnitude, tier: 'contrast', kind: 'pad', num: '', short: '', headline: '', plain: '' }] }, { thumb: true, reduceMotion: true, viewBox: [-470, -470, 940, 940] });
-  me.insertAdjacentHTML('beforeend', `<div class="pn">Milton<small class="num">2024</small></div><div class="ps"><b>${esc(E.num)}</b> passed</div>`);
+  Pond.render(msv, { event: { name: 'Milton', magnitude: .5, label: false }, domains: P.domains, rings: P.rings, effects: [{ id: 'c', domain: E.domain, lag_days: E.lag_days, magnitude: Math.min(1, Math.abs(E.contrast.d_logpts) / 0.25), tier: 'likely', kind: 'pad', num: '', short: '', headline: '', plain: '' }] }, { thumb: true, reduceMotion: true, viewBox: [-470, -470, 940, 940] });
+  me.insertAdjacentHTML('beforeend', `<div class="pn">Milton<small class="num">2024</small></div><div class="ps"><b>${E.contrast.effect_pct}%</b> passed</div>`);
   row.prepend(me);
 
   /* the ripple stopped here: honest when there are no flats */
   const sb = $('#stopped-body');
-  if (P.flats.length) sb.innerHTML = `<p>${P.flats.length} things we said in advance might move, and didn’t.</p><div class="waiting">${P.flats.map(n => `<button type="button" data-open="${n.id}" data-kind="flat"><svg aria-hidden="true"><use href="#k-grass"/></svg>${esc(n.name)}</button>`).join('')}</div>`;
+  if (P.flats.length) sb.innerHTML = `<p><b>${flatsWord(P.flats.length)} things</b> we said in advance might move, and did not. ${esc(P.flats_note)} Three negative controls (${P.controls.map(c => esc(c.name.replace(' (control)', ''))).join(', ')}) also stayed flat, so a nationwide move could not pass as Florida’s. They are the reason the one bright pad can be trusted.</p><div class="waiting">${P.flats.map(n => `<button type="button" data-open="${n.id}" data-kind="flat"><svg aria-hidden="true"><use href="#k-grass"/></svg>${esc(n.name)}<small style="color:var(--muted)">T ${n.t_stat.toFixed(1)}</small></button>`).join('')}</div>`;
   else sb.innerHTML = `<p><b>Nowhere, yet.</b> ${esc(P.flats_note)} Three negative controls (${P.controls.map(c => esc(c.name.replace(' (control)', ''))).join(', ')}) were registered alongside them so a nationwide move could not pass as Florida’s.</p><div class="waiting">${P.untested.map(u => `<button type="button" data-open="${u.id}" data-kind="untested"><svg aria-hidden="true"><use href="#k-float"/></svg>${esc(u.name)}</button>`).join('')}</div>`;
   sb.querySelectorAll('[data-open]').forEach(b => b.addEventListener('click', () => open(b.dataset.open, b.dataset.kind)));
 
