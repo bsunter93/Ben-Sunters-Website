@@ -1,0 +1,50 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Ripple Map · Data collection &amp; contact</title>
+<meta name="robots" content="noindex">
+<link rel="icon" href="/favicon.svg">
+<style>
+  :root { --ink:#1d2a2e; --paper:#f6f1e7; --accent:#1f5f6b; }
+  @media (prefers-color-scheme: dark) { :root { --ink:#e9e4d8; --paper:#142024; --accent:#e0a526; } }
+  body { margin:0; background:var(--paper); color:var(--ink); font:16px/1.6 system-ui, -apple-system, "Segoe UI", sans-serif; }
+  main { max-width:680px; margin:0 auto; padding:48px 16px 64px; }
+  h1 { font-size:1.6rem; line-height:1.25; margin:0 0 .25rem; }
+  h2 { font-size:1.05rem; margin:2rem 0 .5rem; }
+  p.lede { opacity:.8; margin-top:0; }
+  a { color:var(--accent); }
+  code { font-size:.9em; }
+  li { margin:.25rem 0; }
+</style>
+</head>
+<body>
+<main>
+  <h1>Ripple Map: data collection &amp; contact</h1>
+  <p class="lede">Ripple Map is a research project by Ben Sunter that measures how events spill over into public attention and everyday activity. This page is the contact named in its crawler's User-Agent.</p>
+
+  <h2>Who is making requests</h2>
+  <p>Requests identify themselves as <code>ripples-research/0.2 (+https://bensunter.com/ripples/methods/)</code>. They come from scheduled jobs on Supabase and GitHub Actions.</p>
+
+  <h2>What it collects</h2>
+  <ul>
+    <li>Only public, aggregate counts: daily pageviews, public statistics series, and item counts from documented APIs.</li>
+    <li>No personal data, no account data, no content behind a login.</li>
+  </ul>
+
+  <h2>How it behaves</h2>
+  <ul>
+    <li>Documented APIs are used where they exist, and robots.txt is respected everywhere else.</li>
+    <li>Requests are one at a time and well under each provider's published limits. For Wikimedia that is at most one request per second.</li>
+    <li>On any HTTP 429 or 503 it stops, and it does not retry until the next scheduled run.</li>
+    <li>It never uses proxies, rotating IPs, a disguised User-Agent, or ways around CAPTCHAs or bot checks.</li>
+  </ul>
+
+  <h2>Contact / opt-out</h2>
+  <p>If this crawler is causing problems, or you'd like a source excluded, email <a href="mailto:sunterbb@gmail.com">sunterbb@gmail.com</a>. Requests are honoured promptly, and each source has a kill switch.</p>
+
+  <p style="margin-top:2.5rem;opacity:.7"><a href="/">bensunter.com</a></p>
+</main>
+</body>
+</html>
