@@ -51,7 +51,7 @@
 import { addDays, db, errMsg, ingest, type ObsRow, politeFetch, type Run, serve, stateGet, stateSet } from "./att.ts";
 import { getJson, getText, r4, scrubStr, secret, todayUtc, wrap } from "./wsa.ts";
 
-export const ECON_VERSION = "2026-09-26.e7";
+export const ECON_VERSION = "2026-09-26.e8";
 
 // ------------------------------------------------------------------ series catalogues
 type Kind = "rate" | "level" | "count";
@@ -339,7 +339,7 @@ function csvFields(line: string, maxIdx: number): string[] {
   }
   return out;
 }
-async function eiaBulkFile(run: Run, name: string): Promise<{ rows: number; ok: boolean; bas: number; gen_bas?: number; days: number; col: string; fuel_weeks?: number }> {
+async function eiaBulkFile(run: Run, name: string): Promise<{ rows: number; ok: boolean; bas: number; gen_bas?: number; days: number; col: string; fuel_weeks?: number; fuel_cols?: number[]; fuel_days?: number }> {
   const res = await getText(run, "eia.930", `${EIA_BULK}/${name}`, { accept: "text/csv,*/*" }, 100_000);
   if (!res || !res.body) return { rows: 0, ok: false, bas: 0, days: 0, col: "" };
   const reader = res.body.pipeThrough(new TextDecoderStream()).getReader();
@@ -372,7 +372,7 @@ async function eiaBulkFile(run: Run, name: string): Promise<{ rows: number; ok: 
     for (const [fuel, idx] of [["solar", iSol], ["wind", iWind]] as Array<[string, number]>) {
       if (idx < 0 || !f[idx]) continue;
       const x = Number(f[idx].replace(/,/g, ""));
-      if (!Number.isFinite(x) || x < 0) continue;
+      if (!Number.isFinite(x)) continue; // night-time solar is reported as small negatives (station load): keep the hour, sum the value
       const fk = `${fuel}|${k}`;
       fsum.set(fk, (fsum.get(fk) ?? 0) + x); fhours.set(fk, (fhours.get(fk) ?? 0) + 1);
     }
@@ -445,7 +445,7 @@ async function eiaBulkFile(run: Run, name: string): Promise<{ rows: number; ok: 
   }
   await ingest(run, out, 2000);
   await ingest(run, fout, 2000);
-  return { rows: out.length + fout.length, ok: true, bas: nBa, gen_bas: gbas.size, days: days.size, col: iAdj >= 0 ? "adjusted" : "demand", fuel_weeks: fout.length };
+  return { rows: out.length + fout.length, ok: true, bas: nBa, gen_bas: gbas.size, days: days.size, col: iAdj >= 0 ? "adjusted" : "demand", fuel_weeks: fout.length, fuel_cols: [iSol, iWind], fuel_days: fsum.size };
 }
 async function modeEia930(run: Run, backfill = false) {
   const t0 = Date.now();
