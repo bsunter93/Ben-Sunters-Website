@@ -419,3 +419,67 @@ language sql stable security definer set search_path = '' as $$
      and pg_catalog.has_function_privilege(r.rolname, p.oid, 'EXECUTE')
    order by 1, 2
 $$;
+
+-- ---------------------------------------------------------------- p5: publish stays inside the API statement timeout
+-- PostgREST runs service_role RPCs under the authenticator's statement_timeout (8 s). With the 30 library lines published on
+-- 2026-09-26 one rm_publish_bundle_v2 call measured 9.8 s (freeze 4.1 s for 39 lines at ~0.1 s each; HopEvidence mirror ~5-10 s
+-- for ~220 hops of 36 running lines). ripples-publish now:
+--   1. freezes in chunks: public.rm_publish_freeze_v2(as_of, events, cap) until `done` (state in att_state 'rm.freeze.run');
+--   2. calls rm_publish_bundle_v2, which reuses that freeze result when it is fresh (< 15 min, same as_of and events) instead of
+--      freezing again, and — with att_config publish.hops_external = true — returns only `hop_ids` (prioritised, capped) instead
+--      of the HopEvidence documents;
+--   3. fetches the hop documents in chunks: public.rm_publish_hops_v2(hop_ids[]) (marks them mirrored).
+-- Both new RPCs are service-only (no anon / authenticated EXECUTE), like rm_publish_bundle_v2.
+create or replace function public.rm_publish_freeze_v2(p_as_of date default null, p_events bigint[] default null, p_cap int default 15) returns jsonb
+language plpgsql security definer set search_path = '' as $$
+declare d date := coalesce(p_as_of, (now() at time zone 'utc')::date); fr jsonb; st jsonb; fresh jsonb; n_new int;
+begin
+  fr := ripples.att_publish_cascades(d, p_events, greatest(coalesce(p_cap, 15), 1));
+  select v into st from ripples.att_state where k = 'rm.freeze.run';
+  if st is null or st ->> 'as_of' <> d::text or (st ->> 'at')::timestamptz < now() - interval '15 minutes'
+     or (st -> 'events') is distinct from coalesce(to_jsonb(p_events), 'null'::jsonb) then
+    st := jsonb_build_object('as_of', d, 'events', coalesce(to_jsonb(p_events), 'null'::jsonb), 'lines', '[]'::jsonb, 'seen', '[]'::jsonb, 'started', now());
+  end if;
+  select coalesce(jsonb_agg(x), '[]'::jsonb) into fresh from jsonb_array_elements(fr -> 'lines') x where not (st -> 'seen') @> jsonb_build_array(x -> 'event_id');
+  n_new := jsonb_array_length(fresh);
+  st := st || jsonb_build_object('at', now(), 'lines', (st -> 'lines') || fresh,
+                                 'seen', (st -> 'seen') || coalesce((select jsonb_agg(x -> 'event_id') from jsonb_array_elements(fresh) x), '[]'::jsonb),
+                                 'result', fr - 'lines');
+  insert into ripples.att_state(k, v) values ('rm.freeze.run', st) on conflict (k) do update set v = excluded.v, updated_at = now();
+  return jsonb_build_object('as_of', d, 'processed', jsonb_array_length(fr -> 'lines'), 'fresh', n_new, 'candidates', fr -> 'candidates',
+                            'seen', jsonb_array_length(st -> 'seen'), 'new_versions', (select count(*) from jsonb_array_elements(st -> 'lines') x where x ->> 'unchanged' = 'false'),
+                            'done', n_new = 0 or jsonb_array_length(st -> 'seen') >= coalesce((fr ->> 'candidates')::int, 0));
+end $$;
+revoke all on function public.rm_publish_freeze_v2(date, bigint[], int) from public, anon, authenticated;
+grant execute on function public.rm_publish_freeze_v2(date, bigint[], int) to service_role;
+
+create or replace function public.rm_publish_hops_v2(p_hops bigint[]) returns jsonb
+language plpgsql security definer set search_path = '' as $$
+declare ids bigint[]; out jsonb;
+begin
+  -- only hops that are on a public line's latest version (nodes or flat), at most 50 per call
+  select array_agg(h order by h) into ids from (
+    select distinct h from unnest(coalesce(p_hops, '{}')) h
+     where exists (select 1 from (select distinct on (v.event_id) v.payload from ripples.rm_public_versions v order by v.event_id, v.version desc) lv,
+                        lateral (select (n ->> 'hop_id')::bigint id from jsonb_array_elements(lv.payload -> 'nodes') n
+                                 union all select (n ->> 'hop_id')::bigint from jsonb_array_elements(coalesce(lv.payload -> 'flat', '[]'::jsonb)) n) x
+                    where x.id = h)
+     limit 50) z;
+  select coalesce(jsonb_agg(jsonb_build_object('hop_id', h, 'json', ripples.rm_hop_evidence(h)::text, 'csv', ripples.rm_hop_csv(h)) order by h), '[]'::jsonb)
+    into out from unnest(coalesce(ids, '{}')) h;
+  insert into ripples.rm_hop_mirrored(hop_id, mirrored_at) select h, now() from unnest(coalesce(ids, '{}')) h
+  on conflict (hop_id) do update set mirrored_at = excluded.mirrored_at;
+  return out;
+end $$;
+revoke all on function public.rm_publish_hops_v2(bigint[]) from public, anon, authenticated;
+grant execute on function public.rm_publish_hops_v2(bigint[]) to service_role;
+
+-- rm_publish_bundle_v2 (live definition, anchor-replaced):
+--   declare …                                   → declare fst jsonb; …
+--   fr := ripples.att_publish_cascades(d, p_events);
+--     → reuse att_state 'rm.freeze.run' when fresh (then delete it), else freeze as before
+--   the HopEvidence select + rm_hop_mirrored insert → skipped when att_config publish.hops_external (hops = [])
+--   'hops', hops,                                → 'hops', hops, 'hop_ids', <hop_ids when hops_external>,
+insert into ripples.att_config(key, value) values ('publish', jsonb_build_object('hops_external', true,
+  'note', 'ripples-publish fetches HopEvidence through rm_publish_hops_v2 in chunks; freezes through rm_publish_freeze_v2 in chunks'))
+on conflict (key) do update set value = ripples.att_config.value || excluded.value, updated_at = now();

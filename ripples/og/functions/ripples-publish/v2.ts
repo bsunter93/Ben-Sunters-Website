@@ -15,6 +15,9 @@
 //    later run until it lands; and it lists `withdraw` paths — withheld versions (raw identifiers in public labels) with their
 //    cards, lines with no public version, hops no longer on a public line, and calendars of windows that have closed — which
 //    this run removes. Withheld versions stay frozen in the database and the ledger; they are just never served.
+// 8. Statement timeout (API RPCs run under the 8 s authenticator timeout): freezing runs first in chunks through
+//    rm_publish_freeze_v2 (the bundle reuses that result), and HopEvidence is fetched in chunks through rm_publish_hops_v2 when the
+//    bundle returns `hop_ids` (att_config publish.hops_external).
 // 7. Story layer and pond (2026-09-26 integration): v2/stories.json, v2/patterns.json, v2/pond/index.json, v2/pond/{slug}.json (see storyFiles).
 // deno-lint-ignore-file no-explicit-any
 import type { SupabaseClient } from "jsr:@supabase/supabase-js@2";
@@ -107,6 +110,14 @@ export async function publishV2(db: SupabaseClient, sbUrl: string, token: string
   const asOf = typeof b.as_of === "string" && /^\d{4}-\d{2}-\d{2}$/.test(b.as_of) ? b.as_of : null;
   const events = Array.isArray(b.events) && b.events.every((x: unknown) => Number.isInteger(x)) ? b.events : null;
   const full = b.full === true;
+  // 0. freeze in chunks (each RPC stays well inside the API statement timeout); the bundle reuses this freeze instead of repeating it
+  const freezeRuns: any[] = [];
+  for (let i = 0; i < 20; i++) {
+    const { data: fz, error: fe } = await db.rpc("rm_publish_freeze_v2", { p_as_of: asOf, p_events: events, p_cap: 12 });
+    if (fe) { console.error("rm_publish_freeze_v2", fe.message); freezeRuns.push({ error: fe.message }); break; }   // the bundle then freezes itself
+    freezeRuns.push({ processed: fz?.processed, fresh: fz?.fresh, seen: fz?.seen, candidates: fz?.candidates });
+    if (fz?.done) break;
+  }
   const { data: bundle, error } = await db.rpc("rm_publish_bundle_v2", { p_as_of: asOf, p_events: events, p_full: full });
   if (error) { console.error("rm_publish_bundle_v2", error.message); return { status: 500, body: { ok: false, error: "bundle_error", detail: error.message } }; }
   const day: string = bundle.as_of;
@@ -157,7 +168,21 @@ export async function publishV2(db: SupabaseClient, sbUrl: string, token: string
         body: calendar(`rm-line-${c.event_id}`, last, `Last window closes: ${label}`, `The last open window on this line closes today.`, `${SITE}/line/${slug}/`, stamp) });
     }
   }
-  for (const hp of bundle.hops ?? []) {
+  // HopEvidence: with att_config publish.hops_external the bundle sends only the prioritised hop ids; fetch them in chunks
+  const hopDocs: any[] = [...(bundle.hops ?? [])];
+  const hopErrors: string[] = [];
+  if (Array.isArray(bundle.hop_ids) && bundle.hop_ids.length) {
+    const ids: number[] = bundle.hop_ids.filter((x: unknown) => Number.isInteger(x));
+    const chunks: number[][] = [];
+    for (let i = 0; i < ids.length; i += 20) chunks.push(ids.slice(i, i + 20));
+    const res = await pool(chunks, 3, async (c) => {
+      const r = await db.rpc("rm_publish_hops_v2", { p_hops: c });
+      if (r.error) hopErrors.push(`rm_publish_hops_v2: ${r.error.message}`);
+      return r.data ?? [];
+    });
+    for (const r of res) hopDocs.push(...r);
+  }
+  for (const hp of hopDocs) {
     if (hp.json) ups.push({ path: `${P}hop/${hp.hop_id}.json`, body: hp.json, type: J, cache: C3600 });
     if (hp.csv) ups.push({ path: `${P}hop/${hp.hop_id}.csv`, body: hp.csv, type: "text/csv; charset=utf-8", cache: C3600 });
   }
@@ -197,7 +222,7 @@ export async function publishV2(db: SupabaseClient, sbUrl: string, token: string
     }
   };
   await pool(ups, 8, upload);
-  errors.push(...ponds.errors);
+  errors.push(...ponds.errors, ...hopErrors);
 
   // data/index.json from the bucket listing
   if (od) {
@@ -273,7 +298,7 @@ export async function publishV2(db: SupabaseClient, sbUrl: string, token: string
   const res = {
     ok, as_of: day, freeze: bundle.freeze, lines_frozen: bundle.lines_frozen, new_versions: newVersions,
     frozen_retried: retried.length, held: bundle.held ?? [], grants_fixed: bundle.grants_fixed ?? 0,
-    hops: (bundle.hops ?? []).length, hops_deferred: bundle.hops_deferred ?? 0, withdrawn: removed,
+    freeze_chunks: freezeRuns, hops: hopDocs.length, hops_deferred: bundle.hops_deferred ?? 0, withdrawn: removed,
     stories: ponds.stories, patterns: ponds.patterns, ponds: ponds.written.size, ponds_skipped: ponds.skipped, ponds_removed: ponds.removed,
     uploaded: ups.length - errors.length - kept.length, frozen_kept: kept.length, errors, og,
     ms: Math.round(performance.now() - t0),
