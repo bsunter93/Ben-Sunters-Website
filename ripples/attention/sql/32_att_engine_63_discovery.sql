@@ -440,7 +440,7 @@ end $$;
 --    selected by the same candidate test outside the cap.
 create or replace function ripples.att_fx63_select_run(p_batch text, p_set int default 0) returns jsonb
 language plpgsql security definer set search_path = '' as $$
-declare cfg jsonb := ripples._att_cfg('engine63'); rule jsonb := cfg -> 'rule'; role text := case when p_set = 0 then 'explore' else 'dx' end;
+declare cfg jsonb := ripples._att_cfg('engine63'); rule jsonb := cfg -> 'rule'; v_role text := case when p_set = 0 then 'explore' else 'dx' end;
         x_n_min int := (rule ->> 'x_n_min')::int; x_p_max float8 := (rule ->> 'x_p_max')::float8; thr_log float8 := (rule ->> 'x_abs_min_log')::float8;
         thr_raw float8 := (rule ->> 'x_abs_min_raw')::float8; k_cap int := (rule ->> 'k_cap')::int; n_sel int; n_chk int; n_cand int;
 begin
@@ -450,7 +450,7 @@ begin
            pn.value_kind, p.n_events, p.d, p.se, p.p_placebo,
            case when pn.value_kind = 'rate' then thr_raw else thr_log end as thr
       from ripples.att_fx_grid g join ripples.att_fx_panel pn on pn.source = g.source and pn.metric = g.metric and pn.geo_kind = g.geo_kind
-      left join ripples.att_fx_pool p on p.grid_id = g.grid_id and p.role = role and p.decoy_set = p_set
+      left join ripples.att_fx_pool p on p.grid_id = g.grid_id and p.role = v_role and p.decoy_set = p_set
      where g.batch like p_batch || '/%'),
   ok as (select *, coalesce(n_events >= x_n_min and p_placebo <= x_p_max and abs(d) >= thr, false) as x_ok from pools),
   best as (select *, row_number() over (partition by family, sub, source, metric, geo_kind order by (not x_ok), p_placebo nulls last, post_n + lag_n, grid_id) = 1 as variant_best from ok),
@@ -539,7 +539,7 @@ end $$;
 --     outside), the plain-English strength word. Hunch statuses for exploration hits that were not confirmed.
 create or replace function ripples.att_fx63_verdict(p_batch text, p_set int default 0) returns jsonb
 language plpgsql security definer set search_path = '' as $$
-declare cfg jsonb := ripples._att_cfg('engine63'); rule jsonb := cfg -> 'rule'; role text := case when p_set = 0 then 'confirm' else 'dc' end;
+declare cfg jsonb := ripples._att_cfg('engine63'); rule jsonb := cfg -> 'rule'; v_role text := case when p_set = 0 then 'confirm' else 'dc' end;
         c_n_min int := (rule ->> 'c_n_min')::int; q_strong float8 := (rule ->> 'q_strong')::float8; q_pat float8 := (rule ->> 'q_pattern')::float8;
         ids int[]; ps float8[]; qs float8[]; i int; n_conf int; n_weak int; n_sel int;
 begin
@@ -548,7 +548,7 @@ begin
     c_sign_ok = (sign(p.d) = s.x_sign), c_n_clustered_out = (p.payload ->> 'n_clustered_out')::int, c_n_regional_pass = (p.payload ->> 'n_regional_pass')::int,
     c_q = null, computed_at = now()
     from ripples.att_fx_pool p
-   where p.grid_id = s.grid_id and p.role = role and p.decoy_set = p_set and s.batch = p_batch and s.decoy_set = p_set and s.selected;
+   where p.grid_id = s.grid_id and p.role = v_role and p.decoy_set = p_set and s.batch = p_batch and s.decoy_set = p_set and s.selected;
   -- BH over the confirmation set only: selected findings (weight > 0) with enough held-out events
   select array_agg(s.grid_id order by s.grid_id), array_agg(coalesce(s.c_p, 1)::float8 order by s.grid_id) into ids, ps
     from ripples.att_fx63_select s join ripples.att_fx_grid g on g.grid_id = s.grid_id
