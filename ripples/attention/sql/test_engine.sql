@@ -321,3 +321,78 @@ begin
   return coalesce(ripples.att_state_get('engine.controls'), '{}'::jsonb) - 'positive';
 end $$;
 revoke all on function ripples.att_controls_runner() from anon, authenticated, public;
+
+-- =====================================================================================================================
+-- Engine 6.2 (30_att_engine_62_pooled_regional.sql): T19–T25. Run: select ripples.att_test_engine_62();  (service_role)
+-- Pure tests on synthetic panels (no writes outside a temp table) plus the hook-install invariants on the live att_finalize.
+-- =====================================================================================================================
+create or replace function ripples.att_test_engine_62() returns jsonb
+language plpgsql security definer set search_path = '' as $$
+declare res jsonb := '[]'::jsonb; ok boolean; r float8[]; j jsonb; j0 jsonb; ps float8[]; pc int2[]; days date[]; regs text[]; nr int := 12; n int := 900;
+        i int; k int; v float8; acc float8; row_ps float8[]; row_pc int2[]; cfg jsonb; def text; w float8[]; hk text[];
+begin
+  cfg := ripples._att_cfg('engine62') || '{"n_time": 24, "n_space": 20, "n_synth": 12}'::jsonb;
+  -- T19 DerSimonian–Laird on known inputs: homogeneous → τ² = 0, I² = 0, pooled = precision-weighted mean; heterogeneous → τ² > 0
+  r := ripples.att_fx_dl(array[0.10, 0.10, 0.10], array[0.05, 0.05, 0.05]);
+  ok := abs(r[1] - 0.10) < 1e-9 and abs(r[2] - 0.05 / sqrt(3)) < 1e-9 and r[3] = 0 and r[4] = 0;
+  r := ripples.att_fx_dl(array[0.5, -0.4, 0.6, -0.5], array[0.05, 0.05, 0.05, 0.05]);
+  ok := ok and r[3] > 0.1 and r[4] > 0.9 and abs(r[1] - 0.05) < 0.01;
+  res := ripples._att_t(res, 'T19 DL random effects (homogeneous / heterogeneous)', ok, jsonb_build_object('tau2', r[3], 'i2', r[4], 'pooled', r[1]));
+
+  -- synthetic panel: 12 regions × 900 days, AR(1)-ish noise with a shared seasonal + a common shock; regions 1–2 get +0.30 from day 700 for 7 days
+  perform setseed(0.42);
+  select array_agg(d::date order by d) into days from generate_series('2020-01-01'::date, '2020-01-01'::date + (n - 1), '1 day') d;
+  select array_agg('R' || lpad(x::text, 2, '0') order by x) into regs from generate_series(1, nr) x;
+  ps := '{}'; pc := '{}';
+  for k in 1..nr loop
+    row_ps := array_fill(0::float8, array[n]); row_pc := array_fill(0::int2, array[n]); acc := 0; v := 0;
+    for i in 1..n loop
+      v := 0.6 * v + 0.05 * (random() - 0.5) * 2;                                             -- region noise
+      acc := acc + 5 + 0.20 * sin(2 * pi() * i / 365.0) + v + case when i between 500 and 506 then 0.5 else 0 end   -- season + common shock at 500
+             + case when k <= 2 and i between 700 and 706 then 0.30 else 0 end;
+      row_ps[i] := acc; row_pc[i] := i;
+    end loop;
+    if k = 1 then ps := array[row_ps]; pc := array[row_pc]; else ps := ps || row_ps; pc := pc || row_pc; end if;
+  end loop;
+  -- T20 DiD recovers the injected effect at day 700 (treated R01,R02), common shock at day 500 cancels (|d| small)
+  j := ripples.att_fx_calc(ps, pc, days, regs, 'day', array['R01', 'R02'], days[700], 28, 7, 0, true, 0.11, cfg);
+  j0 := ripples.att_fx_calc(ps, pc, days, regs, 'day', array['R01', 'R02'], days[500], 28, 7, 0, true, 0.12, cfg);
+  ok := abs((j ->> 'd')::float8 - 0.30) < 0.06 and (j ->> 'p_space')::float8 <= 0.10 and (j ->> 'z')::float8 > 3
+        and abs((j0 ->> 'd')::float8) < 0.08 and (j0 ->> 'p_space')::float8 > 0.10;
+  res := ripples._att_t(res, 'T20 DiD: injected +0.30 recovered, common shock cancels', ok,
+           jsonb_build_object('d', j ->> 'd', 'z', j ->> 'z', 'p_space', j ->> 'p_space', 'p_pre', j ->> 'p_pre', 'shock_d', j0 ->> 'd', 'shock_p_space', j0 ->> 'p_space'));
+  -- T21 pre-trends flat on the injected event, synthetic control agrees in sign with a large RMSPE ratio
+  ok := (j ->> 'p_pre')::float8 >= 0.10 and (j ->> 'synth_d')::float8 > 0.15 and (j ->> 'synth_ratio')::float8 > 2 and (j ->> 'synth_p')::float8 <= 0.15;
+  res := ripples._att_t(res, 'T21 pre-trend joint test flat; synthetic control recovers sign with RMSPE-ratio rank p', ok,
+           jsonb_build_object('p_pre', j ->> 'p_pre', 'lead', j -> 'lead', 'synth_d', j ->> 'synth_d', 'synth_ratio', j ->> 'synth_ratio', 'synth_p', j ->> 'synth_p'));
+  -- T22 a pre-trending treated unit is caught: add a ramp to R03 before day 800 and test R03 at day 800
+  -- ps is a prefix sum: a daily ramp of +0.01/day from day 761 is the prefix 0.01·m(m+1)/2 with m = i − 760
+  for i in 761..n loop ps[3][i] := ps[3][i] + 0.01 * (i - 760) * (i - 759) / 2.0; end loop;
+  j0 := ripples.att_fx_calc(ps, pc, days, regs, 'day', array['R03'], days[800], 28, 7, 0, false, 0.13, cfg);
+  ok := (j0 ->> 'p_pre')::float8 < 0.10;
+  res := ripples._att_t(res, 'T22 pre-trending treated unit fails the flat-leads test', ok, jsonb_build_object('p_pre', j0 ->> 'p_pre', 'lead', j0 -> 'lead', 'd', j0 ->> 'd'));
+  -- T23 Wilson interval and BH labelling helpers
+  w := ripples.att_fx_wilson(0, 20);
+  ok := w[1] = 0 and abs(w[2] - 0.161) < 0.01;
+  w := ripples.att_fx_wilson(2, 40);
+  ok := ok and abs(w[1] - 0.0138) < 0.005 and abs(w[2] - 0.162) < 0.01;
+  ok := ok and ripples.att_fx_idx(days, days[10]) = 10 and ripples.att_fx_idx(days, days[10] - 1) = 9 and ripples.att_fx_idx(days, days[n] + 1) is null;
+  res := ripples._att_t(res, 'T23 Wilson CI (0/20, 2/40) and obs-index search', ok, jsonb_build_object('w0', ripples.att_fx_wilson(0, 20), 'w2', ripples.att_fx_wilson(2, 40)));
+  -- T24 hook invariants: installed exactly once in the LIVE att_finalize; idempotent; substantive failures are never liftable
+  select pg_get_functiondef(p.oid) into def from pg_proc p join pg_namespace n2 on n2.oid = p.pronamespace where n2.nspname = 'ripples' and p.proname = 'att_finalize';
+  ok := (length(def) - length(replace(def, 'ripples.att_fx_hook(r.hop_id, r.look_no, fails)', ''))) / length('ripples.att_fx_hook(r.hop_id, r.look_no, fails)') = 1
+        and (ripples.att_fx_hook_install() ->> 'already')::boolean;
+  hk := ripples.att_fx_hook(-1, 1, array['common shock day', 'already moving', 'q above 0.05']);
+  ok := ok and hk = array['common shock day', 'already moving', 'q above 0.05'];
+  select pg_get_functiondef(p.oid) into def from pg_proc p join pg_namespace n2 on n2.oid = p.pronamespace where n2.nspname = 'ripples' and p.proname = 'att_fx_hook';
+  ok := ok and position('''common shock day''' in split_part(def, 'lifted := array(', 2)) = 0 and position('''already moving''' in split_part(def, 'lifted := array(', 2)) = 0
+        and position('''reversed''' in split_part(def, 'lifted := array(', 2)) = 0;
+  res := ripples._att_t(res, 'T24 6.2 hook installed once, idempotent, unknown hop is a no-op, common-shock / already-moving / reversed never lifted', ok, jsonb_build_object('hook_noop', hk));
+  -- T25 the Thanksgiving-week storm (2025-11-26, New York) on the real grid panel: whatever the contrast says, the hook cannot clear
+  -- 'common shock day' (registered holiday) — Measured stays unreachable by construction
+  hk := ripples.att_fx_hook(-1, 1, array['common shock day']);
+  ok := hk = array['common shock day'] and ripples.att_holiday('2025-11-27') = 'us_thanksgiving';
+  res := ripples._att_t(res, 'T25 Thanksgiving-week storm: common-shock failure survives the 6.2 hook', ok, jsonb_build_object('fails', hk));
+  return jsonb_build_object('ok', (select bool_and((x ->> 'ok')::boolean) from jsonb_array_elements(res) x), 'tests', res);
+end $$;
+revoke all on function ripples.att_test_engine_62() from anon, authenticated, public;
