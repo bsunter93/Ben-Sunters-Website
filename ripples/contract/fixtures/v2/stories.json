@@ -8,41 +8,189 @@
       "story_id": "cascade:1201:9001",
       "kind": "cascade",
       "archetype": "Detour",
-      "archetypes": ["Detour", "Delay"],
-      "event": {"event_id": 1201, "slug": "hurricane-polo-1201", "label": "Hurricane Polo", "emoji": "🌀", "family": "hazard.storm", "onset": "2026-09-22", "sensitive": true, "reconstructed": false, "is_control": false},
+      "archetypes": [
+        "Detour",
+        "Delay"
+      ],
+      "event": {
+        "event_id": 1201,
+        "slug": "hurricane-polo-1201",
+        "label": "Hurricane Polo",
+        "emoji": "🌀",
+        "family": "hazard.storm",
+        "onset": "2026-09-22",
+        "sensitive": true,
+        "reconstructed": false,
+        "is_control": false
+      },
       "pattern": null,
       "tier": "measured",
       "tier_wording": "Measured movement, not proof of cause.",
       "engine_tier": "measured",
       "demoted": false,
       "gate_reason": null,
-      "hero": {"hop_id": 9002, "label": "Florida initial jobless claims", "domain": "jobs", "tier": "measured", "rho": 1.31, "unit": "x", "lag_days": 18, "onset": "2026-10-10",
-               "p_1_in": 58, "f_1_in": 20, "channels": {"agree": 2, "of": 3},
-               "sentence": "Florida initial jobless claims ran 1.31× its normal for a mid-October Thursday, starting 18 days after Hurricane Polo. Measured movement, not proof of cause."},
-      "spine": [9001, 9002],
-      "branches": [9003],
+      "hero": {
+        "hop_id": 9002,
+        "label": "Florida initial jobless claims",
+        "domain": "jobs",
+        "tier": "measured",
+        "rho": 1.31,
+        "unit": "x",
+        "lag_days": 18,
+        "onset": "2026-10-10",
+        "p_1_in": 58,
+        "f_1_in": 20,
+        "channels": {
+          "agree": 2,
+          "of": 3
+        },
+        "sentence": "Florida initial jobless claims ran 1.31× its normal for a mid-October Thursday, starting 18 days after Hurricane Polo. Measured movement, not proof of cause."
+      },
+      "spine": [
+        9001,
+        9002
+      ],
+      "branches": [
+        9003
+      ],
       "graph": {
         "nodes": [
-          {"hop_id": 9001, "depth": 1, "label": "US air travellers", "domain": "real_world", "kind": "outcome", "tier": "measured", "provisional": false, "rho": 0.91, "unit": "x", "lag_days": 1, "onset": "2026-09-23", "window_close": "2026-09-29", "p_1_in": 58, "f_1_in": 20, "channels": {"agree": 2, "of": 3}},
-          {"hop_id": 9002, "depth": 2, "label": "Florida initial jobless claims", "domain": "jobs", "kind": "outcome", "tier": "measured", "provisional": false, "rho": 1.31, "unit": "x", "lag_days": 18, "onset": "2026-10-10", "window_close": "2026-10-20", "p_1_in": 58, "f_1_in": 20, "channels": {"agree": 2, "of": 3}},
-          {"hop_id": 9003, "depth": 1, "label": "FEMA declarations in Florida", "domain": "institutions", "kind": "outcome", "tier": "likely", "provisional": false, "rho": 2.1, "unit": "x", "lag_days": 3, "onset": "2026-09-25", "window_close": "2026-12-21", "p_1_in": 19, "f_1_in": null, "channels": {"agree": 1, "of": 1}}
+          {
+            "kind": "outcome",
+            "provisional": false,
+            "rho": 0.91,
+            "unit": "x",
+            "lag_days": 1,
+            "onset": "2026-09-23",
+            "window_close": "2026-09-29",
+            "p_1_in": 58,
+            "f_1_in": 20,
+            "channels": {
+              "agree": 2,
+              "of": 3
+            },
+            "p_hat": null,
+            "hop_id": 9001,
+            "depth": 1,
+            "label": "US air travellers",
+            "domain": "real_world",
+            "tier": "measured"
+          },
+          {
+            "kind": "outcome",
+            "provisional": false,
+            "rho": 1.31,
+            "unit": "x",
+            "lag_days": 18,
+            "onset": "2026-10-10",
+            "window_close": "2026-10-20",
+            "p_1_in": 58,
+            "f_1_in": 20,
+            "channels": {
+              "agree": 2,
+              "of": 3
+            },
+            "p_hat": null,
+            "hop_id": 9002,
+            "depth": 2,
+            "label": "Florida initial jobless claims",
+            "domain": "jobs",
+            "tier": "measured"
+          },
+          {
+            "kind": "outcome",
+            "provisional": false,
+            "rho": 2.1,
+            "unit": "x",
+            "lag_days": 3,
+            "onset": "2026-09-25",
+            "window_close": "2026-12-21",
+            "p_1_in": 19,
+            "f_1_in": null,
+            "channels": {
+              "agree": 1,
+              "of": 1
+            },
+            "p_hat": null,
+            "hop_id": 9003,
+            "depth": 1,
+            "label": "FEMA declarations in Florida",
+            "domain": "institutions",
+            "tier": "likely"
+          }
         ],
         "edges": [
-          {"from": "event", "to": 9001, "kind": "fork"},
-          {"from": 9001, "to": 9002, "kind": "chain", "engine_parent": 9001, "mediation": "supported"},
-          {"from": "event", "to": 9003, "kind": "fork"}
+          {
+            "from": "event",
+            "to": 9001,
+            "kind": "fork"
+          },
+          {
+            "from": 9001,
+            "to": 9002,
+            "kind": "chain",
+            "engine_parent": 9001,
+            "mediation": "supported"
+          },
+          {
+            "from": "event",
+            "to": 9003,
+            "kind": "fork"
+          }
         ]
       },
       "mediation_supported": true,
-      "scores": {"story": 0.81, "coherence": 0.95, "temporal": 1, "mechanism": 0.9, "evidence_at_transitions": 1, "surprise": 0.72, "magnitude": 0.9, "shock": 0.86, "novelty": 1, "shareability": 0.9,
-                 "visual_clarity": 0.79, "common_cause_risk": 0, "domain_diversity": 3, "independent_confirmations": 3, "branching_noise": 0.3, "length": 2, "replication": 0.71},
-      "replication": {"n_similar": 7, "n_seen": 5, "n_strict": 2, "strength": "pattern", "effect": 2.6, "wording": "moved in the expected direction after 5 of 7 similar events",
-                      "examples": [{"event_id": 2251, "label": "Hurricane Beryl (2024)", "onset": "2024-07-08", "slug": null}],
-                      "this_event_regional": {"pass": true, "p_space": 0.032}},
+      "scores": {
+        "story": 0.81,
+        "coherence": 0.95,
+        "temporal": 1,
+        "mechanism": 0.9,
+        "evidence_at_transitions": 1,
+        "surprise": 0.72,
+        "magnitude": 0.9,
+        "shock": 0.86,
+        "novelty": 1,
+        "shareability": 0.9,
+        "visual_clarity": 0.79,
+        "common_cause_risk": 0,
+        "domain_diversity": 3,
+        "independent_confirmations": 3,
+        "branching_noise": 0.3,
+        "length": 2,
+        "replication": 0.71
+      },
+      "replication": {
+        "n_similar": 7,
+        "n_seen": 5,
+        "n_strict": 2,
+        "strength": "pattern",
+        "effect": 2.6,
+        "wording": "moved in the expected direction after 5 of 7 similar events",
+        "examples": [
+          {
+            "event_id": 2251,
+            "label": "Hurricane Beryl (2024)",
+            "onset": "2024-07-08",
+            "slug": null
+          }
+        ],
+        "this_event_regional": {
+          "pass": true,
+          "p_space": 0.032
+        }
+      },
       "watching": null,
       "headline": "Hurricane Polo: 18 days later, something moved in Florida initial jobless claims.",
-      "why": ["a named mechanism at every step (mechanism library)", "3 independent confirmations", "moved in the expected direction after 5 of 7 similar events", "crosses 3 domains"],
-      "visual_density": {"n": 12, "bucket": "medium"},
+      "why": [
+        "a named mechanism at every step (mechanism library)",
+        "3 independent confirmations",
+        "moved in the expected direction after 5 of 7 similar events",
+        "crosses 3 domains"
+      ],
+      "visual_density": {
+        "n": 12,
+        "bucket": "medium"
+      },
       "quiet": true,
       "is_control": false,
       "version": 3,
@@ -51,26 +199,89 @@
       "short_title": "Hurricane Polo → Florida initial jobless claims",
       "conversation_hook": null,
       "share_line": "Hurricane Polo → Florida initial jobless claims · Measured · 18 days · 3 domains · consistent with, never proof of cause · https://bensunter.com/ripples/line/hurricane-polo-1201/stop/9002/",
-      "travel": {"domains_crossed": 3, "days": 18, "depth": 2},
-      "share": {"slug": "hurricane-polo-1201-stop-9002", "version": 3, "created_at": "2026-09-26T04:13:51+00:00", "refreshed_at": "2026-09-26T04:13:51+00:00",
-                "grown_since": {"version": 2, "stops_added": 1}, "og": "v2/og/stop-9002.png",
-                "reopen": {"event_id": 1201, "hop_id": 9002, "version": 3, "grid_id": 6, "kind": "cascade"}},
+      "travel": {
+        "domains_crossed": 3,
+        "days": 18,
+        "depth": 2
+      },
+      "share": {
+        "slug": "hurricane-polo-1201-stop-9002",
+        "version": 3,
+        "created_at": "2026-09-26T04:13:51+00:00",
+        "refreshed_at": "2026-09-26T04:13:51+00:00",
+        "grown_since": {
+          "version": 2,
+          "stops_added": 1
+        },
+        "og": "v2/og/stop-9002.png",
+        "reopen": {
+          "event_id": 1201,
+          "hop_id": 9002,
+          "version": 3,
+          "grid_id": 6,
+          "kind": "cascade"
+        }
+      },
       "next": {
-        "same_event": [{"story_id": "cascade:1201:9003", "short_title": "Hurricane Polo → FEMA declarations in Florida", "tier": "likely", "archetype": "Funnel"}],
-        "same_stop": [{"story_id": "cascade:1188:8801", "short_title": "Hurricane Nadine → Florida initial jobless claims", "tier": "likely", "archetype": null}],
+        "same_event": [
+          {
+            "story_id": "cascade:1201:9003",
+            "short_title": "Hurricane Polo → FEMA declarations in Florida",
+            "tier": "likely",
+            "archetype": "Funnel"
+          }
+        ],
+        "same_stop": [
+          {
+            "story_id": "cascade:1188:8801",
+            "short_title": "Hurricane Nadine → Florida initial jobless claims",
+            "tier": "likely",
+            "archetype": null
+          }
+        ],
         "stop_connections": 4,
-        "same_domain": {"domain": "jobs", "url": "https://bensunter.com/ripples/lands/jobs/", "n_stories": 3},
-        "one_more": {"story_id": "pattern:17", "short_title": "Cold snaps → regional grid electricity demand", "archetype": null}
+        "same_domain": {
+          "domain": "jobs",
+          "url": "https://bensunter.com/ripples/lands/jobs/",
+          "n_stories": 3
+        },
+        "one_more": {
+          "story_id": "pattern:17",
+          "short_title": "Cold snaps → regional grid electricity demand",
+          "archetype": null
+        }
       }
     },
     {
       "story_id": "pattern:10",
       "kind": "pattern",
       "archetype": "Blind Spot",
-      "archetypes": ["Blind Spot"],
+      "archetypes": [
+        "Blind Spot"
+      ],
       "event": null,
-      "pattern": {"id": 10, "family": "hazard.storm", "family_label": "Storm", "sub": "hurricane", "outcome_label": "state new-business applications", "n_events": 23, "effect": -3.2, "ci": [-6.3, 0],
-                  "unit": "pct", "q": 0.0415, "p_placebo": 0.0033, "strength": "strong pattern", "window": {"pre": 8, "post": 4, "grain": "week"}},
+      "pattern": {
+        "id": 10,
+        "family": "hazard.storm",
+        "family_label": "Storm",
+        "sub": "hurricane",
+        "outcome_label": "state new-business applications",
+        "n_events": 23,
+        "effect": -3.2,
+        "ci": [
+          -6.3,
+          0
+        ],
+        "unit": "pct",
+        "q": 0.0415,
+        "p_placebo": 0.0033,
+        "strength": "strong pattern",
+        "window": {
+          "pre": 8,
+          "post": 4,
+          "grain": "week"
+        }
+      },
       "tier": "strong pattern",
       "tier_wording": "A pattern across past events, not evidence about any one event. Consistent with, never proof of cause.",
       "engine_tier": "strong pattern",
@@ -79,15 +290,51 @@
       "hero": null,
       "spine": [],
       "branches": [],
-      "graph": {"nodes": [], "edges": []},
+      "graph": {
+        "nodes": [],
+        "edges": []
+      },
       "mediation_supported": true,
-      "scores": {"story": 0.8, "coherence": 0.94, "temporal": 0.87, "mechanism": 1, "evidence_at_transitions": 1, "surprise": 0.8, "magnitude": 0.13, "shock": 0.85, "novelty": 1, "shareability": 0.83,
-                 "visual_clarity": 1, "common_cause_risk": 0, "domain_diversity": 2, "independent_confirmations": 3, "branching_noise": 0, "length": 1, "replication": 0.39},
-      "replication": {"n_similar": 23, "n_seen": 9, "n_strict": 1, "strength": "strong pattern", "effect": -3.2, "wording": "moved in the expected direction after 9 of 23 past events", "examples": [], "this_event_regional": null},
+      "scores": {
+        "story": 0.8,
+        "coherence": 0.94,
+        "temporal": 0.87,
+        "mechanism": 1,
+        "evidence_at_transitions": 1,
+        "surprise": 0.8,
+        "magnitude": 0.13,
+        "shock": 0.85,
+        "novelty": 1,
+        "shareability": 0.83,
+        "visual_clarity": 1,
+        "common_cause_risk": 0,
+        "domain_diversity": 2,
+        "independent_confirmations": 3,
+        "branching_noise": 0,
+        "length": 1,
+        "replication": 0.39
+      },
+      "replication": {
+        "n_similar": 23,
+        "n_seen": 9,
+        "n_strict": 1,
+        "strength": "strong pattern",
+        "effect": -3.2,
+        "wording": "moved in the expected direction after 9 of 23 past events",
+        "examples": [],
+        "this_event_regional": null
+      },
       "watching": null,
       "headline": "Hurricanes → state new-business applications: -3.2% over 4 weeks, measured across 23 past events",
-      "why": ["affected vs unaffected regions, season-matched placebo events", "strength: strong pattern (about 1 in 20 findings at this level could be a fluke)", "crosses into a different domain (business)"],
-      "visual_density": {"n": 23, "bucket": "medium"},
+      "why": [
+        "affected vs unaffected regions, season-matched placebo events",
+        "strength: strong pattern (about 1 in 20 findings at this level could be a fluke)",
+        "crosses into a different domain (business)"
+      ],
+      "visual_density": {
+        "n": 23,
+        "bucket": "medium"
+      },
       "quiet": true,
       "is_control": false,
       "version": null,
@@ -96,40 +343,164 @@
       "short_title": "Hurricanes → state new-business applications",
       "conversation_hook": "Seen across 23 past events, not one.",
       "share_line": "Hurricanes → state new-business applications · -3.2% across 23 past events · a pattern, never proof of cause · https://bensunter.com/ripples/patterns/#p10",
-      "travel": {"domains_crossed": 2, "days": 28, "depth": 1},
-      "share": {"slug": "pattern-10", "version": null, "created_at": "2026-09-26T04:13:51+00:00", "refreshed_at": "2026-09-26T04:13:51+00:00", "grown_since": null, "og": null,
-                "reopen": {"event_id": null, "hop_id": null, "version": null, "grid_id": 10, "kind": "pattern"}},
-      "next": {"same_event": [], "same_stop": [], "stop_connections": 0, "same_domain": {"domain": "business", "url": "https://bensunter.com/ripples/lands/business/", "n_stories": 0},
-               "one_more": {"story_id": "pattern:17", "short_title": "Cold snaps → regional grid electricity demand", "archetype": null}}
+      "travel": {
+        "domains_crossed": 2,
+        "days": 28,
+        "depth": 1
+      },
+      "share": {
+        "slug": "pattern-10",
+        "version": null,
+        "created_at": "2026-09-26T04:13:51+00:00",
+        "refreshed_at": "2026-09-26T04:13:51+00:00",
+        "grown_since": null,
+        "og": null,
+        "reopen": {
+          "event_id": null,
+          "hop_id": null,
+          "version": null,
+          "grid_id": 10,
+          "kind": "pattern"
+        }
+      },
+      "next": {
+        "same_event": [],
+        "same_stop": [],
+        "stop_connections": 0,
+        "same_domain": {
+          "domain": "business",
+          "url": "https://bensunter.com/ripples/lands/business/",
+          "n_stories": 0
+        },
+        "one_more": {
+          "story_id": "pattern:17",
+          "short_title": "Cold snaps → regional grid electricity demand",
+          "archetype": null
+        }
+      }
     },
     {
       "story_id": "watching:1201:9004",
       "kind": "watching",
       "archetype": null,
       "archetypes": [],
-      "event": {"event_id": 1201, "slug": "hurricane-polo-1201", "label": "Hurricane Polo", "emoji": "🌀", "family": "hazard.storm", "onset": "2026-09-22", "sensitive": true, "reconstructed": false, "is_control": false},
+      "event": {
+        "event_id": 1201,
+        "slug": "hurricane-polo-1201",
+        "label": "Hurricane Polo",
+        "emoji": "🌀",
+        "family": "hazard.storm",
+        "onset": "2026-09-22",
+        "sensitive": true,
+        "reconstructed": false,
+        "is_control": false
+      },
       "pattern": null,
       "tier": "watching",
       "tier_wording": "Too early to tell. The mechanism exists; no measurable move yet.",
       "engine_tier": "watching",
       "demoted": false,
       "gate_reason": null,
-      "hero": {"hop_id": 9004, "label": "Florida new-business applications", "domain": "markets", "tier": "watching", "rho": null, "unit": "x", "lag_days": null, "onset": null,
-               "p_1_in": null, "f_1_in": null, "channels": {"agree": 0, "of": 1},
-               "sentence": "Florida new-business applications: too early to tell. Window closes 2026-10-20. Similar storm events: a move by then about 1 in 5 times."},
-      "spine": [9004],
+      "hero": {
+        "hop_id": 9004,
+        "label": "Florida new-business applications",
+        "domain": "markets",
+        "tier": "watching",
+        "rho": null,
+        "unit": "x",
+        "lag_days": null,
+        "onset": null,
+        "p_1_in": null,
+        "f_1_in": null,
+        "channels": {
+          "agree": 0,
+          "of": 1
+        },
+        "sentence": "Florida new-business applications: too early to tell. Window closes 2026-10-20. Similar storm events: a move by then about 1 in 5 times."
+      },
+      "spine": [
+        9004
+      ],
       "branches": [],
-      "graph": {"nodes": [{"hop_id": 9004, "depth": 1, "label": "Florida new-business applications", "domain": "markets", "kind": "outcome", "tier": "watching", "provisional": false, "rho": null, "unit": "x",
-                           "lag_days": null, "onset": null, "window_close": "2026-10-20", "p_1_in": null, "f_1_in": null, "channels": {"agree": 0, "of": 1}}],
-                "edges": [{"from": "event", "to": 9004, "kind": "fork"}]},
+      "graph": {
+        "nodes": [
+          {
+            "kind": "outcome",
+            "provisional": false,
+            "rho": null,
+            "unit": "x",
+            "lag_days": null,
+            "onset": null,
+            "window_close": "2026-10-20",
+            "p_1_in": null,
+            "f_1_in": null,
+            "channels": {
+              "agree": 0,
+              "of": 1
+            },
+            "p_hat": null,
+            "hop_id": 9004,
+            "depth": 1,
+            "label": "Florida new-business applications",
+            "domain": "markets",
+            "tier": "watching"
+          }
+        ],
+        "edges": [
+          {
+            "from": "event",
+            "to": 9004,
+            "kind": "fork"
+          }
+        ]
+      },
       "mediation_supported": true,
-      "scores": {"story": 0.46, "coherence": 0.75, "temporal": 0.5, "mechanism": 1, "evidence_at_transitions": 0.2, "surprise": 0.53, "magnitude": 0, "shock": 0.86, "novelty": 1, "shareability": 0.38,
-                 "visual_clarity": 1, "common_cause_risk": 0, "domain_diversity": 1, "independent_confirmations": 0, "branching_noise": 0.3, "length": 1, "replication": 0.39},
-      "replication": {"n_similar": 23, "n_seen": 9, "n_strict": 1, "strength": "strong pattern", "effect": -3.2, "wording": "moved in the expected direction after 9 of 23 similar events", "examples": [], "this_event_regional": null},
-      "watching": {"window_close": "2026-10-20", "next_look": "2026-10-06", "days_to_resolve": 24, "p_hat": 0.2, "expected_1_in": 5},
+      "scores": {
+        "story": 0.46,
+        "coherence": 0.75,
+        "temporal": 0.5,
+        "mechanism": 1,
+        "evidence_at_transitions": 0.2,
+        "surprise": 0.53,
+        "magnitude": 0,
+        "shock": 0.86,
+        "novelty": 1,
+        "shareability": 0.38,
+        "visual_clarity": 1,
+        "common_cause_risk": 0,
+        "domain_diversity": 1,
+        "independent_confirmations": 0,
+        "branching_noise": 0.3,
+        "length": 1,
+        "replication": 0.39
+      },
+      "replication": {
+        "n_similar": 23,
+        "n_seen": 9,
+        "n_strict": 1,
+        "strength": "strong pattern",
+        "effect": -3.2,
+        "wording": "moved in the expected direction after 9 of 23 similar events",
+        "examples": [],
+        "this_event_regional": null
+      },
+      "watching": {
+        "window_close": "2026-10-20",
+        "next_look": "2026-10-06",
+        "days_to_resolve": 24,
+        "p_hat": 0.2,
+        "expected_1_in": 5
+      },
       "headline": "Hurricane Polo: something is still being watched in Florida new-business applications.",
-      "why": ["a named mechanism at every step (mechanism library)", "moved in the expected direction after 9 of 23 similar events", "window closes in 24 days; we expect a move about 1 in 5 times"],
-      "visual_density": {"n": 12, "bucket": "medium"},
+      "why": [
+        "a named mechanism at every step (mechanism library)",
+        "moved in the expected direction after 9 of 23 similar events",
+        "window closes in 24 days; we expect a move about 1 in 5 times"
+      ],
+      "visual_density": {
+        "n": 12,
+        "bucket": "medium"
+      },
       "quiet": true,
       "is_control": false,
       "version": 3,
@@ -138,39 +509,162 @@
       "short_title": "Hurricane Polo → Florida new-business applications?",
       "conversation_hook": null,
       "share_line": "Hurricane Polo → Florida new-business applications? · still being watched, closes in 24 days · https://bensunter.com/ripples/line/hurricane-polo-1201/stop/9004/",
-      "travel": {"domains_crossed": 1, "days": 0, "depth": 1},
-      "share": {"slug": "hurricane-polo-1201-stop-9004", "version": 3, "created_at": "2026-09-26T04:13:51+00:00", "refreshed_at": "2026-09-26T04:13:51+00:00", "grown_since": {"version": 2, "stops_added": 1}, "og": "v2/og/stop-9004.png",
-                "reopen": {"event_id": 1201, "hop_id": 9004, "version": 3, "grid_id": 10, "kind": "watching"}},
-      "next": {"same_event": [{"story_id": "cascade:1201:9001", "short_title": "Hurricane Polo → Florida initial jobless claims", "tier": "measured", "archetype": "Detour"}], "same_stop": [], "stop_connections": 2,
-               "same_domain": {"domain": "markets", "url": "https://bensunter.com/ripples/lands/markets/", "n_stories": 1}, "one_more": {"story_id": "pattern:17", "short_title": "Cold snaps → regional grid electricity demand", "archetype": null}}
+      "travel": {
+        "domains_crossed": 1,
+        "days": 0,
+        "depth": 1
+      },
+      "share": {
+        "slug": "hurricane-polo-1201-stop-9004",
+        "version": 3,
+        "created_at": "2026-09-26T04:13:51+00:00",
+        "refreshed_at": "2026-09-26T04:13:51+00:00",
+        "grown_since": {
+          "version": 2,
+          "stops_added": 1
+        },
+        "og": "v2/og/stop-9004.png",
+        "reopen": {
+          "event_id": 1201,
+          "hop_id": 9004,
+          "version": 3,
+          "grid_id": 10,
+          "kind": "watching"
+        }
+      },
+      "next": {
+        "same_event": [
+          {
+            "story_id": "cascade:1201:9001",
+            "short_title": "Hurricane Polo → Florida initial jobless claims",
+            "tier": "measured",
+            "archetype": "Detour"
+          }
+        ],
+        "same_stop": [],
+        "stop_connections": 2,
+        "same_domain": {
+          "domain": "markets",
+          "url": "https://bensunter.com/ripples/lands/markets/",
+          "n_stories": 1
+        },
+        "one_more": {
+          "story_id": "pattern:17",
+          "short_title": "Cold snaps → regional grid electricity demand",
+          "archetype": null
+        }
+      }
     },
     {
       "story_id": "non_event:1201:9005",
       "kind": "non_event",
       "archetype": "Dead end",
-      "archetypes": ["Dead end", "Collapse"],
-      "event": {"event_id": 1201, "slug": "hurricane-polo-1201", "label": "Hurricane Polo", "emoji": "🌀", "family": "hazard.storm", "onset": "2026-09-22", "sensitive": true, "reconstructed": false, "is_control": false},
+      "archetypes": [
+        "Dead end",
+        "Collapse"
+      ],
+      "event": {
+        "event_id": 1201,
+        "slug": "hurricane-polo-1201",
+        "label": "Hurricane Polo",
+        "emoji": "🌀",
+        "family": "hazard.storm",
+        "onset": "2026-09-22",
+        "sensitive": true,
+        "reconstructed": false,
+        "is_control": false
+      },
       "pattern": null,
       "tier": "flat",
       "tier_wording": "Expected to move; it stayed flat. The window closed without a detectable move.",
       "engine_tier": "flat",
       "demoted": false,
       "gate_reason": null,
-      "hero": {"hop_id": 9005, "label": "US regular gasoline price (weekly)", "domain": "markets", "tier": "flat", "rho": null, "unit": "x", "lag_days": null, "onset": null,
-               "p_1_in": null, "f_1_in": null, "channels": {"agree": 0, "of": 0},
-               "sentence": "US regular gasoline price (weekly): expected to move about 1 in 5 times after Hurricane Polo; it stayed flat. The window closed 2026-10-06 without a detectable move."},
-      "spine": [9005],
+      "hero": {
+        "hop_id": 9005,
+        "label": "US regular gasoline price (weekly)",
+        "domain": "markets",
+        "tier": "flat",
+        "rho": null,
+        "unit": "x",
+        "lag_days": null,
+        "onset": null,
+        "p_1_in": null,
+        "f_1_in": null,
+        "channels": {
+          "agree": 0,
+          "of": 0
+        },
+        "sentence": "US regular gasoline price (weekly): expected to move about 1 in 5 times after Hurricane Polo; it stayed flat. The window closed 2026-10-06 without a detectable move."
+      },
+      "spine": [
+        9005
+      ],
       "branches": [],
-      "graph": {"nodes": [{"hop_id": 9005, "depth": 1, "label": "US regular gasoline price (weekly)", "domain": "markets", "tier": "flat", "window_close": "2026-10-06", "p_hat": 0.2}],
-                "edges": [{"from": "event", "to": 9005, "kind": "fork"}]},
+      "graph": {
+        "nodes": [
+          {
+            "kind": null,
+            "provisional": false,
+            "rho": null,
+            "unit": "x",
+            "lag_days": null,
+            "onset": null,
+            "window_close": "2026-10-06",
+            "p_1_in": null,
+            "f_1_in": null,
+            "channels": null,
+            "p_hat": 0.2,
+            "hop_id": 9005,
+            "depth": 1,
+            "label": "US regular gasoline price (weekly)",
+            "domain": "markets",
+            "tier": "flat"
+          }
+        ],
+        "edges": [
+          {
+            "from": "event",
+            "to": 9005,
+            "kind": "fork"
+          }
+        ]
+      },
       "mediation_supported": true,
-      "scores": {"story": 0.43, "coherence": 1, "temporal": 1, "mechanism": 1, "evidence_at_transitions": 0, "surprise": 0.5, "magnitude": 0, "shock": 0.86, "novelty": 1, "shareability": 0.3,
-                 "visual_clarity": 0.77, "common_cause_risk": 0, "domain_diversity": 1, "independent_confirmations": 0, "branching_noise": 0.3, "length": 1, "replication": 0},
+      "scores": {
+        "story": 0.43,
+        "coherence": 1,
+        "temporal": 1,
+        "mechanism": 1,
+        "evidence_at_transitions": 0,
+        "surprise": 0.5,
+        "magnitude": 0,
+        "shock": 0.86,
+        "novelty": 1,
+        "shareability": 0.3,
+        "visual_clarity": 0.77,
+        "common_cause_risk": 0,
+        "domain_diversity": 1,
+        "independent_confirmations": 0,
+        "branching_noise": 0.3,
+        "length": 1,
+        "replication": 0
+      },
       "replication": null,
-      "watching": {"window_close": "2026-10-06", "p_hat": 0.2, "expected_1_in": 5, "resolved": "flat"},
+      "watching": {
+        "window_close": "2026-10-06",
+        "p_hat": 0.2,
+        "expected_1_in": 5,
+        "resolved": "flat"
+      },
       "headline": "Hurricane Polo: the expected move in US regular gasoline price (weekly) never came.",
-      "why": ["a named mechanism at every step (mechanism library)"],
-      "visual_density": {"n": 12, "bucket": "medium"},
+      "why": [
+        "a named mechanism at every step (mechanism library)"
+      ],
+      "visual_density": {
+        "n": 12,
+        "bucket": "medium"
+      },
       "quiet": true,
       "is_control": false,
       "version": 3,
@@ -179,13 +673,53 @@
       "short_title": "Hurricane Polo → US regular gasoline price (weekly): dead end",
       "conversation_hook": null,
       "share_line": "Hurricane Polo → US regular gasoline price (weekly): dead end · stayed flat · https://bensunter.com/ripples/line/hurricane-polo-1201/stop/9005/",
-      "travel": {"domains_crossed": 0, "days": null, "depth": 0},
-      "share": {"slug": "hurricane-polo-1201-stop-9005", "version": 3, "created_at": "2026-09-26T04:13:51+00:00", "refreshed_at": "2026-09-26T04:13:51+00:00", "grown_since": {"version": 2, "stops_added": 1}, "og": "v2/og/stop-9005.png",
-                "reopen": {"event_id": 1201, "hop_id": 9005, "version": 3, "grid_id": null, "kind": "non_event"}},
-      "next": {"same_event": [], "same_stop": [], "stop_connections": 0, "same_domain": {"domain": "markets", "url": "https://bensunter.com/ripples/lands/markets/", "n_stories": 1}, "one_more": null}
+      "travel": {
+        "domains_crossed": 0,
+        "days": null,
+        "depth": 0
+      },
+      "share": {
+        "slug": "hurricane-polo-1201-stop-9005",
+        "version": 3,
+        "created_at": "2026-09-26T04:13:51+00:00",
+        "refreshed_at": "2026-09-26T04:13:51+00:00",
+        "grown_since": {
+          "version": 2,
+          "stops_added": 1
+        },
+        "og": "v2/og/stop-9005.png",
+        "reopen": {
+          "event_id": 1201,
+          "hop_id": 9005,
+          "version": 3,
+          "grid_id": null,
+          "kind": "non_event"
+        }
+      },
+      "next": {
+        "same_event": [],
+        "same_stop": [],
+        "stop_connections": 0,
+        "same_domain": {
+          "domain": "markets",
+          "url": "https://bensunter.com/ripples/lands/markets/",
+          "n_stories": 1
+        },
+        "one_more": null
+      }
     }
   ],
-  "counts": {"Detour": 1, "Blind Spot": 1, "Ripple": 1, "Dead end": 1},
-  "pool": {"candidates": 201, "featurable": 156, "public": 31, "events_with_story": 7},
+  "counts": {
+    "Detour": 1,
+    "Blind Spot": 1,
+    "Ripple": 1,
+    "Dead end": 1
+  },
+  "pool": {
+    "candidates": 201,
+    "featurable": 156,
+    "public": 31,
+    "events_with_story": 7
+  },
   "note": "Consistent with, never proof of cause."
 }

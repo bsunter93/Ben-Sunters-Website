@@ -1579,7 +1579,9 @@ language sql stable security definer set search_path = '' as $$
      and (p.proname like 'rm\_%' or p.proname like 'ripples\_%')
      and p.proname not in ('rm_shocks','rm_cascade','rm_hop','rm_lands','rm_archive','rm_week','rm_calibration','rm_health','rm_event',
                            'ripples_latest','ripples_puzzle','ripples_reveal','ripples_callit','ripples_board','ripples_archive',
-                           'ripples_brief','ripples_health','ripples_join','ripples_track_record')
+                           'ripples_brief','ripples_health','ripples_join','ripples_track_record',
+                           'rm_patterns','rm_hop_fx62',          -- engine 6.2 public reads (30_att_engine_62_pooled_regional.sql)
+                           'rm_stories')                          -- story layer public read (31_att_story_layer.sql)
      and pg_catalog.has_function_privilege(r.rolname, p.oid, 'EXECUTE')
    order by 1, 2
 $$;

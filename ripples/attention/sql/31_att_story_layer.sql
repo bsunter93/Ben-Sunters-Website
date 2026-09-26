@@ -709,7 +709,8 @@ begin
       'hero', null, 'spine', '[]'::jsonb, 'branches', '[]'::jsonb, 'graph', jsonb_build_object('nodes', '[]'::jsonb, 'edges', '[]'::jsonb), 'mediation_supported', true,
       'scores', ripples.rm_story_scores(s),
       'replication', jsonb_build_object('n_similar', fe.n_events, 'n_seen', (s.replication ->> 'n_seen')::int, 'n_strict', (s.replication ->> 'n_strict')::int, 'strength', fe.strength,
-                                        'effect', fe.pct, 'wording', 'moved in the expected direction after ' || (s.replication ->> 'n_seen') || ' of ' || fe.n_events || ' past events', 'examples', ex),
+                                        'effect', fe.pct, 'wording', 'moved in the expected direction after ' || (s.replication ->> 'n_seen') || ' of ' || fe.n_events || ' past events', 'examples', ex,
+                                        'this_event_regional', null),
       'watching', null, 'headline', headline, 'why', why, 'visual_density', jsonb_build_object('n', fe.n_events, 'bucket', case when fe.n_events <= 12 then 'sparse' when fe.n_events <= 40 then 'medium' else 'dense' end),
       'quiet', (s.sensitivity ->> 'quiet')::boolean, 'is_control', false, 'version', null, 'url', 'https://bensunter.com/ripples/patterns/#p' || fe.grid_id,
       'story_sentence', s.copy ->> 'story_sentence', 'short_title', s.copy ->> 'short_title', 'conversation_hook', s.copy ->> 'conversation_hook', 'share_line', s.copy ->> 'share_line',
@@ -725,7 +726,9 @@ begin
     lbl := ripples.rm_label_resolve(g ->> 'node', (select n2 ->> 'label' from jsonb_array_elements(coalesce(lv -> 'nodes', '[]'::jsonb) || coalesce(lv -> 'flat', '[]'::jsonb)) n2 where (n2 ->> 'hop_id')::bigint = (g ->> 'hop_id')::bigint limit 1));
     if lbl is null then lbl := ripples.rm_label_resolve(g ->> 'node', ripples.att_node_label(g ->> 'node')); end if;
     if lbl is null then return null; end if;
-    nodes := nodes || ((g - 'node' - 'hidden') || jsonb_build_object('label', lbl));
+    nodes := nodes || (jsonb_build_object('kind', null, 'provisional', false, 'rho', null, 'unit', 'x', 'lag_days', null, 'onset', null, 'window_close', null,
+                                          'p_1_in', null, 'f_1_in', null, 'channels', null, 'p_hat', null)   -- uniform node shape across kinds
+                       || (g - 'node' - 'hidden') || jsonb_build_object('label', lbl));
   end loop;
   select x into hero from jsonb_array_elements(nodes) x where (x ->> 'hop_id')::bigint = s.hero_stop;
   if hero is null then return null; end if;
@@ -858,6 +861,8 @@ language sql stable security definer set search_path = '' as $$
 $$;
 revoke execute on function public.rm_stories(int, int, text) from public, anon, authenticated;
 grant execute on function public.rm_stories(int, int, text) to anon, authenticated, service_role;
+-- rm_grant_audit() (06_rm_public_rpcs.sql) is a hard-coded allowlist and rm_enforce_grants() revokes anything else at every publish:
+-- 'rm_stories' (and 6.2's 'rm_patterns', 'rm_hop_fx62') were added to that allowlist (migration att_story_layer_p5_grant_allowlist).
 grant execute on all functions in schema ripples to service_role;
 
 -- ---------------------------------------------------------------------------------------------------------------------
@@ -867,12 +872,13 @@ create or replace function ripples.rm_story_contract_test() returns jsonb
 language plpgsql stable security definer set search_path = '' as $$
 declare fx jsonb; act jsonb; diffs jsonb; leaks text[]; cov jsonb; kinds jsonb; bad_words int; demoted_bad int; wording_bad int;
 begin
-  select payload into fx from ripples.rm_contract_fixtures where name = 'stories.json';
+  select payload - '_comment' into fx from ripples.rm_contract_fixtures where name = 'stories.json';
   act := public.rm_stories(50, 36500, null);
-  select coalesce(jsonb_agg(x), '[]'::jsonb) into diffs from ripples.rm_shape_diff(fx, act, '$', '{}', array['pattern','event','hero','watching','replication']) x;
+  -- $.counts is a map keyed by archetype (rm_shape_diff map semantics); the kind-specific objects are null where a kind has none
+  select coalesce(jsonb_agg(x), '[]'::jsonb) into diffs from ripples.rm_shape_diff(fx, act, '$', array['$.counts'], array['pattern','event','hero','watching','replication']) x;
   select jsonb_build_object('compared', count(*) filter (where c.state = 'compared'), 'vacuous', count(*) filter (where c.state = 'vacuous'),
-                            'vacuous_paths', coalesce((select jsonb_agg(p) from (select c2.path p from ripples.rm_shape_cover(fx, act, '$', '{}') c2 where c2.state = 'vacuous' order by 1 limit 12) z), '[]'::jsonb))
-    into cov from ripples.rm_shape_cover(fx, act, '$', '{}') c;
+                            'vacuous_paths', coalesce((select jsonb_agg(p) from (select c2.path p from ripples.rm_shape_cover(fx, act, '$', array['$.counts']) c2 where c2.state = 'vacuous' order by 1 limit 12) z), '[]'::jsonb))
+    into cov from ripples.rm_shape_cover(fx, act, '$', array['$.counts']) c;
   leaks := ripples.rm_label_leaks(act, array['node','id','slug','url','story_id','payload_hash','ledger','template','spark','band','series','licences','sources','geo','code','family','sub','story','kind','archetype']);
   select count(*) into bad_words from jsonb_array_elements(act -> 'featured') f, jsonb_path_query(f, 'strict $.**') x
    where jsonb_typeof(x) = 'string' and (x #>> '{}') ~* '\m(caused|drove|because of|flooded into)\M';

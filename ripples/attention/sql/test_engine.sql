@@ -472,7 +472,7 @@ begin
                       where r.hop_id = h and r.p_hat > 0 and c.window_close < today
                         and (select t.tier from ripples.att_hop_tests t where t.hop_id = h and t.tier is not null order by t.look_no desc limit 1) = 'flat');
   ok := n_bad = 0 and not exists (select 1 from ripples.att_story_candidates where story_kind = 'non_event' and (tier <> 'flat' or archetype not in ('Ghost', 'Dead end')))
-        and ripples.att_story_archetypes('non_event', '{}')[1] = 'Dead end' and ripples.att_story_archetypes('ghost', '{}')[1] = 'Ghost'
+        and (ripples.att_story_archetypes('non_event', '{}'))[1] = 'Dead end' and (ripples.att_story_archetypes('ghost', '{}'))[1] = 'Ghost'
         and ripples.att_story_archetypes('cascade', '{"evidence_at_transitions": 0.6}') is distinct from array['Dead end'];
   res := ripples._att_t(res, 'T34 Non-Event stories only for pre-registered expected effects that stayed flat', ok, jsonb_build_object('non_events', n_rows, 'bad', n_bad));
   -- T35 coherence gates exclude regardless of score; the score is pure, bounded, order-only and favours counterintuitive findings (D-16)
@@ -490,15 +490,15 @@ begin
                                                                                         or not (s.fields ->> 'labels_ok')::boolean));
   res := ripples._att_t(res, 'T35 coherence gates exclude regardless of score; score pure, bounded, counterintuitive favoured', ok, jsonb_build_object('unsurprising', s1, 'surprising', s2, 'max', s3, 'min', s4));
   -- T36 the archetype rules are deterministic on fields (one example each of the merged D-14/D-15/D-16 list)
-  ok := ripples.att_story_archetypes('cascade', '{"length": 2, "mediation_supported": true, "domain_diversity": 2, "surprise": 0.7, "evidence_at_transitions": 1}')[1] = 'Detour'
-        and ripples.att_story_archetypes('cascade', '{"event_domains_likely": 3}')[1] = 'Branch'
-        and ripples.att_story_archetypes('cascade', '{"event_domains_likely": 2}')[1] = 'Echo'
-        and ripples.att_story_archetypes('cascade', '{"funnel_siblings": 3}')[1] = 'Funnel'
-        and ripples.att_story_archetypes('cascade', '{"direction_unexpected": true}')[1] = 'Bounce'
-        and ripples.att_story_archetypes('cascade', '{"magnitude": 0.9, "shock": 0.2}')[1] = 'Amplifier'
-        and ripples.att_story_archetypes('cascade', '{"evidence_at_transitions": 0.6, "surprise": 0.7}')[1] = 'Blind Spot'
-        and ripples.att_story_archetypes('cascade', '{"evidence_at_transitions": 0.6, "hero_lag_days": 9}')[1] = 'Delay'
-        and ripples.att_story_archetypes('cascade', '{"shared_stop": true, "event_domains_likely": 3}')[1] = 'Shared Stop'
+  ok := (ripples.att_story_archetypes('cascade', '{"length": 2, "mediation_supported": true, "domain_diversity": 2, "surprise": 0.7, "evidence_at_transitions": 1}'))[1] = 'Detour'
+        and (ripples.att_story_archetypes('cascade', '{"event_domains_likely": 3}'))[1] = 'Branch'
+        and (ripples.att_story_archetypes('cascade', '{"event_domains_likely": 2}'))[1] = 'Echo'
+        and (ripples.att_story_archetypes('cascade', '{"funnel_siblings": 3}'))[1] = 'Funnel'
+        and (ripples.att_story_archetypes('cascade', '{"direction_unexpected": true}'))[1] = 'Bounce'
+        and (ripples.att_story_archetypes('cascade', '{"magnitude": 0.9, "shock": 0.2}'))[1] = 'Amplifier'
+        and (ripples.att_story_archetypes('cascade', '{"evidence_at_transitions": 0.6, "surprise": 0.7}'))[1] = 'Blind Spot'
+        and (ripples.att_story_archetypes('cascade', '{"evidence_at_transitions": 0.6, "hero_lag_days": 9}'))[1] = 'Delay'
+        and (ripples.att_story_archetypes('cascade', '{"shared_stop": true, "event_domains_likely": 3}'))[1] = 'Shared Stop'
         and ripples.att_story_archetypes('watching', '{"evidence_at_transitions": 0.2, "surprise": 0.9}') = '{}'
         and ripples.att_story_archetypes('cascade', '{"length": 2, "mediation_supported": false, "domain_diversity": 2, "surprise": 0.7}') is distinct from array['Detour'];
   res := ripples._att_t(res, 'T36 archetype rules deterministic (Detour needs mediation; Watching has none)', ok, null);
