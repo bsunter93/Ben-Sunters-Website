@@ -83,7 +83,7 @@ function board(S0, fresh) {
   const ctl = S0?.control;
   if (ctl) el.append(h('div', { class: 'dep ctl', role: 'group', 'aria-label': 'The control ripple' },
     h('span', { class: 'ic', 'aria-hidden': 'true' }, em('📄')),
-    h('span', null, h('span', { class: 'nm' }, L.plural(ctl.n_decoys || 1, 'page') + " that weren't trending"), h('span', { class: 'sub' }, strip(ctl.stops || {}, 6, true), sep(), 'same tests')),
+    h('span', null, h('span', { class: 'nm' }, L.plural(ctl.n_decoys || 1, 'page') + " that weren't trending"), h('span', { class: 'sub' }, strip(ctl.stops || {}, 6, true), h('span', { style: 'white-space:nowrap' }, sep(), 'same tests'))),
     h('span', { class: 'dest wat' }, 'the control'), h('span')));
   const dl = L.dayLine(S0?.line), ll = S0?.listed_lines_sum;
   el.append(legend(), h('p', { class: 'bd-foot' },

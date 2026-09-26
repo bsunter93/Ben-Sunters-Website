@@ -238,8 +238,9 @@ function waitlist() {
   const email = h('input', { type: 'email', required: true, maxlength: 254, autocomplete: 'email', placeholder: 'you@example.com', 'aria-label': 'Email address' });
   const out = h('p', { class: 'xs', role: 'status', style: 'margin-top:6px' });
   const f = h('form', { onsubmit: async ev => { ev.preventDefault(); try { await rpc('ripples_join', { p_email: email.value.trim(), p_role: null, p_price: 'free', p_topics: null, p_source: 'line' }); put(out, "Saved. We'll write once, when the email starts."); } catch (e) { put(out, 'That did not save. Please try again later.'); } } }, email, h('button', { class: 'btn sec sm', type: 'submit' }, 'Add me'));
+  const note = h('p', { class: 'xs muted', style: 'margin-top:6px' }, 'We keep the address for this list only; it cannot be read back through the site. ', h('a', { class: 'lnk', href: '/ripples/methods/#privacy' }, 'Privacy'));
   return h('section', { class: 'wl', 'aria-labelledby': 'wl-t' }, h('h2', { id: 'wl-t', style: 'font:700 15px/1.3 var(--sans)' }, 'Want new lines by email?'),
-    h('p', { class: 'sm muted', style: 'margin-top:4px' }, "We don't send email yet. Leave your address and we'll write once, when the daily email starts."), f, out,
+    h('p', { class: 'sm muted', style: 'margin-top:4px' }, "We don't send email yet. Leave your address and we'll write once, when the daily email starts."), f, note, out,
     C.STRIPE.support ? h('p', { class: 'sm', style: 'margin-top:12px' }, h('b', null, 'Support Knock⌃On. '), 'Pay what you want, from $2. It unlocks nothing: the map and archive stay free. ', h('a', { class: 'lnk', href: C.STRIPE.support, target: '_blank', rel: 'noopener' }, 'Support')) : null);
 }
 export async function linePage(r) {

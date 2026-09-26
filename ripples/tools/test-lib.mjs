@@ -89,9 +89,9 @@ for (const f of SHIP) {
 }
 
 // the whole deployable /ripples/ tree, not only the files above: no retired v5 numbered stubs (ripples/{n}/), and every page
-// and built file passes the same copy rules. Out of this sweep: tools/, contract/, attention/ (not served as pages), and pro/
-// and docs/, which are not WS-D pages (their v5 copy is a WS-F decommission item).
-const SKIP = new Set(['tools', 'contract', 'attention', 'pro', 'docs', 'node_modules']);
+// and built file passes the same copy rules. Out of this sweep: tools/, contract/, attention/ (not served as pages), and docs/
+// (the owner's print summary, which quotes the banned words as a list on purpose). /pro/ is in the sweep.
+const SKIP = new Set(['tools', 'contract', 'attention', 'docs', 'node_modules']);
 ok('no v5 numbered stub directories ripples/{n}/', !readdirSync(root).some(d => /^\d+$/.test(d) && statSync(join(root, d)).isDirectory()), readdirSync(root).filter(d => /^\d+$/.test(d)).length + ' found');
 const walk = (d, out = []) => { for (const e of readdirSync(join(root, d), { withFileTypes: true })) { const r = d ? `${d}/${e.name}` : e.name; if (e.isDirectory()) { if (!(d === '' && SKIP.has(e.name))) walk(r, out); } else if (/\.(html|js|css)$/.test(e.name)) out.push(r); } return out; };
 const site = walk('').filter(f => !SHIP.includes(f) && !/^(og|pipeline|ops)\//.test(f));
@@ -103,6 +103,10 @@ for (const f of site) {
   if (f.endsWith('.html') && /fonts\.googleapis|fonts\.gstatic|<script[^>]+src="https?:/i.test(s)) siteBad.push(`${f}: external font or script`);
 }
 ok(`whole /ripples/ tree (${site.length} more files): copy rules`, !siteBad.length, siteBad.slice(0, 5).join('; '));
+// /pro/ is kept as D-1 left it, but under the Ripple Map: no retired game vocabulary or v5 puzzle numbering
+{ const s = readFileSync(join(root, 'pro/index.html'), 'utf8').replace(/value="player"/g, '').replace(/(content="|:\s*)#[0-9a-f]{3,8}\b/gi, '');
+  const m = s.match(/.{0,30}(\bgames?\b|\bpuzzles?\b|\bplay(ing)?\b|\bBoard\b|'#' \+|[^&\w]#\d).{0,30}/i);
+  ok('pro/index.html: no v5 game copy (game, puzzle, play, Board, #N)', !m, m && m[0]); }
 
 // ---------- budget (EXPERIENCE §11): per route, shell HTML + CSS + every JS file it loads ≤ 120 KB uncompressed ----------
 const size = f => statSync(join(root, f)).size;

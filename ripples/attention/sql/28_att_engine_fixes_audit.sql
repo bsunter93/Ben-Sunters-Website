@@ -231,7 +231,17 @@ begin
   return n;
 end $$;
 
--- B1(b) + history read point: att_zvec_series (copied from 20_att_engine_zvec.sql, two edits)
+-- storage: the session bundle cache is emptied at the start of every hop test (topic pools load up to 300 × 2,555-float series per hop)
+create or replace function ripples.att_hb_reset() returns void
+language plpgsql set search_path = '' as $$
+begin
+  create temp table if not exists _hb (series_id bigint primary key, source text, channel text, kappa real, quality real, from_day date, n int,
+                                       ar real[], resid real[], ar_agg real[], grain text, value_kind text, stat_kind text, l int, attention boolean,
+                                       base_level real) on commit drop;
+  truncate _hb;
+end $$;
+
+-- B1(b) + S7 + history read point: att_zvec_series (copied from 20_att_engine_zvec.sql, edits asserted)
 create or replace function ripples.att_zvec_series(p_series bigint, p_day date, p_phi float8 default 0) returns jsonb
 language plpgsql security definer set search_path = '' as $$
 declare
@@ -239,7 +249,7 @@ declare
   v_total bigint; v_agg bigint; cfg jsonb := coalesce(ripples._att_cfg('engine'), '{}'::jsonb);
   v_days int := coalesce((cfg->>'zvec_days')::int, 420); v_long int := coalesce((cfg->>'zvec_days_long')::int, 2555);
   v_ar real[]; v_res real[]; v_aragg real[]; v_sigma real; v_b real; v_kappa real; v_base real; v_lam real;
-  v_sxy float8; v_sxx float8; v_np int; v_n90 int; v_beta float8; gpool float8[]; hpool jsonb; v_nb_all int; v_minb int; v_sigw int;
+  v_sxy float8; v_sxx float8; v_np int; v_n90 int; v_beta float8; gpool float8[]; hpool jsonb; v_nb_all int; v_minb int; v_sigw int; v_ya boolean := false;
 begin
   select se.*, src.grain into s from ripples.att_series se join ripples.att_sources src on src.source = se.source where se.series_id = p_series;
   if not found then return null; end if;
@@ -253,6 +263,7 @@ begin
   select min(day), max(day), count(*) into v_first, v_last, v_nobs from ripples.att_zvec_obs(p_series, '1900-01-01', p_day) where value is not null;   -- HISTORY READ POINT
   if v_nobs is null or v_nobs < 28 or v_last < p_day - 60 then return null; end if;
   v_n := least(v_long, greatest(v_days, (p_day - v_first) + 1));   -- B1(b): the array covers the series' history (≤ 7 y)
+  v_ya := v_same and v_first <= p_day - 730;   -- S7: same-weekday sources with ≥ 2 prior years get the year-ago-anchored baseline
   v_from := p_day - v_n + 1;
   if v_kind = 'share' and s.key <> '__total__' then
     select series_id into v_total from ripples.att_series t where t.source = s.source and t.metric = s.metric and t.geo = s.geo and t.key = '__total__';
@@ -312,7 +323,7 @@ begin
   select coalesce(sum(a.r * b.r), 0), coalesce(sum(b.r * b.r), 0), count(*) into v_sxy, v_sxx, v_np
     from _zs a join _zs b on b.i = a.i - 364
     where a.r is not null and b.r is not null and a.i >= greatest(1, v_n - 1095) and abs(a.r) < 1 and abs(b.r) < 1 and a.h = '' and b.h = '';
-  if p_phi <> 0 and v_nobs >= 400 then
+  if p_phi <> 0 and v_nobs >= 400 and not v_ya then   -- S7: the anchored baseline replaces the φ year-ago term
     update _zs z set xt = z.xt - p_phi * b.r from _zs b
      where b.i = z.i - 364 and b.r is not null and z.i >= 1 and z.xt is not null and z.h = '' and b.h = '' and abs(b.r) < 1;
   end if;
@@ -329,6 +340,22 @@ begin
     group by a.i) q
   where q.i = z.i;
   update _zs set m = null where i >= 1 and coalesce(nb, 0) < v_minb;
+  -- S7 (6.1): same-weekday sources with ≥ 2 prior years: baseline = median of the same weekday in the same week of the prior years
+  -- (t − 364k ± 7 d, k = 1..3; ≥ 4 points) plus the trailing level offset (median of x̃ − year-ago over [t − 35, t − 21]); the rolling
+  -- same-weekday median stays where the prior years are missing. Growth is carried by the level offset, so no trend projection.
+  if v_ya then
+    create temp table if not exists _zya (i int primary key, ya float8) on commit drop;
+    truncate _zya;
+    insert into _zya
+    select a.i, percentile_cont(0.5) within group (order by b.xt)
+    from _zs a join _zs b on b.i in (a.i - 371, a.i - 364, a.i - 357, a.i - 735, a.i - 728, a.i - 721, a.i - 1099, a.i - 1092, a.i - 1085) and b.xt is not null
+    where a.i >= -35 group by a.i having count(*) >= 4;
+    update _zs z set m = q.ya + q.lvl
+    from (select a.i, y.ya, (select percentile_cont(0.5) within group (order by sx.xt - y2.ya) from _zs sx join _zya y2 on y2.i = sx.i
+                              where sx.i between a.i - 35 and a.i - 21 and sx.xt is not null) lvl
+          from _zs a join _zya y on y.i = a.i where a.i >= 1) q
+    where q.i = z.i and q.lvl is not null;
+  end if;
   -- σ: 1.4826·MAD of the residuals against the baseline (ENGINE §3.4: B against the day's own median); same-weekday series use a
   -- year of same-weekday residuals, each against its own day's baseline median (inside B: the current median)
   update _zs z set sigma = greatest(
@@ -350,7 +377,7 @@ begin
   cross join (values (35),(42),(49),(56),(63)) d(k)
   join _zs b on b.i = a.i + d.k and b.i <= g.i - 21 and b.xt is not null
   group by g.i having count(*) >= 20 and count(distinct a.i) >= (case when v_same then 8 else 40 end);
-  update _zs z set yhat = case when abs(sl.b) * 60 > z.sigma then z.m + sl.b * 66 else z.m end
+  update _zs z set yhat = case when abs(sl.b) * 60 > z.sigma and not v_ya then z.m + sl.b * 66 else z.m end
   from (select z2.i, (select b from _zsl where _zsl.i <= z2.i order by _zsl.i desc limit 1) b from _zs z2 where z2.i >= 1) sl
   where sl.i = z.i and z.m is not null and sl.b is not null;
   update _zs set yhat = m where i >= 1 and yhat is null and m is not null;
@@ -1254,6 +1281,7 @@ begin
      not exists (select 1 from ripples.att_node_series ns where ns.node = c.node and ns.channel <> 'MONEY') then
     return jsonb_build_object('skipped', 'MONEY channel is disabled');
   end if;
+  perform ripples.att_hb_reset();   -- storage: one hop's series at a time in the session cache
   bundle := ripples.att_hop_bundle(v_hop);
   perform ripples.att_hb_load((select array_agg((x ->> 'series_id')::bigint) from jsonb_array_elements(bundle) x), c.l_by_channel);
   real_r := ripples.att_hop_stat_b(bundle, c.onset, v_end, c.sign, c.excluded_ch, null, agg, true, c.onset);
@@ -1747,6 +1775,7 @@ language plpgsql security definer set search_path = '' as $$
 declare bundle jsonb; b record; res jsonb; t_h float8; d date; tv float8; exceed int := 0; n int := 0; lo date; hi date;
         dd date[] := '{}'; k int; gate boolean;
 begin
+  perform ripples.att_hb_reset();
   perform ripples.att_hb_load(array[p_series]);
   select * into b from _hb where series_id = p_series;
   if not found then return jsonb_build_object('p', null, 'reason', 'no zvec'); end if;
@@ -2130,3 +2159,41 @@ begin
 end $$;
 revoke all on function ripples.att_controls_step() from anon, authenticated, public;
 -- select cron.schedule('att-controls-loop', '* * * * *', $$set statement_timeout = '30min'; select ripples.att_controls_step() where (select v ? 'finished' from ripples.att_state where k = 'zvec.run')$$);
+
+
+-- ---------------------------------------------------------------------------------------------------------------------
+-- S7 rebuild stepper: re-run att_zvec_series for the same-weekday sources in ≤ p_budget_s chunks (aggregate keys first, so the regional
+-- demeaning finds the rebuilt aggregate), then att_zvec_demean per source. State in att_state 'zvec.s7'. Never inside the 05:40–08:50 window.
+-- ---------------------------------------------------------------------------------------------------------------------
+create or replace function ripples.att_zvec_rebuild_step(p_sources text[] default null, p_budget_s int default 45, p_day date default current_date - 1) returns jsonb
+language plpgsql security definer set search_path = '' as $$
+declare st jsonb := coalesce(ripples.att_state_get('zvec.s7'), '{}'::jsonb); t0 timestamptz := clock_timestamp(); sid bigint; n int := 0; src text; v_phi float8; v_nobs int;
+begin
+  if (now() at time zone 'utc')::time between '05:40' and '08:50' then return jsonb_build_object('skipped', 'nightly window'); end if;
+  if st ? 'finished' and p_sources is null then return st - 'pending'; end if;
+  if not (st ? 'pending') or p_sources is not null then
+    st := jsonb_build_object('started', now(), 'day', p_day, 'sources', to_jsonb(coalesce(p_sources, (select array_agg(source) from ripples.att_engine_source_map where same_dow))),
+            'pending', (select coalesce(jsonb_agg(s.series_id order by (s.key = coalesce(m.agg_key, '')) desc, s.source, s.series_id), '[]'::jsonb)
+                        from ripples.att_series s join ripples.att_engine_source_map m on m.source = s.source
+                        where s.source = any(coalesce(p_sources, (select array_agg(source) from ripples.att_engine_source_map where same_dow))) and s.last_day >= p_day - 60),
+            'done', 0);
+    perform ripples.att_state_set('zvec.s7', st);
+  end if;
+  while jsonb_array_length(st -> 'pending') > 0 and clock_timestamp() - t0 < make_interval(secs => p_budget_s) loop
+    sid := (st -> 'pending' ->> 0)::bigint;
+    select s.source, coalesce((ripples.att_state_get('zvec.phi.' || s.source) ->> 'phi')::float8, 0), coalesce(z.n_obs, 0) into src, v_phi, v_nobs
+      from ripples.att_series s left join ripples.att_zvec z on z.series_id = s.series_id where s.series_id = sid;
+    perform ripples.att_zvec_series(sid, (st ->> 'day')::date, case when v_nobs >= 400 then v_phi * v_nobs / (v_nobs + 50.0) else 0 end);
+    st := st || jsonb_build_object('pending', (st -> 'pending') - 0, 'done', (st ->> 'done')::int + 1);
+    n := n + 1;
+  end loop;
+  if jsonb_array_length(st -> 'pending') = 0 then
+    for src in select x from jsonb_array_elements_text(st -> 'sources') x loop perform ripples.att_zvec_demean(src, (st ->> 'day')::date); end loop;
+    perform ripples.att_common_days_refresh((st ->> 'day')::date);
+    st := st || jsonb_build_object('finished', now());
+  end if;
+  perform ripples.att_state_set('zvec.s7', st);
+  return (st - 'pending') || jsonb_build_object('this_call', n, 'left', jsonb_array_length(st -> 'pending'));
+end $$;
+revoke all on function ripples.att_zvec_rebuild_step(text[], int, date) from anon, authenticated, public;
+-- select cron.schedule('att-zvec-s7', '* * * * *', $$set statement_timeout = '110s'; select ripples.att_zvec_rebuild_step(null, 45)$$);  -- unschedule once 'zvec.s7' carries 'finished'
