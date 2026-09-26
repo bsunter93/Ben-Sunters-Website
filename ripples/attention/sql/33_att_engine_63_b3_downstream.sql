@@ -155,3 +155,26 @@ begin
   execute replace(def,a,b);
 end $$;
 -- grid set b5 (listings_m, newlist_m, dom_m; same windows) is in att_fx63_grid_spec(p_set) as applied live.
+
+-- b5 outcome (ledger 1200 confirm freeze, 1201 calibration, 1203 withheld): 2 pairs passed the pre-registered rule
+-- (wildfire -> days on market, months 1-3; wildfire -> new listings, months 6-11; decoys 0 of 336 decoy grids confirmed)
+-- but FAIL a post-hoc seasonal robustness check (same states, same calendar months, other years look alike: median
+-- in-time p 0.48 / 0.52). The in-space null does not adjust for region-specific seasonality. Batch status 'withheld',
+-- method 6.3.5-m suspended (space_fallback_batches = []). A seasonally de-meaned in-space null is required before reuse.
+update ripples.att_config set value = value || '{"space_fallback_batches":[]}'::jsonb where key = 'engine63';
+
+-- public reads must never surface a withheld / not-testable / superseded batch (patched live, anchor-checked):
+do $$ declare r record; def text; a text := 'where v.decoy_set = 0';
+  b text := 'where v.decoy_set = 0 and not exists (select 1 from ripples.att_fx63_batch xb where xb.batch = v.batch and xb.status in (''withheld'', ''not testable'', ''superseded''))';
+begin
+  for r in select p.oid from pg_proc p join pg_namespace n on n.oid = p.pronamespace
+           where n.nspname = 'public' and p.proname in ('rm_patterns63', 'rm_hunches', 'rm_kill_list63') loop
+    def := pg_get_functiondef(r.oid);
+    continue when position('xb.status in' in def) > 0;
+    if (length(def) - length(replace(def, a, ''))) / length(a) <> 1 then raise exception 'anchor count in %', r.oid::regprocedure; end if;
+    execute replace(def, a, b);
+  end loop;
+end $$;
+
+-- Supabase Pro (2026-09-26): ingest cap raised to 6000 MB; b-batch space guard at 5800 MB.
+update ripples.att_config set value = to_jsonb(6000) where key = 'db_cap_mb';
