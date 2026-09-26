@@ -1,7 +1,7 @@
 // Ripple Map v6 list pages (WS-D): map, every line, archive, lands, week and the methods Receipts.
 import * as C from './config.js';
 import * as L from './lib.js';
-import { $, add, h, S, em, sep, joinSep, put, icon, IC, RM, desk, ls, today, INLINE, D, rpc, load, event, toast, copy, share, prefetchImg, shareImage, landing, flaps, countUp, tt_, pips, stamp, dtile, strip, legend, spark, theme, wander, chrome, visits, seedChart, getBip } from './ui.js';
+import { $, add, h, S, em, sep, joinSep, put, icon, IC, RM, desk, ls, today, INLINE, D, rpc, load, event, toast, copy, share, prefetchImg, shareImage, landing, flaps, countUp, untilLook, tt_, pips, stamp, dtile, strip, legend, spark, theme, wander, chrome, visits, seedChart, getBip } from './ui.js';
 
 // ---------- LISTS: map, lines, archive, lands, week ----------
 export function lineRow(a, extra) {
@@ -62,7 +62,24 @@ export async function landsPage(r) {
       h('span', null, h('span', { class: 'nm', style: x.retracted ? 'text-decoration:line-through' : null }, x.label), h('span', { class: 'sub' }, x.reconstructed ? h('span', { class: 'tagr' }, 'reconstructed') : null, joinSep([`after ${x.event_label}`, x.lag_days != null ? L.lagShort(x.lag_days) : null, L.fmtDay(x.onset), x.attention_ripple ? 'attention ripple' : null, x.retracted ? `retracted ${L.fmtDay(x.retracted.date)}` : null]))),
       h('span', { class: 'rt' }, x.rho != null ? flaps(L.mult(x.rho, x.unit), 'mute') : null, stamp(x.retracted ? 'retracted' : x.tier)))))
       : h('p', { class: 'empty', style: 'margin-top:12px' }, `No Measured or Likely stop in ${L.domWord(dom)} in the last 30 days. That is a result too.`),
-    legend('onstage'));
+    legend('onstage'), watchingHere(dom));
+}
+// The page never ends at one sentence: the running lines' Watching stops in this domain, with their next look
+// (scanned client-side from the running lines' cascades until the lands payload carries a watching[] array)
+function watchingHere(dom) {
+  const box = h('section', { class: 'sec', 'aria-labelledby': 'wh-t' }, h('h2', { class: 'h2', id: 'wh-t' }, `Being watched in ${L.domWord(dom)}`), h('p', { class: 'lede', style: 'margin:-4px 0 10px' }, 'Windows still open: nothing has moved yet, and the look is scheduled.'));
+  (async () => {
+    const a = ((await D.archive()) || []).filter(x => x.status === 'running').sort((x, y) => String(y.onset).localeCompare(String(x.onset))).slice(0, 12);
+    const rows = [];
+    await Promise.all(a.map(async x => { const c = await D.cascade(x.event_id); if (!c) return; for (const n of c.nodes || []) if (n.tier === 'watching' && n.domain === dom && !n.window_closed && (n.due || n.window_close)) rows.push({ x, c, n, due: n.due || n.window_close }); }));
+    rows.sort((p, q) => String(p.due).localeCompare(String(q.due)));
+    if (!rows.length) { box.remove(); return; }
+    box.append(h('div', { class: 'list' }, rows.slice(0, 12).map(r => h('a', { class: 'li', href: L.stopUrl(r.x.slug, r.n.hop_id) },
+      h('span', { class: 'ic', 'aria-hidden': 'true' }, em(r.x.emoji || '▫️')),
+      h('span', null, h('span', { class: 'nm' }, r.n.label), h('span', { class: 'sub' }, joinSep([`after ${r.x.label}`, `${L.lookWord(r.n.due, r.n.window_close).toLowerCase()} ${L.fmtDate(r.due)}`]))),
+      h('span', { class: 'rt' }, flaps(untilLook(r.due), 'mute', `${untilLook(r.due)} to the look`), stamp('watching'))))));
+  })().catch(() => box.remove());
+  return box;
 }
 
 // ---------- METHODS: the Receipts ----------

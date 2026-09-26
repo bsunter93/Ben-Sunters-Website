@@ -216,9 +216,9 @@ function stopCard(c, e, idx, total, sc, laneIdx) {
     const look = !n.window_closed ? (n.due || n.window_close) : null;
     if (look) {
       const dl = Math.max(0, L.daysBetween(today(), look));
-      const cnt = h('p', { class: 'say wait' }, flaps(String(dl), null, `${dl} days`), ` ${dl === 1 ? 'day' : 'days'} until the ${L.lookWord(n.due, n.window_close).toLowerCase()}${dl === 0 ? ': today' : ''}.`);
-      if (!firstFlap) firstFlap = [cnt.querySelector('.flaps') && cnt, String(dl)];
-      say.replaceWith(cnt); card._say = cnt;
+      const cnt = h('p', { class: 'say wait' }, `${n.label}: `, flaps(String(dl), null, `${dl} days`), ` ${dl === 1 ? 'day' : 'days'} until the ${L.lookWord(n.due, n.window_close).toLowerCase()}${dl === 0 ? ', today' : ''}.`);
+      if (!firstFlap) firstFlap = [cnt, String(dl)];
+      say.replaceWith(cnt);
     }
     if (!n.window_closed && n.window_close) {
       const a = L.dayMs(c.event.onset), z = L.dayMs(n.window_close), t = Math.min(z, Math.max(a, L.dayMs(today())));
@@ -470,26 +470,36 @@ function closeSheet(nav = true) {
   if (nav) { if (pushed) history.back(); else history.replaceState(null, '', lineHref); }
   opener?.focus?.();
 }
+// the spike wordmark (the same SVG as the top bar) for the context strip that survives a cropped screenshot
+function wordmark() {
+  const s = S('svg', { viewBox: '0 0 15 11', 'aria-hidden': 'true' }); s.innerHTML = '<path d="M0 9.5H5L7.4 1.5L9.8 9.5H15"/>';
+  return h('b', { class: 'wm2' }, 'Knock', s, 'On', h('span', { class: 'sr' }, 'Knock-On'));
+}
 function q1Chart(q, parentOnset) {
   const svg = S('svg', { class: 'q1', viewBox: '0 0 340 150', role: 'img', preserveAspectRatio: 'none' });
   const s = (q.series || []).map(Number), n = s.length; if (n < 3) return null;
-  const all = s.concat(q.band_lo || [], q.band_hi || [], q.last_year || []).filter(v => v > 0 && isFinite(v));
+  // Show the after, not 94 days of noise: the x-domain is onset − 42 … onset + 14 days (ART §3.2). Data ends at as_of; the
+  // empty right margin is the part of the window still open, not invented future.
+  const oi0 = q.onset_index ?? n - 1, i0 = Math.max(0, oi0 - 42), i1 = oi0 + 14, span = Math.max(8, i1 - i0), inD = i => i >= i0 && i <= i1, last = Math.min(n - 1, i1);
+  const all = s.slice(i0, i1 + 1).concat((q.band_lo || []).slice(i0, i1 + 1), (q.band_hi || []).slice(i0, i1 + 1), (q.last_year || []).slice(i0, i1 + 1)).filter(v => v > 0 && isFinite(v));
   const lo = Math.min(0.7, ...all), hi = Math.max(1.4, ...all);
-  const pl = 30, pr = 8, pt = 8, pb = 20, W = 340, H = 150;
-  const x = i => pl + (i / (n - 1)) * (W - pl - pr), y = v => pt + (1 - (L.log2(v) - L.log2(lo)) / (L.log2(hi) - L.log2(lo))) * (H - pt - pb);
-  const P = (arr, a = 0) => arr.map((v, i) => (v > 0 ? `${i ? 'L' : 'M'}${x(i + a).toFixed(1)} ${y(v).toFixed(1)}` : '')).join('').replace(/^L/, 'M');
-  if (q.window) S('rect', { x: x(q.window[0]), y: pt, width: Math.max(2, x(Math.min(n - 1, q.window[1])) - x(q.window[0])), height: H - pt - pb, fill: 'var(--spike-wash)' }, svg);
+  const pl = 30, pr = 30, pt = 8, pb = 20, W = 340, H = 150;
+  const x = i => pl + ((i - i0) / span) * (W - pl - pr), y = v => pt + (1 - (L.log2(v) - L.log2(lo)) / (L.log2(hi) - L.log2(lo))) * (H - pt - pb);
+  const P = (arr, a = 0) => arr.map((v, i) => (v > 0 && inD(i + a) ? `${i ? 'L' : 'M'}${x(i + a).toFixed(1)} ${y(v).toFixed(1)}` : '')).join('').replace(/^L/, 'M');
+  if (q.window) S('rect', { x: x(Math.max(i0, q.window[0])), y: pt, width: Math.max(2, x(Math.min(i0 + span, q.window[1])) - x(Math.max(i0, q.window[0]))), height: H - pt - pb, fill: 'var(--spike-wash)' }, svg);
   for (const g of [0.5, 1, 2, 4, 8].filter(v => v >= lo && v <= hi)) { S('line', { x1: pl, x2: W - pr, y1: y(g), y2: y(g), stroke: 'var(--grid-panel)' }, svg); const t = S('text', { x: pl - 4, y: y(g) + 3.5, 'text-anchor': 'end', 'font-size': 10, fill: 'var(--on-panel-3)', 'font-family': 'var(--display)', 'font-weight': 800 }, svg); axText(t, g + '×'); }
-  if (q.band_lo && q.band_hi) S('path', { d: P(q.band_hi) + 'L' + q.band_lo.map((v, i) => [x(i), y(v)]).reverse().map(p => p[0].toFixed(1) + ' ' + p[1].toFixed(1)).join('L') + 'Z', fill: 'rgba(234,243,240,.13)' }, svg);
-  if (q.last_year) S('path', { d: P(q.last_year), fill: 'none', stroke: 'var(--on-panel-3)', 'stroke-width': 1, opacity: 0.55 }, svg);
+  if (q.band_lo && q.band_hi) S('path', { d: P(q.band_hi) + 'L' + q.band_lo.map((v, i) => [x(i), y(v), i]).filter(p => inD(p[2]) && p[1] === p[1]).reverse().map(p => p[0].toFixed(1) + ' ' + p[1].toFixed(1)).join('L') + 'Z', fill: 'rgba(234,243,240,.20)' }, svg);
+  if (q.last_year) S('path', { d: P(q.last_year), fill: 'none', stroke: 'var(--on-panel-3)', 'stroke-width': 1.25, 'stroke-dasharray': '2 3', opacity: 0.8 }, svg);
   const oi = q.onset_index ?? n;
   S('path', { d: P(s.slice(0, oi + 1)), fill: 'none', stroke: 'var(--on-panel-2)', 'stroke-width': 1.5, 'stroke-linejoin': 'round' }, svg);
-  if (oi < n) S('path', { d: P(s.slice(oi), oi), fill: 'none', stroke: 'var(--spike)', 'stroke-width': 2.75, 'stroke-linejoin': 'round', class: 'lane-hot' }, svg);
+  if (oi < n) S('path', { d: P(s.slice(oi), oi), fill: 'none', stroke: 'var(--spike)', 'stroke-width': 2.75, 'stroke-linejoin': 'round', 'stroke-linecap': 'round', class: 'lane-hot' }, svg);
   if (q.onset_index != null) { S('line', { x1: x(oi), x2: x(oi), y1: pt, y2: H - pb, stroke: 'var(--event)', 'stroke-width': 1.25 }, svg); }
-  const d0 = S('text', { x: pl, y: H - 5, 'font-size': 10.5, fill: 'var(--on-panel-3)', 'font-family': 'var(--sans)' }, svg); d0.textContent = L.fmtDay(q.from);
-  const d1 = S('text', { x: W - pr, y: H - 5, 'text-anchor': 'end', 'font-size': 10.5, fill: 'var(--on-panel-3)', 'font-family': 'var(--sans)' }, svg); d1.textContent = L.fmtDay(L.addDays(q.from, n - 1));
+  // the direct label on the after-segment's end, so the chart and the flap agree at a glance
+  if (oi < n && q.rho != null) { const lv = s[last]; const t = S('text', { x: x(last) + 5, y: y(lv) + 4, 'font-size': 11, fill: 'var(--marigold-ink)', 'font-family': 'var(--display)', 'font-weight': 800, style: 'paint-order:stroke;stroke:var(--panel);stroke-width:3px' }, svg); axText(t, L.num(q.rho) + '×'); }
+  const d0 = S('text', { x: pl, y: H - 5, 'font-size': 10.5, fill: 'var(--on-panel-3)', 'font-family': 'var(--sans)' }, svg); d0.textContent = L.fmtDay(L.addDays(q.from, i0));
+  const d1 = S('text', { x: W - pr, y: H - 5, 'text-anchor': 'end', 'font-size': 10.5, fill: 'var(--on-panel-3)', 'font-family': 'var(--sans)' }, svg); d1.textContent = L.fmtDay(L.addDays(q.from, i0 + span));
   if (q.onset_index != null) { const t = S('text', { x: x(oi) - 4, y: pt + 10, 'text-anchor': 'end', 'font-size': 10.5, fill: 'var(--on-panel-2)', 'font-family': 'var(--sans)' }, svg); t.textContent = parentOnset ? `shock ${L.fmtDay(parentOnset)}` : 'shock'; }
-  svg.setAttribute('aria-label', `The series against its normal band over ${n} days, with the same weeks last year; the part after the shock is highlighted. Values are in the table under Show the math.`);
+  svg.setAttribute('aria-label', `The series against its normal band, six weeks before the shock to two weeks after, with the same weeks last year; the part after the shock is highlighted. Values are in the table under Show the math.`);
   return svg;
 }
 async function openSheet(hopOrDoc, c, opener, push) {
@@ -532,8 +542,8 @@ function renderEvidence(el, d, c) {
   const ft = L.flukeTiles(q5.f_1_in);
   const meter = ft && !q5.f_warming ? h('div', { class: 'meter', role: 'img', 'aria-label': `One tile in ${ft} marked` }, Array.from({ length: ft }, (_, i) => h('i', { class: i === Math.floor(ft / 2) ? 'lit' : '' }))) : null;
   const flatById = new Map((c.flat || []).map(f => [f.label, f]));
-  const chan = ch => { const nod = ch.zhat == null || (ch.kappa != null && ch.kappa < 0.5); return h('div', { class: `ch ${ch.agree ? 'agree' : nod ? 'nodata' : ''}` }, ch.label || ch.code, h('small', null, ch.agree ? 'agrees' : nod ? 'still warming up' : "didn't move", ch.zhat != null ? `, z ${Number(ch.zhat).toFixed(1)}` : '')); };
-  const q1 = d.q1_normal ? q1Chart(d.q1_normal, q2.parent_onset) : null;
+  const chan = ch => { const nod = ch.zhat == null || (ch.kappa != null && ch.kappa < 0.5); return h('div', { class: `ch ${ch.agree ? 'agree' : nod ? 'nodata' : ''}` }, ch.label || ch.code, h('small', null, ch.agree ? `agrees${ch.zhat != null ? `, z ${Number(ch.zhat).toFixed(1)}` : ''}` : nod ? 'still warming up' : `below the bar${ch.zhat != null ? ` (z ${Number(ch.zhat).toFixed(1)})` : ''}`)); };
+  const q1 = d.q1_normal ? q1Chart({ ...d.q1_normal, rho: x.rho }, q2.parent_onset) : null;
   const untested = x.rho == null && !d.retracted;
   const node = (c.nodes || []).find(n => n.hop_id === d.hop_id);
   const csv = m.csv || `${C.STORAGE}hop/${d.hop_id}.csv`;
@@ -543,11 +553,13 @@ function renderEvidence(el, d, c) {
   const q1rows = d.q1_normal ? d.q1_normal.series.map((v, i) => h('tr', null, h('td', null, L.fmtDay(L.addDays(d.q1_normal.from, i))), h('td', { class: 'n' }, v), h('td', { class: 'n' }, d.q1_normal.band_lo?.[i] ?? '–'), h('td', { class: 'n' }, d.q1_normal.band_hi?.[i] ?? '–'), h('td', { class: 'n' }, d.q1_normal.last_year?.[i] ?? '–'))) : [];
   put(el, el.firstChild,
     h('div', { class: 'ev-h' },
-      h('div', { class: 'ev-stamp' }, stamp(d.tier, false), d.provisional ? h('span', { class: 'prov' }, 'provisional') : null, d.tier_reason && d.tier !== 'retracted' ? h('span', { class: 'xs', style: 'color:var(--on-panel-2)' }, d.tier_reason) : null),
-      h('p', { class: 'ev-def' }, `${T.w}: ${T.def}`),
+      // the tier's plain-language definition lives on the stamp's tooltip/long-press and in the ? sheet (EXPERIENCE §10), not
+      // as a third statement of the same fact above the fold
+      h('div', { class: 'ev-stamp' }, stamp(d.tier), d.provisional ? h('span', { class: 'prov' }, 'provisional') : null, d.tier_reason && d.tier !== 'retracted' ? h('span', { class: 'xs', style: 'color:var(--on-panel-2)' }, d.tier_reason) : null),
+      h('p', { class: 'sr' }, `${T.w}: ${T.def}`),
       h('h2', { class: 'ev-name', id: 'ev-t' }, em(L.domIcon(d.node.domain)), ' ', d.node.label),
       d.retracted ? h('p', { class: 'retban', role: 'note' }, `Retracted ${L.fmtDate(d.retracted.date)}: ${d.retracted.reason}. Everything below stays visible.`) : null,
-      fig ? h('div', { class: 'ev-fig' }, fig, h('p', null, u === 'points' ? 'points against its normal' : 'its normal,', h('br'), h('b', null, x.lag_days === 0 ? 'the same day as' : `+${L.plural(x.lag_days, 'day')} after`), ' ', x.parent_label || d.parent?.label)) : null,
+      fig ? h('div', { class: 'ev-fig' }, L.dirGlyph(x.rho, u) ? h('span', { class: 'dir', 'aria-hidden': 'true' }, L.dirGlyph(x.rho, u)) : null, fig, h('p', null, u === 'points' ? 'points against its normal' : 'its normal', L.pctGloss(x.rho, u) ? h('span', { class: 'gloss' }, ` (${L.pctGloss(x.rho, u)})`) : null, u === 'points' ? '' : ',', h('br'), h('b', null, x.lag_days === 0 ? 'the same day as' : `+${L.plural(x.lag_days, 'day')} after`), ' ', x.parent_label || d.parent?.label)) : null,
       h('p', { class: 'ev-say' }, d.retracted ? 'Before the retraction: ' + L.evidenceHeadline(d) : L.evidenceHeadline(d)),
       live),
     d.q1_normal ? sec('Q1', 'Is this normal for it?', q1, h('p', { class: 'q1k' }, h('span', null, h('i', { style: 'background:var(--on-panel)' }), 'this series'), h('span', null, h('i', { style: 'background:var(--spike)' }), 'after the shock'), h('span', null, h('i', { style: 'background:rgba(234,243,240,.3);height:8px' }), 'its normal range'), h('span', null, h('i', { style: 'background:var(--on-panel-3);height:1.5px' }), 'same weeks last year')),
@@ -584,7 +596,7 @@ function renderEvidence(el, d, c) {
       q1rows.length ? h('details', null, h('summary', null, 'Q1 chart as a table'), h('div', { class: 'tw' }, h('table', { class: 't' }, h('thead', null, h('tr', null, ['Day', '× normal', 'normal low', 'normal high', 'last year'].map(t => h('th', { scope: 'col' }, t)))), h('tbody', null, q1rows)))) : null,
       h('div', { class: 'btns' }, h('a', { class: 'btn sec sm', href: csv, download: `stop-${d.hop_id}.csv` }, 'Download CSV'), h('a', { class: 'btn sec sm', href: issue, target: '_blank', rel: 'noopener' }, 'Something wrong?'))),
     h('div', { class: 'btns' }, h('button', { class: 'btn', onclick: () => share(L.shareStop(d), 'stop') }, icon('share'), 'Share this stop'), h('a', { class: 'btn sec', href: `/ripples/lands/${d.node.domain}/` }, 'Start from here')),
-    h('p', { class: 'ctx' }, h('b', null, 'Knock⌃On'), sep(), `${c.event.label} → ${d.node.label}`, sep(), 'bensunter.com/ripples', sep(), L.FOOT));
+    h('p', { class: 'ctx' }, wordmark(), sep(), `${c.event.label} → ${d.node.label}`, sep(), 'bensunter.com/ripples', sep(), L.FOOT));
   setTimeout(() => { live.textContent = d.sr_sentence || ''; }, 60);
   if (fig && !d.retracted) countUp(fig, L.mult(x.rho, u), quiet);
 }

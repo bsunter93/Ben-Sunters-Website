@@ -1,13 +1,14 @@
 // Knock⌃On Ripple Map v6 (WS-D): the "How to read the map" dialog, loaded on the first tap of the ? button (ui.js chrome).
 import * as L from './lib.js';
-import { $, h, em, tt_, ls } from './ui.js';
+import { $, h, em, tt_, ls, icon } from './ui.js';
 
 export function help() {
   let d = $('#helpdlg');
   if (!d) {
     const hide = ls.get('ko.hide_middle') === '1';
     d = h('dialog', { id: 'helpdlg', 'aria-labelledby': 'helpt' },
-      h('h2', { id: 'helpt', tabindex: '-1', autofocus: true }, 'How to read the Ripple Map'),
+      // a 44 px close control at the top (Esc still works); focus lands on it so the way out is the first thing announced
+      h('div', { class: 'dh' }, h('h2', { id: 'helpt', tabindex: '-1' }, 'How to read the Ripple Map'), h('button', { class: 'xb', type: 'button', 'aria-label': 'Close', autofocus: true, onclick: () => d.close() }, icon('x'))),
       h('p', null, 'Each upstream shock is a line. Each stop is a series in another part of life that moved against its own normal after the shock. We test many paths and show the ones that stayed flat too.'),
       h('h3', null, 'Tiers'),
       h('ul', null, ['measured', 'likely', 'watching', 'flat'].map(t => h('li', null, t === 'flat' ? h('b', { 'aria-hidden': 'true' }, '⊥') : tt_(t), h('span', null, h('b', null, L.TIER[t].w + '. '), L.TIER[t].def)))),
