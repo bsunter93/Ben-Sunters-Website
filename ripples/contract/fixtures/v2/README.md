@@ -151,3 +151,11 @@ It returns `{v, as_of, rule, featured[], counts, pool, note}`; every `featured[]
 
 Test: `select ripples.rm_story_contract_test();` (shape diff against `stories.json`, leak guard, causal-word lint, gate reasons) and
 `select ripples.att_test_story();` (T30–T37 invariants).
+
+## Pond (2026-09-26 integration)
+
+`pond-index.json` = `public.rm_pond()`; the per-event payload fixture `pond.json` (= `public.rm_pond('hurricane-milton-positive-control-213')`,
+arrays trimmed to one element) lives in `ripples.rm_contract_fixtures` (name `pond.json`) and is regenerated there with
+`pg_temp.trim1(public.rm_pond(slug))` (see `contract/sql/07_rm_pond_integration.sql`). `ripples.rm_pond_contract_test()` diffs every
+published pond against it (plus leak guard, tier = frozen-version tier, Measured only where `att_ce_gate` agrees, controls only when
+allowlisted in `att_config story.public_controls`).
