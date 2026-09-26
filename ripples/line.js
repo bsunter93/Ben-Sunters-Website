@@ -243,9 +243,19 @@ function stopCard(c, e, idx, total, sc, laneIdx) {
 function flatStub(c, parentHop, where) {
   const fl = (c.flat || []).filter(f => (f.parent_hop || null) === (parentHop || null));
   if (!fl.length) return null;
-  const list = h('ul', { class: 'flatlist', hidden: true }, fl.map(f => h('li', null, h('span', null, em(L.domIcon(f.domain)), ' ', f.label, h('span', { class: 'sr' }, `: ${L.num(f.rho)} times its normal, ${f.reason}`)), spark(f.spark), h('b', { 'aria-hidden': 'true' }, f.rho != null ? L.num(f.rho) + '×' : ''))));
-  const b = h('button', { class: 'stub', 'aria-expanded': 'false', onclick: () => { const o = list.hidden; list.hidden = !o; b.setAttribute('aria-expanded', String(o)); } },
-    h('span', { class: 'bot', 'aria-hidden': 'true' }, '⊥'), `${fl.length} stayed flat${where ? ' ' + where : ''}`, icon('chev', 'chev'));
+  // Signature C: the null is the product. The flat paths are a grid of grey tiles (icon, flat sparkline, multiple) that flip
+  // face-up in a 40 ms stagger when the stub opens; the row reads "N moved, M didn't", and the null can be shared as such.
+  const moved = (c.nodes || []).filter(n => L.isMoved(n) && (n.parent_hop || null) === (parentHop || null)).length;
+  const tiles = fl.map(f => h('li', { class: 'ft', title: `${f.label}: ${L.num(f.rho)}× its normal, ${f.reason}` }, h('span', { class: 'fi', 'aria-hidden': 'true' }, em(L.domIcon(f.domain))), spark(f.spark, 64, 22),
+    h('b', { 'aria-hidden': 'true' }, f.rho != null ? L.num(f.rho) + '×' : ''), h('span', { class: 'fl' }, f.label, h('span', { class: 'sr' }, `: ${L.num(f.rho)} times its normal, ${f.reason}`))));
+  const nullText = `${L.shareLine(c).split('\n')[0]}\n⊥${fl.length} stayed flat${where ? ' ' + where : ''}, ${L.plural(moved, 'path')} moved. Every path we tried is counted.\nconsistent with, not proof of cause\n${L.SITE}${L.lineUrl(c.event.slug, c.version)}`;
+  const list = h('div', { class: 'flatbox', hidden: true }, h('p', { class: 'flatsum' }, h('b', null, `${L.fmtInt(moved)} moved, ${L.fmtInt(fl.length)} didn't.`), ' Each tile is one path tested against its own normal; grey means it stayed inside its range.'),
+    h('ul', { class: 'flatlist' }, tiles), h('button', { class: 'btn sec sm', onclick: () => share(nullText, 'null') }, icon('share'), 'Share the null'));
+  let flipped = false;
+  const b = h('button', { class: 'stub', 'aria-expanded': 'false', onclick: () => {
+    const o = list.hidden; list.hidden = !o; b.setAttribute('aria-expanded', String(o));
+    if (o && !flipped && !RM && !c.event.sensitive) { flipped = true; tiles.forEach((t, i) => t.animate([{ transform: 'rotateY(90deg)', opacity: 0.3 }, { transform: 'rotateY(0)', opacity: 1 }], { duration: 140, delay: i * 40, fill: 'backwards', easing: 'ease-out' })); }
+  } }, h('span', { class: 'bot', 'aria-hidden': 'true' }, '⊥'), `${fl.length} stayed flat${where ? ' ' + where : ''}`, icon('chev', 'chev'));
   return h('div', { style: 'margin:4px 0 12px' }, b, list);
 }
 function shareBlock(c, frozenK) {

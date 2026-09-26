@@ -166,7 +166,8 @@ input,select{font:inherit}
 .tk-top{display:flex;align-items:center;gap:8px;padding:12px 16px 0;font:600 13px/1 var(--sans)}
 .tk-top .tag{display:inline-flex;align-items:center;height:24px;padding:0 9px;border-radius:5px;box-shadow:inset 0 0 0 1.5px currentColor}
 .tk-top .ver{margin-left:auto;font:850 13px/1 var(--display);font-variation-settings:"wdth" 100}
-.tk-top .tag2{font:600 12.5px/1.2 var(--sans);opacity:.85;min-width:0}
+.tk-top .tag{white-space:nowrap;flex:none}
+.tk-top .tag2{font:600 12px/1.2 var(--sans);letter-spacing:-.01em;opacity:.85;min-width:0;flex:0 1 auto;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .tk-body{padding:10px 16px 12px}
 .tk-row{display:flex;align-items:center;gap:10px}
 .tk-emo{width:36px;height:36px;border-radius:var(--r-tile);background:rgba(255,255,255,.5);display:grid;place-items:center;font-size:20px;flex:none}
@@ -259,7 +260,8 @@ input,select{font:inherit}
 .note a{font-weight:700}
 .note.soft{background:var(--card);color:var(--ink);box-shadow:inset 0 0 0 2px var(--hair)}
 .stick{position:sticky;top:0;z-index:12;background:var(--stage);margin:0 -16px;padding:0 16px 6px;contain:layout paint}
-.strip{display:flex;align-items:center;height:44px;overflow-x:auto;scrollbar-width:none;gap:0;padding:0 2px;scroll-snap-type:x proximity;-webkit-mask-image:linear-gradient(90deg,#000 88%,transparent);mask-image:linear-gradient(90deg,#000 88%,transparent)}
+.strip{display:flex;align-items:center;height:44px;overflow-x:auto;scrollbar-width:none;gap:0;padding:0 2px;scroll-snap-type:x proximity}
+@media (max-width:959px){.strip{-webkit-mask-image:linear-gradient(90deg,#000 88%,transparent);mask-image:linear-gradient(90deg,#000 88%,transparent)}}
 .strip::-webkit-scrollbar{display:none}
 .strip .dt{width:30px;height:30px;font-size:15px;cursor:pointer;transition:transform var(--t-quick) var(--e-out);scroll-snap-align:center}
 .strip .dt::after{content:"";position:absolute;inset:-7px}
@@ -317,9 +319,15 @@ input,select{font:inherit}
 .stub{display:flex;align-items:center;gap:8px;width:100%;min-height:44px;padding:0 12px;border-radius:10px;color:var(--ink-2);font:600 13.5px/1.2 var(--sans);box-shadow:inset 0 0 0 1.5px var(--hair);background:var(--sunk)}
 .stub svg{width:16px;height:16px;margin-left:auto;flex:none;transition:transform var(--t-quick)}.stub[aria-expanded="true"] svg{transform:rotate(90deg)}
 .stub .bot{font:700 16px/1 var(--sans);color:var(--flat)}
-.flatlist{margin:8px 0 4px;display:grid;gap:6px}
-.flatlist li{display:grid;grid-template-columns:minmax(0,1fr) 64px 48px;align-items:center;gap:10px;font:500 13.5px/1.25 var(--sans);color:var(--ink-2);min-height:36px}
-.flatlist li b{font:850 14px/1 var(--display);font-variation-settings:"wdth" 100;text-align:right;color:var(--ink-2)}
+.flatbox{margin:8px 0 4px}
+.flatsum{font:500 13.5px/1.4 var(--sans);color:var(--ink-2);margin-bottom:8px}.flatsum b{color:var(--ink)}
+.flatbox .btn{margin-top:10px}
+/* the flat grid: one 84 px grey tile per path (icon, its flat sparkline, its multiple, its name), flipped face-up on open */
+.flatlist{display:grid;grid-template-columns:repeat(auto-fill,minmax(84px,1fr));gap:6px;perspective:600px}
+.flatlist .ft{display:grid;grid-template-rows:auto 22px auto auto;justify-items:center;gap:3px;padding:8px 4px 6px;border-radius:8px;background:var(--sunk);box-shadow:inset 0 0 0 1.5px var(--hair);font:500 11px/1.2 var(--sans);color:var(--ink-3);text-align:center;transform-origin:50% 50%}
+.flatlist .ft .fi{font-size:15px;opacity:.75}
+.flatlist .ft b{font:850 13px/1 var(--display);font-variation-settings:"wdth" 100;color:var(--ink-2)}
+.flatlist .ft .fl{max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .flatlist svg{width:64px;height:22px;display:block}
 .wt{margin-top:22px}
 .wt .track{position:relative;height:14px;border-radius:7px;box-shadow:inset 0 0 0 1.5px var(--hair);background:var(--sunk)}
