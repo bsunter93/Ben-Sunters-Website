@@ -12,7 +12,7 @@ function heroTicket(S0, archive) {
     // Cold start with nothing Measured anywhere: say so, and point at what is being watched (never pad a headline)
     const rows = (S0?.shocks || []);
     const due = rows.map(r => r.next_due).filter(d => d && d >= today()).sort()[0];
-    tk.classList.add('empty');
+    tk.classList.add('cold');
     add(tk, h('p', { class: 'tk-top' }, h('span', { class: 'tag' }, 'Ripple of the week')),
       h('div', { class: 'tk-body' },
         h('h1', { class: 'tk-title', id: 'hero-t' }, 'Nothing Measured yet'),

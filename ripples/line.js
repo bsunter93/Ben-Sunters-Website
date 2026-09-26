@@ -41,7 +41,8 @@ export function staircase(c, entries, opts = {}) {
     const xt = X(tD); S('line', { x1: xt, x2: xt, y1: top, y2: H - bot + 2, stroke: 'var(--ink-3)', 'stroke-width': 1, opacity: 0.55 }, grid);
     const tl = S('text', { x: Math.min(W - 4, xt + 3), y: top + 8, class: 'lane-lbl', 'text-anchor': xt > W - 40 ? 'end' : 'start' }, grid); tl.textContent = 'today';
     // scale key: one doubling
-    const kx = W - gr + 14, ky = H - bot - 4;
+    const anyData = lanes.some(l => l.pts.length > 1);
+    const kx = anyData ? W - gr + 14 : -99, ky = H - bot - 4;
     S('path', { d: `M${kx} ${ky}v${-k}m-3 0h6m-6 ${k}h6`, stroke: 'var(--ink-3)', 'stroke-width': 1.5, fill: 'none' }, grid);
     const kt = S('text', { x: kx + 5, y: ky - k / 2 + 3, class: 'ax' }, grid); kt.textContent = '2×';
     const clipId = 'clp' + Math.random().toString(36).slice(2, 7);
@@ -351,7 +352,7 @@ export async function linePage(r) {
     if (!cards[0]) return;
     sc.reveal(1, quiet); sc.focus(1); tiles[0]?.setAttribute('aria-current', 'true');
     // desktop has room for the whole line: replay every lane in the order the stops moved (≈ 2.5 s)
-    if (desk()) { const n = sc.lanes.length; for (let i = 2; i < n; i++) setTimeout(() => sc.reveal(i, quiet), RM ? 0 : (i - 1) * Math.min(320, 2500 / n)); }
+    if (desk() || !stations.length) { const n = sc.lanes.length; for (let i = 2; i < n; i++) setTimeout(() => sc.reveal(i, quiet), RM ? 0 : (i - 1) * Math.min(320, 2500 / n)); }
   });
   // shrink the sticky chart once the reader is into the stops (no layout animation)
   const sent = h('div', { 'aria-hidden': 'true' }); list.before(sent);
@@ -442,6 +443,8 @@ function renderEvidence(el, d, c) {
   const flatById = new Map((c.flat || []).map(f => [f.label, f]));
   const chan = ch => { const nod = ch.zhat == null || (ch.kappa != null && ch.kappa < 0.5); return h('div', { class: `ch ${ch.agree ? 'agree' : nod ? 'nodata' : ''}` }, ch.label || ch.code, h('small', null, ch.agree ? 'agrees' : nod ? 'still warming up' : "didn't move", ch.zhat != null ? `, ž ${Number(ch.zhat).toFixed(1)}` : '')); };
   const q1 = d.q1_normal ? q1Chart(d.q1_normal, q2.parent_onset) : null;
+  const untested = x.rho == null && !d.retracted;
+  const node = (c.nodes || []).find(n => n.hop_id === d.hop_id);
   const csv = m.csv || `${C.STORAGE}hop/${d.hop_id}.csv`;
   const issue = `https://github.com/bsunter93/Ben-Sunters-Website/issues/new?title=${encodeURIComponent(`Ripple Map: stop ${d.hop_id} (${d.node.label})`)}&body=${encodeURIComponent(`What looks wrong on https://bensunter.com${L.stopUrl(d.event.slug, d.hop_id)} ?\n\n`)}`;
   const rows = (arr) => h('div', { class: 'tw' }, h('table', { class: 't' }, h('tbody', null, arr.filter(Boolean).map(([k, v]) => h('tr', null, h('th', { scope: 'row' }, k), h('td', null, v ?? '–'))))));
@@ -458,29 +461,34 @@ function renderEvidence(el, d, c) {
       live),
     d.q1_normal ? sec('Q1', 'Is this normal for it?', q1, h('p', { class: 'q1k' }, h('span', null, h('i', { style: 'background:var(--on-panel)' }), 'this series'), h('span', null, h('i', { style: 'background:var(--spike)' }), 'after the shock'), h('span', null, h('i', { style: 'background:rgba(234,243,240,.3);height:8px' }), 'its normal range'), h('span', null, h('i', { style: 'background:var(--on-panel-3);height:1.5px' }), 'same weeks last year')),
       h('p', null, `Its normal is measured over ${d.q1_normal.baseline ? L.daysBetween(d.q1_normal.baseline.from, d.q1_normal.baseline.to) + 1 : 91} days ending ${d.q1_normal.baseline ? L.fmtDay(d.q1_normal.baseline.to) : 'three weeks before the shock'}, matched by weekday${d.q1_normal.baseline?.year_ago_term ? ', with a year-ago term' : ''}. The faint line is the same weeks last year: the placebo you can see.`)) : null,
-    sec('Q2', 'Did it move after, not before?',
+    untested ? h('section', { class: 'qs' }, h('h3', null, 'What we are waiting for'), h('p', null, d.sentence || ''),
+      d.look && d.look.window_close ? h('p', null, d.look.window_closed ? `Its window closed ${L.fmtDate(d.look.window_close)}.` : `Its window runs from ${L.fmtDate(q2.parent_onset)} to ${L.fmtDate(d.look.window_close)}. `, !d.look.window_closed && node?.due ? `Next look ${L.fmtDate(node.due)}.` : '') : null,
+      h('p', null, 'Nothing has moved yet, so there is no size, timing or luck check to show. The tests below run the moment a look finds a move.')) : null,
+    untested ? null : sec('Q2', 'Did it move after, not before?',
       h('div', { class: 'ruler' }, h('span', { class: 'd' }, L.fmtDate(q2.parent_onset)), h('span', { class: 'ln', 'aria-hidden': 'true' }), h('span', { class: 'd' }, L.fmtDate(q2.node_onset)), h('span', { class: q2.order_ok ? 'ok' : '' }, q2.lag_days != null ? (q2.lag_days === 0 ? 'same day' : `+${L.plural(q2.lag_days, 'day')}`) : '', q2.order_ok ? ' ✓' : '')),
       h('p', null, q2.pre_trend?.flag ? 'Already moving before the shock: capped at Likely.' : `Not already moving: its pre-trend score was ${q2.pre_trend?.s ?? '–'} (the flag is at 2).`)),
-    sec('Q3', 'Who else saw it?', h('div', { class: 'chs' }, (q3.channels || []).map(chan)),
+    untested ? null : sec('Q3', 'Who else saw it?', h('div', { class: 'chs' }, (q3.channels || []).map(chan)),
       h('p', null, h('b', null, `${q3.agree ?? 0} of ${q3.of ?? 0} independent sources agree.`), q3.loso_ok === false ? ' It drops below the bar without its strongest source.' : '', q3.common_shock ? ' The onset day was a common-shock day.' : ''),
       (q3.excluded || []).length ? h('p', null, 'Not counted: ', q3.excluded.map(e => `${e.label} (${e.why})`).join('; '), '.') : null),
     sec('Q4', 'Why these two?', h('ul', { class: 'path' }, (q4.path || []).map(p => h('li', null, p.text, h('small', null, p.source ? p.source[0].toUpperCase() + p.source.slice(1) : '')))),
       q4.replication?.text ? h('p', null, h('b', null, q4.replication.text)) : null,
       q4.rival_note ? h('p', null, q4.rival_note) : (q5.attribution && q5.attribution.share < 0.5 && q5.attribution.rivals?.length ? h('p', null, `Also consistent with: ${q5.attribution.rivals.map(r => r.label).join(', ')} (active the same week).`) : null),
       (q4.route_ideas || []).map(ri => h('p', { class: 'idea' }, `Route idea, not measured: ${ri.text} (${ri.source}).`))),
-    sec('Q5', 'Could it be luck?',
+    untested ? null : sec('Q5', 'Could it be luck?',
       h('div', { class: 'luck' }, h('p', null, h('b', null, 'Lookalikes. '), L.lookalikes(q5.p_1_in) || 'Not tested yet.'), pstrip,
         placebo.fam.length ? h('p', { class: 'xs' }, placebo.fam.map(f => `${L.fmtInt(f.exceed)} of ${L.fmtInt(f.n)} ${L.FAM_WORD[f.k]}`).join(', '), ' looked this strong.') : null),
       h('div', { class: 'luck' }, h('p', null, h('b', null, 'Fluke rate. '), L.flukeRate(q5.f_1_in, q5.f_warming) || 'Not measured yet.'), meter),
       q5.day && q5.day.tested ? h('p', null, `We tested ${L.fmtInt(q5.day.tested)} paths that day. Expect about ${L.expected(q5.day.expected_flukes)} of that day's ${L.plural(q5.day.measured, 'Measured stop')} to be wrong.`) : null,
       (q5.flat_siblings || []).length ? [h('p', null, h('b', null, 'The ones that stayed flat')), h('ul', { class: 'sibs' }, q5.flat_siblings.map(s => h('li', null, s.label, spark(flatById.get(s.label)?.spark, 64, 20), h('b', null, L.num(s.rho) + '×'))))] : null),
     h('details', { class: 'math' }, h('summary', null, 'Show the math'),
-      rows([['Statistic', `${m.stat_kind || '–'}${m.s != null ? `, S = ${m.s}` : ''}`], ['Scale σ', m.sigma], ['Window', m.window_days != null ? L.plural(m.window_days, 'day') : null],
-        ['Multiple', `shrunk ${L.mult(x.rho, u)} [${L.mult(x.rho_lo, u)}–${L.mult(x.rho_hi, u)}], raw ${L.mult(m.raw_rho, u)}`], ['Look', d.look ? `${d.look.no} of ${d.look.of}${d.look.final ? ', final' : ''}${m.look_day ? `, ${L.fmtDay(m.look_day)}` : ''}` : null],
-        ['Placebo p', `${q5.p ?? '–'} (floor ${q5.p_floor ?? '–'})`], ['q (weighted BH)', q5.q], ['BH', q5.bh ? `rank ${q5.bh.rank} of ${q5.bh.m}, weight ${q5.bh.weight}` : null], ['Fluke bin', q5.f_bin], ['ρ̂₁', m.rho1 ?? 'not stored'],
-        ['Method', m.method || c.method], ['Ledger', m.ledger ? h('span', null, `entry ${m.ledger.seq} `, h('span', { class: 'hash' }, m.ledger.chain_hash)) : null], ['Failed conditions', (m.fails || []).join(', ') || 'none']]),
+      rows([m.stat_kind ? ['Statistic', `${m.stat_kind}${m.s != null ? `, S = ${m.s}` : ''}`] : null, m.sigma != null ? ['Scale σ', m.sigma] : null, m.window_days != null ? ['Window', L.plural(m.window_days, 'day')] : null,
+        x.rho != null ? ['Multiple', `shrunk ${L.mult(x.rho, u)} [${L.mult(x.rho_lo, u)}–${L.mult(x.rho_hi, u)}]${m.raw_rho != null ? `, raw ${L.mult(m.raw_rho, u)}` : ''}`] : null,
+        d.look && d.look.no != null ? ['Look', `${d.look.no} of ${d.look.of}${d.look.final ? ', final' : ''}${m.look_day ? `, ${L.fmtDay(m.look_day)}` : ''}`] : null,
+        q5.p != null ? ['Placebo p', `${q5.p}${q5.p_floor != null ? ` (floor ${q5.p_floor})` : ''}`] : null, q5.q != null ? ['q (weighted BH)', q5.q] : null,
+        q5.bh && q5.bh.m != null ? ['BH', `rank ${q5.bh.rank} of ${q5.bh.m}, weight ${q5.bh.weight}`] : null, q5.f_bin ? ['Fluke bin', q5.f_bin] : null, untested ? null : ['ρ̂₁', m.rho1 ?? 'not stored'],
+        ['Method', m.method || c.method], m.ledger ? ['Ledger', h('span', null, `entry ${m.ledger.seq} `, h('span', { class: 'hash' }, m.ledger.chain_hash))] : null, untested ? null : ['Failed conditions', (m.fails || []).join(', ') || 'none']]),
       zRows.length ? h('div', { class: 'tw' }, h('table', { class: 't' }, h('thead', null, h('tr', null, ['Channel', 'ž', 'S', 'κ', 'weight', 'sources'].map(t => h('th', { scope: 'col' }, t)))), h('tbody', null, zRows))) : null,
-      h('div', { class: 'tw' }, h('table', { class: 't' }, h('thead', null, h('tr', null, ['Placebo family', 'tested', 'as strong'].map(t => h('th', { scope: 'col' }, t)))), h('tbody', null, placebo.fam.map(f => h('tr', null, h('td', null, L.FAM_WORD[f.k]), h('td', { class: 'n' }, L.fmtInt(f.n)), h('td', { class: 'n' }, L.fmtInt(f.exceed))))))),
+      untested ? null : h('div', { class: 'tw' }, h('table', { class: 't' }, h('thead', null, h('tr', null, ['Placebo family', 'tested', 'as strong'].map(t => h('th', { scope: 'col' }, t)))), h('tbody', null, placebo.fam.map(f => h('tr', null, h('td', null, L.FAM_WORD[f.k]), h('td', { class: 'n' }, L.fmtInt(f.n)), h('td', { class: 'n' }, L.fmtInt(f.exceed))))))),
       (m.licences || []).length ? h('p', { class: 'xs', style: 'color:var(--on-panel-2)' }, 'Sources: ', m.licences.map(l => `${l.attribution} (${l.licence})`).join('; ')) : null,
       q1rows.length ? h('details', null, h('summary', null, 'Q1 chart as a table'), h('div', { class: 'tw' }, h('table', { class: 't' }, h('thead', null, h('tr', null, ['Day', '× normal', 'normal low', 'normal high', 'last year'].map(t => h('th', { scope: 'col' }, t)))), h('tbody', null, q1rows)))) : null,
       h('div', { class: 'btns' }, h('a', { class: 'btn sec sm', href: csv, download: `stop-${d.hop_id}.csv` }, 'Download CSV'), h('a', { class: 'btn sec sm', href: issue, target: '_blank', rel: 'noopener' }, 'Something wrong?'))),
