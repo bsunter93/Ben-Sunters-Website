@@ -22,7 +22,8 @@ export function staircase(c, entries, opts = {}) {
   let hot = -1, dayClip = null;
   api.draw = () => {
     svg.replaceChildren();
-    const W = Math.max(280, Math.round(fig.clientWidth - 12) || 316), H = desk() ? 320 : fig.classList.contains('min') ? 118 : 180;
+    const tkt = fig.classList.contains('tk'), min = fig.classList.contains('min');
+    const W = Math.max(280, Math.round(fig.clientWidth - 12) || 316), H = tkt ? 150 : desk() ? 320 : min ? 118 : 200;
     svg.setAttribute('viewBox', `0 0 ${W} ${H}`);
     const gl = desk() ? 150 : 24, gr = 40, top = 8, bot = 18;
     const dEnd = Math.max(tD + 2, 10, ...lanes.map(l => l.due ?? -99).filter(d => d > -99 && d <= tD + 14));
@@ -35,7 +36,11 @@ export function staircase(c, entries, opts = {}) {
     const XL = i => (byHop ? (dd => cx(i) + (dd - anchor(lanes[i])) * pxDay) : X);
     const vis = (l, i) => l.pts.filter(p => (byHop ? Math.abs(p.d - anchor(l)) <= 6 : p.d >= X.start && p.d <= X.end));
     const ext = lanes.map((l, i) => { const v = vis(l, i).map(p => L.log2(p.v)).concat(l.band ? l.band.hi.filter(p => p.d >= X.start).map(p => L.log2(p.v)) : []); return { up: Math.max(0, ...v), dn: Math.max(0, ...v.map(x => -x)) }; });
-    const layout = k => { const b = []; let y = top + Math.max(6, ext[0].up * k); b.push(y); for (let i = 1; i < n; i++) { y += Math.max(desk() ? 18 : 13, ext[i - 1].dn * k + ext[i].up * k * 0.4 + 5); b.push(y); } return { b, tot: y + ext[n - 1].dn * k + bot }; };
+    // The shock's job is to mark when, not to own the scale: its lane is capped at ≈3× (1.6 doublings) and the peak beyond
+    // the cap is drawn as a clipped spike with its label at the cap. The stop lanes get a floor on their pitch instead.
+    const CAP = 1.6; ext[0].up = Math.min(ext[0].up, CAP);
+    const pitch = tkt ? 20 : desk() ? 34 : min ? 14 : 18;
+    const layout = k => { const b = []; let y = top + Math.max(6, ext[0].up * k); b.push(y); for (let i = 1; i < n; i++) { y += Math.max(pitch, ext[i - 1].dn * k + ext[i].up * k * 0.4 + 5); b.push(y); } return { b, tot: y + ext[n - 1].dn * k + bot }; };
     let lo = 1, hi = 90, k = 1;
     for (let it = 0; it < 24; it++) { const m = (lo + hi) / 2; if (layout(m).tot <= H) { k = m; lo = m; } else hi = m; }
     let { b } = layout(k);
@@ -56,11 +61,13 @@ export function staircase(c, entries, opts = {}) {
     const clipId = 'clp' + Math.random().toString(36).slice(2, 7);
     const cp = S('clipPath', { id: clipId }, S('defs', null, svg)); dayClip = S('rect', { x: 0, y: -40, width: W, height: H + 80 }, cp);
     body.setAttribute('clip-path', `url(#${clipId})`);
-    const P = (arr, y0, Xf = X) => arr.map((p, i) => `${i ? 'L' : 'M'}${Xf(p.d).toFixed(1)} ${(y0 - k * L.log2(p.v)).toFixed(1)}`).join('');
-    api.X = X; api.W = W;
-    const placed = [];
+    const P = (arr, y0, Xf = X, cap = 99) => arr.map((p, i) => `${i ? 'L' : 'M'}${Xf(p.d).toFixed(1)} ${(y0 - k * Math.min(cap, L.log2(p.v))).toFixed(1)}`).join('');
+    api.X = X; api.W = W; api.k = k;
+    const placed = [], lagText = b.length > 1 && (b[1] - b[0]) < 22 || (n > 2 && (b[2] - b[1]) < 22);
+    // lanes not yet revealed are painted faint (.28) so the fold shows the shape of the staircase at first paint
+    const dim = l => (l.att ? 0.2 : 0.28);
     lanes.forEach((l, i) => {
-      const y0 = b[i], g = S('g', { class: 'lane', opacity: l.shown || opts.all ? 1 : 0 }, body), n0 = l.n, Xi = XL(i);
+      const y0 = b[i], g = S('g', { class: 'lane', opacity: l.shown || opts.all ? 1 : dim(l) }, body), n0 = l.n, Xi = XL(i);
       l.g = g; l.y0 = y0;
       S('line', { x1: gl, x2: W - gr, y1: y0, y2: y0, stroke: 'var(--grid-card)', 'stroke-width': 1 }, g);
       if (l.band) {
@@ -72,9 +79,10 @@ export function staircase(c, entries, opts = {}) {
       const pre = pts.filter(p => p.d <= cut), post = pts.filter(p => p.d >= cut - 1);
       const flat = n0.tier === 'retracted', watch = n0.tier === 'watching';
       const col = flat ? 'var(--flat)' : 'var(--ink)';
-      l.pre = pre.length > 1 ? S('path', { d: P(pre, y0, Xi), fill: 'none', stroke: col, 'stroke-width': 1.75, 'stroke-linejoin': 'round', 'stroke-dasharray': watch ? '4 4' : null, class: flat ? 'lane-flat' : null }, g) : null;
-      l.post = post.length > 1 && l.od != null ? S('path', { d: P(post, y0, Xi), fill: 'none', stroke: l.shock ? 'var(--spike)' : col, 'stroke-width': l.shock ? 2.5 : 2, 'stroke-linejoin': 'round', 'stroke-linecap': 'round', class: l.shock ? 'lane-hot' : flat ? 'lane-flat' : null }, g) : null;
-      if (n0.attention_ripple) g.setAttribute('opacity', l.shown ? 0.5 : 0), l.att = true;
+      const cap = l.shock ? CAP : 99;
+      l.pre = pre.length > 1 ? S('path', { d: P(pre, y0, Xi, cap), fill: 'none', stroke: col, 'stroke-width': 1.75, 'stroke-linejoin': 'round', 'stroke-dasharray': watch ? '4 4' : null, class: flat ? 'lane-flat' : null }, g) : null;
+      l.post = post.length > 1 && l.od != null ? S('path', { d: P(post, y0, Xi, cap), fill: 'none', stroke: l.shock ? 'var(--spike)' : col, 'stroke-width': l.shock ? 2.5 : 2, 'stroke-linejoin': 'round', 'stroke-linecap': 'round', class: l.shock ? 'lane-hot' : flat ? 'lane-flat' : null }, g) : null;
+      if (n0.attention_ripple) { l.att = true; g.setAttribute('opacity', l.shown || opts.all ? 0.5 : dim(l)); }
       // Watching: dashed track from today to the due date, hollow tile at the due date
       if (watch && l.due != null) {
         const a = S('line', { x1: Xi(byHop ? l.due - 3 : Math.min(tD, l.due)), x2: Xi(l.due), y1: y0, y2: y0, stroke: 'var(--ink)', 'stroke-width': 2, 'stroke-dasharray': '4 4', class: RM ? null : 'marching' }, g);
@@ -95,18 +103,22 @@ export function staircase(c, entries, opts = {}) {
           const lag = n0.lag_days != null ? (n0.lag_days === 0 ? '0 d' : `+${Math.round(n0.lag_days)} d`) : '';
           const mx = x2 + 7, my = y2 - 9, bw = lag.length * 6 + 6;
           if (lag && !placed.some(r => mx < r[0] + r[2] + 2 && mx + bw + 2 > r[0] && Math.abs(my - r[1]) < 15)) {
-            const fr = S('rect', { x: mx, y: my - 7, width: bw, height: 14, rx: 2.5, fill: 'var(--marigold)' }, g);
-            const lt = S('text', { x: mx + 3, y: my + 4, class: 'ax', style: 'fill:#0B3A40' }, g); axText(lt, lag);
-            placed.push([mx, my, bw, fr, lt]);
+            // tight lanes (pitch < 22 px): the lag is plain axis text beside the dot, so flaps never stack on each other
+            const fr = lagText ? null : S('rect', { x: mx, y: my - 7, width: bw, height: 14, rx: 2.5, fill: 'var(--marigold)' }, g);
+            const lt = S('text', { x: lagText ? x2 + 6 : mx + 3, y: lagText ? y2 - 4 : my + 4, class: 'ax', style: lagText ? 'fill:var(--marigold-ink);paint-order:stroke;stroke:var(--card);stroke-width:3px' : 'fill:#0B3A40' }, g); axText(lt, lag);
+            placed.push([mx, my, bw, fr || lt, lt]);
           }
         }
         l.dot = S('circle', { cx: Xi(l.od), cy: y0, r: l.shock ? 4.5 : 4, fill: l.shock ? 'var(--marigold)' : 'var(--card)', stroke: 'var(--ink)', 'stroke-width': 2 }, g);
       }
       l.val = null;
       if (l.shock && post.length) {
+        // the peak label sits at the (capped) peak; it moves to the left of the dot when the "today" rule is in the way
         const pk = post.reduce((a, p) => (p.v > a.v ? p : a), post[0]);
-        const st = S('text', { x: Xi(pk.d) + 7, y: y0 - k * L.log2(pk.v) + 4, class: 'ax', style: 'font-size:12px;fill:var(--marigold-ink);paint-order:stroke;stroke:var(--card);stroke-width:3px' }, g);
+        const px = Xi(pk.d), left = !byHop && px > X(tD) - 40, py = y0 - k * Math.min(CAP, L.log2(pk.v));
+        const st = S('text', { x: left ? px - 7 : px + 7, y: py + 4, class: 'ax', 'text-anchor': left ? 'end' : 'start', style: 'font-size:12px;fill:var(--marigold-ink);paint-order:stroke;stroke:var(--card);stroke-width:3px' }, g);
         axText(st, L.num(pk.v) + '×');
+        if (L.log2(pk.v) > CAP) S('path', { d: `M${(px - 4).toFixed(1)} ${(py - 2).toFixed(1)}l4 -4 4 4`, fill: 'none', stroke: 'var(--spike)', 'stroke-width': 1.5, 'stroke-linecap': 'round' }, g);
       }
       if (!l.shock && post.length && n0.rho != null) {
         const ex = post.reduce((a, p) => (Math.abs(L.log2(p.v)) > Math.abs(L.log2(a.v)) ? p : a), post[0]);

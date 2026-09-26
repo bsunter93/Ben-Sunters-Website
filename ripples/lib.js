@@ -57,6 +57,16 @@ export function rel(x, unit = 'x', tail = 'its normal') {
   return `${num(v)}× ${tail}`;
 }
 export const oneIn = n => (fin(n) && Number(n) >= 1 ? `1 in ${fmtInt(n)}` : '');
+// A multiple read as a percentage, so 0.91× reads as a signal: "9% fewer" / "240% more". A caption only, never a flap;
+// empty for rates in points and for moves under 1%.
+export function pctGloss(x, unit = 'x') {
+  if (!fin(x) || unit === 'points') return '';
+  const v = Number(x), p = v < 1 ? Math.round((1 - v) * 100) : Math.round((v - 1) * 100);
+  if (p < 1) return '';
+  return v < 1 ? `${p}% fewer` : `${fmtInt(p)}% more`;
+}
+// the arrow before a flap: ↓ for a dip, ↑ for a rise, nothing within ±3.5% (|log2| ≤ .05)
+export const dirGlyph = (x, unit = 'x') => (!fin(x) ? '' : unit === 'points' ? (Number(x) < 0 ? '↓' : Number(x) > 0 ? '↑' : '') : Math.abs(log2(Number(x))) > 0.05 ? (Number(x) < 1 ? '↓' : '↑') : '');
 export const plural = (n, one, many = one + 's') => `${fmtInt(n)} ${Number(n) === 1 ? one : many}`;
 
 // ---------- dates (UTC dates as yyyy-mm-dd strings) ----------
@@ -220,13 +230,17 @@ export function stopSentence(n, parent) {
   }
   const who = n.domain === 'reading' ? `${n.label} readers` : n.label;
   const parts = [{ t: `${n.domain === 'reading' && !/readers?$/i.test(n.label) ? who : n.label} ran ` }];
+  // {dir} is the ↓/↑ glyph before the flap; {g} is the percentage gloss after it (Plex caption, never a flap)
+  const dir = dirGlyph(n.rho, n.unit), g = pctGloss(n.rho, n.unit);
+  if (dir) parts.push({ dir });
   if (n.unit === 'points') parts.push({ flap: mult(n.rho, 'points') }, { t: ` ${Math.abs(n.rho).toFixed(2) === '1.00' ? 'point' : 'points'} ${n.rho < 0 ? 'below' : 'above'} its normal, ` });
-  else parts.push({ flap: num(n.rho) + '×' }, { t: ' its normal, ' });
+  else parts.push({ flap: num(n.rho) + '×' }, { t: ' its normal' }, ...(g ? [{ g: ` (${g})` }] : []), { t: ', ' });
   if (fin(n.lag_days) && Number(n.lag_days) > 0) parts.push({ flap: `+${Math.round(n.lag_days)}` }, { t: ` ${Number(n.lag_days) === 1 ? 'day' : 'days'} after ${parent}.` });
   else parts.push({ t: `the same day as ${parent}.` });
   return parts;
 }
-export const plainParts = parts => parts.map(p => p.t ?? p.flap).join('');
+// the plain sentence (screen readers, tests): flaps as digits; the ↓/↑ glyph and the percentage gloss are visual only
+export const plainParts = parts => parts.map(p => (p.g != null || p.dir != null ? '' : p.t ?? p.flap)).join('');
 // Evidence sheet headline (§5): the shrunk multiple with its interval
 export function evidenceHeadline(h) {
   const x = h.headline || {}, u = h.q1_normal?.unit || 'x', node = h.node?.label || '';

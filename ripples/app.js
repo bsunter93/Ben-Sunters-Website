@@ -2,7 +2,7 @@
 // ripples/tools/gen-stubs.mjs) picks the renderer. Data: the stub's inlined #rm-data first, then Storage v2/, then the RPC.
 import * as C from './config.js';
 import * as L from './lib.js';
-import { $, add, h, S, em, sep, joinSep, put, icon, IC, RM, desk, ls, today, INLINE, D, rpc, load, event, toast, copy, share, prefetchImg, shareImage, landing, flaps, countUp, tt_, pips, stamp, dtile, strip, legend, spark, theme, wander, chrome, visits, seedChart, getBip } from './ui.js';
+import { $, add, h, S, em, sep, joinSep, put, icon, IC, RM, desk, ls, today, INLINE, D, rpc, load, event, toast, copy, share, prefetchImg, shareImage, landing, flaps, countUp, setFlaps, untilLook, tt_, pips, stamp, dtile, strip, legend, spark, theme, wander, chrome, visits, seedChart, getBip } from './ui.js';
 
 // ---------- HOME ----------
 function heroTicket(S0, archive) {
@@ -105,13 +105,28 @@ async function archiveTicket(S0, archive) {
   tk.classList.add('arch'); tk.querySelector('h1')?.replaceWith(h('h2', { class: 'tk-title', id: 'arch-t' }, a.label)); tk.setAttribute('aria-labelledby', 'arch-t');
   return tk;
 }
+// A board row's destination column, in order of what the line has: the farthest Measured domain; else its Likely domain
+// (never labelled "watching"); else "went nowhere"; else the live countdown to its next look (signature A: the board as a
+// split-flap clock, ticking every minute; "today" in marigold once the look is due; static under reduced motion).
+const tickers = [];
 function depRow(s, fresh) {
   const st = s.stops || {};
-  const when = s.next_due && s.next_due >= today() ? `due ${L.fmtDay(s.next_due)}` : `since ${L.fmtDay(s.onset)}`;
-  const dest = s.farthest_measured_domain ? h('span', { class: 'dest' }, h('span', null, em(L.domIcon(s.farthest_measured_domain)), ' ', L.domWord(s.farthest_measured_domain)), h('small', null, when)) : h('span', { class: 'dest wat' }, s.status === 'nowhere' ? 'went nowhere' : 'watching', h('small', null, when));
-  return h('a', { class: 'dep' + (fresh ? ' new' : ''), href: L.lineUrl(s.slug) },
+  const due = s.next_due && s.next_due >= today() ? s.next_due : null;
+  const when = due ? `${L.lookWord(due, s.window_close).toLowerCase()} ${L.fmtDay(due)}` : `since ${L.fmtDay(s.onset)}`;
+  let dest, said;
+  if (s.farthest_measured_domain) { dest = h('span', { class: 'dest' }, h('span', null, em(L.domIcon(s.farthest_measured_domain)), ' ', L.domWord(s.farthest_measured_domain)), h('small', null, when)); said = `farthest ${L.domWord(s.farthest_measured_domain)}, Measured`; }
+  else if (st.likely > 0 && (s.domains_reached || []).length) { const d = s.domains_reached[0]; dest = h('span', { class: 'dest' }, h('span', null, tt_('likely'), ' ', em(L.domIcon(d)), ' ', L.domWord(d)), h('small', null, when)); said = `Likely in ${L.domWord(d)}`; }
+  else if (s.status === 'nowhere') { dest = h('span', { class: 'dest wat' }, 'went nowhere', h('small', null, when)); said = 'went nowhere'; }
+  else if (due) {
+    const cd = flaps(untilLook(due), 'mute' + (untilLook(due) === 'today' ? ' hot' : ''), false);
+    dest = h('span', { class: 'dest clock' }, cd, h('small', null, `${untilLook(due) === 'today' ? L.lookWord(due, s.window_close).toLowerCase() : 'to the next look'}`));
+    tickers.push(() => { const t = untilLook(due); setFlaps(cd, t); cd.classList.toggle('hot', t === 'today'); });
+    said = `next look ${L.fmtDate(due)}`;
+  } else { dest = h('span', { class: 'dest wat' }, 'watching', h('small', null, when)); said = 'watching'; }
+  const label = `${s.label}${s.reconstructed ? ', reconstructed' : ''}: ${st.measured || 0} Measured, ${st.likely || 0} Likely, ${st.watching || 0} Watching, ${st.flat || 0} stayed flat; ${said}${due ? `; next look ${L.fmtDate(due)}` : ''}${fresh ? '; new since your last visit' : ''}`;
+  return h('a', { class: 'dep' + (fresh ? ' new' : ''), href: L.lineUrl(s.slug), 'aria-label': label },
     h('span', { class: 'ic', 'aria-hidden': 'true' }, em(s.emoji || '▫️')),
-    h('span', null, h('span', { class: 'nm' }, s.label, s.reconstructed ? h('span', { class: 'sr' }, ' (reconstructed)') : null), h('span', { class: 'sub' }, strip(st, 7, true), fresh ? [sep(), h('span', { class: 'hl' }, 'new')] : null)),
+    h('span', { 'aria-hidden': 'true' }, h('span', { class: 'nm' }, s.label), h('span', { class: 'sub' }, strip(st, 7, true, s.watching_domains), fresh ? [sep(), h('span', { class: 'hl' }, 'new')] : null)),
     dest, icon('chev', 'chev'));
 }
 function board(S0, fresh) {
@@ -127,7 +142,11 @@ function board(S0, fresh) {
     h('span', null, h('span', { class: 'nm' }, L.plural(ctl.n_decoys || 1, 'page') + " that weren't trending"), h('span', { class: 'sub' }, strip(ctl.stops || {}, 6, true), h('span', { style: 'white-space:nowrap' }, sep(), 'same tests'))),
     h('span', { class: 'dest wat' }, 'the control'), h('span')));
   const dl = L.dayLine(S0?.line), ll = S0?.listed_lines_sum;
-  el.append(legend(), h('p', { class: 'bd-foot' },
+  // nothing Measured on the board yet: say so, and name the next look (the board is a clock, not a graveyard)
+  const nM = rows.reduce((a, r) => a + (r.stops?.measured || 0), 0);
+  const nextRow = rows.filter(r => r.next_due && r.next_due >= today()).sort((a, b) => String(a.next_due).localeCompare(String(b.next_due)))[0];
+  const waiting = !nM && rows.length ? h('b', { class: 'wait' }, `Nothing has passed yet.${nextRow ? ` Next look: ${nextRow.label}, ${L.fmtDate(nextRow.next_due)}.` : ''}`) : null;
+  el.append(legend(), h('p', { class: 'bd-foot' }, waiting ? [waiting, h('br')] : null,
     dl ? [h('b', null, `Tested ${L.fmtInt(dl.tested)} paths today`), sep(), `${L.fmtInt(dl.moved)} moved`, sep(), `${L.fmtInt(dl.measured ?? 0)} Measured`, L.flukeClause(dl.expected, dl.measured) ? [sep(), L.flukeClause(dl.expected, dl.measured)] : null]
       : [h('b', null, "Today's tests are not in yet.")],
     ll && ll.lines ? [h('br'), `On the ${L.plural(ll.lines, 'listed line')}, over all their days: ${L.fmtInt(ll.tested)} paths tested, ${L.fmtInt(ll.moved)} moved, ${L.fmtInt(ll.measured)} Measured.`] : null));
@@ -169,8 +188,13 @@ async function home() {
   const main = $('#main');
   if (!S0) { put(main, h('div', { class: 'empty' }, 'The Ripple Map could not load. Please try again in a minute.')); return; }
   const sn = sinceSnap(S0);
-  const ar = S0.hero && S0.hero.reconstructed ? await D.archive() : null;
-  put(main, h('div', { class: 'home' }, h('div', null, heroTicket(S0, ar), sinceBlock(sn)), h('div', null, board(S0, sn.fresh), domChips(S0))));
+  const ar = !S0.hero || S0.hero.reconstructed ? await D.archive() : null;
+  // cold start: the reconstructed archive line is the second ticket, so the fold has a real staircase (EXPERIENCE §2);
+  // it is awaited so the page paints once, without a shift
+  const arch = !S0.hero && ar ? await archiveTicket(S0, ar).catch(() => null) : null;
+  put(main, h('div', { class: 'home' }, h('div', null, heroTicket(S0, ar), arch, sinceBlock(sn)), h('div', null, board(S0, sn.fresh), domChips(S0))));
+  // the board's countdown flaps tick once a minute (only the changed digit folds); paused while the tab is hidden
+  if (tickers.length) { const tick = () => { if (!document.hidden) tickers.forEach(f => f()); }; setInterval(tick, 60000); document.addEventListener('visibilitychange', tick); }
   // the board clacks over once: each flap cycles a few letters and lands (not under reduced motion)
   if (!RM) main.querySelectorAll('.fw b').forEach((b, i) => {
     const fin = b.textContent, AZ = 'ABCDEFGHIJKLMNOPRSTUVWXYZ'; let n = 3 + (i % 4);
