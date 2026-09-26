@@ -51,7 +51,7 @@
 import { addDays, db, errMsg, ingest, type ObsRow, politeFetch, type Run, serve, stateGet, stateSet } from "./att.ts";
 import { getJson, getText, r4, scrubStr, secret, todayUtc, wrap } from "./wsa.ts";
 
-export const ECON_VERSION = "2026-09-26.e8";
+export const ECON_VERSION = "2026-09-26.e9";
 
 // ------------------------------------------------------------------ series catalogues
 type Kind = "rate" | "level" | "count";
@@ -348,8 +348,9 @@ async function eiaBulkFile(run: Run, name: string): Promise<{ rows: number; ok: 
   const fsum = new Map<string, number>(), fhours = new Map<string, number>(); // key `${fuel}|${ba}|${date}` (solar / wind)
   let buf = "", header: string[] | null = null, iBa = 0, iDate = 1, iDem = -1, iAdj = -1, iNg = -1, iNgAdj = -1, maxIdx = 0, complete = true;
   // fuel columns: files up to 2023 carry one "Net Generation (MW) from Solar" column; newer files split it into
-  // "... from Solar with/without Integrated Battery Storage" (+ Imputed / Adjusted variants). All matching columns of the
-  // preferred variant (Adjusted when present) are summed per hour.
+  // "... from Solar with/without Integrated Battery Storage" (+ Imputed / Adjusted variants; EIA's own header spells one of them
+  // "Solar witho Integrated Battery Storage (Adjusted)", accepted). All matching columns of the preferred variant (Adjusted when
+  // present) are summed per hour.
   let iSol: number[] = [], iWind: number[] = [];
   const handle = (line: string) => {
     if (!line) return;
@@ -359,7 +360,7 @@ async function eiaBulkFile(run: Run, name: string): Promise<{ rows: number; ok: 
       iDem = header.indexOf("demand (mw)"); iAdj = header.indexOf("demand (mw) (adjusted)");
       iNg = header.indexOf("net generation (mw)"); iNgAdj = header.indexOf("net generation (mw) (adjusted)");
       const cols = (fuel: string, adj: boolean) => {
-        const re = new RegExp(`^net generation \\(mw\\) from ${fuel}( with(out)? integrated battery storage)?${adj ? " \\(adjusted\\)" : ""}$`);
+        const re = new RegExp(`^net generation \\(mw\\) from ${fuel}( with(out|o)? integrated battery storage)?${adj ? " \\(adjusted\\)" : ""}$`);
         return header!.map((h, i) => (re.test(h) ? i : -1)).filter((i) => i >= 0);
       };
       iSol = cols("solar", true); if (!iSol.length) iSol = cols("solar", false);
