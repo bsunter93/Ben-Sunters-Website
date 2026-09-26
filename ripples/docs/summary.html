@@ -102,7 +102,7 @@ figcaption{font-size:7.8pt;color:var(--ink-2);border-top:1px solid var(--hair);p
 <p class="who">The owner, 25–26 Sep 2026. Everything below is judged against these three lines.</p>
 </div>
 <p class="oneline"><strong>In one sentence:</strong> Ripple Map takes an upstream shock (a hurricane, a heat wave, a model release, a rate decision), follows it across domains (jobless claims, grid demand, air travel, downloads, filings, prediction markets), and labels every step with a confidence tier that was earned by pre-registered tests, not asserted.</p>
-<p>A hurricane leads to disaster declarations, then to jobless claims, then to new business filings. Each step on the map carries one of three words:</p>
+<p>For example, a hurricane leads to disaster declarations, then jobless claims, then new business filings. Each step carries one of three words:</p>
 <table>
 <thead><tr><th style="width:14%">Tier</th><th style="width:50%">What it takes</th><th>How it reads</th></tr></thead>
 <tbody>
@@ -117,11 +117,11 @@ figcaption{font-size:7.8pt;color:var(--ink-2);border-top:1px solid var(--hair);p
 <div class="claim"><p><strong>Tests are locked before the data is read.</strong> Every candidate link, its weight and its look schedule are frozen and written to an append-only, hash-chained ledger before any post-event number is used. The chain verifies after every change (696 rows, 54 freeze batches, 0 tests without a frozen candidate, as of 03:30 UTC).</p></div>
 <div class="claim"><p><strong>Every link is tested against fakes.</strong> Three placebo families (fake dates, other events, look-alike series) plus daily decoy events run through identical code. Any tier a decoy earns is false by construction, so the fluke rate is measured, not assumed.</p></div>
 <div class="claim"><p><strong>A second opinion must agree.</strong> A nightly BigQuery forecast check (<code>AI.CAUSAL_EFFECT</code>) must agree before anything is called Measured. On its first calibrated run it flagged 0 of 13 eligible decoys.</p></div>
-<div class="claim"><p><strong>Patterns across many past events (engine 6.2).</strong> Pooling past events of the same kind, and comparing hit regions with untouched ones, turns single noisy hops into findings like "across N past hurricanes, jobless claims in hit states rose X %", each with a measured fluke rate. This is what lets the product be both rigorous and full of interesting findings.</p></div>
+<div class="claim"><p><strong>Patterns across past events (engine 6.2).</strong> Pooling past events of the same kind, and comparing hit regions with untouched ones, yields findings like "across N past hurricanes, jobless claims in hit states rose X %", each with a measured fluke rate.</p></div>
 <div class="claim"><p><strong>The failures stay on screen.</strong> Stops that stayed flat, retractions, the decoy "control ripple" and failed launch gates are published. Nobody else publishes the denominator.</p></div>
 
 <h2>3 · Rigor and usability, balanced</h2>
-<p>Strict tests favour obvious effects, and a map with three Measured hops is dull. The answer is not to loosen Measured. It is to add a second, plentiful kind of finding that is honestly labelled:</p>
+<p>Strict tests favour obvious effects. The answer is not to loosen Measured but to add a plentiful, honestly labelled second kind of finding:</p>
 <ul>
 <li><strong>Measured stays as strict as engine 6.1.</strong> Engine 6.2 can only lift a statistical failure when a pre-registered regional contrast passes its own placebo test, and it adds a failure when a large family of past events disagrees.</li>
 <li><strong>Patterns and Likely findings are the everyday product.</strong> Each carries a strength word tied to a published fluke rate ("strong pattern", "pattern", "hint").</li>
@@ -129,7 +129,7 @@ figcaption{font-size:7.8pt;color:var(--ink-2);border-top:1px solid var(--hair);p
 </ul>
 
 <h2>4 · The experience</h2>
-<p>An interactive entertainment explorer: the hero is the Ripple Map of today's shocks, each growing a cascade that crosses domains over days and weeks. Tapping a step opens an evidence card (the mechanism, the series against its own seasonal normal, the lag, the fluke rate, how many independent sources agree, and the tier). Pattern cards summarise what happened across past events of the same kind. Shareable cascade cards are pre-rendered. A light "call the next ripple" moment is optional.</p>
+<p>An interactive entertainment explorer: the hero is the Ripple Map of today's shocks, each growing a cascade that crosses domains over days and weeks. Tapping a step opens an evidence card: mechanism, the series against its own seasonal normal, lag, fluke rate, agreeing sources and tier. Pattern cards summarise past events of the same kind; cascade cards are shareable; a light "call the next ripple" moment is optional.</p>
 <p><strong>Visual design: under redesign.</strong> The owner rejected the first frontend's look on 26 Sep. Three high-fidelity directions are being made on a real event (Hurricane Milton): <strong>A</strong> editorial seismograph, <strong>B</strong> radial ripple map, <strong>C</strong> chain of story cards. Chosen direction: <span class="tbd">{{TBD: owner's pick of A / B / C}}</span>. The frontend is rebuilt on it afterwards.</p>
 <div class="old">
 <p><strong>Superseded v5 content (kept out of this document).</strong> Decision D-6 returned the project to the core vision, which removed:</p>
@@ -147,10 +147,10 @@ figcaption{font-size:7.8pt;color:var(--ink-2);border-top:1px solid var(--hair);p
 <div><span class="n">377<small> / 500 MB</small></span><span class="l">Database used</span></div>
 </div>
 <table>
-<thead><tr><th style="width:26%">Area</th><th>State (26 Sep, 03:30 UTC)</th></tr></thead>
+<thead><tr><th style="width:16%">Area</th><th>State (26 Sep, 03:30 UTC)</th></tr></thead>
 <tbody>
-<tr><td><b>Data layer</b></td><td><span class="ok">Done.</span> 35+ sources (54 registered) collected within written rules; YouTube added tonight (40 countries × 7 categories). Wikipedia history backfill: 360 of 996 pages filled, continuing every 10 minutes.</td></tr>
-<tr><td><b>Engine 6.1</b></td><td><span class="ok">Deployed.</span> All five audit blockers and 8 should-fixes fixed, plus a year-ago-anchored baseline for grid, travel, transit and prices. <span class="pend">Acceptance runs in progress</span>: every pre-registered look is being re-run on the final arrays (1,931 re-run so far).</td></tr>
+<tr><td><b>Data layer</b></td><td><span class="ok">Done.</span> 35+ sources (54 registered) collected within written rules; YouTube added tonight. Wikipedia 3-year history: 360 of 996 pages filled, every 10 minutes.</td></tr>
+<tr><td><b>Engine 6.1</b></td><td><span class="ok">Deployed.</span> All five audit blockers and 8 should-fixes fixed, plus a year-ago-anchored baseline for grid, travel, transit and prices. <span class="pend">Acceptance runs in progress</span> (1,931 pre-registered looks re-run so far).</td></tr>
 <tr><td><b>Engine 6.2</b></td><td><span class="pend">Deployed; results pending.</span> 29 family × outcome pairs and 4,035 past events frozen and hashed before any effect was computed. Patterns found: <span class="tbd">{{TBD: n patterns / strong patterns of 29 pairs}}</span>.</td></tr>
 <tr><td><b>Second opinion</b></td><td><span class="ok">Live.</span> Nightly GitHub Action on BigQuery; wired into what the site publishes.</td></tr>
 <tr><td><b>Publishing</b></td><td><span class="ok">Done.</span> Daily frozen versions, feeds, share cards, data-contract tests pass.</td></tr>
@@ -161,7 +161,7 @@ figcaption{font-size:7.8pt;color:var(--ink-2);border-top:1px solid var(--hair);p
 <h2>6 · Honest risks</h2>
 <ol>
 <li><strong>Rigor versus "hidden".</strong> Strict tests favour obvious effects, and so far no hop of any kind has reached Measured. Engine 6.2 is the answer; whether it yields enough interesting patterns is <span class="tbd">{{TBD: 6.2 result, n patterns with published fluke rate}}</span>.</li>
-<li><strong>Power is low on some channels.</strong> Before 6.1, a +5σ planted effect was caught at most 29 % of the time (physical series) and almost never on builder series. The 6.1 curve is <span class="tbd">{{TBD: 6.1 spike-in recall at +3σ by channel}}</span>. The site never claims "no effect" beyond that curve.</li>
+<li><strong>Power is low on some channels.</strong> Before 6.1, a planted +5σ effect was caught at most 29 % of the time. The 6.1 curve: <span class="tbd">{{TBD: 6.1 spike-in recall at +3σ by channel}}</span>. The site never claims "no effect" beyond that curve.</li>
 <li><strong>Live events start quiet.</strong> Effects take days to weeks. The archive and pattern findings fill the gap.</li>
 <li><strong>Outcomes are mostly US data.</strong> Claims stay inside the measured geography.</li>
 <li><strong>Free infrastructure.</strong> 377 of 500 MB used, the scheduler stalls during long statements, and free projects pause after a week idle. Supabase Pro (about $25/month) is recommended at launch.</li>
@@ -177,19 +177,10 @@ figcaption{font-size:7.8pt;color:var(--ink-2);border-top:1px solid var(--hair);p
 <li>Replace every yellow number in this document with the final build's value.</li>
 <li>Owner merges to main to go live. Target date: <span class="tbd">{{TBD: launch date}}</span>.</li>
 </ol>
-<p class="small"><strong>Owner asks:</strong> pick A / B / C; approve Supabase Pro at launch; merge. Non-blocking: Stripe link for the pay-what-you-want support button (it unlocks nothing), Google Trends API alpha, legal review before any paid tier. Monetisation (support button; "Radar" alerts planned at $49/month) is unchanged and not a focus before launch.</p>
+<p class="small"><strong>Owner asks:</strong> pick A / B / C; approve Supabase Pro at launch; merge. Non-blocking: the Stripe link for the pay-what-you-want support button (unlocks nothing; "Radar" alerts stay planned at $49/month), legal review before any paid tier.</p>
 
 <h2>8 · Market gap</h2>
-<table>
-<thead><tr><th style="width:38%">Product</th><th>Where it stops</th></tr></thead>
-<tbody>
-<tr><td>Ripple News (iOS, AI ripple explainers)</td><td>Narrative only; no baseline, placebo or null</td></tr>
-<tr><td>TickerTrends; Kalshi, Polymarket</td><td>First order, one domain; prices, not attribution</td></tr>
-<tr><td>RavenPack, Dataminr, Permutable AI</td><td>News to prices and alerts; no published denominators</td></tr>
-<tr><td>Futures Platform; Interos, Everstream</td><td>Scenario wheels or one supply-chain domain; enterprise-only</td></tr>
-</tbody>
-</table>
-<p class="small">None combines live events, cascades past the second order, pre-registered placebo tests and public denominators. <span class="tbd">{{TBD: re-verify competitors before sharing}}</span></p>
+<p class="small">Nearest products and where they stop: Ripple News (AI ripple explainers; narrative only, no baseline or null) · TickerTrends, Kalshi, Polymarket (first order, one domain; prices, not attribution) · RavenPack, Dataminr, Permutable AI (news to prices; no published denominators) · Futures Platform, Interos, Everstream (scenario wheels or one supply-chain domain; enterprise only). None combines live events, cascades past the second order, pre-registered placebo tests and public denominators. <span class="tbd">{{TBD: re-verify competitors before sharing}}</span></p>
 
 <!-- ============================ TECHNICAL ============================ -->
 <h2 class="part pb">Part II · Technical summary</h2>
@@ -209,7 +200,7 @@ figcaption{font-size:7.8pt;color:var(--ink-2);border-top:1px solid var(--hair);p
     <g><rect x="0" y="20" width="160" height="36" fill="#eef2f3"/><rect x="0" y="20" width="3" height="36" fill="#0B3A40"/>
       <text x="9" y="34" font-weight="600" fill="#1c2426">Attention</text><text x="9" y="47" font-size="7.2" fill="#5d686b">Wikipedia · HN · SE · Bluesky · GDELT · YouTube</text></g>
     <g><rect x="0" y="62" width="160" height="36" fill="#eef2f3"/><rect x="0" y="62" width="3" height="36" fill="#0B3A40"/>
-      <text x="9" y="76" font-weight="600" fill="#1c2426">Outcomes</text><text x="9" y="89" font-size="7.2" fill="#5d686b">TSA · MTA · EIA-930 · FRED/BLS · DOL · FEMA · NOAA</text></g>
+      <text x="9" y="76" font-weight="600" fill="#1c2426">Outcomes</text><text x="9" y="89" font-size="7.2" fill="#5d686b">TSA · MTA · EIA-930 · FRED · DOL · NOAA</text></g>
     <g><rect x="0" y="104" width="160" height="36" fill="#eef2f3"/><rect x="0" y="104" width="3" height="36" fill="#0B3A40"/>
       <text x="9" y="118" font-weight="600" fill="#1c2426">Markets and builders</text><text x="9" y="131" font-size="7.2" fill="#5d686b">Polymarket · Kalshi · npm · PyPI · equities (z)</text></g>
     <g><rect x="0" y="146" width="160" height="36" fill="#eef2f3"/><rect x="0" y="146" width="3" height="36" fill="#0B3A40"/>
@@ -230,7 +221,7 @@ figcaption{font-size:7.8pt;color:var(--ink-2);border-top:1px solid var(--hair);p
   <rect x="182" y="20" width="3" height="298" fill="#6d4a86"/>
   <g font-size="8.4" fill="#1c2426">
     <g font-family="IBM Plex Mono, monospace" font-size="7.2" fill="#6d4a86">
-      <text x="192" y="37">05:50</text><text x="192" y="74">07:37</text><text x="192" y="111">07:33–</text><text x="192" y="148">08:20</text>
+      <text x="192" y="37">05:50</text><text x="192" y="74">07:37</text><text x="192" y="111">07:33</text><text x="192" y="148">08:20</text>
       <text x="192" y="185">08:25</text><text x="192" y="222">08:55</text><text x="192" y="259">Sun</text><text x="192" y="296">all day</text>
     </g>
     <text x="234" y="37" font-weight="600">Build baselines</text><text x="234" y="48" font-size="7.2" fill="#5d686b">robust, pre-onset only; holidays removed</text>
@@ -355,7 +346,7 @@ figcaption{font-size:7.8pt;color:var(--ink-2);border-top:1px solid var(--hair);p
 
 <h3>6.1: the independent audit and its fixes</h3>
 <p>An independent statistician found the engine <em>safe by absence of power</em> (nothing had ever reached Measured) but with four anti-conservative holes that would matter once power was restored, plus a deploy gate that could not pass. All five blockers are fixed and deployed; the ledger still verifies bit-identically.</p>
-<table>
+<div class="avoid"><table>
 <thead><tr><th style="width:6%">#</th><th style="width:44%">Audit finding</th><th>Fix in 6.1</th></tr></thead>
 <tbody>
 <tr><td class="tier">B1</td><td>Positive-control fixtures could not reach their targets</td><td>Controls look up geo-annotated events; regional expectations (affected grid regions, state declarations); attention targets no longer expected to be Measured</td></tr>
@@ -364,7 +355,7 @@ figcaption{font-size:7.8pt;color:var(--ink-2);border-top:1px solid var(--hair);p
 <tr><td class="tier">B4</td><td>Holiday and common-shock flags never fired</td><td>US holidays, Christmas week and Black Friday registered (759 days); panel-wide days flagged; state filters honoured</td></tr>
 <tr><td class="tier">B5</td><td>Settled hops were never re-examined; retraction did not propagate</td><td>Daily re-examination at 08:55 in the hop's own frozen family; retraction and demotion flow to children</td></tr>
 </tbody>
-</table>
+</table></div>
 <p class="small">Also fixed: duplicate-path removal, the mechanism graph read as it stood at the event date, honest fluke-rate labels while warming up, price series as levels, and (after the report) a year-ago-anchored baseline for grid, travel, transit and price series. Not yet done: first-difference baselines for growth series, a link-family redefinition, four minor items.</p>
 
 <h3>6.2: patterns across events, and hit versus untouched regions</h3>
@@ -473,16 +464,16 @@ figcaption{font-size:7.8pt;color:var(--ink-2);border-top:1px solid var(--hair);p
 <table>
 <thead><tr><th style="width:30%">Gate</th><th style="width:42%">Criterion</th><th>Result</th></tr></thead>
 <tbody>
-<tr><td>G1 Positive controls</td><td>Realistic controls Measured on the archive</td><td><span class="tbd">{{TBD: G1}}</span></td></tr>
-<tr><td>G2–G4 Decoys, negatives, null</td><td>As in §13</td><td><span class="tbd">{{TBD: G2–G4}}</span></td></tr>
+<tr><td>G1 Positive controls</td><td>Realistic controls Measured on the archive</td><td><span class="tbd">{{TBD: G1 positive-control result}}</span></td></tr>
+<tr><td>G2–G4 Decoys, negatives, null</td><td>As in §13</td><td><span class="tbd">{{TBD: G2–G4 decoy, negative, null results}}</span></td></tr>
 <tr><td>G5 Forecast gate calibrated</td><td>Decoy flag rate published; Measured requires agreement</td><td><span class="ok">Pass</span> · 0 of 13 decoys</td></tr>
 <tr><td>G6 Freeze integrity</td><td>Ledger verifies; no test without a frozen candidate</td><td><span class="ok">Pass</span> · 03:30 UTC</td></tr>
-<tr><td>G7 Pattern calibration</td><td>6.2 fluke rates published per strength word</td><td><span class="tbd">{{TBD: G7}}</span></td></tr>
-<tr><td>G8 Copy audit</td><td>No chain probability, ticker, dollar figure or causal verb anywhere</td><td><span class="tbd">{{TBD: G8}}</span></td></tr>
+<tr><td>G7 Pattern calibration</td><td>6.2 fluke rates published per strength word</td><td><span class="tbd">{{TBD: G7 pattern fluke rates published}}</span></td></tr>
+<tr><td>G8 Copy audit</td><td>No chain probability, ticker, dollar figure or causal verb anywhere</td><td><span class="tbd">{{TBD: G8 copy audit result}}</span></td></tr>
 <tr><td>G9 Budgets</td><td>DB under 400 MB; daily run done by 08:18</td><td><span class="tbd">{{TBD: G9 MB, finish time}}</span></td></tr>
 <tr><td>G10 Three live days</td><td>End to end, collect → publish → share cards</td><td><span class="tbd">{{TBD: G10 n of 3}}</span></td></tr>
-<tr><td>G11 Frontend</td><td>Chosen direction built; shell ≤ 120 KB; fast on a 360 px phone</td><td><span class="tbd">{{TBD: G11}}</span></td></tr>
-<tr><td>G12 Decommission</td><td>v5 game RPCs revoked; no points, streaks or crowd stats anywhere</td><td><span class="tbd">{{TBD: G12}}</span></td></tr>
+<tr><td>G11 Frontend</td><td>Chosen direction built; shell ≤ 120 KB; fast on a 360 px phone</td><td><span class="tbd">{{TBD: G11 frontend built and budget}}</span></td></tr>
+<tr><td>G12 Decommission</td><td>v5 game RPCs revoked; no points, streaks or crowd stats anywhere</td><td><span class="tbd">{{TBD: G12 decommission check}}</span></td></tr>
 </tbody>
 </table>
 
@@ -491,7 +482,7 @@ figcaption{font-size:7.8pt;color:var(--ink-2);border-top:1px solid var(--hair);p
 <thead><tr><th style="width:24%">When</th><th>What</th></tr></thead>
 <tbody>
 <tr><td>Before launch</td><td>6.1 acceptance, 6.2 results, design pick and rebuild, integration, playtests, final review</td></tr>
-<tr><td>Launch <span class="tbd">{{TBD: date}}</span></td><td>Ripple Map with the reconstructed archive and pattern cards as the day-one hero; owner posts by hand for 14 days</td></tr>
+<tr><td>Launch <span class="tbd">{{TBD: launch date}}</span></td><td>Ripple Map with the reconstructed archive and pattern cards as the day-one hero; owner posts by hand for 14 days</td></tr>
 <tr><td>Days 28–90 of collection</td><td>Warm-up sources (news, TV, Bluesky, charts, YouTube, Kalshi) become eligible to count</td></tr>
 <tr><td>After launch</td><td>Growth-series baselines; link-family redefinition; anchoring the ledger head outside the database; clickstream and Trends when available</td></tr>
 <tr><td>Before any paid tier</td><td>Move YELLOW non-commercial sources off paid surfaces; legal review</td></tr>
