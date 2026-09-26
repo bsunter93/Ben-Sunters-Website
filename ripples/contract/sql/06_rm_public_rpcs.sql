@@ -1296,7 +1296,7 @@ declare r jsonb := '[]'::jsonb; ev bigint; ev_old bigint; hop bigint; wk text; d
         -- keys added after 2026-09-26: absent from versions frozen earlier (and from week editions that embed them)
         later text[] := array['window_closed', 'held_back', 'window_close', 'biggest_basis', 'biggest_window_days', 'listed_lines_sum'];
         syn_id bigint := 8999999999999001; syn jsonb; sc jsonb; syn_err text; syn_diffs jsonb; syn_cov jsonb; asserts jsonb := '[]'::jsonb; base jsonb; n0 jsonb;
-        t date := (now() at time zone 'utc')::date; nd jsonb;
+        t date := (now() at time zone 'utc')::date; nd jsonb; sold jsonb; sold_diffs jsonb; sold_withheld jsonb;
 begin
   select day into d from ripples.rm_days order by day desc limit 1;
   select v.event_id into ev from ripples.rm_public_versions v join ripples.att_events e using (event_id)
@@ -1326,7 +1326,9 @@ begin
                               'vacuous_sample', coalesce((jsonb_agg(c.path order by c.path) filter (where c.state = 'vacuous')) -> 0, 'null'::jsonb),
                               'vacuous_paths', coalesce(jsonb_agg(c.path order by c.path) filter (where c.state = 'vacuous'), '[]'::jsonb))
       into cov from ripples.rm_shape_cover(fx, act, '$', maps) c;
+    -- no older public version on live data yet (a fresh line, or older versions withheld): not a contract failure; part 2 covers it
     r := r || jsonb_build_object('fixture', fname, 'has_fixture', fx is not null, 'has_output', act is not null and jsonb_typeof(act) <> 'null', 'diffs', diffs,
+                                 'skipped', case when fname = 'cascade-1201-v2.json' and ev_old is null then 'no older public version on live data; see synthetic.older_version' end,
                                  'coverage', jsonb_build_object('compared', cov -> 'compared', 'vacuous', cov -> 'vacuous',
                                                                 'vacuous_paths', (select coalesce(jsonb_agg(p), '[]'::jsonb) from (select p from jsonb_array_elements(cov -> 'vacuous_paths') p limit 12) z)));
   end loop;
@@ -1355,6 +1357,12 @@ begin
     sc := (sc - '_label_hold') || ripples.rm_share_text(sc, 3)
           || jsonb_build_object('version', 3, 'published_at', '2026-01-01T00:00:00Z', 'payload_hash', 'synthetic', 'grown_since', jsonb_build_object('version', 2, 'stops_added', 1),
                                 'grown_to', null, 'ledger', jsonb_build_object('seq', 1, 'chain_hash', 'synthetic'));
+    -- older-version path: v1 withheld, v2 public, v3 latest; rm_cascade(e, 2) must add grown_to, rm_cascade(e, 1) must be null
+    insert into ripples.att_cascade_versions(event_id, version, payload, payload_hash)
+    values (syn_id, 1, sc || '{"version": 1}'::jsonb, 'syn1'), (syn_id, 2, sc || '{"version": 2}'::jsonb, 'syn2'), (syn_id, 3, sc, 'syn3');
+    insert into ripples.rm_version_audit(event_id, version, leaks, sample, withheld, reason) values (syn_id, 1, 1, '{Q1}', true, 'synthetic');
+    sold := public.rm_cascade(syn_id, 2);
+    sold_withheld := to_jsonb(public.rm_cascade(syn_id, 1) is null);
     raise exception using errcode = 'P0001', message = 'rm_contract_test rollback';
   exception when others then
     if sqlerrm <> 'rm_contract_test rollback' then syn_err := sqlerrm; end if;
@@ -1381,14 +1389,20 @@ begin
     asserts := asserts || jsonb_build_object('check', 'Measured sentence carries both fluke labels and the footer', 'ok',
                  nd ->> 'sentence' like '%A random pairing looks this strong about 1 in%' and nd ->> 'sentence' like '%turn out to be flukes about 1 in%'
                  and nd ->> 'sentence' like '%Measured movement, not proof of cause.%' and nd ->> 'sentence' not similar to '%(caused|drove|because of)%', 'got', nd ->> 'sentence');
+    select coalesce(jsonb_agg(x), '[]'::jsonb) into sold_diffs
+      from ripples.rm_shape_diff((select f.payload from ripples.rm_contract_fixtures f where f.name = 'cascade-1201-v2.json'), sold, '$', maps, '{}') x;
+    asserts := asserts || jsonb_build_object('check', 'an older public version matches cascade-1201-v2.json and carries grown_to', 'ok',
+                 sold is not null and jsonb_array_length(sold_diffs) = 0 and (sold -> 'grown_to' ->> 'version')::int = 3, 'got', sold_diffs);
+    asserts := asserts || jsonb_build_object('check', 'a withheld version is never served', 'ok', coalesce(sold_withheld = 'true'::jsonb, false), 'got', sold_withheld);
     asserts := asserts || jsonb_build_object('check', 'the rolled-back rows are gone', 'ok',
-                 not exists (select 1 from ripples.att_events where event_id = syn_id) and not exists (select 1 from ripples.att_cascades where event_id = syn_id), 'got', null);
+                 not exists (select 1 from ripples.att_events where event_id = syn_id) and not exists (select 1 from ripples.att_cascades where event_id = syn_id)
+                 and not exists (select 1 from ripples.att_cascade_versions where event_id = syn_id) and not exists (select 1 from ripples.rm_version_audit where event_id = syn_id), 'got', null);
   end if;
   return jsonb_build_object('day', d, 'event', ev, 'event_old', ev_old, 'hop', hop, 'week', wk, 'results', r,
-                            'live_ok', not exists (select 1 from jsonb_array_elements(r) x where jsonb_array_length(x -> 'diffs') > 0 or not (x ->> 'has_output')::boolean),
+                            'live_ok', not exists (select 1 from jsonb_array_elements(r) x where jsonb_array_length(x -> 'diffs') > 0 or (not (x ->> 'has_output')::boolean and x ->> 'skipped' is null)),
                             'live_vacuous', (select sum((x -> 'coverage' ->> 'vacuous')::int) from jsonb_array_elements(r) x),
                             'synthetic', jsonb_build_object('error', syn_err, 'diffs', coalesce(syn_diffs, '[]'::jsonb), 'coverage', syn_cov, 'asserts', asserts),
-                            'ok', not exists (select 1 from jsonb_array_elements(r) x where jsonb_array_length(x -> 'diffs') > 0 or not (x ->> 'has_output')::boolean)
+                            'ok', not exists (select 1 from jsonb_array_elements(r) x where jsonb_array_length(x -> 'diffs') > 0 or (not (x ->> 'has_output')::boolean and x ->> 'skipped' is null))
                                   and syn_err is null and sc is not null and jsonb_array_length(coalesce(syn_diffs, '[]'::jsonb)) = 0
                                   and not exists (select 1 from jsonb_array_elements(asserts) a where not (a ->> 'ok')::boolean));
 end $$;
