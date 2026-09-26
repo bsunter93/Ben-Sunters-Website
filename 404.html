@@ -1,0 +1,38 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Page not found | Benjamin J. Sunter</title>
+<meta name="robots" content="noindex">
+<meta name="color-scheme" content="light dark">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<script>
+// GitHub Pages serves this file for every missing path. Ripple Map line, stop, lands and week URLs are published daily,
+// so a fresh one can be requested before its static stub exists: hand the path to the /ripples/line/ shell, which
+// restores it with history.replaceState and renders it from the live data (ripples/app.js, boot). Retired v5 numbered
+// puzzle pages go to the Ripple Map home. Everything else gets the plain page below.
+(function () {
+  var l = location, p = l.pathname;
+  if (/^\/ripples\/(line|lands|week)\/./.test(p)) { l.replace('/ripples/line/?rm_path=' + encodeURIComponent(p + l.search + l.hash)); return; }
+  if (/^\/ripples\/\d+\/(\d\/)?$/.test(p)) l.replace('/ripples/');
+})();
+</script>
+<style>
+:root{--bg:#EDF1EE;--ink:#0B3A40;--muted:#557275}
+@media (prefers-color-scheme:dark){:root{--bg:#062429;--ink:#EAF3F0;--muted:#A9C4C1}}
+body{margin:0;background:var(--bg);color:var(--ink);font:400 17px/1.5 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif}
+main{max-width:560px;margin:0 auto;padding:18vh 16px 48px}
+h1{font-size:28px;line-height:1.2;margin:0 0 10px}
+p{margin:0 0 12px;color:var(--muted)}
+a{color:inherit;font-weight:600;display:inline-block;min-height:44px;line-height:44px;margin-right:18px}
+</style>
+</head>
+<body>
+<main>
+<h1>Page not found</h1>
+<p>That address doesn't exist on this site.</p>
+<a href="/">bensunter.com</a><a href="/ripples/">Ripple Map</a>
+</main>
+</body>
+</html>
