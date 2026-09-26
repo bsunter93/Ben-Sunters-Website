@@ -77,7 +77,14 @@ create or replace function ripples.att_fx63_grid_spec(p_set text)
       ('b3', 'fred.state', 'nonfarm_m', 'state', 'labor', '[[18,3,1,"immediate"],[18,6,6,"delayed"]]'),
       ('b3', 'fred.state', 'cons_m', 'state', 'labor', '[[18,3,1,"immediate"],[18,6,6,"delayed"]]'),
       ('b3', 'fred.state', 'bppriv_m', 'state', 'housing', '[[18,3,1,"immediate"],[18,6,6,"delayed"]]'),
-      ('b3', 'fred.state', 'leih_m', 'state', 'labor', '[[18,3,1,"immediate"],[18,6,6,"delayed"]]')) p(pset, source, metric, geo_kind, dom, variants))
+      ('b3', 'fred.state', 'leih_m', 'state', 'labor', '[[18,3,1,"immediate"],[18,6,6,"delayed"]]'),
+      ('b4', 'fred.state', 'nonfarm_m', 'state', 'labor', '[[18,3,1,"immediate"],[18,6,6,"delayed"]]'),
+      ('b4', 'fred.state', 'cons_m', 'state', 'labor', '[[18,3,1,"immediate"],[18,6,6,"delayed"]]'),
+      ('b4', 'fred.state', 'bppriv_m', 'state', 'housing', '[[18,3,1,"immediate"],[18,6,6,"delayed"]]'),
+      ('b4', 'fred.state', 'leih_m', 'state', 'labor', '[[18,3,1,"immediate"],[18,6,6,"delayed"]]'),
+      ('b5', 'fred.state', 'listings_m', 'state', 'housing', '[[18,3,1,"immediate"],[18,6,6,"delayed"]]'),
+      ('b5', 'fred.state', 'newlist_m', 'state', 'housing', '[[18,3,1,"immediate"],[18,6,6,"delayed"]]'),
+      ('b5', 'fred.state', 'dom_m', 'state', 'housing', '[[18,3,1,"immediate"],[18,6,6,"delayed"]]')) p(pset, source, metric, geo_kind, dom, variants))
   select jsonb_agg(jsonb_build_object('family', f.family, 'sub', f.sub, 'source', p.source, 'metric', p.metric, 'geo_kind', p.geo_kind,
                                       'de', 'hazard', 'do', p.dom, 'variants', p.variants,
                                       'definitional', (p.source = 'fema.decl' and f.fema_defined),
@@ -93,3 +100,58 @@ select cron.schedule('att-downstream-drain', '1-59/6 * * * *', $c$
        + coalesce((select jsonb_array_length(coalesce(s.v -> 'missing', '[]'::jsonb)) from ripples.att_state s where s.k = 'econ.fred.downstream'), 0) < 204
 $c$);
 select cron.schedule('att-downstream-daily', '17 14 * * *', $c$ select public.call_collector('att-downstream', '{}'::jsonb) $c$);
+
+-- b3 outcome (ledger 1195): not testable. Every exploration event had a degenerate in-time null (11-12 distinct
+-- pseudo-onsets): monthly grain x 18-month pre-window x data from 2016 x regime purge. Rows purged (ledger 1196).
+--
+-- b4 (long-history re-run, pre-registered before the history is extended): the four outcomes FRED carries back to
+-- 1990 (nonfarm, construction jobs, private housing permits, leisure & hospitality jobs), state monthly panels
+-- extended to 2000-01 so the in-time placebo has ~3x more pseudo-onsets; same families, same windows as b3.
+-- The Realtor.com housing outcomes (from 2016 only) move to the in-space-inference batch (option 2).
+-- Collection: att_config econ.fred_state_from = 2000-01-01; att-downstream nonfarm observation_start 2000-01-01.
+--
+-- b5 / method 6.3.5-m (pre-registered at ledger 1198, before the batch is frozen): in-space fallback for monthly panels
+-- whose in-time null is degenerate, ONLY for batches listed in engine63.space_fallback_batches (["fx63-b5-housing-space"]).
+-- Applied to the live bodies as anchor-checked, idempotent patches (same pattern as att_fx63_hook_install):
+--   att_fx_calc: collects the in-space permutation draws it already computes and returns them as 'space_d' (additive:
+--     no existing output or random draw changes).
+--   att_fx63_step: in the month-grain degenerate branch, for listed batches with >= space_min_draws (20) draws:
+--     med = median(space_d), se = max(1.4826*MAD, se_floor), z = (d - med)/se, placebo_d := space_d, note 'in-space null'.
+update ripples.att_config set value = value || '{"space_fallback_batches":["fx63-b5-housing-space"],"space_min_draws":20}'::jsonb
+ where key = 'engine63';
+
+do $$ declare def text; sig text := 'ripples.att_fx_calc(double precision[],smallint[],date[],text[],text,text[],date,integer,integer,integer,boolean,double precision,jsonb)';
+  a1 text := 'pos int; tmp int; pool int[]; j int;'; b1 text := 'pos int; tmp int; pool int[]; j int; sdr float8[] := ''{}''; /* ENGINE 6.3.5-m: in-space draws */';
+  a2 text := 'ns := ns + 1;'; b2 text := 'ns := ns + 1; sdr := sdr || x[1];';
+  a3 text := '''n_space'', ns,'; b3 text := '''n_space'', ns, ''space_d'', to_jsonb(sdr),';
+begin
+  select pg_get_functiondef(sig::regprocedure) into def;
+  if position('ENGINE 6.3.5-m' in def) > 0 then return; end if;
+  if (length(def)-length(replace(def,a1,'')))/length(a1) <> 1 or (length(def)-length(replace(def,a2,'')))/length(a2) <> 1
+     or (length(def)-length(replace(def,a3,'')))/length(a3) <> 1 then raise exception 'att_fx_calc anchors'; end if;
+  execute replace(replace(replace(def,a1,b1),a2,b2),a3,b3);
+end $$;
+
+do $$ declare def text;
+  a text := $a$if n_dist < mind then j := j || jsonb_build_object('se', null, 'med', null, 'note', 'degenerate null (' || n_dist || ' distinct pseudo-onsets)'); end if;$a$;
+  b text := $b$if n_dist < mind then
+          -- ENGINE 6.3.5-m (33_att_engine_63_b3_downstream): in-space fallback, only for batches listed in engine63.space_fallback_batches.
+          if split_part(g.batch, '/', 1) in (select jsonb_array_elements_text(coalesce(cfg -> 'space_fallback_batches', '[]'::jsonb)))
+             and jsonb_array_length(coalesce(j -> 'space_d', '[]'::jsonb)) >= coalesce((cfg ->> 'space_min_draws')::int, 20) then
+            j := j || (select jsonb_build_object('med', m, 'se', greatest(1.4826 * mad, coalesce((c ->> 'se_floor')::float8, 0.005)),
+                                                 'z', ((j ->> 'd')::float8 - m) / greatest(1.4826 * mad, coalesce((c ->> 'se_floor')::float8, 0.005)),
+                                                 'placebo_d', j -> 'space_d',
+                                                 'note', 'in-space null (' || jsonb_array_length(j -> 'space_d') || ' draws; in-time degenerate: ' || n_dist || ' distinct pseudo-onsets)')
+                         from (select m, (select percentile_cont(0.5) within group (order by abs(x::float8 - m)) from jsonb_array_elements_text(j -> 'space_d') x) mad
+                                 from (select percentile_cont(0.5) within group (order by x::float8) m from jsonb_array_elements_text(j -> 'space_d') x) q) q2);
+          else
+            j := j || jsonb_build_object('se', null, 'med', null, 'note', 'degenerate null (' || n_dist || ' distinct pseudo-onsets)');
+          end if;
+        end if;$b$;
+begin
+  select pg_get_functiondef('ripples.att_fx63_step(integer,text[])'::regprocedure) into def;
+  if position('ENGINE 6.3.5-m' in def) > 0 then return; end if;
+  if (length(def)-length(replace(def,a,'')))/length(a) <> 1 then raise exception 'att_fx63_step anchor'; end if;
+  execute replace(def,a,b);
+end $$;
+-- grid set b5 (listings_m, newlist_m, dom_m; same windows) is in att_fx63_grid_spec(p_set) as applied live.

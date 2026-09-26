@@ -16,7 +16,7 @@
 // is recorded once and never retried; aggregate public statistics only. Auth: x-collector-token checked against Vault.
 import { createClient } from "jsr:@supabase/supabase-js@2";
 
-const VERSION = "2026-09-26.d2";
+const VERSION = "2026-09-26.d3";
 const UA = "ripples-research/0.2 (+https://bensunter.com/ripples/methods/)";
 const FRED = "https://api.stlouisfed.org/fred/series/observations";
 const STATES = ["AL","AK","AZ","AR","CA","CO","CT","DE","DC","FL","GA","HI","ID","IL","IN","IA","KS","KY","LA","ME","MD",
@@ -29,7 +29,7 @@ const SERIES = [
   { id: (s: string) => `ACTLISCOU${s}`, metric: "listings", first: false },
   { id: (s: string) => `NEWLISCOU${s}`, metric: "newlist", first: false },
   { id: (s: string) => `MEDDAYONMAR${s}`, metric: "dom", first: false },
-  { id: (s: string) => `${s}NA`, metric: "nonfarm", first: true },
+  { id: (s: string) => `${s}NA`, metric: "nonfarm", first: true, from: "2000-01-01" }, // long history for batch b4
 ];
 const STATE_KEY = "econ.fred.downstream";
 const MAX_CALLS = 60, SPACING_MS = 1100, WALL_MS = 100_000;
@@ -71,7 +71,7 @@ Deno.serve(async (req) => {
       if (calls > 0) await sleep(SPACING_MS);
       calls++;
       const q = new URLSearchParams({ series_id: id, api_key: key, file_type: "json", limit: "100000",
-        observation_start: last ? addDays(today(), -400) : "2015-01-01" });
+        observation_start: last ? addDays(today(), -400) : ("from" in s && s.from ? s.from : "2015-01-01") });
       if (s.first) { q.set("output_type", "4"); q.set("realtime_start", "1776-07-04"); q.set("realtime_end", "9999-12-31"); }
       let res: Response;
       try {
