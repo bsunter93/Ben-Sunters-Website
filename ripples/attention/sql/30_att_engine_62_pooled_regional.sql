@@ -1015,3 +1015,240 @@ begin
 end $$;
 revoke all on function ripples.att_fx_verify_install() from anon, authenticated, public;
 select ripples.att_fx_verify_install();
+
+-- ---------------------------------------------------------------------------------------------------------------------
+-- 13. Method 6.2.1 (migration att_engine_62_p5_overlap_rule_hook_units_pond): overlap rule, family rule v3, units, "pond" fields.
+--   * Overlap rule (pre-registered before re-pooling, recorded as a model_version row): within a (pair, role, set), an event whose window
+--     overlaps an earlier event's window (onset within lag + post observations) AND shares a treated region is a duplicate of that cluster
+--     and is dropped from the pool (Marco/Laura 2020, several fire-management declarations per state per week…); n_clustered_out is published.
+--   * Family rule v3 in the hook: agrees → contrast passes as defined; contradicts (opposite-sign pattern, p ≤ 0.05) → Measured fails;
+--     null family with ≥ K events → the event must carry itself (p_space ≤ 0.05 AND p_time ≤ 0.05 AND |z| ≥ 3, i.e. both placebo families
+--     and 3σ as in 6.1). Never looser than 6.1.
+--   * Units: rate-valued panels (temperature) publish raw differences, not percentages.
+--   * "Stone in a pond": stone = event magnitude percent-rank within its family (0–1), ripple = |effect| in log points / 0.25 clipped to 1,
+--     reach = 0 same domain / 0.5 adjacent (power, government) / 1 cross-domain (labor, business, travel, developer).
+-- ---------------------------------------------------------------------------------------------------------------------
+update ripples.att_config set value = value || '{"dedupe_overlap": true, "method": "6.2.1", "ripple_full_scale_logpts": 0.25}'::jsonb, updated_at = now() where key = 'engine62';
+
+create or replace function ripples.att_fx_cluster_dups(p_grid int, p_role text, p_set int) returns table(event_id bigint)
+language sql stable security definer set search_path = '' as $$
+  with g as (select gr.*, case pn.grain when 'week' then 7 else 1 end as gd from ripples.att_fx_grid gr join ripples.att_fx_panel pn on pn.source = gr.source and pn.metric = gr.metric and pn.geo_kind = gr.geo_kind where gr.grid_id = p_grid)
+  select distinct b.event_id
+    from ripples.att_fx_event a join ripples.att_fx_event b on b.grid_id = a.grid_id and b.role = a.role and b.decoy_set = a.decoy_set
+         and (b.onset > a.onset or (b.onset = a.onset and b.event_id > a.event_id))
+         and b.onset <= a.onset + (select (lag_n + post_n) * gd from g)
+         and b.treated && a.treated
+   where a.grid_id = p_grid and a.role = p_role and a.decoy_set = p_set
+$$;
+
+create or replace function ripples.att_fx_shock_norm(p_event bigint) returns real
+language sql stable security definer set search_path = '' as $$
+  select case when e.magnitude is null then null else
+    (select (count(*) filter (where x.magnitude < e.magnitude))::real / greatest(count(*) - 1, 1)
+       from ripples.att_events x where x.family = e.family and x.role = 'library' and x.magnitude is not null) end
+  from ripples.att_events e where e.event_id = p_event
+$$;
+
+create or replace function ripples.att_fx_pond(p_d float8, p_domain_event text, p_domain_outcome text, p_unit text) returns jsonb
+language sql immutable set search_path = '' as $$
+  select jsonb_build_object(
+    'ripple', case when p_d is null or p_unit = 'raw' then null else least(1, abs(p_d) / 0.25) end,
+    'reach', case when p_domain_outcome in ('labor', 'business', 'travel', 'developer') then 1.0 when p_domain_outcome in ('power', 'government') then 0.5 else 0.0 end,
+    'scale_note', 'ripple = |effect| in log points / 0.25, clipped to 1; reach: 0 same domain, 0.5 adjacent, 1 cross-domain')
+$$;
+
+-- pool v3 (overlap rule + shock median), hook v3 (family rule + pond), view v2 (units), rm_patterns v2 (pond, units, clustered-out sample)
+create or replace function ripples.att_fx_pool_run(p_grid int, p_role text default 'real', p_set int default 0) returns jsonb
+language plpgsql security definer set search_path = '' as $$
+declare cfg jsonb := ripples._att_cfg('engine62'); b int := coalesce((cfg ->> 'b_pool')::int, 300); g record; dc float8[]; se float8[]; mags float8[];
+        k int; n_skip int; n_clu int := 0; r float8[]; dp float8; sp float8; i int; rep int; pdc float8[]; rr float8[]; n_ge int := 0;
+        p_plc float8; p_norm float8; ws float8; sw float8; swm float8; swd float8; swmm float8; swmd float8; mbar float8; slope float8; slope_se float8; dose_p float8; n_dose int := 0;
+        ev record; sign_ok boolean; strength text; payload jsonb; n_reg_pass int; n_flat int; n_space_tested int; n_synth_ok int;
+        ci_lo float8; ci_hi float8;
+begin
+  select * into g from ripples.att_fx_grid where grid_id = p_grid;
+  perform setseed(((hashtext('pool:' || p_grid || ':' || p_role || ':' || p_set) % 100000) / 100000.0)::float8);
+  create temp table _fxdup on commit drop as select * from ripples.att_fx_cluster_dups(p_grid, p_role, p_set);
+  if coalesce((cfg ->> 'dedupe_overlap')::boolean, false) then select count(*) into n_clu from _fxdup; else delete from _fxdup; end if;
+  create temp table _fxe on commit drop as
+    select f.*, f.d - f.med as dc from ripples.att_fx_event f where f.grid_id = p_grid and f.role = p_role and f.decoy_set = p_set and f.se is not null and f.med is not null
+       and not exists (select 1 from _fxdup d where d.event_id = f.event_id);
+  select count(*) into n_skip from ripples.att_fx_event f where f.grid_id = p_grid and f.role = p_role and f.decoy_set = p_set and (f.se is null or f.med is null);
+  select coalesce(array_agg(x.dc order by x.event_id), '{}'), coalesce(array_agg(x.se::float8 order by x.event_id), '{}'), coalesce(array_agg(x.magnitude::float8 order by x.event_id), '{}'), count(*)
+    into dc, se, mags, k from _fxe x;
+  if k < 2 then
+    insert into ripples.att_fx_pool(grid_id, role, decoy_set, n_events, n_skipped, strength, payload, computed_at) values (p_grid, p_role, p_set, k, n_skip, 'too few events', jsonb_build_object('n_clustered_out', n_clu), now())
+    on conflict (grid_id, role, decoy_set) do update set n_events = excluded.n_events, n_skipped = excluded.n_skipped, strength = excluded.strength, payload = excluded.payload, computed_at = now();
+    drop table _fxe; drop table _fxdup;
+    return jsonb_build_object('grid', p_grid, 'n', k, 'skipped', n_skip);
+  end if;
+  r := ripples.att_fx_dl(dc, se);
+  dp := r[1]; sp := r[2];
+  p_norm := 2 * (1 - ripples.att_norm_cdf(abs(dp / sp)));
+  -- placebo pool: B replicates, one season-matched pseudo-event per real event, pooled with the same estimator
+  for rep in 1..b loop
+    pdc := '{}';
+    for ev in select x.placebo_d, x.med from _fxe x order by x.event_id loop
+      pdc := pdc || (ev.placebo_d[1 + floor(random() * cardinality(ev.placebo_d))::int]::float8 - ev.med);
+    end loop;
+    rr := ripples.att_fx_dl(pdc, se);
+    if abs(rr[1]) >= abs(dp) then n_ge := n_ge + 1; end if;
+  end loop;
+  p_plc := (1 + n_ge)::float8 / (b + 1);
+  -- dose–response: random-effects-weighted least squares of dc on magnitude
+  sw := 0; swm := 0; swd := 0;
+  for i in 1..k loop
+    if mags[i] is not null then ws := 1 / (se[i]^2 + r[3]); sw := sw + ws; swm := swm + ws * mags[i]; swd := swd + ws * dc[i]; n_dose := n_dose + 1; end if;
+  end loop;
+  if n_dose >= 6 and sw > 0 then
+    mbar := swm / sw; swmm := 0; swmd := 0;
+    for i in 1..k loop
+      if mags[i] is not null then ws := 1 / (se[i]^2 + r[3]); swmm := swmm + ws * (mags[i] - mbar)^2; swmd := swmd + ws * (mags[i] - mbar) * dc[i]; end if;
+    end loop;
+    if swmm > 0 then slope := swmd / swmm; slope_se := sqrt(1 / swmm); dose_p := 2 * (1 - ripples.att_norm_cdf(abs(slope / slope_se))); end if;
+  end if;
+  sign_ok := g.expected_sign = 0 or sign(dp) = g.expected_sign;
+  ci_lo := dp - 1.96 * sp; ci_hi := dp + 1.96 * sp;
+  select count(*) filter (where x.p_space <= (cfg ->> 'q_measured')::float8 and x.p_pre >= (cfg ->> 'p_pretrend')::float8 and (g.expected_sign = 0 or sign(x.d) = g.expected_sign)),
+         count(*) filter (where x.p_pre >= (cfg ->> 'p_pretrend')::float8), count(*) filter (where x.p_space is not null),
+         count(*) filter (where x.synth_d is not null and sign(x.synth_d) = sign(x.d))
+    into n_reg_pass, n_flat, n_space_tested, n_synth_ok from _fxe x;
+  strength := case when k < (cfg ->> 'k_min')::int then 'too few events' when p_plc <= 0.05 then 'hint (before multiplicity)' else 'no pattern' end;
+  payload := jsonb_build_object('n_regional_pass', n_reg_pass, 'n_pretrend_flat', n_flat, 'n_space_tested', n_space_tested, 'n_synth_agree', n_synth_ok,
+                                'q_stat', r[5], 'b', b, 'share_positive', (select round(avg((x.dc > 0)::int)::numeric, 3) from _fxe x),
+                                'median_z', (select percentile_cont(0.5) within group (order by x.z) from _fxe x), 'n_clustered_out', n_clu,
+                                'shock_median_norm', (select percentile_cont(0.5) within group (order by ripples.att_fx_shock_norm(x.event_id)) from _fxe x where x.magnitude is not null));
+  insert into ripples.att_fx_pool(grid_id, role, decoy_set, n_events, n_skipped, d, se, ci_lo, ci_hi, tau2, i2, p_norm, p_placebo, q, sign_ok,
+                                  dose_slope, dose_se, dose_p, n_dose, strength, payload, computed_at)
+  values (p_grid, p_role, p_set, k, n_skip, dp, sp, ci_lo, ci_hi, r[3], r[4], p_norm, p_plc, null, sign_ok, slope, slope_se, dose_p, n_dose, strength, payload, now())
+  on conflict (grid_id, role, decoy_set) do update set n_events = excluded.n_events, n_skipped = excluded.n_skipped, d = excluded.d, se = excluded.se,
+    ci_lo = excluded.ci_lo, ci_hi = excluded.ci_hi, tau2 = excluded.tau2, i2 = excluded.i2, p_norm = excluded.p_norm, p_placebo = excluded.p_placebo, q = null,
+    sign_ok = excluded.sign_ok, dose_slope = excluded.dose_slope, dose_se = excluded.dose_se, dose_p = excluded.dose_p, n_dose = excluded.n_dose,
+    strength = excluded.strength, payload = excluded.payload, computed_at = now();
+  drop table _fxe; drop table _fxdup;
+  return jsonb_build_object('grid', p_grid, 'role', p_role, 'set', p_set, 'n', k, 'clustered_out', n_clu, 'd', dp, 'se', sp, 'tau2', r[3], 'i2', r[4], 'p_norm', p_norm, 'p_placebo', p_plc, 'dose_slope', slope, 'dose_p', dose_p);
+end $$;
+
+create or replace function ripples.att_fx_hook(p_hop bigint, p_look int, p_fails text[]) returns text[]
+language plpgsql security definer set search_path = '' as $$
+declare c record; src text; rest text; ser record; g record; fe ripples.att_fx_event; po record; fails text[] := p_fails; cfg jsonb := ripples._att_cfg('engine62');
+        qm float8 := coalesce((cfg ->> 'q_measured')::float8, 0.05); ppre float8 := coalesce((cfg ->> 'p_pretrend')::float8, 0.10); kmin int := coalesce((cfg ->> 'k_min')::int, 8);
+        region text; reg_pass boolean := false; reg_strong boolean := false; fam_state text := 'none'; ev jsonb := '{}'::jsonb; lifted text[] := '{}'; shrunk float8; shrunk_se float8;
+        liftable text[] := array['q above 0.05', 'a placebo family disagrees', 'one channel only', 'placebo families', 'final look not reached']; unit text;
+begin
+  select h.hop_id, h.event_id, h.node, h.sign into c from ripples.att_hop_candidates h where h.hop_id = p_hop;
+  if not found or c.event_id is null or c.node is null or c.node ~ '^Q[0-9]+$' then return p_fails; end if;
+  src := split_part(c.node, ':', 1); rest := substr(c.node, length(src) + 2);
+  select s.metric, s.geo, s.key into ser from ripples.att_series s where s.source = src and s.key = rest limit 1;
+  if not found then return p_fails; end if;
+  for g in select gr.* from ripples.att_fx_grid gr join ripples.att_events e on e.family = gr.family and e.event_id = c.event_id
+           join ripples.att_topics tp on tp.topic_id = e.topic_id
+           where gr.source = src and gr.metric = ser.metric and gr.ledger_seq is not null
+             and (gr.sub is null or (gr.sub = 'hurricane' and (tp.meta ? 'storm' or e.label ~* 'hurricane|tropical')))
+           order by (gr.sub is not null) desc, gr.grid_id loop
+    region := case g.geo_kind when 'state' then ser.geo else ser.key end;
+    select case when pn.value_kind = 'rate' then 'raw' else 'pct' end into unit from ripples.att_fx_panel pn where pn.source = g.source and pn.metric = g.metric and pn.geo_kind = g.geo_kind;
+    fe := ripples.att_fx_live_calc(g.grid_id, c.event_id);
+    if fe.grid_id is not null and region = any(fe.treated) and fe.p_space is not null then
+      reg_pass := fe.p_space <= qm and coalesce(fe.p_pre, 0) >= ppre and (c.sign = 0 or sign(fe.d) = c.sign) and (fe.synth_d is null or sign(fe.synth_d) = sign(fe.d));
+      reg_strong := reg_pass and coalesce(fe.p_time, 1) <= qm and abs(coalesce(fe.z, 0)) >= 3;
+      ev := ev || jsonb_build_object('grid_id', g.grid_id, 'pair', g.label, 'role', fe.role, 'region', region, 'd', fe.d, 'd_centred', fe.d - fe.med, 'z', fe.z, 'p_space', fe.p_space, 'p_pre', fe.p_pre,
+                                     'p_time', fe.p_time, 'synth_d', fe.synth_d, 'synth_p', fe.synth_p, 'n_donors', fe.n_donors, 'regional_pass', reg_pass, 'regional_strong', reg_strong,
+                                     'window', jsonb_build_object('pre', g.pre_n, 'post', g.post_n, 'lag', g.lag_n), 'unit', unit,
+                                     'pond', ripples.att_fx_pond(fe.d - fe.med, g.domain_event, g.domain_outcome, unit) || jsonb_build_object('stone', ripples.att_fx_shock_norm(c.event_id)));
+    end if;
+    select * into po from ripples.att_fx_pool p where p.grid_id = g.grid_id and p.role = 'real' and p.decoy_set = 0;
+    if found and po.n_events >= kmin then
+      fam_state := case when po.p_placebo <= 0.05 and (c.sign = 0 or sign(po.d) = c.sign) then 'agrees'
+                        when po.p_placebo <= 0.05 and c.sign <> 0 and sign(po.d) <> c.sign then 'contradicts'
+                        else 'no pattern' end;
+      ev := ev || jsonb_build_object('family', jsonb_build_object('grid_id', g.grid_id, 'n_events', po.n_events, 'd', po.d, 'se', po.se, 'tau2', po.tau2, 'i2', po.i2, 'p_placebo', po.p_placebo, 'q', po.q, 'strength', po.strength, 'state', fam_state,
+                                                                  'wording', 'measured across ' || po.n_events || ' past events'));
+      if fe.grid_id is not null and fe.se is not null then
+        shrunk := ((fe.d - fe.med) * coalesce(po.tau2, 0) + po.d * fe.se ^ 2) / nullif(coalesce(po.tau2, 0) + fe.se ^ 2, 0);
+        shrunk_se := sqrt(1 / (1 / greatest(fe.se ^ 2, 1e-9) + 1 / greatest(coalesce(po.tau2, 0), 1e-9)));
+        ev := ev || jsonb_build_object('shrunk', jsonb_build_object('d', shrunk, 'se', shrunk_se, 'note', 'this event''s own estimate shrunk toward the family pattern; the family result is not evidence about this event'));
+      end if;
+    elsif found then
+      fam_state := 'too few events';
+      ev := ev || jsonb_build_object('family', jsonb_build_object('grid_id', g.grid_id, 'n_events', po.n_events, 'state', fam_state));
+    end if;
+    exit;
+  end loop;
+  if ev = '{}'::jsonb then return p_fails; end if;
+  if (reg_pass and fam_state in ('agrees', 'too few events', 'none')) or (reg_strong and fam_state = 'no pattern') then
+    lifted := array(select x from unnest(fails) x where x = any(liftable));
+    fails := array(select x from unnest(fails) x where not (x = any(liftable)));
+  end if;
+  if fam_state = 'contradicts' then fails := array_append(fails, 'past events moved the other way (' || (ev #>> '{family,n_events}') || ' events)');
+  elsif fam_state = 'no pattern' and reg_pass and not reg_strong then fails := array_append(fails, 'no pattern across ' || (ev #>> '{family,n_events}') || ' past events; this event alone is not strong enough'); end if;
+  update ripples.att_hop_tests t set detail = coalesce(t.detail, '{}'::jsonb) || jsonb_build_object('fx62', ev || jsonb_build_object('lifted', to_jsonb(lifted), 'family_state', fam_state))
+   where t.hop_id = p_hop and t.look_no = p_look;
+  return fails;
+end $$;
+
+drop view if exists ripples.att_family_effects;
+create view ripples.att_family_effects as
+  select g.grid_id, g.batch, g.family, f.label as family_label, g.sub, g.source, g.metric, g.geo_kind, ripples.att_fx_outcome_label(g.source, g.metric) as outcome_label,
+         g.domain_event, g.domain_outcome, g.definitional, (g.bh_weight = 0) as is_check, g.expected_sign, g.pre_n, g.post_n, g.lag_n,
+         pn.grain, case when pn.value_kind = 'rate' then 'raw' else 'pct' end as unit,
+         p.n_events, p.n_skipped, (p.payload ->> 'n_clustered_out')::int as n_clustered_out, p.d, p.se, p.ci_lo, p.ci_hi,
+         case when pn.value_kind = 'rate' then round(p.d::numeric, 2) else round((100 * (exp(p.d) - 1))::numeric, 1) end as pct,
+         case when pn.value_kind = 'rate' then round(p.ci_lo::numeric, 2) else round((100 * (exp(p.ci_lo) - 1))::numeric, 1) end as pct_lo,
+         case when pn.value_kind = 'rate' then round(p.ci_hi::numeric, 2) else round((100 * (exp(p.ci_hi) - 1))::numeric, 1) end as pct_hi,
+         p.tau2, p.i2, p.p_norm, p.p_placebo, p.q, p.sign_ok, p.dose_slope, p.dose_se, p.dose_p, p.n_dose,
+         p.strength, p.payload, p.computed_at, g.ledger_seq, g.frozen_hash
+    from ripples.att_fx_grid g join ripples.att_families f on f.family = g.family
+    left join ripples.att_fx_panel pn on pn.source = g.source and pn.metric = g.metric and pn.geo_kind = g.geo_kind
+    left join ripples.att_fx_pool p on p.grid_id = g.grid_id and p.role = 'real' and p.decoy_set = 0;
+revoke all on ripples.att_family_effects from anon, authenticated, public;
+
+create or replace function public.rm_patterns(p_family text default null, p_min text default 'hint') returns jsonb
+language sql stable security definer set search_path = '' as $$
+  with ranked as (
+    select v.*, case v.strength when 'strong pattern' then 4 when 'pattern' then 3 when 'unexpected direction' then 2 when 'hint' then 1 when 'check passed' then 1 else 0 end as rank_
+    from ripples.att_family_effects v
+    where v.ledger_seq is not null and v.computed_at is not null and v.n_events is not null
+      and not ripples.rm_node_hidden(v.source || ':' || v.metric)
+      and (p_family is null or v.family = p_family))
+  select coalesce(jsonb_agg(jsonb_build_object(
+    'id', r.grid_id, 'family', r.family, 'family_label', r.family_label, 'sub', r.sub,
+    'event_label', case when r.sub = 'hurricane' then 'Hurricanes' else r.family_label || 's' end,
+    'outcome', r.source || ':' || r.metric, 'outcome_label', r.outcome_label, 'geo_kind', r.geo_kind,
+    'design', case when r.geo_kind = 'national' and r.source = 'tsa.pax' then 'event study (season-matched placebos)' else 'affected vs unaffected regions (difference-in-differences, in-space + in-time placebos)' end,
+    'window', jsonb_build_object('pre', r.pre_n, 'post', r.post_n, 'lag', r.lag_n, 'grain', r.grain),
+    'n_events', r.n_events, 'n_clustered_out', r.n_clustered_out, 'unit', r.unit, 'effect', r.pct, 'ci', jsonb_build_array(r.pct_lo, r.pct_hi), 'effect_logpts', round(r.d::numeric, 4),
+    'i2', round(coalesce(r.i2, 0)::numeric, 2), 'p_placebo', r.p_placebo, 'q', r.q, 'strength', r.strength, 'sign_expected', r.expected_sign, 'sign_ok', r.sign_ok,
+    'is_check', r.is_check, 'definitional', r.definitional, 'non_obvious', r.domain_outcome in ('labor', 'business', 'travel', 'developer'),
+    'dose', case when r.dose_slope is not null then jsonb_build_object('slope_per_unit', round(r.dose_slope::numeric, 4), 'p', r.dose_p, 'n', r.n_dose) end,
+    'pond', ripples.att_fx_pond(r.d, r.domain_event, r.domain_outcome, r.unit) || jsonb_build_object('stone', r.payload -> 'shock_median_norm', 'stone_note', 'median normalised magnitude of the pooled events (per-event stone = percent rank of magnitude within the family)'),
+    'n_regional_pass', r.payload -> 'n_regional_pass', 'n_pretrend_flat', r.payload -> 'n_pretrend_flat', 'share_positive', r.payload -> 'share_positive',
+    'fluke_note', case r.strength when 'strong pattern' then 'about 1 in 20 findings at this level could be a fluke' when 'pattern' then 'about 1 in 5 findings at this level could be a fluke'
+                                  when 'hint' then 'did not survive the multiple-comparison correction; treat as a lead' when 'check passed' then 'a pre-registered sanity check, not a finding' else null end,
+    'headline', case when r.sub = 'hurricane' then 'Hurricanes' else r.family_label || 's' end || ' → ' || r.outcome_label || ': ' || case when r.pct >= 0 then '+' else '' end || r.pct
+                || case when r.unit = 'pct' then '%' else ' (raw units)' end || ' over ' || r.post_n || ' ' || case r.grain when 'week' then 'weeks' else 'days' end || ', measured across ' || r.n_events || ' past events',
+    'wording', 'measured across ' || r.n_events || ' past events',
+    'sample_events', (select jsonb_agg(jsonb_build_object('label', coalesce(ripples.rm_label_resolve(e.qid, e.label), e.label), 'onset', f.onset,
+                                                          'effect', case when r.unit = 'pct' then round((100 * (exp(f.d - f.med) - 1))::numeric, 1) else round((f.d - f.med)::numeric, 2) end, 'z', round(f.z::numeric, 2), 'p_space', f.p_space,
+                                                          'stone', ripples.att_fx_shock_norm(e.event_id)) order by abs(f.z) desc)
+                      from (select * from ripples.att_fx_event f0 where f0.grid_id = r.grid_id and f0.role = 'real' and f0.z is not null
+                              and not exists (select 1 from ripples.att_fx_cluster_dups(r.grid_id, 'real', 0) d where d.event_id = f0.event_id) order by abs(f0.z) desc limit 3) f
+                      join ripples.att_events e on e.event_id = f.event_id where coalesce(e.sensitive, false) = false),
+    'ledger_seq', r.ledger_seq, 'computed_at', r.computed_at
+  ) order by r.rank_ desc, coalesce(r.q, 1), r.p_placebo), '[]'::jsonb)
+  from ranked r
+  where r.rank_ >= case p_min when 'strong pattern' then 4 when 'pattern' then 3 when 'hint' then 1 else 0 end
+$$;
+revoke all on function public.rm_patterns(text, text) from public;
+grant execute on function public.rm_patterns(text, text) to anon, authenticated, service_role;
+
+do $$ declare t text; begin
+  for t in select p.oid::regprocedure::text from pg_proc p join pg_namespace n on n.oid = p.pronamespace
+           where n.nspname = 'ripples' and p.proname like 'att\_fx\_%' loop
+    execute format('revoke all on function %s from anon, authenticated, public', t);
+  end loop;
+end $$;
+select ripples.att_fx_model_version_register();   -- 6.2.1 model_version row
+
+-- Re-pool everything under 6.2.1 (all (grid, role, set) combinations), then BH, then the calibration ledger row:
+--   select ripples.att_fx_pool_run(grid_id, role, decoy_set) from ripples.att_fx_pool;  select ripples.att_fx_bh();  select ripples.att_fx_calibration();
