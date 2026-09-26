@@ -107,7 +107,7 @@ function landing(r) {
 // ---------- shared pieces ----------
 function flaps(str, cls, label) {
   const w = h('span', { class: 'flaps' + (cls ? ' ' + cls : ''), 'aria-hidden': 'true' });
-  for (const ch of str) w.append(h('span', { class: 'flap' + (ch === '.' || ch === ',' ? ' nr' : '×+−-'.includes(ch) ? ' x' : '') }, h('span', null, ch === ' ' ? ' ' : ch)));
+  for (const ch of str) w.append(h('span', { class: 'flap' + (ch === '.' || ch === ',' ? ' nr' : '×+−-'.includes(ch) ? ' x' : /[a-z]/.test(ch) ? ' u' : '') }, h('span', null, ch === ' ' ? ' ' : ch)));
   return label === false ? w : h('span', null, w, h('span', { class: 'sr' }, label || str.replace('×', ' times')));
 }
 // flip-digit count-up to the final value (ART §4.3): changed digits fold; ends with a 2 px thunk. Never under reduced motion.
@@ -128,6 +128,31 @@ function countUp(wrap, final, quiet) {
   [...fmt(from)].forEach((ch, j) => { if (cells[j]) cells[j].textContent = ch; });
   setTimeout(tick, 60);
 }
+// Set a flap group to an arbitrary string (the live countdown on the board): only the changed cells fold (70 ms rotateX),
+// cells are added or dropped when the length changes; no motion under reduced motion. Returns the group.
+function setFlaps(wrap, str, anim = true) {
+  const box = wrap.querySelector('.flaps') || wrap;
+  const chars = [...String(str)];
+  while (box.children.length > chars.length) box.lastChild.remove();
+  chars.forEach((ch, j) => {
+    let c = box.children[j];
+    if (!c) { c = h('span', { class: 'flap' }, h('span', null, ch)); box.append(c); }
+    c.className = 'flap' + (ch === '.' || ch === ',' ? ' nr' : '×+−-'.includes(ch) ? ' x' : /[a-z]/.test(ch) ? ' u' : '');
+    const s = c.firstChild;
+    if (s.textContent !== ch) { s.textContent = ch === ' ' ? ' ' : ch; if (anim && !RM) c.animate([{ transform: 'rotateX(0)' }, { transform: 'rotateX(-80deg)' }, { transform: 'rotateX(0)' }], { duration: 70, easing: 'ease-in' }); }
+  });
+  const sr = wrap.querySelector('.sr'); if (sr) sr.textContent = str;
+  return wrap;
+}
+// "3d 14h" / "6h 20m" / "today" until a look date (a yyyy-mm-dd; looks resolve at about 08:45 UTC). Past or today → "today".
+function untilLook(due, now = Date.now()) {
+  if (!due) return null;
+  const t = L.dayMs(due) + (8 * 60 + 45) * 60000, ms = t - now;
+  if (ms <= 0) return 'today';
+  const hrs = Math.floor(ms / 3600000), d = Math.floor(hrs / 24), hh = hrs % 24;
+  if (d >= 1) return `${d}d ${String(hh).padStart(2, '0')}h`;
+  return `${hh}h ${String(Math.floor((ms % 3600000) / 60000)).padStart(2, '0')}m`;
+}
 const tt_ = (tier, extra) => h('span', { class: `tt ${tier}${extra ? ' ' + extra : ''}`, 'aria-hidden': 'true' });
 function pips(n) { const w = h('span', { class: 'pips', 'aria-hidden': 'true' }); for (let i = 0; i < 3; i++) w.append(h('i', { class: i < n ? 'on' : '' })); return w; }
 function stamp(tier, title) {
@@ -139,10 +164,12 @@ function dtile(n, cls = '') {
   if (n.attention_ripple) t.append(h('span', { class: 'ar emo' }, '📖'));
   return t;
 }
-function strip(st, max = 8, panel) {
+function strip(st, max = 8, panel, domains) {
   const w = h('span', { class: 'tstrip' });
   const seq = [...Array(st.measured || 0).fill('measured'), ...Array(st.likely || 0).fill('likely'), ...Array(st.watching || 0).fill('watching')];
-  seq.slice(0, max).forEach(t => w.append(tt_(t)));
+  // domains (optional): the Watching stops' domains, so a row says where it might land: ○🧑‍💼 ○🏛
+  let wi = 0;
+  seq.slice(0, max).forEach(t => { w.append(tt_(t)); if (t === 'watching' && domains && domains[wi]) w.append(em(L.domIcon(domains[wi++]))); });
   if (seq.length > max) w.append(h('small', null, `+${seq.length - max}`));
   if (st.flat) w.append(h('small', null, `⊥${st.flat}`));
   w.append(h('span', { class: 'sr' }, `${st.measured || 0} Measured, ${st.likely || 0} Likely, ${st.watching || 0} Watching, ${st.flat || 0} stayed flat`));
@@ -162,18 +189,34 @@ function theme() {
   const r = document.documentElement, dark = r.getAttribute('data-theme') === 'dark' || (!r.hasAttribute('data-theme') && matchMedia('(prefers-color-scheme: dark)').matches);
   r.setAttribute('data-theme', dark ? 'light' : 'dark'); ls.set('ko.theme', dark ? 'light' : 'dark');
 }
+// Wander never dead-ends: (a) a Measured stop on a live line from the last 90 days, (b) a Measured stop from the
+// reconstructed archive, (c) the Watching stop that is looked at soonest. A line whose cascade file is missing is skipped.
 async function wander() {
-  toast('Finding a Measured stop…');
+  toast('Wandering…');
   const a = (await D.archive()) || [];
   const cut = L.addDays(today(), -90);
-  let pool = a.filter(x => x.measured > 0 && !x.sensitive && !x.reconstructed && x.onset >= cut);
-  if (!pool.length) pool = a.filter(x => x.measured > 0 && !x.sensitive);
-  if (!pool.length) { toast('Nothing Measured in the last 90 days yet'); return; }
-  const line = pool[Math.floor(Math.random() * pool.length)];
-  const c = await D.cascade(line.event_id);
-  const ms = (c?.nodes || []).filter(n => n.tier === 'measured');
-  if (!ms.length) { location.href = L.lineUrl(line.slug); return; }
-  location.href = L.stopUrl(line.slug, ms[Math.floor(Math.random() * ms.length)].hop_id) + '?src=wander';
+  const shuffle = xs => xs.slice().sort(() => Math.random() - 0.5);
+  const pools = [a.filter(x => x.measured > 0 && !x.sensitive && !x.reconstructed && x.onset >= cut), a.filter(x => x.measured > 0 && !x.sensitive && x.reconstructed), a.filter(x => x.measured > 0 && !x.sensitive)];
+  for (const pool of pools) {
+    for (const line of shuffle(pool).slice(0, 4)) {
+      const c = await D.cascade(line.event_id); if (!c || !c.nodes) continue;
+      const ms = c.nodes.filter(n => n.tier === 'measured');
+      if (!ms.length) continue;
+      location.href = L.stopUrl(line.slug, ms[Math.floor(Math.random() * ms.length)].hop_id) + '?src=wander';
+      return;
+    }
+  }
+  // (c) nothing Measured anywhere yet: the soonest look among the running lines
+  const running = a.filter(x => x.status === 'running' && !x.sensitive).sort((x, y) => String(y.onset).localeCompare(String(x.onset))).slice(0, 6);
+  let best = null;
+  for (const line of running) {
+    const c = await D.cascade(line.event_id); if (!c || !c.nodes) continue;
+    for (const n of c.nodes) if (n.tier === 'watching' && !n.window_closed && (n.due || n.window_close) && (!best || (n.due || n.window_close) < (best.n.due || best.n.window_close))) best = { n, line };
+  }
+  if (best) { toast('Nothing Measured yet: here is what is about to be looked at'); setTimeout(() => { location.href = L.stopUrl(best.line.slug, best.n.hop_id) + '?src=wander'; }, 900); return; }
+  const any = a.find(x => x.status === 'running') || a[0];
+  if (any) { location.href = L.lineUrl(any.slug) + '?src=wander'; return; }
+  toast('No lines are published yet');
 }
 // Fonts (self-hosted, OFL): registered after first paint so they never delay it; swap in when they arrive (cached after).
 function fonts() {
@@ -190,7 +233,13 @@ function chrome() {
   $('#theme')?.addEventListener('click', theme);
   // the help dialog is loaded on first tap (it is not needed to draw any page)
   $('#help')?.addEventListener('click', () => import('./help.js').then(m => m.help()));
-  $('#wander')?.addEventListener('click', wander);
+  const wd = $('#wander');
+  if (wd) {
+    wd.setAttribute('aria-label', 'Wander: jump somewhere unexpected'); wd.title = 'Wander: jump somewhere unexpected';
+    // the buzzer press (ART §4.2): the die tips 12° and back; kept under reduced motion because it answers the tap
+    wd.addEventListener('pointerdown', () => { const i = wd.querySelector('i'); i && i.animate([{ transform: 'rotate(0)' }, { transform: 'rotate(-12deg) translateY(2px)' }, { transform: 'rotate(0)' }], { duration: RM ? 1 : 180, easing: 'cubic-bezier(.5,0,.1,1)' }); });
+    wd.addEventListener('click', wander);
+  }
   const dt = $('#today'); if (dt && !dt.textContent.trim()) dt.textContent = L.fmtDate(today());
   if (!$('#toast')) document.body.append(h('div', { id: 'toast', role: 'status', 'aria-live': 'polite' }));
   a2hs();
@@ -238,4 +287,4 @@ function seedChart(svg, vals, quiet, peakLabel) {
   return true;
 }
 
-export { $, add, h, S, em, sep, joinSep, put, icon, IC, RM, desk, ls, today, INLINE, D, rpc, load, event, toast, copy, share, prefetchImg, shareImage, landing, flaps, countUp, tt_, pips, stamp, dtile, strip, legend, spark, theme, wander, chrome, visits, seedChart, getBip, axText };
+export { $, add, h, S, em, sep, joinSep, put, icon, IC, RM, desk, ls, today, INLINE, D, rpc, load, event, toast, copy, share, prefetchImg, shareImage, landing, flaps, countUp, setFlaps, untilLook, tt_, pips, stamp, dtile, strip, legend, spark, theme, wander, chrome, visits, seedChart, getBip, axText };

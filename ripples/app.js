@@ -9,22 +9,26 @@ function heroTicket(S0, archive) {
   const hero = S0?.hero;
   const tk = h('section', { class: 'ticket hero grain', 'aria-labelledby': 'hero-t' });
   if (!hero) {
-    // Cold start with nothing Measured anywhere: say so, and point at what is being watched (never pad a headline)
+    // Cold start with nothing Measured anywhere: the board is watching. Say what is open and when the first look lands
+    // (never pad a headline); the reconstructed archive line follows as a second ticket (home(), archiveTicket)
     const rows = (S0?.shocks || []);
     const due = rows.map(r => r.next_due).filter(d => d && d >= today()).sort()[0];
+    const dueRow = due ? rows.find(r => r.next_due === due) : null;
     // the hook states only what the rows show: Measured and Likely counts are summed from the board, never assumed zero
-    const nM = rows.reduce((a, r) => a + (r.stops?.measured || 0), 0), nL = rows.reduce((a, r) => a + (r.stops?.likely || 0), 0);
+    const nM = rows.reduce((a, r) => a + (r.stops?.measured || 0), 0), nL = rows.reduce((a, r) => a + (r.stops?.likely || 0), 0), nW = rows.reduce((a, r) => a + (r.stops?.watching || 0), 0);
     const hook = !rows.length ? 'No lines are published yet.'
       : nM ? `${L.plural(rows.length, 'line')} on the board, with ${L.plural(nM, 'Measured stop')} among them. None is picked as the headline today.`
-      : nL ? `${L.plural(rows.length, 'line')} on the board: ${L.plural(nL, 'Likely stop')} so far, none Measured yet.`
-      : `${L.plural(rows.length, 'line')} on the board, every stop still Watching or flat.`;
+      : `${L.plural(rows.length, 'line')}, ${L.plural(nW, 'window')} open.${nL ? ` ${L.plural(nL, 'Likely stop')} so far, none Measured yet.` : ''}${due ? ` First result due ${L.fmtDate(due)}.` : ''}`;
     tk.classList.add('cold');
+    const cd = due ? flaps(untilLook(due), 'ink', `${untilLook(due)} to the next look`) : null;
+    if (cd && !RM) { const t = setInterval(() => { if (!cd.isConnected) return clearInterval(t); setFlaps(cd, untilLook(due)); }, 60000); }
     add(tk, h('p', { class: 'tk-top' }, h('span', { class: 'tag' }, 'Ripple of the week')),
       h('div', { class: 'tk-body' },
-        h('h1', { class: 'tk-title', id: 'hero-t' }, nM ? 'No headline today' : 'Nothing Measured yet'),
+        h('h1', { class: 'tk-title', id: 'hero-t' }, nM ? 'No headline today' : 'The board is watching'),
         h('p', { class: 'tk-hook' }, hook),
         h('p', { class: 'tk-sub' }, 'A stop lands here only when it passes every test: its own normal, timing, two sources, and the fluke controls.'),
-        h('div', { class: 'tk-path', 'aria-hidden': 'true' }, h('span', { class: 'dt shock' }, em(rows[0]?.emoji || '🌀')), h('span', { class: 'trk' }), h('span', { class: 'dt q' }, '?'), h('span', { class: 'lbl' }, due ? `Next result due ${L.fmtDay(due)}` : 'Waiting for the first result'))),
+        h('div', { class: 'tk-path' }, h('span', { class: 'dt shock', 'aria-hidden': 'true' }, em(dueRow?.emoji || rows[0]?.emoji || '🌀')), h('span', { class: 'trk', 'aria-hidden': 'true' }), h('span', { class: 'dt q', 'aria-hidden': 'true' }, '?'),
+          h('span', { class: 'lbl' }, cd ? [cd, h('br'), h('span', { style: 'font-weight:500' }, `to the next look${dueRow ? `: ${dueRow.label}` : ''}`)] : 'Waiting for the first result'))),
       h('div', { class: 'tk-perf', 'aria-hidden': 'true' }, h('span', { class: 'notch l' }), h('span', { class: 'notch r' })),
       h('div', { class: 'tk-foot' }, h('a', { class: 'btn', href: '#departures' }, 'See what we are watching')));
     return tk;
@@ -35,33 +39,70 @@ function heroTicket(S0, archive) {
   const svg = S('svg', { class: 'tk-chart', role: 'img', 'aria-label': `${hero.title}: attention against its own normal over the last weeks, peaking at ${L.num(s.magnitude_x)} times normal.` });
   const hasChart = s.spark ? seedChart(svg, s.spark, quiet, L.num(s.magnitude_x) + '×') : false;
   const st = hero.stop || {};
-  const path = h('div', { class: 'tk-path', id: 'hero-path' }, h('span', { class: 'dt shock', 'aria-hidden': 'true' }, em(s.emoji || '🌀')), h('span', { class: 'trk', 'aria-hidden': 'true' }),
-    h('span', { class: 'dt measured', 'aria-hidden': 'true' }, em(L.domIcon(st.domain))), h('span', { class: 'lbl' }, L.domWord(st.domain), h('br'), h('span', { style: 'font-weight:500' }, 'Measured')));
+  // the tile row: shock → the Measured stop (or, for an archive line without a headline stop, the domains it reached)
+  const tiles = st.domain ? [st.domain] : (s.domains_reached || s.domains || []).slice(0, 3);
+  const path = h('div', { class: 'tk-path', id: 'hero-path' }, h('span', { class: 'dt shock', 'aria-hidden': 'true' }, em(s.emoji || '🌀')),
+    tiles.map((d, i) => [h('span', { class: 'trk', 'aria-hidden': 'true' }), h('span', { class: 'dt measured', 'aria-hidden': 'true' }, em(L.domIcon(d))),
+      i === tiles.length - 1 ? h('span', { class: 'lbl' }, tiles.length === 1 ? L.domWord(d) : tiles.map(L.domWord).join(', '), h('br'), h('span', { class: 'tier' }, pips(3), 'Measured')) : null]));
   // a live row carries stops as {measured, likely, …}; an archive row (reconstructed hero) carries a count and `domains`
   const stops = typeof s.stops === 'number' ? s.stops : s.stops ? (s.stops.measured || 0) + (s.stops.likely || 0) : null;
   const doms = s.domains_reached || s.domains;
   const meta = joinSep([stops != null ? L.plural(stops, 'stop') : null, doms ? L.plural(doms.length, 'domain') : null, L.STATUS[s.status] || null, hero.reconstructed ? 'reconstructed' : null]);
+  // the size in words under the engine's headline: "9% fewer US air travellers than on a normal Wednesday." (client gloss, §4)
+  const gloss = L.pctGloss(st.rho, st.unit);
+  const onsetDay = st.onset || (s.onset && st.lag_days != null ? L.addDays(s.onset, Math.round(st.lag_days)) : null);
+  const sub = gloss && st.label ? `${gloss[0].toUpperCase()}${gloss.slice(1)} ${st.domain === 'reading' && !/readers?$/i.test(st.label) ? `${st.label} readers` : st.label} than on a normal ${onsetDay ? L.fmtDate(onsetDay, true).split(' ')[0] : 'day'}.` : null;
+  // the staircase (signature B) replaces the seed chart once the cascade arrives; its height is reserved so nothing shifts
+  const stage = h('div', { class: 'tk-stage' + (stops >= 2 ? ' tall' : '') }, hasChart ? svg : null);
   add(tk,
-    h('p', { class: 'tk-top' }, h('span', { class: 'tag' }, hero.reconstructed ? 'From the archive, reconstructed' : 'Ripple of the week'), hero.version ? h('span', { class: 'ver' }, 'v' + hero.version) : null),
+    h('p', { class: 'tk-top' }, h('span', { class: 'tag' }, hero.reconstructed ? 'From the archive, reconstructed' : visits() < 2 ? 'Ripple of the week ▪ shock → where it showed up' : 'Ripple of the week'), hero.version ? h('span', { class: 'ver' }, 'v' + hero.version) : null),
     h('div', { class: 'tk-body' },
       h('div', { class: 'tk-row' }, h('span', { class: 'tk-emo', 'aria-hidden': 'true' }, em(s.emoji || '🌀')), h('h1', { class: 'tk-title', id: 'hero-t' }, hero.title)),
       h('p', { class: 'tk-hook' }, hero.headline),
-      s.magnitude_x ? h('p', { class: 'tk-sub' }, joinSep([`Peaked at ${L.num(s.magnitude_x)}× its normal attention`, L.biggest(s) || null])) : null,
-      hasChart ? svg : null, path),
+      sub ? h('p', { class: 'tk-sub gloss' }, sub) : null,
+      s.magnitude_x ? h('p', { class: 'tk-sub' }, joinSep([`Peaked at ${L.num(s.magnitude_x)}× its normal readers`, L.biggest(s) || null])) : null,
+      hasChart || stops >= 2 ? stage : null, path),
     h('div', { class: 'tk-perf', 'aria-hidden': 'true' }, h('span', { class: 'notch l' }), h('span', { class: 'notch r' })),
     h('div', { class: 'tk-foot' }, meta.length ? h('p', { class: 'tk-meta' }, meta) : null, h('a', { class: 'btn', href: L.lineUrl(hero.slug) + (ls.get('ko.hide_middle') === '1' ? '?hide=1' : '') }, 'Trace the line')));
   // "?" tiles hide only the stops between the shock and that Measured stop; they flip once through domain icons (not in quiet mode)
   D.cascade(hero.event_id).then(c => {
     if (!c) return;
-    const mid = L.ancestors(c, st.hop_id);
-    if (!mid.length) return;
+    const mid = st.hop_id ? L.ancestors(c, st.hop_id) : [];
     const trk = path.children[1];
     mid.forEach(() => {
       const q = h('span', { class: 'dt q', 'aria-hidden': 'true' }, '?');
       trk.after(q, h('span', { class: 'trk', 'aria-hidden': 'true' }));
       if (!RM && !quiet) { const ic = L.DOMAINS.map(k => L.DOM[k].i); let i = 0; const t = setInterval(() => { q.textContent = i < 6 ? ic[i++ % ic.length] : '?'; if (i >= 6) { clearInterval(t); q.textContent = '?'; } }, 110); }
     });
+    // Signature B: with two or more moved stops the ticket carries the line's staircase, auto-replayed every 6 s
+    // (lanes draw in the order the stops moved, hold, loop); reduced motion and quiet mode show the final frame. One tap opens the line.
+    if (L.stopCount(c) < 2 || !stage.isConnected) return;
+    import('./line.js').then(m => {
+      const entries = L.lineOrder(c).filter(e => e.depth < 3).slice(0, 6);
+      const still = RM || quiet;
+      const sc = m.staircase(c, entries, { all: still, cls: 'tk', caption: still ? 'Each lane: one stop against its own normal, on one shared scale.' : 'Replaying the line: each lane is one stop against its own normal.' });
+      sc.fig.setAttribute('role', 'img'); sc.fig.setAttribute('aria-label', `${hero.title}: ${L.plural(L.stopCount(c), 'stop')} drawn as a staircase, each against its own normal.`);
+      sc.fig.addEventListener('click', () => { sc.stopLoop && sc.stopLoop(); location.href = L.lineUrl(hero.slug); });
+      stage.replaceChildren(sc.fig); stage.classList.add('tall');
+      if (!still) requestAnimationFrame(() => sc.loop(6000));
+    }).catch(() => {});
   });
+  return tk;
+}
+// The archive ticket under the cold hero: the best reconstructed line (most Measured stops) rendered like a headline ticket,
+// with its first Measured stop as the hook when its cascade is published, or its domains reached when it is not.
+async function archiveTicket(S0, archive) {
+  const pool = (archive || []).filter(x => x.reconstructed && x.measured > 0).sort((a, b) => (b.measured - a.measured) || (a.sensitive ? 1 : 0) - (b.sensitive ? 1 : 0));
+  const a = pool[0]; if (!a) return null;
+  const c = await D.cascade(a.event_id);
+  const first = c ? (c.nodes || []).filter(n => n.tier === 'measured' && n.onset).sort((x, y) => String(x.onset).localeCompare(String(y.onset)))[0] : null;
+  const who = first ? (first.domain === 'reading' && !/readers?$/i.test(first.label) ? `${first.label} readers` : first.label) : '';
+  const headline = first ? `${first.lag_days > 0 ? `${L.plural(Math.round(first.lag_days), 'day')} later` : 'The same day'} it showed up in ${who}.`
+    : `Reached ${(a.domains || []).map(L.domWord).join(' and ') || 'other parts of life'}: ${L.plural(a.measured, 'Measured stop')}.`;
+  const hero = { source: 'archive', reconstructed: true, event_id: a.event_id, version: a.version, slug: a.slug, title: a.label, sensitive: a.sensitive, headline,
+    stop: first ? { hop_id: first.hop_id, label: first.label, domain: first.domain, rho: first.rho, unit: first.unit, lag_days: first.lag_days, onset: first.onset } : null };
+  const tk = heroTicket({ ...S0, hero, shocks: [] }, archive);
+  tk.classList.add('arch'); tk.querySelector('h1')?.replaceWith(h('h2', { class: 'tk-title', id: 'arch-t' }, a.label)); tk.setAttribute('aria-labelledby', 'arch-t');
   return tk;
 }
 function depRow(s, fresh) {

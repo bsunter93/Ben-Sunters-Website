@@ -2056,6 +2056,28 @@ begin
   return jsonb_build_object('groups_done', done, 'next', i, 'of', n_groups, 'finished', st ? 'finished', 'seconds', round(extract(epoch from clock_timestamp() - t0)::numeric, 1));
 end $$;
 
+-- 6.1: the chunked recompute must never run while a zvec rebuild is rewriting arrays (looks would mix array states),
+-- and a single cron statement stays under the launcher's freeze budget (≤ 100 s).
+create or replace function ripples.att_recompute_step_locked(p_budget_s integer default 600)
+ returns jsonb language plpgsql security definer set search_path to '' as $function$
+declare r jsonb; v_s7 jsonb; v_run jsonb;
+begin
+  select v into v_s7 from ripples.att_state where k = 'zvec.s7';
+  select v into v_run from ripples.att_state where k = 'zvec.run';
+  if v_s7 is not null and not (v_s7 ? 'finished') then return jsonb_build_object('skipped', 'zvec S7 rebuild in progress'); end if;
+  if v_run is not null and not (v_run ? 'finished') then return jsonb_build_object('skipped', 'zvec rebuild in progress'); end if;
+  if not pg_try_advisory_lock(hashtext('ripples.att_recompute_step')) then return jsonb_build_object('skipped', 'another stepper holds the lock'); end if;
+  begin
+    r := ripples.att_recompute_step(least(coalesce(p_budget_s, 50), 100));
+  exception when others then
+    perform pg_advisory_unlock(hashtext('ripples.att_recompute_step'));
+    raise;
+  end;
+  perform pg_advisory_unlock(hashtext('ripples.att_recompute_step'));
+  return r;
+end $function$;
+revoke all on function ripples.att_recompute_step_locked(integer) from public, anon, authenticated;
+
 
 -- ---------------------------------------------------------------------------------------------------------------------
 -- B1. Positive-control fixtures: slug of the geo-annotated control event, its meta (ba / state), regional expectations.
