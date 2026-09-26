@@ -139,8 +139,10 @@ $$;
 create or replace function ripples.att_story_copy(p_kind text, p_archetype text, p_tier text, p_event_label text, p_family_word text, p_hero_label text, p_hero_domain text,
                                                   p_lag_days int, p_travel jsonb, p_rep jsonb, p_watch jsonb, p_quiet boolean, p_url text) returns jsonb
 language plpgsql immutable set search_path = '' as $$
-declare verb text; when_ text; sent text; title text; hook text; share text; dom text := ripples.rm_domain_word(p_hero_domain); n_dom int; days int; depth int;
+declare verb text; when_ text; sent text; title text; hook text; share text; dom text := ripples.rm_domain_word(p_hero_domain); n_dom int; days int; depth int; fam_pl text;
 begin
+  fam_pl := case when lower(p_family_word) = 'person' then 'people' when lower(p_family_word) like '%s' then lower(p_family_word)
+                 when lower(p_family_word) like '%y' then left(lower(p_family_word), -1) || 'ies' else lower(p_family_word) || 's' end;
   n_dom := coalesce((p_travel ->> 'domains_crossed')::int, 1); days := (p_travel ->> 'days')::int; depth := coalesce((p_travel ->> 'depth')::int, 1);
   when_ := case when p_lag_days is null then 'later' when p_lag_days = 0 then 'the same day' when p_lag_days = 1 then 'a day later'
                 when p_lag_days >= 21 then round(p_lag_days / 7.0) || ' weeks later' else p_lag_days || ' days later' end;
@@ -159,18 +161,19 @@ begin
     hook := 'Everybody expected a ripple. Nothing moved.';
     share := title || ' · ' || coalesce(p_travel ->> 'expected_stops', '?') || ' expected stops, none moved · ' || coalesce(p_url, '');
   elsif p_kind = 'non_event' then
-    sent := format('After %s, %s %s %s. We expected a move about 1 in %s times; the window closed flat.', p_event_label, dom, verb, p_hero_label, coalesce(p_watch ->> 'expected_1_in', '?'));
+    sent := format('%s was expected to ripple into %s%s. It didn''t: we expected a move about 1 in %s times, and the window closed flat.', p_event_label, p_hero_label,
+                   case when dom is null then '' else ' (' || lower(dom) || ')' end, coalesce(p_watch ->> 'expected_1_in', '?'));
     title := p_event_label || ' → ' || p_hero_label || ': dead end';
     hook := 'The expected move never came.';
     share := title || ' · stayed flat · ' || coalesce(p_url, '');
   elsif p_kind = 'watching' then
     sent := format('%s %s %s. Too early to tell: the window closes in %s days.', p_event_label, verb, p_hero_label, coalesce(p_watch ->> 'days_to_resolve', '?'));
     title := p_event_label || ' → ' || p_hero_label || '?';
-    hook := format('Similar %s: a move by then about 1 in %s times.', lower(p_family_word) || 's', coalesce(p_watch ->> 'expected_1_in', '?'));
+    hook := format('Similar %s: a move by then about 1 in %s times.', fam_pl, coalesce(p_watch ->> 'expected_1_in', '?'));
     share := title || ' · still being watched, closes in ' || coalesce(p_watch ->> 'days_to_resolve', '?') || ' days · ' || coalesce(p_url, '');
   else
     sent := case when n_dom >= 2 and depth >= 2 then format('%s didn''t stop at %s — %s it %s %s, %s domains away.', p_event_label, lower(dom), when_, verb, p_hero_label, n_dom)
-                 when p_archetype = 'Blind Spot' then format('%s %s %s — not where a %s usually lands.', p_event_label, verb, p_hero_label, lower(p_family_word))
+                 when p_archetype = 'Blind Spot' then format('%s %s %s — not where %s usually land.', p_event_label, verb, p_hero_label, fam_pl)
                  when p_archetype = 'Delay' then format('Nothing, nothing, then %s: %s %s %s.', when_, p_event_label, verb, p_hero_label)
                  when p_archetype = 'Funnel' then format('%s %s %s from several directions at once.', p_event_label, verb, p_hero_label)
                  when p_archetype in ('Echo','Branch') then format('%s %s %s — and %s other domains answered.', p_event_label, verb, p_hero_label, n_dom - 1)
@@ -187,7 +190,7 @@ begin
              || case when days is not null then ' · ' || days || case when days = 1 then ' day' else ' days' end else '' end
              || case when n_dom >= 2 then ' · ' || n_dom || ' domains' else '' end || ' · consistent with, never proof of cause · ' || coalesce(p_url, '');
   end if;
-  if p_quiet then hook := null; end if;   -- quiet mode: no playful hook on sensitive events
+  if p_quiet and p_kind <> 'pattern' then hook := null; end if;   -- quiet mode: no playful hook on a sensitive event (patterns are aggregates)
   return jsonb_build_object('story_sentence', sent, 'short_title', title, 'conversation_hook', hook, 'share_line', share);
 end $$;
 -- coherence gate: featurable only if both coherences pass and every node has a public name
@@ -505,13 +508,13 @@ begin
   end loop;
 
   -- ---- non-events: pre-registered expected stops (p_hat > 0) whose window closed flat; Ghost when the whole event stayed flat ----
-  select array_agg(r.hop_id order by r.hop_id) into ghost_hops
-    from ripples.att_hop_registry r join ripples.att_hop_candidates c2 on c2.hop_id = r.hop_id
-   where c2.event_id = p_event and c2.role in ('real','library','positive_control') and r.p_hat > 0 and c2.window_close < today
+  select array_agg(rg.hop_id order by rg.hop_id) into ghost_hops
+    from ripples.att_hop_registry rg join ripples.att_hop_candidates c2 on c2.hop_id = rg.hop_id
+   where c2.event_id = p_event and c2.role in ('real','library','positive_control') and rg.p_hat > 0 and c2.window_close < today
      and not ripples.rm_node_hidden(c2.node)
-     and exists (select 1 from ripples.att_hop_tests t2 where t2.hop_id = r.hop_id and t2.tier = 'flat'
-                    and t2.look_no = (select max(t3.look_no) from ripples.att_hop_tests t3 where t3.hop_id = r.hop_id and t3.tier is not null))
-     and not exists (select 1 from jsonb_array_elements(nodes) x where (x ->> 'hop_id')::bigint = r.hop_id and x ->> 'tier' in ('measured','likely','watching'));
+     and exists (select 1 from ripples.att_hop_tests t2 where t2.hop_id = rg.hop_id and t2.tier = 'flat'
+                    and t2.look_no = (select max(t3.look_no) from ripples.att_hop_tests t3 where t3.hop_id = rg.hop_id and t3.tier is not null))
+     and not exists (select 1 from jsonb_array_elements(nodes) x where (x ->> 'hop_id')::bigint = rg.hop_id and x ->> 'tier' in ('measured','likely','watching'));
   n_ghost := coalesce(cardinality(ghost_hops), 0);
   if n_ghost > 0 then
     if n_ghost >= coalesce((cfg -> 'gates' ->> 'ghost_min_expected')::int, 3)
@@ -835,6 +838,7 @@ language sql stable security definer set search_path = '' as $$
     select s.*, ripples.rm_story_item(s) item
       from ripples.att_story_candidates s
      where s.featurable and (p_kind is null or s.story_kind = p_kind)
+       and coalesce((s.sensitivity ->> 'is_control')::boolean, false) = false        -- positive-control fixtures are never featured
        and (s.event_id is null or exists (select 1 from ripples.att_events e where e.event_id = s.event_id
                                               and e.onset >= (now() at time zone 'utc')::date - least(greatest(coalesce(p_days, 90), 1), 36500)))),
   ok as (select * from cand where item is not null),
