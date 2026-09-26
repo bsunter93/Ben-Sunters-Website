@@ -2086,7 +2086,7 @@ do $$ declare j record; begin
   for j in select jobid from cron.job where jobname in ('att-reexamine', 'att-wse-looks', 'att-recompute') loop perform cron.unschedule(j.jobid); end loop;
 end $$;
 select cron.schedule('att-reexamine', '55 8 * * *', $$set statement_timeout = '25min'; select ripples.att_reexamine(current_date, false, 900)$$);
-select cron.schedule('att-recompute', '* * * * *', $$set statement_timeout = '15min'; select ripples.att_recompute_step_locked(540)$$);
+select cron.schedule('att-recompute', '* * * * *', $$set statement_timeout = '110s'; select ripples.att_recompute_step_locked(50)$$);   -- short: pg_cron launches nothing while a long job statement runs on this instance
 
 select ripples.att_common_days_refresh(current_date - 1);
 
@@ -2101,3 +2101,32 @@ do $$ declare t text; begin
     execute format('revoke all on function %s from anon, authenticated, public', t);
   end loop;
 end $$;
+
+-- Deploy gate as a cron loop of SHORT statements: one positive control per minute (att_run_library of one event), then att_run_controls
+-- (negative check + ledger row). Request with att_state_set('engine.controls.request', '{"status":"pending"}'); result in 'engine.controls'.
+create or replace function ripples.att_controls_step() returns jsonb
+language plpgsql security definer set search_path = '' as $$
+declare req jsonb := coalesce(ripples.att_state_get('engine.controls.request'), '{}'::jsonb); k record; r jsonb; ctx text; t0 timestamptz := clock_timestamp();
+begin
+  if coalesce(req ->> 'status', '') <> 'pending' then return jsonb_build_object('idle', true); end if;
+  if not pg_try_advisory_lock(hashtext('ripples.att_controls_runner')) then return jsonb_build_object('skipped', 'running'); end if;
+  begin
+    select * into k from ripples.att_controls where kind = 'positive' and (last_run is null or last_run < current_date) order by id limit 1;
+    if found then
+      r := ripples.att_run_positive_control(k.id);
+      perform ripples.att_state_set('engine.controls.request', req || jsonb_build_object('last', r - 'event_id', 'at', now()));
+    else
+      r := ripples.att_run_controls(false);
+      perform ripples.att_state_set('engine.controls', r || jsonb_build_object('at', now(), 'seconds', round(extract(epoch from clock_timestamp() - t0)::numeric, 1)));
+      perform ripples.att_state_set('engine.controls.request', jsonb_build_object('status', 'done', 'at', now()));
+    end if;
+  exception when others or query_canceled then
+    get stacked diagnostics ctx = pg_exception_context;
+    perform ripples.att_state_set('engine.controls', jsonb_build_object('error', sqlerrm, 'state', sqlstate, 'ctx', left(ctx, 800), 'at', now(), 'control', k.id));
+    perform ripples.att_state_set('engine.controls.request', jsonb_build_object('status', 'failed', 'at', now(), 'control', k.id));
+  end;
+  perform pg_advisory_unlock(hashtext('ripples.att_controls_runner'));
+  return coalesce(r, '{}'::jsonb) - 'positive';
+end $$;
+revoke all on function ripples.att_controls_step() from anon, authenticated, public;
+-- select cron.schedule('att-controls-loop', '* * * * *', $$set statement_timeout = '30min'; select ripples.att_controls_step() where (select v ? 'finished' from ripples.att_state where k = 'zvec.run')$$);

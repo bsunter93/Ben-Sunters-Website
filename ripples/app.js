@@ -5,7 +5,7 @@ import * as L from '/ripples/lib.js';
 
 // ---------- tiny DOM kit ----------
 const $ = (s, r = document) => r.querySelector(s);
-const add = (e, k) => { for (const c of k.flat(9)) if (c != null && c !== false && c !== '') e.append(c.nodeType ? c : String(c)); return e; };
+const add = (e, ...k) => { for (const c of k.flat(9)) if (c != null && c !== false && c !== '') e.append(c.nodeType ? c : String(c)); return e; };
 function h(t, a, ...k) {
   const e = document.createElement(t);
   if (a) for (const [x, v] of Object.entries(a)) {
@@ -14,14 +14,14 @@ function h(t, a, ...k) {
     else if (x === 'class') e.className = v;
     else e.setAttribute(x, v === true ? '' : v);
   }
-  return add(e, k);
+  return add(e, ...k);
 }
 const NS = 'http://www.w3.org/2000/svg';
 function S(t, a, p) { const e = document.createElementNS(NS, t); if (a) for (const x in a) if (a[x] != null) e.setAttribute(x, a[x]); if (p) p.append(e); return e; }
 const em = x => h('span', { class: 'emo', 'aria-hidden': 'true' }, x);
 const sep = () => h('span', { class: 'sepq', 'aria-hidden': 'true' });
 const joinSep = xs => xs.filter(Boolean).flatMap((x, i) => (i ? [sep(), x] : [x]));
-const put = (el, ...k) => { if (!el) return el; el.replaceChildren(); return add(el, k); };
+const put = (el, ...k) => { if (!el) return el; el.replaceChildren(); return add(el, ...k); };
 const IC = {
   chev: '<path d="M6 4l4 4-4 4" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>',
   share: '<path d="M8 10V2M5 5l3-3 3 3M3 8v5.5h10V8" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>',
@@ -112,7 +112,7 @@ function landing(r) {
 // ---------- shared pieces ----------
 function flaps(str, cls, label) {
   const w = h('span', { class: 'flaps' + (cls ? ' ' + cls : ''), 'aria-hidden': 'true' });
-  for (const ch of str) w.append(h('span', { class: 'flap' + (ch === '.' || ch === ',' ? ' nr' : ch === '×' ? ' x' : '') }, h('span', null, ch === ' ' ? ' ' : ch)));
+  for (const ch of str) w.append(h('span', { class: 'flap' + (ch === '.' || ch === ',' ? ' nr' : '×+−-'.includes(ch) ? ' x' : '') }, h('span', null, ch === ' ' ? ' ' : ch)));
   return label === false ? w : h('span', null, w, h('span', { class: 'sr' }, label || str.replace('×', ' times')));
 }
 // flip-digit count-up to the final value (ART §4.3): changed digits fold; ends with a 2 px thunk. Never under reduced motion.
@@ -303,24 +303,26 @@ function heroTicket(S0, archive) {
 function depRow(s, fresh) {
   const st = s.stops || {};
   const where = s.farthest_measured_domain ? [em(L.domIcon(s.farthest_measured_domain)), L.domWord(s.farthest_measured_domain)] : s.status === 'nowhere' ? ['went nowhere'] : ['watching'];
-  const when = s.next_due && s.next_due >= today() ? `next look ${L.fmtDay(s.next_due)}` : `since ${L.fmtDay(s.onset)}`;
+  const when = s.next_due && s.next_due >= today() ? `due ${L.fmtDay(s.next_due)}` : `since ${L.fmtDay(s.onset)}`;
+  const dest = s.farthest_measured_domain ? h('span', { class: 'dest' }, h('span', null, em(L.domIcon(s.farthest_measured_domain)), ' ', L.domWord(s.farthest_measured_domain)), h('small', null, when)) : h('span', { class: 'dest w' }, s.status === 'nowhere' ? 'went nowhere' : 'watching', h('small', null, when));
+  void where;
   return h('a', { class: 'dep' + (fresh ? ' new' : ''), href: L.lineUrl(s.slug) },
     h('span', { class: 'ic', 'aria-hidden': 'true' }, em(s.emoji || '▫️')),
-    h('span', null, h('span', { class: 'nm' }, s.label, s.reconstructed ? h('span', { class: 'sr' }, ' (reconstructed)') : null), h('span', { class: 'sub' }, ...where, sep(), when, fresh ? [sep(), h('span', { class: 'hl' }, 'new')] : null)),
-    strip(st, 6, true), icon('chev', 'chev'));
+    h('span', null, h('span', { class: 'nm' }, s.label, s.reconstructed ? h('span', { class: 'sr' }, ' (reconstructed)') : null), h('span', { class: 'sub' }, strip(st, 7, true), fresh ? [sep(), h('span', { class: 'hl' }, 'new')] : null)),
+    dest, icon('chev', 'chev'));
 }
 function board(S0, fresh) {
   const rows = (S0?.shocks || []).slice().sort((a, b) => (b.stops?.measured || 0) - (a.stops?.measured || 0) || (b.stops?.likely || 0) - (a.stops?.likely || 0) || String(b.onset).localeCompare(String(a.onset)));
   const pub = S0?.published_at;
   const el = h('section', { class: 'panel board grain', id: 'departures', 'aria-labelledby': 'dep-t' },
-    h('div', { class: 'bd-head' }, h('h2', { id: 'dep-t', class: 'fw', 'aria-label': 'Departures' }, [...'Departures'].map(ch => h('b', { 'aria-hidden': 'true' }, ch))),
+    h('div', { class: 'bd-head' }, h('h2', { id: 'dep-t', class: 'fw', 'aria-label': 'Departures' }, [...'DEPARTURES'].map(ch => h('b', { 'aria-hidden': 'true' }, ch))),
       h('p', { class: 'bd-time' }, h('b', null, pub ? L.fmtTime(pub) : '--:--'), S0?.day ? L.fmtDate(S0.day) : '')),
     rows.length ? rows.map(s => depRow(s, fresh.has(s.event_id))) : h('p', { class: 'dep' }, h('span'), h('span', { class: 'sub' }, 'No lines published today yet.')));
   const ctl = S0?.control;
   if (ctl) el.append(h('div', { class: 'dep ctl', role: 'group', 'aria-label': 'The control ripple' },
     h('span', { class: 'ic', 'aria-hidden': 'true' }, em('📄')),
-    h('span', null, h('span', { class: 'nm' }, L.plural(ctl.n_decoys || 1, 'page') + " that weren't trending"), h('span', { class: 'sub' }, 'the control: same tests, every day')),
-    strip(ctl.stops || {}, 6, true), h('span')));
+    h('span', null, h('span', { class: 'nm' }, L.plural(ctl.n_decoys || 1, 'page') + " that weren't trending"), h('span', { class: 'sub' }, strip(ctl.stops || {}, 6, true), sep(), 'same tests')),
+    h('span', { class: 'dest w' }, 'the control'), h('span')));
   const dl = L.dayLine(S0?.line), ll = S0?.listed_lines_sum;
   el.append(legend(), h('p', { class: 'bd-foot' },
     dl ? [h('b', null, `Tested ${L.fmtInt(dl.tested)} paths today`), sep(), `${L.fmtInt(dl.moved)} moved`, sep(), `about ${L.expected(dl.expected)} expected by chance`]
@@ -390,7 +392,7 @@ function staircase(c, entries, opts = {}) {
     const W = Math.max(280, Math.round(fig.clientWidth - 12) || 316), H = desk() ? 320 : fig.classList.contains('min') ? 118 : 180;
     svg.setAttribute('viewBox', `0 0 ${W} ${H}`);
     const gl = desk() ? 150 : 24, gr = 40, top = 8, bot = 18;
-    const dEnd = Math.max(tD + 1, ...lanes.map(l => l.due ?? -99).filter(d => d > -99));
+    const dEnd = Math.max(tD + 2, 10, ...lanes.map(l => l.due ?? -99).filter(d => d > -99 && d <= tD + 14));
     const X = L.xScale(dEnd, gl, W - gr);
     const vis = l => l.pts.filter(p => p.d >= X.start && p.d <= X.end);
     const ext = lanes.map(l => { const v = vis(l).map(p => L.log2(p.v)).concat(l.band ? l.band.hi.filter(p => p.d >= X.start).map(p => L.log2(p.v)) : []); return { up: Math.max(0, ...v), dn: Math.max(0, ...v.map(x => -x)) }; });
@@ -433,7 +435,8 @@ function staircase(c, entries, opts = {}) {
       if (watch && l.due != null) {
         const a = S('line', { x1: X(Math.min(tD, l.due)), x2: X(l.due), y1: y0, y2: y0, stroke: 'var(--ink)', 'stroke-width': 2, 'stroke-dasharray': '4 4', class: RM ? null : 'marching' }, g);
         void a;
-        S('rect', { x: X(l.due) - 5, y: y0 - 5, width: 10, height: 10, rx: 2, fill: 'var(--card)', stroke: 'var(--ink)', 'stroke-width': 1.75 }, g);
+        if (l.due <= X.end) S('rect', { x: X(l.due) - 5, y: y0 - 5, width: 10, height: 10, rx: 2, fill: 'var(--card)', stroke: 'var(--ink)', 'stroke-width': 1.75 }, g);
+        else S('path', { d: `M${X(X.end) + 2} ${y0 - 5}l6 5-6 5z`, fill: 'var(--ink)' }, g);
       }
       // lane label: icon (and the name on desktop)
       const lab = S('text', { x: 2, y: y0 + 4, class: 'lane-lbl' }, g);
@@ -442,7 +445,7 @@ function staircase(c, entries, opts = {}) {
       // onset dot + connector from the parent's onset, with the lag as a small flap
       if (l.od != null && l.od >= X.start) {
         const par = l.shock ? null : lanes.findIndex(q => (n0.parent_hop ? q.n.hop_id === n0.parent_hop : q.shock));
-        if (par >= 0 && lanes[par].od != null) {
+        if (par != null && par >= 0 && lanes[par].od != null) {
           const x1 = X(lanes[par].od), y1 = b[par], x2 = X(l.od), y2 = y0;
           S('path', { d: `M${x1} ${y1}L${x2} ${y2}`, stroke: 'var(--ink)', 'stroke-width': 1.25, opacity: 0.45, fill: 'none' }, g);
           const lag = n0.lag_days != null ? (n0.lag_days === 0 ? '0 d' : `+${Math.round(n0.lag_days)} d`) : '';
@@ -510,7 +513,7 @@ function stopCard(c, e, idx, total, sc, laneIdx) {
   const facts = h('p', { class: 'facts' }, stamp(n.tier), h('span', { style: 'margin-left:8px' }),
     joinSep([n.tier_reason && n.tier !== 'retracted' && n.tier_reason !== 'attention ripple' ? n.tier_reason : null,
       n.attention_ripple ? 'attention ripple' : null,
-      n.channels && n.channels.of ? `${n.channels.agree} of ${n.channels.of} sources agree` : null,
+      n.channels && n.channels.of ? `${n.channels.agree} of ${n.channels.of} ${n.channels.of === 1 ? 'source agrees' : 'sources agree'}` : null,
       n.provisional ? h('span', { class: 'prov' }, 'provisional') : null]));
   add(card, kick);
   if (e.depth > 1) card.append(h('p', { class: 'from' }, `↳ after ${par}, if the previous step holds`));
@@ -647,7 +650,7 @@ async function linePage(r) {
   const denEl = h('div', { class: 'den' },
     h('p', null, h('b', null, `Tested ${L.plural(den.tested ?? 0, 'path')} on this line`), sep(), `${L.fmtInt(den.moved ?? 0)} moved`, sep(), `${L.fmtInt(den.measured ?? 0)} Measured`, sep(), `about ${L.expected(den.expected_false_links)} expected false links`),
     ctl ? h('p', { style: 'margin-top:6px' }, `The control ripple (${c.control.label || "a page that wasn't trending"}, same tests): ${ctl.measured} Measured, ${ctl.likely} Likely, ${ctl.watching} Watching, ${ctl.flat} flat.`) : null,
-    (c.rivals || []).length ? h('p', { style: 'margin-top:6px' }, 'Also active this week: ', c.rivals.map(x => `${x.label} (${x.note})`).join('; '), '. A shared stop could be a common cause.') : null,
+    (c.rivals || []).length ? h('p', { style: 'margin-top:6px' }, 'Also active this week: ', c.rivals.map(x => x.label).join(', '), '. A stop shared with it could be a common cause.') : null,
     h('p', { class: 'xs', style: 'margin-top:6px' }, `Method ${c.method || C.METHOD}`, c.ledger?.seq ? [sep(), `ledger #${L.fmtInt(c.ledger.seq)}`] : null, sep(), h('a', { class: 'lnk', href: '/ripples/methods/' }, 'How we test')));
   // replay scrubber: stops light as their onset day passes; 2.5 s end to end; any tap skips
   const dMax = L.lineDays(c), dMin = -3;
@@ -767,7 +770,7 @@ async function openSheet(hopOrDoc, c, opener, push) {
   sheetState = { el, scrim, opener, pushed: push, lineHref, keyh };
   if (push) history.pushState({ sheet: hopId }, '', L.stopUrl(c.event.slug, hopId));
   document.body.style.overflow = 'hidden';
-  put(el, h('div', { class: 'grab' }, h('b', null, node ? `${L.tierWord(node.tier)} stop, ${L.domWord(node.domain)}` : 'Evidence'), h('button', { class: 'x', 'aria-label': 'Close the evidence', onclick: () => closeSheet() }, icon('x'))),
+  put(el, h('div', { class: 'grab' }, h('b', null, node ? `${L.tierWord(node.tier)} stop, ${L.domWord(node.domain)}` : 'Evidence'), h('button', { class: 'xb', 'aria-label': 'Close the evidence', onclick: () => closeSheet() }, icon('x'))),
     h('p', { class: 'ev-h', id: 'ev-t' }, node ? node.label : 'Loading the evidence…'));
   requestAnimationFrame(() => { scrim.classList.add('on'); el.classList.add('on'); el.focus(); });
   const d = typeof hopOrDoc === 'number' ? await D.hop(hopOrDoc) : hopOrDoc;

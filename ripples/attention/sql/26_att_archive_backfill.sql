@@ -27,7 +27,8 @@
 -- ---------------------------------------------------------------------------------------------------------------------
 insert into ripples.att_config(key, value) values ('archive', jsonb_build_object(
   'selection_version', 'wse-2',
-  'db_guard_mb', 360,                         -- stop running library events above this whole-DB size (collectors stop at 390)
+  'db_guard_mb', 360,                         -- stop running library events above this size of permanent relations …
+  'db_total_guard_mb', 380,                   -- … or above this whole-DB size (att_ingest refuses collector writes at 390)
   'skip_utc', jsonb_build_array('05:40', '08:50'),   -- never during the nightly zvec build or the live morning pipeline
   'prior_caps', jsonb_build_object(           -- pre-2026 prior-set sample per family (largest magnitude first; onset ≥ 2020-01-20
     'hazard.storm', 20, 'hazard.heat', 10,    -- so the multi-year baselines exist); media.* and tech.software_release are not
@@ -128,13 +129,17 @@ create or replace function ripples.att_archive_step() returns jsonb
 language plpgsql security definer set search_path = '' as $$
 declare cfg jsonb := coalesce(ripples._att_cfg('archive'), '{}'::jsonb); p record; r jsonb; t0 timestamptz := clock_timestamp();
         db_mb real := pg_database_size(current_database()) / 1048576.0; rc jsonb := ripples.att_state_get('engine.recompute');
+        perm_mb real := (select sum(pg_relation_size(c.oid)) from pg_class c where c.relkind in ('r','m','t','i') and c.relpersistence <> 't') / 1048576.0;
         zv jsonb := ripples.att_state_get('zvec.run'); now_t time := (now() at time zone 'utc')::time;
 begin
   if now_t between coalesce((cfg -> 'skip_utc' ->> 0)::time, '05:40') and coalesce((cfg -> 'skip_utc' ->> 1)::time, '08:50') then
     return jsonb_build_object('skipped', 'nightly zvec / live morning window');
   end if;
-  if db_mb > coalesce((cfg ->> 'db_guard_mb')::real, 360) then
-    return jsonb_build_object('skipped', 'db guard', 'db_mb', round(db_mb::numeric, 1), 'guard', cfg ->> 'db_guard_mb');
+  -- two guards: permanent relations (what the archive adds) and the whole-database size att_ingest checks (collectors stop at
+  -- db_cap_mb − 10); the archive must stop first
+  if perm_mb > coalesce((cfg ->> 'db_guard_mb')::real, 360) or db_mb > coalesce((cfg ->> 'db_total_guard_mb')::real, 380) then
+    return jsonb_build_object('skipped', 'db guard', 'perm_mb', round(perm_mb::numeric, 1), 'db_mb', round(db_mb::numeric, 1),
+                              'guard', cfg ->> 'db_guard_mb', 'total_guard', coalesce(cfg ->> 'db_total_guard_mb', '380'));
   end if;
   -- never run on half-rebuilt arrays or while WS-B's recompute re-runs pre-registered looks
   if rc is not null and not (rc ? 'finished') then return jsonb_build_object('skipped', 'engine recompute in progress'); end if;
