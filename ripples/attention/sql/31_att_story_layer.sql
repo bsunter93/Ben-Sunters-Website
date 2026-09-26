@@ -217,7 +217,7 @@ $$;
 --   Funnel      : ≥ 2 Likely+ sibling stops (same parent) land in the SAME domain (e.g. FEMA declarations in FL, NC, SC).
 --   Bounce      : direction opposite to the pre-registered / template sign (rho < 1 where + expected, > 1 where − expected), or a pattern 'unexpected direction'.
 --   Amplifier   : magnitude ≥ 0.8 with shock ≤ 0.4 (small stone, big ripple), or a child stop's |log effect| > 1.5× its parent's.
---   Blind Spot  : tier ≥ Likely and surprise ≥ 0.6 (destination domain far from the family's usual domains).
+--   Blind Spot  : tier ≥ Likely and surprise ≥ 0.6 and counterintuitiveness ≥ 0.6 (far from the family's usual domains AND not what the mechanism library expects; p8 2026-09-26).
 --   Delay       : tier ≥ Likely and (hero lag ≥ 7 d or the hero's channel window ≥ 28 d): nothing, nothing, then "9 days later".
 -- Watching stories carry no archetype (kind 'watching' is the anticipation object itself). Patterns: Bounce / Blind Spot or none.
 create or replace function ripples.att_story_archetypes(p_kind text, p_fields jsonb, p_cfg jsonb default null) returns text[]
@@ -236,7 +236,7 @@ language sql immutable set search_path = '' as $$
     case when p_kind in ('cascade','pattern') and ((coalesce((p_fields ->> 'magnitude')::float8, 0) >= 0.8 and coalesce((p_fields ->> 'shock')::float8, 1) <= 0.4)
                                                     or coalesce((p_fields ->> 'amplified_child')::boolean, false)) then 'Amplifier' end,
     case when p_kind in ('cascade','pattern') and coalesce((p_fields ->> 'evidence_at_transitions')::float8, 0) >= 0.5
-              and coalesce((p_fields ->> 'surprise')::float8, 0) >= 0.6 then 'Blind Spot' end,
+              and coalesce((p_fields ->> 'surprise')::float8, 0) >= 0.6 and coalesce((p_fields ->> 'counterintuitiveness')::float8, 0) >= 0.6 then 'Blind Spot' end,
     case when p_kind = 'cascade' and coalesce((p_fields ->> 'evidence_at_transitions')::float8, 0) >= 0.5
               and (coalesce((p_fields ->> 'hero_lag_days')::float8, 0) >= 7 or coalesce((p_fields ->> 'hero_window_days')::int, 0) >= 28) then 'Delay' end
   ], null)
