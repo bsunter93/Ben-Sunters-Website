@@ -874,15 +874,18 @@ revoke all on function ripples.att_fx63_minwage_register(), ripples.att_fx63_fre
 
 
 -- =====================================================================================================================
--- P9 + P10 (migrations att_engine_63_p9_method_632_redteam, att_engine_63_p10_method_633_studentised_mde) — methods 6.3.2 / 6.3.3.
--- Config deltas applied: method 6.3.3; split_date 2024-01-01; regime_exclusions [2020-02-15..2021-06-30, all panels]; decoy_sets 8;
--- conditional_dc 30; clean_null true; winners_curse_shrink 0.6; month_band 45; month_min_distinct 20; outcome_concepts {demand_w: demand};
--- family_tree {hazard.storm|hurricane: hazard.storm}; prior_exposure_batch fx-2026-09-26; studentised_pool true;
--- mde_ceilings {labor/business/housing 0.03, power/government 0.05, rate 0.3 pp}. New columns: att_fx63_select.prior_exposure, mde_80,
--- power_at_x, n_confirm_candidates, rung, verdict3; att_fx63_batch.confirm_cutoff, forward_candidates; table att_fx63_kill_log (RLS, no grants).
--- The 6.2 hook on att_fx_pool_run (studentised placebo pool for the 6.3 roles only) is installed by att_fx63_pool_hook_install().
--- Below: the LIVE definitions of every 6.3 function and public RPC, exported from the database after those migrations (source of record;
--- earlier P1–P4 bodies above are superseded where a name repeats).
+-- P5–P16 (migrations att_engine_63_p5_method_631_both_p … p16_patterns_fluke_line_calibrated) — methods 6.3.1 → 6.3.4 and the v1 inputs.
+-- Config (att_config 'engine63') at hand-back: method 6.3.4; split_date 2024-01-01; regime_exclusions [2020-02-15..2021-06-30, all panels];
+-- decoy_sets 8; conditional_dc 24 (12 → 24 after the first calibration, ledger register row); clean_null true; clean_control_donors true;
+-- winners_curse_shrink 0.6; month_band 45; month_min_distinct 20; outcome_concepts {demand_w: demand}; family_tree {hazard.storm|hurricane:
+-- hazard.storm}; prior_exposure_batch fx-2026-09-26; studentised_pool true; mde_ceilings {labor/business/housing 0.03, power/government 0.05,
+-- rate 0.3 pp}; forward {lower 0.2, upper 20, shrink 0.6, lambda 0.1..3}; disclosure_634 / disclosure_634b (see ENGINE_63.md §4).
+-- Tables (RLS, no grants): att_fx63_batch, att_fx63_select, att_fx63_kill_log, att_fx63_fam_events, att_fx63_forward, att_fx63_rule,
+-- att_eia_subregion_map (P13, zone -> states); view att_fx63_patterns; public RPCs rm_patterns63 / rm_hunches / rm_kill_list63 / rm_kill_log63.
+-- Hooks on 6.2 bodies (anchor-checked, idempotent): att_fx_cluster_dups (att_fx63_hook_install), att_fx_pool_run (att_fx63_pool_hook_install),
+-- public.rm_patterns (att_fx_rm_patterns_quiet_install), att_fx_treated (P13: additive geo kind 'sub'), rm_grant_audit allow-list.
+-- Below: the LIVE definitions of every 6.3 function and public RPC, exported from the database after P16 (source of record; the P1–P4
+-- bodies above are superseded where a name repeats). Byte-for-byte equal to pg_get_functiondef at export time.
 -- =====================================================================================================================
 CREATE OR REPLACE FUNCTION ripples.att_fx63_calibration(p_batch text, p_ledger boolean DEFAULT true)
  RETURNS jsonb
@@ -915,7 +918,7 @@ begin
   guard := jsonb_build_object(
     'hook_liftable_unchanged', position($l$liftable text[] := array['q above 0.05', 'a placebo family disagrees', 'one channel only', 'placebo families', 'final look not reached']$l$ in hk) > 0,
     'no_63_function_touches_tiers', not exists (select 1 from pg_proc p join pg_namespace n on n.oid = p.pronamespace where n.nspname = 'ripples' and p.proname like 'att\_fx63\_%'
-                                                 and (pg_get_functiondef(p.oid) ~ 'att_finalize\(' or pg_get_functiondef(p.oid) ~ 'att_hop_tests' or pg_get_functiondef(p.oid) ~ 'att_fx_hook\(')),
+                                                 and p.proname <> 'att_fx63_calibration' and (pg_get_functiondef(p.oid) ~ ('att_fin' || 'alize\(') or pg_get_functiondef(p.oid) ~ ('att_hop' || '_tests') or pg_get_functiondef(p.oid) ~ ('att_fx' || '_hook\('))),
     'no_63_grid_has_ledger_seq', not exists (select 1 from ripples.att_fx_grid where status = 'fx63' and ledger_seq is not null));
   j := jsonb_build_object('batch', p_batch, 'at', now(), 'method', ripples._att_cfg('engine63') ->> 'method',
         'decoy_pipeline', jsonb_build_object('kind', 'conditional false-confirmation rate: dc universes of every selected real pair', 'n_decoy_selected', n_ct, 'n_false_confirmed_q05', n_cf,
@@ -931,24 +934,17 @@ begin
   return j;
 end $function$
 ;
-
 CREATE OR REPLACE FUNCTION ripples.att_fx63_clean_null(p_family text, p_cand date, p_treated text[], p_geo_kind text, p_pre integer, p_post integer, p_lag integer, p_grain text)
  RETURNS boolean
- LANGUAGE plpgsql
+ LANGUAGE sql
  STABLE SECURITY DEFINER
  SET search_path TO ''
 AS $function$
-declare gd int := ripples.att_fx63_gd(p_grain); r record; tr text[]; fam text := split_part(p_family, '|', 1);
-begin
-  for r in select e.event_id, e.onset from ripples.att_events e where e.family = fam and e.role = 'library'
-            and e.onset between p_cand - (p_pre + p_lag + p_post + 1) * gd and p_cand + (p_pre + p_lag + p_post + 1) * gd loop
-    tr := ripples.att_fx_treated(r.event_id, p_geo_kind, null);
-    if tr && p_treated then return false; end if;
-  end loop;
-  return true;
-end $function$
+  select not exists (select 1 from ripples.att_fx63_fam_events fe where fe.family = split_part(p_family, '|', 1) and fe.geo_kind = p_geo_kind
+                      and fe.onset between p_cand - (p_pre + p_lag + p_post + 1) * ripples.att_fx63_gd(p_grain) and p_cand + (p_pre + p_lag + p_post + 1) * ripples.att_fx63_gd(p_grain)
+                      and fe.treated && p_treated)
+$function$
 ;
-
 CREATE OR REPLACE FUNCTION ripples.att_fx63_confirm_events(p_grid integer)
  RETURNS TABLE(event_id bigint, onset date, treated text[], magnitude real)
  LANGUAGE plpgsql
@@ -977,7 +973,6 @@ begin
   end loop;
 end $function$
 ;
-
 CREATE OR REPLACE FUNCTION ripples.att_fx63_confirm_freeze(p_batch text)
  RETURNS jsonb
  LANGUAGE plpgsql
@@ -1011,7 +1006,6 @@ begin
   return jsonb_build_object('batch', p_batch, 'n_selected', n_sel, 'n_confirm_events', n_ev, 'seq', v_seq, 'hash', h);
 end $function$
 ;
-
 CREATE OR REPLACE FUNCTION ripples.att_fx63_confirm_hash(p_grid integer)
  RETURNS text
  LANGUAGE sql
@@ -1022,7 +1016,83 @@ AS $function$
                                             from ripples.att_fx63_confirm_events(p_grid)), ''), 'sha256'), 'hex')
 $function$
 ;
-
+CREATE OR REPLACE FUNCTION ripples.att_fx63_contaminated(p_family text, p_geo_kind text, p_onset date, p_pre integer, p_post integer, p_lag integer, p_grain text, p_self bigint)
+ RETURNS text[]
+ LANGUAGE sql
+ STABLE SECURITY DEFINER
+ SET search_path TO ''
+AS $function$
+  select coalesce(array_agg(distinct x), '{}') from ripples.att_fx63_fam_events fe, unnest(fe.treated) x
+   where fe.family = p_family and fe.geo_kind = p_geo_kind and fe.event_id is distinct from p_self
+     and abs(fe.onset - p_onset) <= (p_pre + p_lag + p_post) * ripples.att_fx63_gd(p_grain)
+$function$
+;
+CREATE OR REPLACE FUNCTION public.rm_hunches(p_family text DEFAULT NULL::text, p_limit integer DEFAULT 50)
+ RETURNS jsonb
+ LANGUAGE sql
+ STABLE SECURITY DEFINER
+ SET search_path TO ''
+AS $function$
+  select coalesce(jsonb_agg(jsonb_build_object(
+    'id', r.grid_id, 'batch', r.batch, 'method', '6.3', 'label', 'hunch', 'family', r.family, 'family_label', r.family_label, 'sub', r.sub,
+    'event_label', case when r.sub = 'hurricane' then 'Hurricanes' else r.family_label || 's' end,
+    'outcome', r.source || ':' || r.metric, 'outcome_label', r.outcome_label, 'geo_kind', r.geo_kind,
+    'window', jsonb_build_object('pre', r.pre_n, 'post', r.post_n, 'lag', r.lag_n, 'grain', r.grain, 'variant', r.variant), 'unit', r.unit,
+    'exploration', jsonb_build_object('n_events', r.x_n, 'effect', r.x_pct, 'p_placebo', r.x_p, 'period', 'before ' || r.split_date),
+    'held_out', case when r.c_n is not null then jsonb_build_object('n_events', r.c_n, 'effect', r.c_pct, 'ci', jsonb_build_array(r.c_pct_lo, r.c_pct_hi), 'p_placebo', r.c_p, 'q', r.c_q, 'sign_ok', r.c_sign_ok, 'period', 'since ' || r.split_date) end,
+    'status', r.verdict, 'strength', 'hunch',
+    'status_label', case when r.verdict = 'not replicated' then 'did not show up again in the held-out events'
+                         when r.verdict = 'reversed' then 'moved the other way in the held-out events'
+                         when r.verdict like 'too few held-out%' then 'not enough held-out events yet to test it'
+                         when r.verdict like 'not tested%' then 'a lead that was not tested (' || r.reason || ')'
+                         when r.verdict = 'confirmation pending' then 'held-out test pending' else r.verdict end,
+    'domain_distance', r.domain_distance, 'expected_by_mechanism', r.expected_by_mechanism, 'non_obvious', (r.domain_distance >= 1),
+    'note', 'an exploratory lead from one half of the archive that did not survive (or has not yet had) an out-of-sample test; not evidence about any event',
+    'sample_events', ripples.att_fx63_sample_events(r.grid_id, 'explore', 2),
+    'ledger', jsonb_build_object('explore_seq', r.explore_seq, 'confirm_seq', r.confirm_seq), 'computed_at', r.computed_at
+  ) order by (r.verdict = 'not replicated') desc, r.x_p), '[]'::jsonb)
+  from (select v.* from ripples.att_fx63_patterns v
+         where v.decoy_set = 0 and v.x_ok and v.strength = 'hunch' and not v.is_check
+           and not ripples.rm_node_hidden(v.source || ':' || v.metric)
+           and (p_family is null or v.family = p_family)
+         order by (v.verdict = 'not replicated') desc, v.x_p limit greatest(1, least(p_limit, 200))) r
+$function$
+;
+CREATE OR REPLACE FUNCTION public.rm_kill_list63(p_batch text DEFAULT NULL::text)
+ RETURNS jsonb
+ LANGUAGE sql
+ STABLE SECURITY DEFINER
+ SET search_path TO ''
+AS $function$
+  select coalesce(jsonb_agg(jsonb_build_object(
+    'id', v.grid_id, 'batch', v.batch, 'family', v.family, 'family_label', v.family_label, 'sub', v.sub,
+    'event_label', case when v.sub = 'hurricane' then 'Hurricanes' else v.family_label || 's' end,
+    'outcome', v.source || ':' || v.metric, 'outcome_label', v.outcome_label, 'window', jsonb_build_object('pre', v.pre_n, 'post', v.post_n, 'lag', v.lag_n, 'grain', v.grain, 'variant', v.variant),
+    'unit', v.unit, 'is_check', v.is_check,
+    'exploration', jsonb_build_object('n_events', v.x_n, 'effect', v.x_pct, 'effect_logpts', round(v.x_d::numeric, 4), 'se_logpts', round(v.x_se::numeric, 4),
+                                      'ci_logpts', jsonb_build_array(round((v.x_d - 1.96 * v.x_se)::numeric, 4), round((v.x_d + 1.96 * v.x_se)::numeric, 4)), 'p_placebo', v.x_p, 'period', 'before ' || v.split_date),
+    'held_out', case when v.c_n is not null then jsonb_build_object('n_events', v.c_n, 'effect', v.c_pct, 'ci', jsonb_build_array(v.c_pct_lo, v.c_pct_hi), 'i2', round(coalesce(v.c_i2, 0)::numeric, 2), 'p_placebo', v.c_p, 'p_norm', v.c_p_norm, 'q', v.c_q, 'sign_ok', v.c_sign_ok, 'period', 'since ' || v.split_date) end,
+    'candidate', v.x_ok, 'selected', v.selected, 'reason', v.reason, 'verdict', coalesce(v.verdict, case when v.x_ok then 'pending' else 'not a candidate' end), 'strength', v.strength,
+    'ghost', (not coalesce(v.x_ok, false) and v.x_n >= 20 and v.x_se is not null and 2 * 1.96 * v.x_se <= 0.06),
+    'ghost_note', case when (not coalesce(v.x_ok, false) and v.x_n >= 20 and v.x_se is not null and 2 * 1.96 * v.x_se <= 0.06)
+                       then 'well-powered null: across ' || v.x_n || ' events the 95% interval is narrower than ±' || round((100 * 1.96 * v.x_se)::numeric, 1) || '%' end,
+    'domain_distance', v.domain_distance, 'expected_by_mechanism', v.expected_by_mechanism, 'non_obvious', (v.domain_distance >= 1),
+    'ledger', jsonb_build_object('explore_seq', v.explore_seq, 'confirm_seq', v.confirm_seq)
+  ) order by v.selected desc, coalesce(v.verdict, 'z'), v.x_p nulls last, v.grid_id), '[]'::jsonb)
+  from ripples.att_fx63_patterns v
+  where v.decoy_set = 0 and (p_batch is null or v.batch = p_batch) and not ripples.rm_node_hidden(v.source || ':' || v.metric)
+$function$
+;
+CREATE OR REPLACE FUNCTION public.rm_kill_log63(p_batch text DEFAULT NULL::text)
+ RETURNS jsonb
+ LANGUAGE sql
+ STABLE SECURITY DEFINER
+ SET search_path TO ''
+AS $function$
+  select coalesce(jsonb_agg(jsonb_build_object('batch', k.batch, 'id', k.grid_id, 'pair', g.label, 'family', coalesce(k.family, g.family), 'attack', k.attack, 'evidence', k.evidence, 'decided_at', k.decided_at, 'ledger_seq', k.ledger_seq) order by k.decided_at desc, k.id desc), '[]'::jsonb)
+    from ripples.att_fx63_kill_log k left join ripples.att_fx_grid g on g.grid_id = k.grid_id where p_batch is null or k.batch = p_batch
+$function$
+;
 CREATE OR REPLACE FUNCTION ripples.att_fx63_decoy_confirm_seed(p_batch text)
  RETURNS integer
  LANGUAGE plpgsql
@@ -1060,7 +1130,50 @@ begin
   return n_ins;
 end $function$
 ;
-
+CREATE OR REPLACE FUNCTION ripples.att_fx63_decoy_confirm_seed_step(p_batch text, p_budget_s integer DEFAULT 50)
+ RETURNS jsonb
+ LANGUAGE plpgsql
+ SECURITY DEFINER
+ SET search_path TO ''
+AS $function$
+declare cfg jsonb := ripples._att_cfg('engine63'); m int := coalesce((cfg ->> 'conditional_dc')::int, 12); split date := (cfg ->> 'split_date')::date; t0 timestamptz := clock_timestamp();
+        s record; pan record; c record; y0 int; yr int; yrs int[]; cand date; tries int; ok boolean; n_ins int := 0; band int; kk int; done jsonb; key text; n_groups int := 0;
+begin
+  select coalesce(v -> 'done', '{}'::jsonb) into done from ripples.att_state where k = 'engine63.dc_seed:' || p_batch;
+  done := coalesce(done, '{}'::jsonb);
+  for s in select sl.*, g.source, g.metric, g.geo_kind, g.family, g.pre_n, g.post_n, g.lag_n from ripples.att_fx63_select sl join ripples.att_fx_grid g on g.grid_id = sl.grid_id
+           where sl.batch = p_batch and sl.decoy_set = 0 and sl.selected order by sl.grid_id loop
+    select * into pan from ripples.att_fx_panel p where p.source = s.source and p.metric = s.metric and p.geo_kind = s.geo_kind;
+    band := case when pan.grain = 'month' then coalesce((cfg ->> 'month_band')::int, 45) else coalesce((cfg -> 'confirm' ->> 'season_band')::int, 21) end;
+    for kk in 1..m loop
+      key := s.grid_id || ':' || kk;
+      continue when done ? key;
+      perform setseed(((hashtext('fx63dc3:' || s.grid_id || ':' || kk) % 100000) / 100000.0)::float8);
+      for c in select * from ripples.att_fx63_confirm_events(s.grid_id) loop
+        y0 := extract(year from c.onset)::int; yrs := '{}';
+        for yr in extract(year from split)::int..(extract(year from pan.days[pan.n])::int) loop if yr <> y0 then yrs := yrs || yr; end if; end loop;
+        continue when cardinality(yrs) = 0;
+        ok := false; tries := 0;
+        while not ok and tries < 30 loop
+          tries := tries + 1;
+          yr := yrs[1 + floor(random() * cardinality(yrs))::int];
+          cand := (c.onset + make_interval(years => yr - y0))::date + (floor(random() * (2 * band + 1))::int - band);
+          ok := cand >= split and cand between pan.days[1] + 200 and pan.days[pan.n] - (s.lag_n + s.post_n + 1) * ripples.att_fx63_gd(pan.grain) and abs(cand - c.onset) > 120
+                and ripples.att_fx63_regime_ok(cand, s.pre_n, s.post_n, s.lag_n, pan.grain)
+                and ripples.att_fx63_clean_null(s.family, cand, c.treated, s.geo_kind, s.pre_n, s.post_n, s.lag_n, pan.grain);
+        end loop;
+        continue when not ok;
+        insert into ripples.att_fx_event(grid_id, event_id, role, decoy_set, onset, treated, magnitude) values (s.grid_id, c.event_id, 'dc', kk, cand, c.treated, c.magnitude) on conflict do nothing;
+        n_ins := n_ins + 1;
+      end loop;
+      done := done || jsonb_build_object(key, true); n_groups := n_groups + 1;
+      insert into ripples.att_state(k, v) values ('engine63.dc_seed:' || p_batch, jsonb_build_object('done', done, 'at', now())) on conflict (k) do update set v = excluded.v, updated_at = now();
+      if clock_timestamp() - t0 > make_interval(secs => p_budget_s) then return jsonb_build_object('inserted', n_ins, 'groups', n_groups, 'complete', false); end if;
+    end loop;
+  end loop;
+  return jsonb_build_object('inserted', n_ins, 'groups', n_groups, 'complete', true);
+end $function$
+;
 CREATE OR REPLACE FUNCTION ripples.att_fx63_decoy_seed(p_batch text, p_sets integer DEFAULT NULL::integer)
  RETURNS integer
  LANGUAGE plpgsql
@@ -1099,7 +1212,6 @@ begin
   return n_ins;
 end $function$
 ;
-
 CREATE OR REPLACE FUNCTION ripples.att_fx63_domain_distance(p_de text, p_do text)
  RETURNS real
  LANGUAGE sql
@@ -1110,7 +1222,6 @@ AS $function$
                   case when p_de = p_do then 0 else 1 end)
 $function$
 ;
-
 CREATE OR REPLACE FUNCTION ripples.att_fx63_expected_by_mechanism(p_family text, p_source text)
  RETURNS boolean
  LANGUAGE sql
@@ -1124,47 +1235,85 @@ AS $function$
       or exists (select 1 from ripples.att_mech_edges e, src where e.valid_to is null and e.from_node = 'family:' || p_family and e.to_node like src.s || ':%')
 $function$
 ;
-
+CREATE OR REPLACE FUNCTION ripples.att_fx63_fam_events_build()
+ RETURNS integer
+ LANGUAGE plpgsql
+ SECURITY DEFINER
+ SET search_path TO ''
+AS $function$
+declare r record; tr text[]; n int := 0;
+begin
+  truncate ripples.att_fx63_fam_events;
+  for r in select distinct e.event_id, e.onset, e.family, gk.geo_kind from ripples.att_events e cross join (values ('state'), ('ba')) gk(geo_kind)
+           where e.role = 'library' and e.family in (select distinct family from ripples.att_fx_grid where status = 'fx63') loop
+    tr := ripples.att_fx_treated(r.event_id, r.geo_kind, null);
+    continue when tr is null or cardinality(tr) = 0;
+    insert into ripples.att_fx63_fam_events(family, geo_kind, event_id, onset, treated) values (r.family, r.geo_kind, r.event_id, r.onset, tr) on conflict do nothing;
+    n := n + 1;
+  end loop;
+  return n;
+end $function$
+;
 CREATE OR REPLACE FUNCTION ripples.att_fx63_finisher(p_batch text)
  RETURNS jsonb
  LANGUAGE plpgsql
  SECURITY DEFINER
  SET search_path TO ''
 AS $function$
-declare b record; n_x_pending int; n_c_pending int; n_dx_pending int; n_dc_pending int; n_dx int; n_dc int; out jsonb := '{}'::jsonb; s int; sets int := (ripples._att_cfg('engine63') ->> 'decoy_sets')::int;
+declare b record; n_x_pending int; n_c_pending int; n_dx_pending int; n_dc_pending int; n_dx int; n_dc int; out jsonb := '{}'::jsonb; s int; sets int := (ripples._att_cfg('engine63') ->> 'decoy_sets')::int; r record; dcs jsonb;
 begin
   if not pg_try_advisory_xact_lock(hashtext('fx63finisher')) then return jsonb_build_object('skipped', 'running'); end if;
   select * into b from ripples.att_fx63_batch where batch = p_batch;
   if not found or b.explore_seq is null then return jsonb_build_object('error', 'not frozen'); end if;
   select count(*) filter (where f.role = 'explore' and f.computed_at is null), count(*) filter (where f.role = 'confirm' and f.computed_at is null),
-         count(*) filter (where f.role = 'dx' and f.computed_at is null), count(*) filter (where f.role = 'dc' and f.computed_at is null),
-         count(*) filter (where f.role = 'dx'), count(*) filter (where f.role = 'dc')
-    into n_x_pending, n_c_pending, n_dx_pending, n_dc_pending, n_dx, n_dc
-    from ripples.att_fx_event f join ripples.att_fx_grid g on g.grid_id = f.grid_id where g.batch like p_batch || '/%';
-  -- stage 1: exploration complete and pooled → select + confirmation freeze
+         count(*) filter (where f.role = 'dx' and f.computed_at is null), count(*) filter (where f.role = 'dc' and f.computed_at is null), count(*) filter (where f.role = 'dx'), count(*) filter (where f.role = 'dc')
+    into n_x_pending, n_c_pending, n_dx_pending, n_dc_pending, n_dx, n_dc from ripples.att_fx_event f join ripples.att_fx_grid g on g.grid_id = f.grid_id where g.batch like p_batch || '/%';
+  -- stage 1: exploration complete + pooled → select + confirmation freeze (short)
   if n_x_pending = 0 and b.confirm_seq is null and not exists (select 1 from ripples.att_fx_event f join ripples.att_fx_grid g on g.grid_id = f.grid_id where g.batch like p_batch || '/%' and f.role = 'explore'
                                                              and not exists (select 1 from ripples.att_fx_pool p where p.grid_id = f.grid_id and p.role = 'explore' and p.decoy_set = 0)) then
-    out := out || jsonb_build_object('select0', ripples.att_fx63_select_run(p_batch, 0));
-    out := out || jsonb_build_object('confirm_freeze', ripples.att_fx63_confirm_freeze(p_batch));
-    if n_dc = 0 then out := out || jsonb_build_object('dc_seeded', ripples.att_fx63_decoy_confirm_seed(p_batch)); end if;
+    out := out || jsonb_build_object('select0', ripples.att_fx63_select_run(p_batch, 0), 'confirm_freeze', ripples.att_fx63_confirm_freeze(p_batch));
     return out;
   end if;
-  -- stage 2: decoy exploration complete → decoy selections (their confirmation half is the conditional set, already seeded)
+  -- stage 1b: conditional decoys, chunked
+  if b.confirm_seq is not null then
+    select v into dcs from ripples.att_state where k = 'engine63.dc_seed:' || p_batch;
+    if dcs is null or not coalesce((dcs ->> 'complete')::boolean, false) then
+      out := out || jsonb_build_object('dc_seed', ripples.att_fx63_decoy_confirm_seed_step(p_batch, 45));
+      if (out -> 'dc_seed' ->> 'complete')::boolean then
+        update ripples.att_state set v = v || '{"complete": true}'::jsonb where k = 'engine63.dc_seed:' || p_batch;
+      end if;
+      return out;
+    end if;
+  end if;
+  -- stage 2: decoy exploration complete → decoy selections
   if n_dx > 0 and n_dx_pending = 0 and not exists (select 1 from ripples.att_fx63_select where batch = p_batch and decoy_set > 0) then
     for s in 1..sets loop out := out || jsonb_build_object('select' || s, ripples.att_fx63_select_run(p_batch, s)); end loop;
+    return out;
   end if;
-  -- stage 3: confirmation + conditional decoys complete → verdicts + calibration
+  -- stage 3: confirmation + conditional decoys complete → verdicts, repeatability, calibration, forward set
   if b.confirm_seq is not null and n_c_pending = 0 and n_dc > 0 and n_dc_pending = 0 and n_dx_pending = 0 and b.calib_seq is null
-     and exists (select 1 from ripples.att_fx63_select where batch = p_batch and decoy_set > 0) then
+     and exists (select 1 from ripples.att_fx63_select where batch = p_batch and decoy_set > 0)
+     and not exists (select 1 from ripples.att_fx_event f join ripples.att_fx_grid g on g.grid_id = f.grid_id where g.batch like p_batch || '/%' and f.role in ('confirm', 'dc')
+                       and not exists (select 1 from ripples.att_fx_pool p where p.grid_id = f.grid_id and p.role = f.role and p.decoy_set = f.decoy_set)) then
     out := out || jsonb_build_object('verdict0', ripples.att_fx63_verdict(p_batch, 0));
+    for r in select s2.grid_id, s2.x_sign from ripples.att_fx63_select s2 where s2.batch = p_batch and s2.decoy_set = 0 and s2.selected loop
+      update ripples.att_fx63_select set repeat_detail = ripples.att_fx63_repeatability(r.grid_id, 'confirm', r.x_sign), repeatability = (ripples.att_fx63_repeatability(r.grid_id, 'confirm', r.x_sign) ->> 'score')::int
+       where batch = p_batch and decoy_set = 0 and grid_id = r.grid_id;
+    end loop;
     out := out || jsonb_build_object('calibration', ripples.att_fx63_calibration(p_batch, true) - 'in_space_placebos_by_panel' - 'known_positives');
-    perform cron.unschedule(jobid) from cron.job where jobname like 'att-fx63-step-%' or jobname = 'att-fx63-finisher';
-    out := out || jsonb_build_object('finished', true);
+    out := out || jsonb_build_object('forward', ripples.att_fx63_forward_register(p_batch));
+    perform cron.unschedule(jobid) from cron.job where jobname like 'att-fx63-step-%';
+    return out || jsonb_build_object('finished', true);
+  end if;
+  -- stage 4: score forward events (after calibration), then unschedule the finisher
+  if b.calib_seq is not null then
+    out := out || jsonb_build_object('forward_score', ripples.att_fx63_forward_score(p_batch, 45));
+    if (out -> 'forward_score' ->> 'pending')::int = 0 then perform cron.unschedule(jobid) from cron.job where jobname = 'att-fx63-finisher'; out := out || '{"all_done": true}'::jsonb; end if;
+    return out;
   end if;
   return out || jsonb_build_object('pending', jsonb_build_object('explore', n_x_pending, 'confirm', n_c_pending, 'dx', n_dx_pending, 'dc', n_dc_pending));
 end $function$
 ;
-
 CREATE OR REPLACE FUNCTION ripples.att_fx63_fluke_line(p_rung text)
  RETURNS text
  LANGUAGE sql
@@ -1180,8 +1329,72 @@ AS $function$
               when p_rung = 'check' then 'a pre-registered sanity check, not a finding' else null end from c
 $function$
 ;
-
-CREATE OR REPLACE FUNCTION ripples.att_fx63_freeze(p_batch text)
+CREATE OR REPLACE FUNCTION ripples.att_fx63_forward_register(p_batch text)
+ RETURNS jsonb
+ LANGUAGE plpgsql
+ SECURITY DEFINER
+ SET search_path TO ''
+AS $function$
+declare cfg jsonb := ripples._att_cfg('engine63') -> 'forward'; b record; s record; pan record; fc jsonb; n_rules int := 0; n_ev int := 0; payload jsonb; v_seq bigint; gd int;
+begin
+  select * into b from ripples.att_fx63_batch where batch = p_batch;
+  for s in select sl.*, g.source, g.metric, g.geo_kind, g.post_n, g.lag_n from ripples.att_fx63_select sl join ripples.att_fx_grid g on g.grid_id = sl.grid_id
+           where sl.batch = p_batch and sl.decoy_set = 0 and sl.rung in ('pattern', 'pattern_weaker', 'consistent') loop
+    select * into pan from ripples.att_fx_panel p where p.source = s.source and p.metric = s.metric and p.geo_kind = s.geo_kind;
+    gd := ripples.att_fx63_gd(pan.grain);
+    insert into ripples.att_fx63_rule(batch, grid_id, delta_ref, sign, lambda_min, lambda_max, upper_bound, lower_bound, updated_at)
+    values (p_batch, s.grid_id, (cfg ->> 'shrink')::float8 * s.c_d, s.x_sign, (cfg ->> 'lambda_min')::real, (cfg ->> 'lambda_max')::real, (cfg ->> 'upper')::real, (cfg ->> 'lower')::real, now())
+    on conflict (batch, grid_id) do nothing;
+    n_rules := n_rules + 1;
+    for fc in select * from jsonb_array_elements(coalesce(b.forward_candidates, '[]'::jsonb)) x where (x ->> 0)::int = s.grid_id loop
+      insert into ripples.att_fx63_forward(batch, grid_id, event_id, onset, treated, window_close)
+      select p_batch, s.grid_id, (fc ->> 1)::bigint, (fc ->> 2)::date, ripples.att_fx_treated((fc ->> 1)::bigint, s.geo_kind, null), (fc ->> 2)::date + (s.lag_n + s.post_n + 1) * gd
+      on conflict do nothing;
+      n_ev := n_ev + 1;
+    end loop;
+  end loop;
+  payload := jsonb_build_object('object', 'fx63_forward', 'batch', p_batch, 'rules', (select jsonb_agg(to_jsonb(r) - 'updated_at' order by r.grid_id) from ripples.att_fx63_rule r where r.batch = p_batch),
+                                'events', (select jsonb_agg(jsonb_build_array(f.grid_id, f.event_id, f.onset, f.window_close) order by f.grid_id, f.event_id) from ripples.att_fx63_forward f where f.batch = p_batch), 'config', cfg);
+  if n_rules > 0 then
+    v_seq := ripples.att_ledger_append(current_date, 'register', jsonb_build_object('object', 'fx63_forward', 'batch', p_batch, 'n_rules', n_rules, 'n_events', n_ev), payload);
+    update ripples.att_fx63_rule set registered_seq = v_seq where batch = p_batch and registered_seq is null;
+  end if;
+  return jsonb_build_object('rules', n_rules, 'events', n_ev, 'seq', v_seq);
+end $function$
+;
+CREATE OR REPLACE FUNCTION ripples.att_fx63_forward_score(p_batch text, p_budget_s integer DEFAULT 50)
+ RETURNS jsonb
+ LANGUAGE plpgsql
+ SECURITY DEFINER
+ SET search_path TO ''
+AS $function$
+declare cfg jsonb := ripples._att_cfg('engine63'); t0 timestamptz := clock_timestamp(); f record; g record; pan record; ru record; j jsonb; lam float8; z float8; ev float8; n int := 0; dc float8;
+begin
+  for f in select fw.* from ripples.att_fx63_forward fw where fw.batch = p_batch and fw.computed_at is null and fw.window_close <= current_date order by fw.grid_id, fw.onset loop
+    select * into g from ripples.att_fx_grid where grid_id = f.grid_id;
+    select * into pan from ripples.att_fx_panel p where p.source = g.source and p.metric = g.metric and p.geo_kind = g.geo_kind;
+    select * into ru from ripples.att_fx63_rule where batch = p_batch and grid_id = f.grid_id;
+    if not ripples.att_fx63_regime_ok(f.onset, g.pre_n, g.post_n, g.lag_n, pan.grain) or cardinality(f.treated) = 0 then
+      update ripples.att_fx63_forward set computed_at = now(), status_after = 'skipped' where batch = p_batch and grid_id = f.grid_id and event_id = f.event_id; continue;
+    end if;
+    j := ripples.att_fx_calc(pan.ps, pan.pc, pan.days, pan.regions, pan.grain, f.treated, f.onset, g.pre_n, g.post_n, g.lag_n, false, ((hashtext('fwd:' || f.grid_id || ':' || f.event_id) % 100000) / 100000.0)::float8, cfg -> 'confirm');
+    if j ->> 'se' is null then update ripples.att_fx63_forward set computed_at = now(), status_after = 'no estimate' where batch = p_batch and grid_id = f.grid_id and event_id = f.event_id; continue; end if;
+    dc := (j ->> 'd')::float8 - (j ->> 'med')::float8; z := ru.sign * dc / (j ->> 'se')::float8;
+    lam := least(greatest(abs(ru.delta_ref) / (j ->> 'se')::float8, ru.lambda_min), ru.lambda_max);
+    ev := exp(lam * z - lam * lam / 2);
+    update ripples.att_fx63_rule set cum_e = least(cum_e * ev, 1e12), n_forward = n_forward + 1, n_hits = n_hits + (z > 0)::int, last_event = f.onset,
+           status = case when least(cum_e * ev, 1e12) >= upper_bound then 'standing (re-confirmed)' when cum_e * ev <= lower_bound then 'retired' else 'watching' end, updated_at = now()
+     where batch = p_batch and grid_id = f.grid_id;
+    update ripples.att_fx63_forward set d = (j ->> 'd')::real, med = (j ->> 'med')::real, se = (j ->> 'se')::real, z = z, e_value = ev, cum_e = (select cum_e from ripples.att_fx63_rule where batch = p_batch and grid_id = f.grid_id),
+           status_after = (select status from ripples.att_fx63_rule where batch = p_batch and grid_id = f.grid_id), computed_at = now()
+     where batch = p_batch and grid_id = f.grid_id and event_id = f.event_id;
+    n := n + 1;
+    exit when clock_timestamp() - t0 > make_interval(secs => p_budget_s);
+  end loop;
+  return jsonb_build_object('scored', n, 'pending', (select count(*) from ripples.att_fx63_forward where batch = p_batch and computed_at is null and window_close <= current_date));
+end $function$
+;
+CREATE OR REPLACE FUNCTION ripples.att_fx63_freeze(p_batch text, p_set text DEFAULT 'b1'::text)
  RETURNS jsonb
  LANGUAGE plpgsql
  SECURITY DEFINER
@@ -1197,7 +1410,7 @@ begin
   select jsonb_object_agg(source || ':' || metric || ':' || geo_kind, jsonb_build_object('from', days[1], 'to', days[n], 'regions', to_jsonb(regions), 'n', n, 'grain', grain)) into ext from ripples.att_fx_panel;
   insert into ripples.att_fx63_batch(batch, split_date, cfg, status, panel_extents, confirm_cutoff) values (p_batch, split, cfg, 'exploring', ext, cutoff)
   on conflict (batch) do update set panel_extents = excluded.panel_extents, confirm_cutoff = excluded.confirm_cutoff, split_date = excluded.split_date, cfg = excluded.cfg where ripples.att_fx63_batch.explore_seq is null;
-  for s in select * from jsonb_array_elements(ripples.att_fx63_grid_spec()) loop
+  for s in select * from jsonb_array_elements(ripples.att_fx63_grid_spec(p_set)) loop
     continue when not exists (select 1 from ripples.att_fx_panel p where p.source = s ->> 'source' and p.metric = s ->> 'metric' and p.geo_kind = s ->> 'geo_kind');
     for v in select * from jsonb_array_elements(s -> 'variants') loop
       insert into ripples.att_fx_grid(batch, family, sub, source, metric, geo_kind, pre_n, post_n, lag_n, expected_sign, synth, definitional, domain_event, domain_outcome, target_map, bh_weight, label, status)
@@ -1247,7 +1460,6 @@ begin
   return jsonb_build_object('batch', p_batch, 'n_pairs', n_g, 'n_explore_events', n_x, 'n_confirm_candidates', n_c, 'n_forward', n_fwd, 'n_excluded_regime', n_reg, 'seq', v_seq, 'hash', h);
 end $function$
 ;
-
 CREATE OR REPLACE FUNCTION ripples.att_fx63_freeze_single(p_batch text, p_family text, p_pairs jsonb)
  RETURNS jsonb
  LANGUAGE plpgsql
@@ -1289,7 +1501,6 @@ begin
   return jsonb_build_object('batch', p_batch, 'n_pairs', n_g, 'n_events', n_x, 'seq', v_seq);
 end $function$
 ;
-
 CREATE OR REPLACE FUNCTION ripples.att_fx63_gd(p_grain text)
  RETURNS integer
  LANGUAGE sql
@@ -1297,7 +1508,6 @@ CREATE OR REPLACE FUNCTION ripples.att_fx63_gd(p_grain text)
  SET search_path TO ''
 AS $function$ select case p_grain when 'week' then 7 when 'month' then 30 else 1 end $function$
 ;
-
 CREATE OR REPLACE FUNCTION ripples.att_fx63_grant_audit_install()
  RETURNS jsonb
  LANGUAGE plpgsql
@@ -1314,8 +1524,14 @@ begin
   return jsonb_build_object('installed', true, 'already', false);
 end $function$
 ;
-
 CREATE OR REPLACE FUNCTION ripples.att_fx63_grid_spec()
+ RETURNS jsonb
+ LANGUAGE sql
+ IMMUTABLE
+ SET search_path TO ''
+AS $function$ select ripples.att_fx63_grid_spec('b1') $function$
+;
+CREATE OR REPLACE FUNCTION ripples.att_fx63_grid_spec(p_set text)
  RETURNS jsonb
  LANGUAGE sql
  IMMUTABLE
@@ -1325,25 +1541,27 @@ AS $function$
       ('hazard.storm', null::text, true), ('hazard.storm', 'hurricane', true), ('hazard.heat', null, false), ('hazard.cold', null, true),
       ('hazard.flood', null, true), ('hazard.wildfire', null, true), ('hazard.quake', null, true)) f(family, sub, fema_defined)),
   pan as (select * from (values
-      ('dol.claims', 'ic', 'state', 'labor', '[[8,4,0,"immediate"],[8,4,4,"delayed"]]'::jsonb),
-      ('dol.claims', 'cw', 'state', 'labor', '[[8,4,1,"immediate"],[8,4,5,"delayed"]]'),
-      ('census.bfs', 'ba', 'state', 'business', '[[8,4,0,"immediate"],[8,4,4,"delayed"]]'),
-      ('eia.930', 'demand', 'ba', 'power', '[[28,7,0,"immediate"],[28,14,7,"delayed"]]'),
-      ('eia.930', 'demand_w', 'ba', 'power', '[[8,2,0,"immediate"],[8,4,2,"delayed"]]'),
-      ('fema.decl', 'n_w', 'state', 'government', '[[8,2,0,"immediate"],[8,4,2,"delayed"]]'),
-      ('fred.state', 'leih_m', 'state', 'labor', '[[12,2,0,"immediate"],[12,3,2,"delayed"]]'),
-      ('fred.state', 'cons_m', 'state', 'labor', '[[12,2,0,"immediate"],[12,3,2,"delayed"]]'),
-      ('fred.state', 'ur_m', 'state', 'labor', '[[12,2,0,"immediate"],[12,3,2,"delayed"]]'),
-      ('fred.state', 'bppriv_m', 'state', 'housing', '[[12,2,0,"immediate"],[12,3,2,"delayed"]]')) p(source, metric, geo_kind, dom, variants))
+      ('b1', 'dol.claims', 'ic', 'state', 'labor', '[[8,4,0,"immediate"],[8,4,4,"delayed"]]'::jsonb),
+      ('b1', 'dol.claims', 'cw', 'state', 'labor', '[[8,4,1,"immediate"],[8,4,5,"delayed"]]'),
+      ('b1', 'census.bfs', 'ba', 'state', 'business', '[[8,4,0,"immediate"],[8,4,4,"delayed"]]'),
+      ('b1', 'eia.930', 'demand', 'ba', 'power', '[[28,7,0,"immediate"],[28,14,7,"delayed"]]'),
+      ('b1', 'eia.930', 'demand_w', 'ba', 'power', '[[8,2,0,"immediate"],[8,4,2,"delayed"]]'),
+      ('b1', 'fema.decl', 'n_w', 'state', 'government', '[[8,2,0,"immediate"],[8,4,2,"delayed"]]'),
+      ('b1', 'fred.state', 'leih_m', 'state', 'labor', '[[12,2,0,"immediate"],[12,3,2,"delayed"]]'),
+      ('b1', 'fred.state', 'cons_m', 'state', 'labor', '[[12,2,0,"immediate"],[12,3,2,"delayed"]]'),
+      ('b1', 'fred.state', 'ur_m', 'state', 'labor', '[[12,2,0,"immediate"],[12,3,2,"delayed"]]'),
+      ('b1', 'fred.state', 'bppriv_m', 'state', 'housing', '[[12,2,0,"immediate"],[12,3,2,"delayed"]]'),
+      ('b2', 'eia.930', 'ng_solar_w', 'ba', 'power', '[[8,2,0,"immediate"],[8,4,2,"delayed"]]'),
+      ('b2', 'eia.930', 'ng_wind_w', 'ba', 'power', '[[8,2,0,"immediate"],[8,4,2,"delayed"]]'),
+      ('b2', 'eia.930', 'sub_demand_w', 'sub', 'power', '[[8,2,0,"immediate"],[8,4,2,"delayed"]]')) p(pset, source, metric, geo_kind, dom, variants))
   select jsonb_agg(jsonb_build_object('family', f.family, 'sub', f.sub, 'source', p.source, 'metric', p.metric, 'geo_kind', p.geo_kind,
                                       'de', 'hazard', 'do', p.dom, 'variants', p.variants,
                                       'definitional', (p.source = 'fema.decl' and f.fema_defined),
                                       'w', case when p.source = 'fema.decl' and f.fema_defined then 0 else 1 end)
                    order by f.family, f.sub nulls first, p.source, p.metric)
-  from fam f cross join pan p
+  from fam f cross join pan p where p.pset = p_set and (p_set <> 'b2' or f.family <> 'hazard.quake')
 $function$
 ;
-
 CREATE OR REPLACE FUNCTION ripples.att_fx63_hook_install()
  RETURNS jsonb
  LANGUAGE plpgsql
@@ -1362,7 +1580,6 @@ begin
   return jsonb_build_object('installed', true, 'already', false);
 end $function$
 ;
-
 CREATE OR REPLACE FUNCTION ripples.att_fx63_minwage_register()
  RETURNS jsonb
  LANGUAGE plpgsql
@@ -1399,7 +1616,6 @@ begin
   return jsonb_build_object('n_events', n_ev, 'events', out, 'excluded_states', to_jsonb(excl));
 end $function$
 ;
-
 CREATE OR REPLACE FUNCTION ripples.att_fx63_model_version_register()
  RETURNS jsonb
  LANGUAGE plpgsql
@@ -1419,7 +1635,6 @@ begin
   return jsonb_build_object('seq', v_seq, 'hash', h, 'new', true);
 end $function$
 ;
-
 CREATE OR REPLACE FUNCTION ripples.att_fx63_outcome_label(p_source text, p_metric text)
  RETURNS text
  LANGUAGE sql
@@ -1429,6 +1644,9 @@ AS $function$
   select case p_source || ':' || p_metric
     when 'fema.decl:n_w' then 'FEMA disaster declarations in the state (weekly)'
     when 'eia.930:demand_w' then 'regional grid electricity demand (weekly)'
+    when 'eia.930:ng_solar_w' then 'regional grid solar generation (weekly)'
+    when 'eia.930:ng_wind_w' then 'regional grid wind generation (weekly)'
+    when 'eia.930:sub_demand_w' then 'grid sub-region electricity demand (weekly)'
     when 'fred.state:leih_m' then 'state leisure & hospitality employment'
     when 'fred.state:cons_m' then 'state construction employment'
     when 'fred.state:ur_m' then 'state unemployment rate'
@@ -1436,8 +1654,7 @@ AS $function$
     else ripples.att_fx_outcome_label(p_source, p_metric) end
 $function$
 ;
-
-CREATE OR REPLACE FUNCTION ripples.att_fx63_panel_build(p_source text, p_metric text, p_geo_kind text, p_agg text, p_value_kind text DEFAULT NULL::text)
+CREATE OR REPLACE FUNCTION ripples.att_fx63_panel_build(p_source text, p_metric text, p_geo_kind text, p_agg text, p_value_kind text DEFAULT NULL::text, p_weekly boolean DEFAULT false)
  RETURNS jsonb
  LANGUAGE plpgsql
  SECURITY DEFINER
@@ -1462,7 +1679,7 @@ begin
     create temp table _fxo63 on commit drop as
       select region, (date_trunc('week', (day + 1)::timestamp)::date + 5) as day,
              case when vk = 'rate' then avg(y) when vk = 'count' then ln(1 + greatest(sum(y), 0)) else ln(1 + greatest(avg(y), 0)) end as y
-      from _fxr63 group by 1, 2 having count(*) >= 4;
+      from _fxr63 group by 1, 2 having count(*) >= case when p_weekly then 1 else 4 end;
     grain := 'week';
   else
     create temp table _fxo63 on commit drop as
@@ -1486,7 +1703,6 @@ begin
   return jsonb_build_object('source', p_source, 'metric', out_metric, 'geo_kind', p_geo_kind, 'grain', grain, 'value_kind', vk, 'n', n, 'regions', nr, 'from', days[1], 'to', days[n]);
 end $function$
 ;
-
 CREATE OR REPLACE FUNCTION ripples.att_fx63_panel_refresh()
  RETURNS jsonb
  LANGUAGE plpgsql
@@ -1496,12 +1712,11 @@ AS $function$
 declare s jsonb; out jsonb := '[]'::jsonb;
 begin
   for s in select * from jsonb_array_elements(ripples.att_fx63_panel_spec()) loop
-    out := out || ripples.att_fx63_panel_build(s ->> 'source', s ->> 'metric', s ->> 'geo_kind', s ->> 'agg', s ->> 'value_kind');
+    out := out || ripples.att_fx63_panel_build(s ->> 'source', s ->> 'metric', s ->> 'geo_kind', s ->> 'agg', s ->> 'value_kind', coalesce((s ->> 'weekly')::boolean, false));
   end loop;
   return out;
 end $function$
 ;
-
 CREATE OR REPLACE FUNCTION ripples.att_fx63_panel_spec()
  RETURNS jsonb
  LANGUAGE sql
@@ -1511,6 +1726,9 @@ AS $function$
   select '[
     {"source":"fema.decl","metric":"n","geo_kind":"state","agg":"week","value_kind":"count"},
     {"source":"eia.930","metric":"demand","geo_kind":"ba","agg":"week","value_kind":"level"},
+    {"source":"eia.930","metric":"ng_solar","geo_kind":"ba","agg":"week","value_kind":"level","weekly":true},
+    {"source":"eia.930","metric":"ng_wind","geo_kind":"ba","agg":"week","value_kind":"level","weekly":true},
+    {"source":"eia.930","metric":"sub_demand","geo_kind":"sub","agg":"week","value_kind":"level","weekly":true},
     {"source":"fred.state","metric":"leih","geo_kind":"state","agg":"month","value_kind":"level"},
     {"source":"fred.state","metric":"cons","geo_kind":"state","agg":"month","value_kind":"level"},
     {"source":"fred.state","metric":"ur","geo_kind":"state","agg":"month","value_kind":"rate"},
@@ -1518,7 +1736,6 @@ AS $function$
   ]'::jsonb
 $function$
 ;
-
 CREATE OR REPLACE FUNCTION ripples.att_fx63_pool_hook_install()
  RETURNS jsonb
  LANGUAGE plpgsql
@@ -1538,7 +1755,6 @@ begin
   return jsonb_build_object('installed', true, 'already', false);
 end $function$
 ;
-
 CREATE OR REPLACE FUNCTION ripples.att_fx63_power_curve(p_source text, p_metric text, p_geo_kind text, p_pre integer, p_post integer, p_lag integer, p_deltas double precision[] DEFAULT ARRAY[(0)::numeric, 0.01, 0.02, 0.03, 0.05, 0.10], p_k integer DEFAULT 12, p_reps integer DEFAULT 3)
  RETURNS jsonb
  LANGUAGE plpgsql
@@ -1579,7 +1795,6 @@ begin
   return jsonb_build_object('panel', p_source || ':' || p_metric || ':' || p_geo_kind, 'window', jsonb_build_object('pre', p_pre, 'post', p_post, 'lag', p_lag), 'curve', out);
 end $function$
 ;
-
 CREATE OR REPLACE FUNCTION ripples.att_fx63_regime_ok(p_onset date, p_pre integer, p_post integer, p_lag integer, p_grain text)
  RETURNS boolean
  LANGUAGE sql
@@ -1591,7 +1806,31 @@ AS $function$
                          && daterange((x ->> 'from')::date, (x ->> 'to')::date, '[]'))
 $function$
 ;
-
+CREATE OR REPLACE FUNCTION ripples.att_fx63_repeatability(p_grid integer, p_role text, p_sign integer)
+ RETURNS jsonb
+ LANGUAGE plpgsql
+ STABLE SECURITY DEFINER
+ SET search_path TO ''
+AS $function$
+declare dc float8[]; se float8[]; ons date[]; k int; i int; r float8[]; z_loo_min float8 := 1e9; share float8; z_early float8; z_late float8; score int := 0; dc2 float8[]; se2 float8[]; h int;
+begin
+  select array_agg((f.d - f.med)::float8 order by f.onset), array_agg(f.se::float8 order by f.onset), array_agg(f.onset order by f.onset), count(*)
+    into dc, se, ons, k from ripples.att_fx_event f where f.grid_id = p_grid and f.role = p_role and f.decoy_set = 0 and f.se is not null and f.med is not null
+     and not exists (select 1 from ripples.att_fx_cluster_dups(p_grid, p_role, 0) d where d.event_id = f.event_id);
+  if k < 4 then return jsonb_build_object('score', null, 'note', 'fewer than 4 events'); end if;
+  select avg((sign(x) = p_sign)::int) into share from unnest(dc) x;
+  for i in 1..k loop
+    dc2 := dc[1:i-1] || dc[i+1:k]; se2 := se[1:i-1] || se[i+1:k];
+    r := ripples.att_fx_dl(dc2, se2); z_loo_min := least(z_loo_min, p_sign * r[1] / greatest(r[2], 1e-12));
+  end loop;
+  h := k / 2;
+  r := ripples.att_fx_dl(dc[1:h], se[1:h]); z_early := p_sign * r[1] / greatest(r[2], 1e-12);
+  r := ripples.att_fx_dl(dc[h+1:k], se[h+1:k]); z_late := p_sign * r[1] / greatest(r[2], 1e-12);
+  score := (share >= 0.6)::int + (z_loo_min >= 1.96)::int + (z_early >= 1 and z_late >= 1)::int;
+  return jsonb_build_object('score', score, 'n', k, 'share_expected_sign', round(share::numeric, 2), 'loo_min_z', round(z_loo_min::numeric, 2), 'z_early', round(z_early::numeric, 2), 'z_late', round(z_late::numeric, 2),
+                            'label', case score when 3 then 'rock solid' when 2 then 'solid' when 1 then 'fragile' else 'very fragile' end);
+end $function$
+;
 CREATE OR REPLACE FUNCTION ripples.att_fx63_sample_events(p_grid integer, p_role text, p_limit integer DEFAULT 3)
  RETURNS jsonb
  LANGUAGE sql
@@ -1610,7 +1849,6 @@ AS $function$
    where not ripples.att_story_off_limits(e.event_id)
 $function$
 ;
-
 CREATE OR REPLACE FUNCTION ripples.att_fx63_select_run(p_batch text, p_set integer DEFAULT 0)
  RETURNS jsonb
  LANGUAGE plpgsql
@@ -1668,7 +1906,6 @@ begin
   return jsonb_build_object('batch', p_batch, 'set', p_set, 'n_pairs', (select count(*) from ripples.att_fx63_select where batch = p_batch and decoy_set = p_set), 'n_candidates', n_cand, 'n_selected', n_sel, 'n_checks_selected', n_chk);
 end $function$
 ;
-
 CREATE OR REPLACE FUNCTION ripples.att_fx63_shrink(p_d double precision[], p_se double precision[])
  RETURNS TABLE(i integer, d_raw double precision, se_raw double precision, d_shrunk double precision, se_shrunk double precision, w_pool double precision)
  LANGUAGE plpgsql
@@ -1691,7 +1928,19 @@ begin
   end loop;
 end $function$
 ;
-
+CREATE OR REPLACE FUNCTION ripples.att_fx63_slice(ps double precision[], pc smallint[], keep integer[], OUT ps2 double precision[], OUT pc2 smallint[])
+ RETURNS record
+ LANGUAGE plpgsql
+ IMMUTABLE
+ SET search_path TO ''
+AS $function$
+declare i int; n int := array_length(ps, 2); first boolean := true;
+begin
+  foreach i in array keep loop
+    if first then ps2 := ps[i:i][1:n]; pc2 := pc[i:i][1:n]; first := false; else ps2 := ps2 || ps[i:i][1:n]; pc2 := pc2 || pc[i:i][1:n]; end if;
+  end loop;
+end $function$
+;
 CREATE OR REPLACE FUNCTION ripples.att_fx63_step(p_budget_s integer DEFAULT 50, p_roles text[] DEFAULT ARRAY['explore'::text, 'dx'::text, 'confirm'::text, 'dc'::text])
  RETURNS jsonb
  LANGUAGE plpgsql
@@ -1700,6 +1949,7 @@ CREATE OR REPLACE FUNCTION ripples.att_fx63_step(p_budget_s integer DEFAULT 50, 
 AS $function$
 declare t0 timestamptz := clock_timestamp(); cfg jsonb := ripples._att_cfg('engine63'); g record; pan record; e record; j jsonb; c jsonb;
         n_done int := 0; pooled int := 0; v_grid int; pr record; tried int[] := '{}'; n_dist int; mind int := coalesce((cfg ->> 'month_min_distinct')::int, 20);
+        mask boolean := coalesce((cfg ->> 'clean_control_donors')::boolean, false); cont text[]; keep int[]; regs text[]; ps2 float8[]; pc2 int2[]; min_don int; i int; n_masked int; fam text; note_extra text;
 begin
   loop
     select f.grid_id into v_grid from ripples.att_fx_event f join ripples.att_fx_grid gr on gr.grid_id = f.grid_id
@@ -1709,10 +1959,26 @@ begin
     continue when not pg_try_advisory_xact_lock(hashtext('fx63:' || v_grid));
     select * into g from ripples.att_fx_grid where grid_id = v_grid;
     select * into pan from ripples.att_fx_panel p where p.source = g.source and p.metric = g.metric and p.geo_kind = g.geo_kind;
+    fam := g.family;
     for e in select * from ripples.att_fx_event f where f.grid_id = v_grid and f.computed_at is null and f.role = any(p_roles) order by (f.role in ('confirm', 'explore')) desc, f.role, f.decoy_set, f.event_id loop
       c := case when e.role in ('explore', 'dx') then cfg -> 'explore' else cfg -> 'confirm' end;
       if pan.grain = 'month' then c := c || jsonb_build_object('season_band', coalesce((cfg ->> 'month_band')::int, 45)); end if;
-      j := ripples.att_fx_calc(pan.ps, pan.pc, pan.days, pan.regions, pan.grain, e.treated, e.onset, g.pre_n, g.post_n, g.lag_n, false,
+      min_don := coalesce((c ->> 'min_donors')::int, 5); note_extra := null;
+      if mask then
+        cont := ripples.att_fx63_contaminated(fam, g.geo_kind, e.onset, g.pre_n, g.post_n, g.lag_n, pan.grain, case when e.role in ('explore', 'confirm') then e.event_id else null end);
+        cont := array(select x from unnest(cont) x where not (x = any(e.treated)));
+        if cardinality(cont) > 0 then
+          keep := array(select gs from generate_subscripts(pan.regions, 1) gs where not (pan.regions[gs] = any(cont)));
+          if cardinality(keep) - cardinality(e.treated) >= min_don then
+            select s.ps2, s.pc2 into ps2, pc2 from ripples.att_fx63_slice(pan.ps, pan.pc, keep) s;
+            regs := array(select pan.regions[kk] from unnest(keep) kk order by kk);
+            n_masked := cardinality(cont);
+          else
+            ps2 := pan.ps; pc2 := pan.pc; regs := pan.regions; n_masked := 0; note_extra := 'mask_fallback (' || cardinality(cont) || ' contaminated, too few clean donors)';
+          end if;
+        else ps2 := pan.ps; pc2 := pan.pc; regs := pan.regions; n_masked := 0; end if;
+      else ps2 := pan.ps; pc2 := pan.pc; regs := pan.regions; n_masked := 0; end if;
+      j := ripples.att_fx_calc(ps2, pc2, pan.days, regs, pan.grain, e.treated, e.onset, g.pre_n, g.post_n, g.lag_n, false,
                                ((hashtext(v_grid || ':' || e.event_id || ':' || e.role || ':' || e.decoy_set) % 100000) / 100000.0)::float8, c);
       if pan.grain = 'month' and j ? 'placebo_d' then
         select count(distinct round(x::numeric, 6)) into n_dist from jsonb_array_elements_text(j -> 'placebo_d') x;
@@ -1723,7 +1989,7 @@ begin
         med = (j ->> 'med')::real, se = (j ->> 'se')::real, z = (j ->> 'z')::real, p_time = (j ->> 'p_time')::real, p_space = (j ->> 'p_space')::real,
         p_pre = (j ->> 'p_pre')::real, lead = (select array_agg(x::real) from jsonb_array_elements_text(coalesce(j -> 'lead', '[]'::jsonb)) x),
         placebo_d = (select array_agg(x::real) from jsonb_array_elements_text(coalesce(j -> 'placebo_d', '[]'::jsonb)) x),
-        note = j ->> 'note', computed_at = now()
+        note = concat_ws('; ', j ->> 'note', note_extra, case when n_masked > 0 then 'masked ' || n_masked || ' contaminated donors' end), computed_at = now()
       where f.grid_id = e.grid_id and f.event_id = e.event_id and f.role = e.role and f.decoy_set = e.decoy_set;
       n_done := n_done + 1;
       exit when clock_timestamp() - t0 > make_interval(secs => p_budget_s);
@@ -1745,7 +2011,6 @@ begin
   return j;
 end $function$
 ;
-
 CREATE OR REPLACE FUNCTION ripples.att_fx63_verdict(p_batch text, p_set integer DEFAULT 0)
  RETURNS jsonb
  LANGUAGE plpgsql
@@ -1812,76 +2077,6 @@ begin
   return jsonb_build_object('batch', p_batch, 'set', p_set, 'n_selected', n_sel, 'n_in_bh', coalesce(cardinality(ids), 0), 'n_replicated', n_conf, 'n_replicated_weaker', n_weak);
 end $function$
 ;
-
-CREATE OR REPLACE FUNCTION public.rm_hunches(p_family text DEFAULT NULL::text, p_limit integer DEFAULT 50)
- RETURNS jsonb
- LANGUAGE sql
- STABLE SECURITY DEFINER
- SET search_path TO ''
-AS $function$
-  select coalesce(jsonb_agg(jsonb_build_object(
-    'id', r.grid_id, 'batch', r.batch, 'method', '6.3', 'label', 'hunch', 'family', r.family, 'family_label', r.family_label, 'sub', r.sub,
-    'event_label', case when r.sub = 'hurricane' then 'Hurricanes' else r.family_label || 's' end,
-    'outcome', r.source || ':' || r.metric, 'outcome_label', r.outcome_label, 'geo_kind', r.geo_kind,
-    'window', jsonb_build_object('pre', r.pre_n, 'post', r.post_n, 'lag', r.lag_n, 'grain', r.grain, 'variant', r.variant), 'unit', r.unit,
-    'exploration', jsonb_build_object('n_events', r.x_n, 'effect', r.x_pct, 'p_placebo', r.x_p, 'period', 'before ' || r.split_date),
-    'held_out', case when r.c_n is not null then jsonb_build_object('n_events', r.c_n, 'effect', r.c_pct, 'ci', jsonb_build_array(r.c_pct_lo, r.c_pct_hi), 'p_placebo', r.c_p, 'q', r.c_q, 'sign_ok', r.c_sign_ok, 'period', 'since ' || r.split_date) end,
-    'status', r.verdict, 'strength', 'hunch',
-    'status_label', case when r.verdict = 'not replicated' then 'did not show up again in the held-out events'
-                         when r.verdict = 'reversed' then 'moved the other way in the held-out events'
-                         when r.verdict like 'too few held-out%' then 'not enough held-out events yet to test it'
-                         when r.verdict like 'not tested%' then 'a lead that was not tested (' || r.reason || ')'
-                         when r.verdict = 'confirmation pending' then 'held-out test pending' else r.verdict end,
-    'domain_distance', r.domain_distance, 'expected_by_mechanism', r.expected_by_mechanism, 'non_obvious', (r.domain_distance >= 1),
-    'note', 'an exploratory lead from one half of the archive that did not survive (or has not yet had) an out-of-sample test; not evidence about any event',
-    'sample_events', ripples.att_fx63_sample_events(r.grid_id, 'explore', 2),
-    'ledger', jsonb_build_object('explore_seq', r.explore_seq, 'confirm_seq', r.confirm_seq), 'computed_at', r.computed_at
-  ) order by (r.verdict = 'not replicated') desc, r.x_p), '[]'::jsonb)
-  from (select v.* from ripples.att_fx63_patterns v
-         where v.decoy_set = 0 and v.x_ok and v.strength = 'hunch' and not v.is_check
-           and not ripples.rm_node_hidden(v.source || ':' || v.metric)
-           and (p_family is null or v.family = p_family)
-         order by (v.verdict = 'not replicated') desc, v.x_p limit greatest(1, least(p_limit, 200))) r
-$function$
-;
-
-CREATE OR REPLACE FUNCTION public.rm_kill_list63(p_batch text DEFAULT NULL::text)
- RETURNS jsonb
- LANGUAGE sql
- STABLE SECURITY DEFINER
- SET search_path TO ''
-AS $function$
-  select coalesce(jsonb_agg(jsonb_build_object(
-    'id', v.grid_id, 'batch', v.batch, 'family', v.family, 'family_label', v.family_label, 'sub', v.sub,
-    'event_label', case when v.sub = 'hurricane' then 'Hurricanes' else v.family_label || 's' end,
-    'outcome', v.source || ':' || v.metric, 'outcome_label', v.outcome_label, 'window', jsonb_build_object('pre', v.pre_n, 'post', v.post_n, 'lag', v.lag_n, 'grain', v.grain, 'variant', v.variant),
-    'unit', v.unit, 'is_check', v.is_check,
-    'exploration', jsonb_build_object('n_events', v.x_n, 'effect', v.x_pct, 'effect_logpts', round(v.x_d::numeric, 4), 'se_logpts', round(v.x_se::numeric, 4),
-                                      'ci_logpts', jsonb_build_array(round((v.x_d - 1.96 * v.x_se)::numeric, 4), round((v.x_d + 1.96 * v.x_se)::numeric, 4)), 'p_placebo', v.x_p, 'period', 'before ' || v.split_date),
-    'held_out', case when v.c_n is not null then jsonb_build_object('n_events', v.c_n, 'effect', v.c_pct, 'ci', jsonb_build_array(v.c_pct_lo, v.c_pct_hi), 'i2', round(coalesce(v.c_i2, 0)::numeric, 2), 'p_placebo', v.c_p, 'p_norm', v.c_p_norm, 'q', v.c_q, 'sign_ok', v.c_sign_ok, 'period', 'since ' || v.split_date) end,
-    'candidate', v.x_ok, 'selected', v.selected, 'reason', v.reason, 'verdict', coalesce(v.verdict, case when v.x_ok then 'pending' else 'not a candidate' end), 'strength', v.strength,
-    'ghost', (not coalesce(v.x_ok, false) and v.x_n >= 20 and v.x_se is not null and 2 * 1.96 * v.x_se <= 0.06),
-    'ghost_note', case when (not coalesce(v.x_ok, false) and v.x_n >= 20 and v.x_se is not null and 2 * 1.96 * v.x_se <= 0.06)
-                       then 'well-powered null: across ' || v.x_n || ' events the 95% interval is narrower than ±' || round((100 * 1.96 * v.x_se)::numeric, 1) || '%' end,
-    'domain_distance', v.domain_distance, 'expected_by_mechanism', v.expected_by_mechanism, 'non_obvious', (v.domain_distance >= 1),
-    'ledger', jsonb_build_object('explore_seq', v.explore_seq, 'confirm_seq', v.confirm_seq)
-  ) order by v.selected desc, coalesce(v.verdict, 'z'), v.x_p nulls last, v.grid_id), '[]'::jsonb)
-  from ripples.att_fx63_patterns v
-  where v.decoy_set = 0 and (p_batch is null or v.batch = p_batch) and not ripples.rm_node_hidden(v.source || ':' || v.metric)
-$function$
-;
-
-CREATE OR REPLACE FUNCTION public.rm_kill_log63(p_batch text DEFAULT NULL::text)
- RETURNS jsonb
- LANGUAGE sql
- STABLE SECURITY DEFINER
- SET search_path TO ''
-AS $function$
-  select coalesce(jsonb_agg(jsonb_build_object('batch', k.batch, 'id', k.grid_id, 'pair', g.label, 'family', coalesce(k.family, g.family), 'attack', k.attack, 'evidence', k.evidence, 'decided_at', k.decided_at, 'ledger_seq', k.ledger_seq) order by k.decided_at desc, k.id desc), '[]'::jsonb)
-    from ripples.att_fx63_kill_log k left join ripples.att_fx_grid g on g.grid_id = k.grid_id where p_batch is null or k.batch = p_batch
-$function$
-;
-
 CREATE OR REPLACE FUNCTION public.rm_patterns63(p_family text DEFAULT NULL::text, p_min text DEFAULT 'confirmed'::text)
  RETURNS jsonb
  LANGUAGE sql
@@ -1909,9 +2104,7 @@ AS $function$
     'domain_distance', r.domain_distance, 'expected_by_mechanism', r.expected_by_mechanism, 'non_obvious', (r.domain_distance >= 1),
     'pond', ripples.att_fx_pond(r.c_d, r.domain_event, r.domain_outcome, r.unit)
             || jsonb_build_object('stone', (select percentile_cont(0.5) within group (order by ripples.att_fx_shock_norm(f.event_id)) from ripples.att_fx_event f where f.grid_id = r.grid_id and f.role = 'confirm' and f.magnitude is not null)),
-    'fluke_note', case r.strength when 'confirmed pattern' then 'found in one half of the archive and seen again in the other; about 1 in 20 findings at this level could be a fluke'
-                                  when 'confirmed pattern (weaker)' then 'found in one half of the archive and seen again in the other; about 1 in 5 findings at this level could be a fluke'
-                                  when 'check passed' then 'a pre-registered sanity check, not a finding' else null end,
+    'fluke_note', ripples.att_fx63_fluke_line(case r.strength when 'confirmed pattern' then 'pattern' when 'consistent pattern' then 'consistent' when 'confirmed pattern (weaker)' then 'pattern_weaker' when 'consistent pattern (weaker)' then 'pattern_weaker' when 'check passed' then 'check' else 'hunch' end),
     'headline', case when r.sub = 'hurricane' then 'Hurricanes' else r.family_label || 's' end || ' → ' || r.outcome_label || ': ' || case when r.c_pct >= 0 then '+' else '' end || r.c_pct
                 || case when r.unit = 'pct' then '%' else ' (raw units)' end || ' over ' || r.post_n || ' ' || case r.grain when 'week' then 'weeks' when 'month' then 'months' else 'days' end
                 || case when r.lag_n > 0 then ', starting ' || r.lag_n || ' ' || case r.grain when 'week' then 'weeks' when 'month' then 'months' else 'days' end || ' after the event' else '' end
