@@ -1,0 +1,81 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Milton share cards</title>
+<meta name="robots" content="noindex">
+<link rel="icon" href="../icon-192.png">
+<link rel="stylesheet" href="pond.css">
+<link rel="stylesheet" href="app.css">
+<style>
+body{background:#2A3234;padding:40px;display:grid;gap:40px;justify-items:start;overflow:auto}
+.card{position:relative;background:var(--bank);overflow:hidden;display:grid;border:0;border-radius:0;padding:0;color:var(--text)}
+.card .pond{position:absolute}
+.brand{font-size:18px}.brand svg{width:24px;height:24px}
+.trust{display:flex;gap:18px;font-size:15px;color:var(--text-2);flex-wrap:wrap;max-width:none;margin:0}
+.trust span{display:inline-flex;align-items:center;gap:7px}
+.trust span::before{content:"";width:6px;height:6px;border-radius:50%;background:var(--ring)}
+.trust span.half::before{background:linear-gradient(90deg,var(--pad-edge) 50%,transparent 50%);border:1.5px solid var(--pad-edge);width:8px;height:8px;box-sizing:border-box}
+.reach{font-size:15px;color:var(--text);margin:0}
+.reach small{display:inline;color:var(--text-3);margin-left:8px;font-size:13px}
+.cta{display:inline-flex;align-items:center;gap:8px;background:var(--text);color:var(--bank);border-radius:999px;padding:10px 18px;font-size:16px;font-weight:600;align-self:flex-start}
+#land{width:1200px;height:630px;grid-template-columns:600px 1fr}
+#land .copy{padding:44px 0 40px 48px;display:flex;flex-direction:column;gap:14px;z-index:2}
+#land h1{font-size:48px;line-height:1.02;letter-spacing:-.035em;font-weight:600;margin:6px 0 0;text-wrap:balance;max-width:none}
+#land h1 .q{color:var(--text-2);font-weight:500}
+#land .big{font-size:96px;line-height:.95;letter-spacing:-.05em;font-weight:650;color:var(--num);margin:4px 0 0}
+#land .big small{font-size:22px;letter-spacing:-.01em;color:var(--text);font-weight:500;margin-left:12px}
+#land .pond{width:780px;height:780px;right:-90px;top:-75px}
+#land .pond .domain-label{display:none}
+#land .foot{margin-top:auto;display:flex;gap:16px;align-items:center}
+#port{width:1080px;height:1350px;grid-template-rows:auto 1fr auto}
+#port .head{padding:56px 60px 0;display:flex;justify-content:space-between;align-items:center;z-index:2}
+#port .pond{position:relative;width:1080px;height:760px;margin-top:-20px}
+#port .copy{padding:0 60px 56px;display:flex;flex-direction:column;gap:16px;z-index:2}
+#port h1{font-size:60px;line-height:1;letter-spacing:-.04em;font-weight:600;margin:0;text-wrap:balance;max-width:none}
+#port h1 .q{color:var(--text-2);font-weight:500}
+#port .big{font-size:120px;line-height:.95;letter-spacing:-.05em;font-weight:650;color:var(--num)}
+#port .big small{font-size:26px;letter-spacing:-.01em;color:var(--text);font-weight:500;margin-left:14px}
+#port .trust{font-size:18px}
+#port .foot{display:flex;justify-content:space-between;align-items:center;margin-top:6px}
+.pond .domain-label{font-size:17px}.pond .lbl{font-size:22px}.pond .lbl-tier{font-size:16px}.pond .ring-label{font-size:15px}
+</style>
+</head>
+<body>
+<div class="card" id="land">
+  <div class="copy">
+    <div class="brand"><svg viewBox="0 0 24 24" aria-hidden="true"><ellipse cx="12" cy="12" rx="3" ry="2.4" fill="#C8B48E"/><circle cx="12" cy="12" r="6.5" fill="none" stroke="#A9EAD9" stroke-width="1.2"/><circle cx="12" cy="12" r="10.5" fill="none" stroke="#A9EAD9" stroke-width="1.2" opacity=".45"/></svg>Ripple Map</div>
+    <h1>Hurricane Milton hit Florida. <span class="q">The next day its power grids drew a fifth less than the rest of the country.</span></h1>
+    <div class="big num">−20%<small>vs 51 unaffected regions</small></div>
+    <div class="trust"><span class="half">Regional contrast passed</span><span>Not yet Measured</span><span>Passed after 1 of 27 similar storms</span></div>
+    <div class="foot"><span class="cta">Trace the ripple</span><span class="reach"><span class="num">1</span> domain · <span class="num">7</span> days · 1st-order<small>how far it travelled</small></span></div>
+  </div>
+  <svg class="pond" id="pond-land" aria-hidden="true"></svg>
+</div>
+
+<div class="card" id="port">
+  <div class="head">
+    <div class="brand"><svg viewBox="0 0 24 24" aria-hidden="true"><ellipse cx="12" cy="12" rx="3" ry="2.4" fill="#C8B48E"/><circle cx="12" cy="12" r="6.5" fill="none" stroke="#A9EAD9" stroke-width="1.2"/><circle cx="12" cy="12" r="10.5" fill="none" stroke="#A9EAD9" stroke-width="1.2" opacity=".45"/></svg>Ripple Map</div>
+    <span class="reach">Consistent with, never proof of cause</span>
+  </div>
+  <svg class="pond" id="pond-port" aria-hidden="true"></svg>
+  <div class="copy">
+    <h1>Hurricane Milton hit Florida. <span class="q">The next day its power grids drew a fifth less than the rest of the country.</span></h1>
+    <div class="big num">−20%<small>grid demand vs unaffected regions</small></div>
+    <div class="trust"><span class="half">Regional contrast passed, not yet Measured</span><span>1 in 31 by chance across regions</span><span>Passed after 1 of 27 similar storms</span></div>
+    <div class="foot"><span class="cta">What else did Milton touch?</span><span class="reach"><span class="num">1</span> domain · <span class="num">7</span> days · 1st-order</span></div>
+  </div>
+</div>
+
+<script src="pond.js"></script>
+<script>
+fetch('data/milton.json').then(r => r.json()).then(P => {
+  P.effects[0].tier = 'contrast'; P.effects[0].label_side = 'left'; P.ringLabelAngle = 152;
+  P.untested.forEach(u => { u.offset = 0; });
+  Pond.render(document.getElementById('pond-land'), { ...P, rivals: [], filtered: [] }, { reduceMotion: true, viewBox: [-500, -500, 1000, 1000] });
+  Pond.render(document.getElementById('pond-port'), { ...P, rivals: [], filtered: [] }, { reduceMotion: true, viewBox: [-560, -430, 1120, 860] });
+  document.body.dataset.ready = '1';
+});
+</script>
+</body>
+</html>

@@ -42,8 +42,9 @@
 
 /* untested floats */
 .pond .float{cursor:pointer}
-.pond .float-ring{fill:transparent;stroke:var(--text-2);stroke-width:1.2;stroke-dasharray:2.2 2.6;opacity:.7}
-.pond .float-dot{fill:var(--text-2);opacity:.7}
+.pond .float-water{fill:var(--water-deep);opacity:.45}
+.pond .float-ring{fill:transparent;stroke:var(--ring);stroke-width:1.3;stroke-dasharray:2.4 2.8;opacity:.75}
+.pond .float-dot{fill:var(--ring);opacity:.8}
 .pond .float:hover .float-ring,.pond .float.active .float-ring{stroke:var(--text);opacity:1}
 
 /* far-shore marks (world rules) */

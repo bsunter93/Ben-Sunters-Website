@@ -30,6 +30,13 @@
 //               ~70 first-order stations; daily update (last 14 days) or backfill (params.from, default 2019-01-01).
 //   census_bfs  Census Business Formation Statistics weekly business applications (BA_NSA, national + state) from the
 //               weekly CSVs listed in att_config.econ.bfs_urls (Year/Week rows -> week-ending Saturday).
+//   fred_state  ENGINE 6.3 regional outcome panels (source fred.state): monthly state series republished by FRED from BLS
+//               (CES state supersectors <ST>LEIH leisure & hospitality, <ST>CONS construction; LAUS <ST>UR unemployment
+//               rate), Census (<ST>BPPRIV private housing units authorized by building permits) and the annual DOL state
+//               minimum wage (STTMINWG<ST>, rate as of January 1, source U.S. Department of Labor). 50 states + DC. FIRST-
+//               RELEASE values (ALFRED output_type=4), from att_config.econ.fred_from. Resumable cursor att_state
+//               'econ.fred.state' {fetched: {id: day}, missing: [id]}; a series is re-read when > 32 days old (monthly
+//               release cadence) or with params.force. Budget: the shared 'fred' bucket, host lease, per-run cap.
 //   backfill    params.source in (fred | fred_rt | eia.930 | bls.ces | bls.cpi_items | dol.claims | noaa.ghcnd |
 //               census.bfs): resumable full history (att_state 'econ.bf.<source>'). fred_rt re-reads the weekly series
 //               once as first releases (one call each; att_state 'econ.fred.rt').
@@ -41,7 +48,7 @@
 import { addDays, db, errMsg, ingest, type ObsRow, politeFetch, type Run, serve, stateGet, stateSet } from "./att.ts";
 import { getJson, getText, r4, scrubStr, secret, todayUtc, wrap } from "./wsa.ts";
 
-export const ECON_VERSION = "2026-09-25.e5";
+export const ECON_VERSION = "2026-09-26.e6";
 
 // ------------------------------------------------------------------ series catalogues
 type Kind = "rate" | "level" | "count";
@@ -751,6 +758,69 @@ async function modeBfs(run: Run, backfill = false) {
   run.source({ source: "census.bfs", status: run.partial ? "partial" : rows ? "ok" : "parse_error", rows, ms: Date.now() - t0 });
 }
 
+// ================================================================== FRED state panels (ENGINE 6.3, source fred.state)
+// One FRED call per (state, series); every value is the first-released one (ALFRED output_type=4). Order: minimum wage
+// first (annual, 51 calls: the policy.min_wage event family), then the monthly panels. Missing ids (400/404) are
+// recorded once and never retried without params.force.
+interface StS { suffix?: string; prefix?: string; metric: string; kind: Kind; annual?: boolean }
+const FRED_STATE_SERIES: StS[] = [
+  { prefix: "STTMINWG", metric: "minwage", kind: "level", annual: true },
+  { suffix: "LEIH", metric: "leih", kind: "level" },
+  { suffix: "CONS", metric: "cons", kind: "level" },
+  { suffix: "UR", metric: "ur", kind: "rate" },
+  { suffix: "BPPRIV", metric: "bppriv", kind: "count" },
+];
+function fredStateId(s: StS, st: string): string { return s.prefix ? `${s.prefix}${st}` : `${st}${s.suffix}`; }
+async function modeFredState(run: Run) {
+  const t0 = Date.now();
+  const key = await secret(run, "fred_api_key");
+  if (!key) return noKey(run, "fred.state", "fred_api_key");
+  const cfg = await cfgEcon();
+  const today = todayUtc();
+  const st0 = await st<{ fetched?: Record<string, string>; missing?: string[] }>("econ.fred.state", {});
+  const fetched = st0.fetched ?? {}, missing = new Set(st0.missing ?? []);
+  const only: string[] | null = Array.isArray(run.params.metrics) ? run.params.metrics.map(String) : null;
+  const from0 = String(cfg.fred_state_from ?? cfg.fred_from ?? "2015-01-01");
+  let rows = 0, done = 0, wanted = 0, fails = 0;
+  outer: for (const s of FRED_STATE_SERIES) {
+    if (only && !only.includes(s.metric)) continue;
+    for (const stc of FRED_STATES) {
+      const id = fredStateId(s, stc);
+      if (missing.has(id) && run.params.force !== true) continue;
+      const last = fetched[id];
+      const stale = !last || last < addDays(today, s.annual ? -120 : -32);
+      if (!stale && run.params.force !== true) continue;
+      wanted++;
+      if (run.outOfTime(8000) || run.skipped.some((x) => x.host === "api.stlouisfed.org")) { run.partial = true; break outer; }
+      const from = !last ? from0 : addDays(today, s.annual ? -800 : -400);
+      const q = new URLSearchParams({ series_id: id, api_key: key, file_type: "json", observation_start: from, limit: "100000",
+        output_type: "4", realtime_start: "1776-07-04", realtime_end: "9999-12-31" });
+      const res = await politeFetch(run, `${FRED}/series/observations?${q}`, { source: "fred.state", headers: { accept: "application/json" }, timeoutMs: 30_000 });
+      if (!res) { run.partial = true; break outer; }
+      if (res.status === 400 || res.status === 404) { await res.body?.cancel(); missing.add(id); continue; }
+      if (!res.ok) { await res.body?.cancel(); run.errors.push(`fred.state ${id}: http ${res.status}`); fails++; continue; }
+      const j = await res.json().catch(() => null);
+      const out: ObsRow[] = [];
+      for (const o of Array.isArray(j?.observations) ? j.observations : []) {
+        const v = num(o?.value);
+        if (!isDay(o?.date) || v === null) continue;
+        const rs = isDay(o?.realtime_start) ? String(o.realtime_start) : "";
+        out.push({ source: "fred.state", key: id, metric: s.metric, geo: `US-${stc}`, day: o.date, value: v,
+          meta: { rt: "first", vintage: rs, released: rs, ...(s.annual ? { annual: true, ref: "dol:state-minimum-wage-history" } : { monthly: true }) } });
+      }
+      rows += (await ingest(run, out)).rows;
+      fetched[id] = today; done++;
+      await stSet(run, "econ.fred.state", { fetched, missing: [...missing].sort() });
+    }
+  }
+  await stSet(run, "econ.fred.state", { fetched, missing: [...missing].sort() });
+  const pending = Math.max(0, wanted - done - fails);
+  if (pending > 0) { run.partial = true; run.nextCursor = { source: "fred.state", pending }; }
+  run.extra.fred_state = { fetched_now: done, rows, fails, pending, n_fetched: Object.keys(fetched).length, n_missing: missing.size,
+    of: FRED_STATE_SERIES.length * FRED_STATES.length };
+  run.source({ source: "fred.state", status: fails && !done ? "http_error" : run.partial ? "partial" : "ok", keys: done, rows, ms: Date.now() - t0 });
+}
+
 // ================================================================== probe / backfill dispatch
 async function modeProbe(run: Run) {
   const url = String(run.params.url ?? "");
@@ -817,6 +887,7 @@ serve("att-econ", {
   dol_claims: wrap((r) => modeDol(r, false)),
   noaa: wrap((r) => modeNoaa(r, false)),
   census_bfs: wrap((r) => modeBfs(r, false)),
+  fred_state: wrap(modeFredState),
   backfill: wrap(modeBackfill),
   probe: wrap(modeProbe),
   ping: wrap(async (r) => { r.extra.version = ECON_VERSION; r.extra.wsa = "ok"; }),

@@ -116,12 +116,12 @@ export function assemble() {
   const passes = g8.filter(e => e.p_space <= 0.05 && e.p_pre >= 0.10 && e.d < 0);
   const sameDir = g8.filter(e => e.d < 0);
   const replication = {
-    n_similar: pat.pool8.n_events, n_seen: passes.length, n_same_direction: sameDir.length,
+    n_similar: g8.length, n_pooled: pat.pool8.n_events, n_seen: passes.length, n_same_direction: sameDir.length,
     rule: 'seen = the pre-registered regional contrast passed (in-space p <= 0.05, pre-trends flat, expected sign)',
     examples: passes.map(e => ({ label: e.label, onset: e.onset, effect_pct: pct(e.d), z: e.z, p_space: e.p_space })),
     all: g8.map(e => ({ label: e.label.replace(/ \(\d{4}\)$/, ''), year: e.onset.slice(0, 4), effect_pct: pct(e.d), pass: e.p_space <= 0.05 && e.p_pre >= 0.10 && e.d < 0, treated: e.treated })),
     family: { effect_pct: pct(pat.pool8.d), ci_pct: [pct(pat.pool8.ci_lo), pct(pat.pool8.ci_hi)], p_placebo: pat.pool8.p_placebo, q: pat.pool8.q, strength: pat.pool8.strength, i2: pat.pool8.i2,
-      note: 'Across 24 past hurricanes the pooled effect is null; most storms are mapped to whole grid operators (MISO, PJM) where a landfall is a rounding error. Milton and Ian, both mapped to Florida utilities, are the two that pass.' }
+      note: 'Across the 27 past storms tested (24 once overlapping storms are merged) the pooled effect is null; most storms are mapped to whole grid operators (MISO, PJM) where a landfall is a rounding error. Milton and Ian, both mapped to Florida utilities, are the two that pass.' }
   };
 
   const grid = {
@@ -203,13 +203,13 @@ export function assemble() {
     effects: [grid],
     untested, controls, flats: [], flats_note: 'The engine has ruled nothing flat on this storm: no single-event test has run. The dotted markers are pre-registered series waiting for their test.',
     shore: [shore],
-    rivals: [{ name: 'Hurricane Helene', event_id: helene.event_id, days_before: days(helene.onset, onset), magnitude: null, angle: 12, distance: 236,
+    rivals: [{ name: 'Hurricane Helene', event_id: helene.event_id, days_before: days(helene.onset, onset), magnitude: null, angle: 306, distance: 250,
       own_contrast: { effect_pct: pct(helene.grid8.d), p_space: r(helene.grid8.p_space, 3), pass: false, treated: helene.grid8.treated },
       note: `Helene came ashore ${days(helene.onset, onset)} days earlier and its rings overlap Milton’s pre-window. Its own contrast on the same grids: ${pct(helene.grid8.d)}%, no pass.` }],
     filtered: [{ name: 'Columbus Day, 14 Oct', domain: di('institutions'), lag_days: 7, magnitude: 0.5, kind: 'holiday', days: misc.common_days.filter(c => c.holiday === 'us_columbus').map(c => c.day),
       note: 'A holiday inside the seven-day window. Common to Florida and the donor regions, so the contrast cancels it; the 6.1 engine drops the day.' }],
     watching: { hop_id: 6094, name: NODE['iem.warn:EW.W'].label, window_start: ev.as_of, window_close: '2024-10-14', prior: 0.2, status: 'queued',
-      text: 'Every window on this pond closed in 2024. When the queued tests run, each dotted marker becomes a pad, a grass bed, or stays dotted. Watch this ripple and we keep the change for you on this device.' },
+      text: 'Every window on this pond had closed by January 2025. When the queued tests run, each dotted marker becomes a pad, a grass bed, or stays dotted. Watch this ripple and we keep the change for you on this device.' },
     pattern_next: { ...pat.p17, url: '../lands/real_world/' },
     calibration: misc.calibration,
     ledger: misc.ledger, ledger_head: misc.ledger_head,

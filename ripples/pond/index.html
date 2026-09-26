@@ -1,0 +1,124 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Hurricane Milton, traced</title>
+<meta name="description" content="Hurricane Milton didn't stop at the coast. The day after landfall, Florida's two big power grids were drawing a fifth less than regions the storm never touched. Consistent with, never proof of cause.">
+<link rel="canonical" href="https://bensunter.com/ripples/pond/">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Hurricane Milton → Florida grid demand, −20% against unaffected regions">
+<meta property="og:description" content="The day after landfall, Florida's two big power grids were drawing a fifth less than 51 regions the storm never touched. Regional contrast passed, not yet Measured. Consistent with, never proof of cause.">
+<meta property="og:url" content="https://bensunter.com/ripples/pond/">
+<meta property="og:image" content="https://bensunter.com/ripples/pond/og/milton.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="A stone in a pond: Hurricane Milton at the centre, one lily pad in the Real world sector at day 3 reading −20% grid demand, twelve dotted markers waiting for their test.">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://bensunter.com/ripples/pond/og/milton.png">
+<meta name="theme-color" content="#0F1516">
+<link rel="icon" href="../icon-192.png">
+<link rel="preload" href="fonts/InterTight.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="pond.css">
+<link rel="stylesheet" href="app.css">
+</head>
+<body class="hook">
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <symbol id="k-stone" viewBox="0 0 30 22"><ellipse cx="15" cy="12" rx="8" ry="6.5" fill="#2A2F33" stroke="#5F676E"/><path d="M11 9q3-3 7-1" fill="none" stroke="#A2ABB2" stroke-linecap="round"/></symbol>
+  <symbol id="k-ring" viewBox="0 0 30 22"><circle cx="15" cy="11" r="4" fill="none" stroke="#A9EAD9" stroke-width="1.2"/><circle cx="15" cy="11" r="9" fill="none" stroke="#A9EAD9" stroke-width="1.2" opacity=".6"/></symbol>
+  <symbol id="k-pad" viewBox="0 0 30 22"><path d="M15 11 L21 4 A8 8 0 1 0 21 18 Z" fill="#6DBE9C" stroke="#8DDCBB" stroke-width="1.2" stroke-linejoin="round"/></symbol>
+  <symbol id="k-pad-half" viewBox="0 0 30 22"><path d="M15 11 L21 4 A8 8 0 1 0 21 18 Z" fill="#17453F" stroke="#8DDCBB" stroke-width="1.4" stroke-linejoin="round"/></symbol>
+  <symbol id="k-float" viewBox="0 0 30 22"><circle cx="15" cy="11" r="6" fill="none" stroke="#A7B5B1" stroke-width="1.2" stroke-dasharray="2.2 2.6"/><circle cx="15" cy="11" r="1.5" fill="#A7B5B1"/></symbol>
+  <symbol id="k-crest" viewBox="0 0 30 22"><path d="M2 16 Q8 5 15 16 T28 16" fill="none" stroke="#A9EAD9" stroke-width="2.4" stroke-linecap="round"/><path d="M2 20 Q8 16 15 20 T28 20" fill="none" stroke="#A9EAD9" stroke-width="1" stroke-linecap="round" opacity=".6"/></symbol>
+  <symbol id="k-grass" viewBox="0 0 30 22"><g fill="#4FA37F"><path d="M9 20 Q7 12 11 4 Q11 12 10.5 20Z"/><path d="M14 20 Q13 11 15 3 Q16 11 15 20Z"/><path d="M19 20 Q19 11 22 5 Q21 12 20 20Z"/></g><ellipse cx="15" cy="3" rx="1" ry="2.4" fill="#C8B48E"/></symbol>
+  <symbol id="k-shore" viewBox="0 0 30 22"><path d="M2 15 Q10 9 18 13 T30 11 L30 22 L2 22Z" fill="#0F1516" stroke="#C8B48E" stroke-width="1.2"/><ellipse cx="22" cy="17" rx="4" ry="1.8" fill="#C8B48E"/><ellipse cx="22.5" cy="14.5" rx="2.8" ry="1.4" fill="#C8B48E"/></symbol>
+  <symbol id="k-boulder" viewBox="0 0 30 22"><path d="M8 17 L6 10 L11 4 L19 3 L24 8 L23 16 Z" fill="#28333A" stroke="#4C5A61" stroke-linejoin="round"/><path d="M2 20 q5-3 8 0 M20 20 q5-3 8 0" fill="none" stroke="#A9EAD9" stroke-width="1.1" stroke-linecap="round"/></symbol>
+  <symbol id="k-rival" viewBox="0 0 30 22"><ellipse cx="9" cy="11" rx="4" ry="3.2" fill="#3B3F44" stroke="#5F676E"/><ellipse cx="21" cy="11" rx="4" ry="3.2" fill="#2A2F33" stroke="#5F676E"/><circle cx="9" cy="11" r="8" fill="none" stroke="#A9EAD9" stroke-dasharray="2 2" opacity=".7"/><circle cx="21" cy="11" r="8" fill="none" stroke="#A9EAD9" opacity=".7"/></symbol>
+  <symbol id="g-measured" viewBox="0 0 14 14"><circle cx="7" cy="7" r="6" fill="currentColor"/></symbol>
+  <symbol id="g-half" viewBox="0 0 14 14"><circle cx="7" cy="7" r="5.5" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="M7 1.5 A5.5 5.5 0 0 1 7 12.5Z" fill="currentColor"/></symbol>
+  <symbol id="g-dotted" viewBox="0 0 14 14"><circle cx="7" cy="7" r="5.5" fill="none" stroke="currentColor" stroke-width="1.6" stroke-dasharray="2.4 2.4"/></symbol>
+  <symbol id="g-rule" viewBox="0 0 14 14"><ellipse cx="7" cy="10.5" rx="5.5" ry="2.4" fill="currentColor"/><ellipse cx="7.4" cy="6.6" rx="3.8" ry="1.9" fill="currentColor"/><ellipse cx="6.8" cy="3.4" rx="2.4" ry="1.4" fill="currentColor"/></symbol>
+  <symbol id="i-arrow" viewBox="0 0 14 14"><path d="M2 7h9M7.5 3.5L11 7l-3.5 3.5" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+  <symbol id="i-send" viewBox="0 0 16 16"><path d="M8 10V2M5 5l3-3 3 3M3 8v5.5h10V8" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+  <symbol id="i-eye" viewBox="0 0 16 16"><path d="M1.5 8s2.5-4.5 6.5-4.5S14.5 8 14.5 8 12 12.5 8 12.5 1.5 8 1.5 8Z" fill="none" stroke="currentColor" stroke-width="1.5"/><circle cx="8" cy="8" r="2" fill="currentColor"/></symbol>
+</svg>
+
+<header class="top"><div class="top-in">
+  <a class="brand" href="../"><svg viewBox="0 0 24 24" aria-hidden="true"><ellipse cx="12" cy="12" rx="3" ry="2.4" fill="#C8B48E"/><circle cx="12" cy="12" r="6.5" fill="none" stroke="#A9EAD9" stroke-width="1.2"/><circle cx="12" cy="12" r="10.5" fill="none" stroke="#A9EAD9" stroke-width="1.2" opacity=".45"/></svg>Ripple Map</a>
+  <nav class="nav" aria-label="Site"><a href="../archive/">Events</a><a href="../methods/">How it works</a><a href="../lands/real_world/">Lands</a></nav>
+</div></header>
+
+<main>
+<section class="gone" id="gone" hidden aria-label="While you were gone"></section>
+
+<section class="hero" aria-label="Hurricane Milton, traced">
+  <div class="lede">
+    <p class="kicker" id="kicker">Hurricane Milton <span class="num">9 Oct 2024</span> <span class="tag">real engine data, snapshot 2026-09-26</span></p>
+    <h1 id="h1">Hurricane Milton. <span class="quiet">The day after landfall, something moved in Florida’s power grid.</span></h1>
+    <p class="trust hook-h" id="trust"><b>Regional contrast passed.</b> Florida against 51 regions the storm missed. <span class="no">Not yet Measured: the single-event test is queued.</span> Passed after <span class="num">1 of 27</span> similar storms tested.</p>
+    <p class="reach hook-h" id="reach"><span class="num">1</span> domain · <span class="num">7</span> days · 1st-order<small>How far the ripple travelled. Storms like it usually reach Business four weeks on (23-hurricane rule).</small></p>
+    <div class="actions hook-h"><button class="btn primary big-btn" id="btn-trace" type="button">Trace it<svg width="14" height="14" aria-hidden="true"><use href="#i-arrow"/></svg></button></div>
+
+    <p class="sub traced-h" id="traced-sub"></p>
+    <div class="actions traced-h"><button class="btn primary" id="btn-send" type="button"><svg width="16" height="16" aria-hidden="true"><use href="#i-send"/></svg>Send this</button><button class="btn" id="btn-watch" type="button"><svg width="16" height="16" aria-hidden="true"><use href="#i-eye"/></svg>Watch this ripple</button></div>
+    <div class="key traced-h" aria-label="How to read the pond">
+      <h2>How to read the pond</h2>
+      <ul>
+        <li><svg><use href="#k-stone"/></svg><span><b>The stone</b> is the storm. Bigger stone, bigger shock.</span></li>
+        <li><svg><use href="#k-ring"/></svg><span><b>Rings</b> are time after the storm, a day to three months.</span></li>
+        <li><svg><use href="#k-pad"/></svg><span><b>Lily pads</b> are things that moved. Solid means Measured; half-filled means well supported but not yet Measured.</span></li>
+        <li><svg><use href="#k-crest"/></svg><span><b>Wave height</b> at a pad is how big the move was.</span></li>
+        <li><svg><use href="#k-float"/></svg><span><b>Dotted floats</b> are series we registered in advance and have not tested yet.</span></li>
+        <li><svg><use href="#k-grass"/></svg><span><b>Reeds</b> absorb the wave: checked, stayed flat.</span></li>
+        <li><svg><use href="#k-shore"/></svg><span><b>A cairn on the far shore</b> marks where storms like this one usually reach: a rule about many storms, not evidence about this one.</span></li>
+        <li><svg><use href="#k-boulder"/></svg><span><b>A boulder</b> is a shock we filtered out; ripples bend around it.</span></li>
+        <li><svg><use href="#k-rival"/></svg><span><b>A second stone</b> nearby means overlapping rings we cannot cleanly separate.</span></li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="stage">
+    <div class="pond-box"><svg id="pond" role="group" aria-label="The pond: Hurricane Milton as a stone, its knock-on effects placed by domain and by time after landfall"></svg></div>
+    <ol class="pond-list traced-h" id="pond-list" aria-label="Things on the pond"></ol>
+    <p class="hint traced-h">Click a pad for the evidence. Dotted floats are waiting for their test.</p>
+  </div>
+</section>
+
+<section class="shore" id="shore">
+  <div class="shore-in">
+    <h2>What else did Milton touch?</h2>
+    <p class="lead">Everything the engine registered for this storm, in one place: the one thing it has measured, where storms like it usually reach, and the twelve series still waiting for their test.</p>
+    <ul class="chain" id="chain-list"></ul>
+
+    <div class="past" id="past">
+      <h3 id="past-h"></h3>
+      <p class="lead" id="past-lead"></p>
+      <div class="past-row" id="past-row"></div>
+    </div>
+
+    <div class="stopped" id="stopped">
+      <h3>The ripple stopped here</h3>
+      <div id="stopped-body"></div>
+    </div>
+
+    <div class="onemore" id="onemore"></div>
+  </div>
+</section>
+</main>
+
+<footer><div>
+  <span>Ripple Map shows movement with timing evidence, never proof of cause. Confidence words are ours, not the data provider's.</span>
+  <span id="foot-src"></span>
+</div></footer>
+
+<div class="scrim" id="scrim"></div>
+<aside class="panel" id="panel" aria-live="polite" aria-label="Evidence" hidden>
+  <button class="close" id="close" type="button" aria-label="Close evidence"><svg width="14" height="14" viewBox="0 0 14 14" aria-hidden="true"><path d="M2 2l10 10M12 2L2 12" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg></button>
+  <div id="panel-body"></div>
+</aside>
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+<script src="pond.js"></script>
+<script src="app.js"></script>
+</body>
+</html>

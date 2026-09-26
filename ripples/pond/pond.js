@@ -90,8 +90,9 @@
   /* an untested, pre-registered series: a small dotted float, no crest */
   function floatMarker(g, x, y, r) {
     const m = el('g', { class: 'float', transform: `translate(${f1(x)},${f1(y)})` }, g);
+    el('circle', { cx: 0, cy: 0, r: r + 5, class: 'float-water' }, m);
     el('circle', { cx: 0, cy: 0, r, class: 'float-ring' }, m);
-    el('circle', { cx: 0, cy: 0, r: 1.6, class: 'float-dot' }, m);
+    el('circle', { cx: 0, cy: 0, r: 1.8, class: 'float-dot' }, m);
     return m;
   }
 
@@ -99,7 +100,7 @@
   function makePlacer(vb, R0) {
     const boxes = [];
     const est = (txt, fs) => txt.length * fs * .56;
-    function place(x, y, gap, lines, prefer) {
+    function place(x, y, gap, lines, prefer, inward) {
       const w = Math.max(...lines.map(l => est(l.text, l.size))), h = lines.reduce((s, l) => s + l.size * 1.25, 0);
       const cands = [];
       const dirs = prefer === 'auto' || !prefer ? [[1, 0], [-1, 0], [0, 1], [0, -1], [1, 1], [-1, 1], [1, -1], [-1, -1]] : { right: [[1, 0]], left: [[-1, 0]], below: [[0, 1]], above: [[0, -1]] }[prefer];
@@ -113,7 +114,7 @@
         if (bx < vb[0] + 6 || bx + bw > vb[0] + vb[2] - 6 || by < vb[1] + 6 || by + bh > vb[1] + vb[3] - 6) cost += 1e5;
         const cx = bx + bw / 2, cy = by + bh / 2, rr = Math.hypot(cx, cy); if (rr > R0 + 10) cost += (rr - R0) * 40;
         // prefer outward from the stone
-        const outward = (x * dx + y * dy) / (Math.hypot(x, y) || 1); cost -= outward * 12;
+        const outward = (x * dx + y * dy) / (Math.hypot(x, y) || 1); cost -= outward * 12 * (inward ? -2.5 : 1);
         cands.push({ cost, lx, ly, anchor, box: { x: bx, y: by, w: bw, h: bh } });
       });
       cands.sort((a, b) => a.cost - b.cost);
@@ -238,6 +239,7 @@
       el('path', { id: `${uid}-arc${i}`, d: `M${f1(p1[0])},${f1(p1[1])} A${Rl},${Rl} 0 0 ${flip ? 0 : 1} ${f1(p2[0])},${f1(p2[1])}`, fill: 'none' }, defs);
       const t = el('text', { class: 'domain-label' }, gD);
       el('textPath', { href: `#${uid}-arc${i}`, startOffset: '50%', 'text-anchor': 'middle' }, t, d);
+      const dm = pol(c, Rl); placer.reserve(dm[0], dm[1], d.length * 9 + 20, 40);
     });
 
     /* the stone (reserve its label space first so nothing lands on it) */
@@ -266,7 +268,7 @@
     Object.values(byDom).forEach(list => list.forEach((u, j) => {
       const spread = (j - (list.length - 1) / 2) * (SW / (list.length + 1)) * .9;
       const p = pos(u.domain, u.lag_days, spread); u._pos = p;
-      const m = floatMarker(gU, p.x, p.y, compact ? 9 : 7);
+      const m = floatMarker(gU, p.x, p.y, compact ? 11 : 8.5);
       m.setAttribute('tabindex', '0'); m.setAttribute('role', 'button'); m.dataset.id = u.id;
       m.setAttribute('aria-label', `${u.name}: pre-registered, window closed ${u.window_close}, test not yet run.`);
       el('title', {}, m, `${u.name}: pre-registered, untested`);
@@ -298,7 +300,7 @@
       el('ellipse', { cx: 0, cy: 4, rx: 9, ry: 4 }, c); el('ellipse', { cx: 1, cy: -2, rx: 6.5, ry: 3.2 }, c); el('ellipse', { cx: -.5, cy: -7, rx: 4, ry: 2.4 }, c);
       const lab = el('g', { class: 'label', style: `animation-delay:${(ringDelay(p.r) + .35).toFixed(2)}s` }, wrap);
       if (!compact && !thumb) {
-        const best = placer.place(p.x, p.y, 34, [{ text: s.num + ' ' + s.short, size: fs.lbl }, { text: 'World rule, 23 hurricanes', size: fs.tier }], s.label_side || 'auto');
+        const best = placer.place(p.x, p.y, 36, [{ text: s.num + ' ' + s.short, size: fs.lbl }, { text: `World rule across ${s.pattern.n_events} hurricanes`, size: fs.tier }], s.label_side || 'auto', true);
         const t = el('text', { x: f1(best.lx), y: f1(best.ly), class: 'lbl', 'text-anchor': best.anchor }, lab);
         el('tspan', { class: 'lbl-num' }, t, s.num + ' '); el('tspan', {}, t, s.short);
         el('text', { x: f1(best.lx), y: f1(best.ly) + 16, class: 'lbl-tier', 'text-anchor': best.anchor }, lab, `World rule across ${s.pattern.n_events} hurricanes`);

@@ -513,3 +513,410 @@ begin
   return jsonb_build_object('ok', (select bool_and((x ->> 'ok')::boolean) from jsonb_array_elements(res) x), 'tests', res);
 end $$;
 revoke all on function ripples.att_test_story() from anon, authenticated, public;
+-- ---------------------------------------------------------------------------------------------------------------------
+-- Staged harness (engine 6.1.1). The single-statement att_test_engine() takes 25–30 min and pg_cron launches nothing while it
+-- runs. att_test_step(budget) runs the same T1–T17 as a state machine in att_state 'engine.test.stage', each call ≤ budget s
+-- (cron: every minute, statement_timeout 110 s), so collectors and other agents' jobs keep running. The synthetic fixture
+-- therefore persists between calls (no rollback): the cleanup stage removes every fixture row and marks the fixture's freeze
+-- ledger rows superseded_by = 'fixture-cleanup' (the ledger is append-only; att_ledger_verify and T5 skip superseded batches).
+-- Start:  select ripples.att_test_stage_start(null);            -- or array['T5','T7','T9','T13','T17']
+--         select cron.schedule('att-test-step', '* * * * *', $$set statement_timeout = '110s'; select ripples.att_test_step(50)$$);
+-- Result: att_state 'engine.test' (ok, tests[], staged = true); the step unschedules its own cron job when finished.
+-- ---------------------------------------------------------------------------------------------------------------------
+create or replace function ripples.att_test_stage_start(p_only text[] default null) returns jsonb
+language plpgsql security definer set search_path = '' as $$
+declare st jsonb;
+begin
+  st := jsonb_build_object('stage', 'pure', 'only', to_jsonb(p_only), 'started', now(), 'res', '[]'::jsonb, 't0', current_date - 45, 'nser', 80,
+                           'need_fixture', p_only is null or exists (select 1 from unnest(p_only) x where x in ('T7','T8','T9','T10','T11','T12','T17','T50','T51','T52')),
+                           'calls', 0, 'seconds', 0);
+  perform ripples.att_state_set('engine.test.stage', st);
+  perform ripples.att_state_set('engine.test.request', jsonb_build_object('status', 'staged', 'only', to_jsonb(p_only), 'at', now()));
+  return st - 'res';
+end $$;
+revoke all on function ripples.att_test_stage_start(text[]) from anon, authenticated, public;
+
+create or replace function ripples._att_want(p_st jsonb, p_test text) returns boolean
+language sql immutable set search_path = '' as $$
+  select p_st -> 'only' is null or jsonb_typeof(p_st -> 'only') = 'null' or p_st -> 'only' ? p_test
+$$;
+
+create or replace function ripples.att_test_step(p_budget_s int default 50) returns jsonb
+language plpgsql security definer set search_path = '' as $$
+declare st jsonb := ripples.att_state_get('engine.test.stage'); res jsonb; ok boolean; j jsonb; j2 jsonb; j3 jsonb; arr real[]; s jsonb; s2 jsonb; q float8[];
+        t0 date; i int; nser int; v_sid bigint; v_ev bigint; grp bigint[]; a date; fr jsonb; r record; n int := 0; last_look date; fin jsonb;
+        v_hop bigint; v_look smallint; aa jsonb; bb jsonb; lv jsonb; ledger_ok boolean; tamper jsonb; bad_keys jsonb; h record; v_recomp text;
+        n_inj_meas int; n_null_likely int; n_decoy_meas int; n_decoy_tested int; ps float8[]; ks jsonb; v_child bigint; v_q_before real;
+        tt timestamptz := clock_timestamp(); stage text; ctx text; ids bigint[]; hashes text[]; pre_common boolean; v_verify jsonb;
+begin
+  if st is null or st ? 'finished' or st ->> 'stage' in ('finished', 'failed') then return jsonb_build_object('idle', true); end if;
+  if not pg_try_advisory_lock(hashtext('ripples.att_test_step')) then return jsonb_build_object('skipped', 'running'); end if;
+  stage := st ->> 'stage'; res := coalesce(st -> 'res', '[]'::jsonb); t0 := (st ->> 't0')::date; nser := coalesce((st ->> 'nser')::int, 80);
+  v_ev := (st ->> 'event_id')::bigint;
+  if st ? 'group' then select array_agg(x::bigint) into grp from jsonb_array_elements_text(st -> 'group') x; end if;
+  begin
+  -- ------------------------------------------------------------------------------------------------------------ pure tests
+  if stage = 'pure' then
+    if ripples._att_want(st, 'T1') then
+      ok := abs(ripples.att_norm_inv(0.975) - 1.959964) < 1e-4 and abs(ripples.att_norm_cdf(1.96) - 0.9750021) < 1e-5 and abs(ripples.att_norm_cdf(ripples.att_norm_inv(0.001)) - 0.001) < 1e-6;
+      res := ripples._att_t(res, 'T1 normal cdf/quantile', ok, null);
+      ok := abs(ripples.att_nb_midp_z(5, 5, null)) < 0.25 and ripples.att_nb_midp_z(15, 5, null) > 3 and ripples.att_nb_midp_z(15, 5, 2) < ripples.att_nb_midp_z(15, 5, null) and ripples.att_nb_midp_z(5000, 3, null) > 6;
+      res := ripples._att_t(res, 'T1 NB mid-p z (Poisson centre, tail, overdispersion, underflow)', ok, null);
+      ok := ripples.att_holiday('2025-11-27') = 'us_thanksgiving' and ripples.att_holiday('2025-12-25') = 'us_xmas' and ripples.att_holiday('2025-12-27') = 'xmas_week' and ripples.att_holiday('2026-04-03') = 'uk_goodfriday'
+            and ripples.att_holiday('2026-07-03') = 'us_july4' and ripples.att_holiday('2026-09-25') = '' and ripples.att_easter(2026) = '2026-04-05';
+      res := ripples._att_t(res, 'T1 holidays', ok, null);
+    end if;
+    if ripples._att_want(st, 'T2') then
+      select array_agg((case when g = 300 then 5.0 when g = 301 then 4.0 else 0.0 end)::real order by g) into arr from generate_series(1, 420) g;
+      s := ripples.att_win_stat(arr, null, '2025-01-01', 420, '2025-01-01'::date + 297, 7, 'peak', 1, 0, '2026-12-31', false);
+      s2 := ripples.att_win_stat(arr, null, '2025-01-01', 420, '2025-01-01'::date + 297, 7, 'car', 1, 0.5, '2026-12-31', false);
+      ok := (s ->> 'S')::float8 = 5 and (s ->> 'lag')::int = 2 and abs((s2 ->> 'S')::float8 - 9.0 / (sqrt(8) * sqrt(3))) < 1e-9
+            and (ripples.att_win_stat(arr, null, '2025-01-01', 420, '2025-01-01'::date + 297, 7, 'peak', -1, 0, '2026-12-31', false) ->> 'S')::float8 = 0
+            and (ripples.att_win_stat(arr, null, '2025-01-01', 420, '2025-01-01'::date + 297, 7, 'peak', 0, 0, '2026-12-31', false) ->> 'S')::float8 = 5;
+      res := ripples._att_t(res, 'T2 window statistic: peak, signed/unsigned, CAR = Σ/(√n·√((1+ρ)/(1−ρ)))', ok, jsonb_build_object('peak', s, 'car', s2));
+      ok := abs(ripples.att_rho1(arr, '2025-01-01', 420, '2025-01-01'::date + 297)) < 1e-9;
+      res := ripples._att_t(res, 'T2 rho1 of a flat baseline is 0', ok, null);
+    end if;
+    if ripples._att_want(st, 'T3') then
+      perform setseed(0.42);
+      select array_agg(((random() * 2 - 1) * 1.7)::real order by g) into arr from generate_series(1, 420) g;
+      s := ripples.att_sd_null_calc(arr, '2025-01-01', 420, 7, 'car', 1); s2 := ripples.att_sd_null_calc(arr, '2025-01-01', 420, 7, 'peak', 1);
+      ok := abs((s ->> 'sd')::float8 - 0.98) < 0.15 and (s2 ->> 'mean')::float8 between 1.2 and 1.8 and (s ->> 'n')::int >= 250;
+      res := ripples._att_t(res, 'T3 sd_null: CAR ≈ 1 on iid noise, peak null mean ≈ 1.5 (centred ž needed)', ok, jsonb_build_object('car', s, 'peak', s2));
+    end if;
+    if ripples._att_want(st, 'T4') then
+      q := ripples.att_bh_q(array[0.001, 0.01, 0.02, 0.5], array[1, 1, 1, 1]);
+      ok := abs(q[1] - 0.004) < 1e-9 and abs(q[2] - 0.02) < 1e-9 and abs(q[3] - 0.0266667) < 1e-6 and abs(q[4] - 0.5) < 1e-9;
+      q := ripples.att_bh_q(array[0.02, 0.01], array[5, 0.2]);
+      ok := ok and q[1] < q[2] and abs(q[1] - 2 * 0.02 / 5 / 1) < 1e-9;
+      res := ripples._att_t(res, 'T4 weighted BH step-up (pure)', ok, null);
+    end if;
+    if ripples._att_want(st, 'T13') then
+      perform setseed(0.42);
+      select array_agg(((random() * 2 - 1) * 0.6)::real order by g) into arr from generate_series(1, 1200) g;
+      j := ripples.att_sd_null_calc(arr, '2022-01-01', 1200, 7, 'car', 1);
+      select array_agg((case when g in (300, 700, 1100) then 12.0 else 0.0 end)::real order by g) into arr from generate_series(1, 1200) g;
+      j2 := ripples.att_sd_null_calc(arr, '2022-01-01', 1200, 2, 'peak', 1);
+      perform setseed(0.11);
+      select array_agg((case when g <= 600 then (random() * 2 - 1) * 1.7 else (random() * 2 - 1) * 40 end)::real order by g) into arr from generate_series(1, 1200) g;
+      j3 := ripples.att_sd_null_calc(arr, '2022-01-01', 1200, 7, 'car', 1, '2022-01-01'::date + 560, false);
+      s := ripples.att_sd_null_calc(arr, '2022-01-01', 1200, 7, 'car', 1);
+      ok := (j ->> 'sd')::float8 = 1.0 and (j ->> 'floored')::boolean and (j2 ->> 'sd') is null and j2 ->> 'reason' = 'degenerate'
+            and (j3 ->> 'sd')::float8 < 1.5 and (s ->> 'sd')::float8 > 2.5 * (j3 ->> 'sd')::float8 and (j3 ->> 'to')::date <= '2022-01-01'::date + 560 - 7 - 30 - 7;
+      res := ripples._att_t(res, 'T13 null scale: robust MAD with floors, degenerate series excluded, pre-onset windows only', ok, jsonb_build_object('iid', j, 'dormant', j2, 'pre_onset', j3 - 'from', 'whole_array', s - 'from' - 'to'));
+    end if;
+    if ripples._att_want(st, 'T14') then
+      ok := (select count(*) from ripples.att_common_days where day in ('2025-11-26', '2025-11-27', '2025-11-28', '2025-12-26', '2026-07-03', '2024-11-28')) = 6
+            and not exists (select 1 from ripples.att_common_days where day = '2025-11-19');
+      res := ripples._att_t(res, 'T14 US federal holidays ± 1 d, Black Friday and Christmas week are registered common-shock days', ok, null);
+    end if;
+    if ripples._att_want(st, 'T15') then
+      insert into ripples.att_topics(qid, label_key, label, lang, status, in_panel, origin, meta)
+      values (null, 'test:geo:ny', 'test NY event', 'en', 'panel', false, 'cascade', '{"state": ["NY", "NJ"], "family": "hazard.storm"}'::jsonb),
+             (null, 'test:geo:fl', 'test FL event', 'en', 'panel', false, 'cascade', '{"state": ["FL"], "family": "hazard.storm"}'::jsonb),
+             (null, 'test:geo:none', 'test no-geo event', 'en', 'panel', false, 'cascade', '{"family": "hazard.storm"}'::jsonb)
+      on conflict (label_key) do nothing;
+      ok := (select count(*) from ripples.att_resolve_targets('{"node":"mta.ridership:subway","geo_filter":["US-NY","US-NJ","US-CT"],"sign":-1}'::jsonb, (select topic_id from ripples.att_topics where label_key = 'test:geo:ny'))) = 1
+            and (select count(*) from ripples.att_resolve_targets('{"node":"mta.ridership:subway","geo_filter":["US-NY","US-NJ","US-CT"],"sign":-1}'::jsonb, (select topic_id from ripples.att_topics where label_key = 'test:geo:fl'))) = 0
+            and (select count(*) from ripples.att_resolve_targets('{"node":"mta.ridership:subway","geo_filter":["US-NY","US-NJ","US-CT"],"sign":-1}'::jsonb, (select topic_id from ripples.att_topics where label_key = 'test:geo:none'))) = 0
+            and (select count(*) from ripples.att_resolve_targets('{"node":"tsa.pax:checkpoint","sign":-1}'::jsonb, (select topic_id from ripples.att_topics where label_key = 'test:geo:fl'))) = 1;
+      res := ripples._att_t(res, 'T15 geo_filter honoured in target resolution (state ∩ filter; no state meta → not proposed)', ok, null);
+      delete from ripples.att_topics where label_key like 'test:geo:%';
+    end if;
+    if ripples._att_want(st, 'T16') then
+      ok := ripples.att_look_dates('INST', '2025-11-26', 7) = array['2025-12-04'::date] and ripples.att_look_dates('INST', '2025-11-26', 90) = array['2025-12-27'::date, '2026-01-26', '2026-02-25']
+            and ripples.att_hop_l('INST', 'storm_nws_warnings') = 7 and ripples.att_hop_l('INST', 'storm_fema_decl') = 90 and ripples.att_hop_l('PHYS', null) = 7;
+      res := ripples._att_t(res, 'T16 template L honoured per channel at freeze (INST 7 → one look at +8; INST 90 → +31/+61/+91)', ok, null);
+    end if;
+    if ripples._att_want(st, 'T5') then
+      v_verify := ripples.att_ledger_verify();
+      ok := (v_verify ->> 'ok')::boolean;
+      for h in select l.seq, l.payload_hash fh, (l.ref ->> 'as_of')::date as_of, (l.ref ? 'refreeze_of') refrozen from ripples.att_ledger l
+               where l.kind = 'freeze' and not (l.ref ? 'superseded_by') and l.ref ? 'as_of' and not (l.ref ? 'object') loop
+        v_recomp := ripples.att_freeze_hash(h.as_of, false, h.fh);
+        ok := ok and v_recomp = h.fh
+              and (h.refrozen or abs((select sum(bh_weight) - count(*) from ripples.att_hop_candidates c where c.frozen_hash = h.fh)) < 1e-2 * greatest(1, (select count(*) from ripples.att_hop_candidates c where c.frozen_hash = h.fh)));
+      end loop;
+      res := ripples._att_t(res, 'T5 every frozen batch recomputes bit-identically and its BH weights sum to m', ok,
+               jsonb_build_object('ledger_verify', v_verify - 'bad', 'bad', v_verify -> 'bad',
+                                  'other_freeze_objects', (select coalesce(jsonb_agg(jsonb_build_object('seq', seq, 'object', ref ->> 'object', 'method', ref ->> 'method')), '[]'::jsonb) from ripples.att_ledger where kind = 'freeze' and ref ? 'object')));
+      ok := not exists (select 1 from ripples.att_hop_tests t where not exists (select 1 from ripples.att_hop_candidates c where c.hop_id = t.hop_id and c.frozen_hash is not null));
+      res := ripples._att_t(res, 'T5 no att_hop_tests row without a frozen candidate', ok, null);
+    end if;
+    if ripples._att_want(st, 'T6') then
+      ok := not exists (select 1 from ripples.att_hop_candidates c join ripples.att_node_series ns on ns.node = c.node where ns.channel = 'MONEY')
+            and not exists (select 1 from ripples.att_hop_candidates c, jsonb_array_elements(c.path) p where p ->> 'type' = 'IO')
+            and not exists (select 1 from ripples.att_hop_tests where tier = 'measured' and attention_only);
+      res := ripples._att_t(res, 'T6 MONEY zero tests, IO zero tests, attention-only never Measured', ok, null);
+    end if;
+    stage := case when (st ->> 'need_fixture')::boolean then 'fixture' else 'cleanup' end;
+  -- ------------------------------------------------------------------------------------------------------------ fixture rows
+  elsif stage = 'fixture' then
+    -- 70 null series + 10 with an injected +0.3 log-unit response for 7 days after t0; 1,200 days of iid log-noise, no weekly pattern
+    insert into ripples.att_sources(source, family, channel, grade, value_kind, grain, history_from, quality, enabled, reason, needs_secret, policy_d1, tier,
+                                    attribution, license_note, per_run_cap, per_day_cap, spacing_ms, budget_bucket, hosts, robots_required, backfill_fn)
+    values ('test.synth', 'test', 'physical', 'green', 'level', 'day', current_date - 1200, 1, true, 'engine test fixture', null, false, 'test', 'synthetic', 'none', null, null, 0, null, '{}', false, null)
+    on conflict (source) do nothing;
+    insert into ripples.att_engine_source_map(source, channel, value_kind, same_dow, agg_key, domain) values ('test.synth', 'PHYS', 'level', false, null, 'real_world') on conflict (source) do update set same_dow = excluded.same_dow;
+    insert into ripples.att_families(family, label, scheduled, mapper) values ('test.synth', 'Synthetic test family', false,
+      (select jsonb_agg(jsonb_build_object('node', 'test.synth:s' || lpad(g::text, 2, '0'), 'sign', 1, 'template', 'test_injected'))
+         from (select g from generate_series(1, 10) g union all select g from generate_series(71, 80) g) x))
+    on conflict (family) do update set mapper = excluded.mapper;
+    perform setseed(0.7);
+    for i in 1..nser loop
+      insert into ripples.att_series(source, metric, geo, key, last_day) values ('test.synth', 'n', 'US', 's' || lpad(i::text, 2, '0'), current_date - 1)
+      on conflict (source, metric, geo, key) do update set last_day = excluded.last_day returning series_id into v_sid;
+      delete from ripples.attention_obs where series_id = v_sid;
+      insert into ripples.attention_obs(series_id, day, value)
+      select v_sid, d::date, exp(5 + 0.05 * (random() * 2 - 1) * 1.7 + case when i > 70 and d::date between t0 and t0 + 6 then 0.30 else 0 end)
+      from generate_series(current_date - 1200, current_date - 1, interval '1 day') d;
+    end loop;
+    -- T50/T51 (6.1.2): s81 = 0.6 × s71 two days later + own noise (a mediated child: its shock arrives through s71); s82 = its own copy of the
+    -- shock at t0 with independent noise (a fork: the event moves it directly, no residual s71 → s82 association)
+    for i in 81..82 loop
+      insert into ripples.att_series(source, metric, geo, key, last_day) values ('test.synth', 'n', 'US', 's' || i, current_date - 1)
+      on conflict (source, metric, geo, key) do update set last_day = excluded.last_day returning series_id into v_sid;
+      delete from ripples.attention_obs where series_id = v_sid;
+      if i = 81 then
+        insert into ripples.attention_obs(series_id, day, value)
+        select v_sid, o.day + 2, exp(5 + 0.05 * (random() * 2 - 1) * 1.7 + 0.6 * (ln(o.value) - 5))
+        from ripples.attention_obs o join ripples.att_series s71 on s71.series_id = o.series_id
+        where s71.source = 'test.synth' and s71.key = 's71' and o.day + 2 <= current_date - 1;
+      else
+        insert into ripples.attention_obs(series_id, day, value)
+        select v_sid, d::date, exp(5 + 0.05 * (random() * 2 - 1) * 1.7 + case when d::date between t0 and t0 + 6 then 0.30 else 0 end)
+        from generate_series(current_date - 1200, current_date - 1, interval '1 day') d;
+      end if;
+    end loop;
+    delete from ripples.att_zvec where series_id in (select series_id from ripples.att_series where source = 'test.synth');
+    stage := 'zvec';
+  -- ------------------------------------------------------------------------------------------------------------ arrays, chunked
+  elsif stage = 'zvec' then
+    for r in select s.series_id from ripples.att_series s where s.source = 'test.synth' and not exists (select 1 from ripples.att_zvec z where z.series_id = s.series_id) order by s.series_id loop
+      exit when clock_timestamp() - tt > make_interval(secs => p_budget_s);
+      perform ripples.att_zvec_series(r.series_id, current_date - 1, 0);
+      n := n + 1;
+    end loop;
+    if not exists (select 1 from ripples.att_series s where s.source = 'test.synth' and not exists (select 1 from ripples.att_zvec z where z.series_id = s.series_id)) then
+      pre_common := exists (select 1 from ripples.att_common_days where day = t0);
+      v_ev := ripples.att_library_event(null, 'Synthetic shock', 'test.synth', t0, 'library');
+      select array_agg(e.event_id) into grp from ripples.att_events e where e.event_id = v_ev or e.matched_to = v_ev;
+      st := st || jsonb_build_object('event_id', v_ev, 'group', to_jsonb(grp), 'common_pre', pre_common);
+      stage := 'freeze';
+    end if;
+  -- ------------------------------------------------------------------------------------------------------------ freeze (att_run_library, front half)
+  elsif stage = 'freeze' then
+    for a in select distinct e.as_of from ripples.att_events e where e.event_id = any(grp) order by 1 loop
+      fr := ripples.att_freeze_candidates(a, true, (select array_agg(e.event_id) from ripples.att_events e where e.event_id = any(grp) and e.as_of = a));
+    end loop;
+    st := st || jsonb_build_object('freeze', fr - 'frozen_hash');
+    stage := 'looks';
+  -- ------------------------------------------------------------------------------------------------------------ looks, chunked (earliest look day first)
+  elsif stage = 'looks' then
+    for r in select c.hop_id, u.o look_no, u.d from ripples.att_hop_candidates c, unnest(c.looks) with ordinality u(d, o)
+             where c.event_id = any(grp) and c.frozen_hash is not null and c.status <> 'skipped' and u.d <= current_date
+               and not exists (select 1 from ripples.att_hop_tests t where t.hop_id = c.hop_id and t.look_no = u.o and (t.t_stat is not null or t.tier_reason = 'waiting_series'))
+             order by u.d, (c.role = 'library') desc, c.hop_id loop
+      exit when clock_timestamp() - tt > make_interval(secs => p_budget_s);
+      perform ripples.att_engine_job(jsonb_build_object('hop_id', r.hop_id, 'look', r.look_no));
+      n := n + 1;
+    end loop;
+    st := st || jsonb_build_object('looks_ran', coalesce((st ->> 'looks_ran')::int, 0) + n);
+    if not exists (select 1 from ripples.att_hop_candidates c, unnest(c.looks) with ordinality u(d, o)
+                   where c.event_id = any(grp) and c.frozen_hash is not null and c.status <> 'skipped' and u.d <= current_date
+                     and not exists (select 1 from ripples.att_hop_tests t where t.hop_id = c.hop_id and t.look_no = u.o and (t.t_stat is not null or t.tier_reason = 'waiting_series'))) then
+      stage := 'finalize';
+    end if;
+  -- ------------------------------------------------------------------------------------------------------------ finalize + T7 / T8 / T17
+  elsif stage = 'finalize' then
+    select max(l) into last_look from ripples.att_hop_candidates c, unnest(c.looks) l where c.event_id = any(grp) and c.frozen_hash is not null and l <= current_date;
+    fin := ripples.att_finalize(last_look, true, false, grp);
+    perform ripples.att_chain_decide(last_look);
+    perform ripples.att_build_cascade(v_ev, last_look);
+    st := st || jsonb_build_object('finalize', fin, 'final_day', last_look);
+    select count(*) filter (where hl.tier = 'measured' and hl.node >= 'test.synth:s71'), count(*) filter (where hl.tier in ('likely','measured') and hl.node <= 'test.synth:s10')
+      into n_inj_meas, n_null_likely from ripples.att_hop_latest hl where hl.event_id = v_ev;
+    select count(*), count(*) filter (where hl.tier = 'measured') into n_decoy_tested, n_decoy_meas
+      from ripples.att_hop_latest hl join ripples.att_events e on e.event_id = hl.event_id where e.matched_to = v_ev and e.role = 'decoy' and hl.t_stat is not null;
+    if ripples._att_want(st, 'T7') then
+      ok := n_inj_meas >= 8 and n_null_likely <= 1 and n_decoy_meas <= greatest(1, n_decoy_tested / 10);
+      res := ripples._att_t(res, 'T7 synthetic fixture: injected targets Measured (recall ≥ 8/10), null targets flat, decoy Measured rate ≤ 0.10', ok,
+               jsonb_build_object('injected_measured', n_inj_meas, 'null_likely_or_better', n_null_likely, 'decoy_tested', n_decoy_tested, 'decoy_measured', n_decoy_meas, 'finalize', fin,
+                                  'nodes', (select jsonb_agg(jsonb_build_object('node', hl.node, 'tier', hl.tier, 'T', round(hl.t_stat::numeric, 2), 'p', hl.fluke, 'p_date', hl.p_date, 'n_date', hl.n_date, 'p_topic', hl.p_topic, 'n_topic', hl.n_topic, 'q', round(hl.q_w::numeric, 4), 'fails', hl.detail -> 'fails') order by hl.node)
+                                            from ripples.att_hop_latest hl where hl.event_id = v_ev)));
+    end if;
+    select hl.hop_id, hl.look_no into v_hop, v_look from ripples.att_hop_latest hl where hl.event_id = v_ev and hl.t_stat is not null order by hl.t_stat desc limit 1;
+    st := st || jsonb_build_object('hop', v_hop, 'look', v_look);
+    if ripples._att_want(st, 'T8') then
+      aa := ripples.att_test_hop(v_hop, v_look, null, null); bb := ripples.att_test_hop(v_hop, v_look, 'rival', v_ev::int);
+      ok := abs((aa ->> 'T')::float8 - (bb ->> 'T')::float8) < 1e-9;
+      res := ripples._att_t(res, 'T8 placebo draw at shift 0 equals the real statistic (identical code path)', ok, jsonb_build_object('T_real', aa ->> 'T', 'T_shift0', bb ->> 'T'));
+    end if;
+    if ripples._att_want(st, 'T17') then
+      ok := not exists (select 1 from ripples.att_hop_candidates c where c.event_id = v_ev and c.role = 'library' and (c.l_by_channel is null or c.engine_version not like '6.1%' or c.graph_version is null))
+            and (select l_by_channel ->> 'PHYS' from ripples.att_hop_candidates where hop_id = v_hop) = '7'
+            and not exists (select 1 from ripples.att_hop_candidates c where c.event_id = v_ev and c.role <> 'negative_control' group by c.as_of, c.event_id, c.parent_hop, c.node, c.sign having count(*) > 1)
+            and not exists (select 1 from ripples.att_hop_tests t join ripples.att_hop_candidates c on c.hop_id = t.hop_id where c.event_id = v_ev and t.q_w is not null and t.look_no < 100
+                            and abs((t.detail -> 'bh' ->> 'p_bh')::float8 - ripples.att_bh_input(t.p_date, t.n_date, t.p_topic, t.n_topic, t.p_link, t.n_link, t.fluke, coalesce((ripples._att_cfg('engine') ->> 'bh_min_draws')::int, 200))::float8) > 1e-6)
+            and (select every(sign <> 0) from ripples.att_hop_candidates c where c.event_id = v_ev and c.role = 'negative_control');
+      res := ripples._att_t(res, 'T17 frozen L / versions on the batch, no duplicate paths, BH input = max over families with >= bh_min_draws draws (p_h fallback), signed negative controls', ok,
+               (select jsonb_build_object('l_by_channel', l_by_channel, 'engine_version', engine_version, 'graph_version', left(graph_version, 12)) from ripples.att_hop_candidates where hop_id = v_hop));
+    end if;
+    stage := 'chain';
+    st := st || jsonb_build_object('i', 0, 'ps', '[]'::jsonb);
+  -- ------------------------------------------------------------------------------------------------------------ T50–T52: chaining record (6.1.2)
+  elsif stage = 'chain' then
+    if ripples._att_want(st, 'T50') or ripples._att_want(st, 'T51') or ripples._att_want(st, 'T52') then
+      -- the parent: the fixture hop for s71 (an injected series); two synthetic depth-2 children with onset = the parent's movement onset
+      select c.hop_id, coalesce(t.t_v, c.onset) as onset_v into r from ripples.att_hop_candidates c
+        join lateral (select t_v from ripples.att_hop_tests t where t.hop_id = c.hop_id and t.t_stat is not null order by look_no desc limit 1) t on true
+       where c.event_id = v_ev and c.node = 'test.synth:s71' limit 1;
+      v_hop := r.hop_id; last_look := r.onset_v;
+      perform ripples.att_node_bundle('test.synth:s81'); perform ripples.att_node_bundle('test.synth:s82');
+      for i in 81..82 loop
+        insert into ripples.att_hop_candidates(as_of, u_topic, v_topic, proposed_by, edge, status, event_id, role, parent_hop, depth, path, path_type, prior, bh_weight, channels, excluded_ch,
+                                               window_close, looks, voi, node, onset, sign, reconstructed, frozen_hash, frozen_at, freeze_proven, engine_version, l_by_channel)
+        select c.as_of, c.u_topic, c.v_topic, c.proposed_by, c.edge, 'queued', c.event_id, 'library', v_hop, 2,
+               jsonb_build_array(jsonb_build_object('type', 'MECH', 'from', 'test.synth:s71', 'to', 'test.synth:s' || i, 'sign', 1, 's', 1.0, 'source', 'test chain')), 'P-MECH', c.prior, c.bh_weight, c.channels, c.excluded_ch,
+               last_look + 7, array[last_look + 8], c.voi, 'test.synth:s' || i, last_look, 1, true, 'test-chain-' || v_hop || '-' || i, now(), false, '6.1', c.l_by_channel
+        from ripples.att_hop_candidates c where c.hop_id = v_hop returning hop_id into v_child;
+        perform ripples.att_engine_job(jsonb_build_object('hop_id', v_child, 'look', 1));
+        st := st || jsonb_build_object('chain_' || i, (select t.detail -> 'chain' from ripples.att_hop_tests t where t.hop_id = v_child and t.look_no = 1));
+      end loop;
+      perform ripples.att_build_cascade(v_ev, last_look + 8);
+      j := st -> 'chain_81'; j2 := st -> 'chain_82';
+      ok := j is not null and (j ->> 'order_ok')::boolean and (j ->> 'lag_parent_child_days')::int between 1 and 4 and (j ->> 'beta')::float8 > 0.2 and (j ->> 'p')::float8 <= 0.05
+            and not (j ->> 'fork_test')::boolean and (j ->> 'mediation_c')::boolean and (j ->> 'attenuation')::float8 >= 0.5;
+      res := ripples._att_t(res, 'T50 mediated child (s81 = 0.6·s71 two days later): order ok, β > 0 with p ≤ 0.05, attenuation ≥ 0.5 → fork_test false, mediation_c true', ok, j);
+      ok := j2 is not null and ((j2 ->> 'fork_test')::boolean or not (j2 ->> 'mediation_c')::boolean) and coalesce((j2 ->> 'beta')::float8, 0) < 0.2;
+      res := ripples._att_t(res, 'T51 independent child (s82 moves with the event, no s71 → s82 association): stays a fork', ok, j2);
+      ok := exists (select 1 from ripples.att_hop_tests t where t.hop_id = v_hop and t.t_stat is not null and t.detail ? 'lag_days' and t.detail ? 'lag_from_event_days'
+                    and (t.detail ->> 'lag_from_event_days')::int = t.t_v - t0)
+            and exists (select 1 from ripples.att_cascades cs, jsonb_array_elements(cs.payload -> 'nodes') nd where cs.event_id = v_ev and nd ? 'lag_days' and nd ? 'lag_from_event_days' and nd ? 'chain');
+      res := ripples._att_t(res, 'T52 lag_days / lag_from_event_days on test rows and cascade nodes; cascade nodes carry the chain record', ok,
+               jsonb_build_object('parent', (select jsonb_build_object('lag_days', t.detail -> 'lag_days', 'lag_from_event_days', t.detail -> 'lag_from_event_days', 't_v', t.t_v) from ripples.att_hop_tests t where t.hop_id = v_hop and t.t_stat is not null order by look_no desc limit 1)));
+    end if;
+    stage := case when ripples._att_want(st, 'T7') then 'heldout' else 'reexam' end;
+  -- ------------------------------------------------------------------------------------------------------------ held-out null p-values, chunked
+  elsif stage = 'heldout' then
+    i := coalesce((st ->> 'i')::int, 0);
+    while i < 50 and clock_timestamp() - tt < make_interval(secs => p_budget_s) loop
+      i := i + 1;
+      select series_id into v_sid from ripples.att_series where source = 'test.synth' and key = 's' || lpad(i::text, 2, '0');
+      j := ripples.att_heldout_p(v_sid, t0, t0 + 7, 200);
+      if (j ->> 'p') is not null then st := st || jsonb_build_object('ps', (st -> 'ps') || to_jsonb((j ->> 'p')::float8)); end if;
+    end loop;
+    st := st || jsonb_build_object('i', i);
+    if i >= 50 then
+      select array_agg(x::float8) into ps from jsonb_array_elements_text(st -> 'ps') x;
+      ks := ripples.att_ks_uniform(ps);
+      ok := (ks ->> 'p')::float8 >= 0.05 and (select min(x) from unnest(ps) x) >= 1::float8 / 201 - 1e-12;
+      res := ripples._att_t(res, 'T7 null p-values uniform (KS p ≥ 0.05) and floored at 1/(N+1)', ok, ks - 'hist' || jsonb_build_object('min_p', (select min(x) from unnest(ps) x), 'n', cardinality(ps)));
+      stage := 'reexam';
+    end if;
+  -- ------------------------------------------------------------------------------------------------------------ T9 re-examination + T10–T12
+  elsif stage = 'reexam' then
+    v_hop := (st ->> 'hop')::bigint; v_look := (st ->> 'look')::smallint;
+    if ripples._att_want(st, 'T9') and v_hop is not null then
+      insert into ripples.att_hop_registry(hop_id, window_close, p_hat, family, path_type, channel) select v_hop, window_close, 0.2, 'test.synth', path_type, 'PHYS' from ripples.att_hop_candidates where hop_id = v_hop
+      on conflict (hop_id) do nothing;
+      update ripples.att_hop_registry set published_tier = 'measured', published_at = now() where hop_id = v_hop;
+      v_q_before := (select q_w from ripples.att_hop_tests where hop_id = v_hop and look_no = v_look);
+      insert into ripples.att_hop_candidates(as_of, u_topic, v_topic, proposed_by, edge, status, event_id, role, parent_hop, depth, path, path_type, prior, bh_weight, channels, excluded_ch,
+                                             window_close, looks, voi, node, onset, sign, reconstructed, frozen_hash, frozen_at, freeze_proven, engine_version)
+      select c.as_of, c.u_topic, c.v_topic, c.proposed_by, c.edge, 'tested', c.event_id, 'library', v_hop, 2, c.path, c.path_type, c.prior, c.bh_weight, c.channels, c.excluded_ch,
+             c.window_close + 7, array[c.window_close + 8], c.voi, c.node, c.onset + 7, c.sign, true, 'test-child-' || v_hop, now(), false, '6.1'
+      from ripples.att_hop_candidates c where c.hop_id = v_hop returning hop_id into v_child;
+      insert into ripples.att_hop_tests(hop_id, look_no, as_of, u_topic, v_topic, t_u, look_day, is_final, t_stat, fluke, q_w, tier, tier_reason, flags, detail)
+      select v_child, 1, c.as_of, c.u_topic, c.v_topic, c.onset, c.looks[1], true, 4.0, 0.02, 0.05, 'likely', 'test child', '{}', '{"n_out3": 1}'::jsonb
+      from ripples.att_hop_candidates c where c.hop_id = v_child;
+      insert into ripples.att_common_days(day, sources, c_by_source, reason, as_of)
+      select c.onset, '{}', '{}'::jsonb, 'registered', current_date from ripples.att_hop_candidates c where c.hop_id = v_hop
+      on conflict (day) do update set reason = 'registered';
+      fin := ripples.att_reexamine(current_date, true, p_budget_s);
+      ok := (select tier from ripples.att_hop_tests where hop_id = v_hop and look_no >= 100 order by look_no desc limit 1) = 'retracted'
+            and (select q_w from ripples.att_hop_tests where hop_id = v_hop and look_no = v_look) = v_q_before and v_q_before is not null
+            and (select tier from ripples.att_hop_tests where hop_id = v_hop and look_no = v_look) <> 'retracted'
+            and exists (select 1 from ripples.att_ledger where kind = 'retract' and (ref ->> 'hop_id')::bigint = v_hop)
+            and (select tier from ripples.att_hop_tests where hop_id = v_child order by look_no desc limit 1) = 'retracted'
+            and (select tier_reason from ripples.att_hop_tests where hop_id = v_child order by look_no desc limit 1) = 'previous step retracted'
+            and exists (select 1 from ripples.att_ledger where kind = 'retract' and (ref ->> 'hop_id')::bigint = v_child);
+      res := ripples._att_t(res, 'T9 settled-hop re-examination retracts on a later common-shock flag without touching the settled look; the retraction propagates to the child', ok,
+               jsonb_build_object('reexam', fin - 'finalize', 'tier_new', (select tier from ripples.att_hop_tests where hop_id = v_hop and look_no >= 100 order by look_no desc limit 1),
+                                  'reason', (select retract_reason from ripples.att_hop_tests where hop_id = v_hop and look_no >= 100 order by look_no desc limit 1),
+                                  'q_settled_before', v_q_before, 'q_settled_after', (select q_w from ripples.att_hop_tests where hop_id = v_hop and look_no = v_look),
+                                  'child_tier', (select tier from ripples.att_hop_tests where hop_id = v_child order by look_no desc limit 1)));
+      st := st || jsonb_build_object('child', v_child);
+    end if;
+    if ripples._att_want(st, 'T10') then
+      lv := ripples.att_ledger_verify(); ledger_ok := (lv ->> 'ok')::boolean;
+      begin
+        update ripples.att_ledger set payload_hash = repeat('0', 64) where seq = (select min(seq) from ripples.att_ledger where kind = 'freeze');
+        tamper := ripples.att_ledger_verify();
+        raise exception 'rollback tamper';
+      exception when others then null; end;
+      ok := ledger_ok and not (tamper ->> 'ok')::boolean and jsonb_array_length(tamper -> 'bad') >= 1;
+      res := ripples._att_t(res, 'T10 ledger chain verifies; a tampered freeze row is detected', ok, jsonb_build_object('verify', lv - 'bad', 'tamper_bad', tamper -> 'bad'));
+    end if;
+    if ripples._att_want(st, 'T11') then
+      ok := not exists (select 1 from ripples.att_hop_tests where fluke is not null and p_floor is not null and fluke < p_floor - 1e-9)
+            and not exists (select 1 from ripples.att_hop_tests where tier = 'measured' and coalesce((detail ->> 'n_out3')::int, 0) < 1);
+      res := ripples._att_t(res, 'T11 p-value floors respected; every Measured row has an outcome channel', ok, null);
+    end if;
+    if ripples._att_want(st, 'T12') then
+      select coalesce(jsonb_agg(distinct pk), '[]'::jsonb) into bad_keys
+        from ripples.att_cascades c, jsonb_path_query(c.payload, 'strict $.**') p, jsonb_object_keys(case when jsonb_typeof(p) = 'object' then p else '{}'::jsonb end) pk
+       where pk ~* 'chain_?(prob|f|cred)|compound|prob_true';
+      ok := jsonb_array_length(bad_keys) = 0 and not exists (select 1 from ripples.att_cascades c where c.payload::text ~* '\m(caused|drove|because of)\M');
+      res := ripples._att_t(res, 'T12 no payload contains a chain probability or a causal claim', ok, jsonb_build_object('bad_keys', bad_keys));
+    end if;
+    stage := 'cleanup';
+  -- ------------------------------------------------------------------------------------------------------------ cleanup: every fixture row goes; ledger rows are marked
+  elsif stage = 'cleanup' then
+    if grp is not null then
+      select array_agg(c.hop_id), array_agg(distinct c.frozen_hash) filter (where c.frozen_hash not like 'test-child-%' and c.frozen_hash not like 'test-chain-%') into ids, hashes from ripples.att_hop_candidates c where c.event_id = any(grp);
+      delete from ripples.att_placebo_top where hop_id = any(ids);
+      delete from ripples.att_placebo_draws where hop_id = any(ids);
+      delete from ripples.att_hop_tests where hop_id = any(ids);
+      delete from ripples.att_hop_registry where hop_id = any(ids);
+      delete from ripples.att_hop_candidates where hop_id = any(ids);
+      update ripples.att_ledger set ref = ref || jsonb_build_object('superseded_by', 'fixture-cleanup') where kind = 'freeze' and payload_hash = any(hashes);
+      delete from ripples.att_cascades where event_id = any(grp);
+      delete from ripples.att_events where event_id = any(grp);
+      delete from ripples.att_topics where label_key like 'decoy:' || v_ev || ':%' or label_key = 'library:' || ripples.att_slugify('Synthetic shock') || ':' || t0;
+      if not coalesce((st ->> 'common_pre')::boolean, false) then delete from ripples.att_common_days where day = t0 and reason = 'registered'; end if;
+    end if;
+    delete from ripples.att_sd_null where series_id in (select series_id from ripples.att_series where source = 'test.synth');
+    delete from ripples.att_zvec where series_id in (select series_id from ripples.att_series where source = 'test.synth');
+    delete from ripples.attention_obs where series_id in (select series_id from ripples.att_series where source = 'test.synth');
+    delete from ripples.att_zvec_ct where source = 'test.synth';
+    delete from ripples.att_node_series where node like 'test.synth:%';
+    delete from ripples.att_series where source = 'test.synth';
+    delete from ripples.att_families where family = 'test.synth';
+    delete from ripples.att_engine_source_map where source = 'test.synth';
+    delete from ripples.att_sources where source = 'test.synth';
+    perform ripples.att_state_set('engine.test', jsonb_build_object('ok', not exists (select 1 from jsonb_array_elements(res) r where not (r ->> 'ok')::boolean), 'tests', res, 'at', now(),
+                                  'staged', true, 'started', st -> 'started', 'calls', coalesce((st ->> 'calls')::int, 0) + 1,
+                                  'seconds', round((coalesce((st ->> 'seconds')::numeric, 0) + extract(epoch from clock_timestamp() - tt))::numeric, 1), 'only', st -> 'only'));
+    perform ripples.att_state_set('engine.test.request', jsonb_build_object('status', 'done', 'at', now(), 'staged', true));
+    stage := 'finished';
+    perform cron.unschedule('att-test-step') from cron.job where jobname = 'att-test-step';
+  end if;
+  exception when others then
+    get stacked diagnostics ctx = pg_exception_context;
+    st := st || jsonb_build_object('stage', 'failed', 'failed_in', stage, 'error', sqlerrm, 'state', sqlstate, 'ctx', left(ctx, 600), 'at', now(), 'res', res);
+    perform ripples.att_state_set('engine.test.stage', st);
+    perform ripples.att_state_set('engine.test', jsonb_build_object('error', sqlerrm, 'state', sqlstate, 'failed_in', stage, 'ctx', left(ctx, 600), 'tests', res, 'at', now(), 'staged', true));
+    perform ripples.att_state_set('engine.test.request', jsonb_build_object('status', 'failed', 'at', now(), 'staged', true));
+    perform pg_advisory_unlock(hashtext('ripples.att_test_step'));
+    return st - 'res';
+  end;
+  st := st || jsonb_build_object('stage', stage, 'res', res, 'calls', coalesce((st ->> 'calls')::int, 0) + 1,
+                                 'seconds', round((coalesce((st ->> 'seconds')::numeric, 0) + extract(epoch from clock_timestamp() - tt))::numeric, 1), 'at', now(), 'this_call', n);
+  if stage = 'finished' then st := st || jsonb_build_object('finished', now()); end if;
+  perform ripples.att_state_set('engine.test.stage', st);
+  perform pg_advisory_unlock(hashtext('ripples.att_test_step'));
+  return st - 'res' - 'ps';
+end $$;
+revoke all on function ripples.att_test_step(int) from anon, authenticated, public;
+revoke all on function ripples._att_want(jsonb, text) from anon, authenticated, public;
