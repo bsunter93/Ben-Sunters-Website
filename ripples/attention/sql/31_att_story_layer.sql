@@ -320,7 +320,7 @@ declare ev ripples.att_events; ws jsonb; cfg jsonb := ripples._att_cfg('story');
         excl text; tier_min text; tier_max text; ev_dom_likely int; funnel int; shared boolean; dir_unexp boolean; amp boolean; novelty real; share real;
         hero_lag float8; hero_l int; t ripples.att_hop_tests; c ripples.att_hop_candidates; chain jsonb; parent_onset date; l_days int; plaus real;
         tmpl text; expected_sign int; rho float8; pr jsonb; nd_min text; tier_rank int; r record; n_ghost int; ghost_hops bigint[]; wt jsonb;
-        window_open boolean; nxt date; p_hat real; kind text; old_fs jsonb; counter real; travel jsonb; cp jsonb; fam_word text; hero_lbl text; url text;
+        window_open boolean; nxt date; v_phat real; kind text; pp bigint; wj jsonb; old_fs jsonb; counter real; travel jsonb; cp jsonb; fam_word text; hero_lbl text; url text;
 begin
   select * into ev from ripples.att_events where event_id = p_event;
   if not found or ev.role not in ('real','library','positive_control') then return 0; end if;
@@ -407,9 +407,10 @@ begin
     hero_hop := (hero ->> 'hop_id')::bigint;
     spine := array[hero_hop];
     loop
-      select (e ->> 'engine_parent')::bigint into r from jsonb_array_elements(edges) e where (e ->> 'to')::bigint = spine[1] and e ->> 'kind' = 'chain';
-      exit when r is null or (r.r) is null;
-      spine := array[(r.r)::bigint] || spine;
+      pp := null;
+      select (ed ->> 'engine_parent')::bigint into pp from jsonb_array_elements(edges) ed where (ed ->> 'to')::bigint = spine[1] and ed ->> 'kind' = 'chain';
+      exit when pp is null or pp = any (spine);
+      spine := array[pp] || spine;
     end loop;
     branches := array(select h from unnest(hop_ids) h where h <> all (spine));
     -- story-level fields
@@ -478,15 +479,15 @@ begin
     if excl is null and (root ->> 'retracted') is not null and jsonb_typeof(root -> 'retracted') <> 'null' then excl := 'retracted'; end if;
     arche := ripples.att_story_archetypes(kind, fields, cfg);
     nxt := (select min(d) from ripples.att_hop_candidates hc, unnest(hc.looks) d where hc.hop_id = (root ->> 'hop_id')::bigint and d >= today);
-    select p_hat into p_hat from ripples.att_hop_registry where hop_id = (root ->> 'hop_id')::bigint;
-    p_hat := coalesce(p_hat, (root ->> 'p_hat')::real);
+    select rg.p_hat into v_phat from ripples.att_hop_registry rg where rg.hop_id = (root ->> 'hop_id')::bigint;
+    v_phat := coalesce(v_phat, (root ->> 'p_hat')::real);
     hero_lbl := ripples.rm_label_resolve(hero ->> 'node', hero ->> 'label');
     url := 'https://bensunter.com/ripples/line/' || ripples.rm_slug(p_event) || '/stop/' || hero_hop || '/';
-    wt := case when kind = 'watching' then jsonb_build_object('window_close', root -> 'window_close', 'next_look', nxt, 'days_to_resolve', greatest(0, (root ->> 'window_close')::date - today),
-                                                              'p_hat', p_hat, 'expected_1_in', ripples.rm_one_in(p_hat, 50), 'tier_reason', root -> 'tier_reason') end;
+    wj := case when kind = 'watching' then jsonb_build_object('window_close', root -> 'window_close', 'next_look', nxt, 'days_to_resolve', greatest(0, (root ->> 'window_close')::date - today),
+                                                              'p_hat', v_phat, 'expected_1_in', ripples.rm_one_in(v_phat, 50), 'tier_reason', root -> 'tier_reason') end;
     cp := case when hero_lbl is null then null else
             ripples.att_story_copy(kind, arche[1], pub ->> 'tier', ev.label, fam_word, hero_lbl, ripples.rm_domain8(hero ->> 'domain'), (hero ->> 'lag_days')::int, travel,
-                                   case when rep is null then null else rep || jsonb_build_object('effect', rep -> 'effect_pct') end, wt, quiet, url) end;
+                                   case when rep is null then null else rep || jsonb_build_object('effect', rep -> 'effect_pct') end, wj, quiet, url) end;
     insert into ripples.att_story_candidates (story_id, story_kind, event_id, grid_id, root_hop, hop_ids, engine_tier, tier, gate, tier_min, tier_max, fields, graph,
         archetype, archetypes, hero_stop, spine, branches, story_score, coherence_score, featurable, exclude_reason, watching, replication, sensitivity, copy, travel, first_seen)
     values (kind || ':' || p_event || ':' || (root ->> 'hop_id'), kind, p_event, (rep ->> 'grid_id')::int, (root ->> 'hop_id')::bigint, hop_ids,
@@ -497,8 +498,8 @@ begin
                                         'p_1_in', s -> 'p_1_in', 'f_1_in', s -> 'f_1_in', 'channels', s -> 'channels', 'hidden', s -> 'hidden') order by coalesce((s ->> 'depth')::int, 1), (s ->> 'hop_id')::bigint)
                                       from jsonb_array_elements(sub) s), 'edges', edges),
         arche[1], coalesce(arche, '{}'), hero_hop, spine, branches, score, coh,
-        excl is null and (kind = 'cascade' or (kind = 'watching' and p_hat is not null)), coalesce(excl, case when kind = 'watching' and p_hat is null then 'no pre-registered expectation' end),
-        wt, rep, jsonb_build_object('quiet', quiet, 'family', ev.family, 'is_control', is_ctl), cp, travel,
+        excl is null and (kind = 'cascade' or (kind = 'watching' and v_phat is not null)), coalesce(excl, case when kind = 'watching' and v_phat is null then 'no pre-registered expectation' end),
+        wj, rep, jsonb_build_object('quiet', quiet, 'family', ev.family, 'is_control', is_ctl), cp, travel,
         coalesce((old_fs ->> (kind || ':' || p_event || ':' || (root ->> 'hop_id')))::timestamptz, now()));
     n_written := n_written + 1;
   end loop;
@@ -517,23 +518,28 @@ begin
        and not exists (select 1 from jsonb_array_elements(nodes) x where x ->> 'tier' in ('measured','likely')) then
       -- one event-level Ghost
       labels_ok := not exists (select 1 from ripples.att_hop_candidates c2 where c2.hop_id = any (ghost_hops) and ripples.rm_label_resolve(c2.node, ripples.att_node_label(c2.node)) is null);
-      select avg(r.p_hat) into p_hat from ripples.att_hop_registry r where r.hop_id = any (ghost_hops);
-      fields := jsonb_build_object('temporal_coherence', 1, 'mechanism_coherence', 1, 'evidence_at_transitions', 0, 'domain_diversity', 0, 'surprise', round((1 - coalesce(p_hat, 0))::numeric, 3),
+      select avg(rg.p_hat) into v_phat from ripples.att_hop_registry rg where rg.hop_id = any (ghost_hops);
+      fields := jsonb_build_object('temporal_coherence', 1, 'mechanism_coherence', 1, 'evidence_at_transitions', 0, 'domain_diversity', 0, 'surprise', round((1 - coalesce(v_phat, 0))::numeric, 3),
                                    'magnitude', 0, 'shock', round(coalesce(shock, 0.5)::numeric, 3), 'replication', 0, 'independent_confirmations', 0, 'branching_noise', round(noise::numeric, 3),
                                    'length', 1, 'visual_clarity', round((1 / (1 + noise))::numeric, 3), 'common_cause_risk', 0, 'mediation_supported', true, 'labels_ok', labels_ok,
                                    'novelty', 1, 'shareability', round((0.2 + 0.2 * (case when labels_ok then 1 else 0 end) + 0.1 * (case when quiet then 0 else 1 end))::numeric, 3),
-                                   'visual_density', nn + nflat, 'expected_stops', n_ghost, 'expected_p_hat', p_hat);
+                                   'visual_density', nn + nflat, 'expected_stops', n_ghost, 'expected_p_hat', v_phat, 'counterintuitiveness', round((1 - coalesce(v_phat, 0))::numeric, 3));
+      travel := jsonb_build_object('domains_crossed', 0, 'days', null, 'depth', 0, 'expected_stops', n_ghost);
+      url := 'https://bensunter.com/ripples/line/' || ripples.rm_slug(p_event) || '/';
+      cp := case when not labels_ok then null else ripples.att_story_copy('non_event', 'Ghost', 'flat', ev.label, fam_word, ev.label, null, null, travel, null,
+                                                                           jsonb_build_object('expected_1_in', ripples.rm_one_in(v_phat, 50)), quiet, url) end;
       insert into ripples.att_story_candidates (story_id, story_kind, event_id, root_hop, hop_ids, engine_tier, tier, gate, tier_min, tier_max, fields, graph, archetype, archetypes,
-          hero_stop, spine, branches, story_score, coherence_score, featurable, exclude_reason, watching, replication, sensitivity)
+          hero_stop, spine, branches, story_score, coherence_score, featurable, exclude_reason, watching, replication, sensitivity, copy, travel, first_seen)
       values ('ghost:' || p_event, 'non_event', p_event, ghost_hops[1], ghost_hops, 'flat', 'flat', jsonb_build_object('demoted', false), 'flat', 'flat', fields,
           jsonb_build_object('nodes', (select jsonb_agg(jsonb_build_object('hop_id', c2.hop_id, 'depth', 1, 'node', c2.node, 'domain', ripples.rm_domain8(ripples.rm_domain(c2.channels[1])), 'tier', 'flat',
-                                                                          'window_close', c2.window_close, 'p_hat', (select p_hat from ripples.att_hop_registry r where r.hop_id = c2.hop_id)) order by c2.hop_id)
+                                                                          'window_close', c2.window_close, 'p_hat', (select rg.p_hat from ripples.att_hop_registry rg where rg.hop_id = c2.hop_id)) order by c2.hop_id)
                                           from ripples.att_hop_candidates c2 where c2.hop_id = any (ghost_hops)),
                              'edges', (select jsonb_agg(jsonb_build_object('from', 'event', 'to', h, 'kind', 'fork')) from unnest(ghost_hops) h)),
           'Ghost', array['Ghost'], ghost_hops[1], array[ghost_hops[1]], ghost_hops[2:],
-          ripples.att_story_score(fields || jsonb_build_object('surprise', round((1 - coalesce(p_hat, 0))::numeric, 3)), cfg), 1,
+          ripples.att_story_score(fields || jsonb_build_object('surprise', round((1 - coalesce(v_phat, 0))::numeric, 3)), cfg), 1,
           labels_ok, case when not labels_ok then 'waiting for a public name' end,
-          null, null, jsonb_build_object('quiet', quiet, 'family', ev.family, 'is_control', is_ctl));
+          jsonb_build_object('expected_1_in', ripples.rm_one_in(v_phat, 50), 'p_hat', v_phat, 'resolved', 'flat'), null,
+          jsonb_build_object('quiet', quiet, 'family', ev.family, 'is_control', is_ctl), cp, travel, coalesce((old_fs ->> ('ghost:' || p_event))::timestamptz, now()));
       n_written := n_written + 1;
     else
       for r in select c2.*, rg.p_hat ph from ripples.att_hop_candidates c2 join ripples.att_hop_registry rg on rg.hop_id = c2.hop_id where c2.hop_id = any (ghost_hops) loop
@@ -548,17 +554,22 @@ begin
                                      'independent_confirmations', 0, 'branching_noise', round(noise::numeric, 3), 'length', 1, 'visual_clarity', round((1 / (1 + noise))::numeric, 3),
                                      'common_cause_risk', 0, 'mediation_supported', true, 'labels_ok', lbl is not null, 'novelty', 1,
                                      'shareability', round((0.1 + 0.2 * (case when lbl is not null then 1 else 0 end) + 0.1 * (case when rep is not null then 1 else 0 end) + 0.1 * (case when quiet then 0 else 1 end))::numeric, 3),
-                                     'visual_density', nn + nflat, 'expected_p_hat', r.ph);
+                                     'visual_density', nn + nflat, 'expected_p_hat', r.ph, 'counterintuitiveness', round((0.5 * (1 - fam_share) + 0.5 * r.ph)::numeric, 3));
         excl := ripples.att_story_gate(fields, cfg);
+        travel := jsonb_build_object('domains_crossed', 0, 'days', null, 'depth', 0);
+        url := 'https://bensunter.com/ripples/line/' || ripples.rm_slug(p_event) || '/stop/' || r.hop_id || '/';
+        wt := jsonb_build_object('window_close', r.window_close, 'p_hat', r.ph, 'expected_1_in', ripples.rm_one_in(r.ph, 50), 'resolved', 'flat');
+        cp := case when lbl is null then null else ripples.att_story_copy('non_event', 'Dead end', 'flat', ev.label, fam_word, lbl, ripples.rm_domain8(ripples.rm_domain(r.channels[1])), null, travel,
+                                                                          case when rep is null then null else rep || jsonb_build_object('effect', rep -> 'effect_pct') end, wt, quiet, url) end;
         insert into ripples.att_story_candidates (story_id, story_kind, event_id, grid_id, root_hop, hop_ids, engine_tier, tier, gate, tier_min, tier_max, fields, graph, archetype, archetypes,
-            hero_stop, spine, branches, story_score, coherence_score, featurable, exclude_reason, watching, replication, sensitivity)
+            hero_stop, spine, branches, story_score, coherence_score, featurable, exclude_reason, watching, replication, sensitivity, copy, travel, first_seen)
         values ('non_event:' || p_event || ':' || r.hop_id, 'non_event', p_event, (rep ->> 'grid_id')::int, r.hop_id, array[r.hop_id], 'flat', 'flat', jsonb_build_object('demoted', false), 'flat', 'flat', fields,
             jsonb_build_object('nodes', jsonb_build_array(jsonb_build_object('hop_id', r.hop_id, 'depth', 1, 'node', r.node, 'domain', ripples.rm_domain8(ripples.rm_domain(r.channels[1])), 'tier', 'flat',
                                                                              'window_close', r.window_close, 'p_hat', r.ph)),
                                'edges', jsonb_build_array(jsonb_build_object('from', 'event', 'to', r.hop_id, 'kind', 'fork'))),
-            'Collapse', array['Collapse'], r.hop_id, array[r.hop_id], '{}', ripples.att_story_score(fields, cfg), round(((1 + ripples.att_story_mech_support(r.path)) / 2)::numeric, 3),
-            excl is null, excl, jsonb_build_object('window_close', r.window_close, 'p_hat', r.ph, 'expected_1_in', ripples.rm_one_in(r.ph, 50), 'resolved', 'flat'),
-            rep, jsonb_build_object('quiet', quiet, 'family', ev.family, 'is_control', is_ctl));
+            'Dead end', array['Dead end','Collapse'], r.hop_id, array[r.hop_id], '{}', ripples.att_story_score(fields, cfg), round(((1 + ripples.att_story_mech_support(r.path)) / 2)::numeric, 3),
+            excl is null, excl, wt,
+            rep, jsonb_build_object('quiet', quiet, 'family', ev.family, 'is_control', is_ctl), cp, travel, coalesce((old_fs ->> ('non_event:' || p_event || ':' || r.hop_id))::timestamptz, now()));
         n_written := n_written + 1;
       end loop;
     end if;
@@ -573,8 +584,9 @@ revoke all on function ripples.att_story_event(bigint) from anon, authenticated,
 create or replace function ripples.att_story_patterns() returns int
 language plpgsql security definer set search_path = '' as $fn$
 declare cfg jsonb := ripples._att_cfg('story'); r record; fields jsonb; n int := 0; strength_score real; pond jsonb; nonobv boolean; arche text[]; excl text; novelty real;
-        today date := (now() at time zone 'utc')::date;
+        today date := (now() at time zone 'utc')::date; old_fs jsonb; rep jsonb; cp jsonb; travel jsonb; fam_word text;
 begin
+  select coalesce(jsonb_object_agg(story_id, first_seen), '{}'::jsonb) into old_fs from ripples.att_story_candidates where story_kind = 'pattern';
   delete from ripples.att_story_candidates where story_kind = 'pattern';
   for r in select v.* from ripples.att_family_effects v where v.ledger_seq is not null and v.computed_at is not null and v.n_events is not null
                                                           and not ripples.rm_node_hidden(v.source || ':' || v.metric) loop
@@ -593,23 +605,29 @@ begin
       'independent_confirmations_scaled', least(1, ((case when coalesce((r.payload ->> 'n_regional_pass')::int, 0) > 0 then 1 else 0 end) + (case when coalesce((r.payload ->> 'n_synth_agree')::float8, 0) > 0.5 * r.n_events then 1 else 0 end) + (case when coalesce(r.p_placebo, 1) <= 0.05 then 1 else 0 end)) / 3.0),
       'branching_noise', 0, 'length', 1, 'visual_clarity', 1, 'common_cause_risk', 0, 'mediation_supported', true, 'labels_ok', true,
       'novelty', novelty, 'shareability', round((0.4 * strength_score + 0.2 * coalesce((pond ->> 'ripple')::float8, 0) + 0.2 + 0.1 + 0.1)::numeric, 3),
-      'visual_density', r.n_events, 'direction_unexpected', r.strength = 'unexpected direction', 'heterogeneity_i2', r.i2, 'is_check', r.is_check, 'definitional', r.definitional);
+      'visual_density', r.n_events, 'direction_unexpected', r.strength = 'unexpected direction', 'heterogeneity_i2', r.i2, 'is_check', r.is_check, 'definitional', r.definitional,
+      'counterintuitiveness', case when nonobv then 0.85 else 0.2 end, 'travel', jsonb_build_object('domains_crossed', case when nonobv then 2 else 1 end, 'days', r.post_n * case r.grain when 'week' then 7 else 1 end, 'depth', 1));
     arche := ripples.att_story_archetypes('pattern', fields, cfg);
     excl := case when r.is_check then 'a pre-registered sanity check, not a finding' when r.definitional then 'definitional pair' when r.strength not in ('strong pattern','pattern') then 'below pattern strength (' || coalesce(r.strength, 'n/a') || ')' end;
+    rep := jsonb_build_object('grid_id', r.grid_id, 'n_similar', r.n_events, 'n_seen', round(coalesce((r.payload ->> 'share_positive')::float8, 0) * r.n_events)::int,
+                              'n_strict', coalesce((r.payload ->> 'n_regional_pass')::int, 0), 'strength', r.strength, 'effect_pct', r.pct, 'q', r.q, 'p_placebo', r.p_placebo,
+                              'outcome_label', r.outcome_label, 'sign_expected', r.expected_sign, 'unit', case when r.source = 'noaa.ghcnd' and r.metric = 'temp' then 'raw' else 'pct' end,
+                              'example_event_ids', coalesce((select jsonb_agg(f0.event_id order by abs(f0.z) desc) from (select * from ripples.att_fx_event f0 where f0.grid_id = r.grid_id and f0.role = 'real' and f0.z is not null
+                                                             and not exists (select 1 from ripples.att_fx_cluster_dups(r.grid_id, 'real', 0) d where d.event_id = f0.event_id) order by abs(f0.z) desc limit 3) f0), '[]'::jsonb));
+    travel := fields -> 'travel';
+    fam_word := case when r.sub = 'hurricane' then 'Hurricane' else r.family_label end;
+    cp := ripples.att_story_copy('pattern', arche[1], r.strength, fam_word || 's', fam_word || 's', r.outcome_label, r.domain_outcome, null, travel, rep || jsonb_build_object('effect', r.pct), null,
+                                 r.family like 'hazard.%', 'https://bensunter.com/ripples/patterns/#p' || r.grid_id);
     insert into ripples.att_story_candidates (story_id, story_kind, event_id, grid_id, root_hop, hop_ids, engine_tier, tier, gate, tier_min, tier_max, fields, graph, archetype, archetypes,
-        hero_stop, spine, branches, story_score, coherence_score, featurable, exclude_reason, watching, replication, sensitivity)
+        hero_stop, spine, branches, story_score, coherence_score, featurable, exclude_reason, watching, replication, sensitivity, copy, travel, first_seen)
     values ('pattern:' || r.grid_id, 'pattern', null, r.grid_id, null, '{}', r.strength, r.strength, jsonb_build_object('demoted', false), r.strength, r.strength, fields,
         jsonb_build_object('nodes', jsonb_build_array(jsonb_build_object('grid_id', r.grid_id, 'depth', 1, 'node', r.source || ':' || r.metric, 'domain', r.domain_outcome, 'tier', r.strength)),
                            'edges', jsonb_build_array(jsonb_build_object('from', 'family', 'to', r.grid_id, 'kind', 'fork'))),
         arche[1], coalesce(arche, '{}'), null, '{}', '{}',
         ripples.att_story_score(fields || jsonb_build_object('domain_diversity', fields -> 'domain_diversity_scaled', 'independent_confirmations', fields -> 'independent_confirmations_scaled'), cfg),
         round(((coalesce((fields ->> 'temporal_coherence')::float8, 1) + 1) / 2)::numeric, 3), excl is null, excl, null,
-        jsonb_build_object('grid_id', r.grid_id, 'n_similar', r.n_events, 'n_seen', round(coalesce((r.payload ->> 'share_positive')::float8, 0) * r.n_events)::int,
-                           'n_strict', coalesce((r.payload ->> 'n_regional_pass')::int, 0), 'strength', r.strength, 'effect_pct', r.pct, 'q', r.q, 'p_placebo', r.p_placebo,
-                           'outcome_label', r.outcome_label, 'sign_expected', r.expected_sign, 'unit', case when r.source = 'noaa.ghcnd' and r.metric = 'temp' then 'raw' else 'pct' end,
-                           'example_event_ids', coalesce((select jsonb_agg(f0.event_id order by abs(f0.z) desc) from (select * from ripples.att_fx_event f0 where f0.grid_id = r.grid_id and f0.role = 'real' and f0.z is not null
-                                                          and not exists (select 1 from ripples.att_fx_cluster_dups(r.grid_id, 'real', 0) d where d.event_id = f0.event_id) order by abs(f0.z) desc limit 3) f0), '[]'::jsonb)),
-        jsonb_build_object('quiet', r.family like 'hazard.%', 'family', r.family, 'is_control', false));
+        rep, jsonb_build_object('quiet', r.family like 'hazard.%', 'family', r.family, 'is_control', false), cp, travel,
+        coalesce((old_fs ->> ('pattern:' || r.grid_id))::timestamptz, now()));
     n := n + 1;
   end loop;
   return n;
@@ -690,7 +708,10 @@ begin
       'replication', jsonb_build_object('n_similar', fe.n_events, 'n_seen', (s.replication ->> 'n_seen')::int, 'n_strict', (s.replication ->> 'n_strict')::int, 'strength', fe.strength,
                                         'effect', fe.pct, 'wording', 'moved in the expected direction after ' || (s.replication ->> 'n_seen') || ' of ' || fe.n_events || ' past events', 'examples', ex),
       'watching', null, 'headline', headline, 'why', why, 'visual_density', jsonb_build_object('n', fe.n_events, 'bucket', case when fe.n_events <= 12 then 'sparse' when fe.n_events <= 40 then 'medium' else 'dense' end),
-      'quiet', (s.sensitivity ->> 'quiet')::boolean, 'is_control', false, 'version', null, 'url', 'https://bensunter.com/ripples/patterns/#p' || fe.grid_id);
+      'quiet', (s.sensitivity ->> 'quiet')::boolean, 'is_control', false, 'version', null, 'url', 'https://bensunter.com/ripples/patterns/#p' || fe.grid_id,
+      'story_sentence', s.copy ->> 'story_sentence', 'short_title', s.copy ->> 'short_title', 'conversation_hook', s.copy ->> 'conversation_hook', 'share_line', s.copy ->> 'share_line',
+      'travel', jsonb_build_object('domains_crossed', (s.travel ->> 'domains_crossed')::int, 'days', (s.travel ->> 'days')::int, 'depth', (s.travel ->> 'depth')::int),
+      'share', ripples.rm_story_share(s, null), 'next', ripples.rm_story_next(s));
   end if;
   -- event-based stories: only public lines, only named nodes
   select * into ev from ripples.att_events where event_id = s.event_id;
@@ -755,8 +776,48 @@ begin
     'headline', headline, 'why', why,
     'visual_density', jsonb_build_object('n', (s.fields ->> 'visual_density')::int, 'bucket', case when (s.fields ->> 'visual_density')::int <= 6 then 'sparse' when (s.fields ->> 'visual_density')::int <= 15 then 'medium' else 'dense' end),
     'quiet', (s.sensitivity ->> 'quiet')::boolean, 'is_control', (s.sensitivity ->> 'is_control')::boolean, 'version', ver,
-    'url', 'https://bensunter.com/ripples/line/' || ripples.rm_slug(ev.event_id) || '/' || case when s.hero_stop is not null and s.story_kind <> 'non_event' then 'stop/' || s.hero_stop || '/' else '' end);
+    'url', 'https://bensunter.com/ripples/line/' || ripples.rm_slug(ev.event_id) || '/' || case when s.hero_stop is not null and s.story_kind <> 'non_event' then 'stop/' || s.hero_stop || '/' else '' end)
+    -- D-16: first-class copy, travel, share identity and rabbit-hole pointers
+    || jsonb_build_object('story_sentence', s.copy ->> 'story_sentence', 'short_title', s.copy ->> 'short_title', 'conversation_hook', s.copy ->> 'conversation_hook', 'share_line', s.copy ->> 'share_line',
+                          'travel', jsonb_build_object('domains_crossed', (s.travel ->> 'domains_crossed')::int, 'days', (s.travel ->> 'days')::int, 'depth', (s.travel ->> 'depth')::int),
+                          'share', ripples.rm_story_share(s, ver), 'next', ripples.rm_story_next(s));
 end $fn$;
+-- share identity (D-16 §1): canonical slug + frozen line version + first_seen + grown_since (compatible with rm_public_versions / grown_since)
+create or replace function ripples.rm_story_share(s ripples.att_story_candidates, p_version int) returns jsonb
+language sql stable security definer set search_path = '' as $$
+  select jsonb_build_object(
+    'slug', case when s.story_kind = 'pattern' then 'pattern-' || s.grid_id else ripples.rm_slug(s.event_id) || case when s.story_kind = 'non_event' and s.archetype = 'Ghost' then '' else '-stop-' || s.hero_stop end end,
+    'version', p_version, 'created_at', s.first_seen, 'refreshed_at', s.refreshed_at,
+    'grown_since', case when s.event_id is null then null else
+      (select case when prev.version is null then null else jsonb_build_object('version', prev.version, 'stops_added', ripples.rm_stops(cur.payload) - ripples.rm_stops(prev.payload)) end
+         from (select v.version, v.payload from ripples.rm_public_versions v where v.event_id = s.event_id order by v.version desc limit 1) cur
+         left join lateral (select v.version, v.payload from ripples.rm_public_versions v where v.event_id = s.event_id and v.version < cur.version order by v.version desc limit 1) prev on true) end,
+    'og', case when s.story_kind = 'pattern' then null when s.story_kind = 'non_event' and s.archetype = 'Ghost' then 'v2/og/line-' || s.event_id || '-v' || p_version || '.png' else 'v2/og/stop-' || s.hero_stop || '.png' end,
+    'reopen', jsonb_build_object('event_id', s.event_id, 'hop_id', s.hero_stop, 'version', p_version, 'grid_id', s.grid_id, 'kind', s.story_kind))
+$$;
+-- rabbit-hole pointers (D-16 §3): same event ("What else did X touch?"), same stop node elsewhere ("this stop connects to N other things"), same domain (lands), one more
+create or replace function ripples.rm_story_next(s ripples.att_story_candidates) returns jsonb
+language sql stable security definer set search_path = '' as $$
+  with hero_node as (select g ->> 'node' node, g ->> 'domain' domain from jsonb_array_elements(s.graph -> 'nodes') g
+                      where (s.hero_stop is not null and (g ->> 'hop_id')::bigint = s.hero_stop) or (s.story_kind = 'pattern') limit 1),
+  pub as (select c.* from ripples.att_story_candidates c where c.featurable and c.copy is not null and c.story_id <> s.story_id
+             and (c.event_id is null or ripples.rm_is_public(c.event_id)))
+  select jsonb_build_object(
+    'same_event', coalesce((select jsonb_agg(jsonb_build_object('story_id', p.story_id, 'short_title', p.copy ->> 'short_title', 'tier', p.tier, 'archetype', p.archetype) order by p.story_score desc)
+                              from (select * from pub p0 where s.event_id is not null and p0.event_id = s.event_id order by p0.story_score desc limit 5) p), '[]'::jsonb),
+    'same_stop', coalesce((select jsonb_agg(jsonb_build_object('story_id', p.story_id, 'short_title', p.copy ->> 'short_title', 'tier', p.tier, 'archetype', p.archetype) order by p.story_score desc)
+                             from (select p0.* from pub p0, hero_node h where p0.event_id is distinct from s.event_id
+                                     and exists (select 1 from jsonb_array_elements(p0.graph -> 'nodes') g where g ->> 'node' = h.node) order by p0.story_score desc limit 5) p), '[]'::jsonb),
+    'stop_connections', (select count(distinct c.event_id) from ripples.att_hop_candidates c join ripples.att_events e on e.event_id = c.event_id, hero_node h
+                          where c.node = h.node and c.frozen_hash is not null and e.role in ('real','library','positive_control') and c.event_id is distinct from s.event_id
+                            and exists (select 1 from ripples.rm_public_versions v where v.event_id = c.event_id)),
+    'same_domain', (select jsonb_build_object('domain', h.domain, 'url', 'https://bensunter.com/ripples/lands/' || h.domain || '/',
+                                              'n_stories', (select count(*) from pub p0 where exists (select 1 from jsonb_array_elements(p0.graph -> 'nodes') g where (g ->> 'hop_id')::bigint = p0.hero_stop and g ->> 'domain' = h.domain)))
+                      from hero_node h),
+    'one_more', (select jsonb_build_object('story_id', p.story_id, 'short_title', p.copy ->> 'short_title', 'archetype', p.archetype)
+                   from pub p where p.sensitivity ->> 'family' is distinct from s.sensitivity ->> 'family' order by p.story_score desc, p.story_id limit 1))
+$$;
+revoke all on function ripples.rm_story_share(ripples.att_story_candidates, int), ripples.rm_story_next(ripples.att_story_candidates) from anon, authenticated, public;
 create or replace function ripples.rm_story_scores(s ripples.att_story_candidates) returns jsonb
 language sql immutable set search_path = '' as $$
   select jsonb_build_object('story', round(s.story_score::numeric, 3), 'coherence', round(s.coherence_score::numeric, 3),
