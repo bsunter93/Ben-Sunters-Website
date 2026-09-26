@@ -480,17 +480,17 @@ end $$;
 --     held-out candidates for the pairs the rule selected in that decoy universe.
 create or replace function ripples.att_fx63_confirm_freeze(p_batch text) returns jsonb
 language plpgsql security definer set search_path = '' as $$
-declare b record; s record; c record; n_ev int := 0; n_sel int := 0; bad text[] := '{}'; payload jsonb; h text; v_seq bigint;
+declare b record; sr record; cr record; n_ev int := 0; n_sel int := 0; bad text[] := '{}'; payload jsonb; h text; v_seq bigint;
 begin
   select * into b from ripples.att_fx63_batch where batch = p_batch;
   if not found or b.explore_seq is null then return jsonb_build_object('error', 'exploration not frozen'); end if;
   if b.confirm_seq is not null then return jsonb_build_object('batch', p_batch, 'already_frozen', true, 'seq', b.confirm_seq); end if;
-  for s in select * from ripples.att_fx63_select where batch = p_batch and decoy_set = 0 and selected order by grid_id loop
-    if ripples.att_fx63_confirm_hash(s.grid_id) is distinct from (b.confirm_hashes ->> s.grid_id::text) then bad := bad || s.grid_id::text; continue; end if;
+  for sr in select * from ripples.att_fx63_select where batch = p_batch and decoy_set = 0 and selected order by grid_id loop
+    if ripples.att_fx63_confirm_hash(sr.grid_id) is distinct from (b.confirm_hashes ->> sr.grid_id::text) then bad := bad || sr.grid_id::text; continue; end if;
     n_sel := n_sel + 1;
-    for c in select * from ripples.att_fx63_confirm_events(s.grid_id) loop
+    for cr in select * from ripples.att_fx63_confirm_events(sr.grid_id) loop
       insert into ripples.att_fx_event(grid_id, event_id, role, decoy_set, onset, treated, magnitude)
-      values (s.grid_id, c.event_id, 'confirm', 0, c.onset, c.treated, c.magnitude) on conflict do nothing;
+      values (sr.grid_id, cr.event_id, 'confirm', 0, cr.onset, cr.treated, cr.magnitude) on conflict do nothing;
       n_ev := n_ev + 1;
     end loop;
   end loop;

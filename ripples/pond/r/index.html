@@ -1,0 +1,144 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<!--META-->
+<title>Ripple Map: a ripple, traced</title>
+<meta name="description" content="What did that event change? One shock, its knock-on effects placed by domain and by time, with the evidence for each. Consistent with, never proof of cause.">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Ripple Map: a ripple, traced">
+<meta property="og:description" content="What did that event change? Consistent with, never proof of cause.">
+<meta property="og:image" content="https://bensunter.com/ripples/pond/og/milton.png">
+<meta property="og:image:width" content="1200"><meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<!--/META-->
+<meta name="theme-color" content="#0F1516">
+<link rel="icon" href="../../icon-192.png">
+<link rel="preload" href="../fonts/InterTight.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="../pond.css">
+<link rel="stylesheet" href="../app.css">
+<link rel="stylesheet" href="../site.css">
+<style>
+/* ripple page: the hero sits under the nav bar instead of behind it */
+.hero{padding-top:28px;min-height:calc(100vh - 60px)}
+.gone{padding-top:20px}
+.gone:not([hidden]) + .hero{padding-top:12px}
+@media (max-width:900px){.hero{padding-top:14px;min-height:0}.gone{padding-top:12px}}
+.banner.landed{margin:0 40px 0;max-width:1440px}
+@media (max-width:900px){.banner.landed{margin:0 16px}}
+.tag-src{display:inline-flex;align-items:center;gap:6px;font-size:11.5px;color:var(--text-3);border:1px dashed var(--line-2);border-radius:999px;padding:2px 9px;line-height:1.4}
+.lede .a-tag{margin:0 0 10px}
+.fc{background:var(--card);border:1px solid var(--pline);border-radius:14px;padding:12px 12px 10px;margin-top:8px;display:grid;gap:6px}
+.fc .row{display:grid;grid-template-columns:1fr auto;gap:10px;font-size:13.5px;color:var(--ink-2);align-items:baseline}
+.fc .row b{color:var(--ink);font-weight:600;font-variant-numeric:tabular-nums}
+.fc .ci{position:relative;height:6px;background:var(--accent-band);border-radius:3px;grid-column:1/-1}
+.fc .ci i{position:absolute;top:0;height:100%;background:var(--accent);border-radius:3px;opacity:.55}
+.fc .ci b{position:absolute;top:-3px;width:12px;height:12px;border-radius:50%;background:var(--accent);transform:translateX(-50%)}
+.fc .ci em{position:absolute;top:-4px;width:1px;height:14px;background:var(--ink);opacity:.6}
+.fc small{font-size:12px;color:var(--muted)}
+.lede .follow{margin-top:14px}
+.lede .follow a{background:var(--bank-2);border-color:var(--line);color:var(--text)}
+.lede .follow small{color:var(--text-3)}.lede .follow .go{color:var(--sand)}
+.shore .follow a{max-width:520px}
+</style>
+</head>
+<body class="hook">
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <symbol id="k-stone" viewBox="0 0 30 22"><ellipse cx="15" cy="12" rx="8" ry="6.5" fill="#2A2F33" stroke="#5F676E"/><path d="M11 9q3-3 7-1" fill="none" stroke="#A2ABB2" stroke-linecap="round"/></symbol>
+  <symbol id="k-ring" viewBox="0 0 30 22"><circle cx="15" cy="11" r="4" fill="none" stroke="#A9EAD9" stroke-width="1.2"/><circle cx="15" cy="11" r="9" fill="none" stroke="#A9EAD9" stroke-width="1.2" opacity=".6"/></symbol>
+  <symbol id="k-pad" viewBox="0 0 30 22"><path d="M15 11 L21 4 A8 8 0 1 0 21 18 Z" fill="#6DBE9C" stroke="#8DDCBB" stroke-width="1.2" stroke-linejoin="round"/></symbol>
+  <symbol id="k-pad-half" viewBox="0 0 30 22"><path d="M15 11 L21 4 A8 8 0 1 0 21 18 Z" fill="#17453F" stroke="#8DDCBB" stroke-width="1.4" stroke-linejoin="round"/></symbol>
+  <symbol id="k-float" viewBox="0 0 30 22"><circle cx="15" cy="11" r="6" fill="none" stroke="#A7B5B1" stroke-width="1.2" stroke-dasharray="2.2 2.6"/><circle cx="15" cy="11" r="1.5" fill="#A7B5B1"/></symbol>
+  <symbol id="k-crest" viewBox="0 0 30 22"><path d="M2 16 Q8 5 15 16 T28 16" fill="none" stroke="#A9EAD9" stroke-width="2.4" stroke-linecap="round"/><path d="M2 20 Q8 16 15 20 T28 20" fill="none" stroke="#A9EAD9" stroke-width="1" stroke-linecap="round" opacity=".6"/></symbol>
+  <symbol id="k-grass" viewBox="0 0 30 22"><g fill="#4FA37F"><path d="M9 20 Q7 12 11 4 Q11 12 10.5 20Z"/><path d="M14 20 Q13 11 15 3 Q16 11 15 20Z"/><path d="M19 20 Q19 11 22 5 Q21 12 20 20Z"/></g><ellipse cx="15" cy="3" rx="1" ry="2.4" fill="#C8B48E"/></symbol>
+  <symbol id="k-shore" viewBox="0 0 30 22"><path d="M2 15 Q10 9 18 13 T30 11 L30 22 L2 22Z" fill="#0F1516" stroke="#C8B48E" stroke-width="1.2"/><ellipse cx="22" cy="17" rx="4" ry="1.8" fill="#C8B48E"/><ellipse cx="22.5" cy="14.5" rx="2.8" ry="1.4" fill="#C8B48E"/></symbol>
+  <symbol id="k-boulder" viewBox="0 0 30 22"><path d="M8 17 L6 10 L11 4 L19 3 L24 8 L23 16 Z" fill="#28333A" stroke="#4C5A61" stroke-linejoin="round"/><path d="M2 20 q5-3 8 0 M20 20 q5-3 8 0" fill="none" stroke="#A9EAD9" stroke-width="1.1" stroke-linecap="round"/></symbol>
+  <symbol id="k-rival" viewBox="0 0 30 22"><ellipse cx="9" cy="11" rx="4" ry="3.2" fill="#3B3F44" stroke="#5F676E"/><ellipse cx="21" cy="11" rx="4" ry="3.2" fill="#2A2F33" stroke="#5F676E"/><circle cx="9" cy="11" r="8" fill="none" stroke="#A9EAD9" stroke-dasharray="2 2" opacity=".7"/><circle cx="21" cy="11" r="8" fill="none" stroke="#A9EAD9" opacity=".7"/></symbol>
+  <symbol id="g-measured" viewBox="0 0 14 14"><circle cx="7" cy="7" r="6" fill="currentColor"/></symbol>
+  <symbol id="g-half" viewBox="0 0 14 14"><circle cx="7" cy="7" r="5.5" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="M7 1.5 A5.5 5.5 0 0 1 7 12.5Z" fill="currentColor"/></symbol>
+  <symbol id="g-dotted" viewBox="0 0 14 14"><circle cx="7" cy="7" r="5.5" fill="none" stroke="currentColor" stroke-width="1.6" stroke-dasharray="2.4 2.4"/></symbol>
+  <symbol id="g-flat" viewBox="0 0 14 14"><g fill="currentColor"><path d="M4 13 Q3 8 5 3 Q5.5 8 5 13Z"/><path d="M7 13 Q6.5 7 7.5 2 Q8.5 7 8 13Z"/><path d="M10 13 Q10 8 11.5 4 Q11 9 10.8 13Z"/></g></symbol>
+  <symbol id="g-rule" viewBox="0 0 14 14"><ellipse cx="7" cy="10.5" rx="5.5" ry="2.4" fill="currentColor"/><ellipse cx="7.4" cy="6.6" rx="3.8" ry="1.9" fill="currentColor"/><ellipse cx="6.8" cy="3.4" rx="2.4" ry="1.4" fill="currentColor"/></symbol>
+  <symbol id="i-arrow" viewBox="0 0 14 14"><path d="M2 7h9M7.5 3.5L11 7l-3.5 3.5" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+  <symbol id="i-send" viewBox="0 0 16 16"><path d="M8 10V2M5 5l3-3 3 3M3 8v5.5h10V8" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+  <symbol id="i-eye" viewBox="0 0 16 16"><path d="M1.5 8s2.5-4.5 6.5-4.5S14.5 8 14.5 8 12 12.5 8 12.5 1.5 8 1.5 8Z" fill="none" stroke="currentColor" stroke-width="1.5"/><circle cx="8" cy="8" r="2" fill="currentColor"/></symbol>
+</svg>
+
+<header class="top"></header>
+
+<main>
+<div id="banners"></div>
+<section class="gone" id="gone" hidden aria-label="While you were gone"></section>
+
+<section class="hero" aria-label="The ripple">
+  <div class="lede">
+    <p class="kicker" id="kicker"></p>
+    <div id="arch"></div>
+    <h1 id="h1"></h1>
+    <p class="trust hook-h" id="trust"></p>
+    <p class="reach hook-h" id="reach"></p>
+    <div class="actions hook-h"><button class="btn primary big-btn" id="btn-trace" type="button">Trace it<svg width="14" height="14" aria-hidden="true"><use href="#i-arrow"/></svg></button></div>
+
+    <p class="sub traced-h" id="traced-sub"></p>
+    <div class="actions traced-h"><button class="btn primary" id="btn-send" type="button"><svg width="16" height="16" aria-hidden="true"><use href="#i-send"/></svg>Send this</button><button class="btn" id="btn-share" type="button">Share</button><button class="btn" id="btn-watch" type="button"><svg width="16" height="16" aria-hidden="true"><use href="#i-eye"/></svg>Watch this ripple</button></div>
+    <div class="follow traced-h" id="follow-hero"></div>
+    <div class="key traced-h" aria-label="How to read the pond">
+      <h2>How to read the pond</h2>
+      <ul>
+        <li><svg><use href="#k-stone"/></svg><span><b>The stone</b> is the event. Bigger stone, bigger shock.</span></li>
+        <li><svg><use href="#k-ring"/></svg><span><b>Rings</b> are time after it, a day to three months.</span></li>
+        <li><svg><use href="#k-pad"/></svg><span><b>Lily pads</b> are things that moved. Solid means Measured; half-filled means well supported but not yet Measured.</span></li>
+        <li><svg><use href="#k-crest"/></svg><span><b>Wave height</b> at a pad is how big the move was.</span></li>
+        <li><svg><use href="#k-float"/></svg><span><b>A dotted float</b> is a series still waiting for its verdict.</span></li>
+        <li><svg><use href="#k-grass"/></svg><span><b>Reeds</b> absorb the wave: checked, stayed flat.</span></li>
+        <li><svg><use href="#k-shore"/></svg><span><b>A cairn on the far shore</b> marks where events like this one usually reach: a rule about many, not evidence about this one.</span></li>
+        <li><svg><use href="#k-boulder"/></svg><span><b>A boulder</b> is a shock we filtered out; ripples bend around it.</span></li>
+        <li><svg><use href="#k-rival"/></svg><span><b>A second stone</b> nearby means overlapping rings we cannot cleanly separate.</span></li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="stage">
+    <div class="pond-box"><svg id="pond" role="group" aria-label="The pond"></svg></div>
+    <ol class="pond-list traced-h" id="pond-list" aria-label="Things on the pond"></ol>
+    <p class="hint traced-h">Click a pad for the evidence. Hover the reeds to see what stayed flat.</p>
+  </div>
+</section>
+
+<section class="shore" id="shore">
+  <div class="shore-in">
+    <h2 id="shore-h"></h2>
+    <p class="lead" id="shore-lead"></p>
+    <ul class="chain" id="chain-list"></ul>
+    <div class="past" id="past" hidden>
+      <h3 id="past-h"></h3>
+      <p class="lead" id="past-lead"></p>
+      <div class="past-row" id="past-row"></div>
+    </div>
+    <div class="stopped" id="stopped">
+      <h3>The ripple stopped here</h3>
+      <div id="stopped-body"></div>
+    </div>
+    <div class="onemore" id="onemore"></div>
+  </div>
+</section>
+</main>
+
+<footer><div>
+  <span>Ripple Map shows movement with timing evidence, never proof of cause. Confidence words are ours, not the data provider's.</span>
+  <span id="foot-src"></span>
+</div></footer>
+
+<div class="scrim" id="scrim"></div>
+<aside class="panel" id="panel" aria-live="polite" aria-label="Evidence" hidden>
+  <button class="close" id="close" type="button" aria-label="Close evidence"><svg width="14" height="14" viewBox="0 0 14 14" aria-hidden="true"><path d="M2 2l10 10M12 2L2 12" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg></button>
+  <div id="panel-body"></div>
+</aside>
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+<script src="../pond.js"></script>
+<script src="../site.js"></script>
+<script src="../ripple.js"></script>
+</body>
+</html>
