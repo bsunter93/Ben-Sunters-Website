@@ -3,7 +3,9 @@
 Input: the placebo-only extract from ripples.att_e1_extract (donor counties only). Each replicate draws, per event, as
 many pseudo-treated counties as the real event had designated counties (from that event's donors), injects an effect of
 size delta into their window outcome, and asks each method for a one-sided p-value for "effect < 0". Reports recall
-(share of replicates with p <= 0.05) per method and delta; delta = 0 is the false-positive rate. No real treated unit is
+(share of replicates with p <= 0.05) per method and delta; delta = 0 is the false-positive rate. Because nominal p-values
+can be miscalibrated, it also reports size-adjusted recall: each method's cutoff is set so exactly 5% of delta = 0
+replicates pass, which puts all methods on equal terms. No real treated unit is
 ever used.
 
 usage: python e1_bakeoff.py extract.json [--reps 300] [--seed 7]
@@ -99,6 +101,7 @@ def main() -> int:
     rng = random.Random(a.seed)
     methods = ["M1", "M2", "M3", "M4", "M5"]
     hits = {(m, d): 0 for m in methods for d in DELTAS}
+    zs = {(m, d): [] for m in methods for d in DELTAS}
     for _ in range(a.reps):
         draws = []
         for n_t, dose, units in events:
@@ -110,8 +113,18 @@ def main() -> int:
                 est, var = combine(stats, m, [dose for dose, _, _ in draws])
                 if p_lower(est, var) <= 0.05:
                     hits[(m, delta)] += 1
+                zs[(m, delta)].append(est / math.sqrt(var) if var > 0 else (-1e9 if est < 0 else 1e9))
+    # Size-adjusted recall: each method's cutoff is the 5th percentile of its own z at delta = 0, so every method has
+    # exactly a 5% false-positive rate on placebo data and recall is compared on equal terms.
+    adj = {}
+    for m in methods:
+        null = sorted(zs[(m, 0.0)])
+        cut = null[max(0, int(0.05 * len(null)) - 1)]
+        adj[m] = {"cutoff_z": round(cut, 3),
+                  **{f"{d:+.3f}": round(sum(z <= cut for z in zs[(m, d)]) / a.reps, 3) for d in DELTAS}}
     res = {"n_events": len(events), "reps": a.reps,
-           "recall": {m: {f"{d:+.3f}": round(hits[(m, d)] / a.reps, 3) for d in DELTAS} for m in methods}}
+           "recall_nominal_p05": {m: {f"{d:+.3f}": round(hits[(m, d)] / a.reps, 3) for d in DELTAS} for m in methods},
+           "recall_size_adjusted_5pct": adj}
     print(json.dumps(res, indent=1))
     return 0
 

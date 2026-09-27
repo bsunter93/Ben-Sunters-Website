@@ -80,6 +80,10 @@ more than ~20k rows in one transaction on this instance.
 - Collecting: `att-b9-collect` (1 request/min; FEMA county declarations, then 210 QCEW quarterly files 2000–2026Q1).
   When `att_b9_req` shows all done: run `select ripples.att_b9_test('1023', 13, 24)` (and the secondaries) as a one-off
   cron job with a long timeout (the permutation step is heavy), append the result to the ledger, unschedule the collector.
+- **Result (18:33 UTC, ledger 1277): NOT SUPPORTED.** Primary −0.43%, one-sided p 0.373, 91 floods, 1,133 counties,
+  49.5% of events negative. Secondaries: finance 6–11 −0.60% (p 0.29), total private −0.38% (p 0.24), finance − total
+  −0.02% (p 0.49). Test md5 matched the registration; results in `ripples.att_b9_result`; collector unscheduled.
+  QCEW 2001–2013 came from BLS bulk files (`.github/workflows/ripples-qcew-backfill.yml`, ledger 1274).
 
 ### Next (runbook steps 6–7, unchanged in substance)
 1. b6 / b7: when each finisher reports `all_done`, read `att_fx63_select` (decoy_set 0, selected) and the decoy
