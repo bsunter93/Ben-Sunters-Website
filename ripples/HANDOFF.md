@@ -46,7 +46,13 @@ from `main`). Supabase project `kffkasnzqcddpystszch` (Pro plan), schema `ripple
   0.9 s when the RPC is slow (was 3.5 s blank) and upgrades to live in place; "How" visible on phones; Absorbed /
   Expected only / Surprise defined on How it works; `aria-live` removed from `<main>`.
 
-### Running now (04:20 UTC)
+### Outage 04:24–05:24 UTC and the slower schedule (read `41_att_ops_after_disk_exhaustion.sql`)
+Session 2's jobs exhausted the instance's disk-IO burst budget and the database stopped answering until the owner
+restarted it. Nothing committed was lost. Jobs now run slowly and staggered. **b7's finisher is deliberately off** until
+every b7 grid has decoy rows; the re-arm command is in file 41. Never run more than one heavy every-minute job or write
+more than ~20k rows in one transaction on this instance.
+
+### Running at the session-2 handoff (04:20 UTC, superseded by the outage note above)
 - `att-fx63-step-1`, `-step-2` (every minute, ~650 rows each per run), `att-fx63-finisher-fx63-b6-unexpected`,
   `att-fx63-finisher-fx63-b7-decade`, `att-fx63-seed-b7` (one-off). Expect b6 to finish in ~1 h and b7 in ~6–8 h
   (41.5k explore + ~330k decoy rows).
@@ -55,6 +61,16 @@ from `main`). Supabase project `kffkasnzqcddpystszch` (Pro plan), schema `ripple
   Note: every few minutes a tick returns "SET" in ~0.1 s instead of running tasks; harmless (the next tick runs), cause
   not yet found.
 - DB 562 MB of 6,000.
+
+### Results (07:40 UTC)
+- **b6: nothing survived** (0/12; decoys clean). **b8: nothing surprising survived.** Its 5 claims "confirmations" were a
+  year confound (see ledger 1229); the one remaining confirmation (cold → electricity demand) is the obvious link.
+- Lesson for b9: confirmation nulls must be year-matched (fake shocks drawn inside the confirmation period) or anomalies
+  scaled per year; extend the claims regime exclusion through 2022; use empirical p (more draws), not the normal tail.
+- **b7: nothing confirmed** (0/10; decoys clean). One lead worth a pre-registered follow-up: floods → fewer
+  finance/insurance/real-estate jobs a year later (q 0.030, 10/11 held-out floods same sign) failed only the power gate.
+  It is the first non-obvious link to repeat across two batches (b6 months 6–11, b7 months 13–24). A county-level
+  test (QCEW finance employment in flooded vs unflooded counties, NFIP claims as dose) would decide it.
 
 ### Next (runbook steps 6–7, unchanged in substance)
 1. b6 / b7: when each finisher reports `all_done`, read `att_fx63_select` (decoy_set 0, selected) and the decoy
@@ -196,9 +212,9 @@ expected, or unfolding. **No surprising link has survived yet.**
 | fx63-b3-downstream | housing/jobs, 2016+ | not testable (degenerate monthly null) | 1191, 1195, 1196 |
 | fx63-b4-longhistory | jobs/permits back to 2005 | withheld: wildfire → leisure & hospitality jobs −0.6% passed weakly, then failed the seasonal check (median in-time p 0.42; 2/154) | 1197, 1204–1207, 1210 |
 | fx63-b5-housing-space | housing, in-space null | withheld (seasonal check) | 1198, 1200–1203 |
-| fx63-b6-unexpected | 7 industry job panels plus weekly CDC deaths | **frozen, running** (session 2) | 1209, 1216, 1217 |
-| fx63-b7-decade | historical shocks 2000–2018, year-after window, 14 outcomes | catalog amended, **frozen, running** (session 2) | 1211, 1214, 1218, 1219 |
-| b8-anomaly-first | anomaly scan, work back to shocks vs season-matched fake shocks | amended before start, **running** (session 2); smoke test on the positive control passed (storms → FEMA-declaration spikes 5.2× fake shocks, p<1e-4) | 1212, 1213, 1215, 1220, 1221 |
+| fx63-b6-unexpected | 7 industry job panels plus weekly CDC deaths | **done: nothing survived.** 12 selected → 0 confirmed (6 inconclusive, 6 contradicted; best: flood → finance jobs months 6–11, q 0.32). Decoys: 31 decoy selections, 0 false confirmations | 1209, 1216, 1217, 1222, 1226 |
+| fx63-b7-decade | historical shocks 2000–2018, year-after window, 14 outcomes | **done: nothing confirmed.** 10 selected → 0 confirmed (7 inconclusive, 3 contradicted). Decoys: 49 decoy selections, 0 false confirmations (Wilson ≤ 7.4%). **Best lead:** flood → finance/insurance/real-estate jobs −3.3% in months 13–24 (q 0.030, CI −5.5%..−1.1%, 10/11 held-out floods same sign, leave-one-out stable) — held back only by the MDE gate (power 0.38, 11 held-out events). Same outcome was b6's nearest miss (months 6–11). | 1211, 1214, 1218, 1219, 1223, 1270 |
+| b8-anomaly-first | anomaly scan, work back to shocks vs season-matched fake shocks | **done.** 1,344 screened → 50 promoted → 6 "confirmed" + positive control; **5 of the 6 withheld** (all on weekly initial claims: 2024+ claims anomalies run 3–4× the pre-2020 rate, and fake shocks were not year-matched). Survivor: cold snap → electricity demand up weeks 2–4 (expected). Normal-approximation tail is anti-conservative (2.7% at nominal 1%) | 1212–1215, 1220, 1221, 1225, 1227–1229 |
 
 Why the engine only found obvious links (diagnosis given to the owner):
 1. It only measured first-order things, about 15 outcomes (now widened by b6 and b8).
