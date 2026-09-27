@@ -75,12 +75,43 @@ details.more summary span{font-family:var(--mono);font-size:12px;color:var(--tex
 .btn{display:inline-flex;align-items:center;gap:8px;font-size:14px;padding:9px 16px;border-radius:999px;border:1px solid var(--line-2);color:var(--text)}
 .btn:hover{border-color:var(--glass-dim)}
 .btn.primary{background:var(--text);color:var(--bg);border-color:var(--text)}
-.viz svg{display:block;width:100%;height:auto;max-width:520px;margin:0 auto}
-.scale{display:flex;margin:8px auto 0;max-width:420px;font-family:var(--mono);font-size:11px;letter-spacing:.08em;text-transform:uppercase}
-.scale span{flex:1;text-align:center;padding:8px 0;border-top:1px solid var(--line-2);color:var(--text-3)}
-.scale span.on{border-top:2px solid var(--glass);color:var(--text)}
-.scale span.edge{border-top:2px solid var(--glass);color:var(--glass)}
-.reachline{text-align:center;color:var(--text-2);font-size:14px;margin-top:10px}
+.viz{min-width:0}
+.pond{position:relative;width:100%;max-width:600px;margin:0 auto;touch-action:pan-y}
+.pond canvas{position:absolute;inset:0;display:block}
+.marks{position:absolute;inset:0}
+.mk{position:absolute;width:0;height:0;padding:0;border:0;background:none;cursor:pointer}
+.mk:focus-visible{outline:0}
+.mk:focus-visible .buoy{outline:2px solid var(--glass);outline-offset:4px}
+.buoy{position:absolute;left:0;top:0;width:11px;height:11px;border-radius:50%;transform:translate(-50%,-50%);border:1.25px solid var(--c-likely);background:rgba(9,13,16,.55);transition:opacity .5s,border-color .5s;will-change:transform}
+.buoy::after{content:"";position:absolute;inset:-12px;border-radius:50%}
+.t-confirmed .buoy{width:10px;height:10px;background:var(--c-confirmed);border-color:var(--c-confirmed)}
+.t-likely .buoy{background:radial-gradient(circle,var(--c-likely) 0 2px,rgba(9,13,16,.55) 2.6px)}
+.t-possible .buoy{border:1px dashed var(--c-possible);background:none}
+.t-watch .buoy{width:8px;height:8px;border:1px solid var(--c-watch);background:none;opacity:.6}
+.t-none .buoy{width:5px;height:5px;border:0;background:#56666D}
+.mover .buoy{opacity:.45}
+.mover.hit .buoy{opacity:1}
+.mk.sel .buoy{box-shadow:0 0 0 4px var(--bg),0 0 0 5px var(--text)}
+.lb{position:absolute;left:11px;top:-.6em;white-space:nowrap;font-size:12.5px;line-height:1.25;color:var(--text);text-shadow:0 0 3px var(--bg),0 0 8px var(--bg);transition:opacity .5s,color .2s}
+.lb em{font-style:normal;font-family:var(--mono);font-size:10.5px;letter-spacing:.04em;margin-left:6px;color:var(--text-3)}
+.lb em.up{color:var(--up)} .lb em.down{color:var(--down)} .lb em.moved{color:var(--text-2)}
+.mover .lb{opacity:.5} .mover.hit .lb{opacity:1}
+.t-possible .lb,.t-watch .lb{color:var(--text-2)}
+.t-none .lb{color:var(--text-3);font-size:11.5px;opacity:.8}
+.mk:hover .lb,.mk.sel .lb{color:var(--glass)}
+.scrub{position:relative;max-width:440px;margin:6px auto 0;padding-top:10px;cursor:pointer;touch-action:none;user-select:none;-webkit-user-select:none}
+.scrub:focus-visible{outline-offset:6px}
+.rail{position:relative;height:1px;background:var(--line-2)}
+.rail .fill{position:absolute;left:0;top:-.5px;height:2px;width:0;background:var(--glass-dim)}
+.rail .knob{position:absolute;top:0;left:0;width:9px;height:9px;border-radius:50%;background:var(--text);transform:translate(-50%,-50%);box-shadow:0 0 0 3px var(--bg)}
+.stops{display:flex;margin-top:8px;font-family:var(--mono);font-size:11px;letter-spacing:.08em;text-transform:uppercase}
+.stops span{flex:1;text-align:center;padding:4px 0;color:var(--text-3)}
+.stops span.on{color:var(--text-2)}
+.stops span.edge{color:var(--glass)}
+.pondfoot{display:flex;flex-wrap:wrap;justify-content:center;align-items:baseline;gap:4px 14px;margin-top:8px}
+.replay{font-family:var(--mono);font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--text-3);border-bottom:1px solid var(--line-2);padding-bottom:1px}
+.replay:hover{color:var(--glass);border-color:var(--glass-dim)}
+.reachline{text-align:center;color:var(--text-2);font-size:14px;margin:0}
 .groups{margin-top:40px;display:grid;gap:30px}
 .group h3{font-family:var(--mono);font-size:11.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--text-3);display:flex;align-items:center;gap:2px;margin-bottom:6px}
 .gnote{margin:0 0 8px;color:var(--text-3);font-size:14px;max-width:62ch}
@@ -149,3 +180,6 @@ details.more summary span{font-family:var(--mono);font-size:12px;color:var(--tex
 }
 @media (max-width:420px){ nav.tabs a[data-nav="how"]{display:none} }
 @media (prefers-reduced-motion: reduce){*{animation:none!important;transition:none!important}}
+
+.impact .exp { margin-left: 8px; font-family: var(--mono, 'Geist Mono', monospace); font-size: 10px; letter-spacing: .12em; text-transform: uppercase;
+  color: var(--c-watch, #8A979D); border: 1px solid currentColor; border-radius: 999px; padding: 1px 7px; vertical-align: 2px; opacity: .8; }

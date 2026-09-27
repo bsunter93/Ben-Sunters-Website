@@ -10,13 +10,21 @@
 //   NEWLISCOU{ST}   Realtor.com new listing count           metric 'newlist'    (from 2016-07)
 //   MEDDAYONMAR{ST} Realtor.com median days on market       metric 'dom'        (from 2016-07)
 //   {ST}NA          BLS total nonfarm employment            metric 'nonfarm'
+//   {ST}SRVO/EDUH/FIRE/GOVT/PBSV/TRAD/MFG  BLS CES state supersector jobs (batch b6, "unexpected places"), first releases
+//                   from 2000: other services (repair, personal care), private education & health, financial activities
+//                   (insurance), government, professional & business services, trade/transport/utilities, manufacturing
+//
+// mode "cdc" (batch b6): CDC/NCHS weekly all-cause deaths by state (keyless Socrata API on data.cdc.gov), source
+// 'cdc.deaths' metric 'all': 2014-2019 from 3yf8-kanr (final), 2020+ from r8kw-7aab (provisional, group "By Week").
+// New York City is reported separately and is added into New York. Weeks ending within 8 weeks of the file's
+// data_as_of are NOT ingested (death reporting lags; recent weeks are incomplete); recent weeks are re-read daily.
 //
 // Demarcation (same rules as att-econ): key read at run time from Vault via public.att_secret and never logged; honest
 // UA; serial requests with >= 1.1 s spacing (FRED allows 120/min); STOP for the run on 429/503; a missing id (400/404)
 // is recorded once and never retried; aggregate public statistics only. Auth: x-collector-token checked against Vault.
 import { createClient } from "jsr:@supabase/supabase-js@2";
 
-const VERSION = "2026-09-26.d3";
+const VERSION = "2026-09-27.d5";
 const UA = "ripples-research/0.2 (+https://bensunter.com/ripples/methods/)";
 const FRED = "https://api.stlouisfed.org/fred/series/observations";
 const STATES = ["AL","AK","AZ","AR","CA","CO","CT","DE","DC","FL","GA","HI","ID","IL","IN","IA","KS","KY","LA","ME","MD",
@@ -30,7 +38,19 @@ const SERIES = [
   { id: (s: string) => `NEWLISCOU${s}`, metric: "newlist", first: false },
   { id: (s: string) => `MEDDAYONMAR${s}`, metric: "dom", first: false },
   { id: (s: string) => `${s}NA`, metric: "nonfarm", first: true, from: "2000-01-01" }, // long history for batch b4
+  // batch b6: where else does a shock land? CES supersectors, first releases, long history
+  ...["SRVO", "EDUH", "FIRE", "GOVT", "PBSV", "TRAD", "MFG"].map((m) =>
+    ({ id: (s: string) => `${s}${m}`, metric: m.toLowerCase(), first: true, from: "2000-01-01" })),
 ];
+const CDC = "https://data.cdc.gov/resource";
+const CDC_KEY = "cdc.deaths";
+const NAME2ST: Record<string, string> = { "Alabama":"AL","Alaska":"AK","Arizona":"AZ","Arkansas":"AR","California":"CA","Colorado":"CO",
+  "Connecticut":"CT","Delaware":"DE","District of Columbia":"DC","Florida":"FL","Georgia":"GA","Hawaii":"HI","Idaho":"ID","Illinois":"IL",
+  "Indiana":"IN","Iowa":"IA","Kansas":"KS","Kentucky":"KY","Louisiana":"LA","Maine":"ME","Maryland":"MD","Massachusetts":"MA",
+  "Michigan":"MI","Minnesota":"MN","Mississippi":"MS","Missouri":"MO","Montana":"MT","Nebraska":"NE","Nevada":"NV","New Hampshire":"NH",
+  "New Jersey":"NJ","New Mexico":"NM","New York":"NY","New York City":"NY","North Carolina":"NC","North Dakota":"ND","Ohio":"OH",
+  "Oklahoma":"OK","Oregon":"OR","Pennsylvania":"PA","Rhode Island":"RI","South Carolina":"SC","South Dakota":"SD","Tennessee":"TN",
+  "Texas":"TX","Utah":"UT","Vermont":"VT","Virginia":"VA","Washington":"WA","West Virginia":"WV","Wisconsin":"WI","Wyoming":"WY" };
 const STATE_KEY = "econ.fred.downstream";
 const MAX_CALLS = 60, SPACING_MS = 1100, WALL_MS = 100_000;
 
@@ -49,6 +69,7 @@ Deno.serve(async (req) => {
   const force = body?.params?.force === true;
   const t0 = Date.now();
   const errors: string[] = [];
+  if (body?.params?.mode === "cdc") return json(await cdc(force, errors, t0));
 
   const { data: keyData } = await db.rpc("att_secret", { p_name: "fred_api_key" });
   const key = typeof keyData === "string" ? keyData.trim() : "";
@@ -105,3 +126,62 @@ Deno.serve(async (req) => {
   return json({ ok: true, version: VERSION, calls, series_fetched: done, rows, left, n_missing: missing.size,
     stop, errors: errors.slice(0, 10), ms: Date.now() - t0 });
 });
+
+// ---- mode "cdc": weekly all-cause deaths by state -----------------------------------------------------------------
+async function cdcGet(path: string): Promise<{ rows?: Record<string, string>[]; stop?: string; err?: string }> {
+  let res: Response;
+  try {
+    res = await fetch(`${CDC}/${path}`, { headers: { "user-agent": UA, accept: "application/json" }, signal: AbortSignal.timeout(60_000) });
+  } catch (e) { return { err: e instanceof Error ? e.message : String(e) }; }
+  if (res.status === 429 || res.status === 503) { await res.body?.cancel(); return { stop: `host_killed_${res.status}` }; }
+  if (!res.ok) { await res.body?.cancel(); return { err: `http ${res.status}` }; }
+  const j = await res.json().catch(() => null);
+  return Array.isArray(j) ? { rows: j } : { err: "not an array" };
+}
+
+async function cdc(force: boolean, errors: string[], t0: number) {
+  const { data: st0 } = await db.rpc("att_state_get", { p_k: CDC_KEY });
+  const st = (st0 ?? {}) as { hist_done?: boolean; last?: string };
+  if (st.last === today() && !force) return { ok: true, version: VERSION, mode: "cdc", skipped: "already ran today" };
+  // week_end -> state -> deaths (NY + NYC summed)
+  const acc = new Map<string, number>();
+  const add = (name: string, day: string, v: number) => {
+    const s = NAME2ST[name]; if (!s || !/^\d{4}-\d{2}-\d{2}$/.test(day) || !Number.isFinite(v)) return;
+    const k = `${s}|${day}`; acc.set(k, (acc.get(k) ?? 0) + v);
+  };
+  let stop: string | undefined, calls = 0, asOf = "";
+  if (!st.hist_done || force) {
+    calls++;
+    const r = await cdcGet("3yf8-kanr.json?$select=jurisdiction_of_occurrence,weekendingdate,allcause&$limit=50000");
+    if (r.stop) stop = r.stop; else if (r.err) errors.push(`3yf8-kanr: ${r.err}`);
+    for (const o of r.rows ?? []) add(String(o.jurisdiction_of_occurrence), String(o.weekendingdate).slice(0, 10), Number(o.allcause));
+  }
+  if (!stop) {
+    await sleep(2000); calls++;
+    const since = st.hist_done && !force ? addDays(today(), -210) : "2019-12-01";
+    const r = await cdcGet(`r8kw-7aab.json?$select=data_as_of,state,end_date,total_deaths&$where=${encodeURIComponent(`\`group\`='By Week' AND end_date >= '${since}'`)}&$limit=50000`);
+    if (r.stop) stop = r.stop; else if (r.err) errors.push(`r8kw-7aab: ${r.err}`);
+    for (const o of r.rows ?? []) {
+      asOf = asOf || String(o.data_as_of ?? "").slice(0, 10);
+      if (o.total_deaths == null) continue;
+      add(String(o.state), String(o.end_date).slice(0, 10), Number(o.total_deaths));
+    }
+  }
+  const cutoff = asOf ? addDays(asOf, -56) : addDays(today(), -63);
+  const out: Record<string, unknown>[] = [];
+  for (const [k, v] of acc) {
+    const [s, day] = k.split("|");
+    if (day > cutoff) continue;
+    out.push({ source: "cdc.deaths", key: `cdc_deaths_all_${s}`, metric: "all", geo: `US-${s}`, day, value: v,
+      meta: { rt: "latest", provisional: day >= "2020-01-01", as_of: asOf || null, weekly: true, via: "att-downstream" } });
+  }
+  let rows = 0;
+  for (let i = 0; i < out.length; i += 2000) {
+    const { data: r, error } = await db.rpc("att_ingest", { p_rows: out.slice(i, i + 2000) });
+    if (error) { errors.push(`att_ingest cdc: ${error.message}`); break; }
+    rows += Number((r as { rows?: number } | null)?.rows ?? 0);
+  }
+  if (!stop && !errors.length) await db.rpc("att_state_set", { p_k: CDC_KEY, p_v: { hist_done: true, last: today(), as_of: asOf, cutoff } });
+  return { ok: !stop && !errors.length, version: VERSION, mode: "cdc", calls, weeks_states: out.length, rows, cutoff, stop: stop ?? null,
+    errors: errors.slice(0, 10), ms: Date.now() - t0 };
+}
