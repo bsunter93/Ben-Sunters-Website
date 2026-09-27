@@ -1,0 +1,54 @@
+# Ripple Map E9 phase 1: US baby-name counts from the public BigQuery copy of the SSA data (ripples/tools/bq/e9_names.py).
+# Keyless auth (OWNER_DECISIONS D-8). One small query, dry-run first under a byte cap. Manual runs only.
+name: Ripples E9 baby names (BigQuery)
+
+on:
+  workflow_dispatch:
+    inputs:
+      dry_run_only:
+        description: "Only dry-run the query and log bytes"
+        type: boolean
+        required: false
+        default: false
+
+permissions:
+  contents: read
+  id-token: write
+
+concurrency:
+  group: ripples-e9-names
+  cancel-in-progress: false
+
+jobs:
+  names:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    env:
+      SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+      SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+      IN_DRY: ${{ inputs.dry_run_only && 'true' || 'false' }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - id: auth
+        uses: google-github-actions/auth@v2
+        with:
+          workload_identity_provider: ${{ vars.GCP_WIF_PROVIDER }}
+          service_account: ${{ vars.GCP_SA_EMAIL }}
+
+      - uses: google-github-actions/setup-gcloud@v2
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install BigQuery client
+        run: pip install --quiet -r ripples/tools/bq/requirements.txt
+
+      - name: Fetch and load names
+        working-directory: ripples/tools/bq
+        run: |
+          set -euo pipefail
+          args=(--project ripple-509716 --location US)
+          if [[ "${IN_DRY}" == "true" ]]; then args+=(--dry-run-only); fi
+          python e9_names.py "${args[@]}"
