@@ -24,7 +24,7 @@
 // is recorded once and never retried; aggregate public statistics only. Auth: x-collector-token checked against Vault.
 import { createClient } from "jsr:@supabase/supabase-js@2";
 
-const VERSION = "2026-09-27.d4";
+const VERSION = "2026-09-27.d5";
 const UA = "ripples-research/0.2 (+https://bensunter.com/ripples/methods/)";
 const FRED = "https://api.stlouisfed.org/fred/series/observations";
 const STATES = ["AL","AK","AZ","AR","CA","CO","CT","DE","DC","FL","GA","HI","ID","IL","IN","IA","KS","KY","LA","ME","MD",
@@ -159,7 +159,7 @@ async function cdc(force: boolean, errors: string[], t0: number) {
   if (!stop) {
     await sleep(2000); calls++;
     const since = st.hist_done && !force ? addDays(today(), -210) : "2019-12-01";
-    const r = await cdcGet(`r8kw-7aab.json?$select=data_as_of,state,end_date,total_deaths&$where=${encodeURIComponent(`group='By Week' AND end_date >= '${since}'`)}&$limit=50000`);
+    const r = await cdcGet(`r8kw-7aab.json?$select=data_as_of,state,end_date,total_deaths&$where=${encodeURIComponent(`\`group\`='By Week' AND end_date >= '${since}'`)}&$limit=50000`);
     if (r.stop) stop = r.stop; else if (r.err) errors.push(`r8kw-7aab: ${r.err}`);
     for (const o of r.rows ?? []) {
       asOf = asOf || String(o.data_as_of ?? "").slice(0, 10);
