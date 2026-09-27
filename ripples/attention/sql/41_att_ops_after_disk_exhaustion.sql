@@ -68,3 +68,8 @@ select cron.schedule('att-fx63-finisher-fx63-b6-unexpected', '6-59/10 * * * *', 
 select cron.schedule('att-fx63-seed-b7', '3-59/4 * * * *', $$set statement_timeout = '100s';
   select ripples.att_fx63_decoy_seed_grid('fx63-b7-decade', g.grid_id) from (select g.grid_id from ripples.att_fx_grid g where g.batch like 'fx63-b7-decade/%'
     and not exists (select 1 from ripples.att_fx_event f where f.grid_id = g.grid_id and f.role = 'dx') order by g.grid_id limit 6) g$$);
+
+-- 07:40 UTC: b8 post-verdict robustness (ledger 1229, late disclosure). 5 confirmations on dol.claims ic_w withheld as a
+-- year-composition confound; b7 seed back to 3 grids per run after one 100 s timeout at 6.
+update ripples.att_anom_hyp set verdict = 'withheld (year confound)'
+ where run = 'b8-anomaly-first' and stage = 'explore' and promoted and verdict = 'confirmed' and source = 'dol.claims' and metric = 'ic_w';
