@@ -148,7 +148,7 @@ b9 tests it at county level with its own pre-registered design:
 
 | # | experiment | status |
 |---|---|---|
-| E1 | method bake-off on placebo counties with injected effects | tooling built; runs when b9 data is complete |
+| E1 | method bake-off on placebo counties with injected effects | **done (ledger 1278):** random-effects pooling wins (recall 78% at −2% vs 38% for b9's design); analytic p-values over-reject, so calibrated nulls stay mandatory |
 | E2 | spillovers to neighbouring counties | planned |
 | E3 | network propagation (IRS migration, LODES commuting, input-output) | planned |
 | E4 | dose-response (NFIP claims dollars) | planned |
@@ -247,8 +247,6 @@ b9 tests it at county level with its own pre-registered design:
 
 0. **E9 phase 1:** load SSA names and the 2015+ Wikipedia pageviews for the control articles, then run the four positive
    controls and 200 negative controls.
-2. **E1:** export the placebo-only extract (`att_e1_extract`) and run `ripples/tools/experiments/e1_bakeoff.py`. Pick
-   the estimator with the best recall at a calibrated false-positive rate.
 3. **E4 and E2:** load NFIP claims and county adjacency. Pre-register dose-response and spillover tests using the E1
    winner.
 4. **E3:** load IRS county migration and LODES commuting flows; test "connected counties" against weakly connected
