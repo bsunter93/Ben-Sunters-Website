@@ -1,0 +1,27 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "og-data.schema.json",
+  "title": "OG card data (ripples_og_data, service_role only)",
+  "type": "object", "additionalProperties": false,
+  "required": ["n", "kind", "status", "date", "from_date", "past", "seed", "rounds", "R"],
+  "properties": {
+    "n": {"type": "integer"},
+    "kind": {"enum": ["live", "practice", "fixture"]},
+    "status": {"type": "string"},
+    "date": {"$ref": "defs.schema.json#/$defs/date"},
+    "from_date": {"$ref": "defs.schema.json#/$defs/dateOrNull"},
+    "past": {"type": "boolean", "description": "puzzle_date < current UTC date (reveal variant allowed)"},
+    "seed": {"type": "object", "additionalProperties": false,
+             "required": ["title", "emoji", "biggest_in_days", "since_records", "multiple", "langs"],
+             "properties": {"title": {"type": ["string", "null"]}, "emoji": {"type": ["string", "null"]},
+                            "biggest_in_days": {"type": ["integer", "null"]}, "since_records": {"type": "boolean"},
+                            "multiple": {"type": ["number", "null"]}, "langs": {"type": ["integer", "null"]}}},
+    "rounds": {"type": "array", "items": {
+      "type": "object", "additionalProperties": false,
+      "required": ["i", "continues", "seed_emoji", "emoji", "title", "multiple"],
+      "properties": {"i": {"type": "integer"}, "continues": {"type": "boolean"}, "seed_emoji": {"type": ["string", "null"]},
+                     "emoji": {"type": ["string", "null"]}, "title": {"type": ["string", "null"]},
+                     "multiple": {"type": ["number", "null"]}}}},
+    "R": {"type": "integer"}
+  }
+}

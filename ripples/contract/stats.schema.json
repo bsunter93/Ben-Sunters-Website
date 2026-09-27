@@ -1,0 +1,27 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "stats.schema.json",
+  "title": "StatsPayload (ripples_stats / ripples_submit_play)",
+  "type": "object", "additionalProperties": false,
+  "required": ["n", "players", "shown", "rounds", "score_hist", "mag_median_x", "you"],
+  "properties": {
+    "n": {"type": "integer"},
+    "players": {"type": "integer", "minimum": 0},
+    "shown": {"type": "boolean"},
+    "rounds": {"anyOf": [{"type": "null"}, {"type": "array", "items": {
+      "type": "object", "additionalProperties": false, "required": ["i", "first_try_pct", "found_pct", "split"],
+      "properties": {
+        "i": {"type": "integer"},
+        "first_try_pct": {"type": "integer", "minimum": 0, "maximum": 100},
+        "found_pct": {"type": "integer", "minimum": 0, "maximum": 100},
+        "split": {"type": "object", "additionalProperties": false, "required": ["a", "b", "c", "d"],
+                  "properties": {"a": {"type": "integer"}, "b": {"type": "integer"}, "c": {"type": "integer"}, "d": {"type": "integer"}}}
+      }}}]},
+    "score_hist": {"type": ["array", "null"], "items": {"type": "integer", "minimum": 0}},
+    "mag_median_x": {"type": ["number", "null"]},
+    "you": {"anyOf": [{"type": "null"}, {
+      "type": "object", "additionalProperties": false, "required": ["score", "max", "percentile"],
+      "properties": {"score": {"type": "integer"}, "max": {"type": "integer"},
+                     "percentile": {"type": ["integer", "null"], "minimum": 0, "maximum": 100}}}]}
+  }
+}

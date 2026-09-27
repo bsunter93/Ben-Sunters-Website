@@ -1,0 +1,87 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "puzzle.schema.json",
+  "title": "PuzzlePayload (ripples_puzzle / v1/puzzle/{n}.json)",
+  "type": "object", "additionalProperties": false,
+  "required": ["v", "n", "kind", "date", "data_date", "from_date", "status", "method", "seed", "rounds", "final", "callit", "headline"],
+  "properties": {
+    "v": {"const": 1},
+    "n": {"type": "integer"},
+    "kind": {"enum": ["live", "practice", "fixture"]},
+    "date": {"$ref": "defs.schema.json#/$defs/date"},
+    "data_date": {"$ref": "defs.schema.json#/$defs/dateOrNull"},
+    "from_date": {"$ref": "defs.schema.json#/$defs/dateOrNull"},
+    "status": {"enum": ["built", "published", "vetoed", "delayed", "fixture"]},
+    "method": {"type": "string"},
+    "seed": {
+      "type": "object", "additionalProperties": false,
+      "required": ["qid", "title", "emoji", "category", "desc", "multiple", "biggest_in_days", "biggest_since_records",
+                   "langs", "onset", "spark", "baseline", "why", "badges", "cross"],
+      "properties": {
+        "qid": {"$ref": "defs.schema.json#/$defs/qid"},
+        "title": {"type": "string", "minLength": 1},
+        "emoji": {"$ref": "defs.schema.json#/$defs/emoji"},
+        "category": {"$ref": "defs.schema.json#/$defs/category"},
+        "desc": {"type": ["string", "null"]},
+        "multiple": {"type": "number", "minimum": 0},
+        "biggest_in_days": {"type": ["integer", "null"], "minimum": 0},
+        "biggest_since_records": {"type": "boolean"},
+        "langs": {"type": "integer", "minimum": 0},
+        "onset": {"$ref": "defs.schema.json#/$defs/date"},
+        "spark": {"$ref": "defs.schema.json#/$defs/spark", "minItems": 90, "maxItems": 90},
+        "baseline": {
+          "type": "object", "additionalProperties": false, "required": ["from", "to", "median"],
+          "properties": {"from": {"$ref": "defs.schema.json#/$defs/date"}, "to": {"$ref": "defs.schema.json#/$defs/date"},
+                         "median": {"type": "number", "minimum": 0}}
+        },
+        "why": {"type": "array", "maxItems": 3, "items": {
+          "type": "object", "additionalProperties": false, "required": ["title", "source", "url"],
+          "properties": {"title": {"type": "string"}, "source": {"type": ["string", "null"]},
+                         "url": {"$ref": "defs.schema.json#/$defs/httpsUrl"}}}},
+        "badges": {"type": "array", "items": {"type": "string", "pattern": "^[a-z0-9_]+(:[A-Za-z0-9_-]+)?$"}},
+        "cross": {"$ref": "defs.schema.json#/$defs/cross"}
+      }
+    },
+    "rounds": {
+      "type": "array", "minItems": 3, "maxItems": 4,
+      "items": {
+        "type": "object", "additionalProperties": false,
+        "required": ["i", "continues", "parent", "seed", "options", "answer_h"],
+        "properties": {
+          "i": {"type": "integer", "minimum": 1, "maximum": 4},
+          "continues": {"type": "boolean"},
+          "parent": {"type": "object", "additionalProperties": false, "required": ["qid", "title", "emoji"],
+                     "properties": {"qid": {"$ref": "defs.schema.json#/$defs/qid"}, "title": {"type": "string"},
+                                    "emoji": {"$ref": "defs.schema.json#/$defs/emoji"}}},
+          "seed": {"anyOf": [{"type": "null"}, {
+            "type": "object", "additionalProperties": false,
+            "required": ["qid", "title", "emoji", "multiple", "biggest_in_days"],
+            "properties": {"qid": {"$ref": "defs.schema.json#/$defs/qid"}, "title": {"type": "string"},
+                           "emoji": {"$ref": "defs.schema.json#/$defs/emoji"}, "multiple": {"type": "number"},
+                           "biggest_in_days": {"type": ["integer", "null"]}}}]},
+          "options": {"type": "array", "minItems": 4, "maxItems": 4, "items": {
+            "type": "object", "additionalProperties": false, "required": ["id", "qid", "title", "emoji", "desc"],
+            "properties": {"id": {"$ref": "defs.schema.json#/$defs/optionId"}, "qid": {"$ref": "defs.schema.json#/$defs/qid"},
+                           "title": {"type": "string"}, "emoji": {"$ref": "defs.schema.json#/$defs/emoji"},
+                           "desc": {"type": ["string", "null"]}}}},
+          "answer_h": {"type": "string", "pattern": "^[0-9a-f]{64}$"}
+        }
+      }
+    },
+    "final": {"type": "object", "additionalProperties": false, "required": ["round", "mag_min", "mag_max"],
+              "properties": {"round": {"type": "integer"}, "mag_min": {"type": "number"}, "mag_max": {"type": "number"}}},
+    "callit": {"anyOf": [{"type": "null"}, {
+      "type": "object", "additionalProperties": false, "required": ["window_start", "window_end", "options"],
+      "properties": {
+        "window_start": {"$ref": "defs.schema.json#/$defs/date"},
+        "window_end": {"$ref": "defs.schema.json#/$defs/date"},
+        "options": {"type": "array", "minItems": 1, "maxItems": 4, "items": {
+          "type": "object", "additionalProperties": false, "required": ["qid", "title", "emoji", "desc"],
+          "properties": {"qid": {"$ref": "defs.schema.json#/$defs/qid"}, "title": {"type": "string"},
+                         "emoji": {"$ref": "defs.schema.json#/$defs/emoji"}, "desc": {"type": ["string", "null"]}}}}
+      }}]},
+    "headline": {"anyOf": [{"type": "null"}, {
+      "type": "object", "additionalProperties": false, "required": ["text", "source"],
+      "properties": {"text": {"type": "string", "maxLength": 70}, "source": {"enum": ["ai", "template"]}}}]}
+  }
+}

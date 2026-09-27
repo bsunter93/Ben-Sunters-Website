@@ -1,0 +1,17 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "health.schema.json",
+  "title": "Health (ripples_health)",
+  "type": "object", "additionalProperties": false,
+  "required": ["latest_n", "published_at", "stale", "expected_n", "stage", "wm_calls", "errors", "clickstream_month"],
+  "properties": {
+    "latest_n": {"type": ["integer", "null"]},
+    "published_at": {"type": ["string", "null"]},
+    "stale": {"type": "boolean"},
+    "expected_n": {"type": "integer"},
+    "stage": {"type": ["string", "null"]},
+    "wm_calls": {"type": ["integer", "null"]},
+    "errors": {"type": ["integer", "null"]},
+    "clickstream_month": {"type": ["string", "null"], "pattern": "^[0-9]{4}-[0-9]{2}$"}
+  }
+}

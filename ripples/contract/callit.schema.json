@@ -1,0 +1,27 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "callit.schema.json",
+  "title": "CallItPayload (ripples_callit / v1/callit/{n}.json)",
+  "type": "object", "additionalProperties": false,
+  "required": ["n", "window_start", "window_end", "resolves_on", "model", "options"],
+  "properties": {
+    "n": {"type": "integer"},
+    "window_start": {"$ref": "defs.schema.json#/$defs/date"},
+    "window_end": {"$ref": "defs.schema.json#/$defs/date"},
+    "resolves_on": {"$ref": "defs.schema.json#/$defs/date"},
+    "model": {"type": "string"},
+    "options": {"type": "array", "maxItems": 4, "items": {
+      "type": "object", "additionalProperties": false,
+      "required": ["qid", "title", "emoji", "model_p", "crowd_pct", "outcome", "max_z", "url"],
+      "properties": {
+        "qid": {"$ref": "defs.schema.json#/$defs/qid"},
+        "title": {"type": "string"},
+        "emoji": {"type": ["string", "null"]},
+        "model_p": {"type": ["number", "null"], "minimum": 0, "maximum": 1},
+        "crowd_pct": {"type": ["integer", "null"], "minimum": 0, "maximum": 100},
+        "outcome": {"enum": ["pending", "hit", "miss"]},
+        "max_z": {"type": ["number", "null"]},
+        "url": {"anyOf": [{"type": "null"}, {"$ref": "defs.schema.json#/$defs/wikiUrl"}]}
+      }}}
+  }
+}
