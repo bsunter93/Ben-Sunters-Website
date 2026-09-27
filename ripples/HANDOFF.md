@@ -101,8 +101,8 @@ What the owner has said, and what it means for the work:
   goes one direction, and rings must not be always visible.
 - **Style:** direct, blunt feedback. Report outcomes honestly, including "nothing survived". Short status updates while
   working.
-- The owner said "merge it and make it live" for PR #13/#14/#15. Otherwise, do **not** open or merge PRs without an
-  explicit go-ahead.
+- The owner said "merge it and make it live" for PR #13/#14/#15. Opening PRs (as drafts) needs no go-ahead (owner,
+  2026-09-27: "I dont care if you make PRs without my go ahead"). **Merging** still waits for the owner's explicit go-ahead.
 
 Earlier binding decisions D-1..D-16 (story layer, information-exploration game, share objects) still hold. They are in
 `ripples/docs/` and the older sql headers.
