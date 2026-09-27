@@ -1,0 +1,49 @@
+# Ripple Lab (protocol: ledger 1279, ripples/lab/README.md). Scores discovery designs in fake worlds built from public
+# data (BLS QCEW bulk files + OpenFEMA declarations). Runs automatically when lab code changes on a claude/ branch, so
+# designs can be iterated without manual dispatch. No secrets: it reads only public data and writes only a report.
+name: Ripples lab
+
+on:
+  push:
+    branches: ["claude/**"]
+    paths: ["ripples/lab/**", ".github/workflows/ripples-lab.yml"]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ripples-lab-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  lab:
+    runs-on: ubuntu-latest
+    timeout-minutes: 150
+    env:
+      LAB_CACHE: ${{ github.workspace }}/.lab-cache
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: pip install --quiet numpy scipy
+      - uses: actions/cache@v4
+        with:
+          path: .lab-cache
+          key: ripples-lab-data-${{ hashFiles('ripples/lab/data.py') }}
+      - name: Build data (cached after the first run)
+        working-directory: ripples/lab
+        run: python data.py
+      - name: Run lab
+        working-directory: ripples/lab
+        run: |
+          set -euo pipefail
+          args=$(cat run_args.txt 2>/dev/null || true)
+          python lab.py $args --out "$GITHUB_WORKSPACE/lab_report.json"
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: lab-report
+          path: lab_report.json
+          if-no-files-found: ignore
