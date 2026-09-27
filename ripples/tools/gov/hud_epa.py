@@ -37,6 +37,9 @@ STATES = ["AL", "AK", "AZ", "AR", "CA", "CO", "CT", "DE", "DC", "FL", "GA", "HI"
           "PA", "RI", "SC", "SD", "TN", "TX", "UT", "VT", "VA", "WA", "WV", "WI", "WY", "PR"]
 
 
+STATE_KEY = "gha.hud_epa.done_years"
+
+
 class Stop(Exception):
     pass
 
@@ -64,6 +67,20 @@ class Writer:
         self.written = 0
         self.rejected = 0
         self.stop_reason = None
+        # Years fully loaded in earlier runs, so each scheduled run moves on instead of re-sending the same years
+        # until the row cap. Past years only; the current year is always refreshed.
+        self.done = (sb.rpc("att_state_get", {"p_k": STATE_KEY}) or {}) if sb else {}
+
+    def is_done(self, src: str, y: int) -> bool:
+        return y < dt.date.today().year and str(y) in (self.done.get(src) or [])
+
+    def mark_done(self, src: str, y: int) -> None:
+        if self.dry or y >= dt.date.today().year:
+            return
+        self.done.setdefault(src, [])
+        if str(y) not in self.done[src]:
+            self.done[src].append(str(y))
+            self.sb.rpc("att_state_set", {"p_k": STATE_KEY, "p_v": self.done})
 
     def put(self, rows: list[dict]) -> bool:
         for i in range(0, len(rows), 1000):
@@ -94,9 +111,14 @@ def epa(years: list[int], w: Writer) -> dict:
             out["key_check"] = (j.get("Header") or [{}])[0].get("status", "unknown")
         except Stop as e:
             out["key_check"] = f"stopped: {e}"
+        except urllib.error.HTTPError as e:
+            out["key_check"] = f"failed: HTTP {e.code}"   # status only; the URL carries the key and is never logged
         except Exception as e:  # noqa: BLE001
             out["key_check"] = f"failed: {type(e).__name__}"
     for y in years:
+        if w.is_done("epa", y):
+            out["years"][y] = "already loaded"
+            continue
         try:
             raw = get(f"https://aqs.epa.gov/aqsweb/airdata/daily_aqi_by_county_{y}.zip", timeout=300)
         except Stop as e:
@@ -127,6 +149,7 @@ def epa(years: list[int], w: Writer) -> dict:
         log(f"epa {y}: {len(rows)} rows; written so far {w.written}")
         if not ok:
             break
+        w.mark_done("epa", y)
     return out
 
 
@@ -137,6 +160,9 @@ def hud(years: list[int], w: Writer) -> dict:
         return {"skipped": "no HUD_USER_TOKEN"}
     auth = {"Authorization": "Bearer " + tok, "Accept": "application/json"}
     for y in years:
+        if w.is_done("hud", y):
+            out["years"][y] = "already loaded"
+            continue
         rows, errs = [], 0
         for st in STATES:
             try:
@@ -157,7 +183,7 @@ def hud(years: list[int], w: Writer) -> dict:
                 if len(fips) == 5 and fips.isdigit() and isinstance(v, (int, float)):
                     rows.append({"source": "hud.fmr", "metric": "fmr_2br", "geo": f"US-CTY-{fips}", "key": fips,
                                  "day": f"{y - 1}-10-01", "value": v, "meta": {"fy": y, "via": "gha"}})
-            time.sleep(0.3)
+            time.sleep(1.6)   # HUD USER rate-limits near 60 requests/minute (429 on the first dry run at ~1/s)
         # one row per county per year (metro counties can repeat across areas: keep the first)
         seen, uniq = set(), []
         for r in rows:
@@ -168,6 +194,8 @@ def hud(years: list[int], w: Writer) -> dict:
         log(f"hud {y}: {len(uniq)} rows; written so far {w.written}")
         if not ok:
             break
+        if errs == 0:
+            w.mark_done("hud", y)
     return out
 
 
