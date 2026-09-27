@@ -190,7 +190,7 @@ select cron.schedule('att-b9-collect', '* * * * *', $c$
 $c$);
 
 -- 16:15 UTC (not part of b9): owner-provided keys stored in Vault (census_api_key updated; api_data_gov_key, epa_aqs_key,
--- epa_aqs_email, usda_nass_key added). att_secret's allow-list now includes the four new names. epa_aqs_email is sent only to
+-- epa_aqs_email, usda_nass_key, hud_user_token added). att_secret's allow-list now includes the five new names. epa_aqs_email is sent only to
 -- aqs.epa.gov together with epa_aqs_key (EPA requires both on every request).
 create or replace function public.att_secret(p_name text) returns text language sql stable security definer set search_path to '' as $function$
-  select decrypted_secret from vault.decrypted_secrets where name = p_name and name in ('fred_api_key','sec_contact_email','bls_api_key','eia_api_key','census_api_key','noaa_cdo_token','youtube_api_key','twelvedata_api_key','alphavantage_api_key','stackexchange_key','github_token','api_data_gov_key','epa_aqs_key','epa_aqs_email','usda_nass_key') limit 1; $function$;
+  select decrypted_secret from vault.decrypted_secrets where name = p_name and name in ('fred_api_key','sec_contact_email','bls_api_key','eia_api_key','census_api_key','noaa_cdo_token','youtube_api_key','twelvedata_api_key','alphavantage_api_key','stackexchange_key','github_token','api_data_gov_key','epa_aqs_key','epa_aqs_email','usda_nass_key','hud_user_token') limit 1; $function$;
