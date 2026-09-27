@@ -144,43 +144,288 @@
     return g;
   }
 
-  function pond(s, openIdx) {
-    const W = 520, C = 260, R0 = 26, R1 = 236;
-    const svg = document.createElementNS(NS, 'svg'); svg.setAttribute('viewBox', `0 0 ${W} ${W}`); svg.setAttribute('role', 'img');
-    const edge = reachRing(s);
-    svg.setAttribute('aria-label', `${s.name}: the ripple reached a ${edge.l.toLowerCase()}`);
-    const defs = svgEl('defs', {}, svg); const rg = svgEl('radialGradient', { id: 'pg' }, defs);
-    svgEl('stop', { offset: '0%', 'stop-color': '#13252D' }, rg); svgEl('stop', { offset: '70%', 'stop-color': '#0C161B' }, rg); svgEl('stop', { offset: '100%', 'stop-color': '#090D10', 'stop-opacity': 0 }, rg);
-    const gl = svgEl('filter', { id: 'gl', x: '-50%', y: '-50%', width: '200%', height: '200%' }, defs); svgEl('feGaussianBlur', { stdDeviation: 3 }, gl);
-    svgEl('circle', { cx: C, cy: C, r: R1 + 18, fill: 'url(#pg)' }, svg);
-    RINGS.filter(r => r.d <= edge.d).forEach((r, i) => {
-      const rr = rOf(r.d, R0, R1), last = r === edge;
-      if (last) svgEl('circle', { cx: C, cy: C, r: rr, fill: 'none', stroke: '#A9D3DF', 'stroke-width': 3, opacity: 0.25, filter: 'url(#gl)' }, svg);
-      const c = svgEl('circle', { cx: C, cy: C, r: rr, fill: 'none', stroke: '#A9D3DF', 'stroke-width': last ? 1.3 : 0.7, opacity: last ? 0.95 : 0.4 }, svg);
-      if (!reduce && openIdx === -2) { c.style.transformOrigin = `${C}px ${C}px`; c.animate([{ transform: 'scale(.2)', opacity: 0 }, { transform: 'scale(1)', opacity: last ? 0.95 : 0.4 }], { duration: 900, delay: 180 + i * 260, easing: 'cubic-bezier(.2,.7,.2,1)', fill: 'both' }); }
-      const t = svgEl('text', { x: C, y: C - rr - 7, 'text-anchor': 'middle', 'font-family': 'Geist Mono, monospace', 'font-size': 10, 'letter-spacing': 1.4, fill: last ? '#A9D3DF' : '#6B7A81' }, svg); t.textContent = r.l.toUpperCase();
+  /* ---------- the pond: a stone dropped in dark water, drawn on canvas ----------
+   * Distance from the centre is time (day → quarter). The wave travels as far as the shock's reach, then dies out.
+   * The surface is a small height field (ambient swell + the wave packet + marker ripples), lit by its slope and upscaled;
+   * markers and their labels are DOM buttons laid over it, so they stay crisp, focusable and clickable. */
+  const WORD = { up: 'rose', down: 'fell', moved: 'moved', flat: 'moved' };
+  const SPAN = { Day: 'a day', Week: 'a week', Month: 'a month', Quarter: 'three months' };
+  const smooth = (a, b, x) => { const t = Math.min(1, Math.max(0, (x - a) / (b - a))); return t * t * (3 - 2 * t); };
+  let pondCtl = null;
+
+  function Pond(s, host, ui) {
+    const TILT = 0.5, PERS = 0.2, T_IMP = 0.5, DPR = Math.min(2, window.devicePixelRatio || 1), TAU = Math.PI * 2;
+    const mv = moved(s), edge = reachRing(s);
+    const reachD = mv.length ? Math.max(s.reach || 1, ...mv.map(m => m.at || 1)) : 0;
+    const marks = [
+      ...s.impacts.map((im, i) => { const m = mv.includes(im);
+        return { i, im, name: im.short || im.name, tier: im.tier, moves: m, d: m ? Math.min(im.at || 1, reachD) : (im.at || 91),
+          word: m ? (WORD[im.dir] || 'moved') : im.tier === 'possible' ? 'maybe' : 'too early', dir: m ? im.dir : '' }; }),
+      ...(s.none || []).map(nm => ({ i: -1, name: nm, tier: 'none', moves: false, d: 91, word: 'still', dir: '' })),
+    ];
+    const n = marks.length, stepA = TAU / Math.max(1, n), th0 = stepA * (Math.floor(n / 2) + 0.5);   // evenly spread, clear of the time axis
+    marks.forEach((m, k) => { m.k = k; m.th = th0 + k * stepA + (m.tier === 'none' ? (((k * 0.377) % 1) - 0.5) * stepA * 0.5 : 0); });
+
+    const edgeTxt = SPAN[edge.l];
+    const summary = mv.length
+      ? `${s.name}: a stone dropped in still water. The ripple reached about ${edgeTxt}, then died out. ${mv.map(m => `${m.short || m.name} ${WORD[m.dir] || 'moved'}`).join('; ')}.`
+      : `${s.name}: a stone dropped in still water. The water absorbed it: no measured ripple yet.`;
+    host.innerHTML = `<canvas role="img" aria-label="${esc(summary)}"></canvas><div class="marks"></div>`;
+    const cv = host.querySelector('canvas'), ctx = cv.getContext('2d'), layer = host.querySelector('.marks');
+    const off = document.createElement('canvas'), octx = off.getContext('2d');
+
+    marks.forEach(m => {
+      const b = document.createElement('button'); b.type = 'button';
+      b.className = `mk t-${m.tier}${m.moves ? ' mover' : ''}`;
+      b.setAttribute('aria-label', `${m.im ? m.im.name : m.name}: ${m.word}${m.im ? ', ' + TIER[m.tier].label.toLowerCase() : ''}`);
+      b.innerHTML = `<i class="buoy" aria-hidden="true"></i><span class="lb" aria-hidden="true">${esc(m.name)}<em class="${esc(m.dir)}">${esc(m.word)}</em></span>`;
+      b.onclick = () => (m.i >= 0 ? ui.pick(m.i) : ui.none());
+      layer.appendChild(b); m.el = b; m.buoy = b.firstChild; m.lb = b.lastChild;
     });
-    svgEl('circle', { cx: C, cy: C, r: 4, fill: '#E7ECEE' }, svg);
-    svgEl('circle', { cx: C, cy: C, r: 9, fill: 'none', stroke: '#E7ECEE', 'stroke-width': 0.6, opacity: 0.35 }, svg);
-    const shown = s.impacts.map((im, i) => ({ im, i })).filter(x => x.im.tier !== 'watch');
-    shown.forEach(({ im, i }, k) => {
-      const beyond = im.tier === 'possible'; const d = beyond ? Math.max(im.at || 28, edge.d * 1.8) : Math.min(im.at || 1, edge.d);
-      const r = Math.min(rOf(d, R0, R1), R1 + 6);
-      const a = (-58 + k * (shown.length > 1 ? 300 / shown.length : 0)) * Math.PI / 180, x = C + r * Math.cos(a), y = C + r * Math.sin(a);
-      const g = svgEl('g', { tabindex: 0, role: 'button', 'aria-label': `${im.name}, ${TIER[im.tier].label}`, style: 'cursor:pointer' }, svg);
-      const col = TIER[im.tier].c;
-      if (im.tier === 'confirmed') { svgEl('circle', { cx: x, cy: y, r: 10, fill: col, opacity: 0.18, filter: 'url(#gl)' }, g); svgEl('circle', { cx: x, cy: y, r: 5.5, fill: col }, g); }
-      else if (im.tier === 'likely') { svgEl('circle', { cx: x, cy: y, r: 6, fill: 'none', stroke: col, 'stroke-width': 1.4 }, g); svgEl('path', { d: `M${x} ${y - 6} a6 6 0 0 0 0 12 z`, fill: col }, g); }
-      else svgEl('circle', { cx: x, cy: y, r: 6, fill: 'none', stroke: col, 'stroke-width': 1.1, 'stroke-dasharray': '2 2.5' }, g);
-      if (openIdx === i) svgEl('circle', { cx: x, cy: y, r: 13, fill: 'none', stroke: '#E7ECEE', 'stroke-width': 0.8 }, g);
-      const right = Math.cos(a) > -0.3;
-      svgEl('text', { x: right ? x + 14 : x - 14, y: y + 4, 'text-anchor': right ? 'start' : 'end', 'font-family': 'Geist, sans-serif', 'font-size': 13, fill: '#E7ECEE' }, g).textContent = im.short || im.name;
-      svgEl('text', { x: right ? x + 14 : x - 14, y: y + 19, 'text-anchor': right ? 'start' : 'end', 'font-family': 'Geist Mono, monospace', 'font-size': 10.5,
-        fill: im.dir === 'up' ? '#E2B170' : im.dir === 'down' ? '#8FB9E8' : '#6B7A81' }, g).textContent = `${SYM[im.dir] ? SYM[im.dir] + ' ' : ''}${im.mag}`;
-      const open = () => toggleImpact(i, true);
-      g.addEventListener('click', open); g.addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); open(); } });
+
+    /* ---- geometry (CSS px) ---- */
+    let W = 0, H = 0, cx = 0, cy = 0, R0 = 0, R1 = 0, LAM = 16, reachR = 0, Rend = 0, bw = 0, bh = 0, sc = 3;
+    let RR, PX, PZ, PH1, PH2, PH3, PATCH, BASE, ALPHA, HGT, img, ticks = [], stopsR = [];
+    function layout() {
+      const w = Math.round(host.clientWidth); if (!w || w === W) return false;
+      W = w; H = Math.round(W * (W < 520 ? 0.8 : 0.68)); host.style.height = H + 'px';
+      cv.width = Math.round(W * DPR); cv.height = Math.round(H * DPR); cv.style.width = W + 'px'; cv.style.height = H + 'px';
+      cx = W / 2; R1 = Math.min(W * 0.435, (H - 64) / (TILT * (1 / (1 + PERS) + 1 / (1 - PERS)))); R0 = R1 * 0.1;
+      const far = R1 * TILT / (1 + PERS), near = R1 * TILT / (1 - PERS); cy = (H - far - near) / 2 + far;
+      LAM = Math.max(16, R1 * 0.1);
+      reachR = mv.length ? rOf(reachD, R0, R1) : R0 * 0.8; Rend = reachR + Math.max(LAM * 2.2, R1 * 0.13);
+      stopsR = RINGS.map(r => rOf(r.d, R0, R1));
+      // the small surface buffer
+      sc = W > 480 ? 3 : 2.5; bw = Math.ceil(W / sc); bh = Math.ceil(H / sc);
+      off.width = bw; off.height = bh; img = octx.createImageData(bw, bh);
+      const N = bw * bh; RR = new Float32Array(N); PX = new Float32Array(N); PZ = new Float32Array(N); PH1 = new Float32Array(N); PH2 = new Float32Array(N); PH3 = new Float32Array(N); PATCH = new Float32Array(N);
+      BASE = new Float32Array(N * 3); ALPHA = new Float32Array(N); HGT = new Float32Array(N);
+      for (let y = 0; y < bh; y++) for (let x = 0; x < bw; x++) {
+        const i = y * bw + x, sx = (x + 0.5) * sc, sy = (y + 0.5) * sc, v = (sy - cy) / TILT, pz = v / (1 + PERS * v / R1), px = (sx - cx) * (1 - PERS * pz / R1);
+        RR[i] = Math.hypot(px, pz);
+        PX[i] = px; PZ[i] = pz;   // plane coordinates under this pixel (the water is seen at an angle)
+        PH1[i] = 0.11 * px + 0.8 * Math.sin(0.05 * pz + 1.3);
+        PH2[i] = 0.09 * (0.55 * px + 0.83 * pz) + 0.7 * Math.sin(0.06 * px);
+        PH3[i] = 0.14 * (-0.8 * px + 0.6 * pz) + 0.5 * Math.sin(0.07 * pz - 0.04 * px);
+        PATCH[i] = 0.3 + 0.7 * (0.5 + 0.5 * Math.sin(0.012 * px + 0.9) * Math.sin(0.017 * pz - 0.4));
+        const fy = sy / H, far = 1 - fy;   // the far water holds a little sky
+        const e = RR[i] / (R1 * 1.25), fall = 1 - 0.35 * smooth(0.6, 1.2, e);
+        BASE[i * 3] = (9 + 9 * far) * fall; BASE[i * 3 + 1] = (14 + 15 * far) * fall; BASE[i * 3 + 2] = (17 + 18 * far) * fall;
+        const edgeD = Math.min(sx, W - sx, sy, H - sy); ALPHA[i] = 255 * smooth(0, Math.min(40, W * 0.08), edgeD);
+      }
+      ticks = RINGS.map((r, k) => ({ l: r.l.toUpperCase(), x: cx + stopsR[k], edge: r === edge && mv.length > 0 }));
+      placeMarks();
+      return true;
+    }
+    const proj = (x, z) => { const f = 1 / (1 - PERS * z / R1); return [cx + x * f, cy + z * TILT * f]; };
+    function placeMarks() {
+      const boxes = [];
+      ctx.font = '500 9.5px "Geist Mono", ui-monospace, monospace';
+      let prev = -1e9;
+      ticks.forEach(t => {   // time labels sit under the axis; one that would touch its neighbour steps above it
+        t.w = ctx.measureText(t.l).width + t.l.length * 1.2; t.lx = Math.min(t.x - t.w / 2, W - t.w - 4);
+        t.up = t.lx < prev + 6 && !ticks[ticks.indexOf(t) - 1]?.up; t.ly = t.up ? cy - 19 : cy + 8; if (!t.up) prev = t.lx + t.w;
+        boxes.push({ x: t.lx - 3, y: t.ly - 2, w: t.w + 6, h: 14 });
+      });
+      const lo = Math.max(Rend + LAM * 0.5, R1 * 0.55), hi = R1 * 1.08;
+      marks.forEach(m => {
+        // no-sign markers float out in the calm water beyond the reach, scattered (their distance means nothing)
+        m.r = m.tier === 'none' ? lo + (hi - lo) * ((0.31 + m.k * 0.618) % 1) : Math.min(rOf(m.d, R0, R1), R1 * 1.02);
+        m.px = m.r * Math.cos(m.th); m.pz = m.r * Math.sin(m.th); [m.x, m.y] = proj(m.px, m.pz);
+        m.el.style.left = m.x.toFixed(1) + 'px'; m.el.style.top = m.y.toFixed(1) + 'px';
+        boxes.push({ x: m.x - 7, y: m.y - 7, w: 14, h: 14 });
+      });
+      const hit = (a) => a.x < 2 || a.y < 2 || a.x + a.w > W - 2 || a.y + a.h > H - 2 || boxes.some(b => a.x < b.x + b.w && a.x + a.w > b.x && a.y < b.y + b.h && a.y + a.h > b.y);
+      const order = marks.slice().sort((a, b) => (b.moves - a.moves) || ((b.tier !== 'none') - (a.tier !== 'none')) || a.k - b.k);
+      order.forEach(m => {
+        m.lb.hidden = false; const w = m.lb.offsetWidth, h = m.lb.offsetHeight, out = Math.cos(m.th) >= 0;
+        const c = { r: [11, -h / 2], l: [-11 - w, -h / 2], b: [-w / 2, 9], t: [-w / 2, -9 - h] };
+        const pref = (out ? ['r', 'l'] : ['l', 'r']).concat(Math.sin(m.th) > 0 ? ['b', 't'] : ['t', 'b']);
+        let pick = pref.find(k => !hit({ x: m.x + c[k][0], y: m.y + c[k][1], w, h }));
+        if (!pick && m.tier !== 'none') pick = pref.find(k => { const a = { x: m.x + c[k][0], y: m.y + c[k][1], w, h }; return a.x >= 0 && a.x + a.w <= W; }) || pref[0];
+        if (!pick) { m.lb.hidden = true; return; }
+        m.lb.style.left = c[pick][0] + 'px'; m.lb.style.top = c[pick][1] + 'px';
+        boxes.push({ x: m.x + c[pick][0] - 3, y: m.y + c[pick][1] - 2, w: w + 6, h: h + 4 });
+      });
+    }
+
+    /* ---- the wave ---- */
+    const amp = r => (1 / Math.sqrt(1 + r / (R1 * 0.16))) * (1 - smooth(reachR, Rend, r)) * smooth(0, LAM * 0.8, r);
+    let LUT = new Float32Array(1), lutN = 0;
+    function buildLUT(front, A, ph, t, still) {
+      lutN = Math.ceil(R1 * 1.5) + 2; if (LUT.length < lutN) LUT = new Float32Array(lutN);
+      const splashT = t - T_IMP, resid = still ? 0 : 0.07 * smooth(0, 1.5, t - T_IMP);
+      for (let r = 0; r < lutN; r++) {
+        let h = 0;
+        if (still) {   // reduced motion: the settled record of how far it went
+          h = amp(r) * Math.cos(TAU * r / (LAM * 1.3)) * smooth(LAM * 0.4, LAM * 1.4, r) * (0.25 + 0.5 * r / Math.max(1, reachR));
+        }
+        if (A > 0.002) {
+          const d = front - r;   // distance behind the leading edge
+          if (d > -LAM && d < LAM * 5) h += A * smooth(-0.6 * LAM, 0.3 * LAM, d) * Math.exp(-Math.max(d, 0) / (1.05 * LAM)) * Math.cos(TAU * d / LAM + ph);
+        }
+        if (splashT > 0 && splashT < 1.2) {   // the plunge: a small crater that springs back
+          const g = Math.exp(-(r * r) / (LAM * LAM * 0.35));
+          h += g * (-1.6 * Math.exp(-splashT / 0.16) + 0.7 * Math.sin(splashT * 14) * Math.exp(-splashT / 0.3));
+        }
+        if (resid > 0 && r < reachR) h += resid * (1 - smooth(reachR * 0.55, reachR, r)) * Math.sin(TAU * r / (LAM * 1.7) - t * 1.3) * Math.exp(-r / (R1 * 0.5));
+        LUT[r] = h;
+      }
+    }
+    const rips = [];
+    function surface(t, front, A, ph, still) {
+      buildLUT(front, A, ph, t, still);
+      const N = bw * bh, a1 = 0.9 * t * 0.35, a2 = 0.6 * t * 0.35, a3 = 1.3 * t * 0.35, amb = 0.08;
+      for (let i = 0; i < N; i++) {
+        const r = RR[i], j = r | 0, f = r - j;
+        const w = j + 1 < lutN ? LUT[j] + (LUT[j + 1] - LUT[j]) * f : 0;
+        HGT[i] = w + amb * PATCH[i] * (Math.sin(PH1[i] + a1) + Math.sin(PH2[i] - a2) + 0.6 * Math.sin(PH3[i] + a3));
+      }
+      for (let q = rips.length - 1; q >= 0; q--) {   // each touched marker sends out its own small ring
+        const p = rips[q], age = t - p.t0, ra = age * LAM * 3.2, a = 0.55 * Math.exp(-age / 0.9);
+        if (a < 0.01) { rips.splice(q, 1); continue; }
+        const l2 = LAM * 0.55, ext = ra + l2 * 2;
+        const [ax, ay] = proj(p.px - ext, p.pz - ext), [bx, by] = proj(p.px + ext, p.pz + ext), [ex] = proj(p.px - ext, p.pz + ext), [fx] = proj(p.px + ext, p.pz - ext);
+        const x0 = Math.max(0, (Math.min(ax, ex) / sc) | 0), x1 = Math.min(bw - 1, Math.ceil(Math.max(bx, fx) / sc));
+        const y0 = Math.max(0, (ay / sc) | 0), y1 = Math.min(bh - 1, Math.ceil(by / sc));
+        for (let y = y0; y <= y1; y++) for (let x = x0; x <= x1; x++) {
+          const i = y * bw + x, d = ra - Math.hypot(PX[i] - p.px, PZ[i] - p.pz);
+          if (d > -l2 && d < l2 * 3) HGT[i] += a * smooth(-l2, 0.3 * l2, d) * Math.exp(-Math.max(d, 0) / l2) * Math.cos(TAU * d / l2);
+        }
+      }
+      // light the slope: light from the far side, low over the water
+      const D = img.data, G = 0.95 * (3 / sc);
+      for (let y = 0; y < bh; y++) {
+        const ym = y > 0 ? -bw : 0, yp = y < bh - 1 ? bw : 0;
+        for (let x = 0; x < bw; x++) {
+          const i = y * bw + x, hx = HGT[x < bw - 1 ? i + 1 : i] - HGT[x > 0 ? i - 1 : i], hy = HGT[i + yp] - HGT[i + ym];
+          const v = (0.42 * hx + 0.9 * hy) * G, h = HGT[i];
+          const lit = v > 0 ? Math.min(1, v * 0.55 + v * v * 0.9) : 0, dk = v < 0 ? Math.min(0.75, -v * 0.7) : 0;
+          const lift = h > 0 ? Math.min(0.12, h * 0.07) : 0;
+          const k = i * 3, o = i * 4, br = BASE[k], bg = BASE[k + 1], bb = BASE[k + 2], m = lit * 0.82 + lift;
+          D[o] = br + (169 - br) * m - br * dk; D[o + 1] = bg + (211 - bg) * m - bg * dk; D[o + 2] = bb + (223 - bb) * m - bb * dk; D[o + 3] = ALPHA[i];
+        }
+      }
+      octx.putImageData(img, 0, 0);
+    }
+
+    /* ---- state ---- */
+    let mode = reduce ? 'still' : 'anim', simT = 0, last = 0, raf = 0, vis = true, dragging = false, frames = 0;
+    let scrubR = 0, shownR = 0, front = 0, settled = false;
+    const TRAVEL = () => 1.1 + 2.7 * Math.min(1, Rend / R1);
+    const U = [0, 0.125, 0.375, 0.625, 0.875, 1];
+    const RV = () => [0, ...stopsR, R1 * 1.1];
+    const uToR = u => { const rv = RV(); for (let k = 1; k < U.length; k++) if (u <= U[k]) return rv[k - 1] + (rv[k] - rv[k - 1]) * (u - U[k - 1]) / (U[k] - U[k - 1]); return rv[5]; };
+    const rToU = r => { const rv = RV(); for (let k = 1; k < rv.length; k++) if (r <= rv[k]) return U[k - 1] + (U[k] - U[k - 1]) * (r - rv[k - 1]) / (rv[k] - rv[k - 1]); return 1; };
+
+    function frontNow() {
+      if (mode === 'scrub') return shownR;
+      if (mode === 'still') return Rend;
+      const u = (simT - T_IMP) / TRAVEL(); if (u <= 0) return 0; if (u >= 1) { settled = true; return Rend + 1; }
+      return Rend * (1 - Math.pow(1 - u, 1.8));
+    }
+    function draw() {
+      if (!W) return;
+      front = frontNow();
+      const live = mode === 'scrub' || (mode === 'anim' && !settled);
+      const A = live ? amp(front) : 0, ph = reduce ? 0 : -simT * 2.4;
+      surface(reduce ? 4 : simT, front, A, ph, mode === 'still');
+      ctx.setTransform(DPR, 0, 0, DPR, 0, 0); ctx.clearRect(0, 0, W, H);
+      ctx.imageSmoothingEnabled = true; ctx.imageSmoothingQuality = 'high';
+      ctx.drawImage(off, 0, 0, bw * sc, bh * sc);
+      // the stone, falling, then the point it went in
+      if (mode === 'anim' && simT < T_IMP) {
+        const p = simT / T_IMP;
+        ctx.fillStyle = `rgba(0,0,0,${0.35 * p})`; ctx.beginPath(); ctx.ellipse(cx, cy, 5 + 4 * (1 - p), (5 + 4 * (1 - p)) * TILT, 0, 0, TAU); ctx.fill();
+        ctx.fillStyle = `rgba(231,236,238,${0.3 + 0.7 * p})`; ctx.beginPath(); ctx.arc(cx, cy - 40 * (1 - p) * (1 - p), 2.2 + 2.6 * (1 - p), 0, TAU); ctx.fill();
+      } else {
+        ctx.fillStyle = 'rgba(231,236,238,.55)'; ctx.beginPath(); ctx.arc(cx, cy, 1.6, 0, TAU); ctx.fill();
+      }
+      // time along one radius only: faint, brightening as the wave passes
+      ctx.font = '500 9.5px "Geist Mono", ui-monospace, monospace'; ctx.textBaseline = 'top';
+      if ('letterSpacing' in ctx) ctx.letterSpacing = '1.2px';
+      ticks.forEach((t, k) => {
+        const near = A > 0.02 ? Math.max(0, 1 - Math.abs(front - stopsR[k]) / (LAM * 2.5)) : 0;
+        const done = (mode !== 'scrub' && (settled || mode === 'still')) && t.edge;
+        const al = Math.min(0.9, 0.26 + 0.6 * near + (done ? 0.34 : 0));
+        ctx.fillStyle = t.edge && (done || near > 0) ? `rgba(169,211,223,${al})` : `rgba(163,176,182,${al})`;
+        ctx.fillRect(Math.round(t.x), cy - 3, 1, 6);
+        ctx.fillText(t.l, t.lx, t.ly);
+      });
+      if ('letterSpacing' in ctx) ctx.letterSpacing = '0px';
+      // markers: touched when the wave reaches them
+      marks.forEach(m => {
+        if (m.moves) {
+          const on = front >= m.r - LAM * 0.3;
+          if (on && !m.hit) { m.hit = true; m.tHit = simT; m.el.classList.add('hit'); if (!reduce && mode !== 'still') rips.push({ px: m.px, pz: m.pz, t0: simT }); }
+          else if (!on && m.hit && mode === 'scrub') { m.hit = false; m.el.classList.remove('hit'); }
+        }
+        if (!reduce) {
+          const a = m.hit ? simT - m.tHit : 0;
+          const dy = m.hit ? -3 * Math.sin(a * 10) * Math.exp(-a / 0.6) + 0.6 * Math.sin(simT * 1.4 + m.k * 1.7) : 0;
+          m.buoy.style.transform = `translate(-50%,calc(-50% + ${dy.toFixed(2)}px))`;
+        }
+      });
+      // the scrubber follows the wave
+      const u = rToU(Math.min(front, R1 * 1.1));
+      ui.fill.style.width = (u * 100).toFixed(2) + '%'; ui.knob.style.left = (u * 100).toFixed(2) + '%';
+    }
+    function sayLine() {
+      if (mode !== 'scrub') {
+        ui.line.textContent = mv.length ? `The ripple reached about ${edgeTxt}, then died out.` : 'No measured ripple yet: the water settled almost at once.';
+        return;
+      }
+      const k = Math.max(0, stopsR.findIndex((r, i) => Math.abs(r - scrubR) === Math.min(...stopsR.map(q => Math.abs(q - scrubR)))));
+      const c = marks.filter(m => m.moves && m.r <= scrubR + LAM * 0.3).length;
+      const by = `By ${SPAN[RINGS[k].l]}: `;
+      ui.line.textContent = scrubR >= Rend - 1 ? by + 'calm again. The ripple had died out.'
+        : scrubR > reachR + 1 ? by + 'fading out.'
+          : by + (c ? `still spreading. ${c} thing${c > 1 ? 's' : ''} had moved.` : 'still spreading. Nothing had moved yet.');
+      ui.scrub.setAttribute('aria-valuenow', k); ui.scrub.setAttribute('aria-valuetext', `${RINGS[k].l}. ${ui.line.textContent}`);
+    }
+
+    /* ---- loop: only while visible, only while something moves ---- */
+    function frame(now) {
+      raf = 0; if (!host.isConnected) return stop();
+      const dt = last ? Math.min(0.05, (now - last) / 1000) : 1 / 60; last = now; simT += dt;
+      if (mode === 'scrub' && !dragging) shownR += (scrubR - shownR) * Math.min(1, dt * 7);
+      if (!(settled && mode === 'anim' && (frames++ & 1))) draw();   // settled water only needs half the frames
+      kick();
+    }
+    function kick() { if (reduce || raf || !vis || document.hidden || !host.isConnected) { if (!raf) last = 0; return; } raf = requestAnimationFrame(frame); }
+    const io = 'IntersectionObserver' in window ? new IntersectionObserver(e => { vis = e[e.length - 1].isIntersecting; kick(); }) : null;
+    const ro = 'ResizeObserver' in window ? new ResizeObserver(() => { if (layout()) { draw(); sayLine(); } }) : null;
+    const onVis = () => kick();
+    function stop() { if (raf) cancelAnimationFrame(raf); raf = 0; io && io.disconnect(); ro && ro.disconnect(); document.removeEventListener('visibilitychange', onVis); }
+    io && io.observe(host); ro && ro.observe(host); document.addEventListener('visibilitychange', onVis);
+
+    /* ---- scrubber + replay ---- */
+    function scrubTo(r, snap) {
+      if (mode !== 'scrub') { shownR = Math.min(front, R1 * 1.1); mode = 'scrub'; }
+      scrubR = r; if (snap || reduce) shownR = r;
+      sayLine(); if (reduce) draw(); else kick();
+    }
+    const uAt = e => { const b = ui.rail.getBoundingClientRect(); return Math.min(1, Math.max(0, (e.clientX - b.left) / b.width)); };
+    const nearest = u => Math.min(3, Math.max(0, Math.round((u - 0.125) / 0.25)));
+    ui.scrub.addEventListener('pointerdown', e => { dragging = true; ui.scrub.setPointerCapture?.(e.pointerId); scrubTo(uToR(uAt(e)), true); e.preventDefault(); });
+    ui.scrub.addEventListener('pointermove', e => { if (dragging) scrubTo(uToR(uAt(e)), true); });
+    const end = e => { if (!dragging) return; dragging = false; scrubTo(stopsR[nearest(uAt(e))], false); };
+    ui.scrub.addEventListener('pointerup', end); ui.scrub.addEventListener('pointercancel', end);
+    ui.scrub.addEventListener('keydown', e => {
+      const cur = mode === 'scrub' ? nearest(rToU(scrubR)) : -1;
+      const k = { ArrowRight: cur + 1, ArrowUp: cur + 1, ArrowLeft: cur - 1, ArrowDown: cur - 1, Home: 0, End: 3 }[e.key];
+      if (k == null) return; e.preventDefault(); scrubTo(stopsR[Math.min(3, Math.max(0, k))], false);
     });
-    return svg;
+    ui.replay.onclick = () => {
+      mode = reduce ? 'still' : 'anim'; simT = 0; settled = false; rips.length = 0;
+      marks.forEach(m => { m.hit = false; m.el.classList.remove('hit'); });
+      sayLine(); draw(); kick();
+    };
+
+    layout(); sayLine(); draw(); kick();
+    return {
+      setOpen(i) { marks.forEach(m => m.el.classList.toggle('sel', m.i >= 0 && m.i === i)); },
+    };
   }
 
   let cur = null, openI = -1;
@@ -200,13 +445,17 @@
           ${s.is_control ? `<p class="note">One of our test cases: a shock whose effect we expected. We use it to check the engine finds real effects before we trust it on surprising ones.</p>` : ''}
           <div class="actions"><button class="btn primary" id="send">Send this</button><a class="btn" href="#/" id="another">Find another ripple</a></div>
         </div>
-        <div class="viz"><div id="pond"></div>
-          <div class="scale">${RINGS.map((r, i) => `<span class="${i < ei ? 'on' : i === ei ? 'edge' : ''}">${r.l}</span>`).join('')}</div>
-          <p class="reachline">${moved(s).length ? `Reached a ${edge.l.toLowerCase()}, then calm.` : 'No measured ripple yet.'}</p></div>
+        <div class="viz"><div class="pond" id="pond"></div>
+          <div class="scrub" id="scrub" role="slider" tabindex="0" aria-label="How far the ripple had travelled by then" aria-valuemin="0" aria-valuemax="3" aria-valuenow="${ei}" aria-valuetext="${edge.l}">
+            <div class="rail" id="rail"><i class="fill" id="fill"></i><i class="knob" id="knob"></i></div>
+            <div class="stops">${RINGS.map((r, i) => `<span class="${i < ei ? 'on' : i === ei && moved(s).length ? 'edge' : ''}">${r.l}</span>`).join('')}</div>
+          </div>
+          <div class="pondfoot"><p class="reachline" id="reachline"></p><button type="button" class="replay" id="replay">Drop again</button></div></div>
       </section>
       <section class="groups" id="groups"></section>
       ${s.context ? `<div class="context"><div class="eyebrow">${esc(s.context.title)}</div><p>${esc(s.context.text)}</p></div>` : ''}`;
-    $('#pond').appendChild(pond(s, -2));
+    pondCtl = Pond(s, $('#pond'), { scrub: $('#scrub'), rail: $('#rail'), fill: $('#fill'), knob: $('#knob'), line: $('#reachline'), replay: $('#replay'),
+      pick: i => toggleImpact(i, true), none: showNone });
     $('#send').onclick = () => send(s.title, url);
     renderGroups();
     window.scrollTo({ top: 0, behavior: reduce ? 'auto' : 'smooth' });
@@ -235,7 +484,7 @@
       G.appendChild(sec);
     });
     if (s.none && s.none.length) {
-      const ns = document.createElement('div'); ns.className = 'group';
+      const ns = document.createElement('div'); ns.className = 'group'; ns.id = 'nonegroup';
       const first = s.none.slice(0, 3).map(x => x.toLowerCase());
       ns.innerHTML = `<h3><i class="dot" style="background:var(--c-none)"></i>No sign</h3>
         <p class="nosign">Didn’t move: ${esc(first.join(', '))}${s.none.length > 3 ? ` and ${s.none.length - 3} more` : ''}.${s.none.length > 3 ? '<button id="allnone">See all</button>' : ''}</p>
@@ -244,9 +493,13 @@
       const b = $('#allnone'); if (b) b.onclick = e => { const l = $('#nonelist'); l.hidden = !l.hidden; e.target.textContent = l.hidden ? 'See all' : 'Hide'; };
     }
   }
+  function showNone() {   // a still marker: open the full no-sign list
+    const l = $('#nonelist'), b = $('#allnone'); if (l && l.hidden) { l.hidden = false; if (b) b.textContent = 'Hide'; }
+    $('#nonegroup')?.scrollIntoView({ behavior: reduce ? 'auto' : 'smooth', block: 'center' });
+  }
   function toggleImpact(i, scroll) {
     openI = openI === i ? -1 : i; if (openI >= 0) ping('stop_open');
-    const p = $('#pond'); p.innerHTML = ''; p.appendChild(pond(cur, openI)); renderGroups();
+    if (pondCtl) pondCtl.setOpen(openI); renderGroups();
     if (scroll && openI >= 0) document.getElementById(`imp-${i}`)?.scrollIntoView({ behavior: reduce ? 'auto' : 'smooth', block: 'center' });
   }
 
