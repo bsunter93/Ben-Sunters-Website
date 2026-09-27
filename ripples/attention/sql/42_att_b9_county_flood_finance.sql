@@ -188,3 +188,9 @@ select cron.schedule('att-b9-collect', '* * * * *', $c$
   set statement_timeout = '100s';
   select ripples.att_b9_tick() where exists (select 1 from ripples.att_b9_req where status in ('queued', 'requested'))
 $c$);
+
+-- 16:15 UTC (not part of b9): owner-provided keys stored in Vault (census_api_key updated; api_data_gov_key, epa_aqs_key,
+-- epa_aqs_email added). att_secret's allow-list now includes the three new names. epa_aqs_email is sent only to
+-- aqs.epa.gov together with epa_aqs_key (EPA requires both on every request).
+create or replace function public.att_secret(p_name text) returns text language sql stable security definer set search_path to '' as $function$
+  select decrypted_secret from vault.decrypted_secrets where name = p_name and name in ('fred_api_key','sec_contact_email','bls_api_key','eia_api_key','census_api_key','noaa_cdo_token','youtube_api_key','twelvedata_api_key','alphavantage_api_key','stackexchange_key','github_token','api_data_gov_key','epa_aqs_key','epa_aqs_email') limit 1; $function$;
