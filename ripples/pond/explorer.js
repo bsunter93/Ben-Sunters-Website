@@ -152,6 +152,14 @@
   const SPAN = { Day: 'a day', Week: 'a week', Month: 'a month', Quarter: 'three months' };
   const smooth = (a, b, x) => { const t = Math.min(1, Math.max(0, (x - a) / (b - a))); return t * t * (3 - 2 * t); };
   let pondCtl = null;
+  const POND_T = [0.22, 0.48, 0.74, 1];   // day, week, month, quarter sit evenly along the radius, like the scrubber under it
+  function rPond(d, R1) {
+    if (d <= RINGS[0].d) return R1 * POND_T[0] * Math.max(0, d) / RINGS[0].d;
+    for (let k = 1; k < RINGS.length; k++) if (d <= RINGS[k].d) {
+      const f = Math.log(d / RINGS[k - 1].d) / Math.log(RINGS[k].d / RINGS[k - 1].d); return R1 * (POND_T[k - 1] + (POND_T[k] - POND_T[k - 1]) * f);
+    }
+    return R1;
+  }
 
   function Pond(s, host, ui) {
     const TILT = 0.5, PERS = 0.2, T_IMP = 0.5, DPR = Math.min(2, window.devicePixelRatio || 1), TAU = Math.PI * 2;
@@ -164,7 +172,13 @@
       ...(s.none || []).map(nm => ({ i: -1, name: nm, tier: 'none', moves: false, d: 91, word: 'still', dir: '' })),
     ];
     const n = marks.length, stepA = TAU / Math.max(1, n), th0 = stepA * (Math.floor(n / 2) + 0.5);   // evenly spread, clear of the time axis
-    marks.forEach((m, k) => { m.k = k; m.th = th0 + k * stepA + (m.tier === 'none' ? (((k * 0.377) % 1) - 0.5) * stepA * 0.5 : 0); });
+        // angle slots only spread things out for legibility: the things that moved take evenly spaced slots, the rest fill in
+    const nm = marks.filter(m => m.moves).length, slots = [], free = [];
+    marks.forEach((m, k) => { m.k = k; });
+    for (let j = 0; j < nm; j++) slots.push(Math.round(j * n / nm));
+    for (let q = 0; q < n; q++) if (!slots.includes(q)) free.push(q);
+    let a = 0, b = 0;
+    marks.forEach(m => { const q = m.moves ? slots[a++] : free[b++]; m.th = th0 + q * stepA + (m.tier === 'none' ? (((m.k * 0.377) % 1) - 0.5) * stepA * 0.5 : 0); });
 
     const edgeTxt = SPAN[edge.l];
     const summary = mv.length
@@ -193,8 +207,8 @@
       cx = W / 2; R1 = Math.min(W * 0.435, (H - 64) / (TILT * (1 / (1 + PERS) + 1 / (1 - PERS)))); R0 = R1 * 0.1;
       const far = R1 * TILT / (1 + PERS), near = R1 * TILT / (1 - PERS); cy = (H - far - near) / 2 + far;
       LAM = Math.max(16, R1 * 0.1);
-      reachR = mv.length ? rOf(reachD, R0, R1) : R0 * 0.8; Rend = reachR + Math.max(LAM * 2.2, R1 * 0.13);
-      stopsR = RINGS.map(r => rOf(r.d, R0, R1));
+      reachR = mv.length ? rPond(reachD, R1) : R0 * 0.8; Rend = reachR + Math.max(LAM * 1.6, R1 * 0.12);
+      stopsR = RINGS.map(r => rPond(r.d, R1));
       // the small surface buffer
       sc = W > 480 ? 3 : 2.5; bw = Math.ceil(W / sc); bh = Math.ceil(H / sc);
       off.width = bw; off.height = bh; img = octx.createImageData(bw, bh);
@@ -211,7 +225,8 @@
         const fy = sy / H, far = 1 - fy;   // the far water holds a little sky
         const e = RR[i] / (R1 * 1.25), fall = 1 - 0.35 * smooth(0.6, 1.2, e);
         BASE[i * 3] = (9 + 9 * far) * fall; BASE[i * 3 + 1] = (14 + 15 * far) * fall; BASE[i * 3 + 2] = (17 + 18 * far) * fall;
-        const edgeD = Math.min(sx, W - sx, sy, H - sy); ALPHA[i] = 255 * smooth(0, Math.min(40, W * 0.08), edgeD);
+        const edgeD = Math.min(sx, W - sx, sy, H - sy);   // no box: the water thins out towards every edge
+        ALPHA[i] = 255 * smooth(0, W * 0.14, edgeD) * (1 - smooth(1.0, 1.45, e * 1.25));
       }
       ticks = RINGS.map((r, k) => ({ l: r.l.toUpperCase(), x: cx + stopsR[k], edge: r === edge && mv.length > 0 }));
       placeMarks();
@@ -230,17 +245,19 @@
       const lo = Math.max(Rend + LAM * 0.5, R1 * 0.55), hi = R1 * 1.08;
       marks.forEach(m => {
         // no-sign markers float out in the calm water beyond the reach, scattered (their distance means nothing)
-        m.r = m.tier === 'none' ? lo + (hi - lo) * ((0.31 + m.k * 0.618) % 1) : Math.min(rOf(m.d, R0, R1), R1 * 1.02);
+        m.r = m.tier === 'none' ? lo + (hi - lo) * ((0.31 + m.k * 0.618) % 1) : Math.min(rPond(m.d, R1), R1 * 1.02);
         m.px = m.r * Math.cos(m.th); m.pz = m.r * Math.sin(m.th); [m.x, m.y] = proj(m.px, m.pz);
         m.el.style.left = m.x.toFixed(1) + 'px'; m.el.style.top = m.y.toFixed(1) + 'px';
-        boxes.push({ x: m.x - 7, y: m.y - 7, w: 14, h: 14 });
+        const bb = { x: m.x - 7, y: m.y - 7, w: 14, h: 14 }; boxes.push(bb);
+        ticks.forEach(t => { if (bb.x < t.lx + t.w && bb.x + bb.w > t.lx && bb.y < t.ly + 11 && bb.y + bb.h > t.ly) t.hide = true; });   // a buoy sitting on a time label wins
       });
       const hit = (a) => a.x < 2 || a.y < 2 || a.x + a.w > W - 2 || a.y + a.h > H - 2 || boxes.some(b => a.x < b.x + b.w && a.x + a.w > b.x && a.y < b.y + b.h && a.y + a.h > b.y);
       const order = marks.slice().sort((a, b) => (b.moves - a.moves) || ((b.tier !== 'none') - (a.tier !== 'none')) || a.k - b.k);
       order.forEach(m => {
         m.lb.hidden = false; const w = m.lb.offsetWidth, h = m.lb.offsetHeight, out = Math.cos(m.th) >= 0;
-        const c = { r: [11, -h / 2], l: [-11 - w, -h / 2], b: [-w / 2, 9], t: [-w / 2, -9 - h] };
-        const pref = (out ? ['r', 'l'] : ['l', 'r']).concat(Math.sin(m.th) > 0 ? ['b', 't'] : ['t', 'b']);
+        const c = { r: [11, -h / 2], l: [-11 - w, -h / 2], b: [-w / 2, 9], t: [-w / 2, -9 - h], tr: [6, -8 - h], tl: [-6 - w, -8 - h], br: [6, 8], bl: [-6 - w, 8] };
+        const lo2 = Math.sin(m.th) > 0, pref = (out ? ['r', 'l'] : ['l', 'r']).concat(lo2 ? ['b', 't'] : ['t', 'b'],
+          out ? (lo2 ? ['br', 'tr', 'bl', 'tl'] : ['tr', 'br', 'tl', 'bl']) : (lo2 ? ['bl', 'tl', 'br', 'tr'] : ['tl', 'bl', 'tr', 'br']));
         let pick = pref.find(k => !hit({ x: m.x + c[k][0], y: m.y + c[k][1], w, h }));
         if (!pick && m.tier !== 'none') pick = pref.find(k => { const a = { x: m.x + c[k][0], y: m.y + c[k][1], w, h }; return a.x >= 0 && a.x + a.w <= W; }) || pref[0];
         if (!pick) { m.lb.hidden = true; return; }
@@ -258,7 +275,7 @@
       for (let r = 0; r < lutN; r++) {
         let h = 0;
         if (still) {   // reduced motion: the settled record of how far it went
-          h = amp(r) * Math.cos(TAU * r / (LAM * 1.3)) * smooth(LAM * 0.4, LAM * 1.4, r) * (0.25 + 0.5 * r / Math.max(1, reachR));
+          h = amp(r) * Math.cos(TAU * r / (LAM * 1.3)) * smooth(LAM * 0.4, LAM * 1.4, r) * (0.15 + 0.35 * r / Math.max(1, reachR));
         }
         if (A > 0.002) {
           const d = front - r;   // distance behind the leading edge
@@ -275,7 +292,7 @@
     const rips = [];
     function surface(t, front, A, ph, still) {
       buildLUT(front, A, ph, t, still);
-      const N = bw * bh, a1 = 0.9 * t * 0.35, a2 = 0.6 * t * 0.35, a3 = 1.3 * t * 0.35, amb = 0.08;
+      const N = bw * bh, a1 = 0.9 * t * 0.35, a2 = 0.6 * t * 0.35, a3 = 1.3 * t * 0.35, amb = 0.06;
       for (let i = 0; i < N; i++) {
         const r = RR[i], j = r | 0, f = r - j;
         const w = j + 1 < lutN ? LUT[j] + (LUT[j + 1] - LUT[j]) * f : 0;
@@ -350,7 +367,7 @@
         const al = Math.min(0.9, 0.26 + 0.6 * near + (done ? 0.34 : 0));
         ctx.fillStyle = t.edge && (done || near > 0) ? `rgba(169,211,223,${al})` : `rgba(163,176,182,${al})`;
         ctx.fillRect(Math.round(t.x), cy - 3, 1, 6);
-        ctx.fillText(t.l, t.lx, t.ly);
+        if (!t.hide) ctx.fillText(t.l, t.lx, t.ly);
       });
       if ('letterSpacing' in ctx) ctx.letterSpacing = '0px';
       // markers: touched when the wave reaches them
@@ -378,8 +395,8 @@
       const k = Math.max(0, stopsR.findIndex((r, i) => Math.abs(r - scrubR) === Math.min(...stopsR.map(q => Math.abs(q - scrubR)))));
       const c = marks.filter(m => m.moves && m.r <= scrubR + LAM * 0.3).length;
       const by = `By ${SPAN[RINGS[k].l]}: `;
-      ui.line.textContent = scrubR >= Rend - 1 ? by + 'calm again. The ripple had died out.'
-        : scrubR > reachR + 1 ? by + 'fading out.'
+      ui.line.textContent = scrubR >= Rend - LAM * 0.5 ? by + 'calm again. The ripple had died out.'
+        : scrubR > reachR + 1 ? by + 'fading out, almost calm.'
           : by + (c ? `still spreading. ${c} thing${c > 1 ? 's' : ''} had moved.` : 'still spreading. Nothing had moved yet.');
       ui.scrub.setAttribute('aria-valuenow', k); ui.scrub.setAttribute('aria-valuetext', `${RINGS[k].l}. ${ui.line.textContent}`);
     }
