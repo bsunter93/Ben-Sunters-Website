@@ -1,0 +1,60 @@
+# Ripple Map: HUD Fair Market Rents and EPA daily AQI by county (ripples/tools/gov/hud_epa.py). Both hosts refuse the
+# Supabase network, so this runs on GitHub and writes through public.att_ingest. Row-capped and paced per run.
+name: Ripples HUD + EPA county data
+
+on:
+  schedule:
+    - cron: "17 3 * * 1"   # Mondays 03:17 UTC; each run adds up to max_rows until history is complete
+  workflow_dispatch:
+    inputs:
+      what:
+        description: "both, epa or hud"
+        required: false
+        default: "both"
+      epa_from:
+        description: "EPA first year"
+        required: false
+        default: "2010"
+      max_rows:
+        description: "Max rows written this run"
+        required: false
+        default: "250000"
+      dry_run:
+        description: "Fetch and count only, write nothing"
+        type: boolean
+        required: false
+        default: false
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ripples-hud-epa
+  cancel-in-progress: false
+
+jobs:
+  fetch:
+    runs-on: ubuntu-latest
+    timeout-minutes: 90
+    env:
+      SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+      SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+      HUD_USER_TOKEN: ${{ secrets.HUD_USER_TOKEN }}
+      EPA_AQS_KEY: ${{ secrets.EPA_AQS_KEY }}
+      EPA_AQS_EMAIL: ${{ secrets.EPA_AQS_EMAIL }}
+      IN_WHAT: ${{ inputs.what || 'both' }}
+      IN_EPA_FROM: ${{ inputs.epa_from || '2010' }}
+      IN_MAX_ROWS: ${{ inputs.max_rows || '250000' }}
+      IN_DRY: ${{ inputs.dry_run && 'true' || 'false' }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Fetch and ingest
+        working-directory: ripples/tools/gov
+        run: |
+          set -euo pipefail
+          args=(--what "${IN_WHAT}" --epa-from "${IN_EPA_FROM}" --max-rows "${IN_MAX_ROWS}")
+          if [[ "${IN_DRY}" == "true" ]]; then args+=(--dry-run); fi
+          python hud_epa.py "${args[@]}"
