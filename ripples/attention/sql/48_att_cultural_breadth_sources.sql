@@ -26,3 +26,8 @@
 -- pg_net watchdog: the pg_net worker went idle with requests queued several times on 2026-09-27.
 --   ripples.att_net_watchdog(), cron 'att-net-watchdog' every 5 minutes: if the oldest queued request id has not moved
 --   since the last check, net.worker_restart(); otherwise net.wake().
+--
+-- Fix 2026-09-27 22:05 UTC: att_yt_tick stopped itself on the first video with comments disabled, because YouTube
+-- answers commentThreads.list with HTTP 403 for such videos and every 403 was treated as a block. Now the job stops only
+-- on 429/503 or a 403 whose reason is quotaExceeded / rateLimitExceeded / dailyLimitExceeded / userRateLimitExceeded;
+-- any other 403 marks the one video 'comments_disabled' or 'forbidden' and the job moves on. Job rescheduled.
