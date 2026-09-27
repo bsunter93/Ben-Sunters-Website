@@ -1,0 +1,193 @@
+# Ripple Map: context brief (updated 2026-09-27 17:40 UTC)
+
+Standalone context for anyone (person or new chat) picking up Ripple Map. It covers the vision, the current status,
+what we learned, pitfalls, open gaps and next steps. The operational runbook with exact commands is
+`ripples/HANDOFF.md`, and the experiments plan is `ripples/docs/experiments.md`.
+
+- Live site: https://bensunter.com/ripples/pond/
+- Repo: `bsunter93/Ben-Sunters-Website`
+- Database: Supabase project `kffkasnzqcddpystszch`, schema `ripples`. The compute tier went from nano to micro on
+  2026-09-27.
+
+---
+
+## 1. Vision (owner, verbatim core)
+
+> "The entire point of the app is uncovering hidden impacts from upstream events — regardless of where that impact
+> shows up. Attribution and traceability with statistical rigor are key."
+
+- **Obvious links are worthless.** "Storm → energy demand" is not a product. The product is the link nobody would guess.
+- **One shock, many outcomes.** A shock is one-to-many, not one-to-one.
+- **Resilience is a finding.** A shock that dies out (for example, Florida absorbing a hurricane) is worth showing, but
+  only against a counterfactual.
+- **Anomaly-first, not list-first.** Start from whatever moved unusually and work backwards to causes.
+- **Decade scale.** Compare old shocks' long-run outcomes with recent ones.
+- **Audience.** A 12-year-old must get it. Statistics sit behind links, with short plain summaries.
+- **Design.** Serious, sleek, not cartoony. The pond must feel like water. Outcomes are not on a perimeter, and rings
+  are not always visible.
+- **Honesty.** Report blunt results, including "nothing survived".
+
+## 2. Current status (one screen)
+
+**Product.** The pond explorer is live. Every shock page reads absorbed, expected or still unfolding. **No surprising
+link has passed confirmation yet**, and the pages say so.
+
+**Engine.** Pre-registered, hash-chained ledger (now about 1,274 entries), decoy universes, held-out confirmation, BH
+correction, seasonal check and withholding. It works: across b6 and b7, 80 decoy selections produced 0 false
+confirmations.
+
+**Batches so far**
+
+| batch | question | result |
+|---|---|---|
+| b1–b2 | first-order effects | confirmed, but only obvious links (storm → power, and so on) |
+| b3–b5 | housing and jobs downstream | not testable, or withheld on the seasonal check |
+| b6 | 7 industry job panels + CDC deaths | 0/12 confirmed |
+| b7 | historical shocks 2000–2018, year-after window | 0/10 confirmed; **one real lead** (below) |
+| b8 | anomaly-first scan | nothing surprising; 5 "confirmations" withheld as a year confound |
+| **b9** | **county-level flood → finance jobs** | **pre-registered (ledger 1271), data loading now** |
+
+**The one lead.** Floods → finance/insurance/real-estate jobs **−3.3%** in months 13–24.
+- q 0.030, CI −5.5% to −1.1%, 10 of 11 held-out floods negative.
+- It failed only the power gate (power 0.38).
+- The same outcome was b6's nearest miss (months 6–11).
+
+b9 tests it at county level with its own pre-registered design:
+- Treated counties: FEMA flood-declared counties.
+- Controls: same-state counties with no declaration.
+- Outcome: QCEW private finance employment, months 13–24.
+- Null: in-space permutation.
+- Primary threshold: one-sided p ≤ 0.05.
+
+**Data loading for b9 (as of 17:40 UTC)**
+- FEMA county declarations: done (49,224 rows).
+- QCEW 2014 onward: loading from the database at one request a minute, through mid-2019 so far.
+- QCEW 2001–2013: the open-data API only serves 2014+ (disclosed in ledger 1274 before any results). These years come
+  from BLS bulk files via the GitHub job "Ripples QCEW backfill". The dry run passed with about 76k rows a year; the
+  real run is going now.
+- Then: run `att_b9_test` (primary + 3 secondaries), write it to the ledger and report.
+
+**Other data now flowing**
+- HUD Fair Market Rents by county: GitHub Actions job. 2017–2020 verified; the rate-limit fix is merged (PR #21).
+- EPA daily AQI by county, reduced to weekly: GitHub Actions job, about 100k rows a year. It resumes by year from 2010.
+- Keys stored in Vault: Census, BLS, FRED, api.data.gov (FBI crime data), EPA AQS + email, USDA NASS, HUD, OpenAQ.
+
+**Experiments program** (`ripples/docs/experiments.md`, ledger 1272)
+
+| # | experiment | status |
+|---|---|---|
+| E1 | method bake-off on placebo counties with injected effects | tooling built; runs when b9 data is complete |
+| E2 | spillovers to neighbouring counties | planned |
+| E3 | network propagation (IRS migration, LODES commuting, input-output) | planned |
+| E4 | dose-response (NFIP claims dollars) | planned |
+| E5 | regression discontinuity at FEMA aid thresholds | planned |
+| E6 | multi-outcome fingerprints (one joint test) | planned |
+| E7 | predictive validity (fit 2001–2015, forecast 2016+) | planned |
+| E8 | anomaly-first v2 at county level, year-matched | planned |
+
+## 3. Learnings
+
+1. **The rigor machinery works, and it is strict.** Decoys produce no false confirmations. The cost is that small real
+   effects fail the power gate, so better data and designs, not looser gates, are the way forward.
+2. **Resolution is the bottleneck, not imagination.** State-monthly data dilutes local shocks. A storm that wrecks 10
+   counties barely moves a state total, so "absorbed" can just mean diluted. County footprints plus county outcomes
+   are the biggest lever.
+3. **Nulls must match the treated units' years.** b8's 5 "confirmations" came from 2024+ claims anomalies running
+   3–4× the pre-2020 rate against fake shocks drawn from all years. Use year-matched or in-space permutation nulls,
+   empirical p-values, and per-year anomaly scaling.
+4. **The normal tail approximation is anti-conservative:** 2.7% at a nominal 1%. Prefer empirical p from many draws.
+5. **Catalog contamination is real.** Katrina evacuee declarations spanned 47 states, and 9/11, a refinery explosion
+   and a plant fire were typed as "Fire" (wildfire). Always inspect raw event rows before freezing a batch.
+6. **Regime breaks must be excluded:** the pandemic (2020-02-15 to 2021-06-30) and the 2008–09 financial crisis.
+   Claims data is still abnormal through 2022.
+7. **One lead repeated across two independent batches:** flood → finance jobs. Repetition across designs is the
+   strongest signal we have. The b9 county test exists because of it.
+8. **Choose methods on placebo data, never on real treated units.** That is how E1 is built, so choosing a method
+   cannot peek at the answer.
+9. **Obvious-link filtering by regex is weak.** Surprise should come from the mechanism graph and domain distance.
+
+## 4. Pitfalls (operational, learned the hard way)
+
+**Database load**
+- **Disk-IO burst budget.** Session 2's jobs exhausted it and the database stopped answering for about an hour.
+- Rules: never more than one heavy every-minute job, never more than about 20k rows in one transaction, and stagger
+  schedules.
+
+**Tooling**
+- **MCP `execute_sql` past 60 s** returns an error but **keeps running server-side**. Run long work as one-off cron
+  jobs.
+- **Repo SQL drifts from live functions.** Patch by anchoring on `pg_get_functiondef`, never on the repo text.
+- **PL/pgSQL traps:**
+  - Never put a `CASE` inside an `IF` condition.
+  - Avoid variable names that clash with columns or keywords.
+  - A multi-statement MCP call is one transaction.
+
+**Engine**
+- **Decoy seeding is manual** (`att_fx63_decoy_seed`). Without it a batch never finishes.
+- Grids with no clean decoy date can loop forever; this is now tracked per grid.
+- **Finishers** must not unschedule shared workers while another batch is unfinished. Each batch now has its own
+  finisher.
+
+**Network and APIs**
+- The cloud container cannot reach most government APIs directly. The database (pg_net) can reach some. HUD and EPA
+  refuse the database network, so they run on GitHub Actions.
+- **API coverage surprises.** The QCEW open-data API only serves 2014+. HUD rate-limits at about 60 requests a minute.
+  Always dry-run and read the logs before a real run.
+- **Scheduled jobs must resume.** A job that restarts from year 1 every run never gets past its row cap. The fix was
+  done-year tracking in `att_state`.
+
+**Security**
+- Keys never appear in logs or URLs that are printed. Grep for leaked keys before every commit.
+
+**GitHub**
+- Workflow dispatch from this integration returns 403, so the owner runs workflows. A new workflow only appears in
+  Actions after its PR is merged to `main`.
+
+## 5. Open gaps (most important first)
+
+1. **No surprising link confirmed yet.** Everything depends on b9 and the experiments producing one that holds up.
+2. **Measurement is narrow.** The scan only covers about 20 regional panels plus county QCEW. About 12k national series
+   (Wikipedia, news, social, markets) are outside every test; they need a timing-only design (lane 2), labelled weaker.
+3. **"Absorbed" has no counterfactual.** It needs a pre-registered resilient-versus-not comparison (Florida vs North
+   Carolina hurricanes).
+4. **No dose-response yet.** Candidate dose measures are NFIP claims dollars, NOAA damage, wind speed and burned acres.
+5. **Too little held-out data.** Confirmation uses only 2024+ shocks. A second split (screen 2000–2015, confirm
+   2016–2019 and 2022–2023) would roughly double power.
+6. **b8 has no full decoy-universe calibration**, and its results are not wired into the pages ("Something unusual"
+   mode).
+7. **The page catalog is thin and skewed:** 26 small wildfires stuck on "unfolding", and no pages for historical shocks.
+8. **Frontend debt:**
+   - Share cards still show the rejected v1 design.
+   - "Too early" markers sit on the pond rim.
+   - No downstream "could ripple on to" exploration.
+   - The flow diagram is tiny on phones.
+   - Contrast is low in places.
+9. **Newsletter issue 01** leads with an obvious link. Reframe it around what did not move, or hold it for a real
+   finding.
+10. **Operations:** there is no engine status view and no automated check that live functions match the repo.
+11. **Viability:** the product only has a hook once one surprising, repeatable, explainable link exists. Until then it
+    is an honest "nothing yet" machine.
+
+## 6. Next steps
+
+1. **Finish b9 data** (backfill run + API collection), run the frozen test, report plainly whatever it says, and
+   record it in the ledger.
+2. **E1:** export the placebo-only extract (`att_e1_extract`) and run `ripples/tools/experiments/e1_bakeoff.py`. Pick
+   the estimator with the best recall at a calibrated false-positive rate.
+3. **E4 and E2:** load NFIP claims and county adjacency. Pre-register dose-response and spillover tests using the E1
+   winner.
+4. **E3:** load IRS county migration and LODES commuting flows; test "connected counties" against weakly connected
+   ones.
+5. **Owner:** run the HUD + EPA job for real (untick dry run, EPA first year 2010). The weekly schedule then continues
+   it.
+6. Product work after the first real finding: wire anomaly results into the pages, add a resilience comparison, and
+   regenerate the share cards.
+
+## 7. Rules that never change
+
+- Every test is pre-registered in the ledger before any result exists. Deviations are disclosed, and late ones are
+  labelled late. Confirmations must pass the seasonal check or be withheld.
+- Honest UA `ripples-research/0.2 (+https://bensunter.com/ripples/methods/)`. Stop on 429/503 with no same-day retry.
+  No bypassing blocks. Aggregate data only, no personal data.
+- Keys live only in Supabase Vault or GitHub secrets.
+- The owner merges PRs. Claude opens them without asking.
