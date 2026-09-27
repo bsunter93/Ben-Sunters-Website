@@ -138,12 +138,13 @@ begin
                 when top is not null then 'expected'
                 when jsonb_array_length(waits) > 0 or jsonb_array_length(leads) > 0 then 'unfolding'
                 else 'none' end;
+  title := case when name ~ '^(Heat wave|Inflation report|Cold snap)' then 'The ' || ripples.att_plain_lc1(name) else name end;   -- generic names read as 'The heat wave'
   title := case story
-    when 'surprise' then name || ' reached ' || lower(sur ->> 'name') || '.'
-    when 'absorbed' then name || case when fam like 'hazard.%' then ' was absorbed.' else ' stayed contained.' end
-    when 'expected' then name || ': only the expected ripple so far.'
-    when 'unfolding' then name || ': still unfolding.'
-    else name || ': no clear ripple.' end;
+    when 'surprise' then title || ' reached ' || ripples.att_plain_lc1(sur ->> 'name') || '.'
+    when 'absorbed' then title || case when fam like 'hazard.%' then ' was absorbed.' else ' stayed contained.' end
+    when 'expected' then title || ': only the expected ripple so far.'
+    when 'unfolding' then title || ': still unfolding.'
+    else title || ': no clear ripple.' end;
   synth := case story
     when 'surprise' then (sur ->> 'say')
          || case when cardinality(exp_names) > 0 then ' That’s beyond the expected ripple in ' || lower(ripples.att_plain_list(exp_names)) || '.' else '' end

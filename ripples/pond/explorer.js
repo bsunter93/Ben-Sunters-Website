@@ -18,6 +18,7 @@
     none: { label: 'No sign', c: '#3A474E', css: 'var(--c-none)' },
   };
   const ORDER = ['confirmed', 'likely', 'possible', 'watch'];
+  const STORY = { surprise: 'Surprise', absorbed: 'Absorbed', expected: 'Expected only' };   // story layer v2.1 (35_att_story_surprise.sql)
   const SYM = { up: '↑', down: '↓' };
   const $ = s => document.querySelector(s);
   const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[c]);
@@ -53,8 +54,8 @@
   const reachRing = s => RINGS.filter(r => r.d <= Math.max(1, s.reach || 1)).slice(-1)[0] || RINGS[0];
   const rOf = (d, R0, R1) => { const lo = Math.log(0.5), hi = Math.log(91); const t = (Math.log(Math.max(d || 1, 0.5)) - lo) / (hi - lo); return R0 + (R1 - R0) * Math.min(1, Math.max(0, t)); };
   const moved = s => s.impacts.filter(i => i.tier === 'confirmed' || i.tier === 'likely');
-  function titleHTML(t) {   // italicise what the shock touched
-    const m = t.match(/^(.*?(?:clearest mark was on|probably moved))\s(.+?)\.?$/);
+  function titleHTML(t) {   // italicise only the surprising place a shock reached
+    const m = t.match(/^(.*?\breached)\s(.+?)\.?$/);
     return m ? `${esc(m[1])} <em>${esc(m[2])}.</em>` : esc(t);
   }
   function tallyHTML(s) {
@@ -254,6 +255,7 @@
       const hit = (a) => a.x < 2 || a.y < 2 || a.x + a.w > W - 2 || a.y + a.h > H - 2 || boxes.some(b => a.x < b.x + b.w && a.x + a.w > b.x && a.y < b.y + b.h && a.y + a.h > b.y);
       const order = marks.slice().sort((a, b) => (b.moves - a.moves) || ((b.tier !== 'none') - (a.tier !== 'none')) || a.k - b.k);
       order.forEach(m => {
+        if (m.tier === 'none') { m.lb.hidden = true; return; }   // still water stays quiet: no-sign names live in the list below
         m.lb.hidden = false; const w = m.lb.offsetWidth, h = m.lb.offsetHeight, out = Math.cos(m.th) >= 0;
         const c = { r: [11, -h / 2], l: [-11 - w, -h / 2], b: [-w / 2, 9], t: [-w / 2, -9 - h], tr: [6, -8 - h], tl: [-6 - w, -8 - h], br: [6, 8], bl: [-6 - w, 8] };
         const lo2 = Math.sin(m.th) > 0, pref = (out ? ['r', 'l'] : ['l', 'r']).concat(lo2 ? ['b', 't'] : ['t', 'b'],
@@ -457,7 +459,7 @@
         <div class="headcol">
           <div class="eyebrow">${esc(s.kind)} · ${esc(s.when)}${s.where ? ' · ' + esc(s.where) : ''}</div>
           <h1 class="sm" style="margin-top:14px">${titleHTML(s.title)}</h1>
-          <div class="verdict"><span class="conf"><i class="dot" style="background:${TIER[s.confidence].css}"></i>${TIER[s.confidence].label}</span>${esc(s.verdict)}</div>
+          <div class="verdict"><span class="conf"><i class="dot" style="background:${TIER[s.confidence].css}"></i>${STORY[s.story] || TIER[s.confidence].label}</span>${esc(s.verdict)}</div>
           <p class="synth">${esc(s.synth)}</p>
           ${s.is_control ? `<p class="note">One of our test cases: a shock whose effect we expected. We use it to check the engine finds real effects before we trust it on surprising ones.</p>` : ''}
           <div class="actions"><button class="btn primary" id="send">Send this</button><a class="btn" href="#/" id="another">Find another ripple</a></div>
@@ -485,7 +487,7 @@
       sec.innerHTML = `<h3><i class="dot" style="background:${TIER[t].css}"></i>${TIER[t].label}</h3><p class="gnote">${esc(D.tiers[t])}</p>`;
       list.forEach(({ im, i }) => {
         const b = document.createElement('button'); b.className = 'impact'; b.id = `imp-${i}`; b.setAttribute('aria-expanded', openI === i);
-        b.innerHTML = `<span><span class="iname">${esc(im.name)}</span><span class="isub">${esc(im.sub)}</span></span><span class="dir ${esc(im.dir)}">${SYM[im.dir] ? SYM[im.dir] + ' ' : ''}${esc(im.mag)}</span><span class="chev" aria-hidden="true">${openI === i ? '−' : '+'}</span>`;
+        b.innerHTML = `<span><span class="iname">${esc(im.name)}${im.expected ? '<span class="exp">Expected</span>' : ''}</span><span class="isub">${esc(im.sub)}</span></span><span class="dir ${esc(im.dir)}">${SYM[im.dir] ? SYM[im.dir] + ' ' : ''}${esc(im.mag)}</span><span class="chev" aria-hidden="true">${openI === i ? '−' : '+'}</span>`;
         b.onclick = () => toggleImpact(i, false); sec.appendChild(b);
         if (openI === i) {
           const o = outcome(im.group); const d = document.createElement('div'); d.className = 'drawer fade';
