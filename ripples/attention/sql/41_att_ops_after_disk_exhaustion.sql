@@ -73,3 +73,14 @@ select cron.schedule('att-fx63-seed-b7', '3-59/4 * * * *', $$set statement_timeo
 -- year-composition confound; b7 seed back to 3 grids per run after one 100 s timeout at 6.
 update ripples.att_anom_hyp set verdict = 'withheld (year confound)'
  where run = 'b8-anomaly-first' and stage = 'explore' and promoted and verdict = 'confirmed' and source = 'dol.claims' and metric = 'ic_w';
+
+-- 09:10 UTC: the 3-grid b7 seed runs kept hitting 100 s on storm grids (126/234 stalled for an hour). One grid takes
+-- ~20 s (the clean-control check per decoy draw is the cost, not the writes). Now 6 grids per run, 280 s, every
+-- 5 minutes; when every b7 grid has dx rows the job schedules the b7 finisher itself and unschedules itself.
+select cron.schedule('att-fx63-seed-b7', '3-59/5 * * * *', $c$set statement_timeout = '280s';
+  select ripples.att_fx63_decoy_seed_grid('fx63-b7-decade', g.grid_id) from (select g.grid_id from ripples.att_fx_grid g where g.batch like 'fx63-b7-decade/%'
+    and not exists (select 1 from ripples.att_fx_event f where f.grid_id = g.grid_id and f.role = 'dx') order by g.grid_id limit 6) g;
+  select cron.schedule('att-fx63-finisher-fx63-b7-decade', '4-59/5 * * * *', $f$set statement_timeout = '280s'; select ripples.att_fx63_finisher('fx63-b7-decade')$f$),
+         cron.unschedule('att-fx63-seed-b7')
+   where not exists (select 1 from ripples.att_fx_grid g where g.batch like 'fx63-b7-decade/%'
+                       and not exists (select 1 from ripples.att_fx_event f where f.grid_id = g.grid_id and f.role = 'dx'));$c$);
