@@ -52,3 +52,19 @@ select cron.schedule('att-anom-b8-slow', '37 * * * *', $c$
   select ripples.att_anom_retry('b8-anomaly-first') where exists (select 1 from ripples.att_anom_queue where run = 'b8-anomaly-first' and status = 'timeout')
 $c$);
 select cron.schedule('att-fx63-finisher-fx63-b6-unexpected', '2-59/5 * * * *', $$set statement_timeout = '100s'; select ripples.att_fx63_finisher('fx63-b6-unexpected')$$);
+
+-- 06:30 UTC addendum.
+--  5. b8: att_norm_cdf underflowed on one screen task with an extreme z, so every tick failed (05:41-06:25) and the
+--     queue stalled on that task. z is clamped to [-30, 30] before the CDF (ledger 1225; no rule change).
+--  6. The b6 finisher's verdict stage needs more than 100 s: it now runs every 10 minutes with a 280 s timeout.
+--  7. b7 decoy seed raised to 6 grids per run (runs took ~6 s at 3 grids).
+do $$ declare d text;
+  a text := $a$1 - ripples.att_norm_cdf(((o.r - nl.m) / nl.s)::float8)$a$;
+  b text := $b$1 - ripples.att_norm_cdf(least(30, greatest(-30, (o.r - nl.m) / nl.s))::float8)$b$;
+begin d := pg_get_functiondef('ripples.att_anom_link(text,text,text,text,text,text,text,integer)'::regprocedure);
+  if position(b in d) > 0 then return; end if;
+  if position(a in d) = 0 then raise exception 'cdf anchor'; end if; execute replace(d, a, b); end $$;
+select cron.schedule('att-fx63-finisher-fx63-b6-unexpected', '6-59/10 * * * *', $$set statement_timeout = '280s'; select ripples.att_fx63_finisher('fx63-b6-unexpected')$$);
+select cron.schedule('att-fx63-seed-b7', '3-59/4 * * * *', $$set statement_timeout = '100s';
+  select ripples.att_fx63_decoy_seed_grid('fx63-b7-decade', g.grid_id) from (select g.grid_id from ripples.att_fx_grid g where g.batch like 'fx63-b7-decade/%'
+    and not exists (select 1 from ripples.att_fx_event f where f.grid_id = g.grid_id and f.role = 'dx') order by g.grid_id limit 6) g$$);
