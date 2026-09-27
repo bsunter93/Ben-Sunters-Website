@@ -178,3 +178,18 @@ end $$;
 
 -- Supabase Pro (2026-09-26): ingest cap raised to 6000 MB; b-batch space guard at 5800 MB.
 update ripples.att_config set value = to_jsonb(6000) where key = 'db_cap_mb';
+
+-- b4 (frozen at ledger 1204; date-range disclosure 1205, written after the freeze and before any result): state panels
+-- start where ALFRED first-release vintages begin (2005-06; permits 2007-11), via a per-panel start. Every other panel
+-- keeps 2015-01. att_fx63_panel_build patched live (anchor-checked):
+do $$ declare def text; a text := $a$declare v_from date := '2015-01-01';$a$;
+  b text := $b$declare v_from date := coalesce((ripples._att_cfg('engine63') -> 'panel_from' ->> (p_source || ':' || p_metric))::date, '2015-01-01'); /* ENGINE 6.3 b4: per-panel start */$b$;
+begin
+  select pg_get_functiondef('ripples.att_fx63_panel_build(text,text,text,text,text,boolean)'::regprocedure) into def;
+  if position('b4: per-panel start' in def) > 0 then return; end if;
+  if (length(def) - length(replace(def, a, ''))) / length(a) <> 1 then raise exception 'att_fx63_panel_build anchor'; end if;
+  execute replace(def, a, b);
+end $$;
+update ripples.att_config set value = value || '{"panel_from":{"fred.state:cons":"2005-06-01","fred.state:leih":"2005-06-01","fred.state:nonfarm":"2005-06-01","fred.state:bppriv":"2007-11-01"}}'::jsonb
+ where key = 'engine63';
+update ripples.att_config set value = value || '{"fred_state_from":"2000-01-01"}'::jsonb where key = 'econ';
