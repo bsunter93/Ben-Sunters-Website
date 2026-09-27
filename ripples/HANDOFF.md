@@ -1,11 +1,76 @@
-# Ripple Map — handoff (2026-09-27 03:35 UTC)
+# Ripple Map — handoff (updated 2026-09-27 04:25 UTC, session 2)
 
 Read this first. It is everything a new chat needs to continue: who the owner is and what they want, the rules, how the
 system is built, exactly what is running right now, and the runbook for the next steps.
 
-Repo `bsunter93/Ben-Sunters-Website`, working branch `claude/admiring-goldberg-u36vlz` (merged to `main` through PR #15;
-later commits are on the branch only: b7 + b8 SQL and this file). Live site: https://bensunter.com/ripples/ →
-`/ripples/pond/` (GitHub Pages from `main`). Supabase project `kffkasnzqcddpystszch` (Pro plan), schema `ripples`.
+Repo `bsunter93/Ben-Sunters-Website`. Session 1 worked on `claude/admiring-goldberg-u36vlz` (merged to `main` through
+PR #15, plus b7 + b8 SQL and this file on the branch). Session 2 works on `claude/funny-ride-8tiy11` (starts from
+session 1's branch; draft PR, not merged). Live site: https://bensunter.com/ripples/ → `/ripples/pond/` (GitHub Pages
+from `main`). Supabase project `kffkasnzqcddpystszch` (Pro plan), schema `ripples`.
+
+**Section 0 supersedes sections 6 and 7** (kept below as the session-1 record).
+
+---
+
+## 0. Session 2 (2026-09-27 03:45–04:25 UTC): what was done, what is running, what is next
+
+### Done (runbook steps 1–5), each change disclosed in the ledger before the step it affects
+- **Historical catalog (b7 input)**: 20/20 OpenFEMA declaration years fetched, none stopped. Before building, the raw rows
+  showed two contaminations, fixed in `39_att_b7_b8_prefreeze_amendments.sql` part A (ledger 1214):
+  Katrina 2005 covered 47 states (evacuee-sheltering EMs: titles with EVACU, plus late EM-only states ID/KY/PA), and
+  the 2001-09-11 "FIRES AND EXPLOSIONS" declarations (NY, NJ, VA), a 2009 PR refinery explosion and a 2011 OK plant
+  fire were typed "Fire" and would have entered as wildfires. Built: **1,829 library_hist events** (storm 574 incl. 63
+  named, wildfire 1,023, flood 119, cold 83, quake 12). Katrina now AL FL LA MS; Sandy 13 states; Harvey LA TX.
+- **b6** panels built (7 FRED supersectors start 2005-06, not 2000; eduh/fire 47 states, trad 50, mfg 49; CDC deaths
+  2014-01..2026-07), disclosure 1216, **frozen 1217** (112 pairs, 3,452 explore rows).
+- **b7** claims panels rebuilt from 2010-01; disclosure 1218 (panel starts, hist counts, magnitude caveat, the 2019
+  catalog-composition shift: pre-2019 events are FEMA-only, 2019+ also NOAA cold snaps / USGS felt quakes), **frozen
+  1219** (234 pairs, 41,545 explore rows vs b4's 1,500: library_hist was read).
+- **Decoys**: the runbook omitted `att_fx63_decoy_seed(batch)`, which nothing calls automatically; without it a batch
+  can never finish. b6 seeded (19,748 dx rows; 7,868 draws found no clean placebo date because the mask is denser now).
+  b7 is seeded by the one-off cron job `att-fx63-seed-b7` (started 04:09, unschedules itself).
+- **Finisher hazard fixed** (39 part C): steps are unscheduled only when no other frozen batch is unfinished; each batch
+  has its own finisher job `att-fx63-finisher-<batch>`, which removes itself at the end.
+- **b8 amended before start** (39 part B, ledger 1215 and 1220): weekly fake shocks shifted by round(s × 52.1775) weeks
+  (no calendar drift); confirmation now needs BH q ≤ 0.05 across the promoted list + empirical p ≤ 0.05 on 400 draws +
+  enrichment ≥ 1.2 (was p ≤ 0.05 each, uncorrected); a tail-calibration count for the normal approximation; the tick
+  runs ~45 s of tasks per call and traps statement timeouts (task → `timeout` → one slow retry in `att-anom-b8-slow` →
+  `failed`); duplicate engine-6.2 claims panels (`dol.claims:ic/cw`) dropped from the scan.
+  **Started** 04:08 (ledger 1221: 21 panels, 10,243 anomalies, 273 screen tasks), `anom_go = true`.
+- **Story layer v2.2** (`40_att_story_honesty.sql`), then explorer rebuilt and snapshot refreshed: engine-6.2 "strong
+  pattern" world rules no longer shown as Confirmed; "expected, not yet tested" → "predicted, not yet tested"; a
+  'likely' move that more than 1 in 10 ordinary days match is listed as didn't-move (CPI → inflation expectations,
+  10 of 36); no group is both "too early" and "no sign"; "absorbed" says how many things were measured.
+- **Frontend** (`ripples/pond/`): honest status line on Find; unfolding shocks no longer say "absorbed/settled";
+  outcome list counts known causes, not rows being checked; flow labels no longer clipped; saved copy paints after
+  0.9 s when the RPC is slow (was 3.5 s blank) and upgrades to live in place; "How" visible on phones; Absorbed /
+  Expected only / Surprise defined on How it works; `aria-live` removed from `<main>`.
+
+### Running now (04:20 UTC)
+- `att-fx63-step-1`, `-step-2` (every minute, ~650 rows each per run), `att-fx63-finisher-fx63-b6-unexpected`,
+  `att-fx63-finisher-fx63-b7-decade`, `att-fx63-seed-b7` (one-off). Expect b6 to finish in ~1 h and b7 in ~6–8 h
+  (41.5k explore + ~330k decoy rows).
+- `att-anom-b8` (every minute) and `att-anom-b8-slow` (every 10 minutes, only when a task timed out). 80/273 screen
+  tasks done at 04:17. After the screen: BH promotion (ledger freeze) → confirmation (400 draws) → verdicts → `done`.
+  Note: every few minutes a tick returns "SET" in ~0.1 s instead of running tasks; harmless (the next tick runs), cause
+  not yet found.
+- DB 562 MB of 6,000.
+
+### Next (runbook steps 6–7, unchanged in substance)
+1. b6 / b7: when each finisher reports `all_done`, read `att_fx63_select` (decoy_set 0, selected) and the decoy
+   calibration; for any confirmation run the seasonal check (median `p_time` of held-out rows in `att_fx_event`, role
+   `confirm`, decoy_set 0, and the count with `p_time` ≤ 0.1); if it fails, set status `withheld` + ledger note.
+2. b8: `select * from ripples.att_anom_hyp where run = 'b8-anomaly-first' and stage = 'explore' and promoted`; verdicts
+   `confirmed%` (rows "(positive control)" are FEMA-defined, never findings); report the `normal_tail_calibration`
+   object in the verdicts ledger entry (share of null draws with z ≥ 2.326 should be ≈ 0.01).
+3. `select ripples.att_explorer_build();`, refresh `data/explorer.json` (base64 of `public.rm_explorer()` with an md5
+   check), report plainly to the owner, commit. Merge only when the owner says so.
+
+### Environment notes learned this session
+- An MCP `execute_sql` call that passes 60 s returns a timeout error **but keeps running server-side** (check
+  `pg_stat_activity`). Long work (freeze, decoy seed, `att_anom_start`) is safer as a one-off cron job.
+- The repo SQL is not always identical to the live functions (e.g. `att_explorer_build`'s world-rule tier line differs
+  from file 34). Always anchor patches on `pg_get_functiondef`, never on the repo text.
 
 ---
 
@@ -131,9 +196,9 @@ expected, or unfolding. **No surprising link has survived yet.**
 | fx63-b3-downstream | housing/jobs, 2016+ | not testable (degenerate monthly null) | 1191, 1195, 1196 |
 | fx63-b4-longhistory | jobs/permits back to 2005 | withheld: wildfire → leisure & hospitality jobs −0.6% passed weakly, then failed the seasonal check (median in-time p 0.42; 2/154) | 1197, 1204–1207, 1210 |
 | fx63-b5-housing-space | housing, in-space null | withheld (seasonal check) | 1198, 1200–1203 |
-| fx63-b6-unexpected | 7 industry job panels plus weekly CDC deaths | pre-registered, **not frozen** | 1209 |
-| fx63-b7-decade | historical shocks 2000–2018, year-after window, 14 outcomes | pre-registered, **not frozen** | 1211 |
-| b8-anomaly-first | anomaly scan, work back to shocks vs season-matched fake shocks | pre-registered; smoke test on the positive control passed (storms → FEMA-declaration spikes 5.2× fake shocks, p<1e-4); **not started** | 1212, 1213 |
+| fx63-b6-unexpected | 7 industry job panels plus weekly CDC deaths | **frozen, running** (session 2) | 1209, 1216, 1217 |
+| fx63-b7-decade | historical shocks 2000–2018, year-after window, 14 outcomes | catalog amended, **frozen, running** (session 2) | 1211, 1214, 1218, 1219 |
+| b8-anomaly-first | anomaly scan, work back to shocks vs season-matched fake shocks | amended before start, **running** (session 2); smoke test on the positive control passed (storms → FEMA-declaration spikes 5.2× fake shocks, p<1e-4) | 1212, 1213, 1215, 1220, 1221 |
 
 Why the engine only found obvious links (diagnosis given to the owner):
 1. It only measured first-order things, about 15 outcomes (now widened by b6 and b8).
@@ -142,7 +207,7 @@ Why the engine only found obvious links (diagnosis given to the owner):
 3. The rigor gates favour big direct effects.
 4. The data is state-level and monthly, which is coarse.
 
-## 6. What is running right now (as of 03:34 UTC)
+## 6. What was running at the session-1 handoff (03:34 UTC; superseded by section 0)
 
 - `att-hist-fema` (every 2 minutes): 7 of 20 declaration years done, 12 queued, 1 in flight. It finishes on its own
   around 04:05 UTC.
@@ -154,7 +219,7 @@ Why the engine only found obvious links (diagnosis given to the owner):
   chat owns the runbook below. Set your own reminders with `send_later` if you want check-ins.
 - DB about 516 MB of the 6000 MB cap. The space guard cron `att-fx63-space-guard` unschedules steps above 5800 MB.
 
-## 7. Runbook — do these in order
+## 7. Session-1 runbook (steps 1–5 done in session 2; see section 0)
 
 Historical shocks join the clean-control mask, so build them **before** freezing any batch or starting b8.
 
@@ -230,3 +295,57 @@ Historical shocks join the clean-control mask, so build them **before** freezing
 - The rendered `milton-60s.mp4` (4 MB) lived only in the old chat's scratchpad and is not in the repo. Re-render it from
   the sources if needed.
 - Side-income viability was discussed: the newsletter plus video format built around one shock per issue.
+
+## 10. Vision sweep (session 2): where the build falls short of the vision, and what would fix it
+
+Core vision: *hidden impacts from upstream events, wherever they show up, with attribution and traceability under
+statistical rigor.* What matches today: the rigor machinery (pre-registration, ledger, decoys, held-out confirmation,
+seasonal check, withholding) is real and was honoured; the pond reads as water; statistics sit behind links; the
+pages now say plainly that no surprising link has passed. What does not match, most important first:
+
+1. **The scan only looks where we measure, and we measure little.** "Regardless of where the impact shows up" is bounded
+   by 20 regional panels, all state-level labor, housing, power, deaths and declarations. The ~12k national series
+   (Wikipedia, news, social, markets, npm) are outside every test. Fixes: lane 2 (timing-only design with fake dates,
+   labelled weaker); and more regional outcomes with long history: county employment and wages (BLS QCEW), county
+   unemployment (LAUS), business counts (CBP), migration (IRS SOI), flood-insurance claims (NFIP), SNAP and Medicaid
+   enrolment, births, school enrolment, bankruptcy filings, power outages (EIA-417 / ODIN), air quality (EPA AQS).
+2. **State-level data hides local shocks, so "absorbed" may just be dilution.** A storm that wrecks 10 counties
+   barely moves a statewide total; Helene's western North Carolina losses are invisible in NC aggregates. The FEMA
+   fetch drops `designatedArea`, so county footprints exist in the source but are thrown away. County footprints +
+   county outcomes (QCEW, LAUS) is the single biggest lever for both discovery and honest "absorbed" calls.
+3. **"Absorbed" has no counterfactual.** It currently means "only the expected thing moved, and fast". To call
+   resilience a finding, compare the same shock kind in resilient and non-resilient places (Florida vs North Carolina
+   hurricanes), pre-registered as a heterogeneity test.
+4. **Too little held-out data for rare effects.** Confirmation uses only 2024+ shocks (~2.7 years). A second split
+   (screen on 2000–2015, confirm on 2016–2019 and 2022–2023, pandemic excluded) would roughly double confirmation power
+   for b8-style hypotheses. Pre-register it as a new run rather than changing b8.
+5. **b8 has no decoy-universe calibration.** Engine 6.3 runs fake shock catalogs through the whole pipeline; b8 only
+   has per-hypothesis fake-shock nulls plus the new tail check. Run the full screen → promote → confirm path on 2–4
+   random shock catalogs and report false confirmations (target 0).
+6. **"Expected" is a hand-written regex** (`att_plain_groups.obvious_for`). Surprise should come from the
+   pre-registered mechanism graph and `domain_distance` (engine 6.3 already computes it), not from a regex.
+7. **No dose-response.** Magnitude is a declaration count (and for b7, state-declarations only). Damage in dollars
+   (NOAA Storm Events), wind speed, burned acres (NIFC) and people affected would give dose-response, one of the
+   strongest attribution checks.
+8. **The catalog of pages is thin and skewed.** 32 pages: 26 small wildfires stuck on "still unfolding", 6 with
+   results; the 1,829 historical shocks and ~2,000 2019+ shocks have no pages. Publish pages for shocks with results
+   (Katrina, Sandy, Harvey once b7 reports; decade comparisons) and stop publishing small fire declarations that
+   have none.
+9. **b8 is not in the pages yet** (section 8, first bullet): per shock, anomalies in its footprint afterwards, labelled
+   attributed / consistent with a pattern / unexplained, plus a third Find mode "Something unusual".
+10. **Frontend gaps still open:**
+    - Share cards (`og/*.png`) show the rejected v1 orbit design with stale numbers ("12 things stayed flat"), and 27
+      wildfire pages reuse Milton's card. Regenerate them from the current pond.
+    - "Too early" markers sit on the pond rim, the perimeter look the owner rejected.
+    - Shock pages have no downstream exploration ("could ripple on to …").
+    - "What held steady" is the weakest visual; the grey no-sign dots are unlabelled.
+    - The outcome flow diagram is tiny on phones (an SVG with min-width 560 inside a scroller).
+    - `--text-3` contrast is 4.39:1, and the canvas time labels are about 1.7:1.
+    - The scrubber knob sits between WEEK and MONTH while the text says "about a week".
+11. **Newsletter issue 01** leads with Milton → electricity demand, the kind of obvious link the owner called
+    worthless, uses the old label set (Measured / Likely / Watching) and stale counts. Reframe it around "absorbed"
+    (what didn't move, and why that's interesting), or hold it until b7/b8 report.
+12. **Operations:** the repo SQL drifts from the live functions; the handoff runbook missed decoy seeding; the
+    finisher could strand a batch; the b8 tick could retry forever. Add an engine status view and a check that
+    hashes live function definitions against the repo, and keep a check-in routine while batches run.
+

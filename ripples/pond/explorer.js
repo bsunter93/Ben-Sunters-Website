@@ -29,8 +29,11 @@
   const trail = [];
 
   /* ---------- data ---------- */
+  // Live data if it answers within 0.9 s; otherwise paint the saved copy at once and switch to live when it lands,
+  // so a slow or hanging RPC never leaves a blank page for the full 3.5 s timeout.
   async function load() {
     if (window.__RM_EXPLORER) { const j = window.__RM_EXPLORER; j._src = 'bundled'; return j; }   // offline previews
+    const snap = fetch('data/explorer.json', { cache: 'no-cache' }).then(r => r.json()).then(j => { j._src = 'snapshot'; return j; });
     const live = (async () => {
       const c = new AbortController(); const t = setTimeout(() => c.abort(), 3500);
       try {
@@ -39,8 +42,17 @@
         if (!r.ok) throw new Error(r.status); const j = await r.json(); if (!j || !j.shocks) throw new Error('empty'); j._src = 'live'; return j;
       } finally { clearTimeout(t); }
     })();
-    try { return await live; } catch {
-      const r = await fetch('data/explorer.json', { cache: 'no-cache' }); const j = await r.json(); j._src = 'snapshot'; return j;
+    const first = await Promise.race([live.catch(() => null), new Promise(res => setTimeout(() => res(null), 900))]);
+    if (first) return first;
+    live.then(upgrade, () => {});
+    try { return await snap; } catch { return await live; }
+  }
+  function upgrade(j) {   // live data arrived after the saved copy was painted
+    if (!D || D._src !== 'snapshot') return;
+    D = j; asOf(D);
+    if (/^#?\/?$/.test(location.hash)) {   // refresh Find in place (keeps the search box and its focus); other views pick it up on the next visit
+      const st = document.querySelector('.hero .status'); if (st) st.innerHTML = statusLine();
+      renderList();
     }
   }
   function ping(kind) {   // aggregate counts only (rm_event); never blocks
@@ -54,6 +66,7 @@
   const reachRing = s => RINGS.filter(r => r.d <= Math.max(1, s.reach || 1)).slice(-1)[0] || RINGS[0];
   const rOf = (d, R0, R1) => { const lo = Math.log(0.5), hi = Math.log(91); const t = (Math.log(Math.max(d || 1, 0.5)) - lo) / (hi - lo); return R0 + (R1 - R0) * Math.min(1, Math.max(0, t)); };
   const moved = s => s.impacts.filter(i => i.tier === 'confirmed' || i.tier === 'likely');
+  const fit = (t, n) => (t.length > n ? t.slice(0, n - 1).trimEnd() + '…' : t);
   function titleHTML(t) {   // italicise only the surprising place a shock reached
     const m = t.match(/^(.*?\breached)\s(.+?)\.?$/);
     return m ? `${esc(m[1])} <em>${esc(m[2])}.</em>` : esc(t);
@@ -98,6 +111,7 @@
         <div class="eyebrow">What did that event change?</div>
         <h1 style="margin-top:14px">Every shock sends out <em>ripples.</em><br>Pick one to follow.</h1>
         <p class="lede">Start from something that happened, or from something that changed. We trace what moved, how far it travelled, and how sure we are.</p>
+        <p class="status">${statusLine()}</p>
         <label class="search"><svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><circle cx="9" cy="9" r="6"/><path d="M13.5 13.5 18 18"/></svg>
           <input id="q" type="search" placeholder="Try “hurricane”, “electricity”, “AI”…" value="${esc(query)}" aria-label="Search shocks and outcomes" autocomplete="off"></label>
         <div class="modes" role="group" aria-label="Start from">
@@ -111,8 +125,16 @@
     document.querySelectorAll('[data-mode]').forEach(b => b.onclick = () => { findMode = b.dataset.mode; document.querySelectorAll('[data-mode]').forEach(x => x.setAttribute('aria-pressed', x === b)); renderList(); });
     renderList();
   }
+  function statusLine() {   // the honest state of the search, from the story layer's own labels
+    const nSur = D.shocks.filter(s => s.story === 'surprise').length;
+    return nSur
+      ? `${nSur} shock${nSur > 1 ? 's' : ''} reached somewhere you wouldn’t have guessed. Those lead the list.`
+      : `Where we are: no surprising ripple has passed our checks yet. Every effect we’ve confirmed so far is the one you’d expect. We’ll say so here the day that changes. <a class="linkbtn" href="#/how">How we check</a>`;
+  }
+  const causes = o => o.up.filter(u => u.tier === 'confirmed' || u.tier === 'likely').length;
   function renderList() {
     const q = query.trim().toLowerCase(), L = $('#list');
+    if (!L) return;
     if (findMode === 'shock') {
       $('#hint').textContent = 'Shocks with results first. The rings show how far each one travelled.';
       const hit = s => !q || [s.name, s.kind, s.where, s.plural, ...s.impacts.map(i => i.name)].join(' ').toLowerCase().includes(q);
@@ -127,10 +149,12 @@
       if (!main.length && !later.length) L.innerHTML = `<p class="hint" style="padding:18px 4px">Nothing traced for that yet.</p>`;
     } else {
       $('#hint').textContent = 'Things that changed, and the shocks we’ve traced to them.';
-      const items = Object.values(D.outcomes).filter(o => !q || o.name.toLowerCase().includes(q)).sort((a, b) => (b.n_moved || 0) - (a.n_moved || 0));
+      const items = Object.values(D.outcomes).filter(o => !q || o.name.toLowerCase().includes(q)).sort((a, b) => causes(b) - causes(a) || b.up.length - a.up.length);
+      const meta = o => { const c = causes(o), k = o.up.length - c, n = o.down.length;
+        return [`${c} known cause${c === 1 ? '' : 's'}`, k ? `${k} being checked` : '', n ? `${n} possible next step${n === 1 ? '' : 's'}` : ''].filter(Boolean).join(' · '); };
       L.innerHTML = `<div class="list">${items.map(o => `
         <a class="row" href="#/o/${encodeURIComponent(o.key)}" data-key="${esc(o.key)}"><span class="g"></span>
-          <div><div class="name">${esc(o.name)}</div><div class="meta">${o.up.length} upstream · ${o.down.length} downstream lead${o.down.length === 1 ? '' : 's'}</div><div class="one">${esc(o.synth)}</div></div>
+          <div><div class="name">${esc(o.name)}</div><div class="meta">${meta(o)}</div><div class="one">${esc(o.synth)}</div></div>
           <span class="go" aria-hidden="true">→</span></a>`).join('')}</div>`;
       L.querySelectorAll('.row').forEach(r => r.querySelector('.g').replaceWith(outGlyph(outcome(r.dataset.key))));
       if (!items.length) L.innerHTML = `<p class="hint" style="padding:18px 4px">Nothing traced for that yet.</p>`;
@@ -182,9 +206,12 @@
     marks.forEach(m => { const q = m.moves ? slots[a++] : free[b++]; m.th = th0 + q * stepA + (m.tier === 'none' ? (((m.k * 0.377) % 1) - 0.5) * stepA * 0.5 : 0); });
 
     const edgeTxt = SPAN[edge.l];
+    // nothing moved: "too early" (data still arriving) and "nothing we measure moved" are different statements
+    const quiet = s.confidence === 'watch' ? 'Too early to tell: the data hasn’t arrived yet.'
+      : (s.none && s.none.length) ? 'Nothing we measure moved.' : 'No measured ripple yet.';
     const summary = mv.length
       ? `${s.name}: a stone dropped in still water. The ripple reached about ${edgeTxt}, then died out. ${mv.map(m => `${m.short || m.name} ${WORD[m.dir] || 'moved'}`).join('; ')}.`
-      : `${s.name}: a stone dropped in still water. The water absorbed it: no measured ripple yet.`;
+      : `${s.name}: a stone dropped in still water. ${quiet}`;
     host.innerHTML = `<canvas role="img" aria-label="${esc(summary)}"></canvas><div class="marks"></div>`;
     const cv = host.querySelector('canvas'), ctx = cv.getContext('2d'), layer = host.querySelector('.marks');
     const off = document.createElement('canvas'), octx = off.getContext('2d');
@@ -391,7 +418,7 @@
     }
     function sayLine() {
       if (mode !== 'scrub') {
-        ui.line.textContent = mv.length ? `The ripple reached about ${edgeTxt}, then died out.` : 'No measured ripple yet: the water settled almost at once.';
+        ui.line.textContent = mv.length ? `The ripple reached about ${edgeTxt}, then died out.` : quiet;
         return;
       }
       const k = Math.max(0, stopsR.findIndex((r, i) => Math.abs(r - scrubR) === Math.min(...stopsR.map(q => Math.abs(q - scrubR)))));
@@ -532,8 +559,12 @@
       svgEl('path', { d: `M 250 ${y} C ${cx - 120} ${y}, ${cx - 120} ${cy}, ${cx - 14} ${cy}`, fill: 'none', stroke: col, 'stroke-width': u.tier === 'confirmed' ? 2 : u.tier === 'likely' ? 1.4 : 1, opacity: 0.85, 'stroke-dasharray': (u.tier === 'possible' || u.tier === 'watch') ? '3 4' : null }, svg);
       const g = svgEl('g', u.shock ? { tabindex: 0, role: 'link', style: 'cursor:pointer', 'aria-label': u.name } : {}, svg);
       svgEl('circle', { cx: 250, cy: y, r: 4, fill: col }, g);
-      svgEl('text', { x: 236, y: y - 3, 'text-anchor': 'end', 'font-family': 'Geist, sans-serif', 'font-size': 15, fill: '#E7ECEE' }, g).textContent = u.name;
-      svgEl('text', { x: 236, y: y + 15, 'text-anchor': 'end', 'font-family': 'Geist Mono, monospace', 'font-size': 11, fill: u.dir === 'up' ? '#E2B170' : u.dir === 'down' ? '#8FB9E8' : '#6B7A81' }, g).textContent = `${SYM[u.dir] ? SYM[u.dir] + ' ' : ''}${u.txt.replace(/^(up|down)\s+/, '')}`;
+      // labels end at x=236, so they must fit in ~230px: world rules put "across N past events" on the second line
+      const wr = u.name.match(/^(.*) \(across (\d+) past events\)$/);
+      svgEl('title', {}, g).textContent = u.name;
+      svgEl('text', { x: 236, y: y - 3, 'text-anchor': 'end', 'font-family': 'Geist, sans-serif', 'font-size': 15, fill: '#E7ECEE' }, g).textContent = fit(wr ? wr[1] : u.name, 24);
+      svgEl('text', { x: 236, y: y + 15, 'text-anchor': 'end', 'font-family': 'Geist Mono, monospace', 'font-size': 11, fill: u.dir === 'up' ? '#E2B170' : u.dir === 'down' ? '#8FB9E8' : '#6B7A81' }, g).textContent =
+        fit(`${wr ? wr[2] + ' past events · ' : ''}${SYM[u.dir] ? SYM[u.dir] + ' ' : ''}${u.txt.replace(/^(up|down)\s+/, '').replace(/ on average$/, wr ? ' avg' : ' on average')}`, 34);
       if (u.shock) { const go = () => { location.hash = `#/s/${encodeURIComponent(u.shock)}`; }; g.addEventListener('click', go); g.addEventListener('keydown', e => { if (e.key === 'Enter') go(); }); }
     });
     svgEl('circle', { cx, cy, r: 16, fill: '#A9D3DF', opacity: 0.12 }, svg); svgEl('circle', { cx, cy, r: 7, fill: '#E7ECEE' }, svg);
@@ -544,7 +575,8 @@
       const has = !!outcome(d.group);
       const g = svgEl('g', has ? { tabindex: 0, role: 'link', style: 'cursor:pointer', 'aria-label': d.name } : {}, svg);
       svgEl('circle', { cx: W - 250, cy: y, r: 4, fill: 'none', stroke: col, 'stroke-width': 1.2 }, g);
-      svgEl('text', { x: W - 236, y: y - 3, 'font-family': 'Geist, sans-serif', 'font-size': 15, fill: '#E7ECEE' }, g).textContent = d.name;
+      svgEl('title', {}, g).textContent = d.name;
+      svgEl('text', { x: W - 236, y: y - 3, 'font-family': 'Geist, sans-serif', 'font-size': 15, fill: '#E7ECEE' }, g).textContent = fit(d.name, 24);
       svgEl('text', { x: W - 236, y: y + 15, 'font-family': 'Geist Mono, monospace', 'font-size': 11, fill: '#6B7A81' }, g).textContent = TIER[d.tier].label.toLowerCase();
       if (has) { const go = () => { location.hash = `#/o/${encodeURIComponent(d.group)}`; }; g.addEventListener('click', go); g.addEventListener('keydown', e => { if (e.key === 'Enter') go(); }); }
     });
@@ -601,6 +633,10 @@
       </ol>
       <div class="groups" style="margin-top:40px">${ORDER.map(t => `<div class="group"><h3><i class="dot" style="background:${TIER[t].css}"></i>${TIER[t].label}</h3><p class="nosign">${esc(D.tiers[t])}</p></div>`).join('')}
         <div class="group"><h3><i class="dot" style="background:var(--c-none)"></i>No sign</h3><p class="nosign">${esc(D.tiers.none)}</p></div></div>
+      <div class="groups" style="margin-top:28px"><div class="eyebrow">What the headline words mean</div>
+        <div class="group"><h3>Surprise</h3><p class="nosign">The shock moved something you wouldn’t have guessed. This is what we’re looking for.</p></div>
+        <div class="group"><h3>Expected only</h3><p class="nosign">Only the obvious thing moved, like a storm changing electricity use. True, but not news.</p></div>
+        <div class="group"><h3>Absorbed</h3><p class="nosign">The obvious ripple showed up, then died out: nothing else we measure moved. That can be a finding too, when a place is built to take the hit. It only covers what we measure.</p></div></div>
       <p class="note" style="margin-top:34px">${esc(D.note)} <a class="linkbtn" href="../methods/">Full methods</a></p></section>`;
   }
   function viewMissing() { $('#main').innerHTML = `<section class="hero fade"><h1 class="sm">That ripple isn’t here.</h1><p class="lede">It may have been renamed or withdrawn. <a class="linkbtn" href="#/">Find another</a></p></section>`; }
@@ -615,10 +651,12 @@
     return viewFind();
   }
   window.addEventListener('hashchange', route);
-  load().then(d => {
-    D = d; route();
+  function asOf(d) {
     const b = d.built_at ? new Date(d.built_at) : null;
     $('#asof').textContent = b ? `Updated ${b.toLocaleDateString(undefined, { day: 'numeric', month: 'short', year: 'numeric' })}${d._src === 'snapshot' ? ' (saved copy)' : ''}.` : '';
+  }
+  load().then(d => {
+    D = d; route(); asOf(d);
     if (!ls.get('rm.seen')) { ls.set('rm.seen', '1'); ping('landing'); }
   }).catch(() => { $('#main').innerHTML = `<p class="loading">Couldn’t load the ripples. Please try again in a moment.</p>`; });
 })();
