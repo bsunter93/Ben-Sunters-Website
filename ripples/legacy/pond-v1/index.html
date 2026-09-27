@@ -1,0 +1,94 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Ripple Map: what did that event change?</title>
+<meta name="description" content="Something happened in the world. Let's see what it touched. Ripples traced from real events to the things that moved, with the evidence for each, and the things that stayed flat. Consistent with, never proof of cause.">
+<link rel="canonical" href="https://bensunter.com/ripples/pond/">
+<meta property="og:type" content="website">
+<meta property="og:title" content="Ripple Map: what did that event change?">
+<meta property="og:description" content="Hurricane Milton hit Florida. The day after landfall, power use across Duke Energy Florida fell 11% for a week while 51 regions the storm missed held steady. Measured. Consistent with, never proof of cause.">
+<meta property="og:url" content="https://bensunter.com/ripples/pond/">
+<meta property="og:image" content="https://bensunter.com/ripples/pond/og/milton.png">
+<meta property="og:image:width" content="1200"><meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="A stone in a pond: Hurricane Milton at the centre, one solid lily pad in the Real world sector at day 3 reading −11% power use, twelve reed beds for the things that stayed flat.">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="theme-color" content="#0F1516">
+<link rel="icon" href="../icon-192.png">
+<link rel="preload" href="fonts/InterTight.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="pond.min.css">
+<link rel="stylesheet" href="app.min.css">
+<link rel="stylesheet" href="site.min.css">
+<style>
+body.loading main{visibility:hidden}
+.feat .num-big{font-size:64px;line-height:.95;letter-spacing:-.045em;font-weight:650;color:var(--num);margin:8px 0 2px;font-variant-numeric:tabular-nums}
+.feat .num-big small{display:block;font-size:16px;letter-spacing:-.01em;color:var(--text);font-weight:500;margin-top:6px}
+.feat .lede .tier{margin:0 0 12px}
+.ticket{display:grid;grid-template-columns:1fr auto;gap:16px;align-items:center;border:1px solid var(--sand);border-radius:18px;padding:16px 20px;background:linear-gradient(90deg,rgba(200,180,142,.08),transparent)}
+.ticket b{display:block;font-size:18px;letter-spacing:-.01em;margin-bottom:2px}
+.ticket span{font-size:14px;color:var(--text-2)}
+.ticket .cd{text-align:right}
+@media (max-width:900px){.feat .num-big{font-size:52px}.ticket{grid-template-columns:1fr}.ticket .cd{text-align:left}}
+</style>
+</head>
+<body class="loading">
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <symbol id="i-arrow" viewBox="0 0 14 14"><path d="M2 7h9M7.5 3.5L11 7l-3.5 3.5" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+  <symbol id="i-send" viewBox="0 0 16 16"><path d="M8 10V2M5 5l3-3 3 3M3 8v5.5h10V8" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+  <symbol id="i-eye" viewBox="0 0 16 16"><path d="M1.5 8s2.5-4.5 6.5-4.5S14.5 8 14.5 8 12 12.5 8 12.5 1.5 8 1.5 8Z" fill="none" stroke="currentColor" stroke-width="1.5"/><circle cx="8" cy="8" r="2" fill="currentColor"/></symbol>
+  <symbol id="k-grass" viewBox="0 0 30 22"><g fill="#4FA37F"><path d="M9 20 Q7 12 11 4 Q11 12 10.5 20Z"/><path d="M14 20 Q13 11 15 3 Q16 11 15 20Z"/><path d="M19 20 Q19 11 22 5 Q21 12 20 20Z"/></g><ellipse cx="15" cy="3" rx="1" ry="2.4" fill="#C8B48E"/></symbol>
+  <symbol id="k-float" viewBox="0 0 30 22"><circle cx="15" cy="11" r="6" fill="none" stroke="#A7B5B1" stroke-width="1.2" stroke-dasharray="2.2 2.6"/><circle cx="15" cy="11" r="1.5" fill="#A7B5B1"/></symbol>
+</svg>
+<header class="top"></header>
+<main class="page">
+  <section id="gone" hidden aria-label="While you were gone"></section>
+
+  <section class="feat" id="feat" aria-label="The ripple of the moment">
+    <div class="lede">
+      <p class="eyebrow" id="feat-eyebrow">The ripple of the moment</p>
+      <div id="feat-arch" style="margin-bottom:10px"></div>
+      <h1 id="feat-h1"></h1>
+      <div class="num-big" id="feat-num"></div>
+      <p class="trust" id="feat-trust"></p>
+      <p class="reach" id="feat-reach"></p>
+      <div class="actions"><a class="btn primary big-btn" id="feat-trace" href="r/">Trace it<svg width="14" height="14" aria-hidden="true"><use href="#i-arrow"/></svg></a><button class="btn" id="feat-send" type="button"><svg width="16" height="16" aria-hidden="true"><use href="#i-send"/></svg>Send this</button></div>
+      <p id="feat-note" style="font-size:12.5px;color:var(--text-3);margin:14px 0 0;max-width:44ch"></p>
+    </div>
+    <div class="stage"><a class="pond-box" id="feat-link" href="r/" aria-label="Open the ripple"><svg id="feat-pond" class="pond" role="img"></svg></a></div>
+  </section>
+
+  <section class="sec" id="ticket-sec" hidden>
+    <div class="ticket" id="ticket"></div>
+  </section>
+
+  <section class="sec" id="stories">
+    <div class="head"><h2>What moved</h2><a href="wander/">Wander</a></div>
+    <p class="lead">Ripples ranked by the story layer; every tier word is the engine's, after the forecast gate.</p>
+    <ul class="cards" id="cards"></ul>
+  </section>
+
+  <section class="sec" id="rules">
+    <div class="head"><h2>World rules</h2><a href="how/#glossary">What a rule is</a></div>
+    <p class="lead">Patterns across many past events, not evidence about any one of them.</p>
+    <ul class="cards two" id="rule-cards"></ul>
+  </section>
+
+  <section class="sec" id="dead">
+    <div class="head"><h2>The ripple that died</h2><a href="how/#glossary">Why we show these</a></div>
+    <p class="lead">Things we said in advance might move, and did not. A dead end we disclose is a finding too.</p>
+    <ul class="cards four" id="dead-cards"></ul>
+  </section>
+
+  <section class="sec" id="watching">
+    <div class="head"><h2>Still being watched</h2><a href="watch/">Your watch list</a></div>
+    <p class="lead">Open questions with a date. Each window was registered before anyone looked.</p>
+    <ul class="cards four" id="watch-cards"></ul>
+  </section>
+</main>
+<footer><div><span>Ripple Map shows movement with timing evidence, never proof of cause. Confidence words are ours, not the data provider's.</span><span id="foot"></span></div></footer>
+<script src="pond.min.js"></script>
+<script src="site.min.js"></script>
+<script src="now.min.js"></script>
+</body>
+</html>
