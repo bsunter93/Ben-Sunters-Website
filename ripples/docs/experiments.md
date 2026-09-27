@@ -68,8 +68,59 @@ and the most repeatable.
 
 Re-run the anomaly lane at county level with year-matched fake shocks, empirical p-values and per-year anomaly scaling.
 
+## E9 — Cultural shocks: do well-known social trends leave measurable ripples? (owner direction 2026-09-27)
+
+The product hook: relatable trends people remember (a book, a show, a movement) and whether they measurably changed
+anything downstream, *as a contributing driver, not the only one*. Owner's example: did the Fifty Shades wave (2011–2015)
+measurably shift how people talk about sex, and on into other outcomes? Culture has no geographic footprint and
+everything trends together, so a naive before/after would "confirm" almost anything. E9 therefore runs in two phases,
+and phase 2 is registered only if phase 1 passes.
+
+### Phase 1 (registered now): can the method recover known cultural ripples and reject fake ones?
+
+Positive controls (documented effects; each one hypothesis, fixed in advance):
+
+| # | shock (date) | outcome | expected |
+|---|---|---|---|
+| P1 | The Queen's Gambit on Netflix (2020-10-23) | en.wikipedia pageviews of "Chess" | up, days 1–60 |
+| P2 | Stranger Things 4 vol. 1 (2022-05-27) | en.wikipedia pageviews of "Kate Bush" | up, days 1–60 |
+| P3 | Game of Thrones premiere (2011-04-17) | US births named Arya (SSA national names) | up, 2012–2016 vs 2006–2010 |
+| P4 | Frozen release (2013-11-27) | US births named Elsa (SSA) | up in 2014 vs 2009–2013 |
+
+Designs (identical code for every hypothesis, real or fake):
+- **Pageviews (timing design).** Effect = mean log daily views days 1–60 minus days −90..−1. Null 1: the same article
+  at 500 placebo dates (outside ±180 days of the real date, same weekday). Null 2: a pre-listed set of 4–6 comparison
+  articles on the real date (P1: Checkers, Go (game), Backgammon, Poker, Sudoku; P2: Madonna, Cyndi Lauper, Peter
+  Gabriel, Tears for Fears, Depeche Mode). Pass = empirical p ≤ 0.05 against null 1 **and** effect above every
+  comparison article.
+- **Baby names (synthetic control).** Outcome = log count by year. Donors = names ranked 200–2000 over the pre-period
+  with no link to the same title, weighted to match the pre-period path. Null = placebo-in-space over donors. Pass =
+  rank p ≤ 0.05.
+- **Negative controls.** 200 random (article or name, date) pairs from the same pools run through the same code;
+  target false-pass rate ≤ 5% (Wilson upper bound reported). Plus each positive date applied to an unrelated article
+  ("Photosynthesis") and unrelated name.
+
+Phase 1 passes if **at least 3 of 4** positive controls pass **and** the negative false-pass rate is ≤ 5%. If it
+fails, E9 stops and that is reported plainly; the design gets fixed before any real trend is tested.
+
+### Phase 2 (pre-registered separately after phase 1): the trend screen
+
+- Catalog of about 30 well-known trends since 2010, each with a dated release or peak and a comparison title of similar
+  size without the theme (e.g. Fifty Shades vs another same-year mega-bestseller; #MeToo 2017-10-15; Ice Bucket
+  Challenge; Serial; Hamilton; Tiger King; Squid Game; Barbie; Eras Tour).
+- Outcomes screened with the phase-1 designs: Wikipedia pageviews (topic articles, not the title itself), SSA names,
+  and where available state-level variation (Google Trends by state only if a sanctioned route exists; library
+  checkout open data; CDC and BLS series) so exposure differences can be tested, not just timing.
+- Direct echoes (the title's own article, its author, its actors) are excluded as obvious. BH correction across the
+  screen, held-out confirmation on later events of the same kind, and the language "measurably contributed to",
+  never "caused".
+
+Data: Wikipedia pageviews from 2015 via the existing BigQuery backfill workflow (P3/P4 need no pageviews); SSA national
+and state names files (keyless, public domain).
+
 ## Order and cost
 
 E1 first (it decides which estimator every later test uses), then E4 + E2 (cheap once NFIP and county adjacency are
-loaded), then E3 (needs IRS migration and LODES, both keyless), E5, E6, E7, E8. Each real-data application gets its own
+loaded), then E3 (needs IRS migration and LODES, both keyless), E5, E6, E7, E8. E9 phase 1 runs in parallel (different data; no
+dependency on the county panel). Each real-data application gets its own
 ledger pre-registration; method benchmarks are registered once here (ledger entry "experiments-program").

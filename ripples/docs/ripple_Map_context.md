@@ -1,4 +1,4 @@
-# Ripple Map: context brief (updated 2026-09-27 17:40 UTC)
+# Ripple Map: context brief (updated 2026-09-27 18:10 UTC)
 
 Standalone context for anyone (person or new chat) picking up Ripple Map. It covers the vision, the current status,
 what we learned, pitfalls, open gaps and next steps. The operational runbook with exact commands is
@@ -26,6 +26,77 @@ what we learned, pitfalls, open gaps and next steps. The operational runbook wit
 - **Design.** Serious, sleek, not cartoony. The pond must feel like water. Outcomes are not on a perimeter, and rings
   are not always visible.
 - **Honesty.** Report blunt results, including "nothing survived".
+
+## 1a. Product thesis (revised 2026-09-27)
+
+**Anchor on the trends people remember; use every other dataset as the places a ripple could land.**
+
+The owner's user story:
+- Fifty Shades of Grey was a huge wave in 2011–2016.
+- Did it measurably change how people talk about sex, and did that carry on into #MeToo-era conversation, the rise of
+  OnlyFans, or legislation?
+- It doesn't need to be the primary or only driver. The interesting question is whether a trend people remember had a
+  *measurable* impact on downstream behaviours and outcomes.
+
+What that means:
+- **The stone is a relatable social or cultural trend:** a book, a show, a film, a movement, a viral moment. Disasters
+  and economic releases stay as a second shelf and as a proving ground for the method.
+- **The ripples can land anywhere we measure:**
+  - what people search and read (Wikipedia pageviews, search interest)
+  - what they name their children (SSA names)
+  - what they buy (BLS spending, product categories)
+  - health and social outcomes (CDC)
+  - work and money (QCEW, claims)
+  - the law (legislation timelines)
+- **The claim is contribution, not cause.** Plain labels:
+  - "moved at the same time"
+  - "moved more where more people were exposed"
+  - "measurably contributed to"
+  - "didn't move"
+
+  The product never says "caused".
+- **Why it can be a hit:** the stone is relatable and the landing spot is surprising. That pairing is the share object
+  ("Frozen changed what parents named their daughters, then it reversed").
+- **What keeps it honest:** culture has no footprint, and everything trends together. Every cultural claim therefore
+  needs at least one of the following, and the method must first recover known effects (E9 phase 1) before any new
+  trend is tested:
+  - sharp timing tested against placebo dates
+  - uneven exposure (country, state, release stagger)
+  - a comparison title of similar size without the theme
+
+## 1b. Design concept and direction (revised 2026-09-27)
+
+The pond language stays. What changes is what goes in it and how the evidence reads.
+
+- **Find is a shelf of things you remember,** grouped by year ("2013: Frozen, Harlem Shake, Breaking Bad finale"). Each
+  card shows the trend and one teaser of where it rippled ("…and 3 places you wouldn't guess"). Disasters sit on a
+  second shelf.
+- **Trend page = the pond:**
+  - The stone drops at the trend's date.
+  - Rings spread over months and years, not days.
+  - Outcomes that moved bob and send their own small ripple. Their distance from the stone is surprise (domain
+    distance), so obvious echoes sit close and quiet, and far landings are the story.
+  - Outcomes that didn't move are shown as still water, because "it didn't change X" is a finding too.
+- **Ghost stone:** the comparison title is drawn faint beside the real one ("Fifty Shades vs. the other #1 bestseller of
+  2012"). Where the ghost's rings match the real one's, it says so; that is the honesty device a 12-year-old can see.
+- **Exposure map:** where exposure varied (states, countries), a small map shows "more exposure → bigger move". That is
+  the strongest visual proof we can give.
+- **Evidence ladder behind a link:**
+  - timing (moved right after the date)
+  - comparison (moved more than the ghost)
+  - exposure (moved more where more people were exposed)
+  - replicated (seen after similar trends)
+
+  Each rung is a plain sentence. The statistics stay one click deeper.
+- **Headline pattern:** "[Trend] measurably contributed to [surprising outcome]. It wasn't the only reason: [the other
+  things going on]." Or: "[Trend] was everywhere, and it didn't change [thing you'd expect]." Both are shareable.
+- **Tone:** serious and sleek, not cartoony, with water that feels like water. No outcomes on the rim; rings appear as
+  the wave reaches them.
+- **Order of work:**
+  1. E9 phase 1 (method on known ripples).
+  2. Phase 2 screen.
+  3. The first trend pages built only for trends with a result.
+  4. The share card built around the ghost stone and the surprising landing.
 
 ## 2. Current status (one screen)
 
@@ -84,6 +155,7 @@ b9 tests it at county level with its own pre-registered design:
 | E6 | multi-outcome fingerprints (one joint test) | planned |
 | E7 | predictive validity (fit 2001–2015, forecast 2016+) | planned |
 | E8 | anomaly-first v2 at county level, year-matched | planned |
+| E9 | cultural shocks: known ripples first (phase 1), then a trend screen (phase 2) | phase 1 registered (ledger 1275) |
 
 ## 3. Learnings
 
@@ -170,6 +242,8 @@ b9 tests it at county level with its own pre-registered design:
 
 ## 6. Next steps
 
+0. **E9 phase 1:** load SSA names and the 2015+ Wikipedia pageviews for the control articles, then run the four positive
+   controls and 200 negative controls.
 1. **Finish b9 data** (backfill run + API collection), run the frozen test, report plainly whatever it says, and
    record it in the ledger.
 2. **E1:** export the placebo-only extract (`att_e1_extract`) and run `ripples/tools/experiments/e1_bakeoff.py`. Pick
