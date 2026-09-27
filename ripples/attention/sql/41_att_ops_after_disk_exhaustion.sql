@@ -104,3 +104,7 @@ select cron.schedule('att-fx63-seed-b7', '3-59/5 * * * *', $c$set statement_time
    where not exists (select 1 from ripples.att_fx_grid g where g.batch like 'fx63-b7-decade/%'
                        and not exists (select 1 from ripples.att_fx_event f where f.grid_id = g.grid_id and f.role = 'dx')
                        and not (to_jsonb(g.grid_id) <@ (select v from ripples.att_state where k = 'engine63.seed_tried:fx63-b7-decade')));$c$);
+
+-- 12:24 UTC: seed raised to 5 grids per run (runs <= 46 s). ~13:00: seeding complete (223/234 grids with dx rows; 11
+-- grids had no clean decoy date), the job armed the b7 finisher and unscheduled itself. ~14:30: b7 finished
+-- (calibration ledger 1270) and the finisher removed the step worker and itself. No fx63/anom jobs remain scheduled.
