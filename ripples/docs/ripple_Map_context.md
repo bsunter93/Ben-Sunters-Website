@@ -116,9 +116,9 @@ confirmations.
 | b6 | 7 industry job panels + CDC deaths | 0/12 confirmed |
 | b7 | historical shocks 2000–2018, year-after window | 0/10 confirmed; **one real lead** (below) |
 | b8 | anomaly-first scan | nothing surprising; 5 "confirmations" withheld as a year confound |
-| **b9** | **county-level flood → finance jobs** | **pre-registered (ledger 1271), data loading now** |
+| b9 | county-level flood → finance jobs | **not supported** (−0.43%, p 0.37, 91 floods, 1,133 counties; ledger 1277) |
 
-**The one lead.** Floods → finance/insurance/real-estate jobs **−3.3%** in months 13–24.
+**The one lead (now tested and not supported at county level).** Floods → finance/insurance/real-estate jobs **−3.3%** in months 13–24.
 - q 0.030, CI −5.5% to −1.1%, 10 of 11 held-out floods negative.
 - It failed only the power gate (power 0.38).
 - The same outcome was b6's nearest miss (months 6–11).
@@ -130,13 +130,14 @@ b9 tests it at county level with its own pre-registered design:
 - Null: in-space permutation.
 - Primary threshold: one-sided p ≤ 0.05.
 
-**Data loading for b9 (as of 17:40 UTC)**
-- FEMA county declarations: done (49,224 rows).
-- QCEW 2014 onward: loading from the database at one request a minute, through mid-2019 so far.
-- QCEW 2001–2013: the open-data API only serves 2014+ (disclosed in ledger 1274 before any results). These years come
-  from BLS bulk files via the GitHub job "Ripples QCEW backfill". The dry run passed with about 76k rows a year; the
-  real run is going now.
-- Then: run `att_b9_test` (primary + 3 secondaries), write it to the ledger and report.
+**b9 result (18:45 UTC, ledger 1277): not supported.**
+- Primary: finance jobs in flood-declared counties vs same-state undeclared counties, months 13–24: **−0.43%**,
+  one-sided p **0.37** (1,000 permutations), 91 floods, 1,133 counties. Half the floods went each way (49.5% negative).
+- Secondaries: finance months 6–11 −0.60% (p 0.29); total private jobs −0.38% (p 0.24); finance minus total −0.02%
+  (p 0.49). Finance does not move differently from the rest of the local economy.
+- Reading: the state-level lead does not replicate at county level. The state result was most likely the kind of
+  chance finding the power gate exists to catch. The engine did its job: it refused to confirm a link that doesn't hold.
+- Data: QCEW 2001–2026Q1 complete (about 76k rows a year; 2001–2013 from BLS bulk files, ledger 1274).
 
 **Other data now flowing**
 - HUD Fair Market Rents by county: GitHub Actions job. 2017–2020 verified; the rate-limit fix is merged (PR #21).
@@ -147,7 +148,7 @@ b9 tests it at county level with its own pre-registered design:
 
 | # | experiment | status |
 |---|---|---|
-| E1 | method bake-off on placebo counties with injected effects | tooling built; runs when b9 data is complete |
+| E1 | method bake-off on placebo counties with injected effects | **done (ledger 1278):** random-effects pooling wins (recall 78% at −2% vs 38% for b9's design); analytic p-values over-reject, so calibrated nulls stay mandatory |
 | E2 | spillovers to neighbouring counties | planned |
 | E3 | network propagation (IRS migration, LODES commuting, input-output) | planned |
 | E4 | dose-response (NFIP claims dollars) | planned |
@@ -173,7 +174,8 @@ b9 tests it at county level with its own pre-registered design:
 6. **Regime breaks must be excluded:** the pandemic (2020-02-15 to 2021-06-30) and the 2008–09 financial crisis.
    Claims data is still abnormal through 2022.
 7. **One lead repeated across two independent batches:** flood → finance jobs. Repetition across designs is the
-   strongest signal we have. The b9 county test exists because of it.
+   strongest signal we have. The b9 county test existed because of it, and it did not hold (ledger 1277): even
+   repetition across two state-level batches was not enough, so county-level confirmation stays mandatory.
 8. **Choose methods on placebo data, never on real treated units.** That is how E1 is built, so choosing a method
    cannot peek at the answer.
 9. **Obvious-link filtering by regex is weak.** Surprise should come from the mechanism graph and domain distance.
@@ -217,7 +219,8 @@ b9 tests it at county level with its own pre-registered design:
 
 ## 5. Open gaps (most important first)
 
-1. **No surprising link confirmed yet.** Everything depends on b9 and the experiments producing one that holds up.
+1. **No surprising link confirmed yet.** b9 (the one lead) did not hold at county level. Everything now depends on the
+   experiments (E1–E9), above all the cultural-trends direction (E9), producing one that holds up.
 2. **Measurement is narrow.** The scan only covers about 20 regional panels plus county QCEW. About 12k national series
    (Wikipedia, news, social, markets) are outside every test; they need a timing-only design (lane 2), labelled weaker.
 3. **"Absorbed" has no counterfactual.** It needs a pre-registered resilient-versus-not comparison (Florida vs North
@@ -244,10 +247,6 @@ b9 tests it at county level with its own pre-registered design:
 
 0. **E9 phase 1:** load SSA names and the 2015+ Wikipedia pageviews for the control articles, then run the four positive
    controls and 200 negative controls.
-1. **Finish b9 data** (backfill run + API collection), run the frozen test, report plainly whatever it says, and
-   record it in the ledger.
-2. **E1:** export the placebo-only extract (`att_e1_extract`) and run `ripples/tools/experiments/e1_bakeoff.py`. Pick
-   the estimator with the best recall at a calibrated false-positive rate.
 3. **E4 and E2:** load NFIP claims and county adjacency. Pre-register dose-response and spillover tests using the E1
    winner.
 4. **E3:** load IRS county migration and LODES commuting flows; test "connected counties" against weakly connected

@@ -28,6 +28,26 @@ on placebo data is it applied to real shocks, under a fresh pre-registration wit
   recall at −1% and −2% with calibrated false positives. Runs outside the database from an exported, placebo-only
   extract, so it adds no load.
 
+### E1 result (2026-09-27, ledger 1278; `ripples/docs/results/e1_bakeoff_2026-09-27.json`)
+
+56 usable flood events (placebo donors only), 1,000 replicates. Two findings:
+
+1. **Analytic p-values over-reject.** At a nominal p ≤ 0.05 with no real effect, every method "found" something too
+   often: M1 7.5%, M2 9.8%, M3 17.2%, M4 9.2%, M5 7.1%. Every real test must use a permutation or placebo null (as b9
+   did) or a placebo-calibrated cutoff.
+2. **Pooling wins.** Recall at an honest 5% false-positive rate:
+
+| method | −0.5% | −1% | −2% | −3% |
+|---|---|---|---|---|
+| M1 mean difference (b9's design) | 10% | 17% | 38% | 67% |
+| M2 precision-weighted | 11% | 22% | 55% | 87% |
+| M3 matched donors | 13% | 23% | 55% | 84% |
+| **M4 random-effects pooling** | **15%** | **35%** | **78%** | **98%** |
+| M5 dose-weighted (county count) | 12% | 23% | 59% | 88% |
+
+M4 roughly doubles recall at −1% and −2% and is the estimator for E2/E4, always with a calibrated null. Small effects
+(−0.5%) stay out of reach with this many events; that needs more events or better outcomes, not a better formula.
+
 ## E2 — Spillovers: does the ripple travel?
 
 The vision is "wherever the impact shows up". Test undeclared **neighbouring** counties (and the next ring out) for
