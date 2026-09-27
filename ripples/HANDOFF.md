@@ -72,6 +72,15 @@ more than ~20k rows in one transaction on this instance.
   It is the first non-obvious link to repeat across two batches (b6 months 6–11, b7 months 13–24). A county-level
   test (QCEW finance employment in flooded vs unflooded counties, NFIP claims as dose) would decide it.
 
+### b9: county-level flood → finance-jobs test (pre-registered 16:05 UTC, ledger 1271)
+- File `42_att_b9_county_flood_finance.sql`. One primary test, frozen (test function md5 in the ledger) before any county
+  data existed: FEMA flood DR declarations → QCEW private Financial Activities employment, designated counties vs
+  same-state undeclared counties, months 13–24, in-space permutation null (year-matched by construction), one-sided
+  p ≤ 0.05. Secondary: months 6–11, total private employment, finance minus total.
+- Collecting: `att-b9-collect` (1 request/min; FEMA county declarations, then 210 QCEW quarterly files 2000–2026Q1).
+  When `att_b9_req` shows all done: run `select ripples.att_b9_test('1023', 13, 24)` (and the secondaries) as a one-off
+  cron job with a long timeout (the permutation step is heavy), append the result to the ledger, unschedule the collector.
+
 ### Next (runbook steps 6–7, unchanged in substance)
 1. b6 / b7: when each finisher reports `all_done`, read `att_fx63_select` (decoy_set 0, selected) and the decoy
    calibration; for any confirmation run the seasonal check (median `p_time` of held-out rows in `att_fx_event`, role
