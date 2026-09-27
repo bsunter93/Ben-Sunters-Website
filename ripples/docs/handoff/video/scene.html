@@ -1,0 +1,125 @@
+<!doctype html><html><head><meta charset="utf-8"><style>
+@font-face{font-family:"Inter Tight";src:url(file:///home/user/Ben-Sunters-Website/ripples/pond/fonts/InterTight.woff2) format("woff2");font-weight:100 900}
+:root{--bank:#0F1516;--bank2:#151C1D;--line:#25302F;--text:#F1F4F2;--t2:#A7B5B1;--t3:#7C8A86;--water:#061B22;--ring:#A9EAD9;--sand:#C8B48E;--num:#F6C46A;--pad:#6DBE9C;--padedge:#8DDCBB;--grass:#4FA37F;--stone:#2A2F33;--stoneedge:#5F676E;--stonehi:#A2ABB2}
+*{box-sizing:border-box;margin:0}
+html,body{width:1080px;height:1920px;overflow:hidden;background:var(--bank);color:var(--text);font-family:"Inter Tight",sans-serif;font-feature-settings:"tnum" 1}
+#stage{position:absolute;inset:0}
+svg{position:absolute;left:0;top:0}
+.layer{position:absolute;left:0;right:0;opacity:0}
+.brand{position:absolute;top:70px;left:70px;font-size:30px;font-weight:600;color:var(--t2);letter-spacing:-.01em;display:flex;gap:14px;align-items:center}
+.brand i{width:26px;height:26px;border:2.5px solid var(--ring);border-radius:50%;display:inline-block;box-shadow:0 0 0 7px rgba(169,234,217,.15)}
+.cap{position:absolute;left:70px;right:70px;bottom:190px;font-size:50px;line-height:1.22;font-weight:600;letter-spacing:-.02em;text-align:center;text-wrap:balance;color:var(--text);text-shadow:0 2px 18px rgba(0,0,0,.6)}
+.foot{position:absolute;left:0;right:0;bottom:90px;text-align:center;font-size:26px;color:var(--t3);font-style:italic}
+.eyebrow{font-size:34px;letter-spacing:.12em;text-transform:uppercase;color:var(--sand);font-weight:600}
+.big{font-size:200px;font-weight:650;letter-spacing:-.05em;color:var(--num);line-height:1}
+.mid{font-size:52px;font-weight:600;letter-spacing:-.02em}
+.small{font-size:34px;color:var(--t2)}
+.tier{display:inline-flex;align-items:center;gap:16px;font-size:48px;font-weight:700;letter-spacing:.14em;color:var(--padedge);border:3px solid var(--padedge);border-radius:999px;padding:14px 38px}
+.tier b{width:26px;height:26px;border-radius:50%;background:var(--padedge)}
+.circles{display:flex;gap:44px;justify-content:center}
+.circles div{width:120px;height:120px;border-radius:50%;border:4px dashed var(--t3);display:grid;place-items:center;font-size:54px;font-weight:650;color:var(--t3)}
+.circles div.on{border:4px solid var(--ring);color:var(--water);background:var(--ring)}
+.flat li{list-style:none;font-size:46px;font-weight:500;padding:18px 0;border-bottom:2px solid var(--line);display:flex;gap:24px;align-items:center}
+.flat li i{width:22px;height:22px;border-radius:50%;background:var(--grass);flex:none}
+.row{display:grid;grid-template-columns:1fr;gap:8px;margin:0 0 50px}
+</style></head><body><div id="stage">
+<svg id="svg" width="1080" height="1920"></svg>
+<div class="brand"><i></i>Ripple Map</div>
+<div id="L1" class="layer" style="top:1180px;text-align:center"><div class="eyebrow">Hurricane Milton</div><div class="small" style="margin-top:16px">Landfall · Siesta Key, Florida · 9 Oct 2024</div></div>
+<div id="L2" class="layer" style="top:1080px;text-align:center"><div class="small" id="L2a">Duke Energy Florida · electricity demand</div><div class="big" id="num">1.00×</div><div class="mid" id="L2b" style="color:var(--t2)">of normal · the day after landfall</div></div>
+<div id="L3" class="layer" style="top:560px;text-align:center"><div class="mid" style="font-size:96px;letter-spacing:-.03em">Could it be luck?</div><div class="small" style="margin:26px 0 70px">Three independent checks</div><div class="circles"><div id="c1">1</div><div id="c2">2</div><div id="c3">3</div></div></div>
+<div id="L4" class="layer" style="top:1300px;text-align:center"><div class="big" style="font-size:150px"><span style="color:var(--num)">3</span><span style="color:var(--t3)"> / 1,646</span></div><div class="small" style="margin-top:14px">random days looked this strong</div></div>
+<div id="L5" class="layer" style="top:330px;padding:0 70px"><div class="eyebrow">Check 2 · regions the storm missed</div><div class="small" style="margin-top:14px">Daily demand vs its own normal, Sep–Oct 2024</div></div>
+<div id="L5b" class="layer" style="top:1180px;padding:0 70px"><div class="row"><div class="big" style="font-size:130px">−20%</div><div class="small">Florida's grids vs 51 regions the storm missed</div></div><div class="row"><div class="mid" style="font-size:64px">0 of 41</div><div class="small">fake storm dates came close</div></div></div>
+<div id="L6" class="layer" style="top:330px;padding:0 70px"><div class="eyebrow">Check 3 · a forecast that knew nothing</div><div class="small" style="margin-top:14px">Duke Energy Florida demand vs forecast, 8 days from onset</div></div>
+<div id="L7" class="layer" style="top:1300px;text-align:center"><div class="tier"><b></b>MEASURED</div><div class="small" style="margin-top:30px">Three methods, one answer</div></div>
+<div id="L8" class="layer" style="top:300px;padding:0 70px"><div class="eyebrow" style="color:var(--grass)">Stayed flat · 12 tested</div><ul class="flat" style="padding:0;margin-top:30px" id="flat"></ul></div>
+<div id="L9" class="layer" style="top:1220px;padding:0 90px;text-align:center"><div class="mid" style="font-size:58px;line-height:1.2">Milton is a test storm.</div><div class="small" style="margin-top:22px;line-height:1.35">It checks the engine finds real effects before we trust it on surprising ones.</div></div>
+<div id="L10" class="layer" style="top:640px;text-align:center;padding:0 80px"><div class="mid" style="font-size:92px;line-height:1.05;letter-spacing:-.035em">What did that event change?</div><div class="small" style="margin-top:60px;font-size:40px;color:var(--text)">Full evidence + data</div><div class="mid" style="margin-top:14px;color:var(--sand);font-size:56px">bensunter.com/ripples</div></div>
+<div class="cap" id="cap"></div>
+<div class="foot" id="foot">consistent with, never proof of cause</div>
+</div>
+<script>
+const G=GRID;const S=document.getElementById('svg');const NS='http://www.w3.org/2000/svg';
+const el=(n,a,p=S)=>{const e=document.createElementNS(NS,n);for(const k in a)e.setAttribute(k,a[k]);p.appendChild(e);return e};
+const cl=(x,a=0,b=1)=>Math.max(a,Math.min(b,x));const lin=(t,a,b)=>cl((t-a)/(b-a));
+const ease=x=>1-Math.pow(1-x,3);const eio=x=>x<.5?4*x*x*x:1-Math.pow(-2*x+2,3)/2;
+const fade=(t,a,b,f=.5)=>Math.min(ease(lin(t,a,a+f)),1-ease(lin(t,b-f,b)));
+const CAPS=[[0,4,"The day after Hurricane Milton hit Florida, something moved in the power grid."],
+[4,8.6,"On Florida's Gulf coast, electricity demand fell to less than half of normal."],
+[8.6,13,"For the whole week, it ran about eleven percent below."],
+[13,18,"But demand bounces around. Could that just be luck? We checked three ways."],
+[18,25,"One. We ran the same test on 1,646 random days. Only three looked this strong."],
+[25,29.5,"Two. We compared Florida with fifty-one grid regions the storm missed."],
+[29.5,34,"Florida ran twenty percent below them, and no fake storm date came close."],
+[34,41,"Three. A forecast model that knew nothing about the storm predicted normal demand. Reality came in about twenty percent under."],
+[41,44,""],
+[44,51,"And what didn't move? Jobless claims. Air travel. Gas prices. Twelve things we tested stayed flat."],
+[51,57,"Milton is one of our test storms. It's how we check the engine finds real effects before we trust it on the surprising ones."],
+[57,60.1,"Consistent with, never proof of cause. Full evidence at the link."]];
+// pond
+const P=el('g',{});const cx=540,cy=820;
+el('ellipse',{cx,cy,rx:470,ry:420,fill:'#061B22'},P);
+const rings=[...Array(6)].map(()=>el('circle',{cx,cy,r:0,fill:'none',stroke:'#A9EAD9','stroke-width':3},P));
+const stone=el('g',{},P);el('ellipse',{cx:0,cy:0,rx:46,ry:34,fill:'#2A2F33',stroke:'#5F676E','stroke-width':2.5},stone);el('path',{d:'M-24 -14 Q-6 -26 16 -18',fill:'none',stroke:'#A2ABB2','stroke-width':3,'stroke-linecap':'round'},stone);
+const padG=el('g',{},P);const PX=800,PY=620;
+el('circle',{cx:PX,cy:PY,r:44,fill:'#17453F',stroke:'#8DDCBB','stroke-width':3},padG);el('path',{d:`M${PX} ${PY} L${PX+44} ${PY-8}`,stroke:'#061B22','stroke-width':6},padG);
+const grass=el('g',{},P);[[250,1040],[300,1100],[200,960],[860,1030],[820,1090]].forEach(([x,y])=>{for(let k=0;k<5;k++)el('path',{d:`M${x+k*9} ${y} q${-6+k*3} -40 ${-2+k*4} -70`,stroke:k%2?'#3E8C6C':'#4FA37F','stroke-width':6,fill:'none','stroke-linecap':'round'},grass)});
+const others=el('g',{},S);[["Hurricane Helene",190,470,70],["Heat wave · 24 states",880,430,80],["CPI release",150,1000,58],["Hurricane Lala",930,980,62],["DeepSeek-R1",540,300,50]].forEach(([n,x,y,r])=>{el('circle',{cx:x,cy:y,r,fill:'#061B22',stroke:'#A9EAD9','stroke-opacity':.3,'stroke-width':2},others);const t=el('text',{x,y:y+r+44,'text-anchor':'middle',fill:'#7C8A86','font-size':30},others);t.textContent=n});
+// dots
+const D=el('g',{},S);const dots=[];const cols=42,sz=19;const ox=(1080-cols*sz)/2+sz/2,oy=380;
+const hi=new Set([311,902,1377]);for(let i=0;i<1646;i++){const x=ox+(i%cols)*sz,y=oy+Math.floor(i/cols)*sz;dots.push(el('circle',{cx:x,cy:y,r:hi.has(i)?8:5,fill:hi.has(i)?'#F6C46A':'#344240'},D))}
+// chart
+const C=el('g',{},S);const cx0=110,cx1=990,cy0=520,cy1=1080;const n=G.length;
+const X=i=>cx0+(cx1-cx0)*i/(n-1),Y=v=>cy1-(v-0.35)/(1.2-0.35)*(cy1-cy0);
+el('line',{x1:cx0,x2:cx1,y1:Y(1),y2:Y(1),stroke:'#344240','stroke-width':2,'stroke-dasharray':'6 8'},C);
+const tn=el('text',{x:cx1,y:Y(1)-14,'text-anchor':'end',fill:'#7C8A86','font-size':26},C);tn.textContent='normal';
+const li=G.findIndex(r=>r[0]=='2024-10-09');el('line',{x1:X(li),x2:X(li),y1:cy0-20,y2:cy1,stroke:'#C8B48E','stroke-width':2.5,'stroke-dasharray':'8 8'},C);
+const tl=el('text',{x:X(li)-12,y:cy0-30,'text-anchor':'end',fill:'#C8B48E','font-size':28,'font-weight':600},C);tl.textContent='landfall';
+const pd=el('path',{fill:'none',stroke:'#A7B5B1','stroke-width':4,'stroke-linejoin':'round'},C);const pf=el('path',{fill:'none',stroke:'#F6C46A','stroke-width':6,'stroke-linejoin':'round'},C);
+const ld=el('text',{x:cx0,y:Y(0.4),'text-anchor':'start',fill:'#A7B5B1','font-size':28},C);ld.textContent='— grey: 51 regions the storm missed';
+const lf=el('text',{x:X(li+1)+16,y:Y(G[li+1][1])+8,fill:'#F6C46A','font-size':30,'font-weight':600},C);lf.textContent='Duke Energy Florida';
+[['2 Sep',0],['1 Oct',G.findIndex(r=>r[0]=='2024-10-01')],['27 Oct',n-1]].forEach(([s,i])=>{const t=el('text',{x:X(i),y:cy1+50,'text-anchor':i==0?'start':i==n-1?'end':'middle',fill:'#7C8A86','font-size':26},C);t.textContent=s});
+const path=(k,upto)=>{let d='';for(let i=0;i<=upto&&i<n;i++)d+=(i?'L':'M')+X(i).toFixed(1)+' '+Y(G[i][k]).toFixed(1);return d};
+// forecast intervals (real numbers)
+const F=el('g',{},S);const fx=v=>880+v*21;
+el('line',{x1:fx(0),x2:fx(0),y1:700,y2:1180,stroke:'#A7B5B1','stroke-width':3},F);const f0=el('text',{x:fx(0),y:680,'text-anchor':'middle',fill:'#A7B5B1','font-size':28},F);f0.textContent='forecast (0%)';
+const FR=[[-20.4,-31.7,-4.6,'Demand series A'],[-19.1,-32.1,-0.1,'Demand series B']];const fb=[];
+FR.forEach(([m,lo,hi2,lab],j)=>{const y=820+j*220;const g=el('g',{},F);el('line',{x1:fx(lo),x2:fx(hi2),y1:y,y2:y,stroke:'#F6C46A','stroke-width':10,'stroke-linecap':'round','stroke-opacity':.45},g);el('circle',{cx:fx(m),cy:y,r:18,fill:'#F6C46A'},g);const a=el('text',{x:fx(lo),y:y-40,fill:'#F1F4F2','font-size':30},g);a.textContent=lab;const b=el('text',{x:fx(m),y:y+72,'text-anchor':'middle',fill:'#F6C46A','font-size':56,'font-weight':650},g);b.textContent=(m+'%').replace('-','−');fb.push(g)});
+const fn=el('text',{x:540,y:1250,'text-anchor':'middle',fill:'#7C8A86','font-size':26},F);fn.textContent='bars: the model\'s uncertainty range · Google BigQuery';
+const FL=["Florida Power & Light demand (on its own)","Florida jobless claims","US air travellers (TSA)","US gasoline price","Gulf Coast jet-fuel price","FEMA declarations × 3","Weather warnings × 4"];
+const ul=document.getElementById('flat');const lis=FL.map(s=>{const l=document.createElement('li');l.innerHTML='<i></i>'+s;ul.appendChild(l);return l});
+const $=id=>document.getElementById(id);const op=(e,v)=>{e.style.opacity=v;if(e.setAttribute&&e instanceof SVGElement)e.setAttribute('opacity',v)};
+window.render=function(t){
+ const c=CAPS.find(x=>t>=x[0]&&t<x[1]);$('cap').textContent=c?c[2]:'';$('cap').style.opacity=c?Math.min(1,lin(t,c[0],c[0]+.2))*Math.min(1,lin(t,c[1]+.05,c[1]-.15)):0;
+ $('foot').style.opacity=t<57?.8:0;
+ // pond visible 0-13 and 51-57 (zoomed out)
+ let pondO=Math.max(fade(t,0,13.2,.3),fade(t,41,57.2,.6)*(t>=41&&t<44?1:0),fade(t,51,57.3,.6));
+ const sc=t>=51?1-0.45*eio(lin(t,51,53.5)):1;
+ P.setAttribute('transform',`translate(${cx} ${cy}) scale(${sc}) translate(${-cx} ${-cy})`);op(P,pondO);
+ op(others,t>=51?ease(lin(t,52,54))*fade(t,51,57.3,.6):0);
+ const drop=lin(t,.3,1.1);stone.setAttribute('transform',`translate(${cx} ${cy-500*(1-ease(drop)) })`);op(stone,t<.3?0:1);
+ rings.forEach((r,i)=>{const s=1.1+i*.55;const k=((t-s)/4.2);const on=t>s&&t<13;const kk=((t-s)%4.2)/4.2;const rad=on?40+kk*440:0;r.setAttribute('r',rad);r.setAttribute('opacity',on?(1-kk)*.8:0)});
+ op(padG,t<4.4?0:ease(lin(t,4.4,5)));op(grass,t>=41&&t<44?1:0);
+ op($('L1'),fade(t,.9,4,.4));
+ op($('L2'),fade(t,4.8,13,.4));
+ let v;if(t<5.2)v=1;else if(t<8)v=1-0.55*ease(lin(t,5.2,8));else if(t<9.4)v=.45;else v=.45+0.44*ease(lin(t,9.4,10.6));
+ $('num').textContent=v.toFixed(2)+'×';$('L2b').textContent=t<9?'of normal · the day after landfall':'of normal · the week after landfall';
+ op($('L3'),Math.max(fade(t,13,18,.4),0));
+ ['c1','c2','c3'].forEach((id,i)=>$(id).classList.toggle('on',t>13+1.3*(i+1)&&false));
+ // dots
+ op(D,fade(t,18,25,.4));op($('L4'),fade(t,19.5,25,.5));dots.forEach((d,i)=>{if(!hi.has(i))d.setAttribute('fill',t>19.5?'#2A3533':'#344240')});
+ [...hi].forEach(i=>{dots[i].setAttribute('r',t>19.5?8+6*Math.sin(lin(t,19.5,20.3)*Math.PI):8)});
+ // chart
+ op(C,fade(t,25,34,.4));op($('L5'),fade(t,25,34,.4));op($('L5b'),fade(t,29.3,34,.4));
+ const up=Math.floor((n-1)*ease(lin(t,25.4,29.2)));pd.setAttribute('d',path(2,up));pf.setAttribute('d',path(1,up));op(lf,t>28?1:0);op(ld,t>28?1:0);
+ // forecast
+ op(F,fade(t,34,41,.4));op($('L6'),fade(t,34,41,.4));fb.forEach((g,j)=>op(g,ease(lin(t,35.5+j*1.2,36.1+j*1.2))));op(fn,lin(t,37.5,38));
+ // measured
+ op($('L7'),fade(t,41.2,44,.35));
+ op($('L8'),fade(t,44,51,.4));lis.forEach((l,i)=>l.style.opacity=ease(lin(t,44.4+i*.55,44.8+i*.55)));
+ op($('L9'),fade(t,53,57.2,.5));
+ op($('L10'),ease(lin(t,57.1,57.6)));
+};
+render(0);
+</script></body></html>
