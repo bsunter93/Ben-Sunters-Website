@@ -46,7 +46,13 @@ from `main`). Supabase project `kffkasnzqcddpystszch` (Pro plan), schema `ripple
   0.9 s when the RPC is slow (was 3.5 s blank) and upgrades to live in place; "How" visible on phones; Absorbed /
   Expected only / Surprise defined on How it works; `aria-live` removed from `<main>`.
 
-### Running now (04:20 UTC)
+### Outage 04:24–05:24 UTC and the slower schedule (read `41_att_ops_after_disk_exhaustion.sql`)
+Session 2's jobs exhausted the instance's disk-IO burst budget and the database stopped answering until the owner
+restarted it. Nothing committed was lost. Jobs now run slowly and staggered. **b7's finisher is deliberately off** until
+every b7 grid has decoy rows; the re-arm command is in file 41. Never run more than one heavy every-minute job or write
+more than ~20k rows in one transaction on this instance.
+
+### Running at the session-2 handoff (04:20 UTC, superseded by the outage note above)
 - `att-fx63-step-1`, `-step-2` (every minute, ~650 rows each per run), `att-fx63-finisher-fx63-b6-unexpected`,
   `att-fx63-finisher-fx63-b7-decade`, `att-fx63-seed-b7` (one-off). Expect b6 to finish in ~1 h and b7 in ~6–8 h
   (41.5k explore + ~330k decoy rows).
