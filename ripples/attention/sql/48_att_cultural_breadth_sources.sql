@@ -1,0 +1,28 @@
+-- 48: cultural outcome and breadth sources beyond Wikipedia (owner request 2026-09-27; direction D-26). All keyless or
+-- using keys already held; aggregates only; no personal data stored. Applied live 2026-09-27 (functions exact text:
+-- pg_get_functiondef).
+--
+-- Seattle Public Library checkouts (data.seattle.gov dataset tmmm-ytt6, Socrata, keyless)
+--   ripples.att_sea_terms(term, weight_2019, status, req_id, done_at): 1,500 subject headings, the most-checked-out in
+--     2019 (books), split from the Subjects field.
+--   ripples.att_sea(term, ym, n): monthly checkouts of items whose subjects contain the heading, 2005-04 onward.
+--   ripples.att_sea_tick(): one heading per minute (cron 'att-sea'), server-side aggregation
+--     ($select=checkoutyear,checkoutmonth,sum(checkouts), $where=subjects like '%heading%'), stops on 403/429/503,
+--     unschedules itself when done.
+--
+-- YouTube distinct-commenter breadth (key youtube_api_key, already held; YouTube Data API v3)
+--   ripples.att_yt_videos(vid, qid, comments, status, next_page, pages): 956 official videos for 667 catalog events,
+--     from Wikidata P1651 (YouTube video ID). Videos with > 20,000 comment threads are skipped (too costly to read).
+--   ripples.att_yt_tmp(vid, day, h): md5 of the author channel id, held only while one video is being read; deleted as
+--     soon as the video's daily aggregates are written.
+--   ripples.att_yt_breadth(vid, qid, day, threads, authors): per day, comment threads and distinct commenters.
+--   ripples.att_yt_tick(): cron 'att-yt-breadth' every minute: videos.list statistics (1 unit / 50 videos) then
+--     commentThreads.list pages (1 unit / 100 threads); at most 4,000 units a day (att-youtube uses ~1,000 of the
+--     10,000 default quota). Stops on 403/429/503.
+--
+-- Bluesky breadth already existed: att-social jetstream stores per-hashtag per-day post counts and HyperLogLog
+-- distinct-author registers in ripples.att_social_tags (since 2026-09-23; DIDs hashed in memory, never stored).
+--
+-- pg_net watchdog: the pg_net worker went idle with requests queued several times on 2026-09-27.
+--   ripples.att_net_watchdog(), cron 'att-net-watchdog' every 5 minutes: if the oldest queued request id has not moved
+--   since the last check, net.worker_restart(); otherwise net.wake().
