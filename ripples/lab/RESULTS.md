@@ -3,6 +3,7 @@
 | date | design | false discoveries / run (no plant) | recall 1% / 2% / 3% | notes |
 |---|---|---|---|---|
 | 2026-09-27 | synthetic smoke test | 0.00 | — | pipeline check only; empirical p resolution fixed by null-standardized p |
+| 2026-09-27 | run 1: dl pooling, time split (screen < 2016, confirm 2016+), 11 supersectors × 3 windows × 6 groups, 60 worlds, 300 null draws | **0.017** (calibration 4.9%) | 5% / 20% / 48% | 450 usable events (storm 228/40, flood 56/40, winter 24/12, hurricane 29/2, fire 14/1, quake 4/0 screen/confirm): the confirm period is starved. Positive controls: hurricane → leisure q1–2 found in screen (−1.15%, p 0.02); **hurricane → construction not found** (−0.8% / −1.7%, wrong sign) |
 
 ## Cultural lab (`cultural_lab.py`), synthetic smoke tests only (300 articles × 1,100 days, random walk + weekly cycle + unrelated spikes; 440 catalog-shaped events; 150 fake events per world, 10 planted pairs, top-50 candidates)
 

@@ -1,1 +1,3 @@
---estimator dl --worlds 60 --null 300 --deltas 0.01 0.02 0.03 --positive-controls
+--estimator dl --split time --worlds 60 --null 300 --deltas 0.01 0.02 0.03 --positive-controls --out r1_dl_time.json
+--estimator dl --split random --worlds 60 --null 300 --deltas 0.01 0.02 0.03 --positive-controls --out r2_dl_random.json
+--estimator mean --split random --worlds 60 --null 300 --deltas 0.01 0.02 0.03 --out r3_mean_random.json

@@ -39,11 +39,16 @@ jobs:
         working-directory: ripples/lab
         run: |
           set -euo pipefail
-          args=$(cat run_args.txt 2>/dev/null || true)
-          python lab.py $args --out "$GITHUB_WORKSPACE/lab_report.json"
+          mkdir -p "$GITHUB_WORKSPACE/lab_reports"
+          # one design per line in run_args.txt; each writes its own report (its --out is a file name)
+          while IFS= read -r line; do
+            [[ -z "$line" || "$line" == \#* ]] && continue
+            python lab.py $line
+          done < run_args.txt
+          mv r*.json "$GITHUB_WORKSPACE/lab_reports/" 2>/dev/null || true
       - uses: actions/upload-artifact@v4
         if: always()
         with:
-          name: lab-report
-          path: lab_report.json
+          name: lab-reports
+          path: lab_reports/
           if-no-files-found: ignore

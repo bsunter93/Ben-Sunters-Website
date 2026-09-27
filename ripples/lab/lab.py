@@ -40,7 +40,7 @@ def qnum(yq: int) -> int:
     return (yq // 10) * 4 + (yq % 10 - 1)
 
 
-def build_events(panel: dict, fema: list[dict], min_donors: int = 6) -> list[dict]:
+def build_events(panel: dict, fema: list[dict], min_donors: int = 6, split: str = "time", seed: int = 1) -> list[dict]:
     counties = [str(c) for c in panel["counties"]]
     ci = {c: i for i, c in enumerate(counties)}
     quarters = [int(q) for q in panel["quarters"]]
@@ -86,6 +86,10 @@ def build_events(panel: dict, fema: list[dict], min_donors: int = 6) -> list[dic
             continue
         out.append({**e, "q0": q0, "treated": np.array(sorted(e["treated"])), "donors": np.array(donors),
                     "period": "screen" if e["yq"] // 10 < SPLIT_YEAR else "confirm"})
+    if split == "random":   # random halves of events within each shock group (fixed seed, set before any data is read)
+        r = np.random.default_rng(seed)
+        for e in out:
+            e["period"] = "screen" if r.random() < 0.5 else "confirm"
     return out
 
 
@@ -198,7 +202,7 @@ def bh(p: np.ndarray, q: float) -> np.ndarray:
 def run(args):
     t0 = time.time()
     panel, fema = build_panel(), build_fema()
-    events = build_events(panel, fema)
+    events = build_events(panel, fema, split=args.split)
     deltas(panel, events)
     groups = sorted({e["group"] for e in events})
     S, W = len(panel["series"]), len(WINDOWS)
@@ -210,7 +214,7 @@ def run(args):
     def stack(worlds, g, p):
         return np.stack([w[g][p][0] if g in w and p in w[g] else np.full((S, W), np.nan) for w in worlds])
 
-    report = {"design": {"estimator": args.estimator, "split_year": SPLIT_YEAR, "windows": WINDOWS, "pre": PRE,
+    report = {"design": {"estimator": args.estimator, "split": args.split, "split_year": SPLIT_YEAR, "windows": WINDOWS, "pre": PRE,
                          "bh_q": args.q, "pmode": args.pmode, "confirm_p": args.confirm_p, "null_draws": args.null},
               "events": counts, "series": [str(s) for s in panel["series"]]}
     nulls = [world(events, rng, args.estimator) for _ in range(args.null)]
@@ -291,15 +295,16 @@ def main() -> int:
     ap.add_argument("--deltas", type=float, nargs="*", default=[0.01, 0.02, 0.03])
     ap.add_argument("--q", type=float, default=0.10)
     ap.add_argument("--confirm-p", type=float, default=0.05)
+    ap.add_argument("--split", choices=["time", "random"], default="time")
     ap.add_argument("--pmode", choices=["standardized", "empirical"], default="standardized")
     ap.add_argument("--seed", type=int, default=20260927)
     ap.add_argument("--positive-controls", action="store_true")
     ap.add_argument("--out", default="lab_report.json")
     a = ap.parse_args()
     rep = run(a)
-    rep["run_at"] = dt.datetime.utcnow().isoformat(timespec="seconds") + "Z"
+    rep["run_at"] = dt.datetime.now(dt.timezone.utc).isoformat(timespec="seconds")
     json.dump(rep, open(a.out, "w"), indent=1)
-    md = [f"### Ripple Lab ({a.estimator})", "", f"events: `{json.dumps(rep['events'])}`", "",
+    md = [f"### Ripple Lab ({a.estimator}, split={a.split})", "", f"events: `{json.dumps(rep['events'])}`", "",
           "| planted effect | false discoveries / run | recall | screen share p<=.05 |", "|---|---|---|---|"]
     for k, v in rep["scorecard"].items():
         md.append(f"| {k} | {v['false_discoveries_per_run']} | {v['recall']} | {v['screen_p05_share_all_cells']} |")
