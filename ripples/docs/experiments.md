@@ -1,5 +1,14 @@
 # Ripple Map — modelling experiments (registered 2026-09-27)
 
+> **Direction (D-26, 2026-09-27):** the product is cultural ripples. The research program is now organised around three
+> questions in `discovery_engine.md`:
+> - Q1: rediscover known cultural ripples (E9 phase 1).
+> - Q2: improve candidate generation without more false discoveries (the cultural lab, with methods D1–D4).
+> - Q3: an unknown discovery survives held-out confirmation.
+>
+> E1–E8 below are disaster/economic proving-ground experiments. They still inform the shared machinery (estimators,
+> calibration, pooling), but they are not the product.
+
 Goal: find a way to uncover **surprising** shock → outcome links **repeatably**, without giving up the rigor rules
 (pre-registration, decoys, held-out confirmation, withholding). Eight batches so far confirmed only obvious links, and the
 one real lead (floods → finance jobs) failed only on power. The problem is method power and data resolution, not

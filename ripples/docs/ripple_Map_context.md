@@ -27,6 +27,19 @@ what we learned, pitfalls, open gaps and next steps. The operational runbook wit
   are not always visible.
 - **Honesty.** Report blunt results, including "nothing survived".
 
+## 1. Governing direction (D-26, 2026-09-27)
+
+`ripples/docs/discovery_engine.md` is the governing direction and wins over older text below.
+- **Thesis:** "What did that thing everyone remembers change?" Memorable cultural stone → surprising, defensible
+  landing spot. Frozen → Elsa is the canonical ripple.
+- **One engine, not seven products.** A creative discovery layer runs competing methods: D1 event fingerprints, D2
+  outcome-first anomalies, D3 exposure gradients, D4 ghost events. A conservative verification layer stays unchanged.
+- **Research program:** Q1 rediscover known ripples → Q2 improve candidate generation at a fixed false-discovery rate
+  → Q3 an unknown discovery survives held-out confirmation.
+- **Benchmark:** how often the engine produces a relationship that is both genuinely surprising and independently
+  defensible.
+- **Disasters and economic shocks** are proving grounds and secondary content, not the identity.
+
 ## 1a. Product thesis (revised 2026-09-27)
 
 **Anchor on the trends people remember; use every other dataset as the places a ripple could land.**
