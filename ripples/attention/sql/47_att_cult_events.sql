@@ -20,3 +20,15 @@ create table if not exists ripples.att_cult_req (typ text primary key, req_id bi
 alter table ripples.att_cult_events enable row level security;
 alter table ripples.att_cult_req enable row level security;
 revoke all on ripples.att_cult_events, ripples.att_cult_req from anon, authenticated, public;
+
+-- 2026-09-27 21:00 UTC widening (owner: "look across more dimensions"): Wikidata queries added for video games (Q7889),
+-- albums (Q482994, Q208569), elections/referendums (P585), protests and social movements (P580), sporting event editions
+-- (P580), deaths of very prominent people (humans with >= 150 sitelinks, P570), internet memes (P571) and legal cases.
+-- Parsed by ripples.att_cult_parse() (merges any finished att_cult_req responses; insert-only, never overwrites).
+-- Wikidata types elections too specifically, so 20 political/social/tech moments with exact dates were curated by hand
+-- (qid 'CUR:*', meta.curated = true): US presidential elections 2008-2024, the Brexit vote, the ACA, Obergefell, Dobbs,
+-- Occupy, the Weinstein report, #MeToo, the Women's March, Charlottesville, Sandy Hook, March for Our Lives, George
+-- Floyd, January 6, the WHO pandemic declaration and the ChatGPT release.
+-- Catalog after widening: 1,862 events (film 1,200, tv 280, game 114, sport 101, song 58, death 28, album 25,
+-- protest 25, book 22, politics 8, social 8, meme 4, case 3, court 2, election 1, health 1, tech 1).
+-- Ops note: the pg_net worker sometimes goes idle with requests queued; net.wake() or net.worker_restart() clears it.
