@@ -84,3 +84,23 @@ select cron.schedule('att-fx63-seed-b7', '3-59/5 * * * *', $c$set statement_time
          cron.unschedule('att-fx63-seed-b7')
    where not exists (select 1 from ripples.att_fx_grid g where g.batch like 'fx63-b7-decade/%'
                        and not exists (select 1 from ripples.att_fx_event f where f.grid_id = g.grid_id and f.role = 'dx'));$c$);
+
+-- 11:22 UTC: seeding stalled at 174/234 because the first unseeded grids (hurricane sub-family, 14-21 events) have no
+-- clean decoy date at all (168/168 draws rejected by the clean-control mask), so they never get dx rows and the job
+-- re-picked them forever. The job now records every grid it has tried in att_state 'engine63.seed_tried:fx63-b7-decade'
+-- and moves on; grids with no clean draw end with no decoy rows, as att_fx63_decoy_seed always allowed
+-- ('rejected_no_clean_draw'; b6 had 7,868 such draws). The finisher's decoy stage is batch-level, so this is not a rule
+-- change; those pairs simply contribute nothing to the decoy calibration.
+insert into ripples.att_state(k, v) values ('engine63.seed_tried:fx63-b7-decade', '[]'::jsonb) on conflict (k) do nothing;
+select cron.schedule('att-fx63-seed-b7', '3-59/5 * * * *', $c$set statement_timeout = '280s';
+  with pick as (select g.grid_id from ripples.att_fx_grid g where g.batch like 'fx63-b7-decade/%'
+                   and not exists (select 1 from ripples.att_fx_event f where f.grid_id = g.grid_id and f.role = 'dx')
+                   and not (to_jsonb(g.grid_id) <@ (select v from ripples.att_state where k = 'engine63.seed_tried:fx63-b7-decade'))
+                 order by g.grid_id limit 2),
+  s as (select p.grid_id, ripples.att_fx63_decoy_seed_grid('fx63-b7-decade', p.grid_id) n from pick p)
+  update ripples.att_state set v = v || (select coalesce(jsonb_agg(grid_id), '[]'::jsonb) from s), updated_at = now() where k = 'engine63.seed_tried:fx63-b7-decade';
+  select cron.schedule('att-fx63-finisher-fx63-b7-decade', '4-59/5 * * * *', $f$set statement_timeout = '280s'; select ripples.att_fx63_finisher('fx63-b7-decade')$f$),
+         cron.unschedule('att-fx63-seed-b7')
+   where not exists (select 1 from ripples.att_fx_grid g where g.batch like 'fx63-b7-decade/%'
+                       and not exists (select 1 from ripples.att_fx_event f where f.grid_id = g.grid_id and f.role = 'dx')
+                       and not (to_jsonb(g.grid_id) <@ (select v from ripples.att_state where k = 'engine63.seed_tried:fx63-b7-decade')));$c$);
