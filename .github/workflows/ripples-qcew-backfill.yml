@@ -1,0 +1,50 @@
+# Ripple Map b9: QCEW county employment 2001-2013 from BLS bulk files (ripples/tools/gov/qcew_backfill.py). The QCEW
+# open-data API only serves 2014+, so these years are loaded once from GitHub. Manual runs only.
+name: Ripples QCEW backfill
+
+on:
+  workflow_dispatch:
+    inputs:
+      from_year:
+        description: "First year (2001-2013)"
+        required: false
+        default: "2001"
+      to_year:
+        description: "Last year (2001-2013)"
+        required: false
+        default: "2013"
+      dry_run:
+        description: "Download and count only, write nothing"
+        type: boolean
+        required: false
+        default: false
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ripples-qcew-backfill
+  cancel-in-progress: false
+
+jobs:
+  fetch:
+    runs-on: ubuntu-latest
+    timeout-minutes: 240
+    env:
+      SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+      SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+      IN_FROM: ${{ inputs.from_year }}
+      IN_TO: ${{ inputs.to_year }}
+      IN_DRY: ${{ inputs.dry_run && 'true' || 'false' }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Fetch and load
+        working-directory: ripples/tools/gov
+        run: |
+          set -euo pipefail
+          args=(--from-year "${IN_FROM}" --to-year "${IN_TO}")
+          if [[ "${IN_DRY}" == "true" ]]; then args+=(--dry-run); fi
+          python qcew_backfill.py "${args[@]}"
