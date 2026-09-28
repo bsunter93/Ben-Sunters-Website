@@ -49,7 +49,7 @@ def get(url: str) -> dict:
 def page_links(title: str, ns: str) -> list[str]:
     out, cont = [], {}
     while True:
-        q = {"action": "query", "format": "json", "titles": title, "prop": "links", "plnamespace": ns,
+        q = {"action": "query", "format": "json", "redirects": "1", "titles": title, "prop": "links", "plnamespace": ns,
              "pllimit": "max"} | cont
         j = get("https://en.wikipedia.org/w/api.php?" + urllib.parse.urlencode(q))
         for p in (j.get("query") or {}).get("pages", {}).values():
@@ -62,13 +62,15 @@ def page_links(title: str, ns: str) -> list[str]:
 
 def vital_articles() -> list[str]:
     """Level-3 Vital Articles. The list has moved between page layouts over the years, so try the known ones in
-    order: the level-3 page itself, then the level-3 subpages linked from the main page, then the main page."""
-    for title in ("Wikipedia:Vital articles/Level/3",):
+    order: the level-3 page ("Level 3"; "Level/3" redirects to it as of 2026-09), then level-3 subpages linked from
+    the main page, then the main page."""
+    for title in ("Wikipedia:Vital articles/Level 3", "Wikipedia:Vital articles/Level/3"):
         got = set(page_links(title, "0"))
         if len(got) >= 500:
             return sorted(got)
     subs = sorted({t for src in ("Wikipedia:Vital articles", "Wikipedia:Vital articles/Level/3")
-                   for t in page_links(src, "4") if t.startswith("Wikipedia:Vital articles/Level/3/")})
+                   for t in page_links(src, "4") if t.startswith(("Wikipedia:Vital articles/Level/3/",
+                                                                     "Wikipedia:Vital articles/Level 3/"))})
     got = set()
     for t in subs:
         got |= set(page_links(t, "0"))
