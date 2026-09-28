@@ -1,8 +1,8 @@
-# one cultural-lab design per line (arguments to cultural_lab.py). Run 1 (2026-09-28): lifts of +10% to +50% were
-# never found among ~150k event x article pairs, so this run finds the size threshold and tests a smaller search.
---size 0.5 --out c_size050.json
---size 1.0 --out c_size100.json
---size 2.0 --out c_size200.json
---size 5.0 --out c_size500.json
---size 1.0 --events 15 --plants 5 --out c_size100_ev15.json
---size 2.0 --events 15 --plants 5 --out c_size200_ev15.json
+# one cultural-lab design per line (arguments to cultural_lab.py).
+# Run 1 (2026-09-28): blind single-event search missed lifts up to +50%. Run 2: event-coupled plants (ripples follow the
+# event's own attention curve), the shape library, the shape max-statistic, onset-aligned coupling, and family pooling.
+--plant-shape coupled --size 1.0 --worlds 6 --out c_pair_coupled100.json
+--plant-shape coupled --size 2.0 --worlds 6 --out c_pair_coupled200.json
+--plant-shape mix --size 1.0 --worlds 6 --out c_pair_mix100.json
+--plant-shape coupled --size 1.0 --family-plants 3 --family-size 0.3 --worlds 6 --out c_fam030.json
+--plant-shape coupled --size 1.0 --family-plants 3 --family-size 0.5 --worlds 6 --out c_fam050.json
