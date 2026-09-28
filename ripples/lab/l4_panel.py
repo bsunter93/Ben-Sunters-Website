@@ -14,6 +14,7 @@ import json
 import os
 import sys
 import time
+import urllib.error
 import urllib.parse
 
 import numpy as np
@@ -87,7 +88,8 @@ def fetch() -> int:
             break
         try:
             s = CD.views(t, END)
-        except CD.Stop as e:
+        except (CD.Stop, urllib.error.HTTPError, urllib.error.URLError, TimeoutError) as e:
+            # any refusal or server error (403/429/5xx, timeouts) ends fetching for the day
             print(f"stopped: {e} after {n}; no retry today", flush=True)
             with open(os.path.join(CD.CACHE, "l4_stopped"), "w") as f:
                 f.write(dt.datetime.now(dt.timezone.utc).date().isoformat())
