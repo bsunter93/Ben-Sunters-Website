@@ -218,10 +218,12 @@ dl.how dt{font-weight:700}dl.how dd{margin:0;color:var(--ink-2)}
       for (const c of s.data.candidates || []) {
         const fr = s.data.families[c.family], top = (fr.top || []).find((t) => t.article === c.article) || {};
         const conf = confs.filter((x) => x.screen === s.id && x.family === c.family && x.outcome === c.article);
-        cands.push({s, c, fr, top, conf, v: verdictOf(conf)});
+        const note = (man.notes || []).find((n) => n.screen === s.id && n.family === c.family);
+        cands.push({s, c, fr, top, conf, v: note ? {cls: note.cls, text: note.verdict} : verdictOf(conf)});
       }
     }
-    const rank = (x) => (x.c.echo ? 10 : 0) + (x.v.cls === "ok" ? 0 : x.v.cls === "warn" ? 1 : 2);
+    const rank = (x) => (x.v.text.startsWith("Explained") ? 20 : 0) + (x.c.echo ? 10 : 0) +
+      (x.v.cls === "ok" ? 0 : x.v.cls === "warn" ? 1 : 2);
     cands.sort((a, b) => rank(a) - rank(b) || a.c.p_both - b.c.p_both);
     const replicated = cands.filter((x) => x.v.cls === "ok").length;
     const pendingRuns = screens.filter((s) => !s.data).length + confs.filter((c) => !c.res).length;
