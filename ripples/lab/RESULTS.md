@@ -36,6 +36,36 @@ False "verified" candidates per world: 6–30 across methods. Lessons (for desig
 4. Real calibration needs the real pageview panel (Vital Articles, daily, 2016+), fetched from 2026-09-28 because
    Wikimedia is paused for 2026-09-27 after a 429.
 
+## Cultural lab on real pageviews, run 1 (2026-09-28, [Actions run 36363187938](https://github.com/bsunter93/Ben-Sunters-Website/actions/runs/36363187938))
+
+Setup:
+- Panel: 998 level-3 Vital Articles, daily user views from 2015-07-01 to 2026-08-31 (4,080 days).
+- Events: 893 catalog events since 2015, given random fake dates.
+- Each world: 150 fake events, 10 planted pairs, top 50 candidates out of about 150,000 (event, article) pairs; 10
+  worlds per design.
+
+| planted lift | naive | ghost | outcome-first | placebo-calibrated | detrended |
+|---|---|---|---|---|---|
+| +10% | 0.00 | 0.01 | 0.00 | 0.00 | 0.00 |
+| +20% | 0.00 | 0.01 | 0.00 | 0.01 | 0.00 |
+| +30% | 0.00 | 0.01 | 0.00 | 0.01 | 0.00 |
+| +50% | 0.01 | 0.01 | 0.00 | 0.01 | 0.00 |
+
+False "verified" candidates per world: naive 43, ghost 42.5, outcome-first 27.6, placebo 41.3, detrended 34.6.
+
+Lessons (design, not findings):
+1. **The search space is the problem.** Real attention spikes in popular articles (deaths, elections, the pandemic)
+   fill the top of any list ranked across about 150,000 pairs. A sustained +50% lift never reaches the top 50. The
+   known real ripples are much larger (Chess about 3.4×, Kate Bush about 13×; E9 phase 1). Run 2 measures the size
+   threshold, and whether a smaller search (15 events per world) helps.
+2. **The persistence check verifies almost nothing.** Most false candidates pass it, because real attention shifts in
+   real data persist too. As the smoke tests already suggested, verification has to be replication-based (another
+   event of the same class, or held-out ghosts), with BH control across all pairs.
+3. Implication for D1–D4: blind search over (event × every outcome) can only find very large ripples. Useful
+   candidate generation has to narrow the pairs first. Two options: relatedness priors (an outcome's link distance
+   from the event's article, or shared Wikidata properties), or pooling across a class of events (D1 fingerprints),
+   so that many small responses add up.
+
 ## Data sources for the cultural lab (2026-09-27)
 
 | source | where | size | status |
