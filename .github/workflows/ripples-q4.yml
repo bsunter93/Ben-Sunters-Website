@@ -6,7 +6,7 @@ name: Ripples Q4 named subjects
 on:
   push:
     branches: ["claude/**"]
-    paths: ["ripples/lab/q4_matched.py", "ripples/corpus/q4_subjects_v1.tsv", ".github/workflows/ripples-q4.yml"]
+    paths: ["ripples/lab/q4_matched.py", "ripples/corpus/q4_*.tsv", ".github/workflows/ripples-q4.yml"]
   workflow_dispatch:
 
 permissions:
@@ -39,6 +39,17 @@ jobs:
         run: |
           test -f "$LAB_CACHE/pv.npz" || { echo "panel cache missing"; exit 1; }
           Q4_OUT="$OUT/q4_subjects_v1.json" python q4_matched.py ../corpus/q4_subjects_v1.tsv
+      - name: Named-subject test v1b and held-out dramas (addendum 1)
+        if: always()
+        working-directory: ripples/lab
+        env:
+          Q4_PROTOCOL: ripples/docs/q4_protocol_v1.md#addendum-1
+        run: |
+          ok() { python -c "import json,sys; sys.exit(1 if json.load(open(sys.argv[1])).get('stopped') else 0)" "$1"; }
+          ok "$OUT/q4_subjects_v1.json" || { echo "v1 stopped or failed; no more fetches today"; exit 1; }
+          Q4_OUT="$OUT/q4_subjects_v1b.json" python q4_matched.py ../corpus/q4_subjects_v1b.tsv
+          ok "$OUT/q4_subjects_v1b.json" || { echo "v1b stopped or failed; no more fetches today"; exit 1; }
+          Q4_OUT="$OUT/q4_heldout_drama_v1.json" python q4_matched.py ../corpus/q4_heldout_drama_v1.tsv
       - uses: actions/cache/save@v4
         if: always()
         with:
@@ -50,10 +61,10 @@ jobs:
         env:
           SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
           SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
-        run: python q3_upload.py "$OUT/q4_subjects_v1.json"
+        run: python q3_upload.py "$OUT"/q4_*.json
       - uses: actions/upload-artifact@v4
         if: always()
         with:
           name: q4-results
-          path: q4_subjects_v1.json
+          path: q4_*.json
           if-no-files-found: ignore

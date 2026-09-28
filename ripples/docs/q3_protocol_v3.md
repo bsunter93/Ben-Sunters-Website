@@ -78,3 +78,16 @@ Each lens runs exactly as registered for screen v2:
   - true_story_films shares no events with v2 films_blockbusters.
 - **Internal check:** The Queen's Gambit is in drama_premieres. Chess is expected to be diluted at family level,
   as in v2; the named-subject test (Q4) is where it should show.
+
+## Amendment B (registered 2026-09-28, ledger 1369, before any v3 family is scored)
+
+- **What changes:** streaming_service_launches reaches 10 events and joins v3, which now has **24 families and 321
+  events**.
+- **Events:** the owner batch's 7 launches plus 3 from the owner's validation pack
+  (`ripples/corpus/validation_pack_1.csv`): ESPN+ (2018-04-12), YouTube TV (2017-04-05) and BritBox (2017-03-07).
+- **Left out:** Shudder (2015) and DAZN (2016-08-10) fall before the window.
+- **Close pair:** Disney+ and Apple TV+ launched 11 days apart. A candidate carried by them is reported as
+  common-shock risk.
+- **Shared article:** HBO Max and Max both resolve to the current Max article, on dates three years apart (allowed by
+  rule 6 of the taxonomy).
+- **Correction:** Benjamini–Hochberg is across all 24 families within each lens.

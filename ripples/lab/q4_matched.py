@@ -60,7 +60,7 @@ def main() -> int:
     pdays = rng.integers(lo, hi, size=N_PLACEBO)
     ztab = np.array([L._NORM.inv_cdf(1 - min(max((1 + k) / (1 + N_PLACEBO), 0.5 / (1 + N_PLACEBO)),
                                              1 - 0.5 / (1 + N_PLACEBO))) for k in range(N_PLACEBO + 1)])
-    report = {"protocol": "ripples/docs/q4_protocol_v1.md", "method": "discovery v1 statistic, named subject per event",
+    report = {"protocol": os.environ.get("Q4_PROTOCOL", "ripples/docs/q4_protocol_v1.md"), "method": "discovery v1 statistic, named subject per event",
               "seed": SEED, "file": os.path.basename(path), "families": {}}
     for fam, members in read(path).items():
         used = []
