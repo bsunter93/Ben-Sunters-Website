@@ -1,0 +1,3626 @@
+{
+ "options": {
+  "panel": "pv.npz",
+  "same_weekday": false,
+  "min_coverage": 0.0
+ },
+ "protocol": "ripples/docs/q3_protocol.md",
+ "method": "discovery v1 (ledger 1283)",
+ "seed": 20260929,
+ "panel": {
+  "file": "pv.npz",
+  "articles": 998,
+  "start": "2015-07-01",
+  "end": "2026-08-31"
+ },
+ "families": {
+  "streaming_hits": {
+   "members": [
+    {
+     "id": "E583",
+     "article": "Ted Lasso",
+     "day0": "2020-08-14",
+     "titles_used": 38,
+     "d0": "2020-08-14"
+    },
+    {
+     "id": "E582",
+     "article": "The Queen's Gambit (miniseries)",
+     "day0": "2020-10-23",
+     "titles_used": 4,
+     "d0": "2020-10-23"
+    },
+    {
+     "id": "E581",
+     "article": "Bridgerton",
+     "day0": "2020-12-25",
+     "titles_used": 40,
+     "d0": "2020-12-25"
+    },
+    {
+     "id": "E589",
+     "article": "WandaVision",
+     "day0": "2021-01-15",
+     "titles_used": 14,
+     "d0": "2021-01-15"
+    },
+    {
+     "id": "E580",
+     "article": "Squid Game",
+     "day0": "2021-09-17",
+     "titles_used": 25,
+     "d0": "2021-09-17"
+    },
+    {
+     "id": "E586",
+     "article": "Arcane (TV series)",
+     "day0": "2021-11-06",
+     "titles_used": 11,
+     "d0": "2021-11-06"
+    },
+    {
+     "id": "E587",
+     "article": "The Mandalorian",
+     "day0": "2019-11-12",
+     "titles_used": 12,
+     "d0": "2019-11-12"
+    },
+    {
+     "id": "E584",
+     "article": "The Last of Us (TV series)",
+     "day0": "2023-01-15",
+     "titles_used": 9,
+     "d0": "2023-01-15"
+    },
+    {
+     "id": "E585",
+     "article": "Fallout (American TV series)",
+     "day0": "2024-04-10",
+     "titles_used": 7,
+     "d0": "2024-04-10"
+    }
+   ],
+   "n_used": 9,
+   "clustered_members": [
+    "E581",
+    "E589"
+   ],
+   "min_p_both": 0.005994005994005994,
+   "top": [
+    {
+     "article": "Sexually transmitted infection",
+     "score_mad": 5.646,
+     "score_rank": 4.457,
+     "p_mad": 0.006,
+     "p_rank": 0.003,
+     "loo_stable": false,
+     "echo": false,
+     "member_z_mad": [
+      1.0,
+      3.7,
+      2.73,
+      1.99,
+      1.61,
+      1.42,
+      2.82,
+      0.16,
+      1.5
+     ]
+    },
+    {
+     "article": "Catherine the Great",
+     "score_mad": 4.933,
+     "score_rank": 3.812,
+     "p_mad": 0.045,
+     "p_rank": 0.028,
+     "loo_stable": false,
+     "echo": true,
+     "member_z_mad": [
+      1.32,
+      2.43,
+      2.96,
+      1.08,
+      0.95,
+      2.09,
+      4.0,
+      -0.2,
+      0.16
+     ]
+    },
+    {
+     "article": "Cyrus the Great",
+     "score_mad": 4.88,
+     "score_rank": 3.889,
+     "p_mad": 0.0569,
+     "p_rank": 0.018,
+     "loo_stable": false,
+     "echo": false,
+     "member_z_mad": [
+      1.55,
+      1.54,
+      1.88,
+      1.42,
+      1.54,
+      0.78,
+      4.0,
+      -0.18,
+      2.1
+     ]
+    },
+    {
+     "article": "Charlemagne",
+     "score_mad": 4.615,
+     "score_rank": 4.244,
+     "p_mad": 0.1129,
+     "p_rank": 0.003,
+     "loo_stable": false,
+     "echo": false,
+     "member_z_mad": [
+      1.64,
+      1.75,
+      2.22,
+      1.11,
+      1.86,
+      0.67,
+      2.77,
+      0.59,
+      1.23
+     ]
+    },
+    {
+     "article": "Soul",
+     "score_mad": 4.52,
+     "score_rank": 3.496,
+     "p_mad": 0.1349,
+     "p_rank": 0.0969,
+     "loo_stable": false,
+     "echo": true,
+     "member_z_mad": [
+      0.83,
+      0.88,
+      4.0,
+      1.32,
+      1.36,
+      1.86,
+      0.36,
+      0.01,
+      2.94
+     ]
+    },
+    {
+     "article": "Dam",
+     "score_mad": 4.452,
+     "score_rank": 3.569,
+     "p_mad": 0.1608,
+     "p_rank": 0.0739,
+     "loo_stable": false,
+     "echo": false,
+     "member_z_mad": [
+      2.21,
+      0.94,
+      0.56,
+      2.61,
+      2.75,
+      2.45,
+      0.06,
+      0.64,
+      1.14
+     ]
+    },
+    {
+     "article": "Walt Disney",
+     "score_mad": 4.119,
+     "score_rank": 3.387,
+     "p_mad": 0.3027,
+     "p_rank": 0.1379,
+     "loo_stable": false,
+     "echo": false,
+     "member_z_mad": [
+      0.15,
+      1.7,
+      1.83,
+      0.89,
+      2.42,
+      1.24,
+      1.24,
+      0.55,
+      2.35
+     ]
+    },
+    {
+     "article": "Dream",
+     "score_mad": 4.042,
+     "score_rank": 3.132,
+     "p_mad": 0.3546,
+     "p_rank": 0.3127,
+     "loo_stable": false,
+     "echo": false,
+     "member_z_mad": [
+      1.5,
+      1.85,
+      1.65,
+      1.59,
+      0.36,
+      0.69,
+      3.6,
+      -0.04,
+      0.91
+     ]
+    },
+    {
+     "article": "Mahatma Gandhi",
+     "score_mad": 4.0,
+     "score_rank": 3.117,
+     "p_mad": 0.3816,
+     "p_rank": 0.3297,
+     "loo_stable": false,
+     "echo": false,
+     "member_z_mad": [
+      2.51,
+      -0.28,
+      2.35,
+      1.41,
+      1.28,
+      1.69,
+      2.26,
+      1.29,
+      -0.5
+     ]
+    },
+    {
+     "article": "Tea",
+     "score_mad": 3.964,
+     "score_rank": 3.399,
+     "p_mad": 0.3966,
+     "p_rank": 0.1349,
+     "loo_stable": false,
+     "echo": false,
+     "member_z_mad": [
+      0.95,
+      1.48,
+      2.22,
+      0.63,
+      1.6,
+      1.22,
+      2.32,
+      -0.43,
+      1.9
+     ]
+    }
+   ]
+  },
+  "films_blockbusters": {
+   "members": [
+    {
+     "id": "E099",
+     "article": "Black Panther (film)",
+     "day0": "2018-02-16",
+     "titles_used": 12,
+     "d0": "2018-02-16"
+    },
+    {
+     "id": "E557",
+     "article": "Avengers: Infinity War",
+     "day0": "2018-04-27",
+     "titles_used": 47,
+     "d0": "2018-04-27"
+    },
+    {
+     "id": "E565",
+     "article": "Spider-Man: Into the Spider-Verse",
+     "day0": "2018-12-14",
+     "titles_used": 22,
+     "d0": "2018-12-14"
+    },
+    {
+     "id": "E558",
+     "article": "Avengers: Endgame",
+     "day0": "2019-04-26",
+     "titles_used": 45,
+     "d0": "2019-04-26"
+    },
+    {
+     "id": "E559",
+     "article": "Joker (2019 film)",
+     "day0": "2019-10-04",
+     "titles_used": 10,
+     "d0": "2019-10-04"
+    },
+    {
+     "id": "E568",
+     "article": "Dune (2021 film)",
+     "day0": "2021-10-22",
+     "titles_used": 14,
+     "d0": "2021-10-22"
+    },
+    {
+     "id": "E566",
+     "article": "Spider-Man: No Way Home",
+     "day0": "2021-12-17",
+     "titles_used": 21,
+     "d0": "2021-12-17"
+    },
+    {
+     "id": "E567",
+     "article": "Top Gun: Maverick",
+     "day0": "2022-05-27",
+     "titles_used": 55,
+     "d0": "2022-05-27"
+    },
+    {
+     "id": "E100",
+     "article": "Barbenheimer",
+     "day0": "2023-07-21",
+     "titles_used": 17,
+     "d0": "2023-07-21"
+    },
+    {
+     "id": "E569",
+     "article": "Dune: Part Two",
+     "day0": "2024-03-01",
+     "titles_used": 9,
+     "d0": "2024-03-01"
+    }
+   ],
+   "n_used": 10,
+   "clustered_members": [],
+   "min_p_both": 0.004995004995004995,
+   "top": [
+    {
+     "article": "Napoleon",
+     "score_mad": 5.955,
+     "score_rank": 4.192,
+     "p_mad": 0.004,
+     "p_rank": 0.005,
+     "loo_stable": false,
+     "echo": true,
+     "member_z_mad": [
+      1.8,
+      0.11,
+      0.66,
+      4.0,
+      0.8,
+      0.79,
+      1.33,
+      1.35,
+      4.0,
+      4.0
+     ]
+    },
+    {
+     "article": "Elizabeth I",
+     "score_mad": 5.365,
+     "score_rank": 4.062,
+     "p_mad": 0.016,
+     "p_rank": 0.013,
+     "loo_stable": false,
+     "echo": false,
+     "member_z_mad": [
+      1.35,
+      1.03,
+      2.42,
+      0.75,
+      2.34,
+      1.63,
+      1.18,
+      3.67,
+      0.89,
+      1.72
+     ]
+    },
+    {
+     "article": "Meditation",
+     "score_mad": 4.942,
+     "score_rank": 4.162,
+     "p_mad": 0.043,
+     "p_rank": 0.006,
+     "loo_stable": false,
+     "echo": false,
+     "member_z_mad": [
+      1.59,
+      2.95,
+      0.6,
+      1.71,
+      2.11,
+      2.25,
+      0.56,
+      1.56,
+      1.16,
+      1.15
+     ]
+    },
+    {
+     "article": "Bhagavad Gita",
+     "score_mad": 5.072,
+     "score_rank": 3.512,
+     "p_mad": 0.031,
+     "p_rank": 0.1009,
+     "loo_stable": false,
+     "echo": false,
+     "member_z_mad": [
+      1.08,
+      -0.08,
+      1.67,
+      0.01,
+      1.47,
+      2.08,
+      3.92,
+      0.44,
+      4.0,
+      1.45
+     ]
+    },
+    {
+     "article": "Epistemology",
+     "score_mad": 4.464,
+     "score_rank": 3.497,
+     "p_mad": 0.1508,
+     "p_rank": 0.1089,
+     "loo_stable": false,
+     "echo": false,
+     "member_z_mad": [
+      1.05,
+      2.2,
+      2.49,
+      0.58,
+      1.44,
+      0.31,
+      -0.04,
+      0.89,
+      4.0,
+      1.19
+     ]
+    },
+    {
+     "article": "Pablo Picasso",
+     "score_mad": 4.498,
+     "score_rank": 3.388,
+     "p_mad": 0.1349,
+     "p_rank": 0.1608,
+     "loo_stable": false,
+     "echo": false,
+     "member_z_mad": [
+      2.3,
+      4.0,
+      -0.12,
+      0.9,
+      0.57,
+      2.96,
+      1.22,
+      2.44,
+      -0.64,
+      0.57
+     ]
+    },
+    {
+     "article": "French Revolution",
+     "score_mad": 4.922,
+     "score_rank": 3.367,
+     "p_mad": 0.049,
+     "p_rank": 0.1698,
+     "loo_stable": false,
+     "echo": false,
+     "member_z_mad": [
+      0.91,
+      0.86,
+      2.87,
+      2.72,
+      1.18,
+      -0.47,
+      0.53,
+      0.96,
+      2.25,
+      3.75
+     ]
+    },
+    {
+     "article": "New religious movement",
+     "score_mad": 4.353,
+     "score_rank": 3.494,
+     "p_mad": 0.1978,
+     "p_rank": 0.1119,
+     "loo_stable": false,
+     "echo": false,
+     "member_z_mad": [
+      1.1,
+      1.55,
+      1.0,
+      1.72,
+      0.83,
+      1.61,
+      2.31,
+      2.33,
+      -0.26,
+      1.56
+     ]
+    },
+    {
+     "article": "Bronze Age",
+     "score_mad": 4.381,
+     "score_rank": 3.281,
+     "p_mad": 0.1808,
+     "p_rank": 0.2178,
+     "loo_stable": false,
+     "echo": false,
+     "member_z_mad": [
+      1.94,
+      1.29,
+      1.09,
+      1.17,
+      1.72,
+      1.95,
+      0.52,
+      0.89,
+      0.37,
+      2.93
+     ]
+    },
+    {
+     "article": "Charlie Chaplin",
+     "score_mad": 4.322,
+     "score_rank": 3.278,
+     "p_mad": 0.2148,
+     "p_rank": 0.2188,
+     "loo_stable": false,
+     "echo": true,
+     "member_z_mad": [
+      1.41,
+      1.06,
+      0.76,
+      1.65,
+      2.16,
+      0.54,
+      -0.2,
+      0.89,
+      4.0,
+      1.39
+     ]
+    }
+   ]
+  },
+  "films_awards": {
+   "members": [
+    {
+     "id": "E554",
+     "article": "La La Land",
+     "day0": "2016-12-09",
+     "titles_used": 13,
+     "d0": "2016-12-09"
+    },
+    {
+     "id": "E555",
+     "article": "Get Out",
+     "day0": "2017-02-24",
+     "titles_used": 14,
+     "d0": "2017-02-24"
+    },
+    {
+     "id": "E560",
+     "article": "Parasite (2019 film)",
+     "day0": "2020-02-09",
+     "titles_used": 9,
+     "d0": "2020-02-09"
+    },
+    {
+     "id": "E561",
+     "article": "Everything Everywhere All at Once",
+     "day0": "2022-03-25..2023-03-31",
+     "titles_used": 28,
+     "d0": "2023-03-13"
+    }
+   ],
+   "n_used": 4,
+   "clustered_members": [],
+   "min_p_both": 0.8031968031968032,
+   "top": [
+    {
+     "article": "Walt Disney",
+     "score_mad": 3.704,
+     "score_rank": 2.679,
+     "p_mad": 0.7792,
+     "p_rank": 0.8032,
+     "loo_stable": false,
+     "echo": false,
+     "member_z_mad": [
+      -0.04,
+      1.55,
+      2.55,
+      3.35
+     ]
+    },
+    {
+     "article": "Polynesia",
+     "score_mad": 2.948,
+     "score_rank": 2.549,
+     "p_mad": 0.996,
+     "p_rank": 0.8881,
+     "loo_stable": false,
+     "echo": false,
+     "member_z_mad": [
+      0.55,
+      1.93,
+      2.97,
+      0.44
+     ]
+    },
+    {
+     "article": "Aztecs",
+     "score_mad": 3.264,
+     "score_rank": 2.207,
+     "p_mad": 0.963,
+     "p_rank": 0.999,
+     "loo_stable": false,
+     "echo": false,
+     "member_z_mad": [
+      2.37,
+      3.05,
+      0.86,
+      0.25
+     ]
+    },
+    {
+     "article": "Obesity",
+     "score_mad": 3.167,
+     "score_rank": 2.219,
+     "p_mad": 0.973,
+     "p_rank": 0.999,
+     "loo_stable": false,
+     "echo": false,
+     "member_z_mad": [
+      0.36,
+      0.79,
+      1.18,
+      4.0
+     ]
+    },
+    {
+     "article": "Astronomy",
+     "score_mad": 2.991,
+     "score_rank": 1.81,
+     "p_mad": 0.995,
+     "p_rank": 1.0,
+     "loo_stable": false,
+     "echo": false,
+     "member_z_mad": [
+      2.72,
+      -0.31,
+      4.0,
+      -0.42
+     ]
+    },
+    {
+     "article": "Compass",
+     "score_mad": 2.736,
+     "score_rank": 1.923,
+     "p_mad": 1.0,
+     "p_rank": 1.0,
+     "loo_stable": false,
+     "echo": false,
+     "member_z_mad": [
+      -0.09,
+      2.99,
+      0.86,
+      1.7
+     ]
+    },
+    {
+     "article": "Calligraphy",
+     "score_mad": 2.654,
+     "score_rank": 2.385,
+     "p_mad": 1.0,
+     "p_rank": 0.975,
+     "loo_stable": false,
+     "echo": false,
+     "member_z_mad": [
+      2.06,
+      1.86,
+      0.76,
+      0.63
+     ]
+    },
+    {
+     "article": "Clock",
+     "score_mad": 2.63,
+     "score_rank": 2.222,
+     "p_mad": 1.0,
+     "p_rank": 0.999,
+     "loo_stable": false,
+     "echo": false,
+     "member_z_mad": [
+      2.99,
+      0.63,
+      1.13,
+      0.52
+     ]
+    },
+    {
+     "article": "Sumer",
+     "score_mad": 2.584,
+     "score_rank": 2.097,
+     "p_mad": 1.0,
+     "p_rank": 0.999,
+     "loo_stable": false,
+     "echo": false,
+     "member_z_mad": [
+      -0.14,
+      2.64,
+      0.97,
+      1.7
+     ]
+    },
+    {
+     "article": "Malay language",
+     "score_mad": 2.582,
+     "score_rank": 1.834,
+     "p_mad": 1.0,
+     "p_rank": 1.0,
+     "loo_stable": false,
+     "echo": false,
+     "member_z_mad": [
+      -1.08,
+      1.61,
+      0.91,
+      3.72
+     ]
+    }
+   ]
+  },
+  "games": {
+   "members": [
+    {
+     "id": "E605",
+     "article": "The Legend of Zelda: Breath of the Wild",
+     "day0": "2017-03-03",
+     "titles_used": 47,
+     "d0": "2017-03-03"
+    },
+    {
+     "id": "E137",
+     "article": "Fortnite Battle Royale",
+     "day0": "2017-09-26",
+     "titles_used": 21,
+     "skip": "too few views around the event"
+    },
+    {
+     "id": "E613",
+     "article": "Animal Crossing: New Horizons",
+     "day0": "2020-03-20",
+     "titles_used": 27,
+     "d0": "2020-03-20"
+    },
+    {
+     "id": "E612",
+     "article": "Fall Guys",
+     "day0": "2020-08-04",
+     "titles_used": 9,
+     "d0": "2020-08-04"
+    },
+    {
+     "id": "E622",
+     "article": "Hades (video game)",
+     "day0": "2020-09-17",
+     "titles_used": 5,
+     "d0": "2020-09-17"
+    },
+    {
+     "id": "E615",
+     "article": "Genshin Impact",
+     "day0": "2020-09-28",
+     "titles_used": 15,
+     "d0": "2020-09-28"
+    },
+    {
+     "id": "E616",
+     "article": "Cyberpunk 2077",
+     "day0": "2020-12-10",
+     "titles_used": 17,
+     "d0": "2020-12-10"
+    },
+    {
+     "id": "E140",
+     "article": "Wordle",
+     "day0": "2021-12-15..2022-02-28",
+     "titles_used": 12,
+     "d0": "2022-02-16"
+    },
+    {
+     "id": "E141",
+     "article": "Elden Ring",
+     "day0": "2022-02-25",
+     "titles_used": 15,
+     "d0": "2022-02-25"
+    },
+    {
+     "id": "E142",
+     "article": "Baldur's Gate 3",
+     "day0": "2023-08-03",
+     "titles_used": 15,
+     "d0": "2023-08-03"
+    },
+    {
+     "id": "E619",
+     "article": "Palworld",
+     "day0": "2024-01-19",
+     "titles_used": 14,
+     "d0": "2024-01-19"
+    },
+    {
+     "id": "E620",
+     "article": "Helldivers 2",
+     "day0": "2024-02-08",
+     "titles_used": 5,
+     "d0": "2024-02-08"
+    },
+    {
+     "id": "E621",
+     "article": "Black Myth: Wukong",
+     "day0": "2024-08-20",
+     "titles_used": 4,
+     "d0": "2024-08-20"
+    }
+   ],
+   "n_used": 12,
+   "clustered_members": [
+    "E140",
+    "E141",
+    "E615",
+    "E619",
+    "E620",
+    "E622"
+   ],
+   "min_p_both": 0.7312687312687313,
+   "top": [
+    {
+     "article": "Inca Empire",
+     "score_mad": 3.649,
+     "score_rank": 2.922,
+     "p_mad": 0.7313,
+     "p_rank": 0.6064,
+     "loo_stable": false,
+     "echo": false,
+     "member_z_mad": [
+      1.47,
+      -0.02,
+      0.13,
+      2.1,
+      4.0,
+      0.91,
+      1.6,
+      1.32,
+      -0.66,
+      0.41,
+      1.37,
+      -0.0
+     ]
+    },
+    {
+     "article": "Neolithic Revolution",
+     "score_mad": 3.434,
+     "score_rank": 2.63,
+     "p_mad": 0.8741,
+     "p_rank": 0.8921,
+     "loo_stable": false,
+     "echo": false,
+     "member_z_mad": [
+      0.4,
+      0.66,
+      0.56,
+      0.65,
+      0.91,
+      1.03,
+      3.72,
+      4.0,
+      0.15,
+      0.54,
+      -0.41,
+      -0.31
+     ]
+    },
+    {
+     "article": "Military history",
+     "score_mad": 3.58,
+     "score_rank": 2.592,
+     "p_mad": 0.7832,
+     "p_rank": 0.9091,
+     "loo_stable": false,
+     "echo": false,
+     "member_z_mad": [
+      0.02,
+      2.31,
+      2.39,
+      -0.57,
+      -0.11,
+      -0.53,
+      1.62,
+      4.0,
+      -0.83,
+      3.56,
+      0.65,
+      -0.1
+     ]
+    },
+    {
+     "article": "Atlantic slave trade",
+     "score_mad": 3.251,
+     "score_rank": 2.69,
+     "p_mad": 0.9441,
+     "p_rank": 0.8382,
+     "loo_stable": false,
+     "echo": false,
+     "member_z_mad": [
+      0.35,
+      -0.99,
+      3.36,
+      2.19,
+      1.32,
+      2.1,
+      1.34,
+      1.67,
+      -0.56,
+      0.88,
+      1.02,
+      -1.42
+     ]
+    },
+    {
+     "article": "Christopher Columbus",
+     "score_mad": 3.013,
+     "score_rank": 2.283,
+     "p_mad": 0.991,
+     "p_rank": 0.993,
+     "loo_stable": false,
+     "echo": false,
+     "member_z_mad": [
+      -0.8,
+      0.13,
+      4.0,
+      -0.02,
+      1.25,
+      1.36,
+      0.88,
+      1.94,
+      1.21,
+      -0.83,
+      0.83,
+      0.49
+     ]
+    },
+    {
+     "article": "Confucianism",
+     "score_mad": 2.991,
+     "score_rank": 2.62,
+     "p_mad": 0.993,
+     "p_rank": 0.8981,
+     "loo_stable": false,
+     "echo": false,
+     "member_z_mad": [
+      0.55,
+      2.07,
+      -0.43,
+      0.04,
+      0.41,
+      1.96,
+      0.12,
+      2.38,
+      0.62,
+      -0.1,
+      1.48,
+      1.26
+     ]
+    },
+    {
+     "article": "Romanticism",
+     "score_mad": 2.849,
+     "score_rank": 2.607,
+     "p_mad": 0.997,
+     "p_rank": 0.9031,
+     "loo_stable": false,
+     "echo": false,
+     "member_z_mad": [
+      1.19,
+      1.18,
+      0.18,
+      0.93,
+      0.64,
+      1.68,
+      0.41,
+      0.36,
+      0.82,
+      0.14,
+      1.23,
+      1.1
+     ]
+    },
+    {
+     "article": "Telephone",
+     "score_mad": 2.895,
+     "score_rank": 2.173,
+     "p_mad": 0.996,
+     "p_rank": 0.998,
+     "loo_stable": false,
+     "echo": false,
+     "member_z_mad": [
+      0.29,
+      0.94,
+      3.49,
+      1.12,
+      0.03,
+      0.1,
+      -0.17,
+      1.7,
+      0.0,
+      0.19,
+      0.12,
+      2.22
+     ]
+    },
+    {
+     "article": "Galileo Galilei",
+     "score_mad": 3.041,
+     "score_rank": 1.751,
+     "p_mad": 0.987,
+     "p_rank": 1.0,
+     "loo_stable": false,
+     "echo": false,
+     "member_z_mad": [
+      -3.55,
+      0.15,
+      0.22,
+      1.55,
+      4.0,
+      0.53,
+      1.91,
+      3.6,
+      -1.43,
+      -1.34,
+      0.89,
+      4.0
+     ]
+    },
+    {
+     "article": "Immanuel Kant",
+     "score_mad": 2.965,
+     "score_rank": 2.035,
+     "p_mad": 0.993,
+     "p_rank": 1.0,
+     "loo_stable": false,
+     "echo": false,
+     "member_z_mad": [
+      0.27,
+      0.71,
+      0.75,
+      -0.53,
+      0.45,
+      -1.69,
+      -1.04,
+      1.71,
+      0.18,
+      2.32,
+      4.0,
+      3.14
+     ]
+    }
+   ]
+  },
+  "platform_launches": {
+   "members": [
+    {
+     "id": "E651",
+     "article": "Vine (service)",
+     "day0": "2016-10-27",
+     "titles_used": 16,
+     "d0": "2016-10-27"
+    },
+    {
+     "id": "E655",
+     "article": "TikTok",
+     "day0": "2018-08-02",
+     "titles_used": 49,
+     "d0": "2018-08-02"
+    },
+    {
+     "id": "E594",
+     "article": "Disney+",
+     "day0": "2019-11-12",
+     "titles_used": 20,
+     "d0": "2019-11-12"
+    },
+    {
+     "id": "E595",
+     "article": "HBO Max",
+     "day0": "2020-05-27",
+     "titles_used": 50,
+     "d0": "2020-05-27"
+    },
+    {
+     "id": "E596",
+     "article": "Peacock (streaming service)",
+     "day0": "2020-07-15",
+     "titles_used": 16,
+     "d0": "2020-07-15"
+    },
+    {
+     "id": "E665",
+     "article": "Clubhouse (app)",
+     "day0": "2021-01-15..2021-03-15",
+     "titles_used": 1,
+     "d0": "2021-02-15"
+    },
+    {
+     "id": "E664",
+     "article": "BeReal",
+     "day0": "2022-06-01..2022-09-30",
+     "titles_used": 3,
+     "d0": "2022-09-05"
+    }
+   ],
+   "n_used": 7,
+   "clustered_members": [],
+   "min_p_both": 0.6783216783216783,
+   "top": [
+    {
+     "article": "Function (mathematics)",
+     "score_mad": 3.887,
+     "score_rank": 2.87,
+     "p_mad": 0.6404,
+     "p_rank": 0.6783,
+     "loo_stable": false,
+     "echo": false,
+     "member_z_mad": [
+      0.95,
+      -1.02,
+      4.0,
+      2.13,
+      -0.17,
+      1.85,
+      2.55
+     ]
+    },
+    {
+     "article": "Poetry",
+     "score_mad": 4.072,
+     "score_rank": 2.758,
+     "p_mad": 0.4875,
+     "p_rank": 0.7982,
+     "loo_stable": false,
+     "echo": false,
+     "member_z_mad": [
+      4.0,
+      0.03,
+      4.0,
+      0.23,
+      -0.27,
+      1.67,
+      1.12
+     ]
+    },
+    {
+     "article": "Heredity",
+     "score_mad": 3.234,
+     "score_rank": 2.78,
+     "p_mad": 0.976,
+     "p_rank": 0.7762,
+     "loo_stable": false,
+     "echo": false,
+     "member_z_mad": [
+      0.65,
+      0.16,
+      1.76,
+      2.27,
+      0.47,
+      1.47,
+      1.77
+     ]
+    },
+    {
+     "article": "Drug",
+     "score_mad": 3.222,
+     "score_rank": 2.677,
+     "p_mad": 0.976,
+     "p_rank": 0.8651,
+     "loo_stable": false,
+     "echo": false,
+     "member_z_mad": [
+      0.4,
+      0.66,
+      4.0,
+      1.94,
+      -0.28,
+      1.73,
+      0.07
+     ]
+    },
+    {
+     "article": "Industrial Revolution",
+     "score_mad": 3.109,
+     "score_rank": 2.419,
+     "p_mad": 0.986,
+     "p_rank": 0.975,
+     "loo_stable": false,
+     "echo": false,
+     "member_z_mad": [
+      1.34,
+      1.84,
+      -0.72,
+      0.62,
+      0.44,
+      2.79,
+      1.9
+     ]
+    },
+    {
+     "article": "Solid",
+     "score_mad": 3.108,
+     "score_rank": 2.582,
+     "p_mad": 0.986,
+     "p_rank": 0.9301,
+     "loo_stable": false,
+     "echo": false,
+     "member_z_mad": [
+      2.42,
+      0.17,
+      2.18,
+      0.75,
+      -1.4,
+      1.81,
+      2.3
+     ]
+    },
+    {
+     "article": "Crime",
+     "score_mad": 3.1,
+     "score_rank": 2.84,
+     "p_mad": 0.986,
+     "p_rank": 0.7063,
+     "loo_stable": false,
+     "echo": false,
+     "member_z_mad": [
+      0.79,
+      0.39,
+      2.23,
+      0.3,
+      1.61,
+      0.84,
+      2.04
+     ]
+    },
+    {
+     "article": "Atlantic slave trade",
+     "score_mad": 3.075,
+     "score_rank": 2.799,
+     "p_mad": 0.988,
+     "p_rank": 0.7552,
+     "loo_stable": false,
+     "echo": false,
+     "member_z_mad": [
+      1.66,
+      0.87,
+      0.29,
+      0.19,
+      2.85,
+      2.18,
+      0.09
+     ]
+    },
+    {
+     "article": "Health",
+     "score_mad": 3.309,
+     "score_rank": 2.349,
+     "p_mad": 0.953,
+     "p_rank": 0.993,
+     "loo_stable": false,
+     "echo": false,
+     "member_z_mad": [
+      0.03,
+      2.41,
+      3.81,
+      0.9,
+      -1.08,
+      1.25,
+      1.44
+     ]
+    },
+    {
+     "article": "Gas",
+     "score_mad": 3.762,
+     "score_rank": 2.342,
+     "p_mad": 0.7373,
+     "p_rank": 0.994,
+     "loo_stable": false,
+     "echo": true,
+     "member_z_mad": [
+      4.0,
+      1.24,
+      4.0,
+      0.27,
+      -1.25,
+      0.9,
+      0.79
+     ]
+    }
+   ]
+  },
+  "ai_models": {
+   "members": [
+    {
+     "id": "E727",
+     "article": "AlphaFold",
+     "day0": "2020-11-30",
+     "titles_used": 9,
+     "d0": "2020-11-30"
+    },
+    {
+     "id": "E709",
+     "article": "Midjourney",
+     "day0": "2022-07-01..2022-09-30",
+     "titles_used": 3,
+     "d0": "2022-09-03"
+    },
+    {
+     "id": "E710",
+     "article": "Stable Diffusion",
+     "day0": "2022-08-22",
+     "titles_used": 5,
+     "skip": "too few views around the event"
+    },
+    {
+     "id": "E198",
+     "article": "ChatGPT",
+     "day0": "2022-11-30",
+     "titles_used": 38,
+     "d0": "2022-11-30"
+    },
+    {
+     "id": "E720",
+     "article": "Llama (language model)",
+     "day0": "2023-02-24",
+     "titles_used": 20,
+     "skip": "too few views around the event"
+    },
+    {
+     "id": "E713",
+     "article": "GPT-4",
+     "day0": "2023-03-14",
+     "titles_used": 6,
+     "d0": "2023-03-14"
+    },
+    {
+     "id": "E717",
+     "article": "Gemini (language model)",
+     "day0": "2023-12-06",
+     "titles_used": 29,
+     "d0": "2023-12-06"
+    },
+    {
+     "id": "E723",
+     "article": "Sora (text-to-video model)",
+     "day0": "2024-02-15",
+     "titles_used": 16,
+     "d0": "2024-02-15"
+    }
+   ],
+   "n_used": 6,
+   "clustered_members": [],
+   "min_p_both": 0.01998001998001998,
+   "top": [
+    {
+     "article": "Computer",
+     "score_mad": 5.944,
+     "score_rank": 3.852,
+     "p_mad": 0.003,
+     "p_rank": 0.02,
+     "loo_stable": false,
+     "echo": false,
+     "member_z_mad": [
+      1.68,
+      3.59,
+      2.98,
+      2.23,
+      1.68,
+      2.4
+     ]
+    },
+    {
+     "article": "Erosion",
+     "score_mad": 4.995,
+     "score_rank": 4.048,
+     "p_mad": 0.041,
+     "p_rank": 0.005,
+     "loo_stable": false,
+     "echo": false,
+     "member_z_mad": [
+      2.6,
+      1.77,
+      1.71,
+      2.36,
+      1.63,
+      2.18
+     ]
+    },
+    {
+     "article": "School",
+     "score_mad": 5.083,
+     "score_rank": 3.68,
+     "p_mad": 0.031,
+     "p_rank": 0.043,
+     "loo_stable": false,
+     "echo": false,
+     "member_z_mad": [
+      1.92,
+      1.69,
+      2.04,
+      1.82,
+      2.38,
+      2.59
+     ]
+    },
+    {
+     "article": "Industrial Revolution",
+     "score_mad": 4.961,
+     "score_rank": 3.604,
+     "p_mad": 0.05,
+     "p_rank": 0.0609,
+     "loo_stable": false,
+     "echo": false,
+     "member_z_mad": [
+      3.19,
+      0.75,
+      3.09,
+      2.48,
+      1.39,
+      1.26
+     ]
+    },
+    {
+     "article": "Polygon",
+     "score_mad": 4.686,
+     "score_rank": 3.595,
+     "p_mad": 0.0929,
+     "p_rank": 0.0619,
+     "loo_stable": false,
+     "echo": true,
+     "member_z_mad": [
+      3.5,
+      1.05,
+      1.4,
+      1.52,
+      1.87,
+      2.13
+     ]
+    },
+    {
+     "article": "Photosynthesis",
+     "score_mad": 4.663,
+     "score_rank": 3.617,
+     "p_mad": 0.0969,
+     "p_rank": 0.0579,
+     "loo_stable": false,
+     "echo": false,
+     "member_z_mad": [
+      2.5,
+      0.77,
+      3.01,
+      1.91,
+      1.32,
+      1.91
+     ]
+    },
+    {
+     "article": "Nervous system",
+     "score_mad": 4.536,
+     "score_rank": 3.476,
+     "p_mad": 0.1319,
+     "p_rank": 0.1099,
+     "loo_stable": false,
+     "echo": false,
+     "member_z_mad": [
+      3.16,
+      1.57,
+      2.66,
+      1.05,
+      0.38,
+      2.28
+     ]
+    },
+    {
+     "article": "Lipid",
+     "score_mad": 4.395,
+     "score_rank": 3.659,
+     "p_mad": 0.1748,
+     "p_rank": 0.048,
+     "loo_stable": false,
+     "echo": false,
+     "member_z_mad": [
+      2.77,
+      1.58,
+      1.81,
+      1.45,
+      1.79,
+      1.37
+     ]
+    },
+    {
+     "article": "Energy",
+     "score_mad": 4.332,
+     "score_rank": 3.488,
+     "p_mad": 0.1998,
+     "p_rank": 0.1039,
+     "loo_stable": false,
+     "echo": false,
+     "member_z_mad": [
+      3.2,
+      0.88,
+      2.46,
+      0.9,
+      1.38,
+      1.8
+     ]
+    },
+    {
+     "article": "Solar energy",
+     "score_mad": 4.293,
+     "score_rank": 3.451,
+     "p_mad": 0.2158,
+     "p_rank": 0.1219,
+     "loo_stable": false,
+     "echo": false,
+     "member_z_mad": [
+      1.94,
+      2.29,
+      2.29,
+      1.4,
+      1.73,
+      0.86
+     ]
+    }
+   ]
+  },
+  "finance_shocks": {
+   "members": [
+    {
+     "id": "E839",
+     "article": "Bitcoin",
+     "day0": "2017-11-15..2017-12-31",
+     "titles_used": 48,
+     "d0": "2017-12-08"
+    },
+    {
+     "id": "E647",
+     "article": "GameStop short squeeze",
+     "day0": "2021-01-27",
+     "titles_used": 12,
+     "d0": "2021-01-27"
+    },
+    {
+     "id": "E842",
+     "article": "Everydays: the First 5000 Days",
+     "day0": "2021-03-11",
+     "titles_used": 6,
+     "d0": "2021-03-11"
+    },
+    {
+     "id": "E873",
+     "article": "Evergrande Group",
+     "day0": "2021-09-01..2021-10-15",
+     "titles_used": 9,
+     "d0": "2021-09-20"
+    },
+    {
+     "id": "E844",
+     "article": "Bankruptcy of FTX",
+     "day0": "2022-11-08",
+     "titles_used": 7,
+     "d0": "2022-11-08"
+    },
+    {
+     "id": "E874",
+     "article": "Collapse of Silicon Valley Bank",
+     "day0": "2023-03-10",
+     "titles_used": 6,
+     "d0": "2023-03-10"
+    }
+   ],
+   "n_used": 6,
+   "clustered_members": [],
+   "min_p_both": 0.025974025974025976,
+   "top": [
+    {
+     "article": "Newton's laws of motion",
+     "score_mad": 5.242,
+     "score_rank": 4.255,
+     "p_mad": 0.026,
+     "p_rank": 0.005,
+     "loo_stable": false,
+     "echo": false,
+     "member_z_mad": [
+      1.84,
+      1.18,
+      1.92,
+      3.45,
+      3.41,
+      1.04
+     ]
+    },
+    {
+     "article": "Neutron",
+     "score_mad": 4.973,
+     "score_rank": 3.716,
+     "p_mad": 0.0509,
+     "p_rank": 0.042,
+     "loo_stable": false,
+     "echo": false,
+     "member_z_mad": [
+      1.35,
+      2.47,
+      1.89,
+      2.49,
+      4.0,
+      -0.02
+     ]
+    },
+    {
+     "article": "Natural selection",
+     "score_mad": 4.923,
+     "score_rank": 3.838,
+     "p_mad": 0.0619,
+     "p_rank": 0.027,
+     "loo_stable": false,
+     "echo": false,
+     "member_z_mad": [
+      3.72,
+      1.3,
+      0.7,
+      1.03,
+      4.0,
+      1.3
+     ]
+    },
+    {
+     "article": "Irrigation",
+     "score_mad": 4.693,
+     "score_rank": 4.032,
+     "p_mad": 0.1059,
+     "p_rank": 0.009,
+     "loo_stable": false,
+     "echo": false,
+     "member_z_mad": [
+      0.14,
+      2.47,
+      2.74,
+      3.53,
+      1.4,
+      1.22
+     ]
+    },
+    {
+     "article": "Variable (mathematics)",
+     "score_mad": 4.653,
+     "score_rank": 3.8,
+     "p_mad": 0.1139,
+     "p_rank": 0.03,
+     "loo_stable": false,
+     "echo": false,
+     "member_z_mad": [
+      1.64,
+      1.26,
+      1.78,
+      4.0,
+      2.38,
+      0.33
+     ]
+    },
+    {
+     "article": "Erosion",
+     "score_mad": 4.648,
+     "score_rank": 3.972,
+     "p_mad": 0.1169,
+     "p_rank": 0.013,
+     "loo_stable": false,
+     "echo": false,
+     "member_z_mad": [
+      1.38,
+      1.95,
+      2.96,
+      2.85,
+      1.2,
+      1.04
+     ]
+    },
+    {
+     "article": "Great Depression",
+     "score_mad": 4.764,
+     "score_rank": 3.343,
+     "p_mad": 0.0929,
+     "p_rank": 0.1518,
+     "loo_stable": false,
+     "echo": false,
+     "member_z_mad": [
+      3.04,
+      2.09,
+      1.71,
+      1.97,
+      -1.14,
+      4.0
+     ]
+    },
+    {
+     "article": "Music",
+     "score_mad": 6.045,
+     "score_rank": 3.33,
+     "p_mad": 0.002,
+     "p_rank": 0.1638,
+     "loo_stable": false,
+     "echo": false,
+     "member_z_mad": [
+      -0.76,
+      4.0,
+      4.0,
+      4.0,
+      1.2,
+      2.37
+     ]
+    },
+    {
+     "article": "Polygon",
+     "score_mad": 4.481,
+     "score_rank": 3.568,
+     "p_mad": 0.1728,
+     "p_rank": 0.0669,
+     "loo_stable": false,
+     "echo": true,
+     "member_z_mad": [
+      2.23,
+      2.21,
+      3.13,
+      2.4,
+      -0.32,
+      1.33
+     ]
+    },
+    {
+     "article": "Industrial Revolution",
+     "score_mad": 4.436,
+     "score_rank": 3.647,
+     "p_mad": 0.1868,
+     "p_rank": 0.0509,
+     "loo_stable": false,
+     "echo": false,
+     "member_z_mad": [
+      3.31,
+      1.45,
+      1.99,
+      2.25,
+      0.91,
+      0.95
+     ]
+    }
+   ]
+  },
+  "protests_abroad": {
+   "members": [
+    {
+     "id": "E929",
+     "article": "Yellow vests protests",
+     "day0": "2018-11-17",
+     "titles_used": 34,
+     "d0": "2018-11-17"
+    },
+    {
+     "id": "E908",
+     "article": "2019–2020 Hong Kong protests",
+     "day0": "2019-06-09",
+     "titles_used": 53,
+     "d0": "2019-06-09"
+    },
+    {
+     "id": "E930",
+     "article": "2019–2022 Chilean protests",
+     "day0": "2019-10-18",
+     "titles_used": 24,
+     "d0": "2019-10-18"
+    },
+    {
+     "id": "E909",
+     "article": "2020–2021 Belarusian protests",
+     "day0": "2020-08-09",
+     "titles_used": 16,
+     "d0": "2020-08-09"
+    },
+    {
+     "id": "E941",
+     "article": "2020–2021 Indian farmers' protest",
+     "day0": "2020-11-26",
+     "titles_used": 20,
+     "d0": "2020-11-26"
+    },
+    {
+     "id": "E910",
+     "article": "2021 Myanmar coup d'état",
+     "day0": "2021-02-01",
+     "titles_used": 14,
+     "d0": "2021-02-01"
+    },
+    {
+     "id": "E911",
+     "article": "2022 Sri Lankan protests",
+     "day0": "2022-07-09",
+     "titles_used": 19,
+     "d0": "2022-07-09"
+    },
+    {
+     "id": "E912",
+     "article": "Mahsa Amini protests",
+     "day0": "2022-09-16",
+     "titles_used": 16,
+     "d0": "2022-09-16"
+    }
+   ],
+   "n_used": 8,
+   "clustered_members": [],
+   "min_p_both": 0.7922077922077922,
+   "top": [
+    {
+     "article": "Indigenous peoples",
+     "score_mad": 3.57,
+     "score_rank": 2.7,
+     "p_mad": 0.7512,
+     "p_rank": 0.7922,
+     "loo_stable": false,
+     "echo": false,
+     "member_z_mad": [
+      -0.3,
+      2.59,
+      1.28,
+      1.92,
+      1.15,
+      1.24,
+      2.5,
+      -0.28
+     ]
+    },
+    {
+     "article": "History of technology",
+     "score_mad": 3.447,
+     "score_rank": 3.243,
+     "p_mad": 0.8322,
+     "p_rank": 0.2627,
+     "loo_stable": false,
+     "echo": false,
+     "member_z_mad": [
+      0.44,
+      0.38,
+      2.21,
+      1.53,
+      1.4,
+      0.51,
+      1.27,
+      2.01
+     ]
+    },
+    {
+     "article": "Oral tradition",
+     "score_mad": 3.254,
+     "score_rank": 2.819,
+     "p_mad": 0.9181,
+     "p_rank": 0.6793,
+     "loo_stable": false,
+     "echo": false,
+     "member_z_mad": [
+      -0.99,
+      1.58,
+      0.46,
+      3.64,
+      0.42,
+      2.43,
+      0.67,
+      0.99
+     ]
+    },
+    {
+     "article": "Rocky Mountains",
+     "score_mad": 3.338,
+     "score_rank": 2.453,
+     "p_mad": 0.8871,
+     "p_rank": 0.9391,
+     "loo_stable": false,
+     "echo": false,
+     "member_z_mad": [
+      0.75,
+      -0.74,
+      4.0,
+      2.5,
+      0.34,
+      0.61,
+      0.68,
+      1.31
+     ]
+    },
+    {
+     "article": "Ancient Egypt",
+     "score_mad": 3.394,
+     "score_rank": 2.437,
+     "p_mad": 0.8631,
+     "p_rank": 0.9461,
+     "loo_stable": false,
+     "echo": false,
+     "member_z_mad": [
+      -0.08,
+      0.7,
+      1.24,
+      4.0,
+      1.65,
+      -0.76,
+      1.58,
+      1.27
+     ]
+    },
+    {
+     "article": "Romanticism",
+     "score_mad": 3.067,
+     "score_rank": 2.599,
+     "p_mad": 0.97,
+     "p_rank": 0.8641,
+     "loo_stable": false,
+     "echo": false,
+     "member_z_mad": [
+      -0.48,
+      1.89,
+      2.32,
+      1.69,
+      0.03,
+      1.75,
+      0.45,
+      1.03
+     ]
+    },
+    {
+     "article": "Industrial Revolution",
+     "score_mad": 3.204,
+     "score_rank": 2.331,
+     "p_mad": 0.9331,
+     "p_rank": 0.983,
+     "loo_stable": false,
+     "echo": false,
+     "member_z_mad": [
+      -0.67,
+      0.38,
+      2.89,
+      0.98,
+      -0.46,
+      3.27,
+      1.34,
+      1.33
+     ]
+    },
+    {
+     "article": "Mental health",
+     "score_mad": 2.96,
+     "score_rank": 2.395,
+     "p_mad": 0.987,
+     "p_rank": 0.963,
+     "loo_stable": false,
+     "echo": true,
+     "member_z_mad": [
+      1.11,
+      1.09,
+      0.85,
+      -0.22,
+      0.56,
+      0.39,
+      4.0,
+      0.59
+     ]
+    },
+    {
+     "article": "Solar energy",
+     "score_mad": 2.894,
+     "score_rank": 2.535,
+     "p_mad": 0.993,
+     "p_rank": 0.8991,
+     "loo_stable": false,
+     "echo": false,
+     "member_z_mad": [
+      -1.22,
+      0.81,
+      0.88,
+      0.64,
+      2.08,
+      2.73,
+      1.05,
+      1.21
+     ]
+    },
+    {
+     "article": "Construction",
+     "score_mad": 2.83,
+     "score_rank": 2.549,
+     "p_mad": 0.996,
+     "p_rank": 0.8901,
+     "loo_stable": false,
+     "echo": false,
+     "member_z_mad": [
+      -2.21,
+      2.84,
+      2.52,
+      0.93,
+      0.51,
+      1.58,
+      0.96,
+      0.87
+     ]
+    }
+   ]
+  },
+  "us_social_moments": {
+   "members": [
+    {
+     "id": "E396",
+     "article": "2017 Women's March",
+     "day0": "2017-01-21",
+     "titles_used": 10,
+     "d0": "2017-01-21"
+    },
+    {
+     "id": "E689",
+     "article": "MeToo movement",
+     "day0": "2017-10-15",
+     "titles_used": 27,
+     "d0": "2017-10-15"
+    },
+    {
+     "id": "E398",
+     "article": "George Floyd protests",
+     "day0": "2020-05-26",
+     "titles_used": 33,
+     "d0": "2020-05-26"
+    },
+    {
+     "id": "E919",
+     "article": "January 6 United States Capitol attack",
+     "day0": "2021-01-06",
+     "titles_used": 101,
+     "d0": "2021-01-06"
+    },
+    {
+     "id": "E922",
+     "article": "Dobbs v. Jackson Women's Health Organization",
+     "day0": "2022-06-24",
+     "titles_used": 13,
+     "d0": "2022-06-24"
+    }
+   ],
+   "n_used": 5,
+   "clustered_members": [],
+   "min_p_both": 0.16383616383616384,
+   "top": [
+    {
+     "article": "Social equality",
+     "score_mad": 4.698,
+     "score_rank": 3.591,
+     "p_mad": 0.1638,
+     "p_rank": 0.0729,
+     "loo_stable": false,
+     "echo": false,
+     "member_z_mad": [
+      2.24,
+      0.44,
+      3.39,
+      2.82,
+      1.61
+     ]
+    },
+    {
+     "article": "Government",
+     "score_mad": 4.522,
+     "score_rank": 3.567,
+     "p_mad": 0.2278,
+     "p_rank": 0.0819,
+     "loo_stable": false,
+     "echo": false,
+     "member_z_mad": [
+      4.0,
+      0.71,
+      1.1,
+      2.31,
+      1.99
+     ]
+    },
+    {
+     "article": "Terrorism",
+     "score_mad": 4.543,
+     "score_rank": 2.889,
+     "p_mad": 0.2208,
+     "p_rank": 0.6154,
+     "loo_stable": false,
+     "echo": false,
+     "member_z_mad": [
+      -0.27,
+      1.35,
+      2.65,
+      4.0,
+      2.42
+     ]
+    },
+    {
+     "article": "Politics",
+     "score_mad": 4.084,
+     "score_rank": 2.87,
+     "p_mad": 0.4755,
+     "p_rank": 0.6304,
+     "loo_stable": false,
+     "echo": false,
+     "member_z_mad": [
+      3.58,
+      -0.29,
+      1.22,
+      1.65,
+      2.97
+     ]
+    },
+    {
+     "article": "John Locke",
+     "score_mad": 3.817,
+     "score_rank": 2.838,
+     "p_mad": 0.6613,
+     "p_rank": 0.6613,
+     "loo_stable": false,
+     "echo": false,
+     "member_z_mad": [
+      2.79,
+      2.46,
+      0.29,
+      0.8,
+      2.2
+     ]
+    },
+    {
+     "article": "Reason",
+     "score_mad": 3.761,
+     "score_rank": 2.82,
+     "p_mad": 0.7063,
+     "p_rank": 0.6793,
+     "loo_stable": false,
+     "echo": true,
+     "member_z_mad": [
+      4.0,
+      0.73,
+      0.34,
+      1.86,
+      1.48
+     ]
+    },
+    {
+     "article": "Motion",
+     "score_mad": 3.807,
+     "score_rank": 2.717,
+     "p_mad": 0.6703,
+     "p_rank": 0.7812,
+     "loo_stable": false,
+     "echo": false,
+     "member_z_mad": [
+      2.86,
+      2.96,
+      0.53,
+      1.79,
+      0.37
+     ]
+    },
+    {
+     "article": "Integer",
+     "score_mad": 3.58,
+     "score_rank": 2.914,
+     "p_mad": 0.8202,
+     "p_rank": 0.5934,
+     "loo_stable": false,
+     "echo": false,
+     "member_z_mad": [
+      1.53,
+      1.85,
+      0.4,
+      1.84,
+      2.38
+     ]
+    },
+    {
+     "article": "Matter",
+     "score_mad": 3.911,
+     "score_rank": 2.55,
+     "p_mad": 0.5854,
+     "p_rank": 0.9191,
+     "loo_stable": false,
+     "echo": false,
+     "member_z_mad": [
+      3.83,
+      0.66,
+      0.33,
+      0.47,
+      3.45
+     ]
+    },
+    {
+     "article": "Carbon",
+     "score_mad": 3.94,
+     "score_rank": 2.461,
+     "p_mad": 0.5674,
+     "p_rank": 0.952,
+     "loo_stable": false,
+     "echo": false,
+     "member_z_mad": [
+      2.94,
+      3.6,
+      -0.23,
+      1.33,
+      1.17
+     ]
+    }
+   ]
+  },
+  "geopolitical_shocks": {
+   "members": [
+    {
+     "id": "E394",
+     "article": "2016 United States presidential election",
+     "day0": "2016-11-08",
+     "titles_used": 68,
+     "d0": "2016-11-08"
+    },
+    {
+     "id": "E904",
+     "article": "Brexit",
+     "day0": "2020-01-31",
+     "titles_used": 61,
+     "d0": "2020-01-31"
+    },
+    {
+     "id": "E438",
+     "article": "COVID-19 pandemic",
+     "day0": "2020-03-11",
+     "titles_used": 101,
+     "d0": "2020-03-11"
+    },
+    {
+     "id": "E946",
+     "article": "Fall of Kabul (2021)",
+     "day0": "2021-08-15",
+     "titles_used": 13,
+     "d0": "2021-08-15"
+    },
+    {
+     "id": "E399",
+     "article": "Russian invasion of Ukraine",
+     "day0": "2022-02-24",
+     "titles_used": 49,
+     "d0": "2022-02-24"
+    },
+    {
+     "id": "E948",
+     "article": "Accession of Finland to NATO",
+     "day0": "2023-04-04",
+     "titles_used": 22,
+     "d0": "2023-04-04"
+    },
+    {
+     "id": "E400",
+     "article": "October 7 attacks",
+     "day0": "2023-10-07",
+     "titles_used": 101,
+     "d0": "2023-10-07"
+    }
+   ],
+   "n_used": 7,
+   "clustered_members": [],
+   "min_p_both": 0.052947052947052944,
+   "top": [
+    {
+     "article": "European Union",
+     "score_mad": 5.368,
+     "score_rank": 3.733,
+     "p_mad": 0.037,
+     "p_rank": 0.0529,
+     "loo_stable": false,
+     "echo": true,
+     "member_z_mad": [
+      2.2,
+      4.0,
+      1.91,
+      0.17,
+      4.0,
+      1.39,
+      0.54
+     ]
+    },
+    {
+     "article": "Music",
+     "score_mad": 6.51,
+     "score_rank": 3.673,
+     "p_mad": 0.002,
+     "p_rank": 0.0699,
+     "loo_stable": true,
+     "echo": false,
+     "member_z_mad": [
+      -0.01,
+      0.34,
+      2.91,
+      4.0,
+      4.0,
+      4.0,
+      1.99
+     ]
+    },
+    {
+     "article": "Middle East",
+     "score_mad": 5.187,
+     "score_rank": 3.671,
+     "p_mad": 0.0559,
+     "p_rank": 0.0729,
+     "loo_stable": false,
+     "echo": false,
+     "member_z_mad": [
+      1.97,
+      0.3,
+      0.41,
+      4.0,
+      2.63,
+      0.41,
+      4.0
+     ]
+    },
+    {
+     "article": "United Nations",
+     "score_mad": 4.563,
+     "score_rank": 3.468,
+     "p_mad": 0.2148,
+     "p_rank": 0.1469,
+     "loo_stable": false,
+     "echo": true,
+     "member_z_mad": [
+      0.87,
+      0.73,
+      -0.55,
+      4.0,
+      4.0,
+      0.67,
+      2.35
+     ]
+    },
+    {
+     "article": "Scramble for Africa",
+     "score_mad": 4.921,
+     "score_rank": 3.305,
+     "p_mad": 0.0969,
+     "p_rank": 0.2348,
+     "loo_stable": false,
+     "echo": false,
+     "member_z_mad": [
+      1.09,
+      -0.71,
+      3.29,
+      4.0,
+      3.78,
+      2.22,
+      -0.65
+     ]
+    },
+    {
+     "article": "Education",
+     "score_mad": 4.285,
+     "score_rank": 3.456,
+     "p_mad": 0.3506,
+     "p_rank": 0.1489,
+     "loo_stable": false,
+     "echo": false,
+     "member_z_mad": [
+      1.86,
+      1.52,
+      3.59,
+      0.31,
+      1.25,
+      1.68,
+      1.12
+     ]
+    },
+    {
+     "article": "South Asia",
+     "score_mad": 4.439,
+     "score_rank": 3.107,
+     "p_mad": 0.2667,
+     "p_rank": 0.3976,
+     "loo_stable": false,
+     "echo": false,
+     "member_z_mad": [
+      -0.13,
+      -0.01,
+      2.43,
+      4.0,
+      1.35,
+      1.73,
+      2.37
+     ]
+    },
+    {
+     "article": "Imperialism",
+     "score_mad": 4.585,
+     "score_rank": 3.07,
+     "p_mad": 0.2008,
+     "p_rank": 0.4346,
+     "loo_stable": false,
+     "echo": false,
+     "member_z_mad": [
+      3.81,
+      -0.15,
+      1.58,
+      3.02,
+      4.0,
+      0.52,
+      -0.65
+     ]
+    },
+    {
+     "article": "Electronics",
+     "score_mad": 4.045,
+     "score_rank": 3.178,
+     "p_mad": 0.5005,
+     "p_rank": 0.3357,
+     "loo_stable": false,
+     "echo": false,
+     "member_z_mad": [
+      2.18,
+      0.6,
+      4.0,
+      2.14,
+      0.82,
+      0.64,
+      0.32
+     ]
+    },
+    {
+     "article": "Renaissance",
+     "score_mad": 4.502,
+     "score_rank": 2.939,
+     "p_mad": 0.2418,
+     "p_rank": 0.5614,
+     "loo_stable": false,
+     "echo": false,
+     "member_z_mad": [
+      2.76,
+      4.0,
+      3.73,
+      1.07,
+      -0.53,
+      0.67,
+      0.21
+     ]
+    }
+   ]
+  },
+  "disasters_shocks": {
+   "members": [
+    {
+     "id": "E883",
+     "article": "Notre-Dame fire",
+     "day0": "2019-04-15",
+     "titles_used": 19,
+     "d0": "2019-04-15"
+    },
+    {
+     "id": "E437",
+     "article": "2019–20 Australian bushfire season",
+     "day0": "2019-12-15..2020-01-31",
+     "titles_used": 31,
+     "d0": "2020-01-06"
+    },
+    {
+     "id": "E863",
+     "article": "2021 Suez Canal obstruction",
+     "day0": "2021-03-23",
+     "titles_used": 10,
+     "d0": "2021-03-23"
+    },
+    {
+     "id": "E442",
+     "article": "2022 Hunga Tonga–Hunga Haʻapai eruption and tsunami",
+     "day0": "2022-01-15",
+     "titles_used": 14,
+     "d0": "2022-01-15"
+    },
+    {
+     "id": "E443",
+     "article": "2023 Turkey–Syria earthquakes",
+     "day0": "2023-02-06",
+     "titles_used": 47,
+     "d0": "2023-02-06"
+    },
+    {
+     "id": "E876",
+     "article": "2023 Canadian wildfires",
+     "day0": "2023-06-05..2023-06-12",
+     "titles_used": 14,
+     "d0": "2023-06-07"
+    },
+    {
+     "id": "E444",
+     "article": "2023 Hawaii wildfires",
+     "day0": "2023-08-08",
+     "titles_used": 13,
+     "d0": "2023-08-08"
+    },
+    {
+     "id": "E445",
+     "article": "Francis Scott Key Bridge collapse",
+     "day0": "2024-03-26",
+     "titles_used": 21,
+     "d0": "2024-03-26"
+    },
+    {
+     "id": "E446",
+     "article": "Hurricane Helene",
+     "day0": "2024-09-26",
+     "titles_used": 9,
+     "d0": "2024-09-26"
+    },
+    {
+     "id": "E447",
+     "article": "January 2025 Southern California wildfires",
+     "day0": "2025-01-07",
+     "titles_used": 36,
+     "d0": "2025-01-07"
+    }
+   ],
+   "n_used": 10,
+   "clustered_members": [],
+   "min_p_both": 0.1038961038961039,
+   "top": [
+    {
+     "article": "Logarithm",
+     "score_mad": 4.726,
+     "score_rank": 3.513,
+     "p_mad": 0.0979,
+     "p_rank": 0.1039,
+     "loo_stable": false,
+     "echo": false,
+     "member_z_mad": [
+      4.0,
+      1.33,
+      0.48,
+      0.43,
+      3.66,
+      0.86,
+      0.22,
+      1.09,
+      1.6,
+      1.27
+     ]
+    },
+    {
+     "article": "Area",
+     "score_mad": 4.683,
+     "score_rank": 4.286,
+     "p_mad": 0.1059,
+     "p_rank": 0.004,
+     "loo_stable": false,
+     "echo": false,
+     "member_z_mad": [
+      4.0,
+      1.85,
+      2.28,
+      0.02,
+      1.61,
+      0.64,
+      0.23,
+      2.37,
+      1.06,
+      0.76
+     ]
+    },
+    {
+     "article": "Scientific method",
+     "score_mad": 4.519,
+     "score_rank": 3.548,
+     "p_mad": 0.1638,
+     "p_rank": 0.0859,
+     "loo_stable": false,
+     "echo": false,
+     "member_z_mad": [
+      2.1,
+      0.47,
+      4.0,
+      -0.25,
+      2.07,
+      1.13,
+      1.49,
+      0.73,
+      1.83,
+      0.72
+     ]
+    },
+    {
+     "article": "Natural disaster",
+     "score_mad": 4.514,
+     "score_rank": 3.633,
+     "p_mad": 0.1648,
+     "p_rank": 0.0649,
+     "loo_stable": false,
+     "echo": true,
+     "member_z_mad": [
+      0.08,
+      1.09,
+      -0.41,
+      4.0,
+      2.47,
+      0.67,
+      1.59,
+      1.36,
+      1.06,
+      2.36
+     ]
+    },
+    {
+     "article": "Sanitation",
+     "score_mad": 4.409,
+     "score_rank": 3.66,
+     "p_mad": 0.1998,
+     "p_rank": 0.0629,
+     "loo_stable": false,
+     "echo": false,
+     "member_z_mad": [
+      0.75,
+      1.73,
+      4.0,
+      1.32,
+      0.72,
+      1.59,
+      0.86,
+      2.01,
+      0.82,
+      0.14
+     ]
+    },
+    {
+     "article": "Digestion",
+     "score_mad": 4.332,
+     "score_rank": 3.527,
+     "p_mad": 0.2318,
+     "p_rank": 0.0959,
+     "loo_stable": false,
+     "echo": false,
+     "member_z_mad": [
+      4.0,
+      0.39,
+      2.57,
+      -0.56,
+      3.03,
+      1.47,
+      0.62,
+      0.95,
+      0.4,
+      0.85
+     ]
+    },
+    {
+     "article": "Industrial Revolution",
+     "score_mad": 4.284,
+     "score_rank": 3.336,
+     "p_mad": 0.2547,
+     "p_rank": 0.1918,
+     "loo_stable": false,
+     "echo": false,
+     "member_z_mad": [
+      2.32,
+      2.87,
+      -0.66,
+      0.53,
+      2.22,
+      0.11,
+      1.77,
+      1.64,
+      1.62,
+      1.12
+     ]
+    },
+    {
+     "article": "Nuclear power",
+     "score_mad": 4.142,
+     "score_rank": 3.171,
+     "p_mad": 0.3437,
+     "p_rank": 0.3247,
+     "loo_stable": false,
+     "echo": false,
+     "member_z_mad": [
+      2.78,
+      1.55,
+      0.1,
+      0.87,
+      0.48,
+      0.82,
+      -0.0,
+      2.55,
+      1.81,
+      2.15
+     ]
+    },
+    {
+     "article": "Fossil fuel",
+     "score_mad": 4.102,
+     "score_rank": 3.398,
+     "p_mad": 0.3686,
+     "p_rank": 0.1618,
+     "loo_stable": false,
+     "echo": false,
+     "member_z_mad": [
+      -0.23,
+      2.1,
+      1.1,
+      4.0,
+      0.43,
+      0.47,
+      0.24,
+      0.84,
+      1.91,
+      2.12
+     ]
+    },
+    {
+     "article": "Artificial intelligence",
+     "score_mad": 4.49,
+     "score_rank": 3.104,
+     "p_mad": 0.1758,
+     "p_rank": 0.3846,
+     "loo_stable": false,
+     "echo": false,
+     "member_z_mad": [
+      4.0,
+      1.93,
+      0.05,
+      0.22,
+      1.02,
+      0.99,
+      0.25,
+      0.92,
+      4.0,
+      0.82
+     ]
+    }
+   ]
+  },
+  "sports_moments": {
+   "members": [
+    {
+     "id": "E754",
+     "article": "2016 World Series",
+     "day0": "2016-11-02",
+     "titles_used": 5,
+     "d0": "2016-11-02"
+    },
+    {
+     "id": "E769",
+     "article": "2018 FIFA World Cup final",
+     "day0": "2018-07-15",
+     "titles_used": 5,
+     "d0": "2018-07-15"
+    },
+    {
+     "id": "E763",
+     "article": "2018 US Open – Women's singles",
+     "day0": "2018-09-08",
+     "titles_used": 4,
+     "d0": "2018-09-08"
+    },
+    {
+     "id": "E765",
+     "article": "2019 Masters Tournament",
+     "day0": "2019-04-14",
+     "titles_used": 2,
+     "d0": "2019-04-14"
+    },
+    {
+     "id": "E774",
+     "article": "2020 Summer Olympics",
+     "day0": "2020-03-24",
+     "titles_used": 101,
+     "d0": "2020-03-24"
+    },
+    {
+     "id": "E776",
+     "article": "Simone Biles",
+     "day0": "2021-07-27",
+     "titles_used": 9,
+     "d0": "2021-07-27"
+    },
+    {
+     "id": "E298",
+     "article": "Lionel Messi",
+     "day0": "2021-08-05",
+     "titles_used": 32,
+     "d0": "2021-08-05"
+    },
+    {
+     "id": "E777",
+     "article": "Emma Raducanu",
+     "day0": "2021-09-11",
+     "titles_used": 5,
+     "d0": "2021-09-11"
+    },
+    {
+     "id": "E788",
+     "article": "LIV Golf",
+     "day0": "2022-06-09",
+     "titles_used": 14,
+     "d0": "2022-06-09"
+    },
+    {
+     "id": "E780",
+     "article": "2022 FIFA World Cup final",
+     "day0": "2022-12-18",
+     "titles_used": 6,
+     "d0": "2022-12-18"
+    },
+    {
+     "id": "E797",
+     "article": "Shohei Ohtani",
+     "day0": "2023-12-09",
+     "titles_used": 19,
+     "d0": "2023-12-09"
+    }
+   ],
+   "n_used": 11,
+   "clustered_members": [
+    "E298",
+    "E776"
+   ],
+   "min_p_both": 0.8481518481518482,
+   "top": [
+    {
+     "article": "Sea",
+     "score_mad": 3.58,
+     "score_rank": 2.937,
+     "p_mad": 0.8482,
+     "p_rank": 0.6174,
+     "loo_stable": false,
+     "echo": false,
+     "member_z_mad": [
+      2.0,
+      1.64,
+      0.44,
+      0.66,
+      4.0,
+      0.94,
+      1.18,
+      0.23,
+      0.84,
+      0.74,
+      -0.79
+     ]
+    },
+    {
+     "article": "Association football",
+     "score_mad": 3.703,
+     "score_rank": 2.693,
+     "p_mad": 0.7612,
+     "p_rank": 0.8521,
+     "loo_stable": false,
+     "echo": true,
+     "member_z_mad": [
+      0.19,
+      4.0,
+      0.29,
+      2.94,
+      -0.37,
+      -2.22,
+      2.06,
+      0.56,
+      -0.3,
+      4.0,
+      1.13
+     ]
+    },
+    {
+     "article": "Spanish language",
+     "score_mad": 3.68,
+     "score_rank": 2.653,
+     "p_mad": 0.7762,
+     "p_rank": 0.8821,
+     "loo_stable": false,
+     "echo": false,
+     "member_z_mad": [
+      0.21,
+      4.0,
+      1.23,
+      1.7,
+      -0.55,
+      0.03,
+      1.09,
+      0.79,
+      0.33,
+      4.0,
+      -0.61
+     ]
+    },
+    {
+     "article": "Heredity",
+     "score_mad": 3.25,
+     "score_rank": 2.696,
+     "p_mad": 0.963,
+     "p_rank": 0.8501,
+     "loo_stable": false,
+     "echo": false,
+     "member_z_mad": [
+      1.28,
+      1.66,
+      0.71,
+      2.21,
+      1.61,
+      -0.32,
+      -0.47,
+      3.41,
+      0.18,
+      -0.2,
+      0.72
+     ]
+    },
+    {
+     "article": "Adolescence",
+     "score_mad": 3.174,
+     "score_rank": 2.794,
+     "p_mad": 0.978,
+     "p_rank": 0.7562,
+     "loo_stable": false,
+     "echo": false,
+     "member_z_mad": [
+      0.7,
+      0.79,
+      0.93,
+      1.7,
+      0.15,
+      -0.25,
+      1.16,
+      1.64,
+      1.16,
+      1.73,
+      0.83
+     ]
+    },
+    {
+     "article": "Gene",
+     "score_mad": 3.079,
+     "score_rank": 2.339,
+     "p_mad": 0.99,
+     "p_rank": 0.985,
+     "loo_stable": false,
+     "echo": false,
+     "member_z_mad": [
+      -0.19,
+      0.76,
+      2.32,
+      1.89,
+      -0.9,
+      0.35,
+      -0.07,
+      0.64,
+      2.07,
+      4.0,
+      -0.66
+     ]
+    },
+    {
+     "article": "Florence Nightingale",
+     "score_mad": 3.454,
+     "score_rank": 2.29,
+     "p_mad": 0.8991,
+     "p_rank": 0.994,
+     "loo_stable": false,
+     "echo": false,
+     "member_z_mad": [
+      1.12,
+      2.25,
+      0.81,
+      4.0,
+      2.19,
+      0.45,
+      1.06,
+      0.12,
+      -0.92,
+      -0.15,
+      0.54
+     ]
+    },
+    {
+     "article": "Telescope",
+     "score_mad": 2.994,
+     "score_rank": 2.725,
+     "p_mad": 0.997,
+     "p_rank": 0.8312,
+     "loo_stable": false,
+     "echo": false,
+     "member_z_mad": [
+      1.86,
+      2.23,
+      0.5,
+      1.61,
+      -0.35,
+      1.3,
+      0.33,
+      -1.46,
+      1.71,
+      1.26,
+      0.94
+     ]
+    },
+    {
+     "article": "Fiction",
+     "score_mad": 3.245,
+     "score_rank": 1.956,
+     "p_mad": 0.963,
+     "p_rank": 1.0,
+     "loo_stable": false,
+     "echo": false,
+     "member_z_mad": [
+      -0.35,
+      4.0,
+      4.0,
+      2.15,
+      -1.23,
+      1.76,
+      -0.42,
+      -0.23,
+      0.11,
+      0.51,
+      0.46
+     ]
+    },
+    {
+     "article": "Museum",
+     "score_mad": 2.868,
+     "score_rank": 2.089,
+     "p_mad": 1.0,
+     "p_rank": 1.0,
+     "loo_stable": false,
+     "echo": false,
+     "member_z_mad": [
+      0.07,
+      0.29,
+      2.97,
+      -0.14,
+      2.09,
+      3.08,
+      -0.65,
+      -1.19,
+      0.81,
+      1.92,
+      0.25
+     ]
+    }
+   ]
+  },
+  "music_moments": {
+   "members": [
+    {
+     "id": "E523",
+     "article": "Despacito",
+     "day0": "2017-01-12..2017-08-31",
+     "titles_used": 15,
+     "skip": "no attention rise"
+    },
+    {
+     "id": "E511",
+     "article": "When We All Fall Asleep, Where Do We Go?",
+     "day0": "2019-03-29",
+     "titles_used": 18,
+     "d0": "2019-03-29"
+    },
+    {
+     "id": "E509",
+     "article": "Old Town Road",
+     "day0": "2019-03-01..2019-06-30",
+     "titles_used": 13,
+     "d0": "2019-05-31"
+    },
+    {
+     "id": "E531",
+     "article": "Blinding Lights",
+     "day0": "2019-11-29..2020-06-30",
+     "titles_used": 13,
+     "d0": "2020-03-20"
+    },
+    {
+     "id": "E544",
+     "article": "Folklore (Taylor Swift album)",
+     "day0": "2020-07-24",
+     "titles_used": 5,
+     "d0": "2020-07-24"
+    },
+    {
+     "id": "E541",
+     "article": "Dreams (Fleetwood Mac song)",
+     "day0": "2020-09-25..2020-10-31",
+     "titles_used": 8,
+     "d0": "2020-10-13"
+    },
+    {
+     "id": "E532",
+     "article": "Drivers License",
+     "day0": "2021-01-08",
+     "titles_used": 59,
+     "d0": "2021-01-08"
+    },
+    {
+     "id": "E537",
+     "article": "Måneskin",
+     "day0": "2021-05-22",
+     "titles_used": 7,
+     "d0": "2021-05-22"
+    },
+    {
+     "id": "E545",
+     "article": "Renaissance (Beyoncé album)",
+     "day0": "2022-07-29",
+     "titles_used": 17,
+     "d0": "2022-07-29"
+    },
+    {
+     "id": "E496",
+     "article": "Brat (album)",
+     "day0": "2024-06-07",
+     "titles_used": 23,
+     "d0": "2024-06-07"
+    },
+    {
+     "id": "E497",
+     "article": "Oasis (band)",
+     "day0": "2024-08-27",
+     "titles_used": 17,
+     "d0": "2024-08-27"
+    }
+   ],
+   "n_used": 10,
+   "clustered_members": [],
+   "min_p_both": 0.15584415584415584,
+   "top": [
+    {
+     "article": "Drink",
+     "score_mad": 4.666,
+     "score_rank": 3.401,
+     "p_mad": 0.1219,
+     "p_rank": 0.1558,
+     "loo_stable": false,
+     "echo": false,
+     "member_z_mad": [
+      1.41,
+      2.02,
+      1.25,
+      0.89,
+      -0.29,
+      4.0,
+      -0.36,
+      2.09,
+      4.0,
+      -0.26
+     ]
+    },
+    {
+     "article": "Arctic Ocean",
+     "score_mad": 3.547,
+     "score_rank": 2.906,
+     "p_mad": 0.8102,
+     "p_rank": 0.6184,
+     "loo_stable": false,
+     "echo": false,
+     "member_z_mad": [
+      2.33,
+      1.16,
+      0.55,
+      -0.12,
+      1.87,
+      -0.27,
+      -0.62,
+      2.83,
+      2.27,
+      1.22
+     ]
+    },
+    {
+     "article": "Learning",
+     "score_mad": 3.115,
+     "score_rank": 2.385,
+     "p_mad": 0.983,
+     "p_rank": 0.981,
+     "loo_stable": false,
+     "echo": false,
+     "member_z_mad": [
+      2.64,
+      0.36,
+      0.03,
+      1.75,
+      0.26,
+      0.41,
+      0.25,
+      -0.83,
+      4.0,
+      0.97
+     ]
+    },
+    {
+     "article": "Mobile phone",
+     "score_mad": 3.064,
+     "score_rank": 2.709,
+     "p_mad": 0.985,
+     "p_rank": 0.8052,
+     "loo_stable": false,
+     "echo": false,
+     "member_z_mad": [
+      1.28,
+      1.81,
+      1.33,
+      0.04,
+      1.07,
+      0.04,
+      1.1,
+      1.33,
+      0.39,
+      1.3
+     ]
+    },
+    {
+     "article": "Optics",
+     "score_mad": 2.947,
+     "score_rank": 2.396,
+     "p_mad": 0.991,
+     "p_rank": 0.98,
+     "loo_stable": false,
+     "echo": false,
+     "member_z_mad": [
+      3.54,
+      2.19,
+      0.98,
+      0.17,
+      0.19,
+      0.88,
+      -0.6,
+      0.48,
+      1.53,
+      -0.02
+     ]
+    },
+    {
+     "article": "Writing",
+     "score_mad": 2.795,
+     "score_rank": 2.69,
+     "p_mad": 0.995,
+     "p_rank": 0.8232,
+     "loo_stable": false,
+     "echo": false,
+     "member_z_mad": [
+      0.49,
+      0.18,
+      0.85,
+      0.39,
+      0.21,
+      1.1,
+      0.49,
+      1.91,
+      1.89,
+      1.32
+     ]
+    },
+    {
+     "article": "Subatomic particle",
+     "score_mad": 2.912,
+     "score_rank": 2.254,
+     "p_mad": 0.992,
+     "p_rank": 0.996,
+     "loo_stable": false,
+     "echo": false,
+     "member_z_mad": [
+      0.81,
+      0.85,
+      -0.59,
+      1.41,
+      0.12,
+      1.44,
+      4.0,
+      0.45,
+      0.52,
+      0.19
+     ]
+    },
+    {
+     "article": "Gene",
+     "score_mad": 2.904,
+     "score_rank": 2.21,
+     "p_mad": 0.992,
+     "p_rank": 0.997,
+     "loo_stable": false,
+     "echo": false,
+     "member_z_mad": [
+      -0.14,
+      0.63,
+      1.51,
+      0.57,
+      0.24,
+      1.61,
+      -1.15,
+      4.0,
+      2.13,
+      -0.21
+     ]
+    },
+    {
+     "article": "Publishing",
+     "score_mad": 2.8,
+     "score_rank": 2.022,
+     "p_mad": 0.995,
+     "p_rank": 0.999,
+     "loo_stable": false,
+     "echo": false,
+     "member_z_mad": [
+      0.59,
+      4.0,
+      0.39,
+      -1.5,
+      -1.73,
+      2.61,
+      -0.09,
+      1.83,
+      2.9,
+      -0.14
+     ]
+    },
+    {
+     "article": "Christopher Columbus",
+     "score_mad": 2.915,
+     "score_rank": 1.158,
+     "p_mad": 0.992,
+     "p_rank": 1.0,
+     "loo_stable": false,
+     "echo": false,
+     "member_z_mad": [
+      -0.43,
+      -1.09,
+      0.01,
+      4.0,
+      4.0,
+      0.71,
+      -0.38,
+      -0.37,
+      -0.14,
+      2.9
+     ]
+    }
+   ]
+  },
+  "pandemic_crazes": {
+   "members": [
+    {
+     "id": "E482",
+     "article": "Tiger King",
+     "day0": "2020-03-20",
+     "titles_used": 14,
+     "d0": "2020-03-20"
+    },
+    {
+     "id": "E483",
+     "article": "Dalgona coffee",
+     "day0": "2020-03-01..2020-04-30",
+     "titles_used": 4,
+     "d0": "2020-04-04"
+    },
+    {
+     "id": "E484",
+     "article": "Sourdough",
+     "day0": "2020-03-15..2020-05-15",
+     "titles_used": 14,
+     "d0": "2020-04-25"
+    },
+    {
+     "id": "E485",
+     "article": "Cottagecore",
+     "day0": "2020-03-01..2020-12-31",
+     "titles_used": 6,
+     "d0": "2020-06-28"
+    },
+    {
+     "id": "E139",
+     "article": "Among Us",
+     "day0": "2020-08-15..2020-10-31",
+     "titles_used": 53,
+     "d0": "2020-09-21"
+    },
+    {
+     "id": "E486",
+     "article": "Peloton Interactive",
+     "day0": "2020-03-01..2020-12-31",
+     "titles_used": 5,
+     "d0": "2020-12-31"
+    }
+   ],
+   "n_used": 6,
+   "clustered_members": [
+    "E482",
+    "E483",
+    "E484"
+   ],
+   "min_p_both": 0.03296703296703297,
+   "top": [
+    {
+     "article": "Home",
+     "score_mad": 5.678,
+     "score_rank": 3.721,
+     "p_mad": 0.005,
+     "p_rank": 0.033,
+     "loo_stable": false,
+     "echo": false,
+     "member_z_mad": [
+      4.0,
+      4.0,
+      4.0,
+      0.22,
+      0.34,
+      1.35
+     ]
+    },
+    {
+     "article": "Festival",
+     "score_mad": 4.384,
+     "score_rank": 3.263,
+     "p_mad": 0.2168,
+     "p_rank": 0.2138,
+     "loo_stable": false,
+     "echo": false,
+     "member_z_mad": [
+      4.0,
+      2.92,
+      0.27,
+      2.22,
+      0.68,
+      0.65
+     ]
+    },
+    {
+     "article": "Niccolò Machiavelli",
+     "score_mad": 4.13,
+     "score_rank": 3.097,
+     "p_mad": 0.3696,
+     "p_rank": 0.3826,
+     "loo_stable": false,
+     "echo": false,
+     "member_z_mad": [
+      2.55,
+      3.21,
+      2.99,
+      0.47,
+      0.48,
+      0.42
+     ]
+    },
+    {
+     "article": "Bicycle",
+     "score_mad": 3.561,
+     "score_rank": 2.651,
+     "p_mad": 0.7852,
+     "p_rank": 0.8701,
+     "loo_stable": false,
+     "echo": false,
+     "member_z_mad": [
+      3.98,
+      1.03,
+      2.05,
+      -0.24,
+      1.25,
+      0.65
+     ]
+    },
+    {
+     "article": "Nigeria",
+     "score_mad": 3.278,
+     "score_rank": 2.62,
+     "p_mad": 0.9271,
+     "p_rank": 0.8841,
+     "loo_stable": false,
+     "echo": false,
+     "member_z_mad": [
+      0.88,
+      1.16,
+      1.73,
+      0.72,
+      3.15,
+      0.4
+     ]
+    },
+    {
+     "article": "Lagos",
+     "score_mad": 3.274,
+     "score_rank": 2.559,
+     "p_mad": 0.9311,
+     "p_rank": 0.9161,
+     "loo_stable": false,
+     "echo": false,
+     "member_z_mad": [
+      0.22,
+      1.5,
+      1.74,
+      -0.14,
+      3.01,
+      1.69
+     ]
+    },
+    {
+     "article": "Ottoman Empire",
+     "score_mad": 3.091,
+     "score_rank": 2.388,
+     "p_mad": 0.982,
+     "p_rank": 0.981,
+     "loo_stable": false,
+     "echo": false,
+     "member_z_mad": [
+      2.37,
+      2.54,
+      2.92,
+      -0.02,
+      -0.19,
+      -0.05
+     ]
+    },
+    {
+     "article": "Telescope",
+     "score_mad": 3.029,
+     "score_rank": 2.431,
+     "p_mad": 0.986,
+     "p_rank": 0.974,
+     "loo_stable": false,
+     "echo": false,
+     "member_z_mad": [
+      1.62,
+      1.23,
+      2.45,
+      -1.26,
+      2.89,
+      0.49
+     ]
+    },
+    {
+     "article": "Common cold",
+     "score_mad": 3.012,
+     "score_rank": 2.658,
+     "p_mad": 0.987,
+     "p_rank": 0.8631,
+     "loo_stable": false,
+     "echo": false,
+     "member_z_mad": [
+      0.1,
+      0.28,
+      2.01,
+      0.78,
+      1.32,
+      2.88
+     ]
+    },
+    {
+     "article": "University",
+     "score_mad": 3.01,
+     "score_rank": 2.363,
+     "p_mad": 0.987,
+     "p_rank": 0.987,
+     "loo_stable": false,
+     "echo": false,
+     "member_z_mad": [
+      0.46,
+      0.87,
+      2.81,
+      -0.27,
+      1.65,
+      1.84
+     ]
+    }
+   ]
+  }
+ },
+ "bh_families_passing": [
+  "ai_models",
+  "films_blockbusters",
+  "finance_shocks",
+  "pandemic_crazes",
+  "streaming_hits"
+ ],
+ "candidates": [],
+ "run": "https://github.com/bsunter93/Ben-Sunters-Website/actions/runs/36379602815",
+ "source": "transcribed from the job log (artifact host unreachable)"
+}
