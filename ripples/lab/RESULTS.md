@@ -35,3 +35,14 @@ False "verified" candidates per world: 6–30 across methods. Lessons (for desig
    (event, article) pairs.
 4. Real calibration needs the real pageview panel (Vital Articles, daily, 2016+), fetched from 2026-09-28 because
    Wikimedia is paused for 2026-09-27 after a 429.
+
+## Data sources for the cultural lab (2026-09-27)
+
+| source | where | size | status |
+|---|---|---|---|
+| Google Books Ngram (eng 2020 release, 1990–2019) | Actions cache `ripples-ngram-v1-*` / artifact `ngram` | 173,325 words × 30 years (14 MB) | done in 18.5 min |
+| Seattle library checkouts by subject heading | `ripples.att_sea` | 1,500 headings × monthly 2005+ | collecting (1 heading/min) |
+| YouTube distinct commenters | `ripples.att_yt_breadth` | 956 videos / 667 events | collecting (≤ 4,000 units/day) |
+| Wikipedia distinct editors | `ripples.att_wp_editors` | 1,862 events | starts 2026-09-28 00:10 UTC |
+| GDELT news attention | `ripples.att_gdelt_tl` | 669 events since 2016-10 | blocked: HTTP 429 on first request from GitHub runners; weekly retry |
+| Bluesky distinct authors per hashtag | `ripples.att_social_tags` | daily since 2026-09-23 | existing collector |

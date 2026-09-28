@@ -1,0 +1,37 @@
+# Ripple Map: Google Books Ngram yearly word frequencies for the cultural lab (ripples/lab/ngram.py). Public data,
+# no secrets; the result is kept in the Actions cache (key ripples-ngram-v1) for the lab, not in the database.
+name: Ripples Ngram extract
+
+on:
+  push:
+    branches: ["claude/**"]
+    paths: ["ripples/lab/ngram.py", ".github/workflows/ripples-ngram.yml"]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  ngram:
+    runs-on: ubuntu-latest
+    timeout-minutes: 330
+    env:
+      LAB_CACHE: ${{ github.workspace }}/.ngram-cache
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: pip install --quiet numpy
+      - uses: actions/cache@v4
+        with:
+          path: .ngram-cache
+          key: ripples-ngram-v1-${{ hashFiles('ripples/lab/ngram.py') }}
+      - name: Extract
+        working-directory: ripples/lab
+        run: python ngram.py
+      - uses: actions/upload-artifact@v4
+        with:
+          name: ngram
+          path: .ngram-cache/ngram.npz
+          if-no-files-found: ignore
