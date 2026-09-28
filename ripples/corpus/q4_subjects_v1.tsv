@@ -1,0 +1,203 @@
+# Q4 named-subject test v1 (ripples/docs/q4_protocol_v1.md). Each event is tested against its own owner-named
+# subject (events_taxonomy_batch1.csv, discovery_subject), mapped to one English Wikipedia article before any data
+# was fetched: the most specific look-up-able element of the owner's subject. Event article titles are disambiguated
+# where the owner's title names another topic (e.g. Chernobyl -> Chernobyl (miniseries)); curly quotes straightened.
+# Tab-separated: family, id, event article, day0, subject article.
+family	id	article	day0	subject
+q4_drama_subjects	T10020	The Crown (TV series)	2016-11-04	Monarchy of the United Kingdom
+q4_drama_subjects	T10021	Westworld (TV series)	2016-10-02	Artificial intelligence
+q4_drama_subjects	T10022	Atlanta (TV series)	2016-09-06	Atlanta hip hop
+q4_drama_subjects	T10024	The Young Pope	2016-10-21	Pope
+q4_drama_subjects	T10025	The OA	2016-12-16	Near-death experience
+q4_drama_subjects	T10026	Medici (TV series)	2016-10-18	House of Medici
+q4_drama_subjects	T10029	The Handmaid's Tale (TV series)	2017-04-26	Dystopia
+q4_drama_subjects	T10030	GLOW (TV series)	2017-06-23	Women's professional wrestling
+q4_drama_subjects	T10031	The Deuce (TV series)	2017-09-10	Times Square
+q4_drama_subjects	T10032	Mindhunter (TV series)	2017-10-13	Offender profiling
+q4_drama_subjects	T10034	The Marvelous Mrs. Maisel	2017-03-17	Stand-up comedy
+q4_drama_subjects	T10035	Ozark (TV series)	2017-07-21	Money laundering
+q4_drama_subjects	T10036	Godless (miniseries)	2017-11-22	American frontier
+q4_drama_subjects	T10037	The Terror (TV series)	2018-03-26	Franklin's lost expedition
+q4_drama_subjects	T10038	Killing Eve	2018-04-08	Espionage
+q4_drama_subjects	T10039	Succession (TV series)	2018-06-03	Media conglomerate
+q4_drama_subjects	T10040	Pose (TV series)	2018-06-03	Ball culture
+q4_drama_subjects	T10041	Yellowstone (American TV series)	2018-06-20	Ranch
+q4_drama_subjects	T10043	Sharp Objects (miniseries)	2018-07-08	Investigative journalism
+q4_drama_subjects	T10044	Narcos: Mexico	2018-11-16	Mexican drug war
+q4_drama_subjects	T10045	Escape at Dannemora	2018-11-18	Prison escape
+q4_drama_subjects	T10046	Dirty John (TV series)	2018-11-25	True crime
+q4_drama_subjects	T10047	The Little Drummer Girl (miniseries)	2018-11-19	Espionage
+q4_drama_subjects	T10048	Chernobyl (miniseries)	2019-05-06	Chernobyl disaster
+q4_drama_subjects	T10049	When They See Us	2019-05-31	Central Park jogger case
+q4_drama_subjects	T10051	The Boys (TV series)	2019-07-26	Superhero fiction
+q4_drama_subjects	T10052	The Morning Show (American TV series)	2019-11-01	Broadcast journalism
+q4_drama_subjects	T10053	The Mandalorian	2019-11-12	Star Wars
+q4_drama_subjects	T10054	Watchmen (TV series)	2019-10-20	Tulsa race massacre
+q4_drama_subjects	T10057	Good Omens (TV series)	2019-05-31	Apocalyptic and post-apocalyptic fiction
+q4_drama_subjects	T10059	The Politician (TV series)	2019-09-27	Political campaign
+q4_drama_subjects	T10061	For All Mankind (TV series)	2019-11-01	Space Race
+q4_drama_subjects	T10062	The Righteous Gemstones	2019-08-18	Megachurch
+q4_drama_subjects	T10063	Pennyworth (TV series)	2019-07-28	Swinging London
+q4_drama_subjects	T10064	The Queen's Gambit (miniseries)	2020-10-23	Chess
+q4_drama_subjects	T10067	Bridgerton	2020-12-25	Regency era
+q4_drama_subjects	T10068	I May Destroy You	2020-06-07	Sexual consent
+q4_drama_subjects	T10070	Devs (miniseries)	2020-03-05	Quantum computing
+q4_drama_subjects	T10071	The Great (TV series)	2020-05-15	Catherine the Great
+q4_drama_subjects	T10074	Lovecraft Country (TV series)	2020-08-16	Jim Crow laws
+q4_drama_subjects	T10075	The Good Lord Bird (miniseries)	2020-10-04	John Brown (abolitionist)
+q4_drama_subjects	T10077	Mrs. America (miniseries)	2020-04-15	Feminism in the United States
+q4_drama_subjects	T10078	Little Fires Everywhere (miniseries)	2020-03-18	Adoption
+q4_drama_subjects	T10079	Outer Banks (TV series)	2020-04-15	Outer Banks
+q4_drama_subjects	T10081	The White Lotus	2021-07-11	Resort
+q4_drama_subjects	T10082	Squid Game	2021-09-17	South Korea
+q4_drama_subjects	T10083	Maid (miniseries)	2021-10-01	Domestic worker
+q4_drama_subjects	T10084	Only Murders in the Building	2021-08-31	Podcast
+q4_drama_subjects	T10085	Yellowjackets (TV series)	2021-11-14	Survival skills
+q4_drama_subjects	T10086	Dopesick (miniseries)	2021-10-13	Opioid epidemic in the United States
+q4_drama_subjects	T10087	The Underground Railroad (miniseries)	2021-05-14	Slavery in the United States
+q4_drama_subjects	T10088	Halston (miniseries)	2021-05-14	Halston
+q4_drama_subjects	T10089	It's a Sin	2021-01-22	HIV/AIDS
+q4_drama_subjects	T10090	Reservation Dogs	2021-08-09	Native Americans in the United States
+q4_drama_subjects	T10092	Domina (TV series)	2021-05-14	Ancient Rome
+q4_drama_subjects	T10093	Leonardo (2021 TV series)	2021-04-23	Leonardo da Vinci
+q4_drama_subjects	T10097	Colin in Black & White	2021-10-29	American football
+q4_drama_subjects	T10098	The North Water (TV series)	2021-09-10	Whaling
+q4_drama_subjects	T10100	Genius (American TV series)	2017-04-25	Albert Einstein
+q4_drama_subjects	T10101	Trust (American TV series)	2018-03-25	Kidnapping of John Paul Getty III
+q4_drama_subjects	T10102	Fosse/Verdon	2019-04-09	Bob Fosse
+q4_drama_subjects	T10103	The Loudest Voice	2019-06-30	Roger Ailes
+q4_drama_subjects	T10104	The Looming Tower (miniseries)	2018-02-28	September 11 attacks
+q4_drama_subjects	T10105	The Hot Zone (miniseries)	2019-05-27	Ebola
+q4_drama_subjects	T10107	Counterpart (TV series)	2017-12-10	Espionage
+q4_drama_subjects	T10108	Alias Grace (miniseries)	2017-11-03	Grace Marks
+q4_drama_subjects	T10109	The Serpent Queen	2022-09-11	Catherine de' Medici
+q4_drama_subjects	T10110	Marie Antoinette (TV series)	2022-10-31	Marie Antoinette
+q4_drama_subjects	T10112	The Bear (TV series)	2022-06-23	Chef
+q4_drama_subjects	T10113	The Dropout	2022-03-03	Theranos
+q4_drama_subjects	T10114	WeCrashed	2022-03-18	WeWork
+q4_drama_subjects	T10115	The Offer (miniseries)	2022-04-28	The Godfather
+q4_drama_subjects	T10116	Winning Time: The Rise of the Lakers Dynasty	2022-03-06	Los Angeles Lakers
+q4_drama_subjects	T10117	The Staircase (miniseries)	2022-05-05	True crime
+q4_drama_subjects	T10119	The Gilded Age (TV series)	2022-01-24	Gilded Age
+q4_drama_subjects	T10120	Pachinko (TV series)	2022-03-25	Korea under Japanese rule
+q4_drama_subjects	T10121	Tokyo Vice	2022-04-07	Yakuza
+q4_drama_subjects	T10122	Under the Banner of Heaven (miniseries)	2022-04-28	Utah
+q4_drama_subjects	T10123	The English (TV series)	2022-11-10	American frontier
+q4_drama_subjects	T10124	Black Bird (miniseries)	2022-07-08	Criminal psychology
+q4_drama_subjects	T10125	The Patient (TV series)	2022-08-30	Psychotherapy
+q4_drama_subjects	T10126	The Last of Us (TV series)	2023-01-15	Cordyceps
+q4_drama_subjects	T10129	The Diplomat (American TV series)	2023-04-20	Diplomacy
+q4_drama_subjects	T10130	A Small Light	2023-05-01	Anne Frank
+q4_drama_subjects	T10131	Fellow Travelers (miniseries)	2023-10-27	Lavender scare
+q4_drama_subjects	T10132	Lessons in Chemistry (miniseries)	2023-10-13	Women in science
+q4_drama_subjects	T10134	Griselda (miniseries)	2024-01-25	Griselda Blanco
+q4_drama_subjects	T10135	Masters of the Air	2024-01-26	Eighth Air Force
+q4_drama_subjects	T10136	The New Look (TV series)	2024-02-14	Christian Dior (designer)
+q4_drama_subjects	T10137	Shōgun (2024 TV series)	2024-02-27	Tokugawa shogunate
+q4_drama_subjects	T10139	The Sympathizer (TV series)	2024-04-14	Vietnam War
+q4_drama_subjects	T10140	The Tattooist of Auschwitz (miniseries)	2024-05-02	Auschwitz concentration camp
+q4_drama_subjects	T10141	Baby Reindeer	2024-04-11	Stalking
+q4_drama_subjects	T10143	3 Body Problem (TV series)	2024-03-21	Search for extraterrestrial intelligence
+q4_drama_subjects	T10144	We Were the Lucky Ones (miniseries)	2024-03-28	The Holocaust in Poland
+q4_drama_subjects	T10146	Becoming Karl Lagerfeld	2024-06-07	Karl Lagerfeld
+q4_drama_subjects	T10147	Cristóbal Balenciaga (TV series)	2024-01-19	Cristóbal Balenciaga
+q4_drama_subjects	T10148	Feud: Capote vs. The Swans	2024-01-31	Truman Capote
+q4_drama_subjects	T10149	Landman (TV series)	2024-11-17	Petroleum industry
+q4_drama_subjects	T10150	Say Nothing (TV series)	2024-11-14	The Troubles
+q4_drama_subjects	T10153	The Agency (2024 TV series)	2024-11-29	Central Intelligence Agency
+q4_drama_subjects	T10155	Expats (TV series)	2024-01-26	Hong Kong
+q4_drama_subjects	T10156	The Regime (miniseries)	2024-03-03	Authoritarianism
+q4_drama_subjects	T10165	Queen Charlotte: A Bridgerton Story	2023-05-04	Charlotte of Mecklenburg-Strelitz
+q4_drama_subjects	T10167	Five Days at Memorial	2022-08-11	Hurricane Katrina
+q4_drama_subjects	T10170	Gaslit (TV series)	2022-04-24	Watergate scandal
+q4_drama_subjects	T10173	The Shrink Next Door	2021-11-12	Psychotherapy
+q4_drama_subjects	T10174	WandaVision	2021-01-15	Sitcom
+q4_drama_subjects	T10175	Loki (TV series)	2021-06-09	Loki
+q4_drama_subjects	T10179	The Pitt (TV series)	2025-01-09	Emergency medicine
+q4_drama_subjects	T10182	Adolescence (TV series)	2025-03-13	Juvenile delinquency
+q4_drama_subjects	T10183	The Narrow Road to the Deep North (miniseries)	2025-04-18	Burma Railway
+q4_drama_subjects	T10188	The Old Man (TV series)	2022-06-16	Central Intelligence Agency
+q4_drama_subjects	T10189	The White Princess (TV series)	2017-04-16	Wars of the Roses
+q4_drama_subjects	T10191	The Alienist (TV series)	2018-01-22	Criminal psychology
+q4_drama_subjects	T10194	Jamestown (TV series)	2017-05-05	Jamestown, Virginia
+q4_death_subjects	T10204	Roger Moore	2017-05-23	James Bond
+q4_death_subjects	T10206	Hugh Hefner	2017-09-27	Playboy
+q4_death_subjects	T10209	Stan Lee	2018-11-12	Marvel Comics
+q4_death_subjects	T10210	Stephen Hawking	2018-03-14	Physical cosmology
+q4_death_subjects	T10215	Kobe Bryant	2020-01-26	Basketball
+q4_death_subjects	T10217	Sean Connery	2020-10-31	James Bond
+q4_death_subjects	T10220	Ruth Bader Ginsburg	2020-09-18	Supreme Court of the United States
+q4_death_subjects	T10221	Prince Philip, Duke of Edinburgh	2021-04-09	Monarchy of the United Kingdom
+q4_death_subjects	T10223	Charlie Watts	2021-08-24	The Rolling Stones
+q4_death_subjects	T10226	Stephen Sondheim	2021-11-26	Musical theatre
+q4_death_subjects	T10230	Taylor Hawkins	2022-03-25	Foo Fighters
+q4_death_subjects	T10233	Mikhail Gorbachev	2022-08-30	Soviet Union
+q4_death_subjects	T10234	Elizabeth II	2022-09-08	Monarchy of the United Kingdom
+q4_death_subjects	T10236	Lisa Marie Presley	2023-01-12	Elvis Presley
+q4_death_subjects	T10246	Akira Toriyama	2024-03-01	Dragon Ball
+q4_death_subjects	T10252	Liam Payne	2024-10-16	One Direction
+q4_film_subjects	T10279	Hidden Figures	2016-12-25	NASA
+q4_film_subjects	T10280	Sully (film)	2016-09-09	US Airways Flight 1549
+q4_film_subjects	T10281	Hacksaw Ridge	2016-11-04	Desmond Doss
+q4_film_subjects	T10282	Loving (2016 film)	2016-11-04	Loving v. Virginia
+q4_film_subjects	T10283	The Founder	2016-12-07	McDonald's
+q4_film_subjects	T10284	Snowden (film)	2016-09-16	National Security Agency
+q4_film_subjects	T10285	Deepwater Horizon (film)	2016-09-30	Deepwater Horizon oil spill
+q4_film_subjects	T10286	Lion (2016 film)	2016-11-25	Adoption
+q4_film_subjects	T10287	Dunkirk (2017 film)	2017-07-21	Dunkirk evacuation
+q4_film_subjects	T10288	Darkest Hour (film)	2017-11-22	Winston Churchill
+q4_film_subjects	T10289	The Post (film)	2017-12-22	Pentagon Papers
+q4_film_subjects	T10290	I, Tonya	2017-12-08	Tonya Harding
+q4_film_subjects	T10291	The Disaster Artist (film)	2017-12-08	The Room
+q4_film_subjects	T10292	All the Money in the World	2017-12-25	Kidnapping of John Paul Getty III
+q4_film_subjects	T10293	First Man (film)	2018-10-12	Apollo 11
+q4_film_subjects	T10294	Bohemian Rhapsody (film)	2018-11-02	Queen (band)
+q4_film_subjects	T10295	Vice (2018 film)	2018-12-25	Dick Cheney
+q4_film_subjects	T10296	On the Basis of Sex	2018-12-25	Ruth Bader Ginsburg
+q4_film_subjects	T10297	BlacKkKlansman	2018-08-10	Ron Stallworth
+q4_film_subjects	T10298	Green Book (film)	2018-11-21	The Negro Motorist Green Book
+q4_film_subjects	T10299	The Favourite	2018-11-23	Anne, Queen of Great Britain
+q4_film_subjects	T10300	Mary Queen of Scots (2018 film)	2018-12-07	Mary, Queen of Scots
+q4_film_subjects	T10301	Rocketman (film)	2019-05-31	Elton John
+q4_film_subjects	T10302	Ford v Ferrari	2019-11-15	24 Hours of Le Mans
+q4_film_subjects	T10303	Judy (film)	2019-09-27	Judy Garland
+q4_film_subjects	T10304	Richard Jewell (film)	2019-12-13	Centennial Olympic Park bombing
+q4_film_subjects	T10305	Dark Waters (2019 film)	2019-11-22	Per- and polyfluoroalkyl substances
+q4_film_subjects	T10306	The Two Popes	2019-11-27	Catholic Church
+q4_film_subjects	T10307	A Beautiful Day in the Neighborhood	2019-11-22	Fred Rogers
+q4_film_subjects	T10308	1917 (2019 film)	2019-12-25	World War I
+q4_film_subjects	T10309	Bombshell (2019 film)	2019-12-20	Fox News
+q4_film_subjects	T10311	The Trial of the Chicago 7	2020-10-16	Chicago Seven
+q4_film_subjects	T10312	Ma Rainey's Black Bottom (film)	2020-12-18	Ma Rainey
+q4_film_subjects	T10313	Mank	2020-11-13	Citizen Kane
+q4_film_subjects	T10315	One Night in Miami... (film)	2020-12-25	Malcolm X
+q4_film_subjects	T10316	The Mauritanian	2021-02-12	Guantanamo Bay detention camp
+q4_film_subjects	T10317	Judas and the Black Messiah	2021-02-12	Black Panther Party
+q4_film_subjects	T10318	The Dig (2021 film)	2021-01-29	Sutton Hoo
+q4_film_subjects	T10320	King Richard (film)	2021-11-19	Richard Williams (tennis coach)
+q4_film_subjects	T10321	Being the Ricardos	2021-12-10	I Love Lucy
+q4_film_subjects	T10322	House of Gucci	2021-11-24	Gucci
+q4_film_subjects	T10323	The Electrical Life of Louis Wain	2021-10-22	Louis Wain
+q4_film_subjects	T10324	Oppenheimer (film)	2023-07-21	Manhattan Project
+q4_film_subjects	T10325	Killers of the Flower Moon (film)	2023-10-20	Osage Indian murders
+q4_film_subjects	T10326	Air (2023 film)	2023-04-05	Air Jordan
+q4_film_subjects	T10327	Ferrari (2023 film)	2023-12-25	Enzo Ferrari
+q4_film_subjects	T10328	The Iron Claw (film)	2023-12-22	Von Erich family
+q4_film_subjects	T10329	Nyad (film)	2023-10-20	Diana Nyad
+q4_film_subjects	T10330	Dumb Money	2023-09-22	GameStop short squeeze
+q4_game_subjects	T10349	Assassin's Creed Origins	2017-10-27	Ancient Egypt
+q4_game_subjects	T10350	Cuphead	2017-09-29	Rubber hose animation
+q4_game_subjects	T10351	God of War (2018 video game)	2018-04-20	Norse mythology
+q4_game_subjects	T10352	Red Dead Redemption 2	2018-10-26	American frontier
+q4_game_subjects	T10354	Celeste (video game)	2018-01-25	Mountaineering
+q4_game_subjects	T10355	Sea of Thieves	2018-03-20	Piracy
+q4_game_subjects	T10357	Sekiro: Shadows Die Twice	2019-03-22	Sengoku period
+q4_game_subjects	T10364	Hades (video game)	2020-09-17	Greek mythology
+q4_game_subjects	T10365	Cyberpunk 2077	2020-12-10	Cyberpunk
+q4_game_subjects	T10366	Microsoft Flight Simulator (2020 video game)	2020-08-18	Aviation
+q4_game_subjects	T10367	Ghost of Tsushima	2020-07-17	Samurai
+q4_game_subjects	T10369	Forza Horizon 5	2021-11-05	Mexico
+q4_game_subjects	T10374	God of War Ragnarök	2022-11-09	Norse mythology
+q4_game_subjects	T10375	Stray (video game)	2022-07-19	Cat
+q4_game_subjects	T10378	Baldur's Gate 3	2023-08-03	Dungeons & Dragons
+q4_game_subjects	T10384	Black Myth: Wukong	2024-08-20	Chinese mythology
