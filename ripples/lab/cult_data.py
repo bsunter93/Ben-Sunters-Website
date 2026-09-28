@@ -34,12 +34,24 @@ class Stop(Exception):
     pass
 
 
-def get(url: str) -> dict:
+BACKOFF_429 = os.environ.get("ALLOW_429_BACKOFF") == "1"  # owner-approved: honour Retry-After, max 2 retries
+
+
+def get(url: str, _tries: int = 0) -> dict:
     req = urllib.request.Request(url, headers={"User-Agent": UA, "Accept": "application/json"})
     try:
         with urllib.request.urlopen(req, timeout=60) as r:
             return json.load(r)
     except urllib.error.HTTPError as e:
+        if e.code == 429 and BACKOFF_429 and _tries < 2:
+            # Wikimedia etiquette: wait as long as the server asks (capped at 120 s), then retry, serially
+            try:
+                wait = min(120, max(5, int(e.headers.get("Retry-After", "60"))))
+            except ValueError:
+                wait = 60
+            print(f"HTTP 429: waiting {wait} s as asked (retry {_tries + 1} of 2)", flush=True)
+            time.sleep(wait)
+            return get(url, _tries + 1)
         if e.code in (403, 429, 503):
             raise Stop(f"HTTP {e.code}") from None
         if e.code == 404:
@@ -59,6 +71,27 @@ def page_links(title: str, ns: str) -> list[str]:
             return out
         cont = j["continue"]
         time.sleep(0.5)
+
+
+def titles_with_redirects(title: str, cap: int = 100) -> list[str]:
+    """The article's current title plus every title that redirects to it (namespace 0). Pageviews are stored under
+    the title at view time, so an article renamed after an event keeps its early views under the old title, which
+    is now a redirect. Summing over all of them recovers the full attention series."""
+    out, cont, canon = [], {}, None
+    while True:
+        q = {"action": "query", "format": "json", "redirects": "1", "titles": title, "prop": "redirects",
+             "rdnamespace": "0", "rdlimit": "max"} | cont
+        j = get("https://en.wikipedia.org/w/api.php?" + urllib.parse.urlencode(q))
+        for p in (j.get("query") or {}).get("pages", {}).values():
+            if "missing" in p:
+                continue
+            canon = p.get("title", canon)
+            out += [r["title"] for r in p.get("redirects", [])]
+        if "continue" not in j:
+            break
+        cont = j["continue"]
+        time.sleep(0.5)
+    return ([canon] if canon else []) + sorted(set(out))[:cap]
 
 
 def vital_articles() -> list[str]:

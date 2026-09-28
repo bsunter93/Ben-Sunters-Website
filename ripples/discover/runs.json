@@ -1,0 +1,35 @@
+{
+ "note": "Manifest for /ripples/discover/. Files that are not there yet show as pending.",
+ "calibration": {
+  "file": "/ripples/docs/results/e9_phase1_2026-09-28.json",
+  "ledger": 1282,
+  "labels": {
+   "P1": {"event": "The Queen's Gambit (Netflix)", "outcome": "Chess", "kind": "Wikipedia views"},
+   "P2": {"event": "Stranger Things season 4", "outcome": "Kate Bush", "kind": "Wikipedia views"},
+   "P3": {"event": "Game of Thrones", "outcome": "Arya", "kind": "US baby names"},
+   "P4": {"event": "Frozen", "outcome": "Elsa", "kind": "US baby names"}
+  }
+ },
+ "screens": [
+  {"id": "v1", "label": "Screen v1", "lens": "Wikipedia views", "file": "/ripples/docs/results/q3_screen_v1_2026-09-28.json",
+   "protocol": "/ripples/docs/q3_protocol.md", "ledger": [1284, 1285]},
+  {"id": "v2", "label": "Screen v2", "lens": "Wikipedia views", "file": "/ripples/docs/results/q3_screen_v2_2026-09-28.json",
+   "protocol": "/ripples/docs/q3_protocol_v2.md", "ledger": [1286]},
+  {"id": "v2nyt", "label": "Screen v2, NYT lens", "lens": "NYT coverage", "file": "/ripples/docs/results/q3_screen_v2_nyt_2026-09-28.json",
+   "protocol": "/ripples/docs/q3_protocol_nyt.md", "ledger": [1290]},
+  {"id": "v2econ", "label": "Screen v2, real-world lens", "lens": "Electricity, markets, air travel", "file": "/ripples/docs/results/q3_screen_v2_econ_2026-09-28.json",
+   "protocol": "/ripples/docs/q3_protocol_econ.md", "ledger": [1291], "echo": false},
+  {"id": "v2daily2", "label": "Screen v2, tech and city lens", "lens": "Hacker News, npm, NYC transit, FEMA", "file": "/ripples/docs/results/q3_screen_v2_daily2_2026-09-28.json",
+   "protocol": "/ripples/docs/q3_protocol_more.md", "ledger": [1294]},
+  {"id": "v2weekly", "label": "Screen v2, weekly lens", "lens": "Jobless claims, business applications, deaths, fuel", "file": "/ripples/docs/results/q3_screen_v2_weekly_2026-09-28.json",
+   "protocol": "/ripples/docs/q3_protocol_more.md", "ledger": [1294], "echo": false},
+  {"id": "v2monthly", "label": "Screen v2, monthly lens", "lens": "State economies, jobs by industry, prices", "file": "/ripples/docs/results/q3_screen_v2_monthly_2026-09-28.json",
+   "protocol": "/ripples/docs/q3_protocol_more.md", "ledger": [1294], "echo": false}
+ ],
+ "confirmations": [
+  {"label": "Confirmation 1: 8 new space events", "screen": "v1", "family": "space_science", "outcome": "Speed of light",
+   "file": "/ripples/docs/results/q3_confirm_space_v1_2026-09-28.json", "ledger": [1286]},
+  {"label": "Confirmation 2: 12 more new space events", "screen": "v1", "family": "space_science", "outcome": "Speed of light",
+   "file": "/ripples/docs/results/q3_confirm_space_v2_2026-09-28.json", "ledger": [1288]}
+ ]
+}

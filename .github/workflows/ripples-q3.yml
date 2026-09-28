@@ -1,0 +1,57 @@
+# Ripple Map Q3 screen v1 (ripples/docs/q3_protocol.md; method discovery v1, ledger 1283): the frozen discovery method
+# on the registered real event families. Reads the cultural-lab panel from the Actions cache, downloads the event
+# articles' views and links (Wikimedia, polite, stop on 403/429/503), prints and uploads the report. Candidates only.
+name: Ripples Q3 screen
+
+on:
+  push:
+    branches: ["claude/**"]
+    paths: ["ripples/lab/q3_run.py", "ripples/corpus/q3_*.tsv", ".github/workflows/ripples-q3.yml"]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ripples-q3
+  cancel-in-progress: false
+
+jobs:
+  q3:
+    runs-on: ubuntu-latest
+    timeout-minutes: 180
+    env:
+      LAB_CACHE: ${{ github.workspace }}/.cult-cache
+      OUT: ${{ github.workspace }}
+      # owner-approved 2026-09-28 (ledger): honour Wikimedia Retry-After on a 429, at most 2 retries, then stop
+      ALLOW_429_BACKOFF: "1"
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: pip install --quiet numpy
+      - uses: actions/cache/restore@v4
+        with:
+          path: .cult-cache
+          key: ripples-cult-v1-${{ github.run_id }}
+          restore-keys: ripples-cult-v1-
+      # confirmations 1 and 2 completed in run 36377195057 (results in ripples/docs/results/); screen v2 is re-run
+      # after that run crashed on a long cache file name (fixed in q3_run.py)
+      - name: Screen v2 (q3_protocol_v2.md)
+        working-directory: ripples/lab
+        run: |
+          test -f "$LAB_CACHE/pv.npz" || { echo "panel cache missing"; exit 1; }
+          Q3_OUT="$OUT/q3_screen_v2.json" python q3_run.py --families ../corpus/q3_families_v2.tsv --redirects
+      - uses: actions/cache/save@v4
+        if: always()
+        with:
+          path: .cult-cache
+          key: ripples-cult-v1-${{ github.run_id }}
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: q3-results
+          path: |
+            q3_screen_v2.json
+          if-no-files-found: ignore
