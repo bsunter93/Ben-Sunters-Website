@@ -23,6 +23,8 @@ jobs:
     env:
       LAB_CACHE: ${{ github.workspace }}/.cult-cache
       OUT: ${{ github.workspace }}
+      # owner-approved 2026-09-28 (ledger): honour Wikimedia Retry-After on a 429, at most 2 retries, then stop
+      ALLOW_429_BACKOFF: "1"
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
