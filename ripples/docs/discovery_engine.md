@@ -66,7 +66,7 @@ DISCOVERY LAYER (creative; competing methods)            VERIFICATION LAYER (con
 
 | # | question | how it is answered | status |
 |---|---|---|---|
-| Q1 | Can the system reliably rediscover known cultural ripples? | E9 phase 1: Queen's Gambit → Chess, Stranger Things → Kate Bush, Game of Thrones → Arya, Frozen → Elsa, plus 200 fake events | registered (ledger 1275); data loading (names need one workflow run) |
+| Q1 | Can the system reliably rediscover known cultural ripples? | E9 phase 1: Queen's Gambit → Chess, Stranger Things → Kate Bush, Game of Thrones → Arya, Frozen → Elsa, plus 200 fake events | **passed 2026-09-28 (ledger 1282)**: 4/4 known ripples recovered, 2/200 fake events passed (1%) |
 | Q2 | Can candidate generation improve without more false discoveries? | **Cultural lab**: the Ripple Lab idea applied to cultural data. Fake events on real outcome series, planted responses, and D1–D4 compared head to head on recall of planted ripples at a fixed false-discovery rate. The disaster lab (running now) is the proving ground for the shared machinery. | disaster lab running; cultural lab next |
 | Q3 | Can an unknown discovery survive held-out confirmation? | The best Q2 architecture is frozen in the ledger, then run on a catalog of about 30–100 remembered events with ghosts, with held-out confirmation | after Q1 + Q2 |
 
@@ -102,7 +102,7 @@ independently defensible.** Not the number of datasets, hypotheses or significan
    matching. Optional, since Wikidata covers most of this.
 4. **Open States API key** (openstates.org, free). State legislation by topic and date, for the "legislation" landing
    spot.
-5. **One click:** run Actions → *Ripples E9 baby names (BigQuery)* so Q1 can run.
+5. ~~Run the E9 baby-names workflow~~ (done 2026-09-28).
 6. **Editorial surprise check.** Before anything is published, a human (you) answers: "Would you have thought to test
    this?" That is the product's surprise filter, and it can't be automated honestly.
 7. **A starter list of ~30 remembered events** you'd most want answered. It seeds Q3 and keeps the catalog anchored

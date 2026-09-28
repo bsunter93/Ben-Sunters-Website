@@ -132,6 +132,28 @@ Designs (identical code for every hypothesis, real or fake):
 Phase 1 passes if **at least 3 of 4** positive controls pass **and** the negative false-pass rate is ≤ 5%. If it
 fails, E9 stops and that is reported plainly; the design gets fixed before any real trend is tested.
 
+### Phase 1 result (2026-09-28, ledger 1282; `ripples/docs/results/e9_phase1_2026-09-28.json`)
+
+**Passed.** All 4 known ripples were recovered, and 2 of 200 fake events passed (1%; upper bound 3.6%).
+
+| # | ripple | effect | p | beat every comparison? |
+|---|---|---|---|---|
+| P1 | Queen's Gambit → "Chess" pageviews | +1.21 log (≈3.4× views) | 0.002 | yes (next best Go, +0.36) |
+| P2 | Stranger Things 4 → "Kate Bush" pageviews | +2.60 log (≈13×) | 0.002 | yes (next best Depeche Mode, +0.47) |
+| P3 | Game of Thrones → girls named Arya, 2012–16 | +1.24 log (≈3.5× synthetic control) | 0.013 | n/a |
+| P4 | Frozen → girls named Elsa, 2014 | +0.85 log (≈2.3×) | 0.010 | n/a |
+
+- Unrelated controls all failed: Photosynthesis on both show dates, and the name Ruth with both name designs.
+- The two false passes were pageview dates for Tears for Fears (2023-05-26) and Cyndi Lauper (2023-12-01). Both
+  are music articles, where real news bumps are common. No fake name event passed.
+- Details fixed before the run (ledger 1281):
+  - The seed (20260928) is set in the script, not this doc. An earlier informal note said "seed 9"; that was never
+    registered.
+  - The Elsa counts were seen while checking the data load, after the code was written. Nothing changed after that.
+- What it means: the verification layer can tell a known ripple from a fake one on these two outcome types. It
+  says nothing yet about *finding* ripples nobody named; that is Q2 (the cultural lab) and Q3.
+- Caveat: the four ripples are famous and large. Smaller ripples will be harder, and the lab measures that.
+
 ### Phase 2 (pre-registered separately after phase 1): the trend screen
 
 - Catalog of about 30 well-known trends since 2010, each with a dated release or peak and a comparison title of similar
