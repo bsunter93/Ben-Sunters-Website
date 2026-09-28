@@ -50,3 +50,31 @@ Each lens runs exactly as registered for screen v2:
   403/429/5xx with no retry that day.
 - This runs only when no other Wikimedia fetcher is running (the wide-lens fetch goes first).
 - The 2026-09-28 retry-after-rate-limit permission (1289) has been removed from the workflow.
+
+## Amendment A (registered 2026-09-28, before any v3 family is scored)
+
+- **What changes:** the owner supplied a batch of 500 dated events with Wikipedia articles and a named subject for
+  each (`ripples/corpus/events_taxonomy_batch1.csv`, ids T10001-T10500). Twelve families from it are added, so v3 now
+  has **23 families and 311 events**:
+
+  | Family | Events | Family | Events |
+  |---|---|---|---|
+  | drama_premieres | 20 | football_finals | 12 |
+  | true_story_films | 19 | us_league_finals | 14 |
+  | game_releases | 16 | us_mass_shootings | 11 |
+  | music_icon_deaths | 18 | scotus_rulings | 13 |
+  | screen_icon_deaths | 20 | referendums | 14 |
+  | console_launches | 12 | cyberattacks_outages | 14 |
+
+- **Correction:** Benjamini–Hochberg is now across all 23 families within each lens.
+- **Event articles:** titles are disambiguated where the owner's title names another topic (e.g. "Chernobyl (miniseries)",
+  "1917 (2019 film)"), and curly quotes are straightened.
+- **Close pairs:** a pair of events within a day (El Paso and Dayton, 2019) keeps the first only.
+- **Seasonal families:** football_finals, us_league_finals and scotus_rulings (decisions cluster in late June) join the
+  seasonal hand check.
+- **Second looks:**
+  - drama_premieres shares The Queen's Gambit, Bridgerton, Squid Game, The Mandalorian and The Last of Us with v2
+    streaming_hits.
+  - true_story_films shares no events with v2 films_blockbusters.
+- **Internal check:** The Queen's Gambit is in drama_premieres. Chess is expected to be diluted at family level,
+  as in v2; the named-subject test (Q4) is where it should show.

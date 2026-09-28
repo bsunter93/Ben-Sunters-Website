@@ -1,12 +1,12 @@
-# Ripple Map Q3 screen v1 (ripples/docs/q3_protocol.md; method discovery v1, ledger 1283): the frozen discovery method
-# on the registered real event families. Reads the cultural-lab panel from the Actions cache, downloads the event
-# articles' views and links (Wikimedia, polite, stop on 403/429/503), prints and uploads the report. Candidates only.
-name: Ripples Q3 screen
+# Ripple Map Q4 named-subject test (ripples/docs/q4_protocol_v1.md): each event against its own owner-named subject.
+# Shares the Q3 concurrency group, so it never runs alongside another Wikimedia fetcher of the Q3 family. Reports are
+# stored in ripples.att_q3_results (the job log API truncates long logs).
+name: Ripples Q4 named subjects
 
 on:
   push:
     branches: ["claude/**"]
-    paths: ["ripples/lab/q3_run.py", "ripples/corpus/q3_*.tsv", ".github/workflows/ripples-q3.yml"]
+    paths: ["ripples/lab/q4_matched.py", "ripples/corpus/q4_subjects_v1.tsv", ".github/workflows/ripples-q4.yml"]
   workflow_dispatch:
 
 permissions:
@@ -17,7 +17,7 @@ concurrency:
   cancel-in-progress: false
 
 jobs:
-  q3:
+  q4:
     runs-on: ubuntu-latest
     timeout-minutes: 330
     env:
@@ -34,28 +34,26 @@ jobs:
           path: .cult-cache
           key: ripples-cult-v1-${{ github.run_id }}
           restore-keys: ripples-cult-v1-
-      - name: Screen v3 (q3_protocol_v3.md)
+      - name: Named-subject test v1
         working-directory: ripples/lab
         run: |
           test -f "$LAB_CACHE/pv.npz" || { echo "panel cache missing"; exit 1; }
-          Q3_PROTOCOL=ripples/docs/q3_protocol_v3.md Q3_OUT="$OUT/q3_screen_v3.json" python q3_run.py \
-            --families ../corpus/q3_families_v3.tsv --redirects
+          Q4_OUT="$OUT/q4_subjects_v1.json" python q4_matched.py ../corpus/q4_subjects_v1.tsv
+      - uses: actions/cache/save@v4
+        if: always()
+        with:
+          path: .cult-cache
+          key: ripples-cult-v1-${{ github.run_id }}
       - name: Store report
         if: always()
         working-directory: ripples/lab
         env:
           SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
           SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
-        run: python q3_upload.py "$OUT/q3_screen_v3.json"
-      - uses: actions/cache/save@v4
-        if: always()
-        with:
-          path: .cult-cache
-          key: ripples-cult-v1-${{ github.run_id }}
+        run: python q3_upload.py "$OUT/q4_subjects_v1.json"
       - uses: actions/upload-artifact@v4
         if: always()
         with:
-          name: q3-results
-          path: |
-            q3_screen_v3.json
+          name: q4-results
+          path: q4_subjects_v1.json
           if-no-files-found: ignore

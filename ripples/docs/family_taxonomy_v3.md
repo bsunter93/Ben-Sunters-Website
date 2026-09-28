@@ -73,3 +73,17 @@ For each family below, **12-15 events** with an **exact date** (the day attentio
 - **game_console_launches, streaming_service_launches**: 5-8 more each.
 
 Families that reach 10 good events are registered and screened like the runnable ones.
+
+## Update 2026-09-28: owner batch added
+
+The owner supplied 500 dated events with Wikipedia articles and a named subject for each
+(`ripples/corpus/events_taxonomy_batch1.csv`). With it:
+
+- **12 families are now runnable**, all in screen v3 (amendment A in `q3_protocol_v3.md`): drama_premieres,
+  true_story_films, game_releases, music_icon_deaths, screen_icon_deaths, football_finals, us_league_finals,
+  us_mass_shootings, scotus_rulings, referendums, cyberattacks_outages, console_launches.
+- **Still short:** streaming_service_launches (8 events).
+- **The subject column opens a stronger test.** Each event is tested against its own named subject: 197 event →
+  subject pairs (`ripples/docs/q4_protocol_v1.md`).
+- **Next most useful from the owner:** held-out events for any family that produces candidates, used to confirm them,
+  and named subjects for events in the older corpus.
