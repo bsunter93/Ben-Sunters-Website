@@ -23,8 +23,6 @@ jobs:
     env:
       LAB_CACHE: ${{ github.workspace }}/.cult-cache
       OUT: ${{ github.workspace }}
-      # owner-approved 2026-09-28 (ledger): honour Wikimedia Retry-After on a 429, at most 2 retries, then stop
-      ALLOW_429_BACKOFF: "1"
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
@@ -36,13 +34,19 @@ jobs:
           path: .cult-cache
           key: ripples-cult-v1-${{ github.run_id }}
           restore-keys: ripples-cult-v1-
-      # confirmations 1 and 2 completed in run 36377195057 (results in ripples/docs/results/); screen v2 is re-run
-      # after that run crashed on a long cache file name (fixed in q3_run.py)
-      - name: Screen v2 (q3_protocol_v2.md)
+      - name: Screen v3 (q3_protocol_v3.md)
         working-directory: ripples/lab
         run: |
           test -f "$LAB_CACHE/pv.npz" || { echo "panel cache missing"; exit 1; }
-          Q3_OUT="$OUT/q3_screen_v2.json" python q3_run.py --families ../corpus/q3_families_v2.tsv --redirects
+          Q3_PROTOCOL=ripples/docs/q3_protocol_v3.md Q3_OUT="$OUT/q3_screen_v3.json" python q3_run.py \
+            --families ../corpus/q3_families_v3.tsv --redirects
+      - name: Store report
+        if: always()
+        working-directory: ripples/lab
+        env:
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+        run: python q3_upload.py "$OUT/q3_screen_v3.json"
       - uses: actions/cache/save@v4
         if: always()
         with:
@@ -53,5 +57,5 @@ jobs:
         with:
           name: q3-results
           path: |
-            q3_screen_v2.json
+            q3_screen_v3.json
           if-no-files-found: ignore
