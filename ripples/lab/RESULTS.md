@@ -127,6 +127,27 @@ Lessons:
    - Rival events on the same dates.
    - Exposure gradients, once place-level outcomes exist.
 
+## Cultural lab run 3: fixes for top-k pooling, 3-event families (2026-09-28, [run 36368092528](https://github.com/bsunter93/Ben-Sunters-Website/actions/runs/36368092528))
+
+Recall at 1 / 0.1 false families per world; 6 worlds, 3 planted families each (18 families per design):
+
+| family pooling (onset coupling) | 5 events, +30% | 5 events, +50% | 3 events, +50% |
+|---|---|---|---|
+| **mean (MAD z, clipped at 4)** | **0.28 / 0.28** | **0.39 / 0.33** | **0.22 / 0.17** |
+| mean of rank-calibrated z | 0.22 / 0.22 | 0.33 / 0.28 | 0.17 / 0 |
+| top-k, clip 10 | 0.17 / 0.11 | 0.39 / 0.28 | 0.11 / 0 |
+| top-k, rank-calibrated | 0.11 / 0.06 | 0.17 / 0 | 0 / 0 |
+| top-k, clip 4 | 0 / 0 | 0 / 0 | 0 / 0 |
+
+- Across runs 2 and 3, mean-pooled onset coupling finds about 25% of broad-type families at +30% and about 47% at
+  +50%. With 18 families per design, each estimate is uncertain by about ±12 points.
+- Top-k statistics fail on real data even when rank-calibrated. Many false families have several extreme members,
+  so the cap is reached. Keep mean pooling.
+- Single pairs with rank calibration score 0 at a fixed false-discovery load. 200 placebo dates cap each score, and
+  too many false pairs tie at the cap.
+- The remaining loss is dilution: a planted family is 5 of about 30 events of its type. Run 4 measures narrow,
+  pre-defined families, the stand-in for owner-curated families. On synthetic data they reach 92% at +30%.
+
 ## Data sources for the cultural lab (2026-09-27)
 
 | source | where | size | status |
