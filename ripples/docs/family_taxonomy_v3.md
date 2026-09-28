@@ -87,3 +87,16 @@ The owner supplied 500 dated events with Wikipedia articles and a named subject 
   subject pairs (`ripples/docs/q4_protocol_v1.md`).
 - **Next most useful from the owner:** held-out events for any family that produces candidates, used to confirm them,
   and named subjects for events in the older corpus.
+
+## Update 2026-09-28: owner validation pack
+
+The owner's validation pack (`ripples/corpus/validation_pack_1.csv`, 91 rows) is registered before any of it is run:
+
+- **streaming_service_launches** is now runnable (10 events; screen v3 amendment B).
+- **43 more event → subject pairs** from the older corpus form Q4 v1b, in three families: culture, science and tech,
+  and news (`q4_protocol_v1.md`, addendum 1).
+- **8 held-out drama premieres** will confirm or fail to confirm the Q4 drama family.
+- **Most useful next from the owner:**
+  - more held-out premieres (15-20 would give the confirmation real power);
+  - exact dates for the 7 flagged rows (WeWork, Peloton, Stanley, Robinhood, D&D, mukbang, Dalgona coffee);
+  - held-out events for Q4 v1b's science and news families.
