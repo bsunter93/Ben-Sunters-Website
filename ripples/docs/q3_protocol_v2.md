@@ -57,3 +57,15 @@ here follows `q3_protocol.md` (v1).
 
 A space-science → Speed of light ripple would be **same-domain and modest in surprise**: space news sending
 readers to a basic physics concept. It is a test of whether the engine's candidates replicate, not a story.
+
+## Addendum (registered before any v2 or confirmation run): confirmation 2
+
+- **Members:** a second, independent held-out space family from the owner's batch E4001–E4500
+  (`ripples/corpus/q3_confirm_space_v2.tsv`, 12 events): TRAPPIST-1, the 2017 eclipse, Cassini's finale,
+  ʻOumuamua, Parker Solar Probe, InSight, Voyager 2 entering interstellar space, Artemis I, Chandrayaan-3,
+  Euclid, SLIM, Europa Clipper.
+- **Test:** same outcome, same test, same success rule as confirmation 1. The two confirmations are reported
+  separately.
+- **Reading the results:**
+  - Speed of light counts as replicated only if both pass.
+  - One pass and one failure is reported as mixed.
