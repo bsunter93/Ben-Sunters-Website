@@ -30,7 +30,7 @@ jobs:
         with:
           python-version: "3.12"
       - run: pip install --quiet numpy
-      - uses: actions/cache@v4
+      - uses: actions/cache/restore@v4
         with:
           path: .cult-cache
           key: ripples-cult-v1-${{ github.run_id }}
@@ -67,6 +67,11 @@ jobs:
           test -f "$LAB_CACHE/econ_pv.npz" || { echo "econ panel missing"; exit 1; }
           Q3_PROTOCOL=ripples/docs/q3_protocol_econ.md Q3_OUT="$OUT/q3_screen_v2_econ.json" python q3_run.py \
             --families ../corpus/q3_families_v2.tsv --redirects --panel econ_pv.npz --same-weekday --min-coverage 0.8
+      - uses: actions/cache/save@v4
+        if: always()
+        with:
+          path: .cult-cache
+          key: ripples-cult-v1-${{ github.run_id }}
       - uses: actions/upload-artifact@v4
         if: always()
         with:
