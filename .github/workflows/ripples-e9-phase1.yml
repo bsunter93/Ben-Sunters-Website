@@ -1,0 +1,41 @@
+# Ripple Map E9 phase 1 (ledger 1275/1276): runs the registered analysis (ripples/tools/experiments/e9_phase1.py) on
+# data exported by public.att_e9_export. Reads only; the result is printed, put in the job summary and uploaded.
+name: Ripples E9 phase 1
+
+on:
+  push:
+    branches: ["claude/**"]
+    paths: ["ripples/tools/experiments/e9_phase1.py", ".github/workflows/ripples-e9-phase1.yml"]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ripples-e9-phase1
+  cancel-in-progress: false
+
+jobs:
+  phase1:
+    runs-on: ubuntu-latest
+    timeout-minutes: 90
+    env:
+      SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+      SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+      E9_WAIT_MIN: "45"
+      E9_OUT: ${{ github.workspace }}/e9_phase1.json
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: pip install --quiet numpy scipy
+      - name: Run
+        working-directory: ripples/tools/experiments
+        run: python e9_phase1.py
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: e9-phase1
+          path: e9_phase1.json
+          if-no-files-found: ignore

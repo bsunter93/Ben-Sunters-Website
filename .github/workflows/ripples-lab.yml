@@ -6,7 +6,7 @@ name: Ripples lab
 on:
   push:
     branches: ["claude/**"]
-    paths: ["ripples/lab/**", ".github/workflows/ripples-lab.yml"]
+    paths: ["ripples/lab/**", "!ripples/lab/cult*", "!ripples/lab/e9*", "!ripples/lab/nyt*", ".github/workflows/ripples-lab.yml"]
   workflow_dispatch:
 
 permissions:

@@ -1,0 +1,150 @@
+{
+ "experiment": "E9 phase 1",
+ "registration": [
+  1275,
+  1276
+ ],
+ "analysis_spec": 1281,
+ "seed": 20260928,
+ "run": "https://github.com/bsunter93/Ben-Sunters-Website/actions/runs/36361912637",
+ "script_md5": "7b9e72cca071fce77e2b8540b15a6de1",
+ "positives": {
+  "P1": {
+   "article": "Chess",
+   "date": "2020-10-23",
+   "effect": 1.213,
+   "p": 0.002,
+   "n_placebo": 500,
+   "comparisons": {
+    "Checkers": 0.335,
+    "Go_(game)": 0.3553,
+    "Backgammon": 0.272,
+    "Poker": 0.0773,
+    "Sudoku": 0.0789
+   },
+   "above_all": true,
+   "pass": true
+  },
+  "P2": {
+   "article": "Kate_Bush",
+   "date": "2022-05-27",
+   "effect": 2.6022,
+   "p": 0.002,
+   "n_placebo": 500,
+   "comparisons": {
+    "Madonna": -0.029,
+    "Cyndi_Lauper": 0.1706,
+    "Peter_Gabriel": 0.0097,
+    "Tears_for_Fears": -0.1326,
+    "Depeche_Mode": 0.4698
+   },
+   "above_all": true,
+   "pass": true
+  },
+  "P3": {
+   "name": "Arya",
+   "pre": [
+    2006,
+    2010
+   ],
+   "post": [
+    2012,
+    2016
+   ],
+   "effect": 1.2394,
+   "p": 0.0129,
+   "n_donors": 1708,
+   "n_placebo": 1708,
+   "pass": true
+  },
+  "P4": {
+   "name": "Elsa",
+   "pre": [
+    2009,
+    2013
+   ],
+   "post": [
+    2014,
+    2014
+   ],
+   "effect": 0.8521,
+   "p": 0.0096,
+   "n_donors": 1776,
+   "n_placebo": 1776,
+   "pass": true
+  }
+ },
+ "positives_passed": 4,
+ "negatives": {
+  "n": 200,
+  "false_passes": 2,
+  "rate": 0.01,
+  "wilson_upper": 0.0357,
+  "pageview_false_passes": 2,
+  "name_false_passes": 0,
+  "passing": [
+   {
+    "article": "Tears_for_Fears",
+    "date": "2023-05-26",
+    "effect": 0.3665,
+    "p": 0.0259,
+    "n_placebo": 500,
+    "comparisons": {
+     "Kate_Bush": -0.1252,
+     "Madonna": 0.2224,
+     "Cyndi_Lauper": 0.0771,
+     "Peter_Gabriel": 0.0463,
+     "Depeche_Mode": -0.2468
+    },
+    "above_all": true,
+    "pass": true
+   },
+   {
+    "article": "Cyndi_Lauper",
+    "date": "2023-12-01",
+    "effect": 0.2757,
+    "p": 0.0499,
+    "n_placebo": 500,
+    "comparisons": {
+     "Kate_Bush": 0.1969,
+     "Madonna": 0.0723,
+     "Peter_Gabriel": -0.1414,
+     "Tears_for_Fears": -0.1736,
+     "Depeche_Mode": -0.1059
+    },
+    "above_all": true,
+    "pass": true
+   }
+  ]
+ },
+ "unrelated": {
+  "Photosynthesis@P1": {
+   "effect": 0.1404,
+   "p": 0.2056,
+   "above_all": false,
+   "pass": false
+  },
+  "Photosynthesis@P2": {
+   "effect": -0.0765,
+   "p": 0.5629,
+   "above_all": false,
+   "pass": false
+  },
+  "Ruth@P3": {
+   "effect": 0.277,
+   "p": 0.2587,
+   "n_donors": 1710,
+   "n_placebo": 200,
+   "pass": false
+  },
+  "Ruth@P4": {
+   "effect": 0.037,
+   "p": 0.4975,
+   "n_donors": 1776,
+   "n_placebo": 200,
+   "pass": false
+  }
+ },
+ "phase1_pass": true,
+ "note": "Transcribed from the run log (the artifact host is not reachable from the authoring environment); the script prints the same JSON it saves."
+}
