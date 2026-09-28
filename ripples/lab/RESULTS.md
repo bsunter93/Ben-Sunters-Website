@@ -36,6 +36,142 @@ False "verified" candidates per world: 6–30 across methods. Lessons (for desig
 4. Real calibration needs the real pageview panel (Vital Articles, daily, 2016+), fetched from 2026-09-28 because
    Wikimedia is paused for 2026-09-27 after a 429.
 
+## Cultural lab on real pageviews, run 1 (2026-09-28, [Actions run 36363187938](https://github.com/bsunter93/Ben-Sunters-Website/actions/runs/36363187938))
+
+Setup:
+- Panel: 998 level-3 Vital Articles, daily user views from 2015-07-01 to 2026-08-31 (4,080 days).
+- Events: 893 catalog events since 2015, given random fake dates.
+- Each world: 150 fake events, 10 planted pairs, top 50 candidates out of about 150,000 (event, article) pairs; 10
+  worlds per design.
+
+| planted lift | naive | ghost | outcome-first | placebo-calibrated | detrended |
+|---|---|---|---|---|---|
+| +10% | 0.00 | 0.01 | 0.00 | 0.00 | 0.00 |
+| +20% | 0.00 | 0.01 | 0.00 | 0.01 | 0.00 |
+| +30% | 0.00 | 0.01 | 0.00 | 0.01 | 0.00 |
+| +50% | 0.01 | 0.01 | 0.00 | 0.01 | 0.00 |
+
+False "verified" candidates per world: naive 43, ghost 42.5, outcome-first 27.6, placebo 41.3, detrended 34.6.
+
+Lessons (design, not findings):
+1. **The search space is the problem.** Real attention spikes in popular articles (deaths, elections, the pandemic)
+   fill the top of any list ranked across about 150,000 pairs. A sustained +50% lift never reaches the top 50. The
+   known real ripples are much larger (Chess about 3.4×, Kate Bush about 13×; E9 phase 1). Run 2 measures the size
+   threshold, and whether a smaller search (15 events per world) helps.
+2. **The persistence check verifies almost nothing.** Most false candidates pass it, because real attention shifts in
+   real data persist too. As the smoke tests already suggested, verification has to be replication-based (another
+   event of the same class, or held-out ghosts), with BH control across all pairs.
+3. Implication for D1–D4: blind search over (event × every outcome) can only find very large ripples. Useful
+   candidate generation has to narrow the pairs first. Two options: relatedness priors (an outcome's link distance
+   from the event's article, or shared Wikidata properties), or pooling across a class of events (D1 fingerprints),
+   so that many small responses add up.
+
+### Size threshold, old methods (2026-09-28, [run 36364608408](https://github.com/bsunter93/Ben-Sunters-Website/actions/runs/36364608408); recall in the top 50)
+
+| planted lift | best method, 150 events per world | 15 events per world |
+|---|---|---|
+| +50% | 0.01 | — |
+| +100% | 0.05 (placebo) | 0.38 (placebo) |
+| +200% | 0.18 (placebo) | 0.76 (placebo) |
+| +500% | 0.54 (placebo) | — |
+
+Blind search needs about a 6× jump to find a single ripple half the time. Cutting the search to a tenth of the events
+multiplies recall about 7×. That is the quantitative case for narrowing candidates before testing.
+
+## Cultural lab run 2: event-coupled ripples and family pooling (2026-09-28, [run 36365876242](https://github.com/bsunter93/Ben-Sunters-Website/actions/runs/36365876242))
+
+New in this run:
+- **Event attention curves:** 889 of 893 catalog events, from their English Wikipedia views.
+- **Coupled plants:** ripples follow the transplanted event's real attention curve (the mean lift over days 1–30 is
+  the stated size).
+- **Metric:** recall at a fixed false-discovery load. The fake-event null sets the cutoff: 1 or 0.1 false
+  discoveries per world, 6 worlds per design.
+
+**Single (event, article) pairs, coupled ripples** (recall at 1 / 0.1 false per world):
+
+| method | +100% | +200% |
+|---|---|---|
+| naive, ghost, placebo, trend, robust | 0 / 0 | 0 / 0 (anom 0.04 / 0) |
+| shape max-statistic | 0 / 0 | 0.02 / 0 |
+| coupling (levels) | 0.03 / 0.02 | 0.03 / 0.03 |
+| **onset-aligned coupling (day-to-day changes)** | **0.10 / 0.08** | **0.15 / 0.12** |
+
+**Mixed ripple shapes at +100%:** no method finds steps, gradual rises, delayed or slope changes blind at this size.
+Onset coupling finds some pulses (0.30) and coupled ripples (0.11).
+
+**Families:** 3 planted families per world, each with 5 events of one type → one article, each member following its
+event's curve. Recall at 1 / 0.1 false families per world:
+
+| family pooling | members +30% | members +50% |
+|---|---|---|
+| **onset coupling, mean over all events of the type** | **0.22 / 0.22** | **0.56 / 0.56** |
+| coupling (levels), mean | 0.17 / 0.11 | 0.39 / 0.17 |
+| placebo, mean | 0.06 / 0.06 | 0.22 / 0.17 |
+| robust, mean | 0 / 0 | 0.11 / 0.06 |
+| any top-5 pooling (clip at 4) | 0 / 0 | 0 / 0 |
+
+- Top-5 pooling saturated: many false families hit the clip ceiling (5 × 4 / √5 = 8.94). Some real articles' placebo
+  spread (MAD) is far narrower than their real bursts. Run 3 tests rank-calibrated scores and a higher clip.
+- On synthetic data the top-5 version was best (0.83). Real data differs, which is why every method is judged on real
+  worlds.
+
+Lessons:
+1. **The working combination:** onset-aligned coupling plus family pooling. Families of 5 events at +50% per member
+   are found about half the time with fewer than 0.1 false families per world. The best single-pair method finds
+   15% of ripples three times that size.
+2. Real ripples of the kind E9 confirmed (Kate Bush ≈ 13×, Chess ≈ 3.4×) are within single-pair reach only when they
+   follow the event's curve.
+3. Next:
+   - Narrower, owner-defined families: sharper than broad Wikidata types.
+   - Rank calibration (run 3).
+   - Rival events on the same dates.
+   - Exposure gradients, once place-level outcomes exist.
+
+## Cultural lab run 3: fixes for top-k pooling, 3-event families (2026-09-28, [run 36368092528](https://github.com/bsunter93/Ben-Sunters-Website/actions/runs/36368092528))
+
+Recall at 1 / 0.1 false families per world; 6 worlds, 3 planted families each (18 families per design):
+
+| family pooling (onset coupling) | 5 events, +30% | 5 events, +50% | 3 events, +50% |
+|---|---|---|---|
+| **mean (MAD z, clipped at 4)** | **0.28 / 0.28** | **0.39 / 0.33** | **0.22 / 0.17** |
+| mean of rank-calibrated z | 0.22 / 0.22 | 0.33 / 0.28 | 0.17 / 0 |
+| top-k, clip 10 | 0.17 / 0.11 | 0.39 / 0.28 | 0.11 / 0 |
+| top-k, rank-calibrated | 0.11 / 0.06 | 0.17 / 0 | 0 / 0 |
+| top-k, clip 4 | 0 / 0 | 0 / 0 | 0 / 0 |
+
+- Across runs 2 and 3, mean-pooled onset coupling finds about 25% of broad-type families at +30% and about 47% at
+  +50%. With 18 families per design, each estimate is uncertain by about ±12 points.
+- Top-k statistics fail on real data even when rank-calibrated. Many false families have several extreme members,
+  so the cap is reached. Keep mean pooling.
+- Single pairs with rank calibration score 0 at a fixed false-discovery load. 200 placebo dates cap each score, and
+  too many false pairs tie at the cap.
+- The remaining loss is dilution: a planted family is 5 of about 30 events of its type. Run 4 measures narrow,
+  pre-defined families, the stand-in for owner-curated families. On synthetic data they reach 92% at +30%.
+
+## Cultural lab run 4: narrow pre-defined families (2026-09-28, [run 36369588461](https://github.com/bsunter93/Ben-Sunters-Website/actions/runs/36369588461))
+
+Setup:
+- Each world's 150 events are split into disjoint groups of 5, the stand-in for owner-curated families such as
+  "sports films".
+- A planted family is a whole group: every member's response follows its own event's attention curve on one article.
+- Null: every other (group, article) pair, about 30 × 998 per world.
+- 8 worlds, 3 planted families each (24 per design). Recall at 1 / 0.1 false families per world:
+
+| member lift | **onset coupling, mean** | onset coupling, rank-calibrated mean | top-5 (clip 10) | coupling (levels) | shape max | robust | placebo |
+|---|---|---|---|---|---|---|---|
+| +30% | **0.67 / 0.42** | 0.62 / 0.58 | 0.62 / 0.58 | 0.33 / 0.17 | 0.25 / 0.25 | 0.04 / 0 | 0.08 / 0 |
+| +20% | **0.42 / 0.12** | 0.33 / 0.29 | 0.33 / 0.21 | 0.08 / 0.08 | 0.04 / 0 | 0 / 0 | 0 / 0 |
+| +10% | 0.08 / 0 | 0.08 / 0.08 | 0.04 / 0 | 0 / 0 | 0 / 0 | 0 / 0 | 0 / 0 |
+
+**Conclusion of runs 1–4 (Q2):** the discovery method that works on real data is **onset-aligned attention coupling,
+pooled over a narrow event family**.
+- It finds about two thirds of 5-event families whose members each lift an outcome by +30%, at 1 false family per
+  world. Broad catalog types manage about a quarter.
+- At the stricter 0.1 false families per world, the rank-calibrated version holds up better (0.58 vs 0.42 at +30%).
+  Discovery v1 therefore reports both, and promotes a family only when both agree.
+- Below +20% per member, 5 events are not enough. Larger families or place-level exposure (D3) would be needed.
+- Frozen as discovery v1 in the ledger (seq 1283, kind `model_version`) before any real family is tested (Q3).
+
 ## Data sources for the cultural lab (2026-09-27)
 
 | source | where | size | status |

@@ -5,7 +5,8 @@ broad outcome topics (Chess, Marriage, Tobacco, ...), not the catalog titles the
 the kind of series a real one would. Views: Wikimedia REST pageviews API, per article, daily, user agent only,
 2015-07-01 to the last full month. Events: public.att_cult_catalog (Wikidata catalog, 2015+), via the service role.
 
-Writes $LAB_CACHE/pv.npz (articles, days as ordinals, views float32 with NaN for missing) and $LAB_CACHE/events.json.
+Writes $LAB_CACHE/pv.npz (articles, days as ordinals, views float32 with NaN for missing), $LAB_CACHE/events.json, and
+$LAB_CACHE/ev_pv.npz (each event's own English Wikipedia article views, titles resolved through Wikidata sitelinks).
 Per-article downloads are cached under $LAB_CACHE/pv/, so a rerun resumes. Aggregate public counts only.
 
 Politeness: honest UA, one request at a time with a 0.5 s pause (well under Wikimedia's published limits), stop on
@@ -46,19 +47,38 @@ def get(url: str) -> dict:
         raise
 
 
-def vital_articles() -> list[str]:
+def page_links(title: str, ns: str) -> list[str]:
     out, cont = [], {}
     while True:
-        q = {"action": "query", "format": "json", "titles": "Wikipedia:Vital articles", "prop": "links",
-             "plnamespace": "0", "pllimit": "max"} | cont
+        q = {"action": "query", "format": "json", "redirects": "1", "titles": title, "prop": "links", "plnamespace": ns,
+             "pllimit": "max"} | cont
         j = get("https://en.wikipedia.org/w/api.php?" + urllib.parse.urlencode(q))
         for p in (j.get("query") or {}).get("pages", {}).values():
             out += [l["title"] for l in p.get("links", [])]
         if "continue" not in j:
-            break
+            return out
         cont = j["continue"]
         time.sleep(0.5)
-    return sorted(set(out))
+
+
+def vital_articles() -> list[str]:
+    """Level-3 Vital Articles. The list has moved between page layouts over the years, so try the known ones in
+    order: the level-3 page ("Level 3"; "Level/3" redirects to it as of 2026-09), then level-3 subpages linked from
+    the main page, then the main page."""
+    for title in ("Wikipedia:Vital articles/Level 3", "Wikipedia:Vital articles/Level/3"):
+        got = set(page_links(title, "0"))
+        if len(got) >= 500:
+            return sorted(got)
+    subs = sorted({t for src in ("Wikipedia:Vital articles", "Wikipedia:Vital articles/Level/3")
+                   for t in page_links(src, "4") if t.startswith(("Wikipedia:Vital articles/Level/3/",
+                                                                     "Wikipedia:Vital articles/Level 3/"))})
+    got = set()
+    for t in subs:
+        got |= set(page_links(t, "0"))
+        time.sleep(0.5)
+    if len(got) < 500:
+        got |= set(page_links("Wikipedia:Vital articles", "0"))
+    return sorted(got)
 
 
 def views(title: str, end: dt.date) -> dict[str, int]:
@@ -80,18 +100,82 @@ def events() -> None:
     print(f"events: {len(ev)}", flush=True)
 
 
+def enwiki_titles(qids: list[str]) -> dict[str, str]:
+    """Wikidata QID -> English Wikipedia article title, 50 ids per request."""
+    out = {}
+    for k in range(0, len(qids), 50):
+        q = {"action": "wbgetentities", "format": "json", "ids": "|".join(qids[k:k + 50]), "props": "sitelinks",
+             "sitefilter": "enwiki"}
+        j = get("https://www.wikidata.org/w/api.php?" + urllib.parse.urlencode(q))
+        for qid, ent in (j.get("entities") or {}).items():
+            t = ((ent.get("sitelinks") or {}).get("enwiki") or {}).get("title")
+            if t:
+                out[qid] = t
+        time.sleep(0.5)
+    return out
+
+
+def event_views(end: dt.date, D: int) -> None:
+    """Each catalog event's own daily attention (its English Wikipedia article), for attention-coupling methods.
+    Writes ev_pv.npz: qids, titles, views[E, D] on the same day grid as pv.npz."""
+    path = os.path.join(CACHE, "events.json")
+    if not os.path.exists(path):
+        return
+    ev = json.load(open(path))
+    tmap_f = os.path.join(CACHE, "ev_titles.json")
+    if not os.path.exists(tmap_f):
+        wd = [e["qid"] for e in ev if e["qid"].startswith("Q")]
+        tmap = enwiki_titles(wd)
+        tmap |= {e["qid"]: e["title"] for e in ev if not e["qid"].startswith("Q") and e.get("title")}
+        json.dump(tmap, open(tmap_f, "w"))
+    tmap = json.load(open(tmap_f))
+    os.makedirs(os.path.join(CACHE, "evpv"), exist_ok=True)
+    print(f"event articles: {len(tmap)} of {len(ev)}", flush=True)
+    for n, (qid, t) in enumerate(sorted(tmap.items())):
+        f = os.path.join(CACHE, "evpv", urllib.parse.quote(qid, safe="") + ".json")
+        if os.path.exists(f):
+            continue
+        json.dump(views(t, end), open(f, "w"))
+        time.sleep(0.5)
+        if n % 100 == 0:
+            print(f"events {n}/{len(tmap)}", flush=True)
+    qids, titles, rows = [], [], []
+    for qid, t in sorted(tmap.items()):
+        f = os.path.join(CACHE, "evpv", urllib.parse.quote(qid, safe="") + ".json")
+        if not os.path.exists(f):
+            continue
+        s = json.load(open(f))
+        if not s:
+            continue
+        row = np.full(D, np.nan, np.float32)
+        for k, v in s.items():
+            i = (dt.date(int(k[:4]), int(k[4:6]), int(k[6:8])) - START).days
+            if 0 <= i < D:
+                row[i] = v
+        qids.append(qid)
+        titles.append(t)
+        rows.append(row)
+    if rows:
+        np.savez_compressed(os.path.join(CACHE, "ev_pv.npz"), qids=np.array(qids), titles=np.array(titles),
+                            views=np.stack(rows))
+    print(json.dumps({"event_series": len(rows)}), flush=True)
+
+
 def main() -> int:
     os.makedirs(os.path.join(CACHE, "pv"), exist_ok=True)
     events()
     today = dt.date.today()
     end = today.replace(day=1) - dt.timedelta(days=1)
-    lst = os.path.join(CACHE, "vital.json")
+    lst = os.path.join(CACHE, "vital_l3.json")
     stop = None
     try:
         if not os.path.exists(lst):
             json.dump(vital_articles(), open(lst, "w"))
         titles = json.load(open(lst))
         print(f"panel: {len(titles)} articles", flush=True)
+        if len(titles) < 500:
+            os.remove(lst)
+            sys.exit(f"article list too small ({len(titles)}); the Vital Articles page layout changed")
         for n, t in enumerate(titles):
             f = os.path.join(CACHE, "pv", urllib.parse.quote(t, safe="") + ".json")
             if os.path.exists(f):
@@ -124,6 +208,11 @@ def main() -> int:
         days = np.array([(START + dt.timedelta(days=i)).toordinal() for i in range(D)])
         np.savez_compressed(os.path.join(CACHE, "pv.npz"), articles=np.array(arts), days=days, views=np.stack(rows))
     print(json.dumps({"articles": len(arts), "days": D, "stop": stop}), flush=True)
+    if stop is None:
+        try:
+            event_views(end, D)
+        except Stop as e:
+            print(f"event views stopped: {e}", flush=True)
     return 0
 
 

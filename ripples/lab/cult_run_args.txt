@@ -1,5 +1,7 @@
-# one cultural-lab design per line (arguments to cultural_lab.py); planted lift sizes from small to large
---size 0.1 --out c_size010.json
---size 0.2 --out c_size020.json
---size 0.3 --out c_size030.json
---size 0.5 --out c_size050.json
+# one cultural-lab design per line (arguments to cultural_lab.py).
+# Runs 2-3 (real data): onset coupling + mean family pooling is the winner (5-event broad-type families: ~25% at +30%,
+# ~47% at +50%); top-k pooling fails on heavy real tails. Run 4: narrow pre-defined families (disjoint 5-event groups,
+# every member carries the ripple), the stand-in for owner-curated families.
+--plant-shape coupled --size 1.0 --family-mode groups --family-plants 3 --family-size 0.3 --worlds 8 --out c_grp030.json
+--plant-shape coupled --size 1.0 --family-mode groups --family-plants 3 --family-size 0.2 --worlds 8 --out c_grp020.json
+--plant-shape coupled --size 1.0 --family-mode groups --family-plants 3 --family-size 0.1 --worlds 8 --out c_grp010.json
