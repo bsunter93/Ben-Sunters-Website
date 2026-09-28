@@ -23,7 +23,7 @@ FAM_FILE = os.path.join(os.path.dirname(__file__), "..", "corpus", "q3_families_
 
 
 def read_families():
-    fams = {}
+    fams = {}  # FAM_FILE may be replaced from the command line
     for line in open(FAM_FILE, encoding="utf-8"):
         if line.startswith("#") or line.startswith("family\t") or not line.strip():
             continue
@@ -41,7 +41,28 @@ def cached(kind, title, fetch):
     return json.load(open(f))
 
 
+def event_views(title, end, redirects):
+    """Daily views of the event article; with redirects=True summed over its current title and all its redirects."""
+    if not redirects:
+        return cached("q3pv", title, lambda: CD.views(title, end)), [title]
+    titles = cached("q3titles", title, lambda: CD.titles_with_redirects(title))
+    total = {}
+    for t in titles:
+        for k, v in cached("q3pv", t, lambda: CD.views(t, end)).items():
+            total[k] = total.get(k, 0) + v
+    return total, titles
+
+
 def main() -> int:
+    import argparse
+    ap = argparse.ArgumentParser()
+    ap.add_argument("--families", default=FAM_FILE)
+    ap.add_argument("--redirects", action="store_true", help="sum event-article views over all redirect titles")
+    ap.add_argument("--confirm", default="", help="pre-specified outcomes, '|'-separated: confirmation mode")
+    a = ap.parse_args()
+    global FAM_FILE
+    FAM_FILE = a.families
+    confirm = [t for t in a.confirm.split("|") if t]
     z = np.load(os.path.join(CD.CACHE, "pv.npz"), allow_pickle=False)
     arts, days = [str(a) for a in z["articles"]], z["days"]
     lv = np.log1p(z["views"].astype(np.float64))
@@ -63,7 +84,8 @@ def main() -> int:
         used, echoes = [], set()
         for m in members:
             try:
-                s = cached("q3pv", m["article"], lambda: CD.views(m["article"], end))
+                s, titles = event_views(m["article"], end, a.redirects)
+                m["titles_used"] = len(titles)
                 links = cached("q3links", m["article"], lambda: CD.page_links(m["article"], "0"))
             except CD.Stop as e:
                 print(f"stopped: {e}", flush=True)
@@ -123,6 +145,23 @@ def main() -> int:
         for w in range(N_NULL):
             for k, m in enumerate(used):
                 NM[w, k], NR[w, k] = zpair(m, rng.integers(lo, hi))
+        if confirm:
+            res = []
+            for t in confirm:
+                if t not in art_idx:
+                    res.append({"outcome": t, "error": "not in panel"})
+                    continue
+                j = art_idx[t]
+                nm, nr = NM[:, :, j].sum(1) / np.sqrt(n), NR[:, :, j].sum(1) / np.sqrt(n)
+                res.append({"outcome": t, "echo": t in echoes, "score_mad": round(float(smad[j]), 3),
+                            "score_rank": round(float(srank[j]), 3),
+                            "p_mad": round(float((1 + (nm >= smad[j]).sum()) / (1 + N_NULL)), 4),
+                            "p_rank": round(float((1 + (nr >= srank[j]).sum()) / (1 + N_NULL)), 4),
+                            "member_z_mad": [round(float(v), 2) for v in OM[:, j]]})
+            report["families"][fam] = {"members": [{k: v for k, v in m.items() if not k.startswith("_")}
+                                                   for m in members], "n_used": n, "confirmation": res}
+            print(f"{fam}: {n} members, confirmation {res}", flush=True)
+            continue
         max_mad = (NM.sum(1) / np.sqrt(n)).max(1)
         max_rank = (NR.sum(1) / np.sqrt(n)).max(1)
         p_mad = (1 + (max_mad[:, None] >= smad[None, :]).sum(0)) / (1 + N_NULL)
@@ -148,6 +187,12 @@ def main() -> int:
         }
         print(f"{fam}: {n} members, min p {p_both.min():.4f}", flush=True)
 
+    if confirm:
+        out = json.dumps(report, indent=1, ensure_ascii=False, default=str)
+        print(out)
+        with open(os.environ.get("Q3_OUT", "q3_confirm.json"), "w", encoding="utf-8") as f:
+            f.write(out)
+        return 0
     # Benjamini-Hochberg at q = 0.10 across tested families on each family's smallest p
     tested = [(f, r["min_p_both"]) for f, r in report["families"].items() if "min_p_both" in r]
     tested.sort(key=lambda t: t[1])

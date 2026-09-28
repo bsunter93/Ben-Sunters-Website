@@ -61,6 +61,27 @@ def page_links(title: str, ns: str) -> list[str]:
         time.sleep(0.5)
 
 
+def titles_with_redirects(title: str, cap: int = 100) -> list[str]:
+    """The article's current title plus every title that redirects to it (namespace 0). Pageviews are stored under
+    the title at view time, so an article renamed after an event keeps its early views under the old title, which
+    is now a redirect. Summing over all of them recovers the full attention series."""
+    out, cont, canon = [], {}, None
+    while True:
+        q = {"action": "query", "format": "json", "redirects": "1", "titles": title, "prop": "redirects",
+             "rdnamespace": "0", "rdlimit": "max"} | cont
+        j = get("https://en.wikipedia.org/w/api.php?" + urllib.parse.urlencode(q))
+        for p in (j.get("query") or {}).get("pages", {}).values():
+            if "missing" in p:
+                continue
+            canon = p.get("title", canon)
+            out += [r["title"] for r in p.get("redirects", [])]
+        if "continue" not in j:
+            break
+        cont = j["continue"]
+        time.sleep(0.5)
+    return ([canon] if canon else []) + sorted(set(out))[:cap]
+
+
 def vital_articles() -> list[str]:
     """Level-3 Vital Articles. The list has moved between page layouts over the years, so try the known ones in
     order: the level-3 page ("Level 3"; "Level/3" redirects to it as of 2026-09), then level-3 subpages linked from
