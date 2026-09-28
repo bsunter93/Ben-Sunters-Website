@@ -1,0 +1,40 @@
+# Ripple Map: NYT Archive API daily tag counts for the cultural lab (ripples/lab/nyt_archive.py). Needs the GitHub
+# secret NYT_API_KEY; without it the job exits cleanly. Counts only (no article text), kept in the Actions cache.
+# Resumable: each run restores the latest cache, fetches missing months, and saves a new cache entry.
+name: Ripples NYT archive
+
+on:
+  push:
+    branches: ["claude/**"]
+    paths: ["ripples/lab/nyt_archive.py", ".github/workflows/ripples-nyt-archive.yml"]
+  schedule:
+    - cron: "23 6 2 * *"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ripples-nyt-archive
+  cancel-in-progress: false
+
+jobs:
+  archive:
+    runs-on: ubuntu-latest
+    timeout-minutes: 180
+    env:
+      LAB_CACHE: ${{ github.workspace }}/.lab-cache
+      NYT_API_KEY: ${{ secrets.NYT_API_KEY }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - uses: actions/cache@v4
+        with:
+          path: .lab-cache/nyt
+          key: ripples-nyt-archive-v1-${{ github.run_id }}
+          restore-keys: ripples-nyt-archive-v1-
+      - name: Fetch months
+        working-directory: ripples/lab
+        run: python nyt_archive.py
