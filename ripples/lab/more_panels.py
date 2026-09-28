@@ -35,6 +35,7 @@ SETS = {
     "weekly": ["dol.claims", "census.bfs", "cdc.deaths", "fred.weekly"],
     "monthly": ["fred.state", "bls.ces", "bls.cpi_items"],
     "library": ["sea"],  # Seattle Public Library monthly checkouts by subject (att_q3_sea_export)
+    "county": ["qcew:10", "qcew:1023"],  # QCEW county employment, all industries and financial activities
 }
 STATE_METRIC = {"ur": "unemployment rate", "nonfarm": "jobs, all", "cons": "construction jobs",
                 "mfg": "manufacturing jobs", "trad": "trade and transport jobs", "pbsv": "business services jobs",
@@ -50,6 +51,8 @@ def label(name: str) -> str:
     st = geo.replace("US-", "") if geo.startswith("US-") else "US"
     if src == "sea":
         return "library:" + key
+    if src == "qcew":
+        return f"County {'jobs' if metric == '10' else 'finance jobs'} (FIPS {key})"
     if src == "hn.algolia":
         return "hn:" + ("all stories" if key == "__total__" else key)
     if src == "npm.dl":
@@ -127,6 +130,7 @@ def main() -> int:
     names, rows, per_source = [], [], {}
     for src in SETS[kind]:
         data = (sb.rpc("att_q3_sea_export", {}, timeout=300) if src == "sea"
+                else sb.rpc("att_q3_qcew_export", {"p_ind": src.split(":")[1]}, timeout=300) if src.startswith("qcew:")
                 else sb.rpc("att_q3_export", {"p_source": src}, timeout=300)) or {}
         kept = 0
         for name, obj in sorted(data.items()):

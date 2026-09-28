@@ -126,6 +126,20 @@ jobs:
           test -f "$LAB_CACHE/library_pv.npz" || { echo "library panel missing"; exit 1; }
           Q3_PROTOCOL=ripples/docs/q3_protocol_wide.md Q3_OUT="$OUT/q3_screen_v2_library.json" python q3_run.py \
             --families ../corpus/q3_families_v2.tsv --redirects --panel library_pv.npz --min-coverage 0.8
+      - name: Build county jobs panel (read-only export, service role)
+        if: always()
+        working-directory: ripples/lab
+        env:
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+        run: python more_panels.py county
+      - name: Screen v2 families on county jobs (q3_protocol_county.md)
+        if: always()
+        working-directory: ripples/lab
+        run: |
+          test -f "$LAB_CACHE/county_pv.npz" || { echo "county panel missing"; exit 1; }
+          Q3_PROTOCOL=ripples/docs/q3_protocol_county.md Q3_OUT="$OUT/q3_screen_v2_county.json" python q3_run.py \
+            --families ../corpus/q3_families_v2.tsv --redirects --panel county_pv.npz --min-coverage 0.8
       - uses: actions/cache/save@v4
         if: always()
         with:
@@ -142,4 +156,5 @@ jobs:
             q3_screen_v2_weekly.json
             q3_screen_v2_monthly.json
             q3_screen_v2_library.json
+            q3_screen_v2_county.json
           if-no-files-found: ignore
