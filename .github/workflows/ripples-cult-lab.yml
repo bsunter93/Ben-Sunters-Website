@@ -1,0 +1,56 @@
+# Ripple Map cultural lab (direction D-26, Q2; protocol ledger 1279): discovery methods compared on fake events and
+# planted ripples over real Wikipedia pageviews (ripples/lab/cult_data.py builds the panel; cultural_lab.py scores).
+# Never tests a real hypothesis. Data is cached between runs; downloads resume.
+name: Ripples cultural lab
+
+on:
+  push:
+    branches: ["claude/**"]
+    paths: ["ripples/lab/cult*", ".github/workflows/ripples-cult-lab.yml"]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ripples-cult-lab-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  lab:
+    runs-on: ubuntu-latest
+    timeout-minutes: 180
+    env:
+      LAB_CACHE: ${{ github.workspace }}/.cult-cache
+      SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+      SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: pip install --quiet numpy
+      - uses: actions/cache@v4
+        with:
+          path: .cult-cache
+          key: ripples-cult-v1-${{ github.run_id }}
+          restore-keys: ripples-cult-v1-
+      - name: Build panel (resumes from cache)
+        working-directory: ripples/lab
+        run: python cult_data.py
+      - name: Run designs
+        working-directory: ripples/lab
+        run: |
+          set -euo pipefail
+          mkdir -p "$GITHUB_WORKSPACE/cult_reports"
+          while IFS= read -r line; do
+            [[ -z "$line" || "$line" == \#* ]] && continue
+            python cultural_lab.py $line
+          done < cult_run_args.txt
+          mv c_*.json "$GITHUB_WORKSPACE/cult_reports/" 2>/dev/null || true
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: cult-reports
+          path: cult_reports/
+          if-no-files-found: ignore
