@@ -51,8 +51,25 @@ def fname(t: str) -> str:
     return os.path.join(CD.CACHE, "pv", name + ".json") if len(name) <= 200 else None
 
 
+def blocked_today() -> bool:
+    """Standing rule: after a 403/429/503 there is no retry that UTC day. A stop writes $LAB_CACHE/l4_stopped (the
+    date); l4_blocked_dates.txt next to this file lists dates blocked by hand (e.g. a stop recorded by older code)."""
+    today = dt.datetime.now(dt.timezone.utc).date().isoformat()
+    marker = os.path.join(CD.CACHE, "l4_stopped")
+    listed = os.path.join(os.path.dirname(__file__), "l4_blocked_dates.txt")
+    dates = set()
+    if os.path.exists(marker):
+        dates.add(open(marker).read().strip())
+    if os.path.exists(listed):
+        dates |= {l.strip() for l in open(listed) if l.strip() and not l.startswith("#")}
+    return today in dates
+
+
 def fetch() -> int:
     os.makedirs(os.path.join(CD.CACHE, "pv"), exist_ok=True)
+    if blocked_today():
+        print("Wikimedia stopped us earlier today; no retry until tomorrow (UTC)", flush=True)
+        return 0
     lst = os.path.join(CD.CACHE, "vital_l4.json")
     if not os.path.exists(lst):
         titles = level4()
@@ -72,6 +89,8 @@ def fetch() -> int:
             s = CD.views(t, END)
         except CD.Stop as e:
             print(f"stopped: {e} after {n}; no retry today", flush=True)
+            with open(os.path.join(CD.CACHE, "l4_stopped"), "w") as f:
+                f.write(dt.datetime.now(dt.timezone.utc).date().isoformat())
             break
         json.dump(s, open(fname(t), "w"))
         time.sleep(PAUSE)
