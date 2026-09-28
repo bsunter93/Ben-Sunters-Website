@@ -148,6 +148,30 @@ Recall at 1 / 0.1 false families per world; 6 worlds, 3 planted families each (1
 - The remaining loss is dilution: a planted family is 5 of about 30 events of its type. Run 4 measures narrow,
   pre-defined families, the stand-in for owner-curated families. On synthetic data they reach 92% at +30%.
 
+## Cultural lab run 4: narrow pre-defined families (2026-09-28, [run 36369588461](https://github.com/bsunter93/Ben-Sunters-Website/actions/runs/36369588461))
+
+Setup:
+- Each world's 150 events are split into disjoint groups of 5, the stand-in for owner-curated families such as
+  "sports films".
+- A planted family is a whole group: every member's response follows its own event's attention curve on one article.
+- Null: every other (group, article) pair, about 30 × 998 per world.
+- 8 worlds, 3 planted families each (24 per design). Recall at 1 / 0.1 false families per world:
+
+| member lift | **onset coupling, mean** | onset coupling, rank-calibrated mean | top-5 (clip 10) | coupling (levels) | shape max | robust | placebo |
+|---|---|---|---|---|---|---|---|
+| +30% | **0.67 / 0.42** | 0.62 / 0.58 | 0.62 / 0.58 | 0.33 / 0.17 | 0.25 / 0.25 | 0.04 / 0 | 0.08 / 0 |
+| +20% | **0.42 / 0.12** | 0.33 / 0.29 | 0.33 / 0.21 | 0.08 / 0.08 | 0.04 / 0 | 0 / 0 | 0 / 0 |
+| +10% | 0.08 / 0 | 0.08 / 0.08 | 0.04 / 0 | 0 / 0 | 0 / 0 | 0 / 0 | 0 / 0 |
+
+**Conclusion of runs 1–4 (Q2):** the discovery method that works on real data is **onset-aligned attention coupling,
+pooled over a narrow event family**.
+- It finds about two thirds of 5-event families whose members each lift an outcome by +30%, at 1 false family per
+  world. Broad catalog types manage about a quarter.
+- At the stricter 0.1 false families per world, the rank-calibrated version holds up better (0.58 vs 0.42 at +30%).
+  Discovery v1 therefore reports both, and promotes a family only when both agree.
+- Below +20% per member, 5 events are not enough. Larger families or place-level exposure (D3) would be needed.
+- Frozen as discovery v1 in the ledger (seq 1283, kind `model_version`) before any real family is tested (Q3).
+
 ## Data sources for the cultural lab (2026-09-27)
 
 | source | where | size | status |

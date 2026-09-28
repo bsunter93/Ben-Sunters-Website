@@ -23,6 +23,21 @@ Evidence tiers decide what may be claimed. Story decides what to show. None of t
    - Combined: 83% recall at 1 false family per world (72% at 0.1) with family members at only +50%. Single-pair
      methods reach 0–17%.
 
+## Status after lab runs 1–4 (real data, 2026-09-28)
+
+**Discovery v1 is frozen** (ledger 1283; `ripples/lab/RESULTS.md`, run 4). For each event with an
+attention curve and each outcome series:
+1. Remove the all-outcome daily median.
+2. Load the outcome's day-to-day changes over days −14..+90 on the event curve's changes (onset-aligned coupling).
+3. Standardize by that outcome's own placebo dates, as a MAD z and as a rank z.
+4. Average over the members of a narrow, pre-defined event family (clip at 4).
+5. Set the cutoff from fake-event worlds.
+6. Promote a (family, outcome) candidate only when both z versions pass.
+
+Measured power: about 67% of 5-event families at +30% per member (1 false family per world), about 42% at +20%.
+Single events are found only at large lifts. The next gains come from narrow families (owner input), exposure
+gradients, and rival events on the same dates.
+
 ## A. Audit of the proposed techniques
 
 | technique | verdict | why |
