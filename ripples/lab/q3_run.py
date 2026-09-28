@@ -130,7 +130,8 @@ def main() -> int:
         for k in range(nf + 1):
             ztabn[nf, k] = L._NORM.inv_cdf(1 - min(max((1 + k) / (1 + nf), 0.5 / (1 + nf)), 1 - 0.5 / (1 + nf)))
     fams = read_families()
-    report = {"options": {"panel": a.panel, "same_weekday": a.same_weekday, "min_coverage": a.min_coverage, "step": step},
+    report = {"options": {"panel": a.panel, "same_weekday": a.same_weekday, "min_coverage": a.min_coverage, "step": step,
+                          "families": os.path.basename(FAM_FILE)},
               "protocol": os.environ.get("Q3_PROTOCOL", "ripples/docs/q3_protocol.md"), "method": "discovery v1 (ledger 1283)", "seed": SEED,
               "panel": {"file": a.panel, "articles": A, "start": str(start), "end": str(end)}, "families": {}}
     art_idx = {a: k for k, a in enumerate(arts)}

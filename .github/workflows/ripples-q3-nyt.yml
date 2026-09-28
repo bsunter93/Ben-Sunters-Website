@@ -1,4 +1,4 @@
-# Ripple Map Q3 other lenses (method discovery v1, ledger 1283): the screen v2 families scored against NYT tag coverage
+# Ripple Map Q3 other lenses (method discovery v1, ledger 1283): the event families in $FAMILIES scored against NYT tag coverage
 # (ripples/docs/q3_protocol_nyt.md, ledger 1290), daily real-world series (ripples/docs/q3_protocol_econ.md, 1291), and
 # daily extras, weekly and monthly panels (ripples/docs/q3_protocol_more.md, 1294) and library checkouts
 # (ripples/docs/q3_protocol_wide.md). Each lens runs even if another fails. Shares the Q3 concurrency group, so it waits for any
@@ -28,6 +28,9 @@ jobs:
     env:
       LAB_CACHE: ${{ github.workspace }}/.cult-cache
       OUT: ${{ github.workspace }}
+      # event families and report tag: v3 (ripples/docs/q3_protocol_v3.md); v2 results are saved in ripples/docs/results
+      FAMILIES: ../corpus/q3_families_v3.tsv
+      TAG: v3
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
@@ -52,10 +55,10 @@ jobs:
           ls "$LAB_CACHE/nyt" | wc -l
           python nyt_panel.py
           rm "$LAB_CACHE/nyt"
-      - name: Screen v2 families on NYT coverage
+      - name: Screen families on NYT coverage
         working-directory: ripples/lab
         run: |
-          Q3_PROTOCOL=ripples/docs/q3_protocol_nyt.md Q3_OUT="$OUT/q3_screen_v2_nyt.json" python q3_run.py --families ../corpus/q3_families_v2.tsv --redirects \
+          Q3_PROTOCOL=ripples/docs/q3_protocol_nyt.md Q3_OUT="$OUT/q3_screen_${TAG}_nyt.json" python q3_run.py --families "$FAMILIES" --redirects \
             --panel nyt_pv.npz
       - name: Build real-world outcome panel (read-only export, service role)
         if: always()
@@ -64,13 +67,13 @@ jobs:
           SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
           SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
         run: python econ_panel.py
-      - name: Screen v2 families on real-world series
+      - name: Screen families on real-world series
         if: always()
         working-directory: ripples/lab
         run: |
           test -f "$LAB_CACHE/econ_pv.npz" || { echo "econ panel missing"; exit 1; }
-          Q3_PROTOCOL=ripples/docs/q3_protocol_econ.md Q3_OUT="$OUT/q3_screen_v2_econ.json" python q3_run.py \
-            --families ../corpus/q3_families_v2.tsv --redirects --panel econ_pv.npz --same-weekday --min-coverage 0.8
+          Q3_PROTOCOL=ripples/docs/q3_protocol_econ.md Q3_OUT="$OUT/q3_screen_${TAG}_econ.json" python q3_run.py \
+            --families "$FAMILIES" --redirects --panel econ_pv.npz --same-weekday --min-coverage 0.8
       - name: Build daily2 outcome panel (read-only export, service role)
         if: always()
         working-directory: ripples/lab
@@ -78,13 +81,13 @@ jobs:
           SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
           SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
         run: python more_panels.py daily2
-      - name: Screen v2 families on the daily2 panel
+      - name: Screen families on the daily2 panel
         if: always()
         working-directory: ripples/lab
         run: |
           test -f "$LAB_CACHE/daily2_pv.npz" || { echo "daily2 panel missing"; exit 1; }
-          Q3_PROTOCOL=ripples/docs/q3_protocol_more.md Q3_OUT="$OUT/q3_screen_v2_daily2.json" python q3_run.py \
-            --families ../corpus/q3_families_v2.tsv --redirects --panel daily2_pv.npz --min-coverage 0.8 --same-weekday
+          Q3_PROTOCOL=ripples/docs/q3_protocol_more.md Q3_OUT="$OUT/q3_screen_${TAG}_daily2.json" python q3_run.py \
+            --families "$FAMILIES" --redirects --panel daily2_pv.npz --min-coverage 0.8 --same-weekday
       - name: Build weekly outcome panel (read-only export, service role)
         if: always()
         working-directory: ripples/lab
@@ -92,13 +95,13 @@ jobs:
           SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
           SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
         run: python more_panels.py weekly
-      - name: Screen v2 families on the weekly panel
+      - name: Screen families on the weekly panel
         if: always()
         working-directory: ripples/lab
         run: |
           test -f "$LAB_CACHE/weekly_pv.npz" || { echo "weekly panel missing"; exit 1; }
-          Q3_PROTOCOL=ripples/docs/q3_protocol_more.md Q3_OUT="$OUT/q3_screen_v2_weekly.json" python q3_run.py \
-            --families ../corpus/q3_families_v2.tsv --redirects --panel weekly_pv.npz --min-coverage 0.8
+          Q3_PROTOCOL=ripples/docs/q3_protocol_more.md Q3_OUT="$OUT/q3_screen_${TAG}_weekly.json" python q3_run.py \
+            --families "$FAMILIES" --redirects --panel weekly_pv.npz --min-coverage 0.8
       - name: Build monthly outcome panel (read-only export, service role)
         if: always()
         working-directory: ripples/lab
@@ -106,13 +109,13 @@ jobs:
           SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
           SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
         run: python more_panels.py monthly
-      - name: Screen v2 families on the monthly panel
+      - name: Screen families on the monthly panel
         if: always()
         working-directory: ripples/lab
         run: |
           test -f "$LAB_CACHE/monthly_pv.npz" || { echo "monthly panel missing"; exit 1; }
-          Q3_PROTOCOL=ripples/docs/q3_protocol_more.md Q3_OUT="$OUT/q3_screen_v2_monthly.json" python q3_run.py \
-            --families ../corpus/q3_families_v2.tsv --redirects --panel monthly_pv.npz --min-coverage 0.8
+          Q3_PROTOCOL=ripples/docs/q3_protocol_more.md Q3_OUT="$OUT/q3_screen_${TAG}_monthly.json" python q3_run.py \
+            --families "$FAMILIES" --redirects --panel monthly_pv.npz --min-coverage 0.8
       - name: Build library outcome panel (read-only export, service role)
         if: always()
         working-directory: ripples/lab
@@ -120,13 +123,13 @@ jobs:
           SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
           SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
         run: python more_panels.py library
-      - name: Screen v2 families on the library panel (q3_protocol_wide.md)
+      - name: Screen families on the library panel (q3_protocol_wide.md)
         if: always()
         working-directory: ripples/lab
         run: |
           test -f "$LAB_CACHE/library_pv.npz" || { echo "library panel missing"; exit 1; }
-          Q3_PROTOCOL=ripples/docs/q3_protocol_wide.md Q3_OUT="$OUT/q3_screen_v2_library.json" python q3_run.py \
-            --families ../corpus/q3_families_v2.tsv --redirects --panel library_pv.npz --min-coverage 0.8
+          Q3_PROTOCOL=ripples/docs/q3_protocol_wide.md Q3_OUT="$OUT/q3_screen_${TAG}_library.json" python q3_run.py \
+            --families "$FAMILIES" --redirects --panel library_pv.npz --min-coverage 0.8
       - name: Build county jobs panel (read-only export, service role)
         if: always()
         working-directory: ripples/lab
@@ -134,20 +137,20 @@ jobs:
           SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
           SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
         run: python more_panels.py county
-      - name: Screen v2 families on county jobs (q3_protocol_county.md)
+      - name: Screen families on county jobs (q3_protocol_county.md)
         if: always()
         working-directory: ripples/lab
         run: |
           test -f "$LAB_CACHE/county_pv.npz" || { echo "county panel missing"; exit 1; }
-          Q3_PROTOCOL=ripples/docs/q3_protocol_county.md Q3_OUT="$OUT/q3_screen_v2_county.json" python q3_run.py \
-            --families ../corpus/q3_families_v2.tsv --redirects --panel county_pv.npz --min-coverage 0.8
+          Q3_PROTOCOL=ripples/docs/q3_protocol_county.md Q3_OUT="$OUT/q3_screen_${TAG}_county.json" python q3_run.py \
+            --families "$FAMILIES" --redirects --panel county_pv.npz --min-coverage 0.8
       - name: Store reports (Supabase results table; the log API truncates long logs)
         if: always()
         working-directory: ripples/lab
         env:
           SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
           SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
-        run: python q3_upload.py "$OUT"/q3_screen_v2_*.json
+        run: python q3_upload.py "$OUT"/q3_screen_${TAG}_*.json
       - uses: actions/cache/save@v4
         if: always()
         with:
@@ -158,11 +161,11 @@ jobs:
         with:
           name: q3-nyt-results
           path: |
-            q3_screen_v2_nyt.json
-            q3_screen_v2_econ.json
-            q3_screen_v2_daily2.json
-            q3_screen_v2_weekly.json
-            q3_screen_v2_monthly.json
-            q3_screen_v2_library.json
-            q3_screen_v2_county.json
+            q3_screen_v3_nyt.json
+            q3_screen_v3_econ.json
+            q3_screen_v3_daily2.json
+            q3_screen_v3_weekly.json
+            q3_screen_v3_monthly.json
+            q3_screen_v3_library.json
+            q3_screen_v3_county.json
           if-no-files-found: ignore
