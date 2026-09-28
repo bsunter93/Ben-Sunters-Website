@@ -243,7 +243,25 @@ def run(a):
         # family ripples (spec: event-family replication): the same article responds to several events of one type,
         # each response following that event's own attention curve at the family lift
         fam_planted = set()
-        if a.family_plants and curves:
+        group_of = {}
+        if a.family_mode == "groups":
+            # narrow, pre-defined families (stand-in for owner-curated families such as "sports films"): the world's
+            # events are split into disjoint groups of family_events; a planted family is a whole group
+            order = rng.permutation(sub)
+            for g in range(len(order) // a.family_events):
+                for i in order[g * a.family_events:(g + 1) * a.family_events]:
+                    group_of[int(i)] = f"g{g}"
+        if a.family_plants and curves and a.family_mode == "groups":
+            gids = sorted(set(group_of.values()))
+            for gi in rng.choice(len(gids), size=min(a.family_plants, len(gids)), replace=False):
+                g = gids[int(gi)]
+                art = int(rng.integers(0, A))
+                for i in [k for k, v in group_of.items() if v == g]:
+                    d = int(fake_day[i])
+                    world = world.copy()
+                    world[art, d + CT[0]:d + CT[-1] + 1] += np.log1p(a.family_size) * curves[int(i)]
+                fam_planted.add((g, art))
+        elif a.family_plants and curves:
             subt = types[sub]
             ok_types = [t for t in set(subt) if (subt == t).sum() >= a.family_events]
             for _ in range(a.family_plants):
@@ -358,7 +376,8 @@ def run(a):
         # family test: for each (event type, article), pool each method's per-pair z over every event of that type in
         # this world, each z clipped to [-4, 4] so one coincident burst cannot carry a family
         if a.family_plants and curves:
-            sub_types = {int(i): types[int(i)] for i in sub}
+            sub_types = ({int(i): group_of.get(int(i), "none") for i in sub} if a.family_mode == "groups"
+                         else {int(i): types[int(i)] for i in sub})
             for m in ("couple", "couple_d", "couple_d_rank", "robust", "shapemax", "placebo"):
                 vals = {}
                 for sc, i, j in cands.get(m, []):
@@ -452,6 +471,9 @@ def main() -> int:
     ap.add_argument("--family-events", type=int, default=5, help="events per planted family")
     ap.add_argument("--family-size", type=float, default=0.5, help="lift of each family member's response")
     ap.add_argument("--family-topk", type=int, default=5, help="members pooled by the top-k family statistic")
+    ap.add_argument("--family-mode", choices=["type", "groups"], default="type",
+                    help="type: families are catalog types (broad); groups: disjoint pre-defined groups of "
+                         "family_events events (narrow, like owner-curated families)")
     ap.add_argument("--out", default="cultural_lab_report.json")
     a = ap.parse_args()
     RB.update(pre=a.rb_pre, post=a.rb_post, seasonal=bool(a.rb_seasonal))

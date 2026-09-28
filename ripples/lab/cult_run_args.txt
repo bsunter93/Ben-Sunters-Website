@@ -1,7 +1,7 @@
 # one cultural-lab design per line (arguments to cultural_lab.py).
-# Run 1: blind single-event search missed lifts up to +50%. Run 2 (real data): only onset-aligned coupling finds single
-# ripples (10-15%); family mean-pooling of coupling found 22% (+30%) and 56% (+50%) of 5-event families; top-k pooling
-# saturated at the clip. Run 3: rank-calibrated coupling, top-k with a higher clip, and 3-event families.
---plant-shape coupled --size 1.0 --family-plants 3 --family-size 0.3 --couple-placebo 200 --worlds 6 --out c_fam030.json
---plant-shape coupled --size 1.0 --family-plants 3 --family-size 0.5 --couple-placebo 200 --worlds 6 --out c_fam050.json
---plant-shape coupled --size 1.0 --family-plants 3 --family-size 0.5 --family-events 3 --family-topk 3 --couple-placebo 200 --worlds 6 --out c_fam050_k3.json
+# Runs 2-3 (real data): onset coupling + mean family pooling is the winner (5-event broad-type families: ~25% at +30%,
+# ~47% at +50%); top-k pooling fails on heavy real tails. Run 4: narrow pre-defined families (disjoint 5-event groups,
+# every member carries the ripple), the stand-in for owner-curated families.
+--plant-shape coupled --size 1.0 --family-mode groups --family-plants 3 --family-size 0.3 --worlds 8 --out c_grp030.json
+--plant-shape coupled --size 1.0 --family-mode groups --family-plants 3 --family-size 0.2 --worlds 8 --out c_grp020.json
+--plant-shape coupled --size 1.0 --family-mode groups --family-plants 3 --family-size 0.1 --worlds 8 --out c_grp010.json
