@@ -82,8 +82,9 @@ independently defensible.** Not the number of datasets, hypotheses or significan
 | Outcome: what people name their children, **by state** | SSA names (national + state) via BigQuery `usa_names` | workflow merged; needs one run |
 | Outcome: what people talk about, **by place** | GDELT news coverage (BigQuery, keyless; also a geographic exposure measure) | reachable via BigQuery |
 | Exposure by country (streaming) | Netflix Top 10 by country (public download, 2021+) | timed out from the database; try via GitHub Actions |
-| Exposure by state (search) | Google Trends by state | **gap: no official bulk route** (see below) |
+| Exposure by metro area (search) | Google Trends (official API, alpha) | applied 2026-09-28, awaiting access |
 | Books and bestseller ghosts | NYT Books API (bestseller lists back to 2008) | **gap: free key** |
+| Outcome: what the news covered, by topic (D2 spikes) | NYT Archive API: every article's index tags per month, 1851+; kept as daily counts per tag, no text (`ripples/lab/nyt_archive.py`) | built; waits for GitHub secret `NYT_API_KEY` (same key as Books) |
 | Film and TV catalog with release dates, genres, popularity | TMDB API | **gap: free key** (Wikidata covers most of it) |
 | Legislation outcomes | Open States or LegiScan APIs | **gap: free key** |
 | What people buy | — | **gap: no good free source**; BLS categories are too coarse |
@@ -93,7 +94,9 @@ independently defensible.** Not the number of datasets, hypotheses or significan
 1. **Google Trends API (alpha).** Google has announced an official Trends API for approved testers (check that it is still open). State-level search interest
    is the best exposure measure for D3 and the most natural outcome for "what people search". Apply with the Google
    account that owns the `ripple-509716` Cloud project.
-2. **NYT Books API key** (developer.nytimes.com, free). Weekly bestseller lists since 2008 give the book catalog and
+   *Status 2026-09-28: owner applied; awaiting access. When granted, store the credential as the GitHub secret
+   `GOOGLE_TRENDS_KEY`; first pull = metro-area (DMA) interest around each catalog event and its ghosts.*
+2. **NYT API key** (developer.nytimes.com, free; enable Archive, Books, Article Search and Most Popular on it; add it as the GitHub secret `NYT_API_KEY`). Archive gives daily news counts per topic tag back to 1851 for spike detection. Weekly bestseller lists since 2008 give the book catalog and
    ready-made ghosts (other #1 bestsellers the same year), which the Fifty Shades question needs.
 3. **TMDB API key** (themoviedb.org, free with attribution). Richer film and TV release dates and popularity for ghost
    matching. Optional, since Wikidata covers most of this.
