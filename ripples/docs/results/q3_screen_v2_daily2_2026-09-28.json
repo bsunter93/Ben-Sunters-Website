@@ -1,0 +1,3621 @@
+{
+ "seed": 20260929,
+ "panel": {
+  "end": "2026-08-31",
+  "file": "daily2_pv.npz",
+  "start": "2015-07-01",
+  "articles": 84
+ },
+ "method": "discovery v1 (ledger 1283)",
+ "options": {
+  "step": 1,
+  "panel": "daily2_pv.npz",
+  "min_coverage": 0.8,
+  "same_weekday": true
+ },
+ "families": {
+  "games": {
+   "top": [
+    {
+     "echo": false,
+     "p_mad": 0.0679,
+     "p_rank": 0.2907,
+     "article": "FEMA declarations: EM (US)",
+     "score_mad": 4.383,
+     "loo_stable": false,
+     "score_rank": 1.512,
+     "member_z_mad": [
+      0,
+      4,
+      3.48,
+      0.44,
+      4,
+      0,
+      0,
+      0,
+      0.37,
+      0,
+      0,
+      2.9
+     ]
+    },
+    {
+     "echo": false,
+     "p_mad": 0.3776,
+     "p_rank": 0.2128,
+     "article": "NYC transit ridership: sir",
+     "score_mad": 3.07,
+     "loo_stable": false,
+     "score_rank": 1.686,
+     "member_z_mad": [
+      0,
+      0,
+      -0.36,
+      3.75,
+      4,
+      1.77,
+      1.13,
+      -0.2,
+      0.66,
+      -0.54,
+      0.16,
+      0.28
+     ]
+    },
+    {
+     "echo": false,
+     "p_mad": 0.3596,
+     "p_rank": 0.6983,
+     "article": "FEMA declarations: st:OR (OR)",
+     "score_mad": 3.13,
+     "loo_stable": false,
+     "score_rank": 0.994,
+     "member_z_mad": [
+      0,
+      4,
+      4,
+      0.17,
+      4,
+      0,
+      0,
+      0,
+      0.09,
+      -2.3,
+      -1.87,
+      2.75
+     ]
+    },
+    {
+     "echo": false,
+     "p_mad": 0.959,
+     "p_rank": 0.7303,
+     "article": "NYC transit ridership: aar",
+     "score_mad": 1.422,
+     "loo_stable": false,
+     "score_rank": 0.948,
+     "member_z_mad": [
+      0,
+      0,
+      0.28,
+      0.21,
+      -0.41,
+      3.59,
+      0.62,
+      0.4,
+      0.75,
+      -0.1,
+      -0.67,
+      0.27
+     ]
+    },
+    {
+     "echo": false,
+     "p_mad": 0.959,
+     "p_rank": 0.7203,
+     "article": "npm downloads: langchain",
+     "score_mad": 1.421,
+     "loo_stable": false,
+     "score_rank": 0.963,
+     "member_z_mad": [
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      3.73,
+      0.07,
+      0,
+      1.12
+     ]
+    },
+    {
+     "echo": false,
+     "p_mad": 0.969,
+     "p_rank": 0.8082,
+     "article": "NYC transit ridership: mnr",
+     "score_mad": 1.344,
+     "loo_stable": false,
+     "score_rank": 0.861,
+     "member_z_mad": [
+      0,
+      0,
+      -0.76,
+      0.96,
+      0.79,
+      4,
+      0.06,
+      -0.6,
+      1.38,
+      -1.42,
+      -0.41,
+      0.67
+     ]
+    },
+    {
+     "echo": false,
+     "p_mad": 0.974,
+     "p_rank": 0.8641,
+     "article": "npm downloads: ollama",
+     "score_mad": 1.261,
+     "loo_stable": false,
+     "score_rank": 0.777,
+     "member_z_mad": [
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0.5,
+      4,
+      1.07,
+      -1.2
+     ]
+    },
+    {
+     "echo": false,
+     "p_mad": 0.1928,
+     "p_rank": 0.992,
+     "article": "FEMA declarations: st:MS (MS)",
+     "score_mad": 3.55,
+     "loo_stable": false,
+     "score_rank": 0.238,
+     "member_z_mad": [
+      0,
+      4,
+      4,
+      0.34,
+      1.38,
+      0,
+      0,
+      0,
+      2.58,
+      0,
+      0,
+      0
+     ]
+    },
+    {
+     "echo": false,
+     "p_mad": 0.996,
+     "p_rank": 0.956,
+     "article": "FEMA declarations: st:NE (NE)",
+     "score_mad": 1.155,
+     "loo_stable": false,
+     "score_rank": 0.526,
+     "member_z_mad": [
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      4,
+      0
+     ]
+    },
+    {
+     "echo": false,
+     "p_mad": 0.998,
+     "p_rank": 0.9101,
+     "article": "FEMA declarations: all (US)",
+     "score_mad": 1.036,
+     "loo_stable": false,
+     "score_rank": 0.68,
+     "member_z_mad": [
+      0,
+      2.12,
+      0.23,
+      -0.3,
+      -0.2,
+      0.91,
+      -0.77,
+      1.24,
+      -1.01,
+      -0.12,
+      0.35,
+      1.15
+     ]
+    }
+   ],
+   "n_used": 12,
+   "members": [
+    {
+     "d0": "2017-03-03",
+     "id": "E605",
+     "day0": "2017-03-03",
+     "article": "The Legend of Zelda: Breath of the Wild",
+     "titles_used": 47
+    },
+    {
+     "id": "E137",
+     "day0": "2017-09-26",
+     "skip": "too few views around the event",
+     "article": "Fortnite Battle Royale",
+     "titles_used": 21
+    },
+    {
+     "d0": "2020-03-20",
+     "id": "E613",
+     "day0": "2020-03-20",
+     "article": "Animal Crossing: New Horizons",
+     "titles_used": 27
+    },
+    {
+     "d0": "2020-08-04",
+     "id": "E612",
+     "day0": "2020-08-04",
+     "article": "Fall Guys",
+     "titles_used": 9
+    },
+    {
+     "d0": "2020-09-17",
+     "id": "E622",
+     "day0": "2020-09-17",
+     "article": "Hades (video game)",
+     "titles_used": 5
+    },
+    {
+     "d0": "2020-09-28",
+     "id": "E615",
+     "day0": "2020-09-28",
+     "article": "Genshin Impact",
+     "titles_used": 15
+    },
+    {
+     "d0": "2020-12-10",
+     "id": "E616",
+     "day0": "2020-12-10",
+     "article": "Cyberpunk 2077",
+     "titles_used": 17
+    },
+    {
+     "d0": "2022-02-16",
+     "id": "E140",
+     "day0": "2021-12-15..2022-02-28",
+     "article": "Wordle",
+     "titles_used": 12
+    },
+    {
+     "d0": "2022-02-25",
+     "id": "E141",
+     "day0": "2022-02-25",
+     "article": "Elden Ring",
+     "titles_used": 15
+    },
+    {
+     "d0": "2023-08-03",
+     "id": "E142",
+     "day0": "2023-08-03",
+     "article": "Baldur's Gate 3",
+     "titles_used": 15
+    },
+    {
+     "d0": "2024-01-19",
+     "id": "E619",
+     "day0": "2024-01-19",
+     "article": "Palworld",
+     "titles_used": 14
+    },
+    {
+     "d0": "2024-02-08",
+     "id": "E620",
+     "day0": "2024-02-08",
+     "article": "Helldivers 2",
+     "titles_used": 5
+    },
+    {
+     "d0": "2024-08-20",
+     "id": "E621",
+     "day0": "2024-08-20",
+     "article": "Black Myth: Wukong",
+     "titles_used": 4
+    }
+   ],
+   "min_p_both": 0.2907092907092907,
+   "clustered_members": [
+    "E140",
+    "E141",
+    "E615",
+    "E619",
+    "E620",
+    "E622"
+   ]
+  },
+  "ai_models": {
+   "top": [
+    {
+     "echo": false,
+     "p_mad": 0.5305,
+     "p_rank": 0.6334,
+     "article": "FEMA declarations: hurricane (US)",
+     "score_mad": 3.266,
+     "loo_stable": false,
+     "score_rank": 1.244,
+     "member_z_mad": [
+      4,
+      0,
+      0,
+      4,
+      0,
+      0
+     ]
+    },
+    {
+     "echo": false,
+     "p_mad": 0.8591,
+     "p_rank": 0.4515,
+     "article": "NYC transit ridership: bt",
+     "score_mad": 1.989,
+     "loo_stable": false,
+     "score_rank": 1.474,
+     "member_z_mad": [
+      2.17,
+      0.65,
+      1.91,
+      -0.47,
+      1.19,
+      -0.59
+     ]
+    },
+    {
+     "echo": false,
+     "p_mad": 0.7742,
+     "p_rank": 0.9071,
+     "article": "FEMA declarations: st:CA (CA)",
+     "score_mad": 2.445,
+     "loo_stable": false,
+     "score_rank": 0.852,
+     "member_z_mad": [
+      -0.11,
+      -0.63,
+      -0.35,
+      4,
+      0.38,
+      2.7
+     ]
+    },
+    {
+     "echo": false,
+     "p_mad": 0.8811,
+     "p_rank": 0.969,
+     "article": "FEMA declarations: flood (US)",
+     "score_mad": 1.893,
+     "loo_stable": false,
+     "score_rank": 0.638,
+     "member_z_mad": [
+      -0.35,
+      -0.49,
+      -0.05,
+      3.82,
+      0.68,
+      1.02
+     ]
+    },
+    {
+     "echo": false,
+     "p_mad": 0.8971,
+     "p_rank": 0.978,
+     "article": "FEMA declarations: st:OK (OK)",
+     "score_mad": 1.8,
+     "loo_stable": false,
+     "score_rank": 0.556,
+     "member_z_mad": [
+      2.23,
+      -0.1,
+      0,
+      2.12,
+      -0.56,
+      0.72
+     ]
+    },
+    {
+     "echo": false,
+     "p_mad": 0.995,
+     "p_rank": 0.9441,
+     "article": "npm downloads: openai",
+     "score_mad": 1.159,
+     "loo_stable": false,
+     "score_rank": 0.75,
+     "member_z_mad": [
+      0,
+      -0.96,
+      1.95,
+      2.11,
+      0.05,
+      -0.31
+     ]
+    },
+    {
+     "echo": false,
+     "p_mad": 0.997,
+     "p_rank": 0.7443,
+     "article": "npm downloads: all packages",
+     "score_mad": 1.121,
+     "loo_stable": false,
+     "score_rank": 1.127,
+     "member_z_mad": [
+      0,
+      0.77,
+      -0.04,
+      1.04,
+      0.34,
+      0.64
+     ]
+    },
+    {
+     "echo": false,
+     "p_mad": 0.998,
+     "p_rank": 0.996,
+     "article": "hn:all stories",
+     "score_mad": 0.78,
+     "loo_stable": false,
+     "score_rank": 0.353,
+     "member_z_mad": [
+      0,
+      1.76,
+      0,
+      0,
+      0,
+      0.15
+     ]
+    },
+    {
+     "echo": false,
+     "p_mad": 0.998,
+     "p_rank": 0.9211,
+     "article": "NYC transit ridership: aar",
+     "score_mad": 0.755,
+     "loo_stable": false,
+     "score_rank": 0.818,
+     "member_z_mad": [
+      0.77,
+      1.12,
+      0.7,
+      0.01,
+      -0.06,
+      -0.69
+     ]
+    },
+    {
+     "echo": false,
+     "p_mad": 0.999,
+     "p_rank": 0.99,
+     "article": "NYC transit ridership: bus",
+     "score_mad": 0.577,
+     "loo_stable": false,
+     "score_rank": 0.467,
+     "member_z_mad": [
+      0.41,
+      1.08,
+      0.85,
+      0.04,
+      -0.51,
+      -0.46
+     ]
+    }
+   ],
+   "n_used": 6,
+   "members": [
+    {
+     "d0": "2020-11-30",
+     "id": "E727",
+     "day0": "2020-11-30",
+     "article": "AlphaFold",
+     "titles_used": 9
+    },
+    {
+     "d0": "2022-09-03",
+     "id": "E709",
+     "day0": "2022-07-01..2022-09-30",
+     "article": "Midjourney",
+     "titles_used": 3
+    },
+    {
+     "id": "E710",
+     "day0": "2022-08-22",
+     "skip": "too few views around the event",
+     "article": "Stable Diffusion",
+     "titles_used": 5
+    },
+    {
+     "d0": "2022-11-30",
+     "id": "E198",
+     "day0": "2022-11-30",
+     "article": "ChatGPT",
+     "titles_used": 38
+    },
+    {
+     "id": "E720",
+     "day0": "2023-02-24",
+     "skip": "too few views around the event",
+     "article": "Llama (language model)",
+     "titles_used": 20
+    },
+    {
+     "d0": "2023-03-14",
+     "id": "E713",
+     "day0": "2023-03-14",
+     "article": "GPT-4",
+     "titles_used": 6
+    },
+    {
+     "d0": "2023-12-06",
+     "id": "E717",
+     "day0": "2023-12-06",
+     "article": "Gemini (language model)",
+     "titles_used": 29
+    },
+    {
+     "d0": "2024-02-15",
+     "id": "E723",
+     "day0": "2024-02-15",
+     "article": "Sora (text-to-video model)",
+     "titles_used": 16
+    }
+   ],
+   "min_p_both": 0.6333666333666333,
+   "clustered_members": []
+  },
+  "films_awards": {
+   "top": [
+    {
+     "echo": false,
+     "p_mad": 0.8751,
+     "p_rank": 0.9021,
+     "article": "npm downloads: @anthropic-ai/sdk",
+     "score_mad": 2,
+     "loo_stable": false,
+     "score_rank": 0.767,
+     "member_z_mad": [
+      0,
+      0,
+      0,
+      4
+     ]
+    },
+    {
+     "echo": false,
+     "p_mad": 0.9371,
+     "p_rank": 0.8212,
+     "article": "FEMA declarations: DR (US)",
+     "score_mad": 1.409,
+     "loo_stable": false,
+     "score_rank": 0.926,
+     "member_z_mad": [
+      0,
+      0,
+      1.38,
+      1.44
+     ]
+    },
+    {
+     "echo": false,
+     "p_mad": 0.971,
+     "p_rank": 0.951,
+     "article": "FEMA declarations: all (US)",
+     "score_mad": 0.773,
+     "loo_stable": false,
+     "score_rank": 0.633,
+     "member_z_mad": [
+      0,
+      0,
+      0.62,
+      0.93
+     ]
+    },
+    {
+     "echo": false,
+     "p_mad": 0.973,
+     "p_rank": 0.9221,
+     "article": "FEMA declarations: flood (US)",
+     "score_mad": 0.743,
+     "loo_stable": false,
+     "score_rank": 0.709,
+     "member_z_mad": [
+      0,
+      0,
+      0.67,
+      0.81
+     ]
+    },
+    {
+     "echo": false,
+     "p_mad": 0.8881,
+     "p_rank": 0.987,
+     "article": "FEMA declarations: EM (US)",
+     "score_mad": 1.848,
+     "loo_stable": false,
+     "score_rank": 0.36,
+     "member_z_mad": [
+      0,
+      0,
+      0,
+      3.7
+     ]
+    },
+    {
+     "echo": false,
+     "p_mad": 0.987,
+     "p_rank": 0.987,
+     "article": "npm downloads: openai",
+     "score_mad": 0.366,
+     "loo_stable": false,
+     "score_rank": 0.352,
+     "member_z_mad": [
+      0,
+      0,
+      0,
+      0.73
+     ]
+    },
+    {
+     "echo": false,
+     "p_mad": 0.99,
+     "p_rank": 0.982,
+     "article": "npm downloads: all packages",
+     "score_mad": 0.286,
+     "loo_stable": false,
+     "score_rank": 0.416,
+     "member_z_mad": [
+      0,
+      0,
+      0,
+      0.57
+     ]
+    },
+    {
+     "echo": false,
+     "p_mad": 0.993,
+     "p_rank": 0.991,
+     "article": "NYC transit ridership: subway",
+     "score_mad": 0.188,
+     "loo_stable": false,
+     "score_rank": 0.178,
+     "member_z_mad": [
+      0,
+      0,
+      0,
+      0.38
+     ]
+    },
+    {
+     "echo": false,
+     "p_mad": 0.993,
+     "p_rank": 0.99,
+     "article": "NYC transit ridership: sir",
+     "score_mad": 0.137,
+     "loo_stable": false,
+     "score_rank": 0.219,
+     "member_z_mad": [
+      0,
+      0,
+      0,
+      0.27
+     ]
+    },
+    {
+     "echo": false,
+     "p_mad": 0.993,
+     "p_rank": 0.993,
+     "article": "NYC transit ridership: bt",
+     "score_mad": 0.095,
+     "loo_stable": false,
+     "score_rank": 0.109,
+     "member_z_mad": [
+      0,
+      0,
+      0,
+      0.19
+     ]
+    }
+   ],
+   "n_used": 4,
+   "members": [
+    {
+     "d0": "2016-12-09",
+     "id": "E554",
+     "day0": "2016-12-09",
+     "article": "La La Land",
+     "titles_used": 13
+    },
+    {
+     "d0": "2017-02-24",
+     "id": "E555",
+     "day0": "2017-02-24",
+     "article": "Get Out",
+     "titles_used": 14
+    },
+    {
+     "d0": "2020-02-09",
+     "id": "E560",
+     "day0": "2020-02-09",
+     "article": "Parasite (2019 film)",
+     "titles_used": 9
+    },
+    {
+     "d0": "2023-03-13",
+     "id": "E561",
+     "day0": "2022-03-25..2023-03-31",
+     "article": "Everything Everywhere All at Once",
+     "titles_used": 28
+    }
+   ],
+   "min_p_both": 0.9020979020979021,
+   "clustered_members": []
+  },
+  "music_moments": {
+   "top": [
+    {
+     "echo": false,
+     "p_mad": 0.965,
+     "p_rank": 0.975,
+     "article": "npm downloads: ollama",
+     "score_mad": 1.353,
+     "loo_stable": false,
+     "score_rank": 0.539,
+     "member_z_mad": [
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      4,
+      0.28
+     ]
+    },
+    {
+     "echo": false,
+     "p_mad": 0.4965,
+     "p_rank": 0.991,
+     "article": "FEMA declarations: hurricane (US)",
+     "score_mad": 2.762,
+     "loo_stable": false,
+     "score_rank": 0.342,
+     "member_z_mad": [
+      0,
+      0,
+      0,
+      0,
+      4,
+      0.76,
+      0.26,
+      -4,
+      3.72,
+      4
+     ]
+    },
+    {
+     "echo": false,
+     "p_mad": 0.99,
+     "p_rank": 0.999,
+     "article": "FEMA declarations: st:KY (KY)",
+     "score_mad": 1.265,
+     "loo_stable": false,
+     "score_rank": 0.13,
+     "member_z_mad": [
+      -4,
+      0,
+      -4,
+      0,
+      0,
+      4,
+      0,
+      4,
+      4,
+      0
+     ]
+    },
+    {
+     "echo": false,
+     "p_mad": 1,
+     "p_rank": 1,
+     "article": "FEMA declarations: st:OK (OK)",
+     "score_mad": 0.873,
+     "loo_stable": false,
+     "score_rank": -0.105,
+     "member_z_mad": [
+      2.67,
+      1.94,
+      -4,
+      0,
+      0.9,
+      -0.28,
+      0,
+      1.54,
+      4,
+      -4
+     ]
+    },
+    {
+     "echo": false,
+     "p_mad": 1,
+     "p_rank": 1,
+     "article": "FEMA declarations: st:FL (FL)",
+     "score_mad": 0.85,
+     "loo_stable": false,
+     "score_rank": -1.871,
+     "member_z_mad": [
+      0,
+      0,
+      0,
+      0,
+      -0.88,
+      0,
+      4,
+      -0.43,
+      -4,
+      4
+     ]
+    },
+    {
+     "echo": false,
+     "p_mad": 1,
+     "p_rank": 0.9331,
+     "article": "npm downloads: langchain",
+     "score_mad": 0.807,
+     "loo_stable": false,
+     "score_rank": 0.718,
+     "member_z_mad": [
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      1.1,
+      1.46
+     ]
+    },
+    {
+     "echo": false,
+     "p_mad": 1,
+     "p_rank": 0.953,
+     "article": "npm downloads: openai",
+     "score_mad": 0.789,
+     "loo_stable": false,
+     "score_rank": 0.657,
+     "member_z_mad": [
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      1.85,
+      0.64,
+      0.01
+     ]
+    },
+    {
+     "echo": false,
+     "p_mad": 1,
+     "p_rank": 0.976,
+     "article": "npm downloads: @anthropic-ai/sdk",
+     "score_mad": 0.734,
+     "loo_stable": false,
+     "score_rank": 0.506,
+     "member_z_mad": [
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      1.91,
+      0.41
+     ]
+    },
+    {
+     "echo": false,
+     "p_mad": 1,
+     "p_rank": 0.972,
+     "article": "npm downloads: all packages",
+     "score_mad": 0.68,
+     "loo_stable": false,
+     "score_rank": 0.554,
+     "member_z_mad": [
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0.84,
+      0.45,
+      0.86
+     ]
+    },
+    {
+     "echo": false,
+     "p_mad": 1,
+     "p_rank": 0.996,
+     "article": "NYC transit ridership: aar",
+     "score_mad": 0.259,
+     "loo_stable": false,
+     "score_rank": 0.191,
+     "member_z_mad": [
+      0,
+      0,
+      0,
+      0.36,
+      -0.25,
+      0.04,
+      -0.04,
+      0,
+      1.59,
+      -0.89
+     ]
+    }
+   ],
+   "n_used": 10,
+   "members": [
+    {
+     "id": "E523",
+     "day0": "2017-01-12..2017-08-31",
+     "skip": "no attention rise",
+     "article": "Despacito",
+     "titles_used": 15
+    },
+    {
+     "d0": "2019-03-29",
+     "id": "E511",
+     "day0": "2019-03-29",
+     "article": "When We All Fall Asleep, Where Do We Go?",
+     "titles_used": 18
+    },
+    {
+     "d0": "2019-05-31",
+     "id": "E509",
+     "day0": "2019-03-01..2019-06-30",
+     "article": "Old Town Road",
+     "titles_used": 13
+    },
+    {
+     "d0": "2020-03-20",
+     "id": "E531",
+     "day0": "2019-11-29..2020-06-30",
+     "article": "Blinding Lights",
+     "titles_used": 13
+    },
+    {
+     "d0": "2020-07-24",
+     "id": "E544",
+     "day0": "2020-07-24",
+     "article": "Folklore (Taylor Swift album)",
+     "titles_used": 5
+    },
+    {
+     "d0": "2020-10-13",
+     "id": "E541",
+     "day0": "2020-09-25..2020-10-31",
+     "article": "Dreams (Fleetwood Mac song)",
+     "titles_used": 8
+    },
+    {
+     "d0": "2021-01-08",
+     "id": "E532",
+     "day0": "2021-01-08",
+     "article": "Drivers License",
+     "titles_used": 59
+    },
+    {
+     "d0": "2021-05-22",
+     "id": "E537",
+     "day0": "2021-05-22",
+     "article": "Måneskin",
+     "titles_used": 7
+    },
+    {
+     "d0": "2022-07-29",
+     "id": "E545",
+     "day0": "2022-07-29",
+     "article": "Renaissance (Beyoncé album)",
+     "titles_used": 17
+    },
+    {
+     "d0": "2024-06-07",
+     "id": "E496",
+     "day0": "2024-06-07",
+     "article": "Brat (album)",
+     "titles_used": 23
+    },
+    {
+     "d0": "2024-08-27",
+     "id": "E497",
+     "day0": "2024-08-27",
+     "article": "Oasis (band)",
+     "titles_used": 17
+    }
+   ],
+   "min_p_both": 0.975024975024975,
+   "clustered_members": []
+  },
+  "finance_shocks": {
+   "top": [
+    {
+     "echo": false,
+     "p_mad": 0.8492,
+     "p_rank": 0.8961,
+     "article": "FEMA declarations: st:WA (WA)",
+     "score_mad": 1.863,
+     "loo_stable": false,
+     "score_rank": 0.855,
+     "member_z_mad": [
+      0,
+      1.94,
+      0.85,
+      0,
+      1.77,
+      0
+     ]
+    },
+    {
+     "echo": false,
+     "p_mad": 0.4775,
+     "p_rank": 0.987,
+     "article": "FEMA declarations: st:SD (SD)",
+     "score_mad": 3.266,
+     "loo_stable": false,
+     "score_rank": 0.461,
+     "member_z_mad": [
+      0,
+      0,
+      4,
+      4,
+      0,
+      0
+     ]
+    },
+    {
+     "echo": false,
+     "p_mad": 0.996,
+     "p_rank": 0.8971,
+     "article": "NYC transit ridership: bus",
+     "score_mad": 1.212,
+     "loo_stable": false,
+     "score_rank": 0.852,
+     "member_z_mad": [
+      0,
+      -0.22,
+      0.24,
+      1.31,
+      1.88,
+      -0.25
+     ]
+    },
+    {
+     "echo": false,
+     "p_mad": 0.997,
+     "p_rank": 0.957,
+     "article": "NYC transit ridership: subway",
+     "score_mad": 0.954,
+     "loo_stable": false,
+     "score_rank": 0.638,
+     "member_z_mad": [
+      0,
+      -0.46,
+      0,
+      1.3,
+      1.58,
+      -0.08
+     ]
+    },
+    {
+     "echo": false,
+     "p_mad": 0.998,
+     "p_rank": 0.979,
+     "article": "NYC transit ridership: aar",
+     "score_mad": 0.911,
+     "loo_stable": false,
+     "score_rank": 0.53,
+     "member_z_mad": [
+      0,
+      0.49,
+      0.34,
+      -0.11,
+      2.11,
+      -0.6
+     ]
+    },
+    {
+     "echo": false,
+     "p_mad": 0.999,
+     "p_rank": 0.999,
+     "article": "NYC transit ridership: sir",
+     "score_mad": 0.691,
+     "loo_stable": false,
+     "score_rank": 0.154,
+     "member_z_mad": [
+      0,
+      -0.08,
+      -0.12,
+      1.59,
+      0.64,
+      -0.34
+     ]
+    },
+    {
+     "echo": false,
+     "p_mad": 0.999,
+     "p_rank": 0.989,
+     "article": "FEMA declarations: severe_storm (US)",
+     "score_mad": 0.587,
+     "loo_stable": false,
+     "score_rank": 0.434,
+     "member_z_mad": [
+      0,
+      -0.33,
+      0.4,
+      0.46,
+      1.23,
+      -0.33
+     ]
+    },
+    {
+     "echo": false,
+     "p_mad": 0.999,
+     "p_rank": 0.996,
+     "article": "FEMA declarations: FM (US)",
+     "score_mad": 0.546,
+     "loo_stable": false,
+     "score_rank": 0.276,
+     "member_z_mad": [
+      0,
+      0.54,
+      -0.24,
+      1.44,
+      0.09,
+      -0.5
+     ]
+    },
+    {
+     "echo": false,
+     "p_mad": 0.999,
+     "p_rank": 0.995,
+     "article": "NYC transit ridership: mnr",
+     "score_mad": 0.444,
+     "loo_stable": false,
+     "score_rank": 0.305,
+     "member_z_mad": [
+      0,
+      -0.67,
+      -0.45,
+      0.76,
+      1.6,
+      -0.16
+     ]
+    },
+    {
+     "echo": false,
+     "p_mad": 0.999,
+     "p_rank": 0.996,
+     "article": "npm downloads: @anthropic-ai/sdk",
+     "score_mad": 0.302,
+     "loo_stable": false,
+     "score_rank": 0.275,
+     "member_z_mad": [
+      0,
+      0,
+      0,
+      0,
+      0,
+      0.74
+     ]
+    }
+   ],
+   "n_used": 6,
+   "members": [
+    {
+     "d0": "2017-12-08",
+     "id": "E839",
+     "day0": "2017-11-15..2017-12-31",
+     "article": "Bitcoin",
+     "titles_used": 48
+    },
+    {
+     "d0": "2021-01-27",
+     "id": "E647",
+     "day0": "2021-01-27",
+     "article": "GameStop short squeeze",
+     "titles_used": 12
+    },
+    {
+     "d0": "2021-03-11",
+     "id": "E842",
+     "day0": "2021-03-11",
+     "article": "Everydays: the First 5000 Days",
+     "titles_used": 6
+    },
+    {
+     "d0": "2021-09-20",
+     "id": "E873",
+     "day0": "2021-09-01..2021-10-15",
+     "article": "Evergrande Group",
+     "titles_used": 9
+    },
+    {
+     "d0": "2022-11-08",
+     "id": "E844",
+     "day0": "2022-11-08",
+     "article": "Bankruptcy of FTX",
+     "titles_used": 7
+    },
+    {
+     "d0": "2023-03-10",
+     "id": "E874",
+     "day0": "2023-03-10",
+     "article": "Collapse of Silicon Valley Bank",
+     "titles_used": 6
+    }
+   ],
+   "min_p_both": 0.8961038961038961,
+   "clustered_members": []
+  },
+  "sports_moments": {
+   "top": [
+    {
+     "echo": false,
+     "p_mad": 0.8731,
+     "p_rank": 0.983,
+     "article": "FEMA declarations: EM (US)",
+     "score_mad": 1.394,
+     "loo_stable": false,
+     "score_rank": 0.242,
+     "member_z_mad": [
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      3.28,
+      0.96,
+      0.43,
+      0,
+      -0.04
+     ]
+    },
+    {
+     "echo": false,
+     "p_mad": 0.4585,
+     "p_rank": 1,
+     "article": "FEMA declarations: st:MS (MS)",
+     "score_mad": 2.412,
+     "loo_stable": false,
+     "score_rank": -0.214,
+     "member_z_mad": [
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      4,
+      4,
+      0,
+      0
+     ]
+    },
+    {
+     "echo": false,
+     "p_mad": 0.9151,
+     "p_rank": 1,
+     "article": "FEMA declarations: st:SD (SD)",
+     "score_mad": 1.264,
+     "loo_stable": false,
+     "score_rank": -1.38,
+     "member_z_mad": [
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0.19,
+      4,
+      0,
+      0
+     ]
+    },
+    {
+     "echo": false,
+     "p_mad": 0.983,
+     "p_rank": 1,
+     "article": "FEMA declarations: st:NC (NC)",
+     "score_mad": 1.206,
+     "loo_stable": false,
+     "score_rank": -1.642,
+     "member_z_mad": [
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      4,
+      0,
+      0,
+      0
+     ]
+    },
+    {
+     "echo": false,
+     "p_mad": 0.99,
+     "p_rank": 1,
+     "article": "FEMA declarations: st:NV (NV)",
+     "score_mad": 1.044,
+     "loo_stable": false,
+     "score_rank": -2.082,
+     "member_z_mad": [
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      3.46,
+      0,
+      0
+     ]
+    },
+    {
+     "echo": false,
+     "p_mad": 0.997,
+     "p_rank": 1,
+     "article": "FEMA declarations: hurricane (US)",
+     "score_mad": 0.853,
+     "loo_stable": false,
+     "score_rank": -1.201,
+     "member_z_mad": [
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      4,
+      -1.17,
+      0,
+      0,
+      0
+     ]
+    },
+    {
+     "echo": false,
+     "p_mad": 0.997,
+     "p_rank": 1,
+     "article": "FEMA declarations: st:MT (MT)",
+     "score_mad": 0.764,
+     "loo_stable": false,
+     "score_rank": -0.075,
+     "member_z_mad": [
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0.52,
+      2.02,
+      0,
+      0
+     ]
+    },
+    {
+     "echo": false,
+     "p_mad": 0.997,
+     "p_rank": 1,
+     "article": "FEMA declarations: st:KY (KY)",
+     "score_mad": 0.763,
+     "loo_stable": false,
+     "score_rank": -2.594,
+     "member_z_mad": [
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      2.53,
+      0,
+      0
+     ]
+    },
+    {
+     "echo": false,
+     "p_mad": 1,
+     "p_rank": 1,
+     "article": "FEMA declarations: st:CA (CA)",
+     "score_mad": 0.484,
+     "loo_stable": false,
+     "score_rank": -1.166,
+     "member_z_mad": [
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      3.93,
+      -0.6,
+      -1.54,
+      0,
+      -0.18
+     ]
+    },
+    {
+     "echo": false,
+     "p_mad": 1,
+     "p_rank": 1,
+     "article": "FEMA declarations: st:WA (WA)",
+     "score_mad": 0.413,
+     "loo_stable": false,
+     "score_rank": -1.152,
+     "member_z_mad": [
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      1.59,
+      0,
+      -0.22
+     ]
+    }
+   ],
+   "n_used": 11,
+   "members": [
+    {
+     "d0": "2016-11-02",
+     "id": "E754",
+     "day0": "2016-11-02",
+     "article": "2016 World Series",
+     "titles_used": 5
+    },
+    {
+     "d0": "2018-07-15",
+     "id": "E769",
+     "day0": "2018-07-15",
+     "article": "2018 FIFA World Cup final",
+     "titles_used": 5
+    },
+    {
+     "d0": "2018-09-08",
+     "id": "E763",
+     "day0": "2018-09-08",
+     "article": "2018 US Open – Women's singles",
+     "titles_used": 4
+    },
+    {
+     "d0": "2019-04-14",
+     "id": "E765",
+     "day0": "2019-04-14",
+     "article": "2019 Masters Tournament",
+     "titles_used": 2
+    },
+    {
+     "d0": "2020-03-24",
+     "id": "E774",
+     "day0": "2020-03-24",
+     "article": "2020 Summer Olympics",
+     "titles_used": 101
+    },
+    {
+     "d0": "2021-07-27",
+     "id": "E776",
+     "day0": "2021-07-27",
+     "article": "Simone Biles",
+     "titles_used": 9
+    },
+    {
+     "d0": "2021-08-05",
+     "id": "E298",
+     "day0": "2021-08-05",
+     "article": "Lionel Messi",
+     "titles_used": 32
+    },
+    {
+     "d0": "2021-09-11",
+     "id": "E777",
+     "day0": "2021-09-11",
+     "article": "Emma Raducanu",
+     "titles_used": 5
+    },
+    {
+     "d0": "2022-06-09",
+     "id": "E788",
+     "day0": "2022-06-09",
+     "article": "LIV Golf",
+     "titles_used": 14
+    },
+    {
+     "d0": "2022-12-18",
+     "id": "E780",
+     "day0": "2022-12-18",
+     "article": "2022 FIFA World Cup final",
+     "titles_used": 6
+    },
+    {
+     "d0": "2023-12-09",
+     "id": "E797",
+     "day0": "2023-12-09",
+     "article": "Shohei Ohtani",
+     "titles_used": 19
+    }
+   ],
+   "min_p_both": 0.983016983016983,
+   "clustered_members": [
+    "E298",
+    "E776"
+   ]
+  },
+  "streaming_hits": {
+   "top": [
+    {
+     "echo": false,
+     "p_mad": 0.8152,
+     "p_rank": 0.7453,
+     "article": "FEMA declarations: st:TN (TN)",
+     "score_mad": 1.863,
+     "loo_stable": false,
+     "score_rank": 1.038,
+     "member_z_mad": [
+      0,
+      -0.51,
+      1.03,
+      2.21,
+      1.78,
+      -2.25,
+      4,
+      -0.31,
+      -0.36
+     ]
+    },
+    {
+     "echo": false,
+     "p_mad": 0.979,
+     "p_rank": 0.991,
+     "article": "npm downloads: ollama",
+     "score_mad": 1.333,
+     "loo_stable": false,
+     "score_rank": 0.487,
+     "member_z_mad": [
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      4
+     ]
+    },
+    {
+     "echo": false,
+     "p_mad": 0.997,
+     "p_rank": 0.991,
+     "article": "FEMA declarations: DR (US)",
+     "score_mad": 0.969,
+     "loo_stable": false,
+     "score_rank": 0.487,
+     "member_z_mad": [
+      0.3,
+      0.01,
+      -1.14,
+      -0.8,
+      0.71,
+      -1.01,
+      2.09,
+      2.43,
+      0.32
+     ]
+    },
+    {
+     "echo": false,
+     "p_mad": 0.997,
+     "p_rank": 0.976,
+     "article": "FEMA declarations: severe_storm (US)",
+     "score_mad": 0.856,
+     "loo_stable": false,
+     "score_rank": 0.581,
+     "member_z_mad": [
+      -0.2,
+      0.18,
+      0.27,
+      -0.91,
+      -0.54,
+      0.29,
+      1.42,
+      1.05,
+      1
+     ]
+    },
+    {
+     "echo": false,
+     "p_mad": 0.997,
+     "p_rank": 0.7443,
+     "article": "NYC transit ridership: sir",
+     "score_mad": 0.778,
+     "loo_stable": false,
+     "score_rank": 1.039,
+     "member_z_mad": [
+      -0.41,
+      1.79,
+      2.08,
+      -1.42,
+      0.32,
+      0.53,
+      0,
+      -0.63,
+      0.09
+     ]
+    },
+    {
+     "echo": false,
+     "p_mad": 0.9401,
+     "p_rank": 1,
+     "article": "FEMA declarations: st:FL (FL)",
+     "score_mad": 1.364,
+     "loo_stable": false,
+     "score_rank": -0.145,
+     "member_z_mad": [
+      3.1,
+      1.54,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      -0.54
+     ]
+    },
+    {
+     "echo": false,
+     "p_mad": 0.979,
+     "p_rank": 1,
+     "article": "FEMA declarations: st:KS (KS)",
+     "score_mad": 1.333,
+     "loo_stable": false,
+     "score_rank": -0.63,
+     "member_z_mad": [
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      4
+     ]
+    },
+    {
+     "echo": false,
+     "p_mad": 0.997,
+     "p_rank": 1,
+     "article": "FEMA declarations: st:NC (NC)",
+     "score_mad": 0.746,
+     "loo_stable": false,
+     "score_rank": -0.951,
+     "member_z_mad": [
+      -4,
+      4,
+      -1.76,
+      0,
+      4,
+      0,
+      0,
+      0,
+      0
+     ]
+    },
+    {
+     "echo": false,
+     "p_mad": 0.998,
+     "p_rank": 1,
+     "article": "FEMA declarations: st:KY (KY)",
+     "score_mad": 0.663,
+     "loo_stable": false,
+     "score_rank": 0.134,
+     "member_z_mad": [
+      0,
+      0,
+      0,
+      -3.94,
+      1.92,
+      4,
+      0,
+      0,
+      0
+     ]
+    },
+    {
+     "echo": false,
+     "p_mad": 1,
+     "p_rank": 1,
+     "article": "FEMA declarations: st:ND (ND)",
+     "score_mad": 0.33,
+     "loo_stable": false,
+     "score_rank": -0.401,
+     "member_z_mad": [
+      4,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0.99,
+      -4,
+      0
+     ]
+    }
+   ],
+   "n_used": 9,
+   "members": [
+    {
+     "d0": "2020-08-14",
+     "id": "E583",
+     "day0": "2020-08-14",
+     "article": "Ted Lasso",
+     "titles_used": 38
+    },
+    {
+     "d0": "2020-10-23",
+     "id": "E582",
+     "day0": "2020-10-23",
+     "article": "The Queen's Gambit (miniseries)",
+     "titles_used": 4
+    },
+    {
+     "d0": "2020-12-25",
+     "id": "E581",
+     "day0": "2020-12-25",
+     "article": "Bridgerton",
+     "titles_used": 40
+    },
+    {
+     "d0": "2021-01-15",
+     "id": "E589",
+     "day0": "2021-01-15",
+     "article": "WandaVision",
+     "titles_used": 14
+    },
+    {
+     "d0": "2021-09-17",
+     "id": "E580",
+     "day0": "2021-09-17",
+     "article": "Squid Game",
+     "titles_used": 25
+    },
+    {
+     "d0": "2021-11-06",
+     "id": "E586",
+     "day0": "2021-11-06",
+     "article": "Arcane (TV series)",
+     "titles_used": 11
+    },
+    {
+     "d0": "2019-11-12",
+     "id": "E587",
+     "day0": "2019-11-12",
+     "article": "The Mandalorian",
+     "titles_used": 12
+    },
+    {
+     "d0": "2023-01-15",
+     "id": "E584",
+     "day0": "2023-01-15",
+     "article": "The Last of Us (TV series)",
+     "titles_used": 9
+    },
+    {
+     "d0": "2024-04-10",
+     "id": "E585",
+     "day0": "2024-04-10",
+     "article": "Fallout (American TV series)",
+     "titles_used": 7
+    }
+   ],
+   "min_p_both": 0.8151848151848152,
+   "clustered_members": [
+    "E581",
+    "E589"
+   ]
+  },
+  "pandemic_crazes": {
+   "top": [
+    {
+     "echo": false,
+     "p_mad": 0.4765,
+     "p_rank": 0.025,
+     "article": "FEMA declarations: all (US)",
+     "score_mad": 2.862,
+     "loo_stable": false,
+     "score_rank": 2.49,
+     "member_z_mad": [
+      1.93,
+      1.23,
+      2.29,
+      1.34,
+      0.54,
+      -0.32
+     ]
+    },
+    {
+     "echo": false,
+     "p_mad": 0.4086,
+     "p_rank": 0.5065,
+     "article": "FEMA declarations: st:WA (WA)",
+     "score_mad": 3.096,
+     "loo_stable": false,
+     "score_rank": 1.347,
+     "member_z_mad": [
+      3.67,
+      -0.35,
+      0,
+      4,
+      0,
+      0.26
+     ]
+    },
+    {
+     "echo": false,
+     "p_mad": 0.5175,
+     "p_rank": 0.2777,
+     "article": "FEMA declarations: fire (US)",
+     "score_mad": 2.74,
+     "loo_stable": false,
+     "score_rank": 1.682,
+     "member_z_mad": [
+      -1.04,
+      0.63,
+      2.46,
+      1.26,
+      3.2,
+      0.19
+     ]
+    },
+    {
+     "echo": false,
+     "p_mad": 0.5964,
+     "p_rank": 0.3716,
+     "article": "FEMA declarations: FM (US)",
+     "score_mad": 2.493,
+     "loo_stable": false,
+     "score_rank": 1.523,
+     "member_z_mad": [
+      -1.11,
+      0.64,
+      2.67,
+      1.37,
+      2.54,
+      -0.01
+     ]
+    },
+    {
+     "echo": false,
+     "p_mad": 0.6194,
+     "p_rank": 0.1259,
+     "article": "FEMA declarations: DR (US)",
+     "score_mad": 2.422,
+     "loo_stable": false,
+     "score_rank": 1.981,
+     "member_z_mad": [
+      3.44,
+      0.96,
+      1.1,
+      0.21,
+      0.56,
+      -0.33
+     ]
+    },
+    {
+     "echo": false,
+     "p_mad": 0.4615,
+     "p_rank": 0.9451,
+     "article": "FEMA declarations: st:LA (LA)",
+     "score_mad": 2.902,
+     "loo_stable": false,
+     "score_rank": 0.708,
+     "member_z_mad": [
+      0,
+      0,
+      0,
+      0,
+      4,
+      3.11
+     ]
+    },
+    {
+     "echo": false,
+     "p_mad": 0.5694,
+     "p_rank": 0.985,
+     "article": "FEMA declarations: st:CA (CA)",
+     "score_mad": 2.552,
+     "loo_stable": false,
+     "score_rank": 0.52,
+     "member_z_mad": [
+      3.98,
+      0,
+      0,
+      -1.73,
+      4,
+      0
+     ]
+    },
+    {
+     "echo": false,
+     "p_mad": 0.1708,
+     "p_rank": 0.994,
+     "article": "FEMA declarations: st:MS (MS)",
+     "score_mad": 3.601,
+     "loo_stable": false,
+     "score_rank": 0.343,
+     "member_z_mad": [
+      0,
+      4,
+      0,
+      -2.63,
+      3.45,
+      4
+     ]
+    },
+    {
+     "echo": false,
+     "p_mad": 0.988,
+     "p_rank": 0.994,
+     "article": "FEMA declarations: st:OK (OK)",
+     "score_mad": 1.347,
+     "loo_stable": false,
+     "score_rank": 0.362,
+     "member_z_mad": [
+      2.95,
+      0.29,
+      0,
+      0,
+      0,
+      0.05
+     ]
+    },
+    {
+     "echo": false,
+     "p_mad": 0.999,
+     "p_rank": 0.8422,
+     "article": "FEMA declarations: flood (US)",
+     "score_mad": 0.632,
+     "loo_stable": false,
+     "score_rank": 0.919,
+     "member_z_mad": [
+      0,
+      1.46,
+      0.04,
+      0.18,
+      0.1,
+      -0.23
+     ]
+    }
+   ],
+   "n_used": 6,
+   "members": [
+    {
+     "d0": "2020-03-20",
+     "id": "E482",
+     "day0": "2020-03-20",
+     "article": "Tiger King",
+     "titles_used": 14
+    },
+    {
+     "d0": "2020-04-04",
+     "id": "E483",
+     "day0": "2020-03-01..2020-04-30",
+     "article": "Dalgona coffee",
+     "titles_used": 4
+    },
+    {
+     "d0": "2020-04-25",
+     "id": "E484",
+     "day0": "2020-03-15..2020-05-15",
+     "article": "Sourdough",
+     "titles_used": 14
+    },
+    {
+     "d0": "2020-06-28",
+     "id": "E485",
+     "day0": "2020-03-01..2020-12-31",
+     "article": "Cottagecore",
+     "titles_used": 6
+    },
+    {
+     "d0": "2020-09-21",
+     "id": "E139",
+     "day0": "2020-08-15..2020-10-31",
+     "article": "Among Us",
+     "titles_used": 53
+    },
+    {
+     "d0": "2020-12-31",
+     "id": "E486",
+     "day0": "2020-03-01..2020-12-31",
+     "article": "Peloton Interactive",
+     "titles_used": 5
+    }
+   ],
+   "min_p_both": 0.47652347652347654,
+   "clustered_members": [
+    "E482",
+    "E483",
+    "E484"
+   ]
+  },
+  "protests_abroad": {
+   "top": [
+    {
+     "echo": false,
+     "p_mad": 0.7542,
+     "p_rank": 0.6913,
+     "article": "FEMA declarations: st:WA (WA)",
+     "score_mad": 1.957,
+     "loo_stable": false,
+     "score_rank": 1.088,
+     "member_z_mad": [
+      0,
+      0,
+      0,
+      4,
+      2.64,
+      3.43,
+      -4,
+      -0.54
+     ]
+    },
+    {
+     "echo": false,
+     "p_mad": 0.7622,
+     "p_rank": 0.6703,
+     "article": "FEMA declarations: fire (US)",
+     "score_mad": 1.93,
+     "loo_stable": false,
+     "score_rank": 1.119,
+     "member_z_mad": [
+      0,
+      0.79,
+      -0.34,
+      4,
+      1.04,
+      1.04,
+      -0.96,
+      -0.11
+     ]
+    },
+    {
+     "echo": false,
+     "p_mad": 0.8012,
+     "p_rank": 0.6983,
+     "article": "NYC transit ridership: sir",
+     "score_mad": 1.821,
+     "loo_stable": false,
+     "score_rank": 1.081,
+     "member_z_mad": [
+      0,
+      0,
+      0,
+      -0.75,
+      2.46,
+      -1.36,
+      4,
+      0.8
+     ]
+    },
+    {
+     "echo": false,
+     "p_mad": 0.8262,
+     "p_rank": 0.8272,
+     "article": "FEMA declarations: FM (US)",
+     "score_mad": 1.765,
+     "loo_stable": false,
+     "score_rank": 0.912,
+     "member_z_mad": [
+      0,
+      0.93,
+      -0.33,
+      4,
+      0.47,
+      1.07,
+      -1.03,
+      -0.12
+     ]
+    },
+    {
+     "echo": false,
+     "p_mad": 0.6863,
+     "p_rank": 0.9091,
+     "article": "FEMA declarations: st:AK (AK)",
+     "score_mad": 2.144,
+     "loo_stable": false,
+     "score_rank": 0.76,
+     "member_z_mad": [
+      0,
+      0,
+      0,
+      0,
+      1.39,
+      0.67,
+      0,
+      4
+     ]
+    },
+    {
+     "echo": false,
+     "p_mad": 0.988,
+     "p_rank": 0.984,
+     "article": "FEMA declarations: flood (US)",
+     "score_mad": 1.18,
+     "loo_stable": false,
+     "score_rank": 0.49,
+     "member_z_mad": [
+      0,
+      2.19,
+      -0.02,
+      -0.23,
+      0.04,
+      0.01,
+      1.44,
+      -0.08
+     ]
+    },
+    {
+     "echo": false,
+     "p_mad": 0.999,
+     "p_rank": 0.8861,
+     "article": "NYC transit ridership: lirr",
+     "score_mad": 0.703,
+     "loo_stable": false,
+     "score_rank": 0.815,
+     "member_z_mad": [
+      0,
+      0,
+      0,
+      0.36,
+      3.09,
+      -4,
+      0.83,
+      1.71
+     ]
+    },
+    {
+     "echo": false,
+     "p_mad": 0.992,
+     "p_rank": 1,
+     "article": "FEMA declarations: st:TX (TX)",
+     "score_mad": 1.079,
+     "loo_stable": false,
+     "score_rank": 0.153,
+     "member_z_mad": [
+      0,
+      1.61,
+      0,
+      4,
+      -2.56,
+      -4,
+      4,
+      0
+     ]
+    },
+    {
+     "echo": false,
+     "p_mad": 0.994,
+     "p_rank": 1,
+     "article": "FEMA declarations: st:AZ (AZ)",
+     "score_mad": 1.025,
+     "loo_stable": false,
+     "score_rank": -0.856,
+     "member_z_mad": [
+      0,
+      4,
+      0,
+      -1.1,
+      -4,
+      4,
+      0,
+      0
+     ]
+    },
+    {
+     "echo": false,
+     "p_mad": 0.997,
+     "p_rank": 1,
+     "article": "FEMA declarations: st:OR (OR)",
+     "score_mad": 0.821,
+     "loo_stable": false,
+     "score_rank": 0.078,
+     "member_z_mad": [
+      0,
+      4,
+      0,
+      -1.68,
+      0,
+      0,
+      0,
+      0
+     ]
+    }
+   ],
+   "n_used": 8,
+   "members": [
+    {
+     "d0": "2018-11-17",
+     "id": "E929",
+     "day0": "2018-11-17",
+     "article": "Yellow vests protests",
+     "titles_used": 34
+    },
+    {
+     "d0": "2019-06-09",
+     "id": "E908",
+     "day0": "2019-06-09",
+     "article": "2019–2020 Hong Kong protests",
+     "titles_used": 53
+    },
+    {
+     "d0": "2019-10-18",
+     "id": "E930",
+     "day0": "2019-10-18",
+     "article": "2019–2022 Chilean protests",
+     "titles_used": 24
+    },
+    {
+     "d0": "2020-08-09",
+     "id": "E909",
+     "day0": "2020-08-09",
+     "article": "2020–2021 Belarusian protests",
+     "titles_used": 16
+    },
+    {
+     "d0": "2020-11-26",
+     "id": "E941",
+     "day0": "2020-11-26",
+     "article": "2020–2021 Indian farmers' protest",
+     "titles_used": 20
+    },
+    {
+     "d0": "2021-02-01",
+     "id": "E910",
+     "day0": "2021-02-01",
+     "article": "2021 Myanmar coup d'état",
+     "titles_used": 14
+    },
+    {
+     "d0": "2022-07-09",
+     "id": "E911",
+     "day0": "2022-07-09",
+     "article": "2022 Sri Lankan protests",
+     "titles_used": 19
+    },
+    {
+     "d0": "2022-09-16",
+     "id": "E912",
+     "day0": "2022-09-16",
+     "article": "Mahsa Amini protests",
+     "titles_used": 16
+    }
+   ],
+   "min_p_both": 0.7542457542457542,
+   "clustered_members": []
+  },
+  "disasters_shocks": {
+   "top": [
+    {
+     "echo": false,
+     "p_mad": 0.9321,
+     "p_rank": 0.8042,
+     "article": "FEMA declarations: EM (US)",
+     "score_mad": 1.75,
+     "loo_stable": false,
+     "score_rank": 0.975,
+     "member_z_mad": [
+      0.22,
+      1.44,
+      0,
+      0,
+      0,
+      0.39,
+      -0.48,
+      0.17,
+      4,
+      -0.2
+     ]
+    },
+    {
+     "echo": false,
+     "p_mad": 0.9341,
+     "p_rank": 0.951,
+     "article": "FEMA declarations: st:OR (OR)",
+     "score_mad": 1.736,
+     "loo_stable": false,
+     "score_rank": 0.645,
+     "member_z_mad": [
+      4,
+      -2.7,
+      1.88,
+      0,
+      0,
+      0.94,
+      1.29,
+      0.08,
+      0,
+      0
+     ]
+    },
+    {
+     "echo": false,
+     "p_mad": 0.7972,
+     "p_rank": 0.965,
+     "article": "FEMA declarations: st:FL (FL)",
+     "score_mad": 2.392,
+     "loo_stable": false,
+     "score_rank": 0.583,
+     "member_z_mad": [
+      0,
+      0.73,
+      0,
+      -4,
+      4,
+      0.81,
+      2.02,
+      0,
+      4,
+      0
+     ]
+    },
+    {
+     "echo": false,
+     "p_mad": 0.7782,
+     "p_rank": 0.986,
+     "article": "FEMA declarations: st:WA (WA)",
+     "score_mad": 2.444,
+     "loo_stable": false,
+     "score_rank": 0.382,
+     "member_z_mad": [
+      0,
+      4,
+      0.62,
+      -0.97,
+      0,
+      3.37,
+      -2.05,
+      -1.24,
+      4,
+      0
+     ]
+    },
+    {
+     "echo": false,
+     "p_mad": 0.9301,
+     "p_rank": 0.99,
+     "article": "npm downloads: ollama",
+     "score_mad": 1.782,
+     "loo_stable": false,
+     "score_rank": 0.361,
+     "member_z_mad": [
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      3.82,
+      0.63,
+      -0.7,
+      1.88
+     ]
+    },
+    {
+     "echo": false,
+     "p_mad": 0.997,
+     "p_rank": 0.5315,
+     "article": "NYC transit ridership: mnr",
+     "score_mad": 1.185,
+     "loo_stable": false,
+     "score_rank": 1.297,
+     "member_z_mad": [
+      0,
+      0,
+      1.46,
+      -1.61,
+      0.44,
+      0.82,
+      0.49,
+      0.78,
+      0.96,
+      0.4
+     ]
+    },
+    {
+     "echo": false,
+     "p_mad": 0.999,
+     "p_rank": 0.986,
+     "article": "FEMA declarations: st:CA (CA)",
+     "score_mad": 0.887,
+     "loo_stable": false,
+     "score_rank": 0.408,
+     "member_z_mad": [
+      -2.59,
+      2.55,
+      0,
+      0,
+      0.96,
+      -0.17,
+      -0.53,
+      1.17,
+      0.59,
+      0.81
+     ]
+    },
+    {
+     "echo": false,
+     "p_mad": 0.999,
+     "p_rank": 0.8132,
+     "article": "NYC transit ridership: bus",
+     "score_mad": 0.879,
+     "loo_stable": false,
+     "score_rank": 0.962,
+     "member_z_mad": [
+      0,
+      0,
+      1.15,
+      -2.6,
+      0.62,
+      -0.58,
+      0.54,
+      1.19,
+      1.69,
+      0.77
+     ]
+    },
+    {
+     "echo": false,
+     "p_mad": 0.999,
+     "p_rank": 0.7812,
+     "article": "NYC transit ridership: aar",
+     "score_mad": 0.834,
+     "loo_stable": false,
+     "score_rank": 0.997,
+     "member_z_mad": [
+      0,
+      0,
+      0.95,
+      -2.63,
+      0.5,
+      0.14,
+      0.23,
+      1.18,
+      1.02,
+      1.25
+     ]
+    },
+    {
+     "echo": false,
+     "p_mad": 0.999,
+     "p_rank": 0.7722,
+     "article": "NYC transit ridership: subway",
+     "score_mad": 0.783,
+     "loo_stable": false,
+     "score_rank": 1.011,
+     "member_z_mad": [
+      0,
+      0,
+      0.49,
+      -2.78,
+      1.11,
+      -0.32,
+      0.59,
+      0.99,
+      1.79,
+      0.6
+     ]
+    }
+   ],
+   "n_used": 10,
+   "members": [
+    {
+     "d0": "2019-04-15",
+     "id": "E883",
+     "day0": "2019-04-15",
+     "article": "Notre-Dame fire",
+     "titles_used": 19
+    },
+    {
+     "d0": "2020-01-06",
+     "id": "E437",
+     "day0": "2019-12-15..2020-01-31",
+     "article": "2019–20 Australian bushfire season",
+     "titles_used": 31
+    },
+    {
+     "d0": "2021-03-23",
+     "id": "E863",
+     "day0": "2021-03-23",
+     "article": "2021 Suez Canal obstruction",
+     "titles_used": 10
+    },
+    {
+     "d0": "2022-01-15",
+     "id": "E442",
+     "day0": "2022-01-15",
+     "article": "2022 Hunga Tonga–Hunga Haʻapai eruption and tsunami",
+     "titles_used": 14
+    },
+    {
+     "d0": "2023-02-06",
+     "id": "E443",
+     "day0": "2023-02-06",
+     "article": "2023 Turkey–Syria earthquakes",
+     "titles_used": 47
+    },
+    {
+     "d0": "2023-06-07",
+     "id": "E876",
+     "day0": "2023-06-05..2023-06-12",
+     "article": "2023 Canadian wildfires",
+     "titles_used": 14
+    },
+    {
+     "d0": "2023-08-08",
+     "id": "E444",
+     "day0": "2023-08-08",
+     "article": "2023 Hawaii wildfires",
+     "titles_used": 13
+    },
+    {
+     "d0": "2024-03-26",
+     "id": "E445",
+     "day0": "2024-03-26",
+     "article": "Francis Scott Key Bridge collapse",
+     "titles_used": 21
+    },
+    {
+     "d0": "2024-09-26",
+     "id": "E446",
+     "day0": "2024-09-26",
+     "article": "Hurricane Helene",
+     "titles_used": 9
+    },
+    {
+     "d0": "2025-01-07",
+     "id": "E447",
+     "day0": "2025-01-07",
+     "article": "January 2025 Southern California wildfires",
+     "titles_used": 36
+    }
+   ],
+   "min_p_both": 0.932067932067932,
+   "clustered_members": []
+  },
+  "platform_launches": {
+   "top": [
+    {
+     "echo": false,
+     "p_mad": 0.4486,
+     "p_rank": 0.4276,
+     "article": "FEMA declarations: st:WA (WA)",
+     "score_mad": 2.754,
+     "loo_stable": false,
+     "score_rank": 1.398,
+     "member_z_mad": [
+      0,
+      0,
+      0,
+      2.22,
+      0.72,
+      4,
+      0.34
+     ]
+    },
+    {
+     "echo": false,
+     "p_mad": 0.5914,
+     "p_rank": 0.8192,
+     "article": "FEMA declarations: st:MS (MS)",
+     "score_mad": 2.322,
+     "loo_stable": false,
+     "score_rank": 0.9,
+     "member_z_mad": [
+      0,
+      0,
+      0,
+      0,
+      4,
+      0,
+      2.14
+     ]
+    },
+    {
+     "echo": false,
+     "p_mad": 0.986,
+     "p_rank": 0.994,
+     "article": "FEMA declarations: EM (US)",
+     "score_mad": 1.036,
+     "loo_stable": false,
+     "score_rank": 0.372,
+     "member_z_mad": [
+      0,
+      0,
+      0,
+      4,
+      2.31,
+      -0.42,
+      -3.14
+     ]
+    },
+    {
+     "echo": false,
+     "p_mad": 0.994,
+     "p_rank": 0.979,
+     "article": "FEMA declarations: severe_storm (US)",
+     "score_mad": 0.768,
+     "loo_stable": false,
+     "score_rank": 0.472,
+     "member_z_mad": [
+      0,
+      0,
+      -0.38,
+      1.44,
+      -0.46,
+      1.64,
+      -0.22
+     ]
+    },
+    {
+     "echo": false,
+     "p_mad": 0.996,
+     "p_rank": 0.981,
+     "article": "FEMA declarations: DR (US)",
+     "score_mad": 0.506,
+     "loo_stable": false,
+     "score_rank": 0.455,
+     "member_z_mad": [
+      0,
+      0,
+      1,
+      0.01,
+      -0.14,
+      0.65,
+      -0.18
+     ]
+    },
+    {
+     "echo": false,
+     "p_mad": 0.3636,
+     "p_rank": 0.999,
+     "article": "FEMA declarations: st:TX (TX)",
+     "score_mad": 3.024,
+     "loo_stable": false,
+     "score_rank": 0.063,
+     "member_z_mad": [
+      0,
+      0,
+      0,
+      4,
+      4,
+      0,
+      0
+     ]
+    },
+    {
+     "echo": false,
+     "p_mad": 0.999,
+     "p_rank": 0.995,
+     "article": "hn:all stories",
+     "score_mad": 0.338,
+     "loo_stable": false,
+     "score_rank": 0.327,
+     "member_z_mad": [
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0.89
+     ]
+    },
+    {
+     "echo": false,
+     "p_mad": 0.999,
+     "p_rank": 0.996,
+     "article": "FEMA declarations: st:OK (OK)",
+     "score_mad": 0.136,
+     "loo_stable": false,
+     "score_rank": 0.278,
+     "member_z_mad": [
+      0,
+      0,
+      0.8,
+      0,
+      0,
+      0,
+      -0.44
+     ]
+    },
+    {
+     "echo": false,
+     "p_mad": 0.999,
+     "p_rank": 0.999,
+     "article": "npm downloads: openai",
+     "score_mad": 0.052,
+     "loo_stable": false,
+     "score_rank": 0.006,
+     "member_z_mad": [
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0.14
+     ]
+    },
+    {
+     "echo": false,
+     "p_mad": 1,
+     "p_rank": 1,
+     "article": "FEMA declarations: chemical (US)",
+     "score_mad": 0,
+     "loo_stable": false,
+     "score_rank": -4.581,
+     "member_z_mad": [
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0
+     ]
+    }
+   ],
+   "n_used": 7,
+   "members": [
+    {
+     "d0": "2016-10-27",
+     "id": "E651",
+     "day0": "2016-10-27",
+     "article": "Vine (service)",
+     "titles_used": 16
+    },
+    {
+     "d0": "2018-08-02",
+     "id": "E655",
+     "day0": "2018-08-02",
+     "article": "TikTok",
+     "titles_used": 49
+    },
+    {
+     "d0": "2019-11-12",
+     "id": "E594",
+     "day0": "2019-11-12",
+     "article": "Disney+",
+     "titles_used": 20
+    },
+    {
+     "d0": "2020-05-27",
+     "id": "E595",
+     "day0": "2020-05-27",
+     "article": "HBO Max",
+     "titles_used": 50
+    },
+    {
+     "d0": "2020-07-15",
+     "id": "E596",
+     "day0": "2020-07-15",
+     "article": "Peacock (streaming service)",
+     "titles_used": 16
+    },
+    {
+     "d0": "2021-02-15",
+     "id": "E665",
+     "day0": "2021-01-15..2021-03-15",
+     "article": "Clubhouse (app)",
+     "titles_used": 1
+    },
+    {
+     "d0": "2022-09-05",
+     "id": "E664",
+     "day0": "2022-06-01..2022-09-30",
+     "article": "BeReal",
+     "titles_used": 3
+    }
+   ],
+   "min_p_both": 0.4485514485514486,
+   "clustered_members": []
+  },
+  "us_social_moments": {
+   "top": [
+    {
+     "echo": false,
+     "p_mad": 0.6693,
+     "p_rank": 0.1439,
+     "article": "NYC transit ridership: aar",
+     "score_mad": 2.457,
+     "loo_stable": false,
+     "score_rank": 2.077,
+     "member_z_mad": [
+      0,
+      0,
+      1.05,
+      2.35,
+      2.1
+     ]
+    },
+    {
+     "echo": false,
+     "p_mad": 0.7013,
+     "p_rank": 0.2028,
+     "article": "NYC transit ridership: lirr",
+     "score_mad": 2.351,
+     "loo_stable": false,
+     "score_rank": 1.94,
+     "member_z_mad": [
+      0,
+      0,
+      2.65,
+      1.61,
+      0.99
+     ]
+    },
+    {
+     "echo": false,
+     "p_mad": 0.971,
+     "p_rank": 0.4456,
+     "article": "NYC transit ridership: subway",
+     "score_mad": 1.729,
+     "loo_stable": false,
+     "score_rank": 1.548,
+     "member_z_mad": [
+      0,
+      0,
+      0.62,
+      1.87,
+      1.37
+     ]
+    },
+    {
+     "echo": false,
+     "p_mad": 0.976,
+     "p_rank": 0.9151,
+     "article": "FEMA declarations: DR (US)",
+     "score_mad": 1.57,
+     "loo_stable": false,
+     "score_rank": 0.863,
+     "member_z_mad": [
+      0,
+      0,
+      3.93,
+      -1.06,
+      0.64
+     ]
+    },
+    {
+     "echo": false,
+     "p_mad": 0.987,
+     "p_rank": 0.5315,
+     "article": "NYC transit ridership: mnr",
+     "score_mad": 1.463,
+     "loo_stable": false,
+     "score_rank": 1.45,
+     "member_z_mad": [
+      0,
+      0,
+      1.63,
+      0.85,
+      0.8
+     ]
+    },
+    {
+     "echo": false,
+     "p_mad": 0.988,
+     "p_rank": 0.6304,
+     "article": "NYC transit ridership: bt",
+     "score_mad": 1.414,
+     "loo_stable": false,
+     "score_rank": 1.315,
+     "member_z_mad": [
+      0,
+      0,
+      0.86,
+      1.46,
+      0.84
+     ]
+    },
+    {
+     "echo": false,
+     "p_mad": 0.992,
+     "p_rank": 0.7363,
+     "article": "NYC transit ridership: bus",
+     "score_mad": 1.259,
+     "loo_stable": false,
+     "score_rank": 1.164,
+     "member_z_mad": [
+      0,
+      0,
+      0.25,
+      1.26,
+      1.31
+     ]
+    },
+    {
+     "echo": false,
+     "p_mad": 0.993,
+     "p_rank": 0.985,
+     "article": "FEMA declarations: st:TX (TX)",
+     "score_mad": 1.154,
+     "loo_stable": false,
+     "score_rank": 0.635,
+     "member_z_mad": [
+      0,
+      0,
+      4,
+      0.78,
+      -2.2
+     ]
+    },
+    {
+     "echo": false,
+     "p_mad": 0.998,
+     "p_rank": 0.985,
+     "article": "FEMA declarations: all (US)",
+     "score_mad": 0.868,
+     "loo_stable": false,
+     "score_rank": 0.648,
+     "member_z_mad": [
+      0,
+      0,
+      2.05,
+      -0.4,
+      0.29
+     ]
+    },
+    {
+     "echo": false,
+     "p_mad": 0.969,
+     "p_rank": 0.999,
+     "article": "FEMA declarations: st:KY (KY)",
+     "score_mad": 1.789,
+     "loo_stable": false,
+     "score_rank": 0.31,
+     "member_z_mad": [
+      0,
+      0,
+      0,
+      0,
+      4
+     ]
+    }
+   ],
+   "n_used": 5,
+   "members": [
+    {
+     "d0": "2017-01-21",
+     "id": "E396",
+     "day0": "2017-01-21",
+     "article": "2017 Women's March",
+     "titles_used": 10
+    },
+    {
+     "d0": "2017-10-15",
+     "id": "E689",
+     "day0": "2017-10-15",
+     "article": "MeToo movement",
+     "titles_used": 27
+    },
+    {
+     "d0": "2020-05-26",
+     "id": "E398",
+     "day0": "2020-05-26",
+     "article": "George Floyd protests",
+     "titles_used": 33
+    },
+    {
+     "d0": "2021-01-06",
+     "id": "E919",
+     "day0": "2021-01-06",
+     "article": "January 6 United States Capitol attack",
+     "titles_used": 101
+    },
+    {
+     "d0": "2022-06-24",
+     "id": "E922",
+     "day0": "2022-06-24",
+     "article": "Dobbs v. Jackson Women's Health Organization",
+     "titles_used": 13
+    }
+   ],
+   "min_p_both": 0.6693306693306693,
+   "clustered_members": []
+  },
+  "films_blockbusters": {
+   "top": [
+    {
+     "echo": false,
+     "p_mad": 0.8122,
+     "p_rank": 0.6583,
+     "article": "FEMA declarations: flood (US)",
+     "score_mad": 1.665,
+     "loo_stable": false,
+     "score_rank": 1.031,
+     "member_z_mad": [
+      0,
+      0,
+      0,
+      0.03,
+      2.16,
+      -0.55,
+      0.01,
+      0.24,
+      4,
+      -0.63
+     ]
+    },
+    {
+     "echo": false,
+     "p_mad": 0.8961,
+     "p_rank": 0.8022,
+     "article": "FEMA declarations: severe_storm (US)",
+     "score_mad": 1.429,
+     "loo_stable": false,
+     "score_rank": 0.847,
+     "member_z_mad": [
+      0,
+      0,
+      0,
+      1.78,
+      0.87,
+      0.24,
+      -2.45,
+      -0.5,
+      2.76,
+      1.82
+     ]
+    },
+    {
+     "echo": false,
+     "p_mad": 0.975,
+     "p_rank": 0.8731,
+     "article": "FEMA declarations: st:MS (MS)",
+     "score_mad": 1.265,
+     "loo_stable": false,
+     "score_rank": 0.728,
+     "member_z_mad": [
+      0,
+      0,
+      0,
+      4,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0
+     ]
+    },
+    {
+     "echo": false,
+     "p_mad": 0.975,
+     "p_rank": 0.991,
+     "article": "FEMA declarations: hurricane (US)",
+     "score_mad": 1.265,
+     "loo_stable": false,
+     "score_rank": 0.348,
+     "member_z_mad": [
+      0,
+      0,
+      0,
+      0,
+      4,
+      0,
+      0,
+      0,
+      0,
+      0
+     ]
+    },
+    {
+     "echo": false,
+     "p_mad": 0.984,
+     "p_rank": 0.996,
+     "article": "npm downloads: ollama",
+     "score_mad": 1.078,
+     "loo_stable": false,
+     "score_rank": 0.321,
+     "member_z_mad": [
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      3.41
+     ]
+    },
+    {
+     "echo": false,
+     "p_mad": 0.997,
+     "p_rank": 0.998,
+     "article": "FEMA declarations: DR (US)",
+     "score_mad": 0.77,
+     "loo_stable": false,
+     "score_rank": 0.202,
+     "member_z_mad": [
+      0,
+      0,
+      0,
+      0.64,
+      1.74,
+      1.82,
+      -2.47,
+      -1.56,
+      3.48,
+      -1.21
+     ]
+    },
+    {
+     "echo": false,
+     "p_mad": 0.975,
+     "p_rank": 1,
+     "article": "FEMA declarations: st:NV (NV)",
+     "score_mad": 1.265,
+     "loo_stable": false,
+     "score_rank": -1.071,
+     "member_z_mad": [
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      4,
+      0,
+      0
+     ]
+    },
+    {
+     "echo": false,
+     "p_mad": 1,
+     "p_rank": 1,
+     "article": "FEMA declarations: all (US)",
+     "score_mad": 0.459,
+     "loo_stable": false,
+     "score_rank": -0.136,
+     "member_z_mad": [
+      0,
+      0,
+      0,
+      1.17,
+      0.69,
+      0.83,
+      -2.38,
+      -1.51,
+      3.5,
+      -0.84
+     ]
+    },
+    {
+     "echo": false,
+     "p_mad": 1,
+     "p_rank": 1,
+     "article": "FEMA declarations: st:TX (TX)",
+     "score_mad": 0.151,
+     "loo_stable": false,
+     "score_rank": -0.418,
+     "member_z_mad": [
+      0,
+      0,
+      0,
+      -4,
+      4,
+      0,
+      4,
+      -2.48,
+      0,
+      -1.04
+     ]
+    },
+    {
+     "echo": false,
+     "p_mad": 1,
+     "p_rank": 0.999,
+     "article": "npm downloads: openai",
+     "score_mad": 0.056,
+     "loo_stable": false,
+     "score_rank": 0.014,
+     "member_z_mad": [
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0.69,
+      -0.51
+     ]
+    }
+   ],
+   "n_used": 10,
+   "members": [
+    {
+     "d0": "2018-02-16",
+     "id": "E099",
+     "day0": "2018-02-16",
+     "article": "Black Panther (film)",
+     "titles_used": 12
+    },
+    {
+     "d0": "2018-04-27",
+     "id": "E557",
+     "day0": "2018-04-27",
+     "article": "Avengers: Infinity War",
+     "titles_used": 47
+    },
+    {
+     "d0": "2018-12-14",
+     "id": "E565",
+     "day0": "2018-12-14",
+     "article": "Spider-Man: Into the Spider-Verse",
+     "titles_used": 22
+    },
+    {
+     "d0": "2019-04-26",
+     "id": "E558",
+     "day0": "2019-04-26",
+     "article": "Avengers: Endgame",
+     "titles_used": 45
+    },
+    {
+     "d0": "2019-10-04",
+     "id": "E559",
+     "day0": "2019-10-04",
+     "article": "Joker (2019 film)",
+     "titles_used": 10
+    },
+    {
+     "d0": "2021-10-22",
+     "id": "E568",
+     "day0": "2021-10-22",
+     "article": "Dune (2021 film)",
+     "titles_used": 14
+    },
+    {
+     "d0": "2021-12-17",
+     "id": "E566",
+     "day0": "2021-12-17",
+     "article": "Spider-Man: No Way Home",
+     "titles_used": 21
+    },
+    {
+     "d0": "2022-05-27",
+     "id": "E567",
+     "day0": "2022-05-27",
+     "article": "Top Gun: Maverick",
+     "titles_used": 55
+    },
+    {
+     "d0": "2023-07-21",
+     "id": "E100",
+     "day0": "2023-07-21",
+     "article": "Barbenheimer",
+     "titles_used": 17
+    },
+    {
+     "d0": "2024-03-01",
+     "id": "E569",
+     "day0": "2024-03-01",
+     "article": "Dune: Part Two",
+     "titles_used": 9
+    }
+   ],
+   "min_p_both": 0.8121878121878122,
+   "clustered_members": []
+  },
+  "geopolitical_shocks": {
+   "top": [
+    {
+     "echo": false,
+     "p_mad": 0.8242,
+     "p_rank": 0.9221,
+     "article": "FEMA declarations: st:TN (TN)",
+     "score_mad": 1.701,
+     "loo_stable": false,
+     "score_rank": 0.626,
+     "member_z_mad": [
+      0,
+      0,
+      4,
+      1.89,
+      -0.67,
+      0,
+      -0.72
+     ]
+    },
+    {
+     "echo": false,
+     "p_mad": 0.3387,
+     "p_rank": 0.9491,
+     "article": "FEMA declarations: st:WA (WA)",
+     "score_mad": 2.986,
+     "loo_stable": false,
+     "score_rank": 0.555,
+     "member_z_mad": [
+      0,
+      0,
+      4,
+      4,
+      -0.1,
+      0,
+      0
+     ]
+    },
+    {
+     "echo": false,
+     "p_mad": 0.97,
+     "p_rank": 0.974,
+     "article": "npm downloads: ollama",
+     "score_mad": 1.512,
+     "loo_stable": false,
+     "score_rank": 0.455,
+     "member_z_mad": [
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      4
+     ]
+    },
+    {
+     "echo": false,
+     "p_mad": 0.985,
+     "p_rank": 0.7992,
+     "article": "NYC transit ridership: mnr",
+     "score_mad": 1.242,
+     "loo_stable": false,
+     "score_rank": 0.86,
+     "member_z_mad": [
+      0,
+      0,
+      0,
+      1.74,
+      1.52,
+      0.04,
+      -0.02
+     ]
+    },
+    {
+     "echo": false,
+     "p_mad": 0.987,
+     "p_rank": 0.7343,
+     "article": "NYC transit ridership: subway",
+     "score_mad": 1.078,
+     "loo_stable": false,
+     "score_rank": 0.948,
+     "member_z_mad": [
+      0,
+      0,
+      0,
+      1.58,
+      1.09,
+      -0.03,
+      0.2
+     ]
+    },
+    {
+     "echo": false,
+     "p_mad": 0.7572,
+     "p_rank": 0.989,
+     "article": "FEMA declarations: st:AZ (AZ)",
+     "score_mad": 1.91,
+     "loo_stable": false,
+     "score_rank": 0.326,
+     "member_z_mad": [
+      0,
+      0,
+      0,
+      2.17,
+      2.89,
+      0,
+      0
+     ]
+    },
+    {
+     "echo": false,
+     "p_mad": 0.989,
+     "p_rank": 0.8691,
+     "article": "npm downloads: @anthropic-ai/sdk",
+     "score_mad": 1.028,
+     "loo_stable": false,
+     "score_rank": 0.733,
+     "member_z_mad": [
+      0,
+      0,
+      0,
+      0,
+      0,
+      1.97,
+      0.75
+     ]
+    },
+    {
+     "echo": false,
+     "p_mad": 0.993,
+     "p_rank": 0.8492,
+     "article": "NYC transit ridership: bus",
+     "score_mad": 0.903,
+     "loo_stable": false,
+     "score_rank": 0.776,
+     "member_z_mad": [
+      0,
+      0,
+      0,
+      1.06,
+      0.67,
+      0,
+      0.66
+     ]
+    },
+    {
+     "echo": false,
+     "p_mad": 0.994,
+     "p_rank": 0.9181,
+     "article": "NYC transit ridership: aar",
+     "score_mad": 0.839,
+     "loo_stable": false,
+     "score_rank": 0.638,
+     "member_z_mad": [
+      0,
+      0,
+      0,
+      0.93,
+      -0.03,
+      -0.09,
+      1.41
+     ]
+    },
+    {
+     "echo": false,
+     "p_mad": 0.994,
+     "p_rank": 0.956,
+     "article": "NYC transit ridership: lirr",
+     "score_mad": 0.761,
+     "loo_stable": false,
+     "score_rank": 0.525,
+     "member_z_mad": [
+      0,
+      0,
+      0,
+      1.44,
+      0.61,
+      0.09,
+      -0.13
+     ]
+    }
+   ],
+   "n_used": 7,
+   "members": [
+    {
+     "d0": "2016-11-08",
+     "id": "E394",
+     "day0": "2016-11-08",
+     "article": "2016 United States presidential election",
+     "titles_used": 68
+    },
+    {
+     "d0": "2020-01-31",
+     "id": "E904",
+     "day0": "2020-01-31",
+     "article": "Brexit",
+     "titles_used": 61
+    },
+    {
+     "d0": "2020-03-11",
+     "id": "E438",
+     "day0": "2020-03-11",
+     "article": "COVID-19 pandemic",
+     "titles_used": 101
+    },
+    {
+     "d0": "2021-08-15",
+     "id": "E946",
+     "day0": "2021-08-15",
+     "article": "Fall of Kabul (2021)",
+     "titles_used": 13
+    },
+    {
+     "d0": "2022-02-24",
+     "id": "E399",
+     "day0": "2022-02-24",
+     "article": "Russian invasion of Ukraine",
+     "titles_used": 49
+    },
+    {
+     "d0": "2023-04-04",
+     "id": "E948",
+     "day0": "2023-04-04",
+     "article": "Accession of Finland to NATO",
+     "titles_used": 22
+    },
+    {
+     "d0": "2023-10-07",
+     "id": "E400",
+     "day0": "2023-10-07",
+     "article": "October 7 attacks",
+     "titles_used": 101
+    }
+   ],
+   "min_p_both": 0.922077922077922,
+   "clustered_members": []
+  }
+ },
+ "protocol": "ripples/docs/q3_protocol_more.md",
+ "candidates": [],
+ "bh_families_passing": [],
+ "run": "https://github.com/bsunter93/Ben-Sunters-Website/actions/runs/36386645986",
+ "source": "stored by the workflow in ripples.att_q3_results"
+}

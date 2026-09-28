@@ -34,6 +34,8 @@ SETS = {
     "daily2": ["hn.algolia", "npm.dl", "mta.ridership", "fema.decl"],
     "weekly": ["dol.claims", "census.bfs", "cdc.deaths", "fred.weekly"],
     "monthly": ["fred.state", "bls.ces", "bls.cpi_items"],
+    "library": ["sea"],  # Seattle Public Library monthly checkouts by subject (att_q3_sea_export)
+    "county": ["qcew:10", "qcew:1023"],  # QCEW county employment, all industries and financial activities
 }
 STATE_METRIC = {"ur": "unemployment rate", "nonfarm": "jobs, all", "cons": "construction jobs",
                 "mfg": "manufacturing jobs", "trad": "trade and transport jobs", "pbsv": "business services jobs",
@@ -47,6 +49,10 @@ RATE_METRICS = {"ur"}
 def label(name: str) -> str:
     src, metric, key, geo = name.split("|")
     st = geo.replace("US-", "") if geo.startswith("US-") else "US"
+    if src == "sea":
+        return "library:" + key
+    if src == "qcew":
+        return f"County {'jobs' if metric == '10' else 'finance jobs'} (FIPS {key})"
     if src == "hn.algolia":
         return "hn:" + ("all stories" if key == "__total__" else key)
     if src == "npm.dl":
@@ -123,7 +129,9 @@ def main() -> int:
     sb = Supabase()
     names, rows, per_source = [], [], {}
     for src in SETS[kind]:
-        data = sb.rpc("att_q3_export", {"p_source": src}, timeout=300) or {}
+        data = (sb.rpc("att_q3_sea_export", {}, timeout=300) if src == "sea"
+                else sb.rpc("att_q3_qcew_export", {"p_ind": src.split(":")[1]}, timeout=300) if src.startswith("qcew:")
+                else sb.rpc("att_q3_export", {"p_source": src}, timeout=300)) or {}
         kept = 0
         for name, obj in sorted(data.items()):
             metric = name.split("|")[1]
@@ -145,7 +153,8 @@ def main() -> int:
                         continue
                     i = int(np.searchsorted(ext, period_of(kind, d)))
                     if i < len(ext) and ext[i] == period_of(kind, d):
-                        y = x if metric in RATE_METRICS else (np.log(x) if x > 0 else np.nan)
+                        y = (x if metric in RATE_METRICS else np.log1p(max(x, 0.0)) if src == "sea"
+                             else (np.log(x) if x > 0 else np.nan))
                         if np.isfinite(y):
                             acc[i] += y
                             cnt[i] += 1
