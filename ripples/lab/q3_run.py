@@ -76,24 +76,46 @@ def main() -> int:
     ap.add_argument("--confirm", default="", help="pre-specified outcomes, '|'-separated: confirmation mode")
     ap.add_argument("--panel", default="pv.npz", help="outcome panel in $LAB_CACHE (pv.npz = Wikipedia; nyt_pv.npz = "
                     "NYT tag coverage). Event curves always come from Wikipedia; the panel sets the day grid.")
+    ap.add_argument("--same-weekday", action="store_true", help="placebo and moved dates keep each event's weekday")
+    ap.add_argument("--min-coverage", type=float, default=0.0,
+                    help="an outcome gets no score for an event when less than this share of its window has data")
     a = ap.parse_args()
     global FAM_FILE
     FAM_FILE = a.families or FAM_FILE
     confirm = [t for t in a.confirm.split("|") if t]
     z = np.load(os.path.join(CD.CACHE, a.panel), allow_pickle=False)
     arts, days = [str(a) for a in z["articles"]], z["days"]
-    lv = np.log1p(z["views"].astype(np.float64))
+    raw = bool(z["raw"]) if "raw" in z.files else False  # pre-transformed panel (econ_panel.py): use values as they are
+    lv = z["views"].astype(np.float64) if raw else np.log1p(z["views"].astype(np.float64))
     A, D = lv.shape
     start = dt.date.fromordinal(int(days[0]))
     end = dt.date.fromordinal(int(days[-1]))
-    x = lv - np.nanmedian(lv, axis=0)
+    x = lv if raw else lv - np.nanmedian(lv, axis=0)
+    fin = np.isfinite(x)
     lo, hi = 364 + 61, D - 121
     rng = np.random.default_rng(SEED)
     pdays = rng.integers(lo, hi, size=N_PLACEBO)
+    adm = np.arange(lo, hi)
+
+    def cstat(d, dc):
+        s = L.couple_diff_stat(x, int(d), dc)
+        if a.min_coverage > 0:
+            cov = fin[:, int(d) + L.CT[0] - 1:int(d) + L.CT[-1] + 1].mean(axis=1)
+            s = np.where(cov >= a.min_coverage, s, np.nan)
+        return s
+
+    def draw(d0, size=None):
+        pool = adm[(adm - d0) % 7 == 0] if a.same_weekday else adm
+        return rng.choice(pool, size=size)
     ztab = np.array([L._NORM.inv_cdf(1 - min(max((1 + k) / (1 + N_PLACEBO), 0.5 / (1 + N_PLACEBO)),
                                              1 - 0.5 / (1 + N_PLACEBO))) for k in range(N_PLACEBO + 1)])
+    ztabn = np.zeros((N_PLACEBO + 1, N_PLACEBO + 1))  # [placebos with a score, placebos at or above] -> z
+    for nf in range(1, N_PLACEBO + 1):
+        for k in range(nf + 1):
+            ztabn[nf, k] = L._NORM.inv_cdf(1 - min(max((1 + k) / (1 + nf), 0.5 / (1 + nf)), 1 - 0.5 / (1 + nf)))
     fams = read_families()
-    report = {"protocol": os.environ.get("Q3_PROTOCOL", "ripples/docs/q3_protocol.md"), "method": "discovery v1 (ledger 1283)", "seed": SEED,
+    report = {"options": {"panel": a.panel, "same_weekday": a.same_weekday, "min_coverage": a.min_coverage},
+              "protocol": os.environ.get("Q3_PROTOCOL", "ripples/docs/q3_protocol.md"), "method": "discovery v1 (ledger 1283)", "seed": SEED,
               "panel": {"file": a.panel, "articles": A, "start": str(start), "end": str(end)}, "families": {}}
     art_idx = {a: k for k, a in enumerate(arts)}
 
@@ -136,11 +158,12 @@ def main() -> int:
                 m["skip"] = "no attention rise"
                 continue
             dc = np.diff(np.concatenate([[0.0], c / mm]))
-            P = np.stack([L.couple_diff_stat(x, int(d), dc) for d in pdays])
+            P = np.stack([cstat(d, dc) for d in (draw(d0, N_PLACEBO) if a.same_weekday else pdays)])
             pm = np.nanmedian(P, axis=0)
             ps = 1.4826 * np.nanmedian(np.abs(P - pm), axis=0)
             ps = np.where(ps > 0, ps, np.nan)
-            m.update(d0=str(start + dt.timedelta(days=d0)), _d0=d0, _dc=dc, _P=P, _pm=pm, _ps=ps)
+            m.update(d0=str(start + dt.timedelta(days=d0)), _d0=d0, _dc=dc, _P=P, _pm=pm, _ps=ps,
+                     _nf=np.isfinite(P).sum(axis=0))
             used.append(m)
         n = len(used)
         # common-shock flag: members whose event days fall within 30 days of another member (a shared shock such as
@@ -156,9 +179,11 @@ def main() -> int:
             continue
 
         def zpair(m, d):
-            s = L.couple_diff_stat(x, int(d), m["_dc"])
+            s = cstat(d, m["_dc"])
             zm = np.clip((s - m["_pm"]) / m["_ps"], -CLIP, CLIP)
-            zr = ztab[(m["_P"] >= s[None, :]).sum(axis=0)]
+            k = (m["_P"] >= s[None, :]).sum(axis=0)
+            # with a coverage rule some placebo dates have no score: rank against the placebos that do
+            zr = ztab[k] if a.min_coverage <= 0 else ztabn[m["_nf"], k]
             return np.nan_to_num(zm), np.where(np.isfinite(s), zr, 0.0)
 
         obs = [zpair(m, m["_d0"]) for m in used]
@@ -169,7 +194,7 @@ def main() -> int:
         NR = np.zeros((N_NULL, n, A), np.float32)
         for w in range(N_NULL):
             for k, m in enumerate(used):
-                NM[w, k], NR[w, k] = zpair(m, rng.integers(lo, hi))
+                NM[w, k], NR[w, k] = zpair(m, draw(m["_d0"]) if a.same_weekday else rng.integers(lo, hi))
         if confirm:
             res = []
             for t in confirm:
