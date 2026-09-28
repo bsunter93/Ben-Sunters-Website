@@ -10,6 +10,7 @@ import datetime as dt
 import json
 import os
 import sys
+import time
 import urllib.parse
 
 import numpy as np
@@ -19,6 +20,7 @@ import cultural_lab as L
 
 SEED = 20260929
 N_PLACEBO, N_NULL, CLIP = 200, 1000, 4.0
+PAUSE = 1.0  # seconds between Wikimedia requests
 FAM_FILE = os.path.join(os.path.dirname(__file__), "..", "corpus", "q3_families_v1.tsv")
 
 
@@ -37,7 +39,9 @@ def cached(kind, title, fetch):
     os.makedirs(d, exist_ok=True)
     f = os.path.join(d, urllib.parse.quote(title, safe="") + ".json")
     if not os.path.exists(f):
-        json.dump(fetch(), open(f, "w"))
+        data = fetch()
+        json.dump(data, open(f, "w"))
+        time.sleep(PAUSE)  # one Wikimedia request at a time with a pause (run of 2026-09-28 was stopped by a 429)
     return json.load(open(f))
 
 
