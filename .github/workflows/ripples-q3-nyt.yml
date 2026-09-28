@@ -1,12 +1,13 @@
-# Ripple Map Q3 NYT lens (ripples/docs/q3_protocol_nyt.md; method discovery v1, ledger 1283): the screen v2 families
-# scored against NYT tag coverage instead of Wikipedia views. Shares the Q3 concurrency group, so it waits for any
+# Ripple Map Q3 other lenses (method discovery v1, ledger 1283): the screen v2 families scored against NYT tag coverage
+# (ripples/docs/q3_protocol_nyt.md, ledger 1290) and daily real-world series (ripples/docs/q3_protocol_econ.md, 1291). Shares the Q3 concurrency group, so it waits for any
 # running Wikipedia Q3 job and then reuses the event views that job cached. Counts only; candidates only.
-name: Ripples Q3 NYT lens
+name: Ripples Q3 other lenses
 
 on:
   push:
     branches: ["claude/**"]
-    paths: ["ripples/lab/nyt_panel.py", "ripples/docs/q3_protocol_nyt.md", ".github/workflows/ripples-q3-nyt.yml"]
+    paths: ["ripples/lab/nyt_panel.py", "ripples/lab/econ_panel.py", "ripples/docs/q3_protocol_nyt.md",
+            "ripples/docs/q3_protocol_econ.md", ".github/workflows/ripples-q3-nyt.yml"]
   workflow_dispatch:
 
 permissions:
@@ -19,11 +20,10 @@ concurrency:
 jobs:
   q3-nyt:
     runs-on: ubuntu-latest
-    timeout-minutes: 180
+    timeout-minutes: 330
     env:
       LAB_CACHE: ${{ github.workspace }}/.cult-cache
       OUT: ${{ github.workspace }}
-      Q3_PROTOCOL: ripples/docs/q3_protocol_nyt.md
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
@@ -51,11 +51,27 @@ jobs:
       - name: Screen v2 families on NYT coverage
         working-directory: ripples/lab
         run: |
-          Q3_OUT="$OUT/q3_screen_v2_nyt.json" python q3_run.py --families ../corpus/q3_families_v2.tsv --redirects \
+          Q3_PROTOCOL=ripples/docs/q3_protocol_nyt.md Q3_OUT="$OUT/q3_screen_v2_nyt.json" python q3_run.py --families ../corpus/q3_families_v2.tsv --redirects \
             --panel nyt_pv.npz
+      - name: Build real-world outcome panel (read-only export, service role)
+        if: always()
+        working-directory: ripples/lab
+        env:
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+        run: python econ_panel.py
+      - name: Screen v2 families on real-world series
+        if: always()
+        working-directory: ripples/lab
+        run: |
+          test -f "$LAB_CACHE/econ_pv.npz" || { echo "econ panel missing"; exit 1; }
+          Q3_PROTOCOL=ripples/docs/q3_protocol_econ.md Q3_OUT="$OUT/q3_screen_v2_econ.json" python q3_run.py \
+            --families ../corpus/q3_families_v2.tsv --redirects --panel econ_pv.npz --same-weekday --min-coverage 0.8
       - uses: actions/upload-artifact@v4
         if: always()
         with:
           name: q3-nyt-results
-          path: q3_screen_v2_nyt.json
+          path: |
+            q3_screen_v2_nyt.json
+            q3_screen_v2_econ.json
           if-no-files-found: ignore

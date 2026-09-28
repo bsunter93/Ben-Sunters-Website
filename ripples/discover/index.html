@@ -110,7 +110,7 @@ dl.how dt{font-weight:700}dl.how dd{margin:0;color:var(--ink-2)}
   </dl>
   <p class="muted">Charts are drawn in your browser from Wikimedia's public pageview API (current article titles only) and
     are illustrations; the tests use the registered data. Protocols: <a href="/ripples/docs/q3_protocol.md">v1</a>,
-    <a href="/ripples/docs/q3_protocol_v2.md">v2</a>, <a href="/ripples/docs/q3_protocol_nyt.md">NYT lens</a>.</p>
+    <a href="/ripples/docs/q3_protocol_v2.md">v2</a>, <a href="/ripples/docs/q3_protocol_nyt.md">NYT lens</a>, <a href="/ripples/docs/q3_protocol_econ.md">real-world lens</a>.</p>
 </main>
 <script>
 (() => {
@@ -245,12 +245,12 @@ dl.how dt{font-weight:700}dl.how dd{margin:0;color:var(--ink-2)}
         <div class="badges">
           <span class="b ok">Fake-date test p = ${fmtP(c.p_both)}</span>
           ${top.loo_stable ? `<span class="b ok">Drop-one stable</span>` : ""}
-          ${c.echo ? `<span class="b warn">Linked from an event (echo)</span>` : `<span class="b ok">Not linked from the events</span>`}
+          ${s.id === "v2econ" ? "" : c.echo ? `<span class="b warn">Linked from an event (echo)</span>` : `<span class="b ok">Not linked from the events</span>`}
           ${clustered ? `<span class="b warn">${clustered} events within 30 days of another</span>` : ""}
         </div>
         ${conf.map((k) => `<p class="muted">${esc(k.label)}: ${k.res ? `p = ${fmtP(k.res.p_mad)} / ${fmtP(k.res.p_rank)} on ${k.res.n} events, <strong class="verdict ${k.res.pass ? "ok" : "no"}">${k.res.pass ? "passed" : "did not pass"}</strong>` : "pending"}</p>`).join("")}
         <details><summary>Evidence</summary>
-          ${s.lens.startsWith("Wikipedia") ? `<div class="chartbox"><p class="muted">Drawing chart…</p></div>` : `<p class="muted">Outcome is an NYT topic tag; charts are drawn for Wikipedia outcomes only.</p>`}
+          ${s.lens.startsWith("Wikipedia") ? `<div class="chartbox"><p class="muted">Drawing chart…</p></div>` : `<p class="muted">Charts are drawn for Wikipedia outcomes only; for this lens see each event's own score below.</p>`}
           ${top.member_z_mad ? bars(members, top.member_z_mad) : ""}
           <p class="muted">Scores: robust ${top.score_mad ?? "–"}, rank ${top.score_rank ?? "–"} (p ${fmtP(top.p_mad)} / ${fmtP(top.p_rank)}).
             <a href="${esc(s.protocol)}">Protocol</a> · ledger ${esc((s.ledger || []).join(", "))}</p>
