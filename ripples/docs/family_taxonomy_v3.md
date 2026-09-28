@@ -100,3 +100,12 @@ The owner's validation pack (`ripples/corpus/validation_pack_1.csv`, 91 rows) is
   - more held-out premieres (15-20 would give the confirmation real power);
   - exact dates for the 7 flagged rows (WeWork, Peloton, Stanley, Robinhood, D&D, mukbang, Dalgona coffee);
   - held-out events for Q4 v1b's science and news families.
+
+## Update 2026-09-28: owner validation pack 2
+
+- **Held-out dramas: 13.** Five of pack 2's 20 premieres were new to the corpus (`q4_protocol_v1.md`, addendum 2).
+  The other 15 were already in the owner batch or the held-out set.
+- **Most useful next:** held-out events must be new to every corpus file, so checking against
+  `events_taxonomy_batch1.csv` first helps. For a science or news confirmation set, 12-15 distinct events of the same
+  kinds as the family (AI, biotech and space for science; sport, business and civic for news), one date per event and
+  spread over years.

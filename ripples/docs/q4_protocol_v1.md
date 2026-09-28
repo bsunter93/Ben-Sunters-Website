@@ -101,3 +101,37 @@ held-out drama premieres. The statistic, test, correction rule and politeness ru
 
 The Q4 workflow runs v1, then v1b, then the held-out set, in one job. Any refusal (403/429/5xx) stops all three for
 the day.
+
+## Addendum 2 (registered 2026-09-28, ledger 1370, before Q4 v1 or anything in addendum 1 has run)
+
+The owner's second validation pack (`ripples/corpus/validation_pack_2.csv`, 47 rows) was checked against every
+corpus file.
+
+- **Held-out dramas: 8 → 13.** Five premieres are new to the corpus and join `q4_heldout_drama_v1.tsv`:
+
+  | Premiere | Subject |
+  |---|---|
+  | The Investigation | Murder of Kim Wall |
+  | The Billion Dollar Code | Terravision (computer program) |
+  | Inventing Anna | Anna Sorokin |
+  | Manhunt | Assassination of Abraham Lincoln |
+  | Transatlantic | Varian Fry |
+
+  The confirmation rule is unchanged.
+- **Dramas left out:**
+  - 13 are already in the owner batch (T ids), so they are not held out. Nine of them are in Q4 v1's drama family.
+    Patrick Melrose, The Plot Against America, All the Light We Cannot See and The Essex Serpent were left out of v1
+    for broad subjects.
+  - A Very English Scandal and A Gentleman in Moscow are already in the held-out set.
+- **Not registered (kept for later):**
+  - **Held-out science (10 rows):** only four missions (Blue Ghost, SPHEREx, Axiom-4, NISAR), all space and all
+    in 2025, with 2-3 dated rows each. The moved-date null treats events as independent, so repeated rows from one
+    mission would overstate the evidence. Four missions are also too few, and q4b_science_tech_subjects mixes AI,
+    biology and space.
+  - **Held-out news (10 rows):** these are disasters, while q4b_news_subjects is sport, business and civic events,
+    so they cannot confirm it. Two are also already in screens: the Key Bridge collapse (v2) and the 2025 Myanmar
+    earthquake (v3). The other eight may seed a future disaster-subject family.
+  - **Date resolutions (7 rows):**
+    - WeWork and mukbang have no defensible day.
+    - Peloton (2013), Robinhood (2015) and D&D 5e (2014) are before the window.
+    - For Stanley and Dalgona coffee, the named subject is the event's own article, so there is no separate outcome.
