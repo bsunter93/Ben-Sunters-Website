@@ -7,6 +7,7 @@ finding: results are candidates for a separately registered confirmation.
 from __future__ import annotations
 
 import datetime as dt
+import hashlib
 import json
 import os
 import sys
@@ -37,7 +38,10 @@ def read_families():
 def cached(kind, title, fetch):
     d = os.path.join(CD.CACHE, kind)
     os.makedirs(d, exist_ok=True)
-    f = os.path.join(d, urllib.parse.quote(title, safe="") + ".json")
+    name = urllib.parse.quote(title, safe="")
+    if len(name) > 200:  # Linux allows 255 bytes; long non-Latin titles are keyed by a hash instead
+        name = "md5-" + hashlib.md5(title.encode("utf-8")).hexdigest()
+    f = os.path.join(d, name + ".json")
     if not os.path.exists(f):
         data = fetch()
         json.dump(data, open(f, "w"))
