@@ -3,6 +3,7 @@
 # daily extras, weekly and monthly panels (ripples/docs/q3_protocol_more.md, 1294) and library checkouts
 # (ripples/docs/q3_protocol_wide.md). Each lens runs even if another fails. Shares the Q3 concurrency group, so it waits for any
 # running Wikipedia Q3 job and then reuses the event views that job cached. Counts only; candidates only.
+# Started after the Wikipedia screen v2 re-run (run 36379602815) finished; first run on the fixed code.
 name: Ripples Q3 other lenses
 
 on:
