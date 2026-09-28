@@ -99,6 +99,13 @@ jobs:
           Q3_PROTOCOL=ripples/docs/q3_protocol_wide.md Q3_OUT="$OUT/q3_screen_v2_wide.json" python q3_run.py \
             --families ../corpus/q3_families_v2.tsv --redirects --panel pv_l4.npz
           touch "$GITHUB_WORKSPACE/.l4-cache/wide_screen_done"
+      - name: Store report
+        if: steps.gate.outputs.run == '1'
+        working-directory: ripples/lab
+        env:
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+        run: python q3_upload.py "$OUT/q3_screen_v2_wide.json"
       - uses: actions/cache/save@v4
         if: steps.gate.outputs.run == '1'
         with:

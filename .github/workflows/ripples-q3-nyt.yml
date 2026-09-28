@@ -3,7 +3,7 @@
 # daily extras, weekly and monthly panels (ripples/docs/q3_protocol_more.md, 1294) and library checkouts
 # (ripples/docs/q3_protocol_wide.md). Each lens runs even if another fails. Shares the Q3 concurrency group, so it waits for any
 # running Wikipedia Q3 job and then reuses the event views that job cached. Counts only; candidates only.
-# Started after the Wikipedia screen v2 re-run (run 36379602815) finished; first run on the fixed code.
+# Re-run 2026-09-28 06:3x with report storage (run 36385680439 finished but its log was truncated to the last lens).
 name: Ripples Q3 other lenses
 
 on:
@@ -141,6 +141,13 @@ jobs:
           test -f "$LAB_CACHE/county_pv.npz" || { echo "county panel missing"; exit 1; }
           Q3_PROTOCOL=ripples/docs/q3_protocol_county.md Q3_OUT="$OUT/q3_screen_v2_county.json" python q3_run.py \
             --families ../corpus/q3_families_v2.tsv --redirects --panel county_pv.npz --min-coverage 0.8
+      - name: Store reports (Supabase results table; the log API truncates long logs)
+        if: always()
+        working-directory: ripples/lab
+        env:
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+        run: python q3_upload.py "$OUT"/q3_screen_v2_*.json
       - uses: actions/cache/save@v4
         if: always()
         with:

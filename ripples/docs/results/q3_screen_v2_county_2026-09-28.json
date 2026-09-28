@@ -1,0 +1,3468 @@
+{
+ "options": {
+  "panel": "county_pv.npz",
+  "same_weekday": false,
+  "min_coverage": 0.8,
+  "step": 30
+ },
+ "protocol": "ripples/docs/q3_protocol_county.md",
+ "method": "discovery v1 (ledger 1283)",
+ "seed": 20260929,
+ "panel": {
+  "file": "county_pv.npz",
+  "articles": 6455,
+  "start": "2015-07-01",
+  "end": "2026-08-01"
+ },
+ "families": {
+  "streaming_hits": {
+   "members": [
+    {
+     "id": "E583",
+     "article": "Ted Lasso",
+     "day0": "2020-08-14",
+     "titles_used": 38,
+     "d0": "2020-08-01"
+    },
+    {
+     "id": "E582",
+     "article": "The Queen's Gambit (miniseries)",
+     "day0": "2020-10-23",
+     "titles_used": 4,
+     "d0": "2020-10-01"
+    },
+    {
+     "id": "E581",
+     "article": "Bridgerton",
+     "day0": "2020-12-25",
+     "titles_used": 40,
+     "d0": "2020-12-01"
+    },
+    {
+     "id": "E589",
+     "article": "WandaVision",
+     "day0": "2021-01-15",
+     "titles_used": 14,
+     "d0": "2021-01-01"
+    },
+    {
+     "id": "E580",
+     "article": "Squid Game",
+     "day0": "2021-09-17",
+     "titles_used": 25,
+     "d0": "2021-09-01"
+    },
+    {
+     "id": "E586",
+     "article": "Arcane (TV series)",
+     "day0": "2021-11-06",
+     "titles_used": 11,
+     "d0": "2021-11-01"
+    },
+    {
+     "id": "E587",
+     "article": "The Mandalorian",
+     "day0": "2019-11-12",
+     "titles_used": 12,
+     "d0": "2019-11-01"
+    },
+    {
+     "id": "E584",
+     "article": "The Last of Us (TV series)",
+     "day0": "2023-01-15",
+     "titles_used": 9,
+     "d0": "2023-01-01"
+    },
+    {
+     "id": "E585",
+     "article": "Fallout (American TV series)",
+     "day0": "2024-04-10",
+     "titles_used": 7,
+     "d0": "2024-04-01"
+    }
+   ],
+   "n_used": 9,
+   "clustered_members": [
+    "E580",
+    "E581",
+    "E582",
+    "E583",
+    "E584",
+    "E585",
+    "E586",
+    "E587",
+    "E589"
+   ],
+   "min_p_both": 0.7492507492507493,
+   "top": [
+    {
+     "article": "County finance jobs (FIPS 20161)",
+     "score_mad": 4.541,
+     "score_rank": 2.997,
+     "p_mad": 0.6344,
+     "p_rank": 0.7493,
+     "loo_stable": false,
+     "echo": false,
+     "member_z_mad": [
+      0.72,
+      1.4,
+      3.3,
+      4.0,
+      0.38,
+      0.01,
+      1.02,
+      1.71,
+      1.09
+     ]
+    },
+    {
+     "article": "County finance jobs (FIPS 39091)",
+     "score_mad": 4.821,
+     "score_rank": 2.91,
+     "p_mad": 0.4865,
+     "p_rank": 0.8292,
+     "loo_stable": false,
+     "echo": false,
+     "member_z_mad": [
+      4.0,
+      2.51,
+      1.21,
+      1.9,
+      -1.69,
+      0.36,
+      1.79,
+      4.0,
+      0.38
+     ]
+    },
+    {
+     "article": "County finance jobs (FIPS 36071)",
+     "score_mad": 4.078,
+     "score_rank": 3.157,
+     "p_mad": 0.8651,
+     "p_rank": 0.5974,
+     "loo_stable": false,
+     "echo": false,
+     "member_z_mad": [
+      1.24,
+      0.72,
+      3.35,
+      1.98,
+      1.02,
+      1.42,
+      0.86,
+      1.46,
+      0.17
+     ]
+    },
+    {
+     "article": "County jobs (FIPS 30079)",
+     "score_mad": 4.285,
+     "score_rank": 2.748,
+     "p_mad": 0.7772,
+     "p_rank": 0.9281,
+     "loo_stable": false,
+     "echo": false,
+     "member_z_mad": [
+      0.0,
+      -0.35,
+      1.9,
+      2.5,
+      0.91,
+      -0.28,
+      3.15,
+      4.0,
+      1.04
+     ]
+    },
+    {
+     "article": "County finance jobs (FIPS 12013)",
+     "score_mad": 4.05,
+     "score_rank": 2.734,
+     "p_mad": 0.8731,
+     "p_rank": 0.9351,
+     "loo_stable": false,
+     "echo": false,
+     "member_z_mad": [
+      0.43,
+      0.95,
+      3.15,
+      3.7,
+      0.54,
+      0.7,
+      0.85,
+      0.69,
+      1.14
+     ]
+    },
+    {
+     "article": "County finance jobs (FIPS 28089)",
+     "score_mad": 3.978,
+     "score_rank": 2.618,
+     "p_mad": 0.9021,
+     "p_rank": 0.967,
+     "loo_stable": false,
+     "echo": false,
+     "member_z_mad": [
+      0.46,
+      1.39,
+      2.18,
+      1.4,
+      0.48,
+      0.96,
+      -2.74,
+      4.0,
+      3.8
+     ]
+    },
+    {
+     "article": "County jobs (FIPS 48465)",
+     "score_mad": 3.652,
+     "score_rank": 2.607,
+     "p_mad": 0.968,
+     "p_rank": 0.97,
+     "loo_stable": false,
+     "echo": false,
+     "member_z_mad": [
+      0.4,
+      1.42,
+      -0.38,
+      -0.68,
+      1.35,
+      -0.03,
+      2.14,
+      4.0,
+      2.76
+     ]
+    },
+    {
+     "article": "County finance jobs (FIPS 42027)",
+     "score_mad": 3.595,
+     "score_rank": 2.606,
+     "p_mad": 0.977,
+     "p_rank": 0.97,
+     "loo_stable": false,
+     "echo": false,
+     "member_z_mad": [
+      1.98,
+      -0.43,
+      1.31,
+      2.6,
+      3.93,
+      0.3,
+      1.21,
+      -0.72,
+      0.61
+     ]
+    },
+    {
+     "article": "County jobs (FIPS 13301)",
+     "score_mad": 4.899,
+     "score_rank": 2.573,
+     "p_mad": 0.4565,
+     "p_rank": 0.981,
+     "loo_stable": false,
+     "echo": false,
+     "member_z_mad": [
+      1.08,
+      3.54,
+      -0.34,
+      -0.37,
+      0.12,
+      2.51,
+      4.0,
+      4.0,
+      0.16
+     ]
+    },
+    {
+     "article": "County finance jobs (FIPS 41053)",
+     "score_mad": 3.564,
+     "score_rank": 2.927,
+     "p_mad": 0.981,
+     "p_rank": 0.8182,
+     "loo_stable": false,
+     "echo": false,
+     "member_z_mad": [
+      1.93,
+      0.8,
+      1.61,
+      2.47,
+      1.05,
+      -0.02,
+      -0.39,
+      3.26,
+      -0.02
+     ]
+    }
+   ]
+  },
+  "films_blockbusters": {
+   "members": [
+    {
+     "id": "E099",
+     "article": "Black Panther (film)",
+     "day0": "2018-02-16",
+     "titles_used": 12,
+     "d0": "2018-02-01"
+    },
+    {
+     "id": "E557",
+     "article": "Avengers: Infinity War",
+     "day0": "2018-04-27",
+     "titles_used": 47,
+     "d0": "2018-04-01"
+    },
+    {
+     "id": "E565",
+     "article": "Spider-Man: Into the Spider-Verse",
+     "day0": "2018-12-14",
+     "titles_used": 22,
+     "d0": "2018-12-01"
+    },
+    {
+     "id": "E558",
+     "article": "Avengers: Endgame",
+     "day0": "2019-04-26",
+     "titles_used": 45,
+     "d0": "2019-04-01"
+    },
+    {
+     "id": "E559",
+     "article": "Joker (2019 film)",
+     "day0": "2019-10-04",
+     "titles_used": 10,
+     "d0": "2019-10-01"
+    },
+    {
+     "id": "E568",
+     "article": "Dune (2021 film)",
+     "day0": "2021-10-22",
+     "titles_used": 14,
+     "d0": "2021-10-01"
+    },
+    {
+     "id": "E566",
+     "article": "Spider-Man: No Way Home",
+     "day0": "2021-12-17",
+     "titles_used": 21,
+     "d0": "2021-12-01"
+    },
+    {
+     "id": "E567",
+     "article": "Top Gun: Maverick",
+     "day0": "2022-05-27",
+     "titles_used": 55,
+     "d0": "2022-05-01"
+    },
+    {
+     "id": "E100",
+     "article": "Barbenheimer",
+     "day0": "2023-07-21",
+     "titles_used": 17,
+     "d0": "2023-07-01"
+    },
+    {
+     "id": "E569",
+     "article": "Dune: Part Two",
+     "day0": "2024-03-01",
+     "titles_used": 9,
+     "d0": "2024-03-01"
+    }
+   ],
+   "n_used": 10,
+   "clustered_members": [
+    "E099",
+    "E100",
+    "E557",
+    "E558",
+    "E559",
+    "E565",
+    "E566",
+    "E567",
+    "E568",
+    "E569"
+   ],
+   "min_p_both": 0.9600399600399601,
+   "top": [
+    {
+     "article": "County finance jobs (FIPS 51735)",
+     "score_mad": 3.74,
+     "score_rank": 3.199,
+     "p_mad": 0.96,
+     "p_rank": 0.5654,
+     "loo_stable": false,
+     "echo": false,
+     "member_z_mad": [
+      0.72,
+      1.99,
+      1.27,
+      0.85,
+      0.67,
+      -0.12,
+      1.22,
+      1.06,
+      2.98,
+      1.2
+     ]
+    },
+    {
+     "article": "County finance jobs (FIPS 46999)",
+     "score_mad": 3.82,
+     "score_rank": 2.537,
+     "p_mad": 0.9451,
+     "p_rank": 0.988,
+     "loo_stable": false,
+     "echo": false,
+     "member_z_mad": [
+      0.43,
+      1.23,
+      0.0,
+      0.59,
+      0.56,
+      4.0,
+      2.6,
+      0.63,
+      0.29,
+      1.76
+     ]
+    },
+    {
+     "article": "County jobs (FIPS 53013)",
+     "score_mad": 2.963,
+     "score_rank": 2.454,
+     "p_mad": 0.999,
+     "p_rank": 0.998,
+     "loo_stable": false,
+     "echo": false,
+     "member_z_mad": [
+      0.15,
+      -0.22,
+      0.81,
+      0.91,
+      1.23,
+      1.45,
+      -0.7,
+      2.3,
+      1.77,
+      1.67
+     ]
+    },
+    {
+     "article": "County jobs (FIPS 48255)",
+     "score_mad": 3.794,
+     "score_rank": 2.255,
+     "p_mad": 0.954,
+     "p_rank": 1.0,
+     "loo_stable": false,
+     "echo": false,
+     "member_z_mad": [
+      -1.05,
+      1.53,
+      3.12,
+      0.29,
+      0.32,
+      -0.01,
+      0.44,
+      2.47,
+      4.0,
+      0.89
+     ]
+    },
+    {
+     "article": "County finance jobs (FIPS 05061)",
+     "score_mad": 3.649,
+     "score_rank": 1.96,
+     "p_mad": 0.976,
+     "p_rank": 1.0,
+     "loo_stable": false,
+     "echo": false,
+     "member_z_mad": [
+      -1.09,
+      1.68,
+      0.93,
+      0.29,
+      0.31,
+      -1.37,
+      4.0,
+      1.69,
+      2.72,
+      2.36
+     ]
+    },
+    {
+     "article": "County finance jobs (FIPS 48387)",
+     "score_mad": 3.453,
+     "score_rank": 2.019,
+     "p_mad": 0.99,
+     "p_rank": 1.0,
+     "loo_stable": false,
+     "echo": false,
+     "member_z_mad": [
+      0.87,
+      -0.11,
+      0.61,
+      0.78,
+      -0.01,
+      4.0,
+      4.0,
+      1.95,
+      -0.79,
+      -0.38
+     ]
+    },
+    {
+     "article": "County finance jobs (FIPS 27087)",
+     "score_mad": 3.447,
+     "score_rank": 1.806,
+     "p_mad": 0.991,
+     "p_rank": 1.0,
+     "loo_stable": false,
+     "echo": false,
+     "member_z_mad": [
+      0.09,
+      -1.42,
+      4.0,
+      0.4,
+      -1.01,
+      0.62,
+      -0.17,
+      4.0,
+      4.0,
+      0.39
+     ]
+    },
+    {
+     "article": "County jobs (FIPS 40043)",
+     "score_mad": 3.342,
+     "score_rank": 2.059,
+     "p_mad": 0.994,
+     "p_rank": 1.0,
+     "loo_stable": false,
+     "echo": false,
+     "member_z_mad": [
+      2.53,
+      2.05,
+      1.99,
+      2.95,
+      -1.45,
+      0.08,
+      -0.72,
+      1.73,
+      1.41,
+      -0.0
+     ]
+    },
+    {
+     "article": "County finance jobs (FIPS 35041)",
+     "score_mad": 3.156,
+     "score_rank": 2.327,
+     "p_mad": 0.999,
+     "p_rank": 1.0,
+     "loo_stable": false,
+     "echo": false,
+     "member_z_mad": [
+      2.21,
+      -0.44,
+      -0.5,
+      -0.47,
+      0.72,
+      0.24,
+      2.49,
+      2.34,
+      3.56,
+      -0.17
+     ]
+    },
+    {
+     "article": "County finance jobs (FIPS 22093)",
+     "score_mad": 3.103,
+     "score_rank": 2.178,
+     "p_mad": 0.999,
+     "p_rank": 1.0,
+     "loo_stable": false,
+     "echo": false,
+     "member_z_mad": [
+      -0.78,
+      0.14,
+      1.83,
+      -0.13,
+      0.34,
+      2.04,
+      4.0,
+      -0.39,
+      1.46,
+      1.3
+     ]
+    }
+   ]
+  },
+  "films_awards": {
+   "members": [
+    {
+     "id": "E554",
+     "article": "La La Land",
+     "day0": "2016-12-09",
+     "titles_used": 13,
+     "d0": "2016-12-01",
+     "_d0": 17,
+     "_dc": "[ 0.11800501  0.50574102  0.37625397 -0.13606126 -0.3254986 ]",
+     "_P": "[[-1.36609180e-02  8.36888978e-03 -3.31262920e-02 ...  3.12941295e-02\n   2.05333489e-01  2.06790168e-02]\n [ 5.69550673e-02  1.30920927e-01  4.23912716e-02 ... -2.22067479e-02\n   2.74032918e-01  9.45995863e-02]\n [ 1.64226167e-02  1.59110163e-02  6.65019511e-02 ...             nan\n              nan -8.45267404e-03]\n ...\n [ 3.40363042e-02  5.93342569e-03 -1.57374199e-02 ... -2.06633242e-02\n  -2.83455707e-01 -7.42940638e-02]\n [ 1.84716304e-02  8.89198308e-03  1.05257196e-03 ...  1.10963691e-02\n   5.46021384e-02 -1.10378410e-02]\n [ 7.49273268e-03  2.34540022e-04 -9.36788507e-03 ...  2.35898493e-02\n  -2.43755054e-02 -1.39841536e-02]]",
+     "_pm": "[ 0.00194169  0.003118    0.0010461  ...  0.00256897  0.01199955\n -0.00063212]",
+     "_ps": "[0.01195031 0.01011685 0.01516198 ... 0.0248392  0.07942264 0.02882195]",
+     "_nf": "[196 196 196 ... 150 150 196]"
+    },
+    {
+     "id": "E555",
+     "article": "Get Out",
+     "day0": "2017-02-24",
+     "titles_used": 14,
+     "d0": "2017-02-01",
+     "_d0": 19,
+     "_dc": "[ 0.17439599  0.74373808  0.08186594 -0.28476155  0.06497201]",
+     "_P": "[[-2.78304393e-03  1.55207957e-02 -4.86664410e-03 ... -1.17890025e-02\n   9.20921131e-02 -2.59981911e-03]\n [-3.82146223e-02 -2.84479432e-03 -4.07798082e-02 ... -1.89769872e-02\n   2.22752818e-01  3.07792036e-02]\n [ 1.08443972e-02  6.90669469e-03  7.56175949e-03 ...             nan\n              nan  3.69004939e-02]\n ...\n [ 4.58095167e-02  3.37282344e-04 -8.04961364e-03 ... -1.55280621e-02\n  -3.55957436e-01 -8.77121898e-02]\n [ 1.15745557e-02  1.07464215e-02  1.35412792e-02 ...  3.80936528e-02\n   8.65183441e-02  1.71244034e-04]\n [ 5.67186696e-03  5.87098949e-03 -1.95049874e-02 ... -5.48762734e-03\n  -6.54412174e-02 -1.24654877e-02]]",
+     "_pm": "[ 0.00123192  0.00027742 -0.00076926 ... -0.00096845  0.01094169\n  0.00122532]",
+     "_ps": "[0.01200427 0.01032555 0.01683293 ... 0.02716824 0.06348652 0.02798406]",
+     "_nf": "[196 196 196 ... 150 150 196]"
+    },
+    {
+     "id": "E560",
+     "article": "Parasite (2019 film)",
+     "day0": "2020-02-09",
+     "titles_used": 9,
+     "skip": "no attention rise"
+    },
+    {
+     "id": "E561",
+     "article": "Everything Everywhere All at Once",
+     "day0": "2022-03-25..2023-03-31",
+     "titles_used": 28,
+     "skip": "no attention rise"
+    }
+   ],
+   "note": "fewer than 3 usable members; not tested"
+  },
+  "games": {
+   "members": [
+    {
+     "id": "E605",
+     "article": "The Legend of Zelda: Breath of the Wild",
+     "day0": "2017-03-03",
+     "titles_used": 47,
+     "d0": "2017-03-01"
+    },
+    {
+     "id": "E137",
+     "article": "Fortnite Battle Royale",
+     "day0": "2017-09-26",
+     "titles_used": 21,
+     "skip": "too few views around the event"
+    },
+    {
+     "id": "E613",
+     "article": "Animal Crossing: New Horizons",
+     "day0": "2020-03-20",
+     "titles_used": 27,
+     "d0": "2020-03-01"
+    },
+    {
+     "id": "E612",
+     "article": "Fall Guys",
+     "day0": "2020-08-04",
+     "titles_used": 9,
+     "d0": "2020-08-01"
+    },
+    {
+     "id": "E622",
+     "article": "Hades (video game)",
+     "day0": "2020-09-17",
+     "titles_used": 5,
+     "d0": "2020-09-01"
+    },
+    {
+     "id": "E615",
+     "article": "Genshin Impact",
+     "day0": "2020-09-28",
+     "titles_used": 15,
+     "d0": "2020-09-01"
+    },
+    {
+     "id": "E616",
+     "article": "Cyberpunk 2077",
+     "day0": "2020-12-10",
+     "titles_used": 17,
+     "skip": "no attention rise"
+    },
+    {
+     "id": "E140",
+     "article": "Wordle",
+     "day0": "2021-12-15..2022-02-28",
+     "titles_used": 12,
+     "d0": "2022-02-01"
+    },
+    {
+     "id": "E141",
+     "article": "Elden Ring",
+     "day0": "2022-02-25",
+     "titles_used": 15,
+     "d0": "2022-02-01"
+    },
+    {
+     "id": "E142",
+     "article": "Baldur's Gate 3",
+     "day0": "2023-08-03",
+     "titles_used": 15,
+     "d0": "2023-08-01"
+    },
+    {
+     "id": "E619",
+     "article": "Palworld",
+     "day0": "2024-01-19",
+     "titles_used": 14,
+     "d0": "2024-01-01"
+    },
+    {
+     "id": "E620",
+     "article": "Helldivers 2",
+     "day0": "2024-02-08",
+     "titles_used": 5,
+     "d0": "2024-02-01"
+    },
+    {
+     "id": "E621",
+     "article": "Black Myth: Wukong",
+     "day0": "2024-08-20",
+     "titles_used": 4,
+     "d0": "2024-08-01"
+    }
+   ],
+   "n_used": 11,
+   "clustered_members": [
+    "E140",
+    "E141",
+    "E142",
+    "E612",
+    "E613",
+    "E615",
+    "E619",
+    "E620",
+    "E621",
+    "E622"
+   ],
+   "min_p_both": 0.7012987012987013,
+   "top": [
+    {
+     "article": "County finance jobs (FIPS 01131)",
+     "score_mad": 4.682,
+     "score_rank": 3.104,
+     "p_mad": 0.6124,
+     "p_rank": 0.7013,
+     "loo_stable": false,
+     "echo": false,
+     "member_z_mad": [
+      2.24,
+      0.47,
+      0.28,
+      1.01,
+      0.76,
+      1.52,
+      1.38,
+      1.33,
+      4.0,
+      4.0,
+      -1.46
+     ]
+    },
+    {
+     "article": "County finance jobs (FIPS 26047)",
+     "score_mad": 4.403,
+     "score_rank": 3.691,
+     "p_mad": 0.7512,
+     "p_rank": 0.1878,
+     "loo_stable": false,
+     "echo": false,
+     "member_z_mad": [
+      2.69,
+      -0.36,
+      0.61,
+      1.66,
+      0.85,
+      1.61,
+      0.05,
+      1.16,
+      3.19,
+      1.87,
+      1.27
+     ]
+    },
+    {
+     "article": "County finance jobs (FIPS 72101)",
+     "score_mad": 4.5,
+     "score_rank": 2.617,
+     "p_mad": 0.6923,
+     "p_rank": 0.98,
+     "loo_stable": false,
+     "echo": false,
+     "member_z_mad": [
+      -0.58,
+      -0.32,
+      -0.71,
+      3.1,
+      2.34,
+      4.0,
+      0.9,
+      -0.13,
+      3.94,
+      1.98,
+      0.4
+     ]
+    },
+    {
+     "article": "County jobs (FIPS 48305)",
+     "score_mad": 3.535,
+     "score_rank": 2.682,
+     "p_mad": 0.985,
+     "p_rank": 0.965,
+     "loo_stable": false,
+     "echo": false,
+     "member_z_mad": [
+      0.4,
+      1.21,
+      0.44,
+      -0.81,
+      -0.18,
+      4.0,
+      1.13,
+      0.58,
+      2.79,
+      1.51,
+      0.64
+     ]
+    },
+    {
+     "article": "County finance jobs (FIPS 17095)",
+     "score_mad": 4.192,
+     "score_rank": 2.591,
+     "p_mad": 0.8541,
+     "p_rank": 0.986,
+     "loo_stable": false,
+     "echo": false,
+     "member_z_mad": [
+      1.16,
+      1.55,
+      -0.93,
+      2.47,
+      3.03,
+      4.0,
+      2.04,
+      -0.0,
+      0.14,
+      -0.25,
+      0.7
+     ]
+    },
+    {
+     "article": "County finance jobs (FIPS 27147)",
+     "score_mad": 4.123,
+     "score_rank": 2.487,
+     "p_mad": 0.8841,
+     "p_rank": 0.995,
+     "loo_stable": false,
+     "echo": false,
+     "member_z_mad": [
+      0.24,
+      -1.74,
+      0.0,
+      0.08,
+      0.89,
+      4.0,
+      4.0,
+      1.4,
+      4.0,
+      1.31,
+      -0.51
+     ]
+    },
+    {
+     "article": "County finance jobs (FIPS 42059)",
+     "score_mad": 3.423,
+     "score_rank": 2.699,
+     "p_mad": 0.995,
+     "p_rank": 0.957,
+     "loo_stable": false,
+     "echo": false,
+     "member_z_mad": [
+      1.18,
+      2.07,
+      -0.92,
+      1.23,
+      0.65,
+      3.47,
+      0.98,
+      1.54,
+      -0.19,
+      0.57,
+      0.76
+     ]
+    },
+    {
+     "article": "County jobs (FIPS 22047)",
+     "score_mad": 3.371,
+     "score_rank": 2.995,
+     "p_mad": 0.995,
+     "p_rank": 0.8032,
+     "loo_stable": false,
+     "echo": false,
+     "member_z_mad": [
+      0.29,
+      0.03,
+      0.0,
+      3.13,
+      1.41,
+      0.69,
+      -0.02,
+      1.93,
+      1.1,
+      0.97,
+      1.65
+     ]
+    },
+    {
+     "article": "County finance jobs (FIPS 34011)",
+     "score_mad": 3.343,
+     "score_rank": 2.443,
+     "p_mad": 0.995,
+     "p_rank": 0.997,
+     "loo_stable": false,
+     "echo": false,
+     "member_z_mad": [
+      2.02,
+      -0.09,
+      1.79,
+      0.2,
+      1.49,
+      2.35,
+      -0.35,
+      0.21,
+      2.15,
+      1.31,
+      0.0
+     ]
+    },
+    {
+     "article": "County jobs (FIPS 22029)",
+     "score_mad": 3.304,
+     "score_rank": 2.799,
+     "p_mad": 0.997,
+     "p_rank": 0.9231,
+     "loo_stable": false,
+     "echo": false,
+     "member_z_mad": [
+      1.17,
+      -0.36,
+      1.4,
+      1.89,
+      0.91,
+      2.14,
+      0.73,
+      -0.32,
+      1.08,
+      -0.61,
+      2.92
+     ]
+    }
+   ]
+  },
+  "platform_launches": {
+   "members": [
+    {
+     "id": "E651",
+     "article": "Vine (service)",
+     "day0": "2016-10-27",
+     "titles_used": 16,
+     "d0": "2016-10-01"
+    },
+    {
+     "id": "E655",
+     "article": "TikTok",
+     "day0": "2018-08-02",
+     "titles_used": 49,
+     "d0": "2018-08-01"
+    },
+    {
+     "id": "E594",
+     "article": "Disney+",
+     "day0": "2019-11-12",
+     "titles_used": 20,
+     "d0": "2019-11-01"
+    },
+    {
+     "id": "E595",
+     "article": "HBO Max",
+     "day0": "2020-05-27",
+     "titles_used": 50,
+     "d0": "2020-05-01"
+    },
+    {
+     "id": "E596",
+     "article": "Peacock (streaming service)",
+     "day0": "2020-07-15",
+     "titles_used": 16,
+     "d0": "2020-07-01"
+    },
+    {
+     "id": "E665",
+     "article": "Clubhouse (app)",
+     "day0": "2021-01-15..2021-03-15",
+     "titles_used": 1,
+     "d0": "2021-02-01"
+    },
+    {
+     "id": "E664",
+     "article": "BeReal",
+     "day0": "2022-06-01..2022-09-30",
+     "titles_used": 3,
+     "d0": "2022-09-01"
+    }
+   ],
+   "n_used": 7,
+   "clustered_members": [
+    "E594",
+    "E595",
+    "E596",
+    "E651",
+    "E655",
+    "E664",
+    "E665"
+   ],
+   "min_p_both": 0.4035964035964036,
+   "top": [
+    {
+     "article": "County jobs (FIPS 48107)",
+     "score_mad": 4.963,
+     "score_rank": 3.421,
+     "p_mad": 0.4036,
+     "p_rank": 0.3007,
+     "loo_stable": false,
+     "echo": false,
+     "member_z_mad": [
+      0.18,
+      0.55,
+      2.86,
+      2.35,
+      1.08,
+      3.55,
+      2.56
+     ]
+    },
+    {
+     "article": "County finance jobs (FIPS 29043)",
+     "score_mad": 4.233,
+     "score_rank": 3.658,
+     "p_mad": 0.8162,
+     "p_rank": 0.1269,
+     "loo_stable": false,
+     "echo": false,
+     "member_z_mad": [
+      1.67,
+      1.5,
+      1.38,
+      0.84,
+      2.21,
+      -0.26,
+      3.87
+     ]
+    },
+    {
+     "article": "County finance jobs (FIPS 48401)",
+     "score_mad": 4.163,
+     "score_rank": 2.7,
+     "p_mad": 0.8511,
+     "p_rank": 0.9331,
+     "loo_stable": false,
+     "echo": false,
+     "member_z_mad": [
+      3.75,
+      1.38,
+      2.1,
+      0.34,
+      1.03,
+      2.35,
+      0.06
+     ]
+    },
+    {
+     "article": "County jobs (FIPS 51595)",
+     "score_mad": 4.203,
+     "score_rank": 2.535,
+     "p_mad": 0.8342,
+     "p_rank": 0.985,
+     "loo_stable": false,
+     "echo": false,
+     "member_z_mad": [
+      3.27,
+      0.35,
+      1.14,
+      -0.29,
+      4.0,
+      1.66,
+      1.0
+     ]
+    },
+    {
+     "article": "County finance jobs (FIPS 27103)",
+     "score_mad": 4.287,
+     "score_rank": 2.467,
+     "p_mad": 0.7932,
+     "p_rank": 0.992,
+     "loo_stable": false,
+     "echo": false,
+     "member_z_mad": [
+      -0.1,
+      0.84,
+      0.88,
+      2.56,
+      3.84,
+      2.28,
+      1.05
+     ]
+    },
+    {
+     "article": "County jobs (FIPS 02198)",
+     "score_mad": 3.511,
+     "score_rank": 2.897,
+     "p_mad": 0.993,
+     "p_rank": 0.8182,
+     "loo_stable": false,
+     "echo": false,
+     "member_z_mad": [
+      1.95,
+      1.07,
+      2.0,
+      2.83,
+      0.43,
+      0.95,
+      0.07
+     ]
+    },
+    {
+     "article": "County finance jobs (FIPS 19017)",
+     "score_mad": 3.507,
+     "score_rank": 2.987,
+     "p_mad": 0.993,
+     "p_rank": 0.7373,
+     "loo_stable": false,
+     "echo": false,
+     "member_z_mad": [
+      2.65,
+      0.76,
+      2.19,
+      0.6,
+      1.22,
+      1.09,
+      0.77
+     ]
+    },
+    {
+     "article": "County finance jobs (FIPS 29061)",
+     "score_mad": 3.319,
+     "score_rank": 2.86,
+     "p_mad": 0.998,
+     "p_rank": 0.8462,
+     "loo_stable": false,
+     "echo": false,
+     "member_z_mad": [
+      0.01,
+      2.28,
+      1.04,
+      1.4,
+      2.62,
+      1.32,
+      0.1
+     ]
+    },
+    {
+     "article": "County finance jobs (FIPS 26115)",
+     "score_mad": 3.832,
+     "score_rank": 2.155,
+     "p_mad": 0.958,
+     "p_rank": 0.999,
+     "loo_stable": false,
+     "echo": false,
+     "member_z_mad": [
+      0.14,
+      0.43,
+      3.41,
+      4.0,
+      -1.08,
+      1.0,
+      2.23
+     ]
+    },
+    {
+     "article": "County jobs (FIPS 29089)",
+     "score_mad": 3.73,
+     "score_rank": 2.285,
+     "p_mad": 0.98,
+     "p_rank": 0.999,
+     "loo_stable": false,
+     "echo": false,
+     "member_z_mad": [
+      -0.48,
+      2.77,
+      0.17,
+      1.27,
+      3.81,
+      0.75,
+      1.57
+     ]
+    }
+   ]
+  },
+  "ai_models": {
+   "members": [
+    {
+     "id": "E727",
+     "article": "AlphaFold",
+     "day0": "2020-11-30",
+     "titles_used": 9,
+     "d0": "2020-11-01"
+    },
+    {
+     "id": "E709",
+     "article": "Midjourney",
+     "day0": "2022-07-01..2022-09-30",
+     "titles_used": 3,
+     "d0": "2022-09-01"
+    },
+    {
+     "id": "E710",
+     "article": "Stable Diffusion",
+     "day0": "2022-08-22",
+     "titles_used": 5,
+     "d0": "2022-08-01"
+    },
+    {
+     "id": "E198",
+     "article": "ChatGPT",
+     "day0": "2022-11-30",
+     "titles_used": 38,
+     "skip": "too few views around the event"
+    },
+    {
+     "id": "E720",
+     "article": "Llama (language model)",
+     "day0": "2023-02-24",
+     "titles_used": 20,
+     "skip": "too few views around the event"
+    },
+    {
+     "id": "E713",
+     "article": "GPT-4",
+     "day0": "2023-03-14",
+     "titles_used": 6,
+     "d0": "2023-03-01"
+    },
+    {
+     "id": "E717",
+     "article": "Gemini (language model)",
+     "day0": "2023-12-06",
+     "titles_used": 29,
+     "skip": "no attention rise"
+    },
+    {
+     "id": "E723",
+     "article": "Sora (text-to-video model)",
+     "day0": "2024-02-15",
+     "titles_used": 16,
+     "d0": "2024-02-01"
+    }
+   ],
+   "n_used": 5,
+   "clustered_members": [
+    "E709",
+    "E710",
+    "E713",
+    "E723",
+    "E727"
+   ],
+   "min_p_both": 0.8691308691308691,
+   "top": [
+    {
+     "article": "County finance jobs (FIPS 21135)",
+     "score_mad": 3.993,
+     "score_rank": 3.09,
+     "p_mad": 0.8691,
+     "p_rank": 0.5305,
+     "loo_stable": false,
+     "echo": false,
+     "member_z_mad": [
+      1.26,
+      3.74,
+      1.15,
+      1.32,
+      1.46
+     ]
+    },
+    {
+     "article": "County finance jobs (FIPS 24021)",
+     "score_mad": 4.407,
+     "score_rank": 2.655,
+     "p_mad": 0.6643,
+     "p_rank": 0.9101,
+     "loo_stable": false,
+     "echo": false,
+     "member_z_mad": [
+      2.74,
+      1.82,
+      4.0,
+      1.15,
+      0.15
+     ]
+    },
+    {
+     "article": "County finance jobs (FIPS 31173)",
+     "score_mad": 3.713,
+     "score_rank": 2.567,
+     "p_mad": 0.9491,
+     "p_rank": 0.9491,
+     "loo_stable": false,
+     "echo": false,
+     "member_z_mad": [
+      2.4,
+      2.21,
+      3.33,
+      -0.35,
+      0.71
+     ]
+    },
+    {
+     "article": "County jobs (FIPS 17113)",
+     "score_mad": 3.104,
+     "score_rank": 2.225,
+     "p_mad": 0.998,
+     "p_rank": 0.999,
+     "loo_stable": false,
+     "echo": false,
+     "member_z_mad": [
+      0.87,
+      0.58,
+      1.52,
+      2.72,
+      1.25
+     ]
+    },
+    {
+     "article": "County finance jobs (FIPS 20145)",
+     "score_mad": 3.039,
+     "score_rank": 2.394,
+     "p_mad": 0.999,
+     "p_rank": 0.985,
+     "loo_stable": false,
+     "echo": false,
+     "member_z_mad": [
+      2.07,
+      0.81,
+      0.3,
+      2.11,
+      1.52
+     ]
+    },
+    {
+     "article": "County jobs (FIPS 37015)",
+     "score_mad": 3.021,
+     "score_rank": 2.516,
+     "p_mad": 0.999,
+     "p_rank": 0.967,
+     "loo_stable": false,
+     "echo": false,
+     "member_z_mad": [
+      1.64,
+      1.18,
+      1.05,
+      0.32,
+      2.56
+     ]
+    },
+    {
+     "article": "County finance jobs (FIPS 05061)",
+     "score_mad": 3.312,
+     "score_rank": 2.0,
+     "p_mad": 0.995,
+     "p_rank": 1.0,
+     "loo_stable": false,
+     "echo": false,
+     "member_z_mad": [
+      -1.28,
+      4.0,
+      2.59,
+      1.56,
+      0.53
+     ]
+    },
+    {
+     "article": "County finance jobs (FIPS 01011)",
+     "score_mad": 3.193,
+     "score_rank": 2.005,
+     "p_mad": 0.998,
+     "p_rank": 1.0,
+     "loo_stable": false,
+     "echo": false,
+     "member_z_mad": [
+      1.3,
+      -1.12,
+      1.62,
+      1.34,
+      4.0
+     ]
+    },
+    {
+     "article": "County finance jobs (FIPS 13049)",
+     "score_mad": 3.121,
+     "score_rank": 2.211,
+     "p_mad": 0.998,
+     "p_rank": 1.0,
+     "loo_stable": false,
+     "echo": false,
+     "member_z_mad": [
+      2.34,
+      0.3,
+      1.76,
+      1.41,
+      1.17
+     ]
+    },
+    {
+     "article": "County finance jobs (FIPS 21115)",
+     "score_mad": 3.112,
+     "score_rank": 1.738,
+     "p_mad": 0.998,
+     "p_rank": 1.0,
+     "loo_stable": false,
+     "echo": false,
+     "member_z_mad": [
+      4.0,
+      -1.23,
+      2.17,
+      1.21,
+      0.81
+     ]
+    }
+   ]
+  },
+  "finance_shocks": {
+   "members": [
+    {
+     "id": "E839",
+     "article": "Bitcoin",
+     "day0": "2017-11-15..2017-12-31",
+     "titles_used": 48,
+     "d0": "2017-12-01"
+    },
+    {
+     "id": "E647",
+     "article": "GameStop short squeeze",
+     "day0": "2021-01-27",
+     "titles_used": 12,
+     "d0": "2021-01-01"
+    },
+    {
+     "id": "E842",
+     "article": "Everydays: the First 5000 Days",
+     "day0": "2021-03-11",
+     "titles_used": 6,
+     "d0": "2021-03-01"
+    },
+    {
+     "id": "E873",
+     "article": "Evergrande Group",
+     "day0": "2021-09-01..2021-10-15",
+     "titles_used": 9,
+     "d0": "2021-09-01"
+    },
+    {
+     "id": "E844",
+     "article": "Bankruptcy of FTX",
+     "day0": "2022-11-08",
+     "titles_used": 7,
+     "d0": "2022-11-01"
+    },
+    {
+     "id": "E874",
+     "article": "Collapse of Silicon Valley Bank",
+     "day0": "2023-03-10",
+     "titles_used": 6,
+     "d0": "2023-03-01"
+    }
+   ],
+   "n_used": 6,
+   "clustered_members": [
+    "E647",
+    "E842",
+    "E844",
+    "E873",
+    "E874"
+   ],
+   "min_p_both": 0.4145854145854146,
+   "top": [
+    {
+     "article": "County jobs (FIPS 12125)",
+     "score_mad": 5.015,
+     "score_rank": 3.358,
+     "p_mad": 0.4146,
+     "p_rank": 0.4096,
+     "loo_stable": false,
+     "echo": false,
+     "member_z_mad": [
+      4.0,
+      4.0,
+      1.31,
+      0.74,
+      1.4,
+      0.83
+     ]
+    },
+    {
+     "article": "County jobs (FIPS 29063)",
+     "score_mad": 4.729,
+     "score_rank": 3.131,
+     "p_mad": 0.5844,
+     "p_rank": 0.6444,
+     "loo_stable": false,
+     "echo": false,
+     "member_z_mad": [
+      4.0,
+      2.01,
+      0.77,
+      3.5,
+      0.74,
+      0.57
+     ]
+    },
+    {
+     "article": "County finance jobs (FIPS 29167)",
+     "score_mad": 4.175,
+     "score_rank": 2.888,
+     "p_mad": 0.8641,
+     "p_rank": 0.8651,
+     "loo_stable": false,
+     "echo": false,
+     "member_z_mad": [
+      0.54,
+      4.0,
+      1.43,
+      2.57,
+      1.5,
+      0.18
+     ]
+    },
+    {
+     "article": "County jobs (FIPS 13087)",
+     "score_mad": 4.615,
+     "score_rank": 2.88,
+     "p_mad": 0.6543,
+     "p_rank": 0.8701,
+     "loo_stable": false,
+     "echo": false,
+     "member_z_mad": [
+      3.42,
+      4.0,
+      0.97,
+      0.63,
+      0.3,
+      1.98
+     ]
+    },
+    {
+     "article": "County jobs (FIPS 36999)",
+     "score_mad": 5.615,
+     "score_rank": 2.838,
+     "p_mad": 0.1738,
+     "p_rank": 0.8891,
+     "loo_stable": false,
+     "echo": false,
+     "member_z_mad": [
+      2.51,
+      4.0,
+      0.77,
+      2.65,
+      4.0,
+      -0.18
+     ]
+    },
+    {
+     "article": "County finance jobs (FIPS 56023)",
+     "score_mad": 4.035,
+     "score_rank": 3.402,
+     "p_mad": 0.9181,
+     "p_rank": 0.3666,
+     "loo_stable": false,
+     "echo": false,
+     "member_z_mad": [
+      1.31,
+      3.34,
+      0.55,
+      0.76,
+      2.32,
+      1.61
+     ]
+    },
+    {
+     "article": "County finance jobs (FIPS 13299)",
+     "score_mad": 3.984,
+     "score_rank": 3.118,
+     "p_mad": 0.9311,
+     "p_rank": 0.6573,
+     "loo_stable": false,
+     "echo": false,
+     "member_z_mad": [
+      2.46,
+      2.62,
+      0.31,
+      1.3,
+      0.82,
+      2.25
+     ]
+    },
+    {
+     "article": "County finance jobs (FIPS 17127)",
+     "score_mad": 5.8,
+     "score_rank": 2.684,
+     "p_mad": 0.1179,
+     "p_rank": 0.954,
+     "loo_stable": false,
+     "echo": false,
+     "member_z_mad": [
+      4.0,
+      4.0,
+      1.41,
+      1.32,
+      4.0,
+      -0.52
+     ]
+    },
+    {
+     "article": "County finance jobs (FIPS 12087)",
+     "score_mad": 4.075,
+     "score_rank": 2.684,
+     "p_mad": 0.9031,
+     "p_rank": 0.954,
+     "loo_stable": false,
+     "echo": false,
+     "member_z_mad": [
+      2.05,
+      0.65,
+      -0.15,
+      4.0,
+      1.1,
+      2.33
+     ]
+    },
+    {
+     "article": "County finance jobs (FIPS 40055)",
+     "score_mad": 3.852,
+     "score_rank": 2.994,
+     "p_mad": 0.954,
+     "p_rank": 0.7792,
+     "loo_stable": false,
+     "echo": false,
+     "member_z_mad": [
+      0.87,
+      3.4,
+      1.87,
+      1.62,
+      1.67,
+      0.0
+     ]
+    }
+   ]
+  },
+  "protests_abroad": {
+   "members": [
+    {
+     "id": "E929",
+     "article": "Yellow vests protests",
+     "day0": "2018-11-17",
+     "titles_used": 34,
+     "d0": "2018-11-01"
+    },
+    {
+     "id": "E908",
+     "article": "2019–2020 Hong Kong protests",
+     "day0": "2019-06-09",
+     "titles_used": 53,
+     "d0": "2019-06-01"
+    },
+    {
+     "id": "E930",
+     "article": "2019–2022 Chilean protests",
+     "day0": "2019-10-18",
+     "titles_used": 24,
+     "d0": "2019-10-01"
+    },
+    {
+     "id": "E909",
+     "article": "2020–2021 Belarusian protests",
+     "day0": "2020-08-09",
+     "titles_used": 16,
+     "d0": "2020-08-01"
+    },
+    {
+     "id": "E941",
+     "article": "2020–2021 Indian farmers' protest",
+     "day0": "2020-11-26",
+     "titles_used": 20,
+     "d0": "2020-11-01"
+    },
+    {
+     "id": "E910",
+     "article": "2021 Myanmar coup d'état",
+     "day0": "2021-02-01",
+     "titles_used": 14,
+     "d0": "2021-02-01"
+    },
+    {
+     "id": "E911",
+     "article": "2022 Sri Lankan protests",
+     "day0": "2022-07-09",
+     "titles_used": 19,
+     "skip": "no attention rise"
+    },
+    {
+     "id": "E912",
+     "article": "Mahsa Amini protests",
+     "day0": "2022-09-16",
+     "titles_used": 16,
+     "d0": "2022-09-01"
+    }
+   ],
+   "n_used": 7,
+   "clustered_members": [
+    "E908",
+    "E909",
+    "E910",
+    "E912",
+    "E929",
+    "E930",
+    "E941"
+   ],
+   "min_p_both": 0.996003996003996,
+   "top": [
+    {
+     "article": "County jobs (FIPS 19087)",
+     "score_mad": 3.259,
+     "score_rank": 2.391,
+     "p_mad": 0.996,
+     "p_rank": 0.993,
+     "loo_stable": false,
+     "echo": false,
+     "member_z_mad": [
+      1.33,
+      2.1,
+      2.98,
+      0.55,
+      0.43,
+      1.28,
+      -0.05
+     ]
+    },
+    {
+     "article": "County finance jobs (FIPS 17019)",
+     "score_mad": 3.601,
+     "score_rank": 2.222,
+     "p_mad": 0.984,
+     "p_rank": 0.997,
+     "loo_stable": false,
+     "echo": false,
+     "member_z_mad": [
+      1.19,
+      0.35,
+      2.76,
+      0.67,
+      -0.4,
+      2.63,
+      2.33
+     ]
+    },
+    {
+     "article": "County jobs (FIPS 22111)",
+     "score_mad": 3.592,
+     "score_rank": 2.273,
+     "p_mad": 0.986,
+     "p_rank": 0.997,
+     "loo_stable": false,
+     "echo": false,
+     "member_z_mad": [
+      -1.04,
+      0.51,
+      3.65,
+      0.96,
+      0.61,
+      0.81,
+      4.0
+     ]
+    },
+    {
+     "article": "County jobs (FIPS 47179)",
+     "score_mad": 3.351,
+     "score_rank": 2.188,
+     "p_mad": 0.994,
+     "p_rank": 0.997,
+     "loo_stable": false,
+     "echo": false,
+     "member_z_mad": [
+      0.41,
+      0.6,
+      0.1,
+      3.22,
+      1.54,
+      1.11,
+      1.9
+     ]
+    },
+    {
+     "article": "County jobs (FIPS 21173)",
+     "score_mad": 3.215,
+     "score_rank": 2.247,
+     "p_mad": 0.997,
+     "p_rank": 0.997,
+     "loo_stable": false,
+     "echo": false,
+     "member_z_mad": [
+      -0.4,
+      0.81,
+      0.43,
+      0.46,
+      4.0,
+      1.19,
+      2.02
+     ]
+    },
+    {
+     "article": "County finance jobs (FIPS 13221)",
+     "score_mad": 3.198,
+     "score_rank": 2.244,
+     "p_mad": 0.997,
+     "p_rank": 0.997,
+     "loo_stable": false,
+     "echo": false,
+     "member_z_mad": [
+      0.8,
+      1.22,
+      1.48,
+      0.38,
+      -0.13,
+      2.56,
+      2.15
+     ]
+    },
+    {
+     "article": "County finance jobs (FIPS 54109)",
+     "score_mad": 4.09,
+     "score_rank": 2.086,
+     "p_mad": 0.8681,
+     "p_rank": 0.998,
+     "loo_stable": false,
+     "echo": false,
+     "member_z_mad": [
+      3.57,
+      -0.11,
+      0.37,
+      4.0,
+      2.43,
+      0.45,
+      0.11
+     ]
+    },
+    {
+     "article": "County finance jobs (FIPS 29019)",
+     "score_mad": 4.074,
+     "score_rank": 2.117,
+     "p_mad": 0.8721,
+     "p_rank": 0.998,
+     "loo_stable": false,
+     "echo": false,
+     "member_z_mad": [
+      0.76,
+      -0.5,
+      4.0,
+      1.68,
+      3.56,
+      0.66,
+      0.62
+     ]
+    },
+    {
+     "article": "County finance jobs (FIPS 44999)",
+     "score_mad": 3.36,
+     "score_rank": 2.126,
+     "p_mad": 0.993,
+     "p_rank": 0.998,
+     "loo_stable": false,
+     "echo": false,
+     "member_z_mad": [
+      0.92,
+      -1.22,
+      4.0,
+      1.53,
+      1.3,
+      0.59,
+      1.77
+     ]
+    },
+    {
+     "article": "County jobs (FIPS 05085)",
+     "score_mad": 4.107,
+     "score_rank": 2.037,
+     "p_mad": 0.8601,
+     "p_rank": 0.999,
+     "loo_stable": false,
+     "echo": false,
+     "member_z_mad": [
+      -0.48,
+      2.49,
+      4.0,
+      1.27,
+      2.87,
+      -0.36,
+      1.08
+     ]
+    }
+   ]
+  },
+  "us_social_moments": {
+   "members": [
+    {
+     "id": "E396",
+     "article": "2017 Women's March",
+     "day0": "2017-01-21",
+     "titles_used": 10,
+     "d0": "2017-01-01"
+    },
+    {
+     "id": "E689",
+     "article": "MeToo movement",
+     "day0": "2017-10-15",
+     "titles_used": 27,
+     "d0": "2017-10-01"
+    },
+    {
+     "id": "E398",
+     "article": "George Floyd protests",
+     "day0": "2020-05-26",
+     "titles_used": 33,
+     "d0": "2020-05-01"
+    },
+    {
+     "id": "E919",
+     "article": "January 6 United States Capitol attack",
+     "day0": "2021-01-06",
+     "titles_used": 101,
+     "d0": "2021-01-01"
+    },
+    {
+     "id": "E922",
+     "article": "Dobbs v. Jackson Women's Health Organization",
+     "day0": "2022-06-24",
+     "titles_used": 13,
+     "d0": "2022-06-01"
+    }
+   ],
+   "n_used": 5,
+   "clustered_members": [
+    "E396",
+    "E398",
+    "E689",
+    "E919",
+    "E922"
+   ],
+   "min_p_both": 0.5614385614385614,
+   "top": [
+    {
+     "article": "County jobs (FIPS 18075)",
+     "score_mad": 4.658,
+     "score_rank": 3.103,
+     "p_mad": 0.5594,
+     "p_rank": 0.5614,
+     "loo_stable": false,
+     "echo": false,
+     "member_z_mad": [
+      0.7,
+      1.95,
+      4.0,
+      2.79,
+      0.98
+     ]
+    },
+    {
+     "article": "County finance jobs (FIPS 54085)",
+     "score_mad": 4.518,
+     "score_rank": 3.923,
+     "p_mad": 0.6304,
+     "p_rank": 0.033,
+     "loo_stable": false,
+     "echo": false,
+     "member_z_mad": [
+      2.32,
+      2.74,
+      1.04,
+      2.0,
+      2.0
+     ]
+    },
+    {
+     "article": "County jobs (FIPS 12009)",
+     "score_mad": 4.676,
+     "score_rank": 2.982,
+     "p_mad": 0.5465,
+     "p_rank": 0.6853,
+     "loo_stable": false,
+     "echo": false,
+     "member_z_mad": [
+      1.06,
+      4.0,
+      4.0,
+      1.17,
+      0.23
+     ]
+    },
+    {
+     "article": "County jobs (FIPS 13295)",
+     "score_mad": 4.182,
+     "score_rank": 2.987,
+     "p_mad": 0.7962,
+     "p_rank": 0.6823,
+     "loo_stable": false,
+     "echo": false,
+     "member_z_mad": [
+      1.62,
+      1.55,
+      4.0,
+      1.62,
+      0.56
+     ]
+    },
+    {
+     "article": "County jobs (FIPS 39173)",
+     "score_mad": 4.3,
+     "score_rank": 2.842,
+     "p_mad": 0.7383,
+     "p_rank": 0.8112,
+     "loo_stable": false,
+     "echo": false,
+     "member_z_mad": [
+      1.44,
+      0.73,
+      4.0,
+      2.91,
+      0.53
+     ]
+    },
+    {
+     "article": "County jobs (FIPS 29137)",
+     "score_mad": 4.085,
+     "score_rank": 3.0,
+     "p_mad": 0.8292,
+     "p_rank": 0.6723,
+     "loo_stable": false,
+     "echo": false,
+     "member_z_mad": [
+      2.83,
+      0.5,
+      2.14,
+      2.77,
+      0.9
+     ]
+    },
+    {
+     "article": "County jobs (FIPS 12109)",
+     "score_mad": 4.388,
+     "score_rank": 2.776,
+     "p_mad": 0.6983,
+     "p_rank": 0.8531,
+     "loo_stable": false,
+     "echo": false,
+     "member_z_mad": [
+      1.75,
+      2.06,
+      3.84,
+      1.99,
+      0.18
+     ]
+    },
+    {
+     "article": "County jobs (FIPS 36019)",
+     "score_mad": 4.021,
+     "score_rank": 2.855,
+     "p_mad": 0.8541,
+     "p_rank": 0.8032,
+     "loo_stable": false,
+     "echo": false,
+     "member_z_mad": [
+      1.16,
+      1.47,
+      4.0,
+      0.71,
+      1.64
+     ]
+    },
+    {
+     "article": "County jobs (FIPS 37133)",
+     "score_mad": 3.996,
+     "score_rank": 2.775,
+     "p_mad": 0.8671,
+     "p_rank": 0.8541,
+     "loo_stable": false,
+     "echo": false,
+     "member_z_mad": [
+      1.93,
+      1.34,
+      3.94,
+      1.6,
+      0.12
+     ]
+    },
+    {
+     "article": "County jobs (FIPS 21091)",
+     "score_mad": 4.306,
+     "score_rank": 2.736,
+     "p_mad": 0.7373,
+     "p_rank": 0.8791,
+     "loo_stable": false,
+     "echo": false,
+     "member_z_mad": [
+      1.53,
+      3.42,
+      4.0,
+      -0.21,
+      0.88
+     ]
+    }
+   ]
+  },
+  "geopolitical_shocks": {
+   "members": [
+    {
+     "id": "E394",
+     "article": "2016 United States presidential election",
+     "day0": "2016-11-08",
+     "titles_used": 68,
+     "d0": "2016-11-01"
+    },
+    {
+     "id": "E904",
+     "article": "Brexit",
+     "day0": "2020-01-31",
+     "titles_used": 61,
+     "d0": "2020-01-01"
+    },
+    {
+     "id": "E438",
+     "article": "COVID-19 pandemic",
+     "day0": "2020-03-11",
+     "titles_used": 101,
+     "d0": "2020-03-01"
+    },
+    {
+     "id": "E946",
+     "article": "Fall of Kabul (2021)",
+     "day0": "2021-08-15",
+     "titles_used": 13,
+     "d0": "2021-08-01"
+    },
+    {
+     "id": "E399",
+     "article": "Russian invasion of Ukraine",
+     "day0": "2022-02-24",
+     "titles_used": 49,
+     "d0": "2022-02-01"
+    },
+    {
+     "id": "E948",
+     "article": "Accession of Finland to NATO",
+     "day0": "2023-04-04",
+     "titles_used": 22,
+     "skip": "no attention rise"
+    },
+    {
+     "id": "E400",
+     "article": "October 7 attacks",
+     "day0": "2023-10-07",
+     "titles_used": 101,
+     "d0": "2023-10-01"
+    }
+   ],
+   "n_used": 6,
+   "clustered_members": [
+    "E399",
+    "E400",
+    "E438",
+    "E904",
+    "E946"
+   ],
+   "min_p_both": 0.7512487512487512,
+   "top": [
+    {
+     "article": "County jobs (FIPS 48109)",
+     "score_mad": 4.32,
+     "score_rank": 3.005,
+     "p_mad": 0.7512,
+     "p_rank": 0.7033,
+     "loo_stable": false,
+     "echo": false,
+     "member_z_mad": [
+      3.42,
+      2.94,
+      1.88,
+      0.18,
+      0.55,
+      1.61
+     ]
+    },
+    {
+     "article": "County finance jobs (FIPS 08014)",
+     "score_mad": 4.197,
+     "score_rank": 2.791,
+     "p_mad": 0.8142,
+     "p_rank": 0.8861,
+     "loo_stable": false,
+     "echo": false,
+     "member_z_mad": [
+      3.77,
+      3.1,
+      -0.34,
+      1.01,
+      1.07,
+      1.68
+     ]
+    },
+    {
+     "article": "County jobs (FIPS 25011)",
+     "score_mad": 4.054,
+     "score_rank": 2.582,
+     "p_mad": 0.8691,
+     "p_rank": 0.969,
+     "loo_stable": false,
+     "echo": false,
+     "member_z_mad": [
+      0.53,
+      1.72,
+      4.0,
+      0.44,
+      1.67,
+      1.56
+     ]
+    },
+    {
+     "article": "County finance jobs (FIPS 13105)",
+     "score_mad": 3.581,
+     "score_rank": 2.506,
+     "p_mad": 0.982,
+     "p_rank": 0.984,
+     "loo_stable": false,
+     "echo": false,
+     "member_z_mad": [
+      1.1,
+      1.15,
+      -0.9,
+      2.52,
+      2.44,
+      2.46
+     ]
+    },
+    {
+     "article": "County jobs (FIPS 16011)",
+     "score_mad": 3.525,
+     "score_rank": 2.512,
+     "p_mad": 0.984,
+     "p_rank": 0.984,
+     "loo_stable": false,
+     "echo": false,
+     "member_z_mad": [
+      4.0,
+      1.18,
+      0.15,
+      0.63,
+      0.01,
+      2.66
+     ]
+    },
+    {
+     "article": "County finance jobs (FIPS 28003)",
+     "score_mad": 3.545,
+     "score_rank": 2.417,
+     "p_mad": 0.983,
+     "p_rank": 0.989,
+     "loo_stable": false,
+     "echo": false,
+     "member_z_mad": [
+      1.01,
+      -0.47,
+      0.67,
+      1.54,
+      1.94,
+      4.0
+     ]
+    },
+    {
+     "article": "County finance jobs (FIPS 48357)",
+     "score_mad": 3.455,
+     "score_rank": 2.538,
+     "p_mad": 0.989,
+     "p_rank": 0.981,
+     "loo_stable": false,
+     "echo": false,
+     "member_z_mad": [
+      0.92,
+      0.75,
+      1.05,
+      0.0,
+      4.0,
+      1.74
+     ]
+    },
+    {
+     "article": "County jobs (FIPS 08013)",
+     "score_mad": 3.675,
+     "score_rank": 2.385,
+     "p_mad": 0.97,
+     "p_rank": 0.991,
+     "loo_stable": false,
+     "echo": false,
+     "member_z_mad": [
+      1.29,
+      1.44,
+      4.0,
+      -0.34,
+      0.49,
+      2.12
+     ]
+    },
+    {
+     "article": "County jobs (FIPS 06109)",
+     "score_mad": 3.363,
+     "score_rank": 2.689,
+     "p_mad": 0.993,
+     "p_rank": 0.9391,
+     "loo_stable": false,
+     "echo": false,
+     "member_z_mad": [
+      0.58,
+      2.81,
+      0.77,
+      1.81,
+      1.0,
+      1.26
+     ]
+    },
+    {
+     "article": "County jobs (FIPS 45009)",
+     "score_mad": 3.535,
+     "score_rank": 2.335,
+     "p_mad": 0.984,
+     "p_rank": 0.994,
+     "loo_stable": false,
+     "echo": false,
+     "member_z_mad": [
+      1.48,
+      1.2,
+      0.93,
+      0.0,
+      2.88,
+      2.16
+     ]
+    }
+   ]
+  },
+  "disasters_shocks": {
+   "members": [
+    {
+     "id": "E883",
+     "article": "Notre-Dame fire",
+     "day0": "2019-04-15",
+     "titles_used": 19,
+     "d0": "2019-04-01"
+    },
+    {
+     "id": "E437",
+     "article": "2019–20 Australian bushfire season",
+     "day0": "2019-12-15..2020-01-31",
+     "titles_used": 31,
+     "d0": "2020-01-01"
+    },
+    {
+     "id": "E863",
+     "article": "2021 Suez Canal obstruction",
+     "day0": "2021-03-23",
+     "titles_used": 10,
+     "d0": "2021-03-01"
+    },
+    {
+     "id": "E442",
+     "article": "2022 Hunga Tonga–Hunga Haʻapai eruption and tsunami",
+     "day0": "2022-01-15",
+     "titles_used": 14,
+     "d0": "2022-01-01"
+    },
+    {
+     "id": "E443",
+     "article": "2023 Turkey–Syria earthquakes",
+     "day0": "2023-02-06",
+     "titles_used": 47,
+     "d0": "2023-02-01"
+    },
+    {
+     "id": "E876",
+     "article": "2023 Canadian wildfires",
+     "day0": "2023-06-05..2023-06-12",
+     "titles_used": 14,
+     "d0": "2023-06-01"
+    },
+    {
+     "id": "E444",
+     "article": "2023 Hawaii wildfires",
+     "day0": "2023-08-08",
+     "titles_used": 13,
+     "d0": "2023-08-01"
+    },
+    {
+     "id": "E445",
+     "article": "Francis Scott Key Bridge collapse",
+     "day0": "2024-03-26",
+     "titles_used": 21,
+     "d0": "2024-03-01"
+    },
+    {
+     "id": "E446",
+     "article": "Hurricane Helene",
+     "day0": "2024-09-26",
+     "titles_used": 9,
+     "d0": "2024-09-01"
+    },
+    {
+     "id": "E447",
+     "article": "January 2025 Southern California wildfires",
+     "day0": "2025-01-07",
+     "titles_used": 36,
+     "d0": "2025-01-01"
+    }
+   ],
+   "n_used": 10,
+   "clustered_members": [
+    "E437",
+    "E442",
+    "E443",
+    "E444",
+    "E445",
+    "E446",
+    "E447",
+    "E863",
+    "E876",
+    "E883"
+   ],
+   "min_p_both": 0.2917082917082917,
+   "top": [
+    {
+     "article": "County finance jobs (FIPS 53011)",
+     "score_mad": 5.381,
+     "score_rank": 3.618,
+     "p_mad": 0.2917,
+     "p_rank": 0.2278,
+     "loo_stable": false,
+     "echo": false,
+     "member_z_mad": [
+      1.16,
+      4.0,
+      2.48,
+      1.64,
+      0.83,
+      0.95,
+      1.03,
+      1.07,
+      0.14,
+      3.72
+     ]
+    },
+    {
+     "article": "County finance jobs (FIPS 05039)",
+     "score_mad": 4.076,
+     "score_rank": 3.25,
+     "p_mad": 0.9101,
+     "p_rank": 0.5744,
+     "loo_stable": false,
+     "echo": false,
+     "member_z_mad": [
+      2.6,
+      0.7,
+      0.59,
+      1.33,
+      0.35,
+      1.48,
+      2.52,
+      0.48,
+      0.72,
+      2.1
+     ]
+    },
+    {
+     "article": "County jobs (FIPS 48219)",
+     "score_mad": 4.33,
+     "score_rank": 2.797,
+     "p_mad": 0.8192,
+     "p_rank": 0.9181,
+     "loo_stable": false,
+     "echo": false,
+     "member_z_mad": [
+      0.14,
+      3.95,
+      1.16,
+      -3.91,
+      1.26,
+      2.93,
+      1.47,
+      2.16,
+      1.07,
+      3.46
+     ]
+    },
+    {
+     "article": "County finance jobs (FIPS 05021)",
+     "score_mad": 3.756,
+     "score_rank": 2.646,
+     "p_mad": 0.976,
+     "p_rank": 0.974,
+     "loo_stable": false,
+     "echo": false,
+     "member_z_mad": [
+      0.6,
+      4.0,
+      0.55,
+      0.56,
+      -0.02,
+      4.0,
+      0.73,
+      0.2,
+      0.42,
+      0.83
+     ]
+    },
+    {
+     "article": "County finance jobs (FIPS 24510)",
+     "score_mad": 3.709,
+     "score_rank": 2.739,
+     "p_mad": 0.981,
+     "p_rank": 0.9471,
+     "loo_stable": false,
+     "echo": false,
+     "member_z_mad": [
+      2.06,
+      2.07,
+      1.47,
+      1.35,
+      1.48,
+      1.68,
+      -0.08,
+      -0.43,
+      -0.09,
+      2.21
+     ]
+    },
+    {
+     "article": "County finance jobs (FIPS 24029)",
+     "score_mad": 3.694,
+     "score_rank": 2.631,
+     "p_mad": 0.981,
+     "p_rank": 0.977,
+     "loo_stable": false,
+     "echo": false,
+     "member_z_mad": [
+      2.51,
+      0.93,
+      2.04,
+      3.04,
+      0.57,
+      0.34,
+      -0.17,
+      0.15,
+      2.28,
+      0.0
+     ]
+    },
+    {
+     "article": "County finance jobs (FIPS 37119)",
+     "score_mad": 3.581,
+     "score_rank": 2.812,
+     "p_mad": 0.988,
+     "p_rank": 0.9081,
+     "loo_stable": false,
+     "echo": false,
+     "member_z_mad": [
+      0.29,
+      1.03,
+      0.96,
+      1.7,
+      0.23,
+      2.97,
+      2.61,
+      0.76,
+      0.55,
+      0.22
+     ]
+    },
+    {
+     "article": "County jobs (FIPS 48467)",
+     "score_mad": 3.675,
+     "score_rank": 2.549,
+     "p_mad": 0.983,
+     "p_rank": 0.99,
+     "loo_stable": false,
+     "echo": false,
+     "member_z_mad": [
+      2.99,
+      2.64,
+      1.31,
+      -0.34,
+      -1.14,
+      1.72,
+      0.64,
+      2.79,
+      1.05,
+      -0.05
+     ]
+    },
+    {
+     "article": "County finance jobs (FIPS 40027)",
+     "score_mad": 3.701,
+     "score_rank": 2.522,
+     "p_mad": 0.981,
+     "p_rank": 0.995,
+     "loo_stable": false,
+     "echo": false,
+     "member_z_mad": [
+      -0.3,
+      2.01,
+      -0.19,
+      0.8,
+      1.74,
+      0.53,
+      1.48,
+      0.74,
+      2.3,
+      2.59
+     ]
+    },
+    {
+     "article": "County finance jobs (FIPS 27125)",
+     "score_mad": 3.977,
+     "score_rank": 2.431,
+     "p_mad": 0.9341,
+     "p_rank": 0.997,
+     "loo_stable": false,
+     "echo": false,
+     "member_z_mad": [
+      0.44,
+      0.14,
+      -0.67,
+      0.64,
+      -0.47,
+      2.08,
+      4.0,
+      2.42,
+      4.0,
+      0.0
+     ]
+    }
+   ]
+  },
+  "sports_moments": {
+   "members": [
+    {
+     "id": "E754",
+     "article": "2016 World Series",
+     "day0": "2016-11-02",
+     "titles_used": 5,
+     "skip": "no attention rise"
+    },
+    {
+     "id": "E769",
+     "article": "2018 FIFA World Cup final",
+     "day0": "2018-07-15",
+     "titles_used": 5,
+     "skip": "no attention rise"
+    },
+    {
+     "id": "E763",
+     "article": "2018 US Open – Women's singles",
+     "day0": "2018-09-08",
+     "titles_used": 4,
+     "d0": "2018-09-01"
+    },
+    {
+     "id": "E765",
+     "article": "2019 Masters Tournament",
+     "day0": "2019-04-14",
+     "titles_used": 2,
+     "skip": "no attention rise"
+    },
+    {
+     "id": "E774",
+     "article": "2020 Summer Olympics",
+     "day0": "2020-03-24",
+     "titles_used": 101,
+     "skip": "no attention rise"
+    },
+    {
+     "id": "E776",
+     "article": "Simone Biles",
+     "day0": "2021-07-27",
+     "titles_used": 9,
+     "d0": "2021-07-01"
+    },
+    {
+     "id": "E298",
+     "article": "Lionel Messi",
+     "day0": "2021-08-05",
+     "titles_used": 32,
+     "skip": "no attention rise"
+    },
+    {
+     "id": "E777",
+     "article": "Emma Raducanu",
+     "day0": "2021-09-11",
+     "titles_used": 5,
+     "d0": "2021-09-01"
+    },
+    {
+     "id": "E788",
+     "article": "LIV Golf",
+     "day0": "2022-06-09",
+     "titles_used": 14,
+     "d0": "2022-06-01"
+    },
+    {
+     "id": "E780",
+     "article": "2022 FIFA World Cup final",
+     "day0": "2022-12-18",
+     "titles_used": 6,
+     "d0": "2022-12-01"
+    },
+    {
+     "id": "E797",
+     "article": "Shohei Ohtani",
+     "day0": "2023-12-09",
+     "titles_used": 19,
+     "d0": "2023-12-01"
+    }
+   ],
+   "n_used": 6,
+   "clustered_members": [
+    "E776",
+    "E777",
+    "E780",
+    "E788",
+    "E797"
+   ],
+   "min_p_both": 0.7662337662337663,
+   "top": [
+    {
+     "article": "County jobs (FIPS 72039)",
+     "score_mad": 4.313,
+     "score_rank": 2.984,
+     "p_mad": 0.7662,
+     "p_rank": 0.7582,
+     "loo_stable": false,
+     "echo": false,
+     "member_z_mad": [
+      2.22,
+      2.99,
+      1.02,
+      0.96,
+      0.02,
+      3.36
+     ]
+    },
+    {
+     "article": "County jobs (FIPS 28041)",
+     "score_mad": 4.13,
+     "score_rank": 2.796,
+     "p_mad": 0.8432,
+     "p_rank": 0.8951,
+     "loo_stable": false,
+     "echo": false,
+     "member_z_mad": [
+      2.61,
+      3.16,
+      1.33,
+      2.52,
+      0.26,
+      0.23
+     ]
+    },
+    {
+     "article": "County finance jobs (FIPS 40079)",
+     "score_mad": 3.914,
+     "score_rank": 2.686,
+     "p_mad": 0.9261,
+     "p_rank": 0.9421,
+     "loo_stable": false,
+     "echo": false,
+     "member_z_mad": [
+      0.26,
+      0.45,
+      3.85,
+      0.72,
+      3.64,
+      0.67
+     ]
+    },
+    {
+     "article": "County finance jobs (FIPS 34031)",
+     "score_mad": 4.31,
+     "score_rank": 2.564,
+     "p_mad": 0.7692,
+     "p_rank": 0.97,
+     "loo_stable": false,
+     "echo": false,
+     "member_z_mad": [
+      0.84,
+      -0.41,
+      1.28,
+      0.85,
+      4.0,
+      4.0
+     ]
+    },
+    {
+     "article": "County finance jobs (FIPS 17053)",
+     "score_mad": 3.703,
+     "score_rank": 2.549,
+     "p_mad": 0.972,
+     "p_rank": 0.971,
+     "loo_stable": false,
+     "echo": false,
+     "member_z_mad": [
+      2.23,
+      0.71,
+      1.37,
+      1.12,
+      3.45,
+      0.2
+     ]
+    },
+    {
+     "article": "County jobs (FIPS 72051)",
+     "score_mad": 3.633,
+     "score_rank": 2.64,
+     "p_mad": 0.979,
+     "p_rank": 0.952,
+     "loo_stable": false,
+     "echo": false,
+     "member_z_mad": [
+      2.06,
+      0.44,
+      0.7,
+      1.44,
+      1.89,
+      2.37
+     ]
+    },
+    {
+     "article": "County jobs (FIPS 47095)",
+     "score_mad": 3.632,
+     "score_rank": 2.808,
+     "p_mad": 0.98,
+     "p_rank": 0.8911,
+     "loo_stable": false,
+     "echo": false,
+     "member_z_mad": [
+      3.01,
+      -0.34,
+      1.07,
+      2.13,
+      2.49,
+      0.53
+     ]
+    },
+    {
+     "article": "County finance jobs (FIPS 20033)",
+     "score_mad": 3.537,
+     "score_rank": 2.388,
+     "p_mad": 0.985,
+     "p_rank": 0.993,
+     "loo_stable": false,
+     "echo": false,
+     "member_z_mad": [
+      0.72,
+      -0.31,
+      1.15,
+      1.19,
+      1.92,
+      4.0
+     ]
+    },
+    {
+     "article": "County finance jobs (FIPS 17021)",
+     "score_mad": 3.467,
+     "score_rank": 2.383,
+     "p_mad": 0.99,
+     "p_rank": 0.994,
+     "loo_stable": false,
+     "echo": false,
+     "member_z_mad": [
+      1.25,
+      0.25,
+      0.78,
+      0.27,
+      2.69,
+      3.25
+     ]
+    },
+    {
+     "article": "County jobs (FIPS 20129)",
+     "score_mad": 3.374,
+     "score_rank": 2.429,
+     "p_mad": 0.994,
+     "p_rank": 0.988,
+     "loo_stable": false,
+     "echo": false,
+     "member_z_mad": [
+      3.89,
+      0.68,
+      0.39,
+      0.93,
+      1.63,
+      0.74
+     ]
+    }
+   ]
+  },
+  "music_moments": {
+   "members": [
+    {
+     "id": "E523",
+     "article": "Despacito",
+     "day0": "2017-01-12..2017-08-31",
+     "titles_used": 15,
+     "d0": "2017-07-01"
+    },
+    {
+     "id": "E511",
+     "article": "When We All Fall Asleep, Where Do We Go?",
+     "day0": "2019-03-29",
+     "titles_used": 18,
+     "d0": "2019-03-01"
+    },
+    {
+     "id": "E509",
+     "article": "Old Town Road",
+     "day0": "2019-03-01..2019-06-30",
+     "titles_used": 13,
+     "d0": "2019-06-01"
+    },
+    {
+     "id": "E531",
+     "article": "Blinding Lights",
+     "day0": "2019-11-29..2020-06-30",
+     "titles_used": 13,
+     "skip": "no attention rise"
+    },
+    {
+     "id": "E544",
+     "article": "Folklore (Taylor Swift album)",
+     "day0": "2020-07-24",
+     "titles_used": 5,
+     "d0": "2020-07-01"
+    },
+    {
+     "id": "E541",
+     "article": "Dreams (Fleetwood Mac song)",
+     "day0": "2020-09-25..2020-10-31",
+     "titles_used": 8,
+     "d0": "2020-10-01"
+    },
+    {
+     "id": "E532",
+     "article": "Drivers License",
+     "day0": "2021-01-08",
+     "titles_used": 59,
+     "d0": "2021-01-01"
+    },
+    {
+     "id": "E537",
+     "article": "Måneskin",
+     "day0": "2021-05-22",
+     "titles_used": 7,
+     "d0": "2021-05-01"
+    },
+    {
+     "id": "E545",
+     "article": "Renaissance (Beyoncé album)",
+     "day0": "2022-07-29",
+     "titles_used": 17,
+     "d0": "2022-07-01"
+    },
+    {
+     "id": "E496",
+     "article": "Brat (album)",
+     "day0": "2024-06-07",
+     "titles_used": 23,
+     "d0": "2024-06-01"
+    },
+    {
+     "id": "E497",
+     "article": "Oasis (band)",
+     "day0": "2024-08-27",
+     "titles_used": 17,
+     "d0": "2024-08-01"
+    }
+   ],
+   "n_used": 10,
+   "clustered_members": [
+    "E496",
+    "E497",
+    "E509",
+    "E511",
+    "E523",
+    "E532",
+    "E537",
+    "E541",
+    "E544",
+    "E545"
+   ],
+   "min_p_both": 0.7222777222777222,
+   "top": [
+    {
+     "article": "County finance jobs (FIPS 13123)",
+     "score_mad": 4.327,
+     "score_rank": 3.292,
+     "p_mad": 0.7223,
+     "p_rank": 0.4366,
+     "loo_stable": false,
+     "echo": false,
+     "member_z_mad": [
+      0.4,
+      3.1,
+      -1.45,
+      1.48,
+      1.33,
+      1.78,
+      2.84,
+      2.34,
+      1.31,
+      0.56
+     ]
+    },
+    {
+     "article": "County jobs (FIPS 21117)",
+     "score_mad": 4.306,
+     "score_rank": 2.974,
+     "p_mad": 0.7313,
+     "p_rank": 0.7652,
+     "loo_stable": false,
+     "echo": false,
+     "member_z_mad": [
+      0.26,
+      1.43,
+      0.08,
+      2.1,
+      0.59,
+      4.0,
+      1.7,
+      1.16,
+      -0.04,
+      2.34
+     ]
+    },
+    {
+     "article": "County jobs (FIPS 13279)",
+     "score_mad": 3.709,
+     "score_rank": 2.882,
+     "p_mad": 0.961,
+     "p_rank": 0.8412,
+     "loo_stable": false,
+     "echo": false,
+     "member_z_mad": [
+      0.51,
+      0.35,
+      -0.82,
+      0.47,
+      0.83,
+      3.1,
+      4.0,
+      1.69,
+      0.21,
+      1.38
+     ]
+    },
+    {
+     "article": "County jobs (FIPS 31045)",
+     "score_mad": 3.331,
+     "score_rank": 2.251,
+     "p_mad": 0.996,
+     "p_rank": 0.997,
+     "loo_stable": false,
+     "echo": false,
+     "member_z_mad": [
+      2.44,
+      0.72,
+      0.59,
+      1.83,
+      0.59,
+      2.16,
+      1.17,
+      -1.34,
+      2.41,
+      -0.04
+     ]
+    },
+    {
+     "article": "County finance jobs (FIPS 01099)",
+     "score_mad": 3.142,
+     "score_rank": 2.684,
+     "p_mad": 0.999,
+     "p_rank": 0.9441,
+     "loo_stable": false,
+     "echo": false,
+     "member_z_mad": [
+      -0.01,
+      0.67,
+      -0.42,
+      0.7,
+      3.16,
+      1.4,
+      0.74,
+      1.51,
+      0.83,
+      1.36
+     ]
+    },
+    {
+     "article": "County finance jobs (FIPS 13243)",
+     "score_mad": 3.135,
+     "score_rank": 2.245,
+     "p_mad": 0.999,
+     "p_rank": 0.997,
+     "loo_stable": false,
+     "echo": false,
+     "member_z_mad": [
+      -0.19,
+      0.13,
+      -0.03,
+      1.72,
+      1.1,
+      0.27,
+      3.23,
+      4.0,
+      0.55,
+      -0.86
+     ]
+    },
+    {
+     "article": "County jobs (FIPS 72117)",
+     "score_mad": 3.609,
+     "score_rank": 2.039,
+     "p_mad": 0.971,
+     "p_rank": 1.0,
+     "loo_stable": false,
+     "echo": false,
+     "member_z_mad": [
+      0.75,
+      0.84,
+      -0.1,
+      3.85,
+      2.91,
+      0.29,
+      0.74,
+      2.46,
+      1.0,
+      -1.33
+     ]
+    },
+    {
+     "article": "County jobs (FIPS 29089)",
+     "score_mad": 3.382,
+     "score_rank": 1.343,
+     "p_mad": 0.993,
+     "p_rank": 1.0,
+     "loo_stable": false,
+     "echo": false,
+     "member_z_mad": [
+      -0.75,
+      -0.61,
+      -0.58,
+      4.0,
+      2.22,
+      -0.5,
+      3.66,
+      1.52,
+      2.81,
+      -1.08
+     ]
+    },
+    {
+     "article": "County jobs (FIPS 29175)",
+     "score_mad": 3.314,
+     "score_rank": 2.118,
+     "p_mad": 0.998,
+     "p_rank": 1.0,
+     "loo_stable": false,
+     "echo": false,
+     "member_z_mad": [
+      -0.02,
+      0.06,
+      1.13,
+      3.44,
+      0.81,
+      1.08,
+      1.23,
+      -0.5,
+      2.6,
+      0.65
+     ]
+    },
+    {
+     "article": "County jobs (FIPS 21211)",
+     "score_mad": 3.31,
+     "score_rank": 2.051,
+     "p_mad": 0.998,
+     "p_rank": 1.0,
+     "loo_stable": false,
+     "echo": false,
+     "member_z_mad": [
+      1.76,
+      -0.16,
+      3.1,
+      2.0,
+      0.4,
+      1.45,
+      -0.2,
+      0.55,
+      1.66,
+      -0.1
+     ]
+    }
+   ]
+  },
+  "pandemic_crazes": {
+   "members": [
+    {
+     "id": "E482",
+     "article": "Tiger King",
+     "day0": "2020-03-20",
+     "titles_used": 14,
+     "d0": "2020-03-01"
+    },
+    {
+     "id": "E483",
+     "article": "Dalgona coffee",
+     "day0": "2020-03-01..2020-04-30",
+     "titles_used": 4,
+     "d0": "2020-04-01"
+    },
+    {
+     "id": "E484",
+     "article": "Sourdough",
+     "day0": "2020-03-15..2020-05-15",
+     "titles_used": 14,
+     "d0": "2020-04-01"
+    },
+    {
+     "id": "E485",
+     "article": "Cottagecore",
+     "day0": "2020-03-01..2020-12-31",
+     "titles_used": 6,
+     "d0": "2020-08-01"
+    },
+    {
+     "id": "E139",
+     "article": "Among Us",
+     "day0": "2020-08-15..2020-10-31",
+     "titles_used": 53,
+     "skip": "no attention rise"
+    },
+    {
+     "id": "E486",
+     "article": "Peloton Interactive",
+     "day0": "2020-03-01..2020-12-31",
+     "titles_used": 5,
+     "d0": "2020-12-01"
+    }
+   ],
+   "n_used": 5,
+   "clustered_members": [
+    "E482",
+    "E483",
+    "E484",
+    "E485",
+    "E486"
+   ],
+   "min_p_both": 0.1258741258741259,
+   "top": [
+    {
+     "article": "County finance jobs (FIPS 13243)",
+     "score_mad": 5.879,
+     "score_rank": 3.615,
+     "p_mad": 0.0839,
+     "p_rank": 0.1259,
+     "loo_stable": false,
+     "echo": false,
+     "member_z_mad": [
+      3.46,
+      4.0,
+      4.0,
+      1.62,
+      0.06
+     ]
+    },
+    {
+     "article": "County finance jobs (FIPS 37077)",
+     "score_mad": 5.252,
+     "score_rank": 3.477,
+     "p_mad": 0.2767,
+     "p_rank": 0.2078,
+     "loo_stable": false,
+     "echo": false,
+     "member_z_mad": [
+      2.8,
+      3.06,
+      2.39,
+      3.34,
+      0.15
+     ]
+    },
+    {
+     "article": "County finance jobs (FIPS 13185)",
+     "score_mad": 5.938,
+     "score_rank": 3.321,
+     "p_mad": 0.0769,
+     "p_rank": 0.3487,
+     "loo_stable": false,
+     "echo": false,
+     "member_z_mad": [
+      2.46,
+      4.0,
+      4.0,
+      3.55,
+      -0.73
+     ]
+    },
+    {
+     "article": "County finance jobs (FIPS 31143)",
+     "score_mad": 5.026,
+     "score_rank": 3.09,
+     "p_mad": 0.4026,
+     "p_rank": 0.5824,
+     "loo_stable": false,
+     "echo": false,
+     "member_z_mad": [
+      3.8,
+      3.74,
+      3.69,
+      0.47,
+      -0.46
+     ]
+    },
+    {
+     "article": "County finance jobs (FIPS 21055)",
+     "score_mad": 4.452,
+     "score_rank": 3.357,
+     "p_mad": 0.6913,
+     "p_rank": 0.3137,
+     "loo_stable": false,
+     "echo": false,
+     "member_z_mad": [
+      1.28,
+      2.7,
+      2.3,
+      1.76,
+      1.91
+     ]
+    },
+    {
+     "article": "County finance jobs (FIPS 48035)",
+     "score_mad": 4.443,
+     "score_rank": 3.211,
+     "p_mad": 0.7003,
+     "p_rank": 0.4555,
+     "loo_stable": false,
+     "echo": false,
+     "member_z_mad": [
+      1.19,
+      3.91,
+      3.71,
+      0.8,
+      0.33
+     ]
+    },
+    {
+     "article": "County finance jobs (FIPS 20207)",
+     "score_mad": 4.96,
+     "score_rank": 2.984,
+     "p_mad": 0.4286,
+     "p_rank": 0.7183,
+     "loo_stable": false,
+     "echo": false,
+     "member_z_mad": [
+      3.69,
+      3.79,
+      4.0,
+      -0.67,
+      0.29
+     ]
+    },
+    {
+     "article": "County finance jobs (FIPS 17175)",
+     "score_mad": 4.98,
+     "score_rank": 2.93,
+     "p_mad": 0.4146,
+     "p_rank": 0.7762,
+     "loo_stable": false,
+     "echo": false,
+     "member_z_mad": [
+      2.49,
+      4.0,
+      4.0,
+      -0.13,
+      0.78
+     ]
+    },
+    {
+     "article": "County finance jobs (FIPS 05149)",
+     "score_mad": 5.219,
+     "score_rank": 2.919,
+     "p_mad": 0.2877,
+     "p_rank": 0.7822,
+     "loo_stable": false,
+     "echo": false,
+     "member_z_mad": [
+      3.88,
+      4.0,
+      4.0,
+      -0.17,
+      -0.05
+     ]
+    },
+    {
+     "article": "County finance jobs (FIPS 36057)",
+     "score_mad": 4.648,
+     "score_rank": 2.883,
+     "p_mad": 0.5914,
+     "p_rank": 0.8112,
+     "loo_stable": false,
+     "echo": false,
+     "member_z_mad": [
+      2.82,
+      4.0,
+      4.0,
+      -1.25,
+      0.82
+     ]
+    }
+   ]
+  }
+ },
+ "bh_families_passing": [],
+ "candidates": [],
+ "run": "https://github.com/bsunter93/Ben-Sunters-Website/actions/runs/36385680439",
+ "source": "transcribed from the job log (artifact host unreachable)"
+}
