@@ -110,7 +110,7 @@ dl.how dt{font-weight:700}dl.how dd{margin:0;color:var(--ink-2)}
   </dl>
   <p class="muted">Charts are drawn in your browser from Wikimedia's public pageview API (current article titles only) and
     are illustrations; the tests use the registered data. Protocols: <a href="/ripples/docs/q3_protocol.md">v1</a>,
-    <a href="/ripples/docs/q3_protocol_v2.md">v2</a>, <a href="/ripples/docs/q3_protocol_nyt.md">NYT lens</a>, <a href="/ripples/docs/q3_protocol_econ.md">real-world lens</a>.</p>
+    <a href="/ripples/docs/q3_protocol_v2.md">v2</a>, <a href="/ripples/docs/q3_protocol_nyt.md">NYT lens</a>, <a href="/ripples/docs/q3_protocol_econ.md">real-world lens</a>, <a href="/ripples/docs/q3_protocol_more.md">further lenses</a>.</p>
 </main>
 <script>
 (() => {
@@ -245,7 +245,7 @@ dl.how dt{font-weight:700}dl.how dd{margin:0;color:var(--ink-2)}
         <div class="badges">
           <span class="b ok">Fake-date test p = ${fmtP(c.p_both)}</span>
           ${top.loo_stable ? `<span class="b ok">Drop-one stable</span>` : ""}
-          ${s.id === "v2econ" ? "" : c.echo ? `<span class="b warn">Linked from an event (echo)</span>` : `<span class="b ok">Not linked from the events</span>`}
+          ${s.echo === false ? "" : c.echo ? `<span class="b warn">Linked from an event (echo)</span>` : `<span class="b ok">Not linked from the events</span>`}
           ${clustered ? `<span class="b warn">${clustered} events within 30 days of another</span>` : ""}
         </div>
         ${conf.map((k) => `<p class="muted">${esc(k.label)}: ${k.res ? `p = ${fmtP(k.res.p_mad)} / ${fmtP(k.res.p_rank)} on ${k.res.n} events, <strong class="verdict ${k.res.pass ? "ok" : "no"}">${k.res.pass ? "passed" : "did not pass"}</strong>${k.res.echo ? " (linked from at least one of these events)" : ""}` : "pending"}</p>`).join("")}

@@ -18,7 +18,13 @@
   {"id": "v2nyt", "label": "Screen v2, NYT lens", "lens": "NYT coverage", "file": "/ripples/docs/results/q3_screen_v2_nyt_2026-09-28.json",
    "protocol": "/ripples/docs/q3_protocol_nyt.md", "ledger": [1290]},
   {"id": "v2econ", "label": "Screen v2, real-world lens", "lens": "Electricity, markets, air travel", "file": "/ripples/docs/results/q3_screen_v2_econ_2026-09-28.json",
-   "protocol": "/ripples/docs/q3_protocol_econ.md", "ledger": [1291]}
+   "protocol": "/ripples/docs/q3_protocol_econ.md", "ledger": [1291], "echo": false},
+  {"id": "v2daily2", "label": "Screen v2, tech and city lens", "lens": "Hacker News, npm, NYC transit, FEMA", "file": "/ripples/docs/results/q3_screen_v2_daily2_2026-09-28.json",
+   "protocol": "/ripples/docs/q3_protocol_more.md", "ledger": [1294]},
+  {"id": "v2weekly", "label": "Screen v2, weekly lens", "lens": "Jobless claims, business applications, deaths, fuel", "file": "/ripples/docs/results/q3_screen_v2_weekly_2026-09-28.json",
+   "protocol": "/ripples/docs/q3_protocol_more.md", "ledger": [1294], "echo": false},
+  {"id": "v2monthly", "label": "Screen v2, monthly lens", "lens": "State economies, jobs by industry, prices", "file": "/ripples/docs/results/q3_screen_v2_monthly_2026-09-28.json",
+   "protocol": "/ripples/docs/q3_protocol_more.md", "ledger": [1294], "echo": false}
  ],
  "confirmations": [
   {"label": "Confirmation 1: 8 new space events", "screen": "v1", "family": "space_science", "outcome": "Speed of light",

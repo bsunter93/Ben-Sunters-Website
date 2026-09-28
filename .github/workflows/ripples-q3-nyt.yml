@@ -1,5 +1,6 @@
 # Ripple Map Q3 other lenses (method discovery v1, ledger 1283): the screen v2 families scored against NYT tag coverage
-# (ripples/docs/q3_protocol_nyt.md, ledger 1290) and daily real-world series (ripples/docs/q3_protocol_econ.md, 1291). Shares the Q3 concurrency group, so it waits for any
+# (ripples/docs/q3_protocol_nyt.md, ledger 1290), daily real-world series (ripples/docs/q3_protocol_econ.md, 1291), and
+# daily extras, weekly and monthly panels (ripples/docs/q3_protocol_more.md, 1294). Each lens runs even if another fails. Shares the Q3 concurrency group, so it waits for any
 # running Wikipedia Q3 job and then reuses the event views that job cached. Counts only; candidates only.
 name: Ripples Q3 other lenses
 
@@ -7,7 +8,8 @@ on:
   push:
     branches: ["claude/**"]
     paths: ["ripples/lab/nyt_panel.py", "ripples/lab/econ_panel.py", "ripples/docs/q3_protocol_nyt.md",
-            "ripples/docs/q3_protocol_econ.md", ".github/workflows/ripples-q3-nyt.yml"]
+            "ripples/docs/q3_protocol_econ.md", "ripples/lab/more_panels.py", "ripples/docs/q3_protocol_more.md",
+            ".github/workflows/ripples-q3-nyt.yml"]
   workflow_dispatch:
 
 permissions:
@@ -67,6 +69,48 @@ jobs:
           test -f "$LAB_CACHE/econ_pv.npz" || { echo "econ panel missing"; exit 1; }
           Q3_PROTOCOL=ripples/docs/q3_protocol_econ.md Q3_OUT="$OUT/q3_screen_v2_econ.json" python q3_run.py \
             --families ../corpus/q3_families_v2.tsv --redirects --panel econ_pv.npz --same-weekday --min-coverage 0.8
+      - name: Build daily2 outcome panel (read-only export, service role)
+        if: always()
+        working-directory: ripples/lab
+        env:
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+        run: python more_panels.py daily2
+      - name: Screen v2 families on the daily2 panel
+        if: always()
+        working-directory: ripples/lab
+        run: |
+          test -f "$LAB_CACHE/daily2_pv.npz" || { echo "daily2 panel missing"; exit 1; }
+          Q3_PROTOCOL=ripples/docs/q3_protocol_more.md Q3_OUT="$OUT/q3_screen_v2_daily2.json" python q3_run.py \
+            --families ../corpus/q3_families_v2.tsv --redirects --panel daily2_pv.npz --min-coverage 0.8 --same-weekday
+      - name: Build weekly outcome panel (read-only export, service role)
+        if: always()
+        working-directory: ripples/lab
+        env:
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+        run: python more_panels.py weekly
+      - name: Screen v2 families on the weekly panel
+        if: always()
+        working-directory: ripples/lab
+        run: |
+          test -f "$LAB_CACHE/weekly_pv.npz" || { echo "weekly panel missing"; exit 1; }
+          Q3_PROTOCOL=ripples/docs/q3_protocol_more.md Q3_OUT="$OUT/q3_screen_v2_weekly.json" python q3_run.py \
+            --families ../corpus/q3_families_v2.tsv --redirects --panel weekly_pv.npz --min-coverage 0.8
+      - name: Build monthly outcome panel (read-only export, service role)
+        if: always()
+        working-directory: ripples/lab
+        env:
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+        run: python more_panels.py monthly
+      - name: Screen v2 families on the monthly panel
+        if: always()
+        working-directory: ripples/lab
+        run: |
+          test -f "$LAB_CACHE/monthly_pv.npz" || { echo "monthly panel missing"; exit 1; }
+          Q3_PROTOCOL=ripples/docs/q3_protocol_more.md Q3_OUT="$OUT/q3_screen_v2_monthly.json" python q3_run.py \
+            --families ../corpus/q3_families_v2.tsv --redirects --panel monthly_pv.npz --min-coverage 0.8
       - uses: actions/cache/save@v4
         if: always()
         with:
@@ -79,4 +123,7 @@ jobs:
           path: |
             q3_screen_v2_nyt.json
             q3_screen_v2_econ.json
+            q3_screen_v2_daily2.json
+            q3_screen_v2_weekly.json
+            q3_screen_v2_monthly.json
           if-no-files-found: ignore
