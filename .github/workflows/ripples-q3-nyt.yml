@@ -1,0 +1,61 @@
+# Ripple Map Q3 NYT lens (ripples/docs/q3_protocol_nyt.md; method discovery v1, ledger 1283): the screen v2 families
+# scored against NYT tag coverage instead of Wikipedia views. Shares the Q3 concurrency group, so it waits for any
+# running Wikipedia Q3 job and then reuses the event views that job cached. Counts only; candidates only.
+name: Ripples Q3 NYT lens
+
+on:
+  push:
+    branches: ["claude/**"]
+    paths: ["ripples/lab/nyt_panel.py", "ripples/docs/q3_protocol_nyt.md", ".github/workflows/ripples-q3-nyt.yml"]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ripples-q3
+  cancel-in-progress: false
+
+jobs:
+  q3-nyt:
+    runs-on: ubuntu-latest
+    timeout-minutes: 180
+    env:
+      LAB_CACHE: ${{ github.workspace }}/.cult-cache
+      OUT: ${{ github.workspace }}
+      Q3_PROTOCOL: ripples/docs/q3_protocol_nyt.md
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: pip install --quiet numpy
+      - uses: actions/cache@v4
+        with:
+          path: .cult-cache
+          key: ripples-cult-v1-${{ github.run_id }}
+          restore-keys: ripples-cult-v1-
+      - uses: actions/cache/restore@v4
+        with:
+          path: .lab-cache/nyt
+          key: ripples-nyt-archive-v1-
+          restore-keys: ripples-nyt-archive-v1-
+      - name: Build NYT outcome panel
+        working-directory: ripples/lab
+        run: |
+          test -f "$LAB_CACHE/pv.npz" || { echo "panel cache missing"; exit 1; }
+          rm -rf "$LAB_CACHE/nyt" && ln -s "$GITHUB_WORKSPACE/.lab-cache/nyt" "$LAB_CACHE/nyt"
+          ls "$LAB_CACHE/nyt" | wc -l
+          python nyt_panel.py
+          rm "$LAB_CACHE/nyt"
+      - name: Screen v2 families on NYT coverage
+        working-directory: ripples/lab
+        run: |
+          Q3_OUT="$OUT/q3_screen_v2_nyt.json" python q3_run.py --families ../corpus/q3_families_v2.tsv --redirects \
+            --panel nyt_pv.npz
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: q3-nyt-results
+          path: q3_screen_v2_nyt.json
+          if-no-files-found: ignore
