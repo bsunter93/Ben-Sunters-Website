@@ -56,12 +56,12 @@ def event_views(title, end, redirects):
 def main() -> int:
     import argparse
     ap = argparse.ArgumentParser()
-    ap.add_argument("--families", default=FAM_FILE)
+    ap.add_argument("--families", default="")
     ap.add_argument("--redirects", action="store_true", help="sum event-article views over all redirect titles")
     ap.add_argument("--confirm", default="", help="pre-specified outcomes, '|'-separated: confirmation mode")
     a = ap.parse_args()
     global FAM_FILE
-    FAM_FILE = a.families
+    FAM_FILE = a.families or FAM_FILE
     confirm = [t for t in a.confirm.split("|") if t]
     z = np.load(os.path.join(CD.CACHE, "pv.npz"), allow_pickle=False)
     arts, days = [str(a) for a in z["articles"]], z["days"]
@@ -126,6 +126,14 @@ def main() -> int:
             m.update(d0=str(start + dt.timedelta(days=d0)), _d0=d0, _dc=dc, _P=P, _pm=pm, _ps=ps)
             used.append(m)
         n = len(used)
+        # common-shock flag: members whose event days fall within 30 days of another member (a shared shock such as
+        # the March 2020 lockdown can masquerade as a family ripple; leave-one-out is the guard, this is the warning)
+        ds = sorted((m["_d0"], m["id"]) for m in used)
+        clustered = set()
+        for (d1, id1), (d2, id2) in zip(ds, ds[1:]):
+            if d2 - d1 <= 30:
+                clustered |= {id1, id2}
+        clustered = sorted(clustered)
         if n < 3:
             report["families"][fam] = {"members": members, "note": "fewer than 3 usable members; not tested"}
             continue
@@ -159,7 +167,8 @@ def main() -> int:
                             "p_rank": round(float((1 + (nr >= srank[j]).sum()) / (1 + N_NULL)), 4),
                             "member_z_mad": [round(float(v), 2) for v in OM[:, j]]})
             report["families"][fam] = {"members": [{k: v for k, v in m.items() if not k.startswith("_")}
-                                                   for m in members], "n_used": n, "confirmation": res}
+                                                   for m in members], "n_used": n, "clustered_members": clustered,
+                                       "confirmation": res}
             print(f"{fam}: {n} members, confirmation {res}", flush=True)
             continue
         max_mad = (NM.sum(1) / np.sqrt(n)).max(1)
@@ -178,6 +187,7 @@ def main() -> int:
         report["families"][fam] = {
             "members": [{k: v for k, v in m.items() if not k.startswith("_")} for m in members],
             "n_used": n,
+            "clustered_members": clustered,
             "min_p_both": float(p_both.min()),
             "top": [{"article": arts[j], "score_mad": round(float(smad[j]), 3), "score_rank": round(float(srank[j]), 3),
                      "p_mad": round(float(p_mad[j]), 4), "p_rank": round(float(p_rank[j]), 4),

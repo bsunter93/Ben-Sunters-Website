@@ -6,7 +6,7 @@ name: Ripples Q3 screen
 on:
   push:
     branches: ["claude/**"]
-    paths: ["ripples/lab/q3_run.py", "ripples/corpus/q3_families_v1.tsv", ".github/workflows/ripples-q3.yml"]
+    paths: ["ripples/lab/q3_run.py", "ripples/corpus/q3_*.tsv", ".github/workflows/ripples-q3.yml"]
   workflow_dispatch:
 
 permissions:
@@ -19,10 +19,10 @@ concurrency:
 jobs:
   q3:
     runs-on: ubuntu-latest
-    timeout-minutes: 120
+    timeout-minutes: 180
     env:
       LAB_CACHE: ${{ github.workspace }}/.cult-cache
-      Q3_OUT: ${{ github.workspace }}/q3_screen_v1.json
+      OUT: ${{ github.workspace }}
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
@@ -34,14 +34,20 @@ jobs:
           path: .cult-cache
           key: ripples-cult-v1-${{ github.run_id }}
           restore-keys: ripples-cult-v1-
-      - name: Run the screen
+      - name: Confirmation 1 (space science -> Speed of light; q3_protocol_v2.md)
         working-directory: ripples/lab
         run: |
           test -f "$LAB_CACHE/pv.npz" || { echo "panel cache missing"; exit 1; }
-          python q3_run.py
+          Q3_OUT="$OUT/q3_confirm_space_v1.json" python q3_run.py --families ../corpus/q3_confirm_space_v1.tsv \
+            --redirects --confirm "Speed of light|Telescope|Solar System"
+      - name: Screen v2 (q3_protocol_v2.md)
+        working-directory: ripples/lab
+        run: Q3_OUT="$OUT/q3_screen_v2.json" python q3_run.py --families ../corpus/q3_families_v2.tsv --redirects
       - uses: actions/upload-artifact@v4
         if: always()
         with:
-          name: q3-screen-v1
-          path: q3_screen_v1.json
+          name: q3-results
+          path: |
+            q3_confirm_space_v1.json
+            q3_screen_v2.json
           if-no-files-found: ignore
