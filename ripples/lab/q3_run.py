@@ -57,17 +57,30 @@ def event_views(title, end, redirects):
     return total, titles
 
 
+def norm_name(t):
+    """Loose name key for echo matching across panels: NYT tags ("subject:Chess", "persons:Obama, Barack") and
+    Wikipedia titles ("Chess", "Barack Obama", "Mercury (planet)") map to the same lower-case words."""
+    t = t.split(":", 1)[1] if ":" in t and t.split(":", 1)[0].isalpha() and t.split(":", 1)[0].islower() else t
+    t = t.split(" (")[0]
+    if t.count(",") == 1:  # "Last, First" person names
+        last, first = [w.strip() for w in t.split(",")]
+        t = f"{first} {last}"
+    return " ".join(t.replace("_", " ").lower().split())
+
+
 def main() -> int:
     import argparse
     ap = argparse.ArgumentParser()
     ap.add_argument("--families", default="")
     ap.add_argument("--redirects", action="store_true", help="sum event-article views over all redirect titles")
     ap.add_argument("--confirm", default="", help="pre-specified outcomes, '|'-separated: confirmation mode")
+    ap.add_argument("--panel", default="pv.npz", help="outcome panel in $LAB_CACHE (pv.npz = Wikipedia; nyt_pv.npz = "
+                    "NYT tag coverage). Event curves always come from Wikipedia; the panel sets the day grid.")
     a = ap.parse_args()
     global FAM_FILE
     FAM_FILE = a.families or FAM_FILE
     confirm = [t for t in a.confirm.split("|") if t]
-    z = np.load(os.path.join(CD.CACHE, "pv.npz"), allow_pickle=False)
+    z = np.load(os.path.join(CD.CACHE, a.panel), allow_pickle=False)
     arts, days = [str(a) for a in z["articles"]], z["days"]
     lv = np.log1p(z["views"].astype(np.float64))
     A, D = lv.shape
@@ -80,8 +93,8 @@ def main() -> int:
     ztab = np.array([L._NORM.inv_cdf(1 - min(max((1 + k) / (1 + N_PLACEBO), 0.5 / (1 + N_PLACEBO)),
                                              1 - 0.5 / (1 + N_PLACEBO))) for k in range(N_PLACEBO + 1)])
     fams = read_families()
-    report = {"protocol": "ripples/docs/q3_protocol.md", "method": "discovery v1 (ledger 1283)", "seed": SEED,
-              "panel": {"articles": A, "start": str(start), "end": str(end)}, "families": {}}
+    report = {"protocol": os.environ.get("Q3_PROTOCOL", "ripples/docs/q3_protocol.md"), "method": "discovery v1 (ledger 1283)", "seed": SEED,
+              "panel": {"file": a.panel, "articles": A, "start": str(start), "end": str(end)}, "families": {}}
     art_idx = {a: k for k, a in enumerate(arts)}
 
     for fam, members in fams.items():
@@ -94,7 +107,7 @@ def main() -> int:
             except CD.Stop as e:
                 print(f"stopped: {e}", flush=True)
                 return 1
-            echoes |= set(links) | {m["article"]}
+            echoes |= {norm_name(t) for t in list(links) + [m["article"]]}
             e = np.full(D, np.nan)
             for k, v in s.items():
                 i = (dt.date(int(k[:4]), int(k[4:6]), int(k[6:8])) - start).days
@@ -165,7 +178,7 @@ def main() -> int:
                     continue
                 j = art_idx[t]
                 nm, nr = NM[:, :, j].sum(1) / np.sqrt(n), NR[:, :, j].sum(1) / np.sqrt(n)
-                res.append({"outcome": t, "echo": t in echoes, "score_mad": round(float(smad[j]), 3),
+                res.append({"outcome": t, "echo": norm_name(t) in echoes, "score_mad": round(float(smad[j]), 3),
                             "score_rank": round(float(srank[j]), 3),
                             "p_mad": round(float((1 + (nm >= smad[j]).sum()) / (1 + N_NULL)), 4),
                             "p_rank": round(float((1 + (nr >= srank[j]).sum()) / (1 + N_NULL)), 4),
@@ -195,9 +208,9 @@ def main() -> int:
             "min_p_both": float(p_both.min()),
             "top": [{"article": arts[j], "score_mad": round(float(smad[j]), 3), "score_rank": round(float(srank[j]), 3),
                      "p_mad": round(float(p_mad[j]), 4), "p_rank": round(float(p_rank[j]), 4),
-                     "loo_stable": bool(loo[j]), "echo": arts[j] in echoes,
+                     "loo_stable": bool(loo[j]), "echo": norm_name(arts[j]) in echoes,
                      "member_z_mad": [round(float(v), 2) for v in OM[:, j]]} for j in order],
-            "_pboth": p_both, "_loo": loo, "_echo": echoes,
+            "_pboth": p_both, "_loo": loo, "_echo": echoes,  # echoes holds normalized names
         }
         print(f"{fam}: {n} members, min p {p_both.min():.4f}", flush=True)
 
@@ -221,7 +234,7 @@ def main() -> int:
             if f in passing:
                 for j in np.where((r["_pboth"] <= 0.05) & r["_loo"])[0]:
                     cands.append({"family": f, "article": arts[j], "p_both": round(float(r["_pboth"][j]), 4),
-                                  "echo": arts[j] in r["_echo"]})
+                                  "echo": norm_name(arts[j]) in r["_echo"]})
             del r["_pboth"], r["_loo"], r["_echo"]
     report["bh_families_passing"] = sorted(passing)
     report["candidates"] = cands
