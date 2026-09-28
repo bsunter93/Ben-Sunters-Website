@@ -91,6 +91,18 @@ def recall_at_fd(pairs, worlds, per_world):
     return round(float((hits > thr).mean()), 3)
 
 
+_NORM = __import__("statistics").NormalDist()
+
+
+def rank_z(real, P):
+    """Per-article empirical placebo p-value (one-sided, (1 + #placebo >= real) / (1 + n)) mapped to a normal z. Bounded
+    by the number of placebo dates, so an article whose placebo spread is too narrow cannot produce a huge score."""
+    n = P.shape[0]
+    pv = np.clip((1 + (P >= real[None, :]).sum(axis=0)) / (1 + n), 0.5 / (1 + n), 1 - 0.5 / (1 + n))
+    z = np.array([_NORM.inv_cdf(1 - q) for q in pv])
+    return np.where(np.isfinite(real), z, np.nan)
+
+
 CT = np.arange(-14, 91)  # coupling window, days relative to the event
 
 
@@ -194,7 +206,8 @@ def run(a):
         sys.exit("coupled plants need ev_pv.npz (run cult_data.py)")
     pool = np.array(sorted(curves)) if curves else np.arange(len(ev))
     scores = {m: {"top_hits": 0, "verified_hits": 0, "false_verified": 0}
-              for m in ("naive", "ghost", "anom", "placebo", "trend", "robust", "couple", "couple_d", "shapemax")}
+              for m in ("naive", "ghost", "anom", "placebo", "trend", "robust", "couple", "couple_d", "couple_d_rank",
+                        "shapemax")}
     fam_pairs = {}  # method -> [(family score, is planted family)]
     fam_total = [0]
     shape_hits = {}  # (method, shape) -> [planted pair recovered at 1 false/world threshold?] filled after the loop
@@ -311,7 +324,7 @@ def run(a):
                 zz = (real - pm) / np.where(ps > 0, ps, np.nan)
                 cp += [(zz[j], int(i), j) for j in range(A)]
         cands["couple"] = cp
-        cd = []
+        cd, cdr = [], []
         if curves:
             for i in sub:
                 dc = np.diff(np.concatenate([[0.0], curves[int(i)]]))
@@ -321,7 +334,10 @@ def run(a):
                 ps = 1.4826 * np.nanmedian(np.abs(P - pm), axis=0)
                 zz = (real - pm) / np.where(ps > 0, ps, np.nan)
                 cd += [(zz[j], int(i), j) for j in range(A)]
+                rz = rank_z(real, P)
+                cdr += [(rz[j], int(i), j) for j in range(A)]
         cands["couple_d"] = cd
+        cands["couple_d_rank"] = cdr
         # shapemax: each shape statistic standardized by the article's own placebo dates (median/MAD), T = max over
         # shapes, then T itself calibrated against the same max at
         # placebo dates, so choosing the best-looking shape is paid for (spec sections 6-8)
@@ -343,7 +359,7 @@ def run(a):
         # this world, each z clipped to [-4, 4] so one coincident burst cannot carry a family
         if a.family_plants and curves:
             sub_types = {int(i): types[int(i)] for i in sub}
-            for m in ("couple", "couple_d", "robust", "shapemax", "placebo"):
+            for m in ("couple", "couple_d", "couple_d_rank", "robust", "shapemax", "placebo"):
                 vals = {}
                 for sc, i, j in cands.get(m, []):
                     if np.isfinite(sc):
@@ -351,12 +367,20 @@ def run(a):
                 # mean-pooled (all events of the type) and top-k pooled (the k strongest members, k fixed in advance)
                 fam_pairs.setdefault(m, []).extend((sum(v) / np.sqrt(len(v)), k in fam_planted) for k, v in vals.items())
                 kk = a.family_topk
+                if m == "couple_d":  # higher clip: real articles have bursts far above 4 MADs (run 2 saturated at 4)
+                    raw = {}
+                    for sc, i, j in cands.get(m, []):
+                        if np.isfinite(sc):
+                            raw.setdefault((sub_types[int(i)], int(j)), []).append(float(np.clip(sc, -10, 10)))
+                    fam_pairs.setdefault(m + "_topk10", []).extend(
+                        (sum(sorted(v, reverse=True)[:kk]) / np.sqrt(kk), k in fam_planted) for k, v in raw.items()
+                        if len(v) >= kk)
                 fam_pairs.setdefault(m + "_topk", []).extend(
                     (sum(sorted(v, reverse=True)[:kk]) / np.sqrt(kk), k in fam_planted) for k, v in vals.items()
                     if len(v) >= kk)
         for m, lst in cands.items():
             lst = [c for c in lst if np.isfinite(c[0])]
-            if m in ("robust", "couple", "couple_d", "shapemax"):
+            if m in ("robust", "couple", "couple_d", "couple_d_rank", "shapemax"):
                 lst = [(max(c[0], 0.0), c[1], c[2]) for c in lst]
             fd_pairs[m] += [(abs(c[0]), (c[1], c[2]) in planted) for c in lst]
             for c in lst:
