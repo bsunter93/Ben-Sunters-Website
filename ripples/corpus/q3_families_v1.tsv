@@ -1,0 +1,48 @@
+# Q3 families v1 (registered before any outcome is examined; see ripples/docs/q3_protocol.md).
+# Source: ripples/corpus/events_500.txt (owner corpus). Eligible = event day 2016-09-01 or later (a year of history is
+# needed before each event) with an English Wikipedia article carrying its attention. Columns are tab-separated:
+# family, id, event article (English Wikipedia title), day0 (YYYY-MM-DD), or a window "start..end" in which day0 is the
+# day of peak views of the event article itself (never of any outcome).
+family	id	article	day0
+space_science	E243	Event Horizon Telescope	2019-04-10
+space_science	E244	Perseverance (rover)	2021-02-18
+space_science	E245	James Webb Space Telescope	2021-12-25
+space_science	E246	James Webb Space Telescope	2022-07-12
+space_science	E247	Double Asteroid Redirection Test	2022-09-26
+space_science	E248	3I/ATLAS	2025-07-01
+pandemic_crazes	E482	Tiger King	2020-03-20
+pandemic_crazes	E483	Dalgona coffee	2020-03-01..2020-04-30
+pandemic_crazes	E484	Sourdough	2020-03-15..2020-05-15
+pandemic_crazes	E485	Cottagecore	2020-03-01..2020-12-31
+pandemic_crazes	E139	Among Us	2020-08-15..2020-10-31
+pandemic_crazes	E486	Peloton Interactive	2020-03-01..2020-12-31
+disasters_2019_on	E437	2019–20 Australian bushfire season	2019-12-15..2020-01-31
+disasters_2019_on	E442	2022 Hunga Tonga–Hunga Haʻapai eruption and tsunami	2022-01-15
+disasters_2019_on	E443	2023 Turkey–Syria earthquakes	2023-02-06
+disasters_2019_on	E444	2023 Hawaii wildfires	2023-08-08
+disasters_2019_on	E446	Hurricane Helene	2024-09-26
+disasters_2019_on	E447	January 2025 Southern California wildfires	2025-01-07
+protest_movements	E396	2017 Women's March	2017-01-21
+protest_movements	E395	Me Too movement	2017-10-15
+protest_movements	E397	2019–2020 Hong Kong protests	2019-06-09
+protest_movements	E398	George Floyd protests	2020-05-26
+geopolitical_shocks	E394	2016 United States presidential election	2016-11-08
+geopolitical_shocks	E438	COVID-19 pandemic	2020-03-11
+geopolitical_shocks	E399	Russian invasion of Ukraine	2022-02-24
+geopolitical_shocks	E400	October 7 attacks	2023-10-07
+screen_phenomena	E099	Black Panther (film)	2018-02-16
+screen_phenomena	E481	Game of Thrones season 8	2019-05-19
+screen_phenomena	E296	The Last Dance (miniseries)	2020-04-19
+screen_phenomena	E100	Barbenheimer	2023-07-21
+games	E137	Fortnite Battle Royale	2017-09-26
+games	E140	Wordle	2021-12-15..2022-02-28
+games	E141	Elden Ring	2022-02-25
+games	E142	Baldur's Gate 3	2023-08-03
+platforms_ai	E197	TikTok	2018-08-02
+platforms_ai	E487	Non-fungible token	2021-03-11
+platforms_ai	E199	Stable Diffusion	2022-08-22
+platforms_ai	E198	ChatGPT	2022-11-30
+sports_moments	E295	2020 Summer Olympics	2020-03-24
+sports_moments	E298	Lionel Messi	2021-08-05
+sports_moments	E299	LIV Golf	2022-06-09
+sports_moments	E300	2022 FIFA World Cup	2022-11-20

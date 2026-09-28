@@ -1,0 +1,47 @@
+# Ripple Map Q3 screen v1 (ripples/docs/q3_protocol.md; method discovery v1, ledger 1283): the frozen discovery method
+# on the registered real event families. Reads the cultural-lab panel from the Actions cache, downloads the event
+# articles' views and links (Wikimedia, polite, stop on 403/429/503), prints and uploads the report. Candidates only.
+name: Ripples Q3 screen
+
+on:
+  push:
+    branches: ["claude/**"]
+    paths: ["ripples/lab/q3_run.py", "ripples/corpus/q3_families_v1.tsv", ".github/workflows/ripples-q3.yml"]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ripples-q3
+  cancel-in-progress: false
+
+jobs:
+  q3:
+    runs-on: ubuntu-latest
+    timeout-minutes: 120
+    env:
+      LAB_CACHE: ${{ github.workspace }}/.cult-cache
+      Q3_OUT: ${{ github.workspace }}/q3_screen_v1.json
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: pip install --quiet numpy
+      - uses: actions/cache@v4
+        with:
+          path: .cult-cache
+          key: ripples-cult-v1-${{ github.run_id }}
+          restore-keys: ripples-cult-v1-
+      - name: Run the screen
+        working-directory: ripples/lab
+        run: |
+          test -f "$LAB_CACHE/pv.npz" || { echo "panel cache missing"; exit 1; }
+          python q3_run.py
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: q3-screen-v1
+          path: q3_screen_v1.json
+          if-no-files-found: ignore
