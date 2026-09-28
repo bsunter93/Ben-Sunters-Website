@@ -24,7 +24,11 @@
   {"id": "v2weekly", "label": "Screen v2, weekly lens", "lens": "Jobless claims, business applications, deaths, fuel", "file": "/ripples/docs/results/q3_screen_v2_weekly_2026-09-28.json",
    "protocol": "/ripples/docs/q3_protocol_more.md", "ledger": [1294], "echo": false},
   {"id": "v2monthly", "label": "Screen v2, monthly lens", "lens": "State economies, jobs by industry, prices", "file": "/ripples/docs/results/q3_screen_v2_monthly_2026-09-28.json",
-   "protocol": "/ripples/docs/q3_protocol_more.md", "ledger": [1294], "echo": false}
+   "protocol": "/ripples/docs/q3_protocol_more.md", "ledger": [1294], "echo": false},
+  {"id": "v2library", "label": "Screen v2, library lens", "lens": "Seattle library checkouts by subject", "file": "/ripples/docs/results/q3_screen_v2_library_2026-09-28.json",
+   "protocol": "/ripples/docs/q3_protocol_wide.md", "ledger": [1295]},
+  {"id": "v2wide", "label": "Screen v2, wide Wikipedia lens", "lens": "10,000 Wikipedia articles", "file": "/ripples/docs/results/q3_screen_v2_wide.json",
+   "protocol": "/ripples/docs/q3_protocol_wide.md", "ledger": [1295]}
  ],
  "confirmations": [
   {"label": "Confirmation 1: 8 new space events", "screen": "v1", "family": "space_science", "outcome": "Speed of light",
