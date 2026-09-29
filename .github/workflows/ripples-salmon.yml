@@ -1,0 +1,61 @@
+# Ripple Map salmon search v1 (ripples/docs/salmon_protocol_v1.md): start from unusual US baby-name surges and swim
+# upstream to candidate cultural causes via Wikidata. Keyless BigQuery (D-8) for the names; Wikidata query service with
+# an honest UA, 1 s between queries, stop on refusal. Report stored in ripples.att_q3_results (salmon_names_v1).
+name: Ripples salmon search
+
+on:
+  push:
+    branches: ["claude/**"]
+    paths: ["ripples/lab/salmon.py", "ripples/tools/bq/salmon_names.py", ".github/workflows/ripples-salmon.yml"]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  id-token: write
+
+concurrency:
+  group: ripples-salmon
+  cancel-in-progress: false
+
+jobs:
+  salmon:
+    runs-on: ubuntu-latest
+    timeout-minutes: 120
+    env:
+      LAB_CACHE: ${{ github.workspace }}/.salmon-cache
+      OUT: ${{ github.workspace }}
+    steps:
+      - uses: actions/checkout@v4
+      - id: auth
+        uses: google-github-actions/auth@v2
+        with:
+          workload_identity_provider: ${{ vars.GCP_WIF_PROVIDER }}
+          service_account: ${{ vars.GCP_SA_EMAIL }}
+      - uses: google-github-actions/setup-gcloud@v2
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: pip install --quiet numpy -r ripples/tools/bq/requirements.txt
+      - uses: actions/cache/restore@v4
+        with:
+          path: .salmon-cache
+          key: ripples-salmon-v1-${{ github.run_id }}
+          restore-keys: ripples-salmon-v1-
+      - name: Names from BigQuery (national, 1985+)
+        working-directory: ripples/tools/bq
+        run: python salmon_names.py --project ripple-509716 --location US --out "$OUT/names_national.csv"
+      - name: Salmon search
+        working-directory: ripples/lab
+        run: SALMON_OUT="$OUT/salmon_names_v1.json" python salmon.py "$OUT/names_national.csv"
+      - uses: actions/cache/save@v4
+        if: always()
+        with:
+          path: .salmon-cache
+          key: ripples-salmon-v1-${{ github.run_id }}
+      - name: Store report
+        if: always()
+        working-directory: ripples/lab
+        env:
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+        run: python q3_upload.py "$OUT/salmon_names_v1.json"

@@ -1,4 +1,4 @@
-# Ripple Map: context brief (updated 2026-09-29 05:40 UTC)
+# Ripple Map: context brief (updated 2026-09-29 06:45 UTC)
 
 Standalone context for anyone (person or new chat) picking up Ripple Map. It covers the vision, the current status,
 what we learned, pitfalls, open gaps and next steps. The operational runbook with exact commands is
@@ -287,14 +287,29 @@ parked as the proving ground (D-26).
    - Pre-register before fetching. The dumps are downloaded from dumps.wikimedia.org one at a time, after the day's
      other Wikimedia work.
    - Limits: monthly resolution; it shows what people read, not what they did.
-3. **Chain test: attention → behaviour.** For event → subject pairs that pass Q4 (or show in Clickstream), test only
+3. **Salmon search: reverse discovery** (`ripples/docs/salmon_protocol_v1.md`, ledger 1373).
+   - **Idea:** start from an outcome that broke from its own trend, then swim upstream to events that could plausibly
+     explain it.
+   - **Labels:** every link is labelled "Possible link (speculative)" and shows why it was surfaced, plus a
+     chance-match rate (how often the linker finds a match this strong for things that did not move).
+   - **Upstream roles:** origin shock (the earliest cause we can see), relay, amplifier, common driver, echo,
+     coincidence.
+   - **Magnitude:** a per-node fingerprint (excess volume, onset order and sharpness, shape, share explained by the
+     upstream curve, transmission ratio) tests the owner's damping hypothesis on known chains.
+   - **v1:** US baby-name surges (BigQuery SSA), with Wikidata characters and works as proposers. The benchmark is 9
+     known cases (Elsa ← Frozen, Khaleesi ← Game of Thrones, Kylo ← Star Wars, …) and it passes if the known cause
+     ranks first in at least 6 of 9.
+   - **Later:** more signals (Wikipedia name pages, Clickstream, lead–lag, news co-coverage), people as candidates,
+     multi-hop tracing, more outcome lenses.
+   - **How it fits:** salmon proposes, the forward engine verifies.
+4. **Chain test: attention → behaviour.** For event → subject pairs that pass Q4 (or show in Clickstream), test only
    that subject in the real-world lenses. For example, chess → Seattle library chess checkouts; a nuclear drama → NYT
    nuclear-power coverage. Testing a handful of pre-chosen outcomes instead of thousands raises power sharply.
-4. **If v3 or Q4 produces candidates:** confirm each on held-out events before it goes on the page as more than a
+5. **If v3, Q4 or salmon produces candidates:** confirm each on held-out events before it goes on the page as more than a
    lead.
-5. **If both come back empty:** test longer windows than 90 days and weekly smoothing for the noisy lenses, before
+6. **If both come back empty:** test longer windows than 90 days and weekly smoothing for the noisy lenses, before
    asking the owner for more events.
-6. **Product:** once a path survives, the pond page for that event shows the path, the counts, the comparison and a
+7. **Product:** once a path survives, the pond page for that event shows the path, the counts, the comparison and a
    plain sentence per step (evidence ladder). The share card is built around the surprising landing.
 
 **From the owner, when possible (not blocking)**

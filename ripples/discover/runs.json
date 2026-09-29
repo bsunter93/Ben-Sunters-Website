@@ -124,12 +124,14 @@
   },
   {
    "id": "v2wide",
-   "label": "Screen v2, wide Wikipedia lens",
+   "label": "Screen v2, wide Wikipedia lens (9,033 articles)",
    "lens": "10,000 Wikipedia articles",
    "file": "/ripples/docs/results/q3_screen_v2_wide.json",
    "protocol": "/ripples/docs/q3_protocol_wide.md",
    "ledger": [
-    1295
+    1295,
+    1376,
+    1378
    ]
   },
   {
@@ -239,6 +241,18 @@
    "family": "pandemic_crazes",
    "cls": "no",
    "verdict": "Explained: the COVID-19 lockdown unemployment spike (all events clustered in 2020), not the crazes. Not sent to confirmation (ledger 1303)."
+  },
+  {
+   "screen": "v2wide",
+   "family": "films_awards",
+   "cls": "warn",
+   "verdict": "Likely the Oscars calendar: 3 of the 4 films' dates sit within days of an Oscars ceremony, when Best Cinematography is announced. Same-weekday check running (ledger 1379)."
+  },
+  {
+   "screen": "v2wide",
+   "family": "ai_models",
+   "cls": "warn",
+   "verdict": "Suspected weekly/school-term artefact: the family's top outcomes are coursework articles (Human genome, Meiosis, Coulomb's law) and most launches fell on weekdays. Same-weekday check running (ledger 1379)."
   }
  ],
  "confirmations": [
@@ -290,5 +304,20 @@
     1371
    ]
   }
- ]
+ ],
+ "salmon": {
+  "label": "Salmon search v1 (baby names)",
+  "file": "/ripples/docs/results/salmon_names_v1.json",
+  "protocol": "/ripples/docs/salmon_protocol_v1.md",
+  "ledger": [
+   1373,
+   1374,
+   1377,
+   1380
+  ],
+  "notes": [
+   "Ally 1998 → One Piece is almost certainly wrong: the likely cause is the TV series Ally McBeal (1997), which the linker did not reach (right year, wrong work). Real-person and TV-driven surges are the known gap of v1.",
+   "Game of Thrones names (Khaleesi, Arya, Daenerys) link only to the 1996 books, not the 2011 TV series, so their chance-match is weak (21%): a data gap in how the characters are linked, not a real miss."
+  ]
+ }
 }
