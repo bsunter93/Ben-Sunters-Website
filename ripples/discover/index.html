@@ -93,6 +93,13 @@ dl.how dt{font-weight:700}dl.how dd{margin:0;color:var(--ink-2)}
     much harder to fake. With about 200 events, about 1 in 20 will pass on its own by chance; the family results are the claims.</p>
   <div id="subjects"></div>
 
+  <h2>What moved, and what might explain it</h2>
+  <p class="muted">The salmon search swims upstream. It starts from something that broke from its own trend (here, a
+    baby name suddenly given far more often), then looks for earlier works that carry the name and could explain it.
+    These links are <strong>speculative</strong>: each shows why it was surfaced, and how often a match this strong turns
+    up for names that did not move (the chance-match rate). Nothing here claims cause.</p>
+  <div id="salmon"></div>
+
   <h2>Calibration: ripples it must find</h2>
   <p class="muted">Before searching, the engine's tests were checked on four well-known ripples and 200 fake ones.</p>
   <div id="calib"></div>
@@ -302,6 +309,43 @@ dl.how dt{font-weight:700}dl.how dd{margin:0;color:var(--ink-2)}
           <tbody>${ev.map(row).join("")}</tbody></table></div></details></div>`;
       }).join("");
     }).join("");
+
+    // salmon search (reverse discovery)
+    if (man.salmon) {
+      const sm = await getJSON(man.salmon.file);
+      const box2 = $("#salmon");
+      if (!sm) box2.innerHTML = `<div class="card pending"><strong>Salmon search v1</strong>: running or not yet saved. Registered at ledger ${esc(man.salmon.ledger.join(", "))}.</div>`;
+      else {
+        const b = sm.benchmark_summary || {};
+        const pct = (x) => x == null ? "–" : x < 0.01 ? "< 1%" : Math.round(x * 100) + "%";
+        const brow = (r) => `<tr><td>${esc(r.name)} <span class="muted">${r.year}</span></td><td>${esc(r.known.split("|")[0].replace(/\\b/g, ""))}</td>
+          <td class="num">${r.rank_of_known ?? "not found"}</td><td class="hide-sm">${esc((r.top[0] || {}).work_label || "–")}</td>
+          <td class="num">${pct(r.chance_match_of_known)}</td><td>${r.detected_in_top200 ? "yes" : "no"}</td></tr>`;
+        let html = `<div class="card"><h3>Benchmark: does it find causes we already know? <span class="muted">· ledger ${esc(man.salmon.ledger.join(", "))}</span></h3>
+          <p><span class="verdict ${b.pass ? "ok" : "no"}">${b.pass ? "Passed" : "Did not pass"}</span>
+          <span class="muted">· known cause ranked first for ${b.hit_at_1 ?? "–"} of ${b.of ?? 9} names (needed 6), in the top 3 for ${b.hit_at_3 ?? "–"}</span></p>
+          <div class="scroll"><table><thead><tr><th>Name</th><th>Known cause</th><th>Rank</th><th class="hide-sm">Linker's top pick</th><th>Chance match</th><th>Spike detected</th></tr></thead>
+          <tbody>${(sm.benchmark || []).map(brow).join("")}</tbody></table></div>
+          ${sm.stopped ? `<p class="muted">Run stopped early: ${esc(sm.stopped)}.</p>` : ""}</div>`;
+        if (b.pass) {
+          const rows = (sm.anomalies || []).filter((a) => a.candidates && a.candidates.length).slice(0, 40).map((a) => {
+            const c = a.candidates[0], ch = c.chain || {};
+            return `<tr><td>${esc(a.name)} <span class="muted">${a.year}</span></td><td class="num">${a.n_prev} → ${a.n}</td>
+              <td>${esc(c.work_label)} <span class="muted">(${c.year})</span>${ch.relay ? `<br><span class="muted">via ${esc(ch.relay)}</span>` : ""}</td>
+              <td class="num">${pct(c.chance_match)}</td></tr>`;
+          }).join("");
+          html += `<div class="card"><h3>Name surges and possible upstream causes <span class="muted">· speculative</span></h3>
+            <p class="muted">Strongest surges first. "Chance match" is how often the linker finds a match at least this strong for a
+            name that did not surge; lower is more convincing.</p>
+            <div class="scroll"><table><thead><tr><th>Name</th><th>Babies (year before → surge year)</th><th>Possible cause (earliest we can see)</th><th>Chance match</th></tr></thead>
+            <tbody>${rows}</tbody></table></div></div>`;
+        } else {
+          html += `<div class="card pending">The linker did not pass its benchmark, so its list of possible causes is not shown as discoveries.
+            It will be revised (v2) and re-tested.</div>`;
+        }
+        box2.innerHTML = html;
+      }
+    }
 
     // calibration
     const e9 = await getJSON(man.calibration.file);
