@@ -60,11 +60,11 @@ BENCHMARK = [  # (name, sex, onset year, acceptable work label pattern)
 ]
 
 QUERY = """SELECT ?item ?kind ?work ?workLabel ?date ?links WHERE {
+  hint:Query hint:optimizer "None" .
   VALUES ?item { %s }
-  { ?item wdt:P1441 ?work . BIND("character" AS ?kind) }
-  UNION { ?item wdt:P577 ?d0 . BIND(?item AS ?work) BIND("work" AS ?kind) }
-  ?work wdt:P577 ?date .
-  ?work wikibase:sitelinks ?links .
+  { ?item wdt:P1441 ?work . ?work wdt:P577 ?date . ?work wikibase:sitelinks ?links . BIND("character" AS ?kind) }
+  UNION
+  { ?item wdt:P577 ?date . ?item wikibase:sitelinks ?links . BIND(?item AS ?work) BIND("work" AS ?kind) }
   OPTIONAL { ?work rdfs:label ?workLabel FILTER(LANG(?workLabel) = "en") }
 }"""
 
@@ -119,11 +119,12 @@ def _get(url, accept):
 
 
 def sparql(name):
-    """v1.1 (deviation 1374, before any result): items from Wikidata's search API (wbsearchentities: English labels and
+    """v1.2 (deviation 1377): each UNION branch binds from the item ids first (optimizer hint), so the query never
+    scans all dated items. v1.1 (deviation 1374, before any result): items from Wikidata's search API (wbsearchentities: English labels and
     aliases, up to 50), then one small SPARQL query on those item ids. A query-level 500/504 is recorded for that name
     and the run continues; a refusal (403/429) or 3 failures in a row stops the run."""
     os.makedirs(CACHE, exist_ok=True)
-    f = os.path.join(CACHE, "v11-" + hashlib.md5(name.encode()).hexdigest() + ".json")
+    f = os.path.join(CACHE, "v12-" + hashlib.md5(name.encode()).hexdigest() + ".json")
     if os.path.exists(f):
         return json.load(open(f))
     try:
@@ -338,7 +339,7 @@ def main() -> int:
         print(f"stopped: {e}", flush=True)
     report["n_queries_cached"] = len(cand_cache)
     report["failed_queries"] = failed
-    report["version"] = "v1.1"
+    report["version"] = "v1.2"
     out = os.environ.get("SALMON_OUT", "salmon_names_v1.json")
     json.dump(report, open(out, "w"), indent=1, default=str)
     print(json.dumps(report.get("benchmark_summary"), default=str), flush=True)

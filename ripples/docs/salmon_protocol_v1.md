@@ -126,3 +126,13 @@ detected it; detection is reported separately.
     name counts as a miss).
   - The run still stops on 403/429 or after 3 failures in a row.
 - **Unchanged:** scoring, anomalies, placebos, benchmark and pass rule.
+
+## Deviation 2 (registered 2026-09-29, before any result existed): v1.2 query order
+
+- **What happened:** the v1.1 run (Actions run 36531058161, 06:27–06:30 UTC) stopped after three query-service 504s in
+  a row (Guadalupe, Gregorio and one more). No anomaly, placebo or benchmark result was produced.
+- **Likely cause:** the query's join order. With the work bound only inside a `BIND`, the engine could scan every
+  dated item before joining to the ~50 searched items.
+- **Fix:** each UNION branch now starts from the searched item ids, and the optimizer is told to keep the written
+  order (`hint:optimizer "None"`).
+- **Unchanged:** everything else.
