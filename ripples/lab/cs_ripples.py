@@ -27,6 +27,7 @@ import subprocess
 import sys
 import time
 import urllib.error
+import urllib.parse
 import urllib.request
 
 UA = "ripples-research/0.2 (+https://bensunter.com/ripples/methods/)"
@@ -237,6 +238,55 @@ def analyse(outdir: str) -> dict:
     return idx
 
 
+# Wikidata typing (v1): cast and crew of a work are expected destinations by construction, so they are discounted and
+# not expanded (their filmographies are obvious). Occupations: actor, film/TV/stage/voice actor, director, screenwriter,
+# producer, showrunner, comedian, presenter, model, singer, musician.
+CREW_OCC = {"Q33999", "Q10800557", "Q10798782", "Q2259451", "Q2405480", "Q2526255", "Q3455803", "Q28389", "Q3282637",
+            "Q578109", "Q947873", "Q245068", "Q13590141", "Q4610556", "Q177220", "Q639669", "Q3387717", "Q1053574"}
+WORK_P31 = {"Q11424", "Q5398426", "Q1259759", "Q21191270", "Q7725634", "Q24856", "Q202866", "Q1261214", "Q7889"}
+WD = "https://www.wikidata.org/w/api.php"
+_WD_CACHE = {}
+
+
+def wd_kinds(titles):
+    """Kind per enwiki title: 'crew' (a person whose occupation is acting/directing/producing etc.), 'person', 'work'
+    (film, series, episode, novel, game), or 'other'. Batched wbgetentities (50 per request), honest UA, 1 s apart,
+    cached; a refusal leaves kinds unknown (None) rather than stopping the map."""
+    path = os.path.join(os.path.dirname(CACHE), "wd_kinds.json")
+    if not _WD_CACHE and os.path.exists(path):
+        _WD_CACHE.update(json.load(open(path)))
+    todo = [t for t in titles if t not in _WD_CACHE]
+    for i in range(0, len(todo), 50):
+        batch = todo[i:i + 50]
+        q = urllib.parse.urlencode({"action": "wbgetentities", "sites": "enwiki", "props": "claims|sitelinks",
+                                    "sitefilter": "enwiki", "format": "json",
+                                    "titles": "|".join(t.replace("_", " ") for t in batch)})
+        req = urllib.request.Request(f"{WD}?{q}", headers={"User-Agent": UA})
+        try:
+            with urllib.request.urlopen(req, timeout=60) as r:
+                data = json.load(r)
+        except Exception as e:  # noqa: BLE001
+            print(f"wikidata: {str(e)[:120]}", flush=True)
+            break
+        for ent in data.get("entities", {}).values():
+            t = ent.get("sitelinks", {}).get("enwiki", {}).get("title")
+            if not t:
+                continue
+            cl = ent.get("claims", {})
+            ids = lambda p: {c.get("mainsnak", {}).get("datavalue", {}).get("value", {}).get("id") for c in cl.get(p, [])}  # noqa: E731
+            p31, occ = ids("P31"), ids("P106")
+            kind = ("crew" if occ & CREW_OCC else "person") if "Q5" in p31 else ("work" if p31 & WORK_P31 else "other")
+            _WD_CACHE[t.replace(" ", "_")] = kind
+        for t in batch:
+            _WD_CACHE.setdefault(t, "other")
+        time.sleep(1)
+    try:
+        json.dump(_WD_CACHE, open(path, "w"))
+    except OSError:
+        pass
+    return {t: _WD_CACHE.get(t) for t in titles}
+
+
 def out_totals(md):
     return {a: sum(v.values()) for a, v in md["out"].items()}
 
@@ -245,7 +295,7 @@ def funnel(outdir: str) -> dict:
     """Event -> unusual 1-hop destinations -> their unusual destinations (up to F_HOPS), ranked by surprise
     (observed minus expected clicks) and a weirdness priority score, not by size. Exploratory."""
     os.makedirs(outdir, exist_ok=True)
-    res = {"version": "funnel v0 (exploratory)", "ledger": 1466, "events": []}
+    res = {"version": "funnel v1 (exploratory; Wikidata kinds, cast/crew discounted)", "ledger": 1466, "events": []}
     for ev, m0 in FUNNEL_EVENTS:
         mons = {m: load(m) for m in window_months(m0)}
         base = [mons[m] for m in window_months(m0)[:BASE_MONTHS] if mons.get(m)]
@@ -309,12 +359,18 @@ def funnel(outdir: str) -> dict:
                                   "to_arrivals": cin, "to_base": round(cb), "specificity": spec,
                                   "carried": round(min(1.0, n / (cin - cb)), 3) if cin > cb else None,
                                   "weirdness": round(weird, 3)})
+                kinds = wd_kinds([e["to"] for e in cands])
+                for e in cands:
+                    e["kind"] = kinds.get(e["to"])
+                    if e["kind"] == "crew":
+                        e["weirdness"] = round(e["weirdness"] * 0.2, 3)
                 cands.sort(key=lambda e: -e["weirdness"])
                 for e in cands[:F_ROOT_KIDS if hop == 1 else F_KIDS]:
                     edges.append(e)
                     seen.add(e["to"])
-                    nodes[e["to"]] = {"hop": hop, "arrivals": e["to_arrivals"], "base": e["to_base"]}
-                    nxt_frontier.append(e["to"])
+                    nodes[e["to"]] = {"hop": hop, "arrivals": e["to_arrivals"], "base": e["to_base"], "kind": e["kind"]}
+                    if e["kind"] != "crew":
+                        nxt_frontier.append(e["to"])
             frontier = nxt_frontier
         # candidate paths: root -> ... -> node, scored by mean weirdness with a length bonus
         parent = {e["to"]: e for e in edges}
@@ -329,7 +385,16 @@ def funnel(outdir: str) -> dict:
             paths.append({"path": [ev] + [c["to"] for c in chain], "score": round(score, 3),
                           "min_surprise": min(c["surprise"] for c in chain)})
         paths.sort(key=lambda p: -p["score"])
-        res["events"].append({"event": ev, "month": m0, "nodes": nodes, "edges": edges, "top_paths": paths[:10],
+        picked, per_prefix = [], collections.Counter()
+        for p_ in paths:  # at most 2 paths per shared prefix, none ending on cast/crew
+            if nodes.get(p_["path"][-1], {}).get("kind") == "crew":
+                continue
+            key = tuple(p_["path"][:-1])
+            if per_prefix[key] >= 2:
+                continue
+            per_prefix[key] += 1
+            picked.append(p_)
+        res["events"].append({"event": ev, "month": m0, "nodes": nodes, "edges": edges, "top_paths": picked[:10],
                               "biggest_by_clicks": sorted(edges, key=lambda e: -e["clicks"])[:5]})
         print(f"{ev} {m0}: {len(edges)} edges; top path {paths[0]['path'] if paths else None}", flush=True)
     json.dump(res, open(os.path.join(outdir, "funnel_v0.json"), "w"), ensure_ascii=False, indent=1)

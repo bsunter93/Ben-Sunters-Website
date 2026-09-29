@@ -34,7 +34,7 @@ jobs:
           restore-keys: ripples-csall-v1-
       - name: Fetch monthly Clickstream (resumable)
         working-directory: ripples/lab
-        run: python cs_ripples.py fetch 45
+        run: python cs_ripples.py fetch "${FETCH_MIN:-0}"
       - uses: actions/cache/save@v4
         if: always()
         with:
