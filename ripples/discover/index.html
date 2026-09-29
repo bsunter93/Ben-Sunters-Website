@@ -328,17 +328,25 @@ dl.how dt{font-weight:700}dl.how dd{margin:0;color:var(--ink-2)}
           <tbody>${(sm.benchmark || []).map(brow).join("")}</tbody></table></div>
           ${sm.stopped ? `<p class="muted">Run stopped early: ${esc(sm.stopped)}.</p>` : ""}</div>`;
         if (b.pass) {
-          const rows = (sm.anomalies || []).filter((a) => a.candidates && a.candidates.length).slice(0, 40).map((a) => {
+          const all = (sm.anomalies || []);
+          const linked = all.filter((a) => a.candidates && a.candidates.length && a.candidates[0].chance_match <= 0.10)
+            .sort((x, y) => x.candidates[0].chance_match - y.candidates[0].chance_match || y.s - x.s);
+          const rows = linked.map((a) => {
             const c = a.candidates[0], ch = c.chain || {};
             return `<tr><td>${esc(a.name)} <span class="muted">${a.year}</span></td><td class="num">${a.n_prev} → ${a.n}</td>
               <td>${esc(c.work_label)} <span class="muted">(${c.year})</span>${ch.relay ? `<br><span class="muted">via ${esc(ch.relay)}</span>` : ""}</td>
               <td class="num">${pct(c.chance_match)}</td></tr>`;
           }).join("");
+          const open = all.filter((a) => !a.candidates || !a.candidates.length).sort((x, y) => y.s - x.s).slice(0, 24)
+            .map((a) => `${esc(a.name)} <span class="muted">${a.year} (${a.n_prev} → ${a.n})</span>`).join(" · ");
           html += `<div class="card"><h3>Name surges and possible upstream causes <span class="muted">· speculative</span></h3>
-            <p class="muted">Strongest surges first. "Chance match" is how often the linker finds a match at least this strong for a
-            name that did not surge; lower is more convincing.</p>
-            <div class="scroll"><table><thead><tr><th>Name</th><th>Babies (year before → surge year)</th><th>Possible cause (earliest we can see)</th><th>Chance match</th></tr></thead>
-            <tbody>${rows}</tbody></table></div></div>`;
+            <p class="muted">${linked.length} of ${all.length} surges have a possible cause that a name that did not surge matches at most 10% of the time.
+            Lower "chance match" is more convincing. The cause shown is the earliest we can see, not proof.</p>
+            <div class="scroll"><table><thead><tr><th>Name</th><th>Babies (year before → surge year)</th><th>Possible cause</th><th>Chance match</th></tr></thead>
+            <tbody>${rows}</tbody></table></div>${(man.salmon.notes || []).map((n) => `<p class="muted">Hand check: ${esc(n)}</p>`).join("")}</div>
+            <div class="card"><h3>Surges still unexplained <span class="muted">· strongest first</span></h3>
+            <p class="muted">v1 only looks for characters and titled works, so surges driven by real people, reality TV or news are not
+            linked yet. That is the next version.</p><p>${open}</p></div>`;
         } else {
           html += `<div class="card pending">The linker did not pass its benchmark, so its list of possible causes is not shown as discoveries.
             It will be revised (v2) and re-tested.</div>`;
