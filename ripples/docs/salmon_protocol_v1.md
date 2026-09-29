@@ -112,3 +112,17 @@ detected it; detection is reported separately.
 
 - `salmon_names_v1` in `ripples.att_q3_results`, saved as `ripples/docs/results/salmon_names_v1.json`.
 - Shown on /ripples/discover/ as "What moved, and what might explain it" if the benchmark passes.
+
+## Deviation 1 (registered 2026-09-29, before any result existed): v1.1 query implementation
+
+- **What happened:** the first run (Actions run 36530730042) stopped within its first minute. The Wikidata query
+  service returned HTTP 504, a gateway timeout: the single SPARQL query (EntitySearch inside SPARQL plus the label
+  service) was too heavy. No anomaly, placebo or benchmark result was produced or seen.
+- **Changes:**
+  - Items are now found with Wikidata's search API (`wbsearchentities`: English labels and aliases, up to 50).
+  - Those item ids go into one small SPARQL query for works (P1441), dated works (P577), dates, sitelinks and English
+    work labels.
+  - A query-level 500/504 for one name is recorded in `failed_queries`, and that name gets no candidates (a benchmark
+    name counts as a miss).
+  - The run still stops on 403/429 or after 3 failures in a row.
+- **Unchanged:** scoring, anomalies, placebos, benchmark and pass rule.

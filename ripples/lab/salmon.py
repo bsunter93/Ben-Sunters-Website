@@ -59,19 +59,13 @@ BENCHMARK = [  # (name, sex, onset year, acceptable work label pattern)
     ("Anakin", "M", 1999, r"Star Wars|Phantom Menace"),
 ]
 
-QUERY = """SELECT ?item ?lab ?alt ?work ?workLabel ?date ?links ?kind WHERE {
-  SERVICE wikibase:mwapi {
-    bd:serviceParam wikibase:endpoint "www.wikidata.org"; wikibase:api "EntitySearch";
-                    mwapi:search "%s"; mwapi:language "en"; mwapi:limit "50".
-    ?item wikibase:apiOutputItem mwapi:item.
-  }
+QUERY = """SELECT ?item ?kind ?work ?workLabel ?date ?links WHERE {
+  VALUES ?item { %s }
   { ?item wdt:P1441 ?work . BIND("character" AS ?kind) }
   UNION { ?item wdt:P577 ?d0 . BIND(?item AS ?work) BIND("work" AS ?kind) }
   ?work wdt:P577 ?date .
   ?work wikibase:sitelinks ?links .
-  OPTIONAL { ?item rdfs:label ?lab FILTER(LANG(?lab) = "en") }
-  OPTIONAL { ?item skos:altLabel ?alt FILTER(LANG(?alt) = "en") }
-  SERVICE wikibase:label { bd:serviceParam wikibase:language "en". }
+  OPTIONAL { ?work rdfs:label ?workLabel FILTER(LANG(?workLabel) = "en") }
 }"""
 
 
@@ -115,27 +109,60 @@ def anomalies(names, y0, y1):
 
 # ---------- Wikidata proposer ----------
 
+FAILS = {"consecutive": 0}
+
+
+def _get(url, accept):
+    req = urllib.request.Request(url, headers={"User-Agent": UA, "Accept": accept})
+    with urllib.request.urlopen(req, timeout=70) as r:
+        return json.load(r)
+
+
 def sparql(name):
+    """v1.1 (deviation 1374, before any result): items from Wikidata's search API (wbsearchentities: English labels and
+    aliases, up to 50), then one small SPARQL query on those item ids. A query-level 500/504 is recorded for that name
+    and the run continues; a refusal (403/429) or 3 failures in a row stops the run."""
     os.makedirs(CACHE, exist_ok=True)
-    f = os.path.join(CACHE, hashlib.md5(name.encode()).hexdigest() + ".json")
+    f = os.path.join(CACHE, "v11-" + hashlib.md5(name.encode()).hexdigest() + ".json")
     if os.path.exists(f):
         return json.load(open(f))
-    q = QUERY % name.replace('"', "")
-    url = "https://query.wikidata.org/sparql?" + urllib.parse.urlencode({"query": q, "format": "json"})
-    req = urllib.request.Request(url, headers={"User-Agent": UA, "Accept": "application/sparql-results+json"})
     try:
-        with urllib.request.urlopen(req, timeout=70) as r:
-            rows = json.load(r)["results"]["bindings"]
-    except urllib.error.HTTPError as e:
-        if e.code == 500:
+        sr = _get("https://www.wikidata.org/w/api.php?" + urllib.parse.urlencode(
+            {"action": "wbsearchentities", "search": name, "language": "en", "uselang": "en", "type": "item",
+             "limit": "50", "format": "json"}), "application/json")
+        time.sleep(PAUSE)
+        hits = sr.get("search", [])
+        labels = {}
+        for h in hits:
+            labels.setdefault(h["id"], set()).update(
+                x for x in [h.get("label"), (h.get("match") or {}).get("text")] + list(h.get("aliases") or []) if x)
+        out = []
+        if labels:
+            q = QUERY % " ".join("wd:" + i for i in labels)
+            rows = _get("https://query.wikidata.org/sparql?" + urllib.parse.urlencode({"query": q, "format": "json"}),
+                        "application/sparql-results+json")["results"]["bindings"]
             time.sleep(PAUSE)
-            return {"error": "query failed (500)"}
-        raise Stop(f"HTTP {e.code}") from None
+            for r in rows:
+                d = {k: v["value"] for k, v in r.items()}
+                it = d["item"].rsplit("/", 1)[-1]
+                for lab in labels.get(it, {it}):
+                    out.append(dict(d, lab=lab))
+    except urllib.error.HTTPError as e:
+        if e.code in (403, 429):
+            raise Stop(f"HTTP {e.code}") from None
+        FAILS["consecutive"] += 1
+        if FAILS["consecutive"] >= 3:
+            raise Stop(f"HTTP {e.code} three times in a row") from None
+        time.sleep(PAUSE * 5)
+        return {"error": f"query failed ({e.code})"}
     except (urllib.error.URLError, TimeoutError) as e:
-        raise Stop(f"network: {e}") from None
-    out = [{k: v["value"] for k, v in r.items()} for r in rows]
+        FAILS["consecutive"] += 1
+        if FAILS["consecutive"] >= 3:
+            raise Stop(f"network: {e}") from None
+        time.sleep(PAUSE * 5)
+        return {"error": f"network ({e})"}
+    FAILS["consecutive"] = 0
     json.dump(out, open(f, "w"))
-    time.sleep(PAUSE)
     return out
 
 
@@ -253,9 +280,14 @@ def main() -> int:
         placebo.append((nm, sx, int(rng.choice(yrs))))
     cand_cache = {}
 
+    failed = []
+
     def cands_for(nm):
         if nm not in cand_cache:
-            cand_cache[nm] = candidates(sparql(nm), nm)
+            rows = sparql(nm)
+            if isinstance(rows, dict):
+                failed.append(nm)
+            cand_cache[nm] = candidates(rows, nm)
         return cand_cache[nm]
 
     try:
@@ -305,6 +337,8 @@ def main() -> int:
         report["stopped"] = stopped
         print(f"stopped: {e}", flush=True)
     report["n_queries_cached"] = len(cand_cache)
+    report["failed_queries"] = failed
+    report["version"] = "v1.1"
     out = os.environ.get("SALMON_OUT", "salmon_names_v1.json")
     json.dump(report, open(out, "w"), indent=1, default=str)
     print(json.dumps(report.get("benchmark_summary"), default=str), flush=True)
