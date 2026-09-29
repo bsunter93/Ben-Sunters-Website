@@ -1,0 +1,64 @@
+# Ripple Map Q6 (ripples/docs/q6_lenses_protocol.md, ledger 1464): the named-subject test on TV news captions and Hacker
+# News (BigQuery, keyless D-8) alongside Wikipedia. Shares the ripples-q3 group (possible Wikimedia cache misses).
+name: Ripples Q6 lenses
+
+on:
+  push:
+    branches: ["claude/**"]
+    paths: ["ripples/lab/q6_lenses.py", "ripples/tools/bq/lens_tv_hn.py", ".github/workflows/ripples-q6.yml"]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  id-token: write
+
+concurrency:
+  group: ripples-q3
+  cancel-in-progress: false
+
+jobs:
+  q6:
+    runs-on: ubuntu-latest
+    timeout-minutes: 240
+    env:
+      LAB_CACHE: ${{ github.workspace }}/.cult-cache
+      OUT: ${{ github.workspace }}
+    steps:
+      - uses: actions/checkout@v4
+      - id: auth
+        uses: google-github-actions/auth@v2
+        with:
+          workload_identity_provider: ${{ vars.GCP_WIF_PROVIDER }}
+          service_account: ${{ vars.GCP_SA_EMAIL }}
+      - uses: google-github-actions/setup-gcloud@v2
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: pip install --quiet numpy -r ripples/tools/bq/requirements.txt
+      - uses: actions/cache/restore@v4
+        with:
+          path: .cult-cache
+          key: ripples-cult-v1-${{ github.run_id }}
+          restore-keys: ripples-cult-v1-
+      - name: Build TV and HN lenses (BigQuery)
+        working-directory: ripples/tools/bq
+        run: |
+          test -f "$LAB_CACHE/lens_tv.csv" && test -f "$LAB_CACHE/lens_hn.csv" && echo "lenses cached" && exit 0
+          python lens_tv_hn.py --outdir "$LAB_CACHE"
+      - name: Q6 named-subject test on three lenses
+        working-directory: ripples/lab
+        run: |
+          test -f "$LAB_CACHE/pv.npz" || { echo "panel cache missing"; exit 1; }
+          Q6_OUT="$OUT/q6_lenses_v1.json" python q6_lenses.py "$LAB_CACHE"
+      - uses: actions/cache/save@v4
+        if: always()
+        with:
+          path: .cult-cache
+          key: ripples-cult-v1-${{ github.run_id }}
+      - name: Store report
+        if: always()
+        working-directory: ripples/lab
+        env:
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+        run: python q3_upload.py "$OUT/q6_lenses_v1.json"
