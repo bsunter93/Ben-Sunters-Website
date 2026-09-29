@@ -124,7 +124,7 @@ def build() -> int:
     days = np.array([(CD.START + dt.timedelta(days=i)).toordinal() for i in range(D)])
     np.savez_compressed(os.path.join(CD.CACHE, "pv_l4.npz"), articles=np.array(arts), days=days, views=np.stack(rows))
     print(json.dumps({"listed": len(titles), "missing": missing, "articles": len(arts), "days": D}), flush=True)
-    complete = len(arts) >= 5000 and missing <= 0.05 * len(titles)
+    complete = len(arts) >= 5000 and missing <= 0.10 * len(titles)  # amendment 2026-09-29 (ledger 1376): 90%
     with open(os.path.join(CD.CACHE, "l4_complete"), "w") as f:
         f.write("1" if complete else "0")
     return 0  # the screen job runs only when l4_complete is 1 (a mostly complete panel)

@@ -29,7 +29,9 @@ Two more outcome panels for the 14 screen v2 families (`ripples/corpus/q3_famili
 - **Fetch:** `ripples/lab/l4_panel.py`, with the standing Wikimedia rules: one request at a time with a 1 s pause,
   honest User-Agent, stop on 403/429/503 with no retry that day, resuming on a later day.
 - **Articles kept:** views on at least 90% of the days in the window 2015-07-01..2026-08-31.
-- **When it runs:** once, when the panel is at least 95% complete and has at least 5,000 articles.
+- **When it runs:** once, when the panel is at least 90% complete and has at least 5,000 articles. This was amended
+  from 95% on 2026-09-29 (ledger 1376), before any wide-lens result existed: the fetch stopped on a 429 at 9,033 of
+  10,016 articles.
 - **Analysis:** exactly screen v2 (`q3_protocol_v2.md`): the same outcome transform (log(1 + views) minus the all-series
   daily median), with no weekday matching and no coverage rule.
 - **Why:**
