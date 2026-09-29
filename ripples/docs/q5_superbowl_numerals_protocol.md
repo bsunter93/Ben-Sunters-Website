@@ -48,5 +48,26 @@ driver has not been ruled out.
 
 - **New fetches:** the "Roman numerals" article views (with redirects) and "Super Bowl 50" event views. Everything else
   is cached.
-- **Fetch rules:** the owner's identity-only Wikimedia token, honest User-Agent, 1 s pause, stop on refusal.
+- **Fetch rules:** honest User-Agent, 1 s pause, stop on refusal. Only a few hundred new requests are needed, so the run
+  is anonymous.
 - **When:** after the Q4 run and the v3 lens runs finish (one Wikimedia job at a time).
+
+## Amendment 1 (registered before any real data for this test was fetched)
+
+- **Problem:** in offline null simulations the swap-null design of test 1 was miscalibrated: 16% false positives at
+  p ≤ 0.05. Nearby Sundays share most of the game day's analysis window, so swapping them is not exchangeable.
+- **Replacement:**
+  - **Statistic:** the local contrast T = Σ_i [z(game_i) − mean_k z(game_i + k)] / √n, with k = ±1, 2, 3 weeks.
+  - **Null:** 2,000 sets in which every game is replaced by a random Sunday across the panel and the same contrast is
+    computed.
+  - **Per-event z:** MAD z against 200 random Sundays across the panel, clipped at ±4.
+  - A seasonal effect cancels inside each contrast.
+- **Offline check** (`ripples/lab/q5_superbowl.py`, synthetic series):
+
+  | Scenario | Share at p ≤ 0.05 | Share at p ≤ 0.01 |
+  |---|---|---|
+  | Pure null | 5.0% | 1.2% |
+  | Fixed calendar-season bump (Feb 1 ± 25 days) | 5.0% | 0.0% |
+  | Planted +100% game-day effect | p = 0.002 in 8 of 8 runs | |
+
+- **Unchanged:** outcomes, events, pass rule (p ≤ 0.05 for Roman numerals), negative control and reader-path check.
