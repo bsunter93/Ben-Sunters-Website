@@ -1,0 +1,49 @@
+# Ripple Map screen v3 weekday check (ledger 1455): screen v3 (q3_screen_v3) re-run with same-weekday
+# placebo and moved dates, to test whether its non-echo candidates are a weekly/academic-calendar artefact. Uses the
+# cached 998-article panel and event views from the screen v3 run only (no new Wikimedia requests expected).
+name: Ripples Q3 screen v3 same-weekday check
+
+on:
+  push:
+    branches: ["claude/**"]
+    paths: [".github/workflows/ripples-q3-v3-check.yml"]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ripples-q3-v3-check
+  cancel-in-progress: false
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    timeout-minutes: 330
+    env:
+      LAB_CACHE: ${{ github.workspace }}/.cult-cache
+      OUT: ${{ github.workspace }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: pip install --quiet numpy
+      - uses: actions/cache/restore@v4
+        with:
+          path: .cult-cache
+          key: ripples-cult-v1-none
+          restore-keys: ripples-cult-v1-
+      - name: Screen v3, same-weekday placebos
+        working-directory: ripples/lab
+        run: |
+          test -f "$LAB_CACHE/pv.npz" || { echo "panel cache missing"; exit 1; }
+          Q3_PROTOCOL=ripples/docs/q3_protocol_v3.md Q3_OUT="$OUT/q3_screen_v3_sameweekday.json" python q3_run.py \
+            --families ../corpus/q3_families_v3.tsv --redirects --same-weekday
+      - name: Store report
+        if: always()
+        working-directory: ripples/lab
+        env:
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+        run: python q3_upload.py "$OUT/q3_screen_v3_sameweekday.json"
