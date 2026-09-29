@@ -1,0 +1,44 @@
+# Attention-source probe: what the free public BigQuery datasets hold (Google Trends, Hacker News, GDELT, Wikipedia,
+# Reddit archives, Stack Overflow). Metadata and small aggregates only, dry-run first. Report: source_probe_v1.
+name: Ripples source probe
+
+on:
+  push:
+    branches: ["claude/**"]
+    paths: ["ripples/tools/bq/source_probe.py", "ripples/tools/bq/source_probe2.py", ".github/workflows/ripples-source-probe.yml"]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  id-token: write
+
+concurrency:
+  group: ripples-source-probe
+  cancel-in-progress: false
+
+jobs:
+  probe:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+      - id: auth
+        uses: google-github-actions/auth@v2
+        with:
+          workload_identity_provider: ${{ vars.GCP_WIF_PROVIDER }}
+          service_account: ${{ vars.GCP_SA_EMAIL }}
+      - uses: google-github-actions/setup-gcloud@v2
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: pip install --quiet -r ripples/tools/bq/requirements.txt
+      - name: Probe
+        working-directory: ripples/tools/bq
+        run: python source_probe2.py "$GITHUB_WORKSPACE/source_probe_v2.json"
+      - name: Store report
+        if: always()
+        working-directory: ripples/lab
+        env:
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+        run: python q3_upload.py "$GITHUB_WORKSPACE/source_probe_v2.json"
