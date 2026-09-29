@@ -1,0 +1,50 @@
+# Ripple Map reader paths: Wikipedia Clickstream (ripples/docs/clickstream_protocol_v1.md, ledger 1462).
+# Streams monthly Clickstream dumps one at a time and keeps only rows touching the focus titles (cached per month, so a
+# stopped run resumes). Report stored in ripples.att_q3_results (clickstream_paths_v1).
+name: Ripples Clickstream reader paths
+
+on:
+  push:
+    branches: ["claude/**"]
+    paths: ["ripples/lab/clickstream.py", ".github/workflows/ripples-clickstream.yml"]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ripples-clickstream
+  cancel-in-progress: false
+
+jobs:
+  paths:
+    runs-on: ubuntu-latest
+    timeout-minutes: 350
+    env:
+      LAB_CACHE: ${{ github.workspace }}/.cs-cache
+      OUT: ${{ github.workspace }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - uses: actions/cache/restore@v4
+        with:
+          path: .cs-cache
+          key: ripples-clickstream-v1-${{ github.run_id }}
+          restore-keys: ripples-clickstream-v1-
+      - name: Fetch and analyse reader paths
+        working-directory: ripples/lab
+        run: CS_OUT="$OUT/clickstream_paths_v1.json" python clickstream.py
+      - uses: actions/cache/save@v4
+        if: always()
+        with:
+          path: .cs-cache
+          key: ripples-clickstream-v1-${{ github.run_id }}
+      - name: Store report
+        if: always()
+        working-directory: ripples/lab
+        env:
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+        run: python q3_upload.py "$OUT/clickstream_paths_v1.json"

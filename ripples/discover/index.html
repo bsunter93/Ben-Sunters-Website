@@ -100,6 +100,12 @@ dl.how dt{font-weight:700}dl.how dd{margin:0;color:var(--ink-2)}
     up for names that did not move (the chance-match rate). Nothing here claims cause.</p>
   <div id="salmon"></div>
 
+  <h2>How readers got there</h2>
+  <p class="muted">Timing tests show <em>that</em> attention moved. Wikipedia's Clickstream (monthly counts of which page readers
+    clicked from) shows <em>how</em>: whether readers walked straight from the event's article to the ripple, or arrived by
+    search or other pages. Pairs with fewer than 10 clicks in a month are not published, so "–" means under 10. Descriptive only.</p>
+  <div id="paths"></div>
+
   <h2>Calibration: ripples it must find</h2>
   <p class="muted">Before searching, the engine's tests were checked on four well-known ripples and 200 fake ones.</p>
   <div id="calib"></div>
@@ -353,6 +359,43 @@ dl.how dt{font-weight:700}dl.how dd{margin:0;color:var(--ink-2)}
             It will be revised (v2) and re-tested.</div>`;
         }
         box2.innerHTML = html;
+      }
+    }
+
+    // reader paths (Clickstream)
+    if (man.paths) {
+      const cs = await getJSON(man.paths.file);
+      const box3 = $("#paths");
+      if (!cs) box3.innerHTML = `<div class="card pending"><strong>Reader paths</strong>: running or not yet saved. Registered at ledger ${esc(man.paths.ledger.join(", "))}.</div>`;
+      else {
+        const n = (x) => x ? Number(x).toLocaleString() : "–";
+        const sb = cs.superbowl_numerals || {};
+        const yrow = (y) => {
+          if (y.skip) return `<tr><td>${y.year}</td><td colspan="5" class="muted">${esc(y.skip)}</td></tr>`;
+          const r = y.Roman_numerals || {}, a = y.Arabic_numerals || {};
+          return `<tr><td>${y.year} <span class="muted">${esc(nice(y.game))}</span></td><td class="num">${n(r.feb_from_super_bowl)}</td>
+            <td class="num">${n(r.compare_from_super_bowl)}</td><td class="num hide-sm">${r.feb_share_from_super_bowl_articles != null ? (r.feb_share_from_super_bowl_articles * 100).toFixed(1) + "%" : "–"}</td>
+            <td class="num">${n(a.feb_from_super_bowl)}</td><td class="num hide-sm">${n((y.roman_to_arabic || {}).feb)} / ${n((y.roman_to_arabic || {}).compare)}</td></tr>`;
+        };
+        const sup = sb.years_supporting || {};
+        let html = `<div class="card"><h3>Super Bowls → Roman numerals: do readers click through? <span class="muted">· ledger ${esc(man.paths.ledger.join(", "))}</span></h3>
+          <p><span class="verdict ${sb.verdict_roman === "supporting" ? "ok" : "no"}">${sb.verdict_roman === "supporting" ? "Reader path found" : sb.verdict_roman === "not run" ? "Not run" : "No clear reader path"}</span>
+          <span class="muted">· ${sup.Roman_numerals ?? 0} of ${sb.years_usable ?? 0} years show February clicks from Super Bowl articles to Roman numerals, far above August</span></p>
+          <div class="scroll"><table><thead><tr><th>Year</th><th>Feb clicks → Roman numerals</th><th>Aug clicks</th><th class="hide-sm">Share of Roman numerals' Feb arrivals</th><th>Feb clicks → Arabic numerals</th><th class="hide-sm">Roman → Arabic, Feb / Aug</th></tr></thead>
+          <tbody>${(sb.years || []).map(yrow).join("")}</tbody></table></div>
+          ${(man.paths.notes || []).map((t) => `<p class="muted">Hand check: ${esc(t)}</p>`).join("")}
+          ${cs.stopped ? `<p class="muted">Fetch stopped early: ${esc(cs.stopped)}.</p>` : ""}</div>`;
+        const erows = (cs.event_paths || []).flatMap((e) => (e.months || []).map((m) => m.skip ? "" :
+          `<tr><td>${esc(nice(e.event))}</td><td>${esc(nice(e.outcome))}</td><td>${esc(m.month)}</td><td class="num">${n(m.event_to_outcome)}</td>
+           <td class="num">${m.outcome_inbound_change > 0 ? "+" : ""}${Number(m.outcome_inbound_change || 0).toLocaleString()}</td>
+           <td class="num">${m.share_of_change_direct != null ? (m.share_of_change_direct * 100).toFixed(1) + "%" : "–"}</td>
+           <td class="hide-sm">${(m.event_outbound_top || []).slice(0, 6).map(([t, c]) => `${esc(nice(t))} <span class="muted">${n(c)}</span>`).join(" · ")}</td></tr>`)).join("");
+        html += `<div class="card"><h3>Reader paths for named ripples</h3>
+          <p class="muted">Clicks from the event's article straight to the outcome, and how much of the outcome's extra traffic that month they account for.
+          The last column is the first ring of the event's ripple map: where its readers went next.</p>
+          <div class="scroll"><table><thead><tr><th>Event</th><th>Outcome</th><th>Month</th><th>Direct clicks</th><th>Outcome's change vs month before</th><th>Share direct</th><th class="hide-sm">Readers went next to</th></tr></thead>
+          <tbody>${erows}</tbody></table></div></div>`;
+        box3.innerHTML = html;
       }
     }
 
