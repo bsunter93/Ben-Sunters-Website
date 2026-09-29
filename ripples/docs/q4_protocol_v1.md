@@ -135,3 +135,38 @@ corpus file.
     - WeWork and mukbang have no defensible day.
     - Peloton (2013), Robinhood (2015) and D&D 5e (2014) are before the window.
     - For Stanley and Dalgona coffee, the named subject is the event's own article, so there is no separate outcome.
+
+## Addendum 3 (registered 2026-09-29 03:30 UTC, ledger 1371, before any of the day's runs)
+
+The owner's validation pack 4 (`ripples/corpus/validation_pack_4.csv`, 46 rows) was checked against every corpus
+file.
+
+- **Held-out dramas: 13 → 22.** Nine premieres are new to the corpus and name a subject someone could look up:
+
+  | Premiere | Subject |
+  |---|---|
+  | Monsieur Spade | Sam Spade |
+  | Apples Never Fall | Liane Moriarty |
+  | Renegade Nell | Highwayman |
+  | A Man in Full | Tom Wolfe |
+  | The Big Cigar | Huey P. Newton |
+  | Clipped | Donald Sterling |
+  | Three Women | Lisa Taddeo |
+  | The Residence | Executive Residence |
+  | Dope Thief | Drug Enforcement Administration |
+
+  The confirmation rule is unchanged. Pack ids are prefixed `V4-` because pack 2 reused the DR numbers.
+- **Dramas left out:**
+  - Six name no single subject: Lady in the Lake (1960s Baltimore), High Potential, Disclaimer, Matlock, Good
+    American Family (an unnamed adoption case) and Happy Face (an unnamed serial-killer case). The owner's subject
+    is used as given, never filled in.
+  - Five are already in the held-out set: A Very English Scandal, The Act, We Own This City, Painkiller and A
+    Gentleman in Moscow.
+- **Title check:** Wikipedia could not be reached from the drafting machine (proxy policy), so the event titles are
+  best-effort disambiguations. A title that does not exist is skipped and reported at run time, never replaced.
+- **Close dates:** four premieres fall within 10 days in March 2024 and March 2025. Their subjects differ, so this
+  is noted rather than excluded.
+- **Not registered, same reasons as addendum 2:**
+  - Science: 6 missions, all space and all in 2025, with repeated rows for Blue Ghost and Axiom-4.
+  - News: the same disasters as pack 2.
+  - Date resolutions: unchanged from pack 2.
