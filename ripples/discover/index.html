@@ -228,6 +228,7 @@ dl.how dt{font-weight:700}dl.how dd{margin:0;color:var(--ink-2)}
     for (const s of screens) {
       if (!s.data) continue;
       for (const [fam, r] of Object.entries(s.data.families)) { nFams++; nEvents += r.n_used || 0; }
+      if (s.hold) continue;  // candidates withheld until the screen's registered check clears them
       for (const c of s.data.candidates || []) {
         const fr = s.data.families[c.family], top = (fr.top || []).find((t) => t.article === c.article) || {};
         const conf = confs.filter((x) => x.screen === s.id && x.family === c.family && x.outcome === c.article);
@@ -301,7 +302,7 @@ dl.how dt{font-weight:700}dl.how dd{margin:0;color:var(--ink-2)}
         const row = (m) => `<tr><td>${esc(m.article)} <span class="muted">${esc(m.day0)}</span></td><td>${esc(m.subject)}</td>
           <td class="num">${m.z_mad.toFixed(1)}</td><td class="num">${fmtP(m.p_event)}${m.p_event <= 0.05 ? ` <span class="verdict ok">•</span>` : ""}</td></tr>`;
         const skipped = (r.members || []).filter((m) => m.skip).length;
-        return `<div class="card"><h3>${esc(famName(f.replace(/^q4_/, "")))} <span class="muted">· ${r.n_used} events${skipped ? `, ${skipped} skipped` : ""}</span></h3>
+        return `<div class="card"><h3>${esc((f === "q4_drama_confirm" ? "held-out drama premieres (confirmation)" : famName(f.replace(/^q4b?_/, ""))))} <span class="muted">· ${r.n_used} events${skipped ? `, ${skipped} skipped` : ""}</span></h3>
           <p>${r.p_mad == null ? `<span class="muted">Too few events scored.</span>` :
             `<span class="verdict ${pass ? "ok" : "no"}">${pass ? "Events of this kind move attention to their subjects" : "No family-level effect"}</span>
              <span class="muted">· p = ${fmtP(r.p_mad)} / ${fmtP(r.p_rank)} · ${r.events_p_le_05} of ${r.n_used} events at p ≤ 0.05 (about ${Math.round(r.n_used * 0.05)} expected by chance)</span>`}</p>
@@ -379,7 +380,7 @@ dl.how dt{font-weight:700}dl.how dd{margin:0;color:var(--ink-2)}
           <td>${r.note ? "–" : pass.has(f) ? ((s.data.candidates || []).some((c) => c.family === f) ? `<span class="verdict ok">passes</span>` : `<span class="verdict warn">passes; no outcome survived drop-one</span>`) : "no"}</td>
           <td>${best ? esc(nice(best.article)) + (best.echo ? ` <span class="muted">(echo)</span>` : "") : `<span class="muted">${esc(r.note || "")}</span>`}</td></tr>`;
       }).join("");
-      return `<div class="card"><h3>${esc(s.label)} <span class="muted">· ${esc(s.lens)}</span></h3><div class="scroll"><table>
+      return `<div class="card"><h3>${esc(s.label)} <span class="muted">· ${esc(s.lens)}</span></h3>${s.hold ? `<p><span class="verdict warn">On hold</span> <span class="muted">${esc(s.hold)}</span></p>` : ""}<div class="scroll"><table>
         <thead><tr><th>Family</th><th class="hide-sm">Events used</th><th>Best p</th><th>Corrected</th><th>Top outcome</th></tr></thead><tbody>${rows}</tbody></table></div></div>`;
     }).join("");
   }

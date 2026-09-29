@@ -24,6 +24,7 @@ jobs:
     env:
       LAB_CACHE: ${{ github.workspace }}/.cult-cache
       OUT: ${{ github.workspace }}
+      WIKIMEDIA_API_TOKEN: ${{ secrets.WIKIMEDIA_API_TOKEN }}
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
@@ -60,3 +61,4 @@ jobs:
           path: |
             q3_screen_v3.json
           if-no-files-found: ignore
+

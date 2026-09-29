@@ -131,20 +131,26 @@
    "ledger": [
     1295,
     1376,
-    1378
+    1378,
+    1379,
+    1383
    ]
   },
   {
    "id": "v3",
-   "label": "Screen v3 (tight families)",
+   "label": "Screen v3 (tight families, same-weekday placebos)",
    "lens": "Wikipedia views",
-   "file": "/ripples/docs/results/q3_screen_v3.json",
+   "file": "/ripples/docs/results/q3_screen_v3_sameweekday.json",
    "protocol": "/ripples/docs/q3_protocol_v3.md",
    "ledger": [
     1365,
     1366,
-    1369
-   ]
+    1369,
+    1454,
+    1455,
+    1456
+   ],
+   "note_first_run": "The first v3 run used any-weekday placebo dates and flagged 337 candidates, mostly coursework articles (a school-calendar artefact; ledger 1454). This registered same-weekday re-run replaces it (1455)."
   },
   {
    "id": "v3nyt",
@@ -244,15 +250,39 @@
   },
   {
    "screen": "v2wide",
-   "family": "films_awards",
-   "cls": "warn",
-   "verdict": "Likely the Oscars calendar: 3 of the 4 films' dates sit within days of an Oscars ceremony, when Best Cinematography is announced. Same-weekday check running (ledger 1379)."
+   "family": "ai_models",
+   "cls": "no",
+   "verdict": "Explained: a weekday / school-term cycle. With placebo dates matched on weekday, Human genome and Email no longer pass (ledger 1383). Not sent to confirmation."
   },
   {
    "screen": "v2wide",
-   "family": "ai_models",
+   "family": "films_awards",
+   "cls": "no",
+   "verdict": "Cinematography is explained by the Oscars calendar: it does not survive the same-weekday check; only the Academy Awards echo does (ledger 1383)."
+  },
+  {
+   "screen": "v3",
+   "family": "super_bowls",
    "cls": "warn",
-   "verdict": "Suspected weekly/school-term artefact: the family's top outcomes are coursework articles (Human genome, Meiosis, Coulomb's law) and most launches fell on weekdays. Same-weekday check running (ledger 1379)."
+   "verdict": "Open candidate (Arabic numerals): 8 of 10 Super Bowls push it up; the likely mechanism is the Roman-numeral game names. Every Super Bowl falls in the same weeks of the year, so a confirmation with pre-set outcomes (Roman numerals, Arabic numerals) and reader-path data comes next (ledger 1456). The Association football link is obvious."
+  },
+  {
+   "screen": "v3",
+   "family": "hurricanes",
+   "cls": "no",
+   "verdict": "Explained: hurricane season overlaps the start of the school year, when Hammurabi is taught (seasonal family; ledger 1456)."
+  },
+  {
+   "screen": "v3",
+   "family": "true_story_films",
+   "cls": "no",
+   "verdict": "Explained: Quantum mechanics is carried by Christmas-season releases (The Post, 1917, Darkest Hour), i.e. school holidays, not by Oppenheimer (ledger 1456)."
+  },
+  {
+   "screen": "v3",
+   "family": "spacex_milestones",
+   "cls": "no",
+   "verdict": "Obvious: Spaceflight is the category of the event itself."
   }
  ],
  "confirmations": [
@@ -283,7 +313,8 @@
    "file": "/ripples/docs/results/q4_subjects_v1.json",
    "protocol": "/ripples/docs/q4_protocol_v1.md",
    "ledger": [
-    1367
+    1367,
+    1458
    ]
   },
   {
@@ -291,7 +322,8 @@
    "file": "/ripples/docs/results/q4_subjects_v1b.json",
    "protocol": "/ripples/docs/q4_protocol_v1.md",
    "ledger": [
-    1369
+    1369,
+    1458
    ]
   },
   {
@@ -301,7 +333,8 @@
    "ledger": [
     1369,
     1370,
-    1371
+    1371,
+    1458
    ]
   }
  ],

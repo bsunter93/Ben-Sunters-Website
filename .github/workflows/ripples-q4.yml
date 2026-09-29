@@ -1,3 +1,4 @@
+# run 2026-09-29: Q4 after screen v3
 # Ripple Map Q4 named-subject test (ripples/docs/q4_protocol_v1.md): each event against its own owner-named subject.
 # Shares the Q3 concurrency group, so it never runs alongside another Wikimedia fetcher of the Q3 family. Reports are
 # stored in ripples.att_q3_results (the job log API truncates long logs).
@@ -23,6 +24,7 @@ jobs:
     env:
       LAB_CACHE: ${{ github.workspace }}/.cult-cache
       OUT: ${{ github.workspace }}
+      WIKIMEDIA_API_TOKEN: ${{ secrets.WIKIMEDIA_API_TOKEN }}
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5

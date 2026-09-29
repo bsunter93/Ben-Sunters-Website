@@ -38,7 +38,11 @@ BACKOFF_429 = os.environ.get("ALLOW_429_BACKOFF") == "1"  # owner-approved: hono
 
 
 def get(url: str, _tries: int = 0) -> dict:
-    req = urllib.request.Request(url, headers={"User-Agent": UA, "Accept": "application/json"})
+    headers = {"User-Agent": UA, "Accept": "application/json"}
+    token = os.environ.get("WIKIMEDIA_API_TOKEN", "").strip()
+    if token:
+        headers["Authorization"] = "Bearer " + token
+    req = urllib.request.Request(url, headers=headers)
     try:
         with urllib.request.urlopen(req, timeout=60) as r:
             return json.load(r)
