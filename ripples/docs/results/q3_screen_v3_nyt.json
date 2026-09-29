@@ -1,0 +1,8349 @@
+{
+ "seed": 20260929,
+ "panel": {
+  "end": "2026-08-31",
+  "file": "nyt_pv.npz",
+  "start": "2015-07-01",
+  "articles": 1289
+ },
+ "method": "discovery v1 (ledger 1283)",
+ "options": {
+  "step": 1,
+  "panel": "nyt_pv.npz",
+  "families": "q3_families_v3.tsv",
+  "min_coverage": 0,
+  "same_weekday": false
+ },
+ "families": {
+  "hurricanes": {
+   "top": [
+    {
+     "echo": false,
+     "p_mad": 0.3546,
+     "p_rank": 0.0529,
+     "article": "subject:Hurricanes and Tropical Storms",
+     "score_mad": 5.621,
+     "loo_stable": false,
+     "score_rank": 3.708,
+     "member_z_mad": [
+      -0.01,
+      0.8,
+      -1.02,
+      0.6,
+      3.1,
+      3.14,
+      2.98,
+      1.52,
+      1.48,
+      1.55,
+      0.47,
+      -1.12,
+      3,
+      3.8,
+      1.48
+     ]
+    },
+    {
+     "echo": false,
+     "p_mad": 0.4286,
+     "p_rank": 0.4176,
+     "article": "subject:Wind",
+     "score_mad": 5.436,
+     "loo_stable": false,
+     "score_rank": 3.122,
+     "member_z_mad": [
+      -0.13,
+      1.66,
+      -0.55,
+      1.7,
+      2.1,
+      2.23,
+      2.34,
+      2.44,
+      1.88,
+      1.18,
+      2.47,
+      0.06,
+      0.37,
+      1.71,
+      1.59
+     ]
+    },
+    {
+     "echo": false,
+     "p_mad": 0.1019,
+     "p_rank": 0.7902,
+     "article": "subject:Thanksgiving Day",
+     "score_mad": 6.54,
+     "loo_stable": false,
+     "score_rank": 2.725,
+     "member_z_mad": [
+      0.82,
+      0.27,
+      -4,
+      4,
+      4,
+      2.35,
+      2.04,
+      2.76,
+      4,
+      4,
+      -0.12,
+      4,
+      0,
+      1,
+      0.2
+     ]
+    },
+    {
+     "echo": false,
+     "p_mad": 0.8052,
+     "p_rank": 0.3377,
+     "article": "glocations:Caribbean Area",
+     "score_mad": 4.695,
+     "loo_stable": false,
+     "score_rank": 3.204,
+     "member_z_mad": [
+      0.75,
+      4,
+      0.4,
+      -2.15,
+      0.11,
+      0.6,
+      4,
+      2.5,
+      0.57,
+      3.75,
+      -4,
+      1.99,
+      2.51,
+      2.57,
+      0.58
+     ]
+    },
+    {
+     "echo": false,
+     "p_mad": 0.8621,
+     "p_rank": 0.5544,
+     "article": "subject:Deferred Action for Childhood Arrivals",
+     "score_mad": 4.537,
+     "loo_stable": false,
+     "score_rank": 2.977,
+     "member_z_mad": [
+      2.47,
+      4,
+      -0.05,
+      4,
+      0.13,
+      -1.32,
+      3.17,
+      -0.38,
+      0.7,
+      0.57,
+      -0.14,
+      0.01,
+      3.15,
+      0.35,
+      0.93
+     ]
+    },
+    {
+     "echo": false,
+     "p_mad": 0.9311,
+     "p_rank": 0.5145,
+     "article": "subject:Evacuations and Evacuees",
+     "score_mad": 4.33,
+     "loo_stable": false,
+     "score_rank": 3.017,
+     "member_z_mad": [
+      1.5,
+      2.2,
+      -3.31,
+      -0.41,
+      2.03,
+      3,
+      0.03,
+      1.23,
+      1.97,
+      4,
+      1.77,
+      -1.11,
+      1.51,
+      -0.47,
+      2.84
+     ]
+    },
+    {
+     "echo": false,
+     "p_mad": 0.971,
+     "p_rank": 0.967,
+     "article": "persons:Duterte, Rodrigo",
+     "score_mad": 4.123,
+     "loo_stable": false,
+     "score_rank": 2.373,
+     "member_z_mad": [
+      3.38,
+      -1.02,
+      1.14,
+      4,
+      1.49,
+      0.63,
+      -1.66,
+      2.91,
+      -0.27,
+      3.6,
+      -0.35,
+      -4,
+      1.87,
+      0.26,
+      4
+     ]
+    },
+    {
+     "echo": true,
+     "p_mad": 0.974,
+     "p_rank": 0.4655,
+     "article": "organizations:United Nations",
+     "score_mad": 4.106,
+     "loo_stable": false,
+     "score_rank": 3.077,
+     "member_z_mad": [
+      0.55,
+      1,
+      3.28,
+      1.72,
+      2.37,
+      2.01,
+      0.49,
+      -0.15,
+      1.94,
+      -0.01,
+      -0.06,
+      0.71,
+      -0.42,
+      2.21,
+      0.27
+     ]
+    },
+    {
+     "echo": false,
+     "p_mad": 0.975,
+     "p_rank": 0.4236,
+     "article": "subject:Libraries and Librarians",
+     "score_mad": 4.105,
+     "loo_stable": false,
+     "score_rank": 3.116,
+     "member_z_mad": [
+      -1.85,
+      -0.51,
+      0.73,
+      0.86,
+      1.44,
+      0.88,
+      3.34,
+      -0.85,
+      0.39,
+      0.41,
+      1.76,
+      3.09,
+      1.71,
+      3.05,
+      1.44
+     ]
+    },
+    {
+     "echo": false,
+     "p_mad": 0.975,
+     "p_rank": 0.2607,
+     "article": "glocations:Iraq",
+     "score_mad": 4.1,
+     "loo_stable": false,
+     "score_rank": 3.302,
+     "member_z_mad": [
+      0.53,
+      1.7,
+      -4,
+      4,
+      0.4,
+      1.62,
+      0.2,
+      -0.32,
+      1.13,
+      4,
+      -0.31,
+      0.95,
+      2.26,
+      2.52,
+      1.2
+     ]
+    }
+   ],
+   "n_used": 15,
+   "members": [
+    {
+     "d0": "2017-08-25",
+     "id": "E6810",
+     "day0": "2017-08-25",
+     "article": "Hurricane Harvey",
+     "titles_used": 15
+    },
+    {
+     "d0": "2017-09-10",
+     "id": "PR-IRMA",
+     "day0": "2017-09-10",
+     "article": "Hurricane Irma",
+     "titles_used": 17
+    },
+    {
+     "d0": "2017-09-20",
+     "id": "E6811",
+     "day0": "2017-09-20",
+     "article": "Hurricane Maria",
+     "titles_used": 9
+    },
+    {
+     "d0": "2018-09-14",
+     "id": "PR-FLORENCE",
+     "day0": "2018-09-14",
+     "article": "Hurricane Florence",
+     "titles_used": 4
+    },
+    {
+     "d0": "2018-10-10",
+     "id": "PR-MICHAEL",
+     "day0": "2018-10-10",
+     "article": "Hurricane Michael",
+     "titles_used": 8
+    },
+    {
+     "d0": "2019-09-01",
+     "id": "E6814",
+     "day0": "2019-09-01",
+     "article": "Hurricane Dorian",
+     "titles_used": 6
+    },
+    {
+     "d0": "2020-08-27",
+     "id": "PR-LAURA",
+     "day0": "2020-08-27",
+     "article": "Hurricane Laura",
+     "titles_used": 5
+    },
+    {
+     "d0": "2021-08-29",
+     "id": "E6813",
+     "day0": "2021-08-29",
+     "article": "Hurricane Ida",
+     "titles_used": 7
+    },
+    {
+     "d0": "2022-09-18",
+     "id": "E6815",
+     "day0": "2022-09-18",
+     "article": "Hurricane Fiona",
+     "titles_used": 8
+    },
+    {
+     "d0": "2022-09-28",
+     "id": "E6812",
+     "day0": "2022-09-28",
+     "article": "Hurricane Ian",
+     "titles_used": 12
+    },
+    {
+     "d0": "2023-08-30",
+     "id": "PR-IDALIA",
+     "day0": "2023-08-30",
+     "article": "Hurricane Idalia",
+     "titles_used": 5
+    },
+    {
+     "d0": "2023-10-25",
+     "id": "E6816",
+     "day0": "2023-10-25",
+     "article": "Hurricane Otis",
+     "titles_used": 3
+    },
+    {
+     "d0": "2024-07-01",
+     "id": "E6817",
+     "day0": "2024-07-01",
+     "article": "Hurricane Beryl",
+     "titles_used": 5
+    },
+    {
+     "d0": "2024-09-26",
+     "id": "PR-HELENE",
+     "day0": "2024-09-26",
+     "article": "Hurricane Helene",
+     "titles_used": 9
+    },
+    {
+     "d0": "2024-10-09",
+     "id": "PR-MILTON",
+     "day0": "2024-10-09",
+     "article": "Hurricane Milton",
+     "titles_used": 11
+    }
+   ],
+   "min_p_both": 0.3546453546453546,
+   "clustered_members": [
+    "E6810",
+    "E6811",
+    "E6812",
+    "E6815",
+    "PR-FLORENCE",
+    "PR-HELENE",
+    "PR-IRMA",
+    "PR-MICHAEL",
+    "PR-MILTON"
+   ]
+  },
+  "earthquakes": {
+   "top": [
+    {
+     "echo": false,
+     "p_mad": 0.001,
+     "p_rank": 0.001,
+     "article": "subject:Earthquakes",
+     "score_mad": 11.561,
+     "loo_stable": true,
+     "score_rank": 6.445,
+     "member_z_mad": [
+      3.81,
+      4,
+      4,
+      4,
+      4,
+      2.54,
+      4,
+      4,
+      4,
+      4,
+      0
+     ]
+    },
+    {
+     "echo": false,
+     "p_mad": 0.6044,
+     "p_rank": 0.2607,
+     "article": "subject:Ratings (Audience Measurement)",
+     "score_mad": 5.52,
+     "loo_stable": false,
+     "score_rank": 3.348,
+     "member_z_mad": [
+      1.77,
+      3.03,
+      4,
+      1.05,
+      1.05,
+      1.75,
+      0.96,
+      3.43,
+      -0.42,
+      1.69,
+      0
+     ]
+    },
+    {
+     "echo": false,
+     "p_mad": 0.8731,
+     "p_rank": 0.8891,
+     "article": "subject:Priests",
+     "score_mad": 4.886,
+     "loo_stable": false,
+     "score_rank": 2.571,
+     "member_z_mad": [
+      4,
+      0.66,
+      1.11,
+      3.27,
+      -0.57,
+      -0.42,
+      0.68,
+      3.42,
+      4,
+      0.05,
+      0
+     ]
+    },
+    {
+     "echo": false,
+     "p_mad": 0.951,
+     "p_rank": 0.9131,
+     "article": "subject:Private Equity",
+     "score_mad": 4.502,
+     "loo_stable": false,
+     "score_rank": 2.512,
+     "member_z_mad": [
+      1.34,
+      -0.01,
+      0.1,
+      0.38,
+      1.08,
+      -0.52,
+      4,
+      4,
+      0.55,
+      4,
+      0
+     ]
+    },
+    {
+     "echo": false,
+     "p_mad": 0.983,
+     "p_rank": 0.997,
+     "article": "subject:Basketball (College)",
+     "score_mad": 4.233,
+     "loo_stable": false,
+     "score_rank": 2.056,
+     "member_z_mad": [
+      4,
+      -0.34,
+      0.58,
+      1.33,
+      0.99,
+      -0.2,
+      2.82,
+      -0.02,
+      1.02,
+      3.85,
+      0
+     ]
+    },
+    {
+     "echo": false,
+     "p_mad": 0.994,
+     "p_rank": 0.997,
+     "article": "glocations:Caribbean Area",
+     "score_mad": 3.982,
+     "loo_stable": false,
+     "score_rank": 2.051,
+     "member_z_mad": [
+      0.47,
+      0.49,
+      0.29,
+      -0.02,
+      4,
+      4,
+      -0.65,
+      -2.5,
+      3.13,
+      4,
+      0
+     ]
+    },
+    {
+     "echo": true,
+     "p_mad": 0.997,
+     "p_rank": 0.997,
+     "article": "glocations:Taiwan",
+     "score_mad": 3.735,
+     "loo_stable": false,
+     "score_rank": 1.983,
+     "member_z_mad": [
+      -0.29,
+      2.16,
+      0.25,
+      0.68,
+      -1.22,
+      2.69,
+      -0.57,
+      0.69,
+      4,
+      4,
+      0
+     ]
+    },
+    {
+     "echo": false,
+     "p_mad": 0.997,
+     "p_rank": 0.998,
+     "article": "subject:Supreme Courts (State)",
+     "score_mad": 3.811,
+     "loo_stable": false,
+     "score_rank": 1.913,
+     "member_z_mad": [
+      0.31,
+      1.1,
+      0.12,
+      0,
+      0.88,
+      -2.49,
+      4,
+      4,
+      0.72,
+      4,
+      0
+     ]
+    },
+    {
+     "echo": false,
+     "p_mad": 0.997,
+     "p_rank": 0.998,
+     "article": "subject:your-feed-fashion",
+     "score_mad": 3.8,
+     "loo_stable": false,
+     "score_rank": 1.853,
+     "member_z_mad": [
+      0,
+      0,
+      1.09,
+      1.05,
+      -3.04,
+      4,
+      4,
+      2.27,
+      -0.77,
+      4,
+      0
+     ]
+    },
+    {
+     "echo": false,
+     "p_mad": 0.998,
+     "p_rank": 0.984,
+     "article": "persons:McCain, John",
+     "score_mad": 3.615,
+     "loo_stable": false,
+     "score_rank": 2.23,
+     "member_z_mad": [
+      -0.46,
+      4,
+      2.64,
+      0.94,
+      4,
+      0.07,
+      0,
+      0.93,
+      -0.14,
+      0,
+      0
+     ]
+    }
+   ],
+   "n_used": 11,
+   "members": [
+    {
+     "d0": "2016-11-13",
+     "id": "E6804",
+     "day0": "2016-11-13",
+     "article": "2016 Kaik\u014dura earthquake",
+     "titles_used": 12
+    },
+    {
+     "d0": "2017-09-19",
+     "id": "PR-PUEBLA",
+     "day0": "2017-09-19",
+     "article": "2017 Puebla earthquake",
+     "titles_used": 6
+    },
+    {
+     "d0": "2018-09-28",
+     "id": "E6805",
+     "day0": "2018-09-28",
+     "article": "2018 Sulawesi earthquake and tsunami",
+     "titles_used": 6
+    },
+    {
+     "d0": "2019-11-26",
+     "id": "PR-ALBANIA",
+     "day0": "2019-11-26",
+     "article": "2019 Albania earthquake",
+     "titles_used": 2
+    },
+    {
+     "d0": "2021-08-14",
+     "id": "PR-HAITI21",
+     "day0": "2021-08-14",
+     "article": "2021 Haiti earthquake",
+     "titles_used": 4
+    },
+    {
+     "d0": "2022-06-22",
+     "id": "PR-AFGH22",
+     "day0": "2022-06-22",
+     "article": "June 2022 Afghanistan earthquake",
+     "titles_used": 3
+    },
+    {
+     "d0": "2023-02-06",
+     "id": "E6807",
+     "day0": "2023-02-06",
+     "article": "2023 Turkey\u2013Syria earthquakes",
+     "titles_used": 47
+    },
+    {
+     "d0": "2023-09-08",
+     "id": "E6808",
+     "day0": "2023-09-08",
+     "article": "2023 Marrakesh\u2013Safi earthquake",
+     "titles_used": 7
+    },
+    {
+     "d0": "2024-01-01",
+     "id": "PR-NOTO",
+     "day0": "2024-01-01",
+     "article": "2024 Noto earthquake",
+     "titles_used": 19
+    },
+    {
+     "d0": "2024-04-03",
+     "id": "PR-HUALIEN",
+     "day0": "2024-04-03",
+     "article": "2024 Hualien earthquake",
+     "titles_used": 4
+    },
+    {
+     "d0": "2025-03-28",
+     "id": "PR-MYANMAR25",
+     "day0": "2025-03-28",
+     "article": "2025 Myanmar earthquake",
+     "titles_used": 10
+    }
+   ],
+   "min_p_both": 0.000999000999000999,
+   "clustered_members": []
+  },
+  "referendums": {
+   "top": [
+    {
+     "echo": false,
+     "p_mad": 0.2068,
+     "p_rank": 0.4755,
+     "article": "subject:Third-Party Politics (US)",
+     "score_mad": 6.096,
+     "loo_stable": false,
+     "score_rank": 3.048,
+     "member_z_mad": [
+      0.18,
+      3.65,
+      0.13,
+      4,
+      2.68,
+      0.91,
+      3.99,
+      2.49,
+      0.69,
+      -1.41,
+      0,
+      0.88,
+      4,
+      0.64
+     ]
+    },
+    {
+     "echo": false,
+     "p_mad": 0.8302,
+     "p_rank": 0.9221,
+     "article": "organizations:International Monetary Fund",
+     "score_mad": 4.555,
+     "loo_stable": false,
+     "score_rank": 2.47,
+     "member_z_mad": [
+      2.6,
+      -0.27,
+      0.14,
+      0.89,
+      3.13,
+      4,
+      0,
+      0,
+      -0.53,
+      -0.03,
+      1,
+      0.4,
+      3.86,
+      1.85
+     ]
+    },
+    {
+     "echo": false,
+     "p_mad": 0.956,
+     "p_rank": 0.8741,
+     "article": "glocations:Caribbean Area",
+     "score_mad": 4.086,
+     "loo_stable": false,
+     "score_rank": 2.551,
+     "member_z_mad": [
+      1.23,
+      -0.43,
+      1.27,
+      1.5,
+      1.67,
+      0.92,
+      2.67,
+      -0.81,
+      0.5,
+      3.11,
+      -1.44,
+      0.89,
+      0.27,
+      3.94
+     ]
+    },
+    {
+     "echo": false,
+     "p_mad": 0.987,
+     "p_rank": 0.981,
+     "article": "subject:Immunity from Prosecution",
+     "score_mad": 3.791,
+     "loo_stable": false,
+     "score_rank": 2.225,
+     "member_z_mad": [
+      2.02,
+      0,
+      0.3,
+      0,
+      0.42,
+      0.02,
+      0.05,
+      0.73,
+      2.15,
+      0.83,
+      1.29,
+      2.44,
+      1.02,
+      2.91
+     ]
+    },
+    {
+     "echo": false,
+     "p_mad": 0.995,
+     "p_rank": 0.995,
+     "article": "organizations:Houthis",
+     "score_mad": 3.595,
+     "loo_stable": false,
+     "score_rank": 2,
+     "member_z_mad": [
+      -1.99,
+      1.89,
+      -1.69,
+      0,
+      2.98,
+      2.94,
+      1.46,
+      0.14,
+      0.63,
+      1.1,
+      0.69,
+      0,
+      2.19,
+      3.12
+     ]
+    },
+    {
+     "echo": false,
+     "p_mad": 0.998,
+     "p_rank": 0.983,
+     "article": "organizations:European Central Bank",
+     "score_mad": 3.538,
+     "loo_stable": false,
+     "score_rank": 2.207,
+     "member_z_mad": [
+      -0.03,
+      2.19,
+      -0.85,
+      0,
+      -0.45,
+      4,
+      1.38,
+      -0.14,
+      2.11,
+      1.03,
+      0.31,
+      -0.1,
+      0.88,
+      2.91
+     ]
+    },
+    {
+     "echo": true,
+     "p_mad": 0.998,
+     "p_rank": 0.7373,
+     "article": "glocations:Chile",
+     "score_mad": 3.51,
+     "loo_stable": false,
+     "score_rank": 2.767,
+     "member_z_mad": [
+      1.54,
+      0.29,
+      1.28,
+      0.82,
+      0.57,
+      -0.19,
+      1.4,
+      -0.6,
+      -1.16,
+      4,
+      0.83,
+      2.7,
+      0.03,
+      1.63
+     ]
+    },
+    {
+     "echo": false,
+     "p_mad": 0.998,
+     "p_rank": 0.1119,
+     "article": "subject:Nuclear Weapons",
+     "score_mad": 3.503,
+     "loo_stable": false,
+     "score_rank": 3.553,
+     "member_z_mad": [
+      0.24,
+      0.54,
+      0.31,
+      -0.1,
+      1.28,
+      -1.15,
+      1.46,
+      2.46,
+      0.53,
+      2.37,
+      1.08,
+      2.27,
+      0.15,
+      1.65
+     ]
+    },
+    {
+     "echo": false,
+     "p_mad": 0.998,
+     "p_rank": 0.8252,
+     "article": "subject:Alzheimer's Disease",
+     "score_mad": 3.499,
+     "loo_stable": false,
+     "score_rank": 2.642,
+     "member_z_mad": [
+      1.49,
+      1.19,
+      -0.68,
+      -0.6,
+      0.76,
+      1.98,
+      0.86,
+      0,
+      -0.55,
+      1.14,
+      1.76,
+      0.19,
+      3.75,
+      1.8
+     ]
+    },
+    {
+     "echo": false,
+     "p_mad": 0.991,
+     "p_rank": 0.999,
+     "article": "persons:Trump, Ivanka",
+     "score_mad": 3.762,
+     "loo_stable": false,
+     "score_rank": 1.725,
+     "member_z_mad": [
+      -0.11,
+      1.08,
+      1.46,
+      -4,
+      2.69,
+      3.66,
+      -1.41,
+      1.92,
+      3.11,
+      4,
+      0,
+      0.67,
+      -0.43,
+      1.43
+     ]
+    }
+   ],
+   "n_used": 14,
+   "members": [
+    {
+     "d0": "2016-10-02",
+     "id": "T10457",
+     "day0": "2016-10-02",
+     "article": "2016 Colombian peace agreement referendum",
+     "titles_used": 5
+    },
+    {
+     "d0": "2016-12-04",
+     "id": "T10458",
+     "day0": "2016-12-04",
+     "article": "2016 Italian constitutional referendum",
+     "titles_used": 4
+    },
+    {
+     "d0": "2017-10-01",
+     "id": "T10459",
+     "day0": "2017-10-01",
+     "article": "2017 Catalan independence referendum",
+     "titles_used": 9
+    },
+    {
+     "d0": "2018-05-25",
+     "id": "T10460",
+     "day0": "2018-05-25",
+     "article": "Thirty-sixth Amendment of the Constitution of Ireland",
+     "titles_used": 16
+    },
+    {
+     "d0": "2018-09-30",
+     "id": "T10461",
+     "day0": "2018-09-30",
+     "article": "2018 Macedonian referendum",
+     "titles_used": 6
+    },
+    {
+     "d0": "2018-11-04",
+     "id": "T10470",
+     "day0": "2018-11-04",
+     "article": "2018 New Caledonian independence referendum",
+     "titles_used": 2
+    },
+    {
+     "d0": "2018-11-24",
+     "id": "T10462",
+     "day0": "2018-11-24",
+     "article": "2018 Taiwanese referendum",
+     "titles_used": 8
+    },
+    {
+     "d0": "2020-09-27",
+     "id": "T10463",
+     "day0": "2020-09-27",
+     "article": "2020 Swiss referendums",
+     "titles_used": 1
+    },
+    {
+     "d0": "2020-10-17",
+     "id": "T10465",
+     "day0": "2020-10-17",
+     "article": "2020 New Zealand cannabis referendum",
+     "titles_used": 3
+    },
+    {
+     "d0": "2020-10-25",
+     "id": "T10464",
+     "day0": "2020-10-25",
+     "article": "2020 Chilean national plebiscite",
+     "titles_used": 5
+    },
+    {
+     "d0": "2021-06-13",
+     "id": "T10466",
+     "day0": "2021-06-13",
+     "article": "2021 Swiss referendums",
+     "titles_used": 1
+    },
+    {
+     "d0": "2022-09-04",
+     "id": "T10467",
+     "day0": "2022-09-04",
+     "article": "2022 Chilean national plebiscite",
+     "titles_used": 2
+    },
+    {
+     "d0": "2023-10-14",
+     "id": "T10468",
+     "day0": "2023-10-14",
+     "article": "2023 Australian Indigenous Voice referendum",
+     "titles_used": 17
+    },
+    {
+     "d0": "2024-03-08",
+     "id": "T10469",
+     "day0": "2024-03-08",
+     "article": "2024 Irish constitutional referendums",
+     "titles_used": 12
+    }
+   ],
+   "min_p_both": 0.4755244755244755,
+   "clustered_members": [
+    "T10462",
+    "T10463",
+    "T10464",
+    "T10465",
+    "T10470"
+   ]
+  },
+  "super_bowls": {
+   "top": [
+    {
+     "echo": true,
+     "p_mad": 0.4595,
+     "p_rank": 0.993,
+     "article": "organizations:Kansas City Chiefs",
+     "score_mad": 5.633,
+     "loo_stable": false,
+     "score_rank": 1.892,
+     "member_z_mad": [
+      -4,
+      1.45,
+      3.12,
+      3.28,
+      3.56,
+      2.94,
+      4,
+      3.46,
+      0,
+      0
+     ]
+    },
+    {
+     "echo": false,
+     "p_mad": 0.995,
+     "p_rank": 0.4446,
+     "article": "subject:Football",
+     "score_mad": 3.672,
+     "loo_stable": false,
+     "score_rank": 3.027,
+     "member_z_mad": [
+      1.02,
+      1.72,
+      1.42,
+      0.9,
+      2.23,
+      0.62,
+      1.36,
+      2.34,
+      0,
+      0
+     ]
+    },
+    {
+     "echo": true,
+     "p_mad": 0.977,
+     "p_rank": 1,
+     "article": "persons:Brady, Tom",
+     "score_mad": 3.852,
+     "loo_stable": false,
+     "score_rank": 1.229,
+     "member_z_mad": [
+      3.44,
+      3.31,
+      0.74,
+      1.44,
+      4,
+      -4,
+      1.59,
+      1.66,
+      0,
+      0
+     ]
+    },
+    {
+     "echo": false,
+     "p_mad": 0.977,
+     "p_rank": 1,
+     "article": "subject:Voter Fraud (Election Fraud)",
+     "score_mad": 3.842,
+     "loo_stable": false,
+     "score_rank": -0.436,
+     "member_z_mad": [
+      0,
+      0,
+      0,
+      0,
+      0.56,
+      4,
+      4,
+      3.59,
+      0,
+      0
+     ]
+    },
+    {
+     "echo": false,
+     "p_mad": 0.99,
+     "p_rank": 1,
+     "article": "subject:Presidential Elections (US)",
+     "score_mad": 3.795,
+     "loo_stable": false,
+     "score_rank": 0.214,
+     "member_z_mad": [
+      0,
+      0,
+      0,
+      4,
+      4,
+      0,
+      0,
+      4,
+      0,
+      0
+     ]
+    },
+    {
+     "echo": false,
+     "p_mad": 0.995,
+     "p_rank": 1,
+     "article": "organizations:AMAZON.COM INC",
+     "score_mad": 3.735,
+     "loo_stable": false,
+     "score_rank": 0.691,
+     "member_z_mad": [
+      1.26,
+      2.91,
+      1.64,
+      2,
+      4,
+      0,
+      0,
+      0,
+      0,
+      0
+     ]
+    },
+    {
+     "echo": false,
+     "p_mad": 0.999,
+     "p_rank": 1,
+     "article": "subject:ADVERTISING AND MARKETING",
+     "score_mad": 3.466,
+     "loo_stable": false,
+     "score_rank": 0.591,
+     "member_z_mad": [
+      4,
+      4,
+      3.03,
+      0.55,
+      -0.62,
+      0,
+      0,
+      0,
+      0,
+      0
+     ]
+    },
+    {
+     "echo": true,
+     "p_mad": 0.999,
+     "p_rank": 1,
+     "article": "glocations:ARIZONA",
+     "score_mad": 3.424,
+     "loo_stable": false,
+     "score_rank": 1.055,
+     "member_z_mad": [
+      -2.01,
+      1.59,
+      3.98,
+      2.72,
+      3.19,
+      1.34,
+      0,
+      0,
+      0,
+      0
+     ]
+    },
+    {
+     "echo": false,
+     "p_mad": 1,
+     "p_rank": 0.966,
+     "article": "subject:Bankruptcies",
+     "score_mad": 3.04,
+     "loo_stable": false,
+     "score_rank": 2.182,
+     "member_z_mad": [
+      0.64,
+      0.04,
+      4,
+      -0.24,
+      0.93,
+      -0.36,
+      0.86,
+      3.73,
+      0,
+      0
+     ]
+    },
+    {
+     "echo": false,
+     "p_mad": 1,
+     "p_rank": 0.996,
+     "article": "organizations:Wells Fargo & Company",
+     "score_mad": 2.931,
+     "loo_stable": false,
+     "score_rank": 1.846,
+     "member_z_mad": [
+      2.24,
+      4,
+      0,
+      1.15,
+      0.13,
+      1.46,
+      0,
+      0.3,
+      0,
+      0
+     ]
+    }
+   ],
+   "n_used": 10,
+   "members": [
+    {
+     "d0": "2017-02-05",
+     "id": "PR-SB51",
+     "day0": "2017-02-05",
+     "article": "Super Bowl LI",
+     "titles_used": 28
+    },
+    {
+     "d0": "2018-02-04",
+     "id": "PR-SB52",
+     "day0": "2018-02-04",
+     "article": "Super Bowl LII",
+     "titles_used": 23
+    },
+    {
+     "d0": "2019-02-03",
+     "id": "PR-SB53",
+     "day0": "2019-02-03",
+     "article": "Super Bowl LIII",
+     "titles_used": 18
+    },
+    {
+     "d0": "2020-02-02",
+     "id": "PR-SB54",
+     "day0": "2020-02-02",
+     "article": "Super Bowl LIV",
+     "titles_used": 14
+    },
+    {
+     "d0": "2021-02-07",
+     "id": "E1001",
+     "day0": "2021-02-07",
+     "article": "Super Bowl LV",
+     "titles_used": 24
+    },
+    {
+     "d0": "2022-02-13",
+     "id": "PR-SB56",
+     "day0": "2022-02-13",
+     "article": "Super Bowl LVI",
+     "titles_used": 13
+    },
+    {
+     "d0": "2023-02-12",
+     "id": "E6319",
+     "day0": "2023-02-12",
+     "article": "Super Bowl LVII",
+     "titles_used": 17
+    },
+    {
+     "d0": "2024-02-11",
+     "id": "E5279",
+     "day0": "2024-02-11",
+     "article": "Super Bowl LVIII",
+     "titles_used": 24
+    },
+    {
+     "d0": "2025-02-09",
+     "id": "PR-SB59",
+     "day0": "2025-02-09",
+     "article": "Super Bowl LIX",
+     "titles_used": 19
+    },
+    {
+     "d0": "2026-02-08",
+     "id": "PR-SB60",
+     "day0": "2026-02-08",
+     "article": "Super Bowl LX",
+     "titles_used": 16
+    }
+   ],
+   "min_p_both": 0.993006993006993,
+   "clustered_members": []
+  },
+  "crypto_shocks": {
+   "top": [
+    {
+     "echo": false,
+     "p_mad": 0.2118,
+     "p_rank": 0.001,
+     "article": "glocations:Israel",
+     "score_mad": 5.618,
+     "loo_stable": false,
+     "score_rank": 4.52,
+     "member_z_mad": [
+      4,
+      3.26,
+      2.94,
+      2.69,
+      0.73,
+      1.16,
+      2.39,
+      0.2,
+      0.46,
+      0.16,
+      0.64
+     ]
+    },
+    {
+     "echo": true,
+     "p_mad": 0.5455,
+     "p_rank": 0.0509,
+     "article": "subject:Bitcoin (Currency)",
+     "score_mad": 4.805,
+     "loo_stable": false,
+     "score_rank": 3.644,
+     "member_z_mad": [
+      1.82,
+      0.68,
+      1.38,
+      4,
+      2.5,
+      0.56,
+      1.52,
+      1.63,
+      -1.4,
+      1.73,
+      1.52
+     ]
+    },
+    {
+     "echo": true,
+     "p_mad": 0.6523,
+     "p_rank": 0.3566,
+     "article": "subject:Virtual Currency",
+     "score_mad": 4.575,
+     "loo_stable": false,
+     "score_rank": 3.085,
+     "member_z_mad": [
+      1.24,
+      0.35,
+      -0.04,
+      4,
+      0.1,
+      0.24,
+      0.63,
+      0.82,
+      4,
+      1.54,
+      2.3
+     ]
+    },
+    {
+     "echo": false,
+     "p_mad": 0.7902,
+     "p_rank": 0.049,
+     "article": "persons:Netanyahu, Benjamin",
+     "score_mad": 4.281,
+     "loo_stable": false,
+     "score_rank": 3.656,
+     "member_z_mad": [
+      1.71,
+      1.32,
+      1.18,
+      2.32,
+      2.62,
+      1.04,
+      0.93,
+      -0.38,
+      2.28,
+      0.17,
+      1.01
+     ]
+    },
+    {
+     "echo": false,
+     "p_mad": 0.8302,
+     "p_rank": 0.5065,
+     "article": "subject:Text Messaging",
+     "score_mad": 4.181,
+     "loo_stable": false,
+     "score_rank": 2.941,
+     "member_z_mad": [
+      0.83,
+      1.63,
+      4,
+      -0.2,
+      0.82,
+      0.04,
+      2.05,
+      3.74,
+      0.75,
+      2.46,
+      -2.25
+     ]
+    },
+    {
+     "echo": false,
+     "p_mad": 0.8631,
+     "p_rank": 0.5924,
+     "article": "organizations:Labor Department (US)",
+     "score_mad": 4.092,
+     "loo_stable": false,
+     "score_rank": 2.853,
+     "member_z_mad": [
+      0.37,
+      0.36,
+      2.89,
+      1.48,
+      1.31,
+      2.49,
+      0.88,
+      3.6,
+      0.07,
+      0.11,
+      0
+     ]
+    },
+    {
+     "echo": true,
+     "p_mad": 0.983,
+     "p_rank": 0.1968,
+     "article": "subject:Computer Security",
+     "score_mad": 3.529,
+     "loo_stable": false,
+     "score_rank": 3.283,
+     "member_z_mad": [
+      0.09,
+      0.16,
+      2.27,
+      2.04,
+      1.87,
+      0.17,
+      3.18,
+      2.29,
+      -2.41,
+      1.84,
+      0.19
+     ]
+    },
+    {
+     "echo": false,
+     "p_mad": 0.978,
+     "p_rank": 0.991,
+     "article": "subject:Meat",
+     "score_mad": 3.57,
+     "loo_stable": false,
+     "score_rank": 1.98,
+     "member_z_mad": [
+      -0.61,
+      -0.78,
+      -0.94,
+      3.95,
+      0.8,
+      -1.22,
+      1.21,
+      0.96,
+      3.17,
+      1.63,
+      3.67
+     ]
+    },
+    {
+     "echo": false,
+     "p_mad": 0.993,
+     "p_rank": 0.988,
+     "article": "organizations:Federal Emergency Management Agency",
+     "score_mad": 3.402,
+     "loo_stable": false,
+     "score_rank": 2.019,
+     "member_z_mad": [
+      1.98,
+      2.8,
+      -0.29,
+      0.18,
+      3.6,
+      0.19,
+      -0.33,
+      2.62,
+      0.85,
+      0.48,
+      -0.81
+     ]
+    },
+    {
+     "echo": false,
+     "p_mad": 0.994,
+     "p_rank": 0.8292,
+     "article": "glocations:New Jersey",
+     "score_mad": 3.348,
+     "loo_stable": false,
+     "score_rank": 2.596,
+     "member_z_mad": [
+      -0.62,
+      1.81,
+      2.11,
+      0.41,
+      1.16,
+      0.89,
+      1.01,
+      0.09,
+      -0.52,
+      1.92,
+      2.84
+     ]
+    }
+   ],
+   "n_used": 11,
+   "members": [
+    {
+     "d0": "2017-11-28",
+     "id": "E6892",
+     "day0": "2017-11-28",
+     "article": "Bitcoin",
+     "titles_used": 48
+    },
+    {
+     "d0": "2017-12-17",
+     "id": "E6893",
+     "day0": "2017-12-17",
+     "article": "Bitcoin",
+     "titles_used": 48
+    },
+    {
+     "d0": "2020-05-11",
+     "id": "E6895",
+     "day0": "2020-05-11",
+     "article": "Bitcoin",
+     "titles_used": 48
+    },
+    {
+     "d0": "2021-02-19",
+     "id": "E10349",
+     "day0": "2021-02-19",
+     "article": "Bitcoin",
+     "titles_used": 48
+    },
+    {
+     "d0": "2021-03-11",
+     "id": "E10351",
+     "day0": "2021-03-11",
+     "article": "Everydays: the First 5000 Days",
+     "titles_used": 6
+    },
+    {
+     "d0": "2021-09-07",
+     "id": "E6906",
+     "day0": "2021-09-07",
+     "article": "Bitcoin in El Salvador",
+     "titles_used": 9
+    },
+    {
+     "d0": "2021-10-19",
+     "id": "E6907",
+     "day0": "2021-10-19",
+     "article": "Bitcoin",
+     "titles_used": 48
+    },
+    {
+     "d0": "2022-09-15",
+     "id": "E6900",
+     "day0": "2022-09-15",
+     "article": "Ethereum",
+     "titles_used": 41
+    },
+    {
+     "d0": "2022-11-11",
+     "id": "E6909",
+     "day0": "2022-11-11",
+     "article": "Bankruptcy of FTX",
+     "titles_used": 7
+    },
+    {
+     "d0": "2024-01-11",
+     "id": "E6908",
+     "day0": "2024-01-11",
+     "article": "Bitcoin",
+     "titles_used": 48
+    },
+    {
+     "d0": "2024-04-20",
+     "id": "E6896",
+     "day0": "2024-04-20",
+     "article": "Bitcoin",
+     "titles_used": 48
+    }
+   ],
+   "min_p_both": 0.21178821178821178,
+   "clustered_members": [
+    "E10349",
+    "E10351",
+    "E6892",
+    "E6893"
+   ]
+  },
+  "ev_milestones": {
+   "top": [
+    {
+     "echo": false,
+     "p_mad": 0.4595,
+     "p_rank": 0.1379,
+     "article": "persons:Newsom, Gavin",
+     "score_mad": 5.27,
+     "loo_stable": false,
+     "score_rank": 3.48,
+     "member_z_mad": [
+      0,
+      -0.04,
+      0.75,
+      2.41,
+      3.58,
+      0.26,
+      3.56,
+      0.6,
+      1.56,
+      4
+     ]
+    },
+    {
+     "echo": false,
+     "p_mad": 0.5225,
+     "p_rank": 0.5145,
+     "article": "subject:Text Messaging",
+     "score_mad": 5.115,
+     "loo_stable": false,
+     "score_rank": 2.997,
+     "member_z_mad": [
+      2.22,
+      3.28,
+      3.89,
+      4,
+      0.45,
+      -0.63,
+      -2.06,
+      1.56,
+      2.04,
+      1.42
+     ]
+    },
+    {
+     "echo": true,
+     "p_mad": 0.6533,
+     "p_rank": 0.1239,
+     "article": "persons:Musk, Elon",
+     "score_mad": 4.887,
+     "loo_stable": false,
+     "score_rank": 3.512,
+     "member_z_mad": [
+      1.51,
+      4,
+      0.4,
+      2.62,
+      0.25,
+      0.49,
+      0.48,
+      1.91,
+      0.81,
+      2.99
+     ]
+    },
+    {
+     "echo": false,
+     "p_mad": 0.6863,
+     "p_rank": 0.042,
+     "article": "subject:Ethics and Official Misconduct",
+     "score_mad": 4.807,
+     "loo_stable": false,
+     "score_rank": 3.826,
+     "member_z_mad": [
+      0.35,
+      3.42,
+      3.78,
+      1.24,
+      2.43,
+      0.55,
+      -1.19,
+      0.45,
+      2.47,
+      1.69
+     ]
+    },
+    {
+     "echo": false,
+     "p_mad": 0.8202,
+     "p_rank": 0.2937,
+     "article": "organizations:Tesla Motors Inc",
+     "score_mad": 4.492,
+     "loo_stable": false,
+     "score_rank": 3.218,
+     "member_z_mad": [
+      2.65,
+      3.1,
+      0,
+      3.46,
+      -2.46,
+      1.64,
+      2.2,
+      0.86,
+      0.55,
+      2.22
+     ]
+    },
+    {
+     "echo": false,
+     "p_mad": 0.8352,
+     "p_rank": 0.0889,
+     "article": "subject:Electric and Hybrid Vehicles",
+     "score_mad": 4.448,
+     "loo_stable": false,
+     "score_rank": 3.599,
+     "member_z_mad": [
+      1.67,
+      3.4,
+      0.24,
+      1.75,
+      -1.16,
+      0.71,
+      2.07,
+      2.67,
+      0.71,
+      2.01
+     ]
+    },
+    {
+     "echo": false,
+     "p_mad": 0.7622,
+     "p_rank": 0.8541,
+     "article": "organizations:National Hockey League",
+     "score_mad": 4.647,
+     "loo_stable": false,
+     "score_rank": 2.604,
+     "member_z_mad": [
+      -0.34,
+      2.54,
+      1.71,
+      0.68,
+      1.66,
+      3.21,
+      2.75,
+      3.4,
+      -1.28,
+      0.36
+     ]
+    },
+    {
+     "echo": false,
+     "p_mad": 0.8941,
+     "p_rank": 0.4955,
+     "article": "subject:Smoking and Tobacco",
+     "score_mad": 4.241,
+     "loo_stable": false,
+     "score_rank": 3.019,
+     "member_z_mad": [
+      3.2,
+      1.48,
+      2.7,
+      2.93,
+      0.14,
+      1,
+      1.19,
+      -0.31,
+      0.39,
+      0.69
+     ]
+    },
+    {
+     "echo": false,
+     "p_mad": 0.9101,
+     "p_rank": 0.7612,
+     "article": "subject:Memory",
+     "score_mad": 4.183,
+     "loo_stable": false,
+     "score_rank": 2.727,
+     "member_z_mad": [
+      -0.96,
+      4,
+      -0.57,
+      1.41,
+      1.14,
+      -0.25,
+      3.53,
+      0.85,
+      0.87,
+      3.19
+     ]
+    },
+    {
+     "echo": false,
+     "p_mad": 0.9201,
+     "p_rank": 0.7483,
+     "article": "subject:Cemeteries",
+     "score_mad": 4.131,
+     "loo_stable": false,
+     "score_rank": 2.755,
+     "member_z_mad": [
+      3.44,
+      0.49,
+      0.66,
+      2.81,
+      1.05,
+      1.58,
+      0.47,
+      1.21,
+      -0.86,
+      2.21
+     ]
+    }
+   ],
+   "n_used": 10,
+   "members": [
+    {
+     "d0": "2017-07-28",
+     "id": "E7111",
+     "day0": "2017-07-28",
+     "article": "Tesla Model 3",
+     "titles_used": 19
+    },
+    {
+     "d0": "2017-11-16",
+     "id": "E8427",
+     "day0": "2017-11-16",
+     "article": "Tesla Semi",
+     "titles_used": 6
+    },
+    {
+     "id": "E5894",
+     "day0": "2018-11-26",
+     "skip": "too few views around the event",
+     "article": "Rivian R1T",
+     "titles_used": 4
+    },
+    {
+     "d0": "2019-09-04",
+     "id": "E6721",
+     "day0": "2019-09-04",
+     "article": "Porsche Taycan",
+     "titles_used": 32
+    },
+    {
+     "d0": "2019-11-21",
+     "id": "E6695",
+     "day0": "2019-11-21",
+     "article": "Tesla Cybertruck",
+     "titles_used": 31
+    },
+    {
+     "d0": "2021-05-19",
+     "id": "E8434",
+     "day0": "2021-05-19",
+     "article": "Ford F-150 Lightning",
+     "titles_used": 12
+    },
+    {
+     "d0": "2021-10-20",
+     "id": "E5899",
+     "day0": "2021-10-20",
+     "article": "GMC Hummer EV",
+     "titles_used": 5
+    },
+    {
+     "d0": "2022-03-09",
+     "id": "E8440",
+     "day0": "2022-03-09",
+     "article": "Volkswagen ID. Buzz",
+     "titles_used": 24
+    },
+    {
+     "d0": "2022-12-01",
+     "id": "E6731",
+     "day0": "2022-12-01",
+     "article": "Tesla Semi",
+     "titles_used": 6
+    },
+    {
+     "d0": "2023-10-02",
+     "id": "E5908",
+     "day0": "2023-10-02",
+     "article": "BYD Auto",
+     "titles_used": 23
+    },
+    {
+     "d0": "2023-11-30",
+     "id": "E6696",
+     "day0": "2023-11-30",
+     "article": "Tesla Cybertruck",
+     "titles_used": 31
+    }
+   ],
+   "min_p_both": 0.4595404595404595,
+   "clustered_members": []
+  },
+  "game_releases": {
+   "top": [
+    {
+     "echo": false,
+     "p_mad": 0.6553,
+     "p_rank": 0.1399,
+     "article": "organizations:Immigration and Customs Enforcement (US)",
+     "score_mad": 4.973,
+     "loo_stable": false,
+     "score_rank": 3.494,
+     "member_z_mad": [
+      -0.63,
+      2.67,
+      1.67,
+      1.35,
+      2.43,
+      1.07,
+      2.47,
+      -0.95,
+      1.34,
+      0.28,
+      -0.59,
+      2.68,
+      3.17,
+      0.38,
+      1.03,
+      1.51
+     ]
+    },
+    {
+     "echo": false,
+     "p_mad": 0.3177,
+     "p_rank": 0.7073,
+     "article": "persons:King, Martin Luther Jr",
+     "score_mad": 5.707,
+     "loo_stable": false,
+     "score_rank": 2.841,
+     "member_z_mad": [
+      0.68,
+      2.73,
+      3.17,
+      -1.06,
+      0.58,
+      4,
+      0.17,
+      3.11,
+      4,
+      -0.1,
+      -0.68,
+      -1.76,
+      2.75,
+      -1.81,
+      3.05,
+      4
+     ]
+    },
+    {
+     "echo": false,
+     "p_mad": 0.6813,
+     "p_rank": 0.8212,
+     "article": "persons:DeVos, Elizabeth (1958- )",
+     "score_mad": 4.91,
+     "loo_stable": false,
+     "score_rank": 2.705,
+     "member_z_mad": [
+      3.58,
+      4,
+      4,
+      -4,
+      4,
+      4,
+      4,
+      0.56,
+      3.13,
+      -1.9,
+      -4,
+      -0.21,
+      0,
+      2.17,
+      0.08,
+      0.23
+     ]
+    },
+    {
+     "echo": false,
+     "p_mad": 0.8561,
+     "p_rank": 0.2238,
+     "article": "organizations:Airbnb",
+     "score_mad": 4.51,
+     "loo_stable": false,
+     "score_rank": 3.377,
+     "member_z_mad": [
+      -0.83,
+      0.07,
+      3.71,
+      0.05,
+      0.01,
+      2.08,
+      -1.34,
+      2.35,
+      0.75,
+      1.76,
+      0.57,
+      1.54,
+      1.79,
+      0.22,
+      1.29,
+      4
+     ]
+    },
+    {
+     "echo": false,
+     "p_mad": 0.8841,
+     "p_rank": 0.1638,
+     "article": "persons:Elizabeth II, Queen of Great Britain",
+     "score_mad": 4.423,
+     "loo_stable": false,
+     "score_rank": 3.448,
+     "member_z_mad": [
+      -0.02,
+      0.13,
+      2.03,
+      1.42,
+      1.81,
+      4,
+      1.62,
+      1.86,
+      -1.17,
+      1.36,
+      0.24,
+      1.55,
+      1.88,
+      0.33,
+      0.13,
+      0.54
+     ]
+    },
+    {
+     "echo": false,
+     "p_mad": 0.976,
+     "p_rank": 0.6863,
+     "article": "organizations:National Weather Service",
+     "score_mad": 3.945,
+     "loo_stable": false,
+     "score_rank": 2.865,
+     "member_z_mad": [
+      2.22,
+      1.28,
+      0.09,
+      2.2,
+      2.31,
+      1.2,
+      4,
+      -0.98,
+      0.87,
+      -0.14,
+      2.71,
+      -0.16,
+      0.65,
+      0.15,
+      -0.3,
+      -0.31
+     ]
+    },
+    {
+     "echo": false,
+     "p_mad": 0.977,
+     "p_rank": 0.9351,
+     "article": "glocations:New Mexico",
+     "score_mad": 3.932,
+     "loo_stable": false,
+     "score_rank": 2.529,
+     "member_z_mad": [
+      0.43,
+      0.32,
+      0.56,
+      0,
+      0.24,
+      0.84,
+      0.13,
+      1.28,
+      -1.12,
+      -0.37,
+      3.34,
+      3.19,
+      -0.15,
+      1.16,
+      4,
+      1.9
+     ]
+    },
+    {
+     "echo": false,
+     "p_mad": 0.977,
+     "p_rank": 0.9421,
+     "article": "subject:Medical Devices",
+     "score_mad": 3.929,
+     "loo_stable": false,
+     "score_rank": 2.51,
+     "member_z_mad": [
+      2.91,
+      1.29,
+      0.14,
+      3.13,
+      1.15,
+      -0.6,
+      4,
+      -1.7,
+      -0.59,
+      0.57,
+      -0.05,
+      -1.63,
+      0.63,
+      1.09,
+      2.23,
+      3.16
+     ]
+    },
+    {
+     "echo": false,
+     "p_mad": 0.963,
+     "p_rank": 0.983,
+     "article": "subject:Tony Awards (Theater Awards)",
+     "score_mad": 4.029,
+     "loo_stable": false,
+     "score_rank": 2.325,
+     "member_z_mad": [
+      1.89,
+      0.16,
+      4,
+      2.91,
+      2.03,
+      0.51,
+      2.38,
+      -0.14,
+      -0.52,
+      -0.11,
+      -0.05,
+      -1.11,
+      2.23,
+      0.7,
+      -0.23,
+      1.46
+     ]
+    },
+    {
+     "echo": false,
+     "p_mad": 0.984,
+     "p_rank": 0.986,
+     "article": "organizations:Exxon Mobil Corp",
+     "score_mad": 3.851,
+     "loo_stable": false,
+     "score_rank": 2.305,
+     "member_z_mad": [
+      1.71,
+      -0.61,
+      0.32,
+      1.89,
+      0.62,
+      0.95,
+      2.65,
+      1.91,
+      -2.17,
+      3.63,
+      -1.99,
+      2.21,
+      2.3,
+      -0.39,
+      0.66,
+      1.69
+     ]
+    }
+   ],
+   "n_used": 16,
+   "members": [
+    {
+     "d0": "2017-03-03",
+     "id": "T10343",
+     "day0": "2017-03-03",
+     "article": "The Legend of Zelda: Breath of the Wild",
+     "titles_used": 47
+    },
+    {
+     "d0": "2017-10-27",
+     "id": "T10349",
+     "day0": "2017-10-27",
+     "article": "Assassin's Creed Origins",
+     "titles_used": 8
+    },
+    {
+     "d0": "2018-04-20",
+     "id": "T10351",
+     "day0": "2018-04-20",
+     "article": "God of War (2018 video game)",
+     "titles_used": 13
+    },
+    {
+     "d0": "2018-10-26",
+     "id": "T10352",
+     "day0": "2018-10-26",
+     "article": "Red Dead Redemption 2",
+     "titles_used": 15
+    },
+    {
+     "d0": "2019-03-22",
+     "id": "T10357",
+     "day0": "2019-03-22",
+     "article": "Sekiro: Shadows Die Twice",
+     "titles_used": 4
+    },
+    {
+     "d0": "2019-11-08",
+     "id": "T10358",
+     "day0": "2019-11-08",
+     "article": "Death Stranding",
+     "titles_used": 9
+    },
+    {
+     "d0": "2020-03-20",
+     "id": "T10362",
+     "day0": "2020-03-20",
+     "article": "Animal Crossing: New Horizons",
+     "titles_used": 27
+    },
+    {
+     "d0": "2020-07-17",
+     "id": "T10367",
+     "day0": "2020-07-17",
+     "article": "Ghost of Tsushima",
+     "titles_used": 7
+    },
+    {
+     "d0": "2020-09-17",
+     "id": "T10364",
+     "day0": "2020-09-17",
+     "article": "Hades (video game)",
+     "titles_used": 5
+    },
+    {
+     "d0": "2020-12-10",
+     "id": "T10365",
+     "day0": "2020-12-10",
+     "article": "Cyberpunk 2077",
+     "titles_used": 17
+    },
+    {
+     "d0": "2022-02-25",
+     "id": "T10373",
+     "day0": "2022-02-25",
+     "article": "Elden Ring",
+     "titles_used": 15
+    },
+    {
+     "d0": "2022-11-09",
+     "id": "T10374",
+     "day0": "2022-11-09",
+     "article": "God of War Ragnar\u00f6k",
+     "titles_used": 12
+    },
+    {
+     "d0": "2023-05-12",
+     "id": "T10379",
+     "day0": "2023-05-12",
+     "article": "The Legend of Zelda: Tears of the Kingdom",
+     "titles_used": 29
+    },
+    {
+     "d0": "2023-08-03",
+     "id": "T10378",
+     "day0": "2023-08-03",
+     "article": "Baldur's Gate 3",
+     "titles_used": 15
+    },
+    {
+     "d0": "2024-01-19",
+     "id": "T10383",
+     "day0": "2024-01-19",
+     "article": "Palworld",
+     "titles_used": 14
+    },
+    {
+     "d0": "2024-08-20",
+     "id": "T10384",
+     "day0": "2024-08-20",
+     "article": "Black Myth: Wukong",
+     "titles_used": 4
+    }
+   ],
+   "min_p_both": 0.6553446553446554,
+   "clustered_members": []
+  },
+  "academy_awards": {
+   "top": [
+    {
+     "echo": true,
+     "p_mad": 0.001,
+     "p_rank": 0.001,
+     "article": "subject:Academy Awards (Oscars)",
+     "score_mad": 10.119,
+     "loo_stable": true,
+     "score_rank": 5.775,
+     "member_z_mad": [
+      4,
+      4,
+      4,
+      4,
+      4,
+      4,
+      4,
+      4,
+      0,
+      0
+     ]
+    },
+    {
+     "echo": false,
+     "p_mad": 0.0899,
+     "p_rank": 0.001,
+     "article": "subject:Movies",
+     "score_mad": 7.49,
+     "loo_stable": false,
+     "score_rank": 5.771,
+     "member_z_mad": [
+      3.54,
+      2.87,
+      2.4,
+      2.54,
+      4,
+      1.73,
+      3.48,
+      3.13,
+      0,
+      0
+     ]
+    },
+    {
+     "echo": false,
+     "p_mad": 0.976,
+     "p_rank": 0.7812,
+     "article": "organizations:American Civil Liberties Union",
+     "score_mad": 4.482,
+     "loo_stable": false,
+     "score_rank": 2.694,
+     "member_z_mad": [
+      4,
+      3.07,
+      4,
+      0.94,
+      -0.29,
+      0,
+      3.83,
+      -1.38,
+      0,
+      0
+     ]
+    },
+    {
+     "echo": false,
+     "p_mad": 0.982,
+     "p_rank": 0.6973,
+     "article": "subject:Addiction (Psychology)",
+     "score_mad": 4.386,
+     "loo_stable": false,
+     "score_rank": 2.805,
+     "member_z_mad": [
+      -0.6,
+      1.6,
+      1.61,
+      4,
+      0.42,
+      2.37,
+      2.61,
+      1.85,
+      0,
+      0
+     ]
+    },
+    {
+     "echo": false,
+     "p_mad": 0.971,
+     "p_rank": 0.99,
+     "article": "subject:Ratings (Audience Measurement)",
+     "score_mad": 4.564,
+     "loo_stable": false,
+     "score_rank": 2.104,
+     "member_z_mad": [
+      2.32,
+      4,
+      3.83,
+      4,
+      2.09,
+      -2.96,
+      2.7,
+      -1.54,
+      0,
+      0
+     ]
+    },
+    {
+     "echo": false,
+     "p_mad": 0.7083,
+     "p_rank": 0.996,
+     "article": "persons:Navalny, Aleksei A",
+     "score_mad": 5.502,
+     "loo_stable": false,
+     "score_rank": 1.955,
+     "member_z_mad": [
+      -1.47,
+      0.45,
+      2.88,
+      4,
+      4,
+      4,
+      4,
+      -0.46,
+      0,
+      0
+     ]
+    },
+    {
+     "echo": false,
+     "p_mad": 0.994,
+     "p_rank": 0.997,
+     "article": "persons:Graham, Lindsey",
+     "score_mad": 4.085,
+     "loo_stable": false,
+     "score_rank": 1.898,
+     "member_z_mad": [
+      4,
+      0.1,
+      3.62,
+      3.36,
+      -0.7,
+      1.78,
+      -3.24,
+      4,
+      0,
+      0
+     ]
+    },
+    {
+     "echo": false,
+     "p_mad": 0.954,
+     "p_rank": 0.999,
+     "article": "subject:Track and Field",
+     "score_mad": 4.697,
+     "loo_stable": false,
+     "score_rank": 1.834,
+     "member_z_mad": [
+      1.95,
+      4,
+      -4,
+      1.88,
+      3.88,
+      0,
+      4,
+      3.14,
+      0,
+      0
+     ]
+    },
+    {
+     "echo": false,
+     "p_mad": 0.9251,
+     "p_rank": 1,
+     "article": "subject:NCAA Basketball Championships (Men)",
+     "score_mad": 4.91,
+     "loo_stable": false,
+     "score_rank": 0.922,
+     "member_z_mad": [
+      4,
+      4,
+      -2.11,
+      0,
+      4,
+      4,
+      4,
+      -2.36,
+      0,
+      0
+     ]
+    },
+    {
+     "echo": false,
+     "p_mad": 0.986,
+     "p_rank": 1,
+     "article": "subject:Opioids and Opiates",
+     "score_mad": 4.321,
+     "loo_stable": false,
+     "score_rank": 1.617,
+     "member_z_mad": [
+      0,
+      2.38,
+      -1.11,
+      4,
+      0.7,
+      1.36,
+      3.81,
+      2.53,
+      0,
+      0
+     ]
+    }
+   ],
+   "n_used": 10,
+   "members": [
+    {
+     "d0": "2017-02-26",
+     "id": "E6253",
+     "day0": "2017-02-26",
+     "article": "89th Academy Awards",
+     "titles_used": 8
+    },
+    {
+     "d0": "2018-03-04",
+     "id": "E6268",
+     "day0": "2018-03-04",
+     "article": "90th Academy Awards",
+     "titles_used": 7
+    },
+    {
+     "d0": "2019-02-24",
+     "id": "E6271",
+     "day0": "2019-02-24",
+     "article": "91st Academy Awards",
+     "titles_used": 5
+    },
+    {
+     "d0": "2020-02-09",
+     "id": "E6252",
+     "day0": "2020-02-09",
+     "article": "92nd Academy Awards",
+     "titles_used": 4
+    },
+    {
+     "d0": "2021-04-25",
+     "id": "PR-OSC93",
+     "day0": "2021-04-25",
+     "article": "93rd Academy Awards",
+     "titles_used": 6
+    },
+    {
+     "d0": "2022-03-27",
+     "id": "E6275",
+     "day0": "2022-03-27",
+     "article": "94th Academy Awards",
+     "titles_used": 8
+    },
+    {
+     "d0": "2023-03-12",
+     "id": "E6266",
+     "day0": "2023-03-12",
+     "article": "95th Academy Awards",
+     "titles_used": 7
+    },
+    {
+     "d0": "2024-03-10",
+     "id": "E6262",
+     "day0": "2024-03-10",
+     "article": "96th Academy Awards",
+     "titles_used": 5
+    },
+    {
+     "d0": "2025-03-02",
+     "id": "PR-OSC97",
+     "day0": "2025-03-02",
+     "article": "97th Academy Awards",
+     "titles_used": 6
+    },
+    {
+     "d0": "2026-03-15",
+     "id": "PR-OSC98",
+     "day0": "2026-03-15",
+     "article": "98th Academy Awards",
+     "titles_used": 8
+    }
+   ],
+   "min_p_both": 0.000999000999000999,
+   "clustered_members": []
+  },
+  "scotus_rulings": {
+   "top": [
+    {
+     "echo": false,
+     "p_mad": 0.001,
+     "p_rank": 0.001,
+     "article": "organizations:Supreme Court (US)",
+     "score_mad": 9.717,
+     "loo_stable": true,
+     "score_rank": 7.162,
+     "member_z_mad": [
+      2.51,
+      1.6,
+      2.32,
+      4,
+      3.7,
+      1.84,
+      4,
+      3.66,
+      2.07,
+      1.55,
+      2.38,
+      2.65,
+      2.76
+     ]
+    },
+    {
+     "echo": false,
+     "p_mad": 0.006,
+     "p_rank": 0.001,
+     "article": "persons:Roberts, John G Jr",
+     "score_mad": 7.715,
+     "loo_stable": true,
+     "score_rank": 4.642,
+     "member_z_mad": [
+      0.1,
+      2.98,
+      4,
+      1.17,
+      4,
+      1.14,
+      3.13,
+      0.82,
+      3.47,
+      3.17,
+      0.12,
+      -0.28,
+      4
+     ]
+    },
+    {
+     "echo": false,
+     "p_mad": 0.2797,
+     "p_rank": 0.1429,
+     "article": "subject:Draft and Recruitment (Sports)",
+     "score_mad": 5.613,
+     "loo_stable": false,
+     "score_rank": 3.465,
+     "member_z_mad": [
+      4,
+      3.96,
+      0.79,
+      0.06,
+      -1.51,
+      1.96,
+      4,
+      2.59,
+      0.44,
+      -0.7,
+      -0.34,
+      4,
+      0.98
+     ]
+    },
+    {
+     "echo": false,
+     "p_mad": 0.3936,
+     "p_rank": 0.036,
+     "article": "subject:Decisions and Verdicts",
+     "score_mad": 5.379,
+     "loo_stable": false,
+     "score_rank": 3.811,
+     "member_z_mad": [
+      1,
+      0.77,
+      -0.05,
+      3.92,
+      0.14,
+      0.31,
+      4,
+      3.56,
+      2.15,
+      1.09,
+      0.07,
+      0.97,
+      1.47
+     ]
+    },
+    {
+     "echo": true,
+     "p_mad": 0.4016,
+     "p_rank": 0.2507,
+     "article": "persons:Obama, Michelle",
+     "score_mad": 5.358,
+     "loo_stable": false,
+     "score_rank": 3.283,
+     "member_z_mad": [
+      4,
+      3.37,
+      0.68,
+      0.28,
+      1,
+      0.84,
+      2.3,
+      0.28,
+      0.25,
+      0.14,
+      4,
+      2.3,
+      -0.12
+     ]
+    },
+    {
+     "echo": false,
+     "p_mad": 0.4685,
+     "p_rank": 0.1369,
+     "article": "subject:Tests and Examinations",
+     "score_mad": 5.207,
+     "loo_stable": false,
+     "score_rank": 3.469,
+     "member_z_mad": [
+      3.74,
+      2.05,
+      1.2,
+      -0.16,
+      0.02,
+      -0.71,
+      4,
+      2.27,
+      0.44,
+      1.42,
+      1.83,
+      1.94,
+      0.72
+     ]
+    },
+    {
+     "echo": false,
+     "p_mad": 0.4905,
+     "p_rank": 0.029,
+     "article": "subject:Auctions",
+     "score_mad": 5.165,
+     "loo_stable": false,
+     "score_rank": 3.848,
+     "member_z_mad": [
+      0.13,
+      2.39,
+      3.53,
+      3.2,
+      2.45,
+      1.5,
+      1.72,
+      0.67,
+      0.52,
+      0.81,
+      0.15,
+      -0.91,
+      2.47
+     ]
+    },
+    {
+     "echo": false,
+     "p_mad": 0.2907,
+     "p_rank": 0.5644,
+     "article": "subject:Opioids and Opiates",
+     "score_mad": 5.573,
+     "loo_stable": false,
+     "score_rank": 2.941,
+     "member_z_mad": [
+      2.17,
+      -0.34,
+      0.34,
+      -0.42,
+      0.32,
+      -0.4,
+      4,
+      2.48,
+      4,
+      2.78,
+      2.7,
+      1.64,
+      0.81
+     ]
+    },
+    {
+     "echo": false,
+     "p_mad": 0.6094,
+     "p_rank": 0.1479,
+     "article": "subject:Whistle-Blowers",
+     "score_mad": 4.922,
+     "loo_stable": false,
+     "score_rank": 3.456,
+     "member_z_mad": [
+      0.06,
+      -0.09,
+      0.99,
+      0.02,
+      0.49,
+      3.39,
+      2.32,
+      1.14,
+      4,
+      4,
+      0.06,
+      0.18,
+      1.19
+     ]
+    },
+    {
+     "echo": false,
+     "p_mad": 0.5864,
+     "p_rank": 0.6753,
+     "article": "persons:Adams, Eric L",
+     "score_mad": 4.956,
+     "loo_stable": false,
+     "score_rank": 2.831,
+     "member_z_mad": [
+      0,
+      0.15,
+      0.72,
+      0.98,
+      -0.34,
+      4,
+      4,
+      0.15,
+      4,
+      2.83,
+      4,
+      -0.48,
+      -2.13
+     ]
+    }
+   ],
+   "n_used": 13,
+   "members": [
+    {
+     "d0": "2018-06-04",
+     "id": "T10444",
+     "day0": "2018-06-04",
+     "article": "Masterpiece Cakeshop v. Colorado Civil Rights Commission",
+     "titles_used": 17
+    },
+    {
+     "d0": "2018-06-22",
+     "id": "T10443",
+     "day0": "2018-06-22",
+     "article": "Carpenter v. United States",
+     "titles_used": 6
+    },
+    {
+     "d0": "2019-06-27",
+     "id": "T10445",
+     "day0": "2019-06-27",
+     "article": "Rucho v. Common Cause",
+     "titles_used": 3
+    },
+    {
+     "d0": "2020-06-15",
+     "id": "T10446",
+     "day0": "2020-06-15",
+     "article": "Bostock v. Clayton County",
+     "titles_used": 7
+    },
+    {
+     "d0": "2020-07-09",
+     "id": "T10447",
+     "day0": "2020-07-09",
+     "article": "McGirt v. Oklahoma",
+     "titles_used": 5
+    },
+    {
+     "d0": "2022-06-23",
+     "id": "T10449",
+     "day0": "2022-06-23",
+     "article": "New York State Rifle & Pistol Association v. Bruen",
+     "titles_used": 18
+    },
+    {
+     "d0": "2022-06-24",
+     "id": "T10448",
+     "day0": "2022-06-24",
+     "article": "Dobbs v. Jackson Women's Health Organization",
+     "titles_used": 13
+    },
+    {
+     "d0": "2022-06-30",
+     "id": "T10450",
+     "day0": "2022-06-30",
+     "article": "West Virginia v. EPA",
+     "titles_used": 8
+    },
+    {
+     "d0": "2023-06-29",
+     "id": "T10452",
+     "day0": "2023-06-29",
+     "article": "Students for Fair Admissions v. Harvard",
+     "titles_used": 31
+    },
+    {
+     "d0": "2023-06-30",
+     "id": "T10451",
+     "day0": "2023-06-30",
+     "article": "303 Creative LLC v. Elenis",
+     "titles_used": 6
+    },
+    {
+     "d0": "2024-06-27",
+     "id": "T10453",
+     "day0": "2024-06-27",
+     "article": "SEC v. Jarkesy",
+     "titles_used": 6
+    },
+    {
+     "d0": "2024-06-28",
+     "id": "T10454",
+     "day0": "2024-06-28",
+     "article": "Loper Bright Enterprises v. Raimondo",
+     "titles_used": 6
+    },
+    {
+     "d0": "2024-07-01",
+     "id": "T10455",
+     "day0": "2024-07-01",
+     "article": "Trump v. United States",
+     "titles_used": 11
+    }
+   ],
+   "min_p_both": 0.000999000999000999,
+   "clustered_members": [
+    "T10443",
+    "T10444",
+    "T10446",
+    "T10447",
+    "T10448",
+    "T10449",
+    "T10450",
+    "T10451",
+    "T10452",
+    "T10453",
+    "T10454",
+    "T10455"
+   ]
+  },
+  "drama_premieres": {
+   "top": [
+    {
+     "echo": false,
+     "p_mad": 0.5804,
+     "p_rank": 0.048,
+     "article": "glocations:Malaysia",
+     "score_mad": 5.044,
+     "loo_stable": false,
+     "score_rank": 3.738,
+     "member_z_mad": [
+      1.74,
+      0.51,
+      2.04,
+      0.17,
+      2.15,
+      -1.19,
+      0.11,
+      2.35,
+      0.88,
+      1.23,
+      0.78,
+      3.2,
+      -0.25,
+      3.37,
+      1.23,
+      0.1,
+      2.84,
+      1.25,
+      0.04,
+      0
+     ]
+    },
+    {
+     "echo": false,
+     "p_mad": 0.98,
+     "p_rank": 0.951,
+     "article": "subject:Mortgages",
+     "score_mad": 3.766,
+     "loo_stable": false,
+     "score_rank": 2.419,
+     "member_z_mad": [
+      -0.07,
+      -0.42,
+      1.83,
+      3.54,
+      0.39,
+      0.59,
+      -1,
+      -0.13,
+      -0.04,
+      0.47,
+      2.36,
+      -1.29,
+      -1.04,
+      4,
+      0.53,
+      1.7,
+      2.78,
+      0.09,
+      2.54,
+      0
+     ]
+    },
+    {
+     "echo": false,
+     "p_mad": 0.991,
+     "p_rank": 0.992,
+     "article": "organizations:Hulu.com",
+     "score_mad": 3.625,
+     "loo_stable": false,
+     "score_rank": 2.226,
+     "member_z_mad": [
+      0.48,
+      1.03,
+      2.16,
+      3.96,
+      0.92,
+      1.55,
+      2,
+      0.66,
+      -0.66,
+      -0.29,
+      0.3,
+      -0.83,
+      4,
+      -0.39,
+      -0.42,
+      0.44,
+      0.15,
+      3.52,
+      -2.35,
+      -0.02
+     ]
+    },
+    {
+     "echo": false,
+     "p_mad": 0.992,
+     "p_rank": 0.3247,
+     "article": "subject:National Parks, Monuments and Seashores",
+     "score_mad": 3.608,
+     "loo_stable": false,
+     "score_rank": 3.193,
+     "member_z_mad": [
+      0.39,
+      0.01,
+      0.77,
+      -0.73,
+      2.93,
+      1.26,
+      0.74,
+      0.91,
+      0.29,
+      0.6,
+      1.67,
+      0.11,
+      3.5,
+      1.69,
+      1.69,
+      -0.17,
+      1.38,
+      -1.55,
+      0.63,
+      0
+     ]
+    },
+    {
+     "echo": false,
+     "p_mad": 0.994,
+     "p_rank": 0.8871,
+     "article": "subject:Same-Sex Marriage, Civil Unions and Domestic Partnerships",
+     "score_mad": 3.596,
+     "loo_stable": false,
+     "score_rank": 2.601,
+     "member_z_mad": [
+      1.2,
+      1.61,
+      -0.48,
+      -0.39,
+      1.43,
+      -0.62,
+      0.36,
+      1.71,
+      3.09,
+      1.45,
+      0.48,
+      1.19,
+      2.55,
+      2.01,
+      1.06,
+      1.97,
+      -2.16,
+      -0.34,
+      -0.05,
+      0
+     ]
+    },
+    {
+     "echo": false,
+     "p_mad": 0.995,
+     "p_rank": 0.989,
+     "article": "subject:Cemeteries",
+     "score_mad": 3.534,
+     "loo_stable": false,
+     "score_rank": 2.251,
+     "member_z_mad": [
+      -0.5,
+      -0.13,
+      1.3,
+      0.33,
+      2.44,
+      0.14,
+      1.87,
+      3.84,
+      2.12,
+      -0.56,
+      0.74,
+      -0.88,
+      0.92,
+      2.59,
+      -2.07,
+      0.69,
+      2,
+      1.61,
+      -0.62,
+      0
+     ]
+    },
+    {
+     "echo": false,
+     "p_mad": 0.1169,
+     "p_rank": 0.996,
+     "article": "subject:vis-photo",
+     "score_mad": 6.425,
+     "loo_stable": false,
+     "score_rank": 2.069,
+     "member_z_mad": [
+      -3.47,
+      3.84,
+      -4,
+      4,
+      4,
+      1.59,
+      0,
+      0.54,
+      0,
+      1.44,
+      0.79,
+      0,
+      0,
+      0,
+      4,
+      4,
+      4,
+      4,
+      4,
+      0
+     ]
+    },
+    {
+     "echo": false,
+     "p_mad": 0.977,
+     "p_rank": 0.998,
+     "article": "organizations:Hezbollah",
+     "score_mad": 3.839,
+     "loo_stable": false,
+     "score_rank": 1.93,
+     "member_z_mad": [
+      -0.71,
+      -0.01,
+      -0.32,
+      0.98,
+      1.27,
+      -0.3,
+      -1.94,
+      0.35,
+      2.45,
+      1.49,
+      1.54,
+      0.45,
+      -0.19,
+      0.19,
+      0.46,
+      -0.54,
+      4,
+      4,
+      4,
+      0
+     ]
+    },
+    {
+     "echo": false,
+     "p_mad": 0.998,
+     "p_rank": 0.986,
+     "article": "subject:Cruises",
+     "score_mad": 3.417,
+     "loo_stable": false,
+     "score_rank": 2.293,
+     "member_z_mad": [
+      0.25,
+      0.17,
+      1.87,
+      -0.46,
+      0.28,
+      0.09,
+      3.01,
+      -0.34,
+      4,
+      1.18,
+      -4,
+      0.96,
+      4,
+      0.92,
+      1.54,
+      1.48,
+      0.66,
+      -1.47,
+      1.15,
+      0
+     ]
+    },
+    {
+     "echo": true,
+     "p_mad": 0.998,
+     "p_rank": 0.997,
+     "article": "persons:Swift, Taylor",
+     "score_mad": 3.312,
+     "loo_stable": false,
+     "score_rank": 1.983,
+     "member_z_mad": [
+      -0.55,
+      2.88,
+      0.22,
+      2.22,
+      -0.38,
+      0.02,
+      1.6,
+      1.3,
+      0.74,
+      0.52,
+      3.16,
+      0.19,
+      -0.01,
+      -2.95,
+      -0.64,
+      -0.84,
+      0.05,
+      4,
+      3.29,
+      0
+     ]
+    }
+   ],
+   "n_used": 20,
+   "members": [
+    {
+     "d0": "2016-10-02",
+     "id": "T10021",
+     "day0": "2016-10-02",
+     "article": "Westworld (TV series)",
+     "titles_used": 16
+    },
+    {
+     "d0": "2016-11-04",
+     "id": "T10020",
+     "day0": "2016-11-04",
+     "article": "The Crown (TV series)",
+     "titles_used": 8
+    },
+    {
+     "d0": "2017-04-26",
+     "id": "T10029",
+     "day0": "2017-04-26",
+     "article": "The Handmaid's Tale (TV series)",
+     "titles_used": 11
+    },
+    {
+     "d0": "2017-10-13",
+     "id": "T10032",
+     "day0": "2017-10-13",
+     "article": "Mindhunter (TV series)",
+     "titles_used": 22
+    },
+    {
+     "d0": "2018-04-08",
+     "id": "T10038",
+     "day0": "2018-04-08",
+     "article": "Killing Eve",
+     "titles_used": 10
+    },
+    {
+     "d0": "2018-06-03",
+     "id": "T10039",
+     "day0": "2018-06-03",
+     "article": "Succession (TV series)",
+     "titles_used": 12
+    },
+    {
+     "d0": "2019-05-06",
+     "id": "T10048",
+     "day0": "2019-05-06",
+     "article": "Chernobyl (miniseries)",
+     "titles_used": 11
+    },
+    {
+     "d0": "2019-07-26",
+     "id": "T10051",
+     "day0": "2019-07-26",
+     "article": "The Boys (TV series)",
+     "titles_used": 8
+    },
+    {
+     "d0": "2019-11-12",
+     "id": "T10053",
+     "day0": "2019-11-12",
+     "article": "The Mandalorian",
+     "titles_used": 12
+    },
+    {
+     "d0": "2020-10-23",
+     "id": "T10064",
+     "day0": "2020-10-23",
+     "article": "The Queen's Gambit (miniseries)",
+     "titles_used": 4
+    },
+    {
+     "d0": "2020-12-25",
+     "id": "T10067",
+     "day0": "2020-12-25",
+     "article": "Bridgerton",
+     "titles_used": 40
+    },
+    {
+     "d0": "2021-07-11",
+     "id": "T10081",
+     "day0": "2021-07-11",
+     "article": "The White Lotus",
+     "titles_used": 7
+    },
+    {
+     "d0": "2021-09-17",
+     "id": "T10082",
+     "day0": "2021-09-17",
+     "article": "Squid Game",
+     "titles_used": 25
+    },
+    {
+     "d0": "2022-02-18",
+     "id": "T10111",
+     "day0": "2022-02-18",
+     "article": "Severance (TV series)",
+     "titles_used": 17
+    },
+    {
+     "d0": "2022-06-23",
+     "id": "T10112",
+     "day0": "2022-06-23",
+     "article": "The Bear (TV series)",
+     "titles_used": 5
+    },
+    {
+     "d0": "2023-01-15",
+     "id": "T10126",
+     "day0": "2023-01-15",
+     "article": "The Last of Us (TV series)",
+     "titles_used": 9
+    },
+    {
+     "d0": "2024-02-27",
+     "id": "T10137",
+     "day0": "2024-02-27",
+     "article": "Sh\u014dgun (2024 TV series)",
+     "titles_used": 7
+    },
+    {
+     "d0": "2024-04-11",
+     "id": "T10141",
+     "day0": "2024-04-11",
+     "article": "Baby Reindeer",
+     "titles_used": 8
+    },
+    {
+     "d0": "2024-09-19",
+     "id": "T10152",
+     "day0": "2024-09-19",
+     "article": "The Penguin (TV series)",
+     "titles_used": 2
+    },
+    {
+     "d0": "2025-03-13",
+     "id": "T10182",
+     "day0": "2025-03-13",
+     "article": "Adolescence (TV series)",
+     "titles_used": 6
+    }
+   ],
+   "min_p_both": 0.5804195804195804,
+   "clustered_members": []
+  },
+  "football_finals": {
+   "top": [
+    {
+     "echo": true,
+     "p_mad": 0.2997,
+     "p_rank": 0.05,
+     "article": "subject:UEFA Champions League (Soccer)",
+     "score_mad": 5.667,
+     "loo_stable": false,
+     "score_rank": 3.768,
+     "member_z_mad": [
+      3.26,
+      1.91,
+      0,
+      2.9,
+      2.33,
+      1.48,
+      -0.49,
+      2.11,
+      1.64,
+      -0.34,
+      4
+     ]
+    },
+    {
+     "echo": true,
+     "p_mad": 0.7542,
+     "p_rank": 0.0779,
+     "article": "glocations:Rome (Italy)",
+     "score_mad": 4.665,
+     "loo_stable": false,
+     "score_rank": 3.621,
+     "member_z_mad": [
+      2.94,
+      0.19,
+      0,
+      1.68,
+      1.74,
+      -0.16,
+      2.16,
+      2.95,
+      2.55,
+      -0.86,
+      2.28
+     ]
+    },
+    {
+     "echo": false,
+     "p_mad": 0.962,
+     "p_rank": 0.2488,
+     "article": "subject:Soccer",
+     "score_mad": 3.912,
+     "loo_stable": false,
+     "score_rank": 3.283,
+     "member_z_mad": [
+      1.65,
+      0.46,
+      1.59,
+      0.7,
+      1.28,
+      1.93,
+      -1.81,
+      1.68,
+      0.05,
+      2.7,
+      2.74
+     ]
+    },
+    {
+     "echo": false,
+     "p_mad": 0.4096,
+     "p_rank": 0.995,
+     "article": "persons:Abbott, Gregory W (1957- )",
+     "score_mad": 5.378,
+     "loo_stable": false,
+     "score_rank": 1.939,
+     "member_z_mad": [
+      -4,
+      4,
+      0,
+      4,
+      2.7,
+      -2.15,
+      4,
+      4,
+      4,
+      -0.92,
+      2.21
+     ]
+    },
+    {
+     "echo": false,
+     "p_mad": 0.997,
+     "p_rank": 0.995,
+     "article": "persons:Cruz, Ted",
+     "score_mad": 3.234,
+     "loo_stable": false,
+     "score_rank": 1.942,
+     "member_z_mad": [
+      0.8,
+      0,
+      0.55,
+      0,
+      0.36,
+      1.35,
+      4,
+      0,
+      0,
+      2.47,
+      1.19
+     ]
+    },
+    {
+     "echo": false,
+     "p_mad": 0.996,
+     "p_rank": 0.998,
+     "article": "persons:ALITO, SAMUEL A JR",
+     "score_mad": 3.379,
+     "loo_stable": false,
+     "score_rank": 1.806,
+     "member_z_mad": [
+      1.45,
+      1.12,
+      4,
+      -4,
+      0,
+      2.03,
+      1.49,
+      -0.06,
+      2.22,
+      2.17,
+      0.79
+     ]
+    },
+    {
+     "echo": false,
+     "p_mad": 0.998,
+     "p_rank": 0.9131,
+     "article": "persons:Gorsuch, Neil M",
+     "score_mad": 3.168,
+     "loo_stable": false,
+     "score_rank": 2.468,
+     "member_z_mad": [
+      2.07,
+      3.09,
+      4,
+      0.53,
+      0.16,
+      0.78,
+      -1.68,
+      0.12,
+      0.77,
+      1.11,
+      -0.43
+     ]
+    },
+    {
+     "echo": false,
+     "p_mad": 0.999,
+     "p_rank": 0.7672,
+     "article": "subject:Income Inequality",
+     "score_mad": 3.149,
+     "loo_stable": false,
+     "score_rank": 2.695,
+     "member_z_mad": [
+      1.97,
+      0.85,
+      1.24,
+      0.32,
+      -1.08,
+      -0.27,
+      2.46,
+      2.07,
+      1.74,
+      1.3,
+      -0.16
+     ]
+    },
+    {
+     "echo": false,
+     "p_mad": 0.1938,
+     "p_rank": 1,
+     "article": "subject:Voter Fraud (Election Fraud)",
+     "score_mad": 6.03,
+     "loo_stable": false,
+     "score_rank": 1.208,
+     "member_z_mad": [
+      0,
+      0,
+      0,
+      0,
+      4,
+      4,
+      4,
+      -4,
+      4,
+      4,
+      4
+     ]
+    },
+    {
+     "echo": false,
+     "p_mad": 0.7093,
+     "p_rank": 1,
+     "article": "subject:ABORTION",
+     "score_mad": 4.765,
+     "loo_stable": false,
+     "score_rank": 0.981,
+     "member_z_mad": [
+      4,
+      1.96,
+      4,
+      1.85,
+      4,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0
+     ]
+    }
+   ],
+   "n_used": 11,
+   "members": [
+    {
+     "d0": "2017-06-03",
+     "id": "T10393",
+     "day0": "2017-06-03",
+     "article": "2017 UEFA Champions League final",
+     "titles_used": 2
+    },
+    {
+     "d0": "2018-05-26",
+     "id": "T10396",
+     "day0": "2018-05-26",
+     "article": "2018 UEFA Champions League final",
+     "titles_used": 2
+    },
+    {
+     "d0": "2018-07-15",
+     "id": "T10397",
+     "day0": "2018-07-15",
+     "article": "2018 FIFA World Cup final",
+     "titles_used": 5
+    },
+    {
+     "d0": "2019-06-01",
+     "id": "T10400",
+     "day0": "2019-06-01",
+     "article": "2019 UEFA Champions League final",
+     "titles_used": 4
+    },
+    {
+     "id": "T10403",
+     "day0": "2019-07-07",
+     "skip": "no attention rise",
+     "article": "2019 FIFA Women's World Cup",
+     "titles_used": 16
+    },
+    {
+     "d0": "2020-08-23",
+     "id": "T10407",
+     "day0": "2020-08-23",
+     "article": "2020 UEFA Champions League final",
+     "titles_used": 3
+    },
+    {
+     "d0": "2021-05-29",
+     "id": "T10410",
+     "day0": "2021-05-29",
+     "article": "2021 UEFA Champions League final",
+     "titles_used": 4
+    },
+    {
+     "d0": "2022-05-28",
+     "id": "T10414",
+     "day0": "2022-05-28",
+     "article": "2022 UEFA Champions League final",
+     "titles_used": 3
+    },
+    {
+     "d0": "2022-12-18",
+     "id": "T10415",
+     "day0": "2022-12-18",
+     "article": "2022 FIFA World Cup final",
+     "titles_used": 6
+    },
+    {
+     "d0": "2023-06-10",
+     "id": "T10419",
+     "day0": "2023-06-10",
+     "article": "2023 UEFA Champions League final",
+     "titles_used": 3
+    },
+    {
+     "d0": "2023-08-20",
+     "id": "T10420",
+     "day0": "2023-08-20",
+     "article": "2023 FIFA Women's World Cup final",
+     "titles_used": 2
+    },
+    {
+     "d0": "2024-06-01",
+     "id": "T10424",
+     "day0": "2024-06-01",
+     "article": "2024 UEFA Champions League final",
+     "titles_used": 2
+    }
+   ],
+   "min_p_both": 0.2997002997002997,
+   "clustered_members": []
+  },
+  "console_launches": {
+   "top": [
+    {
+     "echo": false,
+     "p_mad": 0.9421,
+     "p_rank": 0.9011,
+     "article": "creative_works:Saturday Night Live (TV Program)",
+     "score_mad": 3.934,
+     "loo_stable": false,
+     "score_rank": 2.541,
+     "member_z_mad": [
+      0.07,
+      1.43,
+      3.68,
+      1.29,
+      0.62,
+      1.38,
+      1.89,
+      -1.64,
+      4,
+      1.22,
+      -0.32,
+      0
+     ]
+    },
+    {
+     "echo": false,
+     "p_mad": 0.1938,
+     "p_rank": 0.998,
+     "article": "subject:Thanksgiving Day",
+     "score_mad": 5.697,
+     "loo_stable": false,
+     "score_rank": 1.997,
+     "member_z_mad": [
+      0,
+      4,
+      0,
+      4,
+      1.7,
+      4,
+      0,
+      4,
+      0,
+      0,
+      2.04,
+      0
+     ]
+    },
+    {
+     "echo": false,
+     "p_mad": 0.7133,
+     "p_rank": 0.999,
+     "article": "subject:Unemployment Insurance",
+     "score_mad": 4.547,
+     "loo_stable": false,
+     "score_rank": 1.941,
+     "member_z_mad": [
+      4,
+      0,
+      3.61,
+      0.02,
+      0,
+      4,
+      0,
+      -0.73,
+      1.31,
+      4,
+      -0.46,
+      0
+     ]
+    },
+    {
+     "echo": false,
+     "p_mad": 0.8941,
+     "p_rank": 1,
+     "article": "organizations:OpenAI Labs",
+     "score_mad": 4.124,
+     "loo_stable": false,
+     "score_rank": 0.915,
+     "member_z_mad": [
+      0,
+      0,
+      0,
+      4,
+      2.89,
+      2.46,
+      0,
+      -2.34,
+      1.95,
+      4,
+      1.33,
+      0
+     ]
+    },
+    {
+     "echo": false,
+     "p_mad": 0.9241,
+     "p_rank": 1,
+     "article": "subject:European Sovereign Debt Crisis (2010- )",
+     "score_mad": 4.011,
+     "loo_stable": false,
+     "score_rank": 1.229,
+     "member_z_mad": [
+      4,
+      4,
+      0,
+      0.91,
+      -2.16,
+      2.43,
+      0,
+      2.5,
+      0,
+      0,
+      2.22,
+      0
+     ]
+    },
+    {
+     "echo": false,
+     "p_mad": 0.973,
+     "p_rank": 1,
+     "article": "persons:DeVos, Elizabeth (1958- )",
+     "score_mad": 3.745,
+     "loo_stable": false,
+     "score_rank": 1.609,
+     "member_z_mad": [
+      0.39,
+      4,
+      4,
+      0.66,
+      2.17,
+      1.03,
+      -0.57,
+      -1.19,
+      2.48,
+      0,
+      0,
+      0
+     ]
+    },
+    {
+     "echo": false,
+     "p_mad": 0.987,
+     "p_rank": 1,
+     "article": "subject:your-feed-animals",
+     "score_mad": 3.624,
+     "loo_stable": false,
+     "score_rank": 1.206,
+     "member_z_mad": [
+      0,
+      0,
+      0,
+      0,
+      1.29,
+      4,
+      4,
+      -4,
+      -0.73,
+      4,
+      4,
+      0
+     ]
+    },
+    {
+     "echo": false,
+     "p_mad": 0.99,
+     "p_rank": 1,
+     "article": "persons:Carson, Benjamin S",
+     "score_mad": 3.583,
+     "loo_stable": false,
+     "score_rank": 1.02,
+     "member_z_mad": [
+      -4,
+      3.77,
+      4,
+      -2.93,
+      2.49,
+      4,
+      4,
+      -2.28,
+      0,
+      0,
+      3.36,
+      0
+     ]
+    },
+    {
+     "echo": false,
+     "p_mad": 0.997,
+     "p_rank": 1,
+     "article": "subject:Mass Shootings",
+     "score_mad": 3.471,
+     "loo_stable": false,
+     "score_rank": 0.33,
+     "member_z_mad": [
+      0,
+      0,
+      0,
+      0,
+      4,
+      1.29,
+      4,
+      -0.88,
+      1.13,
+      4,
+      -1.52,
+      0
+     ]
+    },
+    {
+     "echo": false,
+     "p_mad": 1,
+     "p_rank": 1,
+     "article": "subject:Quarantines",
+     "score_mad": 3.288,
+     "loo_stable": false,
+     "score_rank": 0.432,
+     "member_z_mad": [
+      0,
+      0,
+      0,
+      0,
+      0,
+      3.88,
+      -4,
+      3.2,
+      4,
+      4,
+      0.31,
+      0
+     ]
+    }
+   ],
+   "n_used": 12,
+   "members": [
+    {
+     "d0": "2016-10-13",
+     "id": "E8153",
+     "day0": "2016-10-13",
+     "article": "PlayStation VR",
+     "titles_used": 20
+    },
+    {
+     "d0": "2016-11-10",
+     "id": "T10488",
+     "day0": "2016-11-10",
+     "article": "PlayStation 4 Pro",
+     "titles_used": 72
+    },
+    {
+     "d0": "2017-03-03",
+     "id": "T10486",
+     "day0": "2017-03-03",
+     "article": "Nintendo Switch",
+     "titles_used": 46
+    },
+    {
+     "d0": "2017-11-07",
+     "id": "T10487",
+     "day0": "2017-11-07",
+     "article": "Xbox One X",
+     "titles_used": 74
+    },
+    {
+     "d0": "2019-09-20",
+     "id": "T10489",
+     "day0": "2019-09-20",
+     "article": "Nintendo Switch Lite",
+     "titles_used": 46
+    },
+    {
+     "d0": "2020-10-13",
+     "id": "E10378",
+     "day0": "2020-10-13",
+     "article": "Oculus Quest 2",
+     "titles_used": 11
+    },
+    {
+     "d0": "2020-11-12",
+     "id": "T10491",
+     "day0": "2020-11-12",
+     "article": "PlayStation 5",
+     "titles_used": 26
+    },
+    {
+     "d0": "2021-10-08",
+     "id": "E6203",
+     "day0": "2021-10-08",
+     "article": "Nintendo Switch OLED Model",
+     "titles_used": 46
+    },
+    {
+     "d0": "2022-02-25",
+     "id": "T10492",
+     "day0": "2022-02-25",
+     "article": "Steam Deck",
+     "titles_used": 7
+    },
+    {
+     "d0": "2023-02-22",
+     "id": "E6228",
+     "day0": "2023-02-22",
+     "article": "PlayStation VR2",
+     "titles_used": 5
+    },
+    {
+     "d0": "2023-10-10",
+     "id": "E6196",
+     "day0": "2023-10-10",
+     "article": "Meta Quest 3",
+     "titles_used": 2
+    },
+    {
+     "d0": "2025-06-05",
+     "id": "T10493",
+     "day0": "2025-06-05",
+     "article": "Nintendo Switch 2",
+     "titles_used": 19
+    }
+   ],
+   "min_p_both": 0.942057942057942,
+   "clustered_members": [
+    "E10378",
+    "E8153",
+    "T10488",
+    "T10491"
+   ]
+  },
+  "true_story_films": {
+   "top": [
+    {
+     "echo": false,
+     "p_mad": 0.003,
+     "p_rank": 0.007,
+     "article": "subject:Golden Globes (Awards)",
+     "score_mad": 9.773,
+     "loo_stable": true,
+     "score_rank": 4.367,
+     "member_z_mad": [
+      4,
+      0,
+      4,
+      4,
+      4,
+      4,
+      4,
+      0,
+      4,
+      -4,
+      4,
+      3.53,
+      3.3,
+      4,
+      -0.23,
+      0,
+      -4,
+      4,
+      4
+     ]
+    },
+    {
+     "echo": false,
+     "p_mad": 0.01,
+     "p_rank": 0.001,
+     "article": "subject:Movies",
+     "score_mad": 7.931,
+     "loo_stable": true,
+     "score_rank": 6.262,
+     "member_z_mad": [
+      2.47,
+      -0.29,
+      2.88,
+      2,
+      2.29,
+      2.65,
+      3.44,
+      1,
+      1.23,
+      1.69,
+      3.08,
+      2.07,
+      4,
+      0.97,
+      0.4,
+      2.02,
+      -1.7,
+      1.17,
+      3.19
+     ]
+    },
+    {
+     "echo": true,
+     "p_mad": 0.1648,
+     "p_rank": 0.0509,
+     "article": "subject:Academy Awards (Oscars)",
+     "score_mad": 5.957,
+     "loo_stable": false,
+     "score_rank": 3.767,
+     "member_z_mad": [
+      3.83,
+      -0.47,
+      -1.42,
+      2.6,
+      -0.31,
+      2.83,
+      4,
+      2.23,
+      -3.17,
+      3.73,
+      4,
+      0.18,
+      4,
+      4,
+      -1.45,
+      -0.29,
+      -1.61,
+      -0.73,
+      4
+     ]
+    },
+    {
+     "echo": true,
+     "p_mad": 0.7562,
+     "p_rank": 0.1728,
+     "article": "glocations:Malaysia",
+     "score_mad": 4.467,
+     "loo_stable": false,
+     "score_rank": 3.378,
+     "member_z_mad": [
+      -0.23,
+      -1.48,
+      0.82,
+      0,
+      3.2,
+      4,
+      2.21,
+      4,
+      0.46,
+      1.57,
+      0.82,
+      0.81,
+      -0.29,
+      1.47,
+      0.53,
+      -0.23,
+      -0.04,
+      1.04,
+      0.8
+     ]
+    },
+    {
+     "echo": false,
+     "p_mad": 0.8482,
+     "p_rank": 0.0859,
+     "article": "subject:Ratings (Audience Measurement)",
+     "score_mad": 4.222,
+     "loo_stable": false,
+     "score_rank": 3.6,
+     "member_z_mad": [
+      -0.2,
+      3.4,
+      0.99,
+      1.56,
+      -0.52,
+      -0.9,
+      1.16,
+      1.55,
+      2.34,
+      0.83,
+      0.51,
+      0.42,
+      1.68,
+      2.18,
+      4,
+      -0.17,
+      2.25,
+      0.74,
+      -3.43
+     ]
+    },
+    {
+     "echo": false,
+     "p_mad": 0.9331,
+     "p_rank": 0.9421,
+     "article": "subject:Playoff Games",
+     "score_mad": 3.935,
+     "loo_stable": false,
+     "score_rank": 2.421,
+     "member_z_mad": [
+      0.92,
+      -0.54,
+      1.2,
+      -0.79,
+      4,
+      2.74,
+      2.41,
+      -0.91,
+      3.14,
+      0.11,
+      0.43,
+      2.62,
+      0.7,
+      -1.14,
+      0.01,
+      -0.11,
+      2.99,
+      -2.4,
+      1.77
+     ]
+    },
+    {
+     "echo": true,
+     "p_mad": 0.958,
+     "p_rank": 0.7842,
+     "article": "glocations:Nebraska",
+     "score_mad": 3.81,
+     "loo_stable": false,
+     "score_rank": 2.683,
+     "member_z_mad": [
+      0.78,
+      0.49,
+      4,
+      0.97,
+      -0.39,
+      0.11,
+      0.18,
+      -0.61,
+      -0.39,
+      0.5,
+      1.2,
+      2.9,
+      1.8,
+      -0.35,
+      1.91,
+      1.25,
+      0.64,
+      2.23,
+      -0.62
+     ]
+    },
+    {
+     "echo": false,
+     "p_mad": 0.972,
+     "p_rank": 0.954,
+     "article": "persons:Moon Jae-in",
+     "score_mad": 3.719,
+     "loo_stable": false,
+     "score_rank": 2.384,
+     "member_z_mad": [
+      0.16,
+      4,
+      0.79,
+      -3.87,
+      4,
+      2.55,
+      2.04,
+      4,
+      0.37,
+      1.07,
+      2.07,
+      0.75,
+      -2.34,
+      0.24,
+      0.58,
+      0.02,
+      0.41,
+      -0.64,
+      0
+     ]
+    },
+    {
+     "echo": false,
+     "p_mad": 0.972,
+     "p_rank": 0.986,
+     "article": "persons:Ocasio-Cortez, Alexandria",
+     "score_mad": 3.722,
+     "loo_stable": false,
+     "score_rank": 2.187,
+     "member_z_mad": [
+      0,
+      0,
+      0,
+      0,
+      1.83,
+      4,
+      1.66,
+      0.88,
+      3.73,
+      0.24,
+      0.76,
+      0.81,
+      -2.52,
+      0.04,
+      -0.17,
+      2.52,
+      0.12,
+      -0.82,
+      3.16
+     ]
+    },
+    {
+     "echo": false,
+     "p_mad": 0.8841,
+     "p_rank": 0.989,
+     "article": "subject:Tax Cuts and Jobs Act (2017)",
+     "score_mad": 4.134,
+     "loo_stable": false,
+     "score_rank": 2.152,
+     "member_z_mad": [
+      0,
+      0,
+      3.76,
+      1.02,
+      -0.54,
+      2.84,
+      4,
+      -0.67,
+      -2.42,
+      1.14,
+      -2.32,
+      1.39,
+      -3.08,
+      2.87,
+      4,
+      -0.42,
+      0.5,
+      4,
+      1.95
+     ]
+    }
+   ],
+   "n_used": 19,
+   "members": [
+    {
+     "d0": "2016-12-25",
+     "id": "T10279",
+     "day0": "2016-12-25",
+     "article": "Hidden Figures",
+     "titles_used": 4
+    },
+    {
+     "d0": "2017-07-21",
+     "id": "T10287",
+     "day0": "2017-07-21",
+     "article": "Dunkirk (2017 film)",
+     "titles_used": 5
+    },
+    {
+     "d0": "2017-11-22",
+     "id": "T10288",
+     "day0": "2017-11-22",
+     "article": "Darkest Hour (film)",
+     "titles_used": 3
+    },
+    {
+     "d0": "2017-12-22",
+     "id": "T10289",
+     "day0": "2017-12-22",
+     "article": "The Post (film)",
+     "titles_used": 5
+    },
+    {
+     "d0": "2018-10-12",
+     "id": "T10293",
+     "day0": "2018-10-12",
+     "article": "First Man (film)",
+     "titles_used": 2
+    },
+    {
+     "d0": "2018-11-02",
+     "id": "T10294",
+     "day0": "2018-11-02",
+     "article": "Bohemian Rhapsody (film)",
+     "titles_used": 5
+    },
+    {
+     "d0": "2018-12-25",
+     "id": "T10295",
+     "day0": "2018-12-25",
+     "article": "Vice (2018 film)",
+     "titles_used": 2
+    },
+    {
+     "d0": "2019-05-31",
+     "id": "T10301",
+     "day0": "2019-05-31",
+     "article": "Rocketman (film)",
+     "titles_used": 5
+    },
+    {
+     "d0": "2019-09-27",
+     "id": "T10303",
+     "day0": "2019-09-27",
+     "article": "Judy (film)",
+     "titles_used": 3
+    },
+    {
+     "d0": "2019-11-15",
+     "id": "T10302",
+     "day0": "2019-11-15",
+     "article": "Ford v Ferrari",
+     "titles_used": 9
+    },
+    {
+     "d0": "2019-12-25",
+     "id": "T10308",
+     "day0": "2019-12-25",
+     "article": "1917 (2019 film)",
+     "titles_used": 3
+    },
+    {
+     "d0": "2020-10-16",
+     "id": "T10311",
+     "day0": "2020-10-16",
+     "article": "The Trial of the Chicago 7",
+     "titles_used": 11
+    },
+    {
+     "d0": "2021-02-12",
+     "id": "T10317",
+     "day0": "2021-02-12",
+     "article": "Judas and the Black Messiah",
+     "titles_used": 4
+    },
+    {
+     "d0": "2021-11-19",
+     "id": "T10320",
+     "day0": "2021-11-19",
+     "article": "King Richard (film)",
+     "titles_used": 3
+    },
+    {
+     "d0": "2023-04-05",
+     "id": "T10326",
+     "day0": "2023-04-05",
+     "article": "Air (2023 film)",
+     "titles_used": 14
+    },
+    {
+     "d0": "2023-07-21",
+     "id": "T10324",
+     "day0": "2023-07-21",
+     "article": "Oppenheimer (film)",
+     "titles_used": 9
+    },
+    {
+     "d0": "2023-09-22",
+     "id": "T10330",
+     "day0": "2023-09-22",
+     "article": "Dumb Money",
+     "titles_used": 1
+    },
+    {
+     "d0": "2023-10-20",
+     "id": "T10325",
+     "day0": "2023-10-20",
+     "article": "Killers of the Flower Moon (film)",
+     "titles_used": 9
+    },
+    {
+     "d0": "2023-12-25",
+     "id": "T10327",
+     "day0": "2023-12-25",
+     "article": "Ferrari (2023 film)",
+     "titles_used": 3
+    }
+   ],
+   "min_p_both": 0.006993006993006993,
+   "clustered_members": [
+    "T10288",
+    "T10289",
+    "T10293",
+    "T10294",
+    "T10325",
+    "T10330"
+   ]
+  },
+  "us_league_finals": {
+   "top": [
+    {
+     "echo": true,
+     "p_mad": 0.002,
+     "p_rank": 0.001,
+     "article": "subject:World Series",
+     "score_mad": 10.02,
+     "loo_stable": true,
+     "score_rank": 5.868,
+     "member_z_mad": [
+      3.48,
+      4,
+      3.16,
+      1.47,
+      4,
+      1.63,
+      4,
+      0,
+      4,
+      0.1,
+      4,
+      2.86,
+      2.29,
+      2.49
+     ]
+    },
+    {
+     "echo": false,
+     "p_mad": 0.7602,
+     "p_rank": 0.1459,
+     "article": "persons:Swift, Taylor",
+     "score_mad": 4.551,
+     "loo_stable": false,
+     "score_rank": 3.5,
+     "member_z_mad": [
+      1.69,
+      0.13,
+      2.03,
+      1.38,
+      -1.07,
+      1.49,
+      0.88,
+      1.01,
+      1.93,
+      -0.27,
+      2.6,
+      2.69,
+      0.64,
+      1.9
+     ]
+    },
+    {
+     "echo": true,
+     "p_mad": 0.3377,
+     "p_rank": 0.8022,
+     "article": "organizations:Houston Astros",
+     "score_mad": 5.471,
+     "loo_stable": false,
+     "score_rank": 2.663,
+     "member_z_mad": [
+      -0.2,
+      4,
+      1.59,
+      -1.32,
+      4,
+      0.33,
+      2.35,
+      0.18,
+      3.29,
+      -1.02,
+      4,
+      -0.71,
+      4,
+      0
+     ]
+    },
+    {
+     "echo": false,
+     "p_mad": 0.8282,
+     "p_rank": 0.4695,
+     "article": "subject:Roe v Wade (Supreme Court Decision)",
+     "score_mad": 4.407,
+     "loo_stable": false,
+     "score_rank": 3.033,
+     "member_z_mad": [
+      1.95,
+      0.47,
+      0.16,
+      2.72,
+      0.14,
+      0.11,
+      3.22,
+      -0.53,
+      2.35,
+      -1.93,
+      1.06,
+      -0.2,
+      3.51,
+      3.45
+     ]
+    },
+    {
+     "echo": false,
+     "p_mad": 0.8591,
+     "p_rank": 0.8741,
+     "article": "persons:Pompeo, Mike",
+     "score_mad": 4.305,
+     "loo_stable": false,
+     "score_rank": 2.572,
+     "member_z_mad": [
+      -0.17,
+      2.55,
+      1.66,
+      2.12,
+      1.81,
+      1.7,
+      3.31,
+      0.29,
+      -1.15,
+      4,
+      0.25,
+      0,
+      0.12,
+      -0.38
+     ]
+    },
+    {
+     "echo": false,
+     "p_mad": 0.966,
+     "p_rank": 0.9281,
+     "article": "organizations:Senate Committee on the Judiciary",
+     "score_mad": 3.842,
+     "loo_stable": false,
+     "score_rank": 2.461,
+     "member_z_mad": [
+      0,
+      2.07,
+      -1.32,
+      0.08,
+      2.02,
+      2.17,
+      3.29,
+      -1.31,
+      1.51,
+      0.93,
+      -0.22,
+      2.57,
+      -0.22,
+      2.81
+     ]
+    },
+    {
+     "echo": false,
+     "p_mad": 0.974,
+     "p_rank": 0.9151,
+     "article": "glocations:Brussels (Belgium)",
+     "score_mad": 3.758,
+     "loo_stable": false,
+     "score_rank": 2.49,
+     "member_z_mad": [
+      0.08,
+      2.64,
+      1.17,
+      -1.22,
+      3.41,
+      -0.01,
+      0.91,
+      2.48,
+      1.15,
+      -0.04,
+      0.69,
+      0.45,
+      0.07,
+      2.28
+     ]
+    },
+    {
+     "echo": false,
+     "p_mad": 0.98,
+     "p_rank": 0.954,
+     "article": "subject:Recipes",
+     "score_mad": 3.686,
+     "loo_stable": false,
+     "score_rank": 2.354,
+     "member_z_mad": [
+      0.49,
+      -0.03,
+      -0.49,
+      -0.12,
+      2.82,
+      0.72,
+      3.78,
+      3.25,
+      -0.83,
+      0.71,
+      0.44,
+      1.84,
+      -0.57,
+      1.78
+     ]
+    },
+    {
+     "echo": false,
+     "p_mad": 0.982,
+     "p_rank": 0.9001,
+     "article": "subject:Pipelines",
+     "score_mad": 3.664,
+     "loo_stable": false,
+     "score_rank": 2.516,
+     "member_z_mad": [
+      0.54,
+      0.42,
+      -0.67,
+      -0.67,
+      2.95,
+      0.15,
+      2.44,
+      0.77,
+      2.68,
+      2.3,
+      0.46,
+      2.5,
+      -0.85,
+      0.69
+     ]
+    },
+    {
+     "echo": false,
+     "p_mad": 0.8931,
+     "p_rank": 0.987,
+     "article": "subject:your-feed-selfcare",
+     "score_mad": 4.241,
+     "loo_stable": false,
+     "score_rank": 2.185,
+     "member_z_mad": [
+      0,
+      0,
+      4,
+      -0.42,
+      -0.89,
+      -1.14,
+      3.73,
+      0.07,
+      0.41,
+      1.53,
+      1.47,
+      3.39,
+      3.87,
+      -0.16
+     ]
+    }
+   ],
+   "n_used": 14,
+   "members": [
+    {
+     "d0": "2016-11-02",
+     "id": "T10390",
+     "day0": "2016-11-02",
+     "article": "2016 World Series",
+     "titles_used": 5
+    },
+    {
+     "d0": "2017-11-01",
+     "id": "T10394",
+     "day0": "2017-11-01",
+     "article": "2017 World Series",
+     "titles_used": 6
+    },
+    {
+     "d0": "2018-10-28",
+     "id": "T10398",
+     "day0": "2018-10-28",
+     "article": "2018 World Series",
+     "titles_used": 4
+    },
+    {
+     "d0": "2019-06-13",
+     "id": "T10402",
+     "day0": "2019-06-13",
+     "article": "2019 NBA Finals",
+     "titles_used": 5
+    },
+    {
+     "d0": "2019-10-30",
+     "id": "T10404",
+     "day0": "2019-10-30",
+     "article": "2019 World Series",
+     "titles_used": 6
+    },
+    {
+     "d0": "2020-10-11",
+     "id": "T10406",
+     "day0": "2020-10-11",
+     "article": "2020 NBA Finals",
+     "titles_used": 5
+    },
+    {
+     "d0": "2020-10-27",
+     "id": "T10408",
+     "day0": "2020-10-27",
+     "article": "2020 World Series",
+     "titles_used": 5
+    },
+    {
+     "d0": "2021-07-20",
+     "id": "T10411",
+     "day0": "2021-07-20",
+     "article": "2021 NBA Finals",
+     "titles_used": 4
+    },
+    {
+     "d0": "2021-11-02",
+     "id": "T10412",
+     "day0": "2021-11-02",
+     "article": "2021 World Series",
+     "titles_used": 7
+    },
+    {
+     "d0": "2022-06-16",
+     "id": "T10416",
+     "day0": "2022-06-16",
+     "article": "2022 NBA Finals",
+     "titles_used": 5
+    },
+    {
+     "d0": "2022-11-05",
+     "id": "T10417",
+     "day0": "2022-11-05",
+     "article": "2022 World Series",
+     "titles_used": 5
+    },
+    {
+     "d0": "2023-06-12",
+     "id": "T10421",
+     "day0": "2023-06-12",
+     "article": "2023 NBA Finals",
+     "titles_used": 4
+    },
+    {
+     "d0": "2023-11-01",
+     "id": "T10422",
+     "day0": "2023-11-01",
+     "article": "2023 World Series",
+     "titles_used": 4
+    },
+    {
+     "d0": "2024-06-17",
+     "id": "T10425",
+     "day0": "2024-06-17",
+     "article": "2024 NBA Finals",
+     "titles_used": 3
+    }
+   ],
+   "min_p_both": 0.001998001998001998,
+   "clustered_members": [
+    "T10406",
+    "T10408"
+   ]
+  },
+  "ai_model_releases": {
+   "top": [
+    {
+     "echo": false,
+     "p_mad": 0.7652,
+     "p_rank": 0.6583,
+     "article": "subject:Strikes",
+     "score_mad": 4.567,
+     "loo_stable": false,
+     "score_rank": 2.814,
+     "member_z_mad": [
+      0.19,
+      3.24,
+      0.06,
+      0.45,
+      -0.16,
+      0.47,
+      2.38,
+      2.27,
+      -0.51,
+      2.3,
+      0.62,
+      2.5,
+      3.27,
+      0
+     ]
+    },
+    {
+     "echo": false,
+     "p_mad": 0.3237,
+     "p_rank": 0.7692,
+     "article": "subject:your-feed-health",
+     "score_mad": 5.468,
+     "loo_stable": false,
+     "score_rank": 2.703,
+     "member_z_mad": [
+      2.24,
+      -1.64,
+      1.98,
+      -1.18,
+      2.86,
+      0.54,
+      3.24,
+      0.95,
+      3.56,
+      3.14,
+      -0.02,
+      0.77,
+      4,
+      0
+     ]
+    },
+    {
+     "echo": false,
+     "p_mad": 0.7812,
+     "p_rank": 0.7892,
+     "article": "organizations:Hulu.com",
+     "score_mad": 4.526,
+     "loo_stable": false,
+     "score_rank": 2.674,
+     "member_z_mad": [
+      2.42,
+      0.11,
+      -0.96,
+      -0.66,
+      -1.8,
+      2.29,
+      -1.54,
+      3.33,
+      2.98,
+      1.57,
+      1.33,
+      3.86,
+      4,
+      0
+     ]
+    },
+    {
+     "echo": false,
+     "p_mad": 0.8661,
+     "p_rank": 0.2358,
+     "article": "subject:Women's Rights",
+     "score_mad": 4.33,
+     "loo_stable": false,
+     "score_rank": 3.273,
+     "member_z_mad": [
+      4,
+      1.09,
+      0.24,
+      -0.17,
+      0.21,
+      -0.07,
+      1.84,
+      1.33,
+      3.89,
+      0.02,
+      1.65,
+      1.51,
+      0.66,
+      0
+     ]
+    },
+    {
+     "echo": false,
+     "p_mad": 0.8641,
+     "p_rank": 0.9151,
+     "article": "organizations:General Assembly (UN)",
+     "score_mad": 4.334,
+     "loo_stable": false,
+     "score_rank": 2.479,
+     "member_z_mad": [
+      0.74,
+      0.94,
+      2.66,
+      1.67,
+      0.02,
+      2.82,
+      -0.31,
+      -0.23,
+      1.3,
+      -0.16,
+      3.34,
+      0.64,
+      2.79,
+      0
+     ]
+    },
+    {
+     "echo": false,
+     "p_mad": 0.9461,
+     "p_rank": 0.5504,
+     "article": "subject:Rain",
+     "score_mad": 3.995,
+     "loo_stable": false,
+     "score_rank": 2.925,
+     "member_z_mad": [
+      -1.03,
+      2.06,
+      0.22,
+      -0.99,
+      1.44,
+      1.69,
+      0.63,
+      2.27,
+      3.87,
+      0.42,
+      4,
+      -0.19,
+      0.56,
+      0
+     ]
+    },
+    {
+     "echo": false,
+     "p_mad": 0.954,
+     "p_rank": 0.4575,
+     "article": "subject:Hurricanes and Tropical Storms",
+     "score_mad": 3.971,
+     "loo_stable": false,
+     "score_rank": 2.999,
+     "member_z_mad": [
+      0.71,
+      0.46,
+      0.89,
+      2.59,
+      -0.95,
+      1.03,
+      0.84,
+      0.19,
+      3.59,
+      0.88,
+      -0.88,
+      3.58,
+      1.92,
+      0
+     ]
+    },
+    {
+     "echo": false,
+     "p_mad": 0.97,
+     "p_rank": 0.2587,
+     "article": "subject:Gardens and Gardening",
+     "score_mad": 3.874,
+     "loo_stable": false,
+     "score_rank": 3.243,
+     "member_z_mad": [
+      0.84,
+      1.83,
+      0.42,
+      0.27,
+      1.66,
+      1.56,
+      0.89,
+      -0.49,
+      1.24,
+      1.09,
+      2.85,
+      1.7,
+      0.46,
+      0.17
+     ]
+    },
+    {
+     "echo": false,
+     "p_mad": 0.973,
+     "p_rank": 0.8831,
+     "article": "creative_works:The Daily Show with Trevor Noah (TV Program)",
+     "score_mad": 3.858,
+     "loo_stable": false,
+     "score_rank": 2.529,
+     "member_z_mad": [
+      -0.9,
+      1.46,
+      1.26,
+      0.71,
+      0.77,
+      -0.06,
+      0.43,
+      2.48,
+      2.12,
+      0.4,
+      0.22,
+      1.55,
+      4,
+      0
+     ]
+    },
+    {
+     "echo": false,
+     "p_mad": 0.976,
+     "p_rank": 0.9161,
+     "article": "subject:Cyberharassment",
+     "score_mad": 3.796,
+     "loo_stable": false,
+     "score_rank": 2.476,
+     "member_z_mad": [
+      2.87,
+      3.05,
+      0.9,
+      1.15,
+      -1.35,
+      0.03,
+      1.48,
+      0.88,
+      -1.76,
+      -0.05,
+      1.9,
+      2.44,
+      2.65,
+      0
+     ]
+    }
+   ],
+   "n_used": 14,
+   "members": [
+    {
+     "id": "E5527",
+     "day0": "2019-02-14",
+     "skip": "too few views around the event",
+     "article": "GPT-2",
+     "titles_used": 3
+    },
+    {
+     "d0": "2020-05-28",
+     "id": "E5528",
+     "day0": "2020-05-28",
+     "article": "GPT-3",
+     "titles_used": 13
+    },
+    {
+     "d0": "2021-01-05",
+     "id": "E5529",
+     "day0": "2021-01-05",
+     "article": "DALL-E",
+     "titles_used": 101
+    },
+    {
+     "d0": "2021-06-29",
+     "id": "E5530",
+     "day0": "2021-06-29",
+     "article": "GitHub Copilot",
+     "titles_used": 5
+    },
+    {
+     "d0": "2022-04-06",
+     "id": "E5538",
+     "day0": "2022-04-06",
+     "article": "DALL-E",
+     "titles_used": 101
+    },
+    {
+     "id": "E5535",
+     "day0": "2022-08-22",
+     "skip": "too few views around the event",
+     "article": "Stable Diffusion",
+     "titles_used": 5
+    },
+    {
+     "d0": "2022-11-30",
+     "id": "E6110",
+     "day0": "2022-11-30",
+     "article": "ChatGPT",
+     "titles_used": 38
+    },
+    {
+     "d0": "2023-03-14",
+     "id": "E6118",
+     "day0": "2023-03-14",
+     "article": "GPT-4",
+     "titles_used": 6
+    },
+    {
+     "d0": "2023-07-11",
+     "id": "E6121",
+     "day0": "2023-07-11",
+     "article": "Claude (language model)",
+     "titles_used": 39
+    },
+    {
+     "d0": "2023-12-06",
+     "id": "E6116",
+     "day0": "2023-12-06",
+     "article": "Gemini (language model)",
+     "titles_used": 29
+    },
+    {
+     "d0": "2024-02-15",
+     "id": "E5543",
+     "day0": "2024-02-15",
+     "article": "Sora (text-to-video model)",
+     "titles_used": 16
+    },
+    {
+     "d0": "2024-03-04",
+     "id": "E5545",
+     "day0": "2024-03-04",
+     "article": "Claude (language model)",
+     "titles_used": 39
+    },
+    {
+     "d0": "2024-04-18",
+     "id": "E5547",
+     "day0": "2024-04-18",
+     "article": "Llama (language model)",
+     "titles_used": 20
+    },
+    {
+     "d0": "2024-05-13",
+     "id": "E5546",
+     "day0": "2024-05-13",
+     "article": "GPT-4o",
+     "titles_used": 5
+    },
+    {
+     "d0": "2024-09-12",
+     "id": "E6129",
+     "day0": "2024-09-12",
+     "article": "OpenAI o1",
+     "titles_used": 8
+    },
+    {
+     "d0": "2025-01-20",
+     "id": "E6123",
+     "day0": "2025-01-20",
+     "article": "DeepSeek",
+     "titles_used": 51
+    }
+   ],
+   "min_p_both": 0.7652347652347652,
+   "clustered_members": [
+    "E5543",
+    "E5545",
+    "E5546",
+    "E5547"
+   ]
+  },
+  "music_icon_deaths": {
+   "top": [
+    {
+     "echo": false,
+     "p_mad": 0.4635,
+     "p_rank": 0.2338,
+     "article": "subject:Visas",
+     "score_mad": 5.772,
+     "loo_stable": false,
+     "score_rank": 3.359,
+     "member_z_mad": [
+      3.23,
+      2.91,
+      0.5,
+      0.82,
+      1.41,
+      -0.62,
+      4,
+      -0.73,
+      0.48,
+      3.22,
+      1.03,
+      0.63,
+      0.1,
+      0.92,
+      4,
+      0.05,
+      0.97,
+      1.57
+     ]
+    },
+    {
+     "echo": false,
+     "p_mad": 0.7343,
+     "p_rank": 0.7522,
+     "article": "subject:Drug Cartels",
+     "score_mad": 5.19,
+     "loo_stable": false,
+     "score_rank": 2.824,
+     "member_z_mad": [
+      0.95,
+      2.27,
+      -0.15,
+      4,
+      -0.46,
+      4,
+      -4,
+      0.08,
+      4,
+      -0.1,
+      -0.16,
+      2.45,
+      1.23,
+      -0.76,
+      0.17,
+      4,
+      4,
+      0.5
+     ]
+    },
+    {
+     "echo": false,
+     "p_mad": 0.8012,
+     "p_rank": 0.2697,
+     "article": "subject:Death and Dying",
+     "score_mad": 5.041,
+     "loo_stable": false,
+     "score_rank": 3.299,
+     "member_z_mad": [
+      1.42,
+      0.86,
+      1.42,
+      3.11,
+      0.77,
+      0.27,
+      1.31,
+      1.25,
+      -1.05,
+      -1.18,
+      4,
+      1.36,
+      0.94,
+      0.33,
+      0.56,
+      3.73,
+      1.4,
+      0.9
+     ]
+    },
+    {
+     "echo": true,
+     "p_mad": 0.6244,
+     "p_rank": 0.9391,
+     "article": "subject:Vietnam War",
+     "score_mad": 5.45,
+     "loo_stable": false,
+     "score_rank": 2.534,
+     "member_z_mad": [
+      -0.5,
+      2.46,
+      0.18,
+      -0.73,
+      2.38,
+      4,
+      0.3,
+      -1.41,
+      0.28,
+      4,
+      4,
+      -0.51,
+      1.8,
+      0.73,
+      0.43,
+      4,
+      -0.78,
+      2.49
+     ]
+    },
+    {
+     "echo": false,
+     "p_mad": 0.968,
+     "p_rank": 0.7433,
+     "article": "glocations:Louisiana",
+     "score_mad": 4.484,
+     "loo_stable": false,
+     "score_rank": 2.834,
+     "member_z_mad": [
+      -0.29,
+      0.4,
+      0.19,
+      -0.87,
+      1.1,
+      -1.09,
+      -1.28,
+      0.82,
+      4,
+      -0.19,
+      0.74,
+      3.27,
+      0.54,
+      0.57,
+      4,
+      -0.56,
+      3.67,
+      4
+     ]
+    },
+    {
+     "echo": false,
+     "p_mad": 0.969,
+     "p_rank": 0.5544,
+     "article": "organizations:Border Patrol (US)",
+     "score_mad": 4.48,
+     "loo_stable": false,
+     "score_rank": 3.007,
+     "member_z_mad": [
+      2.45,
+      3.39,
+      0.6,
+      0.45,
+      -0.72,
+      1.45,
+      0.27,
+      2.01,
+      4,
+      4,
+      0.11,
+      -0.04,
+      -0.51,
+      0.3,
+      1.07,
+      0.11,
+      -1.16,
+      1.24
+     ]
+    },
+    {
+     "echo": false,
+     "p_mad": 0.971,
+     "p_rank": 0.9201,
+     "article": "subject:Volcanoes",
+     "score_mad": 4.462,
+     "loo_stable": false,
+     "score_rank": 2.574,
+     "member_z_mad": [
+      -0.41,
+      0.69,
+      -0.2,
+      0.62,
+      0.22,
+      0.66,
+      -1.16,
+      4,
+      1.07,
+      4,
+      1.74,
+      1.7,
+      3.05,
+      -0.75,
+      -0.28,
+      0.61,
+      -0.63,
+      4
+     ]
+    },
+    {
+     "echo": false,
+     "p_mad": 0.982,
+     "p_rank": 0.9291,
+     "article": "subject:Drought",
+     "score_mad": 4.363,
+     "loo_stable": false,
+     "score_rank": 2.553,
+     "member_z_mad": [
+      2.2,
+      -0.35,
+      -0.43,
+      -1.06,
+      -0.92,
+      0.96,
+      0.39,
+      0.23,
+      4,
+      0.46,
+      0.09,
+      -1.27,
+      4,
+      1.12,
+      1.66,
+      -0.5,
+      4,
+      3.94
+     ]
+    },
+    {
+     "echo": false,
+     "p_mad": 0.992,
+     "p_rank": 0.979,
+     "article": "persons:Bolsonaro, Jair (1955- )",
+     "score_mad": 4.158,
+     "loo_stable": false,
+     "score_rank": 2.355,
+     "member_z_mad": [
+      0,
+      0,
+      0,
+      0.73,
+      0.32,
+      4,
+      1.28,
+      -4,
+      0.02,
+      0.83,
+      2.65,
+      4,
+      1.25,
+      0.5,
+      -0.28,
+      -0.73,
+      4,
+      3.08
+     ]
+    },
+    {
+     "echo": false,
+     "p_mad": 0.992,
+     "p_rank": 0.7632,
+     "article": "subject:Sex",
+     "score_mad": 4.143,
+     "loo_stable": false,
+     "score_rank": 2.812,
+     "member_z_mad": [
+      0.54,
+      0.8,
+      0.69,
+      -0.83,
+      0.73,
+      4,
+      4,
+      0.08,
+      0.26,
+      -3.45,
+      1.43,
+      3.61,
+      -2.4,
+      0.51,
+      2.49,
+      2.28,
+      2.23,
+      0.62
+     ]
+    }
+   ],
+   "n_used": 18,
+   "members": [
+    {
+     "d0": "2016-12-25",
+     "id": "T10201",
+     "day0": "2016-12-25",
+     "article": "George Michael",
+     "titles_used": 20
+    },
+    {
+     "d0": "2017-03-18",
+     "id": "T10203",
+     "day0": "2017-03-18",
+     "article": "Chuck Berry",
+     "titles_used": 15
+    },
+    {
+     "d0": "2017-10-02",
+     "id": "T10205",
+     "day0": "2017-10-02",
+     "article": "Tom Petty",
+     "titles_used": 13
+    },
+    {
+     "d0": "2018-04-20",
+     "id": "T10211",
+     "day0": "2018-04-20",
+     "article": "Avicii",
+     "titles_used": 23
+    },
+    {
+     "d0": "2018-08-16",
+     "id": "T10207",
+     "day0": "2018-08-16",
+     "article": "Aretha Franklin",
+     "titles_used": 17
+    },
+    {
+     "d0": "2018-09-07",
+     "id": "T10208",
+     "day0": "2018-09-07",
+     "article": "Mac Miller",
+     "titles_used": 10
+    },
+    {
+     "d0": "2020-10-06",
+     "id": "T10219",
+     "day0": "2020-10-06",
+     "article": "Eddie Van Halen",
+     "titles_used": 16
+    },
+    {
+     "d0": "2021-04-09",
+     "id": "T10222",
+     "day0": "2021-04-09",
+     "article": "DMX",
+     "titles_used": 18
+    },
+    {
+     "d0": "2021-08-24",
+     "id": "T10223",
+     "day0": "2021-08-24",
+     "article": "Charlie Watts",
+     "titles_used": 14
+    },
+    {
+     "d0": "2022-01-20",
+     "id": "T10229",
+     "day0": "2022-01-20",
+     "article": "Meat Loaf",
+     "titles_used": 17
+    },
+    {
+     "d0": "2022-03-25",
+     "id": "T10230",
+     "day0": "2022-03-25",
+     "article": "Taylor Hawkins",
+     "titles_used": 5
+    },
+    {
+     "d0": "2022-08-08",
+     "id": "T10232",
+     "day0": "2022-08-08",
+     "article": "Olivia Newton-John",
+     "titles_used": 47
+    },
+    {
+     "d0": "2023-01-10",
+     "id": "T10262",
+     "day0": "2023-01-10",
+     "article": "Jeff Beck",
+     "titles_used": 4
+    },
+    {
+     "d0": "2023-05-24",
+     "id": "T10239",
+     "day0": "2023-05-24",
+     "article": "Tina Turner",
+     "titles_used": 17
+    },
+    {
+     "d0": "2023-07-21",
+     "id": "T10241",
+     "day0": "2023-07-21",
+     "article": "Tony Bennett",
+     "titles_used": 11
+    },
+    {
+     "d0": "2023-09-01",
+     "id": "T10242",
+     "day0": "2023-09-01",
+     "article": "Jimmy Buffett",
+     "titles_used": 21
+    },
+    {
+     "d0": "2024-10-16",
+     "id": "T10252",
+     "day0": "2024-10-16",
+     "article": "Liam Payne",
+     "titles_used": 12
+    },
+    {
+     "d0": "2024-11-03",
+     "id": "T10251",
+     "day0": "2024-11-03",
+     "article": "Quincy Jones",
+     "titles_used": 16
+    }
+   ],
+   "min_p_both": 0.46353646353646355,
+   "clustered_members": [
+    "T10207",
+    "T10208",
+    "T10251",
+    "T10252"
+   ]
+  },
+  "spacex_milestones": {
+   "top": [
+    {
+     "echo": false,
+     "p_mad": 0.001,
+     "p_rank": 0.001,
+     "article": "organizations:Space Exploration Technologies Corp",
+     "score_mad": 11.054,
+     "loo_stable": true,
+     "score_rank": 6.291,
+     "member_z_mad": [
+      3.27,
+      4,
+      4,
+      3.91,
+      4,
+      4,
+      4,
+      1.37,
+      4,
+      3.67,
+      0.44
+     ]
+    },
+    {
+     "echo": true,
+     "p_mad": 0.001,
+     "p_rank": 0.001,
+     "article": "subject:Private Spaceflight",
+     "score_mad": 9.233,
+     "loo_stable": true,
+     "score_rank": 5.89,
+     "member_z_mad": [
+      3.74,
+      2.65,
+      4,
+      1.8,
+      4,
+      4,
+      2.34,
+      1.48,
+      3.15,
+      3.87,
+      -0.4
+     ]
+    },
+    {
+     "echo": false,
+     "p_mad": 0.0999,
+     "p_rank": 0.001,
+     "article": "subject:Rocket Science and Propulsion",
+     "score_mad": 6.461,
+     "loo_stable": false,
+     "score_rank": 4.63,
+     "member_z_mad": [
+      2.87,
+      2.94,
+      4,
+      0.53,
+      3.06,
+      2.07,
+      2.58,
+      1.47,
+      -0.49,
+      2.51,
+      -0.1
+     ]
+    },
+    {
+     "echo": false,
+     "p_mad": 0.8462,
+     "p_rank": 0.8741,
+     "article": "subject:Relocation of Business",
+     "score_mad": 4.391,
+     "loo_stable": false,
+     "score_rank": 2.557,
+     "member_z_mad": [
+      4,
+      -2.17,
+      -0.31,
+      -0.1,
+      1.19,
+      4,
+      2.1,
+      0.29,
+      3.56,
+      1.98,
+      0.03
+     ]
+    },
+    {
+     "echo": false,
+     "p_mad": 0.8891,
+     "p_rank": 0.5025,
+     "article": "organizations:Securities and Exchange Commission",
+     "score_mad": 4.214,
+     "loo_stable": false,
+     "score_rank": 3.028,
+     "member_z_mad": [
+      0.77,
+      4,
+      0.82,
+      2.35,
+      -0.86,
+      0.88,
+      0.7,
+      1.36,
+      3.19,
+      0.77,
+      0
+     ]
+    },
+    {
+     "echo": false,
+     "p_mad": 0.9291,
+     "p_rank": 0.2098,
+     "article": "organizations:Conservative Party (Great Britain)",
+     "score_mad": 4.059,
+     "loo_stable": false,
+     "score_rank": 3.387,
+     "member_z_mad": [
+      0.05,
+      3.36,
+      0.99,
+      0.36,
+      1.24,
+      -0.37,
+      1.2,
+      2.51,
+      3.39,
+      0.72,
+      0
+     ]
+    },
+    {
+     "echo": false,
+     "p_mad": 0.9461,
+     "p_rank": 0.6503,
+     "article": "subject:Hurricanes and Tropical Storms",
+     "score_mad": 3.979,
+     "loo_stable": false,
+     "score_rank": 2.878,
+     "member_z_mad": [
+      0.8,
+      2.42,
+      0.33,
+      1.81,
+      -0.13,
+      -0.74,
+      3.23,
+      4,
+      0.82,
+      1.76,
+      -1.11
+     ]
+    },
+    {
+     "echo": false,
+     "p_mad": 0.953,
+     "p_rank": 0.6653,
+     "article": "subject:Legislatures and Parliaments",
+     "score_mad": 3.94,
+     "loo_stable": false,
+     "score_rank": 2.86,
+     "member_z_mad": [
+      1.05,
+      1.88,
+      -0.61,
+      3.7,
+      1.52,
+      1.56,
+      1.7,
+      0.95,
+      2.02,
+      0.37,
+      -1.08
+     ]
+    },
+    {
+     "echo": false,
+     "p_mad": 0.967,
+     "p_rank": 0.9301,
+     "article": "persons:Murdoch, Rupert",
+     "score_mad": 3.843,
+     "loo_stable": false,
+     "score_rank": 2.434,
+     "member_z_mad": [
+      2.09,
+      2.19,
+      -0.08,
+      1.32,
+      3.06,
+      1.99,
+      0.64,
+      0.47,
+      1.07,
+      0,
+      0
+     ]
+    },
+    {
+     "echo": false,
+     "p_mad": 0.99,
+     "p_rank": 0.6673,
+     "article": "subject:Volunteers and Community Service",
+     "score_mad": 3.556,
+     "loo_stable": false,
+     "score_rank": 2.857,
+     "member_z_mad": [
+      4,
+      0.17,
+      2.98,
+      0.94,
+      0.51,
+      0.45,
+      1.34,
+      0.1,
+      -1.52,
+      2.6,
+      0.23
+     ]
+    }
+   ],
+   "n_used": 11,
+   "members": [
+    {
+     "d0": "2018-02-06",
+     "id": "E5601",
+     "day0": "2018-02-06",
+     "article": "Falcon Heavy test flight",
+     "titles_used": 15
+    },
+    {
+     "d0": "2019-05-23",
+     "id": "E5603",
+     "day0": "2019-05-23",
+     "article": "Starlink",
+     "titles_used": 23
+    },
+    {
+     "d0": "2020-05-30",
+     "id": "E10143",
+     "day0": "2020-05-30",
+     "article": "Crew Dragon Demo-2",
+     "titles_used": 9
+    },
+    {
+     "d0": "2020-11-15",
+     "id": "E5643",
+     "day0": "2020-11-15",
+     "article": "SpaceX Crew-1",
+     "titles_used": 11
+    },
+    {
+     "d0": "2021-09-15",
+     "id": "E5626",
+     "day0": "2021-09-15",
+     "article": "Inspiration4",
+     "titles_used": 9
+    },
+    {
+     "d0": "2023-04-20",
+     "id": "E6545",
+     "day0": "2023-04-20",
+     "article": "Starship flight test 1",
+     "titles_used": 32
+    },
+    {
+     "d0": "2023-11-18",
+     "id": "E5629",
+     "day0": "2023-11-18",
+     "article": "Starship flight test 2",
+     "titles_used": 16
+    },
+    {
+     "d0": "2024-06-06",
+     "id": "E5630",
+     "day0": "2024-06-06",
+     "article": "Starship flight test 4",
+     "titles_used": 10
+    },
+    {
+     "d0": "2024-09-10",
+     "id": "E5627",
+     "day0": "2024-09-10",
+     "article": "Polaris Dawn",
+     "titles_used": 2
+    },
+    {
+     "d0": "2024-10-13",
+     "id": "E5631",
+     "day0": "2024-10-13",
+     "article": "Starship flight test 5",
+     "titles_used": 11
+    },
+    {
+     "d0": "2025-01-16",
+     "id": "E5632",
+     "day0": "2025-01-16",
+     "article": "Starship flight test 7",
+     "titles_used": 5
+    }
+   ],
+   "min_p_both": 0.000999000999000999,
+   "clustered_members": []
+  },
+  "us_mass_shootings": {
+   "top": [
+    {
+     "echo": false,
+     "p_mad": 0.1608,
+     "p_rank": 0.016,
+     "article": "subject:School Shootings and Armed Attacks",
+     "score_mad": 6.564,
+     "loo_stable": false,
+     "score_rank": 4.016,
+     "member_z_mad": [
+      -1.52,
+      4,
+      4,
+      1.62,
+      0.85,
+      0.89,
+      4,
+      4,
+      -0.95,
+      3.86
+     ]
+    },
+    {
+     "echo": false,
+     "p_mad": 0.3117,
+     "p_rank": 0.0829,
+     "article": "subject:Elections, House of Representatives",
+     "score_mad": 6.066,
+     "loo_stable": false,
+     "score_rank": 3.623,
+     "member_z_mad": [
+      3.79,
+      -1.01,
+      0.94,
+      1.24,
+      2.1,
+      4,
+      4,
+      -0.98,
+      3.46,
+      1.63
+     ]
+    },
+    {
+     "echo": false,
+     "p_mad": 0.0539,
+     "p_rank": 0.4466,
+     "article": "subject:Mass Shootings",
+     "score_mad": 7.397,
+     "loo_stable": false,
+     "score_rank": 3.088,
+     "member_z_mad": [
+      0,
+      0,
+      0,
+      4,
+      4,
+      4,
+      -0.61,
+      4,
+      4,
+      4
+     ]
+    },
+    {
+     "echo": false,
+     "p_mad": 0.5604,
+     "p_rank": 0.2458,
+     "article": "subject:Poverty",
+     "score_mad": 5.461,
+     "loo_stable": false,
+     "score_rank": 3.315,
+     "member_z_mad": [
+      0.03,
+      2.58,
+      0.34,
+      3.61,
+      0.86,
+      -0.34,
+      1.73,
+      1,
+      3.45,
+      4
+     ]
+    },
+    {
+     "echo": false,
+     "p_mad": 0.5524,
+     "p_rank": 0.5704,
+     "article": "subject:Cemeteries",
+     "score_mad": 5.474,
+     "loo_stable": false,
+     "score_rank": 2.954,
+     "member_z_mad": [
+      -0.36,
+      1.01,
+      -0.26,
+      0.45,
+      4,
+      1.59,
+      3.67,
+      4,
+      2.49,
+      0.73
+     ]
+    },
+    {
+     "echo": false,
+     "p_mad": 0.7852,
+     "p_rank": 0.2747,
+     "article": "glocations:Middle East",
+     "score_mad": 4.974,
+     "loo_stable": false,
+     "score_rank": 3.281,
+     "member_z_mad": [
+      0.69,
+      2.9,
+      2.14,
+      3.48,
+      0.73,
+      3,
+      1.81,
+      -0.85,
+      1.68,
+      0.16
+     ]
+    },
+    {
+     "echo": false,
+     "p_mad": 0.8382,
+     "p_rank": 0.2138,
+     "article": "subject:Weddings and Engagements",
+     "score_mad": 4.858,
+     "loo_stable": false,
+     "score_rank": 3.36,
+     "member_z_mad": [
+      1.23,
+      2.16,
+      4,
+      0.74,
+      2.41,
+      0.96,
+      2.86,
+      0.16,
+      0.37,
+      0.47
+     ]
+    },
+    {
+     "echo": false,
+     "p_mad": 0.9021,
+     "p_rank": 0.7493,
+     "article": "subject:Bacteria",
+     "score_mad": 4.634,
+     "loo_stable": false,
+     "score_rank": 2.754,
+     "member_z_mad": [
+      2.68,
+      -0.23,
+      4,
+      -0.23,
+      1.35,
+      1.54,
+      4,
+      0.67,
+      -0.26,
+      1.14
+     ]
+    },
+    {
+     "echo": false,
+     "p_mad": 0.9261,
+     "p_rank": 0.9161,
+     "article": "glocations:Jerusalem (Israel)",
+     "score_mad": 4.542,
+     "loo_stable": false,
+     "score_rank": 2.446,
+     "member_z_mad": [
+      -1.45,
+      3.95,
+      1.52,
+      0.69,
+      4,
+      0.89,
+      1.99,
+      4,
+      -0.41,
+      -0.81
+     ]
+    },
+    {
+     "echo": false,
+     "p_mad": 0.9351,
+     "p_rank": 0.6763,
+     "article": "persons:Mohammed bin Salman (1985- )",
+     "score_mad": 4.502,
+     "loo_stable": false,
+     "score_rank": 2.859,
+     "member_z_mad": [
+      4,
+      0.03,
+      4,
+      -1.4,
+      1.12,
+      1.48,
+      2.13,
+      -1.94,
+      4,
+      0.81
+     ]
+    }
+   ],
+   "n_used": 10,
+   "members": [
+    {
+     "d0": "2017-11-05",
+     "id": "T10429",
+     "day0": "2017-11-05",
+     "article": "Sutherland Springs church shooting",
+     "titles_used": 19
+    },
+    {
+     "d0": "2018-02-14",
+     "id": "T10430",
+     "day0": "2018-02-14",
+     "article": "Stoneman Douglas High School shooting",
+     "titles_used": 58
+    },
+    {
+     "d0": "2018-05-18",
+     "id": "T10431",
+     "day0": "2018-05-18",
+     "article": "Santa Fe High School shooting",
+     "titles_used": 14
+    },
+    {
+     "d0": "2019-08-03",
+     "id": "T10432",
+     "day0": "2019-08-03",
+     "article": "2019 El Paso shooting",
+     "titles_used": 24
+    },
+    {
+     "d0": "2021-03-16",
+     "id": "T10434",
+     "day0": "2021-03-16",
+     "article": "Atlanta spa shootings",
+     "titles_used": 17
+    },
+    {
+     "d0": "2022-05-14",
+     "id": "T10436",
+     "day0": "2022-05-14",
+     "article": "2022 Buffalo shooting",
+     "titles_used": 40
+    },
+    {
+     "d0": "2022-05-24",
+     "id": "T10435",
+     "day0": "2022-05-24",
+     "article": "Robb Elementary School shooting",
+     "titles_used": 52
+    },
+    {
+     "d0": "2023-03-27",
+     "id": "T10437",
+     "day0": "2023-03-27",
+     "article": "Covenant School shooting",
+     "titles_used": 19
+    },
+    {
+     "id": "T10438",
+     "day0": "2023-05-06",
+     "skip": "too few views around the event",
+     "article": "Allen, Texas mall shooting",
+     "titles_used": 0
+    },
+    {
+     "d0": "2023-10-25",
+     "id": "T10439",
+     "day0": "2023-10-25",
+     "article": "2023 Lewiston shootings",
+     "titles_used": 19
+    },
+    {
+     "d0": "2024-09-21",
+     "id": "T10440",
+     "day0": "2024-09-21",
+     "article": "2024 Birmingham shooting",
+     "titles_used": 4
+    }
+   ],
+   "min_p_both": 0.16083916083916083,
+   "clustered_members": [
+    "T10435",
+    "T10436"
+   ]
+  },
+  "screen_icon_deaths": {
+   "top": [
+    {
+     "echo": false,
+     "p_mad": 0.4765,
+     "p_rank": 0.4875,
+     "article": "subject:Psychiatry and Psychiatrists",
+     "score_mad": 5.673,
+     "loo_stable": false,
+     "score_rank": 3.051,
+     "member_z_mad": [
+      0.73,
+      0.92,
+      0.81,
+      -1.45,
+      0.11,
+      4,
+      0.18,
+      1.57,
+      4,
+      1.47,
+      -0.19,
+      -1.07,
+      2.05,
+      4,
+      -0.22,
+      3.12,
+      -1.63,
+      -0.48,
+      4,
+      3.45
+     ]
+    },
+    {
+     "echo": false,
+     "p_mad": 0.7303,
+     "p_rank": 0.2438,
+     "article": "subject:Budgets and Budgeting",
+     "score_mad": 5.202,
+     "loo_stable": false,
+     "score_rank": 3.322,
+     "member_z_mad": [
+      -1.45,
+      1.17,
+      4,
+      1.24,
+      3.39,
+      -0.41,
+      1.17,
+      1.79,
+      4,
+      2.55,
+      -0.38,
+      1.14,
+      -1.93,
+      1.55,
+      2.94,
+      1.32,
+      -2.83,
+      2.21,
+      1.22,
+      0.55
+     ]
+    },
+    {
+     "echo": false,
+     "p_mad": 0.7902,
+     "p_rank": 0.3267,
+     "article": "subject:Men and Boys",
+     "score_mad": 5.1,
+     "loo_stable": false,
+     "score_rank": 3.222,
+     "member_z_mad": [
+      1.57,
+      1.62,
+      -4,
+      0.39,
+      3.07,
+      3.41,
+      0.19,
+      0.62,
+      -1.71,
+      2.09,
+      -0.67,
+      3.85,
+      -0.19,
+      4,
+      4,
+      0.95,
+      -0.34,
+      1.82,
+      0.57,
+      1.59
+     ]
+    },
+    {
+     "echo": false,
+     "p_mad": 0.7253,
+     "p_rank": 0.8671,
+     "article": "organizations:TikTok (ByteDance)",
+     "score_mad": 5.211,
+     "loo_stable": false,
+     "score_rank": 2.622,
+     "member_z_mad": [
+      0,
+      0,
+      -1.1,
+      2.19,
+      4,
+      0.19,
+      3,
+      -4,
+      -3.78,
+      4,
+      1.2,
+      4,
+      -0.09,
+      0.1,
+      4,
+      3.22,
+      2.01,
+      2.04,
+      1.24,
+      1.1
+     ]
+    },
+    {
+     "echo": false,
+     "p_mad": 0.8851,
+     "p_rank": 0.9091,
+     "article": "subject:Weight",
+     "score_mad": 4.847,
+     "loo_stable": false,
+     "score_rank": 2.551,
+     "member_z_mad": [
+      -0.25,
+      -0.69,
+      -1.39,
+      1.47,
+      0.9,
+      3.84,
+      -0.34,
+      0.6,
+      4,
+      0.17,
+      0.08,
+      0.45,
+      1.17,
+      2.88,
+      4,
+      4,
+      -1.23,
+      2.7,
+      -0.41,
+      -0.27
+     ]
+    },
+    {
+     "echo": false,
+     "p_mad": 0.005,
+     "p_rank": 0.9301,
+     "article": "subject:your-feed-animals",
+     "score_mad": 8.749,
+     "loo_stable": true,
+     "score_rank": 2.514,
+     "member_z_mad": [
+      0,
+      0,
+      0,
+      0,
+      0,
+      -0.04,
+      -4,
+      4,
+      4,
+      4,
+      4,
+      4,
+      4,
+      4,
+      4,
+      4,
+      4,
+      -4,
+      4,
+      3.17
+     ]
+    },
+    {
+     "echo": false,
+     "p_mad": 0.9431,
+     "p_rank": 0.7512,
+     "article": "subject:Poverty",
+     "score_mad": 4.602,
+     "loo_stable": false,
+     "score_rank": 2.781,
+     "member_z_mad": [
+      -0.05,
+      4,
+      3.96,
+      0.06,
+      2.89,
+      2.33,
+      -2.5,
+      3.88,
+      1.92,
+      0.31,
+      0.03,
+      -0.1,
+      2.38,
+      0.31,
+      0.72,
+      0.4,
+      0.92,
+      0.96,
+      -0.49,
+      -1.34
+     ]
+    },
+    {
+     "echo": false,
+     "p_mad": 0.8092,
+     "p_rank": 0.965,
+     "article": "subject:Credit and Debt",
+     "score_mad": 5.042,
+     "loo_stable": false,
+     "score_rank": 2.385,
+     "member_z_mad": [
+      1.19,
+      -0.28,
+      -0.43,
+      1.18,
+      -1.2,
+      0.9,
+      4,
+      0.16,
+      4,
+      3.44,
+      -1.01,
+      1.05,
+      2.55,
+      -0.07,
+      4,
+      -0.36,
+      -0.31,
+      0.52,
+      -0.75,
+      3.97
+     ]
+    },
+    {
+     "echo": false,
+     "p_mad": 0.979,
+     "p_rank": 0.981,
+     "article": "subject:Longevity",
+     "score_mad": 4.383,
+     "loo_stable": false,
+     "score_rank": 2.274,
+     "member_z_mad": [
+      2.64,
+      0.8,
+      1.3,
+      2.32,
+      -0.15,
+      1.15,
+      -0.31,
+      0.59,
+      -1.23,
+      3.8,
+      -1.74,
+      0.32,
+      0.16,
+      -0.37,
+      0.88,
+      0.34,
+      3.52,
+      3.81,
+      0.61,
+      1.16
+     ]
+    },
+    {
+     "echo": false,
+     "p_mad": 0.996,
+     "p_rank": 0.955,
+     "article": "persons:Kim Jong-un",
+     "score_mad": 4.162,
+     "loo_stable": false,
+     "score_rank": 2.443,
+     "member_z_mad": [
+      4,
+      -0.67,
+      2.05,
+      2.05,
+      0.76,
+      0.33,
+      -0.73,
+      -0.57,
+      0.65,
+      0.15,
+      1.25,
+      -1.1,
+      -0.4,
+      -0.84,
+      0.19,
+      2.91,
+      2.82,
+      -2.23,
+      4,
+      4
+     ]
+    }
+   ],
+   "n_used": 20,
+   "members": [
+    {
+     "d0": "2017-01-25",
+     "id": "T10202",
+     "day0": "2017-01-25",
+     "article": "Mary Tyler Moore",
+     "titles_used": 5
+    },
+    {
+     "d0": "2017-05-23",
+     "id": "T10204",
+     "day0": "2017-05-23",
+     "article": "Roger Moore",
+     "titles_used": 15
+    },
+    {
+     "d0": "2018-11-12",
+     "id": "T10209",
+     "day0": "2018-11-12",
+     "article": "Stan Lee",
+     "titles_used": 17
+    },
+    {
+     "d0": "2019-03-04",
+     "id": "T10212",
+     "day0": "2019-03-04",
+     "article": "Luke Perry",
+     "titles_used": 9
+    },
+    {
+     "d0": "2019-05-13",
+     "id": "T10213",
+     "day0": "2019-05-13",
+     "article": "Doris Day",
+     "titles_used": 10
+    },
+    {
+     "d0": "2019-08-16",
+     "id": "T10214",
+     "day0": "2019-08-16",
+     "article": "Peter Fonda",
+     "titles_used": 3
+    },
+    {
+     "d0": "2020-08-28",
+     "id": "T10216",
+     "day0": "2020-08-28",
+     "article": "Chadwick Boseman",
+     "titles_used": 15
+    },
+    {
+     "d0": "2020-10-31",
+     "id": "T10217",
+     "day0": "2020-10-31",
+     "article": "Sean Connery",
+     "titles_used": 17
+    },
+    {
+     "d0": "2021-09-14",
+     "id": "T10224",
+     "day0": "2021-09-14",
+     "article": "Norm Macdonald",
+     "titles_used": 20
+    },
+    {
+     "d0": "2021-12-31",
+     "id": "T10225",
+     "day0": "2021-12-31",
+     "article": "Betty White",
+     "titles_used": 10
+    },
+    {
+     "d0": "2022-01-06",
+     "id": "T10227",
+     "day0": "2022-01-06",
+     "article": "Sidney Poitier",
+     "titles_used": 12
+    },
+    {
+     "d0": "2022-05-26",
+     "id": "T10231",
+     "day0": "2022-05-26",
+     "article": "Ray Liotta",
+     "titles_used": 11
+    },
+    {
+     "d0": "2023-03-17",
+     "id": "T10238",
+     "day0": "2023-03-17",
+     "article": "Lance Reddick",
+     "titles_used": 3
+    },
+    {
+     "d0": "2023-10-28",
+     "id": "T10244",
+     "day0": "2023-10-28",
+     "article": "Matthew Perry",
+     "titles_used": 10
+    },
+    {
+     "d0": "2023-12-11",
+     "id": "T10243",
+     "day0": "2023-12-11",
+     "article": "Andre Braugher",
+     "titles_used": 6
+    },
+    {
+     "d0": "2024-02-01",
+     "id": "T10245",
+     "day0": "2024-02-01",
+     "article": "Carl Weathers",
+     "titles_used": 2
+    },
+    {
+     "d0": "2024-06-20",
+     "id": "T10247",
+     "day0": "2024-06-20",
+     "article": "Donald Sutherland",
+     "titles_used": 5
+    },
+    {
+     "d0": "2024-07-13",
+     "id": "T10248",
+     "day0": "2024-07-13",
+     "article": "Shannen Doherty",
+     "titles_used": 4
+    },
+    {
+     "d0": "2024-09-09",
+     "id": "T10249",
+     "day0": "2024-09-09",
+     "article": "James Earl Jones",
+     "titles_used": 6
+    },
+    {
+     "d0": "2024-09-27",
+     "id": "T10250",
+     "day0": "2024-09-27",
+     "article": "Maggie Smith",
+     "titles_used": 18
+    }
+   ],
+   "min_p_both": 0.4875124875124875,
+   "clustered_members": [
+    "T10225",
+    "T10227",
+    "T10247",
+    "T10248",
+    "T10249",
+    "T10250"
+   ]
+  },
+  "cyberattacks_outages": {
+   "top": [
+    {
+     "echo": false,
+     "p_mad": 0.8601,
+     "p_rank": 0.4096,
+     "article": "subject:Hospitals",
+     "score_mad": 4.446,
+     "loo_stable": false,
+     "score_rank": 3.055,
+     "member_z_mad": [
+      4,
+      1.17,
+      1.98,
+      0.07,
+      0.72,
+      1.45,
+      -0.1,
+      3.29
+     ]
+    },
+    {
+     "echo": false,
+     "p_mad": 0.8731,
+     "p_rank": 0.5435,
+     "article": "subject:Flags, Emblems and Insignia",
+     "score_mad": 4.372,
+     "loo_stable": false,
+     "score_rank": 2.897,
+     "member_z_mad": [
+      2.05,
+      1.22,
+      0.31,
+      -0.08,
+      1.14,
+      1.33,
+      2.4,
+      4
+     ]
+    },
+    {
+     "echo": false,
+     "p_mad": 0.9031,
+     "p_rank": 0.7822,
+     "article": "subject:Beauty (Concept)",
+     "score_mad": 4.252,
+     "loo_stable": false,
+     "score_rank": 2.611,
+     "member_z_mad": [
+      -0.98,
+      0.02,
+      -0.27,
+      4,
+      0.45,
+      2.31,
+      2.48,
+      4
+     ]
+    },
+    {
+     "echo": false,
+     "p_mad": 0.9391,
+     "p_rank": 0.2238,
+     "article": "subject:Sex",
+     "score_mad": 4.203,
+     "loo_stable": false,
+     "score_rank": 3.307,
+     "member_z_mad": [
+      0.89,
+      1.52,
+      1.83,
+      3.31,
+      1.9,
+      0.31,
+      1.11,
+      1.02
+     ]
+    },
+    {
+     "echo": false,
+     "p_mad": 0.4555,
+     "p_rank": 0.9441,
+     "article": "persons:Vance, J D",
+     "score_mad": 5.462,
+     "loo_stable": false,
+     "score_rank": 2.254,
+     "member_z_mad": [
+      4,
+      2.47,
+      0,
+      3.1,
+      0.29,
+      4,
+      -2.42,
+      4
+     ]
+    },
+    {
+     "echo": false,
+     "p_mad": 0.955,
+     "p_rank": 0.96,
+     "article": "glocations:Minneapolis (Minn)",
+     "score_mad": 4.107,
+     "loo_stable": false,
+     "score_rank": 2.203,
+     "member_z_mad": [
+      2.2,
+      -0.21,
+      0.97,
+      -0.92,
+      1.05,
+      0.53,
+      4,
+      4
+     ]
+    },
+    {
+     "echo": false,
+     "p_mad": 0.96,
+     "p_rank": 0.7952,
+     "article": "persons:de Blasio, Bill",
+     "score_mad": 4.028,
+     "loo_stable": false,
+     "score_rank": 2.59,
+     "member_z_mad": [
+      0.68,
+      1.5,
+      2.12,
+      2.21,
+      -0.79,
+      2.72,
+      3.11,
+      -0.14
+     ]
+    },
+    {
+     "echo": false,
+     "p_mad": 0.963,
+     "p_rank": 0.8422,
+     "article": "subject:Audio Recordings, Downloads and Streaming",
+     "score_mad": 3.976,
+     "loo_stable": false,
+     "score_rank": 2.526,
+     "member_z_mad": [
+      2.35,
+      3.09,
+      3.73,
+      0.61,
+      0.73,
+      -0.57,
+      1.89,
+      -0.57
+     ]
+    },
+    {
+     "echo": false,
+     "p_mad": 0.974,
+     "p_rank": 0.7502,
+     "article": "subject:Mayors",
+     "score_mad": 3.886,
+     "loo_stable": false,
+     "score_rank": 2.657,
+     "member_z_mad": [
+      0.29,
+      1.9,
+      0.01,
+      4,
+      3.24,
+      -0.42,
+      2.75,
+      -0.78
+     ]
+    },
+    {
+     "echo": false,
+     "p_mad": 0.978,
+     "p_rank": 0.9241,
+     "article": "subject:Evictions",
+     "score_mad": 3.843,
+     "loo_stable": false,
+     "score_rank": 2.325,
+     "member_z_mad": [
+      -0.27,
+      4,
+      2.21,
+      2.72,
+      0.88,
+      2.64,
+      0.32,
+      -1.63
+     ]
+    }
+   ],
+   "n_used": 8,
+   "members": [
+    {
+     "d0": "2017-05-12",
+     "id": "T10472",
+     "day0": "2017-05-12",
+     "article": "WannaCry ransomware attack",
+     "titles_used": 77
+    },
+    {
+     "d0": "2017-06-27",
+     "id": "T10473",
+     "day0": "2017-06-27",
+     "article": "Petya (malware)",
+     "titles_used": 8
+    },
+    {
+     "id": "T10474",
+     "day0": "2017-09-07",
+     "skip": "too few views around the event",
+     "article": "2017 Equifax data breach",
+     "titles_used": 3
+    },
+    {
+     "id": "T10475",
+     "day0": "2018-03-17",
+     "skip": "too few views around the event",
+     "article": "Facebook\u2013Cambridge Analytica data scandal",
+     "titles_used": 11
+    },
+    {
+     "id": "T10476",
+     "day0": "2018-11-30",
+     "skip": "too few views around the event",
+     "article": "Marriott International data breach",
+     "titles_used": 0
+    },
+    {
+     "id": "T10477",
+     "day0": "2019-07-29",
+     "skip": "too few views around the event",
+     "article": "Capital One data breach",
+     "titles_used": 0
+    },
+    {
+     "id": "T10478",
+     "day0": "2020-12-13",
+     "skip": "too few views around the event",
+     "article": "SolarWinds cyberattack",
+     "titles_used": 0
+    },
+    {
+     "d0": "2021-03-02",
+     "id": "T10479",
+     "day0": "2021-03-02",
+     "article": "Microsoft Exchange Server data breach",
+     "titles_used": 9
+    },
+    {
+     "d0": "2021-05-07",
+     "id": "T10480",
+     "day0": "2021-05-07",
+     "article": "Colonial Pipeline ransomware attack",
+     "titles_used": 5
+    },
+    {
+     "d0": "2021-12-09",
+     "id": "T10481",
+     "day0": "2021-12-09",
+     "article": "Log4Shell",
+     "titles_used": 7
+    },
+    {
+     "d0": "2022-03-22",
+     "id": "T10482",
+     "day0": "2022-03-22",
+     "article": "Okta",
+     "titles_used": 2
+    },
+    {
+     "d0": "2023-05-31",
+     "id": "T10483",
+     "day0": "2023-05-31",
+     "article": "MOVEit",
+     "titles_used": 1
+    },
+    {
+     "id": "T10484",
+     "day0": "2024-02-21",
+     "skip": "too few views around the event",
+     "article": "Change Healthcare cyberattack",
+     "titles_used": 0
+    },
+    {
+     "d0": "2024-07-19",
+     "id": "T10485",
+     "day0": "2024-07-19",
+     "article": "2024 CrowdStrike-related IT outages",
+     "titles_used": 50
+    }
+   ],
+   "min_p_both": 0.8601398601398601,
+   "clustered_members": []
+  },
+  "apple_product_launches": {
+   "top": [
+    {
+     "echo": false,
+     "p_mad": 0.0769,
+     "p_rank": 0.7283,
+     "article": "subject:your-feed-animals",
+     "score_mad": 6.66,
+     "loo_stable": false,
+     "score_rank": 2.735,
+     "member_z_mad": [
+      0,
+      0,
+      1.43,
+      1.11,
+      4,
+      4,
+      4,
+      4,
+      1.58,
+      0.94
+     ]
+    },
+    {
+     "echo": false,
+     "p_mad": 0.8621,
+     "p_rank": 0.6813,
+     "article": "subject:Content Type: Service",
+     "score_mad": 4.408,
+     "loo_stable": false,
+     "score_rank": 2.783,
+     "member_z_mad": [
+      0,
+      0,
+      3.12,
+      4,
+      2.32,
+      1.29,
+      1.09,
+      0.28,
+      0.52,
+      1.31
+     ]
+    },
+    {
+     "echo": false,
+     "p_mad": 0.8801,
+     "p_rank": 0.5385,
+     "article": "subject:Human Rights and Human Rights Violations",
+     "score_mad": 4.326,
+     "loo_stable": false,
+     "score_rank": 2.929,
+     "member_z_mad": [
+      0.9,
+      0.09,
+      -0.3,
+      -1.47,
+      2.78,
+      1.55,
+      4,
+      1.27,
+      3.91,
+      0.96
+     ]
+    },
+    {
+     "echo": false,
+     "p_mad": 0.9301,
+     "p_rank": 0.6254,
+     "article": "subject:Hurricanes and Tropical Storms",
+     "score_mad": 4.11,
+     "loo_stable": false,
+     "score_rank": 2.843,
+     "member_z_mad": [
+      2.09,
+      2.16,
+      3.03,
+      0.34,
+      2.56,
+      1.98,
+      -0.42,
+      1.9,
+      -0.28,
+      -0.37
+     ]
+    },
+    {
+     "echo": false,
+     "p_mad": 0.9371,
+     "p_rank": 0.7712,
+     "article": "subject:Animal Behavior",
+     "score_mad": 4.069,
+     "loo_stable": false,
+     "score_rank": 2.68,
+     "member_z_mad": [
+      0,
+      -0.1,
+      1.04,
+      1.95,
+      1.22,
+      1.14,
+      2.82,
+      0.46,
+      0.34,
+      4
+     ]
+    },
+    {
+     "echo": false,
+     "p_mad": 0.971,
+     "p_rank": 0.9471,
+     "article": "organizations:National Broadcasting Co",
+     "score_mad": 3.781,
+     "loo_stable": false,
+     "score_rank": 2.352,
+     "member_z_mad": [
+      -0.39,
+      1.84,
+      4,
+      -0.43,
+      1.85,
+      2.99,
+      -0.06,
+      0.86,
+      0.01,
+      1.28
+     ]
+    },
+    {
+     "echo": false,
+     "p_mad": 0.979,
+     "p_rank": 0.6653,
+     "article": "subject:Online Advertising",
+     "score_mad": 3.705,
+     "loo_stable": false,
+     "score_rank": 2.8,
+     "member_z_mad": [
+      0.9,
+      1.3,
+      0.72,
+      -0.74,
+      0.53,
+      4,
+      1.85,
+      0.86,
+      1.85,
+      0.44
+     ]
+    },
+    {
+     "echo": false,
+     "p_mad": 0.983,
+     "p_rank": 0.9121,
+     "article": "subject:Privacy",
+     "score_mad": 3.674,
+     "loo_stable": false,
+     "score_rank": 2.475,
+     "member_z_mad": [
+      0.4,
+      0.01,
+      4,
+      0.11,
+      0.93,
+      -0.4,
+      2.48,
+      1.91,
+      -0.99,
+      3.16
+     ]
+    },
+    {
+     "echo": false,
+     "p_mad": 0.983,
+     "p_rank": 0.7982,
+     "article": "organizations:Goldman Sachs Group Inc",
+     "score_mad": 3.67,
+     "loo_stable": false,
+     "score_rank": 2.643,
+     "member_z_mad": [
+      0.46,
+      0.4,
+      3.91,
+      3.2,
+      -0.52,
+      0.88,
+      0.28,
+      1.98,
+      0.42,
+      0.59
+     ]
+    },
+    {
+     "echo": false,
+     "p_mad": 0.983,
+     "p_rank": 0.8791,
+     "article": "glocations:Central America",
+     "score_mad": 3.669,
+     "loo_stable": false,
+     "score_rank": 2.524,
+     "member_z_mad": [
+      -0.14,
+      0.22,
+      3.34,
+      4,
+      0.4,
+      0.76,
+      1.24,
+      -0.29,
+      1.23,
+      0.85
+     ]
+    }
+   ],
+   "n_used": 10,
+   "members": [
+    {
+     "d0": "2016-12-13",
+     "id": "E6935",
+     "day0": "2016-12-13",
+     "article": "AirPods",
+     "titles_used": 19
+    },
+    {
+     "d0": "2018-02-09",
+     "id": "E6945",
+     "day0": "2018-02-09",
+     "article": "HomePod",
+     "titles_used": 21
+    },
+    {
+     "d0": "2018-09-12",
+     "id": "E8145",
+     "day0": "2018-09-12",
+     "article": "Apple Watch Series 4",
+     "titles_used": 49
+    },
+    {
+     "d0": "2019-10-30",
+     "id": "E6937",
+     "day0": "2019-10-30",
+     "article": "AirPods Pro",
+     "titles_used": 6
+    },
+    {
+     "d0": "2020-06-22",
+     "id": "E5801",
+     "day0": "2020-06-22",
+     "article": "Mac transition to Apple silicon",
+     "titles_used": 6
+    },
+    {
+     "d0": "2020-11-10",
+     "id": "E5802",
+     "day0": "2020-11-10",
+     "article": "Apple M1",
+     "titles_used": 40
+    },
+    {
+     "d0": "2021-04-21",
+     "id": "E8259",
+     "day0": "2021-04-15..2021-05-05",
+     "article": "AirTag",
+     "titles_used": 8
+    },
+    {
+     "d0": "2023-06-05",
+     "id": "E6929",
+     "day0": "2023-06-05",
+     "article": "Apple Vision Pro",
+     "titles_used": 17
+    },
+    {
+     "d0": "2024-02-02",
+     "id": "E6194",
+     "day0": "2024-02-02",
+     "article": "Apple Vision Pro",
+     "titles_used": 17
+    },
+    {
+     "d0": "2024-06-10",
+     "id": "E5549",
+     "day0": "2024-06-10",
+     "article": "Apple Intelligence",
+     "titles_used": 7
+    }
+   ],
+   "min_p_both": 0.7282717282717283,
+   "clustered_members": []
+  },
+  "drug_vaccine_approvals": {
+   "top": [
+    {
+     "echo": false,
+     "p_mad": 0.0829,
+     "p_rank": 0.037,
+     "article": "subject:Olympic Games",
+     "score_mad": 6.649,
+     "loo_stable": false,
+     "score_rank": 3.87,
+     "member_z_mad": [
+      4,
+      -1.35,
+      4,
+      0.95,
+      0.06,
+      3.47,
+      -0.6,
+      0.26,
+      0.53,
+      4,
+      4,
+      3.7
+     ]
+    },
+    {
+     "echo": false,
+     "p_mad": 0.3007,
+     "p_rank": 0.026,
+     "article": "subject:Government Contracts and Procurement",
+     "score_mad": 5.59,
+     "loo_stable": false,
+     "score_rank": 3.955,
+     "member_z_mad": [
+      2.8,
+      0.24,
+      4,
+      0.78,
+      2.79,
+      -0.12,
+      0.32,
+      0.89,
+      2.39,
+      -0.19,
+      1.47,
+      4
+     ]
+    },
+    {
+     "echo": false,
+     "p_mad": 0.3217,
+     "p_rank": 0.1169,
+     "article": "subject:Academy Awards (Oscars)",
+     "score_mad": 5.533,
+     "loo_stable": false,
+     "score_rank": 3.543,
+     "member_z_mad": [
+      0.8,
+      4,
+      0.49,
+      -0.25,
+      0.43,
+      2.44,
+      2.01,
+      0.53,
+      2,
+      1.71,
+      1.51,
+      3.51
+     ]
+    },
+    {
+     "echo": false,
+     "p_mad": 0.3966,
+     "p_rank": 0.5584,
+     "article": "glocations:Belarus",
+     "score_mad": 5.305,
+     "loo_stable": false,
+     "score_rank": 2.959,
+     "member_z_mad": [
+      -2.11,
+      0.03,
+      -0.07,
+      1.09,
+      4,
+      1.88,
+      4,
+      1.82,
+      1.93,
+      -0.01,
+      3.37,
+      2.45
+     ]
+    },
+    {
+     "echo": false,
+     "p_mad": 0.5934,
+     "p_rank": 0.4775,
+     "article": "subject:Shareholder Rights and Activism",
+     "score_mad": 4.87,
+     "loo_stable": false,
+     "score_rank": 3.043,
+     "member_z_mad": [
+      1.3,
+      2.6,
+      -0.11,
+      0.17,
+      0.22,
+      0.67,
+      -0.16,
+      1.21,
+      3.92,
+      3.78,
+      0.84,
+      2.44
+     ]
+    },
+    {
+     "echo": false,
+     "p_mad": 0.6573,
+     "p_rank": 0.0539,
+     "article": "subject:Drugs (Pharmaceuticals)",
+     "score_mad": 4.742,
+     "loo_stable": false,
+     "score_rank": 3.773,
+     "member_z_mad": [
+      2.38,
+      -0.97,
+      0.08,
+      0.18,
+      1.29,
+      2.73,
+      2.75,
+      1.07,
+      3.42,
+      1.66,
+      2.24,
+      -0.41
+     ]
+    },
+    {
+     "echo": false,
+     "p_mad": 0.7493,
+     "p_rank": 0.1219,
+     "article": "subject:Libraries and Librarians",
+     "score_mad": 4.533,
+     "loo_stable": false,
+     "score_rank": 3.534,
+     "member_z_mad": [
+      0.6,
+      0.83,
+      1.32,
+      4,
+      1.52,
+      -1.36,
+      0.18,
+      1.14,
+      0.1,
+      1.45,
+      2.12,
+      3.81
+     ]
+    },
+    {
+     "echo": false,
+     "p_mad": 0.8292,
+     "p_rank": 0.6873,
+     "article": "glocations:Houston (Tex)",
+     "score_mad": 4.327,
+     "loo_stable": false,
+     "score_rank": 2.827,
+     "member_z_mad": [
+      2.65,
+      -0.79,
+      1.43,
+      0.87,
+      2.48,
+      0.46,
+      4,
+      -0.98,
+      2.47,
+      2.3,
+      -0.54,
+      0.65
+     ]
+    },
+    {
+     "echo": false,
+     "p_mad": 0.953,
+     "p_rank": 0.957,
+     "article": "subject:Concussions",
+     "score_mad": 3.875,
+     "loo_stable": false,
+     "score_rank": 2.311,
+     "member_z_mad": [
+      3.93,
+      3.79,
+      -0.67,
+      2.95,
+      0.13,
+      -0.05,
+      -0.37,
+      0.15,
+      3.29,
+      -0.31,
+      -1.08,
+      1.67
+     ]
+    },
+    {
+     "echo": false,
+     "p_mad": 0.959,
+     "p_rank": 0.957,
+     "article": "persons:Epstein, Jeffrey E (1953- )",
+     "score_mad": 3.842,
+     "loo_stable": false,
+     "score_rank": 2.309,
+     "member_z_mad": [
+      0.41,
+      0,
+      2.49,
+      -1.24,
+      1.73,
+      -0.07,
+      4,
+      1.02,
+      0.09,
+      4,
+      1.21,
+      -0.35
+     ]
+    }
+   ],
+   "n_used": 12,
+   "members": [
+    {
+     "d0": "2017-08-30",
+     "id": "E6627",
+     "day0": "2017-08-30",
+     "article": "Tisagenlecleucel",
+     "titles_used": 4
+    },
+    {
+     "d0": "2017-12-19",
+     "id": "E5662",
+     "day0": "2017-12-19",
+     "article": "Voretigene neparvovec",
+     "titles_used": 3
+    },
+    {
+     "d0": "2020-12-11",
+     "id": "E5119",
+     "day0": "2020-12-11",
+     "article": "Pfizer\u2013BioNTech COVID-19 vaccine",
+     "titles_used": 61
+    },
+    {
+     "d0": "2021-06-04",
+     "id": "E5478",
+     "day0": "2021-06-04",
+     "article": "Semaglutide",
+     "titles_used": 33
+    },
+    {
+     "d0": "2021-10-06",
+     "id": "E5124",
+     "day0": "2021-10-06",
+     "article": "RTS,S",
+     "titles_used": 5
+    },
+    {
+     "d0": "2021-12-22",
+     "id": "E5677",
+     "day0": "2021-12-22",
+     "article": "Nirmatrelvir/ritonavir",
+     "titles_used": 10
+    },
+    {
+     "d0": "2023-01-06",
+     "id": "E5139",
+     "day0": "2023-01-06",
+     "article": "Lecanemab",
+     "titles_used": 5
+    },
+    {
+     "d0": "2023-05-31",
+     "id": "E5129",
+     "day0": "2023-05-31",
+     "article": "RSV vaccine",
+     "titles_used": 7
+    },
+    {
+     "d0": "2023-08-04",
+     "id": "E5690",
+     "day0": "2023-08-04",
+     "article": "Zuranolone",
+     "titles_used": 12
+    },
+    {
+     "d0": "2023-11-08",
+     "id": "E6643",
+     "day0": "2023-11-08",
+     "article": "Tirzepatide",
+     "titles_used": 5
+    },
+    {
+     "d0": "2023-12-08",
+     "id": "E5142",
+     "day0": "2023-12-08",
+     "article": "Exagamglogene autotemcel",
+     "titles_used": 5
+    },
+    {
+     "d0": "2024-07-02",
+     "id": "E5140",
+     "day0": "2024-07-02",
+     "article": "Donanemab",
+     "titles_used": 4
+    }
+   ],
+   "min_p_both": 0.08291708291708291,
+   "clustered_members": [
+    "E5142",
+    "E6643"
+   ]
+  },
+  "social_platform_moments": {
+   "top": [
+    {
+     "echo": false,
+     "p_mad": 0.3596,
+     "p_rank": 0.04,
+     "article": "subject:Telephones and Telecommunications",
+     "score_mad": 5.516,
+     "loo_stable": false,
+     "score_rank": 3.759,
+     "member_z_mad": [
+      2.79,
+      1.63,
+      0.74,
+      1.25,
+      2.12,
+      0.23,
+      1.2,
+      4,
+      2.59
+     ]
+    },
+    {
+     "echo": false,
+     "p_mad": 0.4026,
+     "p_rank": 0.2997,
+     "article": "subject:Gifts",
+     "score_mad": 5.39,
+     "loo_stable": false,
+     "score_rank": 3.195,
+     "member_z_mad": [
+      2.66,
+      1.26,
+      4,
+      -0.3,
+      0.12,
+      0.35,
+      4,
+      2.32,
+      1.78
+     ]
+    },
+    {
+     "echo": false,
+     "p_mad": 0.8172,
+     "p_rank": 0.8342,
+     "article": "persons:Sisi, Abdel Fattah el-",
+     "score_mad": 4.588,
+     "loo_stable": false,
+     "score_rank": 2.599,
+     "member_z_mad": [
+      2.48,
+      -2.13,
+      0.1,
+      0.35,
+      3.52,
+      1.23,
+      2.79,
+      4,
+      1.42
+     ]
+    },
+    {
+     "echo": false,
+     "p_mad": 0.9241,
+     "p_rank": 0.8901,
+     "article": "subject:Customs (Tariff)",
+     "score_mad": 4.257,
+     "loo_stable": false,
+     "score_rank": 2.475,
+     "member_z_mad": [
+      2.47,
+      -0.96,
+      -1.59,
+      2.56,
+      0.24,
+      4,
+      0.04,
+      2.01,
+      4
+     ]
+    },
+    {
+     "echo": false,
+     "p_mad": 0.9301,
+     "p_rank": 0.5524,
+     "article": "persons:Zuckerberg, Mark E",
+     "score_mad": 4.236,
+     "loo_stable": false,
+     "score_rank": 2.924,
+     "member_z_mad": [
+      0.85,
+      3.17,
+      1.55,
+      2.68,
+      1.33,
+      2.19,
+      -0.7,
+      1.57,
+      0.06
+     ]
+    },
+    {
+     "echo": false,
+     "p_mad": 0.9411,
+     "p_rank": 0.8332,
+     "article": "subject:Cemeteries",
+     "score_mad": 4.162,
+     "loo_stable": false,
+     "score_rank": 2.6,
+     "member_z_mad": [
+      -0.99,
+      3.72,
+      0,
+      1.01,
+      1.86,
+      0.85,
+      4,
+      0.07,
+      1.96
+     ]
+    },
+    {
+     "echo": false,
+     "p_mad": 0.974,
+     "p_rank": 0.6324,
+     "article": "organizations:Instagram Inc",
+     "score_mad": 3.916,
+     "loo_stable": false,
+     "score_rank": 2.845,
+     "member_z_mad": [
+      0.76,
+      -0.63,
+      1,
+      2.03,
+      1.16,
+      4,
+      1.29,
+      1.99,
+      0.14
+     ]
+    },
+    {
+     "echo": false,
+     "p_mad": 0.978,
+     "p_rank": 0.951,
+     "article": "persons:Christie, Christopher J",
+     "score_mad": 3.853,
+     "loo_stable": false,
+     "score_rank": 2.314,
+     "member_z_mad": [
+      2.5,
+      0.01,
+      1.07,
+      1,
+      -0.3,
+      3.25,
+      4,
+      0.04,
+      -0.01
+     ]
+    },
+    {
+     "echo": false,
+     "p_mad": 0.981,
+     "p_rank": 0.2118,
+     "article": "glocations:Manhattan (NYC)",
+     "score_mad": 3.825,
+     "loo_stable": false,
+     "score_rank": 3.319,
+     "member_z_mad": [
+      2.36,
+      0.44,
+      3.04,
+      0.41,
+      0.45,
+      1.1,
+      1.09,
+      1.38,
+      1.2
+     ]
+    },
+    {
+     "echo": false,
+     "p_mad": 0.989,
+     "p_rank": 0.8551,
+     "article": "organizations:CBS Corporation",
+     "score_mad": 3.661,
+     "loo_stable": false,
+     "score_rank": 2.563,
+     "member_z_mad": [
+      -1.49,
+      1.91,
+      1.46,
+      0.07,
+      0.47,
+      1.17,
+      3.04,
+      1.53,
+      2.83
+     ]
+    }
+   ],
+   "n_used": 9,
+   "members": [
+    {
+     "d0": "2017-11-07",
+     "id": "E8201",
+     "day0": "2017-11-07",
+     "article": "Twitter",
+     "titles_used": 101
+    },
+    {
+     "d0": "2018-08-02",
+     "id": "E10398",
+     "day0": "2018-08-02",
+     "article": "TikTok",
+     "titles_used": 49
+    },
+    {
+     "d0": "2020-08-05",
+     "id": "E6184",
+     "day0": "2020-08-05",
+     "article": "Instagram",
+     "titles_used": 50
+    },
+    {
+     "id": "E6183",
+     "day0": "2020-09-14",
+     "skip": "too few views around the event",
+     "article": "YouTube Shorts",
+     "titles_used": 9
+    },
+    {
+     "id": "E10404",
+     "day0": "2021-05-03",
+     "skip": "no attention rise",
+     "article": "Twitter Spaces",
+     "titles_used": 101
+    },
+    {
+     "d0": "2021-10-28",
+     "id": "E6192",
+     "day0": "2021-10-28",
+     "article": "Meta Platforms",
+     "titles_used": 44
+    },
+    {
+     "d0": "2022-10-27",
+     "id": "E6188",
+     "day0": "2022-10-27",
+     "article": "Acquisition of Twitter by Elon Musk",
+     "titles_used": 34
+    },
+    {
+     "d0": "2023-07-05",
+     "id": "E6041",
+     "day0": "2023-07-05",
+     "article": "Threads (social network)",
+     "titles_used": 25
+    },
+    {
+     "d0": "2023-07-24",
+     "id": "E6190",
+     "day0": "2023-07-24",
+     "article": "Twitter",
+     "titles_used": 101
+    },
+    {
+     "d0": "2024-02-06",
+     "id": "E6043",
+     "day0": "2024-02-06",
+     "article": "Bluesky",
+     "titles_used": 16
+    },
+    {
+     "d0": "2024-03-21",
+     "id": "E6045",
+     "day0": "2024-03-21",
+     "article": "Reddit",
+     "titles_used": 51
+    }
+   ],
+   "min_p_both": 0.3596403596403596,
+   "clustered_members": [
+    "E6041",
+    "E6190"
+   ]
+  },
+  "streaming_service_launches": {
+   "top": [
+    {
+     "echo": false,
+     "p_mad": 0.3746,
+     "p_rank": 0.2388,
+     "article": "persons:King, Martin Luther Jr",
+     "score_mad": 5.204,
+     "loo_stable": false,
+     "score_rank": 3.304,
+     "member_z_mad": [
+      2.39,
+      2.38,
+      2.74,
+      0.39,
+      4,
+      0.88,
+      0,
+      1.29,
+      1.32,
+      1.07
+     ]
+    },
+    {
+     "echo": false,
+     "p_mad": 0.3906,
+     "p_rank": 0.037,
+     "article": "organizations:United States Marine Corps",
+     "score_mad": 5.16,
+     "loo_stable": false,
+     "score_rank": 3.797,
+     "member_z_mad": [
+      0.82,
+      -1.25,
+      1.86,
+      2.78,
+      4,
+      2.58,
+      1.82,
+      1.07,
+      0.62,
+      2.02
+     ]
+    },
+    {
+     "echo": true,
+     "p_mad": 0.9351,
+     "p_rank": 0.6264,
+     "article": "subject:Music",
+     "score_mad": 3.917,
+     "loo_stable": false,
+     "score_rank": 2.884,
+     "member_z_mad": [
+      2.3,
+      -0.63,
+      -0.09,
+      1.96,
+      0.28,
+      2.24,
+      0.56,
+      3.41,
+      0.69,
+      1.67
+     ]
+    },
+    {
+     "echo": true,
+     "p_mad": 0.9361,
+     "p_rank": 0.5964,
+     "article": "subject:Artificial Intelligence",
+     "score_mad": 3.913,
+     "loo_stable": false,
+     "score_rank": 2.91,
+     "member_z_mad": [
+      1.05,
+      0.36,
+      2.43,
+      2.76,
+      -0.83,
+      2.54,
+      0.31,
+      0.75,
+      1.13,
+      1.87
+     ]
+    },
+    {
+     "echo": false,
+     "p_mad": 0.961,
+     "p_rank": 0.5544,
+     "article": "subject:Anxiety and Stress",
+     "score_mad": 3.8,
+     "loo_stable": false,
+     "score_rank": 2.953,
+     "member_z_mad": [
+      2.31,
+      0.03,
+      2.65,
+      1.09,
+      -0.65,
+      2.35,
+      1.46,
+      0.35,
+      1.53,
+      0.88
+     ]
+    },
+    {
+     "echo": true,
+     "p_mad": 0.975,
+     "p_rank": 0.6214,
+     "article": "glocations:China",
+     "score_mad": 3.694,
+     "loo_stable": false,
+     "score_rank": 2.887,
+     "member_z_mad": [
+      2.58,
+      1.59,
+      0.34,
+      0.66,
+      -0.42,
+      4,
+      1.69,
+      -0.02,
+      -0.57,
+      1.84
+     ]
+    },
+    {
+     "echo": false,
+     "p_mad": 0.7163,
+     "p_rank": 0.983,
+     "article": "subject:Targeted Killings",
+     "score_mad": 4.533,
+     "loo_stable": false,
+     "score_rank": 2.237,
+     "member_z_mad": [
+      -0.82,
+      3.06,
+      0.2,
+      4,
+      -0.48,
+      4,
+      0,
+      -0.17,
+      1.18,
+      3.37
+     ]
+    },
+    {
+     "echo": false,
+     "p_mad": 0.8751,
+     "p_rank": 0.988,
+     "article": "subject:Generation Z",
+     "score_mad": 4.122,
+     "loo_stable": false,
+     "score_rank": 2.193,
+     "member_z_mad": [
+      4,
+      3.68,
+      0.75,
+      0.12,
+      0.07,
+      2.73,
+      1.68,
+      0,
+      0,
+      0
+     ]
+    },
+    {
+     "echo": false,
+     "p_mad": 0.3487,
+     "p_rank": 0.989,
+     "article": "subject:Golden Globes (Awards)",
+     "score_mad": 5.302,
+     "loo_stable": false,
+     "score_rank": 2.162,
+     "member_z_mad": [
+      4,
+      4,
+      4,
+      0,
+      0,
+      4,
+      0,
+      0,
+      0,
+      0.77
+     ]
+    },
+    {
+     "echo": false,
+     "p_mad": 0.8821,
+     "p_rank": 0.994,
+     "article": "subject:Voter Registration and Requirements",
+     "score_mad": 4.11,
+     "loo_stable": false,
+     "score_rank": 2.104,
+     "member_z_mad": [
+      3.53,
+      0.12,
+      4,
+      -3.35,
+      4,
+      4,
+      0,
+      -1.53,
+      1.53,
+      0.7
+     ]
+    }
+   ],
+   "n_used": 10,
+   "members": [
+    {
+     "d0": "2019-11-12",
+     "id": "T10494",
+     "day0": "2019-11-12",
+     "article": "Disney+",
+     "titles_used": 20
+    },
+    {
+     "d0": "2019-11-01",
+     "id": "T10495",
+     "day0": "2019-11-01",
+     "article": "Apple TV+",
+     "titles_used": 23
+    },
+    {
+     "d0": "2020-05-27",
+     "id": "T10496",
+     "day0": "2020-05-27",
+     "article": "HBO Max",
+     "titles_used": 50
+    },
+    {
+     "d0": "2020-07-15",
+     "id": "T10497",
+     "day0": "2020-07-15",
+     "article": "Peacock (streaming service)",
+     "titles_used": 16
+    },
+    {
+     "d0": "2021-03-04",
+     "id": "T10498",
+     "day0": "2021-03-04",
+     "article": "Paramount+",
+     "titles_used": 10
+    },
+    {
+     "d0": "2021-01-04",
+     "id": "T10499",
+     "day0": "2021-01-04",
+     "article": "Discovery+",
+     "titles_used": 8
+    },
+    {
+     "d0": "2023-05-23",
+     "id": "T10500",
+     "day0": "2023-05-23",
+     "article": "Max (streaming service)",
+     "titles_used": 50
+    },
+    {
+     "d0": "2018-04-12",
+     "id": "ST001",
+     "day0": "2018-04-12",
+     "article": "ESPN+",
+     "titles_used": 11
+    },
+    {
+     "d0": "2017-04-05",
+     "id": "ST002",
+     "day0": "2017-04-05",
+     "article": "YouTube TV",
+     "titles_used": 8
+    },
+    {
+     "d0": "2017-03-07",
+     "id": "ST003",
+     "day0": "2017-03-07",
+     "article": "BritBox",
+     "titles_used": 2
+    }
+   ],
+   "min_p_both": 0.37462537462537465,
+   "clustered_members": [
+    "ST002",
+    "ST003",
+    "T10494",
+    "T10495"
+   ]
+  }
+ },
+ "protocol": "ripples/docs/q3_protocol_nyt.md",
+ "candidates": [
+  {
+   "echo": true,
+   "family": "spacex_milestones",
+   "p_both": 0.001,
+   "article": "subject:Private Spaceflight"
+  },
+  {
+   "echo": false,
+   "family": "spacex_milestones",
+   "p_both": 0.001,
+   "article": "organizations:Space Exploration Technologies Corp"
+  },
+  {
+   "echo": true,
+   "family": "academy_awards",
+   "p_both": 0.001,
+   "article": "subject:Academy Awards (Oscars)"
+  },
+  {
+   "echo": false,
+   "family": "earthquakes",
+   "p_both": 0.001,
+   "article": "subject:Earthquakes"
+  },
+  {
+   "echo": false,
+   "family": "true_story_films",
+   "p_both": 0.01,
+   "article": "subject:Movies"
+  },
+  {
+   "echo": false,
+   "family": "true_story_films",
+   "p_both": 0.007,
+   "article": "subject:Golden Globes (Awards)"
+  },
+  {
+   "echo": true,
+   "family": "us_league_finals",
+   "p_both": 0.002,
+   "article": "subject:World Series"
+  },
+  {
+   "echo": false,
+   "family": "scotus_rulings",
+   "p_both": 0.001,
+   "article": "organizations:Supreme Court (US)"
+  },
+  {
+   "echo": false,
+   "family": "scotus_rulings",
+   "p_both": 0.006,
+   "article": "persons:Roberts, John G Jr"
+  }
+ ],
+ "bh_families_passing": [
+  "academy_awards",
+  "earthquakes",
+  "scotus_rulings",
+  "spacex_milestones",
+  "true_story_films",
+  "us_league_finals"
+ ],
+ "run": "https://github.com/bsunter93/Ben-Sunters-Website/actions/runs/36562598446",
+ "source": "ripples.att_q3_results (q3_screen_v3_nyt)"
+}
