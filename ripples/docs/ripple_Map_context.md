@@ -1,10 +1,11 @@
-# Ripple Map: context brief (updated 2026-09-27 18:10 UTC)
+# Ripple Map: context brief (updated 2026-09-29 05:40 UTC)
 
 Standalone context for anyone (person or new chat) picking up Ripple Map. It covers the vision, the current status,
 what we learned, pitfalls, open gaps and next steps. The operational runbook with exact commands is
 `ripples/HANDOFF.md`, and the experiments plan is `ripples/docs/experiments.md`.
 
-- Live site: https://bensunter.com/ripples/pond/
+- Live site: https://bensunter.com/ripples/pond/ (explorer) and https://bensunter.com/ripples/discover/ (discovery
+  engine prototype: what the engine found and the evidence behind each result)
 - Repo: `bsunter93/Ben-Sunters-Website`
 - Database: Supabase project `kffkasnzqcddpystszch`, schema `ripples`. The compute tier went from nano to micro on
   2026-09-27.
@@ -111,65 +112,64 @@ The pond language stays. What changes is what goes in it and how the evidence re
   3. The first trend pages built only for trends with a result.
   4. The share card built around the ghost stone and the surprising landing.
 
-## 2. Current status (one screen)
+## 2. Current status (one screen, 2026-09-29)
 
-**Product.** The pond explorer is live. Every shock page reads absorbed, expected or still unfolding. **No surprising
-link has passed confirmation yet**, and the pages say so.
+**In one line:** the engine recovers known ripples and has found one small real one. Tight event families and a
+direct event → subject test run today. Our planned next step is to follow reader paths (Wikipedia Clickstream)
+instead of relying only on timing.
 
-**Engine.** Pre-registered, hash-chained ledger (now about 1,274 entries), decoy universes, held-out confirmation, BH
-correction, seasonal check and withholding. It works: across b6 and b7, 80 decoy selections produced 0 false
-confirmations.
+**What works**
+- **Calibration (E9, ledger 1282):** told where to look, the engine recovers known ripples: The Queen's Gambit →
+  Chess, Stranger Things 4 → Kate Bush, Game of Thrones → the baby name Arya, Frozen → Elsa.
+- **One discovery that replicated:** space events → Wikipedia views of "Speed of light". After big space moments
+  (landings, first images, launches), more people than usual read "Speed of light". It passed two held-out
+  confirmations on 8 and then 12 new space events (ledger 1286, 1288, 1292). It is real but small: a one-step
+  curiosity effect, not a headline.
+- **Rigor:** every test is pre-registered in the hash-chained ledger (now 1,371 entries). Decoy and placebo nulls,
+  BH correction and held-out confirmation are all in place.
 
-**Batches so far**
+**Discovery v1 (ledger 1283).** For a family of 10-20 similar events, it looks for outcomes that change more than usual in
+the days after each event (onset-coupled day-to-day changes over days −14..+90). Each outcome is calibrated against 200
+placebo dates, and each family against 1,000 moved-date worlds. Candidates must pass BH at q = 0.10 and a
+leave-one-event-out check.
 
-| batch | question | result |
-|---|---|---|
-| b1–b2 | first-order effects | confirmed, but only obvious links (storm → power, and so on) |
-| b3–b5 | housing and jobs downstream | not testable, or withheld on the seasonal check |
-| b6 | 7 industry job panels + CDC deaths | 0/12 confirmed |
-| b7 | historical shocks 2000–2018, year-after window | 0/10 confirmed; **one real lead** (below) |
-| b8 | anomaly-first scan | nothing surprising; 5 "confirmations" withheld as a year confound |
-| b9 | county-level flood → finance jobs | **not supported** (−0.43%, p 0.37, 91 floods, 1,133 counties; ledger 1277) |
+**Lenses (places a ripple can land), all loaded**
 
-**The one lead (now tested and not supported at county level).** Floods → finance/insurance/real-estate jobs **−3.3%** in months 13–24.
-- q 0.030, CI −5.5% to −1.1%, 10 of 11 held-out floods negative.
-- It failed only the power gate (power 0.38).
-- The same outcome was b6's nearest miss (months 6–11).
+| Lens | Size |
+|---|---|
+| Wikipedia pageviews | 998 curated articles, plus 10,000 Level-4 Vital Articles (wide lens, ~83% fetched) |
+| NYT coverage by tag | 1,289 tags |
+| Real world, daily | electricity demand (EIA), markets (FRED), air travel (TSA): 161 series |
+| Tech and city, daily | Hacker News, npm, NYC transit, FEMA |
+| Weekly | jobless claims, business applications, deaths, fuel |
+| Monthly | state economies, jobs by industry, CPI |
+| Seattle library checkouts | 493 subjects |
+| County jobs | QCEW, 3,290 counties |
 
-b9 tests it at county level with its own pre-registered design:
-- Treated counties: FEMA flood-declared counties.
-- Controls: same-state counties with no declaration.
-- Outcome: QCEW private finance employment, months 13–24.
-- Null: in-space permutation.
-- Primary threshold: one-sided p ≤ 0.05.
+**Screens so far**
+- **v1 and v2 (13 broad families, all lenses):** no candidates apart from space → speed of light. One false alarm was
+  explained: "pandemic crazes → state unemployment" was COVID (ledger 1303).
+- **Diagnosis:** broad families average single-event ripples away. Nine different streaming shows diluted The Queen's
+  Gambit → Chess to nothing.
 
-**b9 result (18:45 UTC, ledger 1277): not supported.**
-- Primary: finance jobs in flood-declared counties vs same-state undeclared counties, months 13–24: **−0.43%**,
-  one-sided p **0.37** (1,000 permutations), 91 floods, 1,133 counties. Half the floods went each way (49.5% negative).
-- Secondaries: finance months 6–11 −0.60% (p 0.29); total private jobs −0.38% (p 0.24); finance minus total −0.02%
-  (p 0.49). Finance does not move differently from the rest of the local economy.
-- Reading: the state-level lead does not replicate at county level. The state result was most likely the kind of
-  chance finding the power gate exists to catch. The engine did its job: it refused to confirm a link that doesn't hold.
-- Data: QCEW 2001–2026Q1 complete (about 76k rows a year; 2001–2013 from BLS bulk files, ledger 1274).
+**Queued for today, 2026-09-29, one Wikimedia job at a time**
+1. **Wide lens:** finish the fetch (~1,550 articles left), then screen.
+2. **Screen v3 (taxonomy v3):** 24 tight, mechanism-first families, 321 events, on all 8 lenses (ledger 1365, 1366,
+   1369).
+3. **Named-subject test (Q4):** does each event move attention to its own named subject?
+   - v1: 197 events from the owner's batch (ledger 1367).
+   - v1b: 43 older corpus events from the owner's validation pack (ledger 1369).
+   - A 22-show held-out drama set that confirms the drama family only if it passes (ledger 1369-1371).
+4. A check-in (09:30 UTC) collects results, hand-checks candidates, updates /ripples/discover/ and reports.
 
-**Other data now flowing**
-- HUD Fair Market Rents by county: GitHub Actions job. 2017–2020 verified; the rate-limit fix is merged (PR #21).
-- EPA daily AQI by county, reduced to weekly: GitHub Actions job, about 100k rows a year. It resumes by year from 2010.
-- Keys stored in Vault: Census, BLS, FRED, api.data.gov (FBI crime data), EPA AQS + email, USDA NASS, HUD, OpenAQ.
+**Expectation, stated in advance**
+- Named subjects for dramas and films: likely to pass (the effect is direct). That shows the mechanism, not surprise.
+- Tight families: perhaps 1-3 candidates, some with a boring explanation (seasonality, echo, common shock).
+- Real-world lenses: most likely nothing. One cultural event rarely moves national economic series detectably.
 
-**Experiments program** (`ripples/docs/experiments.md`, ledger 1272)
-
-| # | experiment | status |
-|---|---|---|
-| E1 | method bake-off on placebo counties with injected effects | **done (ledger 1278):** random-effects pooling wins (recall 78% at −2% vs 38% for b9's design); analytic p-values over-reject, so calibrated nulls stay mandatory |
-| E2 | spillovers to neighbouring counties | planned |
-| E3 | network propagation (IRS migration, LODES commuting, input-output) | planned |
-| E4 | dose-response (NFIP claims dollars) | planned |
-| E5 | regression discontinuity at FEMA aid thresholds | planned |
-| E6 | multi-outcome fingerprints (one joint test) | planned |
-| E7 | predictive validity (fit 2001–2015, forecast 2016+) | planned |
-| E8 | anomaly-first v2 at county level, year-matched | planned |
-| E9 | cultural shocks: known ripples first (phase 1), then a trend screen (phase 2) | phase 1 registered (ledger 1275) |
+**Older disaster and economy track (b1-b9, E1).** It confirmed only obvious links. The flood → finance jobs lead
+did not replicate at county level (b9, ledger 1277). E1 chose random-effects pooling (ledger 1278). This track is
+parked as the proving ground (D-26).
 
 ## 3. Learnings
 
@@ -192,6 +192,12 @@ b9 tests it at county level with its own pre-registered design:
 8. **Choose methods on placebo data, never on real treated units.** That is how E1 is built, so choosing a method
    cannot peek at the answer.
 9. **Obvious-link filtering by regex is weak.** Surprise should come from the mechanism graph and domain distance.
+10. **Family pooling dilutes single-event ripples.** Broad families (v2 "streaming hits") erased The Queen's Gambit →
+    Chess. Families must be tight and mechanism-first (taxonomy v3), and a single-event method is still needed.
+11. **Timing alone is weak evidence and has low power.** Correlated timing over thousands of outcomes is the hardest
+    way to find a small effect. Direct evidence of the path (where readers actually went) is much stronger.
+12. **Real-world series barely register cultural events.** Across 7 non-Wikipedia lenses, v2 found nothing except a
+    COVID artefact.
 
 ## 4. Pitfalls (operational, learned the hard way)
 
@@ -227,47 +233,74 @@ b9 tests it at county level with its own pre-registered design:
 - Keys never appear in logs or URLs that are printed. Grep for leaked keys before every commit.
 
 **GitHub**
-- Workflow dispatch from this integration returns 403, so the owner runs workflows. A new workflow only appears in
-  Actions after its PR is merged to `main`.
+- Workflow dispatch and cancel from this integration return 403. Runs are started by a one-line comment push to the
+  workflow file on the `claude/**` branch (with its `paths` trigger). Other pushes use `[skip ci]`.
+- The Q3/Q4 workflows share the concurrency group `ripples-q3`. A new pending run cancels an older pending one, so
+  start them one at a time.
+- The job-log API keeps only the last 5,000 lines, and artifact hosts return 403 from the sandbox. Reports go to
+  `ripples.att_q3_results` via `att_q3_result_put` (q3_upload.py).
 
-## 5. Open gaps (most important first)
+**Wikimedia**
+- On 2026-09-28 a 429 stopped the wide fetch. A second run was queued by a push and kept fetching that day, a breach
+  that is disclosed (ledger 1300, 1364). `l4_panel.py` now writes a stop marker on any 403/429/5xx or timeout and
+  refuses same-day fetches.
+- The sandbox proxy blocks en.wikipedia.org, so title checks can't run there. Missing titles are skipped at run
+  time, never remapped.
 
-1. **No surprising link confirmed yet.** b9 (the one lead) did not hold at county level. Everything now depends on the
-   experiments (E1–E9), above all the cultural-trends direction (E9), producing one that holds up.
-2. **Measurement is narrow.** The scan only covers about 20 regional panels plus county QCEW. About 12k national series
-   (Wikipedia, news, social, markets) are outside every test; they need a timing-only design (lane 2), labelled weaker.
-3. **"Absorbed" has no counterfactual.** It needs a pre-registered resilient-versus-not comparison (Florida vs North
-   Carolina hurricanes).
-4. **No dose-response yet.** Candidate dose measures are NFIP claims dollars, NOAA damage, wind speed and burned acres.
-5. **Too little held-out data.** Confirmation uses only 2024+ shocks. A second split (screen 2000–2015, confirm
-   2016–2019 and 2022–2023) would roughly double power.
-6. **b8 has no full decoy-universe calibration**, and its results are not wired into the pages ("Something unusual"
-   mode).
-7. **The page catalog is thin and skewed:** 26 small wildfires stuck on "unfolding", and no pages for historical shocks.
-8. **Frontend debt:**
-   - Share cards still show the rejected v1 design.
-   - "Too early" markers sit on the pond rim.
-   - No downstream "could ripple on to" exploration.
-   - The flow diagram is tiny on phones.
-   - Contrast is low in places.
-9. **Newsletter issue 01** leads with an obvious link. Reframe it around what did not move, or hold it for a real
-   finding.
-10. **Operations:** there is no engine status view and no automated check that live functions match the repo.
-11. **Viability:** the product only has a hook once one surprising, repeatable, explainable link exists. Until then it
-    is an honest "nothing yet" machine.
+## 5. Blockers and bottlenecks (2026-09-29)
 
-## 6. Next steps
+**Blockers (stop progress until resolved)**
+- None hard. Everything queued runs on data and events already in hand, and the owner does not need to supply
+  events for the next steps.
 
-0. **E9 phase 1:** load SSA names and the 2015+ Wikipedia pageviews for the control articles, then run the four positive
-   controls and 200 negative controls.
-3. **E4 and E2:** load NFIP claims and county adjacency. Pre-register dose-response and spillover tests using the E1
-   winner.
-4. **E3:** load IRS county migration and LODES commuting flows; test "connected counties" against weakly connected
-   ones.
-5. **Owner:** run the HUD + EPA job for real (untick dry run, EPA first year 2010). The weekly schedule then continues
-   it.
-6. Product work after the first real finding: wire anomaly results into the pages, add a resilience comparison, and
-   regenerate the share cards.
+**Bottlenecks (slow progress or cap what we can find)**
+1. **Method: timing alone rarely finds surprising ripples.** Small effects, noisy outcomes and thousands of outcomes
+   tested mean very little survives strict correction. This is the main bottleneck; see the plan below.
+2. **Pooling needs 10-20 events of one kind.** Users care about one event, and families need owner-sourced events
+   with exact dates. The owner cannot source more right now.
+3. **Wikimedia politeness limits throughput.** It allows one fetcher at a time, and any 429/5xx ends that day's
+   Wikimedia work. That costs a day per stop. The wide lens still has ~1,550 articles to fetch.
+4. **Orchestration friction:**
+   - Workflows can't be dispatched directly (push-to-trigger only).
+   - A shared concurrency group means strictly sequential runs.
+   - Logs truncate at 5,000 lines (worked around with the results table).
+5. **Held-out data is thin outside dramas.** The science and news held-out rows supplied so far don't fit their
+   families: four or six space missions split into several rows, and disasters rather than sport, business and
+   civic events. The drama held-out set is 22 events, some with titles we could not verify.
+6. **Real-world lenses have low sensitivity** to single cultural events (national aggregates, monthly or weekly
+   resolution).
+
+## 6. Planned approach (next steps, in order)
+
+1. **Today:** run the queue above; resolve every result in the ledger; hand-check candidates; update /ripples/discover/;
+   report plainly, including nulls.
+2. **Next: follow reader paths with Wikipedia Clickstream** (monthly public dumps since 2017: counts of readers clicking
+   from article A to article B, pairs with at least 10 clicks).
+   - For one event, build the ripple map as the paths readers took outward from the event article, 2-4 steps, with
+     counts before and after the event month. For example: The Queen's Gambit → Beth Harmon → Chess → Sicilian Defence.
+   - Discovery flags paths that are new or unusually grown after the event.
+   - Verification uses the actual click counts before and after, against the same months in other years and against
+     comparison events.
+   - First prototype: The Queen's Gambit, Chernobyl and one space event, drawn on /ripples/discover/ as
+     click-by-click paths.
+   - It works per event, so no family of 10-20 is needed.
+   - Pre-register before fetching. The dumps are downloaded from dumps.wikimedia.org one at a time, after the day's
+     other Wikimedia work.
+   - Limits: monthly resolution; it shows what people read, not what they did.
+3. **Chain test: attention → behaviour.** For event → subject pairs that pass Q4 (or show in Clickstream), test only
+   that subject in the real-world lenses. For example, chess → Seattle library chess checkouts; a nuclear drama → NYT
+   nuclear-power coverage. Testing a handful of pre-chosen outcomes instead of thousands raises power sharply.
+4. **If v3 or Q4 produces candidates:** confirm each on held-out events before it goes on the page as more than a
+   lead.
+5. **If both come back empty:** test longer windows than 90 days and weekly smoothing for the noisy lenses, before
+   asking the owner for more events.
+6. **Product:** once a path survives, the pond page for that event shows the path, the counts, the comparison and a
+   plain sentence per step (evidence ladder). The share card is built around the surprising landing.
+
+**From the owner, when possible (not blocking)**
+- More held-out drama premieres that are new to every corpus file (check `events_taxonomy_batch1.csv` first).
+- For science and news confirmation: 12-15 distinct events of the same kinds as the family, one row per event,
+  spread over years.
 
 ## 7. Rules that never change
 
@@ -276,4 +309,4 @@ b9 tests it at county level with its own pre-registered design:
 - Honest UA `ripples-research/0.2 (+https://bensunter.com/ripples/methods/)`. Stop on 429/503 with no same-day retry.
   No bypassing blocks. Aggregate data only, no personal data.
 - Keys live only in Supabase Vault or GitHub secrets.
-- The owner merges PRs. Claude opens them without asking.
+- Claude opens and merges its own PRs (owner direction, 2026-09-28), keeping to the product vision.
