@@ -131,7 +131,9 @@
    "ledger": [
     1295,
     1376,
-    1378
+    1378,
+    1379,
+    1383
    ]
   },
   {
@@ -244,15 +246,15 @@
   },
   {
    "screen": "v2wide",
-   "family": "films_awards",
-   "cls": "warn",
-   "verdict": "Likely the Oscars calendar: 3 of the 4 films' dates sit within days of an Oscars ceremony, when Best Cinematography is announced. Same-weekday check running (ledger 1379)."
+   "family": "ai_models",
+   "cls": "no",
+   "verdict": "Explained: a weekday / school-term cycle. With placebo dates matched on weekday, Human genome and Email no longer pass (ledger 1383). Not sent to confirmation."
   },
   {
    "screen": "v2wide",
-   "family": "ai_models",
-   "cls": "warn",
-   "verdict": "Suspected weekly/school-term artefact: the family's top outcomes are coursework articles (Human genome, Meiosis, Coulomb's law) and most launches fell on weekdays. Same-weekday check running (ledger 1379)."
+   "family": "films_awards",
+   "cls": "no",
+   "verdict": "Cinematography is explained by the Oscars calendar: it does not survive the same-weekday check; only the Academy Awards echo does (ledger 1383)."
   }
  ],
  "confirmations": [
