@@ -9,7 +9,8 @@ each subject phrase (any length, word-bounded, case-insensitive), plus the day's
 
 Aggregate daily counts only. Every query is dry-run first; the run refuses to go past the monthly free-tier budget
 (--budget-gib, counting this project's bytes billed so far this month when that is readable).
-Output: lens_tv.csv and lens_hn.csv (day, phrase, n), phrase "__total__" for the denominator.
+Output: part_{hn,tv1,tv2}.csv per table (cached; a quota refusal stops cleanly and the rest runs another day), merged
+into lens_tv.csv and lens_hn.csv (day, phrase, n; phrase "__total__" is the denominator) once complete.
 """
 from __future__ import annotations
 
@@ -99,42 +100,58 @@ def main() -> int:
     spent = used or 0
     alts = "|".join(re.escape(p).replace("\\'", "'").replace("'", "(?:'|&#x27;)")
                     for p in sorted(P, key=len, reverse=True))
-    plan = [("tv", "iatv_1gramsv2", tv_sql("iatv_1gramsv2"), [bigquery.ArrayQueryParameter("p", "STRING", p1)]),
-            ("tv", "iatv_2gramsv2", tv_sql("iatv_2gramsv2"), [bigquery.ArrayQueryParameter("p", "STRING", p2)]),
-            ("hn", "hacker_news", hn_sql(), [bigquery.ScalarQueryParameter("re", "STRING", rf"\b({alts})\b")])]
-    files = {"tv": open(os.path.join(a.outdir, "lens_tv.csv"), "w", newline=""),
-             "hn": open(os.path.join(a.outdir, "lens_hn.csv"), "w", newline="")}
-    w = {k: csv.writer(f) for k, f in files.items()}
-    for k in w:
-        w[k].writerow(["day", "phrase", "n"])
-    tv_total = {}
+    # One part file per table, kept in --outdir: a part that exists is not queried again. HN (cheap) runs first. A
+    # BigQuery quota refusal (the project's daily cap) stops further queries cleanly; the rest runs on a later day.
+    plan = [("hn", "hacker_news", hn_sql(), [bigquery.ScalarQueryParameter("re", "STRING", rf"\b({alts})\b")]),
+            ("tv1", "iatv_1gramsv2", tv_sql("iatv_1gramsv2"), [bigquery.ArrayQueryParameter("p", "STRING", p1)]),
+            ("tv2", "iatv_2gramsv2", tv_sql("iatv_2gramsv2"), [bigquery.ArrayQueryParameter("p", "STRING", p2)])]
     notes = []
-    for lens, table, sql, params in plan:
+    for part, table, sql, params in plan:
+        path = os.path.join(a.outdir, f"part_{part}.csv")
+        if os.path.exists(path):
+            log(f"{table}: part cached")
+            continue
         est = dry_run_bytes(c, sql, params)
         log(f"{table}: dry run {fmt_bytes(est)}")
         if spent + est > a.budget_gib * GIB:
             notes.append(f"{table} skipped: {fmt_bytes(est)} would pass the {a.budget_gib} GiB monthly budget")
             log(notes[-1])
             continue
-        rows, b, _ = run_query(c, sql, int(est * 1.2) + GIB, params)
+        try:
+            rows, b, _ = run_query(c, sql, int(est * 1.2) + GIB, params)
+        except Exception as e:  # noqa: BLE001
+            if "quota" in str(e).lower():
+                notes.append(f"{table}: BigQuery daily quota reached; remaining parts run on a later day")
+                log(notes[-1])
+                break
+            raise
         spent += b
-        n = 0
-        for r in rows:
-            d, key, cnt = day(r["d"]), r["k"], int(r["n"])
-            if lens == "tv":
-                if table == "iatv_1gramsv2":
-                    tv_total[d] = tv_total.get(d, 0) + cnt
-                if key == "__other__":
-                    continue
-            else:
-                key = key.replace("&#x27;", "'")
-            w[lens].writerow([d, key, cnt])
-            n += 1
-        log(f"{table}: {n} rows, billed {fmt_bytes(b)}")
-    for d, t in sorted(tv_total.items()):
-        w["tv"].writerow([d, "__total__", t])
-    for f in files.values():
-        f.close()
+        with open(path + ".tmp", "w", newline="") as f:
+            w = csv.writer(f)
+            for r in rows:
+                key = r["k"] if part.startswith("tv") else r["k"].replace("&#x27;", "'")
+                w.writerow([day(r["d"]), key, int(r["n"])])
+        os.replace(path + ".tmp", path)
+        log(f"{table}: {len(rows)} rows, billed {fmt_bytes(b)}")
+    parts = {k: os.path.join(a.outdir, f"part_{k}.csv") for k in ("hn", "tv1", "tv2")}
+    if os.path.exists(parts["hn"]):
+        with open(os.path.join(a.outdir, "lens_hn.csv"), "w", newline="") as f:
+            w = csv.writer(f)
+            w.writerow(["day", "phrase", "n"])
+            w.writerows(csv.reader(open(parts["hn"])))
+    if os.path.exists(parts["tv1"]) and os.path.exists(parts["tv2"]):
+        total = {}
+        with open(os.path.join(a.outdir, "lens_tv.csv"), "w", newline="") as f:
+            w = csv.writer(f)
+            w.writerow(["day", "phrase", "n"])
+            for k in ("tv1", "tv2"):
+                for d, key, n in csv.reader(open(parts[k])):
+                    if k == "tv1":
+                        total[d] = total.get(d, 0) + int(n)
+                    if key != "__other__":
+                        w.writerow([d, key, n])
+            for d, t in sorted(total.items()):
+                w.writerow([d, "__total__", t])
     summary(f"### Lens build (TV, HN)\nbilled this run {fmt_bytes(spent - (used or 0))}; " + "; ".join(notes))
     return 0
 

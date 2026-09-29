@@ -43,12 +43,15 @@ jobs:
       - name: Build TV and HN lenses (BigQuery)
         working-directory: ripples/tools/bq
         run: |
-          test -f "$LAB_CACHE/lens_tv.csv" && test -f "$LAB_CACHE/lens_hn.csv" && echo "lenses cached" && exit 0
+          rm -f "$LAB_CACHE/lens_tv.csv" "$LAB_CACHE/lens_hn.csv"
           python lens_tv_hn.py --outdir "$LAB_CACHE"
       - name: Q6 named-subject test on three lenses
         working-directory: ripples/lab
         run: |
           test -f "$LAB_CACHE/pv.npz" || { echo "panel cache missing"; exit 1; }
+          if ! test -f "$LAB_CACHE/lens_tv.csv" || ! test -f "$LAB_CACHE/lens_hn.csv"; then
+            echo "lens parts incomplete (BigQuery daily quota); the test runs when all parts are built"; exit 0
+          fi
           Q6_OUT="$OUT/q6_lenses_v1.json" python q6_lenses.py "$LAB_CACHE"
       - uses: actions/cache/save@v4
         if: always()
