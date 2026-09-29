@@ -1,0 +1,8287 @@
+{
+ "seed": 20260929,
+ "panel": {
+  "end": "2026-08-31",
+  "file": "econ_pv.npz",
+  "start": "2015-07-01",
+  "articles": 161
+ },
+ "method": "discovery v1 (ledger 1283)",
+ "options": {
+  "step": 1,
+  "panel": "econ_pv.npz",
+  "families": "q3_families_v3.tsv",
+  "min_coverage": 0.8,
+  "same_weekday": true
+ },
+ "families": {
+  "hurricanes": {
+   "top": [
+    {
+     "echo": false,
+     "p_mad": 0.6194,
+     "p_rank": 0.4755,
+     "article": "Market: US dollar in Mexican pesos",
+     "score_mad": 2.584,
+     "loo_stable": false,
+     "score_rank": 2.081,
+     "member_z_mad": [
+      0.5,
+      0.1,
+      0.15,
+      1.15,
+      0.34,
+      1.25,
+      0.17,
+      0.12,
+      0.27,
+      0.76,
+      -0.39,
+      2.04,
+      1.44,
+      0.73,
+      1.38
+     ]
+    },
+    {
+     "echo": false,
+     "p_mad": 0.6863,
+     "p_rank": 0.4186,
+     "article": "Electricity demand: TIDC",
+     "score_mad": 2.442,
+     "loo_stable": false,
+     "score_rank": 2.169,
+     "member_z_mad": [
+      1.63,
+      1.79,
+      -1.4,
+      1.46,
+      2.02,
+      0.49,
+      -0.86,
+      1.56,
+      0.18,
+      -0.43,
+      0.86,
+      -1.26,
+      1.03,
+      1.52,
+      0.88
+     ]
+    },
+    {
+     "echo": false,
+     "p_mad": 0.7463,
+     "p_rank": 0.5425,
+     "article": "Electricity demand: AZPS",
+     "score_mad": 2.324,
+     "loo_stable": false,
+     "score_rank": 1.995,
+     "member_z_mad": [
+      0.88,
+      0.57,
+      -0.79,
+      1.18,
+      -0.77,
+      0.58,
+      -0.45,
+      1.97,
+      -0.09,
+      -0.72,
+      1.3,
+      -0.6,
+      2.3,
+      2.43,
+      1.21
+     ]
+    },
+    {
+     "echo": false,
+     "p_mad": 0.5584,
+     "p_rank": 0.7602,
+     "article": "Market: Natural gas price (Henry Hub)",
+     "score_mad": 2.679,
+     "loo_stable": false,
+     "score_rank": 1.717,
+     "member_z_mad": [
+      0.28,
+      -0.04,
+      0.92,
+      0.52,
+      -0.42,
+      1,
+      2.38,
+      1.01,
+      1.4,
+      0.65,
+      -0.94,
+      -0.13,
+      -0.94,
+      3.68,
+      0.99
+     ]
+    },
+    {
+     "echo": false,
+     "p_mad": 0.7962,
+     "p_rank": 0.8262,
+     "article": "Electricity demand: BANC",
+     "score_mad": 2.227,
+     "loo_stable": false,
+     "score_rank": 1.632,
+     "member_z_mad": [
+      0.43,
+      1.32,
+      -0.4,
+      1.56,
+      0.37,
+      -0.89,
+      -1.61,
+      2.59,
+      0.15,
+      -1.99,
+      2.91,
+      0.06,
+      1.9,
+      1.06,
+      1.17
+     ]
+    },
+    {
+     "echo": false,
+     "p_mad": 0.9081,
+     "p_rank": 0.7992,
+     "article": "Electricity demand: SRP",
+     "score_mad": 1.919,
+     "loo_stable": false,
+     "score_rank": 1.676,
+     "member_z_mad": [
+      0.45,
+      0.08,
+      -1.06,
+      1.52,
+      -1.11,
+      0.58,
+      -0.6,
+      3.19,
+      0.36,
+      -1.01,
+      1.46,
+      -0.66,
+      1.27,
+      1.88,
+      1.08
+     ]
+    },
+    {
+     "echo": false,
+     "p_mad": 0.9221,
+     "p_rank": 0.8851,
+     "article": "Electricity demand: WALC",
+     "score_mad": 1.894,
+     "loo_stable": false,
+     "score_rank": 1.517,
+     "member_z_mad": [
+      -0.37,
+      0.79,
+      -0.2,
+      1.65,
+      -0.88,
+      -0.24,
+      -0.59,
+      2.31,
+      -0.02,
+      -0.39,
+      1.9,
+      -1.21,
+      1.22,
+      1.7,
+      1.65
+     ]
+    },
+    {
+     "echo": false,
+     "p_mad": 0.967,
+     "p_rank": 0.9121,
+     "article": "Electricity demand: PACE",
+     "score_mad": 1.661,
+     "loo_stable": false,
+     "score_rank": 1.452,
+     "member_z_mad": [
+      1.73,
+      0.98,
+      -1.91,
+      1.44,
+      2.58,
+      1.97,
+      -1.02,
+      -1.17,
+      0.24,
+      -1.18,
+      1.19,
+      0.03,
+      0.47,
+      0.61,
+      0.47
+     ]
+    },
+    {
+     "echo": false,
+     "p_mad": 0.967,
+     "p_rank": 0.8671,
+     "article": "Electricity demand: CISO",
+     "score_mad": 1.654,
+     "loo_stable": false,
+     "score_rank": 1.559,
+     "member_z_mad": [
+      1.69,
+      2.26,
+      -0.22,
+      0.51,
+      0.56,
+      -0.95,
+      -2.22,
+      2.29,
+      -0.3,
+      -0.43,
+      2.78,
+      0.09,
+      0.25,
+      0.32,
+      -0.21
+     ]
+    },
+    {
+     "echo": false,
+     "p_mad": 0.997,
+     "p_rank": 0.997,
+     "article": "Electricity demand: NEVP",
+     "score_mad": 1.313,
+     "loo_stable": false,
+     "score_rank": 0.973,
+     "member_z_mad": [
+      0.63,
+      1.22,
+      -0.86,
+      -0.35,
+      -0.26,
+      0.43,
+      -0.19,
+      1.38,
+      -0.56,
+      0.05,
+      1.99,
+      -0.65,
+      -0.18,
+      1.67,
+      0.76
+     ]
+    }
+   ],
+   "n_used": 15,
+   "members": [
+    {
+     "d0": "2017-08-25",
+     "id": "E6810",
+     "day0": "2017-08-25",
+     "article": "Hurricane Harvey",
+     "titles_used": 15
+    },
+    {
+     "d0": "2017-09-10",
+     "id": "PR-IRMA",
+     "day0": "2017-09-10",
+     "article": "Hurricane Irma",
+     "titles_used": 17
+    },
+    {
+     "d0": "2017-09-20",
+     "id": "E6811",
+     "day0": "2017-09-20",
+     "article": "Hurricane Maria",
+     "titles_used": 9
+    },
+    {
+     "d0": "2018-09-14",
+     "id": "PR-FLORENCE",
+     "day0": "2018-09-14",
+     "article": "Hurricane Florence",
+     "titles_used": 4
+    },
+    {
+     "d0": "2018-10-10",
+     "id": "PR-MICHAEL",
+     "day0": "2018-10-10",
+     "article": "Hurricane Michael",
+     "titles_used": 8
+    },
+    {
+     "d0": "2019-09-01",
+     "id": "E6814",
+     "day0": "2019-09-01",
+     "article": "Hurricane Dorian",
+     "titles_used": 6
+    },
+    {
+     "d0": "2020-08-27",
+     "id": "PR-LAURA",
+     "day0": "2020-08-27",
+     "article": "Hurricane Laura",
+     "titles_used": 5
+    },
+    {
+     "d0": "2021-08-29",
+     "id": "E6813",
+     "day0": "2021-08-29",
+     "article": "Hurricane Ida",
+     "titles_used": 7
+    },
+    {
+     "d0": "2022-09-18",
+     "id": "E6815",
+     "day0": "2022-09-18",
+     "article": "Hurricane Fiona",
+     "titles_used": 8
+    },
+    {
+     "d0": "2022-09-28",
+     "id": "E6812",
+     "day0": "2022-09-28",
+     "article": "Hurricane Ian",
+     "titles_used": 12
+    },
+    {
+     "d0": "2023-08-30",
+     "id": "PR-IDALIA",
+     "day0": "2023-08-30",
+     "article": "Hurricane Idalia",
+     "titles_used": 5
+    },
+    {
+     "d0": "2023-10-25",
+     "id": "E6816",
+     "day0": "2023-10-25",
+     "article": "Hurricane Otis",
+     "titles_used": 3
+    },
+    {
+     "d0": "2024-07-01",
+     "id": "E6817",
+     "day0": "2024-07-01",
+     "article": "Hurricane Beryl",
+     "titles_used": 5
+    },
+    {
+     "d0": "2024-09-26",
+     "id": "PR-HELENE",
+     "day0": "2024-09-26",
+     "article": "Hurricane Helene",
+     "titles_used": 9
+    },
+    {
+     "d0": "2024-10-09",
+     "id": "PR-MILTON",
+     "day0": "2024-10-09",
+     "article": "Hurricane Milton",
+     "titles_used": 11
+    }
+   ],
+   "min_p_both": 0.6193806193806194,
+   "clustered_members": [
+    "E6810",
+    "E6811",
+    "E6812",
+    "E6815",
+    "PR-FLORENCE",
+    "PR-HELENE",
+    "PR-IRMA",
+    "PR-MICHAEL",
+    "PR-MILTON"
+   ]
+  },
+  "earthquakes": {
+   "top": [
+    {
+     "echo": false,
+     "p_mad": 0.4935,
+     "p_rank": 0.4815,
+     "article": "Electricity demand: WALC",
+     "score_mad": 2.712,
+     "loo_stable": false,
+     "score_rank": 2.078,
+     "member_z_mad": [
+      2.52,
+      0.18,
+      -1.4,
+      0.56,
+      -0.82,
+      1.14,
+      0.86,
+      3.5,
+      2.58,
+      -0.14,
+      0.02
+     ]
+    },
+    {
+     "echo": false,
+     "p_mad": 0.8462,
+     "p_rank": 0.7203,
+     "article": "Electricity demand: CHPD",
+     "score_mad": 2.061,
+     "loo_stable": false,
+     "score_rank": 1.785,
+     "member_z_mad": [
+      1.48,
+      -0.72,
+      -0.93,
+      1.23,
+      0.97,
+      1.05,
+      -0.75,
+      0.37,
+      0.58,
+      1.24,
+      2.31
+     ]
+    },
+    {
+     "echo": false,
+     "p_mad": 0.989,
+     "p_rank": 0.8791,
+     "article": "Electricity demand: GCPD",
+     "score_mad": 1.462,
+     "loo_stable": false,
+     "score_rank": 1.535,
+     "member_z_mad": [
+      1.51,
+      0.02,
+      -0.65,
+      1.5,
+      0.9,
+      0.34,
+      -0.7,
+      1.09,
+      -0.51,
+      0.41,
+      0.94
+     ]
+    },
+    {
+     "echo": false,
+     "p_mad": 0.989,
+     "p_rank": 0.964,
+     "article": "Electricity demand: DOPD",
+     "score_mad": 1.458,
+     "loo_stable": false,
+     "score_rank": 1.3,
+     "member_z_mad": [
+      1.48,
+      -1.11,
+      -1.33,
+      1.09,
+      0.96,
+      0.49,
+      -0.35,
+      0.54,
+      0.45,
+      0.94,
+      1.67
+     ]
+    },
+    {
+     "echo": false,
+     "p_mad": 0.991,
+     "p_rank": 0.965,
+     "article": "Electricity demand: AVA",
+     "score_mad": 1.419,
+     "loo_stable": false,
+     "score_rank": 1.296,
+     "member_z_mad": [
+      0.67,
+      -0.19,
+      -0.97,
+      0.94,
+      1.32,
+      1.29,
+      -0.66,
+      0.63,
+      0.34,
+      -0.04,
+      1.38
+     ]
+    },
+    {
+     "echo": false,
+     "p_mad": 0.996,
+     "p_rank": 0.977,
+     "article": "Electricity demand: SPA",
+     "score_mad": 1.298,
+     "loo_stable": false,
+     "score_rank": 1.259,
+     "member_z_mad": [
+      -0.17,
+      0.92,
+      0.63,
+      0.95,
+      0.07,
+      0.48,
+      0.6,
+      -0.47,
+      -0.29,
+      1.67,
+      -0.09
+     ]
+    },
+    {
+     "echo": false,
+     "p_mad": 0.998,
+     "p_rank": 0.993,
+     "article": "Market: Jet fuel price (Gulf Coast)",
+     "score_mad": 1.235,
+     "loo_stable": false,
+     "score_rank": 1.104,
+     "member_z_mad": [
+      -1.48,
+      -0.03,
+      1.06,
+      -0.12,
+      0.2,
+      0.23,
+      2.35,
+      1.21,
+      -0.14,
+      0.85,
+      -0.02
+     ]
+    },
+    {
+     "echo": false,
+     "p_mad": 1,
+     "p_rank": 0.992,
+     "article": "Electricity demand: PACW",
+     "score_mad": 1.213,
+     "loo_stable": false,
+     "score_rank": 1.141,
+     "member_z_mad": [
+      -0.06,
+      0.43,
+      -1.53,
+      0.8,
+      0.19,
+      1.12,
+      -0.34,
+      1,
+      1.06,
+      0.91,
+      0.43
+     ]
+    },
+    {
+     "echo": false,
+     "p_mad": 1,
+     "p_rank": 0.999,
+     "article": "Electricity demand: WAUW",
+     "score_mad": 1.16,
+     "loo_stable": false,
+     "score_rank": 0.971,
+     "member_z_mad": [
+      -0.37,
+      -0.24,
+      -0.33,
+      0.48,
+      0.74,
+      1.24,
+      -0.39,
+      1.02,
+      0.05,
+      0.49,
+      1.17
+     ]
+    },
+    {
+     "echo": false,
+     "p_mad": 1,
+     "p_rank": 1,
+     "article": "Electricity demand: AECI",
+     "score_mad": 1.047,
+     "loo_stable": false,
+     "score_rank": 0.639,
+     "member_z_mad": [
+      -0.45,
+      1.81,
+      -1.16,
+      0.75,
+      -0.01,
+      -0.06,
+      0.36,
+      0.49,
+      -1.21,
+      3.09,
+      -0.13
+     ]
+    }
+   ],
+   "n_used": 11,
+   "members": [
+    {
+     "d0": "2016-11-13",
+     "id": "E6804",
+     "day0": "2016-11-13",
+     "article": "2016 Kaik\u014dura earthquake",
+     "titles_used": 12
+    },
+    {
+     "d0": "2017-09-19",
+     "id": "PR-PUEBLA",
+     "day0": "2017-09-19",
+     "article": "2017 Puebla earthquake",
+     "titles_used": 6
+    },
+    {
+     "d0": "2018-09-28",
+     "id": "E6805",
+     "day0": "2018-09-28",
+     "article": "2018 Sulawesi earthquake and tsunami",
+     "titles_used": 6
+    },
+    {
+     "d0": "2019-11-26",
+     "id": "PR-ALBANIA",
+     "day0": "2019-11-26",
+     "article": "2019 Albania earthquake",
+     "titles_used": 2
+    },
+    {
+     "d0": "2021-08-14",
+     "id": "PR-HAITI21",
+     "day0": "2021-08-14",
+     "article": "2021 Haiti earthquake",
+     "titles_used": 4
+    },
+    {
+     "d0": "2022-06-22",
+     "id": "PR-AFGH22",
+     "day0": "2022-06-22",
+     "article": "June 2022 Afghanistan earthquake",
+     "titles_used": 3
+    },
+    {
+     "d0": "2023-02-06",
+     "id": "E6807",
+     "day0": "2023-02-06",
+     "article": "2023 Turkey\u2013Syria earthquakes",
+     "titles_used": 47
+    },
+    {
+     "d0": "2023-09-08",
+     "id": "E6808",
+     "day0": "2023-09-08",
+     "article": "2023 Marrakesh\u2013Safi earthquake",
+     "titles_used": 7
+    },
+    {
+     "d0": "2024-01-01",
+     "id": "PR-NOTO",
+     "day0": "2024-01-01",
+     "article": "2024 Noto earthquake",
+     "titles_used": 19
+    },
+    {
+     "d0": "2024-04-03",
+     "id": "PR-HUALIEN",
+     "day0": "2024-04-03",
+     "article": "2024 Hualien earthquake",
+     "titles_used": 4
+    },
+    {
+     "d0": "2025-03-28",
+     "id": "PR-MYANMAR25",
+     "day0": "2025-03-28",
+     "article": "2025 Myanmar earthquake",
+     "titles_used": 10
+    }
+   ],
+   "min_p_both": 0.4935064935064935,
+   "clustered_members": []
+  },
+  "referendums": {
+   "top": [
+    {
+     "echo": false,
+     "p_mad": 0.2707,
+     "p_rank": 0.2168,
+     "article": "Electricity demand: NYIS",
+     "score_mad": 3.123,
+     "loo_stable": false,
+     "score_rank": 2.491,
+     "member_z_mad": [
+      1.22,
+      0.91,
+      0.42,
+      2.72,
+      -0.9,
+      0.26,
+      0.14,
+      3.3,
+      0.03,
+      -0.74,
+      1.41,
+      1.62,
+      0.68,
+      0.62
+     ]
+    },
+    {
+     "echo": false,
+     "p_mad": 0.7103,
+     "p_rank": 0.5914,
+     "article": "Electricity demand: ISNE",
+     "score_mad": 2.332,
+     "loo_stable": false,
+     "score_rank": 2.019,
+     "member_z_mad": [
+      0.49,
+      1.53,
+      -0.61,
+      1.79,
+      -0.15,
+      0.2,
+      -0.07,
+      2.22,
+      0.11,
+      -0.66,
+      1.38,
+      1.11,
+      0.06,
+      1.33
+     ]
+    },
+    {
+     "echo": false,
+     "p_mad": 0.7243,
+     "p_rank": 0.6563,
+     "article": "Market: Jet fuel price (Gulf Coast)",
+     "score_mad": 2.304,
+     "loo_stable": false,
+     "score_rank": 1.924,
+     "member_z_mad": [
+      0.51,
+      1.14,
+      0.86,
+      -0.51,
+      -0.25,
+      1.32,
+      1.29,
+      0.18,
+      0.68,
+      0.42,
+      0.61,
+      1.96,
+      1.71,
+      -1.29
+     ]
+    },
+    {
+     "echo": false,
+     "p_mad": 0.8921,
+     "p_rank": 0.6783,
+     "article": "Electricity demand: FPC",
+     "score_mad": 1.951,
+     "loo_stable": false,
+     "score_rank": 1.874,
+     "member_z_mad": [
+      -0.77,
+      0.99,
+      1.39,
+      0.81,
+      0.55,
+      1.58,
+      2.02,
+      0.94,
+      -3.2,
+      1.23,
+      -0.45,
+      1.58,
+      -0.58,
+      1.21
+     ]
+    },
+    {
+     "echo": false,
+     "p_mad": 0.9191,
+     "p_rank": 0.8771,
+     "article": "Electricity demand: WAUW",
+     "score_mad": 1.857,
+     "loo_stable": false,
+     "score_rank": 1.56,
+     "member_z_mad": [
+      0.08,
+      -0.88,
+      -1.3,
+      0.76,
+      0.97,
+      0.43,
+      2.02,
+      1.24,
+      1.2,
+      1.07,
+      -0.17,
+      0.76,
+      0.54,
+      0.24
+     ]
+    },
+    {
+     "echo": false,
+     "p_mad": 0.9401,
+     "p_rank": 0.8591,
+     "article": "Electricity demand: PJM",
+     "score_mad": 1.767,
+     "loo_stable": false,
+     "score_rank": 1.59,
+     "member_z_mad": [
+      1.91,
+      0.25,
+      0.61,
+      2.16,
+      -0.78,
+      0.28,
+      0.13,
+      1.86,
+      0.05,
+      -0.22,
+      0.61,
+      -0.01,
+      0.23,
+      -0.47
+     ]
+    },
+    {
+     "echo": false,
+     "p_mad": 0.9471,
+     "p_rank": 0.6174,
+     "article": "Electricity demand: TEC",
+     "score_mad": 1.742,
+     "loo_stable": false,
+     "score_rank": 1.981,
+     "member_z_mad": [
+      -0.46,
+      0.75,
+      1.05,
+      -0.04,
+      0.88,
+      1.54,
+      2.21,
+      1.2,
+      -2.83,
+      0.81,
+      -0.29,
+      1.7,
+      -0.89,
+      0.9
+     ]
+    },
+    {
+     "echo": false,
+     "p_mad": 0.961,
+     "p_rank": 0.8621,
+     "article": "Electricity demand: FMPP",
+     "score_mad": 1.656,
+     "loo_stable": false,
+     "score_rank": 1.584,
+     "member_z_mad": [
+      -0.97,
+      1.36,
+      0.74,
+      0.15,
+      0.58,
+      1.23,
+      2.33,
+      1.41,
+      -2.55,
+      1.33,
+      -0.99,
+      1.21,
+      -0.4,
+      0.78
+     ]
+    },
+    {
+     "echo": false,
+     "p_mad": 0.9401,
+     "p_rank": 0.987,
+     "article": "Market: SOFR overnight rate",
+     "score_mad": 1.768,
+     "loo_stable": false,
+     "score_rank": 1.12,
+     "member_z_mad": [
+      0,
+      0,
+      0,
+      1.61,
+      4,
+      -0.59,
+      4,
+      0.37,
+      0.23,
+      0.93,
+      -0.27,
+      -4,
+      0.27,
+      0.07
+     ]
+    },
+    {
+     "echo": false,
+     "p_mad": 0.991,
+     "p_rank": 0.961,
+     "article": "Electricity demand: PACE",
+     "score_mad": 1.395,
+     "loo_stable": false,
+     "score_rank": 1.329,
+     "member_z_mad": [
+      -1.15,
+      -0.03,
+      0.49,
+      0.56,
+      0.61,
+      -0.31,
+      1.76,
+      -1.31,
+      0.21,
+      1.64,
+      1.52,
+      1.29,
+      -0.13,
+      0.06
+     ]
+    }
+   ],
+   "n_used": 14,
+   "members": [
+    {
+     "d0": "2016-10-02",
+     "id": "T10457",
+     "day0": "2016-10-02",
+     "article": "2016 Colombian peace agreement referendum",
+     "titles_used": 5
+    },
+    {
+     "d0": "2016-12-04",
+     "id": "T10458",
+     "day0": "2016-12-04",
+     "article": "2016 Italian constitutional referendum",
+     "titles_used": 4
+    },
+    {
+     "d0": "2017-10-01",
+     "id": "T10459",
+     "day0": "2017-10-01",
+     "article": "2017 Catalan independence referendum",
+     "titles_used": 9
+    },
+    {
+     "d0": "2018-05-25",
+     "id": "T10460",
+     "day0": "2018-05-25",
+     "article": "Thirty-sixth Amendment of the Constitution of Ireland",
+     "titles_used": 16
+    },
+    {
+     "d0": "2018-09-30",
+     "id": "T10461",
+     "day0": "2018-09-30",
+     "article": "2018 Macedonian referendum",
+     "titles_used": 6
+    },
+    {
+     "d0": "2018-11-04",
+     "id": "T10470",
+     "day0": "2018-11-04",
+     "article": "2018 New Caledonian independence referendum",
+     "titles_used": 2
+    },
+    {
+     "d0": "2018-11-24",
+     "id": "T10462",
+     "day0": "2018-11-24",
+     "article": "2018 Taiwanese referendum",
+     "titles_used": 8
+    },
+    {
+     "d0": "2020-09-27",
+     "id": "T10463",
+     "day0": "2020-09-27",
+     "article": "2020 Swiss referendums",
+     "titles_used": 1
+    },
+    {
+     "d0": "2020-10-17",
+     "id": "T10465",
+     "day0": "2020-10-17",
+     "article": "2020 New Zealand cannabis referendum",
+     "titles_used": 3
+    },
+    {
+     "d0": "2020-10-25",
+     "id": "T10464",
+     "day0": "2020-10-25",
+     "article": "2020 Chilean national plebiscite",
+     "titles_used": 5
+    },
+    {
+     "d0": "2021-06-13",
+     "id": "T10466",
+     "day0": "2021-06-13",
+     "article": "2021 Swiss referendums",
+     "titles_used": 1
+    },
+    {
+     "d0": "2022-09-04",
+     "id": "T10467",
+     "day0": "2022-09-04",
+     "article": "2022 Chilean national plebiscite",
+     "titles_used": 2
+    },
+    {
+     "d0": "2023-10-14",
+     "id": "T10468",
+     "day0": "2023-10-14",
+     "article": "2023 Australian Indigenous Voice referendum",
+     "titles_used": 17
+    },
+    {
+     "d0": "2024-03-08",
+     "id": "T10469",
+     "day0": "2024-03-08",
+     "article": "2024 Irish constitutional referendums",
+     "titles_used": 12
+    }
+   ],
+   "min_p_both": 0.2707292707292707,
+   "clustered_members": [
+    "T10462",
+    "T10463",
+    "T10464",
+    "T10465",
+    "T10470"
+   ]
+  },
+  "super_bowls": {
+   "top": [
+    {
+     "echo": false,
+     "p_mad": 0.988,
+     "p_rank": 0.971,
+     "article": "Air travel: TSA checkpoint passengers",
+     "score_mad": 1.504,
+     "loo_stable": false,
+     "score_rank": 1.302,
+     "member_z_mad": [
+      0,
+      0,
+      0.26,
+      1.45,
+      0.39,
+      0.38,
+      0.14,
+      1.63,
+      1.39,
+      -0.88
+     ]
+    },
+    {
+     "echo": false,
+     "p_mad": 0.994,
+     "p_rank": 0.986,
+     "article": "Electricity demand: TAL",
+     "score_mad": 1.389,
+     "loo_stable": false,
+     "score_rank": 1.185,
+     "member_z_mad": [
+      0.21,
+      -1.78,
+      2.31,
+      0.44,
+      1.89,
+      1.37,
+      0.03,
+      -0.65,
+      -0.27,
+      0.86
+     ]
+    },
+    {
+     "echo": false,
+     "p_mad": 0.994,
+     "p_rank": 0.978,
+     "article": "Market: Jet fuel price (Gulf Coast)",
+     "score_mad": 1.389,
+     "loo_stable": false,
+     "score_rank": 1.273,
+     "member_z_mad": [
+      -0.4,
+      0.66,
+      0.33,
+      -1.19,
+      1.66,
+      1.58,
+      1.65,
+      1.73,
+      -0.63,
+      -0.99
+     ]
+    },
+    {
+     "echo": false,
+     "p_mad": 0.997,
+     "p_rank": 0.986,
+     "article": "Electricity demand: PACE",
+     "score_mad": 1.25,
+     "loo_stable": false,
+     "score_rank": 1.175,
+     "member_z_mad": [
+      0.75,
+      0.76,
+      0.3,
+      0.32,
+      -0.46,
+      -0.36,
+      0.73,
+      1.1,
+      -0.36,
+      1.19
+     ]
+    },
+    {
+     "echo": false,
+     "p_mad": 0.998,
+     "p_rank": 0.978,
+     "article": "Electricity demand: TPWR",
+     "score_mad": 1.215,
+     "loo_stable": false,
+     "score_rank": 1.273,
+     "member_z_mad": [
+      0.64,
+      -0.16,
+      1.83,
+      1.08,
+      0.14,
+      -1.22,
+      1,
+      -0.32,
+      -0.51,
+      1.37
+     ]
+    },
+    {
+     "echo": false,
+     "p_mad": 0.999,
+     "p_rank": 0.99,
+     "article": "Electricity demand: LDWP",
+     "score_mad": 1.16,
+     "loo_stable": false,
+     "score_rank": 1.108,
+     "member_z_mad": [
+      1.79,
+      0.45,
+      0.4,
+      -0.98,
+      -0.7,
+      -0.32,
+      0.54,
+      0.73,
+      0.41,
+      1.35
+     ]
+    },
+    {
+     "echo": false,
+     "p_mad": 0.999,
+     "p_rank": 0.991,
+     "article": "Electricity demand: TIDC",
+     "score_mad": 1.147,
+     "loo_stable": false,
+     "score_rank": 1.086,
+     "member_z_mad": [
+      0.61,
+      0.48,
+      1.24,
+      0.32,
+      0.17,
+      -0.16,
+      0.68,
+      0.53,
+      0.16,
+      -0.4
+     ]
+    },
+    {
+     "echo": false,
+     "p_mad": 0.995,
+     "p_rank": 1,
+     "article": "Market: Brent crude oil price",
+     "score_mad": 1.307,
+     "loo_stable": false,
+     "score_rank": 0.906,
+     "member_z_mad": [
+      0.18,
+      1.05,
+      0.89,
+      -0.85,
+      -0.05,
+      2.74,
+      1.37,
+      0.02,
+      -0.32,
+      -0.9
+     ]
+    },
+    {
+     "echo": false,
+     "p_mad": 0.997,
+     "p_rank": 1,
+     "article": "Market: Fed funds rate",
+     "score_mad": 1.265,
+     "loo_stable": false,
+     "score_rank": -0.686,
+     "member_z_mad": [
+      4,
+      4,
+      0,
+      4,
+      -4,
+      0,
+      -4,
+      0,
+      0,
+      0
+     ]
+    },
+    {
+     "echo": false,
+     "p_mad": 0.999,
+     "p_rank": 1,
+     "article": "Electricity demand: AEC",
+     "score_mad": 1.112,
+     "loo_stable": false,
+     "score_rank": 0.601,
+     "member_z_mad": [
+      -0.18,
+      -1.89,
+      2.13,
+      2.5,
+      0.96,
+      0,
+      0,
+      0,
+      0,
+      0
+     ]
+    }
+   ],
+   "n_used": 10,
+   "members": [
+    {
+     "d0": "2017-02-05",
+     "id": "PR-SB51",
+     "day0": "2017-02-05",
+     "article": "Super Bowl LI",
+     "titles_used": 28
+    },
+    {
+     "d0": "2018-02-04",
+     "id": "PR-SB52",
+     "day0": "2018-02-04",
+     "article": "Super Bowl LII",
+     "titles_used": 23
+    },
+    {
+     "d0": "2019-02-03",
+     "id": "PR-SB53",
+     "day0": "2019-02-03",
+     "article": "Super Bowl LIII",
+     "titles_used": 18
+    },
+    {
+     "d0": "2020-02-02",
+     "id": "PR-SB54",
+     "day0": "2020-02-02",
+     "article": "Super Bowl LIV",
+     "titles_used": 14
+    },
+    {
+     "d0": "2021-02-07",
+     "id": "E1001",
+     "day0": "2021-02-07",
+     "article": "Super Bowl LV",
+     "titles_used": 24
+    },
+    {
+     "d0": "2022-02-13",
+     "id": "PR-SB56",
+     "day0": "2022-02-13",
+     "article": "Super Bowl LVI",
+     "titles_used": 13
+    },
+    {
+     "d0": "2023-02-12",
+     "id": "E6319",
+     "day0": "2023-02-12",
+     "article": "Super Bowl LVII",
+     "titles_used": 17
+    },
+    {
+     "d0": "2024-02-11",
+     "id": "E5279",
+     "day0": "2024-02-11",
+     "article": "Super Bowl LVIII",
+     "titles_used": 24
+    },
+    {
+     "d0": "2025-02-09",
+     "id": "PR-SB59",
+     "day0": "2025-02-09",
+     "article": "Super Bowl LIX",
+     "titles_used": 19
+    },
+    {
+     "d0": "2026-02-08",
+     "id": "PR-SB60",
+     "day0": "2026-02-08",
+     "article": "Super Bowl LX",
+     "titles_used": 16
+    }
+   ],
+   "min_p_both": 0.988011988011988,
+   "clustered_members": []
+  },
+  "crypto_shocks": {
+   "top": [
+    {
+     "echo": false,
+     "p_mad": 0.2767,
+     "p_rank": 0.3487,
+     "article": "Electricity demand: PSCO",
+     "score_mad": 3.11,
+     "loo_stable": false,
+     "score_rank": 2.294,
+     "member_z_mad": [
+      -0.01,
+      0.27,
+      0.34,
+      0.39,
+      -0.29,
+      1.41,
+      0.64,
+      0.5,
+      3.42,
+      2.98,
+      0.66
+     ]
+    },
+    {
+     "echo": false,
+     "p_mad": 0.4036,
+     "p_rank": 0.2817,
+     "article": "Electricity demand: TIDC",
+     "score_mad": 2.883,
+     "loo_stable": false,
+     "score_rank": 2.386,
+     "member_z_mad": [
+      0.39,
+      0.54,
+      4,
+      -0.17,
+      1.33,
+      1.61,
+      1.17,
+      -0.01,
+      0.46,
+      0.84,
+      -0.59
+     ]
+    },
+    {
+     "echo": false,
+     "p_mad": 0.6953,
+     "p_rank": 0.4735,
+     "article": "Electricity demand: EPE",
+     "score_mad": 2.434,
+     "loo_stable": false,
+     "score_rank": 2.147,
+     "member_z_mad": [
+      1.89,
+      1.5,
+      -1.06,
+      0.15,
+      -0.96,
+      0.87,
+      0.02,
+      2.85,
+      0.86,
+      1.39,
+      0.55
+     ]
+    },
+    {
+     "echo": false,
+     "p_mad": 0.2248,
+     "p_rank": 0.7493,
+     "article": "Electricity demand: SEC",
+     "score_mad": 3.254,
+     "loo_stable": false,
+     "score_rank": 1.808,
+     "member_z_mad": [
+      2.99,
+      3.26,
+      -0.36,
+      0.56,
+      0.75,
+      1.96,
+      2.46,
+      -0.12,
+      -0.68,
+      -0.14,
+      0.12
+     ]
+    },
+    {
+     "echo": false,
+     "p_mad": 0.7552,
+     "p_rank": 0.6184,
+     "article": "Electricity demand: NEVP",
+     "score_mad": 2.32,
+     "loo_stable": false,
+     "score_rank": 1.966,
+     "member_z_mad": [
+      0.8,
+      0.27,
+      -0.67,
+      0.9,
+      2.25,
+      1.17,
+      0.03,
+      0.82,
+      -0.27,
+      1.52,
+      0.87
+     ]
+    },
+    {
+     "echo": false,
+     "p_mad": 0.7822,
+     "p_rank": 0.8871,
+     "article": "Electricity demand: PGE",
+     "score_mad": 2.263,
+     "loo_stable": false,
+     "score_rank": 1.609,
+     "member_z_mad": [
+      0.01,
+      0.38,
+      1.17,
+      0.44,
+      1.69,
+      0.83,
+      -0.91,
+      0.14,
+      3.13,
+      1.36,
+      -0.74
+     ]
+    },
+    {
+     "echo": false,
+     "p_mad": 0.9061,
+     "p_rank": 0.7732,
+     "article": "Market: US dollar in Canadian dollars",
+     "score_mad": 1.998,
+     "loo_stable": false,
+     "score_rank": 1.771,
+     "member_z_mad": [
+      3.14,
+      1.49,
+      -1.35,
+      0.7,
+      0,
+      1.1,
+      -0.07,
+      1.06,
+      -2.13,
+      1.58,
+      1.1
+     ]
+    },
+    {
+     "echo": false,
+     "p_mad": 0.8941,
+     "p_rank": 0.9121,
+     "article": "Electricity demand: NWMT",
+     "score_mad": 2.026,
+     "loo_stable": false,
+     "score_rank": 1.559,
+     "member_z_mad": [
+      0.37,
+      0.68,
+      2.01,
+      -4,
+      0.8,
+      2.16,
+      0.87,
+      -0.83,
+      3.98,
+      2.16,
+      -1.49
+     ]
+    },
+    {
+     "echo": false,
+     "p_mad": 0.7812,
+     "p_rank": 0.9261,
+     "article": "Electricity demand: BPAT",
+     "score_mad": 2.266,
+     "loo_stable": false,
+     "score_rank": 1.526,
+     "member_z_mad": [
+      0.17,
+      0.57,
+      0.07,
+      -0.48,
+      1.19,
+      0.47,
+      -0.98,
+      0.02,
+      4,
+      2.74,
+      -0.24
+     ]
+    },
+    {
+     "echo": false,
+     "p_mad": 0.9221,
+     "p_rank": 0.9361,
+     "article": "Air travel: TSA checkpoint passengers",
+     "score_mad": 1.943,
+     "loo_stable": false,
+     "score_rank": 1.504,
+     "member_z_mad": [
+      0,
+      0,
+      1.32,
+      0.18,
+      -0.15,
+      -0.1,
+      2.71,
+      1.25,
+      -0.69,
+      1.15,
+      0.78
+     ]
+    }
+   ],
+   "n_used": 11,
+   "members": [
+    {
+     "d0": "2017-11-28",
+     "id": "E6892",
+     "day0": "2017-11-28",
+     "article": "Bitcoin",
+     "titles_used": 48
+    },
+    {
+     "d0": "2017-12-17",
+     "id": "E6893",
+     "day0": "2017-12-17",
+     "article": "Bitcoin",
+     "titles_used": 48
+    },
+    {
+     "d0": "2020-05-11",
+     "id": "E6895",
+     "day0": "2020-05-11",
+     "article": "Bitcoin",
+     "titles_used": 48
+    },
+    {
+     "d0": "2021-02-19",
+     "id": "E10349",
+     "day0": "2021-02-19",
+     "article": "Bitcoin",
+     "titles_used": 48
+    },
+    {
+     "d0": "2021-03-11",
+     "id": "E10351",
+     "day0": "2021-03-11",
+     "article": "Everydays: the First 5000 Days",
+     "titles_used": 6
+    },
+    {
+     "d0": "2021-09-07",
+     "id": "E6906",
+     "day0": "2021-09-07",
+     "article": "Bitcoin in El Salvador",
+     "titles_used": 9
+    },
+    {
+     "d0": "2021-10-19",
+     "id": "E6907",
+     "day0": "2021-10-19",
+     "article": "Bitcoin",
+     "titles_used": 48
+    },
+    {
+     "d0": "2022-09-15",
+     "id": "E6900",
+     "day0": "2022-09-15",
+     "article": "Ethereum",
+     "titles_used": 41
+    },
+    {
+     "d0": "2022-11-11",
+     "id": "E6909",
+     "day0": "2022-11-11",
+     "article": "Bankruptcy of FTX",
+     "titles_used": 7
+    },
+    {
+     "d0": "2024-01-11",
+     "id": "E6908",
+     "day0": "2024-01-11",
+     "article": "Bitcoin",
+     "titles_used": 48
+    },
+    {
+     "d0": "2024-04-20",
+     "id": "E6896",
+     "day0": "2024-04-20",
+     "article": "Bitcoin",
+     "titles_used": 48
+    }
+   ],
+   "min_p_both": 0.34865134865134867,
+   "clustered_members": [
+    "E10349",
+    "E10351",
+    "E6892",
+    "E6893"
+   ]
+  },
+  "ev_milestones": {
+   "top": [
+    {
+     "echo": false,
+     "p_mad": 0.1149,
+     "p_rank": 0.0699,
+     "article": "Market: Euro in US dollars",
+     "score_mad": 3.691,
+     "loo_stable": false,
+     "score_rank": 2.906,
+     "member_z_mad": [
+      1.47,
+      0.2,
+      1.01,
+      -0.67,
+      2.02,
+      1.91,
+      3.72,
+      2.1,
+      1.22,
+      -1.3
+     ]
+    },
+    {
+     "echo": false,
+     "p_mad": 0.3457,
+     "p_rank": 0.0809,
+     "article": "Electricity demand: GCPD",
+     "score_mad": 2.987,
+     "loo_stable": false,
+     "score_rank": 2.848,
+     "member_z_mad": [
+      0.18,
+      0.71,
+      1.18,
+      2.03,
+      -0.07,
+      -0.01,
+      1.89,
+      2.51,
+      0.48,
+      0.55
+     ]
+    },
+    {
+     "echo": false,
+     "p_mad": 0.4855,
+     "p_rank": 0.2168,
+     "article": "Market: Pound in US dollars",
+     "score_mad": 2.76,
+     "loo_stable": false,
+     "score_rank": 2.508,
+     "member_z_mad": [
+      1.27,
+      0.23,
+      1.59,
+      -1.19,
+      2.6,
+      1.36,
+      0.73,
+      2.02,
+      0.41,
+      -0.29
+     ]
+    },
+    {
+     "echo": false,
+     "p_mad": 0.7093,
+     "p_rank": 0.4036,
+     "article": "Electricity demand: PNM",
+     "score_mad": 2.394,
+     "loo_stable": false,
+     "score_rank": 2.239,
+     "member_z_mad": [
+      -0.02,
+      0.59,
+      0.28,
+      1.26,
+      1.85,
+      0.78,
+      0.22,
+      0.34,
+      1.15,
+      1.13
+     ]
+    },
+    {
+     "echo": false,
+     "p_mad": 0.5554,
+     "p_rank": 0.7143,
+     "article": "Electricity demand: WACM",
+     "score_mad": 2.64,
+     "loo_stable": false,
+     "score_rank": 1.88,
+     "member_z_mad": [
+      -0.86,
+      -0.3,
+      0.77,
+      2.76,
+      4,
+      0.69,
+      1.58,
+      -0.34,
+      0.3,
+      -0.27
+     ]
+    },
+    {
+     "echo": false,
+     "p_mad": 0.7972,
+     "p_rank": 0.7652,
+     "article": "Electricity demand: CHPD",
+     "score_mad": 2.206,
+     "loo_stable": false,
+     "score_rank": 1.798,
+     "member_z_mad": [
+      -0.61,
+      -0.01,
+      0,
+      1.89,
+      -0.51,
+      1.1,
+      3.03,
+      1.18,
+      -0.32,
+      1.22
+     ]
+    },
+    {
+     "echo": false,
+     "p_mad": 0.8322,
+     "p_rank": 0.7542,
+     "article": "Electricity demand: BPAT",
+     "score_mad": 2.141,
+     "loo_stable": false,
+     "score_rank": 1.813,
+     "member_z_mad": [
+      -0.24,
+      -0.74,
+      0.19,
+      2.12,
+      1.18,
+      1.56,
+      1.92,
+      1.84,
+      -0.65,
+      -0.4
+     ]
+    },
+    {
+     "echo": false,
+     "p_mad": 0.8501,
+     "p_rank": 0.7542,
+     "article": "Electricity demand: DOPD",
+     "score_mad": 2.097,
+     "loo_stable": false,
+     "score_rank": 1.815,
+     "member_z_mad": [
+      -1.68,
+      0.24,
+      0.41,
+      2.43,
+      -1.42,
+      0.64,
+      2.47,
+      2.96,
+      -0.17,
+      0.74
+     ]
+    },
+    {
+     "echo": false,
+     "p_mad": 0.951,
+     "p_rank": 0.9061,
+     "article": "Electricity demand: SCL",
+     "score_mad": 1.745,
+     "loo_stable": false,
+     "score_rank": 1.523,
+     "member_z_mad": [
+      1.34,
+      -1.43,
+      -0.18,
+      1.57,
+      1.82,
+      0.57,
+      1.1,
+      1.4,
+      0.06,
+      -0.74
+     ]
+    },
+    {
+     "echo": false,
+     "p_mad": 0.4585,
+     "p_rank": 0.953,
+     "article": "Market: SOFR overnight rate",
+     "score_mad": 2.809,
+     "loo_stable": false,
+     "score_rank": 1.408,
+     "member_z_mad": [
+      0,
+      0,
+      4,
+      -0.13,
+      -0.14,
+      -0.07,
+      0.07,
+      1.43,
+      1.7,
+      2.02
+     ]
+    }
+   ],
+   "n_used": 10,
+   "members": [
+    {
+     "d0": "2017-07-28",
+     "id": "E7111",
+     "day0": "2017-07-28",
+     "article": "Tesla Model 3",
+     "titles_used": 19
+    },
+    {
+     "d0": "2017-11-16",
+     "id": "E8427",
+     "day0": "2017-11-16",
+     "article": "Tesla Semi",
+     "titles_used": 6
+    },
+    {
+     "id": "E5894",
+     "day0": "2018-11-26",
+     "skip": "too few views around the event",
+     "article": "Rivian R1T",
+     "titles_used": 4
+    },
+    {
+     "d0": "2019-09-04",
+     "id": "E6721",
+     "day0": "2019-09-04",
+     "article": "Porsche Taycan",
+     "titles_used": 32
+    },
+    {
+     "d0": "2019-11-21",
+     "id": "E6695",
+     "day0": "2019-11-21",
+     "article": "Tesla Cybertruck",
+     "titles_used": 31
+    },
+    {
+     "d0": "2021-05-19",
+     "id": "E8434",
+     "day0": "2021-05-19",
+     "article": "Ford F-150 Lightning",
+     "titles_used": 12
+    },
+    {
+     "d0": "2021-10-20",
+     "id": "E5899",
+     "day0": "2021-10-20",
+     "article": "GMC Hummer EV",
+     "titles_used": 5
+    },
+    {
+     "d0": "2022-03-09",
+     "id": "E8440",
+     "day0": "2022-03-09",
+     "article": "Volkswagen ID. Buzz",
+     "titles_used": 24
+    },
+    {
+     "d0": "2022-12-01",
+     "id": "E6731",
+     "day0": "2022-12-01",
+     "article": "Tesla Semi",
+     "titles_used": 6
+    },
+    {
+     "d0": "2023-10-02",
+     "id": "E5908",
+     "day0": "2023-10-02",
+     "article": "BYD Auto",
+     "titles_used": 23
+    },
+    {
+     "d0": "2023-11-30",
+     "id": "E6696",
+     "day0": "2023-11-30",
+     "article": "Tesla Cybertruck",
+     "titles_used": 31
+    }
+   ],
+   "min_p_both": 0.11488511488511488,
+   "clustered_members": []
+  },
+  "game_releases": {
+   "top": [
+    {
+     "echo": false,
+     "p_mad": 0.5944,
+     "p_rank": 0.5305,
+     "article": "Market: Trade-weighted US dollar",
+     "score_mad": 2.573,
+     "loo_stable": false,
+     "score_rank": 2.083,
+     "member_z_mad": [
+      1.32,
+      1.7,
+      0.63,
+      0.88,
+      -0.41,
+      0.2,
+      3.26,
+      0.84,
+      0.46,
+      0.56,
+      -0.25,
+      0.64,
+      1.14,
+      0.38,
+      -0.36,
+      -0.69
+     ]
+    },
+    {
+     "echo": false,
+     "p_mad": 0.6054,
+     "p_rank": 0.7363,
+     "article": "Market: US dollar in Mexican pesos",
+     "score_mad": 2.542,
+     "loo_stable": false,
+     "score_rank": 1.824,
+     "member_z_mad": [
+      -0.46,
+      0.64,
+      0.99,
+      0.28,
+      -1.17,
+      -0.27,
+      4,
+      1.49,
+      0.66,
+      1.73,
+      -0.34,
+      0.98,
+      0.02,
+      1.62,
+      -0.23,
+      0.24
+     ]
+    },
+    {
+     "echo": false,
+     "p_mad": 0.98,
+     "p_rank": 0.98,
+     "article": "Electricity demand: CPLW",
+     "score_mad": 1.643,
+     "loo_stable": false,
+     "score_rank": 1.259,
+     "member_z_mad": [
+      1.34,
+      1.91,
+      0.7,
+      -0.21,
+      1.28,
+      2.1,
+      -2.1,
+      0.5,
+      0.51,
+      0.58,
+      -1.38,
+      0.03,
+      0.3,
+      -1.52,
+      3.49,
+      -0.97
+     ]
+    },
+    {
+     "echo": false,
+     "p_mad": 0.8561,
+     "p_rank": 0.981,
+     "article": "Electricity demand: SEC",
+     "score_mad": 2.091,
+     "loo_stable": false,
+     "score_rank": 1.228,
+     "member_z_mad": [
+      -0.5,
+      -3.17,
+      1.62,
+      2.11,
+      0,
+      0,
+      -0.72,
+      2.25,
+      2.37,
+      1.62,
+      0.85,
+      -0.15,
+      0.35,
+      -0.26,
+      2.01,
+      0
+     ]
+    },
+    {
+     "echo": false,
+     "p_mad": 0.983,
+     "p_rank": 0.99,
+     "article": "Market: 10y-2y Treasury spread",
+     "score_mad": 1.618,
+     "loo_stable": false,
+     "score_rank": 1.12,
+     "member_z_mad": [
+      -0.05,
+      0.63,
+      1.18,
+      0.6,
+      -0.06,
+      0.32,
+      -3.26,
+      1.2,
+      0.46,
+      -0.15,
+      0.58,
+      0.35,
+      -0.49,
+      4,
+      0.91,
+      0.25
+     ]
+    },
+    {
+     "echo": false,
+     "p_mad": 0.99,
+     "p_rank": 0.966,
+     "article": "Market: US dollar in Canadian dollars",
+     "score_mad": 1.466,
+     "loo_stable": false,
+     "score_rank": 1.323,
+     "member_z_mad": [
+      1.36,
+      1.26,
+      -0.01,
+      0.32,
+      0.26,
+      1.08,
+      -0.3,
+      1.54,
+      0.77,
+      -0.29,
+      -0.45,
+      0.13,
+      1.25,
+      -0.13,
+      -0.15,
+      -0.78
+     ]
+    },
+    {
+     "echo": false,
+     "p_mad": 0.996,
+     "p_rank": 0.994,
+     "article": "Electricity demand: PACW",
+     "score_mad": 1.273,
+     "loo_stable": false,
+     "score_rank": 1.038,
+     "member_z_mad": [
+      0.04,
+      -1.34,
+      1.02,
+      0.72,
+      -0.01,
+      -0.12,
+      -0.46,
+      -0.27,
+      1.48,
+      0.89,
+      2.48,
+      1.14,
+      0.95,
+      -0.78,
+      -1.22,
+      0.58
+     ]
+    },
+    {
+     "echo": false,
+     "p_mad": 0.997,
+     "p_rank": 0.989,
+     "article": "Electricity demand: PGE",
+     "score_mad": 1.263,
+     "loo_stable": false,
+     "score_rank": 1.139,
+     "member_z_mad": [
+      0.67,
+      -1.04,
+      -0.01,
+      0.06,
+      0.66,
+      -0.6,
+      -0.64,
+      0.43,
+      2.19,
+      1.12,
+      1,
+      0.38,
+      1.59,
+      -0.83,
+      -0.66,
+      0.74
+     ]
+    },
+    {
+     "echo": false,
+     "p_mad": 0.997,
+     "p_rank": 0.997,
+     "article": "Electricity demand: DOPD",
+     "score_mad": 1.25,
+     "loo_stable": false,
+     "score_rank": 0.925,
+     "member_z_mad": [
+      1.22,
+      -1.01,
+      -1.58,
+      0.74,
+      0.03,
+      0.92,
+      -1.21,
+      1.62,
+      -0.76,
+      1.09,
+      1.49,
+      3.22,
+      0.66,
+      -0.06,
+      -1.69,
+      0.33
+     ]
+    },
+    {
+     "echo": false,
+     "p_mad": 0.999,
+     "p_rank": 0.991,
+     "article": "Market: US dollar in Japanese yen",
+     "score_mad": 1.188,
+     "loo_stable": false,
+     "score_rank": 1.11,
+     "member_z_mad": [
+      1.58,
+      0.77,
+      0.54,
+      -0.31,
+      -1.42,
+      0.7,
+      2.74,
+      -0.14,
+      -0.82,
+      0.57,
+      0.02,
+      0.89,
+      1.38,
+      -0.46,
+      -0.16,
+      -1.11
+     ]
+    }
+   ],
+   "n_used": 16,
+   "members": [
+    {
+     "d0": "2017-03-03",
+     "id": "T10343",
+     "day0": "2017-03-03",
+     "article": "The Legend of Zelda: Breath of the Wild",
+     "titles_used": 47
+    },
+    {
+     "d0": "2017-10-27",
+     "id": "T10349",
+     "day0": "2017-10-27",
+     "article": "Assassin's Creed Origins",
+     "titles_used": 8
+    },
+    {
+     "d0": "2018-04-20",
+     "id": "T10351",
+     "day0": "2018-04-20",
+     "article": "God of War (2018 video game)",
+     "titles_used": 13
+    },
+    {
+     "d0": "2018-10-26",
+     "id": "T10352",
+     "day0": "2018-10-26",
+     "article": "Red Dead Redemption 2",
+     "titles_used": 15
+    },
+    {
+     "d0": "2019-03-22",
+     "id": "T10357",
+     "day0": "2019-03-22",
+     "article": "Sekiro: Shadows Die Twice",
+     "titles_used": 4
+    },
+    {
+     "d0": "2019-11-08",
+     "id": "T10358",
+     "day0": "2019-11-08",
+     "article": "Death Stranding",
+     "titles_used": 9
+    },
+    {
+     "d0": "2020-03-20",
+     "id": "T10362",
+     "day0": "2020-03-20",
+     "article": "Animal Crossing: New Horizons",
+     "titles_used": 27
+    },
+    {
+     "d0": "2020-07-17",
+     "id": "T10367",
+     "day0": "2020-07-17",
+     "article": "Ghost of Tsushima",
+     "titles_used": 7
+    },
+    {
+     "d0": "2020-09-17",
+     "id": "T10364",
+     "day0": "2020-09-17",
+     "article": "Hades (video game)",
+     "titles_used": 5
+    },
+    {
+     "d0": "2020-12-10",
+     "id": "T10365",
+     "day0": "2020-12-10",
+     "article": "Cyberpunk 2077",
+     "titles_used": 17
+    },
+    {
+     "d0": "2022-02-25",
+     "id": "T10373",
+     "day0": "2022-02-25",
+     "article": "Elden Ring",
+     "titles_used": 15
+    },
+    {
+     "d0": "2022-11-09",
+     "id": "T10374",
+     "day0": "2022-11-09",
+     "article": "God of War Ragnar\u00f6k",
+     "titles_used": 12
+    },
+    {
+     "d0": "2023-05-12",
+     "id": "T10379",
+     "day0": "2023-05-12",
+     "article": "The Legend of Zelda: Tears of the Kingdom",
+     "titles_used": 29
+    },
+    {
+     "d0": "2023-08-03",
+     "id": "T10378",
+     "day0": "2023-08-03",
+     "article": "Baldur's Gate 3",
+     "titles_used": 15
+    },
+    {
+     "d0": "2024-01-19",
+     "id": "T10383",
+     "day0": "2024-01-19",
+     "article": "Palworld",
+     "titles_used": 14
+    },
+    {
+     "d0": "2024-08-20",
+     "id": "T10384",
+     "day0": "2024-08-20",
+     "article": "Black Myth: Wukong",
+     "titles_used": 4
+    }
+   ],
+   "min_p_both": 0.5944055944055944,
+   "clustered_members": []
+  },
+  "academy_awards": {
+   "top": [
+    {
+     "echo": false,
+     "p_mad": 0.7173,
+     "p_rank": 0.6424,
+     "article": "Electricity demand: NYIS",
+     "score_mad": 2.419,
+     "loo_stable": false,
+     "score_rank": 1.894,
+     "member_z_mad": [
+      1.07,
+      1.06,
+      -0.05,
+      -0.47,
+      0.09,
+      2.74,
+      0.81,
+      0.96,
+      0.89,
+      0.56
+     ]
+    },
+    {
+     "echo": false,
+     "p_mad": 0.6563,
+     "p_rank": 0.7582,
+     "article": "Electricity demand: CPLW",
+     "score_mad": 2.546,
+     "loo_stable": false,
+     "score_rank": 1.731,
+     "member_z_mad": [
+      2.51,
+      0.08,
+      2.39,
+      1.62,
+      -0.14,
+      1.33,
+      0.65,
+      2.29,
+      0.99,
+      -3.67
+     ]
+    },
+    {
+     "echo": false,
+     "p_mad": 0.8412,
+     "p_rank": 0.7423,
+     "article": "Electricity demand: PJM",
+     "score_mad": 2.136,
+     "loo_stable": false,
+     "score_rank": 1.754,
+     "member_z_mad": [
+      1.34,
+      0.91,
+      0.98,
+      -0.2,
+      -0.28,
+      2.33,
+      0.66,
+      0.96,
+      1.81,
+      -1.76
+     ]
+    },
+    {
+     "echo": false,
+     "p_mad": 0.8631,
+     "p_rank": 0.7073,
+     "article": "Electricity demand: ISNE",
+     "score_mad": 2.066,
+     "loo_stable": false,
+     "score_rank": 1.794,
+     "member_z_mad": [
+      0.69,
+      0.95,
+      -0.12,
+      -1.04,
+      -0.23,
+      1.69,
+      1.13,
+      1.08,
+      0.88,
+      1.51
+     ]
+    },
+    {
+     "echo": false,
+     "p_mad": 0.998,
+     "p_rank": 0.963,
+     "article": "Electricity demand: US48",
+     "score_mad": 1.201,
+     "loo_stable": false,
+     "score_rank": 1.288,
+     "member_z_mad": [
+      2.02,
+      0.11,
+      0.9,
+      -0.76,
+      -0.62,
+      1.93,
+      1.03,
+      -0.03,
+      1,
+      -1.79
+     ]
+    },
+    {
+     "echo": false,
+     "p_mad": 0.999,
+     "p_rank": 0.999,
+     "article": "Electricity demand: CISO",
+     "score_mad": 1.119,
+     "loo_stable": false,
+     "score_rank": 0.826,
+     "member_z_mad": [
+      1.61,
+      -0.32,
+      2.19,
+      -0.07,
+      -0.65,
+      1.65,
+      -0.57,
+      -0.06,
+      -0.06,
+      -0.18
+     ]
+    },
+    {
+     "echo": false,
+     "p_mad": 0.992,
+     "p_rank": 1,
+     "article": "Electricity demand: AECI",
+     "score_mad": 1.368,
+     "loo_stable": false,
+     "score_rank": 0.384,
+     "member_z_mad": [
+      0.94,
+      -1.89,
+      0.44,
+      -0.79,
+      -0.02,
+      0.47,
+      3.16,
+      -0.64,
+      -1.34,
+      4
+     ]
+    },
+    {
+     "echo": false,
+     "p_mad": 1,
+     "p_rank": 0.998,
+     "article": "Electricity demand: PNM",
+     "score_mad": 1.036,
+     "loo_stable": false,
+     "score_rank": 0.957,
+     "member_z_mad": [
+      0.14,
+      0.81,
+      -0.31,
+      -0.68,
+      0.6,
+      -0.4,
+      0.84,
+      1.24,
+      0.77,
+      0.26
+     ]
+    },
+    {
+     "echo": false,
+     "p_mad": 1,
+     "p_rank": 0.999,
+     "article": "Electricity demand: SPA",
+     "score_mad": 0.982,
+     "loo_stable": false,
+     "score_rank": 0.821,
+     "member_z_mad": [
+      0.33,
+      -1.3,
+      0.48,
+      -1.34,
+      1.28,
+      -0.12,
+      0.75,
+      2.41,
+      0.63,
+      -0.02
+     ]
+    },
+    {
+     "echo": false,
+     "p_mad": 1,
+     "p_rank": 0.981,
+     "article": "Electricity demand: DUK",
+     "score_mad": 0.932,
+     "loo_stable": false,
+     "score_rank": 1.139,
+     "member_z_mad": [
+      1.64,
+      0.12,
+      0.74,
+      1.11,
+      -0.15,
+      0.32,
+      0.32,
+      1.13,
+      1.37,
+      -3.64
+     ]
+    }
+   ],
+   "n_used": 10,
+   "members": [
+    {
+     "d0": "2017-02-26",
+     "id": "E6253",
+     "day0": "2017-02-26",
+     "article": "89th Academy Awards",
+     "titles_used": 8
+    },
+    {
+     "d0": "2018-03-04",
+     "id": "E6268",
+     "day0": "2018-03-04",
+     "article": "90th Academy Awards",
+     "titles_used": 7
+    },
+    {
+     "d0": "2019-02-24",
+     "id": "E6271",
+     "day0": "2019-02-24",
+     "article": "91st Academy Awards",
+     "titles_used": 5
+    },
+    {
+     "d0": "2020-02-09",
+     "id": "E6252",
+     "day0": "2020-02-09",
+     "article": "92nd Academy Awards",
+     "titles_used": 4
+    },
+    {
+     "d0": "2021-04-25",
+     "id": "PR-OSC93",
+     "day0": "2021-04-25",
+     "article": "93rd Academy Awards",
+     "titles_used": 6
+    },
+    {
+     "d0": "2022-03-27",
+     "id": "E6275",
+     "day0": "2022-03-27",
+     "article": "94th Academy Awards",
+     "titles_used": 8
+    },
+    {
+     "d0": "2023-03-12",
+     "id": "E6266",
+     "day0": "2023-03-12",
+     "article": "95th Academy Awards",
+     "titles_used": 7
+    },
+    {
+     "d0": "2024-03-10",
+     "id": "E6262",
+     "day0": "2024-03-10",
+     "article": "96th Academy Awards",
+     "titles_used": 5
+    },
+    {
+     "d0": "2025-03-02",
+     "id": "PR-OSC97",
+     "day0": "2025-03-02",
+     "article": "97th Academy Awards",
+     "titles_used": 6
+    },
+    {
+     "d0": "2026-03-15",
+     "id": "PR-OSC98",
+     "day0": "2026-03-15",
+     "article": "98th Academy Awards",
+     "titles_used": 8
+    }
+   ],
+   "min_p_both": 0.7172827172827173,
+   "clustered_members": []
+  },
+  "scotus_rulings": {
+   "top": [
+    {
+     "echo": false,
+     "p_mad": 0.1339,
+     "p_rank": 0.0679,
+     "article": "Electricity demand: SPA",
+     "score_mad": 3.86,
+     "loo_stable": false,
+     "score_rank": 2.904,
+     "member_z_mad": [
+      -0.48,
+      1.29,
+      0.05,
+      -0.14,
+      2.77,
+      3.18,
+      0.77,
+      1.55,
+      0,
+      -0.47,
+      3.11,
+      -0.56,
+      2.86
+     ]
+    },
+    {
+     "echo": false,
+     "p_mad": 0.1588,
+     "p_rank": 0.0679,
+     "article": "Market: 10-year breakeven inflation",
+     "score_mad": 3.734,
+     "loo_stable": false,
+     "score_rank": 2.907,
+     "member_z_mad": [
+      1.09,
+      0.32,
+      -1.02,
+      1.61,
+      0.19,
+      0.2,
+      4,
+      -0.33,
+      1.08,
+      0.9,
+      2.05,
+      0.6,
+      2.78
+     ]
+    },
+    {
+     "echo": false,
+     "p_mad": 0.1678,
+     "p_rank": 0.1279,
+     "article": "Market: 5-year breakeven inflation",
+     "score_mad": 3.688,
+     "loo_stable": false,
+     "score_rank": 2.717,
+     "member_z_mad": [
+      -0.21,
+      0.51,
+      -1.25,
+      1.9,
+      0.95,
+      0.05,
+      4,
+      0.53,
+      0.62,
+      0.45,
+      2.23,
+      0.93,
+      2.58
+     ]
+    },
+    {
+     "echo": false,
+     "p_mad": 0.5175,
+     "p_rank": 0.3007,
+     "article": "Market: WTI crude oil price",
+     "score_mad": 2.85,
+     "loo_stable": false,
+     "score_rank": 2.374,
+     "member_z_mad": [
+      -0.64,
+      1.9,
+      2.42,
+      0.85,
+      0.5,
+      -0.08,
+      1.35,
+      1.76,
+      -0.43,
+      -0.37,
+      1.78,
+      0.02,
+      1.22
+     ]
+    },
+    {
+     "echo": false,
+     "p_mad": 0.5215,
+     "p_rank": 0.2328,
+     "article": "Electricity demand: SWPP",
+     "score_mad": 2.845,
+     "loo_stable": false,
+     "score_rank": 2.504,
+     "member_z_mad": [
+      -0.32,
+      0.66,
+      1.39,
+      0.94,
+      -0.02,
+      0.61,
+      0.81,
+      -0.39,
+      0.93,
+      -0.76,
+      1.61,
+      2.56,
+      2.24
+     ]
+    },
+    {
+     "echo": false,
+     "p_mad": 0.3786,
+     "p_rank": 0.6154,
+     "article": "Market: 5-year Treasury yield",
+     "score_mad": 3.081,
+     "loo_stable": false,
+     "score_rank": 1.976,
+     "member_z_mad": [
+      0.26,
+      0.07,
+      -1.86,
+      0.04,
+      0.03,
+      0.14,
+      2.06,
+      1.09,
+      3.2,
+      2.5,
+      -0.11,
+      -0.02,
+      3.71
+     ]
+    },
+    {
+     "echo": false,
+     "p_mad": 0.6274,
+     "p_rank": 0.2018,
+     "article": "Electricity demand: SCL",
+     "score_mad": 2.649,
+     "loo_stable": false,
+     "score_rank": 2.571,
+     "member_z_mad": [
+      -0.13,
+      0.69,
+      0.28,
+      1.97,
+      1.17,
+      0.15,
+      1.47,
+      0.83,
+      -0.13,
+      0.82,
+      1.71,
+      1.02,
+      -0.3
+     ]
+    },
+    {
+     "echo": false,
+     "p_mad": 0.4386,
+     "p_rank": 0.6553,
+     "article": "Market: 10-year Treasury yield",
+     "score_mad": 2.982,
+     "loo_stable": false,
+     "score_rank": 1.93,
+     "member_z_mad": [
+      0.45,
+      0.03,
+      -1.53,
+      0.12,
+      0.09,
+      0.45,
+      2.08,
+      1.32,
+      2.95,
+      1.9,
+      -0.41,
+      -0.07,
+      3.39
+     ]
+    },
+    {
+     "echo": false,
+     "p_mad": 0.6753,
+     "p_rank": 0.5385,
+     "article": "Electricity demand: TEC",
+     "score_mad": 2.549,
+     "loo_stable": false,
+     "score_rank": 2.065,
+     "member_z_mad": [
+      1.03,
+      -0.33,
+      1.93,
+      1.99,
+      0.92,
+      1.61,
+      1.7,
+      0.27,
+      0,
+      -0.1,
+      -0.32,
+      -0.41,
+      0.88
+     ]
+    },
+    {
+     "echo": false,
+     "p_mad": 0.4176,
+     "p_rank": 0.7582,
+     "article": "Market: 2-year Treasury yield",
+     "score_mad": 3.009,
+     "loo_stable": false,
+     "score_rank": 1.807,
+     "member_z_mad": [
+      0.91,
+      0.12,
+      -1.2,
+      -0.12,
+      0.05,
+      0.34,
+      2.12,
+      -0.17,
+      3.39,
+      2.86,
+      0,
+      -0.29,
+      2.85
+     ]
+    }
+   ],
+   "n_used": 13,
+   "members": [
+    {
+     "d0": "2018-06-04",
+     "id": "T10444",
+     "day0": "2018-06-04",
+     "article": "Masterpiece Cakeshop v. Colorado Civil Rights Commission",
+     "titles_used": 17
+    },
+    {
+     "d0": "2018-06-22",
+     "id": "T10443",
+     "day0": "2018-06-22",
+     "article": "Carpenter v. United States",
+     "titles_used": 6
+    },
+    {
+     "d0": "2019-06-27",
+     "id": "T10445",
+     "day0": "2019-06-27",
+     "article": "Rucho v. Common Cause",
+     "titles_used": 3
+    },
+    {
+     "d0": "2020-06-15",
+     "id": "T10446",
+     "day0": "2020-06-15",
+     "article": "Bostock v. Clayton County",
+     "titles_used": 7
+    },
+    {
+     "d0": "2020-07-09",
+     "id": "T10447",
+     "day0": "2020-07-09",
+     "article": "McGirt v. Oklahoma",
+     "titles_used": 5
+    },
+    {
+     "d0": "2022-06-23",
+     "id": "T10449",
+     "day0": "2022-06-23",
+     "article": "New York State Rifle & Pistol Association v. Bruen",
+     "titles_used": 18
+    },
+    {
+     "d0": "2022-06-24",
+     "id": "T10448",
+     "day0": "2022-06-24",
+     "article": "Dobbs v. Jackson Women's Health Organization",
+     "titles_used": 13
+    },
+    {
+     "d0": "2022-06-30",
+     "id": "T10450",
+     "day0": "2022-06-30",
+     "article": "West Virginia v. EPA",
+     "titles_used": 8
+    },
+    {
+     "d0": "2023-06-29",
+     "id": "T10452",
+     "day0": "2023-06-29",
+     "article": "Students for Fair Admissions v. Harvard",
+     "titles_used": 31
+    },
+    {
+     "d0": "2023-06-30",
+     "id": "T10451",
+     "day0": "2023-06-30",
+     "article": "303 Creative LLC v. Elenis",
+     "titles_used": 6
+    },
+    {
+     "d0": "2024-06-27",
+     "id": "T10453",
+     "day0": "2024-06-27",
+     "article": "SEC v. Jarkesy",
+     "titles_used": 6
+    },
+    {
+     "d0": "2024-06-28",
+     "id": "T10454",
+     "day0": "2024-06-28",
+     "article": "Loper Bright Enterprises v. Raimondo",
+     "titles_used": 6
+    },
+    {
+     "d0": "2024-07-01",
+     "id": "T10455",
+     "day0": "2024-07-01",
+     "article": "Trump v. United States",
+     "titles_used": 11
+    }
+   ],
+   "min_p_both": 0.13386613386613386,
+   "clustered_members": [
+    "T10443",
+    "T10444",
+    "T10446",
+    "T10447",
+    "T10448",
+    "T10449",
+    "T10450",
+    "T10451",
+    "T10452",
+    "T10453",
+    "T10454",
+    "T10455"
+   ]
+  },
+  "drama_premieres": {
+   "top": [
+    {
+     "echo": false,
+     "p_mad": 0.6533,
+     "p_rank": 0.7383,
+     "article": "Electricity demand: GVL",
+     "score_mad": 2.4,
+     "loo_stable": false,
+     "score_rank": 1.8,
+     "member_z_mad": [
+      1.26,
+      -0.07,
+      0.21,
+      0.85,
+      -0.51,
+      0,
+      0.98,
+      -0.54,
+      2.82,
+      0.86,
+      4,
+      2.15,
+      -1.03,
+      -1.74,
+      -0.28,
+      0.43,
+      -0.13,
+      0.45,
+      0.81,
+      0.23
+     ]
+    },
+    {
+     "echo": false,
+     "p_mad": 0.8152,
+     "p_rank": 0.7512,
+     "article": "Electricity demand: AVA",
+     "score_mad": 2.151,
+     "loo_stable": false,
+     "score_rank": 1.778,
+     "member_z_mad": [
+      0.36,
+      -0.18,
+      1.54,
+      1.17,
+      -0.39,
+      -0.16,
+      0.66,
+      -0.03,
+      3.05,
+      3,
+      -0.32,
+      -0.1,
+      0.34,
+      -2.08,
+      0.53,
+      -0.36,
+      1.68,
+      -0.57,
+      0.34,
+      1.13
+     ]
+    },
+    {
+     "echo": false,
+     "p_mad": 0.8192,
+     "p_rank": 0.7023,
+     "article": "Electricity demand: JEA",
+     "score_mad": 2.141,
+     "loo_stable": false,
+     "score_rank": 1.839,
+     "member_z_mad": [
+      0.68,
+      0.58,
+      0.7,
+      0.82,
+      -0.44,
+      0.8,
+      1.09,
+      0.19,
+      1.14,
+      0.21,
+      4,
+      1.53,
+      -0.8,
+      -2.43,
+      -0.23,
+      0.76,
+      -0.99,
+      1.28,
+      0.61,
+      0.08
+     ]
+    },
+    {
+     "echo": false,
+     "p_mad": 0.9481,
+     "p_rank": 0.8541,
+     "article": "Electricity demand: TAL",
+     "score_mad": 1.78,
+     "loo_stable": false,
+     "score_rank": 1.608,
+     "member_z_mad": [
+      1.43,
+      0.87,
+      0.16,
+      0.59,
+      -1.02,
+      0.92,
+      0.89,
+      0.01,
+      1.31,
+      -0.15,
+      4,
+      1.23,
+      -0.56,
+      -1.23,
+      -0.66,
+      -0.24,
+      -0.16,
+      0.13,
+      0.25,
+      0.2
+     ]
+    },
+    {
+     "echo": false,
+     "p_mad": 0.971,
+     "p_rank": 0.9281,
+     "article": "Electricity demand: IPCO",
+     "score_mad": 1.6,
+     "loo_stable": false,
+     "score_rank": 1.45,
+     "member_z_mad": [
+      1.25,
+      0.24,
+      2.14,
+      2.2,
+      -1.37,
+      1.36,
+      1.38,
+      -1.79,
+      1.09,
+      2.33,
+      -1.62,
+      -0.38,
+      0.67,
+      -1.11,
+      0,
+      -0.34,
+      1.15,
+      0.75,
+      -1.12,
+      0.33
+     ]
+    },
+    {
+     "echo": false,
+     "p_mad": 0.961,
+     "p_rank": 0.979,
+     "article": "Electricity demand: AECI",
+     "score_mad": 1.694,
+     "loo_stable": false,
+     "score_rank": 1.234,
+     "member_z_mad": [
+      0.29,
+      2.71,
+      -0.89,
+      0.62,
+      -0.83,
+      -1.5,
+      1.03,
+      -0.04,
+      2.48,
+      0.57,
+      -0.95,
+      1,
+      -0.44,
+      -0.31,
+      1.55,
+      0.07,
+      -0.43,
+      0.03,
+      0.72,
+      1.91
+     ]
+    },
+    {
+     "echo": false,
+     "p_mad": 0.987,
+     "p_rank": 0.989,
+     "article": "Electricity demand: TEPC",
+     "score_mad": 1.439,
+     "loo_stable": false,
+     "score_rank": 1.096,
+     "member_z_mad": [
+      1,
+      -1.04,
+      0.37,
+      1.24,
+      -0.19,
+      1.44,
+      1.99,
+      1.93,
+      0.6,
+      0.38,
+      0,
+      2.19,
+      -1.64,
+      0.07,
+      0.08,
+      -0.11,
+      -1.68,
+      0.43,
+      -1.18,
+      0.56
+     ]
+    },
+    {
+     "echo": false,
+     "p_mad": 0.99,
+     "p_rank": 0.985,
+     "article": "Market: US dollar in Canadian dollars",
+     "score_mad": 1.366,
+     "loo_stable": false,
+     "score_rank": 1.156,
+     "member_z_mad": [
+      -0.13,
+      1.28,
+      1.19,
+      0.11,
+      -0.78,
+      -0.12,
+      -0.27,
+      0.61,
+      -0.31,
+      0.16,
+      0.21,
+      1.39,
+      0.97,
+      -0.16,
+      1.34,
+      -0.81,
+      1.24,
+      -0.39,
+      -0.37,
+      0.97
+     ]
+    },
+    {
+     "echo": false,
+     "p_mad": 0.987,
+     "p_rank": 0.994,
+     "article": "Electricity demand: AEC",
+     "score_mad": 1.445,
+     "loo_stable": false,
+     "score_rank": 0.975,
+     "member_z_mad": [
+      0.16,
+      0.82,
+      0.53,
+      0.24,
+      -0.19,
+      0.06,
+      0.76,
+      0.5,
+      0.13,
+      -0.27,
+      3.72,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0
+     ]
+    },
+    {
+     "echo": false,
+     "p_mad": 0.998,
+     "p_rank": 0.986,
+     "article": "Electricity demand: PSEI",
+     "score_mad": 1.232,
+     "loo_stable": false,
+     "score_rank": 1.131,
+     "member_z_mad": [
+      0.41,
+      -0.56,
+      0.73,
+      0.88,
+      -1.05,
+      0,
+      3.01,
+      0.38,
+      0,
+      0,
+      0,
+      0.08,
+      0.62,
+      -2.39,
+      1.63,
+      0.07,
+      0.93,
+      -0.12,
+      0.24,
+      0.66
+     ]
+    }
+   ],
+   "n_used": 20,
+   "members": [
+    {
+     "d0": "2016-10-02",
+     "id": "T10021",
+     "day0": "2016-10-02",
+     "article": "Westworld (TV series)",
+     "titles_used": 16
+    },
+    {
+     "d0": "2016-11-04",
+     "id": "T10020",
+     "day0": "2016-11-04",
+     "article": "The Crown (TV series)",
+     "titles_used": 8
+    },
+    {
+     "d0": "2017-04-26",
+     "id": "T10029",
+     "day0": "2017-04-26",
+     "article": "The Handmaid's Tale (TV series)",
+     "titles_used": 11
+    },
+    {
+     "d0": "2017-10-13",
+     "id": "T10032",
+     "day0": "2017-10-13",
+     "article": "Mindhunter (TV series)",
+     "titles_used": 22
+    },
+    {
+     "d0": "2018-04-08",
+     "id": "T10038",
+     "day0": "2018-04-08",
+     "article": "Killing Eve",
+     "titles_used": 10
+    },
+    {
+     "d0": "2018-06-03",
+     "id": "T10039",
+     "day0": "2018-06-03",
+     "article": "Succession (TV series)",
+     "titles_used": 12
+    },
+    {
+     "d0": "2019-05-06",
+     "id": "T10048",
+     "day0": "2019-05-06",
+     "article": "Chernobyl (miniseries)",
+     "titles_used": 11
+    },
+    {
+     "d0": "2019-07-26",
+     "id": "T10051",
+     "day0": "2019-07-26",
+     "article": "The Boys (TV series)",
+     "titles_used": 8
+    },
+    {
+     "d0": "2019-11-12",
+     "id": "T10053",
+     "day0": "2019-11-12",
+     "article": "The Mandalorian",
+     "titles_used": 12
+    },
+    {
+     "d0": "2020-10-23",
+     "id": "T10064",
+     "day0": "2020-10-23",
+     "article": "The Queen's Gambit (miniseries)",
+     "titles_used": 4
+    },
+    {
+     "d0": "2020-12-25",
+     "id": "T10067",
+     "day0": "2020-12-25",
+     "article": "Bridgerton",
+     "titles_used": 40
+    },
+    {
+     "d0": "2021-07-11",
+     "id": "T10081",
+     "day0": "2021-07-11",
+     "article": "The White Lotus",
+     "titles_used": 7
+    },
+    {
+     "d0": "2021-09-17",
+     "id": "T10082",
+     "day0": "2021-09-17",
+     "article": "Squid Game",
+     "titles_used": 25
+    },
+    {
+     "d0": "2022-02-18",
+     "id": "T10111",
+     "day0": "2022-02-18",
+     "article": "Severance (TV series)",
+     "titles_used": 17
+    },
+    {
+     "d0": "2022-06-23",
+     "id": "T10112",
+     "day0": "2022-06-23",
+     "article": "The Bear (TV series)",
+     "titles_used": 5
+    },
+    {
+     "d0": "2023-01-15",
+     "id": "T10126",
+     "day0": "2023-01-15",
+     "article": "The Last of Us (TV series)",
+     "titles_used": 9
+    },
+    {
+     "d0": "2024-02-27",
+     "id": "T10137",
+     "day0": "2024-02-27",
+     "article": "Sh\u014dgun (2024 TV series)",
+     "titles_used": 7
+    },
+    {
+     "d0": "2024-04-11",
+     "id": "T10141",
+     "day0": "2024-04-11",
+     "article": "Baby Reindeer",
+     "titles_used": 8
+    },
+    {
+     "d0": "2024-09-19",
+     "id": "T10152",
+     "day0": "2024-09-19",
+     "article": "The Penguin (TV series)",
+     "titles_used": 2
+    },
+    {
+     "d0": "2025-03-13",
+     "id": "T10182",
+     "day0": "2025-03-13",
+     "article": "Adolescence (TV series)",
+     "titles_used": 6
+    }
+   ],
+   "min_p_both": 0.7382617382617382,
+   "clustered_members": []
+  },
+  "football_finals": {
+   "top": [
+    {
+     "echo": false,
+     "p_mad": 0.4496,
+     "p_rank": 0.3087,
+     "article": "Electricity demand: US48",
+     "score_mad": 2.856,
+     "loo_stable": false,
+     "score_rank": 2.422,
+     "member_z_mad": [
+      1.36,
+      1.29,
+      2.66,
+      0.92,
+      1.11,
+      -0.57,
+      0.1,
+      0.68,
+      1.35,
+      0.66,
+      -0.07
+     ]
+    },
+    {
+     "echo": false,
+     "p_mad": 0.4985,
+     "p_rank": 0.1988,
+     "article": "Electricity demand: EPE",
+     "score_mad": 2.762,
+     "loo_stable": false,
+     "score_rank": 2.63,
+     "member_z_mad": [
+      1.7,
+      0.33,
+      0.08,
+      1.91,
+      -0.21,
+      -0.38,
+      1.76,
+      1.02,
+      0.95,
+      1.62,
+      0.38
+     ]
+    },
+    {
+     "echo": false,
+     "p_mad": 0.9191,
+     "p_rank": 0.7952,
+     "article": "Electricity demand: PACE",
+     "score_mad": 1.958,
+     "loo_stable": false,
+     "score_rank": 1.763,
+     "member_z_mad": [
+      0.87,
+      -0.03,
+      2.45,
+      0.34,
+      0.64,
+      -0.2,
+      -0.47,
+      0.79,
+      1.41,
+      0.44,
+      0.26
+     ]
+    },
+    {
+     "echo": false,
+     "p_mad": 0.959,
+     "p_rank": 0.8492,
+     "article": "Market: US dollar in Canadian dollars",
+     "score_mad": 1.813,
+     "loo_stable": false,
+     "score_rank": 1.674,
+     "member_z_mad": [
+      0.28,
+      0.93,
+      -0.47,
+      2.1,
+      -0.39,
+      1.18,
+      -0.16,
+      1.13,
+      0.91,
+      0.77,
+      -0.28
+     ]
+    },
+    {
+     "echo": false,
+     "p_mad": 0.965,
+     "p_rank": 0.9131,
+     "article": "Electricity demand: PJM",
+     "score_mad": 1.765,
+     "loo_stable": false,
+     "score_rank": 1.518,
+     "member_z_mad": [
+      0.78,
+      1.46,
+      0.86,
+      1.32,
+      0.38,
+      -0.21,
+      -1.33,
+      0.92,
+      1.39,
+      0.76,
+      -0.48
+     ]
+    },
+    {
+     "echo": false,
+     "p_mad": 0.6424,
+     "p_rank": 0.973,
+     "article": "Market: SOFR overnight rate",
+     "score_mad": 2.504,
+     "loo_stable": false,
+     "score_rank": 1.321,
+     "member_z_mad": [
+      0,
+      0.64,
+      -0.26,
+      4,
+      -0.65,
+      0.04,
+      -0.28,
+      4,
+      0.38,
+      0.04,
+      0.4
+     ]
+    },
+    {
+     "echo": false,
+     "p_mad": 0.974,
+     "p_rank": 0.8971,
+     "article": "Electricity demand: PNM",
+     "score_mad": 1.635,
+     "loo_stable": false,
+     "score_rank": 1.562,
+     "member_z_mad": [
+      0.25,
+      -1.32,
+      1.1,
+      0.61,
+      1,
+      1.04,
+      0.42,
+      1.17,
+      0.2,
+      1.04,
+      -0.09
+     ]
+    },
+    {
+     "echo": false,
+     "p_mad": 0.989,
+     "p_rank": 0.978,
+     "article": "Electricity demand: NYIS",
+     "score_mad": 1.399,
+     "loo_stable": false,
+     "score_rank": 1.257,
+     "member_z_mad": [
+      -0.34,
+      2.69,
+      0.58,
+      0.75,
+      0.62,
+      0.92,
+      0.22,
+      0.3,
+      -1.37,
+      0.52,
+      -0.25
+     ]
+    },
+    {
+     "echo": false,
+     "p_mad": 0.989,
+     "p_rank": 0.992,
+     "article": "Electricity demand: MISO",
+     "score_mad": 1.373,
+     "loo_stable": false,
+     "score_rank": 1.121,
+     "member_z_mad": [
+      1.43,
+      0.71,
+      1.14,
+      0.51,
+      -0.18,
+      -1.99,
+      -0.69,
+      0.92,
+      1.53,
+      1.29,
+      -0.12
+     ]
+    },
+    {
+     "echo": false,
+     "p_mad": 0.994,
+     "p_rank": 0.992,
+     "article": "Market: Trade-weighted US dollar",
+     "score_mad": 1.244,
+     "loo_stable": false,
+     "score_rank": 1.117,
+     "member_z_mad": [
+      0.66,
+      -0.25,
+      -1.04,
+      2.1,
+      -0.49,
+      0.36,
+      -0.13,
+      0.7,
+      1.18,
+      0.84,
+      0.21
+     ]
+    }
+   ],
+   "n_used": 11,
+   "members": [
+    {
+     "d0": "2017-06-03",
+     "id": "T10393",
+     "day0": "2017-06-03",
+     "article": "2017 UEFA Champions League final",
+     "titles_used": 2
+    },
+    {
+     "d0": "2018-05-26",
+     "id": "T10396",
+     "day0": "2018-05-26",
+     "article": "2018 UEFA Champions League final",
+     "titles_used": 2
+    },
+    {
+     "d0": "2018-07-15",
+     "id": "T10397",
+     "day0": "2018-07-15",
+     "article": "2018 FIFA World Cup final",
+     "titles_used": 5
+    },
+    {
+     "d0": "2019-06-01",
+     "id": "T10400",
+     "day0": "2019-06-01",
+     "article": "2019 UEFA Champions League final",
+     "titles_used": 4
+    },
+    {
+     "id": "T10403",
+     "day0": "2019-07-07",
+     "skip": "no attention rise",
+     "article": "2019 FIFA Women's World Cup",
+     "titles_used": 16
+    },
+    {
+     "d0": "2020-08-23",
+     "id": "T10407",
+     "day0": "2020-08-23",
+     "article": "2020 UEFA Champions League final",
+     "titles_used": 3
+    },
+    {
+     "d0": "2021-05-29",
+     "id": "T10410",
+     "day0": "2021-05-29",
+     "article": "2021 UEFA Champions League final",
+     "titles_used": 4
+    },
+    {
+     "d0": "2022-05-28",
+     "id": "T10414",
+     "day0": "2022-05-28",
+     "article": "2022 UEFA Champions League final",
+     "titles_used": 3
+    },
+    {
+     "d0": "2022-12-18",
+     "id": "T10415",
+     "day0": "2022-12-18",
+     "article": "2022 FIFA World Cup final",
+     "titles_used": 6
+    },
+    {
+     "d0": "2023-06-10",
+     "id": "T10419",
+     "day0": "2023-06-10",
+     "article": "2023 UEFA Champions League final",
+     "titles_used": 3
+    },
+    {
+     "d0": "2023-08-20",
+     "id": "T10420",
+     "day0": "2023-08-20",
+     "article": "2023 FIFA Women's World Cup final",
+     "titles_used": 2
+    },
+    {
+     "d0": "2024-06-01",
+     "id": "T10424",
+     "day0": "2024-06-01",
+     "article": "2024 UEFA Champions League final",
+     "titles_used": 2
+    }
+   ],
+   "min_p_both": 0.44955044955044954,
+   "clustered_members": []
+  },
+  "console_launches": {
+   "top": [
+    {
+     "echo": false,
+     "p_mad": 0.4046,
+     "p_rank": 0.4286,
+     "article": "Electricity demand: TEPC",
+     "score_mad": 2.893,
+     "loo_stable": false,
+     "score_rank": 2.211,
+     "member_z_mad": [
+      -0.72,
+      -0.37,
+      -0.09,
+      -0.5,
+      3.19,
+      0.44,
+      2.64,
+      1.48,
+      0.97,
+      2.28,
+      0.24,
+      0.46
+     ]
+    },
+    {
+     "echo": false,
+     "p_mad": 0.4765,
+     "p_rank": 0.5365,
+     "article": "Electricity demand: DOPD",
+     "score_mad": 2.788,
+     "loo_stable": false,
+     "score_rank": 2.071,
+     "member_z_mad": [
+      -0.59,
+      -0.28,
+      2.76,
+      0.16,
+      1.48,
+      1.09,
+      0.61,
+      0.69,
+      0.39,
+      3.44,
+      -0.8,
+      0.7
+     ]
+    },
+    {
+     "echo": false,
+     "p_mad": 0.7892,
+     "p_rank": 0.8541,
+     "article": "Electricity demand: CHPD",
+     "score_mad": 2.26,
+     "loo_stable": false,
+     "score_rank": 1.645,
+     "member_z_mad": [
+      -0.82,
+      -0.07,
+      1.99,
+      -0.82,
+      1.25,
+      0.71,
+      0.47,
+      0.95,
+      0.69,
+      3.76,
+      -0.67,
+      0.38
+     ]
+    },
+    {
+     "echo": false,
+     "p_mad": 0.991,
+     "p_rank": 0.964,
+     "article": "Market: US dollar in Japanese yen",
+     "score_mad": 1.542,
+     "loo_stable": false,
+     "score_rank": 1.357,
+     "member_z_mad": [
+      -0.11,
+      0.87,
+      1.96,
+      0.71,
+      0.91,
+      0.28,
+      1.69,
+      -0.77,
+      -0.03,
+      -0.57,
+      0.18,
+      0.22
+     ]
+    },
+    {
+     "echo": false,
+     "p_mad": 0.956,
+     "p_rank": 0.994,
+     "article": "Electricity demand: NWMT",
+     "score_mad": 1.754,
+     "loo_stable": false,
+     "score_rank": 1.084,
+     "member_z_mad": [
+      0.71,
+      -1.28,
+      -0.25,
+      -0.44,
+      2.89,
+      -0.29,
+      0.01,
+      0.21,
+      0.79,
+      3.77,
+      0.42,
+      -0.47
+     ]
+    },
+    {
+     "echo": false,
+     "p_mad": 0.998,
+     "p_rank": 0.999,
+     "article": "Electricity demand: GCPD",
+     "score_mad": 1.294,
+     "loo_stable": false,
+     "score_rank": 0.822,
+     "member_z_mad": [
+      -0.92,
+      0.63,
+      2.26,
+      -1.57,
+      1.58,
+      0.31,
+      -0.3,
+      0.22,
+      0.55,
+      3.68,
+      -1.29,
+      -0.67
+     ]
+    },
+    {
+     "echo": false,
+     "p_mad": 0.999,
+     "p_rank": 0.994,
+     "article": "Electricity demand: PSEI",
+     "score_mad": 1.203,
+     "loo_stable": false,
+     "score_rank": 1.084,
+     "member_z_mad": [
+      0.19,
+      0.86,
+      1.65,
+      -0.1,
+      1.08,
+      0,
+      0,
+      0.48,
+      -0.05,
+      1.15,
+      -1.06,
+      -0.04
+     ]
+    },
+    {
+     "echo": false,
+     "p_mad": 0.999,
+     "p_rank": 0.999,
+     "article": "Market: US dollar in Chinese yuan",
+     "score_mad": 1.147,
+     "loo_stable": false,
+     "score_rank": 0.878,
+     "member_z_mad": [
+      0.63,
+      0.34,
+      0.7,
+      0.22,
+      -1.42,
+      2.7,
+      1.55,
+      0.88,
+      -1.21,
+      0.24,
+      0.07,
+      -0.72
+     ]
+    },
+    {
+     "echo": false,
+     "p_mad": 0.998,
+     "p_rank": 1,
+     "article": "Market: 3-month Treasury yield",
+     "score_mad": 1.241,
+     "loo_stable": false,
+     "score_rank": 0.296,
+     "member_z_mad": [
+      -2.28,
+      -0.01,
+      4,
+      0.77,
+      -0.44,
+      0.27,
+      -0.71,
+      0.43,
+      -0.94,
+      2.92,
+      -0.92,
+      1.22
+     ]
+    },
+    {
+     "echo": false,
+     "p_mad": 1,
+     "p_rank": 1,
+     "article": "Electricity demand: WALC",
+     "score_mad": 0.877,
+     "loo_stable": false,
+     "score_rank": 0.574,
+     "member_z_mad": [
+      -0.86,
+      -0.8,
+      1.7,
+      -0.95,
+      -0.3,
+      0.53,
+      1.69,
+      -0.51,
+      -0.18,
+      2.32,
+      0.7,
+      -0.31
+     ]
+    }
+   ],
+   "n_used": 12,
+   "members": [
+    {
+     "d0": "2016-10-13",
+     "id": "E8153",
+     "day0": "2016-10-13",
+     "article": "PlayStation VR",
+     "titles_used": 20
+    },
+    {
+     "d0": "2016-11-10",
+     "id": "T10488",
+     "day0": "2016-11-10",
+     "article": "PlayStation 4 Pro",
+     "titles_used": 72
+    },
+    {
+     "d0": "2017-03-03",
+     "id": "T10486",
+     "day0": "2017-03-03",
+     "article": "Nintendo Switch",
+     "titles_used": 46
+    },
+    {
+     "d0": "2017-11-07",
+     "id": "T10487",
+     "day0": "2017-11-07",
+     "article": "Xbox One X",
+     "titles_used": 74
+    },
+    {
+     "d0": "2019-09-20",
+     "id": "T10489",
+     "day0": "2019-09-20",
+     "article": "Nintendo Switch Lite",
+     "titles_used": 46
+    },
+    {
+     "d0": "2020-10-13",
+     "id": "E10378",
+     "day0": "2020-10-13",
+     "article": "Oculus Quest 2",
+     "titles_used": 11
+    },
+    {
+     "d0": "2020-11-12",
+     "id": "T10491",
+     "day0": "2020-11-12",
+     "article": "PlayStation 5",
+     "titles_used": 26
+    },
+    {
+     "d0": "2021-10-08",
+     "id": "E6203",
+     "day0": "2021-10-08",
+     "article": "Nintendo Switch OLED Model",
+     "titles_used": 46
+    },
+    {
+     "d0": "2022-02-25",
+     "id": "T10492",
+     "day0": "2022-02-25",
+     "article": "Steam Deck",
+     "titles_used": 7
+    },
+    {
+     "d0": "2023-02-22",
+     "id": "E6228",
+     "day0": "2023-02-22",
+     "article": "PlayStation VR2",
+     "titles_used": 5
+    },
+    {
+     "d0": "2023-10-10",
+     "id": "E6196",
+     "day0": "2023-10-10",
+     "article": "Meta Quest 3",
+     "titles_used": 2
+    },
+    {
+     "d0": "2025-06-05",
+     "id": "T10493",
+     "day0": "2025-06-05",
+     "article": "Nintendo Switch 2",
+     "titles_used": 19
+    }
+   ],
+   "min_p_both": 0.42857142857142855,
+   "clustered_members": [
+    "E10378",
+    "E8153",
+    "T10488",
+    "T10491"
+   ]
+  },
+  "true_story_films": {
+   "top": [
+    {
+     "echo": false,
+     "p_mad": 0.997,
+     "p_rank": 0.992,
+     "article": "Electricity demand: LDWP",
+     "score_mad": 1.198,
+     "loo_stable": false,
+     "score_rank": 1.077,
+     "member_z_mad": [
+      0.56,
+      0.33,
+      1.08,
+      0.16,
+      1.53,
+      0.83,
+      0.05,
+      -0.64,
+      0.63,
+      0.63,
+      -0.56,
+      0.31,
+      -0.69,
+      0.61,
+      0.02,
+      0.98,
+      -0.14,
+      0.18,
+      -0.64
+     ]
+    },
+    {
+     "echo": false,
+     "p_mad": 0.998,
+     "p_rank": 0.9391,
+     "article": "Market: 3-month Treasury yield",
+     "score_mad": 1.101,
+     "loo_stable": false,
+     "score_rank": 1.44,
+     "member_z_mad": [
+      -3.8,
+      2.56,
+      1.73,
+      1.04,
+      0.77,
+      0.41,
+      1.16,
+      -0.56,
+      0.01,
+      0.73,
+      4,
+      0.83,
+      0.1,
+      -2.72,
+      -1.61,
+      0.31,
+      0.1,
+      -0.05,
+      -0.2
+     ]
+    },
+    {
+     "echo": false,
+     "p_mad": 0.998,
+     "p_rank": 0.999,
+     "article": "Market: 10-year breakeven inflation",
+     "score_mad": 1.135,
+     "loo_stable": false,
+     "score_rank": 0.843,
+     "member_z_mad": [
+      0.9,
+      -0.82,
+      0.17,
+      0.93,
+      0,
+      0.52,
+      -0.51,
+      0.14,
+      -0.67,
+      1.09,
+      3.51,
+      -0.45,
+      -0.46,
+      -1.39,
+      1.08,
+      0.67,
+      0.09,
+      0.76,
+      -0.6
+     ]
+    },
+    {
+     "echo": false,
+     "p_mad": 0.999,
+     "p_rank": 0.996,
+     "article": "Market: US dollar in Japanese yen",
+     "score_mad": 1.099,
+     "loo_stable": false,
+     "score_rank": 0.967,
+     "member_z_mad": [
+      1.63,
+      -0.24,
+      0.17,
+      0.56,
+      0.14,
+      0.67,
+      0.33,
+      -0.28,
+      0.08,
+      0.86,
+      2.19,
+      -0.77,
+      -0.28,
+      -0.47,
+      1.58,
+      -1.29,
+      1.69,
+      -2.7,
+      0.91
+     ]
+    },
+    {
+     "echo": false,
+     "p_mad": 1,
+     "p_rank": 0.996,
+     "article": "Electricity demand: IPCO",
+     "score_mad": 1.08,
+     "loo_stable": false,
+     "score_rank": 0.985,
+     "member_z_mad": [
+      1.74,
+      -0.82,
+      -0.38,
+      0.98,
+      1,
+      0.22,
+      -0.06,
+      -0.57,
+      1.87,
+      -0.07,
+      -0.42,
+      0.75,
+      -0.67,
+      0.82,
+      -0.21,
+      0.32,
+      0.69,
+      0.82,
+      -1.3
+     ]
+    },
+    {
+     "echo": false,
+     "p_mad": 1,
+     "p_rank": 0.998,
+     "article": "Market: Euro in US dollars",
+     "score_mad": 1.076,
+     "loo_stable": false,
+     "score_rank": 0.947,
+     "member_z_mad": [
+      -0.26,
+      1.1,
+      0.12,
+      -0.49,
+      0.87,
+      0.91,
+      0.28,
+      -0.1,
+      -0.29,
+      -0.29,
+      -0.79,
+      -0.14,
+      0.33,
+      -0.1,
+      0.29,
+      2.69,
+      -0.64,
+      0.85,
+      0.36
+     ]
+    },
+    {
+     "echo": false,
+     "p_mad": 1,
+     "p_rank": 1,
+     "article": "Electricity demand: IID",
+     "score_mad": 0.821,
+     "loo_stable": false,
+     "score_rank": 0.455,
+     "member_z_mad": [
+      0.41,
+      -1.31,
+      1.43,
+      1.04,
+      0.88,
+      3.28,
+      0.17,
+      -0.42,
+      0.43,
+      0.24,
+      -1.14,
+      -0.08,
+      -0.91,
+      -0.12,
+      1.75,
+      -1.22,
+      0.42,
+      -0.21,
+      -1.08
+     ]
+    },
+    {
+     "echo": false,
+     "p_mad": 1,
+     "p_rank": 0.998,
+     "article": "Market: Fed funds rate",
+     "score_mad": 0.803,
+     "loo_stable": false,
+     "score_rank": 0.894,
+     "member_z_mad": [
+      4,
+      0.92,
+      0.8,
+      -1.63,
+      -0.5,
+      -0.85,
+      -0.4,
+      0.18,
+      0.19,
+      0.06,
+      4,
+      -0.06,
+      0.25,
+      0.15,
+      -1.73,
+      -1.96,
+      0,
+      0.09,
+      0
+     ]
+    },
+    {
+     "echo": false,
+     "p_mad": 1,
+     "p_rank": 1,
+     "article": "Electricity demand: SPA",
+     "score_mad": 0.711,
+     "loo_stable": false,
+     "score_rank": 0.482,
+     "member_z_mad": [
+      -1.07,
+      1.11,
+      0.59,
+      -0.85,
+      -0.45,
+      -1.59,
+      -0.7,
+      -0.49,
+      0.26,
+      -0.25,
+      -0.25,
+      -1.09,
+      1.44,
+      0.52,
+      1.19,
+      0.25,
+      3.23,
+      1.76,
+      -0.52
+     ]
+    },
+    {
+     "echo": false,
+     "p_mad": 1,
+     "p_rank": 1,
+     "article": "Electricity demand: PSCO",
+     "score_mad": 0.619,
+     "loo_stable": false,
+     "score_rank": -0.039,
+     "member_z_mad": [
+      0.11,
+      2.04,
+      0.12,
+      0.44,
+      -0.66,
+      0.31,
+      0.71,
+      -1.2,
+      -0.82,
+      -1.11,
+      -0.3,
+      0.61,
+      -0.51,
+      -0.77,
+      -0.98,
+      0.18,
+      1.62,
+      4,
+      -1.09
+     ]
+    }
+   ],
+   "n_used": 19,
+   "members": [
+    {
+     "d0": "2016-12-25",
+     "id": "T10279",
+     "day0": "2016-12-25",
+     "article": "Hidden Figures",
+     "titles_used": 4
+    },
+    {
+     "d0": "2017-07-21",
+     "id": "T10287",
+     "day0": "2017-07-21",
+     "article": "Dunkirk (2017 film)",
+     "titles_used": 5
+    },
+    {
+     "d0": "2017-11-22",
+     "id": "T10288",
+     "day0": "2017-11-22",
+     "article": "Darkest Hour (film)",
+     "titles_used": 3
+    },
+    {
+     "d0": "2017-12-22",
+     "id": "T10289",
+     "day0": "2017-12-22",
+     "article": "The Post (film)",
+     "titles_used": 5
+    },
+    {
+     "d0": "2018-10-12",
+     "id": "T10293",
+     "day0": "2018-10-12",
+     "article": "First Man (film)",
+     "titles_used": 2
+    },
+    {
+     "d0": "2018-11-02",
+     "id": "T10294",
+     "day0": "2018-11-02",
+     "article": "Bohemian Rhapsody (film)",
+     "titles_used": 5
+    },
+    {
+     "d0": "2018-12-25",
+     "id": "T10295",
+     "day0": "2018-12-25",
+     "article": "Vice (2018 film)",
+     "titles_used": 2
+    },
+    {
+     "d0": "2019-05-31",
+     "id": "T10301",
+     "day0": "2019-05-31",
+     "article": "Rocketman (film)",
+     "titles_used": 5
+    },
+    {
+     "d0": "2019-09-27",
+     "id": "T10303",
+     "day0": "2019-09-27",
+     "article": "Judy (film)",
+     "titles_used": 3
+    },
+    {
+     "d0": "2019-11-15",
+     "id": "T10302",
+     "day0": "2019-11-15",
+     "article": "Ford v Ferrari",
+     "titles_used": 9
+    },
+    {
+     "d0": "2019-12-25",
+     "id": "T10308",
+     "day0": "2019-12-25",
+     "article": "1917 (2019 film)",
+     "titles_used": 3
+    },
+    {
+     "d0": "2020-10-16",
+     "id": "T10311",
+     "day0": "2020-10-16",
+     "article": "The Trial of the Chicago 7",
+     "titles_used": 11
+    },
+    {
+     "d0": "2021-02-12",
+     "id": "T10317",
+     "day0": "2021-02-12",
+     "article": "Judas and the Black Messiah",
+     "titles_used": 4
+    },
+    {
+     "d0": "2021-11-19",
+     "id": "T10320",
+     "day0": "2021-11-19",
+     "article": "King Richard (film)",
+     "titles_used": 3
+    },
+    {
+     "d0": "2023-04-05",
+     "id": "T10326",
+     "day0": "2023-04-05",
+     "article": "Air (2023 film)",
+     "titles_used": 14
+    },
+    {
+     "d0": "2023-07-21",
+     "id": "T10324",
+     "day0": "2023-07-21",
+     "article": "Oppenheimer (film)",
+     "titles_used": 9
+    },
+    {
+     "d0": "2023-09-22",
+     "id": "T10330",
+     "day0": "2023-09-22",
+     "article": "Dumb Money",
+     "titles_used": 1
+    },
+    {
+     "d0": "2023-10-20",
+     "id": "T10325",
+     "day0": "2023-10-20",
+     "article": "Killers of the Flower Moon (film)",
+     "titles_used": 9
+    },
+    {
+     "d0": "2023-12-25",
+     "id": "T10327",
+     "day0": "2023-12-25",
+     "article": "Ferrari (2023 film)",
+     "titles_used": 3
+    }
+   ],
+   "min_p_both": 0.997002997002997,
+   "clustered_members": [
+    "T10288",
+    "T10289",
+    "T10293",
+    "T10294",
+    "T10325",
+    "T10330"
+   ]
+  },
+  "us_league_finals": {
+   "top": [
+    {
+     "echo": false,
+     "p_mad": 0.2208,
+     "p_rank": 0.1369,
+     "article": "Electricity demand: ISNE",
+     "score_mad": 3.262,
+     "loo_stable": false,
+     "score_rank": 2.691,
+     "member_z_mad": [
+      -0.45,
+      0.01,
+      0.18,
+      -0.07,
+      0.89,
+      2.91,
+      0.58,
+      3.28,
+      -0.34,
+      1.54,
+      0.05,
+      0.24,
+      0.41,
+      2.97
+     ]
+    },
+    {
+     "echo": false,
+     "p_mad": 0.6204,
+     "p_rank": 0.6813,
+     "article": "Electricity demand: WALC",
+     "score_mad": 2.439,
+     "loo_stable": false,
+     "score_rank": 1.895,
+     "member_z_mad": [
+      0.11,
+      -0.55,
+      0.02,
+      0.41,
+      -0.33,
+      -0.32,
+      1.24,
+      1.99,
+      1.16,
+      0.6,
+      -0.28,
+      1.73,
+      4,
+      -0.65
+     ]
+    },
+    {
+     "echo": false,
+     "p_mad": 0.7443,
+     "p_rank": 0.6024,
+     "article": "Electricity demand: PJM",
+     "score_mad": 2.249,
+     "loo_stable": false,
+     "score_rank": 1.989,
+     "member_z_mad": [
+      0.2,
+      0.97,
+      1.58,
+      -0.32,
+      0.97,
+      3.18,
+      -1.05,
+      1.27,
+      -0.16,
+      0.55,
+      0.02,
+      -0.59,
+      0.27,
+      1.55
+     ]
+    },
+    {
+     "echo": false,
+     "p_mad": 0.8102,
+     "p_rank": 0.7483,
+     "article": "Electricity demand: NYIS",
+     "score_mad": 2.11,
+     "loo_stable": false,
+     "score_rank": 1.815,
+     "member_z_mad": [
+      0.11,
+      0.33,
+      0.83,
+      -0.05,
+      0.79,
+      3.05,
+      -0.59,
+      0.8,
+      -0.76,
+      1.83,
+      -0.42,
+      -0.15,
+      0.27,
+      1.85
+     ]
+    },
+    {
+     "echo": false,
+     "p_mad": 0.9161,
+     "p_rank": 0.7343,
+     "article": "Electricity demand: GVL",
+     "score_mad": 1.925,
+     "loo_stable": false,
+     "score_rank": 1.83,
+     "member_z_mad": [
+      1.41,
+      -0.03,
+      1.25,
+      1.04,
+      1.11,
+      -0.59,
+      0.99,
+      -0.78,
+      0.18,
+      1.34,
+      0.33,
+      1.43,
+      -0.42,
+      -0.06
+     ]
+    },
+    {
+     "echo": false,
+     "p_mad": 0.9191,
+     "p_rank": 0.8611,
+     "article": "Electricity demand: SCEG",
+     "score_mad": 1.91,
+     "loo_stable": false,
+     "score_rank": 1.645,
+     "member_z_mad": [
+      0.6,
+      0.03,
+      0.51,
+      0.07,
+      2.93,
+      1.18,
+      1.05,
+      0.72,
+      -1.03,
+      -0.25,
+      -0.14,
+      0.8,
+      1.7,
+      -1.04
+     ]
+    },
+    {
+     "echo": false,
+     "p_mad": 0.9331,
+     "p_rank": 0.7173,
+     "article": "Electricity demand: CPLE",
+     "score_mad": 1.85,
+     "loo_stable": false,
+     "score_rank": 1.855,
+     "member_z_mad": [
+      1.01,
+      -0.35,
+      1.3,
+      0.73,
+      1.63,
+      1.6,
+      0.41,
+      1.42,
+      -1.26,
+      0.65,
+      -0.54,
+      -0.27,
+      0.73,
+      -0.16
+     ]
+    },
+    {
+     "echo": false,
+     "p_mad": 0.9431,
+     "p_rank": 0.8462,
+     "article": "Electricity demand: FMPP",
+     "score_mad": 1.819,
+     "loo_stable": false,
+     "score_rank": 1.676,
+     "member_z_mad": [
+      0.49,
+      -0.07,
+      0.96,
+      -1.17,
+      2.01,
+      0.89,
+      0.71,
+      0.32,
+      -0.08,
+      2.1,
+      1.29,
+      0.35,
+      -0.9,
+      -0.1
+     ]
+    },
+    {
+     "echo": false,
+     "p_mad": 0.9491,
+     "p_rank": 0.9351,
+     "article": "Electricity demand: US48",
+     "score_mad": 1.79,
+     "loo_stable": false,
+     "score_rank": 1.475,
+     "member_z_mad": [
+      0.17,
+      0.34,
+      3.28,
+      -0.67,
+      0.33,
+      2.66,
+      -0.74,
+      1.35,
+      -0.44,
+      0.34,
+      0.28,
+      -0.97,
+      0.82,
+      -0.04
+     ]
+    },
+    {
+     "echo": false,
+     "p_mad": 0.8511,
+     "p_rank": 0.968,
+     "article": "Market: US dollar in Mexican pesos",
+     "score_mad": 2.05,
+     "loo_stable": false,
+     "score_rank": 1.386,
+     "member_z_mad": [
+      -0.67,
+      -1.29,
+      0.62,
+      1.67,
+      0.39,
+      0,
+      2.38,
+      0.44,
+      0.53,
+      -0.68,
+      1.3,
+      -0.35,
+      1.48,
+      1.87
+     ]
+    }
+   ],
+   "n_used": 14,
+   "members": [
+    {
+     "d0": "2016-11-02",
+     "id": "T10390",
+     "day0": "2016-11-02",
+     "article": "2016 World Series",
+     "titles_used": 5
+    },
+    {
+     "d0": "2017-11-01",
+     "id": "T10394",
+     "day0": "2017-11-01",
+     "article": "2017 World Series",
+     "titles_used": 6
+    },
+    {
+     "d0": "2018-10-28",
+     "id": "T10398",
+     "day0": "2018-10-28",
+     "article": "2018 World Series",
+     "titles_used": 4
+    },
+    {
+     "d0": "2019-06-13",
+     "id": "T10402",
+     "day0": "2019-06-13",
+     "article": "2019 NBA Finals",
+     "titles_used": 5
+    },
+    {
+     "d0": "2019-10-30",
+     "id": "T10404",
+     "day0": "2019-10-30",
+     "article": "2019 World Series",
+     "titles_used": 6
+    },
+    {
+     "d0": "2020-10-11",
+     "id": "T10406",
+     "day0": "2020-10-11",
+     "article": "2020 NBA Finals",
+     "titles_used": 5
+    },
+    {
+     "d0": "2020-10-27",
+     "id": "T10408",
+     "day0": "2020-10-27",
+     "article": "2020 World Series",
+     "titles_used": 5
+    },
+    {
+     "d0": "2021-07-20",
+     "id": "T10411",
+     "day0": "2021-07-20",
+     "article": "2021 NBA Finals",
+     "titles_used": 4
+    },
+    {
+     "d0": "2021-11-02",
+     "id": "T10412",
+     "day0": "2021-11-02",
+     "article": "2021 World Series",
+     "titles_used": 7
+    },
+    {
+     "d0": "2022-06-16",
+     "id": "T10416",
+     "day0": "2022-06-16",
+     "article": "2022 NBA Finals",
+     "titles_used": 5
+    },
+    {
+     "d0": "2022-11-05",
+     "id": "T10417",
+     "day0": "2022-11-05",
+     "article": "2022 World Series",
+     "titles_used": 5
+    },
+    {
+     "d0": "2023-06-12",
+     "id": "T10421",
+     "day0": "2023-06-12",
+     "article": "2023 NBA Finals",
+     "titles_used": 4
+    },
+    {
+     "d0": "2023-11-01",
+     "id": "T10422",
+     "day0": "2023-11-01",
+     "article": "2023 World Series",
+     "titles_used": 4
+    },
+    {
+     "d0": "2024-06-17",
+     "id": "T10425",
+     "day0": "2024-06-17",
+     "article": "2024 NBA Finals",
+     "titles_used": 3
+    }
+   ],
+   "min_p_both": 0.22077922077922077,
+   "clustered_members": [
+    "T10406",
+    "T10408"
+   ]
+  },
+  "ai_model_releases": {
+   "top": [
+    {
+     "echo": false,
+     "p_mad": 0.1299,
+     "p_rank": 0.0569,
+     "article": "Market: Euro in US dollars",
+     "score_mad": 3.777,
+     "loo_stable": false,
+     "score_rank": 3.059,
+     "member_z_mad": [
+      2.43,
+      1.07,
+      0,
+      2.26,
+      1.6,
+      -0.69,
+      1.92,
+      -0.69,
+      0.48,
+      0.42,
+      0.63,
+      0.23,
+      1.64,
+      2.83
+     ]
+    },
+    {
+     "echo": false,
+     "p_mad": 0.4845,
+     "p_rank": 0.3107,
+     "article": "Market: Pound in US dollars",
+     "score_mad": 2.791,
+     "loo_stable": false,
+     "score_rank": 2.416,
+     "member_z_mad": [
+      -0.24,
+      0.7,
+      0.48,
+      0.63,
+      1.95,
+      0.29,
+      1.7,
+      -0.44,
+      0.25,
+      0.4,
+      0.81,
+      0.02,
+      1.21,
+      2.68
+     ]
+    },
+    {
+     "echo": false,
+     "p_mad": 0.2657,
+     "p_rank": 0.4945,
+     "article": "Electricity demand: TEPC",
+     "score_mad": 3.29,
+     "loo_stable": false,
+     "score_rank": 2.156,
+     "member_z_mad": [
+      -1.47,
+      0,
+      2.46,
+      0.9,
+      1.58,
+      -0.04,
+      0.09,
+      -0.77,
+      3.51,
+      0.88,
+      1.2,
+      3.4,
+      -0.69,
+      1.25
+     ]
+    },
+    {
+     "echo": false,
+     "p_mad": 0.5654,
+     "p_rank": 0.1768,
+     "article": "Electricity demand: AZPS",
+     "score_mad": 2.677,
+     "loo_stable": false,
+     "score_rank": 2.647,
+     "member_z_mad": [
+      0.31,
+      -0.38,
+      2.1,
+      0.34,
+      0.94,
+      1.19,
+      1.35,
+      -0.16,
+      1.06,
+      1.7,
+      -0.67,
+      1.58,
+      -0.55,
+      1.2
+     ]
+    },
+    {
+     "echo": false,
+     "p_mad": 0.6414,
+     "p_rank": 0.7303,
+     "article": "Market: 10y-2y Treasury spread",
+     "score_mad": 2.545,
+     "loo_stable": false,
+     "score_rank": 1.833,
+     "member_z_mad": [
+      -1.02,
+      2.38,
+      0.26,
+      1.39,
+      0.06,
+      2.84,
+      -1.27,
+      0.99,
+      0.3,
+      -0.06,
+      0.63,
+      0.16,
+      2.31,
+      0.57
+     ]
+    },
+    {
+     "echo": false,
+     "p_mad": 0.7622,
+     "p_rank": 0.6474,
+     "article": "Electricity demand: SRP",
+     "score_mad": 2.324,
+     "loo_stable": false,
+     "score_rank": 1.949,
+     "member_z_mad": [
+      0.6,
+      -0.26,
+      2.87,
+      0.35,
+      1.37,
+      0.23,
+      1.24,
+      0.35,
+      -0.08,
+      0.03,
+      0.18,
+      0.22,
+      -0.24,
+      1.83
+     ]
+    },
+    {
+     "echo": false,
+     "p_mad": 0.8392,
+     "p_rank": 0.8821,
+     "article": "Market: Natural gas price (Henry Hub)",
+     "score_mad": 2.181,
+     "loo_stable": false,
+     "score_rank": 1.592,
+     "member_z_mad": [
+      1.14,
+      -1.35,
+      -0.94,
+      1.35,
+      -0.3,
+      0.75,
+      0.86,
+      -4,
+      1.64,
+      1.76,
+      3.46,
+      0.8,
+      2.9,
+      0.1
+     ]
+    },
+    {
+     "echo": false,
+     "p_mad": 0.8821,
+     "p_rank": 0.7842,
+     "article": "Electricity demand: WALC",
+     "score_mad": 2.071,
+     "loo_stable": false,
+     "score_rank": 1.747,
+     "member_z_mad": [
+      0.67,
+      1.3,
+      2.34,
+      -1.27,
+      1.82,
+      0.99,
+      -1.11,
+      2.37,
+      0.23,
+      0.51,
+      0.15,
+      0.18,
+      -0.68,
+      0.24
+     ]
+    },
+    {
+     "echo": false,
+     "p_mad": 0.9451,
+     "p_rank": 0.7952,
+     "article": "Electricity demand: EPE",
+     "score_mad": 1.866,
+     "loo_stable": false,
+     "score_rank": 1.728,
+     "member_z_mad": [
+      0.72,
+      -0.5,
+      2.03,
+      -0.25,
+      1,
+      -0.43,
+      -1.02,
+      0.49,
+      0.66,
+      0.08,
+      0.07,
+      0.89,
+      1.37,
+      1.87
+     ]
+    },
+    {
+     "echo": false,
+     "p_mad": 0.952,
+     "p_rank": 0.7393,
+     "article": "Electricity demand: FMPP",
+     "score_mad": 1.835,
+     "loo_stable": false,
+     "score_rank": 1.824,
+     "member_z_mad": [
+      -0.12,
+      1.47,
+      0.74,
+      0.67,
+      -0.95,
+      -0.97,
+      1.5,
+      1.6,
+      1.31,
+      0.9,
+      0.41,
+      0.39,
+      0.53,
+      -0.62
+     ]
+    }
+   ],
+   "n_used": 14,
+   "members": [
+    {
+     "id": "E5527",
+     "day0": "2019-02-14",
+     "skip": "too few views around the event",
+     "article": "GPT-2",
+     "titles_used": 3
+    },
+    {
+     "d0": "2020-05-28",
+     "id": "E5528",
+     "day0": "2020-05-28",
+     "article": "GPT-3",
+     "titles_used": 13
+    },
+    {
+     "d0": "2021-01-05",
+     "id": "E5529",
+     "day0": "2021-01-05",
+     "article": "DALL-E",
+     "titles_used": 101
+    },
+    {
+     "d0": "2021-06-29",
+     "id": "E5530",
+     "day0": "2021-06-29",
+     "article": "GitHub Copilot",
+     "titles_used": 5
+    },
+    {
+     "d0": "2022-04-06",
+     "id": "E5538",
+     "day0": "2022-04-06",
+     "article": "DALL-E",
+     "titles_used": 101
+    },
+    {
+     "id": "E5535",
+     "day0": "2022-08-22",
+     "skip": "too few views around the event",
+     "article": "Stable Diffusion",
+     "titles_used": 5
+    },
+    {
+     "d0": "2022-11-30",
+     "id": "E6110",
+     "day0": "2022-11-30",
+     "article": "ChatGPT",
+     "titles_used": 38
+    },
+    {
+     "d0": "2023-03-14",
+     "id": "E6118",
+     "day0": "2023-03-14",
+     "article": "GPT-4",
+     "titles_used": 6
+    },
+    {
+     "d0": "2023-07-11",
+     "id": "E6121",
+     "day0": "2023-07-11",
+     "article": "Claude (language model)",
+     "titles_used": 39
+    },
+    {
+     "d0": "2023-12-06",
+     "id": "E6116",
+     "day0": "2023-12-06",
+     "article": "Gemini (language model)",
+     "titles_used": 29
+    },
+    {
+     "d0": "2024-02-15",
+     "id": "E5543",
+     "day0": "2024-02-15",
+     "article": "Sora (text-to-video model)",
+     "titles_used": 16
+    },
+    {
+     "d0": "2024-03-04",
+     "id": "E5545",
+     "day0": "2024-03-04",
+     "article": "Claude (language model)",
+     "titles_used": 39
+    },
+    {
+     "d0": "2024-04-18",
+     "id": "E5547",
+     "day0": "2024-04-18",
+     "article": "Llama (language model)",
+     "titles_used": 20
+    },
+    {
+     "d0": "2024-05-13",
+     "id": "E5546",
+     "day0": "2024-05-13",
+     "article": "GPT-4o",
+     "titles_used": 5
+    },
+    {
+     "d0": "2024-09-12",
+     "id": "E6129",
+     "day0": "2024-09-12",
+     "article": "OpenAI o1",
+     "titles_used": 8
+    },
+    {
+     "d0": "2025-01-20",
+     "id": "E6123",
+     "day0": "2025-01-20",
+     "article": "DeepSeek",
+     "titles_used": 51
+    }
+   ],
+   "min_p_both": 0.12987012987012986,
+   "clustered_members": [
+    "E5543",
+    "E5545",
+    "E5546",
+    "E5547"
+   ]
+  },
+  "music_icon_deaths": {
+   "top": [
+    {
+     "echo": false,
+     "p_mad": 0.8292,
+     "p_rank": 0.8871,
+     "article": "Market: Jet fuel price (Gulf Coast)",
+     "score_mad": 2.123,
+     "loo_stable": false,
+     "score_rank": 1.573,
+     "member_z_mad": [
+      -0.36,
+      -0.11,
+      -1.41,
+      0.45,
+      -0.03,
+      -0.04,
+      1.23,
+      4,
+      1.69,
+      0.82,
+      1.16,
+      -1.9,
+      0.22,
+      1.12,
+      1.67,
+      -0.64,
+      -0.41,
+      1.54
+     ]
+    },
+    {
+     "echo": false,
+     "p_mad": 0.8781,
+     "p_rank": 0.9011,
+     "article": "Electricity demand: PNM",
+     "score_mad": 2.005,
+     "loo_stable": false,
+     "score_rank": 1.532,
+     "member_z_mad": [
+      1.72,
+      -0.08,
+      0.54,
+      -0.52,
+      0.34,
+      1.74,
+      2.98,
+      -0.56,
+      0.16,
+      0.44,
+      -0.88,
+      -1.38,
+      -1.1,
+      1.08,
+      -0.05,
+      1.02,
+      0.45,
+      2.6
+     ]
+    },
+    {
+     "echo": false,
+     "p_mad": 0.987,
+     "p_rank": 0.988,
+     "article": "Market: US dollar in Japanese yen",
+     "score_mad": 1.453,
+     "loo_stable": false,
+     "score_rank": 1.131,
+     "member_z_mad": [
+      0.67,
+      2.49,
+      -0.02,
+      0.41,
+      0.5,
+      0.64,
+      -0.35,
+      1.16,
+      -0.34,
+      -0.95,
+      -0.39,
+      -1.04,
+      2.15,
+      0.01,
+      1.98,
+      0.22,
+      0.94,
+      -1.91
+     ]
+    },
+    {
+     "echo": false,
+     "p_mad": 0.989,
+     "p_rank": 0.971,
+     "article": "Electricity demand: PSCO",
+     "score_mad": 1.422,
+     "loo_stable": false,
+     "score_rank": 1.267,
+     "member_z_mad": [
+      0.67,
+      -0.44,
+      0.74,
+      0.78,
+      0.14,
+      0.8,
+      -0.02,
+      -0.74,
+      0.41,
+      -0.65,
+      0,
+      0.38,
+      0.22,
+      0.47,
+      0.51,
+      0.92,
+      1.79,
+      0.07
+     ]
+    },
+    {
+     "echo": false,
+     "p_mad": 0.987,
+     "p_rank": 0.997,
+     "article": "Market: Trade-weighted US dollar",
+     "score_mad": 1.45,
+     "loo_stable": false,
+     "score_rank": 0.94,
+     "member_z_mad": [
+      0.16,
+      1.32,
+      1.03,
+      2.6,
+      1.22,
+      -0.36,
+      0.55,
+      0.69,
+      -0.77,
+      0.32,
+      -1.55,
+      -0.95,
+      0.78,
+      0.63,
+      1.08,
+      -0.69,
+      1.39,
+      -1.3
+     ]
+    },
+    {
+     "echo": false,
+     "p_mad": 0.987,
+     "p_rank": 0.997,
+     "article": "Electricity demand: TEPC",
+     "score_mad": 1.445,
+     "loo_stable": false,
+     "score_rank": 0.9,
+     "member_z_mad": [
+      0.01,
+      -0.2,
+      -1.7,
+      -0.24,
+      3.96,
+      0.55,
+      -0.3,
+      0.82,
+      -0.21,
+      2.33,
+      0.45,
+      1.04,
+      -0.26,
+      -0.77,
+      -0.06,
+      1.49,
+      0.3,
+      -1.09
+     ]
+    },
+    {
+     "echo": false,
+     "p_mad": 0.994,
+     "p_rank": 0.997,
+     "article": "Electricity demand: OVEC",
+     "score_mad": 1.341,
+     "loo_stable": false,
+     "score_rank": 0.932,
+     "member_z_mad": [
+      0,
+      0,
+      0.13,
+      0.96,
+      2.03,
+      2.57,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0
+     ]
+    },
+    {
+     "echo": false,
+     "p_mad": 0.994,
+     "p_rank": 0.998,
+     "article": "Market: Brent crude oil price",
+     "score_mad": 1.321,
+     "loo_stable": false,
+     "score_rank": 0.885,
+     "member_z_mad": [
+      -0.62,
+      -0.32,
+      -1.59,
+      -0.18,
+      0.22,
+      -0.69,
+      1.33,
+      -0.67,
+      1.24,
+      -0.26,
+      2.85,
+      1.86,
+      1.24,
+      0.52,
+      1.04,
+      -0.41,
+      -0.6,
+      0.65
+     ]
+    },
+    {
+     "echo": false,
+     "p_mad": 0.996,
+     "p_rank": 1,
+     "article": "Market: US dollar in Mexican pesos",
+     "score_mad": 1.305,
+     "loo_stable": false,
+     "score_rank": 0.582,
+     "member_z_mad": [
+      -1.38,
+      0.36,
+      0.24,
+      2.85,
+      2.26,
+      -1.17,
+      1.51,
+      0.5,
+      -0.53,
+      0.35,
+      -1.71,
+      -0.38,
+      -0.11,
+      -1.35,
+      2.21,
+      -0.9,
+      2.66,
+      0.11
+     ]
+    },
+    {
+     "echo": false,
+     "p_mad": 1,
+     "p_rank": 0.994,
+     "article": "Market: WTI crude oil price",
+     "score_mad": 1.085,
+     "loo_stable": false,
+     "score_rank": 0.989,
+     "member_z_mad": [
+      -0.72,
+      0.37,
+      -1.37,
+      -0.14,
+      -0.47,
+      -0.73,
+      1.1,
+      -0.75,
+      1.46,
+      -0.91,
+      2.47,
+      0.8,
+      0.55,
+      0.74,
+      0.97,
+      0.34,
+      -0.61,
+      1.5
+     ]
+    }
+   ],
+   "n_used": 18,
+   "members": [
+    {
+     "d0": "2016-12-25",
+     "id": "T10201",
+     "day0": "2016-12-25",
+     "article": "George Michael",
+     "titles_used": 20
+    },
+    {
+     "d0": "2017-03-18",
+     "id": "T10203",
+     "day0": "2017-03-18",
+     "article": "Chuck Berry",
+     "titles_used": 15
+    },
+    {
+     "d0": "2017-10-02",
+     "id": "T10205",
+     "day0": "2017-10-02",
+     "article": "Tom Petty",
+     "titles_used": 13
+    },
+    {
+     "d0": "2018-04-20",
+     "id": "T10211",
+     "day0": "2018-04-20",
+     "article": "Avicii",
+     "titles_used": 23
+    },
+    {
+     "d0": "2018-08-16",
+     "id": "T10207",
+     "day0": "2018-08-16",
+     "article": "Aretha Franklin",
+     "titles_used": 17
+    },
+    {
+     "d0": "2018-09-07",
+     "id": "T10208",
+     "day0": "2018-09-07",
+     "article": "Mac Miller",
+     "titles_used": 10
+    },
+    {
+     "d0": "2020-10-06",
+     "id": "T10219",
+     "day0": "2020-10-06",
+     "article": "Eddie Van Halen",
+     "titles_used": 16
+    },
+    {
+     "d0": "2021-04-09",
+     "id": "T10222",
+     "day0": "2021-04-09",
+     "article": "DMX",
+     "titles_used": 18
+    },
+    {
+     "d0": "2021-08-24",
+     "id": "T10223",
+     "day0": "2021-08-24",
+     "article": "Charlie Watts",
+     "titles_used": 14
+    },
+    {
+     "d0": "2022-01-20",
+     "id": "T10229",
+     "day0": "2022-01-20",
+     "article": "Meat Loaf",
+     "titles_used": 17
+    },
+    {
+     "d0": "2022-03-25",
+     "id": "T10230",
+     "day0": "2022-03-25",
+     "article": "Taylor Hawkins",
+     "titles_used": 5
+    },
+    {
+     "d0": "2022-08-08",
+     "id": "T10232",
+     "day0": "2022-08-08",
+     "article": "Olivia Newton-John",
+     "titles_used": 47
+    },
+    {
+     "d0": "2023-01-10",
+     "id": "T10262",
+     "day0": "2023-01-10",
+     "article": "Jeff Beck",
+     "titles_used": 4
+    },
+    {
+     "d0": "2023-05-24",
+     "id": "T10239",
+     "day0": "2023-05-24",
+     "article": "Tina Turner",
+     "titles_used": 17
+    },
+    {
+     "d0": "2023-07-21",
+     "id": "T10241",
+     "day0": "2023-07-21",
+     "article": "Tony Bennett",
+     "titles_used": 11
+    },
+    {
+     "d0": "2023-09-01",
+     "id": "T10242",
+     "day0": "2023-09-01",
+     "article": "Jimmy Buffett",
+     "titles_used": 21
+    },
+    {
+     "d0": "2024-10-16",
+     "id": "T10252",
+     "day0": "2024-10-16",
+     "article": "Liam Payne",
+     "titles_used": 12
+    },
+    {
+     "d0": "2024-11-03",
+     "id": "T10251",
+     "day0": "2024-11-03",
+     "article": "Quincy Jones",
+     "titles_used": 16
+    }
+   ],
+   "min_p_both": 0.8871128871128872,
+   "clustered_members": [
+    "T10207",
+    "T10208",
+    "T10251",
+    "T10252"
+   ]
+  },
+  "spacex_milestones": {
+   "top": [
+    {
+     "echo": false,
+     "p_mad": 0.8462,
+     "p_rank": 0.8961,
+     "article": "Electricity demand: CHPD",
+     "score_mad": 2.114,
+     "loo_stable": false,
+     "score_rank": 1.52,
+     "member_z_mad": [
+      4,
+      0.85,
+      -0.6,
+      0.47,
+      -0.59,
+      2.57,
+      1.27,
+      -0.2,
+      -0.54,
+      0.58,
+      -0.79
+     ]
+    },
+    {
+     "echo": false,
+     "p_mad": 0.9001,
+     "p_rank": 0.6813,
+     "article": "Electricity demand: GVL",
+     "score_mad": 1.974,
+     "loo_stable": false,
+     "score_rank": 1.869,
+     "member_z_mad": [
+      1.67,
+      0.87,
+      -0.11,
+      0.05,
+      -0.11,
+      0.66,
+      0.18,
+      0.1,
+      0.01,
+      1.01,
+      2.2
+     ]
+    },
+    {
+     "echo": false,
+     "p_mad": 0.7193,
+     "p_rank": 0.9311,
+     "article": "Market: Natural gas price (Henry Hub)",
+     "score_mad": 2.363,
+     "loo_stable": false,
+     "score_rank": 1.449,
+     "member_z_mad": [
+      -0.29,
+      0.16,
+      0.62,
+      -0.3,
+      0.56,
+      1.48,
+      2.35,
+      1.65,
+      -2.36,
+      -0.03,
+      4
+     ]
+    },
+    {
+     "echo": false,
+     "p_mad": 0.9321,
+     "p_rank": 0.8272,
+     "article": "Electricity demand: ISNE",
+     "score_mad": 1.864,
+     "loo_stable": false,
+     "score_rank": 1.651,
+     "member_z_mad": [
+      1.09,
+      0.51,
+      0.05,
+      0.33,
+      0.05,
+      -0.26,
+      0.43,
+      1.98,
+      0.28,
+      1.22,
+      0.51
+     ]
+    },
+    {
+     "echo": false,
+     "p_mad": 0.9171,
+     "p_rank": 0.9471,
+     "article": "Electricity demand: JEA",
+     "score_mad": 1.914,
+     "loo_stable": false,
+     "score_rank": 1.4,
+     "member_z_mad": [
+      3.38,
+      -0.71,
+      1.25,
+      -0.3,
+      0.03,
+      -0.76,
+      0.47,
+      0.42,
+      0.23,
+      0.6,
+      1.75
+     ]
+    },
+    {
+     "echo": false,
+     "p_mad": 0.959,
+     "p_rank": 0.9131,
+     "article": "Electricity demand: FPC",
+     "score_mad": 1.755,
+     "loo_stable": false,
+     "score_rank": 1.488,
+     "member_z_mad": [
+      1.87,
+      -0.45,
+      -0.43,
+      0.35,
+      0.08,
+      0.66,
+      -1.08,
+      -0.12,
+      0.49,
+      2.1,
+      2.35
+     ]
+    },
+    {
+     "echo": false,
+     "p_mad": 0.955,
+     "p_rank": 0.964,
+     "article": "Electricity demand: NEVP",
+     "score_mad": 1.785,
+     "loo_stable": false,
+     "score_rank": 1.334,
+     "member_z_mad": [
+      -0.79,
+      0.47,
+      1.03,
+      -0.51,
+      0.12,
+      0.03,
+      0.17,
+      2.86,
+      1.89,
+      0.47,
+      0.17
+     ]
+    },
+    {
+     "echo": false,
+     "p_mad": 0.969,
+     "p_rank": 0.9081,
+     "article": "Electricity demand: TAL",
+     "score_mad": 1.649,
+     "loo_stable": false,
+     "score_rank": 1.496,
+     "member_z_mad": [
+      1.92,
+      -0.33,
+      0.45,
+      -0.45,
+      0.19,
+      0.36,
+      0.49,
+      0.76,
+      1.13,
+      0.09,
+      0.85
+     ]
+    },
+    {
+     "echo": false,
+     "p_mad": 0.993,
+     "p_rank": 0.957,
+     "article": "Market: Euro in US dollars",
+     "score_mad": 1.36,
+     "loo_stable": false,
+     "score_rank": 1.368,
+     "member_z_mad": [
+      -0.22,
+      0.73,
+      0.11,
+      0.14,
+      0.81,
+      -0.23,
+      1.47,
+      1.06,
+      -0.07,
+      1.27,
+      -0.57
+     ]
+    },
+    {
+     "echo": false,
+     "p_mad": 0.999,
+     "p_rank": 0.987,
+     "article": "Electricity demand: AVA",
+     "score_mad": 1.174,
+     "loo_stable": false,
+     "score_rank": 1.094,
+     "member_z_mad": [
+      0.2,
+      -0.27,
+      0.32,
+      0.23,
+      0.64,
+      0.5,
+      0.82,
+      0.48,
+      0.16,
+      0.91,
+      -0.1
+     ]
+    }
+   ],
+   "n_used": 11,
+   "members": [
+    {
+     "d0": "2018-02-06",
+     "id": "E5601",
+     "day0": "2018-02-06",
+     "article": "Falcon Heavy test flight",
+     "titles_used": 15
+    },
+    {
+     "d0": "2019-05-23",
+     "id": "E5603",
+     "day0": "2019-05-23",
+     "article": "Starlink",
+     "titles_used": 23
+    },
+    {
+     "d0": "2020-05-30",
+     "id": "E10143",
+     "day0": "2020-05-30",
+     "article": "Crew Dragon Demo-2",
+     "titles_used": 9
+    },
+    {
+     "d0": "2020-11-15",
+     "id": "E5643",
+     "day0": "2020-11-15",
+     "article": "SpaceX Crew-1",
+     "titles_used": 11
+    },
+    {
+     "d0": "2021-09-15",
+     "id": "E5626",
+     "day0": "2021-09-15",
+     "article": "Inspiration4",
+     "titles_used": 9
+    },
+    {
+     "d0": "2023-04-20",
+     "id": "E6545",
+     "day0": "2023-04-20",
+     "article": "Starship flight test 1",
+     "titles_used": 32
+    },
+    {
+     "d0": "2023-11-18",
+     "id": "E5629",
+     "day0": "2023-11-18",
+     "article": "Starship flight test 2",
+     "titles_used": 16
+    },
+    {
+     "d0": "2024-06-06",
+     "id": "E5630",
+     "day0": "2024-06-06",
+     "article": "Starship flight test 4",
+     "titles_used": 10
+    },
+    {
+     "d0": "2024-09-10",
+     "id": "E5627",
+     "day0": "2024-09-10",
+     "article": "Polaris Dawn",
+     "titles_used": 2
+    },
+    {
+     "d0": "2024-10-13",
+     "id": "E5631",
+     "day0": "2024-10-13",
+     "article": "Starship flight test 5",
+     "titles_used": 11
+    },
+    {
+     "d0": "2025-01-16",
+     "id": "E5632",
+     "day0": "2025-01-16",
+     "article": "Starship flight test 7",
+     "titles_used": 5
+    }
+   ],
+   "min_p_both": 0.8961038961038961,
+   "clustered_members": []
+  },
+  "us_mass_shootings": {
+   "top": [
+    {
+     "echo": false,
+     "p_mad": 0.008,
+     "p_rank": 0.1209,
+     "article": "Market: 3-month Treasury yield",
+     "score_mad": 4.946,
+     "loo_stable": false,
+     "score_rank": 2.68,
+     "member_z_mad": [
+      -0.23,
+      1.01,
+      -0.62,
+      2.75,
+      -0.3,
+      3.38,
+      3.71,
+      4,
+      0.47,
+      1.47
+     ]
+    },
+    {
+     "echo": false,
+     "p_mad": 0.2637,
+     "p_rank": 0.4216,
+     "article": "Electricity demand: BANC",
+     "score_mad": 3.124,
+     "loo_stable": false,
+     "score_rank": 2.154,
+     "member_z_mad": [
+      1.07,
+      -0.03,
+      -0.59,
+      2.94,
+      0.2,
+      2.8,
+      1.25,
+      1.96,
+      -1.92,
+      2.21
+     ]
+    },
+    {
+     "echo": false,
+     "p_mad": 0.7263,
+     "p_rank": 0.7483,
+     "article": "Electricity demand: TIDC",
+     "score_mad": 2.281,
+     "loo_stable": false,
+     "score_rank": 1.74,
+     "member_z_mad": [
+      -1.09,
+      0.34,
+      0.49,
+      2.42,
+      0,
+      2.45,
+      0.36,
+      1.21,
+      -0.04,
+      1.06
+     ]
+    },
+    {
+     "echo": false,
+     "p_mad": 0.8851,
+     "p_rank": 0.7273,
+     "article": "Market: Pound in US dollars",
+     "score_mad": 1.956,
+     "loo_stable": false,
+     "score_rank": 1.764,
+     "member_z_mad": [
+      1.55,
+      1.58,
+      -0.71,
+      1.83,
+      0.57,
+      -0.65,
+      0.12,
+      1.39,
+      -1.27,
+      1.78
+     ]
+    },
+    {
+     "echo": false,
+     "p_mad": 0.9061,
+     "p_rank": 0.7253,
+     "article": "Electricity demand: FMPP",
+     "score_mad": 1.885,
+     "loo_stable": false,
+     "score_rank": 1.766,
+     "member_z_mad": [
+      2.03,
+      0.08,
+      0.42,
+      1.28,
+      0.59,
+      1.28,
+      0.03,
+      -0.24,
+      0.07,
+      0.42
+     ]
+    },
+    {
+     "echo": false,
+     "p_mad": 0.9321,
+     "p_rank": 0.8781,
+     "article": "Electricity demand: FPC",
+     "score_mad": 1.77,
+     "loo_stable": false,
+     "score_rank": 1.557,
+     "member_z_mad": [
+      0.68,
+      -0.3,
+      0.37,
+      2.12,
+      1.03,
+      1.07,
+      0.13,
+      -0.05,
+      0.28,
+      0.28
+     ]
+    },
+    {
+     "echo": false,
+     "p_mad": 0.9391,
+     "p_rank": 0.9451,
+     "article": "Electricity demand: WALC",
+     "score_mad": 1.757,
+     "loo_stable": false,
+     "score_rank": 1.36,
+     "member_z_mad": [
+      0.64,
+      2.66,
+      -0.18,
+      0.01,
+      -0.62,
+      2.13,
+      0.38,
+      -0.46,
+      0.03,
+      0.96
+     ]
+    },
+    {
+     "echo": false,
+     "p_mad": 0.9491,
+     "p_rank": 0.8601,
+     "article": "Electricity demand: CISO",
+     "score_mad": 1.721,
+     "loo_stable": false,
+     "score_rank": 1.583,
+     "member_z_mad": [
+      0.92,
+      0.31,
+      0.65,
+      0.33,
+      -0.04,
+      2.56,
+      1.07,
+      0.69,
+      -2.86,
+      1.81
+     ]
+    },
+    {
+     "echo": false,
+     "p_mad": 0.962,
+     "p_rank": 0.9041,
+     "article": "Air travel: TSA checkpoint passengers",
+     "score_mad": 1.669,
+     "loo_stable": false,
+     "score_rank": 1.493,
+     "member_z_mad": [
+      0,
+      0,
+      0,
+      -0.07,
+      0.57,
+      0.72,
+      0.22,
+      0.6,
+      1.55,
+      1.68
+     ]
+    },
+    {
+     "echo": false,
+     "p_mad": 0.9091,
+     "p_rank": 0.964,
+     "article": "Electricity demand: NEVP",
+     "score_mad": 1.877,
+     "loo_stable": false,
+     "score_rank": 1.29,
+     "member_z_mad": [
+      0.41,
+      -0.26,
+      -0.45,
+      0.25,
+      -1.49,
+      4,
+      1.25,
+      0.07,
+      1.21,
+      0.95
+     ]
+    }
+   ],
+   "n_used": 10,
+   "members": [
+    {
+     "d0": "2017-11-05",
+     "id": "T10429",
+     "day0": "2017-11-05",
+     "article": "Sutherland Springs church shooting",
+     "titles_used": 19
+    },
+    {
+     "d0": "2018-02-14",
+     "id": "T10430",
+     "day0": "2018-02-14",
+     "article": "Stoneman Douglas High School shooting",
+     "titles_used": 58
+    },
+    {
+     "d0": "2018-05-18",
+     "id": "T10431",
+     "day0": "2018-05-18",
+     "article": "Santa Fe High School shooting",
+     "titles_used": 14
+    },
+    {
+     "d0": "2019-08-03",
+     "id": "T10432",
+     "day0": "2019-08-03",
+     "article": "2019 El Paso shooting",
+     "titles_used": 24
+    },
+    {
+     "d0": "2021-03-16",
+     "id": "T10434",
+     "day0": "2021-03-16",
+     "article": "Atlanta spa shootings",
+     "titles_used": 17
+    },
+    {
+     "d0": "2022-05-14",
+     "id": "T10436",
+     "day0": "2022-05-14",
+     "article": "2022 Buffalo shooting",
+     "titles_used": 40
+    },
+    {
+     "d0": "2022-05-24",
+     "id": "T10435",
+     "day0": "2022-05-24",
+     "article": "Robb Elementary School shooting",
+     "titles_used": 52
+    },
+    {
+     "d0": "2023-03-27",
+     "id": "T10437",
+     "day0": "2023-03-27",
+     "article": "Covenant School shooting",
+     "titles_used": 19
+    },
+    {
+     "id": "T10438",
+     "day0": "2023-05-06",
+     "skip": "too few views around the event",
+     "article": "Allen, Texas mall shooting",
+     "titles_used": 0
+    },
+    {
+     "d0": "2023-10-25",
+     "id": "T10439",
+     "day0": "2023-10-25",
+     "article": "2023 Lewiston shootings",
+     "titles_used": 19
+    },
+    {
+     "d0": "2024-09-21",
+     "id": "T10440",
+     "day0": "2024-09-21",
+     "article": "2024 Birmingham shooting",
+     "titles_used": 4
+    }
+   ],
+   "min_p_both": 0.12087912087912088,
+   "clustered_members": [
+    "T10435",
+    "T10436"
+   ]
+  },
+  "screen_icon_deaths": {
+   "top": [
+    {
+     "echo": false,
+     "p_mad": 0.2687,
+     "p_rank": 0.2857,
+     "article": "Market: US dollar in Chinese yuan",
+     "score_mad": 3.09,
+     "loo_stable": false,
+     "score_rank": 2.413,
+     "member_z_mad": [
+      1.38,
+      2.24,
+      0.31,
+      -0.25,
+      4,
+      -1.98,
+      1.41,
+      1.18,
+      -1.43,
+      0.43,
+      -0.33,
+      4,
+      -1.43,
+      1.23,
+      0.68,
+      0.97,
+      0.35,
+      0.61,
+      1.46,
+      -1.02
+     ]
+    },
+    {
+     "echo": false,
+     "p_mad": 0.3117,
+     "p_rank": 0.3836,
+     "article": "Market: 10y-2y Treasury spread",
+     "score_mad": 3.002,
+     "loo_stable": false,
+     "score_rank": 2.272,
+     "member_z_mad": [
+      0.97,
+      1.11,
+      0.16,
+      -0.71,
+      0.58,
+      0.72,
+      1.51,
+      0.42,
+      -1.79,
+      0.51,
+      1.9,
+      0.95,
+      4,
+      0.53,
+      4,
+      0.18,
+      0.37,
+      -1.6,
+      -0.79,
+      0.42
+     ]
+    },
+    {
+     "echo": false,
+     "p_mad": 0.4535,
+     "p_rank": 0.4505,
+     "article": "Electricity demand: TEPC",
+     "score_mad": 2.756,
+     "loo_stable": false,
+     "score_rank": 2.159,
+     "member_z_mad": [
+      0.8,
+      -0.17,
+      2.91,
+      1.15,
+      1.41,
+      -0.45,
+      -0.28,
+      1.3,
+      0.95,
+      -0.58,
+      -0.46,
+      3.32,
+      0.35,
+      -0.34,
+      -0.33,
+      0.98,
+      1.66,
+      -0.57,
+      -0.33,
+      1.01
+     ]
+    },
+    {
+     "echo": false,
+     "p_mad": 0.6643,
+     "p_rank": 0.4406,
+     "article": "Electricity demand: HST",
+     "score_mad": 2.442,
+     "loo_stable": false,
+     "score_rank": 2.182,
+     "member_z_mad": [
+      0.36,
+      0.28,
+      0.83,
+      1.95,
+      0.03,
+      1.25,
+      0.22,
+      0.95,
+      -0.3,
+      0.11,
+      -0.45,
+      -0.84,
+      1.63,
+      -0.13,
+      1.92,
+      0.43,
+      -0.35,
+      2.29,
+      -0.59,
+      1.34
+     ]
+    },
+    {
+     "echo": false,
+     "p_mad": 0.7822,
+     "p_rank": 0.6104,
+     "article": "Electricity demand: IPCO",
+     "score_mad": 2.233,
+     "loo_stable": false,
+     "score_rank": 1.972,
+     "member_z_mad": [
+      0.97,
+      2.1,
+      0.97,
+      0.21,
+      0.7,
+      -1.02,
+      0.75,
+      -0.15,
+      0.01,
+      0.52,
+      -0.81,
+      1.37,
+      0.25,
+      1.51,
+      0.34,
+      0.13,
+      1.61,
+      0.84,
+      -0.13,
+      -0.19
+     ]
+    },
+    {
+     "echo": false,
+     "p_mad": 0.7922,
+     "p_rank": 0.6284,
+     "article": "Electricity demand: PNM",
+     "score_mad": 2.21,
+     "loo_stable": false,
+     "score_rank": 1.944,
+     "member_z_mad": [
+      1.77,
+      -0.83,
+      1.81,
+      0.17,
+      0.62,
+      -0.16,
+      -1.31,
+      -0.71,
+      0.3,
+      -0.83,
+      0.52,
+      3.39,
+      -0.06,
+      1.19,
+      0.56,
+      2.31,
+      0.46,
+      0.08,
+      -0.37,
+      0.98
+     ]
+    },
+    {
+     "echo": false,
+     "p_mad": 0.9201,
+     "p_rank": 0.9321,
+     "article": "Electricity demand: EPE",
+     "score_mad": 1.889,
+     "loo_stable": false,
+     "score_rank": 1.469,
+     "member_z_mad": [
+      0.54,
+      -0.94,
+      3.23,
+      1.21,
+      -0.51,
+      0.9,
+      1.15,
+      -0.4,
+      0.85,
+      -0.93,
+      -1.1,
+      2.8,
+      0.57,
+      -0.63,
+      0.59,
+      1.23,
+      -1.4,
+      1.35,
+      -0.8,
+      0.74
+     ]
+    },
+    {
+     "echo": false,
+     "p_mad": 0.9401,
+     "p_rank": 0.9371,
+     "article": "Market: Trade-weighted US dollar",
+     "score_mad": 1.824,
+     "loo_stable": false,
+     "score_rank": 1.461,
+     "member_z_mad": [
+      -0.51,
+      1.25,
+      -0.1,
+      0.31,
+      0.99,
+      -0.6,
+      0.31,
+      2.44,
+      -0.4,
+      0.42,
+      -0.47,
+      -0.65,
+      -0.01,
+      1.17,
+      2.6,
+      0.74,
+      0.61,
+      -0.28,
+      0.9,
+      -0.57
+     ]
+    },
+    {
+     "echo": false,
+     "p_mad": 0.971,
+     "p_rank": 0.985,
+     "article": "Electricity demand: SRP",
+     "score_mad": 1.668,
+     "loo_stable": false,
+     "score_rank": 1.259,
+     "member_z_mad": [
+      1.91,
+      2.75,
+      0.4,
+      0.54,
+      1.2,
+      0,
+      -0.94,
+      -0.64,
+      -0.42,
+      -0.69,
+      -0.63,
+      2.29,
+      0.55,
+      -2.21,
+      1.13,
+      1.19,
+      2.58,
+      -0.17,
+      -1.79,
+      0.41
+     ]
+    },
+    {
+     "echo": false,
+     "p_mad": 0.8861,
+     "p_rank": 0.99,
+     "article": "Market: Fed funds rate",
+     "score_mad": 1.992,
+     "loo_stable": false,
+     "score_rank": 1.155,
+     "member_z_mad": [
+      4,
+      1.29,
+      -0.43,
+      0.11,
+      -1.39,
+      1.19,
+      0.14,
+      0.29,
+      -0.4,
+      -1.93,
+      1.18,
+      -2.84,
+      0,
+      0,
+      0,
+      0.02,
+      0,
+      3.53,
+      4,
+      0.16
+     ]
+    }
+   ],
+   "n_used": 20,
+   "members": [
+    {
+     "d0": "2017-01-25",
+     "id": "T10202",
+     "day0": "2017-01-25",
+     "article": "Mary Tyler Moore",
+     "titles_used": 5
+    },
+    {
+     "d0": "2017-05-23",
+     "id": "T10204",
+     "day0": "2017-05-23",
+     "article": "Roger Moore",
+     "titles_used": 15
+    },
+    {
+     "d0": "2018-11-12",
+     "id": "T10209",
+     "day0": "2018-11-12",
+     "article": "Stan Lee",
+     "titles_used": 17
+    },
+    {
+     "d0": "2019-03-04",
+     "id": "T10212",
+     "day0": "2019-03-04",
+     "article": "Luke Perry",
+     "titles_used": 9
+    },
+    {
+     "d0": "2019-05-13",
+     "id": "T10213",
+     "day0": "2019-05-13",
+     "article": "Doris Day",
+     "titles_used": 10
+    },
+    {
+     "d0": "2019-08-16",
+     "id": "T10214",
+     "day0": "2019-08-16",
+     "article": "Peter Fonda",
+     "titles_used": 3
+    },
+    {
+     "d0": "2020-08-28",
+     "id": "T10216",
+     "day0": "2020-08-28",
+     "article": "Chadwick Boseman",
+     "titles_used": 15
+    },
+    {
+     "d0": "2020-10-31",
+     "id": "T10217",
+     "day0": "2020-10-31",
+     "article": "Sean Connery",
+     "titles_used": 17
+    },
+    {
+     "d0": "2021-09-14",
+     "id": "T10224",
+     "day0": "2021-09-14",
+     "article": "Norm Macdonald",
+     "titles_used": 20
+    },
+    {
+     "d0": "2021-12-31",
+     "id": "T10225",
+     "day0": "2021-12-31",
+     "article": "Betty White",
+     "titles_used": 10
+    },
+    {
+     "d0": "2022-01-06",
+     "id": "T10227",
+     "day0": "2022-01-06",
+     "article": "Sidney Poitier",
+     "titles_used": 12
+    },
+    {
+     "d0": "2022-05-26",
+     "id": "T10231",
+     "day0": "2022-05-26",
+     "article": "Ray Liotta",
+     "titles_used": 11
+    },
+    {
+     "d0": "2023-03-17",
+     "id": "T10238",
+     "day0": "2023-03-17",
+     "article": "Lance Reddick",
+     "titles_used": 3
+    },
+    {
+     "d0": "2023-10-28",
+     "id": "T10244",
+     "day0": "2023-10-28",
+     "article": "Matthew Perry",
+     "titles_used": 10
+    },
+    {
+     "d0": "2023-12-11",
+     "id": "T10243",
+     "day0": "2023-12-11",
+     "article": "Andre Braugher",
+     "titles_used": 6
+    },
+    {
+     "d0": "2024-02-01",
+     "id": "T10245",
+     "day0": "2024-02-01",
+     "article": "Carl Weathers",
+     "titles_used": 2
+    },
+    {
+     "d0": "2024-06-20",
+     "id": "T10247",
+     "day0": "2024-06-20",
+     "article": "Donald Sutherland",
+     "titles_used": 5
+    },
+    {
+     "d0": "2024-07-13",
+     "id": "T10248",
+     "day0": "2024-07-13",
+     "article": "Shannen Doherty",
+     "titles_used": 4
+    },
+    {
+     "d0": "2024-09-09",
+     "id": "T10249",
+     "day0": "2024-09-09",
+     "article": "James Earl Jones",
+     "titles_used": 6
+    },
+    {
+     "d0": "2024-09-27",
+     "id": "T10250",
+     "day0": "2024-09-27",
+     "article": "Maggie Smith",
+     "titles_used": 18
+    }
+   ],
+   "min_p_both": 0.2857142857142857,
+   "clustered_members": [
+    "T10225",
+    "T10227",
+    "T10247",
+    "T10248",
+    "T10249",
+    "T10250"
+   ]
+  },
+  "cyberattacks_outages": {
+   "top": [
+    {
+     "echo": false,
+     "p_mad": 0.8511,
+     "p_rank": 0.9171,
+     "article": "Market: 10y-2y Treasury spread",
+     "score_mad": 2.208,
+     "loo_stable": false,
+     "score_rank": 1.545,
+     "member_z_mad": [
+      0.1,
+      0.94,
+      -0.77,
+      1.56,
+      0.51,
+      1.21,
+      2.9,
+      -0.23
+     ]
+    },
+    {
+     "echo": false,
+     "p_mad": 0.9231,
+     "p_rank": 0.7263,
+     "article": "Electricity demand: SWPP",
+     "score_mad": 2.027,
+     "loo_stable": false,
+     "score_rank": 1.876,
+     "member_z_mad": [
+      1.4,
+      1.34,
+      0.44,
+      -1.05,
+      0.74,
+      1.59,
+      0.81,
+      0.47
+     ]
+    },
+    {
+     "echo": false,
+     "p_mad": 0.952,
+     "p_rank": 0.8192,
+     "article": "Market: 10-year breakeven inflation",
+     "score_mad": 1.912,
+     "loo_stable": false,
+     "score_rank": 1.719,
+     "member_z_mad": [
+      -1.55,
+      0.64,
+      1.9,
+      1.96,
+      0.74,
+      2.45,
+      -1.72,
+      0.98
+     ]
+    },
+    {
+     "echo": false,
+     "p_mad": 0.973,
+     "p_rank": 0.9281,
+     "article": "Electricity demand: AECI",
+     "score_mad": 1.801,
+     "loo_stable": false,
+     "score_rank": 1.512,
+     "member_z_mad": [
+      1.31,
+      0.92,
+      -0.35,
+      -0.19,
+      0.91,
+      1.43,
+      1.37,
+      -0.31
+     ]
+    },
+    {
+     "echo": false,
+     "p_mad": 0.976,
+     "p_rank": 0.9161,
+     "article": "Electricity demand: AVA",
+     "score_mad": 1.74,
+     "loo_stable": false,
+     "score_rank": 1.546,
+     "member_z_mad": [
+      0.82,
+      -0.36,
+      0.31,
+      1.07,
+      -0.74,
+      0.41,
+      2.19,
+      1.22
+     ]
+    },
+    {
+     "echo": false,
+     "p_mad": 0.982,
+     "p_rank": 0.988,
+     "article": "Electricity demand: PNM",
+     "score_mad": 1.679,
+     "loo_stable": false,
+     "score_rank": 1.284,
+     "member_z_mad": [
+      1.95,
+      0.42,
+      1.15,
+      1.02,
+      -2.45,
+      1.95,
+      -0.47,
+      1.18
+     ]
+    },
+    {
+     "echo": false,
+     "p_mad": 0.995,
+     "p_rank": 0.99,
+     "article": "Electricity demand: PACW",
+     "score_mad": 1.5,
+     "loo_stable": false,
+     "score_rank": 1.236,
+     "member_z_mad": [
+      0.24,
+      0.32,
+      1.42,
+      0.99,
+      0.65,
+      -1.03,
+      0.49,
+      1.16
+     ]
+    },
+    {
+     "echo": false,
+     "p_mad": 0.997,
+     "p_rank": 0.994,
+     "article": "Electricity demand: MISO",
+     "score_mad": 1.441,
+     "loo_stable": false,
+     "score_rank": 1.161,
+     "member_z_mad": [
+      -0.26,
+      0.7,
+      1.25,
+      -0.21,
+      0.2,
+      1.65,
+      0.41,
+      0.33
+     ]
+    },
+    {
+     "echo": false,
+     "p_mad": 0.997,
+     "p_rank": 0.977,
+     "article": "Electricity demand: SCL",
+     "score_mad": 1.356,
+     "loo_stable": false,
+     "score_rank": 1.359,
+     "member_z_mad": [
+      1.3,
+      0.12,
+      1.24,
+      0.53,
+      1.63,
+      -1.72,
+      0.84,
+      -0.11
+     ]
+    },
+    {
+     "echo": false,
+     "p_mad": 0.995,
+     "p_rank": 0.999,
+     "article": "Electricity demand: WAUW",
+     "score_mad": 1.544,
+     "loo_stable": false,
+     "score_rank": 0.925,
+     "member_z_mad": [
+      -1.08,
+      2.17,
+      1.2,
+      -0.25,
+      0.26,
+      -2.24,
+      3.83,
+      0.47
+     ]
+    }
+   ],
+   "n_used": 8,
+   "members": [
+    {
+     "d0": "2017-05-12",
+     "id": "T10472",
+     "day0": "2017-05-12",
+     "article": "WannaCry ransomware attack",
+     "titles_used": 77
+    },
+    {
+     "d0": "2017-06-27",
+     "id": "T10473",
+     "day0": "2017-06-27",
+     "article": "Petya (malware)",
+     "titles_used": 8
+    },
+    {
+     "id": "T10474",
+     "day0": "2017-09-07",
+     "skip": "too few views around the event",
+     "article": "2017 Equifax data breach",
+     "titles_used": 3
+    },
+    {
+     "id": "T10475",
+     "day0": "2018-03-17",
+     "skip": "too few views around the event",
+     "article": "Facebook\u2013Cambridge Analytica data scandal",
+     "titles_used": 11
+    },
+    {
+     "id": "T10476",
+     "day0": "2018-11-30",
+     "skip": "too few views around the event",
+     "article": "Marriott International data breach",
+     "titles_used": 0
+    },
+    {
+     "id": "T10477",
+     "day0": "2019-07-29",
+     "skip": "too few views around the event",
+     "article": "Capital One data breach",
+     "titles_used": 0
+    },
+    {
+     "id": "T10478",
+     "day0": "2020-12-13",
+     "skip": "too few views around the event",
+     "article": "SolarWinds cyberattack",
+     "titles_used": 0
+    },
+    {
+     "d0": "2021-03-02",
+     "id": "T10479",
+     "day0": "2021-03-02",
+     "article": "Microsoft Exchange Server data breach",
+     "titles_used": 9
+    },
+    {
+     "d0": "2021-05-07",
+     "id": "T10480",
+     "day0": "2021-05-07",
+     "article": "Colonial Pipeline ransomware attack",
+     "titles_used": 5
+    },
+    {
+     "d0": "2021-12-09",
+     "id": "T10481",
+     "day0": "2021-12-09",
+     "article": "Log4Shell",
+     "titles_used": 7
+    },
+    {
+     "d0": "2022-03-22",
+     "id": "T10482",
+     "day0": "2022-03-22",
+     "article": "Okta",
+     "titles_used": 2
+    },
+    {
+     "d0": "2023-05-31",
+     "id": "T10483",
+     "day0": "2023-05-31",
+     "article": "MOVEit",
+     "titles_used": 1
+    },
+    {
+     "id": "T10484",
+     "day0": "2024-02-21",
+     "skip": "too few views around the event",
+     "article": "Change Healthcare cyberattack",
+     "titles_used": 0
+    },
+    {
+     "d0": "2024-07-19",
+     "id": "T10485",
+     "day0": "2024-07-19",
+     "article": "2024 CrowdStrike-related IT outages",
+     "titles_used": 50
+    }
+   ],
+   "min_p_both": 0.9170829170829171,
+   "clustered_members": []
+  },
+  "apple_product_launches": {
+   "top": [
+    {
+     "echo": false,
+     "p_mad": 0.6993,
+     "p_rank": 0.5584,
+     "article": "Electricity demand: AVA",
+     "score_mad": 2.411,
+     "loo_stable": false,
+     "score_rank": 2.041,
+     "member_z_mad": [
+      0.27,
+      3.52,
+      -1.22,
+      2.15,
+      1.01,
+      0.07,
+      0.88,
+      0.71,
+      -0.19,
+      0.42
+     ]
+    },
+    {
+     "echo": false,
+     "p_mad": 0.8931,
+     "p_rank": 0.8551,
+     "article": "Electricity demand: AECI",
+     "score_mad": 2.054,
+     "loo_stable": false,
+     "score_rank": 1.635,
+     "member_z_mad": [
+      -0.8,
+      1.33,
+      1.25,
+      1.62,
+      -0.68,
+      -0.94,
+      2.75,
+      1.01,
+      1.29,
+      -0.34
+     ]
+    },
+    {
+     "echo": false,
+     "p_mad": 0.9291,
+     "p_rank": 0.8032,
+     "article": "Electricity demand: GCPD",
+     "score_mad": 1.911,
+     "loo_stable": false,
+     "score_rank": 1.731,
+     "member_z_mad": [
+      -0.26,
+      3.05,
+      -0.11,
+      2.11,
+      -1.15,
+      1.21,
+      1.17,
+      0.28,
+      -0.24,
+      -0.02
+     ]
+    },
+    {
+     "echo": false,
+     "p_mad": 0.9331,
+     "p_rank": 0.8342,
+     "article": "Electricity demand: WAUW",
+     "score_mad": 1.896,
+     "loo_stable": false,
+     "score_rank": 1.663,
+     "member_z_mad": [
+      -0.12,
+      -1.17,
+      0.1,
+      1.35,
+      0.82,
+      1.47,
+      -0.68,
+      1.45,
+      1.12,
+      1.67
+     ]
+    },
+    {
+     "echo": false,
+     "p_mad": 0.9141,
+     "p_rank": 0.9481,
+     "article": "Electricity demand: CHPD",
+     "score_mad": 1.963,
+     "loo_stable": false,
+     "score_rank": 1.413,
+     "member_z_mad": [
+      -0.71,
+      1.73,
+      -0.23,
+      3.37,
+      1.47,
+      -0.01,
+      1.79,
+      -0.53,
+      -1.06,
+      0.39
+     ]
+    },
+    {
+     "echo": false,
+     "p_mad": 0.963,
+     "p_rank": 0.9131,
+     "article": "Electricity demand: PACW",
+     "score_mad": 1.729,
+     "loo_stable": false,
+     "score_rank": 1.524,
+     "member_z_mad": [
+      -0.31,
+      0.91,
+      -0.59,
+      1.7,
+      1.02,
+      0.17,
+      0.19,
+      0.72,
+      1.49,
+      0.17
+     ]
+    },
+    {
+     "echo": false,
+     "p_mad": 0.963,
+     "p_rank": 0.8881,
+     "article": "Electricity demand: NWMT",
+     "score_mad": 1.725,
+     "loo_stable": false,
+     "score_rank": 1.569,
+     "member_z_mad": [
+      -1.26,
+      1.24,
+      -0.97,
+      1.13,
+      0.89,
+      0.81,
+      0.66,
+      0.89,
+      1.59,
+      0.49
+     ]
+    },
+    {
+     "echo": false,
+     "p_mad": 0.8731,
+     "p_rank": 0.985,
+     "article": "Electricity demand: DOPD",
+     "score_mad": 2.117,
+     "loo_stable": false,
+     "score_rank": 1.211,
+     "member_z_mad": [
+      -0.37,
+      3.04,
+      -0.58,
+      3.64,
+      -1.15,
+      0.02,
+      2.05,
+      0.05,
+      -0.33,
+      0.32
+     ]
+    },
+    {
+     "echo": false,
+     "p_mad": 0.986,
+     "p_rank": 0.962,
+     "article": "Electricity demand: PSCO",
+     "score_mad": 1.589,
+     "loo_stable": false,
+     "score_rank": 1.354,
+     "member_z_mad": [
+      0.46,
+      1.29,
+      0.37,
+      -1.07,
+      1.85,
+      -0.67,
+      1.34,
+      0.33,
+      0.81,
+      0.32
+     ]
+    },
+    {
+     "echo": false,
+     "p_mad": 0.999,
+     "p_rank": 0.987,
+     "article": "Electricity demand: PGE",
+     "score_mad": 1.334,
+     "loo_stable": false,
+     "score_rank": 1.206,
+     "member_z_mad": [
+      -1.72,
+      1.52,
+      -0.2,
+      1.33,
+      1.56,
+      -0.49,
+      0.15,
+      1.06,
+      0.75,
+      0.26
+     ]
+    }
+   ],
+   "n_used": 10,
+   "members": [
+    {
+     "d0": "2016-12-13",
+     "id": "E6935",
+     "day0": "2016-12-13",
+     "article": "AirPods",
+     "titles_used": 19
+    },
+    {
+     "d0": "2018-02-09",
+     "id": "E6945",
+     "day0": "2018-02-09",
+     "article": "HomePod",
+     "titles_used": 21
+    },
+    {
+     "d0": "2018-09-12",
+     "id": "E8145",
+     "day0": "2018-09-12",
+     "article": "Apple Watch Series 4",
+     "titles_used": 49
+    },
+    {
+     "d0": "2019-10-30",
+     "id": "E6937",
+     "day0": "2019-10-30",
+     "article": "AirPods Pro",
+     "titles_used": 6
+    },
+    {
+     "d0": "2020-06-22",
+     "id": "E5801",
+     "day0": "2020-06-22",
+     "article": "Mac transition to Apple silicon",
+     "titles_used": 6
+    },
+    {
+     "d0": "2020-11-10",
+     "id": "E5802",
+     "day0": "2020-11-10",
+     "article": "Apple M1",
+     "titles_used": 40
+    },
+    {
+     "d0": "2021-04-21",
+     "id": "E8259",
+     "day0": "2021-04-15..2021-05-05",
+     "article": "AirTag",
+     "titles_used": 8
+    },
+    {
+     "d0": "2023-06-05",
+     "id": "E6929",
+     "day0": "2023-06-05",
+     "article": "Apple Vision Pro",
+     "titles_used": 17
+    },
+    {
+     "d0": "2024-02-02",
+     "id": "E6194",
+     "day0": "2024-02-02",
+     "article": "Apple Vision Pro",
+     "titles_used": 17
+    },
+    {
+     "d0": "2024-06-10",
+     "id": "E5549",
+     "day0": "2024-06-10",
+     "article": "Apple Intelligence",
+     "titles_used": 7
+    }
+   ],
+   "min_p_both": 0.6993006993006993,
+   "clustered_members": []
+  },
+  "drug_vaccine_approvals": {
+   "top": [
+    {
+     "echo": false,
+     "p_mad": 0.6733,
+     "p_rank": 0.4965,
+     "article": "Electricity demand: NEVP",
+     "score_mad": 2.41,
+     "loo_stable": false,
+     "score_rank": 2.09,
+     "member_z_mad": [
+      1.76,
+      0.21,
+      0.56,
+      0.23,
+      1.76,
+      -0.59,
+      0,
+      1.41,
+      0.68,
+      1.11,
+      1,
+      0.22
+     ]
+    },
+    {
+     "echo": false,
+     "p_mad": 0.7612,
+     "p_rank": 0.4496,
+     "article": "Electricity demand: CISO",
+     "score_mad": 2.289,
+     "loo_stable": false,
+     "score_rank": 2.15,
+     "member_z_mad": [
+      1.62,
+      0.28,
+      0.23,
+      -1.02,
+      0.11,
+      1.35,
+      0.72,
+      0.4,
+      0.34,
+      0.66,
+      1.74,
+      1.51
+     ]
+    },
+    {
+     "echo": false,
+     "p_mad": 0.7852,
+     "p_rank": 0.6903,
+     "article": "Air travel: TSA checkpoint passengers",
+     "score_mad": 2.233,
+     "loo_stable": false,
+     "score_rank": 1.862,
+     "member_z_mad": [
+      0,
+      0,
+      2.43,
+      0.17,
+      1.45,
+      2.23,
+      0.92,
+      -0.78,
+      -0.17,
+      0.29,
+      0.34,
+      0.85
+     ]
+    },
+    {
+     "echo": false,
+     "p_mad": 0.9001,
+     "p_rank": 0.7353,
+     "article": "Electricity demand: EPE",
+     "score_mad": 1.965,
+     "loo_stable": false,
+     "score_rank": 1.803,
+     "member_z_mad": [
+      1.24,
+      0.77,
+      1.51,
+      -0.46,
+      -0.03,
+      1.93,
+      -0.06,
+      0.45,
+      1.17,
+      -1.07,
+      0.55,
+      0.81
+     ]
+    },
+    {
+     "echo": false,
+     "p_mad": 0.987,
+     "p_rank": 0.963,
+     "article": "Electricity demand: WACM",
+     "score_mad": 1.615,
+     "loo_stable": false,
+     "score_rank": 1.364,
+     "member_z_mad": [
+      -0.22,
+      -1.07,
+      2.93,
+      1.54,
+      -1.03,
+      0.94,
+      -0.39,
+      -0.8,
+      0.84,
+      0.81,
+      1.65,
+      0.39
+     ]
+    },
+    {
+     "echo": false,
+     "p_mad": 0.988,
+     "p_rank": 0.994,
+     "article": "Market: US dollar in Japanese yen",
+     "score_mad": 1.563,
+     "loo_stable": false,
+     "score_rank": 1.129,
+     "member_z_mad": [
+      1.4,
+      1.48,
+      0.68,
+      -1.56,
+      -0.66,
+      2.07,
+      0.1,
+      1.15,
+      -1.14,
+      -0.2,
+      2.24,
+      -0.14
+     ]
+    },
+    {
+     "echo": false,
+     "p_mad": 0.993,
+     "p_rank": 0.994,
+     "article": "Electricity demand: JEA",
+     "score_mad": 1.447,
+     "loo_stable": false,
+     "score_rank": 1.133,
+     "member_z_mad": [
+      0.5,
+      2.86,
+      3.19,
+      -0.19,
+      0.96,
+      0.1,
+      0.7,
+      0.46,
+      -1.71,
+      0.96,
+      -2.31,
+      -0.5
+     ]
+    },
+    {
+     "echo": false,
+     "p_mad": 0.995,
+     "p_rank": 0.997,
+     "article": "Electricity demand: TIDC",
+     "score_mad": 1.406,
+     "loo_stable": false,
+     "score_rank": 1.074,
+     "member_z_mad": [
+      0.55,
+      2.84,
+      -0.01,
+      -2.47,
+      1.58,
+      0.49,
+      0.11,
+      -0.24,
+      1.67,
+      -0.57,
+      0.97,
+      -0.05
+     ]
+    },
+    {
+     "echo": false,
+     "p_mad": 0.998,
+     "p_rank": 0.988,
+     "article": "Electricity demand: FPL",
+     "score_mad": 1.285,
+     "loo_stable": false,
+     "score_rank": 1.223,
+     "member_z_mad": [
+      1.1,
+      1.92,
+      2.83,
+      0.01,
+      0.62,
+      -0.91,
+      -1.72,
+      0.34,
+      -0.64,
+      -0.95,
+      0.18,
+      1.68
+     ]
+    },
+    {
+     "echo": false,
+     "p_mad": 0.998,
+     "p_rank": 0.988,
+     "article": "Electricity demand: AZPS",
+     "score_mad": 1.246,
+     "loo_stable": false,
+     "score_rank": 1.222,
+     "member_z_mad": [
+      0.48,
+      0.73,
+      1.09,
+      1.11,
+      0.36,
+      0.38,
+      0.23,
+      0.29,
+      -0.55,
+      0.46,
+      0.46,
+      -0.71
+     ]
+    }
+   ],
+   "n_used": 12,
+   "members": [
+    {
+     "d0": "2017-08-30",
+     "id": "E6627",
+     "day0": "2017-08-30",
+     "article": "Tisagenlecleucel",
+     "titles_used": 4
+    },
+    {
+     "d0": "2017-12-19",
+     "id": "E5662",
+     "day0": "2017-12-19",
+     "article": "Voretigene neparvovec",
+     "titles_used": 3
+    },
+    {
+     "d0": "2020-12-11",
+     "id": "E5119",
+     "day0": "2020-12-11",
+     "article": "Pfizer\u2013BioNTech COVID-19 vaccine",
+     "titles_used": 61
+    },
+    {
+     "d0": "2021-06-04",
+     "id": "E5478",
+     "day0": "2021-06-04",
+     "article": "Semaglutide",
+     "titles_used": 33
+    },
+    {
+     "d0": "2021-10-06",
+     "id": "E5124",
+     "day0": "2021-10-06",
+     "article": "RTS,S",
+     "titles_used": 5
+    },
+    {
+     "d0": "2021-12-22",
+     "id": "E5677",
+     "day0": "2021-12-22",
+     "article": "Nirmatrelvir/ritonavir",
+     "titles_used": 10
+    },
+    {
+     "d0": "2023-01-06",
+     "id": "E5139",
+     "day0": "2023-01-06",
+     "article": "Lecanemab",
+     "titles_used": 5
+    },
+    {
+     "d0": "2023-05-31",
+     "id": "E5129",
+     "day0": "2023-05-31",
+     "article": "RSV vaccine",
+     "titles_used": 7
+    },
+    {
+     "d0": "2023-08-04",
+     "id": "E5690",
+     "day0": "2023-08-04",
+     "article": "Zuranolone",
+     "titles_used": 12
+    },
+    {
+     "d0": "2023-11-08",
+     "id": "E6643",
+     "day0": "2023-11-08",
+     "article": "Tirzepatide",
+     "titles_used": 5
+    },
+    {
+     "d0": "2023-12-08",
+     "id": "E5142",
+     "day0": "2023-12-08",
+     "article": "Exagamglogene autotemcel",
+     "titles_used": 5
+    },
+    {
+     "d0": "2024-07-02",
+     "id": "E5140",
+     "day0": "2024-07-02",
+     "article": "Donanemab",
+     "titles_used": 4
+    }
+   ],
+   "min_p_both": 0.6733266733266733,
+   "clustered_members": [
+    "E5142",
+    "E6643"
+   ]
+  },
+  "social_platform_moments": {
+   "top": [
+    {
+     "echo": false,
+     "p_mad": 0.5405,
+     "p_rank": 0.5285,
+     "article": "Market: Jet fuel price (Gulf Coast)",
+     "score_mad": 2.673,
+     "loo_stable": false,
+     "score_rank": 2.043,
+     "member_z_mad": [
+      0.11,
+      -0.08,
+      1.93,
+      -0.45,
+      4,
+      0.24,
+      0.62,
+      0.61,
+      1.03
+     ]
+    },
+    {
+     "echo": false,
+     "p_mad": 0.994,
+     "p_rank": 0.991,
+     "article": "Electricity demand: SPA",
+     "score_mad": 1.376,
+     "loo_stable": false,
+     "score_rank": 1.079,
+     "member_z_mad": [
+      1.19,
+      0.32,
+      -0.08,
+      -0.19,
+      -0.34,
+      1.11,
+      2.49,
+      0.01,
+      -0.37
+     ]
+    },
+    {
+     "echo": false,
+     "p_mad": 0.994,
+     "p_rank": 0.991,
+     "article": "Market: 5-year breakeven inflation",
+     "score_mad": 1.361,
+     "loo_stable": false,
+     "score_rank": 1.085,
+     "member_z_mad": [
+      0.32,
+      -0.46,
+      -0.03,
+      1.07,
+      0.45,
+      0.56,
+      2.03,
+      -0.76,
+      0.9
+     ]
+    },
+    {
+     "echo": false,
+     "p_mad": 0.977,
+     "p_rank": 0.995,
+     "article": "Market: 3-month Treasury yield",
+     "score_mad": 1.613,
+     "loo_stable": false,
+     "score_rank": 0.955,
+     "member_z_mad": [
+      0.86,
+      -0.36,
+      -0.28,
+      -0.29,
+      3.4,
+      0.61,
+      0.22,
+      0.5,
+      0.19
+     ]
+    },
+    {
+     "echo": false,
+     "p_mad": 0.996,
+     "p_rank": 0.989,
+     "article": "Electricity demand: WAUW",
+     "score_mad": 1.327,
+     "loo_stable": false,
+     "score_rank": 1.146,
+     "member_z_mad": [
+      0.36,
+      2.94,
+      -0.15,
+      -0.51,
+      -0.03,
+      -0.68,
+      1.02,
+      -0.17,
+      1.19
+     ]
+    },
+    {
+     "echo": false,
+     "p_mad": 0.993,
+     "p_rank": 1,
+     "article": "Electricity demand: SEC",
+     "score_mad": 1.441,
+     "loo_stable": false,
+     "score_rank": 0.833,
+     "member_z_mad": [
+      4,
+      0.41,
+      0.57,
+      -1.4,
+      0.78,
+      -0.53,
+      -0.09,
+      0.76,
+      -0.18
+     ]
+    },
+    {
+     "echo": false,
+     "p_mad": 1,
+     "p_rank": 1,
+     "article": "Market: WTI crude oil price",
+     "score_mad": 0.98,
+     "loo_stable": false,
+     "score_rank": 0.767,
+     "member_z_mad": [
+      0.37,
+      -0.56,
+      1.82,
+      -0.84,
+      0.49,
+      0.53,
+      1.54,
+      -0.18,
+      -0.22
+     ]
+    },
+    {
+     "echo": false,
+     "p_mad": 1,
+     "p_rank": 0.995,
+     "article": "Market: 5-year Treasury yield",
+     "score_mad": 0.965,
+     "loo_stable": false,
+     "score_rank": 0.945,
+     "member_z_mad": [
+      0.4,
+      -0.3,
+      0.16,
+      0.62,
+      0.88,
+      2.32,
+      0.69,
+      -2.68,
+      0.82
+     ]
+    },
+    {
+     "echo": false,
+     "p_mad": 1,
+     "p_rank": 1,
+     "article": "Electricity demand: IID",
+     "score_mad": 0.927,
+     "loo_stable": false,
+     "score_rank": 0.621,
+     "member_z_mad": [
+      -0.17,
+      0.03,
+      -1.02,
+      1.14,
+      0.91,
+      -0.58,
+      1.37,
+      -0.46,
+      1.56
+     ]
+    },
+    {
+     "echo": false,
+     "p_mad": 1,
+     "p_rank": 1,
+     "article": "Market: Natural gas price (Henry Hub)",
+     "score_mad": 0.907,
+     "loo_stable": false,
+     "score_rank": 0.629,
+     "member_z_mad": [
+      1.64,
+      -0.43,
+      0.48,
+      1.38,
+      -0.86,
+      -0.72,
+      0.32,
+      -0.01,
+      0.92
+     ]
+    }
+   ],
+   "n_used": 9,
+   "members": [
+    {
+     "d0": "2017-11-07",
+     "id": "E8201",
+     "day0": "2017-11-07",
+     "article": "Twitter",
+     "titles_used": 101
+    },
+    {
+     "d0": "2018-08-02",
+     "id": "E10398",
+     "day0": "2018-08-02",
+     "article": "TikTok",
+     "titles_used": 49
+    },
+    {
+     "d0": "2020-08-05",
+     "id": "E6184",
+     "day0": "2020-08-05",
+     "article": "Instagram",
+     "titles_used": 50
+    },
+    {
+     "id": "E6183",
+     "day0": "2020-09-14",
+     "skip": "too few views around the event",
+     "article": "YouTube Shorts",
+     "titles_used": 9
+    },
+    {
+     "id": "E10404",
+     "day0": "2021-05-03",
+     "skip": "no attention rise",
+     "article": "Twitter Spaces",
+     "titles_used": 101
+    },
+    {
+     "d0": "2021-10-28",
+     "id": "E6192",
+     "day0": "2021-10-28",
+     "article": "Meta Platforms",
+     "titles_used": 44
+    },
+    {
+     "d0": "2022-10-27",
+     "id": "E6188",
+     "day0": "2022-10-27",
+     "article": "Acquisition of Twitter by Elon Musk",
+     "titles_used": 34
+    },
+    {
+     "d0": "2023-07-05",
+     "id": "E6041",
+     "day0": "2023-07-05",
+     "article": "Threads (social network)",
+     "titles_used": 25
+    },
+    {
+     "d0": "2023-07-24",
+     "id": "E6190",
+     "day0": "2023-07-24",
+     "article": "Twitter",
+     "titles_used": 101
+    },
+    {
+     "d0": "2024-02-06",
+     "id": "E6043",
+     "day0": "2024-02-06",
+     "article": "Bluesky",
+     "titles_used": 16
+    },
+    {
+     "d0": "2024-03-21",
+     "id": "E6045",
+     "day0": "2024-03-21",
+     "article": "Reddit",
+     "titles_used": 51
+    }
+   ],
+   "min_p_both": 0.5404595404595405,
+   "clustered_members": [
+    "E6041",
+    "E6190"
+   ]
+  },
+  "streaming_service_launches": {
+   "top": [
+    {
+     "echo": false,
+     "p_mad": 0.6274,
+     "p_rank": 0.3626,
+     "article": "Electricity demand: CHPD",
+     "score_mad": 2.497,
+     "loo_stable": false,
+     "score_rank": 2.249,
+     "member_z_mad": [
+      1.85,
+      -0.26,
+      0.62,
+      0.53,
+      1.23,
+      2.22,
+      -0.15,
+      0.59,
+      -0.45,
+      1.7
+     ]
+    },
+    {
+     "echo": false,
+     "p_mad": 0.7423,
+     "p_rank": 0.3516,
+     "article": "Electricity demand: BPAT",
+     "score_mad": 2.302,
+     "loo_stable": false,
+     "score_rank": 2.266,
+     "member_z_mad": [
+      1.36,
+      1.18,
+      0.35,
+      0.85,
+      2.07,
+      1.16,
+      -0.47,
+      0.36,
+      -0.04,
+      0.46
+     ]
+    },
+    {
+     "echo": false,
+     "p_mad": 0.8511,
+     "p_rank": 0.7792,
+     "article": "Electricity demand: LGEE",
+     "score_mad": 2.09,
+     "loo_stable": false,
+     "score_rank": 1.767,
+     "member_z_mad": [
+      2.41,
+      3.12,
+      -0.41,
+      0.97,
+      -0.98,
+      -0.63,
+      0.74,
+      1.09,
+      0.07,
+      0.22
+     ]
+    },
+    {
+     "echo": false,
+     "p_mad": 0.8721,
+     "p_rank": 0.8711,
+     "article": "Market: US dollar in Mexican pesos",
+     "score_mad": 2.017,
+     "loo_stable": false,
+     "score_rank": 1.613,
+     "member_z_mad": [
+      0.85,
+      -0.85,
+      -0.28,
+      -1.44,
+      1.67,
+      0.9,
+      1.34,
+      1.89,
+      1.8,
+      0.49
+     ]
+    },
+    {
+     "echo": false,
+     "p_mad": 0.8961,
+     "p_rank": 0.8691,
+     "article": "Market: US dollar in Chinese yuan",
+     "score_mad": 1.976,
+     "loo_stable": false,
+     "score_rank": 1.614,
+     "member_z_mad": [
+      2.76,
+      0.13,
+      2.5,
+      0.45,
+      0.29,
+      -2.76,
+      0.32,
+      1.39,
+      1.06,
+      0.11
+     ]
+    },
+    {
+     "echo": false,
+     "p_mad": 0.957,
+     "p_rank": 0.8232,
+     "article": "Electricity demand: DOPD",
+     "score_mad": 1.748,
+     "loo_stable": false,
+     "score_rank": 1.685,
+     "member_z_mad": [
+      1.89,
+      -0.46,
+      1.08,
+      -1.11,
+      1.25,
+      1.36,
+      -0.06,
+      -0.35,
+      0.23,
+      1.71
+     ]
+    },
+    {
+     "echo": false,
+     "p_mad": 0.958,
+     "p_rank": 0.9301,
+     "article": "Market: 30-year Treasury yield",
+     "score_mad": 1.742,
+     "loo_stable": false,
+     "score_rank": 1.487,
+     "member_z_mad": [
+      0.54,
+      0.56,
+      0.08,
+      0.13,
+      3.26,
+      -0.25,
+      0.07,
+      -0.11,
+      0.74,
+      0.5
+     ]
+    },
+    {
+     "echo": false,
+     "p_mad": 0.972,
+     "p_rank": 0.7882,
+     "article": "Electricity demand: GCPD",
+     "score_mad": 1.666,
+     "loo_stable": false,
+     "score_rank": 1.75,
+     "member_z_mad": [
+      1.67,
+      -0.09,
+      1.24,
+      1.06,
+      1.65,
+      0.3,
+      -0.73,
+      0.1,
+      0.6,
+      -0.52
+     ]
+    },
+    {
+     "echo": false,
+     "p_mad": 0.976,
+     "p_rank": 0.9061,
+     "article": "Electricity demand: SCL",
+     "score_mad": 1.611,
+     "loo_stable": false,
+     "score_rank": 1.554,
+     "member_z_mad": [
+      0.4,
+      0.46,
+      0.01,
+      0.39,
+      1.76,
+      0.5,
+      0.14,
+      0.49,
+      -0.01,
+      0.96
+     ]
+    },
+    {
+     "echo": false,
+     "p_mad": 0.9381,
+     "p_rank": 0.985,
+     "article": "Market: 10y-2y Treasury spread",
+     "score_mad": 1.818,
+     "loo_stable": false,
+     "score_rank": 1.253,
+     "member_z_mad": [
+      0.48,
+      0.05,
+      -0.72,
+      -0.33,
+      4,
+      0.19,
+      1.84,
+      -0.26,
+      0.36,
+      0.15
+     ]
+    }
+   ],
+   "n_used": 10,
+   "members": [
+    {
+     "d0": "2019-11-12",
+     "id": "T10494",
+     "day0": "2019-11-12",
+     "article": "Disney+",
+     "titles_used": 20
+    },
+    {
+     "d0": "2019-11-01",
+     "id": "T10495",
+     "day0": "2019-11-01",
+     "article": "Apple TV+",
+     "titles_used": 23
+    },
+    {
+     "d0": "2020-05-27",
+     "id": "T10496",
+     "day0": "2020-05-27",
+     "article": "HBO Max",
+     "titles_used": 50
+    },
+    {
+     "d0": "2020-07-15",
+     "id": "T10497",
+     "day0": "2020-07-15",
+     "article": "Peacock (streaming service)",
+     "titles_used": 16
+    },
+    {
+     "d0": "2021-03-04",
+     "id": "T10498",
+     "day0": "2021-03-04",
+     "article": "Paramount+",
+     "titles_used": 10
+    },
+    {
+     "d0": "2021-01-04",
+     "id": "T10499",
+     "day0": "2021-01-04",
+     "article": "Discovery+",
+     "titles_used": 8
+    },
+    {
+     "d0": "2023-05-23",
+     "id": "T10500",
+     "day0": "2023-05-23",
+     "article": "Max (streaming service)",
+     "titles_used": 50
+    },
+    {
+     "d0": "2018-04-12",
+     "id": "ST001",
+     "day0": "2018-04-12",
+     "article": "ESPN+",
+     "titles_used": 11
+    },
+    {
+     "d0": "2017-04-05",
+     "id": "ST002",
+     "day0": "2017-04-05",
+     "article": "YouTube TV",
+     "titles_used": 8
+    },
+    {
+     "d0": "2017-03-07",
+     "id": "ST003",
+     "day0": "2017-03-07",
+     "article": "BritBox",
+     "titles_used": 2
+    }
+   ],
+   "min_p_both": 0.6273726273726273,
+   "clustered_members": [
+    "ST002",
+    "ST003",
+    "T10494",
+    "T10495"
+   ]
+  }
+ },
+ "protocol": "ripples/docs/q3_protocol_econ.md",
+ "candidates": [],
+ "bh_families_passing": [],
+ "run": "https://github.com/bsunter93/Ben-Sunters-Website/actions/runs/36562598446",
+ "source": "ripples.att_q3_results (q3_screen_v3_econ)"
+}
