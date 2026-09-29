@@ -1,0 +1,42 @@
+# Google Trends archive (ripples/tools/bq/gt_archive.py): the public BigQuery google_trends lists keep only ~30 days,
+# so copy each new refresh date into ripples.att_gt_terms daily. Keyless BigQuery (D-8); partition-pruned, small scans.
+name: Ripples Google Trends archive
+
+on:
+  schedule:
+    - cron: "17 7 * * *"
+  push:
+    branches: ["claude/**"]
+    paths: ["ripples/tools/bq/gt_archive.py", ".github/workflows/ripples-gt-archive.yml"]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  id-token: write
+
+concurrency:
+  group: ripples-gt-archive
+  cancel-in-progress: false
+
+jobs:
+  archive:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+      - id: auth
+        uses: google-github-actions/auth@v2
+        with:
+          workload_identity_provider: ${{ vars.GCP_WIF_PROVIDER }}
+          service_account: ${{ vars.GCP_SA_EMAIL }}
+      - uses: google-github-actions/setup-gcloud@v2
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: pip install --quiet -r ripples/tools/bq/requirements.txt
+      - name: Archive new refresh dates
+        working-directory: ripples/tools/bq
+        env:
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+        run: python gt_archive.py
