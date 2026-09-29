@@ -138,18 +138,19 @@
   },
   {
    "id": "v3",
-   "label": "Screen v3 (tight families)",
+   "label": "Screen v3 (tight families, same-weekday placebos)",
    "lens": "Wikipedia views",
-   "file": "/ripples/docs/results/q3_screen_v3.json",
+   "file": "/ripples/docs/results/q3_screen_v3_sameweekday.json",
    "protocol": "/ripples/docs/q3_protocol_v3.md",
    "ledger": [
     1365,
     1366,
     1369,
     1454,
-    1455
+    1455,
+    1456
    ],
-   "hold": "18 of 24 families pass, but the 337 candidates are mostly generic coursework articles: a weekday/school-calendar artefact, as in the wide lens. Candidates are withheld until the same-weekday re-run (ledger 1455) decides."
+   "note_first_run": "The first v3 run used any-weekday placebo dates and flagged 337 candidates, mostly coursework articles (a school-calendar artefact; ledger 1454). This registered same-weekday re-run replaces it (1455)."
   },
   {
    "id": "v3nyt",
@@ -258,6 +259,30 @@
    "family": "films_awards",
    "cls": "no",
    "verdict": "Cinematography is explained by the Oscars calendar: it does not survive the same-weekday check; only the Academy Awards echo does (ledger 1383)."
+  },
+  {
+   "screen": "v3",
+   "family": "super_bowls",
+   "cls": "warn",
+   "verdict": "Open candidate (Arabic numerals): 8 of 10 Super Bowls push it up; the likely mechanism is the Roman-numeral game names. Every Super Bowl falls in the same weeks of the year, so a confirmation with pre-set outcomes (Roman numerals, Arabic numerals) and reader-path data comes next (ledger 1456). The Association football link is obvious."
+  },
+  {
+   "screen": "v3",
+   "family": "hurricanes",
+   "cls": "no",
+   "verdict": "Explained: hurricane season overlaps the start of the school year, when Hammurabi is taught (seasonal family; ledger 1456)."
+  },
+  {
+   "screen": "v3",
+   "family": "true_story_films",
+   "cls": "no",
+   "verdict": "Explained: Quantum mechanics is carried by Christmas-season releases (The Post, 1917, Darkest Hour), i.e. school holidays, not by Oppenheimer (ledger 1456)."
+  },
+  {
+   "screen": "v3",
+   "family": "spacex_milestones",
+   "cls": "no",
+   "verdict": "Obvious: Spaceflight is the category of the event itself."
   }
  ],
  "confirmations": [
