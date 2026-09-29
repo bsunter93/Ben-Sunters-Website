@@ -228,6 +228,7 @@ dl.how dt{font-weight:700}dl.how dd{margin:0;color:var(--ink-2)}
     for (const s of screens) {
       if (!s.data) continue;
       for (const [fam, r] of Object.entries(s.data.families)) { nFams++; nEvents += r.n_used || 0; }
+      if (s.hold) continue;  // candidates withheld until the screen's registered check clears them
       for (const c of s.data.candidates || []) {
         const fr = s.data.families[c.family], top = (fr.top || []).find((t) => t.article === c.article) || {};
         const conf = confs.filter((x) => x.screen === s.id && x.family === c.family && x.outcome === c.article);
@@ -379,7 +380,7 @@ dl.how dt{font-weight:700}dl.how dd{margin:0;color:var(--ink-2)}
           <td>${r.note ? "–" : pass.has(f) ? ((s.data.candidates || []).some((c) => c.family === f) ? `<span class="verdict ok">passes</span>` : `<span class="verdict warn">passes; no outcome survived drop-one</span>`) : "no"}</td>
           <td>${best ? esc(nice(best.article)) + (best.echo ? ` <span class="muted">(echo)</span>` : "") : `<span class="muted">${esc(r.note || "")}</span>`}</td></tr>`;
       }).join("");
-      return `<div class="card"><h3>${esc(s.label)} <span class="muted">· ${esc(s.lens)}</span></h3><div class="scroll"><table>
+      return `<div class="card"><h3>${esc(s.label)} <span class="muted">· ${esc(s.lens)}</span></h3>${s.hold ? `<p><span class="verdict warn">On hold</span> <span class="muted">${esc(s.hold)}</span></p>` : ""}<div class="scroll"><table>
         <thead><tr><th>Family</th><th class="hide-sm">Events used</th><th>Best p</th><th>Corrected</th><th>Top outcome</th></tr></thead><tbody>${rows}</tbody></table></div></div>`;
     }).join("");
   }
