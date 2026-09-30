@@ -81,6 +81,8 @@ dl.how dt{font-weight:700}dl.how dd{margin:0;color:var(--ink-2)}
     whose public attention moves in step with each event, again and again. Every candidate is tested against the same
     events moved to random dates. Everything here was registered before it was run.</p>
   <div class="stats" id="stats" aria-live="polite"></div>
+  <div class="card lead"><strong>New: a full ripple map.</strong> <a href="/ripples/discover/queens-gambit/">The Queen's Gambit</a>,
+    followed step by step from chess searches to chess sets, library borrowing and chess sales, each step dated and marked by how it was measured.</div>
 
   <h2>Ripples found</h2>
   <p class="muted">Candidates that passed the screen. A candidate becomes a replicated ripple only when a fresh set of events,
@@ -353,7 +355,7 @@ dl.how dt{font-weight:700}dl.how dd{margin:0;color:var(--ink-2)}
         const verdict = (c) => c.skip ? `<span class="muted">${esc(c.skip)}</span>` : c.passes ? `<span class="verdict ok">passes</span>`
           : (c.p != null && c.p <= 0.05 && !c.order_ok) ? `<span class="verdict warn">rose, but not after the event</span>` : `<span class="verdict no">no</span>`;
         const rows = ct.chains.map((c) => `<tr><td>${esc(c.event)} <span class="muted">${esc(c.month)}</span></td><td>${esc(c.heading)}</td>
-          <td class="num">${c.p == null ? "–" : fmtP(c.p)}</td><td>${esc(c.onset || "–")}</td><td>${verdict(c)}${c.flag ? `<br><span class="muted">${esc(c.flag)}</span>` : ""}</td></tr>`).join("");
+          <td class="num">${c.p == null ? "–" : fmtP(c.p)}</td><td>${esc(c.onset || "–")}</td><td>${c.retracted ? `<span class="verdict no">withdrawn</span><br><span class="muted">${esc(c.retracted)}</span>` : verdict(c)}${c.flag && !c.retracted ? `<br><span class="muted">${esc(c.flag)}</span>` : ""}</td></tr>`).join("");
         box.innerHTML = `<div class="card"><p><strong>${ct.passing} of ${ct.n_scored}</strong> chains pass <span class="muted">(about ${ct.expected_by_chance} expected by chance)</span></p>
           <div class="scroll"><table><thead><tr><th>Event</th><th>Borrowed: books about</th><th>p</th><th>Rise began</th><th></th></tr></thead><tbody>${rows}</tbody></table></div>
           ${(man.chains.notes || []).map((t) => `<p class="muted">Reading: ${esc(t)}</p>`).join("")}<p class="muted">Ledger ${esc(man.chains.ledger.join(", "))}. One city, monthly counts.</p></div>`;
@@ -365,7 +367,7 @@ dl.how dt{font-weight:700}dl.how dd{margin:0;color:var(--ink-2)}
       const c2 = await getJSON(man.chains2.file);
       const box = $("#chains2");
       if (c2) {
-        const stepTxt = (x) => `${esc(x.heading)} <span class="muted">p ${x.p == null ? "–" : fmtP(x.p)}, rise ${esc(x.onset || "none")}</span>`;
+        const stepTxt = (x) => `${esc(x.heading)} <span class="muted">p ${x.p == null ? "–" : fmtP(x.p)}, rise ${esc(x.onset || "none")}${x.retracted ? ", withdrawn: " + esc(x.retracted) : ""}</span>`;
         const rows = c2.chains.map((c) => `<tr><td>${esc(c.event)} <span class="muted">${esc(c.month)}</span></td><td>${c.steps.map(stepTxt).join(" → ")}</td>
           <td>${c.passes ? `<span class="verdict ok">passes</span>` : (c.steps.every((x) => x.passes) ? `<span class="verdict warn">both rose in the same month</span>` : `<span class="verdict no">no</span>`)}</td></tr>`).join("");
         box.innerHTML = `<div class="card"><h3>Less obvious chains <span class="muted">· ledger ${esc(man.chains2.ledger.join(", "))}</span></h3>
