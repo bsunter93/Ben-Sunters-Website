@@ -102,6 +102,7 @@ dl.how dt{font-weight:700}dl.how dd{margin:0;color:var(--ink-2)}
     Public Library patrons borrowed. A chain passes only if borrowing rose beyond its seasonal normal (compared with every
     other month) and the rise started in the event's month or later, never before it.</p>
   <div id="chains"></div>
+  <div id="chains2"></div>
 
   <h2>What moved, and what might explain it</h2>
   <p class="muted">The salmon search swims upstream. It starts from something that broke from its own trend (here, a
@@ -356,6 +357,22 @@ dl.how dt{font-weight:700}dl.how dd{margin:0;color:var(--ink-2)}
         box.innerHTML = `<div class="card"><p><strong>${ct.passing} of ${ct.n_scored}</strong> chains pass <span class="muted">(about ${ct.expected_by_chance} expected by chance)</span></p>
           <div class="scroll"><table><thead><tr><th>Event</th><th>Borrowed: books about</th><th>p</th><th>Rise began</th><th></th></tr></thead><tbody>${rows}</tbody></table></div>
           ${(man.chains.notes || []).map((t) => `<p class="muted">Reading: ${esc(t)}</p>`).join("")}<p class="muted">Ledger ${esc(man.chains.ledger.join(", "))}. One city, monthly counts.</p></div>`;
+      }
+    }
+
+    // chain tests v2: less obvious chains, two-step chains in time order
+    if (man.chains2) {
+      const c2 = await getJSON(man.chains2.file);
+      const box = $("#chains2");
+      if (c2) {
+        const stepTxt = (x) => `${esc(x.heading)} <span class="muted">p ${x.p == null ? "–" : fmtP(x.p)}, rise ${esc(x.onset || "none")}</span>`;
+        const rows = c2.chains.map((c) => `<tr><td>${esc(c.event)} <span class="muted">${esc(c.month)}</span></td><td>${c.steps.map(stepTxt).join(" → ")}</td>
+          <td>${c.passes ? `<span class="verdict ok">passes</span>` : (c.steps.every((x) => x.passes) ? `<span class="verdict warn">both rose in the same month</span>` : `<span class="verdict no">no</span>`)}</td></tr>`).join("");
+        box.innerHTML = `<div class="card"><h3>Less obvious chains <span class="muted">· ledger ${esc(man.chains2.ledger.join(", "))}</span></h3>
+          <p><strong>${c2.chains_passing} of ${c2.chains.length}</strong> chains pass; ${c2.steps_passing} of ${c2.steps_scored} steps rose after their event (about ${c2.steps_expected_by_chance} by chance).
+          A two-step chain needs its second step to start in a later month than its first.</p>
+          <div class="scroll"><table><thead><tr><th>Event</th><th>Borrowing, step by step</th><th></th></tr></thead><tbody>${rows}</tbody></table></div>
+          ${(man.chains2.notes || []).map((t) => `<p class="muted">Reading: ${esc(t)}</p>`).join("")}</div>`;
       }
     }
 
