@@ -97,6 +97,12 @@ dl.how dt{font-weight:700}dl.how dd{margin:0;color:var(--ink-2)}
     Hacker News, beside Wikipedia. Fake dates keep each event's weekday. A pass needs p ≤ 0.05 on both scorings.</p>
   <div id="lenses"></div>
 
+  <h2>From attention to behaviour</h2>
+  <p class="muted">Chain tests follow one event to one thing people actually do, chosen in advance: here, what Seattle
+    Public Library patrons borrowed. A chain passes only if borrowing rose beyond its seasonal normal (compared with every
+    other month) and the rise started in the event's month or later, never before it.</p>
+  <div id="chains"></div>
+
   <h2>What moved, and what might explain it</h2>
   <p class="muted">The salmon search swims upstream. It starts from something that broke from its own trend (here, a
     baby name suddenly given far more often), then looks for earlier works that carry the name and could explain it.
@@ -334,6 +340,22 @@ dl.how dt{font-weight:700}dl.how dd{margin:0;color:var(--ink-2)}
         box.innerHTML = `<div class="card"><div class="scroll"><table><thead><tr><th>Family</th><th>Wikipedia</th><th>TV news</th><th>Hacker News</th></tr></thead><tbody>${rows}</tbody></table></div>
           <p class="muted">Small numbers are events scored in that lens. Per-event agreement (rank correlation): Wikipedia–TV ${ag.wiki_vs_tv?.spearman ?? "–"}, Wikipedia–HN ${ag.wiki_vs_hn?.spearman ?? "–"}, TV–HN ${ag.tv_vs_hn?.spearman ?? "–"}. Ledger ${esc(man.lenses.ledger.join(", "))}.</p>
           ${(man.lenses.notes || []).map((t) => `<p class="muted">Reading: ${esc(t)}</p>`).join("")}</div>`;
+      }
+    }
+
+    // chain tests: event -> behaviour, in time order
+    if (man.chains) {
+      const ct = await getJSON(man.chains.file);
+      const box = $("#chains");
+      if (!ct) box.innerHTML = `<div class="card pending">Chain tests: running or not yet saved. Registered at ledger ${esc(man.chains.ledger.join(", "))}.</div>`;
+      else {
+        const verdict = (c) => c.skip ? `<span class="muted">${esc(c.skip)}</span>` : c.passes ? `<span class="verdict ok">passes</span>`
+          : (c.p != null && c.p <= 0.05 && !c.order_ok) ? `<span class="verdict warn">rose, but not after the event</span>` : `<span class="verdict no">no</span>`;
+        const rows = ct.chains.map((c) => `<tr><td>${esc(c.event)} <span class="muted">${esc(c.month)}</span></td><td>${esc(c.heading)}</td>
+          <td class="num">${c.p == null ? "–" : fmtP(c.p)}</td><td>${esc(c.onset || "–")}</td><td>${verdict(c)}${c.flag ? `<br><span class="muted">${esc(c.flag)}</span>` : ""}</td></tr>`).join("");
+        box.innerHTML = `<div class="card"><p><strong>${ct.passing} of ${ct.n_scored}</strong> chains pass <span class="muted">(about ${ct.expected_by_chance} expected by chance)</span></p>
+          <div class="scroll"><table><thead><tr><th>Event</th><th>Borrowed: books about</th><th>p</th><th>Rise began</th><th></th></tr></thead><tbody>${rows}</tbody></table></div>
+          ${(man.chains.notes || []).map((t) => `<p class="muted">Reading: ${esc(t)}</p>`).join("")}<p class="muted">Ledger ${esc(man.chains.ledger.join(", "))}. One city, monthly counts.</p></div>`;
       }
     }
 
