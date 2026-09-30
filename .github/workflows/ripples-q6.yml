@@ -65,3 +65,4 @@ jobs:
           SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
           SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
         run: python q3_upload.py "$OUT/q6_lenses_v1.json"
+# run 2026-09-30: finish TV 2-gram part after quota reset

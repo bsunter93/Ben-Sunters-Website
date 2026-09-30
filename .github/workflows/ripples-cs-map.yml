@@ -1,0 +1,54 @@
+# Ripple Map prototype (exploratory, ledger 1466): ripple maps from the full monthly English Wikipedia Clickstream
+# (ripples/lab/cs_ripples.py). Streams each monthly dump once (honest UA, one at a time, stop on refusal), keeps pairs
+# with >= 200 clicks in the cache, then builds per-month maps and commits them to ripples/docs/results/map/.
+name: Ripples Clickstream map
+
+on:
+  push:
+    branches: ["claude/**"]
+    paths: ["ripples/lab/cs_ripples.py", ".github/workflows/ripples-cs-map.yml"]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: ripples-cs-map
+  cancel-in-progress: false
+
+jobs:
+  map:
+    runs-on: ubuntu-latest
+    timeout-minutes: 355
+    env:
+      LAB_CACHE: ${{ github.workspace }}/.csall-cache
+      FETCH_MIN: "40"
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - uses: actions/cache/restore@v4
+        with:
+          path: .csall-cache
+          key: ripples-csall-v1-${{ github.run_id }}
+          restore-keys: ripples-csall-v1-
+      - name: Fetch monthly Clickstream (resumable)
+        working-directory: ripples/lab
+        run: python cs_ripples.py fetch "${FETCH_MIN:-0}"
+      - uses: actions/cache/save@v4
+        if: always()
+        with:
+          path: .csall-cache
+          key: ripples-csall-v1-${{ github.run_id }}
+      - name: Build funnel maps (exploratory)
+        working-directory: ripples/lab
+        run: python cs_ripples.py funnel "$GITHUB_WORKSPACE/ripples/docs/results/map"
+      - name: Commit maps
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898900+github-actions[bot]@users.noreply.github.com"
+          git add ripples/docs/results/map
+          git diff --cached --quiet && { echo "no change"; exit 0; }
+          git commit -m "Ripples: Clickstream ripple maps (exploratory, ledger 1466) [skip ci]"
+          git pull --rebase -q origin "${GITHUB_REF_NAME}" && git push -q origin "HEAD:${GITHUB_REF_NAME}"

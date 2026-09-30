@@ -5,7 +5,7 @@ name: Ripples source probe
 on:
   push:
     branches: ["claude/**"]
-    paths: ["ripples/tools/bq/source_probe.py", "ripples/tools/bq/source_probe2.py", ".github/workflows/ripples-source-probe.yml"]
+    paths: ["ripples/tools/bq/source_probe.py", "ripples/tools/bq/source_probe2.py", "ripples/tools/bq/source_probe3.py", ".github/workflows/ripples-source-probe.yml"]
   workflow_dispatch:
 
 permissions:
@@ -34,11 +34,11 @@ jobs:
       - run: pip install --quiet -r ripples/tools/bq/requirements.txt
       - name: Probe
         working-directory: ripples/tools/bq
-        run: python source_probe2.py "$GITHUB_WORKSPACE/source_probe_v2.json"
+        run: python source_probe3.py "$GITHUB_WORKSPACE/source_probe_v3.json"
       - name: Store report
         if: always()
         working-directory: ripples/lab
         env:
           SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
           SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
-        run: python q3_upload.py "$GITHUB_WORKSPACE/source_probe_v2.json"
+        run: python q3_upload.py "$GITHUB_WORKSPACE/source_probe_v3.json"
