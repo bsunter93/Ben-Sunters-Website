@@ -92,6 +92,10 @@ dl.how dt{font-weight:700}dl.how dd{margin:0;color:var(--ink-2)}
     about, a death against the person's field), fixed in advance. There is no search over topics, so a signal here is
     much harder to fake. With about 200 events, about 1 in 20 will pass on its own by chance; the family results are the claims.</p>
   <div id="subjects"></div>
+  <h3 style="margin-top:1.4rem">Beyond Wikipedia</h3>
+  <p class="muted">The same named-subject test, with the subject measured on US TV news (how often it is said on air) and on
+    Hacker News, beside Wikipedia. Fake dates keep each event's weekday. A pass needs p ≤ 0.05 on both scorings.</p>
+  <div id="lenses"></div>
 
   <h2>What moved, and what might explain it</h2>
   <p class="muted">The salmon search swims upstream. It starts from something that broke from its own trend (here, a
@@ -316,6 +320,22 @@ dl.how dt{font-weight:700}dl.how dd{margin:0;color:var(--ink-2)}
           <tbody>${ev.map(row).join("")}</tbody></table></div></details></div>`;
       }).join("");
     }).join("");
+
+    // Q6: the named-subject test on other lenses
+    if (man.lenses) {
+      const q6 = await getJSON(man.lenses.file);
+      const box = $("#lenses");
+      if (!q6) box.innerHTML = `<div class="card pending">Lens test: running or not yet saved. Registered at ledger ${esc(man.lenses.ledger.join(", "))}.</div>`;
+      else {
+        const cell = (x) => !x || x.n_used < 3 ? `<td class="muted">–</td>` : `<td><span class="verdict ${x.passes ? "ok" : "no"}">${x.passes ? "passes" : "no"}</span> <span class="muted">${x.n_used}</span></td>`;
+        const label = (f) => f.replace(/^q4b?_/, "").replace(/_subjects$/, "").replace("drama_confirm", "held-out dramas").replace(/_/g, " ");
+        const rows = Object.entries(q6.families).map(([f, v]) => `<tr><td>${esc(label(f))}</td>${cell(v.wiki)}${cell(v.tv)}${cell(v.hn)}</tr>`).join("");
+        const ag = q6.agreement || {};
+        box.innerHTML = `<div class="card"><div class="scroll"><table><thead><tr><th>Family</th><th>Wikipedia</th><th>TV news</th><th>Hacker News</th></tr></thead><tbody>${rows}</tbody></table></div>
+          <p class="muted">Small numbers are events scored in that lens. Per-event agreement (rank correlation): Wikipedia–TV ${ag.wiki_vs_tv?.spearman ?? "–"}, Wikipedia–HN ${ag.wiki_vs_hn?.spearman ?? "–"}, TV–HN ${ag.tv_vs_hn?.spearman ?? "–"}. Ledger ${esc(man.lenses.ledger.join(", "))}.</p>
+          ${(man.lenses.notes || []).map((t) => `<p class="muted">Reading: ${esc(t)}</p>`).join("")}</div>`;
+      }
+    }
 
     // salmon search (reverse discovery)
     if (man.salmon) {
