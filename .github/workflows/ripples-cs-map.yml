@@ -22,6 +22,7 @@ jobs:
     timeout-minutes: 355
     env:
       LAB_CACHE: ${{ github.workspace }}/.csall-cache
+      FETCH_MIN: "40"
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
