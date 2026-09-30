@@ -133,7 +133,7 @@
      "placebos": 190,
      "onset": "2020-04",
      "after_event": true,
-     "passes": true,
+     "passes": false,
      "checkouts": {
       "2019-03": 5,
       "2019-04": 3,
@@ -157,10 +157,11 @@
       "2020-10": 1,
       "2020-11": 0,
       "2020-12": 1
-     }
+     },
+     "retracted": "Library closure: checkouts fell to 0 in Apr-Aug 2020 (ledger 1504)."
     }
    ],
-   "passes": true
+   "passes": false
   },
   {
    "event": "Tidying Up with Marie Kondo",
@@ -503,8 +504,8 @@
    "passes": false
   }
  ],
- "chains_passing": 1,
+ "chains_passing": 0,
  "steps_scored": 13,
- "steps_passing": 4,
+ "steps_passing": 3,
  "steps_expected_by_chance": 0.65
 }

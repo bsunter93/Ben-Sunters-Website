@@ -20,13 +20,19 @@ import numpy as np
 UA = "ripples-research/0.2 (+https://bensunter.com/ripples/methods/)"
 API = ("https://wikimedia.org/api/rest_v1/metrics/pageviews/per-article/en.wikipedia/all-access/user/"
        "{t}/daily/20191201/20230630")
-EVENT = dt.date(2020, 3, 20)  # Netflix release
-ARTICLES = {
-    "event": ["Tiger_King", "Tiger_King:_Murder,_Mayhem_and_Madness"],
-    "Joe_Exotic": ["Joe_Exotic"], "Carole_Baskin": ["Carole_Baskin"], "Big_Cat_Rescue": ["Big_Cat_Rescue"],
-    "Exotic_pet": ["Exotic_pet"], "Wildlife_trade": ["Wildlife_trade"],
-    "Big_Cat_Public_Safety_Act": ["Big_Cat_Public_Safety_Act"],
+MAPS = {
+    "tiger_king": (dt.date(2020, 3, 20), {  # Netflix release
+        "event": ["Tiger_King", "Tiger_King:_Murder,_Mayhem_and_Madness"],
+        "Joe_Exotic": ["Joe_Exotic"], "Carole_Baskin": ["Carole_Baskin"], "Big_Cat_Rescue": ["Big_Cat_Rescue"],
+        "Exotic_pet": ["Exotic_pet"], "Wildlife_trade": ["Wildlife_trade"],
+        "Big_Cat_Public_Safety_Act": ["Big_Cat_Public_Safety_Act"]}),
+    "queens_gambit": (dt.date(2020, 10, 23), {  # Netflix release
+        "event": ["The_Queen's_Gambit_(miniseries)"], "Beth_Harmon": ["Beth_Harmon"],
+        "Chess": ["Chess"], "Queen's_Gambit": ["Queen's_Gambit"], "Chess_opening": ["Chess_opening"],
+        "Chess_clock": ["Chess_clock"], "Chess.com": ["Chess.com"], "Chess_set": ["Chess_set"]}),
 }
+MAP = sys.argv[2] if len(sys.argv) > 2 else "tiger_king"
+EVENT, ARTICLES = MAPS[MAP]
 
 
 def fetch(title):
@@ -68,7 +74,8 @@ def main() -> int:
                                                         "peak": int(v[e0:].max()) if v[e0:].size else None}
         print(name, out["onsets"][name], flush=True)
     out["days"] = [days[0].isoformat(), days[-1].isoformat()]
-    json.dump(out, open(sys.argv[1] if len(sys.argv) > 1 else "tiger_king_attention.json", "w"))
+    out["map"] = MAP
+    json.dump(out, open(sys.argv[1] if len(sys.argv) > 1 else f"{MAP}_attention.json", "w"))
     return 0
 
 

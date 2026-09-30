@@ -434,10 +434,11 @@
    1498,
    1499,
    1500,
-   1501
+   1501,
+   1504
   ],
   "notes": [
-   "The Queen's Gambit → chess books, Tiger King → tiger books and Barbie → Barbie books rose after their events: attention turned into borrowing.",
+   "The Queen's Gambit → chess books and Barbie → Barbie books rose after their events: attention turned into borrowing. (Tiger King → tiger books was withdrawn: the library was closed in spring 2020 and checkouts fell to zero; ledger 1504.)",
    "Oppenheimer → atomic-bomb books rose too, but the rise began in June 2023, before the film opened, so it fails the time-order rule (the trailer and press may have started it).",
    "These chains are obvious on purpose: they show the behaviour step can be measured. The next chains add a less obvious step, still in time order."
   ]
@@ -448,10 +449,11 @@
   "protocol": "/ripples/docs/chain_tests_v2.md",
   "ledger": [
    1502,
-   1503
+   1503,
+   1504
   ],
   "notes": [
-   "Tiger King → books on the exotic-animal trade rose from April 2020: a less obvious behaviour that followed the show (it falls in the 2020 library closures).",
+   "No less obvious chain passes. Tiger King → exotic-animal-trade books first looked like a pass but was withdrawn: the library was closed in spring 2020 and checkouts fell to zero, which the adjustment misread as a rise (ledger 1504).",
    "Chernobyl → Chernobyl books → nuclear power books: both rose, but in the same month, so monthly counts can't show the second came after the first. Finer timing is needed.",
    "Most hand-picked less obvious chains (Squid Game → Korean, The Last of Us → fungi, Stranger Things → D&D) show nothing in one city's borrowing."
   ]
