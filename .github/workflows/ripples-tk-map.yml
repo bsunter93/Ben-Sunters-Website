@@ -1,0 +1,37 @@
+# Tiger King ripple map (ripples/docs/tiger_king_map.md): daily Wikipedia attention to date each step. About 8
+# anonymous Wikimedia pageview requests, 1 s apart, honest UA; the result is committed for the static map page.
+name: Ripples Tiger King map
+
+on:
+  push:
+    branches: ["claude/**"]
+    paths: ["ripples/lab/tk_map.py", ".github/workflows/ripples-tk-map.yml"]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: ripples-tk-map
+  cancel-in-progress: false
+
+jobs:
+  attention:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: pip install --quiet numpy
+      - name: Daily attention
+        run: python ripples/lab/tk_map.py ripples/docs/results/tiger_king_attention.json
+      - name: Commit
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898900+github-actions[bot]@users.noreply.github.com"
+          git add ripples/docs/results/tiger_king_attention.json
+          git diff --cached --quiet && exit 0
+          git commit -m "Ripples: Tiger King daily attention [skip ci]"
+          git pull --rebase -q origin "${GITHUB_REF_NAME}" && git push -q origin "HEAD:${GITHUB_REF_NAME}"
