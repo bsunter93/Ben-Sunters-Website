@@ -425,5 +425,21 @@
    "Drama ripples (The Queen's Gambit → Chess, Chernobyl → the disaster) show up in what people read but not in what TV news says: viewers look the subject up; the news doesn't cover it.",
    "Hacker News responds to deaths, news and science/tech, as expected for a tech crowd. The TV archive ends in October 2024, so most held-out dramas have no TV data."
   ]
+ },
+ "chains": {
+  "label": "Chain tests v1 (event → library borrowing)",
+  "file": "/ripples/docs/results/chain_tests_v1.json",
+  "protocol": "/ripples/docs/chain_tests_v1.md",
+  "ledger": [
+   1498,
+   1499,
+   1500,
+   1501
+  ],
+  "notes": [
+   "The Queen's Gambit → chess books, Tiger King → tiger books and Barbie → Barbie books rose after their events: attention turned into borrowing.",
+   "Oppenheimer → atomic-bomb books rose too, but the rise began in June 2023, before the film opened, so it fails the time-order rule (the trailer and press may have started it).",
+   "These chains are obvious on purpose: they show the behaviour step can be measured. The next chains add a less obvious step, still in time order."
+  ]
  }
 }
