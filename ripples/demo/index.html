@@ -214,12 +214,27 @@ const cap = s => s ? s[0].toUpperCase() + s.slice(1) : "";
 const esc = s => String(s ?? "").replace(/[&<>"]/g, c => ({"&":"&amp;", "<":"&lt;", ">":"&gt;", '"':"&quot;"})[c]);
 
 // Time scale: playback position t in [0,1] -> days since the event. A short run-up, then log time.
+// Time scale: log time, warped halfway toward even spacing of this story's own steps, so a chain whose steps are
+// days apart and one whose steps are decades apart both fill the pond. Monotonic, so order and rings stay true.
 const PRE = 0.06;
-function daysAt(tt, max) {
-  if (tt < PRE) return -5 + 5 * (tt / PRE);
-  return Math.expm1((tt - PRE) / (1 - PRE) * Math.log1p(max));
+let SCALE = {f: d => Math.log1p(d) / Math.log1p(60), inv: s => Math.expm1(s * Math.log1p(60))};
+function makeScale(days, max) {
+  const g = d => Math.log1p(Math.max(0, d)) / Math.log1p(max);
+  const knots = [...new Set([0, ...days.filter(d => d > 0 && d < max), max])].sort((a, b) => a - b);
+  const pts = knots.map((d, i) => [g(d), 0.5 * g(d) + 0.5 * i / (knots.length - 1)]);
+  const f = d => {
+    const u = g(Math.min(d, max));
+    for (let i = 1; i < pts.length; i++) if (u <= pts[i][0]) { const [u0, b0] = pts[i - 1], [u1, b1] = pts[i]; return u1 === u0 ? b1 : b0 + (b1 - b0) * (u - u0) / (u1 - u0); }
+    return 1;
+  };
+  const inv = s => { let lo = 0, hi = max; for (let k = 0; k < 40; k++) { const mid = (lo + hi) / 2; if (f(mid) < s) lo = mid; else hi = mid; } return (lo + hi) / 2; };
+  return {f, inv};
 }
-const radius = (d, max) => d <= 0 ? 0 : 40 + (R - 40) * Math.log1p(d) / Math.log1p(max);
+function daysAt(tt) {
+  if (tt < PRE) return -5 + 5 * (tt / PRE);
+  return SCALE.inv((tt - PRE) / (1 - PRE));
+}
+const radius = d => d <= 0 ? 0 : 40 + (R - 40) * SCALE.f(d);
 const polar = (r, a) => ({x: C.x + r * Math.sin(a * Math.PI / 180), y: C.y - r * Math.cos(a * Math.PI / 180)});
 
 function sparkHTML(weekly, mark) {
@@ -353,6 +368,7 @@ function draw(story) {
   const dmax = Math.min(today, Math.max(...items.map(x => Math.max(x.d, x.range ? x.range[1] : 0))));
   const max = Math.min(dmax * 1.25, Math.max(today, dmax + 1));
   for (const it of items) if (it.d > max * 0.97) { it.d = max * 0.97; it.future = true; }  // claims about the future sit at the rim
+  SCALE = makeScale(items.map(x => x.d), max);
   const keys = [...new Set(items.map(x => x.slice))].sort((a, b) => (a === "main" ? -1 : b === "main" ? 1 : 0));
   const n = keys.length, w = 360 / n;
   const centre = k => n === 1 ? 0 : -180 + (keys.indexOf(k) + 0.5) * w;
@@ -375,7 +391,7 @@ function draw(story) {
   const rg = el("g", {filter:"url(#wob)"}, g0);
   const lblAng = n === 1 ? 180 : centre(keys[0]) - w / 2;
   for (const [d, lbl] of rings) {
-    const r = radius(d, max);
+    const r = radius(d);
     el("circle", {class:"ring", cx:C.x, cy:C.y, r}, rg);
     const p = polar(r, lblAng);
     el("text", {class:"ringlbl", x:p.x + 4, y:p.y - 3}, g0).textContent = lbl;
@@ -399,10 +415,13 @@ function draw(story) {
   for (const k of keys) {
     const its = items.filter(x => x.slice === k).sort((a, b) => a.d - b.d), m = its.length;
     const step = n === 1 ? Math.min(24, 110 / Math.max(1, m)) : Math.min(w * 0.72 / Math.max(1, m), 16);
-    its.forEach((it, j) => {
-      const off = m === 1 ? 0 : (Math.floor(j / 2) + 0.5) * step * (j % 2 ? 1 : -1);
-      it.a = centre(k) + off; it.r = radius(it.d, max); it.pos = polar(it.r, it.a);
-    });
+    // a chain (each step follows the one before) runs down the slice's center line; independent ripples fan out
+    const chained = its.filter(x => x.parent), loose = its.filter(x => !x.parent || !its.some(y => y.id === x.parent));
+    const ml = loose.length;
+    loose.forEach((it, j) => { const off = ml === 1 ? 0 : (Math.floor(j / 2) + 0.5) * step * (j % 2 ? 1 : -1); it.a = centre(k) + off; });
+    chained.filter(x => !loose.includes(x)).forEach((it, j) => { it.a = centre(k) + (j % 2 ? 6 : -6); });
+    if (n === 1 && m > 1) its.forEach((it, j) => { it.a = -70 + j * 140 / (m - 1); });  // one ripple: a gentle spiral outward
+    its.forEach(it => { it.r = radius(it.d); it.pos = polar(it.r, it.a); });
   }
   const placed = [{x:C.x - 70, y:C.y - 20, w:140, h:70}];  // keep clear of the stone's label
   const overlaps = b => placed.some(p => b.x < p.x + p.w && b.x + b.w > p.x && b.y < p.y + p.h && b.y + b.h > p.y);
@@ -410,7 +429,7 @@ function draw(story) {
     const parent = items.find(x => x.id === it.parent);
     it.from = parent ? parent.pos : C;
     if (it.range) {
-      const a = polar(radius(Math.min(Math.max(it.range[0], 0.5), max), max), it.a), b = polar(radius(Math.min(it.range[1], max), max), it.a);
+      const a = polar(radius(Math.min(Math.max(it.range[0], 0.5), max)), it.a), b = polar(radius(Math.min(it.range[1], max)), it.a);
       it.band = el("line", {class:"band", x1:a.x, y1:a.y, x2:b.x, y2:b.y, stroke:COLOR[it.lv]}, bands);
     }
     it.path = el("path", {class:`edge l-${it.lv}${it.disc ? " disc" : ""}`, d:`M${it.from.x},${it.from.y} L${it.from.x},${it.from.y}`, opacity:0}, edges);
@@ -439,7 +458,8 @@ function draw(story) {
     const sub = el("text", {class:"s", x:0, y:15 * shown.length}, lab); sub.textContent = it.sub || "";
     const bb = lab.getBBox(), pad = 5, bw = bb.width + pad * 2, bh = bb.height + pad * 2;
     const right = [12, -bh / 2], left = [-12 - bw, -bh / 2], up = [-bw / 2, -bh - 12], down = [-bw / 2, 13];
-    const order = it.pos.x >= C.x ? [right, up, down, left] : [left, up, down, right];
+    const rUp = [12, -bh - 6], rDn = [12, 6], lUp = [-12 - bw, -bh - 6], lDn = [-12 - bw, 6];
+    const order = it.pos.x >= C.x ? [right, rUp, rDn, up, down, left, lUp, lDn] : [left, lUp, lDn, up, down, right, rUp, rDn];
     let best = order[0];
     for (const sp of order) {
       const b = {x:it.pos.x + sp[0], y:it.pos.y + sp[1], w:bw, h:bh};
@@ -516,7 +536,7 @@ function valueAt(series, iso0, d) {
 
 function render(now = performance.now()) {
   if (!cur) return;
-  const d = daysAt(t, cur.max), {items, iso0} = cur;
+  const d = daysAt(t), {items, iso0} = cur;
   $("#date").textContent = fmt(addDays(iso0, Math.floor(d)));
   const shown = items.filter(x => x.state !== "hidden" && x.lv !== "busted").length;
   $("#since").innerHTML = `${sinceLabel(d)}<small>${shown} ripple${shown === 1 ? "" : "s"}</small>`;
@@ -550,7 +570,7 @@ function focus(it) {
   if (hot) { hot.lab.classList.remove("hot"); hot.cardEl && hot.cardEl.classList.remove("hot"); }
   hot = it; it.lab.classList.add("hot");
   if (it.cardEl) { it.cardEl.classList.add("hot"); if (!REEL) it.cardEl.scrollIntoView({block:"nearest", behavior:"smooth"}); }
-  for (let k = 0; k <= 1000; k++) if (daysAt(k / 1000, cur.max) >= it.d + 0.5) { if (k / 1000 > t) t = k / 1000; break; }
+  for (let k = 0; k <= 1000; k++) if (daysAt(k / 1000) >= it.d + 0.5) { if (k / 1000 > t) t = k / 1000; break; }
   render();
 }
 
