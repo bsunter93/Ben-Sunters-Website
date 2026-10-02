@@ -11,9 +11,10 @@ For each map:
      month as a placebo), with CLOSURE MONTHS EXCLUDED: months where the library panel fell below half of the same
      month a year earlier are masked, and a step whose window touches them is "not measurable" (ledger 1504).
   3. Ordering rule (ledger 1497): steps are checked in the config's order; each counted step must start on or after
-     the previous counted step (attention by day; behaviour by month; records by date). A step that starts before the
-     event, or before the previous counted step, is shown as "Not counted". Attention steps rising within 3 days of a
-     pre-release event rise are allowed only if they start on or after the release day.
+     the previous counted step (attention by day; behaviour by month; records by date). The first reference point is
+     the event's own attention onset (trailers and early spread count) or the release date, whichever is earlier. A
+     step that starts before it, or before the previous counted step, is shown as "Not counted". Onsets must be
+     sustained (5 days above threshold) and at least a fifth of the way to the peak.
   4. Evidence: "tested" when the config cites a registered test for that step (or the behaviour test passes),
      "timed" when only the onset is measured, "record" for a dated published fact supplied with a source.
 Output: ripples/discover/maps/<slug>/index.html (from ripples/maps/template.html) and ripples/maps/out/<slug>.json.
@@ -79,7 +80,10 @@ def attention(titles, ev):
     mad = 1.4826 * float(np.median(np.abs(pre - med)))
     roll = np.convolve(v, np.ones(7) / 7, mode="full")[:len(v)]
     thr = max(med + 5 * mad, med * 1.5, 20)
-    on = next((i for i in range(e0 - 14, len(v)) if roll[i] > thr), None)
+    peak = float(roll[e0 - 30:].max()) if len(roll) > e0 else 0.0
+    thr = max(thr, med + 0.2 * (peak - med))  # a rise must be a real share of the peak, not a blip
+    # sustained: the 7-day mean stays above the threshold for 5 days running (filters anniversaries and holidays)
+    on = next((i for i in range(e0 - 30, len(v) - 5) if all(roll[i + k] > thr for k in range(5))), None)
     w0 = e0 - 70
     weekly = [[days[i].isoformat(), round(float(v[i:i + 7].mean()))] for i in range(w0 - (w0 % 7), len(v) - 6, 7)]
     return {"weekly": weekly, "onset": None if on is None else days[on].isoformat(),
@@ -151,10 +155,17 @@ def build(cfg_path):
     ev = dt.date.fromisoformat(cfg["release"])
     out = {"slug": cfg["slug"], "title": cfg["title"], "release": cfg["release"], "steps": []}
     ea = attention(cfg["event_articles"], ev)
+    # The stone hits the water when attention to the event itself starts (trailers and early spread count), so the
+    # ordering rule compares every step with the event's own onset, not only the release date.
+    ev_on = dt.date.fromisoformat(ea["onset"]) if ea and ea.get("onset") else ev
+    ev_on = min(ev_on, ev)
+    lead = (ev - ev_on).days
+    note = cfg.get("event_note", "") or (f"Attention to the event began {lead} days before this date." if lead > 0 else "")
     out["steps"].append({"kind": "event", "title": cfg["event_title"], "date": cfg["release"], "days": 0,
                          "evidence": "event", "series": ea, "measure": "daily Wikipedia views of the event article",
-                         "note": cfg.get("event_note", "")})
-    last_day, last_month = ev, cfg["release"][:7]
+                         "note": note})
+    out["event_onset"] = ev_on.isoformat()
+    last_day, last_month = ev_on, ev_on.isoformat()[:7]
     heads = [s["heading"] for s in cfg["steps"] if s["type"] == "behaviour"]
     lib = supabase("att_sea_series", {"p_terms": heads}) if heads else None
     if lib and lib.get("series") is not None:
@@ -178,8 +189,8 @@ def build(cfg_path):
             else:
                 day = dt.date.fromisoformat(a["onset"])
                 st.update(date=a["onset"], days=a["days"])
-                if day < ev or day < last_day:
-                    st.update(evidence="excluded", why="its rise began before the event or before the previous step")
+                if day < last_day:
+                    st.update(evidence="excluded", why="its rise began before attention to the event did, or before the previous step")
                 else:
                     st["evidence"] = "tested" if s.get("test") else "timed"
                     last_day, last_month = day, a["onset"][:7]
