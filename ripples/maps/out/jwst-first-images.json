@@ -370,11 +370,33 @@
    "title": "People borrow astronomy books",
    "kind": "behaviour",
    "measure": "monthly checkouts of books on “Astronomy”, Seattle Public Library",
-   "evidence": "na",
-   "date": "2022-07",
+   "monthly": {
+    "2021-07": 304,
+    "2021-08": 289,
+    "2021-09": 314,
+    "2021-10": 351,
+    "2021-11": 289,
+    "2021-12": 234,
+    "2022-01": 359,
+    "2022-02": 319,
+    "2022-03": 347,
+    "2022-04": 297,
+    "2022-05": 333,
+    "2022-06": 288,
+    "2022-07": 341,
+    "2022-08": 360,
+    "2022-09": 314,
+    "2022-10": 345,
+    "2022-11": 289,
+    "2022-12": 234,
+    "2023-01": 379
+   },
    "days": null,
-   "why": "library data for this subject is being fetched; it appears on the next build",
-   "note": "Not measurable here: library data for this subject is being fetched; it appears on the next build."
+   "evidence": "excluded",
+   "date": "2022-07",
+   "why": "no rise beyond normal (p = 0.5698)",
+   "test": "Chain test: p = 0.5698 against every other month; rise began never.",
+   "note": "Not counted: no rise beyond normal (p = 0.5698)."
   }
  ],
  "event_onset": "2022-07-11"
