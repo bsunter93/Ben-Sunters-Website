@@ -1,0 +1,63 @@
+{
+ "slug": "queens-gambit",
+ "title": "The Queen's Gambit",
+ "release": "2020-10-23",
+ "event_articles": [
+  "The_Queen's_Gambit_(miniseries)"
+ ],
+ "event_title": "The Queen's Gambit is released on Netflix",
+ "event_note": "Views of the article began climbing two days before release, with the trailer and reviews.",
+ "lede": "A Netflix drama about a chess prodigy, followed step by step: from what people looked up, to what they reached for, to what they borrowed and bought.",
+ "description": "A time-ordered ripple map for The Queen's Gambit: each step dated and marked by how it was measured.",
+ "limits": "Wikipedia stands in for all attention and one city's library for borrowing. Timing shows order, not proof that the event caused each step on its own.",
+ "dataline": "Wikimedia pageviews (daily), Seattle Public Library checkouts (monthly), NPD Group",
+ "steps": [
+  {
+   "type": "attention",
+   "title": "People look up chess",
+   "articles": [
+    "Chess"
+   ],
+   "also": [
+    "Chess_clock",
+    "Chess_opening"
+   ],
+   "note": "Readers also went to chess clocks and openings.",
+   "test": "Named-subject test: z = 4 against 200 fake dates (p = 0.01); family passes (ledger 1458, 1470)."
+  },
+  {
+   "type": "attention",
+   "title": "Interest turns to playing: chess sets and online chess",
+   "articles": [
+    "Chess_set"
+   ],
+   "also": [
+    "Chess.com"
+   ],
+   "note": "Attention moved from the game to the gear and places to play."
+  },
+  {
+   "type": "behaviour",
+   "title": "People borrow chess books",
+   "heading": "Chess"
+  },
+  {
+   "type": "record",
+   "title": "Chess sets and chess books sell",
+   "date": "2020-11-24",
+   "facts": [
+    [
+     "Chess set unit sales, US",
+     "+87%"
+    ],
+    [
+     "Chess book sales, US",
+     "+603%"
+    ]
+   ],
+   "measure": "NPD Group, the three weeks after release, reported 24 November 2020",
+   "source": "https://www.prweb.com/releases/sales_spikes_for_chess_books_and_sets_follow_debut_of_queens_gambit_the_npd_group_says/prweb17572067.htm",
+   "note": "NPD said chess set sales had been flat for 13 weeks before the show. Reported by NPD, not measured by us."
+  }
+ ]
+}

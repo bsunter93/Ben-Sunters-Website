@@ -1,0 +1,62 @@
+{
+ "slug": "chernobyl",
+ "title": "Chernobyl",
+ "release": "2019-05-06",
+ "event_articles": [
+  "Chernobyl_(miniseries)"
+ ],
+ "event_title": "Chernobyl premieres on HBO",
+ "event_note": "",
+ "lede": "An HBO drama about the 1986 nuclear disaster, followed from the history people looked up to the trips they booked.",
+ "description": "A time-ordered ripple map for Chernobyl: each step dated and marked by how it was measured.",
+ "limits": "Wikipedia stands in for all attention and one city's library for borrowing. Timing shows order, not proof that the event caused each step on its own.",
+ "dataline": "Wikimedia pageviews (daily), Seattle Public Library checkouts (monthly), tour operators via Smithsonian",
+ "steps": [
+  {
+   "type": "attention",
+   "title": "People look up the real disaster",
+   "articles": [
+    "Chernobyl_disaster"
+   ],
+   "also": [
+    "Valery_Legasov",
+    "Anatoly_Dyatlov"
+   ],
+   "test": "Named-subject test: z = 4 against 200 fake dates (p = 0.005); family passes (ledger 1458, 1470)."
+  },
+  {
+   "type": "attention",
+   "title": "Interest turns to the reactor and the zone",
+   "articles": [
+    "RBMK"
+   ],
+   "also": [
+    "Chernobyl_Exclusion_Zone",
+    "Pripyat"
+   ]
+  },
+  {
+   "type": "behaviour",
+   "title": "People borrow books about Chernobyl",
+   "heading": "Chernobyl"
+  },
+  {
+   "type": "record",
+   "title": "Tour bookings to the exclusion zone rise",
+   "date": "2019-06-04",
+   "facts": [
+    [
+     "Bookings, SoloEast Travel, May vs a year earlier",
+     "+30%"
+    ],
+    [
+     "Bookings, Chernobyl Tour",
+     "+30–40%"
+    ]
+   ],
+   "measure": "Tour operators quoted by Euronews and Smithsonian, June 2019",
+   "source": "https://www.smithsonianmag.com/smart-news/hbos-chernobyl-miniseries-driving-tourists-nuclear-disaster-site-180972395/",
+   "note": "Reported by the operators, not measured by us."
+  }
+ ]
+}
