@@ -1,11 +1,12 @@
-# Ripple Map: context brief (updated 2026-09-29 06:45 UTC)
+# Ripple Map: context brief (updated 2026-10-02)
 
 Standalone context for anyone (person or new chat) picking up Ripple Map. It covers the vision, the current status,
 what we learned, pitfalls, open gaps and next steps. The operational runbook with exact commands is
 `ripples/HANDOFF.md`, and the experiments plan is `ripples/docs/experiments.md`.
 
-- Live site: https://bensunter.com/ripples/pond/ (explorer) and https://bensunter.com/ripples/discover/ (discovery
-  engine prototype: what the engine found and the evidence behind each result)
+- Live site: https://bensunter.com/ripples/discover/ (every test and its evidence),
+  https://bensunter.com/ripples/discover/queens-gambit/ (the first full ripple map) and
+  https://bensunter.com/ripples/pond/ (the original explorer, parked)
 - Repo: `bsunter93/Ben-Sunters-Website`
 - Database: Supabase project `kffkasnzqcddpystszch`, schema `ripples`. The compute tier went from nano to micro on
   2026-09-27.
@@ -112,64 +113,27 @@ The pond language stays. What changes is what goes in it and how the evidence re
   3. The first trend pages built only for trends with a result.
   4. The share card built around the ghost stone and the surprising landing.
 
-## 2. Current status (one screen, 2026-09-29)
+## 2. Current status (one screen, 2026-10-02)
 
-**In one line:** the engine recovers known ripples and has found one small real one. Tight event families and a
-direct event → subject test run today. Our planned next step is to follow reader paths (Wikipedia Clickstream)
-instead of relying only on timing.
+**In one line:** the engine verifies obvious ripples well, as dated, time-ordered chains, and has published its first
+full map (The Queen's Gambit). It has not yet found a surprising ripple. The next step is automating the map builder.
 
-**What works**
-- **Calibration (E9, ledger 1282):** told where to look, the engine recovers known ripples: The Queen's Gambit →
-  Chess, Stranger Things 4 → Kate Bush, Game of Thrones → the baby name Arya, Frozen → Elsa.
-- **One discovery that replicated:** space events → Wikipedia views of "Speed of light". After big space moments
-  (landings, first images, launches), more people than usual read "Speed of light". It passed two held-out
-  confirmations on 8 and then 12 new space events (ledger 1286, 1288, 1292). It is real but small: a one-step
-  curiosity effect, not a headline.
-- **Rigor:** every test is pre-registered in the hash-chained ledger (now 1,371 entries). Decoy and placebo nulls,
-  BH correction and held-out confirmation are all in place.
+**What a ripple is now (owner rule, ledger 1497):** an approximate cause-and-effect chain. Every step is an outcome
+measured in its own data (attention, behaviour, real world), and every step starts after the step before it. A step
+whose rise began before the event is dropped.
 
-**Discovery v1 (ledger 1283).** For a family of 10-20 similar events, it looks for outcomes that change more than usual in
-the days after each event (onset-coupled day-to-day changes over days −14..+90). Each outcome is calibrated against 200
-placebo dates, and each family against 1,000 moved-date worlds. Candidates must pass BH at q = 0.10 and a
-leave-one-event-out check.
+| Layer | Status | Evidence |
+|---|---|---|
+| Event → attention to its named subject | Works | Every family passes on Wikipedia with weekday-matched placebos; holds on US TV news for films, deaths, news and science/tech (ledger 1458, 1470) |
+| Attention → behaviour | Works for obvious chains | Seattle library borrowing: The Queen's Gambit → chess books, Barbie → Barbie books, after the event (2 of 13; ledger 1501, 1504) |
+| Less obvious behaviour chains | Not yet | 0 of 10 (ledger 1503, 1504) |
+| A whole map | Prototype | The Queen's Gambit: release → chess attention +3 days → chess sets and Chess.com +19/+25 days → library borrowing Nov 2020 → NPD chess-set sales +87% (ledger 1505) |
+| Discovering surprise | Not yet | Broad screens, eight lenses, reader paths (two blind rounds: 1 and 0 of 5 needed) and less obvious chains found only obvious links, artefacts or nothing |
 
-**Lenses (places a ripple can land), all loaded**
-
-| Lens | Size |
-|---|---|
-| Wikipedia pageviews | 998 curated articles, plus 10,000 Level-4 Vital Articles (wide lens, ~83% fetched) |
-| NYT coverage by tag | 1,289 tags |
-| Real world, daily | electricity demand (EIA), markets (FRED), air travel (TSA): 161 series |
-| Tech and city, daily | Hacker News, npm, NYC transit, FEMA |
-| Weekly | jobless claims, business applications, deaths, fuel |
-| Monthly | state economies, jobs by industry, CPI |
-| Seattle library checkouts | 493 subjects |
-| County jobs | QCEW, 3,290 counties |
-
-**Screens so far**
-- **v1 and v2 (13 broad families, all lenses):** no candidates apart from space → speed of light. One false alarm was
-  explained: "pandemic crazes → state unemployment" was COVID (ledger 1303).
-- **Diagnosis:** broad families average single-event ripples away. Nine different streaming shows diluted The Queen's
-  Gambit → Chess to nothing.
-
-**Queued for today, 2026-09-29, one Wikimedia job at a time**
-1. **Wide lens:** finish the fetch (~1,550 articles left), then screen.
-2. **Screen v3 (taxonomy v3):** 24 tight, mechanism-first families, 321 events, on all 8 lenses (ledger 1365, 1366,
-   1369).
-3. **Named-subject test (Q4):** does each event move attention to its own named subject?
-   - v1: 197 events from the owner's batch (ledger 1367).
-   - v1b: 43 older corpus events from the owner's validation pack (ledger 1369).
-   - A 22-show held-out drama set that confirms the drama family only if it passes (ledger 1369-1371).
-4. A check-in (09:30 UTC) collects results, hand-checks candidates, updates /ripples/discover/ and reports.
-
-**Expectation, stated in advance**
-- Named subjects for dramas and films: likely to pass (the effect is direct). That shows the mechanism, not surprise.
-- Tight families: perhaps 1-3 candidates, some with a boring explanation (seasonality, echo, common shock).
-- Real-world lenses: most likely nothing. One cultural event rarely moves national economic series detectably.
-
-**Older disaster and economy track (b1-b9, E1).** It confirmed only obvious links. The flood → finance jobs lead
-did not replicate at county level (b9, ledger 1277). E1 chose random-effects pooling (ledger 1278). This track is
-parked as the proving ground (D-26).
+**Since 29 Sep:** reader paths showed ripple traffic reaches Wikipedia mostly from search (direct clicks 1–3%); a daily
+Google Trends archive started (ripples.att_gt_terms); the named-subject test was re-run on TV news and Hacker News; the
+reader-path "discovery funnel" was tried and dropped after two blind owner ratings; the ordering rule was adopted; two
+Tiger King results were withdrawn as library-closure artefacts (ledger 1504).
 
 ## 3. Learnings
 
@@ -198,6 +162,16 @@ parked as the proving ground (D-26).
     way to find a small effect. Direct evidence of the path (where readers actually went) is much stronger.
 12. **Real-world series barely register cultural events.** Across 7 non-Wikipedia lenses, v2 found nothing except a
     COVID artefact.
+
+**New since 29 Sep:**
+- Search is the front door: ripple traffic reaches Wikipedia mostly from search, so Wikipedia views stand in for search.
+- Clickstream is a curiosity graph (what readers look up next), not a consequence graph; it produced related topics,
+  not outcomes.
+- The ordering rule is the most useful single filter: it rejected Oppenheimer → atomic-bomb books (rise began before the
+  film), which the statistics alone passed.
+- Check raw counts before calling a pass: normalising against a collapsing panel (2020 library closure) manufactures
+  rises.
+- One well-built map explains the product better than any table.
 
 ## 4. Pitfalls (operational, learned the hard way)
 
@@ -247,75 +221,37 @@ parked as the proving ground (D-26).
 - The sandbox proxy blocks en.wikipedia.org, so title checks can't run there. Missing titles are skipped at run
   time, never remapped.
 
-## 5. Blockers and bottlenecks (2026-09-29)
+## 5. Blockers and bottlenecks (2026-10-02)
 
-**Blockers (stop progress until resolved)**
-- None hard. Everything queued runs on data and events already in hand, and the owner does not need to supply
-  events for the next steps.
+**Blockers**
+1. **No surprising content yet.** Verification works; discovery of non-obvious ripples does not.
+2. **Behaviour data is thin and local.** The only free behaviour series with history is one city's library (monthly)
+   and annual baby names. National sales, sign-ups and enrolment are not free.
+3. **No automation.** The first map was assembled by hand.
 
-**Bottlenecks (slow progress or cap what we can find)**
-1. **Method: timing alone rarely finds surprising ripples.** Small effects, noisy outcomes and thousands of outcomes
-   tested mean very little survives strict correction. This is the main bottleneck; see the plan below.
-2. **Pooling needs 10-20 events of one kind.** Users care about one event, and families need owner-sourced events
-   with exact dates. The owner cannot source more right now.
-3. **Wikimedia politeness limits throughput.** It allows one fetcher at a time, and any 429/5xx ends that day's
-   Wikimedia work. That costs a day per stop. The wide lens still has ~1,550 articles to fetch.
-4. **Orchestration friction:**
-   - Workflows can't be dispatched directly (push-to-trigger only).
-   - A shared concurrency group means strictly sequential runs.
-   - Logs truncate at 5,000 lines (worked around with the results table).
-5. **Held-out data is thin outside dramas.** The science and news held-out rows supplied so far don't fit their
-   families: four or six space missions split into several rows, and disasters rather than sport, business and
-   civic events. The drama held-out set is 22 events, some with titles we could not verify.
-6. **Real-world lenses have low sensitivity** to single cultural events (national aggregates, monthly or weekly
-   resolution).
+**Bottlenecks**
+1. **BigQuery sandbox cap:** 204.8 GiB a day, not adjustable without billing (owner: no billing).
+2. **Wikimedia politeness and GDELT refusal** limit high-volume fetching from GitHub runners.
+3. **Monthly behaviour data** cannot order steps that move in the same month.
+4. **Owner rating time:** blind rounds should be 15 items or fewer.
 
-## 6. Planned approach (next steps, in order)
+## 6. Immediate next steps (in order)
 
-1. **Today:** run the queue above; resolve every result in the ledger; hand-check candidates; update /ripples/discover/;
-   report plainly, including nulls.
-2. **Next: follow reader paths with Wikipedia Clickstream** (monthly public dumps since 2017: counts of readers clicking
-   from article A to article B, pairs with at least 10 clicks).
-   - For one event, build the ripple map as the paths readers took outward from the event article, 2-4 steps, with
-     counts before and after the event month. For example: The Queen's Gambit → Beth Harmon → Chess → Sicilian Defence.
-   - Discovery flags paths that are new or unusually grown after the event.
-   - Verification uses the actual click counts before and after, against the same months in other years and against
-     comparison events.
-   - First prototype: The Queen's Gambit, Chernobyl and one space event, drawn on /ripples/discover/ as
-     click-by-click paths.
-   - It works per event, so no family of 10-20 is needed.
-   - Pre-register before fetching. The dumps are downloaded from dumps.wikimedia.org one at a time, after the day's
-     other Wikimedia work.
-   - Limits: monthly resolution; it shows what people read, not what they did.
-3. **Salmon search: reverse discovery** (`ripples/docs/salmon_protocol_v1.md`, ledger 1373).
-   - **Idea:** start from an outcome that broke from its own trend, then swim upstream to events that could plausibly
-     explain it.
-   - **Labels:** every link is labelled "Possible link (speculative)" and shows why it was surfaced, plus a
-     chance-match rate (how often the linker finds a match this strong for things that did not move).
-   - **Upstream roles:** origin shock (the earliest cause we can see), relay, amplifier, common driver, echo,
-     coincidence.
-   - **Magnitude:** a per-node fingerprint (excess volume, onset order and sharpness, shape, share explained by the
-     upstream curve, transmission ratio) tests the owner's damping hypothesis on known chains.
-   - **v1:** US baby-name surges (BigQuery SSA), with Wikidata characters and works as proposers. The benchmark is 9
-     known cases (Elsa ← Frozen, Khaleesi ← Game of Thrones, Kylo ← Star Wars, …) and it passes if the known cause
-     ranks first in at least 6 of 9.
-   - **Later:** more signals (Wikipedia name pages, Clickstream, lead–lag, news co-coverage), people as candidates,
-     multi-hop tracing, more outcome lenses.
-   - **How it fits:** salmon proposes, the forward engine verifies.
-4. **Chain test: attention → behaviour.** For event → subject pairs that pass Q4 (or show in Clickstream), test only
-   that subject in the real-world lenses. For example, chess → Seattle library chess checkouts; a nuclear drama → NYT
-   nuclear-power coverage. Testing a handful of pre-chosen outcomes instead of thousands raises power sharply.
-5. **If v3, Q4 or salmon produces candidates:** confirm each on held-out events before it goes on the page as more than a
-   lead.
-6. **If both come back empty:** test longer windows than 90 days and weekly smoothing for the noisy lenses, before
-   asking the owner for more events.
-7. **Product:** once a path survives, the pond page for that event shows the path, the counts, the comparison and a
-   plain sentence per step (evidence ladder). The share card is built around the surprising landing.
+1. **Map builder.** One script: event (title, date) → daily attention for the event, its named subject and a fixed set
+   of follow-on topics → onsets and the ordering check → behaviour step from library borrowing where a heading exists
+   (closure months excluded, raw counts shown) → optional public-record step (dated, sourced) → the same page as The
+   Queen's Gambit, generated.
+2. **Ten maps** for events whose first step is already verified (Chernobyl, Barbie, Oppenheimer, a death, a science
+   event, …). Publish those that pass the ordering rule.
+3. **Later steps from search, not reader paths:** rising searches after the event (Google Trends archive, usable for
+   events from October 2026 on) and Wikipedia topics whose rise follows the subject's (lead–lag over a fixed candidate
+   set), time order enforced.
+4. **Live mode:** run the builder on new events as they happen, so maps fill in over the following weeks.
+5. **Short blind rounds (≤ 15 items)** on the later steps, with the owner's rule.
 
-**From the owner, when possible (not blocking)**
-- More held-out drama premieres that are new to every corpus file (check `events_taxonomy_batch1.csv` first).
-- For science and news confirmation: 12-15 distinct events of the same kinds as the family, one row per event,
-  spread over years.
+**Decision points:** if fewer than 5 of the 10 maps carry a measured behaviour step, behaviour becomes "where
+available" and maps lead with attention. If two short rounds miss the owner's rule, the product is verified maps of big
+events (obvious but real, well told), not hidden ripples.
 
 ## 7. Rules that never change
 
@@ -325,3 +261,8 @@ parked as the proving ground (D-26).
   No bypassing blocks. Aggregate data only, no personal data.
 - Keys live only in Supabase Vault or GitHub secrets.
 - Claude opens and merges its own PRs (owner direction, 2026-09-28), keeping to the product vision.
+- Explore freely, confirm by registration (owner, 2026-09-29): exploration needs no registration; anything shown as
+  measured comes from a registered test.
+- The ordering rule (owner, 2026-09-30, ledger 1497): every step an outcome in its own data, every step later than the
+  one before.
+- Show raw counts beside every behaviour result; exclude closure months.
