@@ -93,8 +93,6 @@ input[type=range]{flex:1;accent-color:var(--marigold);min-width:0}
 .slicebd{stroke:rgba(214,240,236,.12);stroke-width:1;stroke-dasharray:2 6}
 .rimlbl{font:800 11.5px var(--sans);letter-spacing:.2em;text-transform:uppercase;fill:rgba(242,174,46,.92)}
 .wave{fill:none;stroke:rgba(214,240,236,.5)}
-.caustic{opacity:.075;mix-blend-mode:screen;animation:drift 38s ease-in-out infinite alternate;transform-box:fill-box;transform-origin:center}
-@keyframes drift{from{transform:translate(-18px,-10px) rotate(-2deg)}to{transform:translate(18px,12px) rotate(2deg)}}
 .edge{fill:none;stroke-linecap:round}
 .edge.l-measured{stroke:var(--good);stroke-width:3.4}
 .edge.l-measured.disc{stroke-width:2.2;opacity:.85}
@@ -119,7 +117,7 @@ body.reel header .picker,body.reel .feed,body.reel .how,body.reel .foot,body.ree
 body.reel .wrap{grid-template-columns:1fr;max-width:760px}
 body.reel header{max-width:760px;padding-top:22px}
 @media (max-width:860px){.wrap{grid-template-columns:1fr}.pondbox{position:relative;top:0}}
-@media (prefers-reduced-motion:reduce){.caustic{animation:none}.card.in{animation:none}}
+@media (prefers-reduced-motion:reduce){.card.in{animation:none}}
 </style>
 </head>
 <body>
@@ -159,8 +157,6 @@ body.reel header{max-width:760px;padding-top:22px}
 <p class="foot">An early prototype. Timing shows order, not proof of cause. Every test and every miss: <a href="/ripples/discover/maps/">ripple maps</a> · <a href="/ripples/discover/">discoveries</a>.</p>
 
 <script>
-// soft caustic light: a turbulence texture, drawn once and drifted slowly
-const CAUSTIC = "data:image/svg+xml," + encodeURIComponent(`<svg xmlns="http://www.w3.org/2000/svg" width="600" height="600"><filter id="c" x="0" y="0" width="100%" height="100%"><feTurbulence type="fractalNoise" baseFrequency=".045 .06" numOctaves="2" seed="11"/><feColorMatrix values="0 0 0 0 .78  0 0 0 0 .96  0 0 0 0 .93  0 0 0 7 -3.9"/><feGaussianBlur stdDeviation="1.4"/></filter><rect width="600" height="600" filter="url(#c)"/></svg>`);
 
 // ---------- stories ----------
 // Hand-built maps (from ripples/maps/out): which steps to show, short labels, parents, and the main slice's industry.
@@ -380,10 +376,8 @@ function draw(story) {
     <filter id="wob" x="-5%" y="-5%" width="110%" height="110%"><feTurbulence type="fractalNoise" baseFrequency=".011" numOctaves="2" seed="7"/><feDisplacementMap in="SourceGraphic" scale="4.5"/></filter>
     <filter id="soft"><feGaussianBlur stdDeviation="3"/></filter>
     <clipPath id="pondclip"><circle cx="${C.x}" cy="${C.y}" r="${R + 30}"/></clipPath>`;
-  // water: a softly lit surface with slowly drifting caustic light
+  // water: a softly lit surface
   el("circle", {cx:C.x, cy:C.y, r:R + 34, fill:"url(#water)"}, svg);
-  const cg = el("g", {"clip-path":"url(#pondclip)"}, svg);
-  el("image", {class:"caustic", href:CAUSTIC, x:C.x - R * 1.5, y:C.y - R * 1.5, width:R * 3, height:R * 3, preserveAspectRatio:"none"}, cg);
 
   const g0 = el("g", {}, svg);
   if (n > 1) keys.forEach(k => { const a = centre(k) - w / 2, q = polar(48, a), p = polar(R + 8, a); el("line", {class:"slicebd", x1:q.x, y1:q.y, x2:p.x, y2:p.y}, g0); });
