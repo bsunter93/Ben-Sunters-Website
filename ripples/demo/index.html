@@ -177,9 +177,9 @@ const MAPS = {
 };
 const MAP_ORDER = ["tiger-king", "squid-game", "wednesday", "queens-gambit", "stranger-things-4", "saltburn", "bridgerton", "the-last-of-us",
   "chernobyl", "shogun", "barbie", "top-gun-maverick", "euphoria-s2", "the-bear"];
-const FEATURED = ["frozen", "planet-earth", "jurassic-park", "ice-bucket", "tylenol", "wardrobe-malfunction", "ethanol-tortilla"];
+const FEATURED = ["frozen", "planet-earth", "sputnik-gps", "magnetron-microwave", "earthquake-bank", "tambora-bicycle", "jurassic-park", "ice-bucket", "tylenol", "wardrobe-malfunction", "ethanol-tortilla"];
 const NAMES = {"frozen":"Frozen → baby Elsas", "planet-earth":"Planet Earth → the STURDY Act", "jurassic-park":"Jurassic Park → seized fossils",
-  "ice-bucket":"Ice Bucket → an ALS gene", "tylenol":"Tylenol → caplets", "wardrobe-malfunction":"Super Bowl 2004 → YouTube", "ethanol-tortilla":"Ethanol law → tortilla riots?"};
+  "ice-bucket":"Ice Bucket → an ALS gene", "sputnik-gps":"Sputnik → GPS", "magnetron-microwave":"Radar → microwave ovens", "earthquake-bank":"1906 quake → Bank of America", "tambora-bicycle":"A volcano → the bicycle", "tylenol":"Tylenol → caplets", "wardrobe-malfunction":"Super Bowl 2004 → YouTube", "ethanol-tortilla":"Ethanol law → tortilla riots?"};
 const LVL = {measured:"Measured", timed:"Timed", reported:"Reported", plausible:"Plausible", busted:"Busted"};
 const LV = {tested:"measured", timed:"timed", record:"reported"};
 const COLOR = {measured:"var(--good)", timed:"var(--marigold)", reported:"var(--rec)", plausible:"var(--marigold)", busted:"var(--miss)"};
@@ -607,7 +607,7 @@ function show(kind, slug, autoplay = true) {
   cur = story; hot = null; t = 0; ambient = 0;
   draw(story); buildFeed(story); render();
   setPlaying(autoplay);
-  if (!REEL) history.replaceState(null, "", `?${kind === "chain" ? "c" : "m"}=${slug}`);
+  if (!REEL) try { history.replaceState(null, "", `?${kind === "chain" ? "c" : "m"}=${slug}`); } catch { /* sandboxed previews cannot rewrite the URL */ }
 }
 function next() {
   const list = [...MAP_ORDER.slice(0, 4).map(s => ["map", s]), ...FEATURED.slice(0, 3).map(s => ["chain", s])];
