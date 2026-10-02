@@ -133,7 +133,8 @@ def _arxiv(a, b):
 def series_test(pts, ref, direction, h, transform):
     dates = [d for d, _ in pts]
     y = np.array([math.log(v) if transform == "log" and v > 0 else v for _, v in pts], dtype=float)
-    r = next((i for i, d in enumerate(dates) if d >= ref), None)
+    # the reference period is the one that contains the reference date (a monthly point dated the 1st covers its month)
+    r = max((i for i, d in enumerate(dates) if d <= ref), default=None)
     if r is None or r < 4 * h + 2 * h or r + h > len(y):
         return {"result": "not enough data around the reference date"}
     s = 1 if direction == "up" else -1
@@ -149,9 +150,10 @@ def series_test(pts, ref, direction, h, transform):
     coef = np.polyfit(xs, y[a - 4 * h:a], 1)
     sd = float(np.std(y[a - 4 * h:a] - np.polyval(coef, xs))) or 1e-9
     dev = s * (y - np.polyval(coef, np.arange(len(y)))) / sd
-    on = next((i for i in range(a, min(len(y) - 1, r + 3 * h)) if dev[i] > 2 and dev[i + 1] > 2), None)
-    show = [[d.isoformat(), round(float(v), 3)] for d, v in pts[max(0, r - 6 * h):r + 4 * h]]
     period = int(np.median(np.diff([d.toordinal() for d in dates])))
+    run, thr = (3, 2.5) if period <= 7 else (2, 2.0)  # daily and weekly data are noisier: a longer, larger departure
+    on = next((i for i in range(a, min(len(y) - run + 1, r + 3 * h)) if all(dev[i + k] > thr for k in range(run))), None)
+    show = [[d.isoformat(), round(float(v), 3)] for d, v in pts[max(0, r - 6 * h):r + 4 * h]]
     return {"effect": round(obs, 4), "p": round(p, 3), "n_placebo": len(pool), "period_days": period,
             "onset": dates[on].isoformat() if on is not None else None, "points": show}
 
