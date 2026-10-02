@@ -1,0 +1,279 @@
+[
+ {
+  "slug": "thailand-floods",
+  "title": "Thailand floods and hard drives (2011)",
+  "date": "2011-10-01",
+  "batch": 5,
+  "steps": [
+   {
+    "n": 1,
+    "claim": "Floods hit Thailand's industrial estates",
+    "test": {
+     "type": "record",
+     "date": "2011-10-08",
+     "source": "industrial estates flooded from early October 2011"
+    }
+   },
+   {
+    "n": 2,
+    "claim": "Hard-drive factories halt",
+    "test": {
+     "type": "record",
+     "date": "2011-10-17",
+     "source": "Western Digital reports flooded Thai plants, October 2011 (8-K)"
+    }
+   },
+   {
+    "n": 3,
+    "claim": "HDD shipments fall about 30% in a quarter",
+    "test": {
+     "type": "none",
+     "reason": "the cited source is paid or private (IDC)",
+     "verdict": "not testable"
+    }
+   },
+   {
+    "n": 4,
+    "claim": "Hard-drive prices spike",
+    "test": {
+     "type": "fred",
+     "id": "PCU334112334112",
+     "direction": "up",
+     "h": 3,
+     "transform": "log"
+    },
+    "note": "BLS producer price index, computer storage device manufacturing."
+   },
+   {
+    "n": 5,
+    "claim": "PC makers switch to SSDs",
+    "test": {
+     "type": "none",
+     "reason": "the cited source is paid or private (TrendForce); desk check: SSD adoption also rode falling flash prices and thin laptops",
+     "verdict": "not testable"
+    }
+   }
+  ]
+ },
+ {
+  "slug": "ice-bucket",
+  "title": "Ice Bucket Challenge (2014)",
+  "date": "2014-07-29",
+  "batch": 5,
+  "steps": [
+   {
+    "n": 1,
+    "claim": "The Ice Bucket Challenge goes viral",
+    "test": {
+     "type": "record",
+     "date": "2014-07-29",
+     "source": "viral spread from late July 2014"
+    },
+    "note": "Before Wikimedia's daily pageview API (July 2015), so attention cannot be measured here."
+   },
+   {
+    "n": 2,
+    "claim": "ALS Association raises about $115 million",
+    "test": {
+     "type": "record",
+     "date": "2014-08-29",
+     "source": "ALS Association: $115m in eight weeks (Form 990, FY2014)"
+    }
+   },
+   {
+    "n": 3,
+    "claim": "ALSA funds genetics projects, including Project MinE",
+    "test": {
+     "type": "record",
+     "date": "2014-12-01",
+     "source": "ALSA grant commitments announced late 2014 (Form 990 Schedule I)"
+    }
+   },
+   {
+    "n": 4,
+    "claim": "Project MinE helps identify NEK1",
+    "test": {
+     "type": "record",
+     "date": "2016-07-25",
+     "source": "Kenna et al., Nature Genetics 2016, doi:10.1038/ng.3626"
+    }
+   },
+   {
+    "n": 5,
+    "claim": "New clinical trials target NEK1",
+    "test": {
+     "type": "none",
+     "reason": "desk check: no NEK1-targeted interventional trials known; ClinicalTrials.gov is free and can confirm",
+     "verdict": "no evidence found"
+    }
+   }
+  ]
+ },
+ {
+  "slug": "ethanol-tortilla",
+  "title": "US ethanol mandate and tortillas (2007)",
+  "date": "2007-12-19",
+  "batch": 5,
+  "steps": [
+   {
+    "n": 1,
+    "claim": "EISA expands the Renewable Fuel Standard",
+    "test": {
+     "type": "record",
+     "date": "2007-12-19",
+     "source": "Energy Independence and Security Act signed 19 Dec 2007"
+    }
+   },
+   {
+    "n": 2,
+    "claim": "Farmers plant record corn",
+    "test": {
+     "type": "none",
+     "reason": "USDA NASS acreage is free (annual); desk check: the record corn year was 2007, planted in spring 2007, before EISA (the 2005 RFS was already in force)",
+     "verdict": "wrong order (desk)"
+    }
+   },
+   {
+    "n": 3,
+    "claim": "Corn prices soar",
+    "test": {
+     "type": "fred",
+     "id": "PMAIZMTUSDM",
+     "direction": "up",
+     "h": 6,
+     "transform": "log"
+    },
+    "note": "IMF/FRED global maize price, monthly."
+   },
+   {
+    "n": 4,
+    "claim": "Mexico's 'tortilla riots'",
+    "test": {
+     "type": "record",
+     "date": "2007-01-31",
+     "source": "Mexico tortilla price protests and price pact, January 2007"
+    },
+    "note": "Eleven months before EISA: it cannot be a ripple of the 2007 act."
+   },
+   {
+    "n": 5,
+    "claim": "Mexico cuts corn tariffs and caps prices",
+    "test": {
+     "type": "record",
+     "date": "2007-01-18",
+     "source": "tortilla price-stabilisation pact, January 2007"
+    },
+    "note": "Also before EISA."
+   }
+  ]
+ },
+ {
+  "slug": "cash-for-clunkers",
+  "title": "Cash for Clunkers (2009)",
+  "date": "2009-07-24",
+  "batch": 5,
+  "steps": [
+   {
+    "n": 1,
+    "claim": "CARS rebates begin",
+    "test": {
+     "type": "record",
+     "date": "2009-07-24",
+     "source": "program ran 24 Jul to 24 Aug 2009"
+    }
+   },
+   {
+    "n": 2,
+    "claim": "About 677,000 trade-ins are destroyed",
+    "test": {
+     "type": "record",
+     "date": "2009-12-01",
+     "source": "DOT report to Congress, December 2009: 677,842 vehicles"
+    }
+   },
+   {
+    "n": 3,
+    "claim": "The cheapest used cars become scarce",
+    "test": {
+     "type": "none",
+     "reason": "Manheim index is free as a headline but not loaded",
+     "verdict": "not testable"
+    }
+   },
+   {
+    "n": 4,
+    "claim": "Used-car prices rise",
+    "test": {
+     "type": "fred",
+     "id": "CUSR0000SETA02",
+     "direction": "up",
+     "h": 6,
+     "transform": "log"
+    },
+    "note": "BLS CPI, used cars and trucks."
+   },
+   {
+    "n": 5,
+    "claim": "Americans keep cars longer; fleet age rises",
+    "test": {
+     "type": "none",
+     "reason": "S&P/Polk data are paid; desk check: average vehicle age was already rising every year before 2009",
+     "verdict": "wrong order (desk)"
+    }
+   }
+  ]
+ },
+ {
+  "slug": "airbnb",
+  "title": "Airbnb and housing (2014–18)",
+  "date": "2014-01-01",
+  "batch": 5,
+  "steps": [
+   {
+    "n": 1,
+    "claim": "Airbnb scales globally",
+    "test": {
+     "type": "none",
+     "reason": "the cited source is paid or private (PitchBook, AirDNA); the S-1 is free but annual",
+     "verdict": "not testable"
+    }
+   },
+   {
+    "n": 2,
+    "claim": "Investors convert homes to full-time rentals",
+    "test": {
+     "type": "none",
+     "reason": "the cited source is paid or private (AirDNA)",
+     "verdict": "not testable"
+    }
+   },
+   {
+    "n": 3,
+    "claim": "Long-term rental supply shrinks",
+    "test": {
+     "type": "record",
+     "date": "2018-03-01",
+     "source": "Barron, Kung and Proserpio, 'The Effect of Home-Sharing on House Prices and Rents: Evidence from Airbnb' (NBER working paper, 2018; Marketing Science 2021)"
+    }
+   },
+   {
+    "n": 4,
+    "claim": "Rents rise in heavily listed areas",
+    "test": {
+     "type": "record",
+     "date": "2018-03-01",
+     "source": "same paper; Zillow ZORI begins in 2015, so the early years are not covered"
+    }
+   },
+   {
+    "n": 5,
+    "claim": "Cities restrict short-term rentals",
+    "test": {
+     "type": "record",
+     "date": "2023-09-05",
+     "source": "New York City begins enforcing Local Law 18, 5 Sep 2023"
+    }
+   }
+  ]
+ }
+]

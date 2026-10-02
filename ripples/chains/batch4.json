@@ -1,0 +1,551 @@
+[
+ {
+  "slug": "national-sword",
+  "title": "China's National Sword (2018)",
+  "date": "2018-01-01",
+  "batch": 4,
+  "steps": [
+   {
+    "n": 1,
+    "claim": "China bans most imported plastic and mixed paper",
+    "test": {
+     "type": "record",
+     "date": "2018-01-01",
+     "source": "in force 1 Jan 2018; notified to the WTO in July 2017"
+    }
+   },
+   {
+    "n": 2,
+    "claim": "Western scrap has nowhere to go",
+    "test": {
+     "type": "fred",
+     "id": "WPU0912",
+     "direction": "down",
+     "h": 6,
+     "transform": "log"
+    },
+    "note": "US producer price index for wastepaper."
+   },
+   {
+    "n": 3,
+    "claim": "Cities pay more to process recycling",
+    "test": {
+     "type": "none",
+     "reason": "real and widely reported, but no free national series",
+     "verdict": "not testable"
+    }
+   },
+   {
+    "n": 4,
+    "claim": "Cities suspend curbside recycling",
+    "test": {
+     "type": "none",
+     "reason": "real in dozens of towns (2018–19); no free series",
+     "verdict": "not testable"
+    }
+   },
+   {
+    "n": 5,
+    "claim": "States ban plastic bags and foam",
+    "test": {
+     "type": "none",
+     "reason": "desk check: bans came in 2019–20 (e.g. New York, 2019), but bag-ban campaigns predate 2018; weak link",
+     "verdict": "not testable"
+    }
+   }
+  ]
+ },
+ {
+  "slug": "tylenol",
+  "title": "Tylenol poisonings (1982)",
+  "date": "1982-09-29",
+  "batch": 4,
+  "steps": [
+   {
+    "n": 1,
+    "claim": "Seven die from cyanide-laced Tylenol",
+    "test": {
+     "type": "record",
+     "date": "1982-09-29",
+     "source": "Chicago area, from 29 Sep 1982"
+    }
+   },
+   {
+    "n": 2,
+    "claim": "J&J recalls 31 million bottles",
+    "test": {
+     "type": "record",
+     "date": "1982-10-05",
+     "source": "nationwide recall, early October 1982"
+    }
+   },
+   {
+    "n": 3,
+    "claim": "FDA requires tamper-resistant packaging",
+    "test": {
+     "type": "record",
+     "date": "1982-11-05",
+     "source": "FDA rule, 47 FR 50442, November 1982"
+    }
+   },
+   {
+    "n": 4,
+    "claim": "Tamper-evident packaging industry booms",
+    "test": {
+     "type": "none",
+     "reason": "before free daily or monthly data; patents are free (PatentsView covers 1976+) but not loaded",
+     "verdict": "not testable"
+    }
+   },
+   {
+    "n": 5,
+    "claim": "OTC drugs move from capsules to caplets",
+    "test": {
+     "type": "record",
+     "date": "1986-02-17",
+     "source": "J&J stops selling capsules after a second poisoning, February 1986"
+    },
+    "note": "Follows the 1986 poisoning more than 1982."
+   }
+  ]
+ },
+ {
+  "slug": "csi",
+  "title": "CSI premieres (2000)",
+  "date": "2000-10-06",
+  "batch": 4,
+  "steps": [
+   {
+    "n": 1,
+    "claim": "CSI premieres",
+    "test": {
+     "type": "record",
+     "date": "2000-10-06",
+     "source": "CBS premiere, 6 Oct 2000"
+    }
+   },
+   {
+    "n": 2,
+    "claim": "The 'CSI effect' on juries",
+    "test": {
+     "type": "none",
+     "reason": "desk check: studies (e.g. Shelton, NIJ Journal 2008) found little evidence jurors acquit for lack of forensics",
+     "verdict": "contested"
+    }
+   },
+   {
+    "n": 3,
+    "claim": "Crime-lab budgets expand",
+    "test": {
+     "type": "none",
+     "reason": "BJS crime-lab censuses are free but periodic; DNA funding laws (2004) confound",
+     "verdict": "not testable"
+    }
+   },
+   {
+    "n": 4,
+    "claim": "Forensic-science majors surge",
+    "test": {
+     "type": "none",
+     "reason": "real in IPEDS degree data (free) but not loaded yet",
+     "verdict": "not testable"
+    }
+   },
+   {
+    "n": 5,
+    "claim": "Crime-lab backlogs grow",
+    "test": {
+     "type": "none",
+     "reason": "real, but driven by DNA testing growth; not loaded",
+     "verdict": "not testable"
+    }
+   }
+  ]
+ },
+ {
+  "slug": "gdpr",
+  "title": "GDPR (2018)",
+  "date": "2018-05-25",
+  "batch": 4,
+  "steps": [
+   {
+    "n": 1,
+    "claim": "GDPR takes effect",
+    "test": {
+     "type": "record",
+     "date": "2018-05-25",
+     "source": "Regulation (EU) 2016/679 applies from 25 May 2018"
+    }
+   },
+   {
+    "n": 2,
+    "claim": "Cookie banners everywhere",
+    "test": {
+     "type": "wiki",
+     "articles": [
+      "HTTP cookie",
+      "General Data Protection Regulation"
+     ],
+     "lag": 60
+    }
+   },
+   {
+    "n": 3,
+    "claim": "Ad targeting degrades",
+    "test": {
+     "type": "none",
+     "reason": "the cited source is paid or private",
+     "verdict": "not testable"
+    }
+   },
+   {
+    "n": 4,
+    "claim": "Publishers pivot to paywalls",
+    "test": {
+     "type": "wiki",
+     "articles": [
+      "Paywall"
+     ],
+     "lag": 120
+    },
+    "note": "Desk check: the paywall pivot predates GDPR (NYT 2011)."
+   },
+   {
+    "n": 5,
+    "claim": "Subscription-management apps emerge",
+    "test": {
+     "type": "none",
+     "reason": "desk check: such apps (e.g. Truebill, 2015) predate GDPR",
+     "verdict": "wrong order (desk)"
+    }
+   }
+  ]
+ },
+ {
+  "slug": "fukushima",
+  "title": "Fukushima (2011)",
+  "date": "2011-03-11",
+  "batch": 4,
+  "steps": [
+   {
+    "n": 1,
+    "claim": "Fukushima Daiichi meltdown",
+    "test": {
+     "type": "record",
+     "date": "2011-03-11",
+     "source": "earthquake and tsunami, 11 Mar 2011"
+    }
+   },
+   {
+    "n": 2,
+    "claim": "Germany decides to phase out nuclear",
+    "test": {
+     "type": "record",
+     "date": "2011-05-30",
+     "source": "German government decision 30 May 2011; law passed summer 2011"
+    }
+   },
+   {
+    "n": 3,
+    "claim": "Germany burns more gas and coal",
+    "test": {
+     "type": "none",
+     "reason": "Eurostat and Fraunhofer data are free but not loaded; desk check: renewables replaced most nuclear output",
+     "verdict": "not testable"
+    }
+   },
+   {
+    "n": 4,
+    "claim": "European gas prices rise structurally",
+    "test": {
+     "type": "fred",
+     "id": "PNGASEUUSDM",
+     "direction": "up",
+     "h": 12,
+     "transform": "log"
+    },
+    "note": "IMF/FRED EU natural gas price, monthly."
+   },
+   {
+    "n": 5,
+    "claim": "Energy-intensive industry relocates",
+    "test": {
+     "type": "none",
+     "reason": "desk check: the big wave followed the 2021–22 gas crisis, not 2011",
+     "verdict": "not testable"
+    }
+   }
+  ]
+ },
+ {
+  "slug": "jaws",
+  "title": "Jaws (1975)",
+  "date": "1975-06-20",
+  "batch": 4,
+  "steps": [
+   {
+    "n": 1,
+    "claim": "Jaws is released",
+    "test": {
+     "type": "record",
+     "date": "1975-06-20",
+     "source": "US release, 20 Jun 1975"
+    }
+   },
+   {
+    "n": 2,
+    "claim": "Recreational shark hunting surges",
+    "test": {
+     "type": "none",
+     "reason": "NOAA recreational catch data begin in 1981, after the claimed surge; anecdotal only",
+     "verdict": "not testable"
+    }
+   },
+   {
+    "n": 3,
+    "claim": "Large coastal sharks collapse",
+    "test": {
+     "type": "none",
+     "reason": "desk check: declines are real but driven mainly by commercial fishing",
+     "verdict": "not testable"
+    }
+   },
+   {
+    "n": 4,
+    "claim": "Cownose rays explode",
+    "test": {
+     "type": "none",
+     "reason": "desk check: proposed by Myers et al. (Science 2007), later disputed (Grubbs et al. 2016)",
+     "verdict": "contested"
+    }
+   },
+   {
+    "n": 5,
+    "claim": "Rays wipe out scallop fisheries",
+    "test": {
+     "type": "none",
+     "reason": "desk check: the same disputed study",
+     "verdict": "contested"
+    }
+   }
+  ]
+ },
+ {
+  "slug": "eyjafjallajokull",
+  "title": "Eyjafjallajökull (2010)",
+  "date": "2010-04-14",
+  "batch": 4,
+  "steps": [
+   {
+    "n": 1,
+    "claim": "Icelandic eruption sends ash over Europe",
+    "test": {
+     "type": "record",
+     "date": "2010-04-14",
+     "source": "eruption phase from 14 Apr 2010"
+    }
+   },
+   {
+    "n": 2,
+    "claim": "European airspace closes",
+    "test": {
+     "type": "record",
+     "date": "2010-04-15",
+     "source": "closures 15–20 Apr 2010 (Eurocontrol)"
+    }
+   },
+   {
+    "n": 3,
+    "claim": "Time-critical cargo is stranded",
+    "test": {
+     "type": "none",
+     "reason": "IATA reports are partly paywalled; widely reported",
+     "verdict": "not testable"
+    }
+   },
+   {
+    "n": 4,
+    "claim": "Kenyan flower exporters destroy stock",
+    "test": {
+     "type": "record",
+     "date": "2010-04-19",
+     "source": "Kenya Flower Council losses widely reported, April 2010"
+    }
+   },
+   {
+    "n": 5,
+    "claim": "Logistics firms invest in Eurasian rail",
+    "test": {
+     "type": "none",
+     "reason": "desk check: China–Europe rail grew from 2011 under the Belt and Road programme; no link to the ash cloud found",
+     "verdict": "no evidence found"
+    }
+   }
+  ]
+ },
+ {
+  "slug": "tiktok",
+  "title": "TikTok and short songs (2019–20)",
+  "date": "2019-06-01",
+  "batch": 4,
+  "steps": [
+   {
+    "n": 1,
+    "claim": "TikTok's For You feed takes off",
+    "test": {
+     "type": "wiki",
+     "articles": [
+      "TikTok"
+     ],
+     "lag": 365
+    }
+   },
+   {
+    "n": 2,
+    "claim": "TikTok drives chart success",
+    "test": {
+     "type": "none",
+     "reason": "the cited source is paid or private (Luminate)",
+     "verdict": "not testable"
+    }
+   },
+   {
+    "n": 3,
+    "claim": "Hooks move to the first seconds",
+    "test": {
+     "type": "none",
+     "reason": "Spotify API needs a key; not loaded",
+     "verdict": "not testable"
+    }
+   },
+   {
+    "n": 4,
+    "claim": "Hit songs get shorter",
+    "test": {
+     "type": "none",
+     "reason": "real (shortening began around 2013 with streaming); Billboard data are not free as a series",
+     "verdict": "not testable"
+    }
+   },
+   {
+    "n": 5,
+    "claim": "Catalog sales boom",
+    "test": {
+     "type": "record",
+     "date": "2018-07-11",
+     "source": "Hipgnosis Songs Fund lists in London, July 2018"
+    },
+    "note": "Before TikTok's surge, so it fails the ordering rule as a TikTok ripple."
+   }
+  ]
+ },
+ {
+  "slug": "winter-storm-uri",
+  "title": "Winter Storm Uri (2021)",
+  "date": "2021-02-13",
+  "batch": 4,
+  "steps": [
+   {
+    "n": 1,
+    "claim": "Texas grid fails",
+    "test": {
+     "type": "record",
+     "date": "2021-02-15",
+     "source": "ERCOT rolling outages from 15 Feb 2021"
+    }
+   },
+   {
+    "n": 2,
+    "claim": "Gas supply freezes",
+    "test": {
+     "type": "fred",
+     "id": "DHHNGSP",
+     "direction": "up",
+     "h": 5,
+     "transform": "level"
+    },
+    "note": "Henry Hub daily spot price."
+   },
+   {
+    "n": 3,
+    "claim": "Burst pipes and property damage",
+    "test": {
+     "type": "none",
+     "reason": "Texas Department of Insurance claims are published as reports, not a series",
+     "verdict": "not testable"
+    }
+   },
+   {
+    "n": 4,
+    "claim": "Texas passes SB 3 weatherization law",
+    "test": {
+     "type": "record",
+     "date": "2021-06-08",
+     "source": "SB 3 signed 8 Jun 2021"
+    }
+   },
+   {
+    "n": 5,
+    "claim": "Businesses build microgrids and batteries",
+    "test": {
+     "type": "none",
+     "reason": "EIA data are free; desk check: Texas battery growth is mostly grid-scale, not on-site; not loaded",
+     "verdict": "not testable"
+    }
+   }
+  ]
+ },
+ {
+  "slug": "top-gun",
+  "title": "Top Gun (1986)",
+  "date": "1986-05-16",
+  "batch": 4,
+  "steps": [
+   {
+    "n": 1,
+    "claim": "Top Gun is released with Navy help",
+    "test": {
+     "type": "record",
+     "date": "1986-05-16",
+     "source": "US release, 16 May 1986"
+    }
+   },
+   {
+    "n": 2,
+    "claim": "Navy recruits at cinemas; applications spike",
+    "test": {
+     "type": "none",
+     "reason": "desk check: widely repeated (often as '500%'), but no primary Navy data have been published",
+     "verdict": "unverified"
+    }
+   },
+   {
+    "n": 3,
+    "claim": "Ray-Ban Aviator sales rise 40%",
+    "test": {
+     "type": "none",
+     "reason": "widely reported figure; no primary source found",
+     "verdict": "unverified"
+    }
+   },
+   {
+    "n": 4,
+    "claim": "Pentagon–Hollywood pipeline formalised",
+    "test": {
+     "type": "none",
+     "reason": "desk check: the DoD film liaison office dates from 1948",
+     "verdict": "not testable"
+    }
+   },
+   {
+    "n": 5,
+    "claim": "Pilot bubble reaches airlines 20 years later",
+    "test": {
+     "type": "none",
+     "reason": "desk check: no evidence found that this happened as described",
+     "verdict": "no evidence found"
+    }
+   }
+  ]
+ }
+]

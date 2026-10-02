@@ -1,0 +1,244 @@
+[
+ {
+  "slug": "serial",
+  "title": "Serial (2014)",
+  "date": "2014-10-03",
+  "batch": 2,
+  "steps": [
+   {
+    "n": 1,
+    "claim": "Serial season 1 launches",
+    "test": {
+     "type": "record",
+     "date": "2014-10-03",
+     "source": "first episode, 3 Oct 2014"
+    }
+   },
+   {
+    "n": 2,
+    "claim": "Podcasting becomes a mass medium",
+    "test": {
+     "type": "none",
+     "reason": "Edison Infinite Dial reports are free (annual) but not yet loaded; growth was already under way before Serial",
+     "verdict": "not testable"
+    }
+   },
+   {
+    "n": 3,
+    "claim": "Investors pour money into audio studios",
+    "test": {
+     "type": "none",
+     "reason": "the cited source is paid or private (PitchBook); IAB podcast ad reports are free but annual",
+     "verdict": "not testable"
+    }
+   },
+   {
+    "n": 4,
+    "claim": "Renewed legal momentum; conviction vacated",
+    "test": {
+     "type": "record",
+     "date": "2022-09-19",
+     "source": "Baltimore judge vacates Adnan Syed's conviction, 19 Sep 2022 (reinstated on appeal in 2023)"
+    }
+   },
+   {
+    "n": 5,
+    "claim": "Public defenders swamped by record requests",
+    "test": {
+     "type": "none",
+     "reason": "desk check: no evidence found that this happened as described",
+     "verdict": "no evidence found"
+    }
+   }
+  ]
+ },
+ {
+  "slug": "covid-remote",
+  "title": "Remote work (2020)",
+  "date": "2020-03-13",
+  "batch": 2,
+  "steps": [
+   {
+    "n": 1,
+    "claim": "Remote-work mandates",
+    "test": {
+     "type": "wiki",
+     "articles": [
+      "Remote work"
+     ],
+     "lag": 60
+    }
+   },
+   {
+    "n": 2,
+    "claim": "Knowledge workers move to 'Zoom towns'",
+    "test": {
+     "type": "wiki",
+     "articles": [
+      "Zoom town"
+     ],
+     "lag": 600
+    },
+    "note": "USPS change-of-address files are not free."
+   },
+   {
+    "n": 3,
+    "claim": "Home values in Zoom towns decouple",
+    "test": {
+     "type": "zillow",
+     "towns": [
+      "Boise City, ID",
+      "Bozeman, MT",
+      "Bend, OR",
+      "Coeur d'Alene, ID",
+      "Austin, TX",
+      "Knoxville, TN",
+      "Asheville, NC"
+     ],
+     "direction": "up",
+     "h": 6,
+     "transform": "level"
+    },
+    "note": "Zillow ZHVI: average annual growth of seven Zoom towns minus US growth."
+   },
+   {
+    "n": 4,
+    "claim": "Local workers priced out; municipal staff shortages",
+    "test": {
+     "type": "none",
+     "reason": "BLS LAUS measures unemployment, not vacancies; no free local vacancy series",
+     "verdict": "not testable"
+    }
+   },
+   {
+    "n": 5,
+    "claim": "Towns cap short-term rentals",
+    "test": {
+     "type": "none",
+     "reason": "real in many towns, but scattered; no free national series",
+     "verdict": "not testable"
+    }
+   }
+  ]
+ },
+ {
+  "slug": "jwst",
+  "title": "Webb's first images (2022)",
+  "date": "2022-07-11",
+  "batch": 2,
+  "steps": [
+   {
+    "n": 1,
+    "claim": "NASA releases Webb's first deep field",
+    "test": {
+     "type": "record",
+     "date": "2022-07-11",
+     "source": "NASA/White House release, 11 Jul 2022"
+    }
+   },
+   {
+    "n": 2,
+    "claim": "Public interest in astronomy spikes",
+    "test": {
+     "type": "wiki",
+     "articles": [
+      "Astronomy",
+      "Galaxy",
+      "Universe"
+     ],
+     "lag": 60
+    }
+   },
+   {
+    "n": 3,
+    "claim": "More astrophysics papers and majors",
+    "test": {
+     "type": "arxiv",
+     "direction": "up",
+     "h": 6,
+     "transform": "log"
+    },
+    "note": "arXiv astro-ph monthly submissions (all papers). AIP enrolment data are annual and not loaded."
+   },
+   {
+    "n": 4,
+    "claim": "Federal procurement for infrared optics surges",
+    "test": {
+     "type": "none",
+     "reason": "desk check: implausible mechanism; budgets are set years ahead and the telescope was already built",
+     "verdict": "not testable"
+    }
+   },
+   {
+    "n": 5,
+    "claim": "Consumer infrared and adaptive-optics patents accelerate",
+    "test": {
+     "type": "none",
+     "reason": "PatentsView is free but this would take years to show and has many causes; not loaded",
+     "verdict": "not testable"
+    }
+   }
+  ]
+ },
+ {
+  "slug": "gamestop",
+  "title": "GameStop squeeze (2021)",
+  "date": "2021-01-13",
+  "batch": 2,
+  "steps": [
+   {
+    "n": 1,
+    "claim": "Reddit traders squeeze GameStop",
+    "test": {
+     "type": "wiki",
+     "articles": [
+      "GameStop short squeeze",
+      "GameStop"
+     ],
+     "lag": 60
+    }
+   },
+   {
+    "n": 2,
+    "claim": "Brokerages restrict buying",
+    "test": {
+     "type": "record",
+     "date": "2021-01-28",
+     "source": "Robinhood and others restrict GME purchases, 28 Jan 2021; SEC staff report, 14 Oct 2021"
+    }
+   },
+   {
+    "n": 3,
+    "claim": "Congress holds hearings",
+    "test": {
+     "type": "record",
+     "date": "2021-02-18",
+     "source": "House Financial Services hearing 'Game Stopped?', 18 Feb 2021"
+    }
+   },
+   {
+    "n": 4,
+    "claim": "Retail options trading rises for good",
+    "test": {
+     "type": "wiki",
+     "articles": [
+      "Option (finance)",
+      "Call option"
+     ],
+     "lag": 90
+    },
+    "note": "OCC volume data are free but not loaded; the options boom began in 2020."
+   },
+   {
+    "n": 5,
+    "claim": "Brokerages remove gamified features",
+    "test": {
+     "type": "record",
+     "date": "2021-03-31",
+     "source": "Robinhood removes its confetti animation, 31 Mar 2021"
+    },
+    "note": "Massachusetts regulators had complained about gamification in Dec 2020, before the squeeze."
+   }
+  ]
+ }
+]
