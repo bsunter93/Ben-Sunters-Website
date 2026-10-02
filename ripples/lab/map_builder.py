@@ -189,11 +189,15 @@ def build(cfg_path):
             else:
                 day = dt.date.fromisoformat(a["onset"])
                 st.update(date=a["onset"], days=a["days"])
-                if day < last_day:
+                ref = ev_on if s.get("branch") else last_day  # a branch starts a new line from the event itself
+                if day < ref:
                     st.update(evidence="excluded", why="its rise began before attention to the event did, or before the previous step")
                 else:
                     st["evidence"] = "tested" if s.get("test") else "timed"
-                    last_day, last_month = day, a["onset"][:7]
+                    if not s.get("branch"):
+                        last_day, last_month = day, a["onset"][:7]
+                    else:
+                        st["branch"] = True
         elif s["type"] == "behaviour":
             ser = (lib or {}).get("series", {}).get(s["heading"])
             st.update(kind="behaviour", measure=f"monthly checkouts of books on “{s['heading']}”, Seattle Public Library")
@@ -207,8 +211,10 @@ def build(cfg_path):
                     st.update(evidence="na", date=cfg["release"][:7], why=b["why"])
                 elif not b["passes"] or b["onset"] < last_month:
                     st.update(evidence="excluded", date=b["onset"] or cfg["release"][:7],
-                              why=f"no rise beyond normal (p = {b['p']})" if not b["passes"] else
-                              "its rise began before the previous step",
+                              why=(f"no rise beyond normal (p = {b['p']})" if b["p"] > 0.05 else
+                                   "no clear start to the rise" if b["onset"] is None else
+                                   "its rise began before the event" if not b["passes"] else
+                                   "its rise began before the previous step"),
                               test=f"Chain test: p = {b['p']} against every other month; rise began {b['onset'] or 'never'}.")
                 else:
                     st.update(evidence="tested", date=b["onset"],
