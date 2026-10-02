@@ -302,7 +302,7 @@ function chainLevel(st) {
   const v = st.verdict || "", why = st.reason || st.note || "";
   if (/wrong order|before the step/.test(v)) return ["busted", "Busted", st.test.type === "record" ? "This came before the step it is said to follow." : "It began before the step before it."];
   if (/contradicted/.test(v)) return ["busted", "Busted", `Contradicted. ${why}`];
-  if (/no evidence/.test(v)) return ["busted", "Busted", why || "No evidence found that this happened as described."];
+  if (/no evidence/.test(v)) return ["busted", "Busted", "No evidence found that this happened as described." + (why && !/^desk check: no evidence/.test(why) ? ` (${why}.)` : "")];
   if (/contested|unverified/.test(v)) return ["busted", "Disputed", why];
   if (/not yet/.test(v)) return ["busted", "Not yet", why];
   if (v === "measured") {
