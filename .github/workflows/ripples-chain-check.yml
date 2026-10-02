@@ -4,10 +4,14 @@ name: Ripples chain check
 on:
   push:
     branches: ["claude/**"]
-    paths: ["ripples/lab/chain_check.py", ".github/workflows/ripples-owner-chains.yml"]
+    paths: ["ripples/lab/chain_check.py", "ripples/chains/**", ".github/workflows/ripples-chain-check.yml"]
 
 permissions:
   contents: write
+
+concurrency:
+  group: ripples-chain-check
+  cancel-in-progress: true
 
 jobs:
   run:
