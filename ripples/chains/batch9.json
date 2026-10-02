@@ -1,0 +1,178 @@
+[
+ {
+  "slug": "squid-game-ripples",
+  "title": "Squid Game, beyond TV (2021)",
+  "date": "2021-09-17",
+  "batch": 9,
+  "vertical": "Streaming",
+  "steps": [
+   {
+    "n": 1,
+    "claim": "Squid Game is released on Netflix",
+    "test": {
+     "type": "record",
+     "date": "2021-09-17",
+     "source": "Netflix release, 17 Sep 2021"
+    }
+   },
+   {
+    "n": 2,
+    "claim": "Netflix's biggest launch: 111 million accounts in 17 days",
+    "test": {
+     "type": "record",
+     "date": "2021-10-12",
+     "source": "Netflix announcement, 12 Oct 2021"
+    },
+    "after": 1,
+    "slice": "Streaming",
+    "link": "reported",
+    "link_why": "Netflix's own viewing figures for the show",
+    "short": "111m accounts"
+   },
+   {
+    "n": 3,
+    "claim": "Netflix values the show at about $891 million",
+    "test": {
+     "type": "record",
+     "date": "2021-10-17",
+     "source": "internal figures reported by Bloomberg, 17 Oct 2021"
+    },
+    "after": 2,
+    "slice": "Streaming",
+    "link": "reported",
+    "link_why": "the valuation is of this show",
+    "short": "$891m valuation"
+   },
+   {
+    "n": 4,
+    "claim": "Netflix commits $2.5 billion to Korean content",
+    "test": {
+     "type": "record",
+     "date": "2023-04-24",
+     "source": "Netflix announcement during President Yoon's US visit, Apr 2023"
+    },
+    "after": 3,
+    "slice": "Streaming",
+    "note": "Many shows fed this decision; Squid Game was the biggest.",
+    "short": "$2.5bn Korea bet"
+   },
+   {
+    "n": 5,
+    "claim": "SK Broadband sues Netflix over network costs, citing the traffic surge",
+    "test": {
+     "type": "record",
+     "date": "2021-09-30",
+     "source": "SK Broadband counterclaim, Sept 2021"
+    },
+    "after": 1,
+    "slice": "Telecoms",
+    "note": "The dispute began in 2020, before the show; Squid Game's traffic sharpened it.",
+    "link": "reported",
+    "link_why": "SK Broadband cited the surge in Netflix traffic driven by the show",
+    "short": "SK Broadband suit"
+   },
+   {
+    "n": 6,
+    "claim": "Korea's National Assembly debates network usage fee bills",
+    "test": {
+     "type": "none",
+     "reason": "several bills were introduced in late 2021 and 2022; not loaded as data",
+     "verdict": "not testable"
+    },
+    "after": 5,
+    "slice": "Telecoms",
+    "range": [
+     "2021-10-01",
+     "2022-12-31"
+    ],
+    "short": "Network-fee bills"
+   },
+   {
+    "n": 7,
+    "claim": "Netflix and SK Broadband settle and partner",
+    "test": {
+     "type": "record",
+     "date": "2023-09-18",
+     "source": "joint announcement, Sept 2023"
+    },
+    "after": 5,
+    "slice": "Telecoms",
+    "link": "reported",
+    "link_why": "the settlement ended this lawsuit",
+    "short": "Settlement"
+   },
+   {
+    "n": 8,
+    "claim": "A 'SQUID' crypto token rides the hype, then collapses",
+    "test": {
+     "type": "record",
+     "date": "2021-11-01",
+     "source": "the SQUID token's developers vanished on 1 Nov 2021"
+    },
+    "after": 1,
+    "slice": "Crypto",
+    "link": "reported",
+    "link_why": "the token marketed itself on the show",
+    "short": "SQUID token scam"
+   },
+   {
+    "n": 9,
+    "claim": "Duolingo reports a jump in new Korean learners",
+    "test": {
+     "type": "none",
+     "reason": "Duolingo's statement, October 2021; reported, not measured by us",
+     "verdict": "not testable"
+    },
+    "after": 1,
+    "slice": "Language learning",
+    "range": [
+     "2021-10-01",
+     "2021-10-31"
+    ],
+    "short": "Duolingo Korean"
+   },
+   {
+    "n": 10,
+    "claim": "MrBeast stages a real-life Squid Game",
+    "test": {
+     "type": "record",
+     "date": "2021-11-24",
+     "source": "video published 24 Nov 2021"
+    },
+    "after": 1,
+    "slice": "Online video",
+    "link": "reported",
+    "link_why": "the video recreates the show's games",
+    "short": "MrBeast's game"
+   },
+   {
+    "n": 11,
+    "claim": "Netflix launches Squid Game: The Challenge",
+    "test": {
+     "type": "record",
+     "date": "2023-11-22",
+     "source": "reality series premiere, 22 Nov 2023"
+    },
+    "after": 1,
+    "slice": "Online video",
+    "link": "reported",
+    "link_why": "a Netflix spin-off of the show",
+    "short": "The Challenge"
+   },
+   {
+    "n": 12,
+    "claim": "Interest in ddakji, the paper-tile game, surges",
+    "test": {
+     "type": "wiki",
+     "articles": [
+      "Ddakji"
+     ],
+     "lag": 60
+    },
+    "after": 1,
+    "slice": "Games & play",
+    "short": "Ddakji craze"
+   }
+  ]
+ }
+]

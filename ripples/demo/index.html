@@ -28,9 +28,22 @@ a{color:inherit;text-underline-offset:3px}
 button,select{font:inherit;color:inherit}
 header{max-width:1240px;margin:0 auto;padding:26px 16px 6px}
 .brand{font:800 .78rem/1 var(--sans);letter-spacing:.16em;text-transform:uppercase;color:var(--marigold)}
-h1{font:800 clamp(1.9rem,5vw,3.1rem)/1.03 var(--display);letter-spacing:-.015em;margin:.45rem 0 .45rem;text-wrap:balance}
+h1{font:800 clamp(1.6rem,4.2vw,2.6rem)/1.05 var(--display);letter-spacing:-.015em;margin:.45rem 0 .45rem;text-wrap:balance}
 .sub{color:var(--ink-2);max-width:62ch;margin:0}
-.picker{display:flex;flex-wrap:wrap;gap:7px;margin:16px 0 2px}
+.picker{display:flex;flex-wrap:nowrap;gap:7px;margin:10px 0 2px;overflow-x:auto;scrollbar-width:none;padding-bottom:4px;
+  -webkit-mask-image:linear-gradient(90deg,#000 92%,transparent);mask-image:linear-gradient(90deg,#000 92%,transparent)}
+.picker::-webkit-scrollbar{display:none}
+.picker .chip{flex:none;white-space:nowrap}
+.tabs{display:flex;gap:4px;margin:16px 0 0;border-bottom:1px solid var(--hair)}
+.tab{background:none;border:0;border-bottom:2px solid transparent;padding:8px 12px 9px;font-weight:700;font-size:.92rem;color:var(--ink-3);cursor:pointer;margin-bottom:-1px}
+.tab[aria-selected="true"]{color:var(--ink);border-bottom-color:var(--marigold)}
+.tab small{font-weight:500;color:var(--ink-3);margin-left:4px}
+.tabnote{font-size:.8rem;color:var(--ink-3);margin:8px 0 0}
+.tally{display:flex;flex-wrap:wrap;gap:6px;margin:10px 0 0}
+.tally span{font-size:.74rem;font-weight:700;padding:3px 9px;border-radius:999px;border:1px solid var(--hair)}
+.tally .l-measured{color:var(--good);border-color:var(--good)}.tally .l-timed{color:var(--marigold);border-color:var(--marigold)}
+.tally .l-reported{color:var(--ink);border-color:var(--ink-2)}.tally .l-plausible{color:var(--marigold);border-color:var(--marigold);border-style:dashed}
+.tally .l-busted{color:var(--miss);border-color:var(--miss)}
 .rowlbl{width:100%;font:700 .7rem/1 var(--sans);letter-spacing:.12em;text-transform:uppercase;color:var(--ink-3);margin:8px 0 1px}
 .chip{border:1px solid var(--hair);background:rgba(10,44,51,.7);border-radius:999px;padding:6px 12px;font-weight:600;font-size:.88rem;cursor:pointer;transition:background .16s,border-color .16s}
 .chip:hover{border-color:var(--ink-3)}
@@ -53,7 +66,9 @@ input[type=range]{flex:1;accent-color:var(--marigold);min-width:0}
 .legend{display:flex;flex-wrap:wrap;align-items:center;gap:6px 14px;font-size:.78rem;color:var(--ink-2);padding:6px 8px 4px}
 .legend svg{margin-right:5px;vertical-align:middle}
 .howbtn{margin-left:auto;background:none;border:1px solid var(--hair);border-radius:999px;padding:3px 10px;font-size:.76rem;color:var(--ink-2);cursor:pointer}
-.feed{display:grid;gap:8px}
+.feed{display:grid;gap:8px;align-content:start;position:sticky;top:10px;max-height:calc(100vh - 20px);overflow-y:auto;padding-right:4px;scrollbar-width:thin;scrollbar-color:var(--hair) transparent}
+.nextbtn{background:none;border:1px solid var(--hair);border-radius:999px;padding:6px 12px;font-size:.8rem;font-weight:600;color:var(--ink-2);cursor:pointer;white-space:nowrap}
+.nextbtn:hover{border-color:var(--ink-3);color:var(--ink)}
 .card{background:rgba(12,51,59,.92);border:1px solid var(--hair);border-radius:14px;padding:10px 14px;transition:border-color .2s;cursor:pointer}
 .card.off{display:none}
 .card.in{animation:rise .45s ease-out}
@@ -89,9 +104,9 @@ input[type=range]{flex:1;accent-color:var(--marigold);min-width:0}
 .foot{max-width:1240px;margin:0 auto;padding:0 16px 44px;color:var(--ink-3);font-size:.82rem}
 /* pond */
 .ring{fill:none;stroke:rgba(214,240,236,.11);stroke-width:1.2}
-.ringlbl{fill:rgba(214,240,236,.42);font:600 10.5px var(--sans);letter-spacing:.05em}
+.ringlbl{fill:rgba(214,240,236,.3);font:600 9.5px var(--sans);letter-spacing:.05em}
 .slicebd{stroke:rgba(214,240,236,.12);stroke-width:1;stroke-dasharray:2 6}
-.rimlbl{font:800 11.5px var(--sans);letter-spacing:.2em;text-transform:uppercase;fill:rgba(242,174,46,.92)}
+.rimlbl{font:800 11px var(--sans);letter-spacing:.16em;text-transform:uppercase;fill:rgba(242,174,46,.9)}
 .wave{fill:none;stroke:rgba(214,240,236,.5)}
 .edge{fill:none;stroke-linecap:round}
 .edge.l-measured{stroke:var(--good);stroke-width:3.4}
@@ -112,11 +127,13 @@ input[type=range]{flex:1;accent-color:var(--marigold);min-width:0}
 .nlab text.s{font-weight:500;font-size:11px;fill:var(--ink-3)}
 .nlab.busted text:not(.s){fill:var(--ink-3);text-decoration:line-through}
 .nlab.hot rect{stroke:var(--marigold)}
+#pond.focus .node:not(.lit),#pond.focus .edge:not(.lit),#pond.focus .nlab:not(.lit),#pond.focus .band:not(.lit){opacity:.16 !important;transition:opacity .3s}
+#pond .node,#pond .edge,#pond .nlab{transition:opacity .3s}
 .stone text{font:800 14px var(--display);fill:var(--ink);paint-order:stroke;stroke:#0a3a42;stroke-width:5px}
 body.reel header .picker,body.reel .feed,body.reel .how,body.reel .foot,body.reel .ctl,body.reel .legend{display:none}
 body.reel .wrap{grid-template-columns:1fr;max-width:760px}
 body.reel header{max-width:760px;padding-top:22px}
-@media (max-width:860px){.wrap{grid-template-columns:1fr}.pondbox{position:relative;top:0}}
+@media (max-width:860px){.wrap{grid-template-columns:1fr}.pondbox{position:relative;top:0}.feed{position:static;max-height:none;overflow:visible}}
 @media (prefers-reduced-motion:reduce){.card.in{animation:none}}
 </style>
 </head>
@@ -125,7 +142,14 @@ body.reel header{max-width:760px;padding-top:22px}
   <div class="brand">Knock-On · prototype</div>
   <h1 id="h1">What did that thing everyone remembers change?</h1>
   <p class="sub" id="sub">Pick a moment. The stone is the event; each ring is time since it happened.</p>
-  <div class="picker" id="picker" role="group" aria-label="Choose an event"></div>
+  <div class="tally" id="tally" aria-label="How sure the links are"></div>
+  <div class="tabs" role="tablist" aria-label="Kinds of story">
+    <button class="tab" role="tab" data-tab="maps" aria-selected="true">Ripple maps</button>
+    <button class="tab" role="tab" data-tab="stories" aria-selected="false">Checked stories</button>
+    <button class="tab" role="tab" data-tab="leads" aria-selected="false">Leads</button>
+  </div>
+  <p class="tabnote" id="tabnote"></p>
+  <div class="picker" id="picker" role="tabpanel" aria-label="Choose a story"></div>
 </header>
 
 <div class="wrap">
@@ -135,6 +159,7 @@ body.reel header{max-width:760px;padding-top:22px}
     <div class="ctl">
       <button class="play" id="play" aria-label="Pause"><svg viewBox="0 0 16 16" id="playico"></svg></button>
       <input type="range" id="scrub" min="0" max="1000" value="0" aria-label="Time since the event">
+      <button class="nextbtn" id="nextbtn">Next story →</button>
     </div>
     <div class="legend" aria-label="How sure we are of each link">
       <span><svg width="22" height="8"><line x1="1" y1="4" x2="21" y2="4" stroke="var(--good)" stroke-width="4"/></svg>Measured</span>
@@ -171,11 +196,22 @@ const MAPS = {
     sub:"A TV drama about a 1986 disaster sent readers to the real story, then to the reactor, then on tours to Pripyat.",
     nodes:{1:{l:"The real disaster"}, 2:{l:"The reactor (RBMK)", p:1}, 4:{l:"Zone tours +30%", p:2}}},
 };
-const MAP_ORDER = ["tiger-king", "squid-game", "wednesday", "queens-gambit", "stranger-things-4", "saltburn", "bridgerton", "the-last-of-us",
-  "chernobyl", "shogun", "barbie", "top-gun-maverick", "euphoria-s2", "the-bear"];
-const FEATURED = ["frozen", "planet-earth", "sputnik-gps", "magnetron-microwave", "earthquake-bank", "tambora-bicycle", "jurassic-park", "ice-bucket", "tylenol", "wardrobe-malfunction", "ethanol-tortilla"];
-const NAMES = {"frozen":"Frozen → baby Elsas", "planet-earth":"Planet Earth → the STURDY Act", "jurassic-park":"Jurassic Park → seized fossils",
-  "ice-bucket":"Ice Bucket → an ALS gene", "sputnik-gps":"Sputnik → GPS", "magnetron-microwave":"Radar → microwave ovens", "earthquake-bank":"1906 quake → Bank of America", "tambora-bicycle":"A volcano → the bicycle", "tylenol":"Tylenol → caplets", "wardrobe-malfunction":"Super Bowl 2004 → YouTube", "ethanol-tortilla":"Ethanol law → tortilla riots?"};
+// The three tabs. Ripple maps: multi-hop maps, best first. Checked stories: viral chains checked link by link.
+// Leads: the engine's one-hop finds (attention only), awaiting a second hop.
+const TABS = {
+  maps:[["chain", "squid-game-ripples", "Squid Game, beyond TV"], ["map", "tiger-king", "Tiger King"], ["chain", "sputnik-gps", "Sputnik → GPS"],
+    ["chain", "cantaloupe-penicillin", "A cantaloupe → D-Day penicillin"], ["map", "queens-gambit", "The Queen's Gambit"], ["chain", "magnetron-microwave", "Radar → microwave ovens"],
+    ["chain", "earthquake-bank", "1906 quake → Bank of America"], ["chain", "muybridge-cinema", "A horse's gallop → the movies"], ["map", "chernobyl", "Chernobyl"],
+    ["chain", "planet-earth", "Planet Earth → the STURDY Act"]],
+  stories:[["chain", "frozen", "Frozen → baby Elsas"], ["chain", "tambora-bicycle", "A volcano → the bicycle"], ["chain", "cellucotton-kleenex", "WWI bandages → Kleenex"],
+    ["chain", "heat-pump-super-soaker", "A heat pump → the Super Soaker"], ["chain", "sildenafil-viagra", "An angina drug → Viagra"], ["chain", "perkin-chemotherapy", "A dye → chemotherapy?"],
+    ["chain", "jurassic-park", "Jurassic Park → seized fossils"], ["chain", "ice-bucket", "Ice Bucket → an ALS gene"], ["chain", "tylenol", "Tylenol → caplets"],
+    ["chain", "wardrobe-malfunction", "Super Bowl 2004 → YouTube"], ["chain", "ethanol-tortilla", "Ethanol law → tortilla riots?"]],
+  leads:["wednesday", "stranger-things-4", "saltburn", "bridgerton", "the-last-of-us", "squid-game", "shogun", "barbie", "top-gun-maverick", "euphoria-s2", "the-bear"].map(s => ["map", s, null]),
+};
+const TABNOTE = {maps:"Multi-step ripples, each link rated.", stories:"Viral “butterfly effect” stories, checked link by link.",
+  leads:"What the engine found on its own, qualified by hand: only leads with a material endpoint and a plausible path stay. Each says what data would test the next step."};
+let tab = "maps";
 const LVL = {measured:"Measured", timed:"Timed", reported:"Reported", plausible:"Plausible", busted:"Busted"};
 const LV = {tested:"measured", timed:"timed", record:"reported"};
 const COLOR = {measured:"var(--good)", timed:"var(--marigold)", reported:"var(--rec)", plausible:"var(--marigold)", busted:"var(--miss)"};
@@ -207,6 +243,8 @@ function sinceLabel(d) {
   return `+${(d / 365.25).toFixed(1)} years`;
 }
 const cap = s => s ? s[0].toUpperCase() + s.slice(1) : "";
+const shortLabel = s => { if (s.length <= 24) return s; const cut = s.slice(0, 23); return cut.slice(0, cut.lastIndexOf(" ") > 10 ? cut.lastIndexOf(" ") : 23).replace(/[,;:]$/, "") + "…"; };
+const fmtMonth = d => d.toLocaleDateString("en-US", {month:"short", year:"numeric", timeZone:"UTC"});
 const esc = s => String(s ?? "").replace(/[&<>"]/g, c => ({"&":"&amp;", "<":"&lt;", ">":"&gt;", '"':"&quot;"})[c]);
 
 // Time scale: playback position t in [0,1] -> days since the event. A short run-up, then log time.
@@ -253,14 +291,30 @@ function card({when, badge, badgeCls, title, spark = "", facts = "", short = "",
 
 // ---- discovered links (ripples/demo/discovered.json): measured attention rises found automatically ----
 function discItems(ev, skip = new Set()) {
-  return ev.links.filter(l => !skip.has(l.title)).map((l, k) => ({
-    id:`d${k}`, parent:null, slice:l.slice, d:Math.max(l.lag, 0.5), label:l.label, lv:"measured", disc:true,
-    sub:sinceLabel(l.lag), series:{weekly:l.weekly, pre:l.baseline * 7},
-    card:card({when:`${fmt(D(l.onset))}<span>${sinceLabel(l.lag)}</span>`, badge:"Measured", badgeCls:"l-measured", cls:"disc",
-      title:`People look up ${l.label}`, spark:sparkHTML(l.weekly, ev.date),
-      short:`Attention ${l.ratio}× normal · p = ${l.p}`,
-      details:`<p>${esc(cap(l.desc))}.</p><p>Found automatically: an article linking to the event whose daily Wikipedia views rose unusually (beyond its own history, p = ${l.p}) after attention to the event began. A lead, not a proven effect.</p>`})
-  }));
+  const out = [];
+  ev.links.filter(l => !skip.has(l.title)).forEach((l, k) => {
+    const id = `d${k}`;
+    out.push({id, parent:null, slice:l.slice, d:Math.max(l.lag, 0.5), label:l.label, lv:"measured", disc:true,
+      sub:sinceLabel(l.lag), series:{weekly:l.weekly, pre:l.baseline * 7},
+      card:card({when:`${fmt(D(l.onset))}<span>${sinceLabel(l.lag)}</span>`, badge:"Measured", badgeCls:"l-measured", cls:"disc",
+        title:l.headline || l.label, spark:sparkHTML(l.weekly, ev.date),
+        short:`Attention to “${esc(l.label)}” ${l.ratio}× normal · p = ${l.p}`,
+        details:`<p>${esc(cap(l.desc))}.</p>${l.next ? `<p><b>Next test:</b> ${esc(l.next)}.</p>` : ""}<p>Found by the engine among articles linking to the event: daily Wikipedia views rose beyond their own history (p = ${l.p}) after attention to the event began, then qualified by hand for a material endpoint and a plausible path.</p>`})});
+    if (l.outcome) {
+      const d = daysBetween(ev.date, l.outcome.date);
+      out.push({id:`${id}o`, parent:id, slice:l.slice, d:Math.max(d, 0.5), label:l.outcome.short || shortLabel(l.outcome.claim), lv:"reported", sub:sinceLabel(d),
+        card:card({when:`${fmt(D(l.outcome.date))}<span>${sinceLabel(d)}</span>`, badge:"Reported", badgeCls:"l-reported", title:l.outcome.claim,
+          short:esc(l.outcome.source)})});
+    }
+  });
+  return out;
+}
+function leftOutCard(ev) {
+  if (!ev.dropped || !ev.dropped.length) return [];
+  const by = {}; ev.dropped.forEach(x => (by[x.why] = by[x.why] || []).push(x.title));
+  return [{d:1e9, ...card({when:"Left out", badge:`${ev.dropped.length} leads`, badgeCls:"na", cls:"miss",
+    title:"Leads the engine found that didn't qualify", short:"They rose after the event, but have no material endpoint or no plausible path.",
+    details:Object.entries(by).map(([w, ts]) => `<p><b>${esc(cap(w))}:</b> ${ts.map(esc).join(", ")}</p>`).join("")})}];
 }
 
 function fromMap(slug) {
@@ -277,16 +331,17 @@ function fromMap(slug) {
       series:s.series && s.series.weekly ? s.series : null,
       card:card({when:`${fmt(D(s.date))}<span>${sinceLabel(s.days)}</span>`, badge:LVL[lv], badgeCls:`l-${lv}`, title:s.title,
         spark:s.series ? sparkHTML(s.series.weekly, data.release) : "", facts,
-        short:lv === "plausible" ? "Happened; the link is unproven" : lv === "measured" ? "Passed a test against fake dates" : lv === "reported" ? "A credible source makes the link" : "Rose after the step before",
+        short:lv === "plausible" ? "Happened; the link is unproven" : lv === "measured" ? "Passed a test against fake dates" : lv === "reported" ? esc(s.measure || "") : "Rose after the step before",
         details:`${s.note ? `<p>${esc(s.note)}</p>` : ""}${s.test ? `<p>${esc(s.test)}</p>` : ""}${src}`})});
   }
   if (disc) items.push(...discItems(disc, seen));
+  const leftOut = disc ? leftOutCard(disc) : [];
   const misses = data.steps.filter(s => s.kind === "behavior" && s.evidence !== "tested").map(s => ({d:30,
     ...card({when:"Checked", badge:"Not counted", badgeCls:"na", title:s.title, short:cap(s.why || "no clear rise"), cls:"miss"})}));
   const e0 = data.steps[0];
   const names = {main:cfg.main}; items.forEach(x => { if (x.slice !== "main") names[x.slice] = x.slice; });
   return {key:slug, kind:"map", title:cfg.stone, h1:cfg.h1, sub:cfg.sub, stone:cfg.stone, iso0:data.release, eventSeries:e0.series,
-    names, items, extra:misses,
+    names, items, extra:[...misses, ...leftOut],
     first:card({when:`${fmt(D(data.release))}<span>Day 0</span>`, badge:"The event", badgeCls:"event", title:e0.title, spark:sparkHTML(e0.series.weekly, data.release)})};
 }
 
@@ -294,9 +349,10 @@ function fromDisc(slug) {
   const ev = DATA.disc.events[slug];
   const items = discItems(ev);
   const slices = [...new Set(items.map(x => x.slice))];
-  return {key:slug, kind:"disc", title:ev.title, stone:ev.title, iso0:ev.date, items, extra:[], names:Object.fromEntries(slices.map(s => [s, s])),
-    h1:`${ev.title}: ${items.length} ripples across ${slices.length} industr${slices.length === 1 ? "y" : "ies"}`,
-    sub:`Found by the engine: things whose attention rose unusually after ${ev.title} came out, in time order, sorted by the industry they reached. Each is a measured lead; the next step is to test what happened after it.`,
+  const outcomes = items.filter(x => x.lv === "reported").length;
+  return {key:slug, kind:"disc", title:ev.title, stone:ev.title, iso0:ev.date, items, extra:leftOutCard(ev), names:Object.fromEntries(slices.map(s => [s, s])),
+    h1:`${ev.title}: ${slices.join(", ").replace(/, ([^,]*)$/, " and $1")}`,
+    sub:`The engine found ${ev.links.length + (ev.dropped || []).length} things whose attention rose after ${ev.title} came out; ${ev.links.length} qualified as material, plausible ripples${outcomes ? `, and ${outcomes} already ha${outcomes === 1 ? "s" : "ve"} a documented outcome` : ""}. The rest are listed at the end with the reason.`,
     first:card({when:`${fmt(D(ev.date))}<span>Day 0</span>`, badge:"The event", badgeCls:"event", title:`${ev.title} is released`})};
 }
 
@@ -342,14 +398,17 @@ function fromChain(slug) {
     const happened = st.test.type === "record" ? `<p class="src">${esc(st.source || st.test.source)}</p>` :
       st.test.type === "none" ? "" : `<p class="src">${st.found ? "Wikipedia daily views: " + Object.keys(st.found).filter(k => st.found[k]).join(", ") : SRC(st)}</p>`;
     const id = `c${st.n}`;
-    items.push({id, parent:st.branch ? null : lastMain, slice:st.branch ? `b${st.n}` : "main", d, range, undated, label:st.claim, lv, lvText, sub,
-      card:card({when, badge:lvText, badgeCls:`l-${lv}`, title:st.claim, cls:lv === "busted" ? "busted" : "", spark:weekly ? sparkHTML(weekly, st.ref) : "", short,
+    const parent = st.after ? (st.after === 1 ? null : `c${st.after}`) : st.branch ? null : lastMain;
+    const srcLine = st.source || (st.test && st.test.source) || "";
+    const shortLine = lv === "reported" && srcLine ? esc(srcLine) : short;
+    items.push({id, parent, slice:st.slice || (st.branch ? `b${st.n}` : "main"), d, range, undated, label:st.short || shortLabel(st.claim), lv, lvText, sub,
+      card:card({when, badge:lvText, badgeCls:`l-${lv}`, title:st.claim, cls:lv === "busted" ? "busted" : "", spark:weekly ? sparkHTML(weekly, st.ref) : "", short:shortLine,
         details:`<p>${esc(why)}</p>${st.note && st.note !== why ? `<p>${esc(st.note)}</p>` : ""}${happened}`})});
-    if (!st.branch) lastMain = id;
+    if (!st.branch && !st.after) lastMain = id;
   });
   const tally = {}; items.forEach(x => tally[x.lv] = (tally[x.lv] || 0) + 1);
   const hold = (tally.measured || 0) + (tally.timed || 0) + (tally.reported || 0);
-  const names = {main:ch.vertical || ""}; ch.steps.forEach(x => { if (x.branch) names[`b${x.n}`] = x.vertical || ""; });
+  const names = {main:ch.vertical || ""}; ch.steps.forEach(x => { if (x.branch) names[`b${x.n}`] = x.vertical || ""; if (x.slice) names[x.slice] = x.slice; });
   const s0 = ch.steps[0];
   return {key:slug, kind:"chain", title:ch.title, h1:ch.title, stone:ch.title.split(/,| and | → |\s\(/)[0].trim(), iso0, items, extra:[], names,
     sub:`${hold} of ${items.length} links after the event hold up: ` + ["measured", "timed", "reported", "plausible", "busted"].filter(k => tally[k]).map(k => `${tally[k]} ${LVL[k].toLowerCase()}`).join(", ") + ". Tap a ripple to see why.",
@@ -391,14 +450,12 @@ function draw(story) {
     el("text", {class:"ringlbl", x:p.x + 4, y:p.y - 3}, g0).textContent = lbl;
   }
   el("circle", {cx:C.x, cy:C.y, r:R + 6, fill:"none", stroke:"rgba(214,240,236,.16)", "stroke-width":1.5, filter:"url(#wob)"}, g0);
-  keys.forEach((k, i) => {  // the industry each ripple reached, on the rim (upright on the lower half)
-    const c = centre(k), half = n === 1 ? 50 : Math.min(w / 2 - 6, 66), low = Math.abs(c) > 95;
-    const rr = low ? R + 25 : R + 15, s1 = polar(rr, low ? c + half : c - half), s2 = polar(rr, low ? c - half : c + half);
-    el("path", {id:`rim${i}`, d:`M${s1.x},${s1.y} A${rr},${rr} 0 0 ${low ? 0 : 1} ${s2.x},${s2.y}`, fill:"none"}, g0);
-    const tp = el("textPath", {href:`#rim${i}`, startOffset:"50%", "text-anchor":"middle"}, el("text", {class:"rimlbl"}, g0));
-    tp.textContent = story.names[k] || "";
+  keys.forEach(k => {  // the industry each ripple reached, outside the rim, always horizontal
+    if (!story.names[k]) return;
+    const c = n === 1 ? 0 : centre(k), p = polar(R + 24, c), sx = Math.sin(c * Math.PI / 180), cy = -Math.cos(c * Math.PI / 180);
+    el("text", {class:"rimlbl", x:p.x + (Math.abs(sx) < 0.35 ? 0 : sx > 0 ? 2 : -2), y:p.y + (cy > 0.35 ? 10 : cy < -0.35 ? -2 : 4),
+      "text-anchor":Math.abs(sx) < 0.35 ? "middle" : sx > 0 ? "start" : "end"}, g0).textContent = story.names[k];
   });
-
   const waves = el("g", {}, svg), bands = el("g", {}, svg), edges = el("g", {}, svg), elbls = el("g", {}, svg), nodes = el("g", {}, svg), labels = el("g", {}, svg);
   const stone = el("g", {class:"stone"}, svg);
   const sHalo = el("circle", {cx:C.x, cy:C.y, r:30, fill:"url(#glow)"}, stone);
@@ -413,7 +470,11 @@ function draw(story) {
     const chained = its.filter(x => x.parent), loose = its.filter(x => !x.parent || !its.some(y => y.id === x.parent));
     const ml = loose.length;
     loose.forEach((it, j) => { const off = ml === 1 ? 0 : (Math.floor(j / 2) + 0.5) * step * (j % 2 ? 1 : -1); it.a = centre(k) + off; });
-    chained.filter(x => !loose.includes(x)).forEach((it, j) => { it.a = centre(k) + (j % 2 ? 6 : -6); });
+    // a step that grows from another follows its parent's angle, so a lead and its outcome read as one ray
+    chained.filter(x => !loose.includes(x)).sort((a, b) => a.d - b.d).forEach((it, j) => {
+      const par = its.find(y => y.id === it.parent);
+      it.a = (par && par.a !== undefined ? par.a : centre(k)) + (j % 2 ? 5 : -5);
+    });
     if (n === 1 && m > 1) its.forEach((it, j) => { it.a = -70 + j * 140 / (m - 1); });  // one ripple: a gentle spiral outward
     its.forEach(it => { it.r = radius(it.d); it.pos = polar(it.r, it.a); });
   }
@@ -428,7 +489,7 @@ function draw(story) {
     }
     it.path = el("path", {class:`edge l-${it.lv}${it.disc ? " disc" : ""}`, d:`M${it.from.x},${it.from.y} L${it.from.x},${it.from.y}`, opacity:0}, edges);
     const len = Math.hypot(it.pos.x - it.from.x, it.pos.y - it.from.y);
-    if (!it.disc && len > 80) {  // the confidence label sits on the line itself, so a screenshot keeps it
+    if (false) {  // confidence is carried by line style; the words live in the cards  // the confidence label sits on the line itself, so a screenshot keeps it
       const mx = (it.from.x + it.pos.x) / 2, my = (it.from.y + it.pos.y) / 2;
       let ang = Math.atan2(it.pos.y - it.from.y, it.pos.x - it.from.x) * 180 / Math.PI; if (ang > 90 || ang < -90) ang += 180;
       it.elbl = el("text", {class:`elbl l-${it.lv}`, x:mx, y:my - 5, "text-anchor":"middle", transform:`rotate(${ang.toFixed(1)} ${mx} ${my})`}, elbls);
@@ -444,9 +505,7 @@ function draw(story) {
     // label on a dark backing; try right, left, above, below and keep the first spot that does not collide
     const lab = el("g", {class:"nlab" + (it.lv === "busted" ? " busted" : "")}, labels);
     const rect = el("rect", {rx:6}, lab);
-    const words = it.label.split(" "), lines = [""];
-    for (const wd of words) { if ((lines[lines.length - 1] + " " + wd).trim().length > 22 && lines[lines.length - 1]) lines.push(wd); else lines[lines.length - 1] = (lines[lines.length - 1] + " " + wd).trim(); }
-    const shown = lines.slice(0, 2); if (lines.length > 2) shown[1] += "…";
+    const shown = [it.label.length > 26 ? shortLabel(it.label) : it.label];
     const tx = el("text", {x:0, y:0}, lab);
     shown.forEach((ln, k) => { const ts = el("tspan", {x:0, dy:k ? 15 : 0}, tx); ts.textContent = ln; });
     const sub = el("text", {class:"s", x:0, y:15 * shown.length}, lab); sub.textContent = it.sub || "";
@@ -468,6 +527,7 @@ function draw(story) {
   story.max = max; story.waves = waves; story.sHalo = sHalo; story.sCore = sCore; story.splashed = false;
 }
 
+function isDesc(x, root) { for (let p = x; p; p = cur.items.find(y => y.id === p.parent)) if (p === root) return true; return false; }
 // ---------- feed ----------
 function buildFeed(story) {
   const f = $("#feed"); f.textContent = "";
@@ -531,9 +591,15 @@ function valueAt(series, iso0, d) {
 function render(now = performance.now()) {
   if (!cur) return;
   const d = daysAt(t), {items, iso0} = cur;
-  $("#date").textContent = fmt(addDays(iso0, Math.floor(d)));
   const shown = items.filter(x => x.state !== "hidden" && x.lv !== "busted").length;
-  $("#since").innerHTML = `${sinceLabel(d)}<small>${shown} ripple${shown === 1 ? "" : "s"}</small>`;
+  if (!playing && !scrubbing && t >= 1) {  // at rest: the story's span, not today's date
+    const lastD = Math.max(...items.filter(x => !x.future).map(x => x.d));
+    $("#date").textContent = `${fmtMonth(D(iso0))} → ${fmtMonth(addDays(iso0, lastD))}`;
+    $("#since").innerHTML = `${shown} ripple${shown === 1 ? "" : "s"}<small>over ${sinceLabel(lastD).replace("+", "")}</small>`;
+  } else {
+    $("#date").textContent = fmt(addDays(iso0, Math.floor(d)));
+    $("#since").innerHTML = `${sinceLabel(d)}<small>${shown} ripple${shown === 1 ? "" : "s"}</small>`;
+  }
   $("#scrub").value = Math.round(t * 1000);
   if (!cur.splashed && t >= PRE) { cur.splashed = true; spawnWave(3.2); setTimeout(() => spawnWave(2.2), 240); setTimeout(() => spawnWave(1.4), 520); }
   if (t < PRE) cur.splashed = false;
@@ -551,7 +617,11 @@ function render(now = performance.now()) {
   for (const c of cur.cards || []) {
     const on = d >= c.d;
     c.el.classList.toggle("off", !on);
-    if (on && !c.shown) { c.shown = true; c.el.classList.add("in"); } else if (!on && c.shown) { c.shown = false; c.el.classList.remove("in"); }
+    if (on && !c.shown) {
+      c.shown = true; c.el.classList.add("in");
+      const f = $("#feed");  // follow the story while it plays (desktop, where the feed scrolls on its own)
+      if (playing && f.scrollHeight > f.clientHeight) f.scrollTo({top:c.el.offsetTop - f.offsetTop - f.clientHeight + c.el.offsetHeight + 16, behavior:"smooth"});
+    } else if (!on && c.shown) { c.shown = false; c.el.classList.remove("in"); }
     if (on && c.cursor && c.it && c.it.series && c.it.series.weekly) {
       const w = c.it.series.weekly, t0 = Date.parse(w[0][0]), t1 = Date.parse(w[w.length - 1][0]);
       const x = Math.max(0, Math.min(300, (addDays(iso0, d).getTime() - t0) / (t1 - t0) * 300));
@@ -560,9 +630,20 @@ function render(now = performance.now()) {
   }
 }
 
+function clearFocus() {
+  $("#pond").classList.remove("focus");
+  if (cur) cur.items.forEach(x => [x.g, x.path, x.lab, x.band].forEach(e => e && e.classList.remove("lit")));
+  if (hot) { hot.lab.classList.remove("hot"); hot.cardEl && hot.cardEl.classList.remove("hot"); hot = null; }
+}
 function focus(it) {
-  if (hot) { hot.lab.classList.remove("hot"); hot.cardEl && hot.cardEl.classList.remove("hot"); }
+  if (hot === it) { clearFocus(); return; }
+  clearFocus();
   hot = it; it.lab.classList.add("hot");
+  const lit = new Set([it]);  // its path back to the stone, and anything that grew from it
+  for (let p = it; p && p.parent; ) { p = cur.items.find(x => x.id === p.parent); if (p) lit.add(p); }
+  let grew = true; while (grew) { grew = false; for (const x of cur.items) if (!lit.has(x) && [...lit].some(l => l.id === x.parent && (l === it || cur.items.indexOf(l) >= 0) && isDesc(x, it))) { lit.add(x); grew = true; } }
+  lit.forEach(x => [x.g, x.path, x.lab, x.band].forEach(e => e && e.classList.add("lit")));
+  $("#pond").classList.add("focus");
   if (it.cardEl) { it.cardEl.classList.add("hot"); if (!REEL) it.cardEl.scrollIntoView({block:"nearest", behavior:"smooth"}); }
   for (let k = 0; k <= 1000; k++) if (daysAt(k / 1000) >= it.d + 0.5) { if (k / 1000 > t) t = k / 1000; break; }
   render();
@@ -582,8 +663,10 @@ function tick(now) {
 }
 function setPlaying(p) {
   playing = p;
-  $("#playico").innerHTML = p ? '<rect x="3" y="2" width="3.5" height="12" fill="currentColor"/><rect x="9.5" y="2" width="3.5" height="12" fill="currentColor"/>' : '<path d="M4 2l10 6-10 6z" fill="currentColor"/>';
-  $("#play").setAttribute("aria-label", p ? "Pause" : "Play");
+  const done = !p && t >= 1;
+  $("#playico").innerHTML = p ? '<rect x="3" y="2" width="3.5" height="12" fill="currentColor"/><rect x="9.5" y="2" width="3.5" height="12" fill="currentColor"/>'
+    : done ? '<path d="M8 2.5a5.5 5.5 0 1 1-5.2 3.7" fill="none" stroke="currentColor" stroke-width="2"/><path d="M1.5 2.5v4h4" fill="none" stroke="currentColor" stroke-width="2"/>' : '<path d="M4 2l10 6-10 6z" fill="currentColor"/>';
+  $("#play").setAttribute("aria-label", p ? "Pause" : done ? "Replay" : "Play");
 }
 
 async function loadAll() {
@@ -593,43 +676,67 @@ async function loadAll() {
   DATA.disc = disc; DATA.chains = chains ? chains.chains : [];
   Object.keys(MAPS).forEach((s, i) => { if (maps[i]) DATA.maps[s] = maps[i]; });
 }
+function tabOf(kind, slug) {
+  for (const [k, list] of Object.entries(TABS)) if (list.some(([kk, ss]) => kk === kind && ss === slug)) return k;
+  return kind === "chain" ? "stories" : "leads";
+}
+function renderPicker() {
+  document.querySelectorAll(".tab").forEach(b => b.setAttribute("aria-selected", b.dataset.tab === tab));
+  const pk = $("#picker"); pk.textContent = "";
+  $("#tabnote").textContent = TABNOTE[tab];
+  for (const [kind, slug, name] of TABS[tab]) {
+    if (kind === "chain" && !DATA.chains.some(c => c.slug === slug)) continue;
+    if (kind === "map" && !DATA.maps[slug] && !(DATA.disc && DATA.disc.events[slug] && DATA.disc.events[slug].links.length)) continue;
+    const b = document.createElement("button"); b.className = "chip"; b.dataset.k = `${kind}:${slug}`;
+    b.textContent = name || (DATA.disc && DATA.disc.events[slug] ? DATA.disc.events[slug].title : slug);
+    b.setAttribute("aria-pressed", cur && cur.key === slug); b.onclick = () => show(kind, slug); pk.appendChild(b);
+    if (cur && cur.key === slug) requestAnimationFrame(() => b.scrollIntoView({block:"nearest", inline:"center"}));
+  }
+  if (tab === "stories") {
+    const sel = document.createElement("select"); sel.className = "chip"; sel.id = "allchains"; sel.setAttribute("aria-label", "All checked stories");
+    sel.innerHTML = '<option value="">All checked stories…</option>' + [...DATA.chains].sort((a, b) => a.title.localeCompare(b.title)).map(c => `<option value="${c.slug}">${esc(c.title)}</option>`).join("");
+    if (cur && cur.kind === "chain" && !TABS.stories.some(([, s]) => s === cur.key)) sel.value = cur.key;
+    sel.onchange = () => sel.value && show("chain", sel.value);
+    pk.appendChild(sel);
+  }
+}
 function show(kind, slug, autoplay = true) {
   const story = kind === "chain" ? fromChain(slug) : MAPS[slug] && DATA.maps[slug] ? fromMap(slug) : fromDisc(slug);
-  document.querySelectorAll(".chip[data-k]").forEach(c => c.setAttribute("aria-pressed", c.dataset.k === `${kind}:${slug}`));
-  const sel = $("#allchains"); if (sel) sel.value = kind === "chain" && !FEATURED.includes(slug) ? slug : "";
+  clearFocus(); cur = story; hot = null; t = 0; ambient = 0;
+  const inTab = TABS[tab].some(([k, s]) => k === kind && s === slug) || (tab === "stories" && kind === "chain");
+  if (!inTab) tab = tabOf(kind, slug);
+  renderPicker();
   $("#h1").textContent = story.h1; $("#sub").textContent = story.sub;
-  cur = story; hot = null; t = 0; ambient = 0;
-  draw(story); buildFeed(story); render();
+  const tally = {}; story.items.forEach(x => tally[x.lv] = (tally[x.lv] || 0) + 1);
+  $("#tally").innerHTML = ["measured", "timed", "reported", "plausible", "busted"].filter(k => tally[k]).map(k => `<span class="l-${k}">${tally[k]} ${LVL[k].toLowerCase()}</span>`).join("");
+  draw(story); buildFeed(story); $("#feed").scrollTop = 0; render();
   setPlaying(autoplay);
   if (!REEL) try { history.replaceState(null, "", `?${kind === "chain" ? "c" : "m"}=${slug}`); } catch { /* sandboxed previews cannot rewrite the URL */ }
 }
 function next() {
-  const list = [...MAP_ORDER.slice(0, 4).map(s => ["map", s]), ...FEATURED.slice(0, 3).map(s => ["chain", s])];
+  const list = TABS[tab].filter(([k, s]) => k === "chain" ? DATA.chains.some(c => c.slug === s) : DATA.maps[s] || (DATA.disc && DATA.disc.events[s] && DATA.disc.events[s].links.length));
   const i = list.findIndex(([, s]) => s === cur.key);
   const [k, s] = list[(i + 1) % list.length]; show(k, s);
 }
 
 (async () => {
   await loadAll();
-  const pk = $("#picker");
-  const lbl = text => { const d = document.createElement("div"); d.className = "rowlbl"; d.textContent = text; pk.appendChild(d); };
-  const chip = (kind, slug, text) => { const b = document.createElement("button"); b.className = "chip"; b.dataset.k = `${kind}:${slug}`; b.textContent = text; b.onclick = () => show(kind, slug); pk.appendChild(b); };
-  lbl("Ripple maps: found and measured by the engine");
-  MAP_ORDER.filter(s => (DATA.disc && DATA.disc.events[s]) || DATA.maps[s]).forEach(s => chip("map", s, DATA.disc && DATA.disc.events[s] ? DATA.disc.events[s].title : MAPS[s].stone));
-  lbl("Checked chains: viral “butterfly effect” stories, link by link");
-  FEATURED.filter(s => DATA.chains.some(c => c.slug === s)).forEach(s => chip("chain", s, NAMES[s]));
-  const sel = document.createElement("select"); sel.className = "chip"; sel.id = "allchains"; sel.setAttribute("aria-label", "All checked chains");
-  sel.innerHTML = '<option value="">All checked chains…</option>' + [...DATA.chains].sort((a, b) => a.title.localeCompare(b.title)).map(c => `<option value="${c.slug}">${esc(c.title)}</option>`).join("");
-  sel.onchange = () => sel.value && show("chain", sel.value);
-  pk.appendChild(sel);
+  document.querySelectorAll(".tab").forEach(b => b.onclick = () => { tab = b.dataset.tab; renderPicker(); const first = TABS[tab][0]; if (first) show(first[0], first[1]); });
   $("#howbtn").onclick = () => { const h = $("#how"), open = h.hidden; h.hidden = !open; $("#howbtn").setAttribute("aria-expanded", open); if (open) h.scrollIntoView({behavior:"smooth", block:"start"}); };
-  $("#play").onclick = () => { if (t >= 1) { t = 0; cur.items.forEach(hide); cur.splashed = false; } setPlaying(!playing); };
+  $("#play").onclick = () => { if (t >= 1) { t = 0; cur.items.forEach(hide); cur.splashed = false; $("#feed").scrollTop = 0; } setPlaying(!playing); };
+  $("#nextbtn").onclick = next;
+  $("#pond").addEventListener("click", e => { if (!e.target.closest(".node")) clearFocus(); });
+  document.addEventListener("keydown", e => {
+    if (e.key !== " " || e.target.closest("input,select,button,textarea,[tabindex]")) return;
+    e.preventDefault(); $("#play").click();
+  });
   const sc = $("#scrub");
   sc.oninput = e => { scrubbing = true; t = e.target.value / 1000; setPlaying(false); render(); };
   sc.onchange = () => { scrubbing = false; };
   const c = params.get("c"), m = params.get("m") || params.get("e");
   if (c && DATA.chains.some(x => x.slug === c)) show("chain", c, playing);
-  else show("map", m && (DATA.maps[m] || (DATA.disc && DATA.disc.events[m])) ? m : MAP_ORDER[0], playing);
+  else if (m && (DATA.maps[m] || (DATA.disc && DATA.disc.events[m]))) show("map", m, playing);
+  else show(TABS.maps[0][0], TABS.maps[0][1], playing);
   requestAnimationFrame(tick);
 })();
 </script>

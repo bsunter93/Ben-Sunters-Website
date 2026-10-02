@@ -31,7 +31,7 @@ import urllib.request
 import numpy as np
 
 ROOT = os.path.join(os.path.dirname(__file__), "..")
-OUT = os.path.join(ROOT, "docs", "results", "editor_trail_v1.json")
+OUT = os.environ.get("OUT_JSON") or os.path.join(ROOT, "docs", "results", "editor_trail_v1.json")
 UA = "ripples-research/0.2 (+https://bensunter.com/ripples/methods/)"
 WP = "https://en.wikipedia.org/w/api.php"
 WD = "https://www.wikidata.org/w/api.php"
@@ -224,6 +224,10 @@ def analyze(title, v, ev_i, on_i):
             "ratio": round(ratio, 1), "baseline": round(med, 1), "excess_60d": int(excess),
             "p": round((1 + hits) / (1 + n), 3) if n >= 20 else None, "n_pseudo": n, "seasonal": bool(ly and ly[1] >= ratio / 2),
             "weekly": weekly}
+
+
+if os.environ.get("EVENTS_JSON"):  # second hop: seeds are first-hop leads, each with its own date and stems to drop
+    EVENTS = [tuple(e) for e in json.load(open(os.environ["EVENTS_JSON"]))]
 
 
 def main() -> int:

@@ -1,0 +1,42 @@
+# Editor trail, second hop: the same method run from each strong first-hop lead (ripples/lab/hop2_seeds.json), so the
+# engine can link lead -> next step. Anonymous, honest UA, 1 s apart, stops on refusal; resumes from the results file.
+name: Ripples editor trail hop 2
+
+on:
+  push:
+    branches: ["claude/**"]
+    paths: ["ripples/lab/hop2_seeds.json", ".github/workflows/ripples-editor-trail-hop2.yml"]
+
+permissions:
+  contents: write
+
+concurrency:
+  group: ripples-editor-trail-hop2
+  cancel-in-progress: false
+
+jobs:
+  run:
+    runs-on: ubuntu-latest
+    timeout-minutes: 240
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: pip install --quiet numpy
+      - name: Editor trail hop 2
+        env:
+          CAP: "180"
+          BUDGET_MIN: "215"
+          EVENTS_JSON: ripples/lab/hop2_seeds.json
+          OUT_JSON: ripples/docs/results/editor_trail_hop2.json
+        run: python ripples/lab/editor_trail.py
+      - name: Commit results
+        if: always()
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898900+github-actions[bot]@users.noreply.github.com"
+          git add ripples/docs/results/editor_trail_hop2.json || exit 0
+          git diff --cached --quiet && exit 0
+          git commit -m "Ripples: editor trail hop 2 results [skip ci]"
+          for i in 1 2 3; do git pull --rebase -q origin "${GITHUB_REF_NAME}" && git push -q origin "HEAD:${GITHUB_REF_NAME}" && break; sleep 5; done

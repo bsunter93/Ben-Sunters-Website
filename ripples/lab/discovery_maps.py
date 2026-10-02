@@ -1,9 +1,10 @@
 """Discovery maps: turn editor-trail results (ripples/docs/results/editor_trail_v1.json) into demo map data.
 
-Keeps candidates that rose unusually (p <= 0.05 against the article's own history), began on or after attention to
-the event began (the ordering rule), and are not seasonal. Drops same-field noise: awards, given names, lists,
-discographies, other TV series, films, manga and production studios. Sorts the rest into industry slices by their
-Wikidata description, at most 4 per slice and 12 per event. Output: ripples/demo/discovered.json.
+Starts from candidates that rose unusually (p <= 0.05 against the article's own history), began on or after attention
+to the event began (the ordering rule), and are not seasonal; then applies an editorial qualification (KEEP below):
+only leads with a material endpoint, a plausible path and event-pointing timing stay, each with its mechanism, the data
+that would test the next step, and any documented outcome. Dropped leads are listed with reasons.
+Output: ripples/demo/discovered.json.
 These are explore-stage findings: measured attention rises in the right order, not confirmed causal links.
 """
 from __future__ import annotations
@@ -51,26 +52,73 @@ def label(t):
     return re.sub(r"\s*\((song|album|novel|video game|game|TV series|.*?song)\)$", "", t)
 
 
+# Editorial qualification (2 Oct 2026). A lead stays only if its endpoint is material (a chart, a place people visit,
+# a company, a law, a food business, a charity) AND a plausible path from the event exists AND the timing points to the
+# event. Each kept lead gets a mechanism (its slice), a headline, the data that would test the next step, and, where a
+# documented outcome exists, that outcome as a second, dated step. Everything else is dropped with a reason.
+KEEP = {
+    ("stranger-things-4", "Running Up That Hill"): ("Music charts", "A 1985 Kate Bush song returns", "weekly chart positions",
+        ("2022-06-17", "Running Up That Hill reaches No. 1 in the UK, 37 years after release", "Official Charts Company, 17 Jun 2022")),
+    ("stranger-things-4", "Master of Puppets (song)"): ("Music charts", "Metallica's 1986 track finds a new audience", "weekly chart positions",
+        ("2022-07-12", "Master of Puppets enters the Billboard Hot 100 for the first time", "Billboard, July 2022")),
+    ("stranger-things-4", "Lukiškės Prison"): ("Tourism", "The Vilnius prison used for filming, now an arts venue", "visitor numbers at Lukiškės Prison 2.0", None),
+    ("wednesday", "Bloody Mary (song)"): ("Music charts", "A dance trend revives a 2011 Lady Gaga track", "streaming and chart positions", None),
+    ("wednesday", "Cantacuzino Castle"): ("Tourism", "The Romanian castle that played Nevermore Academy", "castle visitor numbers", None),
+    ("saltburn", "Murder on the Dancefloor"): ("Music charts", "Sophie Ellis-Bextor's 2001 hit returns", "weekly chart positions",
+        ("2024-01-05", "Murder on the Dancefloor climbs back into the UK Top 10", "Official Charts Company, Jan 2024")),
+    ("squid-game", "SK Broadband"): ("Telecoms", "Korea's internet provider and Netflix's traffic", "court filings and network-fee bills",
+        ("2021-09-30", "SK Broadband sues Netflix over network costs, citing the traffic surge", "SK Broadband counterclaim, Sept 2021 (the dispute began in 2020)")),
+    ("squid-game", "Ddakji"): ("Toys & play", "The show's playground games become a craze", "toy and candy sales", None),
+    ("the-bear", "Italian beef"): ("Food", "Chicago's Italian beef sandwich in the spotlight", "restaurant traffic and sales", None),
+    ("bridgerton", "Ranger's House"): ("Tourism", "A Greenwich house that played the Featheringtons' home", "English Heritage visitor numbers", None),
+    ("queens-gambit", "The Steps of the Sun"): ("Publishing", "Readers turn to Walter Tevis's other novels", "book sales for Tevis's backlist", None),
+    ("chernobyl", "Voices from Chernobyl"): ("Publishing", "The oral history behind the series", "book sales", None),
+    ("chernobyl", "Ignalina Nuclear Power Plant"): ("Tourism", "The Lithuanian plant that stood in for Chernobyl", "plant tour bookings", None),
+    ("chernobyl", "Chernobyl Children International"): ("Charity", "A Chernobyl children's charity draws attention", "donations", None),
+    ("tiger-king", "Greater Wynnewood Exotic Animal Park"): ("Regulation", "The zoo at the center of the show", "USDA inspection and licensing records",
+        ("2020-08-18", "USDA suspends the park operator's exhibitor license", "USDA action against Jeff Lowe, Aug 2020")),
+    ("tiger-king", "Big Cat Rescue"): ("Charity", "Carole Baskin's sanctuary in the spotlight", "donations and visits", None),
+    ("the-last-of-us", "Long Long Time"): ("Music charts", "Episode 3 revives a 1970 Linda Ronstadt song", "streaming counts",
+        ("2023-01-30", "Spotify reports a surge in Long Long Time streams after the episode", "Spotify, 30 Jan 2023")),
+    ("shogun", "Gai-Jin"): ("Publishing", "Readers turn to James Clavell's other novels", "book sales for Clavell's backlist", None),
+}
+DROP_WHY = [  # (pattern on title or description, reason), first match wins; anything not kept falls through to the last
+    (r"Maya Hawke|Labrinth|Tom Cruise|Naughty Dog|A24", "same field: the cast's or makers' own work"),
+    (r"novel|short story|book|Asian Saga", "same field: related books"),
+    (r"\bsong\b|single|album|concerto|Notebooks", "a soundtrack reference, not a material outcome"),
+    (r"game|Pall-mall", "a duplicate or a curiosity: no material path"),
+    (r"Brothers Home|Dark Souls|First Class|Mischief|Space Song", "timing points to unrelated news, not the event"),
+    (r"town|city|neighborhood|county|settlement|municipality|eldership|Square|building|mall|station|theatre|theater|house|Somerley", "a setting or minor location: curiosity, not a material outcome"),
+    (r"", "no plausible material path from the event"),
+]
+
+
+OUTCOME_SHORT = {"Running Up That Hill": "UK No. 1", "Master of Puppets (song)": "Hot 100 debut", "Murder on the Dancefloor": "UK Top 10",
+                 "SK Broadband": "Sues Netflix", "Greater Wynnewood Exotic Animal Park": "License suspended", "Long Long Time": "Streams surge"}
+
+
 def main() -> int:
     src = json.load(open(SRC))
     out = {"source": "ripples/docs/results/editor_trail_v1.json", "stage": "explore", "events": {}}
     for slug, e in src["events"].items():
-        keep, per = [], {}
+        keep, dropped = [], []
         for c in e.get("candidates", []):
-            if c.get("p") is None or c["p"] > 0.05 or c.get("seasonal") or DROP.search(f"{c['desc']} {c['title']}"):
+            if c.get("p") is None or c["p"] > 0.05 or c.get("seasonal"):
                 continue
-            s = slice_of(c)
-            if not s or per.get(s, 0) >= 4:
+            k = KEEP.get((slug, c["title"]))
+            if not k:
+                if DROP.search(f"{c['desc']} {c['title']}") or not slice_of(c):
+                    continue  # awards, lists, other screen works: never candidates
+                why = next(r for rx, r in DROP_WHY if re.search(rx, f"{c['title']} {c['desc']}", re.I))
+                dropped.append({"title": c["title"], "why": why})
                 continue
-            per[s] = per.get(s, 0) + 1
-            keep.append({"title": c["title"], "label": label(c["title"]), "desc": c["desc"], "slice": s, "onset": c["onset"],
+            mech, head, nxt, outcome = k
+            keep.append({"title": c["title"], "label": label(c["title"]), "desc": c["desc"], "slice": mech, "headline": head, "next": nxt,
+                         "outcome": {**dict(zip(("date", "claim", "source"), outcome)), "short": OUTCOME_SHORT.get(c["title"])} if outcome else None, "onset": c["onset"],
                          "lag": c["lag"], "ratio": c["ratio"], "p": c["p"], "baseline": c["baseline"], "weekly": c["weekly"]})
-            if len(keep) >= 12:
-                break
-        if keep:
-            out["events"][slug] = {"title": TITLES.get(slug, slug), "date": e["date"], "event_onset": e.get("event_onset"),
-                                   "articles": e.get("articles"), "links": keep}
-        print(slug, len(keep), sorted({k["slice"] for k in keep}))
+        out["events"][slug] = {"title": TITLES.get(slug, slug), "date": e["date"], "event_onset": e.get("event_onset"),
+                               "articles": e.get("articles"), "links": keep, "dropped": dropped}
+        print(slug, len(keep), "kept,", len(dropped), "dropped", sorted({k["slice"] for k in keep}))
     json.dump(out, open(OUT, "w"), ensure_ascii=False, separators=(",", ":"))
     return 0
 
