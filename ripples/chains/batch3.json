@@ -1,0 +1,304 @@
+[
+ {
+  "slug": "svb",
+  "title": "Silicon Valley Bank (2023)",
+  "date": "2023-03-10",
+  "batch": 3,
+  "steps": [
+   {
+    "n": 1,
+    "claim": "SVB fails; the FDIC takes over",
+    "test": {
+     "type": "record",
+     "date": "2023-03-10",
+     "source": "FDIC press release, 10 Mar 2023"
+    }
+   },
+   {
+    "n": 2,
+    "claim": "Startups' payrolls freeze",
+    "test": {
+     "type": "none",
+     "reason": "reported over the weekend of 10–13 March; no free series",
+     "verdict": "not testable"
+    }
+   },
+   {
+    "n": 3,
+    "claim": "Systemic risk exception guarantees all deposits",
+    "test": {
+     "type": "record",
+     "date": "2023-03-12",
+     "source": "Treasury, Fed and FDIC joint statement, 12 Mar 2023"
+    },
+    "link": "reported",
+    "link_why": "the guarantee was a direct response to the failure"
+   },
+   {
+    "n": 4,
+    "claim": "Depositors move cash to money-market funds",
+    "test": {
+     "type": "fred",
+     "id": "WRMFNS",
+     "direction": "up",
+     "h": 8,
+     "transform": "log"
+    },
+    "note": "Retail money-market fund assets, weekly (Fed H.6)."
+   },
+   {
+    "n": 5,
+    "claim": "Banks tighten lending",
+    "test": {
+     "type": "fred",
+     "id": "DRTSCILM",
+     "direction": "up",
+     "h": 2,
+     "transform": "level"
+    },
+    "note": "Senior Loan Officer Survey: net share of banks tightening business-loan standards, quarterly."
+   }
+  ]
+ },
+ {
+  "slug": "ever-given",
+  "title": "Ever Given (2021)",
+  "date": "2021-03-23",
+  "batch": 3,
+  "steps": [
+   {
+    "n": 1,
+    "claim": "Ever Given blocks the Suez Canal",
+    "test": {
+     "type": "record",
+     "date": "2021-03-23",
+     "source": "grounded 23 Mar, refloated 29 Mar 2021"
+    }
+   },
+   {
+    "n": 2,
+    "claim": "Hundreds of ships stuck; about $9.6bn of trade a day held up",
+    "test": {
+     "type": "record",
+     "date": "2021-03-25",
+     "source": "Lloyd's List estimate, widely reported"
+    },
+    "link": "reported",
+    "link_why": "the queue was caused by the blockage"
+   },
+   {
+    "n": 3,
+    "claim": "Ports overwhelmed when the queue arrives",
+    "test": {
+     "type": "none",
+     "reason": "port dwell data are not free as a series; European ports reported bunching in April 2021",
+     "verdict": "not testable"
+    }
+   },
+   {
+    "n": 4,
+    "claim": "Freight rates soar to records",
+    "test": {
+     "type": "fred",
+     "id": "PCU483111483111",
+     "direction": "up",
+     "h": 3,
+     "transform": "log"
+    },
+    "note": "US producer price index for deep-sea freight. Drewry and Freightos headline indices are not free as data."
+   },
+   {
+    "n": 5,
+    "claim": "Firms abandon just-in-time for buffer stocks",
+    "test": {
+     "type": "fred",
+     "id": "ISRATIO",
+     "direction": "up",
+     "h": 6,
+     "transform": "level"
+    },
+    "note": "US business inventories-to-sales ratio."
+   }
+  ]
+ },
+ {
+  "slug": "chatgpt",
+  "title": "ChatGPT (2022)",
+  "date": "2022-11-30",
+  "batch": 3,
+  "steps": [
+   {
+    "n": 1,
+    "claim": "ChatGPT is released",
+    "test": {
+     "type": "wiki",
+     "articles": [
+      "ChatGPT"
+     ],
+     "lag": 150
+    }
+   },
+   {
+    "n": 2,
+    "claim": "Companies adopt LLMs for coding and support",
+    "test": {
+     "type": "stackex",
+     "direction": "down",
+     "h": 6,
+     "transform": "log"
+    },
+    "note": "Proxy: monthly new questions on Stack Overflow (coders asking a chatbot instead)."
+   },
+   {
+    "n": 3,
+    "claim": "VC rotates from crypto to AI",
+    "test": {
+     "type": "none",
+     "reason": "the cited source is paid or private (PitchBook); FTX collapsed in the same month, which confounds it",
+     "verdict": "not testable"
+    }
+   },
+   {
+    "n": 4,
+    "claim": "Essay cheating crisis in schools",
+    "test": {
+     "type": "wiki",
+     "articles": [
+      "Turnitin",
+      "GPTZero",
+      "Academic dishonesty"
+     ],
+     "lag": 120
+    }
+   },
+   {
+    "n": 5,
+    "claim": "Return of blue books and oral exams",
+    "test": {
+     "type": "wiki",
+     "articles": [
+      "Blue book exam"
+     ],
+     "lag": 300
+    }
+   }
+  ]
+ },
+ {
+  "slug": "dobbs",
+  "title": "Dobbs v. Jackson (2022)",
+  "date": "2022-06-24",
+  "batch": 3,
+  "steps": [
+   {
+    "n": 1,
+    "claim": "The Supreme Court overturns Roe",
+    "test": {
+     "type": "record",
+     "date": "2022-06-24",
+     "source": "Dobbs v. Jackson Women's Health Organization, 24 Jun 2022 (draft leaked 2 May 2022)"
+    }
+   },
+   {
+    "n": 2,
+    "claim": "Trigger bans take effect",
+    "test": {
+     "type": "none",
+     "reason": "Guttmacher tracker is free but not a series; bans took effect over days to weeks",
+     "verdict": "not testable"
+    }
+   },
+   {
+    "n": 3,
+    "claim": "Patients travel across state lines",
+    "test": {
+     "type": "none",
+     "reason": "#WeCount reports are free (periodic) but not loaded",
+     "verdict": "not testable"
+    }
+   },
+   {
+    "n": 4,
+    "claim": "People switch to private period-tracking and messaging apps",
+    "test": {
+     "type": "wiki",
+     "articles": [
+      "Flo (app)",
+      "Clue (app)",
+      "Signal (software)"
+     ],
+     "lag": 60
+    },
+    "note": "Watch for rises after the May leak, before the ruling."
+   },
+   {
+    "n": 5,
+    "claim": "States pass travel-restriction laws",
+    "test": {
+     "type": "record",
+     "date": "2023-04-05",
+     "source": "Idaho HB 242, the 'abortion trafficking' law, signed April 2023"
+    },
+    "link": "reported",
+    "link_why": "the law responds to Dobbs"
+   }
+  ]
+ },
+ {
+  "slug": "airpods",
+  "title": "iPhone 7 drops the headphone jack (2016)",
+  "date": "2016-09-07",
+  "batch": 3,
+  "steps": [
+   {
+    "n": 1,
+    "claim": "Apple removes the headphone jack",
+    "test": {
+     "type": "record",
+     "date": "2016-09-07",
+     "source": "Apple event, 7 Sep 2016"
+    }
+   },
+   {
+    "n": 2,
+    "claim": "Wireless earbuds take off; AirPods dominate",
+    "test": {
+     "type": "wiki",
+     "articles": [
+      "AirPods",
+      "Wireless headphones"
+     ],
+     "lag": 150
+    },
+    "note": "AirPods shipped 13 Dec 2016."
+   },
+   {
+    "n": 3,
+    "claim": "Audio makers shift R&D to Bluetooth",
+    "test": {
+     "type": "none",
+     "reason": "Bluetooth SIG market updates are free but annual; not loaded",
+     "verdict": "not testable"
+    }
+   },
+   {
+    "n": 4,
+    "claim": "Earbuds pile up on subway tracks",
+    "test": {
+     "type": "none",
+     "reason": "no public MTA dropped-item series; news anecdotes only",
+     "verdict": "no evidence found"
+    }
+   },
+   {
+    "n": 5,
+    "claim": "Transit agencies buy retrieval tools and nets",
+    "test": {
+     "type": "none",
+     "reason": "desk check: no evidence found that this happened as described",
+     "verdict": "no evidence found"
+    }
+   }
+  ]
+ }
+]

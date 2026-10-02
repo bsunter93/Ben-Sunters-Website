@@ -1,0 +1,35 @@
+# Chain check v1 (ripples/lab/chain_check.py): deterministic checks of supplied chains (ripples/chains/*.json). Anonymous, honest UA.
+name: Ripples chain check
+
+on:
+  push:
+    branches: ["claude/**"]
+    paths: ["ripples/lab/chain_check.py", "ripples/chains/**", ".github/workflows/ripples-chain-check.yml"]
+
+permissions:
+  contents: write
+
+concurrency:
+  group: ripples-chain-check
+  cancel-in-progress: true
+
+jobs:
+  run:
+    runs-on: ubuntu-latest
+    timeout-minutes: 90
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: pip install --quiet numpy
+      - run: python ripples/lab/chain_check.py
+      - name: Commit results
+        if: always()
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898900+github-actions[bot]@users.noreply.github.com"
+          git add ripples/docs/results/chain_check_v1.json || exit 0
+          git diff --cached --quiet && exit 0
+          git commit -m "Ripples: chain checks [skip ci]"
+          for i in 1 2 3; do git pull --rebase -q origin "${GITHUB_REF_NAME}" && git push -q origin "HEAD:${GITHUB_REF_NAME}" && break; sleep 5; done
