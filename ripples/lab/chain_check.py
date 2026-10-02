@@ -108,6 +108,15 @@ def zillow(towns):
 
 
 def arxiv(a=2017, b=2024):
+    """A refusal from arXiv (503 means 'retry later') stops calls to arXiv only; the step reports no data."""
+    try:
+        return _arxiv(a, b)
+    except et.Stop as e:
+        print("arxiv refused:", e, flush=True)
+        return None
+
+
+def _arxiv(a, b):
     out = []
     for y in range(a, b + 1):
         for m in range(1, 13):
@@ -254,7 +263,8 @@ def main() -> int:
                         r = {"result": f"error: {str(e)[:120]}"}
                     v = verdict(st, r, sref)
                     out["steps"].append({"n": st["n"], "claim": st["claim"], "test": {k: st["test"][k] for k in st["test"] if k != "counts"},
-                                         "ref": sref.isoformat(), "verdict": v, "note": st.get("note"), **r})
+                                         "ref": sref.isoformat(), "verdict": v, "note": st.get("note"),
+                                         "link": st.get("link"), "link_why": st.get("link_why"), "branch": st.get("branch", False), **r})
                     print(ch["slug"], st["n"], v, {k: r.get(k) for k in ("onset", "p", "effect", "series", "found", "result")}, flush=True)
                     if v in ("measured", "reported", "timed (short history)") and r.get("onset") and not st.get("branch"):
                         # a new article's creation date dates the article, not the phenomenon: it does not move the reference
