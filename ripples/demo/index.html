@@ -239,7 +239,8 @@ function build(ev, data) {
 
 function draw(ev, data, items, stoneLabel, iso0) {
   const svg = $("#pond"); svg.textContent = "";
-  const max = Math.max(...items.map(x => x.d)) * 1.25;
+  const today = (Date.now() - Date.parse(iso0 + "T00:00:00Z")) / 864e5;  // the clock never runs past today
+  const max = Math.min(Math.max(...items.map(x => x.d)) * 1.25, Math.max(today, Math.max(...items.map(x => x.d)) + 1));
   // rings
   const rings = [[1,"1 day"],[7,"1 week"],[30,"1 month"],[91,"3 months"],[365,"1 year"],[1096,"3 years"],[3653,"10 years"],[7305,"20 years"]].filter(([d]) => d < max);
   const g0 = el("g", {}, svg);
@@ -331,7 +332,7 @@ function buildChain(ch) {
     items.push({i:st.n, s:{title:st.claim, days:d, spark:series, st}, cfg:{l:st.claim,
       a:-80 + k * (160 / Math.max(1, n - 1)), p:st.branch ? null : (k ? steps[k - 1].n : null)}, d, lv, lvText, why, undated});
   });
-  const ev = {slug:ch.slug, stone:ch.title.replace(/\s*\(.*\)$/, "")};
+  const ev = {slug:ch.slug, stone:ch.title.split(/,| and | → |\s\(/)[0].trim()};
   const data = {release:iso0, steps:[{series:null}]};
   draw(ev, data, items, ev.stone, iso0);
   // feed
