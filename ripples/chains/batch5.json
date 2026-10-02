@@ -30,7 +30,11 @@
      "type": "none",
      "reason": "the cited source is paid or private (IDC)",
      "verdict": "not testable"
-    }
+    },
+    "range": [
+     "2011-10-01",
+     "2011-12-31"
+    ]
    },
    {
     "n": 4,
@@ -51,9 +55,14 @@
      "type": "none",
      "reason": "the cited source is paid or private (TrendForce); desk check: SSD adoption also rode falling flash prices and thin laptops",
      "verdict": "not testable"
-    }
+    },
+    "range": [
+     "2012-01-01",
+     "2015-12-31"
+    ]
    }
-  ]
+  ],
+  "vertical": "Computer hardware"
  },
  {
   "slug": "ice-bucket",
@@ -113,7 +122,8 @@
      "verdict": "no evidence found"
     }
    }
-  ]
+  ],
+  "vertical": "Medical research"
  },
  {
   "slug": "ethanol-tortilla",
@@ -127,7 +137,7 @@
     "test": {
      "type": "record",
      "date": "2007-12-19",
-     "source": "Energy Independence and Security Act signed 19 Dec 2007"
+     "source": "Energy Independence and Security Act signed Dec 19, 2007"
     }
    },
    {
@@ -137,7 +147,11 @@
      "type": "none",
      "reason": "USDA NASS acreage is free (annual); desk check: the record corn year was 2007, planted in spring 2007, before EISA (the 2005 RFS was already in force)",
      "verdict": "wrong order (desk)"
-    }
+    },
+    "range": [
+     "2007-03-01",
+     "2007-06-30"
+    ]
    },
    {
     "n": 3,
@@ -171,7 +185,8 @@
     },
     "note": "Also before EISA."
    }
-  ]
+  ],
+  "vertical": "Food prices"
  },
  {
   "slug": "cash-for-clunkers",
@@ -185,7 +200,7 @@
     "test": {
      "type": "record",
      "date": "2009-07-24",
-     "source": "program ran 24 Jul to 24 Aug 2009"
+     "source": "program ran 24 Jul to Aug 24, 2009"
     }
    },
    {
@@ -197,7 +212,7 @@
      "source": "DOT report to Congress, December 2009: 677,842 vehicles"
     },
     "link": "reported",
-    "link_why": "destruction was a programme rule"
+    "link_why": "destruction was a program rule"
    },
    {
     "n": 3,
@@ -206,7 +221,11 @@
      "type": "none",
      "reason": "Manheim index is free as a headline but not loaded",
      "verdict": "not testable"
-    }
+    },
+    "range": [
+     "2009-08-01",
+     "2010-03-31"
+    ]
    },
    {
     "n": 4,
@@ -227,9 +246,14 @@
      "type": "none",
      "reason": "S&P/Polk data are paid; desk check: average vehicle age was already rising every year before 2009",
      "verdict": "wrong order (desk)"
-    }
+    },
+    "range": [
+     "2009-01-01",
+     "2019-12-31"
+    ]
    }
-  ]
+  ],
+  "vertical": "Used cars"
  },
  {
   "slug": "airbnb",
@@ -253,7 +277,11 @@
      "type": "none",
      "reason": "the cited source is paid or private (AirDNA)",
      "verdict": "not testable"
-    }
+    },
+    "range": [
+     "2014-01-01",
+     "2018-12-31"
+    ]
    },
    {
     "n": 3,
@@ -284,9 +312,10 @@
     "test": {
      "type": "record",
      "date": "2023-09-05",
-     "source": "New York City begins enforcing Local Law 18, 5 Sep 2023"
+     "source": "New York City begins enforcing Local Law 18, Sep 5, 2023"
     }
    }
-  ]
+  ],
+  "vertical": "Housing"
  }
 ]

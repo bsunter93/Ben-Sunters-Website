@@ -1,7 +1,7 @@
 # Knock-On v5 contract (W1)
 
 Everything other workstreams build against. The spec is authoritative
-(`SPEC.md` §10); this file records the exact behaviour W1 deployed, including
+(`SPEC.md` §10); this file records the exact behavior W1 deployed, including
 decisions the spec left open. Supabase project `kffkasnzqcddpystszch`.
 
 ## Files
@@ -56,11 +56,11 @@ multi-channel "moved in order" out of scope for v5 (§5.1 limits Bluesky to a ba
 the attention layer (W7) supersedes §14: W5 renders `cross` items only as small corroboration badges ("also
 spiked on …"), never as evidence for the measured hop, never as an ordering or causal claim, and never with a
 number that is not in the item; `when` is a timing label only. The fixture's items (`gtrends`, `bsky`,
-`gdelt_tv`, `mastodon`) are illustrative and labelled TEST.
+`gdelt_tv`, `mastodon`) are illustrative and labeled TEST.
 
 **Licensing (SPEC 12.9).** `cross` items can carry non-Wikimedia data (Google Trends, Bluesky, Mastodon,
 GDELT, Polymarket...). So `v1/puzzle/*`, `v1/reveal/*`, `v1/board/*` and `v1/latest.json` are **not** open data
-and must never be labelled CC BY; only `v1/data/{date}.json|csv` (built from `publish_bundle.csv_rows`, which
+and must never be labeled CC BY; only `v1/data/{date}.json|csv` (built from `publish_bundle.csv_rows`, which
 never contains `cross`) is CC BY. Google Trends may only come from the Trends RSS feed (the "Trending Now"
 batchexecute RPC is RED under DEMARCATION §0) and should be shown as a listing ("in Google Trends daily
 trending searches"), with `multiple: null` unless a licensed numeric source exists. The fixture follows that.
@@ -79,7 +79,7 @@ trending searches"), with `multiple: null` unless a licensed numeric source exis
 
 ## Public RPCs (anon + authenticated; GET for STABLE, POST for VOLATILE)
 
-| RPC | Returns / behaviour |
+| RPC | Returns / behavior |
 |---|---|
 | `ripples_latest()` | `{n,date,status,puzzle,next_at}`. Newest visible live puzzle; `status='published'` when its date is the current puzzle date, else `'delayed'` with the previous puzzle. No live puzzle ever (before launch): `{n:null,date:<current>,status:'delayed',puzzle:null}` — **W5: when `n` is null show a pre-launch/countdown state, never "Here's yesterday's"**. `next_at` = next 07:30 UTC rollover (extension, for the countdown). W5: `v1/latest.json` is rewritten at 07:25 and 07:45, so between 07:30 and 07:45 it still says yesterday is `published`; once `now >= next_at` of the file you hold, re-fetch `ripples_latest` via the RPC |
 | `ripples_puzzle(p_n)` / `ripples_reveal(p_n)` | PuzzlePayload / RevealPayload or `null`. Copy overlay: `ripples.copy` headline replaces `payload.headline`, caption rows replace `reveal.rounds[i].caption` (the unique key keeps one row per slot, so an `ai` row that replaced a `template` row wins). Never applied to the fixture |

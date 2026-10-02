@@ -30,7 +30,7 @@ Each lens runs exactly as registered for screen v2:
   This mostly affects hurricanes, because landfalls cluster within seasons.
 - **Annual and seasonal families** (academy_awards, super_bowls, hurricanes): every candidate is hand-checked for a
   plain seasonal explanation, recorded before any confirmation.
-- **Second looks, labelled as such:**
+- **Second looks, labeled as such:**
   - ai_model_releases shares 8 events with v2 ai_models. Its leading v2 outcome, Computer, is known.
   - spacex_milestones shares Falcon Heavy, Crew Dragon Demo-2 and Starship flight test 1 with confirmation 1 of the
     space → Speed of light ripple. Speed of light, Telescope and Solar System are known outcomes for those events.

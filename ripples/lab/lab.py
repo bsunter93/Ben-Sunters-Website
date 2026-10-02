@@ -170,7 +170,7 @@ def world(events, rng, how, plant=None, real=False):
 def calibrate(null_z: np.ndarray, z: np.ndarray, two_sided: bool, sign: np.ndarray | None = None,
               mode: str = "standardized"):
     """p per cell from null draws [B, ...]. "empirical" ranks z among the draws (resolution 1/(B+1), too coarse for
-    BH over many cells); "standardized" centres and scales z by the null draws' mean and sd, then uses the normal tail."""
+    BH over many cells); "standardized" centers and scales z by the null draws' mean and sd, then uses the normal tail."""
     if mode == "empirical":
         if two_sided:
             return (1 + (np.abs(null_z) >= np.abs(z)).sum(axis=0)) / (1 + null_z.shape[0])

@@ -40,7 +40,7 @@ driver has not been ruled out.
 |---|---|
 | Confirmed (timing) | Test 1 passes for Roman numerals |
 | Supported (mechanism) | Test 1 passes and test 3 shows the reader path |
-| Not confirmed | Test 1 fails; the candidate is labelled a likely seasonal effect |
+| Not confirmed | Test 1 fails; the candidate is labeled a likely seasonal effect |
 
 - The discover page shows the verdict and never says "caused".
 

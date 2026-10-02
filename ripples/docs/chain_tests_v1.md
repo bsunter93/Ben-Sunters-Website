@@ -1,23 +1,23 @@
-# Chain tests v1: from an event to a behaviour, in time order (registered 2026-09-30, before any chain data is fetched)
+# Chain tests v1: from an event to a behavior, in time order (registered 2026-09-30, before any chain data is fetched)
 
 **Why:** the owner's ordering rule (ledger 1497). A ripple is an approximate cause-and-effect chain: each step is an
 outcome measured in its own data, and each step starts after the one before it. Reader paths (Clickstream) showed
-related topics, not outcomes (ledger 1496). Chain tests measure the behaviour step directly.
+related topics, not outcomes (ledger 1496). Chain tests measure the behavior step directly.
 
-**These first chains are deliberately obvious.** They test whether the behaviour layer can be measured at all (does an
+**These first chains are deliberately obvious.** They test whether the behavior layer can be measured at all (does an
 event move what people actually borrow, and only after the event?). Surprising multi-step chains come after this
 layer is shown to work.
 
-## Behaviour data
+## Behavior data
 
 - Seattle Public Library checkouts (data.seattle.gov dataset `tmmm-ytt6`), monthly, 2005 on, all formats, counted for
   items whose subject headings contain the given heading. Fetched by the existing server-side job (`att_sea_tick`),
   one heading per minute, honest User-Agent, stop on refusal. Aggregates only.
-- One city. A miss says little about the country; a hit is one city's behaviour.
+- One city. A miss says little about the country; a hit is one city's behavior.
 
 ## Chains (event month, heading), fixed now
 
-| Event | Month (m0) | Behaviour: checkouts with heading |
+| Event | Month (m0) | Behavior: checkouts with heading |
 |---|---|---|
 | The Queen's Gambit (Netflix) | 2020-10 | Chess |
 | Chernobyl (HBO) | 2019-05 | Chernobyl |

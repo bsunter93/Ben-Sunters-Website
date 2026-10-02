@@ -59,16 +59,24 @@
      "type": "none",
      "reason": "arithmetic: about 1,100 Elsas among about 1.9 million US girls born in 2014, roughly 1 in 1,750; a kindergarten class of 20 has about a 1% chance of one Elsa, so clusters are implausible",
      "verdict": "contradicted by the data"
-    }
+    },
+    "range": [
+     "2019-08-01",
+     "2020-06-30"
+    ]
    },
    {
     "n": 4,
-    "claim": "Name-personalised merchandise outpaces inventory",
+    "claim": "Name-personalized merchandise outpaces inventory",
     "test": {
      "type": "none",
      "reason": "the cited source is paid or private; demand for Elsa merchandise followed the character, not the name",
      "verdict": "not testable"
-    }
+    },
+    "range": [
+     "2014-01-01",
+     "2015-12-31"
+    ]
    },
    {
     "n": 5,
@@ -77,9 +85,14 @@
      "type": "none",
      "reason": "has not happened yet; the 2014 cohort is about 1 in 1,750 girls",
      "verdict": "not yet"
-    }
+    },
+    "range": [
+     "2031-08-01",
+     "2033-06-30"
+    ]
    }
-  ]
+  ],
+  "vertical": "Baby names"
  },
  {
   "slug": "tiger-king",
@@ -114,7 +127,7 @@
     "test": {
      "type": "record",
      "date": "2022-12-20",
-     "source": "Public Law 117-243, signed 20 Dec 2022; passed the House 3 Dec 2020"
+     "source": "Public Law 117-243, signed Dec 20, 2022; passed the House Dec 3, 2020"
     },
     "note": "Not 'swift': 1,005 days after release, and the bill was introduced in 2019, before the show."
    },
@@ -123,9 +136,13 @@
     "claim": "Roadside zoos lose revenue and close",
     "test": {
      "type": "none",
-     "reason": "USDA exhibitor licence data exist but are not published as a free series",
+     "reason": "USDA exhibitor license data exist but are not published as a free series",
      "verdict": "not testable"
-    }
+    },
+    "range": [
+     "2023-01-01",
+     "2025-06-30"
+    ]
    },
    {
     "n": 5,
@@ -139,7 +156,8 @@
      "lag": 540
     }
    }
-  ]
+  ],
+  "vertical": "Wildlife law"
  },
  {
   "slug": "pokemon-go",
@@ -177,7 +195,11 @@
      "type": "none",
      "reason": "reported anecdotally in July 2016; no free sales data",
      "verdict": "not testable"
-    }
+    },
+    "range": [
+     "2016-07-06",
+     "2016-09-30"
+    ]
    },
    {
     "n": 4,
@@ -185,7 +207,7 @@
     "test": {
      "type": "record",
      "date": "2016-07-12",
-     "source": "US Holocaust Memorial Museum asks visitors to stop playing (widely reported, 12 Jul 2016)"
+     "source": "US Holocaust Memorial Museum asks visitors to stop playing (widely reported, Jul 12, 2016)"
     },
     "link": "reported",
     "link_why": "the museum's request was about the game"
@@ -199,7 +221,8 @@
      "verdict": "no evidence found"
     }
    }
-  ]
+  ],
+  "vertical": "Public spaces"
  },
  {
   "slug": "wordle",
@@ -233,7 +256,7 @@
     "test": {
      "type": "record",
      "date": "2022-01-31",
-     "source": "NYT announcement, 31 Jan 2022, 'low seven figures'"
+     "source": "NYT announcement, Jan 31, 2022, 'low seven figures'"
     },
     "link": "reported",
     "link_why": "the purchase followed the viral spread"
@@ -262,9 +285,14 @@
      "type": "none",
      "reason": "partly true but slow and not tied to the acquisition; no free series",
      "verdict": "not testable"
-    }
+    },
+    "range": [
+     "2022-02-01",
+     "2024-12-31"
+    ]
    }
-  ]
+  ],
+  "vertical": "News media"
  },
  {
   "slug": "barbie",
@@ -322,6 +350,7 @@
      "verdict": "no evidence found"
     }
    }
-  ]
+  ],
+  "vertical": "Fashion"
  }
 ]

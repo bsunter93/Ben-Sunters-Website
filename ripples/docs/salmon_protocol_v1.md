@@ -14,7 +14,7 @@ scored, and label every link as speculative.
 | Step | Status |
 |---|---|
 | The anomaly (a name broke from its own trend) | Measured. It is a fact about the data. |
-| The proposed upstream cause | **Speculative.** It is surfaced by a transparent score and labelled "Possible link (speculative)", with the chance-match rate beside it. |
+| The proposed upstream cause | **Speculative.** It is surfaced by a transparent score and labeled "Possible link (speculative)", with the chance-match rate beside it. |
 | Cause and effect | Never claimed. A link becomes "tested" only after a separate pre-registered test. |
 
 ## Data
@@ -64,7 +64,7 @@ scored, and label every link as speculative.
    - **Relay:** the character that carries the name.
    - **Echo:** the work's own title carries the name.
    - **Outcome:** the name-year.
-   - Common drivers and amplifiers are not modelled in v1.
+   - Common drivers and amplifiers are not modeled in v1.
 
 ## Benchmark (fixed now, before any result)
 

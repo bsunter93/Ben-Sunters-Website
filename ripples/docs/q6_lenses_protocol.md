@@ -28,7 +28,7 @@ result, the named-subject test (Q4, ledger 1458: every family passed), holds whe
 - **Event curve:** the event's Wikipedia article views (timing and shape of the event only).
 - **Outcome:** the subject in each lens (log(1 + rate)).
 - **Change from Q4 v1, applied to every lens including Wikipedia:** placebo and moved dates keep the event's weekday.
-  TV and HN have strong weekly cycles, and weekday matching removed the calendar artefact in screen v3 (ledger 1456).
+  TV and HN have strong weekly cycles, and weekday matching removed the calendar artifact in screen v3 (ledger 1456).
 - **Per event:** MAD and rank z against 200 same-weekday placebo dates for its own subject in that lens.
 - **Per family:** sum(z)/√n against 1,000 worlds of same-weekday moved dates.
 - **Pass (family, per lens):** p ≤ 0.05 for both versions. Families as Q4 (v1 four, v1b three, held-out dramas).

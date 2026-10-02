@@ -11,7 +11,7 @@
     "test": {
      "type": "record",
      "date": "2004-02-01",
-     "source": "CBS broadcast, 1 Feb 2004"
+     "source": "CBS broadcast, Feb 1, 2004"
     }
    },
    {
@@ -21,7 +21,11 @@
      "type": "none",
      "reason": "2004 search logs are not public as data; widely reported as a record search",
      "verdict": "not testable"
-    }
+    },
+    "range": [
+     "2004-02-01",
+     "2004-02-29"
+    ]
    },
    {
     "n": 3,
@@ -29,7 +33,7 @@
     "test": {
      "type": "record",
      "date": "2005-02-14",
-     "source": "youtube.com registered 14 Feb 2005; Karim has cited the halftime show and the 2004 tsunami as inspirations"
+     "source": "youtube.com registered Feb 14, 2005; Karim has cited the halftime show and the 2004 tsunami as inspirations"
     },
     "link": "reported",
     "link_why": "Karim has cited the halftime show as one inspiration"
@@ -44,7 +48,8 @@
     },
     "branch": true,
     "link": "reported",
-    "link_why": "the fine was for this broadcast"
+    "link_why": "the fine was for this broadcast",
+    "vertical": "Broadcast regulation"
    },
    {
     "n": 5,
@@ -56,9 +61,11 @@
     },
     "branch": true,
     "link": "reported",
-    "link_why": "the delays were introduced in direct response"
+    "link_why": "the delays were introduced in direct response",
+    "vertical": "Live TV"
    }
-  ]
+  ],
+  "vertical": "Online video"
  },
  {
   "slug": "sideways",
@@ -72,7 +79,7 @@
     "test": {
      "type": "record",
      "date": "2004-10-22",
-     "source": "US limited release, 22 Oct 2004"
+     "source": "US limited release, Oct 22, 2004"
     }
    },
    {
@@ -93,7 +100,11 @@
      "type": "none",
      "reason": "CDFA crush reports are free (annual) but not loaded",
      "verdict": "not testable"
-    }
+    },
+    "range": [
+     "2005-01-01",
+     "2008-12-31"
+    ]
    },
    {
     "n": 4,
@@ -102,7 +113,11 @@
      "type": "none",
      "reason": "USDA/CDFA acreage reports are free (annual) but not loaded",
      "verdict": "not testable"
-    }
+    },
+    "range": [
+     "2006-01-01",
+     "2010-12-31"
+    ]
    },
    {
     "n": 5,
@@ -111,9 +126,14 @@
      "type": "none",
      "reason": "CDFA crush reports, not loaded; desk check: Pinot acreage did grow strongly after 2004",
      "verdict": "not testable"
-    }
+    },
+    "range": [
+     "2005-01-01",
+     "2015-12-31"
+    ]
    }
-  ]
+  ],
+  "vertical": "Wine"
  },
  {
   "slug": "the-dress",
@@ -127,7 +147,7 @@
     "test": {
      "type": "record",
      "date": "2015-02-26",
-     "source": "Tumblr post goes viral, 26 Feb 2015"
+     "source": "Tumblr post goes viral, Feb 26, 2015"
     },
     "note": "Before Wikimedia's daily pageview API (July 2015)."
    },
@@ -165,14 +185,15 @@
    },
    {
     "n": 5,
-    "claim": "A new circadian colour-vision sub-field",
+    "claim": "A new circadian color-vision sub-field",
     "test": {
      "type": "none",
      "reason": "desk check: no evidence found that this happened as described",
      "verdict": "no evidence found"
     }
    }
-  ]
+  ],
+  "vertical": "Vision science"
  },
  {
   "slug": "queens-gambit-2",
@@ -228,7 +249,8 @@
      "source": "Chess.com completes acquisition of Play Magnus Group (about $83m), December 2022"
     }
    }
-  ]
+  ],
+  "vertical": "Games & retail"
  },
  {
   "slug": "toilet-paper",
@@ -286,6 +308,7 @@
      "verdict": "no evidence found"
     }
    }
-  ]
+  ],
+  "vertical": "Home & retail"
  }
 ]

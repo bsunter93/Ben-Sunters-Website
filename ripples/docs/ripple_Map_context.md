@@ -47,11 +47,11 @@ what we learned, pitfalls, open gaps and next steps. The operational runbook wit
 **Anchor on the trends people remember; use every other dataset as the places a ripple could land.**
 
 The owner's user story:
-- Fifty Shades of Grey was a huge wave in 2011–2016.
+- Fifty Shades of Gray was a huge wave in 2011–2016.
 - Did it measurably change how people talk about sex, and did that carry on into #MeToo-era conversation, the rise of
   OnlyFans, or legislation?
 - It doesn't need to be the primary or only driver. The interesting question is whether a trend people remember had a
-  *measurable* impact on downstream behaviours and outcomes.
+  *measurable* impact on downstream behaviors and outcomes.
 
 What that means:
 - **The stone is a relatable social or cultural trend:** a book, a show, a film, a movement, a viral moment. Disasters
@@ -119,21 +119,21 @@ The pond language stays. What changes is what goes in it and how the evidence re
 full map (The Queen's Gambit). It has not yet found a surprising ripple. The next step is automating the map builder.
 
 **What a ripple is now (owner rule, ledger 1497):** an approximate cause-and-effect chain. Every step is an outcome
-measured in its own data (attention, behaviour, real world), and every step starts after the step before it. A step
+measured in its own data (attention, behavior, real world), and every step starts after the step before it. A step
 whose rise began before the event is dropped.
 
 | Layer | Status | Evidence |
 |---|---|---|
 | Event → attention to its named subject | Works | Every family passes on Wikipedia with weekday-matched placebos; holds on US TV news for films, deaths, news and science/tech (ledger 1458, 1470) |
-| Attention → behaviour | Works for obvious chains | Seattle library borrowing: The Queen's Gambit → chess books, Barbie → Barbie books, after the event (2 of 13; ledger 1501, 1504) |
-| Less obvious behaviour chains | Not yet | 0 of 10 (ledger 1503, 1504) |
+| Attention → behavior | Works for obvious chains | Seattle library borrowing: The Queen's Gambit → chess books, Barbie → Barbie books, after the event (2 of 13; ledger 1501, 1504) |
+| Less obvious behavior chains | Not yet | 0 of 10 (ledger 1503, 1504) |
 | A whole map | Prototype | The Queen's Gambit: release → chess attention +3 days → chess sets and Chess.com +19/+25 days → library borrowing Nov 2020 → NPD chess-set sales +87% (ledger 1505) |
-| Discovering surprise | Not yet | Broad screens, eight lenses, reader paths (two blind rounds: 1 and 0 of 5 needed) and less obvious chains found only obvious links, artefacts or nothing |
+| Discovering surprise | Not yet | Broad screens, eight lenses, reader paths (two blind rounds: 1 and 0 of 5 needed) and less obvious chains found only obvious links, artifacts or nothing |
 
 **Since 29 Sep:** reader paths showed ripple traffic reaches Wikipedia mostly from search (direct clicks 1–3%); a daily
 Google Trends archive started (ripples.att_gt_terms); the named-subject test was re-run on TV news and Hacker News; the
 reader-path "discovery funnel" was tried and dropped after two blind owner ratings; the ordering rule was adopted; two
-Tiger King results were withdrawn as library-closure artefacts (ledger 1504).
+Tiger King results were withdrawn as library-closure artifacts (ledger 1504).
 
 ## 3. Learnings
 
@@ -161,7 +161,7 @@ Tiger King results were withdrawn as library-closure artefacts (ledger 1504).
 11. **Timing alone is weak evidence and has low power.** Correlated timing over thousands of outcomes is the hardest
     way to find a small effect. Direct evidence of the path (where readers actually went) is much stronger.
 12. **Real-world series barely register cultural events.** Across 7 non-Wikipedia lenses, v2 found nothing except a
-    COVID artefact.
+    COVID artifact.
 
 **New since 29 Sep:**
 - Search is the front door: ripple traffic reaches Wikipedia mostly from search, so Wikipedia views stand in for search.
@@ -169,7 +169,7 @@ Tiger King results were withdrawn as library-closure artefacts (ledger 1504).
   not outcomes.
 - The ordering rule is the most useful single filter: it rejected Oppenheimer → atomic-bomb books (rise began before the
   film), which the statistics alone passed.
-- Check raw counts before calling a pass: normalising against a collapsing panel (2020 library closure) manufactures
+- Check raw counts before calling a pass: normalizing against a collapsing panel (2020 library closure) manufactures
   rises.
 - One well-built map explains the product better than any table.
 
@@ -225,20 +225,20 @@ Tiger King results were withdrawn as library-closure artefacts (ledger 1504).
 
 **Blockers**
 1. **No surprising content yet.** Verification works; discovery of non-obvious ripples does not.
-2. **Behaviour data is thin and local.** The only free behaviour series with history is one city's library (monthly)
-   and annual baby names. National sales, sign-ups and enrolment are not free.
+2. **Behavior data is thin and local.** The only free behavior series with history is one city's library (monthly)
+   and annual baby names. National sales, sign-ups and enrollment are not free.
 3. **No automation.** The first map was assembled by hand.
 
 **Bottlenecks**
 1. **BigQuery sandbox cap:** 204.8 GiB a day, not adjustable without billing (owner: no billing).
 2. **Wikimedia politeness and GDELT refusal** limit high-volume fetching from GitHub runners.
-3. **Monthly behaviour data** cannot order steps that move in the same month.
+3. **Monthly behavior data** cannot order steps that move in the same month.
 4. **Owner rating time:** blind rounds should be 15 items or fewer.
 
 ## 6. Immediate next steps (in order)
 
 1. **Map builder.** One script: event (title, date) → daily attention for the event, its named subject and a fixed set
-   of follow-on topics → onsets and the ordering check → behaviour step from library borrowing where a heading exists
+   of follow-on topics → onsets and the ordering check → behavior step from library borrowing where a heading exists
    (closure months excluded, raw counts shown) → optional public-record step (dated, sourced) → the same page as The
    Queen's Gambit, generated.
 2. **Ten maps** for events whose first step is already verified (Chernobyl, Barbie, Oppenheimer, a death, a science
@@ -249,14 +249,14 @@ Tiger King results were withdrawn as library-closure artefacts (ledger 1504).
 4. **Live mode:** run the builder on new events as they happen, so maps fill in over the following weeks.
 5. **Short blind rounds (≤ 15 items)** on the later steps, with the owner's rule.
 
-**Decision points:** if fewer than 5 of the 10 maps carry a measured behaviour step, behaviour becomes "where
+**Decision points:** if fewer than 5 of the 10 maps carry a measured behavior step, behavior becomes "where
 available" and maps lead with attention. If two short rounds miss the owner's rule, the product is verified maps of big
 events (obvious but real, well told), not hidden ripples.
 
 ## 7. Rules that never change
 
 - Every test is pre-registered in the ledger before any result exists. Deviations are disclosed, and late ones are
-  labelled late. Confirmations must pass the seasonal check or be withheld.
+  labeled late. Confirmations must pass the seasonal check or be withheld.
 - Honest UA `ripples-research/0.2 (+https://bensunter.com/ripples/methods/)`. Stop on 429/503 with no same-day retry.
   No bypassing blocks. Aggregate data only, no personal data.
 - Keys live only in Supabase Vault or GitHub secrets.
@@ -265,4 +265,4 @@ events (obvious but real, well told), not hidden ripples.
   measured comes from a registered test.
 - The ordering rule (owner, 2026-09-30, ledger 1497): every step an outcome in its own data, every step later than the
   one before.
-- Show raw counts beside every behaviour result; exclude closure months.
+- Show raw counts beside every behavior result; exclude closure months.

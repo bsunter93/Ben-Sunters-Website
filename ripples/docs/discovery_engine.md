@@ -7,7 +7,7 @@ This is the governing direction. Where it conflicts with older docs, this wins.
 **What did that thing everyone remembers change?**
 
 - The stone is a memorable cultural event: a movie, show, book, song, celebrity moment, viral phenomenon or movement.
-- The landing spot can be anything measurable: names, searches, reading, buying, talk, health and social behaviour,
+- The landing spot can be anything measurable: names, searches, reading, buying, talk, health and social behavior,
   work and money, legislation.
 - The canonical ripple: *Frozen → Elsa as a baby name.* The user should think "wait, Frozen changed THAT?", then open
   the evidence and believe it.

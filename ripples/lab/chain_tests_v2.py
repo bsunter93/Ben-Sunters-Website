@@ -1,8 +1,8 @@
-"""Chain tests v2 (ripples/docs/chain_tests_v2.md): less obvious event -> behaviour chains, in time order.
+"""Chain tests v2 (ripples/docs/chain_tests_v2.md): less obvious event -> behavior chains, in time order.
 
 Same data and series as v1 (Seattle library checkouts by subject heading, panel-median and season adjusted), with a
-6-month effect window (downstream behaviour can be slower) and two kinds of chain:
-  one step:  event -> a less obvious behaviour (e.g. Squid Game -> Korean-language books);
+6-month effect window (downstream behavior can be slower) and two kinds of chain:
+  one step:  event -> a less obvious behavior (e.g. Squid Game -> Korean-language books);
   two steps: event -> A -> B, where B must start strictly after A (e.g. The Queen's Gambit -> chess -> board games).
 A step passes if p <= 0.05 against every admissible month and its rise starts in the event month or later; a chain
 passes if every step passes and, for two steps, B's rise starts in a later month than A's (owner ordering rule).

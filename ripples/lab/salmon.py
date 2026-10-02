@@ -16,7 +16,7 @@ Outcome lens: US baby names (national, SSA via BigQuery; ripples/tools/bq/salmon
 4. Chance-match rate: the same linker on 200 placebo name-years (names with no anomaly, random year with n >= 100),
    and on the anomaly name's own non-anomalous years. Reported as (1 + #placebo >= observed) / (1 + #placebo).
 5. Roles: the work is the proposed origin shock (earliest visible cause), a character carrying the name is the relay,
-   the name-year is the outcome. Every link is labelled speculative.
+   the name-year is the outcome. Every link is labeled speculative.
 6. Benchmark (pre-registered): 9 known name ripples; hit@1 and hit@3 of the known work, plus whether the anomaly scan
    detected the name-year. Pass rule: hit@1 >= 6 of 9.
 

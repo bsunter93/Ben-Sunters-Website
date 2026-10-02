@@ -56,7 +56,7 @@ collect_daily -> resolve -> screen -> seeds -> expand -> recheck -> build -> don
   parent's job also tests a **decoy reserve**: up to 30 other outlinks of the same parent whose 60-day median is
   within about 0.5-2x of a promising hop's (pass_raw, p_time <= 0.05) baseline median, with the identical hop test.
   They are stored with `candidates.extra = true`, never counted in fluke rates, never a hop, beam parent,
-  shared-trigger witness or Board wake neighbour (`set_rank` is null); they can only be picked as calm decoys.
+  shared-trigger witness or Board wake neighbor (`set_rank` is null); they can only be picked as calm decoys.
 * **recheck** (live: when the expand queue is empty and it is >= 06:58, or at the 07:16 expand cut-off) the same
   safety re-check for every human that can be shown: real seeds, calm or passing candidates, reserve-bank pages. At
   the 07:20 hard deadline (practice: 24 min) the build starts regardless; `ripples._fresh(qid, as_of)` makes a human
@@ -124,7 +124,7 @@ Evidence badge: `flowed` (clickstream top-20 edge), else `spiked_alongside` for 
 headline "{seed}: which linked pages also spiked?" (no order implied). Template copy (`source = 'template'`) is written to `ripples.copy`; W1's overlay lets W6's AI copy replace it.
 All `cross` arrays are `[]` (the attention layer fills them later).
 
-Call It: 4 calm, linked, safe depth-1 neighbours of round 1's seed with median >= 2,000/day, not options, <= 2 per
+Call It: 4 calm, linked, safe depth-1 neighbors of round 1's seed with median >= 2,000/day, not options, <= 2 per
 category; `model_p = config.callit_climatology (0.08) × config.callit_cs_mult[top5|top20|none] (1.0)`; window
 `puzzle_date + config.callit_window_offset (0)` .. +6.
 

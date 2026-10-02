@@ -133,7 +133,7 @@ Notes for readers of these files:
   including the 07:35 cron job, returns `{"skipped":true,"reason":"deferred_v5_1"}` and posts nothing. The owner posts
   by hand for the first 14 days; `{"dry_run":true}` gives the ready-made text, alt text and reveal image check.
   To switch on in v5.1: set `POSTING_ENABLED = true`, redeploy, add the two vault secrets. The rest of this section
-  describes the behaviour once switched on.
+  describes the behavior once switched on.
 * Reads `ripples_bot_context()`: the vault secrets `bsky_handle` + `bsky_app_password` (returned only when both
   exist), the target = the live **published** puzzle dated the day before the current puzzle date whose
   `ripples_og_data(n).past` is true (so it never posts a puzzle that is still current), today's `social` copy, and
@@ -208,11 +208,11 @@ fetches those pinned `fonts.gstatic.com` URLs and verifies their SHA-256 before 
 @fontsource static WOFFs of the same families and says so in `X-Font-Source: fallback`. Twemoji is pinned to
 `jdecked/twemoji@17.0.3` (what `@latest` resolved to on 2026-09-26, same bytes), so a later re-render draws the same emoji.
 
-**Cards** (1200×630, flat colour, top strip y 40–84, footer "bensunter.com/ripples ▪ Consistent with, never proof of cause."):
+**Cards** (1200×630, flat color, top strip y 40–84, footer "bensunter.com/ripples ▪ Consistent with, never proof of cause."):
 Line (petrol: title, metro strip of tiles — solid Measured, halftone Likely, dashed Watching — and one meta line; a bordered
 RECONSTRUCTED stamp on archive lines; frozen per version at `v2/og/line-{e}-v{k}.png`, `Cache-Control: immutable`), Stop (white:
 the multiple as a marigold flap, the ×-its-normal band chart with the window in marigold, tier pips, "lookalikes ≈ 1 in N"),
-Shock of the day (marigold; never for sensitive shocks), Week (the staircase, lanes labelled), Brand (evergreen).
+Shock of the day (marigold; never for sensitive shocks), Week (the staircase, lanes labeled), Brand (evergreen).
 
 **Checks run 2026-09-25.** Every card 33–68 KB (limit 300 KB). A fresh `&fresh=1` re-render of a frozen line card is
 byte-identical to the stored PNG (md5 = Storage eTag), and a re-publish with `full: true` left all 18 frozen objects untouched.
@@ -230,7 +230,7 @@ Local renders: `scratchpad/wsc/og_*.png` via `harness/render.mjs` (satori 0.10.1
   checked; the 08:40 run continues where 08:25 stopped; `candidates` / `deferred` in `rm_publish_log`), and the bundle mirrors at
   most 400 HopEvidence files per run (new-version lines first, then least recently mirrored; `hops_deferred`).
 * *Cards.* The Stop card writes a rate (unit `points`) as "0.40 pts above its normal", never "+0.40 pts its normal"; a retracted
-  stop shows its old number struck through on a grey flap and "Retracted {date}" as the tier line. Closed Watching windows are no
+  stop shows its old number struck through on a gray flap and "Retracted {date}" as the tier line. Closed Watching windows are no
   longer drawn as upcoming (dashed) stops on the Line and Shock cards.
 * *Cache header.* Supabase Storage stores `cacheControl` as `max-age=N` only, so frozen objects carry `max-age=31536000` without
   `immutable`; the `ripples-og` HTTP response for a frozen version adds `immutable`.

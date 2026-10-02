@@ -11,7 +11,7 @@
     "test": {
      "type": "record",
      "date": "2014-10-03",
-     "source": "first episode, 3 Oct 2014"
+     "source": "first episode, Oct 3, 2014"
     }
    },
    {
@@ -21,7 +21,11 @@
      "type": "none",
      "reason": "Edison Infinite Dial reports are free (annual) but not yet loaded; growth was already under way before Serial",
      "verdict": "not testable"
-    }
+    },
+    "range": [
+     "2014-10-03",
+     "2016-12-31"
+    ]
    },
    {
     "n": 3,
@@ -30,7 +34,11 @@
      "type": "none",
      "reason": "the cited source is paid or private (PitchBook); IAB podcast ad reports are free but annual",
      "verdict": "not testable"
-    }
+    },
+    "range": [
+     "2015-01-01",
+     "2018-12-31"
+    ]
    },
    {
     "n": 4,
@@ -38,7 +46,7 @@
     "test": {
      "type": "record",
      "date": "2022-09-19",
-     "source": "Baltimore judge vacates Adnan Syed's conviction, 19 Sep 2022 (reinstated on appeal in 2023)"
+     "source": "Baltimore judge vacates Adnan Syed's conviction, Sep 19, 2022 (reinstated on appeal in 2023)"
     },
     "link": "reported",
     "link_why": "the podcast revived public and legal attention to the case"
@@ -52,7 +60,8 @@
      "verdict": "no evidence found"
     }
    }
-  ]
+  ],
+  "vertical": "Criminal justice"
  },
  {
   "slug": "covid-remote",
@@ -110,7 +119,11 @@
      "type": "none",
      "reason": "BLS LAUS measures unemployment, not vacancies; no free local vacancy series",
      "verdict": "not testable"
-    }
+    },
+    "range": [
+     "2021-01-01",
+     "2022-12-31"
+    ]
    },
    {
     "n": 5,
@@ -119,9 +132,14 @@
      "type": "none",
      "reason": "real in many towns, but scattered; no free national series",
      "verdict": "not testable"
-    }
+    },
+    "range": [
+     "2021-01-01",
+     "2023-12-31"
+    ]
    }
-  ]
+  ],
+  "vertical": "Housing"
  },
  {
   "slug": "jwst",
@@ -135,7 +153,7 @@
     "test": {
      "type": "record",
      "date": "2022-07-11",
-     "source": "NASA/White House release, 11 Jul 2022"
+     "source": "NASA/White House release, Jul 11, 2022"
     }
    },
    {
@@ -160,7 +178,7 @@
      "h": 6,
      "transform": "log"
     },
-    "note": "arXiv astro-ph monthly submissions (all papers). AIP enrolment data are annual and not loaded."
+    "note": "arXiv astro-ph monthly submissions (all papers). AIP enrollment data are annual and not loaded."
    },
    {
     "n": 4,
@@ -180,7 +198,8 @@
      "verdict": "not testable"
     }
    }
-  ]
+  ],
+  "vertical": "Science"
  },
  {
   "slug": "gamestop",
@@ -206,7 +225,7 @@
     "test": {
      "type": "record",
      "date": "2021-01-28",
-     "source": "Robinhood and others restrict GME purchases, 28 Jan 2021; SEC staff report, 14 Oct 2021"
+     "source": "Robinhood and others restrict GME purchases, Jan 28, 2021; SEC staff report, Oct 14, 2021"
     },
     "link": "reported",
     "link_why": "the restrictions were imposed during the squeeze"
@@ -217,7 +236,7 @@
     "test": {
      "type": "record",
      "date": "2021-02-18",
-     "source": "House Financial Services hearing 'Game Stopped?', 18 Feb 2021"
+     "source": "House Financial Services hearing 'Game Stopped?', Feb 18, 2021"
     },
     "link": "reported",
     "link_why": "the hearing was about the squeeze"
@@ -241,10 +260,11 @@
     "test": {
      "type": "record",
      "date": "2021-03-31",
-     "source": "Robinhood removes its confetti animation, 31 Mar 2021"
+     "source": "Robinhood removes its confetti animation, Mar 31, 2021"
     },
     "note": "Massachusetts regulators had complained about gamification in Dec 2020, before the squeeze."
    }
-  ]
+  ],
+  "vertical": "Finance & regulation"
  }
 ]

@@ -13,7 +13,7 @@ Every step is one of:
   ssa     annual US baby-name counts (from ripples.att_e9_names, supplied inline): the year's log change against
           every other year's.
   record  a dated public record with a source. Not measured by us.
-  none    not testable with free data, with the reason.
+  none    not testable with free data, with the reason; an optional "range" places the claim at its midpoint.
 Ordering rule (ledger 1497): each step's reference date is the previous counted step's date (onset or record),
 starting from the event date. A step that moved but began before its reference is "wrong order".
 Anonymous, honest UA, polite spacing, stop on refusal. Output: ripples/docs/results/chain_check_v1.json.
@@ -208,7 +208,10 @@ def run_step(st, ref):
     k = t["type"]
     if k == "record":
         return {"onset": t["date"], "source": t.get("source")}
-    if k == "none":
+    if k == "none":  # an undated claim with an approximate range is placed at the range's midpoint
+        if st.get("range"):
+            a, b = D(st["range"][0]), D(st["range"][1])
+            return {"reason": t["reason"], "range": st["range"], "onset": (a + (b - a) / 2).isoformat(), "approx": True}
         return {"reason": t["reason"]}
     if k == "wiki":
         return wiki_test(t["articles"], ref, t.get("lag", 150))
@@ -253,10 +256,11 @@ def main() -> int:
         for path in sorted(glob.glob(os.path.join(ROOT, "chains", "*.json"))):
             for ch in json.load(open(path)):
                 ref = D(ch["date"])
-                out = {k: ch[k] for k in ("slug", "title", "date", "batch")}
+                out = {k: ch.get(k) for k in ("slug", "title", "date", "batch", "vertical")}
                 out["steps"] = []
                 for st in ch["steps"]:
-                    sref = D(st["ref"]) if st.get("ref") else ref
+                    # a branch step follows the event itself, not the main chain's latest step
+                    sref = D(st["ref"]) if st.get("ref") else (D(ch["date"]) if st.get("branch") else ref)
                     try:
                         r = run_step(st, sref)
                     except et.Stop:
@@ -266,7 +270,8 @@ def main() -> int:
                     v = verdict(st, r, sref)
                     out["steps"].append({"n": st["n"], "claim": st["claim"], "test": {k: st["test"][k] for k in st["test"] if k != "counts"},
                                          "ref": sref.isoformat(), "verdict": v, "note": st.get("note"),
-                                         "link": st.get("link"), "link_why": st.get("link_why"), "branch": st.get("branch", False), **r})
+                                         "link": st.get("link"), "link_why": st.get("link_why"), "branch": st.get("branch", False),
+                                         "vertical": st.get("vertical"), **r})
                     print(ch["slug"], st["n"], v, {k: r.get(k) for k in ("onset", "p", "effect", "series", "found", "result")}, flush=True)
                     if v in ("measured", "reported", "timed (short history)") and r.get("onset") and not st.get("branch"):
                         # a new article's creation date dates the article, not the phenomenon: it does not move the reference

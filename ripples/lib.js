@@ -21,7 +21,7 @@ export const TIER = {
   likely: { w: 'Likely', g: '◐', pips: 2, def: "Moved after the shock, but one test is still short, so a fluke isn't ruled out." },
   watching: { w: 'Watching', g: '○', pips: 1, def: 'A known mechanism says it could move. Its window is still open, so there is no result yet.' },
   retracted: { w: 'Retracted', g: '✕', pips: 0, def: 'It was on the map, then a later check pushed it below the bar. It stays visible.' },
-  flat: { w: 'Stayed flat', g: '⊥', pips: 0, def: 'Tested and stayed inside its normal range. Counted, drawn grey, never a stop.' },
+  flat: { w: 'Stayed flat', g: '⊥', pips: 0, def: 'Tested and stayed inside its normal range. Counted, drawn gray, never a stop.' },
 };
 export const tierWord = t => (TIER[t] ? TIER[t].w : t || '');
 export const isStation = n => !!n && (n.tier === 'measured' || n.tier === 'likely' || n.tier === 'retracted');
@@ -77,7 +77,7 @@ export const daysBetween = (a, b) => Math.round((dayMs(b) - dayMs(a)) / DAY);
 export function fmtDate(iso, long) {
   if (!iso) return '';
   const d = new Date(String(iso).slice(0, 10) + 'T12:00:00Z');
-  if (long) return d.toLocaleDateString('en-GB', { weekday: 'long', day: 'numeric', month: 'long', timeZone: 'UTC' }).replace(',', '');
+  if (long) return d.toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric', timeZone: 'UTC' });
   return `${WD[d.getUTCDay()]} ${d.getUTCDate()} ${MO[d.getUTCMonth()]}`;
 }
 export const fmtDay = iso => { if (!iso) return ''; const d = new Date(String(iso).slice(0, 10) + 'T12:00:00Z'); return `${d.getUTCDate()} ${MO[d.getUTCMonth()]}`; };

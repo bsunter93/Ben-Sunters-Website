@@ -89,7 +89,7 @@ figcaption{font-size:7.8pt;color:var(--ink-2);border-top:1px solid var(--hair);p
 <h1>Ripple Map</h1>
 <p class="lede">An interactive explorer that uncovers the hidden knock-on effects of big events, wherever they show up, and shows exactly how sure we are about each one.</p>
 <p class="meta">Executive and technical summary · Knock⌃On · Benjamin J. Sunter · bensunter.com/ripples · engine 6.3.4 (6.1 audit fixes, 6.2 pooled + regional, 6.3 held-out confirmation)</p>
-<div class="wd">v1 · 26 Sep 2026, 10:45 UTC · engine 6.3.4 · final numbers</div>
+<div class="wd">v1 · Sep 26, 2026, 10:45 UTC · engine 6.3.4 · final numbers</div>
 </header>
 
 <!-- ============================ EXECUTIVE SUMMARY ============================ -->
@@ -99,7 +99,7 @@ figcaption{font-size:7.8pt;color:var(--ink-2);border-top:1px solid var(--hair);p
 <div class="vision">
 <p>"The entire point of the app is uncovering hidden impacts from upstream events, regardless of where that impact shows up. Attribution and traceability with statistical rigor are key."</p>
 <p>"I'd rather this be a really cool interactive entertainment app than a p2p collaborative or competitive game." · "Balance rigor with product usability."</p>
-<p class="who">The owner, 25–26 Sep 2026. Everything below is judged against these three lines.</p>
+<p class="who">The owner, 25–Sep 26, 2026. Everything below is judged against these three lines.</p>
 </div>
 <p class="oneline"><strong>In one sentence:</strong> Ripple Map takes an upstream shock (a hurricane, a heat wave, a model release, a rate decision), follows it across domains (jobless claims, grid demand, air travel, downloads, filings, prediction markets), and labels every step with a confidence tier that was earned by pre-registered tests, not asserted.</p>
 <p>For example, a hurricane leads to disaster declarations, then jobless claims, then new business filings. Each step carries one of three words:</p>
@@ -121,7 +121,7 @@ figcaption{font-size:7.8pt;color:var(--ink-2);border-top:1px solid var(--hair);p
 <div class="claim"><p><strong>The failures stay on screen.</strong> Stops that stayed flat, retractions, the decoy "control ripple" and failed launch gates are published. Nobody else publishes the denominator.</p></div>
 
 <h2>3 · Rigor and usability, balanced</h2>
-<p>Strict tests favour obvious effects. The answer is not to loosen Measured but to add a plentiful, honestly labelled second kind of finding:</p>
+<p>Strict tests favor obvious effects. The answer is not to loosen Measured but to add a plentiful, honestly labeled second kind of finding:</p>
 <ul>
 <li><strong>Measured stays as strict as engine 6.1.</strong> Engine 6.2 can only lift a statistical failure when a pre-registered regional contrast passes its own placebo test, and it adds a failure when a large family of past events disagrees.</li>
 <li><strong>Patterns and Likely findings are the everyday product.</strong> Each carries a strength word tied to a published fluke rate ("strong pattern", "pattern", "hint").</li>
@@ -129,7 +129,7 @@ figcaption{font-size:7.8pt;color:var(--ink-2);border-top:1px solid var(--hair);p
 </ul>
 
 <h2>4 · The experience</h2>
-<p>An interactive entertainment explorer: the hero is the Ripple Map of today's shocks, each growing a cascade that crosses domains over days and weeks. Tapping a step opens an evidence card: mechanism, the series against its own seasonal normal, lag, fluke rate, agreeing sources and tier. Pattern cards summarise past events of the same kind; cascade cards are shareable; a light "call the next ripple" moment is optional.</p>
+<p>An interactive entertainment explorer: the hero is the Ripple Map of today's shocks, each growing a cascade that crosses domains over days and weeks. Tapping a step opens an evidence card: mechanism, the series against its own seasonal normal, lag, fluke rate, agreeing sources and tier. Pattern cards summarize past events of the same kind; cascade cards are shareable; a light "call the next ripple" moment is optional.</p>
 <p><strong>Visual design: under redesign.</strong> The owner rejected the first frontend's look on 26 Sep. Three high-fidelity directions are being made on a real event (Hurricane Milton): <strong>A</strong> editorial seismograph, <strong>B</strong> radial ripple map, <strong>C</strong> chain of story cards. Chosen direction: <span class="tbd">B (radial) + C (story cards), evolved into the stone-in-a-pond visual language (D-14 to D-16)</span>. The frontend is rebuilt on it afterwards.</p>
 <div class="old">
 <p><strong>Superseded v5 content (kept out of this document).</strong> Decision D-6 returned the project to the core vision, which removed:</p>
@@ -160,7 +160,7 @@ figcaption{font-size:7.8pt;color:var(--ink-2);border-top:1px solid var(--hair);p
 
 <h2>6 · Honest risks</h2>
 <ol>
-<li><strong>Rigor versus "hidden".</strong> Strict tests favour obvious effects, and so far no hop of any kind has reached Measured. Engine 6.2 is the answer; whether it yields enough interesting patterns is <span class="tbd">2 strong patterns (cold snaps → grid demand +3.7%, N 50; hurricanes → new-business applications −3.2%, N 23 — later judged fragile) + heat → demand hint</span>.</li>
+<li><strong>Rigor versus "hidden".</strong> Strict tests favor obvious effects, and so far no hop of any kind has reached Measured. Engine 6.2 is the answer; whether it yields enough interesting patterns is <span class="tbd">2 strong patterns (cold snaps → grid demand +3.7%, N 50; hurricanes → new-business applications −3.2%, N 23 — later judged fragile) + heat → demand hint</span>.</li>
 <li><strong>Power is low on some channels.</strong> Before 6.1, a planted +5σ effect was caught at most 29 % of the time. The 6.1 curve: <span class="tbd">PHYS 0.44, SOC 0.40, ECON 0.17–0.28, JOBS 0.16, BLD 0.13, INST 0</span>. The site never claims "no effect" beyond that curve.</li>
 <li><strong>Live events start quiet.</strong> Effects take days to weeks. The archive and pattern findings fill the gap.</li>
 <li><strong>Outcomes are mostly US data.</strong> Claims stay inside the measured geography.</li>
@@ -175,7 +175,7 @@ figcaption{font-size:7.8pt;color:var(--ink-2);border-top:1px solid var(--hair);p
 <li>Wire the engine into the site end to end; three green live days.</li>
 <li>Playtests with test users; final independent review.</li>
 <li>Replace every yellow number in this document with the final build's value.</li>
-<li>Owner merges to main to go live. Target date: <span class="tbd">on the owner's merge of the branch (target week of 5 Oct 2026)</span>.</li>
+<li>Owner merges to main to go live. Target date: <span class="tbd">on the owner's merge of the branch (target week of Oct 5, 2026)</span>.</li>
 </ol>
 <p class="small"><strong>Owner asks:</strong> pick A / B / C; approve Supabase Pro at launch; merge. Non-blocking: the Stripe link for the pay-what-you-want support button (unlocks nothing; "Radar" alerts stay planned at $49/month), legal review before any paid tier.</p>
 
@@ -273,7 +273,7 @@ figcaption{font-size:7.8pt;color:var(--ink-2);border-top:1px solid var(--hair);p
     <rect x="568" y="212" width="104" height="38" fill="#eef2f3"/><rect x="568" y="212" width="3" height="38" fill="#0B3A40"/>
     <text x="577" y="227" font-weight="600">Methods page</text><text x="577" y="239" font-size="7.2" fill="#5d686b">gates · calibration · contact</text>
   </g>
-  <text x="0" y="340" font-size="7.4" fill="#7b8588">Grey inputs propose routes and never count as evidence. The dashed estimator is a second opinion: Measured requires it to agree.</text>
+  <text x="0" y="340" font-size="7.4" fill="#7b8588">Gray inputs propose routes and never count as evidence. The dashed estimator is a second opinion: Measured requires it to agree.</text>
 </svg>
 <figcaption>Projections are disposable and can be regenerated. A published version is never edited; corrections become new versions or retractions. Every engine cron statement is kept short (under about a minute) because this instance's scheduler launches nothing while a long statement runs.</figcaption>
 </figure>
@@ -294,10 +294,10 @@ figcaption{font-size:7.8pt;color:var(--ink-2);border-top:1px solid var(--hair);p
 <table>
 <thead><tr><th style="width:21%">Source</th><th style="width:29%">Gives</th><th style="width:38%">Known weakness</th><th>Tier</th></tr></thead>
 <tbody>
-<tr><td>Wikipedia pageviews</td><td>Daily readers per article; 3-year history (360 of 996 filled)</td><td>Attention, not behaviour; REST is rate-limited, so bulk history comes from BigQuery's public copy</td><td class="tier">G · CC0</td></tr>
+<tr><td>Wikipedia pageviews</td><td>Daily readers per article; 3-year history (360 of 996 filled)</td><td>Attention, not behavior; REST is rate-limited, so bulk history comes from BigQuery's public copy</td><td class="tier">G · CC0</td></tr>
 <tr><td>YouTube Data API <em>(new)</em></td><td>Most-popular charts, 40 countries × 7 categories: view sums, new entrants, velocity</td><td>Chart-level only; 280 of 10,000 daily quota units</td><td class="tier">G · key</td></tr>
 <tr><td>HN, Stack Exchange, Bluesky, Mastodon, GDELT, TV</td><td>Chatter and coverage by term</td><td>Short history (warm-up); a channel that proposed a link cannot confirm it</td><td class="tier">G / Y</td></tr>
-<tr><td>EIA-930, TSA, MTA, Citi Bike</td><td>Hourly grid demand by region (2015 on); daily air travellers; NYC transit</td><td>Air travel is national only; transit is New York only</td><td class="tier">G</td></tr>
+<tr><td>EIA-930, TSA, MTA, Citi Bike</td><td>Hourly grid demand by region (2015 on); daily air travelers; NYC transit</td><td>Air travel is national only; transit is New York only</td><td class="tier">G</td></tr>
 <tr><td>FRED, BLS, DOL, Census BFS</td><td>Rates, prices, jobs, weekly state jobless claims, business applications</td><td>Monthly or weekly lag; revisions (vintages stored)</td><td class="tier">O key / G</td></tr>
 <tr><td>NOAA, FEMA, NWS, USGS, GDACS</td><td>Weather baselines; declarations, warnings, quakes: shocks and institutional responses</td><td>US-centric; declarations lag events</td><td class="tier">G</td></tr>
 <tr><td>npm, PyPI, GitHub, Hugging Face</td><td>Builder adoption: downloads, stars</td><td>CI-bot inflation; npm history starts mid-2022</td><td class="tier">G / Y</td></tr>
@@ -308,11 +308,11 @@ figcaption{font-size:7.8pt;color:var(--ink-2);border-top:1px solid var(--hair);p
 </table>
 
 <h3>Demarcation: the lines we don't cross</h3>
-<p>Creative means more independent, legitimate signals, not grey access. Each source is graded by a written test (official channel? barrier? robots.txt? terms? personal data? published rate limit?), and the answer is recorded.</p>
+<p>Creative means more independent, legitimate signals, not gray access. Each source is graded by a written test (official channel? barrier? robots.txt? terms? personal data? published rate limit?), and the answer is recorded.</p>
 <table>
 <thead><tr><th style="width:12%">Tier</th><th style="width:52%">Meaning</th><th>Use</th></tr></thead>
 <tbody>
-<tr><td class="tier"><b>GREEN</b></td><td>Official or openly licensed; no barrier; robots.txt allows; terms permit</td><td>Free and paid, within the licence</td></tr>
+<tr><td class="tier"><b>GREEN</b></td><td>Official or openly licensed; no barrier; robots.txt allows; terms permit</td><td>Free and paid, within the license</td></tr>
 <tr><td class="tier"><b>YELLOW</b></td><td>Allowed but undocumented, non-commercial or third-party</td><td>Derived only, free product, kill switch</td></tr>
 <tr><td class="tier"><b>ORANGE / *</b></td><td>Issued key or permission; * = a documented keyed API on a host whose robots.txt disallows it, by owner decision</td><td>Per agreement</td></tr>
 <tr><td class="tier"><b>RED</b></td><td>A barrier, a robots.txt deny with no key route, or terms that ban it</td><td>No request at all</td></tr>
@@ -352,16 +352,16 @@ figcaption{font-size:7.8pt;color:var(--ink-2);border-top:1px solid var(--hair);p
 <tr><td class="tier">B1</td><td>Positive-control fixtures could not reach their targets</td><td>Controls look up geo-annotated events; regional expectations (affected grid regions, state declarations); attention targets no longer expected to be Measured</td></tr>
 <tr><td class="tier">B2</td><td>The null scale was computed over post-onset and regime periods, and was degenerate on zero-heavy series</td><td>Robust "normal" from windows that end before the event (minus a buffer), with floors; degenerate series excluded</td></tr>
 <tr><td class="tier">B3</td><td>Seasonal nulls unmatched outside physical and economic series</td><td>Season-matched fake dates on every channel; series under two years old cannot be Measured</td></tr>
-<tr><td class="tier">B4</td><td>Holiday and common-shock flags never fired</td><td>US holidays, Christmas week and Black Friday registered (759 days); panel-wide days flagged; state filters honoured</td></tr>
+<tr><td class="tier">B4</td><td>Holiday and common-shock flags never fired</td><td>US holidays, Christmas week and Black Friday registered (759 days); panel-wide days flagged; state filters honored</td></tr>
 <tr><td class="tier">B5</td><td>Settled hops were never re-examined; retraction did not propagate</td><td>Daily re-examination at 08:55 in the hop's own frozen family; retraction and demotion flow to children</td></tr>
 </tbody>
 </table></div>
 <p class="small">Also fixed: duplicate-path removal, the mechanism graph read as it stood at the event date, honest fluke-rate labels while warming up, price series as levels, and (after the report) a year-ago-anchored baseline for grid, travel, transit and price series. Not yet done: first-difference baselines for growth series, a link-family redefinition, four minor items.</p>
 
 <h3>6.2: patterns across events, and hit versus untouched regions</h3>
-<p>The aim is many interesting, honestly labelled findings without loosening Measured.</p>
+<p>The aim is many interesting, honestly labeled findings without loosening Measured.</p>
 <ul>
-<li><strong>Family pooling.</strong> Each frozen (event family × outcome) pair pools every past event of that kind. Per-event effects are standardised against 40 season-matched fake onsets, combined by random-effects meta-analysis, and judged by a placebo pool (300 replicates, each pooling one fake onset per real event), not by a normal approximation. Dose–response against event magnitude is reported as exploratory. The batch is one Benjamini–Hochberg family.</li>
+<li><strong>Family pooling.</strong> Each frozen (event family × outcome) pair pools every past event of that kind. Per-event effects are standardized against 40 season-matched fake onsets, combined by random-effects meta-analysis, and judged by a placebo pool (300 replicates, each pooling one fake onset per real event), not by a normal approximation. Dose–response against event magnitude is reported as exploratory. The batch is one Benjamini–Hochberg family.</li>
 <li><strong>Regional contrasts.</strong> Difference-in-differences of hit regions against every untouched region (state claims, business applications, grid regions, declarations, weather), with a three-lead pre-trend test and 30 random in-space placebo groups; synthetic control with a rank test against 20 placebo groups where flagged. Holidays, national news and nationwide weather cancel; a shock that also hits the comparison regions does not.</li>
 <li><strong>New events borrow strength honestly.</strong> A live event's hop shows an empirical-Bayes shrunken estimate next to its own evidence and the family's, with a fixed note that the family result is not evidence about this event.</li>
 <li><strong>Tiering hook.</strong> A passing regional contrast can lift only statistical failures (q, placebo family, single channel, final look not reached); it never lifts a common-shock day, pre-trend, rival, reversal, parent or young-series failure. A family of 8+ past events that disagrees adds a Measured failure.</li>
@@ -446,7 +446,7 @@ figcaption{font-size:7.8pt;color:var(--ink-2);border-top:1px solid var(--hair);p
 </ul>
 </div>
 </div>
-<p>Numbers come only from SQL. Reconstructed archive lines are labelled on every surface and excluded from live denominators. Hazards with casualties get neutral copy and no teaser card.</p>
+<p>Numbers come only from SQL. Reconstructed archive lines are labeled on every surface and excluded from live denominators. Hazards with casualties get neutral copy and no teaser card.</p>
 
 <h2>16 · Infrastructure constraints</h2>
 <table>
@@ -482,7 +482,7 @@ figcaption{font-size:7.8pt;color:var(--ink-2);border-top:1px solid var(--hair);p
 <thead><tr><th style="width:24%">When</th><th>What</th></tr></thead>
 <tbody>
 <tr><td>Before launch</td><td>6.1 acceptance, 6.2 results, design pick and rebuild, integration, playtests, final review</td></tr>
-<tr><td>Launch <span class="tbd">on the owner's merge of the branch (target week of 5 Oct 2026)</span></td><td>Ripple Map with the reconstructed archive and pattern cards as the day-one hero; owner posts by hand for 14 days</td></tr>
+<tr><td>Launch <span class="tbd">on the owner's merge of the branch (target week of Oct 5, 2026)</span></td><td>Ripple Map with the reconstructed archive and pattern cards as the day-one hero; owner posts by hand for 14 days</td></tr>
 <tr><td>Days 28–90 of collection</td><td>Warm-up sources (news, TV, Bluesky, charts, YouTube, Kalshi) become eligible to count</td></tr>
 <tr><td>After launch</td><td>Growth-series baselines; link-family redefinition; anchoring the ledger head outside the database; clickstream and Trends when available</td></tr>
 <tr><td>Before any paid tier</td><td>Move YELLOW non-commercial sources off paid surfaces; legal review</td></tr>

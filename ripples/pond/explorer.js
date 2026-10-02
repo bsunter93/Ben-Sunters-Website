@@ -78,7 +78,7 @@
   function toast(msg) { let t = $('.toast'); if (!t) { t = document.createElement('div'); t.className = 'toast'; t.setAttribute('role', 'status'); document.body.appendChild(t); } t.textContent = msg; t.classList.add('on'); setTimeout(() => t.classList.remove('on'), 1800); }
   async function send(text, url) {
     ping('send');
-    try { if (navigator.share) { await navigator.share({ title: 'Ripple Map', text, url }); return; } } catch { /* cancelled */ }
+    try { if (navigator.share) { await navigator.share({ title: 'Ripple Map', text, url }); return; } } catch { /* canceled */ }
     try { await navigator.clipboard.writeText(`${text} ${url}`); toast('Link copied'); } catch { toast('Copy failed: ' + url); }
   }
 
@@ -110,7 +110,7 @@
       <section class="hero fade">
         <div class="eyebrow">What did that event change?</div>
         <h1 style="margin-top:14px">Every shock sends out <em>ripples.</em><br>Pick one to follow.</h1>
-        <p class="lede">Start from something that happened, or from something that changed. We trace what moved, how far it travelled, and how sure we are.</p>
+        <p class="lede">Start from something that happened, or from something that changed. We trace what moved, how far it traveled, and how sure we are.</p>
         <p class="status">${statusLine()}</p>
         <label class="search"><svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><circle cx="9" cy="9" r="6"/><path d="M13.5 13.5 18 18"/></svg>
           <input id="q" type="search" placeholder="Try “hurricane”, “electricity”, “AI”…" value="${esc(query)}" aria-label="Search shocks and outcomes" autocomplete="off"></label>
@@ -136,7 +136,7 @@
     const q = query.trim().toLowerCase(), L = $('#list');
     if (!L) return;
     if (findMode === 'shock') {
-      $('#hint').textContent = 'Shocks with results first. The rings show how far each one travelled.';
+      $('#hint').textContent = 'Shocks with results first. The rings show how far each one traveled.';
       const hit = s => !q || [s.name, s.kind, s.where, s.plural, ...s.impacts.map(i => i.name)].join(' ').toLowerCase().includes(q);
       const main = D.shocks.filter(s => s.confidence !== 'watch' && hit(s)), later = D.shocks.filter(s => s.confidence === 'watch' && hit(s));
       L.innerHTML = `<div class="list">${main.map(s => `
@@ -170,7 +170,7 @@
   }
 
   /* ---------- the pond: a stone dropped in dark water, drawn on canvas ----------
-   * Distance from the centre is time (day → quarter). The wave travels as far as the shock's reach, then dies out.
+   * Distance from the center is time (day → quarter). The wave travels as far as the shock's reach, then dies out.
    * The surface is a small height field (ambient swell + the wave packet + marker ripples), lit by its slope and upscaled;
    * markers and their labels are DOM buttons laid over it, so they stay crisp, focusable and clickable. */
   const WORD = { up: 'rose', down: 'fell', moved: 'moved', flat: 'moved' };
@@ -253,7 +253,7 @@
         const fy = sy / H, far = 1 - fy;   // the far water holds a little sky
         const e = RR[i] / (R1 * 1.25), fall = 1 - 0.35 * smooth(0.6, 1.2, e);
         BASE[i * 3] = (9 + 9 * far) * fall; BASE[i * 3 + 1] = (14 + 15 * far) * fall; BASE[i * 3 + 2] = (17 + 18 * far) * fall;
-        const edgeD = Math.min(sx, W - sx, sy, H - sy);   // no box: the water thins out towards every edge
+        const edgeD = Math.min(sx, W - sx, sy, H - sy);   // no box: the water thins out toward every edge
         ALPHA[i] = 255 * smooth(0, W * 0.14, edgeD) * (1 - smooth(1.0, 1.45, e * 1.25));
       }
       ticks = RINGS.map((r, k) => ({ l: r.l.toUpperCase(), x: cx + stopsR[k], edge: r === edge && mv.length > 0 }));
@@ -265,7 +265,7 @@
       const boxes = [];
       ctx.font = '500 9.5px "Geist Mono", ui-monospace, monospace';
       let prev = -1e9;
-      ticks.forEach(t => {   // time labels sit under the axis; one that would touch its neighbour steps above it
+      ticks.forEach(t => {   // time labels sit under the axis; one that would touch its neighbor steps above it
         t.w = ctx.measureText(t.l).width + t.l.length * 1.2; t.lx = Math.min(t.x - t.w / 2, W - t.w - 4);
         t.up = t.lx < prev + 6 && !ticks[ticks.indexOf(t) - 1]?.up; t.ly = t.up ? cy - 19 : cy + 8; if (!t.up) prev = t.lx + t.w;
         boxes.push({ x: t.lx - 3, y: t.ly - 2, w: t.w + 6, h: 14 });
@@ -492,7 +492,7 @@
           <div class="actions"><button class="btn primary" id="send">Send this</button><a class="btn" href="#/" id="another">Find another ripple</a></div>
         </div>
         <div class="viz"><div class="pond" id="pond"></div>
-          <div class="scrub" id="scrub" role="slider" tabindex="0" aria-label="How far the ripple had travelled by then" aria-valuemin="0" aria-valuemax="3" aria-valuenow="${ei}" aria-valuetext="${edge.l}">
+          <div class="scrub" id="scrub" role="slider" tabindex="0" aria-label="How far the ripple had traveled by then" aria-valuemin="0" aria-valuemax="3" aria-valuenow="${ei}" aria-valuetext="${edge.l}">
             <div class="rail" id="rail"><i class="fill" id="fill"></i><i class="knob" id="knob"></i></div>
             <div class="stops">${RINGS.map((r, i) => `<span class="${i < ei ? 'on' : i === ei && moved(s).length ? 'edge' : ''}">${r.l}</span>`).join('')}</div>
           </div>
@@ -614,7 +614,7 @@
     const items = [];
     D.shocks.forEach(s => s.impacts.forEach(im => { if (im.tier === 'possible' || (im.tier === 'watch' && s.confidence !== 'watch')) items.push({ s, im }); }));
     const pending = D.shocks.filter(s => s.confidence === 'watch');
-    $('#main').innerHTML = `<section class="hero fade"><div class="eyebrow">Open questions</div><h1 style="margin-top:14px">Ripples still <em>travelling.</em></h1>
+    $('#main').innerHTML = `<section class="hero fade"><div class="eyebrow">Open questions</div><h1 style="margin-top:14px">Ripples still <em>traveling.</em></h1>
       <p class="lede">Leads we’re following and tests waiting for data. Come back and see how they land.</p>
       <div class="list" style="margin-top:28px">${items.map(x => `<a class="row" style="grid-template-columns:1fr auto" href="#/s/${encodeURIComponent(x.s.slug)}"><div>
         <div class="name" style="font-size:22px">${esc(x.im.name)}</div><div class="meta">${esc(x.s.name)} · ${TIER[x.im.tier].label}</div><div class="one">${esc(x.im.sure)}</div></div><span class="go">→</span></a>`).join('')}

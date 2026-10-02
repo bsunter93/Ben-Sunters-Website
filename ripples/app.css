@@ -322,7 +322,7 @@ input,select{font:inherit}
 .flatbox{margin:8px 0 4px}
 .flatsum{font:500 13.5px/1.4 var(--sans);color:var(--ink-2);margin-bottom:8px}.flatsum b{color:var(--ink)}
 .flatbox .btn{margin-top:10px}
-/* the flat grid: one 84 px grey tile per path (icon, its flat sparkline, its multiple, its name), flipped face-up on open */
+/* the flat grid: one 84 px gray tile per path (icon, its flat sparkline, its multiple, its name), flipped face-up on open */
 .flatlist{display:grid;grid-template-columns:repeat(auto-fill,minmax(84px,1fr));gap:6px;perspective:600px}
 .flatlist .ft{display:grid;grid-template-rows:auto 22px auto auto;justify-items:center;gap:3px;padding:8px 4px 6px;border-radius:8px;background:var(--sunk);box-shadow:inset 0 0 0 1.5px var(--hair);font:500 11px/1.2 var(--sans);color:var(--ink-3);text-align:center;transform-origin:50% 50%}
 .flatlist .ft .fi{font-size:15px;opacity:.75}
@@ -539,7 +539,7 @@ dialog li b{color:var(--ink)}
 .line aside .den{margin-top:14px}
 @media (min-width:960px){.mob{display:none!important}}
 
-/* ---------- motion and colour fallbacks ---------- */
+/* ---------- motion and color fallbacks ---------- */
 @keyframes march{to{stroke-dashoffset:-16}}
 .marching{animation:march 1.6s linear infinite}
 @media (prefers-reduced-motion:reduce){

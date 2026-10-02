@@ -25,7 +25,7 @@ svg{position:absolute;left:0;top:0}
 </style></head><body><div id="stage">
 <svg id="svg" width="1080" height="1920"></svg>
 <div class="brand"><i></i>Ripple Map</div>
-<div id="L1" class="layer" style="top:1180px;text-align:center"><div class="eyebrow">Hurricane Milton</div><div class="small" style="margin-top:16px">Landfall · Siesta Key, Florida · 9 Oct 2024</div></div>
+<div id="L1" class="layer" style="top:1180px;text-align:center"><div class="eyebrow">Hurricane Milton</div><div class="small" style="margin-top:16px">Landfall · Siesta Key, Florida · Oct 9, 2024</div></div>
 <div id="L2" class="layer" style="top:1080px;text-align:center"><div class="small" id="L2a">Duke Energy Florida · electricity demand</div><div class="big" id="num">1.00×</div><div class="mid" id="L2b" style="color:var(--t2)">of normal · the day after landfall</div></div>
 <div id="L3" class="layer" style="top:560px;text-align:center"><div class="mid" style="font-size:96px;letter-spacing:-.03em">Could it be luck?</div><div class="small" style="margin:26px 0 70px">Three independent checks</div><div class="circles"><div id="c1">1</div><div id="c2">2</div><div id="c3">3</div></div></div>
 <div id="L4" class="layer" style="top:1300px;text-align:center"><div class="big" style="font-size:150px"><span style="color:var(--num)">3</span><span style="color:var(--t3)"> / 1,646</span></div><div class="small" style="margin-top:14px">random days looked this strong</div></div>
@@ -77,7 +77,7 @@ const tn=el('text',{x:cx1,y:Y(1)-14,'text-anchor':'end',fill:'#7C8A86','font-siz
 const li=G.findIndex(r=>r[0]=='2024-10-09');el('line',{x1:X(li),x2:X(li),y1:cy0-20,y2:cy1,stroke:'#C8B48E','stroke-width':2.5,'stroke-dasharray':'8 8'},C);
 const tl=el('text',{x:X(li)-12,y:cy0-30,'text-anchor':'end',fill:'#C8B48E','font-size':28,'font-weight':600},C);tl.textContent='landfall';
 const pd=el('path',{fill:'none',stroke:'#A7B5B1','stroke-width':4,'stroke-linejoin':'round'},C);const pf=el('path',{fill:'none',stroke:'#F6C46A','stroke-width':6,'stroke-linejoin':'round'},C);
-const ld=el('text',{x:cx0,y:Y(0.4),'text-anchor':'start',fill:'#A7B5B1','font-size':28},C);ld.textContent='— grey: 51 regions the storm missed';
+const ld=el('text',{x:cx0,y:Y(0.4),'text-anchor':'start',fill:'#A7B5B1','font-size':28},C);ld.textContent='— gray: 51 regions the storm missed';
 const lf=el('text',{x:X(li+1)+16,y:Y(G[li+1][1])+8,fill:'#F6C46A','font-size':30,'font-weight':600},C);lf.textContent='Duke Energy Florida';
 [['2 Sep',0],['1 Oct',G.findIndex(r=>r[0]=='2024-10-01')],['27 Oct',n-1]].forEach(([s,i])=>{const t=el('text',{x:X(i),y:cy1+50,'text-anchor':i==0?'start':i==n-1?'end':'middle',fill:'#7C8A86','font-size':26},C);t.textContent=s});
 const path=(k,upto)=>{let d='';for(let i=0;i<=upto&&i<n;i++)d+=(i?'L':'M')+X(i).toFixed(1)+' '+Y(G[i][k]).toFixed(1);return d};
@@ -87,7 +87,7 @@ el('line',{x1:fx(0),x2:fx(0),y1:700,y2:1180,stroke:'#A7B5B1','stroke-width':3},F
 const FR=[[-20.4,-31.7,-4.6,'Demand series A'],[-19.1,-32.1,-0.1,'Demand series B']];const fb=[];
 FR.forEach(([m,lo,hi2,lab],j)=>{const y=820+j*220;const g=el('g',{},F);el('line',{x1:fx(lo),x2:fx(hi2),y1:y,y2:y,stroke:'#F6C46A','stroke-width':10,'stroke-linecap':'round','stroke-opacity':.45},g);el('circle',{cx:fx(m),cy:y,r:18,fill:'#F6C46A'},g);const a=el('text',{x:fx(lo),y:y-40,fill:'#F1F4F2','font-size':30},g);a.textContent=lab;const b=el('text',{x:fx(m),y:y+72,'text-anchor':'middle',fill:'#F6C46A','font-size':56,'font-weight':650},g);b.textContent=(m+'%').replace('-','−');fb.push(g)});
 const fn=el('text',{x:540,y:1250,'text-anchor':'middle',fill:'#7C8A86','font-size':26},F);fn.textContent='bars: the model\'s uncertainty range · Google BigQuery';
-const FL=["Florida Power & Light demand (on its own)","Florida jobless claims","US air travellers (TSA)","US gasoline price","Gulf Coast jet-fuel price","FEMA declarations × 3","Weather warnings × 4"];
+const FL=["Florida Power & Light demand (on its own)","Florida jobless claims","US air travelers (TSA)","US gasoline price","Gulf Coast jet-fuel price","FEMA declarations × 3","Weather warnings × 4"];
 const ul=document.getElementById('flat');const lis=FL.map(s=>{const l=document.createElement('li');l.innerHTML='<i></i>'+s;ul.appendChild(l);return l});
 const $=id=>document.getElementById(id);const op=(e,v)=>{e.style.opacity=v;if(e.setAttribute&&e instanceof SVGElement)e.setAttribute('opacity',v)};
 window.render=function(t){

@@ -200,7 +200,7 @@ def onset(v, e, lo, hi):
     return None
 
 
-def analyse(title, v, ev_i, on_i):
+def analyze(title, v, ev_i, on_i):
     found = onset(v, ev_i, on_i - ev_i, LAG_MAX)
     if not found:
         return None
@@ -270,7 +270,7 @@ def main() -> int:
                 s = series(t, end)
                 if not s:
                     continue
-                r = analyse(t, to_array(s, end), ev_i, on_i)
+                r = analyze(t, to_array(s, end), ev_i, on_i)
                 if not r:
                     continue
                 if "excluded" in r:
