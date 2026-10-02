@@ -225,6 +225,8 @@ def verdict(st, r, ref):
         return "no movement" if "rise" in r["result"] else "no data"
     if r.get("new_article"):
         return "timed (new article)" if D(r["onset"]) >= ref - dt.timedelta(days=3) else "wrong order"
+    if r.get("p") is None and r.get("onset"):  # a sustained rise, but too little history for a placebo test
+        return "timed (short history)" if D(r["onset"]) >= ref - dt.timedelta(days=3) else "wrong order"
     moved = r.get("p") is not None and r["p"] <= 0.05
     if not moved:
         return "no movement"
@@ -254,7 +256,8 @@ def main() -> int:
                     out["steps"].append({"n": st["n"], "claim": st["claim"], "test": {k: st["test"][k] for k in st["test"] if k != "counts"},
                                          "ref": sref.isoformat(), "verdict": v, "note": st.get("note"), **r})
                     print(ch["slug"], st["n"], v, {k: r.get(k) for k in ("onset", "p", "effect", "series", "found", "result")}, flush=True)
-                    if v in ("measured", "reported", "timed (new article)") and r.get("onset") and not st.get("branch"):
+                    if v in ("measured", "reported", "timed (short history)") and r.get("onset") and not st.get("branch"):
+                        # a new article's creation date dates the article, not the phenomenon: it does not move the reference
                         ref = max(ref, D(r["onset"]))
                 rep["chains"].append(out)
                 json.dump(rep, open(OUT, "w"), indent=1, ensure_ascii=False)
