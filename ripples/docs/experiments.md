@@ -1,6 +1,6 @@
-# Ripple Map — modelling experiments (registered 2026-09-27)
+# Ripple Map — modeling experiments (registered 2026-09-27)
 
-> **Direction (D-26, 2026-09-27):** the product is cultural ripples. The research program is now organised around three
+> **Direction (D-26, 2026-09-27):** the product is cultural ripples. The research program is now organized around three
 > questions in `discovery_engine.md`:
 > - Q1: rediscover known cultural ripples (E9 phase 1).
 > - Q2: improve candidate generation without more false discoveries (the cultural lab, with methods D1–D4).
@@ -59,7 +59,7 @@ M4 roughly doubles recall at −1% and −2% and is the estimator for E2/E4, alw
 
 ## E2 — Spillovers: does the ripple travel?
 
-The vision is "wherever the impact shows up". Test undeclared **neighbouring** counties (and the next ring out) for
+The vision is "wherever the impact shows up". Test undeclared **neighboring** counties (and the next ring out) for
 effects opposite or equal to the hit county: displaced jobs, customers and workers move next door. Surprising links are
 likely to live here, and the geography is exactly what a 12-year-old can see on a map.
 

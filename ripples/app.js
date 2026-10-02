@@ -48,7 +48,7 @@ function heroTicket(S0, archive) {
   const stops = typeof s.stops === 'number' ? s.stops : s.stops ? (s.stops.measured || 0) + (s.stops.likely || 0) : null;
   const doms = s.domains_reached || s.domains;
   const meta = joinSep([stops != null ? L.plural(stops, 'stop') : null, doms ? L.plural(doms.length, 'domain') : null, L.STATUS[s.status] || null, hero.reconstructed ? 'reconstructed' : null]);
-  // the size in words under the engine's headline: "9% fewer US air travellers than on a normal Wednesday." (client gloss, §4)
+  // the size in words under the engine's headline: "9% fewer US air travelers than on a normal Wednesday." (client gloss, §4)
   const gloss = L.pctGloss(st.rho, st.unit);
   const onsetDay = st.onset || (s.onset && st.lag_days != null ? L.addDays(s.onset, Math.round(st.lag_days)) : null);
   const sub = gloss && st.label ? `${gloss[0].toUpperCase()}${gloss.slice(1)} ${st.domain === 'reading' && !/readers?$/i.test(st.label) ? `${st.label} readers` : st.label} than on a normal ${onsetDay ? L.fmtDate(onsetDay, true).split(' ')[0] : 'day'}.` : null;
@@ -107,7 +107,7 @@ async function archiveTicket(S0, archive) {
   return tk;
 }
 // A board row's destination column, in order of what the line has: the farthest Measured domain; else its Likely domain
-// (never labelled "watching"); else "went nowhere"; else the live countdown to its next look (signature A: the board as a
+// (never labeled "watching"); else "went nowhere"; else the live countdown to its next look (signature A: the board as a
 // split-flap clock, ticking every minute; "today" in marigold once the look is due; static under reduced motion).
 const tickers = [];
 function depRow(s, fresh) {

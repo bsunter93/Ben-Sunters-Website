@@ -42,7 +42,7 @@ Spec: `ATTENTION_STACK.md` §3 and §7, with `DEMARCATION.md` §7 lead decisions
 | `functions/att-charts/index.ts` (+ `att.ts` copy) | Charts / builder / consumption collector (CHARTS_VERSION 2026-09-25.c9): `apple`, `steamspy`, `github`, `hf`, `anilist`, `openlibrary`, `tranco`, `npm`, `pypi`, `backfill` (npm.dl, pypi.dl, anilist, gh.stars), `ping`. See "att-charts" below |
 | `sql/16_att_world.sql` | Migration `att_world_sources` (att-world): DEMARCATION Q6 budgets / hosts / `backfill_fn` for tsa.pax, usgs.eq, iem.warn, fema.decl, gdacs, mta.ridership, citibike.trips (virtual-host bucket `tripdata.s3.amazonaws.com`), hiringlab.postings (`raw.githubusercontent.com` only) |
 | `sql/16b_att_world_cron.sql` | Migration `att_world_cron`: `att-world` 06:21 (tsa, usgs, iem, fema, gdacs, mta), `att-world-files` 06:22 (hiringlab, citibike), `att-world-pm` 13:41 (tsa, mta), `att_fn_live('att-world')` |
-| `sql/16c_att_world_fixes.sql` | Migration `att_world_fixes`: self-removing cron `att-world-citibike-cap` (`7,27,47 * * * *`) resets `citibike.trips` per_day_cap 30 -> 4 (and today's `att_budget` row) once `world.bf.citibike.trips` is complete (at the latest 2026-09-28); Citi Bike virtual-host ledger entry (`att_sources.license_note`, `att_state['ledger:citibike.trips']`); run 599 relabelled `budget_exhausted` |
+| `sql/16c_att_world_fixes.sql` | Migration `att_world_fixes`: self-removing cron `att-world-citibike-cap` (`7,27,47 * * * *`) resets `citibike.trips` per_day_cap 30 -> 4 (and today's `att_budget` row) once `world.bf.citibike.trips` is complete (at the latest 2026-09-28); Citi Bike virtual-host ledger entry (`att_sources.license_note`, `att_state['ledger:citibike.trips']`); run 599 relabeled `budget_exhausted` |
 | `sql/16d_att_world_citibike_done.sql` | Data-only fix (execute_sql): `citibike.trips` reason text after the Citi Bike JC backfill completed (13 months, JC-202508..JC-202608) |
 | `functions/att-world/index.ts` (+ `att.ts` copy) | World / real-economy collector (WORLD_VERSION 2026-09-25.w3): `tsa`, `usgs`, `iem`, `fema`, `gdacs`, `mta`, `citibike`, `hiringlab`, `all`, `backfill`, `ping`. See "att-world" below |
 | `sql/16_att_wiki.sql` | Migrations `att_wiki_collector` + `att_wiki_plan_signal_history` (att-wiki): wiki.* source rows (1 req/s, `wiki.media` hosts + `wikipedia.org`, `wiki.cs` in the `wikimedia` bucket, robots required), `att_config.wiki`, planners `att_wiki_pv_plan` / `att_wiki_media_plan`, `att_wiki_mirror_signals`, `att_wiki_topcc_reach` / `_prev`, `att_wiki_media_keys`, `att_wiki_jobs(_sweep)`, `att_wiki_calls_today`, `att_wiki_progress` (+ public wrappers, service_role only) |
@@ -75,7 +75,7 @@ After a collector is deployed and tested, add it to the tick's allow-list so que
 
 * UA `ripples-research/0.2 (+https://bensunter.com/ripples/methods/)` on every request (and `Api-User-Agent` for
   Wikimedia). No email anywhere. Cookies are stripped; Deno fetch has no cookie jar; no proxies.
-* **robots.txt** honoured for every URL that is not a Wikimedia documented API (DEMARCATION §7.1: `wikimedia.org`,
+* **robots.txt** honored for every URL that is not a Wikimedia documented API (DEMARCATION §7.1: `wikimedia.org`,
   `api.wikimedia.org`, `stream.wikimedia.org`, and `/w/api.php` + `/api/rest_v1/` on wiki hosts). The `robots:false`
   option is ignored everywhere else, and `att_sources.robots_required=true` forces the check. Cached 24 h in
   `att_state['robots:<origin>']`; 401/403/429/5xx/unreachable robots = deny; 404/410 = allow; a robots.txt redirect is
@@ -242,7 +242,7 @@ stubbed or deleted like the probes above.)
   form was dropped), `att_host_lease_take(p_host, p_run, p_fn, p_ttl_s) -> boolean`,
   `att_host_lease_release(p_run) -> int`; SQL only: `ripples.att_host_unkill(host)`, `ripples.att_host_killed(host)`,
   `ripples._att_clean_meta(jsonb)`.
-* `att_ingest*` sanitise `meta` (allow-list `att_config.meta_allow`; add keys there if a collector needs one).
+* `att_ingest*` sanitize `meta` (allow-list `att_config.meta_allow`; add keys there if a collector needs one).
 
 ## att-market (W7 money + institutional collector, 2026-09-25, MARKET_VERSION 2026-09-25.m8)
 
@@ -298,7 +298,7 @@ text). List sizes come from `att_config.charts.<mode>.limit.{free,pro}` under `a
 Evidence for discovery = 1 - ln(rank)/ln(N+1). Candidates are deduplicated per run (max evidence). **Pacing** is
 end-to-start: the run records `detail.timing[source].min_idle_gap_ms`. A host whose `x-ratelimit-remaining` drops to
 <= 1 is dropped for the run, so GitHub never reaches a 403 (a permanent kill). **Reference panels:** npm (12 packages)
-and pypi (8 packages) are stored as normaliser series with no topic link. **npm gap days:** npm reports days it has
+and pypi (8 packages) are stored as normalizer series with no topic link. **npm gap days:** npm reports days it has
 not computed yet as 0 for every package; zeros are not stored for `__total__` or for packages whose p75 > 100.
 **npm backfill coverage (c8):** a key needs its 400-day fetch only while its first stored day is later than window
 start + 30 days AND it was not backfilled in the last 30 days (`att_state['charts.npm.backfilled']`). c7 counted rows,
@@ -306,7 +306,7 @@ so `__total__` (349 rows after dropping zero days) was refetched over 400 days o
 **npm outage days (c9):** the daily window is 30 days (`charts.npm.days`; same number of requests as 7), so a day npm
 recomputes late is refilled. Days older than the 3-day lag on which npm's all-packages total is 0 are npm outages; they
 are listed (days only) in `att_state['charts.npm.gaps']` so the share transform skips them rather than dividing by a
-missing normaliser. The list was seeded from stored data (48 days in the 400-day window, e.g. 2026-08-30..09-04,
+missing normalizer. The list was seeded from stored data (48 days in the 400-day window, e.g. 2026-08-30..09-04,
 09-07/08, 09-15, 09-17).
 **Ops ledger:** manual interventions are recorded in `att_state['ledger:att-charts.ops']` (15g). Policy from c9: no
 hand edits of robots cache entries or `att_budget` rows; an unavoidable override is appended to the ledger first.
@@ -328,12 +328,12 @@ single request) and `sql/15e` (scoped npm packages were rejected as `@handles`).
 Counts, levels and indices only. Response bodies are read transiently (IEM rows carry forecaster names, FEMA rows county
 names, Citi Bike rows station names and ride ids): none of it is stored. No NWS `api.weather.gov` call exists (RED in
 `isRed()`; IEM is the documented substitute). Attribution strings live in `att_sources.attribution` (FEMA non-endorsement
-notice, "Indeed Hiring Lab ... (CC BY 4.0)", "GDACS, European Commission Joint Research Centre", "Iowa Environmental
+notice, "Indeed Hiring Lab ... (CC BY 4.0)", "GDACS, European Commission Joint Research Center", "Iowa Environmental
 Mesonet, Iowa State University", "Citi Bike System Data", USGS, TSA, MTA/NY Open Data).
 
 | Mode | Source (spacing, run/day cap) | Endpoint | Series (source / metric / geo / key) | History |
 |---|---|---|---|---|
-| `tsa` | `tsa.pax` (5 s, 10/20) | `www.tsa.gov/travel/passenger-volumes` (current year) + `/<year>` pages | `tsa.pax / n / US / checkpoint` (travellers screened) | 2019-01-01 onwards (same-weekday baselines) |
+| `tsa` | `tsa.pax` (5 s, 10/20) | `www.tsa.gov/travel/passenger-volumes` (current year) + `/<year>` pages | `tsa.pax / n / US / checkpoint` (travelers screened) | 2019-01-01 onwards (same-weekday baselines) |
 | `usgs` | `usgs.eq` (5 s, 8/20) | ComCat `fdsnws/event/1/query` geojson, `minfelt=1` and `minmagnitude=4.5` | `felt` (sum of DYFI responses, aux = felt events), `m45` (count, aux = max mag), `sig` (sig >= 600 count, aux = max sig), `ev:<eventid> / felt` for events with >= 25 DYFI responses (aux = mag); geo ALL | 420 days, 105-day windows; the daily run re-reads 30 days (DYFI counts grow) |
 | `iem` | `iem.warn` (10 s, 8/40) | IEM API `/api/1/vtec/sbw_interval.json?begints&endts` | key = VTEC `ph_sig` (`TO.W`, `SV.W`, `FF.W`, `MA.W`, `SQ.W`, `FA.Y` ...) + `__total__` (all warnings), distinct wfo/phen/sig/eventid/year per issuance UTC day; zero-filled; geo US | 420 days, 30-day windows |
 | `fema` | `fema.decl` (5 s, 5/10) | OpenFEMA `v2/DisasterDeclarationsSummaries` (`$select`, `$filter`, `$top=10000`) | `all`, `DR`, `EM`, `FM`, `it:<incident type>`: distinct disasters declared per day (aux = designated areas); zero-filled; geo US | 420 days; daily re-reads 30 days |
@@ -369,7 +369,7 @@ cover the daily calls plus the one-off backfill (citibike.trips was raised to 30
 backfill; the cron job `att-world-citibike-cap` from `sql/16c` puts the row back to 4/day, lowers that day's
 `att_budget` row, and unschedules itself once the backfill is complete, at the latest on 2026-09-28; it fired at 19:07 UTC on 2026-09-25).
 **Status labels (w3):** a source stopped by `per_run_cap:<source>` or `daily_budget_spent:<source>` is reported
-`budget_exhausted` (note names the cap), never `http_error`; run 599 (IEM backfill) was relabelled in `sql/16c`. Every request goes through `politeFetch`: robots.txt
+`budget_exhausted` (note names the cap), never `http_error`; run 599 (IEM backfill) was relabeled in `sql/16c`. Every request goes through `politeFetch`: robots.txt
 checked for every host (tsa.gov, fema.gov, data.ny.gov, gdacs.org, mesonet 200 with no matching disallow; usgs.gov,
 raw.githubusercontent.com, tripdata bucket 404 = allowed).
 

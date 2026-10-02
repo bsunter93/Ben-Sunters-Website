@@ -34,7 +34,7 @@ class Stop(Exception):
     pass
 
 
-BACKOFF_429 = os.environ.get("ALLOW_429_BACKOFF") == "1"  # owner-approved: honour Retry-After, max 2 retries
+BACKOFF_429 = os.environ.get("ALLOW_429_BACKOFF") == "1"  # owner-approved: honor Retry-After, max 2 retries
 
 
 def get(url: str, _tries: int = 0) -> dict:

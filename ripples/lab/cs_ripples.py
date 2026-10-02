@@ -5,12 +5,12 @@ Fetch (mode "fetch"): every monthly file from 2017-11 is streamed once, one at a
 at least MIN_N clicks are kept ($LAB_CACHE/csall/YYYY-MM.tsv.gz). 403/429/503 stops (no retry); 404 = month missing.
 Resumable: months already cached are skipped; --budget-min stops fetching before the job's time limit.
 
-Analyse (mode "analyse"): for each month m, against the median of the 6 months before it (absent = below MIN_N):
+Analyze (mode "analyze"): for each month m, against the median of the 6 months before it (absent = below MIN_N):
   event    A: an article whose total arrivals are >= EV_X times its baseline and >= EV_MIN;
   ripple A->B: a link A->B with >= EDGE_MIN clicks in m and >= EDGE_X times its own baseline (+100), where B's arrivals
            rose too (>= B_X times baseline);
   carried: the share of B's extra arrivals that came straight from A;
-  surprise: 1 - overlap between A's neighbours this month and B's usual neighbours (baseline months), so a ripple into
+  surprise: 1 - overlap between A's neighbors this month and B's usual neighbors (baseline months), so a ripple into
            a part of Wikipedia the event's readers do not normally visit scores high;
   ring 2:  B->C links that surged the same month into an article A does not link to.
 Output: ripples/docs/results/map/index.json and one file per month (top events with their maps, top ripples overall).
@@ -145,18 +145,18 @@ def median(xs):
     return 0.0 if not k else (xs[k // 2] if k % 2 else 0.5 * (xs[k // 2 - 1] + xs[k // 2]))
 
 
-def neighbours(month_data, title, k=60):
+def neighbors(month_data, title, k=60):
     """Top linked destinations of title plus its top internal referrers, in one month."""
     outs = month_data["out"].get(title, {})
     top = sorted(outs, key=outs.get, reverse=True)[:k]
     return set(top)
 
 
-def analyse(outdir: str) -> dict:
+def analyze(outdir: str) -> dict:
     ms = [m for m in months() if os.path.exists(os.path.join(CACHE, f"{m}.tsv.gz"))]
     os.makedirs(outdir, exist_ok=True)
     window, index = collections.deque(maxlen=BASE_MONTHS), []
-    # reverse index for baseline neighbours of B: who linked to B (internal referrers), per month
+    # reverse index for baseline neighbors of B: who linked to B (internal referrers), per month
     for m in ms:
         cur = load(m)
         if cur is None:
@@ -166,7 +166,7 @@ def analyse(outdir: str) -> dict:
             continue
         base_in = lambda t: median([w["in"].get(t, 0) for w in window])  # noqa: E731
         base_edge = lambda a, b: median([w["out"].get(a, {}).get(b, 0) for w in window])  # noqa: E731
-        # referrers of B in baseline months (B's usual neighbourhood)
+        # referrers of B in baseline months (B's usual neighborhood)
         events = []
         for a, n in cur["in"].most_common(4000):
             if SKIP.match(a) or n < EV_MIN:
@@ -178,7 +178,7 @@ def analyse(outdir: str) -> dict:
         month_events, all_edges = [], []
         for a, n, b0 in events[:TOP_EVENTS * 3]:
             outs = cur["out"].get(a, {})
-            nb_a = neighbours(cur, a) | {a}
+            nb_a = neighbors(cur, a) | {a}
             ring = []
             for b, c in sorted(outs.items(), key=lambda kv: -kv[1]):
                 if c < EDGE_MIN:
@@ -250,7 +250,7 @@ CREW_OCC = {"Q33999", "Q10800557", "Q10798782", "Q2259451", "Q2405480", "Q252625
             "Q578109", "Q947873", "Q245068", "Q13590141", "Q4610556", "Q177220", "Q639669", "Q3387717", "Q1053574"}
 WORK_P31 = {"Q11424", "Q5398426", "Q1259759", "Q21191270", "Q7725634", "Q24856", "Q202866", "Q1261214", "Q7889"}
 # v2: destinations the owner called "material" (things in the world people use or are affected by), by direct P31:
-# companies and organisations, brands and products, software and apps, technologies, industries, chemicals, drugs,
+# companies and organizations, brands and products, software and apps, technologies, industries, chemicals, drugs,
 # laws, currencies, commodities, foods, sports, websites, professions, games and toys.
 MATERIAL_P31 = {"Q4830453", "Q783794", "Q891723", "Q6881511", "Q43229", "Q163740", "Q431289", "Q2424752", "Q10929058",
                 "Q7397", "Q620615", "Q11016", "Q8148", "Q268592", "Q11173", "Q79529", "Q113145171", "Q7748",
@@ -442,7 +442,7 @@ def main() -> int:
     if mode == "funnel":
         funnel(sys.argv[2] if len(sys.argv) > 2 else "map")
         return 0
-    analyse(sys.argv[2] if len(sys.argv) > 2 else "map")
+    analyze(sys.argv[2] if len(sys.argv) > 2 else "map")
     return 0
 
 

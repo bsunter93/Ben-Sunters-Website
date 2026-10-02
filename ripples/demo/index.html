@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Knock-On · What did it change?</title>
-<meta name="description" content="Drop in an event everyone remembers and watch what it changed, in the order it happened: attention, then behaviour, then the real world.">
+<meta name="description" content="Drop in an event everyone remembers and watch what it changed, in the order it happened: attention, then behavior, then the real world.">
 <meta property="og:title" content="Knock-On: what did it change?">
 <meta property="og:description" content="Tiger King to a federal law in 1,005 days. Watch the ripples of four cultural moments arrive, in order.">
 <link rel="icon" href="/favicon.svg">
@@ -44,10 +44,13 @@ svg#pond{display:block;width:100%;height:auto;touch-action:manipulation}
 .play{width:40px;height:40px;border-radius:50%;border:0;background:var(--marigold);color:#062429;cursor:pointer;display:grid;place-items:center;flex:none}
 .play svg{width:16px;height:16px}
 input[type=range]{flex:1;accent-color:var(--marigold);min-width:0}
-.legend{display:flex;flex-wrap:wrap;gap:6px 14px;font-size:.8rem;color:var(--ink-2);padding:4px 6px 2px}
+.legend{display:flex;flex-wrap:wrap;align-items:center;gap:6px 14px;font-size:.8rem;color:var(--ink-2);padding:4px 6px 2px}
+.legend svg{margin-right:5px;vertical-align:middle}
+.howbtn{margin-left:auto;background:none;border:1px solid var(--hair);border-radius:999px;padding:4px 10px;font-size:.78rem;color:var(--ink-2);cursor:pointer}
+.how[hidden]{display:none}
 .dot{display:inline-block;width:10px;height:10px;border-radius:50%;margin-right:5px;vertical-align:-1px}
-.feed{display:grid;gap:12px}
-.card{background:var(--card);border:1px solid var(--hair);border-radius:16px;padding:14px 16px;transition:opacity .35s,transform .35s,border-color .2s;cursor:pointer}
+.feed{display:grid;gap:8px}
+.card{background:var(--card);border:1px solid var(--hair);border-radius:14px;padding:11px 14px;transition:opacity .35s,transform .35s,border-color .2s;cursor:pointer}
 .card.off{opacity:0;transform:translateY(10px);pointer-events:none;height:0;padding:0 16px;margin:-6px 0;border-width:0;overflow:hidden}
 .card.hot{border-color:var(--marigold)}
 .card .top{display:flex;justify-content:space-between;gap:10px;align-items:baseline}
@@ -59,12 +62,17 @@ input[type=range]{flex:1;accent-color:var(--marigold);min-width:0}
 .b.record{border-color:var(--ink-2);color:var(--ink)}
 .b.event{background:var(--marigold);border-color:var(--marigold);color:#062429}
 .b.next{border-style:dashed;color:var(--ink-3)}
-.card h2{font:700 1.05rem/1.3 var(--sans);margin:.35rem 0 .2rem}
+.card h2{font:700 .97rem/1.3 var(--sans);margin:.3rem 0 .1rem}
+.card .short{font-size:.84rem;color:var(--ink-2);margin:.3rem 0 0}
+.card details{margin-top:.35rem;font-size:.84rem}
+.card details summary{cursor:pointer;color:var(--ink-3);font-size:.78rem;font-weight:600;list-style:none}
+.card details summary::before{content:"+ "}.card details[open] summary::before{content:"– "}
+.card details p{margin:.35rem 0 0}
 .card p{margin:.25rem 0 0;color:var(--ink-2);font-size:.9rem}
 .card .src{font-size:.78rem;color:var(--ink-3)}
-.spark{display:block;width:100%;height:46px;margin-top:8px}
+.spark{display:block;width:100%;height:40px;margin-top:6px}
 .facts{display:flex;flex-wrap:wrap;gap:8px 22px;margin-top:8px}
-.fact b{display:block;font:800 1.7rem/1 var(--display);color:var(--ink);font-variant-numeric:tabular-nums}
+.fact b{display:block;font:800 1.3rem/1 var(--display);color:var(--ink);font-variant-numeric:tabular-nums}
 .fact span{font-size:.78rem;color:var(--ink-3)}
 .card.next{background:transparent;border-style:dashed}
 .card.miss{background:transparent}
@@ -76,6 +84,9 @@ input[type=range]{flex:1;accent-color:var(--marigold);min-width:0}
 .foot{max-width:1240px;margin:0 auto;padding:0 16px 48px;color:var(--ink-3);font-size:.84rem}
 /* the pond */
 .ring{fill:none;stroke:var(--ring);stroke-width:1}
+.wedge{fill:rgba(234,243,240,.025);stroke:none}.wedge.alt{fill:rgba(234,243,240,.055)}
+.slicebd{stroke:rgba(234,243,240,.16);stroke-width:1}
+.rimlbl{font:800 12.5px var(--sans);letter-spacing:.14em;text-transform:uppercase;fill:var(--marigold)}
 .ringlbl{fill:var(--ring-lbl);font:600 12px var(--sans);letter-spacing:.04em}
 .wave{fill:none;stroke:rgba(234,243,240,.35)}
 .edge{fill:none;stroke:rgba(242,174,46,.75);stroke-width:2;stroke-linecap:round}
@@ -129,21 +140,22 @@ body.reel header{max-width:760px;padding-top:22px}
       <input type="range" id="scrub" min="0" max="1000" value="0" aria-label="Time since the event">
     </div>
     <div class="legend" aria-label="How sure we are of each link">
-      <span><svg width="26" height="8"><line x1="1" y1="4" x2="25" y2="4" stroke="var(--good)" stroke-width="5"/></svg> Measured: moved in the data, beyond normal, after the step before</span>
-      <span><svg width="26" height="8"><line x1="1" y1="4" x2="25" y2="4" stroke="var(--marigold)" stroke-width="3.5"/></svg> Timed: rose in the right order</span>
-      <span><svg width="26" height="8"><line x1="1" y1="4" x2="25" y2="4" stroke="var(--rec)" stroke-width="2.2"/></svg> Reported: a credible source makes the link</span>
-      <span><svg width="26" height="8"><line x1="1" y1="4" x2="25" y2="4" stroke="var(--marigold)" stroke-width="2" stroke-dasharray="5 6"/></svg> Plausible: it happened; the link is unproven</span>
-      <span><svg width="26" height="8"><line x1="1" y1="4" x2="25" y2="4" stroke="var(--miss)" stroke-width="1.6" stroke-dasharray="2 5"/></svg> Busted: wrong order, contradicted or no evidence</span>
+      <span><svg width="22" height="8"><line x1="1" y1="4" x2="21" y2="4" stroke="var(--good)" stroke-width="5"/></svg>Measured</span>
+      <span><svg width="22" height="8"><line x1="1" y1="4" x2="21" y2="4" stroke="var(--marigold)" stroke-width="3.5"/></svg>Timed</span>
+      <span><svg width="22" height="8"><line x1="1" y1="4" x2="21" y2="4" stroke="var(--rec)" stroke-width="2.2"/></svg>Reported</span>
+      <span><svg width="22" height="8"><line x1="1" y1="4" x2="21" y2="4" stroke="var(--marigold)" stroke-width="2" stroke-dasharray="5 6"/></svg>Plausible</span>
+      <span><svg width="22" height="8"><line x1="1" y1="4" x2="21" y2="4" stroke="var(--miss)" stroke-width="1.6" stroke-dasharray="2 5"/></svg>Busted</span>
+      <button class="howbtn" id="howbtn" aria-expanded="false" aria-controls="how">How it works</button>
     </div>
   </section>
   <section class="feed" id="feed" aria-live="polite"></section>
 </div>
 
-<section class="how">
-  <div><h3>Attention first</h3><p>Daily reading and search data show what people went looking for, and exactly when they started.</p></div>
-  <div><h3>Then behaviour</h3><p>Borrowing, buying, signing up: did attention turn into doing? Where it didn't, the map says so.</p></div>
-  <div><h3>Then the world</h3><p>Charts, sales, laws. Public records, dated and sourced, placed where they fall in time.</p></div>
-  <div><h3>Order, not a web</h3><p>A step that began before the step before it is dropped. A ripple is cause and effect in sequence, not a cloud of related topics.</p></div>
+<section class="how" id="how" hidden>
+  <div><h3>Rings are time</h3><p>The stone is the event. Each ring is time since it happened, so ripples land where they began. Separate ripples get their own slice, labeled with the industry they reached.</p></div>
+  <div><h3>Order, not a web</h3><p>Every step must begin after the step before it. A step that started first is busted, however related it looks.</p></div>
+  <div><h3>How sure</h3><p><b>Measured</b>: moved beyond normal in the data, after the step before. <b>Timed</b>: rose in the right order, not tested against chance. <b>Reported</b>: a credible source makes the link. <b>Plausible</b>: it happened; the link is unproven. <b>Busted</b>: wrong order, contradicted, or no evidence.</p></div>
+  <div><h3>The data</h3><p>Daily Wikipedia views, FRED and BLS series, Census retail sales, Zillow home values, Stack Overflow, US baby names and dated public records.</p></div>
 </section>
 <p class="foot">An early prototype. Attention is measured from daily Wikipedia views; library borrowing from Seattle Public Library open data; records are linked to their sources. Timing shows order, not proof of cause. The full maps, with every test and every miss: <a href="/ripples/discover/maps/">ripple maps</a> · <a href="/ripples/discover/">discoveries</a>.</p>
 
@@ -152,25 +164,21 @@ body.reel header{max-width:760px;padding-top:22px}
 const EVENTS = [
   {slug:"tiger-king", chip:"Tiger King", h1:"Tiger King → a federal law, 1,005 days later",
    sub:"Netflix's lockdown hit sent millions to read about big cats. Then Congress moved. The bill predates the show, so this shows order, not proof of cause.",
-   stone:"Tiger King", nodes:{1:{l:"Exotic pets",a:-55},2:{l:"Wildlife trade",a:-10,p:1},4:{l:"House passes Big Cat Act",a:40,p:2,lv:"plausible"},5:{l:"Big Cat Act becomes law",a:95,p:4,lv:"plausible"}},
+   stone:"Tiger King", slices:{main:"Wildlife law"}, nodes:{1:{l:"Exotic pets",a:-55},2:{l:"Wildlife trade",a:-10,p:1},4:{l:"House passes Big Cat Act",a:40,p:2,lv:"plausible"},5:{l:"Big Cat Act becomes law",a:95,p:4,lv:"plausible"}},
    next:{l:"Big-cat sanctuary visits",a:-120,d:400,p:1,t:"Did visits and donations to accredited sanctuaries rise after the show?"}},
-  {slug:"stranger-things-4", chip:"Stranger Things", h1:"Stranger Things → Kate Bush at No. 1, 44 years on",
-   sub:"One scene put a 1985 song back on top of the charts. A second ripple went to Dungeons & Dragons at the same time.",
-   stone:"Stranger Things 4", nodes:{1:{l:"Kate Bush",a:-35},2:{l:"Dungeons & Dragons",a:-145},4:{l:"UK No. 1",a:35,p:1}},
-   next:{l:"Vinyl and streaming",a:95,d:60,p:1,t:"Did sales of Hounds of Love on vinyl rise, and did 1980s back-catalogue streams follow?"}},
   {slug:"queens-gambit", chip:"The Queen's Gambit", h1:"The Queen's Gambit → chess sets sold out",
    sub:"A drama about a fictional prodigy sent people to the game, then to the gear, then to the shops.",
-   stone:"The Queen's Gambit", nodes:{1:{l:"Chess",a:-40},2:{l:"Chess sets",a:20,p:1},4:{l:"Chess sets sell +87%",a:80,p:2}},
+   stone:"The Queen's Gambit", slices:{main:"Retail: chess sets"}, nodes:{1:{l:"Chess",a:-40},2:{l:"Chess sets",a:20,p:1},4:{l:"Chess sets sell +87%",a:80,p:2}},
    next:{l:"Clubs and tournaments",a:150,d:120,p:2,t:"Did new players join clubs and rated tournaments, and did they stay?"}},
   {slug:"chernobyl", chip:"Chernobyl", h1:"Chernobyl → tourists to the exclusion zone",
    sub:"A TV drama about a 1986 disaster sent readers to the real story, then to the reactor, then on tours to Pripyat.",
-   stone:"Chernobyl", nodes:{1:{l:"The real disaster",a:-50},2:{l:"The reactor (RBMK)",a:0,p:1},4:{l:"Zone tours +30%",a:60,p:2}},
+   stone:"Chernobyl", slices:{main:"Tourism"}, nodes:{1:{l:"The real disaster",a:-50},2:{l:"The reactor (RBMK)",a:0,p:1},4:{l:"Zone tours +30%",a:60,p:2}},
    next:{l:"Nuclear power opinion",a:140,d:180,p:2,t:"Did interest in nuclear power, and polling on it, shift after the series?"}},
 ];
 const BADGE = {tested:"Measured",timed:"Timed",record:"Reported",event:"The event",next:"Next"};
 const LV = {tested:"measured", timed:"timed", record:"reported"};
 const LVL = {measured:"Measured", timed:"Timed", reported:"Reported", plausible:"Plausible", busted:"Busted"};
-const FEATURED = ["planet-earth", "jurassic-park", "ice-bucket", "frozen", "wardrobe-malfunction", "ethanol-tortilla"];
+const FEATURED = ["frozen", "planet-earth", "jurassic-park", "ice-bucket", "tylenol", "wardrobe-malfunction", "ethanol-tortilla"];
 let CHAINS = null;
 const COL = {tested:"var(--good)",timed:"var(--marigold)",record:"var(--rec)",event:"var(--marigold)"};
 const NS = "http://www.w3.org/2000/svg", C = {x:350,y:330}, R = 290, DUR = 13000;
@@ -187,7 +195,7 @@ function el(tag, attrs = {}, parent) {
   if (parent) parent.appendChild(e);
   return e;
 }
-const fmt = d => d.toLocaleDateString("en-GB", {day:"numeric", month:"short", year:"numeric", timeZone:"UTC"});
+const fmt = d => d.toLocaleDateString("en-US", {month:"short", day:"numeric", year:"numeric", timeZone:"UTC"});
 const addDays = (iso, n) => new Date(Date.parse(iso + "T00:00:00Z") + n * 864e5);
 function sinceLabel(d) {
   d = Math.round(d);
@@ -227,71 +235,82 @@ function build(ev, data) {
   const items = [];
   for (const [i, cfg] of Object.entries(ev.nodes)) {
     const s = steps[+i]; if (!s || s.days == null) continue;
-    items.push({i:+i, s, cfg, d:Math.max(s.days, 0.5), ev:s.evidence});
-    (s.also || []).forEach((a, k) => items.push({minor:true, s:{title:a.name}, cfg:{l:a.name, a:cfg.a + (k ? -1 : 1) * 24, p:cfg.p}, d:Math.max(a.days, 0.5), ev:s.evidence, of:+i}));
+    items.push({i:+i, s, cfg, d:Math.max(s.days, 0.5), ev:s.evidence, slice:cfg.s || "main"});
   }
   const n = ev.next;
-  items.push({next:true, s:{title:n.l}, cfg:n, d:n.d, ev:"next"});
+  items.push({next:true, s:{title:n.l}, cfg:n, d:n.d, ev:"next", slice:n.s || "main"});
   for (const it of items) it.lv = it.next ? null : it.cfg.lv || LV[it.ev] || "timed";
-  draw(ev, data, items, ev.stone, iso0);
+  draw(ev, data, items, ev.stone, iso0, ev.slices);
   buildFeed(ev, data, items);
 }
 
-function draw(ev, data, items, stoneLabel, iso0) {
+function draw(ev, data, items, stoneLabel, iso0, sliceNames) {
+  // Layout: rings are time since the event (log scale). Each distinct ripple gets its own pie slice; its steps move
+  // outward along the slice as time passes, and the slice's rim carries the industry it reached.
   const svg = $("#pond"); svg.textContent = "";
   const today = (Date.now() - Date.parse(iso0 + "T00:00:00Z")) / 864e5;  // the clock never runs past today
-  const max = Math.min(Math.max(...items.map(x => x.d)) * 1.25, Math.max(today, Math.max(...items.map(x => x.d)) + 1));
-  // rings
-  const rings = [[1,"1 day"],[7,"1 week"],[30,"1 month"],[91,"3 months"],[365,"1 year"],[1096,"3 years"],[3653,"10 years"],[7305,"20 years"]].filter(([d]) => d < max);
+  const dmax = Math.max(...items.map(x => x.d));
+  const max = Math.min(dmax * 1.25, Math.max(today, dmax + 1));
+  const keys = [...new Set(items.map(x => x.slice))], n = keys.length, w = 360 / n;
+  const center = k => n === 1 ? 0 : -180 + (keys.indexOf(k) + 0.5) * w;
   const g0 = el("g", {}, svg);
+  if (n > 1) keys.forEach((k, i) => {  // faint wedges and boundaries
+    const a1 = center(k) - w / 2, a2 = center(k) + w / 2, p1 = polar(R + 6, a1), p2 = polar(R + 6, a2), q = polar(36, a1);
+    el("path", {class:"wedge" + (i % 2 ? " alt" : ""), d:`M${C.x},${C.y} L${p1.x},${p1.y} A${R + 6},${R + 6} 0 ${w > 180 ? 1 : 0} 1 ${p2.x},${p2.y} Z`}, g0);
+    el("line", {class:"slicebd", x1:q.x, y1:q.y, x2:p1.x, y2:p1.y}, g0);
+  });
+  const rings = [[1,"1 day"],[7,"1 week"],[30,"1 month"],[91,"3 months"],[365,"1 year"],[1096,"3 years"],[3653,"10 years"],[7305,"20 years"]].filter(([d]) => d < max);
   for (const [d, lbl] of rings) {
     const r = radius(d, max);
     el("circle", {class:"ring", cx:C.x, cy:C.y, r}, g0);
-    el("text", {class:"ringlbl", x:C.x + r * 0.71 + 4, y:C.y + r * 0.71 + 12}, g0).textContent = lbl;
+    el("text", {class:"ringlbl", x:C.x, y:C.y + r - 4, "text-anchor":"middle"}, g0).textContent = lbl;
   }
+  // rim labels: the industry each ripple reached, written along the outer edge (upright on the lower half)
+  keys.forEach((k, i) => {
+    const c = center(k), half = n === 1 ? 55 : Math.min(w / 2 - 6, 70), low = Math.abs(c) > 90;
+    const rr = low ? R + 22 : R + 12, a1 = c - half, a2 = c + half;
+    const s1 = polar(rr, low ? a2 : a1), s2 = polar(rr, low ? a1 : a2);
+    el("path", {id:`rim${i}`, d:`M${s1.x},${s1.y} A${rr},${rr} 0 0 ${low ? 0 : 1} ${s2.x},${s2.y}`, fill:"none"}, g0);
+    const t = el("text", {class:"rimlbl"}, g0), tp = el("textPath", {href:`#rim${i}`, startOffset:"50%", "text-anchor":"middle"}, t);
+    tp.textContent = (sliceNames && sliceNames[k]) || "";
+  });
   const waves = el("g", {}, svg), edges = el("g", {}, svg), lbls = el("g", {}, svg), nodes = el("g", {}, svg);
-  // stone
   const stone = el("g", {class:"stone"}, svg);
   const sHalo = el("circle", {cx:C.x, cy:C.y, r:22, fill:"var(--marigold-soft)"}, stone);
   el("circle", {cx:C.x, cy:C.y, r:13, fill:"var(--marigold)"}, stone);
   const st = el("text", {x:C.x, y:C.y + 40, "text-anchor":"middle"}, stone); st.textContent = stoneLabel;
-  // nodes and edges
+  // positions: along the slice's center line, alternating slightly either side so labels do not collide
+  for (const k of keys) {
+    const its = items.filter(x => x.slice === k).sort((a, b) => a.d - b.d), off = n === 1 ? 16 : Math.min(w * 0.12, 9);
+    its.forEach((it, j) => { it.r = radius(it.d, max); it.pos = polar(it.r, center(k) + (j % 2 ? off : -off)); it.ca = center(k); });
+  }
   for (const it of items) {
-    it.r = radius(it.d, max); it.pos = polar(it.r, it.cfg.a);
-    const parent = it.minor ? null : items.find(x => !x.minor && !x.next && x.i === it.cfg.p);
+    const parent = items.find(x => !x.next && x.i === it.cfg.p && x !== it);
     const from = parent ? parent.pos : C;
-    it.from = from;
-    const mx = (from.x + it.pos.x) / 2, my = (from.y + it.pos.y) / 2;
-    const bend = it.minor ? 0 : 0.18, cx = mx + (C.y - my) * bend * 0.0 - (it.pos.y - from.y) * bend, cy = my + (it.pos.x - from.x) * bend;
-    const path = el("path", {class:"edge" + (it.next ? " ghost" : ` l-${it.lv}`), d:`M${from.x},${from.y} Q${cx},${cy} ${it.pos.x},${it.pos.y}`}, edges);
-    if (it.minor) path.style.strokeWidth = 1.2, path.style.opacity = .55;
+    const path = el("path", {class:"edge" + (it.next ? " ghost" : ` l-${it.lv}`), d:`M${from.x},${from.y} L${it.pos.x},${it.pos.y}`}, edges);
     const L = path.getTotalLength(); it.path = path; it.L = L;
     it.dashed = it.next || it.lv === "plausible" || it.lv === "busted";
     if (!it.dashed) path.style.strokeDasharray = `${L} ${L}`;
-    if (!it.minor && !it.next) {  // the confidence label sits on the line itself, so a screenshot keeps it
-      const m = path.getPointAtLength(L / 2);
-      it.lbl = el("text", {class:`elbl l-${it.lv}`, x:m.x, y:m.y - 6, "text-anchor":"middle"}, lbls);
+    if (!it.next && L > 46) {  // the confidence label sits on the line itself, so a screenshot keeps it
+      const m = path.getPointAtLength(L / 2), ang = Math.atan2(it.pos.y - from.y, it.pos.x - from.x) * 180 / Math.PI;
+      const rot = ang > 90 || ang < -90 ? ang + 180 : ang;
+      it.lbl = el("text", {class:`elbl l-${it.lv}`, x:m.x, y:m.y - 5, "text-anchor":"middle", transform:`rotate(${rot.toFixed(1)} ${m.x} ${m.y})`}, lbls);
       it.lbl.textContent = it.lvText || LVL[it.lv];
     }
-    const g = el("g", {class:"node" + (it.minor ? " minor" : "") + (it.lv === "busted" ? " busted" : ""), tabindex:it.minor ? -1 : 0}, nodes);
+    const g = el("g", {class:"node" + (it.lv === "busted" ? " busted" : ""), tabindex:0}, nodes);
     const col = it.next ? "none" : it.lv === "busted" ? "var(--miss)" : it.lv === "measured" ? "var(--good)" : it.lv === "reported" ? "var(--rec)" : "var(--marigold)";
-    it.halo = el("circle", {class:"halo", cx:it.pos.x, cy:it.pos.y, r:0, fill:it.ev === "tested" ? "var(--good-soft)" : "var(--marigold-soft)"}, g);
-    it.dot = el("circle", {cx:it.pos.x, cy:it.pos.y, r:it.minor ? 4 : 8, fill:col, stroke:it.next ? "var(--ink-3)" : "none", "stroke-width":1.5, "stroke-dasharray":it.next ? "3 3" : ""}, g);
-    const right = it.pos.x >= C.x - 4;
-    const tx = it.minor ? el("text", {x:it.pos.x, y:it.pos.y - 10, "text-anchor":"middle"}, g)
-      : el("text", {x:it.pos.x + (right ? 14 : -14), y:it.pos.y + 4, "text-anchor":right ? "start" : "end"}, g);
-    // wrap long labels onto two lines of about 22 characters
+    it.halo = el("circle", {class:"halo", cx:it.pos.x, cy:it.pos.y, r:0, fill:it.lv === "measured" ? "var(--good-soft)" : "var(--marigold-soft)"}, g);
+    it.dot = el("circle", {cx:it.pos.x, cy:it.pos.y, r:7, fill:col, stroke:it.next ? "var(--ink-3)" : "none", "stroke-width":1.5, "stroke-dasharray":it.next ? "3 3" : ""}, g);
+    const right = Math.sin(it.ca * Math.PI / 180) > -0.2 ? (it.pos.x >= C.x - 4) : false;
+    const tx = el("text", {x:it.pos.x + (right ? 12 : -12), y:it.pos.y + 4, "text-anchor":right ? "start" : "end"}, g);
     const words = it.cfg.l.split(" "), lines = [""];
-    for (const w of words) { if ((lines[lines.length - 1] + " " + w).trim().length > 22 && lines[lines.length - 1]) lines.push(w); else lines[lines.length - 1] = (lines[lines.length - 1] + " " + w).trim(); }
-    if (it.minor || lines.length === 1) tx.textContent = it.cfg.l;
-    else lines.slice(0, 2).forEach((ln, k) => { const ts = el("tspan", {x:tx.getAttribute("x"), dy:k ? 16 : 0}, tx); ts.textContent = k === 1 && lines.length > 2 ? ln + "…" : ln; });
-    const extra = !it.minor && lines.length > 1 ? 16 : 0;
-    if (!it.minor) {
-      const sub = el("text", {class:"s", x:it.pos.x + (right ? 14 : -14), y:it.pos.y + 19 + extra, "text-anchor":right ? "start" : "end"}, g);
-      sub.textContent = it.next ? "looking for…" : it.undated ? "undated" : sinceLabel(it.s.days);
-      g.addEventListener("click", () => focus(it));
-      g.addEventListener("keydown", e => { if (e.key === "Enter") focus(it); });
-    }
+    for (const wd of words) { if ((lines[lines.length - 1] + " " + wd).trim().length > 20 && lines[lines.length - 1]) lines.push(wd); else lines[lines.length - 1] = (lines[lines.length - 1] + " " + wd).trim(); }
+    if (lines.length === 1) tx.textContent = it.cfg.l;
+    else lines.slice(0, 2).forEach((ln, k) => { const ts = el("tspan", {x:tx.getAttribute("x"), dy:k ? 15 : 0}, tx); ts.textContent = k === 1 && lines.length > 2 ? ln + "…" : ln; });
+    const sub = el("text", {class:"s", x:it.pos.x + (right ? 12 : -12), y:it.pos.y + 18 + (lines.length > 1 ? 15 : 0), "text-anchor":right ? "start" : "end"}, g);
+    sub.textContent = it.next ? "looking for…" : it.undated ? "undated" : sinceLabel(it.s.days);
+    g.addEventListener("click", () => focus(it));
+    g.addEventListener("keydown", e => { if (e.key === "Enter") focus(it); });
     it.g = g;
   }
   cur = {ev, data, items, max, waves, sHalo, stone, iso0, splashed:false};
@@ -300,19 +319,19 @@ function draw(ev, data, items, stoneLabel, iso0) {
 // ---------- checked chains (ripples/docs/results/chain_check_v1.json) ----------
 function chainLevel(st) {
   const v = st.verdict || "", why = st.reason || st.note || "";
-  if (/wrong order|before the step/.test(v)) return ["busted", "Busted", st.test.type === "record" ? "This came before the step it is said to follow." : "It began before the step before it."];
-  if (/contradicted/.test(v)) return ["busted", "Busted", `Contradicted. ${why}`];
-  if (/no evidence/.test(v)) return ["busted", "Busted", "No evidence found that this happened as described." + (why && !/^desk check: no evidence/.test(why) ? ` (${why}.)` : "")];
-  if (/contested|unverified/.test(v)) return ["busted", "Disputed", why];
-  if (/not yet/.test(v)) return ["busted", "Not yet", why];
+  if (/wrong order|before the step/.test(v)) return ["busted", "Busted", st.test.type === "record" ? "This came before the step it is said to follow." : "It began before the step before it.", "Came before its cause"];
+  if (/contradicted/.test(v)) return ["busted", "Busted", `Contradicted. ${why}`, "Contradicted"];
+  if (/no evidence/.test(v)) return ["busted", "Busted", "No evidence found that this happened as described." + (why && !/^desk check: no evidence/.test(why) ? ` (${why}.)` : ""), "No evidence it happened"];
+  if (/contested|unverified/.test(v)) return ["busted", "Disputed", why, "Disputed by later research"];
+  if (/not yet/.test(v)) return ["busted", "Not yet", why, "Hasn't happened yet"];
   if (v === "measured") {
     const t = st.ratio ? `Rose to ${st.ratio}× its normal level from ${fmt(new Date(st.onset))}` : `Moved further than in ${Math.round((1 - st.p) * 100)}% of other periods`;
-    return ["measured", "Measured", `${t} (p = ${st.p}), after the step before.`];
+    return ["measured", "Measured", `${t} (p = ${st.p}), after the step before.`, st.ratio ? `${st.ratio}× normal · p = ${st.p}` : `Beyond ${Math.round((1 - st.p) * 100)}% of other periods · p = ${st.p}`];
   }
-  if (v.startsWith("timed")) return ["timed", "Timed", st.new_article ? `Its Wikipedia article appeared on ${fmt(new Date(st.new_article))}, after the step before.` : `A sustained rise from ${fmt(new Date(st.onset))}, after the step before.`];
-  if (st.link === "reported") return ["reported", "Reported", st.link_why ? st.link_why[0].toUpperCase() + st.link_why.slice(1) + "." : ""];
-  if (v === "no movement") return ["plausible", "Plausible", "No unusual rise in the data we checked."];
-  return ["plausible", "Plausible", why || "It happened; the causal link is unproven."];
+  if (v.startsWith("timed")) return ["timed", "Timed", st.new_article ? `Its Wikipedia article appeared on ${fmt(new Date(st.new_article))}, after the step before.` : `A sustained rise from ${fmt(new Date(st.onset))}, after the step before.`, "Rose after the step before"];
+  if (st.link === "reported") return ["reported", "Reported", st.link_why ? st.link_why[0].toUpperCase() + st.link_why.slice(1) + "." : "", "A credible source makes the link"];
+  if (v === "no movement") return ["plausible", "Plausible", "No unusual rise in the data we checked.", "Happened; no unusual rise in our data"];
+  return ["plausible", "Plausible", why || "It happened; the causal link is unproven.", "Happened; the link is unproven"];
 }
 
 const SRC = st => ({fred:`FRED series ${st.test.id}`, stackex:"Stack Overflow new questions per month (Stack Exchange API)", zillow:"Zillow Home Value Index, Zoom towns minus US",
@@ -324,17 +343,19 @@ function buildChain(ch) {
   steps.forEach((st, k) => {
     let d = st.onset ? (Date.parse(st.onset) - Date.parse(iso0)) / 864e5 : null;
     const undated = d === null;
-    if (undated) d = prevD * 1.8 + 20;
+    if (undated) d = Math.max(30, prevD * 4);  // undated steps are spaced out beyond the last dated one, in claimed order
     d = Math.max(d, 0.5);
     if (!st.branch) prevD = Math.max(prevD, d);
-    const [lv, lvText, why] = chainLevel(st);
+    const [lv, lvText, why, short] = chainLevel(st);
     const series = st.weekly ? {weekly: st.weekly} : st.points ? {weekly: st.points} : null;
     items.push({i:st.n, s:{title:st.claim, days:d, spark:series, st}, cfg:{l:st.claim,
-      a:-80 + k * (160 / Math.max(1, n - 1)), p:st.branch ? null : (k ? steps[k - 1].n : null)}, d, lv, lvText, why, undated});
+      p:st.branch ? null : (k ? steps.slice(0, k).filter(x => !x.branch).map(x => x.n).pop() ?? null : null)}, d, lv, lvText, why, short, undated,
+      slice:st.branch ? `b${st.n}` : "main"});
   });
   const ev = {slug:ch.slug, stone:ch.title.split(/,| and | → |\s\(/)[0].trim()};
   const data = {release:iso0, steps:[{series:null}]};
-  draw(ev, data, items, ev.stone, iso0);
+  const names = {main:ch.vertical || ""}; ch.steps.forEach(x => { if (x.branch) names[`b${x.n}`] = x.vertical || ""; });
+  draw(ev, data, items, ev.stone, iso0, names);
   // feed
   const f = $("#feed"); f.textContent = "";
   const s0 = ch.steps[0];
@@ -346,7 +367,8 @@ function buildChain(ch) {
     const happened = st.test.type === "record" ? `<p class="src">${st.source || st.test.source}</p>` :
       st.test.type === "none" ? "" : `<p class="src">${st.found ? "Wikipedia daily views: " + Object.keys(st.found).filter(k => st.found[k]).join(", ") : SRC(st)}</p>`;
     cards.push({d:it.d, it, cls:it.lv === "busted" ? "busted" : "", html:`<div class="top"><div class="when">${when}</div><span class="b l-${it.lv}">${it.lvText}</span></div>
-      <h2>${st.claim}</h2>${it.s.spark ? spark(it.s.spark, st.ref) : ""}<p class="link"><b>The link:</b> ${it.why}</p>${st.note && st.note !== it.why ? `<p>${st.note}</p>` : ""}${happened}`});
+      <h2>${st.claim}</h2>${it.s.spark ? spark(it.s.spark, st.ref) : ""}<p class="short">${it.short}</p>
+      <details><summary>Why</summary><p>${it.why}</p>${st.note && st.note !== it.why ? `<p>${st.note}</p>` : ""}${happened}</details>`});
   }
   cards.sort((a, b) => a.d - b.d);
   for (const c of cards) {
@@ -392,7 +414,7 @@ function buildFeed(ev, data, items) {
   const f = $("#feed"); f.textContent = "";
   const e0 = data.steps[0];
   const cards = [{d:0, html:`<div class="top"><div class="when">${fmt(addDays(data.release, 0))}<span>Day 0</span></div><span class="b event">The event</span></div>
-    <h2>${e0.title}</h2>${spark(e0.series, data.release)}<p class="src">${e0.measure}</p>`, series:e0.series}];
+    <h2>${e0.title}</h2>${spark(e0.series, data.release)}`, series:e0.series}];
   for (const it of items) {
     if (it.minor) continue;
     const s = it.s;
@@ -404,11 +426,12 @@ function buildFeed(ev, data, items) {
     const also = s.also ? `<p>Also: ${s.also.map(a => `${a.name} (${sinceLabel(a.days)})`).join(", ")}</p>` : "";
     const src = s.source ? `<p class="src"><a href="${s.source}" rel="noopener" target="_blank">${s.measure}</a></p>` : `<p class="src">${s.measure || ""}</p>`;
     cards.push({d:it.d, it, series:s.series, html:`<div class="top"><div class="when">${fmt(addDays(data.release, s.days))}<span>${sinceLabel(s.days)}</span></div><span class="b ${it.ev}">${BADGE[it.ev]}</span></div>
-      <h2>${s.title}</h2>${s.series ? spark(s.series, data.release) : ""}${facts}${s.note ? `<p>${s.note}</p>` : ""}${also}${src}`});
+      <h2>${s.title}</h2>${s.series ? spark(s.series, data.release) : ""}${facts}
+      ${s.note || also || s.measure ? `<details><summary>Details</summary>${s.note ? `<p>${s.note}</p>` : ""}${also}${src}</details>` : ""}`});
   }
-  // honest misses: behaviour steps that were checked and not counted
-  for (const s of data.steps) if (s.kind === "behaviour" && s.evidence !== "tested")
-    cards.push({d:Math.min(30, cur ? cur.max : 30), cls:"miss", html:`<div class="top"><div class="when">Checked</div><span class="b next">Not counted</span></div><h2>${s.title}: ${s.why || "no clear rise"}.</h2><p class="src">${s.measure}</p>`});
+  // honest misses: behavior steps that were checked and not counted
+  for (const s of data.steps) if (s.kind === "behavior" && s.evidence !== "tested")
+    cards.push({d:Math.min(30, cur ? cur.max : 30), cls:"miss", html:`<div class="top"><div class="when">Checked</div><span class="b next">Not counted</span></div><h2>${s.title}</h2><p class="short">${s.why ? s.why[0].toUpperCase() + s.why.slice(1) : "No clear rise"}</p>`});
   cards.sort((a, b) => a.d - b.d);
   for (const c of cards) {
     const div = document.createElement("article");
@@ -527,7 +550,7 @@ EVENTS.forEach((ev, i) => { const b = document.createElement("button"); b.classN
 const soon = document.createElement("span"); soon.className = "chip soon"; soon.textContent = "Any event: coming"; pk.appendChild(soon);
 lbl("Checked chains: viral “butterfly effect” stories, link by link");
 const NAMES = {"planet-earth":"Planet Earth → the STURDY Act", "jurassic-park":"Jurassic Park → seized fossils", "ice-bucket":"Ice Bucket → an ALS gene",
-  "frozen":"Frozen → baby Elsas", "wardrobe-malfunction":"Super Bowl 2004 → YouTube", "ethanol-tortilla":"Ethanol law → tortilla riots?"};
+  "frozen":"Frozen → baby Elsas", "tylenol":"Tylenol → caplets", "wardrobe-malfunction":"Super Bowl 2004 → YouTube", "ethanol-tortilla":"Ethanol law → tortilla riots?"};
 FEATURED.forEach(slug => { const b = document.createElement("button"); b.className = "chip"; b.dataset.c = slug; b.textContent = NAMES[slug]; b.onclick = () => showChain(slug); pk.appendChild(b); });
 const sel = document.createElement("select"); sel.className = "chip"; sel.id = "allchains"; sel.setAttribute("aria-label", "All checked chains");
 sel.innerHTML = '<option value="">All checked chains…</option>';
@@ -537,6 +560,7 @@ fetch("/ripples/docs/results/chain_check_v1.json").then(r => r.json()).then(d =>
   CHAINS = d.chains;
   for (const c of [...CHAINS].sort((a, b) => a.title.localeCompare(b.title))) { const o = document.createElement("option"); o.value = c.slug; o.textContent = c.title; sel.appendChild(o); }
 }).catch(() => {});
+$("#howbtn").onclick = () => { const h = $("#how"), open = h.hidden; h.hidden = !open; $("#howbtn").setAttribute("aria-expanded", open); if (open) h.scrollIntoView({behavior:"smooth", block:"start"}); };
 $("#play").onclick = () => { if (t >= 1) t = 0; setPlaying(!playing); };
 $("#scrub").oninput = e => { t = e.target.value / 1000; setPlaying(false); render(); };
 if (params.get("c")) showChain(params.get("c"), playing);

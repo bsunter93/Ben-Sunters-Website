@@ -31,7 +31,7 @@ The violations were all in the older Knock-On `ripples-*` pipeline and in one cr
      - A 401 or 403 was not treated as a stop, so the host was retried on the next geo and again every hour. That breaks hard rule 3 and DEMARCATION §7.3.
    - **What changed:**
      - robots.txt is now checked for both hosts, with a 24 h cache in `att_state` under `kn.robots:<origin>`.
-     - The shared kill switch (`kill:<host>`) is honoured.
+     - The shared kill switch (`kill:<host>`) is honored.
      - A 429 or 503 now calls `att_host_kill`, which stops the host for the UTC day.
      - A 401 or 403, or a redirect to a login, consent or "sorry" page, is a permanent kill.
      - A redirect to another host skips that host for the run.
@@ -76,7 +76,7 @@ The violations were all in the older Knock-On `ripples-*` pipeline and in one cr
 | dumps.wikimedia.org | att-wiki (clickstream) | G | yes | PASS; not called yet |
 | jetstream1/2.us-east.bsky.network | att-social | G | yes (404 = allow) | PASS. Custom WS client with honest UA; 401/403/429/503 on upgrade triggers a kill. |
 | hn.algolia.com | att-social, att-library | G | yes (404) | PASS |
-| api.stackexchange.com | att-social | Y | yes (400, treated as allow) | PASS. It honours `backoff`, and a throttle violation (502) triggers a kill. |
+| api.stackexchange.com | att-social | Y | yes (400, treated as allow) | PASS. It honors `backoff`, and a throttle violation (502) triggers a kill. |
 | mastodon.social, mstdn.jp | att-social | Y | yes (200) | PASS |
 | data.gdeltproject.org | att-news | G | yes (404) | PASS. The DOC API (`api.gdeltproject.org/api/v2/doc`) is RED-listed and never called. |
 | archive.org (Third Eye) | att-news | Y | yes (200) | PASS |
@@ -242,7 +242,7 @@ That is inside the limit but with little headroom.
    - **Fix:** publish the methods page, or add an owner contact to both UAs; the latter also unblocks SEC EDGAR.
    - I did not gate the Knock-On pipeline, because doing so would stop the daily puzzle.
 2. **The Knock-On pipeline does not read the shared att kill switch for Wikimedia.** Today att-core's backfill got a 429 at 04:05. The Knock-On tick ran 06:00–08:59 against the same IP and got 0 errors. Decide whether one 429 on the shared IP should pause both systems for the rest of the day, which is the strict reading of §7.3.
-3. **`kn.ts` AQS retry timing.** It waits for `Retry-After` up to 20 s before its single retry. The lead decision reads "one retry after 5 s at most". This is minor, and the longer wait is the more polite behaviour. Align the text or the code.
+3. **`kn.ts` AQS retry timing.** It waits for `Retry-After` up to 20 s before its single retry. The lead decision reads "one retry after 5 s at most". This is minor, and the longer wait is the more polite behavior. Align the text or the code.
 4. **`wikidata.entity` has robots_required=true.** Its only URL is `www.wikidata.org/w/api.php`, and robots.txt disallows `/w/`, so `att-wikidata` will get `robots_disallow` on every call once the contact gate opens. This is over-cautious, not a violation. Set it to false under §7.1, or move to `Special:EntityData`.
 5. **api.stackexchange.com robots.txt returns 400.** The code treats a 400 as "no robots.txt, allowed". DEMARCATION Q3 only names 401/403/5xx as a deny, so this is compliant, but note it.
 6. **Concurrent edits.** Local `att-econ/index.ts` (`ECON_VERSION` e4, modified 20:16) is newer than the last version reported by a run (e3). Other builders were editing while this audit ran. The `att-*` checks above are based on the local sources plus live DB evidence (robots cache, kill records and the HTTP status log), and every deployed `att-*` run reports `ATT_VERSION 2026-09-25.3`. Re-run the RED grep after the final deploys.

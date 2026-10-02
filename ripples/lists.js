@@ -43,7 +43,7 @@ export async function archivePage() {
   const a = (await D.archive()) || [];
   const recon = a.filter(x => x.reconstructed).sort((x, y) => String(x.onset).localeCompare(String(y.onset)));
   const closed = a.filter(x => !x.reconstructed && x.status !== 'running').sort((x, y) => String(x.onset).localeCompare(String(y.onset)));
-  put(main, h('h1', { class: 'h1' }, 'Archive'), h('p', { class: 'lede' }, 'Closed lines, oldest to newest, including the ones that went nowhere. Reconstructed lines were run afterwards on past shocks with the same frozen method; they are labelled every time they appear.'),
+  put(main, h('h1', { class: 'h1' }, 'Archive'), h('p', { class: 'lede' }, 'Closed lines, oldest to newest, including the ones that went nowhere. Reconstructed lines were run afterwards on past shocks with the same frozen method; they are labeled every time they appear.'),
     h('h2', { class: 'h2 sec' }, 'Reconstructed archive'), recon.length ? h('div', { class: 'list' }, recon.map(x => lineRow(x))) : h('p', { class: 'empty' }, 'The reconstructed archive is not published yet.'),
     h('h2', { class: 'h2 sec' }, 'Closed lines'), closed.length ? h('div', { class: 'list' }, closed.map(x => lineRow(x))) : h('p', { class: 'empty' }, 'No live line has closed yet. Lines close when every window has shut.'),
     h('p', { class: 'sm', style: 'margin-top:16px' }, h('a', { class: 'lnk', href: '/ripples/map/' }, 'Lines from the last 30 days')));

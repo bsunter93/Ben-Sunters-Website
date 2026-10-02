@@ -115,7 +115,7 @@ What the owner has said, and what it means for the work:
 - **One shock, many outcomes.** "You can't really link it one to one. It's more like one to many." Caveat several possible
   outcomes rather than forcing a single story.
 - **Resilience is a finding.** Florida is built to absorb hurricanes, so the first ripple may just die out there
-  ("less power use → absorbed by the grid"). Look well beyond power and gas for unintuitive behaviours and outcomes
+  ("less power use → absorbed by the grid"). Look well beyond power and gas for unintuitive behaviors and outcomes
   traced to the same shock, in Florida and elsewhere.
 - **Anomaly-first, not list-first** (latest direction): "it can't be based on a rigid list, the chance of the overlap
   is too small. Start at the anomalies, whatever they might be, and see if there are links you can draw and
@@ -146,7 +146,7 @@ Earlier binding decisions D-1..D-16 (story layer, information-exploration game, 
   429/503 with no retry that day. No bypassing blocks, CAPTCHAs or bot walls. No spoofed UA, proxies or IP rotation.
   Aggregate counts only; no personal data. The SEC contact email goes only to sec.gov.
 - Statistics: every test is pre-registered in the hash-chained ledger (`ripples.att_ledger_append(day, kind, ref,
-  payload)`) **before** any result exists. Deviations are disclosed as ledger entries, and late disclosures are labelled
+  payload)`) **before** any result exists. Deviations are disclosed as ledger entries, and late disclosures are labeled
   as late. Confirmations must also pass the seasonal robustness check, otherwise they are withheld. Public RPCs exclude
   withheld / not testable / superseded batches.
 
@@ -233,7 +233,7 @@ Why the engine only found obvious links (diagnosis given to the owner):
 1. It only measured first-order things, about 15 outcomes (now widened by b6 and b8).
 2. The shock catalog started in 2019 (b7 fixes this, but for jobs outcomes the usable window is effectively 2011–2023,
    because first-release data starts in 2005 and 2008–09 and the pandemic are excluded).
-3. The rigor gates favour big direct effects.
+3. The rigor gates favor big direct effects.
 4. The data is state-level and monthly, which is coarse.
 
 ## 6. What was running at the session-1 handoff (03:34 UTC; superseded by section 0)
@@ -301,16 +301,16 @@ Historical shocks join the clean-control mask, so build them **before** freezing
 
 ## 8. Next product work (agreed direction, not built yet)
 
-- **Wire b8 into the pages.** For a shock, show the anomalies in its footprint afterwards, each labelled "attributed"
+- **Wire b8 into the pages.** For a shock, show the anomalies in its footprint afterwards, each labeled "attributed"
   (confirmed link), "consistent with a pattern" (screened only) or "unexplained". This is the core of the owner's
   anomaly-first vision and needs new fields in `att_explorer_shock` plus a UI.
 - **Lane 2: national series with no geography** (Wikipedia, news, social, prediction markets, about 12k series). This
   needs a timing-only design: many events plus fake-date nulls. It is weaker evidence than place-based tests and must be
-  labelled as such.
+  labeled as such.
 - **Decade phase 2:**
   - Annual population outcomes 1–5 years out (IRS migration, County Business Patterns, births, school enrollment).
   - "Analog matching": compare a recent shock's early path with look-alike historical shocks and show what followed,
-    labelled as a lead rather than a finding for this shock.
+    labeled as a lead rather than a finding for this shock.
 - **Absorbed vs not:** compare the same kind of shock in a resilient place and a non-resilient one (Florida vs North
   Carolina for hurricanes). The owner raised it.
 - **Heat history:** there is no pre-2019 heat catalog (it needs a NOAA GHCND station backfill).
@@ -329,15 +329,15 @@ Historical shocks join the clean-control mask, so build them **before** freezing
 
 Core vision: *hidden impacts from upstream events, wherever they show up, with attribution and traceability under
 statistical rigor.* What matches today: the rigor machinery (pre-registration, ledger, decoys, held-out confirmation,
-seasonal check, withholding) is real and was honoured; the pond reads as water; statistics sit behind links; the
+seasonal check, withholding) is real and was honored; the pond reads as water; statistics sit behind links; the
 pages now say plainly that no surprising link has passed. What does not match, most important first:
 
 1. **The scan only looks where we measure, and we measure little.** "Regardless of where the impact shows up" is bounded
    by 20 regional panels, all state-level labor, housing, power, deaths and declarations. The ~12k national series
    (Wikipedia, news, social, markets, npm) are outside every test. Fixes: lane 2 (timing-only design with fake dates,
-   labelled weaker); and more regional outcomes with long history: county employment and wages (BLS QCEW), county
+   labeled weaker); and more regional outcomes with long history: county employment and wages (BLS QCEW), county
    unemployment (LAUS), business counts (CBP), migration (IRS SOI), flood-insurance claims (NFIP), SNAP and Medicaid
-   enrolment, births, school enrolment, bankruptcy filings, power outages (EIA-417 / ODIN), air quality (EPA AQS).
+   enrollment, births, school enrollment, bankruptcy filings, power outages (EIA-417 / ODIN), air quality (EPA AQS).
 2. **State-level data hides local shocks, so "absorbed" may just be dilution.** A storm that wrecks 10 counties
    barely moves a statewide total; Helene's western North Carolina losses are invisible in NC aggregates. The FEMA
    fetch drops `designatedArea`, so county footprints exist in the source but are thrown away. County footprints +
@@ -360,14 +360,14 @@ pages now say plainly that no surprising link has passed. What does not match, m
    results; the 1,829 historical shocks and ~2,000 2019+ shocks have no pages. Publish pages for shocks with results
    (Katrina, Sandy, Harvey once b7 reports; decade comparisons) and stop publishing small fire declarations that
    have none.
-9. **b8 is not in the pages yet** (section 8, first bullet): per shock, anomalies in its footprint afterwards, labelled
+9. **b8 is not in the pages yet** (section 8, first bullet): per shock, anomalies in its footprint afterwards, labeled
    attributed / consistent with a pattern / unexplained, plus a third Find mode "Something unusual".
 10. **Frontend gaps still open:**
     - Share cards (`og/*.png`) show the rejected v1 orbit design with stale numbers ("12 things stayed flat"), and 27
       wildfire pages reuse Milton's card. Regenerate them from the current pond.
     - "Too early" markers sit on the pond rim, the perimeter look the owner rejected.
     - Shock pages have no downstream exploration ("could ripple on to …").
-    - "What held steady" is the weakest visual; the grey no-sign dots are unlabelled.
+    - "What held steady" is the weakest visual; the gray no-sign dots are unlabeled.
     - The outcome flow diagram is tiny on phones (an SVG with min-width 560 inside a scroller).
     - `--text-3` contrast is 4.39:1, and the canvas time labels are about 1.7:1.
     - The scrubber knob sits between WEEK and MONTH while the text says "about a week".

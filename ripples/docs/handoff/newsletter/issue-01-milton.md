@@ -47,7 +47,7 @@ This is the part most coverage skips. We tested twelve other things, and each **
 
 - **Florida Power & Light demand, on its own.** Florida's other big utility, mostly serving the east and south, didn't show a clear drop when tested alone. The effect was concentrated where the storm came ashore.
 - **Florida jobless claims**
-- **US air travellers** at TSA checkpoints
+- **US air travelers** at TSA checkpoints
 - **US gasoline prices** (weekly)
 - **Gulf Coast jet-fuel prices**
 - **FEMA declarations:** Florida-specific, emergency, and major-disaster (three tests)

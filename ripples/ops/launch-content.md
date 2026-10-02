@@ -64,14 +64,14 @@ Standing rules: human posts at 12:00–14:00 UTC; Bluesky at any time (manual); 
 | 3 | Bluesky, X | First **Shock of the day** (non-sensitive shock only; §3.3). If today's shocks are all sensitive, post the Ripple of the week instead | shock card | Landings per post |
 | 4 | **Show HN**, 15:00 UTC; stay 6 h for comments | §3.2 | link only | ≥ 10 points or front page |
 | 5 | Newsletter pitches: Garbage Day, Kottke, Web Curios (≤ 120 words each) | §3.4 | 2 screenshots: a line page and an evidence card | ≥ 1 reply within 10 days |
-| 6 | Bluesky | "The ones that stayed flat": one line's grey stubs and its control ripple (§3.5) | line card | Landings |
+| 6 | Bluesky | "The ones that stayed flat": one line's gray stubs and its control ripple (§3.5) | line card | Landings |
 | 7 | **Data Is Plural** pitch (the dataset and the null tests, not the site); first weekly **Ripple of the week** post | §3.6, §3.4 | week card | Pitch sent |
 | 8 | Bluesky | A Watching stop resolving (flip or stayed flat) from a live line, only if one resolved; otherwise skip | stop card | — |
 | 9 | HN retry, only if Day 4 got < 10 points (email hn@ycombinator.com the day before about the second-chance pool) | §3.2, rewritten around the null | link | Same as Day 4 |
 | 10 | LinkedIn, aimed at comms / research people | "What moved after {shock}: a line with its misses printed" (one live or archive line) | line card | `/pro/` visits |
 | 11 | Product Hunt, 07:01 UTC | "Trace where a shock shows up next, with the misses printed" (feedback, not upvotes) | gallery: 5 screenshots; the MP4 | Comments |
 | 12 | Press pitches: Nieman Lab, Boing Boing (confirm any NPR article exists before pitching) | §3.4 | 3 screenshots, archive link | ≥ 1 reply |
-| 13 | r/dataisbeautiful [OC], Thursday | One staircase chart from a line with a Measured outcome stop (live if one exists; otherwise the archive, labelled reconstructed) | static PNG | Upvotes / landings |
+| 13 | r/dataisbeautiful [OC], Thursday | One staircase chart from a line with a Measured outcome stop (live if one exists; otherwise the archive, labeled reconstructed) | static PNG | Upvotes / landings |
 | 14 | `/methods/` changelog | Public retro: per-channel landings, shares per landing, what we changed | table | Keep or kill each channel by the numbers |
 
 **Dropped from the v5 plan:** daily-game aggregators (dles, Playlin, PuzzleDaily…), creator playthrough DMs, full-screen practice, Call It results posts, streak or crowd copy, "which one spiked?" teasers, the Belly Flop card. **Do not post to r/InternetIsBeautiful.**
@@ -96,9 +96,9 @@ Title (≤ 80 chars):
 > Show HN: Ripple Map – where a shock showed up next, with the misses printed
 
 First comment (post it yourself, immediately):
-> I built this. It starts from a shock (a storm, a heat wave, a macro release, a model release, today's trending pages) and tests a pre-registered set of downstream series: TSA checkpoint counts, EIA-930 grid demand, FRED rates, state jobless claims, FEMA declarations, npm downloads, prediction markets, Wikipedia reading. Each stop is tested against its own weekday/seasonal baseline, with three placebo families (fake dates, other events, lookalike series) through the same code, one weighted Benjamini–Hochberg run per day, and decoy "shocks" that go through everything. A stop is Measured only if an outcome series moved; attention-only co-moves are labelled and capped.
+> I built this. It starts from a shock (a storm, a heat wave, a macro release, a model release, today's trending pages) and tests a pre-registered set of downstream series: TSA checkpoint counts, EIA-930 grid demand, FRED rates, state jobless claims, FEMA declarations, npm downloads, prediction markets, Wikipedia reading. Each stop is tested against its own weekday/seasonal baseline, with three placebo families (fake dates, other events, lookalike series) through the same code, one weighted Benjamini–Hochberg run per day, and decoy "shocks" that go through everything. A stop is Measured only if an outcome series moved; attention-only co-moves are labeled and capped.
 >
-> What it can't say: that anything caused anything. Every card says "consistent with". Live lines are still young (the pipeline started on {first live day}), so the home page shows a reconstructed archive line, labelled as such: {archive numbers sentence from §8.2}.
+> What it can't say: that anything caused anything. Every card says "consistent with". Live lines are still young (the pipeline started on {first live day}), so the home page shows a reconstructed archive line, labeled as such: {archive numbers sentence from §8.2}.
 >
 > The first version of this idea failed publicly: 0 of 120 hops held up once decoys were added. That post-mortem is on /ripples/methods/, next to the decoy false-discovery rate, the positive controls (including the ones that fail) and a hash-chained ledger of every pre-registration.
 >
@@ -112,7 +112,7 @@ If the shock has no Measured stop, the line reads "Nothing measured yet; {n} pat
 
 ### 3.4 Newsletter / press pitch (≤ 120 words)
 
-> Ripple Map traces where a shock shows up next (air travel, grid demand, jobless claims, package downloads, rates) and prints the misses: every stop is tested against fake dates, other events, lookalike series and decoy shocks through the same code, and a stop counts as Measured only if a real-world series moved. The archive of reconstructed lines is labelled as such; across it, {measured} stops reached Measured and about {expected_flukes} of them are expected to be flukes. Free, no login, open CSVs, methods and misses on one page: https://bensunter.com/ripples/methods/. Built by Ben Sunter.
+> Ripple Map traces where a shock shows up next (air travel, grid demand, jobless claims, package downloads, rates) and prints the misses: every stop is tested against fake dates, other events, lookalike series and decoy shocks through the same code, and a stop counts as Measured only if a real-world series moved. The archive of reconstructed lines is labeled as such; across it, {measured} stops reached Measured and about {expected_flukes} of them are expected to be flukes. Free, no login, open CSVs, methods and misses on one page: https://bensunter.com/ripples/methods/. Built by Ben Sunter.
 
 For Data Is Plural, lead with the dataset: daily per-hop statistics, placebo counts and the ledger, CC BY, GREEN-sourced fields only.
 

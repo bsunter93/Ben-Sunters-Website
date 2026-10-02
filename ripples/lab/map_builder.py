@@ -5,17 +5,17 @@ For each map:
      403/429/503) for the event article(s) and every attention step's articles, from 150 days before the event to 210
      after. Onset = first day from 14 days before the event on which the 7-day mean exceeds the pre-period median
      (days -120..-15) by 5 MAD and by 50%.
-  2. Behaviour steps: Seattle Public Library checkouts for a subject heading (ripples.att_sea via public.att_sea_series;
+  2. Behavior steps: Seattle Public Library checkouts for a subject heading (ripples.att_sea via public.att_sea_series;
      a heading not yet fetched is queued with public.att_sea_request and the step shows as pending). Same test as chain
      tests v1 (log1p minus panel median minus same-month 3-year median; effect m0..m0+2 vs m0-6..m0-1; every admissible
      month as a placebo), with CLOSURE MONTHS EXCLUDED: months where the library panel fell below half of the same
      month a year earlier are masked, and a step whose window touches them is "not measurable" (ledger 1504).
   3. Ordering rule (ledger 1497): steps are checked in the config's order; each counted step must start on or after
-     the previous counted step (attention by day; behaviour by month; records by date). The first reference point is
+     the previous counted step (attention by day; behavior by month; records by date). The first reference point is
      the event's own attention onset (trailers and early spread count) or the release date, whichever is earlier. A
      step that starts before it, or before the previous counted step, is shown as "Not counted". Onsets must be
      sustained (5 days above threshold) and at least a fifth of the way to the peak.
-  4. Evidence: "tested" when the config cites a registered test for that step (or the behaviour test passes),
+  4. Evidence: "tested" when the config cites a registered test for that step (or the behavior test passes),
      "timed" when only the onset is measured, "record" for a dated published fact supplied with a source.
 Output: ripples/discover/maps/<slug>/index.html (from ripples/maps/template.html) and ripples/maps/out/<slug>.json.
 """
@@ -111,7 +111,7 @@ def months(a="2005-04", b="2026-08"):
     return out
 
 
-def behaviour(series, panel, m0):
+def behavior(series, panel, m0):
     M = months(b=max(panel))
     idx = {m: i for i, m in enumerate(M)}
     med = np.array([panel.get(m, np.nan) for m in M], dtype=float)
@@ -166,7 +166,7 @@ def build(cfg_path):
                          "note": note})
     out["event_onset"] = ev_on.isoformat()
     last_day, last_month = ev_on, ev_on.isoformat()[:7]
-    heads = [s["heading"] for s in cfg["steps"] if s["type"] == "behaviour"]
+    heads = [s["heading"] for s in cfg["steps"] if s["type"] == "behavior"]
     lib = supabase("att_sea_series", {"p_terms": heads}) if heads else None
     if lib and lib.get("series") is not None:
         missing = [h for h in heads if h not in lib["series"]]
@@ -198,14 +198,14 @@ def build(cfg_path):
                         last_day, last_month = day, a["onset"][:7]
                     else:
                         st["branch"] = True
-        elif s["type"] == "behaviour":
+        elif s["type"] == "behavior":
             ser = (lib or {}).get("series", {}).get(s["heading"])
-            st.update(kind="behaviour", measure=f"monthly checkouts of books on “{s['heading']}”, Seattle Public Library")
+            st.update(kind="behavior", measure=f"monthly checkouts of books on “{s['heading']}”, Seattle Public Library")
             if not ser:
                 st.update(evidence="na", date=cfg["release"][:7], days=None,
                           why="library data for this subject is being fetched; it appears on the next build")
             else:
-                b = behaviour(ser, lib["panel_median"], cfg["release"][:7])
+                b = behavior(ser, lib["panel_median"], cfg["release"][:7])
                 st.update(monthly=b["monthly"], days=None)
                 if not b["measurable"]:
                     st.update(evidence="na", date=cfg["release"][:7], why=b["why"])
@@ -244,7 +244,7 @@ def build(cfg_path):
     print(f"{cfg['slug']}: {len(counted)} counted steps of {len(out['steps']) - 1}", flush=True)
     return {"slug": cfg["slug"], "title": cfg["title"], "release": cfg["release"], "counted": len(counted),
             "steps": len(out["steps"]) - 1,
-            "measured_behaviour": any(s.get("kind") == "behaviour" and s["evidence"] == "tested" for s in out["steps"])}
+            "measured_behavior": any(s.get("kind") == "behavior" and s["evidence"] == "tested" for s in out["steps"])}
 
 
 def main() -> int:
@@ -276,7 +276,7 @@ def write_index(maps):
     rows = "".join(
         f'<a class="stop" href="/ripples/discover/maps/{m["slug"]}/" style="display:block;text-decoration:none">'
         f'<div class="when"><b>{m["release"]}</b><span>{m["counted"]} of {m["steps"]} steps counted'
-        f'{" · measured behaviour" if m["measured_behaviour"] else ""}</span></div><h2>{m["title"]}</h2></a>'
+        f'{" · measured behavior" if m["measured_behavior"] else ""}</span></div><h2>{m["title"]}</h2></a>'
         for m in reversed(maps))
     page = (head + '<main><div class="kicker">Ripple Map · prototype</div><h1>Ripple maps</h1>'
             '<p class="lede">One event each, followed step by step: what people looked up, what they reached for, '

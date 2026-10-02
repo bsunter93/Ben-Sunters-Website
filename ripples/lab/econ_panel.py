@@ -1,4 +1,4 @@
-"""Real-world outcome panel for the discovery engine: daily behaviour-side series on the Wikipedia panel's day grid, so
+"""Real-world outcome panel for the discovery engine: daily behavior-side series on the Wikipedia panel's day grid, so
 q3_run.py can score event families against electricity demand, markets and air travel (ripples/docs/q3_protocol_econ.md).
 
 Input: Supabase RPC att_q3_econ_export (ripples/attention/sql/50_att_q3_econ_export.sql), service role, read-only.

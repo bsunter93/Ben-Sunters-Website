@@ -1,9 +1,9 @@
 # Editor trail v1: discovery of non-obvious ripples (explore stage)
 
-*Written 2 Oct 2026, before the run. Explore stage under explore-then-confirm (ledger 1466): no claim on the public
+*Written Oct 2, 2026, before the run. Explore stage under explore-then-confirm (ledger 1466): no claim on the public
 pages rests on this run alone.*
 
-**Why.** Every open-ended method so far proposed neighbours of an event, not its consequences: Clickstream is a
+**Why.** Every open-ended method so far proposed neighbors of an event, not its consequences: Clickstream is a
 curiosity graph. When an event really moves something, Wikipedia editors tend to record it in the article that moved
 (a song that re-charted, a food that sold out, a town that drew tourists). The articles linking to an event's article
 therefore contain its documented ripples, mixed with cast, episodes and navbox noise.

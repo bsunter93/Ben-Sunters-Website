@@ -4,7 +4,7 @@
                                                                ridership, FEMA disaster declarations (daily grid)
   python more_panels.py weekly   -> $LAB_CACHE/weekly_pv.npz   state jobless claims, business applications, deaths,
                                                                weekly fuel prices (weeks starting Sunday)
-  python more_panels.py monthly  -> $LAB_CACHE/monthly_pv.npz  state labour, housing and permit series, national jobs
+  python more_panels.py monthly  -> $LAB_CACHE/monthly_pv.npz  state labor, housing and permit series, national jobs
                                                                by industry, consumer prices by item (calendar months)
 
 Input: Supabase RPC att_q3_export(source) (ripples/attention/sql/51_att_q3_export.sql), service role, read-only.

@@ -1,4 +1,4 @@
-"""Owner chains v1: deterministic checks of five owner-supplied ripple chains (2 Oct 2026).
+"""Owner chains v1: deterministic checks of five owner-supplied ripple chains (Oct 2, 2026).
 
 For every step that has a measurable Wikipedia article, find the first sustained rise (editor_trail.onset: 7-day
 mean above median + 5 MAD, 1.5x the median and +20 views, for 5 days running, at least a fifth of the way to the
@@ -34,7 +34,7 @@ TESTS = [
      ("2022-01-31", "NYT acquisition"), ("2021-12-01", "2022-06-01")),
     ("barbie", 1, "Attention to the Barbie film", ["Barbie (film)"], ("2023-07-21", "release"), ("2022-03-01", "2023-09-01")),
     ("barbie", 4, "Attention to Barbiecore", ["Barbiecore"], ("2023-07-21", "release"), ("2022-03-01", "2023-12-01")),
-    ("barbie", 4, "Attention to the colour pink", ["Pink"], ("2023-07-21", "release"), ("2023-03-01", "2023-10-01")),
+    ("barbie", 4, "Attention to the color pink", ["Pink"], ("2023-07-21", "release"), ("2023-03-01", "2023-10-01")),
     ("jwst", 2, "Attention to the James Webb Space Telescope", ["James Webb Space Telescope"], ("2022-07-11", "first image"), ("2022-06-15", "2022-09-01")),
     ("jwst", 2, "Attention to astronomy", ["Astronomy", "Galaxy", "Universe"], ("2022-07-11", "first image"), ("2022-06-15", "2022-09-01")),
     ("gamestop", 1, "Attention to the GameStop squeeze", ["GameStop short squeeze", "GameStop"], ("2021-01-13", "first big jump"), ("2020-12-15", "2021-03-01")),

@@ -6,7 +6,7 @@ reconstructed archive line (every number in it comes from att_cascade_versions /
 
     python3 render_launch_gif.py line.json out_dir/
 
-Outputs: launch-poster.png (frame 1), launch.gif (600x750, 15 fps, <= 64 colours, loop) and launch.mp4 (1080x1350, H.264,
+Outputs: launch-poster.png (frame 1), launch.gif (600x750, 15 fps, <= 64 colors, loop) and launch.mp4 (1080x1350, H.264,
 silent, 7 s) when an ffmpeg binary is available (imageio-ffmpeg). "Reconstructed" is burned into every frame, and so is the
 disclaimer "Consistent with, never proof of cause." (>= 18 px at 600 wide).
 

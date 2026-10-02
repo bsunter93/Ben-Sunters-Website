@@ -106,7 +106,7 @@ edge endpoint or a key in the EWMA baseline. In `gkgFile`, every entity is scree
 | ghost (n5) | V1Persons/V1Organizations name that no AllNames name in the document contains, or an AllNames name that is the leading words of one (a photo credit: V1Persons `julia demaree nikhinson`, AllNames `Julia Demaree`) | > 30% of its documents (n7; n5 used 50%) |
 | tail (n7) | among the last 4 AllNames names within 200 characters of the last one, in an article with >= 8 AllNames names (contributor lines: "Associated Press writers ... contributed") | > 60% of its documents |
 | junk | label pattern (`JUNK_LABEL`: photo/image/getty, content agency, `... writer`, share buttons, "website access", doubled names) or a credit marker itself | any |
-| breadth | distinct outlets (SourceCommonName) in the file | candidates and person-like edge endpoints >= 3; organisation edge endpoints >= 2 |
+| breadth | distinct outlets (SourceCommonName) in the file | candidates and person-like edge endpoints >= 3; organization edge endpoints >= 2 |
 
 `extra.files[].dropped` counts the rejections per rule. Names caught by the first five rules are also deleted from
 `att_state['gkg.ewma']` when they appear in a file (n6), so the baseline does not keep journalists' names either.
@@ -151,9 +151,9 @@ CNN's own pages. Now, per document:
   name that is a credit across the file (photo credits). Acronyms ("CNN") and forms like "United States" that AllNames
   omits still count (n9; n8 dropped them, which cost cnn 10/10 and united states 25/297 in a test file);
 - the registry kind (`match.kind`, added by `ripples.att_news_terms`, sql/26) decides which names may match: a one-word
-  pattern of a person, work or organisation must be the whole name and not the short form of a longer V1Persons name in
+  pattern of a person, work or organization must be the whole name and not the short form of a longer V1Persons name in
   the same document; places never match through V1Persons names ("Jordan" in "Michael Jordan"); persons, works and
-  organisations never match through V1Locations features ("Victoria", Australia). Unknown kinds keep the phrase match.
+  organizations never match through V1Locations features ("Victoria", Australia). Unknown kinds keep the phrase match.
 
 Dry run on 20260925190000 (1,546 documents), pre-n8 -> stored: julia 20 -> 0, victoria 5 -> 0, cnn 10 -> 10,
 united states 297 -> 297, india 104 -> 103, russia 53 -> 53, xi jinping 21 -> 20, vladimir putin 14 -> 14.

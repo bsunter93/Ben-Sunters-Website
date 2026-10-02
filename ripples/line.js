@@ -29,7 +29,7 @@ export function staircase(c, entries, opts = {}) {
     const gl = wide ? 150 : 24, gr = 40, top = 8, bot = 18;
     const dEnd = Math.max(tD + 2, 10, ...lanes.map(l => l.due ?? -99).filter(d => d > -99 && d <= tD + 14));
     const X = L.xScale(dEnd, gl, W - gr);
-    // By hop (desktop toggle): each lane keeps its own days but is centred on its own column, so the order reads left to right
+    // By hop (desktop toggle): each lane keeps its own days but is centered on its own column, so the order reads left to right
     const byHop = api.mode === 'hop', n = lanes.length;
     const anchor = l => l.od ?? l.due ?? tD;
     const colW = (W - gl - gr) / n, pxDay = colW / 5;
@@ -243,13 +243,13 @@ function stopCard(c, e, idx, total, sc, laneIdx) {
 function flatStub(c, parentHop, where) {
   const fl = (c.flat || []).filter(f => (f.parent_hop || null) === (parentHop || null));
   if (!fl.length) return null;
-  // Signature C: the null is the product. The flat paths are a grid of grey tiles (icon, flat sparkline, multiple) that flip
+  // Signature C: the null is the product. The flat paths are a grid of gray tiles (icon, flat sparkline, multiple) that flip
   // face-up in a 40 ms stagger when the stub opens; the row reads "N moved, M didn't", and the null can be shared as such.
   const moved = (c.nodes || []).filter(n => L.isMoved(n) && (n.parent_hop || null) === (parentHop || null)).length;
   const tiles = fl.map(f => h('li', { class: 'ft', title: `${f.label}: ${L.num(f.rho)}× its normal, ${f.reason}` }, h('span', { class: 'fi', 'aria-hidden': 'true' }, em(L.domIcon(f.domain))), spark(f.spark, 64, 22),
     h('b', { 'aria-hidden': 'true' }, f.rho != null ? L.num(f.rho) + '×' : ''), h('span', { class: 'fl' }, f.label, h('span', { class: 'sr' }, `: ${L.num(f.rho)} times its normal, ${f.reason}`))));
   const nullText = `${L.shareLine(c).split('\n')[0]}\n⊥${fl.length} stayed flat${where ? ' ' + where : ''}, ${L.plural(moved, 'path')} moved. Every path we tried is counted.\nconsistent with, not proof of cause\n${L.SITE}${L.lineUrl(c.event.slug, c.version)}`;
-  const list = h('div', { class: 'flatbox', hidden: true }, h('p', { class: 'flatsum' }, h('b', null, `${L.fmtInt(moved)} moved, ${L.fmtInt(fl.length)} didn't.`), ' Each tile is one path tested against its own normal; grey means it stayed inside its range.'),
+  const list = h('div', { class: 'flatbox', hidden: true }, h('p', { class: 'flatsum' }, h('b', null, `${L.fmtInt(moved)} moved, ${L.fmtInt(fl.length)} didn't.`), ' Each tile is one path tested against its own normal; gray means it stayed inside its range.'),
     h('ul', { class: 'flatlist' }, tiles), h('button', { class: 'btn sec sm', onclick: () => share(nullText, 'null') }, icon('share'), 'Share the null'));
   let flipped = false;
   const b = h('button', { class: 'stub', 'aria-expanded': 'false', onclick: () => {

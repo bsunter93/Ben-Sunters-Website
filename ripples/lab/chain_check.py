@@ -253,10 +253,11 @@ def main() -> int:
         for path in sorted(glob.glob(os.path.join(ROOT, "chains", "*.json"))):
             for ch in json.load(open(path)):
                 ref = D(ch["date"])
-                out = {k: ch[k] for k in ("slug", "title", "date", "batch")}
+                out = {k: ch.get(k) for k in ("slug", "title", "date", "batch", "vertical")}
                 out["steps"] = []
                 for st in ch["steps"]:
-                    sref = D(st["ref"]) if st.get("ref") else ref
+                    # a branch step follows the event itself, not the main chain's latest step
+                    sref = D(st["ref"]) if st.get("ref") else (D(ch["date"]) if st.get("branch") else ref)
                     try:
                         r = run_step(st, sref)
                     except et.Stop:
@@ -266,7 +267,8 @@ def main() -> int:
                     v = verdict(st, r, sref)
                     out["steps"].append({"n": st["n"], "claim": st["claim"], "test": {k: st["test"][k] for k in st["test"] if k != "counts"},
                                          "ref": sref.isoformat(), "verdict": v, "note": st.get("note"),
-                                         "link": st.get("link"), "link_why": st.get("link_why"), "branch": st.get("branch", False), **r})
+                                         "link": st.get("link"), "link_why": st.get("link_why"), "branch": st.get("branch", False),
+                                         "vertical": st.get("vertical"), **r})
                     print(ch["slug"], st["n"], v, {k: r.get(k) for k in ("onset", "p", "effect", "series", "found", "result")}, flush=True)
                     if v in ("measured", "reported", "timed (short history)") and r.get("onset") and not st.get("branch"):
                         # a new article's creation date dates the article, not the phenomenon: it does not move the reference

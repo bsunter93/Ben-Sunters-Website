@@ -19,7 +19,7 @@ Two more outcome panels for the 14 screen v2 families (`ripples/corpus/q3_famili
 - **Grid and window:** calendar months; event window −1..+3 months, the same monthly settings as `q3_protocol_more.md`.
 - **Coverage rule:** 0.8.
 - **Echo flag:** subjects are names, so the name-matching echo flag applies.
-- **Reading:** a ripple here is behaviour, not just reading about something online. It is one city's library, so a
+- **Reading:** a ripple here is behavior, not just reading about something online. It is one city's library, so a
   null result says little about the country.
 
 ## Wide Wikipedia lens (`pv_l4.npz`)

@@ -1,8 +1,8 @@
 # Chain tests v2: less obvious chains, in time order (registered 2026-09-30, before any v2 data is fetched)
 
-**Why:** chain tests v1 (ledger 1501) showed the behaviour step can be measured: 3 of 13 obvious chains passed and the
-ordering rule caught Oppenheimer. v2 asks for less obvious behaviour, and for two-step chains where the second
-behaviour must start after the first (owner ordering rule, ledger 1497).
+**Why:** chain tests v1 (ledger 1501) showed the behavior step can be measured: 3 of 13 obvious chains passed and the
+ordering rule caught Oppenheimer. v2 asks for less obvious behavior, and for two-step chains where the second
+behavior must start after the first (owner ordering rule, ledger 1497).
 
 ## Chains, fixed now
 
@@ -23,7 +23,7 @@ behaviour must start after the first (owner ordering rule, ledger 1497).
 
 - **Data and series:** as v1 (Seattle Public Library checkouts by subject heading; log(1 + checkouts) minus the
   1,376-heading panel median, minus the same-month median of the previous three years).
-- **Effect:** mean over m0 .. m0+5 minus mean over m0-6 .. m0-1 (6 months, since downstream behaviour can be slower).
+- **Effect:** mean over m0 .. m0+5 minus mean over m0-6 .. m0-1 (6 months, since downstream behavior can be slower).
 - **Null:** the same effect at every admissible month of the same heading (2008 on, at least 10 months from m0).
 - **Onset:** first month from m0-3 to m0+9 above the pre-period mean + 2 MAD (pre-period m0-12 .. m0-1).
 - **Step passes:** p ≤ 0.05 and onset in m0 or later.
