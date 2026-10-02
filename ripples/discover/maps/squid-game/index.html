@@ -1,0 +1,158 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Ripple Map · Squid Game</title>
+<meta name="description" content="A time-ordered ripple map for Squid Game: each step dated and marked by how it was measured.">
+<meta name="robots" content="noindex">
+<link rel="icon" href="/favicon.svg">
+<style>
+@font-face{font-family:"Anybody";src:url(/ripples/fonts/anybody-latin-var.woff2) format("woff2");font-weight:100 900;font-stretch:50% 150%;font-display:swap}
+@font-face{font-family:"IBM Plex Sans";src:url(/ripples/fonts/plex-sans-latin-var.woff2) format("woff2");font-weight:100 700;font-display:optional}
+/* Layout: one column; a vertical transit line down the left with a stop per ripple step, each stop a card with its own small chart. */
+:root{
+  color-scheme:light;
+  --stage:#EDF1EE;--card:#FFFFFF;--sunk:#F4F7F5;--ink:#0B3A40;--ink-2:#3C5E62;--ink-3:#557275;--hair:#D3DDDA;
+  --line:#0B3A40;--marigold:#F2AE2E;--marigold-ink:#9A5E00;--good:#1E7A4F;--grid:#E3E9E7;--wash:rgba(242,174,46,.14);
+  --display:"Anybody","Arial Black",system-ui,sans-serif;--sans:"IBM Plex Sans",-apple-system,"Segoe UI",system-ui,sans-serif;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  color-scheme:dark;--stage:#062429;--card:#0D353B;--sunk:#0A2D32;--ink:#EAF3F0;--ink-2:#B7CDCA;--ink-3:#8AA9A6;--hair:#1C4A51;
+  --line:#EAF3F0;--marigold:#E0A33C;--marigold-ink:#F2B23A;--good:#5CC792;--grid:#16434A;--wash:rgba(224,163,60,.16)}}
+:root[data-theme="dark"]{
+  color-scheme:dark;--stage:#062429;--card:#0D353B;--sunk:#0A2D32;--ink:#EAF3F0;--ink-2:#B7CDCA;--ink-3:#8AA9A6;--hair:#1C4A51;
+  --line:#EAF3F0;--marigold:#E0A33C;--marigold-ink:#F2B23A;--good:#5CC792;--grid:#16434A;--wash:rgba(224,163,60,.16)}
+*,*::before,*::after{box-sizing:border-box}
+body{margin:0;background:var(--stage);color:var(--ink);font:400 16px/1.55 var(--sans);-webkit-font-smoothing:antialiased;overflow-x:hidden}
+main{max-width:820px;margin:0 auto;padding:40px 16px 72px}
+.kicker{font:700 .78rem/1 var(--sans);letter-spacing:.08em;text-transform:uppercase;color:var(--marigold-ink);margin-bottom:.6rem}
+h1{font:800 clamp(1.9rem,5.5vw,2.8rem)/1.05 var(--display);margin:0 0 .6rem;letter-spacing:-.01em;text-wrap:balance}
+.lede{color:var(--ink-2);max-width:62ch;margin:0}
+.legend{display:flex;flex-wrap:wrap;gap:8px 16px;margin:1.2rem 0 1.6rem;font-size:.86rem;color:var(--ink-2)}
+.b{font-size:.74rem;line-height:1;padding:5px 9px;border-radius:999px;border:1px solid var(--hair);background:var(--sunk);white-space:nowrap;font-weight:600}
+.b.tested{border-color:var(--good);color:var(--good)}
+.b.timed{border-color:var(--marigold);color:var(--marigold-ink)}
+.b.record{border-color:var(--ink-3);color:var(--ink-2)}
+.b.event{border-color:var(--line);color:var(--ink)}
+.b.excluded,.b.na{border-style:dashed;color:var(--ink-3)}
+.stop.excluded{opacity:.72}
+.route{position:relative;display:grid;gap:18px;padding-left:44px}
+.route::before{content:"";position:absolute;left:15px;top:14px;bottom:14px;width:4px;border-radius:2px;background:var(--line)}
+.stop{position:relative;background:var(--card);border:1px solid var(--hair);border-radius:14px;padding:16px;min-width:0}
+.stop::before{content:"";position:absolute;left:-37px;top:18px;width:18px;height:18px;border-radius:50%;background:var(--card);border:4px solid var(--line)}
+.stop.event::before{background:var(--line)}
+.when{display:flex;flex-wrap:wrap;align-items:baseline;gap:6px 12px;margin-bottom:.35rem}
+.when b{font:800 1.05rem/1.2 var(--display);font-variant-numeric:tabular-nums}
+.when span{color:var(--ink-3);font-size:.86rem}
+h2{font:700 1.12rem/1.3 var(--sans);margin:0 0 .5rem}
+.measure{font-size:.84rem;color:var(--ink-3);margin:.2rem 0 0}
+.note{color:var(--ink-2);margin:.5rem 0 0;max-width:64ch}
+.test{font-size:.86rem;margin:.5rem 0 0;padding:8px 10px;border-radius:8px;background:var(--sunk);color:var(--ink-2)}
+.also{font-size:.86rem;color:var(--ink-2);margin:.4rem 0 0}
+.chart{position:relative;margin-top:.7rem}
+.chart svg{display:block;width:100%;height:auto;overflow:visible}
+.tip{position:absolute;pointer-events:none;background:var(--ink);color:var(--card);font-size:.78rem;padding:4px 7px;border-radius:6px;white-space:nowrap;transform:translate(-50%,-120%);top:0}
+.facts{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:10px;margin-top:.7rem}
+.fact{border:1px solid var(--hair);border-radius:10px;padding:10px 12px}
+.fact b{display:block;font:800 1.8rem/1.05 var(--display);font-variant-numeric:tabular-nums}
+.fact span{font-size:.84rem;color:var(--ink-2)}
+a{color:inherit;text-underline-offset:3px}
+.foot{margin-top:2rem;color:var(--ink-3);font-size:.9rem;max-width:66ch}
+.foot p{margin:.5rem 0}
+.rule{font-size:.9rem;color:var(--ink-2);border-left:3px solid var(--marigold);padding-left:10px;margin:1rem 0 0;max-width:64ch}
+</style>
+</head>
+<body>
+<main>
+  <div class="kicker">Ripple Map · prototype</div>
+  <h1>Squid Game</h1>
+  <p class="lede">A Korean survival drama that became Netflix's biggest show, followed from what viewers looked up to what they borrowed.</p>
+  <p class="rule">Reading rule: a step counts only if it is an outcome measured in its own data and it starts after the previous step. The badge says how sure we are of each step.</p>
+  <div class="legend" aria-label="Evidence key">
+    <span><span class="b tested">Measured</span> tested against fake dates</span>
+    <span><span class="b timed">Timed</span> start date measured, size not tested</span>
+    <span><span class="b record">Reported</span> from a published source, not measured by us</span>
+  </div>
+  <div class="route" id="route"></div>
+  <div class="foot">
+    <p><strong>What this shows.</strong> The order and timing of each step, and for the measured steps, that the rise was larger than at fake dates. It is evidence of a chain of attention and behaviour, not proof that the show caused each step on its own.</p>
+    <p><strong>Known limits.</strong> Wikipedia stands in for all attention and one city's library for borrowing. Timing shows order, not proof that the event caused each step on its own.</p>
+    <p>Data: Wikimedia pageviews (daily), Seattle Public Library checkouts (monthly) Tests: <a href="/ripples/docs/q4_protocol_v1.md">named-subject test</a>, <a href="/ripples/docs/chain_tests_v1.md">chain tests</a>. More results on <a href="/ripples/discover/">Discoveries</a>.</p>
+  </div>
+</main>
+<script id="data" type="application/json">{"slug": "squid-game", "title": "Squid Game", "release": "2021-09-17", "steps": [{"kind": "event", "title": "Squid Game is released on Netflix", "date": "2021-09-17", "days": 0, "evidence": "event", "series": {"weekly": [["2021-07-06", 0], ["2021-07-13", 0], ["2021-07-20", 0], ["2021-07-27", 0], ["2021-08-03", 0], ["2021-08-10", 674], ["2021-08-17", 1495], ["2021-08-24", 1474], ["2021-08-31", 2710], ["2021-09-07", 2505], ["2021-09-14", 110250], ["2021-09-21", 445236], ["2021-09-28", 750630], ["2021-10-05", 701726], ["2021-10-12", 462718], ["2021-10-19", 255355], ["2021-10-26", 156815], ["2021-11-02", 100227], ["2021-11-09", 70086], ["2021-11-16", 47733], ["2021-11-23", 46944], ["2021-11-30", 33391], ["2021-12-07", 28074], ["2021-12-14", 22088], ["2021-12-21", 21757], ["2021-12-28", 25999], ["2022-01-04", 21333], ["2022-01-11", 17884], ["2022-01-18", 14587], ["2022-01-25", 14776], ["2022-02-01", 14178], ["2022-02-08", 11539], ["2022-02-15", 9440], ["2022-02-22", 10212], ["2022-03-01", 9535], ["2022-03-08", 7683], ["2022-03-15", 7160], ["2022-03-22", 7427], ["2022-03-29", 6572], ["2022-04-05", 7686]], "onset": "2021-09-03", "days": -14, "pre": 0.0, "peak": 889821}, "measure": "daily Wikipedia views of the event article", "note": ""}, {"title": "People look up the honeycomb candy", "kind": "attention", "series": {"weekly": [["2021-07-06", 28], ["2021-07-13", 28], ["2021-07-20", 28], ["2021-07-27", 28], ["2021-08-03", 31], ["2021-08-10", 27], ["2021-08-17", 28], ["2021-08-24", 22], ["2021-08-31", 24], ["2021-09-07", 32], ["2021-09-14", 44], ["2021-09-21", 2096], ["2021-09-28", 8056], ["2021-10-05", 9733], ["2021-10-12", 6156], ["2021-10-19", 2640], ["2021-10-26", 2002], ["2021-11-02", 1440], ["2021-11-09", 1016], ["2021-11-16", 754], ["2021-11-23", 655], ["2021-11-30", 586], ["2021-12-07", 516], ["2021-12-14", 396], ["2021-12-21", 359], ["2021-12-28", 417], ["2022-01-04", 358], ["2022-01-11", 278], ["2022-01-18", 246], ["2022-01-25", 240], ["2022-02-01", 238], ["2022-02-08", 198], ["2022-02-15", 175], ["2022-02-22", 164], ["2022-03-01", 156], ["2022-03-08", 159], ["2022-03-15", 146], ["2022-03-22", 141], ["2022-03-29", 162], ["2022-04-05", 148]], "onset": "2021-09-22", "days": 5, "pre": 28.0, "peak": 14896}, "also": [{"name": "Dalgona coffee", "days": 14}], "measure": "daily Wikipedia views of “Dalgona”", "date": "2021-09-22", "days": 5, "evidence": "timed"}, {"title": "Interest in the Korean language", "kind": "attention", "series": {"weekly": [["2021-07-06", 2376], ["2021-07-13", 2984], ["2021-07-20", 3037], ["2021-07-27", 3002], ["2021-08-03", 3066], ["2021-08-10", 2903], ["2021-08-17", 2981], ["2021-08-24", 3008], ["2021-08-31", 2907], ["2021-09-07", 2971], ["2021-09-14", 3035], ["2021-09-21", 3285], ["2021-09-28", 4287], ["2021-10-05", 4950], ["2021-10-12", 4709], ["2021-10-19", 4137], ["2021-10-26", 3632], ["2021-11-02", 3265], ["2021-11-09", 3198], ["2021-11-16", 3179], ["2021-11-23", 3105], ["2021-11-30", 3009], ["2021-12-07", 3007], ["2021-12-14", 2920], ["2021-12-21", 2705], ["2021-12-28", 3119], ["2022-01-04", 3498], ["2022-01-11", 3310], ["2022-01-18", 3288], ["2022-01-25", 3480], ["2022-02-01", 3631], ["2022-02-08", 3292], ["2022-02-15", 3275], ["2022-02-22", 3094], ["2022-03-01", 2857], ["2022-03-08", 2839], ["2022-03-15", 2867], ["2022-03-22", 2959], ["2022-03-29", 2811], ["2022-04-05", 2811]], "onset": "2021-10-08", "days": 21, "pre": 2705.5, "peak": 5544}, "also": [{"name": "Hangul", "days": 18}], "measure": "daily Wikipedia views of “Korean language”", "date": "2021-10-08", "days": 21, "evidence": "timed"}, {"title": "People borrow Korean-language books", "kind": "behaviour", "measure": "monthly checkouts of books on “Korean language”, Seattle Public Library", "monthly": {"2020-09": 20, "2020-10": 59, "2020-11": 14, "2020-12": 22, "2021-01": 42, "2021-02": 52, "2021-03": 44, "2021-04": 86, "2021-05": 59, "2021-06": 93, "2021-07": 47, "2021-08": 60, "2021-09": 89, "2021-10": 119, "2021-11": 108, "2021-12": 53, "2022-01": 103, "2022-02": 54, "2022-03": 51}, "days": null, "evidence": "excluded", "date": "2021-09", "why": "no rise beyond normal (p = 0.0874)", "test": "Chain test: p = 0.0874 against every other month; rise began never.", "note": "Not counted: no rise beyond normal (p = 0.0874)."}]}</script>
+<script>
+(() => {
+  const D = JSON.parse(document.getElementById("data").textContent);
+  const esc = (s) => String(s).replace(/[&<>"']/g, (c) => ({"&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;"}[c]));
+  const fmtDate = (s) => s.length === 7 ? new Date(s + "-01T00:00:00").toLocaleDateString("en-US", {month: "long", year: "numeric"})
+    : new Date(s + "T00:00:00").toLocaleDateString("en-US", {month: "short", day: "numeric", year: "numeric"});
+  const LABEL = {tested: "Measured", timed: "Timed", record: "Reported", event: "The event", excluded: "Not counted", na: "Not measurable"};
+  const route = document.getElementById("route");
+  const W = Math.max(280, Math.min(700, route.clientWidth - 34)), H = 96, P = {l: 4, r: 4, t: 10, b: 18};
+
+  function line(series, release, onset) {
+    const pts = series.weekly, n = pts.length, max = Math.max(...pts.map((p) => p[1])) || 1;
+    const x = (i) => P.l + (W - P.l - P.r) * i / (n - 1), y = (v) => H - P.b - (H - P.t - P.b) * v / max;
+    const idx = (d) => { let k = pts.findIndex((p) => p[0] >= d); return k < 0 ? n - 1 : Math.max(0, k - (pts[k][0] > d ? 1 : 0)); };
+    const path = pts.map((p, i) => `${i ? "L" : "M"}${x(i).toFixed(1)},${y(p[1]).toFixed(1)}`).join("");
+    const r = idx(release), o = idx(onset);
+    const month = pts.map((p, i) => [p[0], i]).filter(([d], i) => i === 0 || d.slice(5, 7) !== pts[i - 1][0].slice(5, 7));
+    return {svg: `<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="Weekly average views, ${esc(pts[0][0])} to ${esc(pts[n - 1][0])}">
+      <line x1="${P.l}" x2="${W - P.r}" y1="${H - P.b}" y2="${H - P.b}" stroke="var(--grid)" stroke-width="1"/>
+      ${month.map(([d, i]) => `<text x="${x(i)}" y="${H - 4}" font-size="10" fill="var(--ink-3)">${new Date(d + "T00:00:00").toLocaleDateString("en-US", {month: "short"})}</text>`).join("")}
+      <line x1="${x(r)}" x2="${x(r)}" y1="${P.t - 6}" y2="${H - P.b}" stroke="var(--ink-3)" stroke-width="1"/>
+      <text x="${x(r) + 4}" y="${P.t}" font-size="10" fill="var(--ink-3)">release</text>
+      <path d="${path}L${x(n - 1)},${H - P.b}L${x(0)},${H - P.b}Z" fill="var(--wash)"/>
+      <path d="${path}" fill="none" stroke="var(--marigold)" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"/>
+      <circle cx="${x(o)}" cy="${y(pts[o][1])}" r="5" fill="var(--marigold)" stroke="var(--card)" stroke-width="2"/>
+      <rect class="hit" x="0" y="0" width="${W}" height="${H}" fill="transparent"/></svg>`,
+      tip: (fx) => { const i = Math.round((fx * W - P.l) / ((W - P.l - P.r) / (n - 1))); const k = Math.max(0, Math.min(n - 1, i));
+        return [x(k) / W, `Week of ${fmtDate(pts[k][0])}: ${pts[k][1].toLocaleString()} views a day`]; }};
+  }
+
+  function bars(monthly, startMonth) {
+    const ks = Object.keys(monthly), n = ks.length, max = Math.max(...ks.map((k) => monthly[k])) || 1;
+    const slot = (W - P.l - P.r) / n, bw = Math.min(24, slot - 2);
+    const x = (i) => P.l + slot * i + (slot - bw) / 2, h = (v) => (H - P.t - P.b) * v / max;
+    const r = ks.indexOf(startMonth);
+    return {svg: `<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="Monthly checkouts">
+      <line x1="${P.l}" x2="${W - P.r}" y1="${H - P.b}" y2="${H - P.b}" stroke="var(--grid)" stroke-width="1"/>
+      ${ks.map((k, i) => { const v = monthly[k], hh = h(v), yy = H - P.b - hh;
+        const d = hh > 4 ? `M${x(i)},${H - P.b}V${yy + 4}Q${x(i)},${yy} ${x(i) + 4},${yy}H${x(i) + bw - 4}Q${x(i) + bw},${yy} ${x(i) + bw},${yy + 4}V${H - P.b}Z`
+          : `M${x(i)},${H - P.b}V${yy}H${x(i) + bw}V${H - P.b}Z`;
+        return `<path d="${d}" fill="${k >= startMonth ? "var(--marigold)" : "var(--ink-3)"}" opacity="${k >= startMonth ? 1 : .45}"/>`; }).join("")}
+      ${ks.map((k, i) => (i % 3 === 0 ? `<text x="${x(i)}" y="${H - 4}" font-size="10" fill="var(--ink-3)">${new Date(k + "-01T00:00:00").toLocaleDateString("en-US", {month: "short"}) + " ’" + k.slice(2, 4)}</text>` : "")).join("")}
+      ${r >= 0 ? `<line x1="${x(r) - 1}" x2="${x(r) - 1}" y1="${P.t - 6}" y2="${H - P.b}" stroke="var(--ink-3)" stroke-width="1"/><text x="${x(r) + 2}" y="${P.t}" font-size="10" fill="var(--ink-3)">release month</text>` : ""}
+      <rect class="hit" x="0" y="0" width="${W}" height="${H}" fill="transparent"/></svg>`,
+      tip: (fx) => { const k = Math.max(0, Math.min(n - 1, Math.floor((fx * W - P.l) / slot)));
+        return [(x(k) + bw / 2) / W, `${fmtDate(ks[k])}: ${monthly[ks[k]].toLocaleString()} checkouts`]; }};
+  }
+
+  D.steps.forEach((s) => {
+    const el = document.createElement("article");
+    el.className = "stop" + (s.kind === "event" ? " event" : "") + (s.evidence === "excluded" || s.evidence === "na" ? " excluded" : "");
+    const when = s.kind === "event" ? `<b>${fmtDate(s.date)}</b>` : `<b>${fmtDate(s.date)}</b>${s.days != null ? `<span>${s.days} days after release</span>` : `<span>month the rise began</span>`}`;
+    let chart = null;
+    if (s.series) chart = line(s.series, D.release, s.series.onset);
+    if (s.monthly) chart = bars(s.monthly, D.release.slice(0, 7));
+    el.innerHTML = `<div class="when">${when}<span class="b ${s.evidence}">${LABEL[s.evidence]}</span></div>
+      <h2>${esc(s.title)}</h2><p class="measure">${esc(s.measure)}</p>
+      ${chart ? `<div class="chart">${chart.svg}<div class="tip" hidden></div></div>` : ""}
+      ${s.facts ? `<div class="facts">${s.facts.map(([k, v]) => `<div class="fact"><b>${esc(v)}</b><span>${esc(k)}</span></div>`).join("")}</div>` : ""}
+      ${s.also ? `<p class="also">Also rising: ${s.also.map((a) => `${esc(a.name)} <span style="color:var(--ink-3)">(${a.days >= 0 ? "+" : ""}${a.days} days)</span>`).join(", ")}</p>` : ""}
+      ${s.test ? `<p class="test">${esc(s.test)}</p>` : ""}
+      <p class="note">${esc(s.note)}${s.source ? ` <a href="${esc(s.source)}" target="_blank" rel="noopener">Source</a>` : ""}</p>`;
+    route.appendChild(el);
+    if (chart) {
+      const box = el.querySelector(".chart"), tip = box.querySelector(".tip"), svg = box.querySelector("svg");
+      const move = (ev) => { const r = svg.getBoundingClientRect(); const [fx, txt] = chart.tip((ev.clientX - r.left) / r.width);
+        tip.textContent = txt; tip.style.left = (fx * 100) + "%"; tip.hidden = false; };
+      svg.addEventListener("pointermove", move); svg.addEventListener("pointerleave", () => { tip.hidden = true; });
+    }
+  });
+})();
+</script>
+</body>
+</html>

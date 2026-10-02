@@ -1,0 +1,67 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Ripple Map · Ripple maps</title>
+<meta name="description" content="Every ripple map: one event each, followed step by step in time order.">
+<meta name="robots" content="noindex">
+<link rel="icon" href="/favicon.svg">
+<style>
+@font-face{font-family:"Anybody";src:url(/ripples/fonts/anybody-latin-var.woff2) format("woff2");font-weight:100 900;font-stretch:50% 150%;font-display:swap}
+@font-face{font-family:"IBM Plex Sans";src:url(/ripples/fonts/plex-sans-latin-var.woff2) format("woff2");font-weight:100 700;font-display:optional}
+/* Layout: one column; a vertical transit line down the left with a stop per ripple step, each stop a card with its own small chart. */
+:root{
+  color-scheme:light;
+  --stage:#EDF1EE;--card:#FFFFFF;--sunk:#F4F7F5;--ink:#0B3A40;--ink-2:#3C5E62;--ink-3:#557275;--hair:#D3DDDA;
+  --line:#0B3A40;--marigold:#F2AE2E;--marigold-ink:#9A5E00;--good:#1E7A4F;--grid:#E3E9E7;--wash:rgba(242,174,46,.14);
+  --display:"Anybody","Arial Black",system-ui,sans-serif;--sans:"IBM Plex Sans",-apple-system,"Segoe UI",system-ui,sans-serif;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  color-scheme:dark;--stage:#062429;--card:#0D353B;--sunk:#0A2D32;--ink:#EAF3F0;--ink-2:#B7CDCA;--ink-3:#8AA9A6;--hair:#1C4A51;
+  --line:#EAF3F0;--marigold:#E0A33C;--marigold-ink:#F2B23A;--good:#5CC792;--grid:#16434A;--wash:rgba(224,163,60,.16)}}
+:root[data-theme="dark"]{
+  color-scheme:dark;--stage:#062429;--card:#0D353B;--sunk:#0A2D32;--ink:#EAF3F0;--ink-2:#B7CDCA;--ink-3:#8AA9A6;--hair:#1C4A51;
+  --line:#EAF3F0;--marigold:#E0A33C;--marigold-ink:#F2B23A;--good:#5CC792;--grid:#16434A;--wash:rgba(224,163,60,.16)}
+*,*::before,*::after{box-sizing:border-box}
+body{margin:0;background:var(--stage);color:var(--ink);font:400 16px/1.55 var(--sans);-webkit-font-smoothing:antialiased;overflow-x:hidden}
+main{max-width:820px;margin:0 auto;padding:40px 16px 72px}
+.kicker{font:700 .78rem/1 var(--sans);letter-spacing:.08em;text-transform:uppercase;color:var(--marigold-ink);margin-bottom:.6rem}
+h1{font:800 clamp(1.9rem,5.5vw,2.8rem)/1.05 var(--display);margin:0 0 .6rem;letter-spacing:-.01em;text-wrap:balance}
+.lede{color:var(--ink-2);max-width:62ch;margin:0}
+.legend{display:flex;flex-wrap:wrap;gap:8px 16px;margin:1.2rem 0 1.6rem;font-size:.86rem;color:var(--ink-2)}
+.b{font-size:.74rem;line-height:1;padding:5px 9px;border-radius:999px;border:1px solid var(--hair);background:var(--sunk);white-space:nowrap;font-weight:600}
+.b.tested{border-color:var(--good);color:var(--good)}
+.b.timed{border-color:var(--marigold);color:var(--marigold-ink)}
+.b.record{border-color:var(--ink-3);color:var(--ink-2)}
+.b.event{border-color:var(--line);color:var(--ink)}
+.b.excluded,.b.na{border-style:dashed;color:var(--ink-3)}
+.stop.excluded{opacity:.72}
+.route{position:relative;display:grid;gap:18px;padding-left:44px}
+.route::before{content:"";position:absolute;left:15px;top:14px;bottom:14px;width:4px;border-radius:2px;background:var(--line)}
+.stop{position:relative;background:var(--card);border:1px solid var(--hair);border-radius:14px;padding:16px;min-width:0}
+.stop::before{content:"";position:absolute;left:-37px;top:18px;width:18px;height:18px;border-radius:50%;background:var(--card);border:4px solid var(--line)}
+.stop.event::before{background:var(--line)}
+.when{display:flex;flex-wrap:wrap;align-items:baseline;gap:6px 12px;margin-bottom:.35rem}
+.when b{font:800 1.05rem/1.2 var(--display);font-variant-numeric:tabular-nums}
+.when span{color:var(--ink-3);font-size:.86rem}
+h2{font:700 1.12rem/1.3 var(--sans);margin:0 0 .5rem}
+.measure{font-size:.84rem;color:var(--ink-3);margin:.2rem 0 0}
+.note{color:var(--ink-2);margin:.5rem 0 0;max-width:64ch}
+.test{font-size:.86rem;margin:.5rem 0 0;padding:8px 10px;border-radius:8px;background:var(--sunk);color:var(--ink-2)}
+.also{font-size:.86rem;color:var(--ink-2);margin:.4rem 0 0}
+.chart{position:relative;margin-top:.7rem}
+.chart svg{display:block;width:100%;height:auto;overflow:visible}
+.tip{position:absolute;pointer-events:none;background:var(--ink);color:var(--card);font-size:.78rem;padding:4px 7px;border-radius:6px;white-space:nowrap;transform:translate(-50%,-120%);top:0}
+.facts{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:10px;margin-top:.7rem}
+.fact{border:1px solid var(--hair);border-radius:10px;padding:10px 12px}
+.fact b{display:block;font:800 1.8rem/1.05 var(--display);font-variant-numeric:tabular-nums}
+.fact span{font-size:.84rem;color:var(--ink-2)}
+a{color:inherit;text-underline-offset:3px}
+.foot{margin-top:2rem;color:var(--ink-3);font-size:.9rem;max-width:66ch}
+.foot p{margin:.5rem 0}
+.rule{font-size:.9rem;color:var(--ink-2);border-left:3px solid var(--marigold);padding-left:10px;margin:1rem 0 0;max-width:64ch}
+</style>
+</head>
+<body>
+<main><div class="kicker">Ripple Map · prototype</div><h1>Ripple maps</h1><p class="lede">One event each, followed step by step: what people looked up, what they reached for, what they borrowed, and what happened in the world. A step counts only if it starts after the one before it.</p><div class="route" style="margin-top:1.4rem"><a class="stop" href="/ripples/discover/maps/shogun/" style="display:block;text-decoration:none"><div class="when"><b>2024-02-27</b><span>1 of 2 steps counted</span></div><h2>Shōgun</h2></a><a class="stop" href="/ripples/discover/maps/oppenheimer/" style="display:block;text-decoration:none"><div class="when"><b>2023-07-21</b><span>1 of 3 steps counted</span></div><h2>Oppenheimer</h2></a><a class="stop" href="/ripples/discover/maps/barbie/" style="display:block;text-decoration:none"><div class="when"><b>2023-07-21</b><span>1 of 2 steps counted · measured behaviour</span></div><h2>Barbie</h2></a><a class="stop" href="/ripples/discover/maps/the-last-of-us/" style="display:block;text-decoration:none"><div class="when"><b>2023-01-15</b><span>0 of 2 steps counted</span></div><h2>The Last of Us</h2></a><a class="stop" href="/ripples/discover/maps/jwst-first-images/" style="display:block;text-decoration:none"><div class="when"><b>2022-07-12</b><span>0 of 2 steps counted</span></div><h2>Webb's first images</h2></a><a class="stop" href="/ripples/discover/maps/stranger-things-4/" style="display:block;text-decoration:none"><div class="when"><b>2022-05-27</b><span>3 of 4 steps counted</span></div><h2>Stranger Things season 4</h2></a><a class="stop" href="/ripples/discover/maps/wordle/" style="display:block;text-decoration:none"><div class="when"><b>2022-01-01</b><span>0 of 2 steps counted</span></div><h2>Wordle</h2></a><a class="stop" href="/ripples/discover/maps/squid-game/" style="display:block;text-decoration:none"><div class="when"><b>2021-09-17</b><span>2 of 3 steps counted</span></div><h2>Squid Game</h2></a><a class="stop" href="/ripples/discover/maps/queens-gambit/" style="display:block;text-decoration:none"><div class="when"><b>2020-10-23</b><span>3 of 4 steps counted</span></div><h2>The Queen's Gambit</h2></a><a class="stop" href="/ripples/discover/maps/tiger-king/" style="display:block;text-decoration:none"><div class="when"><b>2020-03-20</b><span>4 of 5 steps counted</span></div><h2>Tiger King</h2></a><a class="stop" href="/ripples/discover/maps/chernobyl/" style="display:block;text-decoration:none"><div class="when"><b>2019-05-06</b><span>2 of 4 steps counted</span></div><h2>Chernobyl</h2></a></div><div class="foot"><p>Built by <code>ripples/lab/map_builder.py</code> from the configs in <code>ripples/maps/</code>. More results on <a href="/ripples/discover/">Discoveries</a>.</p></div></main></body></html>

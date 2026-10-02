@@ -1,0 +1,158 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Ripple Map · Barbie</title>
+<meta name="description" content="A time-ordered ripple map for Barbie: each step dated and marked by how it was measured.">
+<meta name="robots" content="noindex">
+<link rel="icon" href="/favicon.svg">
+<style>
+@font-face{font-family:"Anybody";src:url(/ripples/fonts/anybody-latin-var.woff2) format("woff2");font-weight:100 900;font-stretch:50% 150%;font-display:swap}
+@font-face{font-family:"IBM Plex Sans";src:url(/ripples/fonts/plex-sans-latin-var.woff2) format("woff2");font-weight:100 700;font-display:optional}
+/* Layout: one column; a vertical transit line down the left with a stop per ripple step, each stop a card with its own small chart. */
+:root{
+  color-scheme:light;
+  --stage:#EDF1EE;--card:#FFFFFF;--sunk:#F4F7F5;--ink:#0B3A40;--ink-2:#3C5E62;--ink-3:#557275;--hair:#D3DDDA;
+  --line:#0B3A40;--marigold:#F2AE2E;--marigold-ink:#9A5E00;--good:#1E7A4F;--grid:#E3E9E7;--wash:rgba(242,174,46,.14);
+  --display:"Anybody","Arial Black",system-ui,sans-serif;--sans:"IBM Plex Sans",-apple-system,"Segoe UI",system-ui,sans-serif;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  color-scheme:dark;--stage:#062429;--card:#0D353B;--sunk:#0A2D32;--ink:#EAF3F0;--ink-2:#B7CDCA;--ink-3:#8AA9A6;--hair:#1C4A51;
+  --line:#EAF3F0;--marigold:#E0A33C;--marigold-ink:#F2B23A;--good:#5CC792;--grid:#16434A;--wash:rgba(224,163,60,.16)}}
+:root[data-theme="dark"]{
+  color-scheme:dark;--stage:#062429;--card:#0D353B;--sunk:#0A2D32;--ink:#EAF3F0;--ink-2:#B7CDCA;--ink-3:#8AA9A6;--hair:#1C4A51;
+  --line:#EAF3F0;--marigold:#E0A33C;--marigold-ink:#F2B23A;--good:#5CC792;--grid:#16434A;--wash:rgba(224,163,60,.16)}
+*,*::before,*::after{box-sizing:border-box}
+body{margin:0;background:var(--stage);color:var(--ink);font:400 16px/1.55 var(--sans);-webkit-font-smoothing:antialiased;overflow-x:hidden}
+main{max-width:820px;margin:0 auto;padding:40px 16px 72px}
+.kicker{font:700 .78rem/1 var(--sans);letter-spacing:.08em;text-transform:uppercase;color:var(--marigold-ink);margin-bottom:.6rem}
+h1{font:800 clamp(1.9rem,5.5vw,2.8rem)/1.05 var(--display);margin:0 0 .6rem;letter-spacing:-.01em;text-wrap:balance}
+.lede{color:var(--ink-2);max-width:62ch;margin:0}
+.legend{display:flex;flex-wrap:wrap;gap:8px 16px;margin:1.2rem 0 1.6rem;font-size:.86rem;color:var(--ink-2)}
+.b{font-size:.74rem;line-height:1;padding:5px 9px;border-radius:999px;border:1px solid var(--hair);background:var(--sunk);white-space:nowrap;font-weight:600}
+.b.tested{border-color:var(--good);color:var(--good)}
+.b.timed{border-color:var(--marigold);color:var(--marigold-ink)}
+.b.record{border-color:var(--ink-3);color:var(--ink-2)}
+.b.event{border-color:var(--line);color:var(--ink)}
+.b.excluded,.b.na{border-style:dashed;color:var(--ink-3)}
+.stop.excluded{opacity:.72}
+.route{position:relative;display:grid;gap:18px;padding-left:44px}
+.route::before{content:"";position:absolute;left:15px;top:14px;bottom:14px;width:4px;border-radius:2px;background:var(--line)}
+.stop{position:relative;background:var(--card);border:1px solid var(--hair);border-radius:14px;padding:16px;min-width:0}
+.stop::before{content:"";position:absolute;left:-37px;top:18px;width:18px;height:18px;border-radius:50%;background:var(--card);border:4px solid var(--line)}
+.stop.event::before{background:var(--line)}
+.when{display:flex;flex-wrap:wrap;align-items:baseline;gap:6px 12px;margin-bottom:.35rem}
+.when b{font:800 1.05rem/1.2 var(--display);font-variant-numeric:tabular-nums}
+.when span{color:var(--ink-3);font-size:.86rem}
+h2{font:700 1.12rem/1.3 var(--sans);margin:0 0 .5rem}
+.measure{font-size:.84rem;color:var(--ink-3);margin:.2rem 0 0}
+.note{color:var(--ink-2);margin:.5rem 0 0;max-width:64ch}
+.test{font-size:.86rem;margin:.5rem 0 0;padding:8px 10px;border-radius:8px;background:var(--sunk);color:var(--ink-2)}
+.also{font-size:.86rem;color:var(--ink-2);margin:.4rem 0 0}
+.chart{position:relative;margin-top:.7rem}
+.chart svg{display:block;width:100%;height:auto;overflow:visible}
+.tip{position:absolute;pointer-events:none;background:var(--ink);color:var(--card);font-size:.78rem;padding:4px 7px;border-radius:6px;white-space:nowrap;transform:translate(-50%,-120%);top:0}
+.facts{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:10px;margin-top:.7rem}
+.fact{border:1px solid var(--hair);border-radius:10px;padding:10px 12px}
+.fact b{display:block;font:800 1.8rem/1.05 var(--display);font-variant-numeric:tabular-nums}
+.fact span{font-size:.84rem;color:var(--ink-2)}
+a{color:inherit;text-underline-offset:3px}
+.foot{margin-top:2rem;color:var(--ink-3);font-size:.9rem;max-width:66ch}
+.foot p{margin:.5rem 0}
+.rule{font-size:.9rem;color:var(--ink-2);border-left:3px solid var(--marigold);padding-left:10px;margin:1rem 0 0;max-width:64ch}
+</style>
+</head>
+<body>
+<main>
+  <div class="kicker">Ripple Map · prototype</div>
+  <h1>Barbie</h1>
+  <p class="lede">Greta Gerwig's film about the doll, followed from what people looked up to what they borrowed.</p>
+  <p class="rule">Reading rule: a step counts only if it is an outcome measured in its own data and it starts after the previous step. The badge says how sure we are of each step.</p>
+  <div class="legend" aria-label="Evidence key">
+    <span><span class="b tested">Measured</span> tested against fake dates</span>
+    <span><span class="b timed">Timed</span> start date measured, size not tested</span>
+    <span><span class="b record">Reported</span> from a published source, not measured by us</span>
+  </div>
+  <div class="route" id="route"></div>
+  <div class="foot">
+    <p><strong>What this shows.</strong> The order and timing of each step, and for the measured steps, that the rise was larger than at fake dates. It is evidence of a chain of attention and behaviour, not proof that the show caused each step on its own.</p>
+    <p><strong>Known limits.</strong> Wikipedia stands in for all attention and one city's library for borrowing. Timing shows order, not proof that the event caused each step on its own.</p>
+    <p>Data: Wikimedia pageviews (daily), Seattle Public Library checkouts (monthly) Tests: <a href="/ripples/docs/q4_protocol_v1.md">named-subject test</a>, <a href="/ripples/docs/chain_tests_v1.md">chain tests</a>. More results on <a href="/ripples/discover/">Discoveries</a>.</p>
+  </div>
+</main>
+<script id="data" type="application/json">{"slug": "barbie", "title": "Barbie", "release": "2023-07-21", "steps": [{"kind": "event", "title": "Barbie opens in cinemas", "date": "2023-07-21", "days": 0, "evidence": "event", "series": {"weekly": [["2023-05-09", 7991], ["2023-05-16", 8444], ["2023-05-23", 34715], ["2023-05-30", 24189], ["2023-06-06", 16063], ["2023-06-13", 17998], ["2023-06-20", 21781], ["2023-06-27", 36115], ["2023-07-04", 62311], ["2023-07-11", 119967], ["2023-07-18", 560199], ["2023-07-25", 441891], ["2023-08-01", 308478], ["2023-08-08", 175076], ["2023-08-15", 115085], ["2023-08-22", 85560], ["2023-08-29", 75272], ["2023-09-05", 58060], ["2023-09-12", 60203], ["2023-09-19", 45404], ["2023-09-26", 36659], ["2023-10-03", 27865], ["2023-10-10", 26069], ["2023-10-17", 22461], ["2023-10-24", 18778], ["2023-10-31", 20337], ["2023-11-07", 20940], ["2023-11-14", 21647], ["2023-11-21", 20819], ["2023-11-28", 17707], ["2023-12-05", 22723], ["2023-12-12", 36417], ["2023-12-19", 34194], ["2023-12-26", 39673], ["2024-01-02", 33361], ["2024-01-09", 29900], ["2024-01-16", 21657], ["2024-01-23", 39785], ["2024-01-30", 20949], ["2024-02-06", 15144]], "onset": "2023-07-11", "days": -10, "pre": 15541.5, "peak": 833627}, "measure": "daily Wikipedia views of the event article", "note": ""}, {"title": "People look up Barbie, the doll", "kind": "attention", "series": {"weekly": [["2023-05-09", 1819], ["2023-05-16", 1850], ["2023-05-23", 5003], ["2023-05-30", 4160], ["2023-06-06", 3021], ["2023-06-13", 3355], ["2023-06-20", 3844], ["2023-06-27", 5805], ["2023-07-04", 10415], ["2023-07-11", 23469], ["2023-07-18", 118892], ["2023-07-25", 87840], ["2023-08-01", 47055], ["2023-08-08", 29434], ["2023-08-15", 18419], ["2023-08-22", 12360], ["2023-08-29", 9964], ["2023-09-05", 9401], ["2023-09-12", 10698], ["2023-09-19", 8016], ["2023-09-26", 6254], ["2023-10-03", 5457], ["2023-10-10", 5182], ["2023-10-17", 4444], ["2023-10-24", 4238], ["2023-10-31", 4169], ["2023-11-07", 3770], ["2023-11-14", 4296], ["2023-11-21", 5084], ["2023-11-28", 4031], ["2023-12-05", 4577], ["2023-12-12", 9118], ["2023-12-19", 8811], ["2023-12-26", 10863], ["2024-01-02", 7193], ["2024-01-09", 6264], ["2024-01-16", 4800], ["2024-01-23", 5702], ["2024-01-30", 4086], ["2024-02-06", 3392]], "onset": "2023-07-11", "days": -10, "pre": 2924.0, "peak": 175516}, "also": [{"name": "Mattel", "days": -2}, {"name": "Ruth Handler", "days": -11}], "measure": "daily Wikipedia views of “Barbie”", "date": "2023-07-11", "days": -10, "evidence": "excluded", "why": "its rise began before the event or before the previous step", "note": "Not counted: its rise began before the event or before the previous step."}, {"title": "People borrow Barbie books", "kind": "behaviour", "measure": "monthly checkouts of books on “Barbie dolls”, Seattle Public Library", "monthly": {"2022-07": 1, "2022-08": 0, "2022-09": 4, "2022-10": 5, "2022-11": 0, "2022-12": 1, "2023-01": 1, "2023-02": 2, "2023-03": 1, "2023-04": 2, "2023-05": 1, "2023-06": 2, "2023-07": 14, "2023-08": 12, "2023-09": 14, "2023-10": 7, "2023-11": 10, "2023-12": 5, "2024-01": 5}, "days": null, "evidence": "tested", "date": "2023-07", "test": "Chain test: rise beyond the seasonal normal, p = 0.0112 against every other month; rise began 2023-07, after the event. Closure months excluded."}]}</script>
+<script>
+(() => {
+  const D = JSON.parse(document.getElementById("data").textContent);
+  const esc = (s) => String(s).replace(/[&<>"']/g, (c) => ({"&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;"}[c]));
+  const fmtDate = (s) => s.length === 7 ? new Date(s + "-01T00:00:00").toLocaleDateString("en-US", {month: "long", year: "numeric"})
+    : new Date(s + "T00:00:00").toLocaleDateString("en-US", {month: "short", day: "numeric", year: "numeric"});
+  const LABEL = {tested: "Measured", timed: "Timed", record: "Reported", event: "The event", excluded: "Not counted", na: "Not measurable"};
+  const route = document.getElementById("route");
+  const W = Math.max(280, Math.min(700, route.clientWidth - 34)), H = 96, P = {l: 4, r: 4, t: 10, b: 18};
+
+  function line(series, release, onset) {
+    const pts = series.weekly, n = pts.length, max = Math.max(...pts.map((p) => p[1])) || 1;
+    const x = (i) => P.l + (W - P.l - P.r) * i / (n - 1), y = (v) => H - P.b - (H - P.t - P.b) * v / max;
+    const idx = (d) => { let k = pts.findIndex((p) => p[0] >= d); return k < 0 ? n - 1 : Math.max(0, k - (pts[k][0] > d ? 1 : 0)); };
+    const path = pts.map((p, i) => `${i ? "L" : "M"}${x(i).toFixed(1)},${y(p[1]).toFixed(1)}`).join("");
+    const r = idx(release), o = idx(onset);
+    const month = pts.map((p, i) => [p[0], i]).filter(([d], i) => i === 0 || d.slice(5, 7) !== pts[i - 1][0].slice(5, 7));
+    return {svg: `<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="Weekly average views, ${esc(pts[0][0])} to ${esc(pts[n - 1][0])}">
+      <line x1="${P.l}" x2="${W - P.r}" y1="${H - P.b}" y2="${H - P.b}" stroke="var(--grid)" stroke-width="1"/>
+      ${month.map(([d, i]) => `<text x="${x(i)}" y="${H - 4}" font-size="10" fill="var(--ink-3)">${new Date(d + "T00:00:00").toLocaleDateString("en-US", {month: "short"})}</text>`).join("")}
+      <line x1="${x(r)}" x2="${x(r)}" y1="${P.t - 6}" y2="${H - P.b}" stroke="var(--ink-3)" stroke-width="1"/>
+      <text x="${x(r) + 4}" y="${P.t}" font-size="10" fill="var(--ink-3)">release</text>
+      <path d="${path}L${x(n - 1)},${H - P.b}L${x(0)},${H - P.b}Z" fill="var(--wash)"/>
+      <path d="${path}" fill="none" stroke="var(--marigold)" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"/>
+      <circle cx="${x(o)}" cy="${y(pts[o][1])}" r="5" fill="var(--marigold)" stroke="var(--card)" stroke-width="2"/>
+      <rect class="hit" x="0" y="0" width="${W}" height="${H}" fill="transparent"/></svg>`,
+      tip: (fx) => { const i = Math.round((fx * W - P.l) / ((W - P.l - P.r) / (n - 1))); const k = Math.max(0, Math.min(n - 1, i));
+        return [x(k) / W, `Week of ${fmtDate(pts[k][0])}: ${pts[k][1].toLocaleString()} views a day`]; }};
+  }
+
+  function bars(monthly, startMonth) {
+    const ks = Object.keys(monthly), n = ks.length, max = Math.max(...ks.map((k) => monthly[k])) || 1;
+    const slot = (W - P.l - P.r) / n, bw = Math.min(24, slot - 2);
+    const x = (i) => P.l + slot * i + (slot - bw) / 2, h = (v) => (H - P.t - P.b) * v / max;
+    const r = ks.indexOf(startMonth);
+    return {svg: `<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="Monthly checkouts">
+      <line x1="${P.l}" x2="${W - P.r}" y1="${H - P.b}" y2="${H - P.b}" stroke="var(--grid)" stroke-width="1"/>
+      ${ks.map((k, i) => { const v = monthly[k], hh = h(v), yy = H - P.b - hh;
+        const d = hh > 4 ? `M${x(i)},${H - P.b}V${yy + 4}Q${x(i)},${yy} ${x(i) + 4},${yy}H${x(i) + bw - 4}Q${x(i) + bw},${yy} ${x(i) + bw},${yy + 4}V${H - P.b}Z`
+          : `M${x(i)},${H - P.b}V${yy}H${x(i) + bw}V${H - P.b}Z`;
+        return `<path d="${d}" fill="${k >= startMonth ? "var(--marigold)" : "var(--ink-3)"}" opacity="${k >= startMonth ? 1 : .45}"/>`; }).join("")}
+      ${ks.map((k, i) => (i % 3 === 0 ? `<text x="${x(i)}" y="${H - 4}" font-size="10" fill="var(--ink-3)">${new Date(k + "-01T00:00:00").toLocaleDateString("en-US", {month: "short"}) + " ’" + k.slice(2, 4)}</text>` : "")).join("")}
+      ${r >= 0 ? `<line x1="${x(r) - 1}" x2="${x(r) - 1}" y1="${P.t - 6}" y2="${H - P.b}" stroke="var(--ink-3)" stroke-width="1"/><text x="${x(r) + 2}" y="${P.t}" font-size="10" fill="var(--ink-3)">release month</text>` : ""}
+      <rect class="hit" x="0" y="0" width="${W}" height="${H}" fill="transparent"/></svg>`,
+      tip: (fx) => { const k = Math.max(0, Math.min(n - 1, Math.floor((fx * W - P.l) / slot)));
+        return [(x(k) + bw / 2) / W, `${fmtDate(ks[k])}: ${monthly[ks[k]].toLocaleString()} checkouts`]; }};
+  }
+
+  D.steps.forEach((s) => {
+    const el = document.createElement("article");
+    el.className = "stop" + (s.kind === "event" ? " event" : "") + (s.evidence === "excluded" || s.evidence === "na" ? " excluded" : "");
+    const when = s.kind === "event" ? `<b>${fmtDate(s.date)}</b>` : `<b>${fmtDate(s.date)}</b>${s.days != null ? `<span>${s.days} days after release</span>` : `<span>month the rise began</span>`}`;
+    let chart = null;
+    if (s.series) chart = line(s.series, D.release, s.series.onset);
+    if (s.monthly) chart = bars(s.monthly, D.release.slice(0, 7));
+    el.innerHTML = `<div class="when">${when}<span class="b ${s.evidence}">${LABEL[s.evidence]}</span></div>
+      <h2>${esc(s.title)}</h2><p class="measure">${esc(s.measure)}</p>
+      ${chart ? `<div class="chart">${chart.svg}<div class="tip" hidden></div></div>` : ""}
+      ${s.facts ? `<div class="facts">${s.facts.map(([k, v]) => `<div class="fact"><b>${esc(v)}</b><span>${esc(k)}</span></div>`).join("")}</div>` : ""}
+      ${s.also ? `<p class="also">Also rising: ${s.also.map((a) => `${esc(a.name)} <span style="color:var(--ink-3)">(${a.days >= 0 ? "+" : ""}${a.days} days)</span>`).join(", ")}</p>` : ""}
+      ${s.test ? `<p class="test">${esc(s.test)}</p>` : ""}
+      <p class="note">${esc(s.note)}${s.source ? ` <a href="${esc(s.source)}" target="_blank" rel="noopener">Source</a>` : ""}</p>`;
+    route.appendChild(el);
+    if (chart) {
+      const box = el.querySelector(".chart"), tip = box.querySelector(".tip"), svg = box.querySelector("svg");
+      const move = (ev) => { const r = svg.getBoundingClientRect(); const [fx, txt] = chart.tip((ev.clientX - r.left) / r.width);
+        tip.textContent = txt; tip.style.left = (fx * 100) + "%"; tip.hidden = false; };
+      svg.addEventListener("pointermove", move); svg.addEventListener("pointerleave", () => { tip.hidden = true; });
+    }
+  });
+})();
+</script>
+</body>
+</html>
