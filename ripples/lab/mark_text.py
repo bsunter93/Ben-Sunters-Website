@@ -1,4 +1,8 @@
-"""Mark-text search v1.1 (ripples/docs/mark_text_v1_1.md): cultural works named inside legal and parliamentary text.
+"""Mark-text search v1.2 (ripples/docs/mark_text_v1_2.md): cultural works named inside legal and parliamentary text.
+
+v1.2 (Oct 3, after v1.1): named works are read through every Hansard page (up to 1,000 contributions); named markers that
+are also ordinary words need a work-context word within 160 characters; bill stages (second reading, committee, report,
+third reading) are their own tier.
 
 v1.1 (Oct 3, after v1's 26-minute run): named-work markers resolve as the title themselves; Hansard reads the newest and
 the oldest 100 contributions per phrase; legislation.gov.uk notes are fetched from real document paths (UK enactments
@@ -29,8 +33,8 @@ sys.path.insert(0, os.path.dirname(__file__))
 import mark_first as mf  # noqa: E402  (shared helpers: get, sparql, budget, Stop, WP, strip_markup)
 
 ROOT = os.path.join(os.path.dirname(__file__), "..")
-OUT = os.environ.get("OUT_JSON") or os.path.join(ROOT, "docs", "results", "mark_text_v1_1.json")
-PROTOCOL = "ripples/docs/mark_text_v1_1.md"
+OUT = os.environ.get("OUT_JSON") or os.path.join(ROOT, "docs", "results", "mark_text_v1_2.json")
+PROTOCOL = "ripples/docs/mark_text_v1_2.md"
 KEY = os.environ.get("DATA_GOV_KEY", "").strip()
 FR = "https://www.federalregister.gov/api/v1/documents.json"
 UKL = "https://www.legislation.gov.uk"
@@ -49,6 +53,11 @@ NAMED = {"Super Size Me": "Super Size Me", "Blackfish": "Blackfish (film)", "Tig
          "The Jungle": "The Jungle", "Silent Spring": "Silent Spring", "Unsafe at Any Speed": "Unsafe at Any Speed", "WarGames": "WarGames",
          "Cathy Come Home": "Cathy Come Home", "Thirteen Reasons Why": "13 Reasons Why", "13 Reasons Why": "13 Reasons Why",
          "Squid Game": "Squid Game", "Stranger Things": "Stranger Things", "Baby Reindeer": "Baby Reindeer", "Adolescence": "Adolescence (TV series)"}
+# named markers that are also ordinary words need a work-context word nearby (v1.1 matched the fish, the Calais camp, an idiom)
+AMBIGUOUS = {"Blackfish", "The Jungle", "Adolescence", "Stranger Things", "Mr Bates", "Tiger King", "Squid Game", "Baby Reindeer", "WarGames"}
+WORK_CTX = re.compile(r"\b(drama|series|film|documentary|programme|program|show|Netflix|ITV|BBC|Channel 4|HBO|book|novel|broadcast|episode|"
+                      r"aired|watched|viewers|screen|television|TV|docuseries|streaming|Upton Sinclair|SeaWorld|orca|Post Office|Horizon|"
+                      r"Richard Gadd|Jack Thorne|Stephen Graham|Joe Exotic|Hollywood|Matthew Broderick)\b", re.I)
 # the title a marker introduces
 TITLE_RX = [
     re.compile(r"(?:series|drama|documentary|docuseries|film|movie|novel|book|miniseries|podcast|game|programme|program|show)\s+"
@@ -136,6 +145,8 @@ def record(source, mark, mark_date, url, text, marker, tier):
     ctx = window(text, marker)
     if marker.lower() not in ctx.lower():
         return
+    if marker in AMBIGUOUS and not WORK_CTX.search(window(text, marker, 160)):
+        return  # the word, not the work
     found = titles_in(ctx)
     if marker in NAMED and not any(NAMED[marker].split(" (")[0].lower() in t.lower() for t in found):
         found = [NAMED[marker]] + found
@@ -226,8 +237,12 @@ def hansard():
         if term in done:
             continue
         rows, total = [], None
-        for order in ("SittingDateDesc", "SittingDateAsc"):  # the newest 100 and the oldest 100: v1 saw only the newest
-            q = urllib.parse.urlencode({"queryParameters.searchTerm": f'"{term}"', "queryParameters.take": 100, "queryParameters.skip": 0,
+        # named works: every page (up to 1,000 contributions); generic phrases: the newest 100 and the oldest 100
+        plan = [("SittingDateDesc", skip) for skip in range(0, 1000, 100)] if term in NAMED else [("SittingDateDesc", 0), ("SittingDateAsc", 0)]
+        for order, skip in plan:
+            if total is not None and skip >= total:
+                break
+            q = urllib.parse.urlencode({"queryParameters.searchTerm": f'"{term}"', "queryParameters.take": 100, "queryParameters.skip": skip,
                                         "queryParameters.orderBy": order})
             body = mf.get(f"{HAN}/search/contributions/Spoken.json?{q}")
             try:
@@ -236,7 +251,7 @@ def hansard():
                 rows += d.get("Results") or d.get("results") or []
             except (ValueError, TypeError):
                 print("HAN no json for", term, (body or "")[:120].replace("\n", " "), flush=True)
-            if total is not None and total <= 100:
+            if total is not None and total <= 100 and term not in NAMED:
                 break
         seen = set(); rows = [r for r in rows if not (r.get("ContributionExtId") in seen or seen.add(r.get("ContributionExtId")))]
         state.setdefault("han_counts", {})[term] = total
@@ -248,7 +263,9 @@ def hansard():
             url = f"https://hansard.parliament.uk/search/Contributions?searchTerm={urllib.parse.quote(term)}"
             if r.get("DebateSectionExtId"):
                 url = f"https://hansard.parliament.uk/debates/{r['DebateSectionExtId']}"
-            tier = "bill debate" if re.search(r"\bBill\b|\bAct\b|Regulations|Order", section) else "debate"
+            tier = "bill debate" if re.search(r"\bBill\b|Regulations|\bOrder\b", section) else "act debate" if re.search(r"\bAct\b", section) else "debate"
+            if tier == "bill debate" and re.search(r"Second Reading|Committee|Report Stage|Third Reading", section or "", re.I):
+                tier = "bill stage"
             record("HAN", section or "Hansard contribution", date, url, text, term, tier)
         done.append(term); save()
 
@@ -309,7 +326,7 @@ def main() -> int:
     except mf.Stop as e:
         state["stopped"] = str(e); print("stopped:", e, flush=True)
     pairs = state.get("pairs", [])
-    good = [p for p in pairs if p["ordered"] and p["tier"] in ("law", "rule", "bill", "bill debate")]
+    good = [p for p in pairs if p["ordered"] and p["tier"] in ("law", "rule", "bill", "bill debate", "bill stage")]
     good.sort(key=lambda p: (-p["causal_score"], p["lag_days"] or 0))
     state["summary"] = {"pairs": len(pairs), "ordered": sum(1 for p in pairs if p["ordered"]), "good": len(good),
                         "by_source": {s: sum(1 for p in pairs if p["source"] == s) for s in ("HAN", "UKL", "FR", "GOV")}, "top": good[:80]}
