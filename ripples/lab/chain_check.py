@@ -258,9 +258,15 @@ def main() -> int:
                 ref = D(ch["date"])
                 out = {k: ch.get(k) for k in ("slug", "title", "date", "batch", "vertical")}
                 out["steps"] = []
+                onsets = {}
                 for st in ch["steps"]:
-                    # a branch step follows the event itself, not the main chain's latest step
-                    sref = D(st["ref"]) if st.get("ref") else (D(ch["date"]) if st.get("branch") else ref)
+                    # a step follows the step named in "after" (or the event itself for a branch), else the main chain's latest step
+                    if st.get("ref"):
+                        sref = D(st["ref"])
+                    elif st.get("after"):
+                        sref = onsets.get(st["after"], D(ch["date"]))
+                    else:
+                        sref = D(ch["date"]) if st.get("branch") else ref
                     try:
                         r = run_step(st, sref)
                     except et.Stop:
@@ -271,9 +277,11 @@ def main() -> int:
                     out["steps"].append({"n": st["n"], "claim": st["claim"], "test": {k: st["test"][k] for k in st["test"] if k != "counts"},
                                          "ref": sref.isoformat(), "verdict": v, "note": st.get("note"),
                                          "link": st.get("link"), "link_why": st.get("link_why"), "branch": st.get("branch", False),
-                                         "vertical": st.get("vertical"), **r})
+                                         "vertical": st.get("vertical"), "after": st.get("after"), "slice": st.get("slice"), "short": st.get("short"), **r})
                     print(ch["slug"], st["n"], v, {k: r.get(k) for k in ("onset", "p", "effect", "series", "found", "result")}, flush=True)
-                    if v in ("measured", "reported", "timed (short history)") and r.get("onset") and not st.get("branch"):
+                    if v in ("measured", "reported", "timed (short history)") and r.get("onset"):
+                        onsets[st["n"]] = D(r["onset"])
+                    if v in ("measured", "reported", "timed (short history)") and r.get("onset") and not st.get("branch") and not st.get("after"):
                         # a new article's creation date dates the article, not the phenomenon: it does not move the reference
                         ref = max(ref, D(r["onset"]))
                 rep["chains"].append(out)
