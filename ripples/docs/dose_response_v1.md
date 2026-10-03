@@ -44,3 +44,16 @@ breakout mixed together. Its numbers were not the pre-registered outcome and are
 state and beverage codes as values. Run 2 names the YRBS high-school dataset first, filters to state totals, keeps
 only values between 0 and 100, and reads the United States all-beverage rows of the NIAAA file. The design, the
 retail-start dates and the permutation scheme are unchanged.
+
+## Addendum 2, Oct 3 (youth outcome unavailable; young adults added)
+
+Run 4 read the right YRBS table (DASH high school, 46 states, 1991–2017). It cannot carry the design: the state
+tables end in 2017, and Colorado and Washington, the first two retail states, do not take part in the state YRBS at
+all. With two post-opening surveys required, no treated state qualifies, so the youth result is reported as
+"not enough overlapping surveys" and stands as the pre-registered outcome's honest failure.
+
+The same design is therefore also run on the nearest annual outcome that covers every state: BRFSS adults aged
+18–24 who had at least one drink in the past 30 days (crude prevalence, 2011 to the latest year), with all adults
+(Overall) as a secondary. Everything else is unchanged: retail start dates, last survey before to second survey
+after, control states that never opened retail sales, 2,000 random assignments for p, and the two-surveys-before
+placebo for the pre-trend. The Prohibition map's dose-response step reads the 18–24 result. Written before run 5.

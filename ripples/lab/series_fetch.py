@@ -141,6 +141,53 @@ def yrbs_alcohol():
     return found[0][2], found[0][3]
 
 
+# ---------- BRFSS (annual, all states, age breakouts) ----------
+KNOWN_BRFSS = [("data.cdc.gov", "dttw-5yxu"), ("chronicdata.cdc.gov", "dttw-5yxu")]  # BRFSS Prevalence Data (2011 to present)
+
+
+def brfss_drinking(break_out="18-24"):
+    """{state: {year: % who drank in the past 30 days}} for one BRFSS breakout (an age group, or 'Overall'), 2011 on.
+    The YRBS state tables end in 2017 and Colorado and Washington do not take part, so the dose-response design needs
+    an annual outcome that covers every state: BRFSS adults 18–24 is the nearest to the youth question."""
+    for domain, sid in KNOWN_BRFSS:
+        cols, meta = columns_of(domain, sid)
+        if not cols:
+            continue
+        where = ["upper(question) like '%DRINK%ALCOHOL%'", "response='Yes'"]
+        if break_out == "Overall":
+            where.append("break_out='Overall'")
+        else:
+            where += ["break_out_category='Age Group'", f"break_out='{break_out}'"]
+        if "data_value_type" in cols:
+            where.append("data_value_type='Crude Prevalence'")
+        params = {"$where": " AND ".join(where), "$select": "locationabbr,year,question,data_value", "$limit": 50000}
+        rows = jget(f"https://{domain}/resource/{sid}.json?{urllib.parse.urlencode(params)}")
+        if not rows:
+            print("BRFSS: no rows from", domain, sid, flush=True)
+            continue
+        qs = collections.Counter(r.get("question") for r in rows)
+        pick = next((q for q in qs if re.search(r"at least one drink", q or "", re.I) and not re.search(r"binge|heavy", q or "", re.I)), None)
+        print("BRFSS questions:", qs.most_common(4), "->", pick, flush=True)
+        if not pick:
+            continue
+        out = {}
+        for r in rows:
+            if r.get("question") != pick or not r.get("data_value"):
+                continue
+            st, y = str(r["locationabbr"]), int(str(r["year"])[:4])
+            try:
+                v = float(r["data_value"])
+            except ValueError:
+                continue
+            if 0 < v < 100 and len(st) == 2:
+                out.setdefault(st, {})[y] = v
+        years = sorted({y for d in out.values() for y in d})
+        print("BRFSS", break_out, "states:", len(out), "years:", years, flush=True)
+        if len(out) >= 40 and len(years) >= 8:
+            return out, {"domain": domain, "dataset": sid, "name": meta.get("name") or sid, "question": pick, "break_out": break_out, "years": years}
+    return None, None
+
+
 def did(data, treat, k_before=1, k_after=2, pre=False):
     """Mean over treated states of (own change) - (control mean change) between the survey k_before before start and
     k_after after; with pre=True the two surveys before start (placebo in time). Returns (effect, n_treated, rows)."""
@@ -246,6 +293,20 @@ def main() -> int:
             print(json.dumps({k: v for k, v in state["dose"]["cannabis_youth_alcohol"].items() if k not in ("rows", "pretrend_rows", "points")}, indent=1), flush=True)
         else:
             state["yrbs"] = {"result": "no usable dataset found"}
+        for key, bo in (("cannabis_young_adult_alcohol", "18-24"), ("cannabis_adult_alcohol", "Overall")):
+            data, src = brfss_drinking(bo)
+            if not data:
+                state["dose"][key] = {"result": "no usable BRFSS table"}
+                continue
+            for st in ("US", "UW", "GU", "PR", "VI"):
+                data.pop(st, None)
+            us = {}
+            for st, d in data.items():
+                for y, v in d.items():
+                    us.setdefault(y, []).append(v)
+            state["series"][f"brfss_median_current_drinking_{bo.replace('-', '_').lower()}"] = [[f"{y}-07-01", round(sorted(v)[len(v) // 2], 2)] for y, v in sorted(us.items()) if len(v) >= 10]
+            state["dose"][key] = {**dose_response(data), "source": f"CDC BRFSS state prevalence ({src['dataset']}), {src['break_out']}: {src['question']}"}
+            print(key, json.dumps({k: v for k, v in state["dose"][key].items() if k not in ("rows", "pretrend_rows", "points")}, indent=1), flush=True)
         pts, u = niaaa()
         if pts:
             state["series"]["niaaa_percapita_ethanol"] = pts
