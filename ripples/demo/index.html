@@ -625,7 +625,7 @@ function fromActs(work) {
         details:`<p>“${esc((p.sentence || "").slice(0, 420))}…”</p><p class="src"><a href="${esc(p.debate_url || "#")}" target="_blank" rel="noopener">${us ? "Congressional Record" : "Hansard"}</a>${p.act_url ? ` · <a href="${esc(p.act_url)}" target="_blank" rel="noopener">${us ? "govinfo.gov" : "legislation.gov.uk"}</a>` : ""}</p>`})});
   });
   const name = plainWork(work);
-  return {key:work, kind:"acts", title:work, stone:name, iso0, items, extra:[], names:{main:"Parliament"},
+  return {key:work, kind:"acts", title:work, stone:name, iso0, items, extra:[], names:{main:citedWhere(work)},
     h1:ps.length === 1 ? `${name} → ${plainWork(ps[0].act).replace(/ \d{4}$/, "")}` : `${name}: cited in the debates of ${ps.length} ${ps.every(p => p.country === "US") ? "laws" : "Acts"}`,
     sub:`The engine read every ${ps.some(p => p.country === "US") ? (ps.every(p => p.country === "US") ? "Congressional Record item" : "Hansard contribution and Congressional Record item") : "Hansard contribution"} that names ${name} and resolved each bill under debate to the ${ps.every(p => p.country === "US") ? "law" : "Act"} it became. A citation shows the work was in the room when the law was made, not that it caused the law.`,
     first:card({when:`${fmt(D(iso0))}<span>Day 0</span>`, badge:"The event", badgeCls:"event", title:`${name} is released`})};
@@ -1163,6 +1163,7 @@ function pondsFor(name, exceptKind, exceptSlug) {
 }
 function pondChips(list, lead) {
   if (!list.length) return "";
+  const seen = new Set(); list = list.filter(p => { const t = TABS_TITLE(p) || p.title; if (seen.has(t)) return false; seen.add(t); return true; });  // one chip per title
   return `<span>${lead}</span>` + list.map(p => `<button class="pond" data-kind="${p.kind}" data-slug="${p.slug}">${ICON.drop}${esc(TABS_TITLE(p) || p.title)}</button>`).join("");
 }
 const TABS_TITLE = p => { const f = Object.values(TABS).flat().find(([k, s]) => k === p.kind && s === p.slug); return f ? f[2] : null; };
