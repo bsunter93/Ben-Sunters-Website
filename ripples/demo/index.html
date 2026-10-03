@@ -94,17 +94,17 @@ h1 em{font-style:italic;font-weight:500;color:var(--shallow-2)}
 .tab{background:none;border:0;border-bottom:2px solid transparent;padding:8px 12px 9px;font-weight:700;font-size:.92rem;color:var(--ink-3);cursor:pointer;margin-bottom:-1px}
 .tab[aria-selected="true"]{color:var(--ink);border-bottom-color:var(--marigold)}
 .tab small{font-weight:500;color:var(--ink-3);margin-left:4px}
-.tabnote{font-size:.8rem;color:var(--ink-3);margin:8px 0 0}
-.tally{display:flex;flex-wrap:wrap;gap:6px;margin:10px 0 0}
+.tabnote{display:none}  /* the one-line explanations live in How it works */
+.tally{display:flex;flex-wrap:wrap;gap:0 10px;margin:8px 0 0;font-size:.8rem;color:var(--ink-3)}
 .ponds.hdr{display:flex;flex-wrap:wrap;gap:6px;align-items:center;margin:10px 0 0;font-size:.8rem;color:var(--ink-3)}
 .ponds.hdr[hidden]{display:none}
 .ponds.hdr .pond{border-color:var(--hair);color:var(--ink)}.ponds.hdr .pond svg{color:var(--marigold)}.ponds.hdr .pond:hover{border-color:var(--marigold)}
-.tally span{font-size:.74rem;font-weight:700;padding:3px 9px;border-radius:999px;border:1px solid var(--hair)}
+.tally span{font-size:.8rem;font-weight:600;padding:0;border:0}.tally span+span::before{content:"·";margin-right:10px;color:var(--ink-3);font-weight:400}
 .tally .l-measured{color:var(--good);border-color:var(--good)}.tally .l-timed{color:var(--marigold);border-color:var(--marigold)}
-.tally .l-reported{color:var(--ink);border-color:var(--ink-2)}.tally .l-plausible{color:var(--marigold);border-color:var(--marigold);border-style:dashed}
+.tally .l-reported{color:var(--ink-2)}.tally .l-plausible{color:var(--ink-3)}
 .tally .l-busted{color:var(--miss);border-color:var(--miss)}
-.tally .markt{background:var(--marigold);border-color:var(--marigold);color:#062429}
-.tally .nomark{border-style:dashed;color:var(--ink-3)}
+.tally .markt{color:var(--marigold)}
+.tally .nomark{color:var(--ink-3);font-weight:500}
 .markpill{display:inline-block;margin-top:5px;font-size:.72rem;font-weight:800;letter-spacing:.03em;color:var(--marigold)}
 .card.marked{border-color:rgba(242,174,46,.55)}
 .rowlbl{width:100%;font:700 .7rem/1 var(--sans);letter-spacing:.12em;text-transform:uppercase;color:var(--ink-3);margin:8px 0 1px}
@@ -199,9 +199,9 @@ input[type=range]{flex:1;accent-color:var(--marigold);min-width:0}
 .ring{display:none}  /* the time grid is gone; the thread on the right carries the scale */
 .ringlbl{fill:rgba(242,169,59,.6);font:600 9px var(--sans);letter-spacing:.05em}
 .slicebd{stroke:rgba(214,240,236,.12);stroke-width:1;stroke-dasharray:2 6}
-.rimlbl{font:800 11px var(--sans);letter-spacing:.16em;text-transform:uppercase;fill:rgba(242,174,46,.9)}
+.rimlbl{font:700 10px var(--sans);letter-spacing:.16em;text-transform:uppercase;fill:rgba(242,174,46,.55)}
 .wave{fill:none;stroke:rgba(214,240,236,.5)}
-.caustic{mix-blend-mode:screen;opacity:.16}
+.caustic{mix-blend-mode:screen;opacity:.07}
 /* each outcome is a ripple: an arc at its moment in time, styled by how sure we are */
 .rip,.edge{fill:none;stroke-linecap:round}
 .rip{opacity:0;transition:opacity .5s}
@@ -210,7 +210,7 @@ input[type=range]{flex:1;accent-color:var(--marigold);min-width:0}
 .rip.l-measured.on,.rip.l-timed.on{opacity:.75}
 .rip.l-measured{color:var(--good)}.rip.l-timed{color:var(--marigold)}
 .rip.l-reported.on{opacity:.38}.rip.l-plausible.on{opacity:.42}.rip.l-busted.on{opacity:.5}
-.rip2{fill:none;stroke:rgba(214,240,236,.5);stroke-width:1;opacity:0;transition:opacity .6s}
+.rip2{fill:none;stroke:rgba(214,240,236,.28);stroke-width:1;opacity:0;transition:opacity .6s}
 .rip2.on{opacity:0}.rip2.flying{opacity:.6;transition:none}  /* the trailing crest shows only while the ripple travels */
 .glint{fill:none;stroke:rgba(255,255,255,.75);stroke-width:1.3;stroke-linecap:round;stroke-dasharray:5 31;opacity:0;transition:opacity .8s;animation:glide 14s linear infinite}
 .glint.on{opacity:0}.glint{display:none}
@@ -253,6 +253,9 @@ input[type=range]{flex:1;accent-color:var(--marigold);min-width:0}
 .nlab.hot rect{stroke:var(--marigold)}
 #pond.focus .node:not(.lit),#pond.focus .nlab:not(.lit),#pond.focus .band:not(.lit),#pond.focus .rip.on:not(.lit){opacity:.16 !important;transition:opacity .3s}
 #pond.focus .rip2,#pond.focus .glint{opacity:0 !important}
+/* at rest, the ripples that left no mark sit back; a lasting mark or a measured step carries full weight */
+.rip.on.l-reported,.rip.on.l-plausible,.rip.on.l-timed,.rip.on.l-busted{opacity:.28}.crest.l-reported,.crest.l-plausible,.crest.l-timed,.crest.l-busted{opacity:.55}
+.rip.on.l-measured{opacity:.85}
 #pond .node,#pond .nlab{transition:opacity .3s}
 .stone .waterline{transition:opacity .45s ease-out}
 .stone text{font:italic 500 16px var(--display);fill:var(--paper);paint-order:stroke;stroke:rgba(7,34,44,.85);stroke-width:5px}
@@ -692,7 +695,7 @@ function fromChain(slug) {
     const weekly = st.weekly || (st.test.type === "dose" ? null : st.points) || null;  // a dose result's points are per-state effects, not a series
     // the attention check: for a dated step after Aug 2015 with no placebo test of its own, the checker asks whether
     // Wikipedia views of the thing the step names rose at the step's date, by the same test a measured step gets
-    const at = st.attn; let facts = "";
+    const at = st.attn; let facts = "", attnNote = "";
     if (at && at.verdict && !/^no article|^article older/.test(at.verdict)) {
       const a = esc((at.articles || [])[0] || ""), pct = at.p != null ? Math.max(0.1, Math.round(at.p * 1000) / 10) : null;
       const txt = at.verdict === "attention rose" ? `Attention check: Wikipedia views of “${a}” rose to ${at.ratio}× normal from ${fmt(D(at.onset))}; a rise that big appears at only ${pct}% of random dates in the page's own past (p = ${at.p}).`
@@ -700,7 +703,7 @@ function fromChain(slug) {
         : at.verdict === "no sustained rise" ? `Attention check: no sustained rise in views of “${a}” around this date.`
         : at.verdict === "article created then" ? `Attention check: the Wikipedia article “${a}” was created at this date.`
         : at.verdict === "rose, no placebo history" ? `Attention check: views of “${a}” rose from ${fmt(D(at.onset))}; too little history for a placebo test.` : "";
-      if (txt) facts = `<p class="attn${at.verdict === "attention rose" ? " rose" : ""}">${txt}</p>`;
+      if (txt) attnNote = txt;  // read under "How sure?", not on the card's face
     }
     let when, sub;
     if (undated) { when = "Undated<span>no date to check</span>"; sub = "undated"; }
@@ -720,7 +723,7 @@ function fromChain(slug) {
         sure:howSure(st.test.type === "dose" && st.p != null ? "measured" : lv, (lv === "measured" || (st.test.type === "dose" && st.p != null)) ? {kind:st.test.type === "wiki" ? "wiki" : st.test.type === "ssa" ? "ssa" : st.test.type === "dose" ? "dose" : "series", what:st.test.type === "wiki" ? (st.test.articles || [])[0] : SRC(st) || st.series,
             when:st.onset ? fmt(D(st.onset)) : "", ratio:st.ratio, p:st.p, n:st.n_placebo, pre:st.pretrend_p}
           : lv === "timed" ? {when:st.onset ? fmt(D(st.onset)) : "", archive:!!st.archive_first, newArticle:!!st.new_article}
-          : lv === "reported" ? {what:srcLine, why:st.link_why} : {why:why}),
+          : lv === "reported" ? {what:srcLine, why:st.link_why} : {why:why}) + (attnNote ? ` ${esc(attnNote)}` : ""),
         details:`<p>${esc(why)}</p>${st.note && st.note !== why ? `<p>${esc(st.note)}</p>` : ""}${happened}`})});
     if (!st.branch && !st.after) lastMain = id;
   });
@@ -789,7 +792,7 @@ function draw(story) {
     const r = radius(d);
     el("circle", {class:"ring", cx:C.x, cy:C.y, r}, rg);
     const p = PL(polar(r, TA));
-    if (![7, 365, 3653].includes(d) && !(d === 30 && max < 365) && !(d === 91 && max < 3653 && max >= 365)) continue;  // three labels at most
+    if (!(d === 365 || d === 3653 || (d === 7 && max < 365) || (d === 30 && max < 365))) continue;  // two labels: the scale, not a ruler
     const q0 = polar(r, TA - 1.6), q1 = polar(r, TA + 1.6); el("line", {class:"threadtick", x1:q0.x, y1:q0.y, x2:q1.x, y2:q1.y}, g0);
     if (lastRingX != null && Math.abs(p.x - lastRingX) < (dense ? 70 : 44)) continue;  // a short pond: labels would sit on each other
     lastRingX = p.x;
@@ -882,7 +885,7 @@ function draw(story) {
       el("path", {d:"M-15.2,-1.5 A15.8,6 0 0 0 15.2,-1.5", fill:"none", stroke:"rgba(230,250,246,.7)", "stroke-width":1.1, "stroke-linecap":"round"}, pw);
     }
     it.core = null;
-    it.showLabel = !dense || !!it.mark || it.lv === "measured" || items.length <= 4;
+    it.showLabel = !!it.mark || it.lv === "measured" || items.length <= 5;  // at rest the pond says one thing per ripple that matters; the rest wait for a hover or the card
     g.setAttribute("transform", `translate(${C.x},${C.y})`);
     g.addEventListener("click", () => focus(it));
     g.addEventListener("mouseenter", () => showTip(it));
@@ -895,7 +898,7 @@ function draw(story) {
     const shown = wrapLabel(it.label, 26, 2);
     const tx = el("text", {x:0, y:0}, lab); if (dense) tx.style.fontSize = "22px";
     shown.forEach((ln, k) => { const ts = el("tspan", {x:0, dy:k ? 15 * K : 0}, tx); ts.textContent = ln; });
-    const sub = el("text", {class:"s", x:0, y:15 * K * shown.length}, lab); sub.textContent = (it.mark ? `◆ ${it.mark} · ` : "") + (it.sub || "");
+    const sub = el("text", {class:"s", x:0, y:15 * K * shown.length}, lab); sub.textContent = it.mark ? `◆ ${it.mark}` : "";  // the date and the delay live in the card
     if (dense) sub.style.fontSize = "17px";
     const bb = lab.getBBox(), pad = 5 * K, bw = bb.width + pad * 2, bh = bb.height + pad * 2, g1 = 12 * K;
     const right = [g1, -bh / 2], left = [-g1 - bw, -bh / 2], up = [-bw / 2, -bh - g1], down = [-bw / 2, g1 + 1];
@@ -903,7 +906,7 @@ function draw(story) {
     const order = it.pos.x >= C.x ? [right, rUp, rDn, up, down, left, lUp, lDn] : [left, lUp, lDn, up, down, right, rUp, rDn];
     let best = null, least = Infinity, fallback = order[0], far = false;
     const far2 = sp => [sp[0] * 2.4 + (sp[0] > 0 ? 6 : sp[0] < 0 ? -6 : 0), sp[1] * 2.4 + (sp[1] > 0 ? 6 : sp[1] < 0 ? -6 : 0)];
-    for (const sp of [...order, ...order.map(far2)]) {
+    for (const sp of (it.showLabel ? [...order, ...order.map(far2)] : order)) {
       const b = {x:it.pos.x + sp[0], y:it.pos.y + sp[1], w:bw, h:bh};
       const inside = b.x > -118 && b.x + bw < 818 && b.y > VB.top && b.y + bh < VB.bottom;
       if (inside && !overlaps(b)) { best = sp; far = Math.hypot(sp[0], sp[1]) > Math.hypot(...order[0]) * 1.8; break; }
@@ -915,6 +918,7 @@ function draw(story) {
       it.leader = el("line", {class:"leader", x1:it.pos.x, y1:it.pos.y, x2:lx, y2:ly}, labels);
     }
     if (!free && !(it.mark && nMarks <= 6) && it.lv !== "measured") it.showLabel = false;  // shown on hover, focus and in its card
+    if (!it.showLabel && it.leader) { it.leader.remove(); it.leader = null; }
     const bx = it.pos.x + best[0], by = it.pos.y + best[1];
     if (it.showLabel) placed.push({x:bx, y:by, w:bw, h:bh});  // hidden labels do not reserve space
     lab.setAttribute("transform", `translate(${bx + pad - bb.x},${by + pad - bb.y})`);
@@ -1208,7 +1212,7 @@ function show(kind, slug, autoplay = true) {
   $("#h1").textContent = named && named[2] ? named[2] : story.h1;
   const markLine = marks.length ? `The mark it left: ${marks.slice(0, 3).map(x => `${x.label} (${x.mark.toLowerCase()})`).join("; ")}${marks.length > 3 ? `; and ${marks.length - 3} more` : ""}.`
     : "No lasting mark found yet: what changed is attention, money or hype, not a law, an institution, jobs or health.";
-  $("#sub").textContent = kind === "chain" ? markLine : `${markLine} ${story.sub}`;
+  $("#sub").textContent = markLine;  // one line; the story's own paragraph is in the first card
   const tally = {}; story.items.forEach(x => tally[x.lv] = (tally[x.lv] || 0) + 1);
   $("#tally").innerHTML = (marks.length ? `<span class="markt">◆ ${marks.length} lasting mark${marks.length === 1 ? "" : "s"}</span>` : `<span class="nomark">No lasting mark yet</span>`) +
     ["measured", "timed", "reported", "plausible", "busted"].filter(k => tally[k]).map(k => `<span class="l-${k}">${tally[k]} ${LVL[k].toLowerCase()}</span>`).join("");
