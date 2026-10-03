@@ -124,7 +124,7 @@ select.chip option{background:#0c333b;color:var(--ink)}
 .clock .d{font:600 clamp(1.5rem,3.6vw,2.5rem)/1 var(--display);font-variant-numeric:tabular-nums;color:var(--paper)}
 .clock .n{font:700 .88rem/1.2 var(--sans);color:var(--marigold);font-variant-numeric:tabular-nums;text-align:right}
 .clock .n small{display:block;color:var(--ink-3);font-weight:500}
-svg#pond{display:block;width:100%;height:auto;touch-action:manipulation}
+svg#pond{display:block;width:100%;height:auto;touch-action:manipulation;border-radius:18px}
 .ctl{display:flex;align-items:center;gap:12px;padding:0 8px 2px;position:relative}
 .ctl .ticks{position:absolute;left:62px;right:112px;top:34px;display:flex;justify-content:space-between;font-size:.66rem;color:var(--ink-3);font-variant-numeric:tabular-nums;pointer-events:none}
 .ctl{padding-bottom:12px}
@@ -201,8 +201,9 @@ input[type=range]{flex:1;accent-color:var(--marigold);min-width:0}
 .ringlbl{fill:rgba(242,169,59,.6);font:600 9px var(--sans);letter-spacing:.05em}
 .slicebd{stroke:rgba(214,232,246,.07);stroke-width:1;stroke-dasharray:2 6}
 .rimlbl{font:700 10px var(--sans);letter-spacing:.16em;text-transform:uppercase;fill:rgba(242,174,46,.55)}
-.wave{fill:none;stroke:rgba(214,232,246,.5)}
-.caustic{mix-blend-mode:screen;opacity:.11}.waterlight{mix-blend-mode:screen;opacity:.34}
+.wave{fill:none;stroke:rgba(226,240,252,.55);filter:url(#softwave)}
+.caustic{mix-blend-mode:screen;opacity:.11}.waterlight{mix-blend-mode:screen;opacity:.3}.farlight{mix-blend-mode:screen;opacity:.22}
+.drop,.foam,.column{pointer-events:none}
 @media (prefers-reduced-motion:reduce){.waterlight animateTransform{display:none}}
 /* each outcome is a ripple: an arc at its moment in time, styled by how sure we are */
 .rip,.edge{fill:none;stroke-linecap:round}
@@ -213,6 +214,11 @@ input[type=range]{flex:1;accent-color:var(--marigold);min-width:0}
 .rip.l-measured{color:var(--good)}.rip.l-timed{color:var(--marigold)}
 .rip.l-reported.on{opacity:.38}.rip.l-plausible.on{opacity:.42}.rip.l-busted.on{opacity:.5}
 .rip2{fill:none;stroke:rgba(214,232,246,.28);stroke-width:1;opacity:0;transition:opacity .6s}
+.ripS,.ripH{fill:none;stroke-linecap:round;opacity:0;transition:opacity .5s}
+.ripS{stroke:rgba(2,14,28,.5);stroke-width:2.6}.ripH{stroke:rgba(235,246,255,.75);stroke-width:1}
+.ripS.on{opacity:.5}.ripH.on{opacity:.55}.ripS.flying{opacity:.6}.ripH.flying{opacity:.9}
+.ripS.l-busted,.ripH.l-busted{stroke-dasharray:2 5}
+#pond.focus .ripS:not(.lit),#pond.focus .ripH:not(.lit){opacity:.1}
 .rip2.on{opacity:0}.rip2.flying{opacity:.6;transition:none}  /* the trailing crest shows only while the ripple travels */
 .glint{fill:none;stroke:rgba(255,255,255,.75);stroke-width:1.3;stroke-linecap:round;stroke-dasharray:5 31;opacity:0;transition:opacity .8s;animation:glide 14s linear infinite}
 .glint.on{opacity:0}.glint{display:none}
@@ -370,9 +376,9 @@ const ICON = {
 const STONE_SVG = `<path d="M-13.5,-3.5 C-13,-11 -5.5,-15.5 2.5,-14.5 C9.5,-13.6 14.5,-8.5 13.8,-1.5 C13.2,6 7.5,12.5 -0.5,12.6 C-8,12.7 -14,6.5 -13.5,-3.5 Z" fill="url(#rock)"/>
 <path d="M-13.5,-3.5 C-13,-11 -5.5,-15.5 2.5,-14.5 C9.5,-13.6 14.5,-8.5 13.8,-1.5 C13.2,6 7.5,12.5 -0.5,12.6 C-8,12.7 -14,6.5 -13.5,-3.5 Z" fill="none" stroke="rgba(10,25,22,.55)" stroke-width=".8"/>
 <path d="M-9,-9.5 C-5,-13.5 2,-14 6.5,-11.5 C3,-11.8 -3,-11 -6.5,-8.2 C-8,-7.4 -9.6,-8.2 -9,-9.5 Z" fill="rgba(255,255,255,.28)"/>
-<path d="M-12.6,-2.5 C-11,-7.5 -6,-9.5 -2,-8.2 C0.5,-7.4 1.5,-5 -0.5,-3.8 C-3.5,-2.2 -7.5,-1.2 -10.5,-1 C-12,-1 -12.9,-1.4 -12.6,-2.5 Z" fill="url(#moss)" opacity=".95"/>
-<path d="M3.5,-12.5 C6,-13 8.5,-11.5 8.8,-9.5 C9,-8 7.2,-7.4 5.8,-8.2 C4.4,-9 3,-10.4 3.5,-12.5 Z" fill="url(#moss)" opacity=".85"/>
-<path d="M-6,5.5 C-4.5,4.2 -2,4.4 -1.2,5.8 C-0.6,7 -2,8 -3.6,7.8 C-5.2,7.6 -6.6,6.6 -6,5.5 Z" fill="url(#moss)" opacity=".8"/>
+<path d="M-12.6,-2.5 C-11,-7.5 -6,-9.5 -2,-8.2 C0.5,-7.4 1.5,-5 -0.5,-3.8 C-3.5,-2.2 -7.5,-1.2 -10.5,-1 C-12,-1 -12.9,-1.4 -12.6,-2.5 Z" fill="url(#moss)" opacity=".55"/>
+<path d="M3.5,-12.5 C6,-13 8.5,-11.5 8.8,-9.5 C9,-8 7.2,-7.4 5.8,-8.2 C4.4,-9 3,-10.4 3.5,-12.5 Z" fill="url(#moss)" opacity=".35"/>
+<path d="M-6,5.5 C-4.5,4.2 -2,4.4 -1.2,5.8 C-0.6,7 -2,8 -3.6,7.8 C-5.2,7.6 -6.6,6.6 -6,5.5 Z" fill="url(#moss)" opacity=".3"/><path d="M-4,-2 l1.2,.6 M2,2 l1,.5 M6,-4 l.9,.6 M-8,3 l1,.4" stroke="rgba(0,0,0,.25)" stroke-width=".5" stroke-linecap="round"/>
 <circle cx="6.5" cy="3" r=".9" fill="rgba(255,255,255,.18)"/><circle cx="2" cy="7.5" r=".7" fill="rgba(255,255,255,.14)"/><circle cx="-3" cy="-0.5" r=".6" fill="rgba(0,0,0,.22)"/>`;
 // ---------- stories ----------
 // Hand-built maps (from ripples/maps/out): which steps to show, short labels, parents, and the main slice's industry.
@@ -390,7 +396,7 @@ const MAPS = {
 // The three tabs. Ripple maps: multi-hop maps, best first. Checked stories: viral chains checked link by link.
 // Leads: the engine's one-hop finds (attention only), awaiting a second hop.
 const TABS = {
-  maps:[["chain", "planet-earth", "Planet Earth → the STURDY Act"], ["chain", "mr-bates-horizon", "Mr Bates → convictions quashed by law"],
+  maps:[["chain", "mr-bates-horizon", "Mr Bates → convictions quashed by law"], ["chain", "planet-earth", "Planet Earth → the STURDY Act"],
     ["chain", "quincy-orphan-drug", "Quincy, M.E. → the Orphan Drug Act"], ["chain", "cathy-come-home", "Cathy Come Home → a duty to house"],
     ["chain", "sixty-minutes-stock-act", "60 Minutes → the STOCK Act"], ["chain", "octopus-sentience", "My Octopus Teacher → the Sentience Act"],
     ["chain", "victim-1961", "Victim (1961) → the Sexual Offences Act"], ["chain", "daily-show-zadroga", "The Daily Show → the Zadroga Act"],
@@ -762,10 +768,15 @@ function draw(story) {
     <radialGradient id="shine" cx="38%" cy="30%" r="40%"><stop offset="0" stop-color="#d8ecf8" stop-opacity=".09"/><stop offset="1" stop-color="#d8ecf8" stop-opacity="0"/></radialGradient>
     <radialGradient id="glow"><stop offset="0" stop-color="#f2ae2e" stop-opacity=".55"/><stop offset="1" stop-color="#f2ae2e" stop-opacity="0"/></radialGradient>
     <linearGradient id="surface" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#1d6498" stop-opacity=".78"/><stop offset=".5" stop-color="#0f4374" stop-opacity=".9"/><stop offset="1" stop-color="#0a2f55" stop-opacity=".96"/></linearGradient>
+    <linearGradient id="sky" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#08203c"/><stop offset=".7" stop-color="#1d4f7e"/><stop offset="1" stop-color="#5a8fb8"/></linearGradient>
+    <linearGradient id="lake" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#4b85b0"/><stop offset=".12" stop-color="#1f5f93"/><stop offset=".45" stop-color="#0e3f6c"/><stop offset="1" stop-color="#061a30"/></linearGradient>
+    <linearGradient id="shoreref" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#06172a" stop-opacity=".55"/><stop offset="1" stop-color="#06172a" stop-opacity="0"/></linearGradient>
+    <filter id="blur2"><feGaussianBlur stdDeviation="1.6"/></filter>
+    <filter id="blur6"><feGaussianBlur stdDeviation="6"/></filter>
     <radialGradient id="wmask" cx="50%" cy="48%" r="50%"><stop offset="0" stop-color="#fff" stop-opacity="1"/><stop offset=".55" stop-color="#fff" stop-opacity=".75"/><stop offset=".92" stop-color="#fff" stop-opacity=".12"/><stop offset="1" stop-color="#fff" stop-opacity="0"/></radialGradient>
     <radialGradient id="wet"><stop offset="0" stop-color="#8fc4ec" stop-opacity=".35"/><stop offset=".6" stop-color="#8fc4ec" stop-opacity=".08"/><stop offset="1" stop-color="#8fc4ec" stop-opacity="0"/></radialGradient>
-    <linearGradient id="rock" x1="0" y1="0" x2=".6" y2="1"><stop offset="0" stop-color="#aab7a4"/><stop offset=".45" stop-color="#6d7d6e"/><stop offset="1" stop-color="#36443d"/></linearGradient>
-    <linearGradient id="moss" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#8fb55a"/><stop offset="1" stop-color="#4e7a37"/></linearGradient>
+    <linearGradient id="rock" x1="0" y1="0" x2=".6" y2="1"><stop offset="0" stop-color="#c2b9aa"/><stop offset=".45" stop-color="#7b746a"/><stop offset="1" stop-color="#3a3630"/></linearGradient>
+    <linearGradient id="moss" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#7d9450"/><stop offset="1" stop-color="#4b6234"/></linearGradient>
     <filter id="wob" x="-5%" y="-5%" width="110%" height="110%"><feTurbulence type="fractalNoise" baseFrequency=".011" numOctaves="2" seed="7"><animate attributeName="baseFrequency" values="0.011;0.0135;0.011" dur="11s" repeatCount="indefinite"/></feTurbulence><feDisplacementMap in="SourceGraphic" scale="5.5"/></filter>
     <filter id="soft"><feGaussianBlur stdDeviation="3"/></filter>
     <filter id="waterlight" x="-10%" y="-10%" width="120%" height="120%" color-interpolation-filters="sRGB">
@@ -782,6 +793,20 @@ function draw(story) {
       <feComposite in="b" in2="SourceGraphic" operator="in"/>
     </filter>
     <clipPath id="pondclip"><circle cx="${C.x}" cy="${C.y}" r="${R + 30}"/></clipPath>`;
+  // the lake: a dusk sky, a far shore and its reflection, water running to the horizon; the pond is a place on it
+  const HZ = 150, scene = el("g", {class:"scene"}, svg);
+  el("rect", {x:-120, y:88, width:940, height:HZ - 88 + 2, fill:"url(#sky)"}, scene);
+  el("rect", {x:-120, y:HZ, width:940, height:574 - HZ, fill:"url(#lake)"}, scene);
+  const shore = "M-120,150 C-40,141 40,147 120,139 S260,151 340,138 S470,149 560,137 S700,150 760,141 S800,146 820,144";
+  el("path", {d:shore + " L820,150 L-120,150 Z", fill:"#06172a", filter:"url(#blur2)"}, scene);  // the treeline
+  el("path", {d:shore + " L820,150 L-120,150 Z", fill:"#06172a", opacity:".9"}, scene);
+  el("path", {d:"M-120,150 L820,150 L820,196 C700,186 560,194 340,184 S120,196 -120,186 Z", fill:"url(#shoreref)", filter:"url(#blur6)"}, scene);  // its reflection
+  el("line", {x1:-120, y1:HZ, x2:820, y2:HZ, stroke:"#a9cbe6", "stroke-width":.8, opacity:".5"}, scene);
+  const far = el("rect", {x:-120, y:HZ, width:940, height:574 - HZ, fill:"url(#wmask)", filter:"url(#waterlight)", class:"farlight"}, scene);  // light on the open water
+  far.innerHTML = '<animateTransform attributeName="transform" type="translate" values="0 0;-30 0;0 0" dur="37s" repeatCount="indefinite"/>';
+  // reeds at the near bank, dark against the water
+  const reeds = el("g", {class:"reeds", fill:"none", stroke:"#04111f", "stroke-linecap":"round"}, scene);
+  [[-100,574,-88,470,1.6],[-84,574,-96,452,1.3],[-70,574,-60,478,1.5],[-56,574,-62,436,1.2],[792,574,806,468,1.5],[808,574,798,448,1.3],[776,574,772,490,1.2]].forEach(([x1,y1,x2,y2,w]) => el("path", {d:`M${x1},${y1} Q${(x1+x2)/2 - 6},${(y1+y2)/2} ${x2},${y2}`, "stroke-width":w, opacity:".75"}, reeds));
   // water: a softly lit surface, drawn in plane coordinates and tilted as one
   const plane = el("g", {transform:`translate(0 ${C.y}) scale(1 ${TILT}) translate(0 ${-C.y})`}, svg);
   el("circle", {cx:C.x, cy:C.y, r:R + 34, fill:"url(#water)"}, plane);
@@ -810,7 +835,6 @@ function draw(story) {
     lastRingX = p.x;
     const rl = el("text", {class:"ringlbl", x:p.x + 5, y:p.y - 3}, gt); rl.textContent = lbl; if (dense) rl.style.fontSize = "15px";
   }
-  el("circle", {cx:C.x, cy:C.y, r:R + 6, fill:"none", stroke:"rgba(214,232,246,.16)", "stroke-width":1.5, filter:"url(#wob)"}, g0);
   const rimBoxes = [];  // rim words keep their space; ripple labels place around them
   keys.forEach(k => {  // the industry each ripple reached, outside the rim, always horizontal
     if (!story.names[k]) return;
@@ -871,7 +895,10 @@ function draw(story) {
     }
     it.path = el("path", {class:`edge off l-${it.lv}${it.disc ? " disc" : ""}`, d:`M${it.from.x},${it.from.y} L${it.from.x},${it.from.y}`}, edges);
     it.ring2 = el("path", {class:"rip2", d:arcPath(14, it.span)}, rips);
+    it.ringS = el("path", {class:`ripS l-${it.lv}`, d:arcPath(14, it.span), transform:"translate(0 2.2)"}, rips);   // the trough's shadow
+    it.ringH = el("path", {class:`ripH l-${it.lv}`, d:arcPath(14, it.span), transform:"translate(0 -1.6)"}, rips);  // the crest catching the sky
     it.ring = el("path", {class:`rip l-${it.lv}${it.disc ? " disc" : ""}`, d:arcPath(14, it.span)}, rips);
+    rips.appendChild(it.ringH);
     it.glint = el("path", {class:"glint", d:arcPath(14, it.span), style:`animation-delay:-${(it.d * 7) % 14}s`}, rips);
     it.cw = r => Math.min(22, (13 / Math.max(r, 14)) * 180 / Math.PI);  // half-width of the crest in degrees: about 26px of arc
     it.ph = (it.d * 1.7) % 6.28;  // each crest moves to its own phase
@@ -974,7 +1001,7 @@ function buildFeed(story) {
 const ease = p => 1 - Math.pow(1 - p, 3);
 function launch(it, animate) {
   it.g.setAttribute("opacity", 1); it.path.classList.remove("off");
-  if (animate) { it.state = "flying"; it.t0 = performance.now(); it.ring.classList.add("flying"); it.ring2.classList.add("flying"); }
+  if (animate) { it.state = "flying"; it.t0 = performance.now(); [it.ring, it.ring2, it.ringS, it.ringH].forEach(r => r.classList.add("flying")); }
   else land(it);
 }
 function land(it) {  // the label appears only once the ripple has arrived
@@ -982,7 +1009,8 @@ function land(it) {  // the label appears only once the ripple has arrived
   it.state = "landed";
   it.g.setAttribute("transform", `translate(${it.pos.x},${it.pos.y}) scale(${depthK(it.plane)})`);
   it.path.setAttribute("d", `M${it.from.x},${it.from.y} L${it.plane.x},${it.plane.y}`);
-  it.ring.setAttribute("d", arcPath(it.r, it.span)); it.ring.classList.remove("flying"); it.ring.classList.add("on");
+  it.ring.setAttribute("d", arcPath(it.r, it.span)); it.ringS.setAttribute("d", arcPath(it.r, it.span)); it.ringH.setAttribute("d", arcPath(it.r, it.span));
+  [it.ring, it.ringS, it.ringH].forEach(r => { r.classList.remove("flying"); r.classList.add("on"); });
   it.ring2.setAttribute("d", arcPath(Math.max(10, it.r - 7), it.span)); it.ring2.classList.remove("flying"); it.ring2.classList.add("on");
   if (it.lv !== "busted") { it.glint.setAttribute("d", arcPath(it.r, it.span)); it.glint.classList.add("on"); }
   it.crest.classList.add("on"); it.crestg.classList.add("on"); wobble(it, performance.now());
@@ -993,7 +1021,7 @@ function land(it) {  // the label appears only once the ripple has arrived
 function hide(it) {
   it.state = "hidden"; it.g.setAttribute("opacity", 0); it.g.setAttribute("transform", `translate(${C.x},${C.y})`); it.lab.classList.remove("on");
   it.path.classList.add("off"); it.path.setAttribute("d", `M${it.from.x},${it.from.y} L${it.from.x},${it.from.y}`);
-  it.ring.classList.remove("on", "flying"); it.ring.setAttribute("d", arcPath(14, it.span));
+  [it.ring, it.ringS, it.ringH].forEach(r => { r.classList.remove("on", "flying"); r.setAttribute("d", arcPath(14, it.span)); });
   it.ring2.classList.remove("on", "flying"); it.ring2.setAttribute("d", arcPath(14, it.span)); it.glint.classList.remove("on");
   it.crest.classList.remove("on"); it.crestg.classList.remove("on");
   if (it.elbl) it.elbl.style.opacity = 0; if (it.band) it.band.style.opacity = 0;
@@ -1003,7 +1031,7 @@ function fly(it, now) {  // carried out from the stone on a wave whose crest rea
   it.g.setAttribute("transform", `translate(${sp.x},${sp.y}) scale(${depthK(pos)})`);
   it.path.setAttribute("d", `M${it.from.x},${it.from.y} L${pos.x},${pos.y}`);
   const rr = Math.max(14, it.r * ease(p));
-  it.ring.setAttribute("d", arcPath(rr, it.span)); it.ring2.setAttribute("d", arcPath(Math.max(10, rr - 7 - 6 * (1 - p)), it.span));
+  it.ring.setAttribute("d", arcPath(rr, it.span)); it.ringS.setAttribute("d", arcPath(rr, it.span)); it.ringH.setAttribute("d", arcPath(rr, it.span)); it.ring2.setAttribute("d", arcPath(Math.max(10, rr - 7 - 6 * (1 - p)), it.span));
   it.crest.classList.add("on"); it.crestg.classList.add("on"); wobble(it, now, rr, 1.6);
   if (p >= 1) land(it);
 }
@@ -1027,6 +1055,18 @@ function spawnWave(sw, toR = R, ms = 4200, cx = C.x, cy = C.y, r0 = 14) {
   const w = el("circle", {class:"wave", cx, cy, r:r0, "stroke-width":sw}, cur.waves);
   w._b = performance.now(); w._to = toR; w._ms = ms; w._r0 = r0;
 }
+function spawnSplash(cx = C.x, cy = C.y, n = 16) {  // the stone lands: a crown of droplets, a foam ring, a rebound column
+  if (!cur || !cur.waves) return;
+  for (let i = 0; i < n; i++) {
+    const a = (i / n) * Math.PI * 2 + Math.random() * 0.4, sp = 1.6 + Math.random() * 1.8;
+    const d = el("circle", {class:"drop", cx, cy, r:(0.9 + Math.random() * 1.6).toFixed(2), fill:"#eef7ff"}, cur.waves);
+    d._splash = {x:cx, y:cy, vx:Math.cos(a) * sp, vy:-(3.2 + Math.random() * 3.4) + Math.sin(a) * 0.6, b:performance.now(), ms:620 + Math.random() * 260};
+  }
+  const foam = el("circle", {class:"foam", cx, cy, r:12, fill:"none", stroke:"#f2f8ff", "stroke-width":3}, cur.waves);
+  foam._b = performance.now(); foam._to = 46; foam._ms = 900; foam._r0 = 12; foam._foam = true;
+  const col = el("ellipse", {class:"column", cx, cy:cy - 6, rx:5, ry:14, fill:"#dcecfa"}, cur.waves);
+  col._col = {b:performance.now(), ms:520};
+}
 function drop(pos) {  // a tap on the water: two small rings spreading from the point
   spawnWave(2.2, 70, 900, pos.x, pos.y, 6); setTimeout(() => spawnWave(1.3, 95, 1200, pos.x, pos.y, 6), 160);
   ping(640, 0.18);
@@ -1047,11 +1087,27 @@ function ping(freq = 520, dur = 0.25) {
 function tickWaves(now) {
   if (!cur || !cur.waves) return;
   for (const w of [...cur.waves.children]) {
+    if (w._splash) {  // a droplet under gravity, fading as it falls back
+      const q = w._splash, t = (now - q.b) / q.ms;
+      if (t >= 1) { w.remove(); continue; }
+      const g = 7.5 * t * t;  // gravity, in pond pixels
+      w.setAttribute("cx", q.x + q.vx * t * 22); w.setAttribute("cy", q.y + (q.vy * t * 22 + g * 22) * 0.6);
+      w.style.opacity = Math.max(0, 0.95 - t * 0.9);
+      continue;
+    }
+    if (w._col) {  // the rebound column: up, then gone
+      const t = (now - w._col.b) / w._col.ms;
+      if (t >= 1) { w.remove(); continue; }
+      const h = Math.sin(Math.min(1, t) * Math.PI);
+      w.setAttribute("ry", 6 + 22 * h); w.setAttribute("cy", C.y - 6 - 12 * h); w.setAttribute("rx", 5 - 2.5 * t); w.style.opacity = 0.85 * (1 - t * t);
+      continue;
+    }
     const p = (now - w._b) / w._ms;
     if (p >= 1.2) { w.remove(); continue; }
     const r0 = w._r0 || 14;
     w.setAttribute("r", r0 + ease(Math.min(p, 1)) * (w._to - r0) + Math.max(0, p - 1) * 50);
-    w.style.opacity = Math.max(0, Math.min(1, 1.2 - p) * 0.6);
+    w.style.opacity = Math.max(0, Math.min(1, 1.2 - p) * (w._foam ? 0.85 : 0.6));
+    if (w._foam) w.setAttribute("stroke-width", Math.max(0.4, 3 - 2.6 * Math.min(1, p)));
   }
 }
 function valueAt(series, iso0, d) {
@@ -1075,7 +1131,7 @@ function render(now = performance.now()) {
     $("#since").innerHTML = `${sinceLabel(d)}<small>${shown} ripple${shown === 1 ? "" : "s"}</small>`;
   }
   $("#scrub").value = Math.round(t * 1000);
-  if (!cur.splashed && t >= PRE) { cur.splashed = true; spawnWave(3.2); setTimeout(() => spawnWave(2.2), 240); setTimeout(() => spawnWave(1.4), 520); }
+  if (!cur.splashed && t >= PRE) { cur.splashed = true; spawnSplash(); spawnWave(3.2); setTimeout(() => spawnWave(2.2), 240); setTimeout(() => spawnWave(1.4), 520); }
   if (t < PRE) cur.splashed = false;
   const ev0 = cur.eventSeries ? valueAt(cur.eventSeries, iso0, d) : null;
   cur.sHalo.setAttribute("r", 30 + Math.min(18, 3 * Math.log2(1 + (ev0 || 0))));
