@@ -277,7 +277,7 @@ def main() -> int:
                     out["steps"].append({"n": st["n"], "claim": st["claim"], "test": {k: st["test"][k] for k in st["test"] if k != "counts"},
                                          "ref": sref.isoformat(), "verdict": v, "note": st.get("note"),
                                          "link": st.get("link"), "link_why": st.get("link_why"), "branch": st.get("branch", False),
-                                         "vertical": st.get("vertical"), "after": st.get("after"), "slice": st.get("slice"), "short": st.get("short"), **r})
+                                         "vertical": st.get("vertical"), "after": st.get("after"), "slice": st.get("slice"), "short": st.get("short"), "mark": st.get("mark"), **r})
                     print(ch["slug"], st["n"], v, {k: r.get(k) for k in ("onset", "p", "effect", "series", "found", "result")}, flush=True)
                     if v in ("measured", "reported", "timed (short history)") and r.get("onset"):
                         onsets[st["n"]] = D(r["onset"])
