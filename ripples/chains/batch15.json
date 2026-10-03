@@ -393,16 +393,16 @@
    },
    {
     "n": 24,
-    "claim": "Legal cannabis states: did youth drinking fall faster than elsewhere?",
-    "short": "Cannabis dose-response",
+    "claim": "Young adults in legal-cannabis states drink less than elsewhere (the dose-response test)",
+    "short": "Cannabis states drink less?",
     "slice": "Catalysts?",
     "after": 17,
     "test": {
      "type": "dose",
-     "key": "cannabis_youth_alcohol",
+     "key": "cannabis_young_adult_alcohol",
      "date": "2018-07-01"
     },
-    "note": "Difference-in-differences across states with and without retail cannabis (CDC YRBS), permutation inference, pre-trend check: the first test here that is more than timing. Protocol: ripples/docs/dose_response_v1.md."
+    "note": "Dose-response, first rung above timing: in the 20 states that opened retail cannabis (2014–2023), past-30-day drinking among adults 18–24 (CDC BRFSS) changed by about the same as in the 31 states that never did; the pre-registered youth outcome (YRBS) could not be run because the state tables end in 2017 and Colorado and Washington do not take part. Protocol: ripples/docs/dose_response_v1.md."
    },
    {
     "n": 25,

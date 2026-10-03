@@ -1142,7 +1142,7 @@ function show(kind, slug, autoplay = true) {
   const story = kind === "chain" ? fromChain(slug) : kind === "acts" ? fromActs(slug) : MAPS[slug] && DATA.maps[slug] ? fromMap(slug) : fromDisc(slug);
   for (const it of story.items) if (it.mark) {  // a lasting mark: law, institution, infrastructure, jobs, health
     it.card.cls += " marked";
-    it.card.html = it.card.html.replace("</span></div>", `</span></div><div class="markpill">◆ Lasting mark · ${esc(it.mark)}</div>`);
+    if (!it.card.html.includes('class="markpill"')) it.card.html = it.card.html.replace("</span></div>", `</span></div><div class="markpill">◆ Lasting mark · ${esc(it.mark)}</div>`);
   }
   const marks = story.items.filter(x => x.mark);
   story.sub = story.sub.replace(/ Tap a ripple to see why\.$/, "");
