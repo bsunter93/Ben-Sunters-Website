@@ -800,7 +800,7 @@ function draw(story) {
     if (n === 1 && m > 1) its.forEach((it, j) => { it.a = -70 + j * 140 / (m - 1); });  // one ripple: a gentle spiral outward
     its.forEach(it => { it.r = radius(it.d); it.plane = polar(it.r, it.a); it.pos = PL(it.plane); it.span = n === 1 ? null : [centre(k) - w / 2 + 3, centre(k) + w / 2 - 3]; });
   }
-  const placed = [{x:C.x - 70, y:C.y - 20, w:140, h:70}, ...rimBoxes];  // keep clear of the stone's label and the rim words
+  const placed = [{x:C.x - 70 * K, y:C.y - 20 * K, w:140 * K, h:70 * K}, ...rimBoxes];  // the stone's name grows with K on a phone  // keep clear of the stone's label and the rim words
   const nMarks = items.filter(x => x.mark).length;
   const overlaps = b => placed.some(p => b.x < p.x + p.w && b.x + b.w > p.x && b.y < p.y + p.h && b.y + b.h > p.y);
   const overlapArea = b => placed.reduce((s, p) => s + Math.max(0, Math.min(b.x + b.w, p.x + p.w) - Math.max(b.x, p.x)) * Math.max(0, Math.min(b.y + b.h, p.y + p.h) - Math.max(b.y, p.y)), 0);
