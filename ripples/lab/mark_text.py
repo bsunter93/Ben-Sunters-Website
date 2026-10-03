@@ -2,7 +2,8 @@
 
 v1.2 (Oct 3, after v1.1): named works are read through every Hansard page (up to 1,000 contributions); named markers that
 are also ordinary words need a work-context word within 160 characters; bill stages (second reading, committee, report,
-third reading) are their own tier.
+third reading) are their own tier. Oct 3 afternoon: DATA_GOV_KEY set; GovInfo (public laws, bills, the
+Congressional Record, hearings) runs on resume.
 
 v1.1 (Oct 3, after v1's 26-minute run): named-work markers resolve as the title themselves; Hansard reads the newest and
 the oldest 100 contributions per phrase; legislation.gov.uk notes are fetched from real document paths (UK enactments
