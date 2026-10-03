@@ -138,6 +138,29 @@ body.reel header .picker,body.reel .feed,body.reel .how,body.reel .foot,body.ree
 body.reel .wrap{grid-template-columns:1fr;max-width:760px}
 body.reel header{max-width:760px;padding-top:22px}
 @media (max-width:860px){.wrap{grid-template-columns:1fr}.pondbox{position:relative;top:0}.feed{position:static;max-height:none;overflow:visible}}
+@media (max-width:560px){
+  header{padding:14px 12px 2px}.brand{font-size:.68rem}
+  h1{font-size:1.35rem;margin:.3rem 0 .25rem}.sub{font-size:.88rem;line-height:1.35}
+  .tally{margin-top:6px}.tally span{font-size:.68rem;padding:2px 8px}
+  .tabs{margin-top:8px}.tab{padding:6px 9px 7px;font-size:.84rem}.tabnote{display:none}
+  .picker{margin:6px 0 0}.chip{padding:5px 10px;font-size:.82rem}
+  .wrap{padding:6px 10px 24px;gap:12px}.pondbox{padding:8px 8px 6px;border-radius:18px}
+  .clock .d{font-size:1.05rem}.clock .n{font-size:.78rem}
+  .legend{font-size:.7rem;gap:4px 10px;padding:4px 4px 2px}.howbtn{font-size:.7rem;padding:2px 8px}
+  .nextbtn{padding:6px 10px;font-size:.76rem}.play{width:34px;height:34px}
+  .card{padding:9px 12px}.card h2{font-size:.9rem}
+}
+/* first-visit hint, share and the reel caption */
+.hint{position:absolute;left:50%;bottom:72px;transform:translateX(-50%);background:rgba(5,30,36,.9);border:1px solid var(--hair);border-radius:999px;padding:8px 14px;font-size:.8rem;color:var(--ink-2);white-space:nowrap;pointer-events:none;transition:opacity .4s;z-index:2}
+.hint[hidden]{display:none}
+.iconbtn{width:38px;height:38px;border-radius:50%;border:1px solid var(--hair);background:none;color:var(--ink-2);cursor:pointer;display:grid;place-items:center;flex:none}
+.iconbtn svg{width:16px;height:16px}
+.toast{position:fixed;left:50%;bottom:24px;transform:translateX(-50%);background:var(--marigold);color:#062429;font-weight:700;font-size:.84rem;padding:8px 14px;border-radius:999px;opacity:0;transition:opacity .3s;pointer-events:none;z-index:9}
+.toast.on{opacity:1}
+.caption{display:none;margin:4px 8px 6px;padding:10px 14px;border-radius:12px;background:rgba(5,30,36,.75);border:1px solid var(--hair);font-size:1.05rem;min-height:2.6em}
+.caption b{color:var(--marigold)}
+body.reel .caption{display:block}
+body.reel .pondbox{padding-bottom:10px}
 @media (prefers-reduced-motion:reduce){.card.in{animation:none}}
 </style>
 </head>
@@ -160,9 +183,12 @@ body.reel header{max-width:760px;padding-top:22px}
   <section class="pondbox" aria-label="Ripple pond">
     <div class="clock"><div class="d" id="date">—</div><div class="n" id="since">—</div></div>
     <svg id="pond" viewBox="-120 0 940 650" role="img" aria-label="Ripples spreading out from the event over time"></svg>
+    <div class="hint" id="hint" hidden>Press play or drag the slider · tap a ripple to follow it</div>
+    <div class="caption" id="caption" aria-live="polite"></div>
     <div class="ctl">
       <button class="play" id="play" aria-label="Pause"><svg viewBox="0 0 16 16" id="playico"></svg></button>
       <input type="range" id="scrub" min="0" max="1000" value="0" aria-label="Time since the event">
+      <button class="iconbtn" id="share" aria-label="Share this story" title="Share"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M11 5.5 8 2.5 5 5.5M8 2.5v8"/><path d="M3 8.5v4a1 1 0 0 0 1 1h8a1 1 0 0 0 1-1v-4"/></svg></button>
       <button class="nextbtn" id="nextbtn">Next story →</button>
     </div>
     <div class="legend" aria-label="How sure we are of each link">
@@ -177,6 +203,7 @@ body.reel header{max-width:760px;padding-top:22px}
   <section class="feed" id="feed" aria-live="polite"></section>
 </div>
 
+<div class="toast" id="toast" role="status"></div>
 <section class="how" id="how" hidden>
   <div><h3>Rings are time</h3><p>The stone is the event. Each ring is time since it happened, so a ripple lands where it began. Each distinct ripple gets its own slice, labeled on the rim with the industry it reached.</p></div>
   <div><h3>Order, not a web</h3><p>Every step must begin after the step before it. A step that started first is busted, however related it looks.</p></div>
@@ -376,6 +403,7 @@ function chainLevel(st) {
     const t = st.ratio ? `Rose to ${st.ratio}× its normal level from ${fmt(D(st.onset))}` : `Moved further than in ${Math.round((1 - st.p) * 100)}% of other periods`;
     return ["measured", "Measured", `${t} (p = ${st.p}), after the step before.`, st.ratio ? `${st.ratio}× normal · p = ${st.p}` : `Beyond ${Math.round((1 - st.p) * 100)}% of other periods · p = ${st.p}`];
   }
+  if (st.archive_first) return ["timed", "Timed", `Online by ${fmt(D(st.archive_first))}: the earliest Wayback Machine capture of ${st.test.url}, after the step before.`, `Online by ${fmt(D(st.archive_first))} (Wayback)`];
   if (v.startsWith("timed")) return ["timed", "Timed", st.new_article ? `Its Wikipedia article appeared on ${fmt(D(st.new_article))}, after the step before.` : `A sustained rise from ${fmt(D(st.onset))}, after the step before.`, "Rose after the step before"];
   if (st.link === "reported") return ["reported", "Reported", st.link_why ? cap(st.link_why) + "." : "", "A credible source makes the link"];
   if (v === "no movement") return ["plausible", "Plausible", "No unusual rise in the data we checked.", "Happened; no unusual rise in our data"];
@@ -426,6 +454,10 @@ function fromChain(slug) {
 // ---------- drawing ----------
 function draw(story) {
   const svg = $("#pond"); svg.textContent = "";
+  // phones: the pond is drawn about 2.4x smaller, so type and dots scale up and only the marks keep a standing label
+  const dense = (svg.clientWidth || 700) < 560;
+  const K = dense ? 1.75 : 1;
+  story.dense = dense;
   const {items} = story;
   const today = daysBetween(story.iso0, new Date().toISOString().slice(0, 10));
   const dmax = Math.min(today, Math.max(...items.map(x => Math.max(x.d, x.range ? x.range[1] : 0))));
@@ -455,20 +487,22 @@ function draw(story) {
     const r = radius(d);
     el("circle", {class:"ring", cx:C.x, cy:C.y, r}, rg);
     const p = polar(r, lblAng);
-    el("text", {class:"ringlbl", x:p.x + 4, y:p.y - 3}, g0).textContent = lbl;
+    if (dense && ![30, 365, 3653].includes(d)) continue;
+    const rl = el("text", {class:"ringlbl", x:p.x + 4, y:p.y - 3}, g0); rl.textContent = lbl; if (dense) rl.style.fontSize = "15px";
   }
   el("circle", {cx:C.x, cy:C.y, r:R + 6, fill:"none", stroke:"rgba(214,240,236,.16)", "stroke-width":1.5, filter:"url(#wob)"}, g0);
   keys.forEach(k => {  // the industry each ripple reached, outside the rim, always horizontal
     if (!story.names[k]) return;
     const c = n === 1 ? 0 : centre(k), p = polar(R + 24, c), sx = Math.sin(c * Math.PI / 180), cy = -Math.cos(c * Math.PI / 180);
-    el("text", {class:"rimlbl", x:p.x + (Math.abs(sx) < 0.35 ? 0 : sx > 0 ? 2 : -2), y:p.y + (cy > 0.35 ? 10 : cy < -0.35 ? -2 : 4),
-      "text-anchor":Math.abs(sx) < 0.35 ? "middle" : sx > 0 ? "start" : "end"}, g0).textContent = story.names[k];
+    const rt = el("text", {class:"rimlbl", x:p.x + (Math.abs(sx) < 0.35 ? 0 : sx > 0 ? 2 : -2), y:p.y + (cy > 0.35 ? 10 : cy < -0.35 ? -2 : 4),
+      "text-anchor":Math.abs(sx) < 0.35 ? "middle" : sx > 0 ? "start" : "end"}, g0); rt.textContent = story.names[k];
+    if (dense) rt.style.fontSize = "17px";
   });
   const waves = el("g", {}, svg), bands = el("g", {}, svg), edges = el("g", {}, svg), elbls = el("g", {}, svg), nodes = el("g", {}, svg), labels = el("g", {}, svg);
   const stone = el("g", {class:"stone"}, svg);
   const sHalo = el("circle", {cx:C.x, cy:C.y, r:30, fill:"url(#glow)"}, stone);
   const sCore = el("circle", {cx:C.x, cy:C.y, r:12, fill:"var(--marigold)"}, stone);
-  el("text", {x:C.x, y:C.y + 38, "text-anchor":"middle"}, stone).textContent = story.stone;
+  const stoneT = el("text", {x:C.x, y:C.y + 38 * K, "text-anchor":"middle"}, stone); stoneT.textContent = story.stone; if (dense) stoneT.style.fontSize = "22px";
 
   // final positions: spread across the slice, nearest first, alternating either side of its center line
   for (const k of keys) {
@@ -505,8 +539,9 @@ function draw(story) {
     }
     const g = el("g", {class:"node", tabindex:0, role:"button", "aria-label":`${it.label}, ${it.lvText || LVL[it.lv]}`, opacity:0}, nodes);
     it.halo = el("circle", {cx:0, cy:0, r:16, fill:it.lv === "measured" ? "var(--good-soft)" : "var(--marigold-soft)", filter:"url(#soft)", opacity:.8}, g);
-    if (it.mark) el("circle", {cx:0, cy:0, r:11.5, fill:"none", stroke:"var(--marigold)", "stroke-width":2}, g);
-    it.core = el("circle", {class:"core", cx:0, cy:0, r:6.5, fill:COLOR[it.lv]}, g);
+    if (it.mark) el("circle", {cx:0, cy:0, r:11.5 * K, fill:"none", stroke:"var(--marigold)", "stroke-width":2 * K}, g);
+    it.core = el("circle", {class:"core", cx:0, cy:0, r:6.5 * K, fill:COLOR[it.lv]}, g);
+    it.showLabel = !dense || !!it.mark || it.lv === "measured" || items.length <= 4;
     g.setAttribute("transform", `translate(${C.x},${C.y})`);
     g.addEventListener("click", () => focus(it));
     g.addEventListener("keydown", e => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); focus(it); } });
@@ -515,12 +550,13 @@ function draw(story) {
     const lab = el("g", {class:"nlab" + (it.lv === "busted" ? " busted" : "")}, labels);
     const rect = el("rect", {rx:6}, lab);
     const shown = [it.label.length > 26 ? shortLabel(it.label) : it.label];
-    const tx = el("text", {x:0, y:0}, lab);
-    shown.forEach((ln, k) => { const ts = el("tspan", {x:0, dy:k ? 15 : 0}, tx); ts.textContent = ln; });
-    const sub = el("text", {class:"s", x:0, y:15 * shown.length}, lab); sub.textContent = (it.mark ? `◆ ${it.mark} · ` : "") + (it.sub || "");
-    const bb = lab.getBBox(), pad = 5, bw = bb.width + pad * 2, bh = bb.height + pad * 2;
-    const right = [12, -bh / 2], left = [-12 - bw, -bh / 2], up = [-bw / 2, -bh - 12], down = [-bw / 2, 13];
-    const rUp = [12, -bh - 6], rDn = [12, 6], lUp = [-12 - bw, -bh - 6], lDn = [-12 - bw, 6];
+    const tx = el("text", {x:0, y:0}, lab); if (dense) tx.style.fontSize = "22px";
+    shown.forEach((ln, k) => { const ts = el("tspan", {x:0, dy:k ? 15 * K : 0}, tx); ts.textContent = ln; });
+    const sub = el("text", {class:"s", x:0, y:15 * K * shown.length}, lab); sub.textContent = (it.mark ? `◆ ${it.mark} · ` : "") + (it.sub || "");
+    if (dense) sub.style.fontSize = "17px";
+    const bb = lab.getBBox(), pad = 5 * K, bw = bb.width + pad * 2, bh = bb.height + pad * 2, g1 = 12 * K;
+    const right = [g1, -bh / 2], left = [-g1 - bw, -bh / 2], up = [-bw / 2, -bh - g1], down = [-bw / 2, g1 + 1];
+    const rUp = [g1, -bh - 6], rDn = [g1, 6], lUp = [-g1 - bw, -bh - 6], lDn = [-g1 - bw, 6];
     const order = it.pos.x >= C.x ? [right, rUp, rDn, up, down, left, lUp, lDn] : [left, lUp, lDn, up, down, right, rUp, rDn];
     let best = order[0];
     for (const sp of order) {
@@ -528,7 +564,7 @@ function draw(story) {
       if (!overlaps(b) && b.x > -118 && b.x + bw < 818 && b.y > 2 && b.y + bh < 648) { best = sp; break; }
     }
     const bx = it.pos.x + best[0], by = it.pos.y + best[1];
-    placed.push({x:bx, y:by, w:bw, h:bh});
+    if (it.showLabel) placed.push({x:bx, y:by, w:bw, h:bh});  // hidden labels do not reserve space
     lab.setAttribute("transform", `translate(${bx + pad - bb.x},${by + pad - bb.y})`);
     rect.setAttribute("x", bb.x - pad); rect.setAttribute("y", bb.y - pad); rect.setAttribute("width", bw); rect.setAttribute("height", bh);
     it.lab = lab; it.state = "hidden";
@@ -563,7 +599,9 @@ function land(it) {  // the label appears only once the ripple has arrived
   it.state = "landed";
   it.g.setAttribute("transform", `translate(${it.pos.x},${it.pos.y})`);
   it.path.setAttribute("d", `M${it.from.x},${it.from.y} L${it.pos.x},${it.pos.y}`);
-  it.lab.classList.add("on"); if (it.elbl) it.elbl.style.opacity = 1; if (it.band) it.band.style.opacity = .17;
+  if (it.showLabel || it === hot) it.lab.classList.add("on");
+  if (it.elbl) it.elbl.style.opacity = 1; if (it.band) it.band.style.opacity = .17;
+  if (REEL) $("#caption").innerHTML = `${it.mark ? `<b>◆ ${esc(it.mark)}</b> · ` : ""}${esc(it.label)} <span style="color:var(--ink-3)">· ${esc(it.lvText || LVL[it.lv])}${it.sub ? " · " + esc(it.sub) : ""}</span>`;
 }
 function hide(it) {
   it.state = "hidden"; it.g.setAttribute("opacity", 0); it.path.setAttribute("opacity", 0); it.lab.classList.remove("on");
@@ -641,13 +679,13 @@ function render(now = performance.now()) {
 
 function clearFocus() {
   $("#pond").classList.remove("focus");
-  if (cur) cur.items.forEach(x => [x.g, x.path, x.lab, x.band].forEach(e => e && e.classList.remove("lit")));
+  if (cur) cur.items.forEach(x => { [x.g, x.path, x.lab, x.band].forEach(e => e && e.classList.remove("lit")); if (!x.showLabel && x.lab) x.lab.classList.remove("on"); });
   if (hot) { hot.lab.classList.remove("hot"); hot.cardEl && hot.cardEl.classList.remove("hot"); hot = null; }
 }
 function focus(it) {
   if (hot === it) { clearFocus(); return; }
   clearFocus();
-  hot = it; it.lab.classList.add("hot");
+  hot = it; it.lab.classList.add("hot"); if (it.state === "landed") it.lab.classList.add("on");
   const lit = new Set([it]);  // its path back to the stone, and anything that grew from it
   for (let p = it; p && p.parent; ) { p = cur.items.find(x => x.id === p.parent); if (p) lit.add(p); }
   let grew = true; while (grew) { grew = false; for (const x of cur.items) if (!lit.has(x) && [...lit].some(l => l.id === x.parent && (l === it || cur.items.indexOf(l) >= 0) && isDesc(x, it))) { lit.add(x); grew = true; } }
@@ -716,12 +754,16 @@ function show(kind, slug, autoplay = true) {
     it.card.html = it.card.html.replace("</span></div>", `</span></div><div class="markpill">◆ Lasting mark · ${esc(it.mark)}</div>`);
   }
   const marks = story.items.filter(x => x.mark);
-  story.sub = (marks.length ? `The mark it left: ${marks.map(x => `${x.label} (${x.mark.toLowerCase()})`).join("; ")}. ` : "No lasting mark found yet: what changed is attention, money or hype, not a law, an institution, jobs or health. ") + story.sub;
+  story.sub = story.sub.replace(/ Tap a ripple to see why\.$/, "");
   clearFocus(); cur = story; hot = null; t = 0; ambient = 0;
   const inTab = TABS[tab].some(([k, s]) => k === kind && s === slug) || (tab === "stories" && kind === "chain");
   if (!inTab) tab = tabOf(kind, slug);
   renderPicker();
-  $("#h1").textContent = story.h1; $("#sub").textContent = story.sub;
+  const named = TABS[tab].find(([k, s]) => k === kind && s === slug);
+  $("#h1").textContent = named && named[2] ? named[2] : story.h1;
+  const markLine = marks.length ? `The mark it left: ${marks.map(x => `${x.label} (${x.mark.toLowerCase()})`).join("; ")}.`
+    : "No lasting mark found yet: what changed is attention, money or hype, not a law, an institution, jobs or health.";
+  $("#sub").textContent = kind === "chain" ? markLine : `${markLine} ${story.sub}`;
   const tally = {}; story.items.forEach(x => tally[x.lv] = (tally[x.lv] || 0) + 1);
   $("#tally").innerHTML = (marks.length ? `<span class="markt">◆ ${marks.length} lasting mark${marks.length === 1 ? "" : "s"}</span>` : `<span class="nomark">No lasting mark yet</span>`) +
     ["measured", "timed", "reported", "plausible", "busted"].filter(k => tally[k]).map(k => `<span class="l-${k}">${tally[k]} ${LVL[k].toLowerCase()}</span>`).join("");
@@ -741,6 +783,20 @@ function next() {
   $("#howbtn").onclick = () => { const h = $("#how"), open = h.hidden; h.hidden = !open; $("#howbtn").setAttribute("aria-expanded", open); if (open) h.scrollIntoView({behavior:"smooth", block:"start"}); };
   $("#play").onclick = () => { if (t >= 1) { t = 0; cur.items.forEach(hide); cur.splashed = false; $("#feed").scrollTop = 0; } setPlaying(!playing); };
   $("#nextbtn").onclick = next;
+  const toast = m => { const t = $("#toast"); t.textContent = m; t.classList.add("on"); setTimeout(() => t.classList.remove("on"), 1800); };
+  $("#share").onclick = async () => {
+    const url = `https://bensunter.com/ripples/demo/?${cur.kind === "chain" ? "c" : "m"}=${cur.key}`, title = $("#h1").textContent;
+    try { if (navigator.share) { await navigator.share({title:`Knock-On: ${title}`, text:$("#sub").textContent, url}); return; } } catch { return; }
+    try { await navigator.clipboard.writeText(url); toast("Link copied"); } catch { window.prompt("Copy this link", url); }
+  };
+  // first visit: one hint, gone on the first interaction
+  let seen = false; try { seen = localStorage.getItem("ko-hint") === "1"; } catch {}
+  if (!seen && !REEL) {
+    const h = $("#hint"); h.hidden = false;
+    const done = () => { h.hidden = true; try { localStorage.setItem("ko-hint", "1"); } catch {} };
+    setTimeout(done, 9000);
+    ["#play", "#scrub", "#pond", "#nextbtn"].forEach(sel => $(sel).addEventListener("pointerdown", done, {once:true}));
+  }
   $("#pond").addEventListener("click", e => { if (!e.target.closest(".node")) clearFocus(); });
   document.addEventListener("keydown", e => {
     if (e.key !== " " || e.target.closest("input,select,button,textarea,[tabindex]")) return;

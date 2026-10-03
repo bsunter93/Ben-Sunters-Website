@@ -12,6 +12,8 @@ Every step is one of:
           than 2 residual SDs for 2 periods running.
   ssa     annual US baby-name counts (from ripples.att_e9_names, supplied inline): the year's log change against
           every other year's.
+  wayback the earliest Wayback Machine capture of a URL (CDX API): the thing was online by that date. An upper bound on
+          when it began; ordered like a timed step. Options: url, matchType (exact|prefix), from (YYYY).
   record  a dated public record with a source. Not measured by us.
   none    not testable with free data, with the reason; an optional "range" places the claim at its midpoint.
 Ordering rule (ledger 1497): each step's reference date is the previous counted step's date (onset or record),
@@ -129,6 +131,20 @@ def _arxiv(a, b):
     return out or None
 
 
+def wayback_first(url, match="exact", frm=None):
+    """Earliest 200 capture of a URL in the Wayback Machine, as YYYY-MM-DD, or None."""
+    q = {"url": url, "output": "json", "limit": 1, "fl": "timestamp,statuscode", "filter": "statuscode:200", "matchType": match}
+    if frm:
+        q["from"] = frm
+    t = fetch(f"https://web.archive.org/cdx/search/cdx?{urllib.parse.urlencode(q)}", delay=1.5)
+    try:
+        rows = json.loads(t or "[]")
+        ts = rows[1][0] if len(rows) > 1 else None
+    except (ValueError, IndexError):
+        ts = None
+    return f"{ts[:4]}-{ts[4:6]}-{ts[6:8]}" if ts and len(ts) >= 8 else None
+
+
 # ---------- tests ----------
 def series_test(pts, ref, direction, h, transform):
     dates = [d for d, _ in pts]
@@ -215,6 +231,9 @@ def run_step(st, ref):
         return {"reason": t["reason"]}
     if k == "wiki":
         return wiki_test(t["articles"], ref, t.get("lag", 150))
+    if k == "wayback":
+        d = wayback_first(t["url"], t.get("matchType", "exact"), t.get("from"))
+        return {"onset": d, "archive_first": d, "url": t["url"]} if d else {"result": "no capture found"}
     if k == "ssa":
         return ssa_test(t["counts"], t["year"])
     key = (k, json.dumps(t.get("id") or t.get("towns") or ""))
@@ -239,6 +258,8 @@ def verdict(st, r, ref):
         return "no movement" if "rise" in r["result"] else "no data"
     if r.get("new_article"):
         return "timed (new article)" if D(r["onset"]) >= ref - dt.timedelta(days=3) else "wrong order"
+    if r.get("archive_first"):
+        return "timed (online by)" if D(r["onset"]) >= ref - dt.timedelta(days=3) else "wrong order"
     if r.get("p") is None and r.get("onset"):  # a sustained rise, but too little history for a placebo test
         return "timed (short history)" if D(r["onset"]) >= ref - dt.timedelta(days=3) else "wrong order"
     moved = r.get("p") is not None and r["p"] <= 0.05
