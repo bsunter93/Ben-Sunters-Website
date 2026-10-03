@@ -1,4 +1,4 @@
-"""Mark-text search v1.2 (ripples/docs/mark_text_v1_2.md): cultural works named inside legal and parliamentary text.
+"""Mark-text search v1.3 (ripples/docs/mark_text_v1_3.md): cultural works named inside legal and parliamentary text.
 
 v1.2 (Oct 3, after v1.1): named works are read through every Hansard page (up to 1,000 contributions); named markers that
 are also ordinary words need a work-context word within 160 characters; bill stages (second reading, committee, report,
@@ -34,8 +34,9 @@ sys.path.insert(0, os.path.dirname(__file__))
 import mark_first as mf  # noqa: E402  (shared helpers: get, sparql, budget, Stop, WP, strip_markup)
 
 ROOT = os.path.join(os.path.dirname(__file__), "..")
-OUT = os.environ.get("OUT_JSON") or os.path.join(ROOT, "docs", "results", "mark_text_v1_2.json")
-PROTOCOL = "ripples/docs/mark_text_v1_2.md"
+OUT = os.environ.get("OUT_JSON") or os.path.join(ROOT, "docs", "results", "mark_text_v1_3.json")
+PREV = os.path.join(ROOT, "docs", "results", "mark_text_v1_2.json")
+PROTOCOL = "ripples/docs/mark_text_v1_3.md"
 KEY = os.environ.get("DATA_GOV_KEY", "").strip()
 FR = "https://www.federalregister.gov/api/v1/documents.json"
 UKL = "https://www.legislation.gov.uk"
@@ -284,32 +285,41 @@ def govinfo():
         state["govinfo"] = "skipped: DATA_GOV_KEY not set"
         print("GOV skipped: no DATA_GOV_KEY", flush=True)
         return
+    state.pop("govinfo", None)
     done = state.setdefault("gov_done", [])
+    # v1.3: one query per collection (public laws and bills first, then the Record and hearings), newest first, so the
+    # laws are never pushed out by thirty years of floor speeches; the tier reads the Record's own section title
     for term in MARKERS:
-        if term in done:
-            continue
-        payload = json.dumps({"query": f'"{term}" collection:(PLAW OR BILLS OR CREC OR CHRG)', "pageSize": 50, "offsetMark": "*",
-                              "sorts": [{"field": "publishdate", "sortOrder": "ASC"}]}).encode()
-        req = urllib.request.Request(f"{GOV}/search?api_key={KEY}", data=payload, headers={"User-Agent": mf.UA, "Content-Type": "application/json"})
-        mf.budget()
-        try:
-            with urllib.request.urlopen(req, timeout=90) as r:
-                d = json.loads(r.read().decode("utf-8", "replace"))
-        except Exception as e:  # noqa: BLE001
-            print("GOV error", term, str(e)[:100], flush=True); done.append(term); continue
-        finally:
-            mf.time.sleep(1.0)
-        res = d.get("results", [])
-        print("GOV", term, d.get("count"), flush=True)
-        for x in res[:20]:
-            link = x.get("download", {}).get("txtLink") or x.get("resultLink")
-            text = ""
-            if link and "txtLink" in json.dumps(x.get("download", {})):
-                body = mf.get(link + ("&" if "?" in link else "?") + f"api_key={KEY}")
-                text = window(re.sub(r"<[^>]+>", " ", body or ""), term, 600)
-            record("GOV", x.get("title") or x.get("packageId"), x.get("dateIssued"), x.get("resultLink"), text or (x.get("title") or ""), term,
-                   "law" if (x.get("packageId") or "").startswith("PLAW") else "bill" if (x.get("packageId") or "").startswith("BILLS") else "record")
-        done.append(term); save()
+        for coll in ("PLAW", "BILLS", "CREC", "CHRG"):
+            key = f"{term}|{coll}"
+            if key in done:
+                continue
+            payload = json.dumps({"query": f'"{term}" collection:({coll})', "pageSize": 40, "offsetMark": "*",
+                                  "sorts": [{"field": "publishdate", "sortOrder": "DESC"}]}).encode()
+            req = urllib.request.Request(f"{GOV}/search?api_key={KEY}", data=payload, headers={"User-Agent": mf.UA, "Content-Type": "application/json"})
+            mf.budget()
+            try:
+                with urllib.request.urlopen(req, timeout=90) as r:
+                    d = json.loads(r.read().decode("utf-8", "replace"))
+            except Exception as e:  # noqa: BLE001
+                print("GOV error", key, str(e)[:100], flush=True); done.append(key); continue
+            finally:
+                mf.time.sleep(1.0)
+            res = d.get("results", [])
+            print("GOV", key, d.get("count"), flush=True)
+            for x in res[:25]:
+                link = (x.get("download") or {}).get("txtLink")
+                text = ""
+                if link:
+                    body = mf.get(link + ("&" if "?" in link else "?") + f"api_key={KEY}")
+                    text = window(clean(body or ""), term, 600)
+                title = x.get("title") or x.get("packageId") or ""
+                pid = x.get("packageId") or ""
+                tier = ("law" if pid.startswith("PLAW") else "bill" if pid.startswith("BILLS") else
+                        "bill debate" if re.search(r"\bACT\b|\bBILL\b|\bH\.R\.|\bS\. ?\d|RESOLUTION", title.upper()) else
+                        "hearing" if pid.startswith("CHRG") else "record")
+                record("GOV", title, x.get("dateIssued"), x.get("resultLink"), text or title, term, tier)
+            done.append(key); save()
 
 
 def probe():
@@ -323,7 +333,13 @@ def probe():
 
 def main() -> int:
     global state
-    state = json.load(open(OUT)) if os.path.exists(OUT) else {"protocol": PROTOCOL, "started": dt.date.today().isoformat(), "markers": MARKERS}
+    if os.path.exists(OUT):
+        state = json.load(open(OUT))
+    elif os.path.exists(PREV):  # v1.3 starts from v1.2's Hansard, legislation.gov.uk and Federal Register work; GovInfo is redone
+        state = json.load(open(PREV)); state["protocol"] = PROTOCOL
+        state["pairs"] = [p for p in state.get("pairs", []) if p.get("source") != "GOV"]; state.pop("gov_done", None); state.pop("govinfo", None)
+    else:
+        state = {"protocol": PROTOCOL, "started": dt.date.today().isoformat(), "markers": MARKERS}
     state.pop("stopped", None)
     try:
         if "probed" not in state:
@@ -336,6 +352,7 @@ def main() -> int:
         state["stopped"] = str(e); print("stopped:", e, flush=True)
     pairs = state.get("pairs", [])
     good = [p for p in pairs if p["ordered"] and p["tier"] in ("law", "rule", "bill", "bill debate", "bill stage")]
+    state["summary_gov"] = {"pairs": sum(1 for p in pairs if p["source"] == "GOV"), "tiers": dict(__import__("collections").Counter(p["tier"] for p in pairs if p["source"] == "GOV"))}
     good.sort(key=lambda p: (-p["causal_score"], p["lag_days"] or 0))
     state["summary"] = {"pairs": len(pairs), "ordered": sum(1 for p in pairs if p["ordered"]), "good": len(good),
                         "by_source": {s: sum(1 for p in pairs if p["source"] == s) for s in ("HAN", "UKL", "FR", "GOV")}, "top": good[:80]}
