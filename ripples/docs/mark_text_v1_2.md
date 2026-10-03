@@ -30,3 +30,19 @@ The run (15 minutes) read 574 Mr Bates contributions and produced 10 pairs from 
 match as `Mr <em>Bates</em>`, and stripping the tags left a double space that failed the "marker in window" check.
 Whitespace is now collapsed before matching (`clean`). Explanatory-note fetches are limited to primary legislation from
 1999, where notes exist. Nothing else changes; the file is rebuilt from scratch.
+
+## Result (Oct 3, 09:03 UTC; run 37110077187, 29 minutes)
+
+547 pairs (526 Hansard, 21 Federal Register, 0 legislation.gov.uk; GovInfo skipped), 491 time-ordered, 138 in the
+counted tiers. **The positive control is in:** Mr Bates vs The Post Office → Post Office (Horizon System) Offences
+Bill, second reading, March 20, 2024, seven contributions ("that powerful ITV drama … prompted a public outcry"; "the
+influence of the ITV drama … has been very significant in this campaign"). Hand-screened, the counted tiers hold at
+least nine real work → bill citations beyond the control (Cathy Come Home → Housing Subsidies Bill, Dec 15, 1966, a
+month after broadcast, and the 2016 Homelessness Reduction Bill debate tying it to the Housing (Homeless Persons) Act
+1977; My Octopus Teacher → Animal Welfare (Sentience) Bill; Adolescence → Children's Wellbeing and Schools Bill, five
+days after release; McMafia → Sanctions and Anti-Money Laundering Bill; Manhunt → the BBFC accountability bill; Ocean
+with David Attenborough → the Biodiversity Beyond National Jurisdiction Bill; Baby Reindeer → Criminal Justice Bill;
+Super Size Me → Food Products (Marketing to Children) Bill; Silent Spring → Agriculture Bill). **The rule passes** (≥5
+counted pairs with a resolved work and a named bill; ≥2 new to the project). Noise remains (an idiom, a band, a
+cartoon cited for a pun) and is screened by hand; a citation in a debate is a *reported* link at most, never measured.
+Next: the blind owner round, then maps with the Act as the mark where the bill became law.
