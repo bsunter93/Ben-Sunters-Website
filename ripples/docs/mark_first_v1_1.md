@@ -54,3 +54,19 @@ and "miscarriage of justice" into the mark classes.
    structurally out of reach of a Wikipedia route; the denominator stays 5).
 
 The success rule is unchanged.
+
+## Result of the second attempt (Oct 3, 12:10 UTC; run 37107094668, 270 minutes, no failed chunks)
+
+13,371 marks (69 classes), 289,960 works (20 classes), 13,976 pairs, 1,205 with a sentence, 3,842 time-ordered, 2,498
+flagged news, 36 reversed, 46 ordered with causal language. **Recall 2 of 5 strict** (WarGames → CFAA; The Jungle →
+Pure Food and Drug Act and Federal Meat Inspection Act, now caught by "exposés"). Tiger King, Mr Bates and Unsafe at
+Any Speed are still missed: the first two have no article of their own to carry the link, the third's Act article does
+not link the book. **Rule (a) fails** (2 < 3); **rule (b) passes** with new time-ordered causal pairs beyond v1's six:
+JFK (1991 film) → President John F. Kennedy Assassination Records Collection Act of 1992 (the review board "partially
+credited" the film); Silent Spring → National Environmental Policy Act; A Nation of Immigrants → Hart-Celler Act; Holy
+Deadlock → Matrimonial Causes Act 1937; The Descent of Man → the Butler Act (a law against a book's idea; direction to
+be judged by hand); The Caine Mutiny → the Twenty-fifth Amendment (cited in the disability debate; weak).
+
+**Decision.** By the letter the Wikipedia route is dropped as the primary discovery route; the records route
+(`mark_text_v1_2.md`) passed its rule the same morning and becomes primary. The mark-first pairs file stays as a
+secondary source for maps: its hits with causal language are read by hand, never re-run as is.

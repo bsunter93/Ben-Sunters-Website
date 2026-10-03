@@ -179,6 +179,7 @@ chain. Discovery finds one-hop leads but cannot yet find the second hop on its o
 | Two-hop discovery | Not yet | Attention second hops (16 seeds) found siblings and curiosity, not consequences |
 | The demo | Live as Ripple | Three tabs; each outcome its own living ripple; pebbles for lasting marks; isometric pond; paper feed; share cards (PRs #57–#60) |
 | Mark-text search v1.2 | Ran; rule passed | Cultural works named inside Hansard debates and Federal Register rules: 547 pairs, 138 in bill debates and rules; the control (Mr Bates → Post Office (Horizon System) Offences Bill, second reading, Mar 20, 2024) and nine more real work → bill citations (Cathy Come Home → housing bills 1966 and 2016; My Octopus Teacher → Animal Welfare (Sentience) Bill; Adolescence → Children's Wellbeing and Schools Bill; McMafia → Sanctions Bill; Manhunt → BBFC bill; Ocean → BBNJ Bill). A citation is a reported link; the hand screen separates cause from illustration (`mark_text_v1_2.md`) |
+| Mark-first search v1.1 | Ran twice; rule failed on recall (2/5), passed on new pairs | After reliability fixes: 13,371 laws × 289,960 works, 46 ordered causal pairs; new: JFK (film) → JFK Records Act 1992, Silent Spring → NEPA, A Nation of Immigrants → Hart-Celler, Holy Deadlock → Matrimonial Causes Act 1937. Two recall marks have no article of their own, a structural limit. The Wikipedia route is now secondary to the records route; its pairs are read by hand for maps (`mark_first_v1_1.md`) |
 | Mark-first search v1 | Ran; rule failed on coverage | 13,374 laws × 272,453 works → 12,996 link pairs, 3,252 time-ordered, 35 with causal language. Recall 1 of 5 strict (misses were mark/work class coverage and a narrow causal lexicon). Six documented new work → law pairs: Quincy, M.E. → Orphan Drug Act; 60 Minutes → STOCK Act; Victim (1961) → Sexual Offences Act 1967; The Daily Show → Zadroga Act; The West Wing → the 2006 Racial and Religious Hatred Bill defeat; Rangila Rasul → Section 295A (`mark_first_v1.json`) |
 
 **Since Oct 2:**
@@ -315,10 +316,10 @@ chain. Discovery finds one-hop leads but cannot yet find the second hop on its o
    - FRED/BLS series where an industry series exists.
 3. **A records assistant.** It proposes dated outcomes with citations; the checker verifies the dates and the order.
 4. **A slope test** for gradual changes (ChatGPT → Stack Overflow).
-5. **Mark-first, the decision.** The pre-registered rule failed on recall, so by protocol the Wikipedia route gives
-   way to legislative text APIs; the diagnosis says every miss was coverage (mark and work classes, the causal
-   lexicon, a bill date used as the law's date), and the route found six documented pairs. Proposed: one v1.1 run with
-   those fixes under a new pre-registration before switching. The six pairs go to a blind round and then to maps.
+5. **Discovery, decided (Oct 3).** The records route (Hansard, the Federal Register; Congress with a key) is the
+   primary discovery route for lasting marks; the Wikipedia route is secondary and read by hand. A blind round of 15
+   work → law pairs is with the owner; survivors become maps with the Act as the mark. Next pieces: a Bill → Act
+   resolver, the US Congressional Record (needs the `DATA_GOV_KEY` secret), and explanatory notes.
 6. **Look and feel, remaining:** a shelf of live story thumbnails; label collisions on crowded slices; then the
    LinkedIn reel (`?reel`) and post, held until the owner signs off on the look.
 
