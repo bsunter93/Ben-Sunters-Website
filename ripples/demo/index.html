@@ -599,6 +599,7 @@ function chainLevel(st) {
   if (st.archive_first) return ["timed", "Timed", `Online by ${fmt(D(st.archive_first))}: the earliest Wayback Machine capture of ${st.test.url}, after the step before.`, `Online by ${fmt(D(st.archive_first))} (Wayback)`];
   if (v.startsWith("timed")) return ["timed", "Timed", st.new_article ? `Its Wikipedia article appeared on ${fmt(D(st.new_article))}, after the step before.` : `A sustained rise from ${fmt(D(st.onset))}, after the step before.`, "Rose after the step before"];
   if (st.link === "reported") return ["reported", "Reported", st.link_why ? cap(st.link_why) + "." : "", "A credible source makes the link"];
+  if (v === "no movement" && st.ratio && st.p != null) return ["plausible", "Plausible", `Rose to ${st.ratio}× its normal level from ${fmt(D(st.onset))}, but rises like it occur in ${Math.round(st.p * 100)}% of windows in this page's own history: within chance.`, `${st.ratio}× normal, within chance (p = ${st.p})`];
   if (v === "no movement") return ["plausible", "Plausible", "No unusual rise in the data we checked.", "Happened; no unusual rise in our data"];
   return ["plausible", "Plausible", why || "It happened; the causal link is unproven.", "Happened; the link is unproven"];
 }
