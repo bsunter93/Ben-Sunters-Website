@@ -59,6 +59,12 @@ def find_yrbs():
 
 
 def columns_of(domain, sid):
+    """Column names from the table's metadata. (A sample row is not enough: Socrata leaves null fields out of the JSON,
+    so on Oct 3 the YRBS tables' value column was missing from their first row and the tables were rejected.)"""
+    meta = jget(f"https://{domain}/api/views/{sid}.json")
+    cols = [c.get("fieldName", "").lower() for c in (meta or {}).get("columns", []) if c.get("fieldName")]
+    if cols:
+        return cols, {"name": (meta or {}).get("name")}
     rows = jget(f"https://{domain}/resource/{sid}.json?$limit=1")
     return ([k.lower() for k in rows[0].keys()] if rows else []), (rows[0] if rows else {})
 
@@ -122,7 +128,7 @@ def yrbs_alcohol():
                 continue
             if 0 < v < 100 and len(st) == 2:
                 out.setdefault(st, {})[y] = v
-        name = (jget(f"https://{domain}/api/views/{sid}.json") or {}).get("name") or sid
+        name = sample.get("name") or sid
         years = sorted({y for d in out.values() for y in d})
         print("states:", len(out), "years:", years, flush=True)
         if len(out) >= 20 and len(years) >= 2:
