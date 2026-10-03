@@ -194,24 +194,24 @@ input[type=range]{flex:1;accent-color:var(--marigold);min-width:0}
 .how p{margin:0;color:var(--ink-2);font-size:.9rem}
 .foot{max-width:1240px;margin:0 auto;padding:0 16px 44px;color:var(--ink-3);font-size:.82rem}
 /* pond */
-.ring{fill:none;stroke:rgba(214,240,236,.075);stroke-width:1;stroke-dasharray:1 3}
-.ringlbl{fill:rgba(242,169,59,.75);font:600 9.5px var(--sans);letter-spacing:.05em}
+.ring{display:none}  /* the time grid is gone; the thread on the right carries the scale */
+.ringlbl{fill:rgba(242,169,59,.6);font:600 9px var(--sans);letter-spacing:.05em}
 .slicebd{stroke:rgba(214,240,236,.12);stroke-width:1;stroke-dasharray:2 6}
 .rimlbl{font:800 11px var(--sans);letter-spacing:.16em;text-transform:uppercase;fill:rgba(242,174,46,.9)}
 .wave{fill:none;stroke:rgba(214,240,236,.5)}
-.caustic{mix-blend-mode:screen;opacity:.22}
+.caustic{mix-blend-mode:screen;opacity:.16}
 /* each outcome is a ripple: an arc at its moment in time, styled by how sure we are */
 .rip,.edge{fill:none;stroke-linecap:round}
 .rip{opacity:0;transition:opacity .5s}
-.rip.on{opacity:.8}.rip.flying{opacity:1;transition:none}
-.rip.l-measured,.edge.l-measured{stroke:var(--good);stroke-width:3}
-.rip.l-measured.on,.rip.l-timed.on{filter:drop-shadow(0 0 3px currentColor)}
+.rip.on{opacity:.5}.rip.flying{opacity:.95;transition:none}
+.rip.l-measured,.edge.l-measured{stroke:var(--good);stroke-width:2.2}
+.rip.l-measured.on,.rip.l-timed.on{opacity:.75}
 .rip.l-measured{color:var(--good)}.rip.l-timed{color:var(--marigold)}
-.rip.l-reported.on{opacity:.55}.rip.l-plausible.on{opacity:.5}.rip.l-busted.on{opacity:.6}
+.rip.l-reported.on{opacity:.38}.rip.l-plausible.on{opacity:.42}.rip.l-busted.on{opacity:.5}
 .rip2{fill:none;stroke:rgba(214,240,236,.5);stroke-width:1;opacity:0;transition:opacity .6s}
-.rip2.on{opacity:.35}.rip2.flying{opacity:.75;transition:none}
+.rip2.on{opacity:0}.rip2.flying{opacity:.6;transition:none}  /* the trailing crest shows only while the ripple travels */
 .glint{fill:none;stroke:rgba(255,255,255,.75);stroke-width:1.3;stroke-linecap:round;stroke-dasharray:5 31;opacity:0;transition:opacity .8s;animation:glide 14s linear infinite}
-.glint.on{opacity:.65}
+.glint.on{opacity:0}.glint{display:none}
 @keyframes glide{to{stroke-dashoffset:-360}}
 @media (prefers-reduced-motion:reduce){.glint{animation:none}.markglow{animation:none}}
 .thread{stroke:var(--marigold);stroke-width:1;opacity:.45}
@@ -221,22 +221,22 @@ input[type=range]{flex:1;accent-color:var(--marigold);min-width:0}
 .nlab.mark rect{fill:var(--paper);stroke:none}
 .nlab.mark text{fill:var(--paper-ink)}.nlab.mark text.s{fill:#8a5a0a}
 .rip.l-measured.disc,.edge.l-measured.disc{stroke-width:2}
-.rip.l-timed,.edge.l-timed{stroke:var(--marigold);stroke-width:2.6}
-.rip.l-reported,.edge.l-reported{stroke:var(--rec);stroke-width:2.1}
-.rip.l-plausible,.edge.l-plausible{stroke:var(--marigold);stroke-width:1.6;stroke-dasharray:5 6}
+.rip.l-timed,.edge.l-timed{stroke:var(--marigold);stroke-width:2}
+.rip.l-reported,.edge.l-reported{stroke:var(--rec);stroke-width:1.3}
+.rip.l-plausible,.edge.l-plausible{stroke:var(--marigold);stroke-width:1.3;stroke-dasharray:4 7}
 .rip.l-busted,.edge.l-busted{stroke:var(--miss);stroke-width:1.3;stroke-dasharray:2 5}
 /* the thread back to the stone shows only while a ripple is being followed */
 .edge{opacity:0;transition:opacity .3s}
 #pond.focus .edge.lit{opacity:.9}
 .edge.off{display:none}
-.band{stroke-linecap:round;stroke-width:10;opacity:0;transition:opacity .6s}
+.band{display:none}  /* the label says "≈ 1982–1984"; a radial bar read as an artifact */
 .elbl{font:700 9.5px var(--sans);letter-spacing:.08em;text-transform:uppercase;paint-order:stroke;stroke:#0a3a42;stroke-width:4px;opacity:0;transition:opacity .5s}
 .elbl.l-measured{fill:var(--good)}.elbl.l-timed{fill:var(--marigold)}.elbl.l-reported{fill:var(--ink)}.elbl.l-plausible{fill:var(--marigold)}.elbl.l-busted{fill:var(--miss)}
 .node{cursor:pointer;outline:none}
 .node:focus-visible .halo,.node:hover .halo{r:9}
 .crest{fill:none;stroke-linecap:round;stroke-linejoin:round;stroke-width:3.4;opacity:0;transition:opacity .4s}
 .crest.on{opacity:1}
-.crestg{stroke-width:11;opacity:0;filter:url(#soft)}.crestg.on{opacity:.38}
+.crestg{stroke-width:11;opacity:0;filter:url(#soft)}.crestg.on{opacity:.3}
 #pond.focus .crestg.on:not(.lit){opacity:.06}
 .crest.l-measured{stroke:var(--good)}.crest.l-timed{stroke:var(--marigold)}.crest.l-reported{stroke:#f6fbfb}.crest.l-plausible{stroke:var(--marigold);stroke-dasharray:3 4;stroke-width:3.2}.crest.l-busted{stroke:var(--miss);stroke-dasharray:2 3.5;stroke-width:3}
 #pond.focus .crest.on:not(.lit){opacity:.16;transition:opacity .3s}
