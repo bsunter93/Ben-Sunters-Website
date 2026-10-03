@@ -1,11 +1,11 @@
-# Ripple Map: context brief (updated 2026-10-03)
+# Ripple Map: context brief (updated 2026-10-03, evening)
 
 Standalone context for anyone (person or new chat) picking up Ripple Map. It covers the vision, the current status,
 what we learned, pitfalls, open gaps and next steps. The operational runbook with exact commands is
 `ripples/HANDOFF.md`, and the experiments plan is `ripples/docs/experiments.md`.
 
 - Live site:
-  - https://bensunter.com/ripples/demo/: the product prototype.
+  - https://bensunter.com/ripples/demo/: the product prototype, branded **Ripple** since 2026-10-03.
   - https://bensunter.com/ripples/discover/: every test and its evidence.
   - https://bensunter.com/ripples/discover/maps/: 11 generated ripple maps.
   - https://bensunter.com/ripples/pond/: the original explorer, parked.
@@ -118,6 +118,29 @@ The pond language stays. What changes is what goes in it and how the evidence re
   3. The first trend pages built only for trends with a result.
   4. The share card built around the ghost stone and the surprising landing.
 
+## 1b-ii. The look (2026-10-03): Ripple
+
+The demo is **Ripple**: "Throw a stone. See what it changed." Design rules fixed on 2026-10-03, after the owner asked
+for something that "looks like a piece of art you can play with rather than a dashboard", intuitive for a child and
+deep enough for an adult to browse rabbit holes.
+
+- **The pond is the page.** Dark water at dusk runs behind everything; reading happens on warm paper. Two
+  temperatures, so the eye knows where to play and where to read.
+- **Three colors mean something and nothing else uses them:** ember for the stone's lasting marks, moss for measured
+  links, coral for busted links. Everything else is water and paper.
+- **One stone, one splash.** A small mossy river rock falls in. Each outcome is a ripple of its own: an arc that
+  spreads out to its moment in time and stays, styled by how sure we are, with a living crest that lifts and falls.
+  No dots, no connector lines; the thread back to the stone appears only when you tap a ripple.
+- **Lasting marks are pebbles** resting on the water, lit from beneath: the only stones on the pond are the one
+  thrown and the things that stuck.
+- **Time runs along a thread** on the right-hand axis, with ticks at a week, a year, ten years.
+- **Type:** Fraunces for names and the big year; IBM Plex Sans for reading. The wordmark is lowercase *ripple*, the
+  *i* the stone, rings spreading from the second *p*.
+- **Depth:** tap a ripple for its card, "How sure?" in plain words and the source; "Same stone, other ponds" links
+  stories that share a stone; a ripple that is itself a stone links to its own pond.
+- **Quiet extras:** an opening screen on still water, hover previews on desktop, a drop sound that is off by default,
+  a share card for every featured story.
+
 ## 1c. Aspirations (what "great" looks like; updated 2026-10-03)
 
 1. **Surprising, multi-hop, cross-industry ripples** that end in a **lasting mark** (a law, an institution,
@@ -154,7 +177,8 @@ chain. Discovery finds one-hop leads but cannot yet find the second hop on its o
 | Checking supplied chains | Works | 54 chains, 228 links after the event: 10 measured, 3 timed, 107 reported, 64 plausible or not testable, 44 busted (`chain_check_v1.json`) |
 | One-hop discovery | Works as leads | The editor trail rediscovered 4 of 6 documented quirky ripples; 18 of 137 leads qualified by hand, 6 with a documented outcome |
 | Two-hop discovery | Not yet | Attention second hops (16 seeds) found siblings and curiosity, not consequences |
-| The demo | Live | Three tabs; lasting marks ringed; slices by industry; wave motion; tap to focus |
+| The demo | Live as Ripple | Three tabs; each outcome its own living ripple; pebbles for lasting marks; isometric pond; paper feed; share cards (PRs #57–#60) |
+| Mark-first search | Running | Laws → works via Wikipedia and Wikidata, Federal Register full text; pre-registered success rule (`ripples/docs/mark_first_v1.md`) |
 
 **Since Oct 2:**
 - Map builder merged.
@@ -163,6 +187,8 @@ chain. Discovery finds one-hop leads but cannot yet find the second hop on its o
 - The editor trail, with hand qualification and a second hop.
 - American English across the project.
 - The lasting-mark rule.
+- The mark-first search, built and launched.
+- The demo became Ripple: seven design iterations in two days (see 1b-ii).
 
 ## 3. Learnings
 
@@ -288,7 +314,11 @@ chain. Discovery finds one-hop leads but cannot yet find the second hop on its o
    - FRED/BLS series where an industry series exists.
 3. **A records assistant.** It proposes dated outcomes with citations; the checker verifies the dates and the order.
 4. **A slope test** for gradual changes (ChatGPT → Stack Overflow).
-5. **A shareable clip** from reel mode (`?reel`) for LinkedIn, plus a mobile pass on the demo.
+5. **Read the mark-first results** against the pre-registered rule: pass → a blind owner round of up to 15 new
+   work → law pairs, then maps with the law as the mark; fail → legislative text APIs (Congress.gov, Federal Register,
+   Open States).
+6. **Look and feel, remaining:** a shelf of live story thumbnails; label collisions on crowded slices; then the
+   LinkedIn reel (`?reel`) and post, held until the owner signs off on the look.
 
 ## 6a. Open questions (2026-10-03)
 
@@ -318,3 +348,5 @@ chain. Discovery finds one-hop leads but cannot yet find the second hop on its o
   with the reason recorded for every lead left out.
 - A ripple's payoff is a lasting mark. Growth, attention and hype are intermediate steps.
 - American English and US date formats throughout.
+- On the pond, the metaphor is literal: one stone, one splash, each outcome its own ripple, no dots and no connector
+  lines unless asked for. Ember, moss and coral are reserved for marks, measured and busted.
