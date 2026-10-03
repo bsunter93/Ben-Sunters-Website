@@ -446,7 +446,10 @@ def stage1(state):
         for w in hits:
             kind, wdate, wq = works[w]
             c = context_of(text, w) if text else None
-            lag = (dt.date.fromisoformat(mdate) - dt.date.fromisoformat(wdate)).days if (mdate and wdate) else None
+            try:
+                lag = (dt.date.fromisoformat(mdate) - dt.date.fromisoformat(wdate)).days if (mdate and wdate) else None
+            except ValueError:  # BCE or truncated dates ('-1751-01-0') are not comparable; skip the lag, keep the pair
+                lag = None
             culture = bool(c and CULTURE_SECTION.search(c["section"]))
             score = len(CAUSAL.findall(c["sentence"])) if c else 0
             pairs.append({"mark": t, "mark_q": m["q"], "mark_class": m["class"], "mark_country": m["country"], "mark_date": mdate,
