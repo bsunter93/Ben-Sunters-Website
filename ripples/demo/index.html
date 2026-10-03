@@ -340,7 +340,7 @@ body.reel .pondbox{padding-bottom:10px}
 <section class="how" id="how" hidden>
   <div><h3>Rings are time</h3><p>The stone is the event. Each ring is time since it happened, so a ripple lands where it began. Each distinct ripple gets its own slice, labeled on the rim with the industry it reached.</p></div>
   <div><h3>Order, not a web</h3><p>Every step must begin after the step before it. A step that started first is busted, however related it looks.</p></div>
-  <div><h3>How sure</h3><p><b>Measured</b>: moved beyond normal in the data, after the step before. <b>Timed</b>: rose in the right order, not tested against chance. <b>Reported</b>: a credible source makes the link. <b>Plausible</b>: it happened; the link is unproven. <b>Busted</b>: wrong order, contradicted, or no evidence. Steps without an exact date sit at the middle of their likely range.</p></div>
+  <div><h3>How sure</h3><p><b>Measured</b>: moved beyond normal in the data, after the step before. <b>Timed</b>: rose in the right order, not tested against chance. <b>Reported</b>: a credible source makes the link. <b>Plausible</b>: it happened; the link is unproven. <b>Busted</b>: wrong order, contradicted, or no evidence. Steps without an exact date sit at the middle of their likely range. Every dated step since 2015 also gets an <b>attention check</b>: did Wikipedia views of the thing it names rise at that date, tested against the page's own past? It rides along on the card; it does not change the step's rating.</p></div>
   <div><h3>Found by the engine</h3><p>Ripple maps list things whose attention rose unusually after the event, found automatically among the Wikipedia articles that link to it. Attention is a lead, not a proven effect. The data: daily Wikipedia views, FRED and BLS series, Census retail sales, Zillow, Stack Overflow, US baby names and dated public records.</p></div>
 </section>
 <p class="foot">Ripple is an early build. Timing shows order, not proof of cause. Every test and every miss: <a href="/ripples/discover/maps/">ripple maps</a> · <a href="/ripples/discover/">discoveries</a>.</p>
@@ -502,6 +502,7 @@ function howSure(lv, o = {}) {
   const pct = o.p != null ? `${Math.max(0.1, Math.round(o.p * 1000) / 10)}%` : null;
   const after = " It also began after the step before it, which is the order a cause needs.";
   if (lv === "measured") {
+    if (o.kind === "dose") return `${esc(o.what)}. For each state that opened retail cannabis we took the change in the outcome from the last survey before to the second survey after, and subtracted the same change in states that never did. We then handed the same opening dates to 2,000 random sets of states: only ${pct} of those produced a difference this large (p = ${o.p}). A placebo on the two surveys before the opening checks that the treated states were not already drifting (pre-trend p = ${o.pre}). This is the first rung above timing: exposure that varies by place. It still cannot rule out something else that arrived in the same states at the same time.`;
     if (o.kind === "wiki") return `We counted daily Wikipedia views of “${esc(o.what)}”. From ${o.when} they ran about ${o.ratio}× the normal level. We then ran the same test at ${o.n ? `${o.n}` : "many"} random dates in the page's own past: a jump this big showed up at only ${pct} of them (p = ${o.p}).${after} This shows attention, not what people did next.`;
     if (o.kind === "ssa") return `We took the yearly count of US babies given this name and compared the change in ${o.when} with the change in every other year on record. Only ${pct} of years moved this much (p = ${o.p}).${after}`;
     return `We took the official series (${esc(o.what)}) and compared its change after this date with its change after every other date in the series. Only ${pct} of those moved this much (p = ${o.p}).${after} A measured move, not proof that nothing else was going on.`;
@@ -630,6 +631,13 @@ function chainLevel(st) {
   if (/no evidence/.test(v)) return ["busted", "Busted", "No evidence found that this happened as described." + (why && !/^desk check: no evidence/.test(why) ? ` (${why}.)` : ""), "No evidence it happened"];
   if (/contested|unverified/.test(v)) return ["busted", "Disputed", why, "Disputed by later research"];
   if (/not yet/.test(v)) return ["busted", "Not yet", why, "Hasn't happened yet"];
+  if (st.test.type === "dose" && st.effect != null && st.p != null) {  // a dose-response design: states with the exposure against states without
+    const dir = st.effect < 0 ? "fell" : "rose", pts = Math.abs(st.effect).toFixed(1);
+    const line = `Where the exposure arrived, the outcome ${dir} ${pts} points more than in states without it (${st.n_treated} states against ${st.n_control}; permutation p = ${st.p}${st.pretrend_p != null ? `, pre-trend p = ${st.pretrend_p}` : ""}).`;
+    if (v === "measured") return ["measured", "Measured", line, `${dir === "fell" ? "−" : "+"}${pts} points against other states · p = ${st.p}`];
+    if (v === "moved, pre-trend") return ["plausible", "Plausible", line + " But the treated states were already moving differently before the exposure, so the design cannot separate the two.", `Moved, but the trend came first (p = ${st.p})`];
+    return ["plausible", "Plausible", line + " A difference this size is within what random assignment produces.", `Within chance (p = ${st.p})`];
+  }
   if (v === "measured") {
     const t = st.ratio ? `Rose to ${st.ratio}× its normal level from ${fmt(D(st.onset))}` : `Moved further than in ${Math.round((1 - st.p) * 100)}% of other periods`;
     return ["measured", "Measured", `${t} (p = ${st.p}), after the step before.`, st.ratio ? `${st.ratio}× normal · p = ${st.p}` : `Beyond ${Math.round((1 - st.p) * 100)}% of other periods · p = ${st.p}`];
@@ -642,7 +650,8 @@ function chainLevel(st) {
   return ["plausible", "Plausible", why || "It happened; the causal link is unproven.", "Happened; the link is unproven"];
 }
 const SRC = st => ({fred:`FRED series ${st.test.id}`, stackex:"Stack Overflow new questions per month (Stack Exchange API)", zillow:"Zillow Home Value Index, Zoom towns minus US",
-  arxiv:"arXiv astro-ph submissions per month", ssa:"US baby names, Social Security Administration"})[st.test.type] || "";
+  arxiv:"arXiv astro-ph submissions per month", ssa:"US baby names, Social Security Administration", file:st.test.source || st.series || "an official series",
+  dose:st.source || "state surveys, difference-in-differences"})[st.test.type] || "";
 function fromChain(slug) {
   const ch = DATA.chains.find(c => c.slug === slug), iso0 = ch.date, items = [];
   const steps = ch.steps.slice(1);
@@ -683,8 +692,8 @@ function fromChain(slug) {
     const shortLine = lv === "reported" && srcLine ? esc(srcLine) : short;
     items.push({id, parent, slice:st.slice || (st.branch ? `b${st.n}` : "main"), d, range, undated, label:st.short || shortLabel(st.claim), lv, lvText, sub, mark:lv === "busted" ? null : st.mark, short:shortLine, title:st.claim,
       card:card({when, badge:lvText, badgeCls:`l-${lv}`, title:st.claim, cls:lv === "busted" ? "busted" : "", spark:weekly ? sparkHTML(weekly, st.ref) : at && at.weekly && at.ratio ? sparkHTML(at.weekly, st.onset) : "", facts, short:shortLine,
-        sure:howSure(lv, lv === "measured" ? {kind:st.test.type === "wiki" ? "wiki" : st.test.type === "ssa" ? "ssa" : "series", what:st.test.type === "wiki" ? (st.test.articles || [])[0] : SRC(st) || st.series,
-            when:st.onset ? fmt(D(st.onset)) : "", ratio:st.ratio, p:st.p, n:st.n_placebo}
+        sure:howSure(lv, lv === "measured" ? {kind:st.test.type === "wiki" ? "wiki" : st.test.type === "ssa" ? "ssa" : st.test.type === "dose" ? "dose" : "series", what:st.test.type === "wiki" ? (st.test.articles || [])[0] : SRC(st) || st.series,
+            when:st.onset ? fmt(D(st.onset)) : "", ratio:st.ratio, p:st.p, n:st.n_placebo, pre:st.pretrend_p}
           : lv === "timed" ? {when:st.onset ? fmt(D(st.onset)) : "", archive:!!st.archive_first, newArticle:!!st.new_article}
           : lv === "reported" ? {what:srcLine, why:st.link_why} : {why:why}),
         details:`<p>${esc(why)}</p>${st.note && st.note !== why ? `<p>${esc(st.note)}</p>` : ""}${happened}`})});
