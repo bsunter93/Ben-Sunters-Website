@@ -1,4 +1,4 @@
-# Ripple Map: context brief (updated 2026-10-03, 18:00 UTC)
+# Ripple Map: context brief (updated 2026-10-03, 20:30 UTC)
 
 Standalone context for anyone (person or new chat) picking up Ripple Map. It covers the vision, the current status,
 what we learned, pitfalls, open gaps and next steps. The operational runbook with exact commands is
@@ -160,7 +160,7 @@ deep enough for an adult to browse rabbit holes.
    later.
 8. **A verify mode.** Paste any viral "butterfly effect" claim and get it checked link by link. This already works.
 
-## 2. Current status (one screen, 2026-10-03, 18:00 UTC)
+## 2. Current status (one screen, 2026-10-03, 20:30 UTC)
 
 **In one line:** the engine now finds work → law trails on its own from the records (Hansard, the Federal Register,
 the Congressional Record), dated to the day with the sentence that makes the link; the demo is Ripple, with a dozen
@@ -186,7 +186,7 @@ new maps that end in a law; verification lags discovery, and a person still scre
 | **Mark-text v1.3 (US collections)** | Done; v1.3.2 re-screen running | 638 pairs: Hansard 526, Congressional Record and hearings 96, Federal Register 16. US finds: Tiger King → Big Cat Act debate; Silent Spring → Clean Water Act and TSCA hearings, the Rachel Carson trail bills, the Travel Promotion Act debate; The Jungle → the 1995 HACCP rule; Blackfish → National Orca Protection Month; Unsafe at Any Speed across 25 years of auto-safety hearings. A "WarGames → NDAA" pair reported at first was the word, not the film ("operational exercises, wargames, and table-top exercises"): US records say "program" and "show" about everything, so an ambiguous title there now needs a word that can only mean the work |
 | **The citation screen (cite_score v1)** | Works; a transparent floor | A rule scorer labels each citation *reason* / *context* / *aside* from causal words, the clause's subject, a change word, argument form and illustration markers; against the owner's 22 hand grades: precision .73, recall .89. Resolver output carries the score and its reasons; the demo rates an act lead *reported* only when cited as a reason, and prints why. Labels today: 24 reason, 13 context, 43 aside |
 | **Dose-response (evidence ladder, rung 3)** | One result, a real negative | Pre-registered design (`ripples/docs/dose_response_v1.md`): states that opened retail cannabis (20) against states that never did (31), change in past-30-day drinking from the last survey before to the second after, 2,000 random assignments for p, pre-trend placebo. The youth outcome (YRBS) could not run: state tables end in 2017 and CO and WA do not take part. Adults 18–24 (BRFSS, annual): −1.2 points against controls, p = 0.10, pre-trend flat (p = 0.34): within chance. All adults −0.4, p = 0.29. The "cannabis replaced drinking" catalyst fails the first rung above timing |
-| **Attention checks for every post-2015 step** | Works | 105 dated steps since Aug 2015 had no placebo test of their own. The checker now finds each step's Wikipedia article by searching the full claim (strict match: every title word in the claim, or two proper nouns) and runs the measured-step test at the step's date. Run 2: 31 steps could take the test; 4 rose beyond chance (Trigger law at Dobbs 166×, p = .006; World population at 8 billion 9.7×; HBO at Chernobyl's premiere 3.2×; Alcohol and cancer at the Surgeon General's advisory 4.2×), 4 within chance, 15 no rise, 74 no article that is the step's subject. The step's level does not change; the card shows the result |
+| **Attention checks for every post-2015 step** | Works | 105 dated steps since Aug 2015 had no placebo test of their own. The checker finds each step's Wikipedia article (a strict search on the full claim, or a `wiki` hint the chain author names) and runs the measured-step test at the step's date. With 44 hints: 72 steps take the test; 13 rose beyond chance (Paula Vennells at the petition, 1,708×, p = .006; the Post Office scandal at the law's announcement, 354×; Trigger law at Dobbs, 166×; the Chernobyl Exclusion Zone at the bookings surge, 28×; Adnan Syed at the vacated conviction, 25×; SK Broadband at its suit, 26×; GDPR on its first day, 8.9×; Bottom trawling at the consultation, 4.5×; Alcohol and cancer at the advisory, 4.2× …), 5 within chance, 20 no rise, 11 articles created at the date, 7 rose without placebo history, 33 no article. The step's level does not change; the card shows the result |
 | Discovery: the Wikipedia route (mark-first v1, v1.1) | Ran three times; rule failed on recall, passed on new pairs | 13,371 laws × 289,960 works; recall 2 of 5 (two recall laws have no article of their own); new pairs: 60 Minutes → STOCK Act, Quincy → Orphan Drug Act, Victim → Sexual Offences Act 1967, The Daily Show → Zadroga Act, The West Wing → Racial and Religious Hatred Act 2006, JFK (film) → JFK Records Act 1992, Silent Spring → NEPA, Holy Deadlock → Matrimonial Causes Act 1937. Now secondary; read by hand |
 | **The first blind round** | Done | 15 names to the owner: 14 interesting, 4 strictly non-obvious (Victim, The Daily Show, Ocean, Manhunt) and 9 "medium", 13 worth chasing. Left out: Rangila Rasul, Holy Deadlock |
 | **Maps that end in a law** | 12 new chains (batches 13–15) | Mr Bates → Offences Act 2024; Cathy Come Home → Housing (Homeless Persons) Act 1977; Quincy → Orphan Drug Act; My Octopus Teacher → Sentience Act 2022; 60 Minutes → STOCK Act; Victim → Sexual Offences Act 1967; The Daily Show → Zadroga Act 2011 and the 2019 fund; Manhunt → Byron Review → Digital Economy Act 2010 and statutory PEGI; The West Wing → the 2006 defeat; Silent Spring → EPA and the DDT ban; Ocean with David Attenborough → the trawling consultation (no mark yet; measured 4.1× attention, p = 0.004); **Prohibition → a century of American drinking** (22 steps, 1920–2025) |
@@ -356,9 +356,9 @@ new maps that end in a law; verification lags discovery, and a person still scre
 
 1. **The owner's review** of the branch: the readable maps, the citation reasons, the dose-response step, the
    attention checks; then merge and the LinkedIn asset.
-2. **Raise the attention-check count:** 74 of 105 steps found no article that is their subject under the strict
-   matcher; a `wiki` hint on a step names one by hand, and a looser second pass (the chain's own article at the
-   step's date) is a design question.
+2. **Round 2 of the citation grades:** `ripples/docs/cite_grades_v2.md` holds 30 blind citations for the owner; the
+   scorer is re-scored on 52 once graded. The 33 steps still without an article are mostly things with no article
+   (lure modules, rents, R&D shifts).
 3. **More rungs:** a Bill → Public Law resolver for the US (GovInfo "related"); a second dose-response (Dry January
    by country; the Surgeon General advisory by state attention); a second blind round scored against cite_score.
 4. **The screen beyond rules:** a second grade set from the owner (30 citations), then a model-based classifier if

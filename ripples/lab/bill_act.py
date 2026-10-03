@@ -187,6 +187,43 @@ def us_resolve(title, when):
     return {"act": t, "royal_assent": date, "url": f"https://www.govinfo.gov/app/details/{pid}" if pid else None, "method": "govinfo", "note": None}
 
 
+def us_related(package_url, when):
+    """A bill package (BILLS-117hr263ih) -> the public law GovInfo lists as related, if any: the bill's own enacted
+    version carries the law even when the law's title differs from the bill's. None when the key or the relation is missing."""
+    m = re.search(r"/packages/(BILLS-[^/]+)/", package_url or "")
+    if not (KEY and m):
+        return None
+    pid = m.group(1)
+    req = urllib.request.Request(f"{GOV}/related/{pid}?api_key={KEY}", headers={"User-Agent": mf.UA})
+    mf.budget()
+    try:
+        with urllib.request.urlopen(req, timeout=60) as r:
+            d = json.load(r)
+    except urllib.error.HTTPError as e:
+        if e.code in (403, 429, 503):
+            raise mf.Stop(f"GovInfo HTTP {e.code}")
+        return None
+    time.sleep(1)
+    for rel in d.get("relationships", []) or []:
+        if (rel.get("collection") or rel.get("collectionCode") or "").upper() != "PLAW":
+            continue
+        link = rel.get("relationshipLink") or rel.get("link")
+        if not link:
+            continue
+        req2 = urllib.request.Request(f"{link}{'&' if '?' in link else '?'}api_key={KEY}", headers={"User-Agent": mf.UA})
+        try:
+            with urllib.request.urlopen(req2, timeout=60) as r:
+                d2 = json.load(r)
+        except urllib.error.HTTPError:
+            continue
+        time.sleep(1)
+        for law in d2.get("results", []) or d2.get("packages", []) or []:
+            t, date, lid = law.get("title") or "", (law.get("dateIssued") or "")[:10], law.get("packageId")
+            if date and (not when or date >= when):
+                return {"act": t, "royal_assent": date, "url": f"https://www.govinfo.gov/app/details/{lid}" if lid else None, "method": "govinfo-related", "note": None}
+    return None
+
+
 def main() -> int:
     pairs = []
     for f in sorted(glob.glob(os.path.join(ROOT, "docs", "results", "mark_text_v1*.json"))):
@@ -201,12 +238,14 @@ def main() -> int:
             key = f"{clean_bill(p['mark'])} ({(p.get('mark_date') or '')[:4]})"
             if key not in bills or (p.get("mark_date") or "") < (bills[key] or ""):
                 bills[key] = p.get("mark_date")
-    us_bills = {}
+    us_bills, us_pkgs = {}, {}
     for p in pairs:
         if p.get("source") == "GOV" and p.get("tier") in ("bill", "bill debate") and re.search(r"\bAct\b", p.get("mark") or "", re.I):
             key = f"US: {clean_us_title(p['mark'])} ({(p.get('mark_date') or '')[:4]})"
             if key not in us_bills or (p.get("mark_date") or "") < (us_bills[key] or ""):
                 us_bills[key] = p.get("mark_date")
+            if p.get("tier") == "bill" and "BILLS-" in (p.get("url") or ""):
+                us_pkgs.setdefault(key, p["url"])
     print(len(bills), "UK bills and", len(us_bills), "US bill titles to resolve", flush=True)
     state = json.load(open(OUT)) if os.path.exists(OUT) else {"started": dt.date.today().isoformat(), "bills": {}}
     try:
@@ -218,9 +257,9 @@ def main() -> int:
             print(f"  {key} ({bills[key]}) -> {r['act']} {r['royal_assent']} [{r['method']}] {r['note'] or ''}", flush=True)
             json.dump(state, open(OUT, "w"), ensure_ascii=False, indent=0)
         for key in sorted(us_bills, key=lambda k: us_bills[k] or ""):
-            if key in state["bills"] and (state["bills"][key].get("act") or not state["bills"][key].get("candidates")):
-                continue  # a title with logged candidates is tried again (the text-match route was added after run 1)
-            r = us_resolve(re.sub(r"^US: ", "", re.sub(r" \(\d{4}\)$", "", key)), us_bills[key])
+            if key in state["bills"] and (state["bills"][key].get("act") or (not state["bills"][key].get("candidates") and key not in us_pkgs)):
+                continue  # a title with logged candidates, or with a bill package to follow, is tried again
+            r = (us_related(us_pkgs.get(key), us_bills[key]) if key in us_pkgs else None) or us_resolve(re.sub(r"^US: ", "", re.sub(r" \(\d{4}\)$", "", key)), us_bills[key])
             state["bills"][key] = r
             print(f"  {key} ({us_bills[key]}) -> {r['act']} {r['royal_assent']} [{r['method']}] {r['note'] or ''}", flush=True)
             json.dump(state, open(OUT, "w"), ensure_ascii=False, indent=0)
