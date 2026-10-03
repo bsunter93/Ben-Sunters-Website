@@ -4,12 +4,56 @@
 "series": {
 "yrbs_us_median_current_alcohol": [
 [
+"1993-07-01",
+47.21
+],
+[
+"1995-07-01",
+51.58
+],
+[
+"1997-07-01",
+51.33
+],
+[
+"1999-07-01",
+49.61
+],
+[
+"2001-07-01",
+47.94
+],
+[
+"2003-07-01",
+44.41
+],
+[
+"2005-07-01",
+42.73
+],
+[
+"2007-07-01",
+42.9
+],
+[
+"2009-07-01",
+39.31
+],
+[
+"2011-07-01",
+36.24
+],
+[
+"2013-07-01",
+32.72
+],
+[
 "2015-07-01",
-33.86
+29.69
 ],
 [
 "2017-07-01",
-30.02
+27.14
 ]
 ],
 "niaaa_percapita_ethanol": [
@@ -230,23 +274,47 @@
 "dose": {
 "cannabis_youth_alcohol": {
 "result": "not enough overlapping surveys",
-"source": "CDC YRBS state surveys (q6p7-56au), question: Currently drank alcohol"
+"source": "CDC YRBS state surveys (svam-8dhg), question: Currently drank alcohol"
 }
 },
 "yrbs": {
 "source": {
-"domain": "chronicdata.cdc.gov",
-"dataset": "q6p7-56au",
-"name": "DASH - Youth Risk Behavior Surveillance System (YRBSS): High School –  Including Sexual Orientation",
+"domain": "data.cdc.gov",
+"dataset": "svam-8dhg",
+"name": "DASH - Youth Risk Behavior Surveillance System (YRBSS): High School - Excluding Sexual Identity",
 "question": "Currently drank alcohol",
 "value_column": "greater_risk_data_value",
 "years": [
+1991,
+1993,
+1995,
+1997,
+1999,
+2001,
+2003,
+2005,
+2007,
+2009,
+2011,
+2013,
 2015,
 2017
 ]
 },
-"states": 43,
+"states": 46,
 "years": [
+1991,
+1993,
+1995,
+1997,
+1999,
+2001,
+2003,
+2005,
+2007,
+2009,
+2011,
+2013,
 2015,
 2017
 ]
