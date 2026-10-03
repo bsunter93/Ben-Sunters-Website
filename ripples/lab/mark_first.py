@@ -1,4 +1,10 @@
-"""Mark-first search v1 (ripples/docs/mark_first_v1.md): from lasting marks upstream to the cultural events they cite.
+"""Mark-first search v1.1 (ripples/docs/mark_first_v1_1.md): from lasting marks upstream to the cultural events they cite.
+
+v1.1 (Oct 3, after v1 failed its recall rule on coverage): the mark classes come from the closure under both "law" and
+"legislation" (floor 5 articles) plus the classes of the five recall marks; the works add written works and documentary
+series plus the classes of the five recall works; mark dates prefer the infobox's enactment date, then enactment-like
+Wikidata dates, then inception, then the lead; a wider causal lexicon; news sources and reversed-direction sentences
+(the law acted on the work) are flagged and kept out of the top list.
 
 Stage 0  Wikidata causal statements whose cause is a creative work (P828, P1478, P1479), and works with P1542.
 Stage 1  Laws, acts, statutes, executive orders and regulations with an enwiki article (Wikidata) -> the creative works
@@ -6,7 +12,7 @@ Stage 1  Laws, acts, statutes, executive orders and regulations with an enwiki a
          link -> causal-language score and date order.
 Stage 2  Federal Register full-text probe: catalog events by name plus generic markers.
 Anonymous, honest UA, 1 s between Wikipedia and Wikidata requests, 2 s between SPARQL queries, stop on 403/429/503.
-Saves as it goes and resumes. Output: ripples/docs/results/mark_first_v1.json.
+Saves as it goes and resumes. Output: ripples/docs/results/mark_first_v1_1.json.
 """
 from __future__ import annotations
 
@@ -23,7 +29,8 @@ import urllib.parse
 import urllib.request
 
 ROOT = os.path.join(os.path.dirname(__file__), "..")
-OUT = os.environ.get("OUT_JSON") or os.path.join(ROOT, "docs", "results", "mark_first_v1.json")
+OUT = os.environ.get("OUT_JSON") or os.path.join(ROOT, "docs", "results", "mark_first_v1_1.json")
+PROTOCOL = "ripples/docs/mark_first_v1_1.md"
 UA = "ripples-research/0.2 (+https://bensunter.com/ripples/methods/)"
 WP = "https://en.wikipedia.org/w/api.php"
 SPARQL = "https://query.wikidata.org/sparql"
@@ -36,13 +43,29 @@ T0 = time.time()
 WORKS = {"Q11424": "film", "Q93204": "documentary", "Q506240": "TV film", "Q202866": "animated film", "Q5398426": "TV series",
          "Q1259759": "miniseries", "Q15416": "TV program", "Q526877": "web series", "Q581714": "animated series",
          "Q63952888": "anime series", "Q571": "book", "Q7725634": "book", "Q8261": "novel", "Q7889": "video game",
-         "Q2927074": "internet meme", "Q24634210": "podcast"}
+         "Q2927074": "internet meme", "Q24634210": "podcast",
+         # v1.1: nonfiction and documentary television, which v1 left out (Unsafe at Any Speed, Tiger King)
+         "Q47461344": "written work", "Q1146215": "documentary series", "Q17517379": "documentary series", "Q3464665": "TV season"}
+# v1.1: the five recall pairs' own classes are added to the sets at run time (coverage, not the items themselves)
+RECALL_MARKS = ["Post Office (Horizon System) Offences Act 2024", "Big Cat Public Safety Act", "Pure Food and Drug Act",
+                "National Traffic and Motor Vehicle Safety Act", "Computer Fraud and Abuse Act"]
+RECALL_WORKS = ["Mr Bates vs The Post Office", "Tiger King", "The Jungle", "Unsafe at Any Speed", "WarGames"]
+# daily news and reference works cited as sources: kept in the pairs, flagged, left out of the top list
+NEWS = re.compile(r"\bNews\b|Newscast|Newsnight|Newshour|Breakfast|Good Morning|This Morning|\bToday\b|Tonight|Halsbury|Statutes|Gazette|"
+                  r"Hansard|Congressional Record|Federal Register|Code of Federal|Encyclop|Dictionary|Almanac|Yearbook", re.I)
+# the law acted on the work (a ban, a prosecution, a test case), not the other way round
+REVERSED = re.compile(r"\b(banned|ban on|pulled|withdrawn|withdrew|prosecut\w*|charged under|convicted|fined|test case|seized|censored|"
+                      r"under the act|removed from|restricted|struck down|challenged the law|costumes?|dressed as|protesters wearing|"
+                      r"stopped selling|refused to publish|suppressed)\b", re.I)
 # mark classes queried directly, in addition to the classes found under "law"
 MARK_CLASSES = {"Q476068": "Act of Congress", "Q4677783": "Act of Parliament (UK)", "Q820655": "statute", "Q7748": "law",
                 "Q217310": "executive order", "Q49371": "legislation"}
 CAUSAL = re.compile(r"\b(in response to|in the wake of|following|after|prompted|inspired|spurred|led to|as a result|because of|"
-                    r"reaction to|motivated|sparked|catalyst|outcry|public pressure|named after|aftermath|triggered|in light of|"
-                    r"drew attention|raised awareness|highlighted)\b", re.I)
+                    r"reaction to|motivated|motivation|sparked|catalyst|outcry|public pressure|named after|aftermath|triggered|in light of|"
+                    r"drew attention|raised awareness|highlighted|expos[ée]s?|galvani[sz]ed|credited|credits|helped (?:to )?pass|"
+                    r"gained popularity|testified|testimony|impetus|momentum|lobbied|campaign(?:ed)?|publicity|public attention|"
+                    r"calls? for|called for|influenced|pressure (?:on|from)|in the aftermath|precipitated|hastened|accelerated|"
+                    r"brought (?:the issue|attention)|put (?:the issue|pressure))\b", re.I)
 CULTURE_SECTION = re.compile(r"popular culture|in media|in film|in fiction|legacy|see also|references|further reading|external links|"
                              r"adaptation|depiction|portrayal|cultural impact|reception|notes", re.I)
 GENERIC_TERMS = ["Netflix series", "Netflix documentary", "HBO series", "viral video", "social media challenge", "TikTok challenge",
@@ -78,15 +101,19 @@ def get(url, headers=None, delay=1.0, timeout=90):
     return body
 
 
-def sparql(q, delay=2.0):
-    body = get(f"{SPARQL}?{urllib.parse.urlencode({'query': q, 'format': 'json'})}",
-               headers={"Accept": "application/sparql-results+json"}, delay=delay, timeout=120)
-    if not body:
-        return None
-    try:
-        return json.loads(body)["results"]["bindings"]
-    except (ValueError, KeyError):
-        return None
+def sparql(q, delay=2.0, tries=3):
+    """A query with up to three attempts (10 s, then 30 s between), since the endpoint times out under load."""
+    for i in range(tries):
+        body = get(f"{SPARQL}?{urllib.parse.urlencode({'query': q, 'format': 'json'})}",
+                   headers={"Accept": "application/sparql-results+json"}, delay=delay, timeout=120)
+        if body:
+            try:
+                return json.loads(body)["results"]["bindings"]
+            except (ValueError, KeyError):
+                pass
+        if i < tries - 1:
+            time.sleep(10 if i == 0 else 30)
+    return None
 
 
 def title_of(url):
@@ -140,38 +167,94 @@ def stage0():
 def works_set(state):
     works = state.setdefault("works", {})
     done = set(state.setdefault("works_chunks_done", []))
-    vals = " ".join(f"wd:{q}" for q in WORKS)
+    if "work_classes" not in state:
+        extra = {k: v for k, v in classes_of_titles(RECALL_WORKS).items() if k not in WORKS}
+        state["work_classes"] = {**WORKS, **extra}
+    WORKS.update(state["work_classes"])
+    heavy = {"Q47461344", "Q7725634", "Q571"}  # written works: queried on their own, they are the bulk
+    groups = [[q for q in WORKS if q not in heavy], [q for q in WORKS if q in heavy]]
+    failed = state.setdefault("works_chunks_failed", [])
     for y0, y1 in year_chunks():
-        key = f"{y0}-{y1}"
-        if key in done:
-            continue
-        q = f"""SELECT ?w ?cls ?d ?a WHERE {{ VALUES ?cls {{ {vals} }} ?w wdt:P31 ?cls . ?w wdt:P577|wdt:P580|wdt:P571 ?d .
-                FILTER(YEAR(?d) >= {y0} && YEAR(?d) <= {y1}) ?a schema:about ?w ; schema:isPartOf <https://en.wikipedia.org/> . }}"""
-        rows = sparql(q)
-        if rows is None:
-            print("works chunk failed", key, flush=True)
-            continue
-        for b in rows:
-            t = title_of(b["a"]["value"])
-            d = b["d"]["value"][:10]
-            cur = works.get(t)
-            if not cur or d < cur[1]:
-                works[t] = [WORKS.get(qid(b["cls"]["value"]), "work"), d, qid(b["w"]["value"])]
-        done.add(key)
-        state["works_chunks_done"] = sorted(done)
-        print("works", key, len(rows), "rows;", len(works), "titles", flush=True)
+        for gi, grp in enumerate(groups):
+            key = f"{y0}-{y1}/{gi}"
+            if key in done or not grp:
+                continue
+            vals = " ".join(f"wd:{q}" for q in grp)
+            q = f"""SELECT ?w ?cls ?d ?a WHERE {{ VALUES ?cls {{ {vals} }} ?w wdt:P31 ?cls . ?w wdt:P577|wdt:P580|wdt:P571 ?d .
+                    FILTER(YEAR(?d) >= {y0} && YEAR(?d) <= {y1}) ?a schema:about ?w ; schema:isPartOf <https://en.wikipedia.org/> . }}"""
+            rows = sparql(q)
+            if rows is None and y1 > y0:  # split a failed multi-year chunk into single years
+                rows = []
+                for y in range(y0, y1 + 1):
+                    r = sparql(q.replace(f">= {y0} && YEAR(?d) <= {y1}", f">= {y} && YEAR(?d) <= {y}"))
+                    if r is None:
+                        rows = None; break
+                    rows += r
+            if rows is None:
+                print("works chunk failed", key, flush=True)
+                if key not in failed:
+                    failed.append(key)
+                continue
+            for b in rows:
+                t = title_of(b["a"]["value"])
+                d = b["d"]["value"][:10]
+                cur = works.get(t)
+                if not cur or d < cur[1]:
+                    works[t] = [WORKS.get(qid(b["cls"]["value"]), "work"), d, qid(b["w"]["value"])]
+            done.add(key)
+            state["works_chunks_done"] = sorted(done)
+            print("works", key, len(rows), "rows;", len(works), "titles", flush=True)
     return works
+
+
+def classes_of_titles(titles):
+    """The P31 classes (id -> label) of the Wikidata items behind these Wikipedia titles. Logged; used to widen the class sets."""
+    params = {"action": "query", "prop": "pageprops", "ppprop": "wikibase_item", "titles": "|".join(titles), "redirects": 1, "format": "json"}
+    body = get(f"{WP}?{urllib.parse.urlencode(params)}")
+    items = {}
+    try:
+        for pg in json.loads(body)["query"]["pages"].values():
+            if "pageprops" in pg:
+                items[pg["title"]] = pg["pageprops"]["wikibase_item"]
+    except (ValueError, KeyError, TypeError):
+        return {}
+    out = {}
+    if not items:
+        return out
+    vals = " ".join(f"wd:{q}" for q in items.values())
+    q = f"""SELECT ?i ?c ?cLabel WHERE {{ VALUES ?i {{ {vals} }} ?i wdt:P31 ?c . SERVICE wikibase:label {{ bd:serviceParam wikibase:language "en" . }} }}"""
+    for b in sparql(q) or []:
+        out[qid(b["c"]["value"])] = b["cLabel"]["value"]
+    print("classes of", list(items), "->", out, flush=True)
+    return out
 
 
 # ---------- Stage 1b: the marks ----------
 def mark_classes():
     found = dict(MARK_CLASSES)
-    q = """SELECT ?c ?cLabel (COUNT(?m) AS ?n) WHERE { ?c wdt:P279* wd:Q7748 . ?m wdt:P31 ?c .
+    # v1.1: the closure under both "law" and "legislation", a lower floor (5 articles), and a longer list
+    q = """SELECT ?c ?cLabel (COUNT(?m) AS ?n) WHERE { { ?c wdt:P279* wd:Q7748 } UNION { ?c wdt:P279* wd:Q49371 } ?m wdt:P31 ?c .
            ?a schema:about ?m ; schema:isPartOf <https://en.wikipedia.org/> .
-           SERVICE wikibase:label { bd:serviceParam wikibase:language "en" . } } GROUP BY ?c ?cLabel ORDER BY DESC(?n) LIMIT 80"""
-    for b in sparql(q) or []:
-        if int(b["n"]["value"]) >= 20:
+           SERVICE wikibase:label { bd:serviceParam wikibase:language "en" . } } GROUP BY ?c ?cLabel ORDER BY DESC(?n) LIMIT 200"""
+    rows = sparql(q)
+    for b in rows or []:
+        if int(b["n"]["value"]) >= 5:
             found[qid(b["c"]["value"])] = b["cLabel"]["value"]
+    # the floor: the 69 classes v1 found, read from v1's results file, so a timeout cannot shrink the set below v1
+    v1 = os.path.join(ROOT, "docs", "results", "mark_first_v1.json")
+    if os.path.exists(v1):
+        try:
+            for k, v in json.load(open(v1)).get("mark_classes", {}).items():
+                found.setdefault(k, v)
+        except ValueError:
+            pass
+    if rows is None:
+        print("mark class closure query failed; using v1's classes", len(found), flush=True)
+    # the recall marks' classes, law-like only (two recall titles redirect to a scandal and to the Lacey Act's article)
+    lawlike = re.compile(r"act|law|statute|legislat|bill|regulation|order|decree|ordinance|directive|code|treaty|amendment", re.I)
+    for k, v in classes_of_titles(RECALL_MARKS).items():
+        if lawlike.search(v):
+            found[k] = v
     return found
 
 
@@ -183,8 +266,9 @@ def marks_set(state):
     for c, label in classes.items():
         if c in done:
             continue
-        q = f"""SELECT ?m ?a ?d ?countryLabel WHERE {{ ?m wdt:P31 wd:{c} . ?a schema:about ?m ; schema:isPartOf <https://en.wikipedia.org/> .
-                OPTIONAL {{ ?m wdt:P577|wdt:P571|wdt:P7588|wdt:P585|wdt:P580|wdt:P1619 ?d }} OPTIONAL {{ ?m wdt:P17 ?country }}
+        # v1.1: enactment-like dates (publication, effective, signed) are preferred to inception-like ones (a bill's date)
+        q = f"""SELECT ?m ?a ?d1 ?d2 ?countryLabel WHERE {{ ?m wdt:P31 wd:{c} . ?a schema:about ?m ; schema:isPartOf <https://en.wikipedia.org/> .
+                OPTIONAL {{ ?m wdt:P577|wdt:P7588|wdt:P1619 ?d1 }} OPTIONAL {{ ?m wdt:P571|wdt:P585|wdt:P580 ?d2 }} OPTIONAL {{ ?m wdt:P17 ?country }}
                 SERVICE wikibase:label {{ bd:serviceParam wikibase:language "en" . }} }} LIMIT 25000"""
         rows = sparql(q)
         if rows is None:
@@ -192,12 +276,17 @@ def marks_set(state):
             continue
         for b in rows:
             t = title_of(b["a"]["value"])
-            d = b.get("d", {}).get("value", "")[:10] or None
+            d1 = b.get("d1", {}).get("value", "")[:10] or None
+            d2 = b.get("d2", {}).get("value", "")[:10] or None
             cur = marks.get(t)
             if not cur:
-                marks[t] = {"q": qid(b["m"]["value"]), "class": label, "date": d, "country": b.get("countryLabel", {}).get("value")}
-            elif d and (not cur["date"] or d < cur["date"]):
-                cur["date"] = d
+                marks[t] = {"q": qid(b["m"]["value"]), "class": label, "date": d1 or d2, "date_kind": "enacted" if d1 else ("inception" if d2 else None),
+                            "country": b.get("countryLabel", {}).get("value")}
+            else:
+                if d1 and (cur.get("date_kind") != "enacted" or d1 < cur["date"]):
+                    cur["date"], cur["date_kind"] = d1, "enacted"
+                elif d2 and cur.get("date_kind") != "enacted" and (not cur["date"] or d2 < cur["date"]):
+                    cur["date"], cur["date_kind"] = d2, "inception"
         done.add(c)
         state["mark_classes_done"] = sorted(done)
         print("marks", c, label, len(rows), "rows;", len(marks), "titles", flush=True)
@@ -276,6 +365,36 @@ def context_of(text, work):
     return {"section": section, "sentence": sent, "in_lead": section == "lead"}
 
 
+MONTHS = {m: i for i, m in enumerate(["january", "february", "march", "april", "may", "june", "july", "august", "september", "october",
+                                         "november", "december"], 1)}
+
+
+def infobox_date(text):
+    """An enactment date from the article's infobox (royal assent, signed, enacted, passed), as ISO, or None."""
+    if not text:
+        return None
+    head = text[:6000]
+    for field in ("royal_assent", "date_signed", "signeddate", "date_enacted", "enacted", "date_passed", "passeddate", "date_assented",
+                  "assented", "signed_by_date", "date_commenced", "commencement", "date_effective", "effective"):
+        m = re.search(r"\|\s*" + field + r"\s*=\s*([^\n|]*(?:\{\{[^}]*\}\})?[^\n]*)", head, re.I)
+        if not m:
+            continue
+        v = m.group(1)
+        t = re.search(r"\{\{\s*(?:start |end )?date\s*\|\s*(\d{4})\s*\|\s*(\d{1,2})\s*\|\s*(\d{1,2})", v, re.I)
+        if t:
+            return f"{int(t.group(1)):04d}-{int(t.group(2)):02d}-{int(t.group(3)):02d}"
+        t = re.search(r"\b(\d{4})-(\d{2})-(\d{2})\b", v)
+        if t:
+            return t.group(0)
+        t = re.search(r"\b(\d{1,2})\s+([A-Za-z]+)\s+(\d{4})\b", v)
+        if t and t.group(2).lower() in MONTHS:
+            return f"{int(t.group(3)):04d}-{MONTHS[t.group(2).lower()]:02d}-{int(t.group(1)):02d}"
+        t = re.search(r"\b([A-Za-z]+)\s+(\d{1,2}),\s*(\d{4})\b", v)
+        if t and t.group(1).lower() in MONTHS:
+            return f"{int(t.group(3)):04d}-{MONTHS[t.group(1).lower()]:02d}-{int(t.group(2)):02d}"
+    return None
+
+
 def year_from_lead(text):
     lead = strip_markup(text.split("\n==", 1)[0])[:1500]
     m = re.search(r"\b(?:enacted|passed|signed|adopted|promulgated|came into force|introduced)\b[^.]{0,80}?\b((?:18|19|20)\d{2})\b", lead)
@@ -313,7 +432,17 @@ def stage1(state):
             continue
         text = wikitext(t)
         m = marks[t]
-        mdate = m["date"] or (year_from_lead(text) + "-07-01" if text and year_from_lead(text) else None)
+        ib = infobox_date(text)
+        # v1.1: the infobox's enactment date wins; then an enactment-like Wikidata date; then inception; then the lead's year
+        if ib:
+            mdate, msrc = ib, "infobox"
+        elif m["date"] and m.get("date_kind") == "enacted":
+            mdate, msrc = m["date"], "wikidata"
+        elif m["date"]:
+            mdate, msrc = m["date"], "wikidata-inception"
+        else:
+            y = year_from_lead(text) if text else None
+            mdate, msrc = (y + "-07-01", "lead") if y else (None, None)
         for w in hits:
             kind, wdate, wq = works[w]
             c = context_of(text, w) if text else None
@@ -321,7 +450,8 @@ def stage1(state):
             culture = bool(c and CULTURE_SECTION.search(c["section"]))
             score = len(CAUSAL.findall(c["sentence"])) if c else 0
             pairs.append({"mark": t, "mark_q": m["q"], "mark_class": m["class"], "mark_country": m["country"], "mark_date": mdate,
-                          "mark_date_source": "wikidata" if m["date"] else ("lead" if mdate else None),
+                          "mark_date_source": msrc, "news": bool(NEWS.search(w)),
+                          "reversed": bool(c and REVERSED.search(c["sentence"]) and len(REVERSED.findall(c["sentence"])) >= len(CAUSAL.findall(c["sentence"]))),
                           "work": w, "work_kind": kind, "work_date": wdate, "work_q": wq, "lag_days": lag,
                           "ordered": (lag is not None and lag >= 0), "section": c["section"] if c else None,
                           "in_lead": c["in_lead"] if c else False, "culture_section": culture,
@@ -373,8 +503,8 @@ def stage2(state):
 
 # ---------- summary ----------
 def recall(pairs):
-    want = {"Mr Bates vs The Post Office": ["Post Office (Horizon System) Offences Act 2024"],
-            "Tiger King": ["Big Cat Public Safety Act"],
+    want = {"Mr Bates vs The Post Office": ["Post Office (Horizon System) Offences Act 2024", "Post Office (Horizon System) Compensation Act 2024"],
+            "Tiger King": ["Big Cat Public Safety Act", "Lacey Act of 1900"],
             "The Jungle": ["Pure Food and Drug Act", "Federal Meat Inspection Act"],
             "Unsafe at Any Speed": ["National Traffic and Motor Vehicle Safety Act"],
             "WarGames": ["Computer Fraud and Abuse Act", "National Security Decision Directive 145"]}
@@ -393,7 +523,7 @@ def save(state):
 
 
 def main() -> int:
-    state = json.load(open(OUT)) if os.path.exists(OUT) else {"protocol": "ripples/docs/mark_first_v1.md", "started": dt.date.today().isoformat()}
+    state = json.load(open(OUT)) if os.path.exists(OUT) else {"protocol": PROTOCOL, "started": dt.date.today().isoformat()}
     state.pop("stopped", None)
     try:
         if "causal_statements" not in state:
@@ -407,10 +537,12 @@ def main() -> int:
         state["stopped"] = str(e)
         print("stopped:", e, flush=True)
     pairs = state.get("pairs", [])
-    good = [p for p in pairs if p["ordered"] and p["causal_score"] > 0 and not p["culture_section"]]
+    good = [p for p in pairs if p["ordered"] and p["causal_score"] > 0 and not p["culture_section"] and not p.get("news") and not p.get("reversed")]
     good.sort(key=lambda p: (-p["causal_score"], -p["in_lead"], p["lag_days"] or 0))
     state["summary"] = {"marks": len(state.get("marks", {})), "works": len(state.get("works", {})), "scanned": len(state.get("marks_scanned", [])),
-                        "pairs": len(pairs), "ordered_causal": len(good), "recall": recall(pairs), "top": good[:60]}
+                        "pairs": len(pairs), "with_sentence": sum(1 for p in pairs if p.get("sentence")), "ordered": sum(1 for p in pairs if p["ordered"]),
+                        "news": sum(1 for p in pairs if p.get("news")), "reversed": sum(1 for p in pairs if p.get("reversed")),
+                        "ordered_causal": len(good), "recall": recall(pairs), "top": good[:80]}
     save(state)
     print(json.dumps({k: v for k, v in state["summary"].items() if k != "top"}, indent=1))
     for p in good[:40]:

@@ -1,0 +1,41 @@
+# Mark-text search v1 (ripples/lab/mark_text.py, ripples/docs/mark_text_v1.md): cultural works named inside legal and
+# parliamentary records (Hansard, legislation.gov.uk, the Federal Register; GovInfo with an optional key).
+# Anonymous, honest UA, stops on refusal; resumes from the committed results file on the next push.
+name: Ripples mark-text search
+
+on:
+  push:
+    branches: ["claude/**"]
+    paths: ["ripples/lab/mark_text.py", ".github/workflows/ripples-mark-text.yml"]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: ripples-mark-text
+  cancel-in-progress: false
+
+jobs:
+  run:
+    runs-on: ubuntu-latest
+    timeout-minutes: 180
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Mark-text search
+        env:
+          BUDGET_MIN: "150"
+          DATA_GOV_KEY: ${{ secrets.DATA_GOV_KEY }}
+        run: python ripples/lab/mark_text.py
+      - name: Commit results
+        if: always()
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898900+github-actions[bot]@users.noreply.github.com"
+          git add ripples/docs/results/mark_text_v1*.json || exit 0
+          git diff --cached --quiet && exit 0
+          git commit -m "Ripples: mark-text search results [skip ci]"
+          for i in 1 2 3; do git pull --rebase -q origin "${GITHUB_REF_NAME}" && git push -q origin "HEAD:${GITHUB_REF_NAME}" && break; sleep 5; done
