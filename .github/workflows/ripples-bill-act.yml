@@ -1,0 +1,39 @@
+# Bill -> Act resolver (ripples/lab/bill_act.py): for every bill a cultural work was cited in (mark-text results), the
+# Act it became, with its Royal Assent date. UK Parliament Bills API and legislation.gov.uk; no keys; honest UA.
+name: Ripples bill-act resolver
+
+on:
+  push:
+    branches: ["claude/**"]
+    paths: ["ripples/lab/bill_act.py", ".github/workflows/ripples-bill-act.yml"]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: ripples-bill-act
+  cancel-in-progress: false
+
+jobs:
+  run:
+    runs-on: ubuntu-latest
+    timeout-minutes: 90
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Resolve bills to Acts
+        env:
+          BUDGET_MIN: "70"
+        run: python ripples/lab/bill_act.py
+      - name: Commit results
+        if: always()
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898900+github-actions[bot]@users.noreply.github.com"
+          git add ripples/docs/results/bill_act_v1*.json || exit 0
+          git diff --cached --quiet && exit 0
+          git commit -m "Ripples: bill-act resolver results [skip ci]"
+          for i in 1 2 3; do git pull --rebase -q origin "${GITHUB_REF_NAME}" && git push -q origin "HEAD:${GITHUB_REF_NAME}" && break; sleep 5; done

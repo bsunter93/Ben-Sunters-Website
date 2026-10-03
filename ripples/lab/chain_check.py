@@ -192,15 +192,17 @@ def wiki_test(articles, ref, lag=150):
         first = int(np.flatnonzero(~np.isnan(v))[0])
         return {"found": found, "new_article": (et.DAY0 + dt.timedelta(days=first)).isoformat(), "weekly": weekly,
                 "onset": (et.DAY0 + dt.timedelta(days=first)).isoformat()}
-    f = et.onset(v, ri - 30, 0, min(lag, len(v) - ri - 8))
+    # the baseline ends 30 days before the step; the onset window runs from there to ref + lag (v1 stopped at ref,
+    # so a rise that began on the step's own day was missed when lag was short: Mr Bates, Jan 2024)
+    f = et.onset(v, ri - 30, 0, min(lag + 30, len(v) - (ri - 30) - 8))
     if not f:
         return {"found": found, "result": "no sustained rise", "weekly": weekly}
     i, ratio, med = f
     hits = n = 0
-    for e in range(130, ri - 200, 14):
+    for e in range(130, ri - 200, 14):  # placebo windows of the same length, every 14th day of the page's own history
         if et.valid(v, e):
             n += 1
-            g = et.onset(v, e, 0, lag)
+            g = et.onset(v, e, 0, lag + 30)
             hits += bool(g and g[1] >= ratio)
     return {"found": found, "onset": (et.DAY0 + dt.timedelta(days=i)).isoformat(), "ratio": round(ratio, 1),
             "baseline": round(med, 1), "p": round((1 + hits) / (1 + n), 3) if n >= 20 else None, "weekly": weekly}
