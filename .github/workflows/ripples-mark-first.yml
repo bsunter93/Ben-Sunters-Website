@@ -32,9 +32,17 @@ jobs:
       - name: Commit results
         if: always()
         run: |
+          # results are placed on top of whatever the branch holds now (a rebase onto a cancelled run's partial
+          # commit conflicted on 2026-10-03 and the run's results were lost)
           git config user.name "github-actions[bot]"
           git config user.email "41898900+github-actions[bot]@users.noreply.github.com"
-          git add ripples/docs/results/mark_first_v1*.json || exit 0
-          git diff --cached --quiet && exit 0
-          git commit -m "Ripples: mark-first search results [skip ci]"
-          for i in 1 2 3; do git pull --rebase -q origin "${GITHUB_REF_NAME}" && git push -q origin "HEAD:${GITHUB_REF_NAME}" && break; sleep 5; done
+          mkdir -p /tmp/results && cp ripples/docs/results/mark_first_v1*.json /tmp/results/ 2>/dev/null || exit 0
+          for i in 1 2 3 4; do
+            git fetch -q origin "${GITHUB_REF_NAME}" && git reset -q --hard "origin/${GITHUB_REF_NAME}" || exit 0
+            cp /tmp/results/* ripples/docs/results/
+            git add ripples/docs/results/mark_first_v1*.json || exit 0
+            git diff --cached --quiet && exit 0
+            git commit -q -m "Ripples: mark-first search results [skip ci]"
+            git push -q origin "HEAD:${GITHUB_REF_NAME}" && break
+            sleep 7
+          done
