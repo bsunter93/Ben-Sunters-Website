@@ -95,7 +95,13 @@ h1 em{font-style:italic;font-weight:500;color:var(--shallow-2)}
 .tab{background:none;border:0;border-bottom:2px solid transparent;padding:8px 12px 9px;font-weight:700;font-size:.92rem;color:var(--ink-3);cursor:pointer;margin-bottom:-1px}
 .tab[aria-selected="true"]{color:var(--ink);border-bottom-color:var(--marigold)}
 .tab small{font-weight:500;color:var(--ink-3);margin-left:4px}
-.tabnote{display:none}  /* the one-line explanations live in How it works */
+.tabnote{font-size:.8rem;color:var(--ink-3);margin:6px 0 2px}  /* shown inside the chooser only */
+.bar{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-top:8px;flex-wrap:wrap}
+.chooserbtn{display:inline-flex;align-items:center;gap:6px;background:rgba(255,255,255,.06);border:1px solid var(--hair);color:var(--ink);border-radius:999px;padding:7px 14px;font:600 .84rem var(--sans);cursor:pointer;white-space:nowrap}
+.chooserbtn b{font-weight:800;color:var(--marigold)}.chooserbtn:hover{background:rgba(255,255,255,.1)}
+.chooser{margin-top:10px;padding:10px 14px 12px;border:1px solid var(--hair);border-radius:16px;background:rgba(5,22,40,.55)}
+.chooser[hidden]{display:none}
+.chooser .tabs{margin-top:0}.chooser .picker{margin-top:8px}.chooser .ponds{margin-top:10px}
 .tally{display:flex;flex-wrap:wrap;gap:0 10px;margin:8px 0 0;font-size:.8rem;color:var(--ink-3)}
 .ponds.hdr{display:flex;flex-wrap:wrap;gap:6px;align-items:center;margin:10px 0 0;font-size:.8rem;color:var(--ink-3)}
 .ponds.hdr[hidden]{display:none}
@@ -278,6 +284,7 @@ body.reel header{max-width:760px;padding-top:22px}
   .tabs{margin-top:8px;overflow-x:auto;scrollbar-width:none}.tab{padding:6px 7px 7px;font-size:.8rem;gap:5px}.tab svg{width:14px;height:14px}.tabnote{font-size:.74rem;margin:6px 0 0}
   .picker{margin:6px 0 0}.chip{padding:5px 10px;font-size:.82rem}
   .wrap{padding:6px 10px 24px;gap:12px}.pondbox{padding:8px 8px 6px;border-radius:18px}
+  .hint{bottom:148px;font-size:.78rem;padding:7px 12px;max-width:88%;text-align:center}  /* above the two-row controls on a phone */
   .clock .d{font-size:1.05rem}.clock .n{font-size:.78rem}
   .legend{font-size:.7rem;gap:4px 10px;padding:4px 4px 2px}.howbtn{font-size:.7rem;padding:2px 8px}
   .nextbtn{padding:6px 10px;font-size:.76rem}.play{width:34px;height:34px}
@@ -302,15 +309,20 @@ body.reel .pondbox{padding-bottom:10px}
   <div class="brand" id="brand"><svg class="wm" viewBox="0 0 150 46" width="118" height="36" aria-label="ripple"><g class="rings" id="wmrings"><circle r="8"/><circle r="15"/><circle r="23"/></g><text x="2" y="34">r<tspan class="i">i</tspan><tspan id="wmpp">pp</tspan>le</text></svg><span class="tag">Throw a stone. See what it changed.</span></div>
   <h1 id="h1">What did that thing everyone remembers change?</h1>
   <p class="sub" id="sub">Pick a moment. The stone is the event; each ring is time since it happened.</p>
-  <div class="tally" id="tally" aria-label="How sure the links are"></div>
-  <div class="ponds hdr" id="ponds" hidden></div>
-  <div class="tabs" role="tablist" aria-label="Kinds of story">
-    <button class="tab" role="tab" data-tab="maps" aria-selected="true">Lasting marks</button>
-    <button class="tab" role="tab" data-tab="stories" aria-selected="false">Fact-checks</button>
-    <button class="tab" role="tab" data-tab="leads" aria-selected="false">Engine leads</button>
+  <div class="bar">
+    <div class="tally" id="tally" aria-label="How sure the links are"></div>
+    <button class="chooserbtn" id="chooserbtn" aria-expanded="false" aria-controls="chooser"><span>Change story</span> <b id="chooserkind">Lasting marks</b> ▾</button>
   </div>
-  <p class="tabnote" id="tabnote"></p>
-  <div class="picker" id="picker" role="tabpanel" aria-label="Choose a story"></div>
+  <div class="chooser" id="chooser" hidden>
+    <div class="tabs" role="tablist" aria-label="Kinds of story">
+      <button class="tab" role="tab" data-tab="maps" aria-selected="true">Lasting marks</button>
+      <button class="tab" role="tab" data-tab="stories" aria-selected="false">Fact-checks</button>
+      <button class="tab" role="tab" data-tab="leads" aria-selected="false">Engine leads</button>
+    </div>
+    <p class="tabnote" id="tabnote"></p>
+    <div class="picker" id="picker" role="tabpanel" aria-label="Choose a story"></div>
+    <div class="ponds hdr" id="ponds" hidden></div>
+  </div>
 </header>
 
 <div class="wrap">
@@ -1267,6 +1279,7 @@ function pondChips(list, lead) {
 }
 const TABS_TITLE = p => { const f = Object.values(TABS).flat().find(([k, s]) => k === p.kind && s === p.slug); return f ? f[2] : null; };
 function show(kind, slug, autoplay = true) {
+  const ch = $("#chooser"); if (ch && !ch.hidden) { ch.hidden = true; $("#chooserbtn").setAttribute("aria-expanded", "false"); }  // picking a story closes the chooser
   const story = kind === "chain" ? fromChain(slug) : kind === "acts" ? fromActs(slug) : MAPS[slug] && DATA.maps[slug] ? fromMap(slug) : fromDisc(slug);
   for (const it of story.items) if (it.mark) {  // a lasting mark: law, institution, infrastructure, jobs, health
     it.card.cls += " marked";
@@ -1309,7 +1322,13 @@ function next() {
 
 (async () => {
   await loadAll();
-  document.querySelectorAll(".tab").forEach(b => b.onclick = () => { tab = b.dataset.tab; renderPicker(); const first = TABS[tab][0]; if (first) show(first[0], first[1]); });
+  const chooser = $("#chooser"), cbtn = $("#chooserbtn");
+  const setChooser = open => { chooser.hidden = !open; cbtn.setAttribute("aria-expanded", open); };
+  cbtn.onclick = () => setChooser(chooser.hidden);
+  document.addEventListener("click", e => { if (!chooser.hidden && !chooser.contains(e.target) && e.target !== cbtn && !cbtn.contains(e.target)) setChooser(false); });
+  document.addEventListener("keydown", e => { if (e.key === "Escape") setChooser(false); });
+  const KIND = {maps:"Lasting marks", stories:"Fact-checks", leads:"Engine leads"};
+  document.querySelectorAll(".tab").forEach(b => b.onclick = () => { tab = b.dataset.tab; $("#chooserkind").textContent = KIND[tab]; renderPicker(); const first = TABS[tab][0]; if (first) show(first[0], first[1]); });
   $("#howbtn").onclick = () => { const h = $("#how"), open = h.hidden; h.hidden = !open; $("#howbtn").setAttribute("aria-expanded", open); if (open) h.scrollIntoView({behavior:"smooth", block:"start"}); };
   $("#play").onclick = () => { if (t >= 1) { t = 0; cur.items.forEach(hide); cur.splashed = false; $("#feed").scrollTop = 0; } setPlaying(!playing); };
   $("#nextbtn").onclick = next;
