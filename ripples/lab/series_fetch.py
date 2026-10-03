@@ -66,7 +66,11 @@ def yrbs_alcohol():
     """{state: {year: prevalence}} for current alcohol use, high school, total; plus a note on the source."""
     cands = find_yrbs()
     print("YRBS candidates:", cands, flush=True)
+    found, seen = [], set()
     for domain, sid in cands:
+        if sid in seen:
+            continue  # the same table is mirrored on both domains
+        seen.add(sid)
         cols, sample = columns_of(domain, sid)
         if not cols:
             print("no columns from", domain, sid, flush=True)
@@ -114,10 +118,16 @@ def yrbs_alcohol():
             if 0 < v < 100 and len(st) == 2:
                 out.setdefault(st, {})[y] = v
         name = (jget(f"https://{domain}/api/views/{sid}.json") or {}).get("name") or sid
-        print("states:", len(out), "years:", sorted({y for d in out.values() for y in d}), flush=True)
-        if len(out) >= 20:
-            return out, {"domain": domain, "dataset": sid, "name": name, "question": pick, "value_column": vcol}
-    return None, None
+        years = sorted({y for d in out.values() for y in d})
+        print("states:", len(out), "years:", years, flush=True)
+        if len(out) >= 20 and len(years) >= 2:
+            found.append((len(years), len(out), out, {"domain": domain, "dataset": sid, "name": name, "question": pick, "value_column": vcol, "years": years}))
+        if len(years) >= 10:
+            break  # the full series; no need to read the rest
+    if not found:
+        return None, None
+    found.sort(key=lambda f: (f[0], f[1]), reverse=True)  # the table with the most survey years wins
+    return found[0][2], found[0][3]
 
 
 def did(data, treat, k_before=1, k_after=2, pre=False):
@@ -190,9 +200,10 @@ def niaaa():
         if not t or len(t) < 500:
             continue
         pts, sample = [], None
-        for line in t.splitlines():
-            f = line.split()
-            if len(f) >= 7 and f[0] == "99" and f[2] == "4" and re.fullmatch(r"\d{4}", f[1]):
+        lines = [ln for ln in t.splitlines() if ln.strip()]
+        for line in lines:
+            f = re.split(r"[,\t]+|\s+", line.strip())
+            if len(f) >= 7 and f[0].lstrip("0") == "99" and f[2] == "4" and re.fullmatch(r"\d{4}", f[1]):
                 try:
                     pts.append([f"{f[1]}-01-01", float(f[6])])
                     sample = sample or line.strip()
@@ -201,7 +212,7 @@ def niaaa():
         if len(pts) > 30:
             print("NIAAA from", u, len(pts), "years; sample row:", sample, flush=True)
             return sorted(pts), u
-        print("NIAAA file read but no US all-beverage rows parsed from", u, flush=True)
+        print("NIAAA file read but no US all-beverage rows parsed from", u, "; first lines:", lines[:4], "; a late line:", lines[-3:-1], flush=True)
     print("NIAAA file not reachable at the known paths", flush=True)
     return None, None
 
