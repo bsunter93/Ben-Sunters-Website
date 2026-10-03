@@ -1,11 +1,11 @@
-# Ripple Map: context brief (updated 2026-10-03, evening)
+# Ripple Map: context brief (updated 2026-10-03, 16:00 UTC)
 
 Standalone context for anyone (person or new chat) picking up Ripple Map. It covers the vision, the current status,
 what we learned, pitfalls, open gaps and next steps. The operational runbook with exact commands is
 `ripples/HANDOFF.md`, and the experiments plan is `ripples/docs/experiments.md`.
 
 - Live site:
-  - https://bensunter.com/ripples/demo/: the product prototype, branded **Ripple** since 2026-10-03.
+  - https://bensunter.com/ripples/demo/: the product prototype, branded **Ripple** since 2026-10-03. Three tabs: Lasting marks (maps that end in a law, an institution or a public-health change), Fact-checks (viral and historical chains checked link by link), Engine leads (what the engine found on its own).
   - https://bensunter.com/ripples/discover/: every test and its evidence.
   - https://bensunter.com/ripples/discover/maps/: 11 generated ripple maps.
   - https://bensunter.com/ripples/pond/: the original explorer, parked.
@@ -160,37 +160,45 @@ deep enough for an adult to browse rabbit holes.
    later.
 8. **A verify mode.** Paste any viral "butterfly effect" claim and get it checked link by link. This already works.
 
-## 2. Current status (one screen, 2026-10-03)
+## 2. Current status (one screen, 2026-10-03, 16:00 UTC)
 
-**In one line:** the demo shows ripples that left a lasting mark, with every link rated, and the engine checks any
-chain. Discovery finds one-hop leads but cannot yet find the second hop on its own.
+**In one line:** the engine now finds work → law trails on its own from the records (Hansard, the Federal Register,
+the Congressional Record), dated to the day with the sentence that makes the link; the demo is Ripple, with a dozen
+new maps that end in a law; verification lags discovery, and a person still screens the finds. Rating: 6.5 of 10 (was
+5.5 on Oct 2, 4 on Oct 1); the agreed target is 7.5.
 
-**What a ripple is now:**
+**What a ripple is:**
 - **A time-ordered chain of outcomes** (the ordering rule, ledger 1497).
 - **Every link is rated:** measured, timed, reported, plausible or busted.
 - **Its payoff is a lasting mark** (owner, Oct 3): a law, an institution, infrastructure, jobs, public health, or a
   durable change in behavior. Growth, attention, valuations and crazes are intermediate steps, never the endpoint.
+- **How sure, honestly:** *measured* is a reproducible placebo test (association plus order, an empirical p-value that
+  is honest about chance, not about mechanism); *timed* is order only; *reported* is a source making the link;
+  *plausible* is that it happened. The ordering rule falsifies, it never proves. A drama → an Act is not statistically
+  verifiable by anyone; it is shown as reported, never dressed as measured.
 
 | Layer | Status | Evidence |
 |---|---|---|
 | Event → attention to its subject | Works | Every family passes on Wikipedia (ledger 1458, 1470) |
-| Checking supplied chains | Works | 54 chains, 228 links after the event: 10 measured, 3 timed, 107 reported, 64 plausible or not testable, 44 busted (`chain_check_v1.json`) |
-| One-hop discovery | Works as leads | The editor trail rediscovered 4 of 6 documented quirky ripples; 18 of 137 leads qualified by hand, 6 with a documented outcome |
-| Two-hop discovery | Not yet | Attention second hops (16 seeds) found siblings and curiosity, not consequences |
-| The demo | Live as Ripple | Three tabs; each outcome its own living ripple; pebbles for lasting marks; isometric pond; paper feed; share cards (PRs #57–#60) |
-| Mark-text search v1.2 | Ran; rule passed | Cultural works named inside Hansard debates and Federal Register rules: 547 pairs, 138 in bill debates and rules; the control (Mr Bates → Post Office (Horizon System) Offences Bill, second reading, Mar 20, 2024) and nine more real work → bill citations (Cathy Come Home → housing bills 1966 and 2016; My Octopus Teacher → Animal Welfare (Sentience) Bill; Adolescence → Children's Wellbeing and Schools Bill; McMafia → Sanctions Bill; Manhunt → BBFC bill; Ocean → BBNJ Bill). A citation is a reported link; the hand screen separates cause from illustration (`mark_text_v1_2.md`) |
-| Mark-first search v1.1 | Ran twice; rule failed on recall (2/5), passed on new pairs | After reliability fixes: 13,371 laws × 289,960 works, 46 ordered causal pairs; new: JFK (film) → JFK Records Act 1992, Silent Spring → NEPA, A Nation of Immigrants → Hart-Celler, Holy Deadlock → Matrimonial Causes Act 1937. Two recall marks have no article of their own, a structural limit. The Wikipedia route is now secondary to the records route; its pairs are read by hand for maps (`mark_first_v1_1.md`) |
-| Mark-first search v1 | Ran; rule failed on coverage | 13,374 laws × 272,453 works → 12,996 link pairs, 3,252 time-ordered, 35 with causal language. Recall 1 of 5 strict (misses were mark/work class coverage and a narrow causal lexicon). Six documented new work → law pairs: Quincy, M.E. → Orphan Drug Act; 60 Minutes → STOCK Act; Victim (1961) → Sexual Offences Act 1967; The Daily Show → Zadroga Act; The West Wing → the 2006 Racial and Religious Hatred Bill defeat; Rangila Rasul → Section 295A (`mark_first_v1.json`) |
+| Checking supplied chains | Works | 66 chains after batches 13–15 (54 before Oct 3): per link measured / timed / reported / plausible / busted (`chain_check_v1.json`). A window bug found on Oct 3 (a rise on the step's own day was missed when lag was short) is fixed; a full re-run is in progress |
+| **Discovery: the records route (mark-text v1.2 → v1.3)** | **Works; rule passed** | Every Hansard contribution naming a work (574 for Mr Bates, 1,058 for Adolescence, back to the 1960s), Federal Register rules, and with the owner's key the Congressional Record: both controls found (Mr Bates → Post Office (Horizon System) Offences Bill, second reading, Mar 20, 2024; Tiger King → Big Cat Public Safety Act, Jul 28, 2022); 547 UK/FR pairs, 138 in bill debates and rules; nine more real work → bill citations by hand screen. v1.3 (US collections queried properly) running |
+| **Bill → Act resolver v1** | Works, re-running after a fix | UK Parliament Bills API and legislation.gov.uk: 98 bills, 76 resolved to an Act with its Royal Assent date (Mr Bates → Offences Act 2024, May 24; Adolescence → Children's Wellbeing and Schools Act 2026; Cathy Come Home → Homelessness Reduction Act 2017 …). A fallback that matched Acts across years is fixed |
+| Discovery: the Wikipedia route (mark-first v1, v1.1) | Ran three times; rule failed on recall, passed on new pairs | 13,371 laws × 289,960 works; recall 2 of 5 (two recall laws have no article of their own); new pairs: 60 Minutes → STOCK Act, Quincy → Orphan Drug Act, Victim → Sexual Offences Act 1967, The Daily Show → Zadroga Act, The West Wing → Racial and Religious Hatred Act 2006, JFK (film) → JFK Records Act 1992, Silent Spring → NEPA, Holy Deadlock → Matrimonial Causes Act 1937. Now secondary; read by hand |
+| **The first blind round** | Done | 15 names to the owner: 14 interesting, 4 strictly non-obvious (Victim, The Daily Show, Ocean, Manhunt) and 9 "medium", 13 worth chasing. Left out: Rangila Rasul, Holy Deadlock |
+| **Maps that end in a law** | 12 new chains (batches 13–15) | Mr Bates → Offences Act 2024; Cathy Come Home → Housing (Homeless Persons) Act 1977; Quincy → Orphan Drug Act; My Octopus Teacher → Sentience Act 2022; 60 Minutes → STOCK Act; Victim → Sexual Offences Act 1967; The Daily Show → Zadroga Act 2011 and the 2019 fund; Manhunt → Byron Review → Digital Economy Act 2010 and statutory PEGI; The West Wing → the 2006 defeat; Silent Spring → EPA and the DDT ban; Ocean with David Attenborough → the trawling consultation (no mark yet; measured 4.1× attention, p = 0.004); **Prohibition → a century of American drinking** (22 steps, 1920–2025) |
+| The Prohibition throughline (owner's long-horizon test) | Built; first verdicts in | Crime, repeal, drinking's return and the cirrhosis peak, AA and NIAAA, the teen decline (MTF: 72% → 50% → 29%), young adults (Gallup). Each popular catalyst for the Gen Z decline (smartphones, Dry January, legal cannabis, sober curious, the Surgeon General) is a dated step; the claim that it *started* the decline is busted by order against the 1980 onset; as accelerants after 2013 they stay plausible |
+| Engine leads in the demo | Two kinds | Attention leads (18 qualified, 6 with outcomes) and, new, **Parliament's citations**: every Act whose debate named a work, one pond per work (Cathy Come Home, Mr Bates, Silent Spring, Adolescence), with the sentence and links to Hansard and legislation.gov.uk |
+| Two-hop discovery from attention | Not pursued further | Attention second hops found siblings and curiosity; records are the route |
+| The demo | Live as Ripple | Isometric pond that is the page; a mossy stone; each outcome its own living ripple with a crest; pebbles for lasting marks; paper feed; wordmark and opening screen; two-tone icons; share cards and share pages; "Same stone, other ponds" (PRs #57–#64 and today's branch). The owner found the map hard to read twice; it was quieted twice. Living crests and the stone await sign-off |
 
-**Since Oct 2:**
-- Map builder merged.
-- The demo, through four versions.
-- The chain checker.
-- The editor trail, with hand qualification and a second hop.
-- American English across the project.
-- The lasting-mark rule.
-- The mark-first search, built and launched.
-- The demo became Ripple: seven design iterations in two days (see 1b-ii).
+**Since Oct 3 morning:**
+- The records route built, debugged four times by reading one known case each time, and passed.
+- The Wikipedia route run twice more and demoted to secondary.
+- The blind round graded by the owner.
+- Twelve maps that end in a law, as checked chains; the Prohibition throughline as the long-horizon test.
+- The Bill → Act resolver; Parliament's citations as engine-found maps in the demo.
+- The checker's attention-window bug found and fixed.
+- Ripple's look: palette, paper, wordmark, intro, stone, crests, quiet pond.
 
 ## 3. Learnings
 
@@ -240,6 +248,23 @@ chain. Discovery finds one-hop leads but cannot yet find the second hop on its o
 - **Honest confidence beats sparse certainty**, provided invented steps never show as links.
 - **A ripple worth showing leaves a lasting mark.** Growth alone is not a ripple's "so what".
 
+**New since Oct 3 (the records route):**
+- **Records beat attention for lasting marks.** The parliamentary record names the work that moved a debate, on the
+  day, in the member's own words. Nothing in attention data does that.
+- **Read the sentences before trusting the counts.** Four bugs in one day were each found by looking at one known case
+  (Mr Bates, The Jungle, Tiger King, the Horizon surge): a missing quote mark in the title regex, a recency cap, a
+  double space from a highlight tag, a search window that ended on the step's own day.
+- **A citation is a reported link, never more.** "The work was in the room when the law was made" is the honest
+  sentence; cause remains the hand screen's call.
+- **Surprise is a higher bar than interest.** The owner found 14 of 15 pairs interesting but only 4 strictly
+  non-obvious: the ones with an odd mechanism (a 1961 film, a comedian, a documentary → crab welfare, a game → a
+  statutory rating system).
+- **The ordering rule earns its keep on long horizons.** In the Prohibition throughline it busts every popular
+  catalyst for the Gen Z decline as the *origin* (the decline began in 1981) while leaving them standing as
+  accelerants; that is a finding, not a failure.
+- **A Wikipedia route has a structural ceiling:** a law without its own article (the Offences Act, the Big Cat Act)
+  cannot be reached through article links at all.
+
 ## 4. Pitfalls (operational, learned the hard way)
 
 **Database load**
@@ -288,48 +313,61 @@ chain. Discovery finds one-hop leads but cannot yet find the second hop on its o
 - The sandbox proxy blocks en.wikipedia.org, so title checks can't run there. Missing titles are skipped at run
   time, never remapped.
 
-## 5. Blockers and bottlenecks (2026-10-03)
+**Workflows and CI (Oct 3)**
+- A workflow's commit step must add the *versioned* results filename; v1.1's first run was lost to `git add
+  mark_first_v1.json`. Both searches now add `*_v1*.json`.
+- Read job logs through the GitHub MCP `get_job_logs` tool; the built-in `gh` refuses the blob redirect. Logs of a
+  running job are not available.
+- Wikidata SPARQL answers 500/504 under load: retry three times, keep queries small (per class group, per year),
+  and carry a class floor from the last good run.
+- A push to a workflow's paths cancels its in-progress run (chain check); the cancelled run still commits what it had.
+- After a squash merge the working branch diverges from main; reset it onto `origin/main` and cherry-pick.
+- The Hansard API highlights the match with `<em>` tags: collapse whitespace before matching text.
+- legislation.gov.uk's title feed answers across years: check the Act's own year in its id.
+
+## 5. Blockers and bottlenecks (2026-10-03, 16:00 UTC)
 
 **Blockers**
-1. **Second hops are not automated.** Lasting marks are in records, not attention data.
-2. **Free outcome data is patchy.** Charts, book sales, tourism and app downloads are mostly paid or scattered.
-3. **Curation load.** The best maps are assembled from dated records, and lead qualification is editorial.
+1. **Verification lags discovery.** The new maps are mostly reported links; measured steps need post-2015 attention
+   series or free outcome series, and most marks are older than that.
+2. **A person still screens the finds.** The ambiguity guard and the tiers remove most noise; the last mile (cause or
+   illustration) is editorial. The product's claim must say so until a classifier earns trust.
+3. **Free outcome data is patchy** for charts, sales, tourism and app downloads.
 
 **Bottlenecks**
-1. BigQuery sandbox cap (204.8 GiB a day; no billing).
-2. Wikimedia politeness, and per-title pageviews that do not follow renames. arXiv returns 503 under load.
-3. The container cannot reach Wikipedia or FRED. All fetching runs on GitHub Actions.
+1. Wikidata SPARQL reliability; Wikimedia politeness; per-title pageviews that do not follow renames.
+2. legislation.gov.uk explanatory notes: the paths tried return 404 for everything but recent primary Acts; the Atom
+   title feed is the only working door.
+3. The container cannot reach Wikipedia, Wikidata, FRED, parliament.uk or GovInfo; all fetching runs on GitHub Actions,
+   so each fix costs a run (15–90 minutes).
+4. BigQuery sandbox cap (204.8 GiB a day; no billing).
 
 ## 6. Immediate next steps (in order)
 
-1. **Mark-first search.** Work backwards from lasting marks and ask which followed each event, and whether a dated path
-   connects them. Sources:
-   - laws: Congress.gov, state legislatures, Korea's National Assembly open API;
-   - rules: the Federal Register;
-   - institutions;
-   - employment: BLS;
-   - health statistics.
-2. **Second hops from records.** For each qualified lead, pull outcome data:
-   - chart records for music;
-   - heritage visitor statistics for filming locations;
-   - the NYT Books API for publishing;
-   - FRED/BLS series where an industry series exists.
-3. **A records assistant.** It proposes dated outcomes with citations; the checker verifies the dates and the order.
-4. **A slope test** for gradual changes (ChatGPT → Stack Overflow).
-5. **Discovery, decided (Oct 3).** The records route (Hansard, the Federal Register; Congress with a key) is the
-   primary discovery route for lasting marks; the Wikipedia route is secondary and read by hand. A blind round of 15
-   work → law pairs is with the owner; survivors become maps with the Act as the mark. Next pieces: a Bill → Act
-   resolver, the US Congressional Record (needs the `DATA_GOV_KEY` secret), and explanatory notes.
-6. **Look and feel, remaining:** a shelf of live story thumbnails; label collisions on crowded slices; then the
-   LinkedIn reel (`?reel`) and post, held until the owner signs off on the look.
+1. **Land the day's runs:** the checker re-run (window fix), the resolver re-run, mark-text v1.3 (US collections);
+   rebuild the preview with corrected Acts; merge; the owner's sign-off on the look.
+2. **More measured steps per map:** placebo-tested attention for every post-2015 step; a Bill → Public Law resolver
+   for the US (GovInfo "related"); explanatory notes where they exist.
+3. **Dose-response for the Prohibition catalysts:** states with and without legal cannabis against drinking declines
+   (NSDUH state estimates), the first rung above timing on the evidence ladder.
+4. **Automate the screen:** a "cited as a reason" classifier from the causal lexicon and work context, scored against
+   the owner's grades.
+5. **Nested stones:** Prohibition's marks (the 21st Amendment, AA, NIAAA) as chains of their own, so the throughline
+   links down into them.
+6. **The look to sign-off, then LinkedIn:** living crests and the stone; the reel (`?reel`) and the post, led by a
+   lasting-mark chain plus one busted viral claim.
+7. **Live mode** on new events with the Trends archive and the records route (Hansard is live within a day).
 
-## 6a. Open questions (2026-10-03)
+## 6a. Open questions (2026-10-03, 16:00 UTC)
 
-- Can a records search (laws, rules, filings, employment, health) find lasting marks downstream of cultural events
-  often enough to fill maps, or are marks rare for pop culture and common for policy and invention?
-- How much curation is acceptable in the product? Where is the line between "the engine found it" and "we
-  assembled it"? The demo labels the difference; the pitch must too.
-- Which free outcome sources per mark type are reliable enough to automate?
+- How often is a parliamentary citation a cause rather than an illustration? The owner's grades are the first
+  calibration set; a second blind round should be scored against a classifier's guesses.
+- Can dose-response designs (exposure varying by state or country) turn any of the Gen Z catalysts from plausible to
+  measured, or is the decline over-determined?
+- Where is the line between "the engine found it" and "we assembled it" in the product's own words? Today: the
+  engine finds and dates the citations; a person keeps the real ones and writes the chain.
+- Is a reported-only map (no measured step) worth showing at all, or should every map carry at least one measured
+  ripple before it leads a tab?
 - Is live mode compelling before marks have had time to form?
 
 ## 7. Rules that never change
@@ -353,3 +391,6 @@ chain. Discovery finds one-hop leads but cannot yet find the second hop on its o
 - American English and US date formats throughout.
 - On the pond, the metaphor is literal: one stone, one splash, each outcome its own ripple, no dots and no connector
   lines unless asked for. Ember, moss and coral are reserved for marks, measured and busted.
+- A citation in a record is a reported link, never measured. Measured means a placebo test on data; it shows an unusual
+  rise in the right order, not cause. Nothing is dressed as more certain than its test.
+- Every search runs under a rule fixed before it starts; a failed rule is reported as failed, with the diagnosis.
