@@ -20,8 +20,8 @@
 :root{
   color-scheme:dark;
   /* water */
-  --stage:#0b2e3a;--deep:#07222c;--shallow:#2a8c9e;--shallow-2:#8fd3da;--card:#10465a;--sunk:#0d3b4a;--hair:#1f5262;
-  --ink:#f2f6f4;--ink-2:#bfd6d8;--ink-3:#8db0b5;
+  --stage:#0a2b45;--deep:#061b31;--shallow:#2d7fbd;--shallow-2:#8fc4ec;--card:#113e68;--sunk:#0d3254;--hair:#214a72;
+  --ink:#f2f6f8;--ink-2:#c1d5e8;--ink-3:#8ea8c4;
   /* paper: every reading surface */
   --paper:#f4efe4;--paper-2:#eae3d3;--paper-ink:#1e2a2e;--paper-ink-2:#4f5e62;--paper-ink-3:#7e8b8e;
   /* the three colors that mean something: ember = the stone and lasting marks; moss = measured; coral = busted */
@@ -57,7 +57,7 @@ header{max-width:1240px;margin:0 auto;padding:26px 16px 6px}
 .tab{display:inline-flex;align-items:center;gap:7px;white-space:nowrap}.tab svg{width:18px;height:18px;opacity:.6;color:var(--ink-2)}.tab[aria-selected="true"] svg{opacity:1;color:var(--ink)}
 /* opening screen */
 /* the opening screen is still water; the title ripples out from one drop; the button is the stone */
-.intro{position:fixed;inset:0;z-index:20;display:grid;place-items:center;background:radial-gradient(60% 50% at 50% 48%,rgba(42,140,158,.35),transparent 70%),rgba(7,34,44,.94);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);overflow:hidden}
+.intro{position:fixed;inset:0;z-index:20;display:grid;place-items:center;background:radial-gradient(60% 50% at 50% 48%,rgba(45,127,189,.38),transparent 70%),rgba(6,22,40,.94);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);overflow:hidden}
 .intro[hidden]{display:none}
 .intro .panel{position:relative;max-width:620px;margin:16px;padding:30px 28px 26px;text-align:center}
 .intro .panel svg{width:40px;height:40px;color:var(--marigold)}
@@ -68,11 +68,11 @@ header{max-width:1240px;margin:0 auto;padding:26px 16px 6px}
 .intro h2{font:600 clamp(2rem,6vw,3.6rem)/1.04 var(--display);margin:.6rem 0 .6rem;letter-spacing:-.015em;color:var(--paper)}
 .intro h2 em{font-style:italic;font-weight:500;color:var(--shallow-2)}
 .intro p{color:var(--ink-2);margin:0 auto 1.4rem;font-size:1rem;max-width:46ch}
-.intro .go{background:var(--marigold);color:#062429;border:0;border-radius:999px;padding:13px 26px;font-weight:800;font-size:1.02rem;cursor:pointer;box-shadow:0 0 0 8px rgba(242,169,59,.14),0 0 40px rgba(242,169,59,.25)}
+.intro .go{background:var(--marigold);color:#061a2e;border:0;border-radius:999px;padding:13px 26px;font-weight:800;font-size:1.02rem;cursor:pointer;box-shadow:0 0 0 8px rgba(242,169,59,.14),0 0 40px rgba(242,169,59,.25)}
 .intro .go:hover{box-shadow:0 0 0 12px rgba(242,169,59,.16),0 0 50px rgba(242,169,59,.3)}
 .intro .skip{display:block;margin:12px auto 0;background:none;border:0;color:var(--ink-3);font-size:.82rem;cursor:pointer;text-decoration:underline;text-underline-offset:3px}
 /* hover preview */
-.pondbox .tip{position:absolute;z-index:3;pointer-events:none;background:rgba(5,30,36,.94);border:1px solid var(--hair);border-radius:10px;padding:8px 11px;font-size:.8rem;color:var(--ink-2);max-width:260px;opacity:0;transition:opacity .15s}
+.pondbox .tip{position:absolute;z-index:3;pointer-events:none;background:rgba(5,22,40,.94);border:1px solid var(--hair);border-radius:10px;padding:8px 11px;font-size:.8rem;color:var(--ink-2);max-width:260px;opacity:0;transition:opacity .15s}
 .tip.on{opacity:1}.tip b{display:block;color:var(--ink);font-size:.86rem}.tip i{font-style:normal;color:var(--marigold)}
 .iconbtn.off svg .w{display:none}.iconbtn.on{color:var(--marigold);border-color:var(--marigold)}
 /* share card render mode (1200x630) */
@@ -111,7 +111,7 @@ h1 em{font-style:italic;font-weight:500;color:var(--shallow-2)}
 .rowlbl{width:100%;font:700 .7rem/1 var(--sans);letter-spacing:.12em;text-transform:uppercase;color:var(--ink-3);margin:8px 0 1px}
 .chip{border:1px solid var(--hair);background:rgba(10,44,51,.7);border-radius:999px;padding:6px 12px;font-weight:600;font-size:.88rem;cursor:pointer;transition:background .16s,border-color .16s}
 .chip:hover{border-color:var(--ink-3)}
-.chip[aria-pressed="true"]{background:var(--marigold);border-color:var(--marigold);color:#062429}
+.chip[aria-pressed="true"]{background:var(--marigold);border-color:var(--marigold);color:#061a2e}
 select.chip{appearance:none;padding-right:14px;max-width:100%}
 select.chip option{background:#0c333b;color:var(--ink)}
 .wrap{max-width:1240px;margin:0 auto;padding:10px 16px 36px;display:grid;grid-template-columns:minmax(0,1.3fr) minmax(0,1fr);gap:20px;align-items:start}
@@ -131,7 +131,7 @@ svg#pond{display:block;width:100%;height:auto;touch-action:manipulation}
 @media (max-width:560px){.ctl .ticks{left:56px;right:104px;top:30px}}
 .wrap.fade .pondbox,.wrap.fade .feed{animation:fadein .5s ease-out}
 @keyframes fadein{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
-.play{width:38px;height:38px;border-radius:50%;border:0;background:var(--marigold);color:#062429;cursor:pointer;display:grid;place-items:center;flex:none}
+.play{width:38px;height:38px;border-radius:50%;border:0;background:var(--marigold);color:#061a2e;cursor:pointer;display:grid;place-items:center;flex:none}
 .play svg{width:15px;height:15px}
 input[type=range]{flex:1;accent-color:var(--marigold);min-width:0}
 .legend{display:flex;flex-wrap:wrap;align-items:center;gap:6px 14px;font-size:.78rem;color:var(--ink-2);padding:6px 8px 4px}
@@ -185,7 +185,7 @@ input[type=range]{flex:1;accent-color:var(--marigold);min-width:0}
 .fact b{display:block;font:800 1.25rem/1 var(--display);font-variant-numeric:tabular-nums}
 .fact span{font-size:.74rem;color:var(--ink-3)}
 .b{font-size:.68rem;line-height:1;padding:4px 8px;border-radius:999px;border:1px solid var(--hair);white-space:nowrap;font-weight:700;letter-spacing:.02em}
-.b.event{background:var(--marigold);border-color:var(--marigold);color:#062429}
+.b.event{background:var(--marigold);border-color:var(--marigold);color:#061a2e}
 .b.l-measured{border-color:var(--good);color:var(--good)}.b.l-timed{border-color:var(--marigold);color:var(--marigold)}
 .b.l-reported{border-color:var(--ink-2);color:var(--ink)}.b.l-plausible{border-style:dashed;border-color:var(--marigold);color:var(--marigold)}
 .b.l-busted{border-color:var(--miss);color:var(--miss)}.b.na{border-style:dashed;color:var(--ink-3)}
@@ -199,10 +199,11 @@ input[type=range]{flex:1;accent-color:var(--marigold);min-width:0}
 /* pond */
 .ring{display:none}  /* the time grid is gone; the thread on the right carries the scale */
 .ringlbl{fill:rgba(242,169,59,.6);font:600 9px var(--sans);letter-spacing:.05em}
-.slicebd{stroke:rgba(214,240,236,.12);stroke-width:1;stroke-dasharray:2 6}
+.slicebd{stroke:rgba(214,232,246,.07);stroke-width:1;stroke-dasharray:2 6}
 .rimlbl{font:700 10px var(--sans);letter-spacing:.16em;text-transform:uppercase;fill:rgba(242,174,46,.55)}
-.wave{fill:none;stroke:rgba(214,240,236,.5)}
-.caustic{mix-blend-mode:screen;opacity:.07}
+.wave{fill:none;stroke:rgba(214,232,246,.5)}
+.caustic{mix-blend-mode:screen;opacity:.11}.waterlight{mix-blend-mode:screen;opacity:.34}
+@media (prefers-reduced-motion:reduce){.waterlight animateTransform{display:none}}
 /* each outcome is a ripple: an arc at its moment in time, styled by how sure we are */
 .rip,.edge{fill:none;stroke-linecap:round}
 .rip{opacity:0;transition:opacity .5s}
@@ -211,7 +212,7 @@ input[type=range]{flex:1;accent-color:var(--marigold);min-width:0}
 .rip.l-measured.on,.rip.l-timed.on{opacity:.75}
 .rip.l-measured{color:var(--good)}.rip.l-timed{color:var(--marigold)}
 .rip.l-reported.on{opacity:.38}.rip.l-plausible.on{opacity:.42}.rip.l-busted.on{opacity:.5}
-.rip2{fill:none;stroke:rgba(214,240,236,.28);stroke-width:1;opacity:0;transition:opacity .6s}
+.rip2{fill:none;stroke:rgba(214,232,246,.28);stroke-width:1;opacity:0;transition:opacity .6s}
 .rip2.on{opacity:0}.rip2.flying{opacity:.6;transition:none}  /* the trailing crest shows only while the ripple travels */
 .glint{fill:none;stroke:rgba(255,255,255,.75);stroke-width:1.3;stroke-linecap:round;stroke-dasharray:5 31;opacity:0;transition:opacity .8s;animation:glide 14s linear infinite}
 .glint.on{opacity:0}.glint{display:none}
@@ -225,15 +226,15 @@ input[type=range]{flex:1;accent-color:var(--marigold);min-width:0}
 .nlab.mark text{fill:var(--paper-ink)}.nlab.mark text.s{fill:#8a5a0a}
 .rip.l-measured.disc,.edge.l-measured.disc{stroke-width:2}
 .rip.l-timed,.edge.l-timed{stroke:var(--marigold);stroke-width:2}
-.rip.l-reported,.edge.l-reported{stroke:var(--rec);stroke-width:1.3}
-.rip.l-plausible,.edge.l-plausible{stroke:var(--marigold);stroke-width:1.3;stroke-dasharray:4 7}
+.rip.l-reported,.edge.l-reported{stroke:var(--rec);stroke-width:1.5}
+.rip.l-plausible,.edge.l-plausible{stroke:var(--marigold);stroke-width:1.4}
 .rip.l-busted,.edge.l-busted{stroke:var(--miss);stroke-width:1.3;stroke-dasharray:2 5}
 /* the thread back to the stone shows only while a ripple is being followed */
 .edge{opacity:0;transition:opacity .3s}
 #pond.focus .edge.lit{opacity:.9}
 .edge.off{display:none}
 .band{display:none}  /* the label says "≈ 1982–1984"; a radial bar read as an artifact */
-.elbl{font:700 9.5px var(--sans);letter-spacing:.08em;text-transform:uppercase;paint-order:stroke;stroke:#0a3a42;stroke-width:4px;opacity:0;transition:opacity .5s}
+.elbl{font:700 9.5px var(--sans);letter-spacing:.08em;text-transform:uppercase;paint-order:stroke;stroke:#0a2d4e;stroke-width:4px;opacity:0;transition:opacity .5s}
 .elbl.l-measured{fill:var(--good)}.elbl.l-timed{fill:var(--marigold)}.elbl.l-reported{fill:var(--ink)}.elbl.l-plausible{fill:var(--marigold)}.elbl.l-busted{fill:var(--miss)}
 .node{cursor:pointer;outline:none}
 .node:focus-visible .halo,.node:hover .halo{r:9}
@@ -241,13 +242,13 @@ input[type=range]{flex:1;accent-color:var(--marigold);min-width:0}
 .crest.on{opacity:1}
 .crestg{stroke-width:11;opacity:0;filter:url(#soft)}.crestg.on{opacity:.3}
 #pond.focus .crestg.on:not(.lit){opacity:.06}
-.crest.l-measured{stroke:var(--good)}.crest.l-timed{stroke:var(--marigold)}.crest.l-reported{stroke:#f6fbfb}.crest.l-plausible{stroke:var(--marigold);stroke-dasharray:3 4;stroke-width:3.2}.crest.l-busted{stroke:var(--miss);stroke-dasharray:2 3.5;stroke-width:3}
+.crest.l-measured{stroke:var(--good)}.crest.l-timed{stroke:var(--marigold)}.crest.l-reported{stroke:#f6fbfb}.crest.l-plausible{stroke:var(--marigold);stroke-width:3.2}.crest.l-busted{stroke:var(--miss);stroke-dasharray:2 3.5;stroke-width:3}
 #pond.focus .crest.on:not(.lit){opacity:.16;transition:opacity .3s}
 .nlab{opacity:0;transition:opacity .5s ease-out;pointer-events:none}
-.leader{stroke:rgba(214,240,236,.35);stroke-width:1;opacity:0;transition:opacity .5s ease-out;pointer-events:none}.leader.on{opacity:1}
+.leader{stroke:rgba(214,232,246,.35);stroke-width:1;opacity:0;transition:opacity .5s ease-out;pointer-events:none}.leader.on{opacity:1}
 #pond.focus .leader{opacity:.16}
 .nlab.on{opacity:1}
-.nlab rect{fill:rgba(5,30,36,.84);stroke:rgba(214,240,236,.08)}
+.nlab rect{fill:rgba(5,22,40,.84);stroke:rgba(214,232,246,.08)}
 .nlab text{font:600 13.5px var(--sans);fill:var(--ink)}
 .nlab text.s{font-weight:500;font-size:11px;fill:var(--ink-3)}
 .nlab.busted text:not(.s){fill:var(--ink-3);text-decoration:line-through}
@@ -259,7 +260,7 @@ input[type=range]{flex:1;accent-color:var(--marigold);min-width:0}
 .rip.on.l-measured{opacity:.85}
 #pond .node,#pond .nlab{transition:opacity .3s}
 .stone .waterline{transition:opacity .45s ease-out}
-.stone text{font:italic 500 16px var(--display);fill:var(--paper);paint-order:stroke;stroke:rgba(7,34,44,.85);stroke-width:5px}
+.stone text{font:italic 500 16px var(--display);fill:var(--paper);paint-order:stroke;stroke:rgba(6,22,40,.85);stroke-width:5px}
 body.reel header .picker,body.reel .feed,body.reel .how,body.reel .foot,body.reel .ctl,body.reel .legend{display:none}
 body.reel .wrap{grid-template-columns:1fr;max-width:760px}
 body.reel header{max-width:760px;padding-top:22px}
@@ -277,13 +278,13 @@ body.reel header{max-width:760px;padding-top:22px}
   .card{padding:9px 12px}.card h2{font-size:.9rem}
 }
 /* first-visit hint, share and the reel caption */
-.hint{position:absolute;left:50%;bottom:72px;transform:translateX(-50%);background:rgba(5,30,36,.9);border:1px solid var(--hair);border-radius:999px;padding:8px 14px;font-size:.8rem;color:var(--ink-2);white-space:nowrap;pointer-events:none;transition:opacity .4s;z-index:2}
+.hint{position:absolute;left:50%;bottom:72px;transform:translateX(-50%);background:rgba(5,22,40,.9);border:1px solid var(--hair);border-radius:999px;padding:8px 14px;font-size:.8rem;color:var(--ink-2);white-space:nowrap;pointer-events:none;transition:opacity .4s;z-index:2}
 .hint[hidden]{display:none}
 .iconbtn{width:38px;height:38px;border-radius:50%;border:1px solid var(--hair);background:none;color:var(--ink-2);cursor:pointer;display:grid;place-items:center;flex:none}
 .iconbtn svg{width:16px;height:16px}
-.toast{position:fixed;left:50%;bottom:24px;transform:translateX(-50%);background:var(--marigold);color:#062429;font-weight:700;font-size:.84rem;padding:8px 14px;border-radius:999px;opacity:0;transition:opacity .3s;pointer-events:none;z-index:9}
+.toast{position:fixed;left:50%;bottom:24px;transform:translateX(-50%);background:var(--marigold);color:#061a2e;font-weight:700;font-size:.84rem;padding:8px 14px;border-radius:999px;opacity:0;transition:opacity .3s;pointer-events:none;z-index:9}
 .toast.on{opacity:1}
-.caption{display:none;margin:4px 8px 6px;padding:10px 14px;border-radius:12px;background:rgba(5,30,36,.75);border:1px solid var(--hair);font-size:1.05rem;min-height:2.6em}
+.caption{display:none;margin:4px 8px 6px;padding:10px 14px;border-radius:12px;background:rgba(5,22,40,.75);border:1px solid var(--hair);font-size:1.05rem;min-height:2.6em}
 .caption b{color:var(--marigold)}
 body.reel .caption{display:block}
 body.reel .pondbox{padding-bottom:10px}
@@ -358,11 +359,11 @@ body.reel .pondbox{padding-bottom:10px}
 const ICON = {
   drop:'<svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M10 2.5c2.6 3.4 4.3 5.6 4.3 7.9a4.3 4.3 0 0 1-8.6 0c0-2.3 1.7-4.5 4.3-7.9z"/><path d="M3.5 17c1.5.9 4 1.3 6.5 1.3s5-.4 6.5-1.3" opacity=".55"/></svg>',
   // a river through a gorge: canyon walls in stone, the water in blue with a white thread of light
-  marks:'<svg viewBox="0 0 20 20" fill="none" stroke-linecap="round" stroke-linejoin="round"><path d="M4.5 2.5c-1.4 3 1.4 4.6 0 7.6s1.4 4.6 0 7.4" stroke="currentColor" stroke-width="1.5" opacity=".55"/><path d="M15.5 2.5c-1.4 3 1.4 4.6 0 7.6s1.4 4.6 0 7.4" stroke="currentColor" stroke-width="1.5" opacity=".55"/><path d="M10 2c-2.4 3.2 2.4 5.4 0 8.6s2.4 5.2 0 7.4" stroke="#3aa6c4" stroke-width="3.2"/><path d="M10 2c-2.4 3.2 2.4 5.4 0 8.6s2.4 5.2 0 7.4" stroke="#eaf7f9" stroke-width="1"/></svg>',
+  marks:'<svg viewBox="0 0 20 20" fill="none" stroke-linecap="round" stroke-linejoin="round"><path d="M5.2 10.6c-.4-3 2-5.6 5-5.6s5.3 2.4 4.8 5.6" fill="currentColor" stroke="currentColor" stroke-width="1.2" opacity=".9"/><path d="M2.5 11.3c2.2-1.3 5-1.3 7.5 0s5.3 1.3 7.5 0" stroke="#4a9fe0" stroke-width="2.6"/><path d="M2.5 15c2.2-1.3 5-1.3 7.5 0s5.3 1.3 7.5 0" stroke="#4a9fe0" stroke-width="2" opacity=".7"/><path d="M2.5 11.3c2.2-1.3 5-1.3 7.5 0s5.3 1.3 7.5 0" stroke="#eaf4fb" stroke-width=".9"/><path d="M8 7.2c.6-.6 1.4-.9 2.3-.8" stroke="#eaf4fb" stroke-width="1" opacity=".9"/></svg>',
   // a wave: a curling crest, water in blue, foam in white
-  checks:'<svg viewBox="0 0 20 20" fill="none" stroke-linecap="round" stroke-linejoin="round"><path d="M2 16c2.6 0 3.6-2.4 6.2-2.4s3.6 2.4 6.2 2.4 3-.8 3.6-1.5" stroke="#3aa6c4" stroke-width="3"/><path d="M6.6 13.4C6.6 8 10.2 4.8 15.8 4.4c-2.7 1.3-4 3.7-3.3 6.4" stroke="#3aa6c4" stroke-width="3"/><path d="M6.6 13.4C6.6 8 10.2 4.8 15.8 4.4" stroke="#eaf7f9" stroke-width="1"/><path d="M2 16c2.6 0 3.6-2.4 6.2-2.4s3.6 2.4 6.2 2.4" stroke="#eaf7f9" stroke-width="1" opacity=".9"/></svg>',
+  checks:'<svg viewBox="0 0 20 20" fill="none" stroke-linecap="round" stroke-linejoin="round"><circle cx="8.6" cy="8.6" r="5.4" stroke="#4a9fe0" stroke-width="2.6"/><circle cx="8.6" cy="8.6" r="5.4" stroke="#eaf4fb" stroke-width=".9"/><path d="M12.6 12.6 17.2 17.2" stroke="currentColor" stroke-width="2.6"/><path d="M6.2 8.8l1.7 1.7 3.1-3.4" stroke="#eaf4fb" stroke-width="1.7"/></svg>',
   // tributaries feeding one river, as the Nile gathers the Blue Nile and the Atbara: blue water, white light down the main channel
-  leads:'<svg viewBox="0 0 20 20" fill="none" stroke-linecap="round" stroke-linejoin="round"><path d="M16.5 3.5c-2.8 1.6-4.6 3.6-5.6 6.2" stroke="#3aa6c4" stroke-width="2"/><path d="M15.5 9.5c-1.9.5-3.3 1.4-4.2 2.7" stroke="#3aa6c4" stroke-width="1.6"/><path d="M4 2.5c1 2.6 2.6 4.1 4.6 5.4 1.9 1.2 2.6 2.6 2.4 4.8-.1 1.9-.6 3.4-.4 5.3" stroke="#3aa6c4" stroke-width="3.2"/><path d="M4 2.5c1 2.6 2.6 4.1 4.6 5.4 1.9 1.2 2.6 2.6 2.4 4.8-.1 1.9-.6 3.4-.4 5.3" stroke="#eaf7f9" stroke-width="1"/><path d="M16.5 3.5c-2.8 1.6-4.6 3.6-5.6 6.2" stroke="#eaf7f9" stroke-width=".7" opacity=".8"/></svg>',
+  leads:'<svg viewBox="0 0 20 20" fill="none" stroke-linecap="round" stroke-linejoin="round"><circle cx="5" cy="15" r="1.7" fill="#eaf4fb"/><path d="M8.2 11.8a4.6 4.6 0 0 1 0 6.4" stroke="#4a9fe0" stroke-width="2.4"/><path d="M11 9a8.5 8.5 0 0 1 0 12" stroke="#4a9fe0" stroke-width="2.2" opacity=".75"/><path d="M13.8 6.2a12.4 12.4 0 0 1 0 17.6" stroke="#4a9fe0" stroke-width="2" opacity=".5"/><path d="M8.2 11.8a4.6 4.6 0 0 1 0 6.4" stroke="#eaf4fb" stroke-width=".8"/><path d="M11 9a8.5 8.5 0 0 1 0 12" stroke="#eaf4fb" stroke-width=".7" opacity=".8"/><path d="M13.8 6.2a12.4 12.4 0 0 1 0 17.6" stroke="#eaf4fb" stroke-width=".6" opacity=".6"/></svg>',
   sound:'<svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6v4h2.5L9 13V3L5.5 6z"/><path d="M11 6a3 3 0 0 1 0 4" class="w"/></svg>',
 };
 // the stone: a small river rock with moss on its shoulder, drawn upright at the center of the pond
@@ -756,16 +757,24 @@ function draw(story) {
 
   const defs = el("defs", {}, svg);
   defs.innerHTML = `
-    <radialGradient id="water" cx="50%" cy="46%" r="56%"><stop offset="0" stop-color="#1a6e7f" stop-opacity=".6"/><stop offset=".55" stop-color="#0f4d5b" stop-opacity=".4"/><stop offset="1" stop-color="#06272d" stop-opacity="0"/></radialGradient>
-    <linearGradient id="depth" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#9fdbe0" stop-opacity=".10"/><stop offset=".5" stop-color="#9fdbe0" stop-opacity="0"/><stop offset="1" stop-color="#021317" stop-opacity=".28"/></linearGradient>
-    <radialGradient id="shine" cx="38%" cy="30%" r="40%"><stop offset="0" stop-color="#d8f3f3" stop-opacity=".09"/><stop offset="1" stop-color="#d8f3f3" stop-opacity="0"/></radialGradient>
+    <radialGradient id="water" cx="50%" cy="46%" r="56%"><stop offset="0" stop-color="#1e6aa6" stop-opacity=".62"/><stop offset=".55" stop-color="#0f4576" stop-opacity=".42"/><stop offset="1" stop-color="#061b31" stop-opacity="0"/></radialGradient>
+    <linearGradient id="depth" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#9fcdf0" stop-opacity=".10"/><stop offset=".5" stop-color="#9fcdf0" stop-opacity="0"/><stop offset="1" stop-color="#02101e" stop-opacity=".28"/></linearGradient>
+    <radialGradient id="shine" cx="38%" cy="30%" r="40%"><stop offset="0" stop-color="#d8ecf8" stop-opacity=".09"/><stop offset="1" stop-color="#d8ecf8" stop-opacity="0"/></radialGradient>
     <radialGradient id="glow"><stop offset="0" stop-color="#f2ae2e" stop-opacity=".55"/><stop offset="1" stop-color="#f2ae2e" stop-opacity="0"/></radialGradient>
-    <linearGradient id="surface" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#1b6a73" stop-opacity=".78"/><stop offset=".5" stop-color="#0e4a53" stop-opacity=".9"/><stop offset="1" stop-color="#0a3a42" stop-opacity=".96"/></linearGradient>
-    <radialGradient id="wet"><stop offset="0" stop-color="#8fd3da" stop-opacity=".35"/><stop offset=".6" stop-color="#8fd3da" stop-opacity=".08"/><stop offset="1" stop-color="#8fd3da" stop-opacity="0"/></radialGradient>
+    <linearGradient id="surface" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#1d6498" stop-opacity=".78"/><stop offset=".5" stop-color="#0f4374" stop-opacity=".9"/><stop offset="1" stop-color="#0a2f55" stop-opacity=".96"/></linearGradient>
+    <radialGradient id="wmask" cx="50%" cy="48%" r="50%"><stop offset="0" stop-color="#fff" stop-opacity="1"/><stop offset=".55" stop-color="#fff" stop-opacity=".75"/><stop offset=".92" stop-color="#fff" stop-opacity=".12"/><stop offset="1" stop-color="#fff" stop-opacity="0"/></radialGradient>
+    <radialGradient id="wet"><stop offset="0" stop-color="#8fc4ec" stop-opacity=".35"/><stop offset=".6" stop-color="#8fc4ec" stop-opacity=".08"/><stop offset="1" stop-color="#8fc4ec" stop-opacity="0"/></radialGradient>
     <linearGradient id="rock" x1="0" y1="0" x2=".6" y2="1"><stop offset="0" stop-color="#aab7a4"/><stop offset=".45" stop-color="#6d7d6e"/><stop offset="1" stop-color="#36443d"/></linearGradient>
     <linearGradient id="moss" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#8fb55a"/><stop offset="1" stop-color="#4e7a37"/></linearGradient>
     <filter id="wob" x="-5%" y="-5%" width="110%" height="110%"><feTurbulence type="fractalNoise" baseFrequency=".011" numOctaves="2" seed="7"><animate attributeName="baseFrequency" values="0.011;0.0135;0.011" dur="11s" repeatCount="indefinite"/></feTurbulence><feDisplacementMap in="SourceGraphic" scale="5.5"/></filter>
     <filter id="soft"><feGaussianBlur stdDeviation="3"/></filter>
+    <filter id="waterlight" x="-10%" y="-10%" width="120%" height="120%" color-interpolation-filters="sRGB">
+      <feTurbulence type="fractalNoise" baseFrequency=".007 .014" numOctaves="3" seed="11" result="n"><animate attributeName="baseFrequency" values="0.007 0.014;0.0078 0.0162;0.007 0.014" dur="17s" repeatCount="indefinite"/><animate attributeName="seed" values="11;12;13;14;15;16;17;18;19;20" dur="40s" repeatCount="indefinite" calcMode="discrete"/></feTurbulence>
+      <feDiffuseLighting in="n" lighting-color="#cfe6ff" surfaceScale="4" diffuseConstant="1.1" result="lit"><feDistantLight azimuth="235" elevation="52"/></feDiffuseLighting>
+      <feColorMatrix in="lit" type="matrix" values="1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 0 .3" result="l2"/>
+      <feComposite in="l2" in2="SourceGraphic" operator="in"/>
+    </filter>
+    <filter id="softwave" x="-5%" y="-5%" width="110%" height="110%"><feGaussianBlur stdDeviation=".55"/></filter>
     <filter id="caustic" x="-10%" y="-10%" width="120%" height="120%" color-interpolation-filters="sRGB">
       <feTurbulence type="turbulence" baseFrequency=".028 .036" numOctaves="3" seed="3" result="n"><animate attributeName="baseFrequency" values="0.028 0.036;0.031 0.039;0.028 0.036" dur="19s" repeatCount="indefinite"/></feTurbulence>
       <feColorMatrix in="n" type="matrix" values="0 0 0 0 .78  0 0 0 0 .94  0 0 0 0 .94  0 0 0 14 -9.6" result="veins"/>
@@ -779,7 +788,9 @@ function draw(story) {
   el("circle", {cx:C.x, cy:C.y, r:R + 34, fill:"url(#depth)"}, plane);
   const shine = el("ellipse", {cx:C.x - 60, cy:C.y - 90, rx:R * 0.9, ry:R * 0.55, fill:"url(#shine)", filter:"url(#wob)"}, plane);
   shine.innerHTML = '<animateTransform attributeName="transform" type="translate" values="0 0;26 14;-18 22;0 0" dur="29s" repeatCount="indefinite"/>';
-  const ca = el("circle", {class:"caustic", cx:C.x, cy:C.y, r:R + 20, fill:"#9fe3e8", filter:"url(#caustic)"}, plane);
+  const wl = el("circle", {class:"waterlight", cx:C.x, cy:C.y, r:R + 34, fill:"url(#wmask)", filter:"url(#waterlight)"}, plane);  // the surface: lit, slowly moving
+  wl.innerHTML = '<animateTransform attributeName="transform" type="translate" values="0 0;18 -6;-12 8;0 0" dur="31s" repeatCount="indefinite"/>';
+  const ca = el("circle", {class:"caustic", cx:C.x, cy:C.y, r:R + 20, fill:"#9fd3f3", filter:"url(#caustic)"}, plane);
   ca.innerHTML = '<animateTransform attributeName="transform" type="translate" values="0 0;-14 9;10 -12;0 0" dur="23s" repeatCount="indefinite"/>';
 
   const g0 = el("g", {}, plane), gt = el("g", {}, svg);  // g0: lines on the water; gt: upright text
@@ -799,7 +810,7 @@ function draw(story) {
     lastRingX = p.x;
     const rl = el("text", {class:"ringlbl", x:p.x + 5, y:p.y - 3}, gt); rl.textContent = lbl; if (dense) rl.style.fontSize = "15px";
   }
-  el("circle", {cx:C.x, cy:C.y, r:R + 6, fill:"none", stroke:"rgba(214,240,236,.16)", "stroke-width":1.5, filter:"url(#wob)"}, g0);
+  el("circle", {cx:C.x, cy:C.y, r:R + 6, fill:"none", stroke:"rgba(214,232,246,.16)", "stroke-width":1.5, filter:"url(#wob)"}, g0);
   const rimBoxes = [];  // rim words keep their space; ripple labels place around them
   keys.forEach(k => {  // the industry each ripple reached, outside the rim, always horizontal
     if (!story.names[k]) return;
@@ -809,7 +820,7 @@ function draw(story) {
     if (dense) rt.style.fontSize = "17px";
     try { const b = rt.getBBox(); rimBoxes.push({x:b.x - 4, y:b.y - 2, w:b.width + 8, h:b.height + 4}); } catch {}
   });
-  const waves = el("g", {}, plane), bands = el("g", {}, plane), rips = el("g", {}, plane), edges = el("g", {}, plane), elbls = el("g", {}, svg), nodes = el("g", {}, svg), labels = el("g", {}, svg);
+  const waves = el("g", {}, plane), bands = el("g", {}, plane), rips = el("g", {filter:"url(#softwave)"}, plane), edges = el("g", {}, plane), elbls = el("g", {}, svg), nodes = el("g", {}, svg), labels = el("g", {}, svg);
   const sHalo = el("circle", {cx:C.x, cy:C.y, r:30, fill:"url(#wet)"}, plane);
   el("ellipse", {cx:C.x + 3, cy:C.y + 10, rx:28 * K, ry:22 * K, fill:"rgba(3,20,26,.5)", filter:"url(#soft)"}, plane);  // the stone's shadow on the water
   const stone = el("g", {class:"stone"}, svg);
@@ -820,10 +831,10 @@ function draw(story) {
   const ROCK = 'M-13.5,-3.5 C-13,-11 -5.5,-15.5 2.5,-14.5 C9.5,-13.6 14.5,-8.5 13.8,-1.5 C13.2,6 7.5,12.5 -0.5,12.6 C-8,12.7 -14,6.5 -13.5,-3.5 Z';
   const sWater = el("g", {class:"waterline", opacity:0}, sCore);
   const clip = el("clipPath", {id:"wlclip"}, sWater); el("rect", {x:-24, y:-1.5, width:48, height:30}, clip);
-  el("path", {d:ROCK, "clip-path":"url(#wlclip)", fill:"#0f4d56", opacity:".86"}, sWater);
+  el("path", {d:ROCK, "clip-path":"url(#wlclip)", fill:"#0f4474", opacity:".86"}, sWater);
   el("path", {d:ROCK, "clip-path":"url(#wlclip)", fill:"url(#surface)", opacity:".55"}, sWater);
-  el("ellipse", {cx:0, cy:-1.5, rx:16.2, ry:6.2, fill:"none", stroke:"rgba(220,245,240,.12)", "stroke-width":.8}, sWater);
-  el("path", {d:"M-15.6,-1.5 A16.2,6.2 0 0 0 15.6,-1.5", fill:"none", stroke:"rgba(230,250,246,.75)", "stroke-width":1.1, "stroke-linecap":"round"}, sWater);
+  el("ellipse", {cx:0, cy:-1.5, rx:16.2, ry:6.2, fill:"none", stroke:"rgba(220,238,250,.12)", "stroke-width":.8}, sWater);
+  el("path", {d:"M-15.6,-1.5 A16.2,6.2 0 0 0 15.6,-1.5", fill:"none", stroke:"rgba(230,244,252,.75)", "stroke-width":1.1, "stroke-linecap":"round"}, sWater);
   const stoneT = el("text", {x:C.x, y:C.y + 44 * K, "text-anchor":"middle"}, stone); stoneT.textContent = story.stone; if (dense) stoneT.style.fontSize = "22px";
 
   // final positions: spread across the slice, nearest first, alternating either side of its center line
@@ -840,7 +851,9 @@ function draw(story) {
       it.a = (par && par.a !== undefined ? par.a : centre(k)) + (j % 2 ? 5 : -5);
     });
     if (n === 1 && m > 1) its.forEach((it, j) => { it.a = -70 + j * 140 / (m - 1); });  // one ripple: a gentle spiral outward
-    its.forEach(it => { it.r = radius(it.d); it.plane = polar(it.r, it.a); it.pos = PL(it.plane); it.span = n === 1 ? null : [centre(k) - w / 2 + 3, centre(k) + w / 2 - 3]; });
+    // a ripple is an arc of the ring, not the whole ring: a full circle reads as an orbit (owner, Oct 3)
+    const hw = Math.min(w / 2 - 3, 58);  // an arc never wider than about a third of the ring, however few slices there are
+    its.forEach(it => { it.r = radius(it.d); it.plane = polar(it.r, it.a); it.pos = PL(it.plane); it.span = n === 1 ? [it.a - 58, it.a + 58] : [centre(k) - hw, centre(k) + hw]; });
   }
   const placed = [{x:C.x - 70 * K, y:C.y - 20 * K, w:140 * K, h:70 * K}, ...rimBoxes];  // the stone's name grows with K on a phone  // keep clear of the stone's label and the rim words
   const nMarks = items.filter(x => x.mark).length;
@@ -881,9 +894,9 @@ function draw(story) {
       const pw = el("g", {class:"pebblewater", transform:`scale(${ps})`}, g);
       const pc = el("g", {"clip-path":"url(#wlclip)"}, pw);
       const pr = el("g", {transform:`rotate(${rot})`}, pc);
-      el("path", {d:ROCK, fill:"#0f4d56", opacity:".86"}, pr);
+      el("path", {d:ROCK, fill:"#0f4474", opacity:".86"}, pr);
       el("path", {d:ROCK, fill:"url(#surface)", opacity:".55"}, pr);
-      el("path", {d:"M-15.2,-1.5 A15.8,6 0 0 0 15.2,-1.5", fill:"none", stroke:"rgba(230,250,246,.7)", "stroke-width":1.1, "stroke-linecap":"round"}, pw);
+      el("path", {d:"M-15.2,-1.5 A15.8,6 0 0 0 15.2,-1.5", fill:"none", stroke:"rgba(230,244,252,.7)", "stroke-width":1.1, "stroke-linecap":"round"}, pw);
     }
     it.core = null;
     it.showLabel = !!it.mark || it.lv === "measured" || items.length <= 5;  // at rest the pond says one thing per ripple that matters; the rest wait for a hover or the card
