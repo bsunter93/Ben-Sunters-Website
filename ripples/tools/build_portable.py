@@ -46,8 +46,8 @@ def kit():
                 dns[:] = [d for d in dns if d not in SKIP_DIRS]
                 for fn in fns:
                     p = os.path.join(dp, fn)
-                    if p == OUT_ZIP:
-                        continue
+                    if p == OUT_ZIP or "/ripples/demo/cards/" in p or "/ripples/demo/s/" in p or "/ripples/dist/" in p and not p.endswith("ripple-standalone.html"):
+                        continue  # share cards and stubs are generated; the old dist app is not part of Ripple
                     if os.path.getsize(p) > MAX_MB * 1024 * 1024 and not p.endswith((".mp4", ".html")):
                         skipped += 1; continue
                     z.write(p, os.path.join("ripple", os.path.relpath(p, ROOT)))
