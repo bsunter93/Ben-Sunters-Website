@@ -4340,28 +4340,6 @@
     },
     {
      "n": 2,
-     "claim": "The film is the first British feature to say the word 'homosexual'; the BBFC passes it with an X certificate",
-     "test": {
-      "type": "record",
-      "date": "1961-08-01",
-      "source": "BBFC certificate, 1961"
-     },
-     "ref": "1961-08-31",
-     "verdict": "reported, before the step it is said to follow",
-     "note": "The certificate came before the release; it is background, not a ripple.",
-     "link": null,
-     "link_why": null,
-     "branch": false,
-     "vertical": null,
-     "after": 1,
-     "slice": null,
-     "short": "Passed with an X",
-     "mark": null,
-     "onset": "1961-08-01",
-     "source": "BBFC certificate, 1961"
-    },
-    {
-     "n": 3,
      "claim": "Lord Arran's motion to implement Wolfenden passes the Lords",
      "test": {
       "type": "record",
@@ -4383,7 +4361,7 @@
      "source": "Hansard (Lords), 12 May 1965"
     },
     {
-     "n": 4,
+     "n": 3,
      "claim": "Leo Abse's Sexual Offences Bill is given leave in the Commons",
      "test": {
       "type": "record",
@@ -4405,7 +4383,7 @@
      "source": "Hansard (Commons), 5 Jul 1966, ten-minute rule bill"
     },
     {
-     "n": 5,
+     "n": 4,
      "claim": "The Sexual Offences Act 1967 decriminalises homosexual acts in private between men over 21 in England and Wales",
      "test": {
       "type": "record",
@@ -5375,14 +5353,14 @@
       "date": "1973-07-01",
       "source": "NCHS vital statistics: age-adjusted cirrhosis mortality peaked in 1973 at about 15 per 100,000"
      },
-     "ref": "1980-07-01",
-     "verdict": "reported, before the step it is said to follow",
-     "note": "Dated before step 7's peak year on purpose: deaths peaked before consumption did, because the heaviest drinkers were an older cohort. Shown as its own slice, not as a consequence of the peak.",
+     "ref": "1933-12-05",
+     "verdict": "reported",
+     "note": "Deaths peaked seven years before per-capita drinking did, because the heaviest drinkers were an older cohort; ordered here against repeal.",
      "link": "reported",
      "link_why": "vital statistics",
      "branch": false,
      "vertical": null,
-     "after": 7,
+     "after": 5,
      "slice": "Health",
      "short": "Cirrhosis peaks",
      "mark": null,
@@ -5397,14 +5375,14 @@
       "date": "1970-12-31",
       "source": "Comprehensive Alcohol Abuse and Alcoholism Prevention, Treatment, and Rehabilitation Act, signed 31 Dec 1970"
      },
-     "ref": "1980-07-01",
-     "verdict": "reported, before the step it is said to follow",
+     "ref": "1935-06-10",
+     "verdict": "reported",
      "note": null,
      "link": "reported",
-     "link_why": "Senator Harold Hughes, a recovering alcoholic and AA member, wrote the Act; the AMA had called alcoholism a disease in 1956",
+     "link_why": "Senator Harold Hughes, a recovering alcoholic and AA member, wrote the Act; the AMA had called alcoholism a disease in 1956. Ordered against AA's founding.",
      "branch": false,
      "vertical": null,
-     "after": null,
+     "after": 6,
      "slice": "Institutions",
      "short": "NIAAA created",
      "mark": "Institution",
@@ -5463,14 +5441,14 @@
       "date": "2023-12-01",
       "source": "NielsenIQ off-premise sales 2022–23; Athletic Brewing founded 2017"
      },
-     "ref": "2025-08-13",
-     "verdict": "reported, before the step it is said to follow",
+     "ref": "2019-12-01",
+     "verdict": "reported",
      "note": null,
      "link": "reported",
      "link_why": "trade data; the brewers themselves cite younger drinkers",
      "branch": false,
      "vertical": null,
-     "after": null,
+     "after": 10,
      "slice": "The decline",
      "short": "NA beer grows",
      "mark": "Industry",
@@ -6734,593 +6712,6 @@
      ],
      "onset": "2022-07-02",
      "approx": true
-    }
-   ]
-  },
-  {
-   "slug": "jwst",
-   "title": "Webb's first images (2022)",
-   "date": "2022-07-11",
-   "batch": 2,
-   "vertical": "Science",
-   "steps": [
-    {
-     "n": 1,
-     "claim": "NASA releases Webb's first deep field",
-     "test": {
-      "type": "record",
-      "date": "2022-07-11",
-      "source": "NASA/White House release, Jul 11, 2022"
-     },
-     "ref": "2022-07-11",
-     "verdict": "reported",
-     "note": null,
-     "link": null,
-     "link_why": null,
-     "branch": false,
-     "vertical": null,
-     "after": null,
-     "slice": null,
-     "short": null,
-     "mark": null,
-     "onset": "2022-07-11",
-     "source": "NASA/White House release, Jul 11, 2022"
-    },
-    {
-     "n": 2,
-     "claim": "Public interest in astronomy spikes",
-     "test": {
-      "type": "wiki",
-      "articles": [
-       "Astronomy",
-       "Galaxy",
-       "Universe"
-      ],
-      "lag": 60
-     },
-     "ref": "2022-07-11",
-     "verdict": "measured",
-     "note": null,
-     "link": null,
-     "link_why": null,
-     "branch": false,
-     "vertical": null,
-     "after": null,
-     "slice": null,
-     "short": null,
-     "mark": null,
-     "found": {
-      "Astronomy": true,
-      "Galaxy": true,
-      "Universe": true
-     },
-     "onset": "2022-07-12",
-     "ratio": 2.4,
-     "baseline": 6052.0,
-     "p": 0.006,
-     "weekly": [
-      [
-       "2022-04-18",
-       41182
-      ],
-      [
-       "2022-04-25",
-       40931
-      ],
-      [
-       "2022-05-02",
-       39498
-      ],
-      [
-       "2022-05-09",
-       48062
-      ],
-      [
-       "2022-05-16",
-       44235
-      ],
-      [
-       "2022-05-23",
-       41270
-      ],
-      [
-       "2022-05-30",
-       39015
-      ],
-      [
-       "2022-06-06",
-       38712
-      ],
-      [
-       "2022-06-13",
-       39116
-      ],
-      [
-       "2022-06-20",
-       39499
-      ],
-      [
-       "2022-06-27",
-       35682
-      ],
-      [
-       "2022-07-04",
-       39729
-      ],
-      [
-       "2022-07-11",
-       103430
-      ],
-      [
-       "2022-07-18",
-       53626
-      ],
-      [
-       "2022-07-25",
-       45872
-      ],
-      [
-       "2022-08-01",
-       46808
-      ],
-      [
-       "2022-08-08",
-       43321
-      ],
-      [
-       "2022-08-15",
-       43110
-      ],
-      [
-       "2022-08-22",
-       46208
-      ],
-      [
-       "2022-08-29",
-       48907
-      ],
-      [
-       "2022-09-05",
-       49894
-      ],
-      [
-       "2022-09-12",
-       49490
-      ],
-      [
-       "2022-09-19",
-       48720
-      ],
-      [
-       "2022-09-26",
-       46822
-      ],
-      [
-       "2022-10-03",
-       47406
-      ]
-     ]
-    },
-    {
-     "n": 3,
-     "claim": "More astrophysics papers and majors",
-     "test": {
-      "type": "arxiv",
-      "direction": "up",
-      "h": 6,
-      "transform": "log"
-     },
-     "ref": "2022-07-12",
-     "verdict": "no data",
-     "note": "arXiv astro-ph monthly submissions (all papers). AIP enrollment data are annual and not loaded.",
-     "link": null,
-     "link_why": null,
-     "branch": false,
-     "vertical": null,
-     "after": null,
-     "slice": null,
-     "short": null,
-     "mark": null,
-     "result": "no data for arxiv"
-    },
-    {
-     "n": 4,
-     "claim": "Federal procurement for infrared optics surges",
-     "test": {
-      "type": "none",
-      "reason": "desk check: implausible mechanism; budgets are set years ahead and the telescope was already built",
-      "verdict": "not testable"
-     },
-     "ref": "2022-07-12",
-     "verdict": "not testable",
-     "note": null,
-     "link": null,
-     "link_why": null,
-     "branch": false,
-     "vertical": null,
-     "after": null,
-     "slice": null,
-     "short": null,
-     "mark": null,
-     "reason": "desk check: implausible mechanism; budgets are set years ahead and the telescope was already built"
-    },
-    {
-     "n": 5,
-     "claim": "Consumer infrared and adaptive-optics patents accelerate",
-     "test": {
-      "type": "none",
-      "reason": "PatentsView is free but this would take years to show and has many causes; not loaded",
-      "verdict": "not testable"
-     },
-     "ref": "2022-07-12",
-     "verdict": "not testable",
-     "note": null,
-     "link": null,
-     "link_why": null,
-     "branch": false,
-     "vertical": null,
-     "after": null,
-     "slice": null,
-     "short": null,
-     "mark": null,
-     "reason": "PatentsView is free but this would take years to show and has many causes; not loaded"
-    }
-   ]
-  },
-  {
-   "slug": "gamestop",
-   "title": "GameStop squeeze (2021)",
-   "date": "2021-01-13",
-   "batch": 2,
-   "vertical": "Finance & regulation",
-   "steps": [
-    {
-     "n": 1,
-     "claim": "Reddit traders squeeze GameStop",
-     "test": {
-      "type": "wiki",
-      "articles": [
-       "GameStop short squeeze",
-       "GameStop"
-      ],
-      "lag": 60
-     },
-     "ref": "2021-01-13",
-     "verdict": "measured",
-     "note": null,
-     "link": null,
-     "link_why": null,
-     "branch": false,
-     "vertical": null,
-     "after": null,
-     "slice": null,
-     "short": null,
-     "mark": null,
-     "found": {
-      "GameStop short squeeze": true,
-      "GameStop": true
-     },
-     "onset": "2021-01-28",
-     "ratio": 215.0,
-     "baseline": 957.5,
-     "p": 0.008,
-     "weekly": [
-      [
-       "2020-10-21",
-       6285
-      ],
-      [
-       "2020-10-28",
-       5924
-      ],
-      [
-       "2020-11-04",
-       7601
-      ],
-      [
-       "2020-11-11",
-       13032
-      ],
-      [
-       "2020-11-18",
-       9207
-      ],
-      [
-       "2020-11-25",
-       8933
-      ],
-      [
-       "2020-12-02",
-       9886
-      ],
-      [
-       "2020-12-09",
-       9114
-      ],
-      [
-       "2020-12-16",
-       8199
-      ],
-      [
-       "2020-12-23",
-       9129
-      ],
-      [
-       "2020-12-30",
-       7906
-      ],
-      [
-       "2021-01-06",
-       7635
-      ],
-      [
-       "2021-01-13",
-       13772
-      ],
-      [
-       "2021-01-20",
-       68344
-      ],
-      [
-       "2021-01-27",
-       1440843
-      ],
-      [
-       "2021-02-03",
-       259563
-      ],
-      [
-       "2021-02-10",
-       73332
-      ],
-      [
-       "2021-02-17",
-       71344
-      ],
-      [
-       "2021-02-24",
-       84491
-      ],
-      [
-       "2021-03-03",
-       50483
-      ],
-      [
-       "2021-03-10",
-       65260
-      ],
-      [
-       "2021-03-17",
-       39511
-      ],
-      [
-       "2021-03-24",
-       38800
-      ],
-      [
-       "2021-03-31",
-       28184
-      ],
-      [
-       "2021-04-07",
-       28114
-      ]
-     ]
-    },
-    {
-     "n": 2,
-     "claim": "Brokerages restrict buying",
-     "test": {
-      "type": "record",
-      "date": "2021-01-28",
-      "source": "Robinhood and others restrict GME purchases, Jan 28, 2021; SEC staff report, Oct 14, 2021"
-     },
-     "ref": "2021-01-28",
-     "verdict": "reported",
-     "note": null,
-     "link": "reported",
-     "link_why": "the restrictions were imposed during the squeeze",
-     "branch": false,
-     "vertical": null,
-     "after": null,
-     "slice": null,
-     "short": null,
-     "mark": null,
-     "onset": "2021-01-28",
-     "source": "Robinhood and others restrict GME purchases, Jan 28, 2021; SEC staff report, Oct 14, 2021"
-    },
-    {
-     "n": 3,
-     "claim": "Congress holds hearings",
-     "test": {
-      "type": "record",
-      "date": "2021-02-18",
-      "source": "House Financial Services hearing 'Game Stopped?', Feb 18, 2021"
-     },
-     "ref": "2021-01-28",
-     "verdict": "reported",
-     "note": null,
-     "link": "reported",
-     "link_why": "the hearing was about the squeeze",
-     "branch": false,
-     "vertical": null,
-     "after": null,
-     "slice": null,
-     "short": null,
-     "mark": null,
-     "onset": "2021-02-18",
-     "source": "House Financial Services hearing 'Game Stopped?', Feb 18, 2021"
-    },
-    {
-     "n": 4,
-     "claim": "Retail options trading rises for good",
-     "test": {
-      "type": "wiki",
-      "articles": [
-       "Option (finance)",
-       "Call option"
-      ],
-      "lag": 90
-     },
-     "ref": "2021-02-18",
-     "verdict": "moved, wrong order",
-     "note": "OCC volume data are free but not loaded; the options boom began in 2020.",
-     "link": null,
-     "link_why": null,
-     "branch": false,
-     "vertical": null,
-     "after": null,
-     "slice": null,
-     "short": null,
-     "mark": null,
-     "found": {
-      "Option (finance)": true,
-      "Call option": true
-     },
-     "onset": "2021-01-26",
-     "ratio": 9.0,
-     "baseline": 1196.0,
-     "p": 0.008,
-     "weekly": [
-      [
-       "2020-11-26",
-       10270
-      ],
-      [
-       "2020-12-03",
-       11267
-      ],
-      [
-       "2020-12-10",
-       9696
-      ],
-      [
-       "2020-12-17",
-       9195
-      ],
-      [
-       "2020-12-24",
-       7766
-      ],
-      [
-       "2020-12-31",
-       8398
-      ],
-      [
-       "2021-01-07",
-       12490
-      ],
-      [
-       "2021-01-14",
-       11750
-      ],
-      [
-       "2021-01-21",
-       36271
-      ],
-      [
-       "2021-01-28",
-       65696
-      ],
-      [
-       "2021-02-04",
-       24877
-      ],
-      [
-       "2021-02-11",
-       15795
-      ],
-      [
-       "2021-02-18",
-       14180
-      ],
-      [
-       "2021-02-25",
-       17015
-      ],
-      [
-       "2021-03-04",
-       11831
-      ],
-      [
-       "2021-03-11",
-       14838
-      ],
-      [
-       "2021-03-18",
-       8830
-      ],
-      [
-       "2021-03-25",
-       7970
-      ],
-      [
-       "2021-04-01",
-       7372
-      ],
-      [
-       "2021-04-08",
-       7941
-      ],
-      [
-       "2021-04-15",
-       7927
-      ],
-      [
-       "2021-04-22",
-       7286
-      ],
-      [
-       "2021-04-29",
-       6942
-      ],
-      [
-       "2021-05-06",
-       6825
-      ],
-      [
-       "2021-05-13",
-       7258
-      ],
-      [
-       "2021-05-20",
-       7393
-      ],
-      [
-       "2021-05-27",
-       8854
-      ],
-      [
-       "2021-06-03",
-       10137
-      ],
-      [
-       "2021-06-10",
-       8038
-      ]
-     ]
-    },
-    {
-     "n": 5,
-     "claim": "Brokerages remove gamified features",
-     "test": {
-      "type": "record",
-      "date": "2021-03-31",
-      "source": "Robinhood removes its confetti animation, Mar 31, 2021"
-     },
-     "ref": "2021-02-18",
-     "verdict": "reported",
-     "note": "Massachusetts regulators had complained about gamification in Dec 2020, before the squeeze.",
-     "link": null,
-     "link_why": null,
-     "branch": false,
-     "vertical": null,
-     "after": null,
-     "slice": null,
-     "short": null,
-     "mark": null,
-     "onset": "2021-03-31",
-     "source": "Robinhood removes its confetti animation, Mar 31, 2021"
     }
    ]
   }
