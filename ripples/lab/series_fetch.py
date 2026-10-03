@@ -40,41 +40,61 @@ def jget(url):
 
 
 # ---------- YRBS via Socrata ----------
+KNOWN_YRBS = [("chronicdata.cdc.gov", "q6p7-56au"), ("data.cdc.gov", "q6p7-56au")]  # DASH YRBSS high school; tried first, then the catalog
+
+
 def find_yrbs():
-    """Candidate Socrata datasets on CDC domains whose name says YRBS; returns [(domain, id, name)]."""
-    out = []
+    """Candidate Socrata datasets on CDC domains whose name says youth risk behavior; returns [(domain, id, name)].
+    The BRFSS adult survey also matches a loose search (the Oct 3 run used it by mistake), so the name must say youth."""
+    out = list(KNOWN_YRBS)
     for domain in ("data.cdc.gov", "chronicdata.cdc.gov"):
-        q = urllib.parse.urlencode({"domains": domain, "q": "Youth Risk Behavior Surveillance", "limit": 20})
+        q = urllib.parse.urlencode({"domains": domain, "q": "Youth Risk Behavior Surveillance", "limit": 30})
         d = jget(f"https://api.us.socrata.com/api/catalog/v1?{q}")
         for r in (d or {}).get("results", []):
             res = r.get("resource", {})
-            if res.get("type") == "dataset":
-                out.append((domain, res.get("id"), res.get("name"), [c.lower() for c in res.get("columns_field_name", [])]))
+            if res.get("type") == "dataset" and re.search(r"youth|YRBS", res.get("name") or "", re.I) and (domain, res.get("id")) not in out:
+                out.append((domain, res.get("id")))
     return out
+
+
+def columns_of(domain, sid):
+    rows = jget(f"https://{domain}/resource/{sid}.json?$limit=1")
+    return ([k.lower() for k in rows[0].keys()] if rows else []), (rows[0] if rows else {})
 
 
 def yrbs_alcohol():
     """{state: {year: prevalence}} for current alcohol use, high school, total; plus a note on the source."""
     cands = find_yrbs()
-    print("YRBS candidates:", [(c[0], c[1], c[2][:60]) for c in cands], flush=True)
-    for domain, sid, name, cols in cands:
-        need = {"year", "locationabbr", "data_value"}
-        if not need <= set(cols):
+    print("YRBS candidates:", cands, flush=True)
+    for domain, sid in cands:
+        cols, sample = columns_of(domain, sid)
+        if not cols:
+            print("no columns from", domain, sid, flush=True)
             continue
-        qcol = "question" if "question" in cols else "questioncode" if "questioncode" in cols else None
-        if not qcol:
+        if not {"year", "locationabbr"} <= set(cols):
+            print("not a state-year table:", sid, cols[:8], flush=True)
             continue
-        where = f"upper({qcol}) like '%ALCOHOL%'"
-        if "stratificationcategory1" in cols:
-            where += " AND stratificationcategory1='Total'"
-        elif "sex" in cols:
-            where += " AND sex='Total'"
-        params = {"$where": where, "$select": f"locationabbr,year,{qcol},data_value", "$limit": 50000}
+        vcol = next((c for c in ("greater_risk_data_value", "data_value") if c in cols), None)
+        qcol = next((c for c in ("greater_risk_question", "shortquestiontext", "question", "questioncode") if c in cols), None)
+        if not (vcol and qcol):
+            print("no value/question column in", sid, flush=True)
+            continue
+        where = [f"upper({qcol}) like '%ALCOHOL%'"]
+        for c in ("sex", "race", "grade", "sexualidentity"):  # YRBS "Total" strata
+            if c in cols:
+                where.append(f"({c}='Total' OR {c} IS NULL)")
+        if "stratificationtype" in cols:
+            where.append("stratificationtype='State'")
+        if "break_out" in cols:  # BRFSS-style tables
+            where.append("break_out='Overall'")
+        if "response" in cols:
+            where.append("response='Yes'")
+        params = {"$where": " AND ".join(where), "$select": f"locationabbr,year,{qcol},{vcol}", "$limit": 50000}
         rows = jget(f"https://{domain}/resource/{sid}.json?{urllib.parse.urlencode(params)}")
         if not rows:
             print("no rows from", sid, flush=True)
             continue
-        qs = sorted({r.get(qcol) for r in rows})
+        qs = sorted({r.get(qcol) for r in rows if r.get(qcol)})
         print("questions:", qs[:12], flush=True)
         # the current-drinking question, not binge, not first drink, not ever
         pick = next((q for q in qs if re.search(r"currently drank|current(?:ly)? alcohol|drank alcohol.*(?:30|past month)|had at least one drink", q or "", re.I)
@@ -84,15 +104,19 @@ def yrbs_alcohol():
             continue
         out = {}
         for r in rows:
-            if r.get(qcol) != pick or not r.get("data_value"):
+            if r.get(qcol) != pick or not r.get(vcol):
                 continue
             st, y = r["locationabbr"], int(str(r["year"])[:4])
             try:
-                out.setdefault(st, {})[y] = float(r["data_value"])
+                v = float(r[vcol])
             except ValueError:
-                pass
+                continue
+            if 0 < v < 100 and len(st) == 2:
+                out.setdefault(st, {})[y] = v
+        name = (jget(f"https://{domain}/api/views/{sid}.json") or {}).get("name") or sid
+        print("states:", len(out), "years:", sorted({y for d in out.values() for y in d}), flush=True)
         if len(out) >= 20:
-            return out, {"domain": domain, "dataset": sid, "name": name, "question": pick}
+            return out, {"domain": domain, "dataset": sid, "name": name, "question": pick, "value_column": vcol}
     return None, None
 
 
@@ -158,24 +182,32 @@ def dose_response(data):
 
 # ---------- NIAAA ----------
 def niaaa():
+    """US per-capita ethanol (gallons, population 14+, all beverages) by year from the NIAAA surveillance text file.
+    Rows are whitespace fields: state code (99 = United States), year, beverage type (4 = all), gallons of beverage,
+    gallons of ethanol, population 14+, per-capita ethanol 14+, decile, population 21+, per-capita 21+, decile."""
     for u in NIAAA_URLS:
         t = mf.get(u)
         if not t or len(t) < 500:
             continue
-        pts = []
+        pts, sample = [], None
         for line in t.splitlines():
-            m = re.match(r"\s*(\d{4})\s+([\d.]+)", line)
-            if m and 1900 < int(m.group(1)) < 2100:
-                pts.append([f"{m.group(1)}-01-01", float(m.group(2))])
+            f = line.split()
+            if len(f) >= 7 and f[0] == "99" and f[2] == "4" and re.fullmatch(r"\d{4}", f[1]):
+                try:
+                    pts.append([f"{f[1]}-01-01", float(f[6])])
+                    sample = sample or line.strip()
+                except ValueError:
+                    pass
         if len(pts) > 30:
-            print("NIAAA from", u, len(pts), "years", flush=True)
-            return pts, u
+            print("NIAAA from", u, len(pts), "years; sample row:", sample, flush=True)
+            return sorted(pts), u
+        print("NIAAA file read but no US all-beverage rows parsed from", u, flush=True)
     print("NIAAA file not reachable at the known paths", flush=True)
     return None, None
 
 
 def main() -> int:
-    state = json.load(open(OUT)) if os.path.exists(OUT) else {"protocol": "ripples/docs/dose_response_v1.md", "started": dt.date.today().isoformat(), "series": {}, "dose": {}}
+    state = {"protocol": "ripples/docs/dose_response_v1.md", "started": dt.date.today().isoformat(), "series": {}, "dose": {}}  # rebuilt each run
     try:
         data, src = yrbs_alcohol()
         if data:
@@ -186,7 +218,7 @@ def main() -> int:
             for st, d in data.items():
                 for y, v in d.items():
                     us.setdefault(y, []).append(v)
-            state["series"]["yrbs_us_median_current_alcohol"] = [[f"{y}-07-01", round(sorted(v)[len(v) // 2], 2)] for y, v in sorted(us.items())]
+            state["series"]["yrbs_us_median_current_alcohol"] = [[f"{y}-07-01", round(sorted(v)[len(v) // 2], 2)] for y, v in sorted(us.items()) if len(v) >= 10]
             state["dose"]["cannabis_youth_alcohol"] = {**dose_response(data), "source": f"CDC YRBS state surveys ({src['dataset']}), question: {src['question']}"}
             print(json.dumps({k: v for k, v in state["dose"]["cannabis_youth_alcohol"].items() if k not in ("rows", "pretrend_rows", "points")}, indent=1), flush=True)
         else:

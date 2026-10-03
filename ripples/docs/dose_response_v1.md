@@ -35,3 +35,12 @@ logged as missing.
 
 **Output.** `ripples/docs/results/series_v1.json` with `series` (key → [[date, value]]) and `dose` (key → effect, p,
 two-sided p, pre-trend p, n treated, n control, per-state rows, design, source).
+
+## Addendum, Oct 3 (run 1 discarded)
+
+The first CI run found a dataset by catalog search and used it without checking its name: it was the BRFSS adult
+survey ("Adults who have had at least one drink of alcohol within the past 30 days"), with Yes and No rows and every
+breakout mixed together. Its numbers were not the pre-registered outcome and are discarded. The NIAAA parser also read
+state and beverage codes as values. Run 2 names the YRBS high-school dataset first, filters to state totals, keeps
+only values between 0 and 100, and reads the United States all-beverage rows of the NIAAA file. The design, the
+retail-start dates and the permutation scheme are unchanged.
