@@ -3697,6 +3697,117 @@
      "short": "Convictions quashed",
      "mark": null,
      "result": "error: 'reason'"
+    },
+    {
+     "n": 9,
+     "claim": "Attention to Paula Vennells surges",
+     "test": {
+      "type": "wiki",
+      "articles": [
+       "Paula Vennells"
+      ],
+      "lag": 30
+     },
+     "ref": "2024-01-01",
+     "verdict": "measured",
+     "note": null,
+     "link": null,
+     "link_why": null,
+     "branch": true,
+     "vertical": null,
+     "after": null,
+     "slice": null,
+     "short": "Vennells attention",
+     "mark": null,
+     "found": {
+      "Paula Vennells": true
+     },
+     "onset": "2024-01-03",
+     "ratio": 1879.0,
+     "baseline": 50.0,
+     "p": 0.006,
+     "weekly": [
+      [
+       "2023-10-09",
+       466
+      ],
+      [
+       "2023-10-16",
+       303
+      ],
+      [
+       "2023-10-23",
+       587
+      ],
+      [
+       "2023-10-30",
+       459
+      ],
+      [
+       "2023-11-06",
+       764
+      ],
+      [
+       "2023-11-13",
+       1444
+      ],
+      [
+       "2023-11-20",
+       555
+      ],
+      [
+       "2023-11-27",
+       601
+      ],
+      [
+       "2023-12-04",
+       1053
+      ],
+      [
+       "2023-12-11",
+       1807
+      ],
+      [
+       "2023-12-18",
+       1707
+      ],
+      [
+       "2023-12-25",
+       4700
+      ],
+      [
+       "2024-01-01",
+       533557
+      ],
+      [
+       "2024-01-08",
+       426219
+      ],
+      [
+       "2024-01-15",
+       90881
+      ],
+      [
+       "2024-01-22",
+       42990
+      ],
+      [
+       "2024-01-29",
+       21653
+      ],
+      [
+       "2024-02-05",
+       12712
+      ],
+      [
+       "2024-02-12",
+       18985
+      ],
+      [
+       "2024-02-19",
+       25977
+      ]
+     ]
     }
    ]
   },
@@ -5185,6 +5296,238 @@
    ]
   },
   {
+   "slug": "adolescence-schools",
+   "title": "Adolescence and the schools (2025)",
+   "date": "2025-03-13",
+   "batch": 14,
+   "vertical": "Education policy",
+   "steps": [
+    {
+     "n": 1,
+     "claim": "Netflix releases Adolescence",
+     "test": {
+      "type": "record",
+      "date": "2025-03-13",
+      "source": "Netflix, 13 Mar 2025"
+     },
+     "ref": "2025-03-13",
+     "verdict": "reported",
+     "note": null,
+     "link": null,
+     "link_why": null,
+     "branch": false,
+     "vertical": null,
+     "after": null,
+     "slice": null,
+     "short": null,
+     "mark": null,
+     "onset": "2025-03-13",
+     "source": "Netflix, 13 Mar 2025"
+    },
+    {
+     "n": 2,
+     "claim": "Attention to incel culture and the manosphere surges",
+     "test": {
+      "type": "wiki",
+      "articles": [
+       "Incel",
+       "Manosphere"
+      ],
+      "lag": 30
+     },
+     "ref": "2025-03-13",
+     "verdict": "no movement",
+     "note": null,
+     "link": null,
+     "link_why": null,
+     "branch": false,
+     "vertical": null,
+     "after": null,
+     "slice": null,
+     "short": "Incel attention",
+     "mark": null,
+     "found": {
+      "Incel": true,
+      "Manosphere": true
+     },
+     "onset": "2025-03-17",
+     "ratio": 15.4,
+     "baseline": 6467.0,
+     "p": 0.056,
+     "weekly": [
+      [
+       "2024-12-19",
+       46520
+      ],
+      [
+       "2024-12-26",
+       41359
+      ],
+      [
+       "2025-01-02",
+       54128
+      ],
+      [
+       "2025-01-09",
+       48518
+      ],
+      [
+       "2025-01-16",
+       42665
+      ],
+      [
+       "2025-01-23",
+       49397
+      ],
+      [
+       "2025-01-30",
+       37500
+      ],
+      [
+       "2025-02-06",
+       34592
+      ],
+      [
+       "2025-02-13",
+       38696
+      ],
+      [
+       "2025-02-20",
+       35752
+      ],
+      [
+       "2025-02-27",
+       56417
+      ],
+      [
+       "2025-03-06",
+       38276
+      ],
+      [
+       "2025-03-13",
+       376759
+      ],
+      [
+       "2025-03-20",
+       684671
+      ],
+      [
+       "2025-03-27",
+       462782
+      ],
+      [
+       "2025-04-03",
+       245430
+      ],
+      [
+       "2025-04-10",
+       168058
+      ],
+      [
+       "2025-04-17",
+       124981
+      ],
+      [
+       "2025-04-24",
+       93355
+      ],
+      [
+       "2025-05-01",
+       75645
+      ]
+     ]
+    },
+    {
+     "n": 3,
+     "claim": "MPs cite the series in the Children's Wellbeing and Schools Bill debate",
+     "test": {
+      "type": "record",
+      "date": "2025-03-18",
+      "source": "Hansard, 18 Mar 2025: 'powerfully explored in the new Netflix series Adolescence … highlights how a lack of proper education in relationships'"
+     },
+     "ref": "2025-03-13",
+     "verdict": "reported",
+     "note": null,
+     "link": "reported",
+     "link_why": "the debate names the series",
+     "branch": false,
+     "vertical": null,
+     "after": null,
+     "slice": null,
+     "short": "Cited in the Bill debate",
+     "mark": null,
+     "onset": "2025-03-18",
+     "source": "Hansard, 18 Mar 2025: 'powerfully explored in the new Netflix series Adolescence … highlights how a lack of proper education in relationships'"
+    },
+    {
+     "n": 4,
+     "claim": "The Prime Minister backs showing the series in schools",
+     "test": {
+      "type": "record",
+      "date": "2025-03-31",
+      "source": "Downing Street meeting with the makers, 31 Mar 2025; Netflix makes it free to all secondary schools"
+     },
+     "ref": "2025-03-18",
+     "verdict": "reported",
+     "note": null,
+     "link": "reported",
+     "link_why": "the meeting and the schools offer were about the series",
+     "branch": false,
+     "vertical": null,
+     "after": null,
+     "slice": null,
+     "short": "PM backs it",
+     "mark": null,
+     "onset": "2025-03-31",
+     "source": "Downing Street meeting with the makers, 31 Mar 2025; Netflix makes it free to all secondary schools"
+    },
+    {
+     "n": 5,
+     "claim": "Updated relationships, sex and health education guidance names misogyny and incel culture",
+     "test": {
+      "type": "record",
+      "date": "2025-07-15",
+      "source": "Department for Education, RSHE statutory guidance, 15 Jul 2025"
+     },
+     "ref": "2025-03-31",
+     "verdict": "reported",
+     "note": "The guidance review began in 2024; the series is credited with the urgency and the misogyny content, not the review.",
+     "link": null,
+     "link_why": null,
+     "branch": false,
+     "vertical": null,
+     "after": null,
+     "slice": null,
+     "short": "RSHE guidance",
+     "mark": "Policy",
+     "onset": "2025-07-15",
+     "source": "Department for Education, RSHE statutory guidance, 15 Jul 2025"
+    },
+    {
+     "n": 6,
+     "claim": "The Children's Wellbeing and Schools Act receives Royal Assent",
+     "test": {
+      "type": "record",
+      "date": "2026-04-29",
+      "source": "Royal Assent 29 Apr 2026 (Bill → Act resolver, Parliament Bills API)"
+     },
+     "ref": "2025-07-15",
+     "verdict": "reported",
+     "note": "The Bill predates the series (introduced Dec 2024); the series entered its debates. Cited, not caused.",
+     "link": null,
+     "link_why": null,
+     "branch": false,
+     "vertical": null,
+     "after": null,
+     "slice": null,
+     "short": "Schools Act 2026",
+     "mark": "Law",
+     "onset": "2026-04-29",
+     "source": "Royal Assent 29 Apr 2026 (Bill → Act resolver, Parliament Bills API)"
+    }
+   ]
+  },
+  {
    "slug": "america-and-alcohol",
    "title": "Prohibition and a century of American drinking (1920)",
    "date": "1920-01-17",
@@ -5678,6 +6021,289 @@
      "mark": null,
      "onset": "2023-07-01",
      "source": "Gallup: the under-35 decline is already visible in the 2021–23 pooled surveys"
+    },
+    {
+     "n": 23,
+     "claim": "Per-capita drinking turns upward after repeal",
+     "test": {
+      "type": "file",
+      "key": "niaaa_percapita_ethanol",
+      "h": 3,
+      "direction": "up",
+      "transform": "log",
+      "source": "NIAAA apparent per-capita ethanol consumption"
+     },
+     "ref": "1933-12-05",
+     "verdict": "no data",
+     "note": "Tested as a series: the three years after repeal against three-year changes after every other year on record.",
+     "link": null,
+     "link_why": null,
+     "branch": false,
+     "vertical": null,
+     "after": 5,
+     "slice": "Health",
+     "short": "Drinking turns up",
+     "mark": null,
+     "result": "no data for series niaaa_percapita_ethanol"
+    },
+    {
+     "n": 24,
+     "claim": "Legal cannabis states: did youth drinking fall faster than elsewhere?",
+     "test": {
+      "type": "dose",
+      "key": "cannabis_youth_alcohol",
+      "date": "2018-07-01"
+     },
+     "ref": "2014-01-01",
+     "verdict": "no data",
+     "note": "Difference-in-differences across states with and without retail cannabis (CDC YRBS), permutation inference, pre-trend check: the first test here that is more than timing. Protocol: ripples/docs/dose_response_v1.md.",
+     "link": null,
+     "link_why": null,
+     "branch": false,
+     "vertical": null,
+     "after": 17,
+     "slice": "Catalysts?",
+     "short": "Cannabis dose-response",
+     "mark": null,
+     "result": "no dose-response result for cannabis_youth_alcohol"
+    },
+    {
+     "n": 25,
+     "claim": "Attention to alcohol and cancer surges after the Surgeon General's advisory",
+     "test": {
+      "type": "wiki",
+      "articles": [
+       "Alcohol and cancer"
+      ],
+      "lag": 45
+     },
+     "ref": "2025-01-03",
+     "verdict": "measured",
+     "note": null,
+     "link": null,
+     "link_why": null,
+     "branch": false,
+     "vertical": null,
+     "after": 21,
+     "slice": "Catalysts?",
+     "short": "Cancer-warning attention",
+     "mark": null,
+     "found": {
+      "Alcohol and cancer": true
+     },
+     "onset": "2025-01-03",
+     "ratio": 4.2,
+     "baseline": 76.0,
+     "p": 0.035,
+     "weekly": [
+      [
+       "2024-10-11",
+       559
+      ],
+      [
+       "2024-10-18",
+       547
+      ],
+      [
+       "2024-10-25",
+       489
+      ],
+      [
+       "2024-11-01",
+       451
+      ],
+      [
+       "2024-11-08",
+       472
+      ],
+      [
+       "2024-11-15",
+       529
+      ],
+      [
+       "2024-11-22",
+       506
+      ],
+      [
+       "2024-11-29",
+       478
+      ],
+      [
+       "2024-12-06",
+       487
+      ],
+      [
+       "2024-12-13",
+       487
+      ],
+      [
+       "2024-12-20",
+       571
+      ],
+      [
+       "2024-12-27",
+       675
+      ],
+      [
+       "2025-01-03",
+       2238
+      ],
+      [
+       "2025-01-10",
+       867
+      ],
+      [
+       "2025-01-17",
+       692
+      ],
+      [
+       "2025-01-24",
+       543
+      ],
+      [
+       "2025-01-31",
+       539
+      ],
+      [
+       "2025-02-07",
+       494
+      ],
+      [
+       "2025-02-14",
+       556
+      ],
+      [
+       "2025-02-21",
+       449
+      ],
+      [
+       "2025-02-28",
+       399
+      ],
+      [
+       "2025-03-07",
+       650
+      ]
+     ]
+    },
+    {
+     "n": 26,
+     "claim": "Dry January draws a January surge every year",
+     "test": {
+      "type": "wiki",
+      "articles": [
+       "Dry January"
+      ],
+      "lag": 40
+     },
+     "ref": "2016-01-01",
+     "verdict": "timed (short history)",
+     "note": "A seasonal rise: placebo windows that fall in other Januaries make the test honest about that.",
+     "link": null,
+     "link_why": null,
+     "branch": false,
+     "vertical": null,
+     "after": 15,
+     "slice": "Catalysts?",
+     "short": "Dry January attention",
+     "mark": null,
+     "found": {
+      "Dry January": true
+     },
+     "onset": "2015-12-31",
+     "ratio": 94.8,
+     "baseline": 9.0,
+     "p": null,
+     "weekly": [
+      [
+       "2015-10-09",
+       65
+      ],
+      [
+       "2015-10-16",
+       66
+      ],
+      [
+       "2015-10-23",
+       74
+      ],
+      [
+       "2015-10-30",
+       111
+      ],
+      [
+       "2015-11-06",
+       104
+      ],
+      [
+       "2015-11-13",
+       74
+      ],
+      [
+       "2015-11-20",
+       104
+      ],
+      [
+       "2015-11-27",
+       144
+      ],
+      [
+       "2015-12-04",
+       195
+      ],
+      [
+       "2015-12-11",
+       222
+      ],
+      [
+       "2015-12-18",
+       506
+      ],
+      [
+       "2015-12-25",
+       1336
+      ],
+      [
+       "2016-01-01",
+       5972
+      ],
+      [
+       "2016-01-08",
+       2838
+      ],
+      [
+       "2016-01-15",
+       1144
+      ],
+      [
+       "2016-01-22",
+       803
+      ],
+      [
+       "2016-01-29",
+       833
+      ],
+      [
+       "2016-02-05",
+       241
+      ],
+      [
+       "2016-02-12",
+       154
+      ],
+      [
+       "2016-02-19",
+       125
+      ],
+      [
+       "2016-02-26",
+       133
+      ],
+      [
+       "2016-03-04",
+       110
+      ]
+     ]
     }
    ]
   },
