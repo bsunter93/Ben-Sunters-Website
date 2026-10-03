@@ -7263,14 +7263,14 @@
      "test": {
       "type": "file",
       "key": "niaaa_percapita_ethanol",
-      "h": 5,
+      "h": 2,
       "direction": "down",
       "transform": "log",
       "source": "NIAAA apparent per-capita ethanol consumption, gallons per person 14 and older, 1970–2022"
      },
-     "ref": "1981-07-01",
-     "verdict": "no data",
-     "note": "The NIAAA series begins in 1970, so the climb after repeal cannot be tested in it; the fall from the 1981 peak (2.76 gallons) to the 1990s (2.15) can.",
+     "ref": "1982-07-01",
+     "verdict": "no movement",
+     "note": "The NIAAA series begins in 1970, so the climb after repeal cannot be tested in it; the fall from the 1981 peak (2.76 gallons) to the 1990s (2.15) can, as a two-year change from 1982 against every other two-year change in the series.",
      "link": null,
      "link_why": null,
      "branch": false,
@@ -7279,7 +7279,93 @@
      "slice": "Health",
      "short": "Drinking falls after 1981",
      "mark": null,
-     "result": "not enough data around the reference date",
+     "effect": -0.0179,
+     "p": 0.238,
+     "n_placebo": 41,
+     "period_days": 365,
+     "onset": "1983-01-01",
+     "points": [
+      [
+       "1970-01-01",
+       2.523
+      ],
+      [
+       "1971-01-01",
+       2.58
+      ],
+      [
+       "1972-01-01",
+       2.544
+      ],
+      [
+       "1973-01-01",
+       2.6
+      ],
+      [
+       "1974-01-01",
+       2.646
+      ],
+      [
+       "1975-01-01",
+       2.667
+      ],
+      [
+       "1976-01-01",
+       2.658
+      ],
+      [
+       "1977-01-01",
+       2.605
+      ],
+      [
+       "1978-01-01",
+       2.662
+      ],
+      [
+       "1979-01-01",
+       2.698
+      ],
+      [
+       "1980-01-01",
+       2.747
+      ],
+      [
+       "1981-01-01",
+       2.763
+      ],
+      [
+       "1982-01-01",
+       2.72
+      ],
+      [
+       "1983-01-01",
+       2.691
+      ],
+      [
+       "1984-01-01",
+       2.655
+      ],
+      [
+       "1985-01-01",
+       2.623
+      ],
+      [
+       "1986-01-01",
+       2.585
+      ],
+      [
+       "1987-01-01",
+       2.546
+      ],
+      [
+       "1988-01-01",
+       2.488
+      ],
+      [
+       "1989-01-01",
+       2.432
+      ]
+     ],
      "series": "niaaa_percapita_ethanol"
     },
     {
