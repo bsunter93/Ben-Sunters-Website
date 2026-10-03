@@ -1,4 +1,8 @@
-"""Mark-text search v1 (ripples/docs/mark_text_v1.md): cultural works named inside legal and parliamentary text.
+"""Mark-text search v1.1 (ripples/docs/mark_text_v1_1.md): cultural works named inside legal and parliamentary text.
+
+v1.1 (Oct 3, after v1's 26-minute run): named-work markers resolve as the title themselves; Hansard reads the newest and
+the oldest 100 contributions per phrase; legislation.gov.uk notes are fetched from real document paths (UK enactments
+only) and dated by the path's year.
 
 The mark-first search reads Wikipedia's articles about laws. This one reads the records themselves, keyless:
   FR   the Federal Register (rules, proposed rules, notices): full-text search for marker phrases, context from excerpts
@@ -25,7 +29,8 @@ sys.path.insert(0, os.path.dirname(__file__))
 import mark_first as mf  # noqa: E402  (shared helpers: get, sparql, budget, Stop, WP, strip_markup)
 
 ROOT = os.path.join(os.path.dirname(__file__), "..")
-OUT = os.environ.get("OUT_JSON") or os.path.join(ROOT, "docs", "results", "mark_text_v1.json")
+OUT = os.environ.get("OUT_JSON") or os.path.join(ROOT, "docs", "results", "mark_text_v1_1.json")
+PROTOCOL = "ripples/docs/mark_text_v1_1.md"
 KEY = os.environ.get("DATA_GOV_KEY", "").strip()
 FR = "https://www.federalregister.gov/api/v1/documents.json"
 UKL = "https://www.legislation.gov.uk"
@@ -39,6 +44,11 @@ MARKERS = ["Netflix", "HBO", "ITV drama", "BBC drama", "television drama", "tele
            "Panorama programme", "Dispatches programme", "Channel 4 documentary", "reality television", "Super Size Me", "Blackfish",
            "Tiger King", "Mr Bates", "The Jungle", "Silent Spring", "Unsafe at Any Speed", "WarGames", "Cathy Come Home",
            "Thirteen Reasons Why", "13 Reasons Why", "Squid Game", "Stranger Things", "Baby Reindeer", "Adolescence"]
+# markers that are themselves a work: the marker resolves as the title (v1 missed Mr Bates for want of a quote mark)
+NAMED = {"Super Size Me": "Super Size Me", "Blackfish": "Blackfish (film)", "Tiger King": "Tiger King", "Mr Bates": "Mr Bates vs The Post Office",
+         "The Jungle": "The Jungle", "Silent Spring": "Silent Spring", "Unsafe at Any Speed": "Unsafe at Any Speed", "WarGames": "WarGames",
+         "Cathy Come Home": "Cathy Come Home", "Thirteen Reasons Why": "13 Reasons Why", "13 Reasons Why": "13 Reasons Why",
+         "Squid Game": "Squid Game", "Stranger Things": "Stranger Things", "Baby Reindeer": "Baby Reindeer", "Adolescence": "Adolescence (TV series)"}
 # the title a marker introduces
 TITLE_RX = [
     re.compile(r"(?:series|drama|documentary|docuseries|film|movie|novel|book|miniseries|podcast|game|programme|program|show)\s+"
@@ -124,7 +134,12 @@ def record(source, mark, mark_date, url, text, marker, tier):
     """One document hit -> zero or more (work, mark) pairs."""
     pairs = state.setdefault("pairs", [])
     ctx = window(text, marker)
-    for t in titles_in(ctx):
+    if marker.lower() not in ctx.lower():
+        return
+    found = titles_in(ctx)
+    if marker in NAMED and not any(NAMED[marker].split(" (")[0].lower() in t.lower() for t in found):
+        found = [NAMED[marker]] + found
+    for t in found:
         if t.lower() in mark.lower():
             continue
         w = resolve(t)
@@ -189,16 +204,19 @@ def uk_legislation():
         print("UKL", term, len(hits), flush=True)
         state.setdefault("ukl_hits", {})[term] = hits[:50]
         # the explanatory notes carry the "why"; fetch the notes text for up to 8 items per term
-        for h in hits[:8]:
+        for h in hits[:12]:
             if not h["url"]:
                 continue
-            base = re.sub(r"/data\.feed.*$|/contents.*$|\?.*$", "", h["url"])
-            notes = mf.get(base + "/notes/data.xht") or mf.get(base + "/data.xht")
+            m = re.search(r"legislation\.gov\.uk/(?:id/)?((?:ukpga|uksi|asp|ssi|anaw|wsi|nia|nisr|ukla|ukcm)/(\d{4})/\d+)", h["url"])
+            if not m:
+                continue  # EU retained law and the like: not a UK enactment
+            base, year = f"{UKL}/{m.group(1)}", m.group(2)
+            notes = mf.get(base + "/notes/data.xht") or mf.get(base + "/notes/contents/data.xht") or mf.get(base + "/data.xht")
             if not notes:
                 continue
             text = mf.strip_markup(html.unescape(re.sub(r"<[^>]+>", " ", notes)))
             if term.lower() in text.lower():
-                record("UKL", h["title"], h["date"], base, text, term, "law")
+                record("UKL", h["title"], f"{year}-07-01", base, text, term, "law")
         done.append(term); save()
 
 
@@ -207,16 +225,22 @@ def hansard():
     for term in MARKERS:
         if term in done:
             continue
-        q = urllib.parse.urlencode({"queryParameters.searchTerm": f'"{term}"', "queryParameters.take": 100, "queryParameters.skip": 0,
-                                    "queryParameters.orderBy": "SittingDateDesc"})
-        body = mf.get(f"{HAN}/search/contributions/Spoken.json?{q}")
-        rows = []
-        try:
-            d = json.loads(body)
-            rows = d.get("Results") or d.get("results") or []
-        except (ValueError, TypeError):
-            print("HAN no json for", term, (body or "")[:120].replace("\n", " "), flush=True)
-        print("HAN", term, len(rows), flush=True)
+        rows, total = [], None
+        for order in ("SittingDateDesc", "SittingDateAsc"):  # the newest 100 and the oldest 100: v1 saw only the newest
+            q = urllib.parse.urlencode({"queryParameters.searchTerm": f'"{term}"', "queryParameters.take": 100, "queryParameters.skip": 0,
+                                        "queryParameters.orderBy": order})
+            body = mf.get(f"{HAN}/search/contributions/Spoken.json?{q}")
+            try:
+                d = json.loads(body)
+                total = d.get("TotalResultCount", total)
+                rows += d.get("Results") or d.get("results") or []
+            except (ValueError, TypeError):
+                print("HAN no json for", term, (body or "")[:120].replace("\n", " "), flush=True)
+            if total is not None and total <= 100:
+                break
+        seen = set(); rows = [r for r in rows if not (r.get("ContributionExtId") in seen or seen.add(r.get("ContributionExtId")))]
+        state.setdefault("han_counts", {})[term] = total
+        print("HAN", term, total, "total;", len(rows), "read", flush=True)
         for r in rows:
             text = mf.strip_markup(html.unescape(re.sub(r"<[^>]+>", " ", r.get("ContributionText") or r.get("ContributionTextFull") or "")))
             section = r.get("DebateSection") or r.get("DebateSectionTitle") or ""
@@ -273,8 +297,7 @@ def probe():
 
 def main() -> int:
     global state
-    state = json.load(open(OUT)) if os.path.exists(OUT) else {"protocol": "ripples/docs/mark_text_v1.md", "started": dt.date.today().isoformat(),
-                                                                "markers": MARKERS}
+    state = json.load(open(OUT)) if os.path.exists(OUT) else {"protocol": PROTOCOL, "started": dt.date.today().isoformat(), "markers": MARKERS}
     state.pop("stopped", None)
     try:
         if "probed" not in state:
