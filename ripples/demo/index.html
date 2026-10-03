@@ -562,7 +562,7 @@ function fromMap(slug) {
       short:lv === "plausible" ? "Happened; the link is unproven" : lv === "measured" ? "Passed a test against fake dates" : lv === "reported" ? (s.measure || "") : "Rose after the step before",
       series:s.series && s.series.weekly ? s.series : null,
       card:card({when:`${fmt(D(s.date))}<span>${sinceLabel(s.days)}</span>`, badge:LVL[lv], badgeCls:`l-${lv}`, title:s.title,
-        sure:howSure(st.test.type === "dose" && st.p != null ? "measured" : lv, (lv === "measured" || (st.test.type === "dose" && st.p != null)) ? {kind:"wiki", what:(s.measure || "").replace(/.*“([^”]+)”.*/, "$1"), when:fmt(D(s.date)), ratio:"several", p:0.01} : lv === "reported" ? {what:s.measure} : {when:fmt(D(s.date)), why:s.note}),
+        sure:howSure(lv, lv === "measured" ? {kind:"wiki", what:(s.measure || "").replace(/.*“([^”]+)”.*/, "$1"), when:fmt(D(s.date)), ratio:"several", p:0.01} : lv === "reported" ? {what:s.measure} : {when:fmt(D(s.date)), why:s.note}),
         spark:s.series ? sparkHTML(s.series.weekly, data.release) : "", facts,
         short:lv === "plausible" ? "Happened; the link is unproven" : lv === "measured" ? "Passed a test against fake dates" : lv === "reported" ? esc(s.measure || "") : "Rose after the step before",
         details:`${s.note ? `<p>${esc(s.note)}</p>` : ""}${s.test ? `<p>${esc(s.test)}</p>` : ""}${src}`})});
@@ -692,7 +692,7 @@ function fromChain(slug) {
     const shortLine = lv === "reported" && srcLine ? esc(srcLine) : short;
     items.push({id, parent, slice:st.slice || (st.branch ? `b${st.n}` : "main"), d, range, undated, label:st.short || shortLabel(st.claim), lv, lvText, sub, mark:lv === "busted" ? null : st.mark, short:shortLine, title:st.claim,
       card:card({when, badge:lvText, badgeCls:`l-${lv}`, title:st.claim, cls:lv === "busted" ? "busted" : "", spark:weekly ? sparkHTML(weekly, st.ref) : at && at.weekly && at.ratio ? sparkHTML(at.weekly, st.onset) : "", facts, short:shortLine,
-        sure:howSure(lv, lv === "measured" ? {kind:st.test.type === "wiki" ? "wiki" : st.test.type === "ssa" ? "ssa" : st.test.type === "dose" ? "dose" : "series", what:st.test.type === "wiki" ? (st.test.articles || [])[0] : SRC(st) || st.series,
+        sure:howSure(st.test.type === "dose" && st.p != null ? "measured" : lv, (lv === "measured" || (st.test.type === "dose" && st.p != null)) ? {kind:st.test.type === "wiki" ? "wiki" : st.test.type === "ssa" ? "ssa" : st.test.type === "dose" ? "dose" : "series", what:st.test.type === "wiki" ? (st.test.articles || [])[0] : SRC(st) || st.series,
             when:st.onset ? fmt(D(st.onset)) : "", ratio:st.ratio, p:st.p, n:st.n_placebo, pre:st.pretrend_p}
           : lv === "timed" ? {when:st.onset ? fmt(D(st.onset)) : "", archive:!!st.archive_first, newArticle:!!st.new_article}
           : lv === "reported" ? {what:srcLine, why:st.link_why} : {why:why}),
