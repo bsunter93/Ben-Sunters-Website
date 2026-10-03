@@ -27,6 +27,7 @@ jobs:
       - name: Resolve bills to Acts
         env:
           BUDGET_MIN: "70"
+          DATA_GOV_KEY: ${{ secrets.DATA_GOV_KEY }}
         run: python ripples/lab/bill_act.py
       - name: Commit results
         if: always()
