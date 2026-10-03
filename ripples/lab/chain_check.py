@@ -351,6 +351,8 @@ def verdict(st, r, ref):
     if k == "none":
         return st["test"].get("verdict", "not testable")
     if k == "record":
+        if st.get("must_precede"):  # a claimed cause of the step before it: it has to come first, or it is busted by order
+            return "reported" if D(r["onset"]) <= ref else "reported, after what it is said to have started"
         return "reported" if D(r["onset"]) >= ref else "reported, before the step it is said to follow"
     if r.get("result"):
         return "no movement" if "rise" in r["result"] else "no data"
