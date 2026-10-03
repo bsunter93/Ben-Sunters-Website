@@ -31,3 +31,26 @@ new to the project. Pass → blind owner round (≤15 names) → maps. Fail → 
 route (`mark_text_v1.md`), which runs in parallel either way.
 
 **Output.** `ripples/docs/results/mark_first_v1_1.json` (fresh state; v1's file is kept as the record of v1).
+
+## Addendum, before the second v1.1 attempt (Oct 3, 07:50 UTC)
+
+The first v1.1 attempt (run 37101630919, 93 minutes) produced a thinner result than v1 and its file was lost to a
+workflow bug (the commit step added v1's filename). Its log shows why it was thin: Wikidata's SPARQL endpoint answered
+500/504 to a third of the queries. Stage 0 returned nothing; the class-closure query failed, leaving 8 classes and
+4,289 laws (v1 had 13,374); 20 of 57 works year-chunks failed, among them the 1900s (*The Jungle*) and 2020 (*Tiger
+King*). Recall 1 of 5 again, for reasons of reachability rather than method. Two recall titles also redirect: the
+Offences Act to "British Post Office scandal", the Big Cat Act to "Lacey Act of 1900", which pulled "political scandal"
+and "miscarriage of justice" into the mark classes.
+
+**Reliability and scoping fixes, nothing else:**
+1. Every SPARQL query is tried up to three times (10 s, then 30 s between attempts).
+2. Works are queried per year chunk in two groups (screen and other works; written works on their own); a failed
+   multi-year chunk is split into single years; failures are listed in the file.
+3. The mark classes can never fall below v1's 69 (read from `mark_first_v1.json`); the closure query adds to them.
+4. Recall-mark classes are added only when law-like (act, law, statute, legislation, bill, regulation, order, decree,
+   ordinance, directive, code, treaty, amendment).
+5. Recall matching accepts the article that holds the law: "Lacey Act of 1900" for the Big Cat Public Safety Act, and
+   the Compensation Act 2024 beside the Offences Act (the Offences Act has no article of its own, so this pair is
+   structurally out of reach of a Wikipedia route; the denominator stays 5).
+
+The success rule is unchanged.
