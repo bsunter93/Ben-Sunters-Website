@@ -209,20 +209,42 @@ def wiki_test(articles, ref, lag=150):
 
 
 STOPWORDS = set("the a an of in on at to for and or by with from is are was were its it as into over under after before their they them"
-                " about first new more most than that this these those record records passes pass takes take goes go".split())
+                " about first new more most than that this these those record records passes pass takes take goes go law laws act acts bill bills"
+                " debate debates cited cites claim claims announced announces hits hit million game games rise rises surge surges effect effects"
+                " takes effect becomes become release releases released airs opens open".split())
 PAGEVIEWS_FROM = dt.date(2015, 8, 1)
 
 
+def _words(t):
+    return {w for w in re.findall(r"[a-z0-9]{3,}", t.lower()) if w not in STOPWORDS}
+
+
 def wiki_search(q):
-    """The first Wikipedia search result that shares a content word with the query, or None."""
-    words = {w for w in re.findall(r"[a-z0-9]{4,}", q.lower()) if w not in STOPWORDS}
+    """The Wikipedia article a step names, or None. Search the step's full claim; accept a result only when every content
+    word of its title is in the claim, or at least two of its words are proper nouns in the claim. (The first run matched
+    "Stewart testifies" to Rory Stewart, "Cited in the Bill debate" to the Bill Nye–Ken Ham debate and "STURDY Act" to
+    Sturdy beggar; a title that merely shares one word with the step is not the step's subject.)"""
+    words = _words(q)
+    proper = {w.lower() for w in re.findall(r"\b[A-Z][A-Za-z0-9'’-]{2,}\b", q)} - STOPWORDS
     if not words:
         return None
-    d = et.get(et.WP + "?" + urllib.parse.urlencode({"action": "query", "list": "search", "srsearch": q, "srlimit": 5, "srnamespace": 0, "format": "json"}))
+    d = et.get(et.WP + "?" + urllib.parse.urlencode({"action": "query", "list": "search", "srsearch": q, "srlimit": 6, "srnamespace": 0, "format": "json"}))
+    best, best_score = None, 0
     for r in ((d or {}).get("query") or {}).get("search", []):
-        if set(re.findall(r"[a-z0-9]{4,}", r["title"].lower())) & words:
-            return r["title"]
-    return None
+        title = r["title"]
+        if re.search(r"\(disambiguation\)|^List of ", title):
+            continue
+        tw = _words(title)
+        if not tw:
+            continue
+        all_in = tw <= words
+        pn = len(tw & proper)
+        if not (all_in or pn >= 2):
+            continue
+        score = (3 if all_in else 0) + pn + (1 if len(tw) >= 2 else 0)
+        if score > best_score:
+            best, best_score = title, score
+    return best
 
 
 def attention_check(st, r):
@@ -237,7 +259,7 @@ def attention_check(st, r):
         return None
     arts = st.get("wiki") or []
     if not arts:
-        a = wiki_search(st.get("short") or st["claim"])
+        a = wiki_search(st["claim"]) or (wiki_search(st["short"]) if st.get("short") else None)
         if a:
             arts = [a]
     if not arts:
