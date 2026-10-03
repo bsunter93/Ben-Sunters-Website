@@ -9,6 +9,7 @@ Writes ripples/docs/results/series_v1.json. Honest UA, 1 s between requests, sto
 """
 from __future__ import annotations
 
+import collections
 import csv
 import datetime as dt
 import io
@@ -69,19 +70,18 @@ def yrbs_alcohol():
     found, seen = [], set()
     for domain, sid in cands:
         if sid in seen:
-            continue  # the same table is mirrored on both domains
-        seen.add(sid)
+            continue  # the same table is mirrored on both domains; a mirror is tried only when the first read failed
         cols, sample = columns_of(domain, sid)
         if not cols:
             print("no columns from", domain, sid, flush=True)
             continue
-        if not {"year", "locationabbr"} <= set(cols):
-            print("not a state-year table:", sid, cols[:8], flush=True)
-            continue
-        vcol = next((c for c in ("greater_risk_data_value", "data_value") if c in cols), None)
-        qcol = next((c for c in ("greater_risk_question", "shortquestiontext", "question", "questioncode") if c in cols), None)
-        if not (vcol and qcol):
-            print("no value/question column in", sid, flush=True)
+        seen.add(sid)
+        ycol = next((c for c in ("year", "surveyyear", "yearstart") if c in cols), None)
+        lcol = next((c for c in ("locationabbr", "area_abbr", "statecode", "state") if c in cols), None)
+        vcol = next((c for c in ("greater_risk_data_value", "data_value", "percent", "prevalence", "value") if c in cols), None)
+        qcol = next((c for c in ("greater_risk_question", "shortquestiontext", "question", "questioncode", "topic") if c in cols), None)
+        if not (ycol and lcol and vcol and qcol):
+            print("schema not usable:", sid, cols[:40], flush=True)
             continue
         where = [f"upper({qcol}) like '%ALCOHOL%'"]
         for c in ("sex", "race", "grade", "sexualidentity"):  # YRBS "Total" strata
@@ -93,7 +93,8 @@ def yrbs_alcohol():
             where.append("break_out='Overall'")
         if "response" in cols:
             where.append("response='Yes'")
-        params = {"$where": " AND ".join(where), "$select": f"locationabbr,year,{qcol},{vcol}", "$limit": 50000}
+        strata = [c for c in ("demographics_type", "demographics_value", "stratificationcategory1", "stratification1") if c in cols]
+        params = {"$where": " AND ".join(where), "$select": ",".join([lcol, ycol, qcol, vcol] + strata), "$limit": 50000}
         rows = jget(f"https://{domain}/resource/{sid}.json?{urllib.parse.urlencode(params)}")
         if not rows:
             print("no rows from", sid, flush=True)
@@ -106,11 +107,15 @@ def yrbs_alcohol():
         if not pick:
             print("no current-drinking question in", sid, flush=True)
             continue
+        rows = [r for r in rows if r.get(qcol) == pick and r.get(vcol)]
+        if strata:  # keep the whole-population rows: the stratum value that reads as a total, else the most common one
+            vals = collections.Counter(tuple(r.get(c) for c in strata) for r in rows)
+            total = next((k for k in vals if any(re.fullmatch(r"(total|overall|all( students)?)", str(x) or "", re.I) for x in k)), vals.most_common(1)[0][0])
+            print("strata:", vals.most_common(6), "-> using", total, flush=True)
+            rows = [r for r in rows if tuple(r.get(c) for c in strata) == total]
         out = {}
         for r in rows:
-            if r.get(qcol) != pick or not r.get(vcol):
-                continue
-            st, y = r["locationabbr"], int(str(r["year"])[:4])
+            st, y = str(r[lcol]), int(str(r[ycol])[:4])
             try:
                 v = float(r[vcol])
             except ValueError:
@@ -193,8 +198,8 @@ def dose_response(data):
 # ---------- NIAAA ----------
 def niaaa():
     """US per-capita ethanol (gallons, population 14+, all beverages) by year from the NIAAA surveillance text file.
-    Rows are whitespace fields: state code (99 = United States), year, beverage type (4 = all), gallons of beverage,
-    gallons of ethanol, population 14+, per-capita ethanol 14+, decile, population 21+, per-capita 21+, decile."""
+    Rows are whitespace fields: year, state code (99 = United States), beverage type (4 = all), gallons of beverage,
+    gallons of ethanol, population 14+, per-capita ethanol 14+ in ten-thousandths of a gallon, decile, population 21+, ..."""
     for u in NIAAA_URLS:
         t = mf.get(u)
         if not t or len(t) < 500:
@@ -203,9 +208,10 @@ def niaaa():
         lines = [ln for ln in t.splitlines() if ln.strip()]
         for line in lines:
             f = re.split(r"[,\t]+|\s+", line.strip())
-            if len(f) >= 7 and f[0].lstrip("0") == "99" and f[2] == "4" and re.fullmatch(r"\d{4}", f[1]):
+            # observed Oct 3: "2022 99 4 <gallons> <ethanol> <pop 14+> <per capita 14+ x 10000> <decile> <pop 21+> <per capita 21+ x 10000> ..."
+            if len(f) >= 7 and re.fullmatch(r"\d{4}", f[0]) and f[1].lstrip("0") == "99" and f[2] == "4":
                 try:
-                    pts.append([f"{f[1]}-01-01", float(f[6])])
+                    pts.append([f"{f[0]}-01-01", round(float(f[6]) / 10000, 4)])
                     sample = sample or line.strip()
                 except ValueError:
                     pass
