@@ -130,9 +130,10 @@ def main() -> int:
         except ValueError:
             pass
     bills = {}
+    # one resolution per bill name and session year: "Criminal Justice Bill" is a different bill in 1982 and in 2024
     for p in pairs:
         if p.get("source") == "HAN" and p.get("tier") in ("bill debate", "bill stage") and re.search(r"\bBill\b", p["mark"]):
-            key = clean_bill(p["mark"])
+            key = f"{clean_bill(p['mark'])} ({(p.get('mark_date') or '')[:4]})"
             if key not in bills or (p.get("mark_date") or "") < (bills[key] or ""):
                 bills[key] = p.get("mark_date")
     print(len(bills), "bills to resolve", flush=True)
@@ -141,7 +142,7 @@ def main() -> int:
         for key in sorted(bills, key=lambda k: bills[k] or ""):
             if key in state["bills"]:
                 continue
-            r = resolve(key, bills[key])
+            r = resolve(re.sub(r" \(\d{4}\)$", "", key), bills[key])
             state["bills"][key] = r
             print(f"  {key} ({bills[key]}) -> {r['act']} {r['royal_assent']} [{r['method']}] {r['note'] or ''}", flush=True)
             json.dump(state, open(OUT, "w"), ensure_ascii=False, indent=0)
@@ -152,7 +153,7 @@ def main() -> int:
     for p in pairs:
         if p.get("source") != "HAN" or p.get("tier") not in ("bill debate", "bill stage"):
             continue
-        r = state["bills"].get(clean_bill(p["mark"]))
+        r = state["bills"].get(f"{clean_bill(p['mark'])} ({(p.get('mark_date') or '')[:4]})")
         if not r or not r.get("act"):
             continue
         ra = r.get("royal_assent")
