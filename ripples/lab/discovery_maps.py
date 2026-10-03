@@ -114,7 +114,8 @@ def main() -> int:
                 continue
             mech, head, nxt, outcome = k
             keep.append({"title": c["title"], "label": label(c["title"]), "desc": c["desc"], "slice": mech, "headline": head, "next": nxt,
-                         "outcome": {**dict(zip(("date", "claim", "source"), outcome)), "short": OUTCOME_SHORT.get(c["title"])} if outcome else None, "onset": c["onset"],
+                         "outcome": {**dict(zip(("date", "claim", "source"), outcome)), "short": OUTCOME_SHORT.get(c["title"]),
+                                     "mark": {"Greater Wynnewood Exotic Animal Park": "Regulation"}.get(c["title"])} if outcome else None, "onset": c["onset"],
                          "lag": c["lag"], "ratio": c["ratio"], "p": c["p"], "baseline": c["baseline"], "weekly": c["weekly"]})
         out["events"][slug] = {"title": TITLES.get(slug, slug), "date": e["date"], "event_onset": e.get("event_onset"),
                                "articles": e.get("articles"), "links": keep, "dropped": dropped}

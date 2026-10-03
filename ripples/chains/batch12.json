@@ -1,0 +1,71 @@
+[
+ {
+  "slug": "chernobyl-zone",
+  "title": "Chernobyl and the exclusion zone (2019)",
+  "date": "2019-05-06",
+  "batch": 12,
+  "vertical": "Tourism policy",
+  "steps": [
+   {
+    "n": 1,
+    "claim": "HBO's Chernobyl premieres",
+    "test": {
+     "type": "record",
+     "date": "2019-05-06",
+     "source": "HBO premiere, 6 May 2019"
+    }
+   },
+   {
+    "n": 2,
+    "claim": "Interest in the real disaster surges",
+    "short": "Disaster interest",
+    "test": {
+     "type": "wiki",
+     "articles": [
+      "Chernobyl disaster"
+     ],
+     "lag": 60
+    }
+   },
+   {
+    "n": 3,
+    "claim": "Tour operators report bookings up 30–40%",
+    "short": "Bookings up",
+    "test": {
+     "type": "record",
+     "date": "2019-06-04",
+     "source": "tour operators quoted by Euronews and Smithsonian, June 2019"
+    },
+    "link": "reported",
+    "link_why": "operators attributed the jump to the series"
+   },
+   {
+    "n": 4,
+    "claim": "Ukraine makes the zone an official tourist attraction",
+    "short": "Official tourist site",
+    "test": {
+     "type": "record",
+     "date": "2019-07-10",
+     "source": "President Zelensky's decree, 10 Jul 2019"
+    },
+    "mark": "Policy",
+    "note": "Zelensky announced new walking routes, water routes and checkpoints; the decree followed the post-series surge.",
+    "link": "reported",
+    "link_why": "coverage of the decree tied it to the visitor surge after the series"
+   },
+   {
+    "n": 5,
+    "claim": "Visitors to the zone reach a record year",
+    "short": "Record visitors",
+    "test": {
+     "type": "record",
+     "date": "2020-01-15",
+     "source": "State Agency on Exclusion Zone Management figures for 2019, reported January 2020"
+    },
+    "note": "Tourism stopped with the pandemic and then the 2022 invasion.",
+    "link": "reported",
+    "link_why": "the agency's 2019 visitor figures"
+   }
+  ]
+ }
+]

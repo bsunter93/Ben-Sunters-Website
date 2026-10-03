@@ -1,12 +1,14 @@
-# Ripple Map: context brief (updated 2026-10-02)
+# Ripple Map: context brief (updated 2026-10-03)
 
 Standalone context for anyone (person or new chat) picking up Ripple Map. It covers the vision, the current status,
 what we learned, pitfalls, open gaps and next steps. The operational runbook with exact commands is
 `ripples/HANDOFF.md`, and the experiments plan is `ripples/docs/experiments.md`.
 
-- Live site: https://bensunter.com/ripples/discover/ (every test and its evidence),
-  https://bensunter.com/ripples/discover/queens-gambit/ (the first full ripple map) and
-  https://bensunter.com/ripples/pond/ (the original explorer, parked)
+- Live site:
+  - https://bensunter.com/ripples/demo/: the product prototype.
+  - https://bensunter.com/ripples/discover/: every test and its evidence.
+  - https://bensunter.com/ripples/discover/maps/: 11 generated ripple maps.
+  - https://bensunter.com/ripples/pond/: the original explorer, parked.
 - Repo: `bsunter93/Ben-Sunters-Website`
 - Database: Supabase project `kffkasnzqcddpystszch`, schema `ripples`. The compute tier went from nano to micro on
   2026-09-27.
@@ -14,6 +16,9 @@ what we learned, pitfalls, open gaps and next steps. The operational runbook wit
 ---
 
 ## 1. Vision (owner, verbatim core)
+
+> "What did that thing everyone remembers change?" A ripple's payoff is a lasting mark: "something that leaves a mark,
+> has a lasting impact." (owner, Oct 3)
 
 > "The entire point of the app is uncovering hidden impacts from upstream events — regardless of where that impact
 > shows up. Attribution and traceability with statistical rigor are key."
@@ -113,27 +118,51 @@ The pond language stays. What changes is what goes in it and how the evidence re
   3. The first trend pages built only for trends with a result.
   4. The share card built around the ghost stone and the surprising landing.
 
-## 2. Current status (one screen, 2026-10-02)
+## 1c. Aspirations (what "great" looks like; updated 2026-10-03)
 
-**In one line:** the engine verifies obvious ripples well, as dated, time-ordered chains, and has published its first
-full map (The Queen's Gambit). It has not yet found a surprising ripple. The next step is automating the map builder.
+1. **Surprising, multi-hop, cross-industry ripples** that end in a **lasting mark** (a law, an institution,
+   infrastructure, jobs, public health, a durable behavior change). Not growth for its own sake, and not one-hop
+   curiosity.
+2. **Found by the engine, not hand-assembled.** Repeatable discovery of non-obvious links, judged by how often a link is
+   both genuinely surprising and independently defensible (D-24, D-26).
+3. **Honest about certainty.** Every link rated (measured, timed, reported, plausible, busted); invented steps never
+   shown; nulls and busted claims shown as findings ("resilience is a finding", D-18).
+4. **Entertainment-grade experience.** A pond that feels like water, ripples that ride out from the stone, a story you
+   can follow by tapping. Works for a 12-year-old; the statistics sit one click deeper (D-21). Apple/Robinhood/Uber
+   design bar (D-29).
+5. **Live mode.** "Watch the ripples arrive": maps that fill in as a new event unfolds (the Trends archive has been
+   collecting since Sep 29).
+6. **Any event.** Type an event and get its map.
+7. **Shareable.** A clip and a post for LinkedIn now; share cards (the ghost-stone comparison, the surprising landing)
+   later.
+8. **A verify mode.** Paste any viral "butterfly effect" claim and get it checked link by link. This already works.
 
-**What a ripple is now (owner rule, ledger 1497):** an approximate cause-and-effect chain. Every step is an outcome
-measured in its own data (attention, behavior, real world), and every step starts after the step before it. A step
-whose rise began before the event is dropped.
+## 2. Current status (one screen, 2026-10-03)
+
+**In one line:** the demo shows ripples that left a lasting mark, with every link rated, and the engine checks any
+chain. Discovery finds one-hop leads but cannot yet find the second hop on its own.
+
+**What a ripple is now:**
+- **A time-ordered chain of outcomes** (the ordering rule, ledger 1497).
+- **Every link is rated:** measured, timed, reported, plausible or busted.
+- **Its payoff is a lasting mark** (owner, Oct 3): a law, an institution, infrastructure, jobs, public health, or a
+  durable change in behavior. Growth, attention, valuations and crazes are intermediate steps, never the endpoint.
 
 | Layer | Status | Evidence |
 |---|---|---|
-| Event → attention to its named subject | Works | Every family passes on Wikipedia with weekday-matched placebos; holds on US TV news for films, deaths, news and science/tech (ledger 1458, 1470) |
-| Attention → behavior | Works for obvious chains | Seattle library borrowing: The Queen's Gambit → chess books, Barbie → Barbie books, after the event (2 of 13; ledger 1501, 1504) |
-| Less obvious behavior chains | Not yet | 0 of 10 (ledger 1503, 1504) |
-| A whole map | Prototype | The Queen's Gambit: release → chess attention +3 days → chess sets and Chess.com +19/+25 days → library borrowing Nov 2020 → NPD chess-set sales +87% (ledger 1505) |
-| Discovering surprise | Not yet | Broad screens, eight lenses, reader paths (two blind rounds: 1 and 0 of 5 needed) and less obvious chains found only obvious links, artifacts or nothing |
+| Event → attention to its subject | Works | Every family passes on Wikipedia (ledger 1458, 1470) |
+| Checking supplied chains | Works | 54 chains, 228 links after the event: 10 measured, 3 timed, 107 reported, 64 plausible or not testable, 44 busted (`chain_check_v1.json`) |
+| One-hop discovery | Works as leads | The editor trail rediscovered 4 of 6 documented quirky ripples; 18 of 137 leads qualified by hand, 6 with a documented outcome |
+| Two-hop discovery | Not yet | Attention second hops (16 seeds) found siblings and curiosity, not consequences |
+| The demo | Live | Three tabs; lasting marks ringed; slices by industry; wave motion; tap to focus |
 
-**Since 29 Sep:** reader paths showed ripple traffic reaches Wikipedia mostly from search (direct clicks 1–3%); a daily
-Google Trends archive started (ripples.att_gt_terms); the named-subject test was re-run on TV news and Hacker News; the
-reader-path "discovery funnel" was tried and dropped after two blind owner ratings; the ordering rule was adopted; two
-Tiger King results were withdrawn as library-closure artifacts (ledger 1504).
+**Since Oct 2:**
+- Map builder merged.
+- The demo, through four versions.
+- The chain checker.
+- The editor trail, with hand qualification and a second hop.
+- American English across the project.
+- The lasting-mark rule.
 
 ## 3. Learnings
 
@@ -172,6 +201,16 @@ Tiger King results were withdrawn as library-closure artifacts (ledger 1504).
 - Check raw counts before calling a pass: normalizing against a collapsing panel (2020 library closure) manufactures
   rises.
 - One well-built map explains the product better than any table.
+
+**New since Oct 2:**
+- **Curiosity is not consequence, three times over.** Clickstream, editor-trail one hops and attention second hops all
+  return things related to the show. Consequences live in records: charts, filings, laws, employment, health.
+- **The ordering rule busts confident claims.** It busted 44 of 228 links. Examples: the ethanol law (corn and
+  tortilla prices rose first) and the Barbie paint shortage (a year before release).
+- **AI-written "butterfly effect" chains** get steps 1–2 right; steps 4–5 are usually invented, misdated or folklore.
+  Historical invention and policy lineages are the strongest content.
+- **Honest confidence beats sparse certainty**, provided invented steps never show as links.
+- **A ripple worth showing leaves a lasting mark.** Growth alone is not a ripple's "so what".
 
 ## 4. Pitfalls (operational, learned the hard way)
 
@@ -221,37 +260,44 @@ Tiger King results were withdrawn as library-closure artifacts (ledger 1504).
 - The sandbox proxy blocks en.wikipedia.org, so title checks can't run there. Missing titles are skipped at run
   time, never remapped.
 
-## 5. Blockers and bottlenecks (2026-10-02)
+## 5. Blockers and bottlenecks (2026-10-03)
 
 **Blockers**
-1. **No surprising content yet.** Verification works; discovery of non-obvious ripples does not.
-2. **Behavior data is thin and local.** The only free behavior series with history is one city's library (monthly)
-   and annual baby names. National sales, sign-ups and enrollment are not free.
-3. **No automation.** The first map was assembled by hand.
+1. **Second hops are not automated.** Lasting marks are in records, not attention data.
+2. **Free outcome data is patchy.** Charts, book sales, tourism and app downloads are mostly paid or scattered.
+3. **Curation load.** The best maps are assembled from dated records, and lead qualification is editorial.
 
 **Bottlenecks**
-1. **BigQuery sandbox cap:** 204.8 GiB a day, not adjustable without billing (owner: no billing).
-2. **Wikimedia politeness and GDELT refusal** limit high-volume fetching from GitHub runners.
-3. **Monthly behavior data** cannot order steps that move in the same month.
-4. **Owner rating time:** blind rounds should be 15 items or fewer.
+1. BigQuery sandbox cap (204.8 GiB a day; no billing).
+2. Wikimedia politeness, and per-title pageviews that do not follow renames. arXiv returns 503 under load.
+3. The container cannot reach Wikipedia or FRED. All fetching runs on GitHub Actions.
 
 ## 6. Immediate next steps (in order)
 
-1. **Map builder.** One script: event (title, date) → daily attention for the event, its named subject and a fixed set
-   of follow-on topics → onsets and the ordering check → behavior step from library borrowing where a heading exists
-   (closure months excluded, raw counts shown) → optional public-record step (dated, sourced) → the same page as The
-   Queen's Gambit, generated.
-2. **Ten maps** for events whose first step is already verified (Chernobyl, Barbie, Oppenheimer, a death, a science
-   event, …). Publish those that pass the ordering rule.
-3. **Later steps from search, not reader paths:** rising searches after the event (Google Trends archive, usable for
-   events from October 2026 on) and Wikipedia topics whose rise follows the subject's (lead–lag over a fixed candidate
-   set), time order enforced.
-4. **Live mode:** run the builder on new events as they happen, so maps fill in over the following weeks.
-5. **Short blind rounds (≤ 15 items)** on the later steps, with the owner's rule.
+1. **Mark-first search.** Work backwards from lasting marks and ask which followed each event, and whether a dated path
+   connects them. Sources:
+   - laws: Congress.gov, state legislatures, Korea's National Assembly open API;
+   - rules: the Federal Register;
+   - institutions;
+   - employment: BLS;
+   - health statistics.
+2. **Second hops from records.** For each qualified lead, pull outcome data:
+   - chart records for music;
+   - heritage visitor statistics for filming locations;
+   - the NYT Books API for publishing;
+   - FRED/BLS series where an industry series exists.
+3. **A records assistant.** It proposes dated outcomes with citations; the checker verifies the dates and the order.
+4. **A slope test** for gradual changes (ChatGPT → Stack Overflow).
+5. **A shareable clip** from reel mode (`?reel`) for LinkedIn, plus a mobile pass on the demo.
 
-**Decision points:** if fewer than 5 of the 10 maps carry a measured behavior step, behavior becomes "where
-available" and maps lead with attention. If two short rounds miss the owner's rule, the product is verified maps of big
-events (obvious but real, well told), not hidden ripples.
+## 6a. Open questions (2026-10-03)
+
+- Can a records search (laws, rules, filings, employment, health) find lasting marks downstream of cultural events
+  often enough to fill maps, or are marks rare for pop culture and common for policy and invention?
+- How much curation is acceptable in the product? Where is the line between "the engine found it" and "we
+  assembled it"? The demo labels the difference; the pitch must too.
+- Which free outcome sources per mark type are reliable enough to automate?
+- Is live mode compelling before marks have had time to form?
 
 ## 7. Rules that never change
 
@@ -266,3 +312,9 @@ events (obvious but real, well told), not hidden ripples.
 - The ordering rule (owner, 2026-09-30, ledger 1497): every step an outcome in its own data, every step later than the
   one before.
 - Show raw counts beside every behavior result; exclude closure months.
+- Every link shows how sure we are: measured, timed, reported, plausible or busted. Invented steps never appear as
+  links. A step that began before its cause is busted.
+- One-hop leads are qualified, not capped: a material endpoint, a plausible path and timing that points to the event,
+  with the reason recorded for every lead left out.
+- A ripple's payoff is a lasting mark. Growth, attention and hype are intermediate steps.
+- American English and US date formats throughout.
