@@ -252,6 +252,7 @@ input[type=range]{flex:1;accent-color:var(--marigold);min-width:0}
 #pond.focus .node:not(.lit),#pond.focus .nlab:not(.lit),#pond.focus .band:not(.lit),#pond.focus .rip.on:not(.lit){opacity:.16 !important;transition:opacity .3s}
 #pond.focus .rip2,#pond.focus .glint{opacity:0 !important}
 #pond .node,#pond .nlab{transition:opacity .3s}
+.stone .waterline{transition:opacity .45s ease-out}
 .stone text{font:italic 500 16px var(--display);fill:var(--paper);paint-order:stroke;stroke:rgba(7,34,44,.85);stroke-width:5px}
 body.reel header .picker,body.reel .feed,body.reel .how,body.reel .foot,body.reel .ctl,body.reel .legend{display:none}
 body.reel .wrap{grid-template-columns:1fr;max-width:760px}
@@ -731,6 +732,7 @@ function draw(story) {
     <linearGradient id="depth" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#9fdbe0" stop-opacity=".10"/><stop offset=".5" stop-color="#9fdbe0" stop-opacity="0"/><stop offset="1" stop-color="#021317" stop-opacity=".28"/></linearGradient>
     <radialGradient id="shine" cx="38%" cy="30%" r="40%"><stop offset="0" stop-color="#d8f3f3" stop-opacity=".09"/><stop offset="1" stop-color="#d8f3f3" stop-opacity="0"/></radialGradient>
     <radialGradient id="glow"><stop offset="0" stop-color="#f2ae2e" stop-opacity=".55"/><stop offset="1" stop-color="#f2ae2e" stop-opacity="0"/></radialGradient>
+    <linearGradient id="surface" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#1b6a73" stop-opacity=".78"/><stop offset=".5" stop-color="#0e4a53" stop-opacity=".9"/><stop offset="1" stop-color="#0a3a42" stop-opacity=".96"/></linearGradient>
     <radialGradient id="wet"><stop offset="0" stop-color="#8fd3da" stop-opacity=".35"/><stop offset=".6" stop-color="#8fd3da" stop-opacity=".08"/><stop offset="1" stop-color="#8fd3da" stop-opacity="0"/></radialGradient>
     <linearGradient id="rock" x1="0" y1="0" x2=".6" y2="1"><stop offset="0" stop-color="#aab7a4"/><stop offset=".45" stop-color="#6d7d6e"/><stop offset="1" stop-color="#36443d"/></linearGradient>
     <linearGradient id="moss" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#8fb55a"/><stop offset="1" stop-color="#4e7a37"/></linearGradient>
@@ -782,6 +784,15 @@ function draw(story) {
   const stone = el("g", {class:"stone"}, svg);
   const sCore = el("g", {class:"rockg", transform:`translate(${C.x},${C.y}) scale(${K * 1.7})`}, stone);
   sCore.innerHTML = STONE_SVG;
+  // the stone sits in the water, not on it: the surface covers its lower half (the rock's own outline, clipped below
+  // the waterline, filled with water), with a bright meniscus in front and a faint ring where the surface still bulges
+  const ROCK = 'M-13.5,-3.5 C-13,-11 -5.5,-15.5 2.5,-14.5 C9.5,-13.6 14.5,-8.5 13.8,-1.5 C13.2,6 7.5,12.5 -0.5,12.6 C-8,12.7 -14,6.5 -13.5,-3.5 Z';
+  const sWater = el("g", {class:"waterline", opacity:0}, sCore);
+  const clip = el("clipPath", {id:"wlclip"}, sWater); el("rect", {x:-24, y:-1.5, width:48, height:30}, clip);
+  el("path", {d:ROCK, "clip-path":"url(#wlclip)", fill:"#0f4d56", opacity:".86"}, sWater);
+  el("path", {d:ROCK, "clip-path":"url(#wlclip)", fill:"url(#surface)", opacity:".55"}, sWater);
+  el("ellipse", {cx:0, cy:-1.5, rx:16.2, ry:6.2, fill:"none", stroke:"rgba(220,245,240,.12)", "stroke-width":.8}, sWater);
+  el("path", {d:"M-15.6,-1.5 A16.2,6.2 0 0 0 15.6,-1.5", fill:"none", stroke:"rgba(230,250,246,.75)", "stroke-width":1.1, "stroke-linecap":"round"}, sWater);
   const stoneT = el("text", {x:C.x, y:C.y + 44 * K, "text-anchor":"middle"}, stone); stoneT.textContent = story.stone; if (dense) stoneT.style.fontSize = "22px";
 
   // final positions: spread across the slice, nearest first, alternating either side of its center line
@@ -870,7 +881,7 @@ function draw(story) {
     rect.setAttribute("x", bb.x - pad); rect.setAttribute("y", bb.y - pad); rect.setAttribute("width", bw); rect.setAttribute("height", bh);
     it.lab = lab; it.state = "hidden";
   }
-  story.max = max; story.waves = waves; story.sHalo = sHalo; story.sCore = sCore; story.K = K; story.splashed = false;
+  story.max = max; story.waves = waves; story.sHalo = sHalo; story.sCore = sCore; story.sWater = sWater; story.K = K; story.splashed = false;
 }
 
 function wrapLabel(t, width, lines) {  // greedy word wrap to at most `lines` lines; the last line is cut with an ellipsis
@@ -1011,8 +1022,10 @@ function render(now = performance.now()) {
   const ev0 = cur.eventSeries ? valueAt(cur.eventSeries, iso0, d) : null;
   cur.sHalo.setAttribute("r", 30 + Math.min(18, 3 * Math.log2(1 + (ev0 || 0))));
   const kk = t < PRE ? t / PRE : 1;  // the stone falls in: from above, growing, then lands
-  cur.sCore.setAttribute("transform", `translate(${C.x},${C.y - (1 - kk) * 46}) scale(${((cur.K || 1) * 1.7 * (0.35 + 0.65 * kk)).toFixed(3)})`);
+  const sink = kk >= 1 ? 6 * (cur.K || 1) : 0;  // once it lands it settles into the water
+  cur.sCore.setAttribute("transform", `translate(${C.x},${C.y - (1 - kk) * 46 + sink}) scale(${((cur.K || 1) * 1.7 * (0.35 + 0.65 * kk)).toFixed(3)})`);
   cur.sCore.setAttribute("opacity", Math.min(1, kk * 1.6).toFixed(2));
+  if (cur.sWater) cur.sWater.setAttribute("opacity", kk >= 1 ? 1 : 0);
   for (const it of items) {
     const due = d >= it.d;
     if (due && it.state === "hidden") launch(it, playing && !scrubbing);
