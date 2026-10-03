@@ -243,6 +243,8 @@ input[type=range]{flex:1;accent-color:var(--marigold);min-width:0}
 .crest.l-measured{stroke:var(--good)}.crest.l-timed{stroke:var(--marigold)}.crest.l-reported{stroke:#f6fbfb}.crest.l-plausible{stroke:var(--marigold);stroke-dasharray:3 4;stroke-width:3.2}.crest.l-busted{stroke:var(--miss);stroke-dasharray:2 3.5;stroke-width:3}
 #pond.focus .crest.on:not(.lit){opacity:.16;transition:opacity .3s}
 .nlab{opacity:0;transition:opacity .5s ease-out;pointer-events:none}
+.leader{stroke:rgba(214,240,236,.35);stroke-width:1;opacity:0;transition:opacity .5s ease-out;pointer-events:none}.leader.on{opacity:1}
+#pond.focus .leader{opacity:.16}
 .nlab.on{opacity:1}
 .nlab rect{fill:rgba(5,30,36,.84);stroke:rgba(214,240,236,.08)}
 .nlab text{font:600 13.5px var(--sans);fill:var(--ink)}
@@ -609,6 +611,21 @@ function actsWorks() {  // works cited in the debates of at least two Acts, or c
   }
   return Object.entries(by).filter(([w, n]) => n >= 2 || reason[w]).sort((a, b) => b[1] - a[1]).map(([w]) => w);
 }
+// the citation scorer's reasons as one plain sentence
+function whyText(why) {
+  if (!why || !why.length) return "";
+  const parts = why.map(w => {
+    let m;
+    if ((m = w.match(/^causal language: (.+)$/))) return `it uses causal language (${m[1]})`;
+    if (w === "the work is the subject of the clause") return "the work is the subject of the sentence";
+    if (w === "a change word follows") return "a word for change follows it";
+    if (w === "used in an argument") return "it sits inside an argument";
+    if ((m = w.match(/^illustration cue: (.+)$/))) return `it reads as an illustration (“${m[1]}”)`;
+    return w;
+  });
+  const list = parts.length > 1 ? parts.slice(0, -1).join(", ") + " and " + parts[parts.length - 1] : parts[0];
+  return ` We read it that way because ${list}.`;
+}
 const plainWork = w => w.replace(/ \((TV series|film|\d{4} film|video game|British TV series|novel)\)$/, "");
 function fromActs(work) {
   const ps = actPairs(work), iso0 = ps[0].work_date, items = [];
@@ -620,7 +637,7 @@ function fromActs(work) {
       sub:`${fmtMonth(D(p.royal_assent))} · ${sinceLabel(d)}`, mark:cited ? "Law" : null, title:actName, lv:cited ? "reported" : "plausible", lvText:cited ? "Reported" : "Plausible",
       short:`${cap(how)} in the ${p.bill.trim()} debate, ${fmt(D(p.debated))}`,
       card:card({when:`${fmt(D(p.royal_assent))}<span>${sinceLabel(d)}</span>`, badge:cited ? "Reported" : "Plausible", badgeCls:cited ? "l-reported" : "l-plausible", title:actName, mark:cited ? "Law" : null,
-        short:`${cap(how)} in ${us ? "Congress" : "Parliament"} during the ${us ? "bill's" : "Bill's"} passage, ${fmt(D(p.debated))}.${p.cite_why && p.cite_why.length ? ` Why we read it that way: ${esc(p.cite_why.join("; "))}.` : ""}`,
+        short:`${cap(how)} in ${us ? "Congress" : "Parliament"} during the ${us ? "bill's" : "Bill's"} passage, ${fmt(D(p.debated))}.${esc(whyText(p.cite_why))}`,
         sure:howSure(cited ? "reported" : "plausible", cited ? {what:`${us ? "the Congressional Record" : "Hansard"}, ${fmt(D(p.debated))}`, why:`a member cited the work as a reason in the debate on the ${us ? "bill" : "Bill"}. A citation shows the work was in the room, not that it caused the ${us ? "law" : "Act"}`} : {why:`the work was mentioned in the debate, but not as a reason for the ${us ? "bill" : "Bill"}`}),
         details:`<p>“${esc((p.sentence || "").slice(0, 420))}…”</p><p class="src"><a href="${esc(p.debate_url || "#")}" target="_blank" rel="noopener">${us ? "Congressional Record" : "Hansard"}</a>${p.act_url ? ` · <a href="${esc(p.act_url)}" target="_blank" rel="noopener">${us ? "govinfo.gov" : "legislation.gov.uk"}</a>` : ""}</p>`})});
   });
@@ -767,12 +784,15 @@ function draw(story) {
   const rg = el("g", {filter:"url(#wob)"}, g0);
   const TA = 104, ta = polar(16, TA), tb = polar(R + 4, TA);  // the thread of time, along the right-hand axis where the tilt does not compress spacing
   el("line", {class:"thread", x1:ta.x, y1:ta.y, x2:tb.x, y2:tb.y}, g0);
+  let lastRingX = null;
   for (const [d, lbl] of rings) {
     const r = radius(d);
     el("circle", {class:"ring", cx:C.x, cy:C.y, r}, rg);
     const p = PL(polar(r, TA));
     if (![7, 365, 3653].includes(d) && !(d === 30 && max < 365) && !(d === 91 && max < 3653 && max >= 365)) continue;  // three labels at most
     const q0 = polar(r, TA - 1.6), q1 = polar(r, TA + 1.6); el("line", {class:"threadtick", x1:q0.x, y1:q0.y, x2:q1.x, y2:q1.y}, g0);
+    if (lastRingX != null && Math.abs(p.x - lastRingX) < (dense ? 70 : 44)) continue;  // a short pond: labels would sit on each other
+    lastRingX = p.x;
     const rl = el("text", {class:"ringlbl", x:p.x + 5, y:p.y - 3}, gt); rl.textContent = lbl; if (dense) rl.style.fontSize = "15px";
   }
   el("circle", {cx:C.x, cy:C.y, r:R + 6, fill:"none", stroke:"rgba(214,240,236,.16)", "stroke-width":1.5, filter:"url(#wob)"}, g0);
@@ -881,14 +901,19 @@ function draw(story) {
     const right = [g1, -bh / 2], left = [-g1 - bw, -bh / 2], up = [-bw / 2, -bh - g1], down = [-bw / 2, g1 + 1];
     const rUp = [g1, -bh - 6], rDn = [g1, 6], lUp = [-g1 - bw, -bh - 6], lDn = [-g1 - bw, 6];
     const order = it.pos.x >= C.x ? [right, rUp, rDn, up, down, left, lUp, lDn] : [left, lUp, lDn, up, down, right, rUp, rDn];
-    let best = null, least = Infinity, fallback = order[0];
-    for (const sp of order) {
+    let best = null, least = Infinity, fallback = order[0], far = false;
+    const far2 = sp => [sp[0] * 2.4 + (sp[0] > 0 ? 6 : sp[0] < 0 ? -6 : 0), sp[1] * 2.4 + (sp[1] > 0 ? 6 : sp[1] < 0 ? -6 : 0)];
+    for (const sp of [...order, ...order.map(far2)]) {
       const b = {x:it.pos.x + sp[0], y:it.pos.y + sp[1], w:bw, h:bh};
       const inside = b.x > -118 && b.x + bw < 818 && b.y > VB.top && b.y + bh < VB.bottom;
-      if (inside && !overlaps(b)) { best = sp; break; }
+      if (inside && !overlaps(b)) { best = sp; far = Math.hypot(sp[0], sp[1]) > Math.hypot(...order[0]) * 1.8; break; }
       const a = overlapArea(b) + (inside ? 0 : 1e6); if (a < least) { least = a; fallback = sp; }
     }
     const free = !!best; if (!best) best = fallback;
+    if (free && far) {  // a label placed farther out gets a thin leader back to its ripple
+      const lx = it.pos.x + best[0] + (best[0] + bw / 2 < 0 ? bw : best[0] > 0 ? 0 : bw / 2), ly = it.pos.y + best[1] + (best[1] + bh / 2 < 0 ? bh : best[1] > 0 ? 0 : bh / 2);
+      it.leader = el("line", {class:"leader", x1:it.pos.x, y1:it.pos.y, x2:lx, y2:ly}, labels);
+    }
     if (!free && !(it.mark && nMarks <= 6) && it.lv !== "measured") it.showLabel = false;  // shown on hover, focus and in its card
     const bx = it.pos.x + best[0], by = it.pos.y + best[1];
     if (it.showLabel) placed.push({x:bx, y:by, w:bw, h:bh});  // hidden labels do not reserve space
@@ -943,7 +968,7 @@ function land(it) {  // the label appears only once the ripple has arrived
   it.ring2.setAttribute("d", arcPath(Math.max(10, it.r - 7), it.span)); it.ring2.classList.remove("flying"); it.ring2.classList.add("on");
   if (it.lv !== "busted") { it.glint.setAttribute("d", arcPath(it.r, it.span)); it.glint.classList.add("on"); }
   it.crest.classList.add("on"); it.crestg.classList.add("on"); wobble(it, performance.now());
-  if (it.showLabel || it === hot) it.lab.classList.add("on");
+  if (it.showLabel || it === hot) { it.lab.classList.add("on"); if (it.leader) it.leader.classList.add("on"); }
   if (it.elbl) it.elbl.style.opacity = 1; if (it.band) it.band.style.opacity = .17;
   if (REEL) $("#caption").innerHTML = `${it.mark ? `<b>◆ ${esc(it.mark)}</b> · ` : ""}${esc(it.label)} <span style="color:var(--ink-3)">· ${esc(it.lvText || LVL[it.lv])}${it.sub ? " · " + esc(it.sub) : ""}</span>`;
 }
@@ -1078,7 +1103,7 @@ function showTip(it) {
 function hideTip() { $("#tip").classList.remove("on"); }
 function clearFocus() {
   $("#pond").classList.remove("focus");
-  if (cur) cur.items.forEach(x => { [x.g, x.path, x.lab, x.band, x.ring, x.crest].forEach(e => e && e.classList.remove("lit")); if (!x.showLabel && x.lab) x.lab.classList.remove("on"); });
+  if (cur) cur.items.forEach(x => { [x.g, x.path, x.lab, x.band, x.ring, x.crest].forEach(e => e && e.classList.remove("lit")); if (!x.showLabel && x.lab) { x.lab.classList.remove("on"); if (x.leader) x.leader.classList.remove("on"); } });
   if (hot) { hot.lab.classList.remove("hot"); hot.cardEl && hot.cardEl.classList.remove("hot"); hot = null; }
 }
 function focus(it) {
