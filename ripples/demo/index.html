@@ -209,7 +209,7 @@ input[type=range]{flex:1;accent-color:var(--marigold);min-width:0}
 .how{max-width:1240px;margin:0 auto;padding:0 16px 40px;display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:14px;
   --ink:var(--paper-ink);--ink-2:var(--paper-ink-2);--ink-3:var(--paper-ink-3);--hair:rgba(30,42,46,.14);--card:var(--paper);color:var(--paper-ink)}
 .how[hidden]{display:none}
-.how div{border-top:2px solid var(--hair);padding-top:12px}
+.how div{background:var(--paper);border-radius:14px;padding:14px 16px 16px}
 .how h3{font:800 1rem/1.2 var(--display);margin:0 0 .3rem;color:var(--ink)}
 .how p{margin:0;color:var(--ink-2);font-size:.9rem}
 .foot{max-width:1240px;margin:0 auto;padding:0 16px 44px;color:var(--ink-3);font-size:.82rem}
@@ -258,8 +258,8 @@ input[type=range]{flex:1;accent-color:var(--marigold);min-width:0}
 .rip.l-measured.disc,.edge.l-measured.disc{stroke-width:2}
 .rip.l-timed,.edge.l-timed{stroke:var(--marigold);stroke-width:2}
 .rip.l-reported,.edge.l-reported{stroke:var(--rec);stroke-width:1.5}
-.rip.l-plausible,.edge.l-plausible{stroke:var(--plaus);stroke-width:1.4}
-.rip.l-busted,.edge.l-busted{stroke:var(--miss);stroke-width:1.3;stroke-dasharray:2 5}
+.rip.l-plausible,.edge.l-plausible{stroke:var(--plaus);stroke-width:1.4;stroke-dasharray:5 6}
+.rip.l-busted,.edge.l-busted{stroke:var(--miss);stroke-width:1.8;stroke-dasharray:2 4}
 /* the thread back to the stone shows only while a ripple is being followed */
 .edge{opacity:0;transition:opacity .3s}
 #pond.focus .edge.lit{opacity:.9}
@@ -287,7 +287,7 @@ input[type=range]{flex:1;accent-color:var(--marigold);min-width:0}
 #pond.focus .node.on:not(.lit),#pond.focus .nlab.on:not(.lit),#pond.focus .band:not(.lit),#pond.focus .rip.on:not(.lit){opacity:.16 !important;transition:opacity .3s}  /* only what has landed sits back; what has not arrived stays unseen */
 #pond.focus .rip2,#pond.focus .glint{opacity:0 !important}
 /* at rest, the ripples that left no mark sit back; a lasting mark or a measured step carries full weight */
-.rip.on.l-reported,.rip.on.l-plausible,.rip.on.l-timed,.rip.on.l-busted{opacity:.28}.crest.l-reported,.crest.l-plausible,.crest.l-timed,.crest.l-busted{opacity:.55}
+.rip.on.l-reported,.rip.on.l-plausible,.rip.on.l-timed{opacity:.28}.rip.on.l-busted{opacity:.42}.crest.l-reported,.crest.l-plausible,.crest.l-timed,.crest.l-busted{opacity:.55}
 .rip.on.l-measured{opacity:.85}
 #pond .node,#pond .nlab{transition:opacity .3s}
 .stone .waterline{transition:opacity .45s ease-out}
@@ -303,14 +303,14 @@ body.reel header{max-width:760px;padding-top:22px}
   .tabs{margin-top:8px;overflow-x:auto;scrollbar-width:none}.tab{padding:6px 7px 7px;font-size:.8rem;gap:5px}.tab svg{width:14px;height:14px}.tabnote{font-size:.74rem;margin:6px 0 0}
   .picker{margin:6px 0 0}.chip{padding:5px 10px;font-size:.82rem}
   .wrap{padding:6px 10px 24px;gap:12px}.pondbox{padding:8px 8px 6px;border-radius:18px}
-  .hint{bottom:148px;font-size:.78rem;padding:7px 12px;max-width:88%;text-align:center}  /* above the two-row controls on a phone */
+  .hint{bottom:196px;font-size:.78rem;padding:7px 12px;max-width:88%;text-align:center;white-space:normal}  /* above the three-row controls on a phone */
   .clock .d{font-size:1.05rem}.clock .n{font-size:.78rem}
   .legend{font-size:.7rem;gap:4px 10px;padding:4px 4px 2px}.howbtn{font-size:.7rem;padding:2px 8px}
   .nextbtn{padding:6px 10px;font-size:.76rem}.play{width:34px;height:34px}.stepbtn{padding:5px 9px;font-size:.74rem}
   .card{padding:9px 12px}.card h2{font-size:.9rem}
 }
 /* first-visit hint, share and the reel caption */
-.hint{position:absolute;left:50%;bottom:72px;transform:translateX(-50%);background:rgba(5,22,40,.9);border:1px solid var(--hair);border-radius:999px;padding:8px 14px;font-size:.8rem;color:var(--ink-2);white-space:nowrap;pointer-events:none;transition:opacity .4s;z-index:2}
+.hint{position:absolute;left:50%;bottom:134px;transform:translateX(-50%);background:rgba(5,22,40,.9);border:1px solid var(--hair);border-radius:999px;padding:8px 14px;font-size:.8rem;color:var(--ink-2);white-space:nowrap;pointer-events:none;transition:opacity .4s;z-index:2}
 .hint[hidden]{display:none}
 .iconbtn{width:38px;height:38px;border-radius:50%;border:1px solid var(--hair);background:none;color:var(--ink-2);cursor:pointer;display:grid;place-items:center;flex:none}
 .iconbtn svg{width:16px;height:16px}
@@ -353,7 +353,7 @@ body.reel .pondbox{padding-bottom:10px}
   <section class="pondbox" aria-label="Ripple pond">
     <div class="clock"><div class="d" id="date">—</div><div class="n" id="since">—</div></div>
     <svg id="pond" viewBox="-120 88 940 486" role="img" aria-label="Ripples spreading out from the event over time"></svg>
-    <div class="hint" id="hint" hidden>Press play or drag the slider · tap a ripple to follow it</div>
+    <div class="hint" id="hint" hidden>Press play or drag the slider · click or tap a ripple to follow it</div>
     <div class="tip" id="tip" role="tooltip"></div>
     <div class="caption" id="caption" aria-live="polite"></div>
     <div class="ctl">
@@ -812,7 +812,7 @@ function draw(story) {
   const today = daysBetween(story.iso0, new Date().toISOString().slice(0, 10));
   const dmax = Math.min(today, Math.max(...items.map(x => Math.max(x.d, x.range ? x.range[1] : 0))));
   const max = Math.min(dmax * 1.25, Math.max(today, dmax + 1));
-  for (const it of items) if (it.d > max * 0.97) { it.d = max * 0.97; it.future = true; }  // claims about the future sit at the rim
+  for (const it of items) if (it.d > today) { it.d = max * 0.97; it.future = true; }  // only claims about days after today sit at the rim; past events keep their day
   SCALE = makeScale(items.map(x => x.d), max);
   const keys = [...new Set(items.map(x => x.slice))].sort((a, b) => (a === "main" ? -1 : b === "main" ? 1 : 0));
   const n = keys.length, w = 360 / n;
@@ -890,7 +890,7 @@ function draw(story) {
     const q0 = polar(r, TA - 1.6), q1 = polar(r, TA + 1.6); el("line", {class:"threadtick", x1:q0.x, y1:q0.y, x2:q1.x, y2:q1.y}, g0);
     if (lastRingX != null && Math.abs(p.x - lastRingX) < (dense ? 70 : 44)) continue;  // a short pond: labels would sit on each other
     lastRingX = p.x;
-    const rl = el("text", {class:"ringlbl", x:p.x + 5, y:p.y - 3}, gt); rl.textContent = lbl; if (dense) rl.style.fontSize = "15px";
+    const rl = el("text", {class:"ringlbl", x:p.x + 5, y:p.y - 3}, gt); rl.textContent = lbl; rl.style.fontSize = `${Math.round(9 * K)}px`;
   }
   const rimBoxes = [];  // rim words keep their space; ripple labels place around them
   keys.forEach(k => {  // the industry each ripple reached, outside the rim, always horizontal
@@ -898,7 +898,7 @@ function draw(story) {
     const c = n === 1 ? 0 : centre(k), sx = Math.sin(c * Math.PI / 180), cy = -Math.cos(c * Math.PI / 180), p = PL(polar(R + 24 + 22 * Math.abs(sx), c));
     const rt = el("text", {class:"rimlbl", x:p.x + (Math.abs(sx) < 0.35 ? 0 : sx > 0 ? 2 : -2), y:p.y + (cy > 0.35 ? 10 : cy < -0.35 ? -2 : 4),
       "text-anchor":Math.abs(sx) < 0.35 ? "middle" : sx > 0 ? "start" : "end"}, gt); rt.textContent = story.names[k];
-    if (dense) rt.style.fontSize = "17px";
+    rt.style.fontSize = `${Math.round(12 * K)}px`;
     try {
       let b = rt.getBBox();
       if (b.x < -112) rt.setAttribute("x", +rt.getAttribute("x") + (-112 - b.x)); else if (b.x + b.width > 812) rt.setAttribute("x", +rt.getAttribute("x") - (b.x + b.width - 812));
@@ -1004,10 +1004,10 @@ function draw(story) {
     const lab = el("g", {class:"nlab" + (it.lv === "busted" ? " busted" : "") + (it.mark ? " mark" : "")}, labels);
     const rect = el("rect", {rx:6}, lab);
     const shown = wrapLabel(it.label, 26, 2);
-    const tx = el("text", {x:0, y:0}, lab); if (dense) tx.style.fontSize = "22px";
+    const tx = el("text", {x:0, y:0}, lab); if (K > 1) tx.style.fontSize = `${(13.5 * K).toFixed(1)}px`;  // the text floor: see K above
     shown.forEach((ln, k) => { const ts = el("tspan", {x:0, dy:k ? 15 * K : 0}, tx); ts.textContent = ln; });
     const sub = el("text", {class:"s", x:0, y:15 * K * shown.length}, lab); sub.textContent = it.mark ? `◆ ${it.mark}` : "";  // the date and the delay live in the card
-    if (dense) sub.style.fontSize = "17px";
+    if (K > 1) sub.style.fontSize = `${(11 * K).toFixed(1)}px`;
     const bb = lab.getBBox(), pad = 5 * K, bw = bb.width + pad * 2, bh = bb.height + pad * 2, g1 = 12 * K;
     const right = [g1, -bh / 2], left = [-g1 - bw, -bh / 2], up = [-bw / 2, -bh - g1], down = [-bw / 2, g1 + 1];
     const rUp = [g1, -bh - 6], rDn = [g1, 6], lUp = [-g1 - bw, -bh - 6], lDn = [-g1 - bw, 6];
@@ -1287,9 +1287,9 @@ function tick(now) {
   if (playing && cur) {
     const stop = stepMode && !REEL && t >= PRE ? nextStop(daysAt(t)) : null;
     if (stop) {  // step mode: the front goes to the next ripple in about a second and a half, holds there with its card open, and waits for the reader
-      if (!cur.goal || cur.goal.it !== stop) { let tS = 1; for (let k = 0; k <= 1000; k++) if (daysAt(k / 1000) >= stop.d + 0.5) { tS = k / 1000; break; } cur.goal = {it:stop, tS, t0:t}; }
+      if (!cur.goal) { let tS = 1; for (let k = 0; k <= 1000; k++) if (daysAt(k / 1000) >= stop.d + 0.5) { tS = k / 1000; break; } cur.goal = {it:stop, tS, t0:t}; }  // the goal holds until it is reached, even as the front passes its day
       const g = cur.goal; t = Math.min(g.tS, t + dt / 1500 * Math.max(0.02, g.tS - g.t0));
-      if (t >= g.tS) { cur.goal = null; setPlaying(false); render(now); if (hot !== stop) focus(stop); return requestAnimationFrame(tick); }
+      if (t >= g.tS) { const at = g.it; cur.goal = null; setPlaying(false); render(now); if (hot !== at) focus(at); return requestAnimationFrame(tick); }
     } else t = Math.min(1, t + dt / (cur && cur.dur || DUR));
     if (t >= 1) { if (REEL) { playing = false; setTimeout(next, 2000); } else setPlaying(false); }
   }
@@ -1298,7 +1298,7 @@ function tick(now) {
   requestAnimationFrame(tick);
 }
 function setPlaying(p) {
-  playing = p;
+  playing = p; if (cur && !p) cur.goal = null;  // a pause or a scrub drops the step goal; play picks the next from where the clock is
   const done = !p && t >= 1;
   $("#playico").innerHTML = p ? '<rect x="3" y="2" width="3.5" height="12" fill="currentColor"/><rect x="9.5" y="2" width="3.5" height="12" fill="currentColor"/>'
     : done ? '<path d="M8 2.5a5.5 5.5 0 1 1-5.2 3.7" fill="none" stroke="currentColor" stroke-width="2"/><path d="M1.5 2.5v4h4" fill="none" stroke="currentColor" stroke-width="2"/>' : '<path d="M4 2l10 6-10 6z" fill="currentColor"/>';
