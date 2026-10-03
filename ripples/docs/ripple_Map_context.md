@@ -178,7 +178,7 @@ chain. Discovery finds one-hop leads but cannot yet find the second hop on its o
 | One-hop discovery | Works as leads | The editor trail rediscovered 4 of 6 documented quirky ripples; 18 of 137 leads qualified by hand, 6 with a documented outcome |
 | Two-hop discovery | Not yet | Attention second hops (16 seeds) found siblings and curiosity, not consequences |
 | The demo | Live as Ripple | Three tabs; each outcome its own living ripple; pebbles for lasting marks; isometric pond; paper feed; share cards (PRs #57–#60) |
-| Mark-first search | Running | Laws → works via Wikipedia and Wikidata, Federal Register full text; pre-registered success rule (`ripples/docs/mark_first_v1.md`) |
+| Mark-first search v1 | Ran; rule failed on coverage | 13,374 laws × 272,453 works → 12,996 link pairs, 3,252 time-ordered, 35 with causal language. Recall 1 of 5 strict (misses were mark/work class coverage and a narrow causal lexicon). Six documented new work → law pairs: Quincy, M.E. → Orphan Drug Act; 60 Minutes → STOCK Act; Victim (1961) → Sexual Offences Act 1967; The Daily Show → Zadroga Act; The West Wing → the 2006 Racial and Religious Hatred Bill defeat; Rangila Rasul → Section 295A (`mark_first_v1.json`) |
 
 **Since Oct 2:**
 - Map builder merged.
@@ -314,9 +314,10 @@ chain. Discovery finds one-hop leads but cannot yet find the second hop on its o
    - FRED/BLS series where an industry series exists.
 3. **A records assistant.** It proposes dated outcomes with citations; the checker verifies the dates and the order.
 4. **A slope test** for gradual changes (ChatGPT → Stack Overflow).
-5. **Read the mark-first results** against the pre-registered rule: pass → a blind owner round of up to 15 new
-   work → law pairs, then maps with the law as the mark; fail → legislative text APIs (Congress.gov, Federal Register,
-   Open States).
+5. **Mark-first, the decision.** The pre-registered rule failed on recall, so by protocol the Wikipedia route gives
+   way to legislative text APIs; the diagnosis says every miss was coverage (mark and work classes, the causal
+   lexicon, a bill date used as the law's date), and the route found six documented pairs. Proposed: one v1.1 run with
+   those fixes under a new pre-registration before switching. The six pairs go to a blind round and then to maps.
 6. **Look and feel, remaining:** a shelf of live story thumbnails; label collisions on crowded slices; then the
    LinkedIn reel (`?reel`) and post, held until the owner signs off on the look.
 
