@@ -601,10 +601,13 @@ function citedWhere(work) {  // "Parliament", "Congress", or both, from the pair
   const cs = new Set(actPairs(work).map(p => p.country || "UK"));
   return cs.size > 1 ? "Parliament and Congress" : cs.has("US") ? "Congress" : "Parliament";
 }
-function actsWorks() {  // works cited in the debates of at least two Acts
-  const by = {};
-  for (const p of (DATA.acts && DATA.acts.pairs || [])) if (p.ordered && p.royal_assent && !ACTS_SKIP.test(p.work)) by[p.work] = (by[p.work] || 0) + 1;
-  return Object.entries(by).filter(([, n]) => n >= 2).sort((a, b) => b[1] - a[1]).map(([w]) => w);
+function actsWorks() {  // works cited in the debates of at least two Acts, or cited as a reason for one
+  const by = {}, reason = {};
+  for (const p of (DATA.acts && DATA.acts.pairs || [])) if (p.ordered && p.royal_assent && !ACTS_SKIP.test(p.work)) {
+    by[p.work] = (by[p.work] || 0) + 1;
+    if ((p.cite_score != null ? p.cite_score : (p.causal_score || 0) > 0 ? 2 : 0) >= 2) reason[p.work] = true;
+  }
+  return Object.entries(by).filter(([w, n]) => n >= 2 || reason[w]).sort((a, b) => b[1] - a[1]).map(([w]) => w);
 }
 const plainWork = w => w.replace(/ \((TV series|film|\d{4} film|video game|British TV series|novel)\)$/, "");
 function fromActs(work) {
@@ -623,8 +626,8 @@ function fromActs(work) {
   });
   const name = plainWork(work);
   return {key:work, kind:"acts", title:work, stone:name, iso0, items, extra:[], names:{main:"Parliament"},
-    h1:`${name}: cited in the debates of ${ps.length} Acts`,
-    sub:`The engine read every ${pairs.some(p => p.country === "US") ? (pairs.every(p => p.country === "US") ? "Congressional Record item" : "Hansard contribution and Congressional Record item") : "Hansard contribution"} that names ${name} and resolved each bill under debate to the ${pairs.every(p => p.country === "US") ? "law" : "Act"} it became. A citation shows the work was in the room when the law was made, not that it caused the law.`,
+    h1:ps.length === 1 ? `${name} → ${plainWork(ps[0].act).replace(/ \d{4}$/, "")}` : `${name}: cited in the debates of ${ps.length} ${ps.every(p => p.country === "US") ? "laws" : "Acts"}`,
+    sub:`The engine read every ${ps.some(p => p.country === "US") ? (ps.every(p => p.country === "US") ? "Congressional Record item" : "Hansard contribution and Congressional Record item") : "Hansard contribution"} that names ${name} and resolved each bill under debate to the ${ps.every(p => p.country === "US") ? "law" : "Act"} it became. A citation shows the work was in the room when the law was made, not that it caused the law.`,
     first:card({when:`${fmt(D(iso0))}<span>Day 0</span>`, badge:"The event", badgeCls:"event", title:`${name} is released`})};
 }
 
