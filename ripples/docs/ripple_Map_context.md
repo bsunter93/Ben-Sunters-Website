@@ -17,6 +17,9 @@ what we learned, pitfalls, open gaps and next steps. The operational runbook wit
 
 ## 1. Vision (owner, verbatim core)
 
+> "What did that thing everyone remembers change?" A ripple's payoff is a lasting mark: "something that leaves a mark,
+> has a lasting impact." (owner, Oct 3)
+
 > "The entire point of the app is uncovering hidden impacts from upstream events — regardless of where that impact
 > shows up. Attribution and traceability with statistical rigor are key."
 
@@ -114,6 +117,25 @@ The pond language stays. What changes is what goes in it and how the evidence re
   2. Phase 2 screen.
   3. The first trend pages built only for trends with a result.
   4. The share card built around the ghost stone and the surprising landing.
+
+## 1c. Aspirations (what "great" looks like; updated 2026-10-03)
+
+1. **Surprising, multi-hop, cross-industry ripples** that end in a **lasting mark** (a law, an institution,
+   infrastructure, jobs, public health, a durable behavior change). Not growth for its own sake, and not one-hop
+   curiosity.
+2. **Found by the engine, not hand-assembled.** Repeatable discovery of non-obvious links, judged by how often a link is
+   both genuinely surprising and independently defensible (D-24, D-26).
+3. **Honest about certainty.** Every link rated (measured, timed, reported, plausible, busted); invented steps never
+   shown; nulls and busted claims shown as findings ("resilience is a finding", D-18).
+4. **Entertainment-grade experience.** A pond that feels like water, ripples that ride out from the stone, a story you
+   can follow by tapping. Works for a 12-year-old; the statistics sit one click deeper (D-21). Apple/Robinhood/Uber
+   design bar (D-29).
+5. **Live mode.** "Watch the ripples arrive": maps that fill in as a new event unfolds (the Trends archive has been
+   collecting since Sep 29).
+6. **Any event.** Type an event and get its map.
+7. **Shareable.** A clip and a post for LinkedIn now; share cards (the ghost-stone comparison, the surprising landing)
+   later.
+8. **A verify mode.** Paste any viral "butterfly effect" claim and get it checked link by link. This already works.
 
 ## 2. Current status (one screen, 2026-10-03)
 
@@ -267,6 +289,15 @@ chain. Discovery finds one-hop leads but cannot yet find the second hop on its o
 3. **A records assistant.** It proposes dated outcomes with citations; the checker verifies the dates and the order.
 4. **A slope test** for gradual changes (ChatGPT → Stack Overflow).
 5. **A shareable clip** from reel mode (`?reel`) for LinkedIn, plus a mobile pass on the demo.
+
+## 6a. Open questions (2026-10-03)
+
+- Can a records search (laws, rules, filings, employment, health) find lasting marks downstream of cultural events
+  often enough to fill maps, or are marks rare for pop culture and common for policy and invention?
+- How much curation is acceptable in the product? Where is the line between "the engine found it" and "we
+  assembled it"? The demo labels the difference; the pitch must too.
+- Which free outcome sources per mark type are reliable enough to automate?
+- Is live mode compelling before marks have had time to form?
 
 ## 7. Rules that never change
 
