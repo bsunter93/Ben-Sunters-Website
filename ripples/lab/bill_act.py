@@ -82,8 +82,13 @@ def legislation_feed(act_title, y0, y1):
         for e in re.findall(r"<entry>(.*?)</entry>", body, re.S):
             t = re.search(r"<title[^>]*>(.*?)</title>", e, re.S)
             i = re.search(r"<id>(.*?)</id>", e)
-            if t and i:
-                out.append((html.unescape(re.sub(r"<[^>]+>", "", t.group(1))).strip(), y, i.group(1).replace("/id/", "/")))
+            if not (t and i):
+                continue
+            # the feed can answer across years; keep only an Act whose own year is in range
+            ym = re.search(r"/ukpga/(\d{4})/", i.group(1))
+            if not ym or not (y0 <= int(ym.group(1)) <= y1):
+                continue
+            out.append((html.unescape(re.sub(r"<[^>]+>", "", t.group(1))).strip(), int(ym.group(1)), i.group(1).replace("/id/", "/")))
     return out
 
 
@@ -103,9 +108,11 @@ def resolve(bill, when):
                 res.update(act=f"{base} Act", method="bills-api (no assent date)")
             else:
                 res.update(note=f"not an Act: {b['current_stage']}", method="bills-api")
+                return res  # a bill the API knows and that did not pass: no fallback guessing
     if not res["act"] or not res["url"]:
         hits = legislation_feed(base, year or 1900, (year or 1900) + 2) if year else []
-        hits = [h for h in hits if base.lower().split(" (")[0] in h[0].lower()]
+        # the Act's title must begin with the bill's title (less 'Bill'), so 'Housing Bill' cannot land on 'Housing (Scotland) Act'
+        hits = [h for h in hits if re.sub(r"\s+act\s+\d{4}.*$", "", h[0].lower()).strip() == base.lower().strip()]
         if hits:
             t, y, u = sorted(hits, key=lambda h: h[1])[0]
             res.update(act=res["act"] or t, url=u, method=(res["method"] or "") + "+legislation.gov.uk")
