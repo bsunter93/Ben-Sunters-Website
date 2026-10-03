@@ -848,7 +848,15 @@ function draw(story) {
     it.halo = el("circle", {cx:0, cy:0, r:16 * K, fill:"transparent"}, g);  // the tap target; the marker itself is the crest on the ring
     if (it.mark) {  // a lasting mark is a pebble that stayed on the water, lit from beneath
       el("circle", {class:"markglow", cx:0, cy:0, r:26 * K, fill:"url(#glow)"}, g);
-      const pb = el("g", {class:"pebble", transform:`scale(${(0.85 * K).toFixed(2)}) rotate(${(it.d * 37) % 360})`}, g); pb.innerHTML = STONE_SVG;
+      const rot = (it.d * 37) % 360, ps = (0.85 * K).toFixed(2);
+      const pb = el("g", {class:"pebble", transform:`scale(${ps}) rotate(${rot})`}, g); pb.innerHTML = STONE_SVG;
+      // the pebble sits in the water like the stone: its outline below the waterline, filled with water, and a meniscus
+      const pw = el("g", {class:"pebblewater", transform:`scale(${ps})`}, g);
+      const pc = el("g", {"clip-path":"url(#wlclip)"}, pw);
+      const pr = el("g", {transform:`rotate(${rot})`}, pc);
+      el("path", {d:ROCK, fill:"#0f4d56", opacity:".86"}, pr);
+      el("path", {d:ROCK, fill:"url(#surface)", opacity:".55"}, pr);
+      el("path", {d:"M-15.2,-1.5 A15.8,6 0 0 0 15.2,-1.5", fill:"none", stroke:"rgba(230,250,246,.7)", "stroke-width":1.1, "stroke-linecap":"round"}, pw);
     }
     it.core = null;
     it.showLabel = !dense || !!it.mark || it.lv === "measured" || items.length <= 4;
