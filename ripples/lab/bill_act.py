@@ -18,6 +18,7 @@ import urllib.parse
 
 sys.path.insert(0, os.path.dirname(__file__))
 import mark_first as mf  # noqa: E402
+import cite_score  # noqa: E402
 
 ROOT = os.path.join(os.path.dirname(__file__), "..")
 OUT = os.environ.get("OUT_JSON") or os.path.join(ROOT, "docs", "results", "bill_act_v1.json")
@@ -158,11 +159,12 @@ def main() -> int:
             continue
         ra = r.get("royal_assent")
         ordered = bool(p.get("work_date") and ra and p["work_date"] <= ra)
-        out_pairs.append({"work": p["work"], "work_date": p["work_date"], "bill": p["mark"], "debated": p["mark_date"], "act": r["act"],
+        cs, cwhy = cite_score.score(p.get("sentence") or "", p["work"])
+        out_pairs.append({"work": p["work"], "work_date": p["work_date"], "bill": p["mark"], "debated": p["mark_date"], "act": r["act"], "cite_score": cs, "cite_why": cwhy, "cite_label": cite_score.label(cs),
                           "royal_assent": ra, "act_url": r.get("url"), "ordered": ordered, "causal_score": p.get("causal_score"),
                           "sentence": p.get("sentence"), "debate_url": p.get("url")})
     seen = set(); uniq = []
-    for q in sorted(out_pairs, key=lambda q: (-(q["causal_score"] or 0), q["royal_assent"] or "")):
+    for q in sorted(out_pairs, key=lambda q: (-(q["cite_score"] or 0), -(q["causal_score"] or 0), q["royal_assent"] or "")):
         k = (q["work"], q["act"])
         if k not in seen:
             seen.add(k); uniq.append(q)

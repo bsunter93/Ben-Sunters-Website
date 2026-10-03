@@ -219,6 +219,20 @@ def ssa_test(counts, year):
 
 
 CACHE: dict = {}
+SERIES_FILE = os.path.join(ROOT, "docs", "results", "series_v1.json")
+
+
+def file_series(key):
+    if "series_file" not in CACHE:
+        CACHE["series_file"] = json.load(open(SERIES_FILE)) if os.path.exists(SERIES_FILE) else {}
+    pts = (CACHE["series_file"].get("series") or {}).get(key)
+    return [(D(d), float(v)) for d, v in pts] if pts else None
+
+
+def dose_result(key):
+    if "series_file" not in CACHE:
+        CACHE["series_file"] = json.load(open(SERIES_FILE)) if os.path.exists(SERIES_FILE) else {}
+    return (CACHE["series_file"].get("dose") or {}).get(key)
 
 
 def run_step(st, ref):
@@ -238,6 +252,19 @@ def run_step(st, ref):
         return {"onset": d, "archive_first": d, "url": t["url"]} if d else {"result": "no capture found"}
     if k == "ssa":
         return ssa_test(t["counts"], t["year"])
+    if k == "file":  # an official series fetched by ripples/lab/series_fetch.py into series_v1.json, tested like FRED
+        pts = file_series(t["key"])
+        if not pts:
+            return {"result": f"no data for series {t['key']}"}
+        r = series_test(pts, ref, t.get("direction", "up"), t.get("h", 3), t.get("transform", "log"))
+        r["series"] = t["key"]
+        return r
+    if k == "dose":  # a dose-response result computed by series_fetch.py: effect, permutation p, pre-trend
+        d = dose_result(t["key"])
+        if not d:
+            return {"result": f"no dose-response result for {t['key']}"}
+        return {"onset": t.get("date"), "effect": d.get("effect"), "p": d.get("p"), "pretrend_p": d.get("pretrend_p"), "n_treated": d.get("n_treated"),
+                "n_control": d.get("n_control"), "design": d.get("design"), "source": d.get("source"), "points": d.get("points")}
     key = (k, json.dumps(t.get("id") or t.get("towns") or ""))
     if key not in CACHE:
         CACHE[key] = {"fred": lambda: fred(t["id"]), "stackex": stackex, "zillow": lambda: zillow(t["towns"]),
@@ -262,6 +289,12 @@ def verdict(st, r, ref):
         return "timed (new article)" if D(r["onset"]) >= ref - dt.timedelta(days=3) else "wrong order"
     if r.get("archive_first"):
         return "timed (online by)" if D(r["onset"]) >= ref - dt.timedelta(days=3) else "wrong order"
+    if k == "dose":  # a dose-response design: measured when the permutation p is small and the pre-trend is flat
+        if r.get("p") is None:
+            return "no data"
+        if r["p"] <= 0.05 and (r.get("pretrend_p") is None or r["pretrend_p"] > 0.1):
+            return "measured"
+        return "no movement" if r["p"] > 0.05 else "moved, pre-trend"
     if r.get("p") is None and r.get("onset"):  # a sustained rise, but too little history for a placebo test
         return "timed (short history)" if D(r["onset"]) >= ref - dt.timedelta(days=3) else "wrong order"
     moved = r.get("p") is not None and r["p"] <= 0.05

@@ -374,6 +374,66 @@
      "source": "Gallup: the under-35 decline is already visible in the 2021–23 pooled surveys"
     },
     "note": "The decline was in the data two years before the advisory. Busted as a cause of the trend; it may shape what people say about it."
+   },
+   {
+    "n": 23,
+    "claim": "Per-capita drinking turns upward after repeal",
+    "short": "Drinking turns up",
+    "slice": "Health",
+    "after": 5,
+    "test": {
+     "type": "file",
+     "key": "niaaa_percapita_ethanol",
+     "h": 3,
+     "direction": "up",
+     "transform": "log",
+     "source": "NIAAA apparent per-capita ethanol consumption"
+    },
+    "note": "Tested as a series: the three years after repeal against three-year changes after every other year on record."
+   },
+   {
+    "n": 24,
+    "claim": "Legal cannabis states: did youth drinking fall faster than elsewhere?",
+    "short": "Cannabis dose-response",
+    "slice": "Catalysts?",
+    "after": 17,
+    "test": {
+     "type": "dose",
+     "key": "cannabis_youth_alcohol",
+     "date": "2018-07-01"
+    },
+    "note": "Difference-in-differences across states with and without retail cannabis (CDC YRBS), permutation inference, pre-trend check: the first test here that is more than timing. Protocol: ripples/docs/dose_response_v1.md."
+   },
+   {
+    "n": 25,
+    "claim": "Attention to alcohol and cancer surges after the Surgeon General's advisory",
+    "short": "Cancer-warning attention",
+    "slice": "Catalysts?",
+    "after": 21,
+    "ref": "2025-01-03",
+    "test": {
+     "type": "wiki",
+     "articles": [
+      "Alcohol and cancer"
+     ],
+     "lag": 45
+    }
+   },
+   {
+    "n": 26,
+    "claim": "Dry January draws a January surge every year",
+    "short": "Dry January attention",
+    "slice": "Catalysts?",
+    "after": 15,
+    "ref": "2016-01-01",
+    "test": {
+     "type": "wiki",
+     "articles": [
+      "Dry January"
+     ],
+     "lag": 40
+    },
+    "note": "A seasonal rise: placebo windows that fall in other Januaries make the test honest about that."
    }
   ]
  }

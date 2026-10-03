@@ -602,14 +602,15 @@ const plainWork = w => w.replace(/ \((TV series|film|\d{4} film|video game|Briti
 function fromActs(work) {
   const ps = actPairs(work), iso0 = ps[0].work_date, items = [];
   ps.forEach((p, i) => {
-    const d = Math.max(daysBetween(iso0, p.royal_assent), 0.5), cited = (p.causal_score || 0) > 0;
+    const d = Math.max(daysBetween(iso0, p.royal_assent), 0.5), cs = p.cite_score != null ? p.cite_score : ((p.causal_score || 0) > 0 ? 2 : 0), cited = cs >= 2;
+    const how = cs >= 2 ? "cited as a reason" : cs === 1 ? "mentioned in the argument" : "mentioned in passing";
     const actName = p.act.replace(/\s*\(repealed.*\)$/, "");
-    items.push({id:`a${i}`, parent:null, slice:"main", d, label:actName.length > 30 ? shortLabel(actName) : actName, lv:"reported", lvText:"Reported",
-      sub:`${fmtMonth(D(p.royal_assent))} · ${sinceLabel(d)}`, mark:cited ? "Law" : null, title:actName,
-      short:`Cited in the ${p.bill.trim()} debate, ${fmt(D(p.debated))}`,
-      card:card({when:`${fmt(D(p.royal_assent))}<span>${sinceLabel(d)}</span>`, badge:"Reported", badgeCls:"l-reported", title:actName, mark:cited ? "Law" : null,
-        short:`Named in Parliament during the Bill's passage, ${fmt(D(p.debated))}${cited ? ", with causal language" : ""}.`,
-        sure:howSure("reported", {what:`Hansard, ${fmt(D(p.debated))}`, why:"a member cited the work in the debate on the Bill. A citation shows the work was in the room, not that it caused the Act"}),
+    items.push({id:`a${i}`, parent:null, slice:"main", d, label:actName.length > 30 ? shortLabel(actName) : actName,
+      sub:`${fmtMonth(D(p.royal_assent))} · ${sinceLabel(d)}`, mark:cited ? "Law" : null, title:actName, lv:cited ? "reported" : "plausible", lvText:cited ? "Reported" : "Plausible",
+      short:`${cap(how)} in the ${p.bill.trim()} debate, ${fmt(D(p.debated))}`,
+      card:card({when:`${fmt(D(p.royal_assent))}<span>${sinceLabel(d)}</span>`, badge:cited ? "Reported" : "Plausible", badgeCls:cited ? "l-reported" : "l-plausible", title:actName, mark:cited ? "Law" : null,
+        short:`${cap(how)} in Parliament during the Bill's passage, ${fmt(D(p.debated))}.${p.cite_why && p.cite_why.length ? ` Why we read it that way: ${esc(p.cite_why.join("; "))}.` : ""}`,
+        sure:howSure(cited ? "reported" : "plausible", cited ? {what:`Hansard, ${fmt(D(p.debated))}`, why:"a member cited the work as a reason in the debate on the Bill. A citation shows the work was in the room, not that it caused the Act"} : {why:"the work was mentioned in the debate, but not as a reason for the Bill"}),
         details:`<p>“${esc((p.sentence || "").slice(0, 420))}…”</p><p class="src"><a href="${esc(p.debate_url || "#")}" target="_blank" rel="noopener">Hansard</a>${p.act_url ? ` · <a href="${esc(p.act_url)}" target="_blank" rel="noopener">legislation.gov.uk</a>` : ""}</p>`})});
   });
   const name = plainWork(work);

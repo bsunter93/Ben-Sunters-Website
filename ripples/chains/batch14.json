@@ -390,5 +390,84 @@
     "note": "The consultation closed 1 Sep 2025. No lasting mark yet: the outcome is pending in our records."
    }
   ]
+ },
+ {
+  "slug": "adolescence-schools",
+  "title": "Adolescence and the schools (2025)",
+  "date": "2025-03-13",
+  "batch": 14,
+  "vertical": "Education policy",
+  "steps": [
+   {
+    "n": 1,
+    "claim": "Netflix releases Adolescence",
+    "test": {
+     "type": "record",
+     "date": "2025-03-13",
+     "source": "Netflix, 13 Mar 2025"
+    }
+   },
+   {
+    "n": 2,
+    "claim": "Attention to incel culture and the manosphere surges",
+    "short": "Incel attention",
+    "test": {
+     "type": "wiki",
+     "articles": [
+      "Incel",
+      "Manosphere"
+     ],
+     "lag": 30
+    }
+   },
+   {
+    "n": 3,
+    "claim": "MPs cite the series in the Children's Wellbeing and Schools Bill debate",
+    "short": "Cited in the Bill debate",
+    "test": {
+     "type": "record",
+     "date": "2025-03-18",
+     "source": "Hansard, 18 Mar 2025: 'powerfully explored in the new Netflix series Adolescence … highlights how a lack of proper education in relationships'"
+    },
+    "link": "reported",
+    "link_why": "the debate names the series"
+   },
+   {
+    "n": 4,
+    "claim": "The Prime Minister backs showing the series in schools",
+    "short": "PM backs it",
+    "test": {
+     "type": "record",
+     "date": "2025-03-31",
+     "source": "Downing Street meeting with the makers, 31 Mar 2025; Netflix makes it free to all secondary schools"
+    },
+    "link": "reported",
+    "link_why": "the meeting and the schools offer were about the series"
+   },
+   {
+    "n": 5,
+    "claim": "Updated relationships, sex and health education guidance names misogyny and incel culture",
+    "short": "RSHE guidance",
+    "test": {
+     "type": "record",
+     "date": "2025-07-15",
+     "source": "Department for Education, RSHE statutory guidance, 15 Jul 2025"
+    },
+    "mark": "Policy",
+    "note": "The guidance review began in 2024; the series is credited with the urgency and the misogyny content, not the review."
+   },
+   {
+    "n": 6,
+    "claim": "The Children's Wellbeing and Schools Act receives Royal Assent",
+    "short": "Schools Act 2026",
+    "test": {
+     "type": "record",
+     "date": "2026-04-29",
+     "source": "Royal Assent 29 Apr 2026 (Bill → Act resolver, Parliament Bills API)"
+    },
+    "mark": "Law",
+    "note": "The Bill predates the series (introduced Dec 2024); the series entered its debates. Cited, not caused."
+   }
+  ]
  }
 ]
