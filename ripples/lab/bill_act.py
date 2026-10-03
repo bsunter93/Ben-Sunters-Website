@@ -170,6 +170,15 @@ def us_resolve(title, when):
         t, date = res.get("title") or "", (res.get("dateIssued") or "")[:10]
         if phrase.lower() in t.lower() and lo <= date <= hi and (best is None or date < best[1]):
             best = (t, date, res.get("packageId"))
+    if not best and re.search(r"\bAct of \d{4}$", phrase):
+        # a short title enacted inside a larger law: the Travel Promotion Act of 2009 is Title I of the United States Capitol
+        # Police Administrative Technical Corrections Act of 2009 (Pub. L. 111-145). The phrase search matched the law's
+        # text; the earliest law in the window is taken and the name says where it sits
+        for res in sorted(d.get("results", []), key=lambda r: (r.get("dateIssued") or "")):
+            t, date = res.get("title") or "", (res.get("dateIssued") or "")[:10]
+            if lo <= date <= hi:
+                return {"act": f"{phrase} (within the {t})", "royal_assent": date, "url": f"https://www.govinfo.gov/app/details/{res.get('packageId')}", "method": "govinfo-text",
+                        "note": "the bill's short title appears in the text of a larger law enacted in the window"}
     if not best:
         cands = [f"{(r.get('dateIssued') or '')[:10]} {r.get('title')}" for r in d.get("results", [])[:5]]
         print("    no match; candidates:", cands, flush=True)
@@ -209,8 +218,8 @@ def main() -> int:
             print(f"  {key} ({bills[key]}) -> {r['act']} {r['royal_assent']} [{r['method']}] {r['note'] or ''}", flush=True)
             json.dump(state, open(OUT, "w"), ensure_ascii=False, indent=0)
         for key in sorted(us_bills, key=lambda k: us_bills[k] or ""):
-            if key in state["bills"]:
-                continue
+            if key in state["bills"] and (state["bills"][key].get("act") or not state["bills"][key].get("candidates")):
+                continue  # a title with logged candidates is tried again (the text-match route was added after run 1)
             r = us_resolve(re.sub(r"^US: ", "", re.sub(r" \(\d{4}\)$", "", key)), us_bills[key])
             state["bills"][key] = r
             print(f"  {key} ({us_bills[key]}) -> {r['act']} {r['royal_assent']} [{r['method']}] {r['note'] or ''}", flush=True)
