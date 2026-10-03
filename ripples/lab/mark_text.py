@@ -96,7 +96,13 @@ def titles_in(text):
     return uniq[:6]
 
 
+def clean(text):
+    """Tags out, entities decoded, whitespace collapsed: Hansard highlights the match as 'Mr <em>Bates</em>'."""
+    return re.sub(r"\s+", " ", html.unescape(re.sub(r"<[^>]+>", " ", text or ""))).strip()
+
+
 def window(text, needle, span=320):
+    text = re.sub(r"\s+", " ", text or "")
     i = text.lower().find(needle.lower())
     if i < 0:
         return text[:2 * span]
@@ -186,7 +192,7 @@ def federal_register():
         print("FR", term, d.get("count"), "docs", len(docs), flush=True)
         deep = 0
         for x in docs:
-            ex = mf.strip_markup(html.unescape(re.sub(r"<[^>]+>", " ", x.get("excerpts") or "")))
+            ex = clean(mf.strip_markup(x.get("excerpts") or ""))
             text = ex
             if deep < 12 and x.get("raw_text_url") and re.search(r"Netflix|HBO|ITV|BBC|documentary|series|film|novel", ex, re.I):
                 raw = mf.get(x["raw_text_url"])
@@ -222,10 +228,12 @@ def uk_legislation():
             if not m:
                 continue  # EU retained law and the like: not a UK enactment
             base, year = f"{UKL}/{m.group(1)}", m.group(2)
-            notes = mf.get(base + "/notes/data.xht") or mf.get(base + "/notes/contents/data.xht") or mf.get(base + "/data.xht")
+            if int(year) < 1999 or not m.group(1).startswith(("ukpga", "asp", "anaw", "nia")):
+                continue  # explanatory notes exist for primary legislation from 1999
+            notes = mf.get(base + "/notes/data.xht") or mf.get(base + "/notes/data.htm") or mf.get(base + "/notes/contents/data.htm")
             if not notes:
                 continue
-            text = mf.strip_markup(html.unescape(re.sub(r"<[^>]+>", " ", notes)))
+            text = clean(mf.strip_markup(notes))
             if term.lower() in text.lower():
                 record("UKL", h["title"], f"{year}-07-01", base, text, term, "law")
         done.append(term); save()
@@ -257,7 +265,7 @@ def hansard():
         state.setdefault("han_counts", {})[term] = total
         print("HAN", term, total, "total;", len(rows), "read", flush=True)
         for r in rows:
-            text = mf.strip_markup(html.unescape(re.sub(r"<[^>]+>", " ", r.get("ContributionText") or r.get("ContributionTextFull") or "")))
+            text = clean(mf.strip_markup(r.get("ContributionTextFull") or r.get("ContributionText") or ""))
             section = r.get("DebateSection") or r.get("DebateSectionTitle") or ""
             date = (r.get("SittingDate") or "")[:10]
             url = f"https://hansard.parliament.uk/search/Contributions?searchTerm={urllib.parse.quote(term)}"

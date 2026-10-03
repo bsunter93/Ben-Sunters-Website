@@ -23,3 +23,10 @@ tiers, law / rule / bill / bill debate / bill stage, with a resolved work and a 
 new to the project; Mr Bates → the Offences Bill as the positive control).
 
 **Output.** `ripples/docs/results/mark_text_v1_2.json`. Budget 150 minutes.
+
+## Addendum, after the first v1.2 run (Oct 3, 08:40 UTC)
+
+The run (15 minutes) read 574 Mr Bates contributions and produced 10 pairs from them: the Hansard API highlights the
+match as `Mr <em>Bates</em>`, and stripping the tags left a double space that failed the "marker in window" check.
+Whitespace is now collapsed before matching (`clean`). Explanatory-note fetches are limited to primary legislation from
+1999, where notes exist. Nothing else changes; the file is rebuilt from scratch.
