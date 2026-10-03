@@ -14,7 +14,9 @@ import json
 import os
 import re
 import sys
+import time
 import urllib.parse
+import urllib.request
 
 sys.path.insert(0, os.path.dirname(__file__))
 import mark_first as mf  # noqa: E402
@@ -123,6 +125,68 @@ def resolve(bill, when):
     return res
 
 
+# ---------- United States: a bill or floor-debate title -> the public law it became (GovInfo PLAW collection) ----------
+GOV = "https://api.govinfo.gov"
+KEY = os.environ.get("DATA_GOV_KEY", "")
+
+
+def clean_us_title(t):
+    """A Congressional Record section title ("BIG CAT PUBLIC SAFETY ACT", "ENDLESS FRONTIER ACT--Continued") to a search phrase."""
+    t = re.sub(r"--.*$", "", t.strip())
+    t = re.sub(r"\s+", " ", t)
+    t = re.sub(r"^(the )?introduction of (the )?", "", t, flags=re.I)  # a Record heading, not part of the bill's name
+    if t.isupper():
+        t = t.title()
+        t = re.sub(r"\b(Of|And|The|For|To|In|On|At|By)\b", lambda m: m.group(1).lower(), t)
+        t = t[0].upper() + t[1:]
+        t = t.replace("'S ", "'s ").replace("’S ", "’s ")
+    return t
+
+
+def us_resolve(title, when):
+    """Search public laws for the title; accept one whose title contains the bill's and that was enacted on or after the
+    debate, within the same or the next Congress (two years). No match means the bill did not become law under that name."""
+    if not KEY:
+        return {"act": None, "royal_assent": None, "url": None, "method": "govinfo", "note": "DATA_GOV_KEY not set"}
+    phrase = clean_us_title(title)
+    if len(phrase) < 8 or re.search(r"appropriation|resolution|budget|motion to proceed|continued|daily digest", phrase, re.I):
+        return {"act": None, "royal_assent": None, "url": None, "method": "govinfo", "note": "not a bill title"}
+    payload = json.dumps({"query": f'"{phrase}" collection:(PLAW)', "pageSize": 10, "offsetMark": "*",
+                          "sorts": [{"field": "publishdate", "sortOrder": "ASC"}]}).encode()
+    req = urllib.request.Request(f"{GOV}/search?api_key={KEY}", data=payload, headers={"User-Agent": mf.UA, "Content-Type": "application/json"})
+    mf.budget()
+    try:
+        with urllib.request.urlopen(req, timeout=60) as r:
+            d = json.load(r)
+    except urllib.error.HTTPError as e:
+        if e.code in (403, 429, 503):
+            raise mf.Stop(f"GovInfo HTTP {e.code}")
+        d = {}
+    time.sleep(1)
+    lo = when or "0000"
+    hi = f"{int(lo[:4]) + 2}-12-31" if lo[:4].isdigit() else "9999"
+    best = None
+    for res in d.get("results", []):
+        t, date = res.get("title") or "", (res.get("dateIssued") or "")[:10]
+        if phrase.lower() in t.lower() and lo <= date <= hi and (best is None or date < best[1]):
+            best = (t, date, res.get("packageId"))
+    if not best and re.search(r"\bAct of \d{4}$", phrase):
+        # a short title enacted inside a larger law: the Travel Promotion Act of 2009 is Title I of the United States Capitol
+        # Police Administrative Technical Corrections Act of 2009 (Pub. L. 111-145). The phrase search matched the law's
+        # text; the earliest law in the window is taken and the name says where it sits
+        for res in sorted(d.get("results", []), key=lambda r: (r.get("dateIssued") or "")):
+            t, date = res.get("title") or "", (res.get("dateIssued") or "")[:10]
+            if lo <= date <= hi:
+                return {"act": f"{phrase} (within the {t})", "royal_assent": date, "url": f"https://www.govinfo.gov/app/details/{res.get('packageId')}", "method": "govinfo-text",
+                        "note": "the bill's short title appears in the text of a larger law enacted in the window"}
+    if not best:
+        cands = [f"{(r.get('dateIssued') or '')[:10]} {r.get('title')}" for r in d.get("results", [])[:5]]
+        print("    no match; candidates:", cands, flush=True)
+        return {"act": None, "royal_assent": None, "url": None, "method": "govinfo", "note": "no public law with this title in the window", "candidates": cands}
+    t, date, pid = best
+    return {"act": t, "royal_assent": date, "url": f"https://www.govinfo.gov/app/details/{pid}" if pid else None, "method": "govinfo", "note": None}
+
+
 def main() -> int:
     pairs = []
     for f in sorted(glob.glob(os.path.join(ROOT, "docs", "results", "mark_text_v1*.json"))):
@@ -137,7 +201,13 @@ def main() -> int:
             key = f"{clean_bill(p['mark'])} ({(p.get('mark_date') or '')[:4]})"
             if key not in bills or (p.get("mark_date") or "") < (bills[key] or ""):
                 bills[key] = p.get("mark_date")
-    print(len(bills), "bills to resolve", flush=True)
+    us_bills = {}
+    for p in pairs:
+        if p.get("source") == "GOV" and p.get("tier") in ("bill", "bill debate") and re.search(r"\bAct\b", p.get("mark") or "", re.I):
+            key = f"US: {clean_us_title(p['mark'])} ({(p.get('mark_date') or '')[:4]})"
+            if key not in us_bills or (p.get("mark_date") or "") < (us_bills[key] or ""):
+                us_bills[key] = p.get("mark_date")
+    print(len(bills), "UK bills and", len(us_bills), "US bill titles to resolve", flush=True)
     state = json.load(open(OUT)) if os.path.exists(OUT) else {"started": dt.date.today().isoformat(), "bills": {}}
     try:
         for key in sorted(bills, key=lambda k: bills[k] or ""):
@@ -147,20 +217,30 @@ def main() -> int:
             state["bills"][key] = r
             print(f"  {key} ({bills[key]}) -> {r['act']} {r['royal_assent']} [{r['method']}] {r['note'] or ''}", flush=True)
             json.dump(state, open(OUT, "w"), ensure_ascii=False, indent=0)
+        for key in sorted(us_bills, key=lambda k: us_bills[k] or ""):
+            if key in state["bills"] and (state["bills"][key].get("act") or not state["bills"][key].get("candidates")):
+                continue  # a title with logged candidates is tried again (the text-match route was added after run 1)
+            r = us_resolve(re.sub(r"^US: ", "", re.sub(r" \(\d{4}\)$", "", key)), us_bills[key])
+            state["bills"][key] = r
+            print(f"  {key} ({us_bills[key]}) -> {r['act']} {r['royal_assent']} [{r['method']}] {r['note'] or ''}", flush=True)
+            json.dump(state, open(OUT, "w"), ensure_ascii=False, indent=0)
     except mf.Stop as e:
         state["stopped"] = str(e); print("stopped:", e, flush=True)
     # pairs enriched with the Act
     out_pairs = []
     for p in pairs:
-        if p.get("source") != "HAN" or p.get("tier") not in ("bill debate", "bill stage"):
+        if p.get("source") == "HAN" and p.get("tier") in ("bill debate", "bill stage"):
+            r = state["bills"].get(f"{clean_bill(p['mark'])} ({(p.get('mark_date') or '')[:4]})"); country = "UK"
+        elif p.get("source") == "GOV" and p.get("tier") in ("bill", "bill debate"):
+            r = state["bills"].get(f"US: {clean_us_title(p['mark'])} ({(p.get('mark_date') or '')[:4]})"); country = "US"
+        else:
             continue
-        r = state["bills"].get(f"{clean_bill(p['mark'])} ({(p.get('mark_date') or '')[:4]})")
         if not r or not r.get("act"):
             continue
         ra = r.get("royal_assent")
         ordered = bool(p.get("work_date") and ra and p["work_date"] <= ra)
         cs, cwhy = cite_score.score(p.get("sentence") or "", p["work"])
-        out_pairs.append({"work": p["work"], "work_date": p["work_date"], "bill": p["mark"], "debated": p["mark_date"], "act": r["act"], "cite_score": cs, "cite_why": cwhy, "cite_label": cite_score.label(cs),
+        out_pairs.append({"work": p["work"], "work_date": p["work_date"], "bill": p["mark"], "debated": p["mark_date"], "act": r["act"], "country": country, "cite_score": cs, "cite_why": cwhy, "cite_label": cite_score.label(cs),
                           "royal_assent": ra, "act_url": r.get("url"), "ordered": ordered, "causal_score": p.get("causal_score"),
                           "sentence": p.get("sentence"), "debate_url": p.get("url")})
     seen = set(); uniq = []

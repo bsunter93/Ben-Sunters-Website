@@ -252,6 +252,7 @@ input[type=range]{flex:1;accent-color:var(--marigold);min-width:0}
 #pond.focus .node:not(.lit),#pond.focus .nlab:not(.lit),#pond.focus .band:not(.lit),#pond.focus .rip.on:not(.lit){opacity:.16 !important;transition:opacity .3s}
 #pond.focus .rip2,#pond.focus .glint{opacity:0 !important}
 #pond .node,#pond .nlab{transition:opacity .3s}
+.stone .waterline{transition:opacity .45s ease-out}
 .stone text{font:italic 500 16px var(--display);fill:var(--paper);paint-order:stroke;stroke:rgba(7,34,44,.85);stroke-width:5px}
 body.reel header .picker,body.reel .feed,body.reel .how,body.reel .foot,body.reel .ctl,body.reel .legend{display:none}
 body.reel .wrap{grid-template-columns:1fr;max-width:760px}
@@ -596,30 +597,37 @@ function actPairs(work) {
   return (DATA.acts && DATA.acts.pairs || []).filter(p => p.work === work && p.ordered && p.royal_assent && !ACTS_SKIP.test(p.work))
     .sort((a, b) => a.royal_assent.localeCompare(b.royal_assent));
 }
-function actsWorks() {  // works cited in the debates of at least two Acts
-  const by = {};
-  for (const p of (DATA.acts && DATA.acts.pairs || [])) if (p.ordered && p.royal_assent && !ACTS_SKIP.test(p.work)) by[p.work] = (by[p.work] || 0) + 1;
-  return Object.entries(by).filter(([, n]) => n >= 2).sort((a, b) => b[1] - a[1]).map(([w]) => w);
+function citedWhere(work) {  // "Parliament", "Congress", or both, from the pairs' countries
+  const cs = new Set(actPairs(work).map(p => p.country || "UK"));
+  return cs.size > 1 ? "Parliament and Congress" : cs.has("US") ? "Congress" : "Parliament";
+}
+function actsWorks() {  // works cited in the debates of at least two Acts, or cited as a reason for one
+  const by = {}, reason = {};
+  for (const p of (DATA.acts && DATA.acts.pairs || [])) if (p.ordered && p.royal_assent && !ACTS_SKIP.test(p.work)) {
+    by[p.work] = (by[p.work] || 0) + 1;
+    if ((p.cite_score != null ? p.cite_score : (p.causal_score || 0) > 0 ? 2 : 0) >= 2) reason[p.work] = true;
+  }
+  return Object.entries(by).filter(([w, n]) => n >= 2 || reason[w]).sort((a, b) => b[1] - a[1]).map(([w]) => w);
 }
 const plainWork = w => w.replace(/ \((TV series|film|\d{4} film|video game|British TV series|novel)\)$/, "");
 function fromActs(work) {
   const ps = actPairs(work), iso0 = ps[0].work_date, items = [];
   ps.forEach((p, i) => {
-    const d = Math.max(daysBetween(iso0, p.royal_assent), 0.5), cs = p.cite_score != null ? p.cite_score : ((p.causal_score || 0) > 0 ? 2 : 0), cited = cs >= 2;
+    const d = Math.max(daysBetween(iso0, p.royal_assent), 0.5), cs = p.cite_score != null ? p.cite_score : ((p.causal_score || 0) > 0 ? 2 : 0), cited = cs >= 2, us = p.country === "US";
     const how = cs >= 2 ? "cited as a reason" : cs === 1 ? "mentioned in the argument" : "mentioned in passing";
     const actName = p.act.replace(/\s*\(repealed.*\)$/, "");
     items.push({id:`a${i}`, parent:null, slice:"main", d, label:actName,
       sub:`${fmtMonth(D(p.royal_assent))} · ${sinceLabel(d)}`, mark:cited ? "Law" : null, title:actName, lv:cited ? "reported" : "plausible", lvText:cited ? "Reported" : "Plausible",
       short:`${cap(how)} in the ${p.bill.trim()} debate, ${fmt(D(p.debated))}`,
       card:card({when:`${fmt(D(p.royal_assent))}<span>${sinceLabel(d)}</span>`, badge:cited ? "Reported" : "Plausible", badgeCls:cited ? "l-reported" : "l-plausible", title:actName, mark:cited ? "Law" : null,
-        short:`${cap(how)} in Parliament during the Bill's passage, ${fmt(D(p.debated))}.${p.cite_why && p.cite_why.length ? ` Why we read it that way: ${esc(p.cite_why.join("; "))}.` : ""}`,
-        sure:howSure(cited ? "reported" : "plausible", cited ? {what:`Hansard, ${fmt(D(p.debated))}`, why:"a member cited the work as a reason in the debate on the Bill. A citation shows the work was in the room, not that it caused the Act"} : {why:"the work was mentioned in the debate, but not as a reason for the Bill"}),
-        details:`<p>“${esc((p.sentence || "").slice(0, 420))}…”</p><p class="src"><a href="${esc(p.debate_url || "#")}" target="_blank" rel="noopener">Hansard</a>${p.act_url ? ` · <a href="${esc(p.act_url)}" target="_blank" rel="noopener">legislation.gov.uk</a>` : ""}</p>`})});
+        short:`${cap(how)} in ${us ? "Congress" : "Parliament"} during the ${us ? "bill's" : "Bill's"} passage, ${fmt(D(p.debated))}.${p.cite_why && p.cite_why.length ? ` Why we read it that way: ${esc(p.cite_why.join("; "))}.` : ""}`,
+        sure:howSure(cited ? "reported" : "plausible", cited ? {what:`${us ? "the Congressional Record" : "Hansard"}, ${fmt(D(p.debated))}`, why:`a member cited the work as a reason in the debate on the ${us ? "bill" : "Bill"}. A citation shows the work was in the room, not that it caused the ${us ? "law" : "Act"}`} : {why:`the work was mentioned in the debate, but not as a reason for the ${us ? "bill" : "Bill"}`}),
+        details:`<p>“${esc((p.sentence || "").slice(0, 420))}…”</p><p class="src"><a href="${esc(p.debate_url || "#")}" target="_blank" rel="noopener">${us ? "Congressional Record" : "Hansard"}</a>${p.act_url ? ` · <a href="${esc(p.act_url)}" target="_blank" rel="noopener">${us ? "govinfo.gov" : "legislation.gov.uk"}</a>` : ""}</p>`})});
   });
   const name = plainWork(work);
-  return {key:work, kind:"acts", title:work, stone:name, iso0, items, extra:[], names:{main:"Parliament"},
-    h1:`${name}: cited in the debates of ${ps.length} Acts`,
-    sub:`The engine read every Hansard contribution that names ${name} and resolved each bill under debate to the Act it became. A citation shows the work was in the room when the law was made, not that it caused the law.`,
+  return {key:work, kind:"acts", title:work, stone:name, iso0, items, extra:[], names:{main:citedWhere(work)},
+    h1:ps.length === 1 ? `${name} → ${plainWork(ps[0].act).replace(/ \d{4}$/, "")}` : `${name}: cited in the debates of ${ps.length} ${ps.every(p => p.country === "US") ? "laws" : "Acts"}`,
+    sub:`The engine read every ${ps.some(p => p.country === "US") ? (ps.every(p => p.country === "US") ? "Congressional Record item" : "Hansard contribution and Congressional Record item") : "Hansard contribution"} that names ${name} and resolved each bill under debate to the ${ps.every(p => p.country === "US") ? "law" : "Act"} it became. A citation shows the work was in the room when the law was made, not that it caused the law.`,
     first:card({when:`${fmt(D(iso0))}<span>Day 0</span>`, badge:"The event", badgeCls:"event", title:`${name} is released`})};
 }
 
@@ -731,6 +739,7 @@ function draw(story) {
     <linearGradient id="depth" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#9fdbe0" stop-opacity=".10"/><stop offset=".5" stop-color="#9fdbe0" stop-opacity="0"/><stop offset="1" stop-color="#021317" stop-opacity=".28"/></linearGradient>
     <radialGradient id="shine" cx="38%" cy="30%" r="40%"><stop offset="0" stop-color="#d8f3f3" stop-opacity=".09"/><stop offset="1" stop-color="#d8f3f3" stop-opacity="0"/></radialGradient>
     <radialGradient id="glow"><stop offset="0" stop-color="#f2ae2e" stop-opacity=".55"/><stop offset="1" stop-color="#f2ae2e" stop-opacity="0"/></radialGradient>
+    <linearGradient id="surface" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#1b6a73" stop-opacity=".78"/><stop offset=".5" stop-color="#0e4a53" stop-opacity=".9"/><stop offset="1" stop-color="#0a3a42" stop-opacity=".96"/></linearGradient>
     <radialGradient id="wet"><stop offset="0" stop-color="#8fd3da" stop-opacity=".35"/><stop offset=".6" stop-color="#8fd3da" stop-opacity=".08"/><stop offset="1" stop-color="#8fd3da" stop-opacity="0"/></radialGradient>
     <linearGradient id="rock" x1="0" y1="0" x2=".6" y2="1"><stop offset="0" stop-color="#aab7a4"/><stop offset=".45" stop-color="#6d7d6e"/><stop offset="1" stop-color="#36443d"/></linearGradient>
     <linearGradient id="moss" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#8fb55a"/><stop offset="1" stop-color="#4e7a37"/></linearGradient>
@@ -782,6 +791,15 @@ function draw(story) {
   const stone = el("g", {class:"stone"}, svg);
   const sCore = el("g", {class:"rockg", transform:`translate(${C.x},${C.y}) scale(${K * 1.7})`}, stone);
   sCore.innerHTML = STONE_SVG;
+  // the stone sits in the water, not on it: the surface covers its lower half (the rock's own outline, clipped below
+  // the waterline, filled with water), with a bright meniscus in front and a faint ring where the surface still bulges
+  const ROCK = 'M-13.5,-3.5 C-13,-11 -5.5,-15.5 2.5,-14.5 C9.5,-13.6 14.5,-8.5 13.8,-1.5 C13.2,6 7.5,12.5 -0.5,12.6 C-8,12.7 -14,6.5 -13.5,-3.5 Z';
+  const sWater = el("g", {class:"waterline", opacity:0}, sCore);
+  const clip = el("clipPath", {id:"wlclip"}, sWater); el("rect", {x:-24, y:-1.5, width:48, height:30}, clip);
+  el("path", {d:ROCK, "clip-path":"url(#wlclip)", fill:"#0f4d56", opacity:".86"}, sWater);
+  el("path", {d:ROCK, "clip-path":"url(#wlclip)", fill:"url(#surface)", opacity:".55"}, sWater);
+  el("ellipse", {cx:0, cy:-1.5, rx:16.2, ry:6.2, fill:"none", stroke:"rgba(220,245,240,.12)", "stroke-width":.8}, sWater);
+  el("path", {d:"M-15.6,-1.5 A16.2,6.2 0 0 0 15.6,-1.5", fill:"none", stroke:"rgba(230,250,246,.75)", "stroke-width":1.1, "stroke-linecap":"round"}, sWater);
   const stoneT = el("text", {x:C.x, y:C.y + 44 * K, "text-anchor":"middle"}, stone); stoneT.textContent = story.stone; if (dense) stoneT.style.fontSize = "22px";
 
   // final positions: spread across the slice, nearest first, alternating either side of its center line
@@ -833,7 +851,15 @@ function draw(story) {
     it.halo = el("circle", {cx:0, cy:0, r:16 * K, fill:"transparent"}, g);  // the tap target; the marker itself is the crest on the ring
     if (it.mark) {  // a lasting mark is a pebble that stayed on the water, lit from beneath
       el("circle", {class:"markglow", cx:0, cy:0, r:26 * K, fill:"url(#glow)"}, g);
-      const pb = el("g", {class:"pebble", transform:`scale(${(0.85 * K).toFixed(2)}) rotate(${(it.d * 37) % 360})`}, g); pb.innerHTML = STONE_SVG;
+      const rot = (it.d * 37) % 360, ps = (0.85 * K).toFixed(2);
+      const pb = el("g", {class:"pebble", transform:`scale(${ps}) rotate(${rot})`}, g); pb.innerHTML = STONE_SVG;
+      // the pebble sits in the water like the stone: its outline below the waterline, filled with water, and a meniscus
+      const pw = el("g", {class:"pebblewater", transform:`scale(${ps})`}, g);
+      const pc = el("g", {"clip-path":"url(#wlclip)"}, pw);
+      const pr = el("g", {transform:`rotate(${rot})`}, pc);
+      el("path", {d:ROCK, fill:"#0f4d56", opacity:".86"}, pr);
+      el("path", {d:ROCK, fill:"url(#surface)", opacity:".55"}, pr);
+      el("path", {d:"M-15.2,-1.5 A15.8,6 0 0 0 15.2,-1.5", fill:"none", stroke:"rgba(230,250,246,.7)", "stroke-width":1.1, "stroke-linecap":"round"}, pw);
     }
     it.core = null;
     it.showLabel = !dense || !!it.mark || it.lv === "measured" || items.length <= 4;
@@ -870,7 +896,7 @@ function draw(story) {
     rect.setAttribute("x", bb.x - pad); rect.setAttribute("y", bb.y - pad); rect.setAttribute("width", bw); rect.setAttribute("height", bh);
     it.lab = lab; it.state = "hidden";
   }
-  story.max = max; story.waves = waves; story.sHalo = sHalo; story.sCore = sCore; story.K = K; story.splashed = false;
+  story.max = max; story.waves = waves; story.sHalo = sHalo; story.sCore = sCore; story.sWater = sWater; story.K = K; story.splashed = false;
 }
 
 function wrapLabel(t, width, lines) {  // greedy word wrap to at most `lines` lines; the last line is cut with an ellipsis
@@ -1011,8 +1037,10 @@ function render(now = performance.now()) {
   const ev0 = cur.eventSeries ? valueAt(cur.eventSeries, iso0, d) : null;
   cur.sHalo.setAttribute("r", 30 + Math.min(18, 3 * Math.log2(1 + (ev0 || 0))));
   const kk = t < PRE ? t / PRE : 1;  // the stone falls in: from above, growing, then lands
-  cur.sCore.setAttribute("transform", `translate(${C.x},${C.y - (1 - kk) * 46}) scale(${((cur.K || 1) * 1.7 * (0.35 + 0.65 * kk)).toFixed(3)})`);
+  const sink = kk >= 1 ? 6 * (cur.K || 1) : 0;  // once it lands it settles into the water
+  cur.sCore.setAttribute("transform", `translate(${C.x},${C.y - (1 - kk) * 46 + sink}) scale(${((cur.K || 1) * 1.7 * (0.35 + 0.65 * kk)).toFixed(3)})`);
   cur.sCore.setAttribute("opacity", Math.min(1, kk * 1.6).toFixed(2));
+  if (cur.sWater) cur.sWater.setAttribute("opacity", kk >= 1 ? 1 : 0);
   for (const it of items) {
     const due = d >= it.d;
     if (due && it.state === "hidden") launch(it, playing && !scrubbing);
@@ -1124,7 +1152,7 @@ function allPonds() {
   const out = DATA.chains.map(c => ({kind:"chain", slug:c.slug, stone:c.title.split(/,| and | → |\s\(/)[0].trim(), title:c.title}));
   for (const [slug, cfg] of Object.entries(MAPS)) if (DATA.maps[slug]) out.push({kind:"map", slug, stone:cfg.stone, title:cfg.h1});
   if (DATA.disc) for (const [slug, ev] of Object.entries(DATA.disc.events)) if (ev.links && ev.links.length) out.push({kind:"map", slug, stone:ev.title, title:`${ev.title}: engine leads`});
-  for (const w of actsWorks()) out.push({kind:"acts", slug:w, stone:plainWork(w), title:`${plainWork(w)}: cited in Parliament`});
+  for (const w of actsWorks()) out.push({kind:"acts", slug:w, stone:plainWork(w), title:`${plainWork(w)}: cited in ${citedWhere(w)}`});
   return out;
 }
 const norm = s => String(s || "").toLowerCase().replace(/^the /, "").replace(/[^a-z0-9]+/g, " ").trim();
@@ -1135,6 +1163,7 @@ function pondsFor(name, exceptKind, exceptSlug) {
 }
 function pondChips(list, lead) {
   if (!list.length) return "";
+  const seen = new Set(); list = list.filter(p => { const t = TABS_TITLE(p) || p.title; if (seen.has(t)) return false; seen.add(t); return true; });  // one chip per title
   return `<span>${lead}</span>` + list.map(p => `<button class="pond" data-kind="${p.kind}" data-slug="${p.slug}">${ICON.drop}${esc(TABS_TITLE(p) || p.title)}</button>`).join("");
 }
 const TABS_TITLE = p => { const f = Object.values(TABS).flat().find(([k, s]) => k === p.kind && s === p.slug); return f ? f[2] : null; };
