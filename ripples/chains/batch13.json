@@ -1,46 +1,402 @@
 [
- {"slug": "mr-bates-horizon", "title": "Mr Bates vs The Post Office and the Offences Act (2024)", "date": "2024-01-01", "batch": 13, "vertical": "Justice & law",
+ {
+  "slug": "mr-bates-horizon",
+  "title": "Mr Bates vs The Post Office and the Offences Act (2024)",
+  "date": "2024-01-01",
+  "batch": 13,
+  "vertical": "Justice & law",
   "steps": [
-   {"n": 1, "claim": "ITV airs Mr Bates vs The Post Office over four nights", "test": {"type": "record", "date": "2024-01-01", "source": "ITV broadcast, 1–4 Jan 2024"}},
-   {"n": 2, "claim": "Attention to the Horizon scandal surges", "short": "Scandal attention", "test": {"type": "wiki", "articles": ["British Post Office scandal"], "lag": 30}},
-   {"n": 3, "claim": "A petition to strip Paula Vennells of her CBE passes a million signatures", "short": "Petition hits 1m", "test": {"type": "record", "date": "2024-01-08", "source": "Change.org petition count reported by the BBC, 8 Jan 2024"}, "link": "reported", "link_why": "coverage tied the petition's growth to the drama"},
-   {"n": 4, "claim": "Vennells hands back her CBE", "short": "CBE returned", "test": {"type": "record", "date": "2024-01-09", "source": "Paula Vennells statement, 9 Jan 2024"}, "link": "reported", "link_why": "her statement followed the petition and the broadcast"},
-   {"n": 5, "claim": "The Prime Minister announces a law to quash the convictions", "short": "Law announced", "test": {"type": "record", "date": "2024-01-10", "source": "Hansard, 10 Jan 2024 (Post Office Horizon Scandal statement)"}, "link": "reported", "link_why": "ministers later credited the drama's effect on public outcry (Hansard, 20 Mar 2024)"},
-   {"n": 6, "claim": "At the Offences Bill's second reading, MPs credit the drama with the public outcry", "short": "Bill's second reading", "test": {"type": "record", "date": "2024-03-20", "source": "Hansard, 20 Mar 2024: 'that powerful ITV drama … prompted a public outcry'; 'the influence of the ITV drama … has been very significant in this campaign'"}, "link": "reported", "link_why": "the debate names the drama as the trigger"},
-   {"n": 7, "claim": "The Post Office (Horizon System) Offences Act 2024 quashes the convictions", "short": "Offences Act 2024", "test": {"type": "record", "date": "2024-05-24", "source": "Post Office (Horizon System) Offences Act 2024, Royal Assent 24 May 2024"}, "mark": "Law", "link": "reported", "link_why": "the second-reading debate credits the drama's role in the campaign", "note": "The Act quashed convictions in England and Wales; Scotland and Northern Ireland passed their own Acts. The campaign and the public inquiry predate the drama by years; the drama is credited with the speed of the political response."},
-   {"n": 8, "claim": "Hundreds of convictions are quashed and compensation payments follow", "short": "Convictions quashed", "test": {"type": "none"}, "range": ["2024-05-24", "2024-12-31"], "note": "Convictions were quashed automatically on Royal Assent; compensation offers followed through 2024."}
-  ]},
- {"slug": "cathy-come-home", "title": "Cathy Come Home and the homelessness law (1966)", "date": "1966-11-16", "batch": 13, "vertical": "Housing policy",
+   {
+    "n": 1,
+    "claim": "ITV airs Mr Bates vs The Post Office over four nights",
+    "test": {
+     "type": "record",
+     "date": "2024-01-01",
+     "source": "ITV broadcast, 1–4 Jan 2024"
+    }
+   },
+   {
+    "n": 2,
+    "claim": "Attention to the Horizon scandal surges",
+    "short": "Scandal attention",
+    "test": {
+     "type": "wiki",
+     "articles": [
+      "British Post Office scandal"
+     ],
+     "lag": 30
+    }
+   },
+   {
+    "n": 3,
+    "claim": "A petition to strip Paula Vennells of her CBE passes a million signatures",
+    "short": "Petition hits 1m",
+    "test": {
+     "type": "record",
+     "date": "2024-01-08",
+     "source": "Change.org petition count reported by the BBC, 8 Jan 2024"
+    },
+    "link": "reported",
+    "link_why": "coverage tied the petition's growth to the drama"
+   },
+   {
+    "n": 4,
+    "claim": "Vennells hands back her CBE",
+    "short": "CBE returned",
+    "test": {
+     "type": "record",
+     "date": "2024-01-09",
+     "source": "Paula Vennells statement, 9 Jan 2024"
+    },
+    "link": "reported",
+    "link_why": "her statement followed the petition and the broadcast"
+   },
+   {
+    "n": 5,
+    "claim": "The Prime Minister announces a law to quash the convictions",
+    "short": "Law announced",
+    "test": {
+     "type": "record",
+     "date": "2024-01-10",
+     "source": "Hansard, 10 Jan 2024 (Post Office Horizon Scandal statement)"
+    },
+    "link": "reported",
+    "link_why": "ministers later credited the drama's effect on public outcry (Hansard, 20 Mar 2024)"
+   },
+   {
+    "n": 6,
+    "claim": "At the Offences Bill's second reading, MPs credit the drama with the public outcry",
+    "short": "Bill's second reading",
+    "test": {
+     "type": "record",
+     "date": "2024-03-20",
+     "source": "Hansard, 20 Mar 2024: 'that powerful ITV drama … prompted a public outcry'; 'the influence of the ITV drama … has been very significant in this campaign'"
+    },
+    "link": "reported",
+    "link_why": "the debate names the drama as the trigger"
+   },
+   {
+    "n": 7,
+    "claim": "The Post Office (Horizon System) Offences Act 2024 quashes the convictions",
+    "short": "Offences Act 2024",
+    "test": {
+     "type": "record",
+     "date": "2024-05-24",
+     "source": "Post Office (Horizon System) Offences Act 2024, Royal Assent 24 May 2024"
+    },
+    "mark": "Law",
+    "link": "reported",
+    "link_why": "the second-reading debate credits the drama's role in the campaign",
+    "note": "The Act quashed convictions in England and Wales; Scotland and Northern Ireland passed their own Acts. The campaign and the public inquiry predate the drama by years; the drama is credited with the speed of the political response."
+   },
+   {
+    "n": 8,
+    "claim": "Hundreds of convictions are quashed and compensation payments follow",
+    "short": "Convictions quashed",
+    "test": {
+     "type": "none"
+    },
+    "range": [
+     "2024-05-24",
+     "2024-12-31"
+    ],
+    "note": "Convictions were quashed automatically on Royal Assent; compensation offers followed through 2024."
+   },
+   {
+    "n": 9,
+    "claim": "Attention to Paula Vennells surges",
+    "short": "Vennells attention",
+    "branch": true,
+    "test": {
+     "type": "wiki",
+     "articles": [
+      "Paula Vennells"
+     ],
+     "lag": 30
+    }
+   }
+  ]
+ },
+ {
+  "slug": "cathy-come-home",
+  "title": "Cathy Come Home and the homelessness law (1966)",
+  "date": "1966-11-16",
+  "batch": 13,
+  "vertical": "Housing policy",
   "steps": [
-   {"n": 1, "claim": "The BBC broadcasts Cathy Come Home to 12 million viewers", "test": {"type": "record", "date": "1966-11-16", "source": "BBC Wednesday Play, 16 Nov 1966; audience figure cited in Hansard, 15 Dec 1966"}},
-   {"n": 2, "claim": "Shelter launches two weeks later", "short": "Shelter launches", "test": {"type": "record", "date": "1966-12-01", "source": "Shelter founded 1 Dec 1966"}, "note": "Shelter was planned before the broadcast; the play gave its launch a national audience."},
-   {"n": 3, "claim": "MPs cite the play in the Housing Subsidies Bill debate", "short": "Cited in Parliament", "test": {"type": "record", "date": "1966-12-15", "source": "Hansard, 15 Dec 1966: 'the conscience of the nation has been jolted by a television play … Cathy Come Home'"}, "link": "reported", "link_why": "the speech names the play as the jolt"},
-   {"n": 4, "claim": "The Housing (Homeless Persons) Act 1977 creates a statutory duty to house people in priority need", "short": "Homeless Persons Act", "test": {"type": "record", "date": "1977-07-29", "source": "Housing (Homeless Persons) Act 1977, Royal Assent 29 Jul 1977 (Stephen Ross's private member's bill)"}, "mark": "Law", "link": "reported", "link_why": "Hansard, 28 Oct 2016: the play 'coincided with the launch of Shelter and eventually led to the passage of the Housing (Homeless Persons) Act 1977'", "note": "Eleven years is a long ripple; the link is Parliament's own account, not a measurement."},
-   {"n": 5, "claim": "Councils must house priority-need households from December 1977", "short": "Duty in force", "test": {"type": "record", "date": "1977-12-01", "source": "Act commenced 1 Dec 1977 in England and Wales"}, "link": "reported", "link_why": "the Act's commencement"}
-  ]},
- {"slug": "quincy-orphan-drug", "title": "Quincy, M.E. and the Orphan Drug Act (1981)", "date": "1981-03-04", "batch": 13, "vertical": "Health law",
+   {
+    "n": 1,
+    "claim": "The BBC broadcasts Cathy Come Home to 12 million viewers",
+    "test": {
+     "type": "record",
+     "date": "1966-11-16",
+     "source": "BBC Wednesday Play, 16 Nov 1966; audience figure cited in Hansard, 15 Dec 1966"
+    }
+   },
+   {
+    "n": 2,
+    "claim": "Shelter launches two weeks later",
+    "short": "Shelter launches",
+    "test": {
+     "type": "record",
+     "date": "1966-12-01",
+     "source": "Shelter founded 1 Dec 1966"
+    },
+    "note": "Shelter was planned before the broadcast; the play gave its launch a national audience."
+   },
+   {
+    "n": 3,
+    "claim": "MPs cite the play in the Housing Subsidies Bill debate",
+    "short": "Cited in Parliament",
+    "test": {
+     "type": "record",
+     "date": "1966-12-15",
+     "source": "Hansard, 15 Dec 1966: 'the conscience of the nation has been jolted by a television play … Cathy Come Home'"
+    },
+    "link": "reported",
+    "link_why": "the speech names the play as the jolt"
+   },
+   {
+    "n": 4,
+    "claim": "The Housing (Homeless Persons) Act 1977 creates a statutory duty to house people in priority need",
+    "short": "Homeless Persons Act",
+    "test": {
+     "type": "record",
+     "date": "1977-07-29",
+     "source": "Housing (Homeless Persons) Act 1977, Royal Assent 29 Jul 1977 (Stephen Ross's private member's bill)"
+    },
+    "mark": "Law",
+    "link": "reported",
+    "link_why": "Hansard, 28 Oct 2016: the play 'coincided with the launch of Shelter and eventually led to the passage of the Housing (Homeless Persons) Act 1977'",
+    "note": "Eleven years is a long ripple; the link is Parliament's own account, not a measurement."
+   },
+   {
+    "n": 5,
+    "claim": "Councils must house priority-need households from December 1977",
+    "short": "Duty in force",
+    "test": {
+     "type": "record",
+     "date": "1977-12-01",
+     "source": "Act commenced 1 Dec 1977 in England and Wales"
+    },
+    "link": "reported",
+    "link_why": "the Act's commencement"
+   }
+  ]
+ },
+ {
+  "slug": "quincy-orphan-drug",
+  "title": "Quincy, M.E. and the Orphan Drug Act (1981)",
+  "date": "1981-03-04",
+  "batch": 13,
+  "vertical": "Health law",
   "steps": [
-   {"n": 1, "claim": "Quincy episode 'Seldom Silent, Never Heard' dramatizes Tourette's and the drugs no company will make", "test": {"type": "record", "date": "1981-03-04", "source": "NBC broadcast, 4 Mar 1981"}},
-   {"n": 2, "claim": "Jack Klugman testifies to Congress on orphan drugs", "short": "Klugman testifies", "test": {"type": "record", "date": "1981-03-09", "source": "House Subcommittee on Health and the Environment hearing, 9 Mar 1981"}, "link": "reported", "link_why": "the hearing followed the episode; Klugman appeared as the show's star"},
-   {"n": 3, "claim": "A second episode, 'Give Me Your Weak', airs as the bill stalls", "short": "Second episode", "test": {"type": "record", "date": "1982-03-10", "source": "NBC broadcast, 10 Mar 1982"}, "link": "reported", "link_why": "the episode was written to push the stalled bill"},
-   {"n": 4, "claim": "The Orphan Drug Act is signed", "short": "Orphan Drug Act", "test": {"type": "record", "date": "1983-01-04", "source": "Public Law 97-414, signed 4 Jan 1983"}, "mark": "Law", "link": "reported", "link_why": "accounts credit the two episodes with helping the Act pass (Henry Waxman; Hal Erickson)", "note": "Waxman's bill predates the first episode; the show is credited with the public pressure that passed it."},
-   {"n": 5, "claim": "Hundreds of orphan drugs reach approval", "short": "Orphan drugs approved", "test": {"type": "record", "date": "2023-01-04", "source": "FDA: more than 600 orphan-designated drugs and biologics approved since 1983, against about 10 in the decade before"}, "mark": "Public health", "link": "reported", "link_why": "the FDA attributes the approvals to the Act's incentives"}
-  ]},
- {"slug": "octopus-sentience", "title": "My Octopus Teacher and the Sentience Act (2020)", "date": "2020-09-07", "batch": 13, "vertical": "Animal welfare law",
+   {
+    "n": 1,
+    "claim": "Quincy episode 'Seldom Silent, Never Heard' dramatizes Tourette's and the drugs no company will make",
+    "test": {
+     "type": "record",
+     "date": "1981-03-04",
+     "source": "NBC broadcast, 4 Mar 1981"
+    }
+   },
+   {
+    "n": 2,
+    "claim": "Jack Klugman testifies to Congress on orphan drugs",
+    "short": "Klugman testifies",
+    "test": {
+     "type": "record",
+     "date": "1981-03-09",
+     "source": "House Subcommittee on Health and the Environment hearing, 9 Mar 1981"
+    },
+    "link": "reported",
+    "link_why": "the hearing followed the episode; Klugman appeared as the show's star"
+   },
+   {
+    "n": 3,
+    "claim": "A second episode, 'Give Me Your Weak', airs as the bill stalls",
+    "short": "Second episode",
+    "test": {
+     "type": "record",
+     "date": "1982-03-10",
+     "source": "NBC broadcast, 10 Mar 1982"
+    },
+    "link": "reported",
+    "link_why": "the episode was written to push the stalled bill"
+   },
+   {
+    "n": 4,
+    "claim": "The Orphan Drug Act is signed",
+    "short": "Orphan Drug Act",
+    "test": {
+     "type": "record",
+     "date": "1983-01-04",
+     "source": "Public Law 97-414, signed 4 Jan 1983"
+    },
+    "mark": "Law",
+    "link": "reported",
+    "link_why": "accounts credit the two episodes with helping the Act pass (Henry Waxman; Hal Erickson)",
+    "note": "Waxman's bill predates the first episode; the show is credited with the public pressure that passed it."
+   },
+   {
+    "n": 5,
+    "claim": "Hundreds of orphan drugs reach approval",
+    "short": "Orphan drugs approved",
+    "test": {
+     "type": "record",
+     "date": "2023-01-04",
+     "source": "FDA: more than 600 orphan-designated drugs and biologics approved since 1983, against about 10 in the decade before"
+    },
+    "mark": "Public health",
+    "link": "reported",
+    "link_why": "the FDA attributes the approvals to the Act's incentives"
+   }
+  ]
+ },
+ {
+  "slug": "octopus-sentience",
+  "title": "My Octopus Teacher and the Sentience Act (2020)",
+  "date": "2020-09-07",
+  "batch": 13,
+  "vertical": "Animal welfare law",
   "steps": [
-   {"n": 1, "claim": "Netflix releases My Octopus Teacher", "test": {"type": "record", "date": "2020-09-07", "source": "Netflix release, 7 Sep 2020"}},
-   {"n": 2, "claim": "Attention to octopus intelligence rises", "short": "Octopus interest", "test": {"type": "wiki", "articles": ["Octopus", "Cephalopod intelligence"], "lag": 60}},
-   {"n": 3, "claim": "The film wins the Academy Award for Documentary Feature", "short": "Oscar", "test": {"type": "record", "date": "2021-04-25", "source": "93rd Academy Awards, 25 Apr 2021"}, "link": "reported", "link_why": "the award is the film's own"},
-   {"n": 4, "claim": "A minister tells the Lords he was 'profoundly affected' by the film during the Sentience Bill", "short": "Cited in the Lords", "test": {"type": "record", "date": "2021-07-20", "source": "Hansard, 20 Jul 2021, Animal Welfare (Sentience) Bill [HL]"}, "link": "reported", "link_why": "the minister names the film from the Dispatch Box"},
-   {"n": 5, "claim": "Octopuses, crabs and lobsters are added to the bill after an LSE review", "short": "Cephalopods added", "test": {"type": "record", "date": "2021-11-19", "source": "Defra announcement and the LSE review, 19 Nov 2021"}, "note": "The review was commissioned separately; the film's part is attention, not evidence."},
-   {"n": 6, "claim": "The Animal Welfare (Sentience) Act 2022 receives Royal Assent", "short": "Sentience Act 2022", "test": {"type": "record", "date": "2022-04-28", "source": "Royal Assent 28 Apr 2022"}, "mark": "Law", "note": "The Act was coming regardless; whether the film moved the cephalopod decision is unproven."}
-  ]},
- {"slug": "sixty-minutes-stock-act", "title": "60 Minutes and the STOCK Act (2011)", "date": "2011-11-13", "batch": 13, "vertical": "Ethics law",
+   {
+    "n": 1,
+    "claim": "Netflix releases My Octopus Teacher",
+    "test": {
+     "type": "record",
+     "date": "2020-09-07",
+     "source": "Netflix release, 7 Sep 2020"
+    }
+   },
+   {
+    "n": 2,
+    "claim": "Attention to octopus intelligence rises",
+    "short": "Octopus interest",
+    "test": {
+     "type": "wiki",
+     "articles": [
+      "Octopus",
+      "Cephalopod intelligence"
+     ],
+     "lag": 60
+    }
+   },
+   {
+    "n": 3,
+    "claim": "The film wins the Academy Award for Documentary Feature",
+    "short": "Oscar",
+    "test": {
+     "type": "record",
+     "date": "2021-04-25",
+     "source": "93rd Academy Awards, 25 Apr 2021"
+    },
+    "link": "reported",
+    "link_why": "the award is the film's own"
+   },
+   {
+    "n": 4,
+    "claim": "A minister tells the Lords he was 'profoundly affected' by the film during the Sentience Bill",
+    "short": "Cited in the Lords",
+    "test": {
+     "type": "record",
+     "date": "2021-07-20",
+     "source": "Hansard, 20 Jul 2021, Animal Welfare (Sentience) Bill [HL]"
+    },
+    "link": "reported",
+    "link_why": "the minister names the film from the Dispatch Box"
+   },
+   {
+    "n": 5,
+    "claim": "Octopuses, crabs and lobsters are added to the bill after an LSE review",
+    "short": "Cephalopods added",
+    "test": {
+     "type": "record",
+     "date": "2021-11-19",
+     "source": "Defra announcement and the LSE review, 19 Nov 2021"
+    },
+    "note": "The review was commissioned separately; the film's part is attention, not evidence."
+   },
+   {
+    "n": 6,
+    "claim": "The Animal Welfare (Sentience) Act 2022 receives Royal Assent",
+    "short": "Sentience Act 2022",
+    "test": {
+     "type": "record",
+     "date": "2022-04-28",
+     "source": "Royal Assent 28 Apr 2022"
+    },
+    "mark": "Law",
+    "note": "The Act was coming regardless; whether the film moved the cephalopod decision is unproven."
+   }
+  ]
+ },
+ {
+  "slug": "sixty-minutes-stock-act",
+  "title": "60 Minutes and the STOCK Act (2011)",
+  "date": "2011-11-13",
+  "batch": 13,
+  "vertical": "Ethics law",
   "steps": [
-   {"n": 1, "claim": "60 Minutes airs 'Insiders' on members of Congress trading stock", "test": {"type": "record", "date": "2011-11-13", "source": "CBS, 13 Nov 2011"}},
-   {"n": 2, "claim": "Cosponsors of the STOCK Act jump from 9 to more than 100 within weeks", "short": "Cosponsors surge", "test": {"type": "record", "date": "2011-12-15", "source": "Congress.gov cosponsor dates for H.R. 1148, Nov–Dec 2011"}, "link": "reported", "link_why": "the cosponsor dates cluster in the weeks after the broadcast"},
-   {"n": 3, "claim": "The Senate passes the bill 96–3", "short": "Senate passes", "test": {"type": "record", "date": "2012-02-02", "source": "Senate roll call, 2 Feb 2012"}, "link": "reported", "link_why": "the bill's own history"},
-   {"n": 4, "claim": "The STOCK Act is signed", "short": "STOCK Act", "test": {"type": "record", "date": "2012-04-04", "source": "Public Law 112-105, signed 4 Apr 2012"}, "mark": "Law", "link": "reported", "link_why": "the Act's history records that it 'gained popularity following a 60 Minutes segment'", "note": "The bill had been introduced in 2006 and reintroduced in March 2011; the segment is credited with its passage, not its existence."},
-   {"n": 5, "claim": "Members' trades must be disclosed within 45 days", "short": "Disclosure in force", "test": {"type": "record", "date": "2012-07-03", "source": "STOCK Act periodic transaction reports begin, July 2012"}, "link": "reported", "link_why": "the Act's commencement"}
-  ]}
+   {
+    "n": 1,
+    "claim": "60 Minutes airs 'Insiders' on members of Congress trading stock",
+    "test": {
+     "type": "record",
+     "date": "2011-11-13",
+     "source": "CBS, 13 Nov 2011"
+    }
+   },
+   {
+    "n": 2,
+    "claim": "Cosponsors of the STOCK Act jump from 9 to more than 100 within weeks",
+    "short": "Cosponsors surge",
+    "test": {
+     "type": "record",
+     "date": "2011-12-15",
+     "source": "Congress.gov cosponsor dates for H.R. 1148, Nov–Dec 2011"
+    },
+    "link": "reported",
+    "link_why": "the cosponsor dates cluster in the weeks after the broadcast"
+   },
+   {
+    "n": 3,
+    "claim": "The Senate passes the bill 96–3",
+    "short": "Senate passes",
+    "test": {
+     "type": "record",
+     "date": "2012-02-02",
+     "source": "Senate roll call, 2 Feb 2012"
+    },
+    "link": "reported",
+    "link_why": "the bill's own history"
+   },
+   {
+    "n": 4,
+    "claim": "The STOCK Act is signed",
+    "short": "STOCK Act",
+    "test": {
+     "type": "record",
+     "date": "2012-04-04",
+     "source": "Public Law 112-105, signed 4 Apr 2012"
+    },
+    "mark": "Law",
+    "link": "reported",
+    "link_why": "the Act's history records that it 'gained popularity following a 60 Minutes segment'",
+    "note": "The bill had been introduced in 2006 and reintroduced in March 2011; the segment is credited with its passage, not its existence."
+   },
+   {
+    "n": 5,
+    "claim": "Members' trades must be disclosed within 45 days",
+    "short": "Disclosure in force",
+    "test": {
+     "type": "record",
+     "date": "2012-07-03",
+     "source": "STOCK Act periodic transaction reports begin, July 2012"
+    },
+    "link": "reported",
+    "link_why": "the Act's commencement"
+   }
+  ]
+ }
 ]

@@ -374,6 +374,67 @@
      "source": "Gallup: the under-35 decline is already visible in the 2021–23 pooled surveys"
     },
     "note": "The decline was in the data two years before the advisory. Busted as a cause of the trend; it may shape what people say about it."
+   },
+   {
+    "n": 23,
+    "claim": "Per-capita drinking falls for two decades after the 1981 peak",
+    "short": "Drinking falls after 1981",
+    "slice": "Health",
+    "after": 7,
+    "test": {
+     "type": "file",
+     "key": "niaaa_percapita_ethanol",
+     "h": 2,
+     "direction": "down",
+     "transform": "log",
+     "source": "NIAAA apparent per-capita ethanol consumption, gallons per person 14 and older, 1970–2022"
+    },
+    "note": "The NIAAA series begins in 1970, so the climb after repeal cannot be tested in it; the fall from the 1981 peak (2.76 gallons) to the 1990s (2.15) can, as a two-year change from 1982 against every other two-year change in the series.",
+    "ref": "1982-07-01"
+   },
+   {
+    "n": 24,
+    "claim": "Young adults in legal-cannabis states drink less than elsewhere (the dose-response test)",
+    "short": "Cannabis states drink less?",
+    "slice": "Catalysts?",
+    "after": 17,
+    "test": {
+     "type": "dose",
+     "key": "cannabis_young_adult_alcohol",
+     "date": "2018-07-01"
+    },
+    "note": "Dose-response, first rung above timing: in the 20 states that opened retail cannabis (2014–2023), past-30-day drinking among adults 18–24 (CDC BRFSS) changed by about the same as in the 31 states that never did; the pre-registered youth outcome (YRBS) could not be run because the state tables end in 2017 and Colorado and Washington do not take part. Protocol: ripples/docs/dose_response_v1.md."
+   },
+   {
+    "n": 25,
+    "claim": "Attention to alcohol and cancer surges after the Surgeon General's advisory",
+    "short": "Cancer-warning attention",
+    "slice": "Catalysts?",
+    "after": 21,
+    "ref": "2025-01-03",
+    "test": {
+     "type": "wiki",
+     "articles": [
+      "Alcohol and cancer"
+     ],
+     "lag": 45
+    }
+   },
+   {
+    "n": 26,
+    "claim": "Dry January draws a January surge every year",
+    "short": "Dry January attention",
+    "slice": "Catalysts?",
+    "after": 15,
+    "ref": "2018-01-01",
+    "test": {
+     "type": "wiki",
+     "articles": [
+      "Dry January"
+     ],
+     "lag": 40
+    },
+    "note": "A seasonal rise: placebo windows that fall in other Januaries make the test honest about that. Checked at the Jan 2018 campaign (daily views begin Jul 2015; Jan 2017 left fewer than 20 placebo windows)."
    }
   ]
  }

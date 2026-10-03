@@ -163,6 +163,8 @@ input[type=range]{flex:1;accent-color:var(--marigold);min-width:0}
 .card .when span{font:500 .78rem var(--sans);color:var(--ink-3);margin-left:6px}
 .card h2{font:700 .95rem/1.3 var(--sans);margin:.28rem 0 .05rem}
 .card .short{font-size:.82rem;color:var(--ink-2);margin:.25rem 0 0}
+.card .attn{font-size:.8rem;color:var(--ink-3);margin:.3rem 0 0;padding-left:.6rem;border-left:2px solid var(--ink-4,rgba(0,0,0,.15))}
+.card .attn.rose{color:var(--ink-2);border-left-color:var(--good)}
 .card details{margin-top:.3rem;font-size:.82rem;color:var(--ink-2)}
 .card details summary{cursor:pointer;color:var(--ink-3);font-size:.76rem;font-weight:600;list-style:none}
 .card details summary::-webkit-details-marker{display:none}
@@ -338,7 +340,7 @@ body.reel .pondbox{padding-bottom:10px}
 <section class="how" id="how" hidden>
   <div><h3>Rings are time</h3><p>The stone is the event. Each ring is time since it happened, so a ripple lands where it began. Each distinct ripple gets its own slice, labeled on the rim with the industry it reached.</p></div>
   <div><h3>Order, not a web</h3><p>Every step must begin after the step before it. A step that started first is busted, however related it looks.</p></div>
-  <div><h3>How sure</h3><p><b>Measured</b>: moved beyond normal in the data, after the step before. <b>Timed</b>: rose in the right order, not tested against chance. <b>Reported</b>: a credible source makes the link. <b>Plausible</b>: it happened; the link is unproven. <b>Busted</b>: wrong order, contradicted, or no evidence. Steps without an exact date sit at the middle of their likely range.</p></div>
+  <div><h3>How sure</h3><p><b>Measured</b>: moved beyond normal in the data, after the step before. <b>Timed</b>: rose in the right order, not tested against chance. <b>Reported</b>: a credible source makes the link. <b>Plausible</b>: it happened; the link is unproven. <b>Busted</b>: wrong order, contradicted, or no evidence. Steps without an exact date sit at the middle of their likely range. Every dated step since 2015 also gets an <b>attention check</b>: did Wikipedia views of the thing it names rise at that date, tested against the page's own past? It rides along on the card; it does not change the step's rating.</p></div>
   <div><h3>Found by the engine</h3><p>Ripple maps list things whose attention rose unusually after the event, found automatically among the Wikipedia articles that link to it. Attention is a lead, not a proven effect. The data: daily Wikipedia views, FRED and BLS series, Census retail sales, Zillow, Stack Overflow, US baby names and dated public records.</p></div>
 </section>
 <p class="foot">Ripple is an early build. Timing shows order, not proof of cause. Every test and every miss: <a href="/ripples/discover/maps/">ripple maps</a> · <a href="/ripples/discover/">discoveries</a>.</p>
@@ -500,6 +502,7 @@ function howSure(lv, o = {}) {
   const pct = o.p != null ? `${Math.max(0.1, Math.round(o.p * 1000) / 10)}%` : null;
   const after = " It also began after the step before it, which is the order a cause needs.";
   if (lv === "measured") {
+    if (o.kind === "dose") return `${esc(o.what)}. For each state that opened retail cannabis we took the change in the outcome from the last survey before to the second survey after, and subtracted the same change in states that never did. We then handed the same opening dates to 2,000 random sets of states: ${o.p <= 0.05 ? `only ${pct} of those produced a difference this large (p = ${o.p})` : `${pct} of those produced a difference at least this large (p = ${o.p}), so it is within what chance produces`}. A placebo on the two surveys before the opening checks whether the treated states were already drifting (pre-trend p = ${o.pre}). This is the first rung above timing: exposure that varies by place. It still cannot rule out something else that arrived in the same states at the same time.`;
     if (o.kind === "wiki") return `We counted daily Wikipedia views of “${esc(o.what)}”. From ${o.when} they ran about ${o.ratio}× the normal level. We then ran the same test at ${o.n ? `${o.n}` : "many"} random dates in the page's own past: a jump this big showed up at only ${pct} of them (p = ${o.p}).${after} This shows attention, not what people did next.`;
     if (o.kind === "ssa") return `We took the yearly count of US babies given this name and compared the change in ${o.when} with the change in every other year on record. Only ${pct} of years moved this much (p = ${o.p}).${after}`;
     return `We took the official series (${esc(o.what)}) and compared its change after this date with its change after every other date in the series. Only ${pct} of those moved this much (p = ${o.p}).${after} A measured move, not proof that nothing else was going on.`;
@@ -602,14 +605,15 @@ const plainWork = w => w.replace(/ \((TV series|film|\d{4} film|video game|Briti
 function fromActs(work) {
   const ps = actPairs(work), iso0 = ps[0].work_date, items = [];
   ps.forEach((p, i) => {
-    const d = Math.max(daysBetween(iso0, p.royal_assent), 0.5), cited = (p.causal_score || 0) > 0;
+    const d = Math.max(daysBetween(iso0, p.royal_assent), 0.5), cs = p.cite_score != null ? p.cite_score : ((p.causal_score || 0) > 0 ? 2 : 0), cited = cs >= 2;
+    const how = cs >= 2 ? "cited as a reason" : cs === 1 ? "mentioned in the argument" : "mentioned in passing";
     const actName = p.act.replace(/\s*\(repealed.*\)$/, "");
-    items.push({id:`a${i}`, parent:null, slice:"main", d, label:actName.length > 30 ? shortLabel(actName) : actName, lv:"reported", lvText:"Reported",
-      sub:`${fmtMonth(D(p.royal_assent))} · ${sinceLabel(d)}`, mark:cited ? "Law" : null, title:actName,
-      short:`Cited in the ${p.bill.trim()} debate, ${fmt(D(p.debated))}`,
-      card:card({when:`${fmt(D(p.royal_assent))}<span>${sinceLabel(d)}</span>`, badge:"Reported", badgeCls:"l-reported", title:actName, mark:cited ? "Law" : null,
-        short:`Named in Parliament during the Bill's passage, ${fmt(D(p.debated))}${cited ? ", with causal language" : ""}.`,
-        sure:howSure("reported", {what:`Hansard, ${fmt(D(p.debated))}`, why:"a member cited the work in the debate on the Bill. A citation shows the work was in the room, not that it caused the Act"}),
+    items.push({id:`a${i}`, parent:null, slice:"main", d, label:actName,
+      sub:`${fmtMonth(D(p.royal_assent))} · ${sinceLabel(d)}`, mark:cited ? "Law" : null, title:actName, lv:cited ? "reported" : "plausible", lvText:cited ? "Reported" : "Plausible",
+      short:`${cap(how)} in the ${p.bill.trim()} debate, ${fmt(D(p.debated))}`,
+      card:card({when:`${fmt(D(p.royal_assent))}<span>${sinceLabel(d)}</span>`, badge:cited ? "Reported" : "Plausible", badgeCls:cited ? "l-reported" : "l-plausible", title:actName, mark:cited ? "Law" : null,
+        short:`${cap(how)} in Parliament during the Bill's passage, ${fmt(D(p.debated))}.${p.cite_why && p.cite_why.length ? ` Why we read it that way: ${esc(p.cite_why.join("; "))}.` : ""}`,
+        sure:howSure(cited ? "reported" : "plausible", cited ? {what:`Hansard, ${fmt(D(p.debated))}`, why:"a member cited the work as a reason in the debate on the Bill. A citation shows the work was in the room, not that it caused the Act"} : {why:"the work was mentioned in the debate, but not as a reason for the Bill"}),
         details:`<p>“${esc((p.sentence || "").slice(0, 420))}…”</p><p class="src"><a href="${esc(p.debate_url || "#")}" target="_blank" rel="noopener">Hansard</a>${p.act_url ? ` · <a href="${esc(p.act_url)}" target="_blank" rel="noopener">legislation.gov.uk</a>` : ""}</p>`})});
   });
   const name = plainWork(work);
@@ -627,6 +631,13 @@ function chainLevel(st) {
   if (/no evidence/.test(v)) return ["busted", "Busted", "No evidence found that this happened as described." + (why && !/^desk check: no evidence/.test(why) ? ` (${why}.)` : ""), "No evidence it happened"];
   if (/contested|unverified/.test(v)) return ["busted", "Disputed", why, "Disputed by later research"];
   if (/not yet/.test(v)) return ["busted", "Not yet", why, "Hasn't happened yet"];
+  if (st.test.type === "dose" && st.effect != null && st.p != null) {  // a dose-response design: states with the exposure against states without
+    const dir = st.effect < 0 ? "fell" : "rose", pts = Math.abs(st.effect).toFixed(1);
+    const line = `Where the exposure arrived, the outcome ${dir} ${pts} points more than in states without it (${st.n_treated} states against ${st.n_control}; permutation p = ${st.p}${st.pretrend_p != null ? `, pre-trend p = ${st.pretrend_p}` : ""}).`;
+    if (v === "measured") return ["measured", "Measured", line, `${dir === "fell" ? "−" : "+"}${pts} points against other states · p = ${st.p}`];
+    if (v === "moved, pre-trend") return ["plausible", "Plausible", line + " But the treated states were already moving differently before the exposure, so the design cannot separate the two.", `Moved, but the trend came first (p = ${st.p})`];
+    return ["plausible", "Plausible", line + " A difference this size is within what random assignment produces.", `Within chance (p = ${st.p})`];
+  }
   if (v === "measured") {
     const t = st.ratio ? `Rose to ${st.ratio}× its normal level from ${fmt(D(st.onset))}` : `Moved further than in ${Math.round((1 - st.p) * 100)}% of other periods`;
     return ["measured", "Measured", `${t} (p = ${st.p}), after the step before.`, st.ratio ? `${st.ratio}× normal · p = ${st.p}` : `Beyond ${Math.round((1 - st.p) * 100)}% of other periods · p = ${st.p}`];
@@ -639,7 +650,8 @@ function chainLevel(st) {
   return ["plausible", "Plausible", why || "It happened; the causal link is unproven.", "Happened; the link is unproven"];
 }
 const SRC = st => ({fred:`FRED series ${st.test.id}`, stackex:"Stack Overflow new questions per month (Stack Exchange API)", zillow:"Zillow Home Value Index, Zoom towns minus US",
-  arxiv:"arXiv astro-ph submissions per month", ssa:"US baby names, Social Security Administration"})[st.test.type] || "";
+  arxiv:"arXiv astro-ph submissions per month", ssa:"US baby names, Social Security Administration", file:st.test.source || st.series || "an official series",
+  dose:st.source || "state surveys, difference-in-differences"})[st.test.type] || "";
 function fromChain(slug) {
   const ch = DATA.chains.find(c => c.slug === slug), iso0 = ch.date, items = [];
   const steps = ch.steps.slice(1);
@@ -652,7 +664,19 @@ function fromChain(slug) {
     d = Math.max(d, 0.5);
     if (!st.branch) prevD = Math.max(prevD, d);
     const [lv, lvText, why, short] = chainLevel(st);
-    const weekly = st.weekly || st.points || null;
+    const weekly = st.weekly || (st.test.type === "dose" ? null : st.points) || null;  // a dose result's points are per-state effects, not a series
+    // the attention check: for a dated step after Aug 2015 with no placebo test of its own, the checker asks whether
+    // Wikipedia views of the thing the step names rose at the step's date, by the same test a measured step gets
+    const at = st.attn; let facts = "";
+    if (at && at.verdict && !/^no article|^article older/.test(at.verdict)) {
+      const a = esc((at.articles || [])[0] || ""), pct = at.p != null ? Math.max(0.1, Math.round(at.p * 1000) / 10) : null;
+      const txt = at.verdict === "attention rose" ? `Attention check: Wikipedia views of “${a}” rose to ${at.ratio}× normal from ${fmt(D(at.onset))}; a rise that big appears at only ${pct}% of random dates in the page's own past (p = ${at.p}).`
+        : at.verdict === "within chance" ? `Attention check: views of “${a}” rose to ${at.ratio}× normal, but rises like it occur at ${pct}% of random dates in the page's past: within chance.`
+        : at.verdict === "no sustained rise" ? `Attention check: no sustained rise in views of “${a}” around this date.`
+        : at.verdict === "article created then" ? `Attention check: the Wikipedia article “${a}” was created at this date.`
+        : at.verdict === "rose, no placebo history" ? `Attention check: views of “${a}” rose from ${fmt(D(at.onset))}; too little history for a placebo test.` : "";
+      if (txt) facts = `<p class="attn${at.verdict === "attention rose" ? " rose" : ""}">${txt}</p>`;
+    }
     let when, sub;
     if (undated) { when = "Undated<span>no date to check</span>"; sub = "undated"; }
     else if (st.range) {
@@ -667,9 +691,9 @@ function fromChain(slug) {
     const srcLine = st.source || (st.test && st.test.source) || "";
     const shortLine = lv === "reported" && srcLine ? esc(srcLine) : short;
     items.push({id, parent, slice:st.slice || (st.branch ? `b${st.n}` : "main"), d, range, undated, label:st.short || shortLabel(st.claim), lv, lvText, sub, mark:lv === "busted" ? null : st.mark, short:shortLine, title:st.claim,
-      card:card({when, badge:lvText, badgeCls:`l-${lv}`, title:st.claim, cls:lv === "busted" ? "busted" : "", spark:weekly ? sparkHTML(weekly, st.ref) : "", short:shortLine,
-        sure:howSure(lv, lv === "measured" ? {kind:st.test.type === "wiki" ? "wiki" : st.test.type === "ssa" ? "ssa" : "series", what:st.test.type === "wiki" ? (st.test.articles || [])[0] : SRC(st) || st.series,
-            when:st.onset ? fmt(D(st.onset)) : "", ratio:st.ratio, p:st.p, n:st.n_placebo}
+      card:card({when, badge:lvText, badgeCls:`l-${lv}`, title:st.claim, cls:lv === "busted" ? "busted" : "", spark:weekly ? sparkHTML(weekly, st.ref) : at && at.weekly && at.ratio ? sparkHTML(at.weekly, st.onset) : "", facts, short:shortLine,
+        sure:howSure(st.test.type === "dose" && st.p != null ? "measured" : lv, (lv === "measured" || (st.test.type === "dose" && st.p != null)) ? {kind:st.test.type === "wiki" ? "wiki" : st.test.type === "ssa" ? "ssa" : st.test.type === "dose" ? "dose" : "series", what:st.test.type === "wiki" ? (st.test.articles || [])[0] : SRC(st) || st.series,
+            when:st.onset ? fmt(D(st.onset)) : "", ratio:st.ratio, p:st.p, n:st.n_placebo, pre:st.pretrend_p}
           : lv === "timed" ? {when:st.onset ? fmt(D(st.onset)) : "", archive:!!st.archive_first, newArticle:!!st.new_article}
           : lv === "reported" ? {what:srcLine, why:st.link_why} : {why:why}),
         details:`<p>${esc(why)}</p>${st.note && st.note !== why ? `<p>${esc(st.note)}</p>` : ""}${happened}`})});
@@ -743,12 +767,14 @@ function draw(story) {
     const rl = el("text", {class:"ringlbl", x:p.x + 5, y:p.y - 3}, gt); rl.textContent = lbl; if (dense) rl.style.fontSize = "15px";
   }
   el("circle", {cx:C.x, cy:C.y, r:R + 6, fill:"none", stroke:"rgba(214,240,236,.16)", "stroke-width":1.5, filter:"url(#wob)"}, g0);
+  const rimBoxes = [];  // rim words keep their space; ripple labels place around them
   keys.forEach(k => {  // the industry each ripple reached, outside the rim, always horizontal
     if (!story.names[k]) return;
     const c = n === 1 ? 0 : centre(k), sx = Math.sin(c * Math.PI / 180), cy = -Math.cos(c * Math.PI / 180), p = PL(polar(R + 24 + 22 * Math.abs(sx), c));
     const rt = el("text", {class:"rimlbl", x:p.x + (Math.abs(sx) < 0.35 ? 0 : sx > 0 ? 2 : -2), y:p.y + (cy > 0.35 ? 10 : cy < -0.35 ? -2 : 4),
       "text-anchor":Math.abs(sx) < 0.35 ? "middle" : sx > 0 ? "start" : "end"}, gt); rt.textContent = story.names[k];
     if (dense) rt.style.fontSize = "17px";
+    try { const b = rt.getBBox(); rimBoxes.push({x:b.x - 4, y:b.y - 2, w:b.width + 8, h:b.height + 4}); } catch {}
   });
   const waves = el("g", {}, plane), bands = el("g", {}, plane), rips = el("g", {}, plane), edges = el("g", {}, plane), elbls = el("g", {}, svg), nodes = el("g", {}, svg), labels = el("g", {}, svg);
   const sHalo = el("circle", {cx:C.x, cy:C.y, r:30, fill:"url(#wet)"}, plane);
@@ -774,9 +800,14 @@ function draw(story) {
     if (n === 1 && m > 1) its.forEach((it, j) => { it.a = -70 + j * 140 / (m - 1); });  // one ripple: a gentle spiral outward
     its.forEach(it => { it.r = radius(it.d); it.plane = polar(it.r, it.a); it.pos = PL(it.plane); it.span = n === 1 ? null : [centre(k) - w / 2 + 3, centre(k) + w / 2 - 3]; });
   }
-  const placed = [{x:C.x - 70, y:C.y - 20, w:140, h:70}];  // keep clear of the stone's label
+  const placed = [{x:C.x - 70 * K, y:C.y - 20 * K, w:140 * K, h:70 * K}, ...rimBoxes];  // the stone's name grows with K on a phone  // keep clear of the stone's label and the rim words
+  const nMarks = items.filter(x => x.mark).length;
   const overlaps = b => placed.some(p => b.x < p.x + p.w && b.x + b.w > p.x && b.y < p.y + p.h && b.y + b.h > p.y);
-  for (const it of [...items].sort((a, b) => a.d - b.d)) {
+  const overlapArea = b => placed.reduce((s, p) => s + Math.max(0, Math.min(b.x + b.w, p.x + p.w) - Math.max(b.x, p.x)) * Math.max(0, Math.min(b.y + b.h, p.y + p.h) - Math.max(b.y, p.y)), 0);
+  // lasting marks and measured steps claim their label space first; the rest take what is left, and a label with no
+  // clear spot waits for a hover or a tap instead of piling onto its neighbors (a crowded century still reads)
+  const rank = x => (x.mark ? 0 : x.lv === "measured" ? 1 : 2);
+  for (const it of [...items].sort((a, b) => rank(a) - rank(b) || a.d - b.d)) {
     const parent = items.find(x => x.id === it.parent);
     it.from = parent ? parent.plane : C;  // plane coordinates: edges are drawn on the water
     if (it.range) {
@@ -815,7 +846,7 @@ function draw(story) {
     // label on a dark backing; try right, left, above, below and keep the first spot that does not collide
     const lab = el("g", {class:"nlab" + (it.lv === "busted" ? " busted" : "") + (it.mark ? " mark" : "")}, labels);
     const rect = el("rect", {rx:6}, lab);
-    const shown = [it.label.length > 26 ? shortLabel(it.label) : it.label];
+    const shown = wrapLabel(it.label, 26, 2);
     const tx = el("text", {x:0, y:0}, lab); if (dense) tx.style.fontSize = "22px";
     shown.forEach((ln, k) => { const ts = el("tspan", {x:0, dy:k ? 15 * K : 0}, tx); ts.textContent = ln; });
     const sub = el("text", {class:"s", x:0, y:15 * K * shown.length}, lab); sub.textContent = (it.mark ? `◆ ${it.mark} · ` : "") + (it.sub || "");
@@ -824,11 +855,15 @@ function draw(story) {
     const right = [g1, -bh / 2], left = [-g1 - bw, -bh / 2], up = [-bw / 2, -bh - g1], down = [-bw / 2, g1 + 1];
     const rUp = [g1, -bh - 6], rDn = [g1, 6], lUp = [-g1 - bw, -bh - 6], lDn = [-g1 - bw, 6];
     const order = it.pos.x >= C.x ? [right, rUp, rDn, up, down, left, lUp, lDn] : [left, lUp, lDn, up, down, right, rUp, rDn];
-    let best = order[0];
+    let best = null, least = Infinity, fallback = order[0];
     for (const sp of order) {
       const b = {x:it.pos.x + sp[0], y:it.pos.y + sp[1], w:bw, h:bh};
-      if (!overlaps(b) && b.x > -118 && b.x + bw < 818 && b.y > VB.top && b.y + bh < VB.bottom) { best = sp; break; }
+      const inside = b.x > -118 && b.x + bw < 818 && b.y > VB.top && b.y + bh < VB.bottom;
+      if (inside && !overlaps(b)) { best = sp; break; }
+      const a = overlapArea(b) + (inside ? 0 : 1e6); if (a < least) { least = a; fallback = sp; }
     }
+    const free = !!best; if (!best) best = fallback;
+    if (!free && !(it.mark && nMarks <= 6) && it.lv !== "measured") it.showLabel = false;  // shown on hover, focus and in its card
     const bx = it.pos.x + best[0], by = it.pos.y + best[1];
     if (it.showLabel) placed.push({x:bx, y:by, w:bw, h:bh});  // hidden labels do not reserve space
     lab.setAttribute("transform", `translate(${bx + pad - bb.x},${by + pad - bb.y})`);
@@ -838,6 +873,18 @@ function draw(story) {
   story.max = max; story.waves = waves; story.sHalo = sHalo; story.sCore = sCore; story.K = K; story.splashed = false;
 }
 
+function wrapLabel(t, width, lines) {  // greedy word wrap to at most `lines` lines; the last line is cut with an ellipsis
+  if (t.length <= width) return [t];
+  const out = []; let line = "";
+  for (const w of t.split(/\s+/)) {
+    if (!line) line = w;
+    else if ((line + " " + w).length <= width) line += " " + w;
+    else { out.push(line); line = w; if (out.length === lines) break; }
+  }
+  if (out.length < lines && line) out.push(line);
+  if (out.length > lines || (out.length === lines && out.join(" ").length < t.length)) { out.length = lines; out[lines - 1] = shortLabel(out[lines - 1], width); }
+  return out;
+}
 function isDesc(x, root) { for (let p = x; p; p = cur.items.find(y => y.id === p.parent)) if (p === root) return true; return false; }
 // ---------- feed ----------
 function buildFeed(story) {
@@ -1095,7 +1142,7 @@ function show(kind, slug, autoplay = true) {
   const story = kind === "chain" ? fromChain(slug) : kind === "acts" ? fromActs(slug) : MAPS[slug] && DATA.maps[slug] ? fromMap(slug) : fromDisc(slug);
   for (const it of story.items) if (it.mark) {  // a lasting mark: law, institution, infrastructure, jobs, health
     it.card.cls += " marked";
-    it.card.html = it.card.html.replace("</span></div>", `</span></div><div class="markpill">◆ Lasting mark · ${esc(it.mark)}</div>`);
+    if (!it.card.html.includes('class="markpill"')) it.card.html = it.card.html.replace("</span></div>", `</span></div><div class="markpill">◆ Lasting mark · ${esc(it.mark)}</div>`);
   }
   const marks = story.items.filter(x => x.mark);
   story.sub = story.sub.replace(/ Tap a ripple to see why\.$/, "");

@@ -1,0 +1,6554 @@
+{
+"source": "mark_text_v1_2.json",
+"n_pairs": 588,
+"by_label": {
+"reason": 190,
+"context": 86,
+"aside": 312
+},
+"eval": {
+"n": 22,
+"tp": 8,
+"fp": 3,
+"fn": 1,
+"precision": 0.73,
+"recall": 0.89,
+"rows": [
+{
+"work": "Mr Bates vs The Post Office",
+"mark": " Post Office (Horizon System) Offences Bill",
+"truth": "reason",
+"pred": "reason",
+"score": 3,
+"why": [
+"causal language: campaign, powerful",
+"the work is the subject of the clause"
+]
+},
+{
+"work": "Mr Bates vs The Post Office",
+"mark": "Leasehold and Freehold Reform Bill (First sitting)",
+"truth": "aside",
+"pred": "aside",
+"score": 0,
+"why": [
+"illustration cue: watched"
+]
+},
+{
+"work": "Adolescence (TV series)",
+"mark": " Children’s Wellbeing and Schools Bill",
+"truth": "reason",
+"pred": "reason",
+"score": 2,
+"why": [
+"causal language: addresses, explored, highlights"
+]
+},
+{
+"work": "Cathy Come Home",
+"mark": "Housing Subsidies Bill",
+"truth": "reason",
+"pred": "reason",
+"score": 2,
+"why": [
+"the work is the subject of the clause",
+"a change word follows"
+]
+},
+{
+"work": "Cathy Come Home",
+"mark": " Homelessness Reduction Bill",
+"truth": "reason",
+"pred": "reason",
+"score": 3,
+"why": [
+"causal language: exposed, led to",
+"a change word follows"
+]
+},
+{
+"work": "My Octopus Teacher",
+"mark": "Animal Welfare (Sentience) Bill [HL]",
+"truth": "reason",
+"pred": "reason",
+"score": 2,
+"why": [
+"causal language: showed"
+]
+},
+{
+"work": "Baby Reindeer",
+"mark": "Criminal Justice Bill",
+"truth": "reason",
+"pred": "aside",
+"score": 0,
+"why": []
+},
+{
+"work": "Manhunt (video game)",
+"mark": "British Board of Film Classification (Accountability to Parliament and Appeals) Bill",
+"truth": "reason",
+"pred": "reason",
+"score": 2,
+"why": [
+"causal language: influenced"
+]
+},
+{
+"work": "McMafia",
+"mark": "Brexit: Sanctions Policy (European Union Committee Report)",
+"truth": "reason",
+"pred": "reason",
+"score": 2,
+"why": [
+"causal language: has had, led to, the effect"
+]
+},
+{
+"work": "Silent Spring",
+"mark": "Agriculture Bill",
+"truth": "aside",
+"pred": "context",
+"score": 1,
+"why": [
+"causal language: following, highlighted, seminal",
+"a change word follows",
+"illustration cue: i remember, when i was very young"
+]
+},
+{
+"work": "Silent Spring",
+"mark": "Gas Bill",
+"truth": "aside",
+"pred": "aside",
+"score": 0,
+"why": []
+},
+{
+"work": "Nineteen Eighty-Four",
+"mark": " Product Regulation and Metrology Bill [Lords]",
+"truth": "aside",
+"pred": "aside",
+"score": 0,
+"why": []
+},
+{
+"work": "Welcome to Wrexham",
+"mark": "Football Governance Bill [HL]",
+"truth": "aside",
+"pred": "aside",
+"score": 0,
+"why": [
+"illustration cue: years ago"
+]
+},
+{
+"work": "Nightsleeper",
+"mark": "Passenger Railway Services (Public Ownership) Bill",
+"truth": "aside",
+"pred": "context",
+"score": 1,
+"why": [
+"a change word follows"
+]
+},
+{
+"work": "Yes Minister",
+"mark": "Fire Safety Bill",
+"truth": "aside",
+"pred": "aside",
+"score": 0,
+"why": [
+"title used as ordinary words"
+]
+},
+{
+"work": "Care Bears (TV series)",
+"mark": "The Care Planning, Placement and Case Review (England) (Amendment) Regulations 2021",
+"truth": "aside",
+"pred": "reason",
+"score": 2,
+"why": [
+"causal language: testimony"
+]
+},
+{
+"work": "Gaza: How to Survive a Warzone",
+"mark": " Points of Order",
+"truth": "aside",
+"pred": "reason",
+"score": 2,
+"why": [
+"causal language: after, outcry"
+]
+},
+{
+"work": "Ocean with David Attenborough",
+"mark": " Biodiversity Beyond National Jurisdiction Bill",
+"truth": "context",
+"pred": "aside",
+"score": 0,
+"why": [
+"illustration cue: watched"
+]
+},
+{
+"work": "Super Size Me",
+"mark": "Food Products (Marketing to Children) Bill",
+"truth": "context",
+"pred": "reason",
+"score": 3,
+"why": [
+"causal language: demonstrated",
+"the work is the subject of the clause"
+]
+},
+{
+"work": "Heartbeat (British TV series)",
+"mark": "Terminally Ill Adults (End of Life) Bill",
+"truth": "aside",
+"pred": "aside",
+"score": 0,
+"why": []
+},
+{
+"work": "Downton Abbey",
+"mark": "Equality (Titles) Bill [HL]",
+"truth": "aside",
+"pred": "context",
+"score": 1,
+"why": [
+"a change word follows"
+]
+},
+{
+"work": "Mr Bates vs The Post Office",
+"mark": "Post Office (Horizon System) Compensation Bill",
+"truth": "reason",
+"pred": "reason",
+"score": 3,
+"why": [
+"causal language: campaigners",
+"used in an argument"
+]
+}
+]
+},
+"pairs": [
+{
+"work": "Toxic Town",
+"mark": "Quarries: Planning Policy",
+"tier": "debate",
+"source": "HAN",
+"score": 2,
+"label": "reason",
+"why": [
+"causal language: exposing"
+]
+},
+{
+"work": "Adolescence (TV series)",
+"mark": "Knife Crime",
+"tier": "debate",
+"source": "HAN",
+"score": 1,
+"label": "context",
+"why": [
+"causal language: brought to",
+"the work is the subject of the clause",
+"illustration cue: at school"
+]
+},
+{
+"work": "Adolescence (TV series)",
+"mark": "Online Harms: Young People",
+"tier": "debate",
+"source": "HAN",
+"score": 2,
+"label": "reason",
+"why": [
+"causal language: exposition, influencer"
+]
+},
+{
+"work": "Adolescence (TV series)",
+"mark": "UK Democracy: Impact of Digital Platforms",
+"tier": "debate",
+"source": "HAN",
+"score": 3,
+"label": "reason",
+"why": [
+"causal language: wake-up",
+"used in an argument"
+]
+},
+{
+"work": "Adolescence (TV series)",
+"mark": "UK Democracy: Impact of Digital Platforms",
+"tier": "debate",
+"source": "HAN",
+"score": 0,
+"label": "aside",
+"why": []
+},
+{
+"work": "Adolescence (TV series)",
+"mark": " Relationship Education in Schools",
+"tier": "debate",
+"source": "HAN",
+"score": 2,
+"label": "reason",
+"why": [
+"causal language: following"
+]
+},
+{
+"work": "Adolescence (TV series)",
+"mark": " Male Suicide in Rotherham",
+"tier": "debate",
+"source": "HAN",
+"score": 2,
+"label": "reason",
+"why": [
+"causal language: exposing, moved"
+]
+},
+{
+"work": "Adolescence (TV series)",
+"mark": "Knife Crime: Children and Young People",
+"tier": "debate",
+"source": "HAN",
+"score": 3,
+"label": "reason",
+"why": [
+"causal language: highlights",
+"a change word follows"
+]
+},
+{
+"work": "Adolescence (TV series)",
+"mark": "Violence against Women and Girls",
+"tier": "debate",
+"source": "HAN",
+"score": 2,
+"label": "reason",
+"why": [
+"causal language: groundbreaking"
+]
+},
+{
+"work": "Adolescence (TV series)",
+"mark": " Children’s Wellbeing and Schools Bill",
+"tier": "bill debate",
+"source": "HAN",
+"score": 2,
+"label": "reason",
+"why": [
+"causal language: addresses, explored, highlights"
+]
+},
+{
+"work": "13 Reasons Why",
+"mark": " Internet Service Providers and  Suicide-related Content",
+"tier": "debate",
+"source": "HAN",
+"score": 0,
+"label": "aside",
+"why": []
+},
+{
+"work": "Sex Education (TV series)",
+"mark": "LGBT History Month",
+"tier": "debate",
+"source": "HAN",
+"score": 0,
+"label": "aside",
+"why": [
+"illustration cue: filmed in, my constituency, the famous"
+]
+},
+{
+"work": "Our Planet",
+"mark": "Economy: Creative Industries",
+"tier": "debate",
+"source": "HAN",
+"score": 0,
+"label": "aside",
+"why": []
+},
+{
+"work": "Better Call Saul",
+"mark": "Electromagnetic Fields: Health Effects",
+"tier": "debate",
+"source": "HAN",
+"score": 0,
+"label": "aside",
+"why": [
+"causal language: the impact",
+"illustration cue: character"
+]
+},
+{
+"work": "Heated Rivalry",
+"mark": " Pride Month",
+"tier": "debate",
+"source": "HAN",
+"score": 0,
+"label": "aside",
+"why": [
+"illustration cue: enjoyed"
+]
+},
+{
+"work": "Band of Brothers (miniseries)",
+"mark": "Films: Restriction Of Relief To Films Genuinely Intended For Theatrical Release",
+"tier": "debate",
+"source": "HAN",
+"score": 1,
+"label": "context",
+"why": [
+"used in an argument"
+]
+},
+{
+"work": "Mr Bates vs The Post Office",
+"mark": "Post Office Horizon Compensation Scheme",
+"tier": "debate",
+"source": "HAN",
+"score": 3,
+"label": "reason",
+"why": [
+"causal language: brought to",
+"the work is the subject of the clause"
+]
+},
+{
+"work": "Mr Bates vs The Post Office",
+"mark": "Post Office Horizon: Redress",
+"tier": "debate",
+"source": "HAN",
+"score": 2,
+"label": "reason",
+"why": [
+"causal language: highlighted"
+]
+},
+{
+"work": "Mr Bates vs The Post Office",
+"mark": "Post Office Horizon: Redress",
+"tier": "debate",
+"source": "HAN",
+"score": 2,
+"label": "reason",
+"why": [
+"causal language: highlighted"
+]
+},
+{
+"work": "Mr Bates vs The Post Office",
+"mark": " Post Office (Horizon System) Offences Bill",
+"tier": "bill debate",
+"source": "HAN",
+"score": 3,
+"label": "reason",
+"why": [
+"causal language: campaign, powerful",
+"the work is the subject of the clause"
+]
+},
+{
+"work": "Mr Bates vs The Post Office",
+"mark": " Post Office (Horizon System) Offences Bill",
+"tier": "bill debate",
+"source": "HAN",
+"score": 3,
+"label": "reason",
+"why": [
+"causal language: brought to, campaign, campaigning",
+"the work is the subject of the clause"
+]
+},
+{
+"work": "Mr Bates vs The Post Office",
+"mark": " Post Office Management Culture",
+"tier": "debate",
+"source": "HAN",
+"score": 2,
+"label": "reason",
+"why": [
+"causal language: highlighted"
+]
+},
+{
+"work": "Will & Grace",
+"mark": "Topical Questions",
+"tier": "debate",
+"source": "HAN",
+"score": 0,
+"label": "aside",
+"why": [
+"causal language: because of",
+"illustration cue: series of"
+]
+},
+{
+"work": "Mr Bates vs The Post Office",
+"mark": "Post Office (Horizon System) Compensation Bill",
+"tier": "bill debate",
+"source": "HAN",
+"score": 2,
+"label": "reason",
+"why": [
+"causal language: as a result, powerfully, public attention"
+]
+},
+{
+"work": "Mr Bates vs The Post Office",
+"mark": "Horizon: Compensation and Convictions",
+"tier": "debate",
+"source": "HAN",
+"score": 3,
+"label": "reason",
+"why": [
+"causal language: has had",
+"the work is the subject of the clause"
+]
+},
+{
+"work": "Where the Heart Is (2000 film)",
+"mark": "UK Film Industry",
+"tier": "debate",
+"source": "HAN",
+"score": 2,
+"label": "reason",
+"why": [
+"causal language: shows"
+]
+},
+{
+"work": "Miss Austen",
+"mark": "Jane Austen",
+"tier": "debate",
+"source": "HAN",
+"score": 0,
+"label": "aside",
+"why": [
+"illustration cue: enjoyed"
+]
+},
+{
+"work": "SAS: Rogue Heroes",
+"mark": "Blair Mayne:  Posthumous Victoria Cross",
+"tier": "debate",
+"source": "HAN",
+"score": 0,
+"label": "aside",
+"why": []
+},
+{
+"work": "Take Three Girls",
+"mark": " Violence against Women and Girls",
+"tier": "debate",
+"source": "HAN",
+"score": 3,
+"label": "reason",
+"why": [
+"causal language: exposure, led to",
+"the work is the subject of the clause"
+]
+},
+{
+"work": "Nightsleeper",
+"mark": "Passenger Railway Services (Public Ownership) Bill",
+"tier": "bill debate",
+"source": "HAN",
+"score": 1,
+"label": "context",
+"why": [
+"a change word follows"
+]
+},
+{
+"work": "Sitting in Limbo (2020 film)",
+"mark": "Windrush Day 2021",
+"tier": "debate",
+"source": "HAN",
+"score": 3,
+"label": "reason",
+"why": [
+"causal language: as a result, campaigners",
+"a change word follows"
+]
+},
+{
+"work": "Poldark",
+"mark": "Coastal Erosion",
+"tier": "debate",
+"source": "HAN",
+"score": 0,
+"label": "aside",
+"why": []
+},
+{
+"work": "McMafia",
+"mark": " Government Policy on Russia",
+"tier": "debate",
+"source": "HAN",
+"score": 0,
+"label": "aside",
+"why": []
+},
+{
+"work": "Cathy Come Home",
+"mark": " Homelessness",
+"tier": "debate",
+"source": "HAN",
+"score": 2,
+"label": "reason",
+"why": [
+"causal language: lead to"
+]
+},
+{
+"work": "SAS: Rogue Heroes",
+"mark": "Blair Mayne:  Posthumous Victoria Cross",
+"tier": "debate",
+"source": "HAN",
+"score": 0,
+"label": "aside",
+"why": [
+"illustration cue: fan of"
+]
+},
+{
+"work": "Shakespeare in Love",
+"mark": "Enterprise and Regulatory Reform Bill",
+"tier": "bill debate",
+"source": "HAN",
+"score": 1,
+"label": "context",
+"why": [
+"used in an argument"
+]
+},
+{
+"work": "Tumbledown",
+"mark": "General Requirements As To Licensed Services",
+"tier": "debate",
+"source": "HAN",
+"score": 0,
+"label": "aside",
+"why": []
+},
+{
+"work": "Star Trek: The Next Generation",
+"mark": "Artificial Intelligence: Impact on  Human Relationships and Society",
+"tier": "debate",
+"source": "HAN",
+"score": 0,
+"label": "aside",
+"why": [
+"used in an argument",
+"illustration cue: character"
+]
+},
+{
+"work": "Star Trek: The Next Generation",
+"mark": "Artificial Intelligence: Impact on  Human Relationships and Society",
+"tier": "debate",
+"source": "HAN",
+"score": 0,
+"label": "aside",
+"why": [
+"used in an argument",
+"illustration cue: character"
+]
+},
+{
+"work": "Mr Bates vs The Post Office",
+"mark": "Post Office Horizon Scandal: Compensation Payments",
+"tier": "debate",
+"source": "HAN",
+"score": 0,
+"label": "aside",
+"why": []
+},
+{
+"work": "Narcos",
+"mark": " Economic Crime and Corporate Transparency Bill",
+"tier": "bill debate",
+"source": "HAN",
+"score": 0,
+"label": "aside",
+"why": [
+"illustration cue: watched"
+]
+},
+{
+"work": "Billions (TV series)",
+"mark": "Economy: Spring Statement",
+"tier": "debate",
+"source": "HAN",
+"score": 0,
+"label": "aside",
+"why": []
+},
+{
+"work": "Peaky Blinders (TV series)",
+"mark": "UK Shared Prosperity Fund",
+"tier": "debate",
+"source": "HAN",
+"score": 0,
+"label": "aside",
+"why": []
+},
+{
+"work": "MotherFatherSon",
+"mark": "Acquired Brain Injury",
+"tier": "debate",
+"source": "HAN",
+"score": 2,
+"label": "reason",
+"why": [
+"causal language: has had"
+]
+},
+{
+"work": "McMafia",
+"mark": "Brexit: Sanctions Policy (European Union Committee Report)",
+"tier": "debate",
+"source": "HAN",
+"score": 2,
+"label": "reason",
+"why": [
+"causal language: has had, led to, the effect"
+]
+},
+{
+"work": "McMafia",
+"mark": "Regional Organised Crime Units",
+"tier": "debate",
+"source": "HAN",
+"score": 0,
+"label": "aside",
+"why": []
+},
+{
+"work": "McMafia",
+"mark": "Sanctions and Anti-Money Laundering Bill [HL]",
+"tier": "bill debate",
+"source": "HAN",
+"score": 2,
+"label": "reason",
+"why": [
+"causal language: following"
+]
+},
+{
+"work": "McMafia",
+"mark": "Social Media: News",
+"tier": "debate",
+"source": "HAN",
+"score": 0,
+"label": "aside",
+"why": [
+"a change word follows",
+"used in an argument",
+"illustration cue: like"
+]
+},
+{
+"work": "Candid Camera",
+"mark": "Brexit: Justice for Families, Individuals and Businesses (EU Committee Report)",
+"tier": "debate",
+"source": "HAN",
+"score": 0,
+"label": "aside",
+"why": [
+"illustration cue: character, like"
+]
+},
+{
+"work": "Hinterland (TV series)",
+"mark": "Brexit: Creative Industries",
+"tier": "debate",
+"source": "HAN",
+"score": 0,
+"label": "aside",
+"why": []
+},
+{
+"work": "Just a Minute",
+"mark": "Armed Forces Covenant",
+"tier": "debate",
+"source": "HAN",
+"score": 0,
+"label": "aside",
+"why": []
+},
+{
+"work": "Where the Heart Is (2000 film)",
+"mark": "UK Film Industry",
+"tier": "debate",
+"source": "HAN",
+"score": 2,
+"label": "reason",
+"why": [
+"causal language: shows"
+]
+},
+{
+"work": "Doc Martin",
+"mark": "Marine and Coastal Access Bill [HL]",
+"tier": "bill debate",
+"source": "HAN",
+"score": 1,
+"label": "context",
+"why": [
+"a change word follows"
+]
+},
+{
+"work": "Our Friends in the North",
+"mark": " Rating (Empty Properties) Bill",
+"tier": "bill debate",
+"source": "HAN",
+"score": 3,
+"label": "reason",
+"why": [
+"causal language: after",
+"a change word follows"
+]
+},
+{
+"work": "Blackadder",
+"mark": "Aviation (South-East)",
+"tier": "debate",
+"source": "HAN",
+"score": 0,
+"label": "aside",
+"why": []
+},
+{
+"work": "The War at Sea",
+"mark": "Royal Navy (Selection Of Officer Cadets)",
+"tier": "debate",
+"source": "HAN",
+"score": 2,
+"label": "reason",
+"why": [
+"causal language: demonstration"
+]
+},
+{
+"work": "Web of Life",
+"mark": "British Broadcasting Corporation (Co-Production Contracts)",
+"tier": "debate",
+"source": "HAN",
+"score": 0,
+"label": "aside",
+"why": []
+},
+{
+"work": "It's a Knockout",
+"mark": "Youth And Community Bill",
+"tier": "bill debate",
+"source": "HAN",
+"score": 0,
+"label": "aside",
+"why": [
+"illustration cue: character"
+]
+},
+{
+"work": "Sailor Moon",
+"mark": "The Royal Navy",
+"tier": "debate",
+"source": "HAN",
+"score": 0,
+"label": "aside",
+"why": [
+"illustration cue: like"
+]
+},
+{
+"work": "Upstairs, Downstairs (1971 TV series)",
+"mark": "Dividends Bill",
+"tier": "bill debate",
+"source": "HAN",
+"score": 1,
+"label": "context",
+"why": [
+"used in an argument"
+]
+},
+{
+"work": "Upstairs Downstairs (2010 TV series)",
+"mark": "Dividends Bill",
+"tier": "bill debate",
+"source": "HAN",
+"score": 1,
+"label": "context",
+"why": [
+"used in an argument"
+]
+},
+{
+"work": "Yes Minister",
+"mark": "Public Accounts",
+"tier": "debate",
+"source": "HAN",
+"score": 0,
+"label": "aside",
+"why": [
+"title used as ordinary words"
+]
+},
+{
+"work": "Yes Minister",
+"mark": "Central And Local Government",
+"tier": "debate",
+"source": "HAN",
+"score": 0,
+"label": "aside",
+"why": [
+"title used as ordinary words"
+]
+},
+{
+"work": "Yes Minister",
+"mark": "Asbestos",
+"tier": "debate",
+"source": "HAN",
+"score": 0,
+"label": "aside",
+"why": [
+"title used as ordinary words"
+]
+},
+{
+"work": "For Crying Out Loud (album)",
+"mark": "Younger Generation",
+"tier": "debate",
+"source": "HAN",
+"score": 1,
+"label": "context",
+"why": [
+"used in an argument"
+]
+},
+{
+"work": "By the Sword Divided",
+"mark": "Interpretation",
+"tier": "debate",
+"source": "HAN",
+"score": 2,
+"label": "reason",
+"why": [
+"causal language: shows"
+]
+},
+{
+"work": "Jesus: The Evidence",
+"mark": "New Ireland Forum",
+"tier": "debate",
+"source": "HAN",
+"score": 0,
+"label": "aside",
+"why": [
+"illustration cue: like"
+]
+},
+{
+"work": "Communards (album)",
+"mark": "The Rich And The Poor",
+"tier": "debate",
+"source": "HAN",
+"score": 3,
+"label": "reason",
+"why": [
+"causal language: revealed, showed",
+"the work is the subject of the clause"
+]
+},
+{
+"work": "Scotch on the Rocks",
+"mark": "National Advisory Committees",
+"tier": "debate",
+"source": "HAN",
+"score": 1,
+"label": "context",
+"why": [
+"a change word follows"
+]
+},
+{
+"work": "Shōgun (2024 TV series)",
+"mark": "Dangerous Goods (Imports)",
+"tier": "debate",
+"source": "HAN",
+"score": 0,
+"label": "aside",
+"why": [
+"illustration cue: episode of"
+]
+},
+{
+"work": "Minder (TV series)",
+"mark": "Parking Schemes For The Handicapped",
+"tier": "debate",
+"source": "HAN",
+"score": 0,
+"label": "aside",
+"why": [
+"used in an argument",
+"illustration cue: like"
+]
+},
+{
+"work": "(Everything I Do) I Do It for You",
+"mark": "The Economy (North-East)",
+"tier": "debate",
+"source": "HAN",
+"score": 0,
+"label": "aside",
+"why": []
+},
+{
+"work": "Bergerac (2025 TV series)",
+"mark": "Regional Tourism (Television)",
+"tier": "debate",
+"source": "HAN",
+"score": 0,
+"label": "aside",
+"why": []
+},
+{
+"work": "Upstairs, Downstairs (1971 TV series)",
+"mark": "Young Domestic Workers",
+"tier": "debate",
+"source": "HAN",
+"score": 3,
+"label": "reason",
+"why": [
+"causal language: demonstrates",
+"a change word follows"
+]
+},
+{
+"work": "Upstairs Downstairs (2010 TV series)",
+"mark": "Young Domestic Workers",
+"tier": "debate",
+"source": "HAN",
+"score": 0,
+"label": "aside",
+"why": []
+},
+{
+"work": "Heartbeat (British TV series)",
+"mark": "Terminally Ill Adults (End of Life) Bill",
+"tier": "bill debate",
+"source": "HAN",
+"score": 0,
+"label": "aside",
+"why": []
+},
+{
+"work": "Race Across the World",
+"mark": "International Rail Services: Ashford",
+"tier": "debate",
+"source": "HAN",
+"score": 0,
+"label": "aside",
+"why": [
+"used in an argument",
+"illustration cue: fans of, like"
+]
+},
+{
+"work": "Adolescence (TV series)",
+"mark": "Rugby League",
+"tier": "debate",
+"source": "HAN",
+"score": 2,
+"label": "reason",
+"why": [
+"causal language: the impact"
+]
+},
+{
+"work": "Peaky Blinders (TV series)",
+"mark": "Budget Responsibility Bill",
+"tier": "bill debate",
+"source": "HAN",
+"score": 0,
+"label": "aside",
+"why": [
+"illustration cue: like, years ago"
+]
+},
+{
+"work": "Years and Years (TV series)",
+"mark": "Safety of Rwanda  (Asylum and Immigration) Bill",
+"tier": "bill debate",
+"source": "HAN",
+"score": 0,
+"label": "aside",
+"why": [
+"a change word follows",
+"illustration cue: like"
+]
+},
+{
+"work": "The Last Kids on Earth",
+"mark": "Children’s Health: Ultra-processed Foods",
+"tier": "debate",
+"source": "HAN",
+"score": 3,
+"label": "reason",
+"why": [
+"causal language: highlighted",
+"the work is the subject of the clause"
+]
+},
+{
+"work": "Yes Minister",
+"mark": "Fire Safety Bill",
+"tier": "bill debate",
+"source": "HAN",
+"score": 0,
+"label": "aside",
+"why": [
+"title used as ordinary words"
+]
+},
+{
+"work": "Yes (Yes album)",
+"mark": "Fire Safety Bill",
+"tier": "bill debate",
+"source": "HAN",
+"score": 0,
+"label": "aside",
+"why": [
+"title used as ordinary words"
+]
+},
+{
+"work": "Peaky Blinders (TV series)",
+"mark": "Education and Local Government",
+"tier": "debate",
+"source": "HAN",
+"score": 0,
+"label": "aside",
+"why": []
+},
+{
+"work": "Years and Years (TV series)",
+"mark": "Regulating in a Digital World (Communications Committee Report)",
+"tier": "debate",
+"source": "HAN",
+"score": 0,
+"label": "aside",
+"why": []
+},
+{
+"work": "Hollyoaks",
+"mark": "Eating Disorders",
+"tier": "debate",
+"source": "HAN",
+"score": 2,
+"label": "reason",
+"why": [
+"causal language: highlighting"
+]
+},
+{
+"work": "On the Buses",
+"mark": "Buses",
+"tier": "debate",
+"source": "HAN",
+"score": 2,
+"label": "reason",
+"why": [
+"causal language: after"
+]
+},
+{
+"work": "Last of the Summer Wine",
+"mark": " English Wine Industry",
+"tier": "debate",
+"source": "HAN",
+"score": 0,
+"label": "aside",
+"why": [
+"illustration cue: my constituency"
+]
+},
+{
+"work": "Game of Thrones",
+"mark": "Film Industry",
+"tier": "debate",
+"source": "HAN",
+"score": 0,
+"label": "aside",
+"why": [
+"the work is the subject of the clause",
+"illustration cue: filmed in, my constituency, watched"
+]
+},
+{
+"work": "Downton Abbey",
+"mark": "Equality (Titles) Bill [HL]",
+"tier": "bill debate",
+"source": "HAN",
+"score": 1,
+"label": "context",
+"why": [
+"a change word follows"
+]
+},
+{
+"work": "Last of the Summer Wine",
+"mark": "Department for Communities and Local Government",
+"tier": "debate",
+"source": "HAN",
+"score": 0,
+"label": "aside",
+"why": [
+"illustration cue: the famous"
+]
+},
+{
+"work": "Borgen (TV series)",
+"mark": "European Union (Approvals) Bill [Lords]",
+"tier": "bill debate",
+"source": "HAN",
+"score": 0,
+"label": "aside",
+"why": [
+"illustration cue: fan of"
+]
+},
+{
+"work": "Trawlermen (TV series)",
+"mark": "Foreign Fishermen (Visas)",
+"tier": "debate",
+"source": "HAN",
+"score": 0,
+"label": "aside",
+"why": []
+},
+{
+"work": "Only Fools and Horses",
+"mark": "Constitution and Home Affairs",
+"tier": "debate",
+"source": "HAN",
+"score": 0,
+"label": "aside",
+"why": [
+"causal language: inspired",
+"illustration cue: like, my constituency"
+]
+},
+{
+"work": "Only Fools and Horses",
+"mark": "Constitution and Home Affairs",
+"tier": "debate",
+"source": "HAN",
+"score": 0,
+"label": "aside",
+"why": [
+"causal language: inspired",
+"illustration cue: like, my constituency"
+]
+},
+{
+"work": "Dungeons & Dragons",
+"mark": "UK Inventors",
+"tier": "debate",
+"source": "HAN",
+"score": 2,
+"label": "reason",
+"why": [
+"a change word follows",
+"used in an argument"
+]
+},
+{
+"work": "Red Dwarf",
+"mark": "National Institute for Health and Clinical Excellence",
+"tier": "debate",
+"source": "HAN",
+"score": 0,
+"label": "aside",
+"why": [
+"illustration cue: paraphrasing"
+]
+},
+{
+"work": "Yes Minister",
+"mark": "Freedom Of Information Bill",
+"tier": "bill debate",
+"source": "HAN",
+"score": 0,
+"label": "aside",
+"why": [
+"title used as ordinary words"
+]
+},
+{
+"work": "Yes (Yes album)",
+"mark": "Freedom Of Information Bill",
+"tier": "bill debate",
+"source": "HAN",
+"score": 0,
+"label": "aside",
+"why": [
+"title used as ordinary words"
+]
+},
+{
+"work": "Last of the Summer Wine",
+"mark": "Adjournment (Summer)",
+"tier": "debate",
+"source": "HAN",
+"score": 0,
+"label": "aside",
+"why": [
+"illustration cue: my constituency"
+]
+},
+{
+"work": "Minder (TV series)",
+"mark": "Drug Abuse: Preventive Measures In Schools",
+"tier": "debate",
+"source": "HAN",
+"score": 2,
+"label": "reason",
+"why": [
+"causal language: explore"
+]
+},
+{
+"work": "Welcome to Wrexham",
+"mark": "Football Governance Bill [HL]",
+"tier": "bill debate",
+"source": "HAN",
+"score": 0,
+"label": "aside",
+"why": [
+"illustration cue: years ago"
+]
+},
+{
+"work": "Red Seas Under Red Skies",
+"mark": "Climate Change: Impact on Developing Nations",
+"tier": "debate",
+"source": "HAN",
+"score": 2,
+"label": "reason",
+"why": [
+"causal language: revealed"
+]
+},
+{
+"work": "Resistance Fighters",
+"mark": "Antimicrobial Resistance",
+"tier": "debate",
+"source": "HAN",
+"score": 2,
+"label": "reason",
+"why": [
+"causal language: because of, shows"
+]
+},
+{
+"work": "Banaz: A Love Story",
+"mark": "Sharia Law",
+"tier": "debate",
+"source": "HAN",
+"score": 1,
+"label": "context",
+"why": [
+"a change word follows"
+]
+},
+{
+"work": "Louis Theroux: Inside the Manosphere",
+"mark": " Online Harms",
+"tier": "debate",
+"source": "HAN",
+"score": 0,
+"label": "aside",
+"why": []
+},
+{
+"work": "Gaza: Doctors Under Attack",
+"mark": " BBC Charter Renewal",
+"tier": "debate",
+"source": "HAN",
+"score": 0,
+"label": "aside",
+"why": []
+},
+{
+"work": "Ocean with David Attenborough",
+"mark": " Biodiversity Beyond National Jurisdiction Bill",
+"tier": "bill debate",
+"source": "HAN",
+"score": 0,
+"label": "aside",
+"why": [
+"illustration cue: watched"
+]
+},
+{
+"work": "Nowhere to Run (1993 film)",
+"mark": "Children’s Wellbeing and Schools Bill",
+"tier": "bill debate",
+"source": "HAN",
+"score": 3,
+"label": "reason",
+"why": [
+"causal language: the impact",
+"a change word follows"
+]
+},
+{
+"work": "Gaza: How to Survive a Warzone",
+"mark": " Gaza: BBC Coverage",
+"tier": "debate",
+"source": "HAN",
+"score": 0,
+"label": "aside",
+"why": [
+"a change word follows",
+"illustration cue: like"
+]
+},
+{
+"work": "Gaza: How to Survive a Warzone",
+"mark": " Points of Order",
+"tier": "bill debate",
+"source": "HAN",
+"score": 2,
+"label": "reason",
+"why": [
+"causal language: after, outcry"
+]
+},
+{
+"work": "Red Seas Under Red Skies",
+"mark": "Climate Change: Impact on Developing Nations",
+"tier": "debate",
+"source": "HAN",
+"score": 2,
+"label": "reason",
+"why": [
+"causal language: revealed"
+]
+},
+{
+"work": "The Cruel Sea (1953 film)",
+"mark": "Lifeboat Services: Search and Rescue",
+"tier": "debate",
+"source": "HAN",
+"score": 3,
+"label": "reason",
+"why": [
+"causal language: highlighted, powerfully",
+"the work is the subject of the clause",
+"a change word follows",
+"used in an argument",
+"illustration cue: years ago"
+]
+},
+{
+"work": "Elizabeth: The Unseen Queen",
+"mark": "Tributes to Her Late Majesty The Queen",
+"tier": "debate",
+"source": "HAN",
+"score": 2,
+"label": "reason",
+"why": [
+"causal language: following"
+]
+},
+{
+"work": "Kiss the Ground",
+"mark": "Sustainable Farming",
+"tier": "debate",
+"source": "HAN",
+"score": 2,
+"label": "reason",
+"why": [
+"a change word follows",
+"used in an argument"
+]
+},
+{
+"work": "My Octopus Teacher",
+"mark": "Animal Welfare (Sentience) Bill [HL]",
+"tier": "bill debate",
+"source": "HAN",
+"score": 2,
+"label": "reason",
+"why": [
+"causal language: showed"
+]
+},
+{
+"work": "The Blue Planet",
+"mark": "World Oceans Day 2021",
+"tier": "debate",
+"source": "HAN",
+"score": 3,
+"label": "reason",
+"why": [
+"causal language: has had, the effect",
+"the work is the subject of the clause"
+]
+},
+{
+"work": "Unremembered",
+"mark": " Commonwealth War Graves Commission: Historical Inequalities Report",
+"tier": "debate",
+"source": "HAN",
+"score": 2,
+"label": "reason",
+"why": [
+"causal language: exposed"
+]
+},
+{
+"work": "Care Bears (TV series)",
+"mark": "The Care Planning, Placement and Case Review (England) (Amendment) Regulations 2021",
+"tier": "bill debate",
+"source": "HAN",
+"score": 2,
+"label": "reason",
+"why": [
+"causal language: testimony"
+]
+},
+{
+"work": "Take Three Girls",
+"mark": " Grooming Gangs",
+"tier": "debate",
+"source": "HAN",
+"score": 1,
+"label": "context",
+"why": [
+"causal language: powerfully",
+"a change word follows",
+"illustration cue: think of"
+]
+},
+{
+"work": "Who Killed the Electric Car?",
+"mark": " Alternative Fuelled Vehicles: Energy Provision",
+"tier": "debate",
+"source": "HAN",
+"score": 0,
+"label": "aside",
+"why": [
+"a change word follows",
+"illustration cue: my constituency"
+]
+},
+{
+"work": "Miss Americana",
+"mark": " Eating Disorders Awareness Week",
+"tier": "debate",
+"source": "HAN",
+"score": 2,
+"label": "reason",
+"why": [
+"causal language: after"
+]
+},
+{
+"work": "Gunpowder Milkshake",
+"mark": "Channel 4 Relocation",
+"tier": "debate",
+"source": "HAN",
+"score": 0,
+"label": "aside",
+"why": [
+"causal language: after",
+"illustration cue: filmed at"
+]
+},
+{
+"work": "Miss Potter",
+"mark": "BBC",
+"tier": "debate",
+"source": "HAN",
+"score": 2,
+"label": "reason",
+"why": [
+"causal language: after, following"
+]
+},
+{
+"work": "Mansfield Park",
+"mark": " World Book Day",
+"tier": "debate",
+"source": "HAN",
+"score": 0,
+"label": "aside",
+"why": []
+},
+{
+"work": "Nineteen Eighty-Four",
+"mark": " Product Regulation and Metrology Bill [Lords]",
+"tier": "bill debate",
+"source": "HAN",
+"score": 0,
+"label": "aside",
+"why": []
+},
+{
+"work": "Ivanhoe",
+"mark": "Free School Meals: Summer Holidays",
+"tier": "debate",
+"source": "HAN",
+"score": 0,
+"label": "aside",
+"why": []
+},
+{
+"work": "Bon Cop, Bad Cop",
+"mark": " Drugs Policy",
+"tier": "debate",
+"source": "HAN",
+"score": 2,
+"label": "reason",
+"why": [
+"causal language: testimony"
+]
+},
+{
+"work": "Lemmings (video game)",
+"mark": "Creative Industries",
+"tier": "debate",
+"source": "HAN",
+"score": 0,
+"label": "aside",
+"why": []
+},
+{
+"work": "Manhunt (video game)",
+"mark": "Engagements",
+"tier": "debate",
+"source": "HAN",
+"score": 2,
+"label": "reason",
+"why": [
+"causal language: influenced"
+]
+},
+{
+"work": "Tomb Raider",
+"mark": "Arts and Urban Regeneration",
+"tier": "debate",
+"source": "HAN",
+"score": 0,
+"label": "aside",
+"why": []
+},
+{
+"work": "Manhunt (video game)",
+"mark": "Engagements",
+"tier": "debate",
+"source": "HAN",
+"score": 2,
+"label": "reason",
+"why": [
+"causal language: influenced"
+]
+},
+{
+"work": "Bully (album)",
+"mark": "Engagements",
+"tier": "debate",
+"source": "HAN",
+"score": 2,
+"label": "reason",
+"why": [
+"causal language: influenced"
+]
+},
+{
+"work": "Manhunt (video game)",
+"mark": "Engagements",
+"tier": "debate",
+"source": "HAN",
+"score": 3,
+"label": "reason",
+"why": [
+"causal language: influenced, shows",
+"a change word follows"
+]
+},
+{
+"work": "Manhunt (video game)",
+"mark": "British Board of Film Classification (Accountability to Parliament and Appeals) Bill",
+"tier": "bill debate",
+"source": "HAN",
+"score": 2,
+"label": "reason",
+"why": [
+"causal language: influenced"
+]
+},
+{
+"work": "RapeLay",
+"mark": " Business of the House",
+"tier": "debate",
+"source": "HAN",
+"score": 0,
+"label": "aside",
+"why": []
+},
+{
+"work": "Moshi Monsters",
+"mark": "Creative Industries",
+"tier": "debate",
+"source": "HAN",
+"score": 0,
+"label": "aside",
+"why": []
+},
+{
+"work": "Double Jeopardy (1999 film)",
+"mark": "Sentencing Guidelines (Pre-sentence Reports) Bill",
+"tier": "bill debate",
+"source": "HAN",
+"score": 0,
+"label": "aside",
+"why": [
+"illustration cue: like"
+]
+},
+{
+"work": "The Lives of a Bengal Lancer (film)",
+"mark": "Blair Mayne:  Posthumous Victoria Cross",
+"tier": "debate",
+"source": "HAN",
+"score": 1,
+"label": "context",
+"why": [
+"used in an argument"
+]
+},
+{
+"work": "The Lives of a Bengal Lancer (film)",
+"mark": " UK Submarine Fleet",
+"tier": "debate",
+"source": "HAN",
+"score": 0,
+"label": "aside",
+"why": []
+},
+{
+"work": "The Big Bang Theory",
+"mark": "Wellbeing of Future Generations Bill [HL]",
+"tier": "bill debate",
+"source": "HAN",
+"score": 1,
+"label": "context",
+"why": [
+"a change word follows"
+]
+},
+{
+"work": "The Big Bang Theory",
+"mark": "Genetically Modified Organisms (Deliberate Release) (Amendment) (England) Regulations 2022",
+"tier": "bill debate",
+"source": "HAN",
+"score": 0,
+"label": "aside",
+"why": []
+},
+{
+"work": "60 Minutes",
+"mark": "Visiting Forces Act 1952",
+"tier": "act debate",
+"source": "HAN",
+"score": 3,
+"label": "reason",
+"why": [
+"causal language: the effect, triggered",
+"a change word follows"
+]
+},
+{
+"work": "60 Minutes",
+"mark": "Visiting Forces Act 1952",
+"tier": "act debate",
+"source": "HAN",
+"score": 0,
+"label": "aside",
+"why": []
+},
+{
+"work": "Beyond Our Ken",
+"mark": "Business Of The House",
+"tier": "debate",
+"source": "HAN",
+"score": 0,
+"label": "aside",
+"why": []
+},
+{
+"work": "Bloodline (2008 film)",
+"mark": "Mental Health Units (Use of Force) Bill",
+"tier": "bill debate",
+"source": "HAN",
+"score": 3,
+"label": "reason",
+"why": [
+"causal language: shone a spotlight",
+"a change word follows"
+]
+},
+{
+"work": "Swiped (2025 film)",
+"mark": "Social Media Use: Minimum Age",
+"tier": "debate",
+"source": "HAN",
+"score": 2,
+"label": "reason",
+"why": [
+"causal language: showed"
+]
+},
+{
+"work": "Grierson Awards",
+"mark": " High Rise Social Housing: Reducing Fire Risk",
+"tier": "debate",
+"source": "HAN",
+"score": 0,
+"label": "aside",
+"why": [
+"illustration cue: like, watched"
+]
+},
+{
+"work": "Crime and Punishment",
+"mark": " Ministry of Justice Spending",
+"tier": "debate",
+"source": "HAN",
+"score": 0,
+"label": "aside",
+"why": []
+},
+{
+"work": "Cyberbully (2011 film)",
+"mark": "Online Child Abuse",
+"tier": "debate",
+"source": "HAN",
+"score": 1,
+"label": "context",
+"why": [
+"used in an argument"
+]
+},
+{
+"work": "Bank of Dave (film)",
+"mark": "Financial Services (Banking Reform) Bill",
+"tier": "bill debate",
+"source": "HAN",
+"score": 2,
+"label": "reason",
+"why": [
+"causal language: has had"
+]
+},
+{
+"work": "The Secret History",
+"mark": "Hms Glorious",
+"tier": "debate",
+"source": "HAN",
+"score": 0,
+"label": "aside",
+"why": []
+},
+{
+"work": "Big Brother 28 (American season)",
+"mark": "Engagements",
+"tier": "debate",
+"source": "HAN",
+"score": 3,
+"label": "reason",
+"why": [
+"causal language: prompted",
+"the work is the subject of the clause"
+]
+},
+{
+"work": "Super Size Me",
+"mark": "Food Products (Marketing to Children) Bill",
+"tier": "bill debate",
+"source": "HAN",
+"score": 3,
+"label": "reason",
+"why": [
+"causal language: demonstrated",
+"the work is the subject of the clause"
+]
+},
+{
+"work": "Mr Bates vs The Post Office",
+"mark": "Public Office (Accountability) Bill",
+"tier": "bill debate",
+"source": "HAN",
+"score": 1,
+"label": "context",
+"why": [
+"a change word follows"
+]
+},
+{
+"work": "Mr Bates vs The Post Office",
+"mark": "Broadcasting: Recent Developments",
+"tier": "debate",
+"source": "HAN",
+"score": 0,
+"label": "aside",
+"why": []
+},
+{
+"work": "Mr Bates vs The Post Office",
+"mark": "Sentencing Bill",
+"tier": "bill debate",
+"source": "HAN",
+"score": 0,
+"label": "aside",
+"why": [
+"used in an argument",
+"illustration cue: like, years ago"
+]
+},
+{
+"work": "Mr Bates vs The Post Office",
+"mark": "Diego Garcia Military Base and British Indian Ocean Territory Bill",
+"tier": "bill debate",
+"source": "HAN",
+"score": 0,
+"label": "aside",
+"why": [
+"used in an argument",
+"illustration cue: like"
+]
+},
+{
+"work": "Mr Bates vs The Post Office",
+"mark": "Online Harms: Young People",
+"tier": "debate",
+"source": "HAN",
+"score": 0,
+"label": "aside",
+"why": [
+"causal language: the effect",
+"illustration cue: think of"
+]
+},
+{
+"work": "Mr Bates vs The Post Office",
+"mark": "Data (Use and Access) Bill [HL]",
+"tier": "bill debate",
+"source": "HAN",
+"score": 4,
+"label": "reason",
+"why": [
+"causal language: brought about",
+"the work is the subject of the clause",
+"a change word follows",
+"used in an argument"
+]
+},
+{
+"work": "Mr Bates vs The Post Office",
+"mark": "Swann Report: 40th Anniversary",
+"tier": "debate",
+"source": "HAN",
+"score": 2,
+"label": "reason",
+"why": [
+"causal language: campaign, exposing, momentum"
+]
+},
+{
+"work": "Mr Bates vs The Post Office",
+"mark": "Post Office Horizon Compensation Scheme",
+"tier": "debate",
+"source": "HAN",
+"score": 3,
+"label": "reason",
+"why": [
+"causal language: brought to",
+"the work is the subject of the clause"
+]
+},
+{
+"work": "Mr Bates vs The Post Office",
+"mark": "Post Office Horizon Compensation Scheme",
+"tier": "debate",
+"source": "HAN",
+"score": 0,
+"label": "aside",
+"why": [
+"illustration cue: years ago"
+]
+},
+{
+"work": "Mr Bates vs The Post Office",
+"mark": "Data (Use and Access) Bill [Lords]",
+"tier": "bill debate",
+"source": "HAN",
+"score": 2,
+"label": "reason",
+"why": [
+"a change word follows",
+"used in an argument"
+]
+},
+{
+"work": "Mr Bates vs The Post Office",
+"mark": " Local Post Offices",
+"tier": "debate",
+"source": "HAN",
+"score": 0,
+"label": "aside",
+"why": []
+},
+{
+"work": "Mr Bates vs The Post Office",
+"mark": "Cumberlege Review: Pelvic Mesh",
+"tier": "debate",
+"source": "HAN",
+"score": 0,
+"label": "aside",
+"why": [
+"illustration cue: i remember"
+]
+},
+{
+"work": "Mr Bates vs The Post Office",
+"mark": "Post Office Horizon: Redress",
+"tier": "debate",
+"source": "HAN",
+"score": 2,
+"label": "reason",
+"why": [
+"causal language: highlighted"
+]
+},
+{
+"work": "Mr Bates vs The Post Office",
+"mark": "Post Office Horizon: Redress",
+"tier": "debate",
+"source": "HAN",
+"score": 2,
+"label": "reason",
+"why": [
+"causal language: highlighted"
+]
+},
+{
+"work": "Mr Bates vs The Post Office",
+"mark": "Post Office Horizon: Redress",
+"tier": "debate",
+"source": "HAN",
+"score": 2,
+"label": "reason",
+"why": [
+"causal language: highlighted"
+]
+},
+{
+"work": "Mr Bates vs The Post Office",
+"mark": "Watchdogs (Industry and Regulators Committee Report)",
+"tier": "debate",
+"source": "HAN",
+"score": 0,
+"label": "aside",
+"why": []
+},
+{
+"work": "Mr Bates vs The Post Office",
+"mark": "Media Bill",
+"tier": "bill debate",
+"source": "HAN",
+"score": 0,
+"label": "aside",
+"why": [
+"causal language: seminal",
+"illustration cue: think of"
+]
+},
+{
+"work": "Mr Bates vs The Post Office",
+"mark": "Data Protection and Digital Information Bill",
+"tier": "bill debate",
+"source": "HAN",
+"score": 1,
+"label": "context",
+"why": [
+"a change word follows"
+]
+},
+{
+"work": "Mr Bates vs The Post Office",
+"mark": "Litigation Funding Agreements (Enforceability) Bill [HL]",
+"tier": "bill debate",
+"source": "HAN",
+"score": 0,
+"label": "aside",
+"why": []
+},
+{
+"work": "Mr Bates vs The Post Office",
+"mark": " Post Office (Horizon System) Offences Bill",
+"tier": "bill debate",
+"source": "HAN",
+"score": 2,
+"label": "reason",
+"why": [
+"causal language: after, because of"
+]
+},
+{
+"work": "Mr Bates vs The Post Office",
+"mark": " Post Office (Horizon System) Offences Bill",
+"tier": "bill debate",
+"source": "HAN",
+"score": 2,
+"label": "reason",
+"why": [
+"a change word follows",
+"used in an argument"
+]
+},
+{
+"work": "Mr Bates vs The Post Office",
+"mark": " Post Office (Horizon System) Offences Bill",
+"tier": "bill debate",
+"source": "HAN",
+"score": 3,
+"label": "reason",
+"why": [
+"causal language: after, outcry, powerful",
+"used in an argument"
+]
+},
+{
+"work": "Mr Bates vs The Post Office",
+"mark": " Post Office (Horizon System) Offences Bill",
+"tier": "bill debate",
+"source": "HAN",
+"score": 3,
+"label": "reason",
+"why": [
+"causal language: campaign, powerful",
+"the work is the subject of the clause"
+]
+},
+{
+"work": "Mr Bates vs The Post Office",
+"mark": " Post Office (Horizon System) Offences Bill",
+"tier": "bill debate",
+"source": "HAN",
+"score": 3,
+"label": "reason",
+"why": [
+"causal language: brought to, campaign, campaigning",
+"the work is the subject of the clause"
+]
+},
+{
+"work": "Mr Bates vs The Post Office",
+"mark": "Housing: Young People",
+"tier": "debate",
+"source": "HAN",
+"score": 2,
+"label": "reason",
+"why": [
+"causal language: following"
+]
+},
+{
+"work": "Mr Bates vs The Post Office",
+"mark": "Infected Blood Inquiry: Recommendations",
+"tier": "debate",
+"source": "HAN",
+"score": 3,
+"label": "reason",
+"why": [
+"causal language: following",
+"a change word follows"
+]
+},
+{
+"work": "Mr Bates vs The Post Office",
+"mark": "Media Bill",
+"tier": "bill debate",
+"source": "HAN",
+"score": 1,
+"label": "context",
+"why": [
+"a change word follows"
+]
+},
+{
+"work": "Mr Bates vs The Post Office",
+"mark": "Media Bill",
+"tier": "bill debate",
+"source": "HAN",
+"score": 0,
+"label": "aside",
+"why": []
+},
+{
+"work": "Mr Bates vs The Post Office",
+"mark": " Post Office Horizon:  Compensation and Legislation",
+"tier": "debate",
+"source": "HAN",
+"score": 0,
+"label": "aside",
+"why": []
+},
+{
+"work": "Mr Bates vs The Post Office",
+"mark": "Post Office Horizon Scandal: Compensation Payments",
+"tier": "debate",
+"source": "HAN",
+"score": 0,
+"label": "aside",
+"why": []
+},
+{
+"work": "Mr Bates vs The Post Office",
+"mark": " Post Office Governance and Horizon Compensation Schemes",
+"tier": "debate",
+"source": "HAN",
+"score": 2,
+"label": "reason",
+"why": [
+"causal language: after"
+]
+},
+{
+"work": "Mr Bates vs The Post Office",
+"mark": " Post Office Management Culture",
+"tier": "debate",
+"source": "HAN",
+"score": 2,
+"label": "reason",
+"why": [
+"causal language: highlighted"
+]
+},
+{
+"work": "Mr Bates vs The Post Office",
+"mark": " Post Office Management Culture",
+"tier": "debate",
+"source": "HAN",
+"score": 0,
+"label": "aside",
+"why": []
+},
+{
+"work": "Mr Bates vs The Post Office",
+"mark": " Post Office Management Culture",
+"tier": "debate",
+"source": "HAN",
+"score": 3,
+"label": "reason",
+"why": [
+"causal language: highlighted",
+"the work is the subject of the clause"
+]
+},
+{
+"work": "Mr Bates vs The Post Office",
+"mark": " Post Office Management Culture",
+"tier": "debate",
+"source": "HAN",
+"score": 2,
+"label": "reason",
+"why": [
+"causal language: campaigners, has had, revealed"
+]
+},
+{
+"work": "Mr Bates vs The Post Office",
+"mark": "Post Office Appointments: Ministerial Responsibility",
+"tier": "debate",
+"source": "HAN",
+"score": 1,
+"label": "context",
+"why": [
+"causal language: after",
+"a change word follows",
+"illustration cue: the words of, think of"
+]
+},
+{
+"work": "Mr Bates vs The Post Office",
+"mark": "Joint Enterprise (Significant Contribution) Bill",
+"tier": "bill debate",
+"source": "HAN",
+"score": 3,
+"label": "reason",
+"why": [
+"causal language: powerful",
+"used in an argument"
+]
+},
+{
+"work": "Mr Bates vs The Post Office",
+"mark": "Joint Enterprise (Significant Contribution) Bill",
+"tier": "bill debate",
+"source": "HAN",
+"score": 1,
+"label": "context",
+"why": [
+"causal language: highlight, inspired, powerful",
+"used in an argument",
+"illustration cue: years ago"
+]
+},
+{
+"work": "Mr Bates vs The Post Office",
+"mark": "Arts",
+"tier": "debate",
+"source": "HAN",
+"score": 0,
+"label": "aside",
+"why": []
+},
+{
+"work": "Mr Bates vs The Post Office",
+"mark": "Arts",
+"tier": "debate",
+"source": "HAN",
+"score": 2,
+"label": "reason",
+"why": [
+"causal language: campaigning"
+]
+},
+{
+"work": "Mr Bates vs The Post Office",
+"mark": "Arts",
+"tier": "debate",
+"source": "HAN",
+"score": 3,
+"label": "reason",
+"why": [
+"causal language: moved",
+"used in an argument"
+]
+},
+{
+"work": "Mr Bates vs The Post Office",
+"mark": "Arts",
+"tier": "debate",
+"source": "HAN",
+"score": 3,
+"label": "reason",
+"why": [
+"causal language: after",
+"used in an argument"
+]
+},
+{
+"work": "Mr Bates vs The Post Office",
+"mark": "Arts",
+"tier": "debate",
+"source": "HAN",
+"score": 1,
+"label": "context",
+"why": [
+"used in an argument"
+]
+},
+{
+"work": "Mr Bates vs The Post Office",
+"mark": "Arts",
+"tier": "debate",
+"source": "HAN",
+"score": 2,
+"label": "reason",
+"why": [
+"causal language: moved"
+]
+},
+{
+"work": "Mr Bates vs The Post Office",
+"mark": "Digital Markets, Competition and Consumers Bill",
+"tier": "bill debate",
+"source": "HAN",
+"score": 0,
+"label": "aside",
+"why": []
+},
+{
+"work": "Mr Bates vs The Post Office",
+"mark": "Digital Markets, Competition and Consumers Bill",
+"tier": "bill debate",
+"source": "HAN",
+"score": 0,
+"label": "aside",
+"why": []
+},
+{
+"work": "Mr Bates vs The Post Office",
+"mark": "Media Bill",
+"tier": "bill debate",
+"source": "HAN",
+"score": 4,
+"label": "reason",
+"why": [
+"causal language: highlighted",
+"the work is the subject of the clause",
+"used in an argument"
+]
+},
+{
+"work": "Mr Bates vs The Post Office",
+"mark": "Media Bill",
+"tier": "bill debate",
+"source": "HAN",
+"score": 4,
+"label": "reason",
+"why": [
+"causal language: highlighted",
+"the work is the subject of the clause",
+"used in an argument"
+]
+},
+{
+"work": "Mr Bates vs The Post Office",
+"mark": "BBC: Funding",
+"tier": "debate",
+"source": "HAN",
+"score": 0,
+"label": "aside",
+"why": [
+"used in an argument",
+"illustration cue: watched"
+]
+},
+{
+"work": "Mr Bates vs The Post Office",
+"mark": "BBC: Funding",
+"tier": "debate",
+"source": "HAN",
+"score": 1,
+"label": "context",
+"why": [
+"a change word follows"
+]
+},
+{
+"work": "Mr Bates vs The Post Office",
+"mark": "Water Pollution",
+"tier": "debate",
+"source": "HAN",
+"score": 0,
+"label": "aside",
+"why": [
+"causal language: campaigne, the effect",
+"illustration cue: like"
+]
+},
+{
+"work": "Mr Bates vs The Post Office",
+"mark": "Leasehold and Freehold Reform Bill (First sitting)",
+"tier": "bill debate",
+"source": "HAN",
+"score": 0,
+"label": "aside",
+"why": [
+"illustration cue: watched"
+]
+},
+{
+"work": "Mr Bates vs The Post Office",
+"mark": "Post Office (Horizon System) Compensation Bill",
+"tier": "bill debate",
+"source": "HAN",
+"score": 3,
+"label": "reason",
+"why": [
+"causal language: campaigners",
+"used in an argument"
+]
+},
+{
+"work": "Mr Bates vs The Post Office",
+"mark": "Post Office (Horizon System) Compensation Bill",
+"tier": "bill debate",
+"source": "HAN",
+"score": 2,
+"label": "reason",
+"why": [
+"causal language: as a result, powerfully, public attention"
+]
+},
+{
+"work": "Mr Bates vs The Post Office",
+"mark": "Climate Change: Impact on Developing Nations",
+"tier": "debate",
+"source": "HAN",
+"score": 4,
+"label": "reason",
+"why": [
+"causal language: demonstrates, has had",
+"the work is the subject of the clause",
+"a change word follows"
+]
+},
+{
+"work": "Mr Bates vs The Post Office",
+"mark": "Parliamentary Democracy and Standards in Public Life",
+"tier": "debate",
+"source": "HAN",
+"score": 0,
+"label": "aside",
+"why": [
+"illustration cue: the words of"
+]
+},
+{
+"work": "Mr Bates vs The Post Office",
+"mark": "Long-term Plan for Housing",
+"tier": "debate",
+"source": "HAN",
+"score": 2,
+"label": "reason",
+"why": [
+"causal language: because of"
+]
+},
+{
+"work": "Mr Bates vs The Post Office",
+"mark": "Post Office Horizon Scandal",
+"tier": "debate",
+"source": "HAN",
+"score": 2,
+"label": "reason",
+"why": [
+"causal language: moved"
+]
+},
+{
+"work": "Mr Bates vs The Post Office",
+"mark": "Post Office Horizon Scandal",
+"tier": "debate",
+"source": "HAN",
+"score": 0,
+"label": "aside",
+"why": []
+},
+{
+"work": "Mr Bates vs The Post Office",
+"mark": "Horizon: Compensation and Convictions",
+"tier": "debate",
+"source": "HAN",
+"score": 2,
+"label": "reason",
+"why": [
+"causal language: campaigned"
+]
+},
+{
+"work": "Mr Bates vs The Post Office",
+"mark": "Horizon: Compensation and Convictions",
+"tier": "debate",
+"source": "HAN",
+"score": 2,
+"label": "reason",
+"why": [
+"causal language: galvanising, has had"
+]
+},
+{
+"work": "Mr Bates vs The Post Office",
+"mark": "Horizon: Compensation and Convictions",
+"tier": "debate",
+"source": "HAN",
+"score": 3,
+"label": "reason",
+"why": [
+"causal language: has had",
+"the work is the subject of the clause"
+]
+},
+{
+"work": "Mr Bates vs The Post Office",
+"mark": "Post Office (Horizon System) Compensation Bill",
+"tier": "bill debate",
+"source": "HAN",
+"score": 0,
+"label": "aside",
+"why": []
+},
+{
+"work": "Mr Bates vs The Post Office",
+"mark": "Post Office (Horizon System) Compensation Bill",
+"tier": "bill debate",
+"source": "HAN",
+"score": 1,
+"label": "context",
+"why": [
+"causal language: campaigned",
+"a change word follows",
+"illustration cue: like"
+]
+},
+{
+"work": "Mr Bates vs The Post Office",
+"mark": "Post Office (Horizon System) Compensation Bill",
+"tier": "bill debate",
+"source": "HAN",
+"score": 3,
+"label": "reason",
+"why": [
+"causal language: campaigners",
+"used in an argument"
+]
+},
+{
+"work": "Mr Bates vs The Post Office",
+"mark": "Post Office (Horizon System) Compensation Bill",
+"tier": "bill debate",
+"source": "HAN",
+"score": 0,
+"label": "aside",
+"why": []
+},
+{
+"work": "The Jungle",
+"mark": "Children’s Access to Theatre",
+"tier": "debate",
+"source": "HAN",
+"score": 0,
+"label": "aside",
+"why": []
+},
+{
+"work": "The Jungle",
+"mark": "King’s Speech (4th Day)",
+"tier": "debate",
+"source": "HAN",
+"score": 0,
+"label": "aside",
+"why": []
+},
+{
+"work": "The Jungle",
+"mark": "BBC World Service",
+"tier": "debate",
+"source": "HAN",
+"score": 0,
+"label": "aside",
+"why": []
+},
+{
+"work": "The Jungle",
+"mark": "Scammers",
+"tier": "debate",
+"source": "HAN",
+"score": 3,
+"label": "reason",
+"why": [
+"causal language: campaigns",
+"a change word follows"
+]
+},
+{
+"work": "The Jungle",
+"mark": "Dissolution and Calling of Parliament Bill",
+"tier": "bill debate",
+"source": "HAN",
+"score": 1,
+"label": "context",
+"why": [
+"a change word follows"
+]
+},
+{
+"work": "The Jungle",
+"mark": "Chair of the European Union Committee",
+"tier": "debate",
+"source": "HAN",
+"score": 0,
+"label": "aside",
+"why": [
+"illustration cue: character"
+]
+},
+{
+"work": "The Jungle",
+"mark": "Ivory Bill",
+"tier": "bill debate",
+"source": "HAN",
+"score": 0,
+"label": "aside",
+"why": [
+"illustration cue: my favourite"
+]
+},
+{
+"work": "The Jungle",
+"mark": "Calais: Refugee Camp",
+"tier": "debate",
+"source": "HAN",
+"score": 0,
+"label": "aside",
+"why": [
+"title used as ordinary words"
+]
+},
+{
+"work": "The Jungle",
+"mark": "English Votes for English Laws",
+"tier": "debate",
+"source": "HAN",
+"score": 0,
+"label": "aside",
+"why": []
+},
+{
+"work": "The Jungle",
+"mark": "English Votes for English Laws",
+"tier": "debate",
+"source": "HAN",
+"score": 0,
+"label": "aside",
+"why": [
+"illustration cue: like"
+]
+},
+{
+"work": "The Jungle",
+"mark": "Scotland: Independence",
+"tier": "debate",
+"source": "HAN",
+"score": 0,
+"label": "aside",
+"why": [
+"illustration cue: i remember"
+]
+},
+{
+"work": "The Jungle",
+"mark": "Justice and Security Bill [Lords]",
+"tier": "bill debate",
+"source": "HAN",
+"score": 0,
+"label": "aside",
+"why": [
+"a change word follows",
+"illustration cue: like"
+]
+},
+{
+"work": "The Jungle",
+"mark": "Fuel Duty",
+"tier": "debate",
+"source": "HAN",
+"score": 1,
+"label": "context",
+"why": [
+"a change word follows"
+]
+},
+{
+"work": "The Jungle",
+"mark": "Voting by Prisoners",
+"tier": "debate",
+"source": "HAN",
+"score": 1,
+"label": "context",
+"why": [
+"used in an argument"
+]
+},
+{
+"work": "The Jungle",
+"mark": "Future of the BBC",
+"tier": "debate",
+"source": "HAN",
+"score": 0,
+"label": "aside",
+"why": []
+},
+{
+"work": "The Jungle",
+"mark": "Public Service Broadcasting (Communications Committee Report)",
+"tier": "debate",
+"source": "HAN",
+"score": 0,
+"label": "aside",
+"why": []
+},
+{
+"work": "The Jungle",
+"mark": "Afghanistan and Pakistan",
+"tier": "debate",
+"source": "HAN",
+"score": 0,
+"label": "aside",
+"why": []
+},
+{
+"work": "The Jungle",
+"mark": "Legislative and Regulatory Reform Bill",
+"tier": "bill debate",
+"source": "HAN",
+"score": 0,
+"label": "aside",
+"why": []
+},
+{
+"work": "The Jungle",
+"mark": "BBC Royal Charter",
+"tier": "debate",
+"source": "HAN",
+"score": 0,
+"label": "aside",
+"why": [
+"illustration cue: like"
+]
+},
+{
+"work": "The Jungle",
+"mark": "EU Objective 1 Regions",
+"tier": "debate",
+"source": "HAN",
+"score": 0,
+"label": "aside",
+"why": []
+},
+{
+"work": "The Jungle",
+"mark": "Address In Reply To Her Majesty's Most Gracious Speech",
+"tier": "debate",
+"source": "HAN",
+"score": 0,
+"label": "aside",
+"why": [
+"illustration cue: like"
+]
+},
+{
+"work": "The Jungle",
+"mark": "Adoption And Children Bill",
+"tier": "bill debate",
+"source": "HAN",
+"score": 0,
+"label": "aside",
+"why": []
+},
+{
+"work": "The Jungle",
+"mark": "Telecoms Regulation",
+"tier": "debate",
+"source": "HAN",
+"score": 0,
+"label": "aside",
+"why": []
+},
+{
+"work": "The Jungle",
+"mark": "House Of Lords Reform",
+"tier": "debate",
+"source": "HAN",
+"score": 0,
+"label": "aside",
+"why": [
+"illustration cue: the words of"
+]
+},
+{
+"work": "The Jungle",
+"mark": "Budget Resolutions And Economic Situation",
+"tier": "debate",
+"source": "HAN",
+"score": 0,
+"label": "aside",
+"why": []
+},
+{
+"work": "The Jungle",
+"mark": "Debate On The Address",
+"tier": "debate",
+"source": "HAN",
+"score": 2,
+"label": "reason",
+"why": [
+"a change word follows",
+"used in an argument"
+]
+},
+{
+"work": "The Jungle",
+"mark": "Post Office",
+"tier": "debate",
+"source": "HAN",
+"score": 2,
+"label": "reason",
+"why": [
+"a change word follows",
+"used in an argument"
+]
+},
+{
+"work": "The Jungle",
+"mark": "Deregulation And Contracting Out Bill",
+"tier": "bill debate",
+"source": "HAN",
+"score": 0,
+"label": "aside",
+"why": []
+},
+{
+"work": "The Jungle",
+"mark": "Statement On The Defence Estimates",
+"tier": "debate",
+"source": "HAN",
+"score": 0,
+"label": "aside",
+"why": [
+"title used as ordinary words"
+]
+},
+{
+"work": "The Jungle",
+"mark": "Iraq",
+"tier": "debate",
+"source": "HAN",
+"score": 0,
+"label": "aside",
+"why": []
+},
+{
+"work": "The Jungle",
+"mark": "Criminal Justice (International; Co-Operation) Bill Lords",
+"tier": "bill debate",
+"source": "HAN",
+"score": 0,
+"label": "aside",
+"why": [
+"illustration cue: like, watched"
+]
+},
+{
+"work": "The Jungle",
+"mark": "British Broadcasting: Independence",
+"tier": "debate",
+"source": "HAN",
+"score": 1,
+"label": "context",
+"why": [
+"a change word follows"
+]
+},
+{
+"work": "The Jungle",
+"mark": "Copyright, Designs And Patents Bill Hl",
+"tier": "bill debate",
+"source": "HAN",
+"score": 0,
+"label": "aside",
+"why": []
+},
+{
+"work": "The Jungle",
+"mark": "Supplementary Benefit",
+"tier": "debate",
+"source": "HAN",
+"score": 0,
+"label": "aside",
+"why": [
+"illustration cue: like"
+]
+},
+{
+"work": "The Jungle",
+"mark": "Rate Support Grant (Scotland)",
+"tier": "debate",
+"source": "HAN",
+"score": 0,
+"label": "aside",
+"why": [
+"illustration cue: i remember"
+]
+},
+{
+"work": "The Jungle",
+"mark": "Unemployment",
+"tier": "debate",
+"source": "HAN",
+"score": 0,
+"label": "aside",
+"why": []
+},
+{
+"work": "The Jungle",
+"mark": "Films Bill",
+"tier": "bill debate",
+"source": "HAN",
+"score": 0,
+"label": "aside",
+"why": []
+},
+{
+"work": "The Jungle",
+"mark": "Newspaper Industry",
+"tier": "debate",
+"source": "HAN",
+"score": 0,
+"label": "aside",
+"why": []
+},
+{
+"work": "The Jungle",
+"mark": "Service Widows (Equality Of Pensions) (No 2) Bill Hl",
+"tier": "bill debate",
+"source": "HAN",
+"score": 1,
+"label": "context",
+"why": [
+"a change word follows"
+]
+},
+{
+"work": "The Jungle",
+"mark": "Sport And Recreation",
+"tier": "debate",
+"source": "HAN",
+"score": 1,
+"label": "context",
+"why": [
+"a change word follows"
+]
+},
+{
+"work": "The Jungle",
+"mark": "Pay And Prices Policy",
+"tier": "debate",
+"source": "HAN",
+"score": 1,
+"label": "context",
+"why": [
+"a change word follows"
+]
+},
+{
+"work": "The Jungle",
+"mark": "Eec Membership And The Commonwealth",
+"tier": "debate",
+"source": "HAN",
+"score": 0,
+"label": "aside",
+"why": [
+"illustration cue: i remember, many years ago"
+]
+},
+{
+"work": "The Jungle",
+"mark": "Equality Of Opportunity",
+"tier": "debate",
+"source": "HAN",
+"score": 0,
+"label": "aside",
+"why": [
+"illustration cue: like"
+]
+},
+{
+"work": "The Jungle",
+"mark": "Social Contract",
+"tier": "debate",
+"source": "HAN",
+"score": 0,
+"label": "aside",
+"why": [
+"illustration cue: series of"
+]
+},
+{
+"work": "The Jungle",
+"mark": "Bbc And \"British Empire\" Series",
+"tier": "debate",
+"source": "HAN",
+"score": 0,
+"label": "aside",
+"why": []
+},
+{
+"work": "The Jungle",
+"mark": "The Defence Estimates",
+"tier": "debate",
+"source": "HAN",
+"score": 0,
+"label": "aside",
+"why": [
+"a change word follows",
+"illustration cue: series of"
+]
+},
+{
+"work": "The Jungle",
+"mark": "London Government Bill",
+"tier": "bill debate",
+"source": "HAN",
+"score": 0,
+"label": "aside",
+"why": [
+"a change word follows",
+"illustration cue: to quote"
+]
+},
+{
+"work": "The Jungle",
+"mark": "Introduction Of Commercial Broadcasting",
+"tier": "debate",
+"source": "HAN",
+"score": 0,
+"label": "aside",
+"why": []
+},
+{
+"work": "Silent Spring",
+"mark": "King’s Speech",
+"tier": "debate",
+"source": "HAN",
+"score": 0,
+"label": "aside",
+"why": []
+},
+{
+"work": "Silent Spring",
+"mark": "UN Biodiversity Conference: COP 15",
+"tier": "debate",
+"source": "HAN",
+"score": 3,
+"label": "reason",
+"why": [
+"causal language: pressure",
+"a change word follows"
+]
+},
+{
+"work": "Silent Spring",
+"mark": "COP 27: Commitments",
+"tier": "debate",
+"source": "HAN",
+"score": 0,
+"label": "aside",
+"why": [
+"illustration cue: years ago"
+]
+},
+{
+"work": "Silent Spring",
+"mark": "Health and Care Bill",
+"tier": "bill debate",
+"source": "HAN",
+"score": 2,
+"label": "reason",
+"why": [
+"causal language: exposure"
+]
+},
+{
+"work": "Silent Spring",
+"mark": "Climate Change: COP 26",
+"tier": "debate",
+"source": "HAN",
+"score": 0,
+"label": "aside",
+"why": []
+},
+{
+"work": "Silent Spring",
+"mark": "Catchment Based Approach’s Chalk Stream Restoration Strategy 2021",
+"tier": "debate",
+"source": "HAN",
+"score": 0,
+"label": "aside",
+"why": [
+"a change word follows",
+"illustration cue: years ago"
+]
+},
+{
+"work": "Silent Spring",
+"mark": "Land Use Framework",
+"tier": "debate",
+"source": "HAN",
+"score": 2,
+"label": "reason",
+"why": [
+"a change word follows",
+"used in an argument"
+]
+},
+{
+"work": "Silent Spring",
+"mark": "Environment Bill",
+"tier": "bill debate",
+"source": "HAN",
+"score": 0,
+"label": "aside",
+"why": []
+},
+{
+"work": "Silent Spring",
+"mark": "Environment Bill",
+"tier": "bill debate",
+"source": "HAN",
+"score": 2,
+"label": "reason",
+"why": [
+"causal language: seminal"
+]
+},
+{
+"work": "Silent Spring",
+"mark": "Environment Bill",
+"tier": "bill debate",
+"source": "HAN",
+"score": 0,
+"label": "aside",
+"why": [
+"causal language: showed",
+"illustration cue: years ago"
+]
+},
+{
+"work": "Silent Spring",
+"mark": "Environment Bill",
+"tier": "bill debate",
+"source": "HAN",
+"score": 0,
+"label": "aside",
+"why": [
+"causal language: the effect",
+"illustration cue: years ago"
+]
+},
+{
+"work": "Silent Spring",
+"mark": "Agriculture Bill",
+"tier": "bill debate",
+"source": "HAN",
+"score": 1,
+"label": "context",
+"why": [
+"causal language: following, highlighted, seminal",
+"a change word follows",
+"illustration cue: i remember, when i was very young"
+]
+},
+{
+"work": "Silent Spring",
+"mark": "Wellbeing of Future Generations Bill [HL]",
+"tier": "bill debate",
+"source": "HAN",
+"score": 0,
+"label": "aside",
+"why": []
+},
+{
+"work": "Silent Spring",
+"mark": "The Climate Emergency",
+"tier": "debate",
+"source": "HAN",
+"score": 0,
+"label": "aside",
+"why": []
+},
+{
+"work": "Silent Spring",
+"mark": "The Climate Emergency",
+"tier": "debate",
+"source": "HAN",
+"score": 0,
+"label": "aside",
+"why": [
+"illustration cue: years ago"
+]
+},
+{
+"work": "Silent Spring",
+"mark": "European Union (Withdrawal) Bill",
+"tier": "bill debate",
+"source": "HAN",
+"score": 3,
+"label": "reason",
+"why": [
+"causal language: moved, reminds us",
+"used in an argument"
+]
+},
+{
+"work": "Silent Spring",
+"mark": "Agriculture and Horticulture",
+"tier": "debate",
+"source": "HAN",
+"score": 0,
+"label": "aside",
+"why": []
+},
+{
+"work": "Silent Spring",
+"mark": "Queen’s Speech",
+"tier": "debate",
+"source": "HAN",
+"score": 0,
+"label": "aside",
+"why": []
+},
+{
+"work": "Silent Spring",
+"mark": "Pollinators and Pesticides",
+"tier": "debate",
+"source": "HAN",
+"score": 2,
+"label": "reason",
+"why": [
+"causal language: seminal",
+"a change word follows",
+"used in an argument",
+"illustration cue: anniversary"
+]
+},
+{
+"work": "Silent Spring",
+"mark": "Bee Population",
+"tier": "debate",
+"source": "HAN",
+"score": 4,
+"label": "reason",
+"why": [
+"causal language: because of",
+"a change word follows",
+"used in an argument"
+]
+},
+{
+"work": "Silent Spring",
+"mark": "Antarctica: Centenary of Scott Expedition",
+"tier": "debate",
+"source": "HAN",
+"score": 2,
+"label": "reason",
+"why": [
+"causal language: the impact"
+]
+},
+{
+"work": "Silent Spring",
+"mark": " Bee Industry",
+"tier": "debate",
+"source": "HAN",
+"score": 0,
+"label": "aside",
+"why": [
+"illustration cue: years ago"
+]
+},
+{
+"work": "Silent Spring",
+"mark": "Organic Food",
+"tier": "debate",
+"source": "HAN",
+"score": 2,
+"label": "reason",
+"why": [
+"causal language: following"
+]
+},
+{
+"work": "Silent Spring",
+"mark": "Climate Change",
+"tier": "debate",
+"source": "HAN",
+"score": 2,
+"label": "reason",
+"why": [
+"causal language: after"
+]
+},
+{
+"work": "Silent Spring",
+"mark": "Countryside And Rights Of Way Bill",
+"tier": "bill debate",
+"source": "HAN",
+"score": 0,
+"label": "aside",
+"why": [
+"a change word follows",
+"illustration cue: as in, like"
+]
+},
+{
+"work": "Silent Spring",
+"mark": "Cap Reform: Ecc Report",
+"tier": "debate",
+"source": "HAN",
+"score": 0,
+"label": "aside",
+"why": [
+"a change word follows",
+"illustration cue: years ago"
+]
+},
+{
+"work": "Silent Spring",
+"mark": "Genetic Modification In Agriculture:Ecc Report",
+"tier": "debate",
+"source": "HAN",
+"score": 1,
+"label": "context",
+"why": [
+"used in an argument"
+]
+},
+{
+"work": "Silent Spring",
+"mark": "Energy Efficiency Bill",
+"tier": "bill debate",
+"source": "HAN",
+"score": 1,
+"label": "context",
+"why": [
+"a change word follows"
+]
+},
+{
+"work": "Silent Spring",
+"mark": "The Economy",
+"tier": "debate",
+"source": "HAN",
+"score": 0,
+"label": "aside",
+"why": []
+},
+{
+"work": "Silent Spring",
+"mark": "British Council",
+"tier": "debate",
+"source": "HAN",
+"score": 2,
+"label": "reason",
+"why": [
+"causal language: lead to"
+]
+},
+{
+"work": "Silent Spring",
+"mark": "Environmental Protection",
+"tier": "debate",
+"source": "HAN",
+"score": 0,
+"label": "aside",
+"why": []
+},
+{
+"work": "Silent Spring",
+"mark": "Local Government Bill",
+"tier": "bill debate",
+"source": "HAN",
+"score": 3,
+"label": "reason",
+"why": [
+"causal language: campaigning, campaigns",
+"a change word follows"
+]
+},
+{
+"work": "Silent Spring",
+"mark": "Food And Environment Protection Bill Lords",
+"tier": "bill debate",
+"source": "HAN",
+"score": 1,
+"label": "context",
+"why": [
+"a change word follows"
+]
+},
+{
+"work": "Silent Spring",
+"mark": "Food And Environment Protection Bill Lords",
+"tier": "bill debate",
+"source": "HAN",
+"score": 1,
+"label": "context",
+"why": [
+"a change word follows"
+]
+},
+{
+"work": "Silent Spring",
+"mark": "Criminal Justice Bill",
+"tier": "bill debate",
+"source": "HAN",
+"score": 0,
+"label": "aside",
+"why": []
+},
+{
+"work": "Silent Spring",
+"mark": "Independent Broadcasting Authority Bill",
+"tier": "bill debate",
+"source": "HAN",
+"score": 0,
+"label": "aside",
+"why": []
+},
+{
+"work": "Silent Spring",
+"mark": "European Community (Pesticides)",
+"tier": "debate",
+"source": "HAN",
+"score": 0,
+"label": "aside",
+"why": []
+},
+{
+"work": "Silent Spring",
+"mark": "Eec Environment Policy: Ecc Reports",
+"tier": "debate",
+"source": "HAN",
+"score": 0,
+"label": "aside",
+"why": []
+},
+{
+"work": "Silent Spring",
+"mark": "Otter Hunting Regulation Bill Hl",
+"tier": "bill debate",
+"source": "HAN",
+"score": 1,
+"label": "context",
+"why": [
+"a change word follows"
+]
+},
+{
+"work": "Silent Spring",
+"mark": "Endangered Species Protection",
+"tier": "debate",
+"source": "HAN",
+"score": 0,
+"label": "aside",
+"why": []
+},
+{
+"work": "Silent Spring",
+"mark": "Pollution And Protection Of The Environment",
+"tier": "debate",
+"source": "HAN",
+"score": 0,
+"label": "aside",
+"why": [
+"causal language: after",
+"illustration cue: in my youth, years ago"
+]
+},
+{
+"work": "Silent Spring",
+"mark": "Pollution And Protecton Of The Environment",
+"tier": "debate",
+"source": "HAN",
+"score": 2,
+"label": "reason",
+"why": [
+"causal language: because of"
+]
+},
+{
+"work": "Silent Spring",
+"mark": "Economic Affairs",
+"tier": "debate",
+"source": "HAN",
+"score": 0,
+"label": "aside",
+"why": [
+"causal language: because of",
+"illustration cue: years ago"
+]
+},
+{
+"work": "Silent Spring",
+"mark": "Pollution And Purification Of Rivers",
+"tier": "debate",
+"source": "HAN",
+"score": 0,
+"label": "aside",
+"why": []
+},
+{
+"work": "Silent Spring",
+"mark": "Gas Bill",
+"tier": "bill debate",
+"source": "HAN",
+"score": 0,
+"label": "aside",
+"why": []
+},
+{
+"work": "Silent Spring",
+"mark": "Poisonous Substances In Agriculture And Food Storage",
+"tier": "debate",
+"source": "HAN",
+"score": 1,
+"label": "context",
+"why": [
+"used in an argument"
+]
+},
+{
+"work": "Silent Spring",
+"mark": "Farm And Garden Chemicals",
+"tier": "debate",
+"source": "HAN",
+"score": 1,
+"label": "context",
+"why": [
+"a change word follows"
+]
+},
+{
+"work": "Silent Spring",
+"mark": "Dangers From Toxic Chemicals",
+"tier": "debate",
+"source": "HAN",
+"score": 0,
+"label": "aside",
+"why": [
+"causal language: after",
+"illustration cue: like"
+]
+},
+{
+"work": "Silent Spring",
+"mark": "Dangers From Toxic Chemicals",
+"tier": "debate",
+"source": "HAN",
+"score": 0,
+"label": "aside",
+"why": []
+},
+{
+"work": "Silent Spring",
+"mark": "Dangers From Toxic Chemicals",
+"tier": "debate",
+"source": "HAN",
+"score": 0,
+"label": "aside",
+"why": []
+},
+{
+"work": "Silent Spring",
+"mark": "Dangers From Toxic Chemicals",
+"tier": "debate",
+"source": "HAN",
+"score": 0,
+"label": "aside",
+"why": []
+},
+{
+"work": "Silent Spring",
+"mark": "Dangers From Toxic Chemicals",
+"tier": "debate",
+"source": "HAN",
+"score": 0,
+"label": "aside",
+"why": []
+},
+{
+"work": "Silent Spring",
+"mark": "Dangers From Toxic Chemicals",
+"tier": "debate",
+"source": "HAN",
+"score": 2,
+"label": "reason",
+"why": [
+"a change word follows",
+"used in an argument"
+]
+},
+{
+"work": "Silent Spring",
+"mark": "Pesticides",
+"tier": "debate",
+"source": "HAN",
+"score": 0,
+"label": "aside",
+"why": [
+"illustration cue: read it"
+]
+},
+{
+"work": "Silent Spring",
+"mark": "Pesticides",
+"tier": "debate",
+"source": "HAN",
+"score": 0,
+"label": "aside",
+"why": []
+},
+{
+"work": "Unsafe at Any Speed",
+"mark": "The World Economy",
+"tier": "debate",
+"source": "HAN",
+"score": 0,
+"label": "aside",
+"why": []
+},
+{
+"work": "Unsafe at Any Speed",
+"mark": "The World Economy",
+"tier": "debate",
+"source": "HAN",
+"score": 0,
+"label": "aside",
+"why": [
+"illustration cue: the title"
+]
+},
+{
+"work": "Unsafe at Any Speed",
+"mark": "Charge Of Income Tax For 1977–78",
+"tier": "debate",
+"source": "HAN",
+"score": 1,
+"label": "context",
+"why": [
+"used in an argument"
+]
+},
+{
+"work": "Unsafe at Any Speed",
+"mark": "Finance Bill",
+"tier": "bill debate",
+"source": "HAN",
+"score": 1,
+"label": "context",
+"why": [
+"a change word follows"
+]
+},
+{
+"work": "Unsafe at Any Speed",
+"mark": "The Consumer Council",
+"tier": "debate",
+"source": "HAN",
+"score": 3,
+"label": "reason",
+"why": [
+"causal language: powerful",
+"a change word follows"
+]
+},
+{
+"work": "WarGames",
+"mark": " Strength of the UK’s Armed Forces",
+"tier": "debate",
+"source": "HAN",
+"score": 0,
+"label": "aside",
+"why": []
+},
+{
+"work": "WarGames",
+"mark": "Data Protection Bill",
+"tier": "bill debate",
+"source": "HAN",
+"score": 0,
+"label": "aside",
+"why": [
+"a change word follows",
+"illustration cue: plot"
+]
+},
+{
+"work": "Cathy Come Home",
+"mark": "Online Harms: Young People",
+"tier": "debate",
+"source": "HAN",
+"score": 0,
+"label": "aside",
+"why": [
+"causal language: the effect",
+"illustration cue: think of"
+]
+},
+{
+"work": "Cathy Come Home",
+"mark": "Housing: Young People",
+"tier": "debate",
+"source": "HAN",
+"score": 2,
+"label": "reason",
+"why": [
+"causal language: following"
+]
+},
+{
+"work": "Cathy Come Home",
+"mark": "Arts",
+"tier": "debate",
+"source": "HAN",
+"score": 0,
+"label": "aside",
+"why": []
+},
+{
+"work": "Cathy Come Home",
+"mark": "Arts",
+"tier": "debate",
+"source": "HAN",
+"score": 3,
+"label": "reason",
+"why": [
+"causal language: moved",
+"used in an argument"
+]
+},
+{
+"work": "Cathy Come Home",
+"mark": "Arts",
+"tier": "debate",
+"source": "HAN",
+"score": 2,
+"label": "reason",
+"why": [
+"causal language: led to"
+]
+},
+{
+"work": "Cathy Come Home",
+"mark": "Social Housing (Regulation) Bill [HL]",
+"tier": "bill debate",
+"source": "HAN",
+"score": 1,
+"label": "context",
+"why": [
+"causal language: inspired, revealed",
+"the work is the subject of the clause",
+"illustration cue: the famous"
+]
+},
+{
+"work": "Cathy Come Home",
+"mark": " Supporting Single Parents into Work",
+"tier": "debate",
+"source": "HAN",
+"score": 2,
+"label": "reason",
+"why": [
+"causal language: pressure"
+]
+},
+{
+"work": "Cathy Come Home",
+"mark": "Assisted Dying Bill [HL]",
+"tier": "bill debate",
+"source": "HAN",
+"score": 0,
+"label": "aside",
+"why": [
+"causal language: showed",
+"illustration cue: the famous"
+]
+},
+{
+"work": "Cathy Come Home",
+"mark": " Social Housing: Housing Ombudsman",
+"tier": "debate",
+"source": "HAN",
+"score": 1,
+"label": "context",
+"why": [
+"causal language: in response to",
+"a change word follows",
+"illustration cue: like"
+]
+},
+{
+"work": "Cathy Come Home",
+"mark": "Housing Strategy",
+"tier": "debate",
+"source": "HAN",
+"score": 2,
+"label": "reason",
+"why": [
+"causal language: as a result"
+]
+},
+{
+"work": "Cathy Come Home",
+"mark": " Household Overcrowding: Covid-19",
+"tier": "debate",
+"source": "HAN",
+"score": 2,
+"label": "reason",
+"why": [
+"causal language: led to"
+]
+},
+{
+"work": "Cathy Come Home",
+"mark": " British House Building Industry",
+"tier": "debate",
+"source": "HAN",
+"score": 0,
+"label": "aside",
+"why": []
+},
+{
+"work": "Cathy Come Home",
+"mark": "Affordable Housing",
+"tier": "debate",
+"source": "HAN",
+"score": 1,
+"label": "context",
+"why": [
+"a change word follows"
+]
+},
+{
+"work": "Cathy Come Home",
+"mark": "Homelessness",
+"tier": "debate",
+"source": "HAN",
+"score": 0,
+"label": "aside",
+"why": []
+},
+{
+"work": "Cathy Come Home",
+"mark": "Homes (Fitness for Human Habitation and Liability for Housing Standards) Bill",
+"tier": "bill debate",
+"source": "HAN",
+"score": 1,
+"label": "context",
+"why": [
+"causal language: powerful, shocked",
+"a change word follows",
+"illustration cue: years ago"
+]
+},
+{
+"work": "Cathy Come Home",
+"mark": " Hyde Housing (Lambeth)",
+"tier": "debate",
+"source": "HAN",
+"score": 0,
+"label": "aside",
+"why": []
+},
+{
+"work": "Cathy Come Home",
+"mark": "Homelessness Reduction Bill",
+"tier": "bill debate",
+"source": "HAN",
+"score": 0,
+"label": "aside",
+"why": []
+},
+{
+"work": "Cathy Come Home",
+"mark": "Homelessness Reduction Bill",
+"tier": "bill debate",
+"source": "HAN",
+"score": 0,
+"label": "aside",
+"why": []
+},
+{
+"work": "Cathy Come Home",
+"mark": "Homelessness Reduction Bill",
+"tier": "bill debate",
+"source": "HAN",
+"score": 0,
+"label": "aside",
+"why": []
+},
+{
+"work": "Cathy Come Home",
+"mark": " Circle Housing and Orchard Village",
+"tier": "debate",
+"source": "HAN",
+"score": 1,
+"label": "context",
+"why": [
+"used in an argument"
+]
+},
+{
+"work": "Cathy Come Home",
+"mark": " Homelessness",
+"tier": "debate",
+"source": "HAN",
+"score": 2,
+"label": "reason",
+"why": [
+"causal language: lead to"
+]
+},
+{
+"work": "Cathy Come Home",
+"mark": " Homelessness",
+"tier": "debate",
+"source": "HAN",
+"score": 1,
+"label": "context",
+"why": [
+"causal language: credit",
+"a change word follows",
+"illustration cue: anniversary"
+]
+},
+{
+"work": "Cathy Come Home",
+"mark": " Homelessness",
+"tier": "debate",
+"source": "HAN",
+"score": 2,
+"label": "reason",
+"why": [
+"causal language: following"
+]
+},
+{
+"work": "Cathy Come Home",
+"mark": " Homelessness",
+"tier": "debate",
+"source": "HAN",
+"score": 0,
+"label": "aside",
+"why": [
+"illustration cue: anniversary"
+]
+},
+{
+"work": "Cathy Come Home",
+"mark": " Homelessness",
+"tier": "debate",
+"source": "HAN",
+"score": 2,
+"label": "reason",
+"why": [
+"causal language: highlight"
+]
+},
+{
+"work": "Cathy Come Home",
+"mark": "Renters’ Rights Bill [HL]",
+"tier": "bill debate",
+"source": "HAN",
+"score": 2,
+"label": "reason",
+"why": [
+"causal language: after"
+]
+},
+{
+"work": "Cathy Come Home",
+"mark": " Homelessness Reduction Bill",
+"tier": "bill debate",
+"source": "HAN",
+"score": 3,
+"label": "reason",
+"why": [
+"causal language: exposed, led to",
+"a change word follows"
+]
+},
+{
+"work": "Cathy Come Home",
+"mark": "Homelessness",
+"tier": "debate",
+"source": "HAN",
+"score": 3,
+"label": "reason",
+"why": [
+"causal language: the effect",
+"a change word follows"
+]
+},
+{
+"work": "Cathy Come Home",
+"mark": "Homelessness",
+"tier": "debate",
+"source": "HAN",
+"score": 3,
+"label": "reason",
+"why": [
+"causal language: in the wake of, powerful, showed",
+"the work is the subject of the clause"
+]
+},
+{
+"work": "Cathy Come Home",
+"mark": "Fiscal Responsibility and Fairness",
+"tier": "debate",
+"source": "HAN",
+"score": 2,
+"label": "reason",
+"why": [
+"causal language: after"
+]
+},
+{
+"work": "Cathy Come Home",
+"mark": "Amendment of the Law",
+"tier": "debate",
+"source": "HAN",
+"score": 3,
+"label": "reason",
+"why": [
+"causal language: brought home",
+"the work is the subject of the clause"
+]
+},
+{
+"work": "Cathy Come Home",
+"mark": "Young People in Care",
+"tier": "debate",
+"source": "HAN",
+"score": 2,
+"label": "reason",
+"why": [
+"causal language: highlighted"
+]
+},
+{
+"work": "Cathy Come Home",
+"mark": "Housing: Affordability and the Underoccupancy Charge",
+"tier": "debate",
+"source": "HAN",
+"score": 0,
+"label": "aside",
+"why": []
+},
+{
+"work": "Cathy Come Home",
+"mark": "Housing",
+"tier": "debate",
+"source": "HAN",
+"score": 2,
+"label": "reason",
+"why": [
+"the work is the subject of the clause",
+"a change word follows"
+]
+},
+{
+"work": "Cathy Come Home",
+"mark": "Housing",
+"tier": "debate",
+"source": "HAN",
+"score": 2,
+"label": "reason",
+"why": [
+"causal language: after, shocked"
+]
+},
+{
+"work": "Cathy Come Home",
+"mark": "Family Justice (Transparency, Accountability and Cost of Living) Bill",
+"tier": "bill debate",
+"source": "HAN",
+"score": 0,
+"label": "aside",
+"why": []
+},
+{
+"work": "Cathy Come Home",
+"mark": "Homelessness",
+"tier": "debate",
+"source": "HAN",
+"score": 3,
+"label": "reason",
+"why": [
+"causal language: campaigning, exposed",
+"the work is the subject of the clause"
+]
+},
+{
+"work": "Cathy Come Home",
+"mark": "Council and Social Housing",
+"tier": "debate",
+"source": "HAN",
+"score": 1,
+"label": "context",
+"why": [
+"used in an argument"
+]
+},
+{
+"work": "Cathy Come Home",
+"mark": "Welfare Reform Bill",
+"tier": "bill debate",
+"source": "HAN",
+"score": 0,
+"label": "aside",
+"why": []
+},
+{
+"work": "Cathy Come Home",
+"mark": "Legal Aid, Sentencing and Punishment of Offenders Bill",
+"tier": "bill debate",
+"source": "HAN",
+"score": 0,
+"label": "aside",
+"why": [
+"illustration cue: like"
+]
+},
+{
+"work": "Cathy Come Home",
+"mark": "Localism Bill",
+"tier": "bill debate",
+"source": "HAN",
+"score": 0,
+"label": "aside",
+"why": []
+},
+{
+"work": "Cathy Come Home",
+"mark": "Localism Bill",
+"tier": "bill debate",
+"source": "HAN",
+"score": 0,
+"label": "aside",
+"why": [
+"causal language: drew attention",
+"illustration cue: the famous"
+]
+},
+{
+"work": "Cathy Come Home",
+"mark": "Localism Bill",
+"tier": "bill debate",
+"source": "HAN",
+"score": 0,
+"label": "aside",
+"why": [
+"illustration cue: watched"
+]
+},
+{
+"work": "Cathy Come Home",
+"mark": "Localism Bill",
+"tier": "bill debate",
+"source": "HAN",
+"score": 2,
+"label": "reason",
+"why": [
+"causal language: in response to"
+]
+},
+{
+"work": "Cathy Come Home",
+"mark": "Localism Bill",
+"tier": "bill debate",
+"source": "HAN",
+"score": 1,
+"label": "context",
+"why": [
+"a change word follows"
+]
+},
+{
+"work": "Cathy Come Home",
+"mark": "Housing: Spending Review",
+"tier": "debate",
+"source": "HAN",
+"score": 0,
+"label": "aside",
+"why": []
+},
+{
+"work": "Cathy Come Home",
+"mark": "Topical Questions",
+"tier": "debate",
+"source": "HAN",
+"score": 0,
+"label": "aside",
+"why": []
+},
+{
+"work": "Cathy Come Home",
+"mark": " Children (Protection of Privacy)",
+"tier": "debate",
+"source": "HAN",
+"score": 0,
+"label": "aside",
+"why": []
+},
+{
+"work": "Cathy Come Home",
+"mark": "Housing and Regeneration Bill",
+"tier": "bill debate",
+"source": "HAN",
+"score": 2,
+"label": "reason",
+"why": [
+"causal language: after"
+]
+},
+{
+"work": "Cathy Come Home",
+"mark": "Benefits Simplification",
+"tier": "debate",
+"source": "HAN",
+"score": 3,
+"label": "reason",
+"why": [
+"causal language: led to, pressure",
+"a change word follows"
+]
+},
+{
+"work": "Cathy Come Home",
+"mark": "Housing: Homeless and Overcrowded Families",
+"tier": "debate",
+"source": "HAN",
+"score": 0,
+"label": "aside",
+"why": [
+"causal language: led to",
+"illustration cue: watched"
+]
+},
+{
+"work": "Cathy Come Home",
+"mark": "Christmas Adjournment",
+"tier": "debate",
+"source": "HAN",
+"score": 1,
+"label": "context",
+"why": [
+"causal language: after",
+"used in an argument",
+"illustration cue: anniversary, like"
+]
+},
+{
+"work": "Cathy Come Home",
+"mark": "Engagements",
+"tier": "debate",
+"source": "HAN",
+"score": 2,
+"label": "reason",
+"why": [
+"causal language: after"
+]
+},
+{
+"work": "Cathy Come Home",
+"mark": "Communities and Local Government/Environment, Food and Rural Affairs",
+"tier": "debate",
+"source": "HAN",
+"score": 0,
+"label": "aside",
+"why": [
+"illustration cue: anniversary"
+]
+},
+{
+"work": "Cathy Come Home",
+"mark": "Debate on the Address",
+"tier": "debate",
+"source": "HAN",
+"score": 0,
+"label": "aside",
+"why": [
+"illustration cue: anniversary"
+]
+},
+{
+"work": "Cathy Come Home",
+"mark": " Housing",
+"tier": "debate",
+"source": "HAN",
+"score": 0,
+"label": "aside",
+"why": []
+},
+{
+"work": "Cathy Come Home",
+"mark": " Housing",
+"tier": "debate",
+"source": "HAN",
+"score": 0,
+"label": "aside",
+"why": [
+"causal language: powerful",
+"illustration cue: years ago"
+]
+},
+{
+"work": "Cathy Come Home",
+"mark": " Housing",
+"tier": "debate",
+"source": "HAN",
+"score": 3,
+"label": "reason",
+"why": [
+"causal language: after, campaign, led to",
+"a change word follows"
+]
+},
+{
+"work": "Cathy Come Home",
+"mark": "Budget Resolutions and Economic Situation",
+"tier": "debate",
+"source": "HAN",
+"score": 1,
+"label": "context",
+"why": [
+"causal language: following",
+"a change word follows",
+"illustration cue: years ago"
+]
+},
+{
+"work": "Cathy Come Home",
+"mark": "Children Bill Lords",
+"tier": "bill debate",
+"source": "HAN",
+"score": 0,
+"label": "aside",
+"why": []
+},
+{
+"work": "Cathy Come Home",
+"mark": "Communications Bill",
+"tier": "bill debate",
+"source": "HAN",
+"score": 0,
+"label": "aside",
+"why": []
+},
+{
+"work": "Cathy Come Home",
+"mark": "Affordable Housing",
+"tier": "debate",
+"source": "HAN",
+"score": 3,
+"label": "reason",
+"why": [
+"causal language: after",
+"a change word follows"
+]
+},
+{
+"work": "Cathy Come Home",
+"mark": "A New Clause",
+"tier": "debate",
+"source": "HAN",
+"score": 1,
+"label": "context",
+"why": [
+"used in an argument"
+]
+},
+{
+"work": "Cathy Come Home",
+"mark": "Child Poverty",
+"tier": "debate",
+"source": "HAN",
+"score": 1,
+"label": "context",
+"why": [
+"a change word follows"
+]
+},
+{
+"work": "Cathy Come Home",
+"mark": "Children Act",
+"tier": "act debate",
+"source": "HAN",
+"score": 0,
+"label": "aside",
+"why": [
+"causal language: groundbreaking, the effect",
+"illustration cue: anniversary"
+]
+},
+{
+"work": "Cathy Come Home",
+"mark": "Homelessness Bill",
+"tier": "bill debate",
+"source": "HAN",
+"score": 1,
+"label": "context",
+"why": [
+"a change word follows"
+]
+},
+{
+"work": "Cathy Come Home",
+"mark": "Homelessness Bill",
+"tier": "bill debate",
+"source": "HAN",
+"score": 2,
+"label": "reason",
+"why": [
+"a change word follows",
+"used in an argument"
+]
+},
+{
+"work": "Cathy Come Home",
+"mark": "Homelessness Bill",
+"tier": "bill debate",
+"source": "HAN",
+"score": 3,
+"label": "reason",
+"why": [
+"causal language: spurred, the impact",
+"a change word follows"
+]
+},
+{
+"work": "Cathy Come Home",
+"mark": "Homes Bill",
+"tier": "bill debate",
+"source": "HAN",
+"score": 1,
+"label": "context",
+"why": [
+"a change word follows"
+]
+},
+{
+"work": "Cathy Come Home",
+"mark": "Television (Protection Of Children)",
+"tier": "debate",
+"source": "HAN",
+"score": 0,
+"label": "aside",
+"why": []
+},
+{
+"work": "Cathy Come Home",
+"mark": "Absolute Priority In Housing Allocation For Certain Categories Of Persons",
+"tier": "debate",
+"source": "HAN",
+"score": 2,
+"label": "reason",
+"why": [
+"causal language: shocked"
+]
+},
+{
+"work": "Cathy Come Home",
+"mark": "Absolute Priority In Housing Allocation For Certain Categories Of Persons",
+"tier": "debate",
+"source": "HAN",
+"score": 2,
+"label": "reason",
+"why": [
+"causal language: after"
+]
+},
+{
+"work": "Cathy Come Home",
+"mark": "Housing Bill",
+"tier": "bill debate",
+"source": "HAN",
+"score": 0,
+"label": "aside",
+"why": [
+"a change word follows",
+"illustration cue: enjoyed"
+]
+},
+{
+"work": "Cathy Come Home",
+"mark": "Housing Bill",
+"tier": "bill debate",
+"source": "HAN",
+"score": 1,
+"label": "context",
+"why": [
+"a change word follows"
+]
+},
+{
+"work": "Cathy Come Home",
+"mark": "Social Housing",
+"tier": "debate",
+"source": "HAN",
+"score": 2,
+"label": "reason",
+"why": [
+"causal language: because of"
+]
+},
+{
+"work": "Cathy Come Home",
+"mark": "Criminal Justice And Public Order Bill",
+"tier": "bill debate",
+"source": "HAN",
+"score": 0,
+"label": "aside",
+"why": [
+"illustration cue: years ago"
+]
+},
+{
+"work": "Cathy Come Home",
+"mark": "Housing And Homelessness",
+"tier": "debate",
+"source": "HAN",
+"score": 0,
+"label": "aside",
+"why": []
+},
+{
+"work": "Cathy Come Home",
+"mark": "Local Authority And Housing Association Tenancies",
+"tier": "debate",
+"source": "HAN",
+"score": 0,
+"label": "aside",
+"why": [
+"illustration cue: i remember"
+]
+},
+{
+"work": "Cathy Come Home",
+"mark": "The Family",
+"tier": "debate",
+"source": "HAN",
+"score": 0,
+"label": "aside",
+"why": [
+"the work is the subject of the clause",
+"illustration cue: like, years ago"
+]
+},
+{
+"work": "Cathy Come Home",
+"mark": "Council Accommodation",
+"tier": "debate",
+"source": "HAN",
+"score": 0,
+"label": "aside",
+"why": []
+},
+{
+"work": "Cathy Come Home",
+"mark": "Greater London And The South-East",
+"tier": "debate",
+"source": "HAN",
+"score": 1,
+"label": "context",
+"why": [
+"the work is the subject of the clause"
+]
+},
+{
+"work": "Cathy Come Home",
+"mark": "Greater London And The South-East",
+"tier": "debate",
+"source": "HAN",
+"score": 0,
+"label": "aside",
+"why": [
+"illustration cue: years ago"
+]
+},
+{
+"work": "Cathy Come Home",
+"mark": "Debate On The Address",
+"tier": "debate",
+"source": "HAN",
+"score": 2,
+"label": "reason",
+"why": [
+"the work is the subject of the clause",
+"a change word follows"
+]
+},
+{
+"work": "Cathy Come Home",
+"mark": "Homelessness In Britain",
+"tier": "debate",
+"source": "HAN",
+"score": 0,
+"label": "aside",
+"why": []
+},
+{
+"work": "Cathy Come Home",
+"mark": "Homelessness In Britain",
+"tier": "debate",
+"source": "HAN",
+"score": 0,
+"label": "aside",
+"why": [
+"causal language: brought home, powerful",
+"illustration cue: many years ago"
+]
+},
+{
+"work": "Cathy Come Home",
+"mark": "Broadcasting Bill",
+"tier": "bill debate",
+"source": "HAN",
+"score": 2,
+"label": "reason",
+"why": [
+"causal language: campaign"
+]
+},
+{
+"work": "Cathy Come Home",
+"mark": "Housing (Stoke-On-Trent)",
+"tier": "debate",
+"source": "HAN",
+"score": 0,
+"label": "aside",
+"why": []
+},
+{
+"work": "Cathy Come Home",
+"mark": "The Family",
+"tier": "debate",
+"source": "HAN",
+"score": 1,
+"label": "context",
+"why": [
+"causal language: demonstrated",
+"the work is the subject of the clause",
+"illustration cue: i remember"
+]
+},
+{
+"work": "Cathy Come Home",
+"mark": "Broadcasting And Terrorism",
+"tier": "debate",
+"source": "HAN",
+"score": 0,
+"label": "aside",
+"why": []
+},
+{
+"work": "Cathy Come Home",
+"mark": "Housing Bill",
+"tier": "bill debate",
+"source": "HAN",
+"score": 0,
+"label": "aside",
+"why": []
+},
+{
+"work": "Cathy Come Home",
+"mark": "Inner City Problems",
+"tier": "debate",
+"source": "HAN",
+"score": 0,
+"label": "aside",
+"why": [
+"illustration cue: anniversary"
+]
+},
+{
+"work": "Cathy Come Home",
+"mark": "Housing Policy",
+"tier": "debate",
+"source": "HAN",
+"score": 1,
+"label": "context",
+"why": [
+"causal language: brought home",
+"the work is the subject of the clause",
+"illustration cue: years ago"
+]
+},
+{
+"work": "Cathy Come Home",
+"mark": "The Arts",
+"tier": "debate",
+"source": "HAN",
+"score": 0,
+"label": "aside",
+"why": []
+},
+{
+"work": "Cathy Come Home",
+"mark": "The Arts",
+"tier": "debate",
+"source": "HAN",
+"score": 3,
+"label": "reason",
+"why": [
+"causal language: campaign",
+"a change word follows"
+]
+},
+{
+"work": "Cathy Come Home",
+"mark": "Housing: Public Investment",
+"tier": "debate",
+"source": "HAN",
+"score": 0,
+"label": "aside",
+"why": [
+"illustration cue: many years ago"
+]
+},
+{
+"work": "Cathy Come Home",
+"mark": "The Arts And The Heritage",
+"tier": "debate",
+"source": "HAN",
+"score": 0,
+"label": "aside",
+"why": []
+},
+{
+"work": "Cathy Come Home",
+"mark": "The Arts And The Heritage",
+"tier": "debate",
+"source": "HAN",
+"score": 0,
+"label": "aside",
+"why": []
+},
+{
+"work": "Cathy Come Home",
+"mark": "Homelessness",
+"tier": "debate",
+"source": "HAN",
+"score": 0,
+"label": "aside",
+"why": [
+"illustration cue: like"
+]
+},
+{
+"work": "Cathy Come Home",
+"mark": "The Family",
+"tier": "debate",
+"source": "HAN",
+"score": 2,
+"label": "reason",
+"why": [
+"causal language: highlighted"
+]
+},
+{
+"work": "Cathy Come Home",
+"mark": "Homes Bill",
+"tier": "bill debate",
+"source": "HAN",
+"score": 2,
+"label": "reason",
+"why": [
+"a change word follows",
+"used in an argument"
+]
+},
+{
+"work": "Cathy Come Home",
+"mark": "Homes Bill",
+"tier": "bill debate",
+"source": "HAN",
+"score": 1,
+"label": "context",
+"why": [
+"a change word follows"
+]
+},
+{
+"work": "Cathy Come Home",
+"mark": "Housing Rents And Subsidies Bill",
+"tier": "bill debate",
+"source": "HAN",
+"score": 2,
+"label": "reason",
+"why": [
+"causal language: influenced"
+]
+},
+{
+"work": "Cathy Come Home",
+"mark": "Social Policy",
+"tier": "debate",
+"source": "HAN",
+"score": 2,
+"label": "reason",
+"why": [
+"causal language: the effect"
+]
+},
+{
+"work": "Cathy Come Home",
+"mark": "Homeless People (London)",
+"tier": "debate",
+"source": "HAN",
+"score": 0,
+"label": "aside",
+"why": []
+},
+{
+"work": "Cathy Come Home",
+"mark": "Housing (Willesden)",
+"tier": "debate",
+"source": "HAN",
+"score": 0,
+"label": "aside",
+"why": [
+"causal language: because of, led to",
+"illustration cue: years ago"
+]
+},
+{
+"work": "Cathy Come Home",
+"mark": "Housing (Greater London)",
+"tier": "debate",
+"source": "HAN",
+"score": 0,
+"label": "aside",
+"why": [
+"illustration cue: as in, the famous"
+]
+},
+{
+"work": "Cathy Come Home",
+"mark": "Mass Media Communication",
+"tier": "debate",
+"source": "HAN",
+"score": 0,
+"label": "aside",
+"why": [
+"illustration cue: watched"
+]
+},
+{
+"work": "Cathy Come Home",
+"mark": "Housing",
+"tier": "debate",
+"source": "HAN",
+"score": 0,
+"label": "aside",
+"why": []
+},
+{
+"work": "Cathy Come Home",
+"mark": "Housing",
+"tier": "debate",
+"source": "HAN",
+"score": 2,
+"label": "reason",
+"why": [
+"causal language: moved"
+]
+},
+{
+"work": "Cathy Come Home",
+"mark": "Housing",
+"tier": "debate",
+"source": "HAN",
+"score": 0,
+"label": "aside",
+"why": [
+"used in an argument",
+"illustration cue: like"
+]
+},
+{
+"work": "Cathy Come Home",
+"mark": "Local Authority Houses, Manchester (Sale)",
+"tier": "debate",
+"source": "HAN",
+"score": 2,
+"label": "reason",
+"why": [
+"causal language: outcry"
+]
+},
+{
+"work": "Cathy Come Home",
+"mark": "Confidential Interviews And Broadcasting Libels",
+"tier": "debate",
+"source": "HAN",
+"score": 1,
+"label": "context",
+"why": [
+"used in an argument"
+]
+},
+{
+"work": "Cathy Come Home",
+"mark": "Empty Houses",
+"tier": "debate",
+"source": "HAN",
+"score": 0,
+"label": "aside",
+"why": []
+},
+{
+"work": "Cathy Come Home",
+"mark": "New Clause 1—(Subsidies For Conversions Or Improvements By Housing Associations)",
+"tier": "debate",
+"source": "HAN",
+"score": 1,
+"label": "context",
+"why": [
+"a change word follows"
+]
+},
+{
+"work": "Cathy Come Home",
+"mark": "New Clause—(Capital Grants)",
+"tier": "debate",
+"source": "HAN",
+"score": 0,
+"label": "aside",
+"why": []
+},
+{
+"work": "Cathy Come Home",
+"mark": "National Health Service (Family Planning) Bill",
+"tier": "bill debate",
+"source": "HAN",
+"score": 0,
+"label": "aside",
+"why": []
+},
+{
+"work": "Cathy Come Home",
+"mark": "Housing Subsidies Bill",
+"tier": "bill debate",
+"source": "HAN",
+"score": 0,
+"label": "aside",
+"why": [
+"illustration cue: watched"
+]
+},
+{
+"work": "Cathy Come Home",
+"mark": "Housing Subsidies Bill",
+"tier": "bill debate",
+"source": "HAN",
+"score": 2,
+"label": "reason",
+"why": [
+"the work is the subject of the clause",
+"a change word follows"
+]
+},
+{
+"work": "13 Reasons Why",
+"mark": " Internet Service Providers and  Suicide-related Content",
+"tier": "debate",
+"source": "HAN",
+"score": 0,
+"label": "aside",
+"why": []
+},
+{
+"work": "13 Reasons Why",
+"mark": "Abolition Of Ilea",
+"tier": "debate",
+"source": "HAN",
+"score": 0,
+"label": "aside",
+"why": []
+},
+{
+"work": "13 Reasons Why",
+"mark": "Agriculture",
+"tier": "debate",
+"source": "HAN",
+"score": 0,
+"label": "aside",
+"why": [
+"illustration cue: like"
+]
+},
+{
+"work": "Squid Game",
+"mark": "Arts",
+"tier": "debate",
+"source": "HAN",
+"score": 0,
+"label": "aside",
+"why": []
+},
+{
+"work": "Parasite (2019 film)",
+"mark": "Arts",
+"tier": "debate",
+"source": "HAN",
+"score": 0,
+"label": "aside",
+"why": []
+},
+{
+"work": "Squid Game",
+"mark": "Supporting UK Artists and Culture",
+"tier": "debate",
+"source": "HAN",
+"score": 1,
+"label": "context",
+"why": [
+"a change word follows"
+]
+},
+{
+"work": "The Lost Boys",
+"mark": "Border Security, Asylum and Immigration Bill (Seventh sitting)",
+"tier": "bill debate",
+"source": "HAN",
+"score": 0,
+"label": "aside",
+"why": [
+"illustration cue: a nice, watched"
+]
+},
+{
+"work": "Stranger Things",
+"mark": "Border Security, Asylum and Immigration Bill (Seventh sitting)",
+"tier": "bill debate",
+"source": "HAN",
+"score": 0,
+"label": "aside",
+"why": [
+"illustration cue: watched"
+]
+},
+{
+"work": "Stranger Things",
+"mark": "Criminal Law (Amendment) (Householder Protection) Bill",
+"tier": "bill debate",
+"source": "HAN",
+"score": 0,
+"label": "aside",
+"why": [
+"title used as ordinary words"
+]
+},
+{
+"work": "Baby Reindeer",
+"mark": "Criminal Justice Bill",
+"tier": "bill debate",
+"source": "HAN",
+"score": 0,
+"label": "aside",
+"why": []
+},
+{
+"work": "Adolescence (TV series)",
+"mark": "Infants, Parents and Carers Bill",
+"tier": "bill debate",
+"source": "HAN",
+"score": 0,
+"label": "aside",
+"why": [
+"title used as ordinary words"
+]
+},
+{
+"work": "Adolescence (TV series)",
+"mark": " Children’s Wellbeing and Schools Bill",
+"tier": "bill debate",
+"source": "HAN",
+"score": 0,
+"label": "aside",
+"why": [
+"title used as ordinary words"
+]
+},
+{
+"work": "Adolescence (TV series)",
+"mark": " Minister for Men and Boys",
+"tier": "debate",
+"source": "HAN",
+"score": 1,
+"label": "context",
+"why": [
+"causal language: because of",
+"used in an argument",
+"illustration cue: like"
+]
+},
+{
+"work": "Adolescence (TV series)",
+"mark": "Counter-Extremism Strategy",
+"tier": "debate",
+"source": "HAN",
+"score": 0,
+"label": "aside",
+"why": []
+},
+{
+"work": "Adolescence (TV series)",
+"mark": "Crime and Policing Bill",
+"tier": "bill debate",
+"source": "HAN",
+"score": 0,
+"label": "aside",
+"why": []
+},
+{
+"work": "Adolescence (TV series)",
+"mark": "English Devolution and Community Empowerment Bill",
+"tier": "bill debate",
+"source": "HAN",
+"score": 1,
+"label": "context",
+"why": [
+"used in an argument"
+]
+},
+{
+"work": "Adolescence (TV series)",
+"mark": "Children’s Wellbeing and Schools Bill",
+"tier": "bill debate",
+"source": "HAN",
+"score": 0,
+"label": "aside",
+"why": [
+"illustration cue: like"
+]
+},
+{
+"work": "Adolescence (TV series)",
+"mark": "Children’s Wellbeing and Schools Bill",
+"tier": "bill debate",
+"source": "HAN",
+"score": 0,
+"label": "aside",
+"why": [
+"a change word follows",
+"illustration cue: at school, like"
+]
+},
+{
+"work": "Adolescence (TV series)",
+"mark": "Knife Crime",
+"tier": "debate",
+"source": "HAN",
+"score": 1,
+"label": "context",
+"why": [
+"causal language: brought to",
+"the work is the subject of the clause",
+"illustration cue: at school"
+]
+},
+{
+"work": "Adolescence (TV series)",
+"mark": " Suicide Prevention",
+"tier": "debate",
+"source": "HAN",
+"score": 1,
+"label": "context",
+"why": [
+"used in an argument"
+]
+},
+{
+"work": "Adolescence (TV series)",
+"mark": "Educational Attainment of Boys",
+"tier": "debate",
+"source": "HAN",
+"score": 2,
+"label": "reason",
+"why": [
+"causal language: wake-up"
+]
+},
+{
+"work": "Adolescence (TV series)",
+"mark": "Young People’s Media Literacy",
+"tier": "debate",
+"source": "HAN",
+"score": 1,
+"label": "context",
+"why": [
+"used in an argument"
+]
+},
+{
+"work": "Adolescence (TV series)",
+"mark": "Online Harms: Young People",
+"tier": "debate",
+"source": "HAN",
+"score": 0,
+"label": "aside",
+"why": []
+},
+{
+"work": "Adolescence (TV series)",
+"mark": "Online Harms: Young People",
+"tier": "debate",
+"source": "HAN",
+"score": 0,
+"label": "aside",
+"why": [
+"causal language: the effect",
+"illustration cue: think of"
+]
+},
+{
+"work": "Adolescence (TV series)",
+"mark": "Online Harms: Young People",
+"tier": "debate",
+"source": "HAN",
+"score": 2,
+"label": "reason",
+"why": [
+"causal language: exposition, influencer"
+]
+},
+{
+"work": "Adolescence (TV series)",
+"mark": "Children’s Wellbeing and Schools Bill",
+"tier": "bill debate",
+"source": "HAN",
+"score": 1,
+"label": "context",
+"why": [
+"used in an argument"
+]
+},
+{
+"work": "Adolescence (TV series)",
+"mark": "Blair Mayne:  Posthumous Victoria Cross",
+"tier": "debate",
+"source": "HAN",
+"score": 3,
+"label": "reason",
+"why": [
+"causal language: shows",
+"a change word follows"
+]
+},
+{
+"work": "Adolescence (TV series)",
+"mark": "Rugby League",
+"tier": "debate",
+"source": "HAN",
+"score": 2,
+"label": "reason",
+"why": [
+"causal language: the impact"
+]
+},
+{
+"work": "Adolescence (TV series)",
+"mark": "UK Democracy: Impact of Digital Platforms",
+"tier": "debate",
+"source": "HAN",
+"score": 3,
+"label": "reason",
+"why": [
+"causal language: wake-up",
+"used in an argument"
+]
+},
+{
+"work": "Adolescence (TV series)",
+"mark": "UK Democracy: Impact of Digital Platforms",
+"tier": "debate",
+"source": "HAN",
+"score": 0,
+"label": "aside",
+"why": [
+"used in an argument",
+"illustration cue: like"
+]
+},
+{
+"work": "Adolescence (TV series)",
+"mark": "UK Democracy: Impact of Digital Platforms",
+"tier": "debate",
+"source": "HAN",
+"score": 3,
+"label": "reason",
+"why": [
+"causal language: highlighted, influence, shows",
+"a change word follows"
+]
+},
+{
+"work": "Adolescence (TV series)",
+"mark": "UK Democracy: Impact of Digital Platforms",
+"tier": "debate",
+"source": "HAN",
+"score": 0,
+"label": "aside",
+"why": []
+},
+{
+"work": "Adolescence (TV series)",
+"mark": " Relationship Education in Schools",
+"tier": "debate",
+"source": "HAN",
+"score": 2,
+"label": "reason",
+"why": [
+"causal language: shone a spotlight"
+]
+},
+{
+"work": "Adolescence (TV series)",
+"mark": " Relationship Education in Schools",
+"tier": "debate",
+"source": "HAN",
+"score": 2,
+"label": "reason",
+"why": [
+"causal language: highlighted, powerful"
+]
+},
+{
+"work": "Adolescence (TV series)",
+"mark": " Relationship Education in Schools",
+"tier": "debate",
+"source": "HAN",
+"score": 2,
+"label": "reason",
+"why": [
+"causal language: following"
+]
+},
+{
+"work": "Adolescence (TV series)",
+"mark": " Relationship Education in Schools",
+"tier": "debate",
+"source": "HAN",
+"score": 1,
+"label": "context",
+"why": [
+"used in an argument"
+]
+},
+{
+"work": "Adolescence (TV series)",
+"mark": " Relationship Education in Schools",
+"tier": "debate",
+"source": "HAN",
+"score": 3,
+"label": "reason",
+"why": [
+"causal language: demonstrates",
+"a change word follows"
+]
+},
+{
+"work": "Adolescence (TV series)",
+"mark": " Relationship Education in Schools",
+"tier": "debate",
+"source": "HAN",
+"score": 2,
+"label": "reason",
+"why": [
+"the work is the subject of the clause",
+"used in an argument"
+]
+},
+{
+"work": "Adolescence (TV series)",
+"mark": "Eating Disorder Awareness",
+"tier": "debate",
+"source": "HAN",
+"score": 3,
+"label": "reason",
+"why": [
+"causal language: influencers, shows, the impact",
+"used in an argument"
+]
+},
+{
+"work": "Adolescence (TV series)",
+"mark": "Topical Questions",
+"tier": "debate",
+"source": "HAN",
+"score": 1,
+"label": "context",
+"why": [
+"a change word follows"
+]
+},
+{
+"work": "Adolescence (TV series)",
+"mark": "Technology-enabled VAWG",
+"tier": "debate",
+"source": "HAN",
+"score": 3,
+"label": "reason",
+"why": [
+"causal language: powerfully",
+"a change word follows"
+]
+},
+{
+"work": "Adolescence (TV series)",
+"mark": "Engagements",
+"tier": "debate",
+"source": "HAN",
+"score": 1,
+"label": "context",
+"why": [
+"a change word follows"
+]
+},
+{
+"work": "Adolescence (TV series)",
+"mark": "Technology-enabled VAWG",
+"tier": "debate",
+"source": "HAN",
+"score": 3,
+"label": "reason",
+"why": [
+"causal language: sparked",
+"a change word follows"
+]
+},
+{
+"work": "Adolescence (TV series)",
+"mark": " Male Suicide in Rotherham",
+"tier": "debate",
+"source": "HAN",
+"score": 2,
+"label": "reason",
+"why": [
+"causal language: exposing, moved"
+]
+},
+{
+"work": "Adolescence (TV series)",
+"mark": "Knife Crime: Children and Young People",
+"tier": "debate",
+"source": "HAN",
+"score": 1,
+"label": "context",
+"why": [
+"used in an argument"
+]
+},
+{
+"work": "Adolescence (TV series)",
+"mark": "Knife Crime: Children and Young People",
+"tier": "debate",
+"source": "HAN",
+"score": 1,
+"label": "context",
+"why": [
+"causal language: exposed, highlights",
+"used in an argument",
+"illustration cue: like, watched"
+]
+},
+{
+"work": "Adolescence (TV series)",
+"mark": "Knife Crime: Children and Young People",
+"tier": "debate",
+"source": "HAN",
+"score": 3,
+"label": "reason",
+"why": [
+"causal language: highlights",
+"a change word follows"
+]
+},
+{
+"work": "Adolescence (TV series)",
+"mark": "Knife Crime: Children and Young People",
+"tier": "debate",
+"source": "HAN",
+"score": 2,
+"label": "reason",
+"why": [
+"causal language: exposure, highlighting"
+]
+},
+{
+"work": "Adolescence (TV series)",
+"mark": "Crown Court Criminal Case Backlog",
+"tier": "debate",
+"source": "HAN",
+"score": 3,
+"label": "reason",
+"why": [
+"causal language: powerfully",
+"used in an argument"
+]
+},
+{
+"work": "Adolescence (TV series)",
+"mark": "Engagements",
+"tier": "debate",
+"source": "HAN",
+"score": 2,
+"label": "reason",
+"why": [
+"causal language: highlights"
+]
+},
+{
+"work": "Adolescence (TV series)",
+"mark": "Violence against Women and Girls",
+"tier": "debate",
+"source": "HAN",
+"score": 2,
+"label": "reason",
+"why": [
+"causal language: groundbreaking"
+]
+},
+{
+"work": "Adolescence (TV series)",
+"mark": "Engagements",
+"tier": "debate",
+"source": "HAN",
+"score": 2,
+"label": "reason",
+"why": [
+"causal language: influenced"
+]
+},
+{
+"work": "Adolescence (TV series)",
+"mark": " Children’s Wellbeing and Schools Bill",
+"tier": "bill debate",
+"source": "HAN",
+"score": 2,
+"label": "reason",
+"why": [
+"causal language: addresses, explored, highlights"
+]
+},
+{
+"work": "Adolescence (TV series)",
+"mark": " Education and Opportunity",
+"tier": "debate",
+"source": "HAN",
+"score": 2,
+"label": "reason",
+"why": [
+"causal language: following"
+]
+},
+{
+"work": "Adolescence (TV series)",
+"mark": "Official Development Assistance and the British Council",
+"tier": "debate",
+"source": "HAN",
+"score": 0,
+"label": "aside",
+"why": []
+},
+{
+"work": "Adolescence (TV series)",
+"mark": "Children: Exposure to Harmful Content",
+"tier": "debate",
+"source": "HAN",
+"score": 0,
+"label": "aside",
+"why": []
+},
+{
+"work": "Adolescence (TV series)",
+"mark": "Children’s Health: Vehicle Emissions",
+"tier": "debate",
+"source": "HAN",
+"score": 0,
+"label": "aside",
+"why": [
+"illustration cue: series of"
+]
+},
+{
+"work": "Adolescence (TV series)",
+"mark": "Children and Young People: Digital Technology",
+"tier": "debate",
+"source": "HAN",
+"score": 0,
+"label": "aside",
+"why": []
+},
+{
+"work": "Adolescence (TV series)",
+"mark": "Young People’s Mental Health",
+"tier": "debate",
+"source": "HAN",
+"score": 0,
+"label": "aside",
+"why": [
+"title used as ordinary words"
+]
+},
+{
+"work": "Adolescence (TV series)",
+"mark": "Modern Slavery (Transparency in Supply Chains) Bill [HL]",
+"tier": "bill debate",
+"source": "HAN",
+"score": 2,
+"label": "reason",
+"why": [
+"causal language: after"
+]
+},
+{
+"work": "I Am Slave",
+"mark": "Modern Slavery (Transparency in Supply Chains) Bill [HL]",
+"tier": "bill debate",
+"source": "HAN",
+"score": 0,
+"label": "aside",
+"why": []
+},
+{
+"work": "Adolescence (TV series)",
+"mark": "Health: Cancer",
+"tier": "debate",
+"source": "HAN",
+"score": 0,
+"label": "aside",
+"why": [
+"title used as ordinary words"
+]
+},
+{
+"work": "Adolescence (TV series)",
+"mark": "Young People: Suicide",
+"tier": "debate",
+"source": "HAN",
+"score": 0,
+"label": "aside",
+"why": []
+},
+{
+"work": "Adolescence (TV series)",
+"mark": "Police Reform and Social Responsibility Bill",
+"tier": "bill debate",
+"source": "HAN",
+"score": 0,
+"label": "aside",
+"why": [
+"illustration cue: like"
+]
+},
+{
+"work": "Adolescence (TV series)",
+"mark": "Education: Tomlinson Report",
+"tier": "debate",
+"source": "HAN",
+"score": 0,
+"label": "aside",
+"why": [
+"title used as ordinary words"
+]
+},
+{
+"work": "Adolescence (TV series)",
+"mark": "Criminal Justice And Police Bill",
+"tier": "bill debate",
+"source": "HAN",
+"score": 0,
+"label": "aside",
+"why": [
+"title used as ordinary words"
+]
+},
+{
+"work": "Adolescence (TV series)",
+"mark": "Prison Education",
+"tier": "debate",
+"source": "HAN",
+"score": 0,
+"label": "aside",
+"why": [
+"title used as ordinary words"
+]
+},
+{
+"work": "Adolescence (TV series)",
+"mark": "Adjournment (Easter)",
+"tier": "debate",
+"source": "HAN",
+"score": 0,
+"label": "aside",
+"why": []
+},
+{
+"work": "Adolescence (TV series)",
+"mark": "Child Poverty And Deprivation",
+"tier": "debate",
+"source": "HAN",
+"score": 1,
+"label": "context",
+"why": [
+"used in an argument"
+]
+},
+{
+"work": "Adolescence (TV series)",
+"mark": "Drug Misuse",
+"tier": "debate",
+"source": "HAN",
+"score": 0,
+"label": "aside",
+"why": []
+},
+{
+"work": "Adolescence (TV series)",
+"mark": "Drug And Alcohol Abuse",
+"tier": "debate",
+"source": "HAN",
+"score": 0,
+"label": "aside",
+"why": []
+},
+{
+"work": "Adolescence (TV series)",
+"mark": "Kevin Capenhurst",
+"tier": "debate",
+"source": "HAN",
+"score": 0,
+"label": "aside",
+"why": [
+"causal language: after",
+"illustration cue: enjoyed, series of"
+]
+},
+{
+"work": "Adolescence (TV series)",
+"mark": "Diabetic Children",
+"tier": "debate",
+"source": "HAN",
+"score": 0,
+"label": "aside",
+"why": [
+"title used as ordinary words"
+]
+},
+{
+"work": "Adolescence (TV series)",
+"mark": "Obscene Publications",
+"tier": "debate",
+"source": "HAN",
+"score": 2,
+"label": "reason",
+"why": [
+"causal language: after, shows"
+]
+},
+{
+"work": "Adolescence (TV series)",
+"mark": "Religious Education In Schools",
+"tier": "debate",
+"source": "HAN",
+"score": 0,
+"label": "aside",
+"why": []
+},
+{
+"work": "Adolescence (TV series)",
+"mark": "The Broadcasting Services",
+"tier": "debate",
+"source": "HAN",
+"score": 0,
+"label": "aside",
+"why": [
+"title used as ordinary words"
+]
+},
+{
+"work": "Adolescence (TV series)",
+"mark": "Civil Aviation",
+"tier": "debate",
+"source": "HAN",
+"score": 0,
+"label": "aside",
+"why": []
+},
+{
+"work": "Adolescence (TV series)",
+"mark": "Anglo-Canadian Trade",
+"tier": "debate",
+"source": "HAN",
+"score": 0,
+"label": "aside",
+"why": []
+},
+{
+"work": "Seven Worlds",
+"mark": "Marine Mammals; File No. 21486",
+"tier": "notice",
+"source": "FR",
+"score": 1,
+"label": "context",
+"why": [
+"a change word follows"
+]
+},
+{
+"work": "Grand Theft Auto",
+"mark": "Take-Two Interactive Software, Inc. and Rockstar Games, Inc.; Analysis of Proposed Consent Order To Aid Public Comment",
+"tier": "notice",
+"source": "FR",
+"score": 0,
+"label": "aside",
+"why": []
+},
+{
+"work": "Blackfish (film)",
+"mark": "Marine Mammal Stock Assessment Reports",
+"tier": "notice",
+"source": "FR",
+"score": 0,
+"label": "aside",
+"why": [
+"title used as ordinary words"
+]
+},
+{
+"work": "The Jungle",
+"mark": "Pathogen Reduction; Hazard Analysis and Critical Control Point (HACCP) Systems",
+"tier": "rule",
+"source": "FR",
+"score": 1,
+"label": "context",
+"why": [
+"a change word follows"
+]
+},
+{
+"work": "The Jungle",
+"mark": "Focus Education, LLC; Analysis of Proposed Consent Order To Aid Public Comment",
+"tier": "notice",
+"source": "FR",
+"score": 1,
+"label": "context",
+"why": [
+"a change word follows"
+]
+},
+{
+"work": "Silent Spring",
+"mark": "Endangered and Threatened Wildlife and Plants; Reclassify the Bald Eagle From Endangered to Threatened in Most of the Lower 48 States; Proposed Rule DEPARTMENT OF THE INTERIOR",
+"tier": "notice",
+"source": "FR",
+"score": 0,
+"label": "aside",
+"why": []
+},
+{
+"work": "Silent Spring",
+"mark": "Pathogen Reduction; Hazard Analysis and Critical Control Point (HACCP) Systems",
+"tier": "rule",
+"source": "FR",
+"score": 3,
+"label": "reason",
+"why": [
+"causal language: after, public awareness",
+"a change word follows"
+]
+},
+{
+"work": "Silent Spring",
+"mark": "Forty-Second Report of the TSCA Interagency Testing Committee to the Administrator; Receipt of Report and Request for Comments",
+"tier": "notice",
+"source": "FR",
+"score": 2,
+"label": "reason",
+"why": [
+"causal language: exposure"
+]
+},
+{
+"work": "Silent Spring",
+"mark": "Endangered and Threatened Wildlife and Plants; Proposed Rule To Remove the Bald Eagle in the Lower 48 States From the List of Endangered and Threatened Wildlife",
+"tier": "rule",
+"source": "FR",
+"score": 0,
+"label": "aside",
+"why": []
+},
+{
+"work": "Silent Spring",
+"mark": "Women's History Month, 2009",
+"tier": "notice",
+"source": "FR",
+"score": 2,
+"label": "reason",
+"why": [
+"causal language: exposing"
+]
+},
+{
+"work": "Silent Spring",
+"mark": "Announcement of Funding Awards for Office of Healthy Homes and Lead Hazard Control (OHHLHC) Grant Programs for Fiscal Year (FY) 2012; Correction of OHHLHC Announcement of Funding Awards for FY 2011 and 2010",
+"tier": "notice",
+"source": "FR",
+"score": 0,
+"label": "aside",
+"why": []
+},
+{
+"work": "Silent Spring",
+"mark": "Nominations to the Augmented Science Advisory Committee on Chemicals (SACC); Request for Comments",
+"tier": "notice",
+"source": "FR",
+"score": 0,
+"label": "aside",
+"why": []
+},
+{
+"work": "Silent Spring",
+"mark": "Agency Forms Undergoing Paperwork Reduction Act Review",
+"tier": "notice",
+"source": "FR",
+"score": 0,
+"label": "aside",
+"why": []
+},
+{
+"work": "Silent Spring",
+"mark": "Announcement of Funding Awards",
+"tier": "notice",
+"source": "FR",
+"score": 0,
+"label": "aside",
+"why": []
+},
+{
+"work": "Silent Spring",
+"mark": "National Park Week, 2021",
+"tier": "notice",
+"source": "FR",
+"score": 2,
+"label": "reason",
+"why": [
+"causal language: after, seminal"
+]
+},
+{
+"work": "Silent Spring",
+"mark": "Addition of Certain Chemicals; Community Right-to-Know Toxic Chemical Release Reporting",
+"tier": "rule",
+"source": "FR",
+"score": 0,
+"label": "aside",
+"why": []
+},
+{
+"work": "Silent Spring",
+"mark": "Proposed Data Collection Submitted for Public Comment and Recommendations",
+"tier": "notice",
+"source": "FR",
+"score": 0,
+"label": "aside",
+"why": []
+},
+{
+"work": "Silent Spring",
+"mark": "Agency Forms Undergoing Paperwork Reduction Act Review",
+"tier": "notice",
+"source": "FR",
+"score": 0,
+"label": "aside",
+"why": []
+},
+{
+"work": "Adolescence (TV series)",
+"mark": "Children's Disability Research Issues",
+"tier": "notice",
+"source": "FR",
+"score": 0,
+"label": "aside",
+"why": []
+},
+{
+"work": "Adolescence (TV series)",
+"mark": "Maternal and Child Health Services; Federal Set-Aside Program; Continuing Education and Development Cooperative Agreements",
+"tier": "notice",
+"source": "FR",
+"score": 2,
+"label": "reason",
+"why": [
+"causal language: following"
+]
+},
+{
+"work": "Adolescence (TV series)",
+"mark": "Proposed Collection, Comment Request",
+"tier": "notice",
+"source": "FR",
+"score": 0,
+"label": "aside",
+"why": []
+},
+{
+"work": "Super Size Me",
+"mark": "CONCURRENT RESOLUTION ON THE BUDGET FOR FISCAL YEAR 2008",
+"tier": "record",
+"source": "GOV",
+"score": 2,
+"label": "reason",
+"why": [
+"a change word follows",
+"used in an argument"
+]
+},
+{
+"work": "Blackfish (film)",
+"mark": "AGRICULTURE, RURAL DEVELOPMENT, FOOD AND DRUG ADMINISTRATION, AND RELATED AGENCIES APPROPRIATIONS ACT, 2015",
+"tier": "record",
+"source": "GOV",
+"score": 0,
+"label": "aside",
+"why": [
+"title used as ordinary words"
+]
+},
+{
+"work": "Blackfish (film)",
+"mark": "ORCA CAPTIVITY",
+"tier": "record",
+"source": "GOV",
+"score": 0,
+"label": "aside",
+"why": [
+"title used as ordinary words"
+]
+},
+{
+"work": "Blackfish (film)",
+"mark": "NATIONAL ORCA PROTECTION MONTH",
+"tier": "record",
+"source": "GOV",
+"score": 0,
+"label": "aside",
+"why": [
+"title used as ordinary words"
+]
+},
+{
+"work": "Tiger King",
+"mark": "BIG CAT PUBLIC SAFETY ACT",
+"tier": "record",
+"source": "GOV",
+"score": 4,
+"label": "reason",
+"why": [
+"causal language: showed",
+"the work is the subject of the clause",
+"a change word follows",
+"used in an argument"
+]
+},
+{
+"work": "Silent Spring",
+"mark": "SAFE DRINKING WATER ACT AMENDMENTS OF 1994",
+"tier": "record",
+"source": "GOV",
+"score": 0,
+"label": "aside",
+"why": []
+},
+{
+"work": "Silent Spring",
+"mark": "ADDRESS BY DR. WENDELL RAYBURN",
+"tier": "record",
+"source": "GOV",
+"score": 2,
+"label": "reason",
+"why": [
+"causal language: lead to"
+]
+},
+{
+"work": "Silent Spring",
+"mark": "ENDANGERED SPECIES ACT REFORM AMENDMENTS",
+"tier": "record",
+"source": "GOV",
+"score": 0,
+"label": "aside",
+"why": [
+"illustration cue: like"
+]
+},
+{
+"work": "Silent Spring",
+"mark": "MICHIGAN NEEDS THE NATIONAL BIOLOGICAL SERVICE [NBS]",
+"tier": "record",
+"source": "GOV",
+"score": 1,
+"label": "context",
+"why": [
+"a change word follows"
+]
+},
+{
+"work": "Silent Spring",
+"mark": "AWARDING OF THE PRESIDENTIAL MEDAL OF FREEDOM TO GAYLORD NELSON",
+"tier": "record",
+"source": "GOV",
+"score": 3,
+"label": "reason",
+"why": [
+"causal language: in the wake of",
+"a change word follows"
+]
+},
+{
+"work": "Silent Spring",
+"mark": "EARTH DAY",
+"tier": "record",
+"source": "GOV",
+"score": 0,
+"label": "aside",
+"why": []
+},
+{
+"work": "Silent Spring",
+"mark": "ECO-SANITY",
+"tier": "record",
+"source": "GOV",
+"score": 0,
+"label": "aside",
+"why": [
+"a change word follows",
+"illustration cue: years ago"
+]
+},
+{
+"work": "Silent Spring",
+"mark": "THE 27TH ANNIVERSARY OF EARTH DAY",
+"tier": "record",
+"source": "GOV",
+"score": 1,
+"label": "context",
+"why": [
+"causal language: shocked",
+"used in an argument",
+"illustration cue: series of"
+]
+},
+{
+"work": "Silent Spring",
+"mark": "GLOBAL WARMING",
+"tier": "record",
+"source": "GOV",
+"score": 1,
+"label": "context",
+"why": [
+"a change word follows"
+]
+},
+{
+"work": "Silent Spring",
+"mark": "TRIBUTE TO SENATOR ABRAHAM RIBICOFF",
+"tier": "record",
+"source": "GOV",
+"score": 0,
+"label": "aside",
+"why": [
+"causal language: after, testify, testimony",
+"illustration cue: like"
+]
+},
+{
+"work": "Silent Spring",
+"mark": "EARTH DAY",
+"tier": "record",
+"source": "GOV",
+"score": 2,
+"label": "reason",
+"why": [
+"causal language: inspired"
+]
+},
+{
+"work": "Unsafe at Any Speed",
+"mark": "Consumer Safety Initiatives: Protecting the Vulnerable",
+"tier": "record",
+"source": "GOV",
+"score": 0,
+"label": "aside",
+"why": []
+},
+{
+"work": "Unsafe at Any Speed",
+"mark": "Department of Transportation and Related Agencies Appropriations for Fiscal Year 2001",
+"tier": "record",
+"source": "GOV",
+"score": 0,
+"label": "aside",
+"why": []
+},
+{
+"work": "Unsafe at Any Speed",
+"mark": "Examining Federal Vehicle Technology Research and Development Programs",
+"tier": "record",
+"source": "GOV",
+"score": 1,
+"label": "context",
+"why": [
+"a change word follows"
+]
+},
+{
+"work": "Unsafe at Any Speed",
+"mark": "Ramifications of Auto Industry Bankruptcies (Part I)",
+"tier": "record",
+"source": "GOV",
+"score": 2,
+"label": "reason",
+"why": [
+"causal language: after"
+]
+},
+{
+"work": "Unsafe at Any Speed",
+"mark": "ENERGY TAXES AND TOY CARS",
+"tier": "record",
+"source": "GOV",
+"score": 0,
+"label": "aside",
+"why": [
+"illustration cue: like"
+]
+},
+{
+"work": "Unsafe at Any Speed",
+"mark": "Toyota Gas Pedals: Is the Public at Risk?",
+"tier": "record",
+"source": "GOV",
+"score": 0,
+"label": "aside",
+"why": []
+},
+{
+"work": "Unsafe at Any Speed",
+"mark": "Federal Efforts to Reduce the Impacts of Windstorms",
+"tier": "record",
+"source": "GOV",
+"score": 0,
+"label": "aside",
+"why": []
+},
+{
+"work": "Unsafe at Any Speed",
+"mark": "Oversight of and Policy Considerations for the National Highway Traffic Safety Administration",
+"tier": "record",
+"source": "GOV",
+"score": 0,
+"label": "aside",
+"why": []
+},
+{
+"work": "Unsafe at Any Speed",
+"mark": "BREAKING THROUGH POWER: A HISTORIC CIVIC MOBILIZATION",
+"tier": "record",
+"source": "GOV",
+"score": 1,
+"label": "context",
+"why": [
+"causal language: has had, sparked",
+"a change word follows",
+"illustration cue: anniversary"
+]
+},
+{
+"work": "Unsafe at Any Speed",
+"mark": "Cambridge Analytica and Other Facebook Partners: Examining Data Privacy Risks",
+"tier": "record",
+"source": "GOV",
+"score": 0,
+"label": "aside",
+"why": []
+},
+{
+"work": "Unsafe at Any Speed",
+"mark": "Autonomous Vehicles: Promises and Challenges of Evolving Automotive Technologies",
+"tier": "record",
+"source": "GOV",
+"score": 1,
+"label": "context",
+"why": [
+"a change word follows"
+]
+},
+{
+"work": "Unsafe at Any Speed",
+"mark": "Examining Equity in Transportation Safety Enforcement",
+"tier": "record",
+"source": "GOV",
+"score": 0,
+"label": "aside",
+"why": [
+"a change word follows",
+"illustration cue: anniversary"
+]
+},
+{
+"work": "Unsafe at Any Speed",
+"mark": "DRINKING WATER AND WASTEWATER INFRASTRUCTRE ACT OF 2021--MOTION TO PROCEED--Continued",
+"tier": "record",
+"source": "GOV",
+"score": 0,
+"label": "aside",
+"why": [
+"illustration cue: years ago"
+]
+},
+{
+"work": "Unsafe at Any Speed",
+"mark": "ENDLESS FRONTIER ACT--Continued",
+"tier": "record",
+"source": "GOV",
+"score": 1,
+"label": "context",
+"why": [
+"a change word follows"
+]
+},
+{
+"work": "Unsafe at Any Speed",
+"mark": "Department of Homeland Security Appropriations for 2024",
+"tier": "record",
+"source": "GOV",
+"score": 1,
+"label": "context",
+"why": [
+"a change word follows"
+]
+},
+{
+"work": "Unsafe at Any Speed",
+"mark": "Death by a Thousand Regulations: The Biden Administration's Campaign to Bury America in Red Tape",
+"tier": "record",
+"source": "GOV",
+"score": 2,
+"label": "reason",
+"why": [
+"causal language: as a result",
+"the work is the subject of the clause",
+"a change word follows",
+"illustration cue: series of"
+]
+},
+{
+"work": "13 Reasons Why",
+"mark": "THIRTEEN REASONS WHY WE ARE NOT SAFER",
+"tier": "record",
+"source": "GOV",
+"score": 0,
+"label": "aside",
+"why": []
+},
+{
+"work": "13 Reasons Why",
+"mark": "THIRTEEN REASONS WHY AMERICA IS NOT SAFER BECAUSE OF PRESIDENT BUSH'S FOREIGN POLICY",
+"tier": "record",
+"source": "GOV",
+"score": 0,
+"label": "aside",
+"why": [
+"causal language: because of, campaign",
+"illustration cue: years ago"
+]
+},
+{
+"work": "13 Reasons Why",
+"mark": "HONORING JAMES ALLEN ADAMS",
+"tier": "record",
+"source": "GOV",
+"score": 0,
+"label": "aside",
+"why": []
+},
+{
+"work": "13 Reasons Why",
+"mark": "Creating Opportunity Through a Fairer Tax System",
+"tier": "record",
+"source": "GOV",
+"score": 0,
+"label": "aside",
+"why": []
+},
+{
+"work": "Squid Game",
+"mark": "Demystifying Crypto: Digital Assets and the Role of Government",
+"tier": "record",
+"source": "GOV",
+"score": 1,
+"label": "context",
+"why": [
+"used in an argument"
+]
+},
+{
+"work": "Squid Game",
+"mark": "JOINT MEETING TO HEAR AN ADDRESS BY HIS EXCELLENCY YOON SUK YEOL, PRESIDENT OF THE REPUBLIC OF KOREA",
+"tier": "record",
+"source": "GOV",
+"score": 0,
+"label": "aside",
+"why": [
+"illustration cue: like"
+]
+},
+{
+"work": "Stranger Things",
+"mark": "THE PRESIDENT'S MISGUIDED POLICY ON HAITI",
+"tier": "record",
+"source": "GOV",
+"score": 0,
+"label": "aside",
+"why": []
+},
+{
+"work": "Stranger Things",
+"mark": "Department of Labor, Health and Human Services, and Education, and Related Agencies Appropriations for Fiscal Year 2020",
+"tier": "record",
+"source": "GOV",
+"score": 0,
+"label": "aside",
+"why": [
+"causal language: powerful, testimony",
+"illustration cue: like, star of"
+]
+},
+{
+"work": "Adolescence (TV series)",
+"mark": "Juvenile Delinquency, District of Columbia: Hearings Before the Subcommittee to Investigate Juvenile Delinquency of the Committee on the Judiciary, United States Senate, Eighty-Third Congress, First and Second Sessions, Pursuant to S. Res. 89, Investigation of Juvenile Delinquency in the United States",
+"tier": "record",
+"source": "GOV",
+"score": 0,
+"label": "aside",
+"why": []
+}
+]
+}

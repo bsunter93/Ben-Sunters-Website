@@ -18,6 +18,7 @@ import urllib.parse
 
 sys.path.insert(0, os.path.dirname(__file__))
 import mark_first as mf  # noqa: E402
+import cite_score  # noqa: E402
 
 ROOT = os.path.join(os.path.dirname(__file__), "..")
 OUT = os.environ.get("OUT_JSON") or os.path.join(ROOT, "docs", "results", "bill_act_v1.json")
@@ -130,9 +131,10 @@ def main() -> int:
         except ValueError:
             pass
     bills = {}
+    # one resolution per bill name and session year: "Criminal Justice Bill" is a different bill in 1982 and in 2024
     for p in pairs:
         if p.get("source") == "HAN" and p.get("tier") in ("bill debate", "bill stage") and re.search(r"\bBill\b", p["mark"]):
-            key = clean_bill(p["mark"])
+            key = f"{clean_bill(p['mark'])} ({(p.get('mark_date') or '')[:4]})"
             if key not in bills or (p.get("mark_date") or "") < (bills[key] or ""):
                 bills[key] = p.get("mark_date")
     print(len(bills), "bills to resolve", flush=True)
@@ -141,7 +143,7 @@ def main() -> int:
         for key in sorted(bills, key=lambda k: bills[k] or ""):
             if key in state["bills"]:
                 continue
-            r = resolve(key, bills[key])
+            r = resolve(re.sub(r" \(\d{4}\)$", "", key), bills[key])
             state["bills"][key] = r
             print(f"  {key} ({bills[key]}) -> {r['act']} {r['royal_assent']} [{r['method']}] {r['note'] or ''}", flush=True)
             json.dump(state, open(OUT, "w"), ensure_ascii=False, indent=0)
@@ -152,16 +154,17 @@ def main() -> int:
     for p in pairs:
         if p.get("source") != "HAN" or p.get("tier") not in ("bill debate", "bill stage"):
             continue
-        r = state["bills"].get(clean_bill(p["mark"]))
+        r = state["bills"].get(f"{clean_bill(p['mark'])} ({(p.get('mark_date') or '')[:4]})")
         if not r or not r.get("act"):
             continue
         ra = r.get("royal_assent")
         ordered = bool(p.get("work_date") and ra and p["work_date"] <= ra)
-        out_pairs.append({"work": p["work"], "work_date": p["work_date"], "bill": p["mark"], "debated": p["mark_date"], "act": r["act"],
+        cs, cwhy = cite_score.score(p.get("sentence") or "", p["work"])
+        out_pairs.append({"work": p["work"], "work_date": p["work_date"], "bill": p["mark"], "debated": p["mark_date"], "act": r["act"], "cite_score": cs, "cite_why": cwhy, "cite_label": cite_score.label(cs),
                           "royal_assent": ra, "act_url": r.get("url"), "ordered": ordered, "causal_score": p.get("causal_score"),
                           "sentence": p.get("sentence"), "debate_url": p.get("url")})
     seen = set(); uniq = []
-    for q in sorted(out_pairs, key=lambda q: (-(q["causal_score"] or 0), q["royal_assent"] or "")):
+    for q in sorted(out_pairs, key=lambda q: (-(q["cite_score"] or 0), -(q["causal_score"] or 0), q["royal_assent"] or "")):
         k = (q["work"], q["act"])
         if k not in seen:
             seen.add(k); uniq.append(q)
