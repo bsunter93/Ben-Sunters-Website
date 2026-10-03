@@ -605,7 +605,7 @@ function fromActs(work) {
     const d = Math.max(daysBetween(iso0, p.royal_assent), 0.5), cs = p.cite_score != null ? p.cite_score : ((p.causal_score || 0) > 0 ? 2 : 0), cited = cs >= 2;
     const how = cs >= 2 ? "cited as a reason" : cs === 1 ? "mentioned in the argument" : "mentioned in passing";
     const actName = p.act.replace(/\s*\(repealed.*\)$/, "");
-    items.push({id:`a${i}`, parent:null, slice:"main", d, label:actName.length > 30 ? shortLabel(actName) : actName,
+    items.push({id:`a${i}`, parent:null, slice:"main", d, label:actName,
       sub:`${fmtMonth(D(p.royal_assent))} · ${sinceLabel(d)}`, mark:cited ? "Law" : null, title:actName, lv:cited ? "reported" : "plausible", lvText:cited ? "Reported" : "Plausible",
       short:`${cap(how)} in the ${p.bill.trim()} debate, ${fmt(D(p.debated))}`,
       card:card({when:`${fmt(D(p.royal_assent))}<span>${sinceLabel(d)}</span>`, badge:cited ? "Reported" : "Plausible", badgeCls:cited ? "l-reported" : "l-plausible", title:actName, mark:cited ? "Law" : null,
@@ -744,12 +744,14 @@ function draw(story) {
     const rl = el("text", {class:"ringlbl", x:p.x + 5, y:p.y - 3}, gt); rl.textContent = lbl; if (dense) rl.style.fontSize = "15px";
   }
   el("circle", {cx:C.x, cy:C.y, r:R + 6, fill:"none", stroke:"rgba(214,240,236,.16)", "stroke-width":1.5, filter:"url(#wob)"}, g0);
+  const rimBoxes = [];  // rim words keep their space; ripple labels place around them
   keys.forEach(k => {  // the industry each ripple reached, outside the rim, always horizontal
     if (!story.names[k]) return;
     const c = n === 1 ? 0 : centre(k), sx = Math.sin(c * Math.PI / 180), cy = -Math.cos(c * Math.PI / 180), p = PL(polar(R + 24 + 22 * Math.abs(sx), c));
     const rt = el("text", {class:"rimlbl", x:p.x + (Math.abs(sx) < 0.35 ? 0 : sx > 0 ? 2 : -2), y:p.y + (cy > 0.35 ? 10 : cy < -0.35 ? -2 : 4),
       "text-anchor":Math.abs(sx) < 0.35 ? "middle" : sx > 0 ? "start" : "end"}, gt); rt.textContent = story.names[k];
     if (dense) rt.style.fontSize = "17px";
+    try { const b = rt.getBBox(); rimBoxes.push({x:b.x - 4, y:b.y - 2, w:b.width + 8, h:b.height + 4}); } catch {}
   });
   const waves = el("g", {}, plane), bands = el("g", {}, plane), rips = el("g", {}, plane), edges = el("g", {}, plane), elbls = el("g", {}, svg), nodes = el("g", {}, svg), labels = el("g", {}, svg);
   const sHalo = el("circle", {cx:C.x, cy:C.y, r:30, fill:"url(#wet)"}, plane);
@@ -775,9 +777,14 @@ function draw(story) {
     if (n === 1 && m > 1) its.forEach((it, j) => { it.a = -70 + j * 140 / (m - 1); });  // one ripple: a gentle spiral outward
     its.forEach(it => { it.r = radius(it.d); it.plane = polar(it.r, it.a); it.pos = PL(it.plane); it.span = n === 1 ? null : [centre(k) - w / 2 + 3, centre(k) + w / 2 - 3]; });
   }
-  const placed = [{x:C.x - 70, y:C.y - 20, w:140, h:70}];  // keep clear of the stone's label
+  const placed = [{x:C.x - 70, y:C.y - 20, w:140, h:70}, ...rimBoxes];  // keep clear of the stone's label and the rim words
+  const nMarks = items.filter(x => x.mark).length;
   const overlaps = b => placed.some(p => b.x < p.x + p.w && b.x + b.w > p.x && b.y < p.y + p.h && b.y + b.h > p.y);
-  for (const it of [...items].sort((a, b) => a.d - b.d)) {
+  const overlapArea = b => placed.reduce((s, p) => s + Math.max(0, Math.min(b.x + b.w, p.x + p.w) - Math.max(b.x, p.x)) * Math.max(0, Math.min(b.y + b.h, p.y + p.h) - Math.max(b.y, p.y)), 0);
+  // lasting marks and measured steps claim their label space first; the rest take what is left, and a label with no
+  // clear spot waits for a hover or a tap instead of piling onto its neighbors (a crowded century still reads)
+  const rank = x => (x.mark ? 0 : x.lv === "measured" ? 1 : 2);
+  for (const it of [...items].sort((a, b) => rank(a) - rank(b) || a.d - b.d)) {
     const parent = items.find(x => x.id === it.parent);
     it.from = parent ? parent.plane : C;  // plane coordinates: edges are drawn on the water
     if (it.range) {
@@ -816,7 +823,7 @@ function draw(story) {
     // label on a dark backing; try right, left, above, below and keep the first spot that does not collide
     const lab = el("g", {class:"nlab" + (it.lv === "busted" ? " busted" : "") + (it.mark ? " mark" : "")}, labels);
     const rect = el("rect", {rx:6}, lab);
-    const shown = [it.label.length > 26 ? shortLabel(it.label) : it.label];
+    const shown = wrapLabel(it.label, 26, 2);
     const tx = el("text", {x:0, y:0}, lab); if (dense) tx.style.fontSize = "22px";
     shown.forEach((ln, k) => { const ts = el("tspan", {x:0, dy:k ? 15 * K : 0}, tx); ts.textContent = ln; });
     const sub = el("text", {class:"s", x:0, y:15 * K * shown.length}, lab); sub.textContent = (it.mark ? `◆ ${it.mark} · ` : "") + (it.sub || "");
@@ -825,11 +832,15 @@ function draw(story) {
     const right = [g1, -bh / 2], left = [-g1 - bw, -bh / 2], up = [-bw / 2, -bh - g1], down = [-bw / 2, g1 + 1];
     const rUp = [g1, -bh - 6], rDn = [g1, 6], lUp = [-g1 - bw, -bh - 6], lDn = [-g1 - bw, 6];
     const order = it.pos.x >= C.x ? [right, rUp, rDn, up, down, left, lUp, lDn] : [left, lUp, lDn, up, down, right, rUp, rDn];
-    let best = order[0];
+    let best = null, least = Infinity, fallback = order[0];
     for (const sp of order) {
       const b = {x:it.pos.x + sp[0], y:it.pos.y + sp[1], w:bw, h:bh};
-      if (!overlaps(b) && b.x > -118 && b.x + bw < 818 && b.y > VB.top && b.y + bh < VB.bottom) { best = sp; break; }
+      const inside = b.x > -118 && b.x + bw < 818 && b.y > VB.top && b.y + bh < VB.bottom;
+      if (inside && !overlaps(b)) { best = sp; break; }
+      const a = overlapArea(b) + (inside ? 0 : 1e6); if (a < least) { least = a; fallback = sp; }
     }
+    const free = !!best; if (!best) best = fallback;
+    if (!free && !(it.mark && nMarks <= 6) && it.lv !== "measured") it.showLabel = false;  // shown on hover, focus and in its card
     const bx = it.pos.x + best[0], by = it.pos.y + best[1];
     if (it.showLabel) placed.push({x:bx, y:by, w:bw, h:bh});  // hidden labels do not reserve space
     lab.setAttribute("transform", `translate(${bx + pad - bb.x},${by + pad - bb.y})`);
@@ -839,6 +850,18 @@ function draw(story) {
   story.max = max; story.waves = waves; story.sHalo = sHalo; story.sCore = sCore; story.K = K; story.splashed = false;
 }
 
+function wrapLabel(t, width, lines) {  // greedy word wrap to at most `lines` lines; the last line is cut with an ellipsis
+  if (t.length <= width) return [t];
+  const out = []; let line = "";
+  for (const w of t.split(/\s+/)) {
+    if (!line) line = w;
+    else if ((line + " " + w).length <= width) line += " " + w;
+    else { out.push(line); line = w; if (out.length === lines) break; }
+  }
+  if (out.length < lines && line) out.push(line);
+  if (out.length > lines || (out.length === lines && out.join(" ").length < t.length)) { out.length = lines; out[lines - 1] = shortLabel(out[lines - 1], width); }
+  return out;
+}
 function isDesc(x, root) { for (let p = x; p; p = cur.items.find(y => y.id === p.parent)) if (p === root) return true; return false; }
 // ---------- feed ----------
 function buildFeed(story) {
