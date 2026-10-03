@@ -205,7 +205,54 @@ def wiki_test(articles, ref, lag=150):
             g = et.onset(v, e, 0, lag + 30)
             hits += bool(g and g[1] >= ratio)
     return {"found": found, "onset": (et.DAY0 + dt.timedelta(days=i)).isoformat(), "ratio": round(ratio, 1),
-            "baseline": round(med, 1), "p": round((1 + hits) / (1 + n), 3) if n >= 20 else None, "weekly": weekly}
+            "baseline": round(med, 1), "p": round((1 + hits) / (1 + n), 3) if n >= 20 else None, "n_placebo": n, "weekly": weekly}
+
+
+STOPWORDS = set("the a an of in on at to for and or by with from is are was were its it as into over under after before their they them"
+                " about first new more most than that this these those record records passes pass takes take goes go".split())
+PAGEVIEWS_FROM = dt.date(2015, 8, 1)
+
+
+def wiki_search(q):
+    """The first Wikipedia search result that shares a content word with the query, or None."""
+    words = {w for w in re.findall(r"[a-z0-9]{4,}", q.lower()) if w not in STOPWORDS}
+    if not words:
+        return None
+    d = et.get(et.WP + "?" + urllib.parse.urlencode({"action": "query", "list": "search", "srsearch": q, "srlimit": 5, "srnamespace": 0, "format": "json"}))
+    for r in ((d or {}).get("query") or {}).get("search", []):
+        if set(re.findall(r"[a-z0-9]{4,}", r["title"].lower())) & words:
+            return r["title"]
+    return None
+
+
+def attention_check(st, r):
+    """For a dated step after Aug 2015 that has no placebo test of its own: did attention to the thing the step names rise
+    at the step's date, by the same test and placebo scheme as a measured step? The step's level does not change; the
+    result rides along as `attn` so a reader sees whether anyone noticed."""
+    date = r.get("onset")
+    if not date or st["test"]["type"] not in ("record", "none"):
+        return None
+    d = D(date)
+    if d < PAGEVIEWS_FROM or d > dt.date.today() - dt.timedelta(days=45):
+        return None
+    arts = st.get("wiki") or []
+    if not arts:
+        a = wiki_search(st.get("short") or st["claim"])
+        if a:
+            arts = [a]
+    if not arts:
+        return {"result": "no article found"}
+    w = wiki_test(arts, d, 45)
+    out = {"articles": arts, "onset": w.get("onset"), "ratio": w.get("ratio"), "p": w.get("p"), "weekly": w.get("weekly"), "n_placebo": w.get("n_placebo")}
+    if w.get("result") == "no article":
+        out["verdict"] = "no article"
+    elif w.get("new_article"):
+        out["verdict"] = "article created then" if D(w["onset"]) >= d - dt.timedelta(days=3) else "article older"
+    elif w.get("p") is None:
+        out["verdict"] = "no sustained rise" if w.get("result") else "rose, no placebo history"
+    else:
+        out["verdict"] = "attention rose" if w["p"] <= 0.05 else "within chance"
+    return out
 
 
 def ssa_test(counts, year):
@@ -330,11 +377,20 @@ def main() -> int:
                     except Exception as e:  # noqa: BLE001
                         r = {"result": f"error: {str(e)[:120]}"}
                     v = verdict(st, r, sref)
+                    try:
+                        attn = attention_check(st, r)
+                    except et.Stop:
+                        raise
+                    except Exception as e:  # noqa: BLE001
+                        attn = {"result": f"error: {str(e)[:120]}"}
+                    if attn:
+                        r = {**r, "attn": attn}
                     out["steps"].append({"n": st["n"], "claim": st["claim"], "test": {k: st["test"][k] for k in st["test"] if k != "counts"},
                                          "ref": sref.isoformat(), "verdict": v, "note": st.get("note"),
                                          "link": st.get("link"), "link_why": st.get("link_why"), "branch": st.get("branch", False),
                                          "vertical": st.get("vertical"), "after": st.get("after"), "slice": st.get("slice"), "short": st.get("short"), "mark": st.get("mark"), **r})
-                    print(ch["slug"], st["n"], v, {k: r.get(k) for k in ("onset", "p", "effect", "series", "found", "result")}, flush=True)
+                    print(ch["slug"], st["n"], v, {k: r.get(k) for k in ("onset", "p", "effect", "series", "found", "result")},
+                          {k: r["attn"].get(k) for k in ("articles", "verdict", "ratio", "p")} if r.get("attn") else "", flush=True)
                     if v in ("measured", "reported", "timed (short history)") and r.get("onset"):
                         onsets[st["n"]] = D(r["onset"])
                     if v in ("measured", "reported", "timed (short history)") and r.get("onset") and not st.get("branch") and not st.get("after"):
