@@ -502,7 +502,7 @@ function howSure(lv, o = {}) {
   const pct = o.p != null ? `${Math.max(0.1, Math.round(o.p * 1000) / 10)}%` : null;
   const after = " It also began after the step before it, which is the order a cause needs.";
   if (lv === "measured") {
-    if (o.kind === "dose") return `${esc(o.what)}. For each state that opened retail cannabis we took the change in the outcome from the last survey before to the second survey after, and subtracted the same change in states that never did. We then handed the same opening dates to 2,000 random sets of states: only ${pct} of those produced a difference this large (p = ${o.p}). A placebo on the two surveys before the opening checks that the treated states were not already drifting (pre-trend p = ${o.pre}). This is the first rung above timing: exposure that varies by place. It still cannot rule out something else that arrived in the same states at the same time.`;
+    if (o.kind === "dose") return `${esc(o.what)}. For each state that opened retail cannabis we took the change in the outcome from the last survey before to the second survey after, and subtracted the same change in states that never did. We then handed the same opening dates to 2,000 random sets of states: ${o.p <= 0.05 ? `only ${pct} of those produced a difference this large (p = ${o.p})` : `${pct} of those produced a difference at least this large (p = ${o.p}), so it is within what chance produces`}. A placebo on the two surveys before the opening checks whether the treated states were already drifting (pre-trend p = ${o.pre}). This is the first rung above timing: exposure that varies by place. It still cannot rule out something else that arrived in the same states at the same time.`;
     if (o.kind === "wiki") return `We counted daily Wikipedia views of “${esc(o.what)}”. From ${o.when} they ran about ${o.ratio}× the normal level. We then ran the same test at ${o.n ? `${o.n}` : "many"} random dates in the page's own past: a jump this big showed up at only ${pct} of them (p = ${o.p}).${after} This shows attention, not what people did next.`;
     if (o.kind === "ssa") return `We took the yearly count of US babies given this name and compared the change in ${o.when} with the change in every other year on record. Only ${pct} of years moved this much (p = ${o.p}).${after}`;
     return `We took the official series (${esc(o.what)}) and compared its change after this date with its change after every other date in the series. Only ${pct} of those moved this much (p = ${o.p}).${after} A measured move, not proof that nothing else was going on.`;
@@ -562,7 +562,7 @@ function fromMap(slug) {
       short:lv === "plausible" ? "Happened; the link is unproven" : lv === "measured" ? "Passed a test against fake dates" : lv === "reported" ? (s.measure || "") : "Rose after the step before",
       series:s.series && s.series.weekly ? s.series : null,
       card:card({when:`${fmt(D(s.date))}<span>${sinceLabel(s.days)}</span>`, badge:LVL[lv], badgeCls:`l-${lv}`, title:s.title,
-        sure:howSure(lv, lv === "measured" ? {kind:"wiki", what:(s.measure || "").replace(/.*“([^”]+)”.*/, "$1"), when:fmt(D(s.date)), ratio:"several", p:0.01} : lv === "reported" ? {what:s.measure} : {when:fmt(D(s.date)), why:s.note}),
+        sure:howSure(st.test.type === "dose" && st.p != null ? "measured" : lv, (lv === "measured" || (st.test.type === "dose" && st.p != null)) ? {kind:"wiki", what:(s.measure || "").replace(/.*“([^”]+)”.*/, "$1"), when:fmt(D(s.date)), ratio:"several", p:0.01} : lv === "reported" ? {what:s.measure} : {when:fmt(D(s.date)), why:s.note}),
         spark:s.series ? sparkHTML(s.series.weekly, data.release) : "", facts,
         short:lv === "plausible" ? "Happened; the link is unproven" : lv === "measured" ? "Passed a test against fake dates" : lv === "reported" ? esc(s.measure || "") : "Rose after the step before",
         details:`${s.note ? `<p>${esc(s.note)}</p>` : ""}${s.test ? `<p>${esc(s.test)}</p>` : ""}${src}`})});
@@ -664,7 +664,7 @@ function fromChain(slug) {
     d = Math.max(d, 0.5);
     if (!st.branch) prevD = Math.max(prevD, d);
     const [lv, lvText, why, short] = chainLevel(st);
-    const weekly = st.weekly || st.points || null;
+    const weekly = st.weekly || (st.test.type === "dose" ? null : st.points) || null;  // a dose result's points are per-state effects, not a series
     // the attention check: for a dated step after Aug 2015 with no placebo test of its own, the checker asks whether
     // Wikipedia views of the thing the step names rose at the step's date, by the same test a measured step gets
     const at = st.attn; let facts = "";
