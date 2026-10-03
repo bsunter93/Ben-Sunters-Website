@@ -147,13 +147,35 @@ def resolve(title):
     return res
 
 
+# US records say "program", "show", "series", "screen" and "book" about everything (v1.3 let "adolescence" through on
+# the Foster Care Independence Act and three Federal Register notices on that alone), so for GovInfo and the Federal
+# Register an ambiguous marker needs a word that can only mean the work
+WORK_CTX_US = re.compile(r"\b(drama|film|documentary|docuseries|miniseries|Netflix|ITV|BBC|Channel 4|HBO|novel|aired|watched|viewers|television|TV|"
+                         r"streaming|Upton Sinclair|SeaWorld|orca|Post Office|Horizon|Richard Gadd|Jack Thorne|Stephen Graham|Owen Cooper|"
+                         r"Joe Exotic|Hollywood|Matthew Broderick|Duffer)\b", re.I)
+
+
+def work_context_ok(source, text, marker):
+    return bool((WORK_CTX_US if source in ("GOV", "FR") else WORK_CTX).search(window(text, marker, 160)))
+
+
+def rescreen():
+    """v1.3.1: apply the current ambiguity guard to the pairs already stored, so a tightened guard needs no re-fetch."""
+    pairs = state.get("pairs", [])
+    keep = [p for p in pairs if p.get("marker") not in AMBIGUOUS or work_context_ok(p.get("source"), p.get("sentence") or "", p["marker"])]
+    if len(keep) != len(pairs):
+        print(f"rescreen: dropped {len(pairs) - len(keep)} pairs whose ambiguous marker lacks work context", flush=True)
+        state["pairs"] = keep
+        state["rescreened"] = {"dropped": len(pairs) - len(keep), "run": dt.date.today().isoformat()}
+
+
 def record(source, mark, mark_date, url, text, marker, tier):
     """One document hit -> zero or more (work, mark) pairs."""
     pairs = state.setdefault("pairs", [])
     ctx = window(text, marker)
     if marker.lower() not in ctx.lower():
         return
-    if marker in AMBIGUOUS and not WORK_CTX.search(window(text, marker, 160)):
+    if marker in AMBIGUOUS and not work_context_ok(source, text, marker):
         return  # the word, not the work
     found = titles_in(ctx)
     if marker in NAMED and not any(NAMED[marker].split(" (")[0].lower() in t.lower() for t in found):
@@ -341,6 +363,7 @@ def main() -> int:
     else:
         state = {"protocol": PROTOCOL, "started": dt.date.today().isoformat(), "markers": MARKERS}
     state.pop("stopped", None)
+    rescreen()
     try:
         if "probed" not in state:
             probe(); state["probed"] = True
