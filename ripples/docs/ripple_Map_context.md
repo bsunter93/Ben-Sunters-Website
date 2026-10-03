@@ -1,4 +1,4 @@
-# Ripple Map: context brief (updated 2026-10-03, 16:00 UTC)
+# Ripple Map: context brief (updated 2026-10-03, 17:00 UTC)
 
 Standalone context for anyone (person or new chat) picking up Ripple Map. It covers the vision, the current status,
 what we learned, pitfalls, open gaps and next steps. The operational runbook with exact commands is
@@ -160,7 +160,7 @@ deep enough for an adult to browse rabbit holes.
    later.
 8. **A verify mode.** Paste any viral "butterfly effect" claim and get it checked link by link. This already works.
 
-## 2. Current status (one screen, 2026-10-03, 16:00 UTC)
+## 2. Current status (one screen, 2026-10-03, 17:00 UTC)
 
 **In one line:** the engine now finds work → law trails on its own from the records (Hansard, the Federal Register,
 the Congressional Record), dated to the day with the sentence that makes the link; the demo is Ripple, with a dozen
@@ -180,16 +180,19 @@ new maps that end in a law; verification lags discovery, and a person still scre
 | Layer | Status | Evidence |
 |---|---|---|
 | Event → attention to its subject | Works | Every family passes on Wikipedia (ledger 1458, 1470) |
-| Checking supplied chains | Works | 66 chains after batches 13–15 (54 before Oct 3): per link measured / timed / reported / plausible / busted (`chain_check_v1.json`). A window bug found on Oct 3 (a rise on the step's own day was missed when lag was short) is fixed; a full re-run is in progress |
+| Checking supplied chains | Works | 67 chains after batches 13–15 (54 before Oct 3): per link measured / timed / reported / plausible / busted (`chain_check_v1.json`); 17 measured steps after the window fix (Mr Bates 370×, p = .023; Zadroga 48.7×, p = .012; Ocean 4.6×, p = .004; Alcohol and cancer 4.2×, p = .035). New step types: `file` (official series from `series_v1.json`: NIAAA per-capita ethanol 1970–2022; BRFSS drinking medians 2011–2025) and `dose` |
 | **Discovery: the records route (mark-text v1.2 → v1.3)** | **Works; rule passed** | Every Hansard contribution naming a work (574 for Mr Bates, 1,058 for Adolescence, back to the 1960s), Federal Register rules, and with the owner's key the Congressional Record: both controls found (Mr Bates → Post Office (Horizon System) Offences Bill, second reading, Mar 20, 2024; Tiger King → Big Cat Public Safety Act, Jul 28, 2022); 547 UK/FR pairs, 138 in bill debates and rules; nine more real work → bill citations by hand screen. v1.3 (US collections queried properly) running |
-| **Bill → Act resolver v1** | Works, re-running after a fix | UK Parliament Bills API and legislation.gov.uk: 98 bills, 76 resolved to an Act with its Royal Assent date (Mr Bates → Offences Act 2024, May 24; Adolescence → Children's Wellbeing and Schools Act 2026; Cathy Come Home → Homelessness Reduction Act 2017 …). A fallback that matched Acts across years is fixed |
+| **Bill → Act resolver v3** | Works | UK Parliament Bills API and legislation.gov.uk: 106 bills, 78 resolved to an Act with its Royal Assent date, 76 ordered pairs (Mr Bates → Offences Act 2024, May 24; Adolescence → Children's Wellbeing and Schools Act 2026; Cathy Come Home → Homelessness Reduction Act 2017 …). Cross-year matches fixed; bills keyed by name and year |
+| **The citation screen (cite_score v1)** | Works; a transparent floor | A rule scorer labels each citation *reason* / *context* / *aside* from causal words, the clause's subject, a change word, argument form and illustration markers; against the owner's 22 hand grades: precision .73, recall .89. Resolver output carries the score and its reasons; the demo rates an act lead *reported* only when cited as a reason, and prints why. Labels today: 24 reason, 13 context, 43 aside |
+| **Dose-response (evidence ladder, rung 3)** | One result, a real negative | Pre-registered design (`ripples/docs/dose_response_v1.md`): states that opened retail cannabis (20) against states that never did (31), change in past-30-day drinking from the last survey before to the second after, 2,000 random assignments for p, pre-trend placebo. The youth outcome (YRBS) could not run: state tables end in 2017 and CO and WA do not take part. Adults 18–24 (BRFSS, annual): −1.2 points against controls, p = 0.10, pre-trend flat (p = 0.34): within chance. All adults −0.4, p = 0.29. The "cannabis replaced drinking" catalyst fails the first rung above timing |
+| **Attention checks for every post-2015 step** | Built; first full run landing | 113 dated steps since 2015 had no placebo test of their own. The checker now finds each step's Wikipedia article by search and runs the measured-step test at the step's date; the step's level does not change, the card shows the result |
 | Discovery: the Wikipedia route (mark-first v1, v1.1) | Ran three times; rule failed on recall, passed on new pairs | 13,371 laws × 289,960 works; recall 2 of 5 (two recall laws have no article of their own); new pairs: 60 Minutes → STOCK Act, Quincy → Orphan Drug Act, Victim → Sexual Offences Act 1967, The Daily Show → Zadroga Act, The West Wing → Racial and Religious Hatred Act 2006, JFK (film) → JFK Records Act 1992, Silent Spring → NEPA, Holy Deadlock → Matrimonial Causes Act 1937. Now secondary; read by hand |
 | **The first blind round** | Done | 15 names to the owner: 14 interesting, 4 strictly non-obvious (Victim, The Daily Show, Ocean, Manhunt) and 9 "medium", 13 worth chasing. Left out: Rangila Rasul, Holy Deadlock |
 | **Maps that end in a law** | 12 new chains (batches 13–15) | Mr Bates → Offences Act 2024; Cathy Come Home → Housing (Homeless Persons) Act 1977; Quincy → Orphan Drug Act; My Octopus Teacher → Sentience Act 2022; 60 Minutes → STOCK Act; Victim → Sexual Offences Act 1967; The Daily Show → Zadroga Act 2011 and the 2019 fund; Manhunt → Byron Review → Digital Economy Act 2010 and statutory PEGI; The West Wing → the 2006 defeat; Silent Spring → EPA and the DDT ban; Ocean with David Attenborough → the trawling consultation (no mark yet; measured 4.1× attention, p = 0.004); **Prohibition → a century of American drinking** (22 steps, 1920–2025) |
 | The Prohibition throughline (owner's long-horizon test) | Built; first verdicts in | Crime, repeal, drinking's return and the cirrhosis peak, AA and NIAAA, the teen decline (MTF: 72% → 50% → 29%), young adults (Gallup). Each popular catalyst for the Gen Z decline (smartphones, Dry January, legal cannabis, sober curious, the Surgeon General) is a dated step; the claim that it *started* the decline is busted by order against the 1980 onset; as accelerants after 2013 they stay plausible |
 | Engine leads in the demo | Two kinds | Attention leads (18 qualified, 6 with outcomes) and, new, **Parliament's citations**: every Act whose debate named a work, one pond per work (Cathy Come Home, Mr Bates, Silent Spring, Adolescence), with the sentence and links to Hansard and legislation.gov.uk |
 | Two-hop discovery from attention | Not pursued further | Attention second hops found siblings and curiosity; records are the route |
-| The demo | Live as Ripple | Isometric pond that is the page; a mossy stone; each outcome its own living ripple with a crest; pebbles for lasting marks; paper feed; wordmark and opening screen; two-tone icons; share cards and share pages; "Same stone, other ponds" (PRs #57–#64 and today's branch). The owner found the map hard to read twice; it was quieted twice. Living crests and the stone await sign-off |
+| The demo | Live as Ripple | Isometric pond that is the page; a mossy stone; each outcome its own living ripple with a crest; pebbles for lasting marks; paper feed; wordmark and opening screen; two-tone icons; share cards and share pages; "Same stone, other ponds" (PRs #57–#65 and today's branch). Labels now place by priority, keep clear of the rim words, wrap to two lines, and wait for a hover when a pond is crowded, so a 17-ripple century and an 18-Act map read cleanly. Cards explain dose-response steps and carry the attention check. Awaiting the owner's review |
 
 **Since Oct 3 morning:**
 - The records route built, debugged four times by reading one known case each time, and passed.
@@ -199,6 +202,8 @@ new maps that end in a law; verification lags discovery, and a person still scre
 - The Bill → Act resolver; Parliament's citations as engine-found maps in the demo.
 - The checker's attention-window bug found and fixed.
 - Ripple's look: palette, paper, wordmark, intro, stone, crests, quiet pond.
+- **16:00–17:00:** the citation screen, the dose-response design (five runs to a clean result), `file` and `dose`
+  step types, attention checks for every post-2015 step, and the label pass that makes crowded maps readable.
 
 ## 3. Learnings
 
@@ -325,13 +330,15 @@ new maps that end in a law; verification lags discovery, and a person still scre
 - The Hansard API highlights the match with `<em>` tags: collapse whitespace before matching text.
 - legislation.gov.uk's title feed answers across years: check the Act's own year in its id.
 
-## 5. Blockers and bottlenecks (2026-10-03, 16:00 UTC)
+## 5. Blockers and bottlenecks (2026-10-03, 17:00 UTC)
 
 **Blockers**
-1. **Verification lags discovery.** The new maps are mostly reported links; measured steps need post-2015 attention
-   series or free outcome series, and most marks are older than that.
-2. **A person still screens the finds.** The ambiguity guard and the tiers remove most noise; the last mile (cause or
-   illustration) is editorial. The product's claim must say so until a classifier earns trust.
+1. **Verification lags discovery, less than this morning.** Every dated post-2015 step now gets an attention check
+   where an article exists; marks older than 2015 still rest on records, and outcome series beyond attention are
+   scarce (the youth drinking tables stop in 2017).
+2. **A person still screens the finds, with a scorer beside them.** cite_score v1 labels citations with .73
+   precision and .89 recall on 22 grades; the product says "cited as a reason" or "mentioned in passing" from it. A
+   model-based classifier would be the next step and needs a key the project does not hold.
 3. **Free outcome data is patchy** for charts, sales, tourism and app downloads.
 
 **Bottlenecks**
@@ -344,26 +351,26 @@ new maps that end in a law; verification lags discovery, and a person still scre
 
 ## 6. Immediate next steps (in order)
 
-1. **Land the day's runs:** the checker re-run (window fix), the resolver re-run, mark-text v1.3 (US collections);
-   rebuild the preview with corrected Acts; merge; the owner's sign-off on the look.
-2. **More measured steps per map:** placebo-tested attention for every post-2015 step; a Bill → Public Law resolver
-   for the US (GovInfo "related"); explanatory notes where they exist.
-3. **Dose-response for the Prohibition catalysts:** states with and without legal cannabis against drinking declines
-   (NSDUH state estimates), the first rung above timing on the evidence ladder.
-4. **Automate the screen:** a "cited as a reason" classifier from the causal lexicon and work context, scored against
-   the owner's grades.
+1. **The owner's review** of the branch: the readable maps, the citation reasons, the dose-response step, the
+   attention checks; then merge and the LinkedIn asset.
+2. **Read the attention-check run:** how many of the 113 steps found an article, how many rose beyond chance; fix
+   bad article matches by adding a `wiki` hint to the step.
+3. **More rungs:** a Bill → Public Law resolver for the US (GovInfo "related"); a second dose-response (Dry January
+   by country; the Surgeon General advisory by state attention); a second blind round scored against cite_score.
+4. **The screen beyond rules:** a second grade set from the owner (30 citations), then a model-based classifier if
+   a key becomes available.
 5. **Nested stones:** Prohibition's marks (the 21st Amendment, AA, NIAAA) as chains of their own, so the throughline
    links down into them.
 6. **The look to sign-off, then LinkedIn:** living crests and the stone; the reel (`?reel`) and the post, led by a
    lasting-mark chain plus one busted viral claim.
 7. **Live mode** on new events with the Trends archive and the records route (Hansard is live within a day).
 
-## 6a. Open questions (2026-10-03, 16:00 UTC)
+## 6a. Open questions (2026-10-03, 17:00 UTC)
 
-- How often is a parliamentary citation a cause rather than an illustration? The owner's grades are the first
-  calibration set; a second blind round should be scored against a classifier's guesses.
-- Can dose-response designs (exposure varying by state or country) turn any of the Gen Z catalysts from plausible to
-  measured, or is the decline over-determined?
+- How often is a parliamentary citation a cause rather than an illustration? The owner's 22 grades calibrate
+  cite_score v1 (24 reason / 13 context / 43 aside across 80 pairs); a second blind round should be scored against it.
+- Dose-response: the cannabis catalyst is within chance for young adults and all adults. Is the Gen Z decline
+  over-determined, or is the exposure that matters not state-shaped (phones, prices, health messaging)?
 - Where is the line between "the engine found it" and "we assembled it" in the product's own words? Today: the
   engine finds and dates the citations; a person keeps the real ones and writes the chain.
 - Is a reported-only map (no measured step) worth showing at all, or should every map carry at least one measured
