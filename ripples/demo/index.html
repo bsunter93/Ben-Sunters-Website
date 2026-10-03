@@ -56,14 +56,28 @@ select.chip{appearance:none;padding-right:14px;max-width:100%}
 select.chip option{background:#0c333b;color:var(--ink)}
 .wrap{max-width:1240px;margin:0 auto;padding:10px 16px 36px;display:grid;grid-template-columns:minmax(0,1.3fr) minmax(0,1fr);gap:20px;align-items:start}
 .pondbox{position:sticky;top:10px;border-radius:26px;padding:12px 12px 8px;overflow:hidden;
-  background:radial-gradient(85% 75% at 50% 48%,#0f4c55 0%,#0a3b44 45%,#072c33 75%,#06252b 100%);
-  box-shadow:inset 0 1px 0 rgba(255,255,255,.05),0 30px 60px -30px rgba(0,0,0,.6)}
+  background:
+    radial-gradient(38% 30% at 30% 20%,rgba(190,236,240,.10),transparent 70%),
+    radial-gradient(90% 80% at 50% 42%,#12596b 0%,#0c4553 38%,#07313b 70%,#052229 100%);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.06),inset 0 -40px 80px -40px rgba(0,0,0,.45),0 30px 60px -30px rgba(0,0,0,.6)}
+/* light on the surface: a soft sheen that drifts very slowly, and a second, fainter one out of phase */
+.pondbox::before,.pondbox::after{content:"";position:absolute;inset:-25%;pointer-events:none;z-index:0}
+.pondbox::before{background:radial-gradient(30% 22% at 34% 26%,rgba(200,240,244,.13),transparent 70%);animation:sheen 16s ease-in-out infinite alternate}
+.pondbox::after{background:radial-gradient(26% 18% at 66% 70%,rgba(160,220,230,.07),transparent 70%);animation:sheen 23s ease-in-out infinite alternate-reverse}
+@keyframes sheen{from{transform:translate(-3%,-2%) scale(1)}to{transform:translate(4%,3%) scale(1.08)}}
+.pondbox>*{position:relative;z-index:1}
+.pondbox .hint{z-index:2}
 .clock{display:flex;justify-content:space-between;align-items:flex-end;gap:12px;padding:4px 8px 0;position:relative;z-index:1}
 .clock .d{font:800 clamp(1.25rem,3vw,1.9rem)/1 var(--display);font-variant-numeric:tabular-nums}
 .clock .n{font:700 .88rem/1.2 var(--sans);color:var(--marigold);font-variant-numeric:tabular-nums;text-align:right}
 .clock .n small{display:block;color:var(--ink-3);font-weight:500}
 svg#pond{display:block;width:100%;height:auto;touch-action:manipulation}
-.ctl{display:flex;align-items:center;gap:12px;padding:0 8px 2px}
+.ctl{display:flex;align-items:center;gap:12px;padding:0 8px 2px;position:relative}
+.ctl .ticks{position:absolute;left:62px;right:112px;top:34px;display:flex;justify-content:space-between;font-size:.66rem;color:var(--ink-3);font-variant-numeric:tabular-nums;pointer-events:none}
+.ctl{padding-bottom:12px}
+@media (max-width:560px){.ctl .ticks{left:56px;right:104px;top:30px}}
+.wrap.fade .pondbox,.wrap.fade .feed{animation:fadein .5s ease-out}
+@keyframes fadein{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
 .play{width:38px;height:38px;border-radius:50%;border:0;background:var(--marigold);color:#062429;cursor:pointer;display:grid;place-items:center;flex:none}
 .play svg{width:15px;height:15px}
 input[type=range]{flex:1;accent-color:var(--marigold);min-width:0}
@@ -89,6 +103,12 @@ input[type=range]{flex:1;accent-color:var(--marigold);min-width:0}
 .card details summary::before{content:"+ "}.card details[open] summary::before{content:"– "}
 .card details p{margin:.3rem 0 0}
 .card .src{font-size:.76rem;color:var(--ink-3)}
+.card .row{display:flex;flex-wrap:wrap;gap:4px 16px;align-items:flex-start}
+.card .row details{flex:1 1 100%}
+.card details.sure summary{color:var(--marigold)}
+.card details.sure p{background:var(--sunk);border-radius:8px;padding:8px 10px;color:var(--ink-2)}
+.card{transition:border-color .2s,transform .2s}.card:hover{transform:translateY(-1px);border-color:var(--ink-3)}
+.card.hot:hover{border-color:var(--marigold)}
 .card.busted h2{text-decoration:line-through;text-decoration-color:var(--miss);color:var(--ink-2)}
 .card.miss,.card.disc{background:rgba(12,51,59,.72)}
 .spark{display:block;width:100%;height:38px;margin-top:6px}
@@ -142,7 +162,7 @@ body.reel header{max-width:760px;padding-top:22px}
   header{padding:14px 12px 2px}.brand{font-size:.68rem}
   h1{font-size:1.35rem;margin:.3rem 0 .25rem}.sub{font-size:.88rem;line-height:1.35}
   .tally{margin-top:6px}.tally span{font-size:.68rem;padding:2px 8px}
-  .tabs{margin-top:8px}.tab{padding:6px 9px 7px;font-size:.84rem}.tabnote{display:none}
+  .tabs{margin-top:8px}.tab{padding:6px 9px 7px;font-size:.84rem}.tabnote{font-size:.74rem;margin:6px 0 0}
   .picker{margin:6px 0 0}.chip{padding:5px 10px;font-size:.82rem}
   .wrap{padding:6px 10px 24px;gap:12px}.pondbox{padding:8px 8px 6px;border-radius:18px}
   .clock .d{font-size:1.05rem}.clock .n{font-size:.78rem}
@@ -171,9 +191,9 @@ body.reel .pondbox{padding-bottom:10px}
   <p class="sub" id="sub">Pick a moment. The stone is the event; each ring is time since it happened.</p>
   <div class="tally" id="tally" aria-label="How sure the links are"></div>
   <div class="tabs" role="tablist" aria-label="Kinds of story">
-    <button class="tab" role="tab" data-tab="maps" aria-selected="true">Ripple maps</button>
-    <button class="tab" role="tab" data-tab="stories" aria-selected="false">Checked stories</button>
-    <button class="tab" role="tab" data-tab="leads" aria-selected="false">Leads</button>
+    <button class="tab" role="tab" data-tab="maps" aria-selected="true">Lasting marks</button>
+    <button class="tab" role="tab" data-tab="stories" aria-selected="false">Fact-checks</button>
+    <button class="tab" role="tab" data-tab="leads" aria-selected="false">Engine leads</button>
   </div>
   <p class="tabnote" id="tabnote"></p>
   <div class="picker" id="picker" role="tabpanel" aria-label="Choose a story"></div>
@@ -188,6 +208,7 @@ body.reel .pondbox{padding-bottom:10px}
     <div class="ctl">
       <button class="play" id="play" aria-label="Pause"><svg viewBox="0 0 16 16" id="playico"></svg></button>
       <input type="range" id="scrub" min="0" max="1000" value="0" aria-label="Time since the event">
+      <div class="ticks" id="ticks" aria-hidden="true"></div>
       <button class="iconbtn" id="share" aria-label="Share this story" title="Share"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M11 5.5 8 2.5 5 5.5M8 2.5v8"/><path d="M3 8.5v4a1 1 0 0 0 1 1h8a1 1 0 0 0 1-1v-4"/></svg></button>
       <button class="nextbtn" id="nextbtn">Next story →</button>
     </div>
@@ -244,8 +265,8 @@ const TABS = {
     ["chain", "ethanol-tortilla", "Ethanol law → tortilla riots?"]],
   leads:["queens-gambit", "chernobyl", "wednesday", "stranger-things-4", "saltburn", "bridgerton", "the-last-of-us", "squid-game", "shogun", "the-bear"].map(s => ["map", s, null]),
 };
-const TABNOTE = {maps:"Ripples that left a lasting mark: a law, an institution, infrastructure, jobs or health. Each link rated.", stories:"Viral “butterfly effect” stories, checked link by link.",
-  leads:"What the engine found on its own, qualified by hand: only leads with a material endpoint and a plausible path stay. Each says what data would test the next step."};
+const TABNOTE = {maps:"Events that changed the world in a way that stuck: a law, an institution, infrastructure, jobs or health. Every link rated.", stories:"Viral “butterfly effect” stories put to the test, link by link. Some hold; some are busted.",
+  leads:"What the engine found on its own: things whose attention rose unusually after an event. Hand-screened for a plausible, material path, but still one hop, not proven."};
 let tab = "maps";
 const LVL = {measured:"Measured", timed:"Timed", reported:"Reported", plausible:"Plausible", busted:"Busted"};
 const LV = {tested:"measured", timed:"timed", record:"reported"};
@@ -319,9 +340,29 @@ function sparkHTML(weekly, mark) {
     <polyline points="${pts}" fill="none" stroke="var(--marigold)" stroke-width="2" vector-effect="non-scaling-stroke"/>
     <line class="cursor" x1="-5" x2="-5" y1="0" y2="${H}" stroke="var(--ink)" stroke-width="1.2" vector-effect="non-scaling-stroke"/></svg>`;
 }
-function card({when, badge, badgeCls, title, spark = "", facts = "", short = "", details = "", cls = "", mark = null}) {
+function card({when, badge, badgeCls, title, spark = "", facts = "", short = "", details = "", cls = "", mark = null, sure = ""}) {
+  const sureBox = sure ? `<details class="sure"><summary>How sure?</summary><p>${sure}</p></details>` : "";
   return {cls:cls + (mark ? " marked" : ""), html:`<div class="top"><div class="when">${when}</div><span class="b ${badgeCls}">${badge}</span></div>${mark ? `<div class="markpill">◆ Lasting mark · ${esc(mark)}</div>` : ""}
-    <h2>${esc(title)}</h2>${spark}${facts}${short ? `<p class="short">${short}</p>` : ""}${details ? `<details><summary>Details</summary>${details}</details>` : ""}`};
+    <h2>${esc(title)}</h2>${spark}${facts}${short ? `<p class="short">${short}</p>` : ""}<div class="row">${sureBox}${details ? `<details><summary>Details</summary>${details}</details>` : ""}</div>`};
+}
+// Plain-language account of the evidence behind one link: what was measured, how it was compared, what it does not show.
+function howSure(lv, o = {}) {
+  const pct = o.p != null ? `${Math.max(0.1, Math.round(o.p * 1000) / 10)}%` : null;
+  const after = " It also began after the step before it, which is the order a cause needs.";
+  if (lv === "measured") {
+    if (o.kind === "wiki") return `We counted daily Wikipedia views of “${esc(o.what)}”. From ${o.when} they ran about ${o.ratio}× the normal level. We then ran the same test at ${o.n ? `${o.n}` : "many"} random dates in the page's own past: a jump this big showed up at only ${pct} of them (p = ${o.p}).${after} This shows attention, not what people did next.`;
+    if (o.kind === "ssa") return `We took the yearly count of US babies given this name and compared the change in ${o.when} with the change in every other year on record. Only ${pct} of years moved this much (p = ${o.p}).${after}`;
+    return `We took the official series (${esc(o.what)}) and compared its change after this date with its change after every other date in the series. Only ${pct} of those moved this much (p = ${o.p}).${after} A measured move, not proof that nothing else was going on.`;
+  }
+  if (lv === "timed") {
+    if (o.archive) return `The page was online by ${o.when}: that is its earliest capture in the Wayback Machine. It could have existed earlier, so this is an upper bound.${after} We have not tested it against chance.`;
+    if (o.newArticle) return `Its Wikipedia article was created on ${o.when}, after the step before: a sign it became notable then, not proof that the step before caused it.`;
+    return `The rise began on ${o.when}, after the step before, which is the order a cause needs. We have not tested it against chance, so it could still be a coincidence.`;
+  }
+  if (lv === "reported") return `We did not measure this ourselves. ${o.what ? `A named source (${esc(o.what)})` : "A credible source"} records that it happened on this date${o.why ? ` and ties it to the step before: ${esc(o.why)}` : ""}. Treat it as reliable reporting, not a measurement.`;
+  if (lv === "plausible") return `It happened at about this date, but nothing we checked shows that the step before caused it${o.why ? ` (${esc(o.why)})` : ""}. It stays on the map because the chain claims it, rated honestly as unproven.`;
+  if (lv === "busted") return o.why ? `${esc(o.why)} A ripple has to start after its cause, and the claim has to match the record; this one does not.` : "The claim fails: wrong order, no evidence, or contradicted by the record.";
+  return "";
 }
 
 // ---- discovered links (ripples/demo/discovered.json): measured attention rises found automatically ----
@@ -330,15 +371,17 @@ function discItems(ev, skip = new Set()) {
   ev.links.filter(l => !skip.has(l.title)).forEach((l, k) => {
     const id = `d${k}`;
     out.push({id, parent:null, slice:l.slice, d:Math.max(l.lag, 0.5), label:l.label, lv:"measured", disc:true,
-      sub:sinceLabel(l.lag), series:{weekly:l.weekly, pre:l.baseline * 7},
+      sub:`${fmtMonth(D(l.onset))} · ${sinceLabel(l.lag)}`, series:{weekly:l.weekly, pre:l.baseline * 7},
       card:card({when:`${fmt(D(l.onset))}<span>${sinceLabel(l.lag)}</span>`, badge:"Measured", badgeCls:"l-measured", cls:"disc",
+        sure:howSure("measured", {kind:"wiki", what:l.label, when:fmt(D(l.onset)), ratio:l.ratio, p:l.p, n:l.n_pseudo}),
         title:l.headline || l.label, spark:sparkHTML(l.weekly, ev.date),
         short:`Attention to “${esc(l.label)}” ${l.ratio}× normal · p = ${l.p}`,
         details:`<p>${esc(cap(l.desc))}.</p>${l.next ? `<p><b>Next test:</b> ${esc(l.next)}.</p>` : ""}<p>Found by the engine among articles linking to the event: daily Wikipedia views rose beyond their own history (p = ${l.p}) after attention to the event began, then qualified by hand for a material endpoint and a plausible path.</p>`})});
     if (l.outcome) {
       const d = daysBetween(ev.date, l.outcome.date);
-      out.push({id:`${id}o`, parent:id, slice:l.slice, d:Math.max(d, 0.5), label:l.outcome.short || shortLabel(l.outcome.claim), lv:"reported", sub:sinceLabel(d), mark:l.outcome.mark,
+      out.push({id:`${id}o`, parent:id, slice:l.slice, d:Math.max(d, 0.5), label:l.outcome.short || shortLabel(l.outcome.claim), lv:"reported", sub:`${fmtMonth(D(l.outcome.date))} · ${sinceLabel(d)}`, mark:l.outcome.mark,
         card:card({when:`${fmt(D(l.outcome.date))}<span>${sinceLabel(d)}</span>`, badge:"Reported", badgeCls:"l-reported", title:l.outcome.claim,
+          sure:howSure("reported", {what:l.outcome.source}),
           short:esc(l.outcome.source)})});
     }
   });
@@ -362,9 +405,10 @@ function fromMap(slug) {
     (s.also || []).forEach(a => seen.add(a.name));
     const facts = s.facts ? `<div class="facts">${s.facts.map(([k, v]) => `<div class="fact"><b>${esc(v)}</b><span>${esc(k)}</span></div>`).join("")}</div>` : "";
     const src = s.source ? `<p class="src"><a href="${s.source}" rel="noopener" target="_blank">${esc(s.measure)}</a></p>` : `<p class="src">${esc(s.measure || "")}</p>`;
-    items.push({id:`m${i}`, parent:n.p ? `m${n.p}` : null, slice:"main", d:Math.max(s.days, 0.5), label:n.l, lv, sub:sinceLabel(s.days), mark:n.mark,
+    items.push({id:`m${i}`, parent:n.p ? `m${n.p}` : null, slice:"main", d:Math.max(s.days, 0.5), label:n.l, lv, sub:`${fmtMonth(D(s.date))} · ${sinceLabel(s.days)}`, mark:n.mark,
       series:s.series && s.series.weekly ? s.series : null,
       card:card({when:`${fmt(D(s.date))}<span>${sinceLabel(s.days)}</span>`, badge:LVL[lv], badgeCls:`l-${lv}`, title:s.title,
+        sure:howSure(lv, lv === "measured" ? {kind:"wiki", what:(s.measure || "").replace(/.*“([^”]+)”.*/, "$1"), when:fmt(D(s.date)), ratio:"several", p:0.01} : lv === "reported" ? {what:s.measure} : {when:fmt(D(s.date)), why:s.note}),
         spark:s.series ? sparkHTML(s.series.weekly, data.release) : "", facts,
         short:lv === "plausible" ? "Happened; the link is unproven" : lv === "measured" ? "Passed a test against fake dates" : lv === "reported" ? esc(s.measure || "") : "Rose after the step before",
         details:`${s.note ? `<p>${esc(s.note)}</p>` : ""}${s.test ? `<p>${esc(s.test)}</p>` : ""}${src}`})});
@@ -430,7 +474,7 @@ function fromChain(slug) {
       const y0 = st.range[0].slice(0, 4), y1 = st.range[1].slice(0, 4);
       const span = y0 === y1 ? `${fmt(D(st.range[0])).replace(/,.*/, "")}–${fmt(D(st.range[1])).replace(/,.*/, "")}, ${y0}` : `${y0}–${y1}`;
       when = `≈ ${y0 === y1 ? fmt(D(st.onset)).replace(/ \d+,/, "") : st.onset.slice(0, 4)}<span>likely ${span}</span>`; sub = `≈ ${span}`;
-    } else { when = `${fmt(D(st.onset))}<span>${sinceLabel(d)}</span>`; sub = sinceLabel(d); }
+    } else { when = `${fmt(D(st.onset))}<span>${sinceLabel(d)}</span>`; sub = `${fmtMonth(D(st.onset))} · ${sinceLabel(d)}`; }
     const happened = st.test.type === "record" ? `<p class="src">${esc(st.source || st.test.source)}</p>` :
       st.test.type === "none" ? "" : `<p class="src">${st.found ? "Wikipedia daily views: " + Object.keys(st.found).filter(k => st.found[k]).join(", ") : SRC(st)}</p>`;
     const id = `c${st.n}`;
@@ -439,6 +483,10 @@ function fromChain(slug) {
     const shortLine = lv === "reported" && srcLine ? esc(srcLine) : short;
     items.push({id, parent, slice:st.slice || (st.branch ? `b${st.n}` : "main"), d, range, undated, label:st.short || shortLabel(st.claim), lv, lvText, sub, mark:lv === "busted" ? null : st.mark,
       card:card({when, badge:lvText, badgeCls:`l-${lv}`, title:st.claim, cls:lv === "busted" ? "busted" : "", spark:weekly ? sparkHTML(weekly, st.ref) : "", short:shortLine,
+        sure:howSure(lv, lv === "measured" ? {kind:st.test.type === "wiki" ? "wiki" : st.test.type === "ssa" ? "ssa" : "series", what:st.test.type === "wiki" ? (st.test.articles || [])[0] : SRC(st) || st.series,
+            when:st.onset ? fmt(D(st.onset)) : "", ratio:st.ratio, p:st.p, n:st.n_placebo}
+          : lv === "timed" ? {when:st.onset ? fmt(D(st.onset)) : "", archive:!!st.archive_first, newArticle:!!st.new_article}
+          : lv === "reported" ? {what:srcLine, why:st.link_why} : {why:why}),
         details:`<p>${esc(why)}</p>${st.note && st.note !== why ? `<p>${esc(st.note)}</p>` : ""}${happened}`})});
     if (!st.branch && !st.after) lastMain = id;
   });
@@ -470,13 +518,15 @@ function draw(story) {
 
   const defs = el("defs", {}, svg);
   defs.innerHTML = `
-    <radialGradient id="water" cx="50%" cy="47%" r="55%"><stop offset="0" stop-color="#14606a" stop-opacity=".55"/><stop offset=".6" stop-color="#0d4750" stop-opacity=".35"/><stop offset="1" stop-color="#06272d" stop-opacity="0"/></radialGradient>
+    <radialGradient id="water" cx="50%" cy="46%" r="56%"><stop offset="0" stop-color="#1a6e7f" stop-opacity=".6"/><stop offset=".55" stop-color="#0f4d5b" stop-opacity=".4"/><stop offset="1" stop-color="#06272d" stop-opacity="0"/></radialGradient>
+    <radialGradient id="shine" cx="38%" cy="30%" r="40%"><stop offset="0" stop-color="#d8f3f3" stop-opacity=".09"/><stop offset="1" stop-color="#d8f3f3" stop-opacity="0"/></radialGradient>
     <radialGradient id="glow"><stop offset="0" stop-color="#f2ae2e" stop-opacity=".55"/><stop offset="1" stop-color="#f2ae2e" stop-opacity="0"/></radialGradient>
-    <filter id="wob" x="-5%" y="-5%" width="110%" height="110%"><feTurbulence type="fractalNoise" baseFrequency=".011" numOctaves="2" seed="7"/><feDisplacementMap in="SourceGraphic" scale="4.5"/></filter>
+    <filter id="wob" x="-5%" y="-5%" width="110%" height="110%"><feTurbulence type="fractalNoise" baseFrequency=".011" numOctaves="2" seed="7"><animate attributeName="baseFrequency" values="0.011;0.0135;0.011" dur="11s" repeatCount="indefinite"/></feTurbulence><feDisplacementMap in="SourceGraphic" scale="5.5"/></filter>
     <filter id="soft"><feGaussianBlur stdDeviation="3"/></filter>
     <clipPath id="pondclip"><circle cx="${C.x}" cy="${C.y}" r="${R + 30}"/></clipPath>`;
   // water: a softly lit surface
   el("circle", {cx:C.x, cy:C.y, r:R + 34, fill:"url(#water)"}, svg);
+  el("ellipse", {cx:C.x - 60, cy:C.y - 90, rx:R * 0.9, ry:R * 0.55, fill:"url(#shine)", filter:"url(#wob)"}, svg);
 
   const g0 = el("g", {}, svg);
   if (n > 1) keys.forEach(k => { const a = centre(k) - w / 2, q = polar(48, a), p = polar(R + 8, a); el("line", {class:"slicebd", x1:q.x, y1:q.y, x2:p.x, y2:p.y}, g0); });
@@ -613,17 +663,21 @@ function fly(it, now) {  // carried out from the stone on a wave whose crest rea
   it.path.setAttribute("d", `M${it.from.x},${it.from.y} L${pos.x},${pos.y}`);
   if (p >= 1) land(it);
 }
-function spawnWave(sw, toR = R, ms = 4200) {
+function spawnWave(sw, toR = R, ms = 4200, cx = C.x, cy = C.y, r0 = 14) {
   if (!cur || !cur.waves) return;
-  const w = el("circle", {class:"wave", cx:C.x, cy:C.y, r:14, "stroke-width":sw}, cur.waves);
-  w._b = performance.now(); w._to = toR; w._ms = ms;
+  const w = el("circle", {class:"wave", cx, cy, r:r0, "stroke-width":sw}, cur.waves);
+  w._b = performance.now(); w._to = toR; w._ms = ms; w._r0 = r0;
+}
+function drop(pos) {  // a tap on the water: two small rings spreading from the point
+  spawnWave(2.2, 70, 900, pos.x, pos.y, 6); setTimeout(() => spawnWave(1.3, 95, 1200, pos.x, pos.y, 6), 160);
 }
 function tickWaves(now) {
   if (!cur || !cur.waves) return;
   for (const w of [...cur.waves.children]) {
     const p = (now - w._b) / w._ms;
     if (p >= 1.2) { w.remove(); continue; }
-    w.setAttribute("r", 14 + ease(Math.min(p, 1)) * (w._to - 14) + Math.max(0, p - 1) * 50);
+    const r0 = w._r0 || 14;
+    w.setAttribute("r", r0 + ease(Math.min(p, 1)) * (w._to - r0) + Math.max(0, p - 1) * 50);
     w.style.opacity = Math.max(0, Math.min(1, 1.2 - p) * 0.6);
   }
 }
@@ -683,6 +737,7 @@ function clearFocus() {
   if (hot) { hot.lab.classList.remove("hot"); hot.cardEl && hot.cardEl.classList.remove("hot"); hot = null; }
 }
 function focus(it) {
+  if (it.pos) drop(it.pos);
   if (hot === it) { clearFocus(); return; }
   clearFocus();
   hot = it; it.lab.classList.add("hot"); if (it.state === "landed") it.lab.classList.add("on");
@@ -768,6 +823,9 @@ function show(kind, slug, autoplay = true) {
   $("#tally").innerHTML = (marks.length ? `<span class="markt">◆ ${marks.length} lasting mark${marks.length === 1 ? "" : "s"}</span>` : `<span class="nomark">No lasting mark yet</span>`) +
     ["measured", "timed", "reported", "plausible", "busted"].filter(k => tally[k]).map(k => `<span class="l-${k}">${tally[k]} ${LVL[k].toLowerCase()}</span>`).join("");
   draw(story); buildFeed(story); $("#feed").scrollTop = 0; render();
+  const y = d => addDays(story.iso0, d).getUTCFullYear(), yEnd = y(Math.max(...story.items.filter(x => !x.future).map(x => x.d))), yMid = y(daysAt(0.5));
+  $("#ticks").innerHTML = `<span>${y(0)}</span><span>${yMid > y(0) && yMid < yEnd ? yMid : ""}</span><span>${yEnd > y(0) ? yEnd : ""}</span>`;
+  const w = document.querySelector(".wrap"); w.classList.remove("fade"); void w.offsetWidth; w.classList.add("fade");
   setPlaying(autoplay);
   if (!REEL) try { history.replaceState(null, "", `?${kind === "chain" ? "c" : "m"}=${slug}`); } catch { /* sandboxed previews cannot rewrite the URL */ }
 }
@@ -797,10 +855,20 @@ function next() {
     setTimeout(done, 9000);
     ["#play", "#scrub", "#pond", "#nextbtn"].forEach(sel => $(sel).addEventListener("pointerdown", done, {once:true}));
   }
-  $("#pond").addEventListener("click", e => { if (!e.target.closest(".node")) clearFocus(); });
+  $("#pond").addEventListener("click", e => {
+    if (e.target.closest(".node")) return;
+    clearFocus();
+    const svg = $("#pond"), pt = svg.createSVGPoint(); pt.x = e.clientX; pt.y = e.clientY;
+    const q = pt.matrixTransform(svg.getScreenCTM().inverse()); drop({x:q.x, y:q.y});
+  });
   document.addEventListener("keydown", e => {
-    if (e.key !== " " || e.target.closest("input,select,button,textarea,[tabindex]")) return;
-    e.preventDefault(); $("#play").click();
+    if (e.target.closest("input,select,textarea")) return;
+    if (e.key === " " && !e.target.closest("button,[tabindex]")) { e.preventDefault(); $("#play").click(); }
+    if ((e.key === "ArrowRight" || e.key === "ArrowLeft") && cur) {  // step through the ripples in time order
+      const list = [...cur.items].sort((a, b) => a.d - b.d), i = hot ? list.indexOf(hot) : -1;
+      const nx = list[(i + (e.key === "ArrowRight" ? 1 : list.length - 1)) % list.length];
+      if (nx) { e.preventDefault(); if (hot === nx) return; focus(nx); }
+    }
   });
   const sc = $("#scrub");
   sc.oninput = e => { scrubbing = true; t = e.target.value / 1000; setPlaying(false); render(); };
