@@ -101,15 +101,19 @@ def get(url, headers=None, delay=1.0, timeout=90):
     return body
 
 
-def sparql(q, delay=2.0):
-    body = get(f"{SPARQL}?{urllib.parse.urlencode({'query': q, 'format': 'json'})}",
-               headers={"Accept": "application/sparql-results+json"}, delay=delay, timeout=120)
-    if not body:
-        return None
-    try:
-        return json.loads(body)["results"]["bindings"]
-    except (ValueError, KeyError):
-        return None
+def sparql(q, delay=2.0, tries=3):
+    """A query with up to three attempts (10 s, then 30 s between), since the endpoint times out under load."""
+    for i in range(tries):
+        body = get(f"{SPARQL}?{urllib.parse.urlencode({'query': q, 'format': 'json'})}",
+                   headers={"Accept": "application/sparql-results+json"}, delay=delay, timeout=120)
+        if body:
+            try:
+                return json.loads(body)["results"]["bindings"]
+            except (ValueError, KeyError):
+                pass
+        if i < tries - 1:
+            time.sleep(10 if i == 0 else 30)
+    return None
 
 
 def title_of(url):
@@ -167,26 +171,39 @@ def works_set(state):
         extra = {k: v for k, v in classes_of_titles(RECALL_WORKS).items() if k not in WORKS}
         state["work_classes"] = {**WORKS, **extra}
     WORKS.update(state["work_classes"])
-    vals = " ".join(f"wd:{q}" for q in WORKS)
+    heavy = {"Q47461344", "Q7725634", "Q571"}  # written works: queried on their own, they are the bulk
+    groups = [[q for q in WORKS if q not in heavy], [q for q in WORKS if q in heavy]]
+    failed = state.setdefault("works_chunks_failed", [])
     for y0, y1 in year_chunks():
-        key = f"{y0}-{y1}"
-        if key in done:
-            continue
-        q = f"""SELECT ?w ?cls ?d ?a WHERE {{ VALUES ?cls {{ {vals} }} ?w wdt:P31 ?cls . ?w wdt:P577|wdt:P580|wdt:P571 ?d .
-                FILTER(YEAR(?d) >= {y0} && YEAR(?d) <= {y1}) ?a schema:about ?w ; schema:isPartOf <https://en.wikipedia.org/> . }}"""
-        rows = sparql(q)
-        if rows is None:
-            print("works chunk failed", key, flush=True)
-            continue
-        for b in rows:
-            t = title_of(b["a"]["value"])
-            d = b["d"]["value"][:10]
-            cur = works.get(t)
-            if not cur or d < cur[1]:
-                works[t] = [WORKS.get(qid(b["cls"]["value"]), "work"), d, qid(b["w"]["value"])]
-        done.add(key)
-        state["works_chunks_done"] = sorted(done)
-        print("works", key, len(rows), "rows;", len(works), "titles", flush=True)
+        for gi, grp in enumerate(groups):
+            key = f"{y0}-{y1}/{gi}"
+            if key in done or not grp:
+                continue
+            vals = " ".join(f"wd:{q}" for q in grp)
+            q = f"""SELECT ?w ?cls ?d ?a WHERE {{ VALUES ?cls {{ {vals} }} ?w wdt:P31 ?cls . ?w wdt:P577|wdt:P580|wdt:P571 ?d .
+                    FILTER(YEAR(?d) >= {y0} && YEAR(?d) <= {y1}) ?a schema:about ?w ; schema:isPartOf <https://en.wikipedia.org/> . }}"""
+            rows = sparql(q)
+            if rows is None and y1 > y0:  # split a failed multi-year chunk into single years
+                rows = []
+                for y in range(y0, y1 + 1):
+                    r = sparql(q.replace(f">= {y0} && YEAR(?d) <= {y1}", f">= {y} && YEAR(?d) <= {y}"))
+                    if r is None:
+                        rows = None; break
+                    rows += r
+            if rows is None:
+                print("works chunk failed", key, flush=True)
+                if key not in failed:
+                    failed.append(key)
+                continue
+            for b in rows:
+                t = title_of(b["a"]["value"])
+                d = b["d"]["value"][:10]
+                cur = works.get(t)
+                if not cur or d < cur[1]:
+                    works[t] = [WORKS.get(qid(b["cls"]["value"]), "work"), d, qid(b["w"]["value"])]
+            done.add(key)
+            state["works_chunks_done"] = sorted(done)
+            print("works", key, len(rows), "rows;", len(works), "titles", flush=True)
     return works
 
 
@@ -219,10 +236,25 @@ def mark_classes():
     q = """SELECT ?c ?cLabel (COUNT(?m) AS ?n) WHERE { { ?c wdt:P279* wd:Q7748 } UNION { ?c wdt:P279* wd:Q49371 } ?m wdt:P31 ?c .
            ?a schema:about ?m ; schema:isPartOf <https://en.wikipedia.org/> .
            SERVICE wikibase:label { bd:serviceParam wikibase:language "en" . } } GROUP BY ?c ?cLabel ORDER BY DESC(?n) LIMIT 200"""
-    for b in sparql(q) or []:
+    rows = sparql(q)
+    for b in rows or []:
         if int(b["n"]["value"]) >= 5:
             found[qid(b["c"]["value"])] = b["cLabel"]["value"]
-    found.update(classes_of_titles(RECALL_MARKS))
+    # the floor: the 69 classes v1 found, read from v1's results file, so a timeout cannot shrink the set below v1
+    v1 = os.path.join(ROOT, "docs", "results", "mark_first_v1.json")
+    if os.path.exists(v1):
+        try:
+            for k, v in json.load(open(v1)).get("mark_classes", {}).items():
+                found.setdefault(k, v)
+        except ValueError:
+            pass
+    if rows is None:
+        print("mark class closure query failed; using v1's classes", len(found), flush=True)
+    # the recall marks' classes, law-like only (two recall titles redirect to a scandal and to the Lacey Act's article)
+    lawlike = re.compile(r"act|law|statute|legislat|bill|regulation|order|decree|ordinance|directive|code|treaty|amendment", re.I)
+    for k, v in classes_of_titles(RECALL_MARKS).items():
+        if lawlike.search(v):
+            found[k] = v
     return found
 
 
@@ -471,8 +503,8 @@ def stage2(state):
 
 # ---------- summary ----------
 def recall(pairs):
-    want = {"Mr Bates vs The Post Office": ["Post Office (Horizon System) Offences Act 2024"],
-            "Tiger King": ["Big Cat Public Safety Act"],
+    want = {"Mr Bates vs The Post Office": ["Post Office (Horizon System) Offences Act 2024", "Post Office (Horizon System) Compensation Act 2024"],
+            "Tiger King": ["Big Cat Public Safety Act", "Lacey Act of 1900"],
             "The Jungle": ["Pure Food and Drug Act", "Federal Meat Inspection Act"],
             "Unsafe at Any Speed": ["National Traffic and Motor Vehicle Safety Act"],
             "WarGames": ["Computer Fraud and Abuse Act", "National Security Decision Directive 145"]}
