@@ -7259,25 +7259,25 @@
     },
     {
      "n": 23,
-     "claim": "Per-capita drinking turns upward after repeal",
+     "claim": "Per-capita drinking falls for two decades after the 1981 peak",
      "test": {
       "type": "file",
       "key": "niaaa_percapita_ethanol",
-      "h": 3,
-      "direction": "up",
+      "h": 5,
+      "direction": "down",
       "transform": "log",
-      "source": "NIAAA apparent per-capita ethanol consumption"
+      "source": "NIAAA apparent per-capita ethanol consumption, gallons per person 14 and older, 1970–2022"
      },
-     "ref": "1933-12-05",
+     "ref": "1981-07-01",
      "verdict": "no data",
-     "note": "Tested as a series: the three years after repeal against three-year changes after every other year on record.",
+     "note": "The NIAAA series begins in 1970, so the climb after repeal cannot be tested in it; the fall from the 1981 peak (2.76 gallons) to the 1990s (2.15) can.",
      "link": null,
      "link_why": null,
      "branch": false,
      "vertical": null,
-     "after": 5,
+     "after": 7,
      "slice": "Health",
-     "short": "Drinking turns up",
+     "short": "Drinking falls after 1981",
      "mark": null,
      "result": "not enough data around the reference date",
      "series": "niaaa_percapita_ethanol"
@@ -7522,9 +7522,9 @@
       ],
       "lag": 40
      },
-     "ref": "2017-01-01",
-     "verdict": "timed (short history)",
-     "note": "A seasonal rise: placebo windows that fall in other Januaries make the test honest about that.Attention is checked at the Jan 2017 campaign (daily views begin Jul 2015, so Jan 2016 has no placebo history).",
+     "ref": "2018-01-01",
+     "verdict": "no movement",
+     "note": "A seasonal rise: placebo windows that fall in other Januaries make the test honest about that. Checked at the Jan 2018 campaign (daily views begin Jul 2015; Jan 2017 left fewer than 20 placebo windows).",
      "link": null,
      "link_why": null,
      "branch": false,
@@ -7536,99 +7536,99 @@
      "found": {
       "Dry January": true
      },
-     "onset": "2016-12-29",
-     "ratio": 69.8,
-     "baseline": 16.0,
-     "p": null,
-     "n_placebo": 16,
+     "onset": "2017-12-30",
+     "ratio": 58.9,
+     "baseline": 20.0,
+     "p": 0.209,
+     "n_placebo": 42,
      "weekly": [
       [
-       "2016-10-09",
-       104
+       "2017-10-09",
+       129
       ],
       [
-       "2016-10-16",
-       96
+       "2017-10-16",
+       127
       ],
       [
-       "2016-10-23",
-       134
+       "2017-10-23",
+       158
       ],
       [
-       "2016-10-30",
-       173
+       "2017-10-30",
+       210
       ],
       [
-       "2016-11-06",
-       188
+       "2017-11-06",
+       199
       ],
       [
-       "2016-11-13",
-       256
+       "2017-11-13",
+       246
       ],
       [
-       "2016-11-20",
-       216
+       "2017-11-20",
+       226
       ],
       [
-       "2016-11-27",
-       390
+       "2017-11-27",
+       283
       ],
       [
-       "2016-12-04",
-       435
+       "2017-12-04",
+       382
       ],
       [
-       "2016-12-11",
-       620
+       "2017-12-11",
+       615
       ],
       [
-       "2016-12-18",
-       931
+       "2017-12-18",
+       997
       ],
       [
-       "2016-12-25",
-       2264
+       "2017-12-25",
+       2520
       ],
       [
-       "2017-01-01",
-       7670
+       "2018-01-01",
+       8252
       ],
       [
-       "2017-01-08",
-       4388
+       "2018-01-08",
+       4342
       ],
       [
-       "2017-01-15",
-       2022
+       "2018-01-15",
+       3004
       ],
       [
-       "2017-01-22",
-       1110
+       "2018-01-22",
+       2153
       ],
       [
-       "2017-01-29",
-       2145
+       "2018-01-29",
+       2196
       ],
       [
-       "2017-02-05",
-       434
+       "2018-02-05",
+       444
       ],
       [
-       "2017-02-12",
-       248
-      ],
-      [
-       "2017-02-19",
+       "2018-02-12",
        247
       ],
       [
-       "2017-02-26",
-       243
+       "2018-02-19",
+       214
       ],
       [
-       "2017-03-05",
-       197
+       "2018-02-26",
+       178
+      ],
+      [
+       "2018-03-05",
+       177
       ]
      ]
     }
