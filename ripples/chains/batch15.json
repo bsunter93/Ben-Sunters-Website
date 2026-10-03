@@ -377,19 +377,20 @@
    },
    {
     "n": 23,
-    "claim": "Per-capita drinking turns upward after repeal",
-    "short": "Drinking turns up",
+    "claim": "Per-capita drinking falls for two decades after the 1981 peak",
+    "short": "Drinking falls after 1981",
     "slice": "Health",
-    "after": 5,
+    "after": 7,
     "test": {
      "type": "file",
      "key": "niaaa_percapita_ethanol",
-     "h": 3,
-     "direction": "up",
+     "h": 5,
+     "direction": "down",
      "transform": "log",
-     "source": "NIAAA apparent per-capita ethanol consumption"
+     "source": "NIAAA apparent per-capita ethanol consumption, gallons per person 14 and older, 1970–2022"
     },
-    "note": "Tested as a series: the three years after repeal against three-year changes after every other year on record."
+    "note": "The NIAAA series begins in 1970, so the climb after repeal cannot be tested in it; the fall from the 1981 peak (2.76 gallons) to the 1990s (2.15) can.",
+    "ref": "1981-07-01"
    },
    {
     "n": 24,
@@ -425,7 +426,7 @@
     "short": "Dry January attention",
     "slice": "Catalysts?",
     "after": 15,
-    "ref": "2017-01-01",
+    "ref": "2018-01-01",
     "test": {
      "type": "wiki",
      "articles": [
@@ -433,7 +434,7 @@
      ],
      "lag": 40
     },
-    "note": "A seasonal rise: placebo windows that fall in other Januaries make the test honest about that.Attention is checked at the Jan 2017 campaign (daily views begin Jul 2015, so Jan 2016 has no placebo history)."
+    "note": "A seasonal rise: placebo windows that fall in other Januaries make the test honest about that. Checked at the Jan 2018 campaign (daily views begin Jul 2015; Jan 2017 left fewer than 20 placebo windows)."
    }
   ]
  }
