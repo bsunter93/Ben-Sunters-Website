@@ -77,7 +77,7 @@ reports are in the session scratchpad.
 |---|---|---|
 | Nothing is thrown; the stone is already in the water | Dani, Walter | **Done.** The stone is tossed from the near bank in an arc, spins, lands with a splash crown and a sound; drag the stone and let go to throw it from where you like |
 | Too much header before the water (eight elements, 330 px) | Priya, Dani | **Done.** One bar: counts left, "Change story" right; tabs, chips, other ponds in a panel on demand |
-| Known stories are buried 10–13 swipes deep | Dani, Walter | **Done.** "Start with one you know" row (Tiger King, Squid Game, Frozen, Prohibition, the volcano) pinned at the top of the chooser |
+| Known stories are buried 10–13 swipes deep | Dani, Walter | **Done.** "Start with one you know" row (Tiger King, Squid Game, Frozen, Prohibition, the volcano) pinned at the top of the chooser, and a search box that spans all three tabs (a title, a stone, or an event year) |
 | The default story is not explained | Walter, Dani | **Done.** The first card now carries the step's plain-language note (for Mr Bates: what the drama was and what the scandal was) |
 | Inner ripples overtake outer ones; it reads as orbits | Owner, Dani | **Done.** One wavefront moves outward; arcs bloom where it passes and stay |
 | The fixed 15-second clock runs a century in 15 s | Walter, Priya | **Done.** The clock scales with the number of steps (about 0.65 s a ripple, 15–30 s) |
@@ -91,8 +91,11 @@ reports are in the session scratchpad.
 | "Not yet" dressed as "Busted" | Priya | **Done.** Its own wording: nothing is wrong with the claim; it has not happened yet |
 | A researcher's note leaked on a card | Priya | **Done.** Removed |
 | Rim words clipped on a phone ("STICE & LAW") | Dani | **Done.** Rim words are kept inside the picture |
-| Pond text too small for a 75-year-old | Walter | **Partly.** Rim and ring labels are larger on phones already; a general 16-px floor would crowd the desktop pond. Open |
-| Sources are restatements with no links | Walter | **Open.** The chains carry source strings, not URLs; adding links is a data pass across 67 chains |
-| The map does not carry the story on its own; most ripples unlabeled | Priya, Walter | **Open by design, and under review.** The owner asked for a quiet pond; labels appear for marks and measured steps, the rest on hover and in the cards. A "step" mode (land one ripple, show its card, wait) is the candidate answer |
+| Pond text too small for a 75-year-old | Walter | **Done.** Labels now have a floor in screen pixels that follows the pond's on-screen size: 15 px on a tablet, 12 px on a desktop, 11 px on a phone where the pond is small. Card source lines are larger too |
+| Sources are restatements with no links | Walter | **Done.** Every card's source line now ends in a link: the Wikipedia article we counted, the FRED or SSA series we read, the methods page for our own tests, or a Wikipedia search for the source's own words when the chain names a record without a URL. Honest about what it is: a place to start checking, not a citation database |
+| The map does not carry the story on its own; most ripples unlabeled | Priya, Walter | **Done.** A Step button: the front travels to the next ripple in about a second and a half, stops there with its card open and its label on, and waits; play or the right arrow goes on. The quiet pond stays the default |
 | The log time axis is never explained | Priya, Walter | **Done.** One line in How it works |
-| Sound off by default | Dani | **Partly.** The throw's splash now sounds on the first gesture; the ambient pings stay opt-in |
+| Sound off by default | Dani | **As is.** The throw's splash sounds on the first gesture; the ambient pings stay opt-in, since a page that makes noise unasked is the complaint we would get next |
+
+
+Also fixed while closing these: when a ripple was focused, the labels of ripples that had not yet arrived showed through at 16%, which read as clutter near the stone. Only landed ripples sit back now.

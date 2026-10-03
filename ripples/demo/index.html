@@ -136,7 +136,12 @@ svg#pond{display:block;width:100%;height:auto;touch-action:manipulation;border-r
 .ctl{display:flex;align-items:center;gap:12px;padding:0 8px 2px;position:relative}
 .ctl .ticks{position:absolute;left:62px;right:112px;top:34px;display:flex;justify-content:space-between;font-size:.66rem;color:var(--ink-3);font-variant-numeric:tabular-nums;pointer-events:none}
 .ctl{padding-bottom:12px}
-@media (max-width:560px){.ctl .ticks{left:56px;right:104px;top:30px}}
+@media (max-width:560px){
+  .ctl{flex-wrap:wrap;gap:8px 10px;padding-bottom:6px}
+  .ctl #scrub{order:9;flex:1 1 100%;margin-top:4px}  /* the slider gets its own row on a phone; the buttons share the first */
+  .ctl .ticks{position:static;order:10;flex:1 1 100%;margin-top:-4px;padding:0 2px}
+  .ctl .nextbtn{margin-left:auto}
+}
 .wrap.fade .pondbox,.wrap.fade .feed{animation:fadein .5s ease-out}
 @keyframes fadein{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
 .play{width:38px;height:38px;border-radius:50%;border:0;background:var(--marigold);color:#061a2e;cursor:pointer;display:grid;place-items:center;flex:none}
@@ -161,6 +166,10 @@ input[type=range]{flex:1;accent-color:var(--marigold);min-width:0}
 .ponds .pond svg{width:12px;height:12px;color:#c77f12}
 .ponds .pond:hover{border-color:#c77f12}
 .nextbtn{background:none;border:1px solid var(--hair);border-radius:999px;padding:6px 12px;font-size:.8rem;font-weight:600;color:var(--ink-2);cursor:pointer;white-space:nowrap}
+.stepbtn{background:none;border:1px solid var(--hair);border-radius:999px;padding:6px 11px;font-size:.78rem;font-weight:600;color:var(--ink-2);cursor:pointer;white-space:nowrap;flex:none}
+.stepbtn[aria-pressed="true"]{background:var(--marigold);border-color:var(--marigold);color:#1a1405}
+.search{display:flex;margin:0 0 10px}.search input{flex:1;background:var(--sunk);border:1px solid var(--hair);border-radius:999px;padding:8px 14px;font:inherit;font-size:.9rem;color:var(--ink);outline:none}.search input:focus{border-color:var(--shallow-2)}
+.picker .tabtag{font-size:.7rem;color:var(--ink-3);margin-left:6px;font-weight:500}.picker .none{color:var(--ink-3);font-size:.85rem;margin:4px 0}
 .nextbtn:hover{border-color:var(--ink-3);color:var(--ink)}
 .card{background:rgba(12,51,59,.92);border:1px solid var(--hair);border-radius:14px;padding:10px 14px;transition:border-color .2s;cursor:pointer}
 .card.off{display:none}
@@ -179,7 +188,7 @@ input[type=range]{flex:1;accent-color:var(--marigold);min-width:0}
 .card details summary::-webkit-details-marker{display:none}
 .card details summary::before{content:"+ "}.card details[open] summary::before{content:"– "}
 .card details p{margin:.3rem 0 0}
-.card .src{font-size:.76rem;color:var(--ink-3)}
+.card .src{font-size:.84rem;color:var(--ink-3)}.card .src a{color:var(--shallow-2)}
 .card .row{display:flex;flex-wrap:wrap;gap:4px 16px;align-items:flex-start}
 .card .row details{flex:1 1 100%}
 .card details.sure summary{color:var(--marigold)}
@@ -275,7 +284,7 @@ input[type=range]{flex:1;accent-color:var(--marigold);min-width:0}
 .nlab text.s{font-weight:500;font-size:11px;fill:var(--ink-3)}
 .nlab.busted text:not(.s){fill:var(--ink-3);text-decoration:line-through}
 .nlab.hot rect{stroke:var(--marigold)}
-#pond.focus .node:not(.lit),#pond.focus .nlab:not(.lit),#pond.focus .band:not(.lit),#pond.focus .rip.on:not(.lit){opacity:.16 !important;transition:opacity .3s}
+#pond.focus .node.on:not(.lit),#pond.focus .nlab.on:not(.lit),#pond.focus .band:not(.lit),#pond.focus .rip.on:not(.lit){opacity:.16 !important;transition:opacity .3s}  /* only what has landed sits back; what has not arrived stays unseen */
 #pond.focus .rip2,#pond.focus .glint{opacity:0 !important}
 /* at rest, the ripples that left no mark sit back; a lasting mark or a measured step carries full weight */
 .rip.on.l-reported,.rip.on.l-plausible,.rip.on.l-timed,.rip.on.l-busted{opacity:.28}.crest.l-reported,.crest.l-plausible,.crest.l-timed,.crest.l-busted{opacity:.55}
@@ -297,7 +306,7 @@ body.reel header{max-width:760px;padding-top:22px}
   .hint{bottom:148px;font-size:.78rem;padding:7px 12px;max-width:88%;text-align:center}  /* above the two-row controls on a phone */
   .clock .d{font-size:1.05rem}.clock .n{font-size:.78rem}
   .legend{font-size:.7rem;gap:4px 10px;padding:4px 4px 2px}.howbtn{font-size:.7rem;padding:2px 8px}
-  .nextbtn{padding:6px 10px;font-size:.76rem}.play{width:34px;height:34px}
+  .nextbtn{padding:6px 10px;font-size:.76rem}.play{width:34px;height:34px}.stepbtn{padding:5px 9px;font-size:.74rem}
   .card{padding:9px 12px}.card h2{font-size:.9rem}
 }
 /* first-visit hint, share and the reel caption */
@@ -328,6 +337,7 @@ body.reel .pondbox{padding-bottom:10px}
       <button class="chip" data-kind="map" data-slug="tiger-king">Tiger King</button><button class="chip" data-kind="chain" data-slug="squid-game-ripples">Squid Game</button>
       <button class="chip" data-kind="chain" data-slug="frozen">Frozen</button><button class="chip" data-kind="chain" data-slug="america-and-alcohol">Prohibition</button>
       <button class="chip" data-kind="chain" data-slug="tambora-bicycle">A volcano → the bicycle</button></div>
+    <div class="search"><input type="search" id="search" placeholder="Search the stories (a show, a law, a year…)" aria-label="Search the stories" autocomplete="off"></div>
     <div class="tabs" role="tablist" aria-label="Kinds of story">
       <button class="tab" role="tab" data-tab="maps" aria-selected="true">Lasting marks</button>
       <button class="tab" role="tab" data-tab="stories" aria-selected="false">Fact-checks</button>
@@ -348,6 +358,7 @@ body.reel .pondbox{padding-bottom:10px}
     <div class="caption" id="caption" aria-live="polite"></div>
     <div class="ctl">
       <button class="play" id="play" aria-label="Pause"><svg viewBox="0 0 16 16" id="playico"></svg></button>
+      <button class="stepbtn" id="stepbtn" aria-pressed="false" title="Stop at each ripple and read its card">Step</button>
       <input type="range" id="scrub" min="0" max="1000" value="0" aria-label="Time since the event">
       <div class="ticks" id="ticks" aria-hidden="true"></div>
       <button class="iconbtn off" id="sound" aria-label="Sound off" aria-pressed="false" title="Sound"></button>
@@ -378,7 +389,7 @@ body.reel .pondbox{padding-bottom:10px}
   </div>
 </div>
 <section class="how" id="how" hidden>
-  <div><h3>One wave, outward</h3><p>The stone is the event. A single wavefront leaves it and moves outward as time passes; each thing that changed appears where the front was when it happened, and stays there. So the inner arcs are the earliest changes and the outer ones the latest, and no ripple ever passes another. Time is stretched near the stone: the first weeks take as much room as the later decades, which is why the slider's ticks are uneven. Each distinct ripple gets its own slice, labeled on the rim with the industry it reached.</p></div>
+  <div><h3>One wave, outward</h3><p>The stone is the event. A single wavefront leaves it and moves outward as time passes; each thing that changed appears where the front was when it happened, and stays there. So the inner arcs are the earliest changes and the outer ones the latest, and no ripple ever passes another. Time is stretched near the stone: the first weeks take as much room as the later decades, which is why the slider's ticks are uneven. Each distinct ripple gets its own slice, labeled on the rim with the industry it reached. Press <b>Step</b> and the clock stops at each ripple with its card open; play or the right arrow goes on to the next.</p></div>
   <div><h3>Order, not a web</h3><p>Every step must begin after the step before it. A step that started first is busted, however related it looks.</p></div>
   <div><h3>How sure</h3><p><b>Measured</b>: moved beyond normal in the data, after the step before. <b>Timed</b>: rose in the right order, not tested against chance. <b>Reported</b>: a credible source makes the link. <b>Plausible</b>: it happened; the link is unproven. <b>Busted</b>: wrong order, contradicted, or no evidence. Steps without an exact date sit at the middle of their likely range. Every dated step since 2015 also gets an <b>attention check</b>: did Wikipedia views of the thing it names rise at that date, tested against the page's own past? It rides along on the card; it does not change the step's rating.</p></div>
   <div><h3>Found by the engine</h3><p>Ripple maps list things whose attention rose unusually after the event, found automatically among the Wikipedia articles that link to it. Attention is a lead, not a proven effect. The data: daily Wikipedia views, FRED and BLS series, Census retail sales, Zillow, Stack Overflow, US baby names and dated public records.</p></div>
@@ -714,6 +725,21 @@ function chainLevel(st) {
   if (v === "no movement") return ["plausible", "Plausible", "No unusual rise in the data we checked.", "Happened; no unusual rise in our data"];
   return ["plausible", "Plausible", why || "It happened; the causal link is unproven.", "Happened; the link is unproven"];
 }
+// where a reader can check a source: the record it names, the series we read, or a Wikipedia search for the source's own words
+const SRCURL = st => {
+  const ty = st.test && st.test.type, txt = st.source || (st.test && st.test.source) || "";
+  const m = /https?:\/\/[^\s)]+/.exec(txt); if (m) return [m[0], "Open the source"];
+  if (ty === "wiki" && st.test.articles && st.test.articles[0]) return [`https://en.wikipedia.org/wiki/${encodeURIComponent(st.test.articles[0].replace(/ /g, "_"))}`, "Wikipedia article"];
+  if (ty === "fred" && st.test.id) return [`https://fred.stlouisfed.org/series/${encodeURIComponent(st.test.id)}`, "FRED series"];
+  if (ty === "ssa") return ["https://www.ssa.gov/oact/babynames/", "SSA baby names"];
+  if (ty === "stackex") return ["https://data.stackexchange.com/stackoverflow/queries", "Stack Exchange data"];
+  if (ty === "zillow") return ["https://www.zillow.com/research/data/", "Zillow research data"];
+  if (ty === "arxiv") return ["https://arxiv.org/archive/astro-ph", "arXiv astro-ph"];
+  if (ty === "dose" || ty === "file") return ["/ripples/methods/", "How we tested it"];
+  const q = txt || st.claim || ""; if (!q) return null;
+  return [`https://en.wikipedia.org/w/index.php?search=${encodeURIComponent(q.slice(0, 160))}`, "Search Wikipedia"];
+};
+const srcP = (st, text) => { const u = SRCURL(st); return `<p class="src">${esc(text || "")}${u ? `${text ? " · " : ""}<a href="${esc(u[0])}" target="_blank" rel="noopener">${u[1]} ↗</a>` : ""}</p>`; };
 const SRC = st => ({fred:`FRED series ${st.test.id}`, stackex:"Stack Overflow new questions per month (Stack Exchange API)", zillow:"Zillow Home Value Index, Zoom towns minus US",
   arxiv:"arXiv astro-ph submissions per month", ssa:"US baby names, Social Security Administration", file:st.test.source || st.series || "an official series",
   dose:st.source || "state surveys, difference-in-differences"})[st.test.type] || "";
@@ -749,8 +775,8 @@ function fromChain(slug) {
       const span = y0 === y1 ? `${fmt(D(st.range[0])).replace(/,.*/, "")}–${fmt(D(st.range[1])).replace(/,.*/, "")}, ${y0}` : `${y0}–${y1}`;
       when = `≈ ${y0 === y1 ? fmt(D(st.onset)).replace(/ \d+,/, "") : st.onset.slice(0, 4)}<span>likely ${span}</span>`; sub = `≈ ${span}`;
     } else { when = `${fmt(D(st.onset))}<span>${sinceLabel(d)}</span>`; sub = `${fmtMonth(D(st.onset))} · ${sinceLabel(d)}`; }
-    const happened = st.test.type === "record" ? `<p class="src">${esc(st.source || st.test.source)}</p>` :
-      st.test.type === "none" ? "" : `<p class="src">${st.found ? "Wikipedia daily views: " + Object.keys(st.found).filter(k => st.found[k]).join(", ") : SRC(st)}</p>`;
+    const happened = st.test.type === "record" ? srcP(st, st.source || st.test.source) :
+      st.test.type === "none" ? srcP(st, st.source || "") : srcP(st, st.found ? "Wikipedia daily views: " + Object.keys(st.found).filter(k => st.found[k]).join(", ") : SRC(st));
     const id = `c${st.n}`;
     const parent = st.after ? (st.after === 1 ? null : `c${st.after}`) : st.branch ? null : lastMain;
     const srcLine = st.source || (st.test && st.test.source) || "";
@@ -770,15 +796,17 @@ function fromChain(slug) {
   const s0 = ch.steps[0];
   return {key:slug, kind:"chain", title:ch.title, h1:ch.title, stone:ch.title.split(/,| and | → |\s\(/)[0].trim(), iso0, items, extra:[], names,
     sub:`${hold} of ${items.length} links after the event hold up: ` + ["measured", "timed", "reported", "plausible", "busted"].filter(k => tally[k]).map(k => `${tally[k]} ${LVL[k].toLowerCase()}`).join(", ") + ". Tap a ripple to see why.",
-    first:card({when:`${fmt(D(iso0))}<span>Day 0</span>`, badge:"The event", badgeCls:"event", title:s0.claim, short:s0.note ? esc(s0.note) : "", details:`<p class="src">${esc(s0.source || s0.test.source || "")}</p>`})};
+    first:card({when:`${fmt(D(iso0))}<span>Day 0</span>`, badge:"The event", badgeCls:"event", title:s0.claim, short:s0.note ? esc(s0.note) : "", details:srcP(s0, s0.source || s0.test.source || "")})};
 }
 
 // ---------- drawing ----------
 function draw(story) {
   const svg = $("#pond"); svg.textContent = "";
   // phones: the pond is drawn about 2.4x smaller, so type and dots scale up and only the marks keep a standing label
-  const dense = (svg.clientWidth || 700) < 560;
-  const K = dense ? 1.75 : 1;
+  const scale = (svg.clientWidth || 700) / 940, touch = matchMedia("(pointer:coarse)").matches;
+  const dense = scale < 0.6;
+  const floor = touch ? (dense ? 11 : 15) : 12;  // the smallest a label may be on screen, in CSS px: a tablet held at arm's length reads 15; a phone 11, where the pond is small
+  const K = Math.max(1, floor / (13.5 * scale));
   story.dense = dense;
   const {items} = story;
   const today = daysBetween(story.iso0, new Date().toISOString().slice(0, 10));
@@ -898,7 +926,7 @@ function draw(story) {
   el("path", {d:ROCK, "clip-path":"url(#wlclip)", fill:"url(#surface)", opacity:".55"}, sWater);
   el("ellipse", {cx:0, cy:-1.5, rx:16.2, ry:6.2, fill:"none", stroke:"rgba(220,238,250,.12)", "stroke-width":.8}, sWater);
   el("path", {d:"M-15.6,-1.5 A16.2,6.2 0 0 0 15.6,-1.5", fill:"none", stroke:"rgba(230,244,252,.75)", "stroke-width":1.1, "stroke-linecap":"round"}, sWater);
-  const stoneT = el("text", {x:C.x, y:C.y + 44 * K, "text-anchor":"middle"}, stone); stoneT.textContent = story.stone; if (dense) stoneT.style.fontSize = "22px";
+  const stoneT = el("text", {x:C.x, y:C.y + 44 * K, "text-anchor":"middle"}, stone); stoneT.textContent = story.stone; stoneT.style.fontSize = `${Math.round(16 * Math.min(1.4, K))}px`;
 
   // final positions: spread across the slice, nearest first, alternating either side of its center line
   for (const k of keys) {
@@ -1050,6 +1078,7 @@ function launch(it, animate) {
 }
 function land(it) {  // the label appears only once the ripple has arrived
   it.state = "landed";
+  it.g.classList.add("on");
   it.g.setAttribute("transform", `translate(${it.pos.x},${it.pos.y}) scale(${depthK(it.plane)})`);
   it.path.setAttribute("d", `M${it.from.x},${it.from.y} L${it.plane.x},${it.plane.y}`);
   it.ring.setAttribute("d", arcPath(it.r, it.span)); it.ringS.setAttribute("d", arcPath(it.r, it.span)); it.ringH.setAttribute("d", arcPath(it.r, it.span));
@@ -1062,7 +1091,7 @@ function land(it) {  // the label appears only once the ripple has arrived
   if (REEL) $("#caption").innerHTML = `${it.mark ? `<b>◆ ${esc(it.mark)}</b> · ` : ""}${esc(it.label)} <span style="color:var(--ink-3)">· ${esc(it.lvText || LVL[it.lv])}${it.sub ? " · " + esc(it.sub) : ""}</span>`;
 }
 function hide(it) {
-  it.state = "hidden"; it.g.setAttribute("opacity", 0); it.g.setAttribute("transform", `translate(${C.x},${C.y})`); it.lab.classList.remove("on");
+  it.state = "hidden"; it.g.classList.remove("on"); it.g.setAttribute("opacity", 0); it.g.setAttribute("transform", `translate(${C.x},${C.y})`); it.lab.classList.remove("on");
   it.path.classList.add("off"); it.path.setAttribute("d", `M${it.from.x},${it.from.y} L${it.from.x},${it.from.y}`);
   [it.ring, it.ringS, it.ringH].forEach(r => { r.classList.remove("on", "flying"); r.setAttribute("d", arcPath(14, it.span)); });
   it.ring2.classList.remove("on", "flying"); it.ring2.setAttribute("d", arcPath(14, it.span)); it.glint.classList.remove("on");
@@ -1248,11 +1277,20 @@ function focus(it) {
   render();
 }
 
-let ambient = 0;
+let ambient = 0, stepMode = false;
+try { stepMode = localStorage.getItem("ko-step") === "1"; } catch {}
+function nextStop(dNow) {  // the first ripple still to arrive after this day
+  let best = null; for (const it of cur.items) if (it.d > dNow + 0.01 && (!best || it.d < best.d)) best = it; return best;
+}
 function tick(now) {
   const dt = last ? now - last : 16; last = now;
   if (playing && cur) {
-    t = Math.min(1, t + dt / (cur && cur.dur || DUR));
+    const stop = stepMode && !REEL && t >= PRE ? nextStop(daysAt(t)) : null;
+    if (stop) {  // step mode: the front goes to the next ripple in about a second and a half, holds there with its card open, and waits for the reader
+      if (!cur.goal || cur.goal.it !== stop) { let tS = 1; for (let k = 0; k <= 1000; k++) if (daysAt(k / 1000) >= stop.d + 0.5) { tS = k / 1000; break; } cur.goal = {it:stop, tS, t0:t}; }
+      const g = cur.goal; t = Math.min(g.tS, t + dt / 1500 * Math.max(0.02, g.tS - g.t0));
+      if (t >= g.tS) { cur.goal = null; setPlaying(false); render(now); if (hot !== stop) focus(stop); return requestAnimationFrame(tick); }
+    } else t = Math.min(1, t + dt / (cur && cur.dur || DUR));
     if (t >= 1) { if (REEL) { playing = false; setTimeout(next, 2000); } else setPlaying(false); }
   }
   if (cur) render(now);
@@ -1264,7 +1302,14 @@ function setPlaying(p) {
   const done = !p && t >= 1;
   $("#playico").innerHTML = p ? '<rect x="3" y="2" width="3.5" height="12" fill="currentColor"/><rect x="9.5" y="2" width="3.5" height="12" fill="currentColor"/>'
     : done ? '<path d="M8 2.5a5.5 5.5 0 1 1-5.2 3.7" fill="none" stroke="currentColor" stroke-width="2"/><path d="M1.5 2.5v4h4" fill="none" stroke="currentColor" stroke-width="2"/>' : '<path d="M4 2l10 6-10 6z" fill="currentColor"/>';
-  $("#play").setAttribute("aria-label", p ? "Pause" : done ? "Replay" : "Play");
+  $("#play").setAttribute("aria-label", p ? "Pause" : done ? "Replay" : stepMode && t >= PRE ? "Next ripple" : "Play");
+  $("#play").title = !p && stepMode && t >= PRE && !done ? "Next ripple (or press →)" : "";
+}
+function setStep(on) {
+  stepMode = on; const b = $("#stepbtn"); b.setAttribute("aria-pressed", on); b.title = on ? "Step mode is on: the clock stops at each ripple. Press play or → for the next" : "Stop at each ripple and read its card";
+  try { localStorage.setItem("ko-step", on ? "1" : "0"); } catch {}
+  if (on && cur && !playing && t < 1) setPlaying(true);  // and go to the first ripple
+  setPlaying(playing);
 }
 
 async function loadAll() {
@@ -1281,6 +1326,19 @@ function tabOf(kind, slug) {
 function renderPicker() {
   document.querySelectorAll(".tab").forEach(b => b.setAttribute("aria-selected", b.dataset.tab === tab));
   const pk = $("#picker"); pk.textContent = "";
+  const q = norm(($("#search") || {}).value);
+  if (q) {  // a search spans every tab: title, stone, year
+    const TN = {maps:"Lasting marks", stories:"Fact-checks", leads:"Engine leads"};
+    const seen = new Set(), hits = allPonds().filter(p => { const title = TABS_TITLE(p) || p.title; const key = `${p.kind}:${p.slug}`; if (seen.has(key)) return false; seen.add(key); return norm(title).includes(q) || norm(p.stone).includes(q) || (p.year && p.year === q); }).slice(0, 40);
+    $("#tabnote").textContent = hits.length ? `${hits.length} ${hits.length === 1 ? "story" : "stories"} match` : "";
+    if (!hits.length) { pk.innerHTML = `<p class="none">Nothing matches “${esc($("#search").value)}”. Try a show, a law or a year.</p>`; return; }
+    for (const p of hits) {
+      const b = document.createElement("button"); b.className = "chip"; b.dataset.k = `${p.kind}:${p.slug}`;
+      b.innerHTML = `${esc(TABS_TITLE(p) || p.title)}<span class="tabtag">${TN[tabOf(p.kind, p.slug)] || ""}</span>`;
+      b.setAttribute("aria-pressed", cur && cur.key === p.slug && cur.kind === (p.kind === "map" ? cur.kind : p.kind)); b.onclick = () => show(p.kind, p.slug); pk.appendChild(b);
+    }
+    return;
+  }
   $("#tabnote").textContent = TABNOTE[tab];
   for (const [kind, slug, name] of TABS[tab]) {
     if (kind === "chain" && !DATA.chains.some(c => c.slug === slug)) continue;
@@ -1301,7 +1359,7 @@ function renderPicker() {
 }
 // every pond we have, by the name of its stone
 function allPonds() {
-  const out = DATA.chains.map(c => ({kind:"chain", slug:c.slug, stone:c.title.split(/,| and | → |\s\(/)[0].trim(), title:c.title}));
+  const out = DATA.chains.map(c => ({kind:"chain", slug:c.slug, stone:c.title.split(/,| and | → |\s\(/)[0].trim(), title:c.title, year:(c.date || "").slice(0, 4)}));
   for (const [slug, cfg] of Object.entries(MAPS)) if (DATA.maps[slug]) out.push({kind:"map", slug, stone:cfg.stone, title:cfg.h1});
   if (DATA.disc) for (const [slug, ev] of Object.entries(DATA.disc.events)) if (ev.links && ev.links.length) out.push({kind:"map", slug, stone:ev.title, title:`${ev.title}: engine leads`});
   for (const w of actsWorks()) out.push({kind:"acts", slug:w, stone:plainWork(w), title:`${plainWork(w)}: cited in ${citedWhere(w)}`});
@@ -1321,6 +1379,7 @@ function pondChips(list, lead) {
 const TABS_TITLE = p => { const f = Object.values(TABS).flat().find(([k, s]) => k === p.kind && s === p.slug); return f ? f[2] : null; };
 function show(kind, slug, autoplay = true) {
   const ch = $("#chooser"); if (ch && !ch.hidden) { ch.hidden = true; $("#chooserbtn").setAttribute("aria-expanded", "false"); }  // picking a story closes the chooser
+  if ($("#search")) $("#search").value = "";
   const story = kind === "chain" ? fromChain(slug) : kind === "acts" ? fromActs(slug) : MAPS[slug] && DATA.maps[slug] ? fromMap(slug) : fromDisc(slug);
   for (const it of story.items) if (it.mark) {  // a lasting mark: law, institution, infrastructure, jobs, health
     it.card.cls += " marked";
@@ -1367,6 +1426,8 @@ function next() {
   const setChooser = open => { chooser.hidden = !open; cbtn.setAttribute("aria-expanded", open); };
   cbtn.onclick = () => setChooser(chooser.hidden);
   document.querySelectorAll(".known .chip").forEach(b => b.onclick = () => show(b.dataset.kind, b.dataset.slug));
+  $("#search").oninput = renderPicker;
+  $("#search").onkeydown = e => { if (e.key === "Enter") { const f = $("#picker .chip"); if (f) f.click(); } };
   // drag the stone to throw it: while the story waits at the start, the stone follows the finger and leaves from where it is let go
   (() => {
     const svgEl = $("#pond"); let dragging = false;
@@ -1390,6 +1451,7 @@ function next() {
   $("#howbtn").onclick = () => { const h = $("#how"), open = h.hidden; h.hidden = !open; $("#howbtn").setAttribute("aria-expanded", open); if (open) h.scrollIntoView({behavior:"smooth", block:"start"}); };
   $("#play").onclick = () => { if (t >= 1) { t = 0; cur.items.forEach(hide); cur.splashed = false; $("#feed").scrollTop = 0; } setPlaying(!playing); };
   $("#nextbtn").onclick = next;
+  $("#stepbtn").onclick = () => setStep(!stepMode); setStep(stepMode);
   document.querySelectorAll(".tab").forEach(b => b.insertAdjacentHTML("afterbegin", ICON[{maps:"marks", stories:"checks", leads:"leads"}[b.dataset.tab]]));
   $("#intro-icon").innerHTML = ICON.drop;
   // center the wordmark's rings on the second p's bowl once the type has loaded
