@@ -7,6 +7,8 @@
 <meta name="description" content="Drop in an event everyone remembers and watch what it changed, in the order it happened, with how sure we are of every link.">
 <meta property="og:title" content="Knock-On: what did it change?">
 <meta property="og:description" content="Watch the ripples of cultural moments spread out over time, industry by industry, with every link rated from measured to busted.">
+<meta property="og:image" content="https://bensunter.com/ripples/demo/cards/planet-earth.png"><meta property="og:image:width" content="1200"><meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
 <link rel="icon" href="/favicon.svg">
 <style>
 @font-face{font-family:"Anybody";src:url(/ripples/fonts/anybody-latin-var.woff2) format("woff2");font-weight:100 900;font-stretch:50% 150%;font-display:swap}
@@ -964,7 +966,9 @@ function next() {
   }
   const toast = m => { const t = $("#toast"); t.textContent = m; t.classList.add("on"); setTimeout(() => t.classList.remove("on"), 1800); };
   $("#share").onclick = async () => {
-    const url = `https://bensunter.com/ripples/demo/?${cur.kind === "chain" ? "c" : "m"}=${cur.key}`, title = $("#h1").textContent;
+    // featured stories have a share page with a preview card (ripples/demo/s/<slug>/); the rest link straight in
+    const featured = Object.values(TABS).flat().some(([, s]) => s === cur.key);
+    const url = featured ? `https://bensunter.com/ripples/demo/s/${cur.key}/` : `https://bensunter.com/ripples/demo/?${cur.kind === "chain" ? "c" : "m"}=${cur.key}`, title = $("#h1").textContent;
     try { if (navigator.share) { await navigator.share({title:`Knock-On: ${title}`, text:$("#sub").textContent, url}); return; } } catch { return; }
     try { await navigator.clipboard.writeText(url); toast("Link copied"); } catch { window.prompt("Copy this link", url); }
   };
