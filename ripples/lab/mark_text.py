@@ -57,7 +57,7 @@ NAMED = {"Super Size Me": "Super Size Me", "Blackfish": "Blackfish (film)", "Tig
          "Squid Game": "Squid Game", "Stranger Things": "Stranger Things", "Baby Reindeer": "Baby Reindeer", "Adolescence": "Adolescence (TV series)"}
 # named markers that are also ordinary words need a work-context word nearby (v1.1 matched the fish, the Calais camp, an idiom)
 AMBIGUOUS = {"Blackfish", "The Jungle", "Adolescence", "Stranger Things", "Mr Bates", "Tiger King", "Squid Game", "Baby Reindeer", "WarGames"}
-WORK_CTX = re.compile(r"\b(drama|series|film|documentary|programme|program|show|Netflix|ITV|BBC|Channel 4|HBO|book|novel|broadcast|episode|"
+WORK_CTX = re.compile(r"\b(drama|series|film|movie|documentary|programme|program|show|Netflix|ITV|BBC|Channel 4|HBO|book|novel|broadcast|episode|"
                       r"aired|watched|viewers|screen|television|TV|docuseries|streaming|Upton Sinclair|SeaWorld|orca|Post Office|Horizon|"
                       r"Richard Gadd|Jack Thorne|Stephen Graham|Joe Exotic|Hollywood|Matthew Broderick)\b", re.I)
 # the title a marker introduces
@@ -150,7 +150,7 @@ def resolve(title):
 # US records say "program", "show", "series", "screen" and "book" about everything (v1.3 let "adolescence" through on
 # the Foster Care Independence Act and three Federal Register notices on that alone), so for GovInfo and the Federal
 # Register an ambiguous marker needs a word that can only mean the work
-WORK_CTX_US = re.compile(r"\b(drama|film|documentary|docuseries|miniseries|Netflix|ITV|BBC|Channel 4|HBO|novel|aired|watched|viewers|television|TV|"
+WORK_CTX_US = re.compile(r"\b(drama|film|movie|motion picture|documentary|docuseries|miniseries|Netflix|ITV|BBC|Channel 4|HBO|novel|aired|watched|viewers|television|TV|starring|actor|screenwriter|"
                          r"streaming|Upton Sinclair|SeaWorld|orca|Post Office|Horizon|Richard Gadd|Jack Thorne|Stephen Graham|Owen Cooper|"
                          r"Joe Exotic|Hollywood|Matthew Broderick|Duffer)\b", re.I)
 
@@ -160,13 +160,25 @@ def work_context_ok(source, text, marker):
 
 
 def rescreen():
-    """v1.3.1: apply the current ambiguity guard to the pairs already stored, so a tightened guard needs no re-fetch."""
+    """v1.3.1: apply the current ambiguity guard to the pairs already stored, so a tightened guard needs no re-fetch.
+    v1.3.2: the first rescreen deleted pairs, so a later loosening (adding "movie": the NDAA's WarGames citations) could
+    not bring them back; GovInfo searches for ambiguous markers are redone once, and pairs are kept with a flag."""
     pairs = state.get("pairs", [])
-    keep = [p for p in pairs if p.get("marker") not in AMBIGUOUS or work_context_ok(p.get("source"), p.get("sentence") or "", p["marker"])]
-    if len(keep) != len(pairs):
-        print(f"rescreen: dropped {len(pairs) - len(keep)} pairs whose ambiguous marker lacks work context", flush=True)
-        state["pairs"] = keep
-        state["rescreened"] = {"dropped": len(pairs) - len(keep), "run": dt.date.today().isoformat()}
+    n = 0
+    for p in pairs:
+        bad = p.get("marker") in AMBIGUOUS and not work_context_ok(p.get("source"), p.get("sentence") or "", p["marker"])
+        if bad != bool(p.get("screened_out")):
+            n += 1
+        p["screened_out"] = bad
+    if n:
+        print(f"rescreen: {n} pairs changed screening; {sum(1 for p in pairs if p.get('screened_out'))} now screened out", flush=True)
+    if not state.get("rescreen_v2"):
+        done = state.get("gov_done", [])
+        redo = [k for k in done if k.split("|")[0] in AMBIGUOUS]
+        state["gov_done"] = [k for k in done if k not in redo]
+        state["pairs"] = [p for p in pairs if not (p.get("source") == "GOV" and p.get("marker") in AMBIGUOUS)]
+        state["rescreen_v2"] = dt.date.today().isoformat()
+        print(f"rescreen v2: redoing {len(redo)} GovInfo searches for ambiguous markers", flush=True)
 
 
 def record(source, mark, mark_date, url, text, marker, tier):

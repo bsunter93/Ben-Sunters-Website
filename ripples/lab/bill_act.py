@@ -134,7 +134,13 @@ def clean_us_title(t):
     """A Congressional Record section title ("BIG CAT PUBLIC SAFETY ACT", "ENDLESS FRONTIER ACT--Continued") to a search phrase."""
     t = re.sub(r"--.*$", "", t.strip())
     t = re.sub(r"\s+", " ", t)
-    return t.title() if t.isupper() else t
+    t = re.sub(r"^(the )?introduction of (the )?", "", t, flags=re.I)  # a Record heading, not part of the bill's name
+    if t.isupper():
+        t = t.title()
+        t = re.sub(r"\b(Of|And|The|For|To|In|On|At|By)\b", lambda m: m.group(1).lower(), t)
+        t = t[0].upper() + t[1:]
+        t = t.replace("'S ", "'s ").replace("’S ", "’s ")
+    return t
 
 
 def us_resolve(title, when):
@@ -165,7 +171,9 @@ def us_resolve(title, when):
         if phrase.lower() in t.lower() and lo <= date <= hi and (best is None or date < best[1]):
             best = (t, date, res.get("packageId"))
     if not best:
-        return {"act": None, "royal_assent": None, "url": None, "method": "govinfo", "note": "no public law with this title in the window"}
+        cands = [f"{(r.get('dateIssued') or '')[:10]} {r.get('title')}" for r in d.get("results", [])[:5]]
+        print("    no match; candidates:", cands, flush=True)
+        return {"act": None, "royal_assent": None, "url": None, "method": "govinfo", "note": "no public law with this title in the window", "candidates": cands}
     t, date, pid = best
     return {"act": t, "royal_assent": date, "url": f"https://www.govinfo.gov/app/details/{pid}" if pid else None, "method": "govinfo", "note": None}
 
