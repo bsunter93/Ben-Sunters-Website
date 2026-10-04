@@ -4,7 +4,7 @@ causal connective raises its score. One request a second, honest UA, stop on 4xx
 import json, re, sys
 from legacy import get, clean, sentences, links, plain, CONN, MARKISH
 SKIP = re.compile(r"plot|cast|episode|character|production|filming|music|soundtrack|release|marketing|ratings|awards|references|see also|external|notes|bibliography|further reading|synopsis|premise|development|casting|design|gameplay|track|personnel|chart|certif|home media|crew|setting|style|themes|box office|distribution|broadcast|sources|footnotes|citations", re.I)
-def mine(title):
+def mine(title, keep=None):
     d = get({"action": "parse", "page": title, "prop": "wikitext|sections", "redirects": 1})
     if "error" in d: return None, []
     wt = d["parse"]["wikitext"]["*"]; real = d["parse"]["title"]
@@ -15,7 +15,7 @@ def mine(title):
         if head != "Lead" and SKIP.search(head): continue
         txt, refs = clean(body)
         for sent in sentences(txt):
-            mk = bool(MARKISH.search(sent)); cn = bool(CONN.search(sent))
+            mk = bool(MARKISH.search(sent)) or bool(keep and keep.search(sent)); cn = bool(CONN.search(sent))
             if not mk: continue
             cands.append({"section": head, "text": plain(sent)[:400], "links": links(sent), "years": sorted(set(re.findall(r"\b(1[6-9]\d\d|20\d\d)\b", sent))), "causal": cn, "has_ref": "[ref]" in sent})
     return real, cands
