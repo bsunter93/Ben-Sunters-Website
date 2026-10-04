@@ -209,7 +209,7 @@ input[type=range]{flex:1;accent-color:var(--marigold);min-width:0}
 .facts{display:flex;flex-wrap:wrap;gap:6px 18px;margin-top:6px}
 .fact b{display:block;font:800 1.25rem/1 var(--display);font-variant-numeric:tabular-nums}
 .fact span{font-size:.74rem;color:var(--ink-3)}
-.b{font-size:.74rem;line-height:1;padding:4px 8px;border-radius:999px;border:1px solid var(--hair);white-space:nowrap;font-weight:700;letter-spacing:.02em}
+.b{font-size:.78rem;line-height:1;padding:4px 8px;border-radius:999px;border:1px solid var(--hair);white-space:nowrap;font-weight:700;letter-spacing:.02em}
 .b.event{background:var(--marigold);border-color:var(--marigold);color:#061a2e}
 .b.l-measured{border-color:var(--good);color:var(--good)}.b.l-timed{border-color:#7a5fc4;color:#7a5fc4}
 .b.l-reported{border-color:var(--ink-2);color:var(--ink)}.b.l-plausible{border-style:dashed;border-color:#a8955a;color:#8a7638}
@@ -317,6 +317,7 @@ body.reel header{max-width:760px;padding-top:22px}
   .picker{margin:6px 0 0}.chip{padding:5px 10px;font-size:.82rem}
   .wrap{padding:6px 10px 24px;gap:12px}.pondbox{padding:8px 8px 6px;border-radius:18px}
   .pondbox .hint{position:static;transform:none;margin:8px auto 2px;display:block;width:max-content;max-width:100%;font-size:.78rem;padding:7px 12px;text-align:center;white-space:normal}  /* a phone: in the flow under the pond, never over it */
+  .pondbox .hint[hidden]{display:block;visibility:hidden}  /* and when it goes, the controls stay put */
   .clock .d{font-size:1.05rem}.clock .n{font-size:.78rem}
   .legend{font-size:.78rem;gap:4px 10px;padding:4px 4px 2px}.howbtn{font-size:.78rem;padding:4px 10px}
   .nextbtn{padding:6px 10px;font-size:.8rem}.play{width:36px;height:36px}.stepbtn{padding:6px 10px;font-size:.8rem}
@@ -814,7 +815,7 @@ function fromChain(slug) {
     const shortLine = lv === "reported" ? "" : short;  // the source sits on its own line under the title; a Reported step needs no second sentence
     const pulseW = weekly && st.test.type !== "dose" ? weekly : (at && at.weekly ? at.weekly : null);
     const pulsePre = weekly && st.test.type !== "dose" && st.baseline ? st.baseline * 7 : null;  // the checker's own baseline, so the chart's peak and the card's ratio agree
-    items.push({id, parent, slice:st.slice || (st.branch ? `b${st.n}` : "main"), d, range, undated, label:st.short || shortLabel(st.claim), lv, lvText, sub, mark:lv === "busted" ? null : st.mark, short:shortLine, title:st.claim, series:pulseW ? {weekly:pulseW, pre:pulsePre} : null,
+    items.push({id, parent, slice:st.slice || (st.branch ? `b${st.n}` : "main"), d, range, undated, label:st.short || shortLabel(st.claim), lv, lvText, sub, mark:lv === "busted" ? null : st.mark, short:shortLine, srcText:srcLine, title:st.claim, series:pulseW ? {weekly:pulseW, pre:pulsePre} : null,
       card:card({when, badge:lvText, badgeCls:`l-${lv}`, title:st.claim, cls:lv === "busted" ? "busted" : "", spark:weekly ? sparkHTML(weekly, st.ref) : (lv === "measured" && at && at.weekly && at.ratio) ? sparkHTML(at.weekly, st.onset) : "", facts, short:shortLine,
         sure:howSure(st.test.type === "dose" && st.p != null ? "measured" : lv, (lv === "measured" || (st.test.type === "dose" && st.p != null)) ? {kind:st.test.type === "wiki" ? "wiki" : st.test.type === "ssa" ? "ssa" : st.test.type === "dose" ? "dose" : "series", what:st.test.type === "wiki" ? (st.test.articles || [])[0] : SRC(st) || st.series,
             when:st.onset ? fmt(D(st.onset)) : "", ratio:st.ratio, p:st.p, n:st.n_placebo, pre:st.pretrend_p}
@@ -838,7 +839,7 @@ function draw(story) {
   // phones: the pond is drawn about 2.4x smaller, so type and dots scale up and only the marks keep a standing label
   const scale = (svg.clientWidth || 700) / 940, touch = matchMedia("(pointer:coarse)").matches;
   const dense = scale < 0.6;
-  const floor = touch ? (dense ? 11 : 15) : 12;  // the smallest a label may be on screen, in CSS px: a tablet held at arm's length reads 15; a phone 11, where the pond is small
+  const floor = touch ? (dense ? 11 : 14) : 12;  // the smallest a label may be on screen, in CSS px: a tablet held at arm's length reads 15; a phone 11, where the pond is small
   const K = Math.max(1, floor / (13.5 * scale));
   story.dense = dense;
   const {items} = story;
@@ -905,11 +906,11 @@ function draw(story) {
     el("circle", {class:"ring", cx:C.x, cy:C.y, r}, rg);
     const p = PL(polar(r, TA));
     const q0 = polar(r, TA - 1.6), q1 = polar(r, TA + 1.6); el("line", {class:"threadtick", x1:q0.x, y1:q0.y, x2:q1.x, y2:q1.y}, g0);
-    if (lastRingX != null && Math.abs(p.x - lastRingX) < (dense ? 70 : 44)) continue;  // a short pond: labels would sit on each other
+    if (lastRingX != null && Math.abs(p.x - lastRingX) < (dense ? 70 : 44) * K) continue;  // a short pond: labels would sit on each other
     lastRingX = p.x;
     if (![1, 30, 365, 3653].includes(d)) continue;  // one ladder for every pond: a day, a month, a year, a decade
     const rl = el("text", {class:"ringlbl", x:p.x + 5, y:p.y - 3}, gt); rl.textContent = lbl; rl.style.fontSize = `${Math.round((dense ? 13 : 11) * K)}px`;
-    try { const b = rl.getBBox(); ringBoxes.push({x:b.x - 3, y:b.y - 2, w:b.width + 6, h:b.height + 4}); } catch {}
+    try { const b = rl.getBBox(); ringBoxes.push({x:b.x - 3, y:b.y - 2, w:b.width + 6, h:b.height + 4, soft:true}); } catch {}
   }
   const rimBoxes = [];  // rim words keep their space; ripple labels place around them
   keys.forEach(k => {  // the industry each ripple reached, outside the rim, always horizontal
@@ -917,11 +918,11 @@ function draw(story) {
     const c = n === 1 ? 0 : centre(k), sx = Math.sin(c * Math.PI / 180), cy = -Math.cos(c * Math.PI / 180), p = PL(polar(R + 24 + 22 * Math.abs(sx), c));
     const rt = el("text", {class:"rimlbl", x:p.x + (Math.abs(sx) < 0.35 ? 0 : sx > 0 ? 2 : -2), y:p.y + (cy > 0.35 ? 10 : cy < -0.35 ? -2 : 4),
       "text-anchor":Math.abs(sx) < 0.35 ? "middle" : sx > 0 ? "start" : "end"}, gt); rt.textContent = story.names[k];
-    rt.style.fontSize = `${Math.round(12 * K)}px`;
+    rt.style.fontSize = `${Math.round((dense ? 15 : 12) * K)}px`;
     try {
       let b = rt.getBBox();
       if (b.x < -112) rt.setAttribute("x", +rt.getAttribute("x") + (-112 - b.x)); else if (b.x + b.width > 812) rt.setAttribute("x", +rt.getAttribute("x") - (b.x + b.width - 812));
-      b = rt.getBBox(); rimBoxes.push({x:b.x - 4, y:b.y - 2, w:b.width + 8, h:b.height + 4});
+      b = rt.getBBox(); rimBoxes.push({x:b.x - 4, y:b.y - 2, w:b.width + 8, h:b.height + 4, soft:true});
     } catch {}
   });
   const waves = el("g", {}, plane), bands = el("g", {}, plane), rips = el("g", {filter:"url(#softwave)"}, plane), edges = el("g", {}, plane), elbls = el("g", {}, svg), nodes = el("g", {}, svg), labels = el("g", {}, svg);
@@ -945,7 +946,7 @@ function draw(story) {
   el("path", {d:ROCK, "clip-path":"url(#wlclip)", fill:"url(#surface)", opacity:".55"}, sWater);
   el("ellipse", {cx:0, cy:-1.5, rx:16.2, ry:6.2, fill:"none", stroke:"rgba(220,238,250,.12)", "stroke-width":.8}, sWater);
   el("path", {d:"M-15.6,-1.5 A16.2,6.2 0 0 0 15.6,-1.5", fill:"none", stroke:"rgba(230,244,252,.75)", "stroke-width":1.1, "stroke-linecap":"round"}, sWater);
-  const stoneT = el("text", {x:C.x, y:C.y + 44 * K, "text-anchor":"middle"}, stone); stoneT.textContent = story.stone; stoneT.style.fontSize = `${Math.round(16 * Math.min(1.4, K))}px`;
+  const stoneT = el("text", {x:C.x, y:C.y + 44 * K, "text-anchor":"middle"}, stone); stoneT.textContent = story.stone; stoneT.style.fontSize = `${Math.round(Math.max(16 * Math.min(1.4, K), 11 / scale))}px`;
 
   // final positions: spread across the slice, nearest first, alternating either side of its center line
   for (const k of keys) {
@@ -967,7 +968,7 @@ function draw(story) {
   }
   const placed = [{x:C.x - 70 * K, y:C.y - 20 * K, w:140 * K, h:70 * K}, ...rimBoxes, ...ringBoxes];  // the stone's name grows with K on a phone  // keep clear of the stone's label and the rim words
   const nMarks = items.filter(x => x.mark).length;
-  const overlaps = b => placed.some(p => b.x < p.x + p.w && b.x + b.w > p.x && b.y < p.y + p.h && b.y + b.h > p.y);
+  const overlaps = (b, soft = true) => placed.some(p => (soft || !p.soft) && b.x < p.x + p.w && b.x + b.w > p.x && b.y < p.y + p.h && b.y + b.h > p.y);
   const overlapArea = b => placed.reduce((s, p) => s + Math.max(0, Math.min(b.x + b.w, p.x + p.w) - Math.max(b.x, p.x)) * Math.max(0, Math.min(b.y + b.h, p.y + p.h) - Math.max(b.y, p.y)), 0);
   // lasting marks and measured steps claim their label space first; the rest take what is left, and a label with no
   // clear spot waits for a hover or a tap instead of piling onto its neighbors (a crowded century still reads)
@@ -1018,19 +1019,23 @@ function draw(story) {
     const shown = wrapLabel(it.label, 26, 2);
     const tx = el("text", {x:0, y:0}, lab); if (K > 1) tx.style.fontSize = `${(13.5 * K).toFixed(1)}px`;  // the text floor: see K above
     shown.forEach((ln, k) => { const ts = el("tspan", {x:0, dy:k ? 15 * K : 0}, tx); ts.textContent = ln; });
-    const sub = el("text", {class:"s", x:0, y:15 * K * shown.length}, lab); sub.textContent = it.mark ? `◆ ${it.mark} · ${it.sub || ""}` : (it.sub || "");  // the mark, then the date and the delay
-    if (K > 1) sub.style.fontSize = `${(11 * K).toFixed(1)}px`;
+    const sub = el("text", {class:"s", x:0, y:14 * K * shown.length}, lab); sub.textContent = it.mark ? `◆ ${it.mark} · ${it.sub || ""}` : (it.sub || "");  // the mark, then the date and the delay
+    if (K > 1) sub.style.fontSize = `${(10.5 * K).toFixed(1)}px`;
     const bb = lab.getBBox(), pad = 5 * K, bw = bb.width + pad * 2, bh = bb.height + pad * 2, g1 = 12 * K;
     const right = [g1, -bh / 2], left = [-g1 - bw, -bh / 2], up = [-bw / 2, -bh - g1], down = [-bw / 2, g1 + 1];
     const rUp = [g1, -bh - 6], rDn = [g1, 6], lUp = [-g1 - bw, -bh - 6], lDn = [-g1 - bw, 6];
     const order = it.pos.x >= C.x ? [right, rUp, rDn, up, down, left, lUp, lDn] : [left, lUp, lDn, up, down, right, rUp, rDn];
     let best = null, least = Infinity, fallback = order[0], far = false;
     const far2 = sp => [sp[0] * 2.4 + (sp[0] > 0 ? 6 : sp[0] < 0 ? -6 : 0), sp[1] * 2.4 + (sp[1] > 0 ? 6 : sp[1] < 0 ? -6 : 0)];
-    for (const sp of (it.showLabel ? [...order, ...order.map(far2)] : order)) {
-      const b = {x:it.pos.x + sp[0], y:it.pos.y + sp[1], w:bw, h:bh};
-      const inside = b.x > -118 && b.x + bw < 818 && b.y > VB.top && b.y + bh < VB.bottom;
-      if (inside && !overlaps(b)) { best = sp; far = Math.hypot(sp[0], sp[1]) > Math.hypot(...order[0]) * 1.8; break; }
-      const a = overlapArea(b) + (inside ? 0 : 1e6); if (a < least) { least = a; fallback = sp; }
+    const cands = it.showLabel ? [...order, ...order.map(far2)] : order;
+    for (const soft of [true, false]) {  // first clear of everything; failing that, clear of other labels and the stone, over a rim word if it must
+      for (const sp of cands) {
+        const b = {x:it.pos.x + sp[0], y:it.pos.y + sp[1], w:bw, h:bh};
+        const inside = b.x > -118 && b.x + bw < 818 && b.y > VB.top && b.y + bh < VB.bottom;
+        if (inside && !overlaps(b, soft)) { best = sp; far = Math.hypot(sp[0], sp[1]) > Math.hypot(...order[0]) * 1.8; break; }
+        if (soft) { const a = overlapArea(b) + (inside ? 0 : 1e6); if (a < least) { least = a; fallback = sp; } }
+      }
+      if (best) break;
     }
     const free = !!best; if (!best) best = fallback;
     if (free && far) {  // a label placed farther out gets a thin leader back to its ripple
@@ -1337,7 +1342,7 @@ function focus(it) {
   $("#pond").classList.add("focus");
   if (it.cardEl) { it.cardEl.classList.add("hot"); if (!REEL && window.innerWidth > 860) it.cardEl.scrollIntoView({block:"nearest", behavior:"smooth"}); }
   if (!REEL && window.innerWidth <= 860) {  // on a phone the card is screens below: say what this ripple is, right under the pond
-    const cap = $("#caption"); cap.innerHTML = `${it.mark ? `<b>◆ ${esc(it.mark)}</b> · ` : ""}<b>${esc(it.label)}</b> <span style="color:var(--ink-3)">· ${esc(it.lvText || LVL[it.lv])}${it.sub ? " · " + esc(it.sub) : ""}</span>${it.short ? `<br>${it.short}` : ""}<a href="#" class="readcard">Read the card ↓</a>`;
+    const cap = $("#caption"); const capLine = it.short || (it.srcText ? esc(it.srcText) : ""); cap.innerHTML = `${it.mark ? `<b>◆ ${esc(it.mark)}</b> · ` : ""}<b>${esc(it.label)}</b> <span style="color:var(--ink-3)">· ${esc(it.lvText || LVL[it.lv])}${it.sub ? " · " + esc(it.sub) : ""}</span>${capLine ? `<br>${capLine}` : ""}<a href="#" class="readcard">Read the card ↓</a>`;
     cap.classList.add("on"); const rc = cap.querySelector(".readcard"); if (rc) rc.onclick = e => { e.preventDefault(); if (it.cardEl) it.cardEl.scrollIntoView({block:"start", behavior:"smooth"}); };
   }
   for (let k = 0; k <= 1000; k++) if (daysAt(k / 1000) >= it.d + 0.5) { if (k / 1000 > t) t = k / 1000; break; }
