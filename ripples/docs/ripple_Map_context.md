@@ -1,11 +1,12 @@
-# Ripple Map: context brief (updated 2026-10-04, 03:30 UTC)
+# Ripple Map: context brief (updated 2026-10-04, 06:30 UTC)
 
 Standalone context for anyone (person or new chat) picking up Ripple Map. It covers the vision, the current status,
 what we learned, pitfalls, open gaps and next steps. The operational runbook with exact commands is
 `ripples/HANDOFF.md`, and the experiments plan is `ripples/docs/experiments.md`.
 
 - Live site:
-  - https://bensunter.com/ripples/demo/: the product prototype, branded **Ripple** since 2026-10-03. Three tabs: Lasting marks (maps that end in a law, an institution or a public-health change), Fact-checks (viral and historical chains checked link by link), Engine leads (what the engine found on its own).
+  - https://bensunter.com/ripples/demo/: the product, branded **Ripple** since 2026-10-03. It opens on Tiger King → the Big Cat Act. One chooser with three kinds: Lasting marks (maps that end in a law, an institution or a public-health change), Fact-checks (viral and historical chains checked link by link), Engine leads (what the engine found on its own). Every featured story has a share page at `/ripples/demo/s/<slug>/` with its own preview image; `?c=<slug>&s=<step>` opens on one ripple, stopped.
+  - `ripples/dist/ripple-standalone.html`: the whole demo in one file for offline review; `ripple-review-kit.zip` beside it.
   - https://bensunter.com/ripples/discover/: every test and its evidence.
   - https://bensunter.com/ripples/discover/maps/: 11 generated ripple maps.
   - https://bensunter.com/ripples/pond/: the original explorer, parked.
@@ -128,18 +129,30 @@ deep enough for an adult to browse rabbit holes.
   temperatures, so the eye knows where to play and where to read.
 - **Three colors mean something and nothing else uses them:** ember for the stone's lasting marks, moss for measured
   links, coral for busted links. Everything else is water and paper.
-- **One stone, one splash.** A small mossy river rock falls in. Each outcome is a ripple of its own: an arc that
-  spreads out to its moment in time and stays, styled by how sure we are, with a living crest that lifts and falls.
-  No dots, no connector lines; the thread back to the stone appears only when you tap a ripple.
-- **Lasting marks are pebbles** resting on the water, lit from beneath: the only stones on the pond are the one
-  thrown and the things that stuck.
-- **Time runs along a thread** on the right-hand axis, with ticks at a week, a year, ten years.
+- **One stone, one splash, one wavefront (revised Oct 4).** A matte stone is thrown from the near bank (drag and
+  release to throw it yourself) and lands with a splash. One wavefront leaves it and moves outward; each outcome
+  blooms where the front is when it happens and stays, so no ripple ever passes another. The pond is an instrument:
+  hairline rings labeled 1 day, 1 month, 1 year, 10 years; a vignette for depth; the water's light and caustics
+  under a frame budget the engineer-role tester measured.
+- **The pond's own glyphs (Oct 4).** A lasting mark is a hexagon with a lit marigold core, on the pond, in the tally,
+  the card pill, the caption and the legend. A measured step carries a crosshair; a plausible step a dashed orbit.
+  Lit connectors appear only for the ripple you tap, colored by what they lead to.
+- **The title carries the grade.** "Stone → mark" in the title is drawn from the weakest link on the way to the mark:
+  solid, dashed or dotted, with the subtitle saying it in words, and under it one editorial sentence, "It wasn't the
+  only reason: …", naming the other things going on.
+- **Ten seconds to the mark.** The trailer plays the lasting marks and measured steps loud and the rest quiet, so every
+  story lands inside ten seconds; Step walks every step; at rest the quiet ones wake.
+- **Time runs along the rings**, read against the labeled ladder; a pulse chart on each card aligns the spikes.
 - **Type:** Fraunces for names and the big year; IBM Plex Sans for reading. The wordmark is lowercase *ripple*, the
   *i* the stone, rings spreading from the second *p*.
 - **Depth:** tap a ripple for its card, "How sure?" in plain words and the source; "Same stone, other ponds" links
   stories that share a stone; a ripple that is itself a stone links to its own pond.
-- **Quiet extras:** an opening screen on still water, hover previews on desktop, a drop sound that is off by default,
-  a share card for every featured story.
+- **Quiet extras:** an opening screen on still water (skipped by any deep link), hover previews on desktop, a drop
+  sound that is off by default, a share card and a share page for every featured story, "Share this step" on every
+  card, a run stamp ("Checked Oct 4, 2026 with checker b0aa6fd") on every measured card.
+- **On a phone (Oct 4):** the pond comes first (its top at 145 px on a 390-px phone, down from 290); the tally and the
+  story chooser sit under it with the controls; the subtitle shows two lines until tapped; the caption sits over the
+  pond and a tap on it puts the pond back; no two tap targets answer for each other.
 
 ## 1c. Aspirations (what "great" looks like; updated 2026-10-03)
 
@@ -156,16 +169,30 @@ deep enough for an adult to browse rabbit holes.
 5. **Live mode.** "Watch the ripples arrive": maps that fill in as a new event unfolds (the Trends archive has been
    collecting since Sep 29).
 6. **Any event.** Type an event and get its map.
-7. **Shareable.** A clip and a post for LinkedIn now; share cards (the ghost-stone comparison, the surprising landing)
-   later.
+7. **Shareable.** Done for v1: a launch kit (clips, stills, posts) in `ripples/launch/`, a share card and page per
+   story, a link to any single step. Later: the ghost-stone comparison card.
 8. **A verify mode.** Paste any viral "butterfly effect" claim and get it checked link by link. This already works.
 
-## 2. Current status (one screen, 2026-10-04, 03:30 UTC)
+## 2. Current status (one screen, 2026-10-04, 06:30 UTC)
 
-**In one line:** the engine now finds work → law trails on its own from the records (Hansard, the Federal Register,
-the Congressional Record), dated to the day with the sentence that makes the link; the demo is Ripple, with a dozen
-new maps that end in a law; verification lags discovery, and a person still screens the finds. Rating: 6.5 of 10 (was
-5.5 on Oct 2, 4 on Oct 1); the agreed target is 7.5.
+**In one line:** Ripple is release-ready. The engine finds work → law trails from the records (Hansard, the Federal
+Register, the Congressional Record), dated to the day with the sentence that makes the link; the catalog is 79 checked
+chains and 11 maps, skewed to US stories since batch 16; the pond is an instrument, every story lands its mark inside
+ten seconds, every link is graded, every US law links to its statute, and every story says what else was going on.
+Twelve simulated testers across five rounds took it from 5.5 to **8.2** and voted to release; the builder's own rating
+is **8.5** (4 on Oct 1, 5.5 on Oct 2, 6.5 on Oct 3, 7.5 on the morning of Oct 4). What remains is the thing nobody in
+the room can supply: strangers.
+
+**The rating trail (all testers are simulated personas; three are modeled on public executive roles and labeled so):**
+
+| Round | Who | Before → after |
+|---|---|---|
+| 1 (Oct 3 night) | Dani, Priya, Walter | 4, 5, 5 |
+| 2 | Marcus, Yuki, Earl | 5, 6, 6 |
+| 3 | Aisha, Tom, Lena | 5, 7, 6 → 6.5, 8, 7 after fixes |
+| 4 (Oct 4) | the nine returning; Kurian, Musk, Zuckerberg personas | 5.4 → 7.7; 6, 5, 6; all twelve 7.2 |
+| Roundtable | all twelve, Musk persona moderating | nine combined ideas, five ranked and built (`roundtable_v1.md`) |
+| Final (Oct 4, 05:00) | all twelve | **8.2**, verdict release (`roundtable_final.md`) |
 
 **What a ripple is:**
 - **A time-ordered chain of outcomes** (the ordering rule, ledger 1497).
@@ -193,11 +220,27 @@ new maps that end in a law; verification lags discovery, and a person still scre
 | The Prohibition throughline (owner's long-horizon test) | Built; 26 steps, every rung tried | Crime, repeal, drinking's return and the cirrhosis peak, AA and NIAAA, the teen decline (MTF: 72% → 50% → 29%), young adults (Gallup; BRFSS 18–24: 55.5% → 46.0%, 2011–2025), NIAAA per-capita ethanol 1970–2022. Each popular catalyst for the Gen Z decline is a dated step: the claim that it *started* the decline is busted by order against the 1980 onset; legal cannabis fails the dose-response test (within chance); Dry January's January surge is within chance against other Januaries; the Surgeon General's advisory is the one **measured** step (attention to alcohol and cancer 4.2×, p = .035). 17 reported, 4 busted by order, 2 within chance, 1 measured |
 | Engine leads in the demo | Two kinds | Attention leads (18 qualified, 6 with outcomes) and **the legislature's citations**: every Act or public law whose debate named a work, one pond per work (Cathy Come Home, Mr Bates, Silent Spring, Adolescence; Tiger King → the Big Cat Public Safety Act from the Congressional Record), with the sentence and links to Hansard or the Record and to legislation.gov.uk or govinfo.gov |
 | Two-hop discovery from attention | Not pursued further | Attention second hops found siblings and curiosity; records are the route |
-| **Round four and the roundtable (Oct 4)** | Merged (PR #79) and on the branch | Nine returning testers re-rated the build: 5.4 → 7.7 on average, every one higher; three new simulated executive-role personas (6, 5, 6) asked about reproducibility, engineering cost and the growth loop. A simulated roundtable of all twelve produced nine combined ideas and ranked five (`roundtable_v1.md`). Built the same day: the ten-second trailer (autoplay blooms the marks and measured steps; the rest land quiet), the title's arrow drawn from the weakest link, share-a-step links and `?s=` deep links, a trend's card naming the claims made about it, a proper Not-yet style, Step as a button, run stamps on measured cards. The truncation test (`truncation_v1.md`) ran in CI: 13 measured grades, 0 flips at three cutoffs; the placebo pool is fixed before the step, so grades do not drift. Also fixed: the tap target (the render loop had been shrinking it every frame), the phone caption overlay, deep links opening on the intro, tabs that navigated, idle redraws |
-| **The three fixes before release (Oct 4, 05:50 UTC)** | On the branch | The phone's first screen: the tally and the story chooser move under the pond, the pond's top falls from 290 to 145 px on a 390-px phone; twenty-two US law steps link to the statute on govinfo, each confirmed against the PDF; one editorial "It wasn't the only reason" sentence per story in `demo/context.json`, shown under the title and carried in the share text. Final roundtable: 8.2 average, verdict release. See `final_three_v1.md`. |
-| **The night of Oct 3–4: three persona rounds, the pond as an instrument, the US catalog** | On the branch, PR pending | Round one (Dani, Priya, Walter) closed in PR #74; round two (Marcus, Yuki, Earl: 5, 6, 6) closed in PRs #75–#76; round three (Aisha the data journalist, Tom the retired machinist, Lena the student: 5, 7, 6 before fixes; 6.5, 8, 7 on the first re-test) drove the last pass. What changed: the pond redrawn as an instrument (a flat field, a labeled log time grid, a matte stone, grade in stroke weight and pattern, a marker and a dated label on every ripple, diamonds for marks, labels that place marks first and may sit over a rim word rather than vanish); the spikes chart above the cards (every attention series aligned at its own step, log y, the checker's baseline, a palette with none of the grade hues); real source links or none (190 record links across 41 chains, the source line on the card's face, engine-found cards linking their article and the pageviews tool); twelve US chains first in the catalog (The Jungle, the Triangle fire, the Dust Bowl, Sputnik, Unsafe at Any Speed, the Cuyahoga fire, Love Canal, Three Mile Island, the Exxon Valdez, the hot-coffee case, Columbine, Flint; 115 steps, every busted claim by design, checked in CI); honest p wording at the floor; "What followed and stayed … order, not proof of cause" under the title; Step mode fixed twice; touch drag fixed; a phone caption and a way back to the pond. Reports verbatim: `user_tests_v1.md`, `user_tests_v2.md`, `user_tests_v3.md` |
+| **Round four and the roundtable (Oct 4)** | Live (PRs #79, #80) | Nine returning testers re-rated the build: 5.4 → 7.7 on average, every one higher; three new simulated executive-role personas (6, 5, 6) asked about reproducibility, engineering cost and the growth loop. A simulated roundtable of all twelve produced nine combined ideas and ranked five (`roundtable_v1.md`). Built the same day: the ten-second trailer (autoplay blooms the marks and measured steps; the rest land quiet), the title's arrow drawn from the weakest link, share-a-step links and `?s=` deep links, a trend's card naming the claims made about it, a proper Not-yet style, Step as a button, run stamps on measured cards. The truncation test (`truncation_v1.md`) ran in CI: 13 measured grades, 0 flips at three cutoffs; the placebo pool is fixed before the step, so grades do not drift. Also fixed: the tap target (the render loop had been shrinking it every frame), the phone caption overlay, deep links opening on the intro, tabs that navigated, idle redraws |
+| **The three fixes before release (Oct 4, 05:50 UTC)** | Live (PR #82) | The phone's first screen: the tally and the story chooser move under the pond, the pond's top falls from 290 to 145 px on a 390-px phone; twenty-two US law steps link to the statute on govinfo, each confirmed against the PDF; one editorial "It wasn't the only reason" sentence per story in `demo/context.json`, shown under the title and carried in the share text. Final roundtable: 8.2 average, verdict release. See `final_three_v1.md`. |
+| **The night of Oct 3–4: three persona rounds, the pond as an instrument, the US catalog** | Live (PRs #74–#78) | Round one (Dani, Priya, Walter) closed in PR #74; round two (Marcus, Yuki, Earl: 5, 6, 6) closed in PRs #75–#76; round three (Aisha the data journalist, Tom the retired machinist, Lena the student: 5, 7, 6 before fixes; 6.5, 8, 7 on the first re-test) drove the last pass. What changed: the pond redrawn as an instrument (a flat field, a labeled log time grid, a matte stone, grade in stroke weight and pattern, a marker and a dated label on every ripple, diamonds for marks, labels that place marks first and may sit over a rim word rather than vanish); the spikes chart above the cards (every attention series aligned at its own step, log y, the checker's baseline, a palette with none of the grade hues); real source links or none (190 record links across 41 chains, the source line on the card's face, engine-found cards linking their article and the pageviews tool); twelve US chains first in the catalog (The Jungle, the Triangle fire, the Dust Bowl, Sputnik, Unsafe at Any Speed, the Cuyahoga fire, Love Canal, Three Mile Island, the Exxon Valdez, the hot-coffee case, Columbine, Flint; 115 steps, every busted claim by design, checked in CI); honest p wording at the floor; "What followed and stayed … order, not proof of cause" under the title; Step mode fixed twice; touch drag fixed; a phone caption and a way back to the pond. Reports verbatim: `user_tests_v1.md`, `user_tests_v2.md`, `user_tests_v3.md` |
 | **The demo after the first persona round (PR #74, merged 00:10 UTC)** | Live | One wavefront leaves the stone and moves outward; each ripple blooms where the front is when it happens and stays, so no ripple passes another (the owner's "inner ripples surpass outer ripples" complaint). The stone is thrown from the near bank (drag and release to throw it yourself), lands with a splash and a sound. Header is one bar; the chooser panel holds a "start with one you know" row, tabs and a search box across all tabs. A **Step** button stops the clock at each ripple with its card open. Every card's source line ends in a link (the article or series read, the methods page, or a Wikipedia search for a named record). Labels have a floor in screen pixels on tablets and phones. Three persona reports, verbatim, with an actions table every row of which is now closed: `ripples/docs/user_tests_v1.md`. A second round with three new personas (a 24-year-old warehouse worker on an Android phone; a 42-year-old history teacher on a projector and Chromebooks; a 58-year-old colorblind dispatcher on a 1366×768 laptop at 125%) is running |
 | The demo | Live as Ripple | Isometric pond that is the page; a mossy stone; each outcome its own living ripple with a crest; pebbles for lasting marks; paper feed; wordmark and opening screen; two-tone icons; share cards and share pages; "Same stone, other ponds" (PRs #57–#65 and today's branch). Labels now place by priority, keep clear of the rim words, wrap to two lines, and wait for a hover when a pond is crowded, so a 17-ripple century and an 18-Act map read cleanly. Cards explain dose-response steps and carry the attention check. Awaiting the owner's review |
+
+**Since Oct 4, 00:30 (all live on main):**
+- **Round two and three fixes** (PRs #75–#78): the pond as an instrument (rings, ladder, matte stone, vignette, one
+  pulse every seven seconds), label priority and the text floor, the 44-px tap target, the phone caption over the pond,
+  the pulse chart aligned at each step, deep links that skip the intro, the run stamp.
+- **The US catalog (batch 16):** twelve US chains from The Jungle to Flint, 185 then 186 source links verified live
+  against Wikipedia and the statutes (`sources_pass_v1.md`).
+- **Round four** (PR #79): the nine returning testers and three executive-role personas; `user_tests_v4.md`.
+- **The roundtable's five ideas** (PR #80): the ten-second trailer, the weakest-link arrow in the title, share a step,
+  the run stamp gated on the truncation test (13 measured grades, 3 cutoffs, 0 flips; `truncation_v1.md`), Step
+  follows the argument (the claims line on the trend card). Also the water's atmosphere (caustics, vignette, pulse).
+- **The pond's glyphs and exclusive taps** (PR #81): hexagon, crosshair and dashed orbit; a tap goes to the nearest
+  ripple; the final roundtable; `data_sources_v2.md` (thirteen candidate APIs ranked; all blocked from the container).
+- **The three fixes before release** (PR #82): the phone's first screen, the statutes on govinfo, "It wasn't the only
+  reason" (`final_three_v1.md`).
+- **Launch kit v2** (this pass): re-cut on the release build, with vertical clips for the first time.
 
 **Since Oct 3 morning:**
 - The records route built, debugged four times by reading one known case each time, and passed.
@@ -214,7 +257,7 @@ new maps that end in a law; verification lags discovery, and a person still scre
 - **20:00–00:30 (Oct 4):** ocean palette, the lake scene, ripple height and splash; the portable review kit; the
   one-bar header; the first persona round and its fixes (the thrown stone, the wavefront, the scaled clock, phone
   taps, the must-precede rule for catalyst claims); then the open items closed (Step mode, search, source links,
-  the text floor). PRs #66–#74 merged. The owner's round-2 personas running.
+  the text floor). PRs #66–#74 merged.
 
 ## 3. Learnings
 
@@ -281,6 +324,27 @@ new maps that end in a law; verification lags discovery, and a person still scre
 - **A Wikipedia route has a structural ceiling:** a law without its own article (the Offences Act, the Big Cat Act)
   cannot be reached through article links at all.
 
+**New since Oct 4 (the persona rounds and the release pass):**
+- **Verify each persona's own item in the browser before the persona speaks.** The final roundtable's one real find
+  (tap targets swallowing their neighbors) came from a measurement, not an opinion. Opinions converged; measurements
+  disagreed with them.
+- **A tap target's size is not its exclusivity.** 44 px held everywhere and three of eleven taps still went to the
+  neighbor on a dense pond. The fix is a nearest-center rule, not a bigger circle.
+- **The phone's first screen is a budget.** Header pixels above the pond are the single number the growth-role
+  persona watched; moving the tally and the chooser under the pond halved it without losing anything.
+- **Drift was a question to settle, not to design around.** The truncation test (0 flips at three cutoffs) made the
+  "grade with a history" UI unnecessary; the run stamp is a constant, not a disclaimer.
+- **Say what else was going on.** One editorial sentence under the title does more for honesty than any grade color;
+  it is also the line a journalist or teacher quotes.
+- **The statute beats the article.** govinfo's link service resolves a Statutes at Large cite to the page scan for
+  every volume back to 1789; public-law links work only from the 104th Congress. Scans before 1951 have no readable
+  text layer, so confirm those by granule boundary and say so.
+- **Decoration is the first thing testers cut.** Glass buttons, torn paper and photographic water were all proposed
+  and all declined by the same testers who asked for the rigor to show; the icon system was the one thing taken.
+- **Simulated executives are useful and must stay labeled.** The three persona reviews asked the reproducibility,
+  frame-budget and growth-loop questions no fictional tester asked; every mention says "simulated persona modeled on
+  the public role of …; not his words".
+
 ## 4. Pitfalls (operational, learned the hard way)
 
 **Database load**
@@ -341,53 +405,75 @@ new maps that end in a law; verification lags discovery, and a person still scre
 - The Hansard API highlights the match with `<em>` tags: collapse whitespace before matching text.
 - legislation.gov.uk's title feed answers across years: check the Act's own year in its id.
 
-## 5. Blockers and bottlenecks (2026-10-03, 17:00 UTC)
+**Browser and phone (Oct 4)**
+- **A phone caption over the pond absorbs every later tap.** The tap test read "all taps go to the first ripple" until
+  the test dismissed the caption; a tap on the caption body now clears it. Test harnesses must clear state between taps.
+- **An SVG `<text>` has no `offsetTop`.** Position overlays from `getBoundingClientRect`, and measure a hidden element
+  only after `display:block`.
+- **A render loop that resets an attribute each frame** (the halo radius) silently undoes a one-time size; give the
+  tap target its own element.
+- **`quantized time` can skip a stop:** hold the goal on the story (`cur.goal`) instead of recomputing from `t`.
+- **Unicode glyphs are not portable** (U+2B22 hexagon); draw the mark inline as SVG.
+- **Patch scripts that assert before writing** fail safely but silently; print what was replaced.
+
+**govinfo (Oct 4)**
+- `link/statute/{vol}/{page}` redirects to the granule PDF; `link/plaw` returns 400 before the 104th Congress; the
+  metadata (`mods.xml`) route returns 500 for old granules; `api.govinfo.gov` with the shared demo key is rate-limited
+  (429). The project's `DATA_GOV_KEY` is a GitHub secret and may only be used from a workflow.
+
+## 5. Blockers and bottlenecks (2026-10-04, 06:30 UTC)
 
 **Blockers**
-1. **Verification lags discovery, less than this morning.** Every dated post-2015 step now gets an attention check
-   where an article exists; marks older than 2015 still rest on records, and outcome series beyond attention are
-   scarce (the youth drinking tables stop in 2017).
-2. **A person still screens the finds, with a scorer beside them.** cite_score v1 labels citations with .73
-   precision and .89 recall on 22 grades; the product says "cited as a reason" or "mentioned in passing" from it. A
-   model-based classifier would be the next step and needs a key the project does not hold.
-3. **Free outcome data is patchy** for charts, sales, tourism and app downloads.
+1. **No strangers yet.** Five rounds of simulated testers converged at 8.2; the number that matters is a first-time
+   visitor's. Release is the next experiment, and the launch kit is cut.
+2. **Verification lags discovery for pre-2015 marks.** Every dated post-2015 step gets an attention check; older marks
+   rest on records and statutes. No free source gives a general pre-2015 attention baseline (`data_sources_v2.md`).
+3. **A person still screens the finds**, with cite_score v1 (.73 precision, .89 recall on 22 grades) beside them. A
+   model-based classifier needs a key the project does not hold.
+4. **The context sentences are one author's.** Ninety "It wasn't the only reason" lines were written to be checkable
+   and have not been checked by a second reader.
 
 **Bottlenecks**
-1. Wikidata SPARQL reliability; Wikimedia politeness; per-title pageviews that do not follow renames.
-2. legislation.gov.uk explanatory notes: the paths tried return 404 for everything but recent primary Acts; the Atom
-   title feed is the only working door.
-3. The container cannot reach Wikipedia, Wikidata, FRED, parliament.uk or GovInfo; all fetching runs on GitHub Actions,
-   so each fix costs a run (15–90 minutes).
-4. BigQuery sandbox cap (204.8 GiB a day; no billing).
+1. The container cannot reach Wikidata, FRED, parliament.uk, api.govinfo.gov or any of the thirteen candidate data
+   hosts; Wikipedia, legislation.gov.uk, govinfo's link service and pageviews.wmcloud.org are reachable since the
+   owner whitelisted them. Everything else runs on GitHub Actions, one run per fix.
+2. The checker runs on branches, not on main or a schedule (the Kurian persona's standing note).
+3. "Not yet" (a mark dated in the future) is a regular expression in the page, not a grade in the checker.
+4. The trailer costs about 107 ms/s of task time in headless Chromium (32 at rest); the render loop still asks for a
+   frame about thirty times a second while nothing moves.
+5. BigQuery sandbox cap (204.8 GiB a day; no billing).
 
 ## 6. Immediate next steps (in order)
 
-1. **The owner's review** of the branch: the readable maps, the citation reasons, the dose-response step, the
-   attention checks; then merge and the LinkedIn asset.
-2. **Round 2 of the citation grades:** `ripples/docs/cite_grades_v2.md` holds 30 blind citations for the owner; the
-   scorer is re-scored on 52 once graded. The 33 steps still without an article are mostly things with no article
-   (lure modules, rents, R&D shifts).
-3. **More rungs:** a Bill → Public Law resolver for the US (GovInfo "related"); a second dose-response (Dry January
-   by country; the Surgeon General advisory by state attention); a second blind round scored against cite_score.
-4. **The screen beyond rules:** a second grade set from the owner (30 citations), then a model-based classifier if
-   a key becomes available.
-5. **Nested stones:** Prohibition's marks (the 21st Amendment, AA, NIAAA) as chains of their own, so the throughline
-   links down into them.
-6. **The look to sign-off, then LinkedIn:** living crests and the stone; the reel (`?reel`) and the post, led by a
-   lasting-mark chain plus one busted viral claim.
-7. **Live mode** on new events with the Trends archive and the records route (Hansard is live within a day).
+1. **Release.** Post from the launch kit (`ripples/launch/`, `launch_v2.md`): LinkedIn with the clip, Show HN
+   mid-morning Eastern on a weekday, Reddit the same day, the teacher and newsroom emails. Reply to every substantive
+   comment with the story's share page.
+2. **Watch the first week** for the four dimensions named in the probability estimate: a teacher or newsroom using it
+   (60%), a front page (35%), an outside correction or a suggested stone (25%), a return visit (15%).
+3. **The first-week fixes the final roundtable named, none blocking:** the legend under a 614-px fold; the caption's
+   height on a 375-px phone; quiet trailer dots on a projector; the claims line on the decline cards as well as the
+   peak; Tylenol's links and the 1983 Act; the Mr Bates premise sentence.
+4. **Governance:** run the checker on main and on a schedule; make "Not yet" a checker grade; a govinfo API pass from
+   a workflow to confirm the seven pre-1951 statute links by title.
+5. **Data:** USDA NASS, Congress.gov and SEC EDGAR full-text search, in that order (1.5, 2 and 1.5 days), probed from
+   a workflow since the container cannot reach them.
+6. **Content:** a second reader for `context.json`; the long-story label density on Prohibition; a suggest-a-stone box
+   and a stone of the day once there are visitors to use them.
+7. **Engine:** round two of the citation grades (`cite_grades_v2.md`); a second dose-response; nested stones
+   (Prohibition's marks as chains of their own); live mode on new events once marks have time to form.
 
-## 6a. Open questions (2026-10-03, 17:00 UTC)
+## 6a. Open questions (2026-10-04, 06:30 UTC)
 
-- How often is a parliamentary citation a cause rather than an illustration? The owner's 22 grades calibrate
-  cite_score v1 (24 reason / 13 context / 43 aside across 80 pairs); a second blind round should be scored against it.
-- Dose-response: the cannabis catalyst is within chance for young adults and all adults. Is the Gen Z decline
-  over-determined, or is the exposure that matters not state-shaped (phones, prices, health messaging)?
-- Where is the line between "the engine found it" and "we assembled it" in the product's own words? Today: the
-  engine finds and dates the citations; a person keeps the real ones and writes the chain.
-- Is a reported-only map (no measured step) worth showing at all, or should every map carry at least one measured
-  ripple before it leads a tab?
-- Is live mode compelling before marks have had time to form?
+- Which of the four release dimensions lands first, and does any land at all? The estimate is about 70% for at least
+  one.
+- How often is a parliamentary citation a cause rather than an illustration? cite_score v1 is calibrated on 22 grades;
+  a second blind round should be scored against it.
+- Dose-response: the cannabis catalyst is within chance. Is the Gen Z decline over-determined, or is the exposure that
+  matters not state-shaped?
+- Should the "It wasn't the only reason" line ever be generated (from the records, from the engine's own second
+  stones) rather than written? Today it is editorial by design.
+- Is a reported-only map worth leading a tab, or should every lead carry at least one measured ripple?
+- Where is the line between "the engine found it" and "we assembled it" in the product's own words?
 
 ## 7. Rules that never change
 
@@ -413,3 +499,10 @@ new maps that end in a law; verification lags discovery, and a person still scre
 - A citation in a record is a reported link, never measured. Measured means a placebo test on data; it shows an unusual
   rise in the right order, not cause. Nothing is dressed as more certain than its test.
 - Every search runs under a rule fixed before it starts; a failed rule is reported as failed, with the diagnosis.
+- Simulated testers are simulated and say so. A persona modeled on a public figure is labeled "simulated persona
+  modeled on the public role of …; not his words" wherever it appears.
+- No model identifiers in commits, pull requests, code comments or any pushed artifact.
+- No Google billing. The private `RIPPLE_MAP_CONTEXT.md` in the session scratchpad is never committed.
+- Domains are reached only when the owner has whitelisted them; a 403, 429 or 503 is a stop, never a retry with a
+  different user agent.
+- The statute outranks the article: a law step links to the law itself where a confirmed link exists.
