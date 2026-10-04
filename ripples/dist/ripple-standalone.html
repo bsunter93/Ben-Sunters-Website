@@ -93,6 +93,7 @@ h1 em{font-style:italic;font-weight:500;color:var(--shallow-2)}
   -webkit-mask-image:linear-gradient(90deg,#000 92%,transparent);mask-image:linear-gradient(90deg,#000 92%,transparent)}
 .picker::-webkit-scrollbar{display:none}
 .picker .chip{flex:none;white-space:nowrap}
+.picker .pgroup{flex-basis:100%;font:600 .7rem/1.2 var(--sans);letter-spacing:.07em;text-transform:uppercase;color:var(--ink-3);margin:6px 0 0}
 .tabs{display:flex;flex-wrap:wrap;gap:4px;margin:16px 0 0;border-bottom:1px solid var(--hair)}
 .tab{background:none;border:0;border-bottom:2px solid transparent;padding:8px 12px 9px;font-weight:700;font-size:.92rem;color:var(--ink-3);cursor:pointer;margin-bottom:-1px}
 .tab[aria-selected="true"]{color:var(--ink);border-bottom-color:var(--marigold)}
@@ -151,6 +152,7 @@ svg#pond{display:block;width:100%;height:auto;touch-action:manipulation;border-r
 input[type=range]{flex:1;accent-color:var(--marigold);min-width:0}
 .legend{display:flex;flex-wrap:wrap;align-items:center;gap:6px 14px;font-size:.78rem;color:var(--ink-2);padding:6px 8px 4px}
 .legend svg{margin-right:5px;vertical-align:middle}
+@media (min-width:861px) and (max-height:700px){.legend{position:absolute;right:14px;top:58px;flex-direction:column;align-items:flex-start;gap:4px;font-size:.72rem;padding:6px 9px;background:rgba(15,28,38,.82);border:1px solid var(--hair);border-radius:6px;z-index:2}.legend .howbtn{margin-left:0;margin-top:2px}}  /* a short laptop: the legend sits in the pond's corner like a map's, inside the fold (second roundtable) */
 .howbtn{margin-left:auto;background:none;border:1px solid var(--hair);border-radius:6px;padding:3px 10px;font-size:.76rem;color:var(--ink-2);cursor:pointer}
 .feed{display:grid;gap:8px;align-content:start;position:sticky;top:10px;max-height:calc(100vh - 20px);overflow-y:auto;scrollbar-width:thin;
   --ink:var(--paper-ink);--ink-2:var(--paper-ink-2);--ink-3:var(--paper-ink-3);--hair:rgba(30,42,46,.14);--sunk:var(--paper-2);--rec:var(--paper-ink);--marigold:#c77f12;--good:#3e8f55;--miss:#d04a3a;
@@ -357,6 +359,7 @@ body.reel .caption{display:none}
 body.reel #sub{display:none}body.reel h1{font-size:2.3rem;margin:.3rem 0 .6rem}  /* a clip opens on the title and the pond; the end card says what else was going on */
 body.reel .beatline{font-size:1.12rem;padding-top:46px}body.reel .beatline .bwhen{font-size:.8rem}body.reel .beatline .bwhy{font-size:.95rem}
 @media (max-width:860px){#pond.focus ~ .caption.on{display:block;position:absolute;left:12px;right:12px;margin:0;z-index:3;background:rgba(5,22,40,.92);font-size:.9rem;line-height:1.3;padding:8px 12px}
+  #pond.focus ~ .caption.on.flow{position:static;margin:6px 8px 0}
   .caption .sum{display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;margin-top:2px}
   .caption .acts{display:flex;gap:10px;align-items:center;margin-top:6px}.caption a.readcard{flex:1;display:block;margin:0;padding:6px 0;text-align:center;border:1px solid rgba(242,169,59,.5);border-radius:999px;color:var(--marigold);font-weight:700}.caption .shrcap{margin:0;flex:none}}
 body.reel .pondbox{padding-bottom:10px}
@@ -754,16 +757,19 @@ function whyText(why) {
 const plainWork = w => w.replace(/ \((TV series|film|\d{4} film|video game|British TV series|novel)\)$/, "");
 // ---- engine-found pairs from Wikipedia read as a record (ripples/demo/discovered_wiki.json; docs/discovery_corpus1_v1.md) ----
 function wikiStones() { return DATA.wiki && DATA.wiki.stones ? Object.keys(DATA.wiki.stones) : []; }
+const WGRADE = {reported:{lv:"reported", text:"Reported", cls:"l-reported", card:""}, disputed:{lv:"busted", text:"Disputed", cls:"l-busted", card:"busted"}};  // the engine kind's grades, in one place
 function fromWiki(slug) {
   const w = DATA.wiki.stones[slug], iso0 = w.date, items = [];
   w.marks.forEach((m, i) => {
     const md = m.precision === "year" ? `${m.date}-07-01` : m.precision === "month" ? `${m.date}-15` : m.date;  // a year-dated mark sits mid-year; a month-dated one mid-month
     const d = Math.max(daysBetween(iso0, md), 0.5);
     const when = m.precision === "year" ? m.date : m.precision === "month" ? fmtMonth(D(md)) : fmt(D(md));
-    const where = m.found === "reverse" ? "the mark's own article" : "the stone's article", disputed = m.grade === "disputed";
-    items.push({id:m.id || `w${i}`, parent:null, slice:"main", d, label:m.label, sub:`${m.precision === "year" ? m.date : fmtMonth(D(md))} · ${sinceLabel(d)}`, mark:disputed ? null : m.kind, title:m.title, lv:disputed ? "busted" : "reported", lvText:disputed ? "Disputed" : "Reported",
+    const where = m.found === "reverse" ? "the mark's own article" : "the stone's article", disputed = m.grade === "disputed", G = WGRADE[disputed ? "disputed" : "reported"];
+    const also = (DATA.context || {})[`wiki:${slug}`] || "";
+    const cite = `${w.stone} → ${m.title} (${when}). Ripple grade: ${G.text}. “${m.sentence}” Source: ${m.source_label}, ${m.source_url}.${also ? ` It wasn't the only reason: ${also}` : ""} Ripple, checked ${fmt(D(DATA.wiki.run || "2026-10-04"))}: https://bensunter.com/ripples/demo/?w=${slug}&s=${m.id || `w${i}`}`;
+    items.push({id:m.id || `w${i}`, parent:null, slice:"main", d, label:m.label, sub:`${m.precision === "year" ? m.date : fmtMonth(D(md))} · ${sinceLabel(d)}`, mark:disputed ? null : m.kind, title:m.title, lv:G.lv, lvText:G.text, cite,
       short:disputed ? "A popular claim the record itself questions" : `Named as a consequence in ${where} on Wikipedia`, srcText:m.source_label,
-      card:card({when:`${when}<span>${sinceLabel(d)}</span>`, badge:disputed ? "Disputed" : "Reported", badgeCls:disputed ? "l-busted" : "l-reported", title:m.title, mark:disputed ? null : m.kind, cls:disputed ? "busted" : "",
+      card:card({when:`${when}<span>${sinceLabel(d)}</span>`, badge:G.text, badgeCls:G.cls, title:m.title, mark:disputed ? null : m.kind, cls:G.card,
         short:disputed ? `The engine found the claim in ${where}; the same record says its accuracy has been questioned, so it is shown as disputed, not as a mark.` : `The engine read ${where} for a sentence that names the stone and a lasting change with a causal word, dated the mark from the record, and kept it because it came after. A person confirmed the sentence states a consequence.${m.precision === "day" ? "" : m.precision === "month" ? " Dated to the month." : " Dated to the year."}${m.note ? " " + esc(m.note) : ""}`,
         sure:howSure(disputed ? "busted" : "reported", disputed ? {why:"the record that carries the claim also says its accuracy has been questioned"} : {what:`Wikipedia, ${m.source_label.replace(/^Wikipedia: /, "")}`, why:"a sentence in the article names the link with a causal word. A sentence shows the link is stated in a public record, not that the stone caused the mark"}),
         details:`<p>“${esc(m.sentence)}”</p><p class="src"><a href="${esc(m.source_url)}" target="_blank" rel="noopener">${esc(m.source_label)}</a>${m.mark_url && m.mark_url.split("#")[0] !== m.source_url.split("#")[0] ? ` · <a href="${esc(m.mark_url)}" target="_blank" rel="noopener">Wikipedia: ${esc(m.mark_article || m.label)}</a>` : ""}</p>`})});
@@ -1159,18 +1165,20 @@ function draw(story) {
 // Playback is a schedule, not a constant speed: the throw, then for every ripple a travel (the date rolls toward it)
 // and a hold (it blooms, is lit and is named at the foot of the pond), then a short run-out. Ripples that arrive
 // together share a beat. A long story's holds shrink to fit the cap, never below the floor.
-const BEAT = {throwMs:1100, hold:2600, holdLoud:4000, holdBust:3000, extra:900, travelMin:450, travelMax:1600, travelK:7000, cap:95000, holdFloor:1500, outMs:900};
+const BEAT = {throwMs:1100, hold:2600, holdPre:1800, holdLoud:4000, holdLoudPre:3200, holdBust:3000, extra:900, travelMin:450, travelMax:1600, travelPreMax:1000, travelK:7000, cap:95000, holdFloor:1500, outMs:900};  // holdPre, travelPreMax: the ordinary beats before the first lasting mark run tighter (second roundtable: 17 s to the first law on a phone was too long)
 function makeTimeline(story) {
   const es = story.items.filter(x => x.pos).map(x => ({it:x, tS:tOfDay(x.d)})).sort((a, b) => a.tS - b.tS);
   const beats = [];
   for (const e of es) { const b = beats[beats.length - 1]; if (b && e.tS - b.tS < 0.012) b.items.push(e.it); else beats.push({tS:e.tS, items:[e.it]}); }
   const w = x => (x.mark ? 2 : 0) + (x.lv === "measured" ? 1 : 0);
-  for (const b of beats) {
+  const firstMark = beats.findIndex(b => b.items.some(x => x.mark));
+  beats.forEach((b, i) => {
     b.items.sort((a, c) => w(c) - w(a));  // the mark or the measured step speaks for a shared beat
-    const loud = b.items.some(x => x.mark || x.lv === "measured"), bust = b.items.some(x => x.lv === "busted");
-    b.hold = (loud ? BEAT.holdLoud : bust ? BEAT.holdBust : BEAT.hold) + Math.min(2, b.items.length - 1) * BEAT.extra;
-  }
-  let tp = PRE; for (const b of beats) { b.travel = Math.max(BEAT.travelMin, Math.min(BEAT.travelMax, (b.tS - tp) * BEAT.travelK)); tp = b.tS; }
+    const loud = b.items.some(x => x.mark || x.lv === "measured"), bust = b.items.some(x => x.lv === "busted"), pre = firstMark > 0 && i < firstMark && !bust;
+    b.hold = (loud ? (pre ? BEAT.holdLoudPre : BEAT.holdLoud) : bust ? BEAT.holdBust : pre ? BEAT.holdPre : BEAT.hold) + Math.min(2, b.items.length - 1) * BEAT.extra;
+    b.pre = pre;
+  });
+  let tp = PRE; for (const b of beats) { b.travel = Math.max(BEAT.travelMin, Math.min(b.pre ? BEAT.travelPreMax : BEAT.travelMax, (b.tS - tp) * BEAT.travelK)); tp = b.tS; }
   const fixed = BEAT.throwMs + beats.reduce((a, b) => a + b.travel, 0) + BEAT.outMs, holdSum = beats.reduce((a, b) => a + b.hold, 0);
   if (fixed + holdSum > BEAT.cap && holdSum) { const f = Math.max(0, BEAT.cap - fixed) / holdSum; beats.forEach(b => b.hold = Math.max(BEAT.holdFloor, Math.round(b.hold * f))); }
   const segs = []; let c = 0;
@@ -1237,7 +1245,14 @@ function spotlight(b) {  // the beat's ripples bloom lit, with their path back t
   }
   lit.forEach(x => [x.g, x.path, x.lab, x.band, x.ring, x.crest].forEach(e => e && e.classList.add("lit")));
   cur.lit = lit; $("#pond").classList.add("beat");
-  const bl = $("#beatline"); bl.innerHTML = beatText(b); placeBeatline(); bl.classList.remove("off");
+  const bl = $("#beatline"); bl.innerHTML = beatText(b) + nextMarkLine(b); placeBeatline(); bl.classList.remove("off");
+}
+function nextMarkLine(b) {  // on an ordinary beat, say that a lasting mark is coming and how far away it is
+  if (!cur.timeline || !cur.timeline.beats || b.items.some(x => x.mark)) return "";
+  const beats = cur.timeline.beats, i = beats.indexOf(b); if (i < 0) return "";
+  const k = beats.slice(i + 1).findIndex(x => x.items.some(y => y.mark)); if (k < 0) return "";
+  const m = beats[i + 1 + k].items.find(y => y.mark);
+  return `<span class="bmore">Next lasting mark: ${esc(m.label)} · ${k + 1} ripple${k ? "s" : ""} away</span>`;
 }
 function placeBeatline() {  // the lower third sits on the pond's bottom edge, whatever the pond's size
   const bl = $("#beatline"), svg = $("#pond"), box = $(".pondbox"); if (!bl || !svg) return;
@@ -1321,7 +1336,8 @@ function buildFeed(story) {
     const div = document.createElement("article");
     div.className = `card off ${c.cls || ""}`; div.innerHTML = c.html;
     if (c.it && c.it.hue) { div.classList.add("hasline"); div.style.setProperty("--chip", c.it.hue); }
-    if (c.it) { const row = div.querySelector(".row"); if (row) { const a = document.createElement("a"); a.className = "shr"; a.href = "#"; a.textContent = "Share this step"; a.onclick = e => { e.preventDefault(); e.stopPropagation(); shareStep(c.it); }; row.appendChild(a); } }
+    if (c.it) { const row = div.querySelector(".row"); if (row) { const a = document.createElement("a"); a.className = "shr"; a.href = "#"; a.textContent = "Share this step"; a.onclick = e => { e.preventDefault(); e.stopPropagation(); shareStep(c.it); }; row.appendChild(a);
+      if (c.it.cite) { const k = document.createElement("a"); k.className = "shr cite"; k.href = "#"; k.textContent = "Copy citation"; k.title = "The mark, the date, the grade, the sentence and its source, as one line to paste"; k.onclick = async e => { e.preventDefault(); e.stopPropagation(); try { await navigator.clipboard.writeText(c.it.cite); } catch { prompt("Copy this citation", c.it.cite); } const t = $("#toast"); if (t) { t.textContent = "Citation copied"; t.classList.add("on"); setTimeout(() => t.classList.remove("on"), 1800); } }; row.appendChild(k); } } }
     c.el = div; c.cursor = div.querySelector(".cursor"); c.shown = false;
     if (c.it) { c.it.cardEl = div; div.addEventListener("click", e => { if (e.target.closest("summary,a")) return; focus(c.it); }); }
     f.appendChild(div);
@@ -1551,7 +1567,9 @@ function focus(it) {
   if (!REEL && window.innerWidth <= 860) {  // on a phone the card is screens below: say what this ripple is, right under the pond
     const cap = $("#caption"); const capLine = it.short || (it.srcText ? esc(it.srcText) : ""); cap.innerHTML = `${it.mark ? `<b>${HEX}${esc(it.mark)}</b> · ` : ""}<b>${esc(it.label)}</b> <span style="color:var(--ink-3)">· ${esc(it.lvText || LVL[it.lv])}${it.sub ? " · " + esc(it.sub) : ""}</span>${capLine ? `<div class="sum">${capLine}</div>` : ""}<div class="acts"><a href="#" class="readcard">Read the card ↓</a></div>`;
     cap.querySelector(".acts").insertAdjacentHTML("beforeend", `<a href="#" class="shrcap">Share</a>`); cap.querySelector(".shrcap").onclick = e => { e.preventDefault(); shareStep(it); };
-    cap.classList.add("on"); const svg0 = $("#pond"); cap.style.display = "block"; const pbR = $(".pondbox").getBoundingClientRect(), svR = svg0.getBoundingClientRect(); cap.style.top = `${Math.max(8, svR.bottom - pbR.top - cap.offsetHeight - 10)}px`; cap.style.display = ""; const rc = cap.querySelector(".readcard"); if (rc) rc.onclick = e => { e.preventDefault(); if (it.cardEl) it.cardEl.scrollIntoView({block:"start", behavior:"smooth"}); };
+    cap.classList.add("on"); const svg0 = $("#pond"); cap.style.display = "block"; const pbR = $(".pondbox").getBoundingClientRect(), svR = svg0.getBoundingClientRect();
+    const flow = svR.height < 220; cap.classList.toggle("flow", flow);  // a small pond (the SE) keeps its water: the caption sits under it instead of over it
+    cap.style.top = flow ? "" : `${Math.max(8, svR.bottom - pbR.top - cap.offsetHeight - 10)}px`; cap.style.display = ""; const rc = cap.querySelector(".readcard"); if (rc) rc.onclick = e => { e.preventDefault(); if (it.cardEl) it.cardEl.scrollIntoView({block:"start", behavior:"smooth"}); };
   }
   for (let k = 0; k <= 1000; k++) if (daysAt(k / 1000) >= it.d + 0.5) { if (k / 1000 > t) t = k / 1000; break; }
   render();
@@ -1630,11 +1648,20 @@ function renderPicker() {
     return;
   }
   $("#tabnote").textContent = TABNOTE[tab];
-  for (const [kind, slug, name] of TABS[tab]) {
+  let lastGroup = null;
+  const groupOf = (kind, slug) => {  // the Engine leads shelf is grouped by source, the Wikipedia ponds by the stone's decade (second roundtable: 72 chips were a wall)
+    if (tab !== "leads") return null;
+    if (kind === "wiki") { const y = ((DATA.wiki.stones[slug] || {}).date || "").slice(0, 4); return y ? `From Wikipedia's record · ${y.slice(0, 3)}0s` : "From Wikipedia's record"; }
+    if (kind === "acts") return "From Parliament and Congress";
+    return "From attention";
+  };
+  const list = tab === "leads" ? [...TABS[tab]].sort((a, b) => { const ga = groupOf(a[0], a[1]), gb = groupOf(b[0], b[1]); return ga === gb ? 0 : ga.localeCompare(gb); }) : TABS[tab];
+  for (const [kind, slug, name] of list) {
     if (kind === "chain" && !DATA.chains.some(c => c.slug === slug)) continue;
     if (kind === "acts" && !actsWorks().includes(slug)) continue;
     if (kind === "wiki" && !wikiStones().includes(slug)) continue;
     if (kind === "map" && !DATA.maps[slug] && !(DATA.disc && DATA.disc.events[slug] && DATA.disc.events[slug].links.length)) continue;
+    const grp = groupOf(kind, slug); if (grp && grp !== lastGroup) { const h = document.createElement("div"); h.className = "pgroup"; h.textContent = grp; pk.appendChild(h); lastGroup = grp; }
     const b = document.createElement("button"); b.className = "chip"; b.dataset.k = `${kind}:${slug}`;
     b.textContent = name || (DATA.disc && DATA.disc.events[slug] ? DATA.disc.events[slug].title : slug);
     b.setAttribute("aria-pressed", cur && cur.key === slug); b.onclick = () => show(kind, slug); pk.appendChild(b);

@@ -142,3 +142,18 @@ are almost all reported.
 phone (an earlier first beat for a mark, or a visible promise of one); a shape for the Engine leads shelf (by kind or
 decade); the legend under a 614-px fold and the caption on a 375-px pond, both carried over; an export of an
 engine-found card for people like Rosa. Builder's own rating after this room: **8.0**.
+
+## Actions (Oct 5, 2026, 01:30 UTC): every item in the room, built the same night
+
+| Finding | Who | What was built | Measured after |
+|---|---|---|---|
+| The first lasting mark arrives late on a phone (17 s on Tiger King) | Dani, Jaz, Walter | The ordinary beats before the first mark hold 1.8 s instead of 2.6 and travel at most 1.0 s; measured steps before it hold 3.2 s instead of 4; and from the first beat the narration says what is coming: "Next lasting mark: License suspended · 3 ripples away" | First mark at **15.3 s** (16 s allowed; the two measured steps before it keep a hold a reader can use); the promise line at **2.2 s**. Tiger King runs 28.1 s, Sputnik 35.4, Prohibition 75.8; no two beats under 2.2 s apart. `fold_test.js` |
+| The Engine leads shelf is a wall of 72 chips | Zuckerberg persona | The shelf is grouped under small headings: "From Wikipedia's record · 2010s" by the stone's decade, "From Parliament and Congress", "From attention" | Headings render as full-width rows in the picker |
+| The legend sits under a 614-px fold | Earl | On a laptop screen 700 px or shorter, the legend becomes a corner panel over the pond's top right, like a map's | Legend bottom **482 px** inside a 614-px viewport; pond's foot 602 |
+| The caption covers 76% of a 375-px pond | Lena | A pond shorter than 220 px keeps its water: the caption flows under it instead of over it | Caption covers **0%** of the SE pond |
+| An export of an engine-found card | Rosa | "Copy citation" on every engine card: the stone, the mark, the date, the grade, the sentence and its source, the context line and a link to the step, as one line | Present on 102 cards; copies to the clipboard, falls back to a prompt |
+| The engine's grade lives in two places | Priya | The engine kind reads its grades from one map (`WGRADE`) | "Disputed" and "Reported" defined once for the kind; the chain checker's grades are still its own |
+| The checker runs on branches only | Kurian persona | The chain-check workflow now also runs on pushes to main that touch the chains, weekly on Monday mornings, and by hand | `.github/workflows/ripples-chain-check.yml`; the results commit back to the branch it ran on |
+| Decoys should match the stones' fame | Dev | Fifty of the highest-grossing films of 2005 to 2024 run through the culture reading and the strict reverse rule (`docs/results/famous_decoys_v1.json`) | 46 of 50 produced nothing a screener would keep; 3 produced a "banned in one country" sentence (Deadpool, Wonder Woman, Lightyear) and 1 an industry claim (The Dark Knight and the comic-book boom): **8% under the loosest reading, 0% under the strict reverse rule**, both under the registered 1 in 10. Country bans are a thin mark class and will carry less weight in the next lexicon |
+| Most engine grades are reported | Dev | Stated as such on the tab and on every card; the way up is the series, not the prose (see `discovery_culture_v1.md`) | Open by design |
+| Two wrong links, one duplicate | Aisha, Rosa | Fixed in this pass | 99 of 101 article links answer; the other two corrected or removed |

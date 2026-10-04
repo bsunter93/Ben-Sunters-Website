@@ -50,7 +50,7 @@ its history are in the brief, sections 1 to 1c.
    The look since Oct 4 10:30 is recorded in `docs/styling_pass_v2.md`; where section 1b-ii of the brief or the bullets
    below describe gradients, a vignette, rim capitals, label boxes or an opening screen, that record wins.
 2. **The checker grades every step.** `lab/chain_check.py` runs on GitHub Actions (`.github/workflows/ripples-chain-check.yml`,
-   on pushes to `claude/**` that touch chains or the checker; `workflow_dispatch` otherwise) and commits
+   on pushes to `claude/**` and `main` that touch chains or the checker, weekly on Monday 06:17 UTC, and by `workflow_dispatch`) and commits
    `docs/results/chain_check_v1.json` back. A measured grade is a placebo test whose windows are drawn from the page's
    history *before* the step, so a grade does not drift as time passes; the truncation test (`lab/truncation_test.py`,
    `docs/truncation_v1.md`: 13 measured grades, 3 cutoffs, 0 flips) established that, and every measured card carries
@@ -136,6 +136,7 @@ node tap_test.js        # every ripple's tap target answers to its own ripple on
 node header_test.js     # the pond's top on a 390 and a 375 phone (145 to 167 px on Oct 4) and whether the tally sits under it
 node chart_test.js      # the spikes chart stays inside its column with no animation (the Oct 4 .pulse collision); exits 1 on a failure
 node pace_test.js       # when each ripple arrives and how long a story runs (15 to 95 s, beats 2 s apart or more, a narration line per beat); exits 1 on a failure
+node fold_test.js       # the legend inside a 614-px laptop fold, the caption clear of a small phone pond, the first lasting mark and its promise on a phone; exits 1 on a failure
 node sweep.js           # screenshots of the main screens, desktop and phone, into ./sweep
 ```
 
@@ -217,9 +218,11 @@ The clips are cut and the launch kit is current (PR #94; `launch/posts_ready.txt
 recognizable stones with a behavior lexicon and 22 stones / 25 marks joined the product, including the first Disputed
 engine-found link (PR #96; `docs/discovery_culture_v1.md`): **58 stones, 102 marks under Engine leads.** The second
 roundtable (`docs/roundtable_v2.md`: the twelve at 8.3, three new strangers at 7.3) voted release. Still to do: release
-Monday morning Oct 5 (section 8), the owner's date; the pre-flight checks 1 to 3 already pass on production. First-week
-items from the room: the time to the first lasting mark on a phone, a shape for the 72-chip Engine leads shelf, the
-legend under a 614-px fold, the SE caption, an export of an engine-found card.
+Monday morning Oct 5 (section 8), the owner's date; the pre-flight checks 1 to 3 already pass on production. The room's
+items were all built the same night (PR #98; the actions table in `docs/roundtable_v2.md`): tighter beats before the
+first mark and a promise line, the shelf grouped by source and decade, the legend as a corner panel on short screens, the
+caption in flow under small ponds, Copy citation on engine cards, one grade map for the engine kind, the checker on main
+and weekly, fifty famous films as decoys (8% loose, 0% strict).
 The text below is the state the previous session left.
 
 Release-ready as of 06:30. Five rounds of simulated testers took the product from 5.5 to **8.2** and voted to release; the

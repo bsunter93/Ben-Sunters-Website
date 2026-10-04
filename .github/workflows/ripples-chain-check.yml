@@ -3,8 +3,11 @@ name: Ripples chain check
 
 on:
   push:
-    branches: ["claude/**"]
+    branches: ["claude/**", "main"]
     paths: ["ripples/lab/chain_check.py", "ripples/chains/**", ".github/workflows/ripples-chain-check.yml"]
+  schedule:
+    - cron: "17 6 * * 1"   # weekly, Monday 06:17 UTC: the grades do not drift (truncation test), the data behind them may; results commit back to main
+  workflow_dispatch:
 
 permissions:
   contents: write
