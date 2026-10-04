@@ -993,17 +993,8 @@ function draw(story) {
     it.halo = el("circle", {cx:0, cy:0, r:24 * K, fill:"transparent"}, g);
     el("line", {class:"mkt", x1:0, y1:-6 * K, x2:0, y2:6 * K, transform:`rotate(${it.a})`}, g);  // a tick across the arc at the exact date
     el("circle", {class:`mk l-${it.lv}`, cx:0, cy:0, r:(it.lv === "measured" ? 3.6 : 2.8) * K}, g);  // the tap target (about 44 px on a phone); the marker itself is the crest on the ring
-    if (it.mark) {  // a lasting mark is a pebble that stayed on the water, lit from beneath
-      el("circle", {class:"markglow", cx:0, cy:0, r:26 * K, fill:"url(#glow)"}, g);
-      const rot = (it.d * 37) % 360, ps = (0.85 * K).toFixed(2);
-      const pb = el("g", {class:"pebble", transform:`scale(${ps}) rotate(${rot})`}, g); pb.innerHTML = STONE_SVG;
-      // the pebble sits in the water like the stone: its outline below the waterline, filled with water, and a meniscus
-      const pw = el("g", {class:"pebblewater", transform:`scale(${ps})`}, g);
-      const pc = el("g", {"clip-path":"url(#wlclip)"}, pw);
-      const pr = el("g", {transform:`rotate(${rot})`}, pc);
-      el("path", {d:ROCK, fill:"#0f4474", opacity:".86"}, pr);
-      el("path", {d:ROCK, fill:"url(#surface)", opacity:".55"}, pr);
-      el("path", {d:"M-15.2,-1.5 A15.8,6 0 0 0 15.2,-1.5", fill:"none", stroke:"rgba(230,244,252,.7)", "stroke-width":1.1, "stroke-linecap":"round"}, pw);
+    if (it.mark) {  // a lasting mark: a diamond on the arc, the same glyph the cards and the tally use
+      el("path", {class:"markd", d:`M0,${-6.5 * K} L${6.5 * K},0 L0,${6.5 * K} L${-6.5 * K},0 Z`, fill:"var(--marigold)", stroke:"#061a30", "stroke-width":1.2}, g);
     }
     it.core = null;
     it.showLabel = !dense || !!it.mark || it.lv === "measured" || items.length <= 5;  // a desktop names every ripple that has room; a phone names the marks and the measured steps
