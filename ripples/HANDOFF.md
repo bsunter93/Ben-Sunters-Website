@@ -211,8 +211,10 @@ stones; the bar of 7 in 10 not met; scripts in `lab/discovery/`, results in `doc
 product (PR #92): a fourth story kind, `wiki`, built by `fromWiki` from `demo/discovered_wiki.json`, 14 stones and 25
 marks first under Engine leads, every link reported with its sentence and source, each stone with a context line; deep
 link `?w=<slug>`. The desktop header fold landed (#93: the second header paragraph folds to one line until clicked; header 299 → 243
-px, the pond's foot inside a 614-px fold). Still to do, in order: discovery v1.1 over more stones (running), record and
-encode the clips (section 5), update `docs/launch_v2.md`, then release Monday morning Oct 5 (section 8), the owner's date.
+px, the pond's foot inside a 614-px fold). Discovery v1.1 ran over sixty more stones and 22 stones / 52 marks
+were screened into the product (PR #95; `docs/discovery_corpus1_v1_1.md`; 36 stones, 77 marks under Engine leads).
+The clips are cut and the launch kit is current (PR #94; `launch/posts_ready.txt`). Still to do: the culture shelf
+(behavior-lexicon reading of recognizable cultural stones), then release Monday morning Oct 5 (section 8), the owner's date.
 The text below is the state the previous session left.
 
 Release-ready as of 06:30. Five rounds of simulated testers took the product from 5.5 to **8.2** and voted to release; the
