@@ -766,6 +766,7 @@ const SRCURL = st => {
 };
 const amer = s => String(s || "").replace(/\b(\d{1,2}) (Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Sept|Oct|Nov|Dec)[a-z]* (\d{4})\b/g, (m, d, mo, y) => `${mo.slice(0, 3)} ${+d}, ${y}`).replace(/\s*\([a-z0-9]{4}-[a-z0-9]{4}\)/g, "");  // US dates in source lines; dataset ids out
 const srcP = (st, text) => { const u = SRCURL(st); text = amer(text); const t1 = text ? text.charAt(0).toUpperCase() + text.slice(1) : "";
+  if (!t1 && !u) return `<p class="src"><span class="nolink">No source line yet</span></p>`;  // never an empty line
   return `<p class="src">${esc(t1)}${u ? `${t1 ? " · " : ""}<a href="${esc(u[0])}" target="_blank" rel="noopener">${esc(u[1])} ↗</a>` : t1 ? ` <span class="nolink">· not linked yet</span>` : ""}</p>`; };
 const SRC = st => ({fred:`FRED series ${st.test.id}`, stackex:"Stack Overflow new questions per month (Stack Exchange API)", zillow:"Zillow Home Value Index, Zoom towns minus US",
   arxiv:"arXiv astro-ph submissions per month", ssa:"US baby names, Social Security Administration", file:st.test.source || st.series || "an official series",
