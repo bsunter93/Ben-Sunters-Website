@@ -163,7 +163,7 @@ input[type=range]{flex:1;accent-color:var(--marigold);min-width:0}
 .legend{display:flex;flex-wrap:wrap;align-items:center;gap:6px 14px;font-size:.78rem;color:var(--ink-2);padding:6px 8px 4px}
 .legend svg{margin-right:5px;vertical-align:middle}
 @media (max-width:1200px){.wrap{grid-template-columns:minmax(0,1.45fr) minmax(0,1fr)}}
-@media (min-width:861px) and (max-height:700px){svg#pond{max-height:calc(100vh - 330px)}.legend{position:absolute;right:14px;top:58px;flex-direction:column;align-items:flex-start;gap:4px;font-size:.72rem;padding:6px 9px;background:rgba(15,28,38,.82);border:1px solid var(--hair);border-radius:6px;z-index:2}.legend .howbtn{margin-left:0;margin-top:2px}}  /* a short laptop: the legend sits in the pond's corner like a map's, inside the fold (second roundtable) */
+@media (min-width:861px) and (max-height:820px){svg#pond{max-height:calc(100vh - 330px)}.legend{position:absolute;right:14px;top:58px;flex-direction:column;align-items:flex-start;gap:4px;font-size:.72rem;padding:6px 9px;background:rgba(15,28,38,.82);border:1px solid var(--hair);border-radius:6px;z-index:2}.legend .howbtn{margin-left:0;margin-top:2px}}  /* a short laptop: the legend sits in the pond's corner like a map's, inside the fold (second roundtable) */
 .howbtn{margin-left:auto;background:none;border:1px solid var(--hair);border-radius:6px;padding:3px 10px;font-size:.76rem;color:var(--ink-2);cursor:pointer}
 .feed{display:grid;gap:8px;align-content:start;position:sticky;top:10px;max-height:calc(100vh - 20px);overflow-y:auto;scrollbar-width:thin;
   --ink:var(--paper-ink);--ink-2:var(--paper-ink-2);--ink-3:var(--paper-ink-3);--hair:rgba(30,42,46,.14);--sunk:var(--paper-2);--rec:var(--paper-ink);--marigold:#c77f12;--good:#3e8f55;--miss:#d04a3a;
@@ -1257,7 +1257,7 @@ function segAtClock(ms) { for (const s of cur.timeline.segs) if (ms < s.c0 + s.m
 function tAtClock(ms) { const s = segAtClock(ms); if (!s) return 1; return s.t1 === s.t0 ? s.t0 : s.t0 + (s.t1 - s.t0) * (ms - s.c0) / s.ms; }
 function clockAtT(tt) { if (tt <= 0) return 0; for (const s of cur.timeline.segs) if (s.t1 > s.t0 && tt <= s.t1 + 1e-9) return s.c0 + s.ms * (tt - s.t0) / (s.t1 - s.t0); return cur.timeline.total; }
 function beatText(b) {
-  const it = b.items[0], main = it.title || it.label, why = it.short || it.srcText || "";
+  const it = b.items[0], main = it.title || it.label, why = (it.short || it.srcText || "").replace(/\s*·\s*(a rise this big at [^·]*|no placebo window[^·]*|p = [0-9.]+\)?|within chance[^·]*)\s*/gi, "").replace(/\s*\(p = [0-9.]+\)/g, "").trim();  // the statistics stay on the card; the line under the pond says what happened
   const rest = b.items.slice(1);
   return `<span class="bwhen">${esc(it.sub || sinceLabel(it.d))}</span>${it.mark ? `<span class="bmk">${HEX}${esc(it.mark)}</span>` : ""}<b>${esc(main)}</b><i class="bhow l-${it.lv}">${esc(it.lvText || LVL[it.lv])}</i>${why ? `<span class="bwhy">${why.length > 140 ? esc(why.slice(0, 137)) + "…" : why}</span>` : ""}${rest.length ? `<span class="bmore">At the same time: ${rest.map(x => esc(x.label)).join(" · ")}</span>` : ""}`;
 }
@@ -1276,7 +1276,7 @@ function setMystery(on, part) {
 function verifyText(b) {
   const m = b.mark, stone = cur.stone || cur.title, weak = cur.weak || "plausible";
   const order = `${esc(stone)} came first, ${esc(fmt(D(cur.iso0)))}; ${esc(m.label)} ${sinceLabel(m.d).replace("+", "")} later.`;
-  return `<span class="bwhen">Checked</span><b>${order}</b><i class="bhow l-${weak}">weakest link ${esc(LVL[weak].toLowerCase())}</i><span class="bwhy">${weak === "measured" ? "Every link on the way passed a placebo test against its own past." : weak === "timed" ? "Every link on the way is in order; none was tested against chance." : weak === "reported" ? "A source makes each link; order shows sequence, not proof of cause." : "At least one link on the way is unproven; order shows sequence, not proof of cause."}</span>${cur.also ? `<span class="bmore">It wasn't the only reason: ${esc(cur.also)}</span>` : ""}`;
+  return `<span class="bwhen">Checked</span><b>${order}</b><i class="bhow l-${weak}">weakest link ${esc(LVL[weak].toLowerCase())}</i><span class="bwhy">${weak === "measured" ? "Every link passed its test." : weak === "timed" ? "Every link is in order." : weak === "reported" ? "A source makes each link." : "One link is unproven."} Order, not proof of cause.</span>${cur.also ? `<span class="bmore">It wasn't the only reason: ${esc(cur.also.length > 110 ? cur.also.slice(0, 107).replace(/\s+\S*$/, "") + "…" : cur.also)}</span>` : ""}`;
 }
 function spotlight(b) {  // the beat's ripples bloom lit, with their path back to the stone, and the line under the pond says what happened
   if (b.verify) { cur.beatOn = b; const bl = $("#beatline"); bl.innerHTML = verifyText(b); placeBeatline(); bl.classList.remove("off"); setMystery(false, "sub"); return; }  // the verification beat keeps the mark lit and answers "is it real?"
