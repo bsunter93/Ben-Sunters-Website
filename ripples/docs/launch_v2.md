@@ -2,7 +2,7 @@
 
 Live: https://bensunter.com/ripples/demo/ · Methods and misses: https://bensunter.com/ripples/discover/ · Code: https://github.com/bsunter93/Ben-Sunters-Website/tree/main/ripples
 
-Cut on the release build (main after PR #82): the ten-second trailer, the weakest-link arrow in the title, the "It wasn't the only reason" line, the pond's glyphs, the phone's first screen and the statute links are all in frame. Supersedes `launch_v1.md`.
+Cut on the release build (main after PR #82): the ten-second trailer, the weakest-link arrow in the title, the "It wasn't the only reason" line, the pond's glyphs, the phone's first screen and the statute links are all in frame. Supersedes `archive/launch_v1.md`.
 
 ## Assets in `ripples/launch/`
 

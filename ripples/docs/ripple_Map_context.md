@@ -1,6 +1,8 @@
 # Ripple Map: context brief (updated 2026-10-04, 06:30 UTC)
 
-Standalone context for anyone (person or new chat) picking up Ripple Map. It covers the vision, the current status,
+Standalone context for anyone (person or new chat) picking up Ripple. Read `ripples/HANDOFF.md` first: it is the
+runbook for a new session (what to install, how to build, test and ship, the rules, the next steps); this brief is the
+why and the record. It covers the vision, the current status,
 what we learned, pitfalls, open gaps and next steps. The operational runbook with exact commands is
 `ripples/HANDOFF.md`, and the experiments plan is `ripples/docs/experiments.md`.
 
