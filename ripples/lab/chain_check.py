@@ -379,7 +379,7 @@ def verdict(st, r, ref):
 
 
 def main() -> int:
-    rep = {"protocol": "ripples/lab/chain_check.py", "run": dt.date.today().isoformat(), "chains": []}
+    rep = {"protocol": "ripples/lab/chain_check.py", "run": dt.date.today().isoformat(), "checker_sha": os.environ.get("GITHUB_SHA", "")[:7], "chains": []}
     try:
         for path in sorted(glob.glob(os.path.join(ROOT, "chains", "*.json"))):
             for ch in json.load(open(path)):
