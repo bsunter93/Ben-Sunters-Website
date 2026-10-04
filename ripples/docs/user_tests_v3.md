@@ -109,4 +109,17 @@ Round-three average before fixes: **6.0** (5, 7, 6). The gate is 8. The fixes be
 
 ## Re-ratings on the fixed build
 
-(pending)
+The same three testers were sent back twice: once after the first pass of fixes, once after the items they named as "the one thing for another point".
+
+| | First rating | After the first pass | Final | Their one sentence on the final |
+|---|---|---|---|---|
+| Aisha (data journalist, laptop) | 5 | 6.5 | **7.5** | "I'd now link it as a sourced timing check with its own disclaimer; the arrow headline and the still-unlinked USDA 'lasting mark' keep it short of a citable source for 'the show changed the law.'" |
+| Tom (retired machinist, iPad) | 7 | 8 | **8** | "Everything he asked for in words is now right, the type is readable without squinting, and nothing stacks; he'd give the ninth point when the Education Act, one of the three things in the title, gets its label back." |
+| Lena (student, iPhone SE) | 6 | 7 | **8** | "The pond now tells her the step, the source and the date without leaving it, and nothing shifts or breaks under her thumb; what remains is a small, dense pond and a chart she will not open." |
+| **Average** | **6.0** | **7.2** | **7.8** | |
+
+What the first re-test found and the second pass fixed: Aisha's regression (an attention-check article offered as a step's source), the floor-p sentence on the flagship cards, the chart's top label and its peak wording, the law card's congress.gov link; Tom's remaining text corrections (SRI, the tested-claim date line) and the mark labels, which now place first and may sit over a rim word rather than vanish; Lena's caption summary and the hint that moved the controls when it left.
+
+What remains, in their words: the arrow in the title, which the owner keeps as the brand and the subtitle now qualifies; one mark on Sputnik that lost its label on Tom's run (the placement is deterministic per viewport and the builder's render at his size showed all five, so the difference is in timing or hint state and is open); the USDA suspension card with no link; a chart that is folded on a phone and small when opened; "not linked yet" on the steps the sources pass held back.
+
+**Verified result tonight: 7.8 of 10 from three testers on the final build, up from 6.0 on the same build's first version.** Short of the 8 the owner set by two tenths, with the two testers who use the product as a reader at 8 and the one who would cite it professionally at 7.5.
