@@ -68,8 +68,11 @@ its history are in the brief, sections 1 to 1c.
 7. **The demo is one file.** `demo/index.html`: HTML, CSS and JS, no framework. It fetches `docs/results/chain_check_v1.json`,
    `demo/discovered.json`, `docs/results/bill_act_v1.json`, `demo/sources.json`, `demo/context.json` and the maps. The
    pond is an SVG instrument: one wavefront, hairline rings labeled 1 day / 1 month / 1 year / 10 years, a matte stone,
-   a hexagon with a lit core for a mark, a crosshair for measured, a dashed orbit for plausible. The trailer plays the
-   marks and measured steps loud and the rest quiet so every story lands inside ten seconds; Step walks every step;
+   a hexagon with a lit core for a mark, a crosshair for measured, a dashed orbit for plausible. Playback is a beat
+   schedule (`BEAT`, `makeTimeline`): a throw, then for every ripple a travel while the date rolls and a hold while it
+   blooms lit with a narration line at the foot of the pond (2.6 s; 4 s for a mark or a measured step; holds shrink to
+   fit a 95-s cap), then a short run-out. Tiger King runs about 32 s, Sputnik 38 s, Prohibition 79 s. The ten-second
+   trailer was retired on Oct 4 at the owner's direction ("way too fast"). Step walks every step;
    deep links `?c=<slug>`, `?m=<slug>`, `?e=<slug>`, `?a=<work>` skip the intro; `&s=<step>` opens on one ripple, stopped;
    `&card=1` renders the 1200×630 share card; `&reel=1` plays stories back to back for recording; `&nointro=1` for tests.
 8. **Portable builds.** `tools/build_portable.py` inlines the fonts and every data file into `dist/ripple-standalone.html`
@@ -130,6 +133,7 @@ cd ripples/tools/qa
 node tap_test.js        # every ripple's tap target answers to its own ripple on dense phone ponds; exits 1 on a failure
 node header_test.js     # the pond's top on a 390 and a 375 phone (145 to 167 px on Oct 4) and whether the tally sits under it
 node chart_test.js      # the spikes chart stays inside its column with no animation (the Oct 4 .pulse collision); exits 1 on a failure
+node pace_test.js       # when each ripple arrives and how long a story runs (15 to 95 s, beats 2 s apart or more, a narration line per beat); exits 1 on a failure
 node sweep.js           # screenshots of the main screens, desktop and phone, into ./sweep
 ```
 
@@ -186,9 +190,18 @@ explains the cut points. Output lands in `launch/`.
   scratch and is never committed; the public brief carries everything that matters.
 - Report honestly: a failed rule is reported as failed, with the diagnosis; "nothing survived" is a result.
 
-## 7. Where the work stands (Oct 4, 2026, 06:30 UTC)
+## 7. Where the work stands (Oct 4, 2026, 08:30 UTC)
 
-Release-ready. Five rounds of simulated testers took the product from 5.5 to **8.2** and voted to release; the
+**Not released. The owner saw the live page on the morning of Oct 4 and set a new bar before release:** the playthrough
+was "way too fast and not visually interesting enough", the look "cartoony wireframe", and the worry is that strangers
+call it AI slop before giving it a chance. Two things have landed since: the `.pulse` class collision that ballooned
+the chart over the pond (PR #86) and the beat schedule that replaced the ten-second trailer (PR #87). Still to do, in
+order: the launch clips re-cut as edited video (cuts, a push-in on each arriving ripple, under 15 s; the in-app play can
+run long, the clips cannot), then the look pass (flat matte surface, no gradient or glow, rim words and label boxes
+gone, a print-annotation style, the intro screen replaced by the pond at rest), then one persona round scored on a
+stranger's first ten seconds, then release. The text below is the state the previous session left.
+
+Release-ready as of 06:30. Five rounds of simulated testers took the product from 5.5 to **8.2** and voted to release; the
 builder's own rating is **8.5** (the trail: 4 on Oct 1, 5.5 on Oct 2, 6.5 on Oct 3, 7.5 on the morning of Oct 4, 8 after
 the final roundtable's fix, 8.5 after the three release fixes). Everything is merged to `main` through PR #83.
 
