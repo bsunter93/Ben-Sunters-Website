@@ -173,6 +173,31 @@ CURATED = {
 }
 
 
+# slug -> {n: (volume, page, "Pub. L. x-y")}: the statute itself on govinfo, from the Statutes at Large cite on the step's source line.
+# Confirmed October 4, 2026: the law's own first page named the public law in the PDF text layer (1951 on), or the govinfo granule
+# begins at the cited page (pre-1951 volumes, whose scans carry no readable text layer). See docs/sources_pass_v1.md.
+STATUTE = {
+    "the-jungle-fda": {5: (34, 674, "59-382"), 6: (34, 768, "59-384"), 9: (52, 1040, "75-717")},
+    "triangle-shirtwaist": {9: (49, 620, "74-271"), 10: (52, 1060, "75-718")},
+    "dust-bowl-soil": {4: (49, 163, "74-46"), 5: (49, 1148, "74-461"), 8: (108, 3178, "103-354")},
+    "sputnik-nasa-arpa": {5: (72, 11, "85-325"), 7: (72, 426, "85-568"), 8: (72, 1580, "85-864")},
+    "unsafe-at-any-speed": {3: (80, 718, "89-563"), 6: (84, 1713, "91-605"), 10: (105, 1914, "102-240")},
+    "cuyahoga-clean-water": {3: (83, 852, "91-190"), 6: (84, 1676, "91-604"), 8: (86, 816, "92-500")},
+    "love-canal-superfund": {6: (94, 2767, "96-510"), 8: (100, 1613, "99-499")},
+    "exxon-valdez-opa90": {5: (104, 484, "101-380")},
+    "liebeck-hot-coffee": {8: (119, 4, "109-2")},
+}
+PLAW = {"flint-lead-pipes": {9: (117, 58)}}  # 104th Congress on: govinfo's public-law link service
+
+
+def statute(vol, page, pl):
+    return ("https://www.govinfo.gov/link/statute/%d/%d" % (vol, page), "govinfo: Pub. L. %s, %d Stat. %d" % (pl, vol, page))
+
+
+def plaw(congress, number):
+    return ("https://www.govinfo.gov/link/plaw/%d/public/%d" % (congress, number), "govinfo: Pub. L. %d-%d" % (congress, number))
+
+
 def load_chains():
     out = []
     for path in sorted(glob.glob(CHAINS)):
@@ -203,6 +228,12 @@ def hint_links(chains):
 def main():
     chains = load_chains()
     links = hint_links(chains)
+    for slug, steps in STATUTE.items():  # the statute outranks an encyclopedia article about it
+        for n, (vol, page, pl) in steps.items():
+            url, label = statute(vol, page, pl); links.setdefault(slug, {})[str(n)] = {"url": url, "label": label}
+    for slug, steps in PLAW.items():
+        for n, (congress, number) in steps.items():
+            url, label = plaw(congress, number); links.setdefault(slug, {})[str(n)] = {"url": url, "label": label}
     for slug, steps in CURATED.items():
         for n, (url, label) in steps.items():
             links.setdefault(slug, {})[str(n)] = {"url": url, "label": label}
