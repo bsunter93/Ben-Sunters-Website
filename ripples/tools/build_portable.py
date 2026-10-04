@@ -14,7 +14,8 @@ def standalone():
     maps = re.findall(r'^  "([a-z0-9-]+)": \{h1:', h, re.M)  # the keys of MAPS
     data = {"/ripples/demo/discovered.json": json.load(open(R("ripples", "demo", "discovered.json"))),
             "/ripples/docs/results/chain_check_v1.json": json.load(open(R("ripples", "docs", "results", "chain_check_v1.json"))),
-            "/ripples/docs/results/bill_act_v1.json": json.load(open(R("ripples", "docs", "results", "bill_act_v1.json")))}
+            "/ripples/docs/results/bill_act_v1.json": json.load(open(R("ripples", "docs", "results", "bill_act_v1.json"))),
+            "/ripples/demo/sources.json": json.load(open(R("ripples", "demo", "sources.json")))}
     for s in maps:
         p = R("ripples", "maps", "out", f"{s}.json")
         if os.path.exists(p):

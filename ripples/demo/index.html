@@ -91,7 +91,7 @@ h1 em{font-style:italic;font-weight:500;color:var(--shallow-2)}
   -webkit-mask-image:linear-gradient(90deg,#000 92%,transparent);mask-image:linear-gradient(90deg,#000 92%,transparent)}
 .picker::-webkit-scrollbar{display:none}
 .picker .chip{flex:none;white-space:nowrap}
-.tabs{display:flex;gap:4px;margin:16px 0 0;border-bottom:1px solid var(--hair)}
+.tabs{display:flex;flex-wrap:wrap;gap:4px;margin:16px 0 0;border-bottom:1px solid var(--hair)}
 .tab{background:none;border:0;border-bottom:2px solid transparent;padding:8px 12px 9px;font-weight:700;font-size:.92rem;color:var(--ink-3);cursor:pointer;margin-bottom:-1px}
 .tab[aria-selected="true"]{color:var(--ink);border-bottom-color:var(--marigold)}
 .tab small{font-weight:500;color:var(--ink-3);margin-left:4px}
@@ -124,7 +124,7 @@ select.chip{appearance:none;padding-right:14px;max-width:100%}
 select.chip option{background:#0c333b;color:var(--ink)}
 .wrap{max-width:1240px;margin:0 auto;padding:10px 16px 36px;display:grid;grid-template-columns:minmax(0,1.3fr) minmax(0,1fr);gap:20px;align-items:start}
 .pondbox{position:sticky;top:0;padding:6px 4px 8px;min-width:0}
-.feed{min-width:0}
+.feed{min-width:0}.feed.empty{visibility:hidden}
 @keyframes sheen{from{transform:translate(-3%,-2%) scale(1)}to{transform:translate(4%,3%) scale(1.08)}}
 .pondbox>*{position:relative;z-index:1}
 .pondbox .hint{z-index:2}
@@ -132,9 +132,9 @@ select.chip option{background:#0c333b;color:var(--ink)}
 .clock .d{font:600 clamp(1.5rem,3.6vw,2.5rem)/1 var(--display);font-variant-numeric:tabular-nums;color:var(--paper)}
 .clock .n{font:700 .88rem/1.2 var(--sans);color:var(--marigold);font-variant-numeric:tabular-nums;text-align:right}
 .clock .n small{display:block;color:var(--ink-3);font-weight:500}
-svg#pond{display:block;width:100%;height:auto;touch-action:manipulation;border-radius:18px}
+svg#pond{display:block;width:100%;height:auto;touch-action:manipulation;border-radius:18px}svg#pond.grab{touch-action:none}  /* while the stone waits to be thrown, a touch on the pond is a grab, not a scroll */
 .ctl{display:flex;align-items:center;gap:12px;padding:0 8px 2px;position:relative}
-.ctl .ticks{position:absolute;left:62px;right:112px;top:34px;display:flex;justify-content:space-between;font-size:.66rem;color:var(--ink-3);font-variant-numeric:tabular-nums;pointer-events:none}
+.ctl .ticks{position:absolute;left:62px;right:112px;top:34px;display:flex;justify-content:space-between;font-size:.76rem;color:var(--ink-3);font-variant-numeric:tabular-nums;pointer-events:none}
 .ctl{padding-bottom:12px}
 @media (max-width:560px){
   .ctl{flex-wrap:wrap;gap:8px 10px;padding-bottom:6px}
@@ -188,6 +188,14 @@ input[type=range]{flex:1;accent-color:var(--marigold);min-width:0}
 .card details summary::-webkit-details-marker{display:none}
 .card details summary::before{content:"+ "}.card details[open] summary::before{content:"– "}
 .card details p{margin:.3rem 0 0}
+.pulse{background:var(--paper);border-radius:14px;padding:10px 12px 6px;color:var(--paper-ink)}
+.pulse .ptitle{font:700 .86rem/1.3 var(--sans);margin:0 2px 4px}.pulse .ptitle span{display:block;font-weight:400;color:var(--paper-ink-3);font-size:.76rem}
+.pulse svg{width:100%;height:auto;display:block}.pulse .pg{stroke:rgba(30,42,46,.12);stroke-width:1}.pulse .pg.v{stroke-dasharray:2 4}.pulse .pl{font:500 12px var(--sans);fill:var(--paper-ink-3)}
+.pulse .pline{cursor:pointer}.pulse .pp{fill:none;stroke:var(--h);stroke-width:1.8;stroke-linejoin:round;opacity:.9}.pulse .pd{fill:var(--h);stroke:var(--paper);stroke-width:1.5}
+.pulse .pline:hover .pp{stroke-width:3}.pulse .pz{stroke:rgba(30,42,46,.5);stroke-width:1}.pulse .pl.z{font-weight:700;fill:var(--paper-ink-2)}.pulse .pn{font:600 12.5px var(--sans);fill:var(--h);paint-order:stroke;stroke:var(--paper);stroke-width:3px}.pulse .ptick{cursor:pointer}.pulse .ptick line{stroke-width:1.6}.pulse .ptick text{font:9px var(--sans)}
+.pulse .ptick.l-measured line,.pulse .ptick.l-measured text{stroke:#3e8f55;fill:#3e8f55}.pulse .ptick.l-timed line,.pulse .ptick.l-timed text{stroke:#7a5fc4;fill:#7a5fc4}.pulse .ptick.l-reported line,.pulse .ptick.l-reported text{stroke:#1e2a2e;fill:#1e2a2e}.pulse .ptick.l-plausible line,.pulse .ptick.l-plausible text{stroke:#8a7638;fill:#8a7638}.pulse .ptick.l-busted line,.pulse .ptick.l-busted text{stroke:#d04a3a;fill:#d04a3a}
+.card.hasline{border-left:4px solid var(--chip)}.pulse.none{padding-bottom:10px}
+.pulsefold{background:var(--paper);border-radius:14px;padding:8px 12px;color:var(--paper-ink)}.pulsefold summary{font:700 .86rem var(--sans);cursor:pointer}.pulsefold .pulse{padding:6px 0 0}.pulsefold .pulse .ptitle{display:none}
 .card .src{font-size:.84rem;color:var(--ink-3)}.card .src a{color:var(--shallow-2)}.card .src .nolink{opacity:.7;font-style:italic}
 .card .row{display:flex;flex-wrap:wrap;gap:4px 16px;align-items:flex-start}
 .card .row details{flex:1 1 100%}
@@ -201,7 +209,7 @@ input[type=range]{flex:1;accent-color:var(--marigold);min-width:0}
 .facts{display:flex;flex-wrap:wrap;gap:6px 18px;margin-top:6px}
 .fact b{display:block;font:800 1.25rem/1 var(--display);font-variant-numeric:tabular-nums}
 .fact span{font-size:.74rem;color:var(--ink-3)}
-.b{font-size:.68rem;line-height:1;padding:4px 8px;border-radius:999px;border:1px solid var(--hair);white-space:nowrap;font-weight:700;letter-spacing:.02em}
+.b{font-size:.78rem;line-height:1;padding:4px 8px;border-radius:999px;border:1px solid var(--hair);white-space:nowrap;font-weight:700;letter-spacing:.02em}
 .b.event{background:var(--marigold);border-color:var(--marigold);color:#061a2e}
 .b.l-measured{border-color:var(--good);color:var(--good)}.b.l-timed{border-color:#7a5fc4;color:#7a5fc4}
 .b.l-reported{border-color:var(--ink-2);color:var(--ink)}.b.l-plausible{border-style:dashed;border-color:#a8955a;color:#8a7638}
@@ -214,10 +222,10 @@ input[type=range]{flex:1;accent-color:var(--marigold);min-width:0}
 .how p{margin:0;color:var(--ink-2);font-size:.9rem}
 .foot{max-width:1240px;margin:0 auto;padding:0 16px 44px;color:var(--ink-3);font-size:.82rem}
 /* pond */
-.ring{display:none}  /* the time grid is gone; the thread on the right carries the scale */
-.ringlbl{fill:rgba(242,169,59,.6);font:600 9px var(--sans);letter-spacing:.05em}
+.ring{fill:none;stroke:rgba(214,232,246,.14);stroke-width:.6}  /* the time grid: log rings, a hairline each */
+.ringlbl{fill:rgba(214,232,246,.8);font:500 9px var(--sans);letter-spacing:.04em;font-variant-numeric:tabular-nums}
 .slicebd{stroke:rgba(214,232,246,.07);stroke-width:1;stroke-dasharray:2 6}
-.rimlbl{font:700 10px var(--sans);letter-spacing:.16em;text-transform:uppercase;fill:rgba(242,174,46,.55)}
+.rimlbl{font:600 10px var(--sans);letter-spacing:.16em;text-transform:uppercase;fill:rgba(214,232,246,.5)}
 .wave{fill:none;stroke:rgba(226,240,252,.55);filter:url(#softwave)}
 .frontg{transition:opacity .4s}.front,.frontS,.frontH,.frontGlow{fill:none;stroke-linecap:round}
 .front{stroke:rgba(236,246,255,.78);stroke-width:1.7}.frontS{stroke:rgba(2,14,28,.45);stroke-width:3.2}.frontH{stroke:#fff;stroke-width:.8;opacity:.8}
@@ -249,17 +257,18 @@ input[type=range]{flex:1;accent-color:var(--marigold);min-width:0}
 .glint.on{opacity:0}.glint{display:none}
 @keyframes glide{to{stroke-dashoffset:-360}}
 @media (prefers-reduced-motion:reduce){.glint{animation:none}.markglow{animation:none}}
-.thread{stroke:var(--marigold);stroke-width:1;opacity:.45}
-.threadtick{stroke:var(--marigold);stroke-width:1;opacity:.6}
-.markglow{animation:breathe 3.2s ease-in-out infinite}
+.thread{stroke:rgba(214,232,246,.35);stroke-width:.8}
+.threadtick{stroke:rgba(214,232,246,.6);stroke-width:1}
+.markglow{animation:breathe 3.2s ease-in-out infinite;display:none}
 @keyframes breathe{0%,100%{opacity:.55}50%{opacity:.95}}
 .nlab.mark rect{fill:var(--paper);stroke:none}
 .nlab.mark text{fill:var(--paper-ink)}.nlab.mark text.s{fill:#8a5a0a}
 .rip.l-measured.disc,.edge.l-measured.disc{stroke-width:2}
 .rip.l-timed,.edge.l-timed{stroke:var(--timed);stroke-width:2}
 .rip.l-reported,.edge.l-reported{stroke:var(--rec);stroke-width:1.5}
-.rip.l-plausible,.edge.l-plausible{stroke:var(--plaus);stroke-width:1.4;stroke-dasharray:5 6}
-.rip.l-busted,.edge.l-busted{stroke:var(--miss);stroke-width:1.8;stroke-dasharray:2 4}
+.rip.l-plausible,.edge.l-plausible{stroke:var(--plaus);stroke-width:1.4;stroke-dasharray:6 5}
+.rip.l-busted,.edge.l-busted{stroke:var(--miss);stroke-width:1.8;stroke-dasharray:.1 4.2;stroke-linecap:round}
+.rip.l-measured{stroke-width:3}.rip.l-timed{stroke-width:2.2}.rip.l-reported{stroke-width:1.7}
 /* the thread back to the stone shows only while a ripple is being followed */
 .edge{opacity:0;transition:opacity .3s}
 #pond.focus .edge.lit{opacity:.9}
@@ -269,6 +278,9 @@ input[type=range]{flex:1;accent-color:var(--marigold);min-width:0}
 .elbl.l-measured{fill:var(--good)}.elbl.l-timed{fill:var(--timed)}.elbl.l-reported{fill:var(--ink)}.elbl.l-plausible{fill:var(--plaus)}.elbl.l-busted{fill:var(--miss)}
 .node{cursor:pointer;outline:none}
 .node:focus-visible .halo,.node:hover .halo{r:9}.node:focus-visible .halo{stroke:var(--marigold);stroke-width:2}
+.crest,.crestg{display:none}
+.mk{stroke:#061a30;stroke-width:1.2;paint-order:stroke}.mk.l-measured{fill:var(--good)}.mk.l-timed{fill:var(--timed)}.mk.l-reported{fill:#eaf3fb}.mk.l-plausible{fill:var(--plaus)}.mk.l-busted{fill:var(--miss)}
+.mkt{stroke:rgba(214,232,246,.55);stroke-width:1}
 .crest{fill:none;stroke-linecap:round;stroke-linejoin:round;stroke-width:3.4;opacity:0;transition:opacity .4s}
 .crest.on{opacity:1}
 .crestg{stroke-width:11;opacity:0;filter:url(#soft)}.crestg.on{opacity:.3}
@@ -279,16 +291,16 @@ input[type=range]{flex:1;accent-color:var(--marigold);min-width:0}
 .leader{stroke:rgba(214,232,246,.35);stroke-width:1;opacity:0;transition:opacity .5s ease-out;pointer-events:none}.leader.on{opacity:1}
 #pond.focus .leader{opacity:.16}
 .nlab.on{opacity:1}
-.nlab rect{fill:rgba(5,22,40,.84);stroke:rgba(214,232,246,.08)}
-.nlab text{font:600 13.5px var(--sans);fill:var(--ink)}
+.nlab rect{fill:rgba(5,22,40,.66);stroke:none}
+.nlab text{font:500 13.5px var(--sans);fill:var(--ink)}
 .nlab text.s{font-weight:500;font-size:11px;fill:var(--ink-3)}
 .nlab.busted text:not(.s){fill:var(--ink-3);text-decoration:line-through}
 .nlab.hot rect{stroke:var(--marigold)}
 #pond.focus .node.on:not(.lit),#pond.focus .nlab.on:not(.lit),#pond.focus .band:not(.lit),#pond.focus .rip.on:not(.lit){opacity:.16 !important;transition:opacity .3s}  /* only what has landed sits back; what has not arrived stays unseen */
 #pond.focus .rip2,#pond.focus .glint{opacity:0 !important}
 /* at rest, the ripples that left no mark sit back; a lasting mark or a measured step carries full weight */
-.rip.on.l-reported,.rip.on.l-plausible,.rip.on.l-timed{opacity:.28}.rip.on.l-busted{opacity:.42}.crest.l-reported,.crest.l-plausible,.crest.l-timed,.crest.l-busted{opacity:.55}
-.rip.on.l-measured{opacity:.85}
+.rip.on.l-reported,.rip.on.l-plausible{opacity:.58}.rip.on.l-timed{opacity:.6}.rip.on.l-busted{opacity:.55}.crest.l-reported,.crest.l-plausible,.crest.l-timed,.crest.l-busted{opacity:.55}
+.rip.on.l-measured{opacity:.92}
 #pond .node,#pond .nlab{transition:opacity .3s}
 .stone .waterline{transition:opacity .45s ease-out}
 .stone text{font:italic 500 16px var(--display);fill:var(--paper);paint-order:stroke;stroke:rgba(6,22,40,.85);stroke-width:5px}
@@ -300,18 +312,19 @@ body.reel header{max-width:760px;padding-top:22px}
 @media (max-width:560px){
   header{padding:14px 12px 2px}.brand{font-size:.68rem}
   h1{font-size:1.35rem;margin:.3rem 0 .25rem}.sub{font-size:.88rem;line-height:1.35}
-  .tally{margin-top:6px}.tally span{font-size:.68rem;padding:2px 8px}
+  .tally{margin-top:6px}.tally span{font-size:.76rem;padding:2px 8px}
   .tabs{margin-top:8px;overflow-x:auto;scrollbar-width:none}.tab{padding:6px 7px 7px;font-size:.8rem;gap:5px}.tab svg{width:14px;height:14px}.tabnote{font-size:.74rem;margin:6px 0 0}
   .picker{margin:6px 0 0}.chip{padding:5px 10px;font-size:.82rem}
   .wrap{padding:6px 10px 24px;gap:12px}.pondbox{padding:8px 8px 6px;border-radius:18px}
-  .hint{bottom:196px;font-size:.78rem;padding:7px 12px;max-width:88%;text-align:center;white-space:normal}  /* above the three-row controls on a phone */
+  .pondbox .hint{position:static;transform:none;margin:8px auto 2px;display:block;width:max-content;max-width:100%;font-size:.78rem;padding:7px 12px;text-align:center;white-space:normal}  /* a phone: in the flow under the pond, never over it */
+  .pondbox .hint[hidden]{display:block;visibility:hidden}  /* and when it goes, the controls stay put */
   .clock .d{font-size:1.05rem}.clock .n{font-size:.78rem}
-  .legend{font-size:.7rem;gap:4px 10px;padding:4px 4px 2px}.howbtn{font-size:.7rem;padding:2px 8px}
-  .nextbtn{padding:6px 10px;font-size:.76rem}.play{width:34px;height:34px}.stepbtn{padding:5px 9px;font-size:.74rem}
+  .legend{font-size:.78rem;gap:4px 10px;padding:4px 4px 2px}.howbtn{font-size:.78rem;padding:4px 10px}
+  .nextbtn{padding:6px 10px;font-size:.8rem}.play{width:36px;height:36px}.stepbtn{padding:6px 10px;font-size:.8rem}
   .card{padding:9px 12px}.card h2{font-size:.9rem}
 }
 /* first-visit hint, share and the reel caption */
-.hint{position:absolute;left:50%;bottom:134px;transform:translateX(-50%);background:rgba(5,22,40,.9);border:1px solid var(--hair);border-radius:999px;padding:8px 14px;font-size:.8rem;color:var(--ink-2);white-space:nowrap;pointer-events:none;transition:opacity .4s;z-index:2}
+.hint{position:absolute;left:50%;top:64px;transform:translateX(-50%);background:rgba(5,22,40,.9);border:1px solid var(--hair);border-radius:999px;padding:8px 14px;font-size:.8rem;color:var(--ink-2);white-space:nowrap;pointer-events:none;transition:opacity .4s;z-index:2}
 .hint[hidden]{display:none}
 .iconbtn{width:38px;height:38px;border-radius:50%;border:1px solid var(--hair);background:none;color:var(--ink-2);cursor:pointer;display:grid;place-items:center;flex:none}
 .iconbtn svg{width:16px;height:16px}
@@ -319,6 +332,7 @@ body.reel header{max-width:760px;padding-top:22px}
 .toast.on{opacity:1}
 .caption{display:none;margin:4px 8px 6px;padding:10px 14px;border-radius:12px;background:rgba(5,22,40,.75);border:1px solid var(--hair);font-size:1.05rem;min-height:2.6em}
 .caption b{color:var(--marigold)}
+.topond{position:fixed;right:14px;bottom:18px;z-index:5;background:var(--marigold);color:#1a1405;border:0;border-radius:999px;padding:10px 14px;font:700 .86rem var(--sans);box-shadow:0 4px 18px rgba(0,0,0,.35);cursor:pointer}
 body.reel .caption{display:block}
 @media (max-width:860px){#pond.focus ~ .caption.on{display:block}.caption a{color:var(--marigold);font-weight:600;margin-left:6px}}
 body.reel .pondbox{padding-bottom:10px}
@@ -337,7 +351,7 @@ body.reel .pondbox{padding-bottom:10px}
   <div class="chooser" id="chooser" hidden>
     <div class="known" aria-label="Start with one you know"><span>Start with one you know:</span>
       <button class="chip" data-kind="map" data-slug="tiger-king">Tiger King</button><button class="chip" data-kind="chain" data-slug="squid-game-ripples">Squid Game</button>
-      <button class="chip" data-kind="chain" data-slug="frozen">Frozen</button><button class="chip" data-kind="chain" data-slug="america-and-alcohol">Prohibition</button>
+      <button class="chip" data-kind="chain" data-slug="america-and-alcohol">Prohibition</button><button class="chip" data-kind="chain" data-slug="dust-bowl-soil">The Dust Bowl</button><button class="chip" data-kind="chain" data-slug="frozen">Frozen</button>
       <button class="chip" data-kind="chain" data-slug="tambora-bicycle">A volcano → the bicycle</button></div>
     <div class="search"><input type="search" id="search" placeholder="Search the stories (a show, a law, a year…)" aria-label="Search the stories" autocomplete="off"></div>
     <div class="tabs" role="tablist" aria-label="Kinds of story">
@@ -358,6 +372,7 @@ body.reel .pondbox{padding-bottom:10px}
     <div class="hint" id="hint" hidden>Press play or drag the slider · click or tap a ripple to follow it</div>
     <div class="tip" id="tip" role="tooltip"></div>
     <div class="caption" id="caption" aria-live="polite"></div>
+    <button class="topond" id="topond" hidden aria-label="Back to the pond">↑ Pond</button>
     <div class="ctl">
       <button class="play" id="play" aria-label="Pause"><svg viewBox="0 0 16 16" id="playico"></svg></button>
       <button class="stepbtn" id="stepbtn" aria-pressed="false" title="Stop at each ripple and read its card">Step</button>
@@ -391,9 +406,9 @@ body.reel .pondbox{padding-bottom:10px}
   </div>
 </div>
 <section class="how" id="how" hidden>
-  <div><h3>One wave, outward</h3><p>The stone is the event. A single wavefront leaves it and moves outward as time passes; each thing that changed appears where the front was when it happened, and stays there. So the inner arcs are the earliest changes and the outer ones the latest, and no ripple ever passes another. Time is stretched near the stone: the first weeks take as much room as the later decades, which is why the slider's ticks are uneven. Each distinct ripple gets its own slice, labeled on the rim with the industry it reached. Press <b>Step</b> and the clock stops at each ripple with its card open; play or the right arrow goes on to the next.</p></div>
+  <div><h3>One wave, outward</h3><p>The stone is the event. A single wavefront leaves it and moves outward as time passes; each thing that changed appears where the front was when it happened, and stays there. So the inner arcs are the earliest changes and the outer ones the latest, and no ripple ever passes another. Time is stretched near the stone: the first weeks take as much room as the later decades, which is why the slider's ticks are uneven. Each distinct ripple gets its own slice, labeled on the rim with the industry it reached. Press <b>Step</b> and the clock stops at each ripple with its card highlighted; play or the right arrow goes on to the next.</p></div>
   <div><h3>Order, not a web</h3><p>Every step must begin after the step before it. A step that started first is busted, however related it looks.</p></div>
-  <div><h3>How sure</h3><p><b>Measured</b>: moved beyond normal in the data, after the step before. <b>Timed</b>: rose in the right order, not tested against chance. <b>Reported</b>: a credible source makes the link. <b>Plausible</b>: it happened; the link is unproven. <b>Busted</b>: wrong order, contradicted, or no evidence. Steps without an exact date sit at the middle of their likely range. Every dated step since 2015 also gets an <b>attention check</b>: did Wikipedia views of the thing it names rise at that date, tested against the page's own past? It rides along on the card; it does not change the step's rating.</p></div>
+  <div><h3>How sure</h3><p><b>Measured</b>: moved beyond normal in the data, after the step before. <b>Timed</b>: rose in the right order, not tested against chance. <b>Reported</b>: a credible source makes the link. <b>Plausible</b>: it happened; the link is unproven. <b>Busted</b>: wrong order, contradicted, or no evidence. Steps without an exact date sit at the middle of their likely range. <b>p</b> is the share of placebo windows in a page's own history that rose as much as the real one; small means the rise is rare for that page, not that the step caused what came next. Every dated step since 2015 also gets an <b>attention check</b>: did Wikipedia views of the thing it names rise at that date, tested against the page's own past? It rides along on the card; it does not change the step's rating.</p></div>
   <div><h3>Found by the engine</h3><p>Ripple maps list things whose attention rose unusually after the event, found automatically among the Wikipedia articles that link to it. Attention is a lead, not a proven effect. The data: daily Wikipedia views, FRED and BLS series, Census retail sales, Zillow, Stack Overflow, US baby names and dated public records.</p></div>
 </section>
 <p class="foot">Ripple v1, an early build. Timing shows order, not proof of cause. Every test and every miss: <a href="/ripples/discover/maps/">ripple maps</a> · <a href="/ripples/discover/">discoveries</a>.</p>
@@ -413,12 +428,8 @@ const ICON = {
 };
 // the stone: a small river rock with moss on its shoulder, drawn upright at the center of the pond
 const STONE_SVG = `<path d="M-13.5,-3.5 C-13,-11 -5.5,-15.5 2.5,-14.5 C9.5,-13.6 14.5,-8.5 13.8,-1.5 C13.2,6 7.5,12.5 -0.5,12.6 C-8,12.7 -14,6.5 -13.5,-3.5 Z" fill="url(#rock)"/>
-<path d="M-13.5,-3.5 C-13,-11 -5.5,-15.5 2.5,-14.5 C9.5,-13.6 14.5,-8.5 13.8,-1.5 C13.2,6 7.5,12.5 -0.5,12.6 C-8,12.7 -14,6.5 -13.5,-3.5 Z" fill="none" stroke="rgba(10,25,22,.55)" stroke-width=".8"/>
-<path d="M-9,-9.5 C-5,-13.5 2,-14 6.5,-11.5 C3,-11.8 -3,-11 -6.5,-8.2 C-8,-7.4 -9.6,-8.2 -9,-9.5 Z" fill="rgba(255,255,255,.28)"/>
-<path d="M-12.6,-2.5 C-11,-7.5 -6,-9.5 -2,-8.2 C0.5,-7.4 1.5,-5 -0.5,-3.8 C-3.5,-2.2 -7.5,-1.2 -10.5,-1 C-12,-1 -12.9,-1.4 -12.6,-2.5 Z" fill="url(#moss)" opacity=".55"/>
-<path d="M3.5,-12.5 C6,-13 8.5,-11.5 8.8,-9.5 C9,-8 7.2,-7.4 5.8,-8.2 C4.4,-9 3,-10.4 3.5,-12.5 Z" fill="url(#moss)" opacity=".35"/>
-<path d="M-6,5.5 C-4.5,4.2 -2,4.4 -1.2,5.8 C-0.6,7 -2,8 -3.6,7.8 C-5.2,7.6 -6.6,6.6 -6,5.5 Z" fill="url(#moss)" opacity=".3"/><path d="M-4,-2 l1.2,.6 M2,2 l1,.5 M6,-4 l.9,.6 M-8,3 l1,.4" stroke="rgba(0,0,0,.25)" stroke-width=".5" stroke-linecap="round"/>
-<circle cx="6.5" cy="3" r=".9" fill="rgba(255,255,255,.18)"/><circle cx="2" cy="7.5" r=".7" fill="rgba(255,255,255,.14)"/><circle cx="-3" cy="-0.5" r=".6" fill="rgba(0,0,0,.22)"/>`;
+<path d="M-13.5,-3.5 C-13,-11 -5.5,-15.5 2.5,-14.5 C9.5,-13.6 14.5,-8.5 13.8,-1.5 C13.2,6 7.5,12.5 -0.5,12.6 C-8,12.7 -14,6.5 -13.5,-3.5 Z" fill="none" stroke="rgba(6,20,36,.6)" stroke-width=".7"/>
+<path d="M-9.5,-9 C-5.5,-13 1.5,-13.6 6,-11.4" fill="none" stroke="rgba(255,255,255,.22)" stroke-width="1.1" stroke-linecap="round"/>`;
 // ---------- stories ----------
 // Hand-built maps (from ripples/maps/out): which steps to show, short labels, parents, and the main slice's industry.
 const MAPS = {
@@ -435,12 +446,20 @@ const MAPS = {
 // The three tabs. Ripple maps: multi-hop maps, best first. Checked stories: viral chains checked link by link.
 // Leads: the engine's one-hop finds (attention only), awaiting a second hop.
 const TABS = {
-  maps:[["map", "tiger-king", "Tiger King → the Big Cat Act"], ["chain", "mr-bates-horizon", "Mr Bates → convictions quashed by law"], ["chain", "planet-earth", "Planet Earth → the STURDY Act"],
-    ["chain", "quincy-orphan-drug", "Quincy, M.E. → the Orphan Drug Act"], ["chain", "cathy-come-home", "Cathy Come Home → a duty to house"],
-    ["chain", "sixty-minutes-stock-act", "60 Minutes → the STOCK Act"], ["chain", "octopus-sentience", "My Octopus Teacher → the Sentience Act"],
-    ["chain", "victim-1961", "Victim (1961) → the Sexual Offences Act"], ["chain", "daily-show-zadroga", "The Daily Show → the Zadroga Act"],
-    ["chain", "manhunt-byron", "Manhunt → game ratings in law"], ["chain", "silent-spring-ddt", "Silent Spring → the DDT ban"],
-    ["chain", "west-wing-hatred-act", "The West Wing → a government defeat"], ["chain", "america-and-alcohol", "Prohibition → a century of American drinking"],
+  maps:[["map", "tiger-king", "Tiger King → the Big Cat Act"], ["chain", "the-jungle-fda", "The Jungle → the FDA"], ["chain", "dust-bowl-soil", "The Dust Bowl → soil conservation"],
+    ["chain", "triangle-shirtwaist", "The Triangle fire → the New Deal's labor laws"], ["chain", "sputnik-nasa-arpa", "Sputnik → NASA, ARPA and the Education Act"],
+    ["chain", "unsafe-at-any-speed", "Unsafe at Any Speed → NHTSA and the airbag"], ["chain", "cuyahoga-clean-water", "The Cuyahoga fire → the EPA and the Clean Water Act"],
+    ["chain", "love-canal-superfund", "Love Canal → Superfund"], ["chain", "three-mile-island-nrc", "Three Mile Island → the long pause"],
+    ["chain", "exxon-valdez-opa90", "Exxon Valdez → the Oil Pollution Act"], ["chain", "liebeck-hot-coffee", "The hot-coffee case → tort reform"],
+    ["chain", "columbine-active-shooter", "Columbine → the lockdown drill"], ["chain", "flint-lead-pipes", "Flint → the lead-pipe money"],
+    ["chain", "america-and-alcohol", "Prohibition → a century of American drinking"], ["chain", "silent-spring-ddt", "Silent Spring → the DDT ban"],
+    ["chain", "sixty-minutes-stock-act", "60 Minutes → the STOCK Act"], ["chain", "daily-show-zadroga", "The Daily Show → the Zadroga Act"], ["chain", "quincy-orphan-drug", "Quincy, M.E. → the Orphan Drug Act"],
+    ["chain", "mr-bates-horizon", "Mr Bates → convictions quashed by law"], ["chain", "planet-earth", "Planet Earth → the STURDY Act"],
+    ["chain", "cathy-come-home", "Cathy Come Home → a duty to house"],
+    ["chain", "octopus-sentience", "My Octopus Teacher → the Sentience Act"],
+    ["chain", "victim-1961", "Victim (1961) → the Sexual Offences Act"],
+    ["chain", "manhunt-byron", "Manhunt → game ratings in law"],
+    ["chain", "west-wing-hatred-act", "The West Wing → a government defeat"],
     ["chain", "chernobyl-zone", "Chernobyl → an official tourist zone"],
     ["chain", "tylenol", "Tylenol → tamper-proof packaging"], ["chain", "broad-street-sanitation", "A water pump → modern sewers"],
     ["chain", "sputnik-gps", "Sputnik → GPS"], ["chain", "cantaloupe-penicillin", "A cantaloupe → D-Day penicillin"],
@@ -545,10 +564,10 @@ function sparkHTML(weekly, mark) {
     <polyline points="${pts}" fill="none" stroke="var(--marigold)" stroke-width="2" vector-effect="non-scaling-stroke"/>
     <line class="cursor" x1="-5" x2="-5" y1="0" y2="${H}" stroke="var(--ink)" stroke-width="1.2" vector-effect="non-scaling-stroke"/></svg>`;
 }
-function card({when, badge, badgeCls, title, spark = "", facts = "", short = "", details = "", cls = "", mark = null, sure = ""}) {
+function card({when, badge, badgeCls, title, spark = "", facts = "", short = "", details = "", cls = "", mark = null, sure = "", foot = ""}) {
   const sureBox = sure ? `<details class="sure"><summary>How sure?</summary><p>${sure}</p></details>` : "";
   return {cls:cls + (mark ? " marked" : ""), html:`<div class="top"><div class="when">${when}</div><span class="b ${badgeCls}">${badge}</span></div>${mark ? `<div class="markpill">◆ Lasting mark · ${esc(mark)}</div>` : ""}
-    <h2>${esc(title)}</h2>${spark}${facts}${short ? `<p class="short">${short}</p>` : ""}<div class="row">${sureBox}${details ? `<details><summary>Details</summary>${details}</details>` : ""}</div>`};
+    <h2>${esc(title)}</h2>${spark}${facts}${short ? `<p class="short">${short}</p>` : ""}${foot}<div class="row">${sureBox}${details ? `<details><summary>Details</summary>${details}</details>` : ""}</div>`};
 }
 // Plain-language account of the evidence behind one link: what was measured, how it was compared, what it does not show.
 function howSure(lv, o = {}) {
@@ -556,7 +575,8 @@ function howSure(lv, o = {}) {
   const after = " It also began after the step before it, which is the order a cause needs.";
   if (lv === "measured") {
     if (o.kind === "dose") return `${esc(o.what)}. For each state that opened retail cannabis we took the change in the outcome from the last survey before to the second survey after, and subtracted the same change in states that never did. We then handed the same opening dates to 2,000 random sets of states: ${o.p <= 0.05 ? `only ${pct} of those produced a difference this large (p = ${o.p})` : `${pct} of those produced a difference at least this large (p = ${o.p}), so it is within what chance produces`}. A placebo on the two surveys before the opening checks whether the treated states were already drifting (pre-trend p = ${o.pre}). This is the first rung above timing: exposure that varies by place. It still cannot rule out something else that arrived in the same states at the same time.`;
-    if (o.kind === "wiki") return `We counted daily Wikipedia views of “${esc(o.what)}”. From ${o.when} they ran about ${o.ratio}× the normal level. We then ran the same test at ${o.n ? `${o.n}` : "many"} random dates in the page's own past: a jump this big showed up at only ${pct} of them (p = ${o.p}).${after} This shows attention, not what people did next.`;
+    if (o.kind === "wiki") { const floor = o.p != null && (o.n ? o.p <= 1.05 / (o.n + 1) : o.p <= 0.0105);
+      return `We counted daily Wikipedia views of “${esc(o.what)}”. From ${o.when} they ran about ${o.ratio}× the page's normal (its median before). We then ran the same test at ${o.n ? `${o.n}` : "many"} placebo windows spaced through the page's own past: ${floor ? `none of them rose this much (p = ${o.p}, the smallest this test can report${o.n ? "" : " with the windows it had"})` : `a jump this big showed up at only ${pct} of them (p = ${o.p})`}.${after} This shows attention, not what people did next.`; }
     if (o.kind === "ssa") return `We took the yearly count of US babies given this name and compared the change in ${o.when} with the change in every other year on record. Only ${pct} of years moved this much (p = ${o.p}).${after}`;
     return `We took the official series (${esc(o.what)}) and compared its change after this date with its change after every other date in the series. Only ${pct} of those moved this much (p = ${o.p}).${after} A measured move, not proof that nothing else was going on.`;
   }
@@ -565,10 +585,10 @@ function howSure(lv, o = {}) {
     if (o.newArticle) return `Its Wikipedia article was created on ${o.when}, after the step before: a sign it became notable then, not proof that the step before caused it.`;
     return `The rise began on ${o.when}, after the step before, which is the order a cause needs. We have not tested it against chance, so it could still be a coincidence.`;
   }
-  if (lv === "reported") return `We did not measure this ourselves. ${o.what ? `The source named on the card (${esc(o.what)})` : "A credible source"} records that it happened on this date${o.why ? ` and ties it to the step before: ${esc(String(o.why).replace(/\.\s*$/, ""))}` : ""}. Treat it as reliable reporting, not a measurement.`;
+  if (lv === "reported") return `We did not measure this ourselves. The source named on the card records that it happened on this date${o.why ? ` and ties it to the step before: ${esc(String(o.why).replace(/\.\s*$/, ""))}` : ""}. Treat it as reliable reporting, not a measurement.`;
   if (lv === "plausible") return `It happened at about this date, but nothing we checked shows that the step before caused it${o.why ? ` (${esc(o.why)})` : ""}. It stays on the map because the chain claims it, rated honestly as unproven.`;
   if (lv === "busted" && o.notYet) return `${esc(o.why)} Nothing is wrong with the claim; it simply has not happened yet, so it cannot be rated. It stays on the map as a marker of what to watch.`;
-  if (lv === "busted" && o.late) return `${esc(o.why)} The thing this step is said to have started was already under way before it arrived, so it cannot be the origin. As a later accelerant it stays an open question.`;
+  if (lv === "busted" && o.late) return `${esc(o.why)} The record puts this after the thing it is said to have caused, so it cannot be the origin; the details say what came first. As a later push it stays an open question.`;
   if (lv === "busted") return o.why ? `${esc(o.why)} A ripple has to start after its cause, and the claim has to match the record; this one does not.` : "The claim fails: wrong order, no evidence, or contradicted by the record.";
   return "";
 }
@@ -583,8 +603,8 @@ function discItems(ev, skip = new Set()) {
       card:card({when:`${fmt(D(l.onset))}<span>${sinceLabel(l.lag)}</span>`, badge:"Measured", badgeCls:"l-measured", cls:"disc",
         sure:howSure("measured", {kind:"wiki", what:l.label, when:fmt(D(l.onset)), ratio:l.ratio, p:l.p, n:l.n_pseudo}),
         title:l.headline || l.label, spark:sparkHTML(l.weekly, ev.date),
-        short:`Attention to “${esc(l.label)}” ${l.ratio}× normal · p = ${l.p}`,
-        details:`<p>${esc(cap(l.desc))}.</p>${l.next ? `<p><b>Next test:</b> ${esc(l.next)}.</p>` : ""}<p>Found by the engine among articles linking to the event: daily Wikipedia views rose beyond their own history (p = ${l.p}) after attention to the event began, then qualified by hand for a material endpoint and a plausible path.</p>`})});
+        short:`Attention to “${esc(l.label)}” ${l.ratio}× normal · ${l.p <= 0.0105 ? `no placebo window rose this much (p = ${l.p})` : `p = ${l.p}`}`,
+        details:`<p>${esc(cap(l.desc))}.</p>${l.next ? `<p><b>Next test:</b> ${esc(l.next)}.</p>` : ""}<p>Found by the engine among articles linking to the event: daily Wikipedia views rose beyond their own history (p = ${l.p}) after attention to the event began, then qualified by hand for a material endpoint and a plausible path.</p><p class="src">Daily views of “${esc(l.label)}” · <a href="https://en.wikipedia.org/wiki/${encodeURIComponent(l.label.replace(/ /g, "_"))}" target="_blank" rel="noopener">Wikipedia: ${esc(l.label)} ↗</a> · <a href="https://pageviews.wmcloud.org/?project=en.wikipedia.org&pages=${encodeURIComponent(l.label.replace(/ /g, "_"))}" target="_blank" rel="noopener">the pageviews tool ↗</a></p>`})});
     if (l.outcome) {
       const d = daysBetween(ev.date, l.outcome.date);
       out.push({id:`${id}o`, parent:id, slice:l.slice, d:Math.max(d, 0.5), label:l.outcome.short || shortLabel(l.outcome.claim), lv:"reported", sub:`${fmtMonth(D(l.outcome.date))} · ${sinceLabel(d)}`, mark:l.outcome.mark,
@@ -612,7 +632,10 @@ function fromMap(slug) {
     (s.measure || "").replace(/“([^”]+)”/g, (_, a) => seen.add(a));
     (s.also || []).forEach(a => seen.add(a.name));
     const facts = s.facts ? `<div class="facts">${s.facts.map(([k, v]) => `<div class="fact"><b>${esc(v)}</b><span>${esc(k)}</span></div>`).join("")}</div>` : "";
-    const src = s.source ? `<p class="src"><a href="${s.source}" rel="noopener" target="_blank">${esc(s.measure)}</a></p>` : `<p class="src">${esc(s.measure || "")}</p>`;
+    const sl = ((DATA.sources || {})[slug] || {})[String(i)];
+    const art = lv === "measured" ? (s.measure || "").replace(/.*“([^”]+)”.*/, "$1") : "";
+    const link = sl ? [sl.url, sl.label] : art && art !== s.measure ? [`https://en.wikipedia.org/wiki/${encodeURIComponent(art.replace(/ /g, "_"))}`, `Wikipedia: ${art}`] : s.source ? [s.source, "Source"] : null;
+    const src = `<p class="src">${esc(amer(s.measure || ""))}${link ? ` · <a href="${esc(link[0])}" rel="noopener" target="_blank">${esc(link[1])} ↗</a>` : s.measure ? ` <span class="nolink">· not linked yet</span>` : ""}</p>`;
     items.push({id:`m${i}`, parent:n.p ? `m${n.p}` : null, slice:"main", d:Math.max(s.days, 0.5), label:n.l, lv, sub:`${fmtMonth(D(s.date))} · ${sinceLabel(s.days)}`, mark:n.mark, title:s.title,
       short:lv === "plausible" ? "Happened; the link is unproven" : lv === "measured" ? "Passed a test against fake dates" : lv === "reported" ? (s.measure || "") : "Rose after the step before",
       series:s.series && s.series.weekly ? s.series : null,
@@ -620,7 +643,7 @@ function fromMap(slug) {
         sure:howSure(lv, lv === "measured" ? {kind:"wiki", what:(s.measure || "").replace(/.*“([^”]+)”.*/, "$1"), when:fmt(D(s.date)), ratio:"several", p:0.01} : lv === "reported" ? {what:s.measure} : {when:fmt(D(s.date)), why:s.note}),
         spark:s.series ? sparkHTML(s.series.weekly, data.release) : "", facts,
         short:lv === "plausible" ? "Happened; the link is unproven" : lv === "measured" ? "Passed a test against fake dates" : lv === "reported" ? esc(s.measure || "") : "Rose after the step before",
-        details:`${s.note ? `<p>${esc(s.note)}</p>` : ""}${s.test ? `<p>${esc(s.test)}</p>` : ""}${src}`})});
+        foot:src, details:`${s.note ? `<p>${esc(s.note)}</p>` : ""}${s.test ? `<p>${esc(s.test)}</p>` : ""}`})});
   }
   if (disc) items.push(...discItems(disc, seen));
   const leftOut = disc ? leftOutCard(disc) : [];
@@ -703,7 +726,7 @@ function fromActs(work) {
 // ---- checked chains (ripples/docs/results/chain_check_v1.json) ----
 function chainLevel(st) {
   const v = st.verdict || "", why = st.reason || st.note || "";
-  if (/after what it is said/.test(v)) return ["busted", "Busted", "This arrived after the trend it is said to have started.", "Came after what it claims to have started"];
+  if (/after what it is said/.test(v)) return ["busted", "Busted", "This came after what it is said to have started.", "Came after what it claims to have started"];
   if (/wrong order|before the step/.test(v)) return ["busted", "Busted", st.test.type === "record" ? "This came before the step it is said to follow." : "It began before the step before it.", "Came before its cause"];
   if (/contradicted/.test(v)) return ["busted", "Busted", `Contradicted. ${why}`, "Contradicted"];
   if (/no evidence/.test(v)) return ["busted", "Busted", "No evidence found that this happened as described." + (why && !/^desk check: no evidence/.test(why) ? ` (${why}.)` : ""), "No evidence it happened"];
@@ -718,7 +741,7 @@ function chainLevel(st) {
   }
   if (v === "measured") {
     const t = st.ratio ? `Rose to ${st.ratio}× its normal level from ${fmt(D(st.onset))}` : `Moved further than in ${Math.round((1 - st.p) * 100)}% of other periods`;
-    return ["measured", "Measured", `${t} (p = ${st.p}), after the step before.`, st.ratio ? `${st.ratio}× normal · a rise this big at ${Math.round(st.p * 100)}% of random dates (p = ${st.p})` : `Beyond ${Math.round((1 - st.p) * 100)}% of other periods · p = ${st.p}`];
+    return ["measured", "Measured", `${t} (p = ${st.p}), after the step before.`, st.ratio ? `${st.ratio}× normal · ${st.n_placebo && st.p <= 1.05 / (st.n_placebo + 1) ? `no placebo window rose this much (p = ${st.p})` : `a rise this big at ${Math.round(st.p * 100)}% of placebo windows (p = ${st.p})`}` : `Beyond ${Math.round((1 - st.p) * 100)}% of other periods · p = ${st.p}`];
   }
   if (st.archive_first) return ["timed", "Timed", `Online by ${fmt(D(st.archive_first))}: the earliest Wayback Machine capture of ${st.test.url}, after the step before.`, `Online by ${fmt(D(st.archive_first))} (Wayback)`];
   if (v.startsWith("timed")) return ["timed", "Timed", st.new_article ? `Its Wikipedia article appeared on ${fmt(D(st.new_article))}, after the step before.` : `A sustained rise from ${fmt(D(st.onset))}, after the step before.`, "Rose after the step before"];
@@ -738,10 +761,8 @@ const SRCURL = st => {
   if (ty === "zillow") return ["https://www.zillow.com/research/data/", "Zillow research data"];
   if (ty === "arxiv") return ["https://arxiv.org/archive/astro-ph", "arXiv astro-ph"];
   if (ty === "dose" || ty === "file") return ["/ripples/methods/", "How we tested it"];
-  if (st.url) return [st.url, "Open the source"];
-  const art = (st.attn && st.attn.articles && st.attn.articles[0]) || null;  // the article whose attention we checked at this date
-  if (art) return [`https://en.wikipedia.org/wiki/${encodeURIComponent(art.replace(/ /g, "_"))}`, `Wikipedia: ${art}`];
-  return null;  // no link: the source's own words stand, marked as not linked yet
+  if (st.url) return [st.url, st.urlLabel || "Open the source"];
+  return null;  // an attention-check article is not this step's source  // no link: the source's own words stand, marked as not linked yet
 };
 const amer = s => String(s || "").replace(/\b(\d{1,2}) (Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Sept|Oct|Nov|Dec)[a-z]* (\d{4})\b/g, (m, d, mo, y) => `${mo.slice(0, 3)} ${+d}, ${y}`).replace(/\s*\([a-z0-9]{4}-[a-z0-9]{4}\)/g, "");  // US dates in source lines; dataset ids out
 const srcP = (st, text) => { const u = SRCURL(st); text = amer(text); const t1 = text ? text.charAt(0).toUpperCase() + text.slice(1) : "";
@@ -752,6 +773,8 @@ const SRC = st => ({fred:`FRED series ${st.test.id}`, stackex:"Stack Overflow ne
 function fromChain(slug) {
   const ch = DATA.chains.find(c => c.slug === slug), iso0 = ch.date, items = [];
   const steps = ch.steps.slice(1);
+  const SRCS = (DATA.sources || {})[slug] || {};  // record links from the sources pass, by step number
+  for (const st of ch.steps) { const sl = SRCS[String(st.n)]; if (sl && !st.url) { st.url = sl.url; st.urlLabel = sl.label; } }
   let prevD = 1, lastMain = null;
   steps.forEach(st => {
     let d = st.onset ? daysBetween(iso0, st.onset) : null, range = null;
@@ -775,36 +798,39 @@ function fromChain(slug) {
       if (txt) attnNote = txt;  // read under "How sure?", not on the card's face
     }
     const srcLine = amer(st.source || (st.test && st.test.source) || "");
-    const srcShort = srcLine.split(/;|: | \(/)[0].trim().slice(0, 80);  // the source's name for the How-sure sentence
+    let srcShort = srcLine.split(/;|: | \(/)[0].trim(); if (srcShort.length > 72) srcShort = srcShort.slice(0, 72).replace(/\s+\S*$/, "") + "…";  // the source's name for the How-sure sentence, cut at a word
     let when, sub;
     if (undated) { when = "Undated<span>no date to check</span>"; sub = "undated"; }
     else if (st.range) {
       const y0 = st.range[0].slice(0, 4), y1 = st.range[1].slice(0, 4);
       const span = y0 === y1 ? `${fmt(D(st.range[0])).replace(/,.*/, "")}–${fmt(D(st.range[1])).replace(/,.*/, "")}, ${y0}` : `${y0}–${y1}`;
       when = `≈ ${y0 === y1 ? fmt(D(st.onset)).replace(/ \d+,/, "") : st.onset.slice(0, 4)}<span>likely ${span}</span>`; sub = `≈ ${span}`;
-    } else if (/-07-01$/.test(st.onset || "") && !/jul/i.test(srcLine)) { when = `${st.onset.slice(0, 4)}<span>placed at mid-year · ${sinceLabel(d)}</span>`; sub = `${st.onset.slice(0, 4)} · ${sinceLabel(d)}`; }  // a step dated only to its year
+    } else if (st.must_precede || /after what it is said/.test(st.verdict || "")) { when = `${fmt(D(st.onset))}<span>a claim, tested against the record</span>`; sub = `${fmtMonth(D(st.onset))} · tested`; }
+    else if (/-07-01$/.test(st.onset || "") && !/jul/i.test(srcLine)) { when = `${st.onset.slice(0, 4)}<span>placed at mid-year · ${sinceLabel(d)}</span>`; sub = `${st.onset.slice(0, 4)} · ${sinceLabel(d)}`; }  // a step dated only to its year
     else { when = `${fmt(D(st.onset))}<span>${sinceLabel(d)}</span>`; sub = `${fmtMonth(D(st.onset))} · ${sinceLabel(d)}`; }
     const happened = st.test.type === "record" ? srcP(st, st.source || st.test.source) :
       st.test.type === "none" ? srcP(st, st.source || "") : srcP(st, st.found && Object.keys(st.found).some(k => st.found[k]) ? "Wikipedia daily views: " + Object.keys(st.found).filter(k => st.found[k]).join(", ") : SRC(st));
     const id = `c${st.n}`;
     const parent = st.after ? (st.after === 1 ? null : `c${st.after}`) : st.branch ? null : lastMain;
-    const shortLine = lv === "reported" && srcLine ? esc(srcLine) : short;
-    items.push({id, parent, slice:st.slice || (st.branch ? `b${st.n}` : "main"), d, range, undated, label:st.short || shortLabel(st.claim), lv, lvText, sub, mark:lv === "busted" ? null : st.mark, short:shortLine, title:st.claim,
+    const shortLine = lv === "reported" ? "" : short;  // the source sits on its own line under the title; a Reported step needs no second sentence
+    const pulseW = weekly && st.test.type !== "dose" ? weekly : (at && at.weekly ? at.weekly : null);
+    const pulsePre = weekly && st.test.type !== "dose" && st.baseline ? st.baseline * 7 : null;  // the checker's own baseline, so the chart's peak and the card's ratio agree
+    items.push({id, parent, slice:st.slice || (st.branch ? `b${st.n}` : "main"), d, range, undated, label:st.short || shortLabel(st.claim), lv, lvText, sub, mark:lv === "busted" ? null : st.mark, short:shortLine, srcText:srcLine, title:st.claim, series:pulseW ? {weekly:pulseW, pre:pulsePre} : null,
       card:card({when, badge:lvText, badgeCls:`l-${lv}`, title:st.claim, cls:lv === "busted" ? "busted" : "", spark:weekly ? sparkHTML(weekly, st.ref) : (lv === "measured" && at && at.weekly && at.ratio) ? sparkHTML(at.weekly, st.onset) : "", facts, short:shortLine,
         sure:howSure(st.test.type === "dose" && st.p != null ? "measured" : lv, (lv === "measured" || (st.test.type === "dose" && st.p != null)) ? {kind:st.test.type === "wiki" ? "wiki" : st.test.type === "ssa" ? "ssa" : st.test.type === "dose" ? "dose" : "series", what:st.test.type === "wiki" ? (st.test.articles || [])[0] : SRC(st) || st.series,
             when:st.onset ? fmt(D(st.onset)) : "", ratio:st.ratio, p:st.p, n:st.n_placebo, pre:st.pretrend_p}
           : lv === "timed" ? {when:st.onset ? fmt(D(st.onset)) : "", archive:!!st.archive_first, newArticle:!!st.new_article}
           : lv === "reported" ? {what:srcShort, why:st.link_why} : {why:why, notYet:/not yet/.test(st.verdict || ""), late:/after what it is said/.test(st.verdict || "")}) + (attnNote ? ` ${esc(attnNote)}` : ""),
-        details:`<p>${esc(why)}</p>${st.note && st.note !== why ? `<p>${esc(st.note)}</p>` : ""}${happened}`})});
+        foot:happened, details:`<p>${esc(why)}</p>${st.note && st.note !== why ? `<p>${esc(st.note)}</p>` : ""}`})});
     if (!st.branch && !st.after) lastMain = id;
   });
   const tally = {}; items.forEach(x => tally[x.lv] = (tally[x.lv] || 0) + 1);
   const hold = (tally.measured || 0) + (tally.timed || 0) + (tally.reported || 0);
-  const names = {main:ch.vertical || ""}; ch.steps.forEach(x => { if (x.branch) names[`b${x.n}`] = x.vertical || ""; if (x.slice) names[x.slice] = x.slice; });
+  const names = {main:ch.vertical || ""}; ch.steps.forEach(x => { if (x.branch) names[`b${x.n}`] = x.vertical || ""; if (x.slice) names[x.slice] = /^catalysts\??$/i.test(x.slice) ? "Claims tested" : x.slice; });
   const s0 = ch.steps[0];
   return {key:slug, kind:"chain", title:ch.title, h1:ch.title, stone:ch.title.split(/,| and | → |\s\(/)[0].trim(), iso0, items, extra:[], names,
     sub:`${hold} of ${items.length} links after the event hold up: ` + ["measured", "timed", "reported", "plausible", "busted"].filter(k => tally[k]).map(k => `${tally[k]} ${LVL[k].toLowerCase()}`).join(", ") + ". Tap a ripple to see why.",
-    first:card({when:`${fmt(D(iso0))}<span>Day 0</span>`, badge:"The event", badgeCls:"event", title:s0.claim, short:s0.note ? esc(s0.note) : "", details:srcP(s0, s0.source || s0.test.source || "")})};
+    first:card({when:`${fmt(D(iso0))}<span>Day 0</span>`, badge:"The event", badgeCls:"event", title:s0.claim, short:s0.note ? esc(s0.note) : "", foot:srcP(s0, s0.source || s0.test.source || "")})};
 }
 
 // ---------- drawing ----------
@@ -813,7 +839,7 @@ function draw(story) {
   // phones: the pond is drawn about 2.4x smaller, so type and dots scale up and only the marks keep a standing label
   const scale = (svg.clientWidth || 700) / 940, touch = matchMedia("(pointer:coarse)").matches;
   const dense = scale < 0.6;
-  const floor = touch ? (dense ? 11 : 15) : 12;  // the smallest a label may be on screen, in CSS px: a tablet held at arm's length reads 15; a phone 11, where the pond is small
+  const floor = touch ? (dense ? 11 : 14) : 12;  // the smallest a label may be on screen, in CSS px: a tablet held at arm's length reads 15; a phone 11, where the pond is small
   const K = Math.max(1, floor / (13.5 * scale));
   story.dense = dense;
   const {items} = story;
@@ -834,13 +860,14 @@ function draw(story) {
     <radialGradient id="glow"><stop offset="0" stop-color="#f2ae2e" stop-opacity=".55"/><stop offset="1" stop-color="#f2ae2e" stop-opacity="0"/></radialGradient>
     <linearGradient id="surface" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#1d6498" stop-opacity=".78"/><stop offset=".5" stop-color="#0f4374" stop-opacity=".9"/><stop offset="1" stop-color="#0a2f55" stop-opacity=".96"/></linearGradient>
     <linearGradient id="sky" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#08203c"/><stop offset=".7" stop-color="#1d4f7e"/><stop offset="1" stop-color="#5a8fb8"/></linearGradient>
+    <linearGradient id="field" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#0b2d4b"/><stop offset="1" stop-color="#061a30"/></linearGradient>
     <linearGradient id="lake" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#4b85b0"/><stop offset=".12" stop-color="#1f5f93"/><stop offset=".45" stop-color="#0e3f6c"/><stop offset="1" stop-color="#061a30"/></linearGradient>
     <linearGradient id="shoreref" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#06172a" stop-opacity=".55"/><stop offset="1" stop-color="#06172a" stop-opacity="0"/></linearGradient>
     <filter id="blur2"><feGaussianBlur stdDeviation="1.6"/></filter>
     <filter id="blur6"><feGaussianBlur stdDeviation="6"/></filter>
     <radialGradient id="wmask" cx="50%" cy="48%" r="50%"><stop offset="0" stop-color="#fff" stop-opacity="1"/><stop offset=".55" stop-color="#fff" stop-opacity=".75"/><stop offset=".92" stop-color="#fff" stop-opacity=".12"/><stop offset="1" stop-color="#fff" stop-opacity="0"/></radialGradient>
     <radialGradient id="wet"><stop offset="0" stop-color="#8fc4ec" stop-opacity=".35"/><stop offset=".6" stop-color="#8fc4ec" stop-opacity=".08"/><stop offset="1" stop-color="#8fc4ec" stop-opacity="0"/></radialGradient>
-    <linearGradient id="rock" x1="0" y1="0" x2=".6" y2="1"><stop offset="0" stop-color="#c2b9aa"/><stop offset=".45" stop-color="#7b746a"/><stop offset="1" stop-color="#3a3630"/></linearGradient>
+    <linearGradient id="rock" x1="0" y1="0" x2=".6" y2="1"><stop offset="0" stop-color="#7d7a74"/><stop offset=".5" stop-color="#4a4844"/><stop offset="1" stop-color="#26241f"/></linearGradient>
     <linearGradient id="moss" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#7d9450"/><stop offset="1" stop-color="#4b6234"/></linearGradient>
     <filter id="wob" x="-5%" y="-5%" width="110%" height="110%"><feTurbulence type="fractalNoise" baseFrequency=".011" numOctaves="2" seed="7"><animate attributeName="baseFrequency" values="0.011;0.0135;0.011" dur="11s" repeatCount="indefinite"/></feTurbulence><feDisplacementMap in="SourceGraphic" scale="5.5"/></filter>
     <filter id="soft"><feGaussianBlur stdDeviation="3"/></filter>
@@ -858,47 +885,32 @@ function draw(story) {
       <feComposite in="b" in2="SourceGraphic" operator="in"/>
     </filter>
     <clipPath id="pondclip"><circle cx="${C.x}" cy="${C.y}" r="${R + 30}"/></clipPath>`;
-  // the lake: a dusk sky, a far shore and its reflection, water running to the horizon; the pond is a place on it
-  const HZ = 150, scene = el("g", {class:"scene"}, svg);
-  el("rect", {x:-120, y:88, width:940, height:HZ - 88 + 2, fill:"url(#sky)"}, scene);
-  el("rect", {x:-120, y:HZ, width:940, height:574 - HZ, fill:"url(#lake)"}, scene);
-  const shore = "M-120,150 C-40,141 40,147 120,139 S260,151 340,138 S470,149 560,137 S700,150 760,141 S800,146 820,144";
-  el("path", {d:shore + " L820,150 L-120,150 Z", fill:"#06172a", filter:"url(#blur2)"}, scene);  // the treeline
-  el("path", {d:shore + " L820,150 L-120,150 Z", fill:"#06172a", opacity:".9"}, scene);
-  el("path", {d:"M-120,150 L820,150 L820,196 C700,186 560,194 340,184 S120,196 -120,186 Z", fill:"url(#shoreref)", filter:"url(#blur6)"}, scene);  // its reflection
-  el("line", {x1:-120, y1:HZ, x2:820, y2:HZ, stroke:"#a9cbe6", "stroke-width":.8, opacity:".5"}, scene);
-  const far = el("rect", {x:-120, y:HZ, width:940, height:574 - HZ, fill:"url(#wmask)", filter:"url(#waterlight)", class:"farlight"}, scene);  // light on the open water
-  far.innerHTML = '<animateTransform attributeName="transform" type="translate" values="0 0;-30 0;0 0" dur="37s" repeatCount="indefinite"/>';
-  // reeds at the near bank, dark against the water
-  const reeds = el("g", {class:"reeds", fill:"none", stroke:"#04111f", "stroke-linecap":"round"}, scene);
-  [[-100,574,-88,470,1.6],[-84,574,-96,452,1.3],[-70,574,-60,478,1.5],[-56,574,-62,436,1.2],[792,574,806,468,1.5],[808,574,798,448,1.3],[776,574,772,490,1.2]].forEach(([x1,y1,x2,y2,w]) => el("path", {d:`M${x1},${y1} Q${(x1+x2)/2 - 6},${(y1+y2)/2} ${x2},${y2}`, "stroke-width":w, opacity:".75"}, reeds));
+  // the field: flat dark water to the edges. No shore, no sky: the pond is an instrument, and the grid is the picture
+  const scene = el("g", {class:"scene"}, svg);
+  el("rect", {x:-120, y:88, width:940, height:486, fill:"url(#field)"}, scene);
   // water: a softly lit surface, drawn in plane coordinates and tilted as one
   const plane = el("g", {transform:`translate(0 ${C.y}) scale(1 ${TILT}) translate(0 ${-C.y})`}, svg);
   el("circle", {cx:C.x, cy:C.y, r:R + 34, fill:"url(#water)"}, plane);
   el("circle", {cx:C.x, cy:C.y, r:R + 34, fill:"url(#depth)"}, plane);
-  const shine = el("ellipse", {cx:C.x - 60, cy:C.y - 90, rx:R * 0.9, ry:R * 0.55, fill:"url(#shine)", filter:"url(#wob)"}, plane);
-  shine.innerHTML = '<animateTransform attributeName="transform" type="translate" values="0 0;26 14;-18 22;0 0" dur="29s" repeatCount="indefinite"/>';
-  const wl = el("circle", {class:"waterlight", cx:C.x, cy:C.y, r:R + 34, fill:"url(#wmask)", filter:"url(#waterlight)"}, plane);  // the surface: lit, slowly moving
-  wl.innerHTML = '<animateTransform attributeName="transform" type="translate" values="0 0;18 -6;-12 8;0 0" dur="31s" repeatCount="indefinite"/>';
-  const ca = el("circle", {class:"caustic", cx:C.x, cy:C.y, r:R + 20, fill:"#9fd3f3", filter:"url(#caustic)"}, plane);
-  ca.innerHTML = '<animateTransform attributeName="transform" type="translate" values="0 0;-14 9;10 -12;0 0" dur="23s" repeatCount="indefinite"/>';
+  el("circle", {cx:C.x, cy:C.y, r:R + 34, fill:"none", stroke:"rgba(214,232,246,.10)", "stroke-width":.8}, plane);  // the rim of the measured water
 
   const g0 = el("g", {}, plane), gt = el("g", {}, svg);  // g0: lines on the water; gt: upright text
   if (n > 1) keys.forEach(k => { const a = centre(k) - w / 2, q = polar(48, a), p = polar(R + 8, a); el("line", {class:"slicebd", x1:q.x, y1:q.y, x2:p.x, y2:p.y}, g0); });
   const rings = [[1,"1 day"],[7,"1 week"],[30,"1 month"],[91,"3 months"],[365,"1 year"],[1096,"3 years"],[3653,"10 years"],[7305,"20 years"]].filter(([d]) => d < max);
-  const rg = el("g", {filter:"url(#wob)"}, g0);
+  const rg = el("g", {}, g0);
   const TA = 104, ta = polar(16, TA), tb = polar(R + 4, TA);  // the thread of time, along the right-hand axis where the tilt does not compress spacing
   el("line", {class:"thread", x1:ta.x, y1:ta.y, x2:tb.x, y2:tb.y}, g0);
-  let lastRingX = null;
+  let lastRingX = null; const ringBoxes = [];
   for (const [d, lbl] of rings) {
     const r = radius(d);
     el("circle", {class:"ring", cx:C.x, cy:C.y, r}, rg);
     const p = PL(polar(r, TA));
-    if (!(d === 365 || d === 3653 || (d === 7 && max < 365) || (d === 30 && max < 365))) continue;  // two labels: the scale, not a ruler
     const q0 = polar(r, TA - 1.6), q1 = polar(r, TA + 1.6); el("line", {class:"threadtick", x1:q0.x, y1:q0.y, x2:q1.x, y2:q1.y}, g0);
-    if (lastRingX != null && Math.abs(p.x - lastRingX) < (dense ? 70 : 44)) continue;  // a short pond: labels would sit on each other
+    if (lastRingX != null && Math.abs(p.x - lastRingX) < (dense ? 70 : 44) * K) continue;  // a short pond: labels would sit on each other
     lastRingX = p.x;
-    const rl = el("text", {class:"ringlbl", x:p.x + 5, y:p.y - 3}, gt); rl.textContent = lbl; rl.style.fontSize = `${Math.round(9 * K)}px`;
+    if (![1, 30, 365, 3653].includes(d)) continue;  // one ladder for every pond: a day, a month, a year, a decade
+    const rl = el("text", {class:"ringlbl", x:p.x + 5, y:p.y - 3}, gt); rl.textContent = lbl; rl.style.fontSize = `${Math.round((dense ? 13 : 11) * K)}px`;
+    try { const b = rl.getBBox(); ringBoxes.push({x:b.x - 3, y:b.y - 2, w:b.width + 6, h:b.height + 4, soft:true}); } catch {}
   }
   const rimBoxes = [];  // rim words keep their space; ripple labels place around them
   keys.forEach(k => {  // the industry each ripple reached, outside the rim, always horizontal
@@ -906,11 +918,11 @@ function draw(story) {
     const c = n === 1 ? 0 : centre(k), sx = Math.sin(c * Math.PI / 180), cy = -Math.cos(c * Math.PI / 180), p = PL(polar(R + 24 + 22 * Math.abs(sx), c));
     const rt = el("text", {class:"rimlbl", x:p.x + (Math.abs(sx) < 0.35 ? 0 : sx > 0 ? 2 : -2), y:p.y + (cy > 0.35 ? 10 : cy < -0.35 ? -2 : 4),
       "text-anchor":Math.abs(sx) < 0.35 ? "middle" : sx > 0 ? "start" : "end"}, gt); rt.textContent = story.names[k];
-    rt.style.fontSize = `${Math.round(12 * K)}px`;
+    rt.style.fontSize = `${Math.round((dense ? 15 : 12) * K)}px`;
     try {
       let b = rt.getBBox();
       if (b.x < -112) rt.setAttribute("x", +rt.getAttribute("x") + (-112 - b.x)); else if (b.x + b.width > 812) rt.setAttribute("x", +rt.getAttribute("x") - (b.x + b.width - 812));
-      b = rt.getBBox(); rimBoxes.push({x:b.x - 4, y:b.y - 2, w:b.width + 8, h:b.height + 4});
+      b = rt.getBBox(); rimBoxes.push({x:b.x - 4, y:b.y - 2, w:b.width + 8, h:b.height + 4, soft:true});
     } catch {}
   });
   const waves = el("g", {}, plane), bands = el("g", {}, plane), rips = el("g", {filter:"url(#softwave)"}, plane), edges = el("g", {}, plane), elbls = el("g", {}, svg), nodes = el("g", {}, svg), labels = el("g", {}, svg);
@@ -934,7 +946,7 @@ function draw(story) {
   el("path", {d:ROCK, "clip-path":"url(#wlclip)", fill:"url(#surface)", opacity:".55"}, sWater);
   el("ellipse", {cx:0, cy:-1.5, rx:16.2, ry:6.2, fill:"none", stroke:"rgba(220,238,250,.12)", "stroke-width":.8}, sWater);
   el("path", {d:"M-15.6,-1.5 A16.2,6.2 0 0 0 15.6,-1.5", fill:"none", stroke:"rgba(230,244,252,.75)", "stroke-width":1.1, "stroke-linecap":"round"}, sWater);
-  const stoneT = el("text", {x:C.x, y:C.y + 44 * K, "text-anchor":"middle"}, stone); stoneT.textContent = story.stone; stoneT.style.fontSize = `${Math.round(16 * Math.min(1.4, K))}px`;
+  const stoneT = el("text", {x:C.x, y:C.y + 44 * K, "text-anchor":"middle"}, stone); stoneT.textContent = story.stone; stoneT.style.fontSize = `${Math.round(Math.max(16 * Math.min(1.4, K), 11 / scale))}px`;
 
   // final positions: spread across the slice, nearest first, alternating either side of its center line
   for (const k of keys) {
@@ -954,9 +966,9 @@ function draw(story) {
     const hw = Math.min(w / 2 - 3, 58);  // an arc never wider than about a third of the ring, however few slices there are
     its.forEach(it => { it.r = radius(it.d); it.plane = polar(it.r, it.a); it.pos = PL(it.plane); it.span = n === 1 ? [it.a - 58, it.a + 58] : [centre(k) - hw, centre(k) + hw]; });
   }
-  const placed = [{x:C.x - 70 * K, y:C.y - 20 * K, w:140 * K, h:70 * K}, ...rimBoxes];  // the stone's name grows with K on a phone  // keep clear of the stone's label and the rim words
+  const placed = [{x:C.x - 70 * K, y:C.y - 20 * K, w:140 * K, h:70 * K}, ...rimBoxes, ...ringBoxes];  // the stone's name grows with K on a phone  // keep clear of the stone's label and the rim words
   const nMarks = items.filter(x => x.mark).length;
-  const overlaps = b => placed.some(p => b.x < p.x + p.w && b.x + b.w > p.x && b.y < p.y + p.h && b.y + b.h > p.y);
+  const overlaps = (b, soft = true) => placed.some(p => (soft || !p.soft) && b.x < p.x + p.w && b.x + b.w > p.x && b.y < p.y + p.h && b.y + b.h > p.y);
   const overlapArea = b => placed.reduce((s, p) => s + Math.max(0, Math.min(b.x + b.w, p.x + p.w) - Math.max(b.x, p.x)) * Math.max(0, Math.min(b.y + b.h, p.y + p.h) - Math.max(b.y, p.y)), 0);
   // lasting marks and measured steps claim their label space first; the rest take what is left, and a label with no
   // clear spot waits for a hover or a tap instead of piling onto its neighbors (a crowded century still reads)
@@ -987,21 +999,14 @@ function draw(story) {
       it.elbl.textContent = it.lvText || LVL[it.lv];
     }
     const g = el("g", {class:"node", tabindex:-1, role:"button", "aria-label":`${it.label}, ${it.lvText || LVL[it.lv]}`, opacity:0}, nodes);
-    it.halo = el("circle", {cx:0, cy:0, r:24 * K, fill:"transparent"}, g);  // the tap target (about 44 px on a phone); the marker itself is the crest on the ring
-    if (it.mark) {  // a lasting mark is a pebble that stayed on the water, lit from beneath
-      el("circle", {class:"markglow", cx:0, cy:0, r:26 * K, fill:"url(#glow)"}, g);
-      const rot = (it.d * 37) % 360, ps = (0.85 * K).toFixed(2);
-      const pb = el("g", {class:"pebble", transform:`scale(${ps}) rotate(${rot})`}, g); pb.innerHTML = STONE_SVG;
-      // the pebble sits in the water like the stone: its outline below the waterline, filled with water, and a meniscus
-      const pw = el("g", {class:"pebblewater", transform:`scale(${ps})`}, g);
-      const pc = el("g", {"clip-path":"url(#wlclip)"}, pw);
-      const pr = el("g", {transform:`rotate(${rot})`}, pc);
-      el("path", {d:ROCK, fill:"#0f4474", opacity:".86"}, pr);
-      el("path", {d:ROCK, fill:"url(#surface)", opacity:".55"}, pr);
-      el("path", {d:"M-15.2,-1.5 A15.8,6 0 0 0 15.2,-1.5", fill:"none", stroke:"rgba(230,244,252,.7)", "stroke-width":1.1, "stroke-linecap":"round"}, pw);
+    it.halo = el("circle", {cx:0, cy:0, r:Math.max(24 * K, 22 / scale), fill:"transparent"}, g);  // at least a 44 px tap target on any screen
+    el("line", {class:"mkt", x1:0, y1:-6 * K, x2:0, y2:6 * K, transform:`rotate(${it.a})`}, g);  // a tick across the arc at the exact date
+    el("circle", {class:`mk l-${it.lv}`, cx:0, cy:0, r:(it.lv === "measured" ? 3.6 : 2.8) * K}, g);  // the tap target (about 44 px on a phone); the marker itself is the crest on the ring
+    if (it.mark) {  // a lasting mark: a diamond on the arc, the same glyph the cards and the tally use
+      el("path", {class:"markd", d:`M0,${-6.5 * K} L${6.5 * K},0 L0,${6.5 * K} L${-6.5 * K},0 Z`, fill:"var(--marigold)", stroke:"#061a30", "stroke-width":1.2}, g);
     }
     it.core = null;
-    it.showLabel = !!it.mark || it.lv === "measured" || items.length <= 5;  // at rest the pond says one thing per ripple that matters; the rest wait for a hover or the card
+    it.showLabel = !dense || !!it.mark || it.lv === "measured" || items.length <= 5;  // a desktop names every ripple that has room; a phone names the marks and the measured steps
     g.setAttribute("transform", `translate(${C.x},${C.y})`);
     g.addEventListener("click", () => focus(it));
     g.addEventListener("mouseenter", () => showTip(it));
@@ -1014,26 +1019,30 @@ function draw(story) {
     const shown = wrapLabel(it.label, 26, 2);
     const tx = el("text", {x:0, y:0}, lab); if (K > 1) tx.style.fontSize = `${(13.5 * K).toFixed(1)}px`;  // the text floor: see K above
     shown.forEach((ln, k) => { const ts = el("tspan", {x:0, dy:k ? 15 * K : 0}, tx); ts.textContent = ln; });
-    const sub = el("text", {class:"s", x:0, y:15 * K * shown.length}, lab); sub.textContent = it.mark ? `◆ ${it.mark}` : "";  // the date and the delay live in the card
-    if (K > 1) sub.style.fontSize = `${(11 * K).toFixed(1)}px`;
+    const sub = el("text", {class:"s", x:0, y:14 * K * shown.length}, lab); sub.textContent = it.mark ? `◆ ${it.mark} · ${it.sub || ""}` : (it.sub || "");  // the mark, then the date and the delay
+    if (K > 1) sub.style.fontSize = `${(10.5 * K).toFixed(1)}px`;
     const bb = lab.getBBox(), pad = 5 * K, bw = bb.width + pad * 2, bh = bb.height + pad * 2, g1 = 12 * K;
     const right = [g1, -bh / 2], left = [-g1 - bw, -bh / 2], up = [-bw / 2, -bh - g1], down = [-bw / 2, g1 + 1];
     const rUp = [g1, -bh - 6], rDn = [g1, 6], lUp = [-g1 - bw, -bh - 6], lDn = [-g1 - bw, 6];
     const order = it.pos.x >= C.x ? [right, rUp, rDn, up, down, left, lUp, lDn] : [left, lUp, lDn, up, down, right, rUp, rDn];
     let best = null, least = Infinity, fallback = order[0], far = false;
     const far2 = sp => [sp[0] * 2.4 + (sp[0] > 0 ? 6 : sp[0] < 0 ? -6 : 0), sp[1] * 2.4 + (sp[1] > 0 ? 6 : sp[1] < 0 ? -6 : 0)];
-    for (const sp of (it.showLabel ? [...order, ...order.map(far2)] : order)) {
-      const b = {x:it.pos.x + sp[0], y:it.pos.y + sp[1], w:bw, h:bh};
-      const inside = b.x > -118 && b.x + bw < 818 && b.y > VB.top && b.y + bh < VB.bottom;
-      if (inside && !overlaps(b)) { best = sp; far = Math.hypot(sp[0], sp[1]) > Math.hypot(...order[0]) * 1.8; break; }
-      const a = overlapArea(b) + (inside ? 0 : 1e6); if (a < least) { least = a; fallback = sp; }
+    const cands = it.showLabel ? [...order, ...order.map(far2)] : order;
+    for (const soft of [true, false]) {  // first clear of everything; failing that, clear of other labels and the stone, over a rim word if it must
+      for (const sp of cands) {
+        const b = {x:it.pos.x + sp[0], y:it.pos.y + sp[1], w:bw, h:bh};
+        const inside = b.x > -118 && b.x + bw < 818 && b.y > VB.top && b.y + bh < VB.bottom;
+        if (inside && !overlaps(b, soft)) { best = sp; far = Math.hypot(sp[0], sp[1]) > Math.hypot(...order[0]) * 1.8; break; }
+        if (soft) { const a = overlapArea(b) + (inside ? 0 : 1e6); if (a < least) { least = a; fallback = sp; } }
+      }
+      if (best) break;
     }
     const free = !!best; if (!best) best = fallback;
     if (free && far) {  // a label placed farther out gets a thin leader back to its ripple
       const lx = it.pos.x + best[0] + (best[0] + bw / 2 < 0 ? bw : best[0] > 0 ? 0 : bw / 2), ly = it.pos.y + best[1] + (best[1] + bh / 2 < 0 ? bh : best[1] > 0 ? 0 : bh / 2);
       it.leader = el("line", {class:"leader", x1:it.pos.x, y1:it.pos.y, x2:lx, y2:ly}, labels);
     }
-    if (!free && !(it.mark && nMarks <= 6) && it.lv !== "measured") it.showLabel = false;  // shown on hover, focus and in its card
+    if (!free && !(it.mark && nMarks <= 3) && it.lv !== "measured") it.showLabel = false;  // a crowded pond keeps its labels for hover, focus, the caption and the card
     if (!it.showLabel && it.leader) { it.leader.remove(); it.leader = null; }
     const bx = it.pos.x + best[0], by = it.pos.y + best[1];
     if (it.showLabel) placed.push({x:bx, y:by, w:bw, h:bh});  // hidden labels do not reserve space
@@ -1059,13 +1068,60 @@ function wrapLabel(t, width, lines) {  // greedy word wrap to at most `lines` li
 }
 function isDesc(x, root) { for (let p = x; p; p = cur.items.find(y => y.id === p.parent)) if (p === root) return true; return false; }
 // ---------- feed ----------
+const PULSE_HUES = ["#2f8fa6", "#c27a4a", "#6f8197", "#8a6a9a", "#a88c3a", "#b85a78", "#3f7a88", "#8e7362", "#5c6f52", "#9a8fb8"];  // series colors: none of the five grade hues, not the mark's marigold
+// one chart for the story: how far each page's attention rose above its own normal, all on the pond's clock (log time since the event)
+function pulseHTML(story) {
+  // every attention series on one chart, each aligned at the day its own step happened: height is how far it rose
+  // above that page's normal, the tail is how long it lasted. Comparable across a week-old show and a century-old law
+  const {iso0, items} = story; const lines = []; let hue = 0;
+  for (const it of items) {
+    const w = it.series && it.series.weekly; if (!w || w.length < 3 || it.undated) continue;
+    const at = new Date(addDays(iso0, Math.round(it.d))).toISOString().slice(0, 10);
+    const rel = w.map(([d, v]) => [daysBetween(at, d), v]).filter(([r]) => r >= -35 && r <= 400);
+    if (rel.length < 3) continue;
+    let base = it.series.pre;
+    if (!base) { const pre = rel.filter(([r]) => r < -3).map(x => x[1]).sort((a, b) => a - b); base = pre.length >= 3 ? pre[Math.floor(pre.length / 2)] : null; }
+    if (!base) { const all = w.map(x => x[1]).sort((a, b) => a - b); base = all[Math.floor(all.length * 0.25)] || 1; }
+    const pts = rel.map(([r, v]) => [r, Math.max(0.3, v / Math.max(1, base))]);
+    it.hue = PULSE_HUES[hue++ % PULSE_HUES.length];
+    const pk = pts.reduce((a, p) => p[1] > a[1] ? p : a, pts[0]);
+    lines.push({it, pts, peak:pk});
+  }
+  if (!lines.length) return "";
+  const W = 640, H = 200, L = 46, Rm = 16, T = 16, B = 30, w = W - L - Rm, LEAD = 0.18;
+  const X = r => r < 0 ? L + w * LEAD * (1 - Math.min(35, -r) / 35) : L + w * LEAD + w * (1 - LEAD) * Math.log1p(Math.min(400, r)) / Math.log1p(400);
+  const top = Math.max(...lines.map(l => l.peak[1])) * 1.35, mag = Math.pow(10, Math.floor(Math.log10(top))), ymax = Math.max(5, [1, 2, 5, 10].map(m => m * mag).find(v => v >= top));  // the next 1-2-5 step above the highest peak
+  const Y = r => T + (H - T - B) * (1 - Math.log10(Math.max(0.3, r) / 0.3) / Math.log10(ymax / 0.3));
+  let g = "";
+  if (!/^10*$/.test(String(ymax))) g += `<line class="pg" x1="${L}" x2="${W - Rm}" y1="${Y(ymax).toFixed(1)}" y2="${Y(ymax).toFixed(1)}"/><text class="pl" x="${L - 6}" y="${(Y(ymax) + 3.5).toFixed(1)}" text-anchor="end">${ymax.toLocaleString()}×</text>`;
+  for (let e = 1; e <= ymax; e *= 10) g += `<line class="pg" x1="${L}" x2="${W - Rm}" y1="${Y(e).toFixed(1)}" y2="${Y(e).toFixed(1)}"/><text class="pl" x="${L - 6}" y="${(Y(e) + 3.5).toFixed(1)}" text-anchor="end">${e === 1 ? "normal" : e.toLocaleString() + "×"}</text>`;
+  for (const [d, lbl] of [[-28, "4 wk before"], [7, "1 wk"], [30, "1 mo"], [91, "3 mo"], [365, "1 yr"]]) g += `<line class="pg v" x1="${X(d).toFixed(1)}" x2="${X(d).toFixed(1)}" y1="${T}" y2="${H - B}"/><text class="pl" x="${X(d).toFixed(1)}" y="${H - B + 13}" text-anchor="middle">${lbl}</text>`;
+  g += `<line class="pz" x1="${X(0).toFixed(1)}" x2="${X(0).toFixed(1)}" y1="${T - 4}" y2="${H - B}"/><text class="pl z" x="${X(0).toFixed(1)}" y="${H - B + 13}" text-anchor="middle">the step</text>`;
+  let paths = "", labs = "", used = [];
+  lines.sort((a, b) => b.peak[1] - a.peak[1]);
+  for (const l of lines) {
+    const d = l.pts.map((p, i) => `${i ? "L" : "M"}${X(p[0]).toFixed(1)},${Y(p[1]).toFixed(1)}`).join("");
+    const px = X(l.peak[0]), py = Y(l.peak[1]);
+    paths += `<g class="pline" data-id="${l.it.id}" style="--h:${l.it.hue}"><path d="${d}" class="pp"/><circle cx="${px.toFixed(1)}" cy="${py.toFixed(1)}" r="3.2" class="pd"/><title>${esc(l.it.label)} · peak week ${l.peak[1] >= 10 ? Math.round(l.peak[1]).toLocaleString() : l.peak[1].toFixed(1)}× normal, ${l.peak[0] <= 0 ? "at the step" : `${l.peak[0]} days after`} (the card's figure is the daily peak)</title></g>`;
+    let ly = Math.max(T + 9, py - 6); while (used.some(u => Math.abs(u - ly) < 12)) ly += 12; used.push(ly);  // the name at the peak, kept inside the frame and clear of the last
+    const right = px > L + w * 0.6;
+    labs += `<text class="pn" style="--h:${l.it.hue}" x="${(px + (right ? -6 : 6)).toFixed(1)}" y="${ly.toFixed(1)}" text-anchor="${right ? "end" : "start"}">${esc(l.it.label)}</text>`;
+  }
+  return `<div class="pulse"><div class="ptitle">The spikes, aligned <span>Daily Wikipedia views of each thing named, against that page's own normal (its median before the step), lined up at the day its rise was detected. Height is how far it rose; the tail is how long it lasted. The clock is linear before the step and logarithmic after.</span></div><svg viewBox="0 0 ${W} ${H}" role="img" aria-label="Attention to each page, aligned at its own step">${g}${paths}${labs}</svg></div>`;
+}
 function buildFeed(story) {
   const f = $("#feed"); f.textContent = "";
+  let pulse = pulseHTML(story);
+  if (!pulse && story.kind === "chain") pulse = `<div class="pulse none"><div class="ptitle">No attention series for this story <span>Daily Wikipedia views begin in July 2015; the steps here are older or were checked against records, not attention.</span></div></div>`;
+  if (pulse && window.innerWidth <= 560 && !/pulse none/.test(pulse)) pulse = `<details class="pulsefold"><summary>The spikes, aligned: the chart</summary>${pulse}</details>`;  // a phone folds the chart; its labels are too small at 375 px to be worth the screen
+  if (pulse) { const pv = document.createElement("div"); pv.innerHTML = pulse; const el0 = pv.firstElementChild; f.appendChild(el0);
+    el0.querySelectorAll("[data-id]").forEach(n => n.addEventListener("click", () => { const it = story.items.find(x => x.id === n.dataset.id); if (it) focus(it); })); }
   const cards = [{d:0, ...story.first}, ...story.items.map(it => ({d:it.d, it, ...it.card})), ...story.extra];
   cards.sort((a, b) => a.d - b.d);
   for (const c of cards) {
     const div = document.createElement("article");
     div.className = `card off ${c.cls || ""}`; div.innerHTML = c.html;
+    if (c.it && c.it.hue) { div.classList.add("hasline"); div.style.setProperty("--chip", c.it.hue); }
     c.el = div; c.cursor = div.querySelector(".cursor"); c.shown = false;
     if (c.it) { c.it.cardEl = div; div.addEventListener("click", e => { if (e.target.closest("summary,a")) return; focus(c.it); }); }
     f.appendChild(div);
@@ -1203,6 +1259,7 @@ function render(now = performance.now()) {
   if (!cur) return;
   const d = daysAt(t), {items, iso0} = cur;
   const shown = items.filter(x => x.state !== "hidden" && x.lv !== "busted").length;
+  $("#feed").classList.toggle("empty", t < PRE && !items.some(x => x.state !== "hidden"));
   if (!playing && !scrubbing && t >= 1) {  // at rest: the story's span, not today's date
     const lastD = Math.max(...items.filter(x => !x.future).map(x => x.d));
     $("#date").textContent = `${fmtMonth(D(iso0))} → ${fmtMonth(addDays(iso0, lastD))}`;
@@ -1216,12 +1273,13 @@ function render(now = performance.now()) {
   if (t < PRE) cur.splashed = false;
   const ev0 = cur.eventSeries ? valueAt(cur.eventSeries, iso0, d) : null;
   cur.sHalo.setAttribute("r", 30 + Math.min(18, 3 * Math.log2(1 + (ev0 || 0))));
+  $("#pond").classList.toggle("grab", t < PRE * 0.85);
   const kk = t < PRE ? t / PRE : 1;  // the stone is thrown: from the near bank in an arc, spinning, then it lands and settles
   const sink = kk >= 1 ? 6 * (cur.K || 1) : 0;
-  const from = cur.throwFrom || THROW_FROM, lift = 150 * Math.sin(Math.PI * Math.min(1, kk));
+  const from = cur.throwFrom || (cur.dense ? {x:-20, y:500} : THROW_FROM), lift = 150 * Math.sin(Math.PI * Math.min(1, kk));
   const sx = from.x + (C.x - from.x) * ease(kk), sy = from.y + (C.y - from.y) * ease(kk) - lift + sink;
   const spin = kk < 1 ? (kk * 540) % 360 : 0, grow = kk < 1 ? 1.25 - 0.25 * kk : 1;  // nearer the viewer at the bank, so a little larger
-  cur.sCore.setAttribute("transform", `translate(${sx.toFixed(1)},${sy.toFixed(1)}) rotate(${spin.toFixed(0)}) scale(${((cur.K || 1) * 1.7 * grow).toFixed(3)})`);
+  cur.sCore.setAttribute("transform", `translate(${sx.toFixed(1)},${sy.toFixed(1)}) rotate(${spin.toFixed(0)}) scale(${(Math.min(cur.K || 1, 1.5) * 1.7 * grow).toFixed(3)})`);
   cur.sCore.setAttribute("opacity", 1);
   if (cur.sShadow) { cur.sShadow.setAttribute("opacity", kk < 1 ? (0.15 + 0.35 * kk).toFixed(2) : 0.5); cur.sShadow.setAttribute("transform", kk < 1 ? `translate(${(sx - C.x).toFixed(1)} ${(sy + lift - C.y).toFixed(1)}) scale(${(0.6 + 0.4 * kk).toFixed(2)})` : ""); }
   if (cur.sWater) cur.sWater.setAttribute("opacity", kk >= 1 ? 1 : 0);
@@ -1255,8 +1313,8 @@ function render(now = performance.now()) {
   }
 }
 
-function showTip(it) {
-  if (!matchMedia("(hover:hover) and (pointer:fine)").matches || it.state !== "landed") return;
+function showTip(it, force = false) {
+  if ((!force && !matchMedia("(hover:hover) and (pointer:fine)").matches) || it.state !== "landed") return;
   const tip = $("#tip"), svg = $("#pond"), box = svg.getBoundingClientRect(), pb = svg.parentNode.getBoundingClientRect();
   const vb = svg.viewBox.baseVal, sx = box.width / vb.width, sy = box.height / vb.height;
   const x = box.left - pb.left + (it.pos.x - vb.x) * sx, y = box.top - pb.top + (it.pos.y - vb.y) * sy;
@@ -1276,6 +1334,7 @@ function focus(it) {
   if (hot === it) { clearFocus(); return; }
   clearFocus();
   hot = it; it.lab.classList.add("hot"); if (it.state === "landed") it.lab.classList.add("on");
+  if (matchMedia("(pointer:coarse)").matches && window.innerWidth > 860) { showTip(it, true); clearTimeout(window._tipT); window._tipT = setTimeout(hideTip, 2600); }  // a tablet: the tip for a moment on tap
   const lit = new Set([it]);  // its path back to the stone, and anything that grew from it
   for (let p = it; p && p.parent; ) { p = cur.items.find(x => x.id === p.parent); if (p) lit.add(p); }
   let grew = true; while (grew) { grew = false; for (const x of cur.items) if (!lit.has(x) && [...lit].some(l => l.id === x.parent && (l === it || cur.items.indexOf(l) >= 0) && isDesc(x, it))) { lit.add(x); grew = true; } }
@@ -1283,7 +1342,7 @@ function focus(it) {
   $("#pond").classList.add("focus");
   if (it.cardEl) { it.cardEl.classList.add("hot"); if (!REEL && window.innerWidth > 860) it.cardEl.scrollIntoView({block:"nearest", behavior:"smooth"}); }
   if (!REEL && window.innerWidth <= 860) {  // on a phone the card is screens below: say what this ripple is, right under the pond
-    const cap = $("#caption"); cap.innerHTML = `${it.mark ? `<b>◆ ${esc(it.mark)}</b> · ` : ""}<b>${esc(it.label)}</b> <span style="color:var(--ink-3)">· ${esc(it.lvText || LVL[it.lv])}${it.sub ? " · " + esc(it.sub) : ""}</span>${it.short ? `<br>${it.short}` : ""}<a href="#" class="readcard">Read the card ↓</a>`;
+    const cap = $("#caption"); const capLine = it.short || (it.srcText ? esc(it.srcText) : ""); cap.innerHTML = `${it.mark ? `<b>◆ ${esc(it.mark)}</b> · ` : ""}<b>${esc(it.label)}</b> <span style="color:var(--ink-3)">· ${esc(it.lvText || LVL[it.lv])}${it.sub ? " · " + esc(it.sub) : ""}</span>${capLine ? `<br>${capLine}` : ""}<a href="#" class="readcard">Read the card ↓</a>`;
     cap.classList.add("on"); const rc = cap.querySelector(".readcard"); if (rc) rc.onclick = e => { e.preventDefault(); if (it.cardEl) it.cardEl.scrollIntoView({block:"start", behavior:"smooth"}); };
   }
   for (let k = 0; k <= 1000; k++) if (daysAt(k / 1000) >= it.d + 0.5) { if (k / 1000 > t) t = k / 1000; break; }
@@ -1298,11 +1357,11 @@ function nextStop(dNow) {  // the first ripple still to arrive after this day
 function tick(now) {
   const dt = last ? now - last : 16; last = now;
   if (playing && cur) {
-    const stop = stepMode && !REEL && t >= PRE ? nextStop(daysAt(t)) : null;
+    const stop = stepMode && !REEL && t >= PRE ? (cur.goal ? cur.goal.it : nextStop(daysAt(t))) : null;
     if (stop) {  // step mode: the front goes to the next ripple in about a second and a half, holds there with its card open, and waits for the reader
       if (!cur.goal) { let tS = 1; for (let k = 0; k <= 1000; k++) if (daysAt(k / 1000) >= stop.d + 0.5) { tS = k / 1000; break; } cur.goal = {it:stop, tS, t0:t}; }  // the goal holds until it is reached, even as the front passes its day
       const g = cur.goal; t = Math.min(g.tS, t + dt / 1500 * Math.max(0.02, g.tS - g.t0));
-      if (t >= g.tS) { const at = g.it; cur.goal = null; setPlaying(false); render(now); if (hot !== at) focus(at); return requestAnimationFrame(tick); }
+      if (t >= g.tS) { const at = g.it; cur.goal = null; setPlaying(false); render(now); if (hot !== at) focus(at); if (window.innerWidth <= 860) $(".pondbox").scrollIntoView({block:"start", behavior:"smooth"}); return requestAnimationFrame(tick); }
     } else t = Math.min(1, t + dt / (cur && cur.dur || DUR));
     if (t >= 1) { if (REEL) { playing = false; setTimeout(next, 2000); } else setPlaying(false); }
   }
@@ -1327,9 +1386,9 @@ function setStep(on) {
 
 async function loadAll() {
   const j = u => fetch(u).then(r => r.ok ? r.json() : null).catch(() => null);
-  const [disc, chains, acts, ...maps] = await Promise.all([j("/ripples/demo/discovered.json"), j("/ripples/docs/results/chain_check_v1.json"),
-    j("/ripples/docs/results/bill_act_v1.json"), ...Object.keys(MAPS).map(s => j(`/ripples/maps/out/${s}.json`))]);
-  DATA.disc = disc; DATA.chains = chains ? chains.chains : []; DATA.acts = acts;
+  const [disc, chains, acts, sources, ...maps] = await Promise.all([j("/ripples/demo/discovered.json"), j("/ripples/docs/results/chain_check_v1.json"),
+    j("/ripples/docs/results/bill_act_v1.json"), j("/ripples/demo/sources.json"), ...Object.keys(MAPS).map(s => j(`/ripples/maps/out/${s}.json`))]);
+  DATA.disc = disc; DATA.chains = chains ? chains.chains : []; DATA.acts = acts; DATA.sources = sources || {};
   Object.keys(MAPS).forEach((s, i) => { if (maps[i]) DATA.maps[s] = maps[i]; });
 }
 function tabOf(kind, slug) {
@@ -1342,8 +1401,9 @@ function renderPicker() {
   const q = norm(($("#search") || {}).value);
   if (q) {  // a search spans every tab: title, stone, year
     const TN = {maps:"Lasting marks", stories:"Fact-checks", leads:"Engine leads"};
-    const seen = new Set(), hits = allPonds().filter(p => { const title = TABS_TITLE(p) || p.title; const key = `${p.kind}:${p.slug}`; if (seen.has(key)) return false; seen.add(key); return norm(title).includes(q) || norm(p.stone).includes(q) || (p.year && p.year === q); }).slice(0, 40);
-    $("#tabnote").textContent = hits.length ? `${hits.length} ${hits.length === 1 ? "story" : "stories"} match` : "";
+    const RANK = {maps:0, stories:1, leads:2};
+    const seen = new Set(), hits = allPonds().filter(p => { const title = TABS_TITLE(p) || p.title; const key = `${p.kind}:${p.slug}`; if (seen.has(key)) return false; seen.add(key); return norm(title).includes(q) || norm(p.stone).includes(q) || (p.year && p.year === q); }).sort((a, b) => RANK[tabOf(a.kind, a.slug)] - RANK[tabOf(b.kind, b.slug)]).slice(0, 40);
+    $("#tabnote").textContent = hits.length ? `${hits.length} ${hits.length === 1 ? "story" : "stories"} match` : ""; $("#ponds").hidden = true;
     if (!hits.length) { pk.innerHTML = `<p class="none">Nothing matches “${esc($("#search").value)}”. Try a show, a law or a year.</p>`; return; }
     for (const p of hits) {
       const b = document.createElement("button"); b.className = "chip"; b.dataset.k = `${p.kind}:${p.slug}`;
@@ -1406,7 +1466,7 @@ function show(kind, slug, autoplay = true) {
   renderPicker();
   const named = TABS[tab].find(([k, s]) => k === kind && s === slug);
   $("#h1").textContent = named && named[2] ? named[2] : story.h1;
-  const markLine = marks.length ? `The mark it left: ${marks.slice(0, 3).map(x => `${x.label} (${x.mark.toLowerCase()})`).join("; ")}${marks.length > 3 ? `; and ${marks.length - 3} more` : ""}.`
+  const markLine = marks.length ? `What followed and stayed: ${marks.slice(0, 3).map(x => `${x.label} (${x.mark.toLowerCase()})`).join("; ")}${marks.length > 3 ? `; and ${marks.length - 3} more` : ""}. The arrow shows order, not proof of cause.`
     : "A big splash, no lasting mark yet: what changed so far is attention and money, not a law, an institution, jobs or health.";
   $("#sub").textContent = kind === "acts" ? `Named in the passage of ${story.items.length} ${story.items.length === 1 ? "law" : "laws"}${story.items.length === 1 ? (marks.length ? ", as a reason given for the bill" : ", in passing") : `, ${marks.length} of them as a reason given for the bill`}. A citation shows the work was in the room, not that it caused the law.` : markLine;  // one line; the story's own paragraph is in the first card
   const tally = {}; story.items.forEach(x => tally[x.lv] = (tally[x.lv] || 0) + 1);
@@ -1422,7 +1482,7 @@ function show(kind, slug, autoplay = true) {
   draw(story); buildFeed(story); $("#feed").scrollTop = 0; render();
   document.querySelectorAll(".pond").forEach(b => b.onclick = e => { e.stopPropagation(); show(b.dataset.kind, b.dataset.slug); window.scrollTo({top:0, behavior:"smooth"}); });
   const y = d => addDays(story.iso0, d).getUTCFullYear(), yEnd = y(Math.max(...story.items.filter(x => !x.future).map(x => x.d))), yMid = y(daysAt(0.5));
-  $("#ticks").innerHTML = `<span>${y(0)}</span><span>${yMid > y(0) && yMid < yEnd ? yMid : ""}</span><span>${yEnd > y(0) ? yEnd : ""}</span>`;
+  $("#ticks").innerHTML = `<span>${y(0)}</span><span>${yMid > y(0) && yMid < yEnd ? yMid : ""}</span><span>${yEnd > y(0) ? yEnd : ""}</span>`;  // the end tick is the clock's end
   const w = document.querySelector(".wrap"); w.classList.remove("fade"); void w.offsetWidth; w.classList.add("fade");
   setPlaying(autoplay);
   if (!REEL) try { history.replaceState(null, "", `?${kind === "chain" ? "c" : kind === "acts" ? "a" : "m"}=${encodeURIComponent(slug)}`); } catch { /* sandboxed previews cannot rewrite the URL */ }
@@ -1449,7 +1509,7 @@ function next() {
       if (!cur || t > PRE * 0.85 || !cur.sCore) return;
       const q = toPond(e); if (!q) return;
       const b = cur.sCore.getBBox(), m = cur.sCore.getCTM(), bs = svgEl.getScreenCTM();  // is the press on the stone?
-      const sx = (cur.throwFrom || THROW_FROM).x, sy = (cur.throwFrom || THROW_FROM).y;
+      const home = cur.throwFrom || (cur.dense ? {x:-20, y:500} : THROW_FROM), sx = home.x, sy = home.y;
       if (Math.hypot(q.x - sx, q.y - sy) > 70) return;
       dragging = true; setPlaying(false); svgEl.style.touchAction = "none"; svgEl.setPointerCapture(e.pointerId); e.preventDefault();
     });
@@ -1459,13 +1519,15 @@ function next() {
     svgEl.addEventListener("pointerup", release); svgEl.addEventListener("pointercancel", cancel);
   })();
   document.addEventListener("click", e => { if (!chooser.hidden && !chooser.contains(e.target) && e.target !== cbtn && !cbtn.contains(e.target)) setChooser(false); });
-  document.addEventListener("keydown", e => { if (e.key === "Escape") setChooser(false); });
+  document.addEventListener("keydown", e => { if (e.key === "Escape") setChooser(false); if (e.key === "/" && !e.target.closest("input,select,textarea")) { e.preventDefault(); setChooser(true); $("#search").focus(); } });
   const KIND = {maps:"Lasting marks", stories:"Fact-checks", leads:"Engine leads"};
   document.querySelectorAll(".tab").forEach(b => b.onclick = () => { tab = b.dataset.tab; $("#chooserkind").textContent = KIND[tab]; renderPicker(); const first = TABS[tab][0]; if (first) show(first[0], first[1]); });
   $("#howbtn").onclick = () => { const h = $("#how"), open = h.hidden; h.hidden = !open; $("#howbtn").setAttribute("aria-expanded", open); if (open) h.scrollIntoView({behavior:"smooth", block:"start"}); };
   $("#play").onclick = () => { if (t >= 1) { t = 0; cur.items.forEach(hide); cur.splashed = false; $("#feed").scrollTop = 0; } setPlaying(!playing); };
   $("#nextbtn").onclick = next;
   $("#stepbtn").onclick = () => setStep(!stepMode); setStep(stepMode);
+  const tp = $("#topond"); tp.onclick = () => $(".pondbox").scrollIntoView({block:"start", behavior:"smooth"});
+  addEventListener("scroll", () => { const pb = $(".pondbox").getBoundingClientRect(); tp.hidden = !(window.innerWidth <= 860 && pb.bottom < 0); }, {passive:true});
   document.querySelectorAll(".tab").forEach(b => b.insertAdjacentHTML("afterbegin", ICON[{maps:"marks", stories:"checks", leads:"leads"}[b.dataset.tab]]));
   $("#intro-icon").innerHTML = ICON.drop;
   // center the wordmark's rings on the second p's bowl once the type has loaded
