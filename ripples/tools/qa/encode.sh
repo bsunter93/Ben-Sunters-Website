@@ -1,8 +1,9 @@
 #!/bin/bash
 # Turn a reel recording into the kit's files.
 #   encode.sh <name> <recording.webm> <wide|vertical> <start-seconds> <duration-seconds> [out-dir]
-# A story's trailer runs about ten seconds after a one-second load, rests two seconds, then the next story starts near 12 s:
-# the Oct 4 kit used tiger-king 1.4 10.4 and sputnik 0.6 11.2 (check with: ffmpeg -ss 11.5 -t 4 -i rec.webm -vf fps=2,tile=8x1 -frames:v 1 end.png).
+# Since Oct 4 the page plays an edited cut in reel mode (?reel=1): a still open, the throw, up to five shots with a camera
+# push-in, an end card; about 12.5 s for Tiger King and 14.6 s for Sputnik. reel.js prints each cut's length; start about 0.3 s
+# after load (check with: ffmpeg -ss 0 -t 2 -i rec.webm -vf fps=4,tile=8x1 -frames:v 1 start.png). The Oct 4 06:00 kit predates the cut.
 # The last frame is held two seconds so the rest state reads. Wide: 1200x676 (16:9), 1080x1080 center crop, 800-px GIF. Vertical: 1080x1920.
 set -e
 HERE=$(cd "$(dirname "$0")" && pwd)

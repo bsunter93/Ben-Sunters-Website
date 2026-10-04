@@ -154,10 +154,13 @@ Push the branch; the chain-check workflow grades the chains and commits `chain_c
 **When the demo's look changes:** regenerate the share cards (`node cards.js`, writes `demo/cards/*.png` and the
 `demo/s/<slug>/` stubs from `cards_list.json`) and rebuild the standalone.
 
-**Launch clips:** `node reel.js` records the stills and four raw clips into `./reel`; then, for each,
-`./encode.sh tiger-king reel/vid/tiger-king-wide.webm wide 1.4 10.4` and
-`./encode.sh tiger-king reel/vid/tiger-king-vertical.webm vertical 1.4 10.4` (Sputnik: `0.6 11.2`). The script's header
-explains the cut points. Output lands in `launch/`.
+**Launch clips:** in reel mode (`?reel=1`) the page plays an edited cut, not the playthrough: a still open, the throw,
+up to five shots (the marks and measured steps) as hard cuts with a camera push-in on the arriving ripple, a fast date
+roll where years pass, and a wide end card with the marks and "It wasn't the only reason" (`CUT`, `makeReelCut`,
+`applyCam`). Tiger King 12.5 s, Sputnik 14.6 s. `node reel.js` records the stills and four raw clips into `./reel` and
+prints each cut's length; then `./encode.sh tiger-king reel/vid/tiger-king-wide.webm wide 0.3 12.8` and the vertical
+the same. **Do not record the kit until the look pass has landed**; the Oct 4 06:00 clips in `launch/` predate both
+the pacing and the cut and are stale.
 
 **Git:**
 
