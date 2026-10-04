@@ -174,8 +174,9 @@ def series_test(pts, ref, direction, h, transform):
             "onset": dates[on].isoformat() if on is not None else None, "points": show}
 
 
-def wiki_test(articles, ref, lag=150):
-    end = min(ref + dt.timedelta(days=lag + 30), dt.date.today() - dt.timedelta(days=2))
+def wiki_test(articles, ref, lag=150, today=None):
+    """today: an optional cutoff, so a result can be recomputed as it would have been on an earlier date"""
+    end = min(ref + dt.timedelta(days=lag + 30), (today or dt.date.today()) - dt.timedelta(days=2))
     v, found = None, {}
     for a in articles:
         s = et.series(a, end)

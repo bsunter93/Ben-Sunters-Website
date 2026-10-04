@@ -1,0 +1,42 @@
+# Truncation test (ripples/lab/truncation_test.py): do the measured Wikipedia grades hold with the series cut at earlier dates? Anonymous, honest UA.
+name: Ripples truncation test
+
+on:
+  workflow_dispatch:
+  push:
+    branches: ["claude/**"]
+    paths: ["ripples/lab/truncation_test.py", ".github/workflows/ripples-truncation.yml"]
+
+permissions:
+  contents: write
+
+concurrency:
+  group: ripples-truncation
+  cancel-in-progress: true
+
+jobs:
+  run:
+    runs-on: ubuntu-latest
+    timeout-minutes: 40
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: pip install --quiet numpy
+      - run: python ripples/lab/truncation_test.py
+      - name: Commit results
+        if: always()
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898900+github-actions[bot]@users.noreply.github.com"
+          mkdir -p /tmp/results && cp ripples/docs/results/truncation_v1.json /tmp/results/ 2>/dev/null || exit 0
+          for i in 1 2 3 4; do
+            git fetch -q origin "${GITHUB_REF_NAME}" && git reset -q --hard "origin/${GITHUB_REF_NAME}" || exit 0
+            cp /tmp/results/* ripples/docs/results/
+            git add ripples/docs/results/truncation_v1.json || exit 0
+            git diff --cached --quiet && exit 0
+            git commit -q -m "Ripples: truncation test [skip ci]"
+            git push -q origin "HEAD:${GITHUB_REF_NAME}" && exit 0
+            sleep 5
+          done
