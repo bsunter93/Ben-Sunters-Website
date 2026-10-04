@@ -27,7 +27,10 @@ not proof of cause, and the product says so.
 | The one dose-response design and its two honest failures | `ripples/docs/dose_response_v1.md`, `ripples/lab/series_fetch.py`, `ripples/docs/results/series_v1.json` |
 | The Wikipedia-side discovery that was tried and demoted | `ripples/lab/mark_first.py`, `ripples/docs/mark_first_v1_1.md` |
 | How the fetchers run (the container cannot reach the sources; CI does) | `.github/workflows/ripples-*.yml` |
-| The launch kit (clips, stills, post copy) | `ripples/launch/`, `ripples/docs/launch_v1.md` |
+| The launch kit (clips, stills, post copy) | `ripples/launch/`, `ripples/docs/launch_v2.md` |
+| The browser checks, share cards, clips and statute confirmations | `ripples/tools/qa/` (see `ripples/HANDOFF.md`) |
+| The tester rounds and the final roundtable (simulated personas, labeled) | `ripples/docs/user_tests_v1.md` to `v4.md`, `roundtable_v1.md`, `roundtable_final.md` |
+| Picking the work up in a new session | `ripples/HANDOFF.md` |
 
 ## How to run things
 
