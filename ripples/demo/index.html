@@ -292,6 +292,12 @@ input[type=range]{flex:1;accent-color:var(--marigold);min-width:0}
 .crest,.crestg{display:none}
 .mk{stroke:#061a30;stroke-width:1.2;paint-order:stroke}.mk.l-measured{fill:var(--good)}.mk.l-timed{fill:var(--timed)}.mk.l-reported{fill:#eaf3fb}.mk.l-plausible{fill:var(--plaus)}.mk.l-busted{fill:var(--miss)}
 .mkt{stroke:rgba(214,232,246,.55);stroke-width:1}
+.ringlbl,.rimlbl,.rockg text,.stonet{pointer-events:none}
+svg.hex{vertical-align:-2px;margin-right:4px}
+.mkx{fill:none;stroke:var(--good);stroke-width:1.1;opacity:.85;pointer-events:none}
+.mko{fill:none;stroke:var(--plaus);stroke-width:1;stroke-dasharray:2.2 2.6;opacity:.75;pointer-events:none}
+.markd{fill:#1a2540;stroke:var(--marigold);stroke-width:1.3;paint-order:stroke}.markc{fill:var(--marigold)}
+.node:hover .markd,.node:focus-visible .markd{fill:#2a3350}
 .crest{fill:none;stroke-linecap:round;stroke-linejoin:round;stroke-width:3.4;opacity:0;transition:opacity .4s}
 .crest.on{opacity:1}
 .crestg{stroke-width:11;opacity:0;filter:url(#soft)}.crestg.on{opacity:.3}
@@ -403,6 +409,7 @@ body.reel .pondbox{padding-bottom:10px}
       <span><svg width="22" height="8"><line x1="1" y1="4" x2="21" y2="4" stroke="var(--rec)" stroke-width="2"/></svg>Reported</span>
       <span><svg width="22" height="8"><line x1="1" y1="4" x2="21" y2="4" stroke="var(--plaus)" stroke-width="2" stroke-dasharray="5 6"/></svg>Plausible</span>
       <span><svg width="22" height="8"><line x1="1" y1="4" x2="21" y2="4" stroke="var(--miss)" stroke-width="1.6" stroke-dasharray="2 5"/></svg>Busted</span>
+      <span class="lgmark"><svg width="16" height="16" viewBox="-8 -8 16 16" aria-hidden="true"><path d="M0,-7 L6,-3.5 L6,3.5 L0,7 L-6,3.5 L-6,-3.5 Z" fill="#1a2540" stroke="var(--marigold)" stroke-width="1.3"/><circle r="2.1" fill="var(--marigold)"/></svg>Lasting mark</span>
       <button class="howbtn" id="howbtn" aria-expanded="false" aria-controls="how">How it works</button>
     </div>
   </section>
@@ -442,6 +449,7 @@ const ICON = {
   sound:'<svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6v4h2.5L9 13V3L5.5 6z"/><path d="M11 6a3 3 0 0 1 0 4" class="w"/></svg>',
 };
 // the stone: a small river rock with moss on its shoulder, drawn upright at the center of the pond
+const HEX = `<svg class="hex" width="13" height="13" viewBox="-8 -8 16 16" aria-hidden="true"><path d="M0,-7 L6,-3.5 L6,3.5 L0,7 L-6,3.5 L-6,-3.5 Z" fill="#1a2540" stroke="currentColor" stroke-width="1.4"/><circle r="2.1" fill="currentColor"/></svg>`;  // the lasting-mark glyph, inline so every platform draws it
 const STONE_SVG = `<path d="M-13.5,-3.5 C-13,-11 -5.5,-15.5 2.5,-14.5 C9.5,-13.6 14.5,-8.5 13.8,-1.5 C13.2,6 7.5,12.5 -0.5,12.6 C-8,12.7 -14,6.5 -13.5,-3.5 Z" fill="url(#rock)"/>
 <path d="M-13.5,-3.5 C-13,-11 -5.5,-15.5 2.5,-14.5 C9.5,-13.6 14.5,-8.5 13.8,-1.5 C13.2,6 7.5,12.5 -0.5,12.6 C-8,12.7 -14,6.5 -13.5,-3.5 Z" fill="none" stroke="rgba(6,20,36,.6)" stroke-width=".7"/>
 <path d="M-9.5,-9 C-5.5,-13 1.5,-13.6 6,-11.4" fill="none" stroke="rgba(255,255,255,.22)" stroke-width="1.1" stroke-linecap="round"/>`;
@@ -581,7 +589,7 @@ function sparkHTML(weekly, mark) {
 }
 function card({when, badge, badgeCls, title, spark = "", facts = "", short = "", details = "", cls = "", mark = null, sure = "", foot = ""}) {
   const sureBox = sure ? `<details class="sure"><summary>How sure?</summary><p>${sure}</p></details>` : "";
-  return {cls:cls + (mark ? " marked" : ""), html:`<div class="top"><div class="when">${when}</div><span class="b ${badgeCls}">${badge}</span></div>${mark ? `<div class="markpill">◆ Lasting mark · ${esc(mark)}</div>` : ""}
+  return {cls:cls + (mark ? " marked" : ""), html:`<div class="top"><div class="when">${when}</div><span class="b ${badgeCls}">${badge}</span></div>${mark ? `<div class="markpill">${HEX}Lasting mark · ${esc(mark)}</div>` : ""}
     <h2>${esc(title)}</h2>${spark}${facts}${short ? `<p class="short">${short}</p>` : ""}${foot}<div class="row">${sureBox}${details ? `<details><summary>Details</summary>${details}</details>` : ""}</div>`};
 }
 // Plain-language account of the evidence behind one link: what was measured, how it was compared, what it does not show.
@@ -971,7 +979,7 @@ function draw(story) {
   el("path", {d:ROCK, "clip-path":"url(#wlclip)", fill:"url(#surface)", opacity:".55"}, sWater);
   el("ellipse", {cx:0, cy:-1.5, rx:16.2, ry:6.2, fill:"none", stroke:"rgba(220,238,250,.12)", "stroke-width":.8}, sWater);
   el("path", {d:"M-15.6,-1.5 A16.2,6.2 0 0 0 15.6,-1.5", fill:"none", stroke:"rgba(230,244,252,.75)", "stroke-width":1.1, "stroke-linecap":"round"}, sWater);
-  const stoneT = el("text", {x:C.x, y:C.y + 44 * K, "text-anchor":"middle"}, stone); stoneT.textContent = story.stone; stoneT.style.fontSize = `${Math.round(Math.max(16 * Math.min(1.4, K), 11 / scale))}px`;
+  const stoneT = el("text", {class:"stonet", x:C.x, y:C.y + 44 * K, "text-anchor":"middle"}, stone); stoneT.textContent = story.stone; stoneT.style.fontSize = `${Math.round(Math.max(16 * Math.min(1.4, K), 11 / scale))}px`;
 
   // final positions: spread across the slice, nearest first, alternating either side of its center line
   for (const k of keys) {
@@ -1024,17 +1032,30 @@ function draw(story) {
       it.elbl.textContent = it.lvText || LVL[it.lv];
     }
     const g = el("g", {class:"node", tabindex:-1, role:"button", "aria-label":`${it.label}, ${it.lvText || LVL[it.lv]}`, opacity:0}, nodes);
-    el("circle", {class:"hit", cx:0, cy:0, r:Math.max(24 * K, 22 / scale), fill:"transparent"}, g);  // the tap target: at least 44 px on any screen, never resized
+    it.hit = el("circle", {class:"hit", cx:0, cy:0, r:Math.max(24 * K, 22 / scale), fill:"transparent"}, g);  // the tap target: at least 44 px on any screen, never resized
     it.halo = el("circle", {cx:0, cy:0, r:16, fill:"transparent"}, g);  // the breathing halo the render loop sizes
     el("line", {class:"mkt", x1:0, y1:-6 * K, x2:0, y2:6 * K, transform:`rotate(${it.a})`}, g);  // a tick across the arc at the exact date
-    el("circle", {class:`mk l-${it.lv}`, cx:0, cy:0, r:(it.lv === "measured" ? 3.6 : 2.8) * K}, g);  // the tap target (about 44 px on a phone); the marker itself is the crest on the ring
-    if (it.mark) {  // a lasting mark: a diamond on the arc, the same glyph the cards and the tally use
-      el("path", {class:"markd", d:`M0,${-6.5 * K} L${6.5 * K},0 L0,${6.5 * K} L${-6.5 * K},0 Z`, fill:"var(--marigold)", stroke:"#061a30", "stroke-width":1.2}, g);
+    el("circle", {class:`mk l-${it.lv}`, cx:0, cy:0, r:(it.lv === "measured" ? 3.6 : 2.8) * K}, g);  // the dot; the marker itself is the crest on the ring
+    if (it.lv === "measured") {  // measured: a crosshair, the instrument's own glyph
+      const R = 7 * K, T = 2.6 * K;
+      el("circle", {class:"mkx", cx:0, cy:0, r:R}, g);
+      el("path", {class:"mkx", d:`M0,${-R - T} V${-R + T} M0,${R - T} V${R + T} M${-R - T},0 H${-R + T} M${R - T},0 H${R + T}`}, g);
+    } else if (it.lv === "plausible") {  // plausible: a dashed orbit, a path not yet pinned down
+      el("circle", {class:"mko", cx:0, cy:0, r:6.5 * K}, g);
+    }
+    if (it.mark) {  // a lasting mark: a hexagon with a lit core, the same glyph the cards and the tally use
+      const h = 7.2 * K, w = h * 0.866;
+      el("path", {class:"markd", d:`M0,${-h} L${w},${-h / 2} L${w},${h / 2} L0,${h} L${-w},${h / 2} L${-w},${-h / 2} Z`}, g);
+      el("circle", {class:"markc", cx:0, cy:0, r:2.2 * K}, g);
     }
     it.core = null;
     it.showLabel = !dense || !!it.mark || it.lv === "measured" || items.length <= 5;  // a desktop names every ripple that has room; a phone names the marks and the measured steps
     g.setAttribute("transform", `translate(${C.x},${C.y})`);
-    g.addEventListener("click", () => focus(it));
+    g.addEventListener("click", e => {  // where two targets overlap, the tap goes to the nearest ripple, not the one drawn last
+      let best = it, bd = Infinity;
+      if (e.clientX) items.forEach(o => { if (!o.hit || o.state === "hidden") return; const r = o.hit.getBoundingClientRect(); const d = Math.hypot(r.x + r.width / 2 - e.clientX, r.y + r.height / 2 - e.clientY); if (d < bd) { bd = d; best = o; } });
+      focus(best);
+    });
     g.addEventListener("mouseenter", () => { wake(it); showTip(it); });
     g.addEventListener("mouseleave", hideTip);
     g.addEventListener("keydown", e => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); focus(it); } });
@@ -1045,7 +1066,7 @@ function draw(story) {
     const shown = wrapLabel(it.label, 26, 2);
     const tx = el("text", {x:0, y:0}, lab); if (K > 1) tx.style.fontSize = `${(13.5 * K).toFixed(1)}px`;  // the text floor: see K above
     shown.forEach((ln, k) => { const ts = el("tspan", {x:0, dy:k ? 15 * K : 0}, tx); ts.textContent = ln; });
-    const sub = el("text", {class:"s", x:0, y:14 * K * shown.length}, lab); sub.textContent = it.mark ? `◆ ${it.mark} · ${it.sub || ""}` : (it.sub || "");  // the mark, then the date and the delay
+    const sub = el("text", {class:"s", x:0, y:14 * K * shown.length}, lab); sub.textContent = it.mark ? `${it.mark} · ${it.sub || ""}` : (it.sub || "");  // the mark, then the date and the delay
     if (K > 1) sub.style.fontSize = `${(10.5 * K).toFixed(1)}px`;
     const bb = lab.getBBox(), pad = 5 * K, bw = bb.width + pad * 2, bh = bb.height + pad * 2, g1 = 12 * K;
     const right = [g1, -bh / 2], left = [-g1 - bw, -bh / 2], up = [-bw / 2, -bh - g1], down = [-bw / 2, g1 + 1];
@@ -1076,6 +1097,13 @@ function draw(story) {
     rect.setAttribute("x", bb.x - pad); rect.setAttribute("y", bb.y - pad); rect.setAttribute("width", bw); rect.setAttribute("height", bh);
     it.lab = lab; it.state = "hidden";
   }
+  items.forEach(it => {  // on a dense pond, no tap target may swallow a neighbor's center: each shrinks to half the gap to its nearest neighbor, never below the dot plus a thumb's slack
+    if (!it.hit || !it.pos) return;
+    let near = Infinity;
+    items.forEach(o => { if (o !== it && o.pos) near = Math.min(near, Math.hypot(o.pos.x - it.pos.x, o.pos.y - it.pos.y)); });
+    const r = +it.hit.getAttribute("r"), cap = Math.max(9 * K, near / 2 - 0.5);
+    if (cap < r) it.hit.setAttribute("r", cap.toFixed(1));
+  });
   story.max = max; story.waves = waves; story.sHalo = sHalo; story.sCore = sCore; story.sWater = sWater; story.sShadow = sShadow; story.K = K; story.splashed = false;
   const loud = items.filter(x => x.mark || x.lv === "measured").length;
   story.trailer = loud > 0 && items.length > loud;  // the trailer: ten seconds, the marks and the measured steps bloom, the rest land quiet
@@ -1183,7 +1211,7 @@ function land(it) {  // the label appears only once the ripple has arrived
   it.crest.classList.add("on"); it.crestg.classList.add("on"); wobble(it, performance.now());
   if ((it.showLabel && !it.quiet) || it === hot) { it.lab.classList.add("on"); if (it.leader) it.leader.classList.add("on"); }
   if (it.elbl) it.elbl.style.opacity = 1; if (it.band) it.band.style.opacity = .17;
-  if (REEL) $("#caption").innerHTML = `${it.mark ? `<b>◆ ${esc(it.mark)}</b> · ` : ""}${esc(it.label)} <span style="color:var(--ink-3)">· ${esc(it.lvText || LVL[it.lv])}${it.sub ? " · " + esc(it.sub) : ""}</span>`;
+  if (REEL) $("#caption").innerHTML = `${it.mark ? `<b>${HEX}${esc(it.mark)}</b> · ` : ""}${esc(it.label)} <span style="color:var(--ink-3)">· ${esc(it.lvText || LVL[it.lv])}${it.sub ? " · " + esc(it.sub) : ""}</span>`;
 }
 function wake(it) {  // a quiet step speaks: at rest, in Step, on hover or on a tap
   if (!it.quiet) return; it.quiet = false; [it.g, it.ring, it.ringH, it.ringS].forEach(e => e.classList.remove("quiet"));
@@ -1378,7 +1406,7 @@ function focus(it) {
   $("#pond").classList.add("focus");
   if (it.cardEl) { it.cardEl.classList.add("hot"); if (!REEL && window.innerWidth > 860) it.cardEl.scrollIntoView({block:"nearest", behavior:"smooth"}); }
   if (!REEL && window.innerWidth <= 860) {  // on a phone the card is screens below: say what this ripple is, right under the pond
-    const cap = $("#caption"); const capLine = it.short || (it.srcText ? esc(it.srcText) : ""); cap.innerHTML = `${it.mark ? `<b>◆ ${esc(it.mark)}</b> · ` : ""}<b>${esc(it.label)}</b> <span style="color:var(--ink-3)">· ${esc(it.lvText || LVL[it.lv])}${it.sub ? " · " + esc(it.sub) : ""}</span>${capLine ? `<div class="sum">${capLine}</div>` : ""}<div class="acts"><a href="#" class="readcard">Read the card ↓</a></div>`;
+    const cap = $("#caption"); const capLine = it.short || (it.srcText ? esc(it.srcText) : ""); cap.innerHTML = `${it.mark ? `<b>${HEX}${esc(it.mark)}</b> · ` : ""}<b>${esc(it.label)}</b> <span style="color:var(--ink-3)">· ${esc(it.lvText || LVL[it.lv])}${it.sub ? " · " + esc(it.sub) : ""}</span>${capLine ? `<div class="sum">${capLine}</div>` : ""}<div class="acts"><a href="#" class="readcard">Read the card ↓</a></div>`;
     cap.querySelector(".acts").insertAdjacentHTML("beforeend", `<a href="#" class="shrcap">Share</a>`); cap.querySelector(".shrcap").onclick = e => { e.preventDefault(); shareStep(it); };
     cap.classList.add("on"); const svg0 = $("#pond"); cap.style.display = "block"; const pbR = $(".pondbox").getBoundingClientRect(), svR = svg0.getBoundingClientRect(); cap.style.top = `${Math.max(8, svR.bottom - pbR.top - cap.offsetHeight - 10)}px`; cap.style.display = ""; const rc = cap.querySelector(".readcard"); if (rc) rc.onclick = e => { e.preventDefault(); if (it.cardEl) it.cardEl.scrollIntoView({block:"start", behavior:"smooth"}); };
   }
@@ -1496,7 +1524,7 @@ function show(kind, slug, autoplay = true) {
   const story = kind === "chain" ? fromChain(slug) : kind === "acts" ? fromActs(slug) : MAPS[slug] && DATA.maps[slug] ? fromMap(slug) : fromDisc(slug);
   for (const it of story.items) if (it.mark) {  // a lasting mark: law, institution, infrastructure, jobs, health
     it.card.cls += " marked";
-    if (!it.card.html.includes('class="markpill"')) it.card.html = it.card.html.replace("</span></div>", `</span></div><div class="markpill">◆ Lasting mark · ${esc(it.mark)}</div>`);
+    if (!it.card.html.includes('class="markpill"')) it.card.html = it.card.html.replace("</span></div>", `</span></div><div class="markpill">${HEX}Lasting mark · ${esc(it.mark)}</div>`);
   }
   const marks = story.items.filter(x => x.mark);
   story.sub = story.sub.replace(/ Tap a ripple to see why\.$/, "");
@@ -1517,7 +1545,7 @@ function show(kind, slug, autoplay = true) {
     : "A big splash, no lasting mark yet: what changed so far is attention and money, not a law, an institution, jobs or health.";
   $("#sub").textContent = kind === "acts" ? `Named in the passage of ${story.items.length} ${story.items.length === 1 ? "law" : "laws"}${story.items.length === 1 ? (marks.length ? ", as a reason given for the bill" : ", in passing") : `, ${marks.length} of them as a reason given for the bill`}. A citation shows the work was in the room, not that it caused the law.` : markLine;  // one line; the story's own paragraph is in the first card
   const tally = {}; story.items.forEach(x => tally[x.lv] = (tally[x.lv] || 0) + 1);
-  $("#tally").innerHTML = (kind === "acts" ? `<span class="markt">◆ ${marks.length} cited as a reason</span>` : marks.length ? `<span class="markt">◆ ${marks.length} lasting mark${marks.length === 1 ? "" : "s"}</span>` : `<span class="nomark">No lasting mark yet</span>`) +
+  $("#tally").innerHTML = (kind === "acts" ? `<span class="markt">${HEX}${marks.length} cited as a reason</span>` : marks.length ? `<span class="markt">${HEX}${marks.length} lasting mark${marks.length === 1 ? "" : "s"}</span>` : `<span class="nomark">No lasting mark yet</span>`) +
     ["measured", "timed", "reported", "plausible", "busted"].filter(k => tally[k]).map(k => `<span class="l-${k}">${tally[k]} ${LVL[k].toLowerCase()}</span>`).join("") + (kind === "acts" ? "" : `<span class="weak">weakest link ${LVL[story.weak].toLowerCase()}</span>`);
   // same stone, other ponds; and any ripple that is itself a stone we have thrown
   const others = pondsFor(story.stone, kind, slug), pondsEl = $("#ponds");
@@ -1570,6 +1598,7 @@ function next() {
   const KIND = {maps:"Lasting marks", stories:"Fact-checks", leads:"Engine leads"};
   document.querySelectorAll(".tab").forEach(b => b.onclick = () => { tab = b.dataset.tab; $("#chooserkind").textContent = KIND[tab]; renderPicker(); });  // a tab changes the list; a chip picks the story
   $("#howbtn").onclick = () => { const h = $("#how"), open = h.hidden; h.hidden = !open; $("#howbtn").setAttribute("aria-expanded", open); if (open) h.scrollIntoView({behavior:"smooth", block:"start"}); };
+  $("#caption").addEventListener("click", e => { if (!e.target.closest("a,button") && hot) clearFocus(); });  // a tap on the caption itself, not a link, puts the pond back
   $("#play").onclick = () => { if (t >= 1) { t = 0; cur.items.forEach(hide); cur.splashed = false; $("#feed").scrollTop = 0; } setPlaying(!playing); };
   $("#nextbtn").onclick = next;
   $("#stepbtn").onclick = () => { if (!stepMode) setStep(true); else if (!playing) { if (t >= 1) { t = 0; cur.items.forEach(hide); cur.splashed = false; clearFocus(); } setPlaying(true); } };  // press: next ripple (and Step mode on)
