@@ -219,7 +219,8 @@ The clips are cut and the launch kit is current (PR #94; `launch/posts_ready.txt
 recognizable stones with a behavior lexicon and 22 stones / 25 marks joined the product, including the first Disputed
 engine-found link (PR #96; `docs/discovery_culture_v1.md`): **58 stones, 102 marks under Engine leads.** The second
 roundtable (`docs/roundtable_v2.md`: the twelve at 8.3, three new strangers at 7.3) voted release. Still to do: release
-Monday morning Oct 5 (section 8), the owner's date; the pre-flight checks 1 to 3 already pass on production. The owner then
+Monday morning Oct 5 (section 8), the owner's date; the pre-flight checks 1 to 3 already pass on production. Round six (three more strangers on the reveal build, 8.0; `docs/user_tests_v6.md`) led to two fixes: statistics off the
+narration line, the short-screen rule up to 820 px for classroom Chromebooks (PR #103). The owner then
 asked for the reveal to feel like an investigation (PR #101, `docs/reveal_v1.md`: the title withholds its answer, numbered
 clues, the first mark resolves the title, a verification beat; clips re-recorded). Before that he
 played the demo and sent a readability review (PR #100: long stories name only marks and measured steps at rest, labels step
