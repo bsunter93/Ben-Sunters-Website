@@ -512,12 +512,13 @@ const TABS = {
     ["chain", "cellucotton-kleenex", "WWI bandages → Kleenex"], ["chain", "sildenafil-viagra", "An angina drug → Viagra"], ["chain", "heat-pump-super-soaker", "A heat pump → the Super Soaker"],
     ["chain", "perkin-chemotherapy", "A dye → chemotherapy?"], ["chain", "jurassic-park", "Jurassic Park → seized fossils"], ["chain", "ice-bucket", "Ice Bucket → an ALS gene"],
     ["chain", "ethanol-tortilla", "Ethanol law → tortilla riots?"]],
-  leads:[["acts", "Cathy Come Home", "Cathy Come Home: cited in Parliament"], ["acts", "Mr Bates vs The Post Office", "Mr Bates: cited in Parliament"],
+  leads:[["wiki", "sixty-minutes-stock-act", "60 Minutes → the STOCK Act"], ["wiki", "west-wing-hatred-act", "The West Wing → the Racial and Religious Hatred Act 2006"], ["wiki", "silent-spring-ddt", "Silent Spring → the National Environmental Policy Act"], ["wiki", "sputnik-nasa-arpa", "Sputnik → the National Defense Education Act"], ["wiki", "love-canal-superfund", "Love Canal → the ATSDR"], ["wiki", "exxon-valdez-opa90", "Exxon Valdez → the Oil Pollution Act and a state commission"], ["wiki", "columbine-active-shooter", "Columbine → New Jersey's anti-bullying law"], ["wiki", "flint-lead-pipes", "Flint → the Lead and Copper Rule revisions"], ["wiki", "fukushima", "Fukushima → four new institutions in Japan and Korea"], ["wiki", "anthrax", "The anthrax letters → the Patriot Act"], ["wiki", "an-inconvenient-truth", "An Inconvenient Truth → a climate institution and a court ruling"], ["wiki", "the-day-after", "The Day After → the INF Treaty"], ["wiki", "deepwater-horizon", "Deepwater Horizon → a commission, a council, a health study, a new bureau"], ["wiki", "sandy-hook", "Sandy Hook → two state gun laws and a records carve-out"],
+    ["acts", "Cathy Come Home", "Cathy Come Home: cited in Parliament"], ["acts", "Mr Bates vs The Post Office", "Mr Bates: cited in Parliament"],
     ["acts", "Silent Spring", "Silent Spring: cited in Parliament"], ["acts", "Adolescence (TV series)", "Adolescence: cited in Parliament"],
     ...["queens-gambit", "chernobyl", "wednesday", "stranger-things-4", "saltburn", "bridgerton", "the-last-of-us", "squid-game", "shogun", "the-bear"].map(s => ["map", s, null])],
 };
 const TABNOTE = {maps:"Events that changed the world in a way that stuck: a law, an institution, infrastructure, jobs or health. Every link rated.", stories:"Viral “butterfly effect” stories put to the test, link by link. Some hold; some are busted.",
-  leads:"What the engine found on its own: works cited in Parliament, resolved to the Acts those debates became; and things whose attention rose unusually after an event. Screened by hand; a citation or a rise is a lead, not proof."};
+  leads:"What the engine found on its own: sentences in Wikipedia that name a lasting change after an event, dated and put in order; works cited in Parliament and Congress, resolved to the laws those debates became; and things whose attention rose unusually after an event. Screened by hand; a sentence, a citation or a rise is a lead, not proof."};
 let tab = "maps";
 const LVL = {measured:"Measured", timed:"Timed", reported:"Reported", plausible:"Plausible", busted:"Busted"};
 const LV = {tested:"measured", timed:"timed", record:"reported"};
@@ -747,6 +748,27 @@ function whyText(why) {
   return ` We read it that way because ${list}.`;
 }
 const plainWork = w => w.replace(/ \((TV series|film|\d{4} film|video game|British TV series|novel)\)$/, "");
+// ---- engine-found pairs from Wikipedia read as a record (ripples/demo/discovered_wiki.json; docs/discovery_corpus1_v1.md) ----
+function wikiStones() { return DATA.wiki && DATA.wiki.stones ? Object.keys(DATA.wiki.stones) : []; }
+function fromWiki(slug) {
+  const w = DATA.wiki.stones[slug], iso0 = w.date, items = [];
+  w.marks.forEach((m, i) => {
+    const md = m.precision === "year" ? `${m.date}-07-01` : m.precision === "month" ? `${m.date}-15` : m.date;  // a year-dated mark sits mid-year; a month-dated one mid-month
+    const d = Math.max(daysBetween(iso0, md), 0.5);
+    const when = m.precision === "year" ? m.date : m.precision === "month" ? fmtMonth(D(md)) : fmt(D(md));
+    const where = m.found === "reverse" ? "the mark's own article" : "the stone's article";
+    items.push({id:m.id || `w${i}`, parent:null, slice:"main", d, label:m.label, sub:`${m.precision === "year" ? m.date : fmtMonth(D(md))} · ${sinceLabel(d)}`, mark:m.kind, title:m.title, lv:"reported", lvText:"Reported",
+      short:`Named as a consequence in ${where} on Wikipedia`, srcText:m.source_label,
+      card:card({when:`${when}<span>${sinceLabel(d)}</span>`, badge:"Reported", badgeCls:"l-reported", title:m.title, mark:m.kind,
+        short:`The engine read ${where} for a sentence that names the stone and a lasting change with a causal word, dated the mark from the record, and kept it because it came after. A person confirmed the sentence states a consequence.${m.precision === "day" ? "" : m.precision === "month" ? " Dated to the month." : " Dated to the year."}`,
+        sure:howSure("reported", {what:`Wikipedia, ${m.source_label.replace(/^Wikipedia: /, "")}`, why:"a sentence in the article names the link with a causal word. A sentence shows the link is stated in a public record, not that the stone caused the mark"}),
+        details:`<p>“${esc(m.sentence)}”</p><p class="src"><a href="${esc(m.source_url)}" target="_blank" rel="noopener">${esc(m.source_label)}</a>${m.mark_url ? ` · <a href="${esc(m.mark_url)}" target="_blank" rel="noopener">Wikipedia: ${esc(m.mark_article || m.label)}</a>` : ""}</p>`})});
+  });
+  const n = items.length;
+  return {key:slug, kind:"wiki", title:w.title, stone:w.stone, iso0, items, extra:[], names:{main:"What followed"}, h1:w.title,
+    sub:`The engine read the Wikipedia article on ${w.stone}, and the articles of laws and institutions that link to it, for sentences that name a lasting change with a causal word; dated each mark from the record; kept the ones that came after. A person confirmed every one shown. ${n} ${n === 1 ? "mark" : "marks"}, every link reported, none measured.`,
+    first:card({when:`${fmt(D(iso0))}<span>Day 0</span>`, badge:"The event", badgeCls:"event", title:w.first || w.stone})};
+}
 function fromActs(work) {
   const ps = actPairs(work), iso0 = ps[0].work_date, items = [];
   ps.forEach((p, i) => {
@@ -1577,9 +1599,9 @@ function setStep(on) {
 
 async function loadAll() {
   const j = u => fetch(u).then(r => r.ok ? r.json() : null).catch(() => null);
-  const [disc, chains, acts, sources, context, ...maps] = await Promise.all([j("/ripples/demo/discovered.json"), j("/ripples/docs/results/chain_check_v1.json"),
-    j("/ripples/docs/results/bill_act_v1.json"), j("/ripples/demo/sources.json"), j("/ripples/demo/context.json"), ...Object.keys(MAPS).map(s => j(`/ripples/maps/out/${s}.json`))]);
-  DATA.disc = disc; DATA.chains = chains ? chains.chains : []; DATA.acts = acts; DATA.sources = sources || {}; DATA.context = context || {}; DATA.run = chains && chains.run; DATA.sha = chains && chains.checker_sha;
+  const [disc, chains, acts, sources, context, wiki, ...maps] = await Promise.all([j("/ripples/demo/discovered.json"), j("/ripples/docs/results/chain_check_v1.json"),
+    j("/ripples/docs/results/bill_act_v1.json"), j("/ripples/demo/sources.json"), j("/ripples/demo/context.json"), j("/ripples/demo/discovered_wiki.json"), ...Object.keys(MAPS).map(s => j(`/ripples/maps/out/${s}.json`))]);
+  DATA.disc = disc; DATA.wiki = wiki; DATA.chains = chains ? chains.chains : []; DATA.acts = acts; DATA.sources = sources || {}; DATA.context = context || {}; DATA.run = chains && chains.run; DATA.sha = chains && chains.checker_sha;
   Object.keys(MAPS).forEach((s, i) => { if (maps[i]) DATA.maps[s] = maps[i]; });
 }
 function tabOf(kind, slug) {
@@ -1607,6 +1629,7 @@ function renderPicker() {
   for (const [kind, slug, name] of TABS[tab]) {
     if (kind === "chain" && !DATA.chains.some(c => c.slug === slug)) continue;
     if (kind === "acts" && !actsWorks().includes(slug)) continue;
+    if (kind === "wiki" && !wikiStones().includes(slug)) continue;
     if (kind === "map" && !DATA.maps[slug] && !(DATA.disc && DATA.disc.events[slug] && DATA.disc.events[slug].links.length)) continue;
     const b = document.createElement("button"); b.className = "chip"; b.dataset.k = `${kind}:${slug}`;
     b.textContent = name || (DATA.disc && DATA.disc.events[slug] ? DATA.disc.events[slug].title : slug);
@@ -1627,6 +1650,7 @@ function allPonds() {
   for (const [slug, cfg] of Object.entries(MAPS)) if (DATA.maps[slug]) out.push({kind:"map", slug, stone:cfg.stone, title:cfg.h1});
   if (DATA.disc) for (const [slug, ev] of Object.entries(DATA.disc.events)) if (ev.links && ev.links.length) out.push({kind:"map", slug, stone:ev.title, title:`${ev.title}: engine leads`});
   for (const w of actsWorks()) out.push({kind:"acts", slug:w, stone:plainWork(w), title:`${plainWork(w)}: cited in ${citedWhere(w)}`});
+  for (const [slug, st] of Object.entries(DATA.wiki && DATA.wiki.stones || {})) out.push({kind:"wiki", slug, stone:st.stone, title:st.title, year:(st.date || "").slice(0, 4)});
   return out;
 }
 const norm = s => String(s || "").toLowerCase().replace(/^the /, "").replace(/[^a-z0-9]+/g, " ").trim();
@@ -1644,7 +1668,7 @@ const TABS_TITLE = p => { const f = Object.values(TABS).flat().find(([k, s]) => 
 function show(kind, slug, autoplay = true) {
   const ch = $("#chooser"); if (ch && !ch.hidden) { ch.hidden = true; $("#chooserbtn").setAttribute("aria-expanded", "false"); }  // picking a story closes the chooser
   if ($("#search")) $("#search").value = "";
-  const story = kind === "chain" ? fromChain(slug) : kind === "acts" ? fromActs(slug) : MAPS[slug] && DATA.maps[slug] ? fromMap(slug) : fromDisc(slug);
+  const story = kind === "chain" ? fromChain(slug) : kind === "acts" ? fromActs(slug) : kind === "wiki" ? fromWiki(slug) : MAPS[slug] && DATA.maps[slug] ? fromMap(slug) : fromDisc(slug);
   for (const it of story.items) if (it.mark) {  // a lasting mark: law, institution, infrastructure, jobs, health
     it.card.cls += " marked";
     if (!it.card.html.includes('class="markpill"')) it.card.html = it.card.html.replace("</span></div>", `</span></div><div class="markpill">${HEX}Lasting mark · ${esc(it.mark)}</div>`);
@@ -1685,10 +1709,10 @@ function show(kind, slug, autoplay = true) {
   $("#ticks").innerHTML = `<span>${y(0)}</span><span>${yMid > y(0) && yMid < yEnd ? yMid : ""}</span><span>${yEnd > y(0) ? yEnd : ""}</span>`;  // the end tick is the clock's end
   const w = document.querySelector(".wrap"); w.classList.remove("fade"); void w.offsetWidth; w.classList.add("fade");
   setPlaying(autoplay);
-  if (!REEL) try { history.replaceState(null, "", `?${kind === "chain" ? "c" : kind === "acts" ? "a" : "m"}=${encodeURIComponent(slug)}`); } catch { /* sandboxed previews cannot rewrite the URL */ }
+  if (!REEL) try { history.replaceState(null, "", `?${kind === "chain" ? "c" : kind === "acts" ? "a" : kind === "wiki" ? "w" : "m"}=${encodeURIComponent(slug)}`); } catch { /* sandboxed previews cannot rewrite the URL */ }
 }
 function next() {
-  const list = TABS[tab].filter(([k, s]) => k === "chain" ? DATA.chains.some(c => c.slug === s) : k === "acts" ? actsWorks().includes(s) : DATA.maps[s] || (DATA.disc && DATA.disc.events[s] && DATA.disc.events[s].links.length));
+  const list = TABS[tab].filter(([k, s]) => k === "chain" ? DATA.chains.some(c => c.slug === s) : k === "acts" ? actsWorks().includes(s) : k === "wiki" ? wikiStones().includes(s) : DATA.maps[s] || (DATA.disc && DATA.disc.events[s] && DATA.disc.events[s].links.length));
   const i = list.findIndex(([, s]) => s === cur.key);
   const [k, s] = list[(i + 1) % list.length]; show(k, s);
 }
@@ -1758,7 +1782,7 @@ function next() {
   }
   const toast = m => { const t = $("#toast"); t.textContent = m; t.classList.add("on"); setTimeout(() => t.classList.remove("on"), 1800); };
   window.shareStep = async it => {  // a link that opens on this one ripple, stopped, with its caption
-    const key = cur.kind === "chain" ? "c" : cur.kind === "acts" ? "a" : "m", url = `https://bensunter.com/ripples/demo/?${key}=${encodeURIComponent(cur.key)}&s=${encodeURIComponent(it.id)}`;
+    const key = cur.kind === "chain" ? "c" : cur.kind === "acts" ? "a" : cur.kind === "wiki" ? "w" : "m", url = `https://bensunter.com/ripples/demo/?${key}=${encodeURIComponent(cur.key)}&s=${encodeURIComponent(it.id)}`;
     const title = `${esc(it.label)} · ${cur.stone}`;
     try { if (navigator.share) { await navigator.share({title:`Ripple: ${title}`, text:(it.short || it.srcText || "").replace(/<[^>]+>/g, ""), url}); return; } } catch { return; }
     try { await navigator.clipboard.writeText(url); toast("Link to this step copied"); } catch { window.prompt("Copy this link", url); }
@@ -1766,7 +1790,7 @@ function next() {
   $("#share").onclick = async () => {
     // featured stories have a share page with a preview card (ripples/demo/s/<slug>/); the rest link straight in
     const featured = Object.values(TABS).flat().some(([, s]) => s === cur.key);
-    const url = featured ? `https://bensunter.com/ripples/demo/s/${cur.key}/` : `https://bensunter.com/ripples/demo/?${cur.kind === "chain" ? "c" : cur.kind === "acts" ? "a" : "m"}=${encodeURIComponent(cur.key)}`, title = $("#h1").textContent;
+    const url = featured ? `https://bensunter.com/ripples/demo/s/${cur.key}/` : `https://bensunter.com/ripples/demo/?${cur.kind === "chain" ? "c" : cur.kind === "acts" ? "a" : cur.kind === "wiki" ? "w" : "m"}=${encodeURIComponent(cur.key)}`, title = $("#h1").textContent;
     try { if (navigator.share) { await navigator.share({title:`Ripple: ${title}`, text:$("#sub").textContent, url}); return; } } catch { return; }
     try { await navigator.clipboard.writeText(url); toast("Link copied"); } catch { window.prompt("Copy this link", url); }
   };
@@ -1796,10 +1820,11 @@ function next() {
   const sc = $("#scrub");
   sc.oninput = e => { scrubbing = true; t = e.target.value / 1000; setPlaying(false); unspot(); $("#beatline").classList.add("off"); render(); };
   sc.onchange = () => { scrubbing = false; };
-  const c = params.get("c"), m = params.get("m") || params.get("e"), a = params.get("a");
+  const c = params.get("c"), m = params.get("m") || params.get("e"), a = params.get("a"), wk = params.get("w");
   if (CARD) playing = false;
   if (c && DATA.chains.some(x => x.slug === c)) show("chain", c, playing);
   else if (a && actsWorks().includes(a)) show("acts", a, playing);
+  else if (wk && wikiStones().includes(wk)) show("wiki", wk, playing);
   else if (m && (DATA.maps[m] || (DATA.disc && DATA.disc.events[m]))) show("map", m, playing);
   else show(TABS.maps[0][0], TABS.maps[0][1], playing);
   if (CARD) { t = 1; setPlaying(false); render(); }
