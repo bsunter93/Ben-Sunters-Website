@@ -324,8 +324,8 @@ body.reel header{max-width:760px;padding-top:22px}
   .tabs{margin-top:8px;overflow-x:auto;scrollbar-width:none}.tab{padding:6px 7px 7px;font-size:.8rem;gap:5px}.tab svg{width:14px;height:14px}.tabnote{font-size:.74rem;margin:6px 0 0}
   .picker{margin:6px 0 0}.chip{padding:5px 10px;font-size:.82rem}
   .wrap{padding:6px 10px 24px;gap:12px}.pondbox{padding:8px 8px 6px;border-radius:18px}
-  .pondbox .hint{position:static;transform:none;margin:8px auto 2px;display:block;width:max-content;max-width:100%;font-size:.78rem;padding:7px 12px;text-align:center;white-space:normal}  /* a phone: in the flow under the pond, never over it */
-  .pondbox .hint[hidden]{display:block;visibility:hidden}  /* and when it goes, the controls stay put */
+  .pondbox .hint{position:absolute;left:12px;right:12px;top:auto;bottom:auto;transform:none;margin:0;width:auto;max-width:none;font-size:.78rem;padding:7px 12px;text-align:center;white-space:normal;z-index:2}  /* a phone: over the pond's top edge for its nine seconds; no gap, no jump */
+  .pondbox .hint{top:64px}
   .clock .d{font-size:1.05rem}.clock .n{font-size:.78rem}
   .legend{font-size:.78rem;gap:4px 10px;padding:4px 4px 2px}.howbtn{font-size:.78rem;padding:4px 10px}
   .nextbtn{padding:6px 10px;font-size:.8rem}.play{width:36px;height:36px}.stepbtn{padding:6px 10px;font-size:.8rem}
@@ -342,7 +342,9 @@ body.reel header{max-width:760px;padding-top:22px}
 .caption b{color:var(--marigold)}
 .topond{position:fixed;right:14px;bottom:18px;z-index:5;background:var(--marigold);color:#1a1405;border:0;border-radius:999px;padding:10px 14px;font:700 .86rem var(--sans);box-shadow:0 4px 18px rgba(0,0,0,.35);cursor:pointer}
 body.reel .caption{display:block}
-@media (max-width:860px){#pond.focus ~ .caption.on{display:block;position:absolute;left:12px;right:12px;margin:0;z-index:3;background:rgba(5,22,40,.92)}.caption a.readcard{display:block;margin:8px 0 0;padding:8px 0;text-align:center;border:1px solid rgba(242,169,59,.5);border-radius:999px;color:var(--marigold);font-weight:700}}
+@media (max-width:860px){#pond.focus ~ .caption.on{display:block;position:absolute;left:12px;right:12px;margin:0;z-index:3;background:rgba(5,22,40,.92);font-size:.9rem;line-height:1.3;padding:8px 12px}
+  .caption .sum{display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;margin-top:2px}
+  .caption .acts{display:flex;gap:10px;align-items:center;margin-top:6px}.caption a.readcard{flex:1;display:block;margin:0;padding:6px 0;text-align:center;border:1px solid rgba(242,169,59,.5);border-radius:999px;color:var(--marigold);font-weight:700}.caption .shrcap{margin:0;flex:none}}
 body.reel .pondbox{padding-bottom:10px}
 @media (prefers-reduced-motion:reduce){.card.in{animation:none}}
 </style>
@@ -1368,8 +1370,8 @@ function focus(it) {
   $("#pond").classList.add("focus");
   if (it.cardEl) { it.cardEl.classList.add("hot"); if (!REEL && window.innerWidth > 860) it.cardEl.scrollIntoView({block:"nearest", behavior:"smooth"}); }
   if (!REEL && window.innerWidth <= 860) {  // on a phone the card is screens below: say what this ripple is, right under the pond
-    const cap = $("#caption"); const capLine = it.short || (it.srcText ? esc(it.srcText) : ""); cap.innerHTML = `${it.mark ? `<b>◆ ${esc(it.mark)}</b> · ` : ""}<b>${esc(it.label)}</b> <span style="color:var(--ink-3)">· ${esc(it.lvText || LVL[it.lv])}${it.sub ? " · " + esc(it.sub) : ""}</span>${capLine ? `<br>${capLine}` : ""}<a href="#" class="readcard">Read the card ↓</a>`;
-    cap.innerHTML += `<a href="#" class="shrcap">Share this step</a>`; cap.querySelector(".shrcap").onclick = e => { e.preventDefault(); shareStep(it); };
+    const cap = $("#caption"); const capLine = it.short || (it.srcText ? esc(it.srcText) : ""); cap.innerHTML = `${it.mark ? `<b>◆ ${esc(it.mark)}</b> · ` : ""}<b>${esc(it.label)}</b> <span style="color:var(--ink-3)">· ${esc(it.lvText || LVL[it.lv])}${it.sub ? " · " + esc(it.sub) : ""}</span>${capLine ? `<div class="sum">${capLine}</div>` : ""}<div class="acts"><a href="#" class="readcard">Read the card ↓</a></div>`;
+    cap.querySelector(".acts").insertAdjacentHTML("beforeend", `<a href="#" class="shrcap">Share</a>`); cap.querySelector(".shrcap").onclick = e => { e.preventDefault(); shareStep(it); };
     cap.classList.add("on"); const svg0 = $("#pond"); cap.style.display = "block"; const pbR = $(".pondbox").getBoundingClientRect(), svR = svg0.getBoundingClientRect(); cap.style.top = `${Math.max(8, svR.bottom - pbR.top - cap.offsetHeight - 10)}px`; cap.style.display = ""; const rc = cap.querySelector(".readcard"); if (rc) rc.onclick = e => { e.preventDefault(); if (it.cardEl) it.cardEl.scrollIntoView({block:"start", behavior:"smooth"}); };
   }
   for (let k = 0; k <= 1000; k++) if (daysAt(k / 1000) >= it.d + 0.5) { if (k / 1000 > t) t = k / 1000; break; }
