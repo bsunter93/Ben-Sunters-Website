@@ -11,3 +11,15 @@
 **Caveat.** No network access during this pass: every URL was written from knowledge, not fetched. A reviewer should click through the top stories once before launch, especially the five congress.gov links and the Act-titled Wikipedia articles.
 
 **Held back.** legislation.gov.uk chapter numbers (Horizon Offences Act 2024, Sentience Act 2022, Housing Act 1977): not certain, Wikipedia used instead. Hansard, Pew, Bloomberg, Netflix, NCHS, FDA and the Surgeon General's advisory: no certain deep link, so those steps got the nearest Wikipedia subject or nothing.
+
+## Verification (Oct 4, 2026, 03:40 UTC, after the environment allowed the hosts)
+
+Every link was fetched once with the project's user agent, one request per second.
+
+| Result | Count |
+|---|---|
+| Resolved (HTTP 200) | 139 |
+| Wrong Wikipedia title (404), corrected or dropped | 7 |
+| Not checked by us: the site answers 403 to our agent (congress.gov ×6, ssa.gov, monitoringthefuture.org) | 8 |
+
+The seven: "Housing (Homeless Persons) Act 1977" (no article; now the Act on legislation.gov.uk, ukpga/1977/48, title confirmed), "Motor Vehicle Manufacturers Ass'n v. State Farm" (the article is "Motor Vehicles Manufacturers Ass'n …", corrected), and five with no article at all, dropped from the links and from the chains' `wiki` hints so the attention check does not look for them either: ALERRT, the Factory Investigating Commission, the Neill–Reynolds Report, the STURDY Act, the Soil Conservation Act of 1935. While at it, the Sentience Act 2022 (ukpga/2022/22) and the Post Office (Horizon System) Offences Act 2024 (ukpga/2024/14) now link the Act itself on legislation.gov.uk, titles confirmed. Two Wikipedia links redirect harmlessly (iPhone 7 capitalization; the Gallup home page). Total after the pass: 185 links. The eight unchecked links use each site's canonical URL pattern; a person should click them once.
