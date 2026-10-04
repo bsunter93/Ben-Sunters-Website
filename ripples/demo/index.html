@@ -229,7 +229,7 @@ input[type=range]{flex:1;accent-color:var(--marigold);min-width:0}
 .wave{fill:none;stroke:rgba(226,240,252,.55);filter:url(#softwave)}
 .frontg{transition:opacity .4s}.front,.frontS,.frontH,.frontGlow{fill:none;stroke-linecap:round}
 .front{stroke:rgba(236,246,255,.78);stroke-width:1.7}.frontS{stroke:rgba(2,14,28,.45);stroke-width:3.2}.frontH{stroke:#fff;stroke-width:.8;opacity:.8}
-.frontGlow{stroke:rgba(190,225,255,.22);stroke-width:9;filter:url(#softwave)}
+.frontGlow{stroke:rgba(190,225,255,.18);stroke-width:9}
 @keyframes bloomr{0%{opacity:1;stroke-width:2.6}100%{opacity:.28;stroke-width:1.5}}
 @keyframes bloomh{0%{opacity:1;stroke-width:2.2}100%{opacity:.55;stroke-width:1}}
 @keyframes bloomc{0%{opacity:1;transform:scale(1.25)}100%{opacity:.55;transform:scale(1)}}
@@ -334,7 +334,7 @@ body.reel header{max-width:760px;padding-top:22px}
 .caption b{color:var(--marigold)}
 .topond{position:fixed;right:14px;bottom:18px;z-index:5;background:var(--marigold);color:#1a1405;border:0;border-radius:999px;padding:10px 14px;font:700 .86rem var(--sans);box-shadow:0 4px 18px rgba(0,0,0,.35);cursor:pointer}
 body.reel .caption{display:block}
-@media (max-width:860px){#pond.focus ~ .caption.on{display:block}.caption a{color:var(--marigold);font-weight:600;margin-left:6px}}
+@media (max-width:860px){#pond.focus ~ .caption.on{display:block;position:absolute;left:12px;right:12px;margin:0;z-index:3;background:rgba(5,22,40,.92)}.caption a.readcard{display:block;margin:8px 0 0;padding:8px 0;text-align:center;border:1px solid rgba(242,169,59,.5);border-radius:999px;color:var(--marigold);font-weight:700}}
 body.reel .pondbox{padding-bottom:10px}
 @media (prefers-reduced-motion:reduce){.card.in{animation:none}}
 </style>
@@ -369,7 +369,7 @@ body.reel .pondbox{padding-bottom:10px}
   <section class="pondbox" aria-label="Ripple pond">
     <div class="clock"><div class="d" id="date">—</div><div class="n" id="since">—</div></div>
     <svg id="pond" viewBox="-120 88 940 486" role="img" aria-label="Ripples spreading out from the event over time"></svg>
-    <div class="hint" id="hint" hidden>Press play or drag the slider · click or tap a ripple to follow it</div>
+    <div class="hint" id="hint" hidden>Press play or drag the slider · tap a ripple to follow it</div>
     <div class="tip" id="tip" role="tooltip"></div>
     <div class="caption" id="caption" aria-live="polite"></div>
     <button class="topond" id="topond" hidden aria-label="Back to the pond">↑ Pond</button>
@@ -486,7 +486,7 @@ const COLOR = {measured:"var(--good)", timed:"var(--marigold)", reported:"var(--
 const NS = "http://www.w3.org/2000/svg", C = {x:350, y:330}, R = 286, DUR = 15000, FLY = 1150, THROW_FROM = {x:-30, y:548};  // the near bank, lower left
 const $ = s => document.querySelector(s);
 const params = new URLSearchParams(location.search);
-const REEL = params.has("reel"), CARD = params.has("card"), NOINTRO = params.has("nointro") || REEL || CARD;
+const REEL = params.has("reel"), CARD = params.has("card"), DEEP = ["c", "e", "a", "m"].some(k => params.has(k)), NOINTRO = params.has("nointro") || REEL || CARD || DEEP;  // a shared link opens on its story
 if (REEL) document.body.classList.add("reel");
 if (CARD) document.body.classList.add("card");
 const DATA = {maps:{}, chains:[], disc:null};
@@ -766,6 +766,7 @@ const SRCURL = st => {
 };
 const amer = s => String(s || "").replace(/\b(\d{1,2}) (Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Sept|Oct|Nov|Dec)[a-z]* (\d{4})\b/g, (m, d, mo, y) => `${mo.slice(0, 3)} ${+d}, ${y}`).replace(/\s*\([a-z0-9]{4}-[a-z0-9]{4}\)/g, "");  // US dates in source lines; dataset ids out
 const srcP = (st, text) => { const u = SRCURL(st); text = amer(text); const t1 = text ? text.charAt(0).toUpperCase() + text.slice(1) : "";
+  if (!t1 && !u) return `<p class="src"><span class="nolink">No source line yet</span></p>`;  // never an empty line
   return `<p class="src">${esc(t1)}${u ? `${t1 ? " · " : ""}<a href="${esc(u[0])}" target="_blank" rel="noopener">${esc(u[1])} ↗</a>` : t1 ? ` <span class="nolink">· not linked yet</span>` : ""}</p>`; };
 const SRC = st => ({fred:`FRED series ${st.test.id}`, stackex:"Stack Overflow new questions per month (Stack Exchange API)", zillow:"Zillow Home Value Index, Zoom towns minus US",
   arxiv:"arXiv astro-ph submissions per month", ssa:"US baby names, Social Security Administration", file:st.test.source || st.series || "an official series",
@@ -925,7 +926,7 @@ function draw(story) {
       b = rt.getBBox(); rimBoxes.push({x:b.x - 4, y:b.y - 2, w:b.width + 8, h:b.height + 4, soft:true});
     } catch {}
   });
-  const waves = el("g", {}, plane), bands = el("g", {}, plane), rips = el("g", {filter:"url(#softwave)"}, plane), edges = el("g", {}, plane), elbls = el("g", {}, svg), nodes = el("g", {}, svg), labels = el("g", {}, svg);
+  const waves = el("g", {}, plane), bands = el("g", {}, plane), rips = el("g", {}, plane), edges = el("g", {}, plane), elbls = el("g", {}, svg), nodes = el("g", {}, svg), labels = el("g", {}, svg);
   // one wavefront leaves the stone and moves outward with time; an event's arc appears where the front is when the
   // event happens and stays there. Nothing overtakes anything (owner, Oct 3: inner ripples must not pass outer ones)
   const frontG = el("g", {class:"frontg", opacity:0}, plane);
@@ -999,7 +1000,8 @@ function draw(story) {
       it.elbl.textContent = it.lvText || LVL[it.lv];
     }
     const g = el("g", {class:"node", tabindex:-1, role:"button", "aria-label":`${it.label}, ${it.lvText || LVL[it.lv]}`, opacity:0}, nodes);
-    it.halo = el("circle", {cx:0, cy:0, r:Math.max(24 * K, 22 / scale), fill:"transparent"}, g);  // at least a 44 px tap target on any screen
+    el("circle", {class:"hit", cx:0, cy:0, r:Math.max(24 * K, 22 / scale), fill:"transparent"}, g);  // the tap target: at least 44 px on any screen, never resized
+    it.halo = el("circle", {cx:0, cy:0, r:16, fill:"transparent"}, g);  // the breathing halo the render loop sizes
     el("line", {class:"mkt", x1:0, y1:-6 * K, x2:0, y2:6 * K, transform:`rotate(${it.a})`}, g);  // a tick across the arc at the exact date
     el("circle", {class:`mk l-${it.lv}`, cx:0, cy:0, r:(it.lv === "measured" ? 3.6 : 2.8) * K}, g);  // the tap target (about 44 px on a phone); the marker itself is the crest on the ring
     if (it.mark) {  // a lasting mark: a diamond on the arc, the same glyph the cards and the tally use
@@ -1343,7 +1345,7 @@ function focus(it) {
   if (it.cardEl) { it.cardEl.classList.add("hot"); if (!REEL && window.innerWidth > 860) it.cardEl.scrollIntoView({block:"nearest", behavior:"smooth"}); }
   if (!REEL && window.innerWidth <= 860) {  // on a phone the card is screens below: say what this ripple is, right under the pond
     const cap = $("#caption"); const capLine = it.short || (it.srcText ? esc(it.srcText) : ""); cap.innerHTML = `${it.mark ? `<b>◆ ${esc(it.mark)}</b> · ` : ""}<b>${esc(it.label)}</b> <span style="color:var(--ink-3)">· ${esc(it.lvText || LVL[it.lv])}${it.sub ? " · " + esc(it.sub) : ""}</span>${capLine ? `<br>${capLine}` : ""}<a href="#" class="readcard">Read the card ↓</a>`;
-    cap.classList.add("on"); const rc = cap.querySelector(".readcard"); if (rc) rc.onclick = e => { e.preventDefault(); if (it.cardEl) it.cardEl.scrollIntoView({block:"start", behavior:"smooth"}); };
+    cap.classList.add("on"); const svg0 = $("#pond"); cap.style.top = `${svg0.offsetTop + svg0.offsetHeight - cap.offsetHeight - 10}px`; const rc = cap.querySelector(".readcard"); if (rc) rc.onclick = e => { e.preventDefault(); if (it.cardEl) it.cardEl.scrollIntoView({block:"start", behavior:"smooth"}); };
   }
   for (let k = 0; k <= 1000; k++) if (daysAt(k / 1000) >= it.d + 0.5) { if (k / 1000 > t) t = k / 1000; break; }
   render();
@@ -1365,8 +1367,9 @@ function tick(now) {
     } else t = Math.min(1, t + dt / (cur && cur.dur || DUR));
     if (t >= 1) { if (REEL) { playing = false; setTimeout(next, 2000); } else setPlaying(false); }
   }
-  if (cur) render(now);
-  tickWaves(now);
+  const resting = cur && !playing && !scrubbing && !cur.goal && (t >= 1 || t === 0) && !(cur.waves && cur.waves.children.length) && !window._dragging;
+  if (cur && !resting) render(now);  // at rest nothing moves, so nothing is redrawn
+  if (!resting) tickWaves(now);
   requestAnimationFrame(tick);
 }
 function setPlaying(p) {
@@ -1511,17 +1514,17 @@ function next() {
       const b = cur.sCore.getBBox(), m = cur.sCore.getCTM(), bs = svgEl.getScreenCTM();  // is the press on the stone?
       const home = cur.throwFrom || (cur.dense ? {x:-20, y:500} : THROW_FROM), sx = home.x, sy = home.y;
       if (Math.hypot(q.x - sx, q.y - sy) > 70) return;
-      dragging = true; setPlaying(false); svgEl.style.touchAction = "none"; svgEl.setPointerCapture(e.pointerId); e.preventDefault();
+      dragging = true; window._dragging = true; setPlaying(false); svgEl.style.touchAction = "none"; svgEl.setPointerCapture(e.pointerId); e.preventDefault();
     });
     svgEl.addEventListener("pointermove", e => { if (!dragging) return; const q = toPond(e); if (q) { cur.throwFrom = {x:Math.max(-115, Math.min(815, q.x)), y:Math.max(100, Math.min(570, q.y))}; t = 0; render(); } });
-    const release = e => { if (!dragging) return; dragging = false; svgEl.style.touchAction = ""; t = 0; cur.splashed = false; setPlaying(true); };
-    const cancel = e => { if (!dragging) return; dragging = false; svgEl.style.touchAction = ""; cur.throwFrom = null; t = 0; render(); };  // the browser took the gesture: put the stone back on the bank and wait
+    const release = e => { if (!dragging) return; dragging = false; window._dragging = false; svgEl.style.touchAction = ""; t = 0; cur.splashed = false; setPlaying(true); };
+    const cancel = e => { if (!dragging) return; dragging = false; window._dragging = false; svgEl.style.touchAction = ""; cur.throwFrom = null; t = 0; render(); };  // the browser took the gesture: put the stone back on the bank and wait
     svgEl.addEventListener("pointerup", release); svgEl.addEventListener("pointercancel", cancel);
   })();
   document.addEventListener("click", e => { if (!chooser.hidden && !chooser.contains(e.target) && e.target !== cbtn && !cbtn.contains(e.target)) setChooser(false); });
   document.addEventListener("keydown", e => { if (e.key === "Escape") setChooser(false); if (e.key === "/" && !e.target.closest("input,select,textarea")) { e.preventDefault(); setChooser(true); $("#search").focus(); } });
   const KIND = {maps:"Lasting marks", stories:"Fact-checks", leads:"Engine leads"};
-  document.querySelectorAll(".tab").forEach(b => b.onclick = () => { tab = b.dataset.tab; $("#chooserkind").textContent = KIND[tab]; renderPicker(); const first = TABS[tab][0]; if (first) show(first[0], first[1]); });
+  document.querySelectorAll(".tab").forEach(b => b.onclick = () => { tab = b.dataset.tab; $("#chooserkind").textContent = KIND[tab]; renderPicker(); });  // a tab changes the list; a chip picks the story
   $("#howbtn").onclick = () => { const h = $("#how"), open = h.hidden; h.hidden = !open; $("#howbtn").setAttribute("aria-expanded", open); if (open) h.scrollIntoView({behavior:"smooth", block:"start"}); };
   $("#play").onclick = () => { if (t >= 1) { t = 0; cur.items.forEach(hide); cur.splashed = false; $("#feed").scrollTop = 0; } setPlaying(!playing); };
   $("#nextbtn").onclick = next;
@@ -1530,6 +1533,7 @@ function next() {
   addEventListener("scroll", () => { const pb = $(".pondbox").getBoundingClientRect(); tp.hidden = !(window.innerWidth <= 860 && pb.bottom < 0); }, {passive:true});
   document.querySelectorAll(".tab").forEach(b => b.insertAdjacentHTML("afterbegin", ICON[{maps:"marks", stories:"checks", leads:"leads"}[b.dataset.tab]]));
   $("#intro-icon").innerHTML = ICON.drop;
+  if (matchMedia("(hover:hover) and (pointer:fine)").matches) $("#hint").textContent = "Press play or drag the slider · click a ripple to follow it";
   // center the wordmark's rings on the second p's bowl once the type has loaded
   const placeRings = () => { try { const bb = $("#wmpp").getBBox(), cx = bb.x + bb.width * 0.74, cy = bb.y + bb.height * 0.36;
     $("#wmrings").setAttribute("transform", `translate(${cx.toFixed(1)} ${cy.toFixed(1)})`); } catch {} };
