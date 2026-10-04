@@ -232,6 +232,9 @@ on public executive roles are labeled as such on every mention. The scripts of t
 
 ## 10. A starter prompt for the new chat
 
+The full prompt, with the mission, the owner's working style and the first message expected back, is
+`docs/session_prompt_v1.md`. The short form:
+
 > Read `ripples/HANDOFF.md`, then `ripples/docs/ripple_Map_context.md` sections 2, 5 and 6, in the repository
 > `bsunter93/Ben-Sunters-Website`. Work on a `claude/<name>` branch; open and squash-merge your own pull requests after
 > the `assets` check passes; reset the branch onto `main` after each merge. Keep the rules in HANDOFF section 6
