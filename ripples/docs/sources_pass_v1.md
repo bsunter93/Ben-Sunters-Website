@@ -23,3 +23,15 @@ Every link was fetched once with the project's user agent, one request per secon
 | Not checked by us: the site answers 403 to our agent (congress.gov ×6, ssa.gov, monitoringthefuture.org) | 8 |
 
 The seven: "Housing (Homeless Persons) Act 1977" (no article; now the Act on legislation.gov.uk, ukpga/1977/48, title confirmed), "Motor Vehicle Manufacturers Ass'n v. State Farm" (the article is "Motor Vehicles Manufacturers Ass'n …", corrected), and five with no article at all, dropped from the links and from the chains' `wiki` hints so the attention check does not look for them either: ALERRT, the Factory Investigating Commission, the Neill–Reynolds Report, the STURDY Act, the Soil Conservation Act of 1935. While at it, the Sentience Act 2022 (ukpga/2022/22) and the Post Office (Horizon System) Offences Act 2024 (ukpga/2024/14) now link the Act itself on legislation.gov.uk, titles confirmed. Two Wikipedia links redirect harmlessly (iPhone 7 capitalization; the Gallup home page). Total after the pass: 185 links. The eight unchecked links use each site's canonical URL pattern; a person should click them once.
+
+## The statutes themselves (Oct 4, 2026, 05:40 UTC)
+
+Twenty-two law steps in the US catalog now link to the statute on govinfo rather than to an encyclopedia article about it. The link service `govinfo.gov/link/statute/{volume}/{page}` resolves a Statutes at Large cite to the page scan; `link/plaw/{congress}/public/{number}` resolves a public law from the 104th Congress on (the 103rd and earlier return 400).
+
+How each link was confirmed, with the honest `ripples-research/0.2` user agent and one request a second:
+
+- **Fourteen, by text.** For volumes from 1951 on the scan carries a text layer. The PDF the cite resolves to was fetched and its first page searched for "Public Law N-M"; all fourteen matched (85-325, 85-568, 85-864, 89-563, 91-605, 102-240, 91-190, 91-604, 92-500, 96-510, 99-499, 101-380, 103-354, 109-2). Pub. L. 117-58 is the one public-law link; it resolves to `PLAW-117publ58.pdf`, whose name is the law.
+- **Seven, by page structure.** Volumes 34, 49 and 52 (1906, 1935, 1938) are scans whose text layer is not readable. For those the check is that govinfo's granule begins at the cited page (34 Stat. 768, 49 Stat. 163, 49 Stat. 620, 49 Stat. 1148, 52 Stat. 1040, 52 Stat. 1060), or, for the Meat Inspection Act, that 34 Stat. 674 falls inside the Agriculture appropriations act of June 30, 1906 that begins at page 669, which is where that act lives. A later CI pass can confirm their titles through the govinfo API with the `DATA_GOV_KEY` secret; this container's shared demo key is rate-limited.
+- **Seven Stat. pages were supplied** where the chain file cited only the public law (74-461, 103-354, 85-325, 91-605, 102-240, 92-500, 99-499). Each was confirmed as above before it was linked.
+
+Not linked: Pub. L. 99-509 on the Exxon Valdez "spill" step (the step is the spill, not the fund), and Pub. L. 89-564 (shares a step with 89-563). UK Acts already link to legislation.gov.uk.
