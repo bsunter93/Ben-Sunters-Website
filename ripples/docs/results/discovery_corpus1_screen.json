@@ -1,0 +1,68 @@
+{
+ "note": "Hand screens by the builder on Oct 4, 2026. Labels: mark (a real lasting mark that followed the stone, cited in the sentence), weak (true, junk sentence), context (true but not a mark, not enacted, or a hop), wrong (not a consequence, wrong direction, parse junk, bad stone).",
+ "catalog_strict_in_order": {
+  "1 60 Minutes -> STOCK Act": "mark",
+  "2 The Daily Show -> Protecting Cyberspace as a National Asset Act": "wrong",
+  "3 The West Wing -> Racial and Religious Hatred Act 2006": "mark, non-obvious",
+  "4 Silent Spring -> National Environmental Policy Act": "mark",
+  "5 Prohibition -> Marihuana Tax Act of 1937": "wrong",
+  "6 Black Sunday -> Risk Management Agency": "context",
+  "7 Black Sunday -> Resettlement Administration": "weak",
+  "8 Sputnik -> Partial Nuclear Test Ban Treaty": "context (via PSAC)",
+  "9 Sputnik -> National Defense Education Act": "mark",
+  "10 Sputnik -> Outer Space Treaty": "context",
+  "11 Sputnik -> ARPA-H": "context (via ARPA)",
+  "12 Love Canal -> ATSDR": "mark",
+  "13 Exxon Valdez -> Oil Pollution Act of 1990": "mark",
+  "14 Exxon Valdez -> Exxon Valdez Oil Spill Commission": "mark, obvious",
+  "15 Columbine -> New Jersey Anti-Bullying Bill of Rights Act": "mark, non-obvious",
+  "16 Flint -> Safe Drinking Water Act (sentence: Lead and Copper Rule revisions 2021)": "mark, label mismatch",
+  "17 GDPR -> Danish Data Protection Agency": "wrong",
+  "18 Fukushima -> Reconstruction Agency": "mark",
+  "19 Fukushima -> NAIIC": "mark",
+  "20 Fukushima -> Nuclear Regulation Authority": "mark",
+  "21 Fukushima -> Nuclear Safety and Security Commission (Korea)": "mark, non-obvious",
+  "22 Super Bowl XXXVIII -> Family and Consumer Choice Act of 2007": "context (a bill, not enacted)",
+  "23 Anthrax letters -> Patriot Act": "mark"
+ },
+ "catalog_strict_summary": {
+  "unique_in_order": 23,
+  "mark": 14,
+  "weak": 1,
+  "context": 5,
+  "wrong": 3,
+  "clean_share": 0.61
+ },
+ "catalog_forward_loose_50": {
+  "mark": 13,
+  "non_obvious": 6,
+  "context": 17,
+  "wrong": 20,
+  "wrong_direction": 5,
+  "junk_or_bad_stone": 5
+ },
+ "heldout_reverse": {
+  "pairs_in_order": 2,
+  "mark": 2,
+  "note": "both Deepwater Horizon: BSEE, the National Commission; none for any film or documentary"
+ },
+ "heldout_forward_47": {
+  "mark": 12,
+  "non_obvious": 5,
+  "examples_mark": [
+   "An Inconvenient Truth -> The Climate Reality Project (2006)",
+   "An Inconvenient Truth -> the Dimmock ruling (2007)",
+   "The Day After -> the INF Treaty (reported, via Reagan's diary)",
+   "Deepwater Horizon -> the GuLF Study (2010)",
+   "Deepwater Horizon -> Executive Order 13547, the National Ocean Council (2010)",
+   "Deepwater Horizon -> the National Commission (2010)",
+   "Deepwater Horizon -> BP's federal contracting ban",
+   "Sandy Hook -> Connecticut's Freedom of Information Act change (2013)",
+   "Sandy Hook -> the NY SAFE Act (2013)",
+   "Sandy Hook -> Connecticut's April 2013 gun law and the first dangerous-weapon offender registry",
+   "Sandy Hook -> the memorial approved (2021)"
+  ],
+  "context_or_wrong": 35,
+  "note": "Katrina's 12 causal sentences are operational response (shelters, task forces), not lasting marks; the filter cannot tell them apart yet"
+ }
+}
