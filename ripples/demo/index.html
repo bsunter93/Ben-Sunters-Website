@@ -356,7 +356,9 @@ body.reel header{max-width:760px;padding-top:22px}
 .caption{display:none;margin:4px 8px 6px;padding:10px 14px;border-radius:12px;background:rgba(5,22,40,.75);border:1px solid var(--hair);font-size:1.05rem;min-height:2.6em}
 .caption b{color:var(--marigold)}
 .topond{position:fixed;right:14px;bottom:18px;z-index:5;background:var(--marigold);color:#1a1405;border:0;border-radius:999px;padding:10px 14px;font:700 .86rem var(--sans);box-shadow:0 4px 18px rgba(0,0,0,.35);cursor:pointer}
-body.reel .caption{display:block}
+body.reel .caption{display:none}
+body.reel #sub{display:none}body.reel h1{font-size:2.3rem;margin:.3rem 0 .6rem}  /* a clip opens on the title and the pond; the end card says what else was going on */
+body.reel .beatline{font-size:1.12rem;padding-top:46px}body.reel .beatline .bwhen{font-size:.8rem}body.reel .beatline .bwhy{font-size:.95rem}
 @media (max-width:860px){#pond.focus ~ .caption.on{display:block;position:absolute;left:12px;right:12px;margin:0;z-index:3;background:rgba(5,22,40,.92);font-size:.9rem;line-height:1.3;padding:8px 12px}
   .caption .sum{display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;margin-top:2px}
   .caption .acts{display:flex;gap:10px;align-items:center;margin-top:6px}.caption a.readcard{flex:1;display:block;margin:0;padding:6px 0;text-align:center;border:1px solid rgba(242,169,59,.5);border-radius:999px;color:var(--marigold);font-weight:700}.caption .shrcap{margin:0;flex:none}}
@@ -373,8 +375,8 @@ body.reel .pondbox{padding-bottom:10px}
 .beatline .bmk{color:var(--marigold);font-weight:700;margin-right:6px}.beatline .bmk svg{width:12px;height:12px;vertical-align:-1px;margin-right:3px}
 .card.now{border-color:rgba(242,169,59,.55)}
 @media (max-width:860px){.beatline{position:static;padding:8px 10px 2px;font-size:.88rem;background:none;text-shadow:none;min-height:66px}.beatline.off{min-height:0;padding:0;height:0;overflow:hidden}#pond.focus ~ .beatline{display:none}}
-body.card .beatline,body.reel .beatline{display:none}
-@media (orientation:portrait){body.reel{min-height:100vh;display:flex;flex-direction:column;justify-content:center}body.reel header{padding-top:0}}  /* a vertical reel: the story sits in the middle of the frame */
+body.card .beatline{display:none}
+@media (orientation:portrait){body.reel{min-height:100vh;display:flex;flex-direction:column;justify-content:center}body.reel header{padding-top:0}body.reel .wrap{width:100%}body.reel .beatline{position:static;top:auto !important;background:none;text-shadow:none;padding:14px 16px 0}}  /* a vertical clip: the pond fills the width (an auto-margin flex item shrinks to fit otherwise) and the lower third flows under it */  /* a vertical reel: the story sits in the middle of the frame */
 @media (orientation:portrait) and (min-width:900px){body.reel{zoom:1.5;min-height:calc(100vh / 1.5)}body.reel .wrap{grid-template-columns:1fr;max-width:720px}body.reel .wrap .feed{display:none}}  /* a 1080×1920 reel renders at native pixels with a 720-px layout */
 @media (prefers-reduced-motion:reduce){.card.in{animation:none}}
 </style>
@@ -1158,7 +1160,43 @@ function makeTimeline(story) {
   for (const b of beats) { push(tp, b.tS, b.travel, null); push(b.tS, b.tS, b.hold, b); tp = b.tS; }
   push(tp, 1, BEAT.outMs, null);
   story.timeline = {segs, total:c, beats}; story.clock = 0; story.beatOn = null; story.lit = null;
+  if (REEL) makeReelCut(story, beats);
   const bl = $("#beatline"); if (bl) bl.classList.add("off"); $("#pond").classList.remove("beat");
+}
+// The clip is an edit, not a recording of the playthrough: a still open, the throw, then at most five shots (the
+// marks and the measured steps, by priority) as hard cuts, the camera pushing in on the ripple that just arrived; a
+// fast roll of the date where years pass between shots; and a wide end shot with the marks and "It wasn't the only
+// reason". About 13 to 15 s a story. encode.sh cuts the recording at the numbers reel.js prints from this schedule.
+const CUT = {open:1200, throwMs:1100, cut:80, roll:650, rollAfterDays:365, shot:1700, shotMark:1800, maxShots:5, end:2200};
+function makeReelCut(story, beats) {
+  const pri = b => Math.max(...b.items.map(x => (x.mark ? 2 : 0) + (x.lv === "measured" ? 1 : 0)));
+  let shots = beats.filter(b => pri(b) > 0);
+  if (shots.length < 3) shots = shots.concat(beats.filter(b => pri(b) === 0).slice(0, 3 - shots.length));
+  if (shots.length > CUT.maxShots) shots = shots.sort((a, b) => pri(b) - pri(a) || a.tS - b.tS).slice(0, CUT.maxShots);
+  shots.sort((a, b) => a.tS - b.tS);
+  const segs = []; let c = 0;
+  const push = (t0, t1, ms, beat, cam) => { segs.push({t0, t1, ms, c0:c, beat:beat || null, cam:cam || "wide"}); c += ms; };
+  push(0, 0, CUT.open, null); push(0, PRE, CUT.throwMs, null);
+  let tp = PRE, dp = 0;
+  for (const b of shots) {
+    const d = b.items[0].d, years = d - dp > CUT.rollAfterDays;
+    push(tp, b.tS, years ? CUT.roll : CUT.cut, null, "wide");  // years pass: the date rolls on the wide shot; else a cut
+    push(b.tS, b.tS, pri(b) >= 2 ? CUT.shotMark : CUT.shot, b, "push");
+    tp = b.tS; dp = d;
+  }
+  const marks = story.items.filter(x => x.mark && !x.future);
+  const endBeat = {items:[], end:true, html:`<span class="bwhen">${esc(fmtMonth(D(story.iso0)))} → ${esc(fmtMonth(addDays(story.iso0, Math.max(...story.items.filter(x => !x.future).map(x => x.d)))))} · ${story.items.length} ripples</span><b>${marks.length ? `What followed and stayed: ${marks.slice(0, 3).map(x => esc(x.label)).join("; ")}${marks.length > 3 ? `; and ${marks.length - 3} more` : ""}` : "A big splash, no lasting mark yet"}</b>${story.also ? `<span class="bwhy"><span class="bmk">It wasn't the only reason:</span> ${esc(story.also)}</span>` : ""}<span class="bmore">bensunter.com/ripples · every link graded · order, not proof of cause</span>`};
+  push(tp, 1, CUT.cut, null, "wide"); push(1, 1, CUT.end, endBeat, "wide");
+  story.timeline = {segs, total:c, beats, reel:true, shots};
+}
+const CAM = {X0:-120, Y0:88, W:940, H:486};
+function applyCam(s, ms) {  // the reel's camera: a push-in on the shot's ripple, the wide pond otherwise
+  const svg = $("#pond"); let z = 1, cx = C.x, cy = C.y, it = null;
+  if (s && s.cam === "push" && s.beat && s.beat.items.length) { it = s.beat.items[0]; const p = Math.min(1, (ms - s.c0) / s.ms); z = 1.28 + 0.34 * ease(p); }
+  const w = CAM.W / z, h = CAM.H / z;
+  if (it) { cx = it.pos.x; cy = it.pos.y + h * 0.16; }  // the subject sits in the upper part of the frame, clear of the lower third
+  const x = Math.max(CAM.X0, Math.min(CAM.X0 + CAM.W - w, cx - w / 2)), y = Math.max(CAM.Y0, Math.min(CAM.Y0 + CAM.H - h, cy - h / 2));
+  svg.setAttribute("viewBox", `${x.toFixed(1)} ${y.toFixed(1)} ${w.toFixed(1)} ${h.toFixed(1)}`);
 }
 function segAtClock(ms) { for (const s of cur.timeline.segs) if (ms < s.c0 + s.ms) return s; return null; }
 function tAtClock(ms) { const s = segAtClock(ms); if (!s) return 1; return s.t1 === s.t0 ? s.t0 : s.t0 + (s.t1 - s.t0) * (ms - s.c0) / s.ms; }
@@ -1170,6 +1208,7 @@ function beatText(b) {
 }
 function spotlight(b) {  // the beat's ripples bloom lit, with their path back to the stone, and the line under the pond says what happened
   unspot(); cur.beatOn = b;
+  if (b.end) { const bl = $("#beatline"); bl.innerHTML = b.html; placeBeatline(); bl.classList.remove("off"); return; }
   const lit = new Set();
   for (const it of b.items) {
     wake(it); lit.add(it);
@@ -1183,7 +1222,7 @@ function spotlight(b) {  // the beat's ripples bloom lit, with their path back t
 }
 function placeBeatline() {  // the lower third sits on the pond's bottom edge, whatever the pond's size
   const bl = $("#beatline"), svg = $("#pond"), box = $(".pondbox"); if (!bl || !svg) return;
-  if (window.innerWidth <= 860) { bl.style.top = ""; return; }  // a phone keeps it in flow under the pond
+  if (window.innerWidth <= 860 || (REEL && matchMedia("(orientation:portrait)").matches)) { bl.style.top = ""; return; }  // a phone and a vertical clip keep it in flow under the pond
   const sr = svg.getBoundingClientRect(), br = box.getBoundingClientRect();
   bl.style.top = `${Math.round(sr.bottom - br.top - bl.offsetHeight)}px`;
 }
@@ -1516,8 +1555,9 @@ function tick(now) {
       cur.clock = Math.min(cur.timeline.total, (cur.clock || 0) + dt); t = tAtClock(cur.clock);
       const s = segAtClock(cur.clock);
       if (s && s.beat && cur.beatOn !== s.beat) { render(now); spotlight(s.beat); }
+      if (cur.timeline.reel) applyCam(s, cur.clock);
     } else t = Math.min(1, t + dt / (cur && cur.dur || DUR));
-    if (t >= 1) { if (REEL) { playing = false; setTimeout(next, 2000); } else setPlaying(false); }
+    if (t >= 1 && !(cur.timeline && cur.clock < cur.timeline.total)) { if (REEL) { playing = false; setTimeout(next, 2000); } else setPlaying(false); }
   }
   const resting = cur && !playing && !scrubbing && !cur.goal && (t >= 1 || t === 0) && !(cur.waves && cur.waves.children.length) && !window._dragging;
   if (cur && !resting) render(now);  // at rest nothing moves, so nothing is redrawn
@@ -1527,7 +1567,7 @@ function tick(now) {
 function setPlaying(p) {
   playing = p; if (cur && !p) cur.goal = null;
   if (cur && p && cur.timeline) { unspot(); cur.clock = clockAtT(t); }  // play resumes from wherever the clock is, scrubbed or stepped
-  if (cur && !p && t >= 1) { cur.items.forEach(wake); unspot(); $("#beatline").classList.add("off"); }  // at rest every step speaks and the pond is level
+  if (cur && !p && t >= 1) { cur.items.forEach(wake); if (!REEL) { unspot(); $("#beatline").classList.add("off"); } }  // a reel keeps its end card up  // at rest every step speaks and the pond is level
   if (cur && !p && cur.sCore) render();  // one last frame: the rest label, the woken labels  // a pause or a scrub drops the step goal; play picks the next from where the clock is
   const done = !p && t >= 1;
   $("#playico").innerHTML = p ? '<rect x="3" y="2" width="3.5" height="12" fill="currentColor"/><rect x="9.5" y="2" width="3.5" height="12" fill="currentColor"/>'
@@ -1633,7 +1673,7 @@ function show(kind, slug, autoplay = true) {
   $("#h1").innerHTML = esc(titleText).replace(/\s*→\s*/, ` <span class="arw l-${weak}" title="The weakest link on the way to the mark is ${LVL[weak].toLowerCase()}"><svg viewBox="0 0 44 16" aria-hidden="true"><line x1="2" y1="8" x2="32" y2="8"/><path d="M28 2l9 6-9 6"/></svg></span> `);
   const markLine = marks.length ? `What followed and stayed: ${marks.slice(0, 3).map(x => `${x.label} (${x.mark.toLowerCase()})`).join("; ")}${marks.length > 3 ? `; and ${marks.length - 3} more` : ""}. The arrow is drawn from the weakest link on the way there: ${story.weak === "measured" ? "solid, every link measured" : story.weak === "timed" ? "solid, the links timed" : story.weak === "reported" ? "dashed, a source makes a link" : "dotted, a link is unproven"}. Order, not proof of cause.`
     : "A big splash, no lasting mark yet: what changed so far is attention and money, not a law, an institution, jobs or health.";
-  const also = kind === "acts" ? null : (DATA.context || {})[`${kind}:${slug}`];  // the other things going on: one editorial sentence, so the title never reads as the whole cause
+  const also = kind === "acts" ? null : (DATA.context || {})[`${kind}:${slug}`]; story.also = also || ""; story.titleText = titleText;  // the other things going on: one editorial sentence, so the title never reads as the whole cause
   const subEl = $("#sub"); subEl.classList.toggle("clamp", window.innerWidth <= 560); subEl.setAttribute("aria-expanded", "false");
   subEl.innerHTML = (also ? `<span class="also"><b>It wasn't the only reason:</b> ${esc(also)}</span> ` : "") + esc(kind === "acts" ? `Named in the passage of ${story.items.length} ${story.items.length === 1 ? "law" : "laws"}${story.items.length === 1 ? (marks.length ? ", as a reason given for the bill" : ", in passing") : `, ${marks.length} of them as a reason given for the bill`}. A citation shows the work was in the room, not that it caused the law.` : markLine);  // one line; the story's own paragraph is in the first card
   const tally = {}; story.items.forEach(x => tally[x.lv] = (tally[x.lv] || 0) + 1);
