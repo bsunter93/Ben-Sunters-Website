@@ -218,7 +218,10 @@ The clips are cut and the launch kit is current (PR #94; `launch/posts_ready.txt
 recognizable stones with a behavior lexicon and 22 stones / 25 marks joined the product, including the first Disputed
 engine-found link (PR #96; `docs/discovery_culture_v1.md`): **58 stones, 102 marks under Engine leads.** The second
 roundtable (`docs/roundtable_v2.md`: the twelve at 8.3, three new strangers at 7.3) voted release. Still to do: release
-Monday morning Oct 5 (section 8), the owner's date; the pre-flight checks 1 to 3 already pass on production. The room's
+Monday morning Oct 5 (section 8), the owner's date; the pre-flight checks 1 to 3 already pass on production. The owner then
+played the demo and sent a readability review (PR #99: long stories name only marks and measured steps at rest, labels step
+aside under the narration, the pond column is 1.8× the cards, the spikes chart is sticky and draws in, cards fold behind
+Learn more, the chooser opens in layers). The room's
 items were all built the same night (PR #98; the actions table in `docs/roundtable_v2.md`): tighter beats before the
 first mark and a promise line, the shelf grouped by source and decade, the legend as a corner panel on short screens, the
 caption in flow under small ponds, Copy citation on engine cards, one grade map for the engine kind, the checker on main

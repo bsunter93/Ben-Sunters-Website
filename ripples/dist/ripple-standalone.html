@@ -38,7 +38,8 @@ header,.wrap,.how,.foot,.intro,.toast{position:relative;z-index:1}
 h1,.clock .d,.intro h2{font-variation-settings:"SOFT" 100,"opsz" 72}
 a{color:inherit;text-underline-offset:3px}
 button,select{font:inherit;color:inherit}
-header{max-width:1240px;margin:0 auto;padding:18px 16px 6px}
+header{max-width:1400px;margin:0 auto;padding:18px 16px 6px}
+@media (min-width:1500px){header{max-width:1760px}}
 /* the wordmark: lowercase ripple, the i is the stone, rings spread from the two p's */
 .brand{display:flex;flex-wrap:wrap;align-items:flex-end;gap:2px 14px;color:var(--ink)}
 .brand .tag{padding-bottom:7px}
@@ -100,9 +101,18 @@ h1 em{font-style:italic;font-weight:500;color:var(--shallow-2)}
 .tab small{font-weight:500;color:var(--ink-3);margin-left:4px}
 .tabnote{font-size:.8rem;color:var(--ink-3);margin:6px 0 2px}  /* shown inside the chooser only */
 .bar{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-top:8px;flex-wrap:wrap}
-.chooserbtn{display:inline-flex;align-items:center;gap:6px;background:rgba(255,255,255,.06);border:1px solid var(--hair);color:var(--ink);border-radius:6px;padding:7px 14px;font:600 .84rem var(--sans);cursor:pointer;white-space:nowrap}
-.chooserbtn b{font-weight:800;color:var(--marigold)}.chooserbtn:hover{background:rgba(255,255,255,.1)}
-.chooser{margin-top:10px;padding:10px 14px 12px;border:1px solid var(--hair);border-radius:16px;background:rgba(5,22,40,.55)}
+.chooserbtn{display:inline-flex;align-items:center;gap:8px;background:var(--marigold);border:1px solid var(--marigold);color:#1a1405;border-radius:6px;padding:9px 16px !important;font-size:.92rem !important;padding:7px 14px;font:600 .84rem var(--sans);cursor:pointer;white-space:nowrap}
+.chooserbtn b{color:#5a3a05;font-weight:800}
+.chooserbtn[aria-expanded="true"]{background:rgba(242,169,59,.18);color:var(--marigold);border-color:var(--marigold)}.chooserbtn[aria-expanded="true"] b{color:var(--marigold)}.chooserbtn:hover{background:rgba(255,255,255,.1)}
+.chooser{margin-top:10px;padding:10px 14px 12px;border:1px solid var(--hair);border-radius:10px;background:rgba(5,22,40,.55)}
+/* the chooser opens in layers: six you know, a search, three kinds as cards; a kind's list appears only when a kind is chosen (owner, Oct 5: the open chooser was overwhelming) */
+.chooser.stage1 .picker,.chooser.stage1 #tabnote,.chooser.stage1 .ponds{display:none}
+.chooser.stage1 .tabs{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;border-bottom:0;margin-top:12px}
+.chooser.stage1 .tab{display:block;text-align:left;padding:12px 14px;border:1px solid var(--hair);border-radius:8px;background:rgba(255,255,255,.03);color:var(--ink);font-size:.95rem;margin:0;white-space:normal}
+.chooser.stage1 .tab svg{vertical-align:-3px;margin-right:6px}
+.chooser.stage1 .tab::after{content:attr(data-note);display:block;font:400 .78rem/1.35 var(--sans);color:var(--ink-3);margin-top:6px}
+.chooser.stage1 .tab:hover{border-color:var(--marigold)}
+@media (max-width:560px){.chooser.stage1 .tabs{grid-template-columns:1fr}}
 .chooser[hidden]{display:none}
 .known{display:flex;flex-wrap:wrap;gap:6px;align-items:center;margin:0 0 10px;padding-bottom:10px;border-bottom:1px solid var(--hair)}
 .known span{font-size:.78rem;color:var(--ink-3);margin-right:4px}
@@ -125,7 +135,7 @@ h1 em{font-style:italic;font-weight:500;color:var(--shallow-2)}
 .chip[aria-pressed="true"]{background:var(--marigold);border-color:var(--marigold);color:#061a2e}
 select.chip{appearance:none;padding-right:14px;max-width:100%}
 select.chip option{background:#0c333b;color:var(--ink)}
-.wrap{max-width:1240px;margin:0 auto;padding:10px 16px 36px;display:grid;grid-template-columns:minmax(0,1.3fr) minmax(0,1fr);gap:20px;align-items:start}
+.wrap{max-width:1400px;margin:0 auto;padding:10px 16px 36px;display:grid;grid-template-columns:minmax(0,1.8fr) minmax(0,1fr);gap:24px;align-items:start}  /* Oct 5: the pond is the product; the cards are its notes */
 .pondbox{position:sticky;top:0;padding:6px 4px 8px;min-width:0}
 .feed{min-width:0}.feed.empty{visibility:hidden}
 @keyframes sheen{from{transform:translate(-3%,-2%) scale(1)}to{transform:translate(4%,3%) scale(1.08)}}
@@ -152,7 +162,8 @@ svg#pond{display:block;width:100%;height:auto;touch-action:manipulation;border-r
 input[type=range]{flex:1;accent-color:var(--marigold);min-width:0}
 .legend{display:flex;flex-wrap:wrap;align-items:center;gap:6px 14px;font-size:.78rem;color:var(--ink-2);padding:6px 8px 4px}
 .legend svg{margin-right:5px;vertical-align:middle}
-@media (min-width:861px) and (max-height:700px){.legend{position:absolute;right:14px;top:58px;flex-direction:column;align-items:flex-start;gap:4px;font-size:.72rem;padding:6px 9px;background:rgba(15,28,38,.82);border:1px solid var(--hair);border-radius:6px;z-index:2}.legend .howbtn{margin-left:0;margin-top:2px}}  /* a short laptop: the legend sits in the pond's corner like a map's, inside the fold (second roundtable) */
+@media (max-width:1200px){.wrap{grid-template-columns:minmax(0,1.45fr) minmax(0,1fr)}}
+@media (min-width:861px) and (max-height:700px){svg#pond{max-height:calc(100vh - 330px)}.legend{position:absolute;right:14px;top:58px;flex-direction:column;align-items:flex-start;gap:4px;font-size:.72rem;padding:6px 9px;background:rgba(15,28,38,.82);border:1px solid var(--hair);border-radius:6px;z-index:2}.legend .howbtn{margin-left:0;margin-top:2px}}  /* a short laptop: the legend sits in the pond's corner like a map's, inside the fold (second roundtable) */
 .howbtn{margin-left:auto;background:none;border:1px solid var(--hair);border-radius:6px;padding:3px 10px;font-size:.76rem;color:var(--ink-2);cursor:pointer}
 .feed{display:grid;gap:8px;align-content:start;position:sticky;top:10px;max-height:calc(100vh - 20px);overflow-y:auto;scrollbar-width:thin;
   --ink:var(--paper-ink);--ink-2:var(--paper-ink-2);--ink-3:var(--paper-ink-3);--hair:rgba(30,42,46,.14);--sunk:var(--paper-2);--rec:var(--paper-ink);--marigold:#c77f12;--good:#3e8f55;--miss:#d04a3a;
@@ -193,6 +204,8 @@ input[type=range]{flex:1;accent-color:var(--marigold);min-width:0}
 .card details summary::before{content:"+ "}.card details[open] summary::before{content:"– "}
 .card details p{margin:.3rem 0 0}
 .pulse{background:var(--paper);border-radius:8px;padding:10px 12px 6px;color:var(--paper-ink)}
+.feed .pulse{position:sticky;top:0;z-index:3;box-shadow:0 6px 18px rgba(0,0,0,.25)}  /* the chart stays in view while the cards scroll (owner, Oct 5) */
+.pulse .pline{opacity:0;transition:opacity .4s}.pulse .pline.on{opacity:1}.pulse .pline .pp{stroke-dasharray:1;stroke-dashoffset:1;transition:stroke-dashoffset 1.6s ease-out}.pulse .pline.on .pp{stroke-dashoffset:0}  /* each series draws in from its step as its ripple lands */
 .pulse .ptitle{font:700 .86rem/1.3 var(--sans);margin:0 2px 4px}.pulse .ptitle span{display:block;font-weight:400;color:var(--paper-ink-3);font-size:.76rem}
 .pulse svg{width:100%;height:auto;display:block}.pulse .pg{stroke:rgba(30,42,46,.12);stroke-width:1}.pulse .pg.v{stroke-dasharray:2 4}.pulse .pl{font:500 12px var(--sans);fill:var(--paper-ink-3)}
 .pulse .pline{cursor:pointer}.pulse .pp{fill:none;stroke:var(--h);stroke-width:1.8;stroke-linejoin:round;opacity:.9}.pulse .pd{fill:var(--h);stroke:var(--paper);stroke-width:1.5}
@@ -221,7 +234,10 @@ input[type=range]{flex:1;accent-color:var(--marigold);min-width:0}
 .facts{display:flex;flex-wrap:wrap;gap:6px 18px;margin-top:6px}
 .fact b{display:block;font:800 1.25rem/1 var(--display);font-variant-numeric:tabular-nums}
 .fact span{font-size:.74rem;color:var(--ink-3)}
-.b{font-size:.66rem;line-height:1;padding:4px 7px;border-radius:3px;border:1px solid var(--hair);white-space:nowrap;font-weight:700;letter-spacing:.07em;text-transform:uppercase}
+.b{font-size:.66rem;line-height:1;padding:4px 7px;border-radius:3px;border:1px solid var(--hair);white-space:nowrap;font-weight:700;letter-spacing:.07em;text-transform:uppercase;display:inline-flex;align-items:center;gap:5px}.b svg{width:12px;height:12px;flex:none}
+.card{position:relative}.card .acts{position:absolute;right:14px;bottom:12px;display:flex;gap:12px;margin:0}.card .acts a{font-size:.76rem;color:var(--ink-3)}.card details.more:not([open]){min-height:1.6em;padding-right:200px}
+.card details.more{margin-top:.2rem}.card details.more>summary{display:inline-block;font-size:.76rem;font-weight:600;color:var(--marigold);border:1px solid rgba(242,169,59,.35);border-radius:4px;padding:3px 8px;cursor:pointer;list-style:none}.card details.more>summary::before{content:""}.card details.more[open]>summary{color:var(--ink-3);border-color:var(--hair)}.card details.more>summary::-webkit-details-marker{display:none}
+.feed .card .acts a{color:var(--paper-ink-3)}.feed .card details.more>summary{color:#8a5a0a;border-color:rgba(138,90,10,.35)}.feed .card details.more[open]>summary{color:var(--paper-ink-3);border-color:rgba(30,42,46,.15)}
 .b.event{background:var(--marigold);border-color:var(--marigold);color:#061a2e}
 .b.l-measured{border-color:var(--good);color:var(--good)}.b.l-timed{border-color:#7a5fc4;color:#7a5fc4}
 .b.l-reported{border-color:var(--ink-2);color:var(--ink)}.b.l-plausible{border-style:dashed;border-color:#a8955a;color:#8a7638}
@@ -311,6 +327,7 @@ svg.hex{vertical-align:-2px;margin-right:4px}
 .leader{stroke:rgba(214,232,246,.35);stroke-width:1;opacity:0;transition:opacity .5s ease-out;pointer-events:none}.leader.on{opacity:1}
 #pond.focus .leader{opacity:.16}
 .nlab.on{opacity:1}
+.nlab.under,.leader.under{opacity:0 !important;transition:opacity .25s}
 .nlab rect{fill:none;stroke:none}  /* no boxes: the type carries a halo in the water's color so it reads over the rings */
 .nlab text{font:500 13.5px var(--sans);fill:var(--ink);paint-order:stroke;stroke:#0f1c26;stroke-width:3.5px;stroke-linejoin:round}
 .nlab text.s{font-weight:500;font-size:11px;fill:var(--ink-3);stroke-width:3px}
@@ -328,7 +345,7 @@ svg.hex{vertical-align:-2px;margin-right:4px}
 body.reel header .picker,body.reel .feed,body.reel .how,body.reel .foot,body.reel .ctl,body.reel .legend,body.reel .bar,body.reel .chooser,body.reel .hint{display:none}
 body.reel .wrap{grid-template-columns:1fr;max-width:760px}
 body.reel header{max-width:760px;padding-top:22px}
-@media (min-width:1500px){.wrap{max-width:1560px}.feed{max-width:620px}}
+@media (min-width:1500px){.wrap{max-width:1760px}.feed{max-width:560px}}
 @media (max-width:860px){.wrap{grid-template-columns:1fr}.pondbox{position:relative;top:0}.feed{position:static;max-height:none;overflow:visible}}
 @media (max-width:560px){
   header{padding:10px 12px 0}.brand{font-size:.68rem}.brand .tag{display:none}.brand .wm{width:92px;height:28px}
@@ -411,7 +428,7 @@ body.card .beatline{display:none}
 <div class="wrap">
   <section class="pondbox" aria-label="Ripple pond">
     <div class="clock"><div class="d" id="date">—</div><div class="n" id="since">—</div></div>
-    <svg id="pond" viewBox="-120 88 940 486" role="img" aria-label="Ripples spreading out from the event over time"></svg>
+    <svg id="pond" viewBox="-70 96 840 466" role="img" aria-label="Ripples spreading out from the event over time"></svg>
     <div class="hint" id="hint" hidden>Click a ripple to follow it · drag the slider to move in time</div>
     <div class="tip" id="tip" role="tooltip"></div>
     <div class="caption" id="caption" aria-live="polite"></div>
@@ -592,7 +609,7 @@ function tOfDay(d) {  // the first clock position at which a ripple dated d has 
 }
 // The pond is seen from about 35 degrees above the surface: things drawn on the water are squashed vertically
 // (circles become ellipses); dots and labels stand upright at the projected spot.
-const TILT = 0.6, VB = {top:90, bottom:572};
+const TILT = 0.6, VB = {top:98, bottom:560};
 const PL = p => ({x:p.x, y:C.y + (p.y - C.y) * TILT});
 const depthK = p => (0.84 + 0.32 * Math.max(0, Math.min(1, (p.y - (C.y - R)) / (2 * R)))).toFixed(3);  // back 0.84x, front 1.16x
 const UNPL = q => ({x:q.x, y:C.y + (q.y - C.y) / TILT});
@@ -617,10 +634,19 @@ function sparkHTML(weekly, mark) {
     <polyline points="${pts}" fill="none" stroke="var(--marigold)" stroke-width="2" vector-effect="non-scaling-stroke"/>
     <line class="cursor" x1="-5" x2="-5" y1="0" y2="${H}" stroke="var(--ink)" stroke-width="1.2" vector-effect="non-scaling-stroke"/></svg>`;
 }
+const GLYPH = {  // the grade as a mark, beside its word (Oct 5: visual indicators where there were words)
+  "l-measured":'<svg viewBox="-8 -8 16 16" aria-hidden="true"><circle r="4.5" fill="none" stroke="currentColor" stroke-width="1.4"/><path d="M0,-7.5V-4.5M0,4.5V7.5M-7.5,0H-4.5M4.5,0H7.5" stroke="currentColor" stroke-width="1.4"/></svg>',
+  "l-timed":'<svg viewBox="-8 -8 16 16" aria-hidden="true"><circle r="5.5" fill="none" stroke="currentColor" stroke-width="1.4"/><path d="M0,-3V0.5L2.5,2" fill="none" stroke="currentColor" stroke-width="1.4"/></svg>',
+  "l-reported":'<svg viewBox="-8 -8 16 16" aria-hidden="true"><path d="M-5,-5h10v10h-10z" fill="none" stroke="currentColor" stroke-width="1.3"/><path d="M-2.5,-1.5h5M-2.5,1.5h5" stroke="currentColor" stroke-width="1.3"/></svg>',
+  "l-plausible":'<svg viewBox="-8 -8 16 16" aria-hidden="true"><circle r="5.5" fill="none" stroke="currentColor" stroke-width="1.3" stroke-dasharray="2.4 2.4"/></svg>',
+  "l-busted":'<svg viewBox="-8 -8 16 16" aria-hidden="true"><circle r="5.5" fill="none" stroke="currentColor" stroke-width="1.3"/><path d="M-3.5,-3.5L3.5,3.5M3.5,-3.5L-3.5,3.5" stroke="currentColor" stroke-width="1.4"/></svg>',
+  "na":'<svg viewBox="-8 -8 16 16" aria-hidden="true"><circle r="5.5" fill="none" stroke="currentColor" stroke-width="1.3" stroke-dasharray="1.5 2.5"/></svg>',
+  "event":'<svg viewBox="-8 -8 16 16" aria-hidden="true"><circle r="2.2" fill="currentColor"/><circle r="6" fill="none" stroke="currentColor" stroke-width="1.2"/></svg>'};
 function card({when, badge, badgeCls, title, spark = "", facts = "", short = "", details = "", cls = "", mark = null, sure = "", foot = ""}) {
   const sureBox = sure ? `<details class="sure"><summary>How sure?</summary><p>${sure}</p></details>` : "";
-  return {cls:cls + (mark ? " marked" : ""), html:`<div class="top"><div class="when">${when}</div><span class="b ${badgeCls}">${badge}</span></div>${mark ? `<div class="markpill">${HEX}Lasting mark · ${esc(mark)}</div>` : ""}
-    <h2>${esc(title)}</h2>${spark}${facts}${short ? `<p class="short">${short}</p>` : ""}${foot}<div class="row">${sureBox}${details ? `<details><summary>Details</summary>${details}</details>` : ""}</div>`};
+  const more = facts || short || foot || sureBox || details;  // the face carries the date, the grade, the title and the spark; the rest waits behind Learn more
+  return {cls:cls + (mark ? " marked" : ""), html:`<div class="top"><div class="when">${when}</div><span class="b ${badgeCls}">${GLYPH[badgeCls] || ""}${badge}</span></div>${mark ? `<div class="markpill">${HEX}Lasting mark · ${esc(mark)}</div>` : ""}
+    <h2>${esc(title)}</h2>${spark}<div class="acts"></div>${more ? `<details class="more"><summary>Learn more</summary>${facts}${short ? `<p class="short">${short}</p>` : ""}${foot}<div class="row">${sureBox}${details ? `<details><summary>Details</summary>${details}</details>` : ""}</div></details>` : ""}`};
 }
 // Plain-language account of the evidence behind one link: what was measured, how it was compared, what it does not show.
 function howSure(lv, o = {}) {
@@ -972,7 +998,7 @@ function draw(story) {
     <clipPath id="pondclip"><circle cx="${C.x}" cy="${C.y}" r="${R + 30}"/></clipPath>`;
   // the field: flat dark water to the edges. No shore, no sky: the pond is an instrument, and the grid is the picture
   const scene = el("g", {class:"scene"}, svg);
-  el("rect", {x:-120, y:88, width:940, height:486, fill:"#0f1c26"}, scene);  // the page's own surface: no box around the pond; the disc and its lines are the picture
+  el("rect", {x:-70, y:96, width:840, height:466, fill:"#0f1c26"}, scene);  // the page's own surface: no box around the pond; the disc and its lines are the picture
   // water: a softly lit surface, drawn in plane coordinates and tilted as one
   const plane = el("g", {transform:`translate(0 ${C.y}) scale(1 ${TILT}) translate(0 ${-C.y})`}, svg);
   el("circle", {cx:C.x, cy:C.y, r:R + 34, fill:"url(#depth)"}, plane);  // a faint top light and a darker foot on the disc, nothing more
@@ -1006,7 +1032,7 @@ function draw(story) {
     rt.style.fontSize = `${Math.round((dense ? 12.5 : 12) * K)}px`;  // a dense pond keeps its rim words small; the labels need the room
     try {
       let b = rt.getBBox();
-      if (b.x < -112) rt.setAttribute("x", +rt.getAttribute("x") + (-112 - b.x)); else if (b.x + b.width > 812) rt.setAttribute("x", +rt.getAttribute("x") - (b.x + b.width - 812));
+      if (b.x < -62) rt.setAttribute("x", +rt.getAttribute("x") + (-62 - b.x)); else if (b.x + b.width > 762) rt.setAttribute("x", +rt.getAttribute("x") - (b.x + b.width - 812));
       b = rt.getBBox(); rimBoxes.push({x:b.x - 4, y:b.y - 2, w:b.width + 8, h:b.height + 4, soft:true});
     } catch {}
   });
@@ -1101,7 +1127,7 @@ function draw(story) {
       el("circle", {class:"markc", cx:0, cy:0, r:2.2 * K}, g);
     }
     it.core = null;
-    it.showLabel = !dense || !!it.mark || it.lv === "measured" || items.length <= 5;  // a desktop names every ripple that has room; a phone names the marks and the measured steps
+    it.showLabel = (!dense && items.length <= 10) || !!it.mark || it.lv === "measured" || items.length <= 5;  // a short story names every ripple; a long one (over ten) names its marks and measured steps at rest, and the rest speak on their beat, on hover or on a tap (Oct 5: Prohibition's twenty labels were unreadable)
     g.setAttribute("transform", `translate(${C.x},${C.y})`);
     g.addEventListener("click", e => {  // where two targets overlap, the tap goes to the nearest ripple, not the one drawn last
       let best = it, bd = Infinity;
@@ -1130,7 +1156,7 @@ function draw(story) {
     for (const soft of [true, false]) {  // first clear of everything; failing that, clear of other labels and the stone, over a rim word if it must
       for (const sp of cands) {
         const b = {x:it.pos.x + sp[0], y:it.pos.y + sp[1], w:bw, h:bh};
-        const inside = b.x > -118 && b.x + bw < 818 && b.y > VB.top && b.y + bh < VB.bottom;
+        const inside = b.x > -68 && b.x + bw < 768 && b.y > VB.top && b.y + bh < VB.bottom;
         if (inside && !overlaps(b, soft)) { best = sp; far = Math.hypot(sp[0], sp[1]) > Math.hypot(...order[0]) * 1.8; break; }
         if (soft) { const a = overlapArea(b) + (inside ? 0 : 1e6); if (a < least) { least = a; fallback = sp; } }
       }
@@ -1216,7 +1242,7 @@ function makeReelCut(story, beats) {
   push(tp, 1, CUT.cut, null, "wide"); push(1, 1, CUT.end, endBeat, "wide");
   story.timeline = {segs, total:c, beats, reel:true, shots};
 }
-const CAM = {X0:-120, Y0:88, W:940, H:486};
+const CAM = {X0:-70, Y0:96, W:840, H:466};
 function applyCam(s, ms) {  // the reel's camera: a push-in on the shot's ripple, the wide pond otherwise
   const svg = $("#pond"); let z = 1, cx = C.x, cy = C.y, it = null;
   if (s && s.cam === "push" && s.beat && s.beat.items.length) { it = s.beat.items[0]; const p = Math.min(1, (ms - s.c0) / s.ms); z = 1.28 + 0.34 * ease(p); }
@@ -1256,16 +1282,26 @@ function nextMarkLine(b) {  // on an ordinary beat, say that a lasting mark is c
 }
 function placeBeatline() {  // the lower third sits on the pond's bottom edge, whatever the pond's size
   const bl = $("#beatline"), svg = $("#pond"), box = $(".pondbox"); if (!bl || !svg) return;
-  if (window.innerWidth <= 860 || (REEL && matchMedia("(orientation:portrait)").matches)) { bl.style.top = ""; return; }  // a phone and a vertical clip keep it in flow under the pond
+  if (window.innerWidth <= 860 || (REEL && matchMedia("(orientation:portrait)").matches)) { bl.style.top = ""; shadeUnder(null); return; }  // a phone and a vertical clip keep it in flow under the pond
   const sr = svg.getBoundingClientRect(), br = box.getBoundingClientRect();
   bl.style.top = `${Math.round(sr.bottom - br.top - bl.offsetHeight)}px`;
+  shadeUnder(bl.getBoundingClientRect());
+}
+function shadeUnder(rect) {  // labels that would sit under the lower third step aside while it is up; nothing overlaps the words (Oct 5)
+  if (!cur) return;
+  for (const it of cur.items) {
+    if (!it.lab) continue;
+    let under = false;
+    if (rect && it.lab.classList.contains("on")) { const r = it.lab.getBoundingClientRect(); under = r.width > 0 && r.bottom > rect.top + 6 && r.top < rect.bottom && r.right > rect.left && r.left < rect.right; }
+    it.lab.classList.toggle("under", under); if (it.leader) it.leader.classList.toggle("under", under);
+  }
 }
 window.addEventListener("resize", () => { if (cur && cur.beatOn) placeBeatline(); });
 function unspot() {
   if (!cur || !cur.beatOn) return;
   for (const it of cur.beatOn.items) { it.lab.classList.remove("beat"); if (it.cardEl) it.cardEl.classList.remove("now"); if (!it.showLabel && it !== hot) { it.lab.classList.remove("on"); if (it.leader) it.leader.classList.remove("on"); } }
   (cur.lit || []).forEach(x => { if (x !== hot) [x.g, x.path, x.lab, x.band, x.ring, x.crest].forEach(e => e && e.classList.remove("lit")); });
-  cur.beatOn = null; cur.lit = null; $("#pond").classList.remove("beat");
+  cur.beatOn = null; cur.lit = null; $("#pond").classList.remove("beat"); shadeUnder(null);
 }
 
 function wrapLabel(t, width, lines) {  // greedy word wrap to at most `lines` lines; the last line is cut with an ellipsis
@@ -1316,7 +1352,7 @@ function pulseHTML(story) {
   for (const l of lines) {
     const d = l.pts.map((p, i) => `${i ? "L" : "M"}${X(p[0]).toFixed(1)},${Y(p[1]).toFixed(1)}`).join("");
     const px = X(l.peak[0]), py = Y(l.peak[1]);
-    paths += `<g class="pline" data-id="${l.it.id}" style="--h:${l.it.hue}"><path d="${d}" class="pp"/><circle cx="${px.toFixed(1)}" cy="${py.toFixed(1)}" r="3.2" class="pd"/><title>${esc(l.it.label)} · peak week ${l.peak[1] >= 10 ? Math.round(l.peak[1]).toLocaleString() : l.peak[1].toFixed(1)}× normal, ${l.peak[0] <= 0 ? "at the step" : `${l.peak[0]} days after`} (the card's figure is the daily peak)</title></g>`;
+    paths += `<g class="pline" data-id="${l.it.id}" style="--h:${l.it.hue}"><path d="${d}" class="pp" pathLength="1"/><circle cx="${px.toFixed(1)}" cy="${py.toFixed(1)}" r="3.2" class="pd"/><title>${esc(l.it.label)} · peak week ${l.peak[1] >= 10 ? Math.round(l.peak[1]).toLocaleString() : l.peak[1].toFixed(1)}× normal, ${l.peak[0] <= 0 ? "at the step" : `${l.peak[0]} days after`} (the card's figure is the daily peak)</title></g>`;
     let ly = Math.max(T + 9, py - 6); while (used.some(u => Math.abs(u - ly) < 12)) ly += 12; used.push(ly);  // the name at the peak, kept inside the frame and clear of the last
     const right = px > L + w * 0.6;
     labs += `<text class="pn" style="--h:${l.it.hue}" x="${(px + (right ? -6 : 6)).toFixed(1)}" y="${ly.toFixed(1)}" text-anchor="${right ? "end" : "start"}">${esc(l.it.label)}</text>`;
@@ -1328,7 +1364,9 @@ function buildFeed(story) {
   let pulse = pulseHTML(story);
   if (!pulse && story.kind === "chain") pulse = `<div class="pulse none"><div class="ptitle">No attention series for this story <span>Daily Wikipedia views begin in July 2015; the steps here are older or were checked against records, not attention.</span></div></div>`;
   if (pulse && window.innerWidth <= 560 && !/pulse none/.test(pulse)) pulse = `<details class="pulsefold"><summary>The spikes, aligned: the chart</summary>${pulse}</details>`;  // a phone folds the chart; its labels are too small at 375 px to be worth the screen
+  story.plines = [];
   if (pulse) { const pv = document.createElement("div"); pv.innerHTML = pulse; const el0 = pv.firstElementChild; f.appendChild(el0);
+    el0.querySelectorAll(".pline[data-id]").forEach(n => { const it = story.items.find(x => x.id === n.dataset.id); if (it) story.plines.push([it, n]); });
     el0.querySelectorAll("[data-id]").forEach(n => n.addEventListener("click", () => { const it = story.items.find(x => x.id === n.dataset.id); if (it) focus(it); })); }
   const cards = [{d:0, ...story.first}, ...story.items.map(it => ({d:it.d, it, ...it.card})), ...story.extra];
   cards.sort((a, b) => a.d - b.d);
@@ -1336,7 +1374,7 @@ function buildFeed(story) {
     const div = document.createElement("article");
     div.className = `card off ${c.cls || ""}`; div.innerHTML = c.html;
     if (c.it && c.it.hue) { div.classList.add("hasline"); div.style.setProperty("--chip", c.it.hue); }
-    if (c.it) { const row = div.querySelector(".row"); if (row) { const a = document.createElement("a"); a.className = "shr"; a.href = "#"; a.textContent = "Share this step"; a.onclick = e => { e.preventDefault(); e.stopPropagation(); shareStep(c.it); }; row.appendChild(a);
+    if (c.it) { const row = div.querySelector(".acts") || div.querySelector(".row"); if (row) { const a = document.createElement("a"); a.className = "shr"; a.href = "#"; a.textContent = "Share this step"; a.onclick = e => { e.preventDefault(); e.stopPropagation(); shareStep(c.it); }; row.appendChild(a);
       if (c.it.cite) { const k = document.createElement("a"); k.className = "shr cite"; k.href = "#"; k.textContent = "Copy citation"; k.title = "The mark, the date, the grade, the sentence and its source, as one line to paste"; k.onclick = async e => { e.preventDefault(); e.stopPropagation(); try { await navigator.clipboard.writeText(c.it.cite); } catch { prompt("Copy this citation", c.it.cite); } const t = $("#toast"); if (t) { t.textContent = "Citation copied"; t.classList.add("on"); setTimeout(() => t.classList.remove("on"), 1800); } }; row.appendChild(k); } } }
     c.el = div; c.cursor = div.querySelector(".cursor"); c.shown = false;
     if (c.it) { c.it.cardEl = div; div.addEventListener("click", e => { if (e.target.closest("summary,a")) return; focus(c.it); }); }
@@ -1520,6 +1558,7 @@ function render(now = performance.now()) {
     ["glow", "shadow", "body", "light"].forEach(k => cur.front[k].setAttribute("r", fr));
     cur.front.g.setAttribute("opacity", live && t > PRE ? Math.min(1, (1 - t) * 6).toFixed(2) : 0);
   }
+  for (const [it, n] of cur.plines || []) n.classList.toggle("on", it.state !== "hidden");  // the chart grows with the pond
   for (const c of cur.cards || []) {
     const on = d >= c.d;
     c.el.classList.toggle("off", !on);
@@ -1759,10 +1798,14 @@ function next() {
   phoneLayout(); window.addEventListener("resize", phoneLayout);
   $("#sub").addEventListener("click", () => { const sub = $("#sub"); if (!sub.hasAttribute("aria-expanded")) return; const cls = window.innerWidth <= 560 ? "clamp" : "fold"; const closed = sub.classList.toggle(cls); sub.dataset.open = closed ? "" : "1"; sub.setAttribute("aria-expanded", closed ? "false" : "true"); });  // a tap reads the whole subtitle
   const chooser = $("#chooser"), cbtn = $("#chooserbtn");
-  const setChooser = open => { chooser.hidden = !open; cbtn.setAttribute("aria-expanded", open); if (open && window.innerWidth <= 560) requestAnimationFrame(() => cbtn.scrollIntoView({block:"start", behavior:"smooth"})); };  // on a phone the chooser lives under the pond, so opening it brings it up
+  const TABCOUNT = () => ({maps:TABS.maps.length, stories:DATA.chains.length, leads:TABS.leads.filter(([k, s]) => k === "wiki" ? wikiStones().includes(s) : k === "acts" ? actsWorks().includes(s) : true).length});
+  const TABNOTE_SHORT = {maps:"Events that left a law, an institution or a change in how people live.", stories:"Viral \"butterfly effect\" stories tested link by link; some are busted.", leads:"What the engine found on its own, screened by hand."};
+  const setChooser = open => { chooser.hidden = !open; cbtn.setAttribute("aria-expanded", open);
+    if (open) { chooser.classList.add("stage1"); const n = TABCOUNT(); document.querySelectorAll(".tab").forEach(b => b.dataset.note = `${TABNOTE_SHORT[b.dataset.tab]} ${n[b.dataset.tab]} ${n[b.dataset.tab] === 1 ? "story" : "stories"}.`); }  // first layer: the three kinds as cards
+    if (open && window.innerWidth <= 560) requestAnimationFrame(() => cbtn.scrollIntoView({block:"start", behavior:"smooth"})); };  // on a phone the chooser lives under the pond, so opening it brings it up
   cbtn.onclick = () => setChooser(chooser.hidden);
   document.querySelectorAll(".known .chip").forEach(b => b.onclick = () => show(b.dataset.kind, b.dataset.slug));
-  $("#search").oninput = renderPicker;
+  $("#search").oninput = () => { chooser.classList.remove("stage1"); renderPicker(); };  // a search goes straight to results
   $("#search").onkeydown = e => { if (e.key === "Enter") { const f = $("#picker .chip"); if (f) f.click(); } };
   // drag the stone to throw it: while the story waits at the start, the stone follows the finger and leaves from where it is let go
   (() => {
@@ -1784,7 +1827,7 @@ function next() {
   document.addEventListener("click", e => { if (!chooser.hidden && !chooser.contains(e.target) && e.target !== cbtn && !cbtn.contains(e.target)) setChooser(false); });
   document.addEventListener("keydown", e => { if (e.key === "Escape") setChooser(false); if (e.key === "/" && !e.target.closest("input,select,textarea")) { e.preventDefault(); setChooser(true); $("#search").focus(); } });
   const KIND = {maps:"Lasting marks", stories:"Fact-checks", leads:"Engine leads"};
-  document.querySelectorAll(".tab").forEach(b => b.onclick = () => { tab = b.dataset.tab; $("#chooserkind").textContent = KIND[tab]; renderPicker(); });  // a tab changes the list; a chip picks the story
+  document.querySelectorAll(".tab").forEach(b => b.onclick = () => { tab = b.dataset.tab; $("#chooserkind").textContent = KIND[tab]; chooser.classList.remove("stage1"); renderPicker(); });  // second layer: the chosen kind's list  // a tab changes the list; a chip picks the story
   $("#howbtn").onclick = () => { const h = $("#how"), open = h.hidden; h.hidden = !open; $("#howbtn").setAttribute("aria-expanded", open); if (open) h.scrollIntoView({behavior:"smooth", block:"start"}); };
   $("#caption").addEventListener("click", e => { if (!e.target.closest("a,button") && hot) clearFocus(); });  // a tap on the caption itself, not a link, puts the pond back
   $("#play").onclick = () => { if (t >= 1) { t = 0; cur.items.forEach(hide); cur.splashed = false; $("#feed").scrollTop = 0; } setPlaying(!playing); };
