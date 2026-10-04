@@ -199,6 +199,7 @@ input[type=range]{flex:1;accent-color:var(--marigold);min-width:0}
 .caption .shrcap{color:var(--ink-3);font-size:.82rem;display:block;text-align:center;margin-top:6px}
 .arw{display:inline-block;vertical-align:baseline}.arw svg{width:1.15em;height:.42em;overflow:visible}.arw line,.arw path{fill:none;stroke:currentColor;stroke-width:2.4;stroke-linecap:round;stroke-linejoin:round}
 .arw.l-measured{color:var(--good)}.arw.l-timed{color:var(--timed)}.arw.l-reported{color:var(--ink)}.arw.l-plausible{color:var(--plaus)}
+.arw.l-measured svg{filter:drop-shadow(0 0 5px rgba(127,191,123,.65))}
 .arw.l-reported line{stroke-dasharray:5 4}.arw.l-plausible line{stroke-dasharray:.1 4.5}
 .tally .weak{color:var(--ink-3)}.pulse.none{padding-bottom:10px}
 .pulsefold{background:var(--paper);border-radius:14px;padding:8px 12px;color:var(--paper-ink)}.pulsefold summary{font:700 .86rem var(--sans);cursor:pointer}.pulsefold .pulse{padding:6px 0 0}.pulsefold .pulse .ptitle{display:none}
@@ -229,7 +230,10 @@ input[type=range]{flex:1;accent-color:var(--marigold);min-width:0}
 .how p{margin:0;color:var(--ink-2);font-size:.9rem}
 .foot{max-width:1240px;margin:0 auto;padding:0 16px 44px;color:var(--ink-3);font-size:.82rem}
 /* pond */
-.ring{fill:none;stroke:rgba(214,232,246,.14);stroke-width:.6}  /* the time grid: log rings, a hairline each */
+.ring{fill:none;stroke:rgba(214,232,246,.14);stroke-width:.6}
+.pulse{stroke:rgba(190,225,255,.5);stroke-width:1.2;opacity:0;animation:pulse 7s ease-out infinite}
+@keyframes pulse{0%{transform:scale(.3);opacity:0}6%{opacity:.35}70%{transform:scale(7.5);opacity:0}100%{transform:scale(7.5);opacity:0}}
+@media (prefers-reduced-motion:reduce){.pulse{animation:none}}  /* the time grid: log rings, a hairline each */
 .ringlbl{fill:rgba(214,232,246,.8);font:500 9px var(--sans);letter-spacing:.04em;font-variant-numeric:tabular-nums}
 .slicebd{stroke:rgba(214,232,246,.07);stroke-width:1;stroke-dasharray:2 6}
 .rimlbl{font:600 10px var(--sans);letter-spacing:.16em;text-transform:uppercase;fill:rgba(214,232,246,.5)}
@@ -278,7 +282,7 @@ input[type=range]{flex:1;accent-color:var(--marigold);min-width:0}
 .rip.l-measured{stroke-width:3}.rip.l-timed{stroke-width:2.2}.rip.l-reported{stroke-width:1.7}
 /* the thread back to the stone shows only while a ripple is being followed */
 .edge{opacity:0;transition:opacity .3s}
-#pond.focus .edge.lit{opacity:.9}
+#pond.focus .edge.lit{opacity:.9}#pond.focus .edge.lit.l-measured{stroke:var(--good)}#pond.focus .edge.lit.mark{stroke:var(--marigold)}
 .edge.off{display:none}
 .band{display:none}  /* the label says "≈ 1982–1984"; a radial bar read as an artifact */
 .elbl{font:700 9.5px var(--sans);letter-spacing:.08em;text-transform:uppercase;paint-order:stroke;stroke:#0a2d4e;stroke-width:4px;opacity:0;transition:opacity .5s}
@@ -326,6 +330,7 @@ body.reel header{max-width:760px;padding-top:22px}
   .wrap{padding:6px 10px 24px;gap:12px}.pondbox{padding:8px 8px 6px;border-radius:18px}
   .pondbox .hint{position:absolute;left:12px;right:12px;top:auto;bottom:auto;transform:none;margin:0;width:auto;max-width:none;font-size:.78rem;padding:7px 12px;text-align:center;white-space:normal;z-index:2}  /* a phone: over the pond's top edge for its nine seconds; no gap, no jump */
   .pondbox .hint{top:64px}
+  .leader{display:none}#pond.focus .leader.lit{display:block;opacity:.6}  /* a phone: no string board; one leader, for the ripple you tapped */
   .clock .d{font-size:1.05rem}.clock .n{font-size:.78rem}
   .legend{font-size:.78rem;gap:4px 10px;padding:4px 4px 2px}.howbtn{font-size:.78rem;padding:4px 10px}
   .nextbtn{padding:6px 10px;font-size:.8rem}.play{width:36px;height:36px}.stepbtn{padding:6px 10px;font-size:.8rem}
@@ -871,6 +876,7 @@ function draw(story) {
 
   const defs = el("defs", {}, svg);
   defs.innerHTML = `
+    <radialGradient id="vig" cx="50%" cy="50%" r="62%"><stop offset="0" stop-color="#1b5a8e" stop-opacity=".22"/><stop offset=".45" stop-color="#0b2d4b" stop-opacity="0"/><stop offset="1" stop-color="#020a16" stop-opacity=".55"/></radialGradient>
     <radialGradient id="water" cx="50%" cy="46%" r="56%"><stop offset="0" stop-color="#1e6aa6" stop-opacity=".62"/><stop offset=".55" stop-color="#0f4576" stop-opacity=".42"/><stop offset="1" stop-color="#061b31" stop-opacity="0"/></radialGradient>
     <linearGradient id="depth" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#9fcdf0" stop-opacity=".10"/><stop offset=".5" stop-color="#9fcdf0" stop-opacity="0"/><stop offset="1" stop-color="#02101e" stop-opacity=".28"/></linearGradient>
     <radialGradient id="shine" cx="38%" cy="30%" r="40%"><stop offset="0" stop-color="#d8ecf8" stop-opacity=".09"/><stop offset="1" stop-color="#d8ecf8" stop-opacity="0"/></radialGradient>
@@ -905,11 +911,13 @@ function draw(story) {
   // the field: flat dark water to the edges. No shore, no sky: the pond is an instrument, and the grid is the picture
   const scene = el("g", {class:"scene"}, svg);
   el("rect", {x:-120, y:88, width:940, height:486, fill:"url(#field)"}, scene);
+  el("rect", {x:-120, y:88, width:940, height:486, fill:"url(#vig)"}, scene);  // deep water, lit from beneath the stone
   // water: a softly lit surface, drawn in plane coordinates and tilted as one
   const plane = el("g", {transform:`translate(0 ${C.y}) scale(1 ${TILT}) translate(0 ${-C.y})`}, svg);
   el("circle", {cx:C.x, cy:C.y, r:R + 34, fill:"url(#water)"}, plane);
   el("circle", {cx:C.x, cy:C.y, r:R + 34, fill:"url(#depth)"}, plane);
   el("circle", {cx:C.x, cy:C.y, r:R + 34, fill:"none", stroke:"rgba(214,232,246,.10)", "stroke-width":.8}, plane);  // the rim of the measured water
+  el("circle", {class:"pulse", cx:C.x, cy:C.y, r:40, fill:"none", style:`transform-origin:${C.x}px ${C.y}px`}, plane);  // a faint ring leaves the stone every few seconds
 
   const g0 = el("g", {}, plane), gt = el("g", {}, svg);  // g0: lines on the water; gt: upright text
   if (n > 1) keys.forEach(k => { const a = centre(k) - w / 2, q = polar(48, a), p = polar(R + 8, a); el("line", {class:"slicebd", x1:q.x, y1:q.y, x2:p.x, y2:p.y}, g0); });
@@ -997,7 +1005,7 @@ function draw(story) {
       const a = polar(radius(Math.min(Math.max(it.range[0], 0.5), max)), it.a), b = polar(radius(Math.min(it.range[1], max)), it.a);
       it.band = el("line", {class:"band", x1:a.x, y1:a.y, x2:b.x, y2:b.y, stroke:COLOR[it.lv]}, bands);
     }
-    it.path = el("path", {class:`edge off l-${it.lv}${it.disc ? " disc" : ""}`, d:`M${it.from.x},${it.from.y} L${it.from.x},${it.from.y}`}, edges);
+    it.path = el("path", {class:`edge off l-${it.lv}${it.disc ? " disc" : ""}${it.mark ? " mark" : ""}`, d:`M${it.from.x},${it.from.y} L${it.from.x},${it.from.y}`}, edges);
     it.ring2 = el("path", {class:"rip2", d:arcPath(14, it.span)}, rips);
     it.ringS = el("path", {class:`ripS l-${it.lv}`, d:arcPath(14, it.span), transform:"translate(0 2.2)"}, rips);   // the trough's shadow
     it.ringH = el("path", {class:`ripH l-${it.lv}`, d:arcPath(14, it.span), transform:"translate(0 -1.6)"}, rips);  // the crest catching the sky
