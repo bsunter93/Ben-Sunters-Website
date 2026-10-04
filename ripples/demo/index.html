@@ -39,7 +39,7 @@ header,.wrap,.how,.foot,.intro,.toast{position:relative;z-index:1}
 h1,.clock .d,.intro h2{font-variation-settings:"SOFT" 100,"opsz" 72}
 a{color:inherit;text-underline-offset:3px}
 button,select{font:inherit;color:inherit}
-header{max-width:1240px;margin:0 auto;padding:26px 16px 6px}
+header{max-width:1240px;margin:0 auto;padding:18px 16px 6px}
 /* the wordmark: lowercase ripple, the i is the stone, rings spread from the two p's */
 .brand{display:flex;flex-wrap:wrap;align-items:flex-end;gap:2px 14px;color:var(--ink)}
 .brand .tag{padding-bottom:7px}
@@ -85,6 +85,9 @@ h1 em{font-style:italic;font-weight:500;color:var(--shallow-2)}
 .sub{color:var(--ink-2);max-width:62ch;margin:0}
 .sub .also{display:block;color:var(--paper);margin-bottom:4px}.sub .also b{font-weight:600;color:var(--marigold)}
 .sub.clamp{display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;cursor:pointer}.sub.clamp .also{display:inline;margin:0}.sub.clamp .also::after{content:" "}
+/* on a laptop the header cost a third of the first screen (round five): the honesty line stays whole, the rest folds to one line until clicked */
+.sub .rest{display:block}.sub.fold{cursor:pointer}.sub.fold .rest{position:relative;display:-webkit-box;-webkit-line-clamp:1;-webkit-box-orient:vertical;overflow:hidden;padding-right:4.5em}
+.sub .moreq{display:none}.sub.fold .moreq{display:block;position:absolute;right:0;top:0;color:var(--ink-3);font-size:.8rem;line-height:1.5;padding-left:18px;background:linear-gradient(90deg,rgba(15,28,38,0),var(--stage) 40%)}.sub.fold .rest{position:relative}
 .sub[aria-expanded="true"]{cursor:pointer}
 .pondbox .bar{margin:4px 8px 0}.pondbox .chooser{margin:8px 8px 0}
 .picker{display:flex;flex-wrap:wrap;gap:7px;margin:10px 0 2px;max-height:168px;overflow-y:auto;scrollbar-width:thin;padding-bottom:4px;
@@ -1691,9 +1694,9 @@ function show(kind, slug, autoplay = true) {
   const markLine = marks.length ? `What followed and stayed: ${marks.slice(0, 3).map(x => `${x.label} (${x.mark.toLowerCase()})`).join("; ")}${marks.length > 3 ? `; and ${marks.length - 3} more` : ""}. The arrow is drawn from the weakest link on the way there: ${story.weak === "measured" ? "solid, every link measured" : story.weak === "timed" ? "solid, the links timed" : story.weak === "reported" ? "dashed, a source makes a link" : "dotted, a link is unproven"}. Order, not proof of cause.`
     : "A big splash, no lasting mark yet: what changed so far is attention and money, not a law, an institution, jobs or health.";
   const also = kind === "acts" ? null : (DATA.context || {})[`${kind}:${slug}`]; story.also = also || ""; story.titleText = titleText;  // the other things going on: one editorial sentence, so the title never reads as the whole cause
-  const subEl = $("#sub"); subEl.classList.toggle("clamp", window.innerWidth <= 560); subEl.setAttribute("aria-expanded", "false");
-  subEl.innerHTML = (also ? `<span class="also"><b>It wasn't the only reason:</b> ${esc(also)}</span> ` : "") + esc(kind === "acts" ? `Named in the passage of ${story.items.length} ${story.items.length === 1 ? "law" : "laws"}${story.items.length === 1 ? (marks.length ? ", as a reason given for the bill" : ", in passing") : `, ${marks.length} of them as a reason given for the bill`}. A citation shows the work was in the room, not that it caused the law.` : markLine);  // one line; the story's own paragraph is in the first card
-  const tally = {}; story.items.forEach(x => tally[x.lv] = (tally[x.lv] || 0) + 1);
+  const subEl = $("#sub"); subEl.classList.toggle("clamp", window.innerWidth <= 560); subEl.classList.toggle("fold", window.innerWidth > 560); subEl.setAttribute("aria-expanded", "false");
+  subEl.innerHTML = (also ? `<span class="also"><b>It wasn't the only reason:</b> ${esc(also)}</span> ` : "") + `<span class="rest"><span class="moreq">more ▾</span>` + esc(kind === "acts" ? `Named in the passage of ${story.items.length} ${story.items.length === 1 ? "law" : "laws"}${story.items.length === 1 ? (marks.length ? ", as a reason given for the bill" : ", in passing") : `, ${marks.length} of them as a reason given for the bill`}. A citation shows the work was in the room, not that it caused the law.` : markLine);  // one line; the story's own paragraph is in the first card
+  const tally = {}; story.items.forEach(x => tally[x.lv] = (tally[x.lv] || 0) + 1) + "</span>";
   $("#tally").innerHTML = (kind === "acts" ? `<span class="markt">${HEX}${marks.length} cited as a reason</span>` : marks.length ? `<span class="markt">${HEX}${marks.length} lasting mark${marks.length === 1 ? "" : "s"}</span>` : `<span class="nomark">No lasting mark yet</span>`) +
     ["measured", "timed", "reported", "plausible", "busted"].filter(k => tally[k]).map(k => `<span class="l-${k}">${tally[k]} ${LVL[k].toLowerCase()}</span>`).join("") + (kind === "acts" ? "" : `<span class="weak">weakest link ${LVL[story.weak].toLowerCase()}</span>`);
   // same stone, other ponds; and any ripple that is itself a stone we have thrown
@@ -1723,10 +1726,10 @@ function next() {
     const bar = $(".bar"), ch = $("#chooser"), leg = $(".legend"); if (!bar || !ch || !leg) return;
     const ph = window.innerWidth <= 560, inHead = bar.parentElement.tagName === "HEADER";
     if (ph && inHead) { leg.after(bar); bar.after(ch); } else if (!ph && !inHead) { $("#sub").after(bar); bar.after(ch); }
-    const sub = $("#sub"); if (sub) { if (!ph) { sub.classList.remove("clamp"); sub.removeAttribute("aria-expanded"); } else if (!sub.hasAttribute("aria-expanded")) { sub.classList.add("clamp"); sub.setAttribute("aria-expanded", "false"); } }
+    const sub = $("#sub"); if (sub) { const open = sub.dataset.open === "1"; sub.classList.toggle("clamp", ph && !open); sub.classList.toggle("fold", !ph && !open); sub.setAttribute("aria-expanded", open ? "true" : "false"); }
   };
   phoneLayout(); window.addEventListener("resize", phoneLayout);
-  $("#sub").addEventListener("click", () => { const sub = $("#sub"); if (!sub.hasAttribute("aria-expanded")) return; const open = sub.classList.toggle("clamp"); sub.setAttribute("aria-expanded", open ? "false" : "true"); });  // a tap reads the whole subtitle
+  $("#sub").addEventListener("click", () => { const sub = $("#sub"); if (!sub.hasAttribute("aria-expanded")) return; const cls = window.innerWidth <= 560 ? "clamp" : "fold"; const closed = sub.classList.toggle(cls); sub.dataset.open = closed ? "" : "1"; sub.setAttribute("aria-expanded", closed ? "false" : "true"); });  // a tap reads the whole subtitle
   const chooser = $("#chooser"), cbtn = $("#chooserbtn");
   const setChooser = open => { chooser.hidden = !open; cbtn.setAttribute("aria-expanded", open); if (open && window.innerWidth <= 560) requestAnimationFrame(() => cbtn.scrollIntoView({block:"start", behavior:"smooth"})); };  // on a phone the chooser lives under the pond, so opening it brings it up
   cbtn.onclick = () => setChooser(chooser.hidden);
