@@ -62,7 +62,7 @@ CURATED = {
         1: W("Exotic pet"),
         2: W("Wildlife trade"),
         4: congress("116th", "house-bill", 1380, "H.R. 1380, Big Cat Public Safety Act (116th Congress)"),
-        5: W("Big Cat Public Safety Act"),
+        5: congress("117th", "house-bill", 263, "H.R. 263, Big Cat Public Safety Act (117th Congress), enacted Dec 20, 2022"),
     },
     "mr-bates-horizon": {
         1: W("Mr Bates vs The Post Office"),

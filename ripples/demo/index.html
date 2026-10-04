@@ -574,8 +574,8 @@ function howSure(lv, o = {}) {
   const after = " It also began after the step before it, which is the order a cause needs.";
   if (lv === "measured") {
     if (o.kind === "dose") return `${esc(o.what)}. For each state that opened retail cannabis we took the change in the outcome from the last survey before to the second survey after, and subtracted the same change in states that never did. We then handed the same opening dates to 2,000 random sets of states: ${o.p <= 0.05 ? `only ${pct} of those produced a difference this large (p = ${o.p})` : `${pct} of those produced a difference at least this large (p = ${o.p}), so it is within what chance produces`}. A placebo on the two surveys before the opening checks whether the treated states were already drifting (pre-trend p = ${o.pre}). This is the first rung above timing: exposure that varies by place. It still cannot rule out something else that arrived in the same states at the same time.`;
-    if (o.kind === "wiki") { const floor = o.n && o.p != null && o.p <= 1.05 / (o.n + 1);
-      return `We counted daily Wikipedia views of “${esc(o.what)}”. From ${o.when} they ran about ${o.ratio}× the page's normal (its median before). We then ran the same test at ${o.n ? `${o.n}` : "many"} placebo windows spaced through the page's own past: ${floor ? `none of them rose this much (p = ${o.p}, the smallest this test can report)` : `a jump this big showed up at only ${pct} of them (p = ${o.p})`}.${after} This shows attention, not what people did next.`; }
+    if (o.kind === "wiki") { const floor = o.p != null && (o.n ? o.p <= 1.05 / (o.n + 1) : o.p <= 0.0105);
+      return `We counted daily Wikipedia views of “${esc(o.what)}”. From ${o.when} they ran about ${o.ratio}× the page's normal (its median before). We then ran the same test at ${o.n ? `${o.n}` : "many"} placebo windows spaced through the page's own past: ${floor ? `none of them rose this much (p = ${o.p}, the smallest this test can report${o.n ? "" : " with the windows it had"})` : `a jump this big showed up at only ${pct} of them (p = ${o.p})`}.${after} This shows attention, not what people did next.`; }
     if (o.kind === "ssa") return `We took the yearly count of US babies given this name and compared the change in ${o.when} with the change in every other year on record. Only ${pct} of years moved this much (p = ${o.p}).${after}`;
     return `We took the official series (${esc(o.what)}) and compared its change after this date with its change after every other date in the series. Only ${pct} of those moved this much (p = ${o.p}).${after} A measured move, not proof that nothing else was going on.`;
   }
@@ -602,7 +602,7 @@ function discItems(ev, skip = new Set()) {
       card:card({when:`${fmt(D(l.onset))}<span>${sinceLabel(l.lag)}</span>`, badge:"Measured", badgeCls:"l-measured", cls:"disc",
         sure:howSure("measured", {kind:"wiki", what:l.label, when:fmt(D(l.onset)), ratio:l.ratio, p:l.p, n:l.n_pseudo}),
         title:l.headline || l.label, spark:sparkHTML(l.weekly, ev.date),
-        short:`Attention to “${esc(l.label)}” ${l.ratio}× normal · p = ${l.p}`,
+        short:`Attention to “${esc(l.label)}” ${l.ratio}× normal · ${l.p <= 0.0105 ? `no placebo window rose this much (p = ${l.p})` : `p = ${l.p}`}`,
         details:`<p>${esc(cap(l.desc))}.</p>${l.next ? `<p><b>Next test:</b> ${esc(l.next)}.</p>` : ""}<p>Found by the engine among articles linking to the event: daily Wikipedia views rose beyond their own history (p = ${l.p}) after attention to the event began, then qualified by hand for a material endpoint and a plausible path.</p><p class="src">Daily views of “${esc(l.label)}” · <a href="https://en.wikipedia.org/wiki/${encodeURIComponent(l.label.replace(/ /g, "_"))}" target="_blank" rel="noopener">Wikipedia: ${esc(l.label)} ↗</a> · <a href="https://pageviews.wmcloud.org/?project=en.wikipedia.org&pages=${encodeURIComponent(l.label.replace(/ /g, "_"))}" target="_blank" rel="noopener">the pageviews tool ↗</a></p>`})});
     if (l.outcome) {
       const d = daysBetween(ev.date, l.outcome.date);
@@ -725,7 +725,7 @@ function fromActs(work) {
 // ---- checked chains (ripples/docs/results/chain_check_v1.json) ----
 function chainLevel(st) {
   const v = st.verdict || "", why = st.reason || st.note || "";
-  if (/after what it is said/.test(v)) return ["busted", "Busted", "This arrived after the trend it is said to have started.", "Came after what it claims to have started"];
+  if (/after what it is said/.test(v)) return ["busted", "Busted", "This came after what it is said to have started.", "Came after what it claims to have started"];
   if (/wrong order|before the step/.test(v)) return ["busted", "Busted", st.test.type === "record" ? "This came before the step it is said to follow." : "It began before the step before it.", "Came before its cause"];
   if (/contradicted/.test(v)) return ["busted", "Busted", `Contradicted. ${why}`, "Contradicted"];
   if (/no evidence/.test(v)) return ["busted", "Busted", "No evidence found that this happened as described." + (why && !/^desk check: no evidence/.test(why) ? ` (${why}.)` : ""), "No evidence it happened"];
@@ -761,9 +761,7 @@ const SRCURL = st => {
   if (ty === "arxiv") return ["https://arxiv.org/archive/astro-ph", "arXiv astro-ph"];
   if (ty === "dose" || ty === "file") return ["/ripples/methods/", "How we tested it"];
   if (st.url) return [st.url, st.urlLabel || "Open the source"];
-  const art = (st.attn && st.attn.articles && st.attn.articles[0]) || null;  // the article whose attention we checked at this date
-  if (art) return [`https://en.wikipedia.org/wiki/${encodeURIComponent(art.replace(/ /g, "_"))}`, `Wikipedia: ${art}`];
-  return null;  // no link: the source's own words stand, marked as not linked yet
+  return null;  // an attention-check article is not this step's source  // no link: the source's own words stand, marked as not linked yet
 };
 const amer = s => String(s || "").replace(/\b(\d{1,2}) (Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Sept|Oct|Nov|Dec)[a-z]* (\d{4})\b/g, (m, d, mo, y) => `${mo.slice(0, 3)} ${+d}, ${y}`).replace(/\s*\([a-z0-9]{4}-[a-z0-9]{4}\)/g, "");  // US dates in source lines; dataset ids out
 const srcP = (st, text) => { const u = SRCURL(st); text = amer(text); const t1 = text ? text.charAt(0).toUpperCase() + text.slice(1) : "";
@@ -806,7 +804,7 @@ function fromChain(slug) {
       const y0 = st.range[0].slice(0, 4), y1 = st.range[1].slice(0, 4);
       const span = y0 === y1 ? `${fmt(D(st.range[0])).replace(/,.*/, "")}–${fmt(D(st.range[1])).replace(/,.*/, "")}, ${y0}` : `${y0}–${y1}`;
       when = `≈ ${y0 === y1 ? fmt(D(st.onset)).replace(/ \d+,/, "") : st.onset.slice(0, 4)}<span>likely ${span}</span>`; sub = `≈ ${span}`;
-    } else if (st.must_precede) { when = `${fmt(D(st.onset))}<span>a claim, tested against the record</span>`; sub = `claim · ${fmtMonth(D(st.onset))}`; }
+    } else if (st.must_precede || /after what it is said/.test(st.verdict || "")) { when = `${fmt(D(st.onset))}<span>a claim, tested against the record</span>`; sub = `claim · ${fmtMonth(D(st.onset))}`; }
     else if (/-07-01$/.test(st.onset || "") && !/jul/i.test(srcLine)) { when = `${st.onset.slice(0, 4)}<span>placed at mid-year · ${sinceLabel(d)}</span>`; sub = `${st.onset.slice(0, 4)} · ${sinceLabel(d)}`; }  // a step dated only to its year
     else { when = `${fmt(D(st.onset))}<span>${sinceLabel(d)}</span>`; sub = `${fmtMonth(D(st.onset))} · ${sinceLabel(d)}`; }
     const happened = st.test.type === "record" ? srcP(st, st.source || st.test.source) :
@@ -1090,7 +1088,8 @@ function pulseHTML(story) {
   const top = Math.max(...lines.map(l => l.peak[1])) * 1.35, mag = Math.pow(10, Math.floor(Math.log10(top))), ymax = Math.max(5, [1, 2, 5, 10].map(m => m * mag).find(v => v >= top));  // the next 1-2-5 step above the highest peak
   const Y = r => T + (H - T - B) * (1 - Math.log10(Math.max(0.3, r) / 0.3) / Math.log10(ymax / 0.3));
   let g = "";
-  for (let e = 1; e <= ymax; e *= 10) if (e !== 1 || true) g += `<line class="pg" x1="${L}" x2="${W - Rm}" y1="${Y(e).toFixed(1)}" y2="${Y(e).toFixed(1)}"/><text class="pl" x="${L - 6}" y="${(Y(e) + 3.5).toFixed(1)}" text-anchor="end">${e === 1 ? "normal" : e.toLocaleString() + "×"}</text>`;
+  if (!/^10*$/.test(String(ymax))) g += `<line class="pg" x1="${L}" x2="${W - Rm}" y1="${Y(ymax).toFixed(1)}" y2="${Y(ymax).toFixed(1)}"/><text class="pl" x="${L - 6}" y="${(Y(ymax) + 3.5).toFixed(1)}" text-anchor="end">${ymax.toLocaleString()}×</text>`;
+  for (let e = 1; e <= ymax; e *= 10) g += `<line class="pg" x1="${L}" x2="${W - Rm}" y1="${Y(e).toFixed(1)}" y2="${Y(e).toFixed(1)}"/><text class="pl" x="${L - 6}" y="${(Y(e) + 3.5).toFixed(1)}" text-anchor="end">${e === 1 ? "normal" : e.toLocaleString() + "×"}</text>`;
   for (const [d, lbl] of [[-28, "4 wk before"], [7, "1 wk"], [30, "1 mo"], [91, "3 mo"], [365, "1 yr"]]) g += `<line class="pg v" x1="${X(d).toFixed(1)}" x2="${X(d).toFixed(1)}" y1="${T}" y2="${H - B}"/><text class="pl" x="${X(d).toFixed(1)}" y="${H - B + 13}" text-anchor="middle">${lbl}</text>`;
   g += `<line class="pz" x1="${X(0).toFixed(1)}" x2="${X(0).toFixed(1)}" y1="${T - 4}" y2="${H - B}"/><text class="pl z" x="${X(0).toFixed(1)}" y="${H - B + 13}" text-anchor="middle">the step</text>`;
   let paths = "", labs = "", used = [];
@@ -1098,7 +1097,7 @@ function pulseHTML(story) {
   for (const l of lines) {
     const d = l.pts.map((p, i) => `${i ? "L" : "M"}${X(p[0]).toFixed(1)},${Y(p[1]).toFixed(1)}`).join("");
     const px = X(l.peak[0]), py = Y(l.peak[1]);
-    paths += `<g class="pline" data-id="${l.it.id}" style="--h:${l.it.hue}"><path d="${d}" class="pp"/><circle cx="${px.toFixed(1)}" cy="${py.toFixed(1)}" r="3.2" class="pd"/><title>${esc(l.it.label)} · peak ${l.peak[1] >= 10 ? Math.round(l.peak[1]).toLocaleString() : l.peak[1].toFixed(1)}× normal, ${l.peak[0] <= 0 ? "at the step" : `${l.peak[0]} days after`}</title></g>`;
+    paths += `<g class="pline" data-id="${l.it.id}" style="--h:${l.it.hue}"><path d="${d}" class="pp"/><circle cx="${px.toFixed(1)}" cy="${py.toFixed(1)}" r="3.2" class="pd"/><title>${esc(l.it.label)} · peak week ${l.peak[1] >= 10 ? Math.round(l.peak[1]).toLocaleString() : l.peak[1].toFixed(1)}× normal, ${l.peak[0] <= 0 ? "at the step" : `${l.peak[0]} days after`} (the card's figure is the daily peak)</title></g>`;
     let ly = Math.max(T + 9, py - 6); while (used.some(u => Math.abs(u - ly) < 12)) ly += 12; used.push(ly);  // the name at the peak, kept inside the frame and clear of the last
     const right = px > L + w * 0.6;
     labs += `<text class="pn" style="--h:${l.it.hue}" x="${(px + (right ? -6 : 6)).toFixed(1)}" y="${ly.toFixed(1)}" text-anchor="${right ? "end" : "start"}">${esc(l.it.label)}</text>`;
