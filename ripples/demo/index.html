@@ -215,6 +215,8 @@ input[type=range]{flex:1;accent-color:var(--marigold);min-width:0}
 .card.hasline{border-left:4px solid var(--chip)}
 .card .shr{font-size:.78rem;color:var(--paper-ink-3);text-decoration:none;border-bottom:1px dotted currentColor;margin-left:auto;align-self:center}.card .shr:hover{color:var(--paper-ink)}
 .caption .shrcap{color:var(--ink-3);font-size:.82rem;display:block;text-align:center;margin-top:6px}
+.qmark{color:var(--ink-3)}.arw.l-q{color:var(--ink-3)}.arw.l-q line{stroke-dasharray:none;stroke-width:1.6}.sub .q{color:var(--ink-2);font-style:italic}.sub.held .also{display:none}
+@keyframes revealin{from{opacity:0;transform:translateX(-10px)}to{opacity:1;transform:none}}#h1.resolve .tail,#h1.resolve .arw{display:inline-block;animation:revealin 1.1s ease-out both}#h1.resolve .arw{animation-duration:.7s}#h1.resolve .tail{animation-delay:.45s}
 .arw{display:inline-block;vertical-align:baseline}.arw svg{width:1.15em;height:.42em;overflow:visible}.arw line,.arw path{fill:none;stroke:currentColor;stroke-width:2.4;stroke-linecap:round;stroke-linejoin:round}
 .arw.l-measured{color:var(--good)}.arw.l-timed{color:var(--timed)}.arw.l-reported{color:var(--ink)}.arw.l-plausible{color:var(--plaus)}
 .arw.l-measured svg{filter:drop-shadow(0 0 5px rgba(127,191,123,.65))}
@@ -1190,7 +1192,7 @@ function draw(story) {
 // Playback is a schedule, not a constant speed: the throw, then for every ripple a travel (the date rolls toward it)
 // and a hold (it blooms, is lit and is named at the foot of the pond), then a short run-out. Ripples that arrive
 // together share a beat. A long story's holds shrink to fit the cap, never below the floor.
-const BEAT = {throwMs:1100, hold:2600, holdPre:1800, holdLoud:4000, holdLoudPre:3200, holdBust:3000, extra:900, travelMin:450, travelMax:1600, travelPreMax:1000, travelK:7000, cap:95000, holdFloor:1500, outMs:900};  // holdPre, travelPreMax: the ordinary beats before the first lasting mark run tighter (second roundtable: 17 s to the first law on a phone was too long)
+const BEAT = {throwMs:1100, hold:2600, holdPre:1800, holdLoud:4000, holdLoudPre:3200, holdBust:3000, verifyMs:3400, extra:900, travelMin:450, travelMax:1600, travelPreMax:1000, travelK:7000, cap:95000, holdFloor:1500, outMs:900};  // holdPre, travelPreMax: the ordinary beats before the first lasting mark run tighter (second roundtable: 17 s to the first law on a phone was too long)
 function makeTimeline(story) {
   const es = story.items.filter(x => x.pos).map(x => ({it:x, tS:tOfDay(x.d)})).sort((a, b) => a.tS - b.tS);
   const beats = [];
@@ -1209,7 +1211,7 @@ function makeTimeline(story) {
   const segs = []; let c = 0;
   const push = (t0, t1, ms, beat) => { segs.push({t0, t1, ms, c0:c, beat:beat || null}); c += ms; };
   push(0, PRE, BEAT.throwMs, null); tp = PRE;
-  for (const b of beats) { push(tp, b.tS, b.travel, null); push(b.tS, b.tS, b.hold, b); tp = b.tS; }
+  beats.forEach((b, i) => { push(tp, b.tS, b.travel, null); push(b.tS, b.tS, b.hold, b); if (i === firstMark && !REEL) push(b.tS, b.tS, BEAT.verifyMs, {verify:true, items:[], mark:b.items.find(x => x.mark)}); tp = b.tS; });  // after the first mark: the verification beat
   push(tp, 1, BEAT.outMs, null);
   story.timeline = {segs, total:c, beats}; story.clock = 0; story.beatOn = null; story.lit = null;
   if (REEL) makeReelCut(story, beats);
@@ -1258,9 +1260,28 @@ function beatText(b) {
   const rest = b.items.slice(1);
   return `<span class="bwhen">${esc(it.sub || sinceLabel(it.d))}</span>${it.mark ? `<span class="bmk">${HEX}${esc(it.mark)}</span>` : ""}<b>${esc(main)}</b><i class="bhow l-${it.lv}">${esc(it.lvText || LVL[it.lv])}</i>${why ? `<span class="bwhy">${why.length > 140 ? esc(why.slice(0, 137)) + "…" : why}</span>` : ""}${rest.length ? `<span class="bmore">At the same time: ${rest.map(x => esc(x.label)).join(" · ")}</span>` : ""}`;
 }
+// The investigation (owner, Oct 5): catalyst → suspicion → clue → reveal → verification → consequence. While a story with a
+// lasting mark plays from the start, the title shows the stone and a question mark, the tally "? lasting marks", the
+// subtitle one line; the first mark's beat resolves the title (the arrow draws, the answer fades in, a chime if sound
+// is on), and a verification beat follows with the order check, the weakest link and "It wasn't the only reason".
+// Deep links, the rest state, a tap, a scrub and Step show everything; nothing is hidden from a reader who arrives at the answer.
+function setMystery(on, part) {
+  if (!cur || !cur.h1Mystery) return;
+  const h1 = $("#h1"), sub = $("#sub"), tally = $("#tally");
+  if (on) { h1.classList.remove("resolve"); h1.innerHTML = cur.h1Mystery; tally.innerHTML = cur.tallyMystery; sub.innerHTML = cur.subMystery; sub.classList.add("held"); cur.mystery = true; return; }
+  if (!part || part === "title") { if (cur.mystery && h1.innerHTML !== cur.h1Full) { h1.innerHTML = cur.h1Full; h1.classList.add("resolve"); } tally.innerHTML = cur.tallyFull; }
+  if (!part || part === "sub") { sub.innerHTML = cur.subFull; sub.classList.remove("held"); cur.mystery = false; }
+}
+function verifyText(b) {
+  const m = b.mark, stone = cur.stone || cur.title, weak = cur.weak || "plausible";
+  const order = `${esc(stone)} came first, ${esc(fmt(D(cur.iso0)))}; ${esc(m.label)} ${sinceLabel(m.d).replace("+", "")} later.`;
+  return `<span class="bwhen">Checked</span><b>${order}</b><i class="bhow l-${weak}">weakest link ${esc(LVL[weak].toLowerCase())}</i><span class="bwhy">${weak === "measured" ? "Every link on the way passed a placebo test against its own past." : weak === "timed" ? "Every link on the way is in order; none was tested against chance." : weak === "reported" ? "A source makes each link; order shows sequence, not proof of cause." : "At least one link on the way is unproven; order shows sequence, not proof of cause."}</span>${cur.also ? `<span class="bmore">It wasn't the only reason: ${esc(cur.also)}</span>` : ""}`;
+}
 function spotlight(b) {  // the beat's ripples bloom lit, with their path back to the stone, and the line under the pond says what happened
+  if (b.verify) { cur.beatOn = b; const bl = $("#beatline"); bl.innerHTML = verifyText(b); placeBeatline(); bl.classList.remove("off"); setMystery(false, "sub"); return; }  // the verification beat keeps the mark lit and answers "is it real?"
   unspot(); cur.beatOn = b;
-  if (b.end) { const bl = $("#beatline"); bl.innerHTML = b.html; placeBeatline(); bl.classList.remove("off"); return; }
+  if (b.end) { const bl = $("#beatline"); bl.innerHTML = b.html; placeBeatline(); bl.classList.remove("off"); setMystery(false); return; }
+  if (b.items.some(x => x.mark) && cur.mystery) { setMystery(false, "title"); if (soundOn) ping(660, 0.5); }  // the reveal
   const lit = new Set();
   for (const it of b.items) {
     wake(it); lit.add(it);
@@ -1270,14 +1291,19 @@ function spotlight(b) {  // the beat's ripples bloom lit, with their path back t
   }
   lit.forEach(x => [x.g, x.path, x.lab, x.band, x.ring, x.crest].forEach(e => e && e.classList.add("lit")));
   cur.lit = lit; $("#pond").classList.add("beat");
-  const bl = $("#beatline"); bl.innerHTML = beatText(b) + nextMarkLine(b); placeBeatline(); bl.classList.remove("off");
+  const bl = $("#beatline"); bl.innerHTML = clueText(b) + nextMarkLine(b); placeBeatline(); bl.classList.remove("off");
 }
-function nextMarkLine(b) {  // on an ordinary beat, say that a lasting mark is coming and how far away it is
+function clueText(b) {  // before the first lasting mark, an ordinary beat is a clue, and says which
+  const html = beatText(b); const beats = cur.timeline && cur.timeline.beats; if (!beats || !cur.mystery || b.items.some(x => x.mark)) return html;
+  const fm = beats.findIndex(x => x.items.some(y => y.mark)), i = beats.indexOf(b); if (fm <= 0 || i < 0 || i >= fm) return html;
+  return html.replace('<span class="bwhen">', `<span class="bwhen">Clue ${i + 1} of ${fm} · `);
+}
+function nextMarkLine(b) {  // on an ordinary beat, say that a lasting mark is coming and how far away it is; while the answer is withheld, do not name it
   if (!cur.timeline || !cur.timeline.beats || b.items.some(x => x.mark)) return "";
   const beats = cur.timeline.beats, i = beats.indexOf(b); if (i < 0) return "";
   const k = beats.slice(i + 1).findIndex(x => x.items.some(y => y.mark)); if (k < 0) return "";
   const m = beats[i + 1 + k].items.find(y => y.mark);
-  return `<span class="bmore">Next lasting mark: ${esc(m.label)} · ${k + 1} ripple${k ? "s" : ""} away</span>`;
+  return cur.mystery ? `<span class="bmore">A lasting mark is ${k + 1} ripple${k ? "s" : ""} away</span>` : `<span class="bmore">Next lasting mark: ${esc(m.label)} · ${k + 1} ripple${k ? "s" : ""} away</span>`;
 }
 function placeBeatline() {  // the lower third sits on the pond's bottom edge, whatever the pond's size
   const bl = $("#beatline"), svg = $("#pond"), box = $(".pondbox"); if (!bl || !svg) return;
@@ -1591,6 +1617,7 @@ function clearFocus() {
   if (hot) { hot.lab.classList.remove("hot"); hot.cardEl && hot.cardEl.classList.remove("hot"); hot = null; }
 }
 function focus(it) {
+  setMystery(false);  // a tap is a reader taking over: show everything
   if (it.plane) drop(it.plane);
   if (hot === it) { clearFocus(); return; }
   clearFocus();
@@ -1641,8 +1668,9 @@ function tick(now) {
 }
 function setPlaying(p) {
   playing = p; if (cur && !p) cur.goal = null;
-  if (cur && p && cur.timeline) { unspot(); cur.clock = clockAtT(t); }  // play resumes from wherever the clock is, scrubbed or stepped
-  if (cur && !p && t >= 1) { cur.items.forEach(wake); if (!REEL) { unspot(); $("#beatline").classList.add("off"); } }  // a reel keeps its end card up  // at rest every step speaks and the pond is level
+  if (cur && p && cur.timeline) { unspot(); cur.clock = clockAtT(t); if (t <= PRE + 1e-6 && !stepMode) setMystery(true); else setMystery(false); }  // play from the start is an investigation; a resumed play shows everything
+  if (cur && !p) setMystery(false);  // a pause, a stop, a scrub or a deep link shows everything
+  if (cur && !p && t >= 1) { cur.items.forEach(wake); setMystery(false); if (!REEL) { unspot(); $("#beatline").classList.add("off"); } }  // a reel keeps its end card up  // at rest every step speaks and the pond is level
   if (cur && !p && cur.sCore) render();  // one last frame: the rest label, the woken labels  // a pause or a scrub drops the step goal; play picks the next from where the clock is
   const done = !p && t >= 1;
   $("#playico").innerHTML = p ? '<rect x="3" y="2" width="3.5" height="12" fill="currentColor"/><rect x="9.5" y="2" width="3.5" height="12" fill="currentColor"/>'
@@ -1759,12 +1787,16 @@ function show(kind, slug, autoplay = true) {
   $("#h1").innerHTML = esc(titleText).replace(/\s*→\s*/, ` <span class="arw l-${weak}" title="The weakest link on the way to the mark is ${LVL[weak].toLowerCase()}"><svg viewBox="0 0 44 16" aria-hidden="true"><line x1="2" y1="8" x2="32" y2="8"/><path d="M28 2l9 6-9 6"/></svg></span> `);
   const markLine = marks.length ? `What followed and stayed: ${marks.slice(0, 3).map(x => `${x.label} (${x.mark.toLowerCase()})`).join("; ")}${marks.length > 3 ? `; and ${marks.length - 3} more` : ""}. The arrow is drawn from the weakest link on the way there: ${story.weak === "measured" ? "solid, every link measured" : story.weak === "timed" ? "solid, the links timed" : story.weak === "reported" ? "dashed, a source makes a link" : "dotted, a link is unproven"}. Order, not proof of cause.`
     : "A big splash, no lasting mark yet: what changed so far is attention and money, not a law, an institution, jobs or health.";
+  { const h1 = $("#h1"), arw = h1.querySelector(".arw"); if (arw) { const tail = document.createElement("span"); tail.className = "tail"; while (arw.nextSibling) tail.appendChild(arw.nextSibling); h1.appendChild(tail); } story.h1Full = h1.innerHTML;
+    const q = h1.cloneNode(true), qa = q.querySelector(".arw"), qt = q.querySelector(".tail"); if (qa) { qa.className = "arw l-q"; qa.removeAttribute("title"); } if (qt) qt.innerHTML = '<span class="qmark">?</span>'; story.h1Mystery = qa ? q.innerHTML : null; }  // the investigation: the title withholds its answer until the first lasting mark lands
   const also = kind === "acts" ? null : (DATA.context || {})[`${kind}:${slug}`]; story.also = also || ""; story.titleText = titleText;  // the other things going on: one editorial sentence, so the title never reads as the whole cause
   const subEl = $("#sub"); subEl.classList.toggle("clamp", window.innerWidth <= 560); subEl.classList.toggle("fold", window.innerWidth > 560); subEl.setAttribute("aria-expanded", "false");
-  subEl.innerHTML = (also ? `<span class="also"><b>It wasn't the only reason:</b> ${esc(also)}</span> ` : "") + `<span class="rest"><span class="moreq">more ▾</span>` + esc(kind === "acts" ? `Named in the passage of ${story.items.length} ${story.items.length === 1 ? "law" : "laws"}${story.items.length === 1 ? (marks.length ? ", as a reason given for the bill" : ", in passing") : `, ${marks.length} of them as a reason given for the bill`}. A citation shows the work was in the room, not that it caused the law.` : markLine);  // one line; the story's own paragraph is in the first card
-  const tally = {}; story.items.forEach(x => tally[x.lv] = (tally[x.lv] || 0) + 1) + "</span>";
+  subEl.innerHTML = (also ? `<span class="also"><b>It wasn't the only reason:</b> ${esc(also)}</span> ` : "") + `<span class="rest"><span class="moreq">more ▾</span>` + esc(kind === "acts" ? `Named in the passage of ${story.items.length} ${story.items.length === 1 ? "law" : "laws"}${story.items.length === 1 ? (marks.length ? ", as a reason given for the bill" : ", in passing") : `, ${marks.length} of them as a reason given for the bill`}. A citation shows the work was in the room, not that it caused the law.` : markLine) + "</span>";  // one line; the story's own paragraph is in the first card
+  story.subFull = subEl.innerHTML; story.subMystery = `<span class="q">Something changed after this. Follow the water.</span>`;
+  const tally = {}; story.items.forEach(x => tally[x.lv] = (tally[x.lv] || 0) + 1);
   $("#tally").innerHTML = (kind === "acts" ? `<span class="markt">${HEX}${marks.length} cited as a reason</span>` : marks.length ? `<span class="markt">${HEX}${marks.length} lasting mark${marks.length === 1 ? "" : "s"}</span>` : `<span class="nomark">No lasting mark yet</span>`) +
     ["measured", "timed", "reported", "plausible", "busted"].filter(k => tally[k]).map(k => `<span class="l-${k}">${tally[k]} ${LVL[k].toLowerCase()}</span>`).join("") + (kind === "acts" ? "" : `<span class="weak">weakest link ${LVL[story.weak].toLowerCase()}</span>`);
+  story.tallyFull = $("#tally").innerHTML; story.tallyMystery = story.tallyFull.replace(/(<span class="markt">)[\s\S]*?(<\/span>)/, `$1${HEX}? lasting marks$2`).replace(/<span class="weak">[\s\S]*?<\/span>/, "");
   // same stone, other ponds; and any ripple that is itself a stone we have thrown
   const others = pondsFor(story.stone, kind, slug), pondsEl = $("#ponds");
   pondsEl.innerHTML = pondChips(others, others.length === 1 ? "Same stone, another pond:" : "Same stone, other ponds:"); pondsEl.hidden = !others.length;
@@ -1891,7 +1923,7 @@ function next() {
     }
   });
   const sc = $("#scrub");
-  sc.oninput = e => { scrubbing = true; t = e.target.value / 1000; setPlaying(false); unspot(); $("#beatline").classList.add("off"); render(); };
+  sc.oninput = e => { scrubbing = true; t = e.target.value / 1000; setPlaying(false); setMystery(false); unspot(); $("#beatline").classList.add("off"); render(); };
   sc.onchange = () => { scrubbing = false; };
   const c = params.get("c"), m = params.get("m") || params.get("e"), a = params.get("a"), wk = params.get("w");
   if (CARD) playing = false;
