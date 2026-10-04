@@ -1370,7 +1370,7 @@ function focus(it) {
   if (!REEL && window.innerWidth <= 860) {  // on a phone the card is screens below: say what this ripple is, right under the pond
     const cap = $("#caption"); const capLine = it.short || (it.srcText ? esc(it.srcText) : ""); cap.innerHTML = `${it.mark ? `<b>◆ ${esc(it.mark)}</b> · ` : ""}<b>${esc(it.label)}</b> <span style="color:var(--ink-3)">· ${esc(it.lvText || LVL[it.lv])}${it.sub ? " · " + esc(it.sub) : ""}</span>${capLine ? `<br>${capLine}` : ""}<a href="#" class="readcard">Read the card ↓</a>`;
     cap.innerHTML += `<a href="#" class="shrcap">Share this step</a>`; cap.querySelector(".shrcap").onclick = e => { e.preventDefault(); shareStep(it); };
-    cap.classList.add("on"); const svg0 = $("#pond"); cap.style.top = `${svg0.offsetTop + svg0.offsetHeight - cap.offsetHeight - 10}px`; const rc = cap.querySelector(".readcard"); if (rc) rc.onclick = e => { e.preventDefault(); if (it.cardEl) it.cardEl.scrollIntoView({block:"start", behavior:"smooth"}); };
+    cap.classList.add("on"); const svg0 = $("#pond"); cap.style.display = "block"; cap.style.top = `${svg0.offsetTop + svg0.offsetHeight - cap.offsetHeight - 10}px`; cap.style.display = ""; const rc = cap.querySelector(".readcard"); if (rc) rc.onclick = e => { e.preventDefault(); if (it.cardEl) it.cardEl.scrollIntoView({block:"start", behavior:"smooth"}); };
   }
   for (let k = 0; k <= 1000; k++) if (daysAt(k / 1000) >= it.d + 0.5) { if (k / 1000 > t) t = k / 1000; break; }
   render();
@@ -1496,9 +1496,10 @@ function show(kind, slug, autoplay = true) {
   renderPicker();
   const named = TABS[tab].find(([k, s]) => k === kind && s === slug);
   const RANK = {measured:0, timed:1, reported:2, plausible:3};
-  const path = story.items.filter(x => x.lv !== "busted" && !x.disc && (x.slice === "main" || !x.slice));
+  const mainPath = story.items.filter(x => x.lv !== "busted" && !x.disc && (x.slice === "main" || !x.slice));
+  const path = mainPath.length ? mainPath : story.items.filter(x => x.lv !== "busted" && !x.disc);  // a chain with named slices: every step is on the way
   const upTo = marks.length ? path.filter(x => x.d <= Math.max(...marks.map(m => m.d))) : path;
-  const weak = (upTo.length ? upTo : path).reduce((w, x) => RANK[x.lv] > RANK[w] ? x.lv : w, "measured");
+  const weak = (upTo.length ? upTo : path).reduce((w, x) => w == null || RANK[x.lv] > RANK[w] ? x.lv : w, null) || "plausible";
   story.weak = weak;
   const titleText = named && named[2] ? named[2] : story.h1;
   $("#h1").innerHTML = esc(titleText).replace(/\s*→\s*/, ` <span class="arw l-${weak}" title="The weakest link on the way to the mark is ${LVL[weak].toLowerCase()}"><svg viewBox="0 0 44 16" aria-hidden="true"><line x1="2" y1="8" x2="32" y2="8"/><path d="M28 2l9 6-9 6"/></svg></span> `);
