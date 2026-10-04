@@ -47,6 +47,8 @@ its history are in the brief, sections 1 to 1c.
    one dose-response design, `record` for a dated fact, `none`), optional `wiki` hints naming the exact article, an
    optional `mark` (the kind of lasting mark), `must_precede` for catalyst claims, and `slice` for the pond's sectors.
    `maps/out/*.json` holds 11 generated maps (a stone, its attention and library steps, and the law where there is one).
+   The look since Oct 4 10:30 is recorded in `docs/styling_pass_v2.md`; where section 1b-ii of the brief or the bullets
+   below describe gradients, a vignette, rim capitals, label boxes or an opening screen, that record wins.
 2. **The checker grades every step.** `lab/chain_check.py` runs on GitHub Actions (`.github/workflows/ripples-chain-check.yml`,
    on pushes to `claude/**` that touch chains or the checker; `workflow_dispatch` otherwise) and commits
    `docs/results/chain_check_v1.json` back. A measured grade is a placebo test whose windows are drawn from the page's
@@ -198,11 +200,12 @@ the pacing and the cut and are stale.
 **Not released. The owner saw the live page on the morning of Oct 4 and set a new bar before release:** the playthrough
 was "way too fast and not visually interesting enough", the look "cartoony wireframe", and the worry is that strangers
 call it AI slop before giving it a chance. Two things have landed since: the `.pulse` class collision that ballooned
-the chart over the pond (PR #86) and the beat schedule that replaced the ten-second trailer (PR #87). Still to do, in
-order: the launch clips re-cut as edited video (cuts, a push-in on each arriving ripple, under 15 s; the in-app play can
-run long, the clips cannot), then the look pass (flat matte surface, no gradient or glow, rim words and label boxes
-gone, a print-annotation style, the intro screen replaced by the pond at rest), then one persona round scored on a
-stranger's first ten seconds, then release. The text below is the state the previous session left.
+the chart over the pond (PR #86), the beat schedule that replaced the ten-second trailer (PR #87), the reel cut for
+clips (PR #88, mechanism only, nothing recorded) and the look pass (PR #89, `docs/styling_pass_v2.md`: flat surface,
+no gradient or glow, rim words as print annotations, label boxes gone, matte stone, opening screen retired, share cards
+regenerated). Still to do, in order: one persona round scored on a stranger's first ten seconds (section 9), fixes it
+finds, record and encode the clips (section 5), update `docs/launch_v2.md` for the new assets, then release (section 8).
+The text below is the state the previous session left.
 
 Release-ready as of 06:30. Five rounds of simulated testers took the product from 5.5 to **8.2** and voted to release; the
 builder's own rating is **8.5** (the trail: 4 on Oct 1, 5.5 on Oct 2, 6.5 on Oct 3, 7.5 on the morning of Oct 4, 8 after

@@ -20,7 +20,7 @@
 :root{--timed:#c3b1ee;
   color-scheme:dark;
   /* water */
-  --stage:#0a2b45;--deep:#061b31;--shallow:#2d7fbd;--shallow-2:#8fc4ec;--card:#113e68;--sunk:#0d3254;--hair:#214a72;
+  --stage:#0f1c26;--deep:#0a1219;--shallow:#2d7fbd;--shallow-2:#8fc4ec;--card:#15283a;--sunk:#111f2b;--hair:#2a4254;  /* Oct 4: a flat, desaturated surface; the dusk gradient read as a template */
   --ink:#f2f6f8;--ink-2:#c1d5e8;--ink-3:#8ea8c4;
   /* paper: every reading surface */
   --paper:#f4efe4;--paper-2:#eae3d3;--paper-ink:#1e2a2e;--paper-ink-2:#4f5e62;--paper-ink-3:#7e8b8e;
@@ -30,13 +30,9 @@
 }
 *,*::before,*::after{box-sizing:border-box}
 html,body{background:var(--stage)}
-body{margin:0;color:var(--ink);font:400 16px/1.5 var(--sans);-webkit-font-smoothing:antialiased;overflow-x:hidden;position:relative;
-  background:
-    radial-gradient(900px 600px at 18% 8%,rgba(42,140,158,.28),transparent 70%),
-    radial-gradient(700px 500px at 85% 90%,rgba(42,140,158,.14),transparent 70%),
-    linear-gradient(180deg,#0e3a49 0%,var(--stage) 45%,var(--deep) 100%) fixed}
+body{margin:0;color:var(--ink);font:400 16px/1.5 var(--sans);-webkit-font-smoothing:antialiased;overflow-x:hidden;position:relative;background:var(--stage)}
 /* light on the whole surface: two soft sheens that drift very slowly, so the page itself is the water */
-body::before,body::after{content:"";position:fixed;inset:-25%;pointer-events:none;z-index:0}
+body::before,body::after{display:none}  /* the drifting sheens are gone with the gradient */
 body::before{background:radial-gradient(28% 20% at 30% 24%,rgba(200,240,244,.10),transparent 70%);animation:sheen 19s ease-in-out infinite alternate}
 body::after{background:radial-gradient(24% 16% at 70% 72%,rgba(160,220,230,.07),transparent 70%);animation:sheen 27s ease-in-out infinite alternate-reverse}
 header,.wrap,.how,.foot,.intro,.toast{position:relative;z-index:1}
@@ -101,7 +97,7 @@ h1 em{font-style:italic;font-weight:500;color:var(--shallow-2)}
 .tab small{font-weight:500;color:var(--ink-3);margin-left:4px}
 .tabnote{font-size:.8rem;color:var(--ink-3);margin:6px 0 2px}  /* shown inside the chooser only */
 .bar{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-top:8px;flex-wrap:wrap}
-.chooserbtn{display:inline-flex;align-items:center;gap:6px;background:rgba(255,255,255,.06);border:1px solid var(--hair);color:var(--ink);border-radius:999px;padding:7px 14px;font:600 .84rem var(--sans);cursor:pointer;white-space:nowrap}
+.chooserbtn{display:inline-flex;align-items:center;gap:6px;background:rgba(255,255,255,.06);border:1px solid var(--hair);color:var(--ink);border-radius:6px;padding:7px 14px;font:600 .84rem var(--sans);cursor:pointer;white-space:nowrap}
 .chooserbtn b{font-weight:800;color:var(--marigold)}.chooserbtn:hover{background:rgba(255,255,255,.1)}
 .chooser{margin-top:10px;padding:10px 14px 12px;border:1px solid var(--hair);border-radius:16px;background:rgba(5,22,40,.55)}
 .chooser[hidden]{display:none}
@@ -121,7 +117,7 @@ h1 em{font-style:italic;font-weight:500;color:var(--shallow-2)}
 .markpill{display:inline-block;margin-top:5px;font-size:.72rem;font-weight:800;letter-spacing:.03em;color:var(--marigold)}
 .card.marked{border-color:rgba(242,174,46,.55)}
 .rowlbl{width:100%;font:700 .7rem/1 var(--sans);letter-spacing:.12em;text-transform:uppercase;color:var(--ink-3);margin:8px 0 1px}
-.chip{border:1px solid var(--hair);background:rgba(10,44,51,.7);border-radius:999px;padding:6px 12px;font-weight:600;font-size:.88rem;cursor:pointer;transition:background .16s,border-color .16s}
+.chip{border:1px solid var(--hair);background:rgba(255,255,255,.05);border-radius:6px;padding:6px 12px;font-weight:600;font-size:.88rem;cursor:pointer;transition:background .16s,border-color .16s}
 .chip:hover{border-color:var(--ink-3)}
 .chip[aria-pressed="true"]{background:var(--marigold);border-color:var(--marigold);color:#061a2e}
 select.chip{appearance:none;padding-right:14px;max-width:100%}
@@ -136,7 +132,7 @@ select.chip option{background:#0c333b;color:var(--ink)}
 .clock .d{font:600 clamp(1.5rem,3.6vw,2.5rem)/1 var(--display);font-variant-numeric:tabular-nums;color:var(--paper)}
 .clock .n{font:700 .88rem/1.2 var(--sans);color:var(--marigold);font-variant-numeric:tabular-nums;text-align:right}
 .clock .n small{display:block;color:var(--ink-3);font-weight:500}
-svg#pond{display:block;width:100%;height:auto;touch-action:manipulation;border-radius:18px}svg#pond.grab{touch-action:none}  /* while the stone waits to be thrown, a touch on the pond is a grab, not a scroll */
+svg#pond{display:block;width:100%;height:auto;touch-action:manipulation;border-radius:10px}svg#pond.grab{touch-action:none}  /* while the stone waits to be thrown, a touch on the pond is a grab, not a scroll */
 .ctl{display:flex;align-items:center;gap:12px;padding:0 8px 2px;position:relative}
 .ctl .ticks{position:absolute;left:62px;right:112px;top:34px;display:flex;justify-content:space-between;font-size:.76rem;color:var(--ink-3);font-variant-numeric:tabular-nums;pointer-events:none}
 .ctl{padding-bottom:12px}
@@ -148,12 +144,12 @@ svg#pond{display:block;width:100%;height:auto;touch-action:manipulation;border-r
 }
 .wrap.fade .pondbox,.wrap.fade .feed{animation:fadein .5s ease-out}
 @keyframes fadein{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
-.play{width:38px;height:38px;border-radius:50%;border:0;background:var(--marigold);color:#061a2e;cursor:pointer;display:grid;place-items:center;flex:none}
+.play{width:38px;height:38px;border-radius:6px;border:0;background:var(--marigold);color:#061a2e;cursor:pointer;display:grid;place-items:center;flex:none}
 .play svg{width:15px;height:15px}
 input[type=range]{flex:1;accent-color:var(--marigold);min-width:0}
 .legend{display:flex;flex-wrap:wrap;align-items:center;gap:6px 14px;font-size:.78rem;color:var(--ink-2);padding:6px 8px 4px}
 .legend svg{margin-right:5px;vertical-align:middle}
-.howbtn{margin-left:auto;background:none;border:1px solid var(--hair);border-radius:999px;padding:3px 10px;font-size:.76rem;color:var(--ink-2);cursor:pointer}
+.howbtn{margin-left:auto;background:none;border:1px solid var(--hair);border-radius:6px;padding:3px 10px;font-size:.76rem;color:var(--ink-2);cursor:pointer}
 .feed{display:grid;gap:8px;align-content:start;position:sticky;top:10px;max-height:calc(100vh - 20px);overflow-y:auto;scrollbar-width:thin;
   --ink:var(--paper-ink);--ink-2:var(--paper-ink-2);--ink-3:var(--paper-ink-3);--hair:rgba(30,42,46,.14);--sunk:var(--paper-2);--rec:var(--paper-ink);--marigold:#c77f12;--good:#3e8f55;--miss:#d04a3a;
   color:var(--paper-ink);background:var(--paper);border-radius:22px;padding:10px;scrollbar-color:rgba(30,42,46,.2) transparent;box-shadow:0 30px 60px -30px rgba(0,0,0,.55)}
@@ -169,13 +165,13 @@ input[type=range]{flex:1;accent-color:var(--marigold);min-width:0}
 .ponds .pond{border:1px solid rgba(30,42,46,.25);background:none;border-radius:999px;padding:3px 10px 3px 8px;font:600 .78rem var(--sans);color:var(--paper-ink);cursor:pointer;display:inline-flex;gap:5px;align-items:center}
 .ponds .pond svg{width:12px;height:12px;color:#c77f12}
 .ponds .pond:hover{border-color:#c77f12}
-.nextbtn{background:none;border:1px solid var(--hair);border-radius:999px;padding:6px 12px;font-size:.8rem;font-weight:600;color:var(--ink-2);cursor:pointer;white-space:nowrap}
-.stepbtn{background:none;border:1px solid var(--hair);border-radius:999px;padding:6px 11px;font-size:.78rem;font-weight:600;color:var(--ink-2);cursor:pointer;white-space:nowrap;flex:none}
+.nextbtn{background:none;border:1px solid var(--hair);border-radius:6px;padding:6px 12px;font-size:.8rem;font-weight:600;color:var(--ink-2);cursor:pointer;white-space:nowrap}
+.stepbtn{background:none;border:1px solid var(--hair);border-radius:6px;padding:6px 11px;font-size:.78rem;font-weight:600;color:var(--ink-2);cursor:pointer;white-space:nowrap;flex:none}
 .stepbtn[aria-pressed="true"]{background:var(--marigold);border-color:var(--marigold);color:#1a1405}
-.search{display:flex;margin:0 0 10px}.search input{flex:1;background:var(--sunk);border:1px solid var(--hair);border-radius:999px;padding:8px 14px;font:inherit;font-size:.9rem;color:var(--ink);outline:none}.search input:focus{border-color:var(--shallow-2)}
+.search{display:flex;margin:0 0 10px}.search input{flex:1;background:var(--sunk);border:1px solid var(--hair);border-radius:6px;padding:8px 14px;font:inherit;font-size:.9rem;color:var(--ink);outline:none}.search input:focus{border-color:var(--shallow-2)}
 .picker .tabtag{font-size:.7rem;color:var(--ink-3);margin-left:6px;font-weight:500}.picker .none{color:var(--ink-3);font-size:.85rem;margin:4px 0}
 .nextbtn:hover{border-color:var(--ink-3);color:var(--ink)}
-.card{background:rgba(12,51,59,.92);border:1px solid var(--hair);border-radius:14px;padding:10px 14px;transition:border-color .2s;cursor:pointer}
+.card{background:rgba(12,51,59,.92);border:1px solid var(--hair);border-radius:8px;padding:10px 14px;transition:border-color .2s;cursor:pointer}
 .card.off{display:none}
 .card.in{animation:rise .45s ease-out}
 @keyframes rise{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
@@ -192,7 +188,7 @@ input[type=range]{flex:1;accent-color:var(--marigold);min-width:0}
 .card details summary::-webkit-details-marker{display:none}
 .card details summary::before{content:"+ "}.card details[open] summary::before{content:"– "}
 .card details p{margin:.3rem 0 0}
-.pulse{background:var(--paper);border-radius:14px;padding:10px 12px 6px;color:var(--paper-ink)}
+.pulse{background:var(--paper);border-radius:8px;padding:10px 12px 6px;color:var(--paper-ink)}
 .pulse .ptitle{font:700 .86rem/1.3 var(--sans);margin:0 2px 4px}.pulse .ptitle span{display:block;font-weight:400;color:var(--paper-ink-3);font-size:.76rem}
 .pulse svg{width:100%;height:auto;display:block}.pulse .pg{stroke:rgba(30,42,46,.12);stroke-width:1}.pulse .pg.v{stroke-dasharray:2 4}.pulse .pl{font:500 12px var(--sans);fill:var(--paper-ink-3)}
 .pulse .pline{cursor:pointer}.pulse .pp{fill:none;stroke:var(--h);stroke-width:1.8;stroke-linejoin:round;opacity:.9}.pulse .pd{fill:var(--h);stroke:var(--paper);stroke-width:1.5}
@@ -206,7 +202,7 @@ input[type=range]{flex:1;accent-color:var(--marigold);min-width:0}
 .arw.l-measured svg{filter:drop-shadow(0 0 5px rgba(127,191,123,.65))}
 .arw.l-reported line{stroke-dasharray:5 4}.arw.l-plausible line{stroke-dasharray:.1 4.5}
 .tally .weak{color:var(--ink-3)}.pulse.none{padding-bottom:10px}
-.pulsefold{background:var(--paper);border-radius:14px;padding:8px 12px;color:var(--paper-ink)}.pulsefold summary{font:700 .86rem var(--sans);cursor:pointer}.pulsefold .pulse{padding:6px 0 0}.pulsefold .pulse .ptitle{display:none}
+.pulsefold{background:var(--paper);border-radius:8px;padding:8px 12px;color:var(--paper-ink)}.pulsefold summary{font:700 .86rem var(--sans);cursor:pointer}.pulsefold .pulse{padding:6px 0 0}.pulsefold .pulse .ptitle{display:none}
 .card .claims{font-size:.84rem;color:var(--paper-ink-2);background:rgba(30,42,46,.05);border-radius:8px;padding:6px 10px;margin:.4rem 0 0}
 .card .src{font-size:.84rem;color:var(--ink-3)}.card .src a{color:var(--shallow-2)}.card .src .nolink{opacity:.7;font-style:italic}
 .card .row{display:flex;flex-wrap:wrap;gap:4px 16px;align-items:flex-start}
@@ -221,7 +217,7 @@ input[type=range]{flex:1;accent-color:var(--marigold);min-width:0}
 .facts{display:flex;flex-wrap:wrap;gap:6px 18px;margin-top:6px}
 .fact b{display:block;font:800 1.25rem/1 var(--display);font-variant-numeric:tabular-nums}
 .fact span{font-size:.74rem;color:var(--ink-3)}
-.b{font-size:.78rem;line-height:1;padding:4px 8px;border-radius:999px;border:1px solid var(--hair);white-space:nowrap;font-weight:700;letter-spacing:.02em}
+.b{font-size:.66rem;line-height:1;padding:4px 7px;border-radius:3px;border:1px solid var(--hair);white-space:nowrap;font-weight:700;letter-spacing:.07em;text-transform:uppercase}
 .b.event{background:var(--marigold);border-color:var(--marigold);color:#061a2e}
 .b.l-measured{border-color:var(--good);color:var(--good)}.b.l-timed{border-color:#7a5fc4;color:#7a5fc4}
 .b.l-reported{border-color:var(--ink-2);color:var(--ink)}.b.l-plausible{border-style:dashed;border-color:#a8955a;color:#8a7638}
@@ -238,13 +234,13 @@ input[type=range]{flex:1;accent-color:var(--marigold);min-width:0}
 .wake{stroke:rgba(190,225,255,.5);stroke-width:1.2;opacity:0;animation:wake 7s ease-out infinite}  /* the ring that leaves the stone every few seconds; named .wake, not .pulse, because .pulse is the paper chart above the cards and shared the name until Oct 4, which scaled the chart 7.5x over the pond every seven seconds */
 @keyframes wake{0%{transform:scale(.3);opacity:0}6%{opacity:.35}70%{transform:scale(7.5);opacity:0}100%{transform:scale(7.5);opacity:0}}
 @media (prefers-reduced-motion:reduce){.wake{animation:none}}  /* the time grid: log rings, a hairline each */
-.ringlbl{fill:rgba(214,232,246,.8);font:500 9px var(--sans);letter-spacing:.04em;font-variant-numeric:tabular-nums}
-.slicebd{stroke:rgba(214,232,246,.07);stroke-width:1;stroke-dasharray:2 6}
-.rimlbl{font:600 10px var(--sans);letter-spacing:.16em;text-transform:uppercase;fill:rgba(214,232,246,.5)}
+.ringlbl{fill:rgba(214,232,246,.72);font:500 10px var(--sans);letter-spacing:.01em;font-variant-numeric:tabular-nums}
+.slicebd{display:none}  /* sector boundaries read as radar spokes; the rim word and the position carry the sector */
+.rimlbl{font:italic 500 11px var(--display);letter-spacing:0;text-transform:none;fill:rgba(214,232,246,.62)}  /* where a ripple landed, set like a print annotation, not a radar rim */
 .wave{fill:none;stroke:rgba(226,240,252,.55);filter:url(#softwave)}
 .frontg{transition:opacity .4s}.front,.frontS,.frontH,.frontGlow{fill:none;stroke-linecap:round}
 .front{stroke:rgba(236,246,255,.78);stroke-width:1.7}.frontS{stroke:rgba(2,14,28,.45);stroke-width:3.2}.frontH{stroke:#fff;stroke-width:.8;opacity:.8}
-.frontGlow{stroke:rgba(190,225,255,.18);stroke-width:9}
+.frontGlow{display:none}
 @keyframes bloomr{0%{opacity:1;stroke-width:2.6}100%{opacity:.28;stroke-width:1.5}}
 @keyframes bloomh{0%{opacity:1;stroke-width:2.2}100%{opacity:.55;stroke-width:1}}
 @keyframes bloomc{0%{opacity:1;transform:scale(1.25)}100%{opacity:.55;transform:scale(1)}}
@@ -276,8 +272,7 @@ input[type=range]{flex:1;accent-color:var(--marigold);min-width:0}
 .threadtick{stroke:rgba(214,232,246,.6);stroke-width:1}
 .markglow{animation:breathe 3.2s ease-in-out infinite;display:none}
 @keyframes breathe{0%,100%{opacity:.55}50%{opacity:.95}}
-.nlab.mark rect{fill:var(--paper);stroke:none}
-.nlab.mark text{fill:var(--paper-ink)}.nlab.mark text.s{fill:#8a5a0a}
+.nlab.mark text{fill:var(--marigold)}.nlab.mark text.s{fill:rgba(242,169,59,.78)}  /* a lasting mark is named in ember, the one color that means it */
 .rip.l-measured.disc,.edge.l-measured.disc{stroke-width:2}
 .rip.l-timed,.edge.l-timed{stroke:var(--timed);stroke-width:2}
 .rip.l-reported,.edge.l-reported{stroke:var(--rec);stroke-width:1.5}
@@ -312,11 +307,11 @@ svg.hex{vertical-align:-2px;margin-right:4px}
 .leader{stroke:rgba(214,232,246,.35);stroke-width:1;opacity:0;transition:opacity .5s ease-out;pointer-events:none}.leader.on{opacity:1}
 #pond.focus .leader{opacity:.16}
 .nlab.on{opacity:1}
-.nlab rect{fill:rgba(5,22,40,.66);stroke:none}
-.nlab text{font:500 13.5px var(--sans);fill:var(--ink)}
-.nlab text.s{font-weight:500;font-size:11px;fill:var(--ink-3)}
+.nlab rect{fill:none;stroke:none}  /* no boxes: the type carries a halo in the water's color so it reads over the rings */
+.nlab text{font:500 13.5px var(--sans);fill:var(--ink);paint-order:stroke;stroke:#0f1c26;stroke-width:3.5px;stroke-linejoin:round}
+.nlab text.s{font-weight:500;font-size:11px;fill:var(--ink-3);stroke-width:3px}
 .nlab.busted text:not(.s){fill:var(--ink-3);text-decoration:line-through}
-.nlab.hot rect{stroke:var(--marigold)}
+.nlab.hot rect{fill:none;stroke:var(--marigold);stroke-width:1}
 #pond.focus .node.on:not(.lit),#pond.focus .nlab.on:not(.lit),#pond.focus .band:not(.lit),#pond.focus .rip.on:not(.lit){opacity:.16 !important;transition:opacity .3s}  /* only what has landed sits back; what has not arrived stays unseen */
 #pond.focus .rip2,#pond.focus .glint{opacity:0 !important}
 /* at rest, the ripples that left no mark sit back; a lasting mark or a measured step carries full weight */
@@ -347,13 +342,13 @@ body.reel header{max-width:760px;padding-top:22px}
   .card{padding:9px 12px}.card h2{font-size:.9rem}
 }
 /* first-visit hint, share and the reel caption */
-.hint{position:absolute;left:50%;top:64px;transform:translateX(-50%);background:rgba(5,22,40,.9);border:1px solid var(--hair);border-radius:999px;padding:8px 14px;font-size:.8rem;color:var(--ink-2);white-space:nowrap;pointer-events:none;transition:opacity .4s;z-index:2}
+.hint{position:absolute;left:50%;top:64px;transform:translateX(-50%);background:rgba(5,22,40,.9);border:1px solid var(--hair);border-radius:6px;padding:8px 14px;font-size:.8rem;color:var(--ink-2);white-space:nowrap;pointer-events:none;transition:opacity .4s;z-index:2}
 .hint[hidden]{display:none}
-.iconbtn{width:38px;height:38px;border-radius:50%;border:1px solid var(--hair);background:none;color:var(--ink-2);cursor:pointer;display:grid;place-items:center;flex:none}
+.iconbtn{width:38px;height:38px;border-radius:6px;border:1px solid var(--hair);background:none;color:var(--ink-2);cursor:pointer;display:grid;place-items:center;flex:none}
 .iconbtn svg{width:16px;height:16px}
-.toast{position:fixed;left:50%;bottom:24px;transform:translateX(-50%);background:var(--marigold);color:#061a2e;font-weight:700;font-size:.84rem;padding:8px 14px;border-radius:999px;opacity:0;transition:opacity .3s;pointer-events:none;z-index:9}
+.toast{position:fixed;left:50%;bottom:24px;transform:translateX(-50%);background:var(--marigold);color:#061a2e;font-weight:700;font-size:.84rem;padding:8px 14px;border-radius:6px;opacity:0;transition:opacity .3s;pointer-events:none;z-index:9}
 .toast.on{opacity:1}
-.caption{display:none;margin:4px 8px 6px;padding:10px 14px;border-radius:12px;background:rgba(5,22,40,.75);border:1px solid var(--hair);font-size:1.05rem;min-height:2.6em}
+.caption{display:none;margin:4px 8px 6px;padding:10px 14px;border-radius:8px;background:rgba(5,22,40,.75);border:1px solid var(--hair);font-size:1.05rem;min-height:2.6em}
 .caption b{color:var(--marigold)}
 .topond{position:fixed;right:14px;bottom:18px;z-index:5;background:var(--marigold);color:#1a1405;border:0;border-radius:999px;padding:10px 14px;font:700 .86rem var(--sans);box-shadow:0 4px 18px rgba(0,0,0,.35);cursor:pointer}
 body.reel .caption{display:none}
@@ -411,7 +406,7 @@ body.card .beatline{display:none}
   <section class="pondbox" aria-label="Ripple pond">
     <div class="clock"><div class="d" id="date">—</div><div class="n" id="since">—</div></div>
     <svg id="pond" viewBox="-120 88 940 486" role="img" aria-label="Ripples spreading out from the event over time"></svg>
-    <div class="hint" id="hint" hidden>Press play or drag the slider · tap a ripple to follow it</div>
+    <div class="hint" id="hint" hidden>Click a ripple to follow it · drag the slider to move in time</div>
     <div class="tip" id="tip" role="tooltip"></div>
     <div class="caption" id="caption" aria-live="polite"></div>
     <div class="beatline off" id="beatline" aria-live="polite"></div>
@@ -472,9 +467,9 @@ const ICON = {
 };
 // the stone: a small river rock with moss on its shoulder, drawn upright at the center of the pond
 const HEX = `<svg class="hex" width="13" height="13" viewBox="-8 -8 16 16" aria-hidden="true"><path d="M0,-7 L6,-3.5 L6,3.5 L0,7 L-6,3.5 L-6,-3.5 Z" fill="#1a2540" stroke="currentColor" stroke-width="1.4"/><circle r="2.1" fill="currentColor"/></svg>`;  // the lasting-mark glyph, inline so every platform draws it
-const STONE_SVG = `<path d="M-13.5,-3.5 C-13,-11 -5.5,-15.5 2.5,-14.5 C9.5,-13.6 14.5,-8.5 13.8,-1.5 C13.2,6 7.5,12.5 -0.5,12.6 C-8,12.7 -14,6.5 -13.5,-3.5 Z" fill="url(#rock)"/>
+const STONE_SVG = `<path d="M-13.5,-3.5 C-13,-11 -5.5,-15.5 2.5,-14.5 C9.5,-13.6 14.5,-8.5 13.8,-1.5 C13.2,6 7.5,12.5 -0.5,12.6 C-8,12.7 -14,6.5 -13.5,-3.5 Z" fill="#4b5057"/>
 <path d="M-13.5,-3.5 C-13,-11 -5.5,-15.5 2.5,-14.5 C9.5,-13.6 14.5,-8.5 13.8,-1.5 C13.2,6 7.5,12.5 -0.5,12.6 C-8,12.7 -14,6.5 -13.5,-3.5 Z" fill="none" stroke="rgba(6,20,36,.6)" stroke-width=".7"/>
-<path d="M-9.5,-9 C-5.5,-13 1.5,-13.6 6,-11.4" fill="none" stroke="rgba(255,255,255,.22)" stroke-width="1.1" stroke-linecap="round"/>`;
+<path d="M-9.5,-9 C-5.5,-13 1.5,-13.6 6,-11.4" fill="none" stroke="rgba(255,255,255,.14)" stroke-width="1" stroke-linecap="round"/>`;
 // ---------- stories ----------
 // Hand-built maps (from ripples/maps/out): which steps to show, short labels, parents, and the main slice's industry.
 const MAPS = {
@@ -945,13 +940,11 @@ function draw(story) {
     <clipPath id="pondclip"><circle cx="${C.x}" cy="${C.y}" r="${R + 30}"/></clipPath>`;
   // the field: flat dark water to the edges. No shore, no sky: the pond is an instrument, and the grid is the picture
   const scene = el("g", {class:"scene"}, svg);
-  el("rect", {x:-120, y:88, width:940, height:486, fill:"url(#field)"}, scene);
-  el("rect", {x:-120, y:88, width:940, height:486, fill:"url(#vig)"}, scene);  // deep water, lit from beneath the stone
+  el("rect", {x:-120, y:88, width:940, height:486, fill:"#0f1c26"}, scene);  // the page's own surface: no box around the pond; the disc and its lines are the picture
   // water: a softly lit surface, drawn in plane coordinates and tilted as one
   const plane = el("g", {transform:`translate(0 ${C.y}) scale(1 ${TILT}) translate(0 ${-C.y})`}, svg);
-  el("circle", {cx:C.x, cy:C.y, r:R + 34, fill:"url(#water)"}, plane);
-  el("circle", {cx:C.x, cy:C.y, r:R + 34, fill:"url(#depth)"}, plane);
-  el("circle", {cx:C.x, cy:C.y, r:R + 34, fill:"none", stroke:"rgba(214,232,246,.10)", "stroke-width":.8}, plane);  // the rim of the measured water
+  el("circle", {cx:C.x, cy:C.y, r:R + 34, fill:"url(#depth)"}, plane);  // a faint top light and a darker foot on the disc, nothing more
+  el("circle", {cx:C.x, cy:C.y, r:R + 34, fill:"none", stroke:"rgba(214,232,246,.18)", "stroke-width":.9}, plane);  // the rim of the measured water
   el("circle", {class:"wake", cx:C.x, cy:C.y, r:40, fill:"none", style:`transform-origin:${C.x}px ${C.y}px`}, plane);  // a faint ring leaves the stone every few seconds
 
   const g0 = el("g", {}, plane), gt = el("g", {}, svg);  // g0: lines on the water; gt: upright text
@@ -974,11 +967,11 @@ function draw(story) {
   }
   const rimBoxes = [];  // rim words keep their space; ripple labels place around them
   keys.forEach(k => {  // the industry each ripple reached, outside the rim, always horizontal
-    if (!story.names[k]) return;
+    if (!story.names[k] || dense) return;  // a phone pond has no room for rim words beside its labels; the card and the caption name the sector
     const c = n === 1 ? 0 : centre(k), sx = Math.sin(c * Math.PI / 180), cy = -Math.cos(c * Math.PI / 180), p = PL(polar(R + 24 + 22 * Math.abs(sx), c));
     const rt = el("text", {class:"rimlbl", x:p.x + (Math.abs(sx) < 0.35 ? 0 : sx > 0 ? 2 : -2), y:p.y + (cy > 0.35 ? 10 : cy < -0.35 ? -2 : 4),
       "text-anchor":Math.abs(sx) < 0.35 ? "middle" : sx > 0 ? "start" : "end"}, gt); rt.textContent = story.names[k];
-    rt.style.fontSize = `${Math.round((dense ? 15 : 12) * K)}px`;
+    rt.style.fontSize = `${Math.round((dense ? 12.5 : 12) * K)}px`;  // a dense pond keeps its rim words small; the labels need the room
     try {
       let b = rt.getBBox();
       if (b.x < -112) rt.setAttribute("x", +rt.getAttribute("x") + (-112 - b.x)); else if (b.x + b.width > 812) rt.setAttribute("x", +rt.getAttribute("x") - (b.x + b.width - 812));
@@ -993,7 +986,7 @@ function draw(story) {
     body:el("circle", {class:"front", cx:C.x, cy:C.y, r:0}, frontG), light:el("circle", {class:"frontH", cx:C.x, cy:C.y, r:0, transform:"translate(0 -1.6)"}, frontG)};
   story.front = front;
   const sHalo = el("circle", {cx:C.x, cy:C.y, r:30, fill:"url(#wet)"}, plane);
-  const sShadow = el("ellipse", {cx:C.x + 3, cy:C.y + 10, rx:28 * K, ry:22 * K, fill:"rgba(3,20,26,.5)", filter:"url(#soft)", style:"transform-box:fill-box;transform-origin:center"}, plane);  // the stone's shadow on the water
+  const sShadow = el("ellipse", {cx:C.x + 3, cy:C.y + 10, rx:28 * K, ry:22 * K, fill:"rgba(3,20,26,.3)", filter:"url(#soft)", style:"transform-box:fill-box;transform-origin:center"}, plane);  // the stone's shadow on the water
   const stone = el("g", {class:"stone"}, svg);
   const sCore = el("g", {class:"rockg", transform:`translate(${C.x},${C.y}) scale(${K * 1.7})`}, stone);
   sCore.innerHTML = STONE_SVG;
@@ -1748,7 +1741,7 @@ function next() {
   addEventListener("scroll", () => { const pb = $(".pondbox").getBoundingClientRect(); tp.hidden = !(window.innerWidth <= 860 && pb.bottom < 0); }, {passive:true});
   document.querySelectorAll(".tab").forEach(b => b.insertAdjacentHTML("afterbegin", ICON[{maps:"marks", stories:"checks", leads:"leads"}[b.dataset.tab]]));
   $("#intro-icon").innerHTML = ICON.drop;
-  if (matchMedia("(hover:hover) and (pointer:fine)").matches) $("#hint").textContent = "Press play or drag the slider · click a ripple to follow it";
+  if (matchMedia("(hover:hover) and (pointer:fine)").matches) $("#hint").textContent = "Click a ripple to follow it · drag the slider to move in time";
   // center the wordmark's rings on the second p's bowl once the type has loaded
   const placeRings = () => { try { const bb = $("#wmpp").getBBox(), cx = bb.x + bb.width * 0.74, cy = bb.y + bb.height * 0.36;
     $("#wmrings").setAttribute("transform", `translate(${cx.toFixed(1)} ${cy.toFixed(1)})`); } catch {} };
@@ -1757,7 +1750,7 @@ function next() {
   const setSound = on => { soundOn = on; snd.classList.toggle("on", on); snd.classList.toggle("off", !on); snd.setAttribute("aria-pressed", on); snd.setAttribute("aria-label", on ? "Sound on" : "Sound off"); try { localStorage.setItem("ko-sound", on ? "1" : "0"); } catch {} };
   setSound(soundOn); snd.onclick = () => { setSound(!soundOn); if (soundOn) ping(520, 0.25); };
   // opening screen, once
-  let introSeen = false; try { introSeen = localStorage.getItem("ko-intro") === "1"; } catch {}
+  let introSeen = true;  // Oct 4: the opening screen is retired (a centered hero over a glowing pill read as a template); the page opens on the pond and plays
   if (!introSeen && !NOINTRO) {
     const box = $("#intro"); box.hidden = false; setPlaying(false);
     const close = play => { box.hidden = true; try { localStorage.setItem("ko-intro", "1"); } catch {} if (play) { t = 0; cur.items.forEach(hide); cur.splashed = false; setPlaying(true); } };
