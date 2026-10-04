@@ -251,7 +251,9 @@ time in headless Chromium; the legend sits under a 614-px fold; the caption cove
 1. **Release.** Follow `docs/launch_v2.md`: the four pre-flight checks, LinkedIn with the clip, Show HN mid-morning
    Eastern on a weekday with the first comment ready, Reddit the same day, five teacher and five newsroom emails that
    week. Reply to every substantive comment with the story's share page. A correction gets a thank-you and a fix.
-2. **Watch week one** against the four named dimensions: a teacher or newsroom using it (about 60%), a front page
+2. **Watch week one** with the engagement instruments (`docs/engagement_protocol_v1.md`: a GA4 funnel
+   story_start → reveal → verify → complete, leaves by clock position, taps and second stories per start; configure the
+   internal-traffic filter first) and against the four named dimensions: a teacher or newsroom using it (about 60%), a front page
    (35%), an outside correction or a suggested stone (25%), a return visit (15%). About 70% for at least one.
 3. **First-week fixes from the final roundtable:** the legend under a 614-px fold; the caption's height on a 375-px
    phone; quiet trailer dots on a projector; the claims line on the decline cards as well as the peak; Tylenol's links
