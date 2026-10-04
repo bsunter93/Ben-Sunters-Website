@@ -129,6 +129,7 @@ python3 ripples/tools/build_portable.py
 cd ripples/tools/qa
 node tap_test.js        # every ripple's tap target answers to its own ripple on dense phone ponds; exits 1 on a failure
 node header_test.js     # the pond's top on a 390 and a 375 phone (145 to 167 px on Oct 4) and whether the tally sits under it
+node chart_test.js      # the spikes chart stays inside its column with no animation (the Oct 4 .pulse collision); exits 1 on a failure
 node sweep.js           # screenshots of the main screens, desktop and phone, into ./sweep
 ```
 

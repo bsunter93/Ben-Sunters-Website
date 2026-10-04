@@ -235,9 +235,9 @@ input[type=range]{flex:1;accent-color:var(--marigold);min-width:0}
 .foot{max-width:1240px;margin:0 auto;padding:0 16px 44px;color:var(--ink-3);font-size:.82rem}
 /* pond */
 .ring{fill:none;stroke:rgba(214,232,246,.14);stroke-width:.6}
-.pulse{stroke:rgba(190,225,255,.5);stroke-width:1.2;opacity:0;animation:pulse 7s ease-out infinite}
-@keyframes pulse{0%{transform:scale(.3);opacity:0}6%{opacity:.35}70%{transform:scale(7.5);opacity:0}100%{transform:scale(7.5);opacity:0}}
-@media (prefers-reduced-motion:reduce){.pulse{animation:none}}  /* the time grid: log rings, a hairline each */
+.wake{stroke:rgba(190,225,255,.5);stroke-width:1.2;opacity:0;animation:wake 7s ease-out infinite}  /* the ring that leaves the stone every few seconds; named .wake, not .pulse, because .pulse is the paper chart above the cards and shared the name until Oct 4, which scaled the chart 7.5x over the pond every seven seconds */
+@keyframes wake{0%{transform:scale(.3);opacity:0}6%{opacity:.35}70%{transform:scale(7.5);opacity:0}100%{transform:scale(7.5);opacity:0}}
+@media (prefers-reduced-motion:reduce){.wake{animation:none}}  /* the time grid: log rings, a hairline each */
 .ringlbl{fill:rgba(214,232,246,.8);font:500 9px var(--sans);letter-spacing:.04em;font-variant-numeric:tabular-nums}
 .slicebd{stroke:rgba(214,232,246,.07);stroke-width:1;stroke-dasharray:2 6}
 .rimlbl{font:600 10px var(--sans);letter-spacing:.16em;text-transform:uppercase;fill:rgba(214,232,246,.5)}
@@ -931,7 +931,7 @@ function draw(story) {
   el("circle", {cx:C.x, cy:C.y, r:R + 34, fill:"url(#water)"}, plane);
   el("circle", {cx:C.x, cy:C.y, r:R + 34, fill:"url(#depth)"}, plane);
   el("circle", {cx:C.x, cy:C.y, r:R + 34, fill:"none", stroke:"rgba(214,232,246,.10)", "stroke-width":.8}, plane);  // the rim of the measured water
-  el("circle", {class:"pulse", cx:C.x, cy:C.y, r:40, fill:"none", style:`transform-origin:${C.x}px ${C.y}px`}, plane);  // a faint ring leaves the stone every few seconds
+  el("circle", {class:"wake", cx:C.x, cy:C.y, r:40, fill:"none", style:`transform-origin:${C.x}px ${C.y}px`}, plane);  // a faint ring leaves the stone every few seconds
 
   const g0 = el("g", {}, plane), gt = el("g", {}, svg);  // g0: lines on the water; gt: upright text
   if (n > 1) keys.forEach(k => { const a = centre(k) - w / 2, q = polar(48, a), p = polar(R + 8, a); el("line", {class:"slicebd", x1:q.x, y1:q.y, x2:p.x, y2:p.y}, g0); });
