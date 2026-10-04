@@ -1399,7 +1399,8 @@ function tick(now) {
 }
 function setPlaying(p) {
   playing = p; if (cur && !p) cur.goal = null;
-  if (cur && !p && t >= 1) cur.items.forEach(wake);  // the trailer is over: every step speaks  // a pause or a scrub drops the step goal; play picks the next from where the clock is
+  if (cur && !p && t >= 1) cur.items.forEach(wake);  // the trailer is over: every step speaks
+  if (cur && !p && cur.sCore) render();  // one last frame: the rest label, the woken labels  // a pause or a scrub drops the step goal; play picks the next from where the clock is
   const done = !p && t >= 1;
   $("#playico").innerHTML = p ? '<rect x="3" y="2" width="3.5" height="12" fill="currentColor"/><rect x="9.5" y="2" width="3.5" height="12" fill="currentColor"/>'
     : done ? '<path d="M8 2.5a5.5 5.5 0 1 1-5.2 3.7" fill="none" stroke="currentColor" stroke-width="2"/><path d="M1.5 2.5v4h4" fill="none" stroke="currentColor" stroke-width="2"/>' : '<path d="M4 2l10 6-10 6z" fill="currentColor"/>';
