@@ -1,8 +1,8 @@
-# Ripple: launch kit v2 (Oct 4, 2026; re-cut Oct 4 evening on the release build for Monday, Oct 5)
+# Ripple: launch kit v2 (Oct 4, 2026; re-cut Oct 5 on the release build, with the reveal, for Monday, Oct 5)
 
 Live: https://bensunter.com/ripples/demo/ · Methods and misses: https://bensunter.com/ripples/discover/ · Code: https://github.com/bsunter93/Ben-Sunters-Website/tree/main/ripples
 
-Cut on the release build (main after PR #93): the edited reel cut (an open, the throw, up to five shots with a camera push-in, an end card; Tiger King 12.5 s, Sputnik 14.6 s), the flat look, the weakest-link arrow in the title, the "It wasn't the only reason" line and the statute links are all in frame. The in-app playthrough is slower than the clips on purpose (a beat per ripple, 32 to 79 s a story). Supersedes `archive/launch_v1.md` and the Oct 4 06:00 cut of this kit.
+Cut on the release build (main after PR #101, the investigation reveal: each clip opens on "Stone → ?" and the title resolves when the first lasting mark lands): the edited reel cut (an open, the throw, up to five shots with a camera push-in, an end card; Tiger King 12.5 s, Sputnik 14.6 s), the flat look, the weakest-link arrow in the title, the "It wasn't the only reason" line and the statute links are all in frame. The in-app playthrough is slower than the clips on purpose (a beat per ripple, 32 to 79 s a story). Supersedes `archive/launch_v1.md` and the Oct 4 06:00 cut of this kit.
 
 ## Assets in `ripples/launch/`
 

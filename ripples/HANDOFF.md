@@ -74,7 +74,8 @@ its history are in the brief, sections 1 to 1c.
    schedule (`BEAT`, `makeTimeline`): a throw, then for every ripple a travel while the date rolls and a hold while it
    blooms lit with a narration line at the foot of the pond (2.6 s; 4 s for a mark or a measured step; holds shrink to
    fit a 95-s cap), then a short run-out. Tiger King runs about 32 s, Sputnik 38 s, Prohibition 79 s. The ten-second
-   trailer was retired on Oct 4 at the owner's direction ("way too fast"). Step walks every step;
+   trailer was retired on Oct 4 at the owner's direction ("way too fast"). Since Oct 5 play from the start is an
+   investigation (`setMystery`, the verification beat; `docs/reveal_v1.md`). Step walks every step;
    deep links `?c=<slug>`, `?m=<slug>`, `?e=<slug>`, `?a=<work>` skip the intro; `&s=<step>` opens on one ripple, stopped;
    `&card=1` renders the 1200×630 share card; `&reel=1` plays stories back to back for recording; `&nointro=1` for tests.
 8. **Portable builds.** `tools/build_portable.py` inlines the fonts and every data file into `dist/ripple-standalone.html`
@@ -219,7 +220,9 @@ recognizable stones with a behavior lexicon and 22 stones / 25 marks joined the 
 engine-found link (PR #96; `docs/discovery_culture_v1.md`): **58 stones, 102 marks under Engine leads.** The second
 roundtable (`docs/roundtable_v2.md`: the twelve at 8.3, three new strangers at 7.3) voted release. Still to do: release
 Monday morning Oct 5 (section 8), the owner's date; the pre-flight checks 1 to 3 already pass on production. The owner then
-played the demo and sent a readability review (PR #99: long stories name only marks and measured steps at rest, labels step
+asked for the reveal to feel like an investigation (PR #101, `docs/reveal_v1.md`: the title withholds its answer, numbered
+clues, the first mark resolves the title, a verification beat; clips re-recorded). Before that he
+played the demo and sent a readability review (PR #100: long stories name only marks and measured steps at rest, labels step
 aside under the narration, the pond column is 1.8× the cards, the spikes chart is sticky and draws in, cards fold behind
 Learn more, the chooser opens in layers). The room's
 items were all built the same night (PR #98; the actions table in `docs/roundtable_v2.md`): tighter beats before the
