@@ -553,6 +553,12 @@ const COLOR = {measured:"var(--good)", timed:"var(--marigold)", reported:"var(--
 const NS = "http://www.w3.org/2000/svg", C = {x:350, y:330}, R = 286, DUR = 15000, FLY = 1150, THROW_FROM = {x:-30, y:548};  // the near bank, lower left
 const $ = s => document.querySelector(s);
 const params = new URLSearchParams(location.search);
+// Engagement instruments (Oct 5; docs/engagement_protocol_v1.md). Aggregate events to the site's own GA4 property, no
+// personal data, no event from a local file, a share-card render, a reel recording or a QA run (`&nointro=1` is the tests' flag).
+const TRACK_ON = location.protocol !== "file:" && !new URLSearchParams(location.search).has("reel") && !new URLSearchParams(location.search).has("card") && !new URLSearchParams(location.search).has("nointro") && !/bot|headless/i.test(navigator.userAgent);
+const T0 = performance.now(); const sess = {stories:0, taps:0, reveal:false, storyT0:T0, scrubbed:false};
+function track(name, p = {}) { try { if (!TRACK_ON) return; window.dataLayer = window.dataLayer || []; const gtag = window.gtag || function () { window.dataLayer.push(arguments); }; gtag("event", "ripple_" + name, {...p, seconds_on_page: Math.round((performance.now() - T0) / 1000), transport_type: "beacon"}); } catch {} }
+if (TRACK_ON) { const g = document.createElement("script"); g.async = true; g.src = "https://www.googletagmanager.com/gtag/js?id=G-5DBXQV4RT2"; document.head.appendChild(g); window.dataLayer = window.dataLayer || []; window.gtag = function () { window.dataLayer.push(arguments); }; gtag("js", new Date()); gtag("config", "G-5DBXQV4RT2", {anonymize_ip: true, send_page_view: true}); }
 const REEL = params.has("reel"), CARD = params.has("card"), DEEP = ["c", "e", "a", "m"].some(k => params.has(k)), NOINTRO = params.has("nointro") || REEL || CARD || DEEP;  // a shared link opens on its story
 if (REEL) document.body.classList.add("reel");
 if (CARD) document.body.classList.add("card");
@@ -1279,10 +1285,10 @@ function verifyText(b) {
   return `<span class="bwhen">Checked</span><b>${order}</b><i class="bhow l-${weak}">weakest link ${esc(LVL[weak].toLowerCase())}</i><span class="bwhy">${weak === "measured" ? "Every link passed its test." : weak === "timed" ? "Every link is in order." : weak === "reported" ? "A source makes each link." : "One link is unproven."} Order, not proof of cause.</span>${cur.also ? `<span class="bmore">It wasn't the only reason: ${esc(cur.also.length > 110 ? cur.also.slice(0, 107).replace(/\s+\S*$/, "") + "…" : cur.also)}</span>` : ""}`;
 }
 function spotlight(b) {  // the beat's ripples bloom lit, with their path back to the stone, and the line under the pond says what happened
-  if (b.verify) { cur.beatOn = b; const bl = $("#beatline"); bl.innerHTML = verifyText(b); placeBeatline(); bl.classList.remove("off"); setMystery(false, "sub"); return; }  // the verification beat keeps the mark lit and answers "is it real?"
+  if (b.verify) { cur.beatOn = b; const bl = $("#beatline"); bl.innerHTML = verifyText(b); placeBeatline(); bl.classList.remove("off"); setMystery(false, "sub"); track("verify", {slug: cur.key}); return; }  // the verification beat keeps the mark lit and answers "is it real?"
   unspot(); cur.beatOn = b;
   if (b.end) { const bl = $("#beatline"); bl.innerHTML = b.html; placeBeatline(); bl.classList.remove("off"); setMystery(false); return; }
-  if (b.items.some(x => x.mark) && cur.mystery) { setMystery(false, "title"); if (soundOn) ping(660, 0.5); }  // the reveal
+  if (b.items.some(x => x.mark) && cur.mystery) { setMystery(false, "title"); if (soundOn) ping(660, 0.5); sess.reveal = true; track("reveal", {slug: cur.key, seconds_in_story: Math.round((performance.now() - sess.storyT0) / 1000)}); }  // the reveal
   const lit = new Set();
   for (const it of b.items) {
     wake(it); lit.add(it);
@@ -1401,7 +1407,7 @@ function buildFeed(story) {
     div.className = `card off ${c.cls || ""}`; div.innerHTML = c.html;
     if (c.it && c.it.hue) { div.classList.add("hasline"); div.style.setProperty("--chip", c.it.hue); }
     if (c.it) { const row = div.querySelector(".acts") || div.querySelector(".row"); if (row) { const a = document.createElement("a"); a.className = "shr"; a.href = "#"; a.textContent = "Share this step"; a.onclick = e => { e.preventDefault(); e.stopPropagation(); shareStep(c.it); }; row.appendChild(a);
-      if (c.it.cite) { const k = document.createElement("a"); k.className = "shr cite"; k.href = "#"; k.textContent = "Copy citation"; k.title = "The mark, the date, the grade, the sentence and its source, as one line to paste"; k.onclick = async e => { e.preventDefault(); e.stopPropagation(); try { await navigator.clipboard.writeText(c.it.cite); } catch { prompt("Copy this citation", c.it.cite); } const t = $("#toast"); if (t) { t.textContent = "Citation copied"; t.classList.add("on"); setTimeout(() => t.classList.remove("on"), 1800); } }; row.appendChild(k); } } }
+      if (c.it.cite) { const k = document.createElement("a"); k.className = "shr cite"; k.href = "#"; k.textContent = "Copy citation"; k.title = "The mark, the date, the grade, the sentence and its source, as one line to paste"; k.onclick = async e => { e.preventDefault(); e.stopPropagation(); track("cite", {slug: cur && cur.key, step: c.it.id}); try { await navigator.clipboard.writeText(c.it.cite); } catch { prompt("Copy this citation", c.it.cite); } const t = $("#toast"); if (t) { t.textContent = "Citation copied"; t.classList.add("on"); setTimeout(() => t.classList.remove("on"), 1800); } }; row.appendChild(k); } } }
     c.el = div; c.cursor = div.querySelector(".cursor"); c.shown = false;
     if (c.it) { c.it.cardEl = div; div.addEventListener("click", e => { if (e.target.closest("summary,a")) return; focus(c.it); }); }
     f.appendChild(div);
@@ -1618,6 +1624,7 @@ function clearFocus() {
   if (hot) { hot.lab.classList.remove("hot"); hot.cardEl && hot.cardEl.classList.remove("hot"); hot = null; }
 }
 function focus(it) {
+  if (hot !== it) { sess.taps++; track("tap", {slug: cur && cur.key, step: it.id, grade: it.lv, mark: it.mark || "", nth_tap: sess.taps}); }
   setMystery(false);  // a tap is a reader taking over: show everything
   if (it.plane) drop(it.plane);
   if (hot === it) { clearFocus(); return; }
@@ -1671,7 +1678,7 @@ function setPlaying(p) {
   playing = p; if (cur && !p) cur.goal = null;
   if (cur && p && cur.timeline) { unspot(); cur.clock = clockAtT(t); if (t <= PRE + 1e-6 && !stepMode) setMystery(true); else setMystery(false); }  // play from the start is an investigation; a resumed play shows everything
   if (cur && !p) setMystery(false);  // a pause, a stop, a scrub or a deep link shows everything
-  if (cur && !p && t >= 1) { cur.items.forEach(wake); setMystery(false); if (!REEL) { unspot(); $("#beatline").classList.add("off"); } }  // a reel keeps its end card up  // at rest every step speaks and the pond is level
+  if (cur && !p && t >= 1) { track("complete", {slug: cur.key, seconds_in_story: Math.round((performance.now() - sess.storyT0) / 1000)}); cur.items.forEach(wake); setMystery(false); if (!REEL) { unspot(); $("#beatline").classList.add("off"); } }  // a reel keeps its end card up  // at rest every step speaks and the pond is level
   if (cur && !p && cur.sCore) render();  // one last frame: the rest label, the woken labels  // a pause or a scrub drops the step goal; play picks the next from where the clock is
   const done = !p && t >= 1;
   $("#playico").innerHTML = p ? '<rect x="3" y="2" width="3.5" height="12" fill="currentColor"/><rect x="9.5" y="2" width="3.5" height="12" fill="currentColor"/>'
@@ -1731,7 +1738,7 @@ function renderPicker() {
     const grp = groupOf(kind, slug); if (grp && grp !== lastGroup) { const h = document.createElement("div"); h.className = "pgroup"; h.textContent = grp; pk.appendChild(h); lastGroup = grp; }
     const b = document.createElement("button"); b.className = "chip"; b.dataset.k = `${kind}:${slug}`;
     b.textContent = name || (DATA.disc && DATA.disc.events[slug] ? DATA.disc.events[slug].title : slug);
-    b.setAttribute("aria-pressed", cur && cur.key === slug); b.onclick = () => show(kind, slug); pk.appendChild(b);
+    b.setAttribute("aria-pressed", cur && cur.key === slug); b.onclick = () => { window.__via = q ? "search" : "chip"; show(kind, slug); }; pk.appendChild(b);
     if (cur && cur.key === slug) requestAnimationFrame(() => b.scrollIntoView({block:"nearest", inline:"center"}));
   }
   if (tab === "stories") {
@@ -1774,6 +1781,7 @@ function show(kind, slug, autoplay = true) {
   const marks = story.items.filter(x => x.mark);
   story.sub = story.sub.replace(/ Tap a ripple to see why\.$/, "");
   clearFocus(); hideTip(); cur = story; hot = null; t = 0; ambient = 0;
+  sess.stories++; sess.reveal = false; sess.storyT0 = performance.now(); sess.scrubbed = false; track("story_start", {kind, slug, via: window.__via || (sess.stories === 1 ? "landing" : "unknown"), nth_story: sess.stories}); window.__via = null;
   const inTab = TABS[tab].some(([k, s]) => k === kind && s === slug) || (tab === "stories" && kind === "chain");
   if (!inTab) tab = tabOf(kind, slug);
   renderPicker();
@@ -1832,11 +1840,11 @@ function next() {
   const chooser = $("#chooser"), cbtn = $("#chooserbtn");
   const TABCOUNT = () => ({maps:TABS.maps.length, stories:DATA.chains.length, leads:TABS.leads.filter(([k, s]) => k === "wiki" ? wikiStones().includes(s) : k === "acts" ? actsWorks().includes(s) : true).length});
   const TABNOTE_SHORT = {maps:"Events that left a law, an institution or a change in how people live.", stories:"Viral \"butterfly effect\" stories tested link by link; some are busted.", leads:"What the engine found on its own, screened by hand."};
-  const setChooser = open => { chooser.hidden = !open; cbtn.setAttribute("aria-expanded", open);
+  const setChooser = open => { chooser.hidden = !open; cbtn.setAttribute("aria-expanded", open); if (open) track("chooser_open", {slug: cur && cur.key});
     if (open) { chooser.classList.add("stage1"); const n = TABCOUNT(); document.querySelectorAll(".tab").forEach(b => b.dataset.note = `${TABNOTE_SHORT[b.dataset.tab]} ${n[b.dataset.tab]} ${n[b.dataset.tab] === 1 ? "story" : "stories"}.`); }  // first layer: the three kinds as cards
     if (open && window.innerWidth <= 560) requestAnimationFrame(() => cbtn.scrollIntoView({block:"start", behavior:"smooth"})); };  // on a phone the chooser lives under the pond, so opening it brings it up
   cbtn.onclick = () => setChooser(chooser.hidden);
-  document.querySelectorAll(".known .chip").forEach(b => b.onclick = () => show(b.dataset.kind, b.dataset.slug));
+  document.querySelectorAll(".known .chip").forEach(b => b.onclick = () => { window.__via = "known"; show(b.dataset.kind, b.dataset.slug); });
   $("#search").oninput = () => { chooser.classList.remove("stage1"); renderPicker(); };  // a search goes straight to results
   $("#search").onkeydown = e => { if (e.key === "Enter") { const f = $("#picker .chip"); if (f) f.click(); } };
   // drag the stone to throw it: while the story waits at the start, the stone follows the finger and leaves from where it is let go
@@ -1859,12 +1867,12 @@ function next() {
   document.addEventListener("click", e => { if (!chooser.hidden && !chooser.contains(e.target) && e.target !== cbtn && !cbtn.contains(e.target)) setChooser(false); });
   document.addEventListener("keydown", e => { if (e.key === "Escape") setChooser(false); if (e.key === "/" && !e.target.closest("input,select,textarea")) { e.preventDefault(); setChooser(true); $("#search").focus(); } });
   const KIND = {maps:"Lasting marks", stories:"Fact-checks", leads:"Engine leads"};
-  document.querySelectorAll(".tab").forEach(b => b.onclick = () => { tab = b.dataset.tab; $("#chooserkind").textContent = KIND[tab]; chooser.classList.remove("stage1"); renderPicker(); });  // second layer: the chosen kind's list  // a tab changes the list; a chip picks the story
+  document.querySelectorAll(".tab").forEach(b => b.onclick = () => { tab = b.dataset.tab; $("#chooserkind").textContent = KIND[tab]; chooser.classList.remove("stage1"); track("kind", {tab}); renderPicker(); });  // second layer: the chosen kind's list  // a tab changes the list; a chip picks the story
   $("#howbtn").onclick = () => { const h = $("#how"), open = h.hidden; h.hidden = !open; $("#howbtn").setAttribute("aria-expanded", open); if (open) h.scrollIntoView({behavior:"smooth", block:"start"}); };
   $("#caption").addEventListener("click", e => { if (!e.target.closest("a,button") && hot) clearFocus(); });  // a tap on the caption itself, not a link, puts the pond back
-  $("#play").onclick = () => { if (t >= 1) { t = 0; cur.items.forEach(hide); cur.splashed = false; $("#feed").scrollTop = 0; } setPlaying(!playing); };
-  $("#nextbtn").onclick = next;
-  $("#stepbtn").onclick = () => { if (!stepMode) setStep(true); else if (!playing) { if (t >= 1) { t = 0; cur.items.forEach(hide); cur.splashed = false; clearFocus(); } setPlaying(true); } };  // press: next ripple (and Step mode on)
+  $("#play").onclick = () => { track(playing ? "pause" : (t >= 1 ? "replay" : "play"), {slug: cur && cur.key, t: cur ? Math.round(t * 100) : null}); if (t >= 1) { t = 0; cur.items.forEach(hide); cur.splashed = false; $("#feed").scrollTop = 0; } setPlaying(!playing); };
+  $("#nextbtn").onclick = () => { window.__via = "next"; next(); };
+  $("#stepbtn").onclick = () => { track("step_mode", {slug: cur && cur.key, on: !stepMode}); if (!stepMode) setStep(true); else if (!playing) { if (t >= 1) { t = 0; cur.items.forEach(hide); cur.splashed = false; clearFocus(); } setPlaying(true); } };  // press: next ripple (and Step mode on)
   $("#stepbtn").ondblclick = () => setStep(false);  // double-press: back to the trailer
   setStep(stepMode);
   const tp = $("#topond"); tp.onclick = () => $(".pondbox").scrollIntoView({block:"start", behavior:"smooth"});
@@ -1888,12 +1896,13 @@ function next() {
   }
   const toast = m => { const t = $("#toast"); t.textContent = m; t.classList.add("on"); setTimeout(() => t.classList.remove("on"), 1800); };
   window.shareStep = async it => {  // a link that opens on this one ripple, stopped, with its caption
+    track("share", {slug: cur && cur.key, what: "step", step: it.id});
     const key = cur.kind === "chain" ? "c" : cur.kind === "acts" ? "a" : cur.kind === "wiki" ? "w" : "m", url = `https://bensunter.com/ripples/demo/?${key}=${encodeURIComponent(cur.key)}&s=${encodeURIComponent(it.id)}`;
     const title = `${esc(it.label)} · ${cur.stone}`;
     try { if (navigator.share) { await navigator.share({title:`Ripple: ${title}`, text:(it.short || it.srcText || "").replace(/<[^>]+>/g, ""), url}); return; } } catch { return; }
     try { await navigator.clipboard.writeText(url); toast("Link to this step copied"); } catch { window.prompt("Copy this link", url); }
   };
-  $("#share").onclick = async () => {
+  $("#share").onclick = async () => { track("share", {slug: cur && cur.key, what: "story"});
     // featured stories have a share page with a preview card (ripples/demo/s/<slug>/); the rest link straight in
     const featured = Object.values(TABS).flat().some(([, s]) => s === cur.key);
     const url = featured ? `https://bensunter.com/ripples/demo/s/${cur.key}/` : `https://bensunter.com/ripples/demo/?${cur.kind === "chain" ? "c" : cur.kind === "acts" ? "a" : cur.kind === "wiki" ? "w" : "m"}=${encodeURIComponent(cur.key)}`, title = $("#h1").textContent;
@@ -1924,7 +1933,7 @@ function next() {
     }
   });
   const sc = $("#scrub");
-  sc.oninput = e => { scrubbing = true; t = e.target.value / 1000; setPlaying(false); setMystery(false); unspot(); $("#beatline").classList.add("off"); render(); };
+  sc.oninput = e => { scrubbing = true; t = e.target.value / 1000; if (!sess.scrubbed) { sess.scrubbed = true; track("scrub", {slug: cur && cur.key}); } setPlaying(false); setMystery(false); unspot(); $("#beatline").classList.add("off"); render(); };
   sc.onchange = () => { scrubbing = false; };
   const c = params.get("c"), m = params.get("m") || params.get("e"), a = params.get("a"), wk = params.get("w");
   if (CARD) playing = false;
@@ -1936,6 +1945,10 @@ function next() {
   if (CARD) { t = 1; setPlaying(false); render(); }
   const sid = params.get("s");  // a shared step: open on it, stopped, with its caption
   if (sid && cur) { const it = cur.items.find(x => x.id === sid); if (it) { for (let k = 0; k <= 1000; k++) if (daysAt(k / 1000) >= it.d + 0.5) { t = k / 1000; break; } setPlaying(false); render(); cur.items.forEach(wake); setTimeout(() => focus(it), 400); } }
+  document.addEventListener("toggle", e => { const d = e.target; if (d && d.matches && d.matches(".feed details.more") && d.open) track("learn_more", {slug: cur && cur.key}); }, true);
+  const leave = () => { if (leave.sent) return; leave.sent = true; track("leave", {slug: cur && cur.key, t: cur ? Math.round(t * 100) : null, reveal_reached: sess.reveal ? 1 : 0, stories: sess.stories, taps: sess.taps, playing: playing ? 1 : 0}); };
+  document.addEventListener("visibilitychange", () => { if (document.visibilityState === "hidden") leave(); else leave.sent = false; });
+  window.addEventListener("pagehide", leave);
   requestAnimationFrame(tick);
 })();
 </script>
