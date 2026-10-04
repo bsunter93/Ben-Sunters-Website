@@ -30,7 +30,7 @@ not proof of cause, and the product says so.
 | The launch kit (clips, stills, post copy) | `ripples/launch/`, `ripples/docs/launch_v2.md` |
 | The browser checks, share cards, clips and statute confirmations | `ripples/tools/qa/` (see `ripples/HANDOFF.md`) |
 | The tester rounds and the final roundtable (simulated personas, labeled) | `ripples/docs/user_tests_v1.md` to `v4.md`, `roundtable_v1.md`, `roundtable_final.md` |
-| Picking the work up in a new session | `ripples/HANDOFF.md` |
+| Picking the work up in a new session | `ripples/HANDOFF.md`, then the starter prompt `ripples/docs/session_prompt_v1.md` |
 
 ## How to run things
 
