@@ -1370,7 +1370,7 @@ function focus(it) {
   if (!REEL && window.innerWidth <= 860) {  // on a phone the card is screens below: say what this ripple is, right under the pond
     const cap = $("#caption"); const capLine = it.short || (it.srcText ? esc(it.srcText) : ""); cap.innerHTML = `${it.mark ? `<b>◆ ${esc(it.mark)}</b> · ` : ""}<b>${esc(it.label)}</b> <span style="color:var(--ink-3)">· ${esc(it.lvText || LVL[it.lv])}${it.sub ? " · " + esc(it.sub) : ""}</span>${capLine ? `<br>${capLine}` : ""}<a href="#" class="readcard">Read the card ↓</a>`;
     cap.innerHTML += `<a href="#" class="shrcap">Share this step</a>`; cap.querySelector(".shrcap").onclick = e => { e.preventDefault(); shareStep(it); };
-    cap.classList.add("on"); const svg0 = $("#pond"); cap.style.display = "block"; cap.style.top = `${svg0.offsetTop + svg0.offsetHeight - cap.offsetHeight - 10}px`; cap.style.display = ""; const rc = cap.querySelector(".readcard"); if (rc) rc.onclick = e => { e.preventDefault(); if (it.cardEl) it.cardEl.scrollIntoView({block:"start", behavior:"smooth"}); };
+    cap.classList.add("on"); const svg0 = $("#pond"); cap.style.display = "block"; const pbR = $(".pondbox").getBoundingClientRect(), svR = svg0.getBoundingClientRect(); cap.style.top = `${Math.max(8, svR.bottom - pbR.top - cap.offsetHeight - 10)}px`; cap.style.display = ""; const rc = cap.querySelector(".readcard"); if (rc) rc.onclick = e => { e.preventDefault(); if (it.cardEl) it.cardEl.scrollIntoView({block:"start", behavior:"smooth"}); };
   }
   for (let k = 0; k <= 1000; k++) if (daysAt(k / 1000) >= it.d + 0.5) { if (k / 1000 > t) t = k / 1000; break; }
   render();
