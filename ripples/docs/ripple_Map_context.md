@@ -408,6 +408,12 @@ the room can supply: strangers.
 - legislation.gov.uk's title feed answers across years: check the Act's own year in its id.
 
 **Browser and phone (Oct 4)**
+- **One class name, two elements, two stylesheets' worth of meaning.** The paper chart above the cards and the pond's
+  expanding ring were both `.pulse`; the ring's `animation: pulse 7s` (scale .3 → 7.5, fade) applied to the chart too,
+  which ballooned 7.5× over the pond every seven seconds as ghost text and a gray slab. Found by the owner on the live
+  page the morning after release-ready; four tester rounds in headless Chromium had sampled between the beats. The ring
+  is `.wake` now and `tools/qa/chart_test.js` samples six times across the cycle. Grep a new class name across the
+  whole file before using it; the pond's SVG and the paper's HTML share one stylesheet.
 - **A phone caption over the pond absorbs every later tap.** The tap test read "all taps go to the first ripple" until
   the test dismissed the caption; a tap on the caption body now clears it. Test harnesses must clear state between taps.
 - **An SVG `<text>` has no `offsetTop`.** Position overlays from `getBoundingClientRect`, and measure a hidden element
