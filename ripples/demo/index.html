@@ -361,6 +361,19 @@ body.reel .caption{display:block}
   .caption .sum{display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;margin-top:2px}
   .caption .acts{display:flex;gap:10px;align-items:center;margin-top:6px}.caption a.readcard{flex:1;display:block;margin:0;padding:6px 0;text-align:center;border:1px solid rgba(242,169,59,.5);border-radius:999px;color:var(--marigold);font-weight:700}.caption .shrcap{margin:0;flex:none}}
 body.reel .pondbox{padding-bottom:10px}
+/* the beat: while a story plays, the ripple that just arrived is lit and named at the foot of the pond, and what landed before sits back a little */
+#pond.beat .node.on:not(.lit),#pond.beat .nlab.on:not(.lit),#pond.beat .rip.on:not(.lit){opacity:.42;transition:opacity .5s}
+#pond.beat .crest.on:not(.lit){opacity:.3;transition:opacity .5s}
+#pond.beat .edge.lit{opacity:.85}#pond.beat .edge.lit.l-measured{stroke:var(--good)}#pond.beat .edge.lit.mark{stroke:var(--marigold)}
+.beatline{position:absolute;left:4px;right:4px;z-index:2;padding:34px 18px 14px;text-align:center;border-radius:0 0 14px 14px;background:linear-gradient(180deg,rgba(4,16,30,0) 0%,rgba(4,16,30,.78) 42%,rgba(4,16,30,.92) 100%);font:400 .98rem/1.35 var(--sans);color:var(--ink);text-shadow:0 1px 2px rgba(3,14,28,.9),0 0 16px rgba(3,14,28,.95),0 0 32px rgba(3,14,28,.8);transition:opacity .45s ease-out;pointer-events:none}
+.beatline.off{opacity:0}
+.beatline .bwhen{display:block;font:600 .74rem/1.2 var(--sans);letter-spacing:.06em;text-transform:uppercase;color:var(--ink-3);font-variant-numeric:tabular-nums;margin-bottom:3px}
+.beatline b{font-weight:600}.beatline .bhow{font-style:normal;font-weight:600;margin-left:8px}.beatline .bhow.l-measured{color:var(--good)}.beatline .bhow.l-timed{color:var(--timed)}.beatline .bhow.l-reported{color:var(--ink-2)}.beatline .bhow.l-plausible{color:var(--plaus)}.beatline .bhow.l-busted{color:var(--miss)}
+.beatline .bwhy{display:block;color:var(--ink-2);font-size:.86rem;margin-top:2px}.beatline .bmore{display:block;color:var(--ink-3);font-size:.82rem}
+.beatline .bmk{color:var(--marigold);font-weight:700;margin-right:6px}.beatline .bmk svg{width:12px;height:12px;vertical-align:-1px;margin-right:3px}
+.card.now{border-color:rgba(242,169,59,.55)}
+@media (max-width:860px){.beatline{position:static;padding:8px 10px 2px;font-size:.88rem;background:none;text-shadow:none;min-height:66px}.beatline.off{min-height:0;padding:0;height:0;overflow:hidden}#pond.focus ~ .beatline{display:none}}
+body.card .beatline,body.reel .beatline{display:none}
 @media (orientation:portrait){body.reel{min-height:100vh;display:flex;flex-direction:column;justify-content:center}body.reel header{padding-top:0}}  /* a vertical reel: the story sits in the middle of the frame */
 @media (orientation:portrait) and (min-width:900px){body.reel{zoom:1.5;min-height:calc(100vh / 1.5)}body.reel .wrap{grid-template-columns:1fr;max-width:720px}body.reel .wrap .feed{display:none}}  /* a 1080×1920 reel renders at native pixels with a 720-px layout */
 @media (prefers-reduced-motion:reduce){.card.in{animation:none}}
@@ -399,6 +412,7 @@ body.reel .pondbox{padding-bottom:10px}
     <div class="hint" id="hint" hidden>Press play or drag the slider · tap a ripple to follow it</div>
     <div class="tip" id="tip" role="tooltip"></div>
     <div class="caption" id="caption" aria-live="polite"></div>
+    <div class="beatline off" id="beatline" aria-live="polite"></div>
     <button class="topond" id="topond" hidden aria-label="Back to the pond">↑ Pond</button>
     <div class="ctl">
       <button class="play" id="play" aria-label="Pause"><svg viewBox="0 0 16 16" id="playico"></svg></button>
@@ -566,6 +580,11 @@ function daysAt(tt) {
   return SCALE.inv((tt - PRE) / (1 - PRE));
 }
 const radius = d => d <= 0 ? 0 : 40 + (R - 40) * SCALE.f(d);
+function tOfDay(d) {  // the first clock position at which a ripple dated d has arrived (daysAt is monotonic)
+  if (d <= 0) return PRE; let lo = PRE, hi = 1;
+  for (let k = 0; k < 30; k++) { const mid = (lo + hi) / 2; if (daysAt(mid) < d + 0.5) lo = mid; else hi = mid; }
+  return Math.min(1, hi);
+}
 // The pond is seen from about 35 degrees above the surface: things drawn on the water are squashed vertically
 // (circles become ellipses); dots and labels stand upright at the projected spot.
 const TILT = 0.6, VB = {top:90, bottom:572};
@@ -1111,9 +1130,69 @@ function draw(story) {
     if (cap < r) it.hit.setAttribute("r", cap.toFixed(1));
   });
   story.max = max; story.waves = waves; story.sHalo = sHalo; story.sCore = sCore; story.sWater = sWater; story.sShadow = sShadow; story.K = K; story.splashed = false;
-  const loud = items.filter(x => x.mark || x.lv === "measured").length;
-  story.trailer = loud > 0 && items.length > loud;  // the trailer: ten seconds, the marks and the measured steps bloom, the rest land quiet
-  story.dur = story.trailer ? 10000 : Math.min(30000, Math.max(DUR, 9000 + 650 * items.length));
+  story.trailer = false;  // Oct 4: the ten-second trailer is retired; every ripple gets a beat (makeTimeline), nothing lands quiet
+  makeTimeline(story); story.dur = story.timeline.total;
+}
+
+// ---------- the beat ----------
+// Playback is a schedule, not a constant speed: the throw, then for every ripple a travel (the date rolls toward it)
+// and a hold (it blooms, is lit and is named at the foot of the pond), then a short run-out. Ripples that arrive
+// together share a beat. A long story's holds shrink to fit the cap, never below the floor.
+const BEAT = {throwMs:1100, hold:2600, holdLoud:4000, holdBust:3000, extra:900, travelMin:450, travelMax:1600, travelK:7000, cap:95000, holdFloor:1500, outMs:900};
+function makeTimeline(story) {
+  const es = story.items.filter(x => x.pos).map(x => ({it:x, tS:tOfDay(x.d)})).sort((a, b) => a.tS - b.tS);
+  const beats = [];
+  for (const e of es) { const b = beats[beats.length - 1]; if (b && e.tS - b.tS < 0.012) b.items.push(e.it); else beats.push({tS:e.tS, items:[e.it]}); }
+  const w = x => (x.mark ? 2 : 0) + (x.lv === "measured" ? 1 : 0);
+  for (const b of beats) {
+    b.items.sort((a, c) => w(c) - w(a));  // the mark or the measured step speaks for a shared beat
+    const loud = b.items.some(x => x.mark || x.lv === "measured"), bust = b.items.some(x => x.lv === "busted");
+    b.hold = (loud ? BEAT.holdLoud : bust ? BEAT.holdBust : BEAT.hold) + Math.min(2, b.items.length - 1) * BEAT.extra;
+  }
+  let tp = PRE; for (const b of beats) { b.travel = Math.max(BEAT.travelMin, Math.min(BEAT.travelMax, (b.tS - tp) * BEAT.travelK)); tp = b.tS; }
+  const fixed = BEAT.throwMs + beats.reduce((a, b) => a + b.travel, 0) + BEAT.outMs, holdSum = beats.reduce((a, b) => a + b.hold, 0);
+  if (fixed + holdSum > BEAT.cap && holdSum) { const f = Math.max(0, BEAT.cap - fixed) / holdSum; beats.forEach(b => b.hold = Math.max(BEAT.holdFloor, Math.round(b.hold * f))); }
+  const segs = []; let c = 0;
+  const push = (t0, t1, ms, beat) => { segs.push({t0, t1, ms, c0:c, beat:beat || null}); c += ms; };
+  push(0, PRE, BEAT.throwMs, null); tp = PRE;
+  for (const b of beats) { push(tp, b.tS, b.travel, null); push(b.tS, b.tS, b.hold, b); tp = b.tS; }
+  push(tp, 1, BEAT.outMs, null);
+  story.timeline = {segs, total:c, beats}; story.clock = 0; story.beatOn = null; story.lit = null;
+  const bl = $("#beatline"); if (bl) bl.classList.add("off"); $("#pond").classList.remove("beat");
+}
+function segAtClock(ms) { for (const s of cur.timeline.segs) if (ms < s.c0 + s.ms) return s; return null; }
+function tAtClock(ms) { const s = segAtClock(ms); if (!s) return 1; return s.t1 === s.t0 ? s.t0 : s.t0 + (s.t1 - s.t0) * (ms - s.c0) / s.ms; }
+function clockAtT(tt) { if (tt <= 0) return 0; for (const s of cur.timeline.segs) if (s.t1 > s.t0 && tt <= s.t1 + 1e-9) return s.c0 + s.ms * (tt - s.t0) / (s.t1 - s.t0); return cur.timeline.total; }
+function beatText(b) {
+  const it = b.items[0], main = it.title || it.label, why = it.short || it.srcText || "";
+  const rest = b.items.slice(1);
+  return `<span class="bwhen">${esc(it.sub || sinceLabel(it.d))}</span>${it.mark ? `<span class="bmk">${HEX}${esc(it.mark)}</span>` : ""}<b>${esc(main)}</b><i class="bhow l-${it.lv}">${esc(it.lvText || LVL[it.lv])}</i>${why ? `<span class="bwhy">${why.length > 140 ? esc(why.slice(0, 137)) + "…" : why}</span>` : ""}${rest.length ? `<span class="bmore">At the same time: ${rest.map(x => esc(x.label)).join(" · ")}</span>` : ""}`;
+}
+function spotlight(b) {  // the beat's ripples bloom lit, with their path back to the stone, and the line under the pond says what happened
+  unspot(); cur.beatOn = b;
+  const lit = new Set();
+  for (const it of b.items) {
+    wake(it); lit.add(it);
+    for (let p = it; p && p.parent; ) { p = cur.items.find(x => x.id === p.parent); if (p) lit.add(p); }
+    if (it.state === "landed") { it.lab.classList.add("on"); if (it.leader) it.leader.classList.add("on"); }
+    it.lab.classList.add("beat"); if (it.cardEl) it.cardEl.classList.add("now");
+  }
+  lit.forEach(x => [x.g, x.path, x.lab, x.band, x.ring, x.crest].forEach(e => e && e.classList.add("lit")));
+  cur.lit = lit; $("#pond").classList.add("beat");
+  const bl = $("#beatline"); bl.innerHTML = beatText(b); placeBeatline(); bl.classList.remove("off");
+}
+function placeBeatline() {  // the lower third sits on the pond's bottom edge, whatever the pond's size
+  const bl = $("#beatline"), svg = $("#pond"), box = $(".pondbox"); if (!bl || !svg) return;
+  if (window.innerWidth <= 860) { bl.style.top = ""; return; }  // a phone keeps it in flow under the pond
+  const sr = svg.getBoundingClientRect(), br = box.getBoundingClientRect();
+  bl.style.top = `${Math.round(sr.bottom - br.top - bl.offsetHeight)}px`;
+}
+window.addEventListener("resize", () => { if (cur && cur.beatOn) placeBeatline(); });
+function unspot() {
+  if (!cur || !cur.beatOn) return;
+  for (const it of cur.beatOn.items) { it.lab.classList.remove("beat"); if (it.cardEl) it.cardEl.classList.remove("now"); if (!it.showLabel && it !== hot) { it.lab.classList.remove("on"); if (it.leader) it.leader.classList.remove("on"); } }
+  (cur.lit || []).forEach(x => { if (x !== hot) [x.g, x.path, x.lab, x.band, x.ring, x.crest].forEach(e => e && e.classList.remove("lit")); });
+  cur.beatOn = null; cur.lit = null; $("#pond").classList.remove("beat");
 }
 
 function wrapLabel(t, width, lines) {  // greedy word wrap to at most `lines` lines; the last line is cut with an ellipsis
@@ -1433,6 +1512,10 @@ function tick(now) {
       if (!cur.goal) { let tS = 1; for (let k = 0; k <= 1000; k++) if (daysAt(k / 1000) >= stop.d + 0.5) { tS = k / 1000; break; } cur.goal = {it:stop, tS, t0:t}; }  // the goal holds until it is reached, even as the front passes its day
       const g = cur.goal; t = Math.min(g.tS, t + dt / 1500 * Math.max(0.02, g.tS - g.t0));
       if (t >= g.tS) { const at = g.it; cur.goal = null; setPlaying(false); render(now); if (hot !== at) focus(at); if (window.innerWidth <= 860) $(".pondbox").scrollIntoView({block:"start", behavior:"smooth"}); return requestAnimationFrame(tick); }
+    } else if (cur.timeline) {  // the beat: the clock runs the schedule, and a hold lights its ripple and names it
+      cur.clock = Math.min(cur.timeline.total, (cur.clock || 0) + dt); t = tAtClock(cur.clock);
+      const s = segAtClock(cur.clock);
+      if (s && s.beat && cur.beatOn !== s.beat) { render(now); spotlight(s.beat); }
     } else t = Math.min(1, t + dt / (cur && cur.dur || DUR));
     if (t >= 1) { if (REEL) { playing = false; setTimeout(next, 2000); } else setPlaying(false); }
   }
@@ -1443,7 +1526,8 @@ function tick(now) {
 }
 function setPlaying(p) {
   playing = p; if (cur && !p) cur.goal = null;
-  if (cur && !p && t >= 1) cur.items.forEach(wake);  // the trailer is over: every step speaks
+  if (cur && p && cur.timeline) { unspot(); cur.clock = clockAtT(t); }  // play resumes from wherever the clock is, scrubbed or stepped
+  if (cur && !p && t >= 1) { cur.items.forEach(wake); unspot(); $("#beatline").classList.add("off"); }  // at rest every step speaks and the pond is level
   if (cur && !p && cur.sCore) render();  // one last frame: the rest label, the woken labels  // a pause or a scrub drops the step goal; play picks the next from where the clock is
   const done = !p && t >= 1;
   $("#playico").innerHTML = p ? '<rect x="3" y="2" width="3.5" height="12" fill="currentColor"/><rect x="9.5" y="2" width="3.5" height="12" fill="currentColor"/>'
@@ -1452,7 +1536,7 @@ function setPlaying(p) {
   $("#play").title = !p && stepMode && t >= PRE && !done ? "Next ripple (or press →)" : "";
 }
 function setStep(on) {
-  stepMode = on; const b = $("#stepbtn"); b.setAttribute("aria-pressed", on); b.title = on ? "Next ripple (double-press to go back to the trailer)" : "Next ripple: the clock stops at each one with its card";
+  stepMode = on; const b = $("#stepbtn"); b.setAttribute("aria-pressed", on); b.title = on ? "Next ripple (double-press to go back to play)" : "Next ripple: the clock stops at each one with its card";
   try { localStorage.setItem("ko-step", on ? "1" : "0"); } catch {}
   if (on && cur && !playing) { if (t >= 1) { t = 0; cur.items.forEach(hide); cur.splashed = false; clearFocus(); } setPlaying(true); }  // and go to the first ripple
   setPlaying(playing);
@@ -1677,7 +1761,7 @@ function next() {
     }
   });
   const sc = $("#scrub");
-  sc.oninput = e => { scrubbing = true; t = e.target.value / 1000; setPlaying(false); render(); };
+  sc.oninput = e => { scrubbing = true; t = e.target.value / 1000; setPlaying(false); unspot(); $("#beatline").classList.add("off"); render(); };
   sc.onchange = () => { scrubbing = false; };
   const c = params.get("c"), m = params.get("m") || params.get("e"), a = params.get("a");
   if (CARD) playing = false;
