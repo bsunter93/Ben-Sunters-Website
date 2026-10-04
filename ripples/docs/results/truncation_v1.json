@@ -1,0 +1,531 @@
+{
+ "protocol": "ripples/lab/truncation_test.py",
+ "run": "2026-10-04",
+ "cutoffs": [
+  "2024-12-31",
+  "2025-12-31",
+  "2026-10-04"
+ ],
+ "steps": [
+  {
+   "slug": "tiger-king",
+   "n": 2,
+   "articles": [
+    "Exotic pet",
+    "Big cat"
+   ],
+   "ref": "2020-03-20",
+   "lag": 150,
+   "committed": {
+    "p": 0.01,
+    "ratio": 5.1
+   },
+   "at": {
+    "2024-12-31": {
+     "p": 0.01,
+     "ratio": 5.1,
+     "n_placebo": 100,
+     "onset": "2020-03-26",
+     "grade": "measured",
+     "complete_window": true
+    },
+    "2025-12-31": {
+     "p": 0.01,
+     "ratio": 5.1,
+     "n_placebo": 100,
+     "onset": "2020-03-26",
+     "grade": "measured",
+     "complete_window": true
+    },
+    "2026-10-04": {
+     "p": 0.01,
+     "ratio": 5.1,
+     "n_placebo": 100,
+     "onset": "2020-03-26",
+     "grade": "measured",
+     "complete_window": true
+    }
+   },
+   "holds": true
+  },
+  {
+   "slug": "wordle",
+   "n": 2,
+   "articles": [
+    "Wordle"
+   ],
+   "ref": "2021-10-01",
+   "lag": 150,
+   "committed": {
+    "p": 0.007,
+    "ratio": 49881.1
+   },
+   "at": {
+    "2024-12-31": {
+     "p": 0.007,
+     "ratio": 49881.1,
+     "n_placebo": 140,
+     "onset": "2022-01-21",
+     "grade": "measured",
+     "complete_window": true
+    },
+    "2025-12-31": {
+     "p": 0.007,
+     "ratio": 49881.1,
+     "n_placebo": 140,
+     "onset": "2022-01-21",
+     "grade": "measured",
+     "complete_window": true
+    },
+    "2026-10-04": {
+     "p": 0.007,
+     "ratio": 49881.1,
+     "n_placebo": 140,
+     "onset": "2022-01-21",
+     "grade": "measured",
+     "complete_window": true
+    }
+   },
+   "holds": true
+  },
+  {
+   "slug": "chernobyl-zone",
+   "n": 2,
+   "articles": [
+    "Chernobyl disaster"
+   ],
+   "ref": "2019-05-06",
+   "lag": 60,
+   "committed": {
+    "p": 0.013,
+    "ratio": 48.0
+   },
+   "at": {
+    "2024-12-31": {
+     "p": 0.013,
+     "ratio": 48.0,
+     "n_placebo": 77,
+     "onset": "2019-05-08",
+     "grade": "measured",
+     "complete_window": true
+    },
+    "2025-12-31": {
+     "p": 0.013,
+     "ratio": 48.0,
+     "n_placebo": 77,
+     "onset": "2019-05-08",
+     "grade": "measured",
+     "complete_window": true
+    },
+    "2026-10-04": {
+     "p": 0.013,
+     "ratio": 48.0,
+     "n_placebo": 77,
+     "onset": "2019-05-08",
+     "grade": "measured",
+     "complete_window": true
+    }
+   },
+   "holds": true
+  },
+  {
+   "slug": "mr-bates-horizon",
+   "n": 2,
+   "articles": [
+    "British Post Office scandal"
+   ],
+   "ref": "2024-01-01",
+   "lag": 30,
+   "committed": {
+    "p": 0.023,
+    "ratio": 370.1
+   },
+   "at": {
+    "2024-12-31": {
+     "p": 0.023,
+     "ratio": 370.1,
+     "n_placebo": 43,
+     "onset": "2024-01-02",
+     "grade": "measured",
+     "complete_window": true
+    },
+    "2025-12-31": {
+     "p": 0.023,
+     "ratio": 370.1,
+     "n_placebo": 43,
+     "onset": "2024-01-02",
+     "grade": "measured",
+     "complete_window": true
+    },
+    "2026-10-04": {
+     "p": 0.023,
+     "ratio": 370.1,
+     "n_placebo": 43,
+     "onset": "2024-01-02",
+     "grade": "measured",
+     "complete_window": true
+    }
+   },
+   "holds": true
+  },
+  {
+   "slug": "mr-bates-horizon",
+   "n": 9,
+   "articles": [
+    "Paula Vennells"
+   ],
+   "ref": "2024-01-01",
+   "lag": 30,
+   "committed": {
+    "p": 0.006,
+    "ratio": 1879.0
+   },
+   "at": {
+    "2024-12-31": {
+     "p": 0.006,
+     "ratio": 1879.0,
+     "n_placebo": 175,
+     "onset": "2024-01-03",
+     "grade": "measured",
+     "complete_window": true
+    },
+    "2025-12-31": {
+     "p": 0.006,
+     "ratio": 1879.0,
+     "n_placebo": 175,
+     "onset": "2024-01-03",
+     "grade": "measured",
+     "complete_window": true
+    },
+    "2026-10-04": {
+     "p": 0.006,
+     "ratio": 1879.0,
+     "n_placebo": 175,
+     "onset": "2024-01-03",
+     "grade": "measured",
+     "complete_window": true
+    }
+   },
+   "holds": true
+  },
+  {
+   "slug": "daily-show-zadroga",
+   "n": 5,
+   "articles": [
+    "James Zadroga 9/11 Health and Compensation Act"
+   ],
+   "ref": "2019-06-11",
+   "lag": 30,
+   "committed": {
+    "p": 0.012,
+    "ratio": 48.7
+   },
+   "at": {
+    "2024-12-31": {
+     "p": 0.012,
+     "ratio": 48.7,
+     "n_placebo": 80,
+     "onset": "2019-06-11",
+     "grade": "measured",
+     "complete_window": true
+    },
+    "2025-12-31": {
+     "p": 0.012,
+     "ratio": 48.7,
+     "n_placebo": 80,
+     "onset": "2019-06-11",
+     "grade": "measured",
+     "complete_window": true
+    },
+    "2026-10-04": {
+     "p": 0.012,
+     "ratio": 48.7,
+     "n_placebo": 80,
+     "onset": "2019-06-11",
+     "grade": "measured",
+     "complete_window": true
+    }
+   },
+   "holds": true
+  },
+  {
+   "slug": "ocean-attenborough",
+   "n": 2,
+   "articles": [
+    "Bottom trawling"
+   ],
+   "ref": "2025-05-08",
+   "lag": 45,
+   "committed": {
+    "p": 0.004,
+    "ratio": 4.6
+   },
+   "at": {
+    "2024-12-31": {
+     "note": "before the step"
+    },
+    "2025-12-31": {
+     "p": 0.004,
+     "ratio": 4.6,
+     "n_placebo": 234,
+     "onset": "2025-05-10",
+     "grade": "measured",
+     "complete_window": true
+    },
+    "2026-10-04": {
+     "p": 0.004,
+     "ratio": 4.6,
+     "n_placebo": 234,
+     "onset": "2025-05-10",
+     "grade": "measured",
+     "complete_window": true
+    }
+   },
+   "holds": true
+  },
+  {
+   "slug": "america-and-alcohol",
+   "n": 25,
+   "articles": [
+    "Alcohol and cancer"
+   ],
+   "ref": "2025-01-03",
+   "lag": 45,
+   "committed": {
+    "p": 0.035,
+    "ratio": 4.2
+   },
+   "at": {
+    "2024-12-31": {
+     "note": "before the step"
+    },
+    "2025-12-31": {
+     "p": 0.035,
+     "ratio": 4.2,
+     "n_placebo": 225,
+     "onset": "2025-01-03",
+     "grade": "measured",
+     "complete_window": true
+    },
+    "2026-10-04": {
+     "p": 0.035,
+     "ratio": 4.2,
+     "n_placebo": 225,
+     "onset": "2025-01-03",
+     "grade": "measured",
+     "complete_window": true
+    }
+   },
+   "holds": true
+  },
+  {
+   "slug": "jwst",
+   "n": 2,
+   "articles": [
+    "Astronomy",
+    "Galaxy",
+    "Universe"
+   ],
+   "ref": "2022-07-11",
+   "lag": 60,
+   "committed": {
+    "p": 0.006,
+    "ratio": 2.4
+   },
+   "at": {
+    "2024-12-31": {
+     "p": 0.006,
+     "ratio": 2.4,
+     "n_placebo": 160,
+     "onset": "2022-07-12",
+     "grade": "measured",
+     "complete_window": true
+    },
+    "2025-12-31": {
+     "p": 0.006,
+     "ratio": 2.4,
+     "n_placebo": 160,
+     "onset": "2022-07-12",
+     "grade": "measured",
+     "complete_window": true
+    },
+    "2026-10-04": {
+     "p": 0.006,
+     "ratio": 2.4,
+     "n_placebo": 160,
+     "onset": "2022-07-12",
+     "grade": "measured",
+     "complete_window": true
+    }
+   },
+   "holds": true
+  },
+  {
+   "slug": "gamestop",
+   "n": 1,
+   "articles": [
+    "GameStop short squeeze",
+    "GameStop"
+   ],
+   "ref": "2021-01-13",
+   "lag": 60,
+   "committed": {
+    "p": 0.008,
+    "ratio": 215.0
+   },
+   "at": {
+    "2024-12-31": {
+     "p": 0.008,
+     "ratio": 215.0,
+     "n_placebo": 121,
+     "onset": "2021-01-28",
+     "grade": "measured",
+     "complete_window": true
+    },
+    "2025-12-31": {
+     "p": 0.008,
+     "ratio": 215.0,
+     "n_placebo": 121,
+     "onset": "2021-01-28",
+     "grade": "measured",
+     "complete_window": true
+    },
+    "2026-10-04": {
+     "p": 0.008,
+     "ratio": 215.0,
+     "n_placebo": 121,
+     "onset": "2021-01-28",
+     "grade": "measured",
+     "complete_window": true
+    }
+   },
+   "holds": true
+  },
+  {
+   "slug": "queens-gambit-2",
+   "n": 2,
+   "articles": [
+    "Chess",
+    "Chess set"
+   ],
+   "ref": "2020-10-23",
+   "lag": 60,
+   "committed": {
+    "p": 0.009,
+    "ratio": 3.9
+   },
+   "at": {
+    "2024-12-31": {
+     "p": 0.009,
+     "ratio": 3.9,
+     "n_placebo": 116,
+     "onset": "2020-10-27",
+     "grade": "measured",
+     "complete_window": true
+    },
+    "2025-12-31": {
+     "p": 0.009,
+     "ratio": 3.9,
+     "n_placebo": 116,
+     "onset": "2020-10-27",
+     "grade": "measured",
+     "complete_window": true
+    },
+    "2026-10-04": {
+     "p": 0.009,
+     "ratio": 3.9,
+     "n_placebo": 116,
+     "onset": "2020-10-27",
+     "grade": "measured",
+     "complete_window": true
+    }
+   },
+   "holds": true
+  },
+  {
+   "slug": "toilet-paper",
+   "n": 2,
+   "articles": [
+    "Bidet"
+   ],
+   "ref": "2020-03-11",
+   "lag": 60,
+   "committed": {
+    "p": 0.01,
+    "ratio": 13.0
+   },
+   "at": {
+    "2024-12-31": {
+     "p": 0.01,
+     "ratio": 13.0,
+     "n_placebo": 99,
+     "onset": "2020-03-13",
+     "grade": "measured",
+     "complete_window": true
+    },
+    "2025-12-31": {
+     "p": 0.01,
+     "ratio": 13.0,
+     "n_placebo": 99,
+     "onset": "2020-03-13",
+     "grade": "measured",
+     "complete_window": true
+    },
+    "2026-10-04": {
+     "p": 0.01,
+     "ratio": 13.0,
+     "n_placebo": 99,
+     "onset": "2020-03-13",
+     "grade": "measured",
+     "complete_window": true
+    }
+   },
+   "holds": true
+  },
+  {
+   "slug": "squid-game-ripples",
+   "n": 12,
+   "articles": [
+    "Ddakji"
+   ],
+   "ref": "2021-09-17",
+   "lag": 60,
+   "committed": {
+    "p": 0.008,
+    "ratio": 6499.7
+   },
+   "at": {
+    "2024-12-31": {
+     "p": 0.008,
+     "ratio": 6499.7,
+     "n_placebo": 125,
+     "onset": "2021-09-26",
+     "grade": "measured",
+     "complete_window": true
+    },
+    "2025-12-31": {
+     "p": 0.008,
+     "ratio": 6499.7,
+     "n_placebo": 125,
+     "onset": "2021-09-26",
+     "grade": "measured",
+     "complete_window": true
+    },
+    "2026-10-04": {
+     "p": 0.008,
+     "ratio": 6499.7,
+     "n_placebo": 125,
+     "onset": "2021-09-26",
+     "grade": "measured",
+     "complete_window": true
+    }
+   },
+   "holds": true
+  }
+ ],
+ "summary": {
+  "steps": 13,
+  "flips": 0,
+  "verdict": "grades hold; drift is a theory"
+ }
+}
