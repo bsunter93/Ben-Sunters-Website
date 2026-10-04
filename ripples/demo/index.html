@@ -8,7 +8,7 @@
 <meta property="og:title" content="Ripple: throw a stone, see what it changed">
 <meta property="og:url" content="https://bensunter.com/ripples/demo/"><meta property="og:site_name" content="Ripple"><meta property="og:type" content="website">
 <meta property="og:description" content="Watch the ripples of cultural moments spread out over time, industry by industry, with every link rated from measured to busted.">
-<meta property="og:image" content="https://bensunter.com/ripples/demo/cards/mr-bates-horizon.png"><meta property="og:image:width" content="1200"><meta property="og:image:height" content="630">
+<meta property="og:image" content="https://bensunter.com/ripples/demo/cards/tiger-king.png"><meta property="og:image:width" content="1200"><meta property="og:image:height" content="630">
 <meta name="twitter:card" content="summary_large_image">
 <link rel="icon" href="/favicon.svg">
 <style>
@@ -17,7 +17,7 @@
 @font-face{font-family:"IBM Plex Sans";src:url(/ripples/fonts/plex-sans-latin-var.woff2) format("woff2");font-weight:100 700;font-display:swap}
 /* Layout: a pond (the stone is the event; rings are time since it, log scale; each distinct ripple gets a slice labeled
    with the industry it reached) beside a column of compact cards that arrive in date order. */
-:root{
+:root{--timed:#c3b1ee;
   color-scheme:dark;
   /* water */
   --stage:#0a2b45;--deep:#061b31;--shallow:#2d7fbd;--shallow-2:#8fc4ec;--card:#113e68;--sunk:#0d3254;--hair:#214a72;
@@ -87,7 +87,7 @@ body.card .brand .tag{display:none}body.card .brand::after{content:"bensunter.co
 h1{font:600 clamp(1.7rem,4.4vw,2.9rem)/1.04 var(--display);letter-spacing:-.012em;margin:.6rem 0 .45rem;text-wrap:balance}
 h1 em{font-style:italic;font-weight:500;color:var(--shallow-2)}
 .sub{color:var(--ink-2);max-width:62ch;margin:0}
-.picker{display:flex;flex-wrap:nowrap;gap:7px;margin:10px 0 2px;overflow-x:auto;scrollbar-width:none;padding-bottom:4px;
+.picker{display:flex;flex-wrap:wrap;gap:7px;margin:10px 0 2px;max-height:168px;overflow-y:auto;scrollbar-width:thin;padding-bottom:4px;
   -webkit-mask-image:linear-gradient(90deg,#000 92%,transparent);mask-image:linear-gradient(90deg,#000 92%,transparent)}
 .picker::-webkit-scrollbar{display:none}
 .picker .chip{flex:none;white-space:nowrap}
@@ -109,7 +109,7 @@ h1 em{font-style:italic;font-weight:500;color:var(--shallow-2)}
 .ponds.hdr[hidden]{display:none}
 .ponds.hdr .pond{border-color:var(--hair);color:var(--ink)}.ponds.hdr .pond svg{color:var(--marigold)}.ponds.hdr .pond:hover{border-color:var(--marigold)}
 .tally span{font-size:.8rem;font-weight:600;padding:0;border:0}.tally span+span::before{content:"·";margin-right:10px;color:var(--ink-3);font-weight:400}
-.tally .l-measured{color:var(--good);border-color:var(--good)}.tally .l-timed{color:var(--marigold);border-color:var(--marigold)}
+.tally .l-measured{color:var(--good);border-color:var(--good)}.tally .l-timed{color:var(--timed);border-color:var(--timed)}
 .tally .l-reported{color:var(--ink-2)}.tally .l-plausible{color:var(--ink-3)}
 .tally .l-busted{color:var(--miss);border-color:var(--miss)}
 .tally .markt{color:var(--marigold)}
@@ -188,7 +188,7 @@ input[type=range]{flex:1;accent-color:var(--marigold);min-width:0}
 .card details summary::-webkit-details-marker{display:none}
 .card details summary::before{content:"+ "}.card details[open] summary::before{content:"– "}
 .card details p{margin:.3rem 0 0}
-.card .src{font-size:.84rem;color:var(--ink-3)}.card .src a{color:var(--shallow-2)}
+.card .src{font-size:.84rem;color:var(--ink-3)}.card .src a{color:var(--shallow-2)}.card .src .nolink{opacity:.7;font-style:italic}
 .card .row{display:flex;flex-wrap:wrap;gap:4px 16px;align-items:flex-start}
 .card .row details{flex:1 1 100%}
 .card details.sure summary{color:var(--marigold)}
@@ -203,7 +203,7 @@ input[type=range]{flex:1;accent-color:var(--marigold);min-width:0}
 .fact span{font-size:.74rem;color:var(--ink-3)}
 .b{font-size:.68rem;line-height:1;padding:4px 8px;border-radius:999px;border:1px solid var(--hair);white-space:nowrap;font-weight:700;letter-spacing:.02em}
 .b.event{background:var(--marigold);border-color:var(--marigold);color:#061a2e}
-.b.l-measured{border-color:var(--good);color:var(--good)}.b.l-timed{border-color:var(--marigold);color:var(--marigold)}
+.b.l-measured{border-color:var(--good);color:var(--good)}.b.l-timed{border-color:#7a5fc4;color:#7a5fc4}
 .b.l-reported{border-color:var(--ink-2);color:var(--ink)}.b.l-plausible{border-style:dashed;border-color:#a8955a;color:#8a7638}
 .b.l-busted{border-color:var(--miss);color:var(--miss)}.b.na{border-style:dashed;color:var(--ink-3)}
 .how{max-width:1240px;margin:0 auto;padding:0 16px 40px;display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:14px;
@@ -236,7 +236,7 @@ input[type=range]{flex:1;accent-color:var(--marigold);min-width:0}
 .rip.on{opacity:.5}.rip.flying{opacity:.95;transition:none}
 .rip.l-measured,.edge.l-measured{stroke:var(--good);stroke-width:2.2}
 .rip.l-measured.on,.rip.l-timed.on{opacity:.75}
-.rip.l-measured{color:var(--good)}.rip.l-timed{color:var(--marigold)}
+.rip.l-measured{color:var(--good)}.rip.l-timed{color:var(--timed)}
 .rip.l-reported.on{opacity:.38}.rip.l-plausible.on{opacity:.42}.rip.l-busted.on{opacity:.5}
 .rip2{fill:none;stroke:rgba(214,232,246,.28);stroke-width:1;opacity:0;transition:opacity .6s}
 .ripS,.ripH{fill:none;stroke-linecap:round;opacity:0;transition:opacity .5s}
@@ -256,7 +256,7 @@ input[type=range]{flex:1;accent-color:var(--marigold);min-width:0}
 .nlab.mark rect{fill:var(--paper);stroke:none}
 .nlab.mark text{fill:var(--paper-ink)}.nlab.mark text.s{fill:#8a5a0a}
 .rip.l-measured.disc,.edge.l-measured.disc{stroke-width:2}
-.rip.l-timed,.edge.l-timed{stroke:var(--marigold);stroke-width:2}
+.rip.l-timed,.edge.l-timed{stroke:var(--timed);stroke-width:2}
 .rip.l-reported,.edge.l-reported{stroke:var(--rec);stroke-width:1.5}
 .rip.l-plausible,.edge.l-plausible{stroke:var(--plaus);stroke-width:1.4;stroke-dasharray:5 6}
 .rip.l-busted,.edge.l-busted{stroke:var(--miss);stroke-width:1.8;stroke-dasharray:2 4}
@@ -266,14 +266,14 @@ input[type=range]{flex:1;accent-color:var(--marigold);min-width:0}
 .edge.off{display:none}
 .band{display:none}  /* the label says "≈ 1982–1984"; a radial bar read as an artifact */
 .elbl{font:700 9.5px var(--sans);letter-spacing:.08em;text-transform:uppercase;paint-order:stroke;stroke:#0a2d4e;stroke-width:4px;opacity:0;transition:opacity .5s}
-.elbl.l-measured{fill:var(--good)}.elbl.l-timed{fill:var(--marigold)}.elbl.l-reported{fill:var(--ink)}.elbl.l-plausible{fill:var(--plaus)}.elbl.l-busted{fill:var(--miss)}
+.elbl.l-measured{fill:var(--good)}.elbl.l-timed{fill:var(--timed)}.elbl.l-reported{fill:var(--ink)}.elbl.l-plausible{fill:var(--plaus)}.elbl.l-busted{fill:var(--miss)}
 .node{cursor:pointer;outline:none}
-.node:focus-visible .halo,.node:hover .halo{r:9}
+.node:focus-visible .halo,.node:hover .halo{r:9}.node:focus-visible .halo{stroke:var(--marigold);stroke-width:2}
 .crest{fill:none;stroke-linecap:round;stroke-linejoin:round;stroke-width:3.4;opacity:0;transition:opacity .4s}
 .crest.on{opacity:1}
 .crestg{stroke-width:11;opacity:0;filter:url(#soft)}.crestg.on{opacity:.3}
 #pond.focus .crestg.on:not(.lit){opacity:.06}
-.crest.l-measured{stroke:var(--good)}.crest.l-timed{stroke:var(--marigold)}.crest.l-reported{stroke:#f6fbfb}.crest.l-plausible{stroke:var(--plaus);stroke-width:3.2}.crest.l-busted{stroke:var(--miss);stroke-dasharray:2 3.5;stroke-width:3}
+.crest.l-measured{stroke:var(--good)}.crest.l-timed{stroke:var(--timed)}.crest.l-reported{stroke:#f6fbfb}.crest.l-plausible{stroke:var(--plaus);stroke-width:3.2}.crest.l-busted{stroke:var(--miss);stroke-dasharray:2 3.5;stroke-width:3}
 #pond.focus .crest.on:not(.lit){opacity:.16;transition:opacity .3s}
 .nlab{opacity:0;transition:opacity .5s ease-out;pointer-events:none}
 .leader{stroke:rgba(214,232,246,.35);stroke-width:1;opacity:0;transition:opacity .5s ease-out;pointer-events:none}.leader.on{opacity:1}
@@ -295,6 +295,7 @@ input[type=range]{flex:1;accent-color:var(--marigold);min-width:0}
 body.reel header .picker,body.reel .feed,body.reel .how,body.reel .foot,body.reel .ctl,body.reel .legend{display:none}
 body.reel .wrap{grid-template-columns:1fr;max-width:760px}
 body.reel header{max-width:760px;padding-top:22px}
+@media (min-width:1500px){.wrap{max-width:1560px}.feed{max-width:620px}}
 @media (max-width:860px){.wrap{grid-template-columns:1fr}.pondbox{position:relative;top:0}.feed{position:static;max-height:none;overflow:visible}}
 @media (max-width:560px){
   header{padding:14px 12px 2px}.brand{font-size:.68rem}
@@ -319,6 +320,7 @@ body.reel header{max-width:760px;padding-top:22px}
 .caption{display:none;margin:4px 8px 6px;padding:10px 14px;border-radius:12px;background:rgba(5,22,40,.75);border:1px solid var(--hair);font-size:1.05rem;min-height:2.6em}
 .caption b{color:var(--marigold)}
 body.reel .caption{display:block}
+@media (max-width:860px){#pond.focus ~ .caption.on{display:block}.caption a{color:var(--marigold);font-weight:600;margin-left:6px}}
 body.reel .pondbox{padding-bottom:10px}
 @media (prefers-reduced-motion:reduce){.card.in{animation:none}}
 </style>
@@ -367,7 +369,7 @@ body.reel .pondbox{padding-bottom:10px}
     </div>
     <div class="legend" aria-label="How sure we are of each link">
       <span><svg width="22" height="8"><line x1="1" y1="4" x2="21" y2="4" stroke="var(--good)" stroke-width="4"/></svg>Measured</span>
-      <span><svg width="22" height="8"><line x1="1" y1="4" x2="21" y2="4" stroke="var(--marigold)" stroke-width="3"/></svg>Timed</span>
+      <span><svg width="22" height="8"><line x1="1" y1="4" x2="21" y2="4" stroke="var(--timed)" stroke-width="3"/></svg>Timed</span>
       <span><svg width="22" height="8"><line x1="1" y1="4" x2="21" y2="4" stroke="var(--rec)" stroke-width="2"/></svg>Reported</span>
       <span><svg width="22" height="8"><line x1="1" y1="4" x2="21" y2="4" stroke="var(--plaus)" stroke-width="2" stroke-dasharray="5 6"/></svg>Plausible</span>
       <span><svg width="22" height="8"><line x1="1" y1="4" x2="21" y2="4" stroke="var(--miss)" stroke-width="1.6" stroke-dasharray="2 5"/></svg>Busted</span>
@@ -433,7 +435,7 @@ const MAPS = {
 // The three tabs. Ripple maps: multi-hop maps, best first. Checked stories: viral chains checked link by link.
 // Leads: the engine's one-hop finds (attention only), awaiting a second hop.
 const TABS = {
-  maps:[["chain", "mr-bates-horizon", "Mr Bates → convictions quashed by law"], ["chain", "planet-earth", "Planet Earth → the STURDY Act"],
+  maps:[["map", "tiger-king", "Tiger King → the Big Cat Act"], ["chain", "mr-bates-horizon", "Mr Bates → convictions quashed by law"], ["chain", "planet-earth", "Planet Earth → the STURDY Act"],
     ["chain", "quincy-orphan-drug", "Quincy, M.E. → the Orphan Drug Act"], ["chain", "cathy-come-home", "Cathy Come Home → a duty to house"],
     ["chain", "sixty-minutes-stock-act", "60 Minutes → the STOCK Act"], ["chain", "octopus-sentience", "My Octopus Teacher → the Sentience Act"],
     ["chain", "victim-1961", "Victim (1961) → the Sexual Offences Act"], ["chain", "daily-show-zadroga", "The Daily Show → the Zadroga Act"],
@@ -442,7 +444,7 @@ const TABS = {
     ["chain", "chernobyl-zone", "Chernobyl → an official tourist zone"],
     ["chain", "tylenol", "Tylenol → tamper-proof packaging"], ["chain", "broad-street-sanitation", "A water pump → modern sewers"],
     ["chain", "sputnik-gps", "Sputnik → GPS"], ["chain", "cantaloupe-penicillin", "A cantaloupe → D-Day penicillin"],
-    ["map", "tiger-king", "Tiger King → the Big Cat Act"], ["chain", "earthquake-bank", "1906 quake → Bank of America"],
+    ["chain", "earthquake-bank", "1906 quake → Bank of America"],
     ["chain", "haber-nitrogen", "Ammonia → 8 billion people"], ["chain", "container-waterfronts", "The container → Canary Wharf"],
     ["chain", "wardrobe-malfunction", "Super Bowl 2004 → FCC crackdown"], ["chain", "winter-storm-uri", "Winter Storm Uri → Texas SB 3"],
     ["chain", "fukushima", "Fukushima → Germany quits nuclear"], ["chain", "magnetron-microwave", "Radar → microwave ovens"],
@@ -563,7 +565,7 @@ function howSure(lv, o = {}) {
     if (o.newArticle) return `Its Wikipedia article was created on ${o.when}, after the step before: a sign it became notable then, not proof that the step before caused it.`;
     return `The rise began on ${o.when}, after the step before, which is the order a cause needs. We have not tested it against chance, so it could still be a coincidence.`;
   }
-  if (lv === "reported") return `We did not measure this ourselves. ${o.what ? `A named source (${esc(o.what)})` : "A credible source"} records that it happened on this date${o.why ? ` and ties it to the step before: ${esc(o.why)}` : ""}. Treat it as reliable reporting, not a measurement.`;
+  if (lv === "reported") return `We did not measure this ourselves. ${o.what ? `The source named on the card (${esc(o.what)})` : "A credible source"} records that it happened on this date${o.why ? ` and ties it to the step before: ${esc(String(o.why).replace(/\.\s*$/, ""))}` : ""}. Treat it as reliable reporting, not a measurement.`;
   if (lv === "plausible") return `It happened at about this date, but nothing we checked shows that the step before caused it${o.why ? ` (${esc(o.why)})` : ""}. It stays on the map because the chain claims it, rated honestly as unproven.`;
   if (lv === "busted" && o.notYet) return `${esc(o.why)} Nothing is wrong with the claim; it simply has not happened yet, so it cannot be rated. It stays on the map as a marker of what to watch.`;
   if (lv === "busted" && o.late) return `${esc(o.why)} The thing this step is said to have started was already under way before it arrived, so it cannot be the origin. As a later accelerant it stays an open question.`;
@@ -716,7 +718,7 @@ function chainLevel(st) {
   }
   if (v === "measured") {
     const t = st.ratio ? `Rose to ${st.ratio}× its normal level from ${fmt(D(st.onset))}` : `Moved further than in ${Math.round((1 - st.p) * 100)}% of other periods`;
-    return ["measured", "Measured", `${t} (p = ${st.p}), after the step before.`, st.ratio ? `${st.ratio}× normal · p = ${st.p}` : `Beyond ${Math.round((1 - st.p) * 100)}% of other periods · p = ${st.p}`];
+    return ["measured", "Measured", `${t} (p = ${st.p}), after the step before.`, st.ratio ? `${st.ratio}× normal · a rise this big at ${Math.round(st.p * 100)}% of random dates (p = ${st.p})` : `Beyond ${Math.round((1 - st.p) * 100)}% of other periods · p = ${st.p}`];
   }
   if (st.archive_first) return ["timed", "Timed", `Online by ${fmt(D(st.archive_first))}: the earliest Wayback Machine capture of ${st.test.url}, after the step before.`, `Online by ${fmt(D(st.archive_first))} (Wayback)`];
   if (v.startsWith("timed")) return ["timed", "Timed", st.new_article ? `Its Wikipedia article appeared on ${fmt(D(st.new_article))}, after the step before.` : `A sustained rise from ${fmt(D(st.onset))}, after the step before.`, "Rose after the step before"];
@@ -736,10 +738,14 @@ const SRCURL = st => {
   if (ty === "zillow") return ["https://www.zillow.com/research/data/", "Zillow research data"];
   if (ty === "arxiv") return ["https://arxiv.org/archive/astro-ph", "arXiv astro-ph"];
   if (ty === "dose" || ty === "file") return ["/ripples/methods/", "How we tested it"];
-  const q = txt || st.claim || ""; if (!q) return null;
-  return [`https://en.wikipedia.org/w/index.php?search=${encodeURIComponent(q.slice(0, 160))}`, "Search Wikipedia"];
+  if (st.url) return [st.url, "Open the source"];
+  const art = (st.attn && st.attn.articles && st.attn.articles[0]) || null;  // the article whose attention we checked at this date
+  if (art) return [`https://en.wikipedia.org/wiki/${encodeURIComponent(art.replace(/ /g, "_"))}`, `Wikipedia: ${art}`];
+  return null;  // no link: the source's own words stand, marked as not linked yet
 };
-const srcP = (st, text) => { const u = SRCURL(st); return `<p class="src">${esc(text || "")}${u ? `${text ? " · " : ""}<a href="${esc(u[0])}" target="_blank" rel="noopener">${u[1]} ↗</a>` : ""}</p>`; };
+const amer = s => String(s || "").replace(/\b(\d{1,2}) (Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Sept|Oct|Nov|Dec)[a-z]* (\d{4})\b/g, (m, d, mo, y) => `${mo.slice(0, 3)} ${+d}, ${y}`).replace(/\s*\([a-z0-9]{4}-[a-z0-9]{4}\)/g, "");  // US dates in source lines; dataset ids out
+const srcP = (st, text) => { const u = SRCURL(st); text = amer(text); const t1 = text ? text.charAt(0).toUpperCase() + text.slice(1) : "";
+  return `<p class="src">${esc(t1)}${u ? `${t1 ? " · " : ""}<a href="${esc(u[0])}" target="_blank" rel="noopener">${esc(u[1])} ↗</a>` : t1 ? ` <span class="nolink">· not linked yet</span>` : ""}</p>`; };
 const SRC = st => ({fred:`FRED series ${st.test.id}`, stackex:"Stack Overflow new questions per month (Stack Exchange API)", zillow:"Zillow Home Value Index, Zoom towns minus US",
   arxiv:"arXiv astro-ph submissions per month", ssa:"US baby names, Social Security Administration", file:st.test.source || st.series || "an official series",
   dose:st.source || "state surveys, difference-in-differences"})[st.test.type] || "";
@@ -768,25 +774,27 @@ function fromChain(slug) {
         : at.verdict === "rose, no placebo history" ? `Attention check: views of “${a}” rose from ${fmt(D(at.onset))}; too little history for a placebo test.` : "";
       if (txt) attnNote = txt;  // read under "How sure?", not on the card's face
     }
+    const srcLine = amer(st.source || (st.test && st.test.source) || "");
+    const srcShort = srcLine.split(/;|: | \(/)[0].trim().slice(0, 80);  // the source's name for the How-sure sentence
     let when, sub;
     if (undated) { when = "Undated<span>no date to check</span>"; sub = "undated"; }
     else if (st.range) {
       const y0 = st.range[0].slice(0, 4), y1 = st.range[1].slice(0, 4);
       const span = y0 === y1 ? `${fmt(D(st.range[0])).replace(/,.*/, "")}–${fmt(D(st.range[1])).replace(/,.*/, "")}, ${y0}` : `${y0}–${y1}`;
       when = `≈ ${y0 === y1 ? fmt(D(st.onset)).replace(/ \d+,/, "") : st.onset.slice(0, 4)}<span>likely ${span}</span>`; sub = `≈ ${span}`;
-    } else { when = `${fmt(D(st.onset))}<span>${sinceLabel(d)}</span>`; sub = `${fmtMonth(D(st.onset))} · ${sinceLabel(d)}`; }
+    } else if (/-07-01$/.test(st.onset || "") && !/jul/i.test(srcLine)) { when = `${st.onset.slice(0, 4)}<span>placed at mid-year · ${sinceLabel(d)}</span>`; sub = `${st.onset.slice(0, 4)} · ${sinceLabel(d)}`; }  // a step dated only to its year
+    else { when = `${fmt(D(st.onset))}<span>${sinceLabel(d)}</span>`; sub = `${fmtMonth(D(st.onset))} · ${sinceLabel(d)}`; }
     const happened = st.test.type === "record" ? srcP(st, st.source || st.test.source) :
-      st.test.type === "none" ? srcP(st, st.source || "") : srcP(st, st.found ? "Wikipedia daily views: " + Object.keys(st.found).filter(k => st.found[k]).join(", ") : SRC(st));
+      st.test.type === "none" ? srcP(st, st.source || "") : srcP(st, st.found && Object.keys(st.found).some(k => st.found[k]) ? "Wikipedia daily views: " + Object.keys(st.found).filter(k => st.found[k]).join(", ") : SRC(st));
     const id = `c${st.n}`;
     const parent = st.after ? (st.after === 1 ? null : `c${st.after}`) : st.branch ? null : lastMain;
-    const srcLine = st.source || (st.test && st.test.source) || "";
     const shortLine = lv === "reported" && srcLine ? esc(srcLine) : short;
     items.push({id, parent, slice:st.slice || (st.branch ? `b${st.n}` : "main"), d, range, undated, label:st.short || shortLabel(st.claim), lv, lvText, sub, mark:lv === "busted" ? null : st.mark, short:shortLine, title:st.claim,
-      card:card({when, badge:lvText, badgeCls:`l-${lv}`, title:st.claim, cls:lv === "busted" ? "busted" : "", spark:weekly ? sparkHTML(weekly, st.ref) : at && at.weekly && at.ratio ? sparkHTML(at.weekly, st.onset) : "", facts, short:shortLine,
+      card:card({when, badge:lvText, badgeCls:`l-${lv}`, title:st.claim, cls:lv === "busted" ? "busted" : "", spark:weekly ? sparkHTML(weekly, st.ref) : (lv === "measured" && at && at.weekly && at.ratio) ? sparkHTML(at.weekly, st.onset) : "", facts, short:shortLine,
         sure:howSure(st.test.type === "dose" && st.p != null ? "measured" : lv, (lv === "measured" || (st.test.type === "dose" && st.p != null)) ? {kind:st.test.type === "wiki" ? "wiki" : st.test.type === "ssa" ? "ssa" : st.test.type === "dose" ? "dose" : "series", what:st.test.type === "wiki" ? (st.test.articles || [])[0] : SRC(st) || st.series,
             when:st.onset ? fmt(D(st.onset)) : "", ratio:st.ratio, p:st.p, n:st.n_placebo, pre:st.pretrend_p}
           : lv === "timed" ? {when:st.onset ? fmt(D(st.onset)) : "", archive:!!st.archive_first, newArticle:!!st.new_article}
-          : lv === "reported" ? {what:srcLine, why:st.link_why} : {why:why, notYet:/not yet/.test(st.verdict || ""), late:/after what it is said/.test(st.verdict || "")}) + (attnNote ? ` ${esc(attnNote)}` : ""),
+          : lv === "reported" ? {what:srcShort, why:st.link_why} : {why:why, notYet:/not yet/.test(st.verdict || ""), late:/after what it is said/.test(st.verdict || "")}) + (attnNote ? ` ${esc(attnNote)}` : ""),
         details:`<p>${esc(why)}</p>${st.note && st.note !== why ? `<p>${esc(st.note)}</p>` : ""}${happened}`})});
     if (!st.branch && !st.after) lastMain = id;
   });
@@ -978,7 +986,7 @@ function draw(story) {
       it.elbl = el("text", {class:`elbl l-${it.lv}`, x:mx, y:my - 5, "text-anchor":"middle", transform:`rotate(${ang.toFixed(1)} ${mx} ${my})`}, elbls);
       it.elbl.textContent = it.lvText || LVL[it.lv];
     }
-    const g = el("g", {class:"node", tabindex:0, role:"button", "aria-label":`${it.label}, ${it.lvText || LVL[it.lv]}`, opacity:0}, nodes);
+    const g = el("g", {class:"node", tabindex:-1, role:"button", "aria-label":`${it.label}, ${it.lvText || LVL[it.lv]}`, opacity:0}, nodes);
     it.halo = el("circle", {cx:0, cy:0, r:24 * K, fill:"transparent"}, g);  // the tap target (about 44 px on a phone); the marker itself is the crest on the ring
     if (it.mark) {  // a lasting mark is a pebble that stayed on the water, lit from beneath
       el("circle", {class:"markglow", cx:0, cy:0, r:26 * K, fill:"url(#glow)"}, g);
@@ -1078,7 +1086,7 @@ function launch(it, animate) {
 }
 function land(it) {  // the label appears only once the ripple has arrived
   it.state = "landed";
-  it.g.classList.add("on");
+  it.g.classList.add("on"); it.g.setAttribute("tabindex", 0);
   it.g.setAttribute("transform", `translate(${it.pos.x},${it.pos.y}) scale(${depthK(it.plane)})`);
   it.path.setAttribute("d", `M${it.from.x},${it.from.y} L${it.plane.x},${it.plane.y}`);
   it.ring.setAttribute("d", arcPath(it.r, it.span)); it.ringS.setAttribute("d", arcPath(it.r, it.span)); it.ringH.setAttribute("d", arcPath(it.r, it.span));
@@ -1091,7 +1099,7 @@ function land(it) {  // the label appears only once the ripple has arrived
   if (REEL) $("#caption").innerHTML = `${it.mark ? `<b>◆ ${esc(it.mark)}</b> · ` : ""}${esc(it.label)} <span style="color:var(--ink-3)">· ${esc(it.lvText || LVL[it.lv])}${it.sub ? " · " + esc(it.sub) : ""}</span>`;
 }
 function hide(it) {
-  it.state = "hidden"; it.g.classList.remove("on"); it.g.setAttribute("opacity", 0); it.g.setAttribute("transform", `translate(${C.x},${C.y})`); it.lab.classList.remove("on");
+  it.state = "hidden"; it.g.classList.remove("on"); it.g.setAttribute("tabindex", -1); it.g.setAttribute("opacity", 0); it.g.setAttribute("transform", `translate(${C.x},${C.y})`); it.lab.classList.remove("on");
   it.path.classList.add("off"); it.path.setAttribute("d", `M${it.from.x},${it.from.y} L${it.from.x},${it.from.y}`);
   [it.ring, it.ringS, it.ringH].forEach(r => { r.classList.remove("on", "flying"); r.setAttribute("d", arcPath(14, it.span)); });
   it.ring2.classList.remove("on", "flying"); it.ring2.setAttribute("d", arcPath(14, it.span)); it.glint.classList.remove("on");
@@ -1172,13 +1180,13 @@ function tickWaves(now) {
       const t = (now - w._col.b) / w._col.ms;
       if (t >= 1) { w.remove(); continue; }
       const h = Math.sin(Math.min(1, t) * Math.PI);
-      w.setAttribute("ry", 6 + 22 * h); w.setAttribute("cy", C.y - 6 - 12 * h); w.setAttribute("rx", 5 - 2.5 * t); w.style.opacity = 0.85 * (1 - t * t);
+      w.setAttribute("ry", Math.max(0.1, 6 + 22 * h)); w.setAttribute("cy", C.y - 6 - 12 * h); w.setAttribute("rx", Math.max(0.1, 5 - 2.5 * t)); w.style.opacity = 0.85 * (1 - t * t);
       continue;
     }
     const p = (now - w._b) / w._ms;
     if (p >= 1.2) { w.remove(); continue; }
     const r0 = w._r0 || 14;
-    w.setAttribute("r", r0 + ease(Math.min(p, 1)) * (w._to - r0) + Math.max(0, p - 1) * 50);
+    w.setAttribute("r", Math.max(0.1, r0 + ease(Math.min(p, 1)) * (w._to - r0) + Math.max(0, p - 1) * 50));
     w.style.opacity = Math.max(0, Math.min(1, 1.2 - p) * (w._foam ? 0.85 : 0.6));
     if (w._foam) w.setAttribute("stroke-width", Math.max(0.4, 3 - 2.6 * Math.min(1, p)));
   }
@@ -1258,6 +1266,7 @@ function showTip(it) {
 }
 function hideTip() { $("#tip").classList.remove("on"); }
 function clearFocus() {
+  { const cap = $("#caption"); if (cap && !REEL) { cap.classList.remove("on"); } }
   $("#pond").classList.remove("focus");
   if (cur) cur.items.forEach(x => { [x.g, x.path, x.lab, x.band, x.ring, x.crest].forEach(e => e && e.classList.remove("lit")); if (!x.showLabel && x.lab) { x.lab.classList.remove("on"); if (x.leader) x.leader.classList.remove("on"); } });
   if (hot) { hot.lab.classList.remove("hot"); hot.cardEl && hot.cardEl.classList.remove("hot"); hot = null; }
@@ -1273,6 +1282,10 @@ function focus(it) {
   lit.forEach(x => [x.g, x.path, x.lab, x.band, x.ring, x.crest].forEach(e => e && e.classList.add("lit")));
   $("#pond").classList.add("focus");
   if (it.cardEl) { it.cardEl.classList.add("hot"); if (!REEL && window.innerWidth > 860) it.cardEl.scrollIntoView({block:"nearest", behavior:"smooth"}); }
+  if (!REEL && window.innerWidth <= 860) {  // on a phone the card is screens below: say what this ripple is, right under the pond
+    const cap = $("#caption"); cap.innerHTML = `${it.mark ? `<b>◆ ${esc(it.mark)}</b> · ` : ""}<b>${esc(it.label)}</b> <span style="color:var(--ink-3)">· ${esc(it.lvText || LVL[it.lv])}${it.sub ? " · " + esc(it.sub) : ""}</span>${it.short ? `<br>${it.short}` : ""}<a href="#" class="readcard">Read the card ↓</a>`;
+    cap.classList.add("on"); const rc = cap.querySelector(".readcard"); if (rc) rc.onclick = e => { e.preventDefault(); if (it.cardEl) it.cardEl.scrollIntoView({block:"start", behavior:"smooth"}); };
+  }
   for (let k = 0; k <= 1000; k++) if (daysAt(k / 1000) >= it.d + 0.5) { if (k / 1000 > t) t = k / 1000; break; }
   render();
 }
@@ -1308,7 +1321,7 @@ function setPlaying(p) {
 function setStep(on) {
   stepMode = on; const b = $("#stepbtn"); b.setAttribute("aria-pressed", on); b.title = on ? "Step mode is on: the clock stops at each ripple. Press play or → for the next" : "Stop at each ripple and read its card";
   try { localStorage.setItem("ko-step", on ? "1" : "0"); } catch {}
-  if (on && cur && !playing && t < 1) setPlaying(true);  // and go to the first ripple
+  if (on && cur && !playing) { if (t >= 1) { t = 0; cur.items.forEach(hide); cur.splashed = false; clearFocus(); } setPlaying(true); }  // and go to the first ripple
   setPlaying(playing);
 }
 
@@ -1394,8 +1407,8 @@ function show(kind, slug, autoplay = true) {
   const named = TABS[tab].find(([k, s]) => k === kind && s === slug);
   $("#h1").textContent = named && named[2] ? named[2] : story.h1;
   const markLine = marks.length ? `The mark it left: ${marks.slice(0, 3).map(x => `${x.label} (${x.mark.toLowerCase()})`).join("; ")}${marks.length > 3 ? `; and ${marks.length - 3} more` : ""}.`
-    : "No lasting mark found yet: what changed is attention, money or hype, not a law, an institution, jobs or health.";
-  $("#sub").textContent = kind === "acts" ? `Named in the passage of ${story.items.length} ${story.items.length === 1 ? "law" : "laws"}, ${marks.length} of them as a reason given for the bill. A citation shows the work was in the room, not that it caused the law.` : markLine;  // one line; the story's own paragraph is in the first card
+    : "A big splash, no lasting mark yet: what changed so far is attention and money, not a law, an institution, jobs or health.";
+  $("#sub").textContent = kind === "acts" ? `Named in the passage of ${story.items.length} ${story.items.length === 1 ? "law" : "laws"}${story.items.length === 1 ? (marks.length ? ", as a reason given for the bill" : ", in passing") : `, ${marks.length} of them as a reason given for the bill`}. A citation shows the work was in the room, not that it caused the law.` : markLine;  // one line; the story's own paragraph is in the first card
   const tally = {}; story.items.forEach(x => tally[x.lv] = (tally[x.lv] || 0) + 1);
   $("#tally").innerHTML = (kind === "acts" ? `<span class="markt">◆ ${marks.length} cited as a reason</span>` : marks.length ? `<span class="markt">◆ ${marks.length} lasting mark${marks.length === 1 ? "" : "s"}</span>` : `<span class="nomark">No lasting mark yet</span>`) +
     ["measured", "timed", "reported", "plausible", "busted"].filter(k => tally[k]).map(k => `<span class="l-${k}">${tally[k]} ${LVL[k].toLowerCase()}</span>`).join("");
@@ -1433,16 +1446,17 @@ function next() {
     const svgEl = $("#pond"); let dragging = false;
     const toPond = e => { const pt = svgEl.createSVGPoint(); pt.x = e.clientX; pt.y = e.clientY; const m = svgEl.getScreenCTM(); return m ? pt.matrixTransform(m.inverse()) : null; };
     svgEl.addEventListener("pointerdown", e => {
-      if (!cur || t > PRE * 0.5 || !cur.sCore) return;
+      if (!cur || t > PRE * 0.85 || !cur.sCore) return;
       const q = toPond(e); if (!q) return;
       const b = cur.sCore.getBBox(), m = cur.sCore.getCTM(), bs = svgEl.getScreenCTM();  // is the press on the stone?
       const sx = (cur.throwFrom || THROW_FROM).x, sy = (cur.throwFrom || THROW_FROM).y;
       if (Math.hypot(q.x - sx, q.y - sy) > 70) return;
-      dragging = true; setPlaying(false); svgEl.setPointerCapture(e.pointerId); e.preventDefault();
+      dragging = true; setPlaying(false); svgEl.style.touchAction = "none"; svgEl.setPointerCapture(e.pointerId); e.preventDefault();
     });
     svgEl.addEventListener("pointermove", e => { if (!dragging) return; const q = toPond(e); if (q) { cur.throwFrom = {x:Math.max(-115, Math.min(815, q.x)), y:Math.max(100, Math.min(570, q.y))}; t = 0; render(); } });
-    const release = e => { if (!dragging) return; dragging = false; t = 0; cur.splashed = false; setPlaying(true); };
-    svgEl.addEventListener("pointerup", release); svgEl.addEventListener("pointercancel", release);
+    const release = e => { if (!dragging) return; dragging = false; svgEl.style.touchAction = ""; t = 0; cur.splashed = false; setPlaying(true); };
+    const cancel = e => { if (!dragging) return; dragging = false; svgEl.style.touchAction = ""; cur.throwFrom = null; t = 0; render(); };  // the browser took the gesture: put the stone back on the bank and wait
+    svgEl.addEventListener("pointerup", release); svgEl.addEventListener("pointercancel", cancel);
   })();
   document.addEventListener("click", e => { if (!chooser.hidden && !chooser.contains(e.target) && e.target !== cbtn && !cbtn.contains(e.target)) setChooser(false); });
   document.addEventListener("keydown", e => { if (e.key === "Escape") setChooser(false); });
