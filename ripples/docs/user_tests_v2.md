@@ -124,18 +124,18 @@ Earl
 
 | Finding | Who | Status |
 |---|---|---|
-| "Search Wikipedia" source links read as a dodge, not a citation | All three | **Open, and the biggest.** The chains hold source strings, not URLs. The honest fix is data: a URL per record step (legislation.gov.uk, congress.gov, a DOI, a court docket, an agency table). Until then the link will be relabeled so no one mistakes it for a citation and dropped where the query is the claim itself |
+| "Search Wikipedia" source links read as a dodge, not a citation | All three | **Done as asked, data pass still open.** The search links are gone. A card now links only to something real: the Wikipedia article whose attention was counted (33 steps by their own test, more by the attention check), the series read, a URL in the chain, or a `url` field a chain author adds. Everything else shows the source's own words with "not linked yet". Adding record URLs across the chains is the data pass that remains |
 | First-visit hint sits on the slider it tells you to drag; says "tap" to mouse users | All three | **Fixed**: above the controls; "click or tap" |
 | Pond text too small: rim words and "1 year" have no floor; labels under 10 px on a phone and on a projector | Marcus, Yuki | **Fixed** for labels, rim words and the ring label (see below). Open: the pond column does not grow past 663 px on a 1920 screen; a projector needs a wider pond or a large-type toggle |
 | Step mode skips ripples | Earl (Yuki saw it work on Prohibition at 1920 wide) | **Fixed** (see below) |
 | Dates disagree: clock vs card, rest label vs cards, nodes piled on the rim | Earl | **Fixed** (see below) |
-| The pond does not carry the five grades for a colorblind reader; the legend promises a dashed Plausible that the pond draws solid | Earl | **Partly fixed**: Plausible is dashed on the pond; Busted is heavier and less faint. Open: a distinct Timed color, since Timed shares the marigold of the stone and the lasting-mark pill |
-| Tapping a ripple or stepping on a phone shows nothing readable in view; the card is screens below | Marcus | Open: a pinned one-line caption under the pond on narrow screens |
-| Drag-to-throw breaks under touch and is unreachable during autoplay | Marcus | Open: `touch-action: none` during the drag window; treat `pointercancel` as "put it back"; hold the stone on the bank on first visit |
-| Reported "How sure?" nests the entire source string; dose-response card jargon | Yuki, Earl | Fix queued: pass the short source name; drop the dataset id; one plain line for p where it first appears |
-| Date style mixed: US headers, day-month source lines; placeholder dates print as exact days | Yuki | Open: a precision field per step and one formatter for source strings (data pass) |
-| Catalog is UK-heavy; the default story means nothing to a US 16-year-old; some stories do not belong on a projector | Yuki | Owner's call: a US default, a classroom filter, and US-history chains (Dust Bowl, 1918 flu, New Deal) |
-| Copy: "No lasting mark found yet… hype" as the first line under a fan's show; "1 law, 1 of them" | Marcus | Fix queued |
+| The pond does not carry the five grades for a colorblind reader; the legend promises a dashed Plausible that the pond draws solid | Earl | **Fixed.** Plausible dashed, Busted heavier, and Timed is now lilac, distinct from the stone's marigold and from green and red under deuteranopia (blue-violet survives the simulation; Earl's table had every marigold pair at ΔE 0) |
+| Tapping a ripple or stepping on a phone shows nothing readable in view; the card is screens below | Marcus | **Fixed.** On screens up to 860 px a caption under the pond names the ripple, its grade, date and one-line reason, with a "Read the card" link that scrolls to it |
+| Drag-to-throw breaks under touch and is unreachable during autoplay | Marcus | **Fixed.** The pond sets `touch-action: none` while the stone is held, so Chrome no longer cancels the gesture; a cancelled touch puts the stone back instead of throwing it; the grab window covers almost the whole wait before the throw |
+| Reported "How sure?" nests the entire source string; dose-response card jargon | Yuki, Earl | **Fixed.** The sentence names the source's short name only ("The source named on the card (Miron & Zwiebel (1991)) records…"); dataset ids are stripped; the Measured face reads "370.1× normal · a rise this big at 2% of random dates (p = 0.023)" |
+| Date style mixed: US headers, day-month source lines; placeholder dates print as exact days | Yuki | **Fixed for display.** Source lines are rewritten to US style ("17 Jan 1920" → "Jan 17, 1920"). A step dated to mid-year with no July in its source now reads as its year, "1922 · placed at mid-year". Jan 1 dates are left alone, since some are real (Mr Bates aired Jan 1). A precision field in the data is still the right long-term answer |
+| Catalog is UK-heavy; the default story means nothing to a US 16-year-old; some stories do not belong on a projector | Yuki | **Default changed:** the page opens on Tiger King → the Big Cat Act (US, a law, a show most Americans know); Mr Bates is second. The launch clip is re-cut on it. A classroom filter and US-history chains (Dust Bowl, 1918 flu, New Deal) remain the owner's call |
+| Copy: "No lasting mark found yet… hype" as the first line under a fan's show; "1 law, 1 of them" | Marcus | **Fixed.** "A big splash, no lasting mark yet: what changed so far is attention and money, not a law…"; the one-law case reads "Named in the passage of 1 law, as a reason given for the bill" |
 | "How it works" headings invisible | Yuki | **Fixed** (paper cards) |
 
 What all three praised, in their own words: the cards. The grade word on every card, the strikethrough on busted titles, "How sure?" text that concedes its limits, and the p-value explained in words. Yuki called Step mode "the best thing here"; Earl called the water "a decoration I can't read". Both are right, and together they say where the next work goes: the pond must carry the reading, not just the mood.
@@ -149,3 +149,12 @@ What all three praised, in their own words: the cards. The grade word on every c
 - The rim words and the ring label follow the same text floor as the labels.
 - The text floor itself did not reach the labels: on small screens their size was still fixed at 22 SVG units (7.6 px on Marcus's phone, as he measured). Labels now scale with the floor factor: 11 px on a 360-px phone, 15 px on a tablet, 12 px on a desktop, measured on screen.
 - "How it works" sits on paper cards, so its headings and text read (the round-one fix had set the heading color inside a section whose palette is paper ink on the dark page; the section had no paper behind it).
+
+## Fixed in the second pass (builder, same night)
+
+- Source links: real or none (table above). Timed is lilac. The phone caption on tap and step. Touch drag. The default story is Tiger King.
+- Reported "How sure?" names the short source; US dates on source lines; mid-year placeholders read as a year; dataset ids gone; p explained on the Measured face.
+- A sparkline only on Measured steps (a Reported card with an attention-check spike looked measured).
+- Keyboard: a ripple joins the tab order when it lands (Play is a few Tabs away, not 27); a visible focus ring.
+- The chooser's chips wrap instead of one scrolling strip. On screens 1500 px and wider the layout grows, so the pond is larger on a projector.
+- Step at the end of a story restarts it. No negative radii in the splash. The double period, the empty series name, the lowercase detail, and "cinemas" in the chain text.
