@@ -163,7 +163,7 @@ input[type=range]{flex:1;accent-color:var(--marigold);min-width:0}
 .legend{display:flex;flex-wrap:wrap;align-items:center;gap:6px 14px;font-size:.78rem;color:var(--ink-2);padding:6px 8px 4px}
 .legend svg{margin-right:5px;vertical-align:middle}
 @media (max-width:1200px){.wrap{grid-template-columns:minmax(0,1.45fr) minmax(0,1fr)}}
-@media (min-width:861px) and (max-height:820px){svg#pond{max-height:calc(100vh - 330px)}.legend{position:absolute;right:14px;top:58px;flex-direction:column;align-items:flex-start;gap:4px;font-size:.72rem;padding:6px 9px;background:rgba(15,28,38,.82);border:1px solid var(--hair);border-radius:6px;z-index:2}.legend .howbtn{margin-left:0;margin-top:2px}}  /* a short laptop: the legend sits in the pond's corner like a map's, inside the fold (second roundtable) */
+@media (min-width:861px) and (max-height:820px){svg#pond{max-height:calc(100vh - 362px)}.legend{font-size:.72rem;padding:2px 8px 0;gap:3px 10px}.legend svg{margin-right:3px}}  /* a short laptop: the pond gives up one row so the legend sits under the controls, inside the fold and off the water (the corner panel covered the rim word and the 1-year tick at 1024 and 1366) */
 .howbtn{margin-left:auto;background:none;border:1px solid var(--hair);border-radius:6px;padding:3px 10px;font-size:.76rem;color:var(--ink-2);cursor:pointer}
 .feed{display:grid;gap:8px;align-content:start;position:sticky;top:10px;max-height:calc(100vh - 20px);overflow-y:auto;scrollbar-width:thin;
   --ink:var(--paper-ink);--ink-2:var(--paper-ink-2);--ink-3:var(--paper-ink-3);--hair:rgba(30,42,46,.14);--sunk:var(--paper-2);--rec:var(--paper-ink);--marigold:#c77f12;--good:#3e8f55;--miss:#d04a3a;
@@ -955,10 +955,11 @@ function fromChain(slug) {
 function draw(story) {
   const svg = $("#pond"); svg.textContent = "";
   // phones: the pond is drawn about 2.4x smaller, so type and dots scale up and only the marks keep a standing label
-  const scale = (svg.clientWidth || 700) / 940, touch = matchMedia("(pointer:coarse)").matches;
+  const drawW = svg.clientWidth, scale = (drawW > 200 ? drawW : 700) / 940, touch = matchMedia("(pointer:coarse)").matches;  // a width read before layout settles (a pane's first open) is not a width; draw for a laptop and redraw on resize
+  story.drawW = drawW;
   const dense = scale < 0.6;
   const floor = touch ? (dense ? 11 : 14) : 12;  // the smallest a label may be on screen, in CSS px: a tablet held at arm's length reads 15; a phone 11, where the pond is small
-  const K = Math.max(1, floor / (13.5 * scale));
+  const K = Math.min(2.6, Math.max(1, floor / (13.5 * scale)));  // clamped: an unsettled width once sent K to 209 and painted one mark over the whole pond
   story.dense = dense;
   const {items} = story;
   const today = daysBetween(story.iso0, new Date().toISOString().slice(0, 10));
@@ -1329,6 +1330,10 @@ function shadeUnder(rect) {  // labels that would sit under the lower third step
   }
 }
 window.addEventListener("resize", () => { if (cur && cur.beatOn) placeBeatline(); });
+let redrawT; window.addEventListener("resize", () => {  // the pond was drawn for one width; when the real width differs by more than 15% (a pane opening, a phone turning), draw it again at the same clock
+  clearTimeout(redrawT);
+  redrawT = setTimeout(() => { if (!cur) return; const w = $("#pond").clientWidth; if (w > 200 && Math.abs(w - cur.drawW) / Math.max(w, cur.drawW) > 0.15) { clearFocus(); hideTip(); draw(cur); render(); if (cur.beatOn) placeBeatline(); } }, 200);
+});
 function unspot() {
   if (!cur || !cur.beatOn) return;
   for (const it of cur.beatOn.items) { it.lab.classList.remove("beat"); if (it.cardEl) it.cardEl.classList.remove("now"); if (!it.showLabel && it !== hot) { it.lab.classList.remove("on"); if (it.leader) it.leader.classList.remove("on"); } }
@@ -1805,7 +1810,7 @@ function show(kind, slug, autoplay = true) {
   const tally = {}; story.items.forEach(x => tally[x.lv] = (tally[x.lv] || 0) + 1);
   $("#tally").innerHTML = (kind === "acts" ? `<span class="markt">${HEX}${marks.length} cited as a reason</span>` : marks.length ? `<span class="markt">${HEX}${marks.length} lasting mark${marks.length === 1 ? "" : "s"}</span>` : `<span class="nomark">No lasting mark yet</span>`) +
     ["measured", "timed", "reported", "plausible", "busted"].filter(k => tally[k]).map(k => `<span class="l-${k}">${tally[k]} ${LVL[k].toLowerCase()}</span>`).join("") + (kind === "acts" ? "" : `<span class="weak">weakest link ${LVL[story.weak].toLowerCase()}</span>`);
-  story.tallyFull = $("#tally").innerHTML; story.tallyMystery = story.tallyFull.replace(/(<span class="markt">)[\s\S]*?(<\/span>)/, `$1${HEX}? lasting marks$2`).replace(/<span class="weak">[\s\S]*?<\/span>/, "");
+  story.tallyFull = $("#tally").innerHTML; story.tallyMystery = `<span class="markt">${HEX}? lasting marks</span>`;  // while the answer is withheld, the grade counts wait too: they are jargon until How it works or a card has explained them
   // same stone, other ponds; and any ripple that is itself a stone we have thrown
   const others = pondsFor(story.stone, kind, slug), pondsEl = $("#ponds");
   pondsEl.innerHTML = pondChips(others, others.length === 1 ? "Same stone, another pond:" : "Same stone, other ponds:"); pondsEl.hidden = !others.length;
