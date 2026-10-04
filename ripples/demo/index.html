@@ -394,7 +394,7 @@ body.reel .pondbox{padding-bottom:10px}
 .beatline .bwhy{display:block;color:var(--ink-2);font-size:.86rem;margin-top:2px}.beatline .bmore{display:block;color:var(--ink-3);font-size:.82rem}
 .beatline .bmk{color:var(--marigold);font-weight:700;margin-right:6px}.beatline .bmk svg{width:12px;height:12px;vertical-align:-1px;margin-right:3px}
 .card.now{border-color:rgba(242,169,59,.55)}
-@media (max-width:860px){.beatline{position:static;padding:8px 10px 2px;font-size:.88rem;background:none;text-shadow:none;min-height:66px}.beatline.off{min-height:0;padding:0;height:0;overflow:hidden}#pond.focus ~ .beatline{display:none}}
+@media (max-width:860px){.beatline{position:static;padding:8px 10px 2px;font-size:.88rem;background:none;text-shadow:none;height:104px;box-sizing:border-box;display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:5;overflow:hidden;transition:opacity .35s}.beatline.off{opacity:0}.beatline .bwhy{display:none}#pond.focus ~ .beatline{display:none}}
 body.card .beatline{display:none}
 @media (orientation:portrait){body.reel{min-height:100vh;display:flex;flex-direction:column;justify-content:center}body.reel header{padding-top:0}body.reel .wrap{width:100%}body.reel .beatline{position:static;top:auto !important;background:none;text-shadow:none;padding:14px 16px 0}}  /* a vertical clip: the pond fills the width (an auto-margin flex item shrinks to fit otherwise) and the lower third flows under it */  /* a vertical reel: the story sits in the middle of the frame */
 @media (orientation:portrait) and (min-width:900px){body.reel{zoom:1.5;min-height:calc(100vh / 1.5)}body.reel .wrap{grid-template-columns:1fr;max-width:720px}body.reel .wrap .feed{display:none}}  /* a 1080×1920 reel renders at native pixels with a 720-px layout */
@@ -1174,7 +1174,7 @@ function draw(story) {
       const lx = it.pos.x + best[0] + (best[0] + bw / 2 < 0 ? bw : best[0] > 0 ? 0 : bw / 2), ly = it.pos.y + best[1] + (best[1] + bh / 2 < 0 ? bh : best[1] > 0 ? 0 : bh / 2);
       it.leader = el("line", {class:"leader", x1:it.pos.x, y1:it.pos.y, x2:lx, y2:ly}, labels);
     }
-    if (!free && !(it.mark && nMarks <= 3) && it.lv !== "measured") it.showLabel = false;  // a crowded pond keeps its labels for hover, focus, the caption and the card
+    if (!free && !(it.mark && nMarks <= 3) && (it.lv !== "measured" || dense)) it.showLabel = false;  // a crowded pond keeps its labels for hover, focus, the caption and the card; a phone's small pond drops even a measured label that found no clear spot
     if (!it.showLabel && it.leader) { it.leader.remove(); it.leader = null; }
     const bx = it.pos.x + best[0], by = it.pos.y + best[1];
     if (it.showLabel) placed.push({x:bx, y:by, w:bw, h:bh});  // hidden labels do not reserve space
