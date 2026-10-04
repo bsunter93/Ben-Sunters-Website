@@ -215,8 +215,11 @@ px, the pond's foot inside a 614-px fold). Discovery v1.1 ran over sixty more st
 were screened into the product (PR #95; `docs/discovery_corpus1_v1_1.md`; 36 stones, 77 marks under Engine leads).
 The clips are cut and the launch kit is current (PR #94; `launch/posts_ready.txt`). The culture shelf ran over 132
 recognizable stones with a behavior lexicon and 22 stones / 25 marks joined the product, including the first Disputed
-engine-found link (PR #96; `docs/discovery_culture_v1.md`): **58 stones, 102 marks under Engine leads.** Still to do:
-release Monday morning Oct 5 (section 8), the owner's date; the pre-flight checks 1 to 3 already pass on production.
+engine-found link (PR #96; `docs/discovery_culture_v1.md`): **58 stones, 102 marks under Engine leads.** The second
+roundtable (`docs/roundtable_v2.md`: the twelve at 8.3, three new strangers at 7.3) voted release. Still to do: release
+Monday morning Oct 5 (section 8), the owner's date; the pre-flight checks 1 to 3 already pass on production. First-week
+items from the room: the time to the first lasting mark on a phone, a shape for the 72-chip Engine leads shelf, the
+legend under a 614-px fold, the SE caption, an export of an engine-found card.
 The text below is the state the previous session left.
 
 Release-ready as of 06:30. Five rounds of simulated testers took the product from 5.5 to **8.2** and voted to release; the

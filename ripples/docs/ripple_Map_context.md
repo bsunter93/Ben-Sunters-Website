@@ -1,4 +1,4 @@
-# Ripple Map: context brief (updated 2026-10-04, 23:30 UTC)
+# Ripple Map: context brief (updated 2026-10-05, 00:30 UTC)
 
 Standalone context for anyone (person or new chat) picking up Ripple. Read `ripples/HANDOFF.md` first: it is the
 runbook for a new session (what to install, how to build, test and ship, the rules, the next steps); this brief is the
@@ -193,8 +193,8 @@ on the morning of Oct 4 and set a new bar (pacing, look, no "AI slop"); the page
 narration line, wears a flat editorial look, and opens on the pond. The same day the engine's discovery layer got its
 first measured result and its first product surface: Wikipedia read as a cited-cause record recovers 62% of the
 catalog's lasting marks, busts predecessors automatically, and 25 hand-screened engine-found marks now sit first under
-Engine leads. Twelve simulated testers scored the new build 8.0 on a stranger's first ten seconds; the builder's rating
-is 7.5 (6.5 at pickup). Nobody outside the room has used it yet.
+Engine leads. The second roundtable scored the build 8.3 (the twelve) and 7.3 (three simulated strangers), 8.1 for the fifteen;
+the builder's rating is 8.0 (6.5 at pickup). Nobody outside the room has used it yet.
 
 **What it can do today (capabilities, Oct 4):**
 
@@ -228,6 +228,8 @@ instrument, which tells the next pass where to look.
 | 4 (Oct 4) | the nine returning; Kurian, Musk, Zuckerberg personas | 5.4 → 7.7; 6, 5, 6; all twelve 7.2 |
 | Roundtable | all twelve, Musk persona moderating | nine combined ideas, five ranked and built (`roundtable_v1.md`) |
 | Final (Oct 4, 05:00) | all twelve | **8.2**, verdict release (`roundtable_final.md`) |
+| 5 (Oct 4, 09:00) | the twelve, on a stranger's first ten seconds | **8.0** (`user_tests_v5.md`) |
+| Second roundtable (Oct 4, late) | the twelve, plus Rosa, Dev and Jaz, who had never seen it | the twelve **8.3**, the three strangers 7.3, all fifteen **8.1**; verdict release Monday (`roundtable_v2.md`) |
 
 **What a ripple is:**
 - **A time-ordered chain of outcomes** (the ordering rule, ledger 1497).
