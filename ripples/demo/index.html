@@ -188,6 +188,13 @@ input[type=range]{flex:1;accent-color:var(--marigold);min-width:0}
 .card details summary::-webkit-details-marker{display:none}
 .card details summary::before{content:"+ "}.card details[open] summary::before{content:"– "}
 .card details p{margin:.3rem 0 0}
+.pulse{background:var(--paper);border-radius:14px;padding:10px 12px 6px;color:var(--paper-ink)}
+.pulse .ptitle{font:700 .86rem/1.3 var(--sans);margin:0 2px 4px}.pulse .ptitle span{display:block;font-weight:400;color:var(--paper-ink-3);font-size:.76rem}
+.pulse svg{width:100%;height:auto;display:block}.pulse .pg{stroke:rgba(30,42,46,.12);stroke-width:1}.pulse .pg.v{stroke-dasharray:2 4}.pulse .pl{font:500 10px var(--sans);fill:var(--paper-ink-3)}
+.pulse .pline{cursor:pointer}.pulse .pp{fill:none;stroke:var(--h);stroke-width:1.8;stroke-linejoin:round;opacity:.9}.pulse .pd{fill:var(--h);stroke:var(--paper);stroke-width:1.5}
+.pulse .pline:hover .pp{stroke-width:3}.pulse .pz{stroke:rgba(30,42,46,.5);stroke-width:1}.pulse .pl.z{font-weight:700;fill:var(--paper-ink-2)}.pulse .pn{font:600 10.5px var(--sans);fill:var(--h);paint-order:stroke;stroke:var(--paper);stroke-width:3px}.pulse .ptick{cursor:pointer}.pulse .ptick line{stroke-width:1.6}.pulse .ptick text{font:9px var(--sans)}
+.pulse .ptick.l-measured line,.pulse .ptick.l-measured text{stroke:#3e8f55;fill:#3e8f55}.pulse .ptick.l-timed line,.pulse .ptick.l-timed text{stroke:#7a5fc4;fill:#7a5fc4}.pulse .ptick.l-reported line,.pulse .ptick.l-reported text{stroke:#1e2a2e;fill:#1e2a2e}.pulse .ptick.l-plausible line,.pulse .ptick.l-plausible text{stroke:#8a7638;fill:#8a7638}.pulse .ptick.l-busted line,.pulse .ptick.l-busted text{stroke:#d04a3a;fill:#d04a3a}
+.card.hasline{border-left:4px solid var(--chip)}
 .card .src{font-size:.84rem;color:var(--ink-3)}.card .src a{color:var(--shallow-2)}.card .src .nolink{opacity:.7;font-style:italic}
 .card .row{display:flex;flex-wrap:wrap;gap:4px 16px;align-items:flex-start}
 .card .row details{flex:1 1 100%}
@@ -214,10 +221,10 @@ input[type=range]{flex:1;accent-color:var(--marigold);min-width:0}
 .how p{margin:0;color:var(--ink-2);font-size:.9rem}
 .foot{max-width:1240px;margin:0 auto;padding:0 16px 44px;color:var(--ink-3);font-size:.82rem}
 /* pond */
-.ring{display:none}  /* the time grid is gone; the thread on the right carries the scale */
-.ringlbl{fill:rgba(242,169,59,.6);font:600 9px var(--sans);letter-spacing:.05em}
+.ring{fill:none;stroke:rgba(214,232,246,.14);stroke-width:.6}  /* the time grid: log rings, a hairline each */
+.ringlbl{fill:rgba(214,232,246,.55);font:500 9px var(--sans);letter-spacing:.04em;font-variant-numeric:tabular-nums}
 .slicebd{stroke:rgba(214,232,246,.07);stroke-width:1;stroke-dasharray:2 6}
-.rimlbl{font:700 10px var(--sans);letter-spacing:.16em;text-transform:uppercase;fill:rgba(242,174,46,.55)}
+.rimlbl{font:600 10px var(--sans);letter-spacing:.16em;text-transform:uppercase;fill:rgba(214,232,246,.5)}
 .wave{fill:none;stroke:rgba(226,240,252,.55);filter:url(#softwave)}
 .frontg{transition:opacity .4s}.front,.frontS,.frontH,.frontGlow{fill:none;stroke-linecap:round}
 .front{stroke:rgba(236,246,255,.78);stroke-width:1.7}.frontS{stroke:rgba(2,14,28,.45);stroke-width:3.2}.frontH{stroke:#fff;stroke-width:.8;opacity:.8}
@@ -249,17 +256,18 @@ input[type=range]{flex:1;accent-color:var(--marigold);min-width:0}
 .glint.on{opacity:0}.glint{display:none}
 @keyframes glide{to{stroke-dashoffset:-360}}
 @media (prefers-reduced-motion:reduce){.glint{animation:none}.markglow{animation:none}}
-.thread{stroke:var(--marigold);stroke-width:1;opacity:.45}
-.threadtick{stroke:var(--marigold);stroke-width:1;opacity:.6}
-.markglow{animation:breathe 3.2s ease-in-out infinite}
+.thread{stroke:rgba(214,232,246,.35);stroke-width:.8}
+.threadtick{stroke:rgba(214,232,246,.6);stroke-width:1}
+.markglow{animation:breathe 3.2s ease-in-out infinite;display:none}
 @keyframes breathe{0%,100%{opacity:.55}50%{opacity:.95}}
 .nlab.mark rect{fill:var(--paper);stroke:none}
 .nlab.mark text{fill:var(--paper-ink)}.nlab.mark text.s{fill:#8a5a0a}
 .rip.l-measured.disc,.edge.l-measured.disc{stroke-width:2}
 .rip.l-timed,.edge.l-timed{stroke:var(--timed);stroke-width:2}
 .rip.l-reported,.edge.l-reported{stroke:var(--rec);stroke-width:1.5}
-.rip.l-plausible,.edge.l-plausible{stroke:var(--plaus);stroke-width:1.4;stroke-dasharray:5 6}
-.rip.l-busted,.edge.l-busted{stroke:var(--miss);stroke-width:1.8;stroke-dasharray:2 4}
+.rip.l-plausible,.edge.l-plausible{stroke:var(--plaus);stroke-width:1.4;stroke-dasharray:6 5}
+.rip.l-busted,.edge.l-busted{stroke:var(--miss);stroke-width:1.8;stroke-dasharray:.1 4.2;stroke-linecap:round}
+.rip.l-measured{stroke-width:2.8}.rip.l-timed{stroke-width:2}.rip.l-reported{stroke-width:1.3}
 /* the thread back to the stone shows only while a ripple is being followed */
 .edge{opacity:0;transition:opacity .3s}
 #pond.focus .edge.lit{opacity:.9}
@@ -269,6 +277,9 @@ input[type=range]{flex:1;accent-color:var(--marigold);min-width:0}
 .elbl.l-measured{fill:var(--good)}.elbl.l-timed{fill:var(--timed)}.elbl.l-reported{fill:var(--ink)}.elbl.l-plausible{fill:var(--plaus)}.elbl.l-busted{fill:var(--miss)}
 .node{cursor:pointer;outline:none}
 .node:focus-visible .halo,.node:hover .halo{r:9}.node:focus-visible .halo{stroke:var(--marigold);stroke-width:2}
+.crest,.crestg{display:none}
+.mk{stroke:#061a30;stroke-width:1.2;paint-order:stroke}.mk.l-measured{fill:var(--good)}.mk.l-timed{fill:var(--timed)}.mk.l-reported{fill:#eaf3fb}.mk.l-plausible{fill:var(--plaus)}.mk.l-busted{fill:var(--miss)}
+.mkt{stroke:rgba(214,232,246,.55);stroke-width:1}
 .crest{fill:none;stroke-linecap:round;stroke-linejoin:round;stroke-width:3.4;opacity:0;transition:opacity .4s}
 .crest.on{opacity:1}
 .crestg{stroke-width:11;opacity:0;filter:url(#soft)}.crestg.on{opacity:.3}
@@ -279,16 +290,16 @@ input[type=range]{flex:1;accent-color:var(--marigold);min-width:0}
 .leader{stroke:rgba(214,232,246,.35);stroke-width:1;opacity:0;transition:opacity .5s ease-out;pointer-events:none}.leader.on{opacity:1}
 #pond.focus .leader{opacity:.16}
 .nlab.on{opacity:1}
-.nlab rect{fill:rgba(5,22,40,.84);stroke:rgba(214,232,246,.08)}
-.nlab text{font:600 13.5px var(--sans);fill:var(--ink)}
+.nlab rect{fill:rgba(5,22,40,.66);stroke:none}
+.nlab text{font:500 13.5px var(--sans);fill:var(--ink)}
 .nlab text.s{font-weight:500;font-size:11px;fill:var(--ink-3)}
 .nlab.busted text:not(.s){fill:var(--ink-3);text-decoration:line-through}
 .nlab.hot rect{stroke:var(--marigold)}
 #pond.focus .node.on:not(.lit),#pond.focus .nlab.on:not(.lit),#pond.focus .band:not(.lit),#pond.focus .rip.on:not(.lit){opacity:.16 !important;transition:opacity .3s}  /* only what has landed sits back; what has not arrived stays unseen */
 #pond.focus .rip2,#pond.focus .glint{opacity:0 !important}
 /* at rest, the ripples that left no mark sit back; a lasting mark or a measured step carries full weight */
-.rip.on.l-reported,.rip.on.l-plausible,.rip.on.l-timed{opacity:.28}.rip.on.l-busted{opacity:.42}.crest.l-reported,.crest.l-plausible,.crest.l-timed,.crest.l-busted{opacity:.55}
-.rip.on.l-measured{opacity:.85}
+.rip.on.l-reported,.rip.on.l-plausible{opacity:.45}.rip.on.l-timed{opacity:.6}.rip.on.l-busted{opacity:.55}.crest.l-reported,.crest.l-plausible,.crest.l-timed,.crest.l-busted{opacity:.55}
+.rip.on.l-measured{opacity:.92}
 #pond .node,#pond .nlab{transition:opacity .3s}
 .stone .waterline{transition:opacity .45s ease-out}
 .stone text{font:italic 500 16px var(--display);fill:var(--paper);paint-order:stroke;stroke:rgba(6,22,40,.85);stroke-width:5px}
@@ -337,7 +348,7 @@ body.reel .pondbox{padding-bottom:10px}
   <div class="chooser" id="chooser" hidden>
     <div class="known" aria-label="Start with one you know"><span>Start with one you know:</span>
       <button class="chip" data-kind="map" data-slug="tiger-king">Tiger King</button><button class="chip" data-kind="chain" data-slug="squid-game-ripples">Squid Game</button>
-      <button class="chip" data-kind="chain" data-slug="frozen">Frozen</button><button class="chip" data-kind="chain" data-slug="america-and-alcohol">Prohibition</button>
+      <button class="chip" data-kind="chain" data-slug="america-and-alcohol">Prohibition</button><button class="chip" data-kind="chain" data-slug="dust-bowl-soil">The Dust Bowl</button><button class="chip" data-kind="chain" data-slug="frozen">Frozen</button>
       <button class="chip" data-kind="chain" data-slug="tambora-bicycle">A volcano → the bicycle</button></div>
     <div class="search"><input type="search" id="search" placeholder="Search the stories (a show, a law, a year…)" aria-label="Search the stories" autocomplete="off"></div>
     <div class="tabs" role="tablist" aria-label="Kinds of story">
@@ -413,12 +424,8 @@ const ICON = {
 };
 // the stone: a small river rock with moss on its shoulder, drawn upright at the center of the pond
 const STONE_SVG = `<path d="M-13.5,-3.5 C-13,-11 -5.5,-15.5 2.5,-14.5 C9.5,-13.6 14.5,-8.5 13.8,-1.5 C13.2,6 7.5,12.5 -0.5,12.6 C-8,12.7 -14,6.5 -13.5,-3.5 Z" fill="url(#rock)"/>
-<path d="M-13.5,-3.5 C-13,-11 -5.5,-15.5 2.5,-14.5 C9.5,-13.6 14.5,-8.5 13.8,-1.5 C13.2,6 7.5,12.5 -0.5,12.6 C-8,12.7 -14,6.5 -13.5,-3.5 Z" fill="none" stroke="rgba(10,25,22,.55)" stroke-width=".8"/>
-<path d="M-9,-9.5 C-5,-13.5 2,-14 6.5,-11.5 C3,-11.8 -3,-11 -6.5,-8.2 C-8,-7.4 -9.6,-8.2 -9,-9.5 Z" fill="rgba(255,255,255,.28)"/>
-<path d="M-12.6,-2.5 C-11,-7.5 -6,-9.5 -2,-8.2 C0.5,-7.4 1.5,-5 -0.5,-3.8 C-3.5,-2.2 -7.5,-1.2 -10.5,-1 C-12,-1 -12.9,-1.4 -12.6,-2.5 Z" fill="url(#moss)" opacity=".55"/>
-<path d="M3.5,-12.5 C6,-13 8.5,-11.5 8.8,-9.5 C9,-8 7.2,-7.4 5.8,-8.2 C4.4,-9 3,-10.4 3.5,-12.5 Z" fill="url(#moss)" opacity=".35"/>
-<path d="M-6,5.5 C-4.5,4.2 -2,4.4 -1.2,5.8 C-0.6,7 -2,8 -3.6,7.8 C-5.2,7.6 -6.6,6.6 -6,5.5 Z" fill="url(#moss)" opacity=".3"/><path d="M-4,-2 l1.2,.6 M2,2 l1,.5 M6,-4 l.9,.6 M-8,3 l1,.4" stroke="rgba(0,0,0,.25)" stroke-width=".5" stroke-linecap="round"/>
-<circle cx="6.5" cy="3" r=".9" fill="rgba(255,255,255,.18)"/><circle cx="2" cy="7.5" r=".7" fill="rgba(255,255,255,.14)"/><circle cx="-3" cy="-0.5" r=".6" fill="rgba(0,0,0,.22)"/>`;
+<path d="M-13.5,-3.5 C-13,-11 -5.5,-15.5 2.5,-14.5 C9.5,-13.6 14.5,-8.5 13.8,-1.5 C13.2,6 7.5,12.5 -0.5,12.6 C-8,12.7 -14,6.5 -13.5,-3.5 Z" fill="none" stroke="rgba(6,20,36,.6)" stroke-width=".7"/>
+<path d="M-9.5,-9 C-5.5,-13 1.5,-13.6 6,-11.4" fill="none" stroke="rgba(255,255,255,.22)" stroke-width="1.1" stroke-linecap="round"/>`;
 // ---------- stories ----------
 // Hand-built maps (from ripples/maps/out): which steps to show, short labels, parents, and the main slice's industry.
 const MAPS = {
@@ -435,12 +442,20 @@ const MAPS = {
 // The three tabs. Ripple maps: multi-hop maps, best first. Checked stories: viral chains checked link by link.
 // Leads: the engine's one-hop finds (attention only), awaiting a second hop.
 const TABS = {
-  maps:[["map", "tiger-king", "Tiger King → the Big Cat Act"], ["chain", "mr-bates-horizon", "Mr Bates → convictions quashed by law"], ["chain", "planet-earth", "Planet Earth → the STURDY Act"],
-    ["chain", "quincy-orphan-drug", "Quincy, M.E. → the Orphan Drug Act"], ["chain", "cathy-come-home", "Cathy Come Home → a duty to house"],
-    ["chain", "sixty-minutes-stock-act", "60 Minutes → the STOCK Act"], ["chain", "octopus-sentience", "My Octopus Teacher → the Sentience Act"],
-    ["chain", "victim-1961", "Victim (1961) → the Sexual Offences Act"], ["chain", "daily-show-zadroga", "The Daily Show → the Zadroga Act"],
-    ["chain", "manhunt-byron", "Manhunt → game ratings in law"], ["chain", "silent-spring-ddt", "Silent Spring → the DDT ban"],
-    ["chain", "west-wing-hatred-act", "The West Wing → a government defeat"], ["chain", "america-and-alcohol", "Prohibition → a century of American drinking"],
+  maps:[["map", "tiger-king", "Tiger King → the Big Cat Act"], ["chain", "the-jungle-fda", "The Jungle → the FDA"], ["chain", "dust-bowl-soil", "The Dust Bowl → soil conservation"],
+    ["chain", "triangle-shirtwaist", "The Triangle fire → the New Deal's labor laws"], ["chain", "sputnik-nasa-arpa", "Sputnik → NASA, ARPA and the Education Act"],
+    ["chain", "unsafe-at-any-speed", "Unsafe at Any Speed → NHTSA and the airbag"], ["chain", "cuyahoga-clean-water", "The Cuyahoga fire → the EPA and the Clean Water Act"],
+    ["chain", "love-canal-superfund", "Love Canal → Superfund"], ["chain", "three-mile-island-nrc", "Three Mile Island → the long pause"],
+    ["chain", "exxon-valdez-opa90", "Exxon Valdez → the Oil Pollution Act"], ["chain", "liebeck-hot-coffee", "The hot-coffee case → tort reform"],
+    ["chain", "columbine-active-shooter", "Columbine → the lockdown drill"], ["chain", "flint-lead-pipes", "Flint → the lead-pipe money"],
+    ["chain", "america-and-alcohol", "Prohibition → a century of American drinking"], ["chain", "silent-spring-ddt", "Silent Spring → the DDT ban"],
+    ["chain", "sixty-minutes-stock-act", "60 Minutes → the STOCK Act"], ["chain", "daily-show-zadroga", "The Daily Show → the Zadroga Act"], ["chain", "quincy-orphan-drug", "Quincy, M.E. → the Orphan Drug Act"],
+    ["chain", "mr-bates-horizon", "Mr Bates → convictions quashed by law"], ["chain", "planet-earth", "Planet Earth → the STURDY Act"],
+    ["chain", "cathy-come-home", "Cathy Come Home → a duty to house"],
+    ["chain", "octopus-sentience", "My Octopus Teacher → the Sentience Act"],
+    ["chain", "victim-1961", "Victim (1961) → the Sexual Offences Act"],
+    ["chain", "manhunt-byron", "Manhunt → game ratings in law"],
+    ["chain", "west-wing-hatred-act", "The West Wing → a government defeat"],
     ["chain", "chernobyl-zone", "Chernobyl → an official tourist zone"],
     ["chain", "tylenol", "Tylenol → tamper-proof packaging"], ["chain", "broad-street-sanitation", "A water pump → modern sewers"],
     ["chain", "sputnik-gps", "Sputnik → GPS"], ["chain", "cantaloupe-penicillin", "A cantaloupe → D-Day penicillin"],
@@ -612,7 +627,8 @@ function fromMap(slug) {
     (s.measure || "").replace(/“([^”]+)”/g, (_, a) => seen.add(a));
     (s.also || []).forEach(a => seen.add(a.name));
     const facts = s.facts ? `<div class="facts">${s.facts.map(([k, v]) => `<div class="fact"><b>${esc(v)}</b><span>${esc(k)}</span></div>`).join("")}</div>` : "";
-    const src = s.source ? `<p class="src"><a href="${s.source}" rel="noopener" target="_blank">${esc(s.measure)}</a></p>` : `<p class="src">${esc(s.measure || "")}</p>`;
+    const sl = ((DATA.sources || {})[slug] || {})[String(i)];
+    const src = s.source ? `<p class="src"><a href="${s.source}" rel="noopener" target="_blank">${esc(s.measure)}</a></p>` : `<p class="src">${esc(amer(s.measure || ""))}${sl ? ` · <a href="${esc(sl.url)}" rel="noopener" target="_blank">${esc(sl.label)} ↗</a>` : s.measure ? ` <span class="nolink">· not linked yet</span>` : ""}</p>`;
     items.push({id:`m${i}`, parent:n.p ? `m${n.p}` : null, slice:"main", d:Math.max(s.days, 0.5), label:n.l, lv, sub:`${fmtMonth(D(s.date))} · ${sinceLabel(s.days)}`, mark:n.mark, title:s.title,
       short:lv === "plausible" ? "Happened; the link is unproven" : lv === "measured" ? "Passed a test against fake dates" : lv === "reported" ? (s.measure || "") : "Rose after the step before",
       series:s.series && s.series.weekly ? s.series : null,
@@ -738,7 +754,7 @@ const SRCURL = st => {
   if (ty === "zillow") return ["https://www.zillow.com/research/data/", "Zillow research data"];
   if (ty === "arxiv") return ["https://arxiv.org/archive/astro-ph", "arXiv astro-ph"];
   if (ty === "dose" || ty === "file") return ["/ripples/methods/", "How we tested it"];
-  if (st.url) return [st.url, "Open the source"];
+  if (st.url) return [st.url, st.urlLabel || "Open the source"];
   const art = (st.attn && st.attn.articles && st.attn.articles[0]) || null;  // the article whose attention we checked at this date
   if (art) return [`https://en.wikipedia.org/wiki/${encodeURIComponent(art.replace(/ /g, "_"))}`, `Wikipedia: ${art}`];
   return null;  // no link: the source's own words stand, marked as not linked yet
@@ -752,6 +768,8 @@ const SRC = st => ({fred:`FRED series ${st.test.id}`, stackex:"Stack Overflow ne
 function fromChain(slug) {
   const ch = DATA.chains.find(c => c.slug === slug), iso0 = ch.date, items = [];
   const steps = ch.steps.slice(1);
+  const SRCS = (DATA.sources || {})[slug] || {};  // record links from the sources pass, by step number
+  for (const st of ch.steps) { const sl = SRCS[String(st.n)]; if (sl && !st.url) { st.url = sl.url; st.urlLabel = sl.label; } }
   let prevD = 1, lastMain = null;
   steps.forEach(st => {
     let d = st.onset ? daysBetween(iso0, st.onset) : null, range = null;
@@ -789,7 +807,8 @@ function fromChain(slug) {
     const id = `c${st.n}`;
     const parent = st.after ? (st.after === 1 ? null : `c${st.after}`) : st.branch ? null : lastMain;
     const shortLine = lv === "reported" && srcLine ? esc(srcLine) : short;
-    items.push({id, parent, slice:st.slice || (st.branch ? `b${st.n}` : "main"), d, range, undated, label:st.short || shortLabel(st.claim), lv, lvText, sub, mark:lv === "busted" ? null : st.mark, short:shortLine, title:st.claim,
+    const pulseW = weekly && st.test.type !== "dose" ? weekly : (at && at.weekly ? at.weekly : null);
+    items.push({id, parent, slice:st.slice || (st.branch ? `b${st.n}` : "main"), d, range, undated, label:st.short || shortLabel(st.claim), lv, lvText, sub, mark:lv === "busted" ? null : st.mark, short:shortLine, title:st.claim, series:pulseW ? {weekly:pulseW, pre:null} : null,
       card:card({when, badge:lvText, badgeCls:`l-${lv}`, title:st.claim, cls:lv === "busted" ? "busted" : "", spark:weekly ? sparkHTML(weekly, st.ref) : (lv === "measured" && at && at.weekly && at.ratio) ? sparkHTML(at.weekly, st.onset) : "", facts, short:shortLine,
         sure:howSure(st.test.type === "dose" && st.p != null ? "measured" : lv, (lv === "measured" || (st.test.type === "dose" && st.p != null)) ? {kind:st.test.type === "wiki" ? "wiki" : st.test.type === "ssa" ? "ssa" : st.test.type === "dose" ? "dose" : "series", what:st.test.type === "wiki" ? (st.test.articles || [])[0] : SRC(st) || st.series,
             when:st.onset ? fmt(D(st.onset)) : "", ratio:st.ratio, p:st.p, n:st.n_placebo, pre:st.pretrend_p}
@@ -834,13 +853,14 @@ function draw(story) {
     <radialGradient id="glow"><stop offset="0" stop-color="#f2ae2e" stop-opacity=".55"/><stop offset="1" stop-color="#f2ae2e" stop-opacity="0"/></radialGradient>
     <linearGradient id="surface" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#1d6498" stop-opacity=".78"/><stop offset=".5" stop-color="#0f4374" stop-opacity=".9"/><stop offset="1" stop-color="#0a2f55" stop-opacity=".96"/></linearGradient>
     <linearGradient id="sky" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#08203c"/><stop offset=".7" stop-color="#1d4f7e"/><stop offset="1" stop-color="#5a8fb8"/></linearGradient>
+    <linearGradient id="field" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#0b2d4b"/><stop offset="1" stop-color="#061a30"/></linearGradient>
     <linearGradient id="lake" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#4b85b0"/><stop offset=".12" stop-color="#1f5f93"/><stop offset=".45" stop-color="#0e3f6c"/><stop offset="1" stop-color="#061a30"/></linearGradient>
     <linearGradient id="shoreref" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#06172a" stop-opacity=".55"/><stop offset="1" stop-color="#06172a" stop-opacity="0"/></linearGradient>
     <filter id="blur2"><feGaussianBlur stdDeviation="1.6"/></filter>
     <filter id="blur6"><feGaussianBlur stdDeviation="6"/></filter>
     <radialGradient id="wmask" cx="50%" cy="48%" r="50%"><stop offset="0" stop-color="#fff" stop-opacity="1"/><stop offset=".55" stop-color="#fff" stop-opacity=".75"/><stop offset=".92" stop-color="#fff" stop-opacity=".12"/><stop offset="1" stop-color="#fff" stop-opacity="0"/></radialGradient>
     <radialGradient id="wet"><stop offset="0" stop-color="#8fc4ec" stop-opacity=".35"/><stop offset=".6" stop-color="#8fc4ec" stop-opacity=".08"/><stop offset="1" stop-color="#8fc4ec" stop-opacity="0"/></radialGradient>
-    <linearGradient id="rock" x1="0" y1="0" x2=".6" y2="1"><stop offset="0" stop-color="#c2b9aa"/><stop offset=".45" stop-color="#7b746a"/><stop offset="1" stop-color="#3a3630"/></linearGradient>
+    <linearGradient id="rock" x1="0" y1="0" x2=".6" y2="1"><stop offset="0" stop-color="#7d7a74"/><stop offset=".5" stop-color="#4a4844"/><stop offset="1" stop-color="#26241f"/></linearGradient>
     <linearGradient id="moss" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#7d9450"/><stop offset="1" stop-color="#4b6234"/></linearGradient>
     <filter id="wob" x="-5%" y="-5%" width="110%" height="110%"><feTurbulence type="fractalNoise" baseFrequency=".011" numOctaves="2" seed="7"><animate attributeName="baseFrequency" values="0.011;0.0135;0.011" dur="11s" repeatCount="indefinite"/></feTurbulence><feDisplacementMap in="SourceGraphic" scale="5.5"/></filter>
     <filter id="soft"><feGaussianBlur stdDeviation="3"/></filter>
@@ -858,35 +878,19 @@ function draw(story) {
       <feComposite in="b" in2="SourceGraphic" operator="in"/>
     </filter>
     <clipPath id="pondclip"><circle cx="${C.x}" cy="${C.y}" r="${R + 30}"/></clipPath>`;
-  // the lake: a dusk sky, a far shore and its reflection, water running to the horizon; the pond is a place on it
-  const HZ = 150, scene = el("g", {class:"scene"}, svg);
-  el("rect", {x:-120, y:88, width:940, height:HZ - 88 + 2, fill:"url(#sky)"}, scene);
-  el("rect", {x:-120, y:HZ, width:940, height:574 - HZ, fill:"url(#lake)"}, scene);
-  const shore = "M-120,150 C-40,141 40,147 120,139 S260,151 340,138 S470,149 560,137 S700,150 760,141 S800,146 820,144";
-  el("path", {d:shore + " L820,150 L-120,150 Z", fill:"#06172a", filter:"url(#blur2)"}, scene);  // the treeline
-  el("path", {d:shore + " L820,150 L-120,150 Z", fill:"#06172a", opacity:".9"}, scene);
-  el("path", {d:"M-120,150 L820,150 L820,196 C700,186 560,194 340,184 S120,196 -120,186 Z", fill:"url(#shoreref)", filter:"url(#blur6)"}, scene);  // its reflection
-  el("line", {x1:-120, y1:HZ, x2:820, y2:HZ, stroke:"#a9cbe6", "stroke-width":.8, opacity:".5"}, scene);
-  const far = el("rect", {x:-120, y:HZ, width:940, height:574 - HZ, fill:"url(#wmask)", filter:"url(#waterlight)", class:"farlight"}, scene);  // light on the open water
-  far.innerHTML = '<animateTransform attributeName="transform" type="translate" values="0 0;-30 0;0 0" dur="37s" repeatCount="indefinite"/>';
-  // reeds at the near bank, dark against the water
-  const reeds = el("g", {class:"reeds", fill:"none", stroke:"#04111f", "stroke-linecap":"round"}, scene);
-  [[-100,574,-88,470,1.6],[-84,574,-96,452,1.3],[-70,574,-60,478,1.5],[-56,574,-62,436,1.2],[792,574,806,468,1.5],[808,574,798,448,1.3],[776,574,772,490,1.2]].forEach(([x1,y1,x2,y2,w]) => el("path", {d:`M${x1},${y1} Q${(x1+x2)/2 - 6},${(y1+y2)/2} ${x2},${y2}`, "stroke-width":w, opacity:".75"}, reeds));
+  // the field: flat dark water to the edges. No shore, no sky: the pond is an instrument, and the grid is the picture
+  const scene = el("g", {class:"scene"}, svg);
+  el("rect", {x:-120, y:88, width:940, height:486, fill:"url(#field)"}, scene);
   // water: a softly lit surface, drawn in plane coordinates and tilted as one
   const plane = el("g", {transform:`translate(0 ${C.y}) scale(1 ${TILT}) translate(0 ${-C.y})`}, svg);
   el("circle", {cx:C.x, cy:C.y, r:R + 34, fill:"url(#water)"}, plane);
   el("circle", {cx:C.x, cy:C.y, r:R + 34, fill:"url(#depth)"}, plane);
-  const shine = el("ellipse", {cx:C.x - 60, cy:C.y - 90, rx:R * 0.9, ry:R * 0.55, fill:"url(#shine)", filter:"url(#wob)"}, plane);
-  shine.innerHTML = '<animateTransform attributeName="transform" type="translate" values="0 0;26 14;-18 22;0 0" dur="29s" repeatCount="indefinite"/>';
-  const wl = el("circle", {class:"waterlight", cx:C.x, cy:C.y, r:R + 34, fill:"url(#wmask)", filter:"url(#waterlight)"}, plane);  // the surface: lit, slowly moving
-  wl.innerHTML = '<animateTransform attributeName="transform" type="translate" values="0 0;18 -6;-12 8;0 0" dur="31s" repeatCount="indefinite"/>';
-  const ca = el("circle", {class:"caustic", cx:C.x, cy:C.y, r:R + 20, fill:"#9fd3f3", filter:"url(#caustic)"}, plane);
-  ca.innerHTML = '<animateTransform attributeName="transform" type="translate" values="0 0;-14 9;10 -12;0 0" dur="23s" repeatCount="indefinite"/>';
+  el("circle", {cx:C.x, cy:C.y, r:R + 34, fill:"none", stroke:"rgba(214,232,246,.10)", "stroke-width":.8}, plane);  // the rim of the measured water
 
   const g0 = el("g", {}, plane), gt = el("g", {}, svg);  // g0: lines on the water; gt: upright text
   if (n > 1) keys.forEach(k => { const a = centre(k) - w / 2, q = polar(48, a), p = polar(R + 8, a); el("line", {class:"slicebd", x1:q.x, y1:q.y, x2:p.x, y2:p.y}, g0); });
   const rings = [[1,"1 day"],[7,"1 week"],[30,"1 month"],[91,"3 months"],[365,"1 year"],[1096,"3 years"],[3653,"10 years"],[7305,"20 years"]].filter(([d]) => d < max);
-  const rg = el("g", {filter:"url(#wob)"}, g0);
+  const rg = el("g", {}, g0);
   const TA = 104, ta = polar(16, TA), tb = polar(R + 4, TA);  // the thread of time, along the right-hand axis where the tilt does not compress spacing
   el("line", {class:"thread", x1:ta.x, y1:ta.y, x2:tb.x, y2:tb.y}, g0);
   let lastRingX = null;
@@ -894,7 +898,6 @@ function draw(story) {
     const r = radius(d);
     el("circle", {class:"ring", cx:C.x, cy:C.y, r}, rg);
     const p = PL(polar(r, TA));
-    if (!(d === 365 || d === 3653 || (d === 7 && max < 365) || (d === 30 && max < 365))) continue;  // two labels: the scale, not a ruler
     const q0 = polar(r, TA - 1.6), q1 = polar(r, TA + 1.6); el("line", {class:"threadtick", x1:q0.x, y1:q0.y, x2:q1.x, y2:q1.y}, g0);
     if (lastRingX != null && Math.abs(p.x - lastRingX) < (dense ? 70 : 44)) continue;  // a short pond: labels would sit on each other
     lastRingX = p.x;
@@ -987,7 +990,9 @@ function draw(story) {
       it.elbl.textContent = it.lvText || LVL[it.lv];
     }
     const g = el("g", {class:"node", tabindex:-1, role:"button", "aria-label":`${it.label}, ${it.lvText || LVL[it.lv]}`, opacity:0}, nodes);
-    it.halo = el("circle", {cx:0, cy:0, r:24 * K, fill:"transparent"}, g);  // the tap target (about 44 px on a phone); the marker itself is the crest on the ring
+    it.halo = el("circle", {cx:0, cy:0, r:24 * K, fill:"transparent"}, g);
+    el("line", {class:"mkt", x1:0, y1:-6 * K, x2:0, y2:6 * K, transform:`rotate(${it.a})`}, g);  // a tick across the arc at the exact date
+    el("circle", {class:`mk l-${it.lv}`, cx:0, cy:0, r:(it.lv === "measured" ? 3.6 : 2.8) * K}, g);  // the tap target (about 44 px on a phone); the marker itself is the crest on the ring
     if (it.mark) {  // a lasting mark is a pebble that stayed on the water, lit from beneath
       el("circle", {class:"markglow", cx:0, cy:0, r:26 * K, fill:"url(#glow)"}, g);
       const rot = (it.d * 37) % 360, ps = (0.85 * K).toFixed(2);
@@ -1001,7 +1006,7 @@ function draw(story) {
       el("path", {d:"M-15.2,-1.5 A15.8,6 0 0 0 15.2,-1.5", fill:"none", stroke:"rgba(230,244,252,.7)", "stroke-width":1.1, "stroke-linecap":"round"}, pw);
     }
     it.core = null;
-    it.showLabel = !!it.mark || it.lv === "measured" || items.length <= 5;  // at rest the pond says one thing per ripple that matters; the rest wait for a hover or the card
+    it.showLabel = !dense || !!it.mark || it.lv === "measured" || items.length <= 5;  // a desktop names every ripple that has room; a phone names the marks and the measured steps
     g.setAttribute("transform", `translate(${C.x},${C.y})`);
     g.addEventListener("click", () => focus(it));
     g.addEventListener("mouseenter", () => showTip(it));
@@ -1014,7 +1019,7 @@ function draw(story) {
     const shown = wrapLabel(it.label, 26, 2);
     const tx = el("text", {x:0, y:0}, lab); if (K > 1) tx.style.fontSize = `${(13.5 * K).toFixed(1)}px`;  // the text floor: see K above
     shown.forEach((ln, k) => { const ts = el("tspan", {x:0, dy:k ? 15 * K : 0}, tx); ts.textContent = ln; });
-    const sub = el("text", {class:"s", x:0, y:15 * K * shown.length}, lab); sub.textContent = it.mark ? `◆ ${it.mark}` : "";  // the date and the delay live in the card
+    const sub = el("text", {class:"s", x:0, y:15 * K * shown.length}, lab); sub.textContent = it.mark ? `◆ ${it.mark} · ${it.sub || ""}` : (it.sub || "");  // the mark, then the date and the delay
     if (K > 1) sub.style.fontSize = `${(11 * K).toFixed(1)}px`;
     const bb = lab.getBBox(), pad = 5 * K, bw = bb.width + pad * 2, bh = bb.height + pad * 2, g1 = 12 * K;
     const right = [g1, -bh / 2], left = [-g1 - bw, -bh / 2], up = [-bw / 2, -bh - g1], down = [-bw / 2, g1 + 1];
@@ -1059,13 +1064,57 @@ function wrapLabel(t, width, lines) {  // greedy word wrap to at most `lines` li
 }
 function isDesc(x, root) { for (let p = x; p; p = cur.items.find(y => y.id === p.parent)) if (p === root) return true; return false; }
 // ---------- feed ----------
+const PULSE_HUES = ["#8fc4ec", "#f2a93b", "#7fbf7b", "#c3b1ee", "#f26b5b", "#d9c998", "#5ec8c1", "#e88ab9", "#b7d36a", "#f0c6a0"];
+// one chart for the story: how far each page's attention rose above its own normal, all on the pond's clock (log time since the event)
+function pulseHTML(story) {
+  // every attention series on one chart, each aligned at the day its own step happened: height is how far it rose
+  // above that page's normal, the tail is how long it lasted. Comparable across a week-old show and a century-old law
+  const {iso0, items} = story; const lines = []; let hue = 0;
+  for (const it of items) {
+    const w = it.series && it.series.weekly; if (!w || w.length < 3 || it.undated) continue;
+    const at = new Date(addDays(iso0, Math.round(it.d))).toISOString().slice(0, 10);
+    const rel = w.map(([d, v]) => [daysBetween(at, d), v]).filter(([r]) => r >= -35 && r <= 400);
+    if (rel.length < 3) continue;
+    let base = it.series.pre;
+    if (!base) { const pre = rel.filter(([r]) => r < -3).map(x => x[1]).sort((a, b) => a - b); base = pre.length >= 3 ? pre[Math.floor(pre.length / 2)] : null; }
+    if (!base) { const all = w.map(x => x[1]).sort((a, b) => a - b); base = all[Math.floor(all.length * 0.25)] || 1; }
+    const pts = rel.map(([r, v]) => [r, Math.max(0.3, v / Math.max(1, base))]);
+    it.hue = PULSE_HUES[hue++ % PULSE_HUES.length];
+    const pk = pts.reduce((a, p) => p[1] > a[1] ? p : a, pts[0]);
+    lines.push({it, pts, peak:pk});
+  }
+  if (!lines.length) return "";
+  const W = 640, H = 200, L = 46, Rm = 16, T = 16, B = 30, w = W - L - Rm, LEAD = 0.18;
+  const X = r => r < 0 ? L + w * LEAD * (1 - Math.min(35, -r) / 35) : L + w * LEAD + w * (1 - LEAD) * Math.log1p(Math.min(400, r)) / Math.log1p(400);
+  const ymax = Math.max(10, Math.pow(10, Math.ceil(Math.log10(Math.max(...lines.map(l => l.peak[1]))))));
+  const Y = r => T + (H - T - B) * (1 - Math.log10(Math.max(0.3, r) / 0.3) / Math.log10(ymax / 0.3));
+  let g = "";
+  for (let e = 1; e <= ymax; e *= 10) g += `<line class="pg" x1="${L}" x2="${W - Rm}" y1="${Y(e).toFixed(1)}" y2="${Y(e).toFixed(1)}"/><text class="pl" x="${L - 6}" y="${(Y(e) + 3.5).toFixed(1)}" text-anchor="end">${e === 1 ? "normal" : e.toLocaleString() + "×"}</text>`;
+  for (const [d, lbl] of [[-28, "4 wk before"], [7, "1 wk"], [30, "1 mo"], [91, "3 mo"], [365, "1 yr"]]) g += `<line class="pg v" x1="${X(d).toFixed(1)}" x2="${X(d).toFixed(1)}" y1="${T}" y2="${H - B}"/><text class="pl" x="${X(d).toFixed(1)}" y="${H - B + 13}" text-anchor="middle">${lbl}</text>`;
+  g += `<line class="pz" x1="${X(0).toFixed(1)}" x2="${X(0).toFixed(1)}" y1="${T - 4}" y2="${H - B}"/><text class="pl z" x="${X(0).toFixed(1)}" y="${H - B + 13}" text-anchor="middle">the step</text>`;
+  let paths = "", labs = "", used = [];
+  lines.sort((a, b) => b.peak[1] - a.peak[1]);
+  for (const l of lines) {
+    const d = l.pts.map((p, i) => `${i ? "L" : "M"}${X(p[0]).toFixed(1)},${Y(p[1]).toFixed(1)}`).join("");
+    const px = X(l.peak[0]), py = Y(l.peak[1]);
+    paths += `<g class="pline" data-id="${l.it.id}" style="--h:${l.it.hue}"><path d="${d}" class="pp"/><circle cx="${px.toFixed(1)}" cy="${py.toFixed(1)}" r="3.2" class="pd"/><title>${esc(l.it.label)} · peak ${l.peak[1] >= 10 ? Math.round(l.peak[1]).toLocaleString() : l.peak[1].toFixed(1)}× normal, ${l.peak[0] <= 0 ? "at the step" : `${l.peak[0]} days after`}</title></g>`;
+    let ly = py - 6; while (used.some(u => Math.abs(u - ly) < 11)) ly -= 11; used.push(ly);  // the name at the peak, nudged clear of the last
+    const right = px > L + w * 0.6;
+    labs += `<text class="pn" style="--h:${l.it.hue}" x="${(px + (right ? -6 : 6)).toFixed(1)}" y="${ly.toFixed(1)}" text-anchor="${right ? "end" : "start"}">${esc(l.it.label)}</text>`;
+  }
+  return `<div class="pulse"><div class="ptitle">The spikes, aligned <span>each page's attention against its own normal, from the day its step happened. Height is how far it rose; the tail is how long it lasted.</span></div><svg viewBox="0 0 ${W} ${H}" role="img" aria-label="Attention to each page, aligned at its own step">${g}${paths}${labs}</svg></div>`;
+}
 function buildFeed(story) {
   const f = $("#feed"); f.textContent = "";
+  const pulse = pulseHTML(story);
+  if (pulse) { const pv = document.createElement("div"); pv.innerHTML = pulse; const el0 = pv.firstElementChild; f.appendChild(el0);
+    el0.querySelectorAll("[data-id]").forEach(n => n.addEventListener("click", () => { const it = story.items.find(x => x.id === n.dataset.id); if (it) focus(it); })); }
   const cards = [{d:0, ...story.first}, ...story.items.map(it => ({d:it.d, it, ...it.card})), ...story.extra];
   cards.sort((a, b) => a.d - b.d);
   for (const c of cards) {
     const div = document.createElement("article");
     div.className = `card off ${c.cls || ""}`; div.innerHTML = c.html;
+    if (c.it && c.it.hue) { div.classList.add("hasline"); div.style.setProperty("--chip", c.it.hue); }
     c.el = div; c.cursor = div.querySelector(".cursor"); c.shown = false;
     if (c.it) { c.it.cardEl = div; div.addEventListener("click", e => { if (e.target.closest("summary,a")) return; focus(c.it); }); }
     f.appendChild(div);
@@ -1327,9 +1376,9 @@ function setStep(on) {
 
 async function loadAll() {
   const j = u => fetch(u).then(r => r.ok ? r.json() : null).catch(() => null);
-  const [disc, chains, acts, ...maps] = await Promise.all([j("/ripples/demo/discovered.json"), j("/ripples/docs/results/chain_check_v1.json"),
-    j("/ripples/docs/results/bill_act_v1.json"), ...Object.keys(MAPS).map(s => j(`/ripples/maps/out/${s}.json`))]);
-  DATA.disc = disc; DATA.chains = chains ? chains.chains : []; DATA.acts = acts;
+  const [disc, chains, acts, sources, ...maps] = await Promise.all([j("/ripples/demo/discovered.json"), j("/ripples/docs/results/chain_check_v1.json"),
+    j("/ripples/docs/results/bill_act_v1.json"), j("/ripples/demo/sources.json"), ...Object.keys(MAPS).map(s => j(`/ripples/maps/out/${s}.json`))]);
+  DATA.disc = disc; DATA.chains = chains ? chains.chains : []; DATA.acts = acts; DATA.sources = sources || {};
   Object.keys(MAPS).forEach((s, i) => { if (maps[i]) DATA.maps[s] = maps[i]; });
 }
 function tabOf(kind, slug) {
