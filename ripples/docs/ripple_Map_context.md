@@ -1,4 +1,4 @@
-# Ripple Map: context brief (updated 2026-10-04, 18:30 UTC)
+# Ripple Map: context brief (updated 2026-10-04, 19:30 UTC)
 
 Standalone context for anyone (person or new chat) picking up Ripple. Read `ripples/HANDOFF.md` first: it is the
 runbook for a new session (what to install, how to build, test and ship, the rules, the next steps); this brief is the
@@ -186,15 +186,37 @@ deep enough for an adult to browse rabbit holes.
    story, a link to any single step. Later: the ghost-stone comparison card.
 8. **A verify mode.** Paste any viral "butterfly effect" claim and get it checked link by link. This already works.
 
-## 2. Current status (one screen, 2026-10-04, 06:30 UTC)
+## 2. Current status (one screen, 2026-10-04, 19:30 UTC)
 
-**In one line:** Ripple is release-ready. The engine finds work → law trails from the records (Hansard, the Federal
-Register, the Congressional Record), dated to the day with the sentence that makes the link; the catalog is 79 checked
-chains and 11 maps, skewed to US stories since batch 16; the pond is an instrument, every story lands its mark inside
-ten seconds, every link is graded, every US law links to its statute, and every story says what else was going on.
-Twelve simulated testers across five rounds took it from 5.5 to **8.2** and voted to release; the builder's own rating
-is **8.5** (4 on Oct 1, 5.5 on Oct 2, 6.5 on Oct 3, 7.5 on the morning of Oct 4). What remains is the thing nobody in
-the room can supply: strangers.
+**In one line:** Ripple is a day from release (Monday morning, Oct 5, the owner's date). The owner reviewed the live page
+on the morning of Oct 4 and set a new bar (pacing, look, no "AI slop"); the page now plays a beat per ripple with a
+narration line, wears a flat editorial look, and opens on the pond. The same day the engine's discovery layer got its
+first measured result and its first product surface: Wikipedia read as a cited-cause record recovers 62% of the
+catalog's lasting marks, busts predecessors automatically, and 25 hand-screened engine-found marks now sit first under
+Engine leads. Twelve simulated testers scored the new build 8.0 on a stranger's first ten seconds; the builder's rating
+is 7.5 (6.5 at pickup). Nobody outside the room has used it yet.
+
+**What it can do today (capabilities, Oct 4):**
+
+| Layer | Capability | Where |
+|---|---|---|
+| Catalog | 79 hand-built, CI-checked chains; 11 generated maps; every link graded measured / timed / reported / plausible / busted; 22 US law steps linked to the statute on govinfo | `chains/`, `maps/out/`, `demo/sources.json` |
+| Verification | the checker's placebo test on every step with an attention series; the ordering rule on every step; the truncation test (0 flips) behind the run stamp; one dose-response design | `lab/chain_check.py`, `docs/truncation_v1.md` |
+| Discovery, records | work → law citations from Hansard, the Congressional Record and the Federal Register, resolved to the Act or public law (638 pairs, cite_score .73) | `lab/mark_text.py`, `lab/bill_act.py`, Engine leads (acts) |
+| **Discovery, Wikipedia (new Oct 4)** | the stone's article and the articles of laws and institutions that link to it, read for sentences that name a lasting change; marks dated from title and infobox; the ordering rule applied; 62% recall, 61% strict precision, 0 of 50 decoys; 25 marks screened into the product | `lab/discovery/`, `demo/discovered_wiki.json`, Engine leads (wiki, `?w=`) |
+| Discovery, attention | post-2015 steps checked against Wikipedia pageviews; attention leads with outcomes | `demo/discovered.json` |
+| Product | the pond as an instrument; a beat per ripple (32 to 79 s a story) with a lower-third narration; Step; scrub; deep links to a story or a step; share cards and pages; the weakest-link arrow; "It wasn't the only reason" on every story including the engine-found ones | `demo/index.html` |
+| Clips | reel mode plays an edited cut (12 to 15 s: open, throw, up to five shots with a push-in, an end card); nothing recorded yet | `?reel=1`, `tools/qa/reel.js`, `encode.sh` |
+| QA | five browser scripts: taps, phone header, chart, pacing, plus the reel probe; a persona round protocol | `tools/qa/` |
+
+**Latest changes (Oct 4, in order):** the `.pulse` class collision fixed (#86); the beat schedule (#87); the reel cut
+(#88); the look (#89); round five and the discovery plan (#90); discovery corpus 1 (#91); the engine-found kind in the
+product (#92); the desktop header fold (#93, this pass).
+
+**Breakthroughs worth naming:** reading Wikipedia as text rather than as links turned the "structural ceiling" of the
+Wikipedia route into a 62%-recall instrument; the ordering rule dated from a law's title and infobox busts predecessors
+without a person (33 of 63 reverse pairs); the reverse hop is an events instrument and the forward reading a culture
+instrument, which tells the next pass where to look.
 
 **The rating trail (all testers are simulated personas; three are modeled on public executive roles and labeled so):**
 
@@ -446,47 +468,42 @@ the room can supply: strangers.
   metadata (`mods.xml`) route returns 500 for old granules; `api.govinfo.gov` with the shared demo key is rate-limited
   (429). The project's `DATA_GOV_KEY` is a GitHub secret and may only be used from a workflow.
 
-## 5. Blockers and bottlenecks (2026-10-04, 06:30 UTC)
+## 5. Blockers and bottlenecks (2026-10-04, 19:30 UTC)
 
 **Blockers**
-0. **The owner's bars of Oct 4.** Morning: pacing, the clips, the look (PRs #87 to #89 landed; clips still to record). Evening: crack discovery (`discovery_corpus1_v1.md`: 62% recall, 61% strict precision, bar of 70% not met; v1.1 next). See HANDOFF section 7.
-1. **No strangers yet.** Five rounds of simulated testers converged at 8.2; the number that matters is a first-time
-   visitor's. Release is the next experiment, and the launch kit is cut.
-2. **Verification lags discovery for pre-2015 marks.** Every dated post-2015 step gets an attention check; older marks
-   rest on records and statutes. No free source gives a general pre-2015 attention baseline (`data_sources_v2.md`).
-3. **A person still screens the finds**, with cite_score v1 (.73 precision, .89 recall on 22 grades) beside them. A
-   model-based classifier needs a key the project does not hold.
-4. **The context sentences are one author's.** Ninety "It wasn't the only reason" lines were written to be checkable
-   and have not been checked by a second reader.
+1. **No strangers yet.** Release is Monday morning. Everything else below is smaller than this.
+2. **The clips are not cut.** Reel mode is ready; recording and encoding on the final look is Monday's first job.
+3. **Discovery is a candidate generator, not a writer.** One sentence in four from the forward reading is a lasting
+   mark; the strict reverse rule is 61% clean and works for events, not films. A person still screens, dates and
+   writes the context line. The v1.1 filter (an enacted or established thing, dated at or after the stone) is
+   registered and running on sixty more stones.
+4. **The context sentences are one author's,** now 105 of them, none second-read.
 
 **Bottlenecks**
-1. The container cannot reach Wikidata, FRED, parliament.uk, api.govinfo.gov or any of the thirteen candidate data
-   hosts; Wikipedia, legislation.gov.uk, govinfo's link service and pageviews.wmcloud.org are reachable since the
-   owner whitelisted them. Everything else runs on GitHub Actions, one run per fix.
-2. The checker runs on branches, not on main or a schedule (the Kurian persona's standing note).
-3. "Not yet" (a mark dated in the future) is a regular expression in the page, not a grade in the checker.
-4. The trailer costs about 107 ms/s of task time in headless Chromium (32 at rest); the render loop still asks for a
-   frame about thirty times a second while nothing moves.
-5. BigQuery sandbox cap (204.8 GiB a day; no billing).
+1. Two record hosts stopped on Oct 4 under the rules: EDGAR (403 under the project's agent) and the Federal Register
+   (404 on an old body). Both need a workflow run and, for the SEC, a read of its declared-agent rule.
+2. Laws without their own article (the Sentience Act 2022, the Sexual Offences Act 1967, most state laws) are
+   invisible to the reverse hop; the forward reading and the namesake-statute class are the way to them.
+3. The checker runs on branches, not on main or a schedule; "Not yet" is a regular expression in the page.
+4. Famous-but-markless decoys have not been run; the 0-of-50 decoy rate is a lower bound from obscure films.
+5. BigQuery sandbox cap (no billing) and the single `DATA_GOV_KEY` in GitHub secrets, usable only from workflows.
 
 ## 6. Immediate next steps (in order)
 
-1. **Release.** Post from the launch kit (`ripples/launch/`, `launch_v2.md`): LinkedIn with the clip, Show HN
-   mid-morning Eastern on a weekday, Reddit the same day, the teacher and newsroom emails. Reply to every substantive
-   comment with the story's share page.
-2. **Watch the first week** for the four dimensions named in the probability estimate: a teacher or newsroom using it
-   (60%), a front page (35%), an outside correction or a suggested stone (25%), a return visit (15%).
-3. **The first-week fixes the final roundtable named, none blocking:** the legend under a 614-px fold; the caption's
-   height on a 375-px phone; quiet trailer dots on a projector; the claims line on the decline cards as well as the
-   peak; Tylenol's links and the 1983 Act; the Mr Bates premise sentence.
-4. **Governance:** run the checker on main and on a schedule; make "Not yet" a checker grade; a govinfo API pass from
-   a workflow to confirm the seven pre-1951 statute links by title.
-5. **Data:** USDA NASS, Congress.gov and SEC EDGAR full-text search, in that order (1.5, 2 and 1.5 days), probed from
-   a workflow since the container cannot reach them.
-6. **Content:** a second reader for `context.json`; the long-story label density on Prohibition; a suggest-a-stone box
-   and a stone of the day once there are visitors to use them.
-7. **Engine:** round two of the citation grades (`cite_grades_v2.md`); a second dose-response; nested stones
-   (Prohibition's marks as chains of their own); live mode on new events once marks have time to form.
+1. **Tonight:** screen the sixty-stone v1.1 run, add what survives to `discovered_wiki.json`, write
+   `discovery_corpus1_v1_1.md` with the held-out precision.
+2. **Monday morning:** record and encode the clips on the final look (HANDOFF section 5), update `launch_v2.md`'s
+   assets table and pre-flight, run the four pre-flight checks, post (LinkedIn, Show HN mid-morning Eastern, Reddit),
+   send the teacher and newsroom emails that week.
+3. **Week one:** watch the four dimensions (a teacher or newsroom using it, a front page, an outside correction or a
+   suggested stone, a return visit); reply to every substantive comment with the story's share page; a correction gets
+   a thank-you and a fix.
+4. **Discovery, week one:** famous decoys; the namesake-statute class as its own kind; the Federal Register and EDGAR
+   passes from a workflow; the automated ladder (timing, comparison, exposure) on every pair with a series.
+5. **Governance:** the checker on main and on a schedule; "Not yet" as a checker grade; the seven pre-1951 statute
+   links confirmed by title from a workflow.
+6. **Content:** a second reader for the 105 context lines; Prohibition's label density; a suggest-a-stone box once
+   there are visitors.
 
 ## 6a. Open questions (2026-10-04, 06:30 UTC)
 
