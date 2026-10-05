@@ -38,3 +38,17 @@ because its raters already know them.
 - The panel is simulated (five language-model raters, one model family); real raters replace it after launch.
 - One reader made the strict call on every kept sentence.
 - G2's lexicon expansion and G4's design came after seeing early results; both are labeled.
+
+## G4 (backlinks, addendum 1; not blind)
+
+702 works, 72,643 unique backlink pages, 7,989 typed as institutions, 767 pairs read, 40 kept. Simulated panel on the 40
+(fresh run, same controls): obvious pairs surprise index 1.05, fabricated pairs believable 1.52 (valid); **good rate 27.5%
+(11 of 40)**, above the registered 25%, but G4 was designed after seeing G1 to G3, so this is not counted toward the bar.
+Recall adds Bambi to Smokey Bear: 7 of 25 overall with G4 (6 blind). Across all four generators: 35 good of 161 (21.7%).
+
+PR #133 shipped ten of G4's pairs, each matched word for word against its live source: Bambi to Smokey Bear, Tamagotchi
+to the Sega and Bandai merger called off, Titanic to Carnival buying Cunard ("in part"), Abbey Road to the studio's name,
+The Dark Side of the Moon to the Canada Cup trophy, Angry Birds to NASA's Mighty Eagle lander, Brave New World to the
+Brave New Workshop, Nineteen Eighty-Four to the Big Brother Awards, Born This Way to its foundation, Braveheart to the
+Falkirk Center ("in part"). Left out: bans of a work itself, undated namings (the Jungle Book's Cub Scout titles,
+Festivus, Lulbegrud Creek), statues and memorials of a work, and a 2025 political controversy that is not a work.
