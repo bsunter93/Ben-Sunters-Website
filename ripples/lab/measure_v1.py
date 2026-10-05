@@ -270,8 +270,8 @@ def raw_monthly(s, r, h, design, publish=lambda n: None if n is None else int(ro
 
 def plain_line(stone, outcome_label, res, raw):
     o, c, g = res["own"], res["controls"], res["gradient"]
-    if o.get("effect") is None:
-        return f"{stone}: not run ({o.get('result')})."
+    if o.get("effect") is None or o.get("p") is None:
+        return f"{stone}: not graded ({o.get('result')})."
     fmt = lambda n: f"{n:,}" if isinstance(n, (int, float)) else str(n)  # noqa: E731
     s = (f"{outcome_label} changed {o['effect_pct']:+.1f}% ({fmt(raw.get('before_count'))} to {fmt(raw.get('after_count'))}); "
          f"p = {o['p']} against {o['n_placebo']} earlier windows")

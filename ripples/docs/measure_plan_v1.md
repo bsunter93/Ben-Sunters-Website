@@ -266,3 +266,11 @@ Run 2 reads every response from run 1's local cache: no new request to any host,
 Encounters design (section 7.2) now runs if the cached 1977 totals response carries per-unit values, which run 1 could
 not read; if it does, run 2 requests the annual totals for 1955 to 1990, as registered. Nothing else changes: stones,
 pools, groups, windows, the test, the decoys and the bar are as committed in 01b0a09.
+
+## Addendum 2, Oct 5, 2026, 08:05 UTC (late: a crash fix during run 2)
+
+Run 2's first attempt stopped with an error while writing the plain line for Jazz: New Orleans Jazz National Historical
+Park's series begins in July 2000, so the January 2001 window has an effect but no placebo window and no p. The fix
+grades a mark with no p as "not run" and writes the reason; no grade that has a p is affected. Run 2 was then repeated
+from the same cache, again with no network request. The checks labeled "late" in `measure_v1.md` (a both-sides placebo
+pool, reference shifts, leave-one-unit-out) were computed after the graded run and are not graded.

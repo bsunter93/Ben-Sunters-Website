@@ -30,6 +30,7 @@ UA = "ripples-research/0.2 (+https://bensunter.com/ripples/methods/)"
 STONE_YEAR = 2015
 EXCL_MONTHS = 10  # Sep 2008 to Jun 2009
 EXCL_YEARS = 2    # 2008 and 2009 touch the crisis
+USED_IDS = {"cdc_wonder_ucd", "nps_visits", "ssb_hotel_nights", "defra_family_food"}  # queried by measure_v1.py
 
 # id, name, publisher, frequency (A/Q/M/W/D), start year, geography, units, unit, access URL, probe URL, key/account, terms, kind
 CATALOG = [
@@ -96,7 +97,7 @@ CATALOG = [
      "departement (about 100)", 100, "births given a name (3 or more)", "https://www.insee.fr/fr/statistiques/2540004",
      "https://www.insee.fr/fr/statistiques/2540004", "no key, no account", "open licence; rare names pooled", "naming"),
     ("fhwa_tvt", "Traffic Volume Trends: vehicle miles traveled", "FHWA", "M", 1970,
-     "state", 51, "vehicle miles", "https://www.fhwa.dot.gov/policyinformation/travel_monitoring/tvt.cfm",
+     "national from 1970 (FRED TRFVOLUSM227NFWA); states in the monthly reports (archive years not verified in this pass)", 1, "vehicle miles", "https://www.fhwa.dot.gov/policyinformation/travel_monitoring/tvt.cfm",
      "https://www.fhwa.dot.gov/policyinformation/travel_monitoring/tvt.cfm", "no key, no account (monthly reports; national series on FRED)", "public domain", "travel"),
     ("bts_t100", "T-100 segment data: air passengers by airport and route", "Bureau of Transportation Statistics", "M", 1990,
      "airport", 400, "passengers", "https://www.transtats.bts.gov/Tables.asp?QO_VQ=EEE", "https://www.transtats.bts.gov/",
@@ -118,7 +119,7 @@ CATALOG = [
      "https://www.cpsc.gov/Research--Statistics/NEISS-Injury-Data", "no key, no account", "public; case-level sample file, so only weighted aggregates are kept", "safety"),
     ("fred", "FRED: economic series, many by state (fredgraph.csv)", "Federal Reserve Bank of St. Louis", "M", 1947,
      "national and state (series by series)", 51, "varies", "https://fred.stlouisfed.org/graph/fredgraph.csv?id=TRFVOLUSM227NFWA", None,
-     "no key for fredgraph.csv", "mirrors many of the sources above; check each series' source terms", "various"),
+     "no key for fredgraph.csv", "mirrors many of the sources above; check each series' source terms", "platform"),
 ]
 
 
@@ -164,22 +165,27 @@ def main() -> int:
     if os.path.exists(mpath):
         for r in json.load(open(mpath)).get("requests", []):
             used.setdefault(urllib.parse.urlparse(r["url"]).netloc, r["status"])
+    cached = json.load(open(os.environ["PROBE_STATUS_FILE"])) if os.environ.get("PROBE_STATUS_FILE") else {}
     rows = []
     for (cid, name, pub, freq, start, geo, units, unit, url, purl, access, terms, kind) in CATALOG:
         n = windows(freq, start)
         host = urllib.parse.urlparse(url).netloc
-        if host in used:
-            status = f"called by measure_v1.py today: HTTP {used[host]}"
+        if cid in cached:
+            status = cached[cid]
+        elif host in used:
+            status = f"host called by measure_v1.py today: HTTP {used[host]}" + ("" if cid in USED_IDS else " (this database or file was not queried)")
+        elif host in stopped:
+            status = f"not probed: {host} stopped earlier today ({stopped[host]})"
         elif "key: excluded" in access:
             status = "not probed: needs a key"
         elif purl:
             status = probe(purl, stopped)
             status = f"HTTP {status}" if isinstance(status, int) else status
         else:
-            status = "not probed (same host as another entry or bulk file)"
+            status = "not probed (no landing page registered for a probe)"
         rows.append({"id": cid, "name": name, "publisher": pub, "frequency": {"A": "annual", "Q": "quarterly", "M": "monthly", "W": "weekly", "D": "daily"}[freq],
                      "start_year": start, "geography": geo, "geographic_units": units, "unit": unit, "access_url": url, "access": access,
-                     "terms": terms, "kind": kind, "behavior": kind not in ("attention",), "eligible": "key: excluded" not in access,
+                     "terms": terms, "kind": kind, "behavior": kind not in ("attention", "platform"), "eligible": "key: excluded" not in access,
                      "power": {"placebo_windows_before_a_2015_stone": n, "p_floor": round(1 / (1 + n), 4) if n else None,
                                "note": ("annual national: with N admissible years the smallest p is 1/(N+1)" if freq == "A" else
                                         "short windows overlap, so N is an upper bound on independent information")},

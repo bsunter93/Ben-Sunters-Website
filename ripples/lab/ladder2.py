@@ -217,7 +217,7 @@ def gradient_featured(featured, comparison, stone, h, design, direction, ref=Non
 
 def grade(own, ctrl, grad):
     """the v2 grade and the reasons, rung by rung"""
-    if own.get("effect") is None:
+    if own.get("effect") is None or own.get("p") is None:
         return "not run", [own.get("result", "no effect")]
     why = []
     if own.get("busted"):
