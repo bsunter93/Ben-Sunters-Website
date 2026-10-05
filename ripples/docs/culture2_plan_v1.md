@@ -78,3 +78,13 @@ Known, documented cultural ripples the engine should find on its own:
 Survivors join Engine leads as data (the existing `wiki` kind), graded reported (or disputed where the record disputes
 it), each with its sentence and source; no new interface. The kind's description says how they were found and checked,
 and does not claim a person screened them.
+
+## Addendum 1 (Oct 5, late; written after G1 to G3 reported, before G4 ran)
+
+G1 to G3 recovered 6 or 7 of the 25 known ripples (strict 6: the Child's Play 3 hit is a different mark). The misses share
+one cause: the link is told in the institution's own article (Smokey Bear, Kmart, SeaWorld, Keiko, the Hobbit law, the
+PMRC), which G1's fixed phrases did not match and G2 and G3 never read. G4 is added: for the most-linked cultural works,
+read every article that links to the work (Wikipedia backlinks), keep those whose Wikidata class is an organization,
+government agency, law, regulation, standard, policy, program, sports team, memorial, named place, or institution, and
+read the sentence that carries the link with the same strict test. G4 was designed knowing the misses, so its recall is
+reported separately and labeled not blind; the registered bar is judged on G1 to G3.
