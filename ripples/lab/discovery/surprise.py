@@ -102,8 +102,9 @@ def chunks(xs, n):
         yield xs[i:i + n]
 
 
-def fetch_entities(net, titles):
-    """Resolve titles and fetch lead, categories, Wikidata id, out-links and redirect titles for each article."""
+def fetch_entities(net, titles, cocite=True):
+    """Resolve titles and fetch lead, categories, Wikidata id, out-links and redirect titles for each article.
+    With cocite=False (the deviation after the Oct 5 stop) backlink counts and Wikidata classes are not fetched."""
     titles = sorted({t for t in titles if t})
     canon, ent = {}, {}
     for batch in chunks(titles, 50):
@@ -151,7 +152,10 @@ def fetch_entities(net, titles):
     for t in real:
         e = ent[t]
         e["cats"], e["links"], e["redirects"] = sorted(set(e["cats"])), sorted(set(e["links"])), sorted(set(e["redirects"]))
-        e["backlinks"] = linksto(net, [t])
+        e["backlinks"] = linksto(net, [t]) if cocite else None
+        e["p31"] = []
+    if not cocite:
+        return canon, ent
     qids = sorted({e["qid"] for e in ent.values() if e["qid"]})
     p31 = {}
     for batch in chunks(qids, 50):
@@ -627,6 +631,8 @@ def main():
     ap.add_argument("--offline", action="store_true")
     ap.add_argument("--only", help="comma-separated pair sets to score (testing)")
     ap.add_argument("--out", default=OUT)
+    ap.add_argument("--no-cocite", action="store_true",
+                    help="deviation: drop u4 (no linksto searches) and the Wikidata class labels")
     a = ap.parse_args()
     net = Net(a.cache, a.offline)
     pairs = build_pairs()
@@ -634,7 +640,7 @@ def main():
         pairs = [p for p in pairs if p["set"] in a.only.split(",")]
     titles = {p["stone_article"] for p in pairs} | {p["mark_article"] for p in pairs if p.get("mark_article")}
     try:
-        canon, ent = fetch_entities(net, sorted(titles))
+        canon, ent = fetch_entities(net, sorted(titles), cocite=not a.no_cocite)
         features(pairs, canon, ent, net)
     except Stop as e:
         print("STOPPED:", e, flush=True)
@@ -645,6 +651,10 @@ def main():
         timespec="seconds"), "requests": net.calls, "cache_hits": net.hits,
         "formula": "surprise = (D + U) / 2; D = mean pct(d1, d2); U = mean pct(u1, u2, u3, u4); pct = mid-rank "
                    "percentile over every pair scored where the feature exists (d1 within its document type)"}
+    if a.no_cocite:
+        out["deviation"] = ("u4 (co-citation) dropped for every pair and Wikidata classes not fetched: the registered "
+                            "run stopped on HTTP 429 from Wikipedia's search API on Oct 5, 2026 (UTC) during the "
+                            "linksto counts, and the rules allow no same-day retry. U = mean pct(u1, u2, u3).")
     if not a.only:
         res, blind, pooled, v1 = run_eval(pairs)
         out["evaluation"] = res
@@ -663,8 +673,6 @@ def main():
         for k in ("D", "U", "surprise"):
             if k in row:
                 row[k] = round(row[k], 4)
-        if "mark_title" not in row and p.get("sentence"):
-            row["sentence"] = clean_sentence(p["sentence"])[:240]
         rows.append(row)
     out["pairs"] = rows
     json.dump(out, open(a.out, "w"), indent=1, ensure_ascii=False)

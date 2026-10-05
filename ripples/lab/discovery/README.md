@@ -19,3 +19,9 @@ Every request goes through `legacy.get`: the honest user agent, one request a se
 search gets wrong) and expects the scratch file it was written against; the result is committed, so it need not run
 again. `fedreg.py` is the Federal Register probe (a 404 on an old document's body stopped that host for the day; the
 probe's counts are in `fedreg_probe.json`). The builder's two blind screens are `discovery_corpus1_screen.json`.
+
+`surprise.py` is the surprise score of `docs/surprise_plan_v1.md` (result: `docs/surprise_v1.md`). It runs from the
+repository root, caches raw API responses in a directory outside the repository, and writes
+`docs/results/surprise_v1.json`. A 403, 429, 5xx or timeout writes a dated line to `surprise_blocked_dates.txt` and the
+scorer will not contact Wikimedia again that UTC day; `--offline` rescores from the cache, `--no-cocite` is the Oct 5
+deviation (u4 dropped).
