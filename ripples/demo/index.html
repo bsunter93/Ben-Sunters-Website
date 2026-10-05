@@ -255,6 +255,18 @@ input[type=range]{flex:1;accent-color:var(--marigold);min-width:0}
 .foot{max-width:1240px;margin:0 auto;padding:0 16px 44px;color:var(--ink-3);font-size:.82rem}
 /* pond */
 .ring{fill:none;stroke:rgba(214,232,246,.14);stroke-width:.6}
+/* prototype ?water=2: no ring grid at rest (the ruler on the right keeps the scale), no rim, the disc dissolves into the page, the stone sinks and leaves its name on the water */
+.w2 .ring{opacity:0;transition:opacity .4s}.w2 #pond:hover .ring{opacity:.5}.w2 .rim{display:none}
+.w2 #pond .scene + g > circle:first-child{mask:url(#w2mask)}
+.w2 .streak{fill:rgba(200,226,246,.045);filter:blur(5px);animation:drift 14s ease-in-out infinite alternate}
+@keyframes drift{from{transform:translateX(-18px)}to{transform:translateX(18px)}}
+.w2 #pond .rockg,.w2 #pond .stone ~ ellipse{transition:opacity .9s ease-in,transform .9s ease-in}
+.w2 #pond.sunk .rockg,.w2 #pond.sunk .sshadow{opacity:0}.w2 .sshadow{transition:opacity .9s}
+@media (prefers-reduced-motion:reduce){.w2 .streak{animation:none}}
+.w2 .tally > [class^="l-"],.w2 .tally > .weak{display:none}.w2 .tally.open > [class^="l-"],.w2 .tally.open > .weak{display:inline}
+.sureq{background:none;border:0;padding:0 2px;font:inherit;color:var(--ink-2);text-decoration:underline;text-decoration-color:var(--hair);text-underline-offset:3px;cursor:pointer}.sureq:hover,.sureq:focus-visible{color:var(--ink)}.w2 .tally.open .sureq{color:var(--ink)}
+@media (max-width:700px){.w2 .legend:not(.keyopen) > span:not(.lgmark),.w2 .legend:not(.keyopen) > .lgnote{display:none}}  /* on a phone the key waits behind How it works; the lasting-mark glyph stays */
+.w2 .nlab text.s{opacity:0;transition:opacity .3s}.w2 .nlab.lit text.s,.w2 .nlab.hot text.s,.w2 #pond:not(.playing) .nlab text.s{opacity:1}  /* the date line under a label speaks on its beat, on hover and at rest, not while other beats play */
 .wake{stroke:rgba(190,225,255,.5);stroke-width:1.2;opacity:0;animation:wake 7s ease-out infinite}  /* the ring that leaves the stone every few seconds; named .wake, not .pulse, because .pulse is the paper chart above the cards and shared the name until Oct 4, which scaled the chart 7.5x over the pond every seven seconds */
 @keyframes wake{0%{transform:scale(.3);opacity:0}6%{opacity:.35}70%{transform:scale(7.5);opacity:0}100%{transform:scale(7.5);opacity:0}}
 @media (prefers-reduced-motion:reduce){.wake{animation:none}}  /* the time grid: log rings, a hairline each */
@@ -555,6 +567,8 @@ const COLOR = {measured:"var(--good)", timed:"var(--marigold)", reported:"var(--
 const NS = "http://www.w3.org/2000/svg", C = {x:350, y:330}, R = 286, DUR = 15000, FLY = 1150, THROW_FROM = {x:150, y:452};  // the near rim, lower left, on the water: a stone resting on the bank outside the pond read as a glitch (Oct 4 review)
 const $ = s => document.querySelector(s);
 const params = new URLSearchParams(location.search);
+const W2 = (() => { const w = params.get("water"); try { if (w) sessionStorage.setItem("ripple-water", w); return (w || sessionStorage.getItem("ripple-water")) === "2"; } catch { return w === "2"; } })();  // the water look: ?water=2 turns it on for the session, ?water=1 turns it off; to make it the default, return true when nothing is set
+if (W2) document.documentElement.classList.add("w2");
 // Engagement instruments (Oct 5; docs/engagement_protocol_v1.md). Aggregate events to the site's own GA4 property, no
 // personal data, no event from a local file, a share-card render, a reel recording or a QA run (`&nointro=1` is the tests' flag).
 const TRACK_ON = location.protocol !== "file:" && !new URLSearchParams(location.search).has("reel") && !new URLSearchParams(location.search).has("card") && !new URLSearchParams(location.search).has("nointro") && !/bot|headless/i.test(navigator.userAgent);
@@ -1007,14 +1021,19 @@ function draw(story) {
       <feGaussianBlur in="veins" stdDeviation=".9" result="b"/>
       <feComposite in="b" in2="SourceGraphic" operator="in"/>
     </filter>
+    <radialGradient id="w2fade" cx="50%" cy="50%" r="50%"><stop offset="0" stop-color="#fff"/><stop offset=".5" stop-color="#fff" stop-opacity=".9"/><stop offset="1" stop-color="#fff" stop-opacity="0"/></radialGradient><mask id="w2mask" maskContentUnits="userSpaceOnUse"><circle cx="${C.x}" cy="${C.y}" r="${R + 34}" fill="url(#w2fade)"/></mask>
     <clipPath id="pondclip"><circle cx="${C.x}" cy="${C.y}" r="${R + 30}"/></clipPath>`;
   // the field: flat dark water to the edges. No shore, no sky: the pond is an instrument, and the grid is the picture
   const scene = el("g", {class:"scene"}, svg);
   el("rect", {x:-70, y:96, width:840, height:466, fill:"#0f1c26"}, scene);  // the page's own surface: no box around the pond; the disc and its lines are the picture
   // water: a softly lit surface, drawn in plane coordinates and tilted as one
   const plane = el("g", {transform:`translate(0 ${C.y}) scale(1 ${TILT}) translate(0 ${-C.y})`}, svg);
-  el("circle", {cx:C.x, cy:C.y, r:R + 34, fill:"url(#depth)"}, plane);  // a faint top light and a darker foot on the disc, nothing more
-  el("circle", {cx:C.x, cy:C.y, r:R + 34, fill:"none", stroke:"rgba(214,232,246,.18)", "stroke-width":.9}, plane);  // the rim of the measured water
+  el("circle", {cx:C.x, cy:C.y, r:R + 34, fill:"url(#depth)", ...(W2 ? {mask:"url(#w2mask)"} : {})}, plane);  // a faint top light and a darker foot on the disc, nothing more
+  el("circle", {class:"rim", cx:C.x, cy:C.y, r:R + 34, fill:"none", stroke:"rgba(214,232,246,.18)", "stroke-width":.9}, plane);
+  if (W2) {  // water: a surface that runs past the edge, a slow drift of sky light on it, no disc
+    const sh = el("g", {class:"sheen", mask:"url(#w2mask)"}, plane);
+    for (let i = 0; i < 6; i++) { const y = C.y - R * .95 + i * i * 9 + i * 14, rx = 160 + (i * 61) % 140, cx = C.x - 120 + (i * 89) % 240; el("ellipse", {class:"streak", cx, cy:y, rx, ry:5 + i * 1.5, style:`animation-delay:${-i * 2.3}s;opacity:${(1 - i / 7).toFixed(2)}`}, sh); }  // sky light lies on the far water and thins toward the viewer
+  }  // the rim of the measured water
   el("circle", {class:"wake", cx:C.x, cy:C.y, r:40, fill:"none", style:`transform-origin:${C.x}px ${C.y}px`}, plane);  // a faint ring leaves the stone every few seconds
 
   const g0 = el("g", {}, plane), gt = el("g", {}, svg);  // g0: lines on the water; gt: upright text
@@ -1056,7 +1075,7 @@ function draw(story) {
     body:el("circle", {class:"front", cx:C.x, cy:C.y, r:0}, frontG), light:el("circle", {class:"frontH", cx:C.x, cy:C.y, r:0, transform:"translate(0 -1.6)"}, frontG)};
   story.front = front;
   const sHalo = el("circle", {cx:C.x, cy:C.y, r:30, fill:"url(#wet)"}, plane);
-  const sShadow = el("ellipse", {cx:C.x + 3, cy:C.y + 10, rx:28 * K, ry:22 * K, fill:"rgba(3,20,26,.3)", filter:"url(#soft)", style:"transform-box:fill-box;transform-origin:center"}, plane);  // the stone's shadow on the water
+  const sShadow = el("ellipse", {class:"sshadow", cx:C.x + 3, cy:C.y + 10, rx:28 * K, ry:22 * K, fill:"rgba(3,20,26,.3)", filter:"url(#soft)", style:"transform-box:fill-box;transform-origin:center"}, plane);  // the stone's shadow on the water
   const stone = el("g", {class:"stone"}, svg);
   const sCore = el("g", {class:"rockg", transform:`translate(${C.x},${C.y}) scale(${K * 1.7})`}, stone);
   sCore.innerHTML = STONE_SVG;
@@ -1575,7 +1594,7 @@ function render(now = performance.now()) {
   if (!cur) return;
   const d = daysAt(t), {items, iso0} = cur;
   const shown = items.filter(x => x.state !== "hidden" && x.lv !== "busted").length;
-  $("#feed").classList.toggle("empty", t < PRE && !items.some(x => x.state !== "hidden"));
+  $("#feed").classList.toggle("empty", !W2 && t < PRE && !items.some(x => x.state !== "hidden"));
   if (!playing && !scrubbing && t >= 1) {  // at rest: the story's span, not today's date
     const lastD = Math.max(...items.filter(x => !x.future).map(x => x.d));
     $("#date").textContent = `${fmtMonth(D(iso0))} → ${fmtMonth(addDays(iso0, lastD))}`;
@@ -1585,6 +1604,7 @@ function render(now = performance.now()) {
     $("#since").innerHTML = `${sinceLabel(d)}<small>${shown} ripple${shown === 1 ? "" : "s"}</small>`;
   }
   $("#scrub").value = Math.round(t * 1000);
+  if (W2) $("#pond").classList.toggle("sunk", t >= PRE + 0.004);
   if (!cur.splashed && t >= PRE) { cur.splashed = true; spawnSplash(); spawnWave(3.2); setTimeout(() => spawnWave(2.2), 240); setTimeout(() => spawnWave(1.4), 520); }
   if (t < PRE) cur.splashed = false;
   const ev0 = cur.eventSeries ? valueAt(cur.eventSeries, iso0, d) : null;
@@ -1616,7 +1636,7 @@ function render(now = performance.now()) {
   }
   for (const [it, n] of cur.plines || []) n.classList.toggle("on", it.state !== "hidden");  // the chart grows with the pond
   for (const c of cur.cards || []) {
-    const on = d >= c.d;
+    const on = d >= c.d || (W2 && c.d === 0 && !c.it);  // water: the event's own card is up from the first frame, so the paper column is never empty
     c.el.classList.toggle("off", !on);
     if (on && !c.shown) {
       c.shown = true; c.el.classList.add("in");
@@ -1699,7 +1719,7 @@ function tick(now) {
   requestAnimationFrame(tick);
 }
 function setPlaying(p) {
-  playing = p; if (cur && !p) cur.goal = null;
+  playing = p; $("#pond").classList.toggle("playing", !!p); if (cur && !p) cur.goal = null;
   if (cur && p && cur.timeline) { unspot(); cur.clock = clockAtT(t); if (t <= PRE + 1e-6 && !stepMode) setMystery(true); else setMystery(false); }  // play from the start is an investigation; a resumed play shows everything
   if (cur && !p) setMystery(false);  // a pause, a stop, a scrub or a deep link shows everything
   if (cur && !p && t >= 1) { track("complete", {slug: cur.key, seconds_in_story: Math.round((performance.now() - sess.storyT0) / 1000)}); cur.items.forEach(wake); setMystery(false); if (!REEL) { unspot(); showEndBeat(); } }  // a reel keeps its end card up; ordinary play ends on what stayed and the next stone  // at rest every step speaks and the pond is level
@@ -1829,6 +1849,9 @@ function show(kind, slug, autoplay = true) {
   const tally = {}; story.items.forEach(x => tally[x.lv] = (tally[x.lv] || 0) + 1);
   $("#tally").innerHTML = (kind === "acts" ? `<span class="markt">${HEX}${marks.length} cited as a reason</span>` : marks.length ? `<span class="markt">${HEX}${marks.length} lasting mark${marks.length === 1 ? "" : "s"}</span>` : `<span class="nomark">No lasting mark yet</span>`) +
     ["measured", "timed", "reported", "plausible", "busted"].filter(k => tally[k]).map(k => `<span class="l-${k}">${tally[k]} ${LVL[k].toLowerCase()}</span>`).join("") + (kind === "acts" ? "" : `<span class="weak">weakest link ${LVL[story.weak].toLowerCase()}</span>`);
+  if (W2 && kind !== "acts") { const t0 = $("#tally"), mk = t0.querySelector(".markt, .nomark"); if (mk) mk.insertAdjacentHTML("afterend", '<button type="button" class="sureq" aria-expanded="false">How sure?</button>'); t0.classList.remove("open"); }  // water: the grade counts sit behind one plain question
+  if (W2) { document.querySelectorAll(".legend > span").forEach(sp => { const k = sp.textContent.trim().toLowerCase(); if (tally[k] !== undefined || ["measured", "timed", "reported", "plausible", "busted"].includes(k)) sp.hidden = !tally[k]; if (sp.classList.contains("lgmark")) sp.hidden = !marks.length; });
+    const note = document.querySelector(".lgnote"); if (note) note.hidden = !tally.measured; }  // the key lists only the grades this story uses
   story.tallyFull = $("#tally").innerHTML; story.tallyMystery = `<span class="markt">${HEX}? lasting marks</span>`;  // while the answer is withheld, the grade counts wait too: they are jargon until How it works or a card has explained them
   // same stone, other ponds; and any ripple that is itself a stone we have thrown
   const others = pondsFor(story.stone, kind, slug), pondsEl = $("#ponds");
@@ -1905,7 +1928,8 @@ function showEndBeat() {  // at rest the lower third says what stayed and points
   document.addEventListener("keydown", e => { if (e.key === "Escape") setChooser(false); if (e.key === "/" && !e.target.closest("input,select,textarea")) { e.preventDefault(); setChooser(true); $("#search").focus(); } });
   const KIND = {maps:"Lasting marks", stories:"Fact-checks", leads:"Engine leads"};
   document.querySelectorAll(".tab").forEach(b => b.onclick = () => { tab = b.dataset.tab; $("#chooserkind").textContent = KIND[tab]; chooser.classList.remove("stage1"); track("kind", {tab}); renderPicker(); });  // second layer: the chosen kind's list  // a tab changes the list; a chip picks the story
-  $("#howbtn").onclick = () => { const h = $("#how"), open = h.hidden; h.hidden = !open; $("#howbtn").setAttribute("aria-expanded", open); if (open) h.scrollIntoView({behavior:"smooth", block:"start"}); };
+  $("#tally").addEventListener("click", e => { const b = e.target.closest(".sureq"); if (!b) return; const open = $("#tally").classList.toggle("open"); b.setAttribute("aria-expanded", open); });
+  $("#howbtn").onclick = () => { const h = $("#how"), open = h.hidden; if (W2) document.querySelector(".legend").classList.toggle("keyopen", open); h.hidden = !open; $("#howbtn").setAttribute("aria-expanded", open); if (open) h.scrollIntoView({behavior:"smooth", block:"start"}); };
   $("#caption").addEventListener("click", e => { if (!e.target.closest("a,button") && hot) clearFocus(); });  // a tap on the caption itself, not a link, puts the pond back
   $("#play").onclick = () => { track(playing ? "pause" : (t >= 1 ? "replay" : "play"), {slug: cur && cur.key, t: cur ? Math.round(t * 100) : null}); if (t >= 1) { t = 0; cur.items.forEach(hide); cur.splashed = false; $("#feed").scrollTop = 0; } setPlaying(!playing); };
   $("#nextbtn").onclick = () => { window.__via = "next"; next(); };
