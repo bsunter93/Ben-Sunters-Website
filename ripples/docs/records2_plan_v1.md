@@ -179,3 +179,42 @@ rule fields and empty court fields), and `docs/records2_v1.md` (numbers against 
 
 OpenStates (state bills, a key) and regulations.gov (comments and dockets, a key) are next steps, not used here. GovInfo's
 court opinions collection (USCOURTS) needs the project's `DATA_GOV_KEY`, which may only be used from a workflow.
+
+## 11. Addendum for the court run (Oct 5, 2026, written before any court query)
+
+The owner created a CourtListener account on Oct 5 and stored its token as the repository secret `COURT_LISTENER_API`.
+Reading the v4 documentation again (the REST overview, the search API, the usage API, the case law API and the search
+operators) changes the court design in section 9 as follows. Nothing else in the plan changes.
+
+1. **Pacing.** The documented limits for an account are 5 requests a minute, **50 an hour** and 125 a day, in rolling
+   windows, all applying at once. Section 9 planned around the minute and the day only; pacing at 5 a minute would break
+   the hourly limit in ten minutes. The run waits **80 seconds between requests (45 an hour at most)** and spends at most
+   **min(100, the day's remaining allowance minus 10)** requests, read at the start from the usage API, which has its
+   own throttle. A stop for the day on any 401, 403, 429 or 5xx, or a timeout; no retry the same day; **one run a day**.
+2. **The token** is used only inside `.github/workflows/ripples-courts.yml`, passed to `lab/records2_courts.py` as an
+   environment variable and sent only as the documented `Authorization: Token` header. It is never printed or stored.
+3. **Order:** the 146 cultural works first, then the 49 famous-film decoys, then the 63 events, then the 26 things. The
+   results file keeps a done list, so each day's run continues where the last one stopped (about three days in all).
+4. **Query form.** The date filter goes in the query as `dateFiled:[YYYY-MM-DD TO *]` (the documented range syntax),
+   not as a separate parameter. A stone's phrases are joined with OR in one query (one search per stone). Ambiguous works
+   keep section 9's group `(film OR movie OR television OR documentary OR novel OR book)`. Ambiguous events and things
+   use their one registered disambiguating word from the query file instead of a long group of event words, because the
+   documentation asks for queries without long OR chains. Published opinions only (the default); `highlight=on`; the
+   first page of results by relevance (20 at most).
+5. **Reading.** The opinion text is fetched only for results whose highlighted snippet passes the same guard as the
+   Federal Register run, **three opinions per stone at most**, from `html_with_citations` (the field the documentation
+   recommends), tags stripped, with field selection. Results over the cap are kept with their snippet only and say so.
+6. **Labels, clarified for opinions.** *Reason:* the opinion names the work as a cause of the rule it applies or
+   announces (the work prompted the statute it construes) or as a basis of its holding. *Context:* the work is evidence,
+   an example or history, **or the subject of the case** (a copyright, defamation, obscenity or ban case about the work
+   is the law acting on the work, the reverse direction, and does not count). *Aside:* a passing reference, a quotation,
+   a namesake. The automated strict rule for decoys is unchanged: a published opinion filed after the film, an occurrence
+   that passes the guard, cite_score reason.
+7. **The mark.** A reason pair counts toward the bar only if the holding set a lasting rule: the case has its own English
+   Wikipedia article (checked by a title search), or the opinion struck down or construed a statute. Checked by hand.
+8. **Storage:** for each opinion, only the work, the case name, the court, the date filed, the citation, the one
+   sentence, the URL and the labels. No windows of text.
+9. **Bar for courts,** reported beside the Federal Register's and against the same numbers: at least 5 new real stone →
+   holding pairs, and 0 of 49 decoys under the strict automated rule. A partial run reports what it covered.
+10. **No data-day job yet.** The `claude/eng-dataday` workflow is not on the remote, so the court job is a resumable script
+    started by a push to its own workflow file, at most once a day.
