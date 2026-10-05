@@ -26,7 +26,8 @@ probe's counts are in `fedreg_probe.json`). The builder's two blind screens are 
 the result. `screen_rubric.md` is the rubric. `screen_sets.py` freezes the evaluation sets from the runs above
 (candidate fields only) into `screen_candidates_v1.json`; `screen_compare.py` compares the blind labels
 (`screen_labels_v1.json`) with the person's decisions and writes `screen_compare_v1.json` and the labeled corpus
-`screen_corpus_v1.json`. `screen.py` runs the same rubric through a language-model API (key, model and endpoint from
+`screen_corpus_v1.json`. `screen_new_v1.json` holds the passes from a pool no person screened item by item (screened by a
+language model, not by a person). `screen.py` runs the same rubric through a language-model API (key, model and endpoint from
 environment variables, no defaults); it has not been run, and no workflow calls it.
 
 ```

@@ -212,10 +212,26 @@ either: a different model under the same rubric is a new labeler and needs its o
   in judgment.
 - The four scores are one labeler's editorial judgments, not measurements.
 
+## Candidates no person screened (exploratory, after the comparison)
+
+The catalog stones' forward reading (`legacy2_all.json`) left 224 causal sentences, of which v1 hand-screened a random 50
+and recorded only counts. The 192 that survive the ordering rule were run through rubric v1 the same way, and the 24
+passes are listed in `docs/results/screen_new_v1.json`. That file is labeled **screened by a language model, not by a
+person**. 15 of the 24 are marks the hand-built catalog or the product already holds (the Offences Act 2024, the Housing
+(Homeless Persons) Act 1977, ARPA, the Oil Pollution Act, LCARA and others). That is an independent check that what the
+screen passes on fresh text is mostly real. Nine are not in the catalog or the product: the Wickersham Commission (1929)
+after Prohibition, the American Society of Safety Professionals (1911) after the Triangle fire, the Respect for Marriage
+Act (2022) after Dobbs, the California Consumer Privacy Act (2018), the Virginia and Colorado privacy acts (2021) and
+China's Personal Information Protection Law (2021) after the GDPR, the Project BioShield Act (2004) after the anthrax
+letters, California's 1909 standard fire insurance policy after the 1906 earthquake, and the 1966 Department of
+Transportation after Unsafe at Any Speed. None of them enters the product without a person.
+
 ## Data the product can use
 
 - `docs/results/screen_corpus_v1.json`: 583 candidates, each with the screen's decision, one reason code, flags, four
   scores and the person's decision. This is the start of a labeled corpus of what a good ripple is (and is not).
 - `docs/results/screen_compare_v1.json`: the confusion lists and the judgment matches, for the owner's ruling on finding 2.
+- `docs/results/screen_new_v1.json`: nine marks the screen passed that are not in the catalog or the product, for a person to
+  check (screened by a language model, not by a person).
 - The ten false passes include at least three marks worth a person's second look: chokehold bans in 17 states after
   George Floyd's murder (WF119), the 1995 taggant law after Oklahoma City (WF083) and the Chernobyl commission (WF020).
