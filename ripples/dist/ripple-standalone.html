@@ -272,7 +272,15 @@ input[type=range]{flex:1;accent-color:var(--marigold);min-width:0}
 @media (max-width:560px){.legend [data-tip]::after{max-width:220px}.legend [data-tip]:nth-last-of-type(-n+3)::after{left:auto;right:0}}
 canvas.glw{position:absolute;pointer-events:none;border-radius:10px;z-index:0}.gl svg#pond{position:relative;z-index:1}
 .gl #pond .scene > rect,.gl #pond .scene + g > circle:first-child,.gl .sheen,.gl .wbands,.gl .frontg,.gl .wave,.gl .dimple,.gl #pond [fill="url(#w2sky)"],.gl #pond [fill="url(#wet)"],.gl .sshadow{display:none}
-.w2 .wake{display:none}  /* the pulse every seven seconds read as sonar */
+.w2 .wake{display:none}
+/* the story as a route: the links stay on the water once they land, styled by how sure they are; the arcs step back */
+.w2 .edge{opacity:.5}.w2 .edge.mark{stroke:var(--marigold);opacity:.7}.w2 #pond.beat .edge:not(.lit),.w2 #pond.focus .edge:not(.lit){opacity:.22}
+.w2 .rip.on{opacity:.18}.w2 .rip.on.lit{opacity:.6}.w2 #pond:not(.playing) .rip.on.l-measured{opacity:.28}.gl .ripS,.gl .ripH,.gl .rip2,.gl .glint{display:none}
+.crestdate{font:italic 500 13px var(--display);fill:rgba(226,240,252,.78);paint-order:stroke;stroke:#0f1c26;stroke-width:3.5px;transition:opacity .4s;pointer-events:none}
+.w2 #pond.playing .thread,.w2 #pond.playing .threadtick,.w2 #pond.playing .ringlbl{opacity:.3;transition:opacity .5s}
+.w2 .rimlbl{fill:rgba(214,232,246,.34)}
+.w2 .beatline .bwhen{text-transform:none;letter-spacing:.01em;font-size:.8rem}
+.w2 .feed.playing .card:not(.now):not(.hot){opacity:.6;transition:opacity .4s}.w2 .feed .card.now{box-shadow:0 0 0 1px rgba(242,169,59,.6),0 8px 24px rgba(242,169,59,.12)}  /* the pulse every seven seconds read as sonar */
 .pkS{fill:none;stroke:rgba(2,14,28,.45);stroke-width:3}.pkH{fill:none;stroke:rgba(214,234,248,.42);stroke-width:1.3}.w2 .frontg{filter:url(#softwave)}
 .w2 .front{stroke-width:2;stroke:rgba(226,240,252,.6)}.w2 .frontS{stroke-width:3.8;stroke:rgba(2,14,28,.55)}
 .wbS{fill:none;stroke:rgba(2,14,28,.32);stroke-width:2.2}.wbH{fill:none;stroke:rgba(214,234,248,.16);stroke-width:1}
@@ -608,12 +616,12 @@ const GLW = (() => {
   if (!gl) return null;
   const VS = "attribute vec2 a;void main(){gl_Position=vec4(a,0.,1.);}";
   const FS = `precision highp float;
-uniform vec2 uRes;uniform vec3 uMap;uniform vec4 uVB;uniform vec2 uC;uniform float uR,uTilt,uTime,uSunk;uniform vec2 uFront,uSplash;uniform vec3 uRings[24];uniform int uN;
+uniform vec2 uRes;uniform vec3 uMap;uniform vec4 uVB;uniform vec2 uC;uniform float uR,uTilt,uTime,uSunk;uniform vec2 uFront,uSplash;uniform vec3 uRings[24];uniform int uN;float EMB;
 float H(vec2 p){
   float r=length(p-uC),h=0.;
   float x=r-uFront.x; h+=uFront.y*exp(-pow((x+16.)/20.,2.))*cos(x*.42-uTime*1.7);
   if(uSplash.y>0.){float a=uSplash.x,rs=12.+150.*a,x2=r-rs; h+=1.9*exp(-1.3*a)*exp(-pow(x2/15.,2.))*cos(x2*.5);}
-  for(int i=0;i<24;i++){if(i>=uN)break;vec3 q=uRings[i];float x3=r-q.x;h+=q.y*exp(-x3*x3/28.)*(.75+.25*cos(uTime*1.1+q.x*.13));}
+  for(int i=0;i<24;i++){if(i>=uN)break;vec3 q=uRings[i];float x3=r-q.x;h+=q.y*exp(-x3*x3/28.)*(.75+.25*cos(uTime*1.1+q.x*.13));EMB+=q.z*exp(-x3*x3/90.);}
   h-=uSunk*1.5*exp(-r*r/90.);
   h+=.09*sin(dot(p,vec2(.081,.047))+uTime*.7)+.07*sin(dot(p,vec2(-.052,.113))-uTime*.9)+.05*sin(dot(p,vec2(.131,-.021))+uTime*1.3);
   return h;}
@@ -622,7 +630,7 @@ void main(){
   vec2 s=uVB.xy+(fc-uMap.xy)/uMap.z;
   vec2 p=vec2(s.x,uC.y+(s.y-uC.y)/uTilt);
   float r=length(p-uC),e=.9,k=1.5;
-  float h0=H(p),hx=H(p+vec2(e,0.)),hy=H(p+vec2(0.,e));
+  EMB=0.;float h0=H(p);float em=EMB;float hx=H(p+vec2(e,0.)),hy=H(p+vec2(0.,e));
   vec3 N=normalize(vec3(-(hx-h0)/e*k,(hy-h0)/e*k,1.));
   float se=uTilt,ce=sqrt(1.-se*se);
   vec3 D=normalize(vec3(0.,ce,-se)),Rf=reflect(D,N);
@@ -632,6 +640,7 @@ void main(){
   vec3 body=mix(vec3(.047,.09,.125),vec3(.075,.135,.18),far);
   vec3 col=mix(body,sky,clamp(F*2.4+far*.05,0.,1.));
   col+=vec3(.85,.9,.95)*pow(max(dot(Rf,normalize(vec3(-.35,.8,.48))),0.),110.)*.45;
+  col=mix(col,vec3(.95,.66,.23),clamp(em,0.,1.)*.42);
   float a=1.-smoothstep(uR-30.,uR+44.,r);
   gl_FragColor=vec4(mix(vec3(.059,.11,.149),col,a),1.);}`;
   const sh = (type, src) => { const o = gl.createShader(type); gl.shaderSource(o, src); gl.compileShader(o); return gl.getShaderParameter(o, gl.COMPILE_STATUS) ? o : null; };
@@ -665,12 +674,12 @@ void main(){
     gl.uniform2f(U.uFront, cur.frR || 0, still ? 0 : (cur.frOn || 0));
     const age = cur.splashT ? (now - cur.splashT) / 1000 : 99; gl.uniform2f(U.uSplash, age, !still && age < 4 ? 1 : 0);
     let n = 0; for (const it of cur.items) { if (n >= 24) break; if (it.state !== "landed") continue; const b = it.landT ? (now - it.landT) / 1000 : 9;
-      rings[n * 3] = it.r; rings[n * 3 + 1] = 0.32 + (still ? 0 : 1.1 * Math.exp(-1.6 * b)); rings[n * 3 + 2] = 0; n++; }
+      rings[n * 3] = it.r; rings[n * 3 + 1] = 0.32 + (still ? 0 : 1.1 * Math.exp(-1.6 * b)); rings[n * 3 + 2] = it.mark && !still ? 1.2 * Math.exp(-0.7 * b) : 0; n++; }  // a lasting mark lights the water around it in ember as it lands, then lets go
     gl.uniform3fv(U.uRings, rings); gl.uniform1i(U.uN, n);
     gl.drawArrays(gl.TRIANGLES, 0, 3); lastDraw = now;
   }
   function loop(now) {  // full rate while anything moves; a slow breath for twenty seconds after; then the surface holds still
-    const busy = playing || scrubbing || now - poke < 4000, idle = !still && now - poke < 20000;
+    const busy = playing || scrubbing || now - poke < 6000, idle = !still && now - poke < 20000;
     if (busy || (idle && now - lastDraw > 66) || !lastDraw) draw(now);
     requestAnimationFrame(loop);
   }
@@ -1173,6 +1182,7 @@ function draw(story) {
     body:el("circle", {class:"front", cx:C.x, cy:C.y, r:0}, frontG), light:el("circle", {class:"frontH", cx:C.x, cy:C.y, r:0, transform:"translate(0 -1.6)"}, frontG)};
   if (W2) front.packet = [1, 2, 3, 4].map(k => ({k, s:el("circle", {class:"pkS", cx:C.x, cy:C.y, r:0, transform:"translate(0 2)", style:`opacity:${(0.7 - k * 0.15).toFixed(2)}`}, frontG),
     h:el("circle", {class:"pkH", cx:C.x, cy:C.y, r:0, transform:"translate(0 -1.3)", style:`opacity:${(0.62 - k * 0.13).toFixed(2)}`}, frontG)}));  // water: a packet of crests behind the front, each a lit crest over a dark trough, fading inward
+  if (W2) story.crestDate = el("text", {class:"crestdate", x:C.x, y:C.y, "text-anchor":"end"}, gt);
   story.front = front;
   if (W2) {  // water: the far surface takes the sky's light, the near one is dark; a dimple where the stone went in
     el("circle", {cx:C.x, cy:C.y, r:R + 34, fill:"url(#w2sky)", mask:"url(#w2mask)"}, plane);
@@ -1576,12 +1586,16 @@ function launch(it, animate) {
     setTimeout(() => [it.ring, it.ringH, it.ringS, it.crest].forEach(r => r.classList.remove("bloom")), 1000);
   }
 }
+function routeD(a, b) {  // the water look: a link is a soft curve across the water, bowed to one side, so a branching story reads as a route and not as spokes
+  const mx = (a.x + b.x) / 2, my = (a.y + b.y) / 2, dx = b.x - a.x, dy = b.y - a.y, bend = 0.16;
+  return `M${a.x.toFixed(1)},${a.y.toFixed(1)} Q${(mx - dy * bend).toFixed(1)},${(my + dx * bend).toFixed(1)} ${b.x.toFixed(1)},${b.y.toFixed(1)}`;
+}
 function land(it) {  // the label appears only once the ripple has arrived
   if (it.state !== "landed") it.landT = performance.now();
   it.state = "landed";
   it.g.classList.add("on"); it.g.setAttribute("tabindex", 0);
   it.g.setAttribute("transform", `translate(${it.pos.x},${it.pos.y}) scale(${depthK(it.plane)})`);
-  it.path.setAttribute("d", `M${it.from.x},${it.from.y} L${it.plane.x},${it.plane.y}`);
+  it.path.setAttribute("d", W2 ? routeD(it.from, it.plane) : `M${it.from.x},${it.from.y} L${it.plane.x},${it.plane.y}`);
   it.ring.setAttribute("d", arcPath(it.r, it.span)); it.ringS.setAttribute("d", arcPath(it.r, it.span)); it.ringH.setAttribute("d", arcPath(it.r, it.span));
   [it.ring, it.ringS, it.ringH].forEach(r => { r.classList.remove("flying"); r.classList.add("on"); });
   it.ring2.setAttribute("d", arcPath(Math.max(10, it.r - 7), it.span)); it.ring2.classList.remove("flying"); it.ring2.classList.add("on");
@@ -1741,6 +1755,7 @@ function render(now = performance.now()) {
   }
   if (cur.front) {  // the wavefront: at the radius time has reached; gone once the story is at rest
     const fr = radius(Math.max(0.5, d)), live = t < 1 || playing || scrubbing;
+    if (cur.crestDate) { const on = live && t > PRE && t < 1, q = PL(polar(fr, 322)); cur.crestDate.setAttribute("x", q.x.toFixed(1)); cur.crestDate.setAttribute("y", (q.y - 6).toFixed(1)); cur.crestDate.textContent = fmtMonth(addDays(iso0, Math.floor(d))); cur.crestDate.style.opacity = on ? 1 : 0; }  // the date rides the wave: farther out is later
     ["glow", "shadow", "body", "light"].forEach(k => cur.front[k].setAttribute("r", fr)); cur.frR = fr; cur.frOn = live && t > PRE ? Math.min(1, (1 - t) * 6) : 0;
     if (cur.front.packet) cur.front.packet.forEach(b => { const r = Math.max(0, fr - b.k * 9); b.s.setAttribute("r", r); b.h.setAttribute("r", r); });
     cur.front.g.setAttribute("opacity", live && t > PRE ? Math.min(1, (1 - t) * 6).toFixed(2) : 0);
@@ -1830,7 +1845,7 @@ function tick(now) {
   requestAnimationFrame(tick);
 }
 function setPlaying(p) {
-  playing = p; $("#pond").classList.toggle("playing", !!p); if (cur && !p) cur.goal = null;
+  playing = p; $("#pond").classList.toggle("playing", !!p); $("#feed").classList.toggle("playing", !!p); if (cur && !p) cur.goal = null;
   if (cur && p && cur.timeline) { unspot(); cur.clock = clockAtT(t); if (t <= PRE + 1e-6 && !stepMode) setMystery(true); else setMystery(false); }  // play from the start is an investigation; a resumed play shows everything
   if (cur && !p) setMystery(false);  // a pause, a stop, a scrub or a deep link shows everything
   if (cur && !p && t >= 1) { track("complete", {slug: cur.key, seconds_in_story: Math.round((performance.now() - sess.storyT0) / 1000)}); cur.items.forEach(wake); setMystery(false); if (!REEL) { unspot(); showEndBeat(); } }  // a reel keeps its end card up; ordinary play ends on what stayed and the next stone  // at rest every step speaks and the pond is level
