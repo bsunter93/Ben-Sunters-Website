@@ -420,3 +420,19 @@ A failed part is reported as failed, with the diagnosis.
 - D:sideways:5: approximate date (range midpoint)
 
 Every GDELT DOC query carries the suffix `sourcelang:english`. Television queries carry `(station:CNN OR station:MSNBC OR station:FOXNEWS)` for a US step and `station:BBCNEWS` for a UK step.
+
+## 10. Amendments (each registered before any result it could affect)
+
+**Oct 5, 2026, 06:45 UTC (before any Media Cloud request and before any GDELT data).** GDELT answered HTTP 429 to the
+first request of this pass (the DOC API at 06:35 UTC), with a notice asking for one request every 5 seconds. Under the
+rules this stops `api.gdeltproject.org`, which serves both the DOC and the TV API, until UTC midnight: no further GDELT
+request is made on Oct 5 (UTC). One attempt will be made after Oct 6, 00:00 UTC at the registered pace; a second refusal
+ends GDELT for this pass. Until then, and for good if GDELT stays closed:
+
+1. The news family rests on Media Cloud, as section 5 already provides where GDELT DOC is not testable.
+2. The television family is reported as not run.
+3. The catalyst scan of section 7 runs on Media Cloud's US National series for the same panel with the identical rule
+   (the scan, thresholds, the 3-story floor, the decoy dates and the ranking); a candidate converges when the entity's
+   Wikipedia pageviews show an onset within 7 days of the news onset. If GDELT opens on Oct 6, the registered GDELT DOC
+   scan is primary and supplies the top 20; the Media Cloud scan is reported beside it as a replication.
+4. Bar part 3 (reach before August 2015) can then be met only by Media Cloud.
