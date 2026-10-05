@@ -1,0 +1,5237 @@
+{
+ "protocol": "ripples/docs/records2_plan_v1.md",
+ "written": "2026-10-04",
+ "source": "Federal Register API v1, final rules (type RULE)",
+ "per_page": 20,
+ "max_docs_per_stone": 15,
+ "max_requests": 1500,
+ "counts": {
+  "stones": 235,
+  "decoys": 49,
+  "skipped": 10,
+  "queries": 298,
+  "ambiguous": 131
+ },
+ "stones": [
+  {
+   "id": "tiger-king",
+   "stone": "Tiger King",
+   "article": "Tiger King",
+   "group": "catalog",
+   "type": "work",
+   "date": "2020-03-20",
+   "phrases": [
+    "Tiger King"
+   ],
+   "amb": true,
+   "word": "Netflix",
+   "guard": "Joe Exotic|docuseries|big cats?",
+   "case": "s",
+   "queries": [
+    "\"Tiger King\" Netflix"
+   ]
+  },
+  {
+   "id": "broad-street-sanitation",
+   "stone": "The Broad Street pump",
+   "article": "1854 Broad Street cholera outbreak",
+   "group": "catalog",
+   "type": "event",
+   "date": "1854-08-31",
+   "phrases": [
+    "Broad Street pump"
+   ],
+   "amb": false,
+   "word": null,
+   "guard": "cholera|John Snow|1854",
+   "case": "s",
+   "queries": [
+    "\"Broad Street pump\""
+   ]
+  },
+  {
+   "id": "chernobyl-zone",
+   "stone": "Chernobyl",
+   "article": "Chernobyl",
+   "group": "catalog",
+   "type": "work",
+   "date": "2019-05-06",
+   "phrases": [
+    "Chernobyl"
+   ],
+   "amb": true,
+   "word": "miniseries",
+   "guard": "HBO|miniseries|drama",
+   "case": "s",
+   "queries": [
+    "\"Chernobyl\" miniseries"
+   ]
+  },
+  {
+   "id": "mr-bates-horizon",
+   "stone": "Mr Bates vs The Post Office",
+   "article": "Mr Bates vs The Post Office",
+   "group": "catalog",
+   "type": "work",
+   "date": "2024-01-01",
+   "phrases": [
+    "Mr Bates",
+    "Mr. Bates"
+   ],
+   "amb": true,
+   "word": "television",
+   "guard": "Post Office|ITV|Horizon",
+   "case": "s",
+   "queries": [
+    "\"Mr Bates\" television",
+    "\"Mr. Bates\" television"
+   ]
+  },
+  {
+   "id": "cathy-come-home",
+   "stone": "Cathy Come Home",
+   "article": "Cathy Come Home",
+   "group": "catalog",
+   "type": "work",
+   "date": "1966-11-16",
+   "phrases": [
+    "Cathy Come Home"
+   ],
+   "amb": false,
+   "word": null,
+   "guard": null,
+   "case": "s",
+   "queries": [
+    "\"Cathy Come Home\""
+   ]
+  },
+  {
+   "id": "quincy-orphan-drug",
+   "stone": "Quincy",
+   "article": "Quincy, M.E.",
+   "group": "catalog",
+   "type": "work",
+   "date": "1981-03-04",
+   "phrases": [
+    "Quincy, M.E.",
+    "Quincy"
+   ],
+   "amb": true,
+   "word": "television",
+   "guard": "Jack Klugman|medical examiner|orphan",
+   "case": "s",
+   "queries": [
+    "\"Quincy, M.E.\" television",
+    "\"Quincy\" television"
+   ]
+  },
+  {
+   "id": "octopus-sentience",
+   "stone": "My Octopus Teacher",
+   "article": "My Octopus Teacher",
+   "group": "catalog",
+   "type": "work",
+   "date": "2020-09-07",
+   "phrases": [
+    "My Octopus Teacher"
+   ],
+   "amb": false,
+   "word": null,
+   "guard": "Netflix|documentary",
+   "case": "s",
+   "queries": [
+    "\"My Octopus Teacher\""
+   ]
+  },
+  {
+   "id": "sixty-minutes-stock-act",
+   "stone": "60 Minutes",
+   "article": "60 Minutes",
+   "group": "catalog",
+   "type": "work",
+   "date": "2011-11-13",
+   "phrases": [
+    "60 Minutes"
+   ],
+   "amb": true,
+   "word": "CBS",
+   "guard": "CBS|segment|broadcast|aired|news program|investigat\\w+ report",
+   "case": "s",
+   "queries": [
+    "\"60 Minutes\" CBS"
+   ]
+  },
+  {
+   "id": "victim-1961",
+   "stone": "Victim",
+   "article": "Victim",
+   "group": "catalog",
+   "type": "work",
+   "date": "1961-08-31",
+   "phrases": [
+    "Victim"
+   ],
+   "amb": true,
+   "word": "film",
+   "guard": "Dirk Bogarde|1961",
+   "case": "s",
+   "queries": [
+    "\"Victim\" film"
+   ]
+  },
+  {
+   "id": "daily-show-zadroga",
+   "stone": "The Daily Show",
+   "article": "The Daily Show",
+   "group": "catalog",
+   "type": "work",
+   "date": "2010-12-16",
+   "phrases": [
+    "The Daily Show"
+   ],
+   "amb": false,
+   "word": null,
+   "guard": "Jon Stewart|Comedy Central",
+   "case": "s",
+   "queries": [
+    "\"The Daily Show\""
+   ]
+  },
+  {
+   "id": "manhunt-byron",
+   "stone": "Manhunt",
+   "article": "Manhunt",
+   "group": "catalog",
+   "type": "work",
+   "date": "2003-11-18",
+   "phrases": [
+    "Manhunt"
+   ],
+   "amb": true,
+   "word": "game",
+   "guard": "Rockstar|video game",
+   "case": "s",
+   "queries": [
+    "\"Manhunt\" game"
+   ]
+  },
+  {
+   "id": "west-wing-hatred-act",
+   "stone": "The West Wing",
+   "article": "The West Wing",
+   "group": "catalog",
+   "type": "work",
+   "date": "2005-03-02",
+   "phrases": [
+    "The West Wing"
+   ],
+   "amb": true,
+   "word": "television",
+   "guard": "NBC|Aaron Sorkin|drama",
+   "case": "s",
+   "queries": [
+    "\"The West Wing\" television"
+   ]
+  },
+  {
+   "id": "silent-spring-ddt",
+   "stone": "Silent Spring",
+   "article": "Silent Spring",
+   "group": "catalog",
+   "type": "work",
+   "date": "1962-09-27",
+   "phrases": [
+    "Silent Spring"
+   ],
+   "amb": true,
+   "word": "book",
+   "guard": "Rachel Carson|Carson's|Carson,? R",
+   "case": "s",
+   "queries": [
+    "\"Silent Spring\" book"
+   ]
+  },
+  {
+   "id": "adolescence-schools",
+   "stone": "Adolescence",
+   "article": "Adolescence (TV series)",
+   "group": "catalog",
+   "type": "work",
+   "date": "2025-03-13",
+   "phrases": [
+    "Adolescence"
+   ],
+   "amb": true,
+   "word": "Netflix",
+   "guard": "Netflix|drama|Jack Thorne|Stephen Graham",
+   "case": "s",
+   "queries": [
+    "\"Adolescence\" Netflix"
+   ]
+  },
+  {
+   "id": "america-and-alcohol",
+   "stone": "Prohibition",
+   "article": "Prohibition in the United States",
+   "group": "catalog",
+   "type": "event",
+   "date": "1920-01-17",
+   "phrases": [
+    "Prohibition"
+   ],
+   "amb": true,
+   "word": "repeal",
+   "guard": "Eighteenth Amendment|18th Amendment|Volstead|Prohibition era|National Prohibition|repeal of Prohibition|Twenty-first Amendment|21st Amendment|\\b1920\\b|\\b1933\\b",
+   "case": "s",
+   "queries": [
+    "\"Prohibition\" repeal"
+   ]
+  },
+  {
+   "id": "the-jungle-fda",
+   "stone": "The Jungle",
+   "article": "The Jungle",
+   "group": "catalog",
+   "type": "work",
+   "date": "1906-02-26",
+   "phrases": [
+    "The Jungle"
+   ],
+   "amb": true,
+   "word": "Sinclair",
+   "guard": "Upton Sinclair|Sinclair's|meatpacking|meat-packing|meat packing",
+   "case": "s",
+   "queries": [
+    "\"The Jungle\" Sinclair"
+   ]
+  },
+  {
+   "id": "triangle-shirtwaist",
+   "stone": "The Triangle fire",
+   "article": "Triangle Shirtwaist Factory fire",
+   "group": "catalog",
+   "type": "event",
+   "date": "1911-03-25",
+   "phrases": [
+    "Triangle Shirtwaist"
+   ],
+   "amb": false,
+   "word": null,
+   "guard": null,
+   "case": "s",
+   "queries": [
+    "\"Triangle Shirtwaist\""
+   ]
+  },
+  {
+   "id": "dust-bowl-soil",
+   "stone": "Black Sunday",
+   "article": "Dust Bowl",
+   "group": "catalog",
+   "type": "event",
+   "date": "1935-04-14",
+   "phrases": [
+    "Dust Bowl"
+   ],
+   "amb": false,
+   "word": null,
+   "guard": null,
+   "case": "s",
+   "queries": [
+    "\"Dust Bowl\""
+   ]
+  },
+  {
+   "id": "sputnik-nasa-arpa",
+   "stone": "Sputnik",
+   "article": "Sputnik 1",
+   "group": "catalog",
+   "type": "event",
+   "date": "1957-10-04",
+   "phrases": [
+    "Sputnik"
+   ],
+   "amb": false,
+   "word": null,
+   "guard": null,
+   "case": "s",
+   "queries": [
+    "\"Sputnik\""
+   ]
+  },
+  {
+   "id": "unsafe-at-any-speed",
+   "stone": "Unsafe at Any Speed",
+   "article": "Unsafe at Any Speed",
+   "group": "catalog",
+   "type": "work",
+   "date": "1965-11-30",
+   "phrases": [
+    "Unsafe at Any Speed"
+   ],
+   "amb": false,
+   "word": null,
+   "guard": "Ralph Nader|Nader",
+   "case": "s",
+   "queries": [
+    "\"Unsafe at Any Speed\""
+   ]
+  },
+  {
+   "id": "cuyahoga-clean-water",
+   "stone": "The Cuyahoga fire",
+   "article": "Cuyahoga River fire",
+   "group": "catalog",
+   "type": "event",
+   "date": "1969-06-22",
+   "phrases": [
+    "Cuyahoga River"
+   ],
+   "amb": true,
+   "word": "fire",
+   "guard": "fire|burned|caught fire|ablaze|1969",
+   "case": "s",
+   "queries": [
+    "\"Cuyahoga River\" fire"
+   ]
+  },
+  {
+   "id": "love-canal-superfund",
+   "stone": "Love Canal",
+   "article": "Love Canal",
+   "group": "catalog",
+   "type": "event",
+   "date": "1978-08-02",
+   "phrases": [
+    "Love Canal"
+   ],
+   "amb": false,
+   "word": null,
+   "guard": null,
+   "case": "s",
+   "queries": [
+    "\"Love Canal\""
+   ]
+  },
+  {
+   "id": "three-mile-island-nrc",
+   "stone": "Three Mile Island",
+   "article": "Three Mile Island accident",
+   "group": "catalog",
+   "type": "event",
+   "date": "1979-03-28",
+   "phrases": [
+    "Three Mile Island"
+   ],
+   "amb": true,
+   "word": "accident",
+   "guard": "accident|1979|meltdown|partial melt|TMI-2 accident",
+   "case": "s",
+   "queries": [
+    "\"Three Mile Island\" accident"
+   ]
+  },
+  {
+   "id": "exxon-valdez-opa90",
+   "stone": "The Exxon Valdez",
+   "article": "Exxon Valdez oil spill",
+   "group": "catalog",
+   "type": "event",
+   "date": "1989-03-24",
+   "phrases": [
+    "Exxon Valdez"
+   ],
+   "amb": false,
+   "word": null,
+   "guard": null,
+   "case": "s",
+   "queries": [
+    "\"Exxon Valdez\""
+   ]
+  },
+  {
+   "id": "liebeck-hot-coffee",
+   "stone": "The McDonald's coffee case",
+   "article": "Liebeck v. McDonald's Restaurants",
+   "group": "catalog",
+   "type": "thing",
+   "date": "1994-08-18",
+   "phrases": [
+    "Liebeck"
+   ],
+   "amb": false,
+   "word": null,
+   "guard": null,
+   "case": "s",
+   "queries": [
+    "\"Liebeck\""
+   ]
+  },
+  {
+   "id": "columbine-active-shooter",
+   "stone": "Columbine",
+   "article": "Columbine High School massacre",
+   "group": "catalog",
+   "type": "event",
+   "date": "1999-04-20",
+   "phrases": [
+    "Columbine"
+   ],
+   "amb": true,
+   "word": "shooting",
+   "guard": "shooting|shootings|massacre|High School|1999|gunm[ae]n",
+   "case": "s",
+   "queries": [
+    "\"Columbine\" shooting"
+   ]
+  },
+  {
+   "id": "flint-lead-pipes",
+   "stone": "Flint",
+   "article": "Flint water crisis",
+   "group": "catalog",
+   "type": "event",
+   "date": "2014-04-25",
+   "phrases": [
+    "Flint"
+   ],
+   "amb": true,
+   "word": "water",
+   "guard": "drinking water|water crisis|water system|lead|Michigan|\\b201[456]\\b",
+   "case": "s",
+   "queries": [
+    "\"Flint\" water"
+   ]
+  },
+  {
+   "id": "serial",
+   "stone": "Serial",
+   "article": "Serial",
+   "group": "catalog",
+   "skip": "the same stone as the culture list's Serial (podcast)"
+  },
+  {
+   "id": "svb",
+   "stone": "Silicon Valley Bank",
+   "article": "Collapse of Silicon Valley Bank",
+   "group": "catalog",
+   "type": "event",
+   "date": "2023-03-10",
+   "phrases": [
+    "Silicon Valley Bank"
+   ],
+   "amb": false,
+   "word": null,
+   "guard": null,
+   "case": "s",
+   "queries": [
+    "\"Silicon Valley Bank\""
+   ]
+  },
+  {
+   "id": "dobbs",
+   "stone": "Dobbs v. Jackson",
+   "article": "Dobbs v. Jackson Women's Health Organization",
+   "group": "catalog",
+   "type": "thing",
+   "date": "2022-06-24",
+   "phrases": [
+    "Dobbs v. Jackson",
+    "Dobbs"
+   ],
+   "amb": true,
+   "word": "Jackson",
+   "guard": "Dobbs v\\.|Jackson Women|Supreme Court|decision|Roe",
+   "case": "s",
+   "queries": [
+    "\"Dobbs v. Jackson\" Jackson",
+    "\"Dobbs\" Jackson"
+   ]
+  },
+  {
+   "id": "tylenol",
+   "stone": "Tylenol poisonings",
+   "article": "Chicago Tylenol murders",
+   "group": "catalog",
+   "type": "event",
+   "date": "1982-09-29",
+   "phrases": [
+    "Tylenol"
+   ],
+   "amb": true,
+   "word": "tampering",
+   "guard": "tamper\\w*|poison\\w*|cyanide|1982|Chicago",
+   "case": "s",
+   "queries": [
+    "\"Tylenol\" tampering"
+   ]
+  },
+  {
+   "id": "gdpr",
+   "stone": "GDPR",
+   "article": "General Data Protection Regulation",
+   "group": "catalog",
+   "type": "thing",
+   "date": "2018-05-25",
+   "phrases": [
+    "General Data Protection Regulation",
+    "GDPR"
+   ],
+   "amb": false,
+   "word": null,
+   "guard": null,
+   "case": "s",
+   "queries": [
+    "\"General Data Protection Regulation\"",
+    "\"GDPR\""
+   ]
+  },
+  {
+   "id": "fukushima",
+   "stone": "Fukushima",
+   "article": "Fukushima nuclear accident",
+   "group": "catalog",
+   "type": "event",
+   "date": "2011-03-11",
+   "phrases": [
+    "Fukushima"
+   ],
+   "amb": false,
+   "word": null,
+   "guard": null,
+   "case": "s",
+   "queries": [
+    "\"Fukushima\""
+   ]
+  },
+  {
+   "id": "winter-storm-uri",
+   "stone": "Winter Storm Uri",
+   "article": "February 13–17, 2021 North American winter storm",
+   "group": "catalog",
+   "type": "event",
+   "date": "2021-02-15",
+   "phrases": [
+    "Winter Storm Uri"
+   ],
+   "amb": false,
+   "word": null,
+   "guard": null,
+   "case": "s",
+   "queries": [
+    "\"Winter Storm Uri\""
+   ]
+  },
+  {
+   "id": "ice-bucket",
+   "stone": "Ice Bucket Challenge",
+   "article": "Ice Bucket Challenge",
+   "group": "catalog",
+   "skip": "the same stone as the culture list's Ice Bucket Challenge"
+  },
+  {
+   "id": "cash-for-clunkers",
+   "stone": "Cash for Clunkers",
+   "article": "Car Allowance Rebate System",
+   "group": "catalog",
+   "type": "thing",
+   "date": "2009-07-24",
+   "phrases": [
+    "Cash for Clunkers"
+   ],
+   "amb": false,
+   "word": null,
+   "guard": null,
+   "case": "s",
+   "queries": [
+    "\"Cash for Clunkers\""
+   ]
+  },
+  {
+   "id": "airbnb",
+   "stone": "Airbnb",
+   "article": "Airbnb",
+   "group": "catalog",
+   "type": "thing",
+   "date": "2008-08-11",
+   "phrases": [
+    "Airbnb"
+   ],
+   "amb": false,
+   "word": null,
+   "guard": null,
+   "case": "s",
+   "queries": [
+    "\"Airbnb\""
+   ]
+  },
+  {
+   "id": "wardrobe-malfunction",
+   "stone": "Super Bowl XXXVIII halftime",
+   "article": "Super Bowl XXXVIII halftime show",
+   "group": "catalog",
+   "type": "event",
+   "date": "2004-02-01",
+   "phrases": [
+    "Super Bowl XXXVIII",
+    "Janet Jackson"
+   ],
+   "amb": false,
+   "word": null,
+   "guard": "Super Bowl|halftime|wardrobe|indecen\\w+|broadcast",
+   "case": "s",
+   "queries": [
+    "\"Super Bowl XXXVIII\"",
+    "\"Janet Jackson\""
+   ]
+  },
+  {
+   "id": "anthrax",
+   "stone": "Anthrax letters",
+   "article": "2001 anthrax attacks",
+   "group": "catalog",
+   "type": "event",
+   "date": "2001-09-18",
+   "phrases": [
+    "anthrax attacks",
+    "anthrax letters"
+   ],
+   "amb": false,
+   "word": null,
+   "guard": null,
+   "case": "i",
+   "queries": [
+    "\"anthrax attacks\"",
+    "\"anthrax letters\""
+   ]
+  },
+  {
+   "id": "planet-earth",
+   "stone": "Planet Earth",
+   "article": "Planet Earth (2006 TV series)",
+   "group": "catalog",
+   "type": "work",
+   "date": "2006-03-05",
+   "phrases": [
+    "Planet Earth"
+   ],
+   "amb": true,
+   "word": "BBC",
+   "guard": "BBC|Attenborough",
+   "case": "s",
+   "queries": [
+    "\"Planet Earth\" BBC"
+   ]
+  },
+  {
+   "id": "tambora-bicycle",
+   "stone": "Tambora",
+   "article": "1815 eruption of Mount Tambora",
+   "group": "catalog",
+   "type": "event",
+   "date": "1815-04-10",
+   "phrases": [
+    "Tambora"
+   ],
+   "amb": false,
+   "word": null,
+   "guard": null,
+   "case": "s",
+   "queries": [
+    "\"Tambora\""
+   ]
+  },
+  {
+   "id": "earthquake-bank",
+   "stone": "The 1906 earthquake",
+   "article": "1906 San Francisco earthquake",
+   "group": "catalog",
+   "type": "event",
+   "date": "1906-04-18",
+   "phrases": [
+    "1906 San Francisco earthquake",
+    "1906 earthquake"
+   ],
+   "amb": false,
+   "word": null,
+   "guard": null,
+   "case": "s",
+   "queries": [
+    "\"1906 San Francisco earthquake\"",
+    "\"1906 earthquake\""
+   ]
+  },
+  {
+   "id": "sputnik-gps",
+   "stone": "Sputnik",
+   "article": "Sputnik 1",
+   "group": "catalog",
+   "skip": "the same stone as sputnik-nasa-arpa"
+  },
+  {
+   "id": "hurricane-sandy",
+   "stone": "Hurricane Sandy",
+   "article": "Hurricane Sandy",
+   "group": "wider",
+   "type": "event",
+   "date": "2012-10-29",
+   "phrases": [
+    "Hurricane Sandy",
+    "Superstorm Sandy"
+   ],
+   "amb": false,
+   "word": null,
+   "guard": null,
+   "case": "s",
+   "queries": [
+    "\"Hurricane Sandy\"",
+    "\"Superstorm Sandy\""
+   ]
+  },
+  {
+   "id": "september-11-attacks",
+   "stone": "September 11 attacks",
+   "article": "September 11 attacks",
+   "group": "wider",
+   "type": "event",
+   "date": "2001-09-11",
+   "phrases": [
+    "September 11"
+   ],
+   "amb": true,
+   "word": "attacks",
+   "guard": "attacks?|terroris\\w+|2001|hijack\\w*",
+   "case": "s",
+   "queries": [
+    "\"September 11\" attacks"
+   ]
+  },
+  {
+   "id": "chernobyl-disaster",
+   "stone": "Chernobyl disaster",
+   "article": "Chernobyl disaster",
+   "group": "wider",
+   "type": "event",
+   "date": "1986-04-26",
+   "phrases": [
+    "Chernobyl"
+   ],
+   "amb": false,
+   "word": null,
+   "guard": null,
+   "case": "s",
+   "queries": [
+    "\"Chernobyl\""
+   ]
+  },
+  {
+   "id": "bhopal-disaster",
+   "stone": "Bhopal disaster",
+   "article": "Bhopal disaster",
+   "group": "wider",
+   "type": "event",
+   "date": "1984-12-03",
+   "phrases": [
+    "Bhopal"
+   ],
+   "amb": false,
+   "word": null,
+   "guard": null,
+   "case": "s",
+   "queries": [
+    "\"Bhopal\""
+   ]
+  },
+  {
+   "id": "challenger-disaster",
+   "stone": "Challenger disaster",
+   "article": "Space Shuttle Challenger disaster",
+   "group": "wider",
+   "type": "event",
+   "date": "1986-01-28",
+   "phrases": [
+    "Challenger"
+   ],
+   "amb": true,
+   "word": "shuttle",
+   "guard": "[Ss]huttle|NASA|1986|disaster|accident|explosion",
+   "case": "s",
+   "queries": [
+    "\"Challenger\" shuttle"
+   ]
+  },
+  {
+   "id": "columbia-disaster",
+   "stone": "Columbia disaster",
+   "article": "Space Shuttle Columbia disaster",
+   "group": "wider",
+   "type": "event",
+   "date": "2003",
+   "phrases": [
+    "Space Shuttle Columbia",
+    "Columbia Accident Investigation Board"
+   ],
+   "amb": false,
+   "word": null,
+   "guard": null,
+   "case": "s",
+   "queries": [
+    "\"Space Shuttle Columbia\"",
+    "\"Columbia Accident Investigation Board\""
+   ]
+  },
+  {
+   "id": "hillsborough-disaster",
+   "stone": "Hillsborough disaster",
+   "article": "Hillsborough disaster",
+   "group": "wider",
+   "type": "event",
+   "date": "1989",
+   "phrases": [
+    "Hillsborough"
+   ],
+   "amb": true,
+   "word": "stadium",
+   "guard": "stadium|football|1989|disaster|crush",
+   "case": "s",
+   "queries": [
+    "\"Hillsborough\" stadium"
+   ]
+  },
+  {
+   "id": "grenfell-tower-fire",
+   "stone": "Grenfell Tower fire",
+   "article": "Grenfell Tower fire",
+   "group": "wider",
+   "type": "event",
+   "date": "2017-06-14",
+   "phrases": [
+    "Grenfell"
+   ],
+   "amb": false,
+   "word": null,
+   "guard": null,
+   "case": "s",
+   "queries": [
+    "\"Grenfell\""
+   ]
+  },
+  {
+   "id": "rana-plaza-collapse",
+   "stone": "Rana Plaza collapse",
+   "article": "2013 Dhaka garment factory collapse",
+   "group": "wider",
+   "type": "event",
+   "date": "2013-04-24",
+   "phrases": [
+    "Rana Plaza"
+   ],
+   "amb": false,
+   "word": null,
+   "guard": null,
+   "case": "s",
+   "queries": [
+    "\"Rana Plaza\""
+   ]
+  },
+  {
+   "id": "enron-scandal",
+   "stone": "Enron scandal",
+   "article": "Enron scandal",
+   "group": "wider",
+   "type": "event",
+   "date": "2001-10-16",
+   "phrases": [
+    "Enron"
+   ],
+   "amb": false,
+   "word": null,
+   "guard": null,
+   "case": "s",
+   "queries": [
+    "\"Enron\""
+   ]
+  },
+  {
+   "id": "theranos",
+   "stone": "Theranos",
+   "article": "Theranos",
+   "group": "wider",
+   "type": "event",
+   "date": "2003",
+   "phrases": [
+    "Theranos"
+   ],
+   "amb": false,
+   "word": null,
+   "guard": null,
+   "case": "s",
+   "queries": [
+    "\"Theranos\""
+   ]
+  },
+  {
+   "id": "cambridge-analytica",
+   "stone": "Cambridge Analytica",
+   "article": "Facebook–Cambridge Analytica data scandal",
+   "group": "wider",
+   "type": "event",
+   "date": "2018-03-17",
+   "phrases": [
+    "Cambridge Analytica"
+   ],
+   "amb": false,
+   "word": null,
+   "guard": null,
+   "case": "s",
+   "queries": [
+    "\"Cambridge Analytica\""
+   ]
+  },
+  {
+   "id": "boston-marathon-bombing",
+   "stone": "Boston Marathon bombing",
+   "article": "Boston Marathon bombing",
+   "group": "wider",
+   "type": "event",
+   "date": "2013-04-15",
+   "phrases": [
+    "Boston Marathon"
+   ],
+   "amb": true,
+   "word": "bombing",
+   "guard": "bomb\\w*|attack|2013|explosi\\w+",
+   "case": "s",
+   "queries": [
+    "\"Boston Marathon\" bombing"
+   ]
+  },
+  {
+   "id": "oklahoma-city-bombing",
+   "stone": "Oklahoma City bombing",
+   "article": "Oklahoma City bombing",
+   "group": "wider",
+   "type": "event",
+   "date": "1995-04-19",
+   "phrases": [
+    "Oklahoma City"
+   ],
+   "amb": true,
+   "word": "bombing",
+   "guard": "bomb\\w*|Murrah|1995|attack",
+   "case": "s",
+   "queries": [
+    "\"Oklahoma City\" bombing"
+   ]
+  },
+  {
+   "id": "virginia-tech-shooting",
+   "stone": "Virginia Tech shooting",
+   "article": "Virginia Tech shooting",
+   "group": "wider",
+   "type": "event",
+   "date": "2007-04-16",
+   "phrases": [
+    "Virginia Tech"
+   ],
+   "amb": true,
+   "word": "shooting",
+   "guard": "shooting|shootings|massacre|2007|gunman",
+   "case": "s",
+   "queries": [
+    "\"Virginia Tech\" shooting"
+   ]
+  },
+  {
+   "id": "parkland-shooting",
+   "stone": "Parkland shooting",
+   "article": "Parkland high school shooting",
+   "group": "wider",
+   "type": "event",
+   "date": "2018-02-14",
+   "phrases": [
+    "Parkland"
+   ],
+   "amb": true,
+   "word": "shooting",
+   "guard": "shooting|shootings|Marjory Stoneman Douglas|2018|gunman",
+   "case": "s",
+   "queries": [
+    "\"Parkland\" shooting"
+   ]
+  },
+  {
+   "id": "uvalde-shooting",
+   "stone": "Uvalde shooting",
+   "article": "Robb Elementary School shooting",
+   "group": "wider",
+   "type": "event",
+   "date": "2022-05-24",
+   "phrases": [
+    "Uvalde"
+   ],
+   "amb": true,
+   "word": "shooting",
+   "guard": "shooting|shootings|Robb Elementary|2022|gunman",
+   "case": "s",
+   "queries": [
+    "\"Uvalde\" shooting"
+   ]
+  },
+  {
+   "id": "pulse-nightclub-shooting",
+   "stone": "Pulse nightclub shooting",
+   "article": "Pulse nightclub shooting",
+   "group": "wider",
+   "type": "event",
+   "date": "2016-06-12",
+   "phrases": [
+    "Pulse nightclub"
+   ],
+   "amb": false,
+   "word": null,
+   "guard": null,
+   "case": "s",
+   "queries": [
+    "\"Pulse nightclub\""
+   ]
+  },
+  {
+   "id": "las-vegas-shooting",
+   "stone": "Las Vegas shooting",
+   "article": "2017 Las Vegas shooting",
+   "group": "wider",
+   "type": "event",
+   "date": "2017-10-01",
+   "phrases": [
+    "Las Vegas"
+   ],
+   "amb": true,
+   "word": "shooting",
+   "guard": "shooting|shootings|massacre|October 1, 2017|2017|gunman|bump",
+   "case": "s",
+   "queries": [
+    "\"Las Vegas\" shooting"
+   ]
+  },
+  {
+   "id": "ferguson-unrest",
+   "stone": "Ferguson unrest",
+   "article": "Ferguson unrest",
+   "group": "wider",
+   "type": "event",
+   "date": "2014",
+   "phrases": [
+    "Ferguson"
+   ],
+   "amb": true,
+   "word": "Missouri",
+   "guard": "Missouri|unrest|protests?|Michael Brown|2014",
+   "case": "s",
+   "queries": [
+    "\"Ferguson\" Missouri"
+   ]
+  },
+  {
+   "id": "murder-of-george-floyd",
+   "stone": "Murder of George Floyd",
+   "article": "Murder of George Floyd",
+   "group": "wider",
+   "type": "event",
+   "date": "2020",
+   "phrases": [
+    "George Floyd"
+   ],
+   "amb": false,
+   "word": null,
+   "guard": null,
+   "case": "s",
+   "queries": [
+    "\"George Floyd\""
+   ]
+  },
+  {
+   "id": "me-too-movement",
+   "stone": "Me Too movement",
+   "article": "MeToo movement",
+   "group": "wider",
+   "type": "event",
+   "date": "2017-10-15",
+   "phrases": [
+    "MeToo",
+    "Me Too"
+   ],
+   "amb": true,
+   "word": "movement",
+   "guard": "movement|sexual harassment|2017|#",
+   "case": "s",
+   "queries": [
+    "\"MeToo\" movement",
+    "\"Me Too\" movement"
+   ]
+  },
+  {
+   "id": "harvey-weinstein-sexual-abuse-cases",
+   "stone": "Harvey Weinstein sexual abuse cases",
+   "article": "Harvey Weinstein sexual abuse cases",
+   "group": "wider",
+   "type": "event",
+   "date": "2017",
+   "phrases": [
+    "Harvey Weinstein"
+   ],
+   "amb": false,
+   "word": null,
+   "guard": null,
+   "case": "s",
+   "queries": [
+    "\"Harvey Weinstein\""
+   ]
+  },
+  {
+   "id": "jeffrey-epstein",
+   "stone": "Jeffrey Epstein",
+   "article": "Jeffrey Epstein",
+   "group": "wider",
+   "type": "event",
+   "date": "2019",
+   "phrases": [
+    "Jeffrey Epstein"
+   ],
+   "amb": false,
+   "word": null,
+   "guard": null,
+   "case": "s",
+   "queries": [
+    "\"Jeffrey Epstein\""
+   ]
+  },
+  {
+   "id": "flint",
+   "stone": "Flint",
+   "article": "Flint water crisis",
+   "group": "wider",
+   "skip": "the same stone as the catalog's flint-lead-pipes"
+  },
+  {
+   "id": "camp-fire",
+   "stone": "Camp Fire",
+   "article": "Camp Fire (2018)",
+   "group": "wider",
+   "type": "event",
+   "date": "2018-11-08",
+   "phrases": [
+    "Camp Fire"
+   ],
+   "amb": true,
+   "word": "Paradise",
+   "guard": "Paradise|2018|wildfire|Butte County|PG&E",
+   "case": "s",
+   "queries": [
+    "\"Camp Fire\" Paradise"
+   ]
+  },
+  {
+   "id": "lac-megantic-rail-disaster",
+   "stone": "Lac-Mégantic rail disaster",
+   "article": "Lac-Mégantic rail disaster",
+   "group": "wider",
+   "type": "event",
+   "date": "2013-07-06",
+   "phrases": [
+    "Lac-Mégantic",
+    "Lac-Megantic"
+   ],
+   "amb": false,
+   "word": null,
+   "guard": null,
+   "case": "s",
+   "queries": [
+    "\"Lac-Mégantic\"",
+    "\"Lac-Megantic\""
+   ]
+  },
+  {
+   "id": "costa-concordia-disaster",
+   "stone": "Costa Concordia disaster",
+   "article": "Costa Concordia disaster",
+   "group": "wider",
+   "type": "event",
+   "date": "2012",
+   "phrases": [
+    "Costa Concordia"
+   ],
+   "amb": false,
+   "word": null,
+   "guard": null,
+   "case": "s",
+   "queries": [
+    "\"Costa Concordia\""
+   ]
+  },
+  {
+   "id": "germanwings-flight-9525",
+   "stone": "Germanwings Flight 9525",
+   "article": "Germanwings Flight 9525",
+   "group": "wider",
+   "type": "event",
+   "date": "2015",
+   "phrases": [
+    "Germanwings"
+   ],
+   "amb": false,
+   "word": null,
+   "guard": null,
+   "case": "s",
+   "queries": [
+    "\"Germanwings\""
+   ]
+  },
+  {
+   "id": "boeing-737-max-groundings",
+   "stone": "Boeing 737 MAX groundings",
+   "article": "Boeing 737 MAX groundings",
+   "group": "wider",
+   "type": "event",
+   "date": "2019",
+   "phrases": [
+    "737 MAX"
+   ],
+   "amb": true,
+   "word": "Ethiopian",
+   "guard": "Lion Air|Ethiopian|accidents?|crash\\w*|grounding|2018|2019",
+   "case": "s",
+   "queries": [
+    "\"737 MAX\" Ethiopian"
+   ]
+  },
+  {
+   "id": "takata-airbag-recall",
+   "stone": "Takata airbag recall",
+   "article": "Takata Corporation",
+   "group": "wider",
+   "type": "event",
+   "date": "2014",
+   "phrases": [
+    "Takata"
+   ],
+   "amb": false,
+   "word": null,
+   "guard": null,
+   "case": "s",
+   "queries": [
+    "\"Takata\""
+   ]
+  },
+  {
+   "id": "volkswagen-emissions-scandal",
+   "stone": "Volkswagen emissions scandal",
+   "article": "Volkswagen emissions scandal",
+   "group": "wider",
+   "type": "event",
+   "date": "2015-09-18",
+   "phrases": [
+    "Volkswagen",
+    "Dieselgate"
+   ],
+   "amb": true,
+   "word": "defeat",
+   "guard": "defeat devices?|emissions|scandal|2015|diesel",
+   "case": "s",
+   "queries": [
+    "\"Volkswagen\" defeat",
+    "\"Dieselgate\" defeat"
+   ]
+  },
+  {
+   "id": "dieselgate",
+   "stone": "Dieselgate",
+   "article": "Volkswagen emissions scandal",
+   "group": "wider",
+   "skip": "the same stone as the Volkswagen emissions scandal"
+  },
+  {
+   "id": "equifax-data-breach",
+   "stone": "Equifax data breach",
+   "article": "2017 Equifax data breach",
+   "group": "wider",
+   "type": "event",
+   "date": "2017",
+   "phrases": [
+    "Equifax"
+   ],
+   "amb": true,
+   "word": "breach",
+   "guard": "breach|2017|hack\\w*|compromis\\w+|cyber\\w*",
+   "case": "s",
+   "queries": [
+    "\"Equifax\" breach"
+   ]
+  },
+  {
+   "id": "target-data-breach",
+   "stone": "Target data breach",
+   "article": "Target Corporation",
+   "group": "wider",
+   "type": "event",
+   "date": "2013",
+   "phrases": [
+    "Target"
+   ],
+   "amb": true,
+   "word": "breach",
+   "guard": "data breach|breach|2013|hack\\w*|payment card",
+   "case": "s",
+   "queries": [
+    "\"Target\" breach"
+   ]
+  },
+  {
+   "id": "snowden-leaks",
+   "stone": "Snowden leaks",
+   "article": "Global surveillance disclosures (2013–present)",
+   "group": "wider",
+   "type": "event",
+   "date": "2013",
+   "phrases": [
+    "Edward Snowden"
+   ],
+   "amb": false,
+   "word": null,
+   "guard": null,
+   "case": "s",
+   "queries": [
+    "\"Edward Snowden\""
+   ]
+  },
+  {
+   "id": "wikileaks-iraq-war-logs",
+   "stone": "WikiLeaks Iraq War logs",
+   "article": "Iraq War documents leak",
+   "group": "wider",
+   "type": "event",
+   "date": "2010",
+   "phrases": [
+    "WikiLeaks"
+   ],
+   "amb": false,
+   "word": null,
+   "guard": null,
+   "case": "s",
+   "queries": [
+    "\"WikiLeaks\""
+   ]
+  },
+  {
+   "id": "panama-papers",
+   "stone": "Panama Papers",
+   "article": "Panama Papers",
+   "group": "wider",
+   "type": "event",
+   "date": "2016",
+   "phrases": [
+    "Panama Papers"
+   ],
+   "amb": false,
+   "word": null,
+   "guard": null,
+   "case": "s",
+   "queries": [
+    "\"Panama Papers\""
+   ]
+  },
+  {
+   "id": "lehman-brothers-collapse",
+   "stone": "Lehman Brothers collapse",
+   "article": "Bankruptcy of Lehman Brothers",
+   "group": "wider",
+   "type": "event",
+   "date": "2008",
+   "phrases": [
+    "Lehman Brothers"
+   ],
+   "amb": true,
+   "word": "bankruptcy",
+   "guard": "bankrupt\\w*|collapse|failure|2008|crisis",
+   "case": "s",
+   "queries": [
+    "\"Lehman Brothers\" bankruptcy"
+   ]
+  },
+  {
+   "id": "madoff-fraud",
+   "stone": "Madoff fraud",
+   "article": "Madoff investment scandal",
+   "group": "wider",
+   "type": "event",
+   "date": "2008",
+   "phrases": [
+    "Madoff"
+   ],
+   "amb": false,
+   "word": null,
+   "guard": null,
+   "case": "s",
+   "queries": [
+    "\"Madoff\""
+   ]
+  },
+  {
+   "id": "jaws",
+   "stone": "Jaws",
+   "article": "Jaws (film)",
+   "group": "wider",
+   "skip": "the same stone as Jaws (film) in the held-out list"
+  },
+  {
+   "id": "bowling-for-columbine",
+   "stone": "Bowling for Columbine",
+   "article": "Bowling for Columbine",
+   "group": "wider",
+   "type": "work",
+   "date": "2002",
+   "phrases": [
+    "Bowling for Columbine"
+   ],
+   "amb": false,
+   "word": null,
+   "guard": null,
+   "case": "s",
+   "queries": [
+    "\"Bowling for Columbine\""
+   ]
+  },
+  {
+   "id": "the-cove",
+   "stone": "The Cove",
+   "article": "The Cove (film)",
+   "group": "wider",
+   "type": "work",
+   "date": "2009",
+   "phrases": [
+    "The Cove"
+   ],
+   "amb": true,
+   "word": "documentary",
+   "guard": "dolphins?|Taiji",
+   "case": "s",
+   "queries": [
+    "\"The Cove\" documentary"
+   ]
+  },
+  {
+   "id": "food-inc",
+   "stone": "Food, Inc.",
+   "article": "Food, Inc.",
+   "group": "wider",
+   "type": "work",
+   "date": "2008",
+   "phrases": [
+    "Food, Inc."
+   ],
+   "amb": true,
+   "word": "documentary",
+   "guard": "Robert Kenner",
+   "case": "s",
+   "queries": [
+    "\"Food, Inc.\" documentary"
+   ]
+  },
+  {
+   "id": "gasland",
+   "stone": "Gasland",
+   "article": "Gasland",
+   "group": "wider",
+   "type": "work",
+   "date": "2010",
+   "phrases": [
+    "Gasland"
+   ],
+   "amb": false,
+   "word": null,
+   "guard": "Josh Fox|fracking",
+   "case": "s",
+   "queries": [
+    "\"Gasland\""
+   ]
+  },
+  {
+   "id": "the-thin-blue-line",
+   "stone": "The Thin Blue Line",
+   "article": "The Thin Blue Line (1988 film)",
+   "group": "wider",
+   "type": "work",
+   "date": "1988",
+   "phrases": [
+    "The Thin Blue Line"
+   ],
+   "amb": true,
+   "word": "documentary",
+   "guard": "Errol Morris|Randall Dale Adams",
+   "case": "s",
+   "queries": [
+    "\"The Thin Blue Line\" documentary"
+   ]
+  },
+  {
+   "id": "paradise-lost",
+   "stone": "Paradise Lost",
+   "article": "Paradise Lost: The Child Murders at Robin Hood Hills",
+   "group": "wider",
+   "type": "work",
+   "date": "1996",
+   "phrases": [
+    "Paradise Lost"
+   ],
+   "amb": true,
+   "word": "documentary",
+   "guard": "West Memphis|HBO",
+   "case": "s",
+   "queries": [
+    "\"Paradise Lost\" documentary"
+   ]
+  },
+  {
+   "id": "dear-zachary",
+   "stone": "Dear Zachary",
+   "article": "Dear Zachary: A Letter to a Son About His Father",
+   "group": "wider",
+   "type": "work",
+   "date": "2008-10-31",
+   "phrases": [
+    "Dear Zachary"
+   ],
+   "amb": false,
+   "word": null,
+   "guard": null,
+   "case": "s",
+   "queries": [
+    "\"Dear Zachary\""
+   ]
+  },
+  {
+   "id": "leaving-neverland",
+   "stone": "Leaving Neverland",
+   "article": "Leaving Neverland",
+   "group": "wider",
+   "type": "work",
+   "date": "2019",
+   "phrases": [
+    "Leaving Neverland"
+   ],
+   "amb": false,
+   "word": null,
+   "guard": null,
+   "case": "s",
+   "queries": [
+    "\"Leaving Neverland\""
+   ]
+  },
+  {
+   "id": "surviving-r-kelly",
+   "stone": "Surviving R. Kelly",
+   "article": "Surviving R. Kelly",
+   "group": "wider",
+   "type": "work",
+   "date": "2019",
+   "phrases": [
+    "Surviving R. Kelly"
+   ],
+   "amb": false,
+   "word": null,
+   "guard": null,
+   "case": "s",
+   "queries": [
+    "\"Surviving R. Kelly\""
+   ]
+  },
+  {
+   "id": "the-jinx",
+   "stone": "The Jinx",
+   "article": "The Jinx: The Life and Deaths of Robert Durst",
+   "group": "wider",
+   "type": "work",
+   "date": "2015",
+   "phrases": [
+    "The Jinx"
+   ],
+   "amb": true,
+   "word": "documentary",
+   "guard": "Robert Durst|HBO",
+   "case": "s",
+   "queries": [
+    "\"The Jinx\" documentary"
+   ]
+  },
+  {
+   "id": "making-a-murderer",
+   "stone": "Making a Murderer",
+   "article": "Making a Murderer",
+   "group": "wider",
+   "type": "work",
+   "date": "2015",
+   "phrases": [
+    "Making a Murderer"
+   ],
+   "amb": false,
+   "word": null,
+   "guard": null,
+   "case": "s",
+   "queries": [
+    "\"Making a Murderer\""
+   ]
+  },
+  {
+   "id": "cathy-come-home",
+   "stone": "Cathy Come Home",
+   "article": "Cathy Come Home",
+   "group": "wider",
+   "skip": "the same stone as the catalog's cathy-come-home"
+  },
+  {
+   "id": "philadelphia",
+   "stone": "Philadelphia",
+   "article": "Philadelphia (film)",
+   "group": "wider",
+   "type": "work",
+   "date": "1993",
+   "phrases": [
+    "Philadelphia"
+   ],
+   "amb": true,
+   "word": "film",
+   "guard": "Tom Hanks|AIDS|1993",
+   "case": "s",
+   "queries": [
+    "\"Philadelphia\" film"
+   ]
+  },
+  {
+   "id": "schindler-s-list",
+   "stone": "Schindler's List",
+   "article": "Schindler's List",
+   "group": "wider",
+   "type": "work",
+   "date": "1993",
+   "phrases": [
+    "Schindler's List"
+   ],
+   "amb": false,
+   "word": null,
+   "guard": null,
+   "case": "s",
+   "queries": [
+    "\"Schindler's List\""
+   ]
+  },
+  {
+   "id": "hotel-rwanda",
+   "stone": "Hotel Rwanda",
+   "article": "Hotel Rwanda",
+   "group": "wider",
+   "type": "work",
+   "date": "2004",
+   "phrases": [
+    "Hotel Rwanda"
+   ],
+   "amb": false,
+   "word": null,
+   "guard": null,
+   "case": "s",
+   "queries": [
+    "\"Hotel Rwanda\""
+   ]
+  },
+  {
+   "id": "kony-2012",
+   "stone": "Kony 2012",
+   "article": "Kony 2012",
+   "group": "wider",
+   "type": "work",
+   "date": "2012",
+   "phrases": [
+    "Kony 2012"
+   ],
+   "amb": false,
+   "word": null,
+   "guard": null,
+   "case": "s",
+   "queries": [
+    "\"Kony 2012\""
+   ]
+  },
+  {
+   "id": "super-size-me",
+   "stone": "Super Size Me",
+   "article": "Super Size Me",
+   "group": "wider",
+   "type": "work",
+   "date": "2004",
+   "phrases": [
+    "Super Size Me"
+   ],
+   "amb": false,
+   "word": null,
+   "guard": "Morgan Spurlock|Spurlock",
+   "case": "s",
+   "queries": [
+    "\"Super Size Me\""
+   ]
+  },
+  {
+   "id": "sicko",
+   "stone": "Sicko",
+   "article": "Sicko",
+   "group": "wider",
+   "type": "work",
+   "date": "2007",
+   "phrases": [
+    "Sicko"
+   ],
+   "amb": true,
+   "word": "documentary",
+   "guard": "Michael Moore",
+   "case": "s",
+   "queries": [
+    "\"Sicko\" documentary"
+   ]
+  },
+  {
+   "id": "blackfish-film",
+   "stone": "Blackfish",
+   "article": "Blackfish (film)",
+   "group": "heldout",
+   "type": "work",
+   "date": "2013",
+   "phrases": [
+    "Blackfish"
+   ],
+   "amb": true,
+   "word": "documentary",
+   "guard": "SeaWorld|orcas?|killer whales?|Tilikum",
+   "case": "s",
+   "queries": [
+    "\"Blackfish\" documentary"
+   ]
+  },
+  {
+   "id": "an-inconvenient-truth",
+   "stone": "An Inconvenient Truth",
+   "article": "An Inconvenient Truth",
+   "group": "heldout",
+   "type": "work",
+   "date": "2006-05-24",
+   "phrases": [
+    "An Inconvenient Truth"
+   ],
+   "amb": true,
+   "word": "documentary",
+   "guard": "Al Gore|Gore's",
+   "case": "s",
+   "queries": [
+    "\"An Inconvenient Truth\" documentary"
+   ]
+  },
+  {
+   "id": "the-day-after",
+   "stone": "The Day After",
+   "article": "The Day After",
+   "group": "heldout",
+   "type": "work",
+   "date": "1983-11-20",
+   "phrases": [
+    "The Day After"
+   ],
+   "amb": true,
+   "word": "television",
+   "guard": "ABC|nuclear war|1983",
+   "case": "s",
+   "queries": [
+    "\"The Day After\" television"
+   ]
+  },
+  {
+   "id": "jaws-film",
+   "stone": "Jaws",
+   "article": "Jaws (film)",
+   "group": "heldout",
+   "type": "work",
+   "date": "1975",
+   "phrases": [
+    "Jaws"
+   ],
+   "amb": true,
+   "word": "film",
+   "guard": "Spielberg|Benchley|sharks?",
+   "case": "s",
+   "queries": [
+    "\"Jaws\" film"
+   ]
+  },
+  {
+   "id": "roots-1977-miniseries",
+   "stone": "Roots",
+   "article": "Roots (1977 miniseries)",
+   "group": "heldout",
+   "type": "work",
+   "date": "1977",
+   "phrases": [
+    "Roots"
+   ],
+   "amb": true,
+   "word": "television",
+   "guard": "Alex Haley|Kunta Kinte|miniseries",
+   "case": "s",
+   "queries": [
+    "\"Roots\" television"
+   ]
+  },
+  {
+   "id": "erin-brockovich-film",
+   "stone": "Erin Brockovich",
+   "article": "Erin Brockovich (film)",
+   "group": "heldout",
+   "type": "work",
+   "date": "2000",
+   "phrases": [
+    "Erin Brockovich"
+   ],
+   "amb": true,
+   "word": "film",
+   "guard": "Julia Roberts|Hinkley",
+   "case": "s",
+   "queries": [
+    "\"Erin Brockovich\" film"
+   ]
+  },
+  {
+   "id": "spotlight-film",
+   "stone": "Spotlight",
+   "article": "Spotlight (film)",
+   "group": "heldout",
+   "type": "work",
+   "date": "2015",
+   "phrases": [
+    "Spotlight"
+   ],
+   "amb": true,
+   "word": "film",
+   "guard": "Boston Globe",
+   "case": "s",
+   "queries": [
+    "\"Spotlight\" film"
+   ]
+  },
+  {
+   "id": "13-reasons-why",
+   "stone": "13 Reasons Why",
+   "article": "13 Reasons Why",
+   "group": "heldout",
+   "type": "work",
+   "date": "2017-03-31",
+   "phrases": [
+    "13 Reasons Why"
+   ],
+   "amb": false,
+   "word": null,
+   "guard": "Netflix|suicide",
+   "case": "s",
+   "queries": [
+    "\"13 Reasons Why\""
+   ]
+  },
+  {
+   "id": "the-social-dilemma",
+   "stone": "The Social Dilemma",
+   "article": "The Social Dilemma",
+   "group": "heldout",
+   "type": "work",
+   "date": "2020",
+   "phrases": [
+    "The Social Dilemma"
+   ],
+   "amb": false,
+   "word": null,
+   "guard": "Netflix|documentary",
+   "case": "s",
+   "queries": [
+    "\"The Social Dilemma\""
+   ]
+  },
+  {
+   "id": "hurricane-katrina",
+   "stone": "Hurricane Katrina",
+   "article": "Hurricane Katrina",
+   "group": "heldout",
+   "type": "event",
+   "date": "2005",
+   "phrases": [
+    "Hurricane Katrina"
+   ],
+   "amb": false,
+   "word": null,
+   "guard": null,
+   "case": "s",
+   "queries": [
+    "\"Hurricane Katrina\""
+   ]
+  },
+  {
+   "id": "deepwater-horizon-oil-spill",
+   "stone": "Deepwater Horizon",
+   "article": "Deepwater Horizon oil spill",
+   "group": "heldout",
+   "type": "event",
+   "date": "2010-04-20",
+   "phrases": [
+    "Deepwater Horizon"
+   ],
+   "amb": false,
+   "word": null,
+   "guard": null,
+   "case": "s",
+   "queries": [
+    "\"Deepwater Horizon\""
+   ]
+  },
+  {
+   "id": "sandy-hook-elementary-school-shooting",
+   "stone": "Sandy Hook",
+   "article": "Sandy Hook Elementary School shooting",
+   "group": "heldout",
+   "type": "event",
+   "date": "2012-12-14",
+   "phrases": [
+    "Sandy Hook"
+   ],
+   "amb": true,
+   "word": "shooting",
+   "guard": "shooting|shootings|Elementary|2012|Newtown|gunman",
+   "case": "s",
+   "queries": [
+    "\"Sandy Hook\" shooting"
+   ]
+  },
+  {
+   "id": "chernobyl-miniseries",
+   "stone": "Chernobyl (miniseries)",
+   "article": "Chernobyl (miniseries)",
+   "group": "heldout",
+   "skip": "the same stone as the catalog's chernobyl-zone (the 2019 miniseries)"
+  },
+  {
+   "id": "fast-food-nation",
+   "stone": "Fast Food Nation",
+   "article": "Fast Food Nation",
+   "group": "heldout",
+   "type": "work",
+   "date": "2001",
+   "phrases": [
+    "Fast Food Nation"
+   ],
+   "amb": false,
+   "word": null,
+   "guard": "Eric Schlosser|Schlosser",
+   "case": "s",
+   "queries": [
+    "\"Fast Food Nation\""
+   ]
+  },
+  {
+   "id": "blood-diamond-film",
+   "stone": "Blood Diamond",
+   "article": "Blood Diamond (film)",
+   "group": "heldout",
+   "type": "work",
+   "date": "2006",
+   "phrases": [
+    "Blood Diamond"
+   ],
+   "amb": true,
+   "word": "film",
+   "guard": "Leonardo DiCaprio|2006",
+   "case": "s",
+   "queries": [
+    "\"Blood Diamond\" film"
+   ]
+  },
+  {
+   "id": "the-china-syndrome",
+   "stone": "The China Syndrome",
+   "article": "The China Syndrome",
+   "group": "heldout",
+   "type": "work",
+   "date": "1979",
+   "phrases": [
+    "The China Syndrome"
+   ],
+   "amb": true,
+   "word": "film",
+   "guard": "Jane Fonda|Three Mile Island|1979",
+   "case": "s",
+   "queries": [
+    "\"The China Syndrome\" film"
+   ]
+  },
+  {
+   "id": "cosmos-a-personal-voyage",
+   "stone": "Cosmos",
+   "article": "Cosmos: A Personal Voyage",
+   "group": "heldout",
+   "type": "work",
+   "date": "1980",
+   "phrases": [
+    "Cosmos: A Personal Voyage"
+   ],
+   "amb": false,
+   "word": null,
+   "guard": "Carl Sagan|Sagan",
+   "case": "s",
+   "queries": [
+    "\"Cosmos: A Personal Voyage\""
+   ]
+  },
+  {
+   "id": "philadelphia-film",
+   "stone": "Philadelphia",
+   "article": "Philadelphia (film)",
+   "group": "heldout",
+   "skip": "the same stone as the wider list's Philadelphia"
+  },
+  {
+   "id": "frozen-2013-film",
+   "stone": "Frozen",
+   "article": "Frozen (2013 film)",
+   "group": "culture",
+   "type": "work",
+   "date": "2013-11-27",
+   "phrases": [
+    "Frozen"
+   ],
+   "amb": true,
+   "word": "film",
+   "guard": null,
+   "case": "s",
+   "queries": [
+    "\"Frozen\" film"
+   ]
+  },
+  {
+   "id": "game-of-thrones",
+   "stone": "Game of Thrones",
+   "article": "Game of Thrones",
+   "group": "culture",
+   "type": "work",
+   "date": "2011-04-17",
+   "phrases": [
+    "Game of Thrones"
+   ],
+   "amb": false,
+   "word": null,
+   "guard": null,
+   "case": "s",
+   "queries": [
+    "\"Game of Thrones\""
+   ]
+  },
+  {
+   "id": "harry-potter-and-the-philosopher-s-stone",
+   "stone": "Harry Potter and the Philosopher's Stone",
+   "article": "Harry Potter and the Philosopher's Stone",
+   "group": "culture",
+   "type": "work",
+   "date": "1997",
+   "phrases": [
+    "Harry Potter"
+   ],
+   "amb": false,
+   "word": null,
+   "guard": "Rowling|wizard",
+   "case": "s",
+   "queries": [
+    "\"Harry Potter\""
+   ]
+  },
+  {
+   "id": "finding-nemo",
+   "stone": "Finding Nemo",
+   "article": "Finding Nemo",
+   "group": "culture",
+   "type": "work",
+   "date": "2003-05-30",
+   "phrases": [
+    "Finding Nemo"
+   ],
+   "amb": false,
+   "word": null,
+   "guard": "Pixar|Disney|clownfish|Nemo effect",
+   "case": "s",
+   "queries": [
+    "\"Finding Nemo\""
+   ]
+  },
+  {
+   "id": "101-dalmatians-1996-film",
+   "stone": "101 Dalmatians",
+   "article": "101 Dalmatians (1996 film)",
+   "group": "culture",
+   "type": "work",
+   "date": "1996-11-27",
+   "phrases": [
+    "101 Dalmatians"
+   ],
+   "amb": false,
+   "word": null,
+   "guard": "Disney|Dalmatians? (?:breed|puppies)",
+   "case": "s",
+   "queries": [
+    "\"101 Dalmatians\""
+   ]
+  },
+  {
+   "id": "sideways-film",
+   "stone": "Sideways",
+   "article": "Sideways (film)",
+   "group": "culture",
+   "type": "work",
+   "date": "2004-10-22",
+   "phrases": [
+    "Sideways"
+   ],
+   "amb": true,
+   "word": "film",
+   "guard": null,
+   "case": "s",
+   "queries": [
+    "\"Sideways\" film"
+   ]
+  },
+  {
+   "id": "the-queen-s-gambit-miniseries",
+   "stone": "The Queen's Gambit",
+   "article": "The Queen's Gambit (miniseries)",
+   "group": "culture",
+   "type": "work",
+   "date": "2020-10-23",
+   "phrases": [
+    "Queen's Gambit"
+   ],
+   "amb": true,
+   "word": "television",
+   "guard": null,
+   "case": "s",
+   "queries": [
+    "\"Queen's Gambit\" television"
+   ]
+  },
+  {
+   "id": "twilight-2008-film",
+   "stone": "Twilight",
+   "article": "Twilight (2008 film)",
+   "group": "culture",
+   "type": "work",
+   "date": "2008",
+   "phrases": [
+    "Twilight"
+   ],
+   "amb": true,
+   "word": "film",
+   "guard": null,
+   "case": "s",
+   "queries": [
+    "\"Twilight\" film"
+   ]
+  },
+  {
+   "id": "top-gun",
+   "stone": "Top Gun",
+   "article": "Top Gun",
+   "group": "culture",
+   "type": "work",
+   "date": "1986-05-16",
+   "phrases": [
+    "Top Gun"
+   ],
+   "amb": true,
+   "word": "film",
+   "guard": "Tom Cruise|1986|recruit\\w*",
+   "case": "s",
+   "queries": [
+    "\"Top Gun\" film"
+   ]
+  },
+  {
+   "id": "breaking-bad",
+   "stone": "Breaking Bad",
+   "article": "Breaking Bad",
+   "group": "culture",
+   "type": "work",
+   "date": "2008",
+   "phrases": [
+    "Breaking Bad"
+   ],
+   "amb": true,
+   "word": "television",
+   "guard": null,
+   "case": "s",
+   "queries": [
+    "\"Breaking Bad\" television"
+   ]
+  },
+  {
+   "id": "pokemon-go",
+   "stone": "Pokémon Go",
+   "article": "Pokémon Go",
+   "group": "culture",
+   "type": "work",
+   "date": "2016-07-06",
+   "phrases": [
+    "Pokémon Go",
+    "Pokemon Go"
+   ],
+   "amb": false,
+   "word": null,
+   "guard": "Niantic|augmented reality|players?|app",
+   "case": "s",
+   "queries": [
+    "\"Pokémon Go\"",
+    "\"Pokemon Go\""
+   ]
+  },
+  {
+   "id": "squid-game",
+   "stone": "Squid Game",
+   "article": "Squid Game",
+   "group": "culture",
+   "type": "work",
+   "date": "2021",
+   "phrases": [
+    "Squid Game"
+   ],
+   "amb": true,
+   "word": "Netflix",
+   "guard": null,
+   "case": "s",
+   "queries": [
+    "\"Squid Game\" Netflix"
+   ]
+  },
+  {
+   "id": "stranger-things",
+   "stone": "Stranger Things",
+   "article": "Stranger Things",
+   "group": "culture",
+   "type": "work",
+   "date": "2016",
+   "phrases": [
+    "Stranger Things"
+   ],
+   "amb": true,
+   "word": "Netflix",
+   "guard": null,
+   "case": "s",
+   "queries": [
+    "\"Stranger Things\" Netflix"
+   ]
+  },
+  {
+   "id": "barbie-film",
+   "stone": "Barbie",
+   "article": "Barbie (film)",
+   "group": "culture",
+   "type": "work",
+   "date": "2023",
+   "phrases": [
+    "Barbie"
+   ],
+   "amb": true,
+   "word": "film",
+   "guard": null,
+   "case": "s",
+   "queries": [
+    "\"Barbie\" film"
+   ]
+  },
+  {
+   "id": "titanic-1997-film",
+   "stone": "Titanic",
+   "article": "Titanic (1997 film)",
+   "group": "culture",
+   "type": "work",
+   "date": "1997",
+   "phrases": [
+    "Titanic"
+   ],
+   "amb": true,
+   "word": "film",
+   "guard": null,
+   "case": "s",
+   "queries": [
+    "\"Titanic\" film"
+   ]
+  },
+  {
+   "id": "star-wars-film",
+   "stone": "Star Wars",
+   "article": "Star Wars (film)",
+   "group": "culture",
+   "type": "work",
+   "date": "1977",
+   "phrases": [
+    "Star Wars"
+   ],
+   "amb": true,
+   "word": "film",
+   "guard": null,
+   "case": "s",
+   "queries": [
+    "\"Star Wars\" film"
+   ]
+  },
+  {
+   "id": "e-t-the-extra-terrestrial",
+   "stone": "E.T. the Extra-Terrestrial",
+   "article": "E.T. the Extra-Terrestrial",
+   "group": "culture",
+   "type": "work",
+   "date": "1982",
+   "phrases": [
+    "E.T. the Extra-Terrestrial"
+   ],
+   "amb": false,
+   "word": null,
+   "guard": null,
+   "case": "s",
+   "queries": [
+    "\"E.T. the Extra-Terrestrial\""
+   ]
+  },
+  {
+   "id": "jurassic-park-film",
+   "stone": "Jurassic Park",
+   "article": "Jurassic Park (film)",
+   "group": "culture",
+   "type": "work",
+   "date": "1993-06-11",
+   "phrases": [
+    "Jurassic Park"
+   ],
+   "amb": false,
+   "word": null,
+   "guard": "Spielberg|Crichton|dinosaurs?",
+   "case": "s",
+   "queries": [
+    "\"Jurassic Park\""
+   ]
+  },
+  {
+   "id": "toy-story",
+   "stone": "Toy Story",
+   "article": "Toy Story",
+   "group": "culture",
+   "type": "work",
+   "date": "1995",
+   "phrases": [
+    "Toy Story"
+   ],
+   "amb": false,
+   "word": null,
+   "guard": null,
+   "case": "s",
+   "queries": [
+    "\"Toy Story\""
+   ]
+  },
+  {
+   "id": "the-lion-king",
+   "stone": "The Lion King",
+   "article": "The Lion King",
+   "group": "culture",
+   "type": "work",
+   "date": "1994",
+   "phrases": [
+    "The Lion King"
+   ],
+   "amb": false,
+   "word": null,
+   "guard": null,
+   "case": "s",
+   "queries": [
+    "\"The Lion King\""
+   ]
+  },
+  {
+   "id": "avatar-2009-film",
+   "stone": "Avatar",
+   "article": "Avatar (2009 film)",
+   "group": "culture",
+   "type": "work",
+   "date": "2009-12-18",
+   "phrases": [
+    "Avatar"
+   ],
+   "amb": true,
+   "word": "film",
+   "guard": null,
+   "case": "s",
+   "queries": [
+    "\"Avatar\" film"
+   ]
+  },
+  {
+   "id": "black-panther-film",
+   "stone": "Black Panther",
+   "article": "Black Panther (film)",
+   "group": "culture",
+   "type": "work",
+   "date": "2018",
+   "phrases": [
+    "Black Panther"
+   ],
+   "amb": true,
+   "word": "film",
+   "guard": null,
+   "case": "s",
+   "queries": [
+    "\"Black Panther\" film"
+   ]
+  },
+  {
+   "id": "the-hunger-games-film",
+   "stone": "The Hunger Games",
+   "article": "The Hunger Games (film)",
+   "group": "culture",
+   "type": "work",
+   "date": "2012",
+   "phrases": [
+    "Hunger Games"
+   ],
+   "amb": false,
+   "word": null,
+   "guard": null,
+   "case": "s",
+   "queries": [
+    "\"Hunger Games\""
+   ]
+  },
+  {
+   "id": "fifty-shades-of-grey",
+   "stone": "Fifty Shades of Grey",
+   "article": "Fifty Shades of Grey",
+   "group": "culture",
+   "type": "work",
+   "date": "2011-06-20",
+   "phrases": [
+    "Fifty Shades of Grey"
+   ],
+   "amb": false,
+   "word": null,
+   "guard": null,
+   "case": "s",
+   "queries": [
+    "\"Fifty Shades of Grey\""
+   ]
+  },
+  {
+   "id": "the-da-vinci-code",
+   "stone": "The Da Vinci Code",
+   "article": "The Da Vinci Code",
+   "group": "culture",
+   "type": "work",
+   "date": "2003-03-18",
+   "phrases": [
+    "The Da Vinci Code"
+   ],
+   "amb": false,
+   "word": null,
+   "guard": null,
+   "case": "s",
+   "queries": [
+    "\"The Da Vinci Code\""
+   ]
+  },
+  {
+   "id": "eat-pray-love",
+   "stone": "Eat, Pray, Love",
+   "article": "Eat, Pray, Love",
+   "group": "culture",
+   "type": "work",
+   "date": "2006",
+   "phrases": [
+    "Eat, Pray, Love"
+   ],
+   "amb": false,
+   "word": null,
+   "guard": null,
+   "case": "s",
+   "queries": [
+    "\"Eat, Pray, Love\""
+   ]
+  },
+  {
+   "id": "friends",
+   "stone": "Friends",
+   "article": "Friends",
+   "group": "culture",
+   "type": "work",
+   "date": "1994",
+   "phrases": [
+    "Friends"
+   ],
+   "amb": true,
+   "word": "television",
+   "guard": null,
+   "case": "s",
+   "queries": [
+    "\"Friends\" television"
+   ]
+  },
+  {
+   "id": "seinfeld",
+   "stone": "Seinfeld",
+   "article": "Seinfeld",
+   "group": "culture",
+   "type": "work",
+   "date": "1989",
+   "phrases": [
+    "Seinfeld"
+   ],
+   "amb": true,
+   "word": "television",
+   "guard": null,
+   "case": "s",
+   "queries": [
+    "\"Seinfeld\" television"
+   ]
+  },
+  {
+   "id": "the-sopranos",
+   "stone": "The Sopranos",
+   "article": "The Sopranos",
+   "group": "culture",
+   "type": "work",
+   "date": "1999",
+   "phrases": [
+    "Sopranos"
+   ],
+   "amb": false,
+   "word": null,
+   "guard": null,
+   "case": "s",
+   "queries": [
+    "\"Sopranos\""
+   ]
+  },
+  {
+   "id": "sex-and-the-city",
+   "stone": "Sex and the City",
+   "article": "Sex and the City",
+   "group": "culture",
+   "type": "work",
+   "date": "1998",
+   "phrases": [
+    "Sex and the City"
+   ],
+   "amb": false,
+   "word": null,
+   "guard": null,
+   "case": "s",
+   "queries": [
+    "\"Sex and the City\""
+   ]
+  },
+  {
+   "id": "mad-men",
+   "stone": "Mad Men",
+   "article": "Mad Men",
+   "group": "culture",
+   "type": "work",
+   "date": "2007-07-19",
+   "phrases": [
+    "Mad Men"
+   ],
+   "amb": false,
+   "word": null,
+   "guard": null,
+   "case": "s",
+   "queries": [
+    "\"Mad Men\""
+   ]
+  },
+  {
+   "id": "downton-abbey",
+   "stone": "Downton Abbey",
+   "article": "Downton Abbey",
+   "group": "culture",
+   "type": "work",
+   "date": "2010",
+   "phrases": [
+    "Downton Abbey"
+   ],
+   "amb": false,
+   "word": null,
+   "guard": null,
+   "case": "s",
+   "queries": [
+    "\"Downton Abbey\""
+   ]
+  },
+  {
+   "id": "the-crown-tv-series",
+   "stone": "The Crown",
+   "article": "The Crown (TV series)",
+   "group": "culture",
+   "type": "work",
+   "date": "2016",
+   "phrases": [
+    "The Crown"
+   ],
+   "amb": true,
+   "word": "television",
+   "guard": null,
+   "case": "s",
+   "queries": [
+    "\"The Crown\" television"
+   ]
+  },
+  {
+   "id": "bridgerton",
+   "stone": "Bridgerton",
+   "article": "Bridgerton",
+   "group": "culture",
+   "type": "work",
+   "date": "2020",
+   "phrases": [
+    "Bridgerton"
+   ],
+   "amb": false,
+   "word": null,
+   "guard": null,
+   "case": "s",
+   "queries": [
+    "\"Bridgerton\""
+   ]
+  },
+  {
+   "id": "serial-podcast",
+   "stone": "Serial",
+   "article": "Serial (podcast)",
+   "group": "culture",
+   "type": "work",
+   "date": "2014",
+   "phrases": [
+    "Serial"
+   ],
+   "amb": true,
+   "word": "podcast",
+   "guard": null,
+   "case": "s",
+   "queries": [
+    "\"Serial\" podcast"
+   ]
+  },
+  {
+   "id": "the-great-british-bake-off",
+   "stone": "The Great British Bake Off",
+   "article": "The Great British Bake Off",
+   "group": "culture",
+   "type": "work",
+   "date": "2010-08-17",
+   "phrases": [
+    "Great British Bake Off",
+    "Great British Baking Show"
+   ],
+   "amb": false,
+   "word": null,
+   "guard": null,
+   "case": "s",
+   "queries": [
+    "\"Great British Bake Off\"",
+    "\"Great British Baking Show\""
+   ]
+  },
+  {
+   "id": "american-idol",
+   "stone": "American Idol",
+   "article": "American Idol",
+   "group": "culture",
+   "type": "work",
+   "date": "2002",
+   "phrases": [
+    "American Idol"
+   ],
+   "amb": false,
+   "word": null,
+   "guard": null,
+   "case": "s",
+   "queries": [
+    "\"American Idol\""
+   ]
+  },
+  {
+   "id": "survivor-american-tv-series",
+   "stone": "Survivor",
+   "article": "Survivor (American TV series)",
+   "group": "culture",
+   "type": "work",
+   "date": "2000",
+   "phrases": [
+    "Survivor"
+   ],
+   "amb": true,
+   "word": "television",
+   "guard": null,
+   "case": "s",
+   "queries": [
+    "\"Survivor\" television"
+   ]
+  },
+  {
+   "id": "keeping-up-with-the-kardashians",
+   "stone": "Keeping Up with the Kardashians",
+   "article": "Keeping Up with the Kardashians",
+   "group": "culture",
+   "type": "work",
+   "date": "2007",
+   "phrases": [
+    "Kardashians"
+   ],
+   "amb": false,
+   "word": null,
+   "guard": null,
+   "case": "s",
+   "queries": [
+    "\"Kardashians\""
+   ]
+  },
+  {
+   "id": "jersey-shore-tv-series",
+   "stone": "Jersey Shore",
+   "article": "Jersey Shore (TV series)",
+   "group": "culture",
+   "type": "work",
+   "date": "2009",
+   "phrases": [
+    "Jersey Shore"
+   ],
+   "amb": true,
+   "word": "MTV",
+   "guard": null,
+   "case": "s",
+   "queries": [
+    "\"Jersey Shore\" MTV"
+   ]
+  },
+  {
+   "id": "gangnam-style",
+   "stone": "Gangnam Style",
+   "article": "Gangnam Style",
+   "group": "culture",
+   "type": "work",
+   "date": "2012",
+   "phrases": [
+    "Gangnam Style"
+   ],
+   "amb": false,
+   "word": null,
+   "guard": null,
+   "case": "s",
+   "queries": [
+    "\"Gangnam Style\""
+   ]
+  },
+  {
+   "id": "despacito",
+   "stone": "Despacito",
+   "article": "Despacito",
+   "group": "culture",
+   "type": "work",
+   "date": "2017",
+   "phrases": [
+    "Despacito"
+   ],
+   "amb": false,
+   "word": null,
+   "guard": null,
+   "case": "s",
+   "queries": [
+    "\"Despacito\""
+   ]
+  },
+  {
+   "id": "old-town-road",
+   "stone": "Old Town Road",
+   "article": "Old Town Road",
+   "group": "culture",
+   "type": "work",
+   "date": "2019",
+   "phrases": [
+    "Old Town Road"
+   ],
+   "amb": true,
+   "word": "song",
+   "guard": null,
+   "case": "s",
+   "queries": [
+    "\"Old Town Road\" song"
+   ]
+  },
+  {
+   "id": "thriller-album",
+   "stone": "Thriller",
+   "article": "Thriller (album)",
+   "group": "culture",
+   "type": "work",
+   "date": "1982",
+   "phrases": [
+    "Thriller"
+   ],
+   "amb": true,
+   "word": "album",
+   "guard": null,
+   "case": "s",
+   "queries": [
+    "\"Thriller\" album"
+   ]
+  },
+  {
+   "id": "nevermind",
+   "stone": "Nevermind",
+   "article": "Nevermind",
+   "group": "culture",
+   "type": "work",
+   "date": "1991",
+   "phrases": [
+    "Nevermind"
+   ],
+   "amb": true,
+   "word": "album",
+   "guard": null,
+   "case": "s",
+   "queries": [
+    "\"Nevermind\" album"
+   ]
+  },
+  {
+   "id": "hamilton-musical",
+   "stone": "Hamilton",
+   "article": "Hamilton (musical)",
+   "group": "culture",
+   "type": "work",
+   "date": "2015-08-06",
+   "phrases": [
+    "Hamilton"
+   ],
+   "amb": true,
+   "word": "musical",
+   "guard": null,
+   "case": "s",
+   "queries": [
+    "\"Hamilton\" musical"
+   ]
+  },
+  {
+   "id": "macarena",
+   "stone": "Macarena",
+   "article": "Macarena",
+   "group": "culture",
+   "type": "work",
+   "date": "1993",
+   "phrases": [
+    "Macarena"
+   ],
+   "amb": false,
+   "word": null,
+   "guard": null,
+   "case": "s",
+   "queries": [
+    "\"Macarena\""
+   ]
+  },
+  {
+   "id": "harlem-shake-meme",
+   "stone": "Harlem Shake",
+   "article": "Harlem Shake (meme)",
+   "group": "culture",
+   "type": "work",
+   "date": "2013",
+   "phrases": [
+    "Harlem Shake"
+   ],
+   "amb": false,
+   "word": null,
+   "guard": null,
+   "case": "s",
+   "queries": [
+    "\"Harlem Shake\""
+   ]
+  },
+  {
+   "id": "ice-bucket-challenge",
+   "stone": "Ice Bucket Challenge",
+   "article": "Ice Bucket Challenge",
+   "group": "culture",
+   "type": "thing",
+   "date": "2014",
+   "phrases": [
+    "Ice Bucket Challenge"
+   ],
+   "amb": false,
+   "word": null,
+   "guard": null,
+   "case": "i",
+   "queries": [
+    "\"Ice Bucket Challenge\""
+   ]
+  },
+  {
+   "id": "planking-fad",
+   "stone": "Planking",
+   "article": "Planking (fad)",
+   "group": "culture",
+   "type": "thing",
+   "date": "2011",
+   "phrases": [
+    "Planking"
+   ],
+   "amb": true,
+   "word": "fad",
+   "guard": "fad|craze|trend|photograph\\w*|social media|viral",
+   "case": "s",
+   "queries": [
+    "\"Planking\" fad"
+   ]
+  },
+  {
+   "id": "fidget-spinner",
+   "stone": "Fidget spinner",
+   "article": "Fidget spinner",
+   "group": "culture",
+   "type": "thing",
+   "date": "2017",
+   "phrases": [
+    "Fidget spinner"
+   ],
+   "amb": false,
+   "word": null,
+   "guard": null,
+   "case": "i",
+   "queries": [
+    "\"Fidget spinner\""
+   ]
+  },
+  {
+   "id": "beanie-babies",
+   "stone": "Beanie Babies",
+   "article": "Beanie Babies",
+   "group": "culture",
+   "type": "thing",
+   "date": "1993",
+   "phrases": [
+    "Beanie Babies"
+   ],
+   "amb": false,
+   "word": null,
+   "guard": null,
+   "case": "s",
+   "queries": [
+    "\"Beanie Babies\""
+   ]
+  },
+  {
+   "id": "tamagotchi",
+   "stone": "Tamagotchi",
+   "article": "Tamagotchi",
+   "group": "culture",
+   "type": "thing",
+   "date": "1996",
+   "phrases": [
+    "Tamagotchi"
+   ],
+   "amb": false,
+   "word": null,
+   "guard": null,
+   "case": "s",
+   "queries": [
+    "\"Tamagotchi\""
+   ]
+  },
+  {
+   "id": "furby",
+   "stone": "Furby",
+   "article": "Furby",
+   "group": "culture",
+   "type": "thing",
+   "date": "1998-10-02",
+   "phrases": [
+    "Furby"
+   ],
+   "amb": false,
+   "word": null,
+   "guard": null,
+   "case": "s",
+   "queries": [
+    "\"Furby\""
+   ]
+  },
+  {
+   "id": "rubik-s-cube",
+   "stone": "Rubik's Cube",
+   "article": "Rubik's Cube",
+   "group": "culture",
+   "type": "thing",
+   "date": "1980",
+   "phrases": [
+    "Rubik's Cube"
+   ],
+   "amb": false,
+   "word": null,
+   "guard": null,
+   "case": "s",
+   "queries": [
+    "\"Rubik's Cube\""
+   ]
+  },
+  {
+   "id": "cabbage-patch-kids",
+   "stone": "Cabbage Patch Kids",
+   "article": "Cabbage Patch Kids",
+   "group": "culture",
+   "type": "thing",
+   "date": "1983",
+   "phrases": [
+    "Cabbage Patch Kids"
+   ],
+   "amb": false,
+   "word": null,
+   "guard": null,
+   "case": "s",
+   "queries": [
+    "\"Cabbage Patch Kids\""
+   ]
+  },
+  {
+   "id": "pet-rock",
+   "stone": "Pet Rock",
+   "article": "Pet Rock",
+   "group": "culture",
+   "type": "thing",
+   "date": "1975",
+   "phrases": [
+    "Pet Rock"
+   ],
+   "amb": false,
+   "word": null,
+   "guard": null,
+   "case": "s",
+   "queries": [
+    "\"Pet Rock\""
+   ]
+  },
+  {
+   "id": "wordle",
+   "stone": "Wordle",
+   "article": "Wordle",
+   "group": "culture",
+   "type": "work",
+   "date": "2021",
+   "phrases": [
+    "Wordle"
+   ],
+   "amb": false,
+   "word": null,
+   "guard": "puzzle|New York Times",
+   "case": "s",
+   "queries": [
+    "\"Wordle\""
+   ]
+  },
+  {
+   "id": "fortnite",
+   "stone": "Fortnite",
+   "article": "Fortnite",
+   "group": "culture",
+   "type": "work",
+   "date": "2017",
+   "phrases": [
+    "Fortnite"
+   ],
+   "amb": false,
+   "word": null,
+   "guard": "Epic Games|video game|players?",
+   "case": "s",
+   "queries": [
+    "\"Fortnite\""
+   ]
+  },
+  {
+   "id": "minecraft",
+   "stone": "Minecraft",
+   "article": "Minecraft",
+   "group": "culture",
+   "type": "work",
+   "date": "2011",
+   "phrases": [
+    "Minecraft"
+   ],
+   "amb": false,
+   "word": null,
+   "guard": "video game|Mojang|Microsoft",
+   "case": "s",
+   "queries": [
+    "\"Minecraft\""
+   ]
+  },
+  {
+   "id": "candy-crush-saga",
+   "stone": "Candy Crush Saga",
+   "article": "Candy Crush Saga",
+   "group": "culture",
+   "type": "work",
+   "date": "2012",
+   "phrases": [
+    "Candy Crush"
+   ],
+   "amb": false,
+   "word": null,
+   "guard": null,
+   "case": "s",
+   "queries": [
+    "\"Candy Crush\""
+   ]
+  },
+  {
+   "id": "angry-birds",
+   "stone": "Angry Birds",
+   "article": "Angry Birds",
+   "group": "culture",
+   "type": "work",
+   "date": "2009",
+   "phrases": [
+    "Angry Birds"
+   ],
+   "amb": false,
+   "word": null,
+   "guard": null,
+   "case": "s",
+   "queries": [
+    "\"Angry Birds\""
+   ]
+  },
+  {
+   "id": "tetris",
+   "stone": "Tetris",
+   "article": "Tetris",
+   "group": "culture",
+   "type": "work",
+   "date": "1984-06-06",
+   "phrases": [
+    "Tetris"
+   ],
+   "amb": false,
+   "word": null,
+   "guard": "puzzle|video game",
+   "case": "s",
+   "queries": [
+    "\"Tetris\""
+   ]
+  },
+  {
+   "id": "pac-man",
+   "stone": "Pac-Man",
+   "article": "Pac-Man",
+   "group": "culture",
+   "type": "work",
+   "date": "1980",
+   "phrases": [
+    "Pac-Man"
+   ],
+   "amb": true,
+   "word": "game",
+   "guard": null,
+   "case": "s",
+   "queries": [
+    "\"Pac-Man\" game"
+   ]
+  },
+  {
+   "id": "dungeons-dragons",
+   "stone": "Dungeons & Dragons",
+   "article": "Dungeons & Dragons",
+   "group": "culture",
+   "type": "work",
+   "date": "1974",
+   "phrases": [
+    "Dungeons & Dragons"
+   ],
+   "amb": false,
+   "word": null,
+   "guard": null,
+   "case": "s",
+   "queries": [
+    "\"Dungeons & Dragons\""
+   ]
+  },
+  {
+   "id": "grand-theft-auto-v",
+   "stone": "Grand Theft Auto V",
+   "article": "Grand Theft Auto V",
+   "group": "culture",
+   "type": "work",
+   "date": "2013",
+   "phrases": [
+    "Grand Theft Auto"
+   ],
+   "amb": true,
+   "word": "game",
+   "guard": null,
+   "case": "s",
+   "queries": [
+    "\"Grand Theft Auto\" game"
+   ]
+  },
+  {
+   "id": "wii",
+   "stone": "Wii",
+   "article": "Wii",
+   "group": "culture",
+   "type": "work",
+   "date": "2006",
+   "phrases": [
+    "Wii"
+   ],
+   "amb": false,
+   "word": null,
+   "guard": null,
+   "case": "s",
+   "queries": [
+    "\"Wii\""
+   ]
+  },
+  {
+   "id": "guitar-hero",
+   "stone": "Guitar Hero",
+   "article": "Guitar Hero",
+   "group": "culture",
+   "type": "work",
+   "date": "2005",
+   "phrases": [
+    "Guitar Hero"
+   ],
+   "amb": false,
+   "word": null,
+   "guard": null,
+   "case": "s",
+   "queries": [
+    "\"Guitar Hero\""
+   ]
+  },
+  {
+   "id": "zumba",
+   "stone": "Zumba",
+   "article": "Zumba",
+   "group": "culture",
+   "type": "thing",
+   "date": "2001-01-01",
+   "phrases": [
+    "Zumba"
+   ],
+   "amb": false,
+   "word": null,
+   "guard": null,
+   "case": "s",
+   "queries": [
+    "\"Zumba\""
+   ]
+  },
+  {
+   "id": "crossfit",
+   "stone": "CrossFit",
+   "article": "CrossFit",
+   "group": "culture",
+   "type": "thing",
+   "date": "2000",
+   "phrases": [
+    "CrossFit"
+   ],
+   "amb": false,
+   "word": null,
+   "guard": null,
+   "case": "s",
+   "queries": [
+    "\"CrossFit\""
+   ]
+  },
+  {
+   "id": "dry-january",
+   "stone": "Dry January",
+   "article": "Dry January",
+   "group": "culture",
+   "type": "thing",
+   "date": "2013",
+   "phrases": [
+    "Dry January"
+   ],
+   "amb": false,
+   "word": null,
+   "guard": null,
+   "case": "s",
+   "queries": [
+    "\"Dry January\""
+   ]
+  },
+  {
+   "id": "veganuary",
+   "stone": "Veganuary",
+   "article": "Veganuary",
+   "group": "culture",
+   "type": "thing",
+   "date": "2014",
+   "phrases": [
+    "Veganuary"
+   ],
+   "amb": false,
+   "word": null,
+   "guard": null,
+   "case": "s",
+   "queries": [
+    "\"Veganuary\""
+   ]
+  },
+  {
+   "id": "movember",
+   "stone": "Movember",
+   "article": "Movember",
+   "group": "culture",
+   "type": "thing",
+   "date": "2003",
+   "phrases": [
+    "Movember"
+   ],
+   "amb": false,
+   "word": null,
+   "guard": null,
+   "case": "s",
+   "queries": [
+    "\"Movember\""
+   ]
+  },
+  {
+   "id": "pumpkin-spice-latte",
+   "stone": "Pumpkin Spice Latte",
+   "article": "Pumpkin Spice Latte",
+   "group": "culture",
+   "type": "thing",
+   "date": "2003",
+   "phrases": [
+    "Pumpkin Spice Latte"
+   ],
+   "amb": false,
+   "word": null,
+   "guard": null,
+   "case": "i",
+   "queries": [
+    "\"Pumpkin Spice Latte\""
+   ]
+  },
+  {
+   "id": "cronut",
+   "stone": "Cronut",
+   "article": "Cronut",
+   "group": "culture",
+   "type": "thing",
+   "date": "2013",
+   "phrases": [
+    "Cronut"
+   ],
+   "amb": false,
+   "word": null,
+   "guard": null,
+   "case": "s",
+   "queries": [
+    "\"Cronut\""
+   ]
+  },
+  {
+   "id": "dalgona-coffee",
+   "stone": "Dalgona coffee",
+   "article": "Dalgona coffee",
+   "group": "culture",
+   "type": "thing",
+   "date": "2020",
+   "phrases": [
+    "Dalgona coffee"
+   ],
+   "amb": false,
+   "word": null,
+   "guard": null,
+   "case": "i",
+   "queries": [
+    "\"Dalgona coffee\""
+   ]
+  },
+  {
+   "id": "avocado-toast",
+   "stone": "Avocado toast",
+   "article": "Avocado toast",
+   "group": "culture",
+   "type": "thing",
+   "date": "2010",
+   "phrases": [
+    "Avocado toast"
+   ],
+   "amb": false,
+   "word": null,
+   "guard": null,
+   "case": "i",
+   "queries": [
+    "\"Avocado toast\""
+   ]
+  },
+  {
+   "id": "ketogenic-diet",
+   "stone": "Ketogenic diet",
+   "article": "Ketogenic diet",
+   "group": "culture",
+   "type": "thing",
+   "date": "2010",
+   "phrases": [
+    "Ketogenic diet"
+   ],
+   "amb": false,
+   "word": null,
+   "guard": null,
+   "case": "i",
+   "queries": [
+    "\"Ketogenic diet\""
+   ]
+  },
+  {
+   "id": "marie-kondo",
+   "stone": "Marie Kondo",
+   "article": "Marie Kondo",
+   "group": "culture",
+   "type": "thing",
+   "date": "2014",
+   "phrases": [
+    "Marie Kondo"
+   ],
+   "amb": false,
+   "word": null,
+   "guard": null,
+   "case": "s",
+   "queries": [
+    "\"Marie Kondo\""
+   ]
+  },
+  {
+   "id": "hygge",
+   "stone": "Hygge",
+   "article": "Hygge",
+   "group": "culture",
+   "type": "thing",
+   "date": "2016",
+   "phrases": [
+    "Hygge"
+   ],
+   "amb": false,
+   "word": null,
+   "guard": null,
+   "case": "s",
+   "queries": [
+    "\"Hygge\""
+   ]
+  },
+  {
+   "id": "fyre-festival",
+   "stone": "Fyre Festival",
+   "article": "Fyre Festival",
+   "group": "culture",
+   "type": "event",
+   "date": "2017",
+   "phrases": [
+    "Fyre Festival"
+   ],
+   "amb": false,
+   "word": null,
+   "guard": null,
+   "case": "s",
+   "queries": [
+    "\"Fyre Festival\""
+   ]
+  },
+  {
+   "id": "woodstock",
+   "stone": "Woodstock",
+   "article": "Woodstock",
+   "group": "culture",
+   "type": "event",
+   "date": "1969-08-15",
+   "phrases": [
+    "Woodstock"
+   ],
+   "amb": true,
+   "word": "festival",
+   "guard": "festival|1969|concert|music",
+   "case": "s",
+   "queries": [
+    "\"Woodstock\" festival"
+   ]
+  },
+  {
+   "id": "live-aid",
+   "stone": "Live Aid",
+   "article": "Live Aid",
+   "group": "culture",
+   "type": "event",
+   "date": "1985",
+   "phrases": [
+    "Live Aid"
+   ],
+   "amb": true,
+   "word": "concert",
+   "guard": "concert|1985|Geldof|famine",
+   "case": "s",
+   "queries": [
+    "\"Live Aid\" concert"
+   ]
+  },
+  {
+   "id": "the-blair-witch-project",
+   "stone": "The Blair Witch Project",
+   "article": "The Blair Witch Project",
+   "group": "culture",
+   "type": "work",
+   "date": "1999",
+   "phrases": [
+    "The Blair Witch Project"
+   ],
+   "amb": false,
+   "word": null,
+   "guard": null,
+   "case": "s",
+   "queries": [
+    "\"The Blair Witch Project\""
+   ]
+  },
+  {
+   "id": "free-willy",
+   "stone": "Free Willy",
+   "article": "Free Willy",
+   "group": "culture",
+   "type": "work",
+   "date": "1993",
+   "phrases": [
+    "Free Willy"
+   ],
+   "amb": false,
+   "word": null,
+   "guard": "Keiko|orcas?|killer whales?",
+   "case": "s",
+   "queries": [
+    "\"Free Willy\""
+   ]
+  },
+  {
+   "id": "babe-film",
+   "stone": "Babe",
+   "article": "Babe (film)",
+   "group": "culture",
+   "type": "work",
+   "date": "1995",
+   "phrases": [
+    "Babe"
+   ],
+   "amb": true,
+   "word": "film",
+   "guard": null,
+   "case": "s",
+   "queries": [
+    "\"Babe\" film"
+   ]
+  },
+  {
+   "id": "ratatouille-film",
+   "stone": "Ratatouille",
+   "article": "Ratatouille (film)",
+   "group": "culture",
+   "type": "work",
+   "date": "2007",
+   "phrases": [
+    "Ratatouille"
+   ],
+   "amb": true,
+   "word": "film",
+   "guard": null,
+   "case": "s",
+   "queries": [
+    "\"Ratatouille\" film"
+   ]
+  },
+  {
+   "id": "psycho-1960-film",
+   "stone": "Psycho",
+   "article": "Psycho (1960 film)",
+   "group": "culture",
+   "type": "work",
+   "date": "1960",
+   "phrases": [
+    "Psycho"
+   ],
+   "amb": true,
+   "word": "film",
+   "guard": null,
+   "case": "s",
+   "queries": [
+    "\"Psycho\" film"
+   ]
+  },
+  {
+   "id": "rocky",
+   "stone": "Rocky",
+   "article": "Rocky",
+   "group": "culture",
+   "type": "work",
+   "date": "1976",
+   "phrases": [
+    "Rocky"
+   ],
+   "amb": true,
+   "word": "film",
+   "guard": null,
+   "case": "s",
+   "queries": [
+    "\"Rocky\" film"
+   ]
+  },
+  {
+   "id": "flashdance",
+   "stone": "Flashdance",
+   "article": "Flashdance",
+   "group": "culture",
+   "type": "work",
+   "date": "1983",
+   "phrases": [
+    "Flashdance"
+   ],
+   "amb": false,
+   "word": null,
+   "guard": null,
+   "case": "s",
+   "queries": [
+    "\"Flashdance\""
+   ]
+  },
+  {
+   "id": "saturday-night-fever",
+   "stone": "Saturday Night Fever",
+   "article": "Saturday Night Fever",
+   "group": "culture",
+   "type": "work",
+   "date": "1977",
+   "phrases": [
+    "Saturday Night Fever"
+   ],
+   "amb": false,
+   "word": null,
+   "guard": null,
+   "case": "s",
+   "queries": [
+    "\"Saturday Night Fever\""
+   ]
+  },
+  {
+   "id": "grease-film",
+   "stone": "Grease",
+   "article": "Grease (film)",
+   "group": "culture",
+   "type": "work",
+   "date": "1978",
+   "phrases": [
+    "Grease"
+   ],
+   "amb": true,
+   "word": "film",
+   "guard": null,
+   "case": "s",
+   "queries": [
+    "\"Grease\" film"
+   ]
+  },
+  {
+   "id": "dirty-dancing",
+   "stone": "Dirty Dancing",
+   "article": "Dirty Dancing",
+   "group": "culture",
+   "type": "work",
+   "date": "1987",
+   "phrases": [
+    "Dirty Dancing"
+   ],
+   "amb": false,
+   "word": null,
+   "guard": null,
+   "case": "s",
+   "queries": [
+    "\"Dirty Dancing\""
+   ]
+  },
+  {
+   "id": "clueless-film",
+   "stone": "Clueless",
+   "article": "Clueless (film)",
+   "group": "culture",
+   "type": "work",
+   "date": "1995",
+   "phrases": [
+    "Clueless"
+   ],
+   "amb": true,
+   "word": "film",
+   "guard": null,
+   "case": "s",
+   "queries": [
+    "\"Clueless\" film"
+   ]
+  },
+  {
+   "id": "mean-girls",
+   "stone": "Mean Girls",
+   "article": "Mean Girls",
+   "group": "culture",
+   "type": "work",
+   "date": "2004",
+   "phrases": [
+    "Mean Girls"
+   ],
+   "amb": false,
+   "word": null,
+   "guard": null,
+   "case": "s",
+   "queries": [
+    "\"Mean Girls\""
+   ]
+  },
+  {
+   "id": "the-devil-wears-prada-film",
+   "stone": "The Devil Wears Prada",
+   "article": "The Devil Wears Prada (film)",
+   "group": "culture",
+   "type": "work",
+   "date": "2006",
+   "phrases": [
+    "The Devil Wears Prada"
+   ],
+   "amb": false,
+   "word": null,
+   "guard": null,
+   "case": "s",
+   "queries": [
+    "\"The Devil Wears Prada\""
+   ]
+  },
+  {
+   "id": "sex-education-tv-series",
+   "stone": "Sex Education",
+   "article": "Sex Education (TV series)",
+   "group": "culture",
+   "type": "work",
+   "date": "2019",
+   "phrases": [
+    "Sex Education"
+   ],
+   "amb": true,
+   "word": "Netflix",
+   "guard": null,
+   "case": "s",
+   "queries": [
+    "\"Sex Education\" Netflix"
+   ]
+  },
+  {
+   "id": "euphoria-american-tv-series",
+   "stone": "Euphoria",
+   "article": "Euphoria (American TV series)",
+   "group": "culture",
+   "type": "work",
+   "date": "2019",
+   "phrases": [
+    "Euphoria"
+   ],
+   "amb": true,
+   "word": "HBO",
+   "guard": null,
+   "case": "s",
+   "queries": [
+    "\"Euphoria\" HBO"
+   ]
+  },
+  {
+   "id": "love-island-2015-tv-series",
+   "stone": "Love Island",
+   "article": "Love Island (2015 TV series)",
+   "group": "culture",
+   "type": "work",
+   "date": "2015",
+   "phrases": [
+    "Love Island"
+   ],
+   "amb": true,
+   "word": "television",
+   "guard": null,
+   "case": "s",
+   "queries": [
+    "\"Love Island\" television"
+   ]
+  },
+  {
+   "id": "cowspiracy",
+   "stone": "Cowspiracy",
+   "article": "Cowspiracy",
+   "group": "culture",
+   "type": "work",
+   "date": "2014",
+   "phrases": [
+    "Cowspiracy"
+   ],
+   "amb": false,
+   "word": null,
+   "guard": null,
+   "case": "s",
+   "queries": [
+    "\"Cowspiracy\""
+   ]
+  },
+  {
+   "id": "forks-over-knives",
+   "stone": "Forks Over Knives",
+   "article": "Forks Over Knives",
+   "group": "culture",
+   "type": "work",
+   "date": "2011",
+   "phrases": [
+    "Forks Over Knives"
+   ],
+   "amb": false,
+   "word": null,
+   "guard": null,
+   "case": "s",
+   "queries": [
+    "\"Forks Over Knives\""
+   ]
+  },
+  {
+   "id": "what-the-health",
+   "stone": "What the Health",
+   "article": "What the Health",
+   "group": "culture",
+   "type": "work",
+   "date": "2017",
+   "phrases": [
+    "What the Health"
+   ],
+   "amb": true,
+   "word": "documentary",
+   "guard": null,
+   "case": "s",
+   "queries": [
+    "\"What the Health\" documentary"
+   ]
+  },
+  {
+   "id": "seaspiracy",
+   "stone": "Seaspiracy",
+   "article": "Seaspiracy",
+   "group": "culture",
+   "type": "work",
+   "date": "2021",
+   "phrases": [
+    "Seaspiracy"
+   ],
+   "amb": false,
+   "word": null,
+   "guard": "Netflix|documentary",
+   "case": "s",
+   "queries": [
+    "\"Seaspiracy\""
+   ]
+  },
+  {
+   "id": "our-planet",
+   "stone": "Our Planet",
+   "article": "Our Planet",
+   "group": "culture",
+   "type": "work",
+   "date": "2019",
+   "phrases": [
+    "Our Planet"
+   ],
+   "amb": true,
+   "word": "Netflix",
+   "guard": null,
+   "case": "s",
+   "queries": [
+    "\"Our Planet\" Netflix"
+   ]
+  },
+  {
+   "id": "blue-planet-ii",
+   "stone": "Blue Planet II",
+   "article": "Blue Planet II",
+   "group": "culture",
+   "type": "work",
+   "date": "2017-10-29",
+   "phrases": [
+    "Blue Planet II"
+   ],
+   "amb": false,
+   "word": null,
+   "guard": "BBC|Attenborough|plastics?",
+   "case": "s",
+   "queries": [
+    "\"Blue Planet II\""
+   ]
+  },
+  {
+   "id": "planet-earth-ii",
+   "stone": "Planet Earth II",
+   "article": "Planet Earth II",
+   "group": "culture",
+   "type": "work",
+   "date": "2016",
+   "phrases": [
+    "Planet Earth II"
+   ],
+   "amb": false,
+   "word": null,
+   "guard": "BBC|Attenborough",
+   "case": "s",
+   "queries": [
+    "\"Planet Earth II\""
+   ]
+  },
+  {
+   "id": "march-of-the-penguins",
+   "stone": "March of the Penguins",
+   "article": "March of the Penguins",
+   "group": "culture",
+   "type": "work",
+   "date": "2005",
+   "phrases": [
+    "March of the Penguins"
+   ],
+   "amb": false,
+   "word": null,
+   "guard": null,
+   "case": "s",
+   "queries": [
+    "\"March of the Penguins\""
+   ]
+  },
+  {
+   "id": "chef-s-table",
+   "stone": "Chef's Table",
+   "article": "Chef's Table",
+   "group": "culture",
+   "type": "work",
+   "date": "2015",
+   "phrases": [
+    "Chef's Table"
+   ],
+   "amb": true,
+   "word": "Netflix",
+   "guard": null,
+   "case": "s",
+   "queries": [
+    "\"Chef's Table\" Netflix"
+   ]
+  },
+  {
+   "id": "salt-fat-acid-heat",
+   "stone": "Salt Fat Acid Heat",
+   "article": "Salt Fat Acid Heat",
+   "group": "culture",
+   "type": "work",
+   "date": "2018",
+   "phrases": [
+    "Salt Fat Acid Heat"
+   ],
+   "amb": false,
+   "word": null,
+   "guard": null,
+   "case": "s",
+   "queries": [
+    "\"Salt Fat Acid Heat\""
+   ]
+  },
+  {
+   "id": "the-bear-tv-series",
+   "stone": "The Bear",
+   "article": "The Bear (TV series)",
+   "group": "culture",
+   "type": "work",
+   "date": "2022",
+   "phrases": [
+    "The Bear"
+   ],
+   "amb": true,
+   "word": "television",
+   "guard": null,
+   "case": "s",
+   "queries": [
+    "\"The Bear\" television"
+   ]
+  },
+  {
+   "id": "ted-lasso",
+   "stone": "Ted Lasso",
+   "article": "Ted Lasso",
+   "group": "culture",
+   "type": "work",
+   "date": "2020",
+   "phrases": [
+    "Ted Lasso"
+   ],
+   "amb": false,
+   "word": null,
+   "guard": null,
+   "case": "s",
+   "queries": [
+    "\"Ted Lasso\""
+   ]
+  },
+  {
+   "id": "yellowstone-american-tv-series",
+   "stone": "Yellowstone",
+   "article": "Yellowstone (American TV series)",
+   "group": "culture",
+   "type": "work",
+   "date": "2018",
+   "phrases": [
+    "Yellowstone"
+   ],
+   "amb": true,
+   "word": "television",
+   "guard": null,
+   "case": "s",
+   "queries": [
+    "\"Yellowstone\" television"
+   ]
+  },
+  {
+   "id": "emily-in-paris",
+   "stone": "Emily in Paris",
+   "article": "Emily in Paris",
+   "group": "culture",
+   "type": "work",
+   "date": "2020-10-02",
+   "phrases": [
+    "Emily in Paris"
+   ],
+   "amb": false,
+   "word": null,
+   "guard": null,
+   "case": "s",
+   "queries": [
+    "\"Emily in Paris\""
+   ]
+  },
+  {
+   "id": "white-lotus",
+   "stone": "White Lotus",
+   "article": "White Lotus",
+   "group": "culture",
+   "type": "work",
+   "date": "2021",
+   "phrases": [
+    "White Lotus"
+   ],
+   "amb": true,
+   "word": "HBO",
+   "guard": null,
+   "case": "s",
+   "queries": [
+    "\"White Lotus\" HBO"
+   ]
+  },
+  {
+   "id": "succession-tv-series",
+   "stone": "Succession",
+   "article": "Succession (TV series)",
+   "group": "culture",
+   "type": "work",
+   "date": "2018",
+   "phrases": [
+    "Succession"
+   ],
+   "amb": true,
+   "word": "HBO",
+   "guard": null,
+   "case": "s",
+   "queries": [
+    "\"Succession\" HBO"
+   ]
+  },
+  {
+   "id": "normal-people-tv-series",
+   "stone": "Normal People",
+   "article": "Normal People (TV series)",
+   "group": "culture",
+   "type": "work",
+   "date": "2020",
+   "phrases": [
+    "Normal People"
+   ],
+   "amb": true,
+   "word": "television",
+   "guard": null,
+   "case": "s",
+   "queries": [
+    "\"Normal People\" television"
+   ]
+  },
+  {
+   "id": "fleabag",
+   "stone": "Fleabag",
+   "article": "Fleabag",
+   "group": "culture",
+   "type": "work",
+   "date": "2016",
+   "phrases": [
+    "Fleabag"
+   ],
+   "amb": false,
+   "word": null,
+   "guard": null,
+   "case": "s",
+   "queries": [
+    "\"Fleabag\""
+   ]
+  },
+  {
+   "id": "killing-eve",
+   "stone": "Killing Eve",
+   "article": "Killing Eve",
+   "group": "culture",
+   "type": "work",
+   "date": "2018",
+   "phrases": [
+    "Killing Eve"
+   ],
+   "amb": false,
+   "word": null,
+   "guard": null,
+   "case": "s",
+   "queries": [
+    "\"Killing Eve\""
+   ]
+  },
+  {
+   "id": "peaky-blinders-tv-series",
+   "stone": "Peaky Blinders",
+   "article": "Peaky Blinders (TV series)",
+   "group": "culture",
+   "type": "work",
+   "date": "2013",
+   "phrases": [
+    "Peaky Blinders"
+   ],
+   "amb": false,
+   "word": null,
+   "guard": null,
+   "case": "s",
+   "queries": [
+    "\"Peaky Blinders\""
+   ]
+  },
+  {
+   "id": "narcos",
+   "stone": "Narcos",
+   "article": "Narcos",
+   "group": "culture",
+   "type": "work",
+   "date": "2015",
+   "phrases": [
+    "Narcos"
+   ],
+   "amb": true,
+   "word": "Netflix",
+   "guard": null,
+   "case": "s",
+   "queries": [
+    "\"Narcos\" Netflix"
+   ]
+  },
+  {
+   "id": "money-heist",
+   "stone": "Money Heist",
+   "article": "Money Heist",
+   "group": "culture",
+   "type": "work",
+   "date": "2017",
+   "phrases": [
+    "Money Heist"
+   ],
+   "amb": false,
+   "word": null,
+   "guard": null,
+   "case": "s",
+   "queries": [
+    "\"Money Heist\""
+   ]
+  },
+  {
+   "id": "dark-tv-series",
+   "stone": "Dark",
+   "article": "Dark (TV series)",
+   "group": "culture",
+   "type": "work",
+   "date": "2017",
+   "phrases": [
+    "Dark"
+   ],
+   "amb": true,
+   "word": "Netflix",
+   "guard": null,
+   "case": "s",
+   "queries": [
+    "\"Dark\" Netflix"
+   ]
+  },
+  {
+   "id": "lupin-french-tv-series",
+   "stone": "Lupin",
+   "article": "Lupin (French TV series)",
+   "group": "culture",
+   "type": "work",
+   "date": "2021",
+   "phrases": [
+    "Lupin"
+   ],
+   "amb": true,
+   "word": "Netflix",
+   "guard": null,
+   "case": "s",
+   "queries": [
+    "\"Lupin\" Netflix"
+   ]
+  },
+  {
+   "id": "baby-reindeer",
+   "stone": "Baby Reindeer",
+   "article": "Baby Reindeer",
+   "group": "culture",
+   "type": "work",
+   "date": "2024",
+   "phrases": [
+    "Baby Reindeer"
+   ],
+   "amb": true,
+   "word": "Netflix",
+   "guard": null,
+   "case": "s",
+   "queries": [
+    "\"Baby Reindeer\" Netflix"
+   ]
+  },
+  {
+   "id": "transformers-film",
+   "stone": "Transformers",
+   "article": "Transformers (film)",
+   "group": "decoy",
+   "type": "work",
+   "date": "2007",
+   "phrases": [
+    "Transformers"
+   ],
+   "amb": true,
+   "word": "film",
+   "guard": null,
+   "case": "s",
+   "queries": [
+    "\"Transformers\" film"
+   ]
+  },
+  {
+   "id": "pirates-of-the-caribbean-dead-man-s-chest",
+   "stone": "Pirates of the Caribbean: Dead Man's Chest",
+   "article": "Pirates of the Caribbean: Dead Man's Chest",
+   "group": "decoy",
+   "type": "work",
+   "date": "2006",
+   "phrases": [
+    "Pirates of the Caribbean: Dead Man's Chest"
+   ],
+   "amb": false,
+   "word": null,
+   "guard": null,
+   "case": "s",
+   "queries": [
+    "\"Pirates of the Caribbean: Dead Man's Chest\""
+   ]
+  },
+  {
+   "id": "shrek-2",
+   "stone": "Shrek 2",
+   "article": "Shrek 2",
+   "group": "decoy",
+   "type": "work",
+   "date": "2004",
+   "phrases": [
+    "Shrek 2"
+   ],
+   "amb": false,
+   "word": null,
+   "guard": null,
+   "case": "s",
+   "queries": [
+    "\"Shrek 2\""
+   ]
+  },
+  {
+   "id": "minions-film",
+   "stone": "Minions",
+   "article": "Minions (film)",
+   "group": "decoy",
+   "type": "work",
+   "date": "2015",
+   "phrases": [
+    "Minions"
+   ],
+   "amb": true,
+   "word": "film",
+   "guard": null,
+   "case": "s",
+   "queries": [
+    "\"Minions\" film"
+   ]
+  },
+  {
+   "id": "fast-furious-6",
+   "stone": "Fast & Furious 6",
+   "article": "Fast & Furious 6",
+   "group": "decoy",
+   "type": "work",
+   "date": "2013",
+   "phrases": [
+    "Fast & Furious 6"
+   ],
+   "amb": false,
+   "word": null,
+   "guard": null,
+   "case": "s",
+   "queries": [
+    "\"Fast & Furious 6\""
+   ]
+  },
+  {
+   "id": "the-hangover",
+   "stone": "The Hangover",
+   "article": "The Hangover",
+   "group": "decoy",
+   "type": "work",
+   "date": "2009",
+   "phrases": [
+    "The Hangover"
+   ],
+   "amb": true,
+   "word": "film",
+   "guard": null,
+   "case": "s",
+   "queries": [
+    "\"The Hangover\" film"
+   ]
+  },
+  {
+   "id": "mamma-mia-film",
+   "stone": "Mamma Mia!",
+   "article": "Mamma Mia! (film)",
+   "group": "decoy",
+   "type": "work",
+   "date": "2008",
+   "phrases": [
+    "Mamma Mia!"
+   ],
+   "amb": false,
+   "word": null,
+   "guard": null,
+   "case": "s",
+   "queries": [
+    "\"Mamma Mia!\""
+   ]
+  },
+  {
+   "id": "despicable-me",
+   "stone": "Despicable Me",
+   "article": "Despicable Me",
+   "group": "decoy",
+   "type": "work",
+   "date": "2010",
+   "phrases": [
+    "Despicable Me"
+   ],
+   "amb": false,
+   "word": null,
+   "guard": null,
+   "case": "s",
+   "queries": [
+    "\"Despicable Me\""
+   ]
+  },
+  {
+   "id": "frozen-ii",
+   "stone": "Frozen II",
+   "article": "Frozen II",
+   "group": "decoy",
+   "type": "work",
+   "date": "2019",
+   "phrases": [
+    "Frozen II"
+   ],
+   "amb": true,
+   "word": "film",
+   "guard": null,
+   "case": "s",
+   "queries": [
+    "\"Frozen II\" film"
+   ]
+  },
+  {
+   "id": "spider-man-3",
+   "stone": "Spider-Man 3",
+   "article": "Spider-Man 3",
+   "group": "decoy",
+   "type": "work",
+   "date": "2007",
+   "phrases": [
+    "Spider-Man 3"
+   ],
+   "amb": false,
+   "word": null,
+   "guard": null,
+   "case": "s",
+   "queries": [
+    "\"Spider-Man 3\""
+   ]
+  },
+  {
+   "id": "jumanji-welcome-to-the-jungle",
+   "stone": "Jumanji: Welcome to the Jungle",
+   "article": "Jumanji: Welcome to the Jungle",
+   "group": "decoy",
+   "type": "work",
+   "date": "2017",
+   "phrases": [
+    "Jumanji: Welcome to the Jungle"
+   ],
+   "amb": false,
+   "word": null,
+   "guard": null,
+   "case": "s",
+   "queries": [
+    "\"Jumanji: Welcome to the Jungle\""
+   ]
+  },
+  {
+   "id": "aquaman-film",
+   "stone": "Aquaman",
+   "article": "Aquaman (film)",
+   "group": "decoy",
+   "type": "work",
+   "date": "2018",
+   "phrases": [
+    "Aquaman"
+   ],
+   "amb": true,
+   "word": "film",
+   "guard": null,
+   "case": "s",
+   "queries": [
+    "\"Aquaman\" film"
+   ]
+  },
+  {
+   "id": "the-secret-life-of-pets",
+   "stone": "The Secret Life of Pets",
+   "article": "The Secret Life of Pets",
+   "group": "decoy",
+   "type": "work",
+   "date": "2016",
+   "phrases": [
+    "The Secret Life of Pets"
+   ],
+   "amb": false,
+   "word": null,
+   "guard": null,
+   "case": "s",
+   "queries": [
+    "\"The Secret Life of Pets\""
+   ]
+  },
+  {
+   "id": "zootopia",
+   "stone": "Zootopia",
+   "article": "Zootopia",
+   "group": "decoy",
+   "type": "work",
+   "date": "2016",
+   "phrases": [
+    "Zootopia"
+   ],
+   "amb": true,
+   "word": "film",
+   "guard": null,
+   "case": "s",
+   "queries": [
+    "\"Zootopia\" film"
+   ]
+  },
+  {
+   "id": "moana",
+   "stone": "Moana",
+   "article": "Moana",
+   "group": "decoy",
+   "type": "work",
+   "date": "2016",
+   "phrases": [
+    "Moana"
+   ],
+   "amb": true,
+   "word": "film",
+   "guard": null,
+   "case": "s",
+   "queries": [
+    "\"Moana\" film"
+   ]
+  },
+  {
+   "id": "coco-2017-film",
+   "stone": "Coco",
+   "article": "Coco (2017 film)",
+   "group": "decoy",
+   "type": "work",
+   "date": "2017",
+   "phrases": [
+    "Coco"
+   ],
+   "amb": true,
+   "word": "film",
+   "guard": null,
+   "case": "s",
+   "queries": [
+    "\"Coco\" film"
+   ]
+  },
+  {
+   "id": "inside-out-2015-film",
+   "stone": "Inside Out",
+   "article": "Inside Out (2015 film)",
+   "group": "decoy",
+   "type": "work",
+   "date": "2015",
+   "phrases": [
+    "Inside Out"
+   ],
+   "amb": true,
+   "word": "film",
+   "guard": null,
+   "case": "s",
+   "queries": [
+    "\"Inside Out\" film"
+   ]
+  },
+  {
+   "id": "big-hero-6-film",
+   "stone": "Big Hero 6",
+   "article": "Big Hero 6 (film)",
+   "group": "decoy",
+   "type": "work",
+   "date": "2014",
+   "phrases": [
+    "Big Hero 6"
+   ],
+   "amb": true,
+   "word": "film",
+   "guard": null,
+   "case": "s",
+   "queries": [
+    "\"Big Hero 6\" film"
+   ]
+  },
+  {
+   "id": "the-lego-movie",
+   "stone": "The Lego Movie",
+   "article": "The Lego Movie",
+   "group": "decoy",
+   "type": "work",
+   "date": "2014",
+   "phrases": [
+    "The Lego Movie"
+   ],
+   "amb": false,
+   "word": null,
+   "guard": null,
+   "case": "s",
+   "queries": [
+    "\"The Lego Movie\""
+   ]
+  },
+  {
+   "id": "mission-impossible-fallout",
+   "stone": "Mission: Impossible – Fallout",
+   "article": "Mission: Impossible – Fallout",
+   "group": "decoy",
+   "type": "work",
+   "date": "2018",
+   "phrases": [
+    "Mission: Impossible – Fallout"
+   ],
+   "amb": false,
+   "word": null,
+   "guard": null,
+   "case": "s",
+   "queries": [
+    "\"Mission: Impossible – Fallout\""
+   ]
+  },
+  {
+   "id": "skyfall",
+   "stone": "Skyfall",
+   "article": "Skyfall",
+   "group": "decoy",
+   "type": "work",
+   "date": "2012",
+   "phrases": [
+    "Skyfall"
+   ],
+   "amb": true,
+   "word": "film",
+   "guard": null,
+   "case": "s",
+   "queries": [
+    "\"Skyfall\" film"
+   ]
+  },
+  {
+   "id": "casino-royale-2006-film",
+   "stone": "Casino Royale",
+   "article": "Casino Royale (2006 film)",
+   "group": "decoy",
+   "type": "work",
+   "date": "2006",
+   "phrases": [
+    "Casino Royale"
+   ],
+   "amb": true,
+   "word": "film",
+   "guard": null,
+   "case": "s",
+   "queries": [
+    "\"Casino Royale\" film"
+   ]
+  },
+  {
+   "id": "the-dark-knight",
+   "stone": "The Dark Knight",
+   "article": "The Dark Knight",
+   "group": "decoy",
+   "type": "work",
+   "date": "2008",
+   "phrases": [
+    "The Dark Knight"
+   ],
+   "amb": true,
+   "word": "film",
+   "guard": null,
+   "case": "s",
+   "queries": [
+    "\"The Dark Knight\" film"
+   ]
+  },
+  {
+   "id": "iron-man-2008-film",
+   "stone": "Iron Man",
+   "article": "Iron Man (2008 film)",
+   "group": "decoy",
+   "type": "work",
+   "date": "2008",
+   "phrases": [
+    "Iron Man"
+   ],
+   "amb": true,
+   "word": "film",
+   "guard": null,
+   "case": "s",
+   "queries": [
+    "\"Iron Man\" film"
+   ]
+  },
+  {
+   "id": "deadpool-film",
+   "stone": "Deadpool",
+   "article": "Deadpool (film)",
+   "group": "decoy",
+   "type": "work",
+   "date": "2016",
+   "phrases": [
+    "Deadpool"
+   ],
+   "amb": false,
+   "word": null,
+   "guard": null,
+   "case": "s",
+   "queries": [
+    "\"Deadpool\""
+   ]
+  },
+  {
+   "id": "guardians-of-the-galaxy-film",
+   "stone": "Guardians of the Galaxy",
+   "article": "Guardians of the Galaxy (film)",
+   "group": "decoy",
+   "type": "work",
+   "date": "2014",
+   "phrases": [
+    "Guardians of the Galaxy"
+   ],
+   "amb": false,
+   "word": null,
+   "guard": null,
+   "case": "s",
+   "queries": [
+    "\"Guardians of the Galaxy\""
+   ]
+  },
+  {
+   "id": "wonder-woman-2017-film",
+   "stone": "Wonder Woman",
+   "article": "Wonder Woman (2017 film)",
+   "group": "decoy",
+   "type": "work",
+   "date": "2017",
+   "phrases": [
+    "Wonder Woman"
+   ],
+   "amb": true,
+   "word": "film",
+   "guard": null,
+   "case": "s",
+   "queries": [
+    "\"Wonder Woman\" film"
+   ]
+  },
+  {
+   "id": "it-2017-film",
+   "stone": "It",
+   "article": "It (2017 film)",
+   "group": "decoy",
+   "type": "work",
+   "date": "2017",
+   "phrases": [
+    "It"
+   ],
+   "amb": true,
+   "word": "film",
+   "guard": null,
+   "case": "s",
+   "skip": "the title is a single function word and cannot be searched as a phrase",
+   "queries": []
+  },
+  {
+   "id": "gravity-2013-film",
+   "stone": "Gravity",
+   "article": "Gravity (2013 film)",
+   "group": "decoy",
+   "type": "work",
+   "date": "2013",
+   "phrases": [
+    "Gravity"
+   ],
+   "amb": true,
+   "word": "film",
+   "guard": null,
+   "case": "s",
+   "queries": [
+    "\"Gravity\" film"
+   ]
+  },
+  {
+   "id": "interstellar-film",
+   "stone": "Interstellar",
+   "article": "Interstellar (film)",
+   "group": "decoy",
+   "type": "work",
+   "date": "2014",
+   "phrases": [
+    "Interstellar"
+   ],
+   "amb": true,
+   "word": "film",
+   "guard": null,
+   "case": "s",
+   "queries": [
+    "\"Interstellar\" film"
+   ]
+  },
+  {
+   "id": "inception",
+   "stone": "Inception",
+   "article": "Inception",
+   "group": "decoy",
+   "type": "work",
+   "date": "2010",
+   "phrases": [
+    "Inception"
+   ],
+   "amb": true,
+   "word": "film",
+   "guard": null,
+   "case": "s",
+   "queries": [
+    "\"Inception\" film"
+   ]
+  },
+  {
+   "id": "la-la-land",
+   "stone": "La La Land",
+   "article": "La La Land",
+   "group": "decoy",
+   "type": "work",
+   "date": "2016",
+   "phrases": [
+    "La La Land"
+   ],
+   "amb": true,
+   "word": "film",
+   "guard": null,
+   "case": "s",
+   "queries": [
+    "\"La La Land\" film"
+   ]
+  },
+  {
+   "id": "bohemian-rhapsody-film",
+   "stone": "Bohemian Rhapsody",
+   "article": "Bohemian Rhapsody (film)",
+   "group": "decoy",
+   "type": "work",
+   "date": "2018",
+   "phrases": [
+    "Bohemian Rhapsody"
+   ],
+   "amb": true,
+   "word": "film",
+   "guard": null,
+   "case": "s",
+   "queries": [
+    "\"Bohemian Rhapsody\" film"
+   ]
+  },
+  {
+   "id": "a-star-is-born-2018-film",
+   "stone": "A Star Is Born",
+   "article": "A Star Is Born (2018 film)",
+   "group": "decoy",
+   "type": "work",
+   "date": "2018",
+   "phrases": [
+    "A Star Is Born"
+   ],
+   "amb": true,
+   "word": "film",
+   "guard": null,
+   "case": "s",
+   "queries": [
+    "\"A Star Is Born\" film"
+   ]
+  },
+  {
+   "id": "joker-2019-film",
+   "stone": "Joker",
+   "article": "Joker (2019 film)",
+   "group": "decoy",
+   "type": "work",
+   "date": "2019",
+   "phrases": [
+    "Joker"
+   ],
+   "amb": true,
+   "word": "film",
+   "guard": null,
+   "case": "s",
+   "queries": [
+    "\"Joker\" film"
+   ]
+  },
+  {
+   "id": "dune-2021-film",
+   "stone": "Dune",
+   "article": "Dune (2021 film)",
+   "group": "decoy",
+   "type": "work",
+   "date": "2021",
+   "phrases": [
+    "Dune"
+   ],
+   "amb": true,
+   "word": "film",
+   "guard": null,
+   "case": "s",
+   "queries": [
+    "\"Dune\" film"
+   ]
+  },
+  {
+   "id": "top-gun-maverick",
+   "stone": "Top Gun: Maverick",
+   "article": "Top Gun: Maverick",
+   "group": "decoy",
+   "type": "work",
+   "date": "2022",
+   "phrases": [
+    "Top Gun: Maverick"
+   ],
+   "amb": false,
+   "word": null,
+   "guard": null,
+   "case": "s",
+   "queries": [
+    "\"Top Gun: Maverick\""
+   ]
+  },
+  {
+   "id": "spider-man-no-way-home",
+   "stone": "Spider-Man: No Way Home",
+   "article": "Spider-Man: No Way Home",
+   "group": "decoy",
+   "type": "work",
+   "date": "2021",
+   "phrases": [
+    "Spider-Man: No Way Home"
+   ],
+   "amb": false,
+   "word": null,
+   "guard": null,
+   "case": "s",
+   "queries": [
+    "\"Spider-Man: No Way Home\""
+   ]
+  },
+  {
+   "id": "avengers-endgame",
+   "stone": "Avengers: Endgame",
+   "article": "Avengers: Endgame",
+   "group": "decoy",
+   "type": "work",
+   "date": "2019",
+   "phrases": [
+    "Avengers: Endgame"
+   ],
+   "amb": false,
+   "word": null,
+   "guard": null,
+   "case": "s",
+   "queries": [
+    "\"Avengers: Endgame\""
+   ]
+  },
+  {
+   "id": "avengers-infinity-war",
+   "stone": "Avengers: Infinity War",
+   "article": "Avengers: Infinity War",
+   "group": "decoy",
+   "type": "work",
+   "date": "2018",
+   "phrases": [
+    "Avengers: Infinity War"
+   ],
+   "amb": false,
+   "word": null,
+   "guard": null,
+   "case": "s",
+   "queries": [
+    "\"Avengers: Infinity War\""
+   ]
+  },
+  {
+   "id": "the-super-mario-bros-movie",
+   "stone": "The Super Mario Bros. Movie",
+   "article": "The Super Mario Bros. Movie",
+   "group": "decoy",
+   "type": "work",
+   "date": "2023",
+   "phrases": [
+    "The Super Mario Bros. Movie"
+   ],
+   "amb": false,
+   "word": null,
+   "guard": null,
+   "case": "s",
+   "queries": [
+    "\"The Super Mario Bros. Movie\""
+   ]
+  },
+  {
+   "id": "wicked-2024-film",
+   "stone": "Wicked",
+   "article": "Wicked (2024 film)",
+   "group": "decoy",
+   "type": "work",
+   "date": "2024",
+   "phrases": [
+    "Wicked"
+   ],
+   "amb": true,
+   "word": "film",
+   "guard": null,
+   "case": "s",
+   "queries": [
+    "\"Wicked\" film"
+   ]
+  },
+  {
+   "id": "inside-out-2",
+   "stone": "Inside Out 2",
+   "article": "Inside Out 2",
+   "group": "decoy",
+   "type": "work",
+   "date": "2024",
+   "phrases": [
+    "Inside Out 2"
+   ],
+   "amb": true,
+   "word": "film",
+   "guard": null,
+   "case": "s",
+   "queries": [
+    "\"Inside Out 2\" film"
+   ]
+  },
+  {
+   "id": "deadpool-wolverine",
+   "stone": "Deadpool & Wolverine",
+   "article": "Deadpool & Wolverine",
+   "group": "decoy",
+   "type": "work",
+   "date": "2024",
+   "phrases": [
+    "Deadpool & Wolverine"
+   ],
+   "amb": false,
+   "word": null,
+   "guard": null,
+   "case": "s",
+   "queries": [
+    "\"Deadpool & Wolverine\""
+   ]
+  },
+  {
+   "id": "moana-2",
+   "stone": "Moana 2",
+   "article": "Moana 2",
+   "group": "decoy",
+   "type": "work",
+   "date": "2024",
+   "phrases": [
+    "Moana 2"
+   ],
+   "amb": true,
+   "word": "film",
+   "guard": null,
+   "case": "s",
+   "queries": [
+    "\"Moana 2\" film"
+   ]
+  },
+  {
+   "id": "elemental-film",
+   "stone": "Elemental",
+   "article": "Elemental (film)",
+   "group": "decoy",
+   "type": "work",
+   "date": "2023",
+   "phrases": [
+    "Elemental"
+   ],
+   "amb": true,
+   "word": "film",
+   "guard": null,
+   "case": "s",
+   "queries": [
+    "\"Elemental\" film"
+   ]
+  },
+  {
+   "id": "lightyear-film",
+   "stone": "Lightyear",
+   "article": "Lightyear (film)",
+   "group": "decoy",
+   "type": "work",
+   "date": "2022",
+   "phrases": [
+    "Lightyear"
+   ],
+   "amb": true,
+   "word": "film",
+   "guard": null,
+   "case": "s",
+   "queries": [
+    "\"Lightyear\" film"
+   ]
+  },
+  {
+   "id": "sing-2016-american-film",
+   "stone": "Sing",
+   "article": "Sing (2016 American film)",
+   "group": "decoy",
+   "type": "work",
+   "date": "2016",
+   "phrases": [
+    "Sing"
+   ],
+   "amb": true,
+   "word": "film",
+   "guard": null,
+   "case": "s",
+   "queries": [
+    "\"Sing\" film"
+   ]
+  },
+  {
+   "id": "ice-age-dawn-of-the-dinosaurs",
+   "stone": "Ice Age: Dawn of the Dinosaurs",
+   "article": "Ice Age: Dawn of the Dinosaurs",
+   "group": "decoy",
+   "type": "work",
+   "date": "2009",
+   "phrases": [
+    "Ice Age: Dawn of the Dinosaurs"
+   ],
+   "amb": false,
+   "word": null,
+   "guard": null,
+   "case": "s",
+   "queries": [
+    "\"Ice Age: Dawn of the Dinosaurs\""
+   ]
+  },
+  {
+   "id": "madagascar-escape-2-africa",
+   "stone": "Madagascar: Escape 2 Africa",
+   "article": "Madagascar: Escape 2 Africa",
+   "group": "decoy",
+   "type": "work",
+   "date": "2008",
+   "phrases": [
+    "Madagascar: Escape 2 Africa"
+   ],
+   "amb": false,
+   "word": null,
+   "guard": null,
+   "case": "s",
+   "queries": [
+    "\"Madagascar: Escape 2 Africa\""
+   ]
+  }
+ ]
+}
