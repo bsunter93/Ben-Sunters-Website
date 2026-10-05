@@ -37,3 +37,28 @@ The Congressional Record hop runs only as `.github/workflows/ripples-multihop-go
 secret). One limiter keeps request starts a second apart across every host; responses are cached outside the repository
 (`MULTIHOP_CACHE`), and a 403, 429 or 5xx stops that host for the UTC day (`MULTIHOP_STOPS`). `stage2` picks up where it
 stopped, including survivors whose Hansard search waited for a later day.
+## The screen (Oct 5, 2026)
+
+`docs/screen_plan_v1.md` registers a test of a language-model screen in place of the hand screen; `docs/screen_v1.md` is
+the result. `screen_rubric.md` is the rubric. `screen_sets.py` freezes the evaluation sets from the runs above
+(candidate fields only) into `screen_candidates_v1.json`; `screen_compare.py` compares the blind labels
+(`screen_labels_v1.json`) with the person's decisions and writes `screen_compare_v1.json` and the labeled corpus
+`screen_corpus_v1.json`. `screen_new_v1.json` holds the passes from a pool no person screened item by item (screened by a
+language model, not by a person). `screen.py` runs the same rubric through a language-model API (key, model and endpoint from
+environment variables, no defaults); it has not been run, and no workflow calls it.
+
+```
+cd ripples/docs/results
+python3 ../../lab/discovery/screen_sets.py
+python3 ../../lab/discovery/screen_compare.py
+```
+
+Screen v2 (`docs/screen_plan_v2.md`, `docs/screen_v2.md`): `screen_date.py` dates undated marks from their own
+records (inputs fixed in `screen_dating_inputs_v2.json`), and `screen_v2.py` applies the dates to the v1 labels and
+compares them with the hand keeps minus those that violate the written definitions.
+
+```
+cd ripples/docs/results
+python3 ../../lab/discovery/screen_date.py      # Wikipedia, honest user agent, one request a second
+python3 ../../lab/discovery/screen_v2.py
+```

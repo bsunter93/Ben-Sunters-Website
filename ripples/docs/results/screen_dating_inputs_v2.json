@@ -1,0 +1,361 @@
+{
+ "_about": "Inputs to the dating step of screen v2 (docs/screen_plan_v2.md), fixed and committed before any lookup. For every candidate that rubric v1 rejected only as undated (is_mark, link reason, not disputed), the labeler names the mark's own record: a Wikipedia article title, or null when the mark has no record of its own (a behavior change, an unnamed law, a local rule), with the reason. Named by a language model; the lookups are automatic.",
+ "records": {
+  "H38": {
+   "record": null,
+   "why_null": "a Connecticut statute amendment with no article of its own"
+  },
+  "H43": {
+   "record": null,
+   "why_null": "part of a state act with no article of its own"
+  },
+  "WR01": {
+   "record": null,
+   "why_null": "a designation, not a body or a law; the FBI's own article would date the FBI (1908), not the mark"
+  },
+  "WR07": {
+   "record": "American Jobs Creation Act of 2004",
+   "why_null": null
+  },
+  "WF005": {
+   "record": "September 11th Victim Compensation Fund",
+   "why_null": null
+  },
+  "WF007": {
+   "record": "Patriot Act",
+   "why_null": null
+  },
+  "WF009": {
+   "record": null,
+   "why_null": "no law named"
+  },
+  "WF010": {
+   "record": "Anti-terrorism Act, 2001",
+   "why_null": null
+  },
+  "WF014": {
+   "record": "Transportation Security Administration",
+   "why_null": null
+  },
+  "WF016": {
+   "record": "Justice Against Sponsors of Terrorism Act",
+   "why_null": null
+  },
+  "WF017": {
+   "record": null,
+   "why_null": "none named"
+  },
+  "WF024": {
+   "record": null,
+   "why_null": "no article of its own known to the labeler"
+  },
+  "WF025": {
+   "record": "Convention on Early Notification of a Nuclear Accident",
+   "why_null": null
+  },
+  "WF026": {
+   "record": "Joint Convention on the Safety of Spent Fuel Management and on the Safety of Radioactive Waste Management",
+   "why_null": null
+  },
+  "WF027": {
+   "record": "Chernobyl Children International",
+   "why_null": null
+  },
+  "WF028": {
+   "record": "Bhopal Gas Leak Disaster (Processing of Claims) Act, 1985",
+   "why_null": null
+  },
+  "WF034": {
+   "record": "Sambhavna Trust",
+   "why_null": null
+  },
+  "WF035": {
+   "record": "Rogers Commission Report",
+   "why_null": null
+  },
+  "WF036": {
+   "record": "Office of Safety and Mission Assurance",
+   "why_null": null
+  },
+  "WF043": {
+   "record": null,
+   "why_null": "a policy change with no record of its own"
+  },
+  "WF044": {
+   "record": null,
+   "why_null": "none named"
+  },
+  "WF045": {
+   "record": "Challenger Center for Space Science Education",
+   "why_null": null
+  },
+  "WF058": {
+   "record": null,
+   "why_null": "the laws are not named"
+  },
+  "WF063": {
+   "record": null,
+   "why_null": "the laws are not named"
+  },
+  "WF069": {
+   "record": null,
+   "why_null": "no article of its own known to the labeler"
+  },
+  "WF072": {
+   "record": null,
+   "why_null": "a scholarship"
+  },
+  "WF073": {
+   "record": null,
+   "why_null": "a scholarship and a sculpture with no article of their own known to the labeler"
+  },
+  "WF085": {
+   "record": "NICS Improvement Amendments Act of 2007",
+   "why_null": null
+  },
+  "WF089": {
+   "record": "Never Again MSD",
+   "why_null": null
+  },
+  "WF090": {
+   "record": null,
+   "why_null": "a state bill with no article of its own known to the labeler"
+  },
+  "WF091": {
+   "record": null,
+   "why_null": "the same"
+  },
+  "WF094": {
+   "record": "Marjory Stoneman Douglas High School Public Safety Act",
+   "why_null": null
+  },
+  "WF099": {
+   "record": null,
+   "why_null": "a state law with no article of its own known to the labeler"
+  },
+  "WF110": {
+   "record": "OnePulse Foundation",
+   "why_null": null
+  },
+  "WF111": {
+   "record": "OnePulse Foundation",
+   "why_null": null
+  },
+  "WF114": {
+   "record": null,
+   "why_null": "the regulation has no article of its own; the device's article would not date the ban"
+  },
+  "WF182": {
+   "record": "Comprehensive Environmental Response, Compensation, and Liability Act",
+   "why_null": null
+  },
+  "WF189": {
+   "record": null,
+   "why_null": "scholarships"
+  },
+  "C006": {
+   "record": null,
+   "why_null": "a behavior change or outcome with no record of its own"
+  },
+  "C011": {
+   "record": null,
+   "why_null": "a behavior change or outcome with no record of its own"
+  },
+  "C016": {
+   "record": null,
+   "why_null": "a behavior change or outcome with no record of its own"
+  },
+  "C019": {
+   "record": null,
+   "why_null": "a behavior change or outcome with no record of its own"
+  },
+  "C020": {
+   "record": null,
+   "why_null": "a behavior change or outcome with no record of its own"
+  },
+  "C021": {
+   "record": null,
+   "why_null": "a behavior change or outcome with no record of its own"
+  },
+  "C022": {
+   "record": null,
+   "why_null": "a behavior change or outcome with no record of its own"
+  },
+  "C034": {
+   "record": null,
+   "why_null": "a behavior change or outcome with no record of its own"
+  },
+  "C035": {
+   "record": null,
+   "why_null": "a behavior change or outcome with no record of its own"
+  },
+  "C036": {
+   "record": null,
+   "why_null": "a behavior change or outcome with no record of its own"
+  },
+  "C037": {
+   "record": null,
+   "why_null": "a behavior change or outcome with no record of its own"
+  },
+  "C038": {
+   "record": null,
+   "why_null": "a behavior change or outcome with no record of its own"
+  },
+  "C058": {
+   "record": null,
+   "why_null": "a behavior change or outcome with no record of its own"
+  },
+  "C061": {
+   "record": null,
+   "why_null": "a behavior change or outcome with no record of its own"
+  },
+  "C062": {
+   "record": null,
+   "why_null": "a behavior change or outcome with no record of its own"
+  },
+  "C064": {
+   "record": "Tianchisaurus",
+   "why_null": null
+  },
+  "C092": {
+   "record": null,
+   "why_null": "a behavior change or outcome with no record of its own"
+  },
+  "C093": {
+   "record": null,
+   "why_null": "a behavior change or outcome with no record of its own"
+  },
+  "C094": {
+   "record": null,
+   "why_null": "a behavior change or outcome with no record of its own"
+  },
+  "C099": {
+   "record": null,
+   "why_null": "a behavior change or outcome with no record of its own"
+  },
+  "C118": {
+   "record": null,
+   "why_null": "a behavior change or outcome with no record of its own"
+  },
+  "C133": {
+   "record": null,
+   "why_null": "a behavior change or outcome with no record of its own"
+  },
+  "C159": {
+   "record": null,
+   "why_null": "a behavior change or outcome with no record of its own"
+  },
+  "C195": {
+   "record": null,
+   "why_null": "a behavior change or outcome with no record of its own"
+  },
+  "C227": {
+   "record": null,
+   "why_null": "a behavior change or outcome with no record of its own"
+  },
+  "C230": {
+   "record": null,
+   "why_null": "a behavior change or outcome with no record of its own"
+  },
+  "N018": {
+   "record": null,
+   "why_null": "the chemical's article would not date the ban"
+  },
+  "N019": {
+   "record": null,
+   "why_null": "a prison policy with no article of its own"
+  },
+  "N033": {
+   "record": "United States Environmental Protection Agency",
+   "why_null": null
+  },
+  "N047": {
+   "record": null,
+   "why_null": "a behavior change"
+  },
+  "N048": {
+   "record": null,
+   "why_null": "a behavior change"
+  },
+  "N051": {
+   "record": "Pure Food and Drug Act",
+   "why_null": null
+  },
+  "N052": {
+   "record": "Food and Drug Administration",
+   "why_null": null
+  },
+  "N053": {
+   "record": null,
+   "why_null": "the laws are not named"
+  },
+  "N060": {
+   "record": "Federal Surplus Relief Corporation",
+   "why_null": null
+  },
+  "N065": {
+   "record": "DARPA",
+   "why_null": null
+  },
+  "N073": {
+   "record": "Comprehensive Environmental Response, Compensation, and Liability Act",
+   "why_null": null
+  },
+  "N074": {
+   "record": "Kemeny Commission",
+   "why_null": null
+  },
+  "N083": {
+   "record": null,
+   "why_null": "the laws are not named"
+  },
+  "N117": {
+   "record": null,
+   "why_null": "the law is not named in the fragment"
+  },
+  "N126": {
+   "record": null,
+   "why_null": "many state laws, none named"
+  },
+  "N128": {
+   "record": null,
+   "why_null": "many state laws, none named"
+  },
+  "N129": {
+   "record": null,
+   "why_null": "the law is not named"
+  },
+  "N132": {
+   "record": null,
+   "why_null": "a state law with no article of its own known to the labeler"
+  },
+  "N134": {
+   "record": null,
+   "why_null": "a behavior change"
+  },
+  "N135": {
+   "record": null,
+   "why_null": "a health outcome"
+  },
+  "N164": {
+   "record": null,
+   "why_null": "an outcome"
+  },
+  "N166": {
+   "record": null,
+   "why_null": "an outcome"
+  },
+  "N183": {
+   "record": null,
+   "why_null": "the town's article would date the town, not the colony"
+  },
+  "N185": {
+   "record": "UCSF School of Nursing",
+   "why_null": null
+  },
+  "N191": {
+   "record": "DARPA",
+   "why_null": null
+  }
+ }
+}
