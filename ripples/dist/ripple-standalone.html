@@ -265,6 +265,10 @@ input[type=range]{flex:1;accent-color:var(--marigold);min-width:0}
 .w2 .tally > [class^="l-"],.w2 .tally > .weak{display:none}.w2 .tally.open > [class^="l-"],.w2 .tally.open > .weak{display:inline}
 .sureq{background:none;border:0;padding:0 2px;font:inherit;color:var(--ink-2);text-decoration:underline;text-decoration-color:var(--hair);text-underline-offset:3px;cursor:pointer}.sureq:hover,.sureq:focus-visible{color:var(--ink)}.w2 .tally.open .sureq{color:var(--ink)}
 @media (max-width:700px){.w2 .legend:not(.keyopen) > span:not(.lgmark),.w2 .legend:not(.keyopen) > .lgnote{display:none}}  /* on a phone the key waits behind How it works; the lasting-mark glyph stays */
+.pkS{fill:none;stroke:rgba(2,14,28,.45);stroke-width:3}.pkH{fill:none;stroke:rgba(214,234,248,.42);stroke-width:1.3}.w2 .frontg{filter:url(#softwave)}
+.w2 .front{stroke-width:2;stroke:rgba(226,240,252,.6)}.w2 .frontS{stroke-width:3.8;stroke:rgba(2,14,28,.55)}
+.wbS{fill:none;stroke:rgba(2,14,28,.32);stroke-width:2.2}.wbH{fill:none;stroke:rgba(214,234,248,.16);stroke-width:1}
+.dimple{opacity:0;transition:opacity 1.2s ease-out .4s}.w2 #pond.sunk .dimple{opacity:1}
 .w2 .nlab text.s{opacity:0;transition:opacity .3s}.w2 .nlab.lit text.s,.w2 .nlab.hot text.s,.w2 #pond:not(.playing) .nlab text.s{opacity:1}  /* the date line under a label speaks on its beat, on hover and at rest, not while other beats play */
 .wake{stroke:rgba(190,225,255,.5);stroke-width:1.2;opacity:0;animation:wake 7s ease-out infinite}  /* the ring that leaves the stone every few seconds; named .wake, not .pulse, because .pulse is the paper chart above the cards and shared the name until Oct 4, which scaled the chart 7.5x over the pond every seven seconds */
 @keyframes wake{0%{transform:scale(.3);opacity:0}6%{opacity:.35}70%{transform:scale(7.5);opacity:0}100%{transform:scale(7.5);opacity:0}}
@@ -1022,7 +1026,7 @@ function draw(story) {
       <feGaussianBlur in="veins" stdDeviation=".9" result="b"/>
       <feComposite in="b" in2="SourceGraphic" operator="in"/>
     </filter>
-    <radialGradient id="w2fade" cx="50%" cy="50%" r="50%"><stop offset="0" stop-color="#fff"/><stop offset=".5" stop-color="#fff" stop-opacity=".9"/><stop offset="1" stop-color="#fff" stop-opacity="0"/></radialGradient><mask id="w2mask" maskContentUnits="userSpaceOnUse"><circle cx="${C.x}" cy="${C.y}" r="${R + 34}" fill="url(#w2fade)"/></mask>
+    <linearGradient id="w2sky" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#b9d6ec" stop-opacity=".16"/><stop offset=".45" stop-color="#7fa9c9" stop-opacity=".05"/><stop offset="1" stop-color="#020d18" stop-opacity=".3"/></linearGradient><radialGradient id="w2fade" cx="50%" cy="50%" r="50%"><stop offset="0" stop-color="#fff"/><stop offset=".5" stop-color="#fff" stop-opacity=".9"/><stop offset="1" stop-color="#fff" stop-opacity="0"/></radialGradient><mask id="w2mask" maskContentUnits="userSpaceOnUse"><circle cx="${C.x}" cy="${C.y}" r="${R + 34}" fill="url(#w2fade)"/></mask>
     <clipPath id="pondclip"><circle cx="${C.x}" cy="${C.y}" r="${R + 30}"/></clipPath>`;
   // the field: flat dark water to the edges. No shore, no sky: the pond is an instrument, and the grid is the picture
   const scene = el("g", {class:"scene"}, svg);
@@ -1074,7 +1078,15 @@ function draw(story) {
   const frontG = el("g", {class:"frontg", opacity:0}, plane);
   const front = {g:frontG, glow:el("circle", {class:"frontGlow", cx:C.x, cy:C.y, r:0}, frontG), shadow:el("circle", {class:"frontS", cx:C.x, cy:C.y, r:0, transform:"translate(0 2.4)"}, frontG),
     body:el("circle", {class:"front", cx:C.x, cy:C.y, r:0}, frontG), light:el("circle", {class:"frontH", cx:C.x, cy:C.y, r:0, transform:"translate(0 -1.6)"}, frontG)};
+  if (W2) front.packet = [1, 2, 3, 4].map(k => ({k, s:el("circle", {class:"pkS", cx:C.x, cy:C.y, r:0, transform:"translate(0 2)", style:`opacity:${(0.7 - k * 0.15).toFixed(2)}`}, frontG),
+    h:el("circle", {class:"pkH", cx:C.x, cy:C.y, r:0, transform:"translate(0 -1.3)", style:`opacity:${(0.62 - k * 0.13).toFixed(2)}`}, frontG)}));  // water: a packet of crests behind the front, each a lit crest over a dark trough, fading inward
   story.front = front;
+  if (W2) {  // water: the far surface takes the sky's light, the near one is dark; a dimple where the stone went in
+    el("circle", {cx:C.x, cy:C.y, r:R + 34, fill:"url(#w2sky)", mask:"url(#w2mask)"}, plane);
+    story.wbands = el("g", {class:"wbands"}, plane);
+    el("ellipse", {class:"dimple", cx:C.x, cy:C.y + 1, rx:9, ry:9, fill:"rgba(2,12,22,.55)"}, plane);
+    el("circle", {class:"dimple", cx:C.x, cy:C.y - 1.2, r:11, fill:"none", stroke:"rgba(214,234,248,.35)", "stroke-width":1.2}, plane);
+  }
   const sHalo = el("circle", {cx:C.x, cy:C.y, r:30, fill:"url(#wet)"}, plane);
   const sShadow = el("ellipse", {class:"sshadow", cx:C.x + 3, cy:C.y + 10, rx:28 * K, ry:22 * K, fill:"rgba(3,20,26,.3)", filter:"url(#soft)", style:"transform-box:fill-box;transform-origin:center"}, plane);  // the stone's shadow on the water
   const stone = el("g", {class:"stone"}, svg);
@@ -1481,6 +1493,7 @@ function land(it) {  // the label appears only once the ripple has arrived
   it.ring2.setAttribute("d", arcPath(Math.max(10, it.r - 7), it.span)); it.ring2.classList.remove("flying"); it.ring2.classList.add("on");
   if (it.lv !== "busted") { it.glint.setAttribute("d", arcPath(it.r, it.span)); it.glint.classList.add("on"); }
   it.crest.classList.add("on"); it.crestg.classList.add("on"); wobble(it, performance.now());
+  if (W2 && cur && cur.wbands && !it.wb) it.wb = [0, 6].map((o, i) => { const g = el("g", {class:"wb", style:`opacity:${i ? .5 : 1}`}, cur.wbands); el("circle", {class:"wbS", cx:C.x, cy:C.y, r:Math.max(8, it.r - o), transform:"translate(0 1.6)"}, g); el("circle", {class:"wbH", cx:C.x, cy:C.y, r:Math.max(8, it.r - o), transform:"translate(0 -1.1)"}, g); return g; });  // the water keeps a faint full ring where each ripple passed
   if ((it.showLabel && !it.quiet) || it === hot) { it.lab.classList.add("on"); if (it.leader) it.leader.classList.add("on"); }
   if (it.elbl) it.elbl.style.opacity = 1; if (it.band) it.band.style.opacity = .17;
   if (REEL) $("#caption").innerHTML = `${it.mark ? `<b>${HEX}${esc(it.mark)}</b> · ` : ""}${esc(it.label)} <span style="color:var(--ink-3)">· ${esc(it.lvText || LVL[it.lv])}${it.sub ? " · " + esc(it.sub) : ""}</span>`;
@@ -1496,6 +1509,7 @@ function hide(it) {
   [it.ring, it.ringS, it.ringH].forEach(r => { r.classList.remove("on", "flying"); r.setAttribute("d", arcPath(14, it.span)); });
   it.ring2.classList.remove("on", "flying"); it.ring2.setAttribute("d", arcPath(14, it.span)); it.glint.classList.remove("on");
   it.crest.classList.remove("on"); it.crestg.classList.remove("on");
+  if (it.wb) { it.wb.forEach(g => g.remove()); it.wb = null; }
   if (it.elbl) it.elbl.style.opacity = 0; if (it.band) it.band.style.opacity = 0;
 }
 function fly(it, now) {  // carried out from the stone on a wave whose crest reaches it as it lands
@@ -1633,6 +1647,7 @@ function render(now = performance.now()) {
   if (cur.front) {  // the wavefront: at the radius time has reached; gone once the story is at rest
     const fr = radius(Math.max(0.5, d)), live = t < 1 || playing || scrubbing;
     ["glow", "shadow", "body", "light"].forEach(k => cur.front[k].setAttribute("r", fr));
+    if (cur.front.packet) cur.front.packet.forEach(b => { const r = Math.max(0, fr - b.k * 9); b.s.setAttribute("r", r); b.h.setAttribute("r", r); });
     cur.front.g.setAttribute("opacity", live && t > PRE ? Math.min(1, (1 - t) * 6).toFixed(2) : 0);
   }
   for (const [it, n] of cur.plines || []) n.classList.toggle("on", it.state !== "hidden");  // the chart grows with the pond
