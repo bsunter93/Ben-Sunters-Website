@@ -58,36 +58,27 @@ Show HN: Ripple – see what an event changed downstream, with every link graded
 
 First comment (post within a minute of submitting):
 
-I grew up collecting seabeans on Florida's coast: seeds that fall into the ocean somewhere else and wash up thousands of miles away. Ripple points the same question at history. It starts with an event, looks forward in time for what changed downstream, and checks whether each link holds up.
+Ripple takes an event and looks forward in time for what changed downstream. Each link is graded by what backs it, strongest first:
 
-What you see is a pond. The stone is the event. Each ripple is something that changed afterward, placed at the date it began. Every link carries a grade:
+- Measured: the data shows it. A series (Wikipedia views, baby-name counts, official statistics) jumped more than at 95% of other dates in its own history, and the jump came after the step before it.
+- Timed: the order is right, but the jump wasn't tested against chance.
+- Reported: a source makes the link, like a member of Congress naming the show in the debate on the bill.
+- Plausible: both things happened, but nothing yet ties them together.
+- Busted: it started before its supposed cause, or the data contradicts it.
 
-- measured: a sustained rise in a series (daily Wikipedia views, US baby-name counts, some official series) that beats a placebo test against the series' own history, and began after the step before it
-- timed: right order, not tested against chance
-- reported: a credible source makes the link (for laws, usually the debate itself: a Congressional Record or Hansard sentence that names the work)
-- plausible: it happened; the link is unproven
-- busted: it started before its supposed cause, or there is no evidence it happened
+Order can only falsify, so nothing here is proof of cause. The arrow in each title is drawn from the weakest link.
 
-The ordering rule can only falsify. Nothing here is proof of cause. The arrow in each title is drawn from the weakest link on the way to the mark, and most stories carry a line naming the other things going on.
+The linked example: Tiger King (March 2020), a member of Congress citing it on the House floor (July 2022), the Big Cat Public Safety Act becoming law (December 2022).
 
-The linked example: Tiger King comes out in March 2020, attention to the zoo at its center spikes, a member of Congress cites the show on the House floor in July 2022, and the Big Cat Public Safety Act becomes law that December. The bill had been introduced in every Congress since 2012, and the page says so.
+The engine finds candidate links in Wikipedia, Hansard and the Congressional Record, and US baby-name counts. The recent studies were pre-registered and several missed their bars; the misses are in the repo.
 
-The engine has three routes so far:
+Weak spot: most pre-2015 links rest on sources, not data, because daily Wikipedia views start in 2015.
 
-- Wikipedia read as a cited-cause record: the event's article and the articles that link to it, read for sentences that name a lasting change, then dated and put in order. On our own catalog it recovers 62% of the marks, and 61% of its strict pairs were clean.
-- Parliament and Congress: every Hansard contribution and Congressional Record item that names a work, resolved to the law the bill became. The citation scorer is rules, precision .73 on the first hand-graded set.
-- Baby names: the sharpest rises in US name counts, matched to a work or person in the two years before. It missed its pre-registered bar (4 measured pairs against 5, 0 of 8 known cases). I shipped the two that held for years: Creed and Adonis, Glee and Quinn.
-
-The recent engine studies were pre-registered in the repo before results, and several missed their bars. The misses are published next to the hits.
-
-Known weak spots: most pre-2015 steps rest on reported links, because free daily attention data starts in 2015. The context lines have not had a second reader. Re-running the 13 Wikipedia-measured grades with the data cut off at three earlier dates flipped none, but that is one robustness check.
-
-Stack: one HTML file, SVG and a WebGL water surface, no framework. Python fetchers run on GitHub Actions and commit JSON back to the repo, served by GitHub Pages.
-
-Code, chains, protocols and results: https://github.com/bsunter93/Ben-Sunters-Website/tree/main/ripples
+One HTML file, SVG and WebGL, Python on GitHub Actions, GitHub Pages.
+Code and results: https://github.com/bsunter93/Ben-Sunters-Website/tree/main/ripples
 Methods: https://bensunter.com/ripples/methods/
 
-I'd most value pushback on the statistics framing.
+Pushback on the statistics framing is welcome.
 
 ============================================================
 
