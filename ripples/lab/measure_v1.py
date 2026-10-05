@@ -185,11 +185,7 @@ def nps_fetch(code):
     body = L.fetch(NPS_URL.format(u=code))
     if body is None:
         return None
-    try:
-        js = json.loads(body)
-    except ValueError:
-        return None
-    rows = js if isinstance(js, list) else next((v for v in js.values() if isinstance(v, list)), []) if isinstance(js, dict) else []
+    rows = nps_rows(body)
     out = {}
     for row in rows:
         if not isinstance(row, dict):
@@ -197,7 +193,7 @@ def nps_fetch(code):
         k = {x.lower(): x for x in row}
         yk = next((k[x] for x in k if x == "year"), None)
         mk = next((k[x] for x in k if x == "month"), None)
-        vk = next((k[x] for x in k if "recreation" in x and "visit" in x and "hour" not in x), None)
+        vk = next((k[x] for x in k if x.startswith("recreation") and "visit" in x and "hour" not in x), None)
         uk = next((k[x] for x in k if x in ("unitcode", "unit_code", "parkcode")), None)
         if not (yk and mk and vk):
             continue
@@ -208,6 +204,27 @@ def nps_fetch(code):
         except (TypeError, ValueError):
             continue
     return out or None
+
+
+def nps_rows(body):
+    """the API answers in XML (ArrayOfVisitationData) by default; JSON is read too. Addendum 1: the registered code read
+    JSON only, so the first run parsed no unit; this reads the same cached responses with no new request."""
+    text = body.decode("utf-8", "replace").lstrip() if isinstance(body, bytes) else str(body).lstrip()
+    if text.startswith("<"):
+        try:
+            root = ET.fromstring(text)
+        except ET.ParseError:
+            return []
+        out = []
+        for el in root.iter():
+            if el.tag.split("}")[-1] == "VisitationData":
+                out.append({c.tag.split("}")[-1]: (c.text or "").strip() for c in el})
+        return out
+    try:
+        js = json.loads(text)
+    except ValueError:
+        return []
+    return js if isinstance(js, list) else next((v for v in js.values() if isinstance(v, list)), []) if isinstance(js, dict) else []
 
 
 # ---------------------------------------------------------------- synthetic data for the dry run (no network)
@@ -465,11 +482,7 @@ def run_annual_b(rep, units):
             rep["marks"].append(row)
             continue
         body = L.fetch(NPS_TOTAL_URL.format(y=1977))
-        probe = None
-        try:
-            probe = json.loads(body) if body else None
-        except ValueError:
-            probe = None
+        probe = nps_rows(body) if body else None
         per_unit = isinstance(probe, list) and probe and isinstance(probe[0], dict) and any("unit" in k.lower() for k in probe[0])
         if not per_unit:
             row.update({"grade_v2": "not run", "line": "the NPS API returned no per-unit annual values for 1977; the annual design cannot run",
@@ -481,10 +494,10 @@ def run_annual_b(rep, units):
             b = L.fetch(NPS_TOTAL_URL.format(y=y))
             if not b:
                 break
-            for rw in json.loads(b):
+            for rw in nps_rows(b):
                 k = {x.lower(): x for x in rw}
                 uk = next((k[x] for x in k if "unitcode" in x), None)
-                vk = next((k[x] for x in k if "recreation" in x and "visit" in x and "hour" not in x), None)
+                vk = next((k[x] for x in k if x.startswith("recreation") and "visit" in x and "hour" not in x), None)
                 if uk and vk and str(rw[uk]).upper() == "DETO":
                     by_year[y] = float(rw[vk])
         if len(by_year) < 20:

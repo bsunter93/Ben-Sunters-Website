@@ -250,3 +250,19 @@ A failed part is reported as failed, with the diagnosis. Nothing found here chan
   an NPS unit.
 - Twelve-month windows from 1979 data give 1990s stones about 100 to 200 placebo windows, heavily overlapping.
 - Synthetic calibration shows rungs 2 and 3 do little against pure noise; their job is confounds.
+
+## Addendum 1, Oct 5, 2026, 07:55 UTC (late: after run 1, before any NPS value was read)
+
+Run 1 (07:29 to 07:52 UTC, 121 requests, every one answered 200, no host stopped) parsed no NPS unit: the visitation
+operation answers in XML (`ArrayOfVisitationData`), and the registered parser read JSON only, so all 32 arm-B marks came
+out "not run". Run 1's printed summary showed the arm-A and re-test grades; no arm-B value had been parsed or read.
+
+Fix, parser only: `nps_rows` reads the XML (and still reads JSON). Writing it showed a second parser fault that would
+have mattered: each record carries both `NonRecreationVisitors` and `RecreationVisitors`, and the registered key match
+("recreation" and "visit" in the name) would have taken the first, the non-recreation count. The match now requires the
+name to start with "recreation". The registered outcome (monthly recreation visits) is unchanged.
+
+Run 2 reads every response from run 1's local cache: no new request to any host, except that the conditional Close
+Encounters design (section 7.2) now runs if the cached 1977 totals response carries per-unit values, which run 1 could
+not read; if it does, run 2 requests the annual totals for 1955 to 1990, as registered. Nothing else changes: stones,
+pools, groups, windows, the test, the decoys and the bar are as committed in 01b0a09.
