@@ -13,7 +13,7 @@ import csv
 import os
 import sys
 
-sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", "..", "tools", "bq"))
+sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", "..", "..", "tools", "bq"))
 from common import Supabase  # noqa: E402
 
 

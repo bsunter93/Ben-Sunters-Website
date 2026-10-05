@@ -5,8 +5,8 @@ name: Ripples names export
 
 on:
   push:
-    branches: ["claude/**"]
-    paths: ["ripples/lab/names/export_names.py", ".github/workflows/ripples-names-export.yml"]
+    branches-ignore: ["main"]
+    paths: ["ripples/lab/discovery/names/export_names.py", ".github/workflows/ripples-names-export.yml"]
   workflow_dispatch:
 
 permissions:
@@ -25,7 +25,7 @@ jobs:
         with:
           python-version: "3.12"
       - name: Export names
-        working-directory: ripples/lab/names
+        working-directory: ripples/lab/discovery/names
         run: python export_names.py "$GITHUB_WORKSPACE/names_national_1995_2021.csv"
       - uses: actions/upload-artifact@v4
         with:
