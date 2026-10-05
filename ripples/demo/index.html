@@ -274,6 +274,20 @@ input[type=range]{flex:1;accent-color:var(--marigold);min-width:0}
 canvas.glw{position:absolute;pointer-events:none;border-radius:10px;z-index:0}.gl svg#pond{position:relative;z-index:1}
 .gl #pond .scene > rect,.gl #pond .scene + g > circle:first-child,.gl .sheen,.gl .wbands,.gl .frontg,.gl .wave,.gl .dimple,.gl #pond [fill="url(#w2sky)"],.gl #pond [fill="url(#wet)"],.gl .sshadow{display:none}
 .w2 .wake{display:none}
+/* the water look on a wide screen: the pond takes the full width and the cards run under it as a timeline, left to right in time, like the wave */
+@media (min-width:861px){
+  .w2 .wrap{grid-template-columns:minmax(0,1fr);max-width:1560px;gap:6px}
+  .w2 .pondbox{position:relative}
+  .w2 svg#pond{max-height:max(380px,calc(100vh - 330px))}
+  .w2 .feed{position:relative;top:auto;max-height:none;display:flex;gap:10px;overflow-x:auto;overflow-y:hidden;scroll-snap-type:x proximity;padding:6px 4px 14px;align-items:stretch;scrollbar-width:thin;mask-image:linear-gradient(90deg,#000 0,#000 calc(100% - 48px),transparent)}
+  .w2 .feed > *{flex:0 0 312px;scroll-snap-align:start;margin:0;display:flex;flex-direction:column}
+  .w2 .feed .card .when{white-space:nowrap}.w2 .feed .card .top{flex-wrap:nowrap;gap:8px}.w2 .feed .card .more summary{white-space:nowrap;width:max-content}
+  .w2 .feed .card .acts{margin-top:auto}.w2 .feed .card .markpill{white-space:nowrap;width:max-content;max-width:100%}
+  .w2 .feed > .pulse,.w2 .feed > .pulsefold{flex-basis:440px;position:static;box-shadow:none}
+  .w2 .feed .card .spark{max-height:46px}
+  .w2 .feed.empty{visibility:visible}
+}
+@media (min-width:861px) and (max-height:820px){.w2 svg#pond{max-height:calc(100vh - 362px)}}  /* a short laptop keeps the key above the fold, as before */
 .callout{opacity:0;transition:opacity .45s ease-out;pointer-events:none}.callout.on{opacity:1}
 .callout text{font:500 15px var(--sans);fill:#f2f6f9;paint-order:stroke;stroke:#0f1c26;stroke-width:4px;stroke-linejoin:round}
 .callout .cg{font-weight:600}.callout .cg.l-measured{fill:var(--good)}.callout .cg.l-timed{fill:var(--timed)}.callout .cg.l-reported{fill:var(--rec)}.callout .cg.l-plausible{fill:var(--plaus)}.callout .cg.l-busted{fill:var(--miss)}.callout .cg.l-mark{fill:var(--marigold)}
@@ -1793,7 +1807,8 @@ function render(now = performance.now()) {
     if (on && !c.shown) {
       c.shown = true; c.el.classList.add("in");
       const f = $("#feed");  // follow the story while it plays (desktop, where the feed scrolls on its own)
-      if (playing && f.scrollHeight > f.clientHeight) f.scrollTo({top:c.el.offsetTop - f.offsetTop - f.clientHeight + c.el.offsetHeight + 16, behavior:"smooth"});
+      if (playing && f.scrollWidth > f.clientWidth + 4) f.scrollTo({left:Math.max(0, c.el.offsetLeft - f.offsetLeft - f.clientWidth + c.el.offsetWidth + 24), behavior:"smooth"});  // the timeline strip under a wide pond follows the story sideways
+      else if (playing && f.scrollHeight > f.clientHeight) f.scrollTo({top:c.el.offsetTop - f.offsetTop - f.clientHeight + c.el.offsetHeight + 16, behavior:"smooth"});
     } else if (!on && c.shown) { c.shown = false; c.el.classList.remove("in"); }
     if (on && c.cursor && c.it && c.it.series && c.it.series.weekly) {
       const w = c.it.series.weekly, t0 = Date.parse(w[0][0]), t1 = Date.parse(w[w.length - 1][0]);
@@ -1832,7 +1847,7 @@ function focus(it) {
   let grew = true; while (grew) { grew = false; for (const x of cur.items) if (!lit.has(x) && [...lit].some(l => l.id === x.parent && (l === it || cur.items.indexOf(l) >= 0) && isDesc(x, it))) { lit.add(x); grew = true; } }
   lit.forEach(x => [x.g, x.path, x.lab, x.band, x.ring, x.crest].forEach(e => e && e.classList.add("lit")));
   $("#pond").classList.add("focus");
-  if (it.cardEl) { it.cardEl.classList.add("hot"); if (!REEL && window.innerWidth > 860) it.cardEl.scrollIntoView({block:"nearest", behavior:"smooth"}); }
+  if (it.cardEl) { it.cardEl.classList.add("hot"); if (!REEL && window.innerWidth > 860) it.cardEl.scrollIntoView({block:"nearest", inline:"nearest", behavior:"smooth"}); }
   if (!REEL && window.innerWidth <= 860) {  // on a phone the card is screens below: say what this ripple is, right under the pond
     const cap = $("#caption"); const capLine = it.short || (it.srcText ? esc(it.srcText) : ""); cap.innerHTML = `${it.mark ? `<b>${HEX}${esc(it.mark)}</b> · ` : ""}<b>${esc(it.label)}</b> <span style="color:var(--ink-3)">· ${esc(it.lvText || LVL[it.lv])}${it.sub ? " · " + esc(it.sub) : ""}</span>${capLine ? `<div class="sum">${capLine}</div>` : ""}<div class="acts"><a href="#" class="readcard">Read the card ↓</a></div>`;
     cap.querySelector(".acts").insertAdjacentHTML("beforeend", `<a href="#" class="shrcap">Share</a>`); cap.querySelector(".shrcap").onclick = e => { e.preventDefault(); shareStep(it); };
@@ -2012,7 +2027,7 @@ function show(kind, slug, autoplay = true) {
     const nested = pondsFor(it.title || it.label, kind, slug).concat(it.title && norm(it.title) !== norm(it.label) ? pondsFor(it.label, kind, slug) : []);
     if (nested.length) { it.ponds = nested; it.card.html += `<div class="ponds">${pondChips(nested, "This ripple is a stone too:")}</div>`; }
   }
-  draw(story); buildFeed(story); $("#feed").scrollTop = 0; render();
+  draw(story); buildFeed(story); $("#feed").scrollTop = 0; $("#feed").scrollLeft = 0; render();
   document.querySelectorAll(".pond").forEach(b => b.onclick = e => { e.stopPropagation(); show(b.dataset.kind, b.dataset.slug); window.scrollTo({top:0, behavior:"smooth"}); });
   const y = d => addDays(story.iso0, d).getUTCFullYear(), yEnd = y(Math.max(...story.items.filter(x => !x.future).map(x => x.d))), yMid = y(daysAt(0.5));
   $("#ticks").innerHTML = `<span>${y(0)}</span><span>${yMid > y(0) && yMid < yEnd ? yMid : ""}</span><span>${yEnd > y(0) ? yEnd : ""}</span>`;  // the end tick is the clock's end
