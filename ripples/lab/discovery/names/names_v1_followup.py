@@ -107,7 +107,7 @@ def main():
                 wi = D.get(w, {})
                 if rel != "same work" and (not wi.get("enwiki")):
                     continue
-                dt = nv.first_date(T.get(w)) if rel != "same work" else {"y": R, "m": M}
+                dt = nv.first_date(T.get(w)) if rel != "same work" else {"y": R, "m": M, "d": None}
                 if not dt:
                     continue
                 for c in cw.get(w, []):
@@ -200,7 +200,7 @@ def main():
                 for sq in x["sequels"]:
                     R2 = int(sq["date"][:4])
                     M2 = int(sq["date"][5:7]) if len(sq["date"]) >= 7 else None
-                    W2 = [y for y in range(nv.r_eff(R2, M2), R2 + 2) if y <= nv.Y1]
+                    W2 = [y for y in range(nv.r_eff(R2, M2), nv.r_eff(R2, M2) + 2) if y <= nv.Y1]  # two years from R_eff
                     if not W2:
                         vals.append({**sq, "observable": False})
                         continue

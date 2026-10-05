@@ -449,7 +449,7 @@ def first_date(ds, props=("P577", "P580", "P571")):
     for p in props:
         c = [x for x in ds or [] if x["p"] == p and x["prec"] >= 9 and 1800 <= x["y"] <= 2030]
         if c:
-            b = min(c, key=lambda x: (x["y"], x["m"] if x["prec"] >= 10 else 13))
+            b = min(c, key=lambda x: (x["y"], x["m"] if x["prec"] >= 10 else 13, x["d"] if x["prec"] >= 11 else 32))
             return {"y": b["y"], "m": b["m"] if b["prec"] >= 10 else None, "d": b["d"] if b["prec"] >= 11 else None}
     return None
 
@@ -642,10 +642,11 @@ def pair_record(st, ep, s):
     if t.get("t_hat"):
         th = t["t_hat"]
         rec["counts"] = st.counts(i, R - 3, min(Y1, th + 5))
-        rec["counts_before_after"] = {"year_before_release": R - 1, "n_before": st.n(i, R - 1),
+        yb = max(R - 1, Y0)  # a stone released before 1996 is compared with 1995, the first year in the data
+        rec["counts_before_after"] = {"year_before_release": yb, "n_before": st.n(i, yb),
                                       "onset_year": t["onset"], "peak_year": th, "n_peak": st.n(i, th)}
         rec["persistence"] = persistence(st, i, th, R, sign)
-        rec["plain"] = plain(ep["name"], ep["sex"], sign, st.n(i, R - 1), R - 1, st.n(i, th), th)
+        rec["plain"] = plain(ep["name"], ep["sex"], sign, st.n(i, yb), yb, st.n(i, th), th)
         rec["lag_years"] = {"onset_minus_release": t["onset"] - R, "peak_minus_release": th - R}
     rec["seen_before_registration"] = (ep["name"], ep["sex"]) in SEEN
     return rec
@@ -817,18 +818,31 @@ def scan():
 
 # ---------------------------------------------------------------- finalize: merge the hand check, grade, score the bar
 def pair_key(p):
-    return f"{p['name']}|{p['sex']}|{p['direction']}|{p['stone']['wikidata']}"
+    return f"{p['name']}|{p['sex']}|{p['direction']}|{p['stone']['wikidata']}|{p['stone']['via_qid']}"
 
 
 def finalize():
     cand = json.load(open(os.path.join(RESULTS, "names_v1_candidates.json")))
     hc = json.load(open(os.path.join(RESULTS, "names_v1_handcheck.json")))
     checks = hc["pairs"]
+    labels = hc.get("labels", {})
+    for p in cand["pairs"]:  # items whose only label is multilingual ("mul") come back unlabeled in English
+        s = p["stone"]
+        if (not s["title"] or re.match(r"^Q\d+$", s["title"])) and s["wikidata"] in labels:
+            s["title"] = labels[s["wikidata"]]
+        if not s.get("via") and s.get("via_qid") in labels:
+            s["via"] = labels[s["via_qid"]]
     graded, dropped, unchecked = [], [], []
-    for p in cand["pairs"]:
+    seen_pairs = set()
+    for p in sorted(cand["pairs"], key=lambda p: not checks.get(pair_key(p), {}).get("pass", False)):
         if p["stat_grade"] in ("no move", "out of range"):
             continue
         k = pair_key(p)
+        k4 = (p["name"], p["sex"], p["direction"], p["stone"]["wikidata"])
+        if k4 in seen_pairs and checks.get(k, {}).get("pass"):
+            continue  # one graded row per name and stone (the same film reached through two character items)
+        if checks.get(k, {}).get("pass"):
+            seen_pairs.add(k4)
         h = checks.get(k)
         if h is None:
             unchecked.append(k)
@@ -902,7 +916,9 @@ def finalize():
                                       "stone": p["stone"]["title"], "date": p["stone"]["date"],
                                       "via": p["stone"]["via"], "stat_grade": p["stat_grade"],
                                       "reason": p["hand_check"]["reason"]} for p in dropped],
-           "episodes_without_a_stone": None}
+           "episodes_without_a_stone": None,
+           "placebo_window_handcheck": hc.get("placebo_window_handcheck"),
+           "hand_check_rules": hc.get("rules_applied")}
     matched_eps = {epkey(p) for p in cand["pairs"]}
     out["episodes_without_a_stone"] = len([e for e in cand["episode_list"]
                                            if (e["name"], e["sex"], "rise" if e["sign"] > 0 else "fall", e["peak"])
