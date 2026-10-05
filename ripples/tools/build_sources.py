@@ -16,7 +16,7 @@ Keying. Chains are keyed by the step's `n`. The slug "tiger-king" is shown in
 the demo as a ripple MAP (ripples/maps/out/tiger-king.json, MAPS config in
 ripples/demo/index.html), not as the chain of the same slug. The demo's
 fromMap() looks items up by their index in the map's `steps` array
-(MAPS["tiger-king"].nodes keys 1, 2, 4, 5 are those indexes), so "tiger-king"
+(MAPS["tiger-king"].nodes keys 1, 2, 4, 5, 6 are those indexes), so "tiger-king"
 is keyed by map step INDEX (0 = the release). The hint pass skips that slug so
 the chain's step numbers cannot collide with the map's indexes.
 
@@ -62,8 +62,8 @@ CURATED = {
         1: W("Exotic pet"),
         2: W("Wildlife trade"),
         4: congress("116th", "house-bill", 1380, "H.R. 1380, Big Cat Public Safety Act (116th Congress)"),
-        5: ("https://www.govinfo.gov/link/plaw/117/public/243", "govinfo: Public Law 117-243, Big Cat Public Safety Act, Dec 20, 2022"),
-        6: ("https://www.govinfo.gov/app/details/CREC-2022-07-28/CREC-2022-07-28-pt1-PgH7388", "govinfo: Congressional Record, Jul 28, 2022, H7388"),
+        5: ("https://www.govinfo.gov/app/details/CREC-2022-07-28/CREC-2022-07-28-pt1-PgH7388", "govinfo: Congressional Record, Jul 28, 2022, H7388"),
+        6: ("https://www.govinfo.gov/link/plaw/117/public/243", "govinfo: Public Law 117-243, Big Cat Public Safety Act, Dec 20, 2022"),
     },
     "mr-bates-horizon": {
         1: W("Mr Bates vs The Post Office"),
