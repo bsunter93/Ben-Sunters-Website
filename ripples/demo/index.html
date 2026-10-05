@@ -502,8 +502,8 @@ const STONE_SVG = `<path d="M-13.5,-3.5 C-13,-11 -5.5,-15.5 2.5,-14.5 C9.5,-13.6
 // Hand-built maps (from ripples/maps/out): which steps to show, short labels, parents, and the main slice's industry.
 const MAPS = {
   "tiger-king": {h1:"Tiger King → a federal law, 1,005 days later", stone:"Tiger King", main:"Wildlife law",
-    sub:"Netflix's lockdown hit sent millions to read about big cats, then Congress moved. The bill predates the show, so the law shows order, not proof of cause.",
-    nodes:{1:{l:"Exotic pets"}, 2:{l:"Wildlife trade", p:1}, 4:{l:"House passes Big Cat Act", p:2, lv:"plausible"}, 5:{l:"Big Cat Act becomes law", p:4, lv:"plausible", mark:"Law"}}},
+    sub:"Netflix's lockdown hit sent millions to read about big cats. In 2022 a member of Congress cited the show in the debate on the bill that became law. The bill predates the show, so this shows order and a citation, not proof of cause.",
+    nodes:{1:{l:"Exotic pets"}, 2:{l:"Wildlife trade", p:1}, 4:{l:"House passes Big Cat Act", p:2, lv:"plausible", aside:true}, 5:{l:"Congress cites Tiger King", lv:"reported"}, 6:{l:"Big Cat Act becomes law", p:5, lv:"reported", mark:"Law"}}},  // 4 is the 2020 bill that died in the Senate: shown, not on the way to the 2022 law; 5 is the floor citation (Congressional Record, Jul 28, 2022), graded reported as the fact-check chain grades the Act
   "queens-gambit": {h1:"The Queen's Gambit → chess sets sold out", stone:"The Queen's Gambit", main:"Retail: chess sets",
     sub:"A drama about a fictional prodigy sent people to the game, then to the gear, then to the stores.",
     nodes:{1:{l:"Chess"}, 2:{l:"Chess sets", p:1}, 4:{l:"Chess sets sell +87%", p:2}}},
@@ -725,7 +725,7 @@ function fromMap(slug) {
     const art = lv === "measured" ? (s.measure || "").replace(/.*“([^”]+)”.*/, "$1") : "";
     const link = sl ? [sl.url, sl.label] : art && art !== s.measure ? [`https://en.wikipedia.org/wiki/${encodeURIComponent(art.replace(/ /g, "_"))}`, `Wikipedia: ${art}`] : s.source ? [s.source, "Source"] : null;
     const src = `<p class="src">${esc(amer(s.measure || ""))}${link ? ` · <a href="${esc(link[0])}" rel="noopener" target="_blank">${esc(link[1])} ↗</a>` : s.measure ? ` <span class="nolink">· not linked yet</span>` : ""}</p>`;
-    items.push({id:`m${i}`, parent:n.p ? `m${n.p}` : null, slice:"main", d:Math.max(s.days, 0.5), label:n.l, lv, sub:`${fmtMonth(D(s.date))} · ${sinceLabel(s.days)}`, mark:n.mark, title:s.title,
+    items.push({id:`m${i}`, parent:n.p ? `m${n.p}` : null, slice:"main", aside:!!n.aside, d:Math.max(s.days, 0.5), label:n.l, lv, sub:`${fmtMonth(D(s.date))} · ${sinceLabel(s.days)}`, mark:n.mark, title:s.title,
       short:lv === "plausible" ? "Happened; the link is unproven" : lv === "measured" ? "Passed a test against fake dates" : lv === "reported" ? (s.measure || "") : "Rose after the step before",
       series:s.series && s.series.weekly ? s.series : null,
       card:card({when:`${fmt(D(s.date))}<span>${sinceLabel(s.days)}</span>`, badge:LVL[lv], badgeCls:`l-${lv}`, title:s.title,
@@ -758,7 +758,8 @@ function fromDisc(slug) {
 
 // ---- Parliament's citations, resolved to Acts (ripples/docs/results/bill_act_v1.json) ----
 // The engine read every Hansard contribution naming a work and resolved the bill under debate to the Act it became.
-const ACTS_SKIP = /^(The Jungle|Yes \(|Yes Minister|Stranger Things|Upstairs|Heartbeat|Care Bears|60 Minutes|Nineteen Eighty|Big Brother|Will & Grace|Just a Minute|It's a Knockout)/;
+const SHARE_PAGES = new Set(["chain:america-and-alcohol", "chain:broad-street-sanitation", "chain:cantaloupe-penicillin", "chain:cathy-come-home", "chain:cellucotton-kleenex", "chain:chernobyl-zone", "chain:container-waterfronts", "chain:daily-show-zadroga", "chain:earthquake-bank", "chain:ethanol-tortilla", "chain:frozen", "chain:fukushima", "chain:haber-nitrogen", "chain:heat-pump-super-soaker", "chain:ice-bucket", "chain:jurassic-park", "chain:magnetron-microwave", "chain:manhunt-byron", "chain:mr-bates-horizon", "chain:muybridge-cinema", "chain:ocean-attenborough", "chain:octopus-sentience", "chain:perkin-chemotherapy", "chain:planet-earth", "chain:quincy-orphan-drug", "chain:sildenafil-viagra", "chain:silent-spring-ddt", "chain:sixty-minutes-stock-act", "chain:sputnik-gps", "chain:squid-game-ripples", "chain:tambora-bicycle", "chain:tylenol", "chain:victim-1961", "chain:wardrobe-malfunction", "chain:west-wing-hatred-act", "chain:winter-storm-uri", "map:tiger-king"]);  // the stories with a share page in demo/s/, from tools/qa/cards_list.json; keep the two in step
+const ACTS_SKIP = /^(Nowhere to Run|Bloodline|The Jungle|Yes \(|Yes Minister|Stranger Things|Upstairs|Heartbeat|Care Bears|60 Minutes|Nineteen Eighty|Big Brother|Will & Grace|Just a Minute|It's a Knockout)/;
 function actPairs(work) {
   return (DATA.acts && DATA.acts.pairs || []).filter(p => p.work === work && p.ordered && p.royal_assent && !ACTS_SKIP.test(p.work))
     .sort((a, b) => a.royal_assent.localeCompare(b.royal_assent));
@@ -1810,7 +1811,7 @@ function show(kind, slug, autoplay = true) {
   renderPicker();
   const named = TABS[tab].find(([k, s]) => k === kind && s === slug);
   const RANK = {measured:0, timed:1, reported:2, plausible:3};
-  const mainPath = story.items.filter(x => x.lv !== "busted" && !x.disc && (x.slice === "main" || !x.slice));
+  const mainPath = story.items.filter(x => x.lv !== "busted" && !x.disc && !x.aside && (x.slice === "main" || !x.slice));  // an aside (a step shown for context, off the way to the mark) does not set the arrow
   const path = mainPath.length ? mainPath : story.items.filter(x => x.lv !== "busted" && !x.disc);  // a chain with named slices: every step is on the way
   const upTo = marks.length ? path.filter(x => x.d <= Math.max(...marks.map(m => m.d))) : path;
   const weak = (upTo.length ? upTo : path).reduce((w, x) => w == null || RANK[x.lv] > RANK[w] ? x.lv : w, null) || "plausible";
@@ -1940,7 +1941,7 @@ function showEndBeat() {  // at rest the lower third says what stayed and points
   };
   $("#share").onclick = async () => { track("share", {slug: cur && cur.key, what: "story"});
     // featured stories have a share page with a preview card (ripples/demo/s/<slug>/); the rest link straight in
-    const featured = Object.values(TABS).flat().some(([, s]) => s === cur.key);
+    const featured = SHARE_PAGES.has(`${cur.kind}:${cur.key}`);  // only stories that have a page; a featured tab alone 404'd on 72 stories (Oct 4)
     const url = featured ? `https://bensunter.com/ripples/demo/s/${cur.key}/` : `https://bensunter.com/ripples/demo/?${cur.kind === "chain" ? "c" : cur.kind === "acts" ? "a" : cur.kind === "wiki" ? "w" : "m"}=${encodeURIComponent(cur.key)}`, title = $("#h1").textContent;
     try { if (navigator.share) { await navigator.share({title:`Ripple: ${title}`, text:$("#sub").textContent, url}); return; } } catch { return; }
     try { await navigator.clipboard.writeText(url); toast("Link copied"); } catch { window.prompt("Copy this link", url); }

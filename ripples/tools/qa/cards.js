@@ -8,7 +8,7 @@ const esc = s => s.replace(/&/g, '&amp;').replace(/"/g, '&quot;').replace(/</g, 
   const p = await b.newPage({ viewport: { width: 1200, height: 630 }, deviceScaleFactor: 1 });
   for (const [kind, slug, title] of list) {
     await p.goto(`${base}?${kind === 'chain' ? 'c' : 'e'}=${slug}&card=1`); await p.waitForTimeout(2600);
-    const sub = await p.$eval('#sub', e => e.textContent.trim());
+    const sub = await p.$eval('#sub', e => { const c = e.cloneNode(true); c.querySelectorAll('.moreq').forEach(x => x.remove()); return c.textContent.replace(/\s+/g, ' ').trim(); });  // the "more" toggle is page chrome, not description
     await p.screenshot({ path: path.join(REPO, 'ripples/demo/cards', slug + '.png') });
     const q = `${kind === 'chain' ? 'c' : 'e'}=${slug}`, url = `https://bensunter.com/ripples/demo/?${q}`;
     fs.mkdirSync(path.join(REPO, 'ripples/demo/s', slug), { recursive: true });

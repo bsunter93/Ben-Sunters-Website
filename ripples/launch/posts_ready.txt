@@ -10,9 +10,9 @@ So I built a thing to follow the thread, and to be honest about how sure we can 
 
 It's called Ripple. You throw a stone (a show, a film, a disaster, a discovery) into a pond. The ripples spread out in time; each one is something that changed afterward, placed where it began. Every link is graded: measured against data with a placebo test, timed in the right order, reported by a source, or just plausible. Some are busted, because the "effect" started before its "cause".
 
-The one it opens on: Tiger King. Netflix, March 2020. Within weeks, attention to exotic pets and the wildlife trade ran several times its normal level. In December 2022, the Big Cat Public Safety Act became law. The title draws an arrow from the show to the law, and the arrow is dotted, because the weakest link on the way is only plausible. Under it, one sentence I think every story like this owes you: it wasn't the only reason. Versions of the bill had been introduced in every Congress since 2012 and campaigned for by animal-welfare groups for years.
+The one it opens on: Tiger King. Netflix, March 2020. Within weeks, attention to exotic pets and the wildlife trade ran several times its normal level. In December 2022, the Big Cat Public Safety Act became law. In July 2022 a congressman cited the show on the House floor, in the debate on that bill; the engine found the sentence in the Congressional Record. The arrow in the title is drawn from the weakest link on the way: reported. A source makes the link; nobody measured it. Under it, one sentence I think every story like this owes you: it wasn't the only reason. Versions of the bill had been introduced in every Congress since 2012 and campaigned for by animal-welfare groups for years.
 
-Try Sputnik: five lasting marks in a year (ARPA, the Space Act, the Education Act, NASA, ARPANET), each law linked to the statute itself. And look at the Engine leads tab: what the engine found on its own, screened by hand, with the sentence that makes each link. Try Prohibition, where every popular "catalyst" for Gen Z drinking less turns out to have arrived decades after the decline began. Order is a strict judge.
+Try Sputnik: four lasting marks in a year (ARPA, the Space Act, NASA, the Education Act) and ARPANET twelve years after Sputnik, each law linked to the statute itself. And look at the Engine leads tab: what the engine found on its own, screened by hand, with the sentence that makes each link. Try Prohibition, where every popular "catalyst" for Gen Z drinking less turns out to have arrived decades after the decline began. Order is a strict judge.
 
 Ripple is a v1 and an honest one. Timing shows order, not proof of cause. The tests, the misses and the methods are published alongside it, and so is the sentence about what else was going on.
 
@@ -66,9 +66,9 @@ What it is: a pond. The stone is an event. Each ripple is something that changed
 - plausible: it happened; the link is unproven
 - busted: it started before its supposed cause, or there's no evidence it happened
 
-The ordering rule only falsifies; nothing here is proof of cause, and the UI says so three ways: the arrow in the title is drawn from the weakest link on the path to the mark, the subtitle says it in words, and every story carries an editorial line naming the other things going on.
+The ordering rule only falsifies; nothing here is proof of cause, and the UI says so three ways: the arrow in the title is drawn from the weakest link on the path to the mark, the subtitle says it in words, and every hand-built story carries an editorial line naming the other things going on.
 
-Two things I checked before shipping that I'd want to know as a reader. First, whether grades drift: the placebo windows are drawn from the page's history before the step, and re-running the 13 measured grades with the data truncated at three cutoffs flipped none; each measured card carries the run date and checker commit. Second, the statutes: 22 US law steps link to govinfo's page scan, and each was confirmed by reading "Public Law N-M" off the PDF's first page (seven pre-1951 scans have no text layer, so those are confirmed by the granule boundary and the docs say so).
+Two things I checked before shipping that I'd want to know as a reader. First, whether grades drift: the placebo windows are drawn from the page's history before the step, and re-running the 13 Wikipedia-measured grades with the data truncated at three cutoffs flipped none; each measured card carries the run date and checker commit. Second, the statutes: 22 US law steps link to govinfo's page scan, and each was confirmed by reading "Public Law N-M" off the PDF's first page (seven pre-1951 scans have no text layer, so those are confirmed by the granule boundary and the docs say so).
 
 The engine side: a records route reads every Hansard contribution / Congressional Record item that names a work, resolves the bill to the Act, and a rule-based scorer labels each citation as a reason, context or an aside (precision .73 on the first hand-graded set, published). A person still screens the output. One dose-response design (retail-cannabis states vs not, young-adult drinking) came back within chance and is shown as such.
 
@@ -83,8 +83,8 @@ Things I know are weak: most pre-2015 steps rest on reported links because free 
 ## X / Threads (a short thread, the vertical or 16:9 clip on the first post)
 
 1. I built a pond. Throw a show, a film, a disaster or a discovery into it and watch what it changed, in the order it happened. Every link graded for how sure we can be. https://bensunter.com/ripples/demo/
-2. Tiger King → the Big Cat Act. The arrow is dotted on purpose: the weakest link on the way is only plausible. And under the title: it wasn't the only reason. The bill had been introduced in every Congress since 2012.
-3. Sputnik → ARPA, the Space Act, the Education Act, NASA, ARPANET. Five lasting marks in a year. Each law links to the statute itself.
+2. Tiger King → the Big Cat Act. A congressman cited the show on the House floor in the debate on the bill. The arrow says reported, not measured: a citation is not proof. And under the title: it wasn't the only reason. The bill had been introduced in every Congress since 2012.
+3. Sputnik → ARPA, the Space Act, the Education Act, NASA, ARPANET. Four lasting marks in a year, and ARPANET twelve years later. Each law links to the statute itself.
 4. The engine now reads Wikipedia as a record: the event's article and the laws that link back to it, for the sentence that names the change, dated and put in order. What it found, screened by hand, is under Engine leads.
 5. Prohibition → Gen Z drinking less. Every popular catalyst (phones, Dry January, cannabis) arrived decades after the decline began. Order is a strict judge.
 6. It's a v1. Methods, misses and the tests are published. Which stone would you throw?
@@ -109,6 +109,6 @@ Subject: Every link graded: a tool that dates both ends of a "this caused that" 
 
 Ripple (https://bensunter.com/ripples/demo/) is a free tool that takes a cultural event and shows what changed afterward, in time order, with every link graded for how sure we can honestly be: measured against data with a placebo test, timed, reported by a named source, plausible, or busted because the effect began before its cause.
 
-Why it might be useful at a desk: the headline arrow is drawn from the weakest link, so the page cannot promise more than its worst card; every US law links to the statute on govinfo, every measured card carries the run date and checker commit, and every story has a line naming what else was going on. The record of what it got wrong is published next to what it got right.
+Why it might be useful at a desk: the headline arrow is drawn from the weakest link, so the page cannot promise more than its worst card; 23 US statutes link to the law itself on govinfo, every measured card carries the run date and checker commit, and every hand-built story has a line naming what else was going on. The record of what it got wrong is published next to what it got right.
 
 A story to test it on: Tiger King → the Big Cat Public Safety Act, where the honest version includes a bill introduced in every Congress since 2012. Another: Prohibition and the Gen Z decline in drinking, where it busts the smartphone, Dry January and cannabis explanations by date. I would welcome a correction more than a link.
