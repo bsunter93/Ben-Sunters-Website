@@ -478,6 +478,7 @@ def main() -> int:
         "steps": steps,
         "catalysts": {"scan_source": primary, "top20": top, "decoy_entity_candidates": decoy_c,
                       "n_candidates": len(cands), "n_changes": len(scans[primary]),
+                      "all_candidates": [c for c in cands if c not in top and c["group"] != "decoy"],
                       "replication": {s: [c for c in scans[s] if c["candidate"]] for s in scans if s != primary and scans[s]}},
     }
     json.dump(rep, open(OUT, "w"), indent=1, ensure_ascii=False)

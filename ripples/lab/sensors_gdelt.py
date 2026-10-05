@@ -191,6 +191,29 @@ def main() -> int:
                 r = doc_series(q, reg["doc_suffix"])
                 out["doc"] = [x for x in out["doc"] if x["q"] != q] + [r]
                 print(f"doc {i + 1}/{len(docq)}", q, "points" if "counts" in r else r, flush=True)
+        if only == "panel-tv":  # plan section 7: television only around catalyst candidates (from sensors_v1.json)
+            res = json.load(open(os.path.join(ROOT, "docs", "results", "sensors_v1.json")))
+            cands = [c for c in res["catalysts"]["top20"]] + [c for c in res["catalysts"].get("decoy_entity_candidates", [])]
+            cands += [c for c in res["catalysts"].get("all_candidates", []) if c not in cands]
+            tvq = {it["entity"]: it["q"]["tv"] for it in reg["items"] if it["set"] == "E"}
+            want = {}
+            for c in cands:
+                d = D(c["onset"])
+                k = (tvq[c["entity"]], "US")
+                a, b = d - dt.timedelta(days=150), d + dt.timedelta(days=30)
+                if k in want:
+                    want[k] = (min(want[k][0], a), max(want[k][1], b))
+                else:
+                    want[k] = (a, b)
+            prev = {(x["q"], x.get("country")): x for x in out["tv"] if "clips" in x}
+            for i, ((q, cty), (a, b)) in enumerate(want.items()):
+                if (q, cty) in prev:  # a step already holds this query: widen to cover both (whole chunks are cached)
+                    x = prev[(q, cty)]
+                    a = min(a, D(x["first"]))
+                    b = max(b, D(x["first"]) + dt.timedelta(days=len(x["clips"]) - 1))
+                r = tv_series(q, cty, max(a, dt.date(2009, 7, 2)), min(b, DOC_END), reg["tv_stations"][cty])
+                out["tv"] = [x for x in out["tv"] if (x["q"], x.get("country")) != (q, cty)] + [r]
+                print(f"panel tv {i + 1}/{len(want)}", q, "ok" if "clips" in r else r, flush=True)
         if only in ("all", "tv"):
             for i, t in enumerate(tvq):
                 if (t["q"], t["country"]) in have_tv:

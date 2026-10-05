@@ -7,9 +7,12 @@ before the first request to any source; one amendment, `11eb8ad` (06:37 UTC), be
 `ripples/lab/sensors_v1.py` (the test, convergence, calibration, catalyst scan), `ripples/lab/sensors_mediacloud.py` (the
 workflow's counter), `ripples/lab/sensors_gdelt.py` (the GDELT fetcher).
 
-**Status: interim.** GDELT refused the first request and is closed until Oct 6, 00:00 UTC; Media Cloud stopped on a 504
+**What ran.** GDELT refused the first request and is closed until Oct 6, 00:00 UTC; Media Cloud stopped on a 504
 partway through. Everything below is Media Cloud's online news against the stored Wikipedia results. Television, GDELT's
-news and the catalyst scan are not in this version.
+news and the catalyst scan did not run in this pass. The GDELT leg is ready for its one registered attempt after Oct 6,
+00:00 UTC: `python3 ripples/lab/sensors_gdelt.py`, then `python3 ripples/lab/sensors_v1.py`, then
+`python3 ripples/lab/sensors_gdelt.py panel-tv` for television around the catalyst candidates, `sensors_v1.py` again,
+and the hand check of the top 20 into `ripples/lab/sensors_handcheck_v1.json`.
 
 ## In one paragraph
 
@@ -210,8 +213,11 @@ converged with Wikipedia within a day. That shows the rule recovers known stones
 
 ## 6. Limits
 
-- Television and GDELT's news are missing from this version. For the six non-converging steps, television is the family
-  that could still confirm them.
+- Television and GDELT's news are missing from this pass. For the six non-converging steps, television is the family
+  that could still confirm them, so bar part 1 is failed on the evidence that exists, not settled.
+- Media Cloud stopped after 68 of 166 queries. The workflow is registered to run once; the remaining 98 (nine leads and
+  90 panel entities) need a second run, which is the owner's call. Its counter skips nothing today, so a second run
+  would refetch the 68 as well (about 168 requests, under an hour and a half at 2 a minute).
 - Media Cloud and GDELT DOC are both online news; when GDELT runs, it is a second view of the same family, not a third.
 - US National is the collection for US steps; Squid Game, ddakji and the Wednesday castle are global stories read through
   US outlets.
