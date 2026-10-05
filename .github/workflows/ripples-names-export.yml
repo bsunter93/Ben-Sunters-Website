@@ -1,0 +1,33 @@
+# Ripple names v1 (ripples/docs/names_plan_v1.md): export the baby-name counts the project already holds
+# (ripples.att_e9_names, loaded 2026-09-28 for E9 phase 1) to a CSV artifact. Reads the database only; fetches nothing
+# from any outside host.
+name: Ripples names export
+
+on:
+  push:
+    branches: ["claude/**"]
+    paths: ["ripples/lab/names/export_names.py", ".github/workflows/ripples-names-export.yml"]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  export:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    env:
+      SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+      SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Export names
+        working-directory: ripples/lab/names
+        run: python export_names.py "$GITHUB_WORKSPACE/names_national_1995_2021.csv"
+      - uses: actions/upload-artifact@v4
+        with:
+          name: names-national
+          path: names_national_1995_2021.csv
