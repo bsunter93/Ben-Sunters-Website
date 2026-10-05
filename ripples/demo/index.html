@@ -274,6 +274,11 @@ input[type=range]{flex:1;accent-color:var(--marigold);min-width:0}
 canvas.glw{position:absolute;pointer-events:none;border-radius:10px;z-index:0}.gl svg#pond{position:relative;z-index:1}
 .gl #pond .scene > rect,.gl #pond .scene + g > circle:first-child,.gl .sheen,.gl .wbands,.gl .frontg,.gl .wave,.gl .dimple,.gl #pond [fill="url(#w2sky)"],.gl #pond [fill="url(#wet)"],.gl .sshadow{display:none}
 .w2 .wake{display:none}
+.callout{opacity:0;transition:opacity .45s ease-out;pointer-events:none}.callout.on{opacity:1}
+.callout text{font:500 15px var(--sans);fill:#f2f6f9;paint-order:stroke;stroke:#0f1c26;stroke-width:4px;stroke-linejoin:round}
+.callout .cg{font-weight:600}.callout .cg.l-measured{fill:var(--good)}.callout .cg.l-timed{fill:var(--timed)}.callout .cg.l-reported{fill:var(--rec)}.callout .cg.l-plausible{fill:var(--plaus)}.callout .cg.l-busted{fill:var(--miss)}.callout .cg.l-mark{fill:var(--marigold)}
+.w2 .nlab.phr,.w2 .nlab.cov{opacity:0 !important}.w2 #pond.beat .crestdate{opacity:0 !important}
+.w2 .beatline.mapped > b,.w2 .beatline.mapped > .bhow,.w2 .beatline.mapped > .bwhy,.w2 .beatline.mapped > .bmk{display:none}  /* the sentence is on the water; the line under the pond keeps the clue count and what comes next */
 /* the story as a route: the links stay on the water once they land, styled by how sure they are; the arcs step back */
 .w2 .edge{opacity:.5}.w2 .edge.mark{stroke:var(--marigold);opacity:.7}.w2 #pond.beat .edge:not(.lit),.w2 #pond.focus .edge:not(.lit){opacity:.22}
 .w2 .rip.on{opacity:.18}.w2 .rip.on.lit{opacity:.6}.w2 #pond:not(.playing) .rip.on.l-measured{opacity:.28}.gl .ripS,.gl .ripH,.gl .rip2,.gl .glint{display:none}
@@ -615,12 +620,13 @@ const GLW = (() => {
   if (!gl) return null;
   const VS = "attribute vec2 a;void main(){gl_Position=vec4(a,0.,1.);}";
   const FS = `precision highp float;
-uniform vec2 uRes;uniform vec3 uMap;uniform vec4 uVB;uniform vec2 uC;uniform float uR,uTilt,uTime,uSunk;uniform vec2 uFront,uSplash;uniform vec3 uRings[24];uniform int uN;float EMB;
+uniform vec2 uRes;uniform vec3 uMap;uniform vec4 uVB;uniform vec2 uC;uniform float uR,uTilt,uTime,uSunk;uniform vec2 uFront,uSplash;uniform vec3 uRings[24];uniform int uN;uniform vec3 uMarks[4];float EMB;
 float H(vec2 p){
   float r=length(p-uC),h=0.;
   float x=r-uFront.x; h+=uFront.y*exp(-pow((x+16.)/20.,2.))*cos(x*.42-uTime*1.7);
   if(uSplash.y>0.){float a=uSplash.x,rs=12.+150.*a,x2=r-rs; h+=1.9*exp(-1.3*a)*exp(-pow(x2/15.,2.))*cos(x2*.5);}
-  for(int i=0;i<24;i++){if(i>=uN)break;vec3 q=uRings[i];float x3=r-q.x;h+=q.y*exp(-x3*x3/28.)*(.75+.25*cos(uTime*1.1+q.x*.13));EMB+=q.z*exp(-x3*x3/90.);}
+  for(int i=0;i<24;i++){if(i>=uN)break;vec3 q=uRings[i];float x3=r-q.x;h+=q.y*exp(-x3*x3/28.)*(.75+.25*cos(uTime*1.1+q.x*.13));}
+  for(int j=0;j<4;j++){vec3 m=uMarks[j];vec2 dm=p-m.xy;EMB+=m.z*exp(-dot(dm,dm)/1800.);}
   h-=uSunk*1.5*exp(-r*r/90.);
   h+=.09*sin(dot(p,vec2(.081,.047))+uTime*.7)+.07*sin(dot(p,vec2(-.052,.113))-uTime*.9)+.05*sin(dot(p,vec2(.131,-.021))+uTime*1.3);
   return h;}
@@ -639,7 +645,7 @@ void main(){
   vec3 body=mix(vec3(.047,.09,.125),vec3(.075,.135,.18),far);
   vec3 col=mix(body,sky,clamp(F*2.4+far*.05,0.,1.));
   col+=vec3(.85,.9,.95)*pow(max(dot(Rf,normalize(vec3(-.35,.8,.48))),0.),110.)*.45;
-  col=mix(col,vec3(.95,.66,.23),clamp(em,0.,1.)*.42);
+  col=mix(col,vec3(.95,.66,.23),clamp(em,0.,1.)*.5);
   float a=1.-smoothstep(uR-30.,uR+44.,r);
   gl_FragColor=vec4(mix(vec3(.059,.11,.149),col,a),1.);}`;
   const sh = (type, src) => { const o = gl.createShader(type); gl.shaderSource(o, src); gl.compileShader(o); return gl.getShaderParameter(o, gl.COMPILE_STATUS) ? o : null; };
@@ -649,8 +655,8 @@ void main(){
   gl.useProgram(pr);
   const buf = gl.createBuffer(); gl.bindBuffer(gl.ARRAY_BUFFER, buf); gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([-1, -1, 3, -1, -1, 3]), gl.STATIC_DRAW);
   const loc = gl.getAttribLocation(pr, "a"); gl.enableVertexAttribArray(loc); gl.vertexAttribPointer(loc, 2, gl.FLOAT, false, 0, 0);
-  const U = {}; ["uRes", "uMap", "uVB", "uC", "uR", "uTilt", "uTime", "uSunk", "uFront", "uSplash", "uRings", "uN"].forEach(n => U[n] = gl.getUniformLocation(pr, n));
-  const still = matchMedia("(prefers-reduced-motion: reduce)").matches, rings = new Float32Array(72);
+  const U = {}; ["uRes", "uMap", "uVB", "uC", "uR", "uTilt", "uTime", "uSunk", "uFront", "uSplash", "uRings", "uN", "uMarks"].forEach(n => U[n] = gl.getUniformLocation(pr, n));
+  const still = matchMedia("(prefers-reduced-motion: reduce)").matches, rings = new Float32Array(72), marks = new Float32Array(12);
   let poke = 0, lastDraw = 0, size = "";
   document.documentElement.classList.add("gl");
   function place() {
@@ -673,8 +679,11 @@ void main(){
     gl.uniform2f(U.uFront, cur.frR || 0, still ? 0 : (cur.frOn || 0));
     const age = cur.splashT ? (now - cur.splashT) / 1000 : 99; gl.uniform2f(U.uSplash, age, !still && age < 4 ? 1 : 0);
     let n = 0; for (const it of cur.items) { if (n >= 24) break; if (it.state !== "landed") continue; const b = it.landT ? (now - it.landT) / 1000 : 9;
-      rings[n * 3] = it.r; rings[n * 3 + 1] = 0.32 + (still ? 0 : 1.1 * Math.exp(-1.6 * b)); rings[n * 3 + 2] = it.mark && !still ? 1.2 * Math.exp(-0.7 * b) : 0; n++; }  // a lasting mark lights the water around it in ember as it lands, then lets go
+      rings[n * 3] = it.r; rings[n * 3 + 1] = 0.32 + (still ? 0 : 1.1 * Math.exp(-1.6 * b)); rings[n * 3 + 2] = 0; n++; }
     gl.uniform3fv(U.uRings, rings); gl.uniform1i(U.uN, n);
+    marks.fill(0); let m = 0; for (const it of cur.items) { if (m >= 4) break; if (!it.mark || it.state !== "landed" || still) continue; const b = it.landT ? (now - it.landT) / 1000 : 9; if (b > 6) continue;
+      marks[m * 3] = it.plane.x; marks[m * 3 + 1] = it.plane.y; marks[m * 3 + 2] = 1.3 * Math.exp(-0.6 * b) * Math.min(1, b * 4); m++; }  // a lasting mark lights a pool of water around itself in ember as it lands, then lets go
+    gl.uniform3fv(U.uMarks, marks);
     gl.drawArrays(gl.TRIANGLES, 0, 3); lastDraw = now;
   }
   function loop(now) {  // full rate while anything moves; a slow breath for twenty seconds after; then the surface holds still
@@ -1329,6 +1338,7 @@ function draw(story) {
     const r = +it.hit.getAttribute("r"), cap = Math.max(9 * K, near / 2 - 0.5);
     if (cap < r) it.hit.setAttribute("r", cap.toFixed(1));
   });
+  if (W2) { story.callout = el("g", {class:"callout"}, svg); story.calloutT = el("text", {}, story.callout); story.calloutG = el("text", {class:"cg"}, story.callout); }  // the water look: the step being told is named in a sentence beside it, one at a time
   story.max = max; story.waves = waves; story.sHalo = sHalo; story.sCore = sCore; story.sWater = sWater; story.sShadow = sShadow; story.K = K; story.splashed = false;
   story.trailer = false;  // Oct 4: the ten-second trailer is retired; every ripple gets a beat (makeTimeline), nothing lands quiet
   makeTimeline(story); story.dur = story.timeline.total;
@@ -1452,6 +1462,23 @@ function spotlight(b) {  // the beat's ripples bloom lit, with their path back t
   lit.forEach(x => [x.g, x.path, x.lab, x.band, x.ring, x.crest].forEach(e => e && e.classList.add("lit")));
   cur.lit = lit; $("#pond").classList.add("beat");
   const bl = $("#beatline"); bl.innerHTML = clueText(b) + nextMarkLine(b); placeBeatline(); bl.classList.remove("off");
+  callout(b.items[0]);
+}
+function callout(it) {  // one sentence on the water beside the step being told; its short label steps aside so nothing says it twice. Wide ponds only: a phone keeps the line under the pond
+  const g = cur && cur.callout; if (!g) return;
+  const svg = $("#pond"), wide = svg.clientWidth >= 640;
+  $("#beatline").classList.toggle("mapped", wide && !!it);
+  if (!it || !wide || it.state !== "landed") { g.classList.remove("on"); cur.items.forEach(x => x.lab && x.lab.classList.remove("cov")); return; }
+  const K = cur.K || 1, sc = svg.clientWidth / svg.viewBox.baseVal.width, fs = Math.max(15, 13 / sc), lines = wrapLabel(it.title || it.label, 30, 2);
+  const right = it.pos.x >= C.x, x0 = it.pos.x + (right ? 16 : -16) * K, y0 = it.pos.y - (lines.length > 1 ? 20 : 10) * K;
+  const t = cur.calloutT; t.innerHTML = ""; t.setAttribute("text-anchor", right ? "start" : "end"); t.style.fontSize = `${fs}px`;
+  lines.forEach((ln, i) => { const sp = el("tspan", {x:x0, y:y0 + i * fs * 1.2}, t); sp.textContent = ln; });
+  const gt = cur.calloutG; gt.setAttribute("text-anchor", right ? "start" : "end"); gt.setAttribute("x", x0); gt.setAttribute("y", y0 + lines.length * fs * 1.2 + 1); gt.style.fontSize = `${fs * 0.78}px`;
+  gt.setAttribute("class", `cg l-${it.mark ? "mark" : it.lv}`); gt.textContent = it.mark ? `Lasting mark: ${it.mark.toLowerCase()} · ${it.lvText || LVL[it.lv]}` : (it.lvText || LVL[it.lv]);
+  try { const bb = g.getBBox(), vb = svg.viewBox.baseVal, lo = vb.x + 8, hi = vb.x + vb.width - 8; let dx = 0; if (bb.x < lo) dx = lo - bb.x; else if (bb.x + bb.width > hi) dx = hi - (bb.x + bb.width); g.setAttribute("transform", `translate(${dx.toFixed(1)} 0)`); } catch {}
+  it.lab.classList.add("phr"); g.classList.add("on");
+  try { const a = g.getBoundingClientRect(), A = {x:a.left - 8, y:a.top - 6, w:a.width + 16, h:a.height + 12};  // screen boxes: labels sit in their own transformed groups
+    for (const x of cur.items) { if (x === it || !x.lab) continue; const c = x.lab.getBoundingClientRect(); x.lab.classList.toggle("cov", c.width > 0 && c.left < A.x + A.w && c.right > A.x && c.top < A.y + A.h && c.bottom > A.y); } } catch {}
 }
 function clueText(b) {  // before the reveal, every beat is a clue, and says which (an earlier lasting mark included)
   const html = beatText(b); const beats = cur.timeline && cur.timeline.beats; if (!beats || !cur.mystery) return html;
@@ -1488,9 +1515,9 @@ let redrawT; window.addEventListener("resize", () => {  // the pond was drawn fo
 });
 function unspot() {
   if (!cur || !cur.beatOn) return;
-  for (const it of cur.beatOn.items) { it.lab.classList.remove("beat"); if (it.cardEl) it.cardEl.classList.remove("now"); if (!it.showLabel && it !== hot) { it.lab.classList.remove("on"); if (it.leader) it.leader.classList.remove("on"); } }
+  for (const it of cur.beatOn.items) { it.lab.classList.remove("beat", "phr"); if (it.cardEl) it.cardEl.classList.remove("now"); if (!it.showLabel && it !== hot) { it.lab.classList.remove("on"); if (it.leader) it.leader.classList.remove("on"); } }
   (cur.lit || []).forEach(x => { if (x !== hot) [x.g, x.path, x.lab, x.band, x.ring, x.crest].forEach(e => e && e.classList.remove("lit")); });
-  cur.beatOn = null; cur.lit = null; $("#pond").classList.remove("beat"); shadeUnder(null);
+  cur.beatOn = null; cur.lit = null; $("#pond").classList.remove("beat"); shadeUnder(null); callout(null);
 }
 
 function wrapLabel(t, width, lines) {  // greedy word wrap to at most `lines` lines; the last line is cut with an ellipsis
