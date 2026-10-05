@@ -279,14 +279,26 @@ canvas.glw{position:absolute;pointer-events:none;border-radius:14px;z-index:0}.g
   .w2 .pondbox{position:relative}
   .w2 svg#pond{max-height:max(380px,calc(100vh - 330px))}
   .w2 .feed{position:relative;top:auto;max-height:none;display:flex;gap:10px;overflow-x:auto;overflow-y:hidden;scroll-snap-type:x proximity;padding:6px 4px 14px;align-items:stretch;scrollbar-width:thin;mask-image:linear-gradient(90deg,#000 0,#000 calc(100% - 48px),transparent)}
-  .w2 .feed > *{flex:0 0 312px;scroll-snap-align:start;margin:0;display:flex;flex-direction:column}
-  .w2 .feed .card .when{white-space:nowrap}.w2 .feed .card .top{flex-wrap:nowrap;gap:8px}.w2 .feed .card .more summary{white-space:nowrap;width:max-content}
-  .w2 .feed .card .acts{margin-top:auto}.w2 .feed .card .markpill{white-space:nowrap;width:max-content;max-width:100%}
-  .w2 .feed > .pulse,.w2 .feed > .pulsefold{flex-basis:440px;position:static;box-shadow:none}
+  .w2 .feed > *{flex:0 0 300px;scroll-snap-align:start;margin:0;position:relative}
+  .w2 .feed .card .when{white-space:nowrap}.w2 .feed .card .top{flex-wrap:nowrap;gap:8px}.w2 .feed .card .more summary{white-space:nowrap;width:max-content}.w2 .feed .card .markpill{white-space:nowrap;width:max-content;max-width:100%}
+  .w2 .feed > .pulse{flex-basis:440px;box-shadow:none}.w2 .feed > .pulsefold{flex-basis:210px;box-shadow:none}.w2 .feed > .pulsefold[open]{flex-basis:460px}
   .w2 .feed .card .spark{max-height:46px}
   .w2 .feed.empty{visibility:visible}
 }
-@media (min-width:861px) and (max-height:820px){.w2 svg#pond{max-height:calc(100vh - 362px)}}  /* a short laptop keeps the key above the fold, as before */
+@media (min-width:861px) and (max-height:820px){.w2 svg#pond{max-height:calc(100vh - 362px)}}
+/* the strip as a timeline: cards as tall as their own words, a rail with a dot per card, the current one lit */
+.fit .feed{align-items:flex-start;padding-top:18px;gap:12px}
+.fit .feed .card{padding:10px 12px 10px}.fit .feed .card h2{font-size:.98rem;line-height:1.3;margin:6px 0 4px}.fit .feed .card .spark{max-height:40px}
+.fit .feed .card .more{margin-top:4px}.fit .feed .card:not(:has(details[open])) .acts{position:absolute;right:12px;bottom:10px;margin:0}
+.fit .feed .card .acts .shr{font-size:.74rem}
+.fit .feed > *::after{content:"";position:absolute;top:-11px;left:-12px;right:0;height:1px;background:rgba(30,42,46,.18)}
+.fit .feed > *::before{content:"";position:absolute;top:-14px;left:14px;width:7px;height:7px;border-radius:50%;background:#9aa6ab;z-index:1}
+.fit .feed > .card:has(.b.l-measured)::before{background:#3e8f55}.fit .feed > .card:has(.b.l-timed)::before{background:#7a5fc4}.fit .feed > .card:has(.b.l-plausible)::before{background:#a8955a}.fit .feed > .card:has(.b.l-busted)::before{background:var(--miss)}
+.fit .feed > .card.marked::before{background:#c77f12;box-shadow:0 0 0 3px rgba(199,127,18,.2)}.fit .feed > .card.now::before{box-shadow:0 0 0 4px rgba(242,169,59,.35)}
+.fit .b{text-transform:none;letter-spacing:.01em;font-size:.72rem;padding:3px 7px}
+.fit .legend{padding:2px 8px 0}.fit .legend .lgnote{display:none}
+.glfit .pondbox > .clock{position:absolute;left:8px;right:8px;top:6px;z-index:2;pointer-events:none}
+.fit header{position:relative;padding-bottom:2px}.fit h1{margin:.3rem 0 .3rem}.fit header > .bar{position:absolute;top:16px;right:16px;margin:0;gap:18px}  /* a short laptop keeps the key above the fold, as before */
 .callout{opacity:0;transition:opacity .45s ease-out;pointer-events:none}.callout.on{opacity:1}
 .callout text{font:500 15px var(--sans);fill:#f2f6f9;paint-order:stroke;stroke:#0f1c26;stroke-width:4px;stroke-linejoin:round}
 .callout .cg{font-weight:600}.callout .cg.l-measured{fill:var(--good)}.callout .cg.l-timed{fill:var(--timed)}.callout .cg.l-reported{fill:var(--rec)}.callout .cg.l-plausible{fill:var(--plaus)}.callout .cg.l-busted{fill:var(--miss)}.callout .cg.l-mark{fill:var(--marigold)}
@@ -642,8 +654,9 @@ float fb1(float x){return .5*n1(x)+.25*n1(x*2.03+7.)+.125*n1(x*4.01+3.)+.0625*n1
 float hs2(vec2 q){return fract(sin(dot(q,vec2(127.1,311.7)))*43758.5453);}
 float n2(vec2 x){vec2 i=floor(x),f=fract(x);f=f*f*(3.-2.*f);return mix(mix(hs2(i),hs2(i+vec2(1.,0.)),f.x),mix(hs2(i+vec2(0.,1.)),hs2(i+vec2(1.,1.)),f.x),f.y);}
 float fb2(vec2 x){float v=0.,a=.5;for(int i=0;i<4;i++){v+=a*n2(x);x=x*2.02+vec2(3.1,1.7);a*=.5;}return v;}
-float rBack(float x){return uHz-(26.+44.*fb1(x*.0032+5.1));}
-float rFar(float x){return uHz-(12.+34.*fb1(x*.0055+2.3));}
+float KS(){return clamp((uHz-(uVB.y-uMap.y/uMap.z))/85.,.3,1.);}
+float rBack(float x){return uHz-(26.+44.*fb1(x*.0032+5.1))*KS();}
+float rFar(float x){return uHz-(12.+34.*fb1(x*.0055+2.3))*KS();}
 float rNear(float x){return uHz-(3.+10.*fb1(x*.012+8.7)+7.*pow(n1(x*.38),4.)*smoothstep(.3,.65,fb1(x*.02+1.)));}
 vec3 SCN(vec2 s){
   float t=clamp((uHz-s.y)/95.,0.,1.);
@@ -1136,7 +1149,7 @@ function fromChain(slug) {
 function draw(story) {
   const svg = $("#pond"); svg.textContent = "";
   // phones: the pond is drawn about 2.4x smaller, so type and dots scale up and only the marks keep a standing label
-  const drawW = svg.clientWidth, scale = (drawW > 200 ? drawW : 700) / 940, touch = matchMedia("(pointer:coarse)").matches;  // a width read before layout settles (a pane's first open) is not a width; draw for a laptop and redraw on resize
+  const drawW = svg.clientWidth, effW = svg.clientHeight > 120 ? Math.min(drawW, svg.clientHeight * 840 / 466) : drawW, scale = (effW > 200 ? effW : 700) / 940, touch = matchMedia("(pointer:coarse)").matches;  // a width read before layout settles (a pane's first open) is not a width; draw for a laptop and redraw on resize
   story.drawW = drawW;
   const dense = scale < 0.6;
   const floor = touch ? (dense ? 11 : 14) : 12;  // the smallest a label may be on screen, in CSS px: a tablet held at arm's length reads 15; a phone 11, where the pond is small
@@ -1518,7 +1531,7 @@ function callout(it) {  // one sentence on the water beside the step being told;
   const svg = $("#pond"), wide = svg.clientWidth >= 640;
   $("#beatline").classList.toggle("mapped", wide && !!it);
   if (!it || !wide || it.state !== "landed") { g.classList.remove("on"); cur.items.forEach(x => x.lab && x.lab.classList.remove("cov")); return; }
-  const K = cur.K || 1, sc = svg.clientWidth / svg.viewBox.baseVal.width, fs = Math.max(15, 13 / sc), lines = wrapLabel(it.title || it.label, 30, 2);
+  const K = cur.K || 1, sc = Math.min(svg.clientWidth / svg.viewBox.baseVal.width, svg.clientHeight / svg.viewBox.baseVal.height), fs = Math.max(15, 13 / sc), lines = wrapLabel(it.title || it.label, 30, 2);
   const right = it.pos.x >= C.x, x0 = it.pos.x + (right ? 22 : -22) * K, y0 = it.pos.y - (lines.length > 1 ? 30 : 12) * K;
   const t = cur.calloutT; t.innerHTML = ""; t.setAttribute("text-anchor", right ? "start" : "end"); t.style.fontSize = `${fs}px`;
   lines.forEach((ln, i) => { const sp = el("tspan", {x:x0, y:y0 + i * fs * 1.2}, t); sp.textContent = ln; });
@@ -1624,11 +1637,21 @@ function pulseHTML(story) {
   }
   return `<div class="pulse"><div class="ptitle">The spikes, aligned <span>Daily Wikipedia views of each thing named, against that page's own normal (its median before the step), lined up at the day its rise was detected. Height is how far it rose; the tail is how long it lasted. The clock is linear before the step and logarithmic after.</span></div><svg viewBox="0 0 ${W} ${H}" role="img" aria-label="Attention to each page, aligned at its own step">${g}${paths}${labs}</svg></div>`;
 }
+function fitPond() {  // the water look on a wide screen: the pond takes what the header, the controls and the card strip leave, so the cards are on screen when the page opens (owner, Oct 5: the cards are the anchor)
+  const svg = $("#pond"), leg = $(".legend"), feed = $("#feed"); if (!svg || !leg || !feed) return;
+  const wide = W2 && !REEL_Q && !CARD_Q && window.innerWidth > 860, root = document.documentElement;
+  root.classList.toggle("fit", wide); root.classList.toggle("glfit", wide && !!GLW);
+  if (wide && leg.parentNode !== feed.parentNode) feed.after(leg);  // the key sits under the cards; each word explains itself on hover
+  else if (!wide && leg.parentNode === feed.parentNode && window.innerWidth > 560) $(".ctl").after(leg);
+  if (!wide) { svg.style.maxHeight = ""; return; }
+  const top = svg.getBoundingClientRect().top + window.scrollY, ctl = $(".ctl").offsetHeight || 50;
+  svg.style.maxHeight = `${Math.max(window.innerHeight < 700 ? 230 : 320, Math.round(window.innerHeight - top - ctl - 162))}px`;  // a short laptop lets the cards in at the cost of some pond
+}
 function buildFeed(story) {
   const f = $("#feed"); f.textContent = "";
   let pulse = pulseHTML(story);
   if (!pulse && story.kind === "chain") pulse = `<div class="pulse none"><div class="ptitle">No attention series for this story <span>Daily Wikipedia views begin in July 2015; the steps here are older or were checked against records, not attention.</span></div></div>`;
-  if (pulse && window.innerWidth <= 560 && !/pulse none/.test(pulse)) pulse = `<details class="pulsefold"><summary>The spikes, aligned: the chart</summary>${pulse}</details>`;  // a phone folds the chart; its labels are too small at 375 px to be worth the screen
+  if (pulse && (window.innerWidth <= 560 || (W2 && window.innerWidth > 860)) && !/pulse none/.test(pulse)) pulse = `<details class="pulsefold"><summary>The spikes, aligned: the chart</summary>${pulse}</details>`;  // a phone folds the chart; its labels are too small at 375 px to be worth the screen
   story.plines = [];
   if (pulse) { const pv = document.createElement("div"); pv.innerHTML = pulse; const el0 = pv.firstElementChild; f.appendChild(el0);
     el0.querySelectorAll(".pline[data-id]").forEach(n => { const it = story.items.find(x => x.id === n.dataset.id); if (it) story.plines.push([it, n]); });
@@ -2062,7 +2085,7 @@ function show(kind, slug, autoplay = true) {
     const nested = pondsFor(it.title || it.label, kind, slug).concat(it.title && norm(it.title) !== norm(it.label) ? pondsFor(it.label, kind, slug) : []);
     if (nested.length) { it.ponds = nested; it.card.html += `<div class="ponds">${pondChips(nested, "This ripple is a stone too:")}</div>`; }
   }
-  draw(story); buildFeed(story); $("#feed").scrollTop = 0; $("#feed").scrollLeft = 0; render();
+  fitPond(); draw(story); buildFeed(story); $("#feed").scrollTop = 0; $("#feed").scrollLeft = 0; render();
   document.querySelectorAll(".pond").forEach(b => b.onclick = e => { e.stopPropagation(); show(b.dataset.kind, b.dataset.slug); window.scrollTo({top:0, behavior:"smooth"}); });
   const y = d => addDays(story.iso0, d).getUTCFullYear(), yEnd = y(Math.max(...story.items.filter(x => !x.future).map(x => x.d))), yMid = y(daysAt(0.5));
   $("#ticks").innerHTML = `<span>${y(0)}</span><span>${yMid > y(0) && yMid < yEnd ? yMid : ""}</span><span>${yEnd > y(0) ? yEnd : ""}</span>`;  // the end tick is the clock's end
@@ -2098,6 +2121,7 @@ function showEndBeat() {  // at rest the lower third says what stayed and points
     const sub = $("#sub"); if (sub) { const open = sub.dataset.open === "1"; sub.classList.toggle("clamp", ph && !open); sub.classList.toggle("fold", !ph && !open); sub.setAttribute("aria-expanded", open ? "true" : "false"); }
   };
   phoneLayout(); window.addEventListener("resize", phoneLayout);
+  window.addEventListener("resize", () => requestAnimationFrame(fitPond));
   $("#sub").addEventListener("click", () => { const sub = $("#sub"); if (!sub.hasAttribute("aria-expanded")) return; const cls = window.innerWidth <= 560 ? "clamp" : "fold"; const closed = sub.classList.toggle(cls); sub.dataset.open = closed ? "" : "1"; sub.setAttribute("aria-expanded", closed ? "false" : "true"); });  // a tap reads the whole subtitle
   const chooser = $("#chooser"), cbtn = $("#chooserbtn");
   const TABCOUNT = () => ({maps:TABS.maps.length, stories:DATA.chains.length, leads:TABS.leads.filter(([k, s]) => k === "wiki" ? wikiStones().includes(s) : k === "acts" ? actsWorks().includes(s) : true).length});
