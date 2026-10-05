@@ -20,6 +20,10 @@ search gets wrong) and expects the scratch file it was written against; the resu
 again. `fedreg.py` is the Federal Register probe (a 404 on an old document's body stopped that host for the day; the
 probe's counts are in `fedreg_probe.json`). The builder's two blind screens are `discovery_corpus1_screen.json`.
 
+`shape.py` (Oct 4, 2026) is separate and runs from the repository root with no network: `python3
+ripples/lab/discovery/shape.py placebo` chooses the shape rules on decoy dates, then `python3
+ripples/lab/discovery/shape.py real` classifies the shape of every stored response series, builds lag priors per link
+type and compares catalyst with outcome strength. Plan: `docs/shape_plan_v1.md`; results: `docs/shape_v1.md`.
 ## Multi-hop ripples v1 (Oct 4 to 5, 2026)
 
 `multihop.py`, `multihop_compose.py` and `multihop_gov.py` compose stone → intermediate → lasting mark under the plan

@@ -1,0 +1,2576 @@
+{
+ "protocol": "ripples/docs/shape_plan_v1.md",
+ "code": "ripples/lab/discovery/shape.py real",
+ "run": "2026-10-04",
+ "code_sha": "187859f",
+ "families": {
+  "culture -> naming": {
+   "quantiles_days": {
+    "n": 1,
+    "min": 35.0,
+    "q10": 35.0,
+    "q25": 35.0,
+    "median": 35.0,
+    "q75": 35.0,
+    "q90": 35.0,
+    "max": 35.0
+   },
+   "window_days": null,
+   "window_rule": null,
+   "resolution": [
+    "annual"
+   ],
+   "units": [
+    {
+     "id": "chain:frozen:2",
+     "lag_days": 35,
+     "stone": "frozen",
+     "tier": "claim",
+     "claim": "Parents name daughters Elsa"
+    }
+   ]
+  },
+  "event -> new term": {
+   "quantiles_days": {
+    "n": 2,
+    "min": 19.0,
+    "q10": 56.5,
+    "q25": 112.75,
+    "median": 206.5,
+    "q75": 300.25,
+    "q90": 356.5,
+    "max": 394.0
+   },
+   "window_days": null,
+   "window_rule": null,
+   "resolution": [
+    "weekly"
+   ],
+   "units": [
+    {
+     "id": "chain:barbie:4",
+     "lag_days": 19,
+     "stone": "barbie",
+     "tier": "claim",
+     "claim": "Fashion pivots to pink ('Barbiecore')"
+    },
+    {
+     "id": "chain:covid-remote:2",
+     "lag_days": 394,
+     "stone": "covid-remote",
+     "tier": "claim",
+     "claim": "Knowledge workers move to 'Zoom towns'"
+    }
+   ]
+  },
+  "launch -> adoption": {
+   "quantiles_days": {
+    "n": 5,
+    "min": 2.0,
+    "q10": 2.4,
+    "q25": 3.0,
+    "median": 5.0,
+    "q75": 23.0,
+    "q90": 76.4,
+    "max": 112.0
+   },
+   "window_days": [
+    2.4,
+    76.4
+   ],
+   "window_rule": "q10-q90",
+   "resolution": [
+    "weekly"
+   ],
+   "units": [
+    {
+     "id": "chain:pokemon-go:1",
+     "lag_days": 2,
+     "stone": "pokemon-go",
+     "tier": "claim",
+     "claim": "Pokémon GO launches"
+    },
+    {
+     "id": "chain:airpods:2",
+     "lag_days": 3,
+     "stone": "airpods",
+     "tier": "claim",
+     "claim": "Wireless earbuds take off; AirPods dominate"
+    },
+    {
+     "id": "chain:chatgpt:1",
+     "lag_days": 5,
+     "stone": "chatgpt",
+     "tier": "claim",
+     "claim": "ChatGPT is released"
+    },
+    {
+     "id": "chain:tiktok:1",
+     "lag_days": 23,
+     "stone": "tiktok",
+     "tier": "claim",
+     "claim": "TikTok's For You feed takes off"
+    },
+    {
+     "id": "chain:wordle:2",
+     "lag_days": 112,
+     "stone": "wordle",
+     "tier": "claim",
+     "claim": "People look up Wordle"
+    }
+   ]
+  },
+  "media -> search": {
+   "quantiles_days": {
+    "n": 33,
+    "min": -5.0,
+    "q10": 1.0,
+    "q25": 2.0,
+    "median": 3.0,
+    "q75": 9.0,
+    "q90": 20.200000000000003,
+    "max": 46.0
+   },
+   "window_days": [
+    1.0,
+    20.2
+   ],
+   "window_rule": "q10-q90",
+   "resolution": [
+    "weekly"
+   ],
+   "units": [
+    {
+     "id": "map:oppenheimer:1",
+     "lag_days": -5,
+     "stone": "oppenheimer",
+     "tier": "product",
+     "claim": "People look up J. Robert Oppenheimer"
+    },
+    {
+     "id": "map:barbie:1",
+     "lag_days": -2,
+     "stone": "barbie",
+     "tier": "product",
+     "claim": "People look up Barbie, the doll"
+    },
+    {
+     "id": "chain:mr-bates-horizon:2",
+     "lag_days": 1,
+     "stone": "mr-bates-horizon",
+     "tier": "claim",
+     "claim": "Attention to the Horizon scandal surges"
+    },
+    {
+     "id": "map:shogun:1",
+     "lag_days": 1,
+     "stone": "shogun",
+     "tier": "product",
+     "claim": "People look up the real warlord"
+    },
+    {
+     "id": "map:stranger-things-4:2",
+     "lag_days": 1,
+     "stone": "stranger-things-4",
+     "tier": "product",
+     "claim": "A second branch: interest in Dungeons & Dragons"
+    },
+    {
+     "id": "disc:shogun:Gai-Jin",
+     "lag_days": 1,
+     "stone": "shogun",
+     "tier": "product",
+     "claim": "Readers turn to James Clavell's other novels"
+    },
+    {
+     "id": "chain:chernobyl-zone:2",
+     "lag_days": 2,
+     "stone": "chernobyl",
+     "tier": "claim",
+     "claim": "Interest in the real disaster surges"
+    },
+    {
+     "id": "chain:mr-bates-horizon:9",
+     "lag_days": 2,
+     "stone": "mr-bates-horizon",
+     "tier": "claim",
+     "claim": "Attention to Paula Vennells surges"
+    },
+    {
+     "id": "chain:ocean-attenborough:2",
+     "lag_days": 2,
+     "stone": "ocean-attenborough",
+     "tier": "claim",
+     "claim": "Attention to bottom trawling rises"
+    },
+    {
+     "id": "map:the-last-of-us:1",
+     "lag_days": 2,
+     "stone": "the-last-of-us",
+     "tier": "product",
+     "claim": "People look up the real fungus"
+    },
+    {
+     "id": "disc:stranger-things-4:Lukiškės Prison",
+     "lag_days": 2,
+     "stone": "stranger-things-4",
+     "tier": "product",
+     "claim": "The Vilnius prison used for filming, now an arts venue"
+    },
+    {
+     "id": "disc:queens-gambit:The Steps of the Sun",
+     "lag_days": 2,
+     "stone": "queens-gambit",
+     "tier": "product",
+     "claim": "Readers turn to Walter Tevis's other novels"
+    },
+    {
+     "id": "disc:stranger-things-4:Running Up That Hill",
+     "lag_days": 3,
+     "stone": "stranger-things-4",
+     "tier": "product",
+     "claim": "A 1985 Kate Bush song returns"
+    },
+    {
+     "id": "disc:the-bear:Italian beef",
+     "lag_days": 3,
+     "stone": "the-bear",
+     "tier": "product",
+     "claim": "Chicago's Italian beef sandwich in the spotlight"
+    },
+    {
+     "id": "disc:chernobyl:Ignalina Nuclear Power Plant",
+     "lag_days": 3,
+     "stone": "chernobyl",
+     "tier": "product",
+     "claim": "The Lithuanian plant that stood in for Chernobyl"
+    },
+    {
+     "id": "disc:chernobyl:Chernobyl Children International",
+     "lag_days": 3,
+     "stone": "chernobyl",
+     "tier": "product",
+     "claim": "A Chernobyl children's charity draws attention"
+    },
+    {
+     "id": "disc:tiger-king:Greater Wynnewood Exotic Animal Park",
+     "lag_days": 3,
+     "stone": "tiger-king",
+     "tier": "product",
+     "claim": "The zoo at the center of the show"
+    },
+    {
+     "id": "chain:queens-gambit-2:2",
+     "lag_days": 4,
+     "stone": "queens-gambit",
+     "tier": "claim",
+     "claim": "People look up chess and chess sets"
+    },
+    {
+     "id": "map:stranger-things-4:1",
+     "lag_days": 4,
+     "stone": "stranger-things-4",
+     "tier": "product",
+     "claim": "People look up Kate Bush"
+    },
+    {
+     "id": "disc:wednesday:Cantacuzino Castle",
+     "lag_days": 4,
+     "stone": "wednesday",
+     "tier": "product",
+     "claim": "The Romanian castle that played Nevermore Academy"
+    },
+    {
+     "id": "disc:tiger-king:Big Cat Rescue",
+     "lag_days": 4,
+     "stone": "tiger-king",
+     "tier": "product",
+     "claim": "Carole Baskin's sanctuary in the spotlight"
+    },
+    {
+     "id": "chain:tiger-king:2",
+     "lag_days": 6,
+     "stone": "tiger-king",
+     "tier": "claim",
+     "claim": "People look up big cats and exotic pets"
+    },
+    {
+     "id": "disc:saltburn:Murder on the Dancefloor",
+     "lag_days": 8,
+     "stone": "saltburn",
+     "tier": "product",
+     "claim": "Sophie Ellis-Bextor's 2001 hit returns"
+    },
+    {
+     "id": "disc:bridgerton:Ranger's House",
+     "lag_days": 8,
+     "stone": "bridgerton",
+     "tier": "product",
+     "claim": "A Greenwich house that played the Featheringtons' home"
+    },
+    {
+     "id": "chain:squid-game-ripples:12",
+     "lag_days": 9,
+     "stone": "squid-game",
+     "tier": "claim",
+     "claim": "Interest in ddakji, the paper-tile game, surges"
+    },
+    {
+     "id": "map:squid-game:1",
+     "lag_days": 11,
+     "stone": "squid-game",
+     "tier": "product",
+     "claim": "People look up the honeycomb candy"
+    },
+    {
+     "id": "disc:squid-game:SK Broadband",
+     "lag_days": 15,
+     "stone": "squid-game",
+     "tier": "product",
+     "claim": "Korea's internet provider and Netflix's traffic"
+    },
+    {
+     "id": "map:wordle:1",
+     "lag_days": 17,
+     "stone": "wordle",
+     "tier": "product",
+     "claim": "People look up the games behind it"
+    },
+    {
+     "id": "disc:the-last-of-us:Long Long Time",
+     "lag_days": 17,
+     "stone": "the-last-of-us",
+     "tier": "product",
+     "claim": "Episode 3 revives a 1970 Linda Ronstadt song"
+    },
+    {
+     "id": "map:squid-game:2",
+     "lag_days": 21,
+     "stone": "squid-game",
+     "tier": "product",
+     "claim": "Interest in the Korean language"
+    },
+    {
+     "id": "disc:chernobyl:Voices from Chernobyl",
+     "lag_days": 23,
+     "stone": "chernobyl",
+     "tier": "product",
+     "claim": "The oral history behind the series"
+    },
+    {
+     "id": "disc:stranger-things-4:Master of Puppets (song)",
+     "lag_days": 36,
+     "stone": "stranger-things-4",
+     "tier": "product",
+     "claim": "Metallica's 1986 track finds a new audience"
+    },
+    {
+     "id": "disc:wednesday:Bloody Mary (song)",
+     "lag_days": 46,
+     "stone": "wednesday",
+     "tier": "product",
+     "claim": "A dance trend revives a 2011 Lady Gaga track"
+    }
+   ],
+   "sub": {
+    "subject (catalog and map steps)": {
+     "n": 16,
+     "min": -5.0,
+     "q10": -0.5,
+     "q25": 1.0,
+     "median": 2.0,
+     "q75": 6.75,
+     "q90": 14.0,
+     "max": 21.0
+    },
+    "spillover (engine leads)": {
+     "n": 17,
+     "min": 1.0,
+     "q10": 2.0,
+     "q25": 3.0,
+     "median": 4.0,
+     "q75": 15.0,
+     "q90": 28.200000000000003,
+     "max": 46.0
+    }
+   }
+  },
+  "news -> search": {
+   "quantiles_days": {
+    "n": 11,
+    "min": -2.0,
+    "q10": 0.0,
+    "q25": 0.0,
+    "median": 0.0,
+    "q75": 1.5,
+    "q90": 2.0,
+    "max": 15.0
+   },
+   "window_days": [
+    0.0,
+    2.0
+   ],
+   "window_rule": "q10-q90",
+   "resolution": [
+    "weekly"
+   ],
+   "units": [
+    {
+     "id": "attn:gdpr:1",
+     "lag_days": -2,
+     "stone": "gdpr",
+     "tier": "claim (attention check)",
+     "claim": "GDPR takes effect"
+    },
+    {
+     "id": "chain:daily-show-zadroga:5",
+     "lag_days": 0,
+     "stone": "daily-show-zadroga",
+     "tier": "claim",
+     "claim": "Attention to the Act surges"
+    },
+    {
+     "id": "chain:america-and-alcohol:25",
+     "lag_days": 0,
+     "stone": "america-and-alcohol",
+     "tier": "claim",
+     "claim": "Attention to alcohol and cancer surges after the Surgeon General's advisory"
+    },
+    {
+     "id": "attn:haber-nitrogen:7",
+     "lag_days": 0,
+     "stone": "haber-nitrogen",
+     "tier": "claim (attention check)",
+     "claim": "World population grows from 1.6 billion to 8 billion"
+    },
+    {
+     "id": "attn:three-mile-island-nrc:10",
+     "lag_days": 0,
+     "stone": "three-mile-island-nrc",
+     "tier": "claim (attention check)",
+     "claim": "Constellation agrees to restart Unit 1 to power Microsoft's data centers"
+    },
+    {
+     "id": "attn:serial:4",
+     "lag_days": 0,
+     "stone": "serial",
+     "tier": "claim (attention check)",
+     "claim": "Renewed legal momentum; conviction vacated"
+    },
+    {
+     "id": "chain:jwst:2",
+     "lag_days": 1,
+     "stone": "jwst",
+     "tier": "claim",
+     "claim": "Public interest in astronomy spikes"
+    },
+    {
+     "id": "map:jwst-first-images:1",
+     "lag_days": 1,
+     "stone": "jwst",
+     "tier": "product",
+     "claim": "People look up what the pictures show"
+    },
+    {
+     "id": "chain:toilet-paper:2",
+     "lag_days": 2,
+     "stone": "toilet-paper",
+     "tier": "claim",
+     "claim": "People look up bidets"
+    },
+    {
+     "id": "attn:squid-game-ripples:5",
+     "lag_days": 2,
+     "stone": "squid-game",
+     "tier": "claim (attention check)",
+     "claim": "SK Broadband sues Netflix over network costs, citing the traffic surge"
+    },
+    {
+     "id": "chain:gamestop:1",
+     "lag_days": 15,
+     "stone": "gamestop",
+     "tier": "claim",
+     "claim": "Reddit traders squeeze GameStop"
+    }
+   ]
+  },
+  "search -> search": {
+   "quantiles_days": {
+    "n": 3,
+    "min": 3.0,
+    "q10": 3.6,
+    "q25": 4.5,
+    "median": 6.0,
+    "q75": 10.5,
+    "q90": 13.200000000000001,
+    "max": 15.0
+   },
+   "window_days": [
+    3.0,
+    15.0
+   ],
+   "window_rule": "min-max",
+   "resolution": [
+    "weekly"
+   ],
+   "units": [
+    {
+     "id": "map:chernobyl:2",
+     "lag_days": 3,
+     "stone": "chernobyl",
+     "tier": "product",
+     "claim": "Interest turns to the reactor and the zone"
+    },
+    {
+     "id": "map:tiger-king:2",
+     "lag_days": 6,
+     "stone": "tiger-king",
+     "tier": "product",
+     "claim": "Interest in the wildlife trade"
+    },
+    {
+     "id": "map:queens-gambit:2",
+     "lag_days": 15,
+     "stone": "queens-gambit",
+     "tier": "product",
+     "claim": "Interest turns to playing: chess sets and online chess"
+    }
+   ]
+  },
+  "shock -> prices and purchases": {
+   "quantiles_days": {
+    "n": 3,
+    "min": -10.0,
+    "q10": -8.0,
+    "q25": -5.0,
+    "median": 0.0,
+    "q75": 7.5,
+    "q90": 12.0,
+    "max": 15.0
+   },
+   "window_days": [
+    -10.0,
+    15.0
+   ],
+   "window_rule": "min-max",
+   "resolution": [
+    "monthly"
+   ],
+   "units": [
+    {
+     "id": "chain:toilet-paper:1",
+     "lag_days": -10,
+     "stone": "toilet-paper",
+     "tier": "claim",
+     "claim": "Panic buying empties shelves"
+    },
+    {
+     "id": "chain:cash-for-clunkers:4",
+     "lag_days": 0,
+     "stone": "cash-for-clunkers",
+     "tier": "claim",
+     "claim": "Used-car prices rise"
+    },
+    {
+     "id": "chain:thailand-floods:4",
+     "lag_days": 15,
+     "stone": "thailand-floods",
+     "tier": "claim",
+     "claim": "Hard-drive prices spike"
+    }
+   ]
+  }
+ },
+ "pooled": {
+  "quantiles_days": {
+   "n": 58,
+   "min": -10.0,
+   "q10": 0.0,
+   "q25": 1.0,
+   "median": 3.0,
+   "q75": 14.0,
+   "q90": 23.0,
+   "max": 394.0
+  },
+  "window_days": [
+   0.0,
+   23.0
+  ],
+  "window_rule": "q10-q90"
+ },
+ "held_out": {
+  "units": [
+   {
+    "id": "chain:tiger-king:2",
+    "family": "media -> search",
+    "stone": "tiger-king",
+    "lag_days": 6,
+    "prior_days": [
+     1.0,
+     21.2
+    ],
+    "prior_from": "family",
+    "n_train": 30,
+    "post_weeks": 25,
+    "prior_weeks": [
+     0,
+     4
+    ],
+    "hit_prior_95": true,
+    "hit_7_95": true,
+    "hit_30_95": true,
+    "hit_90_95": true,
+    "hit_prior_99": false,
+    "hit_7_99": true,
+    "hit_30_99": false,
+    "hit_90_99": false,
+    "lag_inside_prior": true
+   },
+   {
+    "id": "chain:pokemon-go:1",
+    "family": "launch -> adoption",
+    "stone": "pokemon-go",
+    "lag_days": 2,
+    "prior_days": [
+     3.0,
+     112.0
+    ],
+    "prior_from": "family",
+    "n_train": 4,
+    "post_weeks": 13,
+    "prior_weeks": [
+     0,
+     12
+    ],
+    "hit_prior_95": true,
+    "hit_7_95": true,
+    "hit_30_95": true,
+    "hit_90_95": true,
+    "hit_prior_99": true,
+    "hit_7_99": true,
+    "hit_30_99": true,
+    "hit_90_99": true,
+    "lag_inside_prior": false
+   },
+   {
+    "id": "chain:wordle:2",
+    "family": "launch -> adoption",
+    "stone": "wordle",
+    "lag_days": 112,
+    "prior_days": [
+     2.0,
+     23.0
+    ],
+    "prior_from": "family",
+    "n_train": 4,
+    "post_weeks": 25,
+    "prior_weeks": [
+     0,
+     4
+    ],
+    "hit_prior_95": false,
+    "hit_7_95": false,
+    "hit_30_95": false,
+    "hit_90_95": true,
+    "hit_prior_99": false,
+    "hit_7_99": false,
+    "hit_30_99": false,
+    "hit_90_99": false,
+    "lag_inside_prior": false
+   },
+   {
+    "id": "chain:barbie:4",
+    "family": "event -> new term",
+    "stone": "barbie",
+    "lag_days": 19,
+    "prior_days": [
+     0.0,
+     23.0
+    ],
+    "prior_from": "pooled",
+    "n_train": 56,
+    "post_weeks": 30,
+    "prior_weeks": [
+     0,
+     4
+    ],
+    "hit_prior_95": false,
+    "hit_7_95": false,
+    "hit_30_95": false,
+    "hit_90_95": false,
+    "hit_prior_99": false,
+    "hit_7_99": false,
+    "hit_30_99": false,
+    "hit_90_99": false,
+    "lag_inside_prior": true
+   },
+   {
+    "id": "chain:chernobyl-zone:2",
+    "family": "media -> search",
+    "stone": "chernobyl",
+    "lag_days": 2,
+    "prior_days": [
+     1.0,
+     17.8
+    ],
+    "prior_from": "family",
+    "n_train": 29,
+    "post_weeks": 13,
+    "prior_weeks": [
+     0,
+     3
+    ],
+    "hit_prior_95": true,
+    "hit_7_95": true,
+    "hit_30_95": true,
+    "hit_90_95": true,
+    "hit_prior_99": true,
+    "hit_7_99": true,
+    "hit_30_99": true,
+    "hit_90_99": true,
+    "lag_inside_prior": true
+   },
+   {
+    "id": "chain:covid-remote:2",
+    "family": "event -> new term",
+    "stone": "covid-remote",
+    "lag_days": 394,
+    "prior_days": [
+     0.0,
+     21.8
+    ],
+    "prior_from": "pooled",
+    "n_train": 57,
+    "post_weeks": 90,
+    "prior_weeks": [
+     0,
+     4
+    ],
+    "hit_prior_95": false,
+    "hit_7_95": false,
+    "hit_30_95": false,
+    "hit_90_95": false,
+    "hit_prior_99": false,
+    "hit_7_99": false,
+    "hit_30_99": false,
+    "hit_90_99": false,
+    "lag_inside_prior": false
+   },
+   {
+    "id": "chain:jwst:2",
+    "family": "news -> search",
+    "stone": "jwst",
+    "lag_days": 1,
+    "prior_days": [
+     -0.4,
+     4.6
+    ],
+    "prior_from": "family",
+    "n_train": 9,
+    "post_weeks": 13,
+    "prior_weeks": [
+     -1,
+     1
+    ],
+    "hit_prior_95": true,
+    "hit_7_95": true,
+    "hit_30_95": false,
+    "hit_90_95": false,
+    "hit_prior_99": false,
+    "hit_7_99": false,
+    "hit_30_99": false,
+    "hit_90_99": false,
+    "lag_inside_prior": true
+   },
+   {
+    "id": "chain:gamestop:1",
+    "family": "news -> search",
+    "stone": "gamestop",
+    "lag_days": 15,
+    "prior_days": [
+     -0.2,
+     2.0
+    ],
+    "prior_from": "family",
+    "n_train": 10,
+    "post_weeks": 13,
+    "prior_weeks": [
+     -1,
+     1
+    ],
+    "hit_prior_95": true,
+    "hit_7_95": true,
+    "hit_30_95": true,
+    "hit_90_95": true,
+    "hit_prior_99": true,
+    "hit_7_99": true,
+    "hit_30_99": true,
+    "hit_90_99": true,
+    "lag_inside_prior": false
+   },
+   {
+    "id": "chain:chatgpt:1",
+    "family": "launch -> adoption",
+    "stone": "chatgpt",
+    "lag_days": 5,
+    "prior_days": [
+     2.0,
+     112.0
+    ],
+    "prior_from": "family",
+    "n_train": 4,
+    "post_weeks": 25,
+    "prior_weeks": [
+     0,
+     17
+    ],
+    "hit_prior_95": true,
+    "hit_7_95": true,
+    "hit_30_95": true,
+    "hit_90_95": true,
+    "hit_prior_99": true,
+    "hit_7_99": true,
+    "hit_30_99": true,
+    "hit_90_99": true,
+    "lag_inside_prior": true
+   },
+   {
+    "id": "chain:airpods:2",
+    "family": "launch -> adoption",
+    "stone": "airpods",
+    "lag_days": 3,
+    "prior_days": [
+     2.0,
+     112.0
+    ],
+    "prior_from": "family",
+    "n_train": 4,
+    "post_weeks": 25,
+    "prior_weeks": [
+     0,
+     17
+    ],
+    "hit_prior_95": true,
+    "hit_7_95": true,
+    "hit_30_95": true,
+    "hit_90_95": true,
+    "hit_prior_99": true,
+    "hit_7_99": true,
+    "hit_30_99": true,
+    "hit_90_99": true,
+    "lag_inside_prior": true
+   },
+   {
+    "id": "chain:tiktok:1",
+    "family": "launch -> adoption",
+    "stone": "tiktok",
+    "lag_days": 23,
+    "prior_days": [
+     2.0,
+     112.0
+    ],
+    "prior_from": "family",
+    "n_train": 4,
+    "post_weeks": 56,
+    "prior_weeks": [
+     0,
+     17
+    ],
+    "hit_prior_95": true,
+    "hit_7_95": false,
+    "hit_30_95": true,
+    "hit_90_95": true,
+    "hit_prior_99": true,
+    "hit_7_99": false,
+    "hit_30_99": true,
+    "hit_90_99": true,
+    "lag_inside_prior": true
+   },
+   {
+    "id": "chain:queens-gambit-2:2",
+    "family": "media -> search",
+    "stone": "queens-gambit",
+    "lag_days": 4,
+    "prior_days": [
+     1.0,
+     21.0
+    ],
+    "prior_from": "family",
+    "n_train": 31,
+    "post_weeks": 13,
+    "prior_weeks": [
+     0,
+     4
+    ],
+    "hit_prior_95": true,
+    "hit_7_95": true,
+    "hit_30_95": true,
+    "hit_90_95": false,
+    "hit_prior_99": false,
+    "hit_7_99": false,
+    "hit_30_99": false,
+    "hit_90_99": false,
+    "lag_inside_prior": true
+   },
+   {
+    "id": "chain:toilet-paper:2",
+    "family": "news -> search",
+    "stone": "toilet-paper",
+    "lag_days": 2,
+    "prior_days": [
+     -0.2,
+     3.3
+    ],
+    "prior_from": "family",
+    "n_train": 10,
+    "post_weeks": 13,
+    "prior_weeks": [
+     -1,
+     1
+    ],
+    "hit_prior_95": true,
+    "hit_7_95": true,
+    "hit_30_95": true,
+    "hit_90_95": true,
+    "hit_prior_99": true,
+    "hit_7_99": true,
+    "hit_30_99": true,
+    "hit_90_99": true,
+    "lag_inside_prior": true
+   },
+   {
+    "id": "chain:squid-game-ripples:12",
+    "family": "media -> search",
+    "stone": "squid-game",
+    "lag_days": 9,
+    "prior_days": [
+     1.0,
+     18.2
+    ],
+    "prior_from": "family",
+    "n_train": 29,
+    "post_weeks": 13,
+    "prior_weeks": [
+     0,
+     3
+    ],
+    "hit_prior_95": true,
+    "hit_7_95": true,
+    "hit_30_95": true,
+    "hit_90_95": true,
+    "hit_prior_99": true,
+    "hit_7_99": true,
+    "hit_30_99": true,
+    "hit_90_99": true,
+    "lag_inside_prior": true
+   },
+   {
+    "id": "map:barbie:1",
+    "family": "media -> search",
+    "stone": "barbie",
+    "lag_days": -2,
+    "prior_days": [
+     1.0,
+     20.6
+    ],
+    "prior_from": "family",
+    "n_train": 32,
+    "post_weeks": 30,
+    "prior_weeks": [
+     0,
+     3
+    ],
+    "hit_prior_95": true,
+    "hit_7_95": true,
+    "hit_30_95": true,
+    "hit_90_95": true,
+    "hit_prior_99": true,
+    "hit_7_99": true,
+    "hit_30_99": true,
+    "hit_90_99": true,
+    "lag_inside_prior": false
+   },
+   {
+    "id": "map:chernobyl:2",
+    "family": "search -> search",
+    "stone": "chernobyl",
+    "lag_days": 3,
+    "prior_days": [
+     0.0,
+     22.6
+    ],
+    "prior_from": "pooled",
+    "n_train": 53,
+    "post_weeks": 30,
+    "prior_weeks": [
+     0,
+     4
+    ],
+    "hit_prior_95": true,
+    "hit_7_95": true,
+    "hit_30_95": true,
+    "hit_90_95": true,
+    "hit_prior_99": true,
+    "hit_7_99": true,
+    "hit_30_99": true,
+    "hit_90_99": true,
+    "lag_inside_prior": true
+   },
+   {
+    "id": "map:jwst-first-images:1",
+    "family": "news -> search",
+    "stone": "jwst",
+    "lag_days": 1,
+    "prior_days": [
+     -0.4,
+     4.6
+    ],
+    "prior_from": "family",
+    "n_train": 9,
+    "post_weeks": 30,
+    "prior_weeks": [
+     -1,
+     1
+    ],
+    "hit_prior_95": true,
+    "hit_7_95": true,
+    "hit_30_95": true,
+    "hit_90_95": true,
+    "hit_prior_99": true,
+    "hit_7_99": true,
+    "hit_30_99": true,
+    "hit_90_99": true,
+    "lag_inside_prior": true
+   },
+   {
+    "id": "map:oppenheimer:1",
+    "family": "media -> search",
+    "stone": "oppenheimer",
+    "lag_days": -5,
+    "prior_days": [
+     1.0,
+     20.6
+    ],
+    "prior_from": "family",
+    "n_train": 32,
+    "post_weeks": 30,
+    "prior_weeks": [
+     0,
+     3
+    ],
+    "hit_prior_95": true,
+    "hit_7_95": true,
+    "hit_30_95": true,
+    "hit_90_95": true,
+    "hit_prior_99": true,
+    "hit_7_99": true,
+    "hit_30_99": true,
+    "hit_90_99": true,
+    "lag_inside_prior": false
+   },
+   {
+    "id": "map:queens-gambit:2",
+    "family": "search -> search",
+    "stone": "queens-gambit",
+    "lag_days": 15,
+    "prior_days": [
+     0.0,
+     23.0
+    ],
+    "prior_from": "pooled",
+    "n_train": 55,
+    "post_weeks": 29,
+    "prior_weeks": [
+     0,
+     4
+    ],
+    "hit_prior_95": true,
+    "hit_7_95": true,
+    "hit_30_95": true,
+    "hit_90_95": false,
+    "hit_prior_99": false,
+    "hit_7_99": false,
+    "hit_30_99": false,
+    "hit_90_99": false,
+    "lag_inside_prior": true
+   },
+   {
+    "id": "map:shogun:1",
+    "family": "media -> search",
+    "stone": "shogun",
+    "lag_days": 1,
+    "prior_days": [
+     1.0,
+     21.0
+    ],
+    "prior_from": "family",
+    "n_train": 31,
+    "post_weeks": 30,
+    "prior_weeks": [
+     0,
+     4
+    ],
+    "hit_prior_95": true,
+    "hit_7_95": true,
+    "hit_30_95": true,
+    "hit_90_95": true,
+    "hit_prior_99": true,
+    "hit_7_99": true,
+    "hit_30_99": true,
+    "hit_90_99": true,
+    "lag_inside_prior": true
+   },
+   {
+    "id": "map:squid-game:1",
+    "family": "media -> search",
+    "stone": "squid-game",
+    "lag_days": 11,
+    "prior_days": [
+     1.0,
+     18.2
+    ],
+    "prior_from": "family",
+    "n_train": 29,
+    "post_weeks": 30,
+    "prior_weeks": [
+     0,
+     3
+    ],
+    "hit_prior_95": true,
+    "hit_7_95": true,
+    "hit_30_95": true,
+    "hit_90_95": true,
+    "hit_prior_99": true,
+    "hit_7_99": true,
+    "hit_30_99": true,
+    "hit_90_99": true,
+    "lag_inside_prior": true
+   },
+   {
+    "id": "map:squid-game:2",
+    "family": "media -> search",
+    "stone": "squid-game",
+    "lag_days": 21,
+    "prior_days": [
+     1.0,
+     18.2
+    ],
+    "prior_from": "family",
+    "n_train": 29,
+    "post_weeks": 30,
+    "prior_weeks": [
+     0,
+     3
+    ],
+    "hit_prior_95": false,
+    "hit_7_95": false,
+    "hit_30_95": false,
+    "hit_90_95": false,
+    "hit_prior_99": false,
+    "hit_7_99": false,
+    "hit_30_99": false,
+    "hit_90_99": false,
+    "lag_inside_prior": false
+   },
+   {
+    "id": "map:stranger-things-4:1",
+    "family": "media -> search",
+    "stone": "stranger-things-4",
+    "lag_days": 4,
+    "prior_days": [
+     1.0,
+     18.2
+    ],
+    "prior_from": "family",
+    "n_train": 28,
+    "post_weeks": 30,
+    "prior_weeks": [
+     0,
+     3
+    ],
+    "hit_prior_95": true,
+    "hit_7_95": true,
+    "hit_30_95": true,
+    "hit_90_95": true,
+    "hit_prior_99": true,
+    "hit_7_99": true,
+    "hit_30_99": true,
+    "hit_90_99": true,
+    "lag_inside_prior": true
+   },
+   {
+    "id": "map:stranger-things-4:2",
+    "family": "media -> search",
+    "stone": "stranger-things-4",
+    "lag_days": 1,
+    "prior_days": [
+     1.0,
+     18.2
+    ],
+    "prior_from": "family",
+    "n_train": 28,
+    "post_weeks": 30,
+    "prior_weeks": [
+     0,
+     3
+    ],
+    "hit_prior_95": true,
+    "hit_7_95": true,
+    "hit_30_95": true,
+    "hit_90_95": false,
+    "hit_prior_99": false,
+    "hit_7_99": true,
+    "hit_30_99": false,
+    "hit_90_99": false,
+    "lag_inside_prior": true
+   },
+   {
+    "id": "map:the-last-of-us:1",
+    "family": "media -> search",
+    "stone": "the-last-of-us",
+    "lag_days": 2,
+    "prior_days": [
+     1.0,
+     21.0
+    ],
+    "prior_from": "family",
+    "n_train": 31,
+    "post_weeks": 30,
+    "prior_weeks": [
+     0,
+     4
+    ],
+    "hit_prior_95": true,
+    "hit_7_95": true,
+    "hit_30_95": true,
+    "hit_90_95": true,
+    "hit_prior_99": true,
+    "hit_7_99": true,
+    "hit_30_99": true,
+    "hit_90_99": true,
+    "lag_inside_prior": true
+   },
+   {
+    "id": "map:tiger-king:2",
+    "family": "search -> search",
+    "stone": "tiger-king",
+    "lag_days": 6,
+    "prior_days": [
+     0.0,
+     23.0
+    ],
+    "prior_from": "pooled",
+    "n_train": 54,
+    "post_weeks": 29,
+    "prior_weeks": [
+     0,
+     4
+    ],
+    "hit_prior_95": false,
+    "hit_7_95": true,
+    "hit_30_95": false,
+    "hit_90_95": false,
+    "hit_prior_99": false,
+    "hit_7_99": false,
+    "hit_30_99": false,
+    "hit_90_99": false,
+    "lag_inside_prior": true
+   },
+   {
+    "id": "map:wordle:1",
+    "family": "media -> search",
+    "stone": "wordle",
+    "lag_days": 17,
+    "prior_days": [
+     1.0,
+     20.6
+    ],
+    "prior_from": "family",
+    "n_train": 32,
+    "post_weeks": 30,
+    "prior_weeks": [
+     0,
+     3
+    ],
+    "hit_prior_95": true,
+    "hit_7_95": true,
+    "hit_30_95": true,
+    "hit_90_95": true,
+    "hit_prior_99": false,
+    "hit_7_99": false,
+    "hit_30_99": false,
+    "hit_90_99": false,
+    "lag_inside_prior": true
+   },
+   {
+    "id": "disc:stranger-things-4:Running Up That Hill",
+    "family": "media -> search",
+    "stone": "stranger-things-4",
+    "lag_days": 3,
+    "prior_days": [
+     1.0,
+     18.2
+    ],
+    "prior_from": "family",
+    "n_train": 28,
+    "post_weeks": 21,
+    "prior_weeks": [
+     0,
+     3
+    ],
+    "hit_prior_95": true,
+    "hit_7_95": true,
+    "hit_30_95": true,
+    "hit_90_95": true,
+    "hit_prior_99": true,
+    "hit_7_99": true,
+    "hit_30_99": true,
+    "hit_90_99": true,
+    "lag_inside_prior": true
+   },
+   {
+    "id": "disc:stranger-things-4:Lukiškės Prison",
+    "family": "media -> search",
+    "stone": "stranger-things-4",
+    "lag_days": 2,
+    "prior_days": [
+     1.0,
+     18.2
+    ],
+    "prior_from": "family",
+    "n_train": 28,
+    "post_weeks": 21,
+    "prior_weeks": [
+     0,
+     3
+    ],
+    "hit_prior_95": true,
+    "hit_7_95": true,
+    "hit_30_95": true,
+    "hit_90_95": true,
+    "hit_prior_99": true,
+    "hit_7_99": true,
+    "hit_30_99": true,
+    "hit_90_99": true,
+    "lag_inside_prior": true
+   },
+   {
+    "id": "disc:stranger-things-4:Master of Puppets (song)",
+    "family": "media -> search",
+    "stone": "stranger-things-4",
+    "lag_days": 36,
+    "prior_days": [
+     1.0,
+     18.2
+    ],
+    "prior_from": "family",
+    "n_train": 28,
+    "post_weeks": 21,
+    "prior_weeks": [
+     0,
+     3
+    ],
+    "hit_prior_95": false,
+    "hit_7_95": false,
+    "hit_30_95": true,
+    "hit_90_95": true,
+    "hit_prior_99": false,
+    "hit_7_99": false,
+    "hit_30_99": true,
+    "hit_90_99": true,
+    "lag_inside_prior": false
+   },
+   {
+    "id": "disc:wednesday:Bloody Mary (song)",
+    "family": "media -> search",
+    "stone": "wednesday",
+    "lag_days": 46,
+    "prior_days": [
+     1.0,
+     17.0
+    ],
+    "prior_from": "family",
+    "n_train": 31,
+    "post_weeks": 21,
+    "prior_weeks": [
+     0,
+     3
+    ],
+    "hit_prior_95": false,
+    "hit_7_95": false,
+    "hit_30_95": false,
+    "hit_90_95": true,
+    "hit_prior_99": false,
+    "hit_7_99": false,
+    "hit_30_99": false,
+    "hit_90_99": true,
+    "lag_inside_prior": false
+   },
+   {
+    "id": "disc:wednesday:Cantacuzino Castle",
+    "family": "media -> search",
+    "stone": "wednesday",
+    "lag_days": 4,
+    "prior_days": [
+     1.0,
+     17.0
+    ],
+    "prior_from": "family",
+    "n_train": 31,
+    "post_weeks": 21,
+    "prior_weeks": [
+     0,
+     3
+    ],
+    "hit_prior_95": true,
+    "hit_7_95": true,
+    "hit_30_95": true,
+    "hit_90_95": true,
+    "hit_prior_99": true,
+    "hit_7_99": true,
+    "hit_30_99": true,
+    "hit_90_99": true,
+    "lag_inside_prior": true
+   },
+   {
+    "id": "disc:saltburn:Murder on the Dancefloor",
+    "family": "media -> search",
+    "stone": "saltburn",
+    "lag_days": 8,
+    "prior_days": [
+     1.0,
+     20.6
+    ],
+    "prior_from": "family",
+    "n_train": 32,
+    "post_weeks": 21,
+    "prior_weeks": [
+     0,
+     3
+    ],
+    "hit_prior_95": true,
+    "hit_7_95": true,
+    "hit_30_95": true,
+    "hit_90_95": true,
+    "hit_prior_99": true,
+    "hit_7_99": true,
+    "hit_30_99": true,
+    "hit_90_99": true,
+    "lag_inside_prior": true
+   },
+   {
+    "id": "disc:squid-game:SK Broadband",
+    "family": "media -> search",
+    "stone": "squid-game",
+    "lag_days": 15,
+    "prior_days": [
+     1.0,
+     18.2
+    ],
+    "prior_from": "family",
+    "n_train": 29,
+    "post_weeks": 21,
+    "prior_weeks": [
+     0,
+     3
+    ],
+    "hit_prior_95": true,
+    "hit_7_95": false,
+    "hit_30_95": true,
+    "hit_90_95": true,
+    "hit_prior_99": true,
+    "hit_7_99": false,
+    "hit_30_99": true,
+    "hit_90_99": true,
+    "lag_inside_prior": true
+   },
+   {
+    "id": "disc:the-bear:Italian beef",
+    "family": "media -> search",
+    "stone": "the-bear",
+    "lag_days": 3,
+    "prior_days": [
+     1.0,
+     20.6
+    ],
+    "prior_from": "family",
+    "n_train": 32,
+    "post_weeks": 21,
+    "prior_weeks": [
+     0,
+     3
+    ],
+    "hit_prior_95": true,
+    "hit_7_95": true,
+    "hit_30_95": true,
+    "hit_90_95": false,
+    "hit_prior_99": false,
+    "hit_7_99": true,
+    "hit_30_99": false,
+    "hit_90_99": false,
+    "lag_inside_prior": true
+   },
+   {
+    "id": "disc:bridgerton:Ranger's House",
+    "family": "media -> search",
+    "stone": "bridgerton",
+    "lag_days": 8,
+    "prior_days": [
+     1.0,
+     20.6
+    ],
+    "prior_from": "family",
+    "n_train": 32,
+    "post_weeks": 21,
+    "prior_weeks": [
+     0,
+     3
+    ],
+    "hit_prior_95": true,
+    "hit_7_95": true,
+    "hit_30_95": true,
+    "hit_90_95": true,
+    "hit_prior_99": true,
+    "hit_7_99": true,
+    "hit_30_99": true,
+    "hit_90_99": true,
+    "lag_inside_prior": true
+   },
+   {
+    "id": "disc:queens-gambit:The Steps of the Sun",
+    "family": "media -> search",
+    "stone": "queens-gambit",
+    "lag_days": 2,
+    "prior_days": [
+     1.0,
+     21.0
+    ],
+    "prior_from": "family",
+    "n_train": 31,
+    "post_weeks": 21,
+    "prior_weeks": [
+     0,
+     4
+    ],
+    "hit_prior_95": true,
+    "hit_7_95": true,
+    "hit_30_95": true,
+    "hit_90_95": true,
+    "hit_prior_99": true,
+    "hit_7_99": true,
+    "hit_30_99": true,
+    "hit_90_99": true,
+    "lag_inside_prior": true
+   },
+   {
+    "id": "disc:chernobyl:Voices from Chernobyl",
+    "family": "media -> search",
+    "stone": "chernobyl",
+    "lag_days": 23,
+    "prior_days": [
+     1.0,
+     17.8
+    ],
+    "prior_from": "family",
+    "n_train": 29,
+    "post_weeks": 21,
+    "prior_weeks": [
+     0,
+     3
+    ],
+    "hit_prior_95": true,
+    "hit_7_95": true,
+    "hit_30_95": true,
+    "hit_90_95": true,
+    "hit_prior_99": true,
+    "hit_7_99": true,
+    "hit_30_99": true,
+    "hit_90_99": true,
+    "lag_inside_prior": false
+   },
+   {
+    "id": "disc:chernobyl:Ignalina Nuclear Power Plant",
+    "family": "media -> search",
+    "stone": "chernobyl",
+    "lag_days": 3,
+    "prior_days": [
+     1.0,
+     17.8
+    ],
+    "prior_from": "family",
+    "n_train": 29,
+    "post_weeks": 21,
+    "prior_weeks": [
+     0,
+     3
+    ],
+    "hit_prior_95": true,
+    "hit_7_95": true,
+    "hit_30_95": true,
+    "hit_90_95": true,
+    "hit_prior_99": true,
+    "hit_7_99": true,
+    "hit_30_99": true,
+    "hit_90_99": true,
+    "lag_inside_prior": true
+   },
+   {
+    "id": "disc:chernobyl:Chernobyl Children International",
+    "family": "media -> search",
+    "stone": "chernobyl",
+    "lag_days": 3,
+    "prior_days": [
+     1.0,
+     17.8
+    ],
+    "prior_from": "family",
+    "n_train": 29,
+    "post_weeks": 21,
+    "prior_weeks": [
+     0,
+     3
+    ],
+    "hit_prior_95": true,
+    "hit_7_95": true,
+    "hit_30_95": true,
+    "hit_90_95": true,
+    "hit_prior_99": false,
+    "hit_7_99": false,
+    "hit_30_99": true,
+    "hit_90_99": false,
+    "lag_inside_prior": true
+   },
+   {
+    "id": "disc:tiger-king:Greater Wynnewood Exotic Animal Park",
+    "family": "media -> search",
+    "stone": "tiger-king",
+    "lag_days": 3,
+    "prior_days": [
+     1.0,
+     21.2
+    ],
+    "prior_from": "family",
+    "n_train": 30,
+    "post_weeks": 21,
+    "prior_weeks": [
+     0,
+     4
+    ],
+    "hit_prior_95": true,
+    "hit_7_95": true,
+    "hit_30_95": true,
+    "hit_90_95": true,
+    "hit_prior_99": true,
+    "hit_7_99": true,
+    "hit_30_99": true,
+    "hit_90_99": true,
+    "lag_inside_prior": true
+   },
+   {
+    "id": "disc:tiger-king:Big Cat Rescue",
+    "family": "media -> search",
+    "stone": "tiger-king",
+    "lag_days": 4,
+    "prior_days": [
+     1.0,
+     21.2
+    ],
+    "prior_from": "family",
+    "n_train": 30,
+    "post_weeks": 21,
+    "prior_weeks": [
+     0,
+     4
+    ],
+    "hit_prior_95": true,
+    "hit_7_95": true,
+    "hit_30_95": true,
+    "hit_90_95": true,
+    "hit_prior_99": true,
+    "hit_7_99": true,
+    "hit_30_99": true,
+    "hit_90_99": true,
+    "lag_inside_prior": true
+   },
+   {
+    "id": "disc:the-last-of-us:Long Long Time",
+    "family": "media -> search",
+    "stone": "the-last-of-us",
+    "lag_days": 17,
+    "prior_days": [
+     1.0,
+     21.0
+    ],
+    "prior_from": "family",
+    "n_train": 31,
+    "post_weeks": 21,
+    "prior_weeks": [
+     0,
+     4
+    ],
+    "hit_prior_95": true,
+    "hit_7_95": false,
+    "hit_30_95": true,
+    "hit_90_95": false,
+    "hit_prior_99": false,
+    "hit_7_99": false,
+    "hit_30_99": false,
+    "hit_90_99": false,
+    "lag_inside_prior": true
+   },
+   {
+    "id": "disc:shogun:Gai-Jin",
+    "family": "media -> search",
+    "stone": "shogun",
+    "lag_days": 1,
+    "prior_days": [
+     1.0,
+     21.0
+    ],
+    "prior_from": "family",
+    "n_train": 31,
+    "post_weeks": 21,
+    "prior_weeks": [
+     0,
+     4
+    ],
+    "hit_prior_95": true,
+    "hit_7_95": true,
+    "hit_30_95": true,
+    "hit_90_95": true,
+    "hit_prior_99": true,
+    "hit_7_99": true,
+    "hit_30_99": true,
+    "hit_90_99": true,
+    "lag_inside_prior": true
+   }
+  ],
+  "n": 44,
+  "fp_5pct": {
+   "hit_rate": {
+    "prior": 0.8409,
+    "7": 0.7955,
+    "30": 0.8409,
+    "90": 0.7727
+   },
+   "best_fixed": "30 days",
+   "prior_minus_best": 0.0,
+   "prior_only": 1,
+   "fixed_only": 1,
+   "mcnemar_p": 1.0,
+   "passed": false
+  },
+  "fp_1pct": {
+   "hit_rate": {
+    "prior": 0.6364,
+    "7": 0.6591,
+    "30": 0.6818,
+    "90": 0.6818
+   },
+   "best_fixed": "30 days",
+   "prior_minus_best": -0.0454,
+   "prior_only": 0,
+   "fixed_only": 2,
+   "mcnemar_p": 0.5,
+   "passed": false
+  },
+  "lag_inside_prior_share": 0.7727,
+  "bar": "held-out hit rate with family priors strictly above the best of the 7, 30 and 90-day windows, each at 5% false positives on decoy dates",
+  "passed": false
+ },
+ "reported_stone_to_mark": {
+  "Law": {
+   "quantiles_days": {
+    "n": 41,
+    "min": 13.0,
+    "q10": 124.0,
+    "q25": 285.0,
+    "median": 598.0,
+    "q75": 3534.0,
+    "q90": 6799.0,
+    "max": 11807.0
+   },
+   "steps": [
+    {
+     "chain": "dust-bowl-soil",
+     "n": 4,
+     "days_from_stone": 13,
+     "claim": "The Soil Conservation Act creates the Soil Conservation Service in the Department of Agriculture"
+    },
+    {
+     "chain": "daily-show-zadroga",
+     "n": 3,
+     "days_from_stone": 17,
+     "claim": "The James Zadroga 9/11 Health and Compensation Act is signed"
+    },
+    {
+     "chain": "fukushima",
+     "n": 2,
+     "days_from_stone": 80,
+     "claim": "Germany decides to phase out nuclear"
+    },
+    {
+     "chain": "winter-storm-uri",
+     "n": 4,
+     "days_from_stone": 115,
+     "claim": "Texas passes SB 3 weatherization law"
+    },
+    {
+     "chain": "the-jungle-fda",
+     "n": 5,
+     "days_from_stone": 124,
+     "claim": "The Federal Meat Inspection Act is signed"
+    },
+    {
+     "chain": "the-jungle-fda",
+     "n": 6,
+     "days_from_stone": 124,
+     "claim": "The Pure Food and Drug Act is signed the same day"
+    },
+    {
+     "chain": "sixty-minutes-stock-act",
+     "n": 4,
+     "days_from_stone": 143,
+     "claim": "The STOCK Act is signed"
+    },
+    {
+     "chain": "mr-bates-horizon",
+     "n": 7,
+     "days_from_stone": 144,
+     "claim": "The Post Office (Horizon System) Offences Act 2024 quashes the convictions"
+    },
+    {
+     "chain": "cuyahoga-clean-water",
+     "n": 3,
+     "days_from_stone": 193,
+     "claim": "The National Environmental Policy Act is signed on New Year's Day"
+    },
+    {
+     "chain": "unsafe-at-any-speed",
+     "n": 3,
+     "days_from_stone": 283,
+     "claim": "The National Traffic and Motor Vehicle Safety Act is signed, with the Highway Safety Act"
+    },
+    {
+     "chain": "dobbs",
+     "n": 5,
+     "days_from_stone": 285,
+     "claim": "States pass travel-restriction laws"
+    },
+    {
+     "chain": "sputnik-nasa-arpa",
+     "n": 7,
+     "days_from_stone": 298,
+     "claim": "The National Aeronautics and Space Act is signed"
+    },
+    {
+     "chain": "dust-bowl-soil",
+     "n": 5,
+     "days_from_stone": 321,
+     "claim": "After the Supreme Court strikes down the AAA, Congress pays farmers to plant soil-conserving crops"
+    },
+    {
+     "chain": "sputnik-nasa-arpa",
+     "n": 8,
+     "days_from_stone": 333,
+     "claim": "The National Defense Education Act puts federal money into science, math and language teaching and student loans"
+    },
+    {
+     "chain": "west-wing-hatred-act",
+     "n": 3,
+     "days_from_stone": 351,
+     "claim": "The Racial and Religious Hatred Act 2006 passes in the Lords' narrower form"
+    },
+    {
+     "chain": "triangle-shirtwaist",
+     "n": 6,
+     "days_from_stone": 370,
+     "claim": "New York's 54-hour law limits the week for women and children in factories"
+    },
+    {
+     "chain": "adolescence-schools",
+     "n": 6,
+     "days_from_stone": 412,
+     "claim": "The Children's Wellbeing and Schools Act receives Royal Assent"
+    },
+    {
+     "chain": "exxon-valdez-opa90",
+     "n": 5,
+     "days_from_stone": 512,
+     "claim": "The Oil Pollution Act of 1990 is signed"
+    },
+    {
+     "chain": "cuyahoga-clean-water",
+     "n": 6,
+     "days_from_stone": 557,
+     "claim": "The Clean Air Act of 1970 is signed"
+    },
+    {
+     "chain": "columbine-active-shooter",
+     "n": 4,
+     "days_from_stone": 567,
+     "claim": "Colorado voters close the gun-show loophole"
+    },
+    {
+     "chain": "octopus-sentience",
+     "n": 6,
+     "days_from_stone": 598,
+     "claim": "The Animal Welfare (Sentience) Act 2022 receives Royal Assent"
+    },
+    {
+     "chain": "quincy-orphan-drug",
+     "n": 4,
+     "days_from_stone": 671,
+     "claim": "The Orphan Drug Act is signed"
+    },
+    {
+     "chain": "love-canal-superfund",
+     "n": 6,
+     "days_from_stone": 862,
+     "claim": "The Comprehensive Environmental Response, Compensation, and Liability Act (Superfund) is signed"
+    },
+    {
+     "chain": "tiger-king",
+     "n": 3,
+     "days_from_stone": 1005,
+     "claim": "Congress passes the Big Cat Public Safety Act"
+    },
+    {
+     "chain": "cuyahoga-clean-water",
+     "n": 8,
+     "days_from_stone": 1214,
+     "claim": "Congress overrides Nixon's veto to pass the Clean Water Act"
+    },
+    {
+     "chain": "victim-1961",
+     "n": 4,
+     "days_from_stone": 2156,
+     "claim": "The Sexual Offences Act 1967 decriminalises homosexual acts in private between men over 21 in England and Wales"
+    },
+    {
+     "chain": "manhunt-byron",
+     "n": 5,
+     "days_from_stone": 2333,
+     "claim": "The Digital Economy Act 2010 makes video game ratings legally enforceable"
+    },
+    {
+     "chain": "love-canal-superfund",
+     "n": 8,
+     "days_from_stone": 2998,
+     "claim": "Congress reauthorizes Superfund at $8.5 billion and adds the community right-to-know law"
+    },
+    {
+     "chain": "daily-show-zadroga",
+     "n": 6,
+     "days_from_stone": 3147,
+     "claim": "The fund is made permanent through 2092"
+    },
+    {
+     "chain": "liebeck-hot-coffee",
+     "n": 7,
+     "days_from_stone": 3219,
+     "claim": "Texas caps non-economic damages in medical cases at $250,000"
+    },
+    {
+     "chain": "airbnb",
+     "n": 5,
+     "days_from_stone": 3534,
+     "claim": "Cities restrict short-term rentals"
+    },
+    {
+     "chain": "liebeck-hot-coffee",
+     "n": 8,
+     "days_from_stone": 3837,
+     "claim": "The Class Action Fairness Act moves large class actions into federal court"
+    },
+    {
+     "chain": "cathy-come-home",
+     "n": 4,
+     "days_from_stone": 3908,
+     "claim": "The Housing (Homeless Persons) Act 1977 creates a statutory duty to house people in priority need"
+    },
+    {
+     "chain": "america-and-alcohol",
+     "n": 5,
+     "days_from_stone": 5071,
+     "claim": "The Twenty-first Amendment repeals Prohibition"
+    },
+    {
+     "chain": "columbine-active-shooter",
+     "n": 9,
+     "days_from_stone": 5888,
+     "claim": "Colorado's Claire Davis School Safety Act lets families sue schools that fail to take reasonable care against violence"
+    },
+    {
+     "chain": "planet-earth",
+     "n": 5,
+     "days_from_stone": 6143,
+     "claim": "Congress passes the STURDY Act"
+    },
+    {
+     "chain": "unsafe-at-any-speed",
+     "n": 9,
+     "days_from_stone": 6799,
+     "claim": "New York passes the first mandatory seat-belt law"
+    },
+    {
+     "chain": "triangle-shirtwaist",
+     "n": 9,
+     "days_from_stone": 8908,
+     "claim": "The Social Security Act is signed"
+    },
+    {
+     "chain": "unsafe-at-any-speed",
+     "n": 10,
+     "days_from_stone": 9514,
+     "claim": "Congress requires airbags on both front seats of every new car"
+    },
+    {
+     "chain": "triangle-shirtwaist",
+     "n": 10,
+     "days_from_stone": 9954,
+     "claim": "The Fair Labor Standards Act sets a federal minimum wage, a 44-hour week and limits on child labor"
+    },
+    {
+     "chain": "the-jungle-fda",
+     "n": 9,
+     "days_from_stone": 11807,
+     "claim": "The Federal Food, Drug, and Cosmetic Act replaces the 1906 law and requires proof of safety before sale"
+    }
+   ]
+  },
+  "Institution": {
+   "quantiles_days": {
+    "n": 13,
+    "min": 97.0,
+    "q10": 173.20000000000005,
+    "q25": 528.0,
+    "median": 1857.0,
+    "q75": 8856.0,
+    "q90": 16681.40000000001,
+    "max": 21732.0
+   },
+   "steps": [
+    {
+     "chain": "triangle-shirtwaist",
+     "n": 4,
+     "days_from_stone": 97,
+     "claim": "New York creates the Factory Investigating Commission, with Robert Wagner as chair and Al Smith as vice-chair"
+    },
+    {
+     "chain": "sputnik-nasa-arpa",
+     "n": 5,
+     "days_from_stone": 126,
+     "claim": "The Advanced Research Projects Agency is created inside the Pentagon"
+    },
+    {
+     "chain": "sputnik-nasa-arpa",
+     "n": 9,
+     "days_from_stone": 362,
+     "claim": "NASA opens for business, absorbing the NACA"
+    },
+    {
+     "chain": "cuyahoga-clean-water",
+     "n": 5,
+     "days_from_stone": 528,
+     "claim": "The Environmental Protection Agency opens"
+    },
+    {
+     "chain": "dust-bowl-soil",
+     "n": 7,
+     "days_from_stone": 843,
+     "claim": "The first soil conservation district is organized at Brown Creek, North Carolina, in Bennett's home county"
+    },
+    {
+     "chain": "earthquake-bank",
+     "n": 4,
+     "days_from_stone": 1262,
+     "claim": "The Bank of Italy pioneers branch banking"
+    },
+    {
+     "chain": "unsafe-at-any-speed",
+     "n": 6,
+     "days_from_stone": 1857,
+     "claim": "The National Highway Traffic Safety Administration is established"
+    },
+    {
+     "chain": "silent-spring-ddt",
+     "n": 4,
+     "days_from_stone": 2988,
+     "claim": "The Environmental Protection Agency is created"
+    },
+    {
+     "chain": "america-and-alcohol",
+     "n": 6,
+     "days_from_stone": 5623,
+     "claim": "Alcoholics Anonymous is founded in Akron"
+    },
+    {
+     "chain": "the-jungle-fda",
+     "n": 7,
+     "days_from_stone": 8856,
+     "claim": "The enforcement bureau is renamed the Food and Drug Administration"
+    },
+    {
+     "chain": "earthquake-bank",
+     "n": 5,
+     "days_from_stone": 8963,
+     "claim": "It becomes Bank of America"
+    },
+    {
+     "chain": "america-and-alcohol",
+     "n": 9,
+     "days_from_stone": 18611,
+     "claim": "The Hughes Act creates the National Institute on Alcohol Abuse and Alcoholism"
+    },
+    {
+     "chain": "dust-bowl-soil",
+     "n": 8,
+     "days_from_stone": 21732,
+     "claim": "The Soil Conservation Service becomes the Natural Resources Conservation Service"
+    }
+   ]
+  },
+  "Regulation": {
+   "quantiles_days": {
+    "n": 11,
+    "min": 37.0,
+    "q10": 234.0,
+    "q25": 468.5,
+    "median": 1863.0,
+    "q75": 3362.5,
+    "q90": 3819.0,
+    "max": 6798.0
+   },
+   "steps": [
+    {
+     "chain": "tylenol",
+     "n": 3,
+     "days_from_stone": 37,
+     "claim": "FDA requires tamper-resistant packaging"
+    },
+    {
+     "chain": "wardrobe-malfunction",
+     "n": 4,
+     "days_from_stone": 234,
+     "claim": "FCC fines CBS $550,000"
+    },
+    {
+     "chain": "unsafe-at-any-speed",
+     "n": 4,
+     "days_from_stone": 427,
+     "claim": "The first Federal Motor Vehicle Safety Standards are issued"
+    },
+    {
+     "chain": "three-mile-island-nrc",
+     "n": 6,
+     "days_from_stone": 510,
+     "claim": "The NRC requires approved emergency plans within ten miles of every plant as a condition of a license"
+    },
+    {
+     "chain": "flint-lead-pipes",
+     "n": 7,
+     "days_from_stone": 1511,
+     "claim": "Michigan adopts the strictest lead rule in the country: all lead service lines out within 20 years"
+    },
+    {
+     "chain": "love-canal-superfund",
+     "n": 7,
+     "days_from_stone": 1863,
+     "claim": "Love Canal is on the first National Priorities List"
+    },
+    {
+     "chain": "flint-lead-pipes",
+     "n": 8,
+     "days_from_stone": 2457,
+     "claim": "The EPA's Lead and Copper Rule Revisions require utilities to inventory lead lines and test school water"
+    },
+    {
+     "chain": "manhunt-byron",
+     "n": 6,
+     "days_from_stone": 3177,
+     "claim": "PEGI becomes the statutory UK rating system"
+    },
+    {
+     "chain": "silent-spring-ddt",
+     "n": 5,
+     "days_from_stone": 3548,
+     "claim": "The EPA bans DDT for most uses"
+    },
+    {
+     "chain": "flint-lead-pipes",
+     "n": 10,
+     "days_from_stone": 3819,
+     "claim": "The Lead and Copper Rule Improvements order every lead pipe in the country replaced within ten years"
+    },
+    {
+     "chain": "unsafe-at-any-speed",
+     "n": 8,
+     "days_from_stone": 6798,
+     "claim": "Secretary Dole orders passive restraints from the 1987 models unless states covering two-thirds of the population pass seat-belt laws"
+    }
+   ]
+  },
+  "Industry": {
+   "quantiles_days": {
+    "n": 9,
+    "min": 7.0,
+    "q10": 991.0,
+    "q25": 2314.0,
+    "median": 5662.0,
+    "q75": 9811.0,
+    "q90": 17192.600000000006,
+    "max": 37939.0
+   },
+   "steps": [
+    {
+     "chain": "wardrobe-malfunction",
+     "n": 5,
+     "days_from_stone": 7,
+     "claim": "Live TV adopts broadcast delays"
+    },
+    {
+     "chain": "tylenol",
+     "n": 5,
+     "days_from_stone": 1237,
+     "claim": "OTC drugs move from capsules to caplets"
+    },
+    {
+     "chain": "cellucotton-kleenex",
+     "n": 4,
+     "days_from_stone": 2314,
+     "claim": "Kimberly-Clark launches Kotex"
+    },
+    {
+     "chain": "cellucotton-kleenex",
+     "n": 5,
+     "days_from_stone": 3501,
+     "claim": "Kleenex launches as a cold-cream remover, later a tissue"
+    },
+    {
+     "chain": "haber-nitrogen",
+     "n": 4,
+     "days_from_stone": 5662,
+     "claim": "After the war, synthetic fertilizer spreads"
+    },
+    {
+     "chain": "muybridge-cinema",
+     "n": 5,
+     "days_from_stone": 6043,
+     "claim": "After meeting Muybridge, Edison files the Kinetoscope caveat"
+    },
+    {
+     "chain": "magnetron-microwave",
+     "n": 5,
+     "days_from_stone": 9811,
+     "claim": "Amana's countertop Radarange reaches homes at $495"
+    },
+    {
+     "chain": "three-mile-island-nrc",
+     "n": 8,
+     "days_from_stone": 12006,
+     "claim": "No new reactor is licensed for 33 years, until the NRC approves Vogtle 3 and 4"
+    },
+    {
+     "chain": "america-and-alcohol",
+     "n": 12,
+     "days_from_stone": 37939,
+     "claim": "Non-alcoholic beer becomes a real category, growing about 30% a year"
+    }
+   ]
+  },
+  "Infrastructure": {
+   "quantiles_days": {
+    "n": 6,
+    "min": 44.0,
+    "q10": 483.0,
+    "q25": 1381.75,
+    "median": 3584.5,
+    "q75": 6673.0,
+    "q90": 8421.0,
+    "max": 9414.0
+   },
+   "steps": [
+    {
+     "chain": "anthrax",
+     "n": 2,
+     "days_from_stone": 44,
+     "claim": "USPS irradiates federal mail"
+    },
+    {
+     "chain": "sputnik-gps",
+     "n": 5,
+     "days_from_stone": 922,
+     "claim": "The Navy's Transit system works; GPS follows"
+    },
+    {
+     "chain": "flint-lead-pipes",
+     "n": 9,
+     "days_from_stone": 2761,
+     "claim": "The Bipartisan Infrastructure Law puts $15 billion into replacing lead service lines"
+    },
+    {
+     "chain": "sputnik-nasa-arpa",
+     "n": 10,
+     "days_from_stone": 4408,
+     "claim": "ARPA's network sends its first message between UCLA and SRI in Menlo Park"
+    },
+    {
+     "chain": "broad-street-sanitation",
+     "n": 6,
+     "days_from_stone": 7428,
+     "claim": "London's sewers are completed and cholera fades"
+    },
+    {
+     "chain": "exxon-valdez-opa90",
+     "n": 9,
+     "days_from_stone": 9414,
+     "claim": "Single-hull tankers are barred from US waters"
+    }
+   ]
+  },
+  "Public health": {
+   "quantiles_days": {
+    "n": 5,
+    "min": 3372.0,
+    "q10": 4315.2,
+    "q25": 5730.0,
+    "median": 15281.0,
+    "q75": 19540.0,
+    "q90": 40780.600000000006,
+    "max": 54941.0
+   },
+   "steps": [
+    {
+     "chain": "sildenafil-viagra",
+     "n": 5,
+     "days_from_stone": 3372,
+     "claim": "The FDA approves Viagra; sales top $1 billion in its first year"
+    },
+    {
+     "chain": "cantaloupe-penicillin",
+     "n": 5,
+     "days_from_stone": 5730,
+     "claim": "Mass production reaches 2.3 million doses for D-Day"
+    },
+    {
+     "chain": "quincy-orphan-drug",
+     "n": 5,
+     "days_from_stone": 15281,
+     "claim": "Hundreds of orphan drugs reach approval"
+    },
+    {
+     "chain": "perkin-chemotherapy",
+     "n": 4,
+     "days_from_stone": 19540,
+     "claim": "Ehrlich's lab finds Salvarsan, the first 'magic bullet'"
+    },
+    {
+     "chain": "broad-street-sanitation",
+     "n": 8,
+     "days_from_stone": 54941,
+     "claim": "Clean water helps drive a 30-year rise in life expectancy"
+    }
+   ]
+  },
+  "Policy": {
+   "quantiles_days": {
+    "n": 4,
+    "min": 2.0,
+    "q10": 20.900000000000002,
+    "q25": 49.25,
+    "median": 94.5,
+    "q75": 350.0,
+    "q90": 756.8000000000002,
+    "max": 1028.0
+   },
+   "steps": [
+    {
+     "chain": "svb",
+     "n": 3,
+     "days_from_stone": 2,
+     "claim": "Systemic risk exception guarantees all deposits"
+    },
+    {
+     "chain": "chernobyl-zone",
+     "n": 4,
+     "days_from_stone": 65,
+     "claim": "Ukraine makes the zone an official tourist attraction"
+    },
+    {
+     "chain": "adolescence-schools",
+     "n": 5,
+     "days_from_stone": 124,
+     "claim": "Updated relationships, sex and health education guidance names misogyny and incel culture"
+    },
+    {
+     "chain": "cuyahoga-clean-water",
+     "n": 7,
+     "days_from_stone": 1028,
+     "claim": "The United States and Canada sign the Great Lakes Water Quality Agreement"
+    }
+   ]
+  },
+  "Jobs": {
+   "quantiles_days": {
+    "n": 1,
+    "min": 9497.0,
+    "q10": 9497.0,
+    "q25": 9497.0,
+    "median": 9497.0,
+    "q75": 9497.0,
+    "q90": 9497.0,
+    "max": 9497.0
+   },
+   "steps": [
+    {
+     "chain": "container-waterfronts",
+     "n": 7,
+     "days_from_stone": 9497,
+     "claim": "Old manual ports decline: Manhattan's piers, London's Docklands"
+    }
+   ]
+  },
+  "Cities": {
+   "quantiles_days": {
+    "n": 1,
+    "min": 12184.0,
+    "q10": 12184.0,
+    "q25": 12184.0,
+    "median": 12184.0,
+    "q75": 12184.0,
+    "q90": 12184.0,
+    "max": 12184.0
+   },
+   "steps": [
+    {
+     "chain": "container-waterfronts",
+     "n": 8,
+     "days_from_stone": 12184,
+     "claim": "Abandoned docks become Canary Wharf"
+    }
+   ]
+  },
+  "Food supply": {
+   "quantiles_days": {
+    "n": 1,
+    "min": 20637.0,
+    "q10": 20637.0,
+    "q25": 20637.0,
+    "median": 20637.0,
+    "q75": 20637.0,
+    "q90": 20637.0,
+    "max": 20637.0
+   },
+   "steps": [
+    {
+     "chain": "haber-nitrogen",
+     "n": 6,
+     "days_from_stone": 20637,
+     "claim": "The Green Revolution reaches India and Pakistan"
+    }
+   ]
+  },
+  "Population": {
+   "quantiles_days": {
+    "n": 1,
+    "min": 41409.0,
+    "q10": 41409.0,
+    "q25": 41409.0,
+    "median": 41409.0,
+    "q75": 41409.0,
+    "q90": 41409.0,
+    "max": 41409.0
+   },
+   "steps": [
+    {
+     "chain": "haber-nitrogen",
+     "n": 7,
+     "days_from_stone": 41409,
+     "claim": "World population grows from 1.6 billion to 8 billion"
+    }
+   ]
+  },
+  "Legal": {
+   "quantiles_days": {
+    "n": 1,
+    "min": 2908.0,
+    "q10": 2908.0,
+    "q25": 2908.0,
+    "median": 2908.0,
+    "q75": 2908.0,
+    "q90": 2908.0,
+    "max": 2908.0
+   },
+   "steps": [
+    {
+     "chain": "serial",
+     "n": 4,
+     "days_from_stone": 2908,
+     "claim": "Renewed legal momentum; conviction vacated"
+    }
+   ]
+  },
+  "Science": {
+   "quantiles_days": {
+    "n": 1,
+    "min": 727.0,
+    "q10": 727.0,
+    "q25": 727.0,
+    "median": 727.0,
+    "q75": 727.0,
+    "q90": 727.0,
+    "max": 727.0
+   },
+   "steps": [
+    {
+     "chain": "ice-bucket",
+     "n": 4,
+     "days_from_stone": 727,
+     "claim": "Project MinE helps identify NEK1"
+    }
+   ]
+  },
+  "Material": {
+   "quantiles_days": {
+    "n": 1,
+    "min": 130.0,
+    "q10": 130.0,
+    "q25": 130.0,
+    "median": 130.0,
+    "q75": 130.0,
+    "q90": 130.0,
+    "max": 130.0
+   },
+   "steps": [
+    {
+     "chain": "cash-for-clunkers",
+     "n": 2,
+     "days_from_stone": 130,
+     "claim": "About 677,000 trade-ins are destroyed"
+    }
+   ]
+  },
+  "Transportation": {
+   "quantiles_days": {
+    "n": 1,
+    "min": 17798.0,
+    "q10": 17798.0,
+    "q25": 17798.0,
+    "median": 17798.0,
+    "q75": 17798.0,
+    "q90": 17798.0,
+    "max": 17798.0
+   },
+   "steps": [
+    {
+     "chain": "tambora-bicycle",
+     "n": 5,
+     "days_from_stone": 17798,
+     "claim": "Pedals and cranks make the modern bicycle"
+    }
+   ]
+  }
+ },
+ "note": "Lags are days from the parent step's date to the response's onset as the checker dated it. A family window is the registered rule over that family's confirmed lags; reported_stone_to_mark is context only, never a prior."
+}
