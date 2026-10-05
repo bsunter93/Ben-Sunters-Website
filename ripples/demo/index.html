@@ -266,6 +266,14 @@ input[type=range]{flex:1;accent-color:var(--marigold);min-width:0}
 .w2 .tally > [class^="l-"],.w2 .tally > .weak{display:none}.w2 .tally.open > [class^="l-"],.w2 .tally.open > .weak{display:inline}
 .sureq{background:none;border:0;padding:0 2px;font:inherit;color:var(--ink-2);text-decoration:underline;text-decoration-color:var(--hair);text-underline-offset:3px;cursor:pointer}.sureq:hover,.sureq:focus-visible{color:var(--ink)}.w2 .tally.open .sureq{color:var(--ink)}
 @media (max-width:700px){.w2 .legend:not(.keyopen) > span:not(.lgmark),.w2 .legend:not(.keyopen) > .lgnote{display:none}}  /* on a phone the key waits behind How it works; the lasting-mark glyph stays */
+.legend [data-tip]{position:relative;cursor:help;border-radius:4px;text-decoration:underline dotted rgba(214,232,246,.35);text-underline-offset:4px}
+.legend [data-tip]:focus-visible{outline:2px solid var(--marigold);outline-offset:2px}
+.legend [data-tip]::after{content:attr(data-tip);position:absolute;left:0;top:calc(100% + 8px);width:max-content;max-width:260px;padding:8px 10px;border-radius:6px;background:#f4efe6;color:#1e2a2e;font:400 .8rem/1.4 var(--sans);text-decoration:none;white-space:normal;box-shadow:0 6px 18px rgba(0,0,0,.35);opacity:0;transform:translateY(-4px);pointer-events:none;transition:opacity .15s,transform .15s;z-index:20}
+.legend [data-tip]:hover::after,.legend [data-tip]:focus::after{opacity:1;transform:none}
+@media (max-width:560px){.legend [data-tip]::after{max-width:220px}.legend [data-tip]:nth-last-of-type(-n+3)::after{left:auto;right:0}}
+canvas.glw{position:absolute;pointer-events:none;border-radius:10px;z-index:0}.gl svg#pond{position:relative;z-index:1}
+.gl #pond .scene > rect,.gl #pond .scene + g > circle:first-child,.gl .sheen,.gl .wbands,.gl .frontg,.gl .wave,.gl .dimple,.gl #pond [fill="url(#w2sky)"],.gl #pond [fill="url(#wet)"],.gl .sshadow{display:none}
+.w2 .wake{display:none}  /* the pulse every seven seconds read as sonar */
 .pkS{fill:none;stroke:rgba(2,14,28,.45);stroke-width:3}.pkH{fill:none;stroke:rgba(214,234,248,.42);stroke-width:1.3}.w2 .frontg{filter:url(#softwave)}
 .w2 .front{stroke-width:2;stroke:rgba(226,240,252,.6)}.w2 .frontS{stroke-width:3.8;stroke:rgba(2,14,28,.55)}
 .wbS{fill:none;stroke:rgba(2,14,28,.32);stroke-width:2.2}.wbH{fill:none;stroke:rgba(214,234,248,.16);stroke-width:1}
@@ -464,12 +472,12 @@ body.card .beatline{display:none}
       <button class="nextbtn" id="nextbtn">Next story →</button>
     </div>
     <div class="legend" aria-label="How sure we are of each link">
-      <span><svg width="22" height="8"><line x1="1" y1="4" x2="21" y2="4" stroke="var(--good)" stroke-width="4"/></svg>Measured</span>
-      <span><svg width="22" height="8"><line x1="1" y1="4" x2="21" y2="4" stroke="var(--timed)" stroke-width="3"/></svg>Timed</span>
-      <span><svg width="22" height="8"><line x1="1" y1="4" x2="21" y2="4" stroke="var(--rec)" stroke-width="2"/></svg>Reported</span>
-      <span><svg width="22" height="8"><line x1="1" y1="4" x2="21" y2="4" stroke="var(--plaus)" stroke-width="2" stroke-dasharray="5 6"/></svg>Plausible</span>
-      <span><svg width="22" height="8"><line x1="1" y1="4" x2="21" y2="4" stroke="var(--miss)" stroke-width="1.6" stroke-dasharray="2 5"/></svg>Busted</span>
-      <span class="lgmark"><svg width="16" height="16" viewBox="-8 -8 16 16" aria-hidden="true"><path d="M0,-7 L6,-3.5 L6,3.5 L0,7 L-6,3.5 L-6,-3.5 Z" fill="#1a2540" stroke="var(--marigold)" stroke-width="1.3"/><circle r="2.1" fill="var(--marigold)"/></svg>Lasting mark</span>
+      <span tabindex="0" role="note" data-tip="Rose beyond chance in a test against fake dates, and after the step before. Most are Wikipedia views: what people looked up, not what they did." aria-label="Measured: Rose beyond chance in a test against fake dates, and after the step before. Most are Wikipedia views: what people looked up, not what they did."><svg width="22" height="8"><line x1="1" y1="4" x2="21" y2="4" stroke="var(--good)" stroke-width="4"/></svg>Measured</span>
+      <span tabindex="0" role="note" data-tip="Came after the step before, in its own data. The order is checked; nothing was tested against chance." aria-label="Timed: Came after the step before, in its own data. The order is checked; nothing was tested against chance."><svg width="22" height="8"><line x1="1" y1="4" x2="21" y2="4" stroke="var(--timed)" stroke-width="3"/></svg>Timed</span>
+      <span tabindex="0" role="note" data-tip="A record or a source makes the link: a law, a citation, a news report. We did not measure it." aria-label="Reported: A record or a source makes the link: a law, a citation, a news report. We did not measure it."><svg width="22" height="8"><line x1="1" y1="4" x2="21" y2="4" stroke="var(--rec)" stroke-width="2"/></svg>Reported</span>
+      <span tabindex="0" role="note" data-tip="It happened, after the step before. The link between them is unproven." aria-label="Plausible: It happened, after the step before. The link between them is unproven."><svg width="22" height="8"><line x1="1" y1="4" x2="21" y2="4" stroke="var(--plaus)" stroke-width="2" stroke-dasharray="5 6"/></svg>Plausible</span>
+      <span tabindex="0" role="note" data-tip="The claimed link fails: the effect began before its supposed cause, or the test found nothing." aria-label="Busted: The claimed link fails: the effect began before its supposed cause, or the test found nothing."><svg width="22" height="8"><line x1="1" y1="4" x2="21" y2="4" stroke="var(--miss)" stroke-width="1.6" stroke-dasharray="2 5"/></svg>Busted</span>
+      <span class="lgmark" tabindex="0" role="note" data-tip="Where a ripple ends: a law, an institution, or a lasting change in health, work or behavior." aria-label="Lasting mark: Where a ripple ends: a law, an institution, or a lasting change in health, work or behavior."><svg width="16" height="16" viewBox="-8 -8 16 16" aria-hidden="true"><path d="M0,-7 L6,-3.5 L6,3.5 L0,7 L-6,3.5 L-6,-3.5 Z" fill="#1a2540" stroke="var(--marigold)" stroke-width="1.3"/><circle r="2.1" fill="var(--marigold)"/></svg>Lasting mark</span>
       <button class="howbtn" id="howbtn" aria-expanded="false" aria-controls="how">How it works</button>
       <span class="lgnote">Measured: beat a placebo test, after the step before. Most measured links are Wikipedia views: what people looked up, not what they did.</span>
     </div>
@@ -573,6 +581,7 @@ const $ = s => document.querySelector(s);
 const params = new URLSearchParams(location.search);
 const W2 = (() => { const w = params.get("water"); try { if (w) sessionStorage.setItem("ripple-water", w); return (w || sessionStorage.getItem("ripple-water") || "2") === "2"; } catch { return w !== "1"; } })();  // the water look is the default (Oct 5); ?water=1 shows the old instrument pond for the session, ?water=2 brings water back
 if (W2) document.documentElement.classList.add("w2");
+const REEL_Q = params.has("reel"), CARD_Q = params.has("card");  // reels and share cards keep the SVG water: their frames are recorded headless
 // Engagement instruments (Oct 5; docs/engagement_protocol_v1.md). Aggregate events to the site's own GA4 property, no
 // personal data, no event from a local file, a share-card render, a reel recording or a QA run (`&nointro=1` is the tests' flag).
 const TRACK_ON = location.protocol !== "file:" && !new URLSearchParams(location.search).has("reel") && !new URLSearchParams(location.search).has("card") && !new URLSearchParams(location.search).has("nointro") && !/bot|headless/i.test(navigator.userAgent);
@@ -585,6 +594,90 @@ if (CARD) document.body.classList.add("card");
 const DATA = {maps:{}, chains:[], disc:null};
 let cur = null, t = 0, playing = !matchMedia("(prefers-reduced-motion: reduce)").matches, last = 0, hot = null, scrubbing = false;
 
+// ---------- water surface (WebGL) ----------
+// The water look's surface: a height field under the SVG, lit by its own slope, so a wave reads as a wave and not as a
+// ring on a chart. It is drawn in the pond's own coordinates (the viewBox and the tilt), so the rings, labels and taps
+// on the SVG sit exactly over it. Built from scratch: a radial wave packet behind the front, the splash's packet, a faint
+// standing ring where each ripple passed, three slow wind waves, Fresnel reflection of a sky gradient and one sun glint.
+// No WebGL, or ?water=1: the SVG water stays as it was.
+const GLW = (() => {
+  if (!W2 || REEL_Q || CARD_Q) return null;
+  const cv = document.createElement("canvas"); cv.className = "glw"; cv.setAttribute("aria-hidden", "true");
+  let gl; try { gl = cv.getContext("webgl", {alpha:false, antialias:false, premultipliedAlpha:false, powerPreference:"low-power"}); } catch {}
+  if (!gl) return null;
+  const VS = "attribute vec2 a;void main(){gl_Position=vec4(a,0.,1.);}";
+  const FS = `precision highp float;
+uniform vec2 uRes;uniform vec3 uMap;uniform vec4 uVB;uniform vec2 uC;uniform float uR,uTilt,uTime,uSunk;uniform vec2 uFront,uSplash;uniform vec3 uRings[24];uniform int uN;
+float H(vec2 p){
+  float r=length(p-uC),h=0.;
+  float x=r-uFront.x; h+=uFront.y*exp(-pow((x+16.)/20.,2.))*cos(x*.42-uTime*1.7);
+  if(uSplash.y>0.){float a=uSplash.x,rs=12.+150.*a,x2=r-rs; h+=1.9*exp(-1.3*a)*exp(-pow(x2/15.,2.))*cos(x2*.5);}
+  for(int i=0;i<24;i++){if(i>=uN)break;vec3 q=uRings[i];float x3=r-q.x;h+=q.y*exp(-x3*x3/28.)*(.75+.25*cos(uTime*1.1+q.x*.13));}
+  h-=uSunk*1.5*exp(-r*r/90.);
+  h+=.09*sin(dot(p,vec2(.081,.047))+uTime*.7)+.07*sin(dot(p,vec2(-.052,.113))-uTime*.9)+.05*sin(dot(p,vec2(.131,-.021))+uTime*1.3);
+  return h;}
+void main(){
+  vec2 fc=vec2(gl_FragCoord.x,uRes.y-gl_FragCoord.y);
+  vec2 s=uVB.xy+(fc-uMap.xy)/uMap.z;
+  vec2 p=vec2(s.x,uC.y+(s.y-uC.y)/uTilt);
+  float r=length(p-uC),e=.9,k=1.5;
+  float h0=H(p),hx=H(p+vec2(e,0.)),hy=H(p+vec2(0.,e));
+  vec3 N=normalize(vec3(-(hx-h0)/e*k,(hy-h0)/e*k,1.));
+  float se=uTilt,ce=sqrt(1.-se*se);
+  vec3 D=normalize(vec3(0.,ce,-se)),Rf=reflect(D,N);
+  float F=.02+.98*pow(1.-max(dot(-D,N),0.),5.);
+  vec3 sky=mix(vec3(.60,.72,.82),vec3(.16,.27,.37),smoothstep(0.,.85,Rf.z));
+  float far=clamp((uC.y-p.y)/uR*.5+.5,0.,1.);
+  vec3 body=mix(vec3(.047,.09,.125),vec3(.075,.135,.18),far);
+  vec3 col=mix(body,sky,clamp(F*2.4+far*.05,0.,1.));
+  col+=vec3(.85,.9,.95)*pow(max(dot(Rf,normalize(vec3(-.35,.8,.48))),0.),110.)*.45;
+  float a=1.-smoothstep(uR-30.,uR+44.,r);
+  gl_FragColor=vec4(mix(vec3(.059,.11,.149),col,a),1.);}`;
+  const sh = (type, src) => { const o = gl.createShader(type); gl.shaderSource(o, src); gl.compileShader(o); return gl.getShaderParameter(o, gl.COMPILE_STATUS) ? o : null; };
+  const vs = sh(gl.VERTEX_SHADER, VS), fs = sh(gl.FRAGMENT_SHADER, FS); if (!vs || !fs) return null;
+  const pr = gl.createProgram(); gl.attachShader(pr, vs); gl.attachShader(pr, fs); gl.linkProgram(pr);
+  if (!gl.getProgramParameter(pr, gl.LINK_STATUS)) return null;
+  gl.useProgram(pr);
+  const buf = gl.createBuffer(); gl.bindBuffer(gl.ARRAY_BUFFER, buf); gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([-1, -1, 3, -1, -1, 3]), gl.STATIC_DRAW);
+  const loc = gl.getAttribLocation(pr, "a"); gl.enableVertexAttribArray(loc); gl.vertexAttribPointer(loc, 2, gl.FLOAT, false, 0, 0);
+  const U = {}; ["uRes", "uMap", "uVB", "uC", "uR", "uTilt", "uTime", "uSunk", "uFront", "uSplash", "uRings", "uN"].forEach(n => U[n] = gl.getUniformLocation(pr, n));
+  const still = matchMedia("(prefers-reduced-motion: reduce)").matches, rings = new Float32Array(72);
+  let poke = 0, lastDraw = 0, size = "";
+  document.documentElement.classList.add("gl");
+  function place() {
+    const svg = $("#pond"); if (!svg || !svg.parentNode) return false;
+    if (cv.parentNode !== svg.parentNode) svg.parentNode.insertBefore(cv, svg);
+    const dpr = Math.min(window.devicePixelRatio || 1, window.innerWidth < 600 ? 1.25 : 1.5), w = svg.clientWidth, h = svg.clientHeight;
+    const key = `${w}x${h}@${dpr}|${svg.offsetLeft},${svg.offsetTop}`;
+    if (key !== size) { size = key; cv.width = Math.max(1, Math.round(w * dpr)); cv.height = Math.max(1, Math.round(h * dpr));
+      cv.style.cssText = `left:${svg.offsetLeft}px;top:${svg.offsetTop}px;width:${w}px;height:${h}px`; gl.viewport(0, 0, cv.width, cv.height); }
+    return w > 0 && h > 0;
+  }
+  function draw(now) {
+    if (!cur || !place()) return;
+    const svg = $("#pond"), vb = svg.viewBox.baseVal, dpr = cv.width / svg.clientWidth, sc = Math.min(svg.clientWidth / vb.width, svg.clientHeight / vb.height);
+    gl.uniform2f(U.uRes, cv.width, cv.height);
+    gl.uniform3f(U.uMap, (svg.clientWidth - vb.width * sc) / 2 * dpr, (svg.clientHeight - vb.height * sc) / 2 * dpr, sc * dpr);
+    gl.uniform4f(U.uVB, vb.x, vb.y, vb.width, vb.height); gl.uniform2f(U.uC, C.x, C.y); gl.uniform1f(U.uR, R + 30); gl.uniform1f(U.uTilt, TILT);
+    gl.uniform1f(U.uTime, still ? 0 : now / 1000);
+    gl.uniform1f(U.uSunk, cur.splashed ? Math.min(1, (now - (cur.splashT || 0)) / 900) : 0);
+    gl.uniform2f(U.uFront, cur.frR || 0, still ? 0 : (cur.frOn || 0));
+    const age = cur.splashT ? (now - cur.splashT) / 1000 : 99; gl.uniform2f(U.uSplash, age, !still && age < 4 ? 1 : 0);
+    let n = 0; for (const it of cur.items) { if (n >= 24) break; if (it.state !== "landed") continue; const b = it.landT ? (now - it.landT) / 1000 : 9;
+      rings[n * 3] = it.r; rings[n * 3 + 1] = 0.32 + (still ? 0 : 1.1 * Math.exp(-1.6 * b)); rings[n * 3 + 2] = 0; n++; }
+    gl.uniform3fv(U.uRings, rings); gl.uniform1i(U.uN, n);
+    gl.drawArrays(gl.TRIANGLES, 0, 3); lastDraw = now;
+  }
+  function loop(now) {  // full rate while anything moves; a slow breath for twenty seconds after; then the surface holds still
+    const busy = playing || scrubbing || now - poke < 4000, idle = !still && now - poke < 20000;
+    if (busy || (idle && now - lastDraw > 66) || !lastDraw) draw(now);
+    requestAnimationFrame(loop);
+  }
+  requestAnimationFrame(loop);
+  window.addEventListener("resize", () => { size = ""; poke = performance.now(); });
+  cv.addEventListener("webglcontextlost", e => { e.preventDefault(); document.documentElement.classList.remove("gl"); cv.remove(); });
+  return {poke: () => { poke = performance.now(); }};
+})();
 function el(tag, attrs = {}, parent) {
   const e = document.createElementNS(NS, tag);
   for (const k in attrs) e.setAttribute(k, attrs[k]);
@@ -1483,6 +1576,7 @@ function launch(it, animate) {
   }
 }
 function land(it) {  // the label appears only once the ripple has arrived
+  if (it.state !== "landed") it.landT = performance.now();
   it.state = "landed";
   it.g.classList.add("on"); it.g.setAttribute("tabindex", 0);
   it.g.setAttribute("transform", `translate(${it.pos.x},${it.pos.y}) scale(${depthK(it.plane)})`);
@@ -1619,7 +1713,8 @@ function render(now = performance.now()) {
   }
   $("#scrub").value = Math.round(t * 1000);
   if (W2) $("#pond").classList.toggle("sunk", t >= PRE + 0.004);
-  if (!cur.splashed && t >= PRE) { cur.splashed = true; spawnSplash(); spawnWave(3.2); setTimeout(() => spawnWave(2.2), 240); setTimeout(() => spawnWave(1.4), 520); }
+  if (GLW) GLW.poke();
+  if (!cur.splashed && t >= PRE) { cur.splashed = true; cur.splashT = performance.now(); spawnSplash(); spawnWave(3.2); setTimeout(() => spawnWave(2.2), 240); setTimeout(() => spawnWave(1.4), 520); }
   if (t < PRE) cur.splashed = false;
   const ev0 = cur.eventSeries ? valueAt(cur.eventSeries, iso0, d) : null;
   cur.sHalo.setAttribute("r", 30 + Math.min(18, 3 * Math.log2(1 + (ev0 || 0))));
@@ -1645,7 +1740,7 @@ function render(now = performance.now()) {
   }
   if (cur.front) {  // the wavefront: at the radius time has reached; gone once the story is at rest
     const fr = radius(Math.max(0.5, d)), live = t < 1 || playing || scrubbing;
-    ["glow", "shadow", "body", "light"].forEach(k => cur.front[k].setAttribute("r", fr));
+    ["glow", "shadow", "body", "light"].forEach(k => cur.front[k].setAttribute("r", fr)); cur.frR = fr; cur.frOn = live && t > PRE ? Math.min(1, (1 - t) * 6) : 0;
     if (cur.front.packet) cur.front.packet.forEach(b => { const r = Math.max(0, fr - b.k * 9); b.s.setAttribute("r", r); b.h.setAttribute("r", r); });
     cur.front.g.setAttribute("opacity", live && t > PRE ? Math.min(1, (1 - t) * 6).toFixed(2) : 0);
   }
