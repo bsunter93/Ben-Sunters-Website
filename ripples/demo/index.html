@@ -259,7 +259,7 @@ input[type=range]{flex:1;accent-color:var(--marigold);min-width:0}
 @media (prefers-reduced-motion:reduce){.wake{animation:none}}  /* the time grid: log rings, a hairline each */
 .ringlbl{fill:rgba(214,232,246,.72);font:500 10px var(--sans);letter-spacing:.01em;font-variant-numeric:tabular-nums}
 .slicebd{display:none}  /* sector boundaries read as radar spokes; the rim word and the position carry the sector */
-.rimlbl{font:italic 500 11px var(--display);letter-spacing:0;text-transform:none;fill:rgba(214,232,246,.62)}  /* where a ripple landed, set like a print annotation, not a radar rim */
+.rimlbl{font:italic 500 11px var(--display);letter-spacing:0;text-transform:none;fill:rgba(214,232,246,.62)}.rimlbl.dim{fill:rgba(214,232,246,.16)}  /* where a ripple landed, set like a print annotation, not a radar rim */
 .wave{fill:none;stroke:rgba(226,240,252,.55);filter:url(#softwave)}
 .frontg{transition:opacity .4s}.front,.frontS,.frontH,.frontGlow{fill:none;stroke-linecap:round}
 .front{stroke:rgba(236,246,255,.78);stroke-width:1.7}.frontS{stroke:rgba(2,14,28,.45);stroke-width:3.2}.frontH{stroke:#fff;stroke-width:.8;opacity:.8}
@@ -392,6 +392,7 @@ body.reel .pondbox{padding-bottom:10px}
 .beatline .bwhen{display:block;font:600 .74rem/1.2 var(--sans);letter-spacing:.06em;text-transform:uppercase;color:var(--ink-3);font-variant-numeric:tabular-nums;margin-bottom:3px}
 .beatline b{font-weight:600}.beatline .bhow{font-style:normal;font-weight:600;margin-left:8px}.beatline .bhow.l-measured{color:var(--good)}.beatline .bhow.l-timed{color:var(--timed)}.beatline .bhow.l-reported{color:var(--ink-2)}.beatline .bhow.l-plausible{color:var(--plaus)}.beatline .bhow.l-busted{color:var(--miss)}
 .beatline .bwhy{display:block;color:var(--ink-2);font-size:.86rem;margin-top:2px}.beatline .bmore{display:block;color:var(--ink-3);font-size:.82rem}
+.beatline .bnext{display:block;width:max-content;max-width:100%;margin:8px auto 0;padding:5px 12px;border-radius:999px;border:1px solid var(--marigold);background:rgba(232,168,56,.12);color:var(--marigold);font:600 .84rem var(--sans);cursor:pointer;pointer-events:auto}.beatline .bnext:hover{background:rgba(232,168,56,.24)}
 .beatline .bmk{color:var(--marigold);font-weight:700;margin-right:6px}.beatline .bmk svg{width:12px;height:12px;vertical-align:-1px;margin-right:3px}
 .card.now{border-color:rgba(242,169,59,.55)}
 @media (max-width:860px){.beatline{position:static;padding:8px 10px 2px;font-size:.88rem;background:none;text-shadow:none;height:104px;box-sizing:border-box;display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:5;overflow:hidden;transition:opacity .35s}.beatline.off{opacity:0}.beatline .bwhy{display:none}#pond.focus ~ .beatline{display:none}}
@@ -549,7 +550,7 @@ const LVL = {measured:"Measured", timed:"Timed", reported:"Reported", plausible:
 const LV = {tested:"measured", timed:"timed", record:"reported"};
 const COLOR = {measured:"var(--good)", timed:"var(--marigold)", reported:"var(--rec)", plausible:"var(--plaus)", busted:"var(--miss)"};
 
-const NS = "http://www.w3.org/2000/svg", C = {x:350, y:330}, R = 286, DUR = 15000, FLY = 1150, THROW_FROM = {x:-30, y:548};  // the near bank, lower left
+const NS = "http://www.w3.org/2000/svg", C = {x:350, y:330}, R = 286, DUR = 15000, FLY = 1150, THROW_FROM = {x:150, y:452};  // the near rim, lower left, on the water: a stone resting on the bank outside the pond read as a glitch (Oct 4 review)
 const $ = s => document.querySelector(s);
 const params = new URLSearchParams(location.search);
 // Engagement instruments (Oct 5; docs/engagement_protocol_v1.md). Aggregate events to the site's own GA4 property, no
@@ -1041,7 +1042,7 @@ function draw(story) {
     try {
       let b = rt.getBBox();
       if (b.x < -62) rt.setAttribute("x", +rt.getAttribute("x") + (-62 - b.x)); else if (b.x + b.width > 762) rt.setAttribute("x", +rt.getAttribute("x") - (b.x + b.width - 812));
-      b = rt.getBBox(); rimBoxes.push({x:b.x - 4, y:b.y - 2, w:b.width + 8, h:b.height + 4, soft:true});
+      b = rt.getBBox(); rimBoxes.push({x:b.x - 4, y:b.y - 2, w:b.width + 8, h:b.height + 4, soft:true, el:rt});
     } catch {}
   });
   const waves = el("g", {}, plane), bands = el("g", {}, plane), rips = el("g", {}, plane), edges = el("g", {}, plane), elbls = el("g", {}, svg), nodes = el("g", {}, svg), labels = el("g", {}, svg);
@@ -1179,6 +1180,7 @@ function draw(story) {
     if (!it.showLabel && it.leader) { it.leader.remove(); it.leader = null; }
     const bx = it.pos.x + best[0], by = it.pos.y + best[1];
     if (it.showLabel) placed.push({x:bx, y:by, w:bw, h:bh});  // hidden labels do not reserve space
+    if (it.showLabel) for (const rb of rimBoxes) if (rb.el && bx < rb.x + rb.w && bx + bw > rb.x && by < rb.y + rb.h && by + bh > rb.y) rb.el.classList.add("dim");  // a rim word under a label steps back; the label is the information
     lab.setAttribute("transform", `translate(${bx + pad - bb.x},${by + pad - bb.y})`);
     rect.setAttribute("x", bb.x - pad); rect.setAttribute("y", bb.y - pad); rect.setAttribute("width", bw); rect.setAttribute("height", bh);
     it.lab = lab; it.state = "hidden";
@@ -1282,7 +1284,7 @@ function setMystery(on, part) {
 function verifyText(b) {
   const m = b.mark, stone = cur.stone || cur.title, weak = cur.weak || "plausible";
   const order = `${esc(stone)} came first, ${esc(fmt(D(cur.iso0)))}; ${esc(m.label)} ${sinceLabel(m.d).replace("+", "")} later.`;
-  return `<span class="bwhen">Checked</span><b>${order}</b><i class="bhow l-${weak}">weakest link ${esc(LVL[weak].toLowerCase())}</i><span class="bwhy">${weak === "measured" ? "Every link passed its test." : weak === "timed" ? "Every link is in order." : weak === "reported" ? "A source makes each link." : "One link is unproven."} Order, not proof of cause.</span>${cur.also ? `<span class="bmore">It wasn't the only reason: ${esc(cur.also.length > 110 ? cur.also.slice(0, 107).replace(/\s+\S*$/, "") + "…" : cur.also)}</span>` : ""}`;
+  return `<span class="bwhen">Checked</span><b>${order}</b><i class="bhow l-${weak}">weakest link ${esc(LVL[weak].toLowerCase())}</i><span class="bwhy">${weak === "measured" ? "Every link passed its test." : weak === "timed" ? "Every link is in order." : weak === "reported" ? "A source makes each link." : "One link is unproven."} Order, not proof of cause.</span>`;  // the "it wasn't the only reason" line lives in the subtitle, whole; a hero beat does not end in an ellipsis
 }
 function spotlight(b) {  // the beat's ripples bloom lit, with their path back to the stone, and the line under the pond says what happened
   if (b.verify) { cur.beatOn = b; const bl = $("#beatline"); bl.innerHTML = verifyText(b); placeBeatline(); bl.classList.remove("off"); setMystery(false, "sub"); track("verify", {slug: cur.key}); return; }  // the verification beat keeps the mark lit and answers "is it real?"
@@ -1573,12 +1575,13 @@ function render(now = performance.now()) {
   $("#pond").classList.toggle("grab", t < PRE * 0.85);
   const kk = t < PRE ? t / PRE : 1;  // the stone is thrown: from the near bank in an arc, spinning, then it lands and settles
   const sink = kk >= 1 ? 6 * (cur.K || 1) : 0;
-  const from = cur.throwFrom || (cur.dense ? {x:-20, y:500} : THROW_FROM), lift = 150 * Math.sin(Math.PI * Math.min(1, kk));
+  const from = cur.throwFrom || THROW_FROM, lift = 150 * Math.sin(Math.PI * Math.min(1, kk));
   const sx = from.x + (C.x - from.x) * ease(kk), sy = from.y + (C.y - from.y) * ease(kk) - lift + sink;
   const spin = kk < 1 ? (kk * 540) % 360 : 0, grow = kk < 1 ? 1.25 - 0.25 * kk : 1;  // nearer the viewer at the bank, so a little larger
   cur.sCore.setAttribute("transform", `translate(${sx.toFixed(1)},${sy.toFixed(1)}) rotate(${spin.toFixed(0)}) scale(${(Math.min(cur.K || 1, 1.5) * 1.7 * grow).toFixed(3)})`);
-  cur.sCore.setAttribute("opacity", 1);
-  if (cur.sShadow) { cur.sShadow.setAttribute("opacity", kk < 1 ? (0.15 + 0.35 * kk).toFixed(2) : 0.5); cur.sShadow.setAttribute("transform", kk < 1 ? `translate(${(sx - C.x).toFixed(1)} ${(sy + lift - C.y).toFixed(1)}) scale(${(0.6 + 0.4 * kk).toFixed(2)})` : ""); }
+  const waiting = kk <= 0 && playing;  // about to be thrown: a grey disc resting on the bank read as a glitch (Oct 4 review), so the stone appears in motion
+  cur.sCore.setAttribute("opacity", waiting ? 0 : 1);
+  if (cur.sShadow) { cur.sShadow.setAttribute("opacity", waiting ? 0 : kk < 1 ? (0.15 + 0.35 * kk).toFixed(2) : 0.5); cur.sShadow.setAttribute("transform", kk < 1 ? `translate(${(sx - C.x).toFixed(1)} ${(sy + lift - C.y).toFixed(1)}) scale(${(0.6 + 0.4 * kk).toFixed(2)})` : ""); }
   if (cur.sWater) cur.sWater.setAttribute("opacity", kk >= 1 ? 1 : 0);
   for (const it of items) {
     const due = d >= it.d;
@@ -1682,7 +1685,7 @@ function setPlaying(p) {
   playing = p; if (cur && !p) cur.goal = null;
   if (cur && p && cur.timeline) { unspot(); cur.clock = clockAtT(t); if (t <= PRE + 1e-6 && !stepMode) setMystery(true); else setMystery(false); }  // play from the start is an investigation; a resumed play shows everything
   if (cur && !p) setMystery(false);  // a pause, a stop, a scrub or a deep link shows everything
-  if (cur && !p && t >= 1) { track("complete", {slug: cur.key, seconds_in_story: Math.round((performance.now() - sess.storyT0) / 1000)}); cur.items.forEach(wake); setMystery(false); if (!REEL) { unspot(); $("#beatline").classList.add("off"); } }  // a reel keeps its end card up  // at rest every step speaks and the pond is level
+  if (cur && !p && t >= 1) { track("complete", {slug: cur.key, seconds_in_story: Math.round((performance.now() - sess.storyT0) / 1000)}); cur.items.forEach(wake); setMystery(false); if (!REEL) { unspot(); showEndBeat(); } }  // a reel keeps its end card up; ordinary play ends on what stayed and the next stone  // at rest every step speaks and the pond is level
   if (cur && !p && cur.sCore) render();  // one last frame: the rest label, the woken labels  // a pause or a scrub drops the step goal; play picks the next from where the clock is
   const done = !p && t >= 1;
   $("#playico").innerHTML = p ? '<rect x="3" y="2" width="3.5" height="12" fill="currentColor"/><rect x="9.5" y="2" width="3.5" height="12" fill="currentColor"/>'
@@ -1825,10 +1828,23 @@ function show(kind, slug, autoplay = true) {
   setPlaying(autoplay);
   if (!REEL) try { history.replaceState(null, "", `?${kind === "chain" ? "c" : kind === "acts" ? "a" : kind === "wiki" ? "w" : "m"}=${encodeURIComponent(slug)}`); } catch { /* sandboxed previews cannot rewrite the URL */ }
 }
-function next() {
+function nextEntry() {  // the story Next would open
   const list = TABS[tab].filter(([k, s]) => k === "chain" ? DATA.chains.some(c => c.slug === s) : k === "acts" ? actsWorks().includes(s) : k === "wiki" ? wikiStones().includes(s) : DATA.maps[s] || (DATA.disc && DATA.disc.events[s] && DATA.disc.events[s].links.length));
   const i = list.findIndex(([, s]) => s === cur.key);
-  const [k, s] = list[(i + 1) % list.length]; show(k, s);
+  const [k, s] = list[(i + 1) % list.length];
+  let title = ""; try { const p = allPonds().find(q => q.slug === s); title = p ? (TABS_TITLE(p) || p.title || "") : ""; } catch {}
+  return {k, s, title};
+}
+function next() { const {k, s} = nextEntry(); show(k, s); }
+function showEndBeat() {  // at rest the lower third says what stayed and points at the next story (Oct 4 review: the last beat alone deflated)
+  if (!cur || REEL) return;
+  const bl = $("#beatline"); if (!bl) return;
+  const marks = cur.items.filter(x => x.mark && !x.future).sort((a, b) => a.d - b.d);
+  const span = `${esc(fmtMonth(D(cur.iso0)))} → ${esc(fmtMonth(addDays(cur.iso0, Math.max(...cur.items.filter(x => !x.future).map(x => x.d)))))} · ${cur.items.length} ripples`;
+  const what = marks.length ? `What followed and stayed: ${marks.slice(0, 3).map(x => esc(x.label)).join("; ")}${marks.length > 3 ? `; and ${marks.length - 3} more` : ""}` : "A big splash, no lasting mark yet";
+  const nx = nextEntry();
+  bl.innerHTML = `<span class="bwhen">${span}</span><b>${what}</b><button type="button" class="bnext" onclick="window.__via='end';next()">Next stone: ${esc(nx.title || "another pond")} →</button>`;
+  placeBeatline(); bl.classList.remove("off");
 }
 
 (async () => {
@@ -1859,7 +1875,7 @@ function next() {
       if (!cur || t > PRE * 0.85 || !cur.sCore) return;
       const q = toPond(e); if (!q) return;
       const b = cur.sCore.getBBox(), m = cur.sCore.getCTM(), bs = svgEl.getScreenCTM();  // is the press on the stone?
-      const home = cur.throwFrom || (cur.dense ? {x:-20, y:500} : THROW_FROM), sx = home.x, sy = home.y;
+      const home = cur.throwFrom || THROW_FROM, sx = home.x, sy = home.y;
       if (Math.hypot(q.x - sx, q.y - sy) > 70) return;
       dragging = true; window._dragging = true; setPlaying(false); svgEl.style.touchAction = "none"; svgEl.setPointerCapture(e.pointerId); e.preventDefault();
     });
