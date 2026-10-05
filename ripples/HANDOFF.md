@@ -1,4 +1,4 @@
-# Ripple: handoff for a new session (Oct 4, 2026)
+# Ripple: handoff for a new session (Oct 5, 2026)
 
 This is the runbook for picking Ripple up in a fresh chat on any machine, cloud or not. It says what the product is,
 what the technical approach is, where everything lives, how to build, test and ship, the rules that never change, where
@@ -137,11 +137,14 @@ node tap_test.js        # every ripple's tap target answers to its own ripple on
 node header_test.js     # the pond's top on a 390 and a 375 phone (145 to 167 px on Oct 4) and whether the tally sits under it
 node chart_test.js      # the spikes chart stays inside its column with no animation (the Oct 4 .pulse collision); exits 1 on a failure
 node pace_test.js       # when each ripple arrives and how long a story runs (15 to 95 s, beats 2 s apart or more, a narration line per beat); exits 1 on a failure
-node fold_test.js       # the legend inside a 614-px laptop fold, the caption clear of a small phone pond, the first lasting mark and its promise on a phone; exits 1 on a failure
+node fold_test.js       # the first card on screen at load at 1093x614 (its title) and 1440x800 (whole), the caption clear of a small phone pond, the first lasting mark and its promise on a phone; exits 1 on a failure
 node sweep.js           # screenshots of the main screens, desktop and phone, into ./sweep
 ```
 
-Set `CHROMIUM=/path/to/chromium` to use a specific browser; otherwise Playwright's own is used. Each script takes an
+The QA scripts load `dist/ripple-standalone.html`: rebuild it before every run or they test old code. The water surface
+is WebGL; headless Chromium runs it on SwiftShader, which can drop an effect a real GPU shows and runs slower (the pace
+test's tightest Prohibition gap can dip under 2 s under load; re-run before believing it). Confirm GL looks in a real
+browser. Set `CHROMIUM=/path/to/chromium` to use a specific browser; otherwise Playwright's own is used. Each script takes an
 optional page argument (a file path or a URL), so the same checks run against the live site.
 
 **When a chain, a hint or a statute changes:**
@@ -173,6 +176,9 @@ the pacing and the cut and are stale.
 - Commit messages describe the change in plain words. No model names or identifiers in commits, pull requests, code
   comments or anything pushed.
 - Grep the diff for keys before every commit.
+- Repository secrets, workflows only: `DATA_GOV_KEY`, `MEDIACLOUD_API_KEY` (10,000 requests a week), `COURT_LISTENER_API`.
+- The owner merges, or lets Claude merge its own PRs (Oct 4 onward). Engine studies open DRAFT PRs and are reviewed against
+  their registered bar before anything reaches the product.
 - Open a draft pull request, wait for the `assets` check (it fails if any page references a missing local asset), mark
   it ready, squash-merge, then reset the branch onto `main` (`git fetch origin main && git checkout -B <branch>
   origin/main && git push -u origin <branch> --force-with-lease`). The owner's standing direction (Sep 28) is that Claude
@@ -197,75 +203,34 @@ the pacing and the cut and are stale.
   scratch and is never committed; the public brief carries everything that matters.
 - Report honestly: a failed rule is reported as failed, with the diagnosis; "nothing survived" is a result.
 
-## 7. Where the work stands (Oct 4, 2026, 08:30 UTC)
+## 7. Where the work stands (Oct 5, 2026)
 
-**Not released. The owner saw the live page on the morning of Oct 4 and set a new bar before release:** the playthrough
-was "way too fast and not visually interesting enough", the look "cartoony wireframe", and the worry is that strangers
-call it AI slop before giving it a chance. Two things have landed since: the `.pulse` class collision that ballooned
-the chart over the pond (PR #86), the beat schedule that replaced the ten-second trailer (PR #87), the reel cut for
-clips (PR #88, mechanism only, nothing recorded) and the look pass (PR #89, `docs/styling_pass_v2.md`: flat surface,
-no gradient or glow, rim words as print annotations, label boxes gone, matte stone, opening screen retired, share cards
-regenerated). Round five ran (8.0; `docs/user_tests_v5.md`). The owner then set a new bar for the evening of Oct 4: crack
-discovery so the engine reliably identifies causal chains. `docs/discovery_plan_v2.md` registers the program;
-`docs/discovery_corpus1_v1.md` is the first result (Wikipedia as a cited-cause record: 62% recall of the catalog's
-marks, 61% clean on the strict reverse rule, 0 of 50 decoys, 26% precision as a forward candidate generator on held-out
-stones; the bar of 7 in 10 not met; scripts in `lab/discovery/`, results in `docs/results/`). The screened pairs are in the
-product (PR #92): a fourth story kind, `wiki`, built by `fromWiki` from `demo/discovered_wiki.json`, 14 stones and 25
-marks first under Engine leads, every link reported with its sentence and source, each stone with a context line; deep
-link `?w=<slug>`. The desktop header fold landed (#93: the second header paragraph folds to one line until clicked; header 299 → 243
-px, the pond's foot inside a 614-px fold). Discovery v1.1 ran over sixty more stones and 22 stones / 52 marks
-were screened into the product (PR #95; `docs/discovery_corpus1_v1_1.md`; 36 stones, 77 marks under Engine leads).
-The clips are cut and the launch kit is current (PR #94; `launch/posts_ready.txt`). The culture shelf ran over 132
-recognizable stones with a behavior lexicon and 22 stones / 25 marks joined the product, including the first Disputed
-engine-found link (PR #96; `docs/discovery_culture_v1.md`): **58 stones, 102 marks under Engine leads.** The second
-roundtable (`docs/roundtable_v2.md`: the twelve at 8.3, three new strangers at 7.3) voted release. Still to do: release
-Monday morning Oct 5 (section 8), the owner's date; the pre-flight checks 1 to 3 already pass on production. Round six (three more strangers on the reveal build, 8.0; `docs/user_tests_v6.md`) led to two fixes: statistics off the
-narration line, the short-screen rule up to 820 px for classroom Chromebooks (PR #103). The owner then
-asked for the reveal to feel like an investigation (PR #101, `docs/reveal_v1.md`: the title withholds its answer, numbered
-clues, the first mark resolves the title, a verification beat; clips re-recorded). Before that he
-played the demo and sent a readability review (PR #100: long stories name only marks and measured steps at rest, labels step
-aside under the narration, the pond column is 1.8× the cards, the spikes chart is sticky and draws in, cards fold behind
-Learn more, the chooser opens in layers). The room's
-items were all built the same night (PR #98; the actions table in `docs/roundtable_v2.md`): tighter beats before the
-first mark and a promise line, the shelf grouped by source and decade, the legend as a corner panel on short screens, the
-caption in flow under small ponds, Copy citation on engine cards, one grade map for the engine kind, the checker on main
-and weekly, fifty famous films as decoys (8% loose, 0% strict).
-The text below is the state the previous session left.
+**Not launched; the public launch is planned for Oct 6.** Everything below is live on main unless marked draft.
 
-Release-ready as of 06:30. Five rounds of simulated testers took the product from 5.5 to **8.2** and voted to release; the
-builder's own rating is **8.5** (the trail: 4 on Oct 1, 5.5 on Oct 2, 6.5 on Oct 3, 7.5 on the morning of Oct 4, 8 after
-the final roundtable's fix, 8.5 after the three release fixes). Everything is merged to `main` through PR #83.
-
-What shipped on Oct 4 alone: the pond as an instrument; the ten-second trailer; the weakest-link arrow in the title;
-share a step; the run stamp gated on the truncation test; the pond's glyphs; exclusive tap targets; the phone's first
-screen (pond top 290 → 145 px); 22 statute links; "It wasn't the only reason" on every story; the US history catalog
-(batch 16); 186 verified source links; launch kit v2 with vertical clips; this handoff and the QA tools.
-
-The honest gaps, none blocking: strangers have not used it; the context sentences are one author's; pre-2015 marks rest
-on records because no free attention series reaches back; the checker runs on branches, not on main or a schedule;
-"Not yet" is a regular expression in the page rather than a checker grade; the trailer costs about 107 ms/s of task
-time in headless Chromium; the legend sits under a 614-px fold; the caption covers most of a 375-px pond.
+- **The page:** a lake at dusk (WebGL water under the SVG: a wave packet, standing rings, wind, sky reflection, a far
+  shore, a treeline, faint clouds), the story drawn as a route of grade-styled curves, the month on the wave's crest, one
+  sentence at a time beside the step being told, an ember pool when a lasting mark lands, a full-width pond fitted so the
+  first card of the timeline strip is on screen at load, and a key whose words define themselves. Flags: `?water=1` (the
+  old instrument pond), `?scene=0` (no scenery). Code: `GLW`, `callout`, `routeD`, `fitPond` in `demo/index.html`.
+- **Tiger King:** the law hangs from Rep. Ed Case's floor citation (reported); the 2020 House bill is an aside.
+- **Launch copy:** `launch/posts_ready.txt` is correct as of Oct 5; the Desktop copy was replaced from it. The clips in
+  `launch/` predate the reveal fix and the lake; do not attach them without a re-cut.
+- **Engine (draft PRs #118 to #121, #123, #124, more running):** see the brief, section 2, for each study's result against
+  its registered bar. Headline: about one engine mark in eight is surprising and believable (simulated panel); 87 of 102
+  engine marks are laws (verifiable, not measurable); the automated surprise score failed; the Federal Register gives
+  event → rule pairs, not cultural ones.
 
 ## 8. Next steps, in order
 
-1. **Release.** Follow `docs/launch_v2.md`: the four pre-flight checks, LinkedIn with the clip, Show HN mid-morning
-   Eastern on a weekday with the first comment ready, Reddit the same day, five teacher and five newsroom emails that
-   week. Reply to every substantive comment with the story's share page. A correction gets a thank-you and a fix.
-2. **Watch week one** with the engagement instruments (`docs/engagement_protocol_v1.md`: a GA4 funnel
-   story_start → reveal → verify → complete, leaves by clock position, taps and second stories per start; configure the
-   internal-traffic filter first) and against the four named dimensions: a teacher or newsroom using it (about 60%), a front page
-   (35%), an outside correction or a suggested stone (25%), a return visit (15%). About 70% for at least one.
-3. **First-week fixes from the final roundtable:** the legend under a 614-px fold; the caption's height on a 375-px
-   phone; quiet trailer dots on a projector; the claims line on the decline cards as well as the peak; Tylenol's links
-   and the 1983 Act; the Mr Bates premise sentence.
-4. **Governance:** run the checker on `main` and on a schedule; make "Not yet" a checker grade; a govinfo API pass from a
-   workflow (with `DATA_GOV_KEY`) to confirm the seven pre-1951 statute links by title.
-5. **Data:** USDA NASS (six steps measurable, about 1.5 days), Congress.gov (five, 2 days), SEC EDGAR full-text search
-   (five, 1.5 days), in that order; see `docs/data_sources_v2.md` for what each gives and what it does not.
-6. **Content:** a second reader for `demo/context.json`; Prohibition's label density; a suggest-a-stone box and a stone
-   of the day once there are visitors.
-7. **Engine:** round two of the citation grades (`docs/cite_grades_v2.md`); a second dose-response; nested stones
-   (Prohibition's marks as chains of their own); live mode on new events once marks have had time to form.
+1. **Launch:** the four pre-flight checks in `docs/launch_v2.md`; post from `launch/posts_ready.txt`.
+2. **Review the engine PRs** in order of arrival, against each registered bar; merge docs and data (failures too); wire into
+   the product only what passed, with no new UI.
+3. **Real raters** on the panel's items (`docs/results/panel_v1/items.json`) after launch; replace the simulated labels.
+4. **Measured discoveries:** the series catalog, matched controls and exposure gradients as the standard test, and the
+   outcome-first scans (baby names, CDC WONDER, park visits).
+5. **Surprise v2** trained on panel labels; leads ranked by evidence first.
+6. **Live mode:** score the registered predictions as they come due.
+7. **Re-cut the clips** once the UI settles (reel mode still draws the SVG water; decide whether reels should show the lake).
 
 ## 9. How a tester round is run (so the next one matches the last five)
 
