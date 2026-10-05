@@ -50,33 +50,44 @@ Tool: Ripple, which I built (vanilla JS + SVG; the checker is Python on GitHub A
 
 ## Hacker News (Show HN)
 
-Title (under 80 characters):
+URL: https://bensunter.com/ripples/demo/?m=tiger-king
 
-Show HN: Ripple – throw a stone into history, see what it changed, every link graded
+Title (78 characters, under HN's 80):
 
-First comment:
+Show HN: Ripple – see what an event changed downstream, with every link graded
 
-I've long been fascinated by how much of the present rests on a chain of small, datable events, and by how badly most "butterfly effect" stories survive contact with a calendar. Ripple is a v1 attempt to do it honestly.
+First comment (post within a minute of submitting):
 
-What it is: a pond. The stone is an event. Each ripple is something that changed afterward, placed at the time it began. Every link carries a grade:
+I grew up collecting seabeans on Florida's coast: seeds that fall into the ocean somewhere else and wash up thousands of miles away. Ripple points the same question at history. It starts with an event, looks forward in time for what changed downstream, and checks whether each link holds up.
 
-- measured: a sustained rise in a series (mostly daily Wikipedia views, some official series) that beats a placebo test run at random dates in that series' own past, and that began after the step before it
+What you see is a pond. The stone is the event. Each ripple is something that changed afterward, placed at the date it began. Every link carries a grade:
+
+- measured: a sustained rise in a series (daily Wikipedia views, US baby-name counts, some official series) that beats a placebo test against the series' own history, and began after the step before it
 - timed: right order, not tested against chance
 - reported: a credible source makes the link (for laws, usually the debate itself: a Congressional Record or Hansard sentence that names the work)
 - plausible: it happened; the link is unproven
-- busted: it started before its supposed cause, or there's no evidence it happened
+- busted: it started before its supposed cause, or there is no evidence it happened
 
-The ordering rule only falsifies; nothing here is proof of cause, and the UI says so three ways: the arrow in the title is drawn from the weakest link on the path to the mark, the subtitle says it in words, and every hand-built story carries an editorial line naming the other things going on.
+The ordering rule can only falsify. Nothing here is proof of cause. The arrow in each title is drawn from the weakest link on the way to the mark, and most stories carry a line naming the other things going on.
 
-Two things I checked before shipping that I'd want to know as a reader. First, whether grades drift: the placebo windows are drawn from the page's history before the step, and re-running the 13 Wikipedia-measured grades with the data truncated at three cutoffs flipped none; each measured card carries the run date and checker commit. Second, the statutes: 22 US law steps link to govinfo's page scan, and each was confirmed by reading "Public Law N-M" off the PDF's first page (seven pre-1951 scans have no text layer, so those are confirmed by the granule boundary and the docs say so).
+The linked example: Tiger King comes out in March 2020, attention to the zoo at its center spikes, a member of Congress cites the show on the House floor in July 2022, and the Big Cat Public Safety Act becomes law that December. The bill had been introduced in every Congress since 2012, and the page says so.
 
-The engine side: a records route reads every Hansard contribution / Congressional Record item that names a work, resolves the bill to the Act, and a rule-based scorer labels each citation as a reason, context or an aside (precision .73 on the first hand-graded set, published). A person still screens the output. One dose-response design (retail-cannabis states vs not, young-adult drinking) came back within chance and is shown as such.
+The engine has three routes so far:
 
-Stack: a single HTML file, SVG, no framework; Python fetchers on GitHub Actions committing JSON back to the repo; GitHub Pages. Everything (chains, protocols, results, misses, the simulated-tester rounds) is in the repo.
+- Wikipedia read as a cited-cause record: the event's article and the articles that link to it, read for sentences that name a lasting change, then dated and put in order. On our own catalog it recovers 62% of the marks, and 61% of its strict pairs were clean.
+- Parliament and Congress: every Hansard contribution and Congressional Record item that names a work, resolved to the law the bill became. The citation scorer is rules, precision .73 on the first hand-graded set.
+- Baby names: the sharpest rises in US name counts, matched to a work or person in the two years before. It missed its pre-registered bar (4 measured pairs against 5, 0 of 8 known cases). I shipped the two that held for years: Creed and Adonis, Glee and Quinn.
 
-The engine's newest route reads Wikipedia as a cited-cause record: the event's article and the articles of laws and institutions that link to it, for sentences that name a lasting change, dated and put in order. On our own catalog it recovers 62% of the marks and busts predecessors on its own; every lead it ships is read against its source first (in the strict test, 61% of its pairs were real; the numbers are published).
+The recent engine studies were pre-registered in the repo before results, and several missed their bars. The misses are published next to the hits.
 
-Things I know are weak: most pre-2015 steps rest on reported links because free daily attention data starts in 2015; the citation scorer is rules, not a model; the "it wasn't the only reason" lines are one author's and have not had a second reader. Would value pushback on the statistics framing most of all.
+Known weak spots: most pre-2015 steps rest on reported links, because free daily attention data starts in 2015. The context lines have not had a second reader. Re-running the 13 Wikipedia-measured grades with the data cut off at three earlier dates flipped none, but that is one robustness check.
+
+Stack: one HTML file, SVG and a WebGL water surface, no framework. Python fetchers run on GitHub Actions and commit JSON back to the repo, served by GitHub Pages.
+
+Code, chains, protocols and results: https://github.com/bsunter93/Ben-Sunters-Website/tree/main/ripples
+Methods: https://bensunter.com/ripples/methods/
+
+I'd most value pushback on the statistics framing.
 
 ============================================================
 
