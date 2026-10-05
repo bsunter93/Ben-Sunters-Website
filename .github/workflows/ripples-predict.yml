@@ -1,0 +1,48 @@
+# Predict check v1 (ripples/lab/predict_check.py): scores the live predictions registered in
+# ripples/docs/results/predictions_v1.json (ripples/docs/predictions_v1.md) as each falls due, and commits
+# ripples/docs/results/predictions_scored_v1.json. Public, keyless sources only (Wikimedia pageviews and the MediaWiki
+# API, data.seattle.gov, the UK Parliament Hansard and Bills APIs); honest user agent; any HTTP status of 400 or above
+# stops the run for the week. No secrets are used. The schedule runs from the default branch once this file is on main.
+name: Ripples predict check
+
+on:
+  schedule:
+    - cron: "41 7 * * 1"   # weekly, Monday 07:41 UTC
+  push:
+    branches: ["*/eng-predict"]   # this branch only: the one run that checks the workflow before it reaches main
+    paths: [".github/workflows/ripples-predict.yml"]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: ripples-predict
+  cancel-in-progress: false
+
+jobs:
+  score:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: pip install --quiet numpy
+      - run: python ripples/lab/predict_check.py
+      - name: Commit scores
+        if: always()
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898900+github-actions[bot]@users.noreply.github.com"
+          mkdir -p /tmp/results && cp ripples/docs/results/predictions_scored_v1.json /tmp/results/ 2>/dev/null || exit 0
+          for i in 1 2 3 4; do
+            git fetch -q origin "${GITHUB_REF_NAME}" && git reset -q --hard "origin/${GITHUB_REF_NAME}" || exit 0
+            cp /tmp/results/predictions_scored_v1.json ripples/docs/results/
+            git add ripples/docs/results/predictions_scored_v1.json || exit 0
+            git diff --cached --quiet && exit 0
+            git commit -q -m "Ripples: prediction scores [skip ci]"
+            git push -q origin "HEAD:${GITHUB_REF_NAME}" && break
+            sleep 7
+          done
