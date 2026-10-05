@@ -456,8 +456,10 @@ def load_real():
             pi = MAP_PARENT.get((m["slug"], i))
             parent = m["steps"][pi]["date"] if pi else m["release"]
             arts = [a.replace("_", " ") for a in cfg["event_articles"]] if i == 0 else re.findall(r"“([^”]+)”", s.get("measure", ""))
+            # map_builder.py stores each week as the mean daily views; every other source stores weekly totals (deviation 1)
+            wk7 = [[d0, 7.0 * float(v0)] for d0, v0 in se["weekly"]]
             add(id=sid, source="map", stone=stone_of(m["slug"]), slug=m["slug"], step=i, articles=arts, role="catalyst" if i == 0 else "outcome",
-                tier="product", parent=parent, parent_what=f"step {pi}" if pi else "stone", weekly=se["weekly"],
+                tier="product", parent=parent, parent_what=f"step {pi}" if pi else "stone", weekly=wk7,
                 house_response=None if i == 0 else s.get("evidence") in ("tested", "timed"),
                 house={"evidence": s.get("evidence"), "onset": se.get("onset")}, claim=s.get("title"),
                 lag_days=None if i == 0 or not s.get("date") or len(s["date"]) < 10 else (D(s["date"]) - D(parent)).days)
@@ -534,18 +536,26 @@ def load_real():
     return R
 
 
+def times(x):
+    """A multiplier in plain words: two significant figures, no decimals above ten."""
+    return f"{x:.1f}" if x < 10 else f"{int(float(f'{x:.2g}')):,}"
+
+
 def plain_words(c):
-    """How the product could say the shape."""
+    """How the product could say the shape. A baseline under 10 views a day reads as "from almost nothing", since a
+    multiplier over an empty article says more about the floor than the response."""
     s = c.get("shape")
     if s in (None, "no response", "not classified"):
         return "no unusual change" if s == "no response" else None
+    tiny = (c.get("baseline_weekly") or 0) < 70
     wk = lambda n: "a week" if n <= 1 else f"{n} weeks"  # noqa: E731
     if s == "immediate spike":
         txt = f"a spike that was mostly gone within {wk(c['fade_weeks'])}" if c.get("fade_weeks") else "a spike within days"
     elif s == "pulse and decay":
         txt = f"a jump that faded over {wk(c['fade_weeks'])}" if c.get("fade_weeks") else f"a jump that was still fading after {c['window_weeks']} weeks"
     elif s == "step change":
-        txt = f"a new normal: about {c['late_lift']:.1f} times the old level, still there {c['window_weeks']} weeks on"
+        txt = (f"a new normal from almost nothing, still there {c['window_weeks']} weeks on" if tiny else
+               f"a new normal: about {times(c['late_lift'])} times the old level, still there {c['window_weeks']} weeks on")
     elif s == "gradual ramp":
         pk = c["peak_week"]
         txt = f"a slow climb that peaked after about {round(pk / 4.35)} months" if pk >= 9 else f"a slow climb that peaked after {pk} weeks"
@@ -556,7 +566,7 @@ def plain_words(c):
     else:
         txt = f"came in {c['waves']} waves"
     if c.get("raised_floor"):
-        txt += f", then settled at about {c['late_lift']:.1f} times its old level"
+        txt += ", then settled well above where it started" if tiny else f", then settled at about {times(c['late_lift'])} times its old level"
     if c.get("onset_week") is not None and c["onset_week"] < 0:
         txt += " (it began rising before the date)"
     return txt
@@ -778,6 +788,9 @@ def real_mode() -> int:
         lift = 10 ** (float(x[ks].max()) - m)
         S = gate_stat(P["stat"], x, m, s, pmax, ks)
         ccls = "weak" if lift < 10 else "strong" if lift >= 100 else "moderate"
+        # deviation 2: a stone whose own article had no views at all from week -12 to week 3 (created later) has no
+        # measurable catalyst; its flags are withheld rather than read as a weak catalyst
+        measurable = bool(w[max(0, k0 - 12):k0 + 4].sum() > 0)
         own = {norm(a) for a in OWN.get(stone, [])} | {norm(a) for a in c["articles"]}
         outs = []
         for r in R:
@@ -797,8 +810,8 @@ def real_mode() -> int:
             gate = bool(sh.get("gate"))
             responded = gate or r.get("house_response") is True
             flat = not gate and r.get("house_response") is not True
-            outsized = bool(responded and (lo_ >= lift or (ccls == "weak" and lo_ >= 10)))
-            no_echo = bool(ccls == "strong" and flat)
+            outsized = bool(measurable and responded and (lo_ >= lift or (ccls == "weak" and lo_ >= 10)))
+            no_echo = bool(measurable and ccls == "strong" and flat)
             base_w = 10 ** mo - FLOOR
             row = {"id": r["id"], "tier": r["tier"], "articles": r["articles"], "parent": r["parent"], "parent_what": r["parent_what"],
                    "claim": r.get("claim"), "lift": round(lo_, 2), "strength": round(gate_stat(P["stat"], xo, mo, so, po, kso), 3),
@@ -810,7 +823,7 @@ def real_mode() -> int:
             r["outcome_strength"] = {"lift": row["lift"], "strength": row["strength"]}
             r["disproportion"] = "outsized response" if outsized else "no echo" if no_echo else None
         stones[stone] = {"catalyst": {"id": cid, "articles": c["articles"], "parent": c["parent"], "lift": round(lift, 2), "strength": round(S, 3),
-                                      "class": ccls, "decoy_percentile": round(float((decoy_cat < S).mean()), 4), "shape": c["shape21"].get("shape"),
+                                      "class": ccls if measurable else "not measurable (the article did not exist yet)", "measurable": measurable, "decoy_percentile": round(float((decoy_cat < S).mean()), 4), "shape": c["shape21"].get("shape"),
                                       "plain": c["plain"]},
                          "outcomes": sorted(outs, key=lambda o: -o["lift"]),
                          "counts": {"outcomes": len(outs), "responded": sum(o["responded"] for o in outs), "flat": sum(o["flat"] for o in outs),
