@@ -1114,6 +1114,7 @@ function fromChain(slug) {
       when = `≈ ${y0 === y1 ? fmt(D(st.onset)).replace(/ \d+,/, "") : st.onset.slice(0, 4)}<span>likely ${span}</span>`; sub = `≈ ${span}`;
     } else if (st.must_precede || /after what it is said/.test(st.verdict || "")) { when = `${fmt(D(st.onset))}<span>a claim, tested against the record</span>`; sub = `${fmtMonth(D(st.onset))} · tested`; }
     else if (/-07-01$/.test(st.onset || "") && !/jul/i.test(srcLine)) { when = `${st.onset.slice(0, 4)}<span>placed at mid-year · ${sinceLabel(d)}</span>`; sub = `${st.onset.slice(0, 4)} · ${sinceLabel(d)}`; }  // a step dated only to its year
+    else if (st.test && st.test.type === "ssa") { when = `${st.onset.slice(0, 4)}<span>a year of births</span>`; sub = `${st.onset.slice(0, 4)} · births that year`; }  // a yearly count says only its year: not Jan 1, not "+7 months"
     else { when = `${fmt(D(st.onset))}<span>${sinceLabel(d)}</span>`; sub = `${fmtMonth(D(st.onset))} · ${sinceLabel(d)}`; }
     const happened = st.test.type === "record" ? srcP(st, st.source || st.test.source) :
       st.test.type === "none" ? srcP(st, st.source || "") : srcP(st, st.found && Object.keys(st.found).some(k => st.found[k]) ? "Wikipedia daily views: " + Object.keys(st.found).filter(k => st.found[k]).join(", ") : SRC(st));
