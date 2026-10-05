@@ -1650,11 +1650,18 @@ function fitPond() {  // the water look on a wide screen: the pond takes what th
   const svg = $("#pond"), leg = $(".legend"), feed = $("#feed"); if (!svg || !leg || !feed) return;
   const wide = W2 && !REEL_Q && !CARD_Q && window.innerWidth > 860, root = document.documentElement;
   root.classList.toggle("fit", wide); root.classList.toggle("glfit", wide && !!GLW);
+  for (const [el, full] of [[$("#h1"), cur && cur.h1Full], [$("#sub"), cur && cur.subFull]]) {  // the answered title and subtitle are taller than the question: keep their room from the start, so the pond does not drop at the reveal and the cards stay on screen (owner, Oct 5)
+    if (!el) continue; el.style.minHeight = "";
+    if (!wide || !full) continue;
+    if (el.innerHTML === full && !el.classList.contains("held")) { el.style.minHeight = `${el.offsetHeight}px`; continue; }
+    const html = el.innerHTML, held = el.classList.contains("held"); el.innerHTML = full; el.classList.remove("held");
+    const h = el.offsetHeight; el.innerHTML = html; el.classList.toggle("held", held); el.style.minHeight = `${h}px`;
+  }
   if (wide && leg.parentNode !== feed.parentNode) feed.after(leg);  // the key sits under the cards; each word explains itself on hover
   else if (!wide && leg.parentNode === feed.parentNode && window.innerWidth > 560) $(".ctl").after(leg);
   if (!wide) { svg.style.maxHeight = ""; return; }
   const top = svg.getBoundingClientRect().top + window.scrollY, ctl = $(".ctl").offsetHeight || 50;
-  svg.style.maxHeight = `${Math.max(window.innerHeight < 700 ? 230 : 320, Math.round(window.innerHeight - top - ctl - 162))}px`;  // a short laptop lets the cards in at the cost of some pond
+  svg.style.maxHeight = `${Math.max(window.innerHeight < 700 ? 230 : window.innerHeight < 780 ? 280 : 320, Math.round(window.innerHeight - top - ctl - 162))}px`;  // a short laptop lets the cards in at the cost of some pond
 }
 function buildFeed(story) {
   const f = $("#feed"); f.textContent = "";
@@ -2134,7 +2141,7 @@ function showEndBeat() {  // at rest the lower third says what stayed and points
     const sub = $("#sub"); if (sub) { const open = sub.dataset.open === "1"; sub.classList.toggle("clamp", ph && !open); sub.classList.toggle("fold", !ph && !open); sub.setAttribute("aria-expanded", open ? "true" : "false"); }
   };
   phoneLayout(); window.addEventListener("resize", phoneLayout);
-  window.addEventListener("resize", () => requestAnimationFrame(fitPond));
+  window.addEventListener("resize", () => requestAnimationFrame(fitPond)); if (document.fonts) document.fonts.ready.then(() => fitPond());  // the reserved heights are measured again in the real fonts
   $("#sub").addEventListener("click", () => { const sub = $("#sub"); if (!sub.hasAttribute("aria-expanded")) return; const cls = window.innerWidth <= 560 ? "clamp" : "fold"; const closed = sub.classList.toggle(cls); sub.dataset.open = closed ? "" : "1"; sub.setAttribute("aria-expanded", closed ? "false" : "true"); });  // a tap reads the whole subtitle
   const chooser = $("#chooser"), cbtn = $("#chooserbtn");
   const TABCOUNT = () => ({maps:TABS.maps.length, stories:DATA.chains.length, leads:TABS.leads.filter(([k, s]) => k === "wiki" ? wikiStones().includes(s) : k === "acts" ? actsWorks().includes(s) : true).length});
