@@ -153,6 +153,7 @@ svg#pond{display:block;width:100%;height:auto;touch-action:manipulation;border-r
 @media (max-width:560px){
   .ctl{flex-wrap:wrap;gap:8px 10px;padding-bottom:6px}
   .ctl #scrub{order:9;flex:1 1 100%;margin-top:4px}  /* the slider gets its own row on a phone; the buttons share the first */
+  .ctl #scrub{height:40px;margin:-8px 0 -12px}  /* a 40-px finger target that draws the same thin track: it grows into the gap above and over the tick labels (which take no taps), so nothing moves */
   .ctl .ticks{position:static;order:10;flex:1 1 100%;margin-top:-4px;padding:0 2px}
   .ctl .nextbtn{margin-left:auto}
 }
