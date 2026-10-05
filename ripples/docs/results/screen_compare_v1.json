@@ -1,0 +1,1165 @@
+{
+ "_about": "Comparison of screen_labels_v1.json with the person's decisions under docs/screen_plan_v1.md.",
+ "by_set": {
+  "E1_strict": {
+   "n": 23,
+   "hand_kept": 14,
+   "gate_pass": 13,
+   "tp": 13,
+   "fp": 0,
+   "fn": 1,
+   "tn": 9,
+   "precision": 1.0,
+   "recall_sentence": 0.929,
+   "kept_marks": 14,
+   "kept_marks_recalled": 13,
+   "recall_mark": 0.929,
+   "agreement": 0.957,
+   "kappa": 0.911
+  },
+  "E2_heldout": {
+   "n": 47,
+   "hand_kept": 13,
+   "gate_pass": 8,
+   "tp": 8,
+   "fp": 0,
+   "fn": 5,
+   "tn": 34,
+   "precision": 1.0,
+   "recall_sentence": 0.615,
+   "kept_marks": 11,
+   "kept_marks_recalled": 8,
+   "recall_mark": 0.727,
+   "agreement": 0.894,
+   "kappa": 0.698
+  },
+  "E3_wider": {
+   "n": 213,
+   "hand_kept": 79,
+   "gate_pass": 43,
+   "tp": 35,
+   "fp": 8,
+   "fn": 44,
+   "tn": 126,
+   "precision": 0.814,
+   "recall_sentence": 0.443,
+   "kept_marks": 54,
+   "kept_marks_recalled": 31,
+   "recall_mark": 0.574,
+   "agreement": 0.756,
+   "kappa": 0.423
+  },
+  "E4_culture": {
+   "n": 233,
+   "hand_kept": 30,
+   "gate_pass": 9,
+   "tp": 7,
+   "fp": 2,
+   "fn": 23,
+   "tn": 201,
+   "precision": 0.778,
+   "recall_sentence": 0.233,
+   "kept_marks": 26,
+   "kept_marks_recalled": 7,
+   "recall_mark": 0.269,
+   "agreement": 0.893,
+   "kappa": 0.318
+  }
+ },
+ "by_class": {
+  "events": {
+   "n": 245,
+   "hand_kept": 97,
+   "gate_pass": 57,
+   "tp": 49,
+   "fp": 8,
+   "fn": 48,
+   "tn": 140,
+   "precision": 0.86,
+   "recall_sentence": 0.505,
+   "kept_marks": 71,
+   "kept_marks_recalled": 45,
+   "recall_mark": 0.634,
+   "agreement": 0.771,
+   "kappa": 0.486
+  },
+  "events_unseen": {
+   "n": 198,
+   "hand_kept": 57,
+   "gate_pass": 31,
+   "tp": 23,
+   "fp": 8,
+   "fn": 34,
+   "tn": 133,
+   "precision": 0.742,
+   "recall_sentence": 0.404,
+   "kept_marks": 35,
+   "kept_marks_recalled": 19,
+   "recall_mark": 0.543,
+   "agreement": 0.788,
+   "kappa": 0.401
+  },
+  "culture": {
+   "n": 271,
+   "hand_kept": 39,
+   "gate_pass": 16,
+   "tp": 14,
+   "fp": 2,
+   "fn": 25,
+   "tn": 230,
+   "precision": 0.875,
+   "recall_sentence": 0.359,
+   "kept_marks": 34,
+   "kept_marks_recalled": 14,
+   "recall_mark": 0.412,
+   "agreement": 0.9,
+   "kappa": 0.464
+  },
+  "culture_unseen": {
+   "n": 236,
+   "hand_kept": 15,
+   "gate_pass": 4,
+   "tp": 2,
+   "fp": 2,
+   "fn": 13,
+   "tn": 219,
+   "precision": 0.5,
+   "recall_sentence": 0.133,
+   "kept_marks": 14,
+   "kept_marks_recalled": 2,
+   "recall_mark": 0.143,
+   "agreement": 0.936,
+   "kappa": 0.189
+  }
+ },
+ "pooled": {
+  "n": 516,
+  "hand_kept": 136,
+  "gate_pass": 73,
+  "tp": 63,
+  "fp": 10,
+  "fn": 73,
+  "tn": 370,
+  "precision": 0.863,
+  "recall_sentence": 0.463,
+  "kept_marks": 105,
+  "kept_marks_recalled": 59,
+  "recall_mark": 0.562,
+  "agreement": 0.839,
+  "kappa": 0.513
+ },
+ "pooled_mechanical_matches_only": {
+  "n": 492,
+  "hand_kept": 112,
+  "gate_pass": 66,
+  "tp": 56,
+  "fp": 10,
+  "fn": 56,
+  "tn": 370,
+  "precision": 0.848,
+  "recall_sentence": 0.5,
+  "kept_marks": 104,
+  "kept_marks_recalled": 56,
+  "recall_mark": 0.538,
+  "agreement": 0.866,
+  "kappa": 0.554
+ },
+ "pooled_unseen_in_docs": {
+  "n": 434,
+  "hand_kept": 72,
+  "gate_pass": 35,
+  "tp": 25,
+  "fp": 10,
+  "fn": 47,
+  "tn": 352,
+  "precision": 0.714,
+  "recall_sentence": 0.347,
+  "kept_marks": 49,
+  "kept_marks_recalled": 21,
+  "recall_mark": 0.429,
+  "agreement": 0.869,
+  "kappa": 0.402
+ },
+ "E1_weak_as_kept": {
+  "kept": 15,
+  "recalled": 13
+ },
+ "E1_scores_by_hand_label": {
+  "mark": {
+   "interest": 58.9,
+   "surprise": 34.3,
+   "evidence": 61.4,
+   "novelty": 34.6,
+   "n": 14
+  },
+  "weak": {
+   "interest": 10.0,
+   "surprise": 20.0,
+   "evidence": 5.0,
+   "novelty": 30.0,
+   "n": 1
+  },
+  "context": {
+   "interest": 39.0,
+   "surprise": 37.0,
+   "evidence": 20.0,
+   "novelty": 43.0,
+   "n": 5
+  },
+  "wrong": {
+   "interest": 23.3,
+   "surprise": 33.3,
+   "evidence": 11.7,
+   "novelty": 40.0,
+   "n": 3
+  }
+ },
+ "decoys": {
+  "E5_decoys_famous": {
+   "n": 33,
+   "gate_pass": 0
+  },
+  "E6_decoys_obscure": {
+   "n": 11,
+   "gate_pass": 0
+  }
+ },
+ "disputed": {
+  "C023": {
+   "hand": "disputed",
+   "screen_disputed": true,
+   "gate": "fail"
+  }
+ },
+ "S1_citations_not_blind": {
+  "n": 22,
+  "tp": 2,
+  "fp": 0,
+  "fn": 7,
+  "precision": 1.0,
+  "recall": 0.222,
+  "label_agreement": 0.545,
+  "cite_score_v1": {
+   "precision": 0.73,
+   "recall": 0.89
+  }
+ },
+ "scores_vs_hand": {
+  "pooled": {
+   "interest": {
+    "mean_kept": 52.0,
+    "mean_rejected": 22.8,
+    "auc": 0.904,
+    "n_kept": 136,
+    "n_rejected": 380
+   },
+   "surprise": {
+    "mean_kept": 36.3,
+    "mean_rejected": 15.8,
+    "auc": 0.815,
+    "n_kept": 136,
+    "n_rejected": 380
+   },
+   "evidence": {
+    "mean_kept": 56.0,
+    "mean_rejected": 27.1,
+    "auc": 0.903,
+    "n_kept": 136,
+    "n_rejected": 380
+   },
+   "novelty": {
+    "mean_kept": 37.1,
+    "mean_rejected": 18.0,
+    "auc": 0.797,
+    "n_kept": 136,
+    "n_rejected": 380
+   }
+  },
+  "events": {
+   "interest": {
+    "mean_kept": 48.8,
+    "mean_rejected": 23.9,
+    "auc": 0.919,
+    "n_kept": 97,
+    "n_rejected": 148
+   },
+   "surprise": {
+    "mean_kept": 30.2,
+    "mean_rejected": 14.6,
+    "auc": 0.8,
+    "n_kept": 97,
+    "n_rejected": 148
+   },
+   "evidence": {
+    "mean_kept": 56.1,
+    "mean_rejected": 28.9,
+    "auc": 0.888,
+    "n_kept": 97,
+    "n_rejected": 148
+   },
+   "novelty": {
+    "mean_kept": 33.1,
+    "mean_rejected": 18.7,
+    "auc": 0.75,
+    "n_kept": 97,
+    "n_rejected": 148
+   }
+  },
+  "culture": {
+   "interest": {
+    "mean_kept": 60.0,
+    "mean_rejected": 22.2,
+    "auc": 0.916,
+    "n_kept": 39,
+    "n_rejected": 232
+   },
+   "surprise": {
+    "mean_kept": 51.5,
+    "mean_rejected": 16.6,
+    "auc": 0.887,
+    "n_kept": 39,
+    "n_rejected": 232
+   },
+   "evidence": {
+    "mean_kept": 55.6,
+    "mean_rejected": 26.0,
+    "auc": 0.919,
+    "n_kept": 39,
+    "n_rejected": 232
+   },
+   "novelty": {
+    "mean_kept": 46.9,
+    "mean_rejected": 17.5,
+    "auc": 0.876,
+    "n_kept": 39,
+    "n_rejected": 232
+   }
+  },
+  "gate_pass_only": {
+   "interest": {
+    "mean_kept": 55.5,
+    "mean_rejected": 46.5,
+    "auc": 0.667,
+    "n_kept": 63,
+    "n_rejected": 10
+   },
+   "surprise": {
+    "mean_kept": 37.2,
+    "mean_rejected": 30.5,
+    "auc": 0.599,
+    "n_kept": 63,
+    "n_rejected": 10
+   },
+   "evidence": {
+    "mean_kept": 65.6,
+    "mean_rejected": 53.5,
+    "auc": 0.806,
+    "n_kept": 63,
+    "n_rejected": 10
+   },
+   "novelty": {
+    "mean_kept": 39.3,
+    "mean_rejected": 33.0,
+    "auc": 0.583,
+    "n_kept": 63,
+    "n_rejected": 10
+   }
+  },
+  "is_mark_only": {
+   "interest": {
+    "mean_kept": 54.8,
+    "mean_rejected": 43.2,
+    "auc": 0.713,
+    "n_kept": 110,
+    "n_rejected": 55
+   },
+   "surprise": {
+    "mean_kept": 38.4,
+    "mean_rejected": 36.7,
+    "auc": 0.512,
+    "n_kept": 110,
+    "n_rejected": 55
+   },
+   "evidence": {
+    "mean_kept": 57.5,
+    "mean_rejected": 36.6,
+    "auc": 0.83,
+    "n_kept": 110,
+    "n_rejected": 55
+   },
+   "novelty": {
+    "mean_kept": 39.1,
+    "mean_rejected": 39.0,
+    "auc": 0.482,
+    "n_kept": 110,
+    "n_rejected": 55
+   }
+  }
+ },
+ "miss_reason_codes": {
+  "aside": 2,
+  "not_a_mark": 21,
+  "undated": 36,
+  "context": 9,
+  "attention_only": 5
+ },
+ "confusion": {
+  "false_pass": [
+   {
+    "id": "WR06",
+    "stone": "Grenfell Tower fire",
+    "mark_stated": "Grenfell Tower Memorial (Expenditure) Act 2026",
+    "justification": "The Act's title names the fire; the sentence itself is about earlier cladding fires; 2026.",
+    "sentence": "[ref] An article in The Guardian three days after the Grenfell Tower fire described it as a \"tragedy foretold\", highlighting that there had been previous cladding fires such as the 2015 fire at The Marina Torch in Dubai, United Arab Emirate"
+   },
+   {
+    "id": "WR13",
+    "stone": "Jeffrey Epstein",
+    "mark_stated": "Epstein Files Transparency Act (2025)",
+    "justification": "The Act's title names the files; the sentence is link markup; 2025.",
+    "sentence": "Kennedy Assassination Records Collection Act of 1992]] * List of people named in the Epstein files * * * [https://www.govinfo.gov/content/pkg/COMPS-18284/uslm/COMPS-18284.xml Epstein Files Transparency Act] as amended ([https://www.govinfo."
+   },
+   {
+    "id": "WF020",
+    "stone": "Chernobyl disaster",
+    "mark_stated": "a government investigating commission (1986)",
+    "justification": "A commission set up later the same day to investigate; investigating commissions count.",
+    "sentence": "thumb|Ruins of abandoned house in Chernobyl, 2019 A commission was established later in the day to investigate the accident."
+   },
+   {
+    "id": "WF083",
+    "stone": "Oklahoma City bombing",
+    "mark_stated": "explosive taggant requirement (June 1995)",
+    "justification": "Enacted June 1995, stated under the bombing's legislation; in order.",
+    "sentence": "In June 1995, Congress enacted legislation requiring chemical taggants to be incorporated into dynamite and other explosives so that a bomb could be traced to its manufacturer."
+   },
+   {
+    "id": "WF084",
+    "stone": "Virginia Tech shooting",
+    "mark_stated": "32 endowment funds in honor of the victims (June 2007)",
+    "justification": "Permanent endowments created in honor of each victim; 2007.",
+    "sentence": "Early in June 2007, the Virginia Tech Foundation announced that $3.2&nbsp;million was moved from the HSMF into 32&nbsp;separately-named endowment funds, each created in honor of a victim killed in the shooting."
+   },
+   {
+    "id": "WF087",
+    "stone": "Virginia Tech shooting",
+    "mark_stated": "a youth chapter named for a victim (Nov 2008)",
+    "justification": "A chapter founded in 2008 took the name of a victim who shielded students; a naming.",
+    "sentence": "It is slightly south of the main memorial.]] A northern Virginia chapter of the B'nai B'rith Youth Organization, founded in November 2008 by Aaron Adler and Ethan Blonder, took on the name Liviu Librescu AZA, in honor of the Holocaust survi"
+   },
+   {
+    "id": "WF112",
+    "stone": "Pulse nightclub shooting",
+    "mark_stated": "state funding for the Pulse National Memorial (2025)",
+    "justification": "The 2025 budget funded the memorial.",
+    "sentence": "[ref] The 2025 Florida state budget signed into law by Governor Ron DeSantis included $394,421 for the Pulse National Memorial."
+   },
+   {
+    "id": "WF119",
+    "stone": "Murder of George Floyd",
+    "mark_stated": "chokehold bans in at least 17 states",
+    "justification": "Banned or restricted by state legislatures in the year after the murder.",
+    "sentence": "Chokeholds and other neck restraints were banned or restricted by at least 17 state legislatures in the year after Floyd's murder."
+   },
+   {
+    "id": "C071",
+    "stone": "Fifty Shades of Grey",
+    "mark_stated": "emergency-room injuries up over 50%",
+    "justification": "A health outcome in the year after publication; correlational.",
+    "sentence": "In the year after the novel's publishing in 2012, injuries requiring Emergency Room visits increased by over 50% from 2010 (the year before the book was published)."
+   },
+   {
+    "id": "C149",
+    "stone": "Minecraft",
+    "mark_stated": "MinecraftEdu (2011)",
+    "justification": "An initiative founded in 2011 to bring the game into schools.",
+    "sentence": "thumb|Minecraft being played in an educational setting Minecraft has been used in educational settings through initiatives such as MinecraftEdu, founded in 2011 to make the game affordable and accessible for schools in collaboration with Mo"
+   }
+  ],
+  "miss": [
+   {
+    "id": "S13",
+    "stone": "The Exxon Valdez",
+    "reason_code": "aside",
+    "mark_stated": null,
+    "justification": "The stone is in an image caption; the sentence is about 1851 law, not a response.",
+    "how_kept": "E1 label: mark",
+    "sentence": "[ref] thumb|left|Heavy sheens of oil as visible on the surface of the water in [[Prince William Sound following the Exxon Valdez oil spill.]]Laws governing oil spills in the United States began in 1851 with the Limitation of Liability Act."
+   },
+   {
+    "id": "H06",
+    "stone": "An Inconvenient Truth",
+    "reason_code": "not_a_mark",
+    "mark_stated": "a 2007 High Court ruling on showing the film in schools",
+    "justification": "A ruling about the film's own use in schools, a reaction to the work's distribution, not a change it caused.",
+    "how_kept": "E2 mark: Dimmock ruling (matched by hand)",
+    "sentence": "On October 10, 2007, High Court Justice Michael Burton, after explaining that the requirement for a balanced presentation does not warrant that equal weight be given to alternative views of a mainstream view, ruled that it was clear that th"
+   },
+   {
+    "id": "H26",
+    "stone": "Deepwater Horizon",
+    "reason_code": "not_a_mark",
+    "mark_stated": "BP monitoring and a temporary contracting ban",
+    "justification": "Settlement terms and a temporary sanction; not lasting, and undated.",
+    "how_kept": "E2 mark: BP federal contracting ban (matched by hand)",
+    "sentence": "BP also agreed to four years of government monitoring of its safety practices and ethics, and the Environmental Protection Agency announced that BP would be temporarily banned from new contracts with the US government."
+   },
+   {
+    "id": "H35",
+    "stone": "Deepwater Horizon",
+    "reason_code": "not_a_mark",
+    "mark_stated": "a temporary federal contracting ban on BP",
+    "justification": "Temporary sanction; undated.",
+    "how_kept": "E2 mark: BP federal contracting ban (matched by hand)",
+    "sentence": "In addition, the U.S. government temporarily banned BP from new federal contracts over its \"lack of business integrity\"."
+   },
+   {
+    "id": "H38",
+    "stone": "Sandy Hook",
+    "reason_code": "undated",
+    "mark_stated": "Connecticut's Freedom of Information Act change",
+    "justification": "Both houses passed a bill to shield the shooting's evidence; the sentence gives June 5 with no year.",
+    "how_kept": "E2 mark: Connecticut FOIA change (matched by hand)",
+    "sentence": "On June 5, both houses (Senate and House of Representatives) of the Connecticut state legislature passed a bill modifying the state's Freedom of Information Act in order to \"prevent the release of crime-scene photos and video evidence from "
+   },
+   {
+    "id": "H43",
+    "stone": "Sandy Hook",
+    "reason_code": "undated",
+    "mark_stated": "a dangerous-weapon offender registry",
+    "justification": "The bill created the first registry, under the gun-control response; the sentence gives no year.",
+    "how_kept": "E2 mark: Connecticut gun law and offender registry (matched by hand)",
+    "sentence": "[ref] It also created the first registry in the United States for dangerous-weapon offenders, and added over 100 types of guns to the state's assault weapons ban."
+   },
+   {
+    "id": "WR04",
+    "stone": "Challenger disaster",
+    "reason_code": "context",
+    "mark_stated": null,
+    "justification": "The sentence is about the report's findings on the launch decision, not a change the disaster caused.",
+    "how_kept": "product mark challenger: Rogers Commission (same mark, matched by hand)",
+    "sentence": "[ref] thumb|left|Ice on the launch tower hours before Challenger launch. The report also strongly criticized the decision-making process that led to the launch of Challenger, saying that it was seriously flawed."
+   },
+   {
+    "id": "WR07",
+    "stone": "Enron scandal",
+    "reason_code": "undated",
+    "mark_stated": "Internal Revenue Code section 409A",
+    "justification": "Enacted in part in response to Enron executives' payouts; no year in the sentence or the mark.",
+    "how_kept": "product mark enron: section 409A (sentence match)",
+    "sentence": "The effects of Section 409A are far-reaching, because of the exceptionally broad definition of \"deferral of compensation.\" Section 409A was enacted, in part, in response to the practice of Enron executives accelerating the payments under th"
+   },
+   {
+    "id": "WR08",
+    "stone": "Enron scandal",
+    "reason_code": "aside",
+    "mark_stated": null,
+    "justification": "Lists precursor reports; Enron is not named in the text.",
+    "how_kept": "product mark enron: UK Companies (Audit, Investigations and Community Enterprise) Act (sentence match)",
+    "sentence": "The following consultation documents and reports are precursors of this act: *The \"Final Report of the Co-ordinating Group on Audit and Accounting Issues\" to the Secretary of State for Trade and Industry and the Chancellor of the Exchequer,"
+   },
+   {
+    "id": "WF001",
+    "stone": "Hurricane Sandy",
+    "reason_code": "not_a_mark",
+    "mark_stated": "Senate passage of the Sandy aid bill",
+    "justification": "One chamber's passage of relief funding.",
+    "how_kept": "product mark hurricane-sandy: Sandy aid law (same mark, matched by hand)",
+    "sentence": "[ref] On January 28, the Senate passed the $50.5&nbsp;billion Sandy aid bill by a count of 62–36."
+   },
+   {
+    "id": "WF002",
+    "stone": "Hurricane Sandy",
+    "reason_code": "context",
+    "mark_stated": "the Sandy aid bill signed into law",
+    "justification": "A fragment; the storm is not named and no year is given.",
+    "how_kept": "product mark hurricane-sandy: Sandy aid law (sentence match)",
+    "sentence": "[ref] which President Obama signed into law January 29."
+   },
+   {
+    "id": "WF005",
+    "stone": "September 11 attacks",
+    "reason_code": "undated",
+    "mark_stated": "September 11th Victim Compensation Fund",
+    "justification": "Created by Congress shortly after the attacks; no year.",
+    "how_kept": "product mark september-11: Victim Compensation Fund (sentence match)",
+    "sentence": "Shortly after the attacks, the September 11th Victim Compensation Fund was created by an Act of Congress."
+   },
+   {
+    "id": "WF007",
+    "stone": "September 11 attacks",
+    "reason_code": "undated",
+    "mark_stated": "USA PATRIOT Act",
+    "justification": "Stated under domestic reactions; no year.",
+    "how_kept": "product mark september-11: Patriot Act (same mark, matched by hand)",
+    "sentence": "Congress also passed the USA PATRIOT Act, saying it would help detect and prosecute terrorism and other crimes."
+   },
+   {
+    "id": "WF010",
+    "stone": "September 11 attacks",
+    "reason_code": "undated",
+    "mark_stated": "Canada's Anti-Terrorism Act",
+    "justification": "Stated under policy responses; no year.",
+    "how_kept": "product mark september-11: Canada's Anti-terrorism Act (sentence match)",
+    "sentence": "[ref] Canada passed the Canadian Anti-Terrorism Act, their first anti-terrorism law."
+   },
+   {
+    "id": "WF014",
+    "stone": "September 11 attacks",
+    "reason_code": "undated",
+    "mark_stated": "Transportation Security Administration",
+    "justification": "The law created the TSA; no year in the sentence.",
+    "how_kept": "product mark september-11: TSA (sentence match)",
+    "sentence": "The law created the Transportation Security Administration to inspect passengers and luggage, causing long delays and concern over passenger privacy."
+   },
+   {
+    "id": "WF016",
+    "stone": "September 11 attacks",
+    "reason_code": "undated",
+    "mark_stated": "Justice Against Sponsors of Terrorism Act",
+    "justification": "Same Act as WF015, no year.",
+    "how_kept": "product mark september-11: JASTA (sentence match)",
+    "sentence": "[ref] Congress passed the Justice Against Sponsors of Terrorism Act."
+   },
+   {
+    "id": "WF025",
+    "stone": "Chernobyl disaster",
+    "reason_code": "undated",
+    "mark_stated": "Early Notification and Assistance Conventions",
+    "justification": "Stated under the international response; no year.",
+    "how_kept": "product mark chernobyl: Early Notification Convention (sentence match)",
+    "sentence": "They created the Convention on Early Notification of a Nuclear Accident and Convention on Assistance in the Case of a Nuclear Accident or Radiological Emergency."
+   },
+   {
+    "id": "WF026",
+    "stone": "Chernobyl disaster",
+    "reason_code": "undated",
+    "mark_stated": "Joint Convention on the Safety of Spent Fuel Management",
+    "justification": "Stated under the international response; no year.",
+    "how_kept": "product mark chernobyl: Joint Convention (sentence match)",
+    "sentence": "They created the Joint Convention on the Safety of Spent Fuel Management, which obligated nations to establish proper policies for the management of nuclear power plants."
+   },
+   {
+    "id": "WF027",
+    "stone": "Chernobyl disaster",
+    "reason_code": "undated",
+    "mark_stated": "Chernobyl Children International",
+    "justification": "A charity established to help those affected; no year.",
+    "how_kept": "product mark chernobyl: Chernobyl Children International (sentence match)",
+    "sentence": "In the United States, the Chernobyl Children International was established to help those economically affected by the disaster."
+   },
+   {
+    "id": "WF028",
+    "stone": "Bhopal disaster",
+    "reason_code": "undated",
+    "mark_stated": "Bhopal Gas Leak Disaster Act",
+    "justification": "Passed after the disaster; no year in the sentence.",
+    "how_kept": "product mark bhopal: Bhopal Gas Leak Disaster Act (same mark, matched by hand)",
+    "sentence": "The Government of India passed the \"Bhopal Gas Leak Disaster Act\" that gave the government rights to represent all victims, whether or not in India."
+   },
+   {
+    "id": "WF035",
+    "stone": "Challenger disaster",
+    "reason_code": "undated",
+    "mark_stated": "Rogers Commission",
+    "justification": "Created to investigate the accident; no year in the sentence.",
+    "how_kept": "product mark challenger: Rogers Commission (sentence match)",
+    "sentence": "President Ronald Reagan created the Rogers Commission to investigate the accident."
+   },
+   {
+    "id": "WF036",
+    "stone": "Challenger disaster",
+    "reason_code": "undated",
+    "mark_stated": "NASA Office of Safety, Reliability, and Quality Assurance; satellites moved off the shuttle",
+    "justification": "Established as a result of the disaster; no year in the sentence.",
+    "how_kept": "product mark challenger: NASA Office of Safety (same mark, matched by hand)",
+    "sentence": "As a result of this disaster, NASA established the Office of Safety, Reliability, and Quality Assurance, and arranged for deployment of commercial satellites from expendable launch vehicles, rather than from a crewed orbiter."
+   },
+   {
+    "id": "WF045",
+    "stone": "Challenger disaster",
+    "reason_code": "undated",
+    "mark_stated": "Challenger Center for Space Science Education",
+    "justification": "Established by the crew's families; no year.",
+    "how_kept": "product mark challenger: Challenger Center (sentence match)",
+    "sentence": "[ref] The crew's families established the Challenger Center for Space Science Education as an educational non-profit organization."
+   },
+   {
+    "id": "WF058",
+    "stone": "Rana Plaza collapse",
+    "reason_code": "undated",
+    "mark_stated": "Bangladesh factory-inspection laws",
+    "justification": "New laws passed in the aftermath; no year.",
+    "how_kept": "product mark rana-plaza: factory-inspection law (sentence match)",
+    "sentence": "In the aftermath, the Bangladesh government passed new laws requiring all garment factories to be inspected by a government-approved agency."
+   },
+   {
+    "id": "WF059",
+    "stone": "Rana Plaza collapse",
+    "reason_code": "context",
+    "mark_stated": "a legally binding safety agreement (2013)",
+    "justification": "The agreement is dated, but the sentence does not tie it to the collapse.",
+    "how_kept": "product mark rana-plaza: Bangladesh Accord (same mark, matched by hand)",
+    "sentence": "Established in 2013, this independent, legally binding agreement primarily sought to reform and ensure the health and safety of workers across the country's Ready-Made Garment (RMG) industry."
+   },
+   {
+    "id": "WF071",
+    "stone": "Boston Marathon bombing",
+    "reason_code": "not_a_mark",
+    "mark_stated": "One Fund Boston",
+    "justification": "A relief fund for victims.",
+    "how_kept": "product mark boston-marathon: One Fund Boston (sentence match)",
+    "sentence": "The One Fund Boston was established by Massachusetts governor Deval Patrick and Boston mayor Thomas Menino to make monetary distributions to bombing victims."
+   },
+   {
+    "id": "WF076",
+    "stone": "Oklahoma City bombing",
+    "reason_code": "context",
+    "mark_stated": "Antiterrorism and Effective Death Penalty Act of 1996",
+    "justification": "A dated law in the lead, but the visible sentence does not tie it to the bombing.",
+    "how_kept": "product mark oklahoma-city: AEDPA (sentence match)",
+    "sentence": "Congress]] passed the Antiterrorism and Effective Death Penalty Act of 1996, which limited access to habeas corpus in the United States, among other provisions."
+   },
+   {
+    "id": "WF085",
+    "stone": "Virginia Tech shooting",
+    "reason_code": "undated",
+    "mark_stated": "first federal gun law in over a decade",
+    "justification": "Prompted by the shooting; no year.",
+    "how_kept": "product mark virginia-tech: NICS Improvement Amendments Act (same mark, matched by hand)",
+    "sentence": "Prompted by the incident, the federal government passed the first gun control law in more than a decade."
+   },
+   {
+    "id": "WF088",
+    "stone": "Virginia Tech shooting",
+    "reason_code": "context",
+    "mark_stated": "federal NICS reporting law",
+    "justification": "In a background section; the shooting is not tied to it; no year.",
+    "how_kept": "product mark virginia-tech: NICS Improvement Amendments Act (same mark, matched by hand)",
+    "sentence": "The federal government later passed a law to improve state reporting to the NICS nationwide."
+   },
+   {
+    "id": "WF089",
+    "stone": "Parkland shooting",
+    "reason_code": "undated",
+    "mark_stated": "Never Again MSD",
+    "justification": "An advocacy group founded by the school's students; no year.",
+    "how_kept": "product mark parkland: Never Again MSD (sentence match)",
+    "sentence": "Students at Parkland founded Never Again MSD, an advocacy group that lobbies for gun control."
+   },
+   {
+    "id": "WF090",
+    "stone": "Parkland shooting",
+    "reason_code": "undated",
+    "mark_stated": "Florida ended death-penalty jury unanimity",
+    "justification": "Overturned partly as a result of the shooter's sentencing; \"has since\" gives no year.",
+    "how_kept": "product mark parkland: death-penalty unanimity repeal (sentence match)",
+    "sentence": "[ref] The unanimity required to impose the death penalty has since been overturned by a bill signed by Governor Ron DeSantis, partly as a result of Cruz's sentencing."
+   },
+   {
+    "id": "WF091",
+    "stone": "Parkland shooting",
+    "reason_code": "undated",
+    "mark_stated": "Florida ended death-penalty jury unanimity",
+    "justification": "Same statement as WF090; no year.",
+    "how_kept": "product mark parkland: death-penalty unanimity repeal (sentence match)",
+    "sentence": "The unanimity required to impose the death penalty has since been overturned by a bill signed by Governor DeSantis, partly as a result of Cruz's sentencing."
+   },
+   {
+    "id": "WF094",
+    "stone": "Parkland shooting",
+    "reason_code": "undated",
+    "mark_stated": "the Act's provisions",
+    "justification": "The provisions of the same Act; no year in this sentence.",
+    "how_kept": "product mark parkland: MSD High School Public Safety Act (same mark, matched by hand)",
+    "sentence": "It raised the minimum age for buying rifles to 21, established waiting periods and background checks, provided a program for the arming of some school employees and hiring of school police, banned bump stocks, and barred some potentially vi"
+   },
+   {
+    "id": "WF099",
+    "stone": "Uvalde shooting",
+    "reason_code": "undated",
+    "mark_stated": "New York raised the age for semi-automatic purchases",
+    "justification": "A law passed \"On June 6\" with no year.",
+    "how_kept": "product mark uvalde: New York age-21 law (sentence match)",
+    "sentence": "On June 6, the state of New York passed a new law raising the age from 18 to 21 for people to be able to buy semi-automatic weapons."
+   },
+   {
+    "id": "WF102",
+    "stone": "Uvalde shooting",
+    "reason_code": "not_a_mark",
+    "mark_stated": "Senate passage of the Bipartisan Safer Communities Act",
+    "justification": "One chamber's passage; no year.",
+    "how_kept": "product mark uvalde: Bipartisan Safer Communities Act (sentence match)",
+    "sentence": "On June 23, the Senate passed the Bipartisan Safer Communities Act with bipartisan support in a 65–33 vote."
+   },
+   {
+    "id": "WF103",
+    "stone": "Uvalde shooting",
+    "reason_code": "not_a_mark",
+    "mark_stated": "House passage of the Bipartisan Safer Communities Act",
+    "justification": "One chamber's passage in this sentence; no year.",
+    "how_kept": "product mark uvalde: Bipartisan Safer Communities Act (sentence match)",
+    "sentence": "On June 24, the House of Representatives passed the Bipartisan Safer Communities Act with bipartisan support in a 234–193 vote."
+   },
+   {
+    "id": "WF104",
+    "stone": "Uvalde shooting",
+    "reason_code": "not_a_mark",
+    "mark_stated": "H.B. 3 passed the Texas House",
+    "justification": "One chamber.",
+    "how_kept": "product mark uvalde: Texas HB 3 (same mark, matched by hand)",
+    "sentence": "On March 8, 2023, H.B. 3 was introduced to the Texas House of Representatives who passed the bill in a 119–25 vote on April 25, 2023."
+   },
+   {
+    "id": "WF109",
+    "stone": "Pulse nightclub shooting",
+    "reason_code": "not_a_mark",
+    "mark_stated": "a fundraising campaign",
+    "justification": "A campaign.",
+    "how_kept": "product mark pulse: OneOrlando Fund (sentence match)",
+    "sentence": "[ref] [ref] Another fundraising campaign, OneOrlando, was established by Mayor Buddy Dyer."
+   },
+   {
+    "id": "WF110",
+    "stone": "Pulse nightclub shooting",
+    "reason_code": "undated",
+    "mark_stated": "OnePulse Foundation",
+    "justification": "Created by the club's owner; the year given is for memorial plans, not the foundation.",
+    "how_kept": "product mark pulse: OnePulse Foundation (sentence match)",
+    "sentence": "[ref] The owner then created the OnePulse Foundation, and in May 2017, announced plans for a memorial site and museum originally slated to open in 2022."
+   },
+   {
+    "id": "WF111",
+    "stone": "Pulse nightclub shooting",
+    "reason_code": "undated",
+    "mark_stated": "OnePulse Foundation",
+    "justification": "Created \"on\" a blank date.",
+    "how_kept": "product mark pulse: OnePulse Foundation (same mark, matched by hand)",
+    "sentence": "[ref] OnePulse Foundation, a charity organization created by a Pulse owner on , filed documents with a plan to fund and build a memorial at the nightclub."
+   },
+   {
+    "id": "WF113",
+    "stone": "Las Vegas shooting",
+    "reason_code": "context",
+    "mark_stated": "federal bump stock ban",
+    "justification": "A truncated lead sentence with no tie to the shooting and no year.",
+    "how_kept": "product mark las-vegas: bump-stock ban (same mark, matched by hand)",
+    "sentence": "[ref] Bump stocks were banned by the [[United States Department of Justice|U.S."
+   },
+   {
+    "id": "WF114",
+    "stone": "Las Vegas shooting",
+    "reason_code": "undated",
+    "mark_stated": "federal bump stock regulation",
+    "justification": "Stated under the gun control response; no year in the sentence.",
+    "how_kept": "product mark las-vegas: bump-stock ban (sentence match)",
+    "sentence": "The regulation banned new sales and required current owners to surrender or destroy existing bump stocks."
+   },
+   {
+    "id": "WF116",
+    "stone": "Las Vegas shooting",
+    "reason_code": "context",
+    "mark_stated": "federal bump stock ban (2019)",
+    "justification": "The ban is mentioned as the object of an appeal, not tied to the shooting.",
+    "how_kept": "product mark las-vegas: bump-stock ban (same mark, matched by hand)",
+    "sentence": "[ref] In 2019, a Texan gun store owner, backed by the NRA, appealed the national ban on bump stocks enacted the same year by classifying rifles with bump stocks as machine guns."
+   },
+   {
+    "id": "WF136",
+    "stone": "Camp Fire",
+    "reason_code": "not_a_mark",
+    "mark_stated": "Chico's six-month price-gouging ordinance",
+    "justification": "An emergency ordinance limited to six months, not lasting; no year.",
+    "how_kept": "product mark camp-fire: Chico price-gouging ordinance (sentence match)",
+    "sentence": "[ref] On November 16, the Chico city council passed an emergency ordinance to prohibit price gouging in Chico, by preventing the cost of rent, goods or services from being increased by more than 10 percent for six months."
+   },
+   {
+    "id": "WF137",
+    "stone": "Camp Fire",
+    "reason_code": "context",
+    "mark_stated": "California wildfire fund under AB 1054",
+    "justification": "The fund is mentioned in the bankruptcy timeline; the fire is not given as its cause.",
+    "how_kept": "product mark camp-fire: AB 1054 wildfire fund (sentence match)",
+    "sentence": "[ref] PG&E had a deadline of June 30, 2020 to exit bankruptcy in order to participate in the California state wildfire insurance fund established by AB&nbsp;1054 that helps utilities pay for future wildfire claims."
+   },
+   {
+    "id": "WF138",
+    "stone": "Camp Fire",
+    "reason_code": "not_a_mark",
+    "mark_stated": "PG&E Fire Victim Trust (July 1, 2020)",
+    "justification": "A claims trust from a bankruptcy settlement, not a standing rule or body.",
+    "how_kept": "product mark camp-fire: PG&E Fire Victim Trust (sentence match)",
+    "sentence": "On July 1, 2020, the PG&E Fire Victim Trust (FVT) was established as part of the reorganization plan of the 2019 bankruptcy of PG&E to administer the claims of the wildfire victims."
+   },
+   {
+    "id": "WF159",
+    "stone": "Volkswagen emissions scandal",
+    "reason_code": "not_a_mark",
+    "mark_stated": "Switzerland banned VW diesel sales (Sep 26, 2015)",
+    "justification": "A ban on the scandal's own product, a reaction.",
+    "how_kept": "product mark volkswagen: Switzerland's sales ban (sentence match)",
+    "sentence": "On 26 September 2015 Switzerland banned sales of Volkswagen diesel cars, marking the most severe step taken so far by a government in reaction to the emissions crisis."
+   },
+   {
+    "id": "WF166",
+    "stone": "Dieselgate",
+    "reason_code": "not_a_mark",
+    "mark_stated": "Switzerland banned VW diesel sales",
+    "justification": "Same as WF159.",
+    "how_kept": "product mark volkswagen: Switzerland's sales ban (sentence match)",
+    "sentence": "On 26 September 2015 Switzerland banned sales of Volkswagen diesel cars, marking the most severe step taken so far by a government in reaction to the emissions crisis."
+   },
+   {
+    "id": "WF182",
+    "stone": "Love Canal",
+    "reason_code": "undated",
+    "mark_stated": "CERCLA (Superfund)",
+    "justification": "Stated under the federal response; no year in this sentence.",
+    "how_kept": "product mark love-canal: CERCLA / Superfund (product: ATSDR) (sentence match)",
+    "sentence": "Congress passed the Comprehensive Environmental Response, Compensation, and Liability Act (CERCLA), better known as the Superfund Act."
+   },
+   {
+    "id": "WF190",
+    "stone": "Dear Zachary",
+    "reason_code": "context",
+    "mark_stated": "a child-protection bail law",
+    "justification": "The bill is not tied to the film in this sentence, and \"the following year\" has no anchor.",
+    "how_kept": "product mark dear-zachary: Bill C-464 (same mark, matched by hand)",
+    "sentence": "The bill, which helps protect children in relation to bail hearings and custody disputes, was signed into law the following year."
+   },
+   {
+    "id": "C004",
+    "stone": "Frozen",
+    "reason_code": "attention_only",
+    "mark_stated": "more Norway tours (2014)",
+    "justification": "Tourism demand inspired by the film, curiosity rather than a lasting change.",
+    "how_kept": "product mark frozen: Norway tours (sentence match)",
+    "sentence": "[ref] Tour operators, including Adventures by Disney, added more tours of Norway in response to increasing 2014 demand."
+   },
+   {
+    "id": "C005",
+    "stone": "Game of Thrones",
+    "reason_code": "attention_only",
+    "mark_stated": "Northern Ireland screen tourism (350,000 visitors a year by 2019)",
+    "justification": "Tourism to filming locations.",
+    "how_kept": "product mark game-of-thrones: Northern Ireland tourism (sentence match)",
+    "sentence": "[ref] By 2019, 350,000 visitors, or one sixth of all tourists, came to Northern Ireland annually because of Game of Thrones."
+   },
+   {
+    "id": "C016",
+    "stone": "Finding Nemo",
+    "reason_code": "undated",
+    "mark_stated": "tropical fish demand and reef depletion",
+    "justification": "Demand rose after release and depleted reefs; \"after the film's release\" gives no year.",
+    "how_kept": "product mark finding-nemo: demand for reef fish (sentence match)",
+    "sentence": "[ref] Demand for tropical fish skyrocketed after the film's release, causing reef species decimation in Vanuatu and several other reef areas."
+   },
+   {
+    "id": "C019",
+    "stone": "101 Dalmatians",
+    "reason_code": "undated",
+    "mark_stated": "Dalmatian purchases rose after the premiere",
+    "justification": "A pet-buying rise reported by protesters; \"after the premiere\" gives no year.",
+    "how_kept": "product mark 101-dalmatians: Dalmatian sales (sentence match)",
+    "sentence": "Animal rights organizations protested the film's release, saying that Dalmatian sales shot up after the premiere, fueled by impulsive purchases of puppies by parents for their children."
+   },
+   {
+    "id": "C020",
+    "stone": "Sideways",
+    "reason_code": "undated",
+    "mark_stated": "Merlot sales down 2%, Pinot noir up 16% in the West",
+    "justification": "A purchase shift tied to the film's release; the year belongs to the release, not to the change.",
+    "how_kept": "product mark sideways: the Sideways effect (sentence match)",
+    "sentence": "[ref] After the film's U.S. release in October 2004, Merlot sales dropped 2% while Pinot noir sales increased 16% in the Western United States."
+   },
+   {
+    "id": "C021",
+    "stone": "Sideways",
+    "reason_code": "undated",
+    "mark_stated": "lasting demand shift to Pinot noir; vines planted on unsuitable land",
+    "justification": "A 2022 study finds the film caused the shift; the change itself carries no year.",
+    "how_kept": "product mark sideways: the Sideways effect (same mark, matched by hand)",
+    "sentence": "[ref] A 2022 study in the Journal of Wine Economics found that Sideways caused a reduction in demand for Merlot and an increase in demand for Pinot noir in the United States, which led California winemakers to grow Pinot noir grapes in unsu"
+   },
+   {
+    "id": "C022",
+    "stone": "The Queen's Gambit",
+    "reason_code": "undated",
+    "mark_stated": "chess set sales rose (one maker up over 1,000%)",
+    "justification": "A rise in a different product category after the release; no year.",
+    "how_kept": "product mark queens-gambit: chess set sales (sentence match)",
+    "sentence": "[ref] International master Levy Rozman considers The Queen's Gambit \"single-handedly the biggest thing to ever happen to chess.\" Sales of chess sets rose greatly following the release of the series, with U.S. company Goliath Games stating t"
+   },
+   {
+    "id": "C034",
+    "stone": "Pokémon Go",
+    "reason_code": "undated",
+    "mark_stated": "New York parole ban on the app for sex offenders",
+    "justification": "A standing parole rule governing conduct, prompted by the player base's age; no year.",
+    "how_kept": "product mark pokemon-go: New York parole rule (sentence match)",
+    "sentence": "[ref] In the state of New York, sex offenders are banned from using the application while on parole, due to concerns stemming from a large percentage of the player base being minors."
+   },
+   {
+    "id": "C039",
+    "stone": "Pokémon Go",
+    "reason_code": "not_a_mark",
+    "mark_stated": "Iran banned the game (Aug 2016)",
+    "justification": "A nationwide ban of the work itself, a reaction to its distribution.",
+    "how_kept": "product mark pokemon-go: Iran's ban (sentence match)",
+    "sentence": "[ref] The Supreme Council of Virtual Space in Iran officially banned the game in August 2016 over security concerns."
+   },
+   {
+    "id": "C067",
+    "stone": "Avatar",
+    "reason_code": "attention_only",
+    "mark_stated": "3D film popularity and 3D televisions",
+    "justification": "A craze in 3D, growth rather than a lasting change.",
+    "how_kept": "product mark avatar: 3D televisions (sentence match)",
+    "sentence": "The success of the film led to an increase in popularity of 3D films, and to electronics manufacturers releasing 3D televisions."
+   },
+   {
+    "id": "C076",
+    "stone": "Fifty Shades of Grey",
+    "reason_code": "not_a_mark",
+    "mark_stated": "Malaysia banned the books (Feb 2015)",
+    "justification": "A ban of the work itself.",
+    "how_kept": "product mark fifty-shades: Malaysia's ban (sentence match)",
+    "sentence": "[ref] In February 2015, the Malaysian Home Ministry banned the Fifty Shades of Grey books shortly after banning its film adaptation after permitting them for three years in local bookstores, citing morality-related reasons."
+   },
+   {
+    "id": "C078",
+    "stone": "The Da Vinci Code",
+    "reason_code": "not_a_mark",
+    "mark_stated": "Indian states banned the film and book (2006)",
+    "justification": "Bans of the work itself.",
+    "how_kept": "product mark da-vinci-code: Indian state bans (sentence match)",
+    "sentence": "[ref] Thus in 2006, seven Indian states (Nagaland, Punjab, Goa, Tamil Nadu, Andhra Pradesh) banned the release or exhibition of the Hollywood movie The Da Vinci Code (as well as the book)."
+   },
+   {
+    "id": "C092",
+    "stone": "The Great British Bake Off",
+    "reason_code": "undated",
+    "mark_stated": "baking ingredient sales rose",
+    "justification": "Shops reported sharp rises credited to the series; no year.",
+    "how_kept": "product mark bake-off: baking sales (sentence match)",
+    "sentence": "[ref] The series is credited with reinvigorating interest in baking throughout the United Kingdom and Ireland, with shops in the UK reporting sharp rises in sales of baking ingredients and accessories."
+   },
+   {
+    "id": "C093",
+    "stone": "The Great British Bake Off",
+    "reason_code": "undated",
+    "mark_stated": "baking ingredient sales rose",
+    "justification": "Same claim as C092; no year.",
+    "how_kept": "product mark bake-off: baking sales (sentence match)",
+    "sentence": "Bake Off is credited with spurring an interest in home baking, with supermarkets and department stores in the UK reporting sharp rises in sales of baking ingredients and accessories."
+   },
+   {
+    "id": "C133",
+    "stone": "Furby",
+    "reason_code": "undated",
+    "mark_stated": "intelligence agencies banned the toy from offices",
+    "justification": "A rule on secure premises prompted by a myth about the toy; no year.",
+    "how_kept": "product mark furby: NSA Furby ban (same mark, matched by hand)",
+    "sentence": "As a result of this myth, several intelligence agencies banned them from their offices."
+   },
+   {
+    "id": "C152",
+    "stone": "Tetris",
+    "reason_code": "not_a_mark",
+    "mark_stated": "the rights company",
+    "justification": "The game's own business.",
+    "how_kept": "product mark tetris: The Tetris Company (sentence match)",
+    "sentence": "The Tetris Company was established to manage rights and licensing."
+   },
+   {
+    "id": "C154",
+    "stone": "Tetris",
+    "reason_code": "not_a_mark",
+    "mark_stated": "the rights company (1996)",
+    "justification": "The game's own business.",
+    "how_kept": "product mark tetris: The Tetris Company (sentence match)",
+    "sentence": "Rogers formed Blue Planet Software and, after a year of negotiations, established the Tetris Company as an equal partnership between Elorg and Blue Planet Software in 1996, \"to own and administer\" the Tetris rights, and \"to serve as the exc"
+   },
+   {
+    "id": "C176",
+    "stone": "Zumba",
+    "reason_code": "not_a_mark",
+    "mark_stated": "Iran banned Zumba (June 2017)",
+    "justification": "A ban of the stone itself in one country.",
+    "how_kept": "product mark zumba: Iran's ban (sentence match)",
+    "sentence": "In June 2017, Zumba was banned in Iran for being un-Islamic."
+   },
+   {
+    "id": "C222",
+    "stone": "An Inconvenient Truth",
+    "reason_code": "not_a_mark",
+    "mark_stated": null,
+    "justification": "The sentence is cut off before the change the study found is stated.",
+    "how_kept": "product mark an-inconvenient-truth: carbon-offset purchases (sentence match)",
+    "sentence": "On the contrary, in a 2011 paper published in the Journal of Environmental Economics and Management, University of Oregon professor Grant Jacobsen found in the two months following the release of the film, zip codes within a 10-mile (16&nbs"
+   },
+   {
+    "id": "C223",
+    "stone": "An Inconvenient Truth",
+    "reason_code": "not_a_mark",
+    "mark_stated": "a 2007 High Court ruling on showing the film in schools",
+    "justification": "A ruling about the film's own use in schools.",
+    "how_kept": "product mark an-inconvenient-truth: Dimmock ruling (same mark, matched by hand)",
+    "sentence": "On October 10, 2007, High Court Justice Michael Burton, after explaining that the requirement for a balanced presentation does not warrant that equal weight be given to alternative views of a mainstream view, ruled that it was clear that th"
+   },
+   {
+    "id": "C226",
+    "stone": "Blue Planet II",
+    "reason_code": "attention_only",
+    "mark_stated": "lasting interest in plastic pollution (2020 study)",
+    "justification": "Interest, even lasting interest, is attention by the definitions; \"suggested\" hedges it.",
+    "how_kept": "product mark blue-planet-ii: the plastics turn (sentence match)",
+    "sentence": "[ref] A 2020 study suggested that the programme triggered long-lasting increased political, media and public interest in plastic pollution in the UK, where previous efforts to do so had not been successful."
+   },
+   {
+    "id": "C227",
+    "stone": "Blue Planet II",
+    "reason_code": "undated",
+    "mark_stated": "marine biology applications rose",
+    "justification": "A sudden rise in applications after the airing; no year.",
+    "how_kept": "product mark blue-planet-ii: marine biology applications (sentence match)",
+    "sentence": "[ref] British universities such as the University of Southampton noticed a sudden increase in applications for marine biology courses following the programme's airing, which was again attributed to the 'Blue Planet effect'."
+   },
+   {
+    "id": "C229",
+    "stone": "Emily in Paris",
+    "reason_code": "attention_only",
+    "mark_stated": "tourists citing the series (2024 survey)",
+    "justification": "Tourism inspired by a show.",
+    "how_kept": "product mark emily-in-paris: Paris tourism (sentence match)",
+    "sentence": "[ref] A 2024 survey by the Centre national du cinéma et de l'image animée found that 38% of tourists cited Emily in Paris as a reason for visiting the city."
+   }
+  ]
+ },
+ "judged_matches": [
+  "C021",
+  "C133",
+  "C223",
+  "WF001",
+  "WF006",
+  "WF007",
+  "WF021",
+  "WF028",
+  "WF036",
+  "WF059",
+  "WF081",
+  "WF085",
+  "WF088",
+  "WF094",
+  "WF104",
+  "WF108",
+  "WF111",
+  "WF113",
+  "WF116",
+  "WF179",
+  "WF190",
+  "WR04",
+  "WR09",
+  "WR15"
+ ]
+}

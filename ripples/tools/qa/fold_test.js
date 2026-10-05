@@ -1,11 +1,13 @@
-// The second roundtable's three measurements: the legend inside a 614-px laptop fold, the caption not covering a small
+// The fold measurements: the first card on screen at load on a laptop (owner, Oct 5), the caption not covering a small
 // phone pond, and the first lasting mark on a phone inside 13 s. node fold_test.js [page]   exits 1 on a failure
 const { pageUrl, browser } = require('./common');
 (async () => {
   const b = await browser(), base = pageUrl(process.argv[2]); let bad = 0;
-  { const pg = await b.newPage({ viewport: { width: 1093, height: 614 }, deviceScaleFactor: 1.25 }); await pg.goto(base + '?m=tiger-king&nointro=1'); await pg.waitForTimeout(1200);
-    const r = await pg.evaluate(() => { const l = document.querySelector('.legend').getBoundingClientRect(), p = document.querySelector('#pond').getBoundingClientRect(); return { legendBottom: Math.round(l.bottom), pondBottom: Math.round(p.bottom), vh: innerHeight }; });
-    const ok = r.legendBottom <= r.vh && r.pondBottom <= r.vh; if (!ok) bad++; console.log(`1093x614 legend bottom ${r.legendBottom}, pond bottom ${r.pondBottom}, viewport ${r.vh}  ${ok ? 'ok' : 'FAIL'}`); await pg.close(); }
+  for (const [w, h, need] of [[1093, 614, 'title'], [1440, 800, 'whole']]) {  // the water look (Oct 5): the cards are the anchor, so the first card must be on screen at load; the key sits under the cards
+    const pg = await b.newPage({ viewport: { width: w, height: h }, deviceScaleFactor: 1.25 }); await pg.goto(base + '?m=tiger-king&nointro=1'); await pg.waitForTimeout(1500);
+    const r = await pg.evaluate(() => { const c = document.querySelector('#feed .card:not(.off)'), p = document.querySelector('#pond').getBoundingClientRect(); const cb = c ? c.getBoundingClientRect() : {top: 9999, bottom: 9999}; return { cardTop: Math.round(cb.top), cardBottom: Math.round(cb.bottom), pondBottom: Math.round(p.bottom), vh: innerHeight }; });
+    const ok = r.pondBottom <= r.vh && (need === 'whole' ? r.cardBottom <= r.vh : r.cardTop + 56 <= r.vh); if (!ok) bad++;
+    console.log(`${w}x${h} first card ${r.cardTop}-${r.cardBottom}, pond bottom ${r.pondBottom}, viewport ${r.vh} (${need} card on screen)  ${ok ? 'ok' : 'FAIL'}`); await pg.close(); }
   { const pg = await b.newPage({ viewport: { width: 375, height: 667 }, deviceScaleFactor: 2, hasTouch: true, isMobile: true }); await pg.goto(base + '?c=columbine-active-shooter&s=c3'); await pg.waitForTimeout(1500);
     const r = await pg.evaluate(() => { const c = document.querySelector('#caption').getBoundingClientRect(), p = document.querySelector('#pond').getBoundingClientRect(); return { cover: +(Math.max(0, Math.min(c.bottom, p.bottom) - Math.max(c.top, p.top)) / p.height).toFixed(2), flow: document.querySelector('#caption').classList.contains('flow'), pondH: Math.round(p.height) }; });
     const ok = r.cover <= 0.05; if (!ok) bad++; console.log(`375x667 caption covers ${Math.round(r.cover * 100)}% of a ${r.pondH}-px pond (flow ${r.flow})  ${ok ? 'ok' : 'FAIL'}`); await pg.close(); }
