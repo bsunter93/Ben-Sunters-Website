@@ -1,0 +1,5447 @@
+{
+ "version": "names_v1",
+ "plan": "ripples/docs/names_plan_v1.md",
+ "plan_commit": "ba589cec5f997eca477beca9e72751081adfa394",
+ "data": {
+  "file": "ripples/lab/discovery/names/names_national_1995_2021.csv",
+  "name_sex_pairs": 3737,
+  "years": [
+   1995,
+   2021
+  ]
+ },
+ "episodes": {
+  "rise": 152,
+  "fall": 78
+ },
+ "bar": {
+  "B1": {
+   "recovered": 0,
+   "of": 8,
+   "needed": 3,
+   "pass": false
+  },
+  "B2": {
+   "new_measured_episodes": 4,
+   "needed": 5,
+   "pass": false
+  },
+  "B3": {
+   "decoy_names": {
+    "rate": 0.0022,
+    "wilson_upper": 0.0051,
+    "n": 2300,
+    "pass": true
+   },
+   "ghost_stones": {
+    "rate": 0.0,
+    "wilson_upper": 0.0078,
+    "n": 488,
+    "pass": true
+   },
+   "fake_stones": {
+    "rate": 0.0033,
+    "wilson_upper": 0.0121,
+    "n": 600,
+    "pass": true
+   }
+  },
+  "pass": false
+ },
+ "known_positives": [
+  {
+   "id": "A1",
+   "name": "Elsa",
+   "sex": "F",
+   "tier": "A",
+   "years": [
+    2014,
+    2014
+   ],
+   "stone": "^Frozen$",
+   "date": "2013-11-27",
+   "direction": "rise",
+   "direct_test": {
+    "grade": "timed",
+    "t_hat": 2014,
+    "onset": 2014,
+    "r_eff": 2014,
+    "window": [
+     2014,
+     2015
+    ],
+    "p_year": 0.00377,
+    "p_own": 0.0385,
+    "material": true,
+    "established": true,
+    "u": 5.144,
+    "e": 0.7411
+   },
+   "counts": {
+    "2010": 440,
+    "2011": 450,
+    "2012": 477,
+    "2013": 526,
+    "2014": 1107,
+    "2015": 618,
+    "2016": 429,
+    "2017": 368,
+    "2018": 248,
+    "2019": 312
+   },
+   "scan_found": true,
+   "scan_episode": {
+    "onset": 2014,
+    "peak": 2014,
+    "years": [
+     2014
+    ],
+    "p_year": 0.00377,
+    "p_own": 0.0385
+   },
+   "matched_expected_stone": true,
+   "matched_pairs": [
+    {
+     "stone": "Frozen",
+     "date": "2013-11-10",
+     "stat_grade": "timed",
+     "via": "Elsa"
+    }
+   ],
+   "expected_stone_in_catalog": [
+    {
+     "stone": "Frozen",
+     "date": "2013-11-10",
+     "shelf": "character",
+     "strict": true,
+     "via": "Elsa"
+    }
+   ],
+   "recovered": false,
+   "graded_pair": null,
+   "best_grade_if_not_recovered": "timed"
+  },
+  {
+   "id": "A2",
+   "name": "Arya",
+   "sex": "F",
+   "tier": "A",
+   "years": [
+    2011,
+    2013
+   ],
+   "stone": "Game of Thrones",
+   "date": "2011-04-17",
+   "direction": "rise",
+   "direct_test": {
+    "grade": "timed",
+    "t_hat": 2012,
+    "onset": 2011,
+    "r_eff": 2011,
+    "window": [
+     2011,
+     2012,
+     2013
+    ],
+    "p_year": 0.02075,
+    "p_own": 0.1154,
+    "material": true,
+    "established": true,
+    "u": 2.901,
+    "e": 0.7697
+   },
+   "counts": {
+    "2008": 144,
+    "2009": 180,
+    "2010": 211,
+    "2011": 344,
+    "2012": 724,
+    "2013": 1117,
+    "2014": 1546,
+    "2015": 1629,
+    "2016": 1886,
+    "2017": 2158
+   },
+   "scan_found": false,
+   "scan_episode": null,
+   "matched_expected_stone": false,
+   "matched_pairs": [],
+   "expected_stone_in_catalog": [
+    {
+     "stone": "Game of Thrones",
+     "date": "2011-04-17",
+     "shelf": "character",
+     "strict": true,
+     "via": "Arya Stark"
+    },
+    {
+     "stone": "A Game of Thrones: Genesis",
+     "date": "2011-09-28",
+     "shelf": "character",
+     "strict": false,
+     "via": "Arya Stark"
+    },
+    {
+     "stone": "Reigns: Game of Thrones",
+     "date": "2018-10-18",
+     "shelf": "character",
+     "strict": false,
+     "via": "Arya Stark"
+    },
+    {
+     "stone": "A Game of Thrones",
+     "date": "2005",
+     "shelf": "character",
+     "strict": false,
+     "via": "Arya Stark"
+    }
+   ],
+   "recovered": false,
+   "graded_pair": null,
+   "best_grade_if_not_recovered": null
+  },
+  {
+   "id": "A3",
+   "name": "Shiloh",
+   "sex": "F",
+   "tier": "A",
+   "years": [
+    2006,
+    2007
+   ],
+   "stone": "Shiloh Jolie-Pitt",
+   "date": "2006-05-27",
+   "direction": "rise",
+   "direct_test": {
+    "grade": "timed",
+    "t_hat": 2007,
+    "onset": 2006,
+    "r_eff": 2006,
+    "window": [
+     2006,
+     2007,
+     2008
+    ],
+    "p_year": 0.00755,
+    "p_own": 0.0385,
+    "material": true,
+    "established": true,
+    "u": 8.559,
+    "e": 1.0102
+   },
+   "counts": {
+    "2003": 31,
+    "2004": 45,
+    "2005": 40,
+    "2006": 112,
+    "2007": 320,
+    "2008": 435,
+    "2009": 487,
+    "2010": 429,
+    "2011": 423,
+    "2012": 414
+   },
+   "scan_found": false,
+   "scan_episode": null,
+   "matched_expected_stone": false,
+   "matched_pairs": [],
+   "expected_stone_in_catalog": [],
+   "recovered": false,
+   "graded_pair": null,
+   "best_grade_if_not_recovered": null
+  },
+  {
+   "id": "A4",
+   "name": "Maci",
+   "sex": "F",
+   "tier": "A",
+   "years": [
+    2009,
+    2011
+   ],
+   "stone": "Maci Bookout|16 and Pregnant|Teen Mom",
+   "date": "2009-06-11",
+   "direction": "rise",
+   "direct_test": {
+    "grade": "measured",
+    "t_hat": 2010,
+    "onset": 2010,
+    "r_eff": 2009,
+    "window": [
+     2009,
+     2010,
+     2011
+    ],
+    "p_year": 0.00189,
+    "p_own": 0.0385,
+    "material": true,
+    "established": true,
+    "u": 8.302,
+    "e": 1.2209
+   },
+   "counts": {
+    "2006": 406,
+    "2007": 381,
+    "2008": 364,
+    "2009": 420,
+    "2010": 1339,
+    "2011": 1725,
+    "2012": 1453,
+    "2013": 1331,
+    "2014": 1223,
+    "2015": 1161
+   },
+   "scan_found": true,
+   "scan_episode": {
+    "onset": 2010,
+    "peak": 2010,
+    "years": [
+     2010
+    ],
+    "p_year": 0.00189,
+    "p_own": 0.0385
+   },
+   "matched_expected_stone": false,
+   "matched_pairs": [],
+   "expected_stone_in_catalog": [],
+   "recovered": false,
+   "graded_pair": null,
+   "best_grade_if_not_recovered": null
+  },
+  {
+   "id": "A5",
+   "name": "Katrina",
+   "sex": "F",
+   "tier": "A",
+   "years": [
+    2005,
+    2007
+   ],
+   "stone": "Hurricane Katrina",
+   "date": "2005-08-29",
+   "direction": "fall",
+   "direct_test": {
+    "grade": "timed",
+    "t_hat": 2006,
+    "onset": 2006,
+    "r_eff": 2006,
+    "window": [
+     2006,
+     2007
+    ],
+    "p_year": 0.0033,
+    "p_own": 0.0769,
+    "material": true,
+    "established": true,
+    "u": -5.039,
+    "e": -0.4781
+   },
+   "counts": {
+    "2002": 1093,
+    "2003": 1112,
+    "2004": 1160,
+    "2005": 1303,
+    "2006": 826,
+    "2007": 458,
+    "2008": 378,
+    "2009": 291,
+    "2010": 250,
+    "2011": 172
+   },
+   "scan_found": true,
+   "scan_episode": {
+    "onset": 2006,
+    "peak": 2006,
+    "years": [
+     2006,
+     2007
+    ],
+    "p_year": 0.0033,
+    "p_own": 0.0769
+   },
+   "matched_expected_stone": true,
+   "matched_pairs": [
+    {
+     "stone": "Hurricane Katrina",
+     "date": "2005-08-23",
+     "stat_grade": "timed",
+     "via": null
+    }
+   ],
+   "expected_stone_in_catalog": [
+    {
+     "stone": "Hurricane Katrina",
+     "date": "2005-08-23",
+     "shelf": "storm",
+     "strict": true,
+     "via": null
+    },
+    {
+     "stone": "Hurricane Katrina",
+     "date": "1981-11-03",
+     "shelf": "storm",
+     "strict": false,
+     "via": null
+    },
+    {
+     "stone": "Hurricane Katrina",
+     "date": "1975-08-29",
+     "shelf": "storm",
+     "strict": false,
+     "via": null
+    }
+   ],
+   "recovered": false,
+   "graded_pair": null,
+   "best_grade_if_not_recovered": "timed"
+  },
+  {
+   "id": "A6",
+   "name": "Isis",
+   "sex": "F",
+   "tier": "A",
+   "years": [
+    2014,
+    2016
+   ],
+   "stone": "Islamic State",
+   "date": "2014-06-29",
+   "direction": "fall",
+   "direct_test": {
+    "grade": "measured",
+    "t_hat": 2015,
+    "onset": 2015,
+    "r_eff": 2014,
+    "window": [
+     2014,
+     2015,
+     2016
+    ],
+    "p_year": 0.00047,
+    "p_own": 0.0385,
+    "material": true,
+    "established": true,
+    "u": -14.578,
+    "e": -1.475
+   },
+   "counts": {
+    "2011": 397,
+    "2012": 413,
+    "2013": 446,
+    "2014": 347,
+    "2015": 73,
+    "2016": 23,
+    "2017": 10,
+    "2018": 8,
+    "2019": 26,
+    "2020": 20
+   },
+   "scan_found": true,
+   "scan_episode": {
+    "onset": 2015,
+    "peak": 2015,
+    "years": [
+     2015
+    ],
+    "p_year": 0.00047,
+    "p_own": 0.0385
+   },
+   "matched_expected_stone": false,
+   "matched_pairs": [],
+   "expected_stone_in_catalog": [
+    {
+     "stone": "Islamic State",
+     "date": "1999",
+     "shelf": "named thing",
+     "strict": true,
+     "via": "Isis"
+    }
+   ],
+   "recovered": false,
+   "graded_pair": null,
+   "best_grade_if_not_recovered": null
+  },
+  {
+   "id": "A7",
+   "name": "Alexa",
+   "sex": "F",
+   "tier": "A",
+   "years": [
+    2015,
+    2017
+   ],
+   "stone": "Amazon Alexa|Amazon Echo",
+   "date": "2014-11-06",
+   "direction": "fall",
+   "direct_test": {
+    "grade": "no move",
+    "t_hat": 2016,
+    "onset": 2016,
+    "r_eff": 2015,
+    "window": [
+     2015,
+     2016
+    ],
+    "p_year": 0.05047,
+    "p_own": 0.1538,
+    "material": true,
+    "established": true,
+    "u": -2.884,
+    "e": -0.202
+   },
+   "counts": {
+    "2011": 4501,
+    "2012": 4292,
+    "2013": 4100,
+    "2014": 4240,
+    "2015": 6034,
+    "2016": 4761,
+    "2017": 3881,
+    "2018": 3047,
+    "2019": 1988,
+    "2020": 1260
+   },
+   "scan_found": false,
+   "scan_episode": null,
+   "matched_expected_stone": false,
+   "matched_pairs": [],
+   "expected_stone_in_catalog": [],
+   "recovered": false,
+   "graded_pair": null,
+   "best_grade_if_not_recovered": null
+  },
+  {
+   "id": "A8",
+   "name": "Elsa",
+   "sex": "F",
+   "tier": "A",
+   "years": [
+    2015,
+    2016
+   ],
+   "stone": "^Frozen$",
+   "date": "2013-11-27",
+   "direction": "fall",
+   "direct_test": {
+    "grade": "timed",
+    "t_hat": 2015,
+    "onset": 2015,
+    "r_eff": 2014,
+    "window": [
+     2014,
+     2015
+    ],
+    "p_year": 0.02217,
+    "p_own": 0.0385,
+    "material": true,
+    "established": true,
+    "u": -3.938,
+    "e": -0.5474
+   },
+   "counts": {
+    "2010": 440,
+    "2011": 450,
+    "2012": 477,
+    "2013": 526,
+    "2014": 1107,
+    "2015": 618,
+    "2016": 429,
+    "2017": 368,
+    "2018": 248,
+    "2019": 312
+   },
+   "scan_found": false,
+   "scan_episode": null,
+   "matched_expected_stone": false,
+   "matched_pairs": [],
+   "expected_stone_in_catalog": [
+    {
+     "stone": "Frozen",
+     "date": "2013-11-10",
+     "shelf": "character",
+     "strict": true,
+     "via": "Elsa"
+    }
+   ],
+   "recovered": false,
+   "graded_pair": null,
+   "best_grade_if_not_recovered": null
+  },
+  {
+   "id": "B1",
+   "name": "Khaleesi",
+   "sex": "F",
+   "tier": "B",
+   "years": [
+    2011,
+    2013
+   ],
+   "stone": "Game of Thrones",
+   "date": "2011-04-17",
+   "direction": "rise",
+   "direct_test": {
+    "grade": "timed",
+    "t_hat": 2011,
+    "onset": 2011,
+    "r_eff": 2011,
+    "window": [
+     2011,
+     2012,
+     2013
+    ],
+    "p_year": 0.00047,
+    "p_own": 0.0769,
+    "material": false,
+    "established": false,
+    "u": 14.843,
+    "e": 0.7422
+   },
+   "counts": {
+    "2008": 0,
+    "2009": 0,
+    "2010": 0,
+    "2011": 5,
+    "2012": 111,
+    "2013": 180,
+    "2014": 320,
+    "2015": 282,
+    "2016": 328,
+    "2017": 430
+   },
+   "scan_found": true,
+   "scan_episode": {
+    "onset": 2011,
+    "peak": 2012,
+    "years": [
+     2012
+    ],
+    "p_year": 0.00047,
+    "p_own": 0.0385
+   },
+   "matched_expected_stone": true,
+   "matched_pairs": [
+    {
+     "stone": "Game of Thrones",
+     "date": "2011-04-17",
+     "stat_grade": "timed",
+     "via": "Daenerys Targaryen"
+    }
+   ],
+   "expected_stone_in_catalog": [
+    {
+     "stone": "Game of Thrones",
+     "date": "2011-04-17",
+     "shelf": "character",
+     "strict": true,
+     "via": "Daenerys Targaryen"
+    },
+    {
+     "stone": "A Game of Thrones: Genesis",
+     "date": "2011-09-28",
+     "shelf": "character",
+     "strict": false,
+     "via": "Daenerys Targaryen"
+    },
+    {
+     "stone": "Reigns: Game of Thrones",
+     "date": "2018-10-18",
+     "shelf": "character",
+     "strict": false,
+     "via": "Daenerys Targaryen"
+    },
+    {
+     "stone": "A Game of Thrones",
+     "date": "2005",
+     "shelf": "character",
+     "strict": false,
+     "via": "Daenerys Targaryen"
+    }
+   ],
+   "recovered": false,
+   "graded_pair": null,
+   "best_grade_if_not_recovered": "timed"
+  },
+  {
+   "id": "B2",
+   "name": "Miley",
+   "sex": "F",
+   "tier": "B",
+   "years": [
+    2006,
+    2008
+   ],
+   "stone": "Hannah Montana|Miley Cyrus",
+   "date": "2006-03-24",
+   "direction": "rise",
+   "direct_test": {
+    "grade": "timed",
+    "t_hat": 2006,
+    "onset": 2006,
+    "r_eff": 2006,
+    "window": [
+     2006,
+     2007,
+     2008
+    ],
+    "p_year": 0.00094,
+    "p_own": 0.0385,
+    "material": true,
+    "established": false,
+    "u": 66.995,
+    "e": 3.3497
+   },
+   "counts": {
+    "2003": 7,
+    "2004": 0,
+    "2005": 0,
+    "2006": 141,
+    "2007": 1214,
+    "2008": 2640,
+    "2009": 1721,
+    "2010": 1411,
+    "2011": 976,
+    "2012": 903
+   },
+   "scan_found": true,
+   "scan_episode": {
+    "onset": 2006,
+    "peak": 2006,
+    "years": [
+     2006,
+     2007
+    ],
+    "p_year": 0.00094,
+    "p_own": 0.0385
+   },
+   "matched_expected_stone": true,
+   "matched_pairs": [
+    {
+     "stone": "Hannah Montana",
+     "date": "2006-03-24",
+     "stat_grade": "timed",
+     "via": "Miley Stewart"
+    }
+   ],
+   "expected_stone_in_catalog": [
+    {
+     "stone": "Miley Cyrus",
+     "date": "2003-09-22",
+     "shelf": "person (debut)",
+     "strict": true,
+     "via": "Miley Cyrus"
+    },
+    {
+     "stone": "Hannah Montana",
+     "date": "2006-03-24",
+     "shelf": "character",
+     "strict": true,
+     "via": "Miley Stewart"
+    },
+    {
+     "stone": "Hannah Montana: The Movie",
+     "date": "2009-04-10",
+     "shelf": "character",
+     "strict": true,
+     "via": "Miley Stewart"
+    },
+    {
+     "stone": "Hannah Montana and Miley Cyrus: Best of Both Worlds Concert",
+     "date": "2008-02-01",
+     "shelf": "character",
+     "strict": true,
+     "via": "Miley Stewart"
+    }
+   ],
+   "recovered": false,
+   "graded_pair": null,
+   "best_grade_if_not_recovered": "timed"
+  },
+  {
+   "id": "B3",
+   "name": "Suri",
+   "sex": "F",
+   "tier": "B",
+   "years": [
+    2006,
+    2007
+   ],
+   "stone": "Suri Cruise",
+   "date": "2006-04-18",
+   "direction": "rise",
+   "direct_test": {
+    "grade": "timed",
+    "t_hat": 2006,
+    "onset": 2006,
+    "r_eff": 2006,
+    "window": [
+     2006,
+     2007,
+     2008
+    ],
+    "p_year": 0.00425,
+    "p_own": 0.0385,
+    "material": true,
+    "established": false,
+    "u": 14.2,
+    "e": 2.3942
+   },
+   "counts": {
+    "2003": 0,
+    "2004": 12,
+    "2005": 8,
+    "2006": 141,
+    "2007": 142,
+    "2008": 169,
+    "2009": 176,
+    "2010": 158,
+    "2011": 142,
+    "2012": 183
+   },
+   "scan_found": true,
+   "scan_episode": {
+    "onset": 2006,
+    "peak": 2006,
+    "years": [
+     2006
+    ],
+    "p_year": 0.00425,
+    "p_own": 0.0385
+   },
+   "matched_expected_stone": false,
+   "matched_pairs": [],
+   "expected_stone_in_catalog": [],
+   "recovered": false,
+   "graded_pair": null,
+   "best_grade_if_not_recovered": null
+  }
+ ],
+ "known_positive_detail": [
+  {
+   "id": "A1",
+   "name": "Elsa",
+   "sex": "F",
+   "tier": "A",
+   "years": [
+    2014,
+    2014
+   ],
+   "stone": "^Frozen$",
+   "date": "2013-11-27",
+   "direction": "rise",
+   "direct_test": {
+    "grade": "timed",
+    "t_hat": 2014,
+    "onset": 2014,
+    "r_eff": 2014,
+    "window": [
+     2014,
+     2015
+    ],
+    "p_year": 0.00377,
+    "p_own": 0.0385,
+    "material": true,
+    "established": true,
+    "u": 5.144,
+    "e": 0.7411
+   },
+   "counts": {
+    "2010": 440,
+    "2011": 450,
+    "2012": 477,
+    "2013": 526,
+    "2014": 1107,
+    "2015": 618,
+    "2016": 429,
+    "2017": 368,
+    "2018": 248,
+    "2019": 312
+   },
+   "scan_found": true,
+   "scan_episode": {
+    "onset": 2014,
+    "peak": 2014,
+    "years": [
+     2014
+    ],
+    "p_year": 0.00377,
+    "p_own": 0.0385
+   },
+   "matched_expected_stone": true,
+   "matched_pairs": [
+    {
+     "stone": "Frozen",
+     "date": "2013-11-10",
+     "stat_grade": "timed",
+     "via": "Elsa"
+    }
+   ],
+   "expected_stone_in_catalog": [
+    {
+     "stone": "Frozen",
+     "date": "2013-11-10",
+     "shelf": "character",
+     "strict": true,
+     "via": "Elsa"
+    }
+   ]
+  },
+  {
+   "id": "A2",
+   "name": "Arya",
+   "sex": "F",
+   "tier": "A",
+   "years": [
+    2011,
+    2013
+   ],
+   "stone": "Game of Thrones",
+   "date": "2011-04-17",
+   "direction": "rise",
+   "direct_test": {
+    "grade": "timed",
+    "t_hat": 2012,
+    "onset": 2011,
+    "r_eff": 2011,
+    "window": [
+     2011,
+     2012,
+     2013
+    ],
+    "p_year": 0.02075,
+    "p_own": 0.1154,
+    "material": true,
+    "established": true,
+    "u": 2.901,
+    "e": 0.7697
+   },
+   "counts": {
+    "2008": 144,
+    "2009": 180,
+    "2010": 211,
+    "2011": 344,
+    "2012": 724,
+    "2013": 1117,
+    "2014": 1546,
+    "2015": 1629,
+    "2016": 1886,
+    "2017": 2158
+   },
+   "scan_found": false,
+   "scan_episode": null,
+   "matched_expected_stone": false,
+   "matched_pairs": [],
+   "expected_stone_in_catalog": [
+    {
+     "stone": "Game of Thrones",
+     "date": "2011-04-17",
+     "shelf": "character",
+     "strict": true,
+     "via": "Arya Stark"
+    },
+    {
+     "stone": "A Game of Thrones: Genesis",
+     "date": "2011-09-28",
+     "shelf": "character",
+     "strict": false,
+     "via": "Arya Stark"
+    },
+    {
+     "stone": "Reigns: Game of Thrones",
+     "date": "2018-10-18",
+     "shelf": "character",
+     "strict": false,
+     "via": "Arya Stark"
+    },
+    {
+     "stone": "A Game of Thrones",
+     "date": "2005",
+     "shelf": "character",
+     "strict": false,
+     "via": "Arya Stark"
+    }
+   ]
+  },
+  {
+   "id": "A3",
+   "name": "Shiloh",
+   "sex": "F",
+   "tier": "A",
+   "years": [
+    2006,
+    2007
+   ],
+   "stone": "Shiloh Jolie-Pitt",
+   "date": "2006-05-27",
+   "direction": "rise",
+   "direct_test": {
+    "grade": "timed",
+    "t_hat": 2007,
+    "onset": 2006,
+    "r_eff": 2006,
+    "window": [
+     2006,
+     2007,
+     2008
+    ],
+    "p_year": 0.00755,
+    "p_own": 0.0385,
+    "material": true,
+    "established": true,
+    "u": 8.559,
+    "e": 1.0102
+   },
+   "counts": {
+    "2003": 31,
+    "2004": 45,
+    "2005": 40,
+    "2006": 112,
+    "2007": 320,
+    "2008": 435,
+    "2009": 487,
+    "2010": 429,
+    "2011": 423,
+    "2012": 414
+   },
+   "scan_found": false,
+   "scan_episode": null,
+   "matched_expected_stone": false,
+   "matched_pairs": [],
+   "expected_stone_in_catalog": []
+  },
+  {
+   "id": "A4",
+   "name": "Maci",
+   "sex": "F",
+   "tier": "A",
+   "years": [
+    2009,
+    2011
+   ],
+   "stone": "Maci Bookout|16 and Pregnant|Teen Mom",
+   "date": "2009-06-11",
+   "direction": "rise",
+   "direct_test": {
+    "grade": "measured",
+    "t_hat": 2010,
+    "onset": 2010,
+    "r_eff": 2009,
+    "window": [
+     2009,
+     2010,
+     2011
+    ],
+    "p_year": 0.00189,
+    "p_own": 0.0385,
+    "material": true,
+    "established": true,
+    "u": 8.302,
+    "e": 1.2209
+   },
+   "counts": {
+    "2006": 406,
+    "2007": 381,
+    "2008": 364,
+    "2009": 420,
+    "2010": 1339,
+    "2011": 1725,
+    "2012": 1453,
+    "2013": 1331,
+    "2014": 1223,
+    "2015": 1161
+   },
+   "scan_found": true,
+   "scan_episode": {
+    "onset": 2010,
+    "peak": 2010,
+    "years": [
+     2010
+    ],
+    "p_year": 0.00189,
+    "p_own": 0.0385
+   },
+   "matched_expected_stone": false,
+   "matched_pairs": [],
+   "expected_stone_in_catalog": []
+  },
+  {
+   "id": "A5",
+   "name": "Katrina",
+   "sex": "F",
+   "tier": "A",
+   "years": [
+    2005,
+    2007
+   ],
+   "stone": "Hurricane Katrina",
+   "date": "2005-08-29",
+   "direction": "fall",
+   "direct_test": {
+    "grade": "timed",
+    "t_hat": 2006,
+    "onset": 2006,
+    "r_eff": 2006,
+    "window": [
+     2006,
+     2007
+    ],
+    "p_year": 0.0033,
+    "p_own": 0.0769,
+    "material": true,
+    "established": true,
+    "u": -5.039,
+    "e": -0.4781
+   },
+   "counts": {
+    "2002": 1093,
+    "2003": 1112,
+    "2004": 1160,
+    "2005": 1303,
+    "2006": 826,
+    "2007": 458,
+    "2008": 378,
+    "2009": 291,
+    "2010": 250,
+    "2011": 172
+   },
+   "scan_found": true,
+   "scan_episode": {
+    "onset": 2006,
+    "peak": 2006,
+    "years": [
+     2006,
+     2007
+    ],
+    "p_year": 0.0033,
+    "p_own": 0.0769
+   },
+   "matched_expected_stone": true,
+   "matched_pairs": [
+    {
+     "stone": "Hurricane Katrina",
+     "date": "2005-08-23",
+     "stat_grade": "timed",
+     "via": null
+    }
+   ],
+   "expected_stone_in_catalog": [
+    {
+     "stone": "Hurricane Katrina",
+     "date": "2005-08-23",
+     "shelf": "storm",
+     "strict": true,
+     "via": null
+    },
+    {
+     "stone": "Hurricane Katrina",
+     "date": "1981-11-03",
+     "shelf": "storm",
+     "strict": false,
+     "via": null
+    },
+    {
+     "stone": "Hurricane Katrina",
+     "date": "1975-08-29",
+     "shelf": "storm",
+     "strict": false,
+     "via": null
+    }
+   ]
+  },
+  {
+   "id": "A6",
+   "name": "Isis",
+   "sex": "F",
+   "tier": "A",
+   "years": [
+    2014,
+    2016
+   ],
+   "stone": "Islamic State",
+   "date": "2014-06-29",
+   "direction": "fall",
+   "direct_test": {
+    "grade": "measured",
+    "t_hat": 2015,
+    "onset": 2015,
+    "r_eff": 2014,
+    "window": [
+     2014,
+     2015,
+     2016
+    ],
+    "p_year": 0.00047,
+    "p_own": 0.0385,
+    "material": true,
+    "established": true,
+    "u": -14.578,
+    "e": -1.475
+   },
+   "counts": {
+    "2011": 397,
+    "2012": 413,
+    "2013": 446,
+    "2014": 347,
+    "2015": 73,
+    "2016": 23,
+    "2017": 10,
+    "2018": 8,
+    "2019": 26,
+    "2020": 20
+   },
+   "scan_found": true,
+   "scan_episode": {
+    "onset": 2015,
+    "peak": 2015,
+    "years": [
+     2015
+    ],
+    "p_year": 0.00047,
+    "p_own": 0.0385
+   },
+   "matched_expected_stone": false,
+   "matched_pairs": [],
+   "expected_stone_in_catalog": [
+    {
+     "stone": "Islamic State",
+     "date": "1999",
+     "shelf": "named thing",
+     "strict": true,
+     "via": "Isis"
+    }
+   ]
+  },
+  {
+   "id": "A7",
+   "name": "Alexa",
+   "sex": "F",
+   "tier": "A",
+   "years": [
+    2015,
+    2017
+   ],
+   "stone": "Amazon Alexa|Amazon Echo",
+   "date": "2014-11-06",
+   "direction": "fall",
+   "direct_test": {
+    "grade": "no move",
+    "t_hat": 2016,
+    "onset": 2016,
+    "r_eff": 2015,
+    "window": [
+     2015,
+     2016
+    ],
+    "p_year": 0.05047,
+    "p_own": 0.1538,
+    "material": true,
+    "established": true,
+    "u": -2.884,
+    "e": -0.202
+   },
+   "counts": {
+    "2011": 4501,
+    "2012": 4292,
+    "2013": 4100,
+    "2014": 4240,
+    "2015": 6034,
+    "2016": 4761,
+    "2017": 3881,
+    "2018": 3047,
+    "2019": 1988,
+    "2020": 1260
+   },
+   "scan_found": false,
+   "scan_episode": null,
+   "matched_expected_stone": false,
+   "matched_pairs": [],
+   "expected_stone_in_catalog": []
+  },
+  {
+   "id": "A8",
+   "name": "Elsa",
+   "sex": "F",
+   "tier": "A",
+   "years": [
+    2015,
+    2016
+   ],
+   "stone": "^Frozen$",
+   "date": "2013-11-27",
+   "direction": "fall",
+   "direct_test": {
+    "grade": "timed",
+    "t_hat": 2015,
+    "onset": 2015,
+    "r_eff": 2014,
+    "window": [
+     2014,
+     2015
+    ],
+    "p_year": 0.02217,
+    "p_own": 0.0385,
+    "material": true,
+    "established": true,
+    "u": -3.938,
+    "e": -0.5474
+   },
+   "counts": {
+    "2010": 440,
+    "2011": 450,
+    "2012": 477,
+    "2013": 526,
+    "2014": 1107,
+    "2015": 618,
+    "2016": 429,
+    "2017": 368,
+    "2018": 248,
+    "2019": 312
+   },
+   "scan_found": false,
+   "scan_episode": null,
+   "matched_expected_stone": false,
+   "matched_pairs": [],
+   "expected_stone_in_catalog": [
+    {
+     "stone": "Frozen",
+     "date": "2013-11-10",
+     "shelf": "character",
+     "strict": true,
+     "via": "Elsa"
+    }
+   ]
+  },
+  {
+   "id": "B1",
+   "name": "Khaleesi",
+   "sex": "F",
+   "tier": "B",
+   "years": [
+    2011,
+    2013
+   ],
+   "stone": "Game of Thrones",
+   "date": "2011-04-17",
+   "direction": "rise",
+   "direct_test": {
+    "grade": "timed",
+    "t_hat": 2011,
+    "onset": 2011,
+    "r_eff": 2011,
+    "window": [
+     2011,
+     2012,
+     2013
+    ],
+    "p_year": 0.00047,
+    "p_own": 0.0769,
+    "material": false,
+    "established": false,
+    "u": 14.843,
+    "e": 0.7422
+   },
+   "counts": {
+    "2008": 0,
+    "2009": 0,
+    "2010": 0,
+    "2011": 5,
+    "2012": 111,
+    "2013": 180,
+    "2014": 320,
+    "2015": 282,
+    "2016": 328,
+    "2017": 430
+   },
+   "scan_found": true,
+   "scan_episode": {
+    "onset": 2011,
+    "peak": 2012,
+    "years": [
+     2012
+    ],
+    "p_year": 0.00047,
+    "p_own": 0.0385
+   },
+   "matched_expected_stone": true,
+   "matched_pairs": [
+    {
+     "stone": "Game of Thrones",
+     "date": "2011-04-17",
+     "stat_grade": "timed",
+     "via": "Daenerys Targaryen"
+    }
+   ],
+   "expected_stone_in_catalog": [
+    {
+     "stone": "Game of Thrones",
+     "date": "2011-04-17",
+     "shelf": "character",
+     "strict": true,
+     "via": "Daenerys Targaryen"
+    },
+    {
+     "stone": "A Game of Thrones: Genesis",
+     "date": "2011-09-28",
+     "shelf": "character",
+     "strict": false,
+     "via": "Daenerys Targaryen"
+    },
+    {
+     "stone": "Reigns: Game of Thrones",
+     "date": "2018-10-18",
+     "shelf": "character",
+     "strict": false,
+     "via": "Daenerys Targaryen"
+    },
+    {
+     "stone": "A Game of Thrones",
+     "date": "2005",
+     "shelf": "character",
+     "strict": false,
+     "via": "Daenerys Targaryen"
+    }
+   ]
+  },
+  {
+   "id": "B2",
+   "name": "Miley",
+   "sex": "F",
+   "tier": "B",
+   "years": [
+    2006,
+    2008
+   ],
+   "stone": "Hannah Montana|Miley Cyrus",
+   "date": "2006-03-24",
+   "direction": "rise",
+   "direct_test": {
+    "grade": "timed",
+    "t_hat": 2006,
+    "onset": 2006,
+    "r_eff": 2006,
+    "window": [
+     2006,
+     2007,
+     2008
+    ],
+    "p_year": 0.00094,
+    "p_own": 0.0385,
+    "material": true,
+    "established": false,
+    "u": 66.995,
+    "e": 3.3497
+   },
+   "counts": {
+    "2003": 7,
+    "2004": 0,
+    "2005": 0,
+    "2006": 141,
+    "2007": 1214,
+    "2008": 2640,
+    "2009": 1721,
+    "2010": 1411,
+    "2011": 976,
+    "2012": 903
+   },
+   "scan_found": true,
+   "scan_episode": {
+    "onset": 2006,
+    "peak": 2006,
+    "years": [
+     2006,
+     2007
+    ],
+    "p_year": 0.00094,
+    "p_own": 0.0385
+   },
+   "matched_expected_stone": true,
+   "matched_pairs": [
+    {
+     "stone": "Hannah Montana",
+     "date": "2006-03-24",
+     "stat_grade": "timed",
+     "via": "Miley Stewart"
+    }
+   ],
+   "expected_stone_in_catalog": [
+    {
+     "stone": "Miley Cyrus",
+     "date": "2003-09-22",
+     "shelf": "person (debut)",
+     "strict": true,
+     "via": "Miley Cyrus"
+    },
+    {
+     "stone": "Hannah Montana",
+     "date": "2006-03-24",
+     "shelf": "character",
+     "strict": true,
+     "via": "Miley Stewart"
+    },
+    {
+     "stone": "Hannah Montana: The Movie",
+     "date": "2009-04-10",
+     "shelf": "character",
+     "strict": true,
+     "via": "Miley Stewart"
+    },
+    {
+     "stone": "Hannah Montana and Miley Cyrus: Best of Both Worlds Concert",
+     "date": "2008-02-01",
+     "shelf": "character",
+     "strict": true,
+     "via": "Miley Stewart"
+    }
+   ]
+  },
+  {
+   "id": "B3",
+   "name": "Suri",
+   "sex": "F",
+   "tier": "B",
+   "years": [
+    2006,
+    2007
+   ],
+   "stone": "Suri Cruise",
+   "date": "2006-04-18",
+   "direction": "rise",
+   "direct_test": {
+    "grade": "timed",
+    "t_hat": 2006,
+    "onset": 2006,
+    "r_eff": 2006,
+    "window": [
+     2006,
+     2007,
+     2008
+    ],
+    "p_year": 0.00425,
+    "p_own": 0.0385,
+    "material": true,
+    "established": false,
+    "u": 14.2,
+    "e": 2.3942
+   },
+   "counts": {
+    "2003": 0,
+    "2004": 12,
+    "2005": 8,
+    "2006": 141,
+    "2007": 142,
+    "2008": 169,
+    "2009": 176,
+    "2010": 158,
+    "2011": 142,
+    "2012": 183
+   },
+   "scan_found": true,
+   "scan_episode": {
+    "onset": 2006,
+    "peak": 2006,
+    "years": [
+     2006
+    ],
+    "p_year": 0.00425,
+    "p_own": 0.0385
+   },
+   "matched_expected_stone": false,
+   "matched_pairs": [],
+   "expected_stone_in_catalog": []
+  }
+ ],
+ "decoys": {
+  "decoy_names": {
+   "n": 2300,
+   "passed": 5,
+   "rate": 0.0022,
+   "wilson_upper": 0.0051
+  },
+  "ghost_stones": {
+   "n": 488,
+   "passed": 0,
+   "rate": 0.0,
+   "wilson_upper": 0.0078
+  },
+  "fake_stones": {
+   "n": 600,
+   "passed": 2,
+   "rate": 0.0033,
+   "wilson_upper": 0.0121
+  },
+  "ruth": {
+   "n": 11,
+   "passed": 0,
+   "rate": 0.0,
+   "wilson_upper": 0.2588
+  },
+  "fake_stones_rise": {
+   "n": 300,
+   "passed": 1,
+   "rate": 0.0033,
+   "wilson_upper": 0.0186
+  },
+  "fake_stones_fall": {
+   "n": 300,
+   "passed": 1,
+   "rate": 0.0033,
+   "wilson_upper": 0.0186
+  },
+  "decoy_names_passing": [
+   {
+    "stone": "Q174385",
+    "real_name": "Alice",
+    "decoy": "Alaina",
+    "grade": "measured"
+   },
+   {
+    "stone": "Q246283",
+    "real_name": "Elsa",
+    "decoy": "Ryan",
+    "grade": "measured"
+   },
+   {
+    "stone": "Q15772548",
+    "real_name": "Nicole",
+    "decoy": "Sadie",
+    "grade": "measured"
+   },
+   {
+    "stone": "Q15711398",
+    "real_name": "Caitlin",
+    "decoy": "Caitlyn",
+    "grade": "measured"
+   },
+   {
+    "stone": "Q110258306",
+    "real_name": "Joan",
+    "decoy": "Colt",
+    "grade": "measured"
+   }
+  ],
+  "ghost_stones_passing": [],
+  "fake_stones_passing": [
+   {
+    "name": "Baby",
+    "sex": "M",
+    "release": "2005-11",
+    "direction": -1,
+    "grade": "measured"
+   },
+   {
+    "name": "Alaina",
+    "sex": "F",
+    "release": "2009-04",
+    "direction": 1,
+    "grade": "measured"
+   }
+  ]
+ },
+ "window_placebo": {
+  "windows": {
+   "0": {
+    "episodes": 230,
+    "with_match": 57,
+    "stat_pass_episodes": 70,
+    "stat_pass_with_match": 16,
+    "share": 0.2478,
+    "share_stat_pass": 0.2286
+   },
+   "4": {
+    "episodes": 230,
+    "with_match": 49,
+    "stat_pass_episodes": 70,
+    "stat_pass_with_match": 12,
+    "share": 0.213,
+    "share_stat_pass": 0.1714
+   },
+   "7": {
+    "episodes": 230,
+    "with_match": 49,
+    "stat_pass_episodes": 70,
+    "stat_pass_with_match": 15,
+    "share": 0.213,
+    "share_stat_pass": 0.2143
+   },
+   "10": {
+    "episodes": 230,
+    "with_match": 54,
+    "stat_pass_episodes": 70,
+    "stat_pass_with_match": 19,
+    "share": 0.2348,
+    "share_stat_pass": 0.2714
+   }
+  },
+  "true_share_stat_pass": 0.2286,
+  "mean_shifted_share_stat_pass": 0.219,
+  "enrichment": 1.04,
+  "estimated_coincidence_share": 0.958
+ },
+ "lookback": {
+  "names": 202,
+  "failed_names": []
+ },
+ "pairs": [
+  {
+   "stone": {
+    "title": "The Dark Knight Rises",
+    "date": "2012-07-20",
+    "wikidata": "Q189330",
+    "shelf": "character",
+    "via": "Alfred Pennyworth",
+    "via_wikidata": "Q159051",
+    "via_adaptation": false,
+    "debut_work": null
+   },
+   "name": "Alfred",
+   "sex": "M",
+   "direction": "rise",
+   "onset_year": 2014,
+   "peak_year": 2014,
+   "counts_before_after": {
+    "year_before_release": 2011,
+    "n_before": 158,
+    "onset_year": 2014,
+    "peak_year": 2014,
+    "n_peak": 234
+   },
+   "counts": {
+    "2009": 203,
+    "2010": 166,
+    "2011": 158,
+    "2012": 157,
+    "2013": 150,
+    "2014": 234,
+    "2015": 170,
+    "2016": 193,
+    "2017": 206,
+    "2018": 193,
+    "2019": 231
+   },
+   "p_year": 0.00186,
+   "p_own": 0.0385,
+   "test": {
+    "grade": "measured",
+    "t_hat": 2014,
+    "onset": 2014,
+    "r_eff": 2013,
+    "window": [
+     2013,
+     2014
+    ],
+    "p_year": 0.00186,
+    "p_own": 0.0385,
+    "material": true,
+    "established": true,
+    "u": 5.015,
+    "e": 0.4322
+   },
+   "grade": "measured",
+   "hand_check": {
+    "pass": true,
+    "reason": "Alfred Pennyworth is in the starring cast of The Dark Knight Rises (Michael Caine); Alfred is his given name; US release; male. Caution: a supporting franchise character who appears in many works."
+   },
+   "persistence": {
+    "pre_level": 175.7,
+    "peak_level": 234.0,
+    "later": {
+     "2016": 193,
+     "2017": 206,
+     "2018": 193,
+     "2019": 231
+    },
+    "share_of_jump_kept": [
+     0.297,
+     0.52,
+     0.297,
+     0.949
+    ],
+    "mean_share_kept": 0.516,
+    "persisted": true,
+    "years_observed": 4
+   },
+   "lag_years": {
+    "onset_minus_release": 2,
+    "peak_minus_release": 2
+   },
+   "plain": "Parents named 76 more sons Alfred in 2014 than in 2011.",
+   "known_positive": false,
+   "seen_before_registration": false
+  },
+  {
+   "stone": {
+    "title": "The Princess and the Frog",
+    "date": "2009-11-25",
+    "wikidata": "Q171300",
+    "shelf": "character",
+    "via": "Tiana",
+    "via_wikidata": "Q958289",
+    "via_adaptation": false,
+    "debut_work": null
+   },
+   "name": "Tiana",
+   "sex": "F",
+   "direction": "rise",
+   "onset_year": 2010,
+   "peak_year": 2010,
+   "counts_before_after": {
+    "year_before_release": 2008,
+    "n_before": 441,
+    "onset_year": 2010,
+    "peak_year": 2010,
+    "n_peak": 942
+   },
+   "counts": {
+    "2006": 631,
+    "2007": 506,
+    "2008": 441,
+    "2009": 466,
+    "2010": 942,
+    "2011": 792,
+    "2012": 684,
+    "2013": 499,
+    "2014": 509,
+    "2015": 441
+   },
+   "p_year": 0.00236,
+   "p_own": 0.0385,
+   "test": {
+    "grade": "measured",
+    "t_hat": 2010,
+    "onset": 2010,
+    "r_eff": 2010,
+    "window": [
+     2010,
+     2011
+    ],
+    "p_year": 0.00236,
+    "p_own": 0.0385,
+    "material": true,
+    "established": true,
+    "u": 8.176,
+    "e": 0.768
+   },
+   "grade": "measured",
+   "hand_check": {
+    "pass": true,
+    "reason": "Tiana is the lead character of The Princess and the Frog; US release; female."
+   },
+   "persistence": {
+    "pre_level": 526.0,
+    "peak_level": 942.0,
+    "later": {
+     "2012": 684,
+     "2013": 499,
+     "2014": 509,
+     "2015": 441
+    },
+    "share_of_jump_kept": [
+     0.38,
+     -0.065,
+     -0.041,
+     -0.204
+    ],
+    "mean_share_kept": 0.017,
+    "persisted": false,
+    "years_observed": 4
+   },
+   "lag_years": {
+    "onset_minus_release": 1,
+    "peak_minus_release": 1
+   },
+   "plain": "Parents named 501 more daughters Tiana in 2010 than in 2008.",
+   "known_positive": false,
+   "seen_before_registration": false
+  },
+  {
+   "stone": {
+    "title": "Creed",
+    "date": "2015-11-25",
+    "wikidata": "Q18822138",
+    "shelf": "character",
+    "via": "Adonis Creed",
+    "via_wikidata": "Q22283579",
+    "via_adaptation": false,
+    "debut_work": null
+   },
+   "name": "Adonis",
+   "sex": "M",
+   "direction": "rise",
+   "onset_year": 2016,
+   "peak_year": 2016,
+   "counts_before_after": {
+    "year_before_release": 2014,
+    "n_before": 287,
+    "onset_year": 2016,
+    "peak_year": 2016,
+    "n_peak": 756
+   },
+   "counts": {
+    "2012": 320,
+    "2013": 292,
+    "2014": 287,
+    "2015": 322,
+    "2016": 756,
+    "2017": 776,
+    "2018": 855,
+    "2019": 1527,
+    "2020": 1651,
+    "2021": 1699
+   },
+   "p_year": 0.00247,
+   "p_own": 0.0385,
+   "test": {
+    "grade": "measured",
+    "t_hat": 2016,
+    "onset": 2016,
+    "r_eff": 2016,
+    "window": [
+     2016,
+     2017
+    ],
+    "p_year": 0.00247,
+    "p_own": 0.0385,
+    "material": true,
+    "established": true,
+    "u": 5.743,
+    "e": 0.8743
+   },
+   "grade": "measured",
+   "hand_check": {
+    "pass": true,
+    "reason": "Title and lead character of Creed (Michael B. Jordan); Adonis is his given name; US release; male."
+   },
+   "persistence": {
+    "pre_level": 299.7,
+    "peak_level": 756.0,
+    "later": {
+     "2018": 855,
+     "2019": 1527,
+     "2020": 1651,
+     "2021": 1699
+    },
+    "share_of_jump_kept": [
+     1.217,
+     2.69,
+     2.961,
+     3.066
+    ],
+    "mean_share_kept": 2.484,
+    "persisted": true,
+    "years_observed": 4
+   },
+   "lag_years": {
+    "onset_minus_release": 1,
+    "peak_minus_release": 1
+   },
+   "plain": "Parents named 469 more sons Adonis in 2016 than in 2014.",
+   "known_positive": false,
+   "seen_before_registration": false
+  },
+  {
+   "stone": {
+    "title": "Glee",
+    "date": "2009-05-19",
+    "wikidata": "Q152178",
+    "shelf": "character",
+    "via": "Quinn Fabray",
+    "via_wikidata": "Q637275",
+    "via_adaptation": false,
+    "debut_work": null
+   },
+   "name": "Quinn",
+   "sex": "F",
+   "direction": "rise",
+   "onset_year": 2010,
+   "peak_year": 2010,
+   "counts_before_after": {
+    "year_before_release": 2008,
+    "n_before": 565,
+    "onset_year": 2010,
+    "peak_year": 2010,
+    "n_peak": 1257
+   },
+   "counts": {
+    "2006": 509,
+    "2007": 488,
+    "2008": 565,
+    "2009": 593,
+    "2010": 1257,
+    "2011": 1676,
+    "2012": 2099,
+    "2013": 2638,
+    "2014": 2541,
+    "2015": 3092
+   },
+   "p_year": 0.00283,
+   "p_own": 0.0385,
+   "test": {
+    "grade": "measured",
+    "t_hat": 2010,
+    "onset": 2010,
+    "r_eff": 2009,
+    "window": [
+     2009,
+     2010,
+     2011
+    ],
+    "p_year": 0.00283,
+    "p_own": 0.0385,
+    "material": true,
+    "established": true,
+    "u": 7.939,
+    "e": 0.8164
+   },
+   "grade": "measured",
+   "hand_check": {
+    "pass": true,
+    "reason": "Quinn Fabray is in the main cast of Glee (Dianna Agron); Quinn is her given name; US series; female."
+   },
+   "persistence": {
+    "pre_level": 520.7,
+    "peak_level": 1257.0,
+    "later": {
+     "2012": 2099,
+     "2013": 2638,
+     "2014": 2541,
+     "2015": 3092
+    },
+    "share_of_jump_kept": [
+     2.144,
+     2.876,
+     2.744,
+     3.492
+    ],
+    "mean_share_kept": 2.814,
+    "persisted": true,
+    "years_observed": 4
+   },
+   "lag_years": {
+    "onset_minus_release": 1,
+    "peak_minus_release": 1
+   },
+   "plain": "Parents named 692 more daughters Quinn in 2010 than in 2008.",
+   "known_positive": false,
+   "seen_before_registration": false
+  },
+  {
+   "stone": {
+    "title": "Game of Thrones",
+    "date": "2011-04-17",
+    "wikidata": "Q23572",
+    "shelf": "character",
+    "via": "Daenerys Targaryen",
+    "via_wikidata": "Q2708078",
+    "via_adaptation": false,
+    "debut_work": null
+   },
+   "name": "Khaleesi",
+   "sex": "F",
+   "direction": "rise",
+   "onset_year": 2011,
+   "peak_year": 2011,
+   "counts_before_after": {
+    "year_before_release": 2010,
+    "n_before": 0,
+    "onset_year": 2011,
+    "peak_year": 2011,
+    "n_peak": 5
+   },
+   "counts": {
+    "2008": 0,
+    "2009": 0,
+    "2010": 0,
+    "2011": 5,
+    "2012": 111,
+    "2013": 180,
+    "2014": 320,
+    "2015": 282,
+    "2016": 328
+   },
+   "p_year": 0.00047,
+   "p_own": 0.0769,
+   "test": {
+    "grade": "timed",
+    "t_hat": 2011,
+    "onset": 2011,
+    "r_eff": 2011,
+    "window": [
+     2011,
+     2012,
+     2013
+    ],
+    "p_year": 0.00047,
+    "p_own": 0.0769,
+    "material": false,
+    "established": false,
+    "u": 14.843,
+    "e": 0.7422
+   },
+   "grade": "timed",
+   "hand_check": {
+    "pass": true,
+    "reason": "Daenerys Targaryen is a lead of Game of Thrones and is widely called Khaleesi in it; US series; female."
+   },
+   "persistence": {
+    "pre_level": 0.0,
+    "peak_level": 5.0,
+    "later": {
+     "2013": 180,
+     "2014": 320,
+     "2015": 282,
+     "2016": 328
+    },
+    "share_of_jump_kept": [
+     36.0,
+     64.0,
+     56.4,
+     65.6
+    ],
+    "mean_share_kept": 55.5,
+    "persisted": true,
+    "years_observed": 4
+   },
+   "lag_years": {
+    "onset_minus_release": 0,
+    "peak_minus_release": 0
+   },
+   "plain": "Parents named 5 more daughters Khaleesi in 2011 than in 2010.",
+   "known_positive": true,
+   "seen_before_registration": false
+  },
+  {
+   "stone": {
+    "title": "Hannah Montana",
+    "date": "2006-03-24",
+    "wikidata": "Q126631",
+    "shelf": "character",
+    "via": "Miley Stewart",
+    "via_wikidata": "Q842949",
+    "via_adaptation": false,
+    "debut_work": null
+   },
+   "name": "Miley",
+   "sex": "F",
+   "direction": "rise",
+   "onset_year": 2006,
+   "peak_year": 2006,
+   "counts_before_after": {
+    "year_before_release": 2005,
+    "n_before": 0,
+    "onset_year": 2006,
+    "peak_year": 2006,
+    "n_peak": 141
+   },
+   "counts": {
+    "2003": 7,
+    "2004": 0,
+    "2005": 0,
+    "2006": 141,
+    "2007": 1214,
+    "2008": 2640,
+    "2009": 1721,
+    "2010": 1411,
+    "2011": 976
+   },
+   "p_year": 0.00094,
+   "p_own": 0.0385,
+   "test": {
+    "grade": "timed",
+    "t_hat": 2006,
+    "onset": 2006,
+    "r_eff": 2006,
+    "window": [
+     2006,
+     2007,
+     2008
+    ],
+    "p_year": 0.00094,
+    "p_own": 0.0385,
+    "material": true,
+    "established": false,
+    "u": 66.995,
+    "e": 3.3497
+   },
+   "grade": "timed",
+   "hand_check": {
+    "pass": true,
+    "reason": "Miley Stewart is the lead of Hannah Montana; US series; female."
+   },
+   "persistence": {
+    "pre_level": 2.3,
+    "peak_level": 141.0,
+    "later": {
+     "2008": 2640,
+     "2009": 1721,
+     "2010": 1411,
+     "2011": 976
+    },
+    "share_of_jump_kept": [
+     19.022,
+     12.394,
+     10.159,
+     7.022
+    ],
+    "mean_share_kept": 12.149,
+    "persisted": true,
+    "years_observed": 4
+   },
+   "lag_years": {
+    "onset_minus_release": 0,
+    "peak_minus_release": 0
+   },
+   "plain": "Parents named 141 more daughters Miley in 2006 than in 2005.",
+   "known_positive": true,
+   "seen_before_registration": false
+  },
+  {
+   "stone": {
+    "title": "Dawson's Creek",
+    "date": "1998-01-20",
+    "wikidata": "Q461357",
+    "shelf": "character",
+    "via": "Dawson Leery",
+    "via_wikidata": "Q3703801",
+    "via_adaptation": false,
+    "debut_work": null
+   },
+   "name": "Dawson",
+   "sex": "M",
+   "direction": "rise",
+   "onset_year": 1998,
+   "peak_year": 1998,
+   "counts_before_after": {
+    "year_before_release": 1997,
+    "n_before": 141,
+    "onset_year": 1998,
+    "peak_year": 1998,
+    "n_peak": 1883
+   },
+   "counts": {
+    "1995": 90,
+    "1996": 126,
+    "1997": 141,
+    "1998": 1883,
+    "1999": 2795,
+    "2000": 2308,
+    "2001": 2026,
+    "2002": 1937,
+    "2003": 1785
+   },
+   "p_year": 0.00186,
+   "p_own": 0.0385,
+   "test": {
+    "grade": "timed",
+    "t_hat": 1998,
+    "onset": 1998,
+    "r_eff": 1998,
+    "window": [
+     1998,
+     1999,
+     2000
+    ],
+    "p_year": 0.00186,
+    "p_own": 0.0385,
+    "material": true,
+    "established": false,
+    "u": 18.917,
+    "e": 2.5498
+   },
+   "grade": "timed",
+   "hand_check": {
+    "pass": true,
+    "reason": "Dawson Leery is the title and lead character of Dawson's Creek; US series; male."
+   },
+   "persistence": {
+    "pre_level": 119.0,
+    "peak_level": 1883.0,
+    "later": {
+     "2000": 2308,
+     "2001": 2026,
+     "2002": 1937,
+     "2003": 1785
+    },
+    "share_of_jump_kept": [
+     1.241,
+     1.081,
+     1.031,
+     0.944
+    ],
+    "mean_share_kept": 1.074,
+    "persisted": true,
+    "years_observed": 4
+   },
+   "lag_years": {
+    "onset_minus_release": 0,
+    "peak_minus_release": 0
+   },
+   "plain": "Parents named 1,742 more sons Dawson in 1998 than in 1997.",
+   "known_positive": false,
+   "seen_before_registration": false
+  },
+  {
+   "stone": {
+    "title": "The Matrix",
+    "date": "1999-03-31",
+    "wikidata": "Q83495",
+    "shelf": "character",
+    "via": "Trinity",
+    "via_wikidata": "Q246835",
+    "via_adaptation": false,
+    "debut_work": null
+   },
+   "name": "Trinity",
+   "sex": "F",
+   "direction": "rise",
+   "onset_year": 1999,
+   "peak_year": 1999,
+   "counts_before_after": {
+    "year_before_release": 1998,
+    "n_before": 447,
+    "onset_year": 1999,
+    "peak_year": 1999,
+    "n_peak": 1462
+   },
+   "counts": {
+    "1996": 285,
+    "1997": 389,
+    "1998": 447,
+    "1999": 1462,
+    "2000": 4280,
+    "2001": 4481,
+    "2002": 4381,
+    "2003": 5128,
+    "2004": 5637
+   },
+   "p_year": 0.00236,
+   "p_own": 0.0385,
+   "test": {
+    "grade": "timed",
+    "t_hat": 1999,
+    "onset": 1999,
+    "r_eff": 1999,
+    "window": [
+     1999,
+     2000,
+     2001
+    ],
+    "p_year": 0.00236,
+    "p_own": 0.0385,
+    "material": true,
+    "established": false,
+    "u": 17.555,
+    "e": 1.1568
+   },
+   "grade": "timed",
+   "hand_check": {
+    "pass": true,
+    "reason": "Trinity is a lead character of The Matrix (Carrie-Anne Moss); US release; female."
+   },
+   "persistence": {
+    "pre_level": 373.7,
+    "peak_level": 1462.0,
+    "later": {
+     "2001": 4481,
+     "2002": 4381,
+     "2003": 5128,
+     "2004": 5637
+    },
+    "share_of_jump_kept": [
+     3.774,
+     3.682,
+     4.368,
+     4.836
+    ],
+    "mean_share_kept": 4.165,
+    "persisted": true,
+    "years_observed": 4
+   },
+   "lag_years": {
+    "onset_minus_release": 0,
+    "peak_minus_release": 0
+   },
+   "plain": "Parents named 1,015 more daughters Trinity in 1999 than in 1998.",
+   "known_positive": false,
+   "seen_before_registration": false
+  },
+  {
+   "stone": {
+    "title": "Austin Powers: The Spy Who Shagged Me",
+    "date": "1999-06-08",
+    "wikidata": "Q487978",
+    "shelf": "character",
+    "via": "Austin Powers",
+    "via_wikidata": "Q2071380",
+    "via_adaptation": false,
+    "debut_work": null
+   },
+   "name": "Austin",
+   "sex": "M",
+   "direction": "fall",
+   "onset_year": 1999,
+   "peak_year": 2000,
+   "counts_before_after": {
+    "year_before_release": 1998,
+    "n_before": 23477,
+    "onset_year": 1999,
+    "peak_year": 2000,
+    "n_peak": 15945
+   },
+   "counts": {
+    "1996": 25661,
+    "1997": 25118,
+    "1998": 23477,
+    "1999": 20767,
+    "2000": 15945,
+    "2001": 14955,
+    "2002": 14541,
+    "2003": 11689,
+    "2004": 10745,
+    "2005": 10107
+   },
+   "p_year": 0.00247,
+   "p_own": 0.0385,
+   "test": {
+    "grade": "timed",
+    "t_hat": 2000,
+    "onset": 1999,
+    "r_eff": 1999,
+    "window": [
+     1999,
+     2000,
+     2001
+    ],
+    "p_year": 0.00247,
+    "p_own": 0.0385,
+    "material": true,
+    "established": false,
+    "u": -6.221,
+    "e": -0.3111
+   },
+   "grade": "timed",
+   "hand_check": {
+    "pass": true,
+    "reason": "Austin Powers is the title character; US release; male."
+   },
+   "persistence": {
+    "pre_level": 24752.0,
+    "peak_level": 15945.0,
+    "later": {
+     "2002": 14541,
+     "2003": 11689,
+     "2004": 10745,
+     "2005": 10107
+    },
+    "share_of_jump_kept": [
+     1.159,
+     1.483,
+     1.59,
+     1.663
+    ],
+    "mean_share_kept": 1.474,
+    "persisted": true,
+    "years_observed": 4
+   },
+   "lag_years": {
+    "onset_minus_release": 0,
+    "peak_minus_release": 1
+   },
+   "plain": "Parents named 7,532 fewer sons Austin in 2000 than in 1998.",
+   "known_positive": false,
+   "seen_before_registration": false
+  },
+  {
+   "stone": {
+    "title": "Kingdom Hearts II",
+    "date": "2005-12-22",
+    "wikidata": "Q626802",
+    "shelf": "character",
+    "via": "Kairi",
+    "via_wikidata": "Q2418696",
+    "via_adaptation": false,
+    "debut_work": null
+   },
+   "name": "Kairi",
+   "sex": "F",
+   "direction": "rise",
+   "onset_year": 2006,
+   "peak_year": 2006,
+   "counts_before_after": {
+    "year_before_release": 2004,
+    "n_before": 48,
+    "onset_year": 2006,
+    "peak_year": 2006,
+    "n_peak": 131
+   },
+   "counts": {
+    "2002": 0,
+    "2003": 45,
+    "2004": 48,
+    "2005": 44,
+    "2006": 131,
+    "2007": 201,
+    "2008": 188,
+    "2009": 175,
+    "2010": 215,
+    "2011": 225
+   },
+   "p_year": 0.0033,
+   "p_own": 0.0769,
+   "test": {
+    "grade": "timed",
+    "t_hat": 2006,
+    "onset": 2006,
+    "r_eff": 2006,
+    "window": [
+     2006,
+     2007
+    ],
+    "p_year": 0.0033,
+    "p_own": 0.0769,
+    "material": true,
+    "established": false,
+    "u": 14.992,
+    "e": 0.9964
+   },
+   "grade": "timed",
+   "hand_check": {
+    "pass": true,
+    "reason": "Kairi is a principal character of Kingdom Hearts II (US release Mar 2006); female."
+   },
+   "persistence": {
+    "pre_level": 31.0,
+    "peak_level": 131.0,
+    "later": {
+     "2008": 188,
+     "2009": 175,
+     "2010": 215,
+     "2011": 225
+    },
+    "share_of_jump_kept": [
+     1.57,
+     1.44,
+     1.84,
+     1.94
+    ],
+    "mean_share_kept": 1.697,
+    "persisted": true,
+    "years_observed": 4
+   },
+   "lag_years": {
+    "onset_minus_release": 1,
+    "peak_minus_release": 1
+   },
+   "plain": "Parents named 83 more daughters Kairi in 2006 than in 2004.",
+   "known_positive": false,
+   "seen_before_registration": false
+  },
+  {
+   "stone": {
+    "title": "Hurricane Katrina",
+    "date": "2005-08-23",
+    "wikidata": "Q16422",
+    "shelf": "storm",
+    "via": null,
+    "via_wikidata": null,
+    "via_adaptation": false,
+    "debut_work": null
+   },
+   "name": "Katrina",
+   "sex": "F",
+   "direction": "fall",
+   "onset_year": 2006,
+   "peak_year": 2006,
+   "counts_before_after": {
+    "year_before_release": 2004,
+    "n_before": 1160,
+    "onset_year": 2006,
+    "peak_year": 2006,
+    "n_peak": 826
+   },
+   "counts": {
+    "2002": 1093,
+    "2003": 1112,
+    "2004": 1160,
+    "2005": 1303,
+    "2006": 826,
+    "2007": 458,
+    "2008": 378,
+    "2009": 291,
+    "2010": 250,
+    "2011": 172
+   },
+   "p_year": 0.0033,
+   "p_own": 0.0769,
+   "test": {
+    "grade": "timed",
+    "t_hat": 2006,
+    "onset": 2006,
+    "r_eff": 2006,
+    "window": [
+     2006,
+     2007
+    ],
+    "p_year": 0.0033,
+    "p_own": 0.0769,
+    "material": true,
+    "established": true,
+    "u": -5.039,
+    "e": -0.4781
+   },
+   "grade": "timed",
+   "hand_check": {
+    "pass": true,
+    "reason": "Hurricane Katrina (Aug 2005); a storm named Katrina that struck the US."
+   },
+   "persistence": {
+    "pre_level": 1121.7,
+    "peak_level": 826.0,
+    "later": {
+     "2008": 378,
+     "2009": 291,
+     "2010": 250,
+     "2011": 172
+    },
+    "share_of_jump_kept": [
+     2.515,
+     2.809,
+     2.948,
+     3.212
+    ],
+    "mean_share_kept": 2.871,
+    "persisted": true,
+    "years_observed": 4
+   },
+   "lag_years": {
+    "onset_minus_release": 1,
+    "peak_minus_release": 1
+   },
+   "plain": "Parents named 334 fewer daughters Katrina in 2006 than in 2004.",
+   "known_positive": true,
+   "seen_before_registration": false
+  },
+  {
+   "stone": {
+    "title": "Raya and the Last Dragon",
+    "date": "2021-03-05",
+    "wikidata": "Q66738105",
+    "shelf": "character",
+    "via": "Raya",
+    "via_wikidata": "Q115152605",
+    "via_adaptation": false,
+    "debut_work": null
+   },
+   "name": "Raya",
+   "sex": "F",
+   "direction": "rise",
+   "onset_year": 2021,
+   "peak_year": 2021,
+   "counts_before_after": {
+    "year_before_release": 2020,
+    "n_before": 222,
+    "onset_year": 2021,
+    "peak_year": 2021,
+    "n_peak": 594
+   },
+   "counts": {
+    "2018": 151,
+    "2019": 173,
+    "2020": 222,
+    "2021": 594
+   },
+   "p_year": 0.0033,
+   "p_own": 0.0385,
+   "test": {
+    "grade": "timed",
+    "t_hat": 2021,
+    "onset": 2021,
+    "r_eff": 2021,
+    "window": [
+     2021
+    ],
+    "p_year": 0.0033,
+    "p_own": 0.0385,
+    "material": true,
+    "established": true,
+    "u": 5.445,
+    "e": 0.9703
+   },
+   "grade": "timed",
+   "hand_check": {
+    "pass": true,
+    "reason": "Raya is the title and lead character of Raya and the Last Dragon; US release; female."
+   },
+   "persistence": {
+    "pre_level": 182.0,
+    "peak_level": 594.0,
+    "later": {},
+    "share_of_jump_kept": [],
+    "mean_share_kept": null,
+    "persisted": null,
+    "years_observed": 0
+   },
+   "lag_years": {
+    "onset_minus_release": 0,
+    "peak_minus_release": 0
+   },
+   "plain": "Parents named 372 more daughters Raya in 2021 than in 2020.",
+   "known_positive": false,
+   "seen_before_registration": false
+  },
+  {
+   "stone": {
+    "title": "Pretty Little Liars",
+    "date": "2010-06-08",
+    "wikidata": "Q32450",
+    "shelf": "character",
+    "via": "Aria Montgomery",
+    "via_wikidata": "Q4790146",
+    "via_adaptation": true,
+    "debut_work": null
+   },
+   "name": "Aria",
+   "sex": "F",
+   "direction": "rise",
+   "onset_year": 2010,
+   "peak_year": 2011,
+   "counts_before_after": {
+    "year_before_release": 2009,
+    "n_before": 557,
+    "onset_year": 2010,
+    "peak_year": 2011,
+    "n_peak": 1976
+   },
+   "counts": {
+    "2007": 496,
+    "2008": 484,
+    "2009": 557,
+    "2010": 882,
+    "2011": 1976,
+    "2012": 3228,
+    "2013": 5114,
+    "2014": 5927,
+    "2015": 6411,
+    "2016": 6943
+   },
+   "p_year": 0.00377,
+   "p_own": 0.0385,
+   "test": {
+    "grade": "timed",
+    "t_hat": 2011,
+    "onset": 2010,
+    "r_eff": 2010,
+    "window": [
+     2010,
+     2011,
+     2012
+    ],
+    "p_year": 0.00377,
+    "p_own": 0.0385,
+    "material": true,
+    "established": true,
+    "u": 5.192,
+    "e": 0.8525
+   },
+   "grade": "timed",
+   "hand_check": {
+    "pass": true,
+    "reason": "Aria Montgomery is a main character of Pretty Little Liars (Lucy Hale); US series; female."
+   },
+   "persistence": {
+    "pre_level": 512.3,
+    "peak_level": 1976.0,
+    "later": {
+     "2013": 5114,
+     "2014": 5927,
+     "2015": 6411,
+     "2016": 6943
+    },
+    "share_of_jump_kept": [
+     3.144,
+     3.699,
+     4.03,
+     4.394
+    ],
+    "mean_share_kept": 3.817,
+    "persisted": true,
+    "years_observed": 4
+   },
+   "lag_years": {
+    "onset_minus_release": 0,
+    "peak_minus_release": 1
+   },
+   "plain": "Parents named 1,419 more daughters Aria in 2011 than in 2009.",
+   "known_positive": false,
+   "seen_before_registration": false
+  },
+  {
+   "stone": {
+    "title": "Legally Blonde",
+    "date": "2001-11-15",
+    "wikidata": "Q500093",
+    "shelf": "character",
+    "via": "Elle Woods",
+    "via_wikidata": "Q5364673",
+    "via_adaptation": false,
+    "debut_work": null
+   },
+   "name": "Elle",
+   "sex": "F",
+   "direction": "rise",
+   "onset_year": 2002,
+   "peak_year": 2002,
+   "counts_before_after": {
+    "year_before_release": 2000,
+    "n_before": 133,
+    "onset_year": 2002,
+    "peak_year": 2002,
+    "n_peak": 388
+   },
+   "counts": {
+    "1998": 112,
+    "1999": 134,
+    "2000": 133,
+    "2001": 149,
+    "2002": 388,
+    "2003": 465,
+    "2004": 554,
+    "2005": 561,
+    "2006": 609,
+    "2007": 648
+   },
+   "p_year": 0.00377,
+   "p_own": 0.0385,
+   "test": {
+    "grade": "timed",
+    "t_hat": 2002,
+    "onset": 2002,
+    "r_eff": 2002,
+    "window": [
+     2002,
+     2003
+    ],
+    "p_year": 0.00377,
+    "p_own": 0.0385,
+    "material": true,
+    "established": true,
+    "u": 13.308,
+    "e": 0.9369
+   },
+   "grade": "timed",
+   "hand_check": {
+    "pass": true,
+    "reason": "Elle Woods is the lead of Legally Blonde; US release; female."
+   },
+   "persistence": {
+    "pre_level": 126.3,
+    "peak_level": 388.0,
+    "later": {
+     "2004": 554,
+     "2005": 561,
+     "2006": 609,
+     "2007": 648
+    },
+    "share_of_jump_kept": [
+     1.634,
+     1.661,
+     1.845,
+     1.994
+    ],
+    "mean_share_kept": 1.783,
+    "persisted": true,
+    "years_observed": 4
+   },
+   "lag_years": {
+    "onset_minus_release": 1,
+    "peak_minus_release": 1
+   },
+   "plain": "Parents named 255 more daughters Elle in 2002 than in 2000.",
+   "known_positive": false,
+   "seen_before_registration": false
+  },
+  {
+   "stone": {
+    "title": "Frozen",
+    "date": "2013-11-10",
+    "wikidata": "Q246283",
+    "shelf": "character",
+    "via": "Elsa",
+    "via_wikidata": "Q15620419",
+    "via_adaptation": false,
+    "debut_work": null
+   },
+   "name": "Elsa",
+   "sex": "F",
+   "direction": "rise",
+   "onset_year": 2014,
+   "peak_year": 2014,
+   "counts_before_after": {
+    "year_before_release": 2012,
+    "n_before": 477,
+    "onset_year": 2014,
+    "peak_year": 2014,
+    "n_peak": 1107
+   },
+   "counts": {
+    "2010": 440,
+    "2011": 450,
+    "2012": 477,
+    "2013": 526,
+    "2014": 1107,
+    "2015": 618,
+    "2016": 429,
+    "2017": 368,
+    "2018": 248,
+    "2019": 312
+   },
+   "p_year": 0.00377,
+   "p_own": 0.0385,
+   "test": {
+    "grade": "timed",
+    "t_hat": 2014,
+    "onset": 2014,
+    "r_eff": 2014,
+    "window": [
+     2014,
+     2015
+    ],
+    "p_year": 0.00377,
+    "p_own": 0.0385,
+    "material": true,
+    "established": true,
+    "u": 5.144,
+    "e": 0.7411
+   },
+   "grade": "timed",
+   "hand_check": {
+    "pass": true,
+    "reason": "Elsa is a lead character of Frozen; US release; female."
+   },
+   "persistence": {
+    "pre_level": 455.7,
+    "peak_level": 1107.0,
+    "later": {
+     "2016": 429,
+     "2017": 368,
+     "2018": 248,
+     "2019": 312
+    },
+    "share_of_jump_kept": [
+     -0.041,
+     -0.135,
+     -0.319,
+     -0.221
+    ],
+    "mean_share_kept": -0.179,
+    "persisted": false,
+    "years_observed": 4
+   },
+   "lag_years": {
+    "onset_minus_release": 1,
+    "peak_minus_release": 1
+   },
+   "plain": "Parents named 630 more daughters Elsa in 2014 than in 2012.",
+   "known_positive": true,
+   "seen_before_registration": false
+  },
+  {
+   "stone": {
+    "title": "The Flash",
+    "date": "2015-02-10",
+    "wikidata": "Q15711398",
+    "shelf": "character",
+    "via": "Killer Frost",
+    "via_wikidata": "Q2624358",
+    "via_adaptation": false,
+    "debut_work": null
+   },
+   "name": "Caitlin",
+   "sex": "F",
+   "direction": "fall",
+   "onset_year": 2016,
+   "peak_year": 2016,
+   "counts_before_after": {
+    "year_before_release": 2014,
+    "n_before": 588,
+    "onset_year": 2016,
+    "peak_year": 2016,
+    "n_peak": 172
+   },
+   "counts": {
+    "2012": 713,
+    "2013": 619,
+    "2014": 588,
+    "2015": 438,
+    "2016": 172,
+    "2017": 103,
+    "2018": 109,
+    "2019": 96,
+    "2020": 58,
+    "2021": 30
+   },
+   "p_year": 0.00425,
+   "p_own": 0.0385,
+   "test": {
+    "grade": "timed",
+    "t_hat": 2016,
+    "onset": 2016,
+    "r_eff": 2015,
+    "window": [
+     2015,
+     2016,
+     2017
+    ],
+    "p_year": 0.00425,
+    "p_own": 0.0385,
+    "material": true,
+    "established": true,
+    "u": -8.585,
+    "e": -0.8827
+   },
+   "grade": "timed",
+   "hand_check": {
+    "pass": true,
+    "reason": "Caitlin Snow (Killer Frost) is a main character of The Flash (Danielle Panabaker); Caitlin is her given name; US series; female. Stone dated by its P577 (Feb 2015); the series premiered Oct 7, 2014, which gives the same window."
+   },
+   "persistence": {
+    "pre_level": 640.0,
+    "peak_level": 172.0,
+    "later": {
+     "2018": 109,
+     "2019": 96,
+     "2020": 58,
+     "2021": 30
+    },
+    "share_of_jump_kept": [
+     1.135,
+     1.162,
+     1.244,
+     1.303
+    ],
+    "mean_share_kept": 1.211,
+    "persisted": true,
+    "years_observed": 4
+   },
+   "lag_years": {
+    "onset_minus_release": 1,
+    "peak_minus_release": 1
+   },
+   "plain": "Parents named 416 fewer daughters Caitlin in 2016 than in 2014.",
+   "known_positive": false,
+   "seen_before_registration": false
+  },
+  {
+   "stone": {
+    "title": "Creed II",
+    "date": "2018-11-21",
+    "wikidata": "Q50233658",
+    "shelf": "character",
+    "via": "Adonis Creed",
+    "via_wikidata": "Q22283579",
+    "via_adaptation": false,
+    "debut_work": null
+   },
+   "name": "Adonis",
+   "sex": "M",
+   "direction": "rise",
+   "onset_year": 2019,
+   "peak_year": 2019,
+   "counts_before_after": {
+    "year_before_release": 2017,
+    "n_before": 776,
+    "onset_year": 2019,
+    "peak_year": 2019,
+    "n_peak": 1527
+   },
+   "counts": {
+    "2015": 322,
+    "2016": 756,
+    "2017": 776,
+    "2018": 855,
+    "2019": 1527,
+    "2020": 1651,
+    "2021": 1699
+   },
+   "p_year": 0.00433,
+   "p_own": 0.0769,
+   "test": {
+    "grade": "timed",
+    "t_hat": 2019,
+    "onset": 2019,
+    "r_eff": 2019,
+    "window": [
+     2019,
+     2020
+    ],
+    "p_year": 0.00433,
+    "p_own": 0.0769,
+    "material": true,
+    "established": true,
+    "u": 4.991,
+    "e": 0.6103
+   },
+   "grade": "timed",
+   "hand_check": {
+    "pass": true,
+    "reason": "Lead character of Creed II; Adonis is his given name; US release; male."
+   },
+   "persistence": {
+    "pre_level": 618.0,
+    "peak_level": 1527.0,
+    "later": {
+     "2021": 1699
+    },
+    "share_of_jump_kept": [
+     1.189
+    ],
+    "mean_share_kept": 1.189,
+    "persisted": true,
+    "years_observed": 1
+   },
+   "lag_years": {
+    "onset_minus_release": 1,
+    "peak_minus_release": 1
+   },
+   "plain": "Parents named 751 more sons Adonis in 2019 than in 2017.",
+   "known_positive": false,
+   "seen_before_registration": false
+  },
+  {
+   "stone": {
+    "title": "The Wire",
+    "date": "2002-06-02",
+    "wikidata": "Q478360",
+    "shelf": "character",
+    "via": "Ervin Burrell",
+    "via_wikidata": "Q5396025",
+    "via_adaptation": false,
+    "debut_work": null
+   },
+   "name": "Ervin",
+   "sex": "M",
+   "direction": "fall",
+   "onset_year": 2004,
+   "peak_year": 2004,
+   "counts_before_after": {
+    "year_before_release": 2001,
+    "n_before": 90,
+    "onset_year": 2004,
+    "peak_year": 2004,
+    "n_peak": 53
+   },
+   "counts": {
+    "1999": 89,
+    "2000": 88,
+    "2001": 90,
+    "2002": 100,
+    "2003": 119,
+    "2004": 53,
+    "2005": 87,
+    "2006": 78,
+    "2007": 86,
+    "2008": 94,
+    "2009": 90
+   },
+   "p_year": 0.00433,
+   "p_own": 0.0385,
+   "test": {
+    "grade": "timed",
+    "t_hat": 2004,
+    "onset": 2004,
+    "r_eff": 2002,
+    "window": [
+     2002,
+     2003,
+     2004
+    ],
+    "p_year": 0.00433,
+    "p_own": 0.0385,
+    "material": true,
+    "established": true,
+    "u": -3.938,
+    "e": -0.7755
+   },
+   "grade": "timed",
+   "hand_check": {
+    "pass": true,
+    "reason": "Ervin Burrell is in the main cast of The Wire (Frankie Faison); US series; male."
+   },
+   "persistence": {
+    "pre_level": 89.0,
+    "peak_level": 53.0,
+    "later": {
+     "2006": 78,
+     "2007": 86,
+     "2008": 94,
+     "2009": 90
+    },
+    "share_of_jump_kept": [
+     0.306,
+     0.083,
+     -0.139,
+     -0.028
+    ],
+    "mean_share_kept": 0.056,
+    "persisted": false,
+    "years_observed": 4
+   },
+   "lag_years": {
+    "onset_minus_release": 2,
+    "peak_minus_release": 2
+   },
+   "plain": "Parents named 37 fewer sons Ervin in 2004 than in 2001.",
+   "known_positive": false,
+   "seen_before_registration": false
+  },
+  {
+   "stone": {
+    "title": "The Dark Knight",
+    "date": "2008-07-18",
+    "wikidata": "Q163872",
+    "shelf": "character",
+    "via": "Two-Face",
+    "via_wikidata": "Q295599",
+    "via_adaptation": false,
+    "debut_work": null
+   },
+   "name": "Harvey",
+   "sex": "M",
+   "direction": "rise",
+   "onset_year": 2009,
+   "peak_year": 2009,
+   "counts_before_after": {
+    "year_before_release": 2007,
+    "n_before": 82,
+    "onset_year": 2009,
+    "peak_year": 2009,
+    "n_peak": 106
+   },
+   "counts": {
+    "2005": 94,
+    "2006": 81,
+    "2007": 82,
+    "2008": 57,
+    "2009": 106,
+    "2010": 133,
+    "2011": 191,
+    "2012": 244,
+    "2013": 352,
+    "2014": 540
+   },
+   "p_year": 0.00433,
+   "p_own": 0.0385,
+   "test": {
+    "grade": "timed",
+    "t_hat": 2009,
+    "onset": 2009,
+    "r_eff": 2009,
+    "window": [
+     2009,
+     2010
+    ],
+    "p_year": 0.00433,
+    "p_own": 0.0385,
+    "material": false,
+    "established": true,
+    "u": 6.569,
+    "e": 0.6196
+   },
+   "grade": "timed",
+   "hand_check": {
+    "pass": true,
+    "reason": "Harvey Dent is in the starring cast of The Dark Knight (Aaron Eckhart) and is called Harvey; US release; male."
+   },
+   "persistence": {
+    "pre_level": 85.7,
+    "peak_level": 106.0,
+    "later": {
+     "2011": 191,
+     "2012": 244,
+     "2013": 352,
+     "2014": 540
+    },
+    "share_of_jump_kept": [
+     5.18,
+     7.787,
+     13.098,
+     22.344
+    ],
+    "mean_share_kept": 12.102,
+    "persisted": true,
+    "years_observed": 4
+   },
+   "lag_years": {
+    "onset_minus_release": 1,
+    "peak_minus_release": 1
+   },
+   "plain": "Parents named 24 more sons Harvey in 2009 than in 2007.",
+   "known_positive": false,
+   "seen_before_registration": false
+  },
+  {
+   "stone": {
+    "title": "Minecraft",
+    "date": "2009-05-17",
+    "wikidata": "Q49740",
+    "shelf": "character",
+    "via": "Steve",
+    "via_wikidata": "Q104901351",
+    "via_adaptation": false,
+    "debut_work": null
+   },
+   "name": "Steve",
+   "sex": "M",
+   "direction": "fall",
+   "onset_year": 2010,
+   "peak_year": 2010,
+   "counts_before_after": {
+    "year_before_release": 2008,
+    "n_before": 377,
+    "onset_year": 2010,
+    "peak_year": 2010,
+    "n_peak": 230
+   },
+   "counts": {
+    "2006": 422,
+    "2007": 386,
+    "2008": 377,
+    "2009": 363,
+    "2010": 230,
+    "2011": 270,
+    "2012": 255,
+    "2013": 185,
+    "2014": 190,
+    "2015": 170
+   },
+   "p_year": 0.00433,
+   "p_own": 0.0385,
+   "test": {
+    "grade": "timed",
+    "t_hat": 2010,
+    "onset": 2010,
+    "r_eff": 2009,
+    "window": [
+     2009,
+     2010,
+     2011
+    ],
+    "p_year": 0.00433,
+    "p_own": 0.0385,
+    "material": true,
+    "established": true,
+    "u": -5.046,
+    "e": -0.3867
+   },
+   "grade": "timed",
+   "hand_check": {
+    "pass": true,
+    "reason": "Steve is the default player character of Minecraft; male."
+   },
+   "persistence": {
+    "pre_level": 395.0,
+    "peak_level": 230.0,
+    "later": {
+     "2012": 255,
+     "2013": 185,
+     "2014": 190,
+     "2015": 170
+    },
+    "share_of_jump_kept": [
+     0.848,
+     1.273,
+     1.242,
+     1.364
+    ],
+    "mean_share_kept": 1.182,
+    "persisted": true,
+    "years_observed": 4
+   },
+   "lag_years": {
+    "onset_minus_release": 1,
+    "peak_minus_release": 1
+   },
+   "plain": "Parents named 147 fewer sons Steve in 2010 than in 2008.",
+   "known_positive": false,
+   "seen_before_registration": false
+  },
+  {
+   "stone": {
+    "title": "Dynasty",
+    "date": "2017-10-11",
+    "wikidata": "Q29982557",
+    "shelf": "character",
+    "via": "Claudia Blaisdel Carrington",
+    "via_wikidata": "Q5129133",
+    "via_adaptation": true,
+    "debut_work": null
+   },
+   "name": "Claudia",
+   "sex": "F",
+   "direction": "fall",
+   "onset_year": 2019,
+   "peak_year": 2019,
+   "counts_before_after": {
+    "year_before_release": 2016,
+    "n_before": 317,
+    "onset_year": 2019,
+    "peak_year": 2019,
+    "n_peak": 189
+   },
+   "counts": {
+    "2014": 326,
+    "2015": 343,
+    "2016": 317,
+    "2017": 271,
+    "2018": 267,
+    "2019": 189,
+    "2020": 191,
+    "2021": 192
+   },
+   "p_year": 0.00472,
+   "p_own": 0.0385,
+   "test": {
+    "grade": "timed",
+    "t_hat": 2019,
+    "onset": 2019,
+    "r_eff": 2018,
+    "window": [
+     2018,
+     2019
+    ],
+    "p_year": 0.00472,
+    "p_own": 0.0385,
+    "material": true,
+    "established": true,
+    "u": -6.053,
+    "e": -0.3027
+   },
+   "grade": "timed",
+   "hand_check": {
+    "pass": true,
+    "reason": "Claudia Blaisdel is in the main cast of Dynasty season 1 (2017); US series; female."
+   },
+   "persistence": {
+    "pre_level": 328.7,
+    "peak_level": 189.0,
+    "later": {
+     "2021": 192
+    },
+    "share_of_jump_kept": [
+     0.979
+    ],
+    "mean_share_kept": 0.979,
+    "persisted": true,
+    "years_observed": 1
+   },
+   "lag_years": {
+    "onset_minus_release": 2,
+    "peak_minus_release": 2
+   },
+   "plain": "Parents named 128 fewer daughters Claudia in 2019 than in 2016.",
+   "known_positive": false,
+   "seen_before_registration": false
+  },
+  {
+   "stone": {
+    "title": "Logan",
+    "date": "2017-02-17",
+    "wikidata": "Q24053263",
+    "shelf": "character",
+    "via": "Wolverine",
+    "via_wikidata": "Q186422",
+    "via_adaptation": false,
+    "debut_work": null
+   },
+   "name": "Logan",
+   "sex": "M",
+   "direction": "rise",
+   "onset_year": 2017,
+   "peak_year": 2017,
+   "counts_before_after": {
+    "year_before_release": 2016,
+    "n_before": 11260,
+    "onset_year": 2017,
+    "peak_year": 2017,
+    "n_peak": 14036
+   },
+   "counts": {
+    "2014": 13660,
+    "2015": 12930,
+    "2016": 11260,
+    "2017": 14036,
+    "2018": 12419,
+    "2019": 10539,
+    "2020": 9127,
+    "2021": 8786
+   },
+   "p_year": 0.00495,
+   "p_own": 0.0769,
+   "test": {
+    "grade": "timed",
+    "t_hat": 2017,
+    "onset": 2017,
+    "r_eff": 2017,
+    "window": [
+     2017,
+     2018,
+     2019
+    ],
+    "p_year": 0.00495,
+    "p_own": 0.0769,
+    "material": true,
+    "established": true,
+    "u": 5.176,
+    "e": 0.2647
+   },
+   "grade": "timed",
+   "hand_check": {
+    "pass": true,
+    "reason": "Logan (Wolverine) is the title character of Logan and is called Logan; US release; male."
+   },
+   "persistence": {
+    "pre_level": 12616.7,
+    "peak_level": 14036.0,
+    "later": {
+     "2019": 10539,
+     "2020": 9127,
+     "2021": 8786
+    },
+    "share_of_jump_kept": [
+     -1.464,
+     -2.459,
+     -2.699
+    ],
+    "mean_share_kept": -2.207,
+    "persisted": false,
+    "years_observed": 3
+   },
+   "lag_years": {
+    "onset_minus_release": 0,
+    "peak_minus_release": 0
+   },
+   "plain": "Parents named 2,776 more sons Logan in 2017 than in 2016.",
+   "known_positive": false,
+   "seen_before_registration": false
+  },
+  {
+   "stone": {
+    "title": "Resident Evil: Extinction",
+    "date": "2007-09-21",
+    "wikidata": "Q156069",
+    "shelf": "character",
+    "via": "Alice Abernathy",
+    "via_wikidata": "Q2418079",
+    "via_adaptation": false,
+    "debut_work": null
+   },
+   "name": "Alice",
+   "sex": "F",
+   "direction": "rise",
+   "onset_year": 2009,
+   "peak_year": 2009,
+   "counts_before_after": {
+    "year_before_release": 2006,
+    "n_before": 806,
+    "onset_year": 2009,
+    "peak_year": 2009,
+    "n_peak": 1240
+   },
+   "counts": {
+    "2004": 711,
+    "2005": 723,
+    "2006": 806,
+    "2007": 932,
+    "2008": 1000,
+    "2009": 1240,
+    "2010": 1777,
+    "2011": 2189,
+    "2012": 2501,
+    "2013": 2929,
+    "2014": 3047
+   },
+   "p_year": 0.01179,
+   "p_own": 0.0769,
+   "test": {
+    "grade": "timed",
+    "t_hat": 2009,
+    "onset": 2009,
+    "r_eff": 2008,
+    "window": [
+     2008,
+     2009
+    ],
+    "p_year": 0.01179,
+    "p_own": 0.0769,
+    "material": true,
+    "established": true,
+    "u": 4.069,
+    "e": 0.2686
+   },
+   "grade": "timed",
+   "hand_check": {
+    "pass": true,
+    "reason": "Alice (Milla Jovovich) is the lead of Resident Evil: Extinction; US release; female."
+   },
+   "persistence": {
+    "pre_level": 746.7,
+    "peak_level": 1240.0,
+    "later": {
+     "2011": 2189,
+     "2012": 2501,
+     "2013": 2929,
+     "2014": 3047
+    },
+    "share_of_jump_kept": [
+     2.924,
+     3.556,
+     4.424,
+     4.663
+    ],
+    "mean_share_kept": 3.892,
+    "persisted": true,
+    "years_observed": 4
+   },
+   "lag_years": {
+    "onset_minus_release": 2,
+    "peak_minus_release": 2
+   },
+   "plain": "Parents named 434 more daughters Alice in 2009 than in 2006.",
+   "known_positive": false,
+   "seen_before_registration": false
+  },
+  {
+   "stone": {
+    "title": "Austin Powers: International Man of Mystery",
+    "date": "1997-05-02",
+    "wikidata": "Q501703",
+    "shelf": "character",
+    "via": "Austin Powers",
+    "via_wikidata": "Q2071380",
+    "via_adaptation": false,
+    "debut_work": null
+   },
+   "name": "Austin",
+   "sex": "M",
+   "direction": "fall",
+   "onset_year": 1999,
+   "peak_year": 1999,
+   "counts_before_after": {
+    "year_before_release": 1996,
+    "n_before": 25661,
+    "onset_year": 1999,
+    "peak_year": 1999,
+    "n_peak": 20767
+   },
+   "counts": {
+    "1995": 25905,
+    "1996": 25661,
+    "1997": 25118,
+    "1998": 23477,
+    "1999": 20767,
+    "2000": 15945,
+    "2001": 14955,
+    "2002": 14541,
+    "2003": 11689,
+    "2004": 10745
+   },
+   "p_year": 0.02041,
+   "p_own": 0.1154,
+   "test": {
+    "grade": "timed",
+    "t_hat": 1999,
+    "onset": 1999,
+    "r_eff": 1997,
+    "window": [
+     1997,
+     1998,
+     1999
+    ],
+    "p_year": 0.02041,
+    "p_own": 0.1154,
+    "material": true,
+    "established": false,
+    "u": -2.65,
+    "e": -0.1325
+   },
+   "grade": "timed",
+   "hand_check": {
+    "pass": true,
+    "reason": "Austin Powers is the title character; Austin is his given name; US release; male."
+   },
+   "persistence": {
+    "pre_level": 25783.0,
+    "peak_level": 20767.0,
+    "later": {
+     "2001": 14955,
+     "2002": 14541,
+     "2003": 11689,
+     "2004": 10745
+    },
+    "share_of_jump_kept": [
+     2.159,
+     2.241,
+     2.81,
+     2.998
+    ],
+    "mean_share_kept": 2.552,
+    "persisted": true,
+    "years_observed": 4
+   },
+   "lag_years": {
+    "onset_minus_release": 2,
+    "peak_minus_release": 2
+   },
+   "plain": "Parents named 4,894 fewer sons Austin in 1999 than in 1996.",
+   "known_positive": false,
+   "seen_before_registration": false
+  },
+  {
+   "stone": {
+    "title": "Chuck",
+    "date": "2007-09-24",
+    "wikidata": "Q2293",
+    "shelf": "character",
+    "via": "Ellie Woodcomb",
+    "via_wikidata": "Q1981346",
+    "via_adaptation": false,
+    "debut_work": null
+   },
+   "name": "Ellie",
+   "sex": "F",
+   "direction": "rise",
+   "onset_year": 2009,
+   "peak_year": 2009,
+   "counts_before_after": {
+    "year_before_release": 2006,
+    "n_before": 1968,
+    "onset_year": 2009,
+    "peak_year": 2009,
+    "n_peak": 2223
+   },
+   "counts": {
+    "2004": 1805,
+    "2005": 1870,
+    "2006": 1968,
+    "2007": 1991,
+    "2008": 1981,
+    "2009": 2223,
+    "2010": 2905,
+    "2011": 3053,
+    "2012": 3386,
+    "2013": 3762,
+    "2014": 4483
+   },
+   "p_year": 0.02736,
+   "p_own": 0.2308,
+   "test": {
+    "grade": "timed",
+    "t_hat": 2009,
+    "onset": 2009,
+    "r_eff": 2008,
+    "window": [
+     2008,
+     2009
+    ],
+    "p_year": 0.02736,
+    "p_own": 0.2308,
+    "material": true,
+    "established": true,
+    "u": 3.177,
+    "e": 0.1694
+   },
+   "grade": "timed",
+   "hand_check": {
+    "pass": true,
+    "reason": "Ellie Woodcomb is in the main cast of Chuck (Sarah Lancaster); US series; female."
+   },
+   "persistence": {
+    "pre_level": 1881.0,
+    "peak_level": 2223.0,
+    "later": {
+     "2011": 3053,
+     "2012": 3386,
+     "2013": 3762,
+     "2014": 4483
+    },
+    "share_of_jump_kept": [
+     3.427,
+     4.401,
+     5.5,
+     7.608
+    ],
+    "mean_share_kept": 5.234,
+    "persisted": true,
+    "years_observed": 4
+   },
+   "lag_years": {
+    "onset_minus_release": 2,
+    "peak_minus_release": 2
+   },
+   "plain": "Parents named 255 more daughters Ellie in 2009 than in 2006.",
+   "known_positive": false,
+   "seen_before_registration": false
+  },
+  {
+   "stone": {
+    "title": "A Dance with Dragons",
+    "date": "2011-07-12",
+    "wikidata": "Q28306",
+    "shelf": "character",
+    "via": "Daenerys Targaryen",
+    "via_wikidata": "Q2708078",
+    "via_adaptation": false,
+    "debut_work": null
+   },
+   "name": "Khaleesi",
+   "sex": "F",
+   "direction": "rise",
+   "onset_year": 2011,
+   "peak_year": 2012,
+   "counts_before_after": {
+    "year_before_release": 2010,
+    "n_before": 0,
+    "onset_year": 2011,
+    "peak_year": 2012,
+    "n_peak": 111
+   },
+   "counts": {
+    "2008": 0,
+    "2009": 0,
+    "2010": 0,
+    "2011": 5,
+    "2012": 111,
+    "2013": 180,
+    "2014": 320,
+    "2015": 282,
+    "2016": 328,
+    "2017": 430
+   },
+   "p_year": 0.00047,
+   "p_own": 0.0385,
+   "test": {
+    "grade": "busted",
+    "t_hat": 2012,
+    "onset": 2011,
+    "r_eff": 2012,
+    "window": [
+     2012,
+     2013
+    ],
+    "p_year": 0.00047,
+    "p_own": 0.0385,
+    "material": true,
+    "established": false,
+    "u": 49.683,
+    "e": 2.4841
+   },
+   "grade": "busted",
+   "hand_check": {
+    "pass": true,
+    "reason": "Daenerys is a principal character of A Dance with Dragons and is called Khaleesi in the books; US publication; female."
+   },
+   "persistence": {
+    "pre_level": 0.0,
+    "peak_level": 111.0,
+    "later": {
+     "2014": 320,
+     "2015": 282,
+     "2016": 328,
+     "2017": 430
+    },
+    "share_of_jump_kept": [
+     2.883,
+     2.541,
+     2.955,
+     3.874
+    ],
+    "mean_share_kept": 3.063,
+    "persisted": true,
+    "years_observed": 4
+   },
+   "lag_years": {
+    "onset_minus_release": 0,
+    "peak_minus_release": 1
+   },
+   "plain": "Parents named 111 more daughters Khaleesi in 2012 than in 2010.",
+   "known_positive": true,
+   "seen_before_registration": false
+  },
+  {
+   "stone": {
+    "title": "Kanye West",
+    "date": "2004-02-10",
+    "wikidata": "Q15935",
+    "shelf": "person (debut)",
+    "via": "Kanye West",
+    "via_wikidata": "Q15935",
+    "via_adaptation": false,
+    "debut_work": "The College Dropout"
+   },
+   "name": "Kanye",
+   "sex": "M",
+   "direction": "rise",
+   "onset_year": 2003,
+   "peak_year": 2004,
+   "counts_before_after": {
+    "year_before_release": 2003,
+    "n_before": 43,
+    "onset_year": 2003,
+    "peak_year": 2004,
+    "n_peak": 473
+   },
+   "counts": {
+    "2001": 0,
+    "2002": 0,
+    "2003": 43,
+    "2004": 473,
+    "2005": 164,
+    "2006": 59,
+    "2007": 5,
+    "2008": 40,
+    "2009": 18
+   },
+   "p_year": 0.00124,
+   "p_own": 0.0385,
+   "test": {
+    "grade": "busted",
+    "t_hat": 2004,
+    "onset": 2003,
+    "r_eff": 2004,
+    "window": [
+     2004,
+     2005,
+     2006
+    ],
+    "p_year": 0.00124,
+    "p_own": 0.0385,
+    "material": true,
+    "established": false,
+    "u": 45.033,
+    "e": 2.2828
+   },
+   "grade": "busted",
+   "hand_check": {
+    "pass": true,
+    "reason": "Kanye West; Kanye is his given name; widely famous in the US by 2004 (The College Dropout); male."
+   },
+   "persistence": {
+    "pre_level": 14.3,
+    "peak_level": 473.0,
+    "later": {
+     "2006": 59,
+     "2007": 5,
+     "2008": 40,
+     "2009": 18
+    },
+    "share_of_jump_kept": [
+     0.097,
+     -0.02,
+     0.056,
+     0.008
+    ],
+    "mean_share_kept": 0.035,
+    "persisted": false,
+    "years_observed": 4
+   },
+   "lag_years": {
+    "onset_minus_release": -1,
+    "peak_minus_release": 0
+   },
+   "plain": "Parents named 430 more sons Kanye in 2004 than in 2003.",
+   "known_positive": false,
+   "seen_before_registration": false
+  },
+  {
+   "stone": {
+    "title": "Rihanna",
+    "date": "2005-08-30",
+    "wikidata": "Q36844",
+    "shelf": "person (debut)",
+    "via": "Rihanna",
+    "via_wikidata": "Q36844",
+    "via_adaptation": false,
+    "debut_work": "Music of the Sun"
+   },
+   "name": "Rihanna",
+   "sex": "F",
+   "direction": "rise",
+   "onset_year": 2005,
+   "peak_year": 2006,
+   "counts_before_after": {
+    "year_before_release": 2004,
+    "n_before": 0,
+    "onset_year": 2005,
+    "peak_year": 2006,
+    "n_peak": 542
+   },
+   "counts": {
+    "2002": 0,
+    "2003": 0,
+    "2004": 0,
+    "2005": 45,
+    "2006": 542,
+    "2007": 743,
+    "2008": 1048,
+    "2009": 787,
+    "2010": 441,
+    "2011": 339
+   },
+   "p_year": 0.00142,
+   "p_own": 0.0385,
+   "test": {
+    "grade": "busted",
+    "t_hat": 2006,
+    "onset": 2005,
+    "r_eff": 2006,
+    "window": [
+     2006,
+     2007
+    ],
+    "p_year": 0.00142,
+    "p_own": 0.0385,
+    "material": true,
+    "established": false,
+    "u": 47.36,
+    "e": 2.368
+   },
+   "grade": "busted",
+   "hand_check": {
+    "pass": true,
+    "reason": "Rihanna; Rihanna is her given name; widely famous in the US in 2005 (Pon de Replay); female."
+   },
+   "persistence": {
+    "pre_level": 0.0,
+    "peak_level": 542.0,
+    "later": {
+     "2008": 1048,
+     "2009": 787,
+     "2010": 441,
+     "2011": 339
+    },
+    "share_of_jump_kept": [
+     1.934,
+     1.452,
+     0.814,
+     0.625
+    ],
+    "mean_share_kept": 1.206,
+    "persisted": true,
+    "years_observed": 4
+   },
+   "lag_years": {
+    "onset_minus_release": 0,
+    "peak_minus_release": 1
+   },
+   "plain": "Parents named 542 more daughters Rihanna in 2006 than in 2004.",
+   "known_positive": false,
+   "seen_before_registration": false
+  },
+  {
+   "stone": {
+    "title": "The Golden Compass",
+    "date": "2007-11-27",
+    "wikidata": "Q637021",
+    "shelf": "character",
+    "via": "Lyra Belacqua",
+    "via_wikidata": "Q2091177",
+    "via_adaptation": true,
+    "debut_work": null
+   },
+   "name": "Lyra",
+   "sex": "F",
+   "direction": "rise",
+   "onset_year": 2007,
+   "peak_year": 2008,
+   "counts_before_after": {
+    "year_before_release": 2006,
+    "n_before": 13,
+    "onset_year": 2007,
+    "peak_year": 2008,
+    "n_peak": 141
+   },
+   "counts": {
+    "2004": 12,
+    "2005": 16,
+    "2006": 13,
+    "2007": 25,
+    "2008": 141,
+    "2009": 176,
+    "2010": 159,
+    "2011": 192,
+    "2012": 193,
+    "2013": 199
+   },
+   "p_year": 0.00189,
+   "p_own": 0.0385,
+   "test": {
+    "grade": "busted",
+    "t_hat": 2008,
+    "onset": 2007,
+    "r_eff": 2008,
+    "window": [
+     2008,
+     2009
+    ],
+    "p_year": 0.00189,
+    "p_own": 0.0385,
+    "material": true,
+    "established": false,
+    "u": 19.695,
+    "e": 1.6099
+   },
+   "grade": "busted",
+   "hand_check": {
+    "pass": true,
+    "reason": "Lyra Belacqua is the lead of The Golden Compass; US release; female."
+   },
+   "persistence": {
+    "pre_level": 13.7,
+    "peak_level": 141.0,
+    "later": {
+     "2010": 159,
+     "2011": 192,
+     "2012": 193,
+     "2013": 199
+    },
+    "share_of_jump_kept": [
+     1.141,
+     1.401,
+     1.408,
+     1.455
+    ],
+    "mean_share_kept": 1.351,
+    "persisted": true,
+    "years_observed": 4
+   },
+   "lag_years": {
+    "onset_minus_release": 0,
+    "peak_minus_release": 1
+   },
+   "plain": "Parents named 128 more daughters Lyra in 2008 than in 2006.",
+   "known_positive": false,
+   "seen_before_registration": false
+  },
+  {
+   "stone": {
+    "title": "Alice in Wonderland",
+    "date": "2010-02-25",
+    "wikidata": "Q174385",
+    "shelf": "character",
+    "via": "Alice",
+    "via_wikidata": "Q1269082",
+    "via_adaptation": true,
+    "debut_work": null
+   },
+   "name": "Alice",
+   "sex": "F",
+   "direction": "rise",
+   "onset_year": 2009,
+   "peak_year": 2010,
+   "counts_before_after": {
+    "year_before_release": 2009,
+    "n_before": 1240,
+    "onset_year": 2009,
+    "peak_year": 2010,
+    "n_peak": 1777
+   },
+   "counts": {
+    "2007": 932,
+    "2008": 1000,
+    "2009": 1240,
+    "2010": 1777,
+    "2011": 2189,
+    "2012": 2501,
+    "2013": 2929,
+    "2014": 3047,
+    "2015": 3419
+   },
+   "p_year": 0.0033,
+   "p_own": 0.0385,
+   "test": {
+    "grade": "busted",
+    "t_hat": 2010,
+    "onset": 2009,
+    "r_eff": 2010,
+    "window": [
+     2010,
+     2011,
+     2012
+    ],
+    "p_year": 0.0033,
+    "p_own": 0.0385,
+    "material": true,
+    "established": true,
+    "u": 6.487,
+    "e": 0.4281
+   },
+   "grade": "busted",
+   "hand_check": {
+    "pass": true,
+    "reason": "Alice is the title and lead character of Alice in Wonderland (2010); US release; female."
+   },
+   "persistence": {
+    "pre_level": 1057.3,
+    "peak_level": 1777.0,
+    "later": {
+     "2012": 2501,
+     "2013": 2929,
+     "2014": 3047,
+     "2015": 3419
+    },
+    "share_of_jump_kept": [
+     2.006,
+     2.601,
+     2.765,
+     3.282
+    ],
+    "mean_share_kept": 2.663,
+    "persisted": true,
+    "years_observed": 4
+   },
+   "lag_years": {
+    "onset_minus_release": -1,
+    "peak_minus_release": 0
+   },
+   "plain": "Parents named 537 more daughters Alice in 2010 than in 2009.",
+   "known_positive": false,
+   "seen_before_registration": false
+  },
+  {
+   "stone": {
+    "title": "Ice Age: Dawn of the Dinosaurs",
+    "date": "2009-07-01",
+    "wikidata": "Q179503",
+    "shelf": "character",
+    "via": "Ellie",
+    "via_wikidata": "Q9252893",
+    "via_adaptation": false,
+    "debut_work": null
+   },
+   "name": "Ellie",
+   "sex": "F",
+   "direction": "rise",
+   "onset_year": 2009,
+   "peak_year": 2010,
+   "counts_before_after": {
+    "year_before_release": 2008,
+    "n_before": 1981,
+    "onset_year": 2009,
+    "peak_year": 2010,
+    "n_peak": 2905
+   },
+   "counts": {
+    "2006": 1968,
+    "2007": 1991,
+    "2008": 1981,
+    "2009": 2223,
+    "2010": 2905,
+    "2011": 3053,
+    "2012": 3386,
+    "2013": 3762,
+    "2014": 4483,
+    "2015": 4868
+   },
+   "p_year": 0.00377,
+   "p_own": 0.0769,
+   "test": {
+    "grade": "busted",
+    "t_hat": 2010,
+    "onset": 2009,
+    "r_eff": 2010,
+    "window": [
+     2010,
+     2011
+    ],
+    "p_year": 0.00377,
+    "p_own": 0.0769,
+    "material": true,
+    "established": true,
+    "u": 5.758,
+    "e": 0.3366
+   },
+   "grade": "busted",
+   "hand_check": {
+    "pass": true,
+    "reason": "Ellie is a principal character of Ice Age: Dawn of the Dinosaurs (Queen Latifah, starring cast); US release; female."
+   },
+   "persistence": {
+    "pre_level": 1980.0,
+    "peak_level": 2905.0,
+    "later": {
+     "2012": 3386,
+     "2013": 3762,
+     "2014": 4483,
+     "2015": 4868
+    },
+    "share_of_jump_kept": [
+     1.52,
+     1.926,
+     2.706,
+     3.122
+    ],
+    "mean_share_kept": 2.319,
+    "persisted": true,
+    "years_observed": 4
+   },
+   "lag_years": {
+    "onset_minus_release": 0,
+    "peak_minus_release": 1
+   },
+   "plain": "Parents named 924 more daughters Ellie in 2010 than in 2008.",
+   "known_positive": false,
+   "seen_before_registration": false
+  },
+  {
+   "stone": {
+    "title": "Suits",
+    "date": "2011-06-23",
+    "wikidata": "Q370185",
+    "shelf": "character",
+    "via": "Harvey Specter",
+    "via_wikidata": "Q18509256",
+    "via_adaptation": false,
+    "debut_work": null
+   },
+   "name": "Harvey",
+   "sex": "M",
+   "direction": "rise",
+   "onset_year": 2009,
+   "peak_year": 2011,
+   "counts_before_after": {
+    "year_before_release": 2010,
+    "n_before": 133,
+    "onset_year": 2009,
+    "peak_year": 2011,
+    "n_peak": 191
+   },
+   "counts": {
+    "2008": 57,
+    "2009": 106,
+    "2010": 133,
+    "2011": 191,
+    "2012": 244,
+    "2013": 352,
+    "2014": 540,
+    "2015": 653,
+    "2016": 740
+   },
+   "p_year": 0.00804,
+   "p_own": 0.1154,
+   "test": {
+    "grade": "busted",
+    "t_hat": 2011,
+    "onset": 2009,
+    "r_eff": 2011,
+    "window": [
+     2011,
+     2012,
+     2013
+    ],
+    "p_year": 0.00804,
+    "p_own": 0.1154,
+    "material": true,
+    "established": true,
+    "u": 4.132,
+    "e": 0.3897
+   },
+   "grade": "busted",
+   "hand_check": {
+    "pass": true,
+    "reason": "Harvey Specter is the lead of Suits; US series; male."
+   },
+   "persistence": {
+    "pre_level": 98.7,
+    "peak_level": 191.0,
+    "later": {
+     "2013": 352,
+     "2014": 540,
+     "2015": 653,
+     "2016": 740
+    },
+    "share_of_jump_kept": [
+     2.744,
+     4.78,
+     6.004,
+     6.946
+    ],
+    "mean_share_kept": 5.118,
+    "persisted": true,
+    "years_observed": 4
+   },
+   "lag_years": {
+    "onset_minus_release": -2,
+    "peak_minus_release": 0
+   },
+   "plain": "Parents named 58 more sons Harvey in 2011 than in 2010.",
+   "known_positive": false,
+   "seen_before_registration": false
+  },
+  {
+   "stone": {
+    "title": "Resident Evil: Afterlife",
+    "date": "2010-09-10",
+    "wikidata": "Q324557",
+    "shelf": "character",
+    "via": "Alice Abernathy",
+    "via_wikidata": "Q2418079",
+    "via_adaptation": false,
+    "debut_work": null
+   },
+   "name": "Alice",
+   "sex": "F",
+   "direction": "rise",
+   "onset_year": 2009,
+   "peak_year": 2011,
+   "counts_before_after": {
+    "year_before_release": 2009,
+    "n_before": 1240,
+    "onset_year": 2009,
+    "peak_year": 2011,
+    "n_peak": 2189
+   },
+   "counts": {
+    "2007": 932,
+    "2008": 1000,
+    "2009": 1240,
+    "2010": 1777,
+    "2011": 2189,
+    "2012": 2501,
+    "2013": 2929,
+    "2014": 3047,
+    "2015": 3419,
+    "2016": 3689
+   },
+   "p_year": 0.00991,
+   "p_own": 0.1154,
+   "test": {
+    "grade": "busted",
+    "t_hat": 2011,
+    "onset": 2009,
+    "r_eff": 2011,
+    "window": [
+     2011,
+     2012
+    ],
+    "p_year": 0.00991,
+    "p_own": 0.1154,
+    "material": true,
+    "established": true,
+    "u": 3.894,
+    "e": 0.257
+   },
+   "grade": "busted",
+   "hand_check": {
+    "pass": true,
+    "reason": "Alice (Milla Jovovich) is the lead of Resident Evil: Afterlife; US release; female."
+   },
+   "persistence": {
+    "pre_level": 1057.3,
+    "peak_level": 2189.0,
+    "later": {
+     "2013": 2929,
+     "2014": 3047,
+     "2015": 3419,
+     "2016": 3689
+    },
+    "share_of_jump_kept": [
+     1.654,
+     1.758,
+     2.087,
+     2.325
+    ],
+    "mean_share_kept": 1.956,
+    "persisted": true,
+    "years_observed": 4
+   },
+   "lag_years": {
+    "onset_minus_release": -1,
+    "peak_minus_release": 1
+   },
+   "plain": "Parents named 949 more daughters Alice in 2011 than in 2009.",
+   "known_positive": false,
+   "seen_before_registration": false
+  },
+  {
+   "stone": {
+    "title": "Gotham",
+    "date": "2014-10-12",
+    "wikidata": "Q15726959",
+    "shelf": "character",
+    "via": "Harvey Bullock",
+    "via_wikidata": "Q2339663",
+    "via_adaptation": false,
+    "debut_work": null
+   },
+   "name": "Harvey",
+   "sex": "M",
+   "direction": "rise",
+   "onset_year": 2009,
+   "peak_year": 2015,
+   "counts_before_after": {
+    "year_before_release": 2013,
+    "n_before": 352,
+    "onset_year": 2009,
+    "peak_year": 2015,
+    "n_peak": 653
+   },
+   "counts": {
+    "2011": 191,
+    "2012": 244,
+    "2013": 352,
+    "2014": 540,
+    "2015": 653,
+    "2016": 740,
+    "2017": 822,
+    "2018": 650,
+    "2019": 745,
+    "2020": 691
+   },
+   "p_year": 0.04824,
+   "p_own": 0.2692,
+   "test": {
+    "grade": "busted",
+    "t_hat": 2015,
+    "onset": 2009,
+    "r_eff": 2015,
+    "window": [
+     2015,
+     2016
+    ],
+    "p_year": 0.04824,
+    "p_own": 0.2692,
+    "material": true,
+    "established": true,
+    "u": 2.003,
+    "e": 0.2088
+   },
+   "grade": "busted",
+   "hand_check": {
+    "pass": true,
+    "reason": "Harvey Bullock is in the main cast of Gotham (Donal Logue); US series; male."
+   },
+   "persistence": {
+    "pre_level": 262.3,
+    "peak_level": 653.0,
+    "later": {
+     "2017": 822,
+     "2018": 650,
+     "2019": 745,
+     "2020": 691
+    },
+    "share_of_jump_kept": [
+     1.433,
+     0.992,
+     1.235,
+     1.097
+    ],
+    "mean_share_kept": 1.189,
+    "persisted": true,
+    "years_observed": 4
+   },
+   "lag_years": {
+    "onset_minus_release": -5,
+    "peak_minus_release": 1
+   },
+   "plain": "Parents named 301 more sons Harvey in 2015 than in 2013.",
+   "known_positive": false,
+   "seen_before_registration": false
+  }
+ ],
+ "dropped_by_hand_check": [
+  {
+   "name": "Ainsley",
+   "sex": "F",
+   "direction": "rise",
+   "stone": "The West Wing",
+   "date": "1999-09-22",
+   "via": "Ainsley Hayes",
+   "stat_grade": "measured",
+   "reason": "H2: Ainsley Hayes was a recurring character (twelve episodes in seasons 2 and 3), not main cast; she first appeared in Oct 2000, after the series premiere used as the stone."
+  },
+  {
+   "name": "Alfred",
+   "sex": "M",
+   "direction": "rise",
+   "stone": "Peaky Blinders",
+   "date": "2013-09-12",
+   "via": "Alfie Solomons",
+   "stat_grade": "measured",
+   "reason": "H1: the character is called Alfie, not Alfred; H3: Peaky Blinders was not available in the US in 2013."
+  },
+  {
+   "name": "Alfred",
+   "sex": "M",
+   "direction": "rise",
+   "stone": "Batman: Arkham Origins",
+   "date": "2013-10-25",
+   "via": "Alfred Pennyworth",
+   "stat_grade": "measured",
+   "reason": "H2: a supporting character in a video game whose lead is Batman."
+  },
+  {
+   "name": "Alice",
+   "sex": "F",
+   "direction": "rise",
+   "stone": "Harry Potter and the Order of the Phoenix",
+   "date": "2007-06-28",
+   "via": "Alice Longbottom",
+   "stat_grade": "timed",
+   "reason": "H2: Alice Longbottom is a minor character."
+  },
+  {
+   "name": "Alice",
+   "sex": "F",
+   "direction": "rise",
+   "stone": "The Simpsons Movie",
+   "date": "2007-07-25",
+   "via": "Mrs. Glick",
+   "stat_grade": "timed",
+   "reason": "H2: Mrs. Glick is a minor character."
+  },
+  {
+   "name": "Alice",
+   "sex": "F",
+   "direction": "rise",
+   "stone": "Alice Eve",
+   "date": "2009-02-27",
+   "via": "Alice Eve",
+   "stat_grade": "timed",
+   "reason": "H2: not a household name in the US by the end of the stone's year"
+  },
+  {
+   "name": "Alice",
+   "sex": "F",
+   "direction": "rise",
+   "stone": "Harry Potter and the Order of the Phoenix",
+   "date": "2007-06-25",
+   "via": "Alice Longbottom",
+   "stat_grade": "timed",
+   "reason": "H2: Alice Longbottom is a minor character."
+  },
+  {
+   "name": "Alice",
+   "sex": "F",
+   "direction": "rise",
+   "stone": "Alice",
+   "date": "2010-01-29",
+   "via": "Alice",
+   "stat_grade": "busted",
+   "reason": "H2/H5: a soundtrack single about the film's character, not a stone with a principal character of its own; the film is graded separately."
+  },
+  {
+   "name": "Alice",
+   "sex": "F",
+   "direction": "rise",
+   "stone": "The Simpsons Game",
+   "date": "2007-10-30",
+   "via": "Mrs. Glick",
+   "stat_grade": "timed",
+   "reason": "H2: Mrs. Glick is a minor character."
+  },
+  {
+   "name": "Alice",
+   "sex": "F",
+   "direction": "rise",
+   "stone": "Martha Speaks",
+   "date": "2008-09-01",
+   "via": "Alice Boxwood",
+   "stat_grade": "timed",
+   "reason": "H2: Alice Boxwood is not a main character of Martha Speaks."
+  },
+  {
+   "name": "Alice",
+   "sex": "F",
+   "direction": "rise",
+   "stone": "Alice Lee",
+   "date": "2009-10-13",
+   "via": "Alice Lee",
+   "stat_grade": "busted",
+   "reason": "H2: a person born in the window, not famous from birth"
+  },
+  {
+   "name": "Axel",
+   "sex": "M",
+   "direction": "rise",
+   "stone": "Axel Disasi",
+   "date": "1998-03-11",
+   "via": "Axel Disasi",
+   "stat_grade": "measured",
+   "reason": "H2: a person born in the window, not famous from birth"
+  },
+  {
+   "name": "Axel",
+   "sex": "M",
+   "direction": "rise",
+   "stone": "Facundo Medina",
+   "date": "1999-05-28",
+   "via": "Facundo Medina",
+   "stat_grade": "measured",
+   "reason": "H2: a person born in the window, not famous from birth (and Axel is not his name)"
+  },
+  {
+   "name": "Axel",
+   "sex": "M",
+   "direction": "rise",
+   "stone": "Axel Zingle",
+   "date": "1998-12-18",
+   "via": "Axel Zingle",
+   "stat_grade": "measured",
+   "reason": "H2: a person born in the window, not famous from birth"
+  },
+  {
+   "name": "Axel",
+   "sex": "M",
+   "direction": "rise",
+   "stone": "Axel Bakayoko",
+   "date": "1998-01-06",
+   "via": "Axel Bakayoko",
+   "stat_grade": "measured",
+   "reason": "H2: a person born in the window, not famous from birth"
+  },
+  {
+   "name": "Axel",
+   "sex": "M",
+   "direction": "rise",
+   "stone": "Axel Geller",
+   "date": "1999-04-01",
+   "via": "Axel Geller",
+   "stat_grade": "measured",
+   "reason": "H2: a person born in the window, not famous from birth"
+  },
+  {
+   "name": "Bennett",
+   "sex": "M",
+   "direction": "rise",
+   "stone": "Terminator: The Sarah Connor Chronicles",
+   "date": "2008-01-13",
+   "via": "Miles Dyson",
+   "stat_grade": "timed",
+   "reason": "H1: Bennett is Miles Dyson's middle name; H2: a supporting character."
+  },
+  {
+   "name": "Bennett",
+   "sex": "M",
+   "direction": "rise",
+   "stone": "Ben Rappaport",
+   "date": "2009-09-22",
+   "via": "Ben Rappaport",
+   "stat_grade": "busted",
+   "reason": "H2: not a household name in the US by the end of the stone's year"
+  },
+  {
+   "name": "Benny",
+   "sex": "M",
+   "direction": "rise",
+   "stone": "Genshin Impact",
+   "date": "2020-09-28",
+   "via": "Bennett",
+   "stat_grade": "timed",
+   "reason": "H1: the character is called Bennett; H2: one of dozens of playable characters."
+  },
+  {
+   "name": "Dawson",
+   "sex": "M",
+   "direction": "rise",
+   "stone": "Dawson Knox",
+   "date": "1996-11-14",
+   "via": "Dawson Knox",
+   "stat_grade": "timed",
+   "reason": "H2: a person born in the window, not famous from birth"
+  },
+  {
+   "name": "Denise",
+   "sex": "F",
+   "direction": "rise",
+   "stone": "Denise Gough",
+   "date": "2018-01-20",
+   "via": "Denise Gough",
+   "stat_grade": "timed",
+   "reason": "H2: not a household name in the US by the end of the stone's year"
+  },
+  {
+   "name": "Elisa",
+   "sex": "F",
+   "direction": "rise",
+   "stone": "Civilization V",
+   "date": "2010-09-21",
+   "via": "Dido",
+   "stat_grade": "measured",
+   "reason": "H1: Dido is not primarily called Elisa; H2: one of many leaders in Civilization V."
+  },
+  {
+   "name": "Elle",
+   "sex": "F",
+   "direction": "rise",
+   "stone": "Elle Fanning",
+   "date": "2001-12-03",
+   "via": "Elle Fanning",
+   "stat_grade": "timed",
+   "reason": "H2: not a household name in the US by the end of the stone's year (a child actor in 2001)"
+  },
+  {
+   "name": "Ellie",
+   "sex": "F",
+   "direction": "rise",
+   "stone": "Ellie Kendrick",
+   "date": "2009-01-18",
+   "via": "Ellie Kendrick",
+   "stat_grade": "timed",
+   "reason": "H2: not a household name in the US by the end of the stone's year"
+  },
+  {
+   "name": "Evangeline",
+   "sex": "F",
+   "direction": "rise",
+   "stone": "Evangeline Lilly",
+   "date": "2003-05-02",
+   "via": "Evangeline Lilly",
+   "stat_grade": "timed",
+   "reason": "H2: not a household name in the US by the end of the stone's year (fame came with Lost, Sep 2004)"
+  },
+  {
+   "name": "Ezekiel",
+   "sex": "M",
+   "direction": "rise",
+   "stone": "Fear the Walking Dead",
+   "date": "2015-08-23",
+   "via": "King Ezekiel",
+   "stat_grade": "busted",
+   "reason": "H2: King Ezekiel does not appear in Fear the Walking Dead (a link through the shared source)."
+  },
+  {
+   "name": "Harvey",
+   "sex": "M",
+   "direction": "rise",
+   "stone": "Gotham",
+   "date": "2014-10-12",
+   "via": "Two-Face",
+   "stat_grade": "busted",
+   "reason": "H2: Harvey Dent is a recurring character in Gotham."
+  },
+  {
+   "name": "Harvey",
+   "sex": "M",
+   "direction": "rise",
+   "stone": "Batman: Arkham City",
+   "date": "2011-10-18",
+   "via": "Two-Face",
+   "stat_grade": "busted",
+   "reason": "H2: a supporting villain in a video game."
+  },
+  {
+   "name": "Harvey",
+   "sex": "M",
+   "direction": "rise",
+   "stone": "Batman: The Brave and the Bold",
+   "date": "2008-11-14",
+   "via": "Two-Face",
+   "stat_grade": "timed",
+   "reason": "H2: a supporting villain in an animated series."
+  },
+  {
+   "name": "Harvey",
+   "sex": "M",
+   "direction": "rise",
+   "stone": "Lego Batman: The Videogame",
+   "date": "2008-09-23",
+   "via": "Two-Face",
+   "stat_grade": "timed",
+   "reason": "H2: a supporting villain in a video game."
+  },
+  {
+   "name": "Harvey",
+   "sex": "M",
+   "direction": "rise",
+   "stone": "Tropical Storm Harvey",
+   "date": "2011-08-19",
+   "via": null,
+   "stat_grade": "busted",
+   "reason": "H2: Tropical Storm Harvey (2011) was a minor storm with no US impact."
+  },
+  {
+   "name": "Kendra",
+   "sex": "F",
+   "direction": "rise",
+   "stone": "Arrow",
+   "date": "2012-10-10",
+   "via": "Kendra Saunders",
+   "stat_grade": "timed",
+   "reason": "H2: Kendra Saunders is a guest character in Arrow."
+  },
+  {
+   "name": "Kendrick",
+   "sex": "M",
+   "direction": "rise",
+   "stone": "Kendrick Lamar",
+   "date": "2011-07-02",
+   "via": "Kendrick Lamar",
+   "stat_grade": "measured",
+   "reason": "H2: Kendrick Lamar was not a household name by the end of 2011 (Section.80, Jul 2011); his breakthrough, good kid, m.A.A.d city (Oct 2012), came after the name's 2012 rise had begun, which would bust the link."
+  },
+  {
+   "name": "Liam",
+   "sex": "M",
+   "direction": "rise",
+   "stone": "Liam Hemsworth",
+   "date": "2009-03-09",
+   "via": "Liam Hemsworth",
+   "stat_grade": "busted",
+   "reason": "H2: not a household name in the US by the end of the stone's year (Liam Hemsworth became known in 2010)"
+  },
+  {
+   "name": "Liam",
+   "sex": "M",
+   "direction": "rise",
+   "stone": "Liam James",
+   "date": "2007-11-29",
+   "via": "Liam James",
+   "stat_grade": "timed",
+   "reason": "H2: not a household name in the US by the end of the stone's year"
+  },
+  {
+   "name": "Liam",
+   "sex": "M",
+   "direction": "rise",
+   "stone": "Liam O'Brien",
+   "date": "2009-03-05",
+   "via": "Liam O'Brien",
+   "stat_grade": "busted",
+   "reason": "H2: not a household name in the US by the end of the stone's year"
+  },
+  {
+   "name": "Logan",
+   "sex": "M",
+   "direction": "rise",
+   "stone": "X-Men: Apocalypse",
+   "date": "2016-05-18",
+   "via": "Wolverine",
+   "stat_grade": "timed",
+   "reason": "H2: Wolverine has a cameo in X-Men: Apocalypse."
+  },
+  {
+   "name": "Logan",
+   "sex": "M",
+   "direction": "rise",
+   "stone": "X-Men: Apocalypse",
+   "date": "2016-05-18",
+   "via": "Logan",
+   "stat_grade": "timed",
+   "reason": "H2: a cameo in X-Men: Apocalypse."
+  },
+  {
+   "name": "Logan",
+   "sex": "M",
+   "direction": "rise",
+   "stone": "Logan Paul",
+   "date": "2017-02-09",
+   "via": "Logan Paul",
+   "stat_grade": "timed",
+   "reason": "H2: not a household name in the US by the end of the stone's year"
+  },
+  {
+   "name": "Mya",
+   "sex": "F",
+   "direction": "rise",
+   "stone": "M\u00fda",
+   "date": "1995",
+   "via": "M\u00fda",
+   "stat_grade": "timed",
+   "reason": "H2: not a household name in the US by the end of the stone's year (her first single came in 1998)"
+  },
+  {
+   "name": "Nicole",
+   "sex": "F",
+   "direction": "rise",
+   "stone": "Kira Kosarin",
+   "date": "2011-05-27",
+   "via": "Kira Kosarin",
+   "stat_grade": "timed",
+   "reason": "H1: she is known as Kira, not Nicole; H2: not widely famous."
+  },
+  {
+   "name": "Rosie",
+   "sex": "F",
+   "direction": "rise",
+   "stone": "Rosie Huntington-Whiteley",
+   "date": "2011-06-23",
+   "via": "Rosie Huntington-Whiteley",
+   "stat_grade": "measured",
+   "reason": "H2: Rosie Huntington-Whiteley was not a household name in the US by the end of 2011; the same rule as every other debut stone."
+  },
+  {
+   "name": "Sanaa",
+   "sex": "F",
+   "direction": "rise",
+   "stone": "Sanaa Lathan",
+   "date": "1998-08-19",
+   "via": "Sanaa Lathan",
+   "stat_grade": "timed",
+   "reason": "H2: not a household name in the US by the end of the stone's year (Sanaa Lathan became known with Love and Basketball, 2000)"
+  },
+  {
+   "name": "Sanaa",
+   "sex": "F",
+   "direction": "rise",
+   "stone": "Sana\u00e2 Mssoudy",
+   "date": "1999-12-30",
+   "via": "Sana\u00e2 Mssoudy",
+   "stat_grade": "timed",
+   "reason": "H2: a person born in the window, not famous from birth"
+  },
+  {
+   "name": "Trinity",
+   "sex": "F",
+   "direction": "rise",
+   "stone": "Naomi",
+   "date": "1999-04-22",
+   "via": "Naomi",
+   "stat_grade": "timed",
+   "reason": "H1: the wrestler performs as Naomi; H2: not widely famous in 1999."
+  },
+  {
+   "name": "Alexa",
+   "sex": "F",
+   "direction": "fall",
+   "stone": "Alexa Demie",
+   "date": "2019-06-16",
+   "via": "Alexa Demie",
+   "stat_grade": "busted",
+   "reason": "H2: Alexa Demie was not widely famous in the US at the stone date."
+  },
+  {
+   "name": "Alvin",
+   "sex": "M",
+   "direction": "fall",
+   "stone": "The X-Files: I Want to Believe",
+   "date": "2008-07-24",
+   "via": "Alvin Kersh",
+   "stat_grade": "timed",
+   "reason": "H2: Alvin Kersh is a minor character in the 2008 film."
+  },
+  {
+   "name": "Austin",
+   "sex": "M",
+   "direction": "fall",
+   "stone": "Derek Cornelius",
+   "date": "1997-11-25",
+   "via": "Derek Cornelius",
+   "stat_grade": "timed",
+   "reason": "H2: a person born in the window, not famous from birth (and Austin is not his name)"
+  },
+  {
+   "name": "Austin",
+   "sex": "M",
+   "direction": "fall",
+   "stone": "Austin Reaves",
+   "date": "1998-05-29",
+   "via": "Austin Reaves",
+   "stat_grade": "timed",
+   "reason": "H2: a person born in the window, not famous from birth"
+  },
+  {
+   "name": "Austin",
+   "sex": "M",
+   "direction": "fall",
+   "stone": "Austin Theory",
+   "date": "1997-08-02",
+   "via": "Austin Theory",
+   "stat_grade": "timed",
+   "reason": "H2: a person born in the window, not famous from birth"
+  },
+  {
+   "name": "Austin",
+   "sex": "M",
+   "direction": "fall",
+   "stone": "Austin Hamilton",
+   "date": "1997-07-29",
+   "via": "Austin Hamilton",
+   "stat_grade": "timed",
+   "reason": "H2: a person born in the window, not famous from birth"
+  },
+  {
+   "name": "Austin",
+   "sex": "M",
+   "direction": "fall",
+   "stone": "Brent Rivera",
+   "date": "1998-01-09",
+   "via": "Brent Rivera",
+   "stat_grade": "timed",
+   "reason": "H2: a person born in the window, not famous from birth (and Austin is not his name)"
+  },
+  {
+   "name": "Axel",
+   "sex": "M",
+   "direction": "fall",
+   "stone": "Axel Laurance",
+   "date": "2001-04-13",
+   "via": "Axel Laurance",
+   "stat_grade": "measured",
+   "reason": "H2: a person born in the window, not famous from birth"
+  },
+  {
+   "name": "Caitlin",
+   "sex": "F",
+   "direction": "fall",
+   "stone": "Legends of Tomorrow",
+   "date": "2016-01-21",
+   "via": "Killer Frost",
+   "stat_grade": "timed",
+   "reason": "H2: a guest character in Legends of Tomorrow."
+  },
+  {
+   "name": "Caitlin",
+   "sex": "F",
+   "direction": "fall",
+   "stone": "Supergirl",
+   "date": "2015-10-26",
+   "via": "Killer Frost",
+   "stat_grade": "timed",
+   "reason": "H2: a guest character in Supergirl."
+  },
+  {
+   "name": "Caitlin",
+   "sex": "F",
+   "direction": "fall",
+   "stone": "Brianna Hildebrand",
+   "date": "2016-01-25",
+   "via": "Brianna Hildebrand",
+   "stat_grade": "timed",
+   "reason": "H1: Caitlin is not her name; H2: not widely famous."
+  },
+  {
+   "name": "Chad",
+   "sex": "M",
+   "direction": "fall",
+   "stone": "Chad Channing",
+   "date": "2015-04-09",
+   "via": "Chad Channing",
+   "stat_grade": "timed",
+   "reason": "H2: not a household name in the US by the end of the stone's year"
+  },
+  {
+   "name": "Denzel",
+   "sex": "M",
+   "direction": "fall",
+   "stone": "Denzel Dumfries",
+   "date": "1996-04-18",
+   "via": "Denzel Dumfries",
+   "stat_grade": "timed",
+   "reason": "H2: a person born in the window, not famous from birth"
+  },
+  {
+   "name": "Denzel",
+   "sex": "M",
+   "direction": "fall",
+   "stone": "Denzel Ward",
+   "date": "1997-04-28",
+   "via": "Denzel Ward",
+   "stat_grade": "timed",
+   "reason": "H2: a person born in the window, not famous from birth"
+  },
+  {
+   "name": "Erika",
+   "sex": "F",
+   "direction": "fall",
+   "stone": "E. L. James",
+   "date": "2011-06-20",
+   "via": "E. L. James",
+   "stat_grade": "timed",
+   "reason": "H1: the author is known as E. L. James, not Erika."
+  },
+  {
+   "name": "Erika",
+   "sex": "F",
+   "direction": "fall",
+   "stone": "Tropical Storm Erika",
+   "date": "2009-09-01",
+   "via": null,
+   "stat_grade": "timed",
+   "reason": "H2: Tropical Storm Erika (2009) was a minor storm with no US landfall."
+  },
+  {
+   "name": "Ervin",
+   "sex": "M",
+   "direction": "fall",
+   "stone": "Ervin Omi\u0107",
+   "date": "2003-01-20",
+   "via": "Ervin Omi\u0107",
+   "stat_grade": "timed",
+   "reason": "H2: a person born in the window, not famous from birth"
+  },
+  {
+   "name": "Ingrid",
+   "sex": "F",
+   "direction": "fall",
+   "stone": "The Simpsons Movie",
+   "date": "2007-07-25",
+   "via": "Jacqueline Bouvier",
+   "stat_grade": "timed",
+   "reason": "H1/H2: a middle name of a minor character."
+  },
+  {
+   "name": "Ingrid",
+   "sex": "F",
+   "direction": "fall",
+   "stone": "Princess Isabella of Denmark",
+   "date": "2007-04-21",
+   "via": "Princess Isabella of Denmark",
+   "stat_grade": "timed",
+   "reason": "H1: Ingrid is a middle name; H2: not famous from birth in the US."
+  },
+  {
+   "name": "Ingrid",
+   "sex": "F",
+   "direction": "fall",
+   "stone": "Resident Evil: Degeneration",
+   "date": "2008-10-18",
+   "via": "Ingrid Hunnigan",
+   "stat_grade": "timed",
+   "reason": "H2: a supporting character in an animated film."
+  },
+  {
+   "name": "Ingrid",
+   "sex": "F",
+   "direction": "fall",
+   "stone": "The Simpsons Game",
+   "date": "2007-10-30",
+   "via": "Jacqueline Bouvier",
+   "stat_grade": "timed",
+   "reason": "H1/H2: a middle name of a minor character."
+  },
+  {
+   "name": "Joan",
+   "sex": "M",
+   "direction": "fall",
+   "stone": "Joan Garcia",
+   "date": "2001-05-04",
+   "via": "Joan Garcia",
+   "stat_grade": "timed",
+   "reason": "H2: a person born in the window, not famous from birth"
+  },
+  {
+   "name": "Joan",
+   "sex": "M",
+   "direction": "fall",
+   "stone": "Joan-Benjamin Gaba",
+   "date": "2001-01-07",
+   "via": "Joan-Benjamin Gaba",
+   "stat_grade": "timed",
+   "reason": "H2: a person born in the window, not famous from birth"
+  },
+  {
+   "name": "Joan",
+   "sex": "M",
+   "direction": "fall",
+   "stone": "Joan Gonz\u00e1lez",
+   "date": "2002-02-01",
+   "via": "Joan Gonz\u00e1lez",
+   "stat_grade": "timed",
+   "reason": "H2: a person born in the window, not famous from birth"
+  },
+  {
+   "name": "Kaitlin",
+   "sex": "F",
+   "direction": "fall",
+   "stone": "Medcezir",
+   "date": "2013-09-13",
+   "via": "Kaitlin Cooper",
+   "stat_grade": "timed",
+   "reason": "H3: a Turkish series not shown in the US."
+  },
+  {
+   "name": "Katrina",
+   "sex": "F",
+   "direction": "fall",
+   "stone": "Katrina Bowden",
+   "date": "2006-10-11",
+   "via": "Katrina Bowden",
+   "stat_grade": "busted",
+   "reason": "H2: not a household name in the US by the end of the stone's year"
+  },
+  {
+   "name": "Katrina",
+   "sex": "F",
+   "direction": "fall",
+   "stone": "Katrina Scott",
+   "date": "2004-06-11",
+   "via": "Katrina Scott",
+   "stat_grade": "timed",
+   "reason": "H2: a person born in the window, not famous from birth"
+  },
+  {
+   "name": "Keenan",
+   "sex": "M",
+   "direction": "fall",
+   "stone": "Keenan Evans",
+   "date": "1996-08-23",
+   "via": "Keenan Evans",
+   "stat_grade": "timed",
+   "reason": "H2: a person born in the window, not famous from birth"
+  },
+  {
+   "name": "Monica",
+   "sex": "F",
+   "direction": "fall",
+   "stone": "Jutta Leerdam",
+   "date": "1998-12-30",
+   "via": "Jutta Leerdam",
+   "stat_grade": "busted",
+   "reason": "H2: a person born in the window, not famous from birth (and Monica is not her name)"
+  },
+  {
+   "name": "Monica",
+   "sex": "F",
+   "direction": "fall",
+   "stone": "Monica Bleibtreu",
+   "date": "1998-08-20",
+   "via": "Monica Bleibtreu",
+   "stat_grade": "busted",
+   "reason": "H2/H3: a German actress not widely known in the US."
+  },
+  {
+   "name": "Monica",
+   "sex": "F",
+   "direction": "fall",
+   "stone": "Monica Okoye",
+   "date": "1999-02-07",
+   "via": "Monica Okoye",
+   "stat_grade": "busted",
+   "reason": "H2: a person born in the window, not famous from birth"
+  },
+  {
+   "name": "Reginald",
+   "sex": "M",
+   "direction": "fall",
+   "stone": "Reggie Perry",
+   "date": "2000-03-21",
+   "via": "Reggie Perry",
+   "stat_grade": "timed",
+   "reason": "H2: a person born in the window, not famous from birth"
+  },
+  {
+   "name": "Steve",
+   "sex": "M",
+   "direction": "fall",
+   "stone": "Sex and the City",
+   "date": "2008-05-12",
+   "via": "Steve Brady",
+   "stat_grade": "timed",
+   "reason": "H2: Steve Brady is not in the starring cast of the 2008 film."
+  },
+  {
+   "name": "Steve",
+   "sex": "M",
+   "direction": "fall",
+   "stone": "Sex and the City 2",
+   "date": "2010-05-27",
+   "via": "Steve Brady",
+   "stat_grade": "timed",
+   "reason": "H2: Steve Brady is not in the starring cast of the 2010 film."
+  },
+  {
+   "name": "Steve",
+   "sex": "M",
+   "direction": "fall",
+   "stone": "Annoying Orange",
+   "date": "2009-10-09",
+   "via": "Steve",
+   "stat_grade": "timed",
+   "reason": "H2: not a principal character of Annoying Orange."
+  },
+  {
+   "name": "Steve",
+   "sex": "M",
+   "direction": "fall",
+   "stone": "Batman: The Brave and the Bold",
+   "date": "2008-11-14",
+   "via": "Steve Trevor",
+   "stat_grade": "timed",
+   "reason": "H2: a supporting character in an animated series."
+  },
+  {
+   "name": "Steve",
+   "sex": "M",
+   "direction": "fall",
+   "stone": "Steve Agee",
+   "date": "2009-09-27",
+   "via": "Steve Agee",
+   "stat_grade": "timed",
+   "reason": "H2: not a household name in the US by the end of the stone's year"
+  },
+  {
+   "name": "Steve",
+   "sex": "M",
+   "direction": "fall",
+   "stone": "Tekken Tag Tournament 2",
+   "date": "2011-09-14",
+   "via": "Steve Fox",
+   "stat_grade": "timed",
+   "reason": "H2: one of dozens of fighters in a video game."
+  },
+  {
+   "name": "Steve",
+   "sex": "M",
+   "direction": "fall",
+   "stone": "Street Fighter X Tekken",
+   "date": "2012-03-06",
+   "via": "Steve Fox",
+   "stat_grade": "timed",
+   "reason": "H2: one of dozens of fighters in a video game."
+  }
+ ],
+ "episodes_without_a_stone": 173,
+ "placebo_window_handcheck": {
+  "label": "post hoc diagnostic, not registered: the same hand check applied to the auto-matched stones in the placebo windows, for the 70 episodes that pass the statistical part of the test",
+  "true_window": {
+   "episodes_with_a_passing_match": 6,
+   "of": 70,
+   "names": [
+    "Adonis",
+    "Alfred",
+    "Alice",
+    "Quinn",
+    "Raya",
+    "Tiana"
+   ]
+  },
+  "shifted_4": {
+   "episodes_with_a_passing_match": 4,
+   "names": [
+    "Alfred (The Dark Knight, 2008)",
+    "Alice (Resident Evil: Apocalypse and The L Word, 2004)",
+    "Axel, rise (Beverly Hills Cop III, 1994)",
+    "Meghan (Meghan Trainor, 2014)"
+   ]
+  },
+  "shifted_7": {
+   "episodes_with_a_passing_match": 3,
+   "names": [
+    "Alfred (Batman Begins, 2005)",
+    "Alice (Resident Evil, 2002; American McGee's Alice, 2000)",
+    "Axel, fall (Beverly Hills Cop III, 1994)"
+   ]
+  },
+  "shifted_10": {
+   "episodes_with_a_passing_match": 2,
+   "names": [
+    "Alfred (The Batman, 2004)",
+    "Alice (Alice in Wonderland, 1999; American McGee's Alice, 2000)"
+   ]
+  },
+  "mean_shifted": 3.0,
+  "enrichment": 2.0,
+  "estimated_coincidence_share": 0.5,
+  "names_matching_in_every_window": [
+   "Alfred",
+   "Alice"
+  ],
+  "without_those_two": {
+   "true": 4,
+   "mean_shifted": 1.0,
+   "enrichment": 4.0
+  }
+ },
+ "hand_check_rules": {
+  "principal": "a character counts as main cast if the work's Wikipedia infobox lists the actor under Starring, or the character is a series regular; a person counts as widely famous if a household name in the US by the end of the stone's year",
+  "born": "a birth stone passes only for a person famous from birth"
+ }
+}

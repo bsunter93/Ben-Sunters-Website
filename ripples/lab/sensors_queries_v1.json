@@ -1,0 +1,3666 @@
+{
+ "registered": "2026-10-04",
+ "plan": "ripples/docs/sensors_plan_v1.md",
+ "doc_suffix": " sourcelang:english",
+ "tv_stations": {
+  "US": "(station:CNN OR station:MSNBC OR station:FOXNEWS)",
+  "UK": "station:BBCNEWS"
+ },
+ "mc_collections": {
+  "US": {
+   "name": "United States - National",
+   "id": 34412234
+  },
+  "UK": {
+   "name": "United Kingdom - National",
+   "id": null
+  }
+ },
+ "excluded": [
+  {
+   "id": "A:the Nov 30, 2022 chatbot-launch chain:1",
+   "why": "its subject is a software model's product name, and the project's rule keeps model names out of every pushed file, queries included"
+  },
+  {
+   "id": "A2:chernobyl-zone:1",
+   "why": "the attention check measured the article HBO, not the step's subject (the miniseries); re-testing HBO says nothing about the step"
+  },
+  {
+   "id": "D:frozen:2",
+   "why": "measured already by SSA names (not an attention claim)"
+  },
+  {
+   "id": "D:frozen:4",
+   "why": "approximate date (range midpoint)"
+  },
+  {
+   "id": "D:america-and-alcohol:14",
+   "why": "a claim about a cause (must-precede), not an event with an attention date"
+  },
+  {
+   "id": "D:america-and-alcohol:16",
+   "why": "a claim about a cause (must-precede), not an event with an attention date"
+  },
+  {
+   "id": "D:america-and-alcohol:18",
+   "why": "a claim about a cause (must-precede), not an event with an attention date"
+  },
+  {
+   "id": "D:flint-lead-pipes:6",
+   "why": "a claim about a cause (must-precede), not an event with an attention date"
+  },
+  {
+   "id": "D:fukushima:3",
+   "why": "approximate date (range midpoint)"
+  },
+  {
+   "id": "D:eyjafjallajokull:3",
+   "why": "approximate date (range midpoint)"
+  },
+  {
+   "id": "D:thailand-floods:3",
+   "why": "approximate date (range midpoint)"
+  },
+  {
+   "id": "D:thailand-floods:4",
+   "why": "measured already by FRED (not an attention claim)"
+  },
+  {
+   "id": "D:thailand-floods:5",
+   "why": "approximate date (range midpoint)"
+  },
+  {
+   "id": "D:cash-for-clunkers:3",
+   "why": "approximate date (range midpoint)"
+  },
+  {
+   "id": "D:cash-for-clunkers:4",
+   "why": "measured already by FRED (not an attention claim)"
+  },
+  {
+   "id": "D:cash-for-clunkers:5",
+   "why": "approximate date (range midpoint)"
+  },
+  {
+   "id": "D:sideways:5",
+   "why": "approximate date (range midpoint)"
+  }
+ ],
+ "items": [
+  {
+   "id": "A:tiger-king:2",
+   "set": "A",
+   "slug": "tiger-king",
+   "n": 2,
+   "claim": "People look up big cats and exotic pets",
+   "ref": "2020-03-20",
+   "lag": 150,
+   "country": "US",
+   "chain_verdict": "measured",
+   "wikipedia": {
+    "source": "chain_check_v1.json (step test)",
+    "articles": [
+     "Exotic pet",
+     "Big cat"
+    ],
+    "verdict": "measured",
+    "onset": "2020-03-26",
+    "ratio": 5.1,
+    "p": 0.01,
+    "n_placebo": 100,
+    "new_article": null
+   },
+   "q": {
+    "doc": "(\"big cat\" OR \"big cats\" OR \"exotic pet\" OR \"exotic pets\")",
+    "mc": "\"big cat\" OR \"big cats\" OR \"exotic pet\" OR \"exotic pets\"",
+    "tv": "(\"big cat\" OR \"big cats\" OR \"exotic pet\" OR \"exotic pets\")"
+   }
+  },
+  {
+   "id": "A:wordle:2",
+   "set": "A",
+   "slug": "wordle",
+   "n": 2,
+   "claim": "People look up Wordle",
+   "ref": "2021-10-01",
+   "lag": 150,
+   "country": "US",
+   "chain_verdict": "measured",
+   "wikipedia": {
+    "source": "chain_check_v1.json (step test)",
+    "articles": [
+     "Wordle"
+    ],
+    "verdict": "measured",
+    "onset": "2022-01-21",
+    "ratio": 49881.1,
+    "p": 0.007,
+    "n_placebo": 140,
+    "new_article": null
+   },
+   "q": {
+    "doc": "\"wordle\" (puzzle OR game OR guess)",
+    "mc": "wordle AND (puzzle OR game OR guess)",
+    "tv": "\"wordle\""
+   }
+  },
+  {
+   "id": "A:chernobyl-zone:2",
+   "set": "A",
+   "slug": "chernobyl-zone",
+   "n": 2,
+   "claim": "Interest in the real disaster surges",
+   "ref": "2019-05-06",
+   "lag": 60,
+   "country": "US",
+   "chain_verdict": "measured",
+   "wikipedia": {
+    "source": "chain_check_v1.json (step test)",
+    "articles": [
+     "Chernobyl disaster"
+    ],
+    "verdict": "measured",
+    "onset": "2019-05-08",
+    "ratio": 48.0,
+    "p": 0.013,
+    "n_placebo": 77,
+    "new_article": null
+   },
+   "q": {
+    "doc": "\"Chernobyl disaster\"",
+    "mc": "\"Chernobyl disaster\"",
+    "tv": "\"chernobyl\""
+   }
+  },
+  {
+   "id": "A:mr-bates-horizon:2",
+   "set": "A",
+   "slug": "mr-bates-horizon",
+   "n": 2,
+   "claim": "Attention to the Horizon scandal surges",
+   "ref": "2024-01-01",
+   "lag": 30,
+   "country": "UK",
+   "chain_verdict": "measured",
+   "wikipedia": {
+    "source": "chain_check_v1.json (step test)",
+    "articles": [
+     "British Post Office scandal"
+    ],
+    "verdict": "measured",
+    "onset": "2024-01-02",
+    "ratio": 370.1,
+    "p": 0.023,
+    "n_placebo": 43,
+    "new_article": null
+   },
+   "q": {
+    "doc": "(\"Post Office scandal\" OR \"Horizon scandal\")",
+    "mc": "\"Post Office scandal\" OR \"Horizon scandal\"",
+    "tv": "(\"post office scandal\" OR \"horizon scandal\")"
+   }
+  },
+  {
+   "id": "A:mr-bates-horizon:9",
+   "set": "A",
+   "slug": "mr-bates-horizon",
+   "n": 9,
+   "claim": "Attention to Paula Vennells surges",
+   "ref": "2024-01-01",
+   "lag": 30,
+   "country": "UK",
+   "chain_verdict": "measured",
+   "wikipedia": {
+    "source": "chain_check_v1.json (step test)",
+    "articles": [
+     "Paula Vennells"
+    ],
+    "verdict": "measured",
+    "onset": "2024-01-03",
+    "ratio": 1879.0,
+    "p": 0.006,
+    "n_placebo": 175,
+    "new_article": null
+   },
+   "q": {
+    "doc": "\"Paula Vennells\"",
+    "mc": "\"Paula Vennells\"",
+    "tv": "\"paula vennells\""
+   }
+  },
+  {
+   "id": "A:daily-show-zadroga:5",
+   "set": "A",
+   "slug": "daily-show-zadroga",
+   "n": 5,
+   "claim": "Attention to the Act surges",
+   "ref": "2019-06-11",
+   "lag": 30,
+   "country": "US",
+   "chain_verdict": "measured",
+   "wikipedia": {
+    "source": "chain_check_v1.json (step test)",
+    "articles": [
+     "James Zadroga 9/11 Health and Compensation Act"
+    ],
+    "verdict": "measured",
+    "onset": "2019-06-11",
+    "ratio": 48.7,
+    "p": 0.012,
+    "n_placebo": 80,
+    "new_article": null
+   },
+   "q": {
+    "doc": "\"Zadroga\"",
+    "mc": "Zadroga",
+    "tv": "\"zadroga\""
+   }
+  },
+  {
+   "id": "A:ocean-attenborough:2",
+   "set": "A",
+   "slug": "ocean-attenborough",
+   "n": 2,
+   "claim": "Attention to bottom trawling rises",
+   "ref": "2025-05-08",
+   "lag": 45,
+   "country": "UK",
+   "chain_verdict": "measured",
+   "wikipedia": {
+    "source": "chain_check_v1.json (step test)",
+    "articles": [
+     "Bottom trawling"
+    ],
+    "verdict": "measured",
+    "onset": "2025-05-10",
+    "ratio": 4.6,
+    "p": 0.004,
+    "n_placebo": 234,
+    "new_article": null
+   },
+   "q": {
+    "doc": "\"bottom trawling\"",
+    "mc": "\"bottom trawling\"",
+    "tv": "\"bottom trawling\""
+   }
+  },
+  {
+   "id": "A:america-and-alcohol:25",
+   "set": "A",
+   "slug": "america-and-alcohol",
+   "n": 25,
+   "claim": "Attention to alcohol and cancer surges after the Surgeon General's advisory",
+   "ref": "2025-01-03",
+   "lag": 45,
+   "country": "US",
+   "chain_verdict": "measured",
+   "wikipedia": {
+    "source": "chain_check_v1.json (step test)",
+    "articles": [
+     "Alcohol and cancer"
+    ],
+    "verdict": "measured",
+    "onset": "2025-01-03",
+    "ratio": 4.2,
+    "p": 0.035,
+    "n_placebo": 225,
+    "new_article": null
+   },
+   "q": {
+    "doc": "\"alcohol and cancer\"",
+    "mc": "\"alcohol and cancer\"",
+    "tv": "\"alcohol and cancer\""
+   }
+  },
+  {
+   "id": "A:jwst:2",
+   "set": "A",
+   "slug": "jwst",
+   "n": 2,
+   "claim": "Public interest in astronomy spikes",
+   "ref": "2022-07-11",
+   "lag": 60,
+   "country": "US",
+   "chain_verdict": "measured",
+   "wikipedia": {
+    "source": "chain_check_v1.json (step test)",
+    "articles": [
+     "Astronomy",
+     "Galaxy",
+     "Universe"
+    ],
+    "verdict": "measured",
+    "onset": "2022-07-12",
+    "ratio": 2.4,
+    "p": 0.006,
+    "n_placebo": 160,
+    "new_article": null
+   },
+   "q": {
+    "doc": "(\"astronomy\" OR \"astronomer\" OR \"astronomers\")",
+    "mc": "astronomy OR astronomer OR astronomers",
+    "tv": "(\"astronomy\" OR \"astronomer\" OR \"astronomers\")"
+   }
+  },
+  {
+   "id": "A:gamestop:1",
+   "set": "A",
+   "slug": "gamestop",
+   "n": 1,
+   "claim": "Reddit traders squeeze GameStop",
+   "ref": "2021-01-13",
+   "lag": 60,
+   "country": "US",
+   "chain_verdict": "measured",
+   "wikipedia": {
+    "source": "chain_check_v1.json (step test)",
+    "articles": [
+     "GameStop short squeeze",
+     "GameStop"
+    ],
+    "verdict": "measured",
+    "onset": "2021-01-28",
+    "ratio": 215.0,
+    "p": 0.008,
+    "n_placebo": 121,
+    "new_article": null
+   },
+   "q": {
+    "doc": "\"GameStop\"",
+    "mc": "GameStop",
+    "tv": "\"gamestop\""
+   }
+  },
+  {
+   "id": "A:queens-gambit-2:2",
+   "set": "A",
+   "slug": "queens-gambit-2",
+   "n": 2,
+   "claim": "People look up chess and chess sets",
+   "ref": "2020-10-23",
+   "lag": 60,
+   "country": "US",
+   "chain_verdict": "measured",
+   "wikipedia": {
+    "source": "chain_check_v1.json (step test)",
+    "articles": [
+     "Chess",
+     "Chess set"
+    ],
+    "verdict": "measured",
+    "onset": "2020-10-27",
+    "ratio": 3.9,
+    "p": 0.009,
+    "n_placebo": 116,
+    "new_article": null
+   },
+   "q": {
+    "doc": "\"chess\" (grandmaster OR tournament OR chessboard OR \"chess set\" OR \"chess sets\")",
+    "mc": "chess AND (grandmaster OR tournament OR chessboard OR \"chess set\" OR \"chess sets\")",
+    "tv": "\"chess\""
+   }
+  },
+  {
+   "id": "A:toilet-paper:2",
+   "set": "A",
+   "slug": "toilet-paper",
+   "n": 2,
+   "claim": "People look up bidets",
+   "ref": "2020-03-11",
+   "lag": 60,
+   "country": "US",
+   "chain_verdict": "measured",
+   "wikipedia": {
+    "source": "chain_check_v1.json (step test)",
+    "articles": [
+     "Bidet"
+    ],
+    "verdict": "measured",
+    "onset": "2020-03-13",
+    "ratio": 13.0,
+    "p": 0.01,
+    "n_placebo": 99,
+    "new_article": null
+   },
+   "q": {
+    "doc": "(\"bidet\" OR \"bidets\")",
+    "mc": "bidet OR bidets",
+    "tv": "(\"bidet\" OR \"bidets\")"
+   }
+  },
+  {
+   "id": "A:squid-game-ripples:12",
+   "set": "A",
+   "slug": "squid-game-ripples",
+   "n": 12,
+   "claim": "Interest in ddakji, the paper-tile game, surges",
+   "ref": "2021-09-17",
+   "lag": 60,
+   "country": "US",
+   "chain_verdict": "measured",
+   "wikipedia": {
+    "source": "chain_check_v1.json (step test)",
+    "articles": [
+     "Ddakji"
+    ],
+    "verdict": "measured",
+    "onset": "2021-09-26",
+    "ratio": 6499.7,
+    "p": 0.008,
+    "n_placebo": 125,
+    "new_article": null
+   },
+   "q": {
+    "doc": "(\"ddakji\" OR \"ttakji\")",
+    "mc": "ddakji OR ttakji",
+    "tv": "(\"ddakji\" OR \"ttakji\")"
+   }
+  },
+  {
+   "id": "A:pokemon-go:1",
+   "set": "A",
+   "slug": "pokemon-go",
+   "n": 1,
+   "claim": "Pokémon GO launches",
+   "ref": "2016-07-06",
+   "lag": 60,
+   "country": "US",
+   "chain_verdict": "timed (short history)",
+   "wikipedia": {
+    "source": "chain_check_v1.json (step test)",
+    "articles": [
+     "Pokémon Go"
+    ],
+    "verdict": "timed (short history)",
+    "onset": "2016-07-08",
+    "ratio": 347715.9,
+    "p": null,
+    "n_placebo": 0,
+    "new_article": null
+   },
+   "q": {
+    "doc": "\"Pokemon Go\"",
+    "mc": "\"Pokemon Go\" OR \"Pokémon Go\"",
+    "tv": "\"pokemon go\""
+   }
+  },
+  {
+   "id": "A:barbie:4",
+   "set": "A",
+   "slug": "barbie",
+   "n": 4,
+   "claim": "Fashion pivots to pink ('Barbiecore')",
+   "ref": "2023-07-21",
+   "lag": 180,
+   "country": "US",
+   "chain_verdict": "timed (new article)",
+   "wikipedia": {
+    "source": "chain_check_v1.json (step test)",
+    "articles": [
+     "Barbiecore"
+    ],
+    "verdict": "timed (new article)",
+    "onset": "2023-08-09",
+    "ratio": null,
+    "p": null,
+    "n_placebo": null,
+    "new_article": "2023-08-09"
+   },
+   "q": {
+    "doc": "\"barbiecore\"",
+    "mc": "barbiecore",
+    "tv": "\"barbiecore\""
+   }
+  },
+  {
+   "id": "A:covid-remote:2",
+   "set": "A",
+   "slug": "covid-remote",
+   "n": 2,
+   "claim": "Knowledge workers move to 'Zoom towns'",
+   "ref": "2020-03-13",
+   "lag": 600,
+   "country": "US",
+   "chain_verdict": "timed (new article)",
+   "wikipedia": {
+    "source": "chain_check_v1.json (step test)",
+    "articles": [
+     "Zoom town"
+    ],
+    "verdict": "timed (new article)",
+    "onset": "2021-04-11",
+    "ratio": null,
+    "p": null,
+    "n_placebo": null,
+    "new_article": "2021-04-11"
+   },
+   "q": {
+    "doc": "(\"zoom town\" OR \"zoom towns\" OR \"zoomtown\" OR \"zoomtowns\")",
+    "mc": "\"zoom town\" OR \"zoom towns\" OR zoomtown OR zoomtowns",
+    "tv": "(\"zoom town\" OR \"zoom towns\")"
+   }
+  },
+  {
+   "id": "A:airpods:2",
+   "set": "A",
+   "slug": "airpods",
+   "n": 2,
+   "claim": "Wireless earbuds take off; AirPods dominate",
+   "ref": "2016-09-07",
+   "lag": 150,
+   "country": "US",
+   "chain_verdict": "timed (new article)",
+   "wikipedia": {
+    "source": "chain_check_v1.json (step test)",
+    "articles": [
+     "AirPods",
+     "Wireless headphones"
+    ],
+    "verdict": "timed (new article)",
+    "onset": "2016-09-10",
+    "ratio": null,
+    "p": null,
+    "n_placebo": null,
+    "new_article": "2016-09-10"
+   },
+   "q": {
+    "doc": "\"AirPods\"",
+    "mc": "AirPods",
+    "tv": "(\"airpods\" OR \"air pods\")"
+   }
+  },
+  {
+   "id": "A:tiktok:1",
+   "set": "A",
+   "slug": "tiktok",
+   "n": 1,
+   "claim": "TikTok's For You feed takes off",
+   "ref": "2018-08-02",
+   "lag": 365,
+   "country": "US",
+   "chain_verdict": "timed (new article)",
+   "wikipedia": {
+    "source": "chain_check_v1.json (step test)",
+    "articles": [
+     "TikTok"
+    ],
+    "verdict": "timed (new article)",
+    "onset": "2018-08-25",
+    "ratio": null,
+    "p": null,
+    "n_placebo": null,
+    "new_article": "2018-08-25"
+   },
+   "q": {
+    "doc": "\"TikTok\"",
+    "mc": "TikTok",
+    "tv": "(\"tiktok\" OR \"tik tok\")"
+   }
+  },
+  {
+   "id": "A2:wordle:3",
+   "set": "A2",
+   "slug": "wordle",
+   "n": 3,
+   "claim": "The New York Times buys Wordle",
+   "ref": "2022-01-31",
+   "lag": 45,
+   "country": "US",
+   "chain_verdict": "reported",
+   "wikipedia": {
+    "source": "chain_check_v1.json (attention check)",
+    "articles": [
+     "Wordle"
+    ],
+    "verdict": "attention rose",
+    "onset": "2022-01-21",
+    "ratio": 49881.1,
+    "p": 0.007,
+    "n_placebo": 149
+   },
+   "q": {
+    "doc": "\"wordle\" (puzzle OR game OR guess)",
+    "mc": "wordle AND (puzzle OR game OR guess)",
+    "tv": "\"wordle\""
+   }
+  },
+  {
+   "id": "A2:haber-nitrogen:7",
+   "set": "A2",
+   "slug": "haber-nitrogen",
+   "n": 7,
+   "claim": "World population grows from 1.6 billion to 8 billion",
+   "ref": "2022-11-15",
+   "lag": 45,
+   "country": "US",
+   "chain_verdict": "reported",
+   "wikipedia": {
+    "source": "chain_check_v1.json (attention check)",
+    "articles": [
+     "World population"
+    ],
+    "verdict": "attention rose",
+    "onset": "2022-11-15",
+    "ratio": 9.7,
+    "p": 0.006,
+    "n_placebo": 169
+   },
+   "q": {
+    "doc": "\"world population\"",
+    "mc": "\"world population\"",
+    "tv": "\"world population\""
+   }
+  },
+  {
+   "id": "A2:chernobyl-zone:3",
+   "set": "A2",
+   "slug": "chernobyl-zone",
+   "n": 3,
+   "claim": "Tour operators report bookings up 30–40%",
+   "ref": "2019-06-04",
+   "lag": 45,
+   "country": "US",
+   "chain_verdict": "reported",
+   "wikipedia": {
+    "source": "chain_check_v1.json (attention check)",
+    "articles": [
+     "Chernobyl Exclusion Zone"
+    ],
+    "verdict": "attention rose",
+    "onset": "2019-05-10",
+    "ratio": 28.0,
+    "p": 0.013,
+    "n_placebo": 79
+   },
+   "q": {
+    "doc": "\"exclusion zone\" \"chernobyl\"",
+    "mc": "\"exclusion zone\" AND chernobyl",
+    "tv": "\"exclusion zone\""
+   }
+  },
+  {
+   "id": "A2:mr-bates-horizon:3",
+   "set": "A2",
+   "slug": "mr-bates-horizon",
+   "n": 3,
+   "claim": "A petition to strip Paula Vennells of her CBE passes a million signatures",
+   "ref": "2024-01-08",
+   "lag": 45,
+   "country": "UK",
+   "chain_verdict": "reported",
+   "wikipedia": {
+    "source": "chain_check_v1.json (attention check)",
+    "articles": [
+     "Paula Vennells"
+    ],
+    "verdict": "attention rose",
+    "onset": "2024-01-03",
+    "ratio": 1708.1,
+    "p": 0.006,
+    "n_placebo": 175
+   },
+   "q": {
+    "doc": "\"Paula Vennells\"",
+    "mc": "\"Paula Vennells\"",
+    "tv": "\"paula vennells\""
+   }
+  },
+  {
+   "id": "A2:mr-bates-horizon:4",
+   "set": "A2",
+   "slug": "mr-bates-horizon",
+   "n": 4,
+   "claim": "Vennells hands back her CBE",
+   "ref": "2024-01-09",
+   "lag": 45,
+   "country": "UK",
+   "chain_verdict": "reported",
+   "wikipedia": {
+    "source": "chain_check_v1.json (attention check)",
+    "articles": [
+     "Paula Vennells"
+    ],
+    "verdict": "attention rose",
+    "onset": "2024-01-03",
+    "ratio": 1708.1,
+    "p": 0.006,
+    "n_placebo": 175
+   },
+   "q": {
+    "doc": "\"Paula Vennells\"",
+    "mc": "\"Paula Vennells\"",
+    "tv": "\"paula vennells\""
+   }
+  },
+  {
+   "id": "A2:mr-bates-horizon:5",
+   "set": "A2",
+   "slug": "mr-bates-horizon",
+   "n": 5,
+   "claim": "The Prime Minister announces a law to quash the convictions",
+   "ref": "2024-01-10",
+   "lag": 45,
+   "country": "UK",
+   "chain_verdict": "reported",
+   "wikipedia": {
+    "source": "chain_check_v1.json (attention check)",
+    "articles": [
+     "British Post Office scandal"
+    ],
+    "verdict": "attention rose",
+    "onset": "2024-01-02",
+    "ratio": 353.8,
+    "p": 0.023,
+    "n_placebo": 43
+   },
+   "q": {
+    "doc": "(\"Post Office scandal\" OR \"Horizon scandal\")",
+    "mc": "\"Post Office scandal\" OR \"Horizon scandal\"",
+    "tv": "(\"post office scandal\" OR \"horizon scandal\")"
+   }
+  },
+  {
+   "id": "A2:octopus-sentience:3",
+   "set": "A2",
+   "slug": "octopus-sentience",
+   "n": 3,
+   "claim": "The film wins the Academy Award for Documentary Feature",
+   "ref": "2021-04-25",
+   "lag": 45,
+   "country": "US",
+   "chain_verdict": "reported",
+   "wikipedia": {
+    "source": "chain_check_v1.json (attention check)",
+    "articles": [
+     "My Octopus Teacher"
+    ],
+    "verdict": "rose, no placebo history",
+    "onset": "2021-04-26",
+    "ratio": 12.4,
+    "p": null,
+    "n_placebo": 0
+   },
+   "q": {
+    "doc": "\"My Octopus Teacher\"",
+    "mc": "\"My Octopus Teacher\"",
+    "tv": "\"my octopus teacher\""
+   }
+  },
+  {
+   "id": "A2:ocean-attenborough:3",
+   "set": "A2",
+   "slug": "ocean-attenborough",
+   "n": 3,
+   "claim": "The UK government opens a consultation on banning bottom trawling in 41 marine protected areas",
+   "ref": "2025-06-09",
+   "lag": 45,
+   "country": "UK",
+   "chain_verdict": "reported",
+   "wikipedia": {
+    "source": "chain_check_v1.json (attention check)",
+    "articles": [
+     "Bottom trawling"
+    ],
+    "verdict": "attention rose",
+    "onset": "2025-05-10",
+    "ratio": 4.5,
+    "p": 0.004,
+    "n_placebo": 236
+   },
+   "q": {
+    "doc": "\"bottom trawling\"",
+    "mc": "\"bottom trawling\"",
+    "tv": "\"bottom trawling\""
+   }
+  },
+  {
+   "id": "A2:adolescence-schools:1",
+   "set": "A2",
+   "slug": "adolescence-schools",
+   "n": 1,
+   "claim": "Netflix releases Adolescence",
+   "ref": "2025-03-13",
+   "lag": 45,
+   "country": "UK",
+   "chain_verdict": "reported",
+   "wikipedia": {
+    "source": "chain_check_v1.json (attention check)",
+    "articles": [
+     "Adolescence (TV series)"
+    ],
+    "verdict": "rose, no placebo history",
+    "onset": "2025-03-15",
+    "ratio": 2470.4,
+    "p": null,
+    "n_placebo": 0
+   },
+   "q": {
+    "doc": "\"adolescence\" (Netflix OR series OR drama)",
+    "mc": "adolescence AND (Netflix OR series OR drama)",
+    "tv": "\"adolescence\""
+   }
+  },
+  {
+   "id": "A2:adolescence-schools:3",
+   "set": "A2",
+   "slug": "adolescence-schools",
+   "n": 3,
+   "claim": "MPs cite the series in the Children's Wellbeing and Schools Bill debate",
+   "ref": "2025-03-18",
+   "lag": 45,
+   "country": "UK",
+   "chain_verdict": "reported",
+   "wikipedia": {
+    "source": "chain_check_v1.json (attention check)",
+    "articles": [
+     "Adolescence (TV series)"
+    ],
+    "verdict": "rose, no placebo history",
+    "onset": "2025-03-15",
+    "ratio": 2007.2,
+    "p": null,
+    "n_placebo": 0
+   },
+   "q": {
+    "doc": "\"adolescence\" (Netflix OR series OR drama)",
+    "mc": "adolescence AND (Netflix OR series OR drama)",
+    "tv": "\"adolescence\""
+   }
+  },
+  {
+   "id": "A2:adolescence-schools:4",
+   "set": "A2",
+   "slug": "adolescence-schools",
+   "n": 4,
+   "claim": "The Prime Minister backs showing the series in schools",
+   "ref": "2025-03-31",
+   "lag": 45,
+   "country": "UK",
+   "chain_verdict": "reported",
+   "wikipedia": {
+    "source": "chain_check_v1.json (attention check)",
+    "articles": [
+     "Adolescence (TV series)"
+    ],
+    "verdict": "rose, no placebo history",
+    "onset": "2025-03-15",
+    "ratio": 1356.2,
+    "p": null,
+    "n_placebo": 0
+   },
+   "q": {
+    "doc": "\"adolescence\" (Netflix OR series OR drama)",
+    "mc": "adolescence AND (Netflix OR series OR drama)",
+    "tv": "\"adolescence\""
+   }
+  },
+  {
+   "id": "A2:america-and-alcohol:21",
+   "set": "A2",
+   "slug": "america-and-alcohol",
+   "n": 21,
+   "claim": "The Surgeon General calls for cancer warnings on alcohol",
+   "ref": "2025-01-03",
+   "lag": 45,
+   "country": "US",
+   "chain_verdict": "reported",
+   "wikipedia": {
+    "source": "chain_check_v1.json (attention check)",
+    "articles": [
+     "Alcohol and cancer"
+    ],
+    "verdict": "attention rose",
+    "onset": "2025-01-03",
+    "ratio": 4.2,
+    "p": 0.035,
+    "n_placebo": 225
+   },
+   "q": {
+    "doc": "\"alcohol and cancer\"",
+    "mc": "\"alcohol and cancer\"",
+    "tv": "\"alcohol and cancer\""
+   }
+  },
+  {
+   "id": "A2:three-mile-island-nrc:10",
+   "set": "A2",
+   "slug": "three-mile-island-nrc",
+   "n": 10,
+   "claim": "Constellation agrees to restart Unit 1 to power Microsoft's data centers",
+   "ref": "2024-09-20",
+   "lag": 45,
+   "country": "US",
+   "chain_verdict": "reported",
+   "wikipedia": {
+    "source": "chain_check_v1.json (attention check)",
+    "articles": [
+     "Three Mile Island Nuclear Generating Station"
+    ],
+    "verdict": "attention rose",
+    "onset": "2024-09-20",
+    "ratio": 14.1,
+    "p": 0.032,
+    "n_placebo": 218
+   },
+   "q": {
+    "doc": "\"Three Mile Island\"",
+    "mc": "\"Three Mile Island\"",
+    "tv": "\"three mile island\""
+   }
+  },
+  {
+   "id": "A2:serial:4",
+   "set": "A2",
+   "slug": "serial",
+   "n": 4,
+   "claim": "Renewed legal momentum; conviction vacated",
+   "ref": "2022-09-19",
+   "lag": 45,
+   "country": "US",
+   "chain_verdict": "reported",
+   "wikipedia": {
+    "source": "chain_check_v1.json (attention check)",
+    "articles": [
+     "Adnan Syed"
+    ],
+    "verdict": "attention rose",
+    "onset": "2022-09-19",
+    "ratio": 25.4,
+    "p": 0.006,
+    "n_placebo": 165
+   },
+   "q": {
+    "doc": "\"Adnan Syed\"",
+    "mc": "\"Adnan Syed\"",
+    "tv": "\"adnan syed\""
+   }
+  },
+  {
+   "id": "A2:dobbs:2",
+   "set": "A2",
+   "slug": "dobbs",
+   "n": 2,
+   "claim": "Trigger bans take effect",
+   "ref": "2022-07-28",
+   "lag": 45,
+   "country": "US",
+   "chain_verdict": "not testable",
+   "wikipedia": {
+    "source": "chain_check_v1.json (attention check)",
+    "articles": [
+     "Trigger law"
+    ],
+    "verdict": "attention rose",
+    "onset": "2022-06-28",
+    "ratio": 165.9,
+    "p": 0.006,
+    "n_placebo": 161
+   },
+   "q": {
+    "doc": "(\"trigger law\" OR \"trigger laws\" OR \"trigger ban\" OR \"trigger bans\")",
+    "mc": "\"trigger law\" OR \"trigger laws\" OR \"trigger ban\" OR \"trigger bans\"",
+    "tv": "(\"trigger law\" OR \"trigger laws\" OR \"trigger ban\" OR \"trigger bans\")"
+   }
+  },
+  {
+   "id": "A2:gdpr:1",
+   "set": "A2",
+   "slug": "gdpr",
+   "n": 1,
+   "claim": "GDPR takes effect",
+   "ref": "2018-05-25",
+   "lag": 45,
+   "country": "US",
+   "chain_verdict": "reported",
+   "wikipedia": {
+    "source": "chain_check_v1.json (attention check)",
+    "articles": [
+     "General Data Protection Regulation"
+    ],
+    "verdict": "attention rose",
+    "onset": "2018-05-23",
+    "ratio": 8.9,
+    "p": 0.019,
+    "n_placebo": 53
+   },
+   "q": {
+    "doc": "(\"GDPR\" OR \"General Data Protection Regulation\")",
+    "mc": "GDPR OR \"General Data Protection Regulation\"",
+    "tv": "(\"gdpr\" OR \"general data protection regulation\")"
+   }
+  },
+  {
+   "id": "A2:ice-bucket:4",
+   "set": "A2",
+   "slug": "ice-bucket",
+   "n": 4,
+   "claim": "Project MinE helps identify NEK1",
+   "ref": "2016-07-25",
+   "lag": 45,
+   "country": "US",
+   "chain_verdict": "reported",
+   "wikipedia": {
+    "source": "chain_check_v1.json (attention check)",
+    "articles": [
+     "NEK1"
+    ],
+    "verdict": "rose, no placebo history",
+    "onset": "2016-07-27",
+    "ratio": 870.9,
+    "p": null,
+    "n_placebo": 5
+   },
+   "q": {
+    "doc": "\"NEK1\"",
+    "mc": "NEK1",
+    "tv": "\"nek1\""
+   }
+  },
+  {
+   "id": "A2:queens-gambit-2:1",
+   "set": "A2",
+   "slug": "queens-gambit-2",
+   "n": 1,
+   "claim": "The Queen's Gambit is released in lockdown",
+   "ref": "2020-10-23",
+   "lag": 45,
+   "country": "US",
+   "chain_verdict": "reported",
+   "wikipedia": {
+    "source": "chain_check_v1.json (attention check)",
+    "articles": [
+     "The Queen's Gambit (miniseries)"
+    ],
+    "verdict": "rose, no placebo history",
+    "onset": "2020-10-25",
+    "ratio": 2948.8,
+    "p": null,
+    "n_placebo": 1
+   },
+   "q": {
+    "doc": "\"Queen's Gambit\"",
+    "mc": "\"Queen's Gambit\"",
+    "tv": "\"queen's gambit\""
+   }
+  },
+  {
+   "id": "A2:squid-game-ripples:5",
+   "set": "A2",
+   "slug": "squid-game-ripples",
+   "n": 5,
+   "claim": "SK Broadband sues Netflix over network costs, citing the traffic surge",
+   "ref": "2021-09-30",
+   "lag": 45,
+   "country": "US",
+   "chain_verdict": "reported",
+   "wikipedia": {
+    "source": "chain_check_v1.json (attention check)",
+    "articles": [
+     "SK Broadband"
+    ],
+    "verdict": "attention rose",
+    "onset": "2021-10-02",
+    "ratio": 26.2,
+    "p": 0.007,
+    "n_placebo": 140
+   },
+   "q": {
+    "doc": "\"SK Broadband\"",
+    "mc": "\"SK Broadband\"",
+    "tv": "\"sk broadband\""
+   }
+  },
+  {
+   "id": "A2:squid-game-ripples:11",
+   "set": "A2",
+   "slug": "squid-game-ripples",
+   "n": 11,
+   "claim": "Netflix launches Squid Game: The Challenge",
+   "ref": "2023-11-22",
+   "lag": 45,
+   "country": "US",
+   "chain_verdict": "reported",
+   "wikipedia": {
+    "source": "chain_check_v1.json (attention check)",
+    "articles": [
+     "Squid Game: The Challenge"
+    ],
+    "verdict": "rose, no placebo history",
+    "onset": "2023-11-22",
+    "ratio": 67829.3,
+    "p": null,
+    "n_placebo": 15
+   },
+   "q": {
+    "doc": "\"Squid Game\" challenge",
+    "mc": "\"Squid Game\" AND challenge",
+    "tv": "\"squid game\""
+   }
+  },
+  {
+   "id": "D:frozen:1",
+   "set": "D",
+   "slug": "frozen",
+   "n": 1,
+   "claim": "Frozen is released; Elsa becomes a phenomenon",
+   "ref": "2013-11-27",
+   "lag": 45,
+   "country": "US",
+   "chain_verdict": "reported",
+   "wikipedia": null,
+   "q": {
+    "doc": "\"Frozen\" Disney",
+    "mc": "Frozen AND Disney",
+    "tv": "\"frozen\" disney"
+   }
+  },
+  {
+   "id": "D:sixty-minutes-stock-act:1",
+   "set": "D",
+   "slug": "sixty-minutes-stock-act",
+   "n": 1,
+   "claim": "60 Minutes airs 'Insiders' on members of Congress trading stock",
+   "ref": "2011-11-13",
+   "lag": 45,
+   "country": "US",
+   "chain_verdict": "reported",
+   "wikipedia": null,
+   "q": {
+    "doc": "\"insider trading\" Congress",
+    "mc": "\"insider trading\" AND Congress",
+    "tv": "\"insider trading\" congress"
+   }
+  },
+  {
+   "id": "D:sixty-minutes-stock-act:2",
+   "set": "D",
+   "slug": "sixty-minutes-stock-act",
+   "n": 2,
+   "claim": "Cosponsors of the STOCK Act jump from 9 to more than 100 within weeks",
+   "ref": "2011-12-15",
+   "lag": 45,
+   "country": "US",
+   "chain_verdict": "reported",
+   "wikipedia": null,
+   "q": {
+    "doc": "\"STOCK Act\"",
+    "mc": "\"STOCK Act\"",
+    "tv": "\"stock act\""
+   }
+  },
+  {
+   "id": "D:sixty-minutes-stock-act:3",
+   "set": "D",
+   "slug": "sixty-minutes-stock-act",
+   "n": 3,
+   "claim": "The Senate passes the bill 96–3",
+   "ref": "2012-02-02",
+   "lag": 45,
+   "country": "US",
+   "chain_verdict": "reported",
+   "wikipedia": null,
+   "q": {
+    "doc": "\"STOCK Act\"",
+    "mc": "\"STOCK Act\"",
+    "tv": "\"stock act\""
+   }
+  },
+  {
+   "id": "D:sixty-minutes-stock-act:4",
+   "set": "D",
+   "slug": "sixty-minutes-stock-act",
+   "n": 4,
+   "claim": "The STOCK Act is signed",
+   "ref": "2012-04-04",
+   "lag": 45,
+   "country": "US",
+   "chain_verdict": "reported",
+   "wikipedia": null,
+   "q": {
+    "doc": "\"STOCK Act\"",
+    "mc": "\"STOCK Act\"",
+    "tv": "\"stock act\""
+   }
+  },
+  {
+   "id": "D:sixty-minutes-stock-act:5",
+   "set": "D",
+   "slug": "sixty-minutes-stock-act",
+   "n": 5,
+   "claim": "Members' trades must be disclosed within 45 days",
+   "ref": "2012-07-03",
+   "lag": 45,
+   "country": "US",
+   "chain_verdict": "reported",
+   "wikipedia": null,
+   "q": {
+    "doc": "\"STOCK Act\"",
+    "mc": "\"STOCK Act\"",
+    "tv": "\"stock act\""
+   }
+  },
+  {
+   "id": "D:daily-show-zadroga:1",
+   "set": "D",
+   "slug": "daily-show-zadroga",
+   "n": 1,
+   "claim": "Jon Stewart devotes a full Daily Show to the stalled 9/11 responders' health bill",
+   "ref": "2010-12-16",
+   "lag": 45,
+   "country": "US",
+   "chain_verdict": "reported",
+   "wikipedia": null,
+   "q": {
+    "doc": "\"Zadroga\"",
+    "mc": "Zadroga",
+    "tv": "\"zadroga\""
+   }
+  },
+  {
+   "id": "D:daily-show-zadroga:2",
+   "set": "D",
+   "slug": "daily-show-zadroga",
+   "n": 2,
+   "claim": "The Senate passes the bill by unanimous consent six days later",
+   "ref": "2010-12-22",
+   "lag": 45,
+   "country": "US",
+   "chain_verdict": "reported",
+   "wikipedia": null,
+   "q": {
+    "doc": "\"Zadroga\"",
+    "mc": "Zadroga",
+    "tv": "\"zadroga\""
+   }
+  },
+  {
+   "id": "D:daily-show-zadroga:3",
+   "set": "D",
+   "slug": "daily-show-zadroga",
+   "n": 3,
+   "claim": "The James Zadroga 9/11 Health and Compensation Act is signed",
+   "ref": "2011-01-02",
+   "lag": 45,
+   "country": "US",
+   "chain_verdict": "reported",
+   "wikipedia": null,
+   "q": {
+    "doc": "\"Zadroga\"",
+    "mc": "Zadroga",
+    "tv": "\"zadroga\""
+   }
+  },
+  {
+   "id": "D:america-and-alcohol:13",
+   "set": "D",
+   "slug": "america-and-alcohol",
+   "n": 13,
+   "claim": "Most US teens have a smartphone",
+   "ref": "2015-04-09",
+   "lag": 45,
+   "country": "US",
+   "chain_verdict": "reported",
+   "wikipedia": null,
+   "q": {
+    "doc": "\"smartphone\" teens",
+    "mc": "smartphone AND teens",
+    "tv": "\"smartphone\" teens"
+   }
+  },
+  {
+   "id": "D:america-and-alcohol:15",
+   "set": "D",
+   "slug": "america-and-alcohol",
+   "n": 15,
+   "claim": "Dry January begins as a public campaign",
+   "ref": "2013-01-01",
+   "lag": 45,
+   "country": "US",
+   "chain_verdict": "reported",
+   "wikipedia": null,
+   "q": {
+    "doc": "\"Dry January\"",
+    "mc": "\"Dry January\"",
+    "tv": "\"dry january\""
+   }
+  },
+  {
+   "id": "D:america-and-alcohol:17",
+   "set": "D",
+   "slug": "america-and-alcohol",
+   "n": 17,
+   "claim": "Legal recreational cannabis begins (Colorado)",
+   "ref": "2014-01-01",
+   "lag": 45,
+   "country": "US",
+   "chain_verdict": "reported",
+   "wikipedia": null,
+   "q": {
+    "doc": "\"marijuana\" Colorado",
+    "mc": "marijuana AND Colorado",
+    "tv": "\"marijuana\" colorado"
+   }
+  },
+  {
+   "id": "D:three-mile-island-nrc:8",
+   "set": "D",
+   "slug": "three-mile-island-nrc",
+   "n": 8,
+   "claim": "No new reactor is licensed for 33 years, until the NRC approves Vogtle 3 and 4",
+   "ref": "2012-02-09",
+   "lag": 45,
+   "country": "US",
+   "chain_verdict": "reported",
+   "wikipedia": null,
+   "q": {
+    "doc": "\"Vogtle\"",
+    "mc": "Vogtle",
+    "tv": "\"vogtle\""
+   }
+  },
+  {
+   "id": "D:exxon-valdez-opa90:9",
+   "set": "D",
+   "slug": "exxon-valdez-opa90",
+   "n": 9,
+   "claim": "Single-hull tankers are barred from US waters",
+   "ref": "2015-01-01",
+   "lag": 45,
+   "country": "US",
+   "chain_verdict": "reported",
+   "wikipedia": null,
+   "q": {
+    "doc": "\"single hull\"",
+    "mc": "\"single hull\" OR \"single-hull\"",
+    "tv": "\"single hull\""
+   }
+  },
+  {
+   "id": "D:liebeck-hot-coffee:10",
+   "set": "D",
+   "slug": "liebeck-hot-coffee",
+   "n": 10,
+   "claim": "HBO's Hot Coffee retells the case and the campaign built on it",
+   "ref": "2011-06-27",
+   "lag": 45,
+   "country": "US",
+   "chain_verdict": "reported",
+   "wikipedia": null,
+   "q": {
+    "doc": "\"hot coffee\" lawsuit",
+    "mc": "\"hot coffee\" AND lawsuit",
+    "tv": "\"hot coffee\" lawsuit"
+   }
+  },
+  {
+   "id": "D:columbine-active-shooter:9",
+   "set": "D",
+   "slug": "columbine-active-shooter",
+   "n": 9,
+   "claim": "Colorado's Claire Davis School Safety Act lets families sue schools that fail to take reasonable care against violence",
+   "ref": "2015-06-03",
+   "lag": 45,
+   "country": "US",
+   "chain_verdict": "reported",
+   "wikipedia": null,
+   "q": {
+    "doc": "\"Claire Davis\"",
+    "mc": "\"Claire Davis\"",
+    "tv": "\"claire davis\""
+   }
+  },
+  {
+   "id": "D:flint-lead-pipes:1",
+   "set": "D",
+   "slug": "flint-lead-pipes",
+   "n": 1,
+   "claim": "Flint switches its drinking water to the Flint River",
+   "ref": "2014-04-25",
+   "lag": 45,
+   "country": "US",
+   "chain_verdict": "reported",
+   "wikipedia": null,
+   "q": {
+    "doc": "\"Flint\" water",
+    "mc": "Flint AND water",
+    "tv": "\"flint\" water"
+   }
+  },
+  {
+   "id": "D:flint-lead-pipes:2",
+   "set": "D",
+   "slug": "flint-lead-pipes",
+   "n": 2,
+   "claim": "General Motors stops using Flint water at its engine plant because it corrodes parts",
+   "ref": "2014-10-13",
+   "lag": 45,
+   "country": "US",
+   "chain_verdict": "reported",
+   "wikipedia": null,
+   "q": {
+    "doc": "\"Flint\" water",
+    "mc": "Flint AND water",
+    "tv": "\"flint\" water"
+   }
+  },
+  {
+   "id": "D:serial:1",
+   "set": "D",
+   "slug": "serial",
+   "n": 1,
+   "claim": "Serial season 1 launches",
+   "ref": "2014-10-03",
+   "lag": 45,
+   "country": "US",
+   "chain_verdict": "reported",
+   "wikipedia": null,
+   "q": {
+    "doc": "\"Serial\" podcast",
+    "mc": "Serial AND podcast",
+    "tv": "\"serial\" podcast"
+   }
+  },
+  {
+   "id": "D:fukushima:1",
+   "set": "D",
+   "slug": "fukushima",
+   "n": 1,
+   "claim": "Fukushima Daiichi meltdown",
+   "ref": "2011-03-11",
+   "lag": 45,
+   "country": "US",
+   "chain_verdict": "reported",
+   "wikipedia": null,
+   "q": {
+    "doc": "\"Fukushima\"",
+    "mc": "Fukushima",
+    "tv": "\"fukushima\""
+   }
+  },
+  {
+   "id": "D:fukushima:2",
+   "set": "D",
+   "slug": "fukushima",
+   "n": 2,
+   "claim": "Germany decides to phase out nuclear",
+   "ref": "2011-05-30",
+   "lag": 45,
+   "country": "US",
+   "chain_verdict": "reported",
+   "wikipedia": null,
+   "q": {
+    "doc": "\"Germany\" nuclear",
+    "mc": "Germany AND nuclear",
+    "tv": "\"germany\" nuclear"
+   }
+  },
+  {
+   "id": "D:eyjafjallajokull:1",
+   "set": "D",
+   "slug": "eyjafjallajokull",
+   "n": 1,
+   "claim": "Icelandic eruption sends ash over Europe",
+   "ref": "2010-04-14",
+   "lag": 45,
+   "country": "US",
+   "chain_verdict": "reported",
+   "wikipedia": null,
+   "q": {
+    "doc": "\"Iceland\" volcano",
+    "mc": "Iceland AND volcano",
+    "tv": "\"iceland\" volcano"
+   }
+  },
+  {
+   "id": "D:eyjafjallajokull:2",
+   "set": "D",
+   "slug": "eyjafjallajokull",
+   "n": 2,
+   "claim": "European airspace closes",
+   "ref": "2010-04-15",
+   "lag": 45,
+   "country": "US",
+   "chain_verdict": "reported",
+   "wikipedia": null,
+   "q": {
+    "doc": "\"airspace\" ash",
+    "mc": "airspace AND ash",
+    "tv": "\"airspace\" ash"
+   }
+  },
+  {
+   "id": "D:eyjafjallajokull:4",
+   "set": "D",
+   "slug": "eyjafjallajokull",
+   "n": 4,
+   "claim": "Kenyan flower exporters destroy stock",
+   "ref": "2010-04-19",
+   "lag": 45,
+   "country": "US",
+   "chain_verdict": "reported",
+   "wikipedia": null,
+   "q": {
+    "doc": "\"Kenya\" flowers",
+    "mc": "Kenya AND flowers",
+    "tv": "\"kenya\" flowers"
+   }
+  },
+  {
+   "id": "D:thailand-floods:1",
+   "set": "D",
+   "slug": "thailand-floods",
+   "n": 1,
+   "claim": "Floods hit Thailand's industrial estates",
+   "ref": "2011-10-08",
+   "lag": 45,
+   "country": "US",
+   "chain_verdict": "reported",
+   "wikipedia": null,
+   "q": {
+    "doc": "\"Thailand\" (flood OR floods OR flooding)",
+    "mc": "Thailand AND (flood OR floods OR flooding)",
+    "tv": "\"thailand\" (flood OR floods OR flooding)"
+   }
+  },
+  {
+   "id": "D:thailand-floods:2",
+   "set": "D",
+   "slug": "thailand-floods",
+   "n": 2,
+   "claim": "Hard-drive factories halt",
+   "ref": "2011-10-17",
+   "lag": 45,
+   "country": "US",
+   "chain_verdict": "reported",
+   "wikipedia": null,
+   "q": {
+    "doc": "(\"hard drive\" OR \"hard drives\") Thailand",
+    "mc": "(\"hard drive\" OR \"hard drives\") AND Thailand",
+    "tv": "(\"hard drive\" OR \"hard drives\") thailand"
+   }
+  },
+  {
+   "id": "D:ice-bucket:1",
+   "set": "D",
+   "slug": "ice-bucket",
+   "n": 1,
+   "claim": "The Ice Bucket Challenge goes viral",
+   "ref": "2014-07-29",
+   "lag": 45,
+   "country": "US",
+   "chain_verdict": "reported",
+   "wikipedia": null,
+   "q": {
+    "doc": "\"ice bucket\"",
+    "mc": "\"ice bucket\"",
+    "tv": "\"ice bucket\""
+   }
+  },
+  {
+   "id": "D:ice-bucket:2",
+   "set": "D",
+   "slug": "ice-bucket",
+   "n": 2,
+   "claim": "ALS Association raises about $115 million",
+   "ref": "2014-08-29",
+   "lag": 45,
+   "country": "US",
+   "chain_verdict": "reported",
+   "wikipedia": null,
+   "q": {
+    "doc": "\"ALS Association\"",
+    "mc": "\"ALS Association\"",
+    "tv": "\"als association\""
+   }
+  },
+  {
+   "id": "D:ice-bucket:3",
+   "set": "D",
+   "slug": "ice-bucket",
+   "n": 3,
+   "claim": "ALSA funds genetics projects, including Project MinE",
+   "ref": "2014-12-01",
+   "lag": 45,
+   "country": "US",
+   "chain_verdict": "reported",
+   "wikipedia": null,
+   "q": {
+    "doc": "\"ALS Association\"",
+    "mc": "\"ALS Association\"",
+    "tv": "\"als association\""
+   }
+  },
+  {
+   "id": "D:cash-for-clunkers:1",
+   "set": "D",
+   "slug": "cash-for-clunkers",
+   "n": 1,
+   "claim": "CARS rebates begin",
+   "ref": "2009-07-24",
+   "lag": 45,
+   "country": "US",
+   "chain_verdict": "reported",
+   "wikipedia": null,
+   "q": {
+    "doc": "\"cash for clunkers\"",
+    "mc": "\"cash for clunkers\"",
+    "tv": "\"cash for clunkers\""
+   }
+  },
+  {
+   "id": "D:cash-for-clunkers:2",
+   "set": "D",
+   "slug": "cash-for-clunkers",
+   "n": 2,
+   "claim": "About 677,000 trade-ins are destroyed",
+   "ref": "2009-12-01",
+   "lag": 45,
+   "country": "US",
+   "chain_verdict": "reported",
+   "wikipedia": null,
+   "q": {
+    "doc": "\"cash for clunkers\"",
+    "mc": "\"cash for clunkers\"",
+    "tv": "\"cash for clunkers\""
+   }
+  },
+  {
+   "id": "D:the-dress:1",
+   "set": "D",
+   "slug": "the-dress",
+   "n": 1,
+   "claim": "The dress photo goes viral",
+   "ref": "2015-02-26",
+   "lag": 45,
+   "country": "US",
+   "chain_verdict": "reported",
+   "wikipedia": null,
+   "q": {
+    "doc": "\"the dress\" (blue OR gold)",
+    "mc": "\"the dress\" AND (blue OR gold)",
+    "tv": "\"the dress\" (blue OR gold)"
+   }
+  },
+  {
+   "id": "D:the-dress:2",
+   "set": "D",
+   "slug": "the-dress",
+   "n": 2,
+   "claim": "Scientists take notice",
+   "ref": "2015-05-14",
+   "lag": 45,
+   "country": "US",
+   "chain_verdict": "reported",
+   "wikipedia": null,
+   "q": {
+    "doc": "\"the dress\" (blue OR gold)",
+    "mc": "\"the dress\" AND (blue OR gold)",
+    "tv": "\"the dress\" (blue OR gold)"
+   }
+  },
+  {
+   "id": "D:jurassic-park:3",
+   "set": "D",
+   "slug": "jurassic-park",
+   "n": 3,
+   "claim": "Poachers smuggle Mongolian dinosaurs",
+   "ref": "2012-10-01",
+   "lag": 45,
+   "country": "US",
+   "chain_verdict": "reported",
+   "wikipedia": null,
+   "q": {
+    "doc": "\"dinosaur\" Mongolia",
+    "mc": "dinosaur AND Mongolia",
+    "tv": "\"dinosaur\" mongolia"
+   }
+  },
+  {
+   "id": "D:sony-hack:1",
+   "set": "D",
+   "slug": "sony-hack",
+   "n": 1,
+   "claim": "North Korea hacks Sony Pictures",
+   "ref": "2014-12-19",
+   "lag": 45,
+   "country": "US",
+   "chain_verdict": "reported",
+   "wikipedia": null,
+   "q": {
+    "doc": "\"Sony\" (hack OR hackers OR hacking)",
+    "mc": "Sony AND (hack OR hackers OR hacking)",
+    "tv": "\"sony\" (hack OR hackers OR hacking)"
+   }
+  },
+  {
+   "id": "D:sony-hack:2",
+   "set": "D",
+   "slug": "sony-hack",
+   "n": 2,
+   "claim": "Leaked emails show Jennifer Lawrence paid less",
+   "ref": "2014-12-12",
+   "lag": 45,
+   "country": "US",
+   "chain_verdict": "reported, before the step it is said to follow",
+   "wikipedia": null,
+   "q": {
+    "doc": "\"Jennifer Lawrence\" (pay OR paid)",
+    "mc": "\"Jennifer Lawrence\" AND (pay OR paid)",
+    "tv": "\"jennifer lawrence\" (pay OR paid)"
+   }
+  },
+  {
+   "id": "D:planet-earth:3",
+   "set": "D",
+   "slug": "planet-earth",
+   "n": 3,
+   "claim": "Old TVs on dressers crush children",
+   "ref": "2011-11-01",
+   "lag": 45,
+   "country": "US",
+   "chain_verdict": "reported",
+   "wikipedia": null,
+   "q": {
+    "doc": "(\"tip over\" OR \"tip-over\" OR \"tipover\") (furniture OR television OR dresser)",
+    "mc": "(\"tip over\" OR \"tip-over\" OR tipover) AND (furniture OR television OR dresser)",
+    "tv": "(\"tip over\" OR \"tipover\") (furniture OR television OR dresser)"
+   }
+  },
+  {
+   "id": "D:planet-earth:4",
+   "set": "D",
+   "slug": "planet-earth",
+   "n": 4,
+   "claim": "CPSC launches 'Anchor It!'",
+   "ref": "2015-06-01",
+   "lag": 45,
+   "country": "US",
+   "chain_verdict": "reported",
+   "wikipedia": null,
+   "q": {
+    "doc": "\"Anchor It\"",
+    "mc": "\"Anchor It\"",
+    "tv": "\"anchor it\""
+   }
+  },
+  {
+   "id": "D:gangnam-style:1",
+   "set": "D",
+   "slug": "gangnam-style",
+   "n": 1,
+   "claim": "Gangnam Style goes viral",
+   "ref": "2012-12-21",
+   "lag": 45,
+   "country": "US",
+   "chain_verdict": "reported",
+   "wikipedia": null,
+   "q": {
+    "doc": "\"Gangnam\"",
+    "mc": "Gangnam",
+    "tv": "\"gangnam\""
+   }
+  },
+  {
+   "id": "D:gangnam-style:2",
+   "set": "D",
+   "slug": "gangnam-style",
+   "n": 2,
+   "claim": "Views approach 2,147,483,647",
+   "ref": "2014-12-01",
+   "lag": 45,
+   "country": "US",
+   "chain_verdict": "reported",
+   "wikipedia": null,
+   "q": {
+    "doc": "\"Gangnam\"",
+    "mc": "Gangnam",
+    "tv": "\"gangnam\""
+   }
+  },
+  {
+   "id": "D:manhunt-byron:5",
+   "set": "D",
+   "slug": "manhunt-byron",
+   "n": 5,
+   "claim": "The Digital Economy Act 2010 makes video game ratings legally enforceable",
+   "ref": "2010-04-08",
+   "lag": 45,
+   "country": "UK",
+   "chain_verdict": "reported",
+   "wikipedia": null,
+   "q": {
+    "doc": "\"Digital Economy Act\"",
+    "mc": "\"Digital Economy Act\"",
+    "tv": null
+   },
+   "tv_untestable": "UK step before January 2017: the television archive carries BBC News only from Jan 1, 2017, and US cable is not the right audience"
+  },
+  {
+   "id": "D:manhunt-byron:6",
+   "set": "D",
+   "slug": "manhunt-byron",
+   "n": 6,
+   "claim": "PEGI becomes the statutory UK rating system",
+   "ref": "2012-07-30",
+   "lag": 45,
+   "country": "UK",
+   "chain_verdict": "reported",
+   "wikipedia": null,
+   "q": {
+    "doc": "\"PEGI\"",
+    "mc": "PEGI",
+    "tv": null
+   },
+   "tv_untestable": "UK step before January 2017: the television archive carries BBC News only from Jan 1, 2017, and US cable is not the right audience"
+  },
+  {
+   "id": "C:stranger-things-4:Running Up That Hill",
+   "set": "C",
+   "slug": "stranger-things-4",
+   "lead": "Running Up That Hill",
+   "claim": "A 1985 Kate Bush song returns",
+   "ref": "2022-05-27",
+   "lag": 120,
+   "country": "US",
+   "chain_verdict": null,
+   "wikipedia": {
+    "source": "demo/discovered.json (editor trail)",
+    "articles": [
+     "Running Up That Hill"
+    ],
+    "verdict": "unusual",
+    "onset": "2022-05-30",
+    "ratio": 110.4,
+    "p": 0.006
+   },
+   "q": {
+    "doc": "\"Running Up That Hill\"",
+    "mc": "\"Running Up That Hill\"",
+    "tv": "\"running up that hill\""
+   }
+  },
+  {
+   "id": "C:stranger-things-4:Lukiškės Prison",
+   "set": "C",
+   "slug": "stranger-things-4",
+   "lead": "Lukiškės Prison",
+   "claim": "The Vilnius prison used for filming, now an arts venue",
+   "ref": "2022-05-27",
+   "lag": 120,
+   "country": "US",
+   "chain_verdict": null,
+   "wikipedia": {
+    "source": "demo/discovered.json (editor trail)",
+    "articles": [
+     "Lukiškės Prison"
+    ],
+    "verdict": "unusual",
+    "onset": "2022-05-29",
+    "ratio": 40.5,
+    "p": 0.006
+   },
+   "q": {
+    "doc": "(\"Lukiskes\" OR \"Lukiškės\")",
+    "mc": "Lukiskes OR Lukiškės",
+    "tv": "\"lukiskes\""
+   }
+  },
+  {
+   "id": "C:stranger-things-4:Master of Puppets (song)",
+   "set": "C",
+   "slug": "stranger-things-4",
+   "lead": "Master of Puppets (song)",
+   "claim": "Metallica's 1986 track finds a new audience",
+   "ref": "2022-05-27",
+   "lag": 120,
+   "country": "US",
+   "chain_verdict": null,
+   "wikipedia": {
+    "source": "demo/discovered.json (editor trail)",
+    "articles": [
+     "Master of Puppets (song)"
+    ],
+    "verdict": "unusual",
+    "onset": "2022-07-02",
+    "ratio": 30.7,
+    "p": 0.006
+   },
+   "q": {
+    "doc": "\"Master of Puppets\"",
+    "mc": "\"Master of Puppets\"",
+    "tv": "\"master of puppets\""
+   }
+  },
+  {
+   "id": "C:wednesday:Bloody Mary (song)",
+   "set": "C",
+   "slug": "wednesday",
+   "lead": "Bloody Mary (song)",
+   "claim": "A dance trend revives a 2011 Lady Gaga track",
+   "ref": "2022-11-23",
+   "lag": 120,
+   "country": "US",
+   "chain_verdict": null,
+   "wikipedia": {
+    "source": "demo/discovered.json (editor trail)",
+    "articles": [
+     "Bloody Mary (song)"
+    ],
+    "verdict": "unusual",
+    "onset": "2023-01-08",
+    "ratio": 3997.4,
+    "p": 0.006
+   },
+   "q": {
+    "doc": "\"Bloody Mary\" (\"Lady Gaga\" OR Gaga)",
+    "mc": "\"Bloody Mary\" AND Gaga",
+    "tv": null
+   },
+   "tv_untestable": "not run on television: the phrase is common speech or a cocktail name, and a caption clip is too short for the disambiguator"
+  },
+  {
+   "id": "C:wednesday:Cantacuzino Castle",
+   "set": "C",
+   "slug": "wednesday",
+   "lead": "Cantacuzino Castle",
+   "claim": "The Romanian castle that played Nevermore Academy",
+   "ref": "2022-11-23",
+   "lag": 120,
+   "country": "US",
+   "chain_verdict": null,
+   "wikipedia": {
+    "source": "demo/discovered.json (editor trail)",
+    "articles": [
+     "Cantacuzino Castle"
+    ],
+    "verdict": "unusual",
+    "onset": "2022-11-27",
+    "ratio": 92.2,
+    "p": 0.006
+   },
+   "q": {
+    "doc": "\"Cantacuzino\"",
+    "mc": "Cantacuzino",
+    "tv": "\"cantacuzino\""
+   }
+  },
+  {
+   "id": "C:saltburn:Murder on the Dancefloor",
+   "set": "C",
+   "slug": "saltburn",
+   "lead": "Murder on the Dancefloor",
+   "claim": "Sophie Ellis-Bextor's 2001 hit returns",
+   "ref": "2023-11-17",
+   "lag": 120,
+   "country": "UK",
+   "chain_verdict": null,
+   "wikipedia": {
+    "source": "demo/discovered.json (editor trail)",
+    "articles": [
+     "Murder on the Dancefloor"
+    ],
+    "verdict": "unusual",
+    "onset": "2023-11-25",
+    "ratio": 82.9,
+    "p": 0.005
+   },
+   "q": {
+    "doc": "\"Murder on the Dancefloor\"",
+    "mc": "\"Murder on the Dancefloor\"",
+    "tv": "\"murder on the dancefloor\""
+   }
+  },
+  {
+   "id": "C:squid-game:Ddakji",
+   "set": "C",
+   "slug": "squid-game",
+   "lead": "Ddakji",
+   "claim": "The show's playground games become a craze",
+   "ref": "2021-09-17",
+   "lag": 120,
+   "country": "US",
+   "chain_verdict": null,
+   "wikipedia": {
+    "source": "demo/discovered.json (editor trail)",
+    "articles": [
+     "Ddakji"
+    ],
+    "verdict": "unusual",
+    "onset": "2021-09-26",
+    "ratio": 6499.7,
+    "p": 0.008
+   },
+   "q": {
+    "doc": "(\"ddakji\" OR \"ttakji\")",
+    "mc": "ddakji OR ttakji",
+    "tv": "(\"ddakji\" OR \"ttakji\")"
+   }
+  },
+  {
+   "id": "C:squid-game:SK Broadband",
+   "set": "C",
+   "slug": "squid-game",
+   "lead": "SK Broadband",
+   "claim": "Korea's internet provider and Netflix's traffic",
+   "ref": "2021-09-17",
+   "lag": 120,
+   "country": "US",
+   "chain_verdict": null,
+   "wikipedia": {
+    "source": "demo/discovered.json (editor trail)",
+    "articles": [
+     "SK Broadband"
+    ],
+    "verdict": "unusual",
+    "onset": "2021-10-02",
+    "ratio": 24.9,
+    "p": 0.007
+   },
+   "q": {
+    "doc": "\"SK Broadband\"",
+    "mc": "\"SK Broadband\"",
+    "tv": "\"sk broadband\""
+   }
+  },
+  {
+   "id": "C:the-bear:Italian beef",
+   "set": "C",
+   "slug": "the-bear",
+   "lead": "Italian beef",
+   "claim": "Chicago's Italian beef sandwich in the spotlight",
+   "ref": "2022-06-23",
+   "lag": 120,
+   "country": "US",
+   "chain_verdict": null,
+   "wikipedia": {
+    "source": "demo/discovered.json (editor trail)",
+    "articles": [
+     "Italian beef"
+    ],
+    "verdict": "unusual",
+    "onset": "2022-06-26",
+    "ratio": 4.9,
+    "p": 0.006
+   },
+   "q": {
+    "doc": "\"Italian beef\"",
+    "mc": "\"Italian beef\"",
+    "tv": "\"italian beef\""
+   }
+  },
+  {
+   "id": "C:bridgerton:Ranger's House",
+   "set": "C",
+   "slug": "bridgerton",
+   "lead": "Ranger's House",
+   "claim": "A Greenwich house that played the Featheringtons' home",
+   "ref": "2020-12-25",
+   "lag": 120,
+   "country": "UK",
+   "chain_verdict": null,
+   "wikipedia": {
+    "source": "demo/discovered.json (editor trail)",
+    "articles": [
+     "Ranger's House"
+    ],
+    "verdict": "unusual",
+    "onset": "2021-01-02",
+    "ratio": 38.2,
+    "p": 0.008
+   },
+   "q": {
+    "doc": "\"Ranger's House\"",
+    "mc": "\"Ranger's House\"",
+    "tv": "\"ranger's house\""
+   }
+  },
+  {
+   "id": "C:queens-gambit:The Steps of the Sun",
+   "set": "C",
+   "slug": "queens-gambit",
+   "lead": "The Steps of the Sun",
+   "claim": "Readers turn to Walter Tevis's other novels",
+   "ref": "2020-10-23",
+   "lag": 120,
+   "country": "US",
+   "chain_verdict": null,
+   "wikipedia": {
+    "source": "demo/discovered.json (editor trail)",
+    "articles": [
+     "The Steps of the Sun"
+    ],
+    "verdict": "unusual",
+    "onset": "2020-10-25",
+    "ratio": 52.4,
+    "p": 0.008
+   },
+   "q": {
+    "doc": "\"The Steps of the Sun\"",
+    "mc": "\"The Steps of the Sun\"",
+    "tv": "\"steps of the sun\""
+   }
+  },
+  {
+   "id": "C:chernobyl:Voices from Chernobyl",
+   "set": "C",
+   "slug": "chernobyl",
+   "lead": "Voices from Chernobyl",
+   "claim": "The oral history behind the series",
+   "ref": "2019-05-06",
+   "lag": 120,
+   "country": "US",
+   "chain_verdict": null,
+   "wikipedia": {
+    "source": "demo/discovered.json (editor trail)",
+    "articles": [
+     "Voices from Chernobyl"
+    ],
+    "verdict": "unusual",
+    "onset": "2019-05-29",
+    "ratio": 123.3,
+    "p": 0.012
+   },
+   "q": {
+    "doc": "\"Voices from Chernobyl\"",
+    "mc": "\"Voices from Chernobyl\"",
+    "tv": "\"voices from chernobyl\""
+   }
+  },
+  {
+   "id": "C:chernobyl:Ignalina Nuclear Power Plant",
+   "set": "C",
+   "slug": "chernobyl",
+   "lead": "Ignalina Nuclear Power Plant",
+   "claim": "The Lithuanian plant that stood in for Chernobyl",
+   "ref": "2019-05-06",
+   "lag": 120,
+   "country": "US",
+   "chain_verdict": null,
+   "wikipedia": {
+    "source": "demo/discovered.json (editor trail)",
+    "articles": [
+     "Ignalina Nuclear Power Plant"
+    ],
+    "verdict": "unusual",
+    "onset": "2019-05-09",
+    "ratio": 58.4,
+    "p": 0.012
+   },
+   "q": {
+    "doc": "\"Ignalina\"",
+    "mc": "Ignalina",
+    "tv": "\"ignalina\""
+   }
+  },
+  {
+   "id": "C:chernobyl:Chernobyl Children International",
+   "set": "C",
+   "slug": "chernobyl",
+   "lead": "Chernobyl Children International",
+   "claim": "A Chernobyl children's charity draws attention",
+   "ref": "2019-05-06",
+   "lag": 120,
+   "country": "US",
+   "chain_verdict": null,
+   "wikipedia": {
+    "source": "demo/discovered.json (editor trail)",
+    "articles": [
+     "Chernobyl Children International"
+    ],
+    "verdict": "unusual",
+    "onset": "2019-05-09",
+    "ratio": 14.2,
+    "p": 0.012
+   },
+   "q": {
+    "doc": "\"Chernobyl Children International\"",
+    "mc": "\"Chernobyl Children International\"",
+    "tv": "\"chernobyl children\""
+   }
+  },
+  {
+   "id": "C:tiger-king:Greater Wynnewood Exotic Animal Park",
+   "set": "C",
+   "slug": "tiger-king",
+   "lead": "Greater Wynnewood Exotic Animal Park",
+   "claim": "The zoo at the center of the show",
+   "ref": "2020-03-20",
+   "lag": 120,
+   "country": "US",
+   "chain_verdict": null,
+   "wikipedia": {
+    "source": "demo/discovered.json (editor trail)",
+    "articles": [
+     "Greater Wynnewood Exotic Animal Park"
+    ],
+    "verdict": "unusual",
+    "onset": "2020-03-23",
+    "ratio": 1280.0,
+    "p": 0.013
+   },
+   "q": {
+    "doc": "(\"Greater Wynnewood\" OR \"G.W. Zoo\" OR \"GW Zoo\")",
+    "mc": "\"Greater Wynnewood\" OR \"G.W. Zoo\" OR \"GW Zoo\"",
+    "tv": "(\"wynnewood\" OR \"g.w. zoo\")"
+   }
+  },
+  {
+   "id": "C:tiger-king:Big Cat Rescue",
+   "set": "C",
+   "slug": "tiger-king",
+   "lead": "Big Cat Rescue",
+   "claim": "Carole Baskin's sanctuary in the spotlight",
+   "ref": "2020-03-20",
+   "lag": 120,
+   "country": "US",
+   "chain_verdict": null,
+   "wikipedia": {
+    "source": "demo/discovered.json (editor trail)",
+    "articles": [
+     "Big Cat Rescue"
+    ],
+    "verdict": "unusual",
+    "onset": "2020-03-24",
+    "ratio": 739.0,
+    "p": 0.01
+   },
+   "q": {
+    "doc": "\"Big Cat Rescue\"",
+    "mc": "\"Big Cat Rescue\"",
+    "tv": "\"big cat rescue\""
+   }
+  },
+  {
+   "id": "C:the-last-of-us:Long Long Time",
+   "set": "C",
+   "slug": "the-last-of-us",
+   "lead": "Long Long Time",
+   "claim": "Episode 3 revives a 1970 Linda Ronstadt song",
+   "ref": "2023-01-15",
+   "lag": 120,
+   "country": "US",
+   "chain_verdict": null,
+   "wikipedia": {
+    "source": "demo/discovered.json (editor trail)",
+    "articles": [
+     "Long Long Time"
+    ],
+    "verdict": "unusual",
+    "onset": "2023-02-01",
+    "ratio": 36.9,
+    "p": 0.006
+   },
+   "q": {
+    "doc": "\"Long Long Time\" Ronstadt",
+    "mc": "\"Long Long Time\" AND Ronstadt",
+    "tv": null
+   },
+   "tv_untestable": "not run on television: the phrase is common speech or a cocktail name, and a caption clip is too short for the disambiguator"
+  },
+  {
+   "id": "C:shogun:Gai-Jin",
+   "set": "C",
+   "slug": "shogun",
+   "lead": "Gai-Jin",
+   "claim": "Readers turn to James Clavell's other novels",
+   "ref": "2024-02-27",
+   "lag": 120,
+   "country": "US",
+   "chain_verdict": null,
+   "wikipedia": {
+    "source": "demo/discovered.json (editor trail)",
+    "articles": [
+     "Gai-Jin"
+    ],
+    "verdict": "unusual",
+    "onset": "2024-02-28",
+    "ratio": 20.7,
+    "p": 0.005
+   },
+   "q": {
+    "doc": "\"Gai-Jin\" Clavell",
+    "mc": "\"Gai-Jin\" AND Clavell",
+    "tv": "\"gai-jin\""
+   }
+  },
+  {
+   "id": "E:big cat",
+   "set": "E",
+   "entity": "big cat",
+   "group": "recall",
+   "country": "US",
+   "wiki_article": "Big cat",
+   "q": {
+    "doc": "(\"big cat\" OR \"big cats\")",
+    "mc": "\"big cat\" OR \"big cats\"",
+    "tv": "(\"big cat\" OR \"big cats\")"
+   }
+  },
+  {
+   "id": "E:exotic pet",
+   "set": "E",
+   "entity": "exotic pet",
+   "group": "recall",
+   "country": "US",
+   "wiki_article": "Exotic pet",
+   "q": {
+    "doc": "(\"exotic pet\" OR \"exotic pets\")",
+    "mc": "\"exotic pet\" OR \"exotic pets\"",
+    "tv": "(\"exotic pet\" OR \"exotic pets\")"
+   }
+  },
+  {
+   "id": "E:Big Cat Rescue",
+   "set": "E",
+   "entity": "Big Cat Rescue",
+   "group": "recall",
+   "country": "US",
+   "wiki_article": "Big Cat Rescue",
+   "q": {
+    "doc": "\"Big Cat Rescue\"",
+    "mc": "\"Big Cat Rescue\"",
+    "tv": "\"big cat rescue\""
+   }
+  },
+  {
+   "id": "E:bidet",
+   "set": "E",
+   "entity": "bidet",
+   "group": "recall",
+   "country": "US",
+   "wiki_article": "Bidet",
+   "q": {
+    "doc": "(\"bidet\" OR \"bidets\")",
+    "mc": "bidet OR bidets",
+    "tv": "(\"bidet\" OR \"bidets\")"
+   }
+  },
+  {
+   "id": "E:chess",
+   "set": "E",
+   "entity": "chess",
+   "group": "recall",
+   "country": "US",
+   "wiki_article": "Chess",
+   "q": {
+    "doc": "\"chess\" (grandmaster OR tournament OR chessboard OR \"chess set\" OR \"chess sets\")",
+    "mc": "chess AND (grandmaster OR tournament OR chessboard OR \"chess set\" OR \"chess sets\")",
+    "tv": "\"chess\""
+   }
+  },
+  {
+   "id": "E:ddakji",
+   "set": "E",
+   "entity": "ddakji",
+   "group": "recall",
+   "country": "US",
+   "wiki_article": "Ddakji",
+   "q": {
+    "doc": "(\"ddakji\" OR \"ttakji\")",
+    "mc": "ddakji OR ttakji",
+    "tv": "(\"ddakji\" OR \"ttakji\")"
+   }
+  },
+  {
+   "id": "E:bottom trawling",
+   "set": "E",
+   "entity": "bottom trawling",
+   "group": "recall",
+   "country": "US",
+   "wiki_article": "Bottom trawling",
+   "q": {
+    "doc": "\"bottom trawling\"",
+    "mc": "\"bottom trawling\"",
+    "tv": "\"bottom trawling\""
+   }
+  },
+  {
+   "id": "E:Running Up That Hill",
+   "set": "E",
+   "entity": "Running Up That Hill",
+   "group": "recall",
+   "country": "US",
+   "wiki_article": "Running Up That Hill",
+   "q": {
+    "doc": "\"Running Up That Hill\"",
+    "mc": "\"Running Up That Hill\"",
+    "tv": "\"running up that hill\""
+   }
+  },
+  {
+   "id": "E:Master of Puppets",
+   "set": "E",
+   "entity": "Master of Puppets",
+   "group": "recall",
+   "country": "US",
+   "wiki_article": "Master of Puppets (song)",
+   "q": {
+    "doc": "\"Master of Puppets\"",
+    "mc": "\"Master of Puppets\"",
+    "tv": "\"master of puppets\""
+   }
+  },
+  {
+   "id": "E:Murder on the Dancefloor",
+   "set": "E",
+   "entity": "Murder on the Dancefloor",
+   "group": "recall",
+   "country": "US",
+   "wiki_article": "Murder on the Dancefloor",
+   "q": {
+    "doc": "\"Murder on the Dancefloor\"",
+    "mc": "\"Murder on the Dancefloor\"",
+    "tv": "\"murder on the dancefloor\""
+   }
+  },
+  {
+   "id": "E:Italian beef",
+   "set": "E",
+   "entity": "Italian beef",
+   "group": "recall",
+   "country": "US",
+   "wiki_article": "Italian beef",
+   "q": {
+    "doc": "\"Italian beef\"",
+    "mc": "\"Italian beef\"",
+    "tv": "\"italian beef\""
+   }
+  },
+  {
+   "id": "E:Paula Vennells",
+   "set": "E",
+   "entity": "Paula Vennells",
+   "group": "recall",
+   "country": "US",
+   "wiki_article": "Paula Vennells",
+   "q": {
+    "doc": "\"Paula Vennells\"",
+    "mc": "\"Paula Vennells\"",
+    "tv": "\"paula vennells\""
+   }
+  },
+  {
+   "id": "E:Post Office scandal",
+   "set": "E",
+   "entity": "Post Office scandal",
+   "group": "recall",
+   "country": "US",
+   "wiki_article": "British Post Office scandal",
+   "q": {
+    "doc": "(\"Post Office scandal\" OR \"Horizon scandal\")",
+    "mc": "\"Post Office scandal\" OR \"Horizon scandal\"",
+    "tv": "(\"post office scandal\" OR \"horizon scandal\")"
+   }
+  },
+  {
+   "id": "E:Zadroga",
+   "set": "E",
+   "entity": "Zadroga",
+   "group": "recall",
+   "country": "US",
+   "wiki_article": "James Zadroga 9/11 Health and Compensation Act",
+   "q": {
+    "doc": "\"Zadroga\"",
+    "mc": "Zadroga",
+    "tv": "\"zadroga\""
+   }
+  },
+  {
+   "id": "E:Chernobyl disaster",
+   "set": "E",
+   "entity": "Chernobyl disaster",
+   "group": "recall",
+   "country": "US",
+   "wiki_article": "Chernobyl disaster",
+   "q": {
+    "doc": "\"Chernobyl disaster\"",
+    "mc": "\"Chernobyl disaster\"",
+    "tv": "\"chernobyl\""
+   }
+  },
+  {
+   "id": "E:astronomy",
+   "set": "E",
+   "entity": "astronomy",
+   "group": "recall",
+   "country": "US",
+   "wiki_article": "Astronomy",
+   "q": {
+    "doc": "(\"astronomy\" OR \"astronomers\")",
+    "mc": "astronomy OR astronomers",
+    "tv": "(\"astronomy\" OR \"astronomers\")"
+   }
+  },
+  {
+   "id": "E:trigger law",
+   "set": "E",
+   "entity": "trigger law",
+   "group": "recall",
+   "country": "US",
+   "wiki_article": "Trigger law",
+   "q": {
+    "doc": "(\"trigger law\" OR \"trigger laws\")",
+    "mc": "\"trigger law\" OR \"trigger laws\"",
+    "tv": "(\"trigger law\" OR \"trigger laws\")"
+   }
+  },
+  {
+   "id": "E:Adnan Syed",
+   "set": "E",
+   "entity": "Adnan Syed",
+   "group": "recall",
+   "country": "US",
+   "wiki_article": "Adnan Syed",
+   "q": {
+    "doc": "\"Adnan Syed\"",
+    "mc": "\"Adnan Syed\"",
+    "tv": "\"adnan syed\""
+   }
+  },
+  {
+   "id": "E:Three Mile Island",
+   "set": "E",
+   "entity": "Three Mile Island",
+   "group": "recall",
+   "country": "US",
+   "wiki_article": "Three Mile Island Nuclear Generating Station",
+   "q": {
+    "doc": "\"Three Mile Island\"",
+    "mc": "\"Three Mile Island\"",
+    "tv": "\"three mile island\""
+   }
+  },
+  {
+   "id": "E:alcohol and cancer",
+   "set": "E",
+   "entity": "alcohol and cancer",
+   "group": "recall",
+   "country": "US",
+   "wiki_article": "Alcohol and cancer",
+   "q": {
+    "doc": "\"alcohol and cancer\"",
+    "mc": "\"alcohol and cancer\"",
+    "tv": "\"alcohol and cancer\""
+   }
+  },
+  {
+   "id": "E:Dry January",
+   "set": "E",
+   "entity": "Dry January",
+   "group": "recall",
+   "country": "US",
+   "wiki_article": "Dry January",
+   "q": {
+    "doc": "\"Dry January\"",
+    "mc": "\"Dry January\"",
+    "tv": "\"dry january\""
+   }
+  },
+  {
+   "id": "E:sober curious",
+   "set": "E",
+   "entity": "sober curious",
+   "group": "recall",
+   "country": "US",
+   "wiki_article": "Sober curious",
+   "q": {
+    "doc": "\"sober curious\"",
+    "mc": "\"sober curious\"",
+    "tv": "\"sober curious\""
+   }
+  },
+  {
+   "id": "E:Pinot Noir",
+   "set": "E",
+   "entity": "Pinot Noir",
+   "group": "recall",
+   "country": "US",
+   "wiki_article": "Pinot noir",
+   "q": {
+    "doc": "\"Pinot Noir\"",
+    "mc": "\"Pinot Noir\"",
+    "tv": "\"pinot noir\""
+   }
+  },
+  {
+   "id": "E:Wordle",
+   "set": "E",
+   "entity": "Wordle",
+   "group": "recall",
+   "country": "US",
+   "wiki_article": "Wordle",
+   "q": {
+    "doc": "\"wordle\" (puzzle OR game OR guess)",
+    "mc": "wordle AND (puzzle OR game OR guess)",
+    "tv": "\"wordle\""
+   }
+  },
+  {
+   "id": "E:sourdough",
+   "set": "E",
+   "entity": "sourdough",
+   "group": "behavior",
+   "country": "US",
+   "wiki_article": "Sourdough",
+   "q": {
+    "doc": "\"sourdough\"",
+    "mc": "sourdough",
+    "tv": "\"sourdough\""
+   }
+  },
+  {
+   "id": "E:cranberry juice",
+   "set": "E",
+   "entity": "cranberry juice",
+   "group": "behavior",
+   "country": "US",
+   "wiki_article": "Cranberry juice",
+   "q": {
+    "doc": "\"cranberry juice\"",
+    "mc": "\"cranberry juice\"",
+    "tv": "\"cranberry juice\""
+   }
+  },
+  {
+   "id": "E:Dalgona coffee",
+   "set": "E",
+   "entity": "Dalgona coffee",
+   "group": "behavior",
+   "country": "US",
+   "wiki_article": "Dalgona coffee",
+   "q": {
+    "doc": "\"dalgona\"",
+    "mc": "dalgona",
+    "tv": "\"dalgona\""
+   }
+  },
+  {
+   "id": "E:Negroni Sbagliato",
+   "set": "E",
+   "entity": "Negroni Sbagliato",
+   "group": "behavior",
+   "country": "US",
+   "wiki_article": "Negroni",
+   "q": {
+    "doc": "\"Negroni Sbagliato\"",
+    "mc": "\"Negroni Sbagliato\"",
+    "tv": "\"negroni sbagliato\""
+   }
+  },
+  {
+   "id": "E:espresso martini",
+   "set": "E",
+   "entity": "espresso martini",
+   "group": "behavior",
+   "country": "US",
+   "wiki_article": "Espresso martini",
+   "q": {
+    "doc": "\"espresso martini\"",
+    "mc": "\"espresso martini\"",
+    "tv": "\"espresso martini\""
+   }
+  },
+  {
+   "id": "E:Aperol",
+   "set": "E",
+   "entity": "Aperol",
+   "group": "behavior",
+   "country": "US",
+   "wiki_article": "Aperol",
+   "q": {
+    "doc": "\"Aperol\"",
+    "mc": "Aperol",
+    "tv": "\"aperol\""
+   }
+  },
+  {
+   "id": "E:oat milk",
+   "set": "E",
+   "entity": "oat milk",
+   "group": "behavior",
+   "country": "US",
+   "wiki_article": "Oat milk",
+   "q": {
+    "doc": "\"oat milk\"",
+    "mc": "\"oat milk\"",
+    "tv": "\"oat milk\""
+   }
+  },
+  {
+   "id": "E:Stanley tumbler",
+   "set": "E",
+   "entity": "Stanley tumbler",
+   "group": "behavior",
+   "country": "US",
+   "wiki_article": "Stanley (drinkware)",
+   "q": {
+    "doc": "(\"Stanley tumbler\" OR \"Stanley tumblers\" OR \"Stanley Quencher\")",
+    "mc": "\"Stanley tumbler\" OR \"Stanley tumblers\" OR \"Stanley Quencher\"",
+    "tv": "(\"stanley tumbler\" OR \"stanley quencher\")"
+   }
+  },
+  {
+   "id": "E:birria",
+   "set": "E",
+   "entity": "birria",
+   "group": "behavior",
+   "country": "US",
+   "wiki_article": "Birria",
+   "q": {
+    "doc": "\"birria\"",
+    "mc": "birria",
+    "tv": "\"birria\""
+   }
+  },
+  {
+   "id": "E:cottage cheese",
+   "set": "E",
+   "entity": "cottage cheese",
+   "group": "behavior",
+   "country": "US",
+   "wiki_article": "Cottage cheese",
+   "q": {
+    "doc": "\"cottage cheese\"",
+    "mc": "\"cottage cheese\"",
+    "tv": "\"cottage cheese\""
+   }
+  },
+  {
+   "id": "E:Dubai chocolate",
+   "set": "E",
+   "entity": "Dubai chocolate",
+   "group": "behavior",
+   "country": "US",
+   "wiki_article": "Dubai chocolate",
+   "q": {
+    "doc": "\"Dubai chocolate\"",
+    "mc": "\"Dubai chocolate\"",
+    "tv": "\"dubai chocolate\""
+   }
+  },
+  {
+   "id": "E:pumpkin spice",
+   "set": "E",
+   "entity": "pumpkin spice",
+   "group": "behavior",
+   "country": "US",
+   "wiki_article": "Pumpkin spice",
+   "q": {
+    "doc": "\"pumpkin spice\"",
+    "mc": "\"pumpkin spice\"",
+    "tv": "\"pumpkin spice\""
+   }
+  },
+  {
+   "id": "E:pickleball",
+   "set": "E",
+   "entity": "pickleball",
+   "group": "behavior",
+   "country": "US",
+   "wiki_article": "Pickleball",
+   "q": {
+    "doc": "\"pickleball\"",
+    "mc": "pickleball",
+    "tv": "\"pickleball\""
+   }
+  },
+  {
+   "id": "E:knitting",
+   "set": "E",
+   "entity": "knitting",
+   "group": "behavior",
+   "country": "US",
+   "wiki_article": "Knitting",
+   "q": {
+    "doc": "\"knitting\"",
+    "mc": "knitting",
+    "tv": "\"knitting\""
+   }
+  },
+  {
+   "id": "E:Dungeons & Dragons",
+   "set": "E",
+   "entity": "Dungeons & Dragons",
+   "group": "behavior",
+   "country": "US",
+   "wiki_article": "Dungeons & Dragons",
+   "q": {
+    "doc": "(\"Dungeons and Dragons\" OR \"Dungeons & Dragons\")",
+    "mc": "\"Dungeons and Dragons\" OR \"Dungeons & Dragons\"",
+    "tv": "\"dungeons and dragons\""
+   }
+  },
+  {
+   "id": "E:Rubik's Cube",
+   "set": "E",
+   "entity": "Rubik's Cube",
+   "group": "behavior",
+   "country": "US",
+   "wiki_article": "Rubik's Cube",
+   "q": {
+    "doc": "(\"Rubik's Cube\" OR \"Rubiks Cube\")",
+    "mc": "\"Rubik's Cube\" OR \"Rubiks Cube\"",
+    "tv": "\"rubik's cube\""
+   }
+  },
+  {
+   "id": "E:jigsaw puzzle",
+   "set": "E",
+   "entity": "jigsaw puzzle",
+   "group": "behavior",
+   "country": "US",
+   "wiki_article": "Jigsaw puzzle",
+   "q": {
+    "doc": "(\"jigsaw puzzle\" OR \"jigsaw puzzles\")",
+    "mc": "\"jigsaw puzzle\" OR \"jigsaw puzzles\"",
+    "tv": "(\"jigsaw puzzle\" OR \"jigsaw puzzles\")"
+   }
+  },
+  {
+   "id": "E:roller skating",
+   "set": "E",
+   "entity": "roller skating",
+   "group": "behavior",
+   "country": "US",
+   "wiki_article": "Roller skating",
+   "q": {
+    "doc": "(\"roller skating\" OR \"roller skates\")",
+    "mc": "\"roller skating\" OR \"roller skates\"",
+    "tv": "(\"roller skating\" OR \"roller skates\")"
+   }
+  },
+  {
+   "id": "E:archery",
+   "set": "E",
+   "entity": "archery",
+   "group": "behavior",
+   "country": "US",
+   "wiki_article": "Archery",
+   "q": {
+    "doc": "\"archery\"",
+    "mc": "archery",
+    "tv": "\"archery\""
+   }
+  },
+  {
+   "id": "E:figure skating",
+   "set": "E",
+   "entity": "figure skating",
+   "group": "behavior",
+   "country": "US",
+   "wiki_article": "Figure skating",
+   "q": {
+    "doc": "\"figure skating\"",
+    "mc": "\"figure skating\"",
+    "tv": "\"figure skating\""
+   }
+  },
+  {
+   "id": "E:Dubrovnik",
+   "set": "E",
+   "entity": "Dubrovnik",
+   "group": "behavior",
+   "country": "US",
+   "wiki_article": "Dubrovnik",
+   "q": {
+    "doc": "\"Dubrovnik\"",
+    "mc": "Dubrovnik",
+    "tv": "\"dubrovnik\""
+   }
+  },
+  {
+   "id": "E:Hobbiton",
+   "set": "E",
+   "entity": "Hobbiton",
+   "group": "behavior",
+   "country": "US",
+   "wiki_article": "Hobbiton Movie Set",
+   "q": {
+    "doc": "\"Hobbiton\"",
+    "mc": "Hobbiton",
+    "tv": "\"hobbiton\""
+   }
+  },
+  {
+   "id": "E:Highclere Castle",
+   "set": "E",
+   "entity": "Highclere Castle",
+   "group": "behavior",
+   "country": "US",
+   "wiki_article": "Highclere Castle",
+   "q": {
+    "doc": "\"Highclere\"",
+    "mc": "Highclere",
+    "tv": "\"highclere\""
+   }
+  },
+  {
+   "id": "E:Taormina",
+   "set": "E",
+   "entity": "Taormina",
+   "group": "behavior",
+   "country": "US",
+   "wiki_article": "Taormina",
+   "q": {
+    "doc": "\"Taormina\"",
+    "mc": "Taormina",
+    "tv": "\"taormina\""
+   }
+  },
+  {
+   "id": "E:Koh Samui",
+   "set": "E",
+   "entity": "Koh Samui",
+   "group": "behavior",
+   "country": "US",
+   "wiki_article": "Ko Samui",
+   "q": {
+    "doc": "(\"Koh Samui\" OR \"Ko Samui\")",
+    "mc": "\"Koh Samui\" OR \"Ko Samui\"",
+    "tv": "(\"koh samui\" OR \"ko samui\")"
+   }
+  },
+  {
+   "id": "E:Glenfinnan",
+   "set": "E",
+   "entity": "Glenfinnan",
+   "group": "behavior",
+   "country": "US",
+   "wiki_article": "Glenfinnan Viaduct",
+   "q": {
+    "doc": "\"Glenfinnan\"",
+    "mc": "Glenfinnan",
+    "tv": "\"glenfinnan\""
+   }
+  },
+  {
+   "id": "E:Pripyat",
+   "set": "E",
+   "entity": "Pripyat",
+   "group": "behavior",
+   "country": "US",
+   "wiki_article": "Pripyat",
+   "q": {
+    "doc": "\"Pripyat\"",
+    "mc": "Pripyat",
+    "tv": "\"pripyat\""
+   }
+  },
+  {
+   "id": "E:Fleetwood Mac",
+   "set": "E",
+   "entity": "Fleetwood Mac",
+   "group": "behavior",
+   "country": "US",
+   "wiki_article": "Fleetwood Mac",
+   "q": {
+    "doc": "\"Fleetwood Mac\"",
+    "mc": "\"Fleetwood Mac\"",
+    "tv": "\"fleetwood mac\""
+   }
+  },
+  {
+   "id": "E:Kate Bush",
+   "set": "E",
+   "entity": "Kate Bush",
+   "group": "behavior",
+   "country": "US",
+   "wiki_article": "Kate Bush",
+   "q": {
+    "doc": "\"Kate Bush\"",
+    "mc": "\"Kate Bush\"",
+    "tv": "\"kate bush\""
+   }
+  },
+  {
+   "id": "E:Sophie Ellis-Bextor",
+   "set": "E",
+   "entity": "Sophie Ellis-Bextor",
+   "group": "behavior",
+   "country": "US",
+   "wiki_article": "Sophie Ellis-Bextor",
+   "q": {
+    "doc": "(\"Sophie Ellis-Bextor\" OR \"Sophie Ellis Bextor\")",
+    "mc": "\"Sophie Ellis-Bextor\" OR \"Sophie Ellis Bextor\"",
+    "tv": "\"sophie ellis\""
+   }
+  },
+  {
+   "id": "E:Linda Ronstadt",
+   "set": "E",
+   "entity": "Linda Ronstadt",
+   "group": "behavior",
+   "country": "US",
+   "wiki_article": "Linda Ronstadt",
+   "q": {
+    "doc": "\"Linda Ronstadt\"",
+    "mc": "\"Linda Ronstadt\"",
+    "tv": "\"linda ronstadt\""
+   }
+  },
+  {
+   "id": "E:Jeff Buckley",
+   "set": "E",
+   "entity": "Jeff Buckley",
+   "group": "behavior",
+   "country": "US",
+   "wiki_article": "Jeff Buckley",
+   "q": {
+    "doc": "\"Jeff Buckley\"",
+    "mc": "\"Jeff Buckley\"",
+    "tv": "\"jeff buckley\""
+   }
+  },
+  {
+   "id": "E:naloxone",
+   "set": "E",
+   "entity": "naloxone",
+   "group": "behavior",
+   "country": "US",
+   "wiki_article": "Naloxone",
+   "q": {
+    "doc": "(\"naloxone\" OR \"Narcan\")",
+    "mc": "naloxone OR Narcan",
+    "tv": "(\"naloxone\" OR \"narcan\")"
+   }
+  },
+  {
+   "id": "E:melatonin",
+   "set": "E",
+   "entity": "melatonin",
+   "group": "behavior",
+   "country": "US",
+   "wiki_article": "Melatonin",
+   "q": {
+    "doc": "\"melatonin\"",
+    "mc": "melatonin",
+    "tv": "\"melatonin\""
+   }
+  },
+  {
+   "id": "E:cold plunge",
+   "set": "E",
+   "entity": "cold plunge",
+   "group": "behavior",
+   "country": "US",
+   "wiki_article": "Ice bath",
+   "q": {
+    "doc": "(\"cold plunge\" OR \"ice bath\")",
+    "mc": "\"cold plunge\" OR \"ice bath\"",
+    "tv": "(\"cold plunge\" OR \"ice bath\")"
+   }
+  },
+  {
+   "id": "E:sunscreen",
+   "set": "E",
+   "entity": "sunscreen",
+   "group": "behavior",
+   "country": "US",
+   "wiki_article": "Sunscreen",
+   "q": {
+    "doc": "\"sunscreen\"",
+    "mc": "sunscreen",
+    "tv": "\"sunscreen\""
+   }
+  },
+  {
+   "id": "E:vaping",
+   "set": "E",
+   "entity": "vaping",
+   "group": "behavior",
+   "country": "US",
+   "wiki_article": "Electronic cigarette",
+   "q": {
+    "doc": "(\"vaping\" OR \"e-cigarette\" OR \"e-cigarettes\")",
+    "mc": "vaping OR \"e-cigarette\" OR \"e-cigarettes\"",
+    "tv": "(\"vaping\" OR \"e-cigarette\")"
+   }
+  },
+  {
+   "id": "E:Ozempic",
+   "set": "E",
+   "entity": "Ozempic",
+   "group": "behavior",
+   "country": "US",
+   "wiki_article": "Semaglutide",
+   "q": {
+    "doc": "(\"Ozempic\" OR \"semaglutide\")",
+    "mc": "Ozempic OR semaglutide",
+    "tv": "(\"ozempic\" OR \"semaglutide\")"
+   }
+  },
+  {
+   "id": "E:orca",
+   "set": "E",
+   "entity": "orca",
+   "group": "behavior",
+   "country": "US",
+   "wiki_article": "Orca",
+   "q": {
+    "doc": "(\"orca\" OR \"orcas\")",
+    "mc": "orca OR orcas",
+    "tv": "(\"orca\" OR \"orcas\")"
+   }
+  },
+  {
+   "id": "E:pangolin",
+   "set": "E",
+   "entity": "pangolin",
+   "group": "behavior",
+   "country": "US",
+   "wiki_article": "Pangolin",
+   "q": {
+    "doc": "(\"pangolin\" OR \"pangolins\")",
+    "mc": "pangolin OR pangolins",
+    "tv": "(\"pangolin\" OR \"pangolins\")"
+   }
+  },
+  {
+   "id": "E:axolotl",
+   "set": "E",
+   "entity": "axolotl",
+   "group": "behavior",
+   "country": "US",
+   "wiki_article": "Axolotl",
+   "q": {
+    "doc": "(\"axolotl\" OR \"axolotls\")",
+    "mc": "axolotl OR axolotls",
+    "tv": "(\"axolotl\" OR \"axolotls\")"
+   }
+  },
+  {
+   "id": "E:capybara",
+   "set": "E",
+   "entity": "capybara",
+   "group": "behavior",
+   "country": "US",
+   "wiki_article": "Capybara",
+   "q": {
+    "doc": "(\"capybara\" OR \"capybaras\")",
+    "mc": "capybara OR capybaras",
+    "tv": "(\"capybara\" OR \"capybaras\")"
+   }
+  },
+  {
+   "id": "E:pygmy hippo",
+   "set": "E",
+   "entity": "pygmy hippo",
+   "group": "behavior",
+   "country": "US",
+   "wiki_article": "Pygmy hippopotamus",
+   "q": {
+    "doc": "(\"pygmy hippo\" OR \"pygmy hippopotamus\")",
+    "mc": "\"pygmy hippo\" OR \"pygmy hippopotamus\"",
+    "tv": "(\"pygmy hippo\" OR \"pygmy hippopotamus\")"
+   }
+  },
+  {
+   "id": "E:octopus",
+   "set": "E",
+   "entity": "octopus",
+   "group": "behavior",
+   "country": "US",
+   "wiki_article": "Octopus",
+   "q": {
+    "doc": "(\"octopus\" OR \"octopuses\")",
+    "mc": "octopus OR octopuses",
+    "tv": "(\"octopus\" OR \"octopuses\")"
+   }
+  },
+  {
+   "id": "E:manatee",
+   "set": "E",
+   "entity": "manatee",
+   "group": "behavior",
+   "country": "US",
+   "wiki_article": "Manatee",
+   "q": {
+    "doc": "(\"manatee\" OR \"manatees\")",
+    "mc": "manatee OR manatees",
+    "tv": "(\"manatee\" OR \"manatees\")"
+   }
+  },
+  {
+   "id": "E:monarch butterfly",
+   "set": "E",
+   "entity": "monarch butterfly",
+   "group": "behavior",
+   "country": "US",
+   "wiki_article": "Monarch butterfly",
+   "q": {
+    "doc": "(\"monarch butterfly\" OR \"monarch butterflies\")",
+    "mc": "\"monarch butterfly\" OR \"monarch butterflies\"",
+    "tv": "(\"monarch butterfly\" OR \"monarch butterflies\")"
+   }
+  },
+  {
+   "id": "E:right to repair",
+   "set": "E",
+   "entity": "right to repair",
+   "group": "behavior",
+   "country": "US",
+   "wiki_article": "Right to repair",
+   "q": {
+    "doc": "\"right to repair\"",
+    "mc": "\"right to repair\"",
+    "tv": "\"right to repair\""
+   }
+  },
+  {
+   "id": "E:four-day week",
+   "set": "E",
+   "entity": "four-day week",
+   "group": "behavior",
+   "country": "US",
+   "wiki_article": "Four-day week",
+   "q": {
+    "doc": "(\"four-day week\" OR \"four-day work week\" OR \"4-day week\")",
+    "mc": "\"four-day week\" OR \"four-day work week\" OR \"4-day week\"",
+    "tv": "(\"four-day week\" OR \"four day week\")"
+   }
+  },
+  {
+   "id": "E:universal basic income",
+   "set": "E",
+   "entity": "universal basic income",
+   "group": "behavior",
+   "country": "US",
+   "wiki_article": "Universal basic income",
+   "q": {
+    "doc": "\"universal basic income\"",
+    "mc": "\"universal basic income\"",
+    "tv": "\"universal basic income\""
+   }
+  },
+  {
+   "id": "E:loot box",
+   "set": "E",
+   "entity": "loot box",
+   "group": "behavior",
+   "country": "US",
+   "wiki_article": "Loot box",
+   "q": {
+    "doc": "(\"loot box\" OR \"loot boxes\")",
+    "mc": "\"loot box\" OR \"loot boxes\"",
+    "tv": "(\"loot box\" OR \"loot boxes\")"
+   }
+  },
+  {
+   "id": "E:Section 230",
+   "set": "E",
+   "entity": "Section 230",
+   "group": "behavior",
+   "country": "US",
+   "wiki_article": "Section 230",
+   "q": {
+    "doc": "\"Section 230\"",
+    "mc": "\"Section 230\"",
+    "tv": "\"section 230\""
+   }
+  },
+  {
+   "id": "E:fidget spinner",
+   "set": "E",
+   "entity": "fidget spinner",
+   "group": "behavior",
+   "country": "US",
+   "wiki_article": "Fidget spinner",
+   "q": {
+    "doc": "(\"fidget spinner\" OR \"fidget spinners\")",
+    "mc": "\"fidget spinner\" OR \"fidget spinners\"",
+    "tv": "(\"fidget spinner\" OR \"fidget spinners\")"
+   }
+  },
+  {
+   "id": "E:air fryer",
+   "set": "E",
+   "entity": "air fryer",
+   "group": "behavior",
+   "country": "US",
+   "wiki_article": "Air fryer",
+   "q": {
+    "doc": "(\"air fryer\" OR \"air fryers\")",
+    "mc": "\"air fryer\" OR \"air fryers\"",
+    "tv": "(\"air fryer\" OR \"air fryers\")"
+   }
+  },
+  {
+   "id": "E:Crocs",
+   "set": "E",
+   "entity": "Crocs",
+   "group": "behavior",
+   "country": "US",
+   "wiki_article": "Crocs",
+   "q": {
+    "doc": "\"Crocs\" (shoes OR clogs OR footwear)",
+    "mc": "Crocs AND (shoes OR clogs OR footwear)",
+    "tv": "\"crocs\""
+   }
+  },
+  {
+   "id": "E:Birkenstock",
+   "set": "E",
+   "entity": "Birkenstock",
+   "group": "behavior",
+   "country": "US",
+   "wiki_article": "Birkenstock",
+   "q": {
+    "doc": "\"Birkenstock\"",
+    "mc": "Birkenstock",
+    "tv": "\"birkenstock\""
+   }
+  },
+  {
+   "id": "E:Tamagotchi",
+   "set": "E",
+   "entity": "Tamagotchi",
+   "group": "behavior",
+   "country": "US",
+   "wiki_article": "Tamagotchi",
+   "q": {
+    "doc": "\"Tamagotchi\"",
+    "mc": "Tamagotchi",
+    "tv": "\"tamagotchi\""
+   }
+  },
+  {
+   "id": "E:Polaroid",
+   "set": "E",
+   "entity": "Polaroid",
+   "group": "behavior",
+   "country": "US",
+   "wiki_article": "Polaroid Corporation",
+   "q": {
+    "doc": "\"Polaroid\"",
+    "mc": "Polaroid",
+    "tv": "\"polaroid\""
+   }
+  },
+  {
+   "id": "E:typewriter",
+   "set": "E",
+   "entity": "typewriter",
+   "group": "behavior",
+   "country": "US",
+   "wiki_article": "Typewriter",
+   "q": {
+    "doc": "(\"typewriter\" OR \"typewriters\")",
+    "mc": "typewriter OR typewriters",
+    "tv": "(\"typewriter\" OR \"typewriters\")"
+   }
+  },
+  {
+   "id": "E:flip phone",
+   "set": "E",
+   "entity": "flip phone",
+   "group": "behavior",
+   "country": "US",
+   "wiki_article": "Flip phone",
+   "q": {
+    "doc": "(\"flip phone\" OR \"flip phones\")",
+    "mc": "\"flip phone\" OR \"flip phones\"",
+    "tv": "(\"flip phone\" OR \"flip phones\")"
+   }
+  },
+  {
+   "id": "E:quiet luxury",
+   "set": "E",
+   "entity": "quiet luxury",
+   "group": "behavior",
+   "country": "US",
+   "wiki_article": "Quiet luxury",
+   "q": {
+    "doc": "\"quiet luxury\"",
+    "mc": "\"quiet luxury\"",
+    "tv": "\"quiet luxury\""
+   }
+  },
+  {
+   "id": "E:mob wife",
+   "set": "E",
+   "entity": "mob wife",
+   "group": "behavior",
+   "country": "US",
+   "wiki_article": "Mob wife aesthetic",
+   "q": {
+    "doc": "\"mob wife\"",
+    "mc": "\"mob wife\"",
+    "tv": "\"mob wife\""
+   }
+  },
+  {
+   "id": "E:cottagecore",
+   "set": "E",
+   "entity": "cottagecore",
+   "group": "behavior",
+   "country": "US",
+   "wiki_article": "Cottagecore",
+   "q": {
+    "doc": "\"cottagecore\"",
+    "mc": "cottagecore",
+    "tv": "\"cottagecore\""
+   }
+  },
+  {
+   "id": "E:tradwife",
+   "set": "E",
+   "entity": "tradwife",
+   "group": "behavior",
+   "country": "US",
+   "wiki_article": "Tradwife",
+   "q": {
+    "doc": "(\"tradwife\" OR \"tradwives\")",
+    "mc": "tradwife OR tradwives",
+    "tv": "(\"tradwife\" OR \"tradwives\")"
+   }
+  },
+  {
+   "id": "E:quiet quitting",
+   "set": "E",
+   "entity": "quiet quitting",
+   "group": "behavior",
+   "country": "US",
+   "wiki_article": "Quiet quitting",
+   "q": {
+    "doc": "\"quiet quitting\"",
+    "mc": "\"quiet quitting\"",
+    "tv": "\"quiet quitting\""
+   }
+  },
+  {
+   "id": "E:brat summer",
+   "set": "E",
+   "entity": "brat summer",
+   "group": "behavior",
+   "country": "US",
+   "wiki_article": "Brat (album)",
+   "q": {
+    "doc": "\"brat summer\"",
+    "mc": "\"brat summer\"",
+    "tv": "\"brat summer\""
+   }
+  },
+  {
+   "id": "E:girl dinner",
+   "set": "E",
+   "entity": "girl dinner",
+   "group": "behavior",
+   "country": "US",
+   "wiki_article": "Girl dinner",
+   "q": {
+    "doc": "\"girl dinner\"",
+    "mc": "\"girl dinner\"",
+    "tv": "\"girl dinner\""
+   }
+  },
+  {
+   "id": "E:rizz",
+   "set": "E",
+   "entity": "rizz",
+   "group": "behavior",
+   "country": "US",
+   "wiki_article": "Rizz",
+   "q": {
+    "doc": "\"rizz\"",
+    "mc": "rizz",
+    "tv": "\"rizz\""
+   }
+  },
+  {
+   "id": "E:gaslighting",
+   "set": "E",
+   "entity": "gaslighting",
+   "group": "behavior",
+   "country": "US",
+   "wiki_article": "Gaslighting",
+   "q": {
+    "doc": "\"gaslighting\"",
+    "mc": "gaslighting",
+    "tv": "\"gaslighting\""
+   }
+  },
+  {
+   "id": "E:very demure",
+   "set": "E",
+   "entity": "very demure",
+   "group": "behavior",
+   "country": "US",
+   "wiki_article": "Jools Lebron",
+   "q": {
+    "doc": "\"very demure\"",
+    "mc": "\"very demure\"",
+    "tv": "\"very demure\""
+   }
+  },
+  {
+   "id": "E:stapler",
+   "set": "E",
+   "entity": "stapler",
+   "group": "decoy",
+   "country": "US",
+   "wiki_article": "Stapler",
+   "q": {
+    "doc": "(\"stapler\" OR \"staplers\")",
+    "mc": "stapler OR staplers",
+    "tv": "(\"stapler\" OR \"staplers\")"
+   }
+  },
+  {
+   "id": "E:doormat",
+   "set": "E",
+   "entity": "doormat",
+   "group": "decoy",
+   "country": "US",
+   "wiki_article": "Doormat",
+   "q": {
+    "doc": "(\"doormat\" OR \"doormats\")",
+    "mc": "doormat OR doormats",
+    "tv": "(\"doormat\" OR \"doormats\")"
+   }
+  },
+  {
+   "id": "E:teaspoon",
+   "set": "E",
+   "entity": "teaspoon",
+   "group": "decoy",
+   "country": "US",
+   "wiki_article": "Teaspoon",
+   "q": {
+    "doc": "\"teaspoon\"",
+    "mc": "teaspoon",
+    "tv": "\"teaspoon\""
+   }
+  },
+  {
+   "id": "E:paper clip",
+   "set": "E",
+   "entity": "paper clip",
+   "group": "decoy",
+   "country": "US",
+   "wiki_article": "Paper clip",
+   "q": {
+    "doc": "(\"paper clip\" OR \"paperclip\")",
+    "mc": "\"paper clip\" OR paperclip",
+    "tv": "(\"paper clip\" OR \"paperclip\")"
+   }
+  },
+  {
+   "id": "E:shoelace",
+   "set": "E",
+   "entity": "shoelace",
+   "group": "decoy",
+   "country": "US",
+   "wiki_article": "Shoelaces",
+   "q": {
+    "doc": "(\"shoelace\" OR \"shoelaces\")",
+    "mc": "shoelace OR shoelaces",
+    "tv": "(\"shoelace\" OR \"shoelaces\")"
+   }
+  },
+  {
+   "id": "E:ceiling fan",
+   "set": "E",
+   "entity": "ceiling fan",
+   "group": "decoy",
+   "country": "US",
+   "wiki_article": "Ceiling fan",
+   "q": {
+    "doc": "(\"ceiling fan\" OR \"ceiling fans\")",
+    "mc": "\"ceiling fan\" OR \"ceiling fans\"",
+    "tv": "(\"ceiling fan\" OR \"ceiling fans\")"
+   }
+  },
+  {
+   "id": "E:garden hose",
+   "set": "E",
+   "entity": "garden hose",
+   "group": "decoy",
+   "country": "US",
+   "wiki_article": "Garden hose",
+   "q": {
+    "doc": "(\"garden hose\" OR \"garden hoses\")",
+    "mc": "\"garden hose\" OR \"garden hoses\"",
+    "tv": "(\"garden hose\" OR \"garden hoses\")"
+   }
+  },
+  {
+   "id": "E:hairbrush",
+   "set": "E",
+   "entity": "hairbrush",
+   "group": "decoy",
+   "country": "US",
+   "wiki_article": "Hairbrush",
+   "q": {
+    "doc": "(\"hairbrush\" OR \"hairbrushes\")",
+    "mc": "hairbrush OR hairbrushes",
+    "tv": "(\"hairbrush\" OR \"hairbrushes\")"
+   }
+  },
+  {
+   "id": "E:spatula",
+   "set": "E",
+   "entity": "spatula",
+   "group": "decoy",
+   "country": "US",
+   "wiki_article": "Spatula",
+   "q": {
+    "doc": "(\"spatula\" OR \"spatulas\")",
+    "mc": "spatula OR spatulas",
+    "tv": "(\"spatula\" OR \"spatulas\")"
+   }
+  },
+  {
+   "id": "E:bookshelf",
+   "set": "E",
+   "entity": "bookshelf",
+   "group": "decoy",
+   "country": "US",
+   "wiki_article": "Bookcase",
+   "q": {
+    "doc": "(\"bookshelf\" OR \"bookshelves\")",
+    "mc": "bookshelf OR bookshelves",
+    "tv": "(\"bookshelf\" OR \"bookshelves\")"
+   }
+  }
+ ]
+}

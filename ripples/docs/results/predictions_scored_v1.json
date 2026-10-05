@@ -1,0 +1,361 @@
+{
+ "protocol": "ripples/docs/predictions_v1.md",
+ "registered": "2026-10-05T07:15:00Z",
+ "registration_commit": "04b2ab1",
+ "run": "2026-10-05",
+ "checker_sha": "4223d1f",
+ "stopped": null,
+ "scorer_notes": [
+  "A wiki_level window is pending until the API has data through the window's end (unpublished days would otherwise read as zeros).",
+  "A baseline under 5 views a day carries a flag for the reader (a page move leaves the new title's earlier series near zero); the flag never enters the verdict.",
+  "Found by the self-test, after registration: Hydraulic shock (X2) was moved from Water hammer around Mar 2025, so its placebo pool includes a near-zero stretch before the move. Its baseline (Jun to Sep 2026) is after the move. The test runs as registered.",
+  "Any HTTP status of 400 or above stops the run for the week; predictions not reached stay pending until their deadline (due date plus 35 days; Jan 31, 2027 for the library)."
+ ],
+ "predictions": [
+  {
+   "id": "A1",
+   "kind": "move",
+   "stone": "christa-pike",
+   "claim": "Attention to Capital punishment in Tennessee stays above chance in Oct 6 to 15.",
+   "due": "2026-10-18",
+   "confidence": 0.6,
+   "status": "pending",
+   "reason": "due 2026-10-18"
+  },
+  {
+   "id": "A2",
+   "kind": "move",
+   "stone": "christa-pike",
+   "claim": "Attention to Lethal injection stays above chance in Oct 6 to 15.",
+   "due": "2026-10-18",
+   "confidence": 0.5,
+   "status": "pending",
+   "reason": "due 2026-10-18"
+  },
+  {
+   "id": "A3",
+   "kind": "not move",
+   "stone": "christa-pike",
+   "claim": "Attention to nitrogen execution (the article Inert gas asphyxiation) does NOT rise beyond chance in Oct 6 to 15.",
+   "due": "2026-10-18",
+   "confidence": 0.65,
+   "status": "pending",
+   "reason": "due 2026-10-18"
+  },
+  {
+   "id": "A4",
+   "kind": "not move",
+   "stone": "christa-pike",
+   "claim": "Attention to Job Corps is back within chance in Oct 14 to Nov 4.",
+   "due": "2026-11-07",
+   "confidence": 0.75,
+   "status": "pending",
+   "reason": "due 2026-11-07"
+  },
+  {
+   "id": "A5",
+   "kind": "not move",
+   "stone": "christa-pike",
+   "claim": "No raised floor: attention to Christa Pike in weeks 13 to 21 (Dec 30, 2026 to Feb 24, 2027) is within chance of her pre-stone level.",
+   "due": "2027-02-27",
+   "confidence": 0.6,
+   "status": "pending",
+   "reason": "due 2027-02-27"
+  },
+  {
+   "id": "B1",
+   "kind": "move",
+   "stone": "esther-rantzen",
+   "claim": "Rantzen is named in at least one spoken contribution in the House of Commons or the House of Lords between Oct 6 and Nov 30, 2026.",
+   "due": "2026-12-03",
+   "confidence": 0.85,
+   "status": "pending",
+   "reason": "due 2026-12-03"
+  },
+  {
+   "id": "B2",
+   "kind": "not move",
+   "stone": "esther-rantzen",
+   "claim": "No bill whose title names assisted dying, assisted suicide, the end of life, terminally ill adults or euthanasia receives a first reading in either House between Oct 6 and Dec 31, 2026.",
+   "due": "2027-01-04",
+   "confidence": 0.8,
+   "status": "pending",
+   "reason": "due 2027-01-04"
+  },
+  {
+   "id": "B3",
+   "kind": "not move",
+   "stone": "esther-rantzen",
+   "claim": "Attention to Assisted suicide in the United Kingdom does NOT rise beyond chance in Oct 6 to 15.",
+   "due": "2026-10-18",
+   "confidence": 0.7,
+   "status": "pending",
+   "reason": "due 2026-10-18"
+  },
+  {
+   "id": "C1",
+   "kind": "move",
+   "stone": "east-of-eden",
+   "claim": "Attention to John Steinbeck stays above chance in Oct 6 to 21, and above the same dates in each of the three prior years.",
+   "due": "2026-10-24",
+   "confidence": 0.75,
+   "status": "pending",
+   "reason": "due 2026-10-24"
+  },
+  {
+   "id": "C2",
+   "kind": "move",
+   "stone": "east-of-eden",
+   "claim": "Attention to the 1955 film East of Eden stays above chance in Oct 6 to 21.",
+   "due": "2026-10-24",
+   "confidence": 0.6,
+   "status": "pending",
+   "reason": "due 2026-10-24"
+  },
+  {
+   "id": "C3",
+   "kind": "not move",
+   "stone": "east-of-eden",
+   "claim": "The article titled Timshel (a 2012 Hell on Wheels episode that shares the novel's key word) does NOT rise beyond chance in Oct 6 to 21.",
+   "due": "2026-10-24",
+   "confidence": 0.6,
+   "status": "pending",
+   "reason": "due 2026-10-24"
+  },
+  {
+   "id": "C4",
+   "kind": "move",
+   "stone": "east-of-eden",
+   "claim": "Seattle Public Library checkouts of East of Eden in October 2026 rise beyond chance against the three months before, and beyond every prior October.",
+   "due": "2026-12-14",
+   "confidence": 0.6,
+   "status": "pending",
+   "reason": "due 2026-12-14"
+  },
+  {
+   "id": "C5",
+   "kind": "not move",
+   "stone": "east-of-eden",
+   "claim": "Attention to The Grapes of Wrath does NOT rise beyond chance in Oct 6 to 21 (after the seasonal check).",
+   "due": "2026-10-24",
+   "confidence": 0.6,
+   "status": "pending",
+   "reason": "due 2026-10-24"
+  },
+  {
+   "id": "C6",
+   "kind": "not move",
+   "stone": "east-of-eden",
+   "claim": "Attention to Salinas, California does NOT rise beyond chance in Oct 6 to 21.",
+   "due": "2026-10-24",
+   "confidence": 0.7,
+   "status": "pending",
+   "reason": "due 2026-10-24"
+  },
+  {
+   "id": "C7",
+   "kind": "not move",
+   "stone": "east-of-eden",
+   "claim": "No raised floor: attention to John Steinbeck in weeks 13 to 21 (Dec 31, 2026 to Feb 25, 2027) is within chance of his pre-stone level once the season is checked.",
+   "due": "2027-02-28",
+   "confidence": 0.75,
+   "status": "pending",
+   "reason": "due 2027-02-28"
+  },
+  {
+   "id": "C8",
+   "kind": "not move",
+   "stone": "east-of-eden",
+   "claim": "Seattle Public Library checkouts of The Grapes of Wrath in October 2026 do NOT rise beyond chance.",
+   "due": "2026-12-14",
+   "confidence": 0.65,
+   "status": "pending",
+   "reason": "due 2026-12-14"
+  },
+  {
+   "id": "D1",
+   "kind": "move",
+   "stone": "verity",
+   "claim": "Seattle Public Library checkouts of Verity in October 2026 rise beyond chance against the three months before, and beyond every prior October; September 2026 does not already rise (the premiere was Sep 24).",
+   "due": "2026-12-14",
+   "confidence": 0.5,
+   "status": "pending",
+   "reason": "due 2026-12-14"
+  },
+  {
+   "id": "D2",
+   "kind": "not move",
+   "stone": "verity",
+   "claim": "Seattle Public Library checkouts of It Ends with Us in October 2026 do NOT rise beyond chance.",
+   "due": "2026-12-14",
+   "confidence": 0.7,
+   "status": "pending",
+   "reason": "due 2026-12-14"
+  },
+  {
+   "id": "D3",
+   "kind": "move",
+   "stone": "verity",
+   "claim": "Attention to Colleen Hoover stays above chance in Oct 6 to 22, with the rise beginning no earlier than Sep 29.",
+   "due": "2026-10-25",
+   "confidence": 0.55,
+   "status": "pending",
+   "reason": "due 2026-10-25"
+  },
+  {
+   "id": "E1",
+   "kind": "move",
+   "stone": "unabomber",
+   "claim": "Attention to Industrial Society and Its Future (the manifesto) stays above chance in Oct 6 to 15.",
+   "due": "2026-10-18",
+   "confidence": 0.65,
+   "status": "pending",
+   "reason": "due 2026-10-18"
+  },
+  {
+   "id": "E2",
+   "kind": "not move",
+   "stone": "unabomber",
+   "claim": "Attention to Anarcho-primitivism does NOT rise beyond chance in Oct 6 to 15.",
+   "due": "2026-10-18",
+   "confidence": 0.6,
+   "status": "pending",
+   "reason": "due 2026-10-18"
+  },
+  {
+   "id": "E3",
+   "kind": "move",
+   "stone": "unabomber",
+   "claim": "Attention to Henry Murray (the Harvard psychologist whose experiments Kaczynski underwent) stays above chance in Oct 6 to 15.",
+   "due": "2026-10-18",
+   "confidence": 0.6,
+   "status": "pending",
+   "reason": "due 2026-10-18"
+  },
+  {
+   "id": "F1",
+   "kind": "not move",
+   "stone": "flydubai-1073",
+   "claim": "Attention to Boeing 737 MAX does NOT rise beyond chance in Oct 6 to 15.",
+   "due": "2026-10-18",
+   "confidence": 0.7,
+   "status": "pending",
+   "reason": "due 2026-10-18"
+  },
+  {
+   "id": "F2",
+   "kind": "not move",
+   "stone": "flydubai-1073",
+   "claim": "Attention to Germanwings Flight 9525 (the sibling pilot-caused crash) is back within chance in Oct 6 to 15.",
+   "due": "2026-10-18",
+   "confidence": 0.55,
+   "status": "pending",
+   "reason": "due 2026-10-18"
+  },
+  {
+   "id": "G1",
+   "kind": "not move",
+   "stone": "cornell-suit",
+   "claim": "Attention to Title IX does NOT rise beyond chance in Oct 6 to 15.",
+   "due": "2026-10-18",
+   "confidence": 0.7,
+   "status": "pending",
+   "reason": "due 2026-10-18"
+  },
+  {
+   "id": "X1",
+   "kind": "decoy",
+   "stone": "passenger-pigeon",
+   "claim": "Attention to De-extinction does NOT rise beyond chance in Oct 6 to 20.",
+   "due": "2026-10-23",
+   "confidence": 0.8,
+   "status": "pending",
+   "reason": "due 2026-10-23"
+  },
+  {
+   "id": "X2",
+   "kind": "decoy",
+   "stone": "hydraulic-ram",
+   "claim": "Attention to Hydraulic shock (water hammer) does NOT rise beyond chance in Oct 6 to 22.",
+   "due": "2026-10-25",
+   "confidence": 0.85,
+   "status": "pending",
+   "reason": "due 2026-10-25"
+  },
+  {
+   "id": "X3",
+   "kind": "decoy",
+   "stone": "theory-of-mind",
+   "claim": "Attention to the Sally–Anne test does NOT rise beyond chance in Oct 6 to 23.",
+   "due": "2026-10-26",
+   "confidence": 0.8,
+   "status": "pending",
+   "reason": "due 2026-10-26"
+  },
+  {
+   "id": "X4",
+   "kind": "decoy",
+   "stone": "abs",
+   "claim": "Attention to Electronic stability control does NOT rise beyond chance in Oct 6 to 25.",
+   "due": "2026-10-28",
+   "confidence": 0.85,
+   "status": "pending",
+   "reason": "due 2026-10-28"
+  },
+  {
+   "id": "X5",
+   "kind": "decoy",
+   "stone": "ndtr",
+   "claim": "Attention to the Canadian Indian residential school system does NOT rise beyond chance in Oct 6 to 23, once the season is checked.",
+   "due": "2026-10-26",
+   "confidence": 0.8,
+   "status": "pending",
+   "reason": "due 2026-10-26"
+  },
+  {
+   "id": "X6",
+   "kind": "decoy",
+   "stone": "tj-maxx",
+   "claim": "Attention to TJX does NOT rise beyond chance in Oct 6 to 20.",
+   "due": "2026-10-23",
+   "confidence": 0.7,
+   "status": "pending",
+   "reason": "due 2026-10-23"
+  },
+  {
+   "id": "X7",
+   "kind": "decoy",
+   "stone": "hunger-stone",
+   "claim": "Attention to the Elbe does NOT rise beyond chance in Oct 6 to 21.",
+   "due": "2026-10-24",
+   "confidence": 0.85,
+   "status": "pending",
+   "reason": "due 2026-10-24"
+  }
+ ],
+ "summary": {
+  "move": {
+   "hit": 0,
+   "miss": 0,
+   "bust": 0,
+   "void": 0,
+   "pending": 10
+  },
+  "not move": {
+   "hit": 0,
+   "miss": 0,
+   "bust": 0,
+   "void": 0,
+   "pending": 15
+  },
+  "decoy": {
+   "hit": 0,
+   "miss": 0,
+   "bust": 0,
+   "void": 0,
+   "pending": 7
+  },
+  "brier": null,
+  "scored": 0
+ }
+}

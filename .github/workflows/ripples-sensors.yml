@@ -1,0 +1,45 @@
+# Sensors v1, Media Cloud leg (ripples/lab/sensors_mediacloud.py; plan: ripples/docs/sensors_plan_v1.md).
+# Runs once, when this file is pushed on a claude/ branch. No schedule: it must not loop. The key is a repository
+# secret, passed only to the one step that needs it, sent only in a request header, and never echoed.
+name: Ripples sensors (Media Cloud)
+
+on:
+  push:
+    branches: ["claude/**"]
+    paths: [".github/workflows/ripples-sensors.yml"]
+
+permissions:
+  contents: write
+
+concurrency:
+  group: ripples-sensors
+  cancel-in-progress: false
+
+jobs:
+  mediacloud:
+    runs-on: ubuntu-latest
+    timeout-minutes: 300
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Count stories over time (aggregate counts only)
+        env:
+          MEDIACLOUD_API_KEY: ${{ secrets.MEDIACLOUD_API_KEY }}
+        run: python ripples/lab/sensors_mediacloud.py
+      - name: Commit results
+        if: always()
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898900+github-actions[bot]@users.noreply.github.com"
+          mkdir -p /tmp/results && cp ripples/docs/results/sensors_mediacloud_v1.json /tmp/results/ 2>/dev/null || exit 0
+          for i in 1 2 3 4; do
+            git fetch -q origin "${GITHUB_REF_NAME}" && git reset -q --hard "origin/${GITHUB_REF_NAME}" || exit 0
+            cp /tmp/results/* ripples/docs/results/
+            git add ripples/docs/results/sensors_mediacloud_v1.json || exit 0
+            git diff --cached --quiet && exit 0
+            git commit -q -m "Ripples: sensors v1, Media Cloud counts [skip ci]"
+            git push -q origin "HEAD:${GITHUB_REF_NAME}" && break
+            sleep 7
+          done

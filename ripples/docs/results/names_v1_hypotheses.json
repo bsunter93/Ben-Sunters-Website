@@ -1,0 +1,294 @@
+{
+ "written": "Oct 5, 2026, before names_v1_followup.py was run",
+ "plan": "ripples/docs/names_plan_v1.md section 10",
+ "note": "Persistence, lag and some sequel and reversal outcomes were already visible in the main output (the brief requires persistence and lag beside every pair); those are labeled and are not blind tests. The companion, sex and the remaining sequel and reversal hypotheses are blind.",
+ "pairs": [
+  {
+   "name": "Adonis",
+   "sex": "M",
+   "direction": "rise",
+   "stone": "Creed",
+   "release": "2015-11-25",
+   "confirmed": true,
+   "hypotheses": [
+    {
+     "kind": "persist",
+     "statement": "Adonis keeps at least half of its 2016 jump in 2018 to 2021.",
+     "status": "already visible in the main output before this addendum (not a blind test)"
+    },
+    {
+     "kind": "reversal",
+     "statement": "No fall with p_year <= 0.05 in 2017 to 2020 (not predicted: the franchise continued).",
+     "status": "blind: not computed before this addendum",
+     "predicted": false
+    },
+    {
+     "kind": "companion",
+     "statement": "No spelling variant of Adonis at edit distance 1 is in the extract; not testable.",
+     "status": "blind: not computed before this addendum",
+     "names": []
+    },
+    {
+     "kind": "lag",
+     "statement": "The peak falls in 2016, the first full year after a November release.",
+     "status": "already visible in the main output before this addendum (not a blind test)"
+    },
+    {
+     "kind": "sex",
+     "statement": "Adonis is not in the extract for girls; not testable.",
+     "status": "blind: not computed before this addendum"
+    },
+    {
+     "kind": "sequel",
+     "statement": "Creed II (Nov 21, 2018) brings another rise with p_year <= 0.10 in 2019 to 2020.",
+     "status": "already visible in the main output before this addendum (not a blind test) (the Creed II pair was graded in the main run)",
+     "sequels": [
+      {
+       "title": "Creed II",
+       "date": "2018-11-21"
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "name": "Alfred",
+   "sex": "M",
+   "direction": "rise",
+   "stone": "The Dark Knight Rises",
+   "release": "2012-07-26",
+   "confirmed": true,
+   "hypotheses": [
+    {
+     "kind": "persist",
+     "statement": "Alfred keeps at least half of its 2014 jump in 2016 to 2019.",
+     "status": "already visible in the main output before this addendum (not a blind test)"
+    },
+    {
+     "kind": "reversal",
+     "statement": "No fall with p_year <= 0.05 in 2015 to 2018 (not predicted).",
+     "status": "blind: not computed before this addendum",
+     "predicted": false
+    },
+    {
+     "kind": "companion",
+     "statement": "Alfredo (edit distance 1; the Spanish form, not a spelling variant) rises with p_year <= 0.05 in the window.",
+     "status": "blind: not computed before this addendum",
+     "names": [
+      "Alfredo"
+     ]
+    },
+    {
+     "kind": "lag",
+     "statement": "The peak falls in 2013, the first full year after a July release.",
+     "status": "already visible in the main output before this addendum (not a blind test)"
+    },
+    {
+     "kind": "sex",
+     "statement": "Alfred is not in the extract for girls; not testable.",
+     "status": "blind: not computed before this addendum"
+    },
+    {
+     "kind": "sequel",
+     "statement": "The Dark Knight Rises has no sequel; not testable.",
+     "status": "blind: not computed before this addendum",
+     "sequels": []
+    }
+   ]
+  },
+  {
+   "name": "Quinn",
+   "sex": "F",
+   "direction": "rise",
+   "stone": "Glee",
+   "release": "2009-05-19",
+   "confirmed": true,
+   "hypotheses": [
+    {
+     "kind": "persist",
+     "statement": "Quinn (girls) keeps at least half of its 2010 jump in 2012 to 2015.",
+     "status": "already visible in the main output before this addendum (not a blind test)"
+    },
+    {
+     "kind": "reversal",
+     "statement": "No fall with p_year <= 0.05 in 2011 to 2014 (not predicted).",
+     "status": "blind: not computed before this addendum",
+     "predicted": false
+    },
+    {
+     "kind": "companion",
+     "statement": "No spelling variant of Quinn (girls) at edit distance 1 is in the extract; not testable.",
+     "status": "blind: not computed before this addendum",
+     "names": []
+    },
+    {
+     "kind": "lag",
+     "statement": "The peak falls in 2010, the first full year after a May release.",
+     "status": "already visible in the main output before this addendum (not a blind test)"
+    },
+    {
+     "kind": "sex",
+     "statement": "Quinn for boys does not rise with p_year <= 0.05 in the same window (the character is a girl).",
+     "status": "blind: not computed before this addendum"
+    },
+    {
+     "kind": "sequel",
+     "statement": "Glee season 2 (Sep 21, 2010) brings another rise with p_year <= 0.10 in 2011 to 2012.",
+     "status": "blind: not computed before this addendum",
+     "sequels": [
+      {
+       "title": "Glee, season 2",
+       "date": "2010-09-21"
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "name": "Tiana",
+   "sex": "F",
+   "direction": "rise",
+   "stone": "The Princess and the Frog",
+   "release": "2009-11-25",
+   "confirmed": true,
+   "hypotheses": [
+    {
+     "kind": "persist",
+     "statement": "Tiana keeps at least half of its 2010 jump in 2012 to 2015.",
+     "status": "already visible in the main output before this addendum (not a blind test)"
+    },
+    {
+     "kind": "reversal",
+     "statement": "A fall with p_year <= 0.05 within 2011 to 2014 (predicted: a one-film princess spike).",
+     "status": "already visible in the main output before this addendum (not a blind test) in part (the persistence numbers show the level fell back)",
+     "predicted": true
+    },
+    {
+     "kind": "companion",
+     "statement": "At least one spelling variant, Tianna or Tyana, rises with p_year <= 0.05 in the window.",
+     "status": "blind: not computed before this addendum",
+     "names": [
+      "Tianna",
+      "Tyana"
+     ]
+    },
+    {
+     "kind": "lag",
+     "statement": "The peak falls in 2010, the first full year after a November release.",
+     "status": "already visible in the main output before this addendum (not a blind test)"
+    },
+    {
+     "kind": "sex",
+     "statement": "Tiana is not in the extract for boys; not testable.",
+     "status": "blind: not computed before this addendum"
+    },
+    {
+     "kind": "sequel",
+     "statement": "The Princess and the Frog has no sequel; not testable.",
+     "status": "blind: not computed before this addendum",
+     "sequels": []
+    }
+   ]
+  },
+  {
+   "name": "Elsa",
+   "sex": "F",
+   "direction": "rise",
+   "stone": "Frozen",
+   "release": "2013-11-27",
+   "confirmed": false,
+   "reference": "graded timed, not confirmed; run for reference as the canonical case",
+   "hypotheses": [
+    {
+     "kind": "persist",
+     "statement": "Elsa keeps at least half of its 2014 jump in 2016 to 2019.",
+     "status": "already visible in the main output before this addendum (not a blind test)"
+    },
+    {
+     "kind": "reversal",
+     "statement": "A fall with p_year <= 0.05 within 2015 to 2018 (predicted: the canonical reversal).",
+     "status": "already visible in the main output before this addendum (not a blind test) in part (known positive A8)",
+     "predicted": true
+    },
+    {
+     "kind": "companion",
+     "statement": "No spelling variant of Elsa at edit distance 1 is in the extract (Elia, Elisa and Ella are other names); not testable.",
+     "status": "blind: not computed before this addendum",
+     "names": []
+    },
+    {
+     "kind": "lag",
+     "statement": "The peak falls in 2014.",
+     "status": "already visible in the main output before this addendum (not a blind test)"
+    },
+    {
+     "kind": "sex",
+     "statement": "Elsa is not in the extract for boys; not testable.",
+     "status": "blind: not computed before this addendum"
+    },
+    {
+     "kind": "sequel",
+     "statement": "Frozen II (Nov 22, 2019) brings another rise with p_year <= 0.10 in 2020 to 2021.",
+     "status": "already visible in the main output before this addendum (not a blind test) (Elsa's counts through 2021 are in the known-positive table)",
+     "sequels": [
+      {
+       "title": "Frozen II",
+       "date": "2019-11-22"
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "name": "Arya",
+   "sex": "F",
+   "direction": "rise",
+   "stone": "Game of Thrones",
+   "release": "2011-04-17",
+   "confirmed": false,
+   "reference": "graded timed, not confirmed; run for reference",
+   "hypotheses": [
+    {
+     "kind": "persist",
+     "statement": "Arya keeps at least half of its jump two to five years later.",
+     "status": "already visible in the main output before this addendum (not a blind test)"
+    },
+    {
+     "kind": "reversal",
+     "statement": "No fall with p_year <= 0.05 within four years of the peak (not predicted).",
+     "status": "already visible in the main output before this addendum (not a blind test)",
+     "predicted": false
+    },
+    {
+     "kind": "companion",
+     "statement": "Aria, the homophone spelling, rises with p_year <= 0.05 in the window.",
+     "status": "blind: not computed before this addendum (an Aria pair with Pretty Little Liars was graded, which shows Aria's 2011 move)",
+     "names": [
+      "Aria"
+     ]
+    },
+    {
+     "kind": "lag",
+     "statement": "The peak falls in 2012.",
+     "status": "already visible in the main output before this addendum (not a blind test)"
+    },
+    {
+     "kind": "sex",
+     "statement": "Arya for boys does not rise with p_year <= 0.05 in the same window.",
+     "status": "blind: not computed before this addendum"
+    },
+    {
+     "kind": "sequel",
+     "statement": "Season 2 (Apr 1, 2012) brings another rise with p_year <= 0.10 in 2012 to 2013.",
+     "status": "already visible in the main output before this addendum (not a blind test)",
+     "sequels": [
+      {
+       "title": "Game of Thrones, season 2",
+       "date": "2012-04-01"
+      }
+     ]
+    }
+   ]
+  }
+ ]
+}

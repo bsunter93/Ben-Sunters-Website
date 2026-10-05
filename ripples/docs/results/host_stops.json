@@ -1,0 +1,60 @@
+{
+ "about": "Per-host stop ledger for data-day jobs (ripples/lab/polite.py, ripples/docs/dataday_v1.md). A stop is a 401, 403, 429, 5xx, timeout or connection error, or any 4xx under a plan whose own rule says so. A host with a stop dated today (UTC) gets no request until the next UTC day. A host with stops on three UTC days in a row is parked: no request until an entry in clears names the host with a later date (a clear never lifts a same-day stop). Jobs append entries; entries are not edited. The first six were recorded by hand from the sources they cite.",
+ "stops": [
+  {
+   "host": "en.wikipedia.org",
+   "date": "2026-10-05",
+   "status": 429,
+   "job": "surprise-u4",
+   "at_utc": null,
+   "path": "/w/api.php",
+   "source": "commit f6b8b99: lab/discovery/surprise_blocked_dates.txt and docs/surprise_v1.md (Wikipedia's search API, during the linksto counts; the exact time was not recorded)"
+  },
+  {
+   "host": "www.ucas.com",
+   "date": "2026-10-05",
+   "status": 404,
+   "job": "ladder-bpii-ucas",
+   "at_utc": "2026-10-05T06:06:00Z",
+   "path": "(a guessed page address)",
+   "source": "commit cd10fdf: ladder_plan_v1.md section 2 (23:06 PDT on Oct 4); a stop under the plan's own rule (any 4xx or 5xx)"
+  },
+  {
+   "host": "hansard-api.parliament.uk",
+   "date": "2026-10-05",
+   "status": 500,
+   "job": "ladder-bpii-hansard",
+   "at_utc": "2026-10-05T06:07:00Z",
+   "path": "/search/contributions/Spoken.json",
+   "source": "commit cd10fdf: ladder_plan_v1.md section 2 (23:07 PDT on Oct 4)"
+  },
+  {
+   "host": "comtradeapi.un.org",
+   "date": "2026-10-05",
+   "status": 400,
+   "job": "ladder-finding-nemo",
+   "at_utc": "2026-10-05T06:22:00Z",
+   "path": "/public/v1/preview/C/A/HS",
+   "source": "commit b3627de: ladder_plan_v1.md Addendum 1, item 1 (run 1, about 23:22 PDT on Oct 4); a stop under the plan's own rule (any 4xx or 5xx)"
+  },
+  {
+   "host": "www.federalregister.gov",
+   "date": "2026-10-05",
+   "status": 429,
+   "job": "records2-lac-megantic",
+   "at_utc": "2026-10-05T06:44:28Z",
+   "path": "/documents/full_text/text/2015/08/06/2015-19002.txt",
+   "source": "commit eb9a229: records2_raw_v1.json, field stopped (the first request of the Lac-Megantic rescan)"
+  },
+  {
+   "host": "web.archive.org",
+   "date": "2026-10-05",
+   "status": 429,
+   "job": "dataday-setup",
+   "at_utc": "2026-10-05T07:08:00Z",
+   "path": "/web/2026id_/https://www.federalregister.gov/robots.txt",
+   "source": "a one-off lookup of the Federal Register's archived robots.txt while the data day was built; not retried (the time is approximate)"
+  }
+ ],
+ "clears": []
+}

@@ -24,6 +24,23 @@ probe's counts are in `fedreg_probe.json`). The builder's two blind screens are 
 ripples/lab/discovery/shape.py placebo` chooses the shape rules on decoy dates, then `python3
 ripples/lab/discovery/shape.py real` classifies the shape of every stored response series, builds lag priors per link
 type and compares catalyst with outcome strength. Plan: `docs/shape_plan_v1.md`; results: `docs/shape_v1.md`.
+## Multi-hop ripples v1 (Oct 4 to 5, 2026)
+
+`multihop.py`, `multihop_compose.py` and `multihop_gov.py` compose stone → intermediate → lasting mark under the plan
+registered in `docs/multihop_plan_v1.md`; the result is `docs/multihop_v1.md`. Run from the repository root:
+
+```
+python3 ripples/lab/discovery/multihop.py stage1 all     # candidates, the specificity filter, hop 1 (writes multihop_stage1_v1.json)
+python3 ripples/lab/discovery/multihop.py stage2 all     # hop 2: Hansard bill debates and the Wikipedia reverse hop
+python3 ripples/lab/discovery/multihop.py resolve        # a later day: bill -> Act for hits that waited on a stopped resolver
+python3 ripples/lab/discovery/multihop.py compose        # automated chains, the D1 wrong-stone decoys
+python3 ripples/lab/discovery/multihop.py build          # with docs/results/multihop_hand_v1.json: multihop_v1.json
+```
+
+The Congressional Record hop runs only as `.github/workflows/ripples-multihop-gov.yml` (the GovInfo key is an Actions
+secret). One limiter keeps request starts a second apart across every host; responses are cached outside the repository
+(`MULTIHOP_CACHE`), and a 403, 429 or 5xx stops that host for the UTC day (`MULTIHOP_STOPS`). `stage2` picks up where it
+stopped, including survivors whose Hansard search waited for a later day.
 ## The screen (Oct 5, 2026)
 
 `docs/screen_plan_v1.md` registers a test of a language-model screen in place of the hand screen; `docs/screen_v1.md` is

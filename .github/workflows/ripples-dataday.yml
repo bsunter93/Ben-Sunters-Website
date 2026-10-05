@@ -1,0 +1,102 @@
+# Ripple data day (ripples/docs/dataday_v1.md). Once a day at a quiet hour, runs the registered jobs that stopped on a
+# refusal on an earlier day (ripples/lab/dataday_jobs.json), one at a time, under ripples/lab/polite.py: no request to a
+# host that stopped us the same UTC day, a host parked after stops on three days in a row, the honest user agent, at most
+# one request a second per host, robots.txt, a request budget, and frozen registered code run unchanged. A job finishes
+# once and never runs again. No secrets are used. Results commit back with [skip ci].
+#
+# Requests are sent only by the scheduled run (which GitHub starts on the default branch) or by a manual run on main
+# with mode=run. A push to this file on any other branch is a dry run: it decides every job, reports, and sends nothing.
+# One ledger and one status file therefore decide every real request, and no branch run can retry a refused host.
+# A commit whose message holds the skip token anywhere, the body included, starts no run at all.
+name: Ripples data day
+
+on:
+  schedule:
+    - cron: "53 4 * * *"   # 04:53 UTC: night in the US, early morning in the UK, clear of the other daily jobs
+  push:
+    branches-ignore: ["main"]
+    paths: [".github/workflows/ripples-dataday.yml"]
+  workflow_dispatch:
+    inputs:
+      mode:
+        description: "dry-run (decide and report only) or run (main only)"
+        required: false
+        default: "dry-run"
+
+permissions:
+  contents: write
+
+concurrency:
+  group: ripples-dataday
+  cancel-in-progress: false
+
+jobs:
+  dataday:
+    runs-on: ubuntu-latest
+    timeout-minutes: 150
+    env:
+      DATADAY_CACHE: ${{ github.workspace }}/.dataday-cache
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: pip install --quiet numpy
+      - name: Mode
+        id: mode
+        env:
+          INPUT_MODE: ${{ inputs.mode }}
+        run: |
+          if [ "${GITHUB_EVENT_NAME}" = "schedule" ]; then mode=run
+          elif [ "${GITHUB_EVENT_NAME}" = "workflow_dispatch" ] && [ "${GITHUB_REF_NAME}" = "main" ] && [ "${INPUT_MODE}" = "run" ]; then mode=run
+          else mode=dry-run; fi
+          echo "mode=${mode}" >> "$GITHUB_OUTPUT"
+          echo "event ${GITHUB_EVENT_NAME} on ${GITHUB_REF_NAME}: ${mode}"
+          mkdir -p .dataday-cache
+      - uses: actions/cache/restore@v4
+        if: steps.mode.outputs.mode == 'run'
+        with:
+          path: .dataday-cache
+          key: ripples-dataday-${{ github.run_id }}-${{ github.run_attempt }}
+          restore-keys: ripples-dataday-
+      - name: Self-tests (local server on 127.0.0.1 only)
+        run: |
+          set -o pipefail
+          python3 ripples/lab/polite.py selftest
+          python3 ripples/lab/dataday.py selftest | grep -E "^(ok|FAIL|dataday selftest)"
+      - name: Data day
+        env:
+          MODE: ${{ steps.mode.outputs.mode }}
+        run: |
+          if [ "${MODE}" = "run" ]; then
+            python3 ripples/lab/dataday.py run
+          else
+            python3 ripples/lab/dataday.py run --dry-run
+          fi
+      - uses: actions/cache/save@v4
+        if: always() && steps.mode.outputs.mode == 'run'
+        continue-on-error: true
+        with:
+          path: .dataday-cache
+          key: ripples-dataday-${{ github.run_id }}-${{ github.run_attempt }}
+      - name: Commit results
+        if: always()
+        env:
+          MODE: ${{ steps.mode.outputs.mode }}
+        run: |
+          # results are placed on top of whatever the branch holds now; the ledger is merged, never overwritten
+          git config user.name "github-actions[bot]"
+          git config user.email "41898900+github-actions[bot]@users.noreply.github.com"
+          rm -rf /tmp/dd && mkdir -p /tmp/dd
+          cp ripples/docs/results/host_stops.json /tmp/dd/ 2>/dev/null || exit 0
+          cp -R ripples/docs/results/dataday /tmp/dd/ 2>/dev/null || exit 0
+          for i in 1 2 3 4; do
+            git fetch -q origin "${GITHUB_REF_NAME}" && git reset -q --hard "origin/${GITHUB_REF_NAME}" || exit 0
+            python3 ripples/lab/dataday.py merge-ledger /tmp/dd/host_stops.json ripples/docs/results/host_stops.json
+            rm -rf ripples/docs/results/dataday && cp -R /tmp/dd/dataday ripples/docs/results/dataday
+            git add ripples/docs/results/host_stops.json ripples/docs/results/dataday || exit 0
+            git diff --cached --quiet && exit 0
+            git commit -q -m "Ripples: data day $(date -u '+%b %-d, %Y'), ${MODE} [skip ci]"
+            git push -q origin "HEAD:${GITHUB_REF_NAME}" && break
+            sleep 7
+          done

@@ -1,0 +1,1100 @@
+{
+ "protocol": "ripples/docs/implications_plan_v1.md",
+ "plan_commit": "ff867c6",
+ "run": "2026-10-05",
+ "code": "ripples/lab/implications_check.py",
+ "stopped": null,
+ "implications": [
+  {
+   "id": "FZ-1",
+   "ripple": "frozen",
+   "link": "step 2, Parents name daughters Elsa (measured: SSA 2014, p = 0.038)",
+   "type": "dose (a second stone, same outcome)",
+   "statement": "Frozen 2 (Nov 22, 2019) moves the name again: Elsa rises in 2020 beyond chance against every other year.",
+   "weakens_if_failed": "Frozen -> Elsa: a second Elsa film that did not move the name makes the 2014 rise look like a one-off fashion",
+   "status": "failed",
+   "note": "log change -0.258, p = 0.885",
+   "result": {
+    "effect": -0.258,
+    "p": 0.885,
+    "n_placebo": 25,
+    "count": 241,
+    "count_before": 312
+   }
+  },
+  {
+   "id": "FZ-2",
+   "ripple": "frozen",
+   "link": "step 2, Parents name daughters Elsa (measured: SSA 2014, p = 0.038)",
+   "type": "sibling stone, same mechanism",
+   "statement": "Encanto (Nov 24, 2021) moves the name Mirabel in 2022.",
+   "weakens_if_failed": "the culture -> naming mechanism, of which Frozen is the catalog's only measured case",
+   "status": "untestable",
+   "note": "ssa.gov refused the request (HTTP 403 to the honest user agent, Oct 5, 2026); per the rules no retry and no other route today"
+  },
+  {
+   "id": "FZ-3",
+   "ripple": "frozen",
+   "link": "step 2, Parents name daughters Elsa (measured: SSA 2014, p = 0.038)",
+   "type": "persistence (a fad, not a trend)",
+   "statement": "If the film caused the 2014 rise, the name falls back as the film fades: Elsa in 2017 is below Elsa in 2014.",
+   "weakens_if_failed": "Frozen -> Elsa: a name still rising three years on is a trend the film may have joined, not started",
+   "status": "held",
+   "note": "2017: 368 against 2014: 1107",
+   "result": {
+    "2014": 1107,
+    "2017": 368,
+    "series": {
+     "2010": 440,
+     "2011": 450,
+     "2012": 477,
+     "2013": 526,
+     "2014": 1107,
+     "2015": 618,
+     "2016": 429,
+     "2017": 368,
+     "2018": 248,
+     "2019": 312,
+     "2020": 241,
+     "2021": 214
+    }
+   }
+  },
+  {
+   "id": "TK-1",
+   "ripple": "tiger-king",
+   "link": "step 2, People look up big cats and exotic pets (measured: 5.1x, p = 0.010)",
+   "type": "dose (a second stone, same outcome)",
+   "statement": "Tiger King 2 (Nov 17, 2021) moves Big cat and Exotic pet again, beyond chance; secondary: by less than the first season's 5.1x.",
+   "weakens_if_failed": "slightly, the dose reading of Tiger King -> big cats (a sequel seen by far fewer may move nothing)",
+   "status": "failed",
+   "note": "no sustained rise",
+   "result": {
+    "onset": null,
+    "ratio": null,
+    "baseline": null,
+    "p": null,
+    "n_placebo": null,
+    "new_article": null,
+    "result": "no sustained rise",
+    "found": {
+     "Exotic pet": true,
+     "Big cat": true
+    },
+    "verdict": "no movement"
+   }
+  },
+  {
+   "id": "TK-2",
+   "ripple": "tiger-king",
+   "link": "step 2, People look up big cats and exotic pets (measured: 5.1x, p = 0.010)",
+   "type": "sibling stone, same mechanism",
+   "statement": "The Elephant Whisperers (Netflix, Dec 8, 2022) sends readers to the Indian elephant.",
+   "weakens_if_failed": "the mechanism 'an animal documentary sends readers to the animal' that Tiger King's step 2 instances",
+   "status": "failed",
+   "note": "no sustained rise",
+   "result": {
+    "onset": null,
+    "ratio": null,
+    "baseline": null,
+    "p": null,
+    "n_placebo": null,
+    "new_article": null,
+    "result": "no sustained rise",
+    "found": {
+     "Indian elephant": true
+    },
+    "verdict": "no movement"
+   }
+  },
+  {
+   "id": "TK-3",
+   "ripple": "tiger-king",
+   "link": "step 2, People look up big cats and exotic pets (measured: 5.1x, p = 0.010)",
+   "type": "specificity (the lockdown confound)",
+   "statement": "An animal Tiger King never shows does NOT rise at the same date: Giraffe is flat after Mar 20, 2020.",
+   "weakens_if_failed": "Tiger King -> big cats directly: if a giraffe rose too, the measured rise is lockdown attention, not the show",
+   "status": "held",
+   "note": "no rise beyond chance",
+   "result": {
+    "onset": "2020-03-28",
+    "ratio": 2.9,
+    "baseline": 2703.5,
+    "p": 0.168,
+    "n_placebo": 100,
+    "new_article": null,
+    "result": null,
+    "found": {
+     "Giraffe": true
+    },
+    "verdict": "no movement"
+   }
+  },
+  {
+   "id": "PG-1",
+   "ripple": "pokemon-go",
+   "link": "step 1, Pokemon GO launches (timed, short history)",
+   "type": "companion outcome",
+   "statement": "The launch sends readers to Ingress, Niantic's earlier game whose portals became PokeStops.",
+   "weakens_if_failed": "narrows the launch's ripple to the game itself; the timed link stands",
+   "status": "untestable",
+   "note": "too short a history: no placebo is possible",
+   "result": {
+    "onset": "2016-07-08",
+    "ratio": 35.5,
+    "baseline": 961.5,
+    "p": null,
+    "n_placebo": 0,
+    "new_article": null,
+    "result": null,
+    "found": {
+     "Ingress (video game)": true
+    },
+    "verdict": "timed (short history)"
+   }
+  },
+  {
+   "id": "PG-2",
+   "ripple": "pokemon-go",
+   "link": "step 1, Pokemon GO launches (timed, short history)",
+   "type": "companion outcome",
+   "statement": "The launch revives the franchise's first games: Pokemon Red, Blue, and Yellow rises beyond chance.",
+   "weakens_if_failed": "narrows the launch's ripple to the game itself; the timed link stands",
+   "status": "failed",
+   "note": "no sustained rise",
+   "result": {
+    "onset": null,
+    "ratio": null,
+    "baseline": null,
+    "p": null,
+    "n_placebo": null,
+    "new_article": null,
+    "result": "no sustained rise",
+    "found": {
+     "Pokémon Red, Blue, and Yellow": true
+    },
+    "verdict": "no movement"
+   }
+  },
+  {
+   "id": "PG-3",
+   "ripple": "pokemon-go",
+   "link": "step 1, Pokemon GO launches (timed, short history)",
+   "type": "companion outcome (behavior)",
+   "statement": "Players walk more in the first weeks and fall back (the chain's step 2 rests on Howe et al., BMJ 2016).",
+   "weakens_if_failed": "step 2 stays reported",
+   "status": "untestable",
+   "note": "step counts are in the paper, not in a free series"
+  },
+  {
+   "id": "WD-1",
+   "ripple": "wordle",
+   "link": "step 2, People look up Wordle (measured, p = 0.007); step 3, the NYT buys Wordle (reported)",
+   "type": "companion outcome",
+   "statement": "After the purchase (Jan 31, 2022), readers look up The New York Times crossword.",
+   "weakens_if_failed": "step 3's reading that the purchase mattered to readers",
+   "status": "failed",
+   "note": "no sustained rise",
+   "result": {
+    "onset": null,
+    "ratio": null,
+    "baseline": null,
+    "p": null,
+    "n_placebo": null,
+    "new_article": null,
+    "result": "no sustained rise",
+    "found": {
+     "The New York Times crossword": true
+    },
+    "verdict": "no movement"
+   }
+  },
+  {
+   "id": "WD-2",
+   "ripple": "wordle",
+   "link": "step 2, People look up Wordle (measured, p = 0.007); step 3, the NYT buys Wordle (reported)",
+   "type": "companion outcome",
+   "statement": "Subscriptions to the paper's games rise after the purchase.",
+   "weakens_if_failed": "step 3",
+   "status": "untestable",
+   "note": "company reports only; no free series"
+  },
+  {
+   "id": "BB-1",
+   "ripple": "barbie",
+   "link": "step 4, Fashion pivots to pink, 'Barbiecore' (timed, new article)",
+   "type": "persistence (a pivot, not a spike)",
+   "statement": "If fashion pivoted, the term outlived the film: views of the title Barbiecore in Jul 21 to Aug 19, 2024 are at least 15% of its highest 30-day mean between Jul 21, 2023 and Jan 31, 2024 (shape v1's raised-floor share).",
+   "weakens_if_failed": "Barbie -> Barbiecore (timed): a term that lasted a season is a spike, not a fashion change",
+   "status": "held",
+   "note": "late mean 5 a day is 64.7% of the peak 30-day mean (7)",
+   "result": {
+    "peak_30day_mean": 7.5,
+    "late_mean": 4.8,
+    "share": 0.647
+   }
+  },
+  {
+   "id": "BB-2",
+   "ripple": "barbie",
+   "link": "step 4, Fashion pivots to pink, 'Barbiecore' (timed, new article)",
+   "type": "sibling stone, same mechanism",
+   "statement": "Wednesday (Netflix, Nov 23, 2022) sends readers to Gothic fashion.",
+   "weakens_if_failed": "the screen -> fashion-term mechanism behind Barbie's step 4",
+   "status": "failed",
+   "note": "no sustained rise",
+   "result": {
+    "onset": null,
+    "ratio": null,
+    "baseline": null,
+    "p": null,
+    "n_placebo": null,
+    "new_article": null,
+    "result": "no sustained rise",
+    "found": {
+     "Gothic fashion": true
+    },
+    "verdict": "no movement"
+   }
+  },
+  {
+   "id": "CH-1",
+   "ripple": "chernobyl-zone",
+   "link": "step 2, Interest in the real disaster surges (measured: 48x, p = 0.013)",
+   "type": "companion outcome",
+   "statement": "The series sends readers to Acute radiation syndrome, which it depicts in detail.",
+   "weakens_if_failed": "narrows Chernobyl -> the disaster to the event itself",
+   "status": "held",
+   "note": "a sustained rise beyond chance, in order",
+   "result": {
+    "onset": "2019-05-10",
+    "ratio": 36.1,
+    "baseline": 724.0,
+    "p": 0.013,
+    "n_placebo": 77,
+    "new_article": null,
+    "result": null,
+    "found": {
+     "Acute radiation syndrome": true
+    },
+    "verdict": "measured"
+   }
+  },
+  {
+   "id": "CH-2",
+   "ripple": "chernobyl-zone",
+   "link": "step 2, Interest in the real disaster surges (measured: 48x, p = 0.013)",
+   "type": "sibling stone, same mechanism",
+   "statement": "The Days (Netflix, Jun 1, 2023) sends readers to the Fukushima nuclear accident.",
+   "weakens_if_failed": "the drama -> real disaster mechanism behind Chernobyl's step 2",
+   "status": "failed",
+   "note": "no sustained rise",
+   "result": {
+    "onset": null,
+    "ratio": null,
+    "baseline": null,
+    "p": null,
+    "n_placebo": null,
+    "new_article": null,
+    "result": "no sustained rise",
+    "found": {
+     "Fukushima nuclear accident": true
+    },
+    "verdict": "no movement"
+   }
+  },
+  {
+   "id": "CH-3",
+   "ripple": "chernobyl-zone",
+   "link": "step 2, Interest in the real disaster surges (measured: 48x, p = 0.013)",
+   "type": "companion outcome (behavior)",
+   "statement": "Zone visitors rise in 2019 beyond the trend.",
+   "weakens_if_failed": "steps 3 and 5 stay reported",
+   "status": "untestable",
+   "note": "the State Agency's figures are a record, not a free series"
+  },
+  {
+   "id": "MB-1",
+   "ripple": "mr-bates-horizon",
+   "link": "steps 2 and 9, attention to the scandal and to Paula Vennells (measured: 370x, p = 0.023; 1,879x, p = 0.006)",
+   "type": "companion outcome",
+   "statement": "The drama sends readers to Fujitsu, which built Horizon.",
+   "weakens_if_failed": "narrows the drama's ripple to people over institutions; steps 2 and 9 stand",
+   "status": "held",
+   "note": "a sustained rise beyond chance, in order",
+   "result": {
+    "onset": "2024-01-03",
+    "ratio": 11.2,
+    "baseline": 612.5,
+    "p": 0.005,
+    "n_placebo": 199,
+    "new_article": null,
+    "result": null,
+    "found": {
+     "Fujitsu": true
+    },
+    "verdict": "measured"
+   }
+  },
+  {
+   "id": "MB-2",
+   "ripple": "mr-bates-horizon",
+   "link": "steps 2 and 9, attention to the scandal and to Paula Vennells (measured: 370x, p = 0.023; 1,879x, p = 0.006)",
+   "type": "companion outcome",
+   "statement": "The drama sends readers to Post Office Limited.",
+   "weakens_if_failed": "narrows the drama's ripple; steps 2 and 9 stand",
+   "status": "held",
+   "note": "a sustained rise beyond chance, in order",
+   "result": {
+    "onset": "2024-01-04",
+    "ratio": 111.2,
+    "baseline": 103.5,
+    "p": 0.045,
+    "n_placebo": 199,
+    "new_article": null,
+    "result": null,
+    "found": {
+     "Post Office Limited": true
+    },
+    "verdict": "measured"
+   }
+  },
+  {
+   "id": "MB-3",
+   "ripple": "mr-bates-horizon",
+   "link": "steps 2 and 9, attention to the scandal and to Paula Vennells (measured: 370x, p = 0.023; 1,879x, p = 0.006)",
+   "type": "sibling stone, same mechanism",
+   "statement": "Toxic Town (Netflix, Feb 27, 2025) sends readers to the Corby toxic waste case.",
+   "weakens_if_failed": "the UK drama -> real scandal mechanism that Mr Bates is the catalog's flagship for",
+   "status": "held",
+   "note": "a sustained rise beyond chance, in order",
+   "result": {
+    "onset": "2025-02-27",
+    "ratio": 1821.5,
+    "baseline": 34.0,
+    "p": 0.004,
+    "n_placebo": 229,
+    "new_article": null,
+    "result": null,
+    "found": {
+     "Corby toxic waste case": true
+    },
+    "verdict": "measured"
+   }
+  },
+  {
+   "id": "DZ-1",
+   "ripple": "daily-show-zadroga",
+   "link": "step 5, Attention to the Act surges at Stewart's 2019 testimony (measured: 48.7x, p = 0.012)",
+   "type": "companion outcome",
+   "statement": "The testimony (Jun 11, 2019) sends readers to the September 11th Victim Compensation Fund.",
+   "weakens_if_failed": "step 5's reading that the testimony moved attention to the program, not only the man",
+   "status": "held",
+   "note": "a sustained rise beyond chance, in order",
+   "result": {
+    "onset": "2019-06-11",
+    "ratio": 35.2,
+    "baseline": 99.5,
+    "p": 0.012,
+    "n_placebo": 80,
+    "new_article": null,
+    "result": null,
+    "found": {
+     "September 11th Victim Compensation Fund": true
+    },
+    "verdict": "measured"
+   }
+  },
+  {
+   "id": "DZ-2",
+   "ripple": "daily-show-zadroga",
+   "link": "step 5, Attention to the Act surges at Stewart's 2019 testimony (measured: 48.7x, p = 0.012)",
+   "type": "companion outcome",
+   "statement": "The testimony sends readers to the World Trade Center Health Program.",
+   "weakens_if_failed": "step 5, as above",
+   "status": "failed",
+   "note": "a rise within chance",
+   "result": {
+    "onset": "2019-06-12",
+    "ratio": 4.2,
+    "baseline": 34.5,
+    "p": 0.173,
+    "n_placebo": 80,
+    "new_article": null,
+    "result": null,
+    "found": {
+     "World Trade Center Health Program": true
+    },
+    "verdict": "no movement"
+   }
+  },
+  {
+   "id": "DZ-3",
+   "ripple": "daily-show-zadroga",
+   "link": "step 5, Attention to the Act surges at Stewart's 2019 testimony (measured: 48.7x, p = 0.012)",
+   "type": "sibling stone, same mechanism",
+   "statement": "Stewart's Capitol speech for the burn-pit bill (Jul 28, 2022) sends readers to the Honoring our PACT Act of 2022.",
+   "weakens_if_failed": "the advocate -> attention to the bill mechanism of step 5 (a new article cannot be placebo-tested and is untestable here)",
+   "status": "untestable",
+   "note": "a new article (first day 2022-08-07): no placebo is possible",
+   "result": {
+    "onset": "2022-08-07",
+    "ratio": null,
+    "baseline": null,
+    "p": null,
+    "n_placebo": null,
+    "new_article": "2022-08-07",
+    "result": null,
+    "found": {
+     "Honoring our PACT Act of 2022": true
+    },
+    "verdict": "timed (new article)"
+   }
+  },
+  {
+   "id": "OC-1",
+   "ripple": "ocean-attenborough",
+   "link": "step 2, Attention to bottom trawling rises (measured: 4.6x, p = 0.004)",
+   "type": "sibling stone, same outcome",
+   "statement": "Seaspiracy (Netflix, Mar 24, 2021) moved the same series: Bottom trawling rises beyond chance.",
+   "weakens_if_failed": "Ocean -> bottom trawling: if a sibling film did not move the series, it may answer to policy news rather than films",
+   "status": "failed",
+   "note": "a rise within chance",
+   "result": {
+    "onset": "2021-04-04",
+    "ratio": 3.1,
+    "baseline": 100.5,
+    "p": 0.094,
+    "n_placebo": 126,
+    "new_article": null,
+    "result": null,
+    "found": {
+     "Bottom trawling": true
+    },
+    "verdict": "no movement"
+   }
+  },
+  {
+   "id": "OC-2",
+   "ripple": "ocean-attenborough",
+   "link": "step 2, Attention to bottom trawling rises (measured: 4.6x, p = 0.004)",
+   "type": "companion outcome",
+   "statement": "The film sends readers to Marine protected area, the policy its campaign named.",
+   "weakens_if_failed": "the step 2 -> step 3 path (attention -> the consultation on protected areas)",
+   "status": "failed",
+   "note": "no sustained rise",
+   "result": {
+    "onset": null,
+    "ratio": null,
+    "baseline": null,
+    "p": null,
+    "n_placebo": null,
+    "new_article": null,
+    "result": "no sustained rise",
+    "found": {
+     "Marine protected area": true
+    },
+    "verdict": "no movement"
+   }
+  },
+  {
+   "id": "OC-3",
+   "ripple": "ocean-attenborough",
+   "link": "step 2, Attention to bottom trawling rises (measured: 4.6x, p = 0.004)",
+   "type": "sibling stone, same mechanism",
+   "statement": "Blue Planet II (BBC, Oct 29, 2017) sends readers to Marine plastic pollution.",
+   "weakens_if_failed": "the nature documentary -> ocean issue mechanism behind Ocean's step 2",
+   "status": "failed",
+   "note": "no sustained rise",
+   "result": {
+    "onset": null,
+    "ratio": null,
+    "baseline": null,
+    "p": null,
+    "n_placebo": null,
+    "new_article": null,
+    "result": "no sustained rise",
+    "found": {
+     "Marine plastic pollution": true
+    },
+    "verdict": "no movement"
+   }
+  },
+  {
+   "id": "AL-1",
+   "ripple": "america-and-alcohol",
+   "link": "step 25, Attention to alcohol and cancer after the Surgeon General's advisory (measured: 4.2x, p = 0.035)",
+   "type": "seasonal check",
+   "statement": "The Jan 2025 rise is the advisory, not January: the same detector at Jan 3, 2024 and Jan 3, 2023 finds a smaller rise or none.",
+   "weakens_if_failed": "step 25 directly: the measured grade would be a January effect (New Year, Dry January), not the advisory",
+   "status": "held",
+   "note": "4.2x against 1.0x, 3.1x",
+   "result": {
+    "years": [
+     {
+      "date": "2025-01-03",
+      "ratio": 4.2,
+      "p": 0.035,
+      "onset": "2025-01-03",
+      "verdict": "measured"
+     },
+     {
+      "date": "2024-01-04",
+      "ratio": null,
+      "p": null,
+      "onset": null,
+      "verdict": "no movement"
+     },
+     {
+      "date": "2023-01-04",
+      "ratio": 3.1,
+      "p": 0.144,
+      "onset": "2023-01-17",
+      "verdict": "no movement"
+     }
+    ]
+   }
+  },
+  {
+   "id": "AL-2",
+   "ripple": "america-and-alcohol",
+   "link": "step 25, Attention to alcohol and cancer after the Surgeon General's advisory (measured: 4.2x, p = 0.035)",
+   "type": "sibling stone, same outcome",
+   "statement": "Canada's Guidance on Alcohol and Health (Jan 17, 2023) moved the same series beyond chance.",
+   "weakens_if_failed": "step 25's mechanism (an official warning -> attention)",
+   "status": "failed",
+   "note": "a rise within chance",
+   "result": {
+    "onset": "2023-01-17",
+    "ratio": 3.1,
+    "baseline": 69.0,
+    "p": 0.143,
+    "n_placebo": 174,
+    "new_article": null,
+    "result": null,
+    "found": {
+     "Alcohol and cancer": true
+    },
+    "verdict": "no movement"
+   }
+  },
+  {
+   "id": "AL-3",
+   "ripple": "america-and-alcohol",
+   "link": "step 25, Attention to alcohol and cancer after the Surgeon General's advisory (measured: 4.2x, p = 0.035)",
+   "type": "companion outcome",
+   "statement": "The advisory sends readers to Alcohol and health as well.",
+   "weakens_if_failed": "narrows step 25 to the cancer framing",
+   "status": "failed",
+   "note": "no sustained rise",
+   "result": {
+    "onset": null,
+    "ratio": null,
+    "baseline": null,
+    "p": null,
+    "n_placebo": null,
+    "new_article": null,
+    "result": "no sustained rise",
+    "found": {
+     "Alcohol and health": true
+    },
+    "verdict": "no movement"
+   }
+  },
+  {
+   "id": "RW-1",
+   "ripple": "covid-remote",
+   "link": "step 2, Knowledge workers move to 'Zoom towns' (timed, new article)",
+   "type": "companion outcome",
+   "statement": "If knowledge workers untethered from offices, Digital nomad rises beyond chance within a year of Mar 13, 2020.",
+   "weakens_if_failed": "step 2's reading that location became optional (Zoom town is a new article with no placebo)",
+   "status": "held",
+   "note": "a sustained rise beyond chance, in order",
+   "result": {
+    "onset": "2021-01-06",
+    "ratio": 3.9,
+    "baseline": 314.5,
+    "p": 0.01,
+    "n_placebo": 100,
+    "new_article": null,
+    "result": null,
+    "found": {
+     "Digital nomad": true
+    },
+    "verdict": "measured"
+   }
+  },
+  {
+   "id": "RW-2",
+   "ripple": "covid-remote",
+   "link": "step 2, Knowledge workers move to 'Zoom towns' (timed, new article)",
+   "type": "place with more exposure",
+   "statement": "Counties around the named Zoom towns gain population faster in 2020 to 2022 than their 2015 to 2019 trend.",
+   "weakens_if_failed": "step 2",
+   "status": "untestable",
+   "note": "county estimates need the Census API (keyed for bulk use) or FRED county series not loaded here"
+  },
+  {
+   "id": "JW-1",
+   "ripple": "jwst",
+   "link": "step 2, Public interest in astronomy spikes (measured: 2.4x, p = 0.006)",
+   "type": "sibling stone, same mechanism",
+   "statement": "The first image of a black hole (Apr 10, 2019) sends readers to Black hole.",
+   "weakens_if_failed": "the 'a picture from a telescope moves public interest' mechanism behind step 2",
+   "status": "held",
+   "note": "a sustained rise beyond chance, in order",
+   "result": {
+    "onset": "2019-04-10",
+    "ratio": 38.1,
+    "baseline": 4834.5,
+    "p": 0.013,
+    "n_placebo": 75,
+    "new_article": null,
+    "result": null,
+    "found": {
+     "Black hole": true
+    },
+    "verdict": "measured"
+   }
+  },
+  {
+   "id": "JW-2",
+   "ripple": "jwst",
+   "link": "step 2, Public interest in astronomy spikes (measured: 2.4x, p = 0.006)",
+   "type": "companion outcome",
+   "statement": "The images send readers to the Hubble Space Telescope, the instrument they are compared with.",
+   "weakens_if_failed": "narrows step 2",
+   "status": "held",
+   "note": "a sustained rise beyond chance, in order",
+   "result": {
+    "onset": "2022-07-12",
+    "ratio": 7.7,
+    "baseline": 1926.5,
+    "p": 0.025,
+    "n_placebo": 160,
+    "new_article": null,
+    "result": null,
+    "found": {
+     "Hubble Space Telescope": true
+    },
+    "verdict": "measured"
+   }
+  },
+  {
+   "id": "GS-1",
+   "ripple": "gamestop",
+   "link": "step 1, Reddit traders squeeze GameStop (measured: 215x, p = 0.008)",
+   "type": "companion outcome",
+   "statement": "The squeeze spreads to the second meme stock: AMC Theatres rises beyond chance.",
+   "weakens_if_failed": "step 1's reading as a retail-trader wave rather than one stock",
+   "status": "held",
+   "note": "a sustained rise beyond chance, in order",
+   "result": {
+    "onset": "2021-01-27",
+    "ratio": 20.8,
+    "baseline": 692.0,
+    "p": 0.008,
+    "n_placebo": 121,
+    "new_article": null,
+    "result": null,
+    "found": {
+     "AMC Theatres": true
+    },
+    "verdict": "measured"
+   }
+  },
+  {
+   "id": "GS-2",
+   "ripple": "gamestop",
+   "link": "step 1, Reddit traders squeeze GameStop (measured: 215x, p = 0.008)",
+   "type": "companion outcome",
+   "statement": "The trading restrictions (Jan 28, 2021) send readers to Robinhood Markets.",
+   "weakens_if_failed": "the step 1 -> step 2 path",
+   "status": "held",
+   "note": "a sustained rise beyond chance, in order",
+   "result": {
+    "onset": "2021-01-28",
+    "ratio": 81.9,
+    "baseline": 26.5,
+    "p": 0.008,
+    "n_placebo": 122,
+    "new_article": null,
+    "result": null,
+    "found": {
+     "Robinhood Markets": true
+    },
+    "verdict": "measured"
+   }
+  },
+  {
+   "id": "GS-3",
+   "ripple": "gamestop",
+   "link": "step 1, Reddit traders squeeze GameStop (measured: 215x, p = 0.008)",
+   "type": "dose (a second stone, same outcome)",
+   "statement": "The May 13, 2024 return of the squeeze's best-known trader moves GameStop short squeeze again; secondary: by less than 215x.",
+   "weakens_if_failed": "slightly, the dose reading of step 1",
+   "status": "failed",
+   "note": "a rise within chance",
+   "result": {
+    "onset": "2024-05-15",
+    "ratio": 3.6,
+    "baseline": 2914.0,
+    "p": 0.281,
+    "n_placebo": 63,
+    "new_article": null,
+    "result": null,
+    "found": {
+     "GameStop short squeeze": true
+    },
+    "verdict": "no movement"
+   }
+  },
+  {
+   "id": "AP-1",
+   "ripple": "airpods",
+   "link": "step 2, Wireless earbuds take off (timed, new article)",
+   "type": "companion outcome",
+   "statement": "Removing the jack sends readers to Phone connector (audio).",
+   "weakens_if_failed": "the removal -> earbuds path (step 1 -> step 2)",
+   "status": "untestable",
+   "note": "too short a history: no placebo is possible",
+   "result": {
+    "onset": "2016-09-07",
+    "ratio": 4.0,
+    "baseline": 1600.5,
+    "p": null,
+    "n_placebo": 8,
+    "new_article": null,
+    "result": null,
+    "found": {
+     "Phone connector (audio)": true
+    },
+    "verdict": "timed (short history)"
+   }
+  },
+  {
+   "id": "AP-2",
+   "ripple": "airpods",
+   "link": "step 2, Wireless earbuds take off (timed, new article)",
+   "type": "companion outcome",
+   "statement": "Removing the jack sends readers to Lightning (connector), the port that replaced it.",
+   "weakens_if_failed": "the removal -> earbuds path",
+   "status": "untestable",
+   "note": "too short a history: no placebo is possible",
+   "result": {
+    "onset": "2016-09-07",
+    "ratio": 6.7,
+    "baseline": 763.0,
+    "p": null,
+    "n_placebo": 8,
+    "new_article": null,
+    "result": null,
+    "found": {
+     "Lightning (connector)": true
+    },
+    "verdict": "timed (short history)"
+   }
+  },
+  {
+   "id": "TT-1",
+   "ripple": "tiktok",
+   "link": "step 1, TikTok's For You feed takes off (timed, new article)",
+   "type": "companion outcome",
+   "statement": "The takeoff sends readers to ByteDance within the chain's own year-long window.",
+   "weakens_if_failed": "narrows step 1; the timed link stands",
+   "status": "untestable",
+   "note": "a new article (first day 2018-06-15): no placebo is possible",
+   "result": {
+    "onset": "2018-06-15",
+    "ratio": null,
+    "baseline": null,
+    "p": null,
+    "n_placebo": null,
+    "new_article": "2018-06-15",
+    "result": null,
+    "found": {
+     "ByteDance": true
+    },
+    "verdict": "wrong order"
+   }
+  },
+  {
+   "id": "TT-2",
+   "ripple": "tiktok",
+   "link": "step 1, TikTok's For You feed takes off (timed, new article)",
+   "type": "companion outcome",
+   "statement": "Hit songs get shorter after 2018 faster than before.",
+   "weakens_if_failed": "steps 2 to 4 stay not testable",
+   "status": "untestable",
+   "note": "Billboard and streaming data are not free as series; Spotify's API needs a key"
+  },
+  {
+   "id": "TH-1",
+   "ripple": "thailand-floods",
+   "link": "step 4, Hard-drive prices spike (measured: PPI for storage devices, p = 0.036)",
+   "type": "companion outcome",
+   "statement": "The floods cut US imports of goods from Thailand beyond chance from Oct 2011.",
+   "weakens_if_failed": "step 4's premise that Thai production stopped at scale",
+   "status": "held",
+   "note": "a move beyond chance, in order",
+   "result": {
+    "effect": -0.1814,
+    "p": 0.021,
+    "n_placebo": 481,
+    "onset": "2011-11-01",
+    "period_days": 31,
+    "result": null,
+    "series": "IMP5490",
+    "verdict": "measured"
+   }
+  },
+  {
+   "id": "TH-2",
+   "ripple": "thailand-floods",
+   "link": "step 4, Hard-drive prices spike (measured: PPI for storage devices, p = 0.036)",
+   "type": "specificity",
+   "statement": "The price shock is specific to disk drives: the producer price index for semiconductors does NOT rise beyond chance at the same date.",
+   "weakens_if_failed": "step 4 directly: a general electronics price move would explain the storage-device rise",
+   "status": "held",
+   "note": "no movement",
+   "result": {
+    "effect": -0.04,
+    "p": 0.976,
+    "n_placebo": 697,
+    "onset": "2011-05-01",
+    "period_days": 31,
+    "result": null,
+    "series": "PCU334413334413",
+    "verdict": "no movement"
+   }
+  },
+  {
+   "id": "TH-3",
+   "ripple": "thailand-floods",
+   "link": "step 4, Hard-drive prices spike (measured: PPI for storage devices, p = 0.036)",
+   "type": "place with more exposure",
+   "statement": "Thailand's industrial production falls more than its neighbors' in Q4 2011.",
+   "weakens_if_failed": "step 1 -> step 4",
+   "status": "untestable",
+   "note": "the OECD production series for Thailand is not on FRED (404 on Oct 5, 2026)"
+  },
+  {
+   "id": "CC-1",
+   "ripple": "cash-for-clunkers",
+   "link": "step 4, Used-car prices rise (measured: CPI used cars, p = 0.033)",
+   "type": "companion outcome",
+   "statement": "The rebates pull sales forward: total vehicle sales jump beyond chance in Jul to Aug 2009.",
+   "weakens_if_failed": "step 4's mechanism (trade-ins scrapped -> fewer used cars) starts with the sales the rebates bought",
+   "status": "failed",
+   "note": "moved, wrong order",
+   "result": {
+    "effect": 0.2511,
+    "p": 0.003,
+    "n_placebo": 597,
+    "onset": "2009-03-01",
+    "period_days": 31,
+    "result": null,
+    "series": "TOTALSA",
+    "verdict": "moved, wrong order"
+   }
+  },
+  {
+   "id": "CC-2",
+   "ripple": "cash-for-clunkers",
+   "link": "step 4, Used-car prices rise (measured: CPI used cars, p = 0.033)",
+   "type": "specificity",
+   "statement": "Scrappage removes used supply only: the CPI for new vehicles does NOT rise beyond chance at the same date.",
+   "weakens_if_failed": "step 4 directly: if new-car prices rose too, the used-car rise is general vehicle inflation",
+   "status": "held",
+   "note": "no movement",
+   "result": {
+    "effect": 0.0214,
+    "p": 0.188,
+    "n_placebo": 848,
+    "onset": "2009-05-01",
+    "period_days": 31,
+    "result": null,
+    "series": "CUSR0000SETA01",
+    "verdict": "no movement"
+   }
+  },
+  {
+   "id": "CC-3",
+   "ripple": "cash-for-clunkers",
+   "link": "step 4, Used-car prices rise (measured: CPI used cars, p = 0.033)",
+   "type": "predicted lag (the pull-forward dip)",
+   "statement": "Sales borrowed from the future leave a hole: total vehicle sales fall beyond chance from Sep 2009.",
+   "weakens_if_failed": "the pull-forward reading of the program that step 4 rests on",
+   "status": "held",
+   "note": "a move beyond chance, in order",
+   "result": {
+    "effect": -0.263,
+    "p": 0.007,
+    "n_placebo": 597,
+    "onset": null,
+    "period_days": 31,
+    "result": null,
+    "series": "TOTALSA",
+    "verdict": "measured"
+   }
+  },
+  {
+   "id": "QG-1",
+   "ripple": "queens-gambit-2",
+   "link": "step 2, People look up chess and chess sets (measured: 3.9x, p = 0.009)",
+   "type": "companion outcome",
+   "statement": "The show sends readers to Grandmaster (chess).",
+   "weakens_if_failed": "narrows step 2",
+   "status": "held",
+   "note": "a sustained rise beyond chance, in order",
+   "result": {
+    "onset": "2020-10-25",
+    "ratio": 7.3,
+    "baseline": 1360.5,
+    "p": 0.034,
+    "n_placebo": 116,
+    "new_article": null,
+    "result": null,
+    "found": {
+     "Grandmaster (chess)": true
+    },
+    "verdict": "measured"
+   }
+  },
+  {
+   "id": "QG-2",
+   "ripple": "queens-gambit-2",
+   "link": "step 2, People look up chess and chess sets (measured: 3.9x, p = 0.009)",
+   "type": "companion outcome",
+   "statement": "The show sends readers to the opening it is named for, the Queen's Gambit.",
+   "weakens_if_failed": "narrows step 2",
+   "status": "held",
+   "note": "a sustained rise beyond chance, in order",
+   "result": {
+    "onset": "2020-10-25",
+    "ratio": 89.5,
+    "baseline": 576.5,
+    "p": 0.009,
+    "n_placebo": 116,
+    "new_article": null,
+    "result": null,
+    "found": {
+     "Queen's Gambit": true
+    },
+    "verdict": "measured"
+   }
+  },
+  {
+   "id": "TP-1",
+   "ripple": "toilet-paper",
+   "link": "step 1, Panic buying (measured: grocery sales, p = 0.002); step 2, People look up bidets (measured: 13x, p = 0.010)",
+   "type": "persistence (adoption, not curiosity)",
+   "statement": "If people adopted bidets, interest stayed raised: Bidet's mean daily views for Mar 1 to Dec 31, 2021 are at least 1.5 times those for Mar 1 to Dec 31, 2019.",
+   "weakens_if_failed": "step 2's reading as a durable change in behavior; the measured attention spike stands",
+   "status": "failed",
+   "note": "1413 against 1242 a day: 1.14x",
+   "result": {
+    "late_mean": 1413.3,
+    "pre_mean": 1241.5,
+    "ratio": 1.14
+   }
+  },
+  {
+   "id": "TP-2",
+   "ripple": "toilet-paper",
+   "link": "step 1, Panic buying (measured: grocery sales, p = 0.002); step 2, People look up bidets (measured: 13x, p = 0.010)",
+   "type": "companion outcome",
+   "statement": "The panic sends readers to Toilets in Japan (the washlet).",
+   "weakens_if_failed": "narrows step 2",
+   "status": "failed",
+   "note": "a rise within chance",
+   "result": {
+    "onset": "2020-03-13",
+    "ratio": 2.5,
+    "baseline": 383.5,
+    "p": 0.21,
+    "n_placebo": 99,
+    "new_article": null,
+    "result": null,
+    "found": {
+     "Toilets in Japan": true
+    },
+    "verdict": "no movement"
+   }
+  },
+  {
+   "id": "SG-1",
+   "ripple": "squid-game-ripples",
+   "link": "step 12, Interest in ddakji surges (measured: 6,500x, p = 0.008)",
+   "type": "dose (a second stone, same outcome)",
+   "statement": "Season 2 (Dec 26, 2024) moves Ddakji again; secondary: by less than the first season's 6,500x.",
+   "weakens_if_failed": "slightly, the dose reading of step 12",
+   "status": "failed",
+   "note": "a rise within chance",
+   "result": {
+    "onset": "2024-12-27",
+    "ratio": 92.2,
+    "baseline": 87.0,
+    "p": 0.052,
+    "n_placebo": 210,
+    "new_article": null,
+    "result": null,
+    "found": {
+     "Ddakji": true
+    },
+    "verdict": "no movement"
+   }
+  },
+  {
+   "id": "SG-2",
+   "ripple": "squid-game-ripples",
+   "link": "step 12, Interest in ddakji surges (measured: 6,500x, p = 0.008)",
+   "type": "companion outcome (a product category)",
+   "statement": "The show sends readers to Vans, the white slip-ons its players wear.",
+   "weakens_if_failed": "narrows step 12 to the games",
+   "status": "failed",
+   "note": "no sustained rise",
+   "result": {
+    "onset": null,
+    "ratio": null,
+    "baseline": null,
+    "p": null,
+    "n_placebo": null,
+    "new_article": null,
+    "result": "no sustained rise",
+    "found": {
+     "Vans": true
+    },
+    "verdict": "no movement"
+   }
+  },
+  {
+   "id": "SG-3",
+   "ripple": "squid-game-ripples",
+   "link": "step 12, Interest in ddakji surges (measured: 6,500x, p = 0.008)",
+   "type": "place with more exposure (the culture)",
+   "statement": "The show sends readers to the Korean Wave.",
+   "weakens_if_failed": "narrows step 12 to the games",
+   "status": "failed",
+   "note": "no sustained rise",
+   "result": {
+    "onset": null,
+    "ratio": null,
+    "baseline": null,
+    "p": null,
+    "n_placebo": null,
+    "new_article": null,
+    "result": "no sustained rise",
+    "found": {
+     "Korean Wave": true
+    },
+    "verdict": "no movement"
+   }
+  }
+ ],
+ "counts": {
+  "held": 20,
+  "failed": 20,
+  "untestable": 12
+ }
+}
