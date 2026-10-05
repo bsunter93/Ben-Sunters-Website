@@ -407,14 +407,15 @@ def works_of(chars):
 def dates_of(qids):
     """Every P577 / P580 / P571 / P569 / P585 statement with its precision."""
     out = {}
+    # each branch binds its own time value (deviation 2: the shared join timed out at the query service)
     branches = " UNION ".join(
-        f'{{ ?item p:{p}/psv:{p} ?v . BIND("{p}" AS ?p) }}' for p in ("P577", "P580", "P571", "P569", "P585"))
+        f'{{ ?item p:{p} ?st . ?st psv:{p} ?v . ?v wikibase:timeValue ?t ; wikibase:timePrecision ?prec . '
+        f'BIND("{p}" AS ?p) }}' for p in ("P577", "P580", "P571", "P569", "P585"))
     for ch in chunks(sorted(qids), 120):
         vals = " ".join("wd:" + q for q in ch)
         q = f"""SELECT ?item ?p ?t ?prec WHERE {{
   VALUES ?item {{ {vals} }}
   {branches}
-  ?v wikibase:timeValue ?t ; wikibase:timePrecision ?prec .
 }}"""
         rows = sparql(q)
         for b in rows or []:

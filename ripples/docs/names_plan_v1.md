@@ -218,3 +218,11 @@ data only. Wikipedia summaries may be read for the hand check under the same rul
     or alias) are no longer found. This lowers recall; it does not loosen any test.
 - **Unchanged:** the statistics, the anomaly rule, the window, the matching rule otherwise, the test, the known positives,
   the decoys and the bar.
+
+## Deviation 2 (registered Oct 5, 2026, 07:20 UTC, before any match or result existed): implementation only
+
+- **What happened:** the resumed run reached the last look-back step (publication dates for 12,944 works and items) and
+  stalled: the date query timed out at the query service (HTTP 504) on every chunk, because its shape joined every
+  time value in Wikidata before the listed items. The run was stopped by hand; no match or result was produced.
+- **Fix:** each date property's branch now binds its own time value. A three-item test query returned in 0.2 seconds.
+- **Unchanged:** everything that is measured or matched.
