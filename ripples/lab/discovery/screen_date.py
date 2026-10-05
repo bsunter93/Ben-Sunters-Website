@@ -20,10 +20,19 @@ import urllib.request
 UA = "ripples-research/0.2 (+https://bensunter.com/ripples/methods/)"
 API = "https://en.wikipedia.org/w/api.php"
 YEAR = r"(1[6-9]\d\d|20\d\d)"
-FIELDS = (r"enacted|date_enacted|date_signed|signed|royal_assent|date_of_royal_assent|ratified|date_ratified|adopted|"
-          r"date_adopted|formed|founded|foundation|established|date_established|effective|date_effective|date_passed|passed|"
-          r"formation|date_formed|inception|start_date|created|date_created|opened|date_opened|"
-          r"authority|binomial_authority|genus_authority|signed_date|date_drafted|date_effective")
+# Infobox field names, normalized (lowercase, spaces and underscores removed), checked in this order of priority: the
+# act that makes the mark (signed, enacted, assent, ratified, adopted), then the start of a body or rule (formed,
+# founded, established, effective, ...), then a taxon's authority, and last a passage date (the latest one listed).
+# Fixed after the first run, which matched only underscore spellings and missed "signeddate" and "effective date";
+# the unregistered "date_drafted" of the first run is dropped. Disclosed in docs/screen_v2.md.
+PRIORITY = [
+    {"signeddate", "datesigned", "signed", "enacted", "dateenacted", "royalassent", "dateofroyalassent", "ratified",
+     "dateratified", "adopted", "dateadopted"},
+    {"formed", "dateformed", "formation", "founded", "foundation", "established", "dateestablished", "effective",
+     "effectivedate", "dateeffective", "inception", "startdate", "created", "datecreated", "opened", "dateopened"},
+    {"authority", "binomialauthority", "genusauthority"},
+]
+PASSED = re.compile(r"^(passed|datepassed|passeddate\d*)$")
 GENERIC = {"united", "states", "national", "federal", "department", "office", "the", "and", "act", "foundation", "commission", "report"}
 _last = [0.0]
 
@@ -70,9 +79,21 @@ def resolve(title):
         rec.update(year=int(t2.group(1)), how="title", field=page)
         return rec
     wt = d["parse"]["wikitext"]["*"]
-    f = re.search(r"\|\s*(" + FIELDS + r")\s*=\s*([^\n]*?)\b" + YEAR + r"\b", wt, re.I)
-    if f:
-        rec.update(year=int(f.group(3)), how="infobox", field=f.group(1).strip().lower())
+    fields = []
+    for line in wt.split("\n"):
+        m2 = re.match(r"\s*\|\s*([A-Za-z0-9_ ]+?)\s*=\s*(.*)$", line)
+        if m2:
+            y = re.search(r"\b" + YEAR + r"\b", m2.group(2))
+            if y:
+                fields.append((re.sub(r"[\s_]", "", m2.group(1).lower()), int(y.group(1)), m2.group(1).strip()))
+    for group in PRIORITY:
+        hit = next((f for f in fields if f[0] in group), None)
+        if hit:
+            rec.update(year=hit[1], how="infobox", field=hit[2])
+            return rec
+    passed = [f for f in fields if PASSED.match(f[0])]
+    if passed:
+        rec.update(year=passed[-1][1], how="infobox", field=passed[-1][2])
         return rec
     rec["note"] = "no year in the title or an infobox field"
     return rec
