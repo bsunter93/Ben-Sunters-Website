@@ -323,9 +323,16 @@ def _query(phrase, rec):
 
 
 # ---------------------------------------------------------------- matching ---------------------------------------------
+GPO = {"ndash": "-", "mdash": "-", "rsquo": "'", "lsquo": "'", "rdquo": '"', "ldquo": '"', "apos": "'"}
+
+
 def fold(s):
-    """Accents off (Lac-Mégantic -> Lac-Megantic), curly quotes and dashes to plain, whitespace collapsed."""
-    s = unicodedata.normalize("NFKD", s or "")
+    """Accents off (Lac-Mégantic -> Lac-Megantic), curly quotes and dashes to plain, whitespace collapsed.
+    Fixed during the run (disclosed in records2_v1.md): the Federal Register's raw text writes accented letters as GPO
+    locator codes, "Lac-M[eacute]gantic", so the codes are decoded first; the first pass missed all seven Lac-Megantic rules."""
+    s = re.sub(r"\[([A-Za-z])(?:acute|grave|circ|uml|tilde|cedil|ring|slash)\]", r"\1", s or "")
+    s = re.sub(r"\[(ndash|mdash|rsquo|lsquo|rdquo|ldquo|apos)\]", lambda m: GPO[m.group(1)], s)
+    s = unicodedata.normalize("NFKD", s)
     s = "".join(c for c in s if not unicodedata.combining(c))
     s = s.replace("’", "'").replace("‘", "'").replace("“", '"').replace("”", '"').replace("``", '"').replace("''", '"')
     s = s.replace("\u2013", "-").replace("\u2014", "-").replace("\u00a0", " ")
@@ -645,6 +652,42 @@ def cmd_run():
     return 0
 
 
+def cmd_rescan(ids):
+    """Re-read the documents a stone already found, with the current matcher (used once, after the GPO-code fix)."""
+    plan = {x["id"]: x for x in json.load(open(QUERIES))["stones"]}
+    state = json.load(open(RAW))
+    before = state.get("requests_total", 0)
+    for sid in ids:
+        rec, st = plan[sid], state["stones"][sid]
+        for item in st["read"]:
+            d = item["publication_date"].replace("-", "/")
+            body = get(f"https://www.federalregister.gov/documents/full_text/text/{d}/{item['document_number']}.txt", want_json=False)
+            if body is None:
+                item["no_text"] = "404 on rescan"; continue
+            best, n, fails, plen = extract(rec, body)
+            item.update({"passing": n, "fails": fails, "preamble_chars": plen, "rescanned": "GPO-code fix"})
+            if best:
+                item.update({k: best[k] for k in ("phrase", "sentence", "window", "cite_score", "cite_why", "cite_label", "guard")})
+                item["strict"] = bool(item["ordered"] is True and best["cite_label"] == "reason")
+            print(sid, item["document_number"], n, best and best["sentence"][:160], flush=True)
+        st["rescanned"] = "GPO-code fix, " + dt.date.today().isoformat()
+    state["requests_total"] = before + _n[0]
+    json.dump(state, open(RAW, "w"), ensure_ascii=False, indent=0)
+
+
+def cmd_paragraph(keys):
+    """For the hand read: the paragraph around the kept occurrence, for sentences the window cut short (disclosed)."""
+    plan = {x["id"]: x for x in json.load(open(QUERIES))["stones"]}
+    state = json.load(open(RAW))
+    for key in keys:
+        sid, num = key.split("|")
+        item = next(x for x in state["stones"][sid]["read"] if x["document_number"] == num)
+        d = item["publication_date"].replace("-", "/")
+        text = fold(get(f"https://www.federalregister.gov/documents/full_text/text/{d}/{num}.txt", want_json=False) or "")
+        i = text.find(item["sentence"][:60].strip(". "))
+        print(f"\n## {key}\n", text[max(0, i - 1200): i + 1200] if i >= 0 else "(sentence not found)")
+
+
 def surviving(state):
     for sid, s in state["stones"].items():
         for r in s["read"]:
@@ -662,56 +705,74 @@ def cmd_review(group=None):
         print("   " + r["sentence"])
 
 
+# stone dates looked up for rules from the same year as a year-only stone (plan section 5); the rules' own texts give them
+RESOLVED = {"hurricane-katrina": "2005-08-29", "boeing-737-max-groundings": "2019-03-13", "equifax-data-breach": "2017-09-07"}
+
+
 def cmd_build():
     state = json.load(open(RAW))
     hand = json.load(open(HAND)) if os.path.exists(HAND) else {}
     plan = json.load(open(QUERIES))
     pairs, screened = [], []
     for sid, s, r in surviving(state):
-        key = f"{sid}|{r['document_number']}"
-        hl = hand.get(key, {})
-        row = {"stone_id": sid, "work": s["stone"], "work_date": s["date"], "group": s["group"], "stone_type": s["type"],
-               "rule": r["title"], "document_number": r["document_number"], "publication_date": r["publication_date"], "ordered": r["ordered"],
+        hl = hand.get(f"{sid}|{r['document_number']}", {})
+        ordered = r["ordered"]
+        if ordered == "same year" and sid in RESOLVED:
+            ordered = r["publication_date"] > RESOLVED[sid]
+        mark = not (hl.get("note") or "").startswith("not a mark")
+        rulemaking = hl.get("rulemaking") or (r["rins"][0] if r["rins"] else r["document_number"])
+        row = {"stone_id": sid, "work": s["stone"], "work_date": RESOLVED.get(sid, s["date"]), "group": s["group"], "stone_type": s["type"],
+               "rule": r["title"], "agency": ", ".join(r["agencies"][:2]), "action": r.get("action"), "document_number": r["document_number"],
+               "rulemaking": rulemaking, "publication_date": r["publication_date"], "ordered": ordered, "a_mark": mark,
                "cite_score": r["cite_score"], "cite_label": r["cite_label"], "strict": r.get("strict"), "hand_label": hl.get("label"),
-               "via": hl.get("via"), "note": hl.get("note"), "sentence": r["sentence"], "url": r["html_url"]}
+               "via": hl.get("via"), "lasting": hl.get("lasting"), "scope": hl.get("scope"), "new": hl.get("new"), "status": hl.get("status"),
+               "note": hl.get("note"), "sentence": r["sentence"], "url": r["html_url"]}
         screened.append(row)
-        if s["group"] != "decoy" and hl.get("label") == "reason" and r["ordered"] is True:
-            pairs.append({"work": s["stone"], "work_date": s["date"], "bill": (r["rins"][0] if r["rins"] else r["document_number"]),
-                          "debated": r["publication_date"], "act": r["title"], "country": "US", "cite_score": r["cite_score"],
-                          "cite_why": r["cite_why"], "cite_label": r["cite_label"], "royal_assent": r.get("effective_on") or r["publication_date"],
-                          "act_url": r["html_url"], "ordered": True, "sentence": r["sentence"], "debate_url": r["html_url"],
-                          "kind": "rule", "source": "Federal Register", "hand_label": "reason", "via": hl.get("via"), "new": hl.get("new"),
-                          "agency": ", ".join(r["agencies"][:2]), "document_number": r["document_number"], "fr_citation": r.get("citation"),
-                          "rin": r["rins"], "rule_action": r.get("action"), "publication_date": r["publication_date"],
-                          "effective_on": r.get("effective_on"), "stone_type": s["type"], "note": hl.get("note"),
+        if s["group"] != "decoy" and hl.get("label") == "reason" and ordered is True and mark and hl.get("lasting"):
+            pairs.append({"work": s["stone"], "work_date": row["work_date"], "bill": rulemaking, "debated": r["publication_date"], "act": r["title"],
+                          "country": "US", "cite_score": r["cite_score"], "cite_why": r["cite_why"], "cite_label": r["cite_label"],
+                          "royal_assent": r.get("effective_on") or r["publication_date"], "act_url": r["html_url"], "ordered": True,
+                          "sentence": r["sentence"], "debate_url": r["html_url"],
+                          "kind": "rule", "source": "Federal Register", "hand_label": "reason", "via": hl.get("via"), "scope": hl.get("scope"),
+                          "new": hl.get("new"), "status": hl.get("status"), "note": hl.get("note"), "agency": row["agency"],
+                          "document_number": r["document_number"], "fr_citation": r.get("citation"), "rin": r["rins"], "rule_action": r.get("action"),
+                          "publication_date": r["publication_date"], "effective_on": r.get("effective_on"), "stone_type": s["type"],
                           "court": None, "case_name": None, "date_filed": None, "opinion_url": None, "holding_mark": None})
     pairs.sort(key=lambda p: (p["work"], p["debated"]))
     dec = [s for s in state["stones"].values() if s["group"] == "decoy"]
     stn = [s for s in state["stones"].values() if s["group"] != "decoy"]
-    decoy_strict = sorted({s["stone"] for s in dec for r in s["read"] if r.get("strict")})
-    decoy_hand = sorted({row["work"] for row in screened if row["group"] == "decoy" and row["hand_label"] == "reason"})
-    labeled = [x for x in screened if x["hand_label"] and x["group"] != "decoy"]
-    tp = sum(1 for x in labeled if x["hand_label"] == "reason" and x["cite_label"] == "reason")
-    fp = sum(1 for x in labeled if x["hand_label"] != "reason" and x["cite_label"] == "reason")
-    fn = sum(1 for x in labeled if x["hand_label"] == "reason" and x["cite_label"] != "reason")
-    distinct = {(p["work"], tuple(p["rin"]) or p["document_number"]) for p in pairs}
-    new = {(p["work"], tuple(p["rin"]) or p["document_number"]) for p in pairs if p.get("new")}
-    out = {"protocol": PROTOCOL, "run": state.get("started", "")[:10], "finished": state.get("finished"),
+    rows = [x for x in screened if x["group"] != "decoy"]
+
+    def distinct(f):
+        return sorted({(x["work"], x["rulemaking"]) for x in rows if x["hand_label"] == "reason" and x["ordered"] is True and x["a_mark"] and f(x)})
+    registered = distinct(lambda x: x["new"])                       # the registered bar: new, real, reason, ordered, a final rule
+    lasting = distinct(lambda x: x["new"] and x["lasting"])          # stricter, after the fact: not temporary by its own terms
+    standing = distinct(lambda x: x["new"] and x["lasting"] and x["scope"] == "standing")  # strictest: beyond the stone's own aftermath
+    tp = sum(1 for x in rows if x["hand_label"] == "reason" and x["cite_label"] == "reason")
+    fp = sum(1 for x in rows if x["hand_label"] != "reason" and x["cite_label"] == "reason")
+    fn = sum(1 for x in rows if x["hand_label"] == "reason" and x["cite_label"] != "reason")
+    by_type = {t: {"stones": sum(1 for s in stn if s["type"] == t), "with_a_final_rule": sum(1 for s in stn if s["type"] == t and s["found"]),
+                   "surviving": sum(1 for x in rows if x["stone_type"] == t),
+                   "reason_lasting_new": len({p for p in lasting if any(x["work"] == p[0] and x["stone_type"] == t for x in rows)})}
+               for t in ("work", "event", "thing")}
+    out = {"protocol": PROTOCOL, "run": state.get("started"), "finished": state.get("finished"),
            "sources": {"federal_register": {"api": "https://www.federalregister.gov/api/v1/documents.json", "key": "none",
-                                            "requests": state.get("requests_total"), "stopped": state.get("stopped")},
-                       "courtlistener": {"api": "https://www.courtlistener.com/api/rest/v4/search/", "status": "not run: the REST API "
-                                         "documentation says authentication is necessary (a token tied to an account); none was created",
-                                         "documented_limits": "authenticated: 5 requests a minute, 50 an hour, 125 a day"}},
+                                            "requests": state.get("requests_total"), "stopped": state.get("stopped"),
+                                            "note": "the registered run finished without a refusal; a 429 answered the first request of a corrective rescan afterward"},
+                       "courtlistener": {"api": "https://www.courtlistener.com/api/rest/v4/search/", "status": "not run: the REST API documentation "
+                                         "says authentication is necessary (a token tied to an account); no account was created",
+                                         "documented_limits": "authenticated users: 5 requests a minute, 50 an hour, 125 a day"}},
            "diagnostics": state.get("diagnostics"),
            "summary": {"stones_searched": len(stn), "decoys_searched": len(dec), "skipped": plan["counts"]["skipped"],
                        "stones_with_a_final_rule_found": sum(1 for s in stn if s["found"]),
-                       "surviving_sentences": sum(1 for x in screened if x["group"] != "decoy"),
-                       "surviving_sentences_decoys": sum(1 for x in screened if x["group"] == "decoy"),
-                       "hand": {k: sum(1 for x in labeled if x["hand_label"] == k) for k in ("reason", "context", "aside")},
-                       "pairs_reason": len(pairs), "distinct_stone_rulemakings": len(distinct), "new_distinct": len(new),
-                       "decoys_passing_strict_rule": decoy_strict, "decoys_passing_hand_read": decoy_hand,
-                       "cite_score_vs_hand": {"tp": tp, "fp": fp, "fn": fn, "precision": round(tp / max(1, tp + fp), 2),
-                                              "recall": round(tp / max(1, tp + fn), 2)}},
+                       "surviving_sentences": len(rows), "surviving_sentences_decoys": len(screened) - len(rows),
+                       "hand": {k: sum(1 for x in rows if x["hand_label"] == k) for k in ("reason", "context", "aside")},
+                       "bar_registered_new_pairs": len(registered), "lasting_new_pairs": len(lasting), "standing_new_pairs": len(standing),
+                       "by_stone_type": by_type,
+                       "decoys_passing_strict_rule": sorted({s["stone"] for s in dec for r in s["read"] if r.get("strict")}),
+                       "decoys_passing_hand_read": sorted({x["work"] for x in screened if x["group"] == "decoy" and x["hand_label"] == "reason"}),
+                       "cite_score_vs_hand": {"tp": tp, "fp": fp, "fn": fn, "precision": round(tp / max(1, tp + fp), 2), "recall": round(tp / max(1, tp + fn), 2)},
+                       "registered_pairs": [list(p) for p in registered], "standing_pairs": [list(p) for p in standing]},
            "pairs": pairs, "screened": screened}
     json.dump(out, open(OUT, "w"), ensure_ascii=False, indent=1)
     print(json.dumps(out["summary"], indent=1))
@@ -731,6 +792,8 @@ def cmd_selftest():
     lm = {"type": "event", "amb": False, "word": None, "phrases": ["Lac-Mégantic"], "guard": None, "case": "s", "date": "2013-07-06"}
     best, n, _, _ = extract(lm, "The derailment at Lac-\nMegantic, Quebec, prompted PHMSA to act. List of Subjects Lac-Megantic")
     assert n == 1, n
+    best, n, _, _ = extract(lm, "The July 6, 2013, derailment in the town of Lac-M[eacute]gantic, Quebec, led PHMSA to act.")
+    assert n == 1, n
     dec = {"type": "work", "amb": True, "word": "film", "phrases": ["Gravity"], "guard": None, "case": "s", "date": "2013"}
     best, n, fails, _ = extract(dec, "The specific gravity of the film was measured. Gravity drains are required.")
     assert n == 0, (n, best)
@@ -739,4 +802,6 @@ def cmd_selftest():
 
 if __name__ == "__main__":
     cmd = sys.argv[1] if len(sys.argv) > 1 else "plan"
+    if cmd in ("rescan", "paragraph"):
+        sys.exit((cmd_rescan if cmd == "rescan" else cmd_paragraph)(sys.argv[2].split(",")) or 0)
     sys.exit({"plan": cmd_plan, "run": cmd_run, "build": cmd_build, "selftest": cmd_selftest}.get(cmd, lambda: cmd_review(sys.argv[2] if len(sys.argv) > 2 else None))() or 0)
