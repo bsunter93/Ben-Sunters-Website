@@ -1,0 +1,54 @@
+{
+ "jobs": {
+  "surprise-u4": {
+   "attempts": []
+  },
+  "records2-lac-megantic": {
+   "attempts": []
+  },
+  "ladder-finding-nemo": {
+   "attempts": []
+  },
+  "ladder-bpii-ucas": {
+   "attempts": []
+  },
+  "ladder-bpii-hansard": {
+   "attempts": []
+  }
+ },
+ "last_run": {
+  "utc": "2026-10-05T07:23:22Z",
+  "date": "2026-10-05",
+  "mode": "dry run",
+  "event": "push",
+  "ref": "claude/eng-dataday",
+  "decisions": [
+   {
+    "job": "surprise-u4",
+    "state": "waiting",
+    "why": "en.wikipedia.org answered 429 on Oct 5, 2026 (UTC); no request before Oct 6, 2026; ripples/lab/discovery/surprise_blocked_dates.txt on eng-surprise lists Oct 5, 2026: no request to en.wikipedia.org today"
+   },
+   {
+    "job": "records2-lac-megantic",
+    "state": "waiting",
+    "why": "www.federalregister.gov answered 429 on Oct 5, 2026 (UTC); no request before Oct 6, 2026"
+   },
+   {
+    "job": "ladder-finding-nemo",
+    "state": "held",
+    "why": "needs Addendum 2 to ladder_plan_v1.md naming one Comtrade request per year without the partner2, customs and transport filters (Addendum 1, item 9), and the commit of the code that makes it; then set plan, code, args, hosts and outputs here, set cleared to true and raise the revision; comtradeapi.un.org answered 400 on Oct 5, 2026 (UTC); no request before Oct 6, 2026"
+   },
+   {
+    "job": "ladder-bpii-ucas",
+    "state": "held",
+    "why": "needs an addendum to ladder_plan_v1.md naming the exact UCAS table address and the placebo pool size (section 6.1), and the commit of code that implements section 6.1; then fill code, tree, args, done_when and outputs here, set cleared to true and raise the revision; www.ucas.com answered 404 on Oct 5, 2026 (UTC); no request before Oct 6, 2026"
+   },
+   {
+    "job": "ladder-bpii-hansard",
+    "state": "held",
+    "why": "needs an addendum to ladder_plan_v1.md confirming the Hansard endpoint (section 6.2), and the commit of code that implements section 6.2; then fill code, tree, args, done_when and outputs here, set cleared to true and raise the revision; hansard-api.parliament.uk answered 500 on Oct 5, 2026 (UTC); no request before Oct 6, 2026"
+   }
+  ]
+ },
+ "updated_utc": "2026-10-05T07:23:22Z"
+}
