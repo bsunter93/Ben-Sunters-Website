@@ -216,5 +216,5 @@ operators) changes the court design in section 9 as follows. Nothing else in the
    sentence, the URL and the labels. No windows of text.
 9. **Bar for courts,** reported beside the Federal Register's and against the same numbers: at least 5 new real stone →
    holding pairs, and 0 of 49 decoys under the strict automated rule. A partial run reports what it covered.
-10. **No data-day job yet.** The `claude/eng-dataday` workflow is not on the remote, so the court job is a resumable script
+10. **No data-day job yet.** The data-day workflow is not on the remote yet, so the court job is a resumable script
     started by a push to its own workflow file, at most once a day.
