@@ -89,7 +89,7 @@ with the diagnosis.
 ## New pools (exploratory; no hand comparison)
 
 1. **The never-screened catalog pool** (192 sentences, `screen_new_v1.json`): the v1 labels plus the dating step.
-2. **The Federal Register pool of records 2** (`docs/results/records2_v1.json` on branch `claude/eng-records`, its
+2. **The Federal Register pool of records 2** (`docs/results/records2_v1.json` on the records 2 branch, `eng-records`, its
    `screened` list of 247 rule sentences, decoys included). Only candidate fields are read: work, work date, stone
    type, group, agency, rule title, action, publication date, sentence, URL and document number. The hand labels in
    that file are not opened. Each candidate is labeled under rubric v2. The mark is the rule the sentence belongs to,

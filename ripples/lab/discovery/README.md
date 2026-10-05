@@ -35,3 +35,13 @@ cd ripples/docs/results
 python3 ../../lab/discovery/screen_sets.py
 python3 ../../lab/discovery/screen_compare.py
 ```
+
+Screen v2 (`docs/screen_plan_v2.md`, `docs/screen_v2.md`): `screen_date.py` dates undated marks from their own
+records (inputs fixed in `screen_dating_inputs_v2.json`), and `screen_v2.py` applies the dates to the v1 labels and
+compares them with the hand keeps minus those that violate the written definitions.
+
+```
+cd ripples/docs/results
+python3 ../../lab/discovery/screen_date.py      # Wikipedia, honest user agent, one request a second
+python3 ../../lab/discovery/screen_v2.py
+```
