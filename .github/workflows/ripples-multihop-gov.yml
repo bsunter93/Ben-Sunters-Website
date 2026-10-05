@@ -1,0 +1,47 @@
+# Multi-hop ripples v1, H4 (ripples/docs/multihop_plan_v1.md): the Congressional Record hop 2 for the stage-1 survivors,
+# from GovInfo with the key in Actions secrets (ripples/lab/discovery/multihop_gov.py). Registered to run once, on the
+# push that carries the survivors; it has no schedule and no manual trigger. Honest UA, four seconds between requests,
+# stops on refusal, and commits its results back to the branch.
+name: Ripples multi-hop Congressional Record
+
+on:
+  push:
+    branches: ["claude/**"]
+    paths: ["ripples/lab/discovery/multihop_gov.py", ".github/workflows/ripples-multihop-gov.yml"]
+
+permissions:
+  contents: write
+
+concurrency:
+  group: ripples-multihop-gov
+  cancel-in-progress: false
+
+jobs:
+  run:
+    runs-on: ubuntu-latest
+    timeout-minutes: 330
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Congressional Record hop 2
+        env:
+          BUDGET_MIN: "300"
+          DATA_GOV_KEY: ${{ secrets.DATA_GOV_KEY }}
+        run: python ripples/lab/discovery/multihop_gov.py
+      - name: Commit results
+        if: always()
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898900+github-actions[bot]@users.noreply.github.com"
+          mkdir -p /tmp/results && cp ripples/docs/results/multihop_gov_v1.json /tmp/results/ 2>/dev/null || exit 0
+          for i in 1 2 3 4; do
+            git fetch -q origin "${GITHUB_REF_NAME}" && git reset -q --hard "origin/${GITHUB_REF_NAME}" || exit 0
+            cp /tmp/results/* ripples/docs/results/
+            git add ripples/docs/results/multihop_gov_v1.json || exit 0
+            git diff --cached --quiet && exit 0
+            git commit -q -m "Ripples: multi-hop Congressional Record results [skip ci]"
+            git push -q origin "HEAD:${GITHUB_REF_NAME}" && break
+            sleep 7
+          done
