@@ -288,7 +288,7 @@ canvas.glw{position:absolute;pointer-events:none;border-radius:14px;z-index:0}.g
 }
 @media (min-width:861px) and (max-height:820px){.w2 svg#pond{max-height:calc(100vh - 362px)}}
 /* the strip as a timeline: cards as tall as their own words, a rail with a dot per card, the current one lit */
-.fit .feed{align-items:flex-start;padding-top:18px;gap:12px}
+.fit .feed{align-items:flex-start;padding-top:18px;gap:12px;max-width:none}  /* the old side-column cap (560 px at 1500 px and wider) cut the timeline after two cards */
 .fit .feed .card{padding:10px 12px 10px}.fit .feed .card h2{font-size:.98rem;line-height:1.3;margin:6px 0 4px}.fit .feed .card .spark{max-height:40px}
 .fit .feed .card .more{margin-top:4px}.fit .feed .card:not(:has(details[open])) .acts{position:absolute;right:12px;bottom:10px;margin:0}
 .fit .feed .card .acts .shr{font-size:.74rem}
@@ -303,7 +303,7 @@ canvas.glw{position:absolute;pointer-events:none;border-radius:14px;z-index:0}.g
 .callout{opacity:0;transition:opacity .45s ease-out;pointer-events:none}.callout.on{opacity:1}
 .callout text{font:500 15px var(--sans);fill:#f2f6f9;paint-order:stroke;stroke:#0f1c26;stroke-width:4px;stroke-linejoin:round}
 .callout .cg{font-weight:600}.callout .cg.l-measured{fill:var(--good)}.callout .cg.l-timed{fill:var(--timed)}.callout .cg.l-reported{fill:var(--rec)}.callout .cg.l-plausible{fill:var(--plaus)}.callout .cg.l-busted{fill:var(--miss)}.callout .cg.l-mark{fill:var(--marigold)}
-.w2 .nlab.phr,.w2 .nlab.cov{opacity:0 !important}.w2 #pond.beat .crestdate{opacity:0 !important}
+.w2 .nlab.phr,.w2 .nlab.cov,.w2 .stonet.cov{opacity:0 !important}.w2 #pond.beat .crestdate{opacity:0 !important}
 .w2 .beatline.mapped > b,.w2 .beatline.mapped > .bhow,.w2 .beatline.mapped > .bwhy,.w2 .beatline.mapped > .bmk{display:none}  /* the sentence is on the water; the line under the pond keeps the clue count and what comes next */
 /* the story as a route: the links stay on the water once they land, styled by how sure they are; the arcs step back */
 .w2 .edge{opacity:0}.w2 .edge.route{opacity:.4}.w2 .edge.route.mark{stroke:var(--marigold);opacity:.62}.w2 .edge.mark{stroke:var(--marigold)}
@@ -1531,17 +1531,24 @@ function callout(it) {  // one sentence on the water beside the step being told;
   const g = cur && cur.callout; if (!g) return;
   const svg = $("#pond"), wide = svg.clientWidth >= 640;
   $("#beatline").classList.toggle("mapped", wide && !!it);
-  if (!it || !wide || it.state !== "landed") { g.classList.remove("on"); cur.items.forEach(x => x.lab && x.lab.classList.remove("cov")); return; }
+  if (!it || !wide || it.state !== "landed") { g.classList.remove("on"); cur.items.forEach(x => x.lab && x.lab.classList.remove("cov", "phr")); svg.querySelector(".stonet")?.classList.remove("cov"); return; }  // the sentence leaves, so every label it stood in for comes back (a one-stone story kept its only label hidden at rest)
   const K = cur.K || 1, sc = Math.min(svg.clientWidth / svg.viewBox.baseVal.width, svg.clientHeight / svg.viewBox.baseVal.height), fs = Math.max(15, 13 / sc), lines = wrapLabel(it.title || it.label, 30, 2);
   const right = it.pos.x >= C.x, x0 = it.pos.x + (right ? 22 : -22) * K, y0 = it.pos.y - (lines.length > 1 ? 30 : 12) * K;
   const t = cur.calloutT; t.innerHTML = ""; t.setAttribute("text-anchor", right ? "start" : "end"); t.style.fontSize = `${fs}px`;
   lines.forEach((ln, i) => { const sp = el("tspan", {x:x0, y:y0 + i * fs * 1.2}, t); sp.textContent = ln; });
   const gt = cur.calloutG; gt.setAttribute("text-anchor", right ? "start" : "end"); gt.setAttribute("x", x0); gt.setAttribute("y", y0 + lines.length * fs * 1.2 + 1); gt.style.fontSize = `${fs * 0.78}px`;
   gt.setAttribute("class", `cg l-${it.mark ? "mark" : it.lv}`); gt.textContent = it.mark ? `Lasting mark: ${it.mark.toLowerCase()} · ${it.lvText || LVL[it.lv]}` : (it.lvText || LVL[it.lv]);
-  try { const bb = g.getBBox(), vb = svg.viewBox.baseVal, lo = vb.x + 8, hi = vb.x + vb.width - 8; let dx = 0; if (bb.x < lo) dx = lo - bb.x; else if (bb.x + bb.width > hi) dx = hi - (bb.x + bb.width); g.setAttribute("transform", `translate(${dx.toFixed(1)} 0)`); } catch {}
-  it.lab.classList.add("phr"); g.classList.add("on");
+  try { const vb = svg.viewBox.baseVal, lo = vb.x + 8, hi = vb.x + vb.width - 8;
+    const over = () => { const bb = g.getBBox(); return bb.x < lo ? lo - bb.x : bb.x + bb.width > hi ? hi - (bb.x + bb.width) : 0; };
+    const side = r => { const x = it.pos.x + (r ? 22 : -22) * K; t.setAttribute("text-anchor", r ? "start" : "end"); gt.setAttribute("text-anchor", r ? "start" : "end"); gt.setAttribute("x", x); t.querySelectorAll("tspan").forEach(sp => sp.setAttribute("x", x)); };
+    let dx = over();
+    if (Math.abs(dx) > 12 * K) { side(!right); const dx2 = over(); if (Math.abs(dx2) < Math.abs(dx)) dx = dx2; else side(right); }  // near the pond's edge the push would put the sentence over its own step: it takes the open side instead
+    g.setAttribute("transform", `translate(${dx.toFixed(1)} 0)`); } catch {}
+  cur.items.forEach(x => x !== it && x.lab && x.lab.classList.remove("phr")); it.lab.classList.add("phr"); g.classList.add("on");
   try { const a = g.getBoundingClientRect(), A = {x:a.left - 8, y:a.top - 6, w:a.width + 16, h:a.height + 12};  // screen boxes: labels sit in their own transformed groups
-    for (const x of cur.items) { if (x === it || !x.lab) continue; const c = x.lab.getBoundingClientRect(); x.lab.classList.toggle("cov", c.width > 0 && c.left < A.x + A.w && c.right > A.x && c.top < A.y + A.h && c.bottom > A.y); } } catch {}
+    const hit = e => { const c = e.getBoundingClientRect(); return c.width > 0 && c.left < A.x + A.w && c.right > A.x && c.top < A.y + A.h && c.bottom > A.y; };
+    for (const x of cur.items) { if (x === it || !x.lab) continue; x.lab.classList.toggle("cov", hit(x.lab)); }
+    const st = svg.querySelector(".stonet"); if (st) st.classList.toggle("cov", hit(st)); } catch {}  // the stone's name steps aside too
 }
 function clueText(b) {  // before the reveal, every beat is a clue, and says which (an earlier lasting mark included)
   const html = beatText(b); const beats = cur.timeline && cur.timeline.beats; if (!beats || !cur.mystery) return html;
