@@ -423,7 +423,7 @@ Every GDELT DOC query carries the suffix `sourcelang:english`. Television querie
 
 ## 10. Amendments (each registered before any result it could affect)
 
-**Oct 5, 2026, 06:45 UTC (before any Media Cloud request and before any GDELT data).** GDELT answered HTTP 429 to the
+**Oct 5, 2026, 06:37 UTC (before any Media Cloud request and before any GDELT data; the time first read 06:45, a slip corrected on Oct 5; the commit, 11eb8ad at 06:37:52 UTC, is the record).** GDELT answered HTTP 429 to the
 first request of this pass (the DOC API at 06:35 UTC), with a notice asking for one request every 5 seconds. Under the
 rules this stops `api.gdeltproject.org`, which serves both the DOC and the TV API, until UTC midnight: no further GDELT
 request is made on Oct 5 (UTC). One attempt will be made after Oct 6, 00:00 UTC at the registered pace; a second refusal
