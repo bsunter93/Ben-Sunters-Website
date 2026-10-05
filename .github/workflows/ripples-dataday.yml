@@ -7,6 +7,7 @@
 # Requests are sent only by the scheduled run (which GitHub starts on the default branch) or by a manual run on main
 # with mode=run. A push to this file on any other branch is a dry run: it decides every job, reports, and sends nothing.
 # One ledger and one status file therefore decide every real request, and no branch run can retry a refused host.
+# A commit whose message holds the skip token anywhere, the body included, starts no run at all.
 name: Ripples data day
 
 on:
