@@ -11,6 +11,7 @@ const shots = [
   { name: 'tk_reveal', url: '/ripples/demo/?m=tiger-king&nointro=1', film: true, pre: 21800, dur: 6800, speed: 1.3 , dsf: 2.5 },
   { name: 'sputnik', url: '/ripples/demo/?c=sputnik-nasa-arpa&nointro=1', film: true, pre: 24500, dur: 15000, speed: 4 , dsf: 2.5 },
   { name: 'bambi', url: '/ripples/demo/?w=bambi-c3&nointro=1', film: true, pre: 0, dur: 6000, speed: 1.0, dsf: 2.5 },
+  { name: 'take', url: '/ripples/demo/?m=tiger-king&nointro=1', pre: 0, dur: 33000, speed: 1, vw: 1280, vh: 720, dsf: 3 },
   { name: 'end', url: '/ripples/tools/film/card.html?mode=end', pre: 0, dur: 2600, speed: 1 },
 ];
 const sleep = ms => new Promise(r => setTimeout(r, ms));
@@ -20,16 +21,19 @@ const sleep = ms => new Promise(r => setTimeout(r, ms));
     if (only && s.name !== only) continue;
     const dir = path.join(OUT, s.name); fs.rmSync(dir, { recursive: true, force: true }); fs.mkdirSync(dir, { recursive: true });
     const p = await b.newPage({ viewport: { width: s.vw || 1600, height: s.vh || 900 }, deviceScaleFactor: s.dsf || 2 });
-    await p.clock.install();
+    await p.clock.install({ time: new Date('2026-10-05T12:00:00Z') }); await p.clock.pauseAt(new Date('2026-10-05T12:00:01Z'));  // time moves only when a frame asks (left running, every screenshot added real time to the story)
     await p.goto(BASE + s.url);
     if (s.film) await p.addStyleTag({ content: FILM_CSS }); else await p.addStyleTag({ content: '.hint,.tip{display:none !important}' });
     // let data load: advance the clock in small steps until the pond exists (cards have no pond)
     for (let i = 0; i < 200; i++) { await p.clock.runFor(16); const ok = await p.evaluate(() => !!document.querySelector('#pond .scene') || !!document.getElementById('wm')); if (ok) break; await sleep(60); }
     if (s.film) await p.evaluate(() => window.dispatchEvent(new Event('resize')));
+    // CSS fades run on the browser's own timeline, not the page clock: freeze it, then step each fade to the page clock every frame
+    const cdp = await p.context().newCDPSession(p); await cdp.send('Animation.enable'); await cdp.send('Animation.setPlaybackRate', { playbackRate: 0 });
     for (let t = 0; t < s.pre; t += 100) await p.clock.runFor(100);
     const step = 1000 / 30 * s.speed, n = Math.round(s.dur / step), meta = { frames: [] };
     for (let i = 0; i < n; i++) {
       await p.clock.runFor(step);
+      await p.evaluate(step => { const now = performance.now(); for (const a of document.getAnimations()) { if (a.__v0 === undefined) a.__v0 = now - step; a.currentTime = Math.max(0, now - a.__v0); } }, step);
       if (s.zoom) { const u = i / Math.max(1, n - 1), z = s.zoom[0] + (s.zoom[1] - s.zoom[0]) * (u * u * (3 - 2 * u));
         await p.evaluate(z => { const w = document.querySelector('.pondbox'); if (!w) return; w.style.transformOrigin = '50% 45%'; w.style.transform = `scale(${z})`;
           // the date and tally ride over the sky: undo the zoom on them so the edges never crop
