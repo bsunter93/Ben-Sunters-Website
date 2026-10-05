@@ -25,6 +25,10 @@ repository root, caches raw API responses in a directory outside the repository,
 `docs/results/surprise_v1.json`. A 403, 429, 5xx or timeout writes a dated line to `surprise_blocked_dates.txt` and the
 scorer will not contact Wikimedia again that UTC day; `--offline` rescores from the cache, `--no-cocite` is the Oct 5
 deviation (u4 dropped).
+`shape.py` (Oct 4, 2026) is separate and runs from the repository root with no network: `python3
+ripples/lab/discovery/shape.py placebo` chooses the shape rules on decoy dates, then `python3
+ripples/lab/discovery/shape.py real` classifies the shape of every stored response series, builds lag priors per link
+type and compares catalyst with outcome strength. Plan: `docs/shape_plan_v1.md`; results: `docs/shape_v1.md`.
 ## Multi-hop ripples v1 (Oct 4 to 5, 2026)
 
 `multihop.py`, `multihop_compose.py` and `multihop_gov.py` compose stone → intermediate → lasting mark under the plan
