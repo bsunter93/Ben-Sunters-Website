@@ -62,7 +62,8 @@ CURATED = {
         1: W("Exotic pet"),
         2: W("Wildlife trade"),
         4: congress("116th", "house-bill", 1380, "H.R. 1380, Big Cat Public Safety Act (116th Congress)"),
-        5: congress("117th", "house-bill", 263, "H.R. 263, Big Cat Public Safety Act (117th Congress), enacted Dec 20, 2022"),
+        5: ("https://www.govinfo.gov/link/plaw/117/public/243", "govinfo: Public Law 117-243, Big Cat Public Safety Act, Dec 20, 2022"),
+        6: ("https://www.govinfo.gov/app/details/CREC-2022-07-28/CREC-2022-07-28-pt1-PgH7388", "govinfo: Congressional Record, Jul 28, 2022, H7388"),
     },
     "mr-bates-horizon": {
         1: W("Mr Bates vs The Post Office"),

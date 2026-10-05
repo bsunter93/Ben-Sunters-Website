@@ -161,7 +161,7 @@ Walter's findings: Prohibition's autoplay is back-loaded (none at 7 s, eighteen 
 
 ## The three new reviewers (simulated personas modeled on public roles; not their words)
 
-### Simulated persona modeled on the public role of Thomas Kurian; not his words. Rating 6.
+### Simulated persona: a cloud-platform executive. Rating 6.
 
 I read the docs first, as I would with any data product: REVIEW_GUIDE, the context brief (sections 1–2, 7), `chain_check.py`, the CI workflow, the sources pass. Then I spent the time in the browser. My rating is 6 of 10, and the reason is that the methodology is more honest than the pipeline is reproducible.
 
@@ -175,7 +175,7 @@ Would a newsroom buy it? As a research notebook with a beautiful front end, yes,
 
 Findings: Tiger King rated twice (map literal vs checker); no checker SHA, input hash or series snapshot in results; CI never runs on main or on a schedule, no golden diff; the citation scorer's calibration set lives in the scorer file and "As just one example" scored as an argument; a "no data" verdict renders as Plausible "Happened"; the chooser tabs navigated (fixed the same hour); no link check in CI; within-chance series drawn on equal footing in the chart with no p; multiple-comparison note absent; the acts pond's chooser label says Lasting marks; the same-stone row is hard to reach; the preview inliner is not in the repo.
 
-### Simulated persona modeled on the public role of Elon Musk; not his words. Rating 5.
+### Simulated persona: an engineering-led founder. Rating 5.
 
 I opened it cold, hit Space on the intro: nothing. Space only drives the play button, which is behind the dialog. Clicked "Throw a stone", watched the rock fly and the front spread. Pretty. Then "/" , typed sputnik, Enter: landed on the right chain in under two seconds. Arrows step the ripples in date order; Step mode stops the clock at each one. The keyboard path is good and I would keep all of it.
 
@@ -191,7 +191,7 @@ Rating: 5/10. Honest instrument, decorated too heavily, and the decoration is wh
 
 Measurements (headless Chromium, software rasterization, so ratios matter more than absolutes): filters on 7.8–19.8 fps and 425–620 ms/s of task time; filters off 12.3–27.8 fps and 172–350 ms/s; raster 9,852 ms vs script 300 ms in a 13-s trace; long tasks up to 1,303 ms on the cold open; 1,007,556-byte HTML with 607 KB of inline JSON and about 249 KB of base64 fonts; a paused story still cost 209 ms/s and 24 layouts/s [builder: the blur filters on arcs and the idle redraw were removed the same hour; the water-texture filters remain]; Space does nothing on the intro; Step scrolls the whole page; placebo windows overlap heavily so p is finer than the data supports; 13 of 30 busted steps are author-written claim decoys; the dose-response step is one of 540.
 
-### Simulated persona modeled on the public role of Mark Zuckerberg; not his words. Rating 6.
+### Simulated persona: a consumer-growth executive. Rating 6.
 
 I opened it on a phone cold. The intro screen is good: "Throw a stone. See what it changed." and one button. I understood the promise before I tapped. Then the tap landed me on a header stack: title, a three-line subtitle, a five-item tally and a "Change story" pill, and the pond itself did not start until 290 px down an 852 px screen, drawn at 357×185. The first ripple appeared about two seconds in; the law, the payoff, arrived at 14 seconds, after the autoplay had crossed 2.8 years. By then the pond labels were sitting on top of each other ("Big Cat Act becomes law" over WILDLIFE LAW, "Big Cat Rescue" over CHARITY). So the ten-second test is a split: the sentence lands, the picture doesn't yet.
 

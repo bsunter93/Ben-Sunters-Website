@@ -233,8 +233,8 @@ instrument, which tells the next pass where to look.
 | 1 (Oct 3 night) | Dani, Priya, Walter | 4, 5, 5 |
 | 2 | Marcus, Yuki, Earl | 5, 6, 6 |
 | 3 | Aisha, Tom, Lena | 5, 7, 6 → 6.5, 8, 7 after fixes |
-| 4 (Oct 4) | the nine returning; Kurian, Musk, Zuckerberg personas | 5.4 → 7.7; 6, 5, 6; all twelve 7.2 |
-| Roundtable | all twelve, Musk persona moderating | nine combined ideas, five ranked and built (`roundtable_v1.md`) |
+| 4 (Oct 4) | the nine returning; cloud-executive, founder, growth-executive personas | 5.4 → 7.7; 6, 5, 6; all twelve 7.2 |
+| Roundtable | all twelve, Founder persona moderating | nine combined ideas, five ranked and built (`roundtable_v1.md`) |
 | Final (Oct 4, 05:00) | all twelve | **8.2**, verdict release (`roundtable_final.md`) |
 | 5 (Oct 4, 09:00) | the twelve, on a stranger's first ten seconds | **8.0** (`user_tests_v5.md`) |
 | 6 (Oct 5) | three new strangers on the reveal build: Theo, 12; Marisol, a teacher; Kwame, a designer | **8.0** (7.3 for the previous three strangers on the build before the reveal); two fixes the same hour: statistics off the narration line, the Chromebook fold (`user_tests_v6.md`) |
@@ -402,8 +402,7 @@ instrument, which tells the next pass where to look.
 - **Decoration is the first thing testers cut.** Glass buttons, torn paper and photographic water were all proposed
   and all declined by the same testers who asked for the rigor to show; the icon system was the one thing taken.
 - **Simulated executives are useful and must stay labeled.** The three persona reviews asked the reproducibility,
-  frame-budget and growth-loop questions no fictional tester asked; every mention says "simulated persona modeled on
-  the public role of …; not his words".
+  frame-budget and growth-loop questions no fictional tester asked; every mention names the role ("a cloud-platform executive"), never a real person.
 
 ## 4. Pitfalls (operational, learned the hard way)
 
@@ -562,8 +561,7 @@ instrument, which tells the next pass where to look.
 - A citation in a record is a reported link, never measured. Measured means a placebo test on data; it shows an unusual
   rise in the right order, not cause. Nothing is dressed as more certain than its test.
 - Every search runs under a rule fixed before it starts; a failed rule is reported as failed, with the diagnosis.
-- Simulated testers are simulated and say so. A persona modeled on a public figure is labeled "simulated persona
-  modeled on the public role of …; not his words" wherever it appears.
+- Simulated testers are simulated and say so. A persona is named by role, never by a real person.
 - No model identifiers in commits, pull requests, code comments or any pushed artifact.
 - No Google billing. The private `RIPPLE_MAP_CONTEXT.md` in the session scratchpad is never committed.
 - Domains are reached only when the owner has whitelisted them; a 403, 429 or 503 is a stop, never a retry with a

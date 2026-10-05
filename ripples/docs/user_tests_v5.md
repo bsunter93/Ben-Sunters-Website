@@ -1,6 +1,6 @@
 # Ripple, round five: the stranger's first ten seconds (Oct 4, 2026)
 
-A simulation. The same twelve simulated testers as rounds four and the roundtable. Nine are fictional (Dani, Priya, Walter, Marcus, Yuki, Earl, Aisha, Tom, Lena); three are simulated personas modeled on the public roles of Thomas Kurian, Elon Musk and Mark Zuckerberg, labeled as such wherever they appear, not those people's words. This round asks one question the earlier rounds did not: what does a stranger see in the first ten seconds, before anyone explains anything, on the build after the owner's review (PRs #86 to #89: the chart bug, the beat schedule, the reel cut, the look).
+A simulation. The same twelve simulated testers as rounds four and the roundtable. Nine are fictional (Dani, Priya, Walter, Marcus, Yuki, Earl, Aisha, Tom, Lena); three are simulated personas modeled on three executive roles (a cloud platform, an engineering-led founder, a consumer-growth lead), labeled as such wherever they appear, not those people's words. This round asks one question the earlier rounds did not: what does a stranger see in the first ten seconds, before anyone explains anything, on the build after the owner's review (PRs #86 to #89: the chart bug, the beat schedule, the reel cut, the look).
 
 Build: `ripple-standalone.html` from main at 76df3f07. Measurements ran in headless Chromium through Playwright, one context per viewport, scripted in `stranger_probe.js` (session scratchpad), screenshots at 0, 3 and 10 s.
 
@@ -43,11 +43,11 @@ Two findings from the table:
 
 **Walter (retired internist, tablet):** "It waits and it speaks. One name every three seconds I can follow. 9."
 
-**Kurian persona (simulated persona modeled on the public role of Thomas Kurian; not his words):** "The look matches the rigor now; the pipeline still runs on branches. 7."
+**Cloud-exec persona (simulated persona: a cloud-platform executive):** "The look matches the rigor now; the pipeline still runs on branches. 7."
 
-**Musk persona (simulated persona modeled on the public role of Elon Musk; not his words):** "Less to render, more to read. Fine. 7."
+**Founder persona (simulated persona: an engineering-led founder):** "Less to render, more to read. Fine. 7."
 
-**Zuckerberg persona (simulated persona modeled on the public role of Mark Zuckerberg; not his words):** "No interstitial, play on load, a share link on every step: the loop is as short as it gets. 8."
+**Growth-exec persona (simulated persona: a consumer-growth executive):** "No interstitial, play on load, a share link on every step: the loop is as short as it gets. 8."
 
 | | Round four | Final (Oct 4, 05:00) | **Round five** |
 |---|---|---|---|
