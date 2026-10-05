@@ -328,7 +328,7 @@ def cmd_run(a):
         print(f"  -> {o['result']}: {rows[-1][2]}", flush=True)
         time.sleep(polite.MIN_INTERVAL)
     status["last_run"] = {"utc": polite.now_utc(), "date": today.isoformat(), "mode": mode,
-                          "event": os.environ.get("GITHUB_EVENT_NAME", "local"), "ref": os.environ.get("GITHUB_REF_NAME", ""),
+                          "event": os.environ.get("GITHUB_EVENT_NAME", "local"),
                           "decisions": [{"job": j, "state": s, "why": w} for j, s, w in rows]}
     status["updated_utc"] = polite.now_utc()
     dump_json(status, status_path)

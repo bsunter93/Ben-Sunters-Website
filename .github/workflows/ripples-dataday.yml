@@ -96,7 +96,7 @@ jobs:
             rm -rf ripples/docs/results/dataday && cp -R /tmp/dd/dataday ripples/docs/results/dataday
             git add ripples/docs/results/host_stops.json ripples/docs/results/dataday || exit 0
             git diff --cached --quiet && exit 0
-            git commit -q -m "Ripples: data day $(date -u +%Y-%m-%d), ${MODE} [skip ci]"
+            git commit -q -m "Ripples: data day $(date -u '+%b %-d, %Y'), ${MODE} [skip ci]"
             git push -q origin "HEAD:${GITHUB_REF_NAME}" && break
             sleep 7
           done
