@@ -306,7 +306,8 @@ canvas.glw{position:absolute;pointer-events:none;border-radius:14px;z-index:0}.g
 .w2 .nlab.phr,.w2 .nlab.cov{opacity:0 !important}.w2 #pond.beat .crestdate{opacity:0 !important}
 .w2 .beatline.mapped > b,.w2 .beatline.mapped > .bhow,.w2 .beatline.mapped > .bwhy,.w2 .beatline.mapped > .bmk{display:none}  /* the sentence is on the water; the line under the pond keeps the clue count and what comes next */
 /* the story as a route: the links stay on the water once they land, styled by how sure they are; the arcs step back */
-.w2 .edge{opacity:.5}.w2 .edge.mark{stroke:var(--marigold);opacity:.7}.w2 #pond.beat .edge:not(.lit),.w2 #pond.focus .edge:not(.lit){opacity:.22}
+.w2 .edge{opacity:0}.w2 .edge.route{opacity:.4}.w2 .edge.route.mark{stroke:var(--marigold);opacity:.62}.w2 .edge.mark{stroke:var(--marigold)}
+.w2 #pond.beat .edge.route:not(.lit),.w2 #pond.focus .edge.route:not(.lit){opacity:.18}  /* at rest only the way to the lasting marks stays drawn; every other link waits for its beat, a hover or a tap */
 .w2 .rip.on{opacity:.18}.w2 .rip.on.lit{opacity:.6}.w2 #pond:not(.playing) .rip.on.l-measured{opacity:.28}.gl .ripS,.gl .ripH,.gl .rip2,.gl .glint{display:none}
 .crestdate{font:italic 500 13px var(--display);fill:rgba(226,240,252,.78);paint-order:stroke;stroke:#0f1c26;stroke-width:3.5px;transition:opacity .4s;pointer-events:none}
 .w2 #pond.playing .thread,.w2 #pond.playing .threadtick,.w2 #pond.playing .ringlbl{opacity:.3;transition:opacity .5s}
@@ -1300,6 +1301,7 @@ function draw(story) {
   // lasting marks and measured steps claim their label space first; the rest take what is left, and a label with no
   // clear spot waits for a hover or a tap instead of piling onto its neighbors (a crowded century still reads)
   const rank = x => (x.mark ? 0 : x.lv === "measured" ? 1 : 2);
+  const onRoute = new Set(); for (const m of items.filter(x => x.mark)) for (let p = m; p; p = items.find(x => x.id === p.parent)) onRoute.add(p);  // the steps on the way to a lasting mark
   for (const it of [...items].sort((a, b) => rank(a) - rank(b) || a.d - b.d)) {
     const parent = items.find(x => x.id === it.parent);
     it.from = parent ? parent.plane : C;  // plane coordinates: edges are drawn on the water
@@ -1307,7 +1309,7 @@ function draw(story) {
       const a = polar(radius(Math.min(Math.max(it.range[0], 0.5), max)), it.a), b = polar(radius(Math.min(it.range[1], max)), it.a);
       it.band = el("line", {class:"band", x1:a.x, y1:a.y, x2:b.x, y2:b.y, stroke:COLOR[it.lv]}, bands);
     }
-    it.path = el("path", {class:`edge off l-${it.lv}${it.disc ? " disc" : ""}${it.mark ? " mark" : ""}`, d:`M${it.from.x},${it.from.y} L${it.from.x},${it.from.y}`}, edges);
+    it.path = el("path", {class:`edge off l-${it.lv}${it.disc ? " disc" : ""}${it.mark ? " mark" : ""}${onRoute.has(it) ? " route" : ""}`, d:`M${it.from.x},${it.from.y} L${it.from.x},${it.from.y}`}, edges);
     it.ring2 = el("path", {class:"rip2", d:arcPath(14, it.span)}, rips);
     it.ringS = el("path", {class:`ripS l-${it.lv}`, d:arcPath(14, it.span), transform:"translate(0 2.2)"}, rips);   // the trough's shadow
     it.ringH = el("path", {class:`ripH l-${it.lv}`, d:arcPath(14, it.span), transform:"translate(0 -1.6)"}, rips);  // the crest catching the sky
@@ -1683,9 +1685,13 @@ function launch(it, animate) {
     setTimeout(() => [it.ring, it.ringH, it.ringS, it.crest].forEach(r => r.classList.remove("bloom")), 1000);
   }
 }
-function routeD(a, b) {  // the water look: a link is a soft curve across the water, bowed to one side, so a branching story reads as a route and not as spokes
-  const mx = (a.x + b.x) / 2, my = (a.y + b.y) / 2, dx = b.x - a.x, dy = b.y - a.y, bend = 0.16;
-  return `M${a.x.toFixed(1)},${a.y.toFixed(1)} Q${(mx - dy * bend).toFixed(1)},${(my + dx * bend).toFixed(1)} ${b.x.toFixed(1)},${b.y.toFixed(1)}`;
+function routeD(a, b) {  // the water look: a link follows the rings, its radius growing with time as its angle turns toward the step, so a chain traces a path around the water instead of a web of chords through the middle (owner, Oct 5)
+  const ra = Math.hypot(a.x - C.x, a.y - C.y), rb = Math.hypot(b.x - C.x, b.y - C.y), tb = Math.atan2(b.y - C.y, b.x - C.x);
+  const ta = ra < 1 ? tb : Math.atan2(a.y - C.y, a.x - C.x); let dt = tb - ta;
+  while (dt > Math.PI) dt -= 2 * Math.PI; while (dt < -Math.PI) dt += 2 * Math.PI;
+  const n = Math.max(6, Math.ceil(Math.abs(dt) * 10)); let d = "";
+  for (let i = 0; i <= n; i++) { const u = i / n, e = u * u * (3 - 2 * u), r = ra + (rb - ra) * u, t = ta + dt * e; d += `${i ? "L" : "M"}${(C.x + r * Math.cos(t)).toFixed(1)},${(C.y + r * Math.sin(t)).toFixed(1)}`; }
+  return d;
 }
 function land(it) {  // the label appears only once the ripple has arrived
   if (it.state !== "landed") it.landT = performance.now();
