@@ -301,3 +301,40 @@ not negative space. They were not tested.
 Any change after this commit is written in an addendum below, dated, with its reason. A change to how a file is read is
 allowed only if it does not change the series, the window, the placebo pool or the grade map, and it is disclosed. A
 failed fetch or parse is reported as a failure for that mark. No series is swapped after the data are seen.
+
+## Addendum 1, Oct 4, 2026, 23:30 PDT (after run 1, before the final run)
+
+Registration commit: `cd10fdf` (23:21 PDT). Everything below came after it and is disclosed as a deviation. None of it
+changes a real mark's series, window, placebo pool or grade map.
+
+1. **Run 1** (the registered code, about 23:22 PDT): Statistics Norway POST 200; gov.uk content API 200; the Defra .ods
+   200; UN Comtrade preview **400** on its first request. The Comtrade host was stopped for the day under the rule
+   (any 4xx or 5xx), so Finding Nemo was not run. Frozen: p = .2122, stays reported. Bake Off: p = .0312, measured.
+2. **Parse gap, fixed.** Defra writes fiscal years from 2015-16 on as six digits ("201516"). The registered pattern read
+   only "YYYY-YY" and "YYYY/YY", so run 1's flour series stopped at 2015. The file also has a calendar 2015 column
+   before 2015-16; section 4.2 assumed the switch ran 2014 to 2015-16. The fix reads six-digit labels as fiscal years.
+   The code's existing break rule (a fiscal/calendar switch, or a year that does not follow the one before) puts a
+   break between calendar 2015 and fiscal 2015-16. The real window (2010 to 2011), its 31 placebo changes (1975 to 2007)
+   and its trend fit (2001-02 to 2007) do not touch those years: p, onset and grade are identical in run 1 and the
+   final run. The fix restores the controls and decoys after 2015 that section 7 lists.
+3. **One more definition break, from the file's own notes:** "Weighting changed to all expenditure from 202324
+   onwards." A change into 2023-24 is treated as not comparable. It affects one decoy window only (Uvalde), which is
+   dropped.
+4. **Diagnostic request:** one re-download of the .ods at 23:23 PDT to read its header row and notes.
+5. **Correction to section 5.1's context sentence.** The plan said the krone weakened in 2014. FRED series EXNOUS
+   (one request, 23:24 PDT) shows about 6.0 kroner per dollar from Jan 2013 to Aug 2014 (5.55 to 6.20), then a fall
+   from Sep 2014 to 8.70 by Dec 2015. Frozen's outcome window (Nov 2013 to Oct 2014) is mostly before the fall. The large
+   rise in foreign nights in 2015 and 2016 coincides with it.
+6. **Late and exploratory, not graded:** `late_check_both_sides` gives p with chain_check's own series-test pool, which
+   also draws placebo windows from after the stone. It was added after run 1 because the flour series swings more after
+   2011 than before. It changes no grade.
+7. **Display only:** `decoy_calibration` copies each tested mark's decoy counts beside its result.
+8. **Runs 2 and 3.** Run 2 (23:25 PDT) fetched the Statistics Norway table and the gov.uk listing again (2 requests,
+   both 200) and read the .ods from the local copy. Run 3 made no request: all three bodies came from the local copy
+   of that day's responses. Run 3 is the run in `ladder_v1.json`. Comtrade, UCAS and Hansard received no request after
+   their first refusal.
+9. **For the next run of Finding Nemo** (another day, under this registration): the 400 most likely came from a
+   parameter the preview endpoint rejects for these years (the extended partner2, customs and transport filters, or six
+   periods in one call). The next attempt will make one request per year without those filters. That is the same
+   series (US imports from the world, HS 030110, trade value) and the same design. An addendum will be committed before
+   it runs.

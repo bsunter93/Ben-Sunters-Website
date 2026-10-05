@@ -45,12 +45,22 @@ UA = "ripples-research/0.2 (+https://bensunter.com/ripples/methods/)"
 D = dt.date.fromisoformat
 
 # ---------- network: honest UA, spacing, stop a host on any refusal ----------
-STOPPED: dict = {}
+# hosts stopped earlier the same day, as "host|what it returned" (no request is made to them)
+STOPPED: dict = {x.split("|")[0]: (x.split("|")[1] if "|" in x else "a refusal") for x in os.environ.get("LADDER_SKIP_HOSTS", "").split(",") if x}
 REQUESTS: list = []
+CACHE_DIR = os.environ.get("LADDER_CACHE")  # a local folder of raw responses, so a re-run makes no new request
+
+
+def _cache_path(url, data):
+    import hashlib
+    return os.path.join(CACHE_DIR, hashlib.sha256((url + "|" + (data or b"").decode("utf-8", "replace")).encode()).hexdigest()[:24])
 
 
 def fetch(url, data=None, headers=None, delay=1.1):
     host = urllib.parse.urlparse(url).netloc
+    if CACHE_DIR and os.path.exists(_cache_path(url, data)):
+        REQUESTS.append({"url": url[:240], "status": "local cache (fetched earlier the same day)"})
+        return open(_cache_path(url, data), "rb").read()
     if host in STOPPED:
         return None
     req = urllib.request.Request(url, data=data, headers={"User-Agent": UA, **(headers or {})})
@@ -67,6 +77,9 @@ def fetch(url, data=None, headers=None, delay=1.1):
         REQUESTS.append({"url": url[:240], "status": code, "at": dt.datetime.now(dt.timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ")})
         print(code, url[:160], flush=True)
         time.sleep(delay)
+    if CACHE_DIR and body is not None:
+        os.makedirs(CACHE_DIR, exist_ok=True)
+        open(_cache_path(url, data), "wb").write(body)
     return body
 
 
@@ -126,6 +139,19 @@ def placebo_test(s, r, stone_i, h, direction):
     p = (1 + sum(1 for x in pool if sign * x >= sign * obs)) / (1 + n) if n else None
     return {"effect": round(obs, 4), "p": round(p, 4) if p is not None else None, "n_placebo": n,
             "p_floor": round(1 / (1 + n), 4) if n else None}
+
+
+def p_both_sides(s, r, h, direction):
+    """LATE (addendum 1), exploratory, not graded: chain_check's series-test pool, every admissible window more than 2h
+    from the reference, before or after the stone"""
+    sign = 1 if direction == "up" else -1
+    obs = eff(s, r, h)
+    pool = [e for e in (eff(s, i, h) for i in range(h, len(s.y) - h + 1) if abs(i - r) > 2 * h) if e is not None]
+    if obs is None or not pool:
+        return None
+    return {"p": round((1 + sum(1 for x in pool if sign * x >= sign * obs)) / (1 + len(pool)), 4), "n_placebo": len(pool),
+            "larger_after_the_stone": [s.labels[i] for i in range(h, len(s.y) - h + 1) if abs(i - r) > 2 * h and i >= r
+                                       and eff(s, i, h) is not None and sign * eff(s, i, h) >= sign * obs]}
 
 
 def onset(s, r, h, direction):
@@ -260,7 +286,7 @@ def ods_tables(raw):
     return out
 
 
-YEAR_LABEL = re.compile(r"^\s*((?:19|20)\d\d)(?:\s*[-/]\s*(\d{2,4}))?\s*$")
+YEAR_LABEL = re.compile(r"^\s*((?:19|20)\d\d)(?:\s*[-/]\s*(\d{2,4})|(\d{2}))?\s*$")
 FLOUR_LABEL = re.compile(r"^\s*flour\s*(\([^)]*\))?\s*$", re.I)
 
 
@@ -293,7 +319,7 @@ def defra_flour():
                 pts = []
                 for ci, m in header[1]:
                     if ci < len(row) and isinstance(row[ci], float):
-                        pts.append((int(m.group(1)), bool(m.group(2)), m.group(0).strip(), row[ci]))
+                        pts.append((int(m.group(1)), bool(m.group(2) or m.group(3)), m.group(0).strip(), row[ci]))
                 return {"sheet": name, "label": lab, "unit": unit, "points": pts, "url": url}
     return {"error": "no row labeled Flour under a year header", "url": url}
 
@@ -391,6 +417,7 @@ def defra_series(pts):
     # definition breaks: the National Food Survey to the Expenditure and Food Survey (2001-02), fiscal to calendar years
     # (2006), calendar to fiscal years (2015-16): a change across a switch in fiscal/calendar status is not comparable
     breaks = {i for i in range(1, len(pts)) if fiscal[i] != fiscal[i - 1] or years[i] - years[i - 1] != 1}
+    breaks |= {i for i in range(1, len(pts)) if fiscal[i] and years[i] == 2023}  # file note 12: weighting changed from 2023-24
     # the survey break (National Food Survey to the Expenditure and Food Survey, first fiscal year 2001-02) also bounds
     # pre-trend fits; the fiscal/calendar switches inside one survey do not
     survey = {i for i in range(1, len(pts)) if fiscal[i] and not fiscal[i - 1] and years[i] <= 2002} | {i for i in breaks if years[i] - years[i - 1] != 1}
@@ -540,7 +567,9 @@ def main() -> int:
                 sk = f"{slug}/{m['id']}"
                 row.update({"series": t["series"], "what_was_measured": t["what"], "test": f"placebo-date test, h={t['h']} {'months' if t['freq'] == 'M' else 'year'}, direction {t['direction']}"})
                 if sk not in series:
-                    row.update({"status": "not run: the source could not be fetched or parsed", "source_url": None})
+                    host = {"finding-nemo": "comtradeapi.un.org", "frozen-culture": "data.ssb.no"}.get(slug, "www.gov.uk")
+                    why = f"{host} returned {STOPPED[host]} to the first data request; the host was stopped for the day under the rule, with no retry" if host in STOPPED else "the source could not be parsed"
+                    row.update({"status": "registered, not run: " + why, "source_url": None})
                 else:
                     s, src = series[sk]
                     ref = ref_for(t, stone, m["date"])
@@ -551,6 +580,7 @@ def main() -> int:
                                 "n_placebo": res.get("n_placebo"), "p_floor": res.get("p_floor"), "window": res.get("window"),
                                 "onset_fit": res.get("fit_periods"), "proposed_grade": g, "grade_reason": why, "raw": raw_block(s, r, t["h"])})
                     row["comparison"] = comparison(s, t, CONTROLS[key], stone, m["date"], res.get("effect"))
+                    row["late_check_both_sides"] = p_both_sides(s, r, t["h"], t["direction"])
                     if f"{sk}/gradient" in series:
                         gs = series[f"{sk}/gradient"][0]
                         gres = placebo_test(gs, gs.index_of(ref), gs.index_of(stone), t["h"], "up")
@@ -563,6 +593,8 @@ def main() -> int:
                         row["broader"] = {"series": "all guest nights in Norwegian hotels (residents and foreigners)" if t["freq"] == "M" else "US imports of all fish and crustaceans (HS chapter 03)",
                                           "effect_log": bres.get("effect"), "p": bres.get("p"), "onset": bres.get("onset"), "grade_if_it_were_the_mark": bg}
                     rep["decoys"][sk] = decoys(s, t, wiki, slug, m["id"], stone, m["date"])
+                    dg = rep["decoys"][sk]["grades"]
+                    row["decoy_calibration"] = {"windows": rep["decoys"][sk]["windows"], **{g: dg.get(g, 0) for g in ("measured", "timed", "busted")}}
                     if g == "reported":
                         rep["negative_space"].append({"stone": st["stone"], "slug": slug, "mark_id": m["id"], "mark": m["title"],
                                                       "expected": f"the record says this rose ({m['date'][:4]})", "found": why,
