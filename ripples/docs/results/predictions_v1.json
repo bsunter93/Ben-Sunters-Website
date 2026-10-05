@@ -1,0 +1,1344 @@
+{
+ "version": "predictions_v1",
+ "registered_at": "2026-10-05T07:15:00Z",
+ "registration_note": "The commit that adds this file is the registration. No per-article outcome series, library count, Hansard count or bill list for any window below was read before it; every window starts on Oct 6, 2026, after the registration.",
+ "feed": {
+  "used": [
+   "Google Trends archive (ripples.att_gt_terms, collected daily since Sep 29 by .github/workflows/ripples-gt-archive.yml from the public BigQuery google_trends lists; US refresh dates through Oct 1, international through Oct 3)",
+   "Wikimedia top-pageviews API, en.wikipedia, all-access, Sep 20 to Oct 3, 2026 (14 requests)"
+  ],
+  "note": "The archive lives in the project's database, read through the owner's connector; the scorer uses only public no-key sources.",
+  "exposure_before_registration": "Reading the top-1000 lists to pick stones showed same-day echoes in some outcome articles before any window: Lethal injection (4 days in the list, peak 80,498 on Oct 1), Job Corps (5 days, 121,489 on Oct 1), Henry Murray (9 days, 54,276 on Sep 27), Industrial Society and Its Future (9 days, 20,559 on Sep 27), John Steinbeck (3 days, 32,776 on Oct 3), East of Eden (film) (3 days, 24,282 on Oct 3), Germanwings Flight 9525 (3 days, 22,563 on Sep 30), Colleen Hoover (3 days, 13,372 on Oct 2), Capital punishment in Tennessee (1 day, 16,345 on Oct 1), Sally–Anne test (1 day, 12,040 on Oct 1), Inert gas asphyxiation (1 day, 8,768 on Oct 1), Canadian Indian residential school system (1 day, 8,301 on Sep 30). These are why every window is a later window; they are disclosed, not hidden."
+ },
+ "lag_priors": {
+  "source": "ripples/docs/results/lag_priors_v1.json on the eng-shape branch (code 187859f, run Oct 4, 2026)",
+  "families_used": {
+   "media -> search": [
+    1,
+    20
+   ],
+   "news -> search": [
+    0,
+    2
+   ],
+   "search -> search": [
+    3,
+    15
+   ],
+   "pooled": [
+    0,
+    23
+   ],
+   "subject of the work": [
+    0,
+    14
+   ],
+   "launch -> adoption": [
+    2,
+    76
+   ]
+  },
+  "shape_rules": [
+   "median half-life of attention spikes 10.7 days",
+   "a new normal is rare (12 of 454) and is not called before 21 weeks",
+   "reported stone-to-law lags: median 598 days (context only)"
+  ]
+ },
+ "tests": {
+  "wiki_level": "Daily views (user agent, all-access, en.wikipedia, per-article API; several articles summed). e = stone date. Baseline b = median of days e-120 to e-15. m = mean of the window. r = m / max(b, 1). Placebo: pseudo-dates every 14th day of the page's own history (index 130, 144, ... up to e-200) with a complete baseline and window, the same offsets; p = (1 + #(r' >= r)) / (1 + N), N >= 20 or the prediction is void. Seasonal check: r must exceed r at e-365, e-730 and e-1095 wherever those exist. Material: m - b >= 20 views a day and r >= 1.5. Moved = p <= 0.05 and material and the seasonal check passed. Order: the checker's onset (editor_trail.onset from e-30, as in chain_check.wiki_test); order holds when there is no onset or the onset is no earlier than e-3.",
+  "library_month": "Monthly checkouts summed over all usage classes and material types for titles starting with any listed prefix whose creator contains the listed name (upper case). s(M) = ln(c(M) + 1) - ln(mean(c(M-1), c(M-2), c(M-3)) + 1). Placebo: s for every month from 2013-01 to two months before M, excluding Mar 2020 to Jun 2021 (closures); p = (1 + #(s' >= s)) / (1 + N). Seasonal check: s exceeds s for the same calendar month of every prior year in the pool. Material: c(M) - mean of the 3 months before >= 10. Moved = p <= 0.05 and material and seasonal. Order: the same test on M-1 (September 2026, pool ending at M-3); order holds when M-1 did not move. Pending until month M is published; void after the deadline.",
+  "hansard_mention": "UK Parliament Hansard API (search/contributions/Spoken.json) for the term between the window dates; the count of contributions whose sitting date is inside the window.",
+  "uk_bill_first_reading": "UK Parliament Bills API: every bill returned for any search term whose short title matches the regex; first reading = the earliest sitting date of its first stage; count bills whose first reading falls inside the window."
+ },
+ "verdicts": {
+  "move": {
+   "hit": "moved and the order holds",
+   "miss": "did not move",
+   "bust": "moved but began more than 3 days before the stone (wiki) or in the month before (library): the ordering rule"
+  },
+  "not move": {
+   "hit": "did not move",
+   "miss": "moved, in order",
+   "bust": "moved, in order, p <= 0.01 and r >= 10 (wiki): a strong ripple where none was predicted",
+   "void": "moved but began before the stone: neither credited nor blamed"
+  },
+  "decoy": "scored as not move",
+  "record move": {
+   "hit": "at least one record in the window",
+   "miss": "none",
+   "bust": "none possible for this test"
+  },
+  "record not move": {
+   "hit": "no record in the window",
+   "miss": "one or more",
+   "bust": "none possible for this test"
+  },
+  "void": "an article missing or renamed, fewer than 20 placebo windows, a source that refused (403, 429 or 5xx) on every weekly try until the deadline, or data unpublished by the deadline. A void is never rescored with a different series."
+ },
+ "stones": {
+  "christa-pike": {
+   "name": "Christa Pike's failed execution in Tennessee",
+   "date": "2026-09-30",
+   "what": "Two failed lethal injections on Sep 30, 2026; the governor halted the state's one other 2026 execution and ordered a third-party review; the corrections commissioner resigned on Oct 3.",
+   "feed": {
+    "trends_us": [
+     [
+      "christa pike",
+      "rising",
+      "2026-09-27",
+      210,
+      20
+     ],
+     [
+      "what did christa pike do to be executed",
+      "top",
+      "2026-09-27",
+      190,
+      6
+     ]
+    ],
+    "wiki_top": [
+     [
+      "Christa_Pike",
+      "2026-10-01",
+      4309025,
+      14
+     ]
+    ]
+   }
+  },
+  "esther-rantzen": {
+   "name": "Esther Rantzen's death",
+   "date": "2026-09-30",
+   "what": "The broadcaster, founder of Childline and the most visible campaigner for assisted dying in England died on Sep 30, 2026, nineteen days after the Commons rejected the reintroduced Terminally Ill Adults (End of Life) Bill (286 to 270, Sep 11, 2026).",
+   "feed": {
+    "trends_intl": [
+     [
+      "esther rantzen",
+      "rising",
+      "2026-09-27",
+      "FR",
+      22,
+      1
+     ],
+     [
+      "esther rantzen",
+      "rising",
+      "2026-09-27",
+      "HU",
+      20,
+      5
+     ]
+    ],
+    "wiki_top": [
+     [
+      "Esther_Rantzen",
+      "2026-09-30",
+      157605,
+      4
+     ]
+    ]
+   }
+  },
+  "east-of-eden": {
+   "name": "East of Eden, the Netflix limited series",
+   "date": "2026-10-01",
+   "what": "A limited series of John Steinbeck's 1952 novel premiered on Netflix on Oct 1, 2026.",
+   "feed": {
+    "trends_intl": [
+     [
+      "east of eden",
+      "rising",
+      "2026-09-27",
+      "NZ",
+      17,
+      25
+     ]
+    ],
+    "wiki_top": [
+     [
+      "East_of_Eden_(2026_miniseries)",
+      "2026-10-02",
+      171814,
+      9
+     ],
+     [
+      "East_of_Eden_(novel)",
+      "2026-10-03",
+      193513,
+      11
+     ]
+    ]
+   }
+  },
+  "verity": {
+   "name": "Verity, the film",
+   "date": "2026-10-02",
+   "what": "The adaptation of Colleen Hoover's 2018 novel opened in US theaters on Oct 2, 2026 (world premiere in London on Sep 24).",
+   "feed": {
+    "trends_intl": [
+     [
+      "verity movie",
+      "top",
+      "2026-09-27",
+      "IN",
+      36,
+      25
+     ],
+     [
+      "verity película",
+      "top",
+      "2026-09-27",
+      "MX",
+      32,
+      23
+     ],
+     [
+      "verity",
+      "top",
+      "2026-09-27",
+      "BR",
+      27,
+      8
+     ]
+    ],
+    "wiki_top": [
+     [
+      "Verity_(film)",
+      "2026-10-02",
+      151519,
+      14
+     ],
+     [
+      "Verity_(novel)",
+      "2026-10-02",
+      97738,
+      14
+     ]
+    ]
+   }
+  },
+  "unabomber": {
+   "name": "Unabomber, the Netflix film",
+   "date": "2026-09-25",
+   "what": "A crime drama about Ted Kaczynski was released by Netflix on Sep 25, 2026.",
+   "feed": {
+    "wiki_top": [
+     [
+      "Ted_Kaczynski",
+      "2026-09-27",
+      438924,
+      14
+     ],
+     [
+      "Unabomber_(film)",
+      "2026-09-27",
+      81481,
+      9
+     ]
+    ]
+   }
+  },
+  "flydubai-1073": {
+   "name": "Flydubai Flight 1073",
+   "date": "2026-09-30",
+   "what": "On Sep 30, 2026 a Dubai to Tel Aviv flight squawked a hijack code and diverted to Tabuk after the first officer attacked the captain; UAE officials called it an attempted terrorist attack.",
+   "feed": {
+    "trends_us": [
+     [
+      "flydubai",
+      "top",
+      "2026-09-27",
+      163,
+      8
+     ]
+    ],
+    "wiki_top": [
+     [
+      "Flydubai_Flight_1073",
+      "2026-10-01",
+      133927,
+      4
+     ]
+    ]
+   }
+  },
+  "cornell-suit": {
+   "name": "The Cornell civil suit",
+   "date": "2026-09-30",
+   "what": "A civil suit filed Sep 16, 2026 against Cornell University and a fraternity chapter drew national attention at the end of September.",
+   "feed": {
+    "trends_us": [
+     [
+      "cornell 7 case",
+      "top",
+      "2026-09-27",
+      185,
+      2
+     ]
+    ],
+    "wiki_top": [
+     [
+      "Cornell_7",
+      "2026-09-30",
+      261954,
+      4
+     ]
+    ]
+   }
+  },
+  "passenger-pigeon": {
+   "name": "Passenger pigeon (a one-day curiosity spike)",
+   "date": "2026-09-27",
+   "decoy": true,
+   "what": "One day in the top-1000 list with no news event attached.",
+   "feed": {
+    "wiki_top": [
+     [
+      "Passenger_pigeon",
+      "2026-09-27",
+      76003,
+      1
+     ]
+    ]
+   }
+  },
+  "hydraulic-ram": {
+   "name": "Hydraulic ram (a two-day curiosity spike)",
+   "date": "2026-09-29",
+   "decoy": true,
+   "what": "Two days in the top-1000 list with no news event attached.",
+   "feed": {
+    "wiki_top": [
+     [
+      "Hydraulic_ram",
+      "2026-09-29",
+      84323,
+      2
+     ]
+    ]
+   }
+  },
+  "theory-of-mind": {
+   "name": "Theory of mind (a one-day curiosity spike)",
+   "date": "2026-09-30",
+   "decoy": true,
+   "what": "One day in the top-1000 list with no news event attached.",
+   "feed": {
+    "wiki_top": [
+     [
+      "Theory_of_mind",
+      "2026-09-30",
+      183160,
+      1
+     ]
+    ]
+   }
+  },
+  "abs": {
+   "name": "Anti-lock braking system (a one-day curiosity spike)",
+   "date": "2026-10-02",
+   "decoy": true,
+   "what": "One day in the top-1000 list with no news event attached.",
+   "feed": {
+    "wiki_top": [
+     [
+      "Anti-lock_braking_system",
+      "2026-10-02",
+      90185,
+      1
+     ]
+    ]
+   }
+  },
+  "ndtr": {
+   "name": "National Day for Truth and Reconciliation (an annual calendar day)",
+   "date": "2026-09-30",
+   "decoy": true,
+   "what": "Canada's annual Sep 30 observance; a calendar stone that recurs every year.",
+   "feed": {
+    "wiki_top": [
+     [
+      "National_Day_for_Truth_and_Reconciliation",
+      "2026-09-30",
+      54019,
+      4
+     ]
+    ]
+   }
+  },
+  "tj-maxx": {
+   "name": "TJ Maxx store closures (a trending retail claim)",
+   "date": "2026-09-27",
+   "decoy": true,
+   "what": "A rising search for a list of store closures, week of Sep 27; no closure announcement was found in the feed.",
+   "feed": {
+    "trends_us": [
+     [
+      "tj maxx store closures list",
+      "rising",
+      "2026-09-27",
+      201,
+      5
+     ],
+     [
+      "tj maxx closing",
+      "top",
+      "2026-09-27",
+      191,
+      7
+     ]
+    ]
+   }
+  },
+  "hunger-stone": {
+   "name": "Hunger stone (a two-day curiosity spike)",
+   "date": "2026-09-28",
+   "decoy": true,
+   "what": "Two days in the top-1000 list; the article notes stones exposed by drought in 2026, but no new event was attached to the spike.",
+   "feed": {
+    "wiki_top": [
+     [
+      "Hunger_stone",
+      "2026-09-28",
+      111489,
+      2
+     ]
+    ]
+   }
+  }
+ },
+ "predictions": [
+  {
+   "id": "A1",
+   "stone": "christa-pike",
+   "kind": "move",
+   "claim": "Attention to Capital punishment in Tennessee stays above chance in Oct 6 to 15.",
+   "why": "The failure, the halted December execution, the commissioner's resignation and an ordered review keep the state's practice in the news; readers move from the person to the state.",
+   "test": {
+    "type": "wiki_level",
+    "articles": [
+     "Capital punishment in Tennessee"
+    ],
+    "stone_date": "2026-09-30",
+    "offsets_days": [
+     6,
+     15
+    ],
+    "window": [
+     "2026-10-06",
+     "2026-10-15"
+    ]
+   },
+   "family": "search -> search",
+   "prior_days": [
+    3,
+    15
+   ],
+   "family_note": null,
+   "confidence": 0.6,
+   "due": "2026-10-18"
+  },
+  {
+   "id": "A2",
+   "stone": "christa-pike",
+   "kind": "move",
+   "claim": "Attention to Lethal injection stays above chance in Oct 6 to 15.",
+   "why": "The method itself failed twice in one state in one year; the review is about the method.",
+   "test": {
+    "type": "wiki_level",
+    "articles": [
+     "Lethal injection"
+    ],
+    "stone_date": "2026-09-30",
+    "offsets_days": [
+     6,
+     15
+    ],
+    "window": [
+     "2026-10-06",
+     "2026-10-15"
+    ]
+   },
+   "family": "search -> search",
+   "prior_days": [
+    3,
+    15
+   ],
+   "family_note": null,
+   "confidence": 0.5,
+   "due": "2026-10-18"
+  },
+  {
+   "id": "A3",
+   "stone": "christa-pike",
+   "kind": "not move",
+   "claim": "Attention to nitrogen execution (the article Inert gas asphyxiation) does NOT rise beyond chance in Oct 6 to 15.",
+   "why": "The plausible-sounding ripple (a failed injection pushes states toward nitrogen) is a policy argument that takes a legislative session, not a search; the debate stays on the injection and the review.",
+   "test": {
+    "type": "wiki_level",
+    "articles": [
+     "Inert gas asphyxiation"
+    ],
+    "stone_date": "2026-09-30",
+    "offsets_days": [
+     6,
+     15
+    ],
+    "window": [
+     "2026-10-06",
+     "2026-10-15"
+    ]
+   },
+   "family": "search -> search",
+   "prior_days": [
+    3,
+    15
+   ],
+   "family_note": null,
+   "confidence": 0.65,
+   "due": "2026-10-18"
+  },
+  {
+   "id": "A4",
+   "stone": "christa-pike",
+   "kind": "not move",
+   "claim": "Attention to Job Corps is back within chance in Oct 14 to Nov 4.",
+   "why": "Job Corps spiked because the 1995 victim was a Job Corps classmate: curiosity, not consequence. Shape v1: news echoes are immediate spikes (median half-life 10.7 days).",
+   "test": {
+    "type": "wiki_level",
+    "articles": [
+     "Job Corps"
+    ],
+    "stone_date": "2026-09-30",
+    "offsets_days": [
+     14,
+     35
+    ],
+    "window": [
+     "2026-10-14",
+     "2026-11-04"
+    ]
+   },
+   "family": "news -> search",
+   "prior_days": [
+    0,
+    2
+   ],
+   "family_note": "window placed after the family's 0 to 2-day prior, where shape v1 says news echoes have decayed",
+   "confidence": 0.75,
+   "due": "2026-11-07"
+  },
+  {
+   "id": "A5",
+   "stone": "christa-pike",
+   "kind": "not move",
+   "claim": "No raised floor: attention to Christa Pike in weeks 13 to 21 (Dec 30, 2026 to Feb 24, 2027) is within chance of her pre-stone level.",
+   "why": "A new normal is rare (12 of 454 series in shape v1) and is not to be called before 21 weeks; her pre-stone baseline already carried the summer's litigation.",
+   "test": {
+    "type": "wiki_level",
+    "articles": [
+     "Christa Pike"
+    ],
+    "stone_date": "2026-09-30",
+    "offsets_days": [
+     91,
+     147
+    ],
+    "window": [
+     "2026-12-30",
+     "2027-02-24"
+    ]
+   },
+   "family": "news -> search",
+   "prior_days": [
+    0,
+    2
+   ],
+   "family_note": "the 21-week rule of shape v1, weeks 13 to 21",
+   "confidence": 0.6,
+   "due": "2027-02-27"
+  },
+  {
+   "id": "B1",
+   "stone": "esther-rantzen",
+   "kind": "move",
+   "claim": "Rantzen is named in at least one spoken contribution in the House of Commons or the House of Lords between Oct 6 and Nov 30, 2026.",
+   "why": "Parliament returns from the conference recess in mid-October; tributes and the campaign she fronted make a mention in the record likely.",
+   "test": {
+    "type": "hansard_mention",
+    "term": "Rantzen",
+    "window": [
+     "2026-10-06",
+     "2026-11-30"
+    ],
+    "stone_date": "2026-09-30"
+   },
+   "family": "record (reported)",
+   "prior_days": null,
+   "family_note": "a record, not a series; the first eight sitting weeks after the recess",
+   "confidence": 0.85,
+   "due": "2026-12-03"
+  },
+  {
+   "id": "B2",
+   "stone": "esther-rantzen",
+   "kind": "not move",
+   "claim": "No bill whose title names assisted dying, assisted suicide, the end of life, terminally ill adults or euthanasia receives a first reading in either House between Oct 6 and Dec 31, 2026.",
+   "why": "The Commons rejected the reintroduced bill on Sep 11, 2026 and the Scottish bill fell on Mar 17, 2026; a campaigner's death does not reopen a private member's slot within a quarter. The lasting mark this stone would need is years away (shape v1: laws median 598 days from the stone).",
+   "test": {
+    "type": "uk_bill_first_reading",
+    "search_terms": [
+     "assisted dying",
+     "assisted suicide",
+     "end of life",
+     "terminally ill",
+     "euthanasia"
+    ],
+    "title_regex": "(?i)assisted (dying|suicide)|end of life|terminally ill|euthanasia",
+    "window": [
+     "2026-10-06",
+     "2026-12-31"
+    ],
+    "stone_date": "2026-09-30"
+   },
+   "family": "attention -> legislation (record)",
+   "prior_days": null,
+   "family_note": "no measured step in the repository; reported stone-to-law lags: median 598 days",
+   "confidence": 0.8,
+   "due": "2027-01-04"
+  },
+  {
+   "id": "B3",
+   "stone": "esther-rantzen",
+   "kind": "not move",
+   "claim": "Attention to Assisted suicide in the United Kingdom does NOT rise beyond chance in Oct 6 to 15.",
+   "why": "The baseline (Jun 2 to Sep 15) already holds the reintroduction and the Sep 11 vote; a death after the defeat is mourned, not legislated.",
+   "test": {
+    "type": "wiki_level",
+    "articles": [
+     "Assisted suicide in the United Kingdom"
+    ],
+    "stone_date": "2026-09-30",
+    "offsets_days": [
+     6,
+     15
+    ],
+    "window": [
+     "2026-10-06",
+     "2026-10-15"
+    ]
+   },
+   "family": "search -> search",
+   "prior_days": [
+    3,
+    15
+   ],
+   "family_note": null,
+   "confidence": 0.7,
+   "due": "2026-10-18"
+  },
+  {
+   "id": "C1",
+   "stone": "east-of-eden",
+   "kind": "move",
+   "claim": "Attention to John Steinbeck stays above chance in Oct 6 to 21, and above the same dates in each of the three prior years.",
+   "why": "An adaptation sends readers to the author; the seasonal check absorbs the school year.",
+   "test": {
+    "type": "wiki_level",
+    "articles": [
+     "John Steinbeck"
+    ],
+    "stone_date": "2026-10-01",
+    "offsets_days": [
+     5,
+     20
+    ],
+    "window": [
+     "2026-10-06",
+     "2026-10-21"
+    ]
+   },
+   "family": "media -> search",
+   "prior_days": [
+    1,
+    20
+   ],
+   "family_note": null,
+   "confidence": 0.75,
+   "due": "2026-10-24"
+  },
+  {
+   "id": "C2",
+   "stone": "east-of-eden",
+   "kind": "move",
+   "claim": "Attention to the 1955 film East of Eden stays above chance in Oct 6 to 21.",
+   "why": "Viewers of a new adaptation look up the famous earlier one (Shogun's 1980 series was the precedent in the engine's candidates).",
+   "test": {
+    "type": "wiki_level",
+    "articles": [
+     "East of Eden (film)"
+    ],
+    "stone_date": "2026-10-01",
+    "offsets_days": [
+     5,
+     20
+    ],
+    "window": [
+     "2026-10-06",
+     "2026-10-21"
+    ]
+   },
+   "family": "media -> search",
+   "prior_days": [
+    1,
+    20
+   ],
+   "family_note": null,
+   "confidence": 0.6,
+   "due": "2026-10-24"
+  },
+  {
+   "id": "C3",
+   "stone": "east-of-eden",
+   "kind": "not move",
+   "claim": "The article titled Timshel (a 2012 Hell on Wheels episode that shares the novel's key word) does NOT rise beyond chance in Oct 6 to 21.",
+   "why": "A measurement check, not a consequence: if a word collision lifted an unrelated page, attention series would need a word filter (the WarGames lesson of Oct 3).",
+   "test": {
+    "type": "wiki_level",
+    "articles": [
+     "Timshel"
+    ],
+    "stone_date": "2026-10-01",
+    "offsets_days": [
+     5,
+     20
+    ],
+    "window": [
+     "2026-10-06",
+     "2026-10-21"
+    ]
+   },
+   "family": "media -> search",
+   "prior_days": [
+    1,
+    20
+   ],
+   "family_note": null,
+   "confidence": 0.6,
+   "due": "2026-10-24"
+  },
+  {
+   "id": "C4",
+   "stone": "east-of-eden",
+   "kind": "move",
+   "claim": "Seattle Public Library checkouts of East of Eden in October 2026 rise beyond chance against the three months before, and beyond every prior October.",
+   "why": "The one behavior outcome in the set: borrowing, not looking up. A classic with many copies and e-licenses can absorb a surge.",
+   "test": {
+    "type": "library_month",
+    "source": "Seattle Public Library, Checkouts by Title (data.seattle.gov tmmm-ytt6)",
+    "title_prefixes": [
+     "East of Eden",
+     "East of eden"
+    ],
+    "creator_contains": "STEINBECK",
+    "month": "2026-10",
+    "stone_date": "2026-10-01"
+   },
+   "family": "media -> library borrowing (monthly)",
+   "prior_days": null,
+   "family_note": "no confirmed library step in the repository; the stone's own month is the window (monthly data)",
+   "confidence": 0.6,
+   "due": "2026-12-14",
+   "deadline": "2027-01-31"
+  },
+  {
+   "id": "C5",
+   "stone": "east-of-eden",
+   "kind": "not move",
+   "claim": "Attention to The Grapes of Wrath does NOT rise beyond chance in Oct 6 to 21 (after the seasonal check).",
+   "why": "Spillover stays with the adapted work and its author; the sibling novel is the negative space.",
+   "test": {
+    "type": "wiki_level",
+    "articles": [
+     "The Grapes of Wrath"
+    ],
+    "stone_date": "2026-10-01",
+    "offsets_days": [
+     5,
+     20
+    ],
+    "window": [
+     "2026-10-06",
+     "2026-10-21"
+    ]
+   },
+   "family": "media -> search",
+   "prior_days": [
+    1,
+    20
+   ],
+   "family_note": null,
+   "confidence": 0.6,
+   "due": "2026-10-24"
+  },
+  {
+   "id": "C6",
+   "stone": "east-of-eden",
+   "kind": "not move",
+   "claim": "Attention to Salinas, California does NOT rise beyond chance in Oct 6 to 21.",
+   "why": "The setting is a place with exposure only on screen; a city of 160,000 with a large daily baseline does not register a period drama.",
+   "test": {
+    "type": "wiki_level",
+    "articles": [
+     "Salinas, California"
+    ],
+    "stone_date": "2026-10-01",
+    "offsets_days": [
+     5,
+     20
+    ],
+    "window": [
+     "2026-10-06",
+     "2026-10-21"
+    ]
+   },
+   "family": "media -> search",
+   "prior_days": [
+    1,
+    20
+   ],
+   "family_note": null,
+   "confidence": 0.7,
+   "due": "2026-10-24"
+  },
+  {
+   "id": "C7",
+   "stone": "east-of-eden",
+   "kind": "not move",
+   "claim": "No raised floor: attention to John Steinbeck in weeks 13 to 21 (Dec 31, 2026 to Feb 25, 2027) is within chance of his pre-stone level once the season is checked.",
+   "why": "Shape v1: a new normal is rare (12 of 454) and only My Octopus Teacher among the stones made one.",
+   "test": {
+    "type": "wiki_level",
+    "articles": [
+     "John Steinbeck"
+    ],
+    "stone_date": "2026-10-01",
+    "offsets_days": [
+     91,
+     147
+    ],
+    "window": [
+     "2026-12-31",
+     "2027-02-25"
+    ]
+   },
+   "family": "media -> search",
+   "prior_days": [
+    1,
+    20
+   ],
+   "family_note": "the 21-week rule of shape v1, weeks 13 to 21",
+   "confidence": 0.75,
+   "due": "2027-02-28"
+  },
+  {
+   "id": "C8",
+   "stone": "east-of-eden",
+   "kind": "not move",
+   "claim": "Seattle Public Library checkouts of The Grapes of Wrath in October 2026 do NOT rise beyond chance.",
+   "why": "The sibling novel in the behavior series: borrowing follows the adapted book.",
+   "test": {
+    "type": "library_month",
+    "source": "Seattle Public Library, Checkouts by Title (data.seattle.gov tmmm-ytt6)",
+    "title_prefixes": [
+     "The Grapes of Wrath",
+     "The grapes of wrath",
+     "Grapes of Wrath",
+     "Grapes of wrath"
+    ],
+    "creator_contains": "STEINBECK",
+    "month": "2026-10",
+    "stone_date": "2026-10-01"
+   },
+   "family": "media -> library borrowing (monthly)",
+   "prior_days": null,
+   "family_note": "no confirmed library step in the repository; the stone's own month is the window (monthly data)",
+   "confidence": 0.65,
+   "due": "2026-12-14",
+   "deadline": "2027-01-31"
+  },
+  {
+   "id": "D1",
+   "stone": "verity",
+   "kind": "move",
+   "claim": "Seattle Public Library checkouts of Verity in October 2026 rise beyond chance against the three months before, and beyond every prior October; September 2026 does not already rise (the premiere was Sep 24).",
+   "why": "A film of a book that is already borrowed heavily; the test is whether a capped supply (copies and licenses) still shows the surge.",
+   "test": {
+    "type": "library_month",
+    "source": "Seattle Public Library, Checkouts by Title (data.seattle.gov tmmm-ytt6)",
+    "title_prefixes": [
+     "Verity"
+    ],
+    "creator_contains": "HOOVER",
+    "month": "2026-10",
+    "stone_date": "2026-10-02"
+   },
+   "family": "media -> library borrowing (monthly)",
+   "prior_days": null,
+   "family_note": "no confirmed library step in the repository; the stone's own month is the window (monthly data)",
+   "confidence": 0.5,
+   "due": "2026-12-14",
+   "deadline": "2027-01-31"
+  },
+  {
+   "id": "D2",
+   "stone": "verity",
+   "kind": "not move",
+   "claim": "Seattle Public Library checkouts of It Ends with Us in October 2026 do NOT rise beyond chance.",
+   "why": "Sibling negative space for the author: the film lifts its own book.",
+   "test": {
+    "type": "library_month",
+    "source": "Seattle Public Library, Checkouts by Title (data.seattle.gov tmmm-ytt6)",
+    "title_prefixes": [
+     "It Ends with Us",
+     "It ends with us"
+    ],
+    "creator_contains": "HOOVER",
+    "month": "2026-10",
+    "stone_date": "2026-10-02"
+   },
+   "family": "media -> library borrowing (monthly)",
+   "prior_days": null,
+   "family_note": "no confirmed library step in the repository; the stone's own month is the window (monthly data)",
+   "confidence": 0.7,
+   "due": "2026-12-14",
+   "deadline": "2027-01-31"
+  },
+  {
+   "id": "D3",
+   "stone": "verity",
+   "kind": "move",
+   "claim": "Attention to Colleen Hoover stays above chance in Oct 6 to 22, with the rise beginning no earlier than Sep 29.",
+   "why": "An adaptation sends readers to the author. The ordering rule may bust it: the London premiere was Sep 24, eight days before the US release that dates the stone.",
+   "test": {
+    "type": "wiki_level",
+    "articles": [
+     "Colleen Hoover"
+    ],
+    "stone_date": "2026-10-02",
+    "offsets_days": [
+     4,
+     20
+    ],
+    "window": [
+     "2026-10-06",
+     "2026-10-22"
+    ]
+   },
+   "family": "media -> search",
+   "prior_days": [
+    1,
+    20
+   ],
+   "family_note": null,
+   "confidence": 0.55,
+   "due": "2026-10-25"
+  },
+  {
+   "id": "E1",
+   "stone": "unabomber",
+   "kind": "move",
+   "claim": "Attention to Industrial Society and Its Future (the manifesto) stays above chance in Oct 6 to 15.",
+   "why": "A film about the man sends readers to the text; shape v1 says shows' spillovers decay over 3 to 12 weeks, so days 11 to 20 should still be raised.",
+   "test": {
+    "type": "wiki_level",
+    "articles": [
+     "Industrial Society and Its Future"
+    ],
+    "stone_date": "2026-09-25",
+    "offsets_days": [
+     11,
+     20
+    ],
+    "window": [
+     "2026-10-06",
+     "2026-10-15"
+    ]
+   },
+   "family": "media -> search",
+   "prior_days": [
+    1,
+    20
+   ],
+   "family_note": null,
+   "confidence": 0.65,
+   "due": "2026-10-18"
+  },
+  {
+   "id": "E2",
+   "stone": "unabomber",
+   "kind": "not move",
+   "claim": "Attention to Anarcho-primitivism does NOT rise beyond chance in Oct 6 to 15.",
+   "why": "Readers go to the man and his text, not to the ideology's general article.",
+   "test": {
+    "type": "wiki_level",
+    "articles": [
+     "Anarcho-primitivism"
+    ],
+    "stone_date": "2026-09-25",
+    "offsets_days": [
+     11,
+     20
+    ],
+    "window": [
+     "2026-10-06",
+     "2026-10-15"
+    ]
+   },
+   "family": "media -> search",
+   "prior_days": [
+    1,
+    20
+   ],
+   "family_note": null,
+   "confidence": 0.6,
+   "due": "2026-10-18"
+  },
+  {
+   "id": "E3",
+   "stone": "unabomber",
+   "kind": "move",
+   "claim": "Attention to Henry Murray (the Harvard psychologist whose experiments Kaczynski underwent) stays above chance in Oct 6 to 15.",
+   "why": "Shape v1: a show's spillover is usually a pulse that decays over weeks, not a spike gone in days.",
+   "test": {
+    "type": "wiki_level",
+    "articles": [
+     "Henry Murray"
+    ],
+    "stone_date": "2026-09-25",
+    "offsets_days": [
+     11,
+     20
+    ],
+    "window": [
+     "2026-10-06",
+     "2026-10-15"
+    ]
+   },
+   "family": "media -> search",
+   "prior_days": [
+    1,
+    20
+   ],
+   "family_note": null,
+   "confidence": 0.6,
+   "due": "2026-10-18"
+  },
+  {
+   "id": "F1",
+   "stone": "flydubai-1073",
+   "kind": "not move",
+   "claim": "Attention to Boeing 737 MAX does NOT rise beyond chance in Oct 6 to 15.",
+   "why": "The aircraft type played no part in a crew attack; a reader conflation the engine predicts will not show.",
+   "test": {
+    "type": "wiki_level",
+    "articles": [
+     "Boeing 737 MAX"
+    ],
+    "stone_date": "2026-09-30",
+    "offsets_days": [
+     6,
+     15
+    ],
+    "window": [
+     "2026-10-06",
+     "2026-10-15"
+    ]
+   },
+   "family": "search -> search",
+   "prior_days": [
+    3,
+    15
+   ],
+   "family_note": null,
+   "confidence": 0.7,
+   "due": "2026-10-18"
+  },
+  {
+   "id": "F2",
+   "stone": "flydubai-1073",
+   "kind": "not move",
+   "claim": "Attention to Germanwings Flight 9525 (the sibling pilot-caused crash) is back within chance in Oct 6 to 15.",
+   "why": "A second-hop echo of a news stone is short (search -> search prior 3 to 15 days; news echoes decay within two weeks).",
+   "test": {
+    "type": "wiki_level",
+    "articles": [
+     "Germanwings Flight 9525"
+    ],
+    "stone_date": "2026-09-30",
+    "offsets_days": [
+     6,
+     15
+    ],
+    "window": [
+     "2026-10-06",
+     "2026-10-15"
+    ]
+   },
+   "family": "search -> search",
+   "prior_days": [
+    3,
+    15
+   ],
+   "family_note": null,
+   "confidence": 0.55,
+   "due": "2026-10-18"
+  },
+  {
+   "id": "G1",
+   "stone": "cornell-suit",
+   "kind": "not move",
+   "claim": "Attention to Title IX does NOT rise beyond chance in Oct 6 to 15.",
+   "why": "A case draws attention to the case; the general law has a large baseline that one suit does not move.",
+   "test": {
+    "type": "wiki_level",
+    "articles": [
+     "Title IX"
+    ],
+    "stone_date": "2026-09-30",
+    "offsets_days": [
+     6,
+     15
+    ],
+    "window": [
+     "2026-10-06",
+     "2026-10-15"
+    ]
+   },
+   "family": "search -> search",
+   "prior_days": [
+    3,
+    15
+   ],
+   "family_note": null,
+   "confidence": 0.7,
+   "due": "2026-10-18"
+  },
+  {
+   "id": "X1",
+   "stone": "passenger-pigeon",
+   "kind": "decoy",
+   "claim": "Attention to De-extinction does NOT rise beyond chance in Oct 6 to 20.",
+   "why": "A curiosity spike with no event behind it has no downstream.",
+   "test": {
+    "type": "wiki_level",
+    "articles": [
+     "De-extinction"
+    ],
+    "stone_date": "2026-09-27",
+    "offsets_days": [
+     9,
+     23
+    ],
+    "window": [
+     "2026-10-06",
+     "2026-10-20"
+    ]
+   },
+   "family": "pooled",
+   "prior_days": [
+    0,
+    23
+   ],
+   "family_note": null,
+   "confidence": 0.8,
+   "due": "2026-10-23"
+  },
+  {
+   "id": "X2",
+   "stone": "hydraulic-ram",
+   "kind": "decoy",
+   "claim": "Attention to Hydraulic shock (water hammer) does NOT rise beyond chance in Oct 6 to 22.",
+   "why": "A curiosity spike with no event behind it has no downstream.",
+   "test": {
+    "type": "wiki_level",
+    "articles": [
+     "Hydraulic shock"
+    ],
+    "stone_date": "2026-09-29",
+    "offsets_days": [
+     7,
+     23
+    ],
+    "window": [
+     "2026-10-06",
+     "2026-10-22"
+    ]
+   },
+   "family": "pooled",
+   "prior_days": [
+    0,
+    23
+   ],
+   "family_note": null,
+   "confidence": 0.85,
+   "due": "2026-10-25"
+  },
+  {
+   "id": "X3",
+   "stone": "theory-of-mind",
+   "kind": "decoy",
+   "claim": "Attention to the Sally–Anne test does NOT rise beyond chance in Oct 6 to 23.",
+   "why": "A curiosity spike with no event behind it has no downstream; any same-day echo has passed before the window.",
+   "test": {
+    "type": "wiki_level",
+    "articles": [
+     "Sally–Anne test"
+    ],
+    "stone_date": "2026-09-30",
+    "offsets_days": [
+     6,
+     23
+    ],
+    "window": [
+     "2026-10-06",
+     "2026-10-23"
+    ]
+   },
+   "family": "pooled",
+   "prior_days": [
+    0,
+    23
+   ],
+   "family_note": null,
+   "confidence": 0.8,
+   "due": "2026-10-26"
+  },
+  {
+   "id": "X4",
+   "stone": "abs",
+   "kind": "decoy",
+   "claim": "Attention to Electronic stability control does NOT rise beyond chance in Oct 6 to 25.",
+   "why": "A curiosity spike with no event behind it has no downstream.",
+   "test": {
+    "type": "wiki_level",
+    "articles": [
+     "Electronic stability control"
+    ],
+    "stone_date": "2026-10-02",
+    "offsets_days": [
+     4,
+     23
+    ],
+    "window": [
+     "2026-10-06",
+     "2026-10-25"
+    ]
+   },
+   "family": "pooled",
+   "prior_days": [
+    0,
+    23
+   ],
+   "family_note": null,
+   "confidence": 0.85,
+   "due": "2026-10-28"
+  },
+  {
+   "id": "X5",
+   "stone": "ndtr",
+   "kind": "decoy",
+   "claim": "Attention to the Canadian Indian residential school system does NOT rise beyond chance in Oct 6 to 23, once the season is checked.",
+   "why": "A calendar stone recurs every year; the seasonal check should absorb it.",
+   "test": {
+    "type": "wiki_level",
+    "articles": [
+     "Canadian Indian residential school system"
+    ],
+    "stone_date": "2026-09-30",
+    "offsets_days": [
+     6,
+     23
+    ],
+    "window": [
+     "2026-10-06",
+     "2026-10-23"
+    ]
+   },
+   "family": "pooled",
+   "prior_days": [
+    0,
+    23
+   ],
+   "family_note": null,
+   "confidence": 0.8,
+   "due": "2026-10-26"
+  },
+  {
+   "id": "X6",
+   "stone": "tj-maxx",
+   "kind": "decoy",
+   "claim": "Attention to TJX does NOT rise beyond chance in Oct 6 to 20.",
+   "why": "A trending retail claim with no announcement behind it has no downstream.",
+   "test": {
+    "type": "wiki_level",
+    "articles": [
+     "TJX"
+    ],
+    "stone_date": "2026-09-27",
+    "offsets_days": [
+     9,
+     23
+    ],
+    "window": [
+     "2026-10-06",
+     "2026-10-20"
+    ]
+   },
+   "family": "pooled",
+   "prior_days": [
+    0,
+    23
+   ],
+   "family_note": null,
+   "confidence": 0.7,
+   "due": "2026-10-23"
+  },
+  {
+   "id": "X7",
+   "stone": "hunger-stone",
+   "kind": "decoy",
+   "claim": "Attention to the Elbe does NOT rise beyond chance in Oct 6 to 21.",
+   "why": "A curiosity spike; a major river's baseline does not register it.",
+   "test": {
+    "type": "wiki_level",
+    "articles": [
+     "Elbe"
+    ],
+    "stone_date": "2026-09-28",
+    "offsets_days": [
+     8,
+     23
+    ],
+    "window": [
+     "2026-10-06",
+     "2026-10-21"
+    ]
+   },
+   "family": "pooled",
+   "prior_days": [
+    0,
+    23
+   ],
+   "family_note": null,
+   "confidence": 0.85,
+   "due": "2026-10-24"
+  }
+ ],
+ "counts": {
+  "move": 10,
+  "not move": 15,
+  "decoy": 7
+ }
+}
