@@ -19,3 +19,18 @@ Every request goes through `legacy.get`: the honest user agent, one request a se
 search gets wrong) and expects the scratch file it was written against; the result is committed, so it need not run
 again. `fedreg.py` is the Federal Register probe (a 404 on an old document's body stopped that host for the day; the
 probe's counts are in `fedreg_probe.json`). The builder's two blind screens are `discovery_corpus1_screen.json`.
+
+## The screen (Oct 5, 2026)
+
+`docs/screen_plan_v1.md` registers a test of a language-model screen in place of the hand screen; `docs/screen_v1.md` is
+the result. `screen_rubric.md` is the rubric. `screen_sets.py` freezes the evaluation sets from the runs above
+(candidate fields only) into `screen_candidates_v1.json`; `screen_compare.py` compares the blind labels
+(`screen_labels_v1.json`) with the person's decisions and writes `screen_compare_v1.json` and the labeled corpus
+`screen_corpus_v1.json`. `screen.py` runs the same rubric through a language-model API (key, model and endpoint from
+environment variables, no defaults); it has not been run, and no workflow calls it.
+
+```
+cd ripples/docs/results
+python3 ../../lab/discovery/screen_sets.py
+python3 ../../lab/discovery/screen_compare.py
+```
