@@ -1,4 +1,4 @@
-# Ripple Map: context brief (updated 2026-10-05, 07:30 UTC)
+# Ripple Map: context brief (updated 2026-10-05, evening UTC)
 
 Standalone context for anyone (person or new chat) picking up Ripple. Read `ripples/HANDOFF.md` first: it is the
 runbook for a new session (what to install, how to build, test and ship, the rules, the next steps); this brief is the
@@ -194,7 +194,55 @@ deep enough for an adult to browse rabbit holes.
    story, a link to any single step. Later: the ghost-stone comparison card.
 8. **A verify mode.** Paste any viral "butterfly effect" claim and get it checked link by link. This already works.
 
-## 2. Current status (one screen, 2026-10-04, 19:30 UTC)
+## 2. Current status (one screen, 2026-10-05)
+
+**In one line:** not launched yet; the owner plans the public launch for Oct 6. Oct 5 turned the pond into a lake you can
+read without the cards, put the cards on screen as a timeline, gave Tiger King its floor citation, fixed the launch copy,
+and ran twelve pre-registered engine studies. The engine's first measured rate: about one engine mark in eight is both
+surprising and believable to a simulated panel.
+
+**The product, Oct 5 (PRs #109 to #117, #122; all live):**
+- **Launch fixes (#109):** Tiger King's law hangs from a reported step, Rep. Ed Case citing the show on the House floor
+  (Congressional Record, Jul 28, 2022, H7388), as the fact-check chain grades it; the 2020 House bill is an aside off the
+  arrow; the law links to Public Law 117-243 on govinfo. Share links only for stories with a page (72 had 404'd). Two wrong
+  citation matches skipped. Four measured steps retitled as attention. Launch copy corrected (four lasting marks in a year
+  and ARPANET twelve years after Sputnik; 23 US statutes on govinfo; the 13 Wikipedia-measured grades). Executive personas
+  renamed by role in every public doc.
+- **The lake (#110, #111, #112, #113, #117):** the water look is the default (`?water=1` shows the old instrument pond).
+  A WebGL height field under the SVG (`GLW` in `demo/index.html`) drawn in the pond's own coordinates: a wave packet pushes
+  out behind the front, the splash sends its own packet, each landed ripple leaves a faint standing ring, wind waves move
+  the surface, light is Fresnel reflection of a sky gradient. A dusk sky, two far ridges, a treeline and almost invisible
+  clouds sit behind the date row; the shore is reflected in the water (`?scene=0` turns the scenery off). The stone sinks;
+  no ring grid at rest; no sonar pulse. Reels, share cards, reduced motion and no-WebGL keep the SVG water.
+- **The story on the map (#114, #115):** links stay on the water as curves styled by grade, ember into a lasting mark; the
+  month rides the wave's crest; a lasting mark lights a pool of ember as it lands; one sentence at a time beside the step
+  being told, and labels under it step aside; the line under the pond keeps only the clue count.
+- **Layout (#116, #122):** a full-width pond; the cards run under it as a timeline, left to right in time, each as tall
+  as its words, with a rail and a dot per card colored by grade; the pond's height is fitted so the first card is on
+  screen at load on a 1440x800 laptop (the owner: the cards are the anchor); the tally and Change story sit on the brand
+  row; the key sits under the cards and each word defines itself on hover, focus or tap.
+
+**The engine, Oct 5 (all pre-registered; draft PRs, nothing merged into the product):**
+
+| Study | PR | Result against its registered bar |
+|---|---|---|
+| Model screen v1 | #118 | Failed: precision .86, recall .56 (bar .80), 0 of 33 decoys. Most misses were undated marks; the rest were hand keeps the written definitions exclude. The owner's keeps tracked evidence (AUC .83), not surprise (.51) or novelty (.48) |
+| Evidence ladder | #119 | 87 of 102 engine marks are dated records with no series. Bake Off → UK household flour measured (p .031) but fragile (4th of 11 against matched TV controls; held at reported). Frozen → Norway stays reported (negative space) |
+| Time-shape and lag | #120 | Shape classes passed (87% stable under truncation). Lag priors tie a 30-day window (84.1% each). Disproportion cases flagged |
+| Surprise score v1 | #121 | Failed: AUC .63 blind round, .57 pooled; .40 Spearman against the panel |
+| Federal Register | #123 | 48 new stone → rule pairs, 15 standing rules, all from events; 0 of 146 cultural works; 0 of 49 decoys |
+| Surprise panel v1 | #124 | Five simulated raters, 169 items; both validity checks passed. 12 of 102 engine marks and 4 of 38 catalog stories surprising and believable |
+
+Running at the time of writing: model screen v2 (a dating step, the written definitions govern), measurable outcomes
+(series catalog, matched controls and exposure gradients as the standard, CDC WONDER), live predictions and implications,
+the data-day workflow, two-hop chains, baby names (outcome-first), GDELT and Media Cloud sensors, and court opinions.
+
+**Owner rulings, Oct 5:** the written definition of a lasting mark governs (his hand keeps that break it are set aside);
+he accepted the CDC WONDER data-use restrictions; no language-model API key for now (screening runs in sessions);
+simulated raters stand in until real people rate after launch. New repository secrets: `MEDIACLOUD_API_KEY` (10,000
+requests a week) and `COURT_LISTENER_API`; both for workflows only.
+
+### Record before Oct 5 (2026-10-04, 19:30 UTC)
 
 **In one line:** Ripple is a day from release (Monday morning, Oct 5, the owner's date). The owner reviewed the live page
 on the morning of Oct 4 and set a new bar (pacing, look, no "AI slop"); the page now plays a beat per ripple with a
@@ -404,6 +452,19 @@ instrument, which tells the next pass where to look.
 - **Simulated executives are useful and must stay labeled.** The three persona reviews asked the reproducibility,
   frame-budget and growth-loop questions no fictional tester asked; every mention names the role ("a cloud-platform executive"), never a real person.
 
+**New since Oct 5:**
+- **Laws can be verified, not measured.** 87 of 102 engine marks are dated records. Measured discoveries need outcomes
+  that are series: names, travel, health, enrollment, spending. That is where the engine has to hunt.
+- **The hand screen selected for evidence, not surprise.** Surprise has to be its own label and its own objective.
+- **Public structure is a poor proxy for surprise.** Wikipedia links make famous stories look connected and obscure ones
+  look surprising; the score failed twice.
+- **Matched controls kill fragile wins.** Bake Off's flour rise passed the placebo test and ranked 4th of 11 against
+  similar shows.
+- **Records find events, not culture.** Hansard, the Congressional Record and the Federal Register cite disasters and
+  rulings; works of culture appear as asides.
+- **A planted control set is cheap and decisive.** Ten obvious and ten invented pairs showed the panel could tell the
+  difference before any of its ratings were used.
+
 ## 4. Pitfalls (operational, learned the hard way)
 
 **Database load**
@@ -481,48 +542,48 @@ instrument, which tells the next pass where to look.
 - **Unicode glyphs are not portable** (U+2B22 hexagon); draw the mark inline as SVG.
 - **Patch scripts that assert before writing** fail safely but silently; print what was replaced.
 
+**The lake (Oct 5)**
+- An SVG element has no `offsetTop`; measure it with `getBoundingClientRect` against its panel. The first canvas lined up
+  only by accident and later drew 0 px tall.
+- GLSL `smoothstep` with edge0 greater than edge1 is undefined: it zeroed the whole image. Write `1.-smoothstep(a,b,x)`.
+- Headless Chromium on SwiftShader can drop a shader effect a real GPU shows (the ember pool). Confirm GL looks in a real
+  browser; the Browser pane pauses animation when hidden.
+- `maps/out/*.json` is rebuilt by the maps workflow from `maps/<slug>.json`: edit the source, and keep record steps in
+  date order or the builder marks them excluded.
+- A wide, height-limited pond letterboxes its viewBox: label sizes must follow the drawn scale, not the box width.
+
 **govinfo (Oct 4)**
 - `link/statute/{vol}/{page}` redirects to the granule PDF; `link/plaw` returns 400 before the 104th Congress; the
   metadata (`mods.xml`) route returns 500 for old granules; `api.govinfo.gov` with the shared demo key is rate-limited
   (429). The project's `DATA_GOV_KEY` is a GitHub secret and may only be used from a workflow.
 
-## 5. Blockers and bottlenecks (2026-10-04, 19:30 UTC)
+## 5. Blockers and bottlenecks (2026-10-05)
 
 **Blockers**
-1. **No strangers yet.** Release is Monday morning. Everything else below is smaller than this.
-2. **The clips are not cut.** Reel mode is ready; recording and encoding on the final look is Monday's first job.
-3. **Discovery is a candidate generator, not a writer.** One sentence in three from the events reading and one in
-   eight from the culture reading is a lasting mark; the strict reverse rule is 60% clean and works for events, not
-   films. A person still screens, dates and writes the context line. Culture's marks are mostly undated in prose;
-   series are the way to grade them above reported.
-4. **The context sentences are one author's,** now 149 of them, none second-read.
+1. **No strangers yet.** The public launch is planned for Oct 6. Everything below is smaller than this.
+2. **The clips predate the lake and the reveal fix.** The owner chose to wait while the UI settles; the posts' clip
+   attachments must be re-cut before they are used.
+3. **The engine verifies far more than it measures.** Laws are records; a measured mark needs a series, matched controls
+   and, where possible, an exposure gradient.
+4. **Surprise has no human labels.** The simulated panel is a proxy; real raters after launch replace it.
 
 **Bottlenecks**
-1. Two record hosts stopped on Oct 4 under the rules: EDGAR (403 under the project's agent) and the Federal Register
-   (404 on an old body). Both need a workflow run and, for the SEC, a read of its declared-agent rule.
-2. Laws without their own article (the Sentience Act 2022, the Sexual Offences Act 1967, most state laws) are
-   invisible to the reverse hop; the forward reading and the namesake-statute class are the way to them.
-3. The checker now runs on main and weekly (PR #98); "Not yet" is still a regular expression in the page.
-4. Famous decoys ran (fifty of the biggest films of 2005 to 2024): 8% produce something under the loosest reading, 0% under the strict rule. Country bans are the thin class that got through.
-5. BigQuery sandbox cap (no billing) and the single `DATA_GOV_KEY` in GitHub secrets, usable only from workflows.
+1. Hosts stopped Oct 5 under the rules: UN Comtrade (400), UCAS (404), Hansard (500 on one call), Wikipedia search (429),
+   the Federal Register (429). The data-day workflow resumes them on later days.
+2. CourtListener's daily cap (account limits) spreads the court search over several days.
+3. No language-model key: the screen runs in sessions, not on a schedule.
 
 ## 6. Immediate next steps (in order)
 
-1. **Tonight:** done. v1.1 (PR #95) and the culture shelf (PR #96) are in the product: 58 stones, 102 marks. Next for
-   culture: the series that can date what prose cannot (ONS and SSA names, national park visitation, the Official
-   Charts), and a Disputed reading ("questioned", "disputed", "found no") run deliberately.
-2. **Monday morning:** record and encode the clips on the final look (HANDOFF section 5), update `launch_v2.md`'s
-   assets table and pre-flight, run the four pre-flight checks, post (LinkedIn, Show HN mid-morning Eastern, Reddit),
-   send the teacher and newsroom emails that week.
-3. **Week one:** watch the four dimensions (a teacher or newsroom using it, a front page, an outside correction or a
-   suggested stone, a return visit); reply to every substantive comment with the story's share page; a correction gets
-   a thank-you and a fix.
-4. **Discovery, week one:** famous decoys; the namesake-statute class as its own kind; the Federal Register and EDGAR
-   passes from a workflow; the automated ladder (timing, comparison, exposure) on every pair with a series.
-5. **Governance:** the checker on main and on a schedule; "Not yet" as a checker grade; the seven pre-1951 statute
-   links confirmed by title from a workflow.
-6. **Content:** a second reader for the 105 context lines; Prohibition's label density; a suggest-a-stone box once
-   there are visitors.
+1. **Launch (Oct 6):** the four pre-flight checks in `docs/launch_v2.md`; post from `launch/posts_ready.txt` (the clips
+   are stale: post without them or re-cut them); reply to every substantive comment with the story's share page.
+2. **Real raters:** put the panel's 169 items in front of people after launch; replace the simulated labels.
+3. **Engine:** review each running study's draft PR against its registered bar; merge the studies' docs and data (failures
+   included); wire into the product only what passed, with no new UI: a measured grade, a new story under Engine leads.
+4. **Measurable hunting:** the series catalog with exposure gradients and matched controls as the standard; the
+   outcome-first scans (names, CDC WONDER, park visits) on the highest-power series.
+5. **Surprise v2:** train and test against the panel labels; rank leads by evidence first, surprise second.
+6. **Live mode:** score the registered predictions as they come due; they are the strongest evidence the engine can make.
 
 ## 6a. Open questions (2026-10-04, 06:30 UTC)
 
@@ -536,6 +597,8 @@ instrument, which tells the next pass where to look.
   stones) rather than written? Today it is editorial by design.
 - Is a reported-only map worth leading a tab, or should every lead carry at least one measured ripple?
 - Where is the line between "the engine found it" and "we assembled it" in the product's own words?
+- Do real raters agree with the simulated panel's one-in-eight? If they find more surprise, the panel was too
+  knowledgeable; if less, the engine's culture shelf is weaker than it looks.
 
 ## 7. Rules that never change
 
