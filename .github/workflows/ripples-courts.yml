@@ -1,0 +1,46 @@
+# Records 2, courts (ripples/lab/records2_courts.py; ripples/docs/records2_plan_v1.md, section 9 and the Oct 5 addendum):
+# US court opinions on CourtListener that name a stone. The account token comes from the repository secret and is used
+# only as the documented Authorization header inside the script; it is never echoed. 80 s between requests, a per-run
+# budget under the day's allowance, a stop for the day on any refusal, one run a day; resumes from the committed
+# results file. Started by a push to this file, at most once a day.
+name: Ripples court opinions
+
+on:
+  push:
+    paths: [".github/workflows/ripples-courts.yml"]
+
+permissions:
+  contents: write
+
+concurrency:
+  group: ripples-courts
+  cancel-in-progress: false
+
+jobs:
+  run:
+    runs-on: ubuntu-latest
+    timeout-minutes: 300
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Court opinion search
+        env:
+          COURT_LISTENER_API: ${{ secrets.COURT_LISTENER_API }}
+        run: python ripples/lab/records2_courts.py
+      - name: Commit results
+        if: always()
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898900+github-actions[bot]@users.noreply.github.com"
+          mkdir -p /tmp/results && cp ripples/docs/results/records2_courts_v1.json /tmp/results/ 2>/dev/null || exit 0
+          for i in 1 2 3 4; do
+            git fetch -q origin "${GITHUB_REF_NAME}" && git reset -q --hard "origin/${GITHUB_REF_NAME}" || exit 0
+            cp /tmp/results/* ripples/docs/results/
+            git add ripples/docs/results/records2_courts_v1.json || exit 0
+            git diff --cached --quiet && exit 0
+            git commit -q -m "Ripples: court opinion search results [skip ci]"
+            git push -q origin "HEAD:${GITHUB_REF_NAME}" && break
+            sleep 7
+          done
