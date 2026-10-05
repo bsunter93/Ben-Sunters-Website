@@ -571,7 +571,7 @@ const COLOR = {measured:"var(--good)", timed:"var(--marigold)", reported:"var(--
 const NS = "http://www.w3.org/2000/svg", C = {x:350, y:330}, R = 286, DUR = 15000, FLY = 1150, THROW_FROM = {x:150, y:452};  // the near rim, lower left, on the water: a stone resting on the bank outside the pond read as a glitch (Oct 4 review)
 const $ = s => document.querySelector(s);
 const params = new URLSearchParams(location.search);
-const W2 = (() => { const w = params.get("water"); try { if (w) sessionStorage.setItem("ripple-water", w); return (w || sessionStorage.getItem("ripple-water")) === "2"; } catch { return w === "2"; } })();  // the water look: ?water=2 turns it on for the session, ?water=1 turns it off; to make it the default, return true when nothing is set
+const W2 = (() => { const w = params.get("water"); try { if (w) sessionStorage.setItem("ripple-water", w); return (w || sessionStorage.getItem("ripple-water") || "2") === "2"; } catch { return w !== "1"; } })();  // the water look is the default (Oct 5); ?water=1 shows the old instrument pond for the session, ?water=2 brings water back
 if (W2) document.documentElement.classList.add("w2");
 // Engagement instruments (Oct 5; docs/engagement_protocol_v1.md). Aggregate events to the site's own GA4 property, no
 // personal data, no event from a local file, a share-card render, a reel recording or a QA run (`&nointro=1` is the tests' flag).
