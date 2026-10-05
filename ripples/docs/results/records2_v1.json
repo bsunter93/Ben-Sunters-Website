@@ -17,7 +17,7 @@
   },
   "courtlistener": {
    "api": "https://www.courtlistener.com/api/rest/v4/search/",
-   "status": "not run: the REST API documentation says authentication is necessary (a token tied to an account); no account was created",
+   "status": "not run on Oct 4 (no token); from Oct 5 a daily workflow with the owner's token, results in records2_courts_v1.json and records2_courts_hand_v1.json",
    "documented_limits": "authenticated users: 5 requests a minute, 50 an hour, 125 a day"
   }
  },

@@ -116,12 +116,12 @@ def main() -> int:
     plan = json.load(open(r2.QUERIES))
     state = json.load(open(OUT)) if os.path.exists(OUT) else {"protocol": r2.PROTOCOL + " (section 9 and the Oct 5 addendum)", "done": [],
                                                               "stones": {}, "runs": [], "requests_total": 0}
-    today = dt.datetime.utcnow().date().isoformat()
+    today = dt.datetime.now(dt.timezone.utc).replace(tzinfo=None).date().isoformat()
     if state.get("stopped", {}).get("date") == today:
         print("stopped earlier today:", state["stopped"]["why"], "; no same-day retry"); return 0
     if any(r.get("date") == today for r in state["runs"]):
         print("a run already started today (UTC); one run a day"); return 0
-    run = {"date": today, "started": dt.datetime.utcnow().isoformat(timespec="seconds") + "Z"}
+    run = {"date": today, "started": dt.datetime.now(dt.timezone.utc).replace(tzinfo=None).isoformat(timespec="seconds") + "Z"}
     state["runs"].append(run)
 
     def save():
@@ -172,7 +172,7 @@ def main() -> int:
     except Stop as e:
         state["stopped"] = {"date": today, "why": str(e)}
         print("STOP:", e, flush=True)
-    run["finished"] = dt.datetime.utcnow().isoformat(timespec="seconds") + "Z"
+    run["finished"] = dt.datetime.now(dt.timezone.utc).replace(tzinfo=None).isoformat(timespec="seconds") + "Z"
     save()
     left = [s["id"] for s in order(plan["stones"]) if s["id"] not in state["done"]]
     print(f"requests this run {_n[0]}; done {len(state['done'])}; left {len(left)}", flush=True)
@@ -190,7 +190,7 @@ def item(rec, x, op, filed, text, source):
         ordered = "same year"
     else:
         ordered = filed[:4] > sd[:4]
-    out = {"case_name": x.get("caseName"), "court": x.get("court"), "court_id": x.get("court_id"), "date_filed": filed,
+    out = {"case_name": plain(x.get("caseName")).strip(), "court": x.get("court"), "court_id": x.get("court_id"), "date_filed": filed,
            "citation": (x.get("citation") or [None])[0], "url": SITE + (x.get("absolute_url") or ""), "opinion_id": op.get("id"),
            "status": x.get("status"), "source": source, "ordered": ordered, "passing": n}
     if best:

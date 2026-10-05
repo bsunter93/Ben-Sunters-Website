@@ -759,8 +759,8 @@ def cmd_build():
            "sources": {"federal_register": {"api": "https://www.federalregister.gov/api/v1/documents.json", "key": "none",
                                             "requests": state.get("requests_total"), "stopped": state.get("stopped"),
                                             "note": "the registered run finished without a refusal; a 429 answered the first request of a corrective rescan afterward"},
-                       "courtlistener": {"api": "https://www.courtlistener.com/api/rest/v4/search/", "status": "not run: the REST API documentation "
-                                         "says authentication is necessary (a token tied to an account); no account was created",
+                       "courtlistener": {"api": "https://www.courtlistener.com/api/rest/v4/search/", "status": "not run on Oct 4 (no token); from Oct 5 a "
+                                         "daily workflow with the owner's token, results in records2_courts_v1.json and records2_courts_hand_v1.json",
                                          "documented_limits": "authenticated users: 5 requests a minute, 50 an hour, 125 a day"}},
            "diagnostics": state.get("diagnostics"),
            "summary": {"stones_searched": len(stn), "decoys_searched": len(dec), "skipped": plan["counts"]["skipped"],

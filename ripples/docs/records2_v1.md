@@ -14,14 +14,15 @@ films** passed the strict automated rule, and none passed my read. But every one
 or a court decision (Hurricane Sandy, Katrina, September 11, Fukushima, Dobbs, Takata, the Oklahoma City bombing).
 **Of 146 cultural works, 32 returned at least one final rule for their query, 5 sentences survived the guards, and 0
 named the work as a reason.** The Federal Register is an events instrument, as the Wikipedia reverse hop was. For works,
-Hansard and the Congressional Record are still the records route. **Court opinions were not searched:** CourtListener's
-API requires an account token, and no account was created.
+Hansard and the Congressional Record are still the records route. **Court opinions:** not searched on Oct 4 for want of
+a token; the owner created an account on Oct 5, and the first daily run (51 of 146 works) found no court pair: 74
+sentences survived the guards, all context or aside (section "Court opinions" below).
 
 ## What each source allowed
 
 | Source | What the documentation says | What happened |
 |---|---|---|
-| CourtListener REST API v4.7 | "Authentication is necessary"; authenticated limits 5 a minute, 50 an hour, 125 a day; anonymous use appears only in the FAQ, as a sign of a broken token | Not run. The design is registered (plan, section 9) for a run with a token the owner creates, as a GitHub secret |
+| CourtListener REST API v4.7 | "Authentication is necessary"; authenticated limits 5 a minute, 50 an hour, 125 a day; anonymous use appears only in the FAQ, as a sign of a broken token | Not run on Oct 4. From Oct 5, a daily workflow with the owner's token (plan, section 9 and the Oct 5 addendum): 99 requests on day one, no refusal |
 | Federal Register API v1 | No key. The documentation page answered the project's agent with an access-request (CAPTCHA) page that says programs should use the API; it was not passed or worked around | 965 requests at 1.1 s, no refusal during the run. Afterward, the first request of a corrective rescan got **HTTP 429**: stopped for the day, no retry (968 requests in all) |
 
 ## Numbers against the bar
@@ -135,6 +136,38 @@ known in advance is a history paragraph in a proposed rule (the diagnostic below
   their stones (emergency and temporary rules filled the relevance list). The Lac-Mégantic rules were found and not
   read correctly (next section).
 
+## Court opinions (CourtListener): the first daily run, Oct 5
+
+Run under the plan's section 9 and the Oct 5 addendum, which was committed (729bc5b) before any court query. The token
+lives only in the repository secret and the workflow (`.github/workflows/ripples-courts.yml`, `lab/records2_courts.py`).
+Raw results `docs/results/records2_courts_v1.json` (written by the workflow, `[skip ci]`); my labels
+`docs/results/records2_courts_hand_v1.json`.
+
+| | Day one (Oct 5, 07:04 to 09:16 UTC) | Bar |
+|---|---|---|
+| Requests | 99 counted (51 searches, 48 opinion texts) plus one usage check, which has its own throttle; 80 s apart; no refusal. The account had used 3 requests before the run; the day ended at 102 of 125 | under 125 a day and 50 an hour |
+| Stones searched | **51 of 146 works** (the catalog's, the wider and held-out lists' works, and the first five of the culture list); 0 decoys, 0 events, 0 things | |
+| Works with any published opinion | 41 | |
+| Sentences that survived the guards | 74, from 21 works (48 read in full, 26 from snippets over the per-stone cap) | |
+| Hand labels | **0 reason**, 26 context, 48 aside | |
+| **New work → holding pairs** | **0 so far** | at least 5: not met on day one |
+| Decoys passing the strict automated rule | not yet searched | 0 |
+| cite_score's reason label | 17 sentences; none is a reason on my read | |
+
+**What courts do with works.** When a work reaches an opinion, it is usually the case itself (Nichols v. Moore, the
+defamation suit over Bowling for Columbine; Warner Bros. v. RDR Books, over a Harry Potter lexicon; a school's refusal to
+show Schindler's List), which is the law acting on the work and does not count. Otherwise it is evidence (two New Jersey
+appellate courts on experts who relied on Silent Spring), an example (Unsafe at Any Speed as muckraking that "forced
+reforms on the automobile industry", in a libel case), history (The Jungle opening the Ninth Circuit's 2018 ag-gag
+decision), or a fact in the record (a juror's views of Making a Murderer). The nearest misses: General Motors v. Volpe (D. Del.
+1970), a vehicle safety case, cites Unsafe at Any Speed, but the stored sentence is the bare citation, so it is
+labeled context; and Highfields Capital v. SeaWorld, a securities case about statements made "in the wake of the 2013
+documentary Blackfish". The guard let through a company name (Leonetti's Frozen Foods) and a different work (The Jungle
+Book); both are asides.
+
+**What remains:** 95 works, 49 decoys, 63 events and 26 things, about three more daily runs. The court numbers here are
+partial and will be replaced as the runs finish.
+
 ## Deviations and incidents, in the order they happened
 
 1. **A matcher bug found during the run.** The Federal Register's raw text writes accented letters as GPO codes
@@ -185,8 +218,9 @@ known in advance is a history paragraph in a proposed rule (the diagnostic below
 
 ## Next steps
 
-1. **CourtListener:** the owner creates an account and stores the token as a GitHub secret; a scheduled workflow runs the
-   registered design at 5 a minute and 125 a day (about three days of searches), or under a Free Law Project membership.
+1. **CourtListener, days two to four:** one push a day to `.github/workflows/ripples-courts.yml` (any edit to the file,
+   such as its header comment) starts the next run; it resumes from the done list: 95 works, then the 49 decoys, the
+   63 events and the 26 things. The data-day workflow can take this job over once it exists on the remote.
 2. **Lac-Mégantic rescan** (seven texts, the fixed matcher) from a workflow on another day, and the four paragraphs in
    deviation 4.
 3. **For works, stay with the legislatures.** The Congressional Record and Hansard name works; final rules do not.
