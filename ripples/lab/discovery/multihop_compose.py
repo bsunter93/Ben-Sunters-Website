@@ -257,7 +257,7 @@ def compose():
                       "d1_tests": sum(len(r["tests"]) for r in {(r["stone"], r["intermediate"]): r for r in d1r}.values()),
                       "d1_passes": sum(r["passes"] for r in {(r["stone"], r["intermediate"]): r for r in d1r}.values())},
            "main": main, "famous": famous, "d1": d1r}
-    json.dump(raw, open(M.RAW, "w"), ensure_ascii=False, indent=1)
+    M.write_json(raw, M.RAW, indent=1)
     print(json.dumps(raw["counts"], indent=1), flush=True)
 
 
@@ -294,9 +294,10 @@ def build():
                       "on the intermediate's Wikipedia views, in order after the stone) or reported (a sentence in the stone's article). Hop 2 is "
                       "reported: a record (Hansard, the Congressional Record, or a law's Wikipedia article) that names the intermediate as a reason "
                       "for the mark. The weakest link is reported. 'context' is the 'It wasn't the only reason' note, left blank for a human editor. "
-                      "Every chain listed under 'chains' survived a strict hand check; 'rejected' keeps the automated chains that did not, with why."),
+                      "Every chain listed under 'chains' survived a strict hand check; 'rejected' keeps the automated chains that did not, with why. "
+                      "Em dashes inside quoted records are set as en dashes; nothing else in a quote is changed."),
            "run": raw["run"], "chains": keep, "rejected": rejected}
-    json.dump(out, open(M.FINAL, "w"), ensure_ascii=False, indent=1)
+    M.write_json(out, M.FINAL, indent=1)
     print(f"built: {len(keep)} chains, {len(rejected)} rejected", flush=True)
 
 

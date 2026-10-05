@@ -23,6 +23,7 @@ import random
 import re
 import sqlite3
 import sys
+import threading
 import time
 import urllib.error
 import urllib.parse
@@ -105,6 +106,14 @@ def norm_target(t):
     return t[0].upper() + t[1:]
 
 
+def write_json(obj, path, indent=0):
+    """House style: em dashes inside quoted records are set as en dashes; nothing else in a quote changes."""
+    text = json.dumps(obj, ensure_ascii=False, indent=indent).replace("\u2014", "\u2013")
+    tmp = path + ".tmp"
+    open(tmp, "w").write(text)
+    os.replace(tmp, path)
+
+
 # ---------- one HTTP layer for every host ----------
 class Stop(Exception):
     pass
@@ -116,24 +125,55 @@ STATE = {"stopped": None}
 _db = None
 
 
+RATE = threading.Lock()   # one limiter: request starts at least a second apart, across every host and thread
+DBL = threading.Lock()
+
+
 def db():
     global _db
     if _db is None:
-        _db = sqlite3.connect(CACHE)
+        _db = sqlite3.connect(CACHE, check_same_thread=False)
         _db.execute("CREATE TABLE IF NOT EXISTS c (k TEXT PRIMARY KEY, status INTEGER, body TEXT, t TEXT)")
     return _db
 
 
+# A 403, 429 or 5xx stops that host for the calendar day (UTC) and is never retried that day. The two bill -> Act
+# resolvers (the Bills API, legislation.gov.uk) are soft: a Hansard hit whose bill they cannot resolve that day is kept
+# as pending and resolved on a later day; any other host stopping ends the run.
+# (Disclosed deviation: the plan said the whole run stops; the repository's earlier runs stopped the host.)
+SOFT_HOSTS = {"www.legislation.gov.uk", "bills-api.parliament.uk"}  # the bill -> Act resolvers: a hit waits for them
+STOPS = os.environ.get("MULTIHOP_STOPS") or os.path.join(os.path.dirname(CACHE), "multihop_stops.json")
+
+
+def stopped_today():
+    try:
+        d = json.load(open(STOPS))
+    except (OSError, ValueError):
+        d = {}
+    day = dt.datetime.utcnow().date().isoformat()
+    return {h for h, v in d.items() if v["day"] == day}, d
+
+
 def fetch(url, headers=None, timeout=90):
-    """Text of url, or None for a 404 or a network error; Stop on a 403, 429 or any 5xx. Cached."""
-    row = db().execute("SELECT status, body FROM c WHERE k=?", (url,)).fetchone()
+    """Text of url, or None for a 404 or a network error; a 403, 429 or any 5xx stops the host for the day. Cached."""
+    with DBL:
+        row = db().execute("SELECT status, body FROM c WHERE k=?", (url,)).fetchone()
     if row:
         return row[1] if row[0] == 200 else None
     if STATE["stopped"]:
         raise Stop(STATE["stopped"])
-    wait = 1.0 - (time.time() - LAST[0])
-    if wait > 0:
-        time.sleep(wait)
+    host0 = urllib.parse.urlparse(url).netloc
+    blocked, _ = stopped_today()
+    if host0 in blocked:
+        COUNTS["skipped:" + host0] += 1
+        if host0 in SOFT_HOSTS:
+            return None
+        raise Stop(f"{host0} stopped for the day")
+    with RATE:
+        wait = 1.0 - (time.time() - LAST[0])
+        if wait > 0:
+            time.sleep(wait)
+        LAST[0] = time.time()
     host = urllib.parse.urlparse(url).netloc
     req = urllib.request.Request(url, headers={"User-Agent": UA, **(headers or {})})
     status, body = 200, None
@@ -143,15 +183,24 @@ def fetch(url, headers=None, timeout=90):
     except urllib.error.HTTPError as e:
         status = e.code
     except Exception as e:  # noqa: BLE001  a timeout or reset is not a status; logged, not cached
-        LAST[0] = time.time(); COUNTS[host] += 1
+        COUNTS[host] += 1
         print(f"  network error at {host}: {str(e)[:80]}", flush=True)
         return None
-    LAST[0] = time.time(); COUNTS[host] += 1
+    COUNTS[host] += 1
     if status in (403, 429) or status >= 500:
-        STATE["stopped"] = f"HTTP {status} from {host} at {TODAY.isoformat()}"
+        with DBL:
+            _, d = stopped_today()
+            now = dt.datetime.utcnow()
+            d[host] = {"day": now.date().isoformat(), "at": now.isoformat(timespec="seconds"), "status": status, "url": url[:160]}
+            json.dump(d, open(STOPS, "w"), indent=1)
+        print(f"  HTTP {status} from {host}: stopped for the day", flush=True)
+        if host in SOFT_HOSTS:
+            return None
+        STATE["stopped"] = f"HTTP {status} from {host} at {now.isoformat(timespec='seconds')} UTC"
         raise Stop(STATE["stopped"])
-    db().execute("INSERT OR REPLACE INTO c VALUES (?,?,?,?)", (url, status, body if status == 200 else None, dt.datetime.utcnow().isoformat()))
-    db().commit()
+    with DBL:
+        db().execute("INSERT OR REPLACE INTO c VALUES (?,?,?,?)", (url, status, body if status == 200 else None, dt.datetime.utcnow().isoformat()))
+        db().commit()
     return body if status == 200 else None
 
 
@@ -505,7 +554,7 @@ def stage1(which):
         for c in s.get("candidates", []):
             if c.get("measured"):
                 c["measured"].pop("weekly", None)
-    json.dump(out, open(STAGE1, "w"), ensure_ascii=False, indent=0)
+    write_json(out, STAGE1)
     print("stage 1 written;", dict(COUNTS), flush=True)
 
 
@@ -639,12 +688,16 @@ def h1(v, stone):
             if cite_score.label(sc) != "reason":
                 continue
             date = (r.get("SittingDate") or "")[:10]
+            sk0 = sum(v for k, v in COUNTS.items() if k.startswith("skipped:"))
             res = bill_act.resolve(section, date)
+            pending = sum(v for k, v in COUNTS.items() if k.startswith("skipped:")) > sk0
             hit = {"name": name, "debate": section, "date": date, "house": r.get("House"), "member": r.get("MemberName"), "window": win[:700],
                    "cite_score": sc, "cite_why": why, "act": res.get("act"), "royal_assent": res.get("royal_assent"), "act_url": res.get("url"),
                    "resolve_note": res.get("note"), "names_stone": any(n and n.lower() in win.lower() for n in stone_names),
                    "url": f"https://hansard.parliament.uk/debates/{r['DebateSectionExtId']}" if r.get("DebateSectionExtId") else None}
-            if not res.get("act") or not res.get("royal_assent"):
+            if pending and not (res.get("act") and res.get("royal_assent")):
+                hit["verdict"] = "pending: resolver stopped for the day"
+            elif not res.get("act") or not res.get("royal_assent"):
                 hit["verdict"] = "no Act"
             elif res["royal_assent"] < date:
                 hit["verdict"] = "busted: Act before the debate"
@@ -654,30 +707,74 @@ def h1(v, stone):
     return out
 
 
-def stage2(which):
+def one_survivor(st, v, prev=None):
+    """H2 then H1. If Hansard is stopped for the day, H1 waits (pending) and a later run fills it in, reusing H2."""
+    r = {"stone": st["real"], "set": st["set"], "intermediate": v["title"]}
+    r["h2"] = prev["h2"] if prev and prev.get("h2") else h2(v, st)
+    if not v["names"]:
+        r["h1"] = {"skipped": "no guarded name"}
+    elif urllib.parse.urlparse(HAN).netloc in stopped_today()[0]:
+        r["h1"] = {"pending": "Hansard stopped for the day", "names": v["names"]}
+    else:
+        r["h1"] = h1(v, st)
+    return r
+
+
+def stage2(which, workers=3):
+    """Survivors in parallel (up to three requests in flight); the shared limiter keeps request starts a second apart."""
+    from concurrent.futures import ThreadPoolExecutor, as_completed
     s1 = json.load(open(STAGE1))
     prev = json.load(open(HOP2)) if os.path.exists(HOP2) else {"done": {}}
     done = prev["done"]
-    try:
-        for st in s1["stones"]:
-            if which != "all" and st["set"] != which:
+    todo = [(st, v) for st in s1["stones"] if which == "all" or st["set"] == which for v in st.get("survivors", [])
+            if f"{st['real']}|{v['title']}" not in done or done[f"{st['real']}|{v['title']}"]["h1"].get("pending")]
+    workers = int(os.environ.get("MULTIHOP_WORKERS", workers))
+    print(f"stage 2: {len(todo)} survivors to go ({len(done)} done)", flush=True)
+
+    def save():
+        write_json({"run": TODAY.isoformat(), "done": done, "requests": dict(COUNTS), "stopped": STATE["stopped"]}, HOP2)
+    with ThreadPoolExecutor(max_workers=workers) as ex:
+        futs = {ex.submit(one_survivor, st, v, done.get(f"{st['real']}|{v['title']}")): (st, v) for st, v in todo}
+        for f in as_completed(futs):
+            st, v = futs[f]
+            try:
+                r = f.result()
+            except (Stop, mf.Stop) as e:
+                STATE["stopped"] = STATE["stopped"] or str(e)
                 continue
-            for v in st.get("survivors", []):
-                key = f"{st['real']}|{v['title']}"
-                if key in done:
+            done[f"{st['real']}|{v['title']}"] = r
+            ok2 = [h for h in r["h2"]["hits"] if h["verdict"] == "in order"]
+            ok1 = [h for h in r["h1"].get("hits", []) if h["verdict"] == "in order"]
+            print(f"  {st['set']:6s} {st['real'][:30]:30s} -> {v['title'][:34]:34s} | H2 {len(ok2)} {'; '.join(h['mark'][:40] for h in ok2[:2])} "
+                  f"| H1 {len(ok1)} {'; '.join((h['act'] or '')[:40] for h in ok1[:2])}", flush=True)
+            save()
+    if STATE["stopped"]:
+        print("stopped:", STATE["stopped"], flush=True)
+    save()
+
+def resolve_pending():
+    """On a later day: resolve the Hansard hits that waited for the bill -> Act resolvers."""
+    d = json.load(open(HOP2))
+    n = 0
+    try:
+        for key, r in d["done"].items():
+            for hit in r.get("h1", {}).get("hits", []):
+                if not hit["verdict"].startswith("pending"):
                     continue
-                r = {"stone": st["real"], "set": st["set"], "intermediate": v["title"]}
-                r["h2"] = h2(v, st)
-                r["h1"] = h1(v, st) if v["names"] else {"skipped": "no guarded name"}
-                done[key] = r
-                ok2 = [h for h in r["h2"]["hits"] if h["verdict"] == "in order"]
-                ok1 = [h for h in r["h1"].get("hits", []) if h["verdict"] == "in order"]
-                print(f"  {st['set']:6s} {st['real'][:30]:30s} -> {v['title'][:34]:34s} | H2 {len(ok2)} {'; '.join(h['mark'][:40] for h in ok2[:2])} "
-                      f"| H1 {len(ok1)} {'; '.join((h['act'] or '')[:40] for h in ok1[:2])}", flush=True)
-                json.dump({"run": TODAY.isoformat(), "done": done, "requests": dict(COUNTS), "stopped": STATE["stopped"]}, open(HOP2, "w"), ensure_ascii=False, indent=0)
+                sk0 = sum(v for k, v in COUNTS.items() if k.startswith("skipped:"))
+                res = bill_act.resolve(hit["debate"], hit["date"])
+                if sum(v for k, v in COUNTS.items() if k.startswith("skipped:")) > sk0 and not (res.get("act") and res.get("royal_assent")):
+                    continue
+                hit.update(act=res.get("act"), royal_assent=res.get("royal_assent"), act_url=res.get("url"), resolve_note=res.get("note"))
+                hit["verdict"] = ("no Act" if not res.get("act") or not res.get("royal_assent") else
+                                  "busted: Act before the debate" if res["royal_assent"] < hit["date"] else "in order")
+                hit["resolved_later"] = dt.datetime.utcnow().date().isoformat()
+                n += 1
     except (Stop, mf.Stop) as e:
-        STATE["stopped"] = str(e); print("stopped:", e, flush=True)
-    json.dump({"run": TODAY.isoformat(), "done": done, "requests": dict(COUNTS), "stopped": STATE["stopped"]}, open(HOP2, "w"), ensure_ascii=False, indent=0)
+        print("stopped:", e, flush=True)
+    write_json(d, HOP2)
+    left = sum(1 for r in d["done"].values() for h in r.get("h1", {}).get("hits", []) if h["verdict"].startswith("pending"))
+    print(f"resolved {n}; still pending {left}", flush=True)
 
 
 if __name__ == "__main__":
@@ -688,6 +785,8 @@ if __name__ == "__main__":
             stage1(arg)
         elif cmd == "stage2":
             stage2(arg)
+        elif cmd == "resolve":
+            resolve_pending()
         else:
             import multihop_compose  # noqa: F401  compose and build live beside this file
             multihop_compose.main(cmd)
