@@ -201,3 +201,20 @@ Wikidata query service and API only: the honest user agent `ripples-research/0.2
 at most one request a second, every response cached, SPARQL 500/504 retried up to three times with small queries, a
 query that still fails is recorded for that name, and any 403, 429 or other refusal stops the run for the day. Aggregate
 data only. Wikipedia summaries may be read for the hand check under the same rules.
+
+## Deviation 1 (registered Oct 5, 2026, 06:30 UTC, before any match or result existed)
+
+- **What happened:** the first scan run stopped during the look-back, after 85 of 202 names (alphabetical), when the
+  Wikidata action API (`www.wikidata.org/w/api.php`, the `wbsearchentities` search used for labels beginning "N ")
+  answered HTTP 429. The run wrote a stop marker (`docs/results/names_v1_stop.json`) and exited. No matching, test,
+  decoy or known-positive result was produced, and none of the cached Wikidata responses has been read.
+- **What changes:**
+  - The action API is not called again today, from anywhere. The search route is **dropped for every name**, including
+    the names already searched (their cached search results are ignored), so all 202 names get the same look-back.
+  - The look-back continues on the Wikidata query service (`query.wikidata.org`), a separate service with its own
+    limits, which has not refused. Spacing is raised from 1 to 2 seconds between requests for the rest of the run; any
+    403, 429 or other refusal from it stops the run for the day.
+  - Cost: characters whose only link to the name is an English label beginning "N " (no P735 given name, no exact label
+    or alias) are no longer found. This lowers recall; it does not loosen any test.
+- **Unchanged:** the statistics, the anomaly rule, the window, the matching rule otherwise, the test, the known positives,
+  the decoys and the bar.

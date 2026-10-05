@@ -59,6 +59,7 @@ SL_WORK, SL_HUMAN, SL_BORN, SL_STORM, SL_THING = 20, 20, 10, 5, 50
 N_DECOY_NAMES = 20
 N_FAKE = 300
 GHOST_SHIFTS = (5, 6, 7, 8, 9, 10)
+SPACING = 2.0                  # seconds between requests (deviation 1; was 1.05)
 
 GIVEN_CLASSES = ("Q202444", "Q11879590", "Q12308941", "Q3409032")
 FEMALE = {"Q6581072", "Q43445", "Q1052281"}
@@ -229,7 +230,7 @@ LOG: list = []
 
 
 def http_get(url, accept):
-    wait = 1.05 - (time.time() - _last[0])
+    wait = SPACING - (time.time() - _last[0])
     if wait > 0:
         time.sleep(wait)
     req = urllib.request.Request(url, headers={"User-Agent": UA, "Accept": accept})
@@ -324,10 +325,7 @@ def seeds_for(name):
             gn.append(q)
         else:
             items.setdefault(q, set()).add(kind)
-    for r in wbsearch(name):
-        first = re.split(r"[\s,]+", r["label"].strip())[0] if r["label"] else ""
-        if first == name and r["label"] != name:
-            items.setdefault(r["id"], set()).add("prefix")
+    # Deviation 1: the action API answered 429 on Oct 5, 2026; the search route (wbsearch) is dropped for every name.
     if gn:
         vals = " ".join("wd:" + g for g in gn)
         q2 = f"""SELECT DISTINCT ?item WHERE {{ VALUES ?gn {{ {vals} }} ?item wdt:P735 ?gn .
@@ -814,8 +812,110 @@ def scan():
     return 0
 
 
+
+
+# ---------------------------------------------------------------- finalize: merge the hand check, grade, score the bar
+def pair_key(p):
+    return f"{p['name']}|{p['sex']}|{p['direction']}|{p['stone']['wikidata']}"
+
+
+def finalize():
+    cand = json.load(open(os.path.join(RESULTS, "names_v1_candidates.json")))
+    hc = json.load(open(os.path.join(RESULTS, "names_v1_handcheck.json")))
+    checks = hc["pairs"]
+    graded, dropped, unchecked = [], [], []
+    for p in cand["pairs"]:
+        if p["stat_grade"] in ("no move", "out of range"):
+            continue
+        k = pair_key(p)
+        h = checks.get(k)
+        if h is None:
+            unchecked.append(k)
+            continue
+        q = {**p, "hand_check": h}
+        if h["pass"]:
+            q["grade"] = p["stat_grade"]
+            graded.append(q)
+        else:
+            q["grade"] = "dropped (hand check)"
+            dropped.append(q)
+    if unchecked:
+        sys.exit(f"{len(unchecked)} pairs have no hand check, for example {unchecked[:5]}")
+
+    def epkey(p):
+        return (p["name"], p["sex"], p["direction"], p["episode"]["peak"])
+
+    kp_ids = {(k["name"], k["sex"], "rise" if k["sign"] > 0 else "fall") for k in KNOWN}
+    measured = [p for p in graded if p["grade"] == "measured"]
+    kp_out = []
+    for k in cand["known_positives"]:
+        rec = [p for p in measured if p["name"] == k["name"] and p["sex"] == k["sex"] and p["direction"] == k["direction"]
+               and re.search(k["stone"], p["stone"]["title"])
+               and k["years"][0] <= p["episode"]["peak"] <= k["years"][1]]
+        best = None
+        if not rec:
+            cands = [p for p in graded if p["name"] == k["name"] and p["sex"] == k["sex"]
+                     and p["direction"] == k["direction"] and re.search(k["stone"], p["stone"]["title"])]
+            best = cands[0]["grade"] if cands else None
+        kp_out.append({**k, "recovered": bool(rec), "graded_pair": rec[0]["stone"]["title"] if rec else None,
+                       "best_grade_if_not_recovered": best})
+    tier_a = [k for k in kp_out if k["tier"] == "A"]
+    new_eps = {}
+    for p in measured:
+        if (p["name"], p["sex"], p["direction"]) in kp_ids or (p["name"], p["sex"]) in SEEN:
+            continue
+        new_eps.setdefault(epkey(p), []).append(p)
+    d = cand["decoys"]
+    b3 = {f: d[f]["rate"] is not None and d[f]["rate"] <= 0.01 for f in ("decoy_names", "ghost_stones", "fake_stones")}
+    bar = {"B1": {"recovered": sum(k["recovered"] for k in tier_a), "of": len(tier_a), "needed": 3},
+           "B2": {"new_measured_episodes": len(new_eps), "needed": 5},
+           "B3": {f: {"rate": d[f]["rate"], "wilson_upper": d[f]["wilson_upper"], "n": d[f]["n"], "pass": b3[f]}
+                  for f in b3}}
+    bar["B1"]["pass"] = bar["B1"]["recovered"] >= 3
+    bar["B2"]["pass"] = bar["B2"]["new_measured_episodes"] >= 5
+    bar["pass"] = bar["B1"]["pass"] and bar["B2"]["pass"] and all(b3.values())
+
+    def lean(p):
+        s = p["stone"]
+        return {"stone": {"title": s["title"], "date": s["date"], "wikidata": s["wikidata"], "shelf": s["shelf"],
+                          "via": s["via"], "via_wikidata": s["via_qid"], "via_adaptation": s["via_adaptation"],
+                          "debut_work": s["debut_work"]},
+                "name": p["name"], "sex": p["sex"], "direction": p["direction"],
+                "onset_year": p["test"]["onset"], "peak_year": p["test"]["t_hat"],
+                "counts_before_after": p["counts_before_after"], "counts": p["counts"],
+                "p_year": p["test"]["p_year"], "p_own": p["test"]["p_own"], "test": p["test"],
+                "grade": p["grade"], "hand_check": p["hand_check"], "persistence": p["persistence"],
+                "lag_years": p["lag_years"], "plain": p["plain"],
+                "known_positive": (p["name"], p["sex"], p["direction"]) in kp_ids,
+                "seen_before_registration": p["seen_before_registration"]}
+
+    order = {"measured": 0, "timed": 1, "busted": 2}
+    graded.sort(key=lambda p: (order[p["grade"]], p["test"]["p_year"], p["name"]))
+    out = {"version": "names_v1", "plan": cand["plan"], "plan_commit": hc.get("plan_commit"),
+           "data": cand["data"], "episodes": cand["episodes"], "bar": bar,
+           "known_positives": kp_out, "known_positive_detail": cand["known_positives"],
+           "decoys": {k: v for k, v in d.items()}, "window_placebo": cand["window_placebo"],
+           "lookback": {"names": cand["lookback"]["names"], "failed_names": cand["lookback"]["failed_names"]},
+           "pairs": [lean(p) for p in graded],
+           "dropped_by_hand_check": [{"name": p["name"], "sex": p["sex"], "direction": p["direction"],
+                                      "stone": p["stone"]["title"], "date": p["stone"]["date"],
+                                      "via": p["stone"]["via"], "stat_grade": p["stat_grade"],
+                                      "reason": p["hand_check"]["reason"]} for p in dropped],
+           "episodes_without_a_stone": None}
+    matched_eps = {epkey(p) for p in cand["pairs"]}
+    out["episodes_without_a_stone"] = len([e for e in cand["episode_list"]
+                                           if (e["name"], e["sex"], "rise" if e["sign"] > 0 else "fall", e["peak"])
+                                           not in matched_eps])
+    with open(os.path.join(RESULTS, "names_v1.json"), "w") as f:
+        json.dump(out, f, indent=1)
+    print(json.dumps(bar, indent=1))
+    return 0
+
+
 if __name__ == "__main__":
     cmd = sys.argv[1] if len(sys.argv) > 1 else "scan"
     if cmd == "scan":
         sys.exit(scan())
+    if cmd == "finalize":
+        sys.exit(finalize())
     sys.exit(f"unknown command {cmd}")
