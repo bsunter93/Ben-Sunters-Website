@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Ripple Map Summary</title>
+<title>Ripple Map: the September engine</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:ital,wght@0,400;0,500;0,600;0,700;1,400&family=IBM+Plex+Serif:ital,wght@0,500;0,600;0,700;1,500&display=swap" rel="stylesheet">
@@ -50,15 +50,12 @@ code{font-family:"IBM Plex Mono",monospace;font-size:.86em;background:var(--teal
 .old strong{color:#3f3548}
 .muted{color:var(--ink-2)}
 .small{font-size:8.4pt;color:var(--ink-2)}
-.tbd{font-family:"IBM Plex Mono",monospace;font-size:.84em;font-weight:500;background:var(--tbd-bg);color:var(--tbd-ink);
-  border:1px dashed var(--tbd-edge);border-radius:2px;padding:0 3px;white-space:normal;box-decoration-break:clone;-webkit-box-decoration-break:clone}
 .stats{display:grid;grid-template-columns:repeat(4,1fr);border-top:1px solid var(--hair);border-bottom:1px solid var(--hair);margin:6px 0 12px}
 .stats > div{padding:9px 10px 9px 0;border-right:1px solid var(--hair);min-width:0}
 .stats > div + div{padding-left:10px}
 .stats > div:last-child{border-right:0}
 .stats .n{font-family:"IBM Plex Mono",monospace;font-size:13pt;font-weight:600;line-height:1.3;display:block;min-height:1.3em}
 .stats .n small{font-size:8pt;font-weight:500;color:var(--ink-3)}
-.stats .n .tbd{font-size:7.4pt;display:inline-block;line-height:1.35}
 .stats .l{font-family:"IBM Plex Mono",monospace;font-size:6.9pt;letter-spacing:.08em;text-transform:uppercase;color:var(--ink-3);display:block;margin-top:3px}
 table{width:100%;border-collapse:collapse;margin:4px 0 12px;font-size:8.4pt;line-height:1.45}
 thead{display:table-header-group}
@@ -87,9 +84,9 @@ figcaption{font-size:7.8pt;color:var(--ink-2);border-top:1px solid var(--hair);p
 
 <header>
 <h1>Ripple Map</h1>
-<p class="lede">An interactive explorer that uncovers the hidden knock-on effects of big events, wherever they show up, and shows exactly how sure we are about each one.</p>
+<p class="lede">The first version of Ripple Map: a live engine in Postgres that followed the knock-on effects of each day's events and labeled every step with how sure it could be. This is the record as it stood on Sep 26, 2026. The engine was parked at the end of September. The current Ripple is at <a href="/ripples/demo/">bensunter.com/ripples/demo</a>.</p>
 <p class="meta">Executive and technical summary · Knock⌃On · Benjamin J. Sunter · bensunter.com/ripples · engine 6.3.4 (6.1 audit fixes, 6.2 pooled + regional, 6.3 held-out confirmation)</p>
-<div class="wd">v1 · Sep 26, 2026, 10:45 UTC · engine 6.3.4 · final numbers</div>
+<div class="wd">Record · Sep 26, 2026 · engine 6.3.4 · parked</div>
 </header>
 
 <!-- ============================ EXECUTIVE SUMMARY ============================ -->
@@ -99,7 +96,7 @@ figcaption{font-size:7.8pt;color:var(--ink-2);border-top:1px solid var(--hair);p
 <div class="vision">
 <p>"The entire point of the app is uncovering hidden impacts from upstream events, regardless of where that impact shows up. Attribution and traceability with statistical rigor are key."</p>
 <p>"I'd rather this be a really cool interactive entertainment app than a p2p collaborative or competitive game." · "Balance rigor with product usability."</p>
-<p class="who">The owner, Sep 25–26, 2026. Everything below is judged against these three lines.</p>
+<p class="who">Ben Sunter, Sep 25–26, 2026. Everything below is judged against these three lines.</p>
 </div>
 <p class="oneline"><strong>In one sentence:</strong> Ripple Map takes an upstream shock (a hurricane, a heat wave, a model release, a rate decision), follows it across domains (jobless claims, grid demand, air travel, downloads, filings, prediction markets), and labels every step with a confidence tier that was earned by pre-registered tests.</p>
 <p>For example, a hurricane leads to disaster declarations, then jobless claims, then new business filings. Each step carries one of three words:</p>
@@ -111,14 +108,14 @@ figcaption{font-size:7.8pt;color:var(--ink-2);border-top:1px solid var(--hair);p
 <tr><td class="tier"><b>Watching</b></td><td>Pre-registered; its window is still open</td><td>"The mechanism exists; no measurable move yet"</td></tr>
 </tbody>
 </table>
-<p>The site never claims proof of cause. It is free, has no accounts, and is not an investment tool.</p>
+<p>The site never claimed proof of cause. It was free, had no accounts, and was not an investment tool.</p>
 
 <h2>2 · What makes it different, and hard to copy</h2>
 <div class="claim"><p><strong>Tests are locked before the data is read.</strong> Every candidate link, its weight and its look schedule are frozen and written to an append-only, hash-chained ledger before any post-event number is used. The chain verifies after every change (696 rows, 54 freeze batches, 0 tests without a frozen candidate, as of 03:30 UTC).</p></div>
 <div class="claim"><p><strong>Every link is tested against fakes.</strong> Three placebo families (fake dates, other events, look-alike series) plus daily decoy events run through identical code. Any tier a decoy earns is false by construction, so the fluke rate is measured.</p></div>
 <div class="claim"><p><strong>A second opinion must agree.</strong> A nightly BigQuery forecast check (<code>AI.CAUSAL_EFFECT</code>) must agree before anything is called Measured. On its first calibrated run it flagged 0 of 13 eligible decoys.</p></div>
 <div class="claim"><p><strong>Patterns across past events (engine 6.2).</strong> Pooling past events of the same kind, and comparing hit regions with untouched ones, yields findings like "across N past hurricanes, jobless claims in hit states rose X %", each with a measured fluke rate.</p></div>
-<div class="claim"><p><strong>The failures stay on screen.</strong> Stops that stayed flat, retractions, the decoy "control ripple" and failed launch gates are published. Nobody else publishes the denominator.</p></div>
+<div class="claim"><p><strong>The failures stay on screen.</strong> Stops that stayed flat, retractions, the decoy "control ripple" and failed launch gates are published. None of the products in §8 published the denominator.</p></div>
 
 <h2>3 · Rigor and usability, balanced</h2>
 <p>Strict tests favor obvious effects. The answer is to keep Measured as strict as it is and add a plentiful, honestly labeled second kind of finding:</p>
@@ -130,57 +127,50 @@ figcaption{font-size:7.8pt;color:var(--ink-2);border-top:1px solid var(--hair);p
 
 <h2>4 · The experience</h2>
 <p>An interactive entertainment explorer: the hero is the Ripple Map of today's shocks, each growing a cascade that crosses domains over days and weeks. Tapping a step opens an evidence card: mechanism, the series against its own seasonal normal, lag, fluke rate, agreeing sources and tier. Pattern cards summarize past events of the same kind; cascade cards are shareable; a light "call the next ripple" moment is optional.</p>
-<p><strong>Visual design: under redesign.</strong> The owner rejected the first frontend's look on Sep 26. Three high-fidelity directions are being made on a real event (Hurricane Milton): <strong>A</strong> editorial seismograph, <strong>B</strong> radial ripple map, <strong>C</strong> chain of story cards. Chosen direction: <span class="tbd">B (radial) + C (story cards), evolved into the stone-in-a-pond visual language (D-14 to D-16)</span>. The frontend is rebuilt on it afterwards.</p>
+<p><strong>Visual design.</strong> I rejected the first frontend's look on Sep 26. Three directions were drawn on a real event (Hurricane Milton): <strong>A</strong> editorial seismograph, <strong>B</strong> radial ripple map, <strong>C</strong> chain of story cards. I picked B and C together, and they became the stone-in-a-pond look the current Ripple uses.</p>
 <div class="old">
-<p><strong>Superseded v5 content (kept out of this document).</strong> Decision D-6 returned the project to the core vision, which removed:</p>
+<p><strong>Dropped earlier.</strong> Going back to the core vision removed:</p>
 <ul>
 <li>the daily puzzle as the main surface, slider scoring, points, streaks, streak shields, crowd stats and leaderboards;</li>
 <li>the Split-Flap Riso art direction (petrol and marigold, departure-board flaps) as the final look; it is now one input to the redesign.</li>
 </ul>
 </div>
 
-<h2>5 · Where it stands</h2>
+<h2>5 · Where it stood</h2>
 <div class="stats">
 <div><span class="n">35+</span><span class="l">Sources collected daily</span></div>
 <div><span class="n">9,659</span><span class="l">Series stored</span></div>
-<div><span class="n">0</span><span class="l">Measured hops so far</span></div>
+<div><span class="n">0</span><span class="l">Measured hops at 03:30 UTC</span></div>
 <div><span class="n">377<small> / 500 MB</small></span><span class="l">Database used</span></div>
 </div>
 <table>
 <thead><tr><th style="width:16%">Area</th><th>State (Sep 26, 03:30 UTC)</th></tr></thead>
 <tbody>
-<tr><td><b>Data layer</b></td><td><span class="ok">Done.</span> 35+ sources (54 registered) collected within written rules; YouTube added tonight. Wikipedia 3-year history: 360 of 996 pages filled, every 10 minutes.</td></tr>
-<tr><td><b>Engine 6.1</b></td><td><span class="ok">Deployed.</span> All five audit blockers and 8 should-fixes fixed, plus a year-ago-anchored baseline for grid, travel, transit and prices. <span class="pend">Acceptance runs in progress</span> (1,931 pre-registered looks re-run so far).</td></tr>
-<tr><td><b>Engine 6.2</b></td><td><span class="pend">Deployed; results pending.</span> 29 family × outcome pairs and 4,035 past events frozen and hashed before any effect was computed. Patterns found: <span class="tbd">2 strong patterns + 1 hint of 29 pairs (6.2); 6.3 held-out: 1 confirmed (weaker), 0 cross-domain, 2 checks, 5 hunches of 126 pairs</span>.</td></tr>
+<tr><td><b>Data layer</b></td><td><span class="ok">Done.</span> 35+ sources (54 registered) collected within written rules; YouTube added Sep 25. Wikipedia 3-year history: 360 of 996 pages filled, every 10 minutes.</td></tr>
+<tr><td><b>Engine 6.1</b></td><td><span class="ok">Deployed.</span> All five audit blockers and 8 should-fixes fixed, plus a year-ago-anchored baseline for grid, travel, transit and prices. Acceptance runs had re-run 1,931 pre-registered looks by 03:30 UTC; the final numbers are in §13.</td></tr>
+<tr><td><b>Engine 6.2</b></td><td><span class="ok">Deployed.</span> 29 family × outcome pairs and 4,035 past events frozen and hashed before any effect was computed. Patterns found: 2 strong patterns and 1 hint of 29 pairs. The 6.3 held-out test of 126 pairs: 1 confirmed (weaker), 0 cross-domain, 2 checks, 5 hunches.</td></tr>
 <tr><td><b>Second opinion</b></td><td><span class="ok">Live.</span> Nightly GitHub Action on BigQuery; wired into what the site publishes.</td></tr>
 <tr><td><b>Publishing</b></td><td><span class="ok">Done.</span> Daily frozen versions, feeds, share cards, data-contract tests pass.</td></tr>
-<tr><td><b>Frontend</b></td><td><span class="no">To rebuild</span> on the chosen direction; the code is on a branch and isn't live yet.</td></tr>
+<tr><td><b>Frontend</b></td><td><span class="no">Not live.</span> Rebuilt as the pond, which became the current Ripple.</td></tr>
 </tbody>
 </table>
 
 <h2>6 · Honest risks</h2>
 <ol>
-<li><strong>Rigor versus "hidden".</strong> Strict tests favor obvious effects, and so far no hop of any kind has reached Measured. Engine 6.2 is the answer; whether it yields enough interesting patterns is <span class="tbd">2 strong patterns (cold snaps → grid demand +3.7%, N 50; hurricanes → new-business applications −3.2%, N 23, later judged fragile) + heat → demand hint</span>.</li>
-<li><strong>Power is low on some channels.</strong> Before 6.1, a planted +5σ effect was caught at most 29 % of the time. The 6.1 curve: <span class="tbd">PHYS 0.44, SOC 0.40, ECON 0.17–0.28, JOBS 0.16, BLD 0.13, INST 0</span>. The site never claims "no effect" beyond that curve.</li>
+<li><strong>Rigor versus "hidden".</strong> Strict tests favor obvious effects. At 03:30 UTC no hop of any kind had reached Measured; the first to reach it was a positive control (Milton → Duke Energy Florida demand). Engine 6.2 was the answer. It found 2 strong patterns (cold snaps → grid demand +3.7%, N 50; hurricanes → new-business applications −3.2%, N 23, later judged fragile) and a heat → demand hint.</li>
+<li><strong>Power is low on some channels.</strong> Before 6.1, a planted +5σ effect was caught at most 29 % of the time. The 6.1 curve: PHYS 0.44, SOC 0.40, ECON 0.17–0.28, JOBS 0.16, BLD 0.13, INST 0. The site never claims "no effect" beyond that curve.</li>
 <li><strong>Live events start quiet.</strong> Effects take days to weeks. The archive and pattern findings fill the gap.</li>
 <li><strong>Outcomes are mostly US data.</strong> Claims stay inside the measured geography.</li>
-<li><strong>Free infrastructure.</strong> 377 of 500 MB used, the scheduler stalls during long statements, and free projects pause after a week idle. Supabase Pro (about $25/month) is recommended at launch.</li>
-<li><strong>Design is not settled</strong>, and one operator runs everything.</li>
+<li><strong>Free infrastructure.</strong> 377 of 500 MB used, the scheduler stalls during long statements, and free projects pause after a week idle. Supabase Pro (about $25/month) was recommended for launch.</li>
+<li><strong>Design was not settled</strong>, and one person ran everything.</li>
 </ol>
 
-<h2>7 · What's next</h2>
-<ol>
-<li>Finish the 6.1 acceptance runs and the 6.2 pooled results; publish both calibration sets.</li>
-<li>Owner picks a design direction (A, B or C); rebuild the frontend on it, including pattern cards.</li>
-<li>Wire the engine into the site end to end; three green live days.</li>
-<li>Playtests with test users; final independent review.</li>
-<li>Replace every yellow number in this document with the final build's value.</li>
-<li>Owner merges to main to go live. Target date: <span class="tbd">on the owner's merge of the branch (target week of Oct 5, 2026)</span>.</li>
-</ol>
-<p class="small"><strong>Owner asks:</strong> pick A / B / C; approve Supabase Pro at launch; merge. Non-blocking: the Stripe link for the pay-what-you-want support button (unlocks nothing; "Radar" alerts stay planned at $49/month), legal review before any paid tier.</p>
+<h2>7 · What happened next</h2>
+<p>The open work on Sep 26 was the 6.1 acceptance runs and the 6.2 results (both finished; the numbers are in this record), a design pick (radial plus story cards), wiring the engine into the site end to end, playtests, and three live days. The plan was to launch the week of Oct 5, 2026, with Supabase Pro (about $25/month), a pay-what-you-want support button that unlocked nothing, and "Radar" alerts planned at $49/month. Any paid tier needed a legal review first.</p>
+<p>The engine was parked before the end-to-end work. The pond became its own product: graded chains from a stone to a lasting mark, built from public records, at <a href="/ripples/demo/">bensunter.com/ripples/demo</a>.</p>
 
 <h2>8 · Market gap</h2>
-<p class="small">Nearest products and where they stop: Ripple News (AI ripple explainers; narrative only, no baseline or null) · TickerTrends, Kalshi, Polymarket (first order, one domain; prices only, no attribution) · RavenPack, Dataminr, Permutable AI (news to prices; no published denominators) · Futures Platform, Interos, Everstream (scenario wheels or one supply-chain domain; enterprise only). None combines live events, cascades past the second order, pre-registered placebo tests and public denominators. <span class="tbd">(competitor list to be re-verified before external sharing)</span></p>
+<p class="small">Nearest products and where they stop: Ripple News (AI ripple explainers; narrative only, no baseline or null) · TickerTrends, Kalshi, Polymarket (first order, one domain; prices only, no attribution) · RavenPack, Dataminr, Permutable AI (news to prices; no published denominators) · Futures Platform, Interos, Everstream (scenario wheels or one supply-chain domain; enterprise only). None combines live events, cascades past the second order, pre-registered placebo tests and public denominators. This list is as of Sep 26, 2026, and hasn't been checked since.</p>
 
 <!-- ============================ TECHNICAL ============================ -->
 <h2 class="part pb">Part II · Technical summary</h2>
@@ -314,21 +304,21 @@ figcaption{font-size:7.8pt;color:var(--ink-2);border-top:1px solid var(--hair);p
 <tbody>
 <tr><td class="tier"><b>GREEN</b></td><td>Official or openly licensed; no barrier; robots.txt allows; terms permit</td><td>Free and paid, within the license</td></tr>
 <tr><td class="tier"><b>YELLOW</b></td><td>Allowed but undocumented, non-commercial or third-party</td><td>Derived only, free product, kill switch</td></tr>
-<tr><td class="tier"><b>ORANGE / *</b></td><td>Issued key or permission; * = a documented keyed API on a host whose robots.txt disallows it, by owner decision</td><td>Per agreement</td></tr>
+<tr><td class="tier"><b>ORANGE / *</b></td><td>Issued key or permission; * = a documented keyed API on a host whose robots.txt disallows it, by my decision</td><td>Per agreement</td></tr>
 <tr><td class="tier"><b>RED</b></td><td>A barrier, a robots.txt deny with no key route, or terms that ban it</td><td>No request at all</td></tr>
 </tbody>
 </table>
 <ul>
 <li><strong>Honest identity.</strong> A declared User-Agent with a contact URL. The Wikimedia contact page is live at <code>bensunter.com/ripples/methods/</code>; every Wikimedia collector stops if it cannot be reached.</li>
-<li><strong>Stop, don't retry.</strong> A 429 or 503 stops the host until the next UTC midnight; a 401 or 403 stops it until the owner clears it. No CAPTCHA solving, proxies, IP or key rotation, or logged-in scraping.</li>
+<li><strong>Stop, don't retry.</strong> A 429 or 503 stops the host until the next UTC midnight; a 401 or 403 stops it until someone clears it by hand. No CAPTCHA solving, proxies, IP or key rotation, or logged-in scraping.</li>
 <li><strong>Aggregates only.</strong> Counts, ranks and our own z-scores; no post text, handles or article bodies.</li>
 <li><strong>YouTube retention.</strong> No per-video row is ever written. The only raw cache is today's and yesterday's chart snapshot (always under 48 hours old); a daily job deletes any raw row older than 28 days as a safety net, inside YouTube's 30-day cached-data rule. Titles are read in memory only.</li>
 <li><strong>Documented exceptions.</strong> Wikimedia's API and SEC EDGAR full-text search (2 req/s, 200/day) skip the robots.txt check; every other rule applies.</li>
 </ul>
-<p class="small">Compliance audit, Sep 25: pass after three fixes in the older pipeline. Re-audit on the final build: <span class="tbd">compliance held throughout; one source (DOE OE-417) skipped because its robots file was unreachable</span>. The demarcation map is an engineering risk map. It isn't legal advice.</p>
+<p class="small">Compliance audit, Sep 25: pass after three fixes in the older pipeline. Re-audit on the final build: compliance held throughout; one source (DOE OE-417) skipped because its robots file was unreachable. The demarcation map is an engineering risk map. It isn't legal advice.</p>
 
 <h2>11 · The cascade engine</h2>
-<p><strong>A typed mechanism graph decides what to test. An event study with placebo controls decides whether the downstream series moved. Pooling across past events decides how much to trust a class of link.</strong> Engine versions: 6.0 (built), 6.1 (independent audit fixed), 6.2 (patterns and regional contrasts, in progress).</p>
+<p><strong>A typed mechanism graph decides what to test. An event study with placebo controls decides whether the downstream series moved. Pooling across past events decides how much to trust a class of link.</strong> Engine versions: 6.0 (built), 6.1 (audit fixes), 6.2 (patterns and regional contrasts), 6.3 (held-out confirmation).</p>
 
 <h3>6.0: the core</h3>
 <ul>
@@ -344,8 +334,8 @@ figcaption{font-size:7.8pt;color:var(--ink-2);border-top:1px solid var(--hair);p
 <li><strong>Chaining.</strong> Only Likely-or-better hops get children; a fork test draws a direct path as a sibling; nothing is multiplied along a chain for display.</li>
 </ul>
 
-<h3>6.1: the independent audit and its fixes</h3>
-<p>An independent statistician found the engine <em>safe by absence of power</em> (nothing had ever reached Measured) but with four anti-conservative holes that would matter once power was restored, plus a deploy gate that could not pass. All five blockers are fixed and deployed; the ledger still verifies bit-identically.</p>
+<h3>6.1: the audit and its fixes</h3>
+<p>A statistical audit of engine 6.0 found it <em>safe by absence of power</em> (nothing had ever reached Measured) but with four anti-conservative holes that would matter once power was restored, plus a deploy gate that could not pass. All five blockers are fixed and deployed; the ledger still verifies bit-identically.</p>
 <div class="avoid"><table>
 <thead><tr><th style="width:6%">#</th><th style="width:44%">Audit finding</th><th>Fix in 6.1</th></tr></thead>
 <tbody>
@@ -369,13 +359,13 @@ figcaption{font-size:7.8pt;color:var(--ink-2);border-top:1px solid var(--hair);p
 <table>
 <thead><tr><th style="width:24%">Strength word</th><th style="width:40%">Rule (pre-registered)</th><th>Published fluke rate</th></tr></thead>
 <tbody>
-<tr><td class="tier"><b>strong pattern</b></td><td>q ≤ 0.05 and the pre-registered sign</td><td><span class="tbd">≤ 7.4% (0 false confirmations in 48 conditional decoy trials, Wilson upper bound)</span></td></tr>
-<tr><td class="tier"><b>pattern</b></td><td>q ≤ 0.20 and the pre-registered sign</td><td><span class="tbd">≤ 7.4% (same calibration, 6.3.4)</span></td></tr>
+<tr><td class="tier"><b>strong pattern</b></td><td>q ≤ 0.05 and the pre-registered sign</td><td>≤ 7.4% (0 false confirmations in 48 conditional decoy trials, Wilson upper bound)</td></tr>
+<tr><td class="tier"><b>pattern</b></td><td>q ≤ 0.20 and the pre-registered sign</td><td>≤ 7.4% (same calibration, 6.3.4)</td></tr>
 <tr><td class="tier">hint</td><td>placebo p ≤ 0.05 but not surviving BH</td><td>shown as exploratory</td></tr>
 <tr><td class="tier">too few events</td><td>fewer than 8 past events</td><td>not published as a pattern</td></tr>
 </tbody>
 </table>
-<p class="small">Pre-registration: ledger seq 931 (method, config, tier rule) and seq 932 (29 pairs, 4,035 events, every panel's extent), hashed before any effect was computed. Example result for the headline pair: <span class="tbd">storms → state jobless claims came in at +2–3% (p 0.08–0.16), honestly reported as no pattern; the held-out 6.3 test of wildfires → claims was contradicted (sign flipped)</span>.</p>
+<p class="small">Pre-registration: ledger seq 931 (method, config, tier rule) and seq 932 (29 pairs, 4,035 events, every panel's extent), hashed before any effect was computed. Example result for the headline pair: storms → state jobless claims came in at +2–3% (p 0.08–0.16), honestly reported as no pattern; the held-out 6.3 test of wildfires → claims was contradicted (sign flipped).</p>
 
 <h2>12 · Second opinion: the forecast gate</h2>
 <p><strong>What it is.</strong> BigQuery's preview <code>AI.CAUSAL_EFFECT</code> fits a univariate forecast for one intervention date and returns the effect with an interval. <strong>What it is not.</strong> No discovery, no common-shock control, no multiple-testing control, so it cannot replace the engine. It is used only as an independent check.</p>
@@ -394,19 +384,19 @@ figcaption{font-size:7.8pt;color:var(--ink-2);border-top:1px solid var(--hair);p
 </table>
 
 <h2>13 · Calibration and acceptance</h2>
-<p>Each number below is published on the methods page. "Before" values are from the audit of engine 6.0; "now" values are from the running 6.1 recompute and will change.</p>
+<p>Each number below is published on the methods page. "Before" values are from the audit of engine 6.0; the rest are the final 6.1 to 6.3 runs.</p>
 <table>
 <thead><tr><th style="width:27%">Check</th><th style="width:27%">Target</th><th>Result</th></tr></thead>
 <tbody>
 <tr><td>Ledger integrity</td><td>Chain verifies; every frozen batch recomputes</td><td><span class="ok">Pass</span> · 696 rows, 54 batches, 0 tests without a candidate</td></tr>
 <tr><td>Null scale (TSA, MTA)</td><td>Spread within 0.7–1.7</td><td><span class="ok">Pass</span> · 1.13 / 1.16 and 1.14 / 1.59</td></tr>
-<tr><td>Holiday trap (Thanksgiving storm)</td><td>Never Measured</td><td><span class="ok">Pass by construction</span>; end-to-end run <span class="tbd">pass: never Measured (common-shock days registered; T18 end-to-end)</span></td></tr>
-<tr><td>Decoys, Likely or better</td><td>≤ 10 %, upper bound ≤ 15 %; Measured 0 on ≥ 500 final looks</td><td>Before: 85 of 505 (16.8 %). Interim 6.1: 0 of 46. Final: <span class="tbd">0.37% (5 of 1,349 decoy final looks; Wilson 0.16–0.86%), 0 Measured</span></td></tr>
-<tr><td>Negative controls</td><td>Within the decoy band</td><td>Before: 7 of 90. Final: <span class="tbd">negative controls: 0 in the live window; decoys 0.37% Likely+ (5 of 1,349), 0 Measured</span></td></tr>
-<tr><td>Positive controls (6)</td><td>Realistic ones reach Measured</td><td>Before: 0 of 6. Interim 6.1: 0 of 6 (recompute unfinished). Final: <span class="tbd">Milton → Duke Energy Florida demand: Measured (published; forecast check agrees 2/2). Helene → FEMA declarations FL/NC/SC: Likely. DeepSeek → SDK downloads: Likely (blocked from Measured by a holiday common shock). ChatGPT, Llama 3, Texas heat dome: no move ≥ 2σ</span></td></tr>
-<tr><td>Power (planted effects)</td><td>≥ 50 % recall at +3σ, lag ≤ 3</td><td>Before, at +5σ: physical 29 %, jobs 16 %, builders 0 %. 6.1: <span class="tbd">published in ENGINE_FIXES (+5σ: PHYS 0.64)</span></td></tr>
-<tr><td>Null uniformity</td><td>KS p ≥ 0.05 on 500 held-out pairs</td><td><span class="tbd">0.34 (uniform)</span></td></tr>
-<tr><td>6.2 decoy families</td><td>Placebo-pool fluke rate published per strength word</td><td><span class="tbd">decoy families 8/120 = 6.7% at p ≤ 0.05 (Wilson 3.4–12.6%); in-space placebos 5.9% ≤ 0.05</span></td></tr>
+<tr><td>Holiday trap (Thanksgiving storm)</td><td>Never Measured</td><td><span class="ok">Pass by construction</span>; end-to-end run pass: never Measured (common-shock days registered; T18 end-to-end)</td></tr>
+<tr><td>Decoys, Likely or better</td><td>≤ 10 %, upper bound ≤ 15 %; Measured 0 on ≥ 500 final looks</td><td>Before: 85 of 505 (16.8 %). Interim 6.1: 0 of 46. Final: 0.37% (5 of 1,349 decoy final looks; Wilson 0.16–0.86%), 0 Measured</td></tr>
+<tr><td>Negative controls</td><td>Within the decoy band</td><td>Before: 7 of 90. Final: negative controls: 0 in the live window; decoys 0.37% Likely+ (5 of 1,349), 0 Measured</td></tr>
+<tr><td>Positive controls (6)</td><td>Realistic ones reach Measured</td><td>Before: 0 of 6. Interim 6.1: 0 of 6 (recompute unfinished). Final: Milton → Duke Energy Florida demand: Measured (published; forecast check agrees 2/2). Helene → FEMA declarations FL/NC/SC: Likely. DeepSeek → SDK downloads: Likely (blocked from Measured by a holiday common shock). ChatGPT, Llama 3, Texas heat dome: no move ≥ 2σ</td></tr>
+<tr><td>Power (planted effects)</td><td>≥ 50 % recall at +3σ, lag ≤ 3</td><td>Before, at +5σ: physical 29 %, jobs 16 %, builders 0 %. 6.1: published in ENGINE_FIXES (+5σ: PHYS 0.64)</td></tr>
+<tr><td>Null uniformity</td><td>KS p ≥ 0.05 on 500 held-out pairs</td><td>0.34 (uniform)</td></tr>
+<tr><td>6.2 decoy families</td><td>Placebo-pool fluke rate published per strength word</td><td>decoy families 8/120 = 6.7% at p ≤ 0.05 (Wilson 3.4–12.6%); in-space placebos 5.9% ≤ 0.05</td></tr>
 </tbody>
 </table>
 <p class="small">The honest expectation from the audit: realistic Measured passes are regional (hurricane → affected grid regions and state declarations) and builder downloads after open-model releases; ChatGPT → npm is untestable (too little pre-launch history), and the Texas heat dome depends on the new year-ago baseline.</p>
@@ -414,8 +404,8 @@ figcaption{font-size:7.8pt;color:var(--ink-2);border-top:1px solid var(--hair);p
 <h2>14 · Publishing, contracts and security</h2>
 <ul>
 <li><strong>Publishing.</strong> Daily frozen cascade versions with payload hashes, mirrored JSON in Storage, pre-rendered share cards, RSS and <code>.ics</code> feeds, open CSV (CC BY, GREEN-derived fields only). Shared links point to frozen versions.</li>
-<li><strong>Contract tests.</strong> <code>rm_contract_test()</code> checks every public payload shape and the Measured wording; the forecast gate has its own tests. Engine unit tests T1–T25 cover freeze identity, placebo code paths, holidays, frozen look dates and the 6.2 hook (which may lift only the allowed failures). Latest full pass: <span class="tbd">T1–T25 and T40–T49 pass (staged harness, 6.1.2 / 6.3.4)</span>.</li>
-<li><strong>Database.</strong> Row-level security on every table. Public RPCs are read-only, <code>SECURITY DEFINER</code>, empty search path, IDs-only inputs. Final advisor run: <span class="tbd">0 ERROR; WARNs are the intended anon-readable public RPCs</span>.</li>
+<li><strong>Contract tests.</strong> <code>rm_contract_test()</code> checks every public payload shape and the Measured wording; the forecast gate has its own tests. Engine unit tests T1–T25 cover freeze identity, placebo code paths, holidays, frozen look dates and the 6.2 hook (which may lift only the allowed failures). Latest full pass: T1–T25 and T40–T49 pass (staged harness, 6.1.2 / 6.3.4).</li>
+<li><strong>Database.</strong> Row-level security on every table. Public RPCs are read-only, <code>SECURITY DEFINER</code>, empty search path, IDs-only inputs. Final advisor run: 0 ERROR; WARNs are the intended anon-readable public RPCs.</li>
 <li><strong>Secrets.</strong> API keys live in Vault and GitHub secrets, never in the repo, logs or payloads; scoped credentials go only to their own hosts. Google Cloud uses Workload Identity Federation restricted to this repository, with BigQuery job-user and data-viewer roles only.</li>
 <li><strong>Visitors.</strong> No accounts, no tracking pixels; a hashed client ID with a daily salt.</li>
 <li><strong>Integrity.</strong> Tamper-evident only. The chain head is not yet anchored outside the database, so it isn't tamper-proof.</li>
@@ -455,7 +445,7 @@ figcaption{font-size:7.8pt;color:var(--ink-2);border-top:1px solid var(--hair);p
 <tr><td>Supabase free tier, 500 MB</td><td>377 MB at 03:30 UTC (self-imposed cap 400 MB); collectors refuse writes near the cap</td><td>Compact array store for history (3 years of Wikipedia ≈ 4.4 MB); retention jobs; <strong>Pro recommended at launch</strong></td></tr>
 <tr><td>Scheduler stalls</td><td><code>pg_cron</code> launches nothing while any single long statement runs; collectors pause too</td><td>Every engine job chunked to under about a minute; long harness and power runs scheduled in quiet windows</td></tr>
 <tr><td>Auto-pause</td><td>Free projects pause after a week idle</td><td>Daily jobs keep it active; Pro removes the risk</td></tr>
-<tr><td>BigQuery cost</td><td>Nightly and weekly Actions only</td><td>204.8 GiB/day cap, $10 alert. Typical nightly scan: <span class="tbd">≈ 0.1 GiB</span></td></tr>
+<tr><td>BigQuery cost</td><td>Nightly and weekly Actions only</td><td>204.8 GiB/day cap, $10 alert. Typical nightly scan: ≈ 0.1 GiB</td></tr>
 </tbody>
 </table>
 
@@ -464,25 +454,25 @@ figcaption{font-size:7.8pt;color:var(--ink-2);border-top:1px solid var(--hair);p
 <table>
 <thead><tr><th style="width:30%">Gate</th><th style="width:42%">Criterion</th><th>Result</th></tr></thead>
 <tbody>
-<tr><td>G1 Positive controls</td><td>Realistic controls Measured on the archive</td><td><span class="tbd">Milton → Duke Energy Florida grid demand: published Measured (single-event test + regional contrast + BigQuery forecast agree)</span></td></tr>
-<tr><td>G2–G4 Decoys, negatives, null</td><td>As in §13</td><td><span class="tbd">pass (decoys 0.37% Likely+, 0 Measured; null p-values uniform, KS p 0.34)</span></td></tr>
+<tr><td>G1 Positive controls</td><td>Realistic controls Measured on the archive</td><td>Milton → Duke Energy Florida grid demand: published Measured (single-event test + regional contrast + BigQuery forecast agree)</td></tr>
+<tr><td>G2–G4 Decoys, negatives, null</td><td>As in §13</td><td>pass (decoys 0.37% Likely+, 0 Measured; null p-values uniform, KS p 0.34)</td></tr>
 <tr><td>G5 Forecast gate calibrated</td><td>Decoy flag rate published; Measured requires agreement</td><td><span class="ok">Pass</span> · 0 of 13 decoys</td></tr>
 <tr><td>G6 Freeze integrity</td><td>Ledger verifies; no test without a frozen candidate</td><td><span class="ok">Pass</span> · 03:30 UTC</td></tr>
-<tr><td>G7 Pattern calibration</td><td>6.2 fluke rates published per strength word</td><td><span class="tbd">yes: fluke line derived from calibration (≤ 7.4%)</span></td></tr>
-<tr><td>G8 Copy audit</td><td>No chain probability, ticker, dollar figure or causal verb anywhere</td><td><span class="tbd">pass: automated trust-gradient guard on every page and share object, 0 violations</span></td></tr>
-<tr><td>G9 Budgets</td><td>DB under 400 MB; daily run done by 08:18</td><td><span class="tbd">≈ 432 MB of 500 MB on Sep 26</span></td></tr>
-<tr><td>G10 Three live days</td><td>End to end, collect → publish → share cards</td><td><span class="tbd">pending (starts after merge)</span></td></tr>
-<tr><td>G11 Frontend</td><td>Chosen direction built; shell ≤ 120 KB; fast on a 360 px phone</td><td><span class="tbd">pond v1 built; all pages within 150 KB JS+CSS; CLS 0</span></td></tr>
-<tr><td>G12 Decommission</td><td>v5 game RPCs revoked; no points, streaks or crowd stats anywhere</td><td><span class="tbd">old v6 entry kept at /ripples/legacy/; /ripples/ opens the pond site</span></td></tr>
+<tr><td>G7 Pattern calibration</td><td>6.2 fluke rates published per strength word</td><td>yes: fluke line derived from calibration (≤ 7.4%)</td></tr>
+<tr><td>G8 Copy audit</td><td>No chain probability, ticker, dollar figure or causal verb anywhere</td><td>pass: automated trust-gradient guard on every page and share object, 0 violations</td></tr>
+<tr><td>G9 Budgets</td><td>DB under 400 MB; daily run done by 08:18</td><td>≈ 432 MB of 500 MB on Sep 26</td></tr>
+<tr><td>G10 Three live days</td><td>End to end, collect → publish → share cards</td><td>Not run; the engine was parked first</td></tr>
+<tr><td>G11 Frontend</td><td>Chosen direction built; shell ≤ 120 KB; fast on a 360 px phone</td><td>pond v1 built; all pages within 150 KB JS+CSS; CLS 0</td></tr>
+<tr><td>G12 Decommission</td><td>v5 game RPCs revoked; no points, streaks or crowd stats anywhere</td><td>old v6 entry kept at /ripples/legacy/; /ripples/ opens the pond site</td></tr>
 </tbody>
 </table>
 
-<h2>18 · Roadmap</h2>
+<h2>18 · Roadmap at the time</h2>
 <table>
 <thead><tr><th style="width:24%">When</th><th>What</th></tr></thead>
 <tbody>
 <tr><td>Before launch</td><td>6.1 acceptance, 6.2 results, design pick and rebuild, integration, playtests, final review</td></tr>
-<tr><td>Launch <span class="tbd">on the owner's merge of the branch (target week of Oct 5, 2026)</span></td><td>Ripple Map with the reconstructed archive and pattern cards as the day-one hero; owner posts by hand for 14 days</td></tr>
+<tr><td>Launch (planned for the week of Oct 5, 2026)</td><td>Ripple Map with the reconstructed archive and pattern cards as the day-one hero; I'd post by hand for 14 days</td></tr>
 <tr><td>Days 28–90 of collection</td><td>Warm-up sources (news, TV, Bluesky, charts, YouTube, Kalshi) become eligible to count</td></tr>
 <tr><td>After launch</td><td>Growth-series baselines; link-family redefinition; anchoring the ledger head outside the database; clickstream and Trends when available</td></tr>
 <tr><td>Before any paid tier</td><td>Move YELLOW non-commercial sources off paid surfaces; legal review</td></tr>
@@ -501,29 +491,8 @@ figcaption{font-size:7.8pt;color:var(--ink-2);border-top:1px solid var(--hair);p
 <tr><td class="tier">p<sub>space</sub>, p<sub>pre</sub></td><td>6.2 in-space placebo rank of a regional contrast; pre-trend check (flat if ≥ 0.10)</td></tr>
 </tbody>
 </table>
-<h3>B · Sources for this document</h3>
-<p class="wide small">STATUS (Sep 26, 03:15 UTC), OWNER_DECISIONS D-1 to D-13, ENGINE_SPEC (6.0), ENGINE_AUDIT, ENGINE_FIXES (6.1), ENGINE_62 (design; results pending), EXPERIENCE_SPEC (visual design superseded), ATTENTION_STACK, DEMARCATION, attention COMPLIANCE (incl. YouTube), BigQuery eligibility and publish-gate SQL, WIKI_HIST, and live database reads at 03:30 UTC (size, series count, ledger verification, forecast-gate calibration view, recompute state).</p>
-<h3>C · Open numbers</h3>
-<ol class="reg" id="tbd-register"></ol>
+<h3>B · Sources for this record</h3>
+<p class="wide small">The project's status notes and decision log, the engine specs for 6.0 to 6.3 and the 6.0 audit, the attention-source and compliance records (including YouTube), the BigQuery eligibility and publish-gate SQL, and live database reads at 03:30 UTC on Sep 26 (size, series count, ledger verification, forecast-gate calibration, recompute state).</p>
 
-<script>
-(function(){
-  var out = document.getElementById('tbd-register'), seen = {}, sec = 'Header';
-  var walker = document.createTreeWalker(document.body, NodeFilter.SHOW_ELEMENT);
-  while (walker.nextNode()) {
-    var el = walker.currentNode;
-    if (el.tagName === 'H2' && !el.classList.contains('part')) sec = '§' + el.textContent.split('·')[0].trim();
-    if (el.classList && el.classList.contains('tbd')) {
-      var t = el.textContent.replace(/^\{\{TBD:\s*/,'').replace(/\}\}$/,'').trim();
-      var key = sec + '|' + t;
-      if (seen[key]) continue; seen[key] = 1;
-      var li = document.createElement('li');
-      var b = document.createElement('span'); b.className = 'tag'; b.textContent = sec + '  ';
-      li.appendChild(b); li.appendChild(document.createTextNode(t)); out.appendChild(li);
-    }
-  }
-  if (!out.children.length) { var li = document.createElement('li'); li.textContent = 'None remaining.'; out.appendChild(li); }
-})();
-</script>
 </body>
 </html>
