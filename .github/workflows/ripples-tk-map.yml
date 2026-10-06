@@ -4,7 +4,7 @@ name: Ripples Tiger King map
 
 on:
   push:
-    branches: ["claude/**"]
+    branches: ["work/**"]
     paths: ["ripples/lab/tk_map.py", ".github/workflows/ripples-tk-map.yml"]
   workflow_dispatch:
 

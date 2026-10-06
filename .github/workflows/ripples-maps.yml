@@ -5,7 +5,7 @@ name: Ripples maps
 
 on:
   push:
-    branches: ["claude/**"]
+    branches: ["work/**"]
     paths: ["ripples/maps/**", "ripples/lab/map_builder.py", ".github/workflows/ripples-maps.yml"]
   workflow_dispatch:
 

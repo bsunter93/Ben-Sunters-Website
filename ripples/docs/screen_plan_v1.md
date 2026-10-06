@@ -10,7 +10,7 @@ pushed before any label exists; deviations will be disclosed in `docs/screen_v1.
   `is_mark`, `link_label` (reason / context / aside), `date_ok`, `disputed`, a one-line justification, a `gate`
   (pass / fail), a `decision` (accepted / rejected) with one `reason_code` from the owner's fixed list, `flags`, and four
   scores from 0 to 100 (interest, surprise, evidence, novelty).
-- **The labeler:** a language model in this session, applying the rubric to each candidate from its text fields alone.
+- **The labeler:** a language model, run by hand, applying the rubric to each candidate from its text fields alone.
 - **The comparison:** the gate against the person's decisions in the same runs.
 
 ## The evaluation sets (frozen in `docs/results/screen_candidates_v1.json`, built by `lab/discovery/screen_sets.py`)

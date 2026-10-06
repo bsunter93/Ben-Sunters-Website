@@ -16,7 +16,7 @@ miss 44% of the marks the person kept.
 |---|---|---|
 | Rubric v1 | is_mark, link_label, date_ok, disputed, a gate, one reason code from the owner's list, flags, four scores | `lab/discovery/screen_rubric.md` |
 | Frozen sets | 583 candidates, candidate fields only | `docs/results/screen_candidates_v1.json` (`lab/discovery/screen_sets.py`) |
-| Blind labels | one pass, one labeler (a language model in a working session, no API) | `docs/results/screen_labels_v1.json` |
+| Blind labels | one pass, one labeler (a language model run by hand, no API) | `docs/results/screen_labels_v1.json` |
 | Comparison | hand decisions matched, metrics, confusion lists | `docs/results/screen_compare_v1.json` (`lab/discovery/screen_compare.py`) |
 | Labeled corpus | every candidate: decision, reason code, flags, scores, and the person's decision | `docs/results/screen_corpus_v1.json` |
 | Automation | the same rubric through an API, **not run** | `lab/discovery/screen.py` |

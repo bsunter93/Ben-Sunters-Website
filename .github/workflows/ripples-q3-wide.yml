@@ -7,7 +7,7 @@ name: Ripples Q3 wide lens
 
 on:
   push:
-    branches: ["claude/**"]
+    branches: ["work/**"]
     paths: ["ripples/lab/l4_panel.py", "ripples/docs/q3_protocol_wide.md", ".github/workflows/ripples-q3-wide.yml"]
   schedule:
     - cron: "41 7 * * *"

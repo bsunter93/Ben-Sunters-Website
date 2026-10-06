@@ -1,10 +1,10 @@
 # Ripple Map: GDELT news-attention timelines for the cultural catalog (ripples/tools/gov/gdelt_timelines.py).
-# Runs on changes to the script on claude/ branches, weekly, or manually; resumable, so each run continues the catalog.
+# Runs on changes to the script on work/ branches, weekly, or manually; resumable, so each run continues the catalog.
 name: Ripples GDELT timelines
 
 on:
   push:
-    branches: ["claude/**"]
+    branches: ["work/**"]
     paths: ["ripples/tools/gov/gdelt_timelines.py", ".github/workflows/ripples-gdelt.yml"]
   schedule:
     - cron: "41 4 * * 2"

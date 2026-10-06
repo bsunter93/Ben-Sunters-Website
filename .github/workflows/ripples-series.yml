@@ -4,7 +4,7 @@ name: Ripples series and dose-response
 
 on:
   push:
-    branches: ["claude/**"]
+    branches: ["work/**"]
     paths: ["ripples/lab/series_fetch.py", ".github/workflows/ripples-series.yml"]
   workflow_dispatch:
 

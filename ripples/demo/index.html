@@ -217,6 +217,9 @@ input[type=range]{flex:1;accent-color:var(--marigold);min-width:0}
 .card.hasline{border-left:4px solid var(--chip)}
 .card .shr{font-size:.78rem;color:var(--paper-ink-3);text-decoration:none;border-bottom:1px dotted currentColor;margin-left:auto;align-self:center}.card .shr:hover{color:var(--paper-ink)}
 .caption .shrcap{color:var(--ink-3);font-size:.82rem;display:block;text-align:center;margin-top:6px}
+.guess{display:inline-flex;flex-wrap:wrap;gap:6px;vertical-align:middle;margin-left:6px}.guess button{font:500 .8rem/1 var(--sans);color:var(--ink);background:rgba(214,232,246,.06);border:1px solid rgba(214,232,246,.28);border-radius:999px;padding:6px 11px;cursor:pointer}.guess button:hover,.guess button:focus-visible{border-color:var(--marigold);color:var(--paper)}
+.guess .gs{display:none}.sub.held{display:block;overflow:visible}.sub .gv{font-style:normal;color:var(--ink)}.sub .gv b,.beatline .gv b{color:var(--marigold);font-weight:600}.beatline .gv{display:block;margin-top:4px;color:var(--ink)}
+@media (max-width:560px){.guess{margin:5px 0 0;display:flex;flex-wrap:nowrap;gap:6px}.guess button{font-size:.78rem;padding:7px 10px;white-space:nowrap}.guess .gl{display:none}.guess .gs{display:inline}}
 .qmark{color:var(--ink-3)}.arw.l-q{color:var(--ink-3)}.arw.l-q line{stroke-dasharray:none;stroke-width:1.6}.sub .q{color:var(--ink-2);font-style:italic}.sub.held .also{display:none}
 @keyframes revealin{from{opacity:0;transform:translateX(-10px)}to{opacity:1;transform:none}}#h1.resolve .tail,#h1.resolve .arw{display:inline-block;animation:revealin 1.1s ease-out both}#h1.resolve .arw{animation-duration:.7s}#h1.resolve .tail{animation-delay:.45s}
 .arw{display:inline-block;vertical-align:baseline}.arw svg{width:1.15em;height:.42em;overflow:visible}.arw line,.arw path{fill:none;stroke:currentColor;stroke-width:2.4;stroke-linecap:round;stroke-linejoin:round}
@@ -496,7 +499,7 @@ body.card .beatline{display:none}
 
 <div class="wrap">
   <section class="pondbox" aria-label="Ripple pond">
-    <div class="clock"><div class="d" id="date">—</div><div class="n" id="since">—</div></div>
+    <div class="clock"><div class="d" id="date">&nbsp;</div><div class="n" id="since">&nbsp;</div></div>
     <svg id="pond" viewBox="-70 96 840 466" role="img" aria-label="Ripples spreading out from the event over time"></svg>
     <div class="hint" id="hint" hidden>Click a ripple to follow it · drag the slider to move in time</div>
     <div class="tip" id="tip" role="tooltip"></div>
@@ -513,14 +516,14 @@ body.card .beatline{display:none}
       <button class="nextbtn" id="nextbtn">Next story →</button>
     </div>
     <div class="legend" aria-label="How sure we are of each link">
-      <span tabindex="0" role="note" data-tip="Rose beyond chance in a test against fake dates, and after the step before. Most are Wikipedia views: what people looked up, not what they did." aria-label="Measured: Rose beyond chance in a test against fake dates, and after the step before. Most are Wikipedia views: what people looked up, not what they did."><svg width="22" height="8"><line x1="1" y1="4" x2="21" y2="4" stroke="var(--good)" stroke-width="4"/></svg>Measured</span>
+      <span tabindex="0" role="note" data-tip="Rose beyond chance in a test against fake dates, and after the step before. Most are Wikipedia views. They show what people looked up." aria-label="Measured: Rose beyond chance in a test against fake dates, and after the step before. Most are Wikipedia views. They show what people looked up."><svg width="22" height="8"><line x1="1" y1="4" x2="21" y2="4" stroke="var(--good)" stroke-width="4"/></svg>Measured</span>
       <span tabindex="0" role="note" data-tip="Came after the step before, in its own data. The order is checked; nothing was tested against chance." aria-label="Timed: Came after the step before, in its own data. The order is checked; nothing was tested against chance."><svg width="22" height="8"><line x1="1" y1="4" x2="21" y2="4" stroke="var(--timed)" stroke-width="3"/></svg>Timed</span>
       <span tabindex="0" role="note" data-tip="A record or a source makes the link: a law, a citation, a news report. We did not measure it." aria-label="Reported: A record or a source makes the link: a law, a citation, a news report. We did not measure it."><svg width="22" height="8"><line x1="1" y1="4" x2="21" y2="4" stroke="var(--rec)" stroke-width="2"/></svg>Reported</span>
       <span tabindex="0" role="note" data-tip="It happened, after the step before. The link between them is unproven." aria-label="Plausible: It happened, after the step before. The link between them is unproven."><svg width="22" height="8"><line x1="1" y1="4" x2="21" y2="4" stroke="var(--plaus)" stroke-width="2" stroke-dasharray="5 6"/></svg>Plausible</span>
       <span tabindex="0" role="note" data-tip="The claimed link fails: the effect began before its supposed cause, or the test found nothing." aria-label="Busted: The claimed link fails: the effect began before its supposed cause, or the test found nothing."><svg width="22" height="8"><line x1="1" y1="4" x2="21" y2="4" stroke="var(--miss)" stroke-width="1.6" stroke-dasharray="2 5"/></svg>Busted</span>
       <span class="lgmark" tabindex="0" role="note" data-tip="Where a ripple ends: a law, an institution, or a lasting change in health, work or behavior." aria-label="Lasting mark: Where a ripple ends: a law, an institution, or a lasting change in health, work or behavior."><svg width="16" height="16" viewBox="-8 -8 16 16" aria-hidden="true"><path d="M0,-7 L6,-3.5 L6,3.5 L0,7 L-6,3.5 L-6,-3.5 Z" fill="#1a2540" stroke="var(--marigold)" stroke-width="1.3"/><circle r="2.1" fill="var(--marigold)"/></svg>Lasting mark</span>
       <button class="howbtn" id="howbtn" aria-expanded="false" aria-controls="how">How it works</button>
-      <span class="lgnote">Measured: beat a placebo test, after the step before. Most measured links are Wikipedia views: what people looked up, not what they did.</span>
+      <span class="lgnote">Measured: beat a placebo test, after the step before. Most measured links are Wikipedia views. They show what people looked up.</span>
     </div>
   </section>
   <section class="feed" id="feed" aria-live="polite"></section>
@@ -539,11 +542,11 @@ body.card .beatline{display:none}
 </div>
 <section class="how" id="how" hidden>
   <div><h3>One wave, outward</h3><p>The stone is the event. A single wavefront leaves it and moves outward as time passes; each thing that changed appears where the front was when it happened, and stays there. So the inner arcs are the earliest changes and the outer ones the latest, and no ripple ever passes another. Time is stretched near the stone: the first weeks take as much room as the later decades, which is why the slider's ticks are uneven. Each distinct ripple gets its own slice, labeled on the rim with the industry it reached. Press <b>Step</b> and the clock stops at each ripple with its card highlighted; play or the right arrow goes on to the next.</p></div>
-  <div><h3>Order, not a web</h3><p>Every step must begin after the step before it. A step that started first is busted, however related it looks.</p></div>
-  <div><h3>How sure</h3><p><b>Measured</b>: moved beyond normal in the data, after the step before, and beat the same test run at fake dates in the series' own past. Most measured links are daily Wikipedia views, which show attention, not behavior; a few are official series (FRED, US baby names). <b>Timed</b>: rose in the right order, not tested against chance. <b>Reported</b>: a credible source makes the link. <b>Plausible</b>: it happened; the link is unproven. <b>Busted</b>: wrong order, contradicted, or no evidence. Steps without an exact date sit at the middle of their likely range. <b>p</b> is the share of placebo windows in a page's own history that rose as much as the real one; small means the rise is rare for that page, not that the step caused what came next. Every dated step since 2015 also gets an <b>attention check</b>: did Wikipedia views of the thing it names rise at that date, tested against the page's own past? It rides along on the card; it does not change the step's rating.</p></div>
-  <div><h3>Found by the engine</h3><p>Ripple maps list things whose attention rose unusually after the event, found automatically among the Wikipedia articles that link to it. Attention is a lead, not a proven effect. The data: daily Wikipedia views, FRED and BLS series, Census retail sales, Zillow, Stack Overflow, US baby names and dated public records.</p></div>
+  <div><h3>Order first</h3><p>Every step must begin after the step before it. A step that started first is busted, however related it looks.</p></div>
+  <div><h3>How sure</h3><p><b>Measured</b>: moved beyond normal in the data, after the step before, and beat the same test run at fake dates in the series' own past. Most measured links are daily Wikipedia views, which measure attention. A few are official series (FRED, US baby names). <b>Timed</b>: rose in the right order. It wasn't tested against chance. <b>Reported</b>: a credible source makes the link. <b>Plausible</b>: it happened; the link is unproven. <b>Busted</b>: wrong order, contradicted, or no evidence. Steps without an exact date sit at the middle of their likely range. <b>p</b> is the share of placebo windows in a page's own history that rose as much as the real one; small means the rise is rare for that page. It doesn't mean the step caused what came next. Every dated step since 2015 also gets an <b>attention check</b>: did Wikipedia views of the thing it names rise at that date, tested against the page's own past? It rides along on the card; it does not change the step's rating.</p></div>
+  <div><h3>Found by the engine</h3><p>Ripple maps list things whose attention rose unusually after the event, found automatically among the Wikipedia articles that link to it. Attention is a lead. It isn't a proven effect. The data: daily Wikipedia views, FRED and BLS series, Census retail sales, Zillow, Stack Overflow, US baby names and dated public records.</p></div>
 </section>
-<p class="foot">Ripple v1, an early build. Timing shows order, not proof of cause. Every test and every miss: <a href="/ripples/discover/maps/">ripple maps</a> · <a href="/ripples/discover/">discoveries</a>. This page counts visits and plays anonymously with Google Analytics; no account, no ads.</p>
+<p class="foot">Ripple v1, an early build. Timing shows order. It doesn't prove cause. Every test and every miss: <a href="/ripples/discover/maps/">ripple maps</a> · <a href="/ripples/discover/">discoveries</a>. This page counts visits and plays anonymously with Google Analytics; no account, no ads.</p>
 
 <script>
 
@@ -567,7 +570,7 @@ const STONE_SVG = `<path d="M-13.5,-3.5 C-13,-11 -5.5,-15.5 2.5,-14.5 C9.5,-13.6
 // Hand-built maps (from ripples/maps/out): which steps to show, short labels, parents, and the main slice's industry.
 const MAPS = {
   "tiger-king": {h1:"Tiger King → a federal law, 1,005 days later", stone:"Tiger King", main:"Wildlife law",
-    sub:"Netflix's lockdown hit sent millions to read about big cats. In 2022 a member of Congress cited the show in the debate on the bill that became law. The bill predates the show, so this shows order and a citation, not proof of cause.",
+    sub:"Netflix's lockdown hit sent millions to read about big cats. In 2022 a member of Congress cited the show in the debate on the bill that became law. The bill predates the show, so this shows order and a citation. It doesn't prove cause.",
     nodes:{1:{l:"Exotic pets"}, 2:{l:"Wildlife trade", p:1}, 4:{l:"House passes Big Cat Act", p:2, lv:"plausible", aside:true}, 5:{l:"Congress cites Tiger King", lv:"reported"}, 6:{l:"Big Cat Act becomes law", p:5, lv:"reported", mark:"Law"}}},  // 4 is the 2020 bill that died in the Senate: shown, not on the way to the 2022 law; 5 is the floor citation (Congressional Record, Jul 28, 2022), graded reported as the fact-check chain grades the Act
   "queens-gambit": {h1:"The Queen's Gambit → chess sets sold out", stone:"The Queen's Gambit", main:"Retail: chess sets",
     sub:"A drama about a fictional prodigy sent people to the game, then to the gear, then to the stores.",
@@ -625,7 +628,7 @@ if (W2) document.documentElement.classList.add("w2");
 const REEL_Q = params.has("reel"), CARD_Q = params.has("card");  // reels and share cards keep the SVG water: their frames are recorded headless
 // Engagement instruments (Oct 5; docs/engagement_protocol_v1.md). Aggregate events to the site's own GA4 property, no
 // personal data, no event from a local file, a share-card render, a reel recording or a QA run (`&nointro=1` is the tests' flag).
-const TRACK_ON = location.protocol !== "file:" && !new URLSearchParams(location.search).has("reel") && !new URLSearchParams(location.search).has("card") && !new URLSearchParams(location.search).has("nointro") && !/bot|headless/i.test(navigator.userAgent);
+const TRACK_ON = location.protocol !== "file:" && !new URLSearchParams(location.search).has("reel") && !new URLSearchParams(location.search).has("card") && !new URLSearchParams(location.search).has("nointro") && !/bot|headless/i.test(navigator.userAgent) && !/^(localhost|127\.|\[::1\])/.test(location.hostname);  // a local copy never counts as a visitor
 const T0 = performance.now(); const sess = {stories:0, taps:0, reveal:false, storyT0:T0, scrubbed:false};
 function track(name, p = {}) { try { if (!TRACK_ON) return; window.dataLayer = window.dataLayer || []; const gtag = window.gtag || function () { window.dataLayer.push(arguments); }; gtag("event", "ripple_" + name, {...p, seconds_on_page: Math.round((performance.now() - T0) / 1000), transport_type: "beacon"}); } catch {} }
 if (TRACK_ON) { const g = document.createElement("script"); g.async = true; g.src = "https://www.googletagmanager.com/gtag/js?id=G-5DBXQV4RT2"; document.head.appendChild(g); window.dataLayer = window.dataLayer || []; window.gtag = function () { window.dataLayer.push(arguments); }; gtag("js", new Date()); gtag("config", "G-5DBXQV4RT2", {anonymize_ip: true, send_page_view: true}); }
@@ -639,7 +642,7 @@ let cur = null, t = 0, playing = !matchMedia("(prefers-reduced-motion: reduce)")
 // The water look's surface: a height field under the SVG, lit by its own slope, so a wave reads as a wave and not as a
 // ring on a chart. It is drawn in the pond's own coordinates (the viewBox and the tilt), so the rings, labels and taps
 // on the SVG sit exactly over it. Built from scratch: a radial wave packet behind the front, the splash's packet, a faint
-// standing ring where each ripple passed, three slow wind waves, Fresnel reflection of a sky gradient and one sun glint.
+// standing arc where each ripple passed (about a third of the ring; a full ring that stays reads as an orbit), three slow wind waves, Fresnel reflection of a sky gradient and one sun glint.
 // No WebGL, or ?water=1: the SVG water stays as it was.
 const GLW = (() => {
   if (!W2 || REEL_Q || CARD_Q) return null;
@@ -672,7 +675,8 @@ float H(vec2 p){
   float r=length(p-uC),h=0.;
   float x=r-uFront.x; h+=uFront.y*exp(-pow((x+16.)/20.,2.))*cos(x*.42-uTime*1.7);
   if(uSplash.y>0.){float a=uSplash.x,rs=12.+150.*a,x2=r-rs; h+=1.9*exp(-1.3*a)*exp(-pow(x2/15.,2.))*cos(x2*.5);}
-  for(int i=0;i<24;i++){if(i>=uN)break;vec3 q=uRings[i];float x3=r-q.x;h+=q.y*exp(-x3*x3/28.)*(.75+.25*cos(uTime*1.1+q.x*.13));}
+  float ang=atan(p.y-uC.y,p.x-uC.x);
+  for(int i=0;i<24;i++){if(i>=uN)break;vec3 q=uRings[i];float x3=r-q.x;h+=(q.y+.42*exp(3.2*(cos(ang-q.z)-1.)))*exp(-x3*x3/28.)*(.75+.25*cos(uTime*1.1+q.x*.13));}
   for(int j=0;j<4;j++){vec3 m=uMarks[j];vec2 dm=p-m.xy;EMB+=m.z*exp(-dot(dm,dm)/1800.);}
   h-=uSunk*1.5*exp(-r*r/90.);
   h+=.09*sin(dot(p,vec2(.081,.047))+uTime*.7)+.07*sin(dot(p,vec2(-.052,.113))-uTime*.9)+.05*sin(dot(p,vec2(.131,-.021))+uTime*1.3);
@@ -742,7 +746,7 @@ void main(){
     gl.uniform2f(U.uFront, cur.frR || 0, still ? 0 : (cur.frOn || 0));
     const age = cur.splashT ? (now - cur.splashT) / 1000 : 99; gl.uniform2f(U.uSplash, age, !still && age < 4 ? 1 : 0);
     let n = 0; for (const it of cur.items) { if (n >= 24) break; if (it.state !== "landed") continue; const b = it.landT ? (now - it.landT) / 1000 : 9;
-      rings[n * 3] = it.r; rings[n * 3 + 1] = 0.32 + (still ? 0 : 1.1 * Math.exp(-1.6 * b)); rings[n * 3 + 2] = 0; n++; }
+      rings[n * 3] = it.r; rings[n * 3 + 1] = still ? 0 : 1.1 * Math.exp(-1.6 * b); rings[n * 3 + 2] = Math.atan2(it.plane.y - C.y, it.plane.x - C.x); n++; }  // y: the wave passing as it lands, the whole ring, gone in two seconds; z: where the arc that stays is centered
     gl.uniform3fv(U.uRings, rings); gl.uniform1i(U.uN, n);
     marks.fill(0); let m = 0; for (const it of cur.items) { if (m >= 4) break; if (!it.mark || it.state !== "landed" || still) continue; const b = it.landT ? (now - it.landT) / 1000 : 9; if (b > 6) continue;
       marks[m * 3] = it.plane.x; marks[m * 3 + 1] = it.plane.y; marks[m * 3 + 2] = 1.3 * Math.exp(-0.6 * b) * Math.min(1, b * 4); m++; }  // a lasting mark lights a pool of water around itself in ember as it lands, then lets go
@@ -778,6 +782,13 @@ function sinceLabel(d) {
   return `+${(d / 365.25).toFixed(1)} years`;
 }
 const cap = s => s ? s[0].toUpperCase() + s.slice(1) : "";
+// One count of a story's ripples for every place that says it (the header at rest, the end line, the clip's end card):
+// ripples that happened and held; a busted claim and a claim about a day still to come are named apart (Oct 5 review:
+// Frozen said "2 ripples" above the pond and "4 ripples" under it)
+function rippleCount(items) {
+  const n = items.filter(x => x.lv !== "busted" && !x.future).length, busted = items.filter(x => x.lv === "busted" && !x.future).length, future = items.filter(x => x.future).length;  // a claim about a day still to come is "not yet", whatever its grade
+  return {n, busted, future, text:`${n} ripple${n === 1 ? "" : "s"}${busted ? ` · ${busted} busted` : ""}${future ? ` · ${future} not yet` : ""}`};
+}
 const shortLabel = s => { if (s.length <= 24) return s; const cut = s.slice(0, 23); return cut.slice(0, cut.lastIndexOf(" ") > 10 ? cut.lastIndexOf(" ") : 23).replace(/[,;:]$/, "") + "…"; };
 const fmtMonth = d => d.toLocaleDateString("en-US", {month:"short", year:"numeric", timeZone:"UTC"});
 const esc = s => String(s ?? "").replace(/[&<>"]/g, c => ({"&":"&amp;", "<":"&lt;", ">":"&gt;", '"':"&quot;"})[c]);
@@ -847,7 +858,7 @@ const GLYPH = {  // the grade as a mark, beside its word (Oct 5: visual indicato
 function card({when, badge, badgeCls, title, spark = "", facts = "", short = "", details = "", cls = "", mark = null, sure = "", foot = ""}) {
   const sureBox = sure ? `<details class="sure"><summary>How sure?</summary><p>${sure}</p></details>` : "";
   const more = facts || short || foot || sureBox || details;  // the face carries the date, the grade, the title and the spark; the rest waits behind Learn more
-  return {cls:cls + (mark ? " marked" : ""), html:`<div class="top"><div class="when">${when}</div><span class="b ${badgeCls}">${GLYPH[badgeCls] || ""}${badge}</span></div>${mark ? `<div class="markpill">${HEX}Lasting mark · ${esc(mark)}</div>` : ""}
+  return {cls:cls + (mark ? " marked" : ""), title, when, html:`<div class="top"><div class="when">${when}</div><span class="b ${badgeCls}">${GLYPH[badgeCls] || ""}${badge}</span></div>${mark ? `<div class="markpill">${HEX}Lasting mark · ${esc(mark)}</div>` : ""}
     <h2>${esc(title)}</h2>${spark}<div class="acts"></div>${more ? `<details class="more"><summary>Learn more</summary>${facts}${short ? `<p class="short">${short}</p>` : ""}${foot}<div class="row">${sureBox}${details ? `<details><summary>Details</summary>${details}</details>` : ""}</div></details>` : ""}`};
 }
 // Plain-language account of the evidence behind one link: what was measured, how it was compared, what it does not show.
@@ -857,16 +868,16 @@ function howSure(lv, o = {}) {
   if (lv === "measured") {
     if (o.kind === "dose") return `${esc(o.what)}. For each state that opened retail cannabis we took the change in the outcome from the last survey before to the second survey after, and subtracted the same change in states that never did. We then handed the same opening dates to 2,000 random sets of states: ${o.p <= 0.05 ? `only ${pct} of those produced a difference this large (p = ${o.p})` : `${pct} of those produced a difference at least this large (p = ${o.p}), so it is within what chance produces`}. A placebo on the two surveys before the opening checks whether the treated states were already drifting (pre-trend p = ${o.pre}). This is the first rung above timing: exposure that varies by place. It still cannot rule out something else that arrived in the same states at the same time.`;
     if (o.kind === "wiki") { const floor = o.p != null && (o.n ? o.p <= 1.05 / (o.n + 1) : o.p <= 0.0105);
-      return `We counted daily Wikipedia views of “${esc(o.what)}”. From ${o.when} they ran about ${o.ratio}× the page's normal (its median before). We then ran the same test at ${o.n ? `${o.n}` : "many"} placebo windows spaced through the page's own past: ${floor ? `none of them rose this much (p = ${o.p}, the smallest this test can report${o.n ? "" : " with the windows it had"})` : `a jump this big showed up at only ${pct} of them (p = ${o.p})`}.${after} This shows attention, not what people did next.${DATA.run ? ` Checked ${fmt(D(DATA.run))}${DATA.sha ? ` with checker ${DATA.sha}` : ""}; the placebo windows come from the page's history before the step, so a later run changes this only if the post-step window was still open.` : ""}`; }
+      return `We counted daily Wikipedia views of “${esc(o.what)}”. From ${o.when} they ran about ${o.ratio}× the page's normal (its median before). We then ran the same test at ${o.n ? `${o.n}` : "many"} placebo windows spaced through the page's own past: ${floor ? `none of them rose this much (p = ${o.p}, the smallest this test can report${o.n ? "" : " with the windows it had"})` : `a jump this big showed up at only ${pct} of them (p = ${o.p})`}.${after} This measures attention only.${DATA.run ? ` Checked ${fmt(D(DATA.run))}${DATA.sha ? ` with checker ${DATA.sha}` : ""}; the placebo windows come from the page's history before the step, so a later run changes this only if the post-step window was still open.` : ""}`; }
     if (o.kind === "ssa") return `We took the yearly count of US babies given this name and compared the change in ${o.when} with the change in every other year on record. Only ${pct} of years moved this much (p = ${o.p}).${after}`;
-    return `We took the official series (${esc(o.what)}) and compared its change after this date with its change after every other date in the series. Only ${pct} of those moved this much (p = ${o.p}).${after} A measured move, not proof that nothing else was going on.`;
+    return `We took the official series (${esc(o.what)}) and compared its change after this date with its change after every other date in the series. Only ${pct} of those moved this much (p = ${o.p}).${after} A measured move. Other things may have been going on too.`;
   }
   if (lv === "timed") {
     if (o.archive) return `The page was online by ${o.when}: that is its earliest capture in the Wayback Machine. It could have existed earlier, so this is an upper bound.${after} We have not tested it against chance.`;
-    if (o.newArticle) return `Its Wikipedia article was created on ${o.when}, after the step before: a sign it became notable then, not proof that the step before caused it.`;
+    if (o.newArticle) return `Its Wikipedia article was created on ${o.when}, after the step before: a sign it became notable then. It doesn't prove the step before caused it.`;
     return `The rise began on ${o.when}, after the step before, which is the order a cause needs. We have not tested it against chance, so it could still be a coincidence.`;
   }
-  if (lv === "reported") return `We did not measure this ourselves. The source named on the card records that it happened on this date${o.why ? ` and ties it to the step before: ${esc(String(o.why).replace(/\.\s*$/, ""))}` : ""}. Treat it as reliable reporting, not a measurement.`;
+  if (lv === "reported") return `We did not measure this ourselves. The source named on the card records that it happened on this date${o.why ? ` and ties it to the step before: ${esc(String(o.why).replace(/\.\s*$/, ""))}` : ""}. Treat it as reliable reporting. It isn't a measurement.`;
   if (lv === "plausible") return `It happened at about this date, but nothing we checked shows that the step before caused it${o.why ? ` (${esc(o.why)})` : ""}. It stays on the map because the chain claims it, rated honestly as unproven.`;
   if (lv === "busted" && o.notYet) return `${esc(o.why)} Nothing is wrong with the claim; it simply has not happened yet, so it cannot be rated. It stays on the map as a marker of what to watch.`;
   if (lv === "busted" && o.late) return `${esc(o.why)} The record puts this after the thing it is said to have caused, so it cannot be the origin; the details say what came first. As a later push it stays an open question.`;
@@ -999,8 +1010,8 @@ function fromWiki(slug) {
     items.push({id:m.id || `w${i}`, parent:null, slice:"main", d, label:m.label, sub:`${m.precision === "year" ? m.date : fmtMonth(D(md))} · ${sinceLabel(d)}`, mark:disputed ? null : m.kind, title:m.title, lv:G.lv, lvText:G.text, cite,
       short:disputed ? "A popular claim the record itself questions" : `Named as a consequence in ${where} on Wikipedia`, srcText:m.source_label,
       card:card({when:`${when}<span>${sinceLabel(d)}</span>`, badge:G.text, badgeCls:G.cls, title:m.title, mark:disputed ? null : m.kind, cls:G.card,
-        short:disputed ? `The engine found the claim in ${where}; the same record says its accuracy has been questioned, so it is shown as disputed, not as a mark.` : `The engine read ${where} for a sentence that names the stone and a lasting change with a causal word, dated the mark from the record, and kept it because it came after. ${w.screen === "read" ? "The sentence was read against its source before it was shown." : "A person confirmed the sentence states a consequence."}${m.precision === "day" ? "" : m.precision === "month" ? " Dated to the month." : " Dated to the year."}${m.note ? " " + esc(m.note) : ""}`,
-        sure:howSure(disputed ? "busted" : "reported", disputed ? {why:"the record that carries the claim also says its accuracy has been questioned"} : {what:`Wikipedia, ${m.source_label.replace(/^Wikipedia: /, "")}`, why:"a sentence in the article names the link with a causal word. A sentence shows the link is stated in a public record, not that the stone caused the mark"}),
+        short:disputed ? `The engine found the claim in ${where}; the same record says its accuracy has been questioned, so it is shown as disputed and doesn't count as a mark.` : `The engine read ${where} for a sentence that names the stone and a lasting change with a causal word, dated the mark from the record, and kept it because it came after. ${w.screen === "read" ? "The sentence was read against its source before it was shown." : "A person confirmed the sentence states a consequence."}${m.precision === "day" ? "" : m.precision === "month" ? " Dated to the month." : " Dated to the year."}${m.note ? " " + esc(m.note) : ""}`,
+        sure:howSure(disputed ? "busted" : "reported", disputed ? {why:"the record that carries the claim also says its accuracy has been questioned"} : {what:`Wikipedia, ${m.source_label.replace(/^Wikipedia: /, "")}`, why:"a sentence in the article names the link with a causal word. A sentence shows the link is stated in a public record. It doesn't show the stone caused the mark"}),
         details:`<p>“${esc(m.sentence)}”</p><p class="src"><a href="${esc(m.source_url)}" target="_blank" rel="noopener">${esc(m.source_label)}</a>${m.mark_url && m.mark_url.split("#")[0] !== m.source_url.split("#")[0] ? ` · <a href="${esc(m.mark_url)}" target="_blank" rel="noopener">Wikipedia: ${esc(m.mark_article || m.label)}</a>` : ""}</p>`})});
   });
   const n = items.length;
@@ -1019,13 +1030,13 @@ function fromActs(work) {
       short:`${cap(how)} in the ${p.bill.trim()} debate, ${fmt(D(p.debated))}`,
       card:card({when:`${fmt(D(p.royal_assent))}<span>${sinceLabel(d)}</span>`, badge:cited ? "Reported" : "Plausible", badgeCls:cited ? "l-reported" : "l-plausible", title:actName, mark:cited ? "Law" : null,
         short:`${cap(how)} in ${us ? "Congress" : "Parliament"} during the ${us ? "bill's" : "Bill's"} passage, ${fmt(D(p.debated))}.${esc(whyText(p.cite_why))}`,
-        sure:howSure(cited ? "reported" : "plausible", cited ? {what:`${us ? "the Congressional Record" : "Hansard"}, ${fmt(D(p.debated))}`, why:`a member cited the work as a reason in the debate on the ${us ? "bill" : "Bill"}. A citation shows the work was in the room, not that it caused the ${us ? "law" : "Act"}`} : {why:`the work was mentioned in the debate, but not as a reason for the ${us ? "bill" : "Bill"}`}),
+        sure:howSure(cited ? "reported" : "plausible", cited ? {what:`${us ? "the Congressional Record" : "Hansard"}, ${fmt(D(p.debated))}`, why:`a member cited the work as a reason in the debate on the ${us ? "bill" : "Bill"}. A citation shows the work was in the room. It doesn't show the work caused the ${us ? "law" : "Act"}`} : {why:`the work was mentioned in the debate, but not as a reason for the ${us ? "bill" : "Bill"}`}),
         details:`<p>“${esc((p.sentence || "").slice(0, 420))}…”</p><p class="src"><a href="${esc(p.debate_url || "#")}" target="_blank" rel="noopener">${us ? "Congressional Record" : "Hansard"}</a>${p.act_url ? ` · <a href="${esc(p.act_url)}" target="_blank" rel="noopener">${us ? "govinfo.gov" : "legislation.gov.uk"}</a>` : ""}</p>`})});
   });
   const name = plainWork(work);
   return {key:work, kind:"acts", title:work, stone:name, iso0, items, extra:[], names:{main:citedWhere(work)},
     h1:ps.length === 1 ? `${name} → ${plainWork(ps[0].act).replace(/ \d{4}$/, "")}` : `${name}: cited in the debates of ${ps.length} ${ps.every(p => p.country === "US") ? "laws" : "Acts"}`,
-    sub:`The engine read every ${ps.some(p => p.country === "US") ? (ps.every(p => p.country === "US") ? "Congressional Record item" : "Hansard contribution and Congressional Record item") : "Hansard contribution"} that names ${name} and resolved each bill under debate to the ${ps.every(p => p.country === "US") ? "law" : "Act"} it became. A citation shows the work was in the room when the law was made, not that it caused the law.`,
+    sub:`The engine read every ${ps.some(p => p.country === "US") ? (ps.every(p => p.country === "US") ? "Congressional Record item" : "Hansard contribution and Congressional Record item") : "Hansard contribution"} that names ${name} and resolved each bill under debate to the ${ps.every(p => p.country === "US") ? "law" : "Act"} it became. A citation shows the work was in the room when the law was made. It doesn't show the work caused the law.`,
     first:card({when:`${fmt(D(iso0))}<span>Day 0</span>`, badge:"The event", badgeCls:"event", title:`${name} is released`})};
 }
 
@@ -1164,8 +1175,10 @@ function draw(story) {
   for (const it of items) if (it.d > today) { it.d = max * 0.97; it.future = true; }  // only claims about days after today sit at the rim; past events keep their day
   SCALE = makeScale(items.map(x => x.d), max);
   const keys = [...new Set(items.map(x => x.slice))].sort((a, b) => (a === "main" ? -1 : b === "main" ? 1 : 0));
-  const n = keys.length, w = 360 / n;
-  const centre = k => n === 1 ? 0 : -180 + (keys.indexOf(k) + 0.5) * w;
+  const n = keys.length, sw = {}, sc0 = {};
+  { const wt = keys.map(k => Math.max(1.5, items.filter(x => x.slice === k).length)), sum = wt.reduce((a, b) => a + b, 0); let acc = -180;
+    keys.forEach((k, i) => { sw[k] = 360 * wt[i] / sum; sc0[k] = acc + sw[k] / 2; acc += sw[k]; }); }  // a sector's width follows its ripples (Oct 5 review: five of Tiger King's eight sat in one third of the pond, the far side empty)
+  const centre = k => n === 1 ? 0 : sc0[k];
 
   const defs = el("defs", {}, svg);
   defs.innerHTML = `
@@ -1216,7 +1229,7 @@ function draw(story) {
   el("circle", {class:"wake", cx:C.x, cy:C.y, r:40, fill:"none", style:`transform-origin:${C.x}px ${C.y}px`}, plane);  // a faint ring leaves the stone every few seconds
 
   const g0 = el("g", {}, plane), gt = el("g", {}, svg);  // g0: lines on the water; gt: upright text
-  if (n > 1) keys.forEach(k => { const a = centre(k) - w / 2, q = polar(48, a), p = polar(R + 8, a); el("line", {class:"slicebd", x1:q.x, y1:q.y, x2:p.x, y2:p.y}, g0); });
+  if (n > 1) keys.forEach(k => { const a = centre(k) - sw[k] / 2, q = polar(48, a), p = polar(R + 8, a); el("line", {class:"slicebd", x1:q.x, y1:q.y, x2:p.x, y2:p.y}, g0); });
   const rings = [[1,"1 day"],[7,"1 week"],[30,"1 month"],[91,"3 months"],[365,"1 year"],[1096,"3 years"],[3653,"10 years"],[7305,"20 years"]].filter(([d]) => d < max);
   const rg = el("g", {}, g0);
   const TA = 104, ta = polar(16, TA), tb = polar(R + 4, TA);  // the thread of time, along the right-hand axis where the tilt does not compress spacing
@@ -1229,7 +1242,7 @@ function draw(story) {
     const q0 = polar(r, TA - 1.6), q1 = polar(r, TA + 1.6); el("line", {class:"threadtick", x1:q0.x, y1:q0.y, x2:q1.x, y2:q1.y}, g0);
     if (lastRingX != null && Math.abs(p.x - lastRingX) < (dense ? 70 : 44) * K) continue;  // a short pond: labels would sit on each other
     lastRingX = p.x;
-    if (![1, 30, 365, 3653].includes(d)) continue;  // one ladder for every pond: a day, a month, a year, a decade
+    if (![1, 30, 365, 3653].includes(d) || (dense && d === 1)) continue;  // a phone's first ripples land on the one-day ring, and its label sat on them  // one ladder for every pond: a day, a month, a year, a decade
     const rl = el("text", {class:"ringlbl", x:p.x + 5, y:p.y - 3}, gt); rl.textContent = lbl; rl.style.fontSize = `${Math.round((dense ? 13 : 11) * K)}px`;
     try { const b = rl.getBBox(); ringBoxes.push({x:b.x - 3, y:b.y - 2, w:b.width + 6, h:b.height + 4, soft:true}); } catch {}
   }
@@ -1281,7 +1294,7 @@ function draw(story) {
   // final positions: spread across the slice, nearest first, alternating either side of its center line
   for (const k of keys) {
     const its = items.filter(x => x.slice === k).sort((a, b) => a.d - b.d), m = its.length;
-    const step = n === 1 ? Math.min(24, 110 / Math.max(1, m)) : Math.min(w * 0.72 / Math.max(1, m), 16);
+    const step = n === 1 ? Math.min(24, 110 / Math.max(1, m)) : Math.min(sw[k] * 0.72 / Math.max(1, m), 28);
     // a chain (each step follows the one before) runs down the slice's center line; independent ripples fan out
     const chained = its.filter(x => x.parent), loose = its.filter(x => !x.parent || !its.some(y => y.id === x.parent));
     const ml = loose.length;
@@ -1289,11 +1302,11 @@ function draw(story) {
     // a step that grows from another follows its parent's angle, so a lead and its outcome read as one ray
     chained.filter(x => !loose.includes(x)).sort((a, b) => a.d - b.d).forEach((it, j) => {
       const par = its.find(y => y.id === it.parent);
-      it.a = (par && par.a !== undefined ? par.a : centre(k)) + (j % 2 ? 5 : -5);
+      it.a = (par && par.a !== undefined ? par.a : centre(k)) + (j % 2 ? 9 : -9);
     });
     if (n === 1 && m > 1) its.forEach((it, j) => { it.a = -70 + j * 140 / (m - 1); });  // one ripple: a gentle spiral outward
     // a ripple is an arc of the ring, not the whole ring: a full circle reads as an orbit (owner, Oct 3)
-    const hw = Math.min(w / 2 - 3, 58);  // an arc never wider than about a third of the ring, however few slices there are
+    const hw = Math.min(sw[k] / 2 - 3, 58);  // an arc never wider than about a third of the ring, however few slices there are
     its.forEach(it => { it.r = radius(it.d); it.plane = polar(it.r, it.a); it.pos = PL(it.plane); it.span = n === 1 ? [it.a - 58, it.a + 58] : [centre(k) - hw, centre(k) + hw]; });
   }
   const placed = [{x:C.x - 70 * K, y:C.y - 20 * K, w:140 * K, h:70 * K}, ...rimBoxes, ...ringBoxes];  // the stone's name grows with K on a phone  // keep clear of the stone's label and the rim words
@@ -1387,7 +1400,7 @@ function draw(story) {
       const lx = it.pos.x + best[0] + (best[0] + bw / 2 < 0 ? bw : best[0] > 0 ? 0 : bw / 2), ly = it.pos.y + best[1] + (best[1] + bh / 2 < 0 ? bh : best[1] > 0 ? 0 : bh / 2);
       it.leader = el("line", {class:"leader", x1:it.pos.x, y1:it.pos.y, x2:lx, y2:ly}, labels);
     }
-    if (!free && !(it.mark && nMarks <= 3) && (it.lv !== "measured" || dense)) it.showLabel = false;  // a crowded pond keeps its labels for hover, focus, the caption and the card; a phone's small pond drops even a measured label that found no clear spot
+    it.noSpot = !free; if (!free && !(it.mark && nMarks <= 3) && (it.lv !== "measured" || dense)) it.showLabel = false;  // a crowded pond keeps its labels for hover, focus, the caption and the card; a phone's small pond drops even a measured label that found no clear spot
     if (!it.showLabel && it.leader) { it.leader.remove(); it.leader = null; }
     const bx = it.pos.x + best[0], by = it.pos.y + best[1];
     if (it.showLabel) placed.push({x:bx, y:by, w:bw, h:bh});  // hidden labels do not reserve space
@@ -1474,7 +1487,7 @@ function makeReelCut(story, beats) {
     tp = b.tS; dp = d;
   }
   const marks = story.items.filter(x => x.mark && !x.future);
-  const endBeat = {items:[], end:true, html:`<span class="bwhen">${esc(fmtMonth(D(story.iso0)))} → ${esc(fmtMonth(addDays(story.iso0, Math.max(...story.items.filter(x => !x.future).map(x => x.d)))))} · ${story.items.length} ripples</span><b>${marks.length ? `What followed and stayed: ${marks.slice(0, 3).map(x => esc(x.label)).join("; ")}${marks.length > 3 ? `; and ${marks.length - 3} more` : ""}` : "A big splash, no lasting mark yet"}</b>${story.also ? `<span class="bwhy"><span class="bmk">It wasn't the only reason:</span> ${esc(story.also)}</span>` : ""}<span class="bmore">bensunter.com/ripples · every link graded · order, not proof of cause</span>`};
+  const endBeat = {items:[], end:true, html:`<span class="bwhen">${esc(fmtMonth(D(story.iso0)))} → ${esc(fmtMonth(addDays(story.iso0, Math.max(...story.items.filter(x => !x.future).map(x => x.d)))))} · ${rippleCount(story.items).text}</span><b>${marks.length ? `What followed and stayed: ${marks.slice(0, 3).map(x => esc(x.label)).join("; ")}${marks.length > 3 ? `; and ${marks.length - 3} more` : ""}` : "A big splash, no lasting mark yet"}</b>${story.also ? `<span class="bwhy"><span class="bmk">It wasn't the only reason:</span> ${esc(story.also)}</span>` : ""}<span class="bmore">bensunter.com/ripples · every link graded · order doesn't prove cause</span>`};
   push(tp, 1, CUT.cut, null, "wide"); push(1, 1, CUT.end, endBeat, "wide");
   story.timeline = {segs, total:c, beats, reel:true, shots};
 }
@@ -1500,17 +1513,53 @@ function beatText(b) {
 // subtitle one line; the first mark's beat resolves the title (the arrow draws, the answer fades in, a chime if sound
 // is on), and a verification beat follows with the order check, the weakest link and "It wasn't the only reason".
 // Deep links, the rest state, a tap, a scrub and Step show everything; nothing is hidden from a reader who arrives at the answer.
+// The guess (owner, Oct 5: "it's watched, not played"): while the answer is withheld, one tap says what kind of thing the
+// viewer thinks changed; when the answer shows, the page says whether it was right. Four kinds cover every lasting mark;
+// "Nothing lasting" is right for a story that has none. One guess a story a visit; the running score is this browser's only.
+const GUESS = [["law", "A law or rule", "Law or rule"], ["built", "Something built", "Built"], ["life", "How people live", "Daily life"], ["none", "Nothing lasting", "Nothing"]];  // the third is a phone's: four fit one row
+const GUESS_SAY = {law:"a law or rule", built:"something built", life:"how people live", none:"nothing lasting"};
+const guessOf = k => /^(law|regulation|policy|legal|rule|ruling|treaty|standard)$/i.test(k || "") ? "law" : /^(behavior|name|public health|population)$/i.test(k || "") ? "life" : "built";
+let guessScore = {n:0, right:0}; try { guessScore = JSON.parse(localStorage.getItem("ripple-guess")) || guessScore; } catch {}
+const guessed = new Set();
+function guessLine() {
+  if (cur.guess) return `<span class="q">Your guess: ${GUESS_SAY[cur.guess]}. Follow the water.</span>`;
+  if (guessed.has(cur.key) || REEL) return `<span class="q">Something changed after this. Follow the water.</span>`;
+  return `<span class="q">What changed after this? Guess:</span><span class="guess" role="group" aria-label="Your guess">${GUESS.map(([k, l, sh]) => `<button type="button" data-g="${k}" aria-label="${l}"><span class="gl">${l}</span><span class="gs">${sh}</span></button>`).join("")}</span>`;
+}
+function pickGuess(k) {
+  if (!cur || !cur.mystery || cur.guess || !GUESS_SAY[k]) return;
+  cur.guess = k; guessed.add(cur.key); track("guess", {slug: cur.key, pick: k});
+  const sub = $("#sub"); sub.innerHTML = guessLine();
+}
+function guessVerdict() {  // scored once, when the answer first shows
+  if (!cur || !cur.guess) return null;
+  if (cur.verdict) return cur.verdict;
+  const marks = cur.items.filter(x => x.mark && !x.future).sort((a, b) => a.d - b.d), g = cur.guess;
+  const ans = marks.length ? (revealMark(cur) || marks[0]) : null;
+  const hit = g === "none" ? (marks.length ? null : true) : ans && guessOf(ans.mark) === g ? ans : marks.find(m => guessOf(m.mark) === g);  // the mark the title names, when the guess fits it
+  const right = !!hit;
+  guessScore.n++; if (right) guessScore.right++; try { localStorage.setItem("ripple-guess", JSON.stringify(guessScore)); } catch {}
+  track("guess_result", {slug: cur.key, pick: g, right: right ? 1 : 0});
+  const said = right ? "" : `You said ${GUESS_SAY[g]}. `;
+  const why = !marks.length ? "No lasting mark yet." : right ? `${cap(GUESS_SAY[g])}: ${esc(hit.label)}.` : `It was ${GUESS_SAY[guessOf(ans.mark)]}: ${esc(ans.label)}.`;
+  const so = guessScore.n > 1 ? ` ${guessScore.right} of ${guessScore.n} right so far.` : "";
+  cur.verdict = {right, html:`<b>${right ? "Right." : "Not this time."}</b> ${said}${why}${so}`};
+  return cur.verdict;
+}
 function setMystery(on, part) {
   if (!cur || !cur.h1Mystery) return;
   const h1 = $("#h1"), sub = $("#sub"), tally = $("#tally");
-  if (on) { h1.classList.remove("resolve"); h1.innerHTML = cur.h1Mystery; tally.innerHTML = cur.tallyMystery; sub.innerHTML = cur.subMystery; sub.classList.add("held"); cur.mystery = true; return; }
-  if (!part || part === "title") { if (cur.mystery && h1.innerHTML !== cur.h1Full) { h1.innerHTML = cur.h1Full; h1.classList.add("resolve"); } tally.innerHTML = cur.tallyFull; }
+  if (on) { h1.classList.remove("resolve"); h1.innerHTML = cur.h1Mystery; tally.innerHTML = cur.tallyMystery; sub.innerHTML = guessLine(); sub.classList.add("held"); cur.mystery = true; return; }
+  if (!part || part === "title") { if (cur.mystery && h1.innerHTML !== cur.h1Full) { h1.innerHTML = cur.h1Full; h1.classList.add("resolve"); } tally.innerHTML = cur.tallyFull;
+    if (part === "title" && cur.mystery) { const v = guessVerdict(); if (v) sub.innerHTML = `<span class="q gv">${v.html}</span>`; } }  // the answer and the verdict land together
+  if (!part && cur.mystery) guessVerdict();
   if (!part || part === "sub") { sub.innerHTML = cur.subFull; sub.classList.remove("held"); cur.mystery = false; }
 }
 function verifyText(b) {
   const m = b.mark, stone = cur.stone || cur.title, weak = cur.weak || "plausible";
   const order = `${esc(stone)} came first, ${esc(fmt(D(cur.iso0)))}; ${esc(m.label)} ${sinceLabel(m.d).replace("+", "")} later.`;
-  return `<span class="bwhen">Checked</span><b>${order}</b><i class="bhow l-${weak}">weakest link ${esc(LVL[weak].toLowerCase())}</i><span class="bwhy">${weak === "measured" ? "Every link passed its test." : weak === "timed" ? "Every link is in order." : weak === "reported" ? "A source makes each link." : "One link is unproven."} Order, not proof of cause.</span>`;  // the "it wasn't the only reason" line lives in the subtitle, whole; a hero beat does not end in an ellipsis
+  const v = cur.verdict;
+  return `${v ? `<span class="gv">${v.html}</span>` : ""}<span class="bwhen">Checked</span><b>${order}</b><i class="bhow l-${weak}">weakest link ${esc(LVL[weak].toLowerCase())}</i><span class="bwhy">${weak === "measured" ? "Every link passed its test." : weak === "timed" ? "Every link is in order." : weak === "reported" ? "A source makes each link." : "One link is unproven."} Order doesn't prove cause.</span>`;  // the "it wasn't the only reason" line lives in the subtitle, whole; a hero beat does not end in an ellipsis
 }
 function spotlight(b) {  // the beat's ripples bloom lit, with their path back to the stone, and the line under the pond says what happened
   if (b.verify) { cur.beatOn = b; const bl = $("#beatline"); bl.innerHTML = verifyText(b); placeBeatline(); bl.classList.remove("off"); setMystery(false, "sub"); track("verify", {slug: cur.key}); return; }  // the verification beat keeps the mark lit and answers "is it real?"
@@ -1521,7 +1570,7 @@ function spotlight(b) {  // the beat's ripples bloom lit, with their path back t
   for (const it of b.items) {
     wake(it); lit.add(it);
     for (let p = it; p && p.parent; ) { p = cur.items.find(x => x.id === p.parent); if (p) lit.add(p); }
-    if (it.state === "landed") { it.lab.classList.add("on"); if (it.leader) it.leader.classList.add("on"); }
+    if (it.state === "landed" && !(cur.dense && it.noSpot && !it.showLabel)) { it.lab.classList.add("on"); if (it.leader) it.leader.classList.add("on"); }  // a phone label with no clear spot stays down on its beat: the line under the pond names it (Oct 5: it sat on the stone's name)
     it.lab.classList.add("beat"); if (it.cardEl) it.cardEl.classList.add("now");
   }
   lit.forEach(x => [x.g, x.path, x.lab, x.band, x.ring, x.crest].forEach(e => e && e.classList.add("lit")));
@@ -1667,7 +1716,7 @@ function fitPond() {  // the water look on a wide screen: the pond takes what th
 function buildFeed(story) {
   const f = $("#feed"); f.textContent = "";
   let pulse = pulseHTML(story);
-  if (!pulse && story.kind === "chain") pulse = `<div class="pulse none"><div class="ptitle">No attention series for this story <span>Daily Wikipedia views begin in July 2015; the steps here are older or were checked against records, not attention.</span></div></div>`;
+  if (!pulse && story.kind === "chain") pulse = `<div class="pulse none"><div class="ptitle">No attention series for this story <span>Daily Wikipedia views begin in July 2015; the steps here are older or were checked against records.</span></div></div>`;
   if (pulse && (window.innerWidth <= 560 || (W2 && window.innerWidth > 860)) && !/pulse none/.test(pulse)) pulse = `<details class="pulsefold"><summary>The spikes, aligned: the chart</summary>${pulse}</details>`;  // a phone folds the chart; its labels are too small at 375 px to be worth the screen
   story.plines = [];
   if (pulse) { const pv = document.createElement("div"); pv.innerHTML = pulse; const el0 = pv.firstElementChild; f.appendChild(el0);
@@ -1835,16 +1884,20 @@ function valueAt(series, iso0, d) {
 function render(now = performance.now()) {
   if (!cur) return;
   const d = daysAt(t), {items, iso0} = cur;
-  const shown = items.filter(x => x.state !== "hidden" && x.lv !== "busted").length;
+  const shown = items.filter(x => x.state !== "hidden" && x.lv !== "busted" && !x.future).length;
   $("#feed").classList.toggle("empty", !W2 && t < PRE && !items.some(x => x.state !== "hidden"));
   if (!playing && !scrubbing && t >= 1) {  // at rest: the story's span, not today's date
     const lastD = Math.max(...items.filter(x => !x.future).map(x => x.d));
     $("#date").textContent = `${fmtMonth(D(iso0))} → ${fmtMonth(addDays(iso0, lastD))}`;
-    $("#since").innerHTML = `${shown} ripple${shown === 1 ? "" : "s"}<small>over ${sinceLabel(lastD).replace("+", "")}</small>`;
+    const rc = rippleCount(items); $("#since").innerHTML = `${rc.n} ripple${rc.n === 1 ? "" : "s"}<small>over ${sinceLabel(lastD).replace("+", "")}</small>`;
   } else {
     $("#date").textContent = fmt(addDays(iso0, Math.floor(d)));
-    $("#since").innerHTML = `${sinceLabel(d)}<small>${shown} ripple${shown === 1 ? "" : "s"}</small>`;
+    $("#since").innerHTML = `${sinceLabel(Math.floor(d))}<small>${shown} ripple${shown === 1 ? "" : "s"}</small>`;  // the same whole day the date shows: the clue line counts from the step's day, and a rounded clock ran one ahead of it (Oct 5 review: "+9 months" over "+8 months")
   }
+  if (!REEL && !CARD) { const svg = $("#pond"), phone = window.innerWidth <= 560;  // Oct 5 review: on a phone the first ripples filled 100 px of an empty pond
+    const b0 = cur.timeline && cur.timeline.beats && cur.timeline.beats[0], t1 = b0 ? b0.tS : PRE + 0.05, u = Math.max(0, Math.min(1, (t - PRE * 0.5) / Math.max(0.001, t1 - PRE * 0.5)));
+    const z = phone ? 1 + 0.45 * (1 - u * u * (3 - 2 * u)) : 1, w = 840 / z, h = 466 / z, vb = `${(350 - w / 2).toFixed(1)} ${(329 - h / 2).toFixed(1)} ${w.toFixed(1)} ${h.toFixed(1)}`;
+    if (svg.getAttribute("viewBox") !== vb) svg.setAttribute("viewBox", vb); }  // a phone starts close on the splash and is back to the whole pond by the time the first ripple lands, so no label is ever cut
   $("#scrub").value = Math.round(t * 1000);
   if (W2) $("#pond").classList.toggle("sunk", t >= PRE + 0.004);
   if (GLW) GLW.poke();
@@ -1964,9 +2017,13 @@ function tick(now) {
   if (!resting) tickWaves(now);
   requestAnimationFrame(tick);
 }
+function openLine() {  // from the first frame the lower third says what the stone is (Oct 5 review: the first seconds were a dark, empty pond)
+  const bl = $("#beatline"), f = cur && cur.first; if (!bl || REEL || !f || !f.title) return;
+  bl.innerHTML = `<span class="bwhen">${(f.when || "").replace(/<span>[\s\S]*$/, "")} · the stone</span><b>${esc(f.title)}</b>`; placeBeatline(); bl.classList.remove("off");
+}
 function setPlaying(p) {
   playing = p; $("#pond").classList.toggle("playing", !!p); $("#feed").classList.toggle("playing", !!p); if (cur && !p) cur.goal = null;
-  if (cur && p && cur.timeline) { unspot(); cur.clock = clockAtT(t); if (t <= PRE + 1e-6 && !stepMode) setMystery(true); else setMystery(false); }  // play from the start is an investigation; a resumed play shows everything
+  if (cur && p && cur.timeline) { unspot(); cur.clock = clockAtT(t); if (t <= PRE + 1e-6 && !stepMode) { setMystery(true); openLine(); } else setMystery(false); }  // play from the start is an investigation; a resumed play shows everything
   if (cur && !p) setMystery(false);  // a pause, a stop, a scrub or a deep link shows everything
   if (cur && !p && t >= 1) { track("complete", {slug: cur.key, seconds_in_story: Math.round((performance.now() - sess.storyT0) / 1000)}); cur.items.forEach(wake); setMystery(false); if (!REEL) { unspot(); showEndBeat(); } }  // a reel keeps its end card up; ordinary play ends on what stayed and the next stone  // at rest every step speaks and the pond is level
   if (cur && !p && cur.sCore) render();  // one last frame: the rest label, the woken labels  // a pause or a scrub drops the step goal; play picks the next from where the clock is
@@ -2085,13 +2142,13 @@ function show(kind, slug, autoplay = true) {
   story.weak = weak;
   const titleText = named && named[2] ? named[2] : story.h1;
   $("#h1").innerHTML = esc(titleText).replace(/\s*→\s*/, ` <span class="arw l-${weak}" title="The weakest link on the way to the mark is ${LVL[weak].toLowerCase()}"><svg viewBox="0 0 44 16" aria-hidden="true"><line x1="2" y1="8" x2="32" y2="8"/><path d="M28 2l9 6-9 6"/></svg></span> `);
-  const markLine = marks.length ? `What followed and stayed: ${marks.slice(0, 3).map(x => `${x.label} (${x.mark.toLowerCase()})`).join("; ")}${marks.length > 3 ? `; and ${marks.length - 3} more` : ""}. The arrow is drawn from the weakest link on the way there: ${story.weak === "measured" ? "solid, every link measured" : story.weak === "timed" ? "solid, the links timed" : story.weak === "reported" ? "dashed, a source makes a link" : "dotted, a link is unproven"}. Order, not proof of cause.`
-    : "A big splash, no lasting mark yet: what changed so far is attention and money, not a law, an institution, jobs or health.";
+  const markLine = marks.length ? `The arrow is drawn from the weakest link on the way to the lasting mark: ${story.weak === "measured" ? "solid, every link measured" : story.weak === "timed" ? "solid, the links timed" : story.weak === "reported" ? "dashed, a source makes a link" : "dotted, a link is unproven"}. Order doesn't prove cause.`
+    : "A big splash, no lasting mark yet: what changed so far is attention and money.";
   { const h1 = $("#h1"), arw = h1.querySelector(".arw"); if (arw) { const tail = document.createElement("span"); tail.className = "tail"; while (arw.nextSibling) tail.appendChild(arw.nextSibling); h1.appendChild(tail); } story.h1Full = h1.innerHTML;
     const q = h1.cloneNode(true), qa = q.querySelector(".arw"), qt = q.querySelector(".tail"); if (qa) { qa.className = "arw l-q"; qa.removeAttribute("title"); } if (qt) qt.innerHTML = '<span class="qmark">?</span>'; story.h1Mystery = qa ? q.innerHTML : null; }  // the investigation: the title withholds its answer until the first lasting mark lands
   const also = kind === "acts" ? null : (DATA.context || {})[`${kind}:${slug}`]; story.also = also || ""; story.titleText = titleText;  // the other things going on: one editorial sentence, so the title never reads as the whole cause
   const subEl = $("#sub"); subEl.classList.toggle("clamp", window.innerWidth <= 560); subEl.classList.toggle("fold", window.innerWidth > 560); subEl.setAttribute("aria-expanded", "false");
-  subEl.innerHTML = (also ? `<span class="also"><b>It wasn't the only reason:</b> ${esc(also)}</span> ` : "") + `<span class="rest"><span class="moreq">more ▾</span>` + esc(kind === "acts" ? `Named in the passage of ${story.items.length} ${story.items.length === 1 ? "law" : "laws"}${story.items.length === 1 ? (marks.length ? ", as a reason given for the bill" : ", in passing") : `, ${marks.length} of them as a reason given for the bill`}. A citation shows the work was in the room, not that it caused the law.` : markLine) + "</span>";  // one line; the story's own paragraph is in the first card
+  subEl.innerHTML = (also ? `<span class="also"><b>It wasn't the only reason:</b> ${esc(also)}</span> ` : "") + `<span class="rest"><span class="moreq">more ▾</span>` + esc(kind === "acts" ? `Named in the passage of ${story.items.length} ${story.items.length === 1 ? "law" : "laws"}${story.items.length === 1 ? (marks.length ? ", as a reason given for the bill" : ", in passing") : `, ${marks.length} of them as a reason given for the bill`}. A citation shows the work was in the room. It doesn't show the work caused the law.` : markLine) + "</span>";  // one line; the story's own paragraph is in the first card
   story.subFull = subEl.innerHTML; story.subMystery = `<span class="q">Something changed after this. Follow the water.</span>`;
   const tally = {}; story.items.forEach(x => tally[x.lv] = (tally[x.lv] || 0) + 1);
   $("#tally").innerHTML = (kind === "acts" ? `<span class="markt">${HEX}${marks.length} cited as a reason</span>` : marks.length ? `<span class="markt">${HEX}${marks.length} lasting mark${marks.length === 1 ? "" : "s"}</span>` : `<span class="nomark">No lasting mark yet</span>`) +
@@ -2109,7 +2166,7 @@ function show(kind, slug, autoplay = true) {
   }
   fitPond(); draw(story); buildFeed(story); $("#feed").scrollTop = 0; $("#feed").scrollLeft = 0; render();
   document.querySelectorAll(".pond").forEach(b => b.onclick = e => { e.stopPropagation(); show(b.dataset.kind, b.dataset.slug); window.scrollTo({top:0, behavior:"smooth"}); });
-  const y = d => addDays(story.iso0, d).getUTCFullYear(), yEnd = y(Math.max(...story.items.filter(x => !x.future).map(x => x.d))), yMid = y(daysAt(0.5));
+  const y = d => addDays(story.iso0, d).getUTCFullYear(), yEnd = y(daysAt(1)), yMid = y(daysAt(0.5));  // the clock's own end: Frozen's clock runs to today for its 2032 step, and its slider said 2020
   $("#ticks").innerHTML = `<span>${y(0)}</span><span>${yMid > y(0) && yMid < yEnd ? yMid : ""}</span><span>${yEnd > y(0) ? yEnd : ""}</span>`;  // the end tick is the clock's end
   const w = document.querySelector(".wrap"); w.classList.remove("fade"); void w.offsetWidth; w.classList.add("fade");
   setPlaying(autoplay);
@@ -2127,10 +2184,10 @@ function showEndBeat() {  // at rest the lower third says what stayed and points
   if (!cur || REEL) return;
   const bl = $("#beatline"); if (!bl) return;
   const marks = cur.items.filter(x => x.mark && !x.future).sort((a, b) => a.d - b.d);
-  const span = `${esc(fmtMonth(D(cur.iso0)))} → ${esc(fmtMonth(addDays(cur.iso0, Math.max(...cur.items.filter(x => !x.future).map(x => x.d)))))} · ${cur.items.length} ripples`;
+  const span = `${esc(fmtMonth(D(cur.iso0)))} → ${esc(fmtMonth(addDays(cur.iso0, Math.max(...cur.items.filter(x => !x.future).map(x => x.d)))))} · ${rippleCount(cur.items).text}`;
   const what = marks.length ? `What followed and stayed: ${marks.slice(0, 3).map(x => esc(x.label)).join("; ")}${marks.length > 3 ? `; and ${marks.length - 3} more` : ""}` : "A big splash, no lasting mark yet";
   const nx = nextEntry();
-  bl.innerHTML = `<span class="bwhen">${span}</span><b>${what}</b><button type="button" class="bnext" onclick="window.__via='end';next()">Next stone: ${esc(nx.title || "another pond")} →</button>`;
+  bl.innerHTML = `<span class="bwhen">${span}</span><b>${what}</b>${cur.verdict ? `<span class="gv">${cur.verdict.html}</span>` : ""}<button type="button" class="bnext" onclick="window.__via='end';next()">Next stone: ${esc(nx.title || "another pond")} →</button>`;
   placeBeatline(); bl.classList.remove("off");
 }
 
@@ -2144,7 +2201,7 @@ function showEndBeat() {  // at rest the lower third says what stayed and points
   };
   phoneLayout(); window.addEventListener("resize", phoneLayout);
   window.addEventListener("resize", () => requestAnimationFrame(fitPond)); if (document.fonts) document.fonts.ready.then(() => fitPond());  // the reserved heights are measured again in the real fonts
-  $("#sub").addEventListener("click", () => { const sub = $("#sub"); if (!sub.hasAttribute("aria-expanded")) return; const cls = window.innerWidth <= 560 ? "clamp" : "fold"; const closed = sub.classList.toggle(cls); sub.dataset.open = closed ? "" : "1"; sub.setAttribute("aria-expanded", closed ? "false" : "true"); });  // a tap reads the whole subtitle
+  $("#sub").addEventListener("click", e => { const gb = e.target.closest(".guess button"); if (gb) { pickGuess(gb.dataset.g); return; } const sub = $("#sub"); if (sub.classList.contains("held") || !sub.hasAttribute("aria-expanded")) return; const cls = window.innerWidth <= 560 ? "clamp" : "fold"; const closed = sub.classList.toggle(cls); sub.dataset.open = closed ? "" : "1"; sub.setAttribute("aria-expanded", closed ? "false" : "true"); });  // a tap reads the whole subtitle
   const chooser = $("#chooser"), cbtn = $("#chooserbtn");
   const TABCOUNT = () => ({maps:TABS.maps.length, stories:DATA.chains.length, leads:TABS.leads.filter(([k, s]) => k === "wiki" ? wikiStones().includes(s) : k === "acts" ? actsWorks().includes(s) : true).length});
   const TABNOTE_SHORT = {maps:"Events that left a law, an institution or a change in how people live.", stories:"Viral \"butterfly effect\" stories tested link by link; some are busted.", leads:"What the engine found on its own, screened by hand."};

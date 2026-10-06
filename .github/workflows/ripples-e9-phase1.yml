@@ -4,7 +4,7 @@ name: Ripples E9 phase 1
 
 on:
   push:
-    branches: ["claude/**"]
+    branches: ["work/**"]
     paths: ["ripples/tools/experiments/e9_phase1.py", ".github/workflows/ripples-e9-phase1.yml"]
   workflow_dispatch:
 

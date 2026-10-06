@@ -5,7 +5,7 @@ name: Ripples salmon search
 
 on:
   push:
-    branches: ["claude/**"]
+    branches: ["work/**"]
     paths: ["ripples/lab/salmon.py", "ripples/tools/bq/salmon_names.py", ".github/workflows/ripples-salmon.yml"]
   workflow_dispatch:
 

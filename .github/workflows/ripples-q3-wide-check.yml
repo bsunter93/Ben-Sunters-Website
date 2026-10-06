@@ -5,7 +5,7 @@ name: Ripples Q3 wide lens same-weekday check
 
 on:
   push:
-    branches: ["claude/**"]
+    branches: ["work/**"]
     paths: [".github/workflows/ripples-q3-wide-check.yml"]
   workflow_dispatch:
 
