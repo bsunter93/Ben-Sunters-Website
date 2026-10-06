@@ -320,7 +320,7 @@ const dchip=(n,unit)=>`<span class="dl ${n>0?'up':n<0?'down':'flat'}">${sgn(n)} 
 
 const HERO=[
   ['lead', T.rate+'%', 'Advance rate', `${T.positive} of ${T.submitted} \u00b7 ${T.live_interview} live interview${T.live_interview===1?'':'s'}`,
-   'Applications that got past an automated acknowledgement \u2014 recruiter contact, assessment, interview or offer \u2014 divided by all applications ever submitted. Prospects are excluded.',
+   'Applications that got past an automated acknowledgement (recruiter contact, assessment, interview or offer) divided by all applications ever submitted. Prospects are excluded.',
    dchip(P.delta.advanced,'advanced vs prior 7d')],
   ['', T.live, 'Active', `${T.dormant} dormant \u00b7 ${T.rejected} rejected`,
    `Submitted, not rejected, and with some activity in the last ${D.stale_days} days. Anything quiet longer than that counts as dormant.`,
@@ -650,7 +650,7 @@ document.getElementById('actions').innerHTML = acts.map((o,i)=>{
   if(o.group) return `<div class="act-g"><span>${esc(o.group)}</span></div>`;
   const val=o.val!=null?`<b class="act-v ${o.fit?fitClass(o.val):''}">${esc(o.val)}${esc(o.unit||'')}</b>`:'';
   return `<div class="act-w"><div class="act ${o.c} hit" data-i="${i}" tabindex="0" role="button" aria-expanded="false"`
-    +` title="${esc(o.co)} \u2014 ${esc(o.ro)}">`
+    +` title="${esc(o.co)}: ${esc(o.ro)}">`
     +`<div class="bar"></div><div class="act-t"><b>${esc(o.co)}</b> <span class="ro">${esc(o.ro)}</span>`
     +(o.age!=null?` <span class="age ${o.age<=7?'fresh':o.age<=21?'ok':'old'}">${o.age}d</span>`:'')
     +(o.lock?` <span class="wq${o.locked?' hard':''}" data-t="${esc(o.lock)}">\u26a0</span>`:'')+`</div>`
@@ -740,7 +740,7 @@ document.getElementById('actions').addEventListener('keydown',e=>{
     return n<=0?'today':n===1?'1d':n+'d';};
   host.style.overflowY='scroll'; host.style.overflowX='hidden'; host.style.marginRight='-4px';
   host.innerHTML=rows.map(r=>`<div class="rc hit" data-id="${r.app_id}"
-      title="${esc(r.company)} \u2014 ${esc(r.role)}${r.source&&r.source!=='gmail'?` \u00b7 recorded from ${esc(r.source)}, so the date is when it was logged`:``}">
+      title="${esc(r.company)}: ${esc(r.role)}${r.source&&r.source!=='gmail'?` \u00b7 recorded from ${esc(r.source)}, so the date is when it was logged`:``}">
     <span class="rc-d">${esc(ago(r.occurred_at))}</span>
     <span class="rc-t"><b>${esc(r.company)}</b> <span class="ro">${esc(r.role)}</span></span>
     <span class="rc-e" style="color:var(--${HUE[r.status]||'muted'})">${esc(LABEL[r.status]||r.status)}${
@@ -841,7 +841,7 @@ function view(){
       <td>${esc(a.role)}${a.attempt?` <span class="pill attempt" data-t="${esc(a.attempt_note)}">try ${a.attempt}</span>`:''}<div class="muted small">${esc(a.klass)}${a.location?' · '+esc(a.location):''}</div></td>
       <td><span class="pill s-${a.status}">${a.status}</span>${a.activity==='dormant'?' <span class="pill s-prospect">dormant</span>':''}</td>
       <td class="num">${a.fit_score??''}</td>
-      <td class="num">${a.posted_age==null?'<span class="muted">&mdash;</span>'
+      <td class="num">${a.posted_age==null?'<span class="muted">n/a</span>'
         :`<span class="age ${a.posted_age<=7?'fresh':a.posted_age<=21?'ok':'old'}">${a.posted_age}d</span>`}</td>
       <td class="num muted">${a.submitted_on||(a.applied_on||'').slice(0,10)}</td>
       <td class="num">${q1}</td></tr>`;}).join('')

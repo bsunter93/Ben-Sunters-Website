@@ -136,11 +136,11 @@ dl.how dt{font-weight:700}dl.how dd{margin:0;color:var(--ink-2)}
       set scores as high on <em>any</em> outcome, so searching hundreds of topics is already paid for.</dd>
     <dt>Two scorings</dt><dd>Each outcome is scored two ways (robust z and rank). Both must reach p ≤ 0.05.</dd>
     <dt>Drop-one stable</dt><dd>Still passes with any single event removed, so no one event carries it.</dd>
-    <dt>Linked (echo)</dt><dd>The outcome is linked from an event's own article. Expected, not surprising; it shows the
+    <dt>Linked (echo)</dt><dd>The outcome is linked from an event's own article. Expected; it shows the
       engine sees what it should.</dd>
     <dt>Nearby events</dt><dd>Some events in the family fall within 30 days of each other, so a shared shock (such as the
       March 2020 lockdowns) could explain part of it.</dd>
-    <dt>Replicated</dt><dd>Passed on new events chosen in advance. Still evidence of a pattern, not proof of cause.</dd>
+    <dt>Replicated</dt><dd>Passed on new events chosen in advance. This is still only evidence of a pattern. It doesn't prove cause.</dd>
   </dl>
   <p class="muted">Charts are drawn in your browser from Wikimedia's public pageview API (current article titles only) and
     are illustrations; the tests use the registered data. Protocols: <a href="/ripples/docs/q3_protocol.md">v1</a>,
@@ -216,7 +216,7 @@ dl.how dt{font-weight:700}dl.how dd{margin:0;color:var(--ink-2)}
       const left = z >= 0 ? 50 : 50 - w;
       return `<div class="bar" role="listitem"><span class="name" title="${esc(m.article)}">${esc(m.article)} <span class="muted">${esc(m.d0 || m.day0)}</span></span>
         <span class="track"><span class="mid"></span><span class="fill${z < 0 ? " neg" : ""}" style="left:${left}%;width:${w}%"></span></span><span class="v">${z.toFixed(1)}</span></div>`;
-    }).join("") + `</div><p class="muted">Each event's own score for this outcome (robust z, capped at ±4). A real ripple shows up in most events, not one.</p>`;
+    }).join("") + `</div><p class="muted">Each event's own score for this outcome (robust z, capped at ±4). A real ripple shows up in most of the events.</p>`;
   }
 
   function verdictOf(conf) {
@@ -411,7 +411,7 @@ dl.how dt{font-weight:700}dl.how dd{margin:0;color:var(--ink-2)}
             .map((a) => `${esc(a.name)} <span class="muted">${a.year} (${a.n_prev} → ${a.n})</span>`).join(" · ");
           html += `<div class="card"><h3>Name surges and possible upstream causes <span class="muted">· speculative</span></h3>
             <p class="muted">${linked.length} of ${all.length} surges have a possible cause that a name that did not surge matches at most 10% of the time.
-            Lower "chance match" is more convincing. The cause shown is the earliest we can see, not proof.</p>
+            Lower "chance match" is more convincing. The cause shown is the earliest we can see. It isn't proof.</p>
             <div class="scroll"><table><thead><tr><th>Name</th><th>Babies (year before → surge year)</th><th>Possible cause</th><th>Chance match</th></tr></thead>
             <tbody>${rows}</tbody></table></div>${(man.salmon.notes || []).map((n) => `<p class="muted">Hand check: ${esc(n)}</p>`).join("")}</div>
             <div class="card"><h3>Surges still unexplained <span class="muted">· strongest first</span></h3>
@@ -472,7 +472,7 @@ dl.how dt{font-weight:700}dl.how dd{margin:0;color:var(--ink-2)}
       $("#calib").innerHTML = `<div class="card"><div class="scroll"><table><thead><tr><th>Event</th><th>Known ripple</th><th class="hide-sm">Measured in</th><th>p</th><th></th></tr></thead><tbody>${rows}</tbody></table></div>
         <p>Found <strong>${e9.positives_passed} of ${Object.keys(e9.positives).length}</strong> known ripples. On ${n.n} fake ones it raised
         <strong>${n.false_passes}</strong> false alarms (${(n.rate * 100).toFixed(1)}%; at most ${(n.wilson_upper * 100).toFixed(1)}% with 95% confidence).</p>
-        <p class="muted">Ledger ${man.calibration.ledger}. These are known, so they are checks, not discoveries.</p></div>`;
+        <p class="muted">Ledger ${man.calibration.ledger}. These ripples are already known, so they serve as checks.</p></div>`;
     }
 
     // families
