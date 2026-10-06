@@ -1,11 +1,11 @@
 # Ripple Lab (protocol: ledger 1279, ripples/lab/README.md). Scores discovery designs in fake worlds built from public
-# data (BLS QCEW bulk files + OpenFEMA declarations). Runs automatically when lab code changes on a claude/ branch, so
+# data (BLS QCEW bulk files + OpenFEMA declarations). Runs automatically when lab code changes on a work/ branch, so
 # designs can be iterated without manual dispatch. No secrets: it reads only public data and writes only a report.
 name: Ripples lab
 
 on:
   push:
-    branches: ["claude/**"]
+    branches: ["work/**"]
     paths: ["ripples/lab/**", "!ripples/lab/cult*", "!ripples/lab/e9*", "!ripples/lab/nyt*", "!ripples/lab/q3*", "!ripples/lab/*.md", "!ripples/lab/discovery/**", ".github/workflows/ripples-lab.yml"]
   workflow_dispatch:
 

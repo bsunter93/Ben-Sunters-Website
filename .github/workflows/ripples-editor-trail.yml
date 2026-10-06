@@ -5,7 +5,7 @@ name: Ripples editor trail
 
 on:
   push:
-    branches: ["claude/**"]
+    branches: ["work/**"]
     paths: ["ripples/lab/editor_trail.py", ".github/workflows/ripples-editor-trail.yml"]
   workflow_dispatch:
 

@@ -5,7 +5,7 @@ name: Ripples Clickstream reader paths
 
 on:
   push:
-    branches: ["claude/**"]
+    branches: ["work/**"]
     paths: ["ripples/lab/clickstream.py", ".github/workflows/ripples-clickstream.yml"]
   workflow_dispatch:
 

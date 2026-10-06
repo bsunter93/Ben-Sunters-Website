@@ -1,11 +1,11 @@
 # Sensors v1, Media Cloud leg (ripples/lab/sensors_mediacloud.py; plan: ripples/docs/sensors_plan_v1.md).
-# Runs once, when this file is pushed on a claude/ branch. No schedule: it must not loop. The key is a repository
+# Runs once, when this file is pushed on a work/ branch. No schedule: it must not loop. The key is a repository
 # secret, passed only to the one step that needs it, sent only in a request header, and never echoed.
 name: Ripples sensors (Media Cloud)
 
 on:
   push:
-    branches: ["claude/**"]
+    branches: ["work/**"]
     paths: [".github/workflows/ripples-sensors.yml"]
 
 permissions:

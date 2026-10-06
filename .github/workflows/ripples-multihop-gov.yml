@@ -6,7 +6,7 @@ name: Ripples multi-hop Congressional Record
 
 on:
   push:
-    branches: ["claude/**"]
+    branches: ["work/**"]
     paths: ["ripples/lab/discovery/multihop_gov.py", ".github/workflows/ripples-multihop-gov.yml"]
 
 permissions:

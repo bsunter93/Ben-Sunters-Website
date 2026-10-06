@@ -1,6 +1,6 @@
-# Ripple: handoff for a new session (Oct 5, 2026)
+# Ripple: the runbook (Oct 5, 2026)
 
-This is the runbook for picking Ripple up in a fresh chat on any machine, cloud or not. It says what the product is,
+This is the runbook for picking Ripple up on any machine. It says what the product is,
 what the technical approach is, where everything lives, how to build, test and ship, the rules that never change, where
 the work stands, and what to do next, in order. The companion brief, `docs/ripple_Map_context.md`, holds the vision in
 the owner's words, the full status table, the learnings and the pitfalls; read it second. `docs/REVIEW_GUIDE.md` is the
@@ -50,7 +50,7 @@ its history are in the brief, sections 1 to 1c.
    The look since Oct 4 10:30 is recorded in `docs/styling_pass_v2.md`; where section 1b-ii of the brief or the bullets
    below describe gradients, a vignette, rim capitals, label boxes or an opening screen, that record wins.
 2. **The checker grades every step.** `lab/chain_check.py` runs on GitHub Actions (`.github/workflows/ripples-chain-check.yml`,
-   on pushes to `claude/**` and `main` that touch chains or the checker, weekly on Monday 06:17 UTC, and by `workflow_dispatch`) and commits
+   on pushes to `work/**` and `main` that touch chains or the checker, weekly on Monday 06:17 UTC, and by `workflow_dispatch`) and commits
    `docs/results/chain_check_v1.json` back. A measured grade is a placebo test whose windows are drawn from the page's
    history *before* the step, so a grade does not drift as time passes; the truncation test (`lab/truncation_test.py`,
    `docs/truncation_v1.md`: 13 measured grades, 3 cutoffs, 0 flips) established that, and every measured card carries
@@ -120,7 +120,7 @@ builds or the QA scripts.
 Keys: the only secret the project uses is `DATA_GOV_KEY` (govinfo and the Congressional Record), and it lives in
 GitHub Actions secrets, used by workflows only. Never put it in a local environment file that could be committed.
 
-Differences from the cloud session this handoff comes from: the cloud container could reach only whitelisted hosts
+Differences from a cloud container: the one used in September could reach only whitelisted hosts
 (Wikipedia, legislation.gov.uk, govinfo's link service, pageviews.wmcloud.org) and nothing else, so fetchers ran in
 Actions. A local machine can reach everything, which changes nothing about the rules: the honest user agent, one request
 a second, a stop on any 4xx/5xx, no retries with a different agent, aggregate data only.
@@ -171,18 +171,17 @@ the pacing and the cut and are stale.
 
 **Git:**
 
-- Work on a `claude/<name>` branch (the Oct 4 session used `claude/funny-ride-8tiy11`). Every push to `claude/**` that
+- Work on a `work/<name>` branch. Every push to `work/**` that
   touches chains or the checker triggers the chain-check workflow.
-- Commit messages describe the change in plain words. No model names or identifiers in commits, pull requests, code
-  comments or anything pushed.
+- Commit messages and pull requests describe the change in plain words, with no trailers.
 - Grep the diff for keys before every commit.
 - Repository secrets, workflows only: `DATA_GOV_KEY`, `MEDIACLOUD_API_KEY` (10,000 requests a week), `COURT_LISTENER_API`.
-- The owner merges, or lets Claude merge its own PRs (Oct 4 onward). Engine studies open DRAFT PRs and are reviewed against
+- The owner merges, or lets a contributor merge their own PRs (Oct 4 onward). Engine studies open DRAFT PRs and are reviewed against
   their registered bar before anything reaches the product.
 - Open a draft pull request, wait for the `assets` check (it fails if any page references a missing local asset), mark
   it ready, squash-merge, then reset the branch onto `main` (`git fetch origin main && git checkout -B <branch>
-  origin/main && git push -u origin <branch> --force-with-lease`). The owner's standing direction (Sep 28) is that Claude
-  opens and merges its own pull requests, keeping to the product vision. Pages rebuilds a few minutes after a merge.
+  origin/main && git push -u origin <branch> --force-with-lease`). The owner's standing direction (Sep 28) is that a contributor
+  opens and merges their own pull requests, keeping to the product vision. Pages rebuilds a few minutes after a merge.
 
 ## 6. Rules that never change
 
@@ -199,8 +198,8 @@ the pacing and the cut and are stale.
 - Simulated testers are simulated and say so; a persona modeled on a public figure is labeled "simulated persona modeled
   on the public role of …; not his words" wherever it appears.
 - American English and US date formats throughout.
-- No Google billing (BigQuery stays inside the sandbox cap). The private `RIPPLE_MAP_CONTEXT.md` of the cloud session was
-  scratch and is never committed; the public brief carries everything that matters.
+- No Google billing (BigQuery stays inside the sandbox cap). Private scratch notes are never committed; the public brief
+  carries everything that matters.
 - Report honestly: a failed rule is reported as failed, with the diagnosis; "nothing survived" is a result.
 
 ## 7. Where the work stands (Oct 5, 2026)
@@ -241,13 +240,3 @@ pond top, label overlaps, task time, link targets). Write the round as `docs/use
 the session, one line and a number per persona, a before/after table. The personas are fictional, and the three modeled
 on public executive roles are labeled as such on every mention. The scripts of the Oct 4 rounds are the ancestors of
 `tools/qa/*.js`; the method is in `docs/roundtable_final.md`, part 1.
-
-## 10. A starter prompt for the new chat
-
-The full prompt, with the mission, the owner's working style and the first message expected back, is
-`docs/session_prompt_v1.md`. The short form:
-
-> Read `ripples/HANDOFF.md`, then `ripples/docs/ripple_Map_context.md` sections 2, 5 and 6, in the repository
-> `bsunter93/Ben-Sunters-Website`. Work on a `claude/<name>` branch; open and squash-merge your own pull requests after
-> the `assets` check passes; reset the branch onto `main` after each merge. Keep the rules in HANDOFF section 6
-> exactly. Start with HANDOFF section 8, step 1, and send me a short synopsis when something lands.

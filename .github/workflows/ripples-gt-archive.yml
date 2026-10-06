@@ -6,7 +6,7 @@ on:
   schedule:
     - cron: "17 7 * * *"
   push:
-    branches: ["claude/**"]
+    branches: ["work/**"]
     paths: ["ripples/tools/bq/gt_archive.py", ".github/workflows/ripples-gt-archive.yml"]
   workflow_dispatch:
 

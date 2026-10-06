@@ -5,7 +5,7 @@ name: Ripples Clickstream map
 
 on:
   push:
-    branches: ["claude/**"]
+    branches: ["work/**"]
     paths: ["ripples/lab/cs_ripples.py", ".github/workflows/ripples-cs-map.yml"]
   workflow_dispatch:
 

@@ -5,7 +5,7 @@ name: Ripples mark-text search
 
 on:
   push:
-    branches: ["claude/**"]
+    branches: ["work/**"]
     paths: ["ripples/lab/mark_text.py", ".github/workflows/ripples-mark-text.yml"]
   workflow_dispatch:
 

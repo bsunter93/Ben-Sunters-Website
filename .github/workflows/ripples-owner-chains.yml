@@ -3,7 +3,7 @@ name: Ripples owner chains
 
 on:
   push:
-    branches: ["claude/**"]
+    branches: ["work/**"]
     paths: ["ripples/lab/owner_chains.py", ".github/workflows/ripples-owner-chains.yml"]
 
 permissions:

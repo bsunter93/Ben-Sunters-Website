@@ -4,7 +4,7 @@ name: Ripples Q6 lenses
 
 on:
   push:
-    branches: ["claude/**"]
+    branches: ["work/**"]
     paths: ["ripples/lab/q6_lenses.py", "ripples/tools/bq/lens_tv_hn.py", ".github/workflows/ripples-q6.yml"]
   workflow_dispatch:
 

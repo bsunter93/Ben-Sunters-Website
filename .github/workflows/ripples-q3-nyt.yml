@@ -9,7 +9,7 @@ name: Ripples Q3 other lenses
 
 on:
   push:
-    branches: ["claude/**"]
+    branches: ["work/**"]
     paths: ["ripples/lab/nyt_panel.py", "ripples/lab/econ_panel.py", "ripples/docs/q3_protocol_nyt.md",
             "ripples/docs/q3_protocol_econ.md", "ripples/lab/more_panels.py", "ripples/docs/q3_protocol_more.md",
             ".github/workflows/ripples-q3-nyt.yml"]

@@ -5,7 +5,7 @@ name: Ripples NYT archive
 
 on:
   push:
-    branches: ["claude/**"]
+    branches: ["work/**"]
     paths: ["ripples/lab/nyt_archive.py", ".github/workflows/ripples-nyt-archive.yml"]
   schedule:
     - cron: "23 6 2 * *"

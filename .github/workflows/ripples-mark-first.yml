@@ -5,7 +5,7 @@ name: Ripples mark-first search
 
 on:
   push:
-    branches: ["claude/**"]
+    branches: ["work/**"]
     paths: ["ripples/lab/mark_first.py", ".github/workflows/ripples-mark-first.yml"]
   workflow_dispatch:
 

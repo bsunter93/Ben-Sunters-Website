@@ -70,3 +70,13 @@ GA4 → Explore → Funnel: `ripple_story_start` → `ripple_reveal` → `ripple
 `ripple_leave` with dimension `t` and breakdown `reveal_reached`. The homepage's own traffic analysis (brief, Sep 16)
 applies: the owner's sessions and datacenter hits must be excluded before any of this is read as audience data; an
 internal-traffic filter on the property is the first thing to configure.
+
+## Oct 5 addendum: the guess shipped before first data
+
+Mechanic 1 shipped on Oct 5 at the owner's direction, ahead of the first 100 starts. The question line offers four
+kinds instead of sectors, so every story has a fair answer: "A law or rule", "Something built", "How people live" and
+"Nothing lasting" (right for a story with no lasting mark). Two events record it: `ripple_guess` (`pick`) on the tap and
+`ripple_guess_result` (`pick`, `right`) when the answer first shows. One guess a story a visit; the running score lives
+in the visitor's browser only. Localhost no longer sends events. Readings that span the release are split at the merge
+commit of this change; the funnel before it is the baseline, and the comparison is the week after against the week
+before, as above.

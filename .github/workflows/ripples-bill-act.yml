@@ -4,7 +4,7 @@ name: Ripples bill-act resolver
 
 on:
   push:
-    branches: ["claude/**"]
+    branches: ["work/**"]
     paths: ["ripples/lab/bill_act.py", ".github/workflows/ripples-bill-act.yml"]
   workflow_dispatch:
 

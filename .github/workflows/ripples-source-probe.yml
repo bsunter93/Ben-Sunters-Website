@@ -4,7 +4,7 @@ name: Ripples source probe
 
 on:
   push:
-    branches: ["claude/**"]
+    branches: ["work/**"]
     paths: ["ripples/tools/bq/source_probe.py", "ripples/tools/bq/source_probe2.py", "ripples/tools/bq/source_probe3.py", ".github/workflows/ripples-source-probe.yml"]
   workflow_dispatch:
 

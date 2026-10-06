@@ -6,7 +6,7 @@ name: Ripples Q4 named subjects
 
 on:
   push:
-    branches: ["claude/**"]
+    branches: ["work/**"]
     paths: ["ripples/lab/q4_matched.py", "ripples/corpus/q4_*.tsv", ".github/workflows/ripples-q4.yml"]
   workflow_dispatch:
 

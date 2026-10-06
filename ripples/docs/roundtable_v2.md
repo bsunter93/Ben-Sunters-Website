@@ -70,7 +70,7 @@ And the words are on the water now, not in boxes.
 have learned to tap it away.
 
 **Aisha:** A hundred and two engine-found marks and every one has a sentence I can read and a page I can open; two
-links were wrong and were fixed in this session. What I would cite is different now: not "the show changed the law,"
+links were wrong and were fixed the same night. What I would cite is different now: not "the show changed the law,"
 but "the record that made the law names the show," and the card says exactly that.
 
 **Tom:** The statutes are still one click away on Sputnik. The engine cards say "we did not measure this ourselves"

@@ -4,7 +4,7 @@ name: Ripples truncation test
 on:
   workflow_dispatch:
   push:
-    branches: ["claude/**"]
+    branches: ["work/**"]
     paths: ["ripples/lab/truncation_test.py", ".github/workflows/ripples-truncation.yml"]
 
 permissions:

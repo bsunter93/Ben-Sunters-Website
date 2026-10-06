@@ -6,7 +6,7 @@ name: Ripples Q3 screen
 
 on:
   push:
-    branches: ["claude/**"]
+    branches: ["work/**"]
     paths: ["ripples/lab/q3_run.py", "ripples/corpus/q3_*.tsv", ".github/workflows/ripples-q3.yml"]
   workflow_dispatch:
 
