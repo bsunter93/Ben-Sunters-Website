@@ -422,7 +422,7 @@ tr.hi td{background:var(--accent-soft);color:var(--ink)}
         </ul>
       </div>
       <p class="pnote">The expected monthly cost of missing, at every headcount you could
-         pick. This is just the waste, not payroll, which you pay either way. The curve is
+         pick. This is just the waste. Payroll isn't in it, since you pay that either way. The curve is
          lopsided because the two mistakes don't cost the same, and its low point is almost
          never where the forecast lands.</p>
       <div class="chartwrap" id="cw">
@@ -450,10 +450,10 @@ tr.hi td{background:var(--accent-soft);color:var(--ink)}
       <p>Effective hours per person are paid hours less shrinkage, times occupancy. Divide
          the month's work by that and you get the headcount the forecast implies. Your
          spreadsheet already does that part.</p>
-      <p>The rest is the newsvendor problem, which is a hundred years old and still works.
+      <p>The rest is the newsvendor problem, which is more than a century old and still works.
          If being short costs <code>r</code> times what being over costs, the
          cost-minimizing plan covers demand <code>r / (r + 1)</code> of the time. At 3&times;
-         that's the 75th percentile, not the 50th. Staffing to the forecast means covering
+         that's the 75th percentile. Staffing to the forecast means covering
          demand half the time, and treating both kinds of miss as if they cost the same.</p>
       <p>This doesn't assume demand is random. It assumes your forecast is good and still
          misses. Whatever you built it from (history, seasonality, market signal, third-party
@@ -721,7 +721,7 @@ function draw(r){
 
   svg.innerHTML=
     '<title id="chart-t">Expected monthly cost of missing the forecast at each headcount. '+
-      'The curve bottoms at '+fte(r.rec)+' people, not at the '+fte(r.m)+' the forecast implies.</title>'+
+      'The curve bottoms at '+fte(r.rec)+' people. The forecast implies '+fte(r.m)+'.</title>'+
     gy+
     '<path d="'+pShort+'" fill="var(--short-fill)"/>'+
     '<path d="'+pOver+'" fill="var(--over-fill)"/>'+
