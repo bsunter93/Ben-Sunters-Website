@@ -1,53 +1,145 @@
 {
  "jobs": {
   "surprise-u4": {
-   "attempts": []
+   "attempts": [
+    {
+     "date": "2026-10-06",
+     "started_utc": "2026-10-06T11:34:25Z",
+     "revision": 1,
+     "code_commit": "2c86cd2910879378c5c9c7ad66ebd1aa82444f85",
+     "exit": 0,
+     "requests": 780,
+     "cache_hits": 0,
+     "hosts": {
+      "en.wikipedia.org": {
+       "requests": 770,
+       "statuses": {
+        "200": 770
+       }
+      },
+      "www.wikidata.org": {
+       "requests": 10,
+       "statuses": {
+        "200": 10
+       }
+      }
+     },
+     "robots": {
+      "en.wikipedia.org": {
+       "verdict": "read",
+       "exceptions_used": 769,
+       "exception": "https://www.mediawiki.org/wiki/API:Etiquette"
+      },
+      "www.wikidata.org": {
+       "verdict": "read",
+       "exceptions_used": 9,
+       "exception": "https://www.mediawiki.org/wiki/API:Etiquette"
+      }
+     },
+     "stops": [],
+     "client_errors": [],
+     "halt": null,
+     "finished_utc": "2026-10-06T12:03:40Z",
+     "result": "done",
+     "why": "the done condition holds",
+     "outputs": [
+      "ripples/docs/results/dataday/surprise-u4/surprise_v1_registered.json"
+     ],
+     "cache_kb": 19537.6
+    }
+   ],
+   "state": "done",
+   "why": "the done condition holds",
+   "last_attempt_date": "2026-10-06"
   },
   "records2-lac-megantic": {
-   "attempts": []
+   "attempts": [
+    {
+     "date": "2026-10-06",
+     "started_utc": "2026-10-06T12:03:41Z",
+     "revision": 1,
+     "code_commit": "eb9a2291d510d6c91e0de4ab65eacf1b5589ab29",
+     "exit": 0,
+     "requests": 8,
+     "cache_hits": 0,
+     "hosts": {
+      "www.federalregister.gov": {
+       "requests": 8,
+       "statuses": {
+        "200": 8
+       }
+      }
+     },
+     "robots": {
+      "www.federalregister.gov": {
+       "verdict": "read",
+       "exceptions_used": 0
+      }
+     },
+     "stops": [],
+     "client_errors": [],
+     "halt": null,
+     "finished_utc": "2026-10-06T12:03:53Z",
+     "result": "done",
+     "why": "the done condition holds",
+     "outputs": [
+      "ripples/docs/results/dataday/records2-lac-megantic/lac_megantic_rescan_v1.json"
+     ],
+     "cache_kb": 2904.0
+    }
+   ],
+   "state": "done",
+   "why": "the done condition holds",
+   "last_attempt_date": "2026-10-06"
   },
   "ladder-finding-nemo": {
-   "attempts": []
+   "attempts": [],
+   "state": "held",
+   "why": "needs Addendum 2 to ladder_plan_v1.md naming one Comtrade request per year without the partner2, customs and transport filters (Addendum 1, item 9), and the commit of the code that makes it; then set plan, code, args, hosts and outputs here, set cleared to true and raise the revision"
   },
   "ladder-bpii-ucas": {
-   "attempts": []
+   "attempts": [],
+   "state": "held",
+   "why": "needs an addendum to ladder_plan_v1.md naming the exact UCAS table address and the placebo pool size (section 6.1), and the commit of code that implements section 6.1; then fill code, tree, args, done_when and outputs here, set cleared to true and raise the revision"
   },
   "ladder-bpii-hansard": {
-   "attempts": []
+   "attempts": [],
+   "state": "held",
+   "why": "needs an addendum to ladder_plan_v1.md confirming the Hansard endpoint (section 6.2), and the commit of code that implements section 6.2; then fill code, tree, args, done_when and outputs here, set cleared to true and raise the revision"
   }
  },
  "last_run": {
-  "utc": "2026-10-05T15:54:06Z",
-  "date": "2026-10-05",
-  "mode": "dry run",
-  "event": "push",
+  "utc": "2026-10-06T12:03:54Z",
+  "date": "2026-10-06",
+  "mode": "run",
+  "event": "schedule",
   "decisions": [
    {
     "job": "surprise-u4",
-    "state": "waiting",
-    "why": "en.wikipedia.org answered 429 on Oct 5, 2026 (UTC); no request before Oct 6, 2026; ripples/lab/discovery/surprise_blocked_dates.txt on eng-surprise lists Oct 5, 2026: no request to en.wikipedia.org today"
+    "state": "done",
+    "why": "the done condition holds (780 requests, 0 from cache)"
    },
    {
     "job": "records2-lac-megantic",
-    "state": "waiting",
-    "why": "www.federalregister.gov answered 429 on Oct 5, 2026 (UTC); no request before Oct 6, 2026"
+    "state": "done",
+    "why": "the done condition holds (8 requests, 0 from cache)"
    },
    {
     "job": "ladder-finding-nemo",
     "state": "held",
-    "why": "needs Addendum 2 to ladder_plan_v1.md naming one Comtrade request per year without the partner2, customs and transport filters (Addendum 1, item 9), and the commit of the code that makes it; then set plan, code, args, hosts and outputs here, set cleared to true and raise the revision; comtradeapi.un.org answered 400 on Oct 5, 2026 (UTC); no request before Oct 6, 2026"
+    "why": "needs Addendum 2 to ladder_plan_v1.md naming one Comtrade request per year without the partner2, customs and transport filters (Addendum 1, item 9), and the commit of the code that makes it; then set plan, code, args, hosts and outputs here, set cleared to true and raise the revision"
    },
    {
     "job": "ladder-bpii-ucas",
     "state": "held",
-    "why": "needs an addendum to ladder_plan_v1.md naming the exact UCAS table address and the placebo pool size (section 6.1), and the commit of code that implements section 6.1; then fill code, tree, args, done_when and outputs here, set cleared to true and raise the revision; www.ucas.com answered 404 on Oct 5, 2026 (UTC); no request before Oct 6, 2026"
+    "why": "needs an addendum to ladder_plan_v1.md naming the exact UCAS table address and the placebo pool size (section 6.1), and the commit of code that implements section 6.1; then fill code, tree, args, done_when and outputs here, set cleared to true and raise the revision"
    },
    {
     "job": "ladder-bpii-hansard",
     "state": "held",
-    "why": "needs an addendum to ladder_plan_v1.md confirming the Hansard endpoint (section 6.2), and the commit of code that implements section 6.2; then fill code, tree, args, done_when and outputs here, set cleared to true and raise the revision; hansard-api.parliament.uk answered 500 on Oct 5, 2026 (UTC); no request before Oct 6, 2026"
+    "why": "needs an addendum to ladder_plan_v1.md confirming the Hansard endpoint (section 6.2), and the commit of code that implements section 6.2; then fill code, tree, args, done_when and outputs here, set cleared to true and raise the revision"
    }
   ]
  },
- "updated_utc": "2026-10-05T15:54:06Z"
+ "updated_utc": "2026-10-06T12:03:54Z"
 }

@@ -1,0 +1,27 @@
+{
+ "job": "surprise-u4",
+ "title": "Surprise score v1: the registered run, with u4 (co-citation) and the Wikidata class labels",
+ "finished_utc": "2026-10-06T12:03:40Z",
+ "revision": 1,
+ "plan": {
+  "path": "ripples/docs/surprise_plan_v1.md",
+  "commit": "2c86cd2910879378c5c9c7ad66ebd1aa82444f85"
+ },
+ "code": {
+  "path": "ripples/lab/discovery/surprise.py",
+  "commit": "2c86cd2910879378c5c9c7ad66ebd1aa82444f85",
+  "sha256": "d9124a028c28b1160748157b7ee24d96114050799fbd742916a972018bc1853a"
+ },
+ "args": [
+  "--cache",
+  "{cache}/script",
+  "--out",
+  "{out}/surprise_v1.json"
+ ],
+ "outputs": [
+  "ripples/docs/results/dataday/surprise-u4/surprise_v1_registered.json"
+ ],
+ "requests_this_run": 780,
+ "cache_hits_this_run": 0,
+ "attempts": 1
+}

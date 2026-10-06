@@ -1,0 +1,32 @@
+## attempt 2026-10-06T11:34:25Z to 2026-10-06T12:03:40Z, exit 0
+251 pairs, 778 requests, 17 cache hits -> /tmp/dataday-surprise-u4-sndjl86a/out/surprise_v1.json
+{
+ "blind_round_auc": {
+  "n": 12,
+  "positives": 4,
+  "auc": 0.562,
+  "p_one_sided": 0.4008,
+  "ci95": [
+   0.219,
+   0.875
+  ]
+ },
+ "blind_round_spearman_grade": 0.351,
+ "pooled_tags_auc": {
+  "n": 76,
+  "positives": 25,
+  "auc": 0.574,
+  "p_one_sided": 0.1518,
+  "ci95": [
+   0.451,
+   0.711
+  ]
+ },
+ "bar": {
+  "blind_round_auc_min": 0.75,
+  "pooled_tags_auc_min": 0.7
+ },
+ "blind_round_pass": false,
+ "pooled_tags_pass": false,
+ "met": false
+}

@@ -1,0 +1,25 @@
+{
+ "job": "records2-lac-megantic",
+ "title": "Records 2: the Lac-Megantic rescan (seven final-rule texts, read with the GPO-code fix)",
+ "finished_utc": "2026-10-06T12:03:53Z",
+ "revision": 1,
+ "plan": {
+  "path": "ripples/docs/records2_plan_v1.md",
+  "commit": "903fc6e02571a82e9268f2e701e32cc25a4f73b9"
+ },
+ "code": {
+  "path": "ripples/lab/records2.py",
+  "commit": "eb9a2291d510d6c91e0de4ab65eacf1b5589ab29",
+  "sha256": "18e278f075ba07664977b7b3d1ac124dde27f30480089ff35aa61a6a8c8d9dd0"
+ },
+ "args": [
+  "rescan",
+  "lac-megantic-rail-disaster"
+ ],
+ "outputs": [
+  "ripples/docs/results/dataday/records2-lac-megantic/lac_megantic_rescan_v1.json"
+ ],
+ "requests_this_run": 8,
+ "cache_hits_this_run": 0,
+ "attempts": 1
+}
