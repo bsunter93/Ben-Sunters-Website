@@ -57,10 +57,16 @@ the answer sooner." **7.5**
 Round six (Theo, Marisol, Kwame) averaged 8.0 on the reveal build. This round measured the guess for the first time.
 Nobody missed the guess or misread it; the two complaints are where it sits on a phone and how long a phone waits for it.
 
-## Open
+## Open, and what was built the same night
 
-- A "Copy citation" line on every card with a source (Marcus). Today only Engine leads have one.
-- The guess within thumb reach on a phone, for example in the line under the pond during the throw (Priya).
+- **Built:** a "Copy citation" line on every card that shows a source (Marcus). It reads the stone, the step, its date,
+  the grade, the lasting mark if any, the source and its link, the reader's own access date and a link back to the step.
+  Coverage measured: Prohibition 25 of 25 cards, Sputnik 9 of 9, Frozen 4 of 4, Cathy Come Home 18 of 18, an Engine lead
+  1 of 1, Tiger King 7 of 8 (the license card shows no source line, so it gets no citation).
+- **Built:** on a phone the guess sits in a row under the pond, above the controls (Priya). Chips at y 434 of 844 and
+  425 of 667 (was 90), tap height 43 px (was 28); the header keeps one line ("What changed after this? Guess below."),
+  so the pond starts at 126 px (was 160). The verdict shows in the same row. Laptops and tablets keep the guess in the
+  header.
 - 25 s to the reveal on a phone (Priya). The pace was set by the owner on Oct 4 ("way too fast"); not changed here.
 
 Builder's rating after this round: **8.5**, unchanged. The search answers the real note. The round's two open items are
