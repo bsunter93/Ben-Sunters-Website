@@ -1562,7 +1562,7 @@ function verifyText(b) {
   return `${v ? `<span class="gv">${v.html}</span>` : ""}<span class="bwhen">Checked</span><b>${order}</b><i class="bhow l-${weak}">weakest link ${esc(LVL[weak].toLowerCase())}</i><span class="bwhy">${weak === "measured" ? "Every link passed its test." : weak === "timed" ? "Every link is in order." : weak === "reported" ? "A source makes each link." : "One link is unproven."} Order doesn't prove cause.</span>`;  // the "it wasn't the only reason" line lives in the subtitle, whole; a hero beat does not end in an ellipsis
 }
 function spotlight(b) {  // the beat's ripples bloom lit, with their path back to the stone, and the line under the pond says what happened
-  if (b.verify) { cur.beatOn = b; const bl = $("#beatline"); bl.innerHTML = verifyText(b); placeBeatline(); bl.classList.remove("off"); setMystery(false, "sub"); track("verify", {slug: cur.key}); return; }  // the verification beat keeps the mark lit and answers "is it real?"
+  if (b.verify) { cur.beatOn = b; const bl = $("#beatline"); bl.innerHTML = verifyText(b); bl.classList.remove("mapped"); placeBeatline(); bl.classList.remove("off"); setMystery(false, "sub"); track("verify", {slug: cur.key}); return; }  // the verification beat keeps the mark lit and answers "is it real?"
   unspot(); cur.beatOn = b;
   if (b.end) { const bl = $("#beatline"); bl.innerHTML = b.html; placeBeatline(); bl.classList.remove("off"); setMystery(false); return; }
   if (cur.mystery && cur.timeline && b === cur.timeline.beats[cur.timeline.reveal]) { setMystery(false, "title"); if (soundOn) ping(660, 0.5); sess.reveal = true; track("reveal", {slug: cur.key, seconds_in_story: Math.round((performance.now() - sess.storyT0) / 1000)}); }  // the reveal
