@@ -164,7 +164,7 @@ svg#pond{display:block;width:100%;height:auto;touch-action:manipulation;border-r
 input[type=range]{flex:1;accent-color:var(--marigold);min-width:0}
 .legend{display:flex;flex-wrap:wrap;align-items:center;gap:6px 14px;font-size:.78rem;color:var(--ink-2);padding:6px 8px 4px}
 .legend svg{margin-right:5px;vertical-align:middle}
-.legend .lgnote{flex-basis:100%;font-size:.72rem;color:var(--ink-3, var(--ink-2));line-height:1.35}
+.legend .lgnote{flex-basis:100%;font-size:.8rem;color:var(--ink-3, var(--ink-2));line-height:1.35}
 @media (max-width:1200px){.wrap{grid-template-columns:minmax(0,1.45fr) minmax(0,1fr)}}
 @media (min-width:861px) and (max-height:820px){svg#pond{max-height:calc(100vh - 362px)}.legend{font-size:.72rem;padding:2px 8px 0;gap:3px 10px}.legend svg{margin-right:3px}.legend .lgnote{display:none}}  /* a short laptop: the pond gives up one row so the legend sits under the controls, inside the fold and off the water (the corner panel covered the rim word and the 1-year tick at 1024 and 1366) */
 .howbtn{margin-left:auto;background:none;border:1px solid var(--hair);border-radius:6px;padding:3px 10px;font-size:.76rem;color:var(--ink-2);cursor:pointer}
@@ -186,7 +186,10 @@ input[type=range]{flex:1;accent-color:var(--marigold);min-width:0}
 .nextbtn{background:none;border:1px solid var(--hair);border-radius:6px;padding:6px 12px;font-size:.8rem;font-weight:600;color:var(--ink-2);cursor:pointer;white-space:nowrap}
 .stepbtn{background:none;border:1px solid var(--hair);border-radius:6px;padding:6px 11px;font-size:.78rem;font-weight:600;color:var(--ink-2);cursor:pointer;white-space:nowrap;flex:none}
 .stepbtn[aria-pressed="true"]{background:var(--marigold);border-color:var(--marigold);color:#1a1405}
-.search{display:flex;margin:0 0 10px}.search input{flex:1;background:var(--sunk);border:1px solid var(--hair);border-radius:6px;padding:8px 14px;font:inherit;font-size:.9rem;color:var(--ink);outline:none}.search input:focus{border-color:var(--shallow-2)}
+.search{display:flex;margin:0 0 10px}.topsearch{position:relative;margin:0;flex:0 1 250px;min-width:170px}.topsearch svg{position:absolute;left:10px;top:50%;width:15px;height:15px;transform:translateY(-50%);fill:none;stroke:var(--ink-2);stroke-width:1.7;stroke-linecap:round;pointer-events:none}.bar .topsearch input{width:100%;padding:8px 12px 8px 32px;background:rgba(214,232,246,.08);border:1px solid rgba(214,232,246,.38);color:var(--paper)}.bar .topsearch input::placeholder{color:var(--ink-2)}.bar .topsearch input:focus{border-color:var(--marigold);background:rgba(214,232,246,.12)}
+.searchbtn{display:none}
+@media (max-width:560px){.topsearch{flex:1 1 100%;order:3}header{position:relative}.searchbtn{display:flex;align-items:center;justify-content:center;position:absolute;top:4px;right:12px;width:40px;height:40px;padding:0;border:1px solid rgba(214,232,246,.38);border-radius:999px;background:rgba(214,232,246,.08);cursor:pointer}.searchbtn svg{width:19px;height:19px;fill:none;stroke:var(--paper);stroke-width:1.7;stroke-linecap:round}#h1::before{content:"";float:right;width:46px;height:1em}}  /* a long title's first line steps around the search button; the lines under it keep the full width */  /* a phone gives the search its own row under the tally and the button */
+.search input{flex:1;background:var(--sunk);border:1px solid var(--hair);border-radius:6px;padding:8px 14px;font:inherit;font-size:.9rem;color:var(--ink);outline:none}.search input:focus{border-color:var(--shallow-2)}
 .picker .tabtag{font-size:.7rem;color:var(--ink-3);margin-left:6px;font-weight:500}.picker .none{color:var(--ink-3);font-size:.85rem;margin:4px 0}
 .nextbtn:hover{border-color:var(--ink-3);color:var(--ink)}
 .card{background:rgba(12,51,59,.92);border:1px solid var(--hair);border-radius:8px;padding:10px 14px;transition:border-color .2s;cursor:pointer}
@@ -218,7 +221,7 @@ input[type=range]{flex:1;accent-color:var(--marigold);min-width:0}
 .card .shr{font-size:.78rem;color:var(--paper-ink-3);text-decoration:none;border-bottom:1px dotted currentColor;margin-left:auto;align-self:center}.card .shr:hover{color:var(--paper-ink)}
 .caption .shrcap{color:var(--ink-3);font-size:.82rem;display:block;text-align:center;margin-top:6px}
 .guess{display:inline-flex;flex-wrap:wrap;gap:6px;vertical-align:middle;margin-left:6px}.guess button{font:500 .8rem/1 var(--sans);color:var(--ink);background:rgba(214,232,246,.06);border:1px solid rgba(214,232,246,.28);border-radius:999px;padding:6px 11px;cursor:pointer}.guess button:hover,.guess button:focus-visible{border-color:var(--marigold);color:var(--paper)}
-.guess .gs{display:none}.sub.held{display:block;overflow:visible}.sub .gv{font-style:normal;color:var(--ink)}.sub .gv b,.beatline .gv b{color:var(--marigold);font-weight:600}.beatline .gv{display:block;margin-top:4px;color:var(--ink)}
+.guess{position:relative;z-index:4}.guess button{position:relative}.guess button::after{content:"";position:absolute;left:0;right:0;top:-8px;bottom:-8px}.guess .gs{display:none}  /* a 28-px chip answers a 42-px finger; the row keeps its height */.sub.held{display:block;overflow:visible}.sub .gv{font-style:normal;color:var(--ink)}.sub .gv b,.beatline .gv b{color:var(--marigold);font-weight:600}.beatline .gv{display:block;margin-top:4px;color:var(--ink)}
 @media (max-width:560px){.guess{margin:5px 0 0;display:flex;flex-wrap:nowrap;gap:6px}.guess button{font-size:.78rem;padding:7px 10px;white-space:nowrap}.guess .gl{display:none}.guess .gs{display:inline}}
 .qmark{color:var(--ink-3)}.arw.l-q{color:var(--ink-3)}.arw.l-q line{stroke-dasharray:none;stroke-width:1.6}.sub .q{color:var(--ink-2);font-style:italic}.sub.held .also{display:none}
 @keyframes revealin{from{opacity:0;transform:translateX(-10px)}to{opacity:1;transform:none}}#h1.resolve .tail,#h1.resolve .arw{display:inline-block;animation:revealin 1.1s ease-out both}#h1.resolve .arw{animation-duration:.7s}#h1.resolve .tail{animation-delay:.45s}
@@ -303,7 +306,7 @@ canvas.glw{position:absolute;pointer-events:none;border-radius:14px;z-index:0}.g
 .fit .b{text-transform:none;letter-spacing:.01em;font-size:.72rem;padding:3px 7px}
 .fit .legend{padding:2px 8px 0}.fit .legend .lgnote{display:none}
 .glfit .pondbox > .clock{position:absolute;left:8px;right:8px;top:6px;z-index:2;pointer-events:none}
-.fit header{position:relative;padding-bottom:2px}.fit h1{margin:.3rem 0 .3rem}.fit header > .bar{position:absolute;top:16px;right:16px;margin:0;gap:18px}  /* a short laptop keeps the key above the fold, as before */
+.fit header{position:relative;padding-bottom:2px}.fit h1{margin:.3rem 0 .3rem}.fit header > .bar{position:absolute;top:12px;right:16px;margin:0;gap:18px;flex-wrap:nowrap;width:max-content}.fit header > .bar > .tally,.fit header > .bar > .chooserbtn{flex-shrink:0}  /* a short laptop keeps the key above the fold, as before */
 .callout{opacity:0;transition:opacity .45s ease-out;pointer-events:none}.callout.on{opacity:1}
 .callout text{font:500 15px var(--sans);fill:#f2f6f9;paint-order:stroke;stroke:#0f1c26;stroke-width:4px;stroke-linejoin:round}
 .callout .cg{font-weight:600}.callout .cg.l-measured{fill:var(--good)}.callout .cg.l-timed{fill:var(--timed)}.callout .cg.l-reported{fill:var(--rec)}.callout .cg.l-plausible{fill:var(--plaus)}.callout .cg.l-busted{fill:var(--miss)}.callout .cg.l-mark{fill:var(--marigold)}
@@ -474,10 +477,12 @@ body.card .beatline{display:none}
 <body>
 <header>
   <div class="brand" id="brand"><svg class="wm" viewBox="0 0 150 46" width="118" height="36" aria-label="ripple"><g class="rings" id="wmrings"><circle r="8"/><circle r="15"/><circle r="23"/></g><text x="2" y="34">r<tspan class="i">i</tspan><tspan id="wmpp">pp</tspan>le</text></svg><span class="tag">Throw a stone. See what it changed.</span></div>
+  <button type="button" class="searchbtn" id="searchbtn" aria-label="Search the stories"><svg viewBox="0 0 16 16" aria-hidden="true"><circle cx="7" cy="7" r="4.6"/><path d="M10.4 10.4l3.6 3.6"/></svg></button>
   <h1 id="h1">What did that thing everyone remembers change?</h1>
   <p class="sub" id="sub">Pick a moment. The stone is the event; each ring is time since it happened.</p>
   <div class="bar">
     <div class="tally" id="tally" aria-label="How sure the links are"></div>
+    <div class="search topsearch"><svg viewBox="0 0 16 16" aria-hidden="true"><circle cx="7" cy="7" r="4.6"/><path d="M10.4 10.4l3.6 3.6"/></svg><input type="search" id="search" placeholder="Search the stories" aria-label="Search the stories: a show, a law, a year" autocomplete="off" enterkeyhint="search"></div>
     <button class="chooserbtn" id="chooserbtn" aria-expanded="false" aria-controls="chooser"><span>Change story</span> <b id="chooserkind">Lasting marks</b> ▾</button>
   </div>
   <div class="chooser" id="chooser" hidden>
@@ -485,7 +490,6 @@ body.card .beatline{display:none}
       <button class="chip" data-kind="map" data-slug="tiger-king">Tiger King</button><button class="chip" data-kind="chain" data-slug="squid-game-ripples">Squid Game</button>
       <button class="chip" data-kind="chain" data-slug="america-and-alcohol">Prohibition</button><button class="chip" data-kind="chain" data-slug="dust-bowl-soil">The Dust Bowl</button><button class="chip" data-kind="chain" data-slug="frozen">Frozen</button>
       <button class="chip" data-kind="chain" data-slug="tambora-bicycle">A volcano → the bicycle</button></div>
-    <div class="search"><input type="search" id="search" placeholder="Search the stories (a show, a law, a year…)" aria-label="Search the stories" autocomplete="off"></div>
     <div class="tabs" role="tablist" aria-label="Kinds of story">
       <button class="tab" role="tab" data-tab="maps" aria-selected="true">Lasting marks</button>
       <button class="tab" role="tab" data-tab="stories" aria-selected="false">Fact-checks</button>
@@ -523,7 +527,7 @@ body.card .beatline{display:none}
       <span tabindex="0" role="note" data-tip="The claimed link fails: the effect began before its supposed cause, or the test found nothing." aria-label="Busted: The claimed link fails: the effect began before its supposed cause, or the test found nothing."><svg width="22" height="8"><line x1="1" y1="4" x2="21" y2="4" stroke="var(--miss)" stroke-width="1.6" stroke-dasharray="2 5"/></svg>Busted</span>
       <span class="lgmark" tabindex="0" role="note" data-tip="Where a ripple ends: a law, an institution, or a lasting change in health, work or behavior." aria-label="Lasting mark: Where a ripple ends: a law, an institution, or a lasting change in health, work or behavior."><svg width="16" height="16" viewBox="-8 -8 16 16" aria-hidden="true"><path d="M0,-7 L6,-3.5 L6,3.5 L0,7 L-6,3.5 L-6,-3.5 Z" fill="#1a2540" stroke="var(--marigold)" stroke-width="1.3"/><circle r="2.1" fill="var(--marigold)"/></svg>Lasting mark</span>
       <button class="howbtn" id="howbtn" aria-expanded="false" aria-controls="how">How it works</button>
-      <span class="lgnote">Measured: beat a placebo test, after the step before. Most measured links are Wikipedia views. They show what people looked up.</span>
+      <span class="lgnote">Measured: the rise beat the same test run on fake dates, and came after the step before. Most measured links count Wikipedia views, which show what people looked up.</span>
     </div>
   </section>
   <section class="feed" id="feed" aria-live="polite"></section>
@@ -2210,7 +2214,9 @@ function showEndBeat() {  // at rest the lower third says what stayed and points
     if (open && window.innerWidth <= 560) requestAnimationFrame(() => cbtn.scrollIntoView({block:"start", behavior:"smooth"})); };  // on a phone the chooser lives under the pond, so opening it brings it up
   cbtn.onclick = () => setChooser(chooser.hidden);
   document.querySelectorAll(".known .chip").forEach(b => b.onclick = () => { window.__via = "known"; show(b.dataset.kind, b.dataset.slug); });
-  $("#search").oninput = () => { chooser.classList.remove("stage1"); renderPicker(); };  // a search goes straight to results
+  $("#search").oninput = () => { if (chooser.hidden) setChooser(true); chooser.classList.remove("stage1"); renderPicker(); };  // the search sits in the header, always visible (a visitor, Oct 5: "the search bar should be more visible"); typing opens the results
+  { const sn = TABCOUNT(); $("#search").placeholder = `Search ${sn.maps + sn.stories + sn.leads} stories`; }
+  $("#searchbtn").onclick = () => { setChooser(true); $("#search").focus({preventScroll:true}); };  // a phone keeps its pond where it was: the search is a button at the top that opens the chooser with the box ready
   $("#search").onkeydown = e => { if (e.key === "Enter") { const f = $("#picker .chip"); if (f) f.click(); } };
   // drag the stone to throw it: while the story waits at the start, the stone follows the finger and leaves from where it is let go
   (() => {
