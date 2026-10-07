@@ -80,3 +80,13 @@ kinds instead of sectors, so every story has a fair answer: "A law or rule", "So
 in the visitor's browser only. Localhost no longer sends events. Readings that span the release are split at the merge
 commit of this change; the funnel before it is the baseline, and the comparison is the week after against the week
 before, as above.
+
+## Oct 7 addendum: the first reading and a change of view
+
+The first week (Oct 1 to 6) landed in "worry" on reaching the reveal: about 12 of 47 visitors who started a story
+(26%) once the review runs are removed, 21 of 56 as reported. Deviation disclosed: the protocol said nothing is sent
+from a headless browser, but eight scripted review runs under a custom user agent were counted; the filter now also
+drops any browser a script drives (`navigator.webdriver`). The parameters of `ripple_leave` were not registered as
+custom dimensions, so the fall-off point could not be read. The response, the chain view, changes the layout and the
+pace together; `docs/chain_view_v1.md` has the reading, the change, how the next week will be compared and a forecast.
+

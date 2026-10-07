@@ -473,8 +473,60 @@ body.card .beatline{display:none}
 @media (orientation:portrait){body.reel{min-height:100vh;display:flex;flex-direction:column;justify-content:center}body.reel header{padding-top:0}body.reel .wrap{width:100%}body.reel .beatline{position:static;top:auto !important;background:none;text-shadow:none;padding:14px 16px 0}}  /* a vertical clip: the pond fills the width (an auto-margin flex item shrinks to fit otherwise) and the lower third flows under it */  /* a vertical reel: the story sits in the middle of the frame */
 @media (orientation:portrait) and (min-width:900px){body.reel{zoom:1.5;min-height:calc(100vh / 1.5)}body.reel .wrap{grid-template-columns:1fr;max-width:720px}body.reel .wrap .feed{display:none}}  /* a 1080×1920 reel renders at native pixels with a 720-px layout */
 @media (prefers-reduced-motion:reduce){.card.in{animation:none}}
+/* Oct 7, the chain view (the default; ?view=pond brings the pond back for the session). The story reads as a list in date
+   order; the water beside it shows the stone and each ripple landing, with no words on it. */
+.cv .beatline,.cv .callout,.cv .nlab,.cv .leader,.cv .ringlbl,.cv .rimlbl,.cv .crestdate,.cv .thread,.cv .threadtick,.cv .edge,.cv .band{display:none !important}
+#pond.zoomed .ringlbl{opacity:0}
+.cv .feed{display:flex;flex-direction:column;gap:12px;position:static;top:auto;max-height:none;overflow:visible;mask-image:none;scroll-snap-type:none;padding:14px 14px 16px 12px}
+.cv .feed > .pulse,.cv .feed > .pulsefold{order:99;position:static;box-shadow:none}
+.cv .feed > .card{position:relative;margin:0 0 0 26px;flex:none}
+.cv .feed > .card::before{content:"";position:absolute;left:-22px;top:14px;width:9px;height:9px;border-radius:50%;background:#9aa6ab;z-index:1}
+.cv .feed > .card::after{content:"";position:absolute;left:-18px;top:24px;bottom:-16px;width:1.5px;background:rgba(30,42,46,.2)}
+.cv .feed > .card:has(.b.l-measured)::before{background:#3e8f55}.cv .feed > .card:has(.b.l-timed)::before{background:#7a5fc4}.cv .feed > .card:has(.b.l-reported)::before{background:#4f6874}.cv .feed > .card:has(.b.l-plausible)::before{background:#a8955a}.cv .feed > .card:has(.b.l-busted)::before,.cv .feed > .card.miss::before{background:#fff;border:1.5px solid #9aa6ab;box-sizing:border-box}
+.cv .feed > .card:has(.b.event)::before{background:#c77f12;box-shadow:0 0 0 3px rgba(199,127,18,.22)}
+.cv .feed > .card.marked::before{width:11px;height:11px;left:-23px;top:13px;border-radius:2px;background:#c77f12 !important;border:0 !important;transform:rotate(45deg)}
+.cv .feed > .card.hasline{border-left:1px solid rgba(30,42,46,.1)}.cv .feed > .card.hasline.marked{border-left-color:rgba(199,127,18,.6)}.cv .feed > .card.answer{border-left-width:2px}
+.cv .feed .card .top{flex-wrap:wrap;gap:2px 10px}.cv .feed .card .top .markpill{order:3;flex-basis:100%;margin:0}
+.cv .feed{align-self:start}
+.cv .pondbox .hint{display:none !important}
+.cv .feed > .card.answer{border:2px solid #c77f12;background:rgba(255,255,255,.88)}
+.cv .feed > .card.answer h2{font-size:1.1rem}
+.cv .feed > .card.answer .markpill::after{content:" · the answer"}
+.cv .feed .card h2{font-size:1.02rem;line-height:1.32}
+.cv .feed .card .spark{max-height:30px;max-width:360px}
+.cv .feed .card:not(.hot):not(:hover):not(:focus-within) .acts{opacity:0}
+.cv .feed.playing .card:not(.now):not(.hot){opacity:.82}
+.cv .feed > .card.tail{order:98;cursor:default;background:rgba(255,255,255,.4);border:1.5px dashed rgba(199,127,18,.55)}
+.cv .feed > .card.tail:hover{transform:none}
+.cv .feed > .card.tail::after{display:none}
+.cv .feed > .card.tail.q::before{content:"?";width:auto;height:auto;background:none;border:0;left:-23px;top:7px;font:700 1.05rem var(--display);color:#c77f12}
+.cv .feed > .card.tail.verify::before,.cv .feed > .card.tail.end::before{background:none;border:1.5px solid #c77f12;box-sizing:border-box}
+.cv .tail h2{font-size:1rem;margin:.15rem 0 0}
+.cv .tail .tq{margin:.2rem 0 0;font-size:.88rem;color:var(--paper-ink-2)}
+.cv .tail .bwhen{display:block;font:700 .82rem var(--sans);color:var(--paper-ink-3)}
+.cv .tail b{display:block;font:700 1rem/1.35 var(--sans);margin:.2rem 0 .15rem}
+.cv .tail .bhow{font-style:normal;font-size:.84rem;color:var(--paper-ink-2);margin-right:6px}
+.cv .tail .bwhy{font-size:.86rem;color:var(--paper-ink-2)}
+.cv .tail .gv{display:block;font-size:.9rem;margin:0 0 .35rem}
+.cv .tail .bnext{display:inline-block;margin:.6rem 0 0;padding:6px 14px;border-radius:999px;border:1px solid #c77f12;background:rgba(199,127,18,.1);color:#8a5a0a;font:600 .88rem var(--sans);cursor:pointer}
+.cv .tail .bnext:hover{background:rgba(199,127,18,.18)}
+@media (min-width:861px){
+  .cv .wrap{grid-template-columns:minmax(0,1fr) minmax(0,1.05fr);max-width:1400px;gap:28px}
+  .cv .pondbox{order:2;position:sticky;top:8px}
+  .cv .feed{order:1}
+  .cv .legend [data-tip]::after{left:auto;right:0}  /* the key sits in the right-hand column: its notes open leftward, or the page scrolls sideways at 1024 */
+  .cv header{position:relative;padding-bottom:2px}.cv h1{margin:.3rem 0 .3rem}
+  .cv header > .bar{position:absolute;top:12px;right:16px;margin:0;gap:18px;flex-wrap:nowrap;width:max-content}.cv header > .bar > .tally,.cv header > .bar > .chooserbtn{flex-shrink:0}
+}
+@media (max-width:560px){
+  .cv .feed{padding:10px 10px 12px 8px;gap:10px}
+  .cv .feed > .card{margin-left:22px}
+  .cv .feed > .card::before{left:-19px}.cv .feed > .card::after{left:-15px}
+  .cv .feed > .card.marked::before{left:-20px}.cv .feed > .card.tail.q::before{left:-20px}
+  .cv .wrap > .legend,.cv .wrap > .bar{padding:0 4px}
+}
 </style>
-<!-- Ripple standalone build 2026-10-05: open this file directly; no server needed. Share pages and the discover pages link to bensunter.com. -->
+<!-- Ripple standalone build 2026-10-07: open this file directly; no server needed. Share pages and the discover pages link to bensunter.com. -->
 </head>
 <body>
 <header>
@@ -634,9 +686,13 @@ const params = new URLSearchParams(location.search);
 const W2 = (() => { const w = params.get("water"); try { if (w) sessionStorage.setItem("ripple-water", w); return (w || sessionStorage.getItem("ripple-water") || "2") === "2"; } catch { return w !== "1"; } })();  // the water look is the default (Oct 5); ?water=1 shows the old instrument pond for the session, ?water=2 brings water back
 if (W2) document.documentElement.classList.add("w2");
 const REEL_Q = params.has("reel"), CARD_Q = params.has("card");  // reels and share cards keep the SVG water: their frames are recorded headless
+const VIEW = (() => { const v = params.get("view") || window.__rippleView; try { if (v) sessionStorage.setItem("ripple-view", v); return v || sessionStorage.getItem("ripple-view") || "chain"; } catch { return v || "chain"; } })();
+const CV = VIEW !== "pond" && !REEL_Q && !CARD_Q;  // Oct 7: the story reads as a list in date order beside the water (a stranger: "the UI is a bit confusing and hard to read"; 26 of 100 starts reached the reveal in the first week); ?view=pond brings the pond back for the session
+if (CV) document.documentElement.classList.add("cv");
+const FOLLOW = CV ? "Watch the list." : "Follow the water.";
 // Engagement instruments (Oct 5; docs/engagement_protocol_v1.md). Aggregate events to the site's own GA4 property, no
 // personal data, no event from a local file, a share-card render, a reel recording or a QA run (`&nointro=1` is the tests' flag).
-const TRACK_ON = location.protocol !== "file:" && !new URLSearchParams(location.search).has("reel") && !new URLSearchParams(location.search).has("card") && !new URLSearchParams(location.search).has("nointro") && !/bot|headless/i.test(navigator.userAgent) && !/^(localhost|127\.|\[::1\])/.test(location.hostname);  // a local copy never counts as a visitor
+const TRACK_ON = location.protocol !== "file:" && !new URLSearchParams(location.search).has("reel") && !new URLSearchParams(location.search).has("card") && !new URLSearchParams(location.search).has("nointro") && !navigator.webdriver && !/bot|headless/i.test(navigator.userAgent) && !/^(localhost|127\.|\[::1\])/.test(location.hostname);  // a local copy never counts as a visitor, nor does a browser a script drives (Oct 7: eight review runs under a custom agent were counted)
 const T0 = performance.now(); const sess = {stories:0, taps:0, reveal:false, storyT0:T0, scrubbed:false};
 function track(name, p = {}) { try { if (!TRACK_ON) return; window.dataLayer = window.dataLayer || []; const gtag = window.gtag || function () { window.dataLayer.push(arguments); }; gtag("event", "ripple_" + name, {...p, seconds_on_page: Math.round((performance.now() - T0) / 1000), transport_type: "beacon"}); } catch {} }
 if (TRACK_ON) { const g = document.createElement("script"); g.async = true; g.src = "https://www.googletagmanager.com/gtag/js?id=G-5DBXQV4RT2"; document.head.appendChild(g); window.dataLayer = window.dataLayer || []; window.gtag = function () { window.dataLayer.push(arguments); }; gtag("js", new Date()); gtag("config", "G-5DBXQV4RT2", {anonymize_ip: true, send_page_view: true}); }
@@ -1337,7 +1393,8 @@ function draw(story) {
   const overlapArea = b => placed.reduce((s, p) => s + Math.max(0, Math.min(b.x + b.w, p.x + p.w) - Math.max(b.x, p.x)) * Math.max(0, Math.min(b.y + b.h, p.y + p.h) - Math.max(b.y, p.y)), 0);
   // lasting marks and measured steps claim their label space first; the rest take what is left, and a label with no
   // clear spot waits for a hover or a tap instead of piling onto its neighbors (a crowded century still reads)
-  const rank = x => (x.mark ? 0 : x.lv === "measured" ? 1 : 2);
+  const rvm = (() => { try { return revealMark(story); } catch { return null; } })();
+  const rank = x => (x === rvm ? -1 : x.mark ? 0 : x.lv === "measured" ? 1 : 2);  // the mark the title names claims its space first
   const onRoute = new Set(); for (const m of items.filter(x => x.mark)) for (let p = m; p; p = items.find(x => x.id === p.parent)) onRoute.add(p);  // the steps on the way to a lasting mark
   for (const it of [...items].sort((a, b) => rank(a) - rank(b) || a.d - b.d)) {
     const parent = items.find(x => x.id === it.parent);
@@ -1422,7 +1479,7 @@ function draw(story) {
       const lx = it.pos.x + best[0] + (best[0] + bw / 2 < 0 ? bw : best[0] > 0 ? 0 : bw / 2), ly = it.pos.y + best[1] + (best[1] + bh / 2 < 0 ? bh : best[1] > 0 ? 0 : bh / 2);
       it.leader = el("line", {class:"leader", x1:it.pos.x, y1:it.pos.y, x2:lx, y2:ly}, labels);
     }
-    it.noSpot = !free; if (!free && !(it.mark && nMarks <= 3) && (it.lv !== "measured" || dense)) it.showLabel = false;  // a crowded pond keeps its labels for hover, focus, the caption and the card; a phone's small pond drops even a measured label that found no clear spot
+    it.noSpot = !free; if (!free && !(it.mark && nMarks <= 3 && (!dense || it === rvm)) && (it.lv !== "measured" || dense)) it.showLabel = false;  // Oct 6: on a phone the Big Cat Act sat 39% over License suspended; a phone keeps the answer's label and lets another mark with no clear spot speak on its beat  // a crowded pond keeps its labels for hover, focus, the caption and the card; a phone's small pond drops even a measured label that found no clear spot
     if (!it.showLabel && it.leader) { it.leader.remove(); it.leader = null; }
     const bx = it.pos.x + best[0], by = it.pos.y + best[1];
     if (it.showLabel) placed.push({x:bx, y:by, w:bw, h:bh});  // hidden labels do not reserve space
@@ -1448,7 +1505,8 @@ function draw(story) {
 // Playback is a schedule, not a constant speed: the throw, then for every ripple a travel (the date rolls toward it)
 // and a hold (it blooms, is lit and is named at the foot of the pond), then a short run-out. Ripples that arrive
 // together share a beat. A long story's holds shrink to fit the cap, never below the floor.
-const BEAT = {throwMs:1100, hold:2600, holdPre:1800, holdLoud:4000, holdLoudPre:3200, holdBust:3000, verifyMs:3400, extra:900, travelMin:450, travelMax:1600, travelPreMax:1000, travelK:7000, cap:95000, holdFloor:1500, outMs:900};  // holdPre, travelPreMax: the ordinary beats before the first lasting mark run tighter (second roundtable: 17 s to the first law on a phone was too long)
+const BEAT = CV ? {throwMs:800, hold:1300, holdPre:900, holdLoud:2100, holdLoudPre:1500, holdBust:1300, verifyMs:3000, extra:500, travelMin:300, travelMax:700, travelPreMax:450, travelK:7000, cap:60000, holdFloor:900, outMs:700}  // the chain view (Oct 7): every step stays on screen in the list, so a beat need not hold until it is read; Tiger King answers at about 14 s instead of 26 (the engagement protocol's first fix for a reveal rate in worry)
+  : {throwMs:1100, hold:2600, holdPre:1800, holdLoud:4000, holdLoudPre:3200, holdBust:3000, verifyMs:3400, extra:900, travelMin:450, travelMax:1600, travelPreMax:1000, travelK:7000, cap:95000, holdFloor:1500, outMs:900};  // holdPre, travelPreMax: the ordinary beats before the first lasting mark run tighter (second roundtable: 17 s to the first law on a phone was too long)
 // The reveal lands on the mark the title names, never earlier (Oct 4 review: Tiger King resolved to the Big Cat Act on the
 // License-suspended beat, two years before the law). Each phrase of the title's answer ("NASA, ARPA and the Education Act")
 // is matched to a mark's short label by shared words; the reveal is the latest matched mark. A title that names no mark it can be matched
@@ -1547,17 +1605,17 @@ const phoneGuess = () => window.innerWidth <= 560;  // Oct 5, round seven: at th
 function guessRow(html) { const r = $("#guessrow"); if (!r) return; r.innerHTML = html || ""; r.hidden = !html || !phoneGuess(); }
 function guessChips() { return `<span class="guess" role="group" aria-label="Your guess">${GUESS.map(([k, l, sh]) => `<button type="button" data-g="${k}" aria-label="${l}"><span class="gl">${l}</span><span class="gs">${sh}</span></button>`).join("")}</span>`; }
 function guessLine() {
-  const open = !cur.guess && !guessed.has(cur.key) && !REEL;
-  if (phoneGuess()) { guessRow(cur.guess ? `<span class="q">Your guess: ${GUESS_SAY[cur.guess]}. Follow the water.</span>` : open ? guessChips() : ""); return `<span class="q">${open ? "What changed after this? Guess below." : "Something changed after this. Follow the water."}</span>`; }
+  const open = !cur.guess && !guessed.has(cur.key) && !REEL && !cur.answered;
+  if (phoneGuess()) { guessRow(cur.guess ? `<span class="q">Your guess: ${GUESS_SAY[cur.guess]}. ${FOLLOW}</span>` : open ? guessChips() : ""); return `<span class="q">${open ? "What changed after this? Guess below." : `Something changed after this. ${FOLLOW}`}</span>`; }
   guessRow("");
-  if (cur.guess) return `<span class="q">Your guess: ${GUESS_SAY[cur.guess]}. Follow the water.</span>`;
-  if (!open) return `<span class="q">Something changed after this. Follow the water.</span>`;
+  if (cur.guess) return `<span class="q">Your guess: ${GUESS_SAY[cur.guess]}. ${FOLLOW}</span>`;
+  if (!open) return `<span class="q">Something changed after this. ${FOLLOW}</span>`;
   return `<span class="q">What changed after this? Guess:</span><span class="guess" role="group" aria-label="Your guess">${GUESS.map(([k, l, sh]) => `<button type="button" data-g="${k}" aria-label="${l}"><span class="gl">${l}</span><span class="gs">${sh}</span></button>`).join("")}</span>`;
 }
 function pickGuess(k) {
-  if (!cur || !cur.mystery || cur.guess || !GUESS_SAY[k]) return;
+  if (!cur || !cur.mystery || cur.answered || cur.guess || !GUESS_SAY[k]) return;
   cur.guess = k; guessed.add(cur.key); track("guess", {slug: cur.key, pick: k});
-  const sub = $("#sub"); sub.innerHTML = guessLine();
+  const sub = $("#sub"); sub.innerHTML = guessLine(); tailQ();
 }
 const verdictHere = () => cur && cur.verdict && !phoneGuess();  // a phone shows the verdict in its guess row, so the narration slot keeps its room
 function guessVerdict() {  // scored once, when the answer first shows
@@ -1578,11 +1636,21 @@ function guessVerdict() {  // scored once, when the answer first shows
 function setMystery(on, part) {
   if (!cur || !cur.h1Mystery) return;
   const h1 = $("#h1"), sub = $("#sub"), tally = $("#tally");
-  if (on) { h1.classList.remove("resolve"); h1.innerHTML = cur.h1Mystery; tally.innerHTML = cur.tallyMystery; sub.innerHTML = guessLine(); sub.classList.add("held"); cur.mystery = true; return; }
+  if (on) { cur.answered = false; h1.classList.remove("resolve"); h1.innerHTML = cur.h1Mystery; tally.innerHTML = cur.tallyMystery; sub.innerHTML = guessLine(); sub.classList.add("held"); cur.mystery = true; tailQ(); return; }
   if (!part || part === "title") { if (cur.mystery && h1.innerHTML !== cur.h1Full) { h1.innerHTML = cur.h1Full; h1.classList.add("resolve"); } tally.innerHTML = cur.tallyFull;
-    if (part === "title" && cur.mystery) { const v = guessVerdict(); if (v) { if (!phoneGuess()) sub.innerHTML = `<span class="q gv">${v.html}</span>`; guessRow(`<span class="gv">${v.html}</span>`); } } }  // the answer and the verdict land together
+    if (part === "title" && cur.mystery) { cur.answered = true; tailSet(""); const v = guessVerdict(); if (v) { if (!phoneGuess()) sub.innerHTML = `<span class="q gv">${v.html}</span>`; guessRow(`<span class="gv">${v.html}</span>`); } else { guessRow(""); if (!phoneGuess()) sub.innerHTML = guessLine(); } } }  // no guess: the chips close with the answer  // the answer and the verdict land together
   if (!part && cur.mystery) { const v = guessVerdict(); guessRow(v ? `<span class="gv">${v.html}</span>` : ""); }
+  if (!part) { const tl = $("#tail"); if (tl && tl.classList.contains("q")) tailSet(""); }  // a pause, a scrub or a tap shows everything: the question row goes
   if (!part || part === "sub") { sub.innerHTML = cur.subFull; sub.classList.remove("held"); cur.mystery = false; }
+}
+// The chain view's last row (Oct 7): while the answer is withheld, the question and how far down the answer is; after the
+// reveal, the check; at rest, what stayed and the next stone. The pond view says the same in the line under the pond.
+function tailSet(html, cls = "") { if (!CV) return; const tl = $("#tail"); if (!tl) return; tl.className = `card tail ${cls}`; tl.innerHTML = html || ""; tl.hidden = !html; }
+function tailQ() {
+  if (!CV || !cur || !cur.mystery || cur.answered) return;
+  const rv = revealMark(cur), d = daysAt(t); if (!rv) { tailSet(""); return; }
+  const left = (cur.cards || []).filter(c => c.it && !(d >= c.d) && c.d <= rv.d).length;
+  tailSet(`<h2>Something lasting changed after this</h2><p class="tq">${left > 1 ? `${left} more steps to the answer` : left === 1 ? "The next step is the answer" : "The answer is next"}${cur.guess ? ` · Your guess: ${GUESS_SAY[cur.guess]}` : ""}</p>`, "q");
 }
 function verifyText(b) {
   const m = b.mark, stone = cur.stone || cur.title, weak = cur.weak || "plausible";
@@ -1591,7 +1659,7 @@ function verifyText(b) {
   return `${v ? `<span class="gv">${v.html}</span>` : ""}<span class="bwhen">Checked</span><b>${order}</b><i class="bhow l-${weak}">weakest link ${esc(LVL[weak].toLowerCase())}</i><span class="bwhy">${weak === "measured" ? "Every link passed its test." : weak === "timed" ? "Every link is in order." : weak === "reported" ? "A source makes each link." : "One link is unproven."} Order doesn't prove cause.</span>`;  // the "it wasn't the only reason" line lives in the subtitle, whole; a hero beat does not end in an ellipsis
 }
 function spotlight(b) {  // the beat's ripples bloom lit, with their path back to the stone, and the line under the pond says what happened
-  if (b.verify) { cur.beatOn = b; const bl = $("#beatline"); bl.innerHTML = verifyText(b); bl.classList.remove("mapped"); placeBeatline(); bl.classList.remove("off"); setMystery(false, "sub"); track("verify", {slug: cur.key}); return; }  // the verification beat keeps the mark lit and answers "is it real?"
+  if (b.verify) { cur.beatOn = b; const bl = $("#beatline"); bl.innerHTML = verifyText(b); tailSet(bl.innerHTML, "verify"); bl.classList.remove("mapped"); placeBeatline(); bl.classList.remove("off"); setMystery(false, "sub"); track("verify", {slug: cur.key}); return; }  // the verification beat keeps the mark lit and answers "is it real?"
   unspot(); cur.beatOn = b;
   if (b.end) { const bl = $("#beatline"); bl.innerHTML = b.html; placeBeatline(); bl.classList.remove("off"); setMystery(false); return; }
   if (cur.mystery && cur.timeline && b === cur.timeline.beats[cur.timeline.reveal]) { setMystery(false, "title"); if (soundOn) ping(660, 0.5); sess.reveal = true; track("reveal", {slug: cur.key, seconds_in_story: Math.round((performance.now() - sess.storyT0) / 1000)}); }  // the reveal
@@ -1727,7 +1795,7 @@ function pulseHTML(story) {
 }
 function fitPond() {  // the water look on a wide screen: the pond takes what the header, the controls and the card strip leave, so the cards are on screen when the page opens (owner, Oct 5: the cards are the anchor)
   const svg = $("#pond"), leg = $(".legend"), feed = $("#feed"); if (!svg || !leg || !feed) return;
-  const wide = W2 && !REEL_Q && !CARD_Q && window.innerWidth > 860, root = document.documentElement;
+  const wide = W2 && !CV && !REEL_Q && !CARD_Q && window.innerWidth > 860, root = document.documentElement;
   root.classList.toggle("fit", wide); root.classList.toggle("glfit", wide && !!GLW);
   for (const [el, full] of [[$("#h1"), cur && cur.h1Full], [$("#sub"), cur && cur.subFull]]) {  // the answered title and subtitle are taller than the question: keep their room from the start, so the pond does not drop at the reveal and the cards stay on screen (owner, Oct 5)
     if (!el) continue; el.style.minHeight = "";
@@ -1764,6 +1832,8 @@ function buildFeed(story) {
     if (c.it) { c.it.cardEl = div; div.addEventListener("click", e => { if (e.target.closest("summary,a")) return; focus(c.it); }); }
     f.appendChild(div);
   }
+  if (CV) { const tl = document.createElement("article"); tl.className = "card tail"; tl.id = "tail"; tl.hidden = true; tl.setAttribute("aria-live", "polite"); f.appendChild(tl);
+    const rv = revealMark(story); if (rv && rv.cardEl) rv.cardEl.classList.add("answer"); }  // the row the title names: when it arrives, the list answers
   story.cards = cards;
 }
 
@@ -1927,7 +1997,7 @@ function render(now = performance.now()) {
   if (!REEL && !CARD) { const svg = $("#pond"), phone = window.innerWidth <= 560;  // Oct 5 review: on a phone the first ripples filled 100 px of an empty pond
     const b0 = cur.timeline && cur.timeline.beats && cur.timeline.beats[0], t1 = b0 ? b0.tS : PRE + 0.05, u = Math.max(0, Math.min(1, (t - PRE * 0.5) / Math.max(0.001, t1 - PRE * 0.5)));
     const z = phone ? 1 + 0.45 * (1 - u * u * (3 - 2 * u)) : 1, w = 840 / z, h = 466 / z, vb = `${(350 - w / 2).toFixed(1)} ${(329 - h / 2).toFixed(1)} ${w.toFixed(1)} ${h.toFixed(1)}`;
-    if (svg.getAttribute("viewBox") !== vb) svg.setAttribute("viewBox", vb); }  // a phone starts close on the splash and is back to the whole pond by the time the first ripple lands, so no label is ever cut
+    if (svg.getAttribute("viewBox") !== vb) svg.setAttribute("viewBox", vb); svg.classList.toggle("zoomed", z > 1.01); }  // the ring labels wait out the close splash ("1 yea" was cut at the edge)  // a phone starts close on the splash and is back to the whole pond by the time the first ripple lands, so no label is ever cut
   $("#scrub").value = Math.round(t * 1000);
   if (W2) $("#pond").classList.toggle("sunk", t >= PRE + 0.004);
   if (GLW) GLW.poke();
@@ -1963,23 +2033,31 @@ function render(now = performance.now()) {
     cur.front.g.setAttribute("opacity", live && t > PRE ? Math.min(1, (1 - t) * 6).toFixed(2) : 0);
   }
   for (const [it, n] of cur.plines || []) n.classList.toggle("on", it.state !== "hidden");  // the chart grows with the pond
+  let moved = false;
   for (const c of cur.cards || []) {
     const on = d >= c.d || (W2 && c.d === 0 && !c.it);  // water: the event's own card is up from the first frame, so the paper column is never empty
     c.el.classList.toggle("off", !on);
     if (on && !c.shown) {
-      c.shown = true; c.el.classList.add("in");
+      c.shown = true; c.el.classList.add("in"); moved = true;
       const f = $("#feed");  // follow the story while it plays (desktop, where the feed scrolls on its own)
       if (playing && f.scrollWidth > f.clientWidth + 4) f.scrollTo({left:Math.max(0, c.el.offsetLeft - f.offsetLeft - f.clientWidth + c.el.offsetWidth + 24), behavior:"smooth"});  // the timeline strip under a wide pond follows the story sideways
       else if (playing && f.scrollHeight > f.clientHeight) f.scrollTo({top:c.el.offsetTop - f.offsetTop - f.clientHeight + c.el.offsetHeight + 16, behavior:"smooth"});
-    } else if (!on && c.shown) { c.shown = false; c.el.classList.remove("in"); }
+    } else if (!on && c.shown) { c.shown = false; c.el.classList.remove("in"); moved = true; }
     if (on && c.cursor && c.it && c.it.series && c.it.series.weekly) {
       const w = c.it.series.weekly, t0 = Date.parse(w[0][0]), t1 = Date.parse(w[w.length - 1][0]);
       const x = Math.max(0, Math.min(300, (addDays(iso0, d).getTime() - t0) / (t1 - t0) * 300));
       c.cursor.setAttribute("x1", x); c.cursor.setAttribute("x2", x);
     }
   }
+  if (moved && CV) { tailQ(); if (playing) followList(); }
 }
 
+let userScrollT = 0; ["wheel", "touchmove", "keydown"].forEach(e => addEventListener(e, () => { userScrollT = performance.now(); }, {passive:true}));
+function followList() {  // the chain view keeps the newest row, and the question under it, in view while the story plays
+  if (performance.now() - userScrollT < 4000) return;
+  const tl = $("#tail"), last = tl && !tl.hidden ? tl : [...$("#feed").querySelectorAll(".card.in")].pop(); if (!last) return;
+  const over = last.getBoundingClientRect().bottom + 16 - window.innerHeight; if (over > 0) window.scrollBy({top:over, behavior:"smooth"});
+}
 function showTip(it, force = false) {
   if ((!force && !matchMedia("(hover:hover) and (pointer:fine)").matches) || it.state !== "landed") return;
   const tip = $("#tip"), svg = $("#pond"), box = svg.getBoundingClientRect(), pb = svg.parentNode.getBoundingClientRect();
@@ -2052,7 +2130,7 @@ function openLine() {  // from the first frame the lower third says what the sto
   bl.innerHTML = `<span class="bwhen">${(f.when || "").replace(/<span>[\s\S]*$/, "")} · the stone</span><b>${esc(f.title)}</b>`; placeBeatline(); bl.classList.remove("off");
 }
 function setPlaying(p) {
-  playing = p; $("#pond").classList.toggle("playing", !!p); $("#feed").classList.toggle("playing", !!p); if (cur && !p) cur.goal = null;
+  playing = p; if (CV && p) tailSet(""); $("#pond").classList.toggle("playing", !!p); $("#feed").classList.toggle("playing", !!p); if (cur && !p) cur.goal = null;
   if (cur && p && cur.timeline) { unspot(); cur.clock = clockAtT(t); if (t <= PRE + 1e-6 && !stepMode) { setMystery(true); openLine(); } else setMystery(false); }  // play from the start is an investigation; a resumed play shows everything
   if (cur && !p) setMystery(false);  // a pause, a stop, a scrub or a deep link shows everything
   if (cur && !p && t >= 1) { track("complete", {slug: cur.key, seconds_in_story: Math.round((performance.now() - sess.storyT0) / 1000)}); cur.items.forEach(wake); setMystery(false); if (!REEL) { unspot(); showEndBeat(); } }  // a reel keeps its end card up; ordinary play ends on what stayed and the next stone  // at rest every step speaks and the pond is level
@@ -2159,7 +2237,7 @@ function show(kind, slug, autoplay = true) {
   const marks = story.items.filter(x => x.mark);
   story.sub = story.sub.replace(/ Tap a ripple to see why\.$/, "");
   clearFocus(); hideTip(); cur = story; hot = null; t = 0; ambient = 0; guessRow("");
-  sess.stories++; sess.reveal = false; sess.storyT0 = performance.now(); sess.scrubbed = false; track("story_start", {kind, slug, via: window.__via || (sess.stories === 1 ? "landing" : "unknown"), nth_story: sess.stories}); window.__via = null;
+  sess.stories++; sess.reveal = false; sess.storyT0 = performance.now(); sess.scrubbed = false; track("story_start", {kind, slug, via: window.__via || (sess.stories === 1 ? "landing" : "unknown"), nth_story: sess.stories, view: CV ? "chain" : "pond"}); window.__via = null;
   const inTab = TABS[tab].some(([k, s]) => k === kind && s === slug) || (tab === "stories" && kind === "chain");
   if (!inTab) tab = tabOf(kind, slug);
   renderPicker();
@@ -2179,7 +2257,7 @@ function show(kind, slug, autoplay = true) {
   const also = kind === "acts" ? null : (DATA.context || {})[`${kind}:${slug}`]; story.also = also || ""; story.titleText = titleText;  // the other things going on: one editorial sentence, so the title never reads as the whole cause
   const subEl = $("#sub"); subEl.classList.toggle("clamp", window.innerWidth <= 560); subEl.classList.toggle("fold", window.innerWidth > 560); subEl.setAttribute("aria-expanded", "false");
   subEl.innerHTML = (also ? `<span class="also"><b>It wasn't the only reason:</b> ${esc(also)}</span> ` : "") + `<span class="rest"><span class="moreq">more ▾</span>` + esc(kind === "acts" ? `Named in the passage of ${story.items.length} ${story.items.length === 1 ? "law" : "laws"}${story.items.length === 1 ? (marks.length ? ", as a reason given for the bill" : ", in passing") : `, ${marks.length} of them as a reason given for the bill`}. A citation shows the work was in the room. It doesn't show the work caused the law.` : markLine) + "</span>";  // one line; the story's own paragraph is in the first card
-  story.subFull = subEl.innerHTML; story.subMystery = `<span class="q">Something changed after this. Follow the water.</span>`;
+  story.subFull = subEl.innerHTML; story.subMystery = `<span class="q">Something changed after this. ${FOLLOW}</span>`;
   const tally = {}; story.items.forEach(x => tally[x.lv] = (tally[x.lv] || 0) + 1);
   $("#tally").innerHTML = (kind === "acts" ? `<span class="markt">${HEX}${marks.length} cited as a reason</span>` : marks.length ? `<span class="markt">${HEX}${marks.length} lasting mark${marks.length === 1 ? "" : "s"}</span>` : `<span class="nomark">No lasting mark yet</span>`) +
     ["measured", "timed", "reported", "plausible", "busted"].filter(k => tally[k]).map(k => `<span class="l-${k}">${tally[k]} ${LVL[k].toLowerCase()}</span>`).join("") + (kind === "acts" ? "" : `<span class="weak">weakest link ${LVL[story.weak].toLowerCase()}</span>`);
@@ -2218,7 +2296,7 @@ function showEndBeat() {  // at rest the lower third says what stayed and points
   const what = marks.length ? `What followed and stayed: ${marks.slice(0, 3).map(x => esc(x.label)).join("; ")}${marks.length > 3 ? `; and ${marks.length - 3} more` : ""}` : "A big splash, no lasting mark yet";
   const nx = nextEntry();
   bl.innerHTML = `<span class="bwhen">${span}</span><b>${what}</b>${verdictHere() ? `<span class="gv">${cur.verdict.html}</span>` : ""}<button type="button" class="bnext" onclick="window.__via='end';next()">Next stone: ${esc(nx.title || "another pond")} →</button>`;
-  placeBeatline(); bl.classList.remove("off");
+  placeBeatline(); bl.classList.remove("off"); tailSet(bl.innerHTML, "end");
 }
 
 (async () => {
@@ -2226,7 +2304,7 @@ function showEndBeat() {  // at rest the lower third says what stayed and points
   const phoneLayout = () => {  // a phone: the pond comes first; the tally and the story chooser sit under it with the controls
     const bar = $(".bar"), ch = $("#chooser"), leg = $(".legend"); if (!bar || !ch || !leg) return;
     const ph = window.innerWidth <= 560, inHead = bar.parentElement.tagName === "HEADER";
-    if (ph && inHead) { leg.after(bar); bar.after(ch); } else if (!ph && !inHead) { $("#sub").after(bar); bar.after(ch); }
+    if (ph && inHead) { if (CV) { $("#feed").after(leg); leg.after(bar); } else leg.after(bar); bar.after(ch); } else if (!ph && !inHead) { $("#sub").after(bar); bar.after(ch); if (CV) $(".ctl").after(leg); }  // the chain view: the list comes straight after the controls; the key, the tally and the chooser follow it
     const sub = $("#sub"); if (sub) { const open = sub.dataset.open === "1"; sub.classList.toggle("clamp", ph && !open); sub.classList.toggle("fold", !ph && !open); sub.setAttribute("aria-expanded", open ? "true" : "false"); }
   };
   phoneLayout(); window.addEventListener("resize", phoneLayout);
