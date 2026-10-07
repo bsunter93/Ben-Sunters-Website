@@ -138,6 +138,7 @@ node header_test.js     # the pond's top on a 390 and a 375 phone (145 to 167 px
 node chart_test.js      # the spikes chart stays inside its column with no animation (the Oct 4 .pulse collision); exits 1 on a failure
 node pace_test.js       # when each ripple arrives and how long a story runs (15 to 95 s, beats 2 s apart or more, a narration line per beat); exits 1 on a failure
 node fold_test.js       # the first card on screen at load at 1093x614 (its title) and 1440x800 (whole), the caption clear of a small phone pond, the first lasting mark and its promise on a phone; exits 1 on a failure
+node chain_test.js      # the chain view: the question row, the answer time, no words on the pond, no overlapping rows, nothing sideways, the guess closes, the next stone; exits 1 on a failure
 node sweep.js           # screenshots of the main screens, desktop and phone, into ./sweep
 ```
 
@@ -206,6 +207,10 @@ the pacing and the cut and are stale.
 
 **Not launched; the public launch is planned for Oct 6.** Everything below is live on main unless marked draft.
 
+- **The chain view (Oct 7), the default:** the story reads as a list in date order beside the water, with no words on
+  the pond, faster beats (Tiger King answers at 14.5 s) and a last row that asks the question, then shows the check and
+  the next stone. `?view=pond` brings the pond back for the session. The other QA checks run on the pond (`QA_VIEW=chain`
+  runs them on the list). Why, the first week's numbers and how the next week is read: `docs/chain_view_v1.md`.
 - **The page:** a lake at dusk (WebGL water under the SVG: a wave packet, standing rings, wind, sky reflection, a far
   shore, a treeline, faint clouds), the story drawn as a route of grade-styled curves, the month on the wave's crest, one
   sentence at a time beside the step being told, an ember pool when a lasting mark lands, a full-width pond fitted so the

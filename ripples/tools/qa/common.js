@@ -11,7 +11,15 @@ function pageUrl(arg) {
   return 'file://' + path.resolve(p);
 }
 // CHROMIUM=/path/to/chromium overrides Playwright's own browser (the cloud container used /opt/pw-browsers/chromium).
-async function browser() { return chromium.launch(process.env.CHROMIUM ? { executablePath: process.env.CHROMIUM } : {}); }
+// Since Oct 7 the page opens on the chain view (a list); these checks test the pond (?view=pond), except chain_test.js.
+// QA_VIEW=chain runs any of them on the list instead.
+async function browser() {
+  const b = await chromium.launch(process.env.CHROMIUM ? { executablePath: process.env.CHROMIUM } : {});
+  const view = process.env.QA_VIEW || 'pond', tag = v => { window.__rippleView = v; };
+  const np = b.newPage.bind(b); b.newPage = async o => { const p = await np(o); await p.addInitScript(tag, view); return p; };
+  const nc = b.newContext.bind(b); b.newContext = async o => { const c = await nc(o); await c.addInitScript(tag, view); return c; };
+  return b;
+}
 // Drag the scrubber to the end so every ripple has landed, then let the pond settle.
 async function toEnd(pg, ms = 2500) {
   await pg.evaluate(() => { const s = document.querySelector('#scrub'); if (s) { s.value = s.max; s.dispatchEvent(new Event('input')); s.dispatchEvent(new Event('change')); } });
