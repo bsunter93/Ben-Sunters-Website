@@ -1,0 +1,336 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Did it work?</title>
+<meta name="description" content="Paste the number you watch, click when you changed something, read one sentence.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --paper: #faf8f3;
+    --ink: #1c1b18;
+    --muted: #6b675e;
+    --rule: #e4dfd4;
+    --soft: #f1ede4;
+    --accent: #e3590b;
+    --accent-ink: #b84507;
+    --band: rgba(227, 89, 11, 0.10);
+    --mono: "IBM Plex Mono", ui-monospace, SFMono-Regular, Menlo, monospace;
+    --serif: "Fraunces", Georgia, "Times New Roman", serif;
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; background: var(--paper); color: var(--ink); }
+  body { font-family: var(--serif); font-size: 18px; line-height: 1.45; -webkit-font-smoothing: antialiased; }
+  main { max-width: 760px; margin: 0 auto; padding: 48px 16px 80px; }
+  h1 { font-size: 44px; font-weight: 600; letter-spacing: -0.01em; margin: 0 0 6px; line-height: 1.05; }
+  .lede { color: var(--muted); margin: 0 0 28px; font-size: 19px; }
+  .chips { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 12px; }
+  .chip { font-family: var(--mono); font-size: 12.5px; padding: 7px 12px; border: 1px solid var(--rule); border-radius: 999px; background: transparent; color: var(--ink); cursor: pointer; }
+  .chip:hover { border-color: var(--ink); }
+  .chip[aria-pressed="true"] { background: var(--ink); color: var(--paper); border-color: var(--ink); }
+  textarea { width: 100%; min-height: 150px; resize: vertical; font-family: var(--mono); font-size: 13px; line-height: 1.5; padding: 12px 14px; border: 1px solid var(--rule); border-radius: 10px; background: #fff; color: var(--ink); outline: none; }
+  textarea:focus { border-color: var(--ink); }
+  .notes { font-family: var(--mono); font-size: 12px; color: var(--muted); margin: 8px 0 0; padding: 0; list-style: none; }
+  .notes li { margin: 2px 0; }
+  .notes li.warning { color: var(--accent-ink); }
+  .notes li.error { color: var(--accent-ink); }
+  section { margin-top: 32px; }
+  .label { font-family: var(--mono); font-size: 12px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); margin: 0 0 10px; }
+  .chartwrap { border: 1px solid var(--rule); border-radius: 12px; background: #fff; padding: 10px 10px 4px; }
+  svg { width: 100%; height: auto; display: block; touch-action: manipulation; }
+  .hint { font-family: var(--mono); font-size: 12px; color: var(--muted); margin: 10px 2px 0; }
+  .controls { display: flex; flex-wrap: wrap; gap: 20px 28px; align-items: flex-end; margin-top: 18px; }
+  .control .label { margin-bottom: 6px; }
+  .seg { display: inline-flex; border: 1px solid var(--rule); border-radius: 999px; overflow: hidden; }
+  .seg button { font-family: var(--mono); font-size: 13px; padding: 8px 16px; border: 0; background: transparent; color: var(--ink); cursor: pointer; }
+  .seg button[aria-pressed="true"] { background: var(--ink); color: var(--paper); }
+  .num { font-family: var(--mono); font-size: 14px; width: 110px; padding: 8px 10px; border: 1px solid var(--rule); border-radius: 8px; background: #fff; color: var(--ink); }
+  .num:focus { outline: none; border-color: var(--ink); }
+  .unit { font-family: var(--mono); font-size: 13px; color: var(--muted); margin-left: 6px; }
+  .verdict { margin-top: 36px; padding-top: 28px; border-top: 1px solid var(--rule); }
+  .word { font-family: var(--mono); font-size: 13px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--accent-ink); margin: 0 0 10px; }
+  .headline { font-size: 30px; line-height: 1.25; font-weight: 400; margin: 0; letter-spacing: -0.005em; }
+  .headline.quiet { color: var(--muted); font-size: 22px; }
+  .dims { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 10px; margin-top: 22px; }
+  .dim { background: var(--soft); border-radius: 10px; padding: 12px 12px 10px; }
+  .dim .k { font-family: var(--mono); font-size: 11px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); }
+  .dim .v { font-family: var(--mono); font-size: 14px; margin-top: 4px; }
+  details { margin-top: 22px; }
+  summary { cursor: pointer; font-family: var(--mono); font-size: 13px; color: var(--ink); list-style: none; display: inline-flex; align-items: center; gap: 8px; padding: 8px 14px; border: 1px solid var(--rule); border-radius: 999px; }
+  summary::-webkit-details-marker { display: none; }
+  summary::before { content: "+"; font-weight: 500; }
+  details[open] summary::before { content: "\2212"; }
+  .why { margin: 16px 0 0; padding: 0; list-style: none; }
+  .why li { padding: 10px 0; border-bottom: 1px solid var(--rule); font-size: 16.5px; }
+  .why li:last-child { border-bottom: 0; }
+  .why .t { font-family: var(--mono); font-size: 11px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); display: block; margin-bottom: 2px; }
+  .next { margin-top: 18px; padding: 14px 16px; border-left: 3px solid var(--accent); background: var(--soft); border-radius: 0 10px 10px 0; font-size: 17px; }
+  .actions { display: flex; gap: 10px; margin-top: 18px; }
+  .btn { font-family: var(--mono); font-size: 13px; padding: 9px 16px; border-radius: 999px; border: 1px solid var(--ink); background: var(--ink); color: var(--paper); cursor: pointer; }
+  .btn.ghost { background: transparent; color: var(--ink); }
+  .logrow { display: inline-flex; gap: 8px; align-items: center; }
+  .logrow[hidden] { display: none; }
+  .ledger { margin-top: 44px; padding-top: 24px; border-top: 1px solid var(--rule); }
+  .ledger p { margin: 0 0 6px; }
+  .ledger .cal { color: var(--muted); font-size: 16px; }
+  .entries { list-style: none; margin: 14px 0 0; padding: 0; }
+  .entries li { display: grid; grid-template-columns: auto 1fr auto auto; gap: 12px; align-items: baseline; padding: 9px 0; border-bottom: 1px solid var(--rule); font-size: 16px; }
+  .entries li:last-child { border-bottom: 0; }
+  .entries .w { font-family: var(--mono); font-size: 11.5px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--accent-ink); min-width: 74px; }
+  .entries .n { cursor: pointer; }
+  .entries .n:hover { text-decoration: underline; }
+  .entries .d { font-family: var(--mono); font-size: 11.5px; color: var(--muted); white-space: nowrap; }
+  .entries .x { font-family: var(--mono); font-size: 12px; color: var(--muted); background: none; border: 0; cursor: pointer; padding: 0 4px; }
+  .entries .x:hover { color: var(--accent-ink); }
+  .waiting { font-family: var(--mono); font-size: 12.5px; color: var(--muted); margin: 8px 0 0; }
+  footer { margin-top: 56px; font-family: var(--mono); font-size: 12px; color: var(--muted); }
+  @media (max-width: 560px) {
+    h1 { font-size: 36px; }
+    .headline { font-size: 24px; }
+    .dims { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  }
+</style>
+</head>
+<body>
+<main>
+  <h1>Did it work?</h1>
+  <p class="lede">Paste the number you watch. Click the week you changed something. Read one sentence.</p>
+
+  <div class="chips" id="examples" role="group" aria-label="Examples"></div>
+  <textarea id="paste" spellcheck="false" placeholder="Paste a column of numbers, with or without dates. Weekly, daily, or monthly. Any format your spreadsheet gives you."></textarea>
+  <ul class="notes" id="notes"></ul>
+
+  <section id="chartSection" hidden>
+    <p class="label">Click the point where the change happened</p>
+    <div class="chartwrap"><svg id="chart" viewBox="0 0 740 300" role="img" aria-label="Series chart"></svg></div>
+    <p class="hint" id="changeHint"></p>
+    <div class="controls">
+      <div class="control">
+        <p class="label">You wanted it to go</p>
+        <div class="seg" id="direction">
+          <button type="button" data-dir="up" aria-pressed="true">Up</button>
+          <button type="button" data-dir="down" aria-pressed="false">Down</button>
+        </div>
+      </div>
+      <div class="control">
+        <p class="label">How much would matter (optional)</p>
+        <input class="num" id="target" type="number" inputmode="decimal" min="0.1" step="0.5" placeholder="10"><span class="unit">%</span>
+      </div>
+    </div>
+  </section>
+
+  <section class="verdict" id="verdictSection" hidden>
+    <p class="word" id="word"></p>
+    <p class="headline" id="headline"></p>
+    <div class="dims" id="dims"></div>
+    <div class="next" id="next"></div>
+    <details id="whyBox">
+      <summary>Why?</summary>
+      <ul class="why" id="why"></ul>
+    </details>
+    <div class="actions">
+      <button class="btn" type="button" id="copy">Copy the sentence</button>
+      <button class="btn ghost" type="button" id="logBtn">Log this change</button>
+      <span class="logrow" id="logForm" hidden><input class="num" id="logName" type="text" style="width:240px" placeholder="What changed?"><button class="btn" type="button" id="logSave">Save</button></span>
+    </div>
+  </section>
+
+  <section class="ledger" id="ledgerSection" hidden>
+    <p class="label">Logged changes</p>
+    <p id="ledgerSummary"></p>
+    <p class="cal" id="ledgerCal"></p>
+    <p class="waiting" id="ledgerWaiting"></p>
+    <ul class="entries" id="ledgerList"></ul>
+  </section>
+
+  <footer>Runs in your browser. Nothing you paste leaves this page. <a href="../did-it-work.html" style="color:inherit">How it decides</a> &middot; <a href="../" style="color:inherit">bensunter.com</a></footer>
+</main>
+
+<script type="module">
+import { parse, analyze, entryFrom, refresh, summarize, calibration } from "./engine.js";
+
+const $ = (id) => document.getElementById(id);
+const state = { text: "", series: null, changeIndex: null, direction: "up", target: null, result: null };
+
+// Three example datasets, built with a tiny seeded generator so they never change.
+function lcg(seed) { let s = seed >>> 0; return () => { s = (s * 1664525 + 1013904223) >>> 0; return s / 4294967296; }; }
+function dateAt(start, i, step) { const d = new Date(start.getTime() + i * step * 864e5); return d.toISOString().slice(0, 10); }
+function monthAt(y, m0, i) { return new Date(Date.UTC(y, m0 + i, 1)).toISOString().slice(0, 10); }
+const EXAMPLES = [
+  { name: "Signups after a price cut", direction: "up", target: "", build() {
+      const r = lcg(11); const start = new Date(Date.UTC(2025, 11, 1)); const rows = ["week,signups"];
+      for (let i = 0; i < 36; i++) { const base = 410 + (i >= 24 ? 64 : 0); rows.push(`${dateAt(start, i, 7)},${Math.round(base + (r() - 0.5) * 30)}`); }
+      return { text: rows.join("\n"), changeIndex: 24 }; } },
+  { name: "Tickets after a new intake form", direction: "down", target: "15", build() {
+      const r = lcg(7); const start = new Date(Date.UTC(2025, 9, 6)); const rows = ["week\topen tickets"];
+      for (let i = 0; i < 40; i++) { const base = 240 + (i >= 26 ? -18 : 0); rows.push(`${dateAt(start, i, 7)}\t${Math.round(base + (r() - 0.5) * 40)}`); }
+      return { text: rows.join("\n"), changeIndex: 26 }; } },
+  { name: "Revenue after a campaign", direction: "up", target: "", build() {
+      const r = lcg(3); const rows = ["Month,Revenue"];
+      for (let i = 0; i < 30; i++) { const base = 118000 + i * 1900; const v = Math.round(base + (r() - 0.5) * 9000); rows.push(`${monthAt(2024, 3, i)},$${v.toLocaleString("en-US")}`); }
+      return { text: rows.join("\n"), changeIndex: 24 }; } },
+];
+
+const chips = $("examples");
+EXAMPLES.forEach((ex, i) => {
+  const b = document.createElement("button"); b.className = "chip"; b.type = "button"; b.textContent = ex.name; b.setAttribute("aria-pressed", "false");
+  b.addEventListener("click", () => { const built = ex.build(); state.direction = ex.direction; $("target").value = ex.target; state.target = ex.target ? Number(ex.target) / 100 : null; setDirectionButtons(); $("paste").value = built.text; loadText(built.text, built.changeIndex); markChip(i); });
+  chips.appendChild(b);
+});
+const own = document.createElement("button"); own.className = "chip"; own.type = "button"; own.textContent = "Paste your own"; own.setAttribute("aria-pressed", "false");
+own.addEventListener("click", () => { $("paste").value = ""; $("paste").focus(); loadText("", null); markChip(3); });
+chips.appendChild(own);
+function markChip(i) { [...chips.children].forEach((c, j) => c.setAttribute("aria-pressed", String(i === j))); }
+
+let timer = null;
+$("paste").addEventListener("input", () => { clearTimeout(timer); timer = setTimeout(() => { markChip(3); loadText($("paste").value, null); }, 250); });
+
+function loadText(text, changeIndex) {
+  state.text = text; state.series = null; state.result = null;
+  const notes = $("notes"); notes.innerHTML = "";
+  if (!text.trim()) { $("chartSection").hidden = true; $("verdictSection").hidden = true; return; }
+  const parsed = parse(text);
+  if (!parsed.ok) {
+    for (const e of parsed.errors) { const li = document.createElement("li"); li.className = "error"; li.textContent = e.message; notes.appendChild(li); }
+    $("chartSection").hidden = true; $("verdictSection").hidden = true; return;
+  }
+  state.series = parsed.series;
+  for (const n of parsed.series.normalizations) { const li = document.createElement("li"); li.className = n.severity; li.textContent = n.message; notes.appendChild(li); }
+  const n = parsed.series.periods.length;
+  state.changeIndex = changeIndex != null ? Math.min(Math.max(1, changeIndex), n - 1) : Math.max(1, Math.round(n * 2 / 3));
+  $("chartSection").hidden = false;
+  run();
+}
+
+function setDirectionButtons() { [...$("direction").children].forEach((b) => b.setAttribute("aria-pressed", String(b.dataset.dir === state.direction))); }
+$("direction").addEventListener("click", (e) => { const b = e.target.closest("button"); if (!b) return; state.direction = b.dataset.dir; setDirectionButtons(); run(); });
+$("target").addEventListener("input", () => { const v = Number($("target").value); state.target = v > 0 ? v / 100 : null; run(); });
+
+function run() {
+  if (!state.series) return;
+  const q = { changeIndex: state.changeIndex, direction: state.direction };
+  if (state.target) q.target = state.target;
+  if (state.series.name) q.metricName = state.series.name;
+  try { state.result = analyze(state.series, q); } catch (err) { state.result = null; console.error(err); }
+  drawChart(); renderVerdict();
+}
+
+// Chart: dots and a line, click to move the change marker, pre-trend projection with its band after the change.
+function drawChart() {
+  const svg = $("chart"); const s = state.series; const r = state.result; const W = 740, H = 300, L = 54, R = 16, T = 18, B = 40;
+  const pts = s.periods; const n = pts.length;
+  const vals = pts.map((p) => p.value).filter((v) => v != null);
+  const bandVals = r ? r.chart.periods.flatMap((c) => [c.preTrendLower, c.preTrendUpper, c.preTrend]).filter((v) => v != null) : [];
+  let lo = Math.min(...vals, ...bandVals), hi = Math.max(...vals, ...bandVals); if (hi === lo) { hi = lo + 1; lo = lo - 1; }
+  const pad = (hi - lo) * 0.08; lo -= pad; hi += pad;
+  const x = (i) => L + (i / Math.max(1, n - 1)) * (W - L - R);
+  const y = (v) => T + (1 - (v - lo) / (hi - lo)) * (H - T - B);
+  const fmt = (v) => Math.abs(v) >= 1e6 ? (v / 1e6).toFixed(1) + "M" : Math.abs(v) >= 1e4 ? Math.round(v / 1e3) + "K" : Math.abs(v) >= 100 ? Math.round(v).toLocaleString("en-US") : Number(v.toPrecision(3)).toString();
+  let out = "";
+  // gridlines
+  for (let k = 0; k <= 4; k++) { const v = lo + (hi - lo) * (k / 4); out += `<line x1="${L}" x2="${W - R}" y1="${y(v)}" y2="${y(v)}" stroke="#ece7dc" stroke-width="1"/><text x="${L - 8}" y="${y(v) + 4}" text-anchor="end" font-family="IBM Plex Mono, monospace" font-size="11" fill="#8a857a">${fmt(v)}</text>`; }
+  // evaluation window shading and band
+  if (r) {
+    const cp = r.chart;
+    out += `<rect x="${x(cp.changeIndex) }" y="${T}" width="${Math.max(0, x(cp.evaluationEnd) - x(cp.changeIndex))}" height="${H - T - B}" fill="#f3efe6"/>`;
+    const band = cp.periods.filter((c) => c.preTrendLower != null && c.preTrendUpper != null);
+    if (band.length > 1) {
+      const top = band.map((c) => `${x(c.index)},${y(c.preTrendUpper)}`).join(" ");
+      const bot = band.slice().reverse().map((c) => `${x(c.index)},${y(c.preTrendLower)}`).join(" ");
+      out += `<polygon points="${top} ${bot}" fill="rgba(227,89,11,0.10)"/>`;
+    }
+    const trend = cp.periods.filter((c) => c.preTrend != null);
+    if (trend.length > 1) out += `<polyline points="${trend.map((c) => `${x(c.index)},${y(c.preTrend)}`).join(" ")}" fill="none" stroke="#e3590b" stroke-width="1.5" stroke-dasharray="4 4"/>`;
+    const post = cp.periods.filter((c) => c.postFit != null);
+    if (post.length > 1) out += `<polyline points="${post.map((c) => `${x(c.index)},${y(c.postFit)}`).join(" ")}" fill="none" stroke="#1c1b18" stroke-width="1.5"/>`;
+  }
+  // control, if any
+  if (s.control) { const c = s.control.filter((p) => p.value != null); if (c.length > 1) out += `<polyline points="${c.map((p) => `${x(p.index)},${y(p.value)}`).join(" ")}" fill="none" stroke="#b9b3a6" stroke-width="1.2"/>`; }
+  // series
+  const present = pts.filter((p) => p.value != null);
+  out += `<polyline points="${present.map((p) => `${x(p.index)},${y(p.value)}`).join(" ")}" fill="none" stroke="#1c1b18" stroke-width="1" opacity="0.5"/>`;
+  const rad = n > 80 ? 2 : n > 40 ? 3 : 4;
+  for (const p of present) out += `<circle cx="${x(p.index)}" cy="${y(p.value)}" r="${rad}" fill="${p.index >= state.changeIndex ? "#1c1b18" : "#fff"}" stroke="#1c1b18" stroke-width="1.2"/>`;
+  // change marker
+  const cx = x(state.changeIndex);
+  out += `<line x1="${cx}" x2="${cx}" y1="${T}" y2="${H - B + 6}" stroke="#e3590b" stroke-width="2"/>`;
+  const cd = pts[state.changeIndex]?.date;
+  out += `<text x="${cx}" y="${H - B + 22}" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="11" fill="#b84507">change${cd ? " " + cd : " at " + (state.changeIndex + 1)}</text>`;
+  // x labels: first and last
+  const first = pts[0]?.date, last = pts[n - 1]?.date;
+  out += `<text x="${L}" y="${H - 6}" font-family="IBM Plex Mono, monospace" font-size="11" fill="#8a857a">${first ?? "1"}</text><text x="${W - R}" y="${H - 6}" text-anchor="end" font-family="IBM Plex Mono, monospace" font-size="11" fill="#8a857a">${last ?? String(n)}</text>`;
+  // click targets
+  for (let i = 1; i < n; i++) out += `<rect data-i="${i}" x="${x(i) - (W - L - R) / (2 * (n - 1))}" y="${T}" width="${(W - L - R) / (n - 1)}" height="${H - T - B}" fill="transparent" style="cursor:pointer"/>`;
+  svg.innerHTML = out;
+  $("changeHint").textContent = `Change marked at ${cd ?? "period " + (state.changeIndex + 1)}: ${state.changeIndex} ${unitWord()} before, ${n - state.changeIndex} after. Arrow keys move it.`;
+}
+function unitWord() { const f = state.series?.frequency; return f === "weekly" ? "weeks" : f === "monthly" ? "months" : f === "daily" ? "days" : "periods"; }
+$("chart").addEventListener("click", (e) => { const t = e.target.closest("[data-i]"); if (!t) return; state.changeIndex = Number(t.dataset.i); run(); });
+document.addEventListener("keydown", (e) => { if (!state.series || document.activeElement.tagName === "TEXTAREA" || document.activeElement.tagName === "INPUT") return; const n = state.series.periods.length; if (e.key === "ArrowLeft") { state.changeIndex = Math.max(1, state.changeIndex - 1); run(); } if (e.key === "ArrowRight") { state.changeIndex = Math.min(n - 1, state.changeIndex + 1); run(); } });
+
+const WORDS = { "supported": "Yes", "partially-supported": "Partly", "not-supported": "No", "inconclusive": "Can't tell", "too-early": "Too early" };
+const DIM_LABELS = { effect: "Did it move?", identification: "Evidence of cause", materiality: "Big enough?", sufficiency: "Enough data?" };
+const DIM_WORDS = { positive: "yes, up", negative: "yes, down", "near-zero": "no", uncertain: "unclear", strong: "strong", moderate: "moderate", weak: "weak", none: "none", meaningful: "yes", "below-threshold": "no", "not-assessed": "you did not say", high: "plenty", medium: "enough", low: "thin", "too-early": "too early" };
+function renderVerdict() {
+  const r = state.result; const sec = $("verdictSection");
+  if (!r) { sec.hidden = false; $("word").textContent = ""; $("headline").textContent = "Something in this input could not be analyzed."; $("headline").className = "headline quiet"; $("dims").innerHTML = ""; $("next").hidden = true; $("why").innerHTML = ""; return; }
+  sec.hidden = false;
+  $("word").textContent = WORDS[r.verdict.word] ?? r.verdict.word;
+  $("headline").textContent = r.headline; $("headline").className = "headline";
+  const d = r.dimensions;
+  const THRESHOLD_WORDS = { meets: "yes", "possibly-below": "not settled", "clearly-below": "no", "not-assessed": "you did not say" };
+  const dimWord = (k) => k === "materiality" ? (THRESHOLD_WORDS[d.thresholdState] ?? DIM_WORDS[d.materiality]) : (DIM_WORDS[d[k]] ?? d[k]);
+  $("dims").innerHTML = ["effect", "identification", "materiality", "sufficiency"].map((k) => `<div class="dim"><div class="k">${DIM_LABELS[k]}</div><div class="v">${dimWord(k)}</div></div>`).join("");
+  $("next").hidden = !r.next?.sentence; $("next").textContent = r.next?.sentence ?? "";
+  $("why").innerHTML = r.details.map((s) => `<li><span class="t">${s.topic.replace(/-/g, " ")}</span>${escapeHtml(s.text)}</li>`).join("");
+}
+function escapeHtml(s) { return s.replace(/[&<>]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;" }[c])); }
+$("copy").addEventListener("click", async () => { if (!state.result) return; try { await navigator.clipboard.writeText(state.result.headline); $("copy").textContent = "Copied"; setTimeout(() => ($("copy").textContent = "Copy the sentence"), 1400); } catch { $("copy").textContent = "Select and copy"; } });
+
+// The ledger: logged changes kept in this browser. Each item holds the entry plus the pasted text so it can be rechecked.
+const LEDGER_KEY = "did-it-work-ledger";
+function loadLedger() { try { const raw = localStorage.getItem(LEDGER_KEY); return raw ? JSON.parse(raw) : []; } catch { return []; } }
+function saveLedger(items) { try { localStorage.setItem(LEDGER_KEY, JSON.stringify(items)); } catch {} }
+let ledger = loadLedger();
+const today = () => new Date().toISOString().slice(0, 10);
+function renderLedger() {
+  const sec = $("ledgerSection");
+  if (!ledger.length) { sec.hidden = true; return; }
+  sec.hidden = false;
+  const entries = ledger.map((it) => it.entry);
+  const s = summarize(entries); const c = calibration(entries);
+  $("ledgerSummary").textContent = s.sentence;
+  $("ledgerCal").textContent = c.sentence ?? "";
+  $("ledgerWaiting").textContent = s.waiting.join(" ");
+  $("ledgerList").innerHTML = ledger.map((it) => `<li><span class="w">${WORDS[it.entry.verdict] ?? it.entry.verdict}</span><span class="n" data-id="${it.entry.id}">${escapeHtml(it.entry.name)}</span><span class="d">${it.entry.changeDate ?? ""} \u00b7 checked ${it.entry.lastChecked}</span><button class="x" data-remove="${it.entry.id}" title="Remove">\u00d7</button></li>`).join("");
+}
+$("logBtn").addEventListener("click", () => { if (!state.result) return; $("logForm").hidden = false; $("logName").value = `${state.series.name ?? "Change"} after ${state.series.periods[state.changeIndex]?.date ?? "period " + (state.changeIndex + 1)}`; $("logName").focus(); $("logName").select(); });
+$("logSave").addEventListener("click", () => {
+  if (!state.result) return;
+  const name = $("logName").value.trim() || "Change";
+  const id = `${Date.now().toString(36)}${Math.floor(Math.random() * 1e6).toString(36)}`;
+  const entry = entryFrom(state.result, { id, name, today: today() });
+  ledger.push({ entry, text: state.text, direction: state.direction, target: state.target });
+  saveLedger(ledger); $("logForm").hidden = true; renderLedger();
+  $("ledgerSection").scrollIntoView({ behavior: "smooth", block: "start" });
+});
+$("logName").addEventListener("keydown", (e) => { if (e.key === "Enter") $("logSave").click(); });
+$("ledgerList").addEventListener("click", (e) => {
+  const rm = e.target.closest("[data-remove]");
+  if (rm) { ledger = ledger.filter((it) => it.entry.id !== rm.dataset.remove); saveLedger(ledger); renderLedger(); return; }
+  const n = e.target.closest("[data-id]"); if (!n) return;
+  const it = ledger.find((x) => x.entry.id === n.dataset.id); if (!it) return;
+  state.direction = it.direction; setDirectionButtons(); state.target = it.target; $("target").value = it.target ? String(Math.round(it.target * 1000) / 10) : "";
+  $("paste").value = it.text; markChip(3); loadText(it.text, it.entry.changeIndex);
+  if (state.result) { it.entry = refresh(it.entry, state.result, today()); saveLedger(ledger); renderLedger(); }
+  window.scrollTo({ top: 0, behavior: "smooth" });
+});
+renderLedger();
+
+// Open on the first example so the page is never empty.
+chips.children[0].click();
+</script>
+</body>
+</html>
