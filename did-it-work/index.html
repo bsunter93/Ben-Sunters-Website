@@ -85,6 +85,26 @@
   .entries .x { font-family: var(--mono); font-size: 12px; color: var(--muted); background: none; border: 0; cursor: pointer; padding: 0 4px; }
   .entries .x:hover { color: var(--accent-ink); }
   .waiting { font-family: var(--mono); font-size: 12.5px; color: var(--muted); margin: 8px 0 0; }
+  .linkbtn { text-align: left; font-family: var(--mono); font-size: 12.5px; color: var(--accent-ink); background: none; border: 0; padding: 0; cursor: pointer; text-decoration: underline; text-underline-offset: 3px; }
+  .plan { margin: 0 0 22px; }
+  .planform { display: grid; gap: 14px; margin-top: 14px; padding: 16px; background: var(--soft); border-radius: 12px; }
+  .planform[hidden] { display: none; }
+  .planform .row { display: flex; flex-wrap: wrap; gap: 14px 24px; align-items: flex-end; }
+  .planform .wide { width: 100%; max-width: 420px; }
+  .recheck { font-family: var(--mono); font-size: 12.5px; color: var(--muted); margin: 10px 0 0; }
+  .recheck[hidden] { display: none; }
+  .record { margin-top: 18px; padding: 18px 18px 8px; border: 1px solid var(--rule); border-radius: 12px; background: #fff; }
+  .record[hidden] { display: none; }
+  .record h3 { font-size: 22px; font-weight: 600; margin: 0 0 4px; }
+  .record .meta { font-family: var(--mono); font-size: 12px; color: var(--muted); margin: 0 0 10px; }
+  .record .expect { margin: 0 0 14px; }
+  .check { border-top: 1px solid var(--rule); padding: 14px 0 6px; }
+  .check .word { margin-bottom: 4px; }
+  .check .when { font-family: var(--mono); font-size: 11.5px; color: var(--muted); margin: 0 0 6px; }
+  .check .hl { font-size: 18px; margin: 0; }
+  .check .dims { margin-top: 12px; }
+  .check details { margin-top: 12px; }
+  .check .older { color: var(--muted); }
   footer { margin-top: 56px; font-family: var(--mono); font-size: 12px; color: var(--muted); }
   @media (max-width: 560px) {
     h1 { font-size: 36px; }
@@ -97,6 +117,20 @@
 <main>
   <h1>Did it work?</h1>
   <p class="lede">Paste the number you watch. Click the week you changed something. Read one sentence.</p>
+
+  <div class="plan">
+    <button class="linkbtn" type="button" id="planToggle">Changing something soon? Write down what you expect before the data.</button>
+    <div class="planform" id="planForm" hidden>
+      <div><p class="label">What are you changing?</p><input class="num wide" id="planName" type="text" placeholder="New intake form"></div>
+      <div><p class="label">Which number should move? (optional)</p><input class="num wide" id="planMetric" type="text" placeholder="open tickets"></div>
+      <div class="row">
+        <div><p class="label">Starting</p><input class="num" id="planDate" type="date" style="width:170px"></div>
+        <div><p class="label">It should go</p><div class="seg" id="planDir"><button type="button" data-dir="up" aria-pressed="true">Up</button><button type="button" data-dir="down" aria-pressed="false">Down</button></div></div>
+        <div><p class="label">By about (optional)</p><input class="num" id="planExpected" type="number" inputmode="decimal" min="0.1" step="0.5" placeholder="10"><span class="unit">%</span></div>
+      </div>
+      <div><button class="btn" type="button" id="planSave">Log it</button></div>
+    </div>
+  </div>
 
   <div class="chips" id="examples" role="group" aria-label="Examples"></div>
   <textarea id="paste" spellcheck="false" placeholder="Paste a column of numbers, with or without dates. Weekly, daily, or monthly. Any format your spreadsheet gives you."></textarea>
@@ -135,6 +169,7 @@
       <button class="btn ghost" type="button" id="logBtn">Log this change</button>
       <span class="logrow" id="logForm" hidden><input class="num" id="logName" type="text" style="width:240px" placeholder="What changed?"><button class="btn" type="button" id="logSave">Save</button></span>
     </div>
+    <p class="recheck" id="recheckHint" hidden></p>
   </section>
 
   <section class="ledger" id="ledgerSection" hidden>
@@ -143,16 +178,17 @@
     <p class="cal" id="ledgerCal"></p>
     <p class="waiting" id="ledgerWaiting"></p>
     <ul class="entries" id="ledgerList"></ul>
+    <div class="record" id="record" hidden></div>
   </section>
 
   <footer>Runs in your browser. Nothing you paste leaves this page. <a href="../did-it-work.html" style="color:inherit">How it decides</a> &middot; <a href="../" style="color:inherit">bensunter.com</a></footer>
 </main>
 
 <script type="module">
-import { parse, analyze, entryFrom, refresh, summarize, calibration } from "./engine.js";
+import { parse, analyze, METHOD_VERSION, entryFrom, plannedEntry, addCheck, latest, fromStored, summarize, calibration } from "./engine.js";
 
 const $ = (id) => document.getElementById(id);
-const state = { text: "", series: null, changeIndex: null, direction: "up", target: null, result: null };
+const state = { text: "", series: null, changeIndex: null, direction: "up", target: null, result: null, recheckId: null };
 
 // Three example datasets, built with a tiny seeded generator so they never change.
 function lcg(seed) { let s = seed >>> 0; return () => { s = (s * 1664525 + 1013904223) >>> 0; return s / 4294967296; }; }
@@ -176,7 +212,7 @@ const EXAMPLES = [
 const chips = $("examples");
 EXAMPLES.forEach((ex, i) => {
   const b = document.createElement("button"); b.className = "chip"; b.type = "button"; b.textContent = ex.name; b.setAttribute("aria-pressed", "false");
-  b.addEventListener("click", () => { const built = ex.build(); state.direction = ex.direction; $("target").value = ex.target; state.target = ex.target ? Number(ex.target) / 100 : null; setDirectionButtons(); $("paste").value = built.text; loadText(built.text, built.changeIndex); markChip(i); });
+  b.addEventListener("click", () => { setRecheck(null); const built = ex.build(); state.direction = ex.direction; $("target").value = ex.target; state.target = ex.target ? Number(ex.target) / 100 : null; setDirectionButtons(); $("paste").value = built.text; loadText(built.text, built.changeIndex); markChip(i); });
   chips.appendChild(b);
 });
 const own = document.createElement("button"); own.className = "chip"; own.type = "button"; own.textContent = "Paste your own"; own.setAttribute("aria-pressed", "false");
@@ -199,6 +235,7 @@ function loadText(text, changeIndex) {
   state.series = parsed.series;
   for (const n of parsed.series.normalizations) { const li = document.createElement("li"); li.className = n.severity; li.textContent = n.message; notes.appendChild(li); }
   const n = parsed.series.periods.length;
+  if (changeIndex == null) changeIndex = indexForRecheck(parsed.series);
   state.changeIndex = changeIndex != null ? Math.min(Math.max(1, changeIndex), n - 1) : Math.max(1, Math.round(n * 2 / 3));
   $("chartSection").hidden = false;
   run();
@@ -289,12 +326,23 @@ function renderVerdict() {
 function escapeHtml(s) { return s.replace(/[&<>]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;" }[c])); }
 $("copy").addEventListener("click", async () => { if (!state.result) return; try { await navigator.clipboard.writeText(state.result.headline); $("copy").textContent = "Copied"; setTimeout(() => ($("copy").textContent = "Copy the sentence"), 1400); } catch { $("copy").textContent = "Select and copy"; } });
 
-// The ledger: logged changes kept in this browser. Each item holds the entry plus the pasted text so it can be rechecked.
+// The ledger: logged changes kept in this browser. Each item holds the entry plus the pasted text
+// so it can be checked again. A check is never rewritten; looking again adds a new one.
 const LEDGER_KEY = "did-it-work-ledger";
-function loadLedger() { try { const raw = localStorage.getItem(LEDGER_KEY); return raw ? JSON.parse(raw) : []; } catch { return []; } }
+function loadLedger() {
+  try {
+    const raw = localStorage.getItem(LEDGER_KEY); const items = raw ? JSON.parse(raw) : [];
+    return items.map((it) => ({ ...it, entry: fromStored(it.entry) })).filter((it) => it.entry);
+  } catch { return []; }
+}
 function saveLedger(items) { try { localStorage.setItem(LEDGER_KEY, JSON.stringify(items)); } catch {} }
 let ledger = loadLedger();
-const today = () => new Date().toISOString().slice(0, 10);
+let openId = null;
+const today = () => { const d = new Date(); return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`; };
+const newId = () => `${Date.now().toString(36)}${Math.floor(Math.random() * 1e6).toString(36)}`;
+const pct = (f) => `${Math.round(f * 1000) / 10}%`;
+const findItem = (id) => ledger.find((x) => x.entry.id === id);
+
 function renderLedger() {
   const sec = $("ledgerSection");
   if (!ledger.length) { sec.hidden = true; return; }
@@ -304,28 +352,105 @@ function renderLedger() {
   $("ledgerSummary").textContent = s.sentence;
   $("ledgerCal").textContent = c.sentence ?? "";
   $("ledgerWaiting").textContent = s.waiting.join(" ");
-  $("ledgerList").innerHTML = ledger.map((it) => `<li><span class="w">${WORDS[it.entry.verdict] ?? it.entry.verdict}</span><span class="n" data-id="${it.entry.id}">${escapeHtml(it.entry.name)}</span><span class="d">${it.entry.changeDate ?? ""} \u00b7 checked ${it.entry.lastChecked}</span><button class="x" data-remove="${it.entry.id}" title="Remove">\u00d7</button></li>`).join("");
+  $("ledgerList").innerHTML = ledger.map((it) => {
+    const e = it.entry; const last = latest(e);
+    const word = last ? (WORDS[last.verdict] ?? last.verdict) : "Waiting";
+    const when = last ? `checked ${last.checkedOn}${e.checks.length > 1 ? ` · ${e.checks.length} checks` : ""}` : `logged ${e.loggedOn}`;
+    return `<li><span class="w">${word}</span><span class="n" data-id="${e.id}">${escapeHtml(e.name)}</span><span class="d">${e.changeDate ?? ""} · ${when}</span><button class="x" data-remove="${e.id}" title="Remove">×</button></li>`;
+  }).join("");
+  renderRecord();
 }
-$("logBtn").addEventListener("click", () => { if (!state.result) return; $("logForm").hidden = false; $("logName").value = `${state.series.name ?? "Change"} after ${state.series.periods[state.changeIndex]?.date ?? "period " + (state.changeIndex + 1)}`; $("logName").focus(); $("logName").select(); });
+
+function expectationLine(e) {
+  const metric = e.metricName ? `${escapeHtml(e.metricName)} ` : "";
+  if (e.expected == null) return `Expected ${metric}to go ${e.direction}. No size given.`;
+  return `Expected ${metric}${e.direction} about ${pct(e.expected)}${e.expectedBeforeData ? ", written down before the data" : ""}.`;
+}
+function checkHtml(c, older) {
+  const d = c.dimensions;
+  const THRESHOLD_WORDS = { meets: "yes", "possibly-below": "not settled", "clearly-below": "no", "not-assessed": "you did not say" };
+  const dims = d ? `<div class="dims">${["effect", "identification", "materiality", "sufficiency"].map((k) => `<div class="dim"><div class="k">${DIM_LABELS[k]}</div><div class="v">${k === "materiality" ? (THRESHOLD_WORDS[d.thresholdState] ?? DIM_WORDS[d.materiality]) : (DIM_WORDS[d[k]] ?? d[k])}</div></div>`).join("")}</div>` : "";
+  const why = c.details.length ? `<details><summary>Why?</summary><ul class="why">${c.details.map((s) => `<li><span class="t">${s.topic.replace(/-/g, " ")}</span>${escapeHtml(s.text)}</li>`).join("")}</ul></details>` : "";
+  const method = c.method === METHOD_VERSION ? `method v${c.method}` : `method v${c.method}; this page runs v${METHOD_VERSION}`;
+  return `<div class="check${older ? " older" : ""}"><p class="word">${WORDS[c.verdict] ?? c.verdict}</p><p class="when">Checked ${c.checkedOn} · ${c.periodsAfter} ${c.periodsAfter === 1 ? "period" : "periods"} after the change · ${method}</p><p class="hl">${escapeHtml(c.headline)}</p>${older ? "" : dims}${c.next && !older ? `<p class="when" style="margin-top:10px">${escapeHtml(c.next)}</p>` : ""}${why}</div>`;
+}
+function renderRecord() {
+  const box = $("record"); const it = openId ? findItem(openId) : null;
+  if (!it) { box.hidden = true; box.innerHTML = ""; return; }
+  const e = it.entry;
+  const checks = e.checks.slice().reverse();
+  const body = checks.length
+    ? checks.map((c, i) => checkHtml(c, i > 0)).join("")
+    : `<div class="check"><p class="hl">No data yet. Paste the numbers once some periods after ${e.changeDate ?? "the change"} are in.</p></div>`;
+  const again = checks.length ? "Check again with newer data" : "Paste the data";
+  box.innerHTML = `<h3>${escapeHtml(e.name)}</h3><p class="meta">Logged ${e.loggedOn}${e.changeDate ? ` · change ${e.changeDate}` : ""} · method v${e.method}</p><p class="expect">${expectationLine(e)}</p>${body}<div class="actions"><button class="btn" type="button" data-again="${e.id}">${again}</button><button class="btn ghost" type="button" data-close>Close</button></div>`;
+  box.hidden = false;
+}
+$("record").addEventListener("click", (ev) => {
+  if (ev.target.closest("[data-close]")) { openId = null; renderRecord(); return; }
+  const again = ev.target.closest("[data-again]"); if (!again) return;
+  const it = findItem(again.dataset.again); if (!it) return;
+  setRecheck(it.entry.id);
+  state.direction = it.entry.direction; setDirectionButtons();
+  const t = it.entry.target ?? it.entry.expected; state.target = t; $("target").value = t ? String(Math.round(t * 1000) / 10) : "";
+  const last = latest(it.entry);
+  $("paste").value = it.text ?? ""; markChip(3); loadText(it.text ?? "", last ? last.changeIndex : null);
+  window.scrollTo({ top: 0, behavior: "smooth" }); $("paste").focus();
+});
+
+// Looking again at a logged change: the next save adds a check to it instead of a new entry.
+function setRecheck(id) {
+  state.recheckId = id; const it = id ? findItem(id) : null;
+  $("recheckHint").hidden = !it;
+  $("recheckHint").innerHTML = it ? `Checking “${escapeHtml(it.entry.name)}” again. Paste newer data if you have it; earlier checks stay as they were. <button class="linkbtn" type="button" id="recheckCancel">Log as a new change instead</button>` : "";
+  $("logBtn").textContent = it ? "Save this check" : "Log this change";
+}
+$("recheckHint").addEventListener("click", (ev) => { if (ev.target.id === "recheckCancel") setRecheck(null); });
+function indexForRecheck(series) {
+  const it = state.recheckId ? findItem(state.recheckId) : null; const d = it?.entry.changeDate;
+  if (!d) return null;
+  const i = series.periods.findIndex((p) => p.date && p.date >= d);
+  return i > 0 ? i : null;
+}
+
+$("logBtn").addEventListener("click", () => {
+  if (!state.result) return;
+  const it = state.recheckId ? findItem(state.recheckId) : null;
+  if (it) {
+    it.entry = addCheck(it.entry, state.result, today()); it.text = state.text;
+    saveLedger(ledger); openId = it.entry.id; setRecheck(null); renderLedger();
+    $("ledgerSection").scrollIntoView({ behavior: "smooth", block: "start" }); return;
+  }
+  $("logForm").hidden = false; $("logName").value = `${state.series.name ?? "Change"} after ${state.series.periods[state.changeIndex]?.date ?? "period " + (state.changeIndex + 1)}`; $("logName").focus(); $("logName").select();
+});
 $("logSave").addEventListener("click", () => {
   if (!state.result) return;
   const name = $("logName").value.trim() || "Change";
-  const id = `${Date.now().toString(36)}${Math.floor(Math.random() * 1e6).toString(36)}`;
-  const entry = entryFrom(state.result, { id, name, today: today() });
-  ledger.push({ entry, text: state.text, direction: state.direction, target: state.target });
-  saveLedger(ledger); $("logForm").hidden = true; renderLedger();
+  const entry = entryFrom(state.result, { id: newId(), name, today: today() });
+  ledger.push({ entry, text: state.text });
+  saveLedger(ledger); $("logForm").hidden = true; openId = null; renderLedger();
   $("ledgerSection").scrollIntoView({ behavior: "smooth", block: "start" });
 });
 $("logName").addEventListener("keydown", (e) => { if (e.key === "Enter") $("logSave").click(); });
 $("ledgerList").addEventListener("click", (e) => {
   const rm = e.target.closest("[data-remove]");
-  if (rm) { ledger = ledger.filter((it) => it.entry.id !== rm.dataset.remove); saveLedger(ledger); renderLedger(); return; }
+  if (rm) { ledger = ledger.filter((it) => it.entry.id !== rm.dataset.remove); if (openId === rm.dataset.remove) openId = null; if (state.recheckId === rm.dataset.remove) setRecheck(null); saveLedger(ledger); renderLedger(); return; }
   const n = e.target.closest("[data-id]"); if (!n) return;
-  const it = ledger.find((x) => x.entry.id === n.dataset.id); if (!it) return;
-  state.direction = it.direction; setDirectionButtons(); state.target = it.target; $("target").value = it.target ? String(Math.round(it.target * 1000) / 10) : "";
-  $("paste").value = it.text; markChip(3); loadText(it.text, it.entry.changeIndex);
-  if (state.result) { it.entry = refresh(it.entry, state.result, today()); saveLedger(ledger); renderLedger(); }
-  window.scrollTo({ top: 0, behavior: "smooth" });
+  openId = openId === n.dataset.id ? null : n.dataset.id; renderRecord();
+});
+
+// Logging a change before its data: the expectation is on record before anyone has seen a number.
+let planDir = "up";
+$("planToggle").addEventListener("click", () => { const f = $("planForm"); f.hidden = !f.hidden; if (!f.hidden) { if (!$("planDate").value) $("planDate").value = today(); $("planName").focus(); } });
+$("planDir").addEventListener("click", (e) => { const b = e.target.closest("button"); if (!b) return; planDir = b.dataset.dir; [...$("planDir").children].forEach((x) => x.setAttribute("aria-pressed", String(x.dataset.dir === planDir))); });
+$("planSave").addEventListener("click", () => {
+  const name = $("planName").value.trim(); if (!name) { $("planName").focus(); return; }
+  const v = Number($("planExpected").value);
+  const entry = plannedEntry({ id: newId(), name, today: today(), changeDate: $("planDate").value || null, direction: planDir, expected: v > 0 ? v / 100 : null, metricName: $("planMetric").value.trim() || null });
+  ledger.push({ entry, text: "" }); saveLedger(ledger);
+  for (const id of ["planName", "planMetric", "planExpected"]) $(id).value = "";
+  $("planForm").hidden = true; openId = entry.id; renderLedger();
+  $("ledgerSection").scrollIntoView({ behavior: "smooth", block: "start" });
 });
 renderLedger();
 

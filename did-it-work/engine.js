@@ -5176,6 +5176,9 @@ function analyze(series, question) {
   };
 }
 
+// src/engine/version.ts
+var METHOD_VERSION = "0.1";
+
 // src/ledger/ledger.ts
 var EMPTY_COUNTS = () => ({
   supported: 0,
@@ -5184,33 +5187,107 @@ var EMPTY_COUNTS = () => ({
   inconclusive: 0,
   "too-early": 0
 });
-function entryFrom(result, input) {
+function checkFrom(result, today) {
   const q = result.question;
-  const target = q.minimumMeaningful ?? q.target ?? null;
-  const expected = input.expected === void 0 ? q.target ?? target : input.expected;
+  const d = result.dimensions;
   const needed = result.next.kind === "wait" || result.next.kind === "more-post-periods" || result.next.kind === "keep-measuring" ? result.next.periods : null;
   return {
-    id: input.id,
-    name: input.name,
-    loggedOn: input.today,
+    checkedOn: today,
+    method: METHOD_VERSION,
     changeDate: result.chart.periods[q.changeIndex]?.date ?? null,
     changeIndex: q.changeIndex,
-    direction: q.direction,
-    target,
-    expected,
-    metricName: result.series.name,
-    frequency: result.series.frequency,
     verdict: result.verdict.word,
     headline: result.headline,
     effectPercent: result.estimate?.effectPercent ?? null,
     periodsAfter: result.series.postPresentAll,
     periodsNeeded: needed,
-    lastChecked: input.today
+    dimensions: { effect: d.effect, identification: d.identification, materiality: d.materiality, thresholdState: d.thresholdState, sufficiency: d.sufficiency },
+    next: result.next.sentence,
+    details: result.details.map((s) => ({ topic: s.topic, text: s.text }))
   };
 }
-function refresh(entry, result, today) {
-  const next = entryFrom(result, { id: entry.id, name: entry.name, today, expected: entry.expected });
-  return { ...next, loggedOn: entry.loggedOn, target: entry.target };
+function entryFrom(result, input) {
+  const q = result.question;
+  const target = q.minimumMeaningful ?? q.target ?? null;
+  const check = checkFrom(result, input.today);
+  return {
+    id: input.id,
+    name: input.name,
+    loggedOn: input.today,
+    method: METHOD_VERSION,
+    changeDate: check.changeDate,
+    direction: q.direction,
+    target,
+    expected: input.expected === void 0 ? q.target ?? target : input.expected,
+    expectedBeforeData: false,
+    metricName: result.series.name,
+    frequency: result.series.frequency,
+    checks: [check]
+  };
+}
+function plannedEntry(input) {
+  return {
+    id: input.id,
+    name: input.name,
+    loggedOn: input.today,
+    method: METHOD_VERSION,
+    changeDate: input.changeDate,
+    direction: input.direction,
+    target: input.expected,
+    expected: input.expected,
+    expectedBeforeData: true,
+    metricName: input.metricName ?? null,
+    frequency: null,
+    checks: []
+  };
+}
+function addCheck(entry, result, today) {
+  const check = checkFrom(result, today);
+  return {
+    ...entry,
+    changeDate: entry.changeDate ?? check.changeDate,
+    metricName: entry.metricName ?? result.series.name,
+    frequency: result.series.frequency,
+    checks: [...entry.checks, check]
+  };
+}
+function latest(entry) {
+  return entry.checks.length ? entry.checks[entry.checks.length - 1] : null;
+}
+function fromStored(raw) {
+  if (!raw || typeof raw !== "object") return null;
+  const r = raw;
+  if (typeof r.id !== "string" || typeof r.name !== "string") return null;
+  if (Array.isArray(r.checks)) return r;
+  if (typeof r.verdict !== "string") return null;
+  const check = {
+    checkedOn: String(r.lastChecked ?? r.loggedOn ?? ""),
+    method: "0.1",
+    changeDate: r.changeDate ?? null,
+    changeIndex: Number(r.changeIndex ?? 0),
+    verdict: r.verdict,
+    headline: String(r.headline ?? ""),
+    effectPercent: r.effectPercent ?? null,
+    periodsAfter: Number(r.periodsAfter ?? 0),
+    periodsNeeded: r.periodsNeeded ?? null,
+    dimensions: null,
+    next: "",
+    details: []
+  };
+  return {
+    id: r.id,
+    name: r.name,
+    loggedOn: String(r.loggedOn ?? check.checkedOn),
+    method: "0.1",
+    changeDate: check.changeDate,
+    direction: r.direction === "down" ? "down" : "up",
+    target: r.target ?? null,
+    expected: r.expected ?? null,
+    expectedBeforeData: false,
+    metricName: r.metricName ?? null,
+    frequency: r.frequency ?? null,
+    checks: [check]
+  };
 }
 function unitWord2(frequency, n) {
   const base2 = frequency === "weekly" ? "week" : frequency === "monthly" ? "month" : frequency === "daily" ? "day" : "period";
@@ -5218,9 +5295,24 @@ function unitWord2(frequency, n) {
 }
 function summarize2(entries) {
   const counts = EMPTY_COUNTS();
-  for (const e of entries) counts[e.verdict] += 1;
+  let awaitingData = 0;
+  const waiting = [];
+  for (const e of entries) {
+    const c = latest(e);
+    if (!c) {
+      awaitingData += 1;
+      waiting.push({ loggedOn: e.loggedOn, line: `${e.name} is waiting for data.` });
+      continue;
+    }
+    counts[c.verdict] += 1;
+    if (c.verdict === "too-early" || c.verdict === "inconclusive" && c.periodsNeeded != null) {
+      waiting.push({
+        loggedOn: e.loggedOn,
+        line: c.periodsNeeded != null ? `${e.name} needs ${c.periodsNeeded} more ${unitWord2(e.frequency, c.periodsNeeded)}.` : `${e.name} can't be told yet.`
+      });
+    }
+  }
   const total = entries.length;
-  const waiting = entries.filter((e) => e.verdict === "too-early" || e.verdict === "inconclusive" && e.periodsNeeded != null).slice().sort((a, b) => a.loggedOn.localeCompare(b.loggedOn)).map((e) => e.periodsNeeded != null ? `${e.name} needs ${e.periodsNeeded} more ${unitWord2(e.frequency, e.periodsNeeded)}.` : `${e.name} can't be told yet.`);
   let sentence;
   if (total === 0) sentence = "No changes logged yet.";
   else {
@@ -5233,9 +5325,11 @@ function summarize2(entries) {
     if (partly) parts.push(`${partly} partly`);
     if (didNot) parts.push(`${didNot} did not`);
     if (unclear) parts.push(`${unclear} can't be told yet`);
+    if (awaitingData) parts.push(`${awaitingData} waiting for data`);
     sentence = `${total} ${total === 1 ? "change" : "changes"} logged. ${parts.join(", ")}.`;
   }
-  return { total, counts, sentence, waiting };
+  waiting.sort((a, b) => a.loggedOn.localeCompare(b.loggedOn));
+  return { total, counts, awaitingData, sentence, waiting: waiting.map((w) => w.line) };
 }
 function median(xs) {
   const s = xs.slice().sort((a, b) => a - b);
@@ -5243,18 +5337,23 @@ function median(xs) {
   return s.length % 2 ? s[m] : (s[m - 1] + s[m]) / 2;
 }
 function calibration(entries) {
-  const pairs = entries.filter((e) => e.expected != null && e.expected > 0 && e.effectPercent != null && e.verdict !== "too-early").map((e) => {
+  const pairs = [];
+  for (const e of entries) {
+    const c = latest(e);
+    if (!c || e.expected == null || e.expected <= 0 || c.effectPercent == null || c.verdict === "too-early") continue;
     const sign2 = e.direction === "up" ? 1 : -1;
-    return sign2 * e.effectPercent / e.expected;
-  });
-  if (pairs.length < 3) return { n: pairs.length, ratio: null, sentence: null };
-  const ratio = median(pairs);
-  let sentence;
-  if (ratio >= 0.85 && ratio <= 1.15) sentence = `Across ${pairs.length} changes with an expectation, the measured effect ran close to what was expected.`;
-  else if (ratio <= 0) sentence = `Across ${pairs.length} changes with an expectation, the typical measured effect went the other way from what was expected.`;
-  else if (ratio < 1) sentence = `Across ${pairs.length} changes with an expectation, the measured effect ran about ${describeFraction(ratio)} of what was expected.`;
-  else sentence = `Across ${pairs.length} changes with an expectation, the measured effect ran about ${ratio.toFixed(1)} times what was expected.`;
-  return { n: pairs.length, ratio, sentence };
+    pairs.push({ ratio: sign2 * c.effectPercent / e.expected, beforeData: e.expectedBeforeData });
+  }
+  const beforeData = pairs.filter((p) => p.beforeData).length;
+  if (pairs.length < 3) return { n: pairs.length, beforeData, ratio: null, sentence: null };
+  const ratio = median(pairs.map((p) => p.ratio));
+  const lead = `Across ${pairs.length} changes with an expectation${beforeData ? ` (${beforeData} written down before the data)` : ""}, `;
+  let rest;
+  if (ratio >= 0.85 && ratio <= 1.15) rest = "the measured effect ran close to what was expected.";
+  else if (ratio <= 0) rest = "the typical measured effect went the other way from what was expected.";
+  else if (ratio < 1) rest = `the measured effect ran about ${describeFraction(ratio)} of what was expected.`;
+  else rest = `the measured effect ran about ${ratio.toFixed(1)} times what was expected.`;
+  return { n: pairs.length, beforeData, ratio, sentence: lead + rest };
 }
 function describeFraction(r) {
   if (r < 0.2) return "a tenth";
@@ -5265,10 +5364,14 @@ function describeFraction(r) {
   return "three quarters";
 }
 export {
+  METHOD_VERSION,
+  addCheck,
   analyze,
   calibration,
   entryFrom,
+  fromStored,
+  latest,
   parse,
-  refresh,
+  plannedEntry,
   summarize2 as summarize
 };
