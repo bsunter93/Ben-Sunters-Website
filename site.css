@@ -157,7 +157,7 @@ h1{font:600 clamp(36px,5.4vw,53px)/1.06 var(--display);letter-spacing:-.026em;ma
   outline:1px solid rgba(255,255,255,.22);outline-offset:0;
   box-shadow:0 6px 22px rgba(0,0,0,.28)}
 /* Phone: single column, smaller portrait. Must stay below the .portrait base rule. */
-@media (max-width:720px){.hero-grid{grid-template-columns:1fr}.portrait{order:-1;width:112px}}
+@media (max-width:720px){.hero-grid{grid-template-columns:1fr;gap:16px}.portrait{order:-1;width:84px}}
 
 
 .links{display:flex;flex-wrap:wrap;gap:10px}
@@ -599,6 +599,7 @@ footer{padding:26px 0 44px;border-top:1px solid var(--hair);
    the floor. Featuring the simulator full width and pairing the two tools underneath
    gives each card a row whose height it actually fills. */
 .feature{margin-top:28px}
+.feature+.feature{margin-top:18px}
 .duo{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:18px;margin-top:18px}
 @media (max-width:860px){.duo{grid-template-columns:1fr}}
 .duo .trio-card:nth-child(1){border-top-color:var(--warm)}
@@ -651,7 +652,7 @@ footer{padding:26px 0 44px;border-top:1px solid var(--hair);
 .trio-card:hover .playlink{text-decoration:underline;text-underline-offset:3px}
 
 .also{margin-top:26px;display:grid;grid-template-columns:110px minmax(0,1fr);gap:6px 18px;align-items:baseline}
-.also-l{font:500 10.5px/1.6 var(--mono);letter-spacing:.13em;text-transform:uppercase;color:var(--muted);grid-row:1 / span 2}
+.also-l{font:500 10.5px/1.6 var(--mono);letter-spacing:.13em;text-transform:uppercase;color:var(--muted);grid-row:1 / span 3}
 .also a{font-size:14px;line-height:1.5;color:var(--body);padding:4px 0;border-bottom:1px solid var(--hair)}
 .also a:hover{text-decoration:none;color:var(--ink)}
 .also a b{color:var(--ink);font-weight:600;margin-right:6px}
