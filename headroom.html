@@ -20,31 +20,28 @@
 <meta name="twitter:card" content="summary_large_image">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700&family=Archivo+Narrow:wght@500;600;700&family=Overpass+Mono:wght@400;500;600;700&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600&family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600&display=swap">
 <style>
 /* ── tokens ──────────────────────────────────────────────────────────────── */
 :root{
-  /* Drafting-paper palette: buff ground, faint blue grid, a sheet on top. */
-  --paper:#F7F4ED; --surface:#FCFAF6; --sunk:#F1EDE3;
-  --grid:#F0F1EE; --grid-soft:#F5F3EC;
-  --ink:#16181B; --body:#33383F; --muted:#5B6068; --faint:#8A8F96;
-  --line:#D6CFC1; --hair:#E6E0D4;
+  /* Same palette and type as site.css, so this reads as a page of the site. */
+  --paper:#FAF9F7; --surface:#FFFFFF; --sunk:#F1F4F3;
+  --ink:#14171C; --body:#33383F; --muted:#5B6068; --faint:#8A8F96;
+  --line:#E1E4E2; --hair:#ECEFED;
   --accent:#0E5C63; --accent-soft:#0E5C6314; --on-accent:#FFFFFF;
   --over:#00779B;  --over-fill:#00779B24;
   --short:#9A5A06; --short-fill:#9A5A0626;
   --focus:#0E5C63;
-  --display:'Archivo Narrow','Archivo',Helvetica,Arial,sans-serif;
-  --sans:'Archivo',-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif;
-  /* Overpass Mono, derived from Highway Gothic road-sign lettering. */
-  --mono:'Overpass Mono',ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
+  --display:'Fraunces',Georgia,'Times New Roman',serif;
+  --sans:'IBM Plex Sans',-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif;
+  --mono:'IBM Plex Mono',ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
   --rail:336px;
 }
 @media (prefers-color-scheme:dark){
   :root:not([data-theme="light"]){
-    --paper:#101317; --surface:#161A1F; --sunk:#131A1E;
-    --grid:#14191D; --grid-soft:#12171B;
+    --paper:#101317; --surface:#171B20; --sunk:#141A1D;
     --ink:#E9E7E2; --body:#C3C6CB; --muted:#8B9098; --faint:#767C84;
-    --line:#2A2F36; --hair:#1C2126;
+    --line:#252A31; --hair:#1C2126;
     --accent:#4FB3AE; --accent-soft:#4FB3AE1A; --on-accent:#0B1013;
     --over:#1093B8;  --over-fill:#1093B830;
     --short:#C08438; --short-fill:#C0843830;
@@ -52,10 +49,9 @@
   }
 }
 :root[data-theme="dark"]{
-  --paper:#101317; --surface:#161A1F; --sunk:#131A1E;
-  --grid:#14191D; --grid-soft:#12171B;
+  --paper:#101317; --surface:#171B20; --sunk:#141A1D;
   --ink:#E9E7E2; --body:#C3C6CB; --muted:#8B9098; --faint:#767C84;
-  --line:#2A2F36; --hair:#1C2126;
+  --line:#252A31; --hair:#1C2126;
   --accent:#4FB3AE; --accent-soft:#4FB3AE1A; --on-accent:#0B1013;
   --over:#1093B8;  --over-fill:#1093B830;
   --short:#C08438; --short-fill:#C0843830;
@@ -66,16 +62,9 @@
 *{box-sizing:border-box}
 [hidden]{display:none!important}
 html{-webkit-text-size-adjust:100%}
-/* Ruled-paper background: 96px major grid over 24px minor. */
 body{margin:0;color:var(--body);font:400 15px/1.6 var(--sans);-webkit-font-smoothing:antialiased;
-  background-color:var(--paper);
-  background-image:
-    linear-gradient(var(--grid) 1px,transparent 1px),
-    linear-gradient(90deg,var(--grid) 1px,transparent 1px),
-    linear-gradient(var(--grid-soft) 1px,transparent 1px),
-    linear-gradient(90deg,var(--grid-soft) 1px,transparent 1px);
-  background-size:96px 96px,96px 96px,24px 24px,24px 24px}
-h1,h2,h3{margin:0;color:var(--ink)}
+  background:var(--paper)}
+h1,h2,h3{margin:0;color:var(--ink);font-variation-settings:"WONK" 0,"SOFT" 0}
 :focus-visible{outline:2px solid var(--focus);outline-offset:2px;border-radius:2px}
 @media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
 .num{font-family:var(--mono);font-variant-numeric:tabular-nums}
@@ -84,9 +73,9 @@ h1,h2,h3{margin:0;color:var(--ink)}
 .top{border-bottom:1px solid var(--line);background:var(--surface)}
 .top-in{max-width:1240px;margin:0 auto;padding:16px clamp(16px,3vw,28px);
   display:flex;align-items:center;gap:18px;flex-wrap:wrap}
-.back{font:500 12px/1 var(--mono);letter-spacing:.06em;color:var(--muted);
-  text-decoration:none;border-bottom:1px solid var(--line);padding-bottom:3px}
-.back:hover{color:var(--accent);border-color:var(--accent)}
+.back{font:500 13px/1 var(--sans);color:var(--muted);text-decoration:none}
+.back:hover{color:var(--ink)}
+.top-kind{font:500 13px/1 var(--sans);color:var(--muted)}
 .top-sp{flex:1}
 .tbtn{font:500 12px/1 var(--mono);letter-spacing:.05em;color:var(--muted);background:none;
   border:1px solid var(--line);border-radius:2px;padding:8px 11px;cursor:pointer}
@@ -268,8 +257,9 @@ tr.hi td{background:var(--accent-soft);color:var(--ink)}
 <body>
 
 <header class="top"><div class="top-in">
-  <a class="back" href="/">&larr; bensunter.com</a>
+  <a class="back" href="index.html">&larr; Benjamin J. Sunter</a>
   <span class="top-sp"></span>
+  <span class="top-kind">Staffing Headroom</span>
   <button class="tbtn" id="share" type="button">Copy link to this model</button>
   <button class="tbtn" id="theme" type="button" aria-label="Switch theme" title="Switch theme">Theme</button>
 </div></header>
@@ -498,13 +488,13 @@ tr.hi td{background:var(--accent-soft);color:var(--ink)}
 
 /* ── theme ─────────────────────────────────────────────────────────────── */
 var root=document.documentElement;
-try{var sv=localStorage.getItem('hr-theme'); if(sv==='light'||sv==='dark') root.setAttribute('data-theme',sv);}catch(e){}
+try{var sv=localStorage.getItem('theme'); if(sv==='light'||sv==='dark') root.setAttribute('data-theme',sv);}catch(e){}
 document.getElementById('theme').addEventListener('click',function(){
   var dark=root.getAttribute('data-theme')==='dark'||
     (!root.hasAttribute('data-theme')&&matchMedia('(prefers-color-scheme: dark)').matches);
   var next=dark?'light':'dark';
   root.setAttribute('data-theme',next);
-  try{localStorage.setItem('hr-theme',next);}catch(e){}
+  try{localStorage.setItem('theme',next);}catch(e){}
   draw();
 });
 
