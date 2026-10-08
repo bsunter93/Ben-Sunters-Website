@@ -600,6 +600,15 @@ footer{padding:26px 0 44px;border-top:1px solid var(--hair);
    gives each card a row whose height it actually fills. */
 .feature{margin-top:28px}
 .feature+.feature{margin-top:18px}
+/* A shot per theme. The toggle sets data-theme, so a <picture> media query alone would
+   not follow it; these mirror the token rules at the top of the file. */
+.trio-card .shot-dark{display:none}
+@media (prefers-color-scheme:dark){
+  :root:not([data-theme="light"]) .trio-card .shot-dark{display:block}
+  :root:not([data-theme="light"]) .trio-card .shot-light{display:none}
+}
+:root[data-theme="dark"] .trio-card .shot-dark{display:block}
+:root[data-theme="dark"] .trio-card .shot-light{display:none}
 .duo{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:18px;margin-top:18px}
 @media (max-width:860px){.duo{grid-template-columns:1fr}}
 .duo .trio-card:nth-child(1){border-top-color:var(--warm)}
