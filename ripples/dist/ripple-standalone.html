@@ -525,8 +525,146 @@ body.card .beatline{display:none}
   .cv .feed > .card.marked::before{left:-20px}.cv .feed > .card.tail.q::before{left:-20px}
   .cv .wrap > .legend,.cv .wrap > .bar{padding:0 4px}
 }
+/* ---------- the answer view (Oct 8): the water opens, a guess opens the answer, the route reads top to bottom ---------- */
+html.av .wrap,html.av #h1,html.av #sub,html.av .tally{display:none}
+html.av header{padding-bottom:10px}
+@media (min-width:561px){html.av header{display:flex;flex-wrap:wrap;align-items:center;gap:10px 28px}html.av header .bar{flex:1;margin-top:0}html.av header .chooser{flex-basis:100%}}
+@media (max-width:560px){html.av .searchbtn{display:none}html.av header .bar{flex-wrap:nowrap;margin-top:10px}html.av .topsearch{order:0;flex:1 1 auto;min-width:0}html.av #chooserkind{display:none}html.av .chooserbtn{padding:9px 12px !important}}
+html.av .foot{margin-top:56px}
+.avmain{display:none;position:relative;z-index:1}
+html.av .avmain{display:block}
+.avhero{position:relative;height:330px;overflow:hidden;background:#0f1c26}
+html:not(.avgl) .avhero{background:linear-gradient(#26313b 0,#0e1a24 42%,#0f2230 43%,#0d1c27 100%)}
+.avhero canvas{position:absolute;inset:0;width:100%;height:100%;display:block}
+.avhero::after{content:"";position:absolute;left:0;right:0;bottom:0;height:64%;background:linear-gradient(90deg,rgba(15,28,38,.74) 0,rgba(15,28,38,.5) 34%,rgba(15,28,38,0) 62%);pointer-events:none}  /* behind the words only: the water on the right stays clear */
+.avin{position:relative;z-index:2;max-width:1180px;height:100%;margin:0 auto;padding:0 32px 70px;display:flex;flex-direction:column;justify-content:flex-end;pointer-events:none}
+.avstonel{margin:0 0 8px;font:500 .92rem/1.4 var(--sans);color:var(--ink-2);max-width:40rem}
+.avq{margin:0;font:600 clamp(2.1rem,4.8vw,3.7rem)/1.04 var(--display);letter-spacing:-.012em;color:var(--ink);max-width:16em;font-variation-settings:"SOFT" 100,"opsz" 72}
+.avq em{font-style:italic;color:var(--marigold)}
+.avq .avarw{color:var(--ink-3);font-weight:400}.avq .avland{color:#ffd391}
+.avq.land{animation:avfade .6s ease both}
+.avfly{position:absolute;z-index:3;width:30px;height:30px;left:0;top:0;pointer-events:none;overflow:visible}
+.avsheet{position:relative;z-index:4;max-width:1180px;margin:-46px auto 0;padding:0 16px}
+.avpaper{display:grid;grid-template-columns:minmax(0,.92fr) minmax(0,1.08fr);background:var(--paper);color:var(--paper-ink);border-radius:20px;box-shadow:0 30px 60px -30px rgba(0,0,0,.6)}
+.avleft{padding:30px 32px 30px;border-right:1px solid rgba(30,42,46,.12)}
+.avright{padding:26px 30px 28px;min-width:0}
+.avlead{margin:0 0 14px;font:600 1.3rem/1.25 var(--display);color:var(--paper-ink)}
+.avtiles{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.avtile{display:grid;grid-template-columns:30px 1fr;column-gap:10px;align-items:center;text-align:left;min-height:64px;padding:12px 14px;border:1px solid rgba(30,42,46,.2);border-radius:14px;background:#fbf8f1;color:var(--paper-ink);font:inherit;cursor:pointer;transition:border-color .15s,background .15s,transform .15s}
+.avtile svg{grid-row:span 2;width:28px;height:28px;color:#b06f0e}
+.avtile b{font:700 .98rem/1.2 var(--sans)}.avtile span{font-size:.8rem;line-height:1.3;color:var(--paper-ink-3)}
+.avtile:hover,.avtile:focus-visible{border-color:var(--paper-ink);background:#fff;transform:translateY(-1px)}
+.avskip{margin:14px 0 0;padding:6px 0;background:none;border:0;border-bottom:1px solid rgba(30,42,46,.35);font:600 .9rem var(--sans);color:var(--paper-ink-2);cursor:pointer}
+.avskip:hover{color:var(--paper-ink);border-color:var(--paper-ink)}
+.avhint{margin:14px 0 0;font-size:.86rem;color:var(--paper-ink-3)}
+.avkick{display:flex;align-items:center;gap:8px;margin:0 0 8px;font:700 .78rem/1.2 var(--sans);letter-spacing:.06em;text-transform:uppercase;color:#a8650c}
+.avkick svg{width:22px;height:22px;flex:none}.avkick.k-none{color:var(--paper-ink-3)}
+.avhead{margin:0;font:600 clamp(1.6rem,2.6vw,2.15rem)/1.12 var(--display);color:var(--paper-ink);font-variation-settings:"SOFT" 60,"opsz" 48}
+.avdate{margin:8px 0 0;font-size:.92rem;color:var(--paper-ink-2)}
+.avverdict{margin:14px 0 0;padding:9px 12px;border-radius:10px;font-size:.92rem;line-height:1.4;background:rgba(62,143,85,.12);color:#24603a}
+.avverdict.wrong{background:rgba(30,42,46,.06);color:var(--paper-ink-2)}
+.avothers{margin:12px 0 0;font-size:.88rem;color:var(--paper-ink-2)}
+.avsure{margin:20px 0 0;padding:16px 0 0;border-top:1px solid rgba(30,42,46,.12)}
+.avlabel{margin:0 0 10px;font:700 .78rem var(--sans);letter-spacing:.06em;text-transform:uppercase;color:var(--paper-ink-3)}
+.avmeter{display:grid;grid-template-columns:repeat(4,1fr);gap:4px}
+.avmeter .rung i{display:block;height:9px;border-radius:3px;background:rgba(30,42,46,.1)}
+.avmeter .rung em{display:block;margin-top:6px;font:500 .74rem/1.2 var(--sans);font-style:normal;color:var(--paper-ink-3)}
+.avmeter .rung.on i{background:var(--rc)}.avmeter .rung.cur em{font-weight:700;color:var(--paper-ink)}
+.r-plausible{--rc:#c2ac6a}.r-reported{--rc:#56666b}.r-timed{--rc:#7a5fc4}.r-measured{--rc:#3e8f55}
+.avsurewhy{margin:12px 0 0;font-size:.94rem;line-height:1.5;color:var(--paper-ink)}
+.avalso{margin:12px 0 0;font-size:.9rem;line-height:1.5;color:var(--paper-ink-2)}.avalso b{color:var(--paper-ink)}
+.avknew{display:flex;flex-wrap:wrap;align-items:center;gap:8px;margin:18px 0 0;font-size:.9rem;color:var(--paper-ink-2)}
+.avknew button{min-height:36px;padding:0 14px;border:1px solid rgba(30,42,46,.25);border-radius:999px;background:none;font:600 .86rem var(--sans);color:var(--paper-ink);cursor:pointer}
+.avknew button:hover{border-color:var(--paper-ink)}
+.avacts{display:flex;flex-wrap:wrap;gap:10px;margin:20px 0 0}
+.avnext{min-height:44px;padding:0 18px;border:0;border-radius:999px;background:var(--marigold);color:#2b1b05;font:700 .95rem var(--sans);cursor:pointer}
+.avnext:hover{filter:brightness(1.06)}
+.avshare{min-height:44px;padding:0 16px;border:1px solid rgba(30,42,46,.25);border-radius:999px;background:none;font:600 .9rem var(--sans);color:var(--paper-ink);cursor:pointer}
+.avrhead{display:flex;align-items:baseline;justify-content:space-between;gap:12px;margin:0 0 14px}
+.avrhead h3{margin:0;font:600 1.25rem var(--display);color:var(--paper-ink)}
+.avrhead span{font-size:.84rem;color:var(--paper-ink-3);white-space:nowrap}
+.avstream{position:relative;list-style:none;margin:0;padding:0}
+.avline{position:absolute;left:0;top:0;width:28px;height:100%;overflow:visible;pointer-events:none}
+.avstream li{position:relative;padding:0 0 18px 42px}
+.avstream li:last-child{padding-bottom:0}
+.avdot{position:absolute;left:3px;top:1px;width:22px;height:22px;display:flex;align-items:center;justify-content:center;background:var(--paper);border-radius:50%;z-index:1}
+.avdot svg{width:18px;height:18px}
+.avn.l-measured .avdot{color:#3e8f55}.avn.l-timed .avdot{color:#7a5fc4}.avn.l-reported .avdot{color:#3a4a4f}.avn.l-plausible .avdot{color:#a08a47}.avn.l-busted .avdot{color:#d04a3a}.avn.l-na .avdot{color:var(--paper-ink-3)}
+.avn.stone .avdot svg{width:22px;height:22px}
+.avn.mark .avdot svg{width:22px;height:22px;color:#c77f12}
+.avn.q .avdot{font:700 .9rem var(--sans);color:var(--paper-ink-3);border:1.5px dashed rgba(30,42,46,.35)}
+.avwhen{margin:0;font:600 .8rem/1.3 var(--sans);color:var(--paper-ink-2)}.avwhen span{margin-left:8px;font-weight:400;color:var(--paper-ink-3)}
+.avtitle{margin:2px 0 0;font:600 1.02rem/1.35 var(--sans);color:var(--paper-ink)}
+.avn.ans .avtitle{font:600 1.22rem/1.25 var(--display)}
+.avn.l-busted .avtitle{color:var(--paper-ink-2)}
+.avmk{margin:4px 0 0;display:flex;align-items:center;gap:5px;font:700 .74rem var(--sans);letter-spacing:.03em;color:#a8650c}.avmk .hex{color:#c77f12}
+.avwhy{margin:5px 0 0;font-size:.88rem;line-height:1.45;color:var(--paper-ink-2)}
+.avwhy a{color:var(--paper-ink-2);white-space:nowrap}
+.avtag{display:inline-block;margin-right:4px;padding:0 7px;border-radius:6px;font:700 .72rem/1.6 var(--sans);letter-spacing:.02em;vertical-align:1px}
+.t-measured{background:rgba(62,143,85,.14);color:#2f7044}.t-timed{background:rgba(122,95,196,.13);color:#5e46a8}.t-reported{background:rgba(30,42,46,.08);color:#2f3d42}
+.t-plausible{background:rgba(168,149,90,.18);color:#76652c}.t-busted{background:rgba(208,74,58,.12);color:#b13a2c}.t-na{background:rgba(30,42,46,.06);color:var(--paper-ink-3)}
+.avlist{margin:4px 0 0;font-size:.9rem;line-height:1.45;color:var(--paper-ink)}
+.avopen,.avall{margin:8px 0 0;padding:4px 0;background:none;border:0;border-bottom:1px solid rgba(30,42,46,.3);font:600 .84rem var(--sans);color:var(--paper-ink-2);cursor:pointer}
+.avall{margin-top:18px}
+.avopen:hover,.avall:hover{color:var(--paper-ink);border-color:var(--paper-ink)}
+.avgap{padding:0 0 18px 42px!important}
+.avgap span{display:inline-block;font:italic 500 .84rem var(--display);color:var(--paper-ink-3)}
+.avmore{margin:6px 0 0}
+.avmore summary{display:inline;cursor:pointer;font:600 .8rem var(--sans);color:var(--paper-ink-3);list-style:none;border-bottom:1px dotted currentColor}
+.avmore summary::-webkit-details-marker{display:none}
+.avmore[open] summary{color:var(--paper-ink-2)}
+.avmore .in{margin:8px 0 0;padding:10px 12px;border-radius:10px;background:rgba(30,42,46,.045);font-size:.86rem;line-height:1.5;color:var(--paper-ink-2)}
+.avmore .in p{margin:0 0 6px}.avmore .in p:last-child{margin-bottom:0}
+.avmore .facts{display:flex;flex-wrap:wrap;gap:10px;margin:0 0 6px}.avmore .fact b{display:block;color:var(--paper-ink)}
+.avspark{margin:0 0 8px}.avspark span{display:block;font-size:.76rem;color:var(--paper-ink-3);margin-bottom:2px}
+.avspark svg{width:100%;height:42px;display:block}
+.avcite{margin-top:4px;padding:4px 10px;border:1px solid rgba(30,42,46,.25);border-radius:999px;background:none;font:600 .78rem var(--sans);color:var(--paper-ink);cursor:pointer}
+.avextra{margin:16px 0 0;padding:12px 0 0;border-top:1px dashed rgba(30,42,46,.2)}
+.avextra h4{margin:0 0 6px;font:700 .78rem var(--sans);letter-spacing:.06em;text-transform:uppercase;color:var(--paper-ink-3)}
+.avextra p{margin:0 0 6px;font-size:.88rem;color:var(--paper-ink-2)}.avextra b{color:var(--paper-ink)}
+.avstream.teaser .avtitle{color:var(--paper-ink-3);font-weight:500}
+.avstream li.flash{animation:avflash 1.6s ease}
+.avstream.reveal li{animation:avin .5s cubic-bezier(.2,.7,.2,1) both;animation-delay:calc(var(--i,0) * 110ms)}
+.avline.draw{animation:avdraw 1.5s cubic-bezier(.45,.05,.3,1) both}
+.avline .flow{stroke-dasharray:3 13;animation:avflow 2.4s linear infinite}
+@keyframes avin{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+@keyframes avdraw{from{clip-path:inset(0 0 100% 0)}to{clip-path:inset(0 0 0 0)}}
+@keyframes avflow{to{stroke-dashoffset:-32}}
+@keyframes avfade{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+@keyframes avflash{0%,40%{background:rgba(242,169,59,.22)}100%{background:transparent}}
+.avleft.land>*{animation:avfade .5s ease both}.avleft.land>*:nth-child(2){animation-delay:.08s}.avleft.land>*:nth-child(3){animation-delay:.16s}.avleft.land>*:nth-child(n+4){animation-delay:.24s}
+.avshelf{max-width:1180px;margin:56px auto 0;padding:0 16px}
+.avsh{margin:0;font:600 1.9rem/1.1 var(--display);color:var(--ink)}
+.avshsub{margin:6px 0 0;color:var(--ink-3);font-size:.95rem}
+.avgroup{margin:28px 0 0}
+.avgroup h3{display:flex;align-items:center;gap:10px;margin:0 0 12px;font:600 1.15rem var(--display);color:var(--ink)}
+.avgroup h3 svg{width:22px;height:22px;color:var(--marigold)}.avgroup h3 em{font:500 .82rem var(--sans);font-style:normal;color:var(--ink-3)}
+.avgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:12px}
+.avcard{display:flex;flex-direction:column;gap:3px;min-height:118px;padding:14px 16px;text-align:left;border:1px solid var(--hair);border-radius:14px;background:var(--card);color:var(--ink);font:inherit;cursor:pointer;transition:border-color .15s,transform .15s,background .15s}
+.avcard:hover,.avcard:focus-visible{border-color:var(--ink-3);background:#1a3044;transform:translateY(-2px)}
+.avcard .cy{font:600 .74rem var(--sans);color:var(--ink-3);letter-spacing:.04em}
+.avcard .cs{font:600 1.12rem/1.2 var(--display);color:var(--ink)}
+.avcard .cl{font-size:.92rem;line-height:1.35;color:#ffd391}
+.avcard .cm{margin-top:auto;padding-top:6px;display:flex;align-items:center;gap:6px;font-size:.76rem;color:var(--ink-3)}
+.avcard .cm i{width:8px;height:8px;border-radius:50%;flex:none}
+.d-measured{background:var(--good)}.d-timed{background:var(--timed)}.d-reported{background:#e9eef0}.d-plausible{background:var(--plaus)}.d-busted{background:var(--miss)}
+.avshmore{margin:12px 0 0;padding:6px 0;background:none;border:0;border-bottom:1px solid var(--ink-3);font:600 .88rem var(--sans);color:var(--ink-2);cursor:pointer}
+@media (max-width:900px){.avpaper{grid-template-columns:minmax(0,1fr)}.avleft{border-right:0;border-bottom:1px solid rgba(30,42,46,.12)}}
+@media (max-width:560px){
+  .avhero{height:260px}
+  .avin{justify-content:flex-start;padding:16px 18px 0}
+  .avhero::after{top:0;bottom:auto;height:48%;background:linear-gradient(rgba(15,28,38,.62),rgba(15,28,38,0))}
+  .avq{font-size:2rem}
+  .avsheet{margin-top:-30px;padding:0 10px}
+  .avleft{padding:22px 18px}.avright{padding:20px 16px 22px}
+  .avtile{grid-template-columns:24px 1fr;min-height:58px;padding:10px 11px}.avtile svg{width:22px;height:22px}.avtile b{font-size:.9rem}.avtile span{font-size:.74rem}
+  .avstream li{padding-left:38px}
+  .avshelf{margin-top:40px}
+  .avgrid{grid-template-columns:1fr 1fr;gap:8px}.avcard{min-height:112px;padding:12px}.avcard .cs{font-size:1rem}.avcard .cl{font-size:.84rem}
+}
+@media (prefers-reduced-motion:reduce){.avstream.reveal li,.avline.draw,.avline .flow,.avleft.land>*,.avq.land{animation:none}}
 </style>
-<!-- Ripple standalone build 2026-10-07: open this file directly; no server needed. Share pages and the discover pages link to bensunter.com. -->
+<!-- Ripple standalone build 2026-10-08: open this file directly; no server needed. Share pages and the discover pages link to bensunter.com. -->
 </head>
 <body>
 <header>
@@ -588,6 +726,11 @@ body.card .beatline{display:none}
   <section class="feed" id="feed" aria-live="polite"></section>
 </div>
 
+<main class="avmain" id="avmain">
+  <section class="avhero" id="avhero"><div class="avin"><p class="avstonel" id="avstone"></p><h1 class="avq" id="avq"></h1></div></section>
+  <div class="avsheet"><div class="avpaper"><div class="avleft" id="avleft" aria-live="polite"></div><div class="avright" id="avright"></div></div></div>
+  <section class="avshelf" id="avshelf" aria-label="More stories"></section>
+</main>
 <div class="toast" id="toast" role="status"></div>
 <div class="intro" id="intro" hidden role="dialog" aria-labelledby="intro-h">
   <div class="panel">
@@ -686,8 +829,10 @@ const params = new URLSearchParams(location.search);
 const W2 = (() => { const w = params.get("water"); try { if (w) sessionStorage.setItem("ripple-water", w); return (w || sessionStorage.getItem("ripple-water") || "2") === "2"; } catch { return w !== "1"; } })();  // the water look is the default (Oct 5); ?water=1 shows the old instrument pond for the session, ?water=2 brings water back
 if (W2) document.documentElement.classList.add("w2");
 const REEL_Q = params.has("reel"), CARD_Q = params.has("card");  // reels and share cards keep the SVG water: their frames are recorded headless
-const VIEW = (() => { const v = params.get("view") || window.__rippleView; try { if (v) sessionStorage.setItem("ripple-view", v); return v || sessionStorage.getItem("ripple-view") || "chain"; } catch { return v || "chain"; } })();
-const CV = VIEW !== "pond" && !REEL_Q && !CARD_Q;  // Oct 7: the story reads as a list in date order beside the water (a stranger: "the UI is a bit confusing and hard to read"; 26 of 100 starts reached the reveal in the first week); ?view=pond brings the pond back for the session
+const VIEW = (() => { const v = params.get("view") || window.__rippleView; try { if (v) sessionStorage.setItem("ripple-view", v); return v || sessionStorage.getItem("ripple-view") || "answer"; } catch { return v || "answer"; } })();
+const AV = VIEW !== "pond" && VIEW !== "chain" && !REEL_Q && !CARD_Q;  // Oct 8: the answer first (the owner chose it over the list); ?view=chain and ?view=pond keep the earlier views
+if (AV) document.documentElement.classList.add("av");
+const CV = VIEW === "chain" && !REEL_Q && !CARD_Q;  // Oct 7: the story reads as a list in date order beside the water (a stranger: "the UI is a bit confusing and hard to read"; 26 of 100 starts reached the reveal in the first week); ?view=pond brings the pond back for the session
 if (CV) document.documentElement.classList.add("cv");
 const FOLLOW = CV ? "Watch the list." : "Follow the water.";
 // Engagement instruments (Oct 5; docs/engagement_protocol_v1.md). Aggregate events to the site's own GA4 property, no
@@ -709,7 +854,7 @@ let cur = null, t = 0, playing = !matchMedia("(prefers-reduced-motion: reduce)")
 // standing arc where each ripple passed (about a third of the ring; a full ring that stays reads as an orbit), three slow wind waves, Fresnel reflection of a sky gradient and one sun glint.
 // No WebGL, or ?water=1: the SVG water stays as it was.
 const GLW = (() => {
-  if (!W2 || REEL_Q || CARD_Q) return null;
+  if (!W2 || REEL_Q || CARD_Q || AV) return null;  // the answer view draws its own water in the hero
   const cv = document.createElement("canvas"); cv.className = "glw"; cv.setAttribute("aria-hidden", "true");
   let gl; try { gl = cv.getContext("webgl", {alpha:false, antialias:false, premultipliedAlpha:false, powerPreference:"low-power"}); } catch {}
   if (!gl) return null;
@@ -968,7 +1113,7 @@ function discItems(ev, skip = new Set()) {
   const out = [];
   ev.links.filter(l => !skip.has(l.title)).forEach((l, k) => {
     const id = `d${k}`;
-    out.push({id, parent:null, slice:l.slice, d:Math.max(l.lag, 0.5), label:l.label, lv:"measured", disc:true, short:`Attention ${l.ratio}× normal · p = ${l.p}`, title:l.headline || l.label,
+    out.push({id, parent:null, slice:l.slice, d:Math.max(l.lag, 0.5), label:l.label, lv:"measured", disc:true, ttype:"wiki", p:l.p, ratio:l.ratio, short:`Attention ${l.ratio}× normal · p = ${l.p}`, title:l.headline || l.label,
       sub:`${fmtMonth(D(l.onset))} · ${sinceLabel(l.lag)}`, series:{weekly:l.weekly, pre:l.baseline * 7},
       card:card({when:`${fmt(D(l.onset))}<span>${sinceLabel(l.lag)}</span>`, badge:"Measured", badgeCls:"l-measured", cls:"disc",
         sure:howSure("measured", {kind:"wiki", what:l.label, when:fmt(D(l.onset)), ratio:l.ratio, p:l.p, n:l.n_pseudo}),
@@ -977,7 +1122,7 @@ function discItems(ev, skip = new Set()) {
         details:`<p>${esc(cap(l.desc))}.</p>${l.next ? `<p><b>Next test:</b> ${esc(l.next)}.</p>` : ""}<p>Found by the engine among articles linking to the event: daily Wikipedia views rose beyond their own history (p = ${l.p}) after attention to the event began, then qualified by hand for a material endpoint and a plausible path.</p><p class="src">Daily views of “${esc(l.label)}” · <a href="https://en.wikipedia.org/wiki/${encodeURIComponent(l.label.replace(/ /g, "_"))}" target="_blank" rel="noopener">Wikipedia: ${esc(l.label)} ↗</a> · <a href="https://pageviews.wmcloud.org/?project=en.wikipedia.org&pages=${encodeURIComponent(l.label.replace(/ /g, "_"))}" target="_blank" rel="noopener">the pageviews tool ↗</a></p>`})});
     if (l.outcome) {
       const d = daysBetween(ev.date, l.outcome.date);
-      out.push({id:`${id}o`, parent:id, slice:l.slice, d:Math.max(d, 0.5), label:l.outcome.short || shortLabel(l.outcome.claim), lv:"reported", sub:`${fmtMonth(D(l.outcome.date))} · ${sinceLabel(d)}`, mark:l.outcome.mark,
+      out.push({id:`${id}o`, parent:id, slice:l.slice, d:Math.max(d, 0.5), label:l.outcome.short || shortLabel(l.outcome.claim), lv:"reported", sub:`${fmtMonth(D(l.outcome.date))} · ${sinceLabel(d)}`, mark:l.outcome.mark, src:l.outcome.source,
         card:card({when:`${fmt(D(l.outcome.date))}<span>${sinceLabel(d)}</span>`, badge:"Reported", badgeCls:"l-reported", title:l.outcome.claim,
           sure:howSure("reported", {what:l.outcome.source}),
           short:esc(l.outcome.source)})});
@@ -1006,7 +1151,7 @@ function fromMap(slug) {
     const art = lv === "measured" ? (s.measure || "").replace(/.*“([^”]+)”.*/, "$1") : "";
     const link = sl ? [sl.url, sl.label] : art && art !== s.measure ? [`https://en.wikipedia.org/wiki/${encodeURIComponent(art.replace(/ /g, "_"))}`, `Wikipedia: ${art}`] : s.source ? [s.source, "Source"] : null;
     const src = `<p class="src">${esc(amer(s.measure || ""))}${link ? ` · <a href="${esc(link[0])}" rel="noopener" target="_blank">${esc(link[1])} ↗</a>` : s.measure ? ` <span class="nolink">· not linked yet</span>` : ""}</p>`;
-    items.push({id:`m${i}`, parent:n.p ? `m${n.p}` : null, slice:"main", aside:!!n.aside, d:Math.max(s.days, 0.5), label:n.l, lv, sub:`${fmtMonth(D(s.date))} · ${sinceLabel(s.days)}`, mark:n.mark, title:s.title,
+    items.push({id:`m${i}`, parent:n.p ? `m${n.p}` : null, slice:"main", aside:!!n.aside, d:Math.max(s.days, 0.5), label:n.l, lv, ttype:lv === "measured" ? "wiki" : null, p:(/p = ([0-9.]+)/.exec(s.test || "") || [])[1] != null ? +/p = ([0-9.]+)/.exec(s.test)[1] : null, src:s.measure || "", sub:`${fmtMonth(D(s.date))} · ${sinceLabel(s.days)}`, mark:n.mark, title:s.title,
       short:lv === "plausible" ? "Happened; the link is unproven" : lv === "measured" ? "Passed a test against fake dates" : lv === "reported" ? (s.measure || "") : "Rose after the step before",
       series:s.series && s.series.weekly ? s.series : null,
       card:card({when:`${fmt(D(s.date))}<span>${sinceLabel(s.days)}</span>`, badge:LVL[lv], badgeCls:`l-${lv}`, title:s.title,
@@ -1085,7 +1230,7 @@ function fromWiki(slug) {
     const where = m.found === "reverse" ? "the mark's own article" : "the stone's article", disputed = m.grade === "disputed", G = WGRADE[disputed ? "disputed" : "reported"];
     const also = (DATA.context || {})[`wiki:${slug}`] || "";
     const cite = `${w.stone} → ${m.title} (${when}). Ripple grade: ${G.text}. “${m.sentence}” Source: ${m.source_label}, ${m.source_url}.${also ? ` It wasn't the only reason: ${also}` : ""} Ripple, checked ${fmt(D(DATA.wiki.run || "2026-10-04"))}: https://bensunter.com/ripples/demo/?w=${slug}&s=${m.id || `w${i}`}`;
-    items.push({id:m.id || `w${i}`, parent:null, slice:"main", d, label:m.label, sub:`${m.precision === "year" ? m.date : fmtMonth(D(md))} · ${sinceLabel(d)}`, mark:disputed ? null : m.kind, title:m.title, lv:G.lv, lvText:G.text, cite,
+    items.push({id:m.id || `w${i}`, parent:null, slice:"main", d, label:m.label, sub:`${m.precision === "year" ? m.date : fmtMonth(D(md))} · ${sinceLabel(d)}`, mark:disputed ? null : m.kind, title:m.title, lv:G.lv, lvText:G.text, cite, ttype:"wikirec", src:m.source_label || "", bust:"the record that carries the claim also says its accuracy has been questioned",
       short:disputed ? "A popular claim the record itself questions" : `Named as a consequence in ${where} on Wikipedia`, srcText:m.source_label,
       card:card({when:`${when}<span>${sinceLabel(d)}</span>`, badge:G.text, badgeCls:G.cls, title:m.title, mark:disputed ? null : m.kind, cls:G.card,
         short:disputed ? `The engine found the claim in ${where}; the same record says its accuracy has been questioned, so it is shown as disputed and doesn't count as a mark.` : `The engine read ${where} for a sentence that names the stone and a lasting change with a causal word, dated the mark from the record, and kept it because it came after. ${w.screen === "read" ? "The sentence was read against its source before it was shown." : "A person confirmed the sentence states a consequence."}${m.precision === "day" ? "" : m.precision === "month" ? " Dated to the month." : " Dated to the year."}${m.note ? " " + esc(m.note) : ""}`,
@@ -1104,7 +1249,7 @@ function fromActs(work) {
     const how = cs >= 2 ? "cited as a reason" : cs === 1 ? "mentioned in the argument" : "mentioned in passing";
     const actName = p.act.replace(/\s*\(repealed.*\)$/, "");
     items.push({id:`a${i}`, parent:null, slice:"main", d, label:actName,
-      sub:`${fmtMonth(D(p.royal_assent))} · ${sinceLabel(d)}`, mark:cited ? "Law" : null, title:actName, lv:cited ? "reported" : "plausible", lvText:cited ? "Reported" : "Plausible",
+      sub:`${fmtMonth(D(p.royal_assent))} · ${sinceLabel(d)}`, mark:cited ? "Law" : null, title:actName, lv:cited ? "reported" : "plausible", lvText:cited ? "Reported" : "Plausible", ttype:"act", us, debated:p.debated,
       short:`${cap(how)} in the ${p.bill.trim()} debate, ${fmt(D(p.debated))}`,
       card:card({when:`${fmt(D(p.royal_assent))}<span>${sinceLabel(d)}</span>`, badge:cited ? "Reported" : "Plausible", badgeCls:cited ? "l-reported" : "l-plausible", title:actName, mark:cited ? "Law" : null,
         short:`${cap(how)} in ${us ? "Congress" : "Parliament"} during the ${us ? "bill's" : "Bill's"} passage, ${fmt(D(p.debated))}.${esc(whyText(p.cite_why))}`,
@@ -1212,7 +1357,7 @@ function fromChain(slug) {
     const shortLine = lv === "reported" ? "" : short;  // the source sits on its own line under the title; a Reported step needs no second sentence
     const pulseW = weekly && st.test.type !== "dose" ? weekly : (at && at.weekly ? at.weekly : null);
     const pulsePre = weekly && st.test.type !== "dose" && st.baseline ? st.baseline * 7 : null;  // the checker's own baseline, so the chart's peak and the card's ratio agree
-    items.push({id, parent, slice:st.slice || (st.branch ? `b${st.n}` : "main"), d, range, undated, label:st.short || shortLabel(st.claim), lv, lvText, sub, mark:lv === "busted" ? null : st.mark, short:shortLine, srcText:srcLine, title:st.claim, claimRef:(st.must_precede || /after what it is said/.test(st.verdict || "")) && st.ref ? daysBetween(iso0, st.ref) : null, notYet:/not yet/.test(st.verdict || ""), series:pulseW ? {weekly:pulseW, pre:pulsePre} : null,
+    items.push({id, parent, slice:st.slice || (st.branch ? `b${st.n}` : "main"), d, range, undated, label:st.short || shortLabel(st.claim), lv, lvText, sub, ttype:st.test.type, p:st.p, ratio:st.ratio, newArt:!!st.new_article, arch:!!st.archive_first, src:srcLine, srcName:SRC(st), bust:short, bustWhy:why, mark:lv === "busted" ? null : st.mark, short:shortLine, srcText:srcLine, title:st.claim, claimRef:(st.must_precede || /after what it is said/.test(st.verdict || "")) && st.ref ? daysBetween(iso0, st.ref) : null, notYet:/not yet/.test(st.verdict || ""), series:pulseW ? {weekly:pulseW, pre:pulsePre} : null,
       card:card({when, badge:lvText, badgeCls:/not yet/.test(st.verdict || "") ? "na" : `l-${lv}`, title:st.claim, cls:lv === "busted" ? (/not yet/.test(st.verdict || "") ? "notyet" : "busted") : "", spark:weekly ? sparkHTML(weekly, st.ref) : (lv === "measured" && at && at.weekly && at.ratio) ? sparkHTML(at.weekly, st.onset) : "", facts, short:shortLine,
         sure:howSure(st.test.type === "dose" && st.p != null ? "measured" : lv, (lv === "measured" || (st.test.type === "dose" && st.p != null)) ? {kind:st.test.type === "wiki" ? "wiki" : st.test.type === "ssa" ? "ssa" : st.test.type === "dose" ? "dose" : "series", what:st.test.type === "wiki" ? (st.test.articles || [])[0] : SRC(st) || st.series,
             when:st.onset ? fmt(D(st.onset)) : "", ratio:st.ratio, p:st.p, n:st.n_placebo, pre:st.pretrend_p}
@@ -1598,7 +1743,7 @@ function beatText(b) {
 // "Nothing lasting" is right for a story that has none. One guess a story a visit; the running score is this browser's only.
 const GUESS = [["law", "A law or rule", "Law or rule"], ["built", "Something built", "Built"], ["life", "How people live", "Daily life"], ["none", "Nothing lasting", "Nothing"]];  // the third is a phone's: four fit one row
 const GUESS_SAY = {law:"a law or rule", built:"something built", life:"how people live", none:"nothing lasting"};
-const guessOf = k => /^(law|regulation|policy|legal|rule|ruling|treaty|standard)$/i.test(k || "") ? "law" : /^(behavior|name|public health|population)$/i.test(k || "") ? "life" : "built";
+const guessOf = k => /^(law|regulation|policy|legal|rule|ruling|treaty|standard)$/i.test(k || "") ? "law" : /^(behavior|public health|population)$/i.test(k || "") ? "life" : "built";
 let guessScore = {n:0, right:0}; try { guessScore = JSON.parse(localStorage.getItem("ripple-guess")) || guessScore; } catch {}
 const guessed = new Set();
 const phoneGuess = () => window.innerWidth <= 560;  // Oct 5, round seven: at the top of a phone the guess was out of a thumb's reach
@@ -1794,6 +1939,7 @@ function pulseHTML(story) {
   return `<div class="pulse"><div class="ptitle">The spikes, aligned <span>Daily Wikipedia views of each thing named, against that page's own normal (its median before the step), lined up at the day its rise was detected. Height is how far it rose; the tail is how long it lasted. The clock is linear before the step and logarithmic after.</span></div><svg viewBox="0 0 ${W} ${H}" role="img" aria-label="Attention to each page, aligned at its own step">${g}${paths}${labs}</svg></div>`;
 }
 function fitPond() {  // the water look on a wide screen: the pond takes what the header, the controls and the card strip leave, so the cards are on screen when the page opens (owner, Oct 5: the cards are the anchor)
+  if (AV) return;
   const svg = $("#pond"), leg = $(".legend"), feed = $("#feed"); if (!svg || !leg || !feed) return;
   const wide = W2 && !CV && !REEL_Q && !CARD_Q && window.innerWidth > 860, root = document.documentElement;
   root.classList.toggle("fit", wide); root.classList.toggle("glfit", wide && !!GLW);
@@ -2237,16 +2383,12 @@ function show(kind, slug, autoplay = true) {
   const marks = story.items.filter(x => x.mark);
   story.sub = story.sub.replace(/ Tap a ripple to see why\.$/, "");
   clearFocus(); hideTip(); cur = story; hot = null; t = 0; ambient = 0; guessRow("");
-  sess.stories++; sess.reveal = false; sess.storyT0 = performance.now(); sess.scrubbed = false; track("story_start", {kind, slug, via: window.__via || (sess.stories === 1 ? "landing" : "unknown"), nth_story: sess.stories, view: CV ? "chain" : "pond"}); window.__via = null;
+  sess.stories++; sess.reveal = false; sess.storyT0 = performance.now(); sess.scrubbed = false; track("story_start", {kind, slug, via: window.__via || (sess.stories === 1 ? "landing" : "unknown"), nth_story: sess.stories, view: AV ? "answer" : CV ? "chain" : "pond"}); window.__via = null;
   const inTab = TABS[tab].some(([k, s]) => k === kind && s === slug) || (tab === "stories" && kind === "chain");
   if (!inTab) tab = tabOf(kind, slug);
   renderPicker();
   const named = TABS[tab].find(([k, s]) => k === kind && s === slug);
-  const RANK = {measured:0, timed:1, reported:2, plausible:3};
-  const mainPath = story.items.filter(x => x.lv !== "busted" && !x.disc && !x.aside && (x.slice === "main" || !x.slice));  // an aside (a step shown for context, off the way to the mark) does not set the arrow
-  const path = mainPath.length ? mainPath : story.items.filter(x => x.lv !== "busted" && !x.disc);  // a chain with named slices: every step is on the way
-  const upTo = marks.length ? path.filter(x => x.d <= Math.max(...marks.map(m => m.d))) : path;
-  const weak = (upTo.length ? upTo : path).reduce((w, x) => w == null || RANK[x.lv] > RANK[w] ? x.lv : w, null) || "plausible";
+  const weak = weakOf(story);
   story.weak = weak;
   const titleText = named && named[2] ? named[2] : story.h1;
   $("#h1").innerHTML = esc(titleText).replace(/\s*→\s*/, ` <span class="arw l-${weak}" title="The weakest link on the way to the mark is ${LVL[weak].toLowerCase()}"><svg viewBox="0 0 44 16" aria-hidden="true"><line x1="2" y1="8" x2="32" y2="8"/><path d="M28 2l9 6-9 6"/></svg></span> `);
@@ -2272,6 +2414,7 @@ function show(kind, slug, autoplay = true) {
     const nested = pondsFor(it.title || it.label, kind, slug).concat(it.title && norm(it.title) !== norm(it.label) ? pondsFor(it.label, kind, slug) : []);
     if (nested.length) { it.ponds = nested; it.card.html += `<div class="ponds">${pondChips(nested, "This ripple is a stone too:")}</div>`; }
   }
+  if (AV) { avShow(story, kind, slug); return; }
   fitPond(); draw(story); buildFeed(story); $("#feed").scrollTop = 0; $("#feed").scrollLeft = 0; render();
   document.querySelectorAll(".pond").forEach(b => b.onclick = e => { e.stopPropagation(); show(b.dataset.kind, b.dataset.slug); window.scrollTo({top:0, behavior:"smooth"}); });
   const y = d => addDays(story.iso0, d).getUTCFullYear(), yEnd = y(daysAt(1)), yMid = y(daysAt(0.5));  // the clock's own end: Frozen's clock runs to today for its 2032 step, and its slider said 2020
@@ -2299,9 +2442,376 @@ function showEndBeat() {  // at rest the lower third says what stayed and points
   placeBeatline(); bl.classList.remove("off"); tailSet(bl.innerHTML, "end");
 }
 
+// ---------- the answer view (Oct 8) ----------
+// A stranger on Reddit, Oct 7: "the UI is a bit confusing and hard to read". The owner chose the answer first: the water is
+// the opening moment, a guess opens the answer at once (no clock to wait on), every link says how we know in plain words,
+// the route from the stone to the mark reads top to bottom, and the shelf shows where each stone lands. ?view=chain and
+// ?view=pond keep the earlier views for the session.
+const AV_KIND = {
+  law:{say:"A law or rule", ex:"a statute, a ban, a ruling", icon:'<svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2.8 7.3 10 3.2l7.2 4.1z"/><path d="M4.6 9v5.6M8 9v5.6M12 9v5.6M15.4 9v5.6M2.8 16.8h14.4"/></svg>'},
+  built:{say:"Something built", ex:"an agency, a company, a place", icon:'<svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2.5 16.5h15M4 16.5V8.8a6 6 0 0 1 12 0v7.7"/><path d="M7.6 16.5v-4.7a2.4 2.4 0 0 1 4.8 0v4.7"/></svg>'},
+  life:{say:"How people live", ex:"names, habits, health", icon:'<svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="7.2" cy="6.4" r="2.4"/><path d="M2.8 16.2c.4-3 2.2-4.6 4.4-4.6s4 1.6 4.4 4.6"/><circle cx="13.9" cy="7.4" r="1.9"/><path d="M12.6 12c.4-.2.9-.3 1.3-.3 1.8 0 3.2 1.4 3.6 3.8"/></svg>'},
+  none:{say:"Nothing lasting", ex:"a splash that faded", icon:'<svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" aria-hidden="true"><circle cx="10" cy="10" r="1.8"/><circle cx="10" cy="10" r="5.2" stroke-dasharray="2 2.6" opacity=".75"/><circle cx="10" cy="10" r="8.3" stroke-dasharray="1.2 3.2" opacity=".45"/></svg>'}};
+const AV_RUNG = [["plausible", "Unproven"], ["reported", "On the record"], ["timed", "In order"], ["measured", "Measured"]];  // weakest to strongest, the order the title's arrow uses
+const AV_TAG = {measured:"Measured", timed:"In order", reported:"On the record", plausible:"Unproven", busted:"Busted", na:"Not yet"};
+const AV_SURE = {
+  measured:"Every link on the way was measured: each one beat the same test run at random dates. Order still doesn't prove cause.",
+  timed:"Every link is in order. At least one was never tested against chance.",
+  reported:"Every link is in order. The weakest one rests on a public record that names the link. Nobody measured it.",
+  plausible:"At least one link is unproven: it happened, but nothing on record ties it to the step before."};
+const AV_STONE = `<svg viewBox="-16 -16 32 32" aria-hidden="true">${STONE_SVG}</svg>`;
+const AV_HEX = `<svg viewBox="-8 -8 16 16" aria-hidden="true"><path d="M0,-7 L6,-3.5 L6,3.5 L0,7 L-6,3.5 L-6,-3.5 Z" fill="#fff3dc" stroke="currentColor" stroke-width="1.5"/><circle r="2.3" fill="currentColor"/></svg>`;
+let avAll = false; const avShelfOpen = new Set(); let avShelfCache = null, avLake = null;
+function weakOf(story) {  // the weakest link on the way to the last lasting mark: it sets the title's arrow and the meter
+  const RANK = {measured:0, timed:1, reported:2, plausible:3}, marks = story.items.filter(x => x.mark);
+  const mainPath = story.items.filter(x => x.lv !== "busted" && !x.disc && !x.aside && (x.slice === "main" || !x.slice));  // an aside (a step shown for context, off the way to the mark) does not set the arrow
+  const path = mainPath.length ? mainPath : story.items.filter(x => x.lv !== "busted" && !x.disc);  // a chain with named slices: every step is on the way
+  const upTo = marks.length ? path.filter(x => x.d <= Math.max(...marks.map(m => m.d))) : path;
+  return (upTo.length ? upTo : path).reduce((w, x) => w == null || RANK[x.lv] > RANK[w] ? x.lv : w, null) || "plausible";
+}
+function avPrep(st) {  // what the pond would have set: a placed flag for the reveal, and a claim about a day still to come is "not yet"
+  const today = (Date.now() - D(st.iso0)) / 864e5;
+  for (const it of st.items) { if (!it.pos) it.pos = {x:0, y:0}; if (it.d > today) it.future = true; }
+}
+function avGap(d) {  // a span in words: "5 months", "2 years 9 months"
+  d = Math.max(0, Math.round(d));
+  if (d < 14) return `${d} day${d === 1 ? "" : "s"}`;
+  if (d < 60) return `${Math.round(d / 7)} weeks`;
+  let y = Math.floor(d / 365.25), m = Math.round((d - y * 365.25) / 30.44); if (m === 12) { y++; m = 0; }
+  if (!y) return `${m} months`;
+  if (y >= 10) return `${Math.round(d / 365.25)} years`;
+  return `${y} year${y === 1 ? "" : "s"}${m ? ` ${m} month${m === 1 ? "" : "s"}` : ""}`;
+}
+const avWhen = it => ((it.card && it.card.when) || it.when || "").replace(/<span>[\s\S]*$/, "").replace(/<[^>]+>/g, "").trim();
+const avStoneName = s => { const n = s.stone || s.title || ""; return /^(A|An) /.test(n) ? n[0].toLowerCase() + n.slice(1) : n; };
+function avTitle(s) {
+  const [a, b] = (s.titleText || s.h1 || "").split(/\s*→\s*/);
+  return b ? `${esc(a)} <span class="avarw">→</span> <span class="avland">${esc(b)}</span>` : esc(s.titleText || s.h1 || "");
+}
+// How we know one link, in plain words: the tag a reader sees and one sentence. The grades and their tests are unchanged.
+function avWhy(it) {
+  const k = p => p == null ? null : p <= 0.0105 ? 99 : Math.max(1, Math.round((1 - p) * 100));
+  if (it.notYet) return ["na", "Not yet", "It hasn't happened yet."];
+  if (it.lv === "busted") return ["busted", it.lvText === "Disputed" ? "Disputed" : "Busted", avSent(avClip(cap(String(it.bustWhy || it.bust || it.short || "the record doesn't back it").replace(/\.\s*$/, "").replace(/\. ([a-z])/g, (m, c) => ". " + c.toUpperCase()))))];
+  if (it.lv === "measured") {
+    const beat = k(it.p), than = beat ? `, more than at ${beat} of 100 random dates before` : "";
+    if (it.ttype === "wiki") return ["measured", "Measured", `Wikipedia readers jumped${it.ratio && it.ratio !== "several" ? ` to ${it.ratio}× normal` : ""}${than}. That counts attention.`];
+    if (it.ttype === "ssa") return ["measured", "Measured", `More babies got the name${beat ? `, a jump bigger than in ${beat} of 100 other years` : ""}.`];
+    if (it.ttype === "dose") return ["measured", "Measured", "It moved more in the states that were exposed than in the states that weren't."];
+    return ["measured", "Measured", `Counted in ${it.srcName || "an official series"}: a move bigger than at ${beat || 95} of 100 other times.`];
+  }
+  if (it.lv === "timed") return ["timed", "In order", it.newArt ? "It got its own Wikipedia article right after the step before. Not tested against chance." : it.arch ? "It was online right after the step before (Wayback Machine). Not tested against chance." : "It rose right after the step before. Not tested against chance."];
+  if (it.lv === "reported") return ["reported", "On the record", it.ttype === "act" ? `Cited as a reason in ${it.us ? "Congress" : "Parliament"} on ${fmt(D(it.debated))}.` : it.ttype === "wikirec" ? `Named as a result in Wikipedia (${it.src.replace(/^Wikipedia: /, "")}).` : it.src ? avSent(avClip(cap(amer(it.src).replace(/\.\s*$/, "")))) : "A credible source makes the link."];
+  return ["plausible", "Unproven", it.ttype === "act" ? "Mentioned in the debate in passing." : "It happened. Nothing on record ties it to the step before."];
+}
+const avClip = x => x.length > 170 ? x.slice(0, 168).replace(/\s+\S*$/, "").replace(/[,;:.]+$/, "") + "…" : x;
+const avSent = x => /[….!?]$/.test(x) ? x : x + ".";  // one sentence: a clipped one ends on its ellipsis
+function avSrc(it) {  // the first outside link on the card: the record, the article or the series
+  const d = document.createElement("div"); d.innerHTML = it.card ? it.card.html : "";
+  const a = d.querySelector("p.src a[href^='http']") || d.querySelector("a[href^='http']");
+  return a ? [a.getAttribute("href"), a.textContent.replace(/\s*↗\s*$/, "").trim() || "Source"] : null;
+}
+function avMore(it, s) {  // "How we know": the card's own account, its chart, its source and a citation to copy
+  const d = document.createElement("div"); d.innerHTML = it.card ? it.card.html : "";
+  const sure = d.querySelector("details.sure > p"), facts = d.querySelector(".facts"), src = d.querySelector("p.src"), det = d.querySelector(".row > details:not(.sure)");
+  const detHtml = det ? [...det.children].filter(c => c.tagName !== "SUMMARY").map(c => c.outerHTML).join("") : "";
+  const on = addDays(s.iso0, Math.round(it.d)).toISOString().slice(0, 10);
+  const spark = it.series && it.series.weekly && it.series.weekly.length > 2 ? `<div class="avspark"><span>${it.ttype === "wiki" || !it.ttype ? "Wikipedia views a week" : "The series"}, ${esc(fmtMonth(D(it.series.weekly[0][0])))} to ${esc(fmtMonth(D(it.series.weekly[it.series.weekly.length - 1][0])))}; the dashed line is this step</span>${sparkHTML(it.series.weekly, on)}</div>` : "";
+  const cite = it.cite || citeFor(it, s); if (cite) (s.av.cites = s.av.cites || {})[it.id] = cite;
+  const body = `${spark}${facts ? facts.outerHTML : ""}${sure ? `<p>${sure.innerHTML}</p>` : ""}${detHtml}${src ? src.outerHTML : ""}${cite ? `<button type="button" class="avcite" data-id="${esc(it.id)}">Copy citation</button>` : ""}`;
+  return body.replace(/<[^>]+>/g, "").trim() || cite ? `<details class="avmore"><summary>How we know</summary><div class="in">${body}</div></details>` : "";
+}
+function avRows(s) {  // the route: every step in date order; a quick burst of small moves near the stone folds into one row
+  const its = s.items.filter(x => avAll || !x.aside).sort((p, q) => p.d - q.d), rows = []; let run = [];
+  const fold = !avAll && !s.av.open;
+  const flush = () => { if (run.length >= 3 && fold) rows.push({cluster:run}); else rows.push(...run.map(it => ({it}))); run = []; };
+  for (const it of its) { if (!it.mark && it.lv !== "busted" && it !== s.answer && it.d <= 60) run.push(it); else { flush(); rows.push({it}); } }
+  flush(); return rows;
+}
+const avD0 = r => r.cluster ? r.cluster[0].d : r.it.d, avD1 = r => r.cluster ? r.cluster[r.cluster.length - 1].d : r.it.d;
+function avRow(r, s, i) {
+  if (r.cluster) {
+    const c = r.cluster, counts = {}; c.forEach(it => { const k = avWhy(it)[0]; counts[k] = (counts[k] || 0) + 1; });
+    const best = ["measured", "timed", "reported", "plausible", "na"].find(k => counts[k]) || "plausible";
+    return `<li class="avn cluster l-${best}" data-lv="${best}" style="--i:${i}"><span class="avdot">${GLYPH[`l-${best}`] || GLYPH.na}</span><div class="avbody">
+      <p class="avwhen">${esc(avWhen(c[0]))} to ${esc(avWhen(c[c.length - 1]))}<span>the first ${esc(avGap(avD1(r)))}</span></p>
+      <p class="avtitle">${c.length} things moved right after it</p>
+      <p class="avlist">${c.map(it => esc(it.label)).join(" · ")}</p>
+      <p class="avwhy">${Object.entries(counts).map(([k, n]) => `<b class="avtag t-${k}">${n} ${AV_TAG[k].toLowerCase()}</b>`).join(" ")}</p>
+      <button type="button" class="avopen">Show these ${c.length} steps</button></div></li>`;
+  }
+  const it = r.it, [cls, tag, why] = avWhy(it), link = avSrc(it), ans = it === s.answer;
+  return `<li class="avn l-${cls}${it.mark ? " mark" : ""}${ans ? " ans" : ""}" data-id="${esc(it.id)}" data-lv="${cls}" style="--i:${i}"><span class="avdot">${it.mark ? AV_HEX : GLYPH[`l-${cls}`] || GLYPH.na}</span><div class="avbody">
+    <p class="avwhen">${esc(avWhen(it) || it.sub || "")}<span>${esc(it.undated ? "undated" : (it.sub || "").split(" · ")[1] || sinceLabel(it.d))}</span></p>
+    <p class="avtitle">${esc(it.title || (it.card && it.card.title) || it.label)}</p>
+    ${it.mark ? `<p class="avmk">${HEX}Lasting mark · ${esc(it.mark)}${ans ? " · the answer" : ""}</p>` : ""}
+    <p class="avwhy"><b class="avtag t-${cls}">${esc(tag)}</b> ${esc(why)}${link ? ` <a href="${esc(link[0])}" target="_blank" rel="noopener">${esc(link[1])} ↗</a>` : ""}${it.aside ? " Shown for context; it is off the way to the mark." : ""}</p>
+    ${avMore(it, s)}</div></li>`;
+}
+function avStoneRow(s) {
+  const f = s.first || {};
+  return `<li class="avn stone" data-lv="stone" style="--i:0"><span class="avdot">${AV_STONE}</span><div class="avbody"><p class="avwhen">${esc(avWhen(f))}<span>the stone</span></p><p class="avtitle">${esc(f.title || s.stone)}</p></div></li>`;
+}
+function avRoute(s, animate) {
+  const all = avRows(s), n = s.items.filter(x => !x.aside).length;
+  const ai = all.findIndex(r => r.it && r.it === s.answer), cut = Math.max(7, ai + 2);  // a long story shows its route through the answer; the rest waits behind one button
+  const rows = !avAll && all.length > 9 && cut < all.length - 1 ? all.slice(0, cut) : all;
+  let html = avStoneRow(s), prev = 0, i = 1;
+  for (const r of rows) { const gap = avD0(r) - prev; if (gap >= 45 && !r.it?.undated) html += `<li class="avgap" data-gap="1"><span>${esc(avGap(gap))} later</span></li>`; html += avRow(r, s, i++); if (!r.it?.undated) prev = Math.max(prev, avD1(r)); }
+  const hidden = s.items.filter(x => x.aside).length + (s.extra || []).length + (avAll || s.av.open ? 0 : rows.filter(r => r.cluster).reduce((a, r) => a + r.cluster.length - 1, 0)) + all.slice(rows.length).reduce((a, r) => a + (r.cluster ? r.cluster.length : 1), 0);
+  const extra = avAll && (s.extra || []).length ? `<div class="avextra"><h4>Checked, not counted</h4>${s.extra.map(e => { const d = document.createElement("div"); d.innerHTML = e.html || ""; const sh = d.querySelector(".short"); return `<p><b>${esc(e.title || "")}</b>${sh ? ` ${esc(sh.textContent)}` : ""}</p>`; }).join("")}</div>` : "";
+  const last = s.items.filter(x => !x.future && !x.undated).reduce((a, x) => Math.max(a, x.d), 0);
+  $("#avright").innerHTML = `<div class="avrhead"><h3>How it got there</h3><span>${esc(fmtMonth(D(s.iso0)))} to ${esc(fmtMonth(addDays(s.iso0, last)))} · ${n} step${n === 1 ? "" : "s"}</span></div>
+    <ol class="avstream${animate ? " reveal" : ""}">${html}</ol>${extra}${hidden || avAll ? `<button type="button" class="avall">${avAll ? "Show the short route" : `Show every step (${hidden} more)`}</button>` : ""}`;
+  avLine(animate);
+}
+function avTeaser(s) {
+  const a = s.answer, n = s.items.filter(x => !x.aside).length;
+  $("#avright").innerHTML = `<div class="avrhead"><h3>How it got there</h3><span>${n} step${n === 1 ? "" : "s"}</span></div>
+    <ol class="avstream teaser">${avStoneRow(s)}<li class="avgap"><span>${a ? `${esc(avGap(a.d))} later` : "Later"}</span></li><li class="avn q" data-lv="q"><span class="avdot">?</span><div class="avbody"><p class="avtitle">Guess, and the route appears here.</p></div></li></ol>`;
+  avLine(false);
+}
+const AV_STROKE = {measured:["#3e8f55", 3.4, ""], timed:["#7a5fc4", 2.6, ""], reported:["#3a4a4f", 2, ""], plausible:["#a08a47", 2, "5 5"], busted:["#d04a3a", 1.8, "2 5"], na:["#9aa5a7", 1.6, "2 5"], q:["#9aa5a7", 1.6, "2 6"], stone:["#3a4a4f", 2, ""]};
+function avLine(animate) {  // the stream's line, drawn after layout: each link styled by how we know it; time gaps run dotted
+  const ol = $("#avright .avstream"); if (!ol) return;
+  ol.querySelector("svg.avline")?.remove();
+  const ob = ol.getBoundingClientRect(), kids = [...ol.children].filter(li => li.tagName === "LI");
+  const pts = []; let gap = null;
+  for (const li of kids) {
+    if (li.classList.contains("avgap")) { const r = li.getBoundingClientRect(); gap = [r.top - ob.top, r.bottom - ob.top]; continue; }
+    const dot = li.querySelector(".avdot"); if (!dot) continue; const r = dot.getBoundingClientRect();
+    pts.push({x:r.left - ob.left + r.width / 2, y:r.top - ob.top + r.height / 2, lv:li.dataset.lv || "reported", gap, ans:li.classList.contains("ans")}); gap = null;
+  }
+  if (pts.length < 2) return;
+  let segs = "", flow = "";
+  for (let k = 1; k < pts.length; k++) {
+    const a = pts[k - 1], b = pts[k], [col, w, dash] = AV_STROKE[b.lv] || AV_STROKE.reported, y0 = a.y + 12, y1 = b.y - 12;
+    if (y1 <= y0) continue;
+    const line = (p, q, extra = "") => `<line x1="${a.x}" x2="${a.x}" y1="${p.toFixed(1)}" y2="${q.toFixed(1)}" stroke="${col}" stroke-width="${w}" stroke-linecap="round"${dash ? ` stroke-dasharray="${dash}"` : ""}${extra}/>`;
+    if (b.gap && b.gap[1] - b.gap[0] > 8) {
+      const g0 = Math.max(y0, b.gap[0] + 2), g1 = Math.min(y1, b.gap[1] - 4);
+      segs += line(y0, g0) + `<line x1="${a.x}" x2="${a.x}" y1="${g0.toFixed(1)}" y2="${g1.toFixed(1)}" stroke="${col}" stroke-width="${Math.max(1.4, w - 1)}" stroke-dasharray="1.5 5" stroke-linecap="round" opacity=".7"/>` + line(g1, y1);
+      segs += `<path d="M${a.x - 6},${((g0 + g1) / 2 + 3).toFixed(1)} l12,-6 M${a.x - 6},${((g0 + g1) / 2 + 8).toFixed(1)} l12,-6" stroke="#9aa5a7" stroke-width="1.3"/>`;
+    } else segs += line(y0, y1);
+    if (!dash && b.lv !== "q") flow += `<line class="flow" x1="${a.x}" x2="${a.x}" y1="${y0.toFixed(1)}" y2="${y1.toFixed(1)}" stroke="#fff" stroke-opacity=".55" stroke-width="${Math.max(1, w - 1.6)}" stroke-linecap="round"/>`;
+  }
+  const svg = document.createElementNS(NS, "svg"); svg.setAttribute("class", `avline${animate ? " draw" : ""}`); svg.setAttribute("aria-hidden", "true");
+  svg.setAttribute("width", Math.ceil(Math.max(...pts.map(p => p.x)) + 10)); svg.setAttribute("height", Math.ceil(ob.height));
+  svg.style.width = `${Math.ceil(Math.max(...pts.map(p => p.x)) + 10)}px`;
+  svg.innerHTML = segs + flow; ol.prepend(svg);
+}
+function avHero(s, answered) {
+  const f = s.first || {};
+  $("#avstone").textContent = [avWhen(f), f.title].filter(Boolean).join(" · ");
+  const q = $("#avq"); q.classList.remove("land"); void q.offsetWidth;
+  q.innerHTML = answered ? avTitle(s) : `What did <em>${esc(avStoneName(s))}</em> change?`;
+  if (answered) q.classList.add("land");
+}
+function avGuessPanel(s) {
+  const a = s.answer, n = s.items.filter(x => !x.aside).length;
+  const L = $("#avleft"); L.classList.remove("land");
+  L.innerHTML = `<p class="avlead">Guess first: what changed after it?</p>
+    <div class="avtiles" role="group" aria-label="Your guess">${GUESS.map(([k]) => `<button type="button" class="avtile" data-g="${k}">${AV_KIND[k].icon}<b>${AV_KIND[k].say}</b><span>${AV_KIND[k].ex}</span></button>`).join("")}</div>
+    <button type="button" class="avskip">Skip the guess and show me →</button>
+    <p class="avhint">${a ? `The answer lands ${esc(avGap(a.d))} after it, ${n} steps downstream.` : `${n} step${n === 1 ? "" : "s"} follow it.`}</p>`;
+}
+function avKnewDone(k) { return `<span>${k ? "You knew this one." : "New to you."} Your answer helps rank which finds are surprising.</span>`; }
+function avAnswerPanel(s, v) {
+  const a = s.answer, marks = s.items.filter(x => x.mark && !x.future).sort((p, q) => p.d - q.d), kind = a ? guessOf(a.mark) : "none", K = AV_KIND[kind];
+  const rung = AV_RUNG.findIndex(([k]) => k === s.weak), others = marks.filter(m => m !== a);
+  let knew = null; try { knew = JSON.parse(localStorage.getItem("ripple-knew") || "{}")[`${s.kind}:${s.key}`]; } catch {}
+  const nx = nextEntry(), nxStone = (nx.title || "").split("→")[0].trim();
+  const L = $("#avleft"); L.classList.remove("land"); void L.offsetWidth;
+  L.innerHTML = `<p class="avkick k-${kind}">${K.icon}<span>${a ? `${esc(K.say)} · ${esc(avGap(a.d))} later` : "No lasting mark yet"}</span></p>
+    <h2 class="avhead">${a ? esc(a.title || a.label) : `${esc(cap(rippleCount(s.items).text))}. Nothing on record has lasted yet.`}</h2>
+    ${a ? `<p class="avdate">${esc(avWhen(a))}${a.mark ? ` · lasting mark: ${esc(a.mark.toLowerCase())}` : ""}</p>` : ""}
+    ${v ? `<p class="avverdict ${v.right ? "right" : "wrong"}">${v.html}</p>` : ""}
+    ${others.length ? `<p class="avothers">Also lasting: ${others.map(m => `${esc(m.label)} (${esc(avWhen(m))})`).join("; ")}</p>` : ""}
+    <div class="avsure"><p class="avlabel">How sure?</p>
+      <div class="avmeter" role="img" aria-label="How sure: ${AV_TAG[s.weak] || ""}">${AV_RUNG.map(([k, w], i) => `<span class="rung r-${k}${i <= rung ? " on" : ""}${i === rung ? " cur" : ""}"><i></i><em>${w}</em></span>`).join("")}</div>
+      <p class="avsurewhy">${AV_SURE[s.weak] || AV_SURE.plausible}</p></div>
+    ${s.also ? `<p class="avalso"><b>It wasn't the only reason:</b> ${esc(s.also)}</p>` : ""}
+    <div class="avknew">${knew != null ? avKnewDone(knew) : `<span>Did you know this already?</span><button type="button" data-knew="1">Knew it</button><button type="button" data-knew="0">Didn't know</button>`}</div>
+    <div class="avacts"><button type="button" class="avnext">Next: ${esc(nxStone || "another stone")} → ?</button><button type="button" class="avshare">Share</button></div>`;
+  L.classList.add("land");
+}
+function avShow(story, kind, slug) {
+  playing = false; t = 0;
+  avPrep(story);  // the reveal and the guess read placed ripples; this view places none on a pond
+  story.answer = revealMark(story); story.av = {kind, slug, open:false}; avAll = false;
+  const known = window.__avKnown === `${kind}:${slug}`; window.__avKnown = null;  // a shelf card already said where it lands
+  avHero(story, false);
+  if (avLake) avLake.throwStone();
+  if (known || guessed.has(story.key)) avReveal(known ? "known" : "again");
+  else { avGuessPanel(story); avTeaser(story); }
+  avShelf();
+  if (!REEL) try { history.replaceState(null, "", `?${kind === "chain" ? "c" : kind === "acts" ? "a" : kind === "wiki" ? "w" : "m"}=${encodeURIComponent(slug)}`); } catch {}
+}
+function avReveal(via) {
+  const s = cur; if (!s || !s.av || s.av.revealed) return;
+  s.av.revealed = true; s.answered = true; s.mystery = false;
+  const v = via === "guess" ? guessVerdict() : null;
+  if (via !== "again") { sess.reveal = true; track("reveal", {slug:s.key, via, view:"answer", seconds_in_story:Math.round((performance.now() - sess.storyT0) / 1000)}); }  // via: guess, skip, or known (a shelf card named the landing)
+  avHero(s, true); avAnswerPanel(s, v); avRoute(s, via !== "again");
+  if (avLake) avLake.ember(!!s.answer);
+}
+function avPick(k) {
+  if (!cur || !cur.av || cur.av.revealed || !GUESS_SAY[k]) return;
+  cur.guess = k; guessed.add(cur.key); track("guess", {slug:cur.key, pick:k, view:"answer"});
+  avReveal("guess");
+}
+function avStep(id) {  // a shared step: open the route with every step, and point at it
+  if (!cur || !cur.av) return;
+  if (!cur.av.revealed) avReveal("again");
+  avAll = true; avRoute(cur, false);
+  const li = [...document.querySelectorAll("#avright li.avn")].find(x => x.dataset.id === id); if (!li) return;
+  const m = li.querySelector("details.avmore"); if (m) m.open = true;
+  setTimeout(() => { li.scrollIntoView({block:"center", behavior:"smooth"}); li.classList.add("flash"); }, 300);
+}
+function avShelfData() {
+  if (avShelfCache) return avShelfCache;
+  const entries = [...TABS.maps, ...TABS.leads.filter(([k]) => k === "wiki" || k === "chain"), ...TABS.stories], seen = new Set(), out = [];
+  for (const [kind, slug, name] of entries) {
+    if (!name || !name.includes("→") || seen.has(name)) continue;
+    let st = null;
+    try {
+      if (kind === "chain" && DATA.chains.some(c => c.slug === slug)) st = fromChain(slug);
+      else if (kind === "wiki" && wikiStones().includes(slug)) st = fromWiki(slug);
+      else if (kind === "map" && MAPS[slug] && DATA.maps[slug]) st = fromMap(slug);
+    } catch { st = null; }
+    if (!st) continue; seen.add(name);
+    avPrep(st);
+    st.titleText = name; const a = revealMark(st), [stone, land] = name.split(/\s*→\s*/);
+    out.push({kind, slug, stone, land, group:a ? guessOf(a.mark) : "none", weak:weakOf(st), gap:a ? a.d : null, year:(st.iso0 || "").slice(0, 4)});
+  }
+  return avShelfCache = out;
+}
+function avShelf() {
+  const el = $("#avshelf"); if (!el || !cur) return;
+  const data = avShelfData(), here = `${cur.kind}:${cur.key}`;
+  const G = [["law", "Stones that changed a law or rule"], ["built", "Stones that built something"], ["life", "Stones that changed how people live"], ["none", "Big splashes, nothing lasting yet"]];
+  el.innerHTML = `<h2 class="avsh">More stones</h2><p class="avshsub">Each card says where the stone landed. Open one to see how it got there.</p>` + G.map(([g, h]) => {
+    const list = data.filter(x => x.group === g && `${x.kind}:${x.slug}` !== here); if (!list.length) return "";
+    const open = avShelfOpen.has(g), shown = open ? list : list.slice(0, 8);
+    return `<section class="avgroup"><h3>${AV_KIND[g].icon}<span>${h}</span><em>${list.length}</em></h3><div class="avgrid">${shown.map(x => `<button type="button" class="avcard" data-k="${x.kind}" data-s="${esc(x.slug)}"><span class="cy">${esc(x.year)}</span><span class="cs">${esc(x.stone)}</span><span class="cl">→ ${esc(x.land)}</span><span class="cm"><i class="d-${x.weak}"></i>${esc(AV_TAG[x.weak] || "")}${x.gap != null ? ` · ${esc(avGap(x.gap))} later` : ""}</span></button>`).join("")}</div>${list.length > 8 ? `<button type="button" class="avshmore" data-g="${g}">${open ? "Show fewer" : `Show all ${list.length}`}</button>` : ""}</section>`;
+  }).join("");
+}
+// The hero's water: a lake at dusk in WebGL, the stone thrown in, rings that spread and fade, and a pool of ember when the
+// answer lands. Drawn only while it is on screen and something moves; reduced motion gets one still frame.
+function avLakeInit(host) {
+  const cv = document.createElement("canvas"); cv.setAttribute("aria-hidden", "true");
+  let gl = null; try { gl = cv.getContext("webgl", {alpha:false, antialias:false, powerPreference:"low-power"}); } catch {}
+  if (!gl) return null;
+  const FS = `precision highp float;
+uniform vec2 uRes,uSp;uniform float uT,uHz,uAge,uEm;
+float hs1(float n){return fract(sin(n)*43758.5453);}
+float n1(float x){float i=floor(x),f=fract(x);f=f*f*(3.-2.*f);return mix(hs1(i),hs1(i+1.),f);}
+float fb1(float x){return .5*n1(x)+.25*n1(x*2.03+7.)+.125*n1(x*4.01+3.)+.0625*n1(x*8.07+11.);}
+vec3 SCN(vec2 s){
+  float t=clamp((uHz-s.y)/max(uHz,1.),0.,1.);
+  vec3 c=mix(vec3(.23,.27,.31),vec3(.043,.07,.098),pow(t,.6));
+  c+=vec3(.07,.045,.02)*exp(-(uHz-s.y)/18.);
+  if(s.y>uHz-(26.+40.*fb1(s.x*.0032+5.1)))c=mix(c,vec3(.13,.165,.195),.55);
+  if(s.y>uHz-(12.+30.*fb1(s.x*.0055+2.3)))c=mix(c,vec3(.085,.115,.14),.85);
+  if(s.y>uHz-(3.+9.*fb1(s.x*.012+8.7)+7.*pow(n1(s.x*.38),4.)*smoothstep(.3,.65,fb1(s.x*.02+1.))))c=vec3(.033,.052,.066);
+  return c;}
+vec2 WP(vec2 s){float dy=max(s.y-uHz,.6),B=max(uSp.y-uHz,20.)/.34;return vec2((s.x-uRes.x*.5)/dy,B/dy);}
+float H(vec2 s){
+  vec2 P=WP(s),Q=WP(uSp);float dy=max(s.y-uHz,.6),B=max(uSp.y-uHz,20.)/.34,fq=max(23./dy,17.*B/(dy*dy))/6.283,wa=1.-smoothstep(.1,.3,fq);float h=wa*(.05*sin(P.x*13.+P.y*7.+uT*1.3)+.04*sin(-P.x*9.+P.y*17.-uT*1.1)+.025*sin(P.x*23.-P.y*5.+uT*1.7));
+  if(uAge>=0.){float r=length(P-Q);
+    for(int i=0;i<3;i++){float c=uAge*1.05-float(i)*.2;if(c>0.){float rr=r-c;h+=.5*exp(-rr*rr/.02)*cos(rr*24.)*exp(-uAge*.3);}}
+    h-=.35*exp(-r*r/.006)*exp(-uAge*2.5);}
+  if(uEm>0.){float r=length(P-Q),c=mod(uT*.32,1.6);float rr=r-c;h+=.12*uEm*exp(-rr*rr/.02)*cos(rr*24.)*(1.-c/1.6);}
+  return h;}
+void main(){
+  vec2 s=vec2(gl_FragCoord.x,uRes.y-gl_FragCoord.y);
+  vec3 page=vec3(.059,.11,.149),col;
+  if(s.y<uHz){col=SCN(s);}
+  else{
+    float dy=s.y-uHz,h0=H(s),hx=H(s+vec2(1.,0.)),hy=H(s+vec2(0.,1.));
+    float g=clamp(dy/max(uRes.y-uHz,1.),0.,1.),K=34.*(1.-g*.5);
+    vec3 N=normalize(vec3(-(hx-h0)*K,-(hy-h0)*K,1.));
+    float F=clamp(mix(.78,.16,pow(g,.55))+N.y*.5,0.,1.);
+    vec3 skyc=mix(vec3(.44,.53,.61),vec3(.09,.15,.21),clamp(.55+N.y*3.2,0.,1.));
+    vec3 refl=mix(SCN(vec2(s.x+N.x*46.,uHz-dy*.95+N.y*60.))*1.1,skyc,.5);
+    vec3 body=mix(vec3(.09,.15,.2),vec3(.05,.09,.125),g);
+    col=mix(body,refl,F);
+    col+=vec3(.85,.9,.95)*pow(max(dot(N,normalize(vec3(-.3,-.55,.78))),0.),180.)*.35;
+    col+=vec3(.16,.19,.21)*exp(-dy/2.2)*.4;
+    vec2 P=WP(s),Q=WP(uSp);float e=exp(-dot(P-Q,P-Q)/.09);
+    col=mix(col,vec3(.95,.66,.23),uEm*e*.5);
+  }
+  vec2 uv=gl_FragCoord.xy/uRes;float vg=smoothstep(0.,.06,uv.x)*(1.-smoothstep(.94,1.,uv.x));
+  gl_FragColor=vec4(mix(page,col,vg),1.);
+}`;
+  const sh = (type, src) => { const o = gl.createShader(type); gl.shaderSource(o, src); gl.compileShader(o); return gl.getShaderParameter(o, gl.COMPILE_STATUS) ? o : null; };
+  const vs = sh(gl.VERTEX_SHADER, "attribute vec2 a;void main(){gl_Position=vec4(a,0.,1.);}"), fs = sh(gl.FRAGMENT_SHADER, FS); if (!vs || !fs) return null;
+  const pr = gl.createProgram(); gl.attachShader(pr, vs); gl.attachShader(pr, fs); gl.linkProgram(pr); if (!gl.getProgramParameter(pr, gl.LINK_STATUS)) return null;
+  gl.useProgram(pr);
+  const buf = gl.createBuffer(); gl.bindBuffer(gl.ARRAY_BUFFER, buf); gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([-1, -1, 3, -1, -1, 3]), gl.STATIC_DRAW);
+  const loc = gl.getAttribLocation(pr, "a"); gl.enableVertexAttribArray(loc); gl.vertexAttribPointer(loc, 2, gl.FLOAT, false, 0, 0);
+  const U = {}; ["uRes", "uSp", "uT", "uHz", "uAge", "uEm"].forEach(n => U[n] = gl.getUniformLocation(pr, n));
+  host.prepend(cv); document.documentElement.classList.add("avgl");
+  const still = matchMedia("(prefers-reduced-motion: reduce)").matches;
+  let splashT = -1, emT = -1, emOn = false, poke = performance.now(), visible = true, raf = 0, dpr = 1, W = 0, Hh = 0;
+  const geo = () => { const ph = window.innerWidth <= 560; const hz = Hh * (ph ? 0.5 : 0.4), bottom = Hh - (ph ? 30 : 46); return {hz, sp:{x:W * (ph ? 0.7 : 0.74), y:hz + (bottom - hz) * (ph ? 0.5 : 0.56)}}; };
+  function size() { dpr = Math.min(window.devicePixelRatio || 1, window.innerWidth < 600 ? 1.25 : 1.5); W = host.clientWidth; Hh = host.clientHeight; cv.width = Math.max(1, Math.round(W * dpr)); cv.height = Math.max(1, Math.round(Hh * dpr)); gl.viewport(0, 0, cv.width, cv.height); }
+  function frame(now) {
+    raf = 0; if (!W) size();
+    const g = geo(), sec = now / 1000;
+    gl.uniform2f(U.uRes, cv.width, cv.height); gl.uniform1f(U.uHz, g.hz * dpr); gl.uniform2f(U.uSp, g.sp.x * dpr, g.sp.y * dpr);
+    gl.uniform1f(U.uT, still ? 0 : sec); gl.uniform1f(U.uAge, still || splashT < 0 ? -1 : (now - splashT) / 1000);
+    gl.uniform1f(U.uEm, emOn ? (still ? 0.6 : Math.min(1, (now - emT) / 1200) * (0.55 + 0.15 * Math.sin(sec * 1.4))) : 0);
+    gl.drawArrays(gl.TRIANGLES, 0, 3);
+    const busy = !still && visible && (now - poke < 26000 || emOn);
+    if (busy) raf = requestAnimationFrame(frame);
+  }
+  const go = () => { poke = performance.now(); if (!raf) raf = requestAnimationFrame(frame); };
+  size(); go();
+  window.addEventListener("resize", () => { size(); go(); });
+  if ("IntersectionObserver" in window) new IntersectionObserver(es => { visible = es[0].isIntersecting; if (visible) go(); }).observe(host);
+  cv.addEventListener("webglcontextlost", e => { e.preventDefault(); cv.remove(); document.documentElement.classList.remove("avgl"); });
+  return {
+    throwStone() {  // the stone flies in from the near bank and lands where the rings start
+      emOn = false; splashT = -1; go();
+      const g = geo(), fly = document.createElementNS(NS, "svg"); fly.setAttribute("class", "avfly"); fly.setAttribute("viewBox", "-16 -16 32 32"); fly.innerHTML = STONE_SVG; host.appendChild(fly);
+      const land = () => { fly.remove(); splashT = performance.now(); go(); if (soundOn) ping(440, 0.3); };
+      if (still || !fly.animate) { land(); return; }
+      const x0 = W * 0.06, y0 = Hh * 0.98, xm = (x0 + g.sp.x) / 2, ym = Math.min(g.hz - 30, Hh * 0.2);
+      fly.animate([{transform:`translate(${x0 - 15}px,${y0 - 15}px) scale(1.25) rotate(0deg)`}, {transform:`translate(${xm - 15}px,${ym - 15}px) scale(.85) rotate(160deg)`, offset:.5}, {transform:`translate(${g.sp.x - 15}px,${g.sp.y - 15}px) scale(.45) rotate(300deg)`}], {duration:1000, easing:"cubic-bezier(.3,.1,.5,1)"}).onfinish = land;
+    },
+    ember(on) { emOn = on; emT = performance.now(); go(); }};
+}
+function avInit() {
+  const main = $("#avmain"); if (!main) return;
+  avLake = avLakeInit($("#avhero"));
+  main.addEventListener("click", e => {
+    const b = e.target.closest("button"); if (!b) return;
+    if (b.dataset.g && b.classList.contains("avtile")) { avPick(b.dataset.g); return; }
+    if (b.classList.contains("avskip")) { avReveal("skip"); return; }
+    if (b.dataset.knew) {
+      const k = b.dataset.knew === "1", key = `${cur.kind}:${cur.key}`;
+      try { const m = JSON.parse(localStorage.getItem("ripple-knew") || "{}"); m[key] = k; localStorage.setItem("ripple-knew", JSON.stringify(m)); } catch {}
+      track("knew", {slug:cur.key, knew:k ? 1 : 0, guess:cur.guess || "none"}); b.parentNode.innerHTML = avKnewDone(k); return;
+    }
+    if (b.classList.contains("avnext")) { window.__via = "next"; next(); window.scrollTo({top:0, behavior:"smooth"}); return; }
+    if (b.classList.contains("avshare")) { $("#share").click(); return; }
+    if (b.classList.contains("avopen")) { cur.av.open = true; avRoute(cur, false); return; }
+    if (b.classList.contains("avall")) { avAll = !avAll; avRoute(cur, false); if (!avAll) $("#avright").scrollIntoView({block:"start", behavior:"smooth"}); return; }
+    if (b.classList.contains("avcite")) { const c = cur.av.cites && cur.av.cites[b.dataset.id]; if (c) { track("cite", {slug:cur.key, step:b.dataset.id}); navigator.clipboard.writeText(c).then(() => { b.textContent = "Copied"; }, () => window.prompt("Copy this citation", c)); } return; }
+    if (b.classList.contains("avcard")) { window.__via = "shelf"; window.__avKnown = `${b.dataset.k}:${b.dataset.s}`; show(b.dataset.k, b.dataset.s); window.scrollTo({top:0, behavior:"smooth"}); return; }
+    if (b.classList.contains("avshmore")) { const g = b.dataset.g; avShelfOpen.has(g) ? avShelfOpen.delete(g) : avShelfOpen.add(g); avShelf(); return; }
+  });
+  main.addEventListener("toggle", e => { if (e.target.matches && e.target.matches("details.avmore") && e.target.open) { track("learn_more", {slug:cur && cur.key, view:"answer"}); avLine(false); } else avLine(false); }, true);
+  let rt = 0; window.addEventListener("resize", () => { clearTimeout(rt); rt = setTimeout(() => avLine(false), 120); });
+  if (document.fonts) document.fonts.ready.then(() => avLine(false));
+}
+
 (async () => {
   await loadAll();
-  const phoneLayout = () => {  // a phone: the pond comes first; the tally and the story chooser sit under it with the controls
+  if (AV) avInit();
+  const phoneLayout = () => {
+    if (AV) return;  // the answer view keeps the search and the chooser in the header  // a phone: the pond comes first; the tally and the story chooser sit under it with the controls
     const bar = $(".bar"), ch = $("#chooser"), leg = $(".legend"); if (!bar || !ch || !leg) return;
     const ph = window.innerWidth <= 560, inHead = bar.parentElement.tagName === "HEADER";
     if (ph && inHead) { if (CV) { $("#feed").after(leg); leg.after(bar); } else leg.after(bar); bar.after(ch); } else if (!ph && !inHead) { $("#sub").after(bar); bar.after(ch); if (CV) $(".ctl").after(leg); }  // the chain view: the list comes straight after the controls; the key, the tally and the chooser follow it
@@ -2401,7 +2911,7 @@ function showEndBeat() {  // at rest the lower third says what stayed and points
     const q = pt.matrixTransform(svg.getScreenCTM().inverse()); drop(UNPL({x:q.x, y:q.y}));
   });
   document.addEventListener("keydown", e => {
-    if (e.target.closest("input,select,textarea")) return;
+    if (AV || e.target.closest("input,select,textarea")) return;
     if (e.key === " " && !e.target.closest("button,[tabindex]")) { e.preventDefault(); $("#play").click(); }
     if ((e.key === "ArrowRight" || e.key === "ArrowLeft") && cur) {  // step through the ripples in time order
       const list = [...cur.items].sort((a, b) => a.d - b.d), i = hot ? list.indexOf(hot) : -1;
@@ -2421,7 +2931,8 @@ function showEndBeat() {  // at rest the lower third says what stayed and points
   else show(TABS.maps[0][0], TABS.maps[0][1], playing);
   if (CARD) { t = 1; setPlaying(false); render(); }
   const sid = params.get("s");  // a shared step: open on it, stopped, with its caption
-  if (sid && cur) { const it = cur.items.find(x => x.id === sid); if (it) { for (let k = 0; k <= 1000; k++) if (daysAt(k / 1000) >= it.d + 0.5) { t = k / 1000; break; } setPlaying(false); render(); cur.items.forEach(wake); setTimeout(() => focus(it), 400); } }
+  if (sid && cur && AV) avStep(sid);
+  else if (sid && cur) { const it = cur.items.find(x => x.id === sid); if (it) { for (let k = 0; k <= 1000; k++) if (daysAt(k / 1000) >= it.d + 0.5) { t = k / 1000; break; } setPlaying(false); render(); cur.items.forEach(wake); setTimeout(() => focus(it), 400); } }
   document.addEventListener("toggle", e => { const d = e.target; if (d && d.matches && d.matches(".feed details.more") && d.open) track("learn_more", {slug: cur && cur.key}); }, true);
   const leave = () => { if (leave.sent) return; leave.sent = true; track("leave", {slug: cur && cur.key, t: cur ? Math.round(t * 100) : null, reveal_reached: sess.reveal ? 1 : 0, stories: sess.stories, taps: sess.taps, playing: playing ? 1 : 0}); };
   document.addEventListener("visibilitychange", () => { if (document.visibilityState === "hidden") leave(); else leave.sent = false; });
