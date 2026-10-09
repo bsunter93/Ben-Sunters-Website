@@ -531,7 +531,7 @@ html.av .wrap,html.av #h1,html.av #sub,html.av .tally{display:none}
 html.av header{padding-bottom:10px}
 @media (min-width:561px){html.av header{display:flex;flex-wrap:wrap;align-items:center;gap:10px 28px}html.av header .bar{flex:1;margin-top:0}html.av header .chooser{flex-basis:100%}}
 @media (max-width:560px){html.av .searchbtn{display:none}html.av header .bar{flex-wrap:nowrap;margin-top:10px}html.av .topsearch{order:0;flex:1 1 auto;min-width:0}html.av #chooserkind{display:none}html.av .chooserbtn{padding:9px 12px !important}}
-html.av .foot{margin-top:56px}
+html.av .foot{margin-top:56px;max-width:1180px;font-size:var(--t-xs, 13px);color:var(--ink-2);line-height:1.55}
 .avmain{display:none;position:relative;z-index:1}
 html.av .avmain{display:block}
 .avhero{position:relative;height:330px;overflow:hidden;background:#0f1c26}
@@ -653,17 +653,26 @@ html:not(.avgl) .avhero{background:linear-gradient(#26313b 0,#0e1a24 42%,#0f2230
   .avshelf{margin-top:40px}
   .avgrid{grid-template-columns:1fr 1fr;gap:8px}.avcard{min-height:112px;padding:12px}.avcard .cs{font-size:1rem}.avcard .cl{font-size:.84rem}
 }
-/* the ripple chart (Oct 8, second pass): one row per step on one clock; lines of readers against each page's own normal */
-.avsay{margin:12px 0 0;font:500 1.06rem/1.4 var(--sans);color:var(--ink);max-width:44rem;text-shadow:0 1px 10px rgba(15,28,38,.8)}
-.avsay b{color:#ffd391;font-weight:600}
+/* the ripple chart (Oct 8, second pass): one row per step on one clock; lines of readers against each page's own normal.
+   Oct 9 pass: one type scale (13 / 15 / 17 px and the display sizes), AA contrast on the paper and on the lake, tabular
+   figures for dates and numbers, one primary action. */
+:root{--paper-ink-3:#5d6a6d;--amber-ink:#8a5208;--t-xs:13px;--t-s:15px;--t-m:17px}
+.avstonel{font-size:var(--t-s);font-variant-numeric:tabular-nums}
+.avsay{margin:12px 0 0;font:500 var(--t-m)/1.4 var(--sans);color:var(--ink);max-width:44rem;text-shadow:0 1px 10px rgba(15,28,38,.8)}
+.avsay b{color:#ffd391;font-weight:600;font-variant-numeric:tabular-nums}
 .avpaper.rc{display:block;padding:24px 30px 22px}
-.rccap{min-height:80px;margin:0 0 4px}
-.rccap .k{margin:0;font:600 .88rem/1.35 var(--sans);color:var(--paper-ink-2)}
-.rccap .k b{color:#a8650c}
-.rccap .h{margin:4px 0 0;font:600 clamp(1.3rem,2.2vw,1.7rem)/1.2 var(--display);color:var(--paper-ink);font-variation-settings:"SOFT" 60,"opsz" 48}
+.rctop{display:flex;align-items:flex-start;gap:12px}
+.rccap{flex:1;min-width:0;min-height:76px;margin:0 0 4px}
+.rccap .k{margin:0;display:flex;flex-wrap:wrap;gap:0 14px;font:500 var(--t-s)/1.4 var(--sans);color:var(--paper-ink-2);font-variant-numeric:tabular-nums}
+.rccap .k b{font-weight:600;color:var(--paper-ink)}
+.rccap .h{margin:4px 0 0;font:600 clamp(1.35rem,2.2vw,1.7rem)/1.22 var(--display);color:var(--paper-ink);font-variation-settings:"SOFT" 60,"opsz" 48}
+.rccap .h .rcg{width:.74em;height:.74em;margin-right:.34em;vertical-align:-.04em;overflow:visible}
 .rccap.swap .k,.rccap.swap .h{animation:avfade .45s ease both}
-.rchow{margin-left:8px;padding:2px 0;background:none;border:0;border-bottom:1px dotted rgba(30,42,46,.5);font:600 .84rem var(--sans);color:var(--paper-ink-2);cursor:pointer;vertical-align:.25em}
-.rchow:hover{color:var(--paper-ink);border-bottom-style:solid}
+.rchow{display:inline-block;margin:-14px 0 -14px 6px;padding:14px 2px;background:none;border:0;font:600 var(--t-s) var(--sans);color:var(--paper-ink-2);cursor:pointer;vertical-align:.2em;text-decoration:underline;text-decoration-style:dotted;text-decoration-color:rgba(30,42,46,.5);text-underline-offset:4px}
+.rchow:hover{color:var(--paper-ink);text-decoration-style:solid}
+.rcplay{flex:none;display:inline-flex;align-items:center;gap:7px;min-height:44px;min-width:44px;margin:-8px -10px 0 0;padding:0 12px;border:0;border-radius:999px;background:none;font:600 var(--t-s) var(--sans);color:var(--paper-ink-2);cursor:pointer}
+.rcplay svg{width:15px;height:15px;flex:none}
+.rcplay:hover{color:var(--paper-ink);background:rgba(30,42,46,.06)}
 .rcchart{position:relative;width:100%;margin-top:6px}
 .rcchart svg{display:block;width:100%;height:auto;overflow:visible}
 .rcrow{opacity:0;transition:opacity .45s ease}
@@ -673,39 +682,91 @@ html:not(.avgl) .avhero{background:linear-gradient(#26313b 0,#0e1a24 42%,#0f2230
 .rcrow.on .rcl{stroke-dashoffset:0}
 .rcrow .rca{fill:var(--h);opacity:0;transition:opacity .8s ease .5s}
 .rcrow.on .rca{opacity:.15}
+.rcrow .rcrun{fill:none;stroke:var(--paper-ink-3);stroke-opacity:.8;stroke-width:1.5;stroke-linecap:round;stroke-linejoin:round;stroke-dasharray:1 1;stroke-dashoffset:1;transition:stroke-dashoffset .9s cubic-bezier(.45,.05,.3,1)}
+.rcrow.on .rcrun{stroke-dashoffset:0}
 .rcrow .rcband{fill:#e0a33c;transform-box:fill-box;transform-origin:0 50%;transform:scaleX(0);transition:transform 1.3s cubic-bezier(.45,.05,.3,1) .2s}
 .rcrow.on .rcband{transform:scaleX(1)}
+.rcrow .rcmore{fill:none;stroke:#c77f12;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
 .rcrow .rcbg{fill:rgba(242,169,59,.13);opacity:0;transition:opacity .3s}
 .rcrow.cur .rcbg{opacity:1}
 .rcrow .rcbase{stroke:rgba(30,42,46,.13);stroke-width:1}
-.rcrow .rcspan{fill:rgba(30,42,46,.08);stroke:rgba(30,42,46,.28);stroke-width:1}
-.rcn{font:600 14.5px var(--sans);fill:var(--paper-ink);paint-order:stroke;stroke:var(--paper);stroke-width:4px;stroke-linejoin:round}
-.rcd{font:500 12.5px var(--sans);fill:var(--paper-ink-3);paint-order:stroke;stroke:var(--paper);stroke-width:4px;stroke-linejoin:round}
-.rcrow.mark .rcn{fill:#8a5208}
+.rcrow .rcspan{fill:rgba(30,42,46,.08);stroke:rgba(30,42,46,.34);stroke-width:1}
+.rcn{font:600 15px var(--sans);fill:var(--paper-ink);paint-order:stroke;stroke:var(--paper);stroke-width:4px;stroke-linejoin:round}
+.rcd{font:500 13px var(--sans);fill:var(--paper-ink-2);font-variant-numeric:tabular-nums;paint-order:stroke;stroke:var(--paper);stroke-width:4px;stroke-linejoin:round}
+.rcrow.mark .rcn{fill:var(--amber-ink)}
 .rcrow.busted .rcn{fill:var(--paper-ink-3)}
-.rcpk{font:700 13px var(--sans);fill:var(--h);paint-order:stroke;stroke:var(--paper);stroke-width:4px;stroke-linejoin:round}
+.rcpk{font:700 13px var(--sans);fill:color-mix(in srgb,var(--h) 62%,#1e2a2e);font-variant-numeric:tabular-nums;paint-order:stroke;stroke:var(--paper);stroke-width:4px;stroke-linejoin:round}
+.rcgap{font:500 13px var(--sans);fill:var(--paper-ink-2);font-variant-numeric:tabular-nums;paint-order:stroke;stroke:var(--paper);stroke-width:5px;stroke-linejoin:round}
+.rcgap.eff{font-size:14px;font-weight:700;fill:var(--paper-ink)}
+.rcgap.bust{font-weight:600;fill:#b23a2c}
 .rchit{fill:transparent;cursor:pointer}
-.rcax{font:500 12px var(--sans);fill:var(--paper-ink-3)}
-.rcgrid{stroke:rgba(30,42,46,.09);stroke-dasharray:2 4}
-.rcnote{margin:12px 0 0;font-size:.86rem;line-height:1.5;color:var(--paper-ink-2)}
-.rcnote .key{display:inline-flex;align-items:center;gap:6px;margin-right:16px}
+.rcax{font:500 13px var(--sans);fill:var(--paper-ink-3);font-variant-numeric:tabular-nums}
+.rcgrid{stroke:rgba(30,42,46,.1);stroke-dasharray:2 4}
+.rcnote{margin:12px 0 0;font-size:var(--t-s);line-height:1.5;color:var(--paper-ink-2)}
+.rcnote .key{display:inline-flex;align-items:center;gap:7px;margin-right:18px}
 .rcnote .key b{color:var(--paper-ink)}
-.rcnote .sw{display:inline-block;width:18px;height:3px;border-radius:2px;background:#2f8fa6}
-.rcnote .bar{display:inline-block;width:18px;height:7px;border-radius:3.5px;background:#e0a33c}
-.rcnote .span{display:inline-block;width:18px;height:10px;border-radius:5px;background:rgba(30,42,46,.08);border:1px solid rgba(30,42,46,.28)}
-.rcalso{margin-top:4px;color:var(--paper-ink-3)}
-.rcfoot{display:flex;flex-wrap:wrap;align-items:center;gap:10px 12px;margin:16px 0 0;padding:16px 0 0;border-top:1px solid rgba(30,42,46,.12)}
-.rcfoot .avknew{margin:0 0 0 auto}
-.rcplay{min-height:40px;padding:0 14px;border:0;background:none;font:600 .86rem var(--sans);color:var(--paper-ink-2);cursor:pointer;text-decoration:underline;text-underline-offset:3px}
-.rcplay:hover{color:var(--paper-ink)}
-.rcsteps{margin:14px 0 0}
-.rcsteps>summary{display:inline-block;padding:4px 0;cursor:pointer;list-style:none;font:600 .9rem var(--sans);color:var(--paper-ink-2);border-bottom:1px solid rgba(30,42,46,.3)}
+.rcnote .key i{display:inline-block;flex:none;width:18px}
+.rcnote .kl{height:3px;border-radius:2px;background:#2f8fa6}
+.rcnote .kb{height:7px;border-radius:3.5px;background:#e0a33c}
+.rcnote .ks{height:10px;border-radius:5px;background:rgba(30,42,46,.08);border:1px solid rgba(30,42,46,.34)}
+.rcalso{margin-top:6px}
+.rcfoot{display:flex;flex-wrap:wrap;align-items:center;gap:10px 12px;margin:18px 0 0;padding:18px 0 0;border-top:1px solid rgba(30,42,46,.12)}
+.rcfoot .avnext{min-height:46px;padding:0 22px;font:700 var(--t-s) var(--sans)}
+.rcfoot .avshare{min-height:46px;padding:0 18px;font:600 var(--t-s) var(--sans)}
+.rcfoot .avknew{display:flex;flex-wrap:wrap;align-items:center;gap:0 2px;margin:0 0 0 auto;font-size:var(--t-s);color:var(--paper-ink-2);animation:avfade .45s ease both}
+.rcfoot .avknew[hidden]{display:none}
+.rcfoot .avknew>span{margin-right:6px}
+.rcfoot .avknew button{min-height:44px;min-width:44px;padding:0 9px;border:0;border-radius:6px;background:none;font:600 var(--t-s) var(--sans);color:var(--paper-ink);text-decoration:underline;text-decoration-color:rgba(30,42,46,.35);text-underline-offset:4px;cursor:pointer}
+.rcfoot .avknew button:hover{text-decoration-color:var(--paper-ink)}
+.rcsteps{margin:10px 0 0}
+.rcsteps>summary{display:inline-flex;align-items:center;min-height:44px;cursor:pointer;list-style:none;font:600 var(--t-s) var(--sans);color:var(--paper-ink-2);text-decoration:underline;text-decoration-color:rgba(30,42,46,.35);text-underline-offset:5px}
 .rcsteps>summary::-webkit-details-marker{display:none}
-.rcsteps>summary:hover{color:var(--paper-ink);border-color:var(--paper-ink)}
+.rcsteps>summary:hover{color:var(--paper-ink);text-decoration-color:var(--paper-ink)}
 .rcsteps .avright{padding:18px 0 0}
 .avcard .cg{display:block;width:100%;height:16px;margin:8px 0 2px}
-@media (max-width:560px){.avpaper.rc{padding:18px 14px 18px}.rccap{min-height:96px}.rcfoot .avknew{margin-left:0}.avsay{font-size:.95rem}}
-@media (prefers-reduced-motion:reduce){.rcrow,.rcrow .rcl,.rcrow .rca,.rcrow .rcband,.rccap.swap .k,.rccap.swap .h{transition:none;animation:none}}
+/* the header: the search, and one plain button that opens the list of every story */
+html.av .chooserbtn{min-height:44px;background:none;border:1px solid rgba(214,232,246,.38);color:var(--ink);font-size:var(--t-s) !important;border-radius:8px}
+html.av .chooserbtn:hover{background:rgba(214,232,246,.08)}
+html.av .chooserbtn[aria-expanded="true"]{background:rgba(214,232,246,.12);color:var(--ink);border-color:var(--ink-2)}
+html.av #chooserkind{display:none}
+html.av .bar .topsearch input{min-height:44px;font-size:var(--t-s);border-radius:8px}
+html.av .brand .tag{font-size:var(--t-xs);color:var(--ink-2)}
+html.av .chooser .chip{min-height:44px;padding:0 14px;font-size:var(--t-s)}
+html.av .chooser .tab{min-height:44px;font-size:var(--t-s)}
+html.av .chooser.stage1 .tab::after{font-size:var(--t-xs);color:var(--ink-2)}
+html.av .known span,html.av .tabnote,html.av .picker .tabtag{font-size:var(--t-xs);color:var(--ink-2)}
+html.av .picker{max-height:212px}
+html.av .picker .pgroup{font:600 var(--t-xs)/1.2 var(--sans);letter-spacing:0;text-transform:none;color:var(--ink-2)}
+/* the shelf: plain group names, four cards a group until asked for more */
+.avshsub{color:var(--ink-2);font-size:var(--t-s)}
+.avgroup h3{font-size:1.3rem}
+.avgroup h3 em{font:500 var(--t-xs) var(--sans);color:var(--ink-2);font-variant-numeric:tabular-nums}
+.avcard{transition:border-color .15s,background .15s}
+.avcard:hover,.avcard:focus-visible{transform:none}
+.avcard .cy{font:600 var(--t-xs) var(--sans);color:var(--ink-2);letter-spacing:.02em;font-variant-numeric:tabular-nums}
+.avcard .cl{font-size:var(--t-s)}
+.avcard .cm{font-size:14px;color:var(--ink-2)}
+.avcard .cm{flex-wrap:wrap;column-gap:6px}
+.avcard .cm b{font-weight:400;white-space:nowrap}
+.avcard .cm em{margin-left:auto;font-style:normal;color:var(--ink-3);white-space:nowrap;font-variant-numeric:tabular-nums}
+.avshmore{display:inline-flex;align-items:center;min-height:44px;margin:4px 0 0;padding:0;border:0;font:600 var(--t-s) var(--sans);color:var(--ink-2);text-decoration:underline;text-decoration-color:var(--ink-3);text-underline-offset:5px}
+.avshmore:hover{color:var(--ink)}
+@media (min-width:901px){.avgrid{grid-template-columns:repeat(4,minmax(0,1fr))}}
+@media (min-width:561px) and (max-width:900px){.avgrid{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media (max-width:560px){
+  .avpaper.rc{padding:18px 14px 18px}
+  .rccap{min-height:92px}
+  .avsay{font-size:var(--t-s)}
+  .rcfoot .avnext{flex:1 1 auto}
+  .rcfoot .avknew{margin-left:0;flex-basis:100%}
+  .avgrid{grid-template-columns:1fr;gap:8px}
+  .avcard{display:grid;grid-template-columns:minmax(0,1fr) auto;column-gap:12px;row-gap:2px;min-height:0;padding:12px 14px 10px}
+  .avcard .cs{grid-column:1;grid-row:1;font-size:1.06rem}
+  .avcard .cy{grid-column:2;grid-row:1;align-self:baseline}
+  .avcard .cl,.avcard .cg,.avcard .cm{grid-column:1/-1}
+  .avcard .cl{font-size:var(--t-s)}
+}
+@media (prefers-reduced-motion:reduce){.rcrow,.rcrow .rcl,.rcrow .rca,.rcrow .rcrun,.rcrow .rcband,.rccap.swap .k,.rccap.swap .h,.rcfoot .avknew{transition:none;animation:none}}
 @media (prefers-reduced-motion:reduce){.avstream.reveal li,.avline.draw,.avline .flow,.avleft.land>*,.avq.land{animation:none}}
 </style>
 </head>
@@ -873,7 +934,7 @@ if (W2) document.documentElement.classList.add("w2");
 const REEL_Q = params.has("reel"), CARD_Q = params.has("card");  // reels and share cards keep the SVG water: their frames are recorded headless
 const VIEW = (() => { const v = params.get("view") || window.__rippleView; try { if (v) sessionStorage.setItem("ripple-view", v); return v || sessionStorage.getItem("ripple-view") || "answer"; } catch { return v || "answer"; } })();
 const AV = VIEW !== "pond" && VIEW !== "chain" && !REEL_Q && !CARD_Q;  // Oct 8: the answer first (the owner chose it over the list); ?view=chain and ?view=pond keep the earlier views
-if (AV) document.documentElement.classList.add("av");
+if (AV) { document.documentElement.classList.add("av"); const cb = document.querySelector("#chooserbtn > span"); if (cb) cb.textContent = "All stories"; }  // the button opens the list of every story; the tab name beside it belongs to the older views
 const CV = VIEW === "chain" && !REEL_Q && !CARD_Q;  // Oct 7: the story reads as a list in date order beside the water (a stranger: "the UI is a bit confusing and hard to read"; 26 of 100 starts reached the reveal in the first week); ?view=pond brings the pond back for the session
 if (CV) document.documentElement.classList.add("cv");
 const FOLLOW = CV ? "Watch the list." : "Follow the water.";
@@ -1442,7 +1503,7 @@ function fromChain(slug) {
   const s0 = ch.steps[0];
   return {key:slug, kind:"chain", title:ch.title, h1:ch.title, stone:ch.title.split(/,| and | → |\s\(/)[0].trim(), iso0, items, extra:[], names,
     sub:`${hold} of ${items.length} links after the event hold up: ` + ["measured", "timed", "reported", "plausible", "busted"].filter(k => tally[k]).map(k => `${tally[k]} ${LVL[k].toLowerCase()}`).join(", ") + ". Tap a ripple to see why.",
-    first:card({when:`${s0.test.date_precision === "year" ? iso0.slice(0, 4) : s0.test.date_precision === "month" ? fmtMonth(D(iso0)) : fmt(D(iso0))}<span>Day 0</span>`, badge:"The event", badgeCls:"event", title:s0.claim, short:s0.note ? esc(s0.note) : "", foot:srcP(s0, s0.source || s0.test.source || "")})};  // a stone known only by its year or month says only that
+    first:card({when:`${s0.test.window ? esc(s0.test.window) : s0.test.date_precision === "year" ? iso0.slice(0, 4) : s0.test.date_precision === "month" ? fmtMonth(D(iso0)) : fmt(D(iso0))}<span>Day 0</span>`, badge:"The event", badgeCls:"event", title:s0.claim, short:s0.note ? esc(s0.note) : "", foot:srcP(s0, s0.source || s0.test.source || "")})};  // a stone known only by its year or month says only that; a recurring stone (each Super Bowl) says its whole window
 }
 
 // ---------- drawing ----------
@@ -2674,7 +2735,7 @@ function avHero(s, answered) {
   const a = s.answer, say = $("#avsay");
   if (say) say.innerHTML = answered && a ? `<b>${esc(a.study ? `${cap(a.study.window)}, in a published study` : a.d < 1 ? "The same day" : `${cap(avGap(a.d))} later`)}:</b> ${esc(String(a.title || a.label).replace(/^(The|A|An) /, m => m.toLowerCase()))}` : "";
 }
-function avKnewDone(k) { return `<span>${k ? "You knew this one." : "New to you."} Your answer helps rank which finds are surprising.</span>`; }
+function avKnewDone(k) { return `<span>${k ? "You knew it." : "New to you."} Each answer helps rank the finds.</span>`; }
 // ---------- the ripple chart (Oct 8, second pass) ----------
 // The owner, Oct 8, on the answer view: too much text, bring the picture back. The stacked interest lines were the best part
 // because they showed how big each downstream move was next to the others. Spoon feed, and drop the guess. One row per step
@@ -2691,8 +2752,14 @@ function rcLift(it, iso0) {  // the step's series as [days since the stone, time
   const pts = w.map(([d, v]) => [daysBetween(iso0, d) + 3.5, v / Math.max(1, base)]), peak = pts.reduce((a, p) => p[1] > a[1] ? p : a, pts[0]);
   return peak[1] >= 1.5 ? {pts, peak} : null;
 }
+function rcRange(it, iso0) {  // a study's window in days since the stone: the checker's range, else the paper's own "1974 to 2009"
+  if (!it.study) return null;
+  if (it.range) return it.range;
+  const m = /^(\d{4}) to (\d{4})$/.exec(String(it.study.window || "").trim());
+  return m ? [Math.max(0, daysBetween(iso0, `${m[1]}-01-01`)), daysBetween(iso0, `${m[2]}-12-31`)] : null;
+}
 function rcRows(s) {  // the stone, then each step in date order; a long story keeps its marks, its answer and its biggest moves
-  let rows = s.items.filter(x => !x.aside && !x.undated && !x.future).sort((p, q) => p.d - q.d).map(it => ({it, lift:rcLift(it, s.iso0)}));
+  let rows = s.items.filter(x => !x.aside && !x.undated && !x.future).sort((p, q) => p.d - q.d).map(it => ({it, lift:rcLift(it, s.iso0), range:rcRange(it, s.iso0)}));
   s.rcHidden = 0;
   if (rows.length > RC_MAX - 1) {
     const keep = new Set(rows.filter(r => r.it.mark || r.it === s.answer).map(r => r.it));
@@ -2702,66 +2769,128 @@ function rcRows(s) {  // the stone, then each step in date order; a long story k
   const f = s.first || {}, ev = s.eventSeries && s.eventSeries.pre ? rcLift({series:s.eventSeries, d:0}, s.iso0) : null;
   return [{stone:true, it:{id:"stone", d:0, label:s.stone || f.title || "The stone", title:f.title || s.stone}, lift:ev}, ...rows];
 }
-function rcCap(s, r, final) {  // the caption for one row: a kicker of facts and a headline
+// The caption speaks for one row: its date and one more fact, then the headline. The small mark before the headline is the
+// row's own mark on the chart (a line, a hexagon, a cross), so the words point at the picture.
+function rcCapGlyph(s, r, i) {
+  const it = r.it, lv = r.stone ? "stone" : it.lv;
+  const svg = inner => `<svg class="rcg" viewBox="-10 -10 20 20" aria-hidden="true">${inner}</svg>`;
+  if (r.stone) return svg(`<circle r="8" fill="none" stroke="#1e2a2e" stroke-opacity=".3" stroke-width="1.5"/><circle r="4.4" fill="#1e2a2e"/>`);
+  if (it.mark) return svg(`<path d="M0,-8 L7,-4 L7,4 L0,8 L-7,4 L-7,-4 Z" fill="#fff3dc" stroke="#c77f12" stroke-width="1.8"/><circle r="2.5" fill="#c77f12"/>`);
+  if (lv === "busted") return svg(`<path d="M-5,-5 L5,5 M5,-5 L-5,5" stroke="#b23a2c" stroke-width="2.2" stroke-linecap="round"/>`);
+  if (r.lift) return svg(`<path d="M-9,5 L-4,4 L-1,-6 L3,1 L9,3" fill="none" stroke="${PULSE_HUES[(i - 1 + PULSE_HUES.length) % PULSE_HUES.length]}" stroke-width="2.2" stroke-linejoin="round" stroke-linecap="round"/>`);
+  if (lv === "plausible") return svg(`<circle r="4.6" fill="#f4efe4" stroke="#8a7638" stroke-width="2"/>`);
+  return svg(`<circle r="4.6" fill="#3a4a4f"/>`);
+}
+function rcCap(s, r, final) {
   const it = r.it;
-  if (r.stone) return [`${esc(avWhen(s.first || {}))} · the stone`, esc(it.title), null];
+  if (r.stone) return [`<b>${esc(avWhen(s.first || {}))}</b>`, esc(it.title), null];
   const bust = it.lv === "busted" ? (it.lvText === "Disputed" ? "disputed" : it.notYet ? "not yet" : "busted") : "";
-  const bits = it.study  // a study's step says its window, its effect and who measured it
-    ? [esc(avWhen(it)), it.study.eff && !bust ? `<b>${esc(it.study.eff)}</b>` : "", bust === "disputed" ? "disputed by later research" : bust ? "busted by a published study" : it.lv === "measured" ? "measured by a published study" : "reported by a published study"]
-    : [esc(avWhen(it)), it.d < 1 ? "the same day" : `${esc(avGap(it.d))} after`];
-  if (r.lift) bits.push(`readers <b>${rcX(r.lift.peak[1])}×</b> normal`);
-  if (it.mark) bits.push("<b>a lasting mark</b>");
-  if (bust && !it.study) bits.push(bust); else if (it.lv === "plausible") bits.push("unproven");
-  if (final && s.rc && s.rc.rows[rcLand(s)] === r) bits.unshift(`<b>${bust ? "The claim" : s.rc.landBy === "wave" ? "The biggest wave after it" : "Where it landed"}</b>`);
-  return [bits.filter(Boolean).join(" · "), esc(it.title || (it.card && it.card.title) || it.label), it.id];
+  const fact = it.study
+    ? (bust === "disputed" ? "disputed by later research" : bust ? "busted by a published study" : it.study.eff ? esc(it.study.eff) : `${it.lv === "measured" ? "measured" : "reported"} in a published study`)
+    : bust ? bust
+    : r.lift ? `readers ${rcX(r.lift.peak[1])}× normal`
+    : it.lv === "plausible" ? "unproven"
+    : it.d < 1 ? "the same day" : `${esc(avGap(it.d))} later`;
+  return [`<b>${esc(avWhen(it))}</b><span>${fact}</span>`, esc(it.title || (it.card && it.card.title) || it.label), it.id];
+}
+// The clock. A story with lines of readers and a span under 8 years keeps log time since the stone, so the first weeks,
+// where the lines are, get room. Everything else runs on the calendar, so the gap between two steps is drawn to scale.
+// A story whose steps all sit on the stone's own date has no clock to draw ("flat").
+const RC_MON = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+function rcCalTicks(iso0, dmax, pw, phone) {  // calendar ticks at round dates: days, months or years, as many as fit
+  const t0 = +D(iso0), t1 = t0 + dmax * 864e5, a = new Date(t0), y0 = a.getUTCFullYear(), y1 = new Date(t1).getUTCFullYear();
+  const maxN = Math.max(2, Math.floor(pw / (phone ? 70 : 104)));
+  const STEPS = [["d", 1], ["d", 2], ["d", 7], ["d", 14], ["m", 1], ["m", 2], ["m", 3], ["m", 6], ["y", 1], ["y", 2], ["y", 5], ["y", 10], ["y", 20], ["y", 25], ["y", 50], ["y", 100]];
+  for (const [u, k] of STEPS) {
+    const out = [];
+    if (u === "d") for (let t = t0 + k * 864e5; t <= t1 && out.length <= maxN; t += k * 864e5) { const q = new Date(t); out.push([t, `${RC_MON[q.getUTCMonth()]} ${q.getUTCDate()}`]); }
+    else if (u === "m") for (let m = y0 * 12 + a.getUTCMonth() + 1; out.length <= maxN; m++) { const t = Date.UTC(Math.floor(m / 12), m % 12, 1); if (t > t1) break; if ((m % 12) % k) continue; out.push([t, m % 12 === 0 || !out.length ? `${RC_MON[m % 12]} ${Math.floor(m / 12)}` : RC_MON[m % 12]]); }
+    else for (let y = Math.ceil((y0 + 1) / k) * k; y <= y1 && out.length <= maxN; y += k) out.push([Date.UTC(y, 0, 1), String(y)]);
+    if (out.length && out.length <= maxN) return out.map(([t, w]) => [(t - t0) / 864e5, w]);
+  }
+  return [];
+}
+function rcScale(s, rows, Wd, phone) {
+  const today = Math.max(2, (Date.now() - D(s.iso0)) / 864e5);
+  const end = Math.max(0, ...rows.map(r => Math.max(r.it.d, r.range ? Math.min(today, r.range[1]) : 0)));
+  const mode = rows.some(r => r.lift) && end < 8 * 365.25 ? "since" : end < 1.5 ? "flat" : "years";
+  const L = phone ? 2 : 236, R = phone ? 30 : 58;
+  if (mode === "since") {
+    const last = Math.max(20, end), dmax = Math.max(last * 1.1, Math.min(today, last * 4)), lead = phone ? 14 : 26, x0 = L + lead, pw = Wd - R - x0;
+    const X = d => d <= 0 ? x0 + lead * Math.max(-1, d / 28) : x0 + pw * Math.log1p(Math.min(d, dmax)) / Math.log1p(dmax);
+    const TICKS = [[7, "1 week"], [30, "1 month"], [182, "6 months"], [365, "1 year"], [730, "2 years"], [1826, "5 years"], [3652, "10 years"], [9131, "25 years"], [18262, "50 years"], [36525, "100 years"]];
+    const ticks = [];
+    let lastX = x0 + (phone ? 40 : 0);
+    for (const [d, w] of TICKS) { const x = X(d); if (d >= dmax * 0.97 || x - lastX < (phone ? 54 : 70) || X(dmax) - x < (phone ? 40 : 52)) continue; ticks.push([d, w]); lastX = x; }
+    return {mode, L, R, x0, pw, X, dmax, today, ticks, toToday:dmax >= today - 1};
+  }
+  const x0 = L + (phone ? 12 : 14), pw = Wd - R - x0;
+  if (mode === "flat") return {mode, L, R, x0, pw, X:() => x0, dmax:1, today, ticks:[], toToday:false};
+  const markLast = rows.some(r => r.it.mark && r.it.d >= end * 0.9);  // a mark near the end keeps room for its bar to read
+  const dmax = Math.max(end * (markLast ? 1.14 : 1.06), end + 2), X = d => x0 + pw * Math.max(0, Math.min(d, dmax)) / dmax;
+  return {mode, L, R, x0, pw, X, dmax, today, ticks:rcCalTicks(s.iso0, dmax, pw, phone), toToday:dmax >= today - 1};
 }
 function rcDraw(s) {
   const host = $("#rcchart"); if (!host || !s.rc) return;
   const rows = s.rc.rows, Wd = Math.round(Math.max(300, host.clientWidth || 900)), phone = Wd < 640; s.rc.w = Wd;
-  const today = Math.max(2, (Date.now() - D(s.iso0)) / 864e5), last = Math.max(20, ...rows.map(r => Math.max(r.it.d, r.it.study && r.it.range ? Math.min(today, r.it.range[1]) : 0)));  // a study's window counts
-  const dmax = Math.max(last * 1.1, Math.min(today, last * 4)), toToday = dmax >= today - 1;  // bars run on to today, unless today would squash the steps
-  const L = phone ? 2 : 236, R = phone ? 30 : 58, lead = phone ? 14 : 26, x0 = L + lead, pw = Wd - R - x0;
-  const X = d => d <= 0 ? x0 + lead * Math.max(-1, d / 28) : x0 + pw * Math.log1p(Math.min(d, dmax)) / Math.log1p(dmax);
+  const sc = rcScale(s, rows, Wd, phone), {mode, L, R, x0, X, dmax} = sc, cal = mode !== "since"; s.rc.mode = mode;
   // a row with a line is taller, so every line stays inside its own row; all lines share one scale, so heights compare
-  const RL = phone ? 104 : 88, R0 = phone ? 54 : 48, PAD = phone ? 12 : 16, AMP = RL - PAD - (phone ? 46 : 24);  // room above each peak for its number
+  const RL = phone ? 104 : 88, R0 = cal ? (phone ? 60 : 52) : (phone ? 54 : 48), PAD = phone ? 12 : 16, AMP = RL - PAD - (phone ? 46 : 24);  // room above each peak for its number
   const ymax = Math.max(10, ...rows.filter(r => r.lift).map(r => r.lift.peak[1])), hOf = v => AMP * Math.log10(Math.max(1, v)) / Math.log10(ymax);
   const rh = rows.map(r => r.lift ? RL : R0), rt = rh.map((h, i) => 6 + rh.slice(0, i).reduce((a, b) => a + b, 0));
-  const H = Math.round(6 + rh.reduce((a, b) => a + b, 0) + 26), yb = i => rt[i] + rh[i] - PAD, ROW = i => rh[i];
-  const TICKS = [[7, "1 week"], [30, "1 month"], [182, "6 months"], [365, "1 year"], [730, "2 years"], [1826, "5 years"], [3652, "10 years"], [9131, "25 years"], [18262, "50 years"], [36525, "100 years"]];
-  let ax = `<text class="rcax" x="${x0}" y="${H - 6}" text-anchor="${phone ? "start" : "middle"}">the stone</text>`, lastX = x0 + (phone ? 40 : 0);
-  for (const [d, w] of TICKS) {
-    const x = X(d); if (d >= dmax * 0.97 || x - lastX < (phone ? 54 : 70) || X(dmax) - x < (phone ? 40 : 52)) continue;
-    ax += `<line class="rcgrid" x1="${x.toFixed(1)}" x2="${x.toFixed(1)}" y1="2" y2="${H - 22}"/><text class="rcax" x="${x.toFixed(1)}" y="${H - 6}" text-anchor="middle">${w}</text>`; lastX = x;
+  const axisH = mode === "flat" ? 4 : 30, H = Math.round(6 + rh.reduce((a, b) => a + b, 0) + axisH), yb = i => rt[i] + rh[i] - PAD, ROW = i => rh[i];
+  let ax = "";
+  if (mode === "since") ax += `<text class="rcax" x="${x0}" y="${H - 7}" text-anchor="${phone ? "start" : "middle"}">the stone</text>`;
+  for (const [d, w] of sc.ticks) {
+    const x = X(d), tw = w.length * 7.4, anc = x + tw / 2 > Wd - 2 ? "end" : "middle";
+    ax += `<line class="rcgrid" x1="${x.toFixed(1)}" x2="${x.toFixed(1)}" y1="2" y2="${H - 24}"/><text class="rcax" x="${x.toFixed(1)}" y="${H - 7}" text-anchor="${anc}">${w}</text>`;
   }
-  ax += `<text class="rcax" x="${X(dmax).toFixed(1)}" y="${H - 6}" text-anchor="${phone ? "end" : "middle"}">${toToday ? "today" : "later"}</text>`;
-  let body = "", labs = "";
+  if (mode === "since") ax += `<text class="rcax" x="${X(dmax).toFixed(1)}" y="${H - 7}" text-anchor="${phone ? "end" : "middle"}">${sc.toToday ? "today" : "later"}</text>`;
+  let body = "", labs = "", runs = 0;
   rows.forEach((r, i) => {
     const it = r.it, y = yb(i), x = X(it.d), lv = r.stone ? "stone" : it.lv;
     const hue = r.stone ? "#1e2a2e" : it.mark ? "#c77f12" : PULSE_HUES[(i - 1 + PULSE_HUES.length) % PULSE_HUES.length];
-    let g = `<rect class="rcbg" x="${phone ? -6 : -10}" y="${(rt[i] + 2).toFixed(1)}" width="${Wd + (phone ? 12 : 20)}" height="${ROW(i) - 4}" rx="10"/><line class="rcbase" x1="${x0}" x2="${(Wd - R).toFixed(1)}" y1="${y.toFixed(1)}" y2="${y.toFixed(1)}"/>`;
+    let g = `<rect class="rcbg" x="${phone ? -6 : -10}" y="${(rt[i] + 2).toFixed(1)}" width="${Wd + (phone ? 12 : 20)}" height="${ROW(i) - 4}" rx="10"/>`;
+    if (!cal || r.lift) g += `<line class="rcbase" x1="${x0}" x2="${(Wd - R).toFixed(1)}" y1="${y.toFixed(1)}" y2="${y.toFixed(1)}"/>`;
     if (r.lift) {
-      const pts = r.lift.pts.filter(([d]) => d >= -28 && d <= dmax).sort((a, b) => a[0] - b[0]);
+      const pts = r.lift.pts.filter(([d]) => d >= (cal ? 0 : -28) && d <= dmax).sort((a, b) => a[0] - b[0]);
       if (pts.length >= 2) {
         const P = pts.map(([d, v]) => [X(d), y - hOf(v)]), line = P.map((p, k) => `${k ? "L" : "M"}${p[0].toFixed(1)},${p[1].toFixed(1)}`).join("");
         g += `<path class="rca" d="${line}L${P[P.length - 1][0].toFixed(1)},${y.toFixed(1)}L${P[0][0].toFixed(1)},${y.toFixed(1)}Z"/><path class="rcl" pathLength="1" d="${line}"/>`;
-        const pk = r.lift.peak; let px = X(Math.max(-28, Math.min(dmax, pk[0]))), py = y - hOf(pk[1]), right = px > Wd - R - 80; px -= right ? 0 : 4;
+        const pk = r.lift.peak; let px = X(Math.max(cal ? 0 : -28, Math.min(dmax, pk[0]))), py = y - hOf(pk[1]), right = px > Wd - R - 80; px -= right ? 0 : 4;
         labs += `<g class="rcrow pk" data-i="${i}" style="--h:${hue}"><text class="rcpk" x="${(px + (right ? -7 : 7)).toFixed(1)}" y="${(py - 7).toFixed(1)}" text-anchor="${right ? "end" : "start"}">${rcX(pk[1])}×</text></g>`;
       }
+    } else if (cal && !r.stone) {  // no line: the hop from the step before, drawn to scale, with the time it took in words
+      const p = rows[i - 1], x1 = X(p.it.d), yp = phone ? Math.max(yb(i - 1), rt[i] + 15) : yb(i - 1), gap = it.d - p.it.d;  // a phone's names sit above their row: the drop starts under the name
+      const path = x - x1 > 14 ? `M${x1.toFixed(1)},${(yp + 10).toFixed(1)}V${(y - 6).toFixed(1)}Q${x1.toFixed(1)},${y.toFixed(1)} ${(x1 + 6).toFixed(1)},${y.toFixed(1)}H${(x - 11).toFixed(1)}` : `M${x1.toFixed(1)},${(yp + 10).toFixed(1)}V${(y - 11).toFixed(1)}`;
+      if (!phone || x - x1 > 14) g += `<path class="rcrun" pathLength="1" d="${path}"/>`;  // a phone draws no stub for a step on the same date
+      const say = lv === "busted" ? (it.lvText === "Disputed" ? "disputed" : "busted") : it.study ? it.study.eff || "" : gap >= 1 ? avGap(gap) : "";
+      if (say) {
+        const tw = say.length * 7.4 + (it.study ? 4 : 0), room = x - x1 - 26;
+        const level = !it.mark && !r.range ? y + 4.5 : y - 10;  // right of a dot or a cross: level with it; right of a mark or a window: above its bar
+        const [lx, ly, anc] = room >= tw + 10 ? [(x1 + x) / 2, y - 8, "middle"] : x + 14 + tw <= Wd - R + (phone ? 26 : 44) ? [x + 14, level, "start"] : [x - 12, y + 17, "end"];  // no room on either side: under the run, clear of the drop
+        g += `<text class="rcgap${lv === "busted" ? " bust" : it.study ? " eff" : ""}" x="${lx.toFixed(1)}" y="${ly.toFixed(1)}" text-anchor="${anc}">${esc(say)}</text>`; runs++;
+      }
     }
-    if (it.study && it.range) { const a = X(Math.max(0, it.range[0])), b = X(Math.min(dmax, it.range[1])); if (b - a > 3) g += `<rect class="rcspan" x="${a.toFixed(1)}" y="${(y - 6).toFixed(1)}" width="${(b - a).toFixed(1)}" height="12" rx="6"/>`; }  // the study's own window
-    if (it.mark) g += `<rect class="rcband" x="${x.toFixed(1)}" y="${(y - 3.5).toFixed(1)}" width="${Math.max(4, Wd - R - x).toFixed(1)}" height="7" rx="3.5"/>`;
+    if (r.range) { const a = X(Math.max(0, r.range[0])), b = X(Math.min(dmax, r.range[1])); if (b - a > 3) g += `<rect class="rcspan" x="${a.toFixed(1)}" y="${(y - 6).toFixed(1)}" width="${(b - a).toFixed(1)}" height="12" rx="6"/>`; }  // the study's own window
+    if (it.mark) {
+      const bx = Wd - R, more = cal && !sc.toToday;  // on the calendar the bar runs past the last tick toward today: an open end says so
+      g += `<rect class="rcband" x="${x.toFixed(1)}" y="${(y - 3.5).toFixed(1)}" width="${Math.max(4, bx - x).toFixed(1)}" height="7" rx="3.5"/>`;
+      if (more && bx - x > 30) g += `<path class="rcmore" d="M${(bx + 5).toFixed(1)},${(y - 5).toFixed(1)}l5,5l-5,5"/>`;
+    }
     if (r.stone) g += `<circle cx="${x}" cy="${y.toFixed(1)}" r="11" fill="none" stroke="#1e2a2e" stroke-opacity=".28" stroke-width="1.5"/><circle cx="${x}" cy="${y.toFixed(1)}" r="6" fill="#1e2a2e"/>`;
     else if (it.mark) g += `<g transform="translate(${x.toFixed(1)},${y.toFixed(1)})"><path d="M0,-9 L7.8,-4.5 L7.8,4.5 L0,9 L-7.8,4.5 L-7.8,-4.5 Z" fill="#fff3dc" stroke="#c77f12" stroke-width="2"/><circle r="2.8" fill="#c77f12"/></g>`;
-    else if (lv === "busted") g += `<path d="M-5,-5 L5,5 M5,-5 L-5,5" transform="translate(${x.toFixed(1)},${y.toFixed(1)})" stroke="#d04a3a" stroke-width="2.2" stroke-linecap="round"/>`;
-    else if (lv === "plausible") g += `<circle cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" r="5" fill="#f4efe4" stroke="#a08a47" stroke-width="2"/>`;
+    else if (lv === "busted") g += `<path d="M-5,-5 L5,5 M5,-5 L-5,5" transform="translate(${x.toFixed(1)},${y.toFixed(1)})" stroke="#c0402f" stroke-width="2.4" stroke-linecap="round"/>`;
+    else if (lv === "plausible") g += `<circle cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" r="5" fill="#f4efe4" stroke="#8a7638" stroke-width="2"/>`;
     else g += `<circle cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" r="5" fill="${r.lift ? hue : "#3a4a4f"}"/>`;
     const max = phone ? 25 : 27, name = it.label.length > max ? it.label.slice(0, max - 1).replace(/\s+\S*$/, "") + "…" : it.label;
     const when = r.stone ? avWhen(s.first || {}) : avWhen(it);
     labs += `<g class="rcrow lab${it.mark ? " mark" : ""}${lv === "busted" ? " busted" : ""}" data-i="${i}">` + (phone
-      ? `<text class="rcn" x="${L}" y="${(rt[i] + 18).toFixed(1)}">${esc(name)}<tspan class="rcd" dx="7">${esc(when)}</tspan></text>`
-      : `<text class="rcn" x="0" y="${(y - 3).toFixed(1)}">${esc(name)}</text><text class="rcd" x="0" y="${(y + 13).toFixed(1)}">${esc(when)}</text>`) + `</g>`;
+      ? `<text class="rcn" x="${L}" y="${(rt[i] + 19).toFixed(1)}">${esc(name)}<tspan class="rcd" dx="8">${esc(when)}</tspan></text>`
+      : `<text class="rcn" x="0" y="${(y - 3).toFixed(1)}">${esc(name)}</text><text class="rcd" x="0" y="${(y + 14).toFixed(1)}">${esc(when)}</text>`) + `</g>`;
     body += `<g class="rcrow${r.stone ? " stone" : ""}${it.mark ? " mark" : ""}${lv === "busted" ? " busted" : ""}" data-i="${i}" style="--h:${hue}">${g}</g>`;
   });
+  s.rc.runs = runs;
   const hits = rows.map((r, i) => `<rect class="rchit" data-i="${i}" x="${phone ? -6 : -10}" y="${(rt[i] + 2).toFixed(1)}" width="${Wd + (phone ? 12 : 20)}" height="${ROW(i) - 4}"><title>${esc(r.it.title || r.it.label)}</title></rect>`).join("");
   host.innerHTML = `<svg viewBox="0 0 ${Wd} ${H}" width="${Wd}" height="${H}" role="img" aria-label="${esc(`How ${s.stone || "the stone"} rippled out, one row per step`)}">${ax}${body}${labs}${hits}</svg>`;
   rcMark(s);
@@ -2774,15 +2903,22 @@ function rcSay(s, i, final) {
   const r = s.rc.rows[i], el = $("#rccap"); if (!r || !el) return;
   const [k, h, id] = rcCap(s, r, final);
   el.classList.remove("swap"); void el.offsetWidth;
-  el.innerHTML = `<p class="k">${k}</p><p class="h">${h}${id && s.rc.done ? ` <button type="button" class="rchow" data-id="${esc(id)}">How we know</button>` : ""}</p>`; el.classList.add("swap");
+  el.innerHTML = `<p class="k">${k}</p><p class="h">${rcCapGlyph(s, r, i)}<span>${h}</span>${id && s.rc.done ? ` <button type="button" class="rchow" data-id="${esc(id)}">How we know</button>` : ""}</p>`; el.classList.add("swap");
   s.rc.cur = i; rcMark(s);
 }
 function rcStop(s) { if (s && s.rc && s.rc.timer) { clearTimeout(s.rc.timer); s.rc.timer = 0; } }
+const RC_PLAY_ICON = {skip:'<svg viewBox="0 0 16 16" aria-hidden="true" fill="currentColor"><path d="M3 3.5v9l6-4.5z"/><path d="M9.5 3.5v9l6-4.5z"/></svg>', again:'<svg viewBox="0 0 16 16" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"><path d="M13 8a5 5 0 1 1-1.6-3.7"/><path d="M11.8 1.6v3h-3"/></svg>'};
+function rcPlayBtn(done) {
+  const b = $("#rcplay"); if (!b) return;
+  b.innerHTML = `${done ? RC_PLAY_ICON.again : RC_PLAY_ICON.skip}<span>${done ? "Replay" : "Skip"}</span>`;
+  b.setAttribute("aria-label", done ? "Play the story again" : "Skip to the end");
+  const k = $("#rcfoot .avknew"); if (k) k.hidden = !done;  // "New to you?" waits for the end of the play
+}
 function rcEnd(s, via) {  // at rest: every row on, the caption on where the stone landed
   rcStop(s); s.rc.upto = s.rc.rows.length - 1; s.rc.done = true;
   if (!s.rc.ended) { s.rc.ended = true; track("chart_end", {slug:s.key, via:via || "play", rows:s.rc.rows.length, seconds_in_story:Math.round((performance.now() - sess.storyT0) / 1000)}); }  // play: watched to the end; skip or tap: cut it short
   rcSay(s, rcLand(s), true);
-  const b = $("#rcplay"); if (b) b.textContent = "Play again";
+  rcPlayBtn(true);
   if (avLake) avLake.ember(!!s.answer);
 }
 function rcLand(s) {  // the row the title points at: the answer, else the step the title names, else the biggest move
@@ -2801,7 +2937,7 @@ function rcLand(s) {  // the row the title points at: the answer, else the step 
 }
 function rcPlay(s) {
   rcStop(s); s.rc.upto = -1; s.rc.cur = -1; s.rc.done = false; rcMark(s);
-  const b = $("#rcplay"); if (b) b.textContent = "Skip to the end";
+  rcPlayBtn(false);
   if (rcReduced()) { rcEnd(s); return; }
   const step = i => {
     if (cur !== s) return;
@@ -2818,16 +2954,16 @@ function rcPick(i) {  // a tap or a hover on a row: the story stops playing and 
 }
 function rcRender(s) {
   s.rc = {rows:rcRows(s), upto:-1, cur:-1, timer:0, done:false};
-  const lines = s.rc.rows.some(r => r.lift), marks = s.rc.rows.some(r => r.it.mark), spans = s.rc.rows.some(r => r.it.study && r.it.range), myth = avMyth(s), study = s.items.some(x => x.study);
+  const lines = s.rc.rows.some(r => r.lift), marks = s.rc.rows.some(r => r.it.mark), spans = s.rc.rows.some(r => r.range), myth = avMyth(s), study = s.items.some(x => x.study);
   const sureTag = myth ? (s.items.some(x => x.lvText === "Disputed") ? "Disputed" : "Busted") : AV_TAG[s.weak] || "Unproven";
   const sureTip = myth ? AV_SURE.myth : study && AV_SURE[`study_${s.weak}`] ? AV_SURE[`study_${s.weak}`] : AV_SURE[s.weak] || AV_SURE.plausible;
   let knew = null; try { knew = JSON.parse(localStorage.getItem("ripple-knew") || "{}")[`${s.kind}:${s.key}`]; } catch {}
   const nx = nextEntry(), nxStone = (nx.title || "").split("→")[0].trim();
-  $("#rcwrap").innerHTML = `<div class="rccap" id="rccap" aria-live="polite"></div><div class="rcchart" id="rcchart"></div>
-    <p class="rcnote">${lines ? `<span class="key"><i class="sw"></i>readers of that Wikipedia page, against its own normal</span>` : ""}${marks ? `<span class="key"><i class="bar"></i>a lasting mark, still there</span>` : ""}${spans ? `<span class="key"><i class="span"></i>the study's window</span>` : ""}<span class="key" title="${esc(sureTip)}">How sure: <b>${esc(sureTag)}</b></span>${s.rcHidden ? `<span class="key">${s.rcHidden} more step${s.rcHidden === 1 ? "" : "s"} in the list below</span>` : ""}</p>
+  $("#rcwrap").innerHTML = `<div class="rctop"><div class="rccap" id="rccap" aria-live="polite"></div><button type="button" class="rcplay" id="rcplay"></button></div><div class="rcchart" id="rcchart"></div>
+    <p class="rcnote">${lines ? `<span class="key"><i class="kl"></i>readers of that Wikipedia page, against its own normal</span>` : ""}${marks ? `<span class="key"><i class="kb"></i>a lasting mark, still there</span>` : ""}${spans ? `<span class="key"><i class="ks"></i>the study's window</span>` : ""}<span class="key" title="${esc(sureTip)}">How sure: <b>${esc(sureTag)}</b></span>${s.rcHidden ? `<span class="key">${s.rcHidden} more step${s.rcHidden === 1 ? "" : "s"} in the list below</span>` : ""}</p>
     ${s.also ? `<p class="rcnote rcalso">Not the only reason: ${esc(s.also)}</p>` : ""}
-    <div class="rcfoot"><button type="button" class="avnext">Next: ${esc(nxStone || "another stone")} →</button><button type="button" class="avshare">Share</button><button type="button" class="rcplay" id="rcplay">Skip to the end</button>
-      <div class="avknew">${knew != null ? avKnewDone(knew) : `<span>New to you?</span><button type="button" data-knew="0">Yes</button><button type="button" data-knew="1">I knew it</button>`}</div></div>`;
+    <div class="rcfoot" id="rcfoot"><button type="button" class="avnext">Next: ${esc(nxStone || "another stone")}</button><button type="button" class="avshare">Share</button>
+      <p class="avknew" hidden>${knew != null ? avKnewDone(knew) : `<span>New to you?</span><button type="button" data-knew="0">Yes</button><button type="button" data-knew="1">I knew it</button>`}</p></div>`;
   rcDraw(s); rcPlay(s);
 }
 function rcGlyph(x) {  // a shelf card's ripple on one shared clock (up to a century): the stone, its steps, the mark and its bar
@@ -2878,18 +3014,18 @@ function avShelfData() {
     avPrep(st);
     st.titleText = name; const a = revealMark(st), [stone, land] = name.split(/\s*→\s*/);
     const myth = !a && avMyth(st);
-    out.push({kind, slug, stone, land, group:myth ? "myth" : a ? guessOf(a.mark) : "none", myth:myth ? (st.items.some(x => x.lvText === "Disputed") ? "Disputed" : "Busted") : null, study:st.items.some(x => x.study), weak:weakOf(st), gap:a ? a.d : null, year:(st.iso0 || "").slice(0, 4), ds:st.items.filter(x => !x.aside && !x.undated && !x.future && x.lv !== "busted").map(x => x.d)});
+    out.push({kind, slug, stone, land, group:myth ? "myth" : a ? guessOf(a.mark) : "none", myth:myth ? (st.items.some(x => x.lvText === "Disputed") ? "Disputed" : "Busted") : null, study:st.items.some(x => x.study), weak:weakOf(st), gap:a ? a.d : null, year:/^\d{4} to \d{4}$/.test(stoneWhen(st)) ? stoneWhen(st).replace(" to ", "–") : (st.iso0 || "").slice(0, 4), ds:st.items.filter(x => !x.aside && !x.undated && !x.future && x.lv !== "busted").map(x => x.d)});
   }
   return avShelfCache = out;
 }
-function avShelf() {
+function avShelf() {  // every other story, grouped by what it left behind; one row of cards a group until asked for more
   const el = $("#avshelf"); if (!el || !cur) return;
-  const data = avShelfData(), here = `${cur.kind}:${cur.key}`;
-  const G = [["life", "Stones that changed how people live"], ["myth", "Myths, checked"], ["built", "Stones that built something"], ["law", "Stones that changed a law or rule"], ["none", "Big splashes, nothing lasting yet"]];
-  el.innerHTML = `<h2 class="avsh">More stones</h2><p class="avshsub">Each card says where the stone landed. The amber bar starts when it landed.</p>` + G.map(([g, h]) => {
+  const data = avShelfData(), here = `${cur.kind}:${cur.key}`, SHOW = window.innerWidth <= 560 ? 3 : 4;  // a phone shows three a group, a wider screen one row of four
+  const G = [["life", "Everyday life"], ["myth", "Myths, checked"], ["built", "Things built"], ["law", "Laws and rules"], ["none", "Nothing lasting yet"]];
+  el.innerHTML = `<h2 class="avsh">More stones</h2><p class="avshsub">The amber bar starts where each stone landed.</p>` + G.map(([g, h]) => {
     const list = data.filter(x => x.group === g && `${x.kind}:${x.slug}` !== here); if (!list.length) return "";
-    const open = avShelfOpen.has(g), shown = open ? list : list.slice(0, 8);
-    return `<section class="avgroup"><h3>${g === "myth" ? AV_MYTH_ICON : AV_KIND[g].icon}<span>${h}</span><em>${list.length}</em></h3><div class="avgrid">${shown.map(x => `<button type="button" class="avcard" data-k="${x.kind}" data-s="${esc(x.slug)}"><span class="cy">${esc(x.year)}</span><span class="cs">${esc(x.stone)}</span><span class="cl">→ ${esc(x.land)}</span>${rcGlyph(x)}<span class="cm"><i class="d-${x.myth ? "busted" : x.weak}"></i>${esc(x.myth || AV_TAG[x.weak] || "")}${x.study ? " · a published study" : x.gap != null ? ` · ${esc(avGap(x.gap))} later` : ""}</span></button>`).join("")}</div>${list.length > 8 ? `<button type="button" class="avshmore" data-g="${g}">${open ? "Show fewer" : `Show all ${list.length}`}</button>` : ""}</section>`;
+    const open = avShelfOpen.has(g), shown = open ? list : list.slice(0, SHOW);
+    return `<section class="avgroup"><h3>${g === "myth" ? AV_MYTH_ICON : AV_KIND[g].icon}<span>${h}</span><em>${list.length}</em></h3><div class="avgrid">${shown.map(x => `<button type="button" class="avcard" data-k="${x.kind}" data-s="${esc(x.slug)}"><span class="cy">${esc(x.year)}</span><span class="cs">${esc(x.stone)}</span><span class="cl">→ ${esc(x.land)}</span>${rcGlyph(x)}<span class="cm"><i class="d-${x.myth ? "busted" : x.weak}"></i><b>${esc(x.myth || AV_TAG[x.weak] || "")}</b>${x.study ? "<em>a published study</em>" : x.gap != null ? `<em>${esc(avGap(x.gap))} later</em>` : ""}</span></button>`).join("")}</div>${list.length > SHOW ? `<button type="button" class="avshmore" data-g="${g}">${open ? "Show fewer" : `Show all ${list.length}`}</button>` : ""}</section>`;
   }).join("");
 }
 // The hero's water: a lake at dusk in WebGL, the stone thrown in, rings that spread and fade, and a pool of ember when the

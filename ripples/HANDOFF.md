@@ -138,7 +138,7 @@ node header_test.js     # the pond's top on a 390 and a 375 phone (145 to 167 px
 node chart_test.js      # the spikes chart stays inside its column with no animation (the Oct 4 .pulse collision); exits 1 on a failure
 node pace_test.js       # when each ripple arrives and how long a story runs (15 to 95 s, beats 2 s apart or more, a narration line per beat); exits 1 on a failure
 node fold_test.js       # the first card on screen at load at 1093x614 (its title) and 1440x800 (whole), the caption clear of a small phone pond, the first lasting mark and its promise on a phone; exits 1 on a failure
-node answer_test.js     # the ripple chart: no guess, title and chart on the first screen, the play reaches its landing row, no overlapping names, nothing sideways at four sizes, every story at two sizes, Skip, Play again, a row tap, shelf, Next, a shared step, both older views; exits 1 on a failure
+node answer_test.js     # the ripple chart: no guess, title and chart on the first screen, the play reaches its landing row, two facts at most above the caption, "New to you?" only after the play, no overlapping names, nothing sideways at four sizes, every story at two sizes with no label outside the panel, Skip, Play again, a row tap, shelf, Next, a shared step, both older views; exits 1 on a failure
 node chain_test.js      # the chain view: the question row, the answer time, no words on the pond, no overlapping rows, nothing sideways, the guess closes, the next stone; exits 1 on a failure
 node sweep.js           # screenshots of the main screens, desktop and phone, into ./sweep
 ```
@@ -208,6 +208,10 @@ the pacing and the cut and are stale.
 
 **Not launched; the public launch is planned for Oct 6.** Everything below is live on main unless marked draft.
 
+- **UI pass (Oct 9):** the chart picks its clock from the story (calendar for long spans and for stories with no line, log
+  time for short stories with lines), a story with no line draws each step as a hop from the one before with the time it
+  took written on it, the caption says two facts at most, Next is the one amber button, the shelf shows one row a group.
+  Record and before/after numbers: `docs/ui_pass_v1.md`.
 - **Study-backed ripples (Oct 8):** 40 stories from published studies and a "Myths, checked" shelf: `docs/studies_v1.md`.
 - **The ripple chart (Oct 8, second pass), the default:** the answer is the title; one chart plays the story row by
   row, one row per step on one clock, each line a page's readers against its own normal on one shared scale, a lasting
