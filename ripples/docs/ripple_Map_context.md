@@ -196,6 +196,10 @@ deep enough for an adult to browse rabbit holes.
 
 ## 2. Current status (one screen, 2026-10-05)
 
+**Oct 8, second pass.** The owner found the answer view too text heavy and the guess annoying. The page now opens on
+the ripple chart: the answer as the title, then one chart that plays the story row by row with one caption. Record:
+`docs/ripple_chart_v1.md`.
+
 **Oct 8 update.** Launched Oct 5 (LinkedIn, then Reddit). A Reddit visitor called the page confusing and hard to read;
 the chain view (Oct 7) and then the answer view (Oct 8, now the default) followed. The answer view puts the answer one
 tap away, says how we know each link in plain words, and adds a "Did you know this already?" tap, the first real

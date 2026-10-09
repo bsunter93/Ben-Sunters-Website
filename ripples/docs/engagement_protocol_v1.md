@@ -90,6 +90,13 @@ drops any browser a script drives (`navigator.webdriver`). The parameters of `ri
 custom dimensions, so the fall-off point could not be read. The response, the chain view, changes the layout and the
 pace together; `docs/chain_view_v1.md` has the reading, the change, how the next week will be compared and a forecast.
 
+## Oct 8 addendum, second pass: the ripple chart
+
+The answer view was replaced the same day by the ripple chart (`docs/ripple_chart_v1.md`). The answer is the title, so
+`ripple_reveal` is no longer sent from it. New event `ripple_chart_end` (`via`: `play`, `skip`, `tap`; `rows`;
+`seconds_in_story`), once per story start: the share of starts that watch to the end is the reading that replaces the
+reveal rate. `ripple_story_start` carries `view: "chart"`.
+
 ## Oct 8 addendum: the answer view
 
 The page now opens on the answer view (`docs/answer_view_v1.md`): a guess or "Skip the guess" shows the answer at

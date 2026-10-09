@@ -138,7 +138,7 @@ node header_test.js     # the pond's top on a 390 and a 375 phone (145 to 167 px
 node chart_test.js      # the spikes chart stays inside its column with no animation (the Oct 4 .pulse collision); exits 1 on a failure
 node pace_test.js       # when each ripple arrives and how long a story runs (15 to 95 s, beats 2 s apart or more, a narration line per beat); exits 1 on a failure
 node fold_test.js       # the first card on screen at load at 1093x614 (its title) and 1440x800 (whole), the caption clear of a small phone pond, the first lasting mark and its promise on a phone; exits 1 on a failure
-node answer_test.js     # the answer view: tiles on the first screen, the answer at once, the route at four sizes, every story renders, Skip, shelf, Next, a shared step, both older views; exits 1 on a failure
+node answer_test.js     # the ripple chart: no guess, title and chart on the first screen, the play reaches its landing row, no overlapping names, nothing sideways at four sizes, every story at two sizes, Skip, Play again, a row tap, shelf, Next, a shared step, both older views; exits 1 on a failure
 node chain_test.js      # the chain view: the question row, the answer time, no words on the pond, no overlapping rows, nothing sideways, the guess closes, the next stone; exits 1 on a failure
 node sweep.js           # screenshots of the main screens, desktop and phone, into ./sweep
 ```
@@ -208,7 +208,11 @@ the pacing and the cut and are stale.
 
 **Not launched; the public launch is planned for Oct 6.** Everything below is live on main unless marked draft.
 
-- **The answer view (Oct 8), the default:** the water opens the page with no words on it; the title asks what the
+- **The ripple chart (Oct 8, second pass), the default:** the answer is the title; one chart plays the story row by
+  row, one row per step on one clock, each line a page's readers against its own normal on one shared scale, a lasting
+  mark as an amber bar to today; one caption; the route folds under it; no guess. Code: `rc*` functions and `.rc*`
+  styles in `demo/index.html`, on top of the answer view's `av*` code. Record: `docs/ripple_chart_v1.md`.
+- **The answer view (Oct 8), replaced the same day by the ripple chart:** the water opens the page with no words on it; the title asks what the
   stone changed; four tiles take a guess and the answer shows at once (or "Skip the guess"); a How sure meter set by the
   weakest link; the route from the stone to the mark top to bottom, each step saying how we know it in plain words; a
   shelf of every story grouped by the kind of mark. `?view=chain` and `?view=pond` keep the earlier views. Code: `av*`
