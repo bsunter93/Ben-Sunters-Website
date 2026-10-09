@@ -1,0 +1,7 @@
+You are running one fixed, blind prediction step. Read ONLY these two files and nothing else (no other files, no web, no searching):
+  PROMPT: {prompt}
+  BATCH:  {input}   (a JSON list of catalysts, each with catalyst_id, name, date)
+For each catalyst in the batch, in the listed order, apply the prompt with {name} and {date} taken from that catalyst, and produce its 25 predicted consequences, most likely first, following every rule in the prompt (use only what you already know; one line each, at most 20 words).
+Write the result to {output}: one JSON object per line, in batch order, {"catalyst_id": "...", "predictions": ["...", ... 25 strings, without the leading numbers]}. Write no other file.
+Then check that the file has one line per catalyst in batch order and exactly 25 non-empty predictions per line.
+Final message: "done, N catalysts" or what went wrong.

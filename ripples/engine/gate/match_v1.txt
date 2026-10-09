@@ -1,0 +1,32 @@
+match_v1 (fixed rule for matching a candidate to its catalyst's 25 predictions, for S_A)
+
+Inputs: one candidate's outcome text (and its claim sentence), and the 25 ranked predictions made for its catalyst by
+predict_v1. Do not use the evidence line, the panel ratings or any other field.
+
+A prediction MATCHES the candidate when a reader who had written that prediction would say "I expected that":
+  specific  The prediction names the same outcome: the same law, body, fund, treaty, product, place or measure, or
+            the same change in the same population, in the same direction. Different wording is fine
+            ("Congress passes the Oil Pollution Act" matches "The Oil Pollution Act of 1990 is signed").
+  class     The prediction names the outcome's kind, its subject and its jurisdiction or population together, at
+            a level where the candidate is an instance of it ("a federal law expanding oil spill liability and
+            cleanup duties" matches the Oil Pollution Act; "copycat suicides rise in the weeks after" matches
+            "more suicides in the US in the following months").
+
+A prediction DOES NOT MATCH when it:
+  - names only a kind or a domain ("new laws", "public debate", "media attention", "safety reforms");
+  - names a different jurisdiction, body or population (a federal law does not match a state law; a US effect does
+    not match an effect measured in another country, unless the prediction says worldwide or names that country);
+  - names the opposite direction (more births does not match fewer births);
+  - names a step on the way rather than the outcome (attention to a topic does not match a law on it).
+
+Myth checks (busted rows): the candidate's outcome is that a popular claim does not hold up. It is matched only by a
+prediction that says the claimed effect was disputed, absent, small or debunked. A prediction that the claimed effect
+happened does not match; record its rank separately as claim_predicted_rank, for information.
+
+Record per candidate: the best (lowest) matching rank 1 to 25 or "not predicted", the match level (specific or class),
+the matching prediction's text, and a one-line reason. When unsure between class and no match, record no match.
+
+Rank to score (a stated monotone rule, not a probability):
+  S_A = 1.0                           if not predicted
+  S_A = 0.7 x (rank - 1) / 24         if predicted at rank 1 to 25 (rank 1 -> 0.00, rank 25 -> 0.70)
+The gap between rank 25 and "not predicted" marks that missing from the list is a different state from a late rank.

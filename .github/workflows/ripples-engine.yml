@@ -1,0 +1,68 @@
+# Discovery engine, script-only steps (ripples/engine/README.md): harvest a frozen query file from PubMed and OpenAlex,
+# then write a metadata-only summary. Runs only when started by hand. The judged steps never run here.
+# The OpenAlex key is a repository secret, passed only to the one step that needs it, added only to requests to
+# api.openalex.org (ripples/engine/fetch.py), and never echoed or logged. Nothing is committed: abstracts stay on the
+# runner, and the artifact holds metadata and request logs only.
+name: Ripples engine (harvest)
+
+on:
+  workflow_dispatch:
+    inputs:
+      queries:
+        description: "Frozen query file in ripples/engine/generate/queries/"
+        type: choice
+        options: [discovery_v4.json, studies_v1.json]
+        default: discovery_v4.json
+      max_searches:
+        description: "Stop each source after this many new searches (0 = no cap)"
+        type: string
+        default: "0"
+  # The weekly run stays off until the discovery v4 pilot meets its bars (ripples/docs/discovery_plan_v4.md).
+  # schedule:
+  #   - cron: "41 7 * * 1"
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ripples-engine
+  cancel-in-progress: false
+
+jobs:
+  harvest:
+    runs-on: ubuntu-latest
+    timeout-minutes: 120
+    env:
+      QUERIES: ripples/engine/generate/queries/${{ inputs.queries || 'discovery_v4.json' }}
+      MAX_SEARCHES: ${{ inputs.max_searches || '0' }}
+      RIPPLE_ENGINE_WORK: ripples/engine/work/actions
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Check the query file and the plan of requests (no request sent)
+        run: |
+          python ripples/engine/generate/harvest.py pubmed --queries "$QUERIES" --dry-run
+          python ripples/engine/generate/harvest.py openalex --queries "$QUERIES" --dry-run
+      - name: Harvest PubMed (no key)
+        run: python ripples/engine/generate/harvest.py pubmed --queries "$QUERIES" --max-searches "$MAX_SEARCHES"
+      - name: Harvest OpenAlex
+        env:
+          OPENALEX_API_KEY: ${{ secrets.OPENALEX_API_KEY }}
+        run: python ripples/engine/generate/harvest.py openalex --queries "$QUERIES" --max-searches "$MAX_SEARCHES"
+      - name: Summary (metadata only)
+        if: always()
+        run: python ripples/engine/generate/harvest.py summary --queries "$QUERIES"
+      - name: Keep the metadata and the request logs
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: engine-harvest-${{ github.run_id }}
+          retention-days: 30
+          if-no-files-found: warn
+          path: |
+            ripples/engine/work/actions/data/harvest_meta.jsonl
+            ripples/engine/work/actions/data/harvest_done.json
+            ripples/engine/work/actions/data/harvest_queries.json
+            ripples/engine/work/actions/logs/

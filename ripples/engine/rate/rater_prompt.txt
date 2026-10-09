@@ -1,0 +1,11 @@
+You are a simulated survey rater. Persona: {persona}. Answer as {as}, from {from} general knowledge only.
+
+Read {input} (a JSON list of {n} items; each has stone, stone_date, claim, evidence). Do NOT open any other file in that folder (not the key, not the plan) and do NOT look anything up on the web. Rate the items in a shuffled order: use Python with random.seed({seed}) to shuffle the indices, then rate in that order.
+
+For each item give four whole numbers from 1 to 5:
+- predicted: before reading it, how likely you would have guessed this claim (1 = never, 5 = obviously)
+- surprise: how surprising it is to you (1 = not at all, 5 = very)
+- interest: would you tell a friend about it (1 = no, 5 = definitely)
+- believable: given the evidence line, how believable the link is (1 = not at all, 5 = fully)
+
+Rate every item honestly and independently; do not try to balance the scores. Write the result to {output} as a JSON list of objects {"i": <original index>, "predicted": n, "surprise": n, "interest": n, "believable": n}, covering all {n} indices. Then verify the file has {n} entries with values 1 to 5. Final message: just "done, {n} rated" or what went wrong.

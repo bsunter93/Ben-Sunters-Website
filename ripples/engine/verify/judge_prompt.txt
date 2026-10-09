@@ -1,0 +1,28 @@
+verify_judge_v4 (verification verdicts, the studies pilot method)
+
+Each item is one candidate link (stone, outcome, claimed direction and effect, design, quote) with the text fetched from
+the paper's own sources (PubMed abstract, publisher-deposited abstract on Crossref, the DOI landing page, or an open copy).
+Judge only from the fetched text. Do not use outside knowledge, do not search, do not open other files.
+
+For each item answer:
+  same_paper     yes / no: the fetched text is the same paper (title matches the candidate's paper title, allowing a
+                 working-paper or published version of the same study)
+  quote_found    yes / no: the candidate's quote appears in the fetched text (the item says whether a script found it
+                 verbatim; if not, look for the same words with small punctuation differences)
+  better_quote   if quote_found is no but the fetched text states the finding, copy one sentence or clause from the fetched
+                 text, exactly, under 25 words, that states it; else ""
+  claim_supported yes / partly / no: the fetched text states this outcome in this direction for this stone. "partly" when
+                 the direction holds but the outcome wording or scope is wider than the text supports (give the fix)
+  claim_fix      a corrected one-line outcome when claim_supported is partly; else ""
+  date_order     yes / no / unclear: the stone happens before the outcome window measured (a study of births nine months
+                 after a blackout is yes; an outcome measured before the event is no)
+  design_ok      yes / no: the fetched text describes a comparison against a baseline (natural experiment, difference in
+                 differences, regression discontinuity, event study, interrupted time series, synthetic control,
+                 instrumental variable, expected counts from other periods or matched controls, randomized trial)
+  grade          "Measured" if design_ok is yes, else "On the record"
+  defensible     yes only if same_paper, (quote_found or a better_quote), claim_supported is yes or partly, date_order is yes,
+                 and design_ok is yes; else no
+  note           one short line
+
+Output one JSON object per item per line with: candidate_id, same_paper, quote_found, better_quote, claim_supported,
+claim_fix, date_order, design_ok, grade, defensible, note.

@@ -1,0 +1,86 @@
+{
+ "version": "rss_config_v1",
+ "note": "EXPLORATORY v1, chosen after seeing the v0 results: S_A only (S_B correlated .02 with rated surprise), G weighted over C. Must be confirmed on a new batch before adoption.",
+ "s_components": {
+  "S_A": 1.0,
+  "S_B": 0.0,
+  "S_D": 0.0
+ },
+ "s_combination": "weighted arithmetic mean of the available normalized S components; weights renormalized over those present",
+ "s_b_normalization": "mid-rank percentile of S_B bits over the evaluation pool; controls are placed on the pool's distribution",
+ "s_b_smoothing_k": 5,
+ "r_weights": {
+  "C": 0.25,
+  "G": 0.75,
+  "U": 1.0
+ },
+ "r_combination": "weighted geometric mean of the available relevance dimensions, weights normalized to sum to 1; U is unavailable in v1 and omitted",
+ "r_required": [
+  "C"
+ ],
+ "alpha": 1.0,
+ "beta": 1.0,
+ "relevance_gate": {
+  "C_min": 0.25,
+  "G_min": 0.05,
+  "rule": "a candidate below either floor keeps its RSS but ranks after every candidate that passes"
+ },
+ "eligibility": "evidence gate from candidates.jsonl eligibility.eligible (Ripple's existing rules); ineligible candidates keep their RSS and rank after eligible ones",
+ "missing_rules": {
+  "S": "renormalize over the S components present; S is missing only if none is present",
+  "R": "renormalize over the relevance dimensions present; R is missing if a required dimension (C) is missing",
+  "RSS": "missing when S or R is missing; unscored candidates rank after scored ones and are never treated as zero"
+ },
+ "dedupe": {
+  "jaccard_min": 0.5,
+  "manual_clusters": {
+   "stock-act": [
+    "pv1-P000",
+    "pv1-P117"
+   ],
+   "rrha-2006": [
+    "pv1-P001",
+    "pv1-P126"
+   ],
+   "opa-1990": [
+    "pv1-P007",
+    "pv1-P111"
+   ],
+   "ndea-1958": [
+    "pv1-P003",
+    "pv1-P106"
+   ],
+   "cercla-1980": [
+    "pv1-P004",
+    "pv1-P109"
+   ],
+   "nhtsa": [
+    "pv1-P107",
+    "pv1-P162"
+   ],
+   "sideways-wine": [
+    "pv1-P082",
+    "st-SIDEWAYS_DEMAND"
+   ],
+   "thirteen-reasons-suicide": [
+    "pv1-P098",
+    "st-THIRTEEN_SUICIDE",
+    "bu-B_THIRTEEN"
+   ],
+   "sixteen-pregnant-births": [
+    "st-SIXTEEN_PREG",
+    "bu-B_SIXTEEN"
+   ]
+  },
+  "rule": "within one catalyst group, candidates in the same manual cluster or with outcome-token Jaccard at or above jaccard_min are one discovery; the best-ranked one stands and the rest are marked duplicate_of and moved after the non-duplicates. RSS itself is unchanged."
+ },
+ "tie_break": [
+  "eligible first",
+  "relevance gate passed first",
+  "scored first",
+  "not a duplicate first",
+  "RSS descending",
+  "R descending",
+  "id ascending"
+ ]
+}

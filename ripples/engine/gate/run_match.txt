@@ -1,0 +1,7 @@
+You are running one fixed, blind matching step. Read ONLY these two files and nothing else (no other files, no web, no searching):
+  RULE:  {prompt}
+  CHUNK: {input}   (a JSON list; each item has candidate_id, catalyst, outcome, claim, myth_check, and the catalyst's 25 ranked predictions, rank 1 first)
+For each item, apply the rule exactly: compare the candidate's outcome (and its claim sentence) with each of the 25 predictions, and record the best (lowest) matching rank 1 to 25 with level "specific" or "class", or record not predicted. When unsure between class and no match, record no match.
+Write the result to {output}: one JSON object per item, {"candidate_id": "...", "rank": <integer 1-25 or null>, "level": "specific" | "class" | null, "prediction": <the matching prediction's text or null>, "claim_predicted_rank": null, "reason": "<one line>"}. rank and level are both null when not predicted. Write no other file.
+Then check that every candidate_id in the chunk appears exactly once.
+Final message: "done, N items, K matched" or what went wrong.

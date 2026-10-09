@@ -1,0 +1,44 @@
+relevance_v1 (fixed rubric for C, catalyst relevance, and G, consequence significance)
+
+Judge each candidate from its own fields only: the catalyst, the candidate outcome, the evidence line, and the existing
+metadata in candidates.jsonl (mark kind, the study's place, reach and lasting fields, the chain's mark steps). Do not use
+the panel ratings, the predictions, or the candidate's surprise. Record one C level and three G subscores, with a short
+reason. C and G are separate: a link can be direct and minor, or loose and momentous.
+
+C, catalyst relevance: how directly and substantively the evidence ties this outcome to this catalyst.
+  1.00 direct        The evidence names the catalyst as the cause, the reason or the measured treatment: a published
+                     study whose design isolates the catalyst; a record saying the outcome was passed, created or
+                     changed because of it ("in response to", "following", "as a result of", "created to investigate");
+                     the catalyst's own institutional aftermath (an inquiry into it, a fund for its victims).
+  0.75 contributing  The evidence names the catalyst as one of several causes, or as the push for an effort already
+                     under way ("gained popularity following", "partly as a result of", "inspired", "credited with"),
+                     or a measured effect that the study says is confined to a subgroup or a channel.
+  0.50 contextual    The catalyst is named as context or background, the outcome answers something the catalyst set off
+                     at one remove (the trial of the perpetrators, the company's bankruptcy), the outcome is named after
+                     the catalyst without a mechanism, or the evidence line names the outcome but not the catalyst and
+                     the link rests on a chain the line does not show.
+  0.25 incidental    A shared name, an homage, a co-occurrence; the outcome would plausibly have happened in the same
+                     form without the catalyst.
+  0.00 none          No relation is stated.
+  missing            The evidence line is empty and no chain step names the outcome (record as missing, never as 0).
+  Myth checks (busted rows): C rates how directly the refutation tests this catalyst's claimed effect (1.00 when the
+  study tests that exact claim on that catalyst; 0.75 when it tests a close variant or a general version of it).
+
+G, consequence significance: the mean of three observable subscores. Never use obscurity, novelty or surprise.
+  scope        who is bound or covered by the outcome
+               1.00 international or multinational (a treaty, several countries); 0.80 national or federal;
+               0.55 a state, province or large region; 0.30 a city, a locality, one institution's population;
+               0.15 one company, one product or a group of individuals.
+  reach        how many people the outcome touches (use the study's own reach field where it exists)
+               5 -> 1.00 most adults; 4 -> 0.75 a large share; 3 -> 0.50 a sizable group; 2 -> 0.25 a niche group;
+               1 -> 0.00 very niche.
+  permanence   institutional permanence or durability
+               1.00 a standing law, treaty, institution, or a durable outcome (births, deaths, names, a closure);
+               0.70 a multi-year program, policy, fund or trend; 0.40 a change lasting months;
+               0.15 a one-off or short effect (days or weeks).
+  Myth checks: G rates the outcome the popular story claimed, since a refutation matters in proportion to the claim it
+  corrects.
+  missing      A subscore that cannot be judged from the fields is recorded as missing; G is then the mean of the
+               subscores that exist, and G is missing only when all three are.
+
+Output per candidate: {"id", "C", "C_level", "G_scope", "G_reach", "G_permanence", "G", "reason"}.

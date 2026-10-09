@@ -1,0 +1,7 @@
+You are running one fixed judged step: extraction. Read ONLY these two files and nothing else (no other files, no web, no searching):
+  PROMPT: {prompt}
+  BATCH:  {input}   (a JSON list of papers, each with paper_id, title, year, venue and abstract)
+Apply the prompt to every paper in the batch, in the listed order, using only the text given.
+Write the result to {output}: one JSON object per line, a screen line for every paper and one line per raw pair, with exactly the fields the prompt lists. Write no other file.
+Then check that every line parses as JSON and that every paper_id in the batch has exactly one screen line.
+Final message: "done, N papers, K raw pairs" or what went wrong.
