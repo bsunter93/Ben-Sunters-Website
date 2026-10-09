@@ -549,15 +549,6 @@ html:not(.avgl) .avhero{background:linear-gradient(#26313b 0,#0e1a24 42%,#0f2230
 .avpaper{display:grid;grid-template-columns:minmax(0,.92fr) minmax(0,1.08fr);background:var(--paper);color:var(--paper-ink);border-radius:20px;box-shadow:0 30px 60px -30px rgba(0,0,0,.6)}
 .avleft{padding:30px 32px 30px;border-right:1px solid rgba(30,42,46,.12)}
 .avright{padding:26px 30px 28px;min-width:0}
-.avlead{margin:0 0 14px;font:600 1.3rem/1.25 var(--display);color:var(--paper-ink)}
-.avtiles{display:grid;grid-template-columns:1fr 1fr;gap:10px}
-.avtile{display:grid;grid-template-columns:30px 1fr;column-gap:10px;align-items:center;text-align:left;min-height:64px;padding:12px 14px;border:1px solid rgba(30,42,46,.2);border-radius:14px;background:#fbf8f1;color:var(--paper-ink);font:inherit;cursor:pointer;transition:border-color .15s,background .15s,transform .15s}
-.avtile svg{grid-row:span 2;width:28px;height:28px;color:#b06f0e}
-.avtile b{font:700 .98rem/1.2 var(--sans)}.avtile span{font-size:.8rem;line-height:1.3;color:var(--paper-ink-3)}
-.avtile:hover,.avtile:focus-visible{border-color:var(--paper-ink);background:#fff;transform:translateY(-1px)}
-.avskip{margin:14px 0 0;padding:6px 0;background:none;border:0;border-bottom:1px solid rgba(30,42,46,.35);font:600 .9rem var(--sans);color:var(--paper-ink-2);cursor:pointer}
-.avskip:hover{color:var(--paper-ink);border-color:var(--paper-ink)}
-.avhint{margin:14px 0 0;font-size:.86rem;color:var(--paper-ink-3)}
 .avkick{display:flex;align-items:center;gap:8px;margin:0 0 8px;font:700 .78rem/1.2 var(--sans);letter-spacing:.06em;text-transform:uppercase;color:#a8650c}
 .avkick svg{width:22px;height:22px;flex:none}.avkick.k-none{color:var(--paper-ink-3)}
 .avhead{margin:0;font:600 clamp(1.6rem,2.6vw,2.15rem)/1.12 var(--display);color:var(--paper-ink);font-variation-settings:"SOFT" 60,"opsz" 48}
@@ -658,11 +649,61 @@ html:not(.avgl) .avhero{background:linear-gradient(#26313b 0,#0e1a24 42%,#0f2230
   .avq{font-size:2rem}
   .avsheet{margin-top:-30px;padding:0 10px}
   .avleft{padding:22px 18px}.avright{padding:20px 16px 22px}
-  .avtile{grid-template-columns:24px 1fr;min-height:58px;padding:10px 11px}.avtile svg{width:22px;height:22px}.avtile b{font-size:.9rem}.avtile span{font-size:.74rem}
   .avstream li{padding-left:38px}
   .avshelf{margin-top:40px}
   .avgrid{grid-template-columns:1fr 1fr;gap:8px}.avcard{min-height:112px;padding:12px}.avcard .cs{font-size:1rem}.avcard .cl{font-size:.84rem}
 }
+/* the ripple chart (Oct 8, second pass): one row per step on one clock; lines of readers against each page's own normal */
+.avsay{margin:12px 0 0;font:500 1.06rem/1.4 var(--sans);color:var(--ink);max-width:44rem;text-shadow:0 1px 10px rgba(15,28,38,.8)}
+.avsay b{color:#ffd391;font-weight:600}
+.avpaper.rc{display:block;padding:24px 30px 22px}
+.rccap{min-height:80px;margin:0 0 4px}
+.rccap .k{margin:0;font:600 .88rem/1.35 var(--sans);color:var(--paper-ink-2)}
+.rccap .k b{color:#a8650c}
+.rccap .h{margin:4px 0 0;font:600 clamp(1.3rem,2.2vw,1.7rem)/1.2 var(--display);color:var(--paper-ink);font-variation-settings:"SOFT" 60,"opsz" 48}
+.rccap.swap .k,.rccap.swap .h{animation:avfade .45s ease both}
+.rchow{margin-left:8px;padding:2px 0;background:none;border:0;border-bottom:1px dotted rgba(30,42,46,.5);font:600 .84rem var(--sans);color:var(--paper-ink-2);cursor:pointer;vertical-align:.25em}
+.rchow:hover{color:var(--paper-ink);border-bottom-style:solid}
+.rcchart{position:relative;width:100%;margin-top:6px}
+.rcchart svg{display:block;width:100%;height:auto;overflow:visible}
+.rcrow{opacity:0;transition:opacity .45s ease}
+.rcrow.lab{opacity:.3}
+.rcrow.on{opacity:1}
+.rcrow .rcl{fill:none;stroke:var(--h);stroke-width:2.2;stroke-linejoin:round;stroke-linecap:round;stroke-dasharray:1 1;stroke-dashoffset:1;transition:stroke-dashoffset 1.1s cubic-bezier(.45,.05,.3,1)}
+.rcrow.on .rcl{stroke-dashoffset:0}
+.rcrow .rca{fill:var(--h);opacity:0;transition:opacity .8s ease .5s}
+.rcrow.on .rca{opacity:.15}
+.rcrow .rcband{fill:#e0a33c;transform-box:fill-box;transform-origin:0 50%;transform:scaleX(0);transition:transform 1.3s cubic-bezier(.45,.05,.3,1) .2s}
+.rcrow.on .rcband{transform:scaleX(1)}
+.rcrow .rcbg{fill:rgba(242,169,59,.13);opacity:0;transition:opacity .3s}
+.rcrow.cur .rcbg{opacity:1}
+.rcrow .rcbase{stroke:rgba(30,42,46,.13);stroke-width:1}
+.rcn{font:600 14.5px var(--sans);fill:var(--paper-ink);paint-order:stroke;stroke:var(--paper);stroke-width:4px;stroke-linejoin:round}
+.rcd{font:500 12.5px var(--sans);fill:var(--paper-ink-3);paint-order:stroke;stroke:var(--paper);stroke-width:4px;stroke-linejoin:round}
+.rcrow.mark .rcn{fill:#8a5208}
+.rcrow.busted .rcn{fill:var(--paper-ink-3)}
+.rcpk{font:700 13px var(--sans);fill:var(--h);paint-order:stroke;stroke:var(--paper);stroke-width:4px;stroke-linejoin:round}
+.rchit{fill:transparent;cursor:pointer}
+.rcax{font:500 12px var(--sans);fill:var(--paper-ink-3)}
+.rcgrid{stroke:rgba(30,42,46,.09);stroke-dasharray:2 4}
+.rcnote{margin:12px 0 0;font-size:.86rem;line-height:1.5;color:var(--paper-ink-2)}
+.rcnote .key{display:inline-flex;align-items:center;gap:6px;margin-right:16px}
+.rcnote .key b{color:var(--paper-ink)}
+.rcnote .sw{display:inline-block;width:18px;height:3px;border-radius:2px;background:#2f8fa6}
+.rcnote .bar{display:inline-block;width:18px;height:7px;border-radius:3.5px;background:#e0a33c}
+.rcalso{margin-top:4px;color:var(--paper-ink-3)}
+.rcfoot{display:flex;flex-wrap:wrap;align-items:center;gap:10px 12px;margin:16px 0 0;padding:16px 0 0;border-top:1px solid rgba(30,42,46,.12)}
+.rcfoot .avknew{margin:0 0 0 auto}
+.rcplay{min-height:40px;padding:0 14px;border:0;background:none;font:600 .86rem var(--sans);color:var(--paper-ink-2);cursor:pointer;text-decoration:underline;text-underline-offset:3px}
+.rcplay:hover{color:var(--paper-ink)}
+.rcsteps{margin:14px 0 0}
+.rcsteps>summary{display:inline-block;padding:4px 0;cursor:pointer;list-style:none;font:600 .9rem var(--sans);color:var(--paper-ink-2);border-bottom:1px solid rgba(30,42,46,.3)}
+.rcsteps>summary::-webkit-details-marker{display:none}
+.rcsteps>summary:hover{color:var(--paper-ink);border-color:var(--paper-ink)}
+.rcsteps .avright{padding:18px 0 0}
+.avcard .cg{display:block;width:100%;height:16px;margin:8px 0 2px}
+@media (max-width:560px){.avpaper.rc{padding:18px 14px 18px}.rccap{min-height:96px}.rcfoot .avknew{margin-left:0}.avsay{font-size:.95rem}}
+@media (prefers-reduced-motion:reduce){.rcrow,.rcrow .rcl,.rcrow .rca,.rcrow .rcband,.rccap.swap .k,.rccap.swap .h{transition:none;animation:none}}
 @media (prefers-reduced-motion:reduce){.avstream.reveal li,.avline.draw,.avline .flow,.avleft.land>*,.avq.land{animation:none}}
 </style>
 </head>
@@ -727,8 +768,8 @@ html:not(.avgl) .avhero{background:linear-gradient(#26313b 0,#0e1a24 42%,#0f2230
 </div>
 
 <main class="avmain" id="avmain">
-  <section class="avhero" id="avhero"><div class="avin"><p class="avstonel" id="avstone"></p><h1 class="avq" id="avq"></h1></div></section>
-  <div class="avsheet"><div class="avpaper"><div class="avleft" id="avleft" aria-live="polite"></div><div class="avright" id="avright"></div></div></div>
+  <section class="avhero" id="avhero"><div class="avin"><p class="avstonel" id="avstone"></p><h1 class="avq" id="avq"></h1><p class="avsay" id="avsay"></p></div></section>
+  <div class="avsheet"><div class="avpaper rc"><div class="rcwrap" id="rcwrap"></div><details class="rcsteps" id="rcsteps"><summary>Every step and how we know it</summary><div class="avright" id="avright"></div></details></div></div>
   <section class="avshelf" id="avshelf" aria-label="More stories"></section>
 </main>
 <div class="toast" id="toast" role="status"></div>
@@ -2382,7 +2423,7 @@ function show(kind, slug, autoplay = true) {
   const marks = story.items.filter(x => x.mark);
   story.sub = story.sub.replace(/ Tap a ripple to see why\.$/, "");
   clearFocus(); hideTip(); cur = story; hot = null; t = 0; ambient = 0; guessRow("");
-  sess.stories++; sess.reveal = false; sess.storyT0 = performance.now(); sess.scrubbed = false; track("story_start", {kind, slug, via: window.__via || (sess.stories === 1 ? "landing" : "unknown"), nth_story: sess.stories, view: AV ? "answer" : CV ? "chain" : "pond"}); window.__via = null;
+  sess.stories++; sess.reveal = false; sess.storyT0 = performance.now(); sess.scrubbed = false; track("story_start", {kind, slug, via: window.__via || (sess.stories === 1 ? "landing" : "unknown"), nth_story: sess.stories, view: AV ? "chart" : CV ? "chain" : "pond"}); window.__via = null;
   const inTab = TABS[tab].some(([k, s]) => k === kind && s === slug) || (tab === "stories" && kind === "chain");
   if (!inTab) tab = tabOf(kind, slug);
   renderPicker();
@@ -2564,12 +2605,6 @@ function avRoute(s, animate) {
     <ol class="avstream${animate ? " reveal" : ""}">${html}</ol>${extra}${hidden || avAll ? `<button type="button" class="avall">${avAll ? "Show the short route" : `Show every step (${hidden} more)`}</button>` : ""}`;
   avLine(animate);
 }
-function avTeaser(s) {
-  const a = s.answer, n = s.items.filter(x => !x.aside).length;
-  $("#avright").innerHTML = `<div class="avrhead"><h3>How it got there</h3><span>${n} step${n === 1 ? "" : "s"}</span></div>
-    <ol class="avstream teaser">${avStoneRow(s)}<li class="avgap"><span>${a ? `${esc(avGap(a.d))} later` : "Later"}</span></li><li class="avn q" data-lv="q"><span class="avdot">?</span><div class="avbody"><p class="avtitle">Guess, and the route appears here.</p></div></li></ol>`;
-  avLine(false);
-}
 const AV_STROKE = {measured:["#3e8f55", 3.4, ""], timed:["#7a5fc4", 2.6, ""], reported:["#3a4a4f", 2, ""], plausible:["#a08a47", 2, "5 5"], busted:["#d04a3a", 1.8, "2 5"], na:["#9aa5a7", 1.6, "2 5"], q:["#9aa5a7", 1.6, "2 6"], stone:["#3a4a4f", 2, ""]};
 function avLine(animate) {  // the stream's line, drawn after layout: each link styled by how we know it; time gaps run dotted
   const ol = $("#avright .avstream"); if (!ol) return;
@@ -2605,63 +2640,186 @@ function avHero(s, answered) {
   const q = $("#avq"); q.classList.remove("land"); void q.offsetWidth;
   q.innerHTML = answered ? avTitle(s) : `What did <em>${esc(avStoneName(s))}</em> change?`;
   if (answered) q.classList.add("land");
-}
-function avGuessPanel(s) {
-  const a = s.answer, n = s.items.filter(x => !x.aside).length;
-  const L = $("#avleft"); L.classList.remove("land");
-  L.innerHTML = `<p class="avlead">Guess first: what changed after it?</p>
-    <div class="avtiles" role="group" aria-label="Your guess">${GUESS.map(([k]) => `<button type="button" class="avtile" data-g="${k}">${AV_KIND[k].icon}<b>${AV_KIND[k].say}</b><span>${AV_KIND[k].ex}</span></button>`).join("")}</div>
-    <button type="button" class="avskip">Skip the guess and show me →</button>
-    <p class="avhint">${a ? `The answer lands ${esc(avGap(a.d))} after it, ${n} steps downstream.` : `${n} step${n === 1 ? "" : "s"} follow it.`}</p>`;
+  const a = s.answer, say = $("#avsay");
+  if (say) say.innerHTML = answered && a ? `<b>${esc(a.d < 1 ? "The same day" : `${cap(avGap(a.d))} later`)}:</b> ${esc(String(a.title || a.label).replace(/^(The|A|An) /, m => m.toLowerCase()))}` : "";
 }
 function avKnewDone(k) { return `<span>${k ? "You knew this one." : "New to you."} Your answer helps rank which finds are surprising.</span>`; }
-function avAnswerPanel(s, v) {
-  const a = s.answer, marks = s.items.filter(x => x.mark && !x.future).sort((p, q) => p.d - q.d), kind = a ? guessOf(a.mark) : "none", K = AV_KIND[kind];
-  const rung = AV_RUNG.findIndex(([k]) => k === s.weak), others = marks.filter(m => m !== a);
+// ---------- the ripple chart (Oct 8, second pass) ----------
+// The owner, Oct 8, on the answer view: too much text, bring the picture back. The stacked interest lines were the best part
+// because they showed how big each downstream move was next to the others. Spoon feed, and drop the guess. One row per step
+// on one clock (log time since the stone); each line is a page's readers against its own normal, on one shared scale; a
+// lasting mark is an amber bar that runs on toward today. The story plays row by row under one caption; a tap shows a row.
+const RC_MS = 1250, RC_MAX = 9;
+const rcReduced = () => !!(window.matchMedia && matchMedia("(prefers-reduced-motion: reduce)").matches);
+const rcX = v => v >= 10 ? Math.round(v).toLocaleString("en-US") : v.toFixed(1).replace(/\.0$/, "");
+function rcLift(it, iso0) {  // the step's series as [days since the stone, times its own normal], or null
+  const w = it.series && it.series.weekly; if (!w || w.length < 3 || it.undated) return null;
+  let base = it.series.pre;
+  if (!base) { const at = addDays(iso0, Math.round(it.d)).toISOString().slice(0, 10), pre = w.filter(([d]) => daysBetween(at, d) < -3).map(x => x[1]).sort((a, b) => a - b); base = pre.length >= 3 ? pre[Math.floor(pre.length / 2)] : null; }
+  if (!base) return null;
+  const pts = w.map(([d, v]) => [daysBetween(iso0, d) + 3.5, v / Math.max(1, base)]), peak = pts.reduce((a, p) => p[1] > a[1] ? p : a, pts[0]);
+  return peak[1] >= 1.5 ? {pts, peak} : null;
+}
+function rcRows(s) {  // the stone, then each step in date order; a long story keeps its marks, its answer and its biggest moves
+  let rows = s.items.filter(x => !x.aside && !x.undated && !x.future).sort((p, q) => p.d - q.d).map(it => ({it, lift:rcLift(it, s.iso0)}));
+  s.rcHidden = 0;
+  if (rows.length > RC_MAX - 1) {
+    const keep = new Set(rows.filter(r => r.it.mark || r.it === s.answer).map(r => r.it));
+    for (const r of [...rows.filter(r => r.lift).sort((a, b) => b.lift.peak[1] - a.lift.peak[1]), ...rows.filter(r => r.it.lv !== "busted"), ...rows]) if (keep.size < RC_MAX - 1) keep.add(r.it);
+    s.rcHidden = rows.length - keep.size; rows = rows.filter(r => keep.has(r.it));
+  }
+  const f = s.first || {}, ev = s.eventSeries && s.eventSeries.pre ? rcLift({series:s.eventSeries, d:0}, s.iso0) : null;
+  return [{stone:true, it:{id:"stone", d:0, label:s.stone || f.title || "The stone", title:f.title || s.stone}, lift:ev}, ...rows];
+}
+function rcCap(s, r, final) {  // the caption for one row: a kicker of facts and a headline
+  const it = r.it;
+  if (r.stone) return [`${esc(avWhen(s.first || {}))} · the stone`, esc(it.title), null];
+  const bits = [esc(avWhen(it)), it.d < 1 ? "the same day" : `${esc(avGap(it.d))} after`];
+  if (r.lift) bits.push(`readers <b>${rcX(r.lift.peak[1])}×</b> normal`);
+  if (it.mark) bits.push("<b>a lasting mark</b>");
+  if (it.lv === "busted") bits.push("busted"); else if (it.lv === "plausible") bits.push("unproven");
+  if (final && s.rc && s.rc.rows[rcLand(s)] === r) bits.unshift(`<b>${s.rc.landBy === "wave" ? "The biggest wave after it" : "Where it landed"}</b>`);
+  return [bits.filter(Boolean).join(" · "), esc(it.title || (it.card && it.card.title) || it.label), it.id];
+}
+function rcDraw(s) {
+  const host = $("#rcchart"); if (!host || !s.rc) return;
+  const rows = s.rc.rows, Wd = Math.round(Math.max(300, host.clientWidth || 900)), phone = Wd < 640; s.rc.w = Wd;
+  const today = Math.max(2, (Date.now() - D(s.iso0)) / 864e5), last = Math.max(20, ...rows.map(r => r.it.d));
+  const dmax = Math.max(last * 1.1, Math.min(today, last * 4)), toToday = dmax >= today - 1;  // bars run on to today, unless today would squash the steps
+  const L = phone ? 2 : 236, R = phone ? 30 : 58, lead = phone ? 14 : 26, x0 = L + lead, pw = Wd - R - x0;
+  const X = d => d <= 0 ? x0 + lead * Math.max(-1, d / 28) : x0 + pw * Math.log1p(Math.min(d, dmax)) / Math.log1p(dmax);
+  // a row with a line is taller, so every line stays inside its own row; all lines share one scale, so heights compare
+  const RL = phone ? 104 : 88, R0 = phone ? 54 : 48, PAD = phone ? 12 : 16, AMP = RL - PAD - (phone ? 46 : 24);  // room above each peak for its number
+  const ymax = Math.max(10, ...rows.filter(r => r.lift).map(r => r.lift.peak[1])), hOf = v => AMP * Math.log10(Math.max(1, v)) / Math.log10(ymax);
+  const rh = rows.map(r => r.lift ? RL : R0), rt = rh.map((h, i) => 6 + rh.slice(0, i).reduce((a, b) => a + b, 0));
+  const H = Math.round(6 + rh.reduce((a, b) => a + b, 0) + 26), yb = i => rt[i] + rh[i] - PAD, ROW = i => rh[i];
+  const TICKS = [[7, "1 week"], [30, "1 month"], [182, "6 months"], [365, "1 year"], [730, "2 years"], [1826, "5 years"], [3652, "10 years"], [9131, "25 years"], [18262, "50 years"], [36525, "100 years"]];
+  let ax = `<text class="rcax" x="${x0}" y="${H - 6}" text-anchor="${phone ? "start" : "middle"}">the stone</text>`, lastX = x0 + (phone ? 40 : 0);
+  for (const [d, w] of TICKS) {
+    const x = X(d); if (d >= dmax * 0.97 || x - lastX < (phone ? 54 : 70) || X(dmax) - x < (phone ? 40 : 52)) continue;
+    ax += `<line class="rcgrid" x1="${x.toFixed(1)}" x2="${x.toFixed(1)}" y1="2" y2="${H - 22}"/><text class="rcax" x="${x.toFixed(1)}" y="${H - 6}" text-anchor="middle">${w}</text>`; lastX = x;
+  }
+  ax += `<text class="rcax" x="${X(dmax).toFixed(1)}" y="${H - 6}" text-anchor="${phone ? "end" : "middle"}">${toToday ? "today" : "later"}</text>`;
+  let body = "", labs = "";
+  rows.forEach((r, i) => {
+    const it = r.it, y = yb(i), x = X(it.d), lv = r.stone ? "stone" : it.lv;
+    const hue = r.stone ? "#1e2a2e" : it.mark ? "#c77f12" : PULSE_HUES[(i - 1 + PULSE_HUES.length) % PULSE_HUES.length];
+    let g = `<rect class="rcbg" x="${phone ? -6 : -10}" y="${(rt[i] + 2).toFixed(1)}" width="${Wd + (phone ? 12 : 20)}" height="${ROW(i) - 4}" rx="10"/><line class="rcbase" x1="${x0}" x2="${(Wd - R).toFixed(1)}" y1="${y.toFixed(1)}" y2="${y.toFixed(1)}"/>`;
+    if (r.lift) {
+      const pts = r.lift.pts.filter(([d]) => d >= -28 && d <= dmax).sort((a, b) => a[0] - b[0]);
+      if (pts.length >= 2) {
+        const P = pts.map(([d, v]) => [X(d), y - hOf(v)]), line = P.map((p, k) => `${k ? "L" : "M"}${p[0].toFixed(1)},${p[1].toFixed(1)}`).join("");
+        g += `<path class="rca" d="${line}L${P[P.length - 1][0].toFixed(1)},${y.toFixed(1)}L${P[0][0].toFixed(1)},${y.toFixed(1)}Z"/><path class="rcl" pathLength="1" d="${line}"/>`;
+        const pk = r.lift.peak; let px = X(Math.max(-28, Math.min(dmax, pk[0]))), py = y - hOf(pk[1]), right = px > Wd - R - 80; px -= right ? 0 : 4;
+        labs += `<g class="rcrow pk" data-i="${i}" style="--h:${hue}"><text class="rcpk" x="${(px + (right ? -7 : 7)).toFixed(1)}" y="${(py - 7).toFixed(1)}" text-anchor="${right ? "end" : "start"}">${rcX(pk[1])}×</text></g>`;
+      }
+    }
+    if (it.mark) g += `<rect class="rcband" x="${x.toFixed(1)}" y="${(y - 3.5).toFixed(1)}" width="${Math.max(4, Wd - R - x).toFixed(1)}" height="7" rx="3.5"/>`;
+    if (r.stone) g += `<circle cx="${x}" cy="${y.toFixed(1)}" r="11" fill="none" stroke="#1e2a2e" stroke-opacity=".28" stroke-width="1.5"/><circle cx="${x}" cy="${y.toFixed(1)}" r="6" fill="#1e2a2e"/>`;
+    else if (it.mark) g += `<g transform="translate(${x.toFixed(1)},${y.toFixed(1)})"><path d="M0,-9 L7.8,-4.5 L7.8,4.5 L0,9 L-7.8,4.5 L-7.8,-4.5 Z" fill="#fff3dc" stroke="#c77f12" stroke-width="2"/><circle r="2.8" fill="#c77f12"/></g>`;
+    else if (lv === "busted") g += `<path d="M-5,-5 L5,5 M5,-5 L-5,5" transform="translate(${x.toFixed(1)},${y.toFixed(1)})" stroke="#d04a3a" stroke-width="2.2" stroke-linecap="round"/>`;
+    else if (lv === "plausible") g += `<circle cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" r="5" fill="#f4efe4" stroke="#a08a47" stroke-width="2"/>`;
+    else g += `<circle cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" r="5" fill="${r.lift ? hue : "#3a4a4f"}"/>`;
+    const max = phone ? 25 : 27, name = it.label.length > max ? it.label.slice(0, max - 1).replace(/\s+\S*$/, "") + "…" : it.label;
+    const when = r.stone ? avWhen(s.first || {}) : avWhen(it);
+    labs += `<g class="rcrow lab${it.mark ? " mark" : ""}${lv === "busted" ? " busted" : ""}" data-i="${i}">` + (phone
+      ? `<text class="rcn" x="${L}" y="${(rt[i] + 18).toFixed(1)}">${esc(name)}<tspan class="rcd" dx="7">${esc(when)}</tspan></text>`
+      : `<text class="rcn" x="0" y="${(y - 3).toFixed(1)}">${esc(name)}</text><text class="rcd" x="0" y="${(y + 13).toFixed(1)}">${esc(when)}</text>`) + `</g>`;
+    body += `<g class="rcrow${r.stone ? " stone" : ""}${it.mark ? " mark" : ""}${lv === "busted" ? " busted" : ""}" data-i="${i}" style="--h:${hue}">${g}</g>`;
+  });
+  const hits = rows.map((r, i) => `<rect class="rchit" data-i="${i}" x="${phone ? -6 : -10}" y="${(rt[i] + 2).toFixed(1)}" width="${Wd + (phone ? 12 : 20)}" height="${ROW(i) - 4}"><title>${esc(r.it.title || r.it.label)}</title></rect>`).join("");
+  host.innerHTML = `<svg viewBox="0 0 ${Wd} ${H}" width="${Wd}" height="${H}" role="img" aria-label="${esc(`How ${s.stone || "the stone"} rippled out, one row per step`)}">${ax}${body}${labs}${hits}</svg>`;
+  rcMark(s);
+}
+function rcMark(s) {
+  const host = $("#rcchart"); if (!host || !s.rc) return;
+  host.querySelectorAll("g.rcrow").forEach(g => { const i = +g.dataset.i; g.classList.toggle("on", i <= s.rc.upto); g.classList.toggle("cur", i === s.rc.cur); });
+}
+function rcSay(s, i, final) {
+  const r = s.rc.rows[i], el = $("#rccap"); if (!r || !el) return;
+  const [k, h, id] = rcCap(s, r, final);
+  el.classList.remove("swap"); void el.offsetWidth;
+  el.innerHTML = `<p class="k">${k}</p><p class="h">${h}${id && s.rc.done ? ` <button type="button" class="rchow" data-id="${esc(id)}">How we know</button>` : ""}</p>`; el.classList.add("swap");
+  s.rc.cur = i; rcMark(s);
+}
+function rcStop(s) { if (s && s.rc && s.rc.timer) { clearTimeout(s.rc.timer); s.rc.timer = 0; } }
+function rcEnd(s, via) {  // at rest: every row on, the caption on where the stone landed
+  rcStop(s); s.rc.upto = s.rc.rows.length - 1; s.rc.done = true;
+  if (!s.rc.ended) { s.rc.ended = true; track("chart_end", {slug:s.key, via:via || "play", rows:s.rc.rows.length, seconds_in_story:Math.round((performance.now() - sess.storyT0) / 1000)}); }  // play: watched to the end; skip or tap: cut it short
+  rcSay(s, rcLand(s), true);
+  const b = $("#rcplay"); if (b) b.textContent = "Play again";
+  if (avLake) avLake.ember(!!s.answer);
+}
+function rcLand(s) {  // the row the title points at: the answer, else the step the title names, else the biggest move
+  const rows = s.rc.rows, n = x => String(x || "").toLowerCase().replace(/^the /, "").replace(/[^a-z0-9]+/g, " ").trim();
+  let i = rows.findIndex(r => s.answer && r.it === s.answer); if (i >= 0) return (s.rc.landBy = "mark", i);
+  const words = x => n(x).split(" ").filter(w => w.length >= 3), land = words((s.titleText || s.h1 || "").split("→")[1]);
+  if (land.length) {  // the step that shares the most words with the title's landing ("chess sets sold out" is "Chess sets sell +87%")
+    const sc = rows.map((r, k) => { const w = r.stone ? [] : words(r.it.label), hit = w.filter(x => land.includes(x)).length; return [k, hit, hit >= 2 || (hit && hit === w.length && hit === land.length)]; }).filter(x => x[2]).sort((a, b) => b[1] - a[1]);
+    if (sc.length) return (s.rc.landBy = "title", sc[0][0]);
+  }
+  s.rc.landBy = "wave";
+  const lifts = rows.map((r, k) => [k, !r.stone && r.lift ? r.lift.peak[1] : 0]).filter(x => x[1] > 0).sort((a, b) => b[1] - a[1]); if (lifts.length) return lifts[0][0];
+  for (let k = rows.length - 1; k > 0; k--) if (rows[k].it.lv !== "busted") return k;
+  return rows.length - 1;
+}
+function rcPlay(s) {
+  rcStop(s); s.rc.upto = -1; s.rc.cur = -1; s.rc.done = false; rcMark(s);
+  const b = $("#rcplay"); if (b) b.textContent = "Skip to the end";
+  if (rcReduced()) { rcEnd(s); return; }
+  const step = i => {
+    if (cur !== s) return;
+    if (i >= s.rc.rows.length) { rcEnd(s); return; }
+    s.rc.upto = i; rcSay(s, i, false);
+    s.rc.timer = setTimeout(() => step(i + 1), i === 0 ? 1000 : RC_MS);
+  };
+  s.rc.timer = setTimeout(() => step(0), 450);
+}
+function rcPick(i) {  // a tap or a hover on a row: the story stops playing and that row speaks
+  const s = cur; if (!s || !s.rc || !s.rc.rows[i]) return;
+  if (!s.rc.done) rcEnd(s, "tap");
+  rcSay(s, i, true);
+}
+function rcRender(s) {
+  s.rc = {rows:rcRows(s), upto:-1, cur:-1, timer:0, done:false};
+  const lines = s.rc.rows.some(r => r.lift), marks = s.rc.rows.some(r => r.it.mark);
   let knew = null; try { knew = JSON.parse(localStorage.getItem("ripple-knew") || "{}")[`${s.kind}:${s.key}`]; } catch {}
   const nx = nextEntry(), nxStone = (nx.title || "").split("→")[0].trim();
-  const L = $("#avleft"); L.classList.remove("land"); void L.offsetWidth;
-  L.innerHTML = `<p class="avkick k-${kind}">${K.icon}<span>${a ? `${esc(K.say)} · ${esc(avGap(a.d))} later` : "No lasting mark yet"}</span></p>
-    <h2 class="avhead">${a ? esc(a.title || a.label) : `${esc(cap(rippleCount(s.items).text))}. Nothing on record has lasted yet.`}</h2>
-    ${a ? `<p class="avdate">${esc(avWhen(a))}${a.mark ? ` · lasting mark: ${esc(a.mark.toLowerCase())}` : ""}</p>` : ""}
-    ${v ? `<p class="avverdict ${v.right ? "right" : "wrong"}">${v.html}</p>` : ""}
-    ${others.length ? `<p class="avothers">Also lasting: ${others.map(m => `${esc(m.label)} (${esc(avWhen(m))})`).join("; ")}</p>` : ""}
-    <div class="avsure"><p class="avlabel">How sure?</p>
-      <div class="avmeter" role="img" aria-label="How sure: ${AV_TAG[s.weak] || ""}">${AV_RUNG.map(([k, w], i) => `<span class="rung r-${k}${i <= rung ? " on" : ""}${i === rung ? " cur" : ""}"><i></i><em>${w}</em></span>`).join("")}</div>
-      <p class="avsurewhy">${AV_SURE[s.weak] || AV_SURE.plausible}</p></div>
-    ${s.also ? `<p class="avalso"><b>It wasn't the only reason:</b> ${esc(s.also)}</p>` : ""}
-    <div class="avknew">${knew != null ? avKnewDone(knew) : `<span>Did you know this already?</span><button type="button" data-knew="1">Knew it</button><button type="button" data-knew="0">Didn't know</button>`}</div>
-    <div class="avacts"><button type="button" class="avnext">Next: ${esc(nxStone || "another stone")} → ?</button><button type="button" class="avshare">Share</button></div>`;
-  L.classList.add("land");
+  $("#rcwrap").innerHTML = `<div class="rccap" id="rccap" aria-live="polite"></div><div class="rcchart" id="rcchart"></div>
+    <p class="rcnote">${lines ? `<span class="key"><i class="sw"></i>readers of that Wikipedia page, against its own normal</span>` : ""}${marks ? `<span class="key"><i class="bar"></i>a lasting mark, still there</span>` : ""}<span class="key" title="${esc(AV_SURE[s.weak] || AV_SURE.plausible)}">How sure: <b>${esc(AV_TAG[s.weak] || "Unproven")}</b></span>${s.rcHidden ? `<span class="key">${s.rcHidden} more step${s.rcHidden === 1 ? "" : "s"} in the list below</span>` : ""}</p>
+    ${s.also ? `<p class="rcnote rcalso">Not the only reason: ${esc(s.also)}</p>` : ""}
+    <div class="rcfoot"><button type="button" class="avnext">Next: ${esc(nxStone || "another stone")} →</button><button type="button" class="avshare">Share</button><button type="button" class="rcplay" id="rcplay">Skip to the end</button>
+      <div class="avknew">${knew != null ? avKnewDone(knew) : `<span>New to you?</span><button type="button" data-knew="0">Yes</button><button type="button" data-knew="1">I knew it</button>`}</div></div>`;
+  rcDraw(s); rcPlay(s);
+}
+function rcGlyph(x) {  // a shelf card's ripple on one shared clock (up to a century): the stone, its steps, the mark and its bar
+  const X = d => 5 + 230 * Math.log1p(Math.max(0, d)) / Math.log1p(36525);
+  let g = `<line x1="5" x2="235" y1="8" y2="8" stroke="rgba(244,239,228,.16)"/>`;
+  if (x.gap != null) g += `<rect x="${X(x.gap).toFixed(1)}" y="5.5" width="${Math.max(3, 235 - X(x.gap)).toFixed(1)}" height="5" rx="2.5" fill="#e0a33c" opacity=".8"/>`;
+  for (const d of x.ds || []) if (d !== x.gap) g += `<circle cx="${X(d).toFixed(1)}" cy="8" r="2.3" fill="rgba(244,239,228,.6)"/>`;
+  g += `<circle cx="5" cy="8" r="3.8" fill="#f4efe4"/>`;
+  if (x.gap != null) g += `<path d="M0,-5.5 L4.8,-2.75 L4.8,2.75 L0,5.5 L-4.8,2.75 L-4.8,-2.75 Z" transform="translate(${X(x.gap).toFixed(1)},8)" fill="#ffd391"/>`;
+  return `<svg class="cg" viewBox="0 0 240 16" preserveAspectRatio="xMinYMid meet" aria-hidden="true">${g}</svg>`;
 }
 function avShow(story, kind, slug) {
   playing = false; t = 0;
   avPrep(story);  // the reveal and the guess read placed ripples; this view places none on a pond
   story.answer = revealMark(story); story.av = {kind, slug, open:false}; avAll = false;
-  const known = window.__avKnown === `${kind}:${slug}`; window.__avKnown = null;  // a shelf card already said where it lands
-  avHero(story, false);
+  window.__avKnown = null;
   if (avLake) avLake.throwStone();
-  if (known || guessed.has(story.key)) avReveal(known ? "known" : "again");
-  else { avGuessPanel(story); avTeaser(story); }
+  avReveal("auto");  // the answer is on screen from the first frame; the chart tells how it got there (owner, Oct 8: no guess)
   avShelf();
   if (!REEL) try { history.replaceState(null, "", `?${kind === "chain" ? "c" : kind === "acts" ? "a" : kind === "wiki" ? "w" : "m"}=${encodeURIComponent(slug)}`); } catch {}
 }
 function avReveal(via) {
   const s = cur; if (!s || !s.av || s.av.revealed) return;
-  s.av.revealed = true; s.answered = true; s.mystery = false;
-  const v = via === "guess" ? guessVerdict() : null;
-  if (via !== "again") { sess.reveal = true; track("reveal", {slug:s.key, via, view:"answer", seconds_in_story:Math.round((performance.now() - sess.storyT0) / 1000)}); }  // via: guess, skip, or known (a shelf card named the landing)
-  avHero(s, true); avAnswerPanel(s, v); avRoute(s, via !== "again");
-  if (avLake) avLake.ember(!!s.answer);
-}
-function avPick(k) {
-  if (!cur || !cur.av || cur.av.revealed || !GUESS_SAY[k]) return;
-  cur.guess = k; guessed.add(cur.key); track("guess", {slug:cur.key, pick:k, view:"answer"});
-  avReveal("guess");
+  s.av.revealed = true; s.answered = true; s.mystery = false; sess.reveal = true;
+  avHero(s, true); avRoute(s, false); rcRender(s);  // the ember lights when the chart reaches the mark (rcEnd)
 }
 function avStep(id) {  // a shared step: open the route with every step, and point at it
   if (!cur || !cur.av) return;
   if (!cur.av.revealed) avReveal("again");
+  const det = $("#rcsteps"); if (det) det.open = true;
   avAll = true; avRoute(cur, false);
   const li = [...document.querySelectorAll("#avright li.avn")].find(x => x.dataset.id === id); if (!li) return;
   const m = li.querySelector("details.avmore"); if (m) m.open = true;
@@ -2681,18 +2839,18 @@ function avShelfData() {
     if (!st) continue; seen.add(name);
     avPrep(st);
     st.titleText = name; const a = revealMark(st), [stone, land] = name.split(/\s*→\s*/);
-    out.push({kind, slug, stone, land, group:a ? guessOf(a.mark) : "none", weak:weakOf(st), gap:a ? a.d : null, year:(st.iso0 || "").slice(0, 4)});
+    out.push({kind, slug, stone, land, group:a ? guessOf(a.mark) : "none", weak:weakOf(st), gap:a ? a.d : null, year:(st.iso0 || "").slice(0, 4), ds:st.items.filter(x => !x.aside && !x.undated && !x.future && x.lv !== "busted").map(x => x.d)});
   }
   return avShelfCache = out;
 }
 function avShelf() {
   const el = $("#avshelf"); if (!el || !cur) return;
   const data = avShelfData(), here = `${cur.kind}:${cur.key}`;
-  const G = [["law", "Stones that changed a law or rule"], ["built", "Stones that built something"], ["life", "Stones that changed how people live"], ["none", "Big splashes, nothing lasting yet"]];
-  el.innerHTML = `<h2 class="avsh">More stones</h2><p class="avshsub">Each card says where the stone landed. Open one to see how it got there.</p>` + G.map(([g, h]) => {
+  const G = [["life", "Stones that changed how people live"], ["built", "Stones that built something"], ["law", "Stones that changed a law or rule"], ["none", "Big splashes, nothing lasting yet"]];
+  el.innerHTML = `<h2 class="avsh">More stones</h2><p class="avshsub">Each card says where the stone landed. The amber bar starts when it landed.</p>` + G.map(([g, h]) => {
     const list = data.filter(x => x.group === g && `${x.kind}:${x.slug}` !== here); if (!list.length) return "";
     const open = avShelfOpen.has(g), shown = open ? list : list.slice(0, 8);
-    return `<section class="avgroup"><h3>${AV_KIND[g].icon}<span>${h}</span><em>${list.length}</em></h3><div class="avgrid">${shown.map(x => `<button type="button" class="avcard" data-k="${x.kind}" data-s="${esc(x.slug)}"><span class="cy">${esc(x.year)}</span><span class="cs">${esc(x.stone)}</span><span class="cl">→ ${esc(x.land)}</span><span class="cm"><i class="d-${x.weak}"></i>${esc(AV_TAG[x.weak] || "")}${x.gap != null ? ` · ${esc(avGap(x.gap))} later` : ""}</span></button>`).join("")}</div>${list.length > 8 ? `<button type="button" class="avshmore" data-g="${g}">${open ? "Show fewer" : `Show all ${list.length}`}</button>` : ""}</section>`;
+    return `<section class="avgroup"><h3>${AV_KIND[g].icon}<span>${h}</span><em>${list.length}</em></h3><div class="avgrid">${shown.map(x => `<button type="button" class="avcard" data-k="${x.kind}" data-s="${esc(x.slug)}"><span class="cy">${esc(x.year)}</span><span class="cs">${esc(x.stone)}</span><span class="cl">→ ${esc(x.land)}</span>${rcGlyph(x)}<span class="cm"><i class="d-${x.weak}"></i>${esc(AV_TAG[x.weak] || "")}${x.gap != null ? ` · ${esc(avGap(x.gap))} later` : ""}</span></button>`).join("")}</div>${list.length > 8 ? `<button type="button" class="avshmore" data-g="${g}">${open ? "Show fewer" : `Show all ${list.length}`}</button>` : ""}</section>`;
   }).join("");
 }
 // The hero's water: a lake at dusk in WebGL, the stone thrown in, rings that spread and fade, and a pool of ember when the
@@ -2785,9 +2943,10 @@ function avInit() {
   const main = $("#avmain"); if (!main) return;
   avLake = avLakeInit($("#avhero"));
   main.addEventListener("click", e => {
+    const hit = e.target.closest && e.target.closest(".rchit"); if (hit) { rcPick(+hit.dataset.i); return; }
     const b = e.target.closest("button"); if (!b) return;
-    if (b.dataset.g && b.classList.contains("avtile")) { avPick(b.dataset.g); return; }
-    if (b.classList.contains("avskip")) { avReveal("skip"); return; }
+    if (b.id === "rcplay") { if (cur.rc) cur.rc.done ? rcPlay(cur) : rcEnd(cur, "skip"); return; }
+    if (b.classList.contains("rchow")) { track("learn_more", {slug:cur.key, view:"chart"}); avStep(b.dataset.id); return; }
     if (b.dataset.knew) {
       const k = b.dataset.knew === "1", key = `${cur.kind}:${cur.key}`;
       try { const m = JSON.parse(localStorage.getItem("ripple-knew") || "{}"); m[key] = k; localStorage.setItem("ripple-knew", JSON.stringify(m)); } catch {}
@@ -2802,7 +2961,8 @@ function avInit() {
     if (b.classList.contains("avshmore")) { const g = b.dataset.g; avShelfOpen.has(g) ? avShelfOpen.delete(g) : avShelfOpen.add(g); avShelf(); return; }
   });
   main.addEventListener("toggle", e => { if (e.target.matches && e.target.matches("details.avmore") && e.target.open) { track("learn_more", {slug:cur && cur.key, view:"answer"}); avLine(false); } else avLine(false); }, true);
-  let rt = 0; window.addEventListener("resize", () => { clearTimeout(rt); rt = setTimeout(() => avLine(false), 120); });
+  main.addEventListener("mouseover", e => { const hit = e.target.closest && e.target.closest(".rchit"); if (hit && cur && cur.rc && cur.rc.done && cur.rc.cur !== +hit.dataset.i) rcSay(cur, +hit.dataset.i, true); });
+  let rt = 0; window.addEventListener("resize", () => { clearTimeout(rt); rt = setTimeout(() => { avLine(false); const c = $("#rcchart"); if (cur && cur.rc && c && Math.abs(c.clientWidth - (cur.rc.w || 0)) > 8) rcDraw(cur); }, 120); });
   if (document.fonts) document.fonts.ready.then(() => avLine(false));
 }
 
