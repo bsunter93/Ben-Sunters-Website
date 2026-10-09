@@ -930,6 +930,7 @@ const COLOR = {measured:"var(--good)", timed:"var(--marigold)", reported:"var(--
 const NS = "http://www.w3.org/2000/svg", C = {x:350, y:330}, R = 286, DUR = 15000, FLY = 1150, THROW_FROM = {x:150, y:452};  // the near rim, lower left, on the water: a stone resting on the bank outside the pond read as a glitch (Oct 4 review)
 const $ = s => document.querySelector(s);
 const params = new URLSearchParams(location.search);
+const OPENER = ["chain", "study-album-traffic"];  // the story a bare link opens (Oct 9): Album release days → more traffic deaths, a peer-reviewed study (docs/studies_v2.md); Tiger King was the opener before
 const W2 = (() => { const w = params.get("water"); try { if (w) sessionStorage.setItem("ripple-water", w); return (w || sessionStorage.getItem("ripple-water") || "2") === "2"; } catch { return w !== "1"; } })();  // the water look is the default (Oct 5); ?water=1 shows the old instrument pond for the session, ?water=2 brings water back
 if (W2) document.documentElement.classList.add("w2");
 const REEL_Q = params.has("reel"), CARD_Q = params.has("card");  // reels and share cards keep the SVG water: their frames are recorded headless
@@ -3333,6 +3334,7 @@ function avInit() {
   else if (a && actsWorks().includes(a)) show("acts", a, playing);
   else if (wk && wikiStones().includes(wk)) show("wiki", wk, playing);
   else if (m && (DATA.maps[m] || (DATA.disc && DATA.disc.events[m] && DATA.disc.events[m].links.length))) show("map", m, playing);  // an engine screen where nothing qualified (Barbie, Top Gun: Maverick, Euphoria) has no pond to draw; the picker already hides it
+  else if (DATA.chains.some(x => x.slug === OPENER[1])) show(OPENER[0], OPENER[1], playing);  // the default opener; ?m=tiger-king still opens Tiger King
   else show(TABS.maps[0][0], TABS.maps[0][1], playing);
   if (CARD) { t = 1; setPlaying(false); render(); }
   const sid = params.get("s");  // a shared step: open on it, stopped, with its caption

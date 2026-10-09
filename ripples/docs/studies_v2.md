@@ -74,3 +74,9 @@ now the Journal of Health Economics; its open copy dates the attacks).
   earthquake against their full texts.
 - **The working-paper label:** the first working paper to ship needs a plain "working paper, not yet peer reviewed" line
   on its card.
+
+## The opener
+
+The demo now opens on Album release days → more traffic deaths, a peer-reviewed study with a strong design (each
+release day against the same weekdays nearby, random Fridays and the same dates in other years). Tiger King stays under All
+stories and at `?m=tiger-king`. The change is its own commit so it can be reverted alone.
