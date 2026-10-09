@@ -90,3 +90,11 @@ drops any browser a script drives (`navigator.webdriver`). The parameters of `ri
 custom dimensions, so the fall-off point could not be read. The response, the chain view, changes the layout and the
 pace together; `docs/chain_view_v1.md` has the reading, the change, how the next week will be compared and a forecast.
 
+## Oct 8 addendum: the answer view
+
+The page now opens on the answer view (`docs/answer_view_v1.md`): a guess or "Skip the guess" shows the answer at
+once. `ripple_story_start` carries `view: "answer"`; `ripple_reveal` carries `via` (`guess`, `skip`, `known` when a
+shelf card already named the landing); the reveal rate is read on `guess` and `skip`. New event `ripple_knew`
+(`knew` 1 or 0, `guess`), once per story per browser: the first surprise label from real visitors. The chain view ran
+about a day, too short to score its forecast. Register `via`, `view`, `knew` and `guess` as custom dimensions before
+reading.

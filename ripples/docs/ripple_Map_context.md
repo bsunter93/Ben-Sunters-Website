@@ -196,6 +196,11 @@ deep enough for an adult to browse rabbit holes.
 
 ## 2. Current status (one screen, 2026-10-05)
 
+**Oct 8 update.** Launched Oct 5 (LinkedIn, then Reddit). A Reddit visitor called the page confusing and hard to read;
+the chain view (Oct 7) and then the answer view (Oct 8, now the default) followed. The answer view puts the answer one
+tap away, says how we know each link in plain words, and adds a "Did you know this already?" tap, the first real
+surprise label. Record: `docs/answer_view_v1.md`. The section below is the Oct 5 status.
+
 **In one line:** not launched yet; the owner plans the public launch for Oct 6. Oct 5 turned the pond into a lake you can
 read without the cards, put the cards on screen as a timeline, gave Tiger King its floor citation, fixed the launch copy,
 and ran twelve pre-registered engine studies. The engine's first measured rate: about one engine mark in eight is both
