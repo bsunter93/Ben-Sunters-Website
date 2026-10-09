@@ -198,6 +198,9 @@ deep enough for an adult to browse rabbit holes.
 
 **Oct 8, studies.** 40 study-backed stories and a "Myths, checked" shelf group. Record: `docs/studies_v1.md`.
 
+**Oct 9, studies, second batch.** 7 stories from the discovery v4 pilot's 26 good finds, re-verified against each
+paper; 19 left out with reasons. Record: `docs/studies_v2.md`.
+
 **Oct 8, second pass.** The owner found the answer view too text heavy and the guess annoying. The page now opens on
 the ripple chart: the answer as the title, then one chart that plays the story row by row with one caption. Record:
 `docs/ripple_chart_v1.md`.

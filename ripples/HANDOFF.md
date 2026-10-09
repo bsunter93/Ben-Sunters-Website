@@ -213,6 +213,8 @@ the pacing and the cut and are stale.
   time for short stories with lines), a story with no line draws each step as a hop from the one before with the time it
   took written on it, the caption says two facts at most, Next is the one amber button, the shelf shows one row a group.
   Record and before/after numbers: `docs/ui_pass_v1.md`.
+- **Study-backed ripples, second batch (Oct 9):** 7 stories from the discovery v4 pilot's good finds, each re-verified
+  against its paper: `docs/studies_v2.md`.
 - **Study-backed ripples (Oct 8):** 40 stories from published studies and a "Myths, checked" shelf: `docs/studies_v1.md`.
 - **The ripple chart (Oct 8, second pass), the default:** the answer is the title; one chart plays the story row by
   row, one row per step on one clock, each line a page's readers against its own normal on one shared scale, a lasting
