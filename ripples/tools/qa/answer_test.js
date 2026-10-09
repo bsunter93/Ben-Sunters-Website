@@ -1,5 +1,7 @@
 // The ripple chart (Oct 8, the default): the answer is the title from the first frame, then one chart plays the story row
 // by row: one row per step on one clock, each line a page's readers against its own normal, a lasting mark as an amber bar.
+// Since Oct 9: the caption says at most two facts above its headline, "New to you?" waits for the end of the play, and a
+// story with no line runs on the calendar with the time between steps written on the chart.
 // Checks, at a phone, a tablet and a desktop size: no guess anywhere; the title and the chart are on the first screen; the
 // story plays to the row it lands on; row names never overlap; nothing scrolls sideways, even with every step open; Skip,
 // Play again, a tap on a row, a shelf card, Next and a shared step each work; every story in the catalog draws its chart
@@ -21,16 +23,16 @@ const { pageUrl, browser } = require('./common');
     const pg = await b.newPage({ viewport: { width: w, height: h }, deviceScaleFactor: 2, hasTouch: touch, isMobile: touch && w < 600 });
     const errs = []; pg.on('pageerror', e => errs.push(e.message));
     await pg.goto(base + '?m=tiger-king&nointro=1'); await pg.waitForSelector('#rcchart svg', { timeout: 15000 });
-    const pre = await pg.evaluate(() => ({ av: document.documentElement.classList.contains('av'), q: document.querySelector('#avq').textContent, guess: document.querySelectorAll('.avtile, .avskip, #guessrow button').length, chartTop: document.querySelector('#rcchart').getBoundingClientRect().top }));
+    const pre = await pg.evaluate(() => ({ av: document.documentElement.classList.contains('av'), q: document.querySelector('#avq').textContent, guess: document.querySelectorAll('.avtile, .avskip, #guessrow button').length, chartTop: document.querySelector('#rcchart').getBoundingClientRect().top, knewEarly: !document.querySelector('#rcfoot .avknew').hidden }));
     const t0 = Date.now();
     await pg.waitForFunction(() => cur && cur.rc && cur.rc.done, null, { timeout: 20000 }).catch(() => {});
     const playMs = Date.now() - t0;
-    const post = await pg.evaluate(() => ({ cap: document.querySelector('#rccap').innerText, on: document.querySelectorAll('#rcchart g.rcrow.on:not(.lab):not(.pk)').length, all: cur.rc.rows.length, ember: true }));
+    const post = await pg.evaluate(() => ({ cap: document.querySelector('#rccap').innerText, facts: document.querySelector('#rccap .k').children.length, knew: !document.querySelector('#rcfoot .avknew').hidden, on: document.querySelectorAll('#rcchart g.rcrow.on:not(.lab):not(.pk)').length, all: cur.rc.rows.length, ember: true }));
     const l1 = await pg.evaluate(layout);
     await pg.evaluate(() => { document.querySelector('#rcsteps').open = true; }); await pg.waitForTimeout(250);
     await pg.click('.avall'); await pg.waitForTimeout(300); const l2 = await pg.evaluate(layout);
-    say(pre.av && !pre.guess && /Tiger King → the Big Cat Act/.test(pre.q) && pre.chartTop < h && /Where it landed/.test(post.cap) && /Big Cat Public Safety Act/.test(post.cap) && post.on === post.all && post.all >= 6 && !l1.ov && !l1.out && !l1.side && !l2.rov && !l2.side && !errs.length,
-      `tiger-king ${w}x${h}: guess controls ${pre.guess}, chart top ${Math.round(pre.chartTop)} px, played in ${(playMs / 1000).toFixed(1)} s to "${post.cap.split('\n').pop().slice(0, 44)}", ${post.on}/${post.all} rows, name overlaps ${l1.ov}, outside ${l1.out}, route overlaps ${l2.rov}, sideways ${l1.side || l2.side ? 'YES' : 'no'}${errs.length ? `, errors: ${errs.slice(0, 2).join(' | ')}` : ''}`);
+    say(pre.av && !pre.guess && /Tiger King → the Big Cat Act/.test(pre.q) && pre.chartTop < h && /Big Cat Public Safety Act/.test(post.cap) && post.facts <= 2 && !pre.knewEarly && post.knew && post.on === post.all && post.all >= 6 && !l1.ov && !l1.out && !l1.side && !l2.rov && !l2.side && !errs.length,
+      `tiger-king ${w}x${h}: guess controls ${pre.guess}, chart top ${Math.round(pre.chartTop)} px, played in ${(playMs / 1000).toFixed(1)} s to "${post.cap.split('\n').pop().slice(0, 44)}" (${post.facts} facts above it), "New to you?" ${pre.knewEarly ? 'SHOWN DURING THE PLAY' : 'after the end'}${post.knew ? '' : ' NEVER SHOWN'}, ${post.on}/${post.all} rows, name overlaps ${l1.ov}, outside ${l1.out}, route overlaps ${l2.rov}, sideways ${l1.side || l2.side ? 'YES' : 'no'}${errs.length ? `, errors: ${errs.slice(0, 2).join(' | ')}` : ''}`);
     await pg.close();
   }
   // every story in the catalog, at a laptop size and a phone size: the chart at rest
@@ -38,7 +40,7 @@ const { pageUrl, browser } = require('./common');
     const pg = await b.newPage({ viewport: { width: w, height: h } }); const errs = []; pg.on('pageerror', e => errs.push(e.message));
     await pg.goto(base + '?m=tiger-king&nointro=1'); await pg.waitForSelector('#rcchart svg', { timeout: 15000 });
     const r = await pg.evaluate(() => {
-      const fails = [], seen = new Set(); let n = 0, lines = 0, onlyDots = 0;
+      const fails = [], seen = new Set(), modes = {}; let n = 0, lines = 0, onlyDots = 0, told = 0;
       for (const p of allPonds()) {
         const key = `${p.kind}:${p.slug}`; if (seen.has(key)) continue; seen.add(key);
         if (p.kind === 'map' && !(MAPS[p.slug] && DATA.maps[p.slug]) && !(DATA.disc && DATA.disc.events[p.slug] && DATA.disc.events[p.slug].links.length)) continue;
@@ -48,14 +50,16 @@ const { pageUrl, browser } = require('./common');
           const names = [...document.querySelectorAll('#rcchart text.rcn')].map(e => e.getBoundingClientRect()); let ov = 0;
           for (let i = 0; i < names.length; i++) for (let j = i + 1; j < names.length; j++) { const a = names[i], c = names[j]; if (a.left < c.right - 1 && c.left < a.right - 1 && a.top < c.bottom - 1 && c.top < a.bottom - 1) ov++; }
           const bad = /\bundefined\b|\bNaN\b|\bnull\b|Invalid Date/.exec(txt);
-          if (cur.rc.rows.some(x => x.lift)) lines++; else onlyDots++;
-          if (rows < 1 || !cap.trim() || ov || bad || document.querySelector('.avtile')) fails.push(`${key}: rows ${rows}, caption "${cap.slice(0, 30)}", name overlaps ${ov}${bad ? `, prints "${bad[0]}"` : ''}`);
+          const facts = document.querySelector('#rccap .k').children.length, out = [...document.querySelectorAll('#rcchart text')].filter(t => { const q = t.getBoundingClientRect(), pan = document.querySelector('.avpaper').getBoundingClientRect(); return q.width && (q.left < pan.left - 1 || q.right > pan.right + 1); }).length;
+          modes[cur.rc.mode] = (modes[cur.rc.mode] || 0) + 1;
+          if (cur.rc.rows.some(x => x.lift)) lines++; else { onlyDots++; if (document.querySelector('#rcchart text.rcgap')) told++; }
+          if (rows < 1 || !cap.trim() || ov || out || facts > 2 || bad || document.querySelector('.avtile')) fails.push(`${key}: rows ${rows}, caption "${cap.slice(0, 30)}", ${facts} facts, name overlaps ${ov}, outside ${out}${bad ? `, prints "${bad[0]}"` : ''}`);
           n++;
         } catch (e) { fails.push(`${key}: ${e.message}`); }
       }
-      return { n, fails, lines, onlyDots, side: document.documentElement.scrollWidth > innerWidth + 1 };
+      return { n, fails, lines, onlyDots, told, modes, side: document.documentElement.scrollWidth > innerWidth + 1 };
     });
-    say(!r.fails.length && !errs.length && !r.side && r.n > 190, `every story at ${w}x${h}: ${r.n} drawn (${r.lines} with at least one line, ${r.onlyDots} dots only), ${r.fails.length} failed${r.fails.length ? '\n   ' + r.fails.slice(0, 8).join('\n   ') : ''}${errs.length ? `, errors: ${errs.slice(0, 2).join(' | ')}` : ''}`);
+    say(!r.fails.length && !errs.length && !r.side && r.n > 190, `every story at ${w}x${h}: ${r.n} drawn (${r.lines} with at least one line, ${r.onlyDots} without; ${r.told} of those write the time between steps; clocks ${Object.entries(r.modes).map(([k, v]) => `${k} ${v}`).join(', ')}), ${r.fails.length} failed${r.fails.length ? '\n   ' + r.fails.slice(0, 8).join('\n   ') : ''}${errs.length ? `, errors: ${errs.slice(0, 2).join(' | ')}` : ''}`);
     await pg.close();
   }
   // Skip, Play again, a tap on a row, a shelf card, Next, a shared step
