@@ -1,0 +1,668 @@
+[
+{
+"stone": "Oklahoma City bombing",
+"stone_date": "04/1995",
+"claim": "Oklahoma City bombing led to: More babies born in Oklahoma County",
+"evidence": "Demography (difference in differences and control-group interrupted time series): \"Oklahoma County showed an interpretable, consistent, and significant increase in births.\""
+},
+{
+"stone": "Super Bowl ads",
+"stone_date": "annual",
+"claim": "Super Bowl ads led to: Brands advertised in the Super Bowl sold more beer and soda in later weeks with big sports events",
+"evidence": "Marketing Science (natural experiment (local team in the game shifts viewership)): \"post\u2013Super Bowl sales effects of ad viewership are concentrated in weeks with subsequent sporting events\""
+},
+{
+"stone": "A local team playing in the Super Bowl",
+"stone_date": "each Super Bowl, 1974-2009 seasons",
+"claim": "A local team playing in the Super Bowl led to: More flu deaths among older people in the team's home county",
+"evidence": "American Journal of Health Economics (difference in differences): \"We estimate having a local team in the Super Bowl caused an 18 percent increase in influenza deaths for the population over age 65.\""
+},
+{
+"stone": "Death of Diana, Princess of Wales",
+"stone_date": "08/31/1997",
+"claim": "Death of Diana, Princess of Wales led to: More suicides and self-harm, especially among women",
+"evidence": "The British Journal of Psychiatry (Poisson regression vs expected): \"Presentations for DSH increased significantly during the week following the death (+44.3%), especially in females (+65.1%).\""
+},
+{
+"stone": "Sesame Street's first broadcasts",
+"stone_date": "1969",
+"claim": "Sesame Street's first broadcasts led to: Kids who could watch were more often at the right grade for their age",
+"evidence": "American Economic Journal Applied Economics (reception variation (UHF vs VHF, tower distance)): \"The results indicate that Sesame Street improved school performance, particularly for boys.\""
+},
+{
+"stone": "Netflix's 13 Reasons Why, season 1",
+"stone_date": "03/31/2017",
+"claim": "Netflix's 13 Reasons Why, season 1 led to: More youth suicides in the US",
+"evidence": "JAMA Psychiatry (time series forecast (two independent teams)): \"No excess suicide mortality was seen in other age groups.\""
+},
+{
+"stone": "Robin Williams's death by suicide",
+"stone_date": "08/11/2014",
+"claim": "Robin Williams's death by suicide led to: More suicides in the US in the following five months",
+"evidence": "PLoS ONE (seasonal ARIMA forecast): \"suggesting an excess of 1,841 cases (9.85% increase)\""
+},
+{
+"stone": "Television arriving in US cities (medium-level stone)",
+"stone_date": "1946 onward rollout",
+"claim": "Television arriving in US cities (medium-level stone) led to: More Americans took up smoking",
+"evidence": "Journal of Consumer Research (difference in differences on staggered TV arrival): \"Our preferred estimates suggest that television increased the share of smokers in the population by 5\u201315 percentage points\""
+},
+{
+"stone": "Rede Globo's telenovelas reaching Brazilian towns",
+"stone_date": "1965-1991 rollout",
+"claim": "Rede Globo's telenovelas reaching Brazilian towns led to: Women had fewer children",
+"evidence": "American Economic Journal Applied Economics (staggered signal entry, area fixed effects): \"Women living in areas covered by Globo have significantly lower fertility.\""
+},
+{
+"stone": "Rede Globo's telenovelas",
+"stone_date": "1965-1991 rollout",
+"claim": "Rede Globo's telenovelas led to: Children's names tracked telenovela characters",
+"evidence": "American Economic Journal Applied Economics (staggered signal entry): \"We provide evidence that novelas, and not just television, affected individual choices, based on children's naming patterns and novela content.\""
+},
+{
+"stone": "Cable TV arriving in rural Indian villages (medium-level stone)",
+"stone_date": "per paper (three-year panel)",
+"claim": "Cable TV arriving in rural Indian villages (medium-level stone) led to: Fewer births and more autonomy for women; younger kids enrolled in school more",
+"evidence": "The Quarterly Journal of Economics (panel difference in differences): \"as well as increases in women's autonomy and decreases in fertility\""
+},
+{
+"stone": "Pokemon Go launch in Hong Kong",
+"stone_date": "2016 (per paper)",
+"claim": "Pokemon Go launch in Hong Kong led to: Fewer self-harm visits to emergency rooms",
+"evidence": "JMIR serious games (interrupted time series, Poisson segmented regression): \"Self-harm incidence in the population, particularly in adults, showed a significant decline in the period after Pok\u00e9mon Go was launched.\""
+},
+{
+"stone": "Pokemon Go release",
+"stone_date": "07/2016",
+"claim": "Pokemon Go release led to: Players walked more",
+"evidence": "Journal of Medical Internet Research (players vs prior activity and matched nonplayers (wearables)): \"increasing their activity by 1473 steps a day on average, a more than 25% increase compared with their prior activity level\""
+},
+{
+"stone": "Fox News Channel entering local cable systems",
+"stone_date": "10/1996-11/2000",
+"claim": "Fox News Channel entering local cable systems led to: More Republican votes",
+"evidence": "National Bureau of Economic Research (staggered cable entry): \"Our estimates imply that Fox News convinced 3 to 8 percent of its viewers to vote Republican.\""
+},
+{
+"stone": "Oprah's book picks on The Oprah Winfrey Show",
+"stone_date": "per paper",
+"claim": "Oprah's book picks on The Oprah Winfrey Show led to: Amazon sales rose for picked books and spilled over to related books nobody mentioned",
+"evidence": " (difference in differences with matched controls): \"the diffusion of exogenous demand shocks in the Amazon.com product network is relatively shallow, typically about three edges deep into the network\""
+},
+{
+"stone": "MTV's 16 and Pregnant",
+"stone_date": "2009",
+"claim": "MTV's 16 and Pregnant led to: Fewer teen births",
+"evidence": "American Economic Review (instrumental variables on local MTV ratings): \"The results imply that this show led to a 4.3 percent reduction in teen births.\""
+},
+{
+"stone": "Katie Couric's live on-air colonoscopy on the Today Show",
+"stone_date": "03/2000",
+"claim": "Katie Couric's live on-air colonoscopy on the Today Show led to: More people got colonoscopies",
+"evidence": "Archives of internal medicine (change point analysis with trend adjustment, two data sources): \"After adjusting for temporal trends, a significantly higher postcampaign colonoscopy rate was sustained for 9 months.\""
+},
+{
+"stone": "Violent blockbuster movie weekends",
+"stone_date": "1995-2004",
+"claim": "Violent blockbuster movie weekends led to: Fewer assaults on big violent-movie nights",
+"evidence": "The Quarterly Journal of Economics (daily time series on movie audience shocks): \"Our estimates suggest that in the short run, violent movies deter almost 1,000 assaults on an average weekend.\""
+},
+{
+"stone": "Fox News Channel viewership",
+"stone_date": "per paper",
+"claim": "Fox News Channel viewership led to: Local governments taxed and spent less",
+"evidence": "American Economic Journal Applied Economics (channel position instrument): \"exposure to the conservative Fox News channel reduces revenues and expenditures\""
+},
+{
+"stone": "Angelina Jolie's New York Times op-ed on her preventive double mastectomy",
+"stone_date": "05/14/2013",
+"claim": "Angelina Jolie's New York Times op-ed on her preventive double mastectomy led to: More women got BRCA gene tests",
+"evidence": "BMJ (difference in differences (claims data)): \"implying a difference-in-difference absolute daily increase of 0.45 tests/100 000 women or a 64% relative increase\""
+},
+{
+"stone": "Game of Thrones filming in Dubrovnik",
+"stone_date": "series 2011-2019",
+"claim": "Game of Thrones filming in Dubrovnik led to: More tourists came to Dubrovnik and other filming towns",
+"evidence": "International Journal of Tourism Research (synthetic control; event study): \"We find a robust and positive effect of filming the TV series in Dubrovnik on the number of tourist arrivals.\""
+},
+{
+"stone": "Upset losses by NFL home teams",
+"stone_date": "per paper (seasons)",
+"claim": "Upset losses by NFL home teams led to: More domestic violence calls to police",
+"evidence": "National Bureau of Economic Research (natural experiment vs betting point spread): \"lead to an 8 percent increase in police reports of at-home male-on-female intimate partner violence\""
+},
+{
+"stone": "Kate Spade's and Anthony Bourdain's suicides",
+"stone_date": "06/2018 (days apart)",
+"claim": "Kate Spade's and Anthony Bourdain's suicides led to: More suicides in the US",
+"evidence": "Australian & New Zealand Journal of Psychiatry (seasonal ARIMA forecast): \"There were 392 (95% confidence interval = [271, 514]) excess suicides by hanging, a 14.5% increase\""
+},
+{
+"stone": "West German TV reaching East German homes (medium-level stone)",
+"stone_date": "before 1990",
+"claim": "West German TV reaching East German homes (medium-level stone) led to: Fewer births (a 2024 study adds fewer marriages, more divorce)",
+"evidence": "Empirical Economics (natural experiment on signal reach (topography), IV and DiD): \"We find robust evidence that access to West German TV results in lower fertility.\""
+},
+{
+"stone": "Zanzibar's month-long blackout",
+"stone_date": "2008",
+"claim": "Zanzibar's month-long blackout led to: A baby boom 8 to 10 months later",
+"evidence": "Demography (birth records, villages by electrification): \"a month-long blackout in 2008 caused a significant increase in the number of births 8 to 10 months later\""
+},
+{
+"stone": "Fox News Channel viewership",
+"stone_date": "2005-2017",
+"claim": "Fox News Channel viewership led to: Judges handed down longer sentences",
+"evidence": "The Economic Journal (channel position instrument): \"Local exposure to conservative news causes judges to impose harsher criminal sentences.\""
+},
+{
+"stone": "ALS Ice Bucket Challenge",
+"stone_date": "08/2014",
+"claim": "ALS Ice Bucket Challenge led to: More people donated money and volunteered, briefly",
+"evidence": "Journal of Economic Psychology (UK panel data, exposure timing): \"having been exposed to the IBC increases the probability of donating money\""
+},
+{
+"stone": "Netflix's 13 Reasons Why, season 1",
+"stone_date": "03/31/2017",
+"claim": "Netflix's 13 Reasons Why, season 1 led to: More teen self-harm emergency visits",
+"evidence": "The Australian and New Zealand journal of psychiatry (time series on health administrative data): \"This study demonstrated a significant increase in self-harm emergency department visits associated with the release of 13 Reasons Why.\""
+},
+{
+"stone": "Ramayan, the TV serial of the Hindu epic",
+"stone_date": "aired 1987-1988",
+"claim": "Ramayan, the TV serial of the Hindu epic led to: Parents gave newborns more traditionally Hindu names",
+"evidence": "National Bureau of Economic Research (difference in differences on TV signal strength): \"Localities with higher Ramayan exposure saw persistently strengthened Hindu religious identity, measured by the names given to newborns\""
+},
+{
+"stone": "Jade Goody's public cervical cancer diagnosis and death",
+"stone_date": "08/2008 diagnosis; died weeks after a 02/2009 terminal announcement",
+"claim": "Jade Goody's public cervical cancer diagnosis and death led to: Far more women went for cervical screening (Pap tests)",
+"evidence": "Journal of Medical Screening (observed vs expected from other periods (England); time series regression (Wales)): \"About half a million extra cervical screening attendances occurred in England between mid-2008 and mid-2009\""
+},
+{
+"stone": "England's matches in the 2002, 2006 and 2010 World Cups",
+"stone_date": "2002, 2006, 2010",
+"claim": "England's matches in the 2002, 2006 and 2010 World Cups led to: More domestic abuse reports on match days, even after wins",
+"evidence": "Journal of Research in Crime and Delinquency (Poisson and negative binomial regression): \"the risk of domestic abuse rose by 26 percent when the English national team won or drew\""
+},
+{
+"stone": "Nazi radio propaganda",
+"stone_date": "1933 onward",
+"claim": "Nazi radio propaganda led to: More party enrollment and denunciations of Jews",
+"evidence": "The Quarterly Journal of Economics (radio reception variation): \"radio propaganda incited anti-Semitic acts and denunciations of Jews to authorities by ordinary citizens\""
+},
+{
+"stone": "Kylie Minogue's breast cancer announcement",
+"stone_date": "05/2005",
+"claim": "Kylie Minogue's breast cancer announcement led to: Young women got more breast scans, but no more cancers were found",
+"evidence": "International journal of epidemiology (before vs after quarters (Australia); ARIMA forecast (UK)): \"The odds of women aged 25-44 years undergoing imaging procedures increased by 20% in the first and second quarters after the Minogue publicity\""
+},
+{
+"stone": "Releases of top-selling Mature-rated video games",
+"stone_date": "2006-2011",
+"claim": "Releases of top-selling Mature-rated video games led to: Crime rose in the weeks after, but only where alcohol is sold",
+"evidence": "Journal of Media Economics (event study on release weeks): \"our results are completely moderated in U.S. counties that forbid alcohol sales\""
+},
+{
+"stone": "Rede Globo's telenovelas",
+"stone_date": "1970-1991 rollout",
+"claim": "Rede Globo's telenovelas led to: More women separated or divorced",
+"evidence": " (staggered signal entry, area fixed effects): \"the share of women who are separated or divorced increases significantly after the Globo signal becomes available\""
+},
+{
+"stone": "England's World Cup loss to Argentina on penalties",
+"stone_date": "06/30/1998",
+"claim": "England's World Cup loss to Argentina on penalties led to: More heart attack hospital admissions",
+"evidence": "BMJ (Clinical research ed.) (comparison with same days in other years and the month before): \"Risk of admission for acute myocardial infarction increased by 25% on 30 June 1998\""
+},
+{
+"stone": "Mohamed Salah joining Liverpool F.C.",
+"stone_date": "per paper",
+"claim": "Mohamed Salah joining Liverpool F.C. led to: Fewer hate crimes in the Liverpool area",
+"evidence": "American Political Science Review (synthetic control): \"hate crimes in the Liverpool area dropped by 16% compared with a synthetic control\""
+},
+{
+"stone": "Twende na Wakati, Tanzanian radio soap opera",
+"stone_date": "1993",
+"claim": "Twende na Wakati, Tanzanian radio soap opera led to: More couples used family planning",
+"evidence": "Journal of Health Communication (treatment vs comparison region over time): \"the radio soap opera promoted progress through the stages for family planning adoption in the treatment area\""
+},
+{
+"stone": "Sideways (film)",
+"stone_date": "2004 release",
+"claim": "Sideways (film) led to: Americans bought less Merlot and more Pinot Noir",
+"evidence": "Journal of Wine Economics (structural break tests on consumption trends): \"We examine the trends in consumption before and after the movie and perform statistical tests for structural changes in consumption.\""
+},
+{
+"stone": "Angelina Jolie's New York Times op-ed on her preventive double mastectomy",
+"stone_date": "05/14/2013",
+"claim": "Angelina Jolie's New York Times op-ed on her preventive double mastectomy led to: More women without cancer chose preventive double mastectomy",
+"evidence": "Breast Cancer Research and Treatment (interrupted time series (claims, 1997-2016)): \"significant increases in genetic testing and mastectomy rates were observed and sustained in subsequent years\""
+},
+{
+"stone": "Brazil's World Cup match days (2014, 2018, 2022)",
+"stone_date": "per paper",
+"claim": "Brazil's World Cup match days (2014, 2018, 2022) led to: Fewer heart attack and heart failure admissions on match days",
+"evidence": "Cardiology Research (daily counts with day, month and year fixed effects): \"On Brazil match days, AMI admissions were 7.0% lower than non-match days\""
+},
+{
+"stone": "Suicides of K-pop singers Jonghyun, Sulli and Goo Hara",
+"stone_date": "per paper (title years 2017-2018)",
+"claim": "Suicides of K-pop singers Jonghyun, Sulli and Goo Hara led to: More suicides in South Korea",
+"evidence": "BMC Public Health (ecological time series, case vs control weeks): \"The suicide rates in Korea significantly increased by 1.21, 1.30, and 1.28 times after the deaths of Jonghyun, Sulli, and Hara Gu\""
+},
+{
+"stone": "Actress Lee Eun-ju's suicide",
+"stone_date": "2005",
+"claim": "Actress Lee Eun-ju's suicide led to: More suicides by the same method in South Korea",
+"evidence": "Journal of affective disorders (time series on death certificates): \"was the largest (5.24; 95% CI=3.31-8.29) in young women who used the same suicide method as the celebrity\""
+},
+{
+"stone": "Charlie Sheen's HIV-positive disclosure on national TV",
+"stone_date": "11/17/2015",
+"claim": "Charlie Sheen's HIV-positive disclosure on national TV led to: Sales of in-home HIV test kits nearly doubled",
+"evidence": "Prevention Science (weekly sales vs expected (time series)): \"In total, there were 8225 more sales than expected around Sheen's disclosure, surpassing World AIDS Day by a factor of about 7.\""
+},
+{
+"stone": "Sideways (film)",
+"stone_date": "2004 release",
+"claim": "Sideways (film) led to: California growers shifted grapes toward Pinot Noir",
+"evidence": "Journal of Wine Economics (modified difference in differences): \"The positive supply response for Pinot Noir is stronger than the negative response for Merlot and concentrated in lower value Central Valley vineyards.\""
+},
+{
+"stone": "Ramayan, the TV serial of the Hindu epic",
+"stone_date": "aired 1987-1988",
+"claim": "Ramayan, the TV serial of the Hindu epic led to: More Hindu-Muslim communal violence through 1992",
+"evidence": "National Bureau of Economic Research (difference in differences on TV signal strength): \"increases in Hindu-Muslim communal violence during the Hindu-nationalist mobilization of the early 1990s\""
+},
+{
+"stone": "Ramayan, the TV serial of the Hindu epic",
+"stone_date": "aired 1987-1988",
+"claim": "Ramayan, the TV serial of the Hindu epic led to: The BJP won more state elections through 2000",
+"evidence": "National Bureau of Economic Research (difference in differences on TV signal strength): \"longer-run increases in electoral success for the Hindu nationalist Bharatiya Janata Party\""
+},
+{
+"stone": "MTV Shuga (TV drama about HIV, Nigeria season)",
+"stone_date": "per paper (trial period)",
+"claim": "MTV Shuga (TV drama about HIV, Nigeria season) led to: Young viewers were twice as likely to get an HIV test",
+"evidence": "World Bank, Washington, DC eBooks (randomized controlled trial): \"Treated subjects are twice as likely to get tested for HIV eight months after the intervention.\""
+},
+{
+"stone": "UK digital TV switchover (medium-level stone)",
+"stone_date": "per paper (staggered)",
+"claim": "UK digital TV switchover (medium-level stone) led to: Test scores rose and teen drinking fell where more TV channels arrived",
+"evidence": "RePEc: Research Papers in Economics (staggered rollout natural experiment): \"I find that the digital switchover increases academic performance\""
+},
+{
+"stone": "Movies broadcast on TV (2005-2006)",
+"stone_date": "2005-2006",
+"claim": "Movies broadcast on TV (2005-2006) led to: DVD sales of a movie rose after it aired free on TV",
+"evidence": "MIS Quarterly (broadcast as exogenous demand shock): \"the post-broadcast increase in DVD sales suggests that giving away content in one channel can stimulate sales in a paid channel\""
+},
+{
+"stone": "Unexpected losses by a prominent in-state college football team",
+"stone_date": "1996-2012 seasons",
+"claim": "Unexpected losses by a prominent in-state college football team led to: Juvenile court judges gave longer sentences the week after",
+"evidence": "American Economic Journal Applied Economics (natural experiment vs betting expectations): \"We find that unexpected losses increase sentence lengths assigned by judges during the week following the game.\""
+},
+{
+"stone": "West German TV reaching East German homes (medium-level stone)",
+"stone_date": "before 1990",
+"claim": "West German TV reaching East German homes (medium-level stone) led to: Fewer crimes against refugees decades later",
+"evidence": "Kyklos (natural experiment on signal reach): \"experienced fewer criminal offenses against refugees\""
+},
+{
+"stone": "Magic Johnson's HIV announcement",
+"stone_date": "11/07/1991",
+"claim": "Magic Johnson's HIV announcement led to: More people sought anonymous HIV counseling and testing",
+"evidence": "AIDS education and prevention : official publication of the International Society for AIDS Education (interrupted time series (weekly)): \"Seven months later, demand had not returned to pre-disclosure levels.\""
+},
+{
+"stone": "Korean Wave exports (K-drama, K-pop)",
+"stone_date": "1997-2014 panel",
+"claim": "Korean Wave exports (K-drama, K-pop) led to: More foreign tourists visited Korea",
+"evidence": "Journal of Open Innovation Technology Market and Complexity (panel random effects): \"it can be seen that the Korean Wave is one of the important factors for attracting foreign tourists to Korea in four countries\""
+},
+{
+"stone": "Chadwick Boseman's death from colon cancer",
+"stone_date": "08/28/2020",
+"claim": "Chadwick Boseman's death from colon cancer led to: Donations to a colon cancer charity jumped",
+"evidence": "JMIR infodemiology (search: ARIMA forecast; donations: organization-reported before vs after): \"The Colon Cancer Foundation reported a 331% increase in donations\""
+},
+{
+"stone": "Blackfish (documentary)",
+"stone_date": "2013",
+"claim": "Blackfish (documentary) led to: SeaWorld attendance fell and it stopped breeding orcas",
+"evidence": "People and Nature (stock data plus 26 key informant interviews (contribution analysis)): \"Following its release, SeaWorld suffered financial difficulties and the company underwent structural changes, including a cessation of its orca breeding programme.\""
+},
+{
+"stone": "Finding Dory (Pixar film)",
+"stone_date": "2016",
+"claim": "Finding Dory (Pixar film): the popular story that the film drove a rush to buy blue tang fish does not hold up",
+"evidence": "online searches rose for 2-3 weeks, but no substantial rise in US blue tang imports or aquarium visits vs counterfactual"
+},
+{
+"stone": "Harry Potter books and films",
+"stone_date": "1997-2011",
+"claim": "Harry Potter books and films: the popular story that Harry Potter set off a UK pet owl craze, then mass abandonment does not hold up",
+"evidence": "no evidence the phenomenon raised legal UK owl trade, with or without lags; no abandonment surge reported"
+},
+{
+"stone": "Blue Planet II (BBC documentary series)",
+"stone_date": "2017",
+"claim": "Blue Planet II (BBC documentary series): the popular story that the series changed viewers' plastic habits does not hold up",
+"evidence": "randomized trial: knowledge rose, plastic consumption behavior did not change"
+},
+{
+"stone": "Squid Game (Netflix)",
+"stone_date": "09/2021",
+"claim": "Squid Game (Netflix): the popular story that a hit show with suicide scenes raises suicides does not hold up",
+"evidence": "no change in South Korea or 8 of 10 countries; up in Germany, down in the UK"
+},
+{
+"stone": "13 Reasons Why (Netflix)",
+"stone_date": "03/31/2017",
+"claim": "13 Reasons Why (Netflix): the popular story that the show caused a rise in youth suicide does not hold up",
+"evidence": "reanalyses find the boys' rise matches the prior month and seasonal school-year patterns"
+},
+{
+"stone": "16 and Pregnant (MTV)",
+"stone_date": "2009",
+"claim": "16 and Pregnant (MTV): the popular story that the show cut teen births 4.3% does not hold up",
+"evidence": "with trend controls the effect disappears; placebo tests show an 'effect' before the show aired"
+},
+{
+"stone": "Hosting the Olympic Games (London 2012 and others)",
+"stone_date": "various; London 2012",
+"claim": "Hosting the Olympic Games (London 2012 and others): the popular story that hosting the Games gets the population moving and playing sport does not hold up",
+"evidence": "host-area surveillance data show no change in physical activity or sport participation, except Beijing 2008 and Nagano 1998; a 2015 systematic review found no inherent demonstration effect"
+},
+{
+"stone": "Angelina Jolie's op-ed",
+"stone_date": "05/14/2013",
+"claim": "Angelina Jolie's op-ed: the popular story that the Jolie effect raised breast cancer screening does not hold up",
+"evidence": "no step change or acceleration in routine screening mammograms at a large center (48,110 exams)"
+},
+{
+"stone": "Robin Williams's death",
+"stone_date": "08/11/2014",
+"claim": "Robin Williams's death: the popular story that the US suicide rise repeated abroad does not hold up",
+"evidence": "England and Wales: 2,051 observed vs 1,949 expected, not significant; Australia: helpline calls not elevated over 4 weeks"
+},
+{
+"stone": "Watching your team in big football matches",
+"stone_date": "various",
+"claim": "Watching your team in big football matches: the popular story that big matches trigger heart attacks does not hold up",
+"evidence": "Italy: no rise in heart attack admissions (RR 1.01); most studies 0.7-1.3; Germany 2006: no stroke rise"
+},
+{
+"stone": "Storylines planted in three US Spanish-language telenovelas",
+"stone_date": "per paper",
+"claim": "Storylines planted in three US Spanish-language telenovelas: the popular story that a soap storyline changes viewers' real behavior does not hold up",
+"evidence": "randomized placement: two effects significant, none large or lasting; bank accounts and voter registration unchanged"
+},
+{
+"stone": "Crown Prince Rudolf's suicide",
+"stone_date": "1889",
+"claim": "Crown Prince Rudolf's suicide: the popular story that every famous suicide sets off copycats does not hold up",
+"evidence": "heavy coverage but no rise in suicides, unlike the Redl case where reporting was irresponsible"
+},
+{
+"stone": "Taylor Swift attending Kansas City Chiefs games",
+"stone_date": "2023 season",
+"claim": "Taylor Swift attending Kansas City Chiefs games: the popular story that Swift's presence lifted Travis Kelce's play does not hold up",
+"evidence": "Kelce's yardage did not differ with Swift in attendance (13 games)"
+},
+{
+"stone": "Universal Music pulling its catalog from TikTok",
+"stone_date": "per paper",
+"claim": "Universal Music pulling its catalog from TikTok: the popular story that TikTok steals streams, so leaving it helps (earlier version: removed songs +2-3% on audio platforms) does not hold up",
+"evidence": "the current version finds removal lowered Spotify demand for UMG titles, with losses concentrated in viral songs; the authors say earlier mixed results depend on the DiD estimand"
+},
+{
+"stone": "Harry Potter series in Indonesia",
+"stone_date": "early 2000s",
+"claim": "Harry Potter series in Indonesia: the popular story that Harry Potter caused the Java and Bali owl trade boom does not hold up",
+"evidence": "owl numbers in bird markets rose, but the authors say timing overlaps the internet and pet groups, so causation is not shown"
+},
+{
+"stone": "Tetris",
+"stone_date": "1984-06-06",
+"claim": "Tetris led to: The Tetris Company is established to hold the rights",
+"evidence": "Rogers formed Blue Planet Software and, after a year of negotiations, established the Tetris Company as an equal partnership between Elorg and Blue Planet Software in 1996, \"to own and administer\" the Tetris rights, and \"to serve as the exclusive source of all Tetris licenses\"."
+},
+{
+"stone": "The West Wing",
+"stone_date": "",
+"claim": "The West Wing led to: a government defeat",
+"evidence": "(a hand-built chain in the catalog; evidence is in the full story)"
+},
+{
+"stone": "The Dust Bowl",
+"stone_date": "",
+"claim": "The Dust Bowl led to: soil conservation",
+"evidence": "(a hand-built chain in the catalog; evidence is in the full story)"
+},
+{
+"stone": "The 2008 financial crisis",
+"stone_date": "",
+"claim": "The 2008 financial crisis led to: new banking regulation",
+"evidence": "The Dodd-Frank Act of 2010 was passed in response to the crisis."
+},
+{
+"stone": "Bhopal",
+"stone_date": "1984-12-03",
+"claim": "Bhopal led to: India passes the Bhopal Gas Leak Disaster Act",
+"evidence": "The Indian Government passed the Bhopal Gas Leak Act in March 1985, allowing the Government of India to act as the legal representative for victims of the disaster, leading to the beginning of legal proceedings."
+},
+{
+"stone": "Uvalde",
+"stone_date": "2022-05-24",
+"claim": "Uvalde led to: New York raises the age to buy semi-automatic rifles to 21",
+"evidence": "On June 6, the state of New York passed a new law raising the age from 18 to 21 for people to be able to buy semi-automatic weapons."
+},
+{
+"stone": "Lac-M\u00e9gantic",
+"stone_date": "2013-07-06",
+"claim": "Lac-M\u00e9gantic led to: The Federal Railroad Administration orders new rules for unattended trains",
+"evidence": "The FRA also established an \"Emergency Order establishing additional requirements for attendance and securement of certain freight trains and vehicles on mainline track or mainline siding outside of a yard or terminal\" on August2, 2013."
+},
+{
+"stone": "The COVID-19 pandemic",
+"stone_date": "",
+"claim": "The COVID-19 pandemic led to: a large rise in remote work",
+"evidence": "Surveys found the share of Americans working from home rose sharply in 2020."
+},
+{
+"stone": "Rana Plaza",
+"stone_date": "2013-04-24",
+"claim": "Rana Plaza led to: Bangladesh passes laws requiring every garment factory to be inspected",
+"evidence": "In the aftermath, the Bangladesh government passed new laws requiring all garment factories to be inspected by a government-approved agency."
+},
+{
+"stone": "Winter Storm Uri",
+"stone_date": "",
+"claim": "Winter Storm Uri led to: Texas SB 3",
+"evidence": "(a hand-built chain in the catalog; evidence is in the full story)"
+},
+{
+"stone": "Frozen",
+"stone_date": "2013-11-27",
+"claim": "Frozen led to: Tour operators add Norway tours to meet demand",
+"evidence": "Tour operators, including Adventures by Disney, added more tours of Norway in response to increasing 2014 demand."
+},
+{
+"stone": "Anthrax letters",
+"stone_date": "",
+"claim": "Anthrax letters led to: Project BioShield Act (2004)",
+"evidence": "In 2004, Congress passed the Project Bioshield Act, which provides $5.6&nbsp;billion over ten years for the purchase of new vaccines and drugs."
+},
+{
+"stone": "An Inconvenient Truth",
+"stone_date": "2006-05-24",
+"claim": "An Inconvenient Truth led to: Gore founds the Alliance for Climate Protection, now The Climate Reality Project",
+"evidence": "Following the film, Gore founded The Climate Reality Project in 2006 which trained 1,000 activists to give Gore's presentation in their communities."
+},
+{
+"stone": "1906 quake",
+"stone_date": "",
+"claim": "1906 quake led to: Bank of America",
+"evidence": "(a hand-built chain in the catalog; evidence is in the full story)"
+},
+{
+"stone": "September 11",
+"stone_date": "2001-09-11",
+"claim": "September 11 led to: Congress creates the September 11th Victim Compensation Fund",
+"evidence": "Shortly after the attacks, the September 11th Victim Compensation Fund was created by an Act of Congress."
+},
+{
+"stone": "Zumba",
+"stone_date": "2001-01-01",
+"claim": "Zumba led to: Iran bans Zumba",
+"evidence": "In June 2017, Zumba was banned in Iran for being un-Islamic."
+},
+{
+"stone": "The Triangle fire",
+"stone_date": "",
+"claim": "The Triangle fire led to: American Society of Safety Professionals (Oct 14, 1911)",
+"evidence": "As a result of the fire, the American Society of Safety Professionals was founded in New York City on October 14, 1911."
+},
+{
+"stone": "Super Bowl 2004",
+"stone_date": "",
+"claim": "Super Bowl 2004 led to: FCC crackdown",
+"evidence": "(a hand-built chain in the catalog; evidence is in the full story)"
+},
+{
+"stone": "Flint",
+"stone_date": "2014-04-25",
+"claim": "Flint led to: Michigan creates the Child Lead Exposure Elimination Commission",
+"evidence": "On March 16, 2017, Governor Snyder created the Child Lead Exposure Elimination Commission and appointed Mona Hanna-Attisha of Flint's Hurley Medical Center, Rebecca Meuninck of Ann Arbor, deputy director of the Ecology Center; Paul Haan of Grand Rapids, executive director of the Healthy Homes"
+},
+{
+"stone": "Sideways",
+"stone_date": "2004-10-22",
+"claim": "Sideways led to: Merlot sales fall and Pinot noir sales rise in the western United States",
+"evidence": "After the film's U.S. release in October 2004, Merlot sales dropped 2% while Pinot noir sales increased 16% in the Western United States."
+},
+{
+"stone": "Fukushima",
+"stone_date": "2011-03-11",
+"claim": "Fukushima led to: Japan's Nuclear Regulation Authority replaces NISA",
+"evidence": "After the Fukushima nuclear disaster following the March 11, 2011, earthquake, the government's safety measures were seen to be inadequate."
+},
+{
+"stone": "Sandy Hook",
+"stone_date": "2012-12-14",
+"claim": "Sandy Hook led to: New York enacts the SAFE Act",
+"evidence": "On January 16, 2013, New York became the first U.S. state to act after the shooting when it enacted the Secure Ammunition and Firearms Enforcement (SAFE) Act."
+},
+{
+"stone": "Uvalde",
+"stone_date": "2022-05-24",
+"claim": "Uvalde led to: Texas requires school-shooting response training for police",
+"evidence": "On May 19, 2023, Texas passed a law requiring members of law enforcement to undergo sixteen hours of training every two years on school shooting response."
+},
+{
+"stone": "The Pulse shooting",
+"stone_date": "2016-06-12",
+"claim": "The Pulse shooting led to: The nightclub's owner creates the OnePulse Foundation",
+"evidence": "The owner then created the OnePulse Foundation, and in May 2017, announced plans for a memorial site and museum originally slated to open in 2022."
+},
+{
+"stone": "9/11 attacks",
+"stone_date": "",
+"claim": "9/11 attacks led to: the creation of the Transportation Security Administration",
+"evidence": "The Aviation and Transportation Security Act, signed in November 2001, created the TSA in response to the attacks."
+},
+{
+"stone": "Cathy Come Home",
+"stone_date": "1966-11-16",
+"claim": "Cathy Come Home led to: The charity Crisis is formed",
+"evidence": "In the light of public reaction to the film, and following a publicity campaign led by Willam Shearman and Iain Macleod highlighting the plight of the homeless, the charity Crisis was formed the following year in 1967."
+},
+{
+"stone": "The Triangle fire",
+"stone_date": "",
+"claim": "The Triangle fire led to: the New Deal's labor laws",
+"evidence": "(a hand-built chain in the catalog; evidence is in the full story)"
+},
+{
+"stone": "Hurricane Katrina",
+"stone_date": "",
+"claim": "Hurricane Katrina led to: reforms to FEMA",
+"evidence": "The Post-Katrina Emergency Management Reform Act of 2006 reorganized FEMA after its response was widely criticized."
+},
+{
+"stone": "Chernobyl",
+"stone_date": "1986-04-26",
+"claim": "Chernobyl led to: The IAEA adopts the Convention on Early Notification of a Nuclear Accident",
+"evidence": "They created the Convention on Early Notification of a Nuclear Accident and Convention on Assistance in the Case of a Nuclear Accident or Radiological Emergency."
+},
+{
+"stone": "Radar",
+"stone_date": "",
+"claim": "Radar led to: microwave ovens",
+"evidence": "(a hand-built chain in the catalog; evidence is in the full story)"
+},
+{
+"stone": "The Fifty Shades of Grey novel",
+"stone_date": "",
+"claim": "The Fifty Shades of Grey novel led to: strong sales of its sequels",
+"evidence": "The second and third books in the series also became bestsellers."
+},
+{
+"stone": "Fukushima",
+"stone_date": "2011-03-11",
+"claim": "Fukushima led to: The Diet's Fukushima Nuclear Accident Independent Investigation Commission is formed",
+"evidence": "National Diet of Japan Fukushima Nuclear Accident Independent Investigation Commission or NAIIC is the commission to investigate the background and cause of Fukushima Daiichi nuclear disaster formed by the statutory law enactment by the Diet."
+},
+{
+"stone": "The Las Vegas shooting",
+"stone_date": "2017-10-01",
+"claim": "The Las Vegas shooting led to: The Justice Department's rule bans bump stocks",
+"evidence": "The regulation banned new sales and required current owners to surrender or destroy existing bump stocks."
+},
+{
+"stone": "MeToo",
+"stone_date": "2017-10-15",
+"claim": "MeToo led to: Indonesia passes the Sexual Violence Crime Act",
+"evidence": "The editor-in-chief of Jurnal Perempuan, Anita Dhewy, thinks that the ratification of the PKS Bill is urgent, especially after victims of sexual harassment in Indonesia have the courage to speak up after the emergence of the Me Too movement."
+},
+{
+"stone": "September 11",
+"stone_date": "2001-09-11",
+"claim": "September 11 led to: Canada passes its first anti-terrorism law",
+"evidence": "Canada passed the Canadian Anti-Terrorism Act, their first anti-terrorism law."
+},
+{
+"stone": "Silent Spring",
+"stone_date": "",
+"claim": "Silent Spring led to: the DDT ban",
+"evidence": "(a hand-built chain in the catalog; evidence is in the full story)"
+},
+{
+"stone": "An Inconvenient Truth",
+"stone_date": "2006-05-24",
+"claim": "An Inconvenient Truth led to: The High Court rules on showing the film in English schools",
+"evidence": "On October 10, 2007, High Court Justice Michael Burton ruled that the film could be shown in schools with guidance notes addressing nine points of departure from the mainstream scientific position."
+},
+{
+"stone": "The Boston Marathon bombing",
+"stone_date": "2013-04-15",
+"claim": "The Boston Marathon bombing led to: Boston makes April 15 a permanent civic holiday, One Boston Day",
+"evidence": "On the second anniversary of the Boston Marathon Bombings, Mayor Marty Walsh established April 15, the day of the bombings, as an official and permanent holiday called \"One Boston Day\", dedicated to conducting random acts of kindness and helping others out."
+},
+{
+"stone": "Chernobyl",
+"stone_date": "1986-04-26",
+"claim": "Chernobyl led to: The Joint Convention on the Safety of Spent Fuel Management is adopted",
+"evidence": "They created the Joint Convention on the Safety of Spent Fuel Management, which obligated nations to establish proper policies for the management of nuclear power plants."
+},
+{
+"stone": "Challenger",
+"stone_date": "1986-01-28",
+"claim": "Challenger led to: President Reagan creates the Rogers Commission",
+"evidence": "President Ronald Reagan created the Rogers Commission to investigate the accident."
+}
+]
