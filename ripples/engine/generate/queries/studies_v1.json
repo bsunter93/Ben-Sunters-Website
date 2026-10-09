@@ -1,0 +1,538 @@
+{
+ "frozen_utc": "2026-10-09T03:39:04Z",
+ "plan_sha256": "00bc825363875dd853d410b019818da2b51f1cd3df4157c50a8b07a954406379",
+ "note": "The 64 frozen query families of the studies pilot, copied from the json block of ripples/docs/studies_plan_v1.md into the engine's cell format (one cell per family). Stone-first: every family names a stone or a kind of stone. OpenAlex queries are plain searches; PubMed queries are E-utilities terms. The supplemental round (ripples/docs/studies_plan_v1_addendum.md) ran on Crossref and is not part of this file.",
+ "sources": {
+  "openalex": "https://api.openalex.org/works?search=<q>&per-page=50&select=id,doi,title,publication_year,cited_by_count,abstract_inverted_index,primary_location",
+  "pubmed": "esearch.fcgi db=pubmed retmax=40 sort=relevance retmode=json, then efetch.fcgi rettype=abstract retmode=xml",
+  "crossref": "backup only, for missing abstracts or dates"
+ },
+ "cells": [
+  {
+   "cell": "F01",
+   "name": "Angelina Jolie effect",
+   "openalex": [
+    "Angelina Jolie BRCA testing",
+    "Angelina Jolie effect"
+   ],
+   "pubmed": [
+    "Angelina Jolie[tiab]"
+   ]
+  },
+  {
+   "cell": "F02",
+   "name": "celebrity cancer disclosure and screening",
+   "openalex": [
+    "celebrity cancer diagnosis screening uptake",
+    "celebrity announcement cancer screening rates"
+   ],
+   "pubmed": [
+    "celebrit*[tiab] AND cancer[tiab] AND screening[tiab]"
+   ]
+  },
+  {
+   "cell": "F03",
+   "name": "Katie Couric colonoscopy",
+   "openalex": [
+    "Katie Couric colonoscopy"
+   ],
+   "pubmed": [
+    "Couric[tiab]"
+   ]
+  },
+  {
+   "cell": "F04",
+   "name": "Jade Goody cervical screening",
+   "openalex": [
+    "Jade Goody cervical screening"
+   ],
+   "pubmed": [
+    "Goody[tiab] AND cervical[tiab]"
+   ]
+  },
+  {
+   "cell": "F05",
+   "name": "Kylie Minogue mammography",
+   "openalex": [
+    "Kylie Minogue breast cancer mammography"
+   ],
+   "pubmed": [
+    "Kylie Minogue[tiab]"
+   ]
+  },
+  {
+   "cell": "F06",
+   "name": "celebrity HIV disclosure and testing",
+   "openalex": [
+    "Magic Johnson HIV announcement testing",
+    "Charlie Sheen HIV disclosure"
+   ],
+   "pubmed": [
+    "(Magic Johnson[tiab] OR Charlie Sheen[tiab] OR Rock Hudson[tiab]) AND HIV"
+   ]
+  },
+  {
+   "cell": "F07",
+   "name": "public figure illness and screening",
+   "openalex": [
+    "Betty Ford breast cancer effect",
+    "Chadwick Boseman colorectal cancer screening",
+    "Ben Stiller prostate cancer screening",
+    "Nancy Reagan breast cancer mastectomy"
+   ],
+   "pubmed": [
+    "(Chadwick Boseman[tiab] OR Ben Stiller[tiab] OR Nancy Reagan[tiab] OR Betty Ford[tiab] OR Ronald Reagan[tiab]) AND cancer"
+   ]
+  },
+  {
+   "cell": "F08",
+   "name": "celebrity suicide Werther effect",
+   "openalex": [
+    "Robin Williams suicide Werther effect",
+    "celebrity suicide imitation suicides"
+   ],
+   "pubmed": [
+    "(celebrity[tiab] AND suicide[tiab]) AND (Werther[tiab] OR imitat*[tiab] OR copycat[tiab])"
+   ]
+  },
+  {
+   "cell": "F09",
+   "name": "13 Reasons Why",
+   "openalex": [
+    "13 Reasons Why suicide rates"
+   ],
+   "pubmed": [
+    "13 Reasons Why[tiab]"
+   ]
+  },
+  {
+   "cell": "F10",
+   "name": "16 and Pregnant",
+   "openalex": [
+    "16 and Pregnant teen childbearing MTV"
+   ]
+  },
+  {
+   "cell": "F11",
+   "name": "telenovelas and family",
+   "openalex": [
+    "telenovelas fertility Brazil",
+    "soap operas divorce fertility"
+   ]
+  },
+  {
+   "cell": "F12",
+   "name": "cable TV and women in India",
+   "openalex": [
+    "cable television women's status India"
+   ]
+  },
+  {
+   "cell": "F13",
+   "name": "An Inconvenient Truth",
+   "openalex": [
+    "An Inconvenient Truth carbon offsets",
+    "documentary film environmental behavior"
+   ]
+  },
+  {
+   "cell": "F14",
+   "name": "CSI effect",
+   "openalex": [
+    "CSI effect forensic science enrollment",
+    "CSI effect jurors"
+   ]
+  },
+  {
+   "cell": "F15",
+   "name": "Scully effect",
+   "openalex": [
+    "Scully effect X-Files women STEM"
+   ]
+  },
+  {
+   "cell": "F16",
+   "name": "Blue Planet II",
+   "openalex": [
+    "Blue Planet II plastic"
+   ]
+  },
+  {
+   "cell": "F17",
+   "name": "Pokemon Go",
+   "openalex": [
+    "Pokemon Go physical activity steps"
+   ],
+   "pubmed": [
+    "Pokemon Go[tiab]"
+   ]
+  },
+  {
+   "cell": "F18",
+   "name": "Sideways and wine",
+   "openalex": [
+    "Sideways movie Pinot Noir Merlot demand"
+   ]
+  },
+  {
+   "cell": "F19",
+   "name": "film-induced tourism",
+   "openalex": [
+    "film-induced tourism visitor arrivals",
+    "Lord of the Rings New Zealand tourism",
+    "Game of Thrones tourism",
+    "Harry Potter tourism"
+   ]
+  },
+  {
+   "cell": "F20",
+   "name": "TV drama and anime tourism",
+   "openalex": [
+    "Korean drama tourism arrivals",
+    "anime pilgrimage tourism"
+   ]
+  },
+  {
+   "cell": "F21",
+   "name": "food documentaries",
+   "openalex": [
+    "Super Size Me fast food consumption",
+    "documentary meat consumption"
+   ]
+  },
+  {
+   "cell": "F22",
+   "name": "Blackfish",
+   "openalex": [
+    "Blackfish documentary SeaWorld attendance"
+   ]
+  },
+  {
+   "cell": "F23",
+   "name": "Jamie Oliver school dinners",
+   "openalex": [
+    "Jamie Oliver school dinners outcomes"
+   ]
+  },
+  {
+   "cell": "F24",
+   "name": "Oprah effect",
+   "openalex": [
+    "Oprah book club sales",
+    "Oprah effect"
+   ]
+  },
+  {
+   "cell": "F25",
+   "name": "Dr. Oz effect",
+   "openalex": [
+    "Dr. Oz effect supplements sales"
+   ]
+  },
+  {
+   "cell": "F26",
+   "name": "Queen's Gambit and chess",
+   "openalex": [
+    "Queen's Gambit chess interest"
+   ]
+  },
+  {
+   "cell": "F27",
+   "name": "Top Gun and recruitment",
+   "openalex": [
+    "Top Gun Navy recruitment film"
+   ]
+  },
+  {
+   "cell": "F28",
+   "name": "baby names and media",
+   "openalex": [
+    "baby names popular culture television characters",
+    "Game of Thrones baby names"
+   ]
+  },
+  {
+   "cell": "F29",
+   "name": "Sesame Street",
+   "openalex": [
+    "Sesame Street school readiness"
+   ]
+  },
+  {
+   "cell": "F30",
+   "name": "television introduction",
+   "openalex": [
+    "introduction of television children test scores",
+    "arrival of television social capital"
+   ]
+  },
+  {
+   "cell": "F31",
+   "name": "violent movies and crime",
+   "openalex": [
+    "violent movies violent crime"
+   ]
+  },
+  {
+   "cell": "F32",
+   "name": "video game releases and crime",
+   "openalex": [
+    "video game release violent crime"
+   ]
+  },
+  {
+   "cell": "F33",
+   "name": "football games and family violence",
+   "openalex": [
+    "football upset domestic violence"
+   ]
+  },
+  {
+   "cell": "F34",
+   "name": "sports events and participation",
+   "openalex": [
+    "Olympic Games sport participation legacy",
+    "Wimbledon tennis participation",
+    "Tiger Woods effect golf"
+   ]
+  },
+  {
+   "cell": "F35",
+   "name": "World Cup and health",
+   "openalex": [
+    "World Cup cardiovascular events"
+   ],
+   "pubmed": [
+    "World Cup[tiab] AND (myocardial[tiab] OR cardiac[tiab] OR cardiovascular[tiab])"
+   ]
+  },
+  {
+   "cell": "F36",
+   "name": "Super Bowl",
+   "openalex": [
+    "Super Bowl influenza mortality",
+    "Super Bowl advertising sales"
+   ]
+  },
+  {
+   "cell": "F37",
+   "name": "Ice Bucket Challenge",
+   "openalex": [
+    "Ice Bucket Challenge donations"
+   ]
+  },
+  {
+   "cell": "F38",
+   "name": "Marie Kondo",
+   "openalex": [
+    "Marie Kondo donations thrift"
+   ]
+  },
+  {
+   "cell": "F39",
+   "name": "smoking in movies",
+   "openalex": [
+    "smoking in movies adolescent smoking"
+   ]
+  },
+  {
+   "cell": "F40",
+   "name": "medical TV drama",
+   "openalex": [
+    "television drama organ donation",
+    "Grey's Anatomy viewers"
+   ]
+  },
+  {
+   "cell": "F41",
+   "name": "entertainment-education",
+   "openalex": [
+    "radio soap opera family planning Tanzania",
+    "MTV Shuga HIV"
+   ]
+  },
+  {
+   "cell": "F42",
+   "name": "Fox News effect",
+   "openalex": [
+    "Fox News effect voting"
+   ]
+  },
+  {
+   "cell": "F43",
+   "name": "radio and behavior",
+   "openalex": [
+    "radio propaganda effect"
+   ]
+  },
+  {
+   "cell": "F44",
+   "name": "songs and sales",
+   "openalex": [
+    "song lyrics brand mentions sales",
+    "music video product sales"
+   ]
+  },
+  {
+   "cell": "F45",
+   "name": "novels and behavior",
+   "openalex": [
+    "novel publication effect behavior",
+    "Twilight Forks tourism"
+   ]
+  },
+  {
+   "cell": "F46",
+   "name": "Harry Potter",
+   "openalex": [
+    "Harry Potter owls trade",
+    "Harry Potter reading children"
+   ]
+  },
+  {
+   "cell": "F47",
+   "name": "Finding Nemo",
+   "openalex": [
+    "Finding Nemo clownfish demand",
+    "Finding Dory blue tang"
+   ]
+  },
+  {
+   "cell": "F48",
+   "name": "Jaws and sharks",
+   "openalex": [
+    "Jaws film shark"
+   ]
+  },
+  {
+   "cell": "F49",
+   "name": "Babe and meat",
+   "openalex": [
+    "Babe film pork vegetarianism"
+   ]
+  },
+  {
+   "cell": "F50",
+   "name": "climate films",
+   "openalex": [
+    "The Day After Tomorrow film climate"
+   ]
+  },
+  {
+   "cell": "F51",
+   "name": "celebrity and vaccination",
+   "openalex": [
+    "Elvis Presley polio vaccine",
+    "celebrity endorsement vaccination uptake",
+    "Jenny McCarthy vaccination"
+   ]
+  },
+  {
+   "cell": "F52",
+   "name": "Taylor Swift effect",
+   "openalex": [
+    "Taylor Swift effect"
+   ]
+  },
+  {
+   "cell": "F53",
+   "name": "streaming series effect",
+   "openalex": [
+    "Netflix series effect demand",
+    "Squid Game effect"
+   ]
+  },
+  {
+   "cell": "F54",
+   "name": "cooking shows",
+   "openalex": [
+    "cooking television shows home cooking",
+    "Great British Bake Off baking"
+   ]
+  },
+  {
+   "cell": "F55",
+   "name": "Mozart effect",
+   "openalex": [
+    "Mozart effect meta-analysis"
+   ]
+  },
+  {
+   "cell": "F56",
+   "name": "blackout babies",
+   "openalex": [
+    "blackout births nine months later"
+   ]
+  },
+  {
+   "cell": "F57",
+   "name": "designated driver and TV",
+   "openalex": [
+    "designated driver campaign television"
+   ]
+  },
+  {
+   "cell": "F58",
+   "name": "Princess Diana",
+   "openalex": [
+    "Princess Diana death suicide",
+    "Diana bulimia"
+   ]
+  },
+  {
+   "cell": "F59",
+   "name": "TV and attitudes plus behavior",
+   "openalex": [
+    "sitcom effect behavior",
+    "television show effect behavior natural experiment"
+   ]
+  },
+  {
+   "cell": "F60",
+   "name": "named media effects",
+   "openalex": [
+    "media effect natural experiment",
+    "television program effect difference-in-differences"
+   ]
+  },
+  {
+   "cell": "F61",
+   "name": "celebrity and diet or health behavior",
+   "openalex": [
+    "celebrity effect health behavior",
+    "celebrity endorsement sales effect"
+   ],
+   "pubmed": [
+    "celebrit*[tiab] AND (sales[tiab] OR uptake[tiab] OR searches[tiab]) AND effect[tiab]"
+   ]
+  },
+  {
+   "cell": "F62",
+   "name": "films and career choice",
+   "openalex": [
+    "film effect career choice",
+    "television effect college major choice"
+   ]
+  },
+  {
+   "cell": "F63",
+   "name": "Steve Irwin and wildlife",
+   "openalex": [
+    "Steve Irwin death"
+   ]
+  },
+  {
+   "cell": "F64",
+   "name": "royal events and behavior",
+   "openalex": [
+    "royal wedding effect",
+    "royal baby effect"
+   ]
+  }
+ ],
+ "counts": {
+  "cells": 64,
+  "openalex_queries": 101,
+  "pubmed_queries": 12
+ }
+}

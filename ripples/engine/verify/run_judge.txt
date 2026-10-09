@@ -1,0 +1,7 @@
+You are running one fixed judged step: verification. Read ONLY these two files and nothing else (no other files, no web, no searching):
+  PROMPT: {prompt}
+  ITEMS:  {input}   (a JSON list; each item has candidate_id, the paper's title and DOI, the stone, the claimed outcome, direction, effect, design and quote, whether a script found the quote verbatim, and the texts fetched from the paper's own sources, each with its source and URL)
+Apply the prompt to every item, in the listed order, judging only from the fetched texts in that item.
+Write the result to {output}: one JSON object per item per line, with exactly the fields the prompt lists. Write no other file.
+Then check that every candidate_id in the file appears exactly once and every line parses as JSON.
+Final message: "done, N items, K defensible" or what went wrong.

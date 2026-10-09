@@ -91,6 +91,7 @@ its history are in the brief, sections 1 to 1c.
 | `chains/batch1..16.json` | the 79 chains (batch 16 is the US history set: The Jungle to Flint) |
 | `maps/out/*.json` | the 11 generated maps |
 | `lab/` | the checker, the records route, the resolver, the citation screen, the truncation test; `lab/discovery/` the Wikipedia cited-cause scripts of Oct 4 |
+| `engine/` | the discovery engine (Oct 9): generate from the outcome side, a blind predictability gate, verification, a simulated rating panel, yield per 100; `engine/README.md` |
 | `docs/results/` | CI-written results (`chain_check_v1.json`, `bill_act_v1.json`, `truncation_v1.json`, …) |
 | `docs/ripple_Map_context.md` | the brief: vision, status, rating trail, learnings, pitfalls, rules |
 | `docs/user_tests_v1..v4.md`, `docs/roundtable_v1.md`, `docs/roundtable_final.md` | the five simulated-tester rounds |

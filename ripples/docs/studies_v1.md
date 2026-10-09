@@ -10,9 +10,10 @@ group, "Myths, checked".
 ## The pilot
 
 **Plan:** registered before any harvest request, 10/08/2026 8:39 PM PT. sha256
-`00bc825363875dd853d410b019818da2b51f1cd3df4157c50a8b07a954406379`. A supplemental round (Crossref and two PubMed
-queries for families OpenAlex never answered) was written down at 9:01 PM, after the main harvest. Its finds are
-reported apart and do not count toward the bars.
+`00bc825363875dd853d410b019818da2b51f1cd3df4157c50a8b07a954406379` (`docs/studies_plan_v1.md`, the registered file
+itself). A supplemental round (Crossref and two PubMed queries for families OpenAlex never answered) was written down at
+9:01 PM, after the main harvest (`docs/studies_plan_v1_addendum.md`). Its finds are reported apart and do not count
+toward the bars.
 
 **Sources:** OpenAlex (main), PubMed for health families, Crossref as backup. 64 frozen query families. A link exists
 only when the paper itself names the stone. A study with a comparison design (difference in differences, interrupted

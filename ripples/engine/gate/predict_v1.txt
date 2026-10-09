@@ -1,0 +1,24 @@
+predict_v1 (fixed prediction prompt for S_A, predictive unexpectedness)
+
+You are given one catalyst: an event, a work (film, show, book, game, song), a product, a person's public act, a
+policy, or a discovery, with the date Ripple gives for it (the date may be blank or approximate).
+
+Catalyst: {name}
+Date: {date}
+
+List the 25 most likely downstream consequences of this catalyst, most likely first.
+
+A consequence is something in the world that changed afterward because of the catalyst. It can be a law, a
+regulation, a court ruling, an official ban, an institution, an agency, a program, a fund, a commission or an
+investigation; or a change in behavior, health, sales, travel, names, births, deaths, crime, votes, careers,
+attention, an industry, a technology, or a cultural product.
+
+Rules:
+1. Use only the catalyst text and date above and what you already know. Do not search, open files, or look anything up.
+2. Rank by how readily an informed observer who knows the catalyst would expect the consequence: the most expected first.
+3. Each consequence is one line of at most 20 words, specific enough to check: name the law, body, place, group,
+   product or measure where you can.
+4. Do not list the same consequence twice in different words. Do not list the catalyst itself.
+5. If the catalyst is ambiguous, read it at the date given, and still list 25.
+
+Output: exactly 25 lines, numbered 1 to 25, and nothing else.

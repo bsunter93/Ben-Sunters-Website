@@ -1,0 +1,46 @@
+types_v1 (fixed rubric for S_B, relationship-type rarity)
+
+Assign every catalyst exactly one catalyst type from its name and date only, and every candidate exactly one outcome
+type from its outcome text only (not its evidence, not its catalyst). Pick the first type in the list that fits.
+A myth check (a busted or disputed row) is typed by the outcome the popular story claimed.
+
+Catalyst types
+  K1 human_disaster     industrial, technological or infrastructure accidents, spills, contamination, building fires,
+                        nuclear accidents, structural collapses, blackouts, product tampering
+  K2 natural_disaster   earthquakes, storms, wildfires, droughts and dust storms, pandemics
+  K3 violent_attack     mass shootings, bombings, terror attacks, poisonings meant to kill
+  K4 screen_fiction     fictional film, TV series or episode, TV or radio drama, telenovela, stage musical
+  K5 nonfiction_media   documentary, news or current-affairs program, talk or reality show, a broadcast segment, an
+                        advertising slot, the arrival or spread of a medium (TV, cable, radio) or of a media export
+  K6 book_print         a book, novel, nonfiction exposé or published op-ed
+  K7 game_toy_product   a video game, toy, app, consumer product or fitness brand
+  K8 public_figure      a public figure's illness disclosure, health act, death or suicide
+  K9 sports_event       a game, tournament, result, a team's run, hosting a sporting event, an athlete's move or a
+                        celebrity's presence at games
+  K10 science_tech      an invention, a scientific discovery, a technology or a launch
+  K11 legal_business    a court case or ruling, a law or regulation as the stone, a corporate scandal, a financial
+                        crisis, a company's business decision
+  K12 movement_culture  a social movement, a festival, a viral campaign
+
+Outcome types
+  O1 law                an enacted statute, act, constitutional amendment or bill signed into law
+  O2 rule_order         an agency rule, regulation, standard, executive or emergency order, decree, ordinance
+  O3 official_ban       a government, agency or institution prohibits or bars something
+  O4 court_legal        a court ruling, lawsuit outcome, prosecution, conviction or legal action
+  O5 inquiry            an investigating commission, inquiry or official review
+  O6 institution        a new agency, office, organization, foundation, charity, fund, company or program body
+  O7 treaty_accord      an international treaty, convention or multiparty accord
+  O8 health             screening, testing, treatment, self-harm, suicide, mortality, morbidity, physical activity,
+                        smoking, health care use
+  O9 market             sales, purchases, demand, prices, an industry's or a company's commercial shift, a product
+  O10 travel            tourism and visitor numbers
+  O11 family            births, fertility, marriage, divorce, family planning, baby names
+  O12 crime_justice     crime, violence, abuse, policing, sentencing patterns
+  O13 civic_political   votes, elections, party membership, political attention, giving and volunteering,
+                        denunciations, local government budgets
+  O14 education_career  school performance, enrollment, applications, careers and recruitment
+  O15 culture_naming    something named after the catalyst, a fashion or style revival, a cultural milestone
+  O16 science_tech      a technology, infrastructure or scientific capability
+
+S_B = -log2 P(outcome type | catalyst type), with P estimated over the whole evaluation pool (controls excluded) as
+(n(c, o) + k * P(o)) / (n(c) + k), P(o) = (n(o) + 1) / (N + 16), k = 5 (set in config.json).

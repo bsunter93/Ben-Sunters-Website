@@ -1,0 +1,1143 @@
+{
+ "frozen_utc": "2026-10-09T16:30:39Z",
+ "plan_sha256": "b90dbbd669168c1898862e9c081fd0d9ed792fb646ae3aeb61e185e050cced69",
+ "note": "Frozen before the first request. Each (I, O) cell is a query family: two OpenAlex queries (design term A is always natural experiment; design term B per event class), and two PubMed queries for O5 cells.",
+ "sources": {
+  "openalex": "https://api.openalex.org/works?search=<q>&per-page=50&select=id,doi,title,publication_year,cited_by_count,abstract_inverted_index,primary_location",
+  "pubmed": "esearch.fcgi db=pubmed retmax=40 sort=relevance retmode=json, then efetch.fcgi rettype=abstract retmode=xml",
+  "crossref": "backup only, for missing abstracts or dates"
+ },
+ "event_classes": {
+  "I1": {
+   "name": "sports results and big games",
+   "words": [
+    "\"Super Bowl\"",
+    "\"World Cup\"",
+    "\"football game\"",
+    "\"football match\"",
+    "\"sporting event\"",
+    "\"sports event\"",
+    "\"home team\"",
+    "\"upset loss\"",
+    "\"unexpected loss\"",
+    "\"playoff\"",
+    "\"championship game\"",
+    "\"Olympic Games\"",
+    "\"NFL\"",
+    "\"college football\""
+   ]
+  },
+  "I2": {
+   "name": "media arrival and rollout",
+   "words": [
+    "\"introduction of television\"",
+    "\"arrival of television\"",
+    "\"television signal\"",
+    "\"TV signal\"",
+    "\"cable television\"",
+    "\"cable TV\"",
+    "\"satellite television\"",
+    "\"radio broadcasts\"",
+    "\"radio coverage\"",
+    "\"broadband\"",
+    "\"high-speed internet\"",
+    "\"mobile phone coverage\"",
+    "\"3G\"",
+    "\"Fox News\"",
+    "\"television channel\""
+   ]
+  },
+  "I3": {
+   "name": "entertainment releases",
+   "words": [
+    "\"movie release\"",
+    "\"film release\"",
+    "\"blockbuster\"",
+    "\"box office\"",
+    "\"video game release\"",
+    "\"television series\"",
+    "\"TV series\"",
+    "\"TV show\"",
+    "\"album release\"",
+    "\"bestseller\"",
+    "\"best-selling book\"",
+    "\"Netflix\"",
+    "movie",
+    "movies",
+    "film"
+   ]
+  },
+  "I4": {
+   "name": "celebrity moments",
+   "words": [
+    "\"celebrity\"",
+    "\"celebrities\"",
+    "\"public figure\"",
+    "\"royal wedding\"",
+    "\"royal family\"",
+    "\"scandal\"",
+    "\"coming out\"",
+    "\"pop star\"",
+    "\"superstar\"",
+    "\"star player\"",
+    "\"high-profile death\"",
+    "\"famous\""
+   ]
+  },
+  "I5": {
+   "name": "one-off shocks",
+   "words": [
+    "\"blackout\"",
+    "\"power outage\"",
+    "\"terrorist attack\"",
+    "\"terror attack\"",
+    "\"earthquake\"",
+    "\"hurricane\"",
+    "\"natural disaster\"",
+    "\"solar eclipse\"",
+    "\"internet outage\"",
+    "\"mass shooting\"",
+    "\"bombing\"",
+    "\"tsunami\"",
+    "\"wildfire\""
+   ]
+  },
+  "I6": {
+   "name": "tech and product launches",
+   "words": [
+    "\"smartphone\"",
+    "\"iPhone\"",
+    "\"mobile app\"",
+    "\"app launch\"",
+    "\"Pokemon Go\"",
+    "\"Pokémon GO\"",
+    "\"video game launch\"",
+    "\"Uber\"",
+    "\"ride-sharing\"",
+    "\"ride-hailing\"",
+    "\"Facebook\"",
+    "\"Twitter\"",
+    "\"Craigslist\"",
+    "\"dating app\"",
+    "\"online dating\"",
+    "\"product launch\""
+   ]
+  },
+  "I7": {
+   "name": "dated clock and calendar rule changes",
+   "words": [
+    "\"daylight saving time\"",
+    "\"daylight saving\"",
+    "\"daylight savings\"",
+    "\"time zone\"",
+    "\"time-zone\"",
+    "\"clock change\"",
+    "\"clock shift\"",
+    "\"International Date Line\"",
+    "\"calendar reform\""
+   ]
+  },
+  "I8": {
+   "name": "viral moments, memes, challenges",
+   "words": [
+    "\"viral video\"",
+    "\"went viral\"",
+    "\"viral post\"",
+    "\"internet meme\"",
+    "\"meme\"",
+    "\"online challenge\"",
+    "\"social media challenge\"",
+    "\"Ice Bucket Challenge\"",
+    "\"TikTok\"",
+    "\"MeToo\"",
+    "\"hashtag\""
+   ]
+  }
+ },
+ "outcome_domains": {
+  "O1": {
+   "name": "births and fertility",
+   "words": [
+    "births",
+    "\"birth rate\"",
+    "fertility",
+    "conceptions",
+    "\"birth weight\"",
+    "childbearing",
+    "pregnancies"
+   ]
+  },
+  "O2": {
+   "name": "marriage, divorce, family",
+   "words": [
+    "marriage",
+    "marriages",
+    "divorce",
+    "divorces",
+    "cohabitation",
+    "\"family formation\""
+   ]
+  },
+  "O3": {
+   "name": "crime and violence",
+   "words": [
+    "crime",
+    "violence",
+    "\"domestic violence\"",
+    "\"intimate partner violence\"",
+    "assault",
+    "\"hate crime\"",
+    "homicide",
+    "arrests"
+   ]
+  },
+  "O4": {
+   "name": "courts, judges, sentencing, juries",
+   "words": [
+    "judges",
+    "sentencing",
+    "\"sentence length\"",
+    "jury",
+    "juries",
+    "\"court decisions\"",
+    "\"judicial decisions\"",
+    "\"asylum decisions\"",
+    "parole"
+   ]
+  },
+  "O5": {
+   "name": "hospital admissions, injuries, mortality",
+   "words": [
+    "\"hospital admissions\"",
+    "\"emergency department\"",
+    "injuries",
+    "mortality",
+    "deaths",
+    "\"myocardial infarction\"",
+    "\"cardiovascular events\"",
+    "hospitalizations"
+   ]
+  },
+  "O6": {
+   "name": "traffic and transport accidents",
+   "words": [
+    "\"traffic accidents\"",
+    "\"car crashes\"",
+    "\"traffic crashes\"",
+    "\"road accidents\"",
+    "\"traffic fatalities\"",
+    "\"motor vehicle crashes\"",
+    "\"fatal crashes\"",
+    "\"road traffic\""
+   ]
+  },
+  "O7": {
+   "name": "school attendance, test scores, education choices",
+   "words": [
+    "\"test scores\"",
+    "\"school attendance\"",
+    "\"student achievement\"",
+    "\"exam performance\"",
+    "\"educational attainment\"",
+    "\"college major\"",
+    "\"school enrollment\"",
+    "\"academic performance\""
+   ]
+  },
+  "O8": {
+   "name": "names and language",
+   "words": [
+    "\"baby names\"",
+    "\"first names\"",
+    "\"given names\"",
+    "naming",
+    "\"language use\"",
+    "\"word use\"",
+    "vocabulary",
+    "dialect"
+   ]
+  },
+  "O9": {
+   "name": "work, productivity, absenteeism",
+   "words": [
+    "productivity",
+    "absenteeism",
+    "\"sick leave\"",
+    "\"labor supply\"",
+    "\"work hours\"",
+    "\"worker performance\"",
+    "\"labor productivity\""
+   ]
+  },
+  "O10": {
+   "name": "spending outside the stone's own product category",
+   "words": [
+    "\"consumer spending\"",
+    "\"household spending\"",
+    "sales",
+    "purchases",
+    "consumption",
+    "expenditure",
+    "demand"
+   ]
+  },
+  "O11": {
+   "name": "civic acts",
+   "words": [
+    "\"blood donation\"",
+    "\"blood donors\"",
+    "\"organ donation\"",
+    "\"organ donor\"",
+    "volunteering",
+    "\"charitable giving\"",
+    "donations",
+    "\"census response\"",
+    "\"civic engagement\""
+   ]
+  }
+ },
+ "design_term_b": {
+  "I1": "difference-in-differences",
+  "I2": "difference-in-differences",
+  "I3": "exogenous",
+  "I4": "quasi-experimental",
+  "I5": "difference-in-differences",
+  "I6": "difference-in-differences",
+  "I7": "regression discontinuity",
+  "I8": "event study"
+ },
+ "removed_cells": {
+  "I4xO5": "topic match: celebrity illness disclosure to screening or care for that illness, and celebrity suicide to suicides, dominate this cell",
+  "I8xO11": "topic match: viral challenges and hashtag campaigns to donations or volunteering for their stated cause dominate this cell"
+ },
+ "extraction_rules": [
+  "A raw pair is (stone, outcome) from one paper that (1) names a specific datable stone in one of the event classes I1 to I8, (2) measures an outcome in real behavior or records, and (3) uses a quasi-experimental or experimental design against a baseline (natural experiment, difference in differences, regression discontinuity, event study, interrupted time series, synthetic control, instrumental variable on the event, randomized trial). Attitude or intention surveys alone, reviews, and plain before-and-after counts are out.",
+  "A stone is datable when the paper gives its date or dated instances (a recurring event counts when its instances are dated, for example each Super Bowl or each spring DST transition). Generic exposure (screen time, media use, sports participation) is not a stone.",
+  "Not stones for this pilot: laws, policies, programs and government interventions; the COVID-19 pandemic and lockdowns; weather, temperature, pollution and seasons; religious observances and holidays; ordinary calendar features (weekends, birthdays, moon phases).",
+  "Excluded up front and logged with the reason, never candidates: outcomes of suicide, self-harm or overdose; party-vote outcomes (vote shares for parties or candidates); topic matches (the outcome is the stone's own subject, stated aim or product: illness disclosure to screening for that illness; place on screen to tourism there; product to its own sales or use; sport event to that sport's participation; campaign or documentary to its stated cause; celebrity suicide to suicides; media arrival to viewing of that medium; the people killed or injured by a disaster or attack itself).",
+  "Each raw pair is logged with the cell of the query that found it and the cell it belongs to by content (event class x outcome domain).",
+  "Null findings are logged as raw pairs with direction none."
+ ],
+ "sampling": {
+  "verify_cap": "If more than 100 candidates pass the gate, verify a random 100: Python random.seed(4100), random.sample over sorted candidate ids.",
+  "audit": "20 gate rejects at random: random.seed(4200), random.sample over sorted reject ids.",
+  "anchors": "10 of yield v1's 56 study items at random: random.seed(4300), random.sample over their item indices; drift = mean absolute change in surprise index against yield v1 scores.json.",
+  "controls": "panel_v1.json['items'] where source is planted_obvious or planted_fabricated (10 each), evidence lines from panel_v1/items.json by id."
+ },
+ "scoring": {
+  "surprise_index": "mean over five raters of (surprise + 6 - predicted) / 2",
+  "surprising": "surprise index at least 3.5",
+  "defensible": "verified at the paper's own page, PubMed abstract, publisher-deposited abstract or an open copy; quote found; stone date before outcome window; design as claimed",
+  "good": "surprising and defensible",
+  "law_or_policy_flag": "outcome is a law, policy, vote or turnout, court, judge or jury decision, or government program uptake"
+ },
+ "cells": [
+  {
+   "cell": "I1xO1",
+   "event_class": "I1",
+   "outcome_domain": "O1",
+   "openalex": [
+    "(\"Super Bowl\" OR \"World Cup\" OR \"football game\" OR \"football match\" OR \"sporting event\" OR \"sports event\" OR \"home team\" OR \"upset loss\" OR \"unexpected loss\" OR \"playoff\" OR \"championship game\" OR \"Olympic Games\" OR \"NFL\" OR \"college football\") AND (births OR \"birth rate\" OR fertility OR conceptions OR \"birth weight\" OR childbearing OR pregnancies) AND \"natural experiment\"",
+    "(\"Super Bowl\" OR \"World Cup\" OR \"football game\" OR \"football match\" OR \"sporting event\" OR \"sports event\" OR \"home team\" OR \"upset loss\" OR \"unexpected loss\" OR \"playoff\" OR \"championship game\" OR \"Olympic Games\" OR \"NFL\" OR \"college football\") AND (births OR \"birth rate\" OR fertility OR conceptions OR \"birth weight\" OR childbearing OR pregnancies) AND \"difference-in-differences\""
+   ]
+  },
+  {
+   "cell": "I1xO2",
+   "event_class": "I1",
+   "outcome_domain": "O2",
+   "openalex": [
+    "(\"Super Bowl\" OR \"World Cup\" OR \"football game\" OR \"football match\" OR \"sporting event\" OR \"sports event\" OR \"home team\" OR \"upset loss\" OR \"unexpected loss\" OR \"playoff\" OR \"championship game\" OR \"Olympic Games\" OR \"NFL\" OR \"college football\") AND (marriage OR marriages OR divorce OR divorces OR cohabitation OR \"family formation\") AND \"natural experiment\"",
+    "(\"Super Bowl\" OR \"World Cup\" OR \"football game\" OR \"football match\" OR \"sporting event\" OR \"sports event\" OR \"home team\" OR \"upset loss\" OR \"unexpected loss\" OR \"playoff\" OR \"championship game\" OR \"Olympic Games\" OR \"NFL\" OR \"college football\") AND (marriage OR marriages OR divorce OR divorces OR cohabitation OR \"family formation\") AND \"difference-in-differences\""
+   ]
+  },
+  {
+   "cell": "I1xO3",
+   "event_class": "I1",
+   "outcome_domain": "O3",
+   "openalex": [
+    "(\"Super Bowl\" OR \"World Cup\" OR \"football game\" OR \"football match\" OR \"sporting event\" OR \"sports event\" OR \"home team\" OR \"upset loss\" OR \"unexpected loss\" OR \"playoff\" OR \"championship game\" OR \"Olympic Games\" OR \"NFL\" OR \"college football\") AND (crime OR violence OR \"domestic violence\" OR \"intimate partner violence\" OR assault OR \"hate crime\" OR homicide OR arrests) AND \"natural experiment\"",
+    "(\"Super Bowl\" OR \"World Cup\" OR \"football game\" OR \"football match\" OR \"sporting event\" OR \"sports event\" OR \"home team\" OR \"upset loss\" OR \"unexpected loss\" OR \"playoff\" OR \"championship game\" OR \"Olympic Games\" OR \"NFL\" OR \"college football\") AND (crime OR violence OR \"domestic violence\" OR \"intimate partner violence\" OR assault OR \"hate crime\" OR homicide OR arrests) AND \"difference-in-differences\""
+   ]
+  },
+  {
+   "cell": "I1xO4",
+   "event_class": "I1",
+   "outcome_domain": "O4",
+   "openalex": [
+    "(\"Super Bowl\" OR \"World Cup\" OR \"football game\" OR \"football match\" OR \"sporting event\" OR \"sports event\" OR \"home team\" OR \"upset loss\" OR \"unexpected loss\" OR \"playoff\" OR \"championship game\" OR \"Olympic Games\" OR \"NFL\" OR \"college football\") AND (judges OR sentencing OR \"sentence length\" OR jury OR juries OR \"court decisions\" OR \"judicial decisions\" OR \"asylum decisions\" OR parole) AND \"natural experiment\"",
+    "(\"Super Bowl\" OR \"World Cup\" OR \"football game\" OR \"football match\" OR \"sporting event\" OR \"sports event\" OR \"home team\" OR \"upset loss\" OR \"unexpected loss\" OR \"playoff\" OR \"championship game\" OR \"Olympic Games\" OR \"NFL\" OR \"college football\") AND (judges OR sentencing OR \"sentence length\" OR jury OR juries OR \"court decisions\" OR \"judicial decisions\" OR \"asylum decisions\" OR parole) AND \"difference-in-differences\""
+   ]
+  },
+  {
+   "cell": "I1xO5",
+   "event_class": "I1",
+   "outcome_domain": "O5",
+   "openalex": [
+    "(\"Super Bowl\" OR \"World Cup\" OR \"football game\" OR \"football match\" OR \"sporting event\" OR \"sports event\" OR \"home team\" OR \"upset loss\" OR \"unexpected loss\" OR \"playoff\" OR \"championship game\" OR \"Olympic Games\" OR \"NFL\" OR \"college football\") AND (\"hospital admissions\" OR \"emergency department\" OR injuries OR mortality OR deaths OR \"myocardial infarction\" OR \"cardiovascular events\" OR hospitalizations) AND \"natural experiment\"",
+    "(\"Super Bowl\" OR \"World Cup\" OR \"football game\" OR \"football match\" OR \"sporting event\" OR \"sports event\" OR \"home team\" OR \"upset loss\" OR \"unexpected loss\" OR \"playoff\" OR \"championship game\" OR \"Olympic Games\" OR \"NFL\" OR \"college football\") AND (\"hospital admissions\" OR \"emergency department\" OR injuries OR mortality OR deaths OR \"myocardial infarction\" OR \"cardiovascular events\" OR hospitalizations) AND \"difference-in-differences\""
+   ],
+   "pubmed": [
+    "(\"Super Bowl\"[tiab] OR \"World Cup\"[tiab] OR \"football game\"[tiab] OR \"football match\"[tiab] OR \"sporting event\"[tiab] OR \"sports event\"[tiab] OR \"home team\"[tiab] OR \"upset loss\"[tiab] OR \"unexpected loss\"[tiab] OR playoff[tiab] OR \"championship game\"[tiab] OR \"Olympic Games\"[tiab] OR NFL[tiab] OR \"college football\"[tiab]) AND (\"hospital admissions\"[tiab] OR \"emergency department\"[tiab] OR injuries[tiab] OR mortality[tiab] OR deaths[tiab] OR \"myocardial infarction\"[tiab] OR \"cardiovascular events\"[tiab] OR hospitalizations[tiab]) AND \"natural experiment\"[tiab]",
+    "(\"Super Bowl\"[tiab] OR \"World Cup\"[tiab] OR \"football game\"[tiab] OR \"football match\"[tiab] OR \"sporting event\"[tiab] OR \"sports event\"[tiab] OR \"home team\"[tiab] OR \"upset loss\"[tiab] OR \"unexpected loss\"[tiab] OR playoff[tiab] OR \"championship game\"[tiab] OR \"Olympic Games\"[tiab] OR NFL[tiab] OR \"college football\"[tiab]) AND (\"hospital admissions\"[tiab] OR \"emergency department\"[tiab] OR injuries[tiab] OR mortality[tiab] OR deaths[tiab] OR \"myocardial infarction\"[tiab] OR \"cardiovascular events\"[tiab] OR hospitalizations[tiab]) AND \"difference-in-differences\"[tiab]"
+   ]
+  },
+  {
+   "cell": "I1xO6",
+   "event_class": "I1",
+   "outcome_domain": "O6",
+   "openalex": [
+    "(\"Super Bowl\" OR \"World Cup\" OR \"football game\" OR \"football match\" OR \"sporting event\" OR \"sports event\" OR \"home team\" OR \"upset loss\" OR \"unexpected loss\" OR \"playoff\" OR \"championship game\" OR \"Olympic Games\" OR \"NFL\" OR \"college football\") AND (\"traffic accidents\" OR \"car crashes\" OR \"traffic crashes\" OR \"road accidents\" OR \"traffic fatalities\" OR \"motor vehicle crashes\" OR \"fatal crashes\" OR \"road traffic\") AND \"natural experiment\"",
+    "(\"Super Bowl\" OR \"World Cup\" OR \"football game\" OR \"football match\" OR \"sporting event\" OR \"sports event\" OR \"home team\" OR \"upset loss\" OR \"unexpected loss\" OR \"playoff\" OR \"championship game\" OR \"Olympic Games\" OR \"NFL\" OR \"college football\") AND (\"traffic accidents\" OR \"car crashes\" OR \"traffic crashes\" OR \"road accidents\" OR \"traffic fatalities\" OR \"motor vehicle crashes\" OR \"fatal crashes\" OR \"road traffic\") AND \"difference-in-differences\""
+   ]
+  },
+  {
+   "cell": "I1xO7",
+   "event_class": "I1",
+   "outcome_domain": "O7",
+   "openalex": [
+    "(\"Super Bowl\" OR \"World Cup\" OR \"football game\" OR \"football match\" OR \"sporting event\" OR \"sports event\" OR \"home team\" OR \"upset loss\" OR \"unexpected loss\" OR \"playoff\" OR \"championship game\" OR \"Olympic Games\" OR \"NFL\" OR \"college football\") AND (\"test scores\" OR \"school attendance\" OR \"student achievement\" OR \"exam performance\" OR \"educational attainment\" OR \"college major\" OR \"school enrollment\" OR \"academic performance\") AND \"natural experiment\"",
+    "(\"Super Bowl\" OR \"World Cup\" OR \"football game\" OR \"football match\" OR \"sporting event\" OR \"sports event\" OR \"home team\" OR \"upset loss\" OR \"unexpected loss\" OR \"playoff\" OR \"championship game\" OR \"Olympic Games\" OR \"NFL\" OR \"college football\") AND (\"test scores\" OR \"school attendance\" OR \"student achievement\" OR \"exam performance\" OR \"educational attainment\" OR \"college major\" OR \"school enrollment\" OR \"academic performance\") AND \"difference-in-differences\""
+   ]
+  },
+  {
+   "cell": "I1xO8",
+   "event_class": "I1",
+   "outcome_domain": "O8",
+   "openalex": [
+    "(\"Super Bowl\" OR \"World Cup\" OR \"football game\" OR \"football match\" OR \"sporting event\" OR \"sports event\" OR \"home team\" OR \"upset loss\" OR \"unexpected loss\" OR \"playoff\" OR \"championship game\" OR \"Olympic Games\" OR \"NFL\" OR \"college football\") AND (\"baby names\" OR \"first names\" OR \"given names\" OR naming OR \"language use\" OR \"word use\" OR vocabulary OR dialect) AND \"natural experiment\"",
+    "(\"Super Bowl\" OR \"World Cup\" OR \"football game\" OR \"football match\" OR \"sporting event\" OR \"sports event\" OR \"home team\" OR \"upset loss\" OR \"unexpected loss\" OR \"playoff\" OR \"championship game\" OR \"Olympic Games\" OR \"NFL\" OR \"college football\") AND (\"baby names\" OR \"first names\" OR \"given names\" OR naming OR \"language use\" OR \"word use\" OR vocabulary OR dialect) AND \"difference-in-differences\""
+   ]
+  },
+  {
+   "cell": "I1xO9",
+   "event_class": "I1",
+   "outcome_domain": "O9",
+   "openalex": [
+    "(\"Super Bowl\" OR \"World Cup\" OR \"football game\" OR \"football match\" OR \"sporting event\" OR \"sports event\" OR \"home team\" OR \"upset loss\" OR \"unexpected loss\" OR \"playoff\" OR \"championship game\" OR \"Olympic Games\" OR \"NFL\" OR \"college football\") AND (productivity OR absenteeism OR \"sick leave\" OR \"labor supply\" OR \"work hours\" OR \"worker performance\" OR \"labor productivity\") AND \"natural experiment\"",
+    "(\"Super Bowl\" OR \"World Cup\" OR \"football game\" OR \"football match\" OR \"sporting event\" OR \"sports event\" OR \"home team\" OR \"upset loss\" OR \"unexpected loss\" OR \"playoff\" OR \"championship game\" OR \"Olympic Games\" OR \"NFL\" OR \"college football\") AND (productivity OR absenteeism OR \"sick leave\" OR \"labor supply\" OR \"work hours\" OR \"worker performance\" OR \"labor productivity\") AND \"difference-in-differences\""
+   ]
+  },
+  {
+   "cell": "I1xO10",
+   "event_class": "I1",
+   "outcome_domain": "O10",
+   "openalex": [
+    "(\"Super Bowl\" OR \"World Cup\" OR \"football game\" OR \"football match\" OR \"sporting event\" OR \"sports event\" OR \"home team\" OR \"upset loss\" OR \"unexpected loss\" OR \"playoff\" OR \"championship game\" OR \"Olympic Games\" OR \"NFL\" OR \"college football\") AND (\"consumer spending\" OR \"household spending\" OR sales OR purchases OR consumption OR expenditure OR demand) AND \"natural experiment\"",
+    "(\"Super Bowl\" OR \"World Cup\" OR \"football game\" OR \"football match\" OR \"sporting event\" OR \"sports event\" OR \"home team\" OR \"upset loss\" OR \"unexpected loss\" OR \"playoff\" OR \"championship game\" OR \"Olympic Games\" OR \"NFL\" OR \"college football\") AND (\"consumer spending\" OR \"household spending\" OR sales OR purchases OR consumption OR expenditure OR demand) AND \"difference-in-differences\""
+   ]
+  },
+  {
+   "cell": "I1xO11",
+   "event_class": "I1",
+   "outcome_domain": "O11",
+   "openalex": [
+    "(\"Super Bowl\" OR \"World Cup\" OR \"football game\" OR \"football match\" OR \"sporting event\" OR \"sports event\" OR \"home team\" OR \"upset loss\" OR \"unexpected loss\" OR \"playoff\" OR \"championship game\" OR \"Olympic Games\" OR \"NFL\" OR \"college football\") AND (\"blood donation\" OR \"blood donors\" OR \"organ donation\" OR \"organ donor\" OR volunteering OR \"charitable giving\" OR donations OR \"census response\" OR \"civic engagement\") AND \"natural experiment\"",
+    "(\"Super Bowl\" OR \"World Cup\" OR \"football game\" OR \"football match\" OR \"sporting event\" OR \"sports event\" OR \"home team\" OR \"upset loss\" OR \"unexpected loss\" OR \"playoff\" OR \"championship game\" OR \"Olympic Games\" OR \"NFL\" OR \"college football\") AND (\"blood donation\" OR \"blood donors\" OR \"organ donation\" OR \"organ donor\" OR volunteering OR \"charitable giving\" OR donations OR \"census response\" OR \"civic engagement\") AND \"difference-in-differences\""
+   ]
+  },
+  {
+   "cell": "I2xO1",
+   "event_class": "I2",
+   "outcome_domain": "O1",
+   "openalex": [
+    "(\"introduction of television\" OR \"arrival of television\" OR \"television signal\" OR \"TV signal\" OR \"cable television\" OR \"cable TV\" OR \"satellite television\" OR \"radio broadcasts\" OR \"radio coverage\" OR \"broadband\" OR \"high-speed internet\" OR \"mobile phone coverage\" OR \"3G\" OR \"Fox News\" OR \"television channel\") AND (births OR \"birth rate\" OR fertility OR conceptions OR \"birth weight\" OR childbearing OR pregnancies) AND \"natural experiment\"",
+    "(\"introduction of television\" OR \"arrival of television\" OR \"television signal\" OR \"TV signal\" OR \"cable television\" OR \"cable TV\" OR \"satellite television\" OR \"radio broadcasts\" OR \"radio coverage\" OR \"broadband\" OR \"high-speed internet\" OR \"mobile phone coverage\" OR \"3G\" OR \"Fox News\" OR \"television channel\") AND (births OR \"birth rate\" OR fertility OR conceptions OR \"birth weight\" OR childbearing OR pregnancies) AND \"difference-in-differences\""
+   ]
+  },
+  {
+   "cell": "I2xO2",
+   "event_class": "I2",
+   "outcome_domain": "O2",
+   "openalex": [
+    "(\"introduction of television\" OR \"arrival of television\" OR \"television signal\" OR \"TV signal\" OR \"cable television\" OR \"cable TV\" OR \"satellite television\" OR \"radio broadcasts\" OR \"radio coverage\" OR \"broadband\" OR \"high-speed internet\" OR \"mobile phone coverage\" OR \"3G\" OR \"Fox News\" OR \"television channel\") AND (marriage OR marriages OR divorce OR divorces OR cohabitation OR \"family formation\") AND \"natural experiment\"",
+    "(\"introduction of television\" OR \"arrival of television\" OR \"television signal\" OR \"TV signal\" OR \"cable television\" OR \"cable TV\" OR \"satellite television\" OR \"radio broadcasts\" OR \"radio coverage\" OR \"broadband\" OR \"high-speed internet\" OR \"mobile phone coverage\" OR \"3G\" OR \"Fox News\" OR \"television channel\") AND (marriage OR marriages OR divorce OR divorces OR cohabitation OR \"family formation\") AND \"difference-in-differences\""
+   ]
+  },
+  {
+   "cell": "I2xO3",
+   "event_class": "I2",
+   "outcome_domain": "O3",
+   "openalex": [
+    "(\"introduction of television\" OR \"arrival of television\" OR \"television signal\" OR \"TV signal\" OR \"cable television\" OR \"cable TV\" OR \"satellite television\" OR \"radio broadcasts\" OR \"radio coverage\" OR \"broadband\" OR \"high-speed internet\" OR \"mobile phone coverage\" OR \"3G\" OR \"Fox News\" OR \"television channel\") AND (crime OR violence OR \"domestic violence\" OR \"intimate partner violence\" OR assault OR \"hate crime\" OR homicide OR arrests) AND \"natural experiment\"",
+    "(\"introduction of television\" OR \"arrival of television\" OR \"television signal\" OR \"TV signal\" OR \"cable television\" OR \"cable TV\" OR \"satellite television\" OR \"radio broadcasts\" OR \"radio coverage\" OR \"broadband\" OR \"high-speed internet\" OR \"mobile phone coverage\" OR \"3G\" OR \"Fox News\" OR \"television channel\") AND (crime OR violence OR \"domestic violence\" OR \"intimate partner violence\" OR assault OR \"hate crime\" OR homicide OR arrests) AND \"difference-in-differences\""
+   ]
+  },
+  {
+   "cell": "I2xO4",
+   "event_class": "I2",
+   "outcome_domain": "O4",
+   "openalex": [
+    "(\"introduction of television\" OR \"arrival of television\" OR \"television signal\" OR \"TV signal\" OR \"cable television\" OR \"cable TV\" OR \"satellite television\" OR \"radio broadcasts\" OR \"radio coverage\" OR \"broadband\" OR \"high-speed internet\" OR \"mobile phone coverage\" OR \"3G\" OR \"Fox News\" OR \"television channel\") AND (judges OR sentencing OR \"sentence length\" OR jury OR juries OR \"court decisions\" OR \"judicial decisions\" OR \"asylum decisions\" OR parole) AND \"natural experiment\"",
+    "(\"introduction of television\" OR \"arrival of television\" OR \"television signal\" OR \"TV signal\" OR \"cable television\" OR \"cable TV\" OR \"satellite television\" OR \"radio broadcasts\" OR \"radio coverage\" OR \"broadband\" OR \"high-speed internet\" OR \"mobile phone coverage\" OR \"3G\" OR \"Fox News\" OR \"television channel\") AND (judges OR sentencing OR \"sentence length\" OR jury OR juries OR \"court decisions\" OR \"judicial decisions\" OR \"asylum decisions\" OR parole) AND \"difference-in-differences\""
+   ]
+  },
+  {
+   "cell": "I2xO5",
+   "event_class": "I2",
+   "outcome_domain": "O5",
+   "openalex": [
+    "(\"introduction of television\" OR \"arrival of television\" OR \"television signal\" OR \"TV signal\" OR \"cable television\" OR \"cable TV\" OR \"satellite television\" OR \"radio broadcasts\" OR \"radio coverage\" OR \"broadband\" OR \"high-speed internet\" OR \"mobile phone coverage\" OR \"3G\" OR \"Fox News\" OR \"television channel\") AND (\"hospital admissions\" OR \"emergency department\" OR injuries OR mortality OR deaths OR \"myocardial infarction\" OR \"cardiovascular events\" OR hospitalizations) AND \"natural experiment\"",
+    "(\"introduction of television\" OR \"arrival of television\" OR \"television signal\" OR \"TV signal\" OR \"cable television\" OR \"cable TV\" OR \"satellite television\" OR \"radio broadcasts\" OR \"radio coverage\" OR \"broadband\" OR \"high-speed internet\" OR \"mobile phone coverage\" OR \"3G\" OR \"Fox News\" OR \"television channel\") AND (\"hospital admissions\" OR \"emergency department\" OR injuries OR mortality OR deaths OR \"myocardial infarction\" OR \"cardiovascular events\" OR hospitalizations) AND \"difference-in-differences\""
+   ],
+   "pubmed": [
+    "(\"introduction of television\"[tiab] OR \"arrival of television\"[tiab] OR \"television signal\"[tiab] OR \"TV signal\"[tiab] OR \"cable television\"[tiab] OR \"cable TV\"[tiab] OR \"satellite television\"[tiab] OR \"radio broadcasts\"[tiab] OR \"radio coverage\"[tiab] OR broadband[tiab] OR \"high-speed internet\"[tiab] OR \"mobile phone coverage\"[tiab] OR 3G[tiab] OR \"Fox News\"[tiab] OR \"television channel\"[tiab]) AND (\"hospital admissions\"[tiab] OR \"emergency department\"[tiab] OR injuries[tiab] OR mortality[tiab] OR deaths[tiab] OR \"myocardial infarction\"[tiab] OR \"cardiovascular events\"[tiab] OR hospitalizations[tiab]) AND \"natural experiment\"[tiab]",
+    "(\"introduction of television\"[tiab] OR \"arrival of television\"[tiab] OR \"television signal\"[tiab] OR \"TV signal\"[tiab] OR \"cable television\"[tiab] OR \"cable TV\"[tiab] OR \"satellite television\"[tiab] OR \"radio broadcasts\"[tiab] OR \"radio coverage\"[tiab] OR broadband[tiab] OR \"high-speed internet\"[tiab] OR \"mobile phone coverage\"[tiab] OR 3G[tiab] OR \"Fox News\"[tiab] OR \"television channel\"[tiab]) AND (\"hospital admissions\"[tiab] OR \"emergency department\"[tiab] OR injuries[tiab] OR mortality[tiab] OR deaths[tiab] OR \"myocardial infarction\"[tiab] OR \"cardiovascular events\"[tiab] OR hospitalizations[tiab]) AND \"difference-in-differences\"[tiab]"
+   ]
+  },
+  {
+   "cell": "I2xO6",
+   "event_class": "I2",
+   "outcome_domain": "O6",
+   "openalex": [
+    "(\"introduction of television\" OR \"arrival of television\" OR \"television signal\" OR \"TV signal\" OR \"cable television\" OR \"cable TV\" OR \"satellite television\" OR \"radio broadcasts\" OR \"radio coverage\" OR \"broadband\" OR \"high-speed internet\" OR \"mobile phone coverage\" OR \"3G\" OR \"Fox News\" OR \"television channel\") AND (\"traffic accidents\" OR \"car crashes\" OR \"traffic crashes\" OR \"road accidents\" OR \"traffic fatalities\" OR \"motor vehicle crashes\" OR \"fatal crashes\" OR \"road traffic\") AND \"natural experiment\"",
+    "(\"introduction of television\" OR \"arrival of television\" OR \"television signal\" OR \"TV signal\" OR \"cable television\" OR \"cable TV\" OR \"satellite television\" OR \"radio broadcasts\" OR \"radio coverage\" OR \"broadband\" OR \"high-speed internet\" OR \"mobile phone coverage\" OR \"3G\" OR \"Fox News\" OR \"television channel\") AND (\"traffic accidents\" OR \"car crashes\" OR \"traffic crashes\" OR \"road accidents\" OR \"traffic fatalities\" OR \"motor vehicle crashes\" OR \"fatal crashes\" OR \"road traffic\") AND \"difference-in-differences\""
+   ]
+  },
+  {
+   "cell": "I2xO7",
+   "event_class": "I2",
+   "outcome_domain": "O7",
+   "openalex": [
+    "(\"introduction of television\" OR \"arrival of television\" OR \"television signal\" OR \"TV signal\" OR \"cable television\" OR \"cable TV\" OR \"satellite television\" OR \"radio broadcasts\" OR \"radio coverage\" OR \"broadband\" OR \"high-speed internet\" OR \"mobile phone coverage\" OR \"3G\" OR \"Fox News\" OR \"television channel\") AND (\"test scores\" OR \"school attendance\" OR \"student achievement\" OR \"exam performance\" OR \"educational attainment\" OR \"college major\" OR \"school enrollment\" OR \"academic performance\") AND \"natural experiment\"",
+    "(\"introduction of television\" OR \"arrival of television\" OR \"television signal\" OR \"TV signal\" OR \"cable television\" OR \"cable TV\" OR \"satellite television\" OR \"radio broadcasts\" OR \"radio coverage\" OR \"broadband\" OR \"high-speed internet\" OR \"mobile phone coverage\" OR \"3G\" OR \"Fox News\" OR \"television channel\") AND (\"test scores\" OR \"school attendance\" OR \"student achievement\" OR \"exam performance\" OR \"educational attainment\" OR \"college major\" OR \"school enrollment\" OR \"academic performance\") AND \"difference-in-differences\""
+   ]
+  },
+  {
+   "cell": "I2xO8",
+   "event_class": "I2",
+   "outcome_domain": "O8",
+   "openalex": [
+    "(\"introduction of television\" OR \"arrival of television\" OR \"television signal\" OR \"TV signal\" OR \"cable television\" OR \"cable TV\" OR \"satellite television\" OR \"radio broadcasts\" OR \"radio coverage\" OR \"broadband\" OR \"high-speed internet\" OR \"mobile phone coverage\" OR \"3G\" OR \"Fox News\" OR \"television channel\") AND (\"baby names\" OR \"first names\" OR \"given names\" OR naming OR \"language use\" OR \"word use\" OR vocabulary OR dialect) AND \"natural experiment\"",
+    "(\"introduction of television\" OR \"arrival of television\" OR \"television signal\" OR \"TV signal\" OR \"cable television\" OR \"cable TV\" OR \"satellite television\" OR \"radio broadcasts\" OR \"radio coverage\" OR \"broadband\" OR \"high-speed internet\" OR \"mobile phone coverage\" OR \"3G\" OR \"Fox News\" OR \"television channel\") AND (\"baby names\" OR \"first names\" OR \"given names\" OR naming OR \"language use\" OR \"word use\" OR vocabulary OR dialect) AND \"difference-in-differences\""
+   ]
+  },
+  {
+   "cell": "I2xO9",
+   "event_class": "I2",
+   "outcome_domain": "O9",
+   "openalex": [
+    "(\"introduction of television\" OR \"arrival of television\" OR \"television signal\" OR \"TV signal\" OR \"cable television\" OR \"cable TV\" OR \"satellite television\" OR \"radio broadcasts\" OR \"radio coverage\" OR \"broadband\" OR \"high-speed internet\" OR \"mobile phone coverage\" OR \"3G\" OR \"Fox News\" OR \"television channel\") AND (productivity OR absenteeism OR \"sick leave\" OR \"labor supply\" OR \"work hours\" OR \"worker performance\" OR \"labor productivity\") AND \"natural experiment\"",
+    "(\"introduction of television\" OR \"arrival of television\" OR \"television signal\" OR \"TV signal\" OR \"cable television\" OR \"cable TV\" OR \"satellite television\" OR \"radio broadcasts\" OR \"radio coverage\" OR \"broadband\" OR \"high-speed internet\" OR \"mobile phone coverage\" OR \"3G\" OR \"Fox News\" OR \"television channel\") AND (productivity OR absenteeism OR \"sick leave\" OR \"labor supply\" OR \"work hours\" OR \"worker performance\" OR \"labor productivity\") AND \"difference-in-differences\""
+   ]
+  },
+  {
+   "cell": "I2xO10",
+   "event_class": "I2",
+   "outcome_domain": "O10",
+   "openalex": [
+    "(\"introduction of television\" OR \"arrival of television\" OR \"television signal\" OR \"TV signal\" OR \"cable television\" OR \"cable TV\" OR \"satellite television\" OR \"radio broadcasts\" OR \"radio coverage\" OR \"broadband\" OR \"high-speed internet\" OR \"mobile phone coverage\" OR \"3G\" OR \"Fox News\" OR \"television channel\") AND (\"consumer spending\" OR \"household spending\" OR sales OR purchases OR consumption OR expenditure OR demand) AND \"natural experiment\"",
+    "(\"introduction of television\" OR \"arrival of television\" OR \"television signal\" OR \"TV signal\" OR \"cable television\" OR \"cable TV\" OR \"satellite television\" OR \"radio broadcasts\" OR \"radio coverage\" OR \"broadband\" OR \"high-speed internet\" OR \"mobile phone coverage\" OR \"3G\" OR \"Fox News\" OR \"television channel\") AND (\"consumer spending\" OR \"household spending\" OR sales OR purchases OR consumption OR expenditure OR demand) AND \"difference-in-differences\""
+   ]
+  },
+  {
+   "cell": "I2xO11",
+   "event_class": "I2",
+   "outcome_domain": "O11",
+   "openalex": [
+    "(\"introduction of television\" OR \"arrival of television\" OR \"television signal\" OR \"TV signal\" OR \"cable television\" OR \"cable TV\" OR \"satellite television\" OR \"radio broadcasts\" OR \"radio coverage\" OR \"broadband\" OR \"high-speed internet\" OR \"mobile phone coverage\" OR \"3G\" OR \"Fox News\" OR \"television channel\") AND (\"blood donation\" OR \"blood donors\" OR \"organ donation\" OR \"organ donor\" OR volunteering OR \"charitable giving\" OR donations OR \"census response\" OR \"civic engagement\") AND \"natural experiment\"",
+    "(\"introduction of television\" OR \"arrival of television\" OR \"television signal\" OR \"TV signal\" OR \"cable television\" OR \"cable TV\" OR \"satellite television\" OR \"radio broadcasts\" OR \"radio coverage\" OR \"broadband\" OR \"high-speed internet\" OR \"mobile phone coverage\" OR \"3G\" OR \"Fox News\" OR \"television channel\") AND (\"blood donation\" OR \"blood donors\" OR \"organ donation\" OR \"organ donor\" OR volunteering OR \"charitable giving\" OR donations OR \"census response\" OR \"civic engagement\") AND \"difference-in-differences\""
+   ]
+  },
+  {
+   "cell": "I3xO1",
+   "event_class": "I3",
+   "outcome_domain": "O1",
+   "openalex": [
+    "(\"movie release\" OR \"film release\" OR \"blockbuster\" OR \"box office\" OR \"video game release\" OR \"television series\" OR \"TV series\" OR \"TV show\" OR \"album release\" OR \"bestseller\" OR \"best-selling book\" OR \"Netflix\" OR movie OR movies OR film) AND (births OR \"birth rate\" OR fertility OR conceptions OR \"birth weight\" OR childbearing OR pregnancies) AND \"natural experiment\"",
+    "(\"movie release\" OR \"film release\" OR \"blockbuster\" OR \"box office\" OR \"video game release\" OR \"television series\" OR \"TV series\" OR \"TV show\" OR \"album release\" OR \"bestseller\" OR \"best-selling book\" OR \"Netflix\" OR movie OR movies OR film) AND (births OR \"birth rate\" OR fertility OR conceptions OR \"birth weight\" OR childbearing OR pregnancies) AND \"exogenous\""
+   ]
+  },
+  {
+   "cell": "I3xO2",
+   "event_class": "I3",
+   "outcome_domain": "O2",
+   "openalex": [
+    "(\"movie release\" OR \"film release\" OR \"blockbuster\" OR \"box office\" OR \"video game release\" OR \"television series\" OR \"TV series\" OR \"TV show\" OR \"album release\" OR \"bestseller\" OR \"best-selling book\" OR \"Netflix\" OR movie OR movies OR film) AND (marriage OR marriages OR divorce OR divorces OR cohabitation OR \"family formation\") AND \"natural experiment\"",
+    "(\"movie release\" OR \"film release\" OR \"blockbuster\" OR \"box office\" OR \"video game release\" OR \"television series\" OR \"TV series\" OR \"TV show\" OR \"album release\" OR \"bestseller\" OR \"best-selling book\" OR \"Netflix\" OR movie OR movies OR film) AND (marriage OR marriages OR divorce OR divorces OR cohabitation OR \"family formation\") AND \"exogenous\""
+   ]
+  },
+  {
+   "cell": "I3xO3",
+   "event_class": "I3",
+   "outcome_domain": "O3",
+   "openalex": [
+    "(\"movie release\" OR \"film release\" OR \"blockbuster\" OR \"box office\" OR \"video game release\" OR \"television series\" OR \"TV series\" OR \"TV show\" OR \"album release\" OR \"bestseller\" OR \"best-selling book\" OR \"Netflix\" OR movie OR movies OR film) AND (crime OR violence OR \"domestic violence\" OR \"intimate partner violence\" OR assault OR \"hate crime\" OR homicide OR arrests) AND \"natural experiment\"",
+    "(\"movie release\" OR \"film release\" OR \"blockbuster\" OR \"box office\" OR \"video game release\" OR \"television series\" OR \"TV series\" OR \"TV show\" OR \"album release\" OR \"bestseller\" OR \"best-selling book\" OR \"Netflix\" OR movie OR movies OR film) AND (crime OR violence OR \"domestic violence\" OR \"intimate partner violence\" OR assault OR \"hate crime\" OR homicide OR arrests) AND \"exogenous\""
+   ]
+  },
+  {
+   "cell": "I3xO4",
+   "event_class": "I3",
+   "outcome_domain": "O4",
+   "openalex": [
+    "(\"movie release\" OR \"film release\" OR \"blockbuster\" OR \"box office\" OR \"video game release\" OR \"television series\" OR \"TV series\" OR \"TV show\" OR \"album release\" OR \"bestseller\" OR \"best-selling book\" OR \"Netflix\" OR movie OR movies OR film) AND (judges OR sentencing OR \"sentence length\" OR jury OR juries OR \"court decisions\" OR \"judicial decisions\" OR \"asylum decisions\" OR parole) AND \"natural experiment\"",
+    "(\"movie release\" OR \"film release\" OR \"blockbuster\" OR \"box office\" OR \"video game release\" OR \"television series\" OR \"TV series\" OR \"TV show\" OR \"album release\" OR \"bestseller\" OR \"best-selling book\" OR \"Netflix\" OR movie OR movies OR film) AND (judges OR sentencing OR \"sentence length\" OR jury OR juries OR \"court decisions\" OR \"judicial decisions\" OR \"asylum decisions\" OR parole) AND \"exogenous\""
+   ]
+  },
+  {
+   "cell": "I3xO5",
+   "event_class": "I3",
+   "outcome_domain": "O5",
+   "openalex": [
+    "(\"movie release\" OR \"film release\" OR \"blockbuster\" OR \"box office\" OR \"video game release\" OR \"television series\" OR \"TV series\" OR \"TV show\" OR \"album release\" OR \"bestseller\" OR \"best-selling book\" OR \"Netflix\" OR movie OR movies OR film) AND (\"hospital admissions\" OR \"emergency department\" OR injuries OR mortality OR deaths OR \"myocardial infarction\" OR \"cardiovascular events\" OR hospitalizations) AND \"natural experiment\"",
+    "(\"movie release\" OR \"film release\" OR \"blockbuster\" OR \"box office\" OR \"video game release\" OR \"television series\" OR \"TV series\" OR \"TV show\" OR \"album release\" OR \"bestseller\" OR \"best-selling book\" OR \"Netflix\" OR movie OR movies OR film) AND (\"hospital admissions\" OR \"emergency department\" OR injuries OR mortality OR deaths OR \"myocardial infarction\" OR \"cardiovascular events\" OR hospitalizations) AND \"exogenous\""
+   ],
+   "pubmed": [
+    "(\"movie release\"[tiab] OR \"film release\"[tiab] OR blockbuster[tiab] OR \"box office\"[tiab] OR \"video game release\"[tiab] OR \"television series\"[tiab] OR \"TV series\"[tiab] OR \"TV show\"[tiab] OR \"album release\"[tiab] OR bestseller[tiab] OR \"best-selling book\"[tiab] OR Netflix[tiab] OR movie[tiab] OR movies[tiab] OR film[tiab]) AND (\"hospital admissions\"[tiab] OR \"emergency department\"[tiab] OR injuries[tiab] OR mortality[tiab] OR deaths[tiab] OR \"myocardial infarction\"[tiab] OR \"cardiovascular events\"[tiab] OR hospitalizations[tiab]) AND \"natural experiment\"[tiab]",
+    "(\"movie release\"[tiab] OR \"film release\"[tiab] OR blockbuster[tiab] OR \"box office\"[tiab] OR \"video game release\"[tiab] OR \"television series\"[tiab] OR \"TV series\"[tiab] OR \"TV show\"[tiab] OR \"album release\"[tiab] OR bestseller[tiab] OR \"best-selling book\"[tiab] OR Netflix[tiab] OR movie[tiab] OR movies[tiab] OR film[tiab]) AND (\"hospital admissions\"[tiab] OR \"emergency department\"[tiab] OR injuries[tiab] OR mortality[tiab] OR deaths[tiab] OR \"myocardial infarction\"[tiab] OR \"cardiovascular events\"[tiab] OR hospitalizations[tiab]) AND exogenous[tiab]"
+   ]
+  },
+  {
+   "cell": "I3xO6",
+   "event_class": "I3",
+   "outcome_domain": "O6",
+   "openalex": [
+    "(\"movie release\" OR \"film release\" OR \"blockbuster\" OR \"box office\" OR \"video game release\" OR \"television series\" OR \"TV series\" OR \"TV show\" OR \"album release\" OR \"bestseller\" OR \"best-selling book\" OR \"Netflix\" OR movie OR movies OR film) AND (\"traffic accidents\" OR \"car crashes\" OR \"traffic crashes\" OR \"road accidents\" OR \"traffic fatalities\" OR \"motor vehicle crashes\" OR \"fatal crashes\" OR \"road traffic\") AND \"natural experiment\"",
+    "(\"movie release\" OR \"film release\" OR \"blockbuster\" OR \"box office\" OR \"video game release\" OR \"television series\" OR \"TV series\" OR \"TV show\" OR \"album release\" OR \"bestseller\" OR \"best-selling book\" OR \"Netflix\" OR movie OR movies OR film) AND (\"traffic accidents\" OR \"car crashes\" OR \"traffic crashes\" OR \"road accidents\" OR \"traffic fatalities\" OR \"motor vehicle crashes\" OR \"fatal crashes\" OR \"road traffic\") AND \"exogenous\""
+   ]
+  },
+  {
+   "cell": "I3xO7",
+   "event_class": "I3",
+   "outcome_domain": "O7",
+   "openalex": [
+    "(\"movie release\" OR \"film release\" OR \"blockbuster\" OR \"box office\" OR \"video game release\" OR \"television series\" OR \"TV series\" OR \"TV show\" OR \"album release\" OR \"bestseller\" OR \"best-selling book\" OR \"Netflix\" OR movie OR movies OR film) AND (\"test scores\" OR \"school attendance\" OR \"student achievement\" OR \"exam performance\" OR \"educational attainment\" OR \"college major\" OR \"school enrollment\" OR \"academic performance\") AND \"natural experiment\"",
+    "(\"movie release\" OR \"film release\" OR \"blockbuster\" OR \"box office\" OR \"video game release\" OR \"television series\" OR \"TV series\" OR \"TV show\" OR \"album release\" OR \"bestseller\" OR \"best-selling book\" OR \"Netflix\" OR movie OR movies OR film) AND (\"test scores\" OR \"school attendance\" OR \"student achievement\" OR \"exam performance\" OR \"educational attainment\" OR \"college major\" OR \"school enrollment\" OR \"academic performance\") AND \"exogenous\""
+   ]
+  },
+  {
+   "cell": "I3xO8",
+   "event_class": "I3",
+   "outcome_domain": "O8",
+   "openalex": [
+    "(\"movie release\" OR \"film release\" OR \"blockbuster\" OR \"box office\" OR \"video game release\" OR \"television series\" OR \"TV series\" OR \"TV show\" OR \"album release\" OR \"bestseller\" OR \"best-selling book\" OR \"Netflix\" OR movie OR movies OR film) AND (\"baby names\" OR \"first names\" OR \"given names\" OR naming OR \"language use\" OR \"word use\" OR vocabulary OR dialect) AND \"natural experiment\"",
+    "(\"movie release\" OR \"film release\" OR \"blockbuster\" OR \"box office\" OR \"video game release\" OR \"television series\" OR \"TV series\" OR \"TV show\" OR \"album release\" OR \"bestseller\" OR \"best-selling book\" OR \"Netflix\" OR movie OR movies OR film) AND (\"baby names\" OR \"first names\" OR \"given names\" OR naming OR \"language use\" OR \"word use\" OR vocabulary OR dialect) AND \"exogenous\""
+   ]
+  },
+  {
+   "cell": "I3xO9",
+   "event_class": "I3",
+   "outcome_domain": "O9",
+   "openalex": [
+    "(\"movie release\" OR \"film release\" OR \"blockbuster\" OR \"box office\" OR \"video game release\" OR \"television series\" OR \"TV series\" OR \"TV show\" OR \"album release\" OR \"bestseller\" OR \"best-selling book\" OR \"Netflix\" OR movie OR movies OR film) AND (productivity OR absenteeism OR \"sick leave\" OR \"labor supply\" OR \"work hours\" OR \"worker performance\" OR \"labor productivity\") AND \"natural experiment\"",
+    "(\"movie release\" OR \"film release\" OR \"blockbuster\" OR \"box office\" OR \"video game release\" OR \"television series\" OR \"TV series\" OR \"TV show\" OR \"album release\" OR \"bestseller\" OR \"best-selling book\" OR \"Netflix\" OR movie OR movies OR film) AND (productivity OR absenteeism OR \"sick leave\" OR \"labor supply\" OR \"work hours\" OR \"worker performance\" OR \"labor productivity\") AND \"exogenous\""
+   ]
+  },
+  {
+   "cell": "I3xO10",
+   "event_class": "I3",
+   "outcome_domain": "O10",
+   "openalex": [
+    "(\"movie release\" OR \"film release\" OR \"blockbuster\" OR \"box office\" OR \"video game release\" OR \"television series\" OR \"TV series\" OR \"TV show\" OR \"album release\" OR \"bestseller\" OR \"best-selling book\" OR \"Netflix\" OR movie OR movies OR film) AND (\"consumer spending\" OR \"household spending\" OR sales OR purchases OR consumption OR expenditure OR demand) AND \"natural experiment\"",
+    "(\"movie release\" OR \"film release\" OR \"blockbuster\" OR \"box office\" OR \"video game release\" OR \"television series\" OR \"TV series\" OR \"TV show\" OR \"album release\" OR \"bestseller\" OR \"best-selling book\" OR \"Netflix\" OR movie OR movies OR film) AND (\"consumer spending\" OR \"household spending\" OR sales OR purchases OR consumption OR expenditure OR demand) AND \"exogenous\""
+   ]
+  },
+  {
+   "cell": "I3xO11",
+   "event_class": "I3",
+   "outcome_domain": "O11",
+   "openalex": [
+    "(\"movie release\" OR \"film release\" OR \"blockbuster\" OR \"box office\" OR \"video game release\" OR \"television series\" OR \"TV series\" OR \"TV show\" OR \"album release\" OR \"bestseller\" OR \"best-selling book\" OR \"Netflix\" OR movie OR movies OR film) AND (\"blood donation\" OR \"blood donors\" OR \"organ donation\" OR \"organ donor\" OR volunteering OR \"charitable giving\" OR donations OR \"census response\" OR \"civic engagement\") AND \"natural experiment\"",
+    "(\"movie release\" OR \"film release\" OR \"blockbuster\" OR \"box office\" OR \"video game release\" OR \"television series\" OR \"TV series\" OR \"TV show\" OR \"album release\" OR \"bestseller\" OR \"best-selling book\" OR \"Netflix\" OR movie OR movies OR film) AND (\"blood donation\" OR \"blood donors\" OR \"organ donation\" OR \"organ donor\" OR volunteering OR \"charitable giving\" OR donations OR \"census response\" OR \"civic engagement\") AND \"exogenous\""
+   ]
+  },
+  {
+   "cell": "I4xO1",
+   "event_class": "I4",
+   "outcome_domain": "O1",
+   "openalex": [
+    "(\"celebrity\" OR \"celebrities\" OR \"public figure\" OR \"royal wedding\" OR \"royal family\" OR \"scandal\" OR \"coming out\" OR \"pop star\" OR \"superstar\" OR \"star player\" OR \"high-profile death\" OR \"famous\") AND (births OR \"birth rate\" OR fertility OR conceptions OR \"birth weight\" OR childbearing OR pregnancies) AND \"natural experiment\"",
+    "(\"celebrity\" OR \"celebrities\" OR \"public figure\" OR \"royal wedding\" OR \"royal family\" OR \"scandal\" OR \"coming out\" OR \"pop star\" OR \"superstar\" OR \"star player\" OR \"high-profile death\" OR \"famous\") AND (births OR \"birth rate\" OR fertility OR conceptions OR \"birth weight\" OR childbearing OR pregnancies) AND \"quasi-experimental\""
+   ]
+  },
+  {
+   "cell": "I4xO2",
+   "event_class": "I4",
+   "outcome_domain": "O2",
+   "openalex": [
+    "(\"celebrity\" OR \"celebrities\" OR \"public figure\" OR \"royal wedding\" OR \"royal family\" OR \"scandal\" OR \"coming out\" OR \"pop star\" OR \"superstar\" OR \"star player\" OR \"high-profile death\" OR \"famous\") AND (marriage OR marriages OR divorce OR divorces OR cohabitation OR \"family formation\") AND \"natural experiment\"",
+    "(\"celebrity\" OR \"celebrities\" OR \"public figure\" OR \"royal wedding\" OR \"royal family\" OR \"scandal\" OR \"coming out\" OR \"pop star\" OR \"superstar\" OR \"star player\" OR \"high-profile death\" OR \"famous\") AND (marriage OR marriages OR divorce OR divorces OR cohabitation OR \"family formation\") AND \"quasi-experimental\""
+   ]
+  },
+  {
+   "cell": "I4xO3",
+   "event_class": "I4",
+   "outcome_domain": "O3",
+   "openalex": [
+    "(\"celebrity\" OR \"celebrities\" OR \"public figure\" OR \"royal wedding\" OR \"royal family\" OR \"scandal\" OR \"coming out\" OR \"pop star\" OR \"superstar\" OR \"star player\" OR \"high-profile death\" OR \"famous\") AND (crime OR violence OR \"domestic violence\" OR \"intimate partner violence\" OR assault OR \"hate crime\" OR homicide OR arrests) AND \"natural experiment\"",
+    "(\"celebrity\" OR \"celebrities\" OR \"public figure\" OR \"royal wedding\" OR \"royal family\" OR \"scandal\" OR \"coming out\" OR \"pop star\" OR \"superstar\" OR \"star player\" OR \"high-profile death\" OR \"famous\") AND (crime OR violence OR \"domestic violence\" OR \"intimate partner violence\" OR assault OR \"hate crime\" OR homicide OR arrests) AND \"quasi-experimental\""
+   ]
+  },
+  {
+   "cell": "I4xO4",
+   "event_class": "I4",
+   "outcome_domain": "O4",
+   "openalex": [
+    "(\"celebrity\" OR \"celebrities\" OR \"public figure\" OR \"royal wedding\" OR \"royal family\" OR \"scandal\" OR \"coming out\" OR \"pop star\" OR \"superstar\" OR \"star player\" OR \"high-profile death\" OR \"famous\") AND (judges OR sentencing OR \"sentence length\" OR jury OR juries OR \"court decisions\" OR \"judicial decisions\" OR \"asylum decisions\" OR parole) AND \"natural experiment\"",
+    "(\"celebrity\" OR \"celebrities\" OR \"public figure\" OR \"royal wedding\" OR \"royal family\" OR \"scandal\" OR \"coming out\" OR \"pop star\" OR \"superstar\" OR \"star player\" OR \"high-profile death\" OR \"famous\") AND (judges OR sentencing OR \"sentence length\" OR jury OR juries OR \"court decisions\" OR \"judicial decisions\" OR \"asylum decisions\" OR parole) AND \"quasi-experimental\""
+   ]
+  },
+  {
+   "cell": "I4xO6",
+   "event_class": "I4",
+   "outcome_domain": "O6",
+   "openalex": [
+    "(\"celebrity\" OR \"celebrities\" OR \"public figure\" OR \"royal wedding\" OR \"royal family\" OR \"scandal\" OR \"coming out\" OR \"pop star\" OR \"superstar\" OR \"star player\" OR \"high-profile death\" OR \"famous\") AND (\"traffic accidents\" OR \"car crashes\" OR \"traffic crashes\" OR \"road accidents\" OR \"traffic fatalities\" OR \"motor vehicle crashes\" OR \"fatal crashes\" OR \"road traffic\") AND \"natural experiment\"",
+    "(\"celebrity\" OR \"celebrities\" OR \"public figure\" OR \"royal wedding\" OR \"royal family\" OR \"scandal\" OR \"coming out\" OR \"pop star\" OR \"superstar\" OR \"star player\" OR \"high-profile death\" OR \"famous\") AND (\"traffic accidents\" OR \"car crashes\" OR \"traffic crashes\" OR \"road accidents\" OR \"traffic fatalities\" OR \"motor vehicle crashes\" OR \"fatal crashes\" OR \"road traffic\") AND \"quasi-experimental\""
+   ]
+  },
+  {
+   "cell": "I4xO7",
+   "event_class": "I4",
+   "outcome_domain": "O7",
+   "openalex": [
+    "(\"celebrity\" OR \"celebrities\" OR \"public figure\" OR \"royal wedding\" OR \"royal family\" OR \"scandal\" OR \"coming out\" OR \"pop star\" OR \"superstar\" OR \"star player\" OR \"high-profile death\" OR \"famous\") AND (\"test scores\" OR \"school attendance\" OR \"student achievement\" OR \"exam performance\" OR \"educational attainment\" OR \"college major\" OR \"school enrollment\" OR \"academic performance\") AND \"natural experiment\"",
+    "(\"celebrity\" OR \"celebrities\" OR \"public figure\" OR \"royal wedding\" OR \"royal family\" OR \"scandal\" OR \"coming out\" OR \"pop star\" OR \"superstar\" OR \"star player\" OR \"high-profile death\" OR \"famous\") AND (\"test scores\" OR \"school attendance\" OR \"student achievement\" OR \"exam performance\" OR \"educational attainment\" OR \"college major\" OR \"school enrollment\" OR \"academic performance\") AND \"quasi-experimental\""
+   ]
+  },
+  {
+   "cell": "I4xO8",
+   "event_class": "I4",
+   "outcome_domain": "O8",
+   "openalex": [
+    "(\"celebrity\" OR \"celebrities\" OR \"public figure\" OR \"royal wedding\" OR \"royal family\" OR \"scandal\" OR \"coming out\" OR \"pop star\" OR \"superstar\" OR \"star player\" OR \"high-profile death\" OR \"famous\") AND (\"baby names\" OR \"first names\" OR \"given names\" OR naming OR \"language use\" OR \"word use\" OR vocabulary OR dialect) AND \"natural experiment\"",
+    "(\"celebrity\" OR \"celebrities\" OR \"public figure\" OR \"royal wedding\" OR \"royal family\" OR \"scandal\" OR \"coming out\" OR \"pop star\" OR \"superstar\" OR \"star player\" OR \"high-profile death\" OR \"famous\") AND (\"baby names\" OR \"first names\" OR \"given names\" OR naming OR \"language use\" OR \"word use\" OR vocabulary OR dialect) AND \"quasi-experimental\""
+   ]
+  },
+  {
+   "cell": "I4xO9",
+   "event_class": "I4",
+   "outcome_domain": "O9",
+   "openalex": [
+    "(\"celebrity\" OR \"celebrities\" OR \"public figure\" OR \"royal wedding\" OR \"royal family\" OR \"scandal\" OR \"coming out\" OR \"pop star\" OR \"superstar\" OR \"star player\" OR \"high-profile death\" OR \"famous\") AND (productivity OR absenteeism OR \"sick leave\" OR \"labor supply\" OR \"work hours\" OR \"worker performance\" OR \"labor productivity\") AND \"natural experiment\"",
+    "(\"celebrity\" OR \"celebrities\" OR \"public figure\" OR \"royal wedding\" OR \"royal family\" OR \"scandal\" OR \"coming out\" OR \"pop star\" OR \"superstar\" OR \"star player\" OR \"high-profile death\" OR \"famous\") AND (productivity OR absenteeism OR \"sick leave\" OR \"labor supply\" OR \"work hours\" OR \"worker performance\" OR \"labor productivity\") AND \"quasi-experimental\""
+   ]
+  },
+  {
+   "cell": "I4xO10",
+   "event_class": "I4",
+   "outcome_domain": "O10",
+   "openalex": [
+    "(\"celebrity\" OR \"celebrities\" OR \"public figure\" OR \"royal wedding\" OR \"royal family\" OR \"scandal\" OR \"coming out\" OR \"pop star\" OR \"superstar\" OR \"star player\" OR \"high-profile death\" OR \"famous\") AND (\"consumer spending\" OR \"household spending\" OR sales OR purchases OR consumption OR expenditure OR demand) AND \"natural experiment\"",
+    "(\"celebrity\" OR \"celebrities\" OR \"public figure\" OR \"royal wedding\" OR \"royal family\" OR \"scandal\" OR \"coming out\" OR \"pop star\" OR \"superstar\" OR \"star player\" OR \"high-profile death\" OR \"famous\") AND (\"consumer spending\" OR \"household spending\" OR sales OR purchases OR consumption OR expenditure OR demand) AND \"quasi-experimental\""
+   ]
+  },
+  {
+   "cell": "I4xO11",
+   "event_class": "I4",
+   "outcome_domain": "O11",
+   "openalex": [
+    "(\"celebrity\" OR \"celebrities\" OR \"public figure\" OR \"royal wedding\" OR \"royal family\" OR \"scandal\" OR \"coming out\" OR \"pop star\" OR \"superstar\" OR \"star player\" OR \"high-profile death\" OR \"famous\") AND (\"blood donation\" OR \"blood donors\" OR \"organ donation\" OR \"organ donor\" OR volunteering OR \"charitable giving\" OR donations OR \"census response\" OR \"civic engagement\") AND \"natural experiment\"",
+    "(\"celebrity\" OR \"celebrities\" OR \"public figure\" OR \"royal wedding\" OR \"royal family\" OR \"scandal\" OR \"coming out\" OR \"pop star\" OR \"superstar\" OR \"star player\" OR \"high-profile death\" OR \"famous\") AND (\"blood donation\" OR \"blood donors\" OR \"organ donation\" OR \"organ donor\" OR volunteering OR \"charitable giving\" OR donations OR \"census response\" OR \"civic engagement\") AND \"quasi-experimental\""
+   ]
+  },
+  {
+   "cell": "I5xO1",
+   "event_class": "I5",
+   "outcome_domain": "O1",
+   "openalex": [
+    "(\"blackout\" OR \"power outage\" OR \"terrorist attack\" OR \"terror attack\" OR \"earthquake\" OR \"hurricane\" OR \"natural disaster\" OR \"solar eclipse\" OR \"internet outage\" OR \"mass shooting\" OR \"bombing\" OR \"tsunami\" OR \"wildfire\") AND (births OR \"birth rate\" OR fertility OR conceptions OR \"birth weight\" OR childbearing OR pregnancies) AND \"natural experiment\"",
+    "(\"blackout\" OR \"power outage\" OR \"terrorist attack\" OR \"terror attack\" OR \"earthquake\" OR \"hurricane\" OR \"natural disaster\" OR \"solar eclipse\" OR \"internet outage\" OR \"mass shooting\" OR \"bombing\" OR \"tsunami\" OR \"wildfire\") AND (births OR \"birth rate\" OR fertility OR conceptions OR \"birth weight\" OR childbearing OR pregnancies) AND \"difference-in-differences\""
+   ]
+  },
+  {
+   "cell": "I5xO2",
+   "event_class": "I5",
+   "outcome_domain": "O2",
+   "openalex": [
+    "(\"blackout\" OR \"power outage\" OR \"terrorist attack\" OR \"terror attack\" OR \"earthquake\" OR \"hurricane\" OR \"natural disaster\" OR \"solar eclipse\" OR \"internet outage\" OR \"mass shooting\" OR \"bombing\" OR \"tsunami\" OR \"wildfire\") AND (marriage OR marriages OR divorce OR divorces OR cohabitation OR \"family formation\") AND \"natural experiment\"",
+    "(\"blackout\" OR \"power outage\" OR \"terrorist attack\" OR \"terror attack\" OR \"earthquake\" OR \"hurricane\" OR \"natural disaster\" OR \"solar eclipse\" OR \"internet outage\" OR \"mass shooting\" OR \"bombing\" OR \"tsunami\" OR \"wildfire\") AND (marriage OR marriages OR divorce OR divorces OR cohabitation OR \"family formation\") AND \"difference-in-differences\""
+   ]
+  },
+  {
+   "cell": "I5xO3",
+   "event_class": "I5",
+   "outcome_domain": "O3",
+   "openalex": [
+    "(\"blackout\" OR \"power outage\" OR \"terrorist attack\" OR \"terror attack\" OR \"earthquake\" OR \"hurricane\" OR \"natural disaster\" OR \"solar eclipse\" OR \"internet outage\" OR \"mass shooting\" OR \"bombing\" OR \"tsunami\" OR \"wildfire\") AND (crime OR violence OR \"domestic violence\" OR \"intimate partner violence\" OR assault OR \"hate crime\" OR homicide OR arrests) AND \"natural experiment\"",
+    "(\"blackout\" OR \"power outage\" OR \"terrorist attack\" OR \"terror attack\" OR \"earthquake\" OR \"hurricane\" OR \"natural disaster\" OR \"solar eclipse\" OR \"internet outage\" OR \"mass shooting\" OR \"bombing\" OR \"tsunami\" OR \"wildfire\") AND (crime OR violence OR \"domestic violence\" OR \"intimate partner violence\" OR assault OR \"hate crime\" OR homicide OR arrests) AND \"difference-in-differences\""
+   ]
+  },
+  {
+   "cell": "I5xO4",
+   "event_class": "I5",
+   "outcome_domain": "O4",
+   "openalex": [
+    "(\"blackout\" OR \"power outage\" OR \"terrorist attack\" OR \"terror attack\" OR \"earthquake\" OR \"hurricane\" OR \"natural disaster\" OR \"solar eclipse\" OR \"internet outage\" OR \"mass shooting\" OR \"bombing\" OR \"tsunami\" OR \"wildfire\") AND (judges OR sentencing OR \"sentence length\" OR jury OR juries OR \"court decisions\" OR \"judicial decisions\" OR \"asylum decisions\" OR parole) AND \"natural experiment\"",
+    "(\"blackout\" OR \"power outage\" OR \"terrorist attack\" OR \"terror attack\" OR \"earthquake\" OR \"hurricane\" OR \"natural disaster\" OR \"solar eclipse\" OR \"internet outage\" OR \"mass shooting\" OR \"bombing\" OR \"tsunami\" OR \"wildfire\") AND (judges OR sentencing OR \"sentence length\" OR jury OR juries OR \"court decisions\" OR \"judicial decisions\" OR \"asylum decisions\" OR parole) AND \"difference-in-differences\""
+   ]
+  },
+  {
+   "cell": "I5xO5",
+   "event_class": "I5",
+   "outcome_domain": "O5",
+   "openalex": [
+    "(\"blackout\" OR \"power outage\" OR \"terrorist attack\" OR \"terror attack\" OR \"earthquake\" OR \"hurricane\" OR \"natural disaster\" OR \"solar eclipse\" OR \"internet outage\" OR \"mass shooting\" OR \"bombing\" OR \"tsunami\" OR \"wildfire\") AND (\"hospital admissions\" OR \"emergency department\" OR injuries OR mortality OR deaths OR \"myocardial infarction\" OR \"cardiovascular events\" OR hospitalizations) AND \"natural experiment\"",
+    "(\"blackout\" OR \"power outage\" OR \"terrorist attack\" OR \"terror attack\" OR \"earthquake\" OR \"hurricane\" OR \"natural disaster\" OR \"solar eclipse\" OR \"internet outage\" OR \"mass shooting\" OR \"bombing\" OR \"tsunami\" OR \"wildfire\") AND (\"hospital admissions\" OR \"emergency department\" OR injuries OR mortality OR deaths OR \"myocardial infarction\" OR \"cardiovascular events\" OR hospitalizations) AND \"difference-in-differences\""
+   ],
+   "pubmed": [
+    "(blackout[tiab] OR \"power outage\"[tiab] OR \"terrorist attack\"[tiab] OR \"terror attack\"[tiab] OR earthquake[tiab] OR hurricane[tiab] OR \"natural disaster\"[tiab] OR \"solar eclipse\"[tiab] OR \"internet outage\"[tiab] OR \"mass shooting\"[tiab] OR bombing[tiab] OR tsunami[tiab] OR wildfire[tiab]) AND (\"hospital admissions\"[tiab] OR \"emergency department\"[tiab] OR injuries[tiab] OR mortality[tiab] OR deaths[tiab] OR \"myocardial infarction\"[tiab] OR \"cardiovascular events\"[tiab] OR hospitalizations[tiab]) AND \"natural experiment\"[tiab]",
+    "(blackout[tiab] OR \"power outage\"[tiab] OR \"terrorist attack\"[tiab] OR \"terror attack\"[tiab] OR earthquake[tiab] OR hurricane[tiab] OR \"natural disaster\"[tiab] OR \"solar eclipse\"[tiab] OR \"internet outage\"[tiab] OR \"mass shooting\"[tiab] OR bombing[tiab] OR tsunami[tiab] OR wildfire[tiab]) AND (\"hospital admissions\"[tiab] OR \"emergency department\"[tiab] OR injuries[tiab] OR mortality[tiab] OR deaths[tiab] OR \"myocardial infarction\"[tiab] OR \"cardiovascular events\"[tiab] OR hospitalizations[tiab]) AND \"difference-in-differences\"[tiab]"
+   ]
+  },
+  {
+   "cell": "I5xO6",
+   "event_class": "I5",
+   "outcome_domain": "O6",
+   "openalex": [
+    "(\"blackout\" OR \"power outage\" OR \"terrorist attack\" OR \"terror attack\" OR \"earthquake\" OR \"hurricane\" OR \"natural disaster\" OR \"solar eclipse\" OR \"internet outage\" OR \"mass shooting\" OR \"bombing\" OR \"tsunami\" OR \"wildfire\") AND (\"traffic accidents\" OR \"car crashes\" OR \"traffic crashes\" OR \"road accidents\" OR \"traffic fatalities\" OR \"motor vehicle crashes\" OR \"fatal crashes\" OR \"road traffic\") AND \"natural experiment\"",
+    "(\"blackout\" OR \"power outage\" OR \"terrorist attack\" OR \"terror attack\" OR \"earthquake\" OR \"hurricane\" OR \"natural disaster\" OR \"solar eclipse\" OR \"internet outage\" OR \"mass shooting\" OR \"bombing\" OR \"tsunami\" OR \"wildfire\") AND (\"traffic accidents\" OR \"car crashes\" OR \"traffic crashes\" OR \"road accidents\" OR \"traffic fatalities\" OR \"motor vehicle crashes\" OR \"fatal crashes\" OR \"road traffic\") AND \"difference-in-differences\""
+   ]
+  },
+  {
+   "cell": "I5xO7",
+   "event_class": "I5",
+   "outcome_domain": "O7",
+   "openalex": [
+    "(\"blackout\" OR \"power outage\" OR \"terrorist attack\" OR \"terror attack\" OR \"earthquake\" OR \"hurricane\" OR \"natural disaster\" OR \"solar eclipse\" OR \"internet outage\" OR \"mass shooting\" OR \"bombing\" OR \"tsunami\" OR \"wildfire\") AND (\"test scores\" OR \"school attendance\" OR \"student achievement\" OR \"exam performance\" OR \"educational attainment\" OR \"college major\" OR \"school enrollment\" OR \"academic performance\") AND \"natural experiment\"",
+    "(\"blackout\" OR \"power outage\" OR \"terrorist attack\" OR \"terror attack\" OR \"earthquake\" OR \"hurricane\" OR \"natural disaster\" OR \"solar eclipse\" OR \"internet outage\" OR \"mass shooting\" OR \"bombing\" OR \"tsunami\" OR \"wildfire\") AND (\"test scores\" OR \"school attendance\" OR \"student achievement\" OR \"exam performance\" OR \"educational attainment\" OR \"college major\" OR \"school enrollment\" OR \"academic performance\") AND \"difference-in-differences\""
+   ]
+  },
+  {
+   "cell": "I5xO8",
+   "event_class": "I5",
+   "outcome_domain": "O8",
+   "openalex": [
+    "(\"blackout\" OR \"power outage\" OR \"terrorist attack\" OR \"terror attack\" OR \"earthquake\" OR \"hurricane\" OR \"natural disaster\" OR \"solar eclipse\" OR \"internet outage\" OR \"mass shooting\" OR \"bombing\" OR \"tsunami\" OR \"wildfire\") AND (\"baby names\" OR \"first names\" OR \"given names\" OR naming OR \"language use\" OR \"word use\" OR vocabulary OR dialect) AND \"natural experiment\"",
+    "(\"blackout\" OR \"power outage\" OR \"terrorist attack\" OR \"terror attack\" OR \"earthquake\" OR \"hurricane\" OR \"natural disaster\" OR \"solar eclipse\" OR \"internet outage\" OR \"mass shooting\" OR \"bombing\" OR \"tsunami\" OR \"wildfire\") AND (\"baby names\" OR \"first names\" OR \"given names\" OR naming OR \"language use\" OR \"word use\" OR vocabulary OR dialect) AND \"difference-in-differences\""
+   ]
+  },
+  {
+   "cell": "I5xO9",
+   "event_class": "I5",
+   "outcome_domain": "O9",
+   "openalex": [
+    "(\"blackout\" OR \"power outage\" OR \"terrorist attack\" OR \"terror attack\" OR \"earthquake\" OR \"hurricane\" OR \"natural disaster\" OR \"solar eclipse\" OR \"internet outage\" OR \"mass shooting\" OR \"bombing\" OR \"tsunami\" OR \"wildfire\") AND (productivity OR absenteeism OR \"sick leave\" OR \"labor supply\" OR \"work hours\" OR \"worker performance\" OR \"labor productivity\") AND \"natural experiment\"",
+    "(\"blackout\" OR \"power outage\" OR \"terrorist attack\" OR \"terror attack\" OR \"earthquake\" OR \"hurricane\" OR \"natural disaster\" OR \"solar eclipse\" OR \"internet outage\" OR \"mass shooting\" OR \"bombing\" OR \"tsunami\" OR \"wildfire\") AND (productivity OR absenteeism OR \"sick leave\" OR \"labor supply\" OR \"work hours\" OR \"worker performance\" OR \"labor productivity\") AND \"difference-in-differences\""
+   ]
+  },
+  {
+   "cell": "I5xO10",
+   "event_class": "I5",
+   "outcome_domain": "O10",
+   "openalex": [
+    "(\"blackout\" OR \"power outage\" OR \"terrorist attack\" OR \"terror attack\" OR \"earthquake\" OR \"hurricane\" OR \"natural disaster\" OR \"solar eclipse\" OR \"internet outage\" OR \"mass shooting\" OR \"bombing\" OR \"tsunami\" OR \"wildfire\") AND (\"consumer spending\" OR \"household spending\" OR sales OR purchases OR consumption OR expenditure OR demand) AND \"natural experiment\"",
+    "(\"blackout\" OR \"power outage\" OR \"terrorist attack\" OR \"terror attack\" OR \"earthquake\" OR \"hurricane\" OR \"natural disaster\" OR \"solar eclipse\" OR \"internet outage\" OR \"mass shooting\" OR \"bombing\" OR \"tsunami\" OR \"wildfire\") AND (\"consumer spending\" OR \"household spending\" OR sales OR purchases OR consumption OR expenditure OR demand) AND \"difference-in-differences\""
+   ]
+  },
+  {
+   "cell": "I5xO11",
+   "event_class": "I5",
+   "outcome_domain": "O11",
+   "openalex": [
+    "(\"blackout\" OR \"power outage\" OR \"terrorist attack\" OR \"terror attack\" OR \"earthquake\" OR \"hurricane\" OR \"natural disaster\" OR \"solar eclipse\" OR \"internet outage\" OR \"mass shooting\" OR \"bombing\" OR \"tsunami\" OR \"wildfire\") AND (\"blood donation\" OR \"blood donors\" OR \"organ donation\" OR \"organ donor\" OR volunteering OR \"charitable giving\" OR donations OR \"census response\" OR \"civic engagement\") AND \"natural experiment\"",
+    "(\"blackout\" OR \"power outage\" OR \"terrorist attack\" OR \"terror attack\" OR \"earthquake\" OR \"hurricane\" OR \"natural disaster\" OR \"solar eclipse\" OR \"internet outage\" OR \"mass shooting\" OR \"bombing\" OR \"tsunami\" OR \"wildfire\") AND (\"blood donation\" OR \"blood donors\" OR \"organ donation\" OR \"organ donor\" OR volunteering OR \"charitable giving\" OR donations OR \"census response\" OR \"civic engagement\") AND \"difference-in-differences\""
+   ]
+  },
+  {
+   "cell": "I6xO1",
+   "event_class": "I6",
+   "outcome_domain": "O1",
+   "openalex": [
+    "(\"smartphone\" OR \"iPhone\" OR \"mobile app\" OR \"app launch\" OR \"Pokemon Go\" OR \"Pokémon GO\" OR \"video game launch\" OR \"Uber\" OR \"ride-sharing\" OR \"ride-hailing\" OR \"Facebook\" OR \"Twitter\" OR \"Craigslist\" OR \"dating app\" OR \"online dating\" OR \"product launch\") AND (births OR \"birth rate\" OR fertility OR conceptions OR \"birth weight\" OR childbearing OR pregnancies) AND \"natural experiment\"",
+    "(\"smartphone\" OR \"iPhone\" OR \"mobile app\" OR \"app launch\" OR \"Pokemon Go\" OR \"Pokémon GO\" OR \"video game launch\" OR \"Uber\" OR \"ride-sharing\" OR \"ride-hailing\" OR \"Facebook\" OR \"Twitter\" OR \"Craigslist\" OR \"dating app\" OR \"online dating\" OR \"product launch\") AND (births OR \"birth rate\" OR fertility OR conceptions OR \"birth weight\" OR childbearing OR pregnancies) AND \"difference-in-differences\""
+   ]
+  },
+  {
+   "cell": "I6xO2",
+   "event_class": "I6",
+   "outcome_domain": "O2",
+   "openalex": [
+    "(\"smartphone\" OR \"iPhone\" OR \"mobile app\" OR \"app launch\" OR \"Pokemon Go\" OR \"Pokémon GO\" OR \"video game launch\" OR \"Uber\" OR \"ride-sharing\" OR \"ride-hailing\" OR \"Facebook\" OR \"Twitter\" OR \"Craigslist\" OR \"dating app\" OR \"online dating\" OR \"product launch\") AND (marriage OR marriages OR divorce OR divorces OR cohabitation OR \"family formation\") AND \"natural experiment\"",
+    "(\"smartphone\" OR \"iPhone\" OR \"mobile app\" OR \"app launch\" OR \"Pokemon Go\" OR \"Pokémon GO\" OR \"video game launch\" OR \"Uber\" OR \"ride-sharing\" OR \"ride-hailing\" OR \"Facebook\" OR \"Twitter\" OR \"Craigslist\" OR \"dating app\" OR \"online dating\" OR \"product launch\") AND (marriage OR marriages OR divorce OR divorces OR cohabitation OR \"family formation\") AND \"difference-in-differences\""
+   ]
+  },
+  {
+   "cell": "I6xO3",
+   "event_class": "I6",
+   "outcome_domain": "O3",
+   "openalex": [
+    "(\"smartphone\" OR \"iPhone\" OR \"mobile app\" OR \"app launch\" OR \"Pokemon Go\" OR \"Pokémon GO\" OR \"video game launch\" OR \"Uber\" OR \"ride-sharing\" OR \"ride-hailing\" OR \"Facebook\" OR \"Twitter\" OR \"Craigslist\" OR \"dating app\" OR \"online dating\" OR \"product launch\") AND (crime OR violence OR \"domestic violence\" OR \"intimate partner violence\" OR assault OR \"hate crime\" OR homicide OR arrests) AND \"natural experiment\"",
+    "(\"smartphone\" OR \"iPhone\" OR \"mobile app\" OR \"app launch\" OR \"Pokemon Go\" OR \"Pokémon GO\" OR \"video game launch\" OR \"Uber\" OR \"ride-sharing\" OR \"ride-hailing\" OR \"Facebook\" OR \"Twitter\" OR \"Craigslist\" OR \"dating app\" OR \"online dating\" OR \"product launch\") AND (crime OR violence OR \"domestic violence\" OR \"intimate partner violence\" OR assault OR \"hate crime\" OR homicide OR arrests) AND \"difference-in-differences\""
+   ]
+  },
+  {
+   "cell": "I6xO4",
+   "event_class": "I6",
+   "outcome_domain": "O4",
+   "openalex": [
+    "(\"smartphone\" OR \"iPhone\" OR \"mobile app\" OR \"app launch\" OR \"Pokemon Go\" OR \"Pokémon GO\" OR \"video game launch\" OR \"Uber\" OR \"ride-sharing\" OR \"ride-hailing\" OR \"Facebook\" OR \"Twitter\" OR \"Craigslist\" OR \"dating app\" OR \"online dating\" OR \"product launch\") AND (judges OR sentencing OR \"sentence length\" OR jury OR juries OR \"court decisions\" OR \"judicial decisions\" OR \"asylum decisions\" OR parole) AND \"natural experiment\"",
+    "(\"smartphone\" OR \"iPhone\" OR \"mobile app\" OR \"app launch\" OR \"Pokemon Go\" OR \"Pokémon GO\" OR \"video game launch\" OR \"Uber\" OR \"ride-sharing\" OR \"ride-hailing\" OR \"Facebook\" OR \"Twitter\" OR \"Craigslist\" OR \"dating app\" OR \"online dating\" OR \"product launch\") AND (judges OR sentencing OR \"sentence length\" OR jury OR juries OR \"court decisions\" OR \"judicial decisions\" OR \"asylum decisions\" OR parole) AND \"difference-in-differences\""
+   ]
+  },
+  {
+   "cell": "I6xO5",
+   "event_class": "I6",
+   "outcome_domain": "O5",
+   "openalex": [
+    "(\"smartphone\" OR \"iPhone\" OR \"mobile app\" OR \"app launch\" OR \"Pokemon Go\" OR \"Pokémon GO\" OR \"video game launch\" OR \"Uber\" OR \"ride-sharing\" OR \"ride-hailing\" OR \"Facebook\" OR \"Twitter\" OR \"Craigslist\" OR \"dating app\" OR \"online dating\" OR \"product launch\") AND (\"hospital admissions\" OR \"emergency department\" OR injuries OR mortality OR deaths OR \"myocardial infarction\" OR \"cardiovascular events\" OR hospitalizations) AND \"natural experiment\"",
+    "(\"smartphone\" OR \"iPhone\" OR \"mobile app\" OR \"app launch\" OR \"Pokemon Go\" OR \"Pokémon GO\" OR \"video game launch\" OR \"Uber\" OR \"ride-sharing\" OR \"ride-hailing\" OR \"Facebook\" OR \"Twitter\" OR \"Craigslist\" OR \"dating app\" OR \"online dating\" OR \"product launch\") AND (\"hospital admissions\" OR \"emergency department\" OR injuries OR mortality OR deaths OR \"myocardial infarction\" OR \"cardiovascular events\" OR hospitalizations) AND \"difference-in-differences\""
+   ],
+   "pubmed": [
+    "(smartphone[tiab] OR iPhone[tiab] OR \"mobile app\"[tiab] OR \"app launch\"[tiab] OR \"Pokemon Go\"[tiab] OR \"Pokémon GO\"[tiab] OR \"video game launch\"[tiab] OR Uber[tiab] OR \"ride-sharing\"[tiab] OR \"ride-hailing\"[tiab] OR Facebook[tiab] OR Twitter[tiab] OR Craigslist[tiab] OR \"dating app\"[tiab] OR \"online dating\"[tiab] OR \"product launch\"[tiab]) AND (\"hospital admissions\"[tiab] OR \"emergency department\"[tiab] OR injuries[tiab] OR mortality[tiab] OR deaths[tiab] OR \"myocardial infarction\"[tiab] OR \"cardiovascular events\"[tiab] OR hospitalizations[tiab]) AND \"natural experiment\"[tiab]",
+    "(smartphone[tiab] OR iPhone[tiab] OR \"mobile app\"[tiab] OR \"app launch\"[tiab] OR \"Pokemon Go\"[tiab] OR \"Pokémon GO\"[tiab] OR \"video game launch\"[tiab] OR Uber[tiab] OR \"ride-sharing\"[tiab] OR \"ride-hailing\"[tiab] OR Facebook[tiab] OR Twitter[tiab] OR Craigslist[tiab] OR \"dating app\"[tiab] OR \"online dating\"[tiab] OR \"product launch\"[tiab]) AND (\"hospital admissions\"[tiab] OR \"emergency department\"[tiab] OR injuries[tiab] OR mortality[tiab] OR deaths[tiab] OR \"myocardial infarction\"[tiab] OR \"cardiovascular events\"[tiab] OR hospitalizations[tiab]) AND \"difference-in-differences\"[tiab]"
+   ]
+  },
+  {
+   "cell": "I6xO6",
+   "event_class": "I6",
+   "outcome_domain": "O6",
+   "openalex": [
+    "(\"smartphone\" OR \"iPhone\" OR \"mobile app\" OR \"app launch\" OR \"Pokemon Go\" OR \"Pokémon GO\" OR \"video game launch\" OR \"Uber\" OR \"ride-sharing\" OR \"ride-hailing\" OR \"Facebook\" OR \"Twitter\" OR \"Craigslist\" OR \"dating app\" OR \"online dating\" OR \"product launch\") AND (\"traffic accidents\" OR \"car crashes\" OR \"traffic crashes\" OR \"road accidents\" OR \"traffic fatalities\" OR \"motor vehicle crashes\" OR \"fatal crashes\" OR \"road traffic\") AND \"natural experiment\"",
+    "(\"smartphone\" OR \"iPhone\" OR \"mobile app\" OR \"app launch\" OR \"Pokemon Go\" OR \"Pokémon GO\" OR \"video game launch\" OR \"Uber\" OR \"ride-sharing\" OR \"ride-hailing\" OR \"Facebook\" OR \"Twitter\" OR \"Craigslist\" OR \"dating app\" OR \"online dating\" OR \"product launch\") AND (\"traffic accidents\" OR \"car crashes\" OR \"traffic crashes\" OR \"road accidents\" OR \"traffic fatalities\" OR \"motor vehicle crashes\" OR \"fatal crashes\" OR \"road traffic\") AND \"difference-in-differences\""
+   ]
+  },
+  {
+   "cell": "I6xO7",
+   "event_class": "I6",
+   "outcome_domain": "O7",
+   "openalex": [
+    "(\"smartphone\" OR \"iPhone\" OR \"mobile app\" OR \"app launch\" OR \"Pokemon Go\" OR \"Pokémon GO\" OR \"video game launch\" OR \"Uber\" OR \"ride-sharing\" OR \"ride-hailing\" OR \"Facebook\" OR \"Twitter\" OR \"Craigslist\" OR \"dating app\" OR \"online dating\" OR \"product launch\") AND (\"test scores\" OR \"school attendance\" OR \"student achievement\" OR \"exam performance\" OR \"educational attainment\" OR \"college major\" OR \"school enrollment\" OR \"academic performance\") AND \"natural experiment\"",
+    "(\"smartphone\" OR \"iPhone\" OR \"mobile app\" OR \"app launch\" OR \"Pokemon Go\" OR \"Pokémon GO\" OR \"video game launch\" OR \"Uber\" OR \"ride-sharing\" OR \"ride-hailing\" OR \"Facebook\" OR \"Twitter\" OR \"Craigslist\" OR \"dating app\" OR \"online dating\" OR \"product launch\") AND (\"test scores\" OR \"school attendance\" OR \"student achievement\" OR \"exam performance\" OR \"educational attainment\" OR \"college major\" OR \"school enrollment\" OR \"academic performance\") AND \"difference-in-differences\""
+   ]
+  },
+  {
+   "cell": "I6xO8",
+   "event_class": "I6",
+   "outcome_domain": "O8",
+   "openalex": [
+    "(\"smartphone\" OR \"iPhone\" OR \"mobile app\" OR \"app launch\" OR \"Pokemon Go\" OR \"Pokémon GO\" OR \"video game launch\" OR \"Uber\" OR \"ride-sharing\" OR \"ride-hailing\" OR \"Facebook\" OR \"Twitter\" OR \"Craigslist\" OR \"dating app\" OR \"online dating\" OR \"product launch\") AND (\"baby names\" OR \"first names\" OR \"given names\" OR naming OR \"language use\" OR \"word use\" OR vocabulary OR dialect) AND \"natural experiment\"",
+    "(\"smartphone\" OR \"iPhone\" OR \"mobile app\" OR \"app launch\" OR \"Pokemon Go\" OR \"Pokémon GO\" OR \"video game launch\" OR \"Uber\" OR \"ride-sharing\" OR \"ride-hailing\" OR \"Facebook\" OR \"Twitter\" OR \"Craigslist\" OR \"dating app\" OR \"online dating\" OR \"product launch\") AND (\"baby names\" OR \"first names\" OR \"given names\" OR naming OR \"language use\" OR \"word use\" OR vocabulary OR dialect) AND \"difference-in-differences\""
+   ]
+  },
+  {
+   "cell": "I6xO9",
+   "event_class": "I6",
+   "outcome_domain": "O9",
+   "openalex": [
+    "(\"smartphone\" OR \"iPhone\" OR \"mobile app\" OR \"app launch\" OR \"Pokemon Go\" OR \"Pokémon GO\" OR \"video game launch\" OR \"Uber\" OR \"ride-sharing\" OR \"ride-hailing\" OR \"Facebook\" OR \"Twitter\" OR \"Craigslist\" OR \"dating app\" OR \"online dating\" OR \"product launch\") AND (productivity OR absenteeism OR \"sick leave\" OR \"labor supply\" OR \"work hours\" OR \"worker performance\" OR \"labor productivity\") AND \"natural experiment\"",
+    "(\"smartphone\" OR \"iPhone\" OR \"mobile app\" OR \"app launch\" OR \"Pokemon Go\" OR \"Pokémon GO\" OR \"video game launch\" OR \"Uber\" OR \"ride-sharing\" OR \"ride-hailing\" OR \"Facebook\" OR \"Twitter\" OR \"Craigslist\" OR \"dating app\" OR \"online dating\" OR \"product launch\") AND (productivity OR absenteeism OR \"sick leave\" OR \"labor supply\" OR \"work hours\" OR \"worker performance\" OR \"labor productivity\") AND \"difference-in-differences\""
+   ]
+  },
+  {
+   "cell": "I6xO10",
+   "event_class": "I6",
+   "outcome_domain": "O10",
+   "openalex": [
+    "(\"smartphone\" OR \"iPhone\" OR \"mobile app\" OR \"app launch\" OR \"Pokemon Go\" OR \"Pokémon GO\" OR \"video game launch\" OR \"Uber\" OR \"ride-sharing\" OR \"ride-hailing\" OR \"Facebook\" OR \"Twitter\" OR \"Craigslist\" OR \"dating app\" OR \"online dating\" OR \"product launch\") AND (\"consumer spending\" OR \"household spending\" OR sales OR purchases OR consumption OR expenditure OR demand) AND \"natural experiment\"",
+    "(\"smartphone\" OR \"iPhone\" OR \"mobile app\" OR \"app launch\" OR \"Pokemon Go\" OR \"Pokémon GO\" OR \"video game launch\" OR \"Uber\" OR \"ride-sharing\" OR \"ride-hailing\" OR \"Facebook\" OR \"Twitter\" OR \"Craigslist\" OR \"dating app\" OR \"online dating\" OR \"product launch\") AND (\"consumer spending\" OR \"household spending\" OR sales OR purchases OR consumption OR expenditure OR demand) AND \"difference-in-differences\""
+   ]
+  },
+  {
+   "cell": "I6xO11",
+   "event_class": "I6",
+   "outcome_domain": "O11",
+   "openalex": [
+    "(\"smartphone\" OR \"iPhone\" OR \"mobile app\" OR \"app launch\" OR \"Pokemon Go\" OR \"Pokémon GO\" OR \"video game launch\" OR \"Uber\" OR \"ride-sharing\" OR \"ride-hailing\" OR \"Facebook\" OR \"Twitter\" OR \"Craigslist\" OR \"dating app\" OR \"online dating\" OR \"product launch\") AND (\"blood donation\" OR \"blood donors\" OR \"organ donation\" OR \"organ donor\" OR volunteering OR \"charitable giving\" OR donations OR \"census response\" OR \"civic engagement\") AND \"natural experiment\"",
+    "(\"smartphone\" OR \"iPhone\" OR \"mobile app\" OR \"app launch\" OR \"Pokemon Go\" OR \"Pokémon GO\" OR \"video game launch\" OR \"Uber\" OR \"ride-sharing\" OR \"ride-hailing\" OR \"Facebook\" OR \"Twitter\" OR \"Craigslist\" OR \"dating app\" OR \"online dating\" OR \"product launch\") AND (\"blood donation\" OR \"blood donors\" OR \"organ donation\" OR \"organ donor\" OR volunteering OR \"charitable giving\" OR donations OR \"census response\" OR \"civic engagement\") AND \"difference-in-differences\""
+   ]
+  },
+  {
+   "cell": "I7xO1",
+   "event_class": "I7",
+   "outcome_domain": "O1",
+   "openalex": [
+    "(\"daylight saving time\" OR \"daylight saving\" OR \"daylight savings\" OR \"time zone\" OR \"time-zone\" OR \"clock change\" OR \"clock shift\" OR \"International Date Line\" OR \"calendar reform\") AND (births OR \"birth rate\" OR fertility OR conceptions OR \"birth weight\" OR childbearing OR pregnancies) AND \"natural experiment\"",
+    "(\"daylight saving time\" OR \"daylight saving\" OR \"daylight savings\" OR \"time zone\" OR \"time-zone\" OR \"clock change\" OR \"clock shift\" OR \"International Date Line\" OR \"calendar reform\") AND (births OR \"birth rate\" OR fertility OR conceptions OR \"birth weight\" OR childbearing OR pregnancies) AND \"regression discontinuity\""
+   ]
+  },
+  {
+   "cell": "I7xO2",
+   "event_class": "I7",
+   "outcome_domain": "O2",
+   "openalex": [
+    "(\"daylight saving time\" OR \"daylight saving\" OR \"daylight savings\" OR \"time zone\" OR \"time-zone\" OR \"clock change\" OR \"clock shift\" OR \"International Date Line\" OR \"calendar reform\") AND (marriage OR marriages OR divorce OR divorces OR cohabitation OR \"family formation\") AND \"natural experiment\"",
+    "(\"daylight saving time\" OR \"daylight saving\" OR \"daylight savings\" OR \"time zone\" OR \"time-zone\" OR \"clock change\" OR \"clock shift\" OR \"International Date Line\" OR \"calendar reform\") AND (marriage OR marriages OR divorce OR divorces OR cohabitation OR \"family formation\") AND \"regression discontinuity\""
+   ]
+  },
+  {
+   "cell": "I7xO3",
+   "event_class": "I7",
+   "outcome_domain": "O3",
+   "openalex": [
+    "(\"daylight saving time\" OR \"daylight saving\" OR \"daylight savings\" OR \"time zone\" OR \"time-zone\" OR \"clock change\" OR \"clock shift\" OR \"International Date Line\" OR \"calendar reform\") AND (crime OR violence OR \"domestic violence\" OR \"intimate partner violence\" OR assault OR \"hate crime\" OR homicide OR arrests) AND \"natural experiment\"",
+    "(\"daylight saving time\" OR \"daylight saving\" OR \"daylight savings\" OR \"time zone\" OR \"time-zone\" OR \"clock change\" OR \"clock shift\" OR \"International Date Line\" OR \"calendar reform\") AND (crime OR violence OR \"domestic violence\" OR \"intimate partner violence\" OR assault OR \"hate crime\" OR homicide OR arrests) AND \"regression discontinuity\""
+   ]
+  },
+  {
+   "cell": "I7xO4",
+   "event_class": "I7",
+   "outcome_domain": "O4",
+   "openalex": [
+    "(\"daylight saving time\" OR \"daylight saving\" OR \"daylight savings\" OR \"time zone\" OR \"time-zone\" OR \"clock change\" OR \"clock shift\" OR \"International Date Line\" OR \"calendar reform\") AND (judges OR sentencing OR \"sentence length\" OR jury OR juries OR \"court decisions\" OR \"judicial decisions\" OR \"asylum decisions\" OR parole) AND \"natural experiment\"",
+    "(\"daylight saving time\" OR \"daylight saving\" OR \"daylight savings\" OR \"time zone\" OR \"time-zone\" OR \"clock change\" OR \"clock shift\" OR \"International Date Line\" OR \"calendar reform\") AND (judges OR sentencing OR \"sentence length\" OR jury OR juries OR \"court decisions\" OR \"judicial decisions\" OR \"asylum decisions\" OR parole) AND \"regression discontinuity\""
+   ]
+  },
+  {
+   "cell": "I7xO5",
+   "event_class": "I7",
+   "outcome_domain": "O5",
+   "openalex": [
+    "(\"daylight saving time\" OR \"daylight saving\" OR \"daylight savings\" OR \"time zone\" OR \"time-zone\" OR \"clock change\" OR \"clock shift\" OR \"International Date Line\" OR \"calendar reform\") AND (\"hospital admissions\" OR \"emergency department\" OR injuries OR mortality OR deaths OR \"myocardial infarction\" OR \"cardiovascular events\" OR hospitalizations) AND \"natural experiment\"",
+    "(\"daylight saving time\" OR \"daylight saving\" OR \"daylight savings\" OR \"time zone\" OR \"time-zone\" OR \"clock change\" OR \"clock shift\" OR \"International Date Line\" OR \"calendar reform\") AND (\"hospital admissions\" OR \"emergency department\" OR injuries OR mortality OR deaths OR \"myocardial infarction\" OR \"cardiovascular events\" OR hospitalizations) AND \"regression discontinuity\""
+   ],
+   "pubmed": [
+    "(\"daylight saving time\"[tiab] OR \"daylight saving\"[tiab] OR \"daylight savings\"[tiab] OR \"time zone\"[tiab] OR \"time-zone\"[tiab] OR \"clock change\"[tiab] OR \"clock shift\"[tiab] OR \"International Date Line\"[tiab] OR \"calendar reform\"[tiab]) AND (\"hospital admissions\"[tiab] OR \"emergency department\"[tiab] OR injuries[tiab] OR mortality[tiab] OR deaths[tiab] OR \"myocardial infarction\"[tiab] OR \"cardiovascular events\"[tiab] OR hospitalizations[tiab]) AND \"natural experiment\"[tiab]",
+    "(\"daylight saving time\"[tiab] OR \"daylight saving\"[tiab] OR \"daylight savings\"[tiab] OR \"time zone\"[tiab] OR \"time-zone\"[tiab] OR \"clock change\"[tiab] OR \"clock shift\"[tiab] OR \"International Date Line\"[tiab] OR \"calendar reform\"[tiab]) AND (\"hospital admissions\"[tiab] OR \"emergency department\"[tiab] OR injuries[tiab] OR mortality[tiab] OR deaths[tiab] OR \"myocardial infarction\"[tiab] OR \"cardiovascular events\"[tiab] OR hospitalizations[tiab]) AND \"regression discontinuity\"[tiab]"
+   ]
+  },
+  {
+   "cell": "I7xO6",
+   "event_class": "I7",
+   "outcome_domain": "O6",
+   "openalex": [
+    "(\"daylight saving time\" OR \"daylight saving\" OR \"daylight savings\" OR \"time zone\" OR \"time-zone\" OR \"clock change\" OR \"clock shift\" OR \"International Date Line\" OR \"calendar reform\") AND (\"traffic accidents\" OR \"car crashes\" OR \"traffic crashes\" OR \"road accidents\" OR \"traffic fatalities\" OR \"motor vehicle crashes\" OR \"fatal crashes\" OR \"road traffic\") AND \"natural experiment\"",
+    "(\"daylight saving time\" OR \"daylight saving\" OR \"daylight savings\" OR \"time zone\" OR \"time-zone\" OR \"clock change\" OR \"clock shift\" OR \"International Date Line\" OR \"calendar reform\") AND (\"traffic accidents\" OR \"car crashes\" OR \"traffic crashes\" OR \"road accidents\" OR \"traffic fatalities\" OR \"motor vehicle crashes\" OR \"fatal crashes\" OR \"road traffic\") AND \"regression discontinuity\""
+   ]
+  },
+  {
+   "cell": "I7xO7",
+   "event_class": "I7",
+   "outcome_domain": "O7",
+   "openalex": [
+    "(\"daylight saving time\" OR \"daylight saving\" OR \"daylight savings\" OR \"time zone\" OR \"time-zone\" OR \"clock change\" OR \"clock shift\" OR \"International Date Line\" OR \"calendar reform\") AND (\"test scores\" OR \"school attendance\" OR \"student achievement\" OR \"exam performance\" OR \"educational attainment\" OR \"college major\" OR \"school enrollment\" OR \"academic performance\") AND \"natural experiment\"",
+    "(\"daylight saving time\" OR \"daylight saving\" OR \"daylight savings\" OR \"time zone\" OR \"time-zone\" OR \"clock change\" OR \"clock shift\" OR \"International Date Line\" OR \"calendar reform\") AND (\"test scores\" OR \"school attendance\" OR \"student achievement\" OR \"exam performance\" OR \"educational attainment\" OR \"college major\" OR \"school enrollment\" OR \"academic performance\") AND \"regression discontinuity\""
+   ]
+  },
+  {
+   "cell": "I7xO8",
+   "event_class": "I7",
+   "outcome_domain": "O8",
+   "openalex": [
+    "(\"daylight saving time\" OR \"daylight saving\" OR \"daylight savings\" OR \"time zone\" OR \"time-zone\" OR \"clock change\" OR \"clock shift\" OR \"International Date Line\" OR \"calendar reform\") AND (\"baby names\" OR \"first names\" OR \"given names\" OR naming OR \"language use\" OR \"word use\" OR vocabulary OR dialect) AND \"natural experiment\"",
+    "(\"daylight saving time\" OR \"daylight saving\" OR \"daylight savings\" OR \"time zone\" OR \"time-zone\" OR \"clock change\" OR \"clock shift\" OR \"International Date Line\" OR \"calendar reform\") AND (\"baby names\" OR \"first names\" OR \"given names\" OR naming OR \"language use\" OR \"word use\" OR vocabulary OR dialect) AND \"regression discontinuity\""
+   ]
+  },
+  {
+   "cell": "I7xO9",
+   "event_class": "I7",
+   "outcome_domain": "O9",
+   "openalex": [
+    "(\"daylight saving time\" OR \"daylight saving\" OR \"daylight savings\" OR \"time zone\" OR \"time-zone\" OR \"clock change\" OR \"clock shift\" OR \"International Date Line\" OR \"calendar reform\") AND (productivity OR absenteeism OR \"sick leave\" OR \"labor supply\" OR \"work hours\" OR \"worker performance\" OR \"labor productivity\") AND \"natural experiment\"",
+    "(\"daylight saving time\" OR \"daylight saving\" OR \"daylight savings\" OR \"time zone\" OR \"time-zone\" OR \"clock change\" OR \"clock shift\" OR \"International Date Line\" OR \"calendar reform\") AND (productivity OR absenteeism OR \"sick leave\" OR \"labor supply\" OR \"work hours\" OR \"worker performance\" OR \"labor productivity\") AND \"regression discontinuity\""
+   ]
+  },
+  {
+   "cell": "I7xO10",
+   "event_class": "I7",
+   "outcome_domain": "O10",
+   "openalex": [
+    "(\"daylight saving time\" OR \"daylight saving\" OR \"daylight savings\" OR \"time zone\" OR \"time-zone\" OR \"clock change\" OR \"clock shift\" OR \"International Date Line\" OR \"calendar reform\") AND (\"consumer spending\" OR \"household spending\" OR sales OR purchases OR consumption OR expenditure OR demand) AND \"natural experiment\"",
+    "(\"daylight saving time\" OR \"daylight saving\" OR \"daylight savings\" OR \"time zone\" OR \"time-zone\" OR \"clock change\" OR \"clock shift\" OR \"International Date Line\" OR \"calendar reform\") AND (\"consumer spending\" OR \"household spending\" OR sales OR purchases OR consumption OR expenditure OR demand) AND \"regression discontinuity\""
+   ]
+  },
+  {
+   "cell": "I7xO11",
+   "event_class": "I7",
+   "outcome_domain": "O11",
+   "openalex": [
+    "(\"daylight saving time\" OR \"daylight saving\" OR \"daylight savings\" OR \"time zone\" OR \"time-zone\" OR \"clock change\" OR \"clock shift\" OR \"International Date Line\" OR \"calendar reform\") AND (\"blood donation\" OR \"blood donors\" OR \"organ donation\" OR \"organ donor\" OR volunteering OR \"charitable giving\" OR donations OR \"census response\" OR \"civic engagement\") AND \"natural experiment\"",
+    "(\"daylight saving time\" OR \"daylight saving\" OR \"daylight savings\" OR \"time zone\" OR \"time-zone\" OR \"clock change\" OR \"clock shift\" OR \"International Date Line\" OR \"calendar reform\") AND (\"blood donation\" OR \"blood donors\" OR \"organ donation\" OR \"organ donor\" OR volunteering OR \"charitable giving\" OR donations OR \"census response\" OR \"civic engagement\") AND \"regression discontinuity\""
+   ]
+  },
+  {
+   "cell": "I8xO1",
+   "event_class": "I8",
+   "outcome_domain": "O1",
+   "openalex": [
+    "(\"viral video\" OR \"went viral\" OR \"viral post\" OR \"internet meme\" OR \"meme\" OR \"online challenge\" OR \"social media challenge\" OR \"Ice Bucket Challenge\" OR \"TikTok\" OR \"MeToo\" OR \"hashtag\") AND (births OR \"birth rate\" OR fertility OR conceptions OR \"birth weight\" OR childbearing OR pregnancies) AND \"natural experiment\"",
+    "(\"viral video\" OR \"went viral\" OR \"viral post\" OR \"internet meme\" OR \"meme\" OR \"online challenge\" OR \"social media challenge\" OR \"Ice Bucket Challenge\" OR \"TikTok\" OR \"MeToo\" OR \"hashtag\") AND (births OR \"birth rate\" OR fertility OR conceptions OR \"birth weight\" OR childbearing OR pregnancies) AND \"event study\""
+   ]
+  },
+  {
+   "cell": "I8xO2",
+   "event_class": "I8",
+   "outcome_domain": "O2",
+   "openalex": [
+    "(\"viral video\" OR \"went viral\" OR \"viral post\" OR \"internet meme\" OR \"meme\" OR \"online challenge\" OR \"social media challenge\" OR \"Ice Bucket Challenge\" OR \"TikTok\" OR \"MeToo\" OR \"hashtag\") AND (marriage OR marriages OR divorce OR divorces OR cohabitation OR \"family formation\") AND \"natural experiment\"",
+    "(\"viral video\" OR \"went viral\" OR \"viral post\" OR \"internet meme\" OR \"meme\" OR \"online challenge\" OR \"social media challenge\" OR \"Ice Bucket Challenge\" OR \"TikTok\" OR \"MeToo\" OR \"hashtag\") AND (marriage OR marriages OR divorce OR divorces OR cohabitation OR \"family formation\") AND \"event study\""
+   ]
+  },
+  {
+   "cell": "I8xO3",
+   "event_class": "I8",
+   "outcome_domain": "O3",
+   "openalex": [
+    "(\"viral video\" OR \"went viral\" OR \"viral post\" OR \"internet meme\" OR \"meme\" OR \"online challenge\" OR \"social media challenge\" OR \"Ice Bucket Challenge\" OR \"TikTok\" OR \"MeToo\" OR \"hashtag\") AND (crime OR violence OR \"domestic violence\" OR \"intimate partner violence\" OR assault OR \"hate crime\" OR homicide OR arrests) AND \"natural experiment\"",
+    "(\"viral video\" OR \"went viral\" OR \"viral post\" OR \"internet meme\" OR \"meme\" OR \"online challenge\" OR \"social media challenge\" OR \"Ice Bucket Challenge\" OR \"TikTok\" OR \"MeToo\" OR \"hashtag\") AND (crime OR violence OR \"domestic violence\" OR \"intimate partner violence\" OR assault OR \"hate crime\" OR homicide OR arrests) AND \"event study\""
+   ]
+  },
+  {
+   "cell": "I8xO4",
+   "event_class": "I8",
+   "outcome_domain": "O4",
+   "openalex": [
+    "(\"viral video\" OR \"went viral\" OR \"viral post\" OR \"internet meme\" OR \"meme\" OR \"online challenge\" OR \"social media challenge\" OR \"Ice Bucket Challenge\" OR \"TikTok\" OR \"MeToo\" OR \"hashtag\") AND (judges OR sentencing OR \"sentence length\" OR jury OR juries OR \"court decisions\" OR \"judicial decisions\" OR \"asylum decisions\" OR parole) AND \"natural experiment\"",
+    "(\"viral video\" OR \"went viral\" OR \"viral post\" OR \"internet meme\" OR \"meme\" OR \"online challenge\" OR \"social media challenge\" OR \"Ice Bucket Challenge\" OR \"TikTok\" OR \"MeToo\" OR \"hashtag\") AND (judges OR sentencing OR \"sentence length\" OR jury OR juries OR \"court decisions\" OR \"judicial decisions\" OR \"asylum decisions\" OR parole) AND \"event study\""
+   ]
+  },
+  {
+   "cell": "I8xO5",
+   "event_class": "I8",
+   "outcome_domain": "O5",
+   "openalex": [
+    "(\"viral video\" OR \"went viral\" OR \"viral post\" OR \"internet meme\" OR \"meme\" OR \"online challenge\" OR \"social media challenge\" OR \"Ice Bucket Challenge\" OR \"TikTok\" OR \"MeToo\" OR \"hashtag\") AND (\"hospital admissions\" OR \"emergency department\" OR injuries OR mortality OR deaths OR \"myocardial infarction\" OR \"cardiovascular events\" OR hospitalizations) AND \"natural experiment\"",
+    "(\"viral video\" OR \"went viral\" OR \"viral post\" OR \"internet meme\" OR \"meme\" OR \"online challenge\" OR \"social media challenge\" OR \"Ice Bucket Challenge\" OR \"TikTok\" OR \"MeToo\" OR \"hashtag\") AND (\"hospital admissions\" OR \"emergency department\" OR injuries OR mortality OR deaths OR \"myocardial infarction\" OR \"cardiovascular events\" OR hospitalizations) AND \"event study\""
+   ],
+   "pubmed": [
+    "(\"viral video\"[tiab] OR \"went viral\"[tiab] OR \"viral post\"[tiab] OR \"internet meme\"[tiab] OR meme[tiab] OR \"online challenge\"[tiab] OR \"social media challenge\"[tiab] OR \"Ice Bucket Challenge\"[tiab] OR TikTok[tiab] OR MeToo[tiab] OR hashtag[tiab]) AND (\"hospital admissions\"[tiab] OR \"emergency department\"[tiab] OR injuries[tiab] OR mortality[tiab] OR deaths[tiab] OR \"myocardial infarction\"[tiab] OR \"cardiovascular events\"[tiab] OR hospitalizations[tiab]) AND \"natural experiment\"[tiab]",
+    "(\"viral video\"[tiab] OR \"went viral\"[tiab] OR \"viral post\"[tiab] OR \"internet meme\"[tiab] OR meme[tiab] OR \"online challenge\"[tiab] OR \"social media challenge\"[tiab] OR \"Ice Bucket Challenge\"[tiab] OR TikTok[tiab] OR MeToo[tiab] OR hashtag[tiab]) AND (\"hospital admissions\"[tiab] OR \"emergency department\"[tiab] OR injuries[tiab] OR mortality[tiab] OR deaths[tiab] OR \"myocardial infarction\"[tiab] OR \"cardiovascular events\"[tiab] OR hospitalizations[tiab]) AND \"event study\"[tiab]"
+   ]
+  },
+  {
+   "cell": "I8xO6",
+   "event_class": "I8",
+   "outcome_domain": "O6",
+   "openalex": [
+    "(\"viral video\" OR \"went viral\" OR \"viral post\" OR \"internet meme\" OR \"meme\" OR \"online challenge\" OR \"social media challenge\" OR \"Ice Bucket Challenge\" OR \"TikTok\" OR \"MeToo\" OR \"hashtag\") AND (\"traffic accidents\" OR \"car crashes\" OR \"traffic crashes\" OR \"road accidents\" OR \"traffic fatalities\" OR \"motor vehicle crashes\" OR \"fatal crashes\" OR \"road traffic\") AND \"natural experiment\"",
+    "(\"viral video\" OR \"went viral\" OR \"viral post\" OR \"internet meme\" OR \"meme\" OR \"online challenge\" OR \"social media challenge\" OR \"Ice Bucket Challenge\" OR \"TikTok\" OR \"MeToo\" OR \"hashtag\") AND (\"traffic accidents\" OR \"car crashes\" OR \"traffic crashes\" OR \"road accidents\" OR \"traffic fatalities\" OR \"motor vehicle crashes\" OR \"fatal crashes\" OR \"road traffic\") AND \"event study\""
+   ]
+  },
+  {
+   "cell": "I8xO7",
+   "event_class": "I8",
+   "outcome_domain": "O7",
+   "openalex": [
+    "(\"viral video\" OR \"went viral\" OR \"viral post\" OR \"internet meme\" OR \"meme\" OR \"online challenge\" OR \"social media challenge\" OR \"Ice Bucket Challenge\" OR \"TikTok\" OR \"MeToo\" OR \"hashtag\") AND (\"test scores\" OR \"school attendance\" OR \"student achievement\" OR \"exam performance\" OR \"educational attainment\" OR \"college major\" OR \"school enrollment\" OR \"academic performance\") AND \"natural experiment\"",
+    "(\"viral video\" OR \"went viral\" OR \"viral post\" OR \"internet meme\" OR \"meme\" OR \"online challenge\" OR \"social media challenge\" OR \"Ice Bucket Challenge\" OR \"TikTok\" OR \"MeToo\" OR \"hashtag\") AND (\"test scores\" OR \"school attendance\" OR \"student achievement\" OR \"exam performance\" OR \"educational attainment\" OR \"college major\" OR \"school enrollment\" OR \"academic performance\") AND \"event study\""
+   ]
+  },
+  {
+   "cell": "I8xO8",
+   "event_class": "I8",
+   "outcome_domain": "O8",
+   "openalex": [
+    "(\"viral video\" OR \"went viral\" OR \"viral post\" OR \"internet meme\" OR \"meme\" OR \"online challenge\" OR \"social media challenge\" OR \"Ice Bucket Challenge\" OR \"TikTok\" OR \"MeToo\" OR \"hashtag\") AND (\"baby names\" OR \"first names\" OR \"given names\" OR naming OR \"language use\" OR \"word use\" OR vocabulary OR dialect) AND \"natural experiment\"",
+    "(\"viral video\" OR \"went viral\" OR \"viral post\" OR \"internet meme\" OR \"meme\" OR \"online challenge\" OR \"social media challenge\" OR \"Ice Bucket Challenge\" OR \"TikTok\" OR \"MeToo\" OR \"hashtag\") AND (\"baby names\" OR \"first names\" OR \"given names\" OR naming OR \"language use\" OR \"word use\" OR vocabulary OR dialect) AND \"event study\""
+   ]
+  },
+  {
+   "cell": "I8xO9",
+   "event_class": "I8",
+   "outcome_domain": "O9",
+   "openalex": [
+    "(\"viral video\" OR \"went viral\" OR \"viral post\" OR \"internet meme\" OR \"meme\" OR \"online challenge\" OR \"social media challenge\" OR \"Ice Bucket Challenge\" OR \"TikTok\" OR \"MeToo\" OR \"hashtag\") AND (productivity OR absenteeism OR \"sick leave\" OR \"labor supply\" OR \"work hours\" OR \"worker performance\" OR \"labor productivity\") AND \"natural experiment\"",
+    "(\"viral video\" OR \"went viral\" OR \"viral post\" OR \"internet meme\" OR \"meme\" OR \"online challenge\" OR \"social media challenge\" OR \"Ice Bucket Challenge\" OR \"TikTok\" OR \"MeToo\" OR \"hashtag\") AND (productivity OR absenteeism OR \"sick leave\" OR \"labor supply\" OR \"work hours\" OR \"worker performance\" OR \"labor productivity\") AND \"event study\""
+   ]
+  },
+  {
+   "cell": "I8xO10",
+   "event_class": "I8",
+   "outcome_domain": "O10",
+   "openalex": [
+    "(\"viral video\" OR \"went viral\" OR \"viral post\" OR \"internet meme\" OR \"meme\" OR \"online challenge\" OR \"social media challenge\" OR \"Ice Bucket Challenge\" OR \"TikTok\" OR \"MeToo\" OR \"hashtag\") AND (\"consumer spending\" OR \"household spending\" OR sales OR purchases OR consumption OR expenditure OR demand) AND \"natural experiment\"",
+    "(\"viral video\" OR \"went viral\" OR \"viral post\" OR \"internet meme\" OR \"meme\" OR \"online challenge\" OR \"social media challenge\" OR \"Ice Bucket Challenge\" OR \"TikTok\" OR \"MeToo\" OR \"hashtag\") AND (\"consumer spending\" OR \"household spending\" OR sales OR purchases OR consumption OR expenditure OR demand) AND \"event study\""
+   ]
+  }
+ ],
+ "counts": {
+  "cells": 86,
+  "openalex_queries": 172,
+  "pubmed_queries": 14
+ }
+}

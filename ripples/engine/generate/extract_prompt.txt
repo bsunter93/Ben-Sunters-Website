@@ -1,0 +1,75 @@
+extract_v4 (raw-pair extraction for the discovery v4 pilot)
+
+You read a batch of papers (title, year, venue, abstract). For each paper decide whether it yields raw pairs, and extract
+them. Use only the text given. Do not search, do not open other files, do not use outside knowledge to add facts.
+
+A raw pair is (stone, outcome) from one paper where all three hold:
+1. STONE: the paper names a specific, datable cultural event in one of these classes:
+   I1 sports results and big games (Super Bowl, World Cup, upsets, home-team wins and losses, star signings)
+   I2 media arrival and rollout (TV, radio, cable, satellite, broadband, mobile coverage, a channel entering a market)
+   I3 entertainment releases (films, video games, series, albums, books)
+   I4 celebrity moments (deaths, scandals, weddings, births, coming out)
+   I5 one-off shocks (blackouts, outages, terrorist attacks, disasters, eclipses, mass shootings)
+   I6 tech and product launches (smartphones, apps, game launches, platforms such as Uber, Craigslist, Facebook)
+   I7 dated clock and calendar rule changes (daylight saving time transitions or extensions, time-zone or date-line switches)
+   I8 viral moments, memes, challenges (including hashtag movements such as MeToo)
+   Datable means the paper gives a date or dated instances (a recurring event counts when its instances are dated: each
+   Super Bowl, each spring DST transition, each release weekend). Generic exposure is not a stone (screen time, hours of
+   TV, social media use in general, "media coverage", sports participation, internet use in general).
+   NOT stones here: laws, policies, programs, regulations, court rulings, government interventions; the COVID-19
+   pandemic and lockdowns; weather, temperature, pollution, seasons; religious observances and holidays (Ramadan,
+   Christmas); ordinary calendar features (weekends, birthdays, Friday the 13th, moon phases); wars and conflicts;
+   economic crises and recessions; epidemics.
+2. OUTCOME: a measured outcome in real behavior or records (births, marriages, crimes, sentences, admissions, deaths,
+   crashes, test scores, attendance, names, productivity, spending, donations, and so on). Attitude, opinion, knowledge or
+   intention surveys alone do not count. Search interest or media attention alone does not count.
+3. DESIGN: a quasi-experimental or experimental comparison against a baseline: natural experiment, difference in
+   differences, regression discontinuity, event study, interrupted time series, synthetic control, instrumental variable
+   based on the event, comparison with expected counts from other years or matched control days or areas, randomized
+   trial. A plain before-and-after count with no trend or control does not count. Reviews and meta-analyses do not count
+   unless they report a pooled effect of one named stone.
+
+Make one row per distinct (stone, outcome). A paper may give several rows (different outcomes, or different stones).
+Report a null finding as a row with direction "none".
+
+Fields per row (JSON object, one per line):
+  "paper_id": the paper's id exactly as given
+  "stone": short specific name of the event as the paper frames it, e.g. "Upset losses by NFL home teams",
+           "The August 2003 Northeast blackout", "Spring daylight saving time transition (US)", "Release of Grand Theft Auto IV"
+  "stone_date": the date or dated instances as the paper gives them (US style: MM/DD/YYYY, MM/YYYY, YYYY, or a range such as
+           "each Super Bowl, 1974-2009"); "" if the abstract gives none
+  "event_class": one of I1..I8
+  "outcome": one plain line, direction included, e.g. "More domestic violence calls to police on the day"
+  "population_place": who and where, e.g. "US counties", "Los Angeles"
+  "outcome_domain": one of
+       O1 births and fertility (incl. birth weight)       O2 marriage, divorce, family
+       O3 crime and violence (incl. domestic, hate crime)  O4 courts, judges, sentencing, juries
+       O5 hospital admissions, injuries, mortality         O6 traffic and transport accidents
+       O7 school attendance, test scores, education choices O8 names and language
+       O9 work, productivity, absenteeism                   O10 spending or sales
+       O11 civic acts (blood or organ donation, volunteering, census response, turnout)
+       O0 none of these (write the area in "other_domain", e.g. "sleep", "stock returns", "physical activity", "mental health")
+  "other_domain": "" unless O0
+  "direction": "up", "down", "none" or "mixed"
+  "effect": the size as the abstract states it, short ("+8% calls", "OR 1.25"); "" if not stated
+  "design": the design as the abstract states it
+  "quote": the paper's own words from the title or abstract that state the finding, copied exactly, under 25 words
+  "excluded": null, or one of
+       "suicide_selfharm_overdose"  the outcome is suicide, self-harm, suicidal behavior, or drug overdose or poisoning
+       "party_vote"                 the outcome is votes or vote shares for a party or candidate
+       "topic_match"                the outcome is the stone's own subject, stated aim or product: illness disclosure to
+                                    screening or care for that illness; a place on screen to tourism there; a product, game,
+                                    film, show or app to its own sales, viewing or use; a sport event to participation in that
+                                    sport; a campaign, challenge or documentary to its stated cause; media arrival to viewing or
+                                    use of that medium; the people killed or injured by a disaster or attack itself
+  "exclusion_note": one line when excluded, else ""
+  "law_policy": true if the outcome is a law, policy, vote or turnout, court, judge or jury decision, or government program
+                uptake; else false
+
+Also give one screen line per paper (JSON object), whether or not it yields rows:
+  {"screen": true, "paper_id": "...", "qualifies": true or false, "reason": one of "ok", "no_stone", "stone_not_in_classes",
+   "no_measured_outcome", "no_design", "review_or_commentary", "survey_only", "not_enough_text", "other",
+   "note": short note}
+
+When unsure whether a stone is specific and datable, or whether the design beats a baseline, mark the paper as not
+qualifying and say why in the note. Do not invent effect sizes, dates or quotes.
