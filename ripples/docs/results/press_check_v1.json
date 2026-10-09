@@ -1,0 +1,5438 @@
+{
+ "check": "press co-mention check v1",
+ "script": "ripples/lab/press_check_v1.py",
+ "queries": "ripples/lab/press_check_v1_queries.json",
+ "queries_sha256": "2a02f74b1caad188b5a37b7c5de01e8b9b1d646f070534bef3404a87d95968fb",
+ "user_agent": "ripple-research (bensunter.com)",
+ "sources": {
+  "guardian": {
+   "endpoint": "https://content.guardianapis.com/search",
+   "count_field": "response.total",
+   "spacing_s": 1.0,
+   "cap_per_run": 480,
+   "pairs_ok": 240,
+   "stones_ok": 152,
+   "operator_check_passed": true
+  },
+  "nyt": {
+   "endpoint": "https://api.nytimes.com/svc/search/v2/articlesearch.json",
+   "count_field": "response.meta.hits",
+   "spacing_s": 12.5,
+   "cap_per_run": 480,
+   "ceiling": 10000,
+   "pairs_ok": 0,
+   "stones_ok": 0,
+   "operator_check_passed": false
+  }
+ },
+ "syntax": {
+  "guardian": "(\"s1\" OR \"s2\") AND (\"o1\" OR \"o2\")",
+  "nyt": "(\"s1\" | \"s2\") +(\"o1\" | \"o2\")"
+ },
+ "runs": [
+  {
+   "started": "2026-10-09T18:00:20Z",
+   "finished": "2026-10-09T18:10:56Z",
+   "sources": {
+    "guardian": {
+     "status": "done",
+     "stop": null,
+     "requests": 391
+    },
+    "nyt": {
+     "status": "stopped",
+     "stop": "operator check failed: OR did not widen or AND did not narrow",
+     "requests": 3
+    }
+   }
+  }
+ ],
+ "probe": {
+  "guardian": {
+   "single": {
+    "count": 275,
+    "status": "ok",
+    "field": "response.total",
+    "at": "2026-10-09T18:00:21Z",
+    "q": "(\"Silent Spring\")"
+   },
+   "or": {
+    "count": 350,
+    "status": "ok",
+    "field": "response.total",
+    "at": "2026-10-09T18:00:22Z",
+    "q": "(\"Silent Spring\" OR \"Rachel Carson\")"
+   },
+   "and": {
+    "count": 101,
+    "status": "ok",
+    "field": "response.total",
+    "at": "2026-10-09T18:00:24Z",
+    "q": "(\"Silent Spring\") AND (\"Rachel Carson\")"
+   }
+  },
+  "nyt": {
+   "single": {
+    "count": 790,
+    "status": "ok",
+    "field": "response.metadata.hits",
+    "at": "2026-10-09T18:10:30Z",
+    "q": "(\"Silent Spring\")"
+   },
+   "or": {
+    "count": 287,
+    "status": "ok",
+    "field": "response.metadata.hits",
+    "at": "2026-10-09T18:10:43Z",
+    "q": "(\"Silent Spring\" | \"Rachel Carson\")"
+   },
+   "and": {
+    "count": 287,
+    "status": "ok",
+    "field": "response.metadata.hits",
+    "at": "2026-10-09T18:10:56Z",
+    "q": "(\"Silent Spring\") +(\"Rachel Carson\")"
+   }
+  }
+ },
+ "pairs": {
+  "bu-B_BLUEPLANET": {
+   "stone": "c103",
+   "q": {
+    "guardian": "(\"Blue Planet II\" OR \"Blue Planet 2\") AND (\"single-use plastic\" OR \"plastic consumption\" OR \"plastic habits\" OR \"plastic use\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 37,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-09T18:05:17Z"
+    }
+   }
+  },
+  "bu-B_DORY": {
+   "stone": "c086",
+   "q": {
+    "guardian": "(\"Finding Dory\") AND (\"blue tang\" OR \"regal tang\" OR \"aquarium fish\" OR \"aquarium trade\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 16,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-09T18:02:34Z"
+    }
+   }
+  },
+  "bu-B_JOLIE_MAMMO": {
+   "stone": "c047",
+   "q": {
+    "guardian": "(\"Angelina Jolie's op-ed\" OR \"My Medical Choice\" OR \"Jolie's mastectomy\" OR \"Jolie effect\") AND (\"breast cancer screening\" OR \"mammograms\" OR \"mammography\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 0,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-09T18:05:03Z"
+    }
+   }
+  },
+  "bu-B_OLYMPICS": {
+   "stone": "c042",
+   "q": {
+    "guardian": "(\"London 2012\" OR \"hosting the Olympics\" OR \"host the Olympics\" OR \"Olympic host city\") AND (\"sports participation\" OR \"participation in sport\" OR \"grassroots sport\" OR \"physical activity\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 273,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-09T18:04:29Z"
+    }
+   }
+  },
+  "bu-B_PLACEMENT": {
+   "stone": "c133",
+   "q": {
+    "guardian": "(\"telenovela storyline\" OR \"telenovela storylines\" OR \"Spanish-language telenovelas\" OR \"telenovela experiment\") AND (\"entertainment-education\" OR \"entertainment education\" OR \"behavior change\" OR \"behaviour change\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 0,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-09T18:01:16Z"
+    }
+   }
+  },
+  "bu-B_POTTER_JAVA": {
+   "stone": "c097",
+   "q": {
+    "guardian": "(\"Harry Potter\") AND (\"owl trade\" OR \"bird markets\" OR \"owl markets\" OR \"Indonesian owls\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 1,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-09T18:01:30Z"
+    }
+   }
+  },
+  "bu-B_POTTER_OWLS": {
+   "stone": "c078",
+   "q": {
+    "guardian": "(\"Harry Potter\") AND (\"pet owls\" OR \"owl craze\" OR \"abandoned owls\" OR \"owl sanctuaries\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 10,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-09T18:06:27Z"
+    }
+   }
+  },
+  "bu-B_RUDOLF": {
+   "stone": "c010",
+   "q": {
+    "guardian": "(\"Mayerling\" OR \"Mayerling incident\" OR \"Crown Prince Rudolf\" OR \"Rudolf's suicide\") AND (\"copycat suicide\" OR \"Werther effect\" OR \"suicide contagion\" OR \"suicide rate\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 0,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-09T18:02:09Z"
+    }
+   }
+  },
+  "bu-B_SIXTEEN": {
+   "stone": "c023",
+   "q": {
+    "guardian": "(\"16 and Pregnant\" OR \"Sixteen and Pregnant\") AND (\"teen birth rate\" OR \"4.3 percent\" OR \"teen births\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 4,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-09T18:02:14Z"
+    }
+   }
+  },
+  "bu-B_SQUIDGAME": {
+   "stone": "c071",
+   "q": {
+    "guardian": "(\"Squid Game\") AND (\"suicide rate\" OR \"suicide contagion\" OR \"copycat suicides\" OR \"Werther effect\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 3,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-09T18:03:13Z"
+    }
+   }
+  },
+  "bu-B_SWIFT": {
+   "stone": "c080",
+   "q": {
+    "guardian": "(\"Taylor Swift effect\" OR \"Swift effect\" OR \"Swift at Arrowhead\" OR \"Swift at the Chiefs game\") AND (\"Kelce's stats\" OR \"Kelce's numbers\" OR \"Kelce's performance\" OR \"receiving yards\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 0,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-09T18:03:21Z"
+    }
+   }
+  },
+  "bu-B_THIRTEEN": {
+   "stone": "c140",
+   "q": {
+    "guardian": "(\"13 Reasons Why\" OR \"Thirteen Reasons Why\") AND (\"suicide contagion\" OR \"causal link\" OR \"contagion effect\" OR \"Werther effect\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 3,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-09T18:02:35Z"
+    }
+   }
+  },
+  "bu-B_TIKTOK": {
+   "stone": "c118",
+   "q": {
+    "guardian": "(\"Universal Music\" OR \"UMG\" OR \"music from TikTok\") AND (\"Spotify streams\" OR \"streaming platforms\" OR \"music streams\" OR \"audio streaming\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 50,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-09T18:06:07Z"
+    }
+   }
+  },
+  "bu-B_WILLIAMS_UK": {
+   "stone": "c045",
+   "q": {
+    "guardian": "(\"Robin Williams's death\" OR \"death of Robin Williams\" OR \"Robin Williams suicide\" OR \"Robin Williams's suicide\") AND (\"suicide rate\" OR \"suicide contagion\" OR \"Werther effect\" OR \"copycat suicides\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 2,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-09T18:04:06Z"
+    }
+   }
+  },
+  "bu-B_WORLDCUP_HEART": {
+   "stone": "c144",
+   "q": {
+    "guardian": "(\"watching football\" OR \"World Cup\" OR \"penalty shootout\" OR \"Super Bowl\") AND (\"heart attack\" OR \"cardiac events\" OR \"cardiovascular deaths\" OR \"cardiac arrest\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 681,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-09T18:06:18Z"
+    }
+   }
+  },
+  "pv1-P000": {
+   "stone": "c050",
+   "q": {
+    "guardian": "(\"60 Minutes\" OR \"Sixty Minutes\") AND (\"STOCK Act\" OR \"Stop Trading on Congressional Knowledge\" OR \"congressional insider trading\" OR \"insider trading ban\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 1,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-09T18:04:07Z"
+    }
+   }
+  },
+  "pv1-P001": {
+   "stone": "c024",
+   "q": {
+    "guardian": "(\"The West Wing\" OR \"West Wing\") AND (\"Racial and Religious Hatred Act\" OR \"Religious Hatred Act\" OR \"religious hatred bill\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 3,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-09T18:03:30Z"
+    }
+   }
+  },
+  "pv1-P002": {
+   "stone": "c142",
+   "q": {
+    "guardian": "(\"Silent Spring\") AND (\"National Environmental Policy Act\" OR \"NEPA\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 0,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-09T18:02:03Z"
+    }
+   }
+  },
+  "pv1-P003": {
+   "stone": "c096",
+   "q": {
+    "guardian": "(\"Sputnik\") AND (\"National Defense Education Act\" OR \"Defense Education Act\" OR \"NDEA\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 7,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-09T18:03:44Z"
+    }
+   }
+  },
+  "pv1-P004": {
+   "stone": "c018",
+   "q": {
+    "guardian": "(\"Love Canal\") AND (\"Agency for Toxic Substances\" OR \"ATSDR\" OR \"Disease Registry\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 0,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-09T18:02:53Z"
+    }
+   }
+  },
+  "pv1-P005": {
+   "stone": "c018",
+   "q": {
+    "guardian": "(\"Love Canal\") AND (\"Area Revitalization Agency\" OR \"LCARA\" OR \"Black Creek Village\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 0,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-09T18:02:56Z"
+    }
+   }
+  },
+  "pv1-P006": {
+   "stone": "c095",
+   "q": {
+    "guardian": "(\"Exxon Valdez\") AND (\"Alaska Oil Spill Commission\" OR \"oil spill commission\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 1,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-09T18:04:44Z"
+    }
+   }
+  },
+  "pv1-P007": {
+   "stone": "c095",
+   "q": {
+    "guardian": "(\"Exxon Valdez\") AND (\"Oil Pollution Act\" OR \"OPA 90\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 5,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-09T18:01:08Z"
+    }
+   }
+  },
+  "pv1-P008": {
+   "stone": "c119",
+   "q": {
+    "guardian": "(\"Columbine High School\" OR \"Columbine shooting\" OR \"Columbine massacre\" OR \"Columbine killings\") AND (\"Anti-Bullying Bill of Rights\" OR \"New Jersey anti-bullying law\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 0,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-09T18:04:01Z"
+    }
+   }
+  },
+  "pv1-P009": {
+   "stone": "c005",
+   "q": {
+    "guardian": "(\"Flint water crisis\" OR \"Flint water\" OR \"Flint crisis\" OR \"Flint's water\") AND (\"Lead and Copper Rule\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 18,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-09T18:06:34Z"
+    }
+   }
+  },
+  "pv1-P010": {
+   "stone": "c005",
+   "q": {
+    "guardian": "(\"Flint water crisis\" OR \"Flint water\" OR \"Flint crisis\" OR \"Flint's water\") AND (\"Child Lead Exposure Elimination Commission\" OR \"Lead Exposure Elimination Commission\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 0,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-09T18:01:55Z"
+    }
+   }
+  },
+  "pv1-P011": {
+   "stone": "c005",
+   "q": {
+    "guardian": "(\"Flint water crisis\" OR \"Flint water\" OR \"Flint crisis\" OR \"Flint's water\") AND (\"BlueConduit\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 0,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-09T18:02:40Z"
+    }
+   }
+  },
+  "pv1-P012": {
+   "stone": "c002",
+   "q": {
+    "guardian": "(\"Fukushima\" OR \"Fukushima Daiichi\" OR \"Fukushima disaster\" OR \"Fukushima nuclear disaster\") AND (\"Nuclear Safety and Security Commission\" OR \"NSSC\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 0,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-09T18:04:10Z"
+    }
+   }
+  },
+  "pv1-P013": {
+   "stone": "c002",
+   "q": {
+    "guardian": "(\"Fukushima\" OR \"Fukushima Daiichi\" OR \"Fukushima disaster\" OR \"Fukushima nuclear disaster\") AND (\"Independent Investigation Commission\" OR \"NAIIC\" OR \"Diet commission\" OR \"Kiyoshi Kurokawa\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 5,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-09T18:03:10Z"
+    }
+   }
+  },
+  "pv1-P014": {
+   "stone": "c002",
+   "q": {
+    "guardian": "(\"Fukushima\" OR \"Fukushima Daiichi\" OR \"Fukushima disaster\" OR \"Fukushima nuclear disaster\") AND (\"Reconstruction Agency\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 5,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-09T18:00:49Z"
+    }
+   }
+  },
+  "pv1-P015": {
+   "stone": "c002",
+   "q": {
+    "guardian": "(\"Fukushima\" OR \"Fukushima Daiichi\" OR \"Fukushima disaster\" OR \"Fukushima nuclear disaster\") AND (\"Nuclear Regulation Authority\" OR \"Nuclear and Industrial Safety Agency\" OR \"NISA\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 71,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-09T18:04:49Z"
+    }
+   }
+  },
+  "pv1-P016": {
+   "stone": "c110",
+   "q": {
+    "guardian": "(\"anthrax letters\" OR \"anthrax attacks\" OR \"anthrax mailings\" OR \"Amerithrax\") AND (\"Patriot Act\" OR \"USA Patriot Act\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 3,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-09T18:01:44Z"
+    }
+   }
+  },
+  "pv1-P017": {
+   "stone": "c083",
+   "q": {
+    "guardian": "(\"An Inconvenient Truth\" OR \"Inconvenient Truth\") AND (\"Alliance for Climate Protection\" OR \"Climate Reality Project\" OR \"Climate Reality\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 19,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-09T18:03:24Z"
+    }
+   }
+  },
+  "pv1-P018": {
+   "stone": "c083",
+   "q": {
+    "guardian": "(\"An Inconvenient Truth\" OR \"Inconvenient Truth\") AND (\"High Court\" OR \"Mr Justice Burton\" OR \"nine errors\" OR \"Stewart Dimmock\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 44,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-09T18:02:18Z"
+    }
+   }
+  },
+  "pv1-P019": {
+   "stone": "c083",
+   "q": {
+    "guardian": "(\"An Inconvenient Truth\" OR \"Inconvenient Truth\") AND (\"carbon offsets\" OR \"carbon offset\" OR \"offsetting emissions\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 6,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-09T18:01:12Z"
+    }
+   }
+  },
+  "pv1-P020": {
+   "stone": "c122",
+   "q": {
+    "guardian": "(\"The Day After\" OR \"ABC's The Day After\") AND (\"INF Treaty\" OR \"Intermediate-Range Nuclear Forces Treaty\" OR \"Intermediate Nuclear Forces Treaty\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 5,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-09T18:04:54Z"
+    }
+   }
+  },
+  "pv1-P021": {
+   "stone": "c014",
+   "q": {
+    "guardian": "(\"Deepwater Horizon\" OR \"BP oil spill\" OR \"Gulf oil spill\" OR \"Gulf of Mexico oil spill\") AND (\"oil spill commission\" OR \"spill commission\" OR \"National Oil Spill Commission\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 9,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-09T18:01:18Z"
+    }
+   }
+  },
+  "pv1-P022": {
+   "stone": "c014",
+   "q": {
+    "guardian": "(\"Deepwater Horizon\" OR \"BP oil spill\" OR \"Gulf oil spill\" OR \"Gulf of Mexico oil spill\") AND (\"GuLF Study\" OR \"Gulf Long-term Follow-up\" OR \"NIEHS\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 0,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-09T18:01:04Z"
+    }
+   }
+  },
+  "pv1-P023": {
+   "stone": "c014",
+   "q": {
+    "guardian": "(\"Deepwater Horizon\" OR \"BP oil spill\" OR \"Gulf oil spill\" OR \"Gulf of Mexico oil spill\") AND (\"National Ocean Council\" OR \"National Ocean Policy\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 2,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-09T18:02:01Z"
+    }
+   }
+  },
+  "pv1-P024": {
+   "stone": "c014",
+   "q": {
+    "guardian": "(\"Deepwater Horizon\" OR \"BP oil spill\" OR \"Gulf oil spill\" OR \"Gulf of Mexico oil spill\") AND (\"Safety and Environmental Enforcement\" OR \"BSEE\" OR \"Minerals Management Service\" OR \"Ocean Energy Management\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 65,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-09T18:02:42Z"
+    }
+   }
+  },
+  "pv1-P025": {
+   "stone": "c014",
+   "q": {
+    "guardian": "(\"Deepwater Horizon\" OR \"BP oil spill\" OR \"Gulf oil spill\" OR \"Gulf of Mexico oil spill\") AND (\"suspended BP\" OR \"suspends BP\" OR \"new federal contracts\" OR \"debarment\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 4,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-09T18:05:24Z"
+    }
+   }
+  },
+  "pv1-P026": {
+   "stone": "c124",
+   "q": {
+    "guardian": "(\"Sandy Hook Elementary\" OR \"Sandy Hook shooting\" OR \"Sandy Hook massacre\" OR \"Newtown shooting\") AND (\"SAFE Act\" OR \"New York SAFE Act\" OR \"Secure Ammunition and Firearms Enforcement\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 2,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-09T18:03:08Z"
+    }
+   }
+  },
+  "pv1-P027": {
+   "stone": "c124",
+   "q": {
+    "guardian": "(\"Sandy Hook Elementary\" OR \"Sandy Hook shooting\" OR \"Sandy Hook massacre\" OR \"Newtown shooting\") AND (\"Connecticut gun law\" OR \"Connecticut gun control law\" OR \"gun offender registry\" OR \"dangerous weapon offender registry\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 0,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-09T18:05:53Z"
+    }
+   }
+  },
+  "pv1-P028": {
+   "stone": "c124",
+   "q": {
+    "guardian": "(\"Sandy Hook Elementary\" OR \"Sandy Hook shooting\" OR \"Sandy Hook massacre\" OR \"Newtown shooting\") AND (\"Connecticut Freedom of Information\" OR \"crime scene photos\" OR \"crime-scene photos\" OR \"crime scene photographs\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 1,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-09T18:01:29Z"
+    }
+   }
+  },
+  "pv1-P029": {
+   "stone": "c017",
+   "q": {
+    "guardian": "(\"September 11 attacks\" OR \"September 11\" OR \"Sept. 11\" OR \"September 11th\") AND (\"Victim Compensation Fund\" OR \"Victims Compensation Fund\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 18,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-09T18:01:24Z"
+    }
+   }
+  },
+  "pv1-P030": {
+   "stone": "c017",
+   "q": {
+    "guardian": "(\"September 11 attacks\" OR \"September 11\" OR \"Sept. 11\" OR \"September 11th\") AND (\"Patriot Act\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 113,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-09T18:05:41Z"
+    }
+   }
+  },
+  "pv1-P031": {
+   "stone": "c017",
+   "q": {
+    "guardian": "(\"September 11 attacks\" OR \"September 11\" OR \"Sept. 11\" OR \"September 11th\") AND (\"Transportation Security Administration\" OR \"TSA\" OR \"Aviation and Transportation Security Act\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 36,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-09T18:04:22Z"
+    }
+   }
+  },
+  "pv1-P032": {
+   "stone": "c017",
+   "q": {
+    "guardian": "(\"September 11 attacks\" OR \"September 11\" OR \"Sept. 11\" OR \"September 11th\") AND (\"Crime and Security Act\" OR \"ATCSA\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 103,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-09T18:04:34Z"
+    }
+   }
+  },
+  "pv1-P033": {
+   "stone": "c017",
+   "q": {
+    "guardian": "(\"September 11 attacks\" OR \"September 11\" OR \"Sept. 11\" OR \"September 11th\") AND (\"Bill C-36\" OR \"Anti-terrorism Act\" OR \"Canadian anti-terrorism\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 23,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-09T18:04:02Z"
+    }
+   }
+  },
+  "pv1-P034": {
+   "stone": "c017",
+   "q": {
+    "guardian": "(\"September 11 attacks\" OR \"September 11\" OR \"Sept. 11\" OR \"September 11th\") AND (\"Terrorism Suppression Act\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 0,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-09T18:05:09Z"
+    }
+   }
+  },
+  "pv1-P035": {
+   "stone": "c017",
+   "q": {
+    "guardian": "(\"September 11 attacks\" OR \"September 11\" OR \"Sept. 11\" OR \"September 11th\") AND (\"Department of Homeland Security\" OR \"Homeland Security Act\" OR \"Homeland Security Department\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 184,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-09T18:01:38Z"
+    }
+   }
+  },
+  "pv1-P036": {
+   "stone": "c017",
+   "q": {
+    "guardian": "(\"September 11 attacks\" OR \"September 11\" OR \"Sept. 11\" OR \"September 11th\") AND (\"JASTA\" OR \"Sponsors of Terrorism Act\" OR \"Justice Against Sponsors\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 3,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-09T18:05:44Z"
+    }
+   }
+  },
+  "pv1-P037": {
+   "stone": "c126",
+   "q": {
+    "guardian": "(\"Chernobyl\" OR \"Chernobyl disaster\" OR \"Chernobyl nuclear disaster\" OR \"Chernobyl accident\") AND (\"Convention on Early Notification\" OR \"Early Notification Convention\" OR \"Notification of a Nuclear Accident\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 1,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-09T18:06:16Z"
+    }
+   }
+  },
+  "pv1-P038": {
+   "stone": "c126",
+   "q": {
+    "guardian": "(\"Chernobyl\" OR \"Chernobyl disaster\" OR \"Chernobyl nuclear disaster\" OR \"Chernobyl accident\") AND (\"UN trust fund\" OR \"United Nations trust fund\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 0,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-09T18:01:46Z"
+    }
+   }
+  },
+  "pv1-P039": {
+   "stone": "c126",
+   "q": {
+    "guardian": "(\"Chernobyl\" OR \"Chernobyl disaster\" OR \"Chernobyl nuclear disaster\" OR \"Chernobyl accident\") AND (\"Children International\" OR \"Children's Project International\" OR \"Adi Roche\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 7,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-09T18:06:26Z"
+    }
+   }
+  },
+  "pv1-P040": {
+   "stone": "c126",
+   "q": {
+    "guardian": "(\"Chernobyl\" OR \"Chernobyl disaster\" OR \"Chernobyl nuclear disaster\" OR \"Chernobyl accident\") AND (\"Shelter Fund\" OR \"New Safe Confinement\" OR \"Shelter Implementation Plan\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 6,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-09T18:05:55Z"
+    }
+   }
+  },
+  "pv1-P041": {
+   "stone": "c126",
+   "q": {
+    "guardian": "(\"Chernobyl\" OR \"Chernobyl disaster\" OR \"Chernobyl nuclear disaster\" OR \"Chernobyl accident\") AND (\"Spent Fuel Management\" OR \"Joint Convention on the Safety\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 0,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-09T18:03:55Z"
+    }
+   }
+  },
+  "pv1-P042": {
+   "stone": "c138",
+   "q": {
+    "guardian": "(\"Bhopal disaster\" OR \"Bhopal gas tragedy\" OR \"Bhopal gas leak\" OR \"Bhopal tragedy\") AND (\"Gas Leak Disaster Act\" OR \"Processing of Claims Act\" OR \"Processing of Claims\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 0,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-09T18:05:31Z"
+    }
+   }
+  },
+  "pv1-P043": {
+   "stone": "c138",
+   "q": {
+    "guardian": "(\"Bhopal disaster\" OR \"Bhopal gas tragedy\" OR \"Bhopal gas leak\" OR \"Bhopal tragedy\") AND (\"International Medical Commission\" OR \"IMCB\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 0,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-09T18:02:29Z"
+    }
+   }
+  },
+  "pv1-P044": {
+   "stone": "c143",
+   "q": {
+    "guardian": "(\"Challenger disaster\" OR \"Challenger explosion\" OR \"space shuttle Challenger\" OR \"Challenger accident\") AND (\"Rogers Commission\" OR \"Rogers report\" OR \"presidential commission\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 6,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-09T18:02:28Z"
+    }
+   }
+  },
+  "pv1-P045": {
+   "stone": "c143",
+   "q": {
+    "guardian": "(\"Challenger disaster\" OR \"Challenger explosion\" OR \"space shuttle Challenger\" OR \"Challenger accident\") AND (\"Space Science Education\" OR \"Center for Space Science\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 0,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-09T18:02:37Z"
+    }
+   }
+  },
+  "pv1-P046": {
+   "stone": "c143",
+   "q": {
+    "guardian": "(\"Challenger disaster\" OR \"Challenger explosion\" OR \"space shuttle Challenger\" OR \"Challenger accident\") AND (\"Reliability and Quality Assurance\" OR \"Office of Safety\" OR \"Quality Assurance office\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 0,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-09T18:01:07Z"
+    }
+   }
+  },
+  "pv1-P047": {
+   "stone": "c101",
+   "q": {
+    "guardian": "(\"Rana Plaza\" OR \"Rana Plaza collapse\" OR \"Savar building collapse\") AND (\"Bangladesh Accord\" OR \"Fire and Building Safety\" OR \"Bangladesh safety accord\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 94,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-09T18:04:17Z"
+    }
+   }
+  },
+  "pv1-P048": {
+   "stone": "c101",
+   "q": {
+    "guardian": "(\"Rana Plaza\" OR \"Rana Plaza collapse\" OR \"Savar building collapse\") AND (\"garment factory inspections\" OR \"factory inspections\" OR \"Bangladesh Labour Act\" OR \"factory inspection regime\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 23,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-09T18:02:20Z"
+    }
+   }
+  },
+  "pv1-P049": {
+   "stone": "c066",
+   "q": {
+    "guardian": "(\"Oklahoma City bombing\" OR \"Oklahoma bombing\" OR \"Murrah building bombing\") AND (\"Effective Death Penalty Act\" OR \"AEDPA\" OR \"Antiterrorism and Effective Death\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 2,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-09T18:04:39Z"
+    }
+   }
+  },
+  "pv1-P050": {
+   "stone": "c066",
+   "q": {
+    "guardian": "(\"Oklahoma City bombing\" OR \"Oklahoma bombing\" OR \"Murrah building bombing\") AND (\"Victim Allocution Clarification Act\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 0,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-09T18:04:31Z"
+    }
+   }
+  },
+  "pv1-P051": {
+   "stone": "c108",
+   "q": {
+    "guardian": "(\"Virginia Tech shooting\" OR \"Virginia Tech massacre\" OR \"Virginia Tech shootings\") AND (\"NICS Improvement Amendments Act\" OR \"NICS Improvement Act\" OR \"background check database\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 3,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-09T18:00:59Z"
+    }
+   }
+  },
+  "pv1-P052": {
+   "stone": "c028",
+   "q": {
+    "guardian": "(\"Parkland\" OR \"Parkland shooting\" OR \"Stoneman Douglas shooting\") AND (\"Never Again MSD\" OR \"NeverAgainMSD\" OR \"Never Again movement\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 4,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-09T18:00:58Z"
+    }
+   }
+  },
+  "pv1-P053": {
+   "stone": "c028",
+   "q": {
+    "guardian": "(\"Parkland\" OR \"Parkland shooting\" OR \"Stoneman Douglas shooting\") AND (\"School Public Safety Act\" OR \"Aaron Feis Guardian Program\" OR \"Florida red flag law\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 3,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-09T18:04:38Z"
+    }
+   }
+  },
+  "pv1-P054": {
+   "stone": "c028",
+   "q": {
+    "guardian": "(\"Parkland\" OR \"Parkland shooting\" OR \"Stoneman Douglas shooting\") AND (\"STOP School Violence Act\" OR \"STOP School Violence\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 9,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-09T18:04:46Z"
+    }
+   }
+  },
+  "pv1-P055": {
+   "stone": "c028",
+   "q": {
+    "guardian": "(\"Parkland\" OR \"Parkland shooting\" OR \"Stoneman Douglas shooting\") AND (\"unanimous jury\" OR \"jury unanimity\" OR \"8-4 jury\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 1,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-09T18:00:30Z"
+    }
+   }
+  },
+  "pv1-P056": {
+   "stone": "c112",
+   "q": {
+    "guardian": "(\"Uvalde shooting\" OR \"Uvalde school shooting\" OR \"Uvalde massacre\" OR \"Robb Elementary\") AND (\"semiautomatic rifle license\" OR \"semiautomatic rifles\" OR \"semi-automatic rifles\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 11,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-09T18:02:43Z"
+    }
+   }
+  },
+  "pv1-P057": {
+   "stone": "c112",
+   "q": {
+    "guardian": "(\"Uvalde shooting\" OR \"Uvalde school shooting\" OR \"Uvalde massacre\" OR \"Robb Elementary\") AND (\"Bipartisan Safer Communities Act\" OR \"Safer Communities Act\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 6,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-09T18:01:22Z"
+    }
+   }
+  },
+  "pv1-P058": {
+   "stone": "c112",
+   "q": {
+    "guardian": "(\"Uvalde shooting\" OR \"Uvalde school shooting\" OR \"Uvalde massacre\" OR \"Robb Elementary\") AND (\"active shooter training\" OR \"active-shooter training\" OR \"ALERRT\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 5,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-09T18:02:48Z"
+    }
+   }
+  },
+  "pv1-P059": {
+   "stone": "c112",
+   "q": {
+    "guardian": "(\"Uvalde shooting\" OR \"Uvalde school shooting\" OR \"Uvalde massacre\" OR \"Robb Elementary\") AND (\"House Bill 3\" OR \"armed security officer\" OR \"armed guards in schools\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 2,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-09T18:01:26Z"
+    }
+   }
+  },
+  "pv1-P060": {
+   "stone": "c111",
+   "q": {
+    "guardian": "(\"Boston Marathon bombing\" OR \"Boston Marathon bombings\" OR \"Boston bombing\" OR \"marathon bombing\") AND (\"One Fund Boston\" OR \"OneFund Boston\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 3,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-09T18:06:38Z"
+    }
+   }
+  },
+  "pv1-P061": {
+   "stone": "c111",
+   "q": {
+    "guardian": "(\"Boston Marathon bombing\" OR \"Boston Marathon bombings\" OR \"Boston bombing\" OR \"marathon bombing\") AND (\"One Boston Day\" OR \"OneBoston Day\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 0,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-09T18:04:26Z"
+    }
+   }
+  },
+  "pv1-P062": {
+   "stone": "c102",
+   "q": {
+    "guardian": "(\"Pulse nightclub\" OR \"Pulse shooting\" OR \"Pulse nightclub shooting\" OR \"Orlando nightclub shooting\") AND (\"OneOrlando\" OR \"OneOrlando Fund\" OR \"One Orlando Fund\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 1,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-09T18:04:04Z"
+    }
+   }
+  },
+  "pv1-P063": {
+   "stone": "c102",
+   "q": {
+    "guardian": "(\"Pulse nightclub\" OR \"Pulse shooting\" OR \"Pulse nightclub shooting\" OR \"Orlando nightclub shooting\") AND (\"onePULSE Foundation\" OR \"OnePulse\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 2,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-09T18:06:32Z"
+    }
+   }
+  },
+  "pv1-P064": {
+   "stone": "c049",
+   "q": {
+    "guardian": "(\"Las Vegas shooting\" OR \"Las Vegas massacre\" OR \"Mandalay Bay shooting\" OR \"Route 91 Harvest\") AND (\"bump stocks\" OR \"bump stock ban\" OR \"bump stock\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 33,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-09T18:03:58Z"
+    }
+   }
+  },
+  "pv1-P065": {
+   "stone": "c013",
+   "q": {
+    "guardian": "(\"Enron\") AND (\"Section 409A\" OR \"409A\" OR \"deferred compensation\" OR \"American Jobs Creation Act\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 7,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-09T18:03:45Z"
+    }
+   }
+  },
+  "pv1-P066": {
+   "stone": "c013",
+   "q": {
+    "guardian": "(\"Enron\") AND (\"Community Enterprise Act\" OR \"Investigations and Community Enterprise\" OR \"community interest company\" OR \"community interest companies\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 4,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-09T18:03:27Z"
+    }
+   }
+  },
+  "pv1-P067": {
+   "stone": "c073",
+   "q": {
+    "guardian": "(\"Cambridge Analytica\") AND (\"Social Science One\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 0,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-09T18:04:09Z"
+    }
+   }
+  },
+  "pv1-P068": {
+   "stone": "c060",
+   "q": {
+    "guardian": "(\"MeToo\" OR \"Me Too movement\" OR \"Me Too era\") AND (\"Sexual Violence Crime Act\" OR \"Sexual Violence Crime Law\" OR \"Sexual Violence Crimes Bill\" OR \"TPKS\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 0,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-09T18:01:21Z"
+    }
+   }
+  },
+  "pv1-P069": {
+   "stone": "c069",
+   "q": {
+    "guardian": "(\"Camp Fire\" OR \"Paradise fire\" OR \"Camp wildfire\") AND (\"price gouging ordinance\" OR \"price-gouging ordinance\" OR \"Chico emergency ordinance\" OR \"Chico price gouging\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 0,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-09T18:05:35Z"
+    }
+   }
+  },
+  "pv1-P070": {
+   "stone": "c069",
+   "q": {
+    "guardian": "(\"Camp Fire\" OR \"Paradise fire\" OR \"Camp wildfire\") AND (\"AB 1054\" OR \"Assembly Bill 1054\" OR \"wildfire fund\" OR \"California Wildfire Fund\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 1,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-09T18:02:21Z"
+    }
+   }
+  },
+  "pv1-P071": {
+   "stone": "c069",
+   "q": {
+    "guardian": "(\"Camp Fire\" OR \"Paradise fire\" OR \"Camp wildfire\") AND (\"Fire Victim Trust\" OR \"PG&E Fire Victim Trust\" OR \"fire victims trust\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 0,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-09T18:01:19Z"
+    }
+   }
+  },
+  "pv1-P072": {
+   "stone": "c059",
+   "q": {
+    "guardian": "(\"Lac-Mégantic\" OR \"Lac-Megantic\") AND (\"unattended trains\" OR \"unattended locomotives\" OR \"Federal Railroad Administration\" OR \"railroad emergency order\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 0,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-09T18:00:43Z"
+    }
+   }
+  },
+  "pv1-P073": {
+   "stone": "c021",
+   "q": {
+    "guardian": "(\"Dieselgate\" OR \"Volkswagen emissions scandal\" OR \"VW emissions scandal\") AND (\"Swiss sales ban\" OR \"Switzerland bans\" OR \"banned in Switzerland\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 2,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-09T18:04:52Z"
+    }
+   }
+  },
+  "pv1-P074": {
+   "stone": "c063",
+   "q": {
+    "guardian": "(\"Dear Zachary\") AND (\"Bill C-464\" OR \"C-464\" OR \"Zachary's Bill\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 0,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-09T18:01:27Z"
+    }
+   }
+  },
+  "pv1-P075": {
+   "stone": "c098",
+   "q": {
+    "guardian": "(\"Grenfell Tower\" OR \"Grenfell fire\" OR \"Grenfell disaster\" OR \"Grenfell tragedy\") AND (\"Tower Memorial Commission\" OR \"Memorial Commission\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 20,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-09T18:05:45Z"
+    }
+   }
+  },
+  "pv1-P076": {
+   "stone": "c130",
+   "q": {
+    "guardian": "(\"Hurricane Sandy\" OR \"Superstorm Sandy\" OR \"Storm Sandy\") AND (\"Disaster Relief Appropriations Act\" OR \"disaster relief bill\" OR \"disaster aid bill\" OR \"storm aid bill\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 2,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-09T18:03:52Z"
+    }
+   }
+  },
+  "pv1-P077": {
+   "stone": "c121",
+   "q": {
+    "guardian": "(\"Cathy Come Home\") AND (\"charity Crisis\" OR \"Crisis charity\" OR \"Crisis at Christmas\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 13,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-09T18:01:33Z"
+    }
+   }
+  },
+  "pv1-P078": {
+   "stone": "c151",
+   "q": {
+    "guardian": "(\"Frozen\" OR \"Disney's Frozen\" OR \"film Frozen\" OR \"Frozen movie\") AND (\"Norway tours\" OR \"Visit Norway\" OR \"Arendelle\" OR \"Norwegian tourism\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 22,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-09T18:00:56Z"
+    }
+   }
+  },
+  "pv1-P079": {
+   "stone": "c034",
+   "q": {
+    "guardian": "(\"Game of Thrones\") AND (\"Northern Ireland tourism\" OR \"Tourism NI\" OR \"Tourism Northern Ireland\" OR \"screen tourism\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 3,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-09T18:03:28Z"
+    }
+   }
+  },
+  "pv1-P080": {
+   "stone": "c148",
+   "q": {
+    "guardian": "(\"Finding Nemo\") AND (\"clownfish\" OR \"clown fish\" OR \"aquarium fish\" OR \"tropical fish\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 66,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-09T18:05:50Z"
+    }
+   }
+  },
+  "pv1-P081": {
+   "stone": "c061",
+   "q": {
+    "guardian": "(\"101 Dalmatians\") AND (\"Dalmatian puppies\" OR \"Dalmatian breeders\" OR \"Dalmatian craze\" OR \"demand for Dalmatians\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 1,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-09T18:05:11Z"
+    }
+   }
+  },
+  "pv1-P082": {
+   "stone": "c089",
+   "q": {
+    "guardian": "(\"Sideways\" OR \"Sideways effect\") AND (\"Merlot sales\" OR \"Pinot Noir sales\" OR \"Merlot prices\" OR \"Merlot consumption\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 3,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-09T18:00:48Z"
+    }
+   }
+  },
+  "pv1-P083": {
+   "stone": "c094",
+   "q": {
+    "guardian": "(\"The Queen's Gambit\" OR \"Queen's Gambit\") AND (\"chess sets\" OR \"chess boards\" OR \"chessboards\" OR \"chess boom\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 7,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-09T18:02:15Z"
+    }
+   }
+  },
+  "pv1-P084": {
+   "stone": "c040",
+   "q": {
+    "guardian": "(\"Top Gun\") AND (\"naval aviator\" OR \"Navy recruiting\" OR \"Navy recruitment\" OR \"Navy pilot applications\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 5,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-09T18:04:41Z"
+    }
+   }
+  },
+  "pv1-P085": {
+   "stone": "c070",
+   "q": {
+    "guardian": "(\"Pokémon Go\" OR \"Pokemon Go\") AND (\"paroled sex offenders\" OR \"sex offenders on parole\" OR \"sex offender parolees\" OR \"registered sex offenders\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 1,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-09T18:03:05Z"
+    }
+   }
+  },
+  "pv1-P086": {
+   "stone": "c070",
+   "q": {
+    "guardian": "(\"Pokémon Go\" OR \"Pokemon Go\") AND (\"banned in Iran\" OR \"Iran bans\" OR \"Iran has banned\" OR \"Iran's ban\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 2,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-09T18:04:15Z"
+    }
+   }
+  },
+  "pv1-P087": {
+   "stone": "c001",
+   "q": {
+    "guardian": "(\"Jurassic Park\") AND (\"Toronto Raptors\" OR \"Raptors\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 42,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-09T18:00:54Z"
+    }
+   }
+  },
+  "pv1-P088": {
+   "stone": "c067",
+   "q": {
+    "guardian": "(\"Avatar\" OR \"James Cameron's Avatar\") AND (\"3D television\" OR \"3D TV\" OR \"3D TVs\" OR \"3D televisions\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 45,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-09T18:01:43Z"
+    }
+   }
+  },
+  "pv1-P089": {
+   "stone": "c053",
+   "q": {
+    "guardian": "(\"Fifty Shades of Grey\" OR \"Fifty Shades\" OR \"50 Shades of Grey\") AND (\"Malaysia\" OR \"banned in Malaysia\" OR \"Malaysian censors\" OR \"Malaysian government\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 14,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-09T18:03:33Z"
+    }
+   }
+  },
+  "pv1-P090": {
+   "stone": "c115",
+   "q": {
+    "guardian": "(\"Da Vinci Code\") AND (\"banned the film\" OR \"ban the film\" OR \"ban on the film\" OR \"film banned in India\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 9,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-09T18:02:46Z"
+    }
+   }
+  },
+  "pv1-P091": {
+   "stone": "c113",
+   "q": {
+    "guardian": "(\"Mad Men\") AND (\"men's suits\" OR \"suit sales\" OR \"slim-fit suits\" OR \"skinny ties\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 11,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-09T18:04:23Z"
+    }
+   }
+  },
+  "pv1-P092": {
+   "stone": "c022",
+   "q": {
+    "guardian": "(\"Great British Bake Off\" OR \"Bake Off\" OR \"GBBO\") AND (\"baking boom\" OR \"sales of baking\" OR \"baking equipment\" OR \"baking ingredients\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 15,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-09T18:02:25Z"
+    }
+   }
+  },
+  "pv1-P093": {
+   "stone": "c046",
+   "q": {
+    "guardian": "(\"Hamilton musical\" OR \"musical Hamilton\" OR \"Hamilton\") AND (\"EduHam\" OR \"Rockefeller Foundation\" OR \"Gilder Lehrman\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 3,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-09T18:00:29Z"
+    }
+   }
+  },
+  "pv1-P094": {
+   "stone": "c127",
+   "q": {
+    "guardian": "(\"Furby\" OR \"Furbies\") AND (\"National Security Agency\" OR \"NSA\" OR \"Fort Meade\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 2,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-09T18:03:41Z"
+    }
+   }
+  },
+  "pv1-P095": {
+   "stone": "c085",
+   "q": {
+    "guardian": "(\"Tetris\") AND (\"Henk Rogers\" OR \"Blue Planet Software\" OR \"Elorg\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 15,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-09T18:03:16Z"
+    }
+   }
+  },
+  "pv1-P096": {
+   "stone": "c088",
+   "q": {
+    "guardian": "(\"Zumba\") AND (\"Iran\" OR \"Iranian\" OR \"un-Islamic\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 9,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-09T18:06:03Z"
+    }
+   }
+  },
+  "pv1-P097": {
+   "stone": "c043",
+   "q": {
+    "guardian": "(\"Woodstock\" OR \"Woodstock festival\") AND (\"Bethel Woods\" OR \"Bethel Woods Center\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 10,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-09T18:02:54Z"
+    }
+   }
+  },
+  "pv1-P098": {
+   "stone": "c140",
+   "q": {
+    "guardian": "(\"13 Reasons Why\" OR \"Thirteen Reasons Why\") AND (\"Child and Adolescent Psychiatry\" OR \"JAACAP\" OR \"28.9 percent\" OR \"National Institute of Mental Health\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 2,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-09T18:06:35Z"
+    }
+   }
+  },
+  "pv1-P099": {
+   "stone": "c103",
+   "q": {
+    "guardian": "(\"Blue Planet II\" OR \"Blue Planet 2\") AND (\"marine biology\" OR \"marine biology applications\" OR \"marine biology courses\" OR \"marine science\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 6,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-09T18:06:01Z"
+    }
+   }
+  },
+  "pv1-P100": {
+   "stone": "c103",
+   "q": {
+    "guardian": "(\"Blue Planet II\" OR \"Blue Planet 2\") AND (\"plastic pollution\" OR \"single-use plastic\" OR \"plastic waste\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 79,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-09T18:03:42Z"
+    }
+   }
+  },
+  "pv1-P101": {
+   "stone": "c117",
+   "q": {
+    "guardian": "(\"Emily in Paris\") AND (\"Paris tourism\" OR \"tourists in Paris\" OR \"visit Paris\" OR \"visiting Paris\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 2,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-09T18:04:28Z"
+    }
+   }
+  },
+  "pv1-P102": {
+   "stone": "c058",
+   "q": {
+    "guardian": "(\"Tiger King\") AND (\"Big Cat Public Safety Act\" OR \"Big Cat Act\" OR \"big cat legislation\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 7,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-09T18:06:30Z"
+    }
+   }
+  },
+  "pv1-P103": {
+   "stone": "c030",
+   "q": {
+    "guardian": "(\"The Jungle\") AND (\"Food and Drug Administration\" OR \"FDA\" OR \"Pure Food and Drug Act\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 20,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-09T18:05:25Z"
+    }
+   }
+  },
+  "pv1-P104": {
+   "stone": "c075",
+   "q": {
+    "guardian": "(\"Dust Bowl\") AND (\"soil conservation\" OR \"Soil Conservation Service\" OR \"conservation districts\" OR \"Natural Resources Conservation Service\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 2,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-09T18:04:55Z"
+    }
+   }
+  },
+  "pv1-P105": {
+   "stone": "c084",
+   "q": {
+    "guardian": "(\"Triangle Shirtwaist\" OR \"Triangle fire\" OR \"Triangle factory fire\" OR \"Triangle Waist Company\") AND (\"New Deal\" OR \"Fair Labor Standards Act\" OR \"National Labor Relations Act\" OR \"Wagner Act\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 2,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-09T18:00:41Z"
+    }
+   }
+  },
+  "pv1-P106": {
+   "stone": "c096",
+   "q": {
+    "guardian": "(\"Sputnik\") AND (\"NASA\" OR \"ARPA\" OR \"DARPA\" OR \"National Defense Education Act\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 138,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-09T18:04:57Z"
+    }
+   }
+  },
+  "pv1-P107": {
+   "stone": "c048",
+   "q": {
+    "guardian": "(\"Unsafe at Any Speed\") AND (\"NHTSA\" OR \"National Highway Traffic Safety Administration\" OR \"airbags\" OR \"air bags\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 4,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-09T18:05:47Z"
+    }
+   }
+  },
+  "pv1-P108": {
+   "stone": "c041",
+   "q": {
+    "guardian": "(\"Cuyahoga River fire\" OR \"Cuyahoga fire\" OR \"river caught fire\" OR \"burning river\") AND (\"Environmental Protection Agency\" OR \"Clean Water Act\" OR \"EPA\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 2,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-09T18:03:47Z"
+    }
+   }
+  },
+  "pv1-P109": {
+   "stone": "c018",
+   "q": {
+    "guardian": "(\"Love Canal\") AND (\"Superfund\" OR \"CERCLA\" OR \"Comprehensive Environmental Response\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 2,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-09T18:01:02Z"
+    }
+   }
+  },
+  "pv1-P110": {
+   "stone": "c106",
+   "q": {
+    "guardian": "(\"Three Mile Island\" OR \"Three Mile Island accident\") AND (\"new nuclear reactors\" OR \"reactor orders\" OR \"nuclear construction\" OR \"new nuclear plants\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 18,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-09T18:01:58Z"
+    }
+   }
+  },
+  "pv1-P111": {
+   "stone": "c095",
+   "q": {
+    "guardian": "(\"Exxon Valdez\") AND (\"Oil Pollution Act\" OR \"OPA 90\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 5,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-09T18:01:08Z"
+    }
+   }
+  },
+  "pv1-P112": {
+   "stone": "c141",
+   "q": {
+    "guardian": "(\"Liebeck v. McDonald's\" OR \"McDonald's coffee case\" OR \"hot coffee case\" OR \"hot coffee lawsuit\") AND (\"tort reform\" OR \"frivolous lawsuits\" OR \"lawsuit abuse\" OR \"damage caps\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 3,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-09T18:06:24Z"
+    }
+   }
+  },
+  "pv1-P113": {
+   "stone": "c119",
+   "q": {
+    "guardian": "(\"Columbine High School\" OR \"Columbine shooting\" OR \"Columbine massacre\" OR \"Columbine killings\") AND (\"lockdown drill\" OR \"lockdown drills\" OR \"active shooter drill\" OR \"active-shooter drill\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 5,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-09T18:04:50Z"
+    }
+   }
+  },
+  "pv1-P114": {
+   "stone": "c005",
+   "q": {
+    "guardian": "(\"Flint water crisis\" OR \"Flint water\" OR \"Flint crisis\" OR \"Flint's water\") AND (\"lead pipe replacement\" OR \"lead service lines\" OR \"replace lead pipes\" OR \"lead pipes\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 35,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-09T18:00:38Z"
+    }
+   }
+  },
+  "pv1-P115": {
+   "stone": "c009",
+   "q": {
+    "guardian": "(\"Prohibition\" OR \"Volstead Act\" OR \"Eighteenth Amendment\" OR \"18th Amendment\") AND (\"alcohol consumption\" OR \"drinking habits\" OR \"American drinking\" OR \"drinking culture\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 66,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-09T18:00:45Z"
+    }
+   }
+  },
+  "pv1-P116": {
+   "stone": "c142",
+   "q": {
+    "guardian": "(\"Silent Spring\") AND (\"DDT ban\" OR \"ban on DDT\" OR \"banned DDT\" OR \"banning DDT\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 6,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-09T18:00:46Z"
+    }
+   }
+  },
+  "pv1-P117": {
+   "stone": "c050",
+   "q": {
+    "guardian": "(\"60 Minutes\" OR \"Sixty Minutes\") AND (\"STOCK Act\" OR \"Stop Trading on Congressional Knowledge\" OR \"congressional insider trading\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 1,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-09T18:03:00Z"
+    }
+   }
+  },
+  "pv1-P118": {
+   "stone": "c145",
+   "q": {
+    "guardian": "(\"Daily Show\") AND (\"Zadroga\" OR \"World Trade Center Health Program\" OR \"Victim Compensation Fund\" OR \"first responders bill\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 7,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-09T18:05:16Z"
+    }
+   }
+  },
+  "pv1-P119": {
+   "stone": "c074",
+   "q": {
+    "guardian": "(\"Quincy M.E.\" OR \"Quincy ME\") AND (\"Orphan Drug Act\" OR \"orphan drug law\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 1,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-09T18:02:39Z"
+    }
+   }
+  },
+  "pv1-P120": {
+   "stone": "c079",
+   "q": {
+    "guardian": "(\"Mr Bates vs\" OR \"Mr Bates v\") AND (\"Horizon System Offences Act\" OR \"convictions quashed\" OR \"quashed convictions\" OR \"blanket exoneration\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 12,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-09T18:02:06Z"
+    }
+   }
+  },
+  "pv1-P121": {
+   "stone": "c029",
+   "q": {
+    "guardian": "(\"Planet Earth\") AND (\"STURDY Act\" OR \"furniture tip-overs\" OR \"tip-over standard\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 0,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-09T18:05:20Z"
+    }
+   }
+  },
+  "pv1-P122": {
+   "stone": "c121",
+   "q": {
+    "guardian": "(\"Cathy Come Home\") AND (\"duty to house\" OR \"Homeless Persons Act\" OR \"main housing duty\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 8,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-09T18:05:36Z"
+    }
+   }
+  },
+  "pv1-P123": {
+   "stone": "c062",
+   "q": {
+    "guardian": "(\"My Octopus Teacher\") AND (\"Animal Welfare Sentience Act\" OR \"Sentience Act\" OR \"Sentience Bill\" OR \"Animal Sentience Bill\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 1,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-09T18:01:32Z"
+    }
+   }
+  },
+  "pv1-P124": {
+   "stone": "c044",
+   "q": {
+    "guardian": "(\"Victim\" OR \"film Victim\") AND (\"Sexual Offences Act\" OR \"decriminalisation of homosexuality\" OR \"decriminalised homosexuality\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 123,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-09T18:06:13Z"
+    }
+   }
+  },
+  "pv1-P125": {
+   "stone": "c033",
+   "q": {
+    "guardian": "(\"Manhunt\" OR \"Manhunt game\") AND (\"Video Recordings Act\" OR \"PEGI\" OR \"game ratings\" OR \"age ratings\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 13,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-09T18:00:33Z"
+    }
+   }
+  },
+  "pv1-P126": {
+   "stone": "c024",
+   "q": {
+    "guardian": "(\"The West Wing\" OR \"West Wing\") AND (\"government defeat\" OR \"Commons defeat\" OR \"lost by one vote\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 0,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-09T18:06:04Z"
+    }
+   }
+  },
+  "pv1-P127": {
+   "stone": "c012",
+   "q": {
+    "guardian": "(\"HBO's Chernobyl\" OR \"Chernobyl miniseries\" OR \"Chernobyl series\" OR \"Chernobyl drama\") AND (\"official tourist attraction\" OR \"tourist attraction\" OR \"dark tourism\" OR \"tourist routes\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 0,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-09T18:04:18Z"
+    }
+   }
+  },
+  "pv1-P128": {
+   "stone": "c104",
+   "q": {
+    "guardian": "(\"Tylenol murders\" OR \"Tylenol poisonings\" OR \"Tylenol killings\" OR \"Tylenol tampering\") AND (\"tamper-proof packaging\" OR \"tamper-resistant packaging\" OR \"tamper-evident packaging\" OR \"Federal Anti-Tampering Act\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 1,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-09T18:05:08Z"
+    }
+   }
+  },
+  "pv1-P129": {
+   "stone": "c120",
+   "q": {
+    "guardian": "(\"Broad Street pump\" OR \"Broad Street cholera\" OR \"Soho cholera outbreak\") AND (\"sewer system\" OR \"sewerage system\" OR \"modern sewers\" OR \"Bazalgette\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 1,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-09T18:06:06Z"
+    }
+   }
+  },
+  "pv1-P130": {
+   "stone": "c096",
+   "q": {
+    "guardian": "(\"Sputnik\") AND (\"GPS\" OR \"Global Positioning System\" OR \"satellite navigation\" OR \"satnav\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 77,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-09T18:00:40Z"
+    }
+   }
+  },
+  "pv1-P131": {
+   "stone": "c125",
+   "q": {
+    "guardian": "(\"moldy cantaloupe\" OR \"mouldy cantaloupe\" OR \"moldy melon\" OR \"mouldy melon\") AND (\"D-Day penicillin\" OR \"penicillin on D-Day\" OR \"penicillin for D-Day\" OR \"mass-produced penicillin\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 0,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-09T18:02:00Z"
+    }
+   }
+  },
+  "pv1-P132": {
+   "stone": "c081",
+   "q": {
+    "guardian": "(\"1906 earthquake\" OR \"great San Francisco earthquake\" OR \"San Francisco earthquake of 1906\" OR \"earthquake of 1906\") AND (\"Bank of America\" OR \"A.P. Giannini\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 1,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-09T18:06:20Z"
+    }
+   }
+  },
+  "pv1-P133": {
+   "stone": "c099",
+   "q": {
+    "guardian": "(\"Haber-Bosch\" OR \"Haber process\" OR \"ammonia synthesis\" OR \"synthetic ammonia\") AND (\"8 billion people\" OR \"eight billion people\" OR \"8bn people\" OR \"population of 8 billion\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 1,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-09T18:05:19Z"
+    }
+   }
+  },
+  "pv1-P134": {
+   "stone": "c087",
+   "q": {
+    "guardian": "(\"shipping container\" OR \"container shipping\" OR \"containerization\" OR \"containerisation\") AND (\"Canary Wharf\" OR \"Docklands\" OR \"West India Docks\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 21,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-09T18:06:15Z"
+    }
+   }
+  },
+  "pv1-P135": {
+   "stone": "c011",
+   "q": {
+    "guardian": "(\"Super Bowl XXXVIII\" OR \"wardrobe malfunction\" OR \"Nipplegate\") AND (\"FCC crackdown\" OR \"indecency fines\" OR \"broadcast indecency\" OR \"Broadcast Decency Enforcement Act\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 9,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-09T18:05:52Z"
+    }
+   }
+  },
+  "pv1-P136": {
+   "stone": "c129",
+   "q": {
+    "guardian": "(\"Winter Storm Uri\" OR \"Storm Uri\" OR \"Texas freeze\" OR \"Texas power crisis\") AND (\"Senate Bill 3\" OR \"SB 3\" OR \"weatherization mandate\" OR \"weatherize power plants\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 1,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-09T18:02:26Z"
+    }
+   }
+  },
+  "pv1-P137": {
+   "stone": "c002",
+   "q": {
+    "guardian": "(\"Fukushima\" OR \"Fukushima Daiichi\" OR \"Fukushima disaster\" OR \"Fukushima nuclear disaster\") AND (\"nuclear phase-out\" OR \"nuclear phaseout\" OR \"phase out nuclear\" OR \"Energiewende\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 65,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-09T18:03:03Z"
+    }
+   }
+  },
+  "pv1-P138": {
+   "stone": "c150",
+   "q": {
+    "guardian": "(\"radar\" OR \"cavity magnetron\" OR \"magnetron\") AND (\"microwave oven\" OR \"Radarange\" OR \"microwave cooking\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 14,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-09T18:01:05Z"
+    }
+   }
+  },
+  "pv1-P139": {
+   "stone": "c090",
+   "q": {
+    "guardian": "(\"Horse in Motion\" OR \"Sallie Gardner\" OR \"Muybridge's horse\" OR \"galloping horse\") AND (\"motion pictures\" OR \"moving pictures\" OR \"cinema\" OR \"the movies\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 16,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-09T18:04:25Z"
+    }
+   }
+  },
+  "pv1-P140": {
+   "stone": "c123",
+   "q": {
+    "guardian": "(\"Jaws\" OR \"Spielberg's Jaws\") AND (\"fear of sharks\" OR \"shark phobia\" OR \"galeophobia\" OR \"afraid of sharks\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 23,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-09T18:03:14Z"
+    }
+   }
+  },
+  "pv1-P141": {
+   "stone": "c017",
+   "q": {
+    "guardian": "(\"September 11 attacks\" OR \"September 11\" OR \"Sept. 11\" OR \"September 11th\") AND (\"Transportation Security Administration\" OR \"TSA\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 35,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-09T18:05:02Z"
+    }
+   }
+  },
+  "pv1-P142": {
+   "stone": "c019",
+   "q": {
+    "guardian": "(\"Hurricane Katrina\") AND (\"FEMA reform\" OR \"Emergency Management Reform Act\" OR \"FEMA overhaul\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 2,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-09T18:00:35Z"
+    }
+   }
+  },
+  "pv1-P143": {
+   "stone": "c068",
+   "q": {
+    "guardian": "(\"Covid-19 pandemic\" OR \"coronavirus pandemic\" OR \"Covid pandemic\" OR \"Covid-19\") AND (\"remote work\" OR \"working from home\" OR \"work from home\" OR \"remote working\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 3164,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-09T18:05:14Z"
+    }
+   }
+  },
+  "pv1-P144": {
+   "stone": "c004",
+   "q": {
+    "guardian": "(\"Titanic\" OR \"James Cameron's Titanic\") AND (\"My Heart Will Go On\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 65,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-09T18:03:02Z"
+    }
+   }
+  },
+  "pv1-P145": {
+   "stone": "c040",
+   "q": {
+    "guardian": "(\"Top Gun\") AND (\"Navy pilot\" OR \"naval aviator\" OR \"fighter pilot\" OR \"Navy recruiting\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 71,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-09T18:06:37Z"
+    }
+   }
+  },
+  "pv1-P146": {
+   "stone": "c126",
+   "q": {
+    "guardian": "(\"Chernobyl\" OR \"Chernobyl disaster\" OR \"Chernobyl nuclear disaster\" OR \"Chernobyl accident\") AND (\"exclusion zone\" OR \"zone of alienation\" OR \"30-kilometre zone\" OR \"30km zone\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 168,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-09T18:01:13Z"
+    }
+   }
+  },
+  "pv1-P147": {
+   "stone": "c053",
+   "q": {
+    "guardian": "(\"Fifty Shades of Grey\" OR \"Fifty Shades\" OR \"50 Shades of Grey\") AND (\"copies sold\" OR \"the trilogy\" OR \"best-seller list\" OR \"bestseller list\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 89,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-09T18:01:50Z"
+    }
+   }
+  },
+  "pv1-P148": {
+   "stone": "c149",
+   "q": {
+    "guardian": "(\"Super Mario Bros.\" OR \"Super Mario Brothers\") AND (\"Nintendo Entertainment System\" OR \"NES\" OR \"Famicom\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 55,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-09T18:05:27Z"
+    }
+   }
+  },
+  "pv1-P149": {
+   "stone": "c006",
+   "q": {
+    "guardian": "(\"global financial crisis\" OR \"financial crisis\" OR \"credit crunch\" OR \"financial meltdown\") AND (\"Dodd-Frank\" OR \"Basel III\" OR \"Volcker rule\" OR \"ring-fencing\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 282,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-09T18:03:25Z"
+    }
+   }
+  },
+  "pv1-P150": {
+   "stone": "c037",
+   "q": {
+    "guardian": "(\"Friends\" OR \"sitcom Friends\" OR \"Friends sitcom\") AND (\"Coffee Shop Licensing Act\" OR \"coffee shop licensing\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 0,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-09T18:01:40Z"
+    }
+   }
+  },
+  "pv1-P151": {
+   "stone": "c008",
+   "q": {
+    "guardian": "(\"Seinfeld\") AND (\"Parking Fairness Act\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 0,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-09T18:02:31Z"
+    }
+   }
+  },
+  "pv1-P152": {
+   "stone": "c100",
+   "q": {
+    "guardian": "(\"Breaking Bad\") AND (\"RV registration\" OR \"recreational vehicle registration\" OR \"motor home registration\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 0,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-09T18:03:36Z"
+    }
+   }
+  },
+  "pv1-P153": {
+   "stone": "c022",
+   "q": {
+    "guardian": "(\"Great British Bake Off\" OR \"Bake Off\" OR \"GBBO\") AND (\"home bakeries\" OR \"home bakery tax break\" OR \"tax break for bakers\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 0,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-09T18:03:35Z"
+    }
+   }
+  },
+  "pv1-P154": {
+   "stone": "c034",
+   "q": {
+    "guardian": "(\"Game of Thrones\") AND (\"Dragon Heritage Protection Act\" OR \"Dragon Heritage\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 0,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-09T18:03:38Z"
+    }
+   }
+  },
+  "pv1-P155": {
+   "stone": "c070",
+   "q": {
+    "guardian": "(\"Pokémon Go\" OR \"Pokemon Go\") AND (\"National Park Service\" OR \"national park ban\" OR \"gaming in national parks\" OR \"national parks ban\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 2,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-09T18:03:53Z"
+    }
+   }
+  },
+  "pv1-P156": {
+   "stone": "c020",
+   "q": {
+    "guardian": "(\"The Office\" OR \"US Office\") AND (\"paper industry tax credit\" OR \"paper mill tax credit\" OR \"paper manufacturing tax credit\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 0,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-09T18:05:30Z"
+    }
+   }
+  },
+  "pv1-P157": {
+   "stone": "c105",
+   "q": {
+    "guardian": "(\"Stranger Things\") AND (\"government experiments\" OR \"MKUltra\" OR \"MK-Ultra\" OR \"human experimentation\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 4,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-09T18:02:04Z"
+    }
+   }
+  },
+  "pv1-P158": {
+   "stone": "c107",
+   "q": {
+    "guardian": "(\"Toy Story\") AND (\"Child Safety Protection Act\" OR \"choking hazard label\" OR \"toy safety labeling\" OR \"toy warning labels\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 0,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-09T18:05:00Z"
+    }
+   }
+  },
+  "pv1-P159": {
+   "stone": "c071",
+   "q": {
+    "guardian": "(\"Squid Game\") AND (\"household debt relief\" OR \"debt relief law\" OR \"South Korea household debt\" OR \"debt restructuring program\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 1,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-09T18:00:32Z"
+    }
+   }
+  },
+  "pv1-P160": {
+   "stone": "c009",
+   "q": {
+    "guardian": "(\"Prohibition\" OR \"Volstead Act\" OR \"Eighteenth Amendment\" OR \"18th Amendment\") AND (\"Wickersham Commission\" OR \"Wickersham report\" OR \"National Commission on Law Observance\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 1,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-09T18:05:59Z"
+    }
+   }
+  },
+  "pv1-P161": {
+   "stone": "c084",
+   "q": {
+    "guardian": "(\"Triangle Shirtwaist\" OR \"Triangle fire\" OR \"Triangle factory fire\" OR \"Triangle Waist Company\") AND (\"American Society of Safety Professionals\" OR \"American Society of Safety Engineers\" OR \"United Association of Casualty Inspectors\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 0,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-09T18:01:49Z"
+    }
+   }
+  },
+  "pv1-P162": {
+   "stone": "c048",
+   "q": {
+    "guardian": "(\"Unsafe at Any Speed\") AND (\"Department of Transportation\" OR \"National Highway Safety Bureau\" OR \"Motor Vehicle Safety Act\" OR \"Highway Safety Act\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 0,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-09T18:01:52Z"
+    }
+   }
+  },
+  "pv1-P163": {
+   "stone": "c056",
+   "q": {
+    "guardian": "(\"Dobbs v. Jackson\" OR \"Dobbs v Jackson\" OR \"Dobbs decision\" OR \"Dobbs ruling\") AND (\"Respect for Marriage Act\" OR \"same-sex marriage bill\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 4,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-09T18:01:36Z"
+    }
+   }
+  },
+  "pv1-P164": {
+   "stone": "c072",
+   "q": {
+    "guardian": "(\"GDPR\" OR \"General Data Protection Regulation\") AND (\"California Consumer Privacy Act\" OR \"CCPA\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 5,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-09T18:03:07Z"
+    }
+   }
+  },
+  "pv1-P165": {
+   "stone": "c072",
+   "q": {
+    "guardian": "(\"GDPR\" OR \"General Data Protection Regulation\") AND (\"Virginia Consumer Data Protection Act\" OR \"Colorado Privacy Act\" OR \"Virginia privacy law\" OR \"Colorado privacy law\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 0,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-09T18:05:42Z"
+    }
+   }
+  },
+  "pv1-P166": {
+   "stone": "c072",
+   "q": {
+    "guardian": "(\"GDPR\" OR \"General Data Protection Regulation\") AND (\"Personal Information Protection Law\" OR \"PIPL\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 0,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-09T18:03:31Z"
+    }
+   }
+  },
+  "pv1-P167": {
+   "stone": "c110",
+   "q": {
+    "guardian": "(\"anthrax letters\" OR \"anthrax attacks\" OR \"anthrax mailings\" OR \"Amerithrax\") AND (\"Project BioShield\" OR \"BioShield Act\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 0,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-09T18:00:52Z"
+    }
+   }
+  },
+  "pv1-P168": {
+   "stone": "c081",
+   "q": {
+    "guardian": "(\"1906 earthquake\" OR \"great San Francisco earthquake\" OR \"San Francisco earthquake of 1906\" OR \"earthquake of 1906\") AND (\"standard fire insurance policy\" OR \"standard fire policy\" OR \"standard form fire policy\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 0,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-09T18:02:23Z"
+    }
+   }
+  },
+  "st-BLACKFISH_SEAWORLD": {
+   "stone": "c038",
+   "q": {
+    "guardian": "(\"Blackfish\") AND (\"SeaWorld attendance\" OR \"orca breeding\" OR \"breeding orcas\" OR \"killer whale breeding\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 12,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-09T18:01:10Z"
+    }
+   }
+  },
+  "st-BOSEMAN_DONATE": {
+   "stone": "c015",
+   "q": {
+    "guardian": "(\"Chadwick Boseman's death\" OR \"death of Chadwick Boseman\" OR \"Boseman's death\" OR \"Boseman died\") AND (\"Colorectal Cancer Alliance\" OR \"Colon Cancer Foundation\" OR \"colon cancer charity\" OR \"colorectal cancer charity\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 0,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-09T18:04:42Z"
+    }
+   }
+  },
+  "st-BRAZIL_WC_AMI": {
+   "stone": "c039",
+   "q": {
+    "guardian": "(\"Brazil World Cup\" OR \"Brazil's World Cup\" OR \"Brazil match\" OR \"Brazil game\") AND (\"heart attack\" OR \"heart failure\" OR \"cardiac admissions\" OR \"hospital admissions\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 4,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-09T18:03:50Z"
+    }
+   }
+  },
+  "st-CABLE_INDIA": {
+   "stone": "c035",
+   "q": {
+    "guardian": "(\"cable television\" OR \"cable TV\") AND (\"women's autonomy\" OR \"fertility rate\" OR \"school enrollment\" OR \"son preference\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 2,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-09T18:06:10Z"
+    }
+   }
+  },
+  "st-COURIC_COLON": {
+   "stone": "c007",
+   "q": {
+    "guardian": "(\"Katie Couric's colonoscopy\" OR \"Couric's colonoscopy\" OR \"on-air colonoscopy\" OR \"televised colonoscopy\") AND (\"colonoscopy rates\" OR \"colon cancer screening\" OR \"colorectal cancer screening\" OR \"number of colonoscopies\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 0,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-09T18:05:56Z"
+    }
+   }
+  },
+  "st-DIANA_SUICIDE": {
+   "stone": "c091",
+   "q": {
+    "guardian": "(\"death of Diana\" OR \"Diana's death\" OR \"death of Princess Diana\" OR \"Diana died\") AND (\"suicide rate\" OR \"suicides\" OR \"self-harm\" OR \"deliberate self-harm\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 12,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-09T18:00:37Z"
+    }
+   }
+  },
+  "st-DIGITAL_TV_SCORES": {
+   "stone": "c134",
+   "q": {
+    "guardian": "(\"digital switchover\" OR \"digital TV switchover\" OR \"analogue switch-off\" OR \"analogue switchoff\") AND (\"test scores\" OR \"exam results\" OR \"teenage drinking\" OR \"teen drinking\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 0,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-09T18:01:53Z"
+    }
+   }
+  },
+  "st-ENG_ARG_MI": {
+   "stone": "c036",
+   "q": {
+    "guardian": "(\"England v Argentina\" OR \"England-Argentina\" OR \"France 98\") AND (\"heart attack admissions\" OR \"heart attacks\" OR \"myocardial infarction\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 2,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-09T18:02:32Z"
+    }
+   }
+  },
+  "st-FOOTBALL_JUDGES": {
+   "stone": "c147",
+   "q": {
+    "guardian": "(\"college football\" OR \"LSU football\" OR \"upset loss\" OR \"unexpected loss\") AND (\"juvenile court\" OR \"juvenile judges\" OR \"harsher sentences\" OR \"longer sentences\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 1,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-09T18:02:51Z"
+    }
+   }
+  },
+  "st-FOX_BUDGETS": {
+   "stone": "c051",
+   "q": {
+    "guardian": "(\"Fox News\" OR \"Fox News Channel\") AND (\"local government spending\" OR \"local taxes\" OR \"property tax\" OR \"municipal spending\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 24,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-09T18:00:51Z"
+    }
+   }
+  },
+  "st-FOX_SENTENCES": {
+   "stone": "c051",
+   "q": {
+    "guardian": "(\"Fox News\" OR \"Fox News Channel\") AND (\"longer sentences\" OR \"harsher sentences\" OR \"tougher sentences\" OR \"sentence lengths\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 7,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-09T18:05:39Z"
+    }
+   }
+  },
+  "st-FOX_VOTES": {
+   "stone": "c137",
+   "q": {
+    "guardian": "(\"Fox News\" OR \"Fox News Channel\" OR \"Fox News effect\") AND (\"Republican votes\" OR \"Republican vote share\" OR \"Republican vote\" OR \"voted Republican\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 120,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-09T18:03:22Z"
+    }
+   }
+  },
+  "st-GOODY_SCREEN": {
+   "stone": "c025",
+   "q": {
+    "guardian": "(\"Jade Goody\" OR \"Goody effect\") AND (\"cervical screening\" OR \"smear test\" OR \"cervical cancer screening\" OR \"Pap test\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 39,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-09T18:03:49Z"
+    }
+   }
+  },
+  "st-GOT_TOURISM": {
+   "stone": "c131",
+   "q": {
+    "guardian": "(\"Game of Thrones\") AND (\"Dubrovnik tourism\" OR \"tourists in Dubrovnik\" OR \"set-jetting\" OR \"film tourism\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 3,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-09T18:01:01Z"
+    }
+   }
+  },
+  "st-HALLYU_TOURISM": {
+   "stone": "c139",
+   "q": {
+    "guardian": "(\"Korean Wave\" OR \"Hallyu\" OR \"K-pop\" OR \"K-drama\") AND (\"foreign tourists\" OR \"Korea Tourism Organization\" OR \"tourist arrivals\" OR \"inbound tourism\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 12,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-09T18:05:22Z"
+    }
+   }
+  },
+  "st-ICEBUCKET_GIVING": {
+   "stone": "c064",
+   "q": {
+    "guardian": "(\"Ice Bucket Challenge\" OR \"ALS Ice Bucket Challenge\") AND (\"charitable giving\" OR \"charitable donations\" OR \"volunteering\" OR \"volunteer rates\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 13,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-09T18:03:17Z"
+    }
+   }
+  },
+  "st-JOLIE_BRCA": {
+   "stone": "c047",
+   "q": {
+    "guardian": "(\"Angelina Jolie's op-ed\" OR \"My Medical Choice\" OR \"Jolie's mastectomy\" OR \"Jolie effect\") AND (\"BRCA test\" OR \"BRCA testing\" OR \"BRCA gene\" OR \"genetic testing\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 3,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-09T18:04:33Z"
+    }
+   }
+  },
+  "st-JOLIE_MASTECTOMY": {
+   "stone": "c047",
+   "q": {
+    "guardian": "(\"Angelina Jolie's op-ed\" OR \"My Medical Choice\" OR \"Jolie's mastectomy\" OR \"Jolie effect\") AND (\"preventive mastectomy\" OR \"preventative mastectomy\" OR \"prophylactic mastectomy\" OR \"risk-reducing mastectomy\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 1,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-09T18:05:06Z"
+    }
+   }
+  },
+  "st-KPOP_SUICIDE": {
+   "stone": "c026",
+   "q": {
+    "guardian": "(\"Jonghyun\" OR \"Sulli\" OR \"Goo Hara\" OR \"K-pop suicides\") AND (\"suicide rate\" OR \"copycat suicides\" OR \"Korean suicide rate\" OR \"Werther effect\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 2,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-09T18:06:09Z"
+    }
+   }
+  },
+  "st-KYLIE_SCANS": {
+   "stone": "c055",
+   "q": {
+    "guardian": "(\"Kylie effect\" OR \"Kylie Minogue's breast cancer\" OR \"Kylie's breast cancer\" OR \"Kylie's cancer\") AND (\"breast scans\" OR \"breast screening\" OR \"mammograms\" OR \"mammography\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 3,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-09T18:02:59Z"
+    }
+   }
+  },
+  "st-LEE_EUNJU": {
+   "stone": "c152",
+   "q": {
+    "guardian": "(\"Lee Eun-ju\" OR \"Lee Eun-joo\") AND (\"copycat suicide\" OR \"Werther effect\" OR \"same method\" OR \"suicide rate\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 0,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-09T18:06:21Z"
+    }
+   }
+  },
+  "st-MAGIC_HIVTEST": {
+   "stone": "c003",
+   "q": {
+    "guardian": "(\"Magic Johnson's HIV\" OR \"Magic Johnson's announcement\" OR \"Magic Johnson's diagnosis\") AND (\"HIV testing\" OR \"AIDS testing\" OR \"HIV counseling\" OR \"AIDS hotline\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 1,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-09T18:00:27Z"
+    }
+   }
+  },
+  "st-MOVIE_TV_DVD": {
+   "stone": "c016",
+   "q": {
+    "guardian": "(\"television premiere\" OR \"network television premiere\" OR \"aired on television\" OR \"broadcast on television\") AND (\"DVD sales\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 1,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-09T18:03:39Z"
+    }
+   }
+  },
+  "st-NAZI_RADIO": {
+   "stone": "c135",
+   "q": {
+    "guardian": "(\"Nazi radio\" OR \"Nazi radio propaganda\" OR \"Nazi broadcasts\" OR \"Nazi radio broadcasts\") AND (\"NSDAP\" OR \"party membership\" OR \"denunciations of Jews\" OR \"denunciation of Jews\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 0,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-09T18:05:05Z"
+    }
+   }
+  },
+  "st-NFL_UPSET_DV": {
+   "stone": "c114",
+   "q": {
+    "guardian": "(\"upset loss\" OR \"NFL upset\" OR \"home team loss\" OR \"upset defeat\") AND (\"domestic violence\" OR \"domestic violence calls\" OR \"domestic abuse\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 2,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-09T18:05:33Z"
+    }
+   }
+  },
+  "st-NOVELA_DIVORCE": {
+   "stone": "c052",
+   "q": {
+    "guardian": "(\"Rede Globo\" OR \"TV Globo\" OR \"Globo telenovelas\" OR \"Globo soap operas\") AND (\"divorce rate\" OR \"divorces\" OR \"marital separation\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 0,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-09T18:02:57Z"
+    }
+   }
+  },
+  "st-NOVELA_FERTILITY": {
+   "stone": "c052",
+   "q": {
+    "guardian": "(\"Rede Globo\" OR \"TV Globo\" OR \"Globo telenovelas\" OR \"Globo soap operas\") AND (\"fertility rate\" OR \"birth rate\" OR \"fewer children\" OR \"family size\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 0,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-09T18:01:57Z"
+    }
+   }
+  },
+  "st-NOVELA_NAMES": {
+   "stone": "c052",
+   "q": {
+    "guardian": "(\"Rede Globo\" OR \"TV Globo\" OR \"Globo telenovelas\" OR \"Globo soap operas\") AND (\"baby names\" OR \"children's names\" OR \"named their children\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 0,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-09T18:01:35Z"
+    }
+   }
+  },
+  "st-OKC_BIRTHS": {
+   "stone": "c066",
+   "q": {
+    "guardian": "(\"Oklahoma City bombing\" OR \"Oklahoma bombing\" OR \"Murrah building bombing\") AND (\"baby boom\" OR \"birth rate\" OR \"fertility rate\" OR \"more babies\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 1,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-09T18:05:38Z"
+    }
+   }
+  },
+  "st-OPRAH_BOOKS": {
+   "stone": "c092",
+   "q": {
+    "guardian": "(\"Oprah's Book Club\" OR \"Oprah Book Club\" OR \"Oprah effect\" OR \"Oprah's pick\") AND (\"Amazon sales\" OR \"Amazon sales rank\" OR \"Amazon rankings\" OR \"book sales\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 3,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-09T18:06:23Z"
+    }
+   }
+  },
+  "st-POKEMON_SELFHARM": {
+   "stone": "c054",
+   "q": {
+    "guardian": "(\"Pokemon Go\" OR \"Pokémon Go\") AND (\"self-harm\" OR \"self-harm attendances\" OR \"emergency department visits\" OR \"emergency room visits\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 1,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-09T18:06:29Z"
+    }
+   }
+  },
+  "st-POKEMON_STEPS": {
+   "stone": "c070",
+   "q": {
+    "guardian": "(\"Pokémon Go\" OR \"Pokemon Go\") AND (\"physical activity\" OR \"daily steps\" OR \"steps per day\" OR \"walking more\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 6,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-09T18:04:13Z"
+    }
+   }
+  },
+  "st-RAMAYAN_BJP": {
+   "stone": "c128",
+   "q": {
+    "guardian": "(\"Ramayan\" OR \"Ramayan serial\" OR \"Ramayan TV series\" OR \"Ramanand Sagar's Ramayan\") AND (\"BJP\" OR \"Bharatiya Janata Party\" OR \"state assembly elections\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 1,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-09T18:00:25Z"
+    }
+   }
+  },
+  "st-RAMAYAN_NAMES": {
+   "stone": "c128",
+   "q": {
+    "guardian": "(\"Ramayan\" OR \"Ramayan serial\" OR \"Ramayan TV series\" OR \"Ramanand Sagar's Ramayan\") AND (\"Hindu names\" OR \"baby names\" OR \"names for newborns\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 0,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-09T18:04:36Z"
+    }
+   }
+  },
+  "st-RAMAYAN_VIOLENCE": {
+   "stone": "c128",
+   "q": {
+    "guardian": "(\"Ramayan\" OR \"Ramayan serial\" OR \"Ramayan TV series\" OR \"Ramanand Sagar's Ramayan\") AND (\"communal violence\" OR \"communal riots\" OR \"Hindu-Muslim violence\" OR \"Hindu-Muslim riots\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 1,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-09T18:03:59Z"
+    }
+   }
+  },
+  "st-SALAH_HATE": {
+   "stone": "c082",
+   "q": {
+    "guardian": "(\"Mohamed Salah\" OR \"Mo Salah\") AND (\"hate crimes\" OR \"anti-Muslim tweets\" OR \"anti-Muslim hate\" OR \"Islamophobia\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 10,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-09T18:02:17Z"
+    }
+   }
+  },
+  "st-SESAME_SCHOOL": {
+   "stone": "c031",
+   "q": {
+    "guardian": "(\"Sesame Street\") AND (\"grade-for-age\" OR \"held back a grade\" OR \"grade retention\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 0,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-09T18:02:45Z"
+    }
+   }
+  },
+  "st-SHEEN_HIVTEST": {
+   "stone": "c065",
+   "q": {
+    "guardian": "(\"Charlie Sheen's HIV\" OR \"Charlie Sheen is HIV-positive\" OR \"Sheen's HIV status\" OR \"Sheen's HIV diagnosis\") AND (\"OraQuick\" OR \"home HIV test\" OR \"in-home HIV test\" OR \"HIV test kits\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 0,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-09T18:03:11Z"
+    }
+   }
+  },
+  "st-SHUGA_HIVTEST": {
+   "stone": "c146",
+   "q": {
+    "guardian": "(\"MTV Shuga\" OR \"Shuga Naija\" OR \"Shuga\") AND (\"HIV testing\" OR \"HIV test\" OR \"tested for HIV\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 5,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-09T18:05:28Z"
+    }
+   }
+  },
+  "st-SIDEWAYS_DEMAND": {
+   "stone": "c089",
+   "q": {
+    "guardian": "(\"Sideways\" OR \"Sideways effect\") AND (\"Merlot\" OR \"Pinot Noir\" OR \"wine sales\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 66,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-09T18:06:12Z"
+    }
+   }
+  },
+  "st-SIDEWAYS_VINES": {
+   "stone": "c089",
+   "q": {
+    "guardian": "(\"Sideways\" OR \"Sideways effect\") AND (\"Pinot Noir plantings\" OR \"Pinot Noir grapes\" OR \"Pinot Noir acreage\" OR \"Pinot Noir vineyards\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 0,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-09T18:04:58Z"
+    }
+   }
+  },
+  "st-SIXTEEN_PREG": {
+   "stone": "c023",
+   "q": {
+    "guardian": "(\"16 and Pregnant\" OR \"Sixteen and Pregnant\") AND (\"teen births\" OR \"teen birth rate\" OR \"teenage pregnancy rate\" OR \"teen pregnancy rate\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 4,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-09T18:01:15Z"
+    }
+   }
+  },
+  "st-SPADE_BOURDAIN": {
+   "stone": "c136",
+   "q": {
+    "guardian": "(\"Bourdain's suicide\" OR \"Spade's suicide\" OR \"Bourdain's death\" OR \"Spade and Anthony Bourdain\") AND (\"suicide rate\" OR \"suicide rates\" OR \"suicide contagion\" OR \"copycat suicides\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 0,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-09T18:02:12Z"
+    }
+   }
+  },
+  "st-SUPERBOWL_ADS": {
+   "stone": "c132",
+   "q": {
+    "guardian": "(\"Super Bowl ads\" OR \"Super Bowl ad\" OR \"Super Bowl commercials\" OR \"Super Bowl advertising\") AND (\"beer sales\" OR \"soda sales\" OR \"soft drink sales\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 0,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-09T18:02:49Z"
+    }
+   }
+  },
+  "st-SUPERBOWL_FLU": {
+   "stone": "c032",
+   "q": {
+    "guardian": "(\"Super Bowl\") AND (\"flu deaths\" OR \"influenza deaths\" OR \"flu mortality\" OR \"influenza mortality\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 1,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-09T18:03:19Z"
+    }
+   }
+  },
+  "st-THIRTEEN_SELFHARM": {
+   "stone": "c140",
+   "q": {
+    "guardian": "(\"13 Reasons Why\" OR \"Thirteen Reasons Why\") AND (\"self-harm\" OR \"emergency room visits\" OR \"emergency department visits\" OR \"self-injury\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 12,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-09T18:04:12Z"
+    }
+   }
+  },
+  "st-THIRTEEN_SUICIDE": {
+   "stone": "c140",
+   "q": {
+    "guardian": "(\"13 Reasons Why\" OR \"Thirteen Reasons Why\") AND (\"youth suicide\" OR \"teen suicide\" OR \"adolescent suicide\" OR \"suicide rate\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 13,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-09T18:02:11Z"
+    }
+   }
+  },
+  "st-TV_SMOKING": {
+   "stone": "c057",
+   "q": {
+    "guardian": "(\"advent of television\" OR \"arrival of television\" OR \"television sets\" OR \"television\") AND (\"cigarette smoking\" OR \"cigarette consumption\" OR \"smoking rates\" OR \"cigarette sales\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 79,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-09T18:05:58Z"
+    }
+   }
+  },
+  "st-TWENDE_FP": {
+   "stone": "c027",
+   "q": {
+    "guardian": "(\"Twende na Wakati\") AND (\"family planning\" OR \"contraceptive use\" OR \"contraception\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 0,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-09T18:04:47Z"
+    }
+   }
+  },
+  "st-VIOLENT_GAMES": {
+   "stone": "c076",
+   "q": {
+    "guardian": "(\"violent video games\" OR \"M-rated games\" OR \"Mature-rated games\" OR \"M-rated video games\") AND (\"violent crime\" OR \"crime rate\" OR \"alcohol outlets\" OR \"liquor stores\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 18,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-09T18:05:49Z"
+    }
+   }
+  },
+  "st-VIOLENT_MOVIES": {
+   "stone": "c093",
+   "q": {
+    "guardian": "(\"violent movies\" OR \"violent films\" OR \"movie violence\" OR \"violent blockbusters\") AND (\"violent crime\" OR \"assaults\" OR \"assault rates\" OR \"crime rate\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 10,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-09T18:04:20Z"
+    }
+   }
+  },
+  "st-WESTTV_FAMILY": {
+   "stone": "c077",
+   "q": {
+    "guardian": "(\"West German television\" OR \"West German TV\" OR \"Valley of the Clueless\") AND (\"birth rate\" OR \"fertility rate\" OR \"divorce rate\" OR \"marriage rate\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 0,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-09T18:03:56Z"
+    }
+   }
+  },
+  "st-WESTTV_REFUGEES": {
+   "stone": "c077",
+   "q": {
+    "guardian": "(\"West German television\" OR \"West German TV\" OR \"Valley of the Clueless\") AND (\"attacks on refugees\" OR \"anti-refugee violence\" OR \"hate crimes against refugees\" OR \"xenophobic attacks\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 0,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-09T18:01:41Z"
+    }
+   }
+  },
+  "st-WILLIAMS_SUICIDE": {
+   "stone": "c045",
+   "q": {
+    "guardian": "(\"Robin Williams's death\" OR \"death of Robin Williams\" OR \"Robin Williams suicide\" OR \"Robin Williams's suicide\") AND (\"suicide rate\" OR \"rise in suicides\" OR \"suicide contagion\" OR \"copycat suicides\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 2,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-09T18:02:07Z"
+    }
+   }
+  },
+  "st-WORLDCUP_DV": {
+   "stone": "c109",
+   "q": {
+    "guardian": "(\"England World Cup\" OR \"England match\" OR \"England game\" OR \"England matches\") AND (\"domestic abuse\" OR \"domestic violence\" OR \"domestic abuse incidents\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 13,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-09T18:05:13Z"
+    }
+   }
+  },
+  "st-ZANZIBAR_BLACKOUT": {
+   "stone": "c116",
+   "q": {
+    "guardian": "(\"Zanzibar blackout\" OR \"Zanzibar power cut\" OR \"Zanzibar power outage\") AND (\"baby boom\" OR \"blackout babies\" OR \"birth rate\" OR \"rise in births\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 0,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-09T18:01:47Z"
+    }
+   }
+  }
+ },
+ "stones": {
+  "c001": {
+   "q": {
+    "guardian": "(\"Jurassic Park\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 1639,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-09T18:07:11Z"
+    }
+   }
+  },
+  "c002": {
+   "q": {
+    "guardian": "(\"Fukushima\" OR \"Fukushima Daiichi\" OR \"Fukushima disaster\" OR \"Fukushima nuclear disaster\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 1812,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-09T18:08:43Z"
+    }
+   }
+  },
+  "c003": {
+   "q": {
+    "guardian": "(\"Magic Johnson's HIV\" OR \"Magic Johnson's announcement\" OR \"Magic Johnson's diagnosis\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 2,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-09T18:08:31Z"
+    }
+   }
+  },
+  "c004": {
+   "q": {
+    "guardian": "(\"Titanic\" OR \"James Cameron's Titanic\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 7625,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-09T18:09:54Z"
+    }
+   }
+  },
+  "c005": {
+   "q": {
+    "guardian": "(\"Flint water crisis\" OR \"Flint water\" OR \"Flint crisis\" OR \"Flint's water\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 173,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-09T18:09:21Z"
+    }
+   }
+  },
+  "c006": {
+   "q": {
+    "guardian": "(\"global financial crisis\" OR \"financial crisis\" OR \"credit crunch\" OR \"financial meltdown\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 34963,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-09T18:07:00Z"
+    }
+   }
+  },
+  "c007": {
+   "q": {
+    "guardian": "(\"Katie Couric's colonoscopy\" OR \"Couric's colonoscopy\" OR \"on-air colonoscopy\" OR \"televised colonoscopy\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 3,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-09T18:07:55Z"
+    }
+   }
+  },
+  "c008": {
+   "q": {
+    "guardian": "(\"Seinfeld\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 2267,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-09T18:06:51Z"
+    }
+   }
+  },
+  "c009": {
+   "q": {
+    "guardian": "(\"Prohibition\" OR \"Volstead Act\" OR \"Eighteenth Amendment\" OR \"18th Amendment\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 6447,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-09T18:10:08Z"
+    }
+   }
+  },
+  "c010": {
+   "q": {
+    "guardian": "(\"Mayerling\" OR \"Mayerling incident\" OR \"Crown Prince Rudolf\" OR \"Rudolf's suicide\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 166,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-09T18:06:57Z"
+    }
+   }
+  },
+  "c011": {
+   "q": {
+    "guardian": "(\"Super Bowl XXXVIII\" OR \"wardrobe malfunction\" OR \"Nipplegate\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 431,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-09T18:09:57Z"
+    }
+   }
+  },
+  "c012": {
+   "q": {
+    "guardian": "(\"HBO's Chernobyl\" OR \"Chernobyl miniseries\" OR \"Chernobyl series\" OR \"Chernobyl drama\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 12,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-09T18:08:20Z"
+    }
+   }
+  },
+  "c013": {
+   "q": {
+    "guardian": "(\"Enron\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 3555,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-09T18:08:05Z"
+    }
+   }
+  },
+  "c014": {
+   "q": {
+    "guardian": "(\"Deepwater Horizon\" OR \"BP oil spill\" OR \"Gulf oil spill\" OR \"Gulf of Mexico oil spill\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 1731,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-09T18:06:44Z"
+    }
+   }
+  },
+  "c015": {
+   "q": {
+    "guardian": "(\"Chadwick Boseman's death\" OR \"death of Chadwick Boseman\" OR \"Boseman's death\" OR \"Boseman died\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 15,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-09T18:10:05Z"
+    }
+   }
+  },
+  "c016": {
+   "q": {
+    "guardian": "(\"television premiere\" OR \"network television premiere\" OR \"aired on television\" OR \"broadcast on television\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 376,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-09T18:09:17Z"
+    }
+   }
+  },
+  "c017": {
+   "q": {
+    "guardian": "(\"September 11 attacks\" OR \"September 11\" OR \"Sept. 11\" OR \"September 11th\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 15359,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-09T18:06:48Z"
+    }
+   }
+  },
+  "c018": {
+   "q": {
+    "guardian": "(\"Love Canal\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 16,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-09T18:07:08Z"
+    }
+   }
+  },
+  "c019": {
+   "q": {
+    "guardian": "(\"Hurricane Katrina\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 2652,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-09T18:07:37Z"
+    }
+   }
+  },
+  "c020": {
+   "q": {
+    "guardian": "(\"The Office\" OR \"US Office\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 84083,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-09T18:08:49Z"
+    }
+   }
+  },
+  "c021": {
+   "q": {
+    "guardian": "(\"Dieselgate\" OR \"Volkswagen emissions scandal\" OR \"VW emissions scandal\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 276,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-09T18:07:06Z"
+    }
+   }
+  },
+  "c022": {
+   "q": {
+    "guardian": "(\"Great British Bake Off\" OR \"Bake Off\" OR \"GBBO\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 3351,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-09T18:09:09Z"
+    }
+   }
+  },
+  "c023": {
+   "q": {
+    "guardian": "(\"16 and Pregnant\" OR \"Sixteen and Pregnant\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 25,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-09T18:09:12Z"
+    }
+   }
+  },
+  "c024": {
+   "q": {
+    "guardian": "(\"The West Wing\" OR \"West Wing\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 2878,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-09T18:08:41Z"
+    }
+   }
+  },
+  "c025": {
+   "q": {
+    "guardian": "(\"Jade Goody\" OR \"Goody effect\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 1178,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-09T18:07:46Z"
+    }
+   }
+  },
+  "c026": {
+   "q": {
+    "guardian": "(\"Jonghyun\" OR \"Sulli\" OR \"Goo Hara\" OR \"K-pop suicides\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 66,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-09T18:10:02Z"
+    }
+   }
+  },
+  "c027": {
+   "q": {
+    "guardian": "(\"Twende na Wakati\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 0,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-09T18:07:48Z"
+    }
+   }
+  },
+  "c028": {
+   "q": {
+    "guardian": "(\"Parkland\" OR \"Parkland shooting\" OR \"Stoneman Douglas shooting\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 2608,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-09T18:07:01Z"
+    }
+   }
+  },
+  "c029": {
+   "q": {
+    "guardian": "(\"Planet Earth\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 2388,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-09T18:09:34Z"
+    }
+   }
+  },
+  "c030": {
+   "q": {
+    "guardian": "(\"The Jungle\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 7495,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-09T18:09:03Z"
+    }
+   }
+  },
+  "c031": {
+   "q": {
+    "guardian": "(\"Sesame Street\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 1116,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-09T18:06:49Z"
+    }
+   }
+  },
+  "c032": {
+   "q": {
+    "guardian": "(\"Super Bowl\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 5874,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-09T18:07:31Z"
+    }
+   }
+  },
+  "c033": {
+   "q": {
+    "guardian": "(\"Manhunt\" OR \"Manhunt game\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 2546,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-09T18:07:23Z"
+    }
+   }
+  },
+  "c034": {
+   "q": {
+    "guardian": "(\"Game of Thrones\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 5646,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-09T18:07:18Z"
+    }
+   }
+  },
+  "c035": {
+   "q": {
+    "guardian": "(\"cable television\" OR \"cable TV\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 3411,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-09T18:08:30Z"
+    }
+   }
+  },
+  "c036": {
+   "q": {
+    "guardian": "(\"England v Argentina\" OR \"England-Argentina\" OR \"France 98\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 1153,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-09T18:06:43Z"
+    }
+   }
+  },
+  "c037": {
+   "q": {
+    "guardian": "(\"Friends\" OR \"sitcom Friends\" OR \"Friends sitcom\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 259475,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-09T18:08:34Z"
+    }
+   }
+  },
+  "c038": {
+   "q": {
+    "guardian": "(\"Blackfish\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 166,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-09T18:09:51Z"
+    }
+   }
+  },
+  "c039": {
+   "q": {
+    "guardian": "(\"Brazil World Cup\" OR \"Brazil's World Cup\" OR \"Brazil match\" OR \"Brazil game\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 621,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-09T18:08:03Z"
+    }
+   }
+  },
+  "c040": {
+   "q": {
+    "guardian": "(\"Top Gun\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 1212,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-09T18:06:54Z"
+    }
+   }
+  },
+  "c041": {
+   "q": {
+    "guardian": "(\"Cuyahoga River fire\" OR \"Cuyahoga fire\" OR \"river caught fire\" OR \"burning river\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 9,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-09T18:09:47Z"
+    }
+   }
+  },
+  "c042": {
+   "q": {
+    "guardian": "(\"London 2012\" OR \"hosting the Olympics\" OR \"host the Olympics\" OR \"Olympic host city\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 9954,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-09T18:10:30Z"
+    }
+   }
+  },
+  "c043": {
+   "q": {
+    "guardian": "(\"Woodstock\" OR \"Woodstock festival\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 1790,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-09T18:08:00Z"
+    }
+   }
+  },
+  "c044": {
+   "q": {
+    "guardian": "(\"Victim\" OR \"film Victim\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 74955,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-09T18:08:28Z"
+    }
+   }
+  },
+  "c045": {
+   "q": {
+    "guardian": "(\"Robin Williams's death\" OR \"death of Robin Williams\" OR \"Robin Williams suicide\" OR \"Robin Williams's suicide\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 21,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-09T18:09:41Z"
+    }
+   }
+  },
+  "c046": {
+   "q": {
+    "guardian": "(\"Hamilton musical\" OR \"musical Hamilton\" OR \"Hamilton\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 24660,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-09T18:07:17Z"
+    }
+   }
+  },
+  "c047": {
+   "q": {
+    "guardian": "(\"Angelina Jolie's op-ed\" OR \"My Medical Choice\" OR \"Jolie's mastectomy\" OR \"Jolie effect\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 6,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-09T18:07:35Z"
+    }
+   }
+  },
+  "c048": {
+   "q": {
+    "guardian": "(\"Unsafe at Any Speed\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 27,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-09T18:08:56Z"
+    }
+   }
+  },
+  "c049": {
+   "q": {
+    "guardian": "(\"Las Vegas shooting\" OR \"Las Vegas massacre\" OR \"Mandalay Bay shooting\" OR \"Route 91 Harvest\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 144,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-09T18:08:19Z"
+    }
+   }
+  },
+  "c050": {
+   "q": {
+    "guardian": "(\"60 Minutes\" OR \"Sixty Minutes\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 4521,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-09T18:08:47Z"
+    }
+   }
+  },
+  "c051": {
+   "q": {
+    "guardian": "(\"Fox News\" OR \"Fox News Channel\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 14206,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-09T18:08:24Z"
+    }
+   }
+  },
+  "c052": {
+   "q": {
+    "guardian": "(\"Rede Globo\" OR \"TV Globo\" OR \"Globo telenovelas\" OR \"Globo soap operas\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 121,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-09T18:08:15Z"
+    }
+   }
+  },
+  "c053": {
+   "q": {
+    "guardian": "(\"Fifty Shades of Grey\" OR \"Fifty Shades\" OR \"50 Shades of Grey\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 1656,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-09T18:09:07Z"
+    }
+   }
+  },
+  "c054": {
+   "q": {
+    "guardian": "(\"Pokemon Go\" OR \"Pokémon Go\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 480,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-09T18:08:08Z"
+    }
+   }
+  },
+  "c055": {
+   "q": {
+    "guardian": "(\"Kylie effect\" OR \"Kylie Minogue's breast cancer\" OR \"Kylie's breast cancer\" OR \"Kylie's cancer\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 12,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-09T18:07:49Z"
+    }
+   }
+  },
+  "c056": {
+   "q": {
+    "guardian": "(\"Dobbs v. Jackson\" OR \"Dobbs v Jackson\" OR \"Dobbs decision\" OR \"Dobbs ruling\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 458,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-09T18:09:06Z"
+    }
+   }
+  },
+  "c057": {
+   "q": {
+    "guardian": "(\"advent of television\" OR \"arrival of television\" OR \"television sets\" OR \"television\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 162172,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-09T18:10:00Z"
+    }
+   }
+  },
+  "c058": {
+   "q": {
+    "guardian": "(\"Tiger King\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 273,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-09T18:07:45Z"
+    }
+   }
+  },
+  "c059": {
+   "q": {
+    "guardian": "(\"Lac-Mégantic\" OR \"Lac-Megantic\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 23,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-09T18:09:37Z"
+    }
+   }
+  },
+  "c060": {
+   "q": {
+    "guardian": "(\"MeToo\" OR \"Me Too movement\" OR \"Me Too era\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 4961,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-09T18:09:26Z"
+    }
+   }
+  },
+  "c061": {
+   "q": {
+    "guardian": "(\"101 Dalmatians\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 166,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-09T18:07:40Z"
+    }
+   }
+  },
+  "c062": {
+   "q": {
+    "guardian": "(\"My Octopus Teacher\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 47,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-09T18:09:01Z"
+    }
+   }
+  },
+  "c063": {
+   "q": {
+    "guardian": "(\"Dear Zachary\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 3,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-09T18:07:14Z"
+    }
+   }
+  },
+  "c064": {
+   "q": {
+    "guardian": "(\"Ice Bucket Challenge\" OR \"ALS Ice Bucket Challenge\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 210,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-09T18:07:51Z"
+    }
+   }
+  },
+  "c065": {
+   "q": {
+    "guardian": "(\"Charlie Sheen's HIV\" OR \"Charlie Sheen is HIV-positive\" OR \"Sheen's HIV status\" OR \"Sheen's HIV diagnosis\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 2,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-09T18:07:09Z"
+    }
+   }
+  },
+  "c066": {
+   "q": {
+    "guardian": "(\"Oklahoma City bombing\" OR \"Oklahoma bombing\" OR \"Murrah building bombing\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 314,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-09T18:08:50Z"
+    }
+   }
+  },
+  "c067": {
+   "q": {
+    "guardian": "(\"Avatar\" OR \"James Cameron's Avatar\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 4235,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-09T18:07:28Z"
+    }
+   }
+  },
+  "c068": {
+   "q": {
+    "guardian": "(\"Covid-19 pandemic\" OR \"coronavirus pandemic\" OR \"Covid pandemic\" OR \"Covid-19\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 56749,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-09T18:06:55Z"
+    }
+   }
+  },
+  "c069": {
+   "q": {
+    "guardian": "(\"Camp Fire\" OR \"Paradise fire\" OR \"Camp wildfire\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 446,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-09T18:09:43Z"
+    }
+   }
+  },
+  "c070": {
+   "q": {
+    "guardian": "(\"Pokémon Go\" OR \"Pokemon Go\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 480,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-09T18:08:12Z"
+    }
+   }
+  },
+  "c071": {
+   "q": {
+    "guardian": "(\"Squid Game\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 473,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-09T18:08:09Z"
+    }
+   }
+  },
+  "c072": {
+   "q": {
+    "guardian": "(\"GDPR\" OR \"General Data Protection Regulation\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 648,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-09T18:09:49Z"
+    }
+   }
+  },
+  "c073": {
+   "q": {
+    "guardian": "(\"Cambridge Analytica\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 1102,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-09T18:08:39Z"
+    }
+   }
+  },
+  "c074": {
+   "q": {
+    "guardian": "(\"Quincy M.E.\" OR \"Quincy ME\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 6,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-09T18:06:52Z"
+    }
+   }
+  },
+  "c075": {
+   "q": {
+    "guardian": "(\"Dust Bowl\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 380,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-09T18:09:55Z"
+    }
+   }
+  },
+  "c076": {
+   "q": {
+    "guardian": "(\"violent video games\" OR \"M-rated games\" OR \"Mature-rated games\" OR \"M-rated video games\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 263,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-09T18:10:28Z"
+    }
+   }
+  },
+  "c077": {
+   "q": {
+    "guardian": "(\"West German television\" OR \"West German TV\" OR \"Valley of the Clueless\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 20,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-09T18:07:22Z"
+    }
+   }
+  },
+  "c078": {
+   "q": {
+    "guardian": "(\"Harry Potter\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 11277,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-09T18:06:46Z"
+    }
+   }
+  },
+  "c079": {
+   "q": {
+    "guardian": "(\"Mr Bates vs\" OR \"Mr Bates v\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 275,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-09T18:10:22Z"
+    }
+   }
+  },
+  "c080": {
+   "q": {
+    "guardian": "(\"Taylor Swift effect\" OR \"Swift effect\" OR \"Swift at Arrowhead\" OR \"Swift at the Chiefs game\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 20,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-09T18:10:14Z"
+    }
+   }
+  },
+  "c081": {
+   "q": {
+    "guardian": "(\"1906 earthquake\" OR \"great San Francisco earthquake\" OR \"San Francisco earthquake of 1906\" OR \"earthquake of 1906\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 71,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-09T18:08:58Z"
+    }
+   }
+  },
+  "c082": {
+   "q": {
+    "guardian": "(\"Mohamed Salah\" OR \"Mo Salah\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 3419,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-09T18:08:53Z"
+    }
+   }
+  },
+  "c083": {
+   "q": {
+    "guardian": "(\"An Inconvenient Truth\" OR \"Inconvenient Truth\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 1216,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-09T18:08:17Z"
+    }
+   }
+  },
+  "c084": {
+   "q": {
+    "guardian": "(\"Triangle Shirtwaist\" OR \"Triangle fire\" OR \"Triangle factory fire\" OR \"Triangle Waist Company\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 32,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-09T18:07:29Z"
+    }
+   }
+  },
+  "c085": {
+   "q": {
+    "guardian": "(\"Tetris\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 869,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-09T18:07:54Z"
+    }
+   }
+  },
+  "c086": {
+   "q": {
+    "guardian": "(\"Finding Dory\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 170,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-09T18:09:15Z"
+    }
+   }
+  },
+  "c087": {
+   "q": {
+    "guardian": "(\"shipping container\" OR \"container shipping\" OR \"containerization\" OR \"containerisation\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 1063,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-09T18:08:25Z"
+    }
+   }
+  },
+  "c088": {
+   "q": {
+    "guardian": "(\"Zumba\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 404,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-09T18:07:42Z"
+    }
+   }
+  },
+  "c089": {
+   "q": {
+    "guardian": "(\"Sideways\" OR \"Sideways effect\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 7999,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-09T18:07:52Z"
+    }
+   }
+  },
+  "c090": {
+   "q": {
+    "guardian": "(\"Horse in Motion\" OR \"Sallie Gardner\" OR \"Muybridge's horse\" OR \"galloping horse\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 139,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-09T18:09:32Z"
+    }
+   }
+  },
+  "c091": {
+   "q": {
+    "guardian": "(\"death of Diana\" OR \"Diana's death\" OR \"death of Princess Diana\" OR \"Diana died\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 1856,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-09T18:06:41Z"
+    }
+   }
+  },
+  "c092": {
+   "q": {
+    "guardian": "(\"Oprah's Book Club\" OR \"Oprah Book Club\" OR \"Oprah effect\" OR \"Oprah's pick\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 78,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-09T18:09:27Z"
+    }
+   }
+  },
+  "c093": {
+   "q": {
+    "guardian": "(\"violent movies\" OR \"violent films\" OR \"movie violence\" OR \"violent blockbusters\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 273,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-09T18:09:58Z"
+    }
+   }
+  },
+  "c094": {
+   "q": {
+    "guardian": "(\"The Queen's Gambit\" OR \"Queen's Gambit\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 64,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-09T18:07:58Z"
+    }
+   }
+  },
+  "c095": {
+   "q": {
+    "guardian": "(\"Exxon Valdez\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 329,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-09T18:10:06Z"
+    }
+   }
+  },
+  "c096": {
+   "q": {
+    "guardian": "(\"Sputnik\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 1613,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-09T18:08:36Z"
+    }
+   }
+  },
+  "c097": {
+   "q": {
+    "guardian": "(\"Harry Potter\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 11277,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-09T18:06:46Z"
+    }
+   }
+  },
+  "c098": {
+   "q": {
+    "guardian": "(\"Grenfell Tower\" OR \"Grenfell fire\" OR \"Grenfell disaster\" OR \"Grenfell tragedy\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 2832,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-09T18:08:06Z"
+    }
+   }
+  },
+  "c099": {
+   "q": {
+    "guardian": "(\"Haber-Bosch\" OR \"Haber process\" OR \"ammonia synthesis\" OR \"synthetic ammonia\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 26,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-09T18:08:11Z"
+    }
+   }
+  },
+  "c100": {
+   "q": {
+    "guardian": "(\"Breaking Bad\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 1973,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-09T18:07:25Z"
+    }
+   }
+  },
+  "c101": {
+   "q": {
+    "guardian": "(\"Rana Plaza\" OR \"Rana Plaza collapse\" OR \"Savar building collapse\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 431,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-09T18:07:34Z"
+    }
+   }
+  },
+  "c102": {
+   "q": {
+    "guardian": "(\"Pulse nightclub\" OR \"Pulse shooting\" OR \"Pulse nightclub shooting\" OR \"Orlando nightclub shooting\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 293,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-09T18:09:30Z"
+    }
+   }
+  },
+  "c103": {
+   "q": {
+    "guardian": "(\"Blue Planet II\" OR \"Blue Planet 2\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 243,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-09T18:09:35Z"
+    }
+   }
+  },
+  "c104": {
+   "q": {
+    "guardian": "(\"Tylenol murders\" OR \"Tylenol poisonings\" OR \"Tylenol killings\" OR \"Tylenol tampering\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 5,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-09T18:06:58Z"
+    }
+   }
+  },
+  "c105": {
+   "q": {
+    "guardian": "(\"Stranger Things\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 1848,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-09T18:10:23Z"
+    }
+   }
+  },
+  "c106": {
+   "q": {
+    "guardian": "(\"Three Mile Island\" OR \"Three Mile Island accident\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 250,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-09T18:08:44Z"
+    }
+   }
+  },
+  "c107": {
+   "q": {
+    "guardian": "(\"Toy Story\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 1767,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-09T18:10:25Z"
+    }
+   }
+  },
+  "c108": {
+   "q": {
+    "guardian": "(\"Virginia Tech shooting\" OR \"Virginia Tech massacre\" OR \"Virginia Tech shootings\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 146,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-09T18:07:20Z"
+    }
+   }
+  },
+  "c109": {
+   "q": {
+    "guardian": "(\"England World Cup\" OR \"England match\" OR \"England game\" OR \"England matches\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 3743,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-09T18:06:40Z"
+    }
+   }
+  },
+  "c110": {
+   "q": {
+    "guardian": "(\"anthrax letters\" OR \"anthrax attacks\" OR \"anthrax mailings\" OR \"Amerithrax\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 192,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-09T18:09:23Z"
+    }
+   }
+  },
+  "c111": {
+   "q": {
+    "guardian": "(\"Boston Marathon bombing\" OR \"Boston Marathon bombings\" OR \"Boston bombing\" OR \"marathon bombing\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 531,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-09T18:09:29Z"
+    }
+   }
+  },
+  "c112": {
+   "q": {
+    "guardian": "(\"Uvalde shooting\" OR \"Uvalde school shooting\" OR \"Uvalde massacre\" OR \"Robb Elementary\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 208,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-09T18:09:18Z"
+    }
+   }
+  },
+  "c113": {
+   "q": {
+    "guardian": "(\"Mad Men\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 2842,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-09T18:09:52Z"
+    }
+   }
+  },
+  "c114": {
+   "q": {
+    "guardian": "(\"upset loss\" OR \"NFL upset\" OR \"home team loss\" OR \"upset defeat\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 64,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-09T18:09:40Z"
+    }
+   }
+  },
+  "c115": {
+   "q": {
+    "guardian": "(\"Da Vinci Code\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 1467,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-09T18:08:33Z"
+    }
+   }
+  },
+  "c116": {
+   "q": {
+    "guardian": "(\"Zanzibar blackout\" OR \"Zanzibar power cut\" OR \"Zanzibar power outage\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 0,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-09T18:09:20Z"
+    }
+   }
+  },
+  "c117": {
+   "q": {
+    "guardian": "(\"Emily in Paris\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 226,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-09T18:08:22Z"
+    }
+   }
+  },
+  "c118": {
+   "q": {
+    "guardian": "(\"Universal Music\" OR \"UMG\" OR \"music from TikTok\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 1387,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-09T18:07:43Z"
+    }
+   }
+  },
+  "c119": {
+   "q": {
+    "guardian": "(\"Columbine High School\" OR \"Columbine shooting\" OR \"Columbine massacre\" OR \"Columbine killings\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 562,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-09T18:10:17Z"
+    }
+   }
+  },
+  "c120": {
+   "q": {
+    "guardian": "(\"Broad Street pump\" OR \"Broad Street cholera\" OR \"Soho cholera outbreak\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 14,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-09T18:08:27Z"
+    }
+   }
+  },
+  "c121": {
+   "q": {
+    "guardian": "(\"Cathy Come Home\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 444,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-09T18:09:38Z"
+    }
+   }
+  },
+  "c122": {
+   "q": {
+    "guardian": "(\"The Day After\" OR \"ABC's The Day After\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 18817,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-09T18:10:12Z"
+    }
+   }
+  },
+  "c123": {
+   "q": {
+    "guardian": "(\"Jaws\" OR \"Spielberg's Jaws\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 6113,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-09T18:09:00Z"
+    }
+   }
+  },
+  "c124": {
+   "q": {
+    "guardian": "(\"Sandy Hook Elementary\" OR \"Sandy Hook shooting\" OR \"Sandy Hook massacre\" OR \"Newtown shooting\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 840,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-09T18:10:09Z"
+    }
+   }
+  },
+  "c125": {
+   "q": {
+    "guardian": "(\"moldy cantaloupe\" OR \"mouldy cantaloupe\" OR \"moldy melon\" OR \"mouldy melon\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 0,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-09T18:10:11Z"
+    }
+   }
+  },
+  "c126": {
+   "q": {
+    "guardian": "(\"Chernobyl\" OR \"Chernobyl disaster\" OR \"Chernobyl nuclear disaster\" OR \"Chernobyl accident\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 1977,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-09T18:07:05Z"
+    }
+   }
+  },
+  "c127": {
+   "q": {
+    "guardian": "(\"Furby\" OR \"Furbies\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 195,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-09T18:10:26Z"
+    }
+   }
+  },
+  "c128": {
+   "q": {
+    "guardian": "(\"Ramayan\" OR \"Ramayan serial\" OR \"Ramayan TV series\" OR \"Ramanand Sagar's Ramayan\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 6,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-09T18:09:46Z"
+    }
+   }
+  },
+  "c129": {
+   "q": {
+    "guardian": "(\"Winter Storm Uri\" OR \"Storm Uri\" OR \"Texas freeze\" OR \"Texas power crisis\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 22,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-09T18:10:16Z"
+    }
+   }
+  },
+  "c130": {
+   "q": {
+    "guardian": "(\"Hurricane Sandy\" OR \"Superstorm Sandy\" OR \"Storm Sandy\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 1122,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-09T18:07:39Z"
+    }
+   }
+  },
+  "c131": {
+   "q": {
+    "guardian": "(\"Game of Thrones\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 5646,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-09T18:07:18Z"
+    }
+   }
+  },
+  "c132": {
+   "q": {
+    "guardian": "(\"Super Bowl ads\" OR \"Super Bowl ad\" OR \"Super Bowl commercials\" OR \"Super Bowl advertising\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 250,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-09T18:09:24Z"
+    }
+   }
+  },
+  "c133": {
+   "q": {
+    "guardian": "(\"telenovela storyline\" OR \"telenovela storylines\" OR \"Spanish-language telenovelas\" OR \"telenovela experiment\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 0,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-09T18:09:04Z"
+    }
+   }
+  },
+  "c134": {
+   "q": {
+    "guardian": "(\"digital switchover\" OR \"digital TV switchover\" OR \"analogue switch-off\" OR \"analogue switchoff\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 1479,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-09T18:08:14Z"
+    }
+   }
+  },
+  "c135": {
+   "q": {
+    "guardian": "(\"Nazi radio\" OR \"Nazi radio propaganda\" OR \"Nazi broadcasts\" OR \"Nazi radio broadcasts\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 16,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-09T18:10:03Z"
+    }
+   }
+  },
+  "c136": {
+   "q": {
+    "guardian": "(\"Bourdain's suicide\" OR \"Spade's suicide\" OR \"Bourdain's death\" OR \"Spade and Anthony Bourdain\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 3,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-09T18:10:19Z"
+    }
+   }
+  },
+  "c137": {
+   "q": {
+    "guardian": "(\"Fox News\" OR \"Fox News Channel\" OR \"Fox News effect\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 14206,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-09T18:08:02Z"
+    }
+   }
+  },
+  "c138": {
+   "q": {
+    "guardian": "(\"Bhopal disaster\" OR \"Bhopal gas tragedy\" OR \"Bhopal gas leak\" OR \"Bhopal tragedy\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 124,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-09T18:07:12Z"
+    }
+   }
+  },
+  "c139": {
+   "q": {
+    "guardian": "(\"Korean Wave\" OR \"Hallyu\" OR \"K-pop\" OR \"K-drama\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 994,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-09T18:07:15Z"
+    }
+   }
+  },
+  "c140": {
+   "q": {
+    "guardian": "(\"13 Reasons Why\" OR \"Thirteen Reasons Why\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 131,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-09T18:08:38Z"
+    }
+   }
+  },
+  "c141": {
+   "q": {
+    "guardian": "(\"Liebeck v. McDonald's\" OR \"McDonald's coffee case\" OR \"hot coffee case\" OR \"hot coffee lawsuit\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 5,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-09T18:07:57Z"
+    }
+   }
+  },
+  "c142": {
+   "q": {
+    "guardian": "(\"Silent Spring\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 275,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-09T18:00:21Z"
+    }
+   }
+  },
+  "c143": {
+   "q": {
+    "guardian": "(\"Challenger disaster\" OR \"Challenger explosion\" OR \"space shuttle Challenger\" OR \"Challenger accident\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 162,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-09T18:09:14Z"
+    }
+   }
+  },
+  "c144": {
+   "q": {
+    "guardian": "(\"watching football\" OR \"World Cup\" OR \"penalty shootout\" OR \"Super Bowl\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 115672,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-09T18:07:03Z"
+    }
+   }
+  },
+  "c145": {
+   "q": {
+    "guardian": "(\"Daily Show\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 2540,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-09T18:10:20Z"
+    }
+   }
+  },
+  "c146": {
+   "q": {
+    "guardian": "(\"MTV Shuga\" OR \"Shuga Naija\" OR \"Shuga\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 13,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-09T18:08:46Z"
+    }
+   }
+  },
+  "c147": {
+   "q": {
+    "guardian": "(\"college football\" OR \"LSU football\" OR \"upset loss\" OR \"unexpected loss\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 1415,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-09T18:07:26Z"
+    }
+   }
+  },
+  "c148": {
+   "q": {
+    "guardian": "(\"Finding Nemo\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 617,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-09T18:09:10Z"
+    }
+   }
+  },
+  "c149": {
+   "q": {
+    "guardian": "(\"Super Mario Bros.\" OR \"Super Mario Brothers\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 490,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-09T18:09:44Z"
+    }
+   }
+  },
+  "c150": {
+   "q": {
+    "guardian": "(\"radar\" OR \"cavity magnetron\" OR \"magnetron\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 20475,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-09T18:08:52Z"
+    }
+   }
+  },
+  "c151": {
+   "q": {
+    "guardian": "(\"Frozen\" OR \"Disney's Frozen\" OR \"film Frozen\" OR \"Frozen movie\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 32143,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-09T18:07:32Z"
+    }
+   }
+  },
+  "c152": {
+   "q": {
+    "guardian": "(\"Lee Eun-ju\" OR \"Lee Eun-joo\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 6,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-09T18:08:55Z"
+    }
+   }
+  }
+ }
+}
