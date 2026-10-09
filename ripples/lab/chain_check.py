@@ -270,7 +270,8 @@ def attention_check(st, r):
     if not arts:
         return {"result": "no article found"}
     w = wiki_test(arts, d, 45)
-    out = {"articles": arts, "onset": w.get("onset"), "ratio": w.get("ratio"), "p": w.get("p"), "weekly": w.get("weekly"), "n_placebo": w.get("n_placebo")}
+    out = {"articles": arts, "onset": w.get("onset"), "ratio": w.get("ratio"), "baseline": w.get("baseline"), "p": w.get("p"), "weekly": w.get("weekly"),
+           "n_placebo": w.get("n_placebo")}  # the baseline lets the page draw the line against the same normal the ratio uses
     if w.get("result") == "no article":
         out["verdict"] = "no article"
     elif w.get("new_article"):

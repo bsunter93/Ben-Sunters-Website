@@ -5,7 +5,9 @@
 // Checks, at a phone, a tablet and a desktop size: no guess anywhere; the title and the chart are on the first screen; the
 // story plays to the row it lands on; row names never overlap; nothing scrolls sideways, even with every step open; Skip,
 // Play again, a tap on a row, a shelf card, Next and a shared step each work; every story in the catalog draws its chart
-// with no error and no "undefined"; ?view=chain and ?view=pond still open the earlier views.
+// with no error and no "undefined"; ?view=chain and ?view=pond still open the earlier views. Since Oct 9 (second pass): a step
+// known only to its year (a year of births, a yearly figure, a mark dated to the year) never shows weeks or days, and a story
+// with no Wikipedia line never says "readers".
 // node answer_test.js [page]   exits 1 on a failure
 process.env.QA_VIEW = 'answer';
 const { pageUrl, browser } = require('./common');
@@ -52,8 +54,12 @@ const { pageUrl, browser } = require('./common');
           const bad = /\bundefined\b|\bNaN\b|\bnull\b|Invalid Date/.exec(txt);
           const facts = document.querySelector('#rccap .k').children.length, out = [...document.querySelectorAll('#rcchart text')].filter(t => { const q = t.getBoundingClientRect(), pan = document.querySelector('.avpaper').getBoundingClientRect(); return q.width && (q.left < pan.left - 1 || q.right > pan.right + 1); }).length;
           modes[cur.rc.mode] = (modes[cur.rc.mode] || 0) + 1;
-          if (cur.rc.rows.some(x => x.lift)) lines++; else { onlyDots++; if (document.querySelector('#rcchart text.rcgap')) told++; }
-          if (rows < 1 || !cap.trim() || ov || out || facts > 2 || bad || document.querySelector('.avtile')) fails.push(`${key}: rows ${rows}, caption "${cap.slice(0, 30)}", ${facts} facts, name overlaps ${ov}, outside ${out}${bad ? `, prints "${bad[0]}"` : ''}`);
+          if (cur.rc.rows.some(x => x.lift || x.births)) lines++; else { onlyDots++; if (document.querySelector('#rcchart text.rcgap')) told++; }
+          // a step known only to its year never shows weeks or days, and a story with no Wikipedia line never says "readers"
+          const fine = /\b\d+ (days?|weeks?|months?)\b|same day/, yearly = cur.rc.rows.map((x, i) => [x, i]).filter(([x]) => !x.stone && !x.it.study && x.it.prec === 'year');  // a study row prints the paper's own words
+          const tooFine = yearly.filter(([x, i]) => fine.test(rcCap(cur, x, true)[0].replace(/<[^>]+>/g, ' ')) || [...document.querySelectorAll(`#rcchart g.rcrow[data-i="${i}"] text.rcgap`)].some(t => fine.test(t.textContent))).length;
+          const readers = !cur.rc.rows.some(x => x.lift) && /readers/.test(document.querySelector('#rcwrap').innerText);
+          if (rows < 1 || !cap.trim() || ov || out || facts > 2 || bad || tooFine || readers || document.querySelector('.avtile')) fails.push(`${key}: rows ${rows}, caption "${cap.slice(0, 30)}", ${facts} facts, name overlaps ${ov}, outside ${out}${bad ? `, prints "${bad[0]}"` : ''}${tooFine ? `, ${tooFine} yearly steps in weeks or days` : ''}${readers ? ', says readers with no Wikipedia line' : ''}`);
           n++;
         } catch (e) { fails.push(`${key}: ${e.message}`); }
       }

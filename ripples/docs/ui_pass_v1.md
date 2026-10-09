@@ -124,5 +124,5 @@ story uses. The other six scripts are unchanged. All seven pass against a local 
   answer would quiet it.
 - The chooser sorts stories as Lasting marks, Fact-checks and Engine leads, and the shelf sorts them by what they left
   behind. One scheme would be easier to learn.
-- The search box counts 274 stories and the chart view draws 241.
+- The search box counted 274 stories and the chart view draws 241. Fixed Oct 9: the box counts the 241 stories the search reaches.
 - The older views (`?view=chain`, `?view=pond`) were not touched. The pond view's phone search button is 40 px.
