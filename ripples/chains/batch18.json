@@ -1,0 +1,1721 @@
+[
+ {
+  "slug": "study-okc-births",
+  "title": "Oklahoma City bombing (1995)",
+  "date": "1995-04-01",
+  "batch": 18,
+  "vertical": "Published studies",
+  "steps": [
+   {
+    "n": 1,
+    "claim": "The Oklahoma City bombing",
+    "test": {
+     "type": "record",
+     "date": "1995-04-01",
+     "date_precision": "month",
+     "source": "“Did Fertility Go Up after the Oklahoma City Bombing? An Analysis of Births in Metropolitan Counties in Oklahoma, 1990–1999,” Demography, 2005",
+     "doi": "10.1353/dem.2005.0034"
+    },
+    "note": "Dated to the month, as the paper gives it."
+   },
+   {
+    "n": 2,
+    "claim": "More babies were born in Oklahoma County",
+    "short": "More births in the county",
+    "test": {
+     "type": "study",
+     "date": "1995-04-01",
+     "date_precision": "month",
+     "window": "1995 to 1999",
+     "grade": "measured",
+     "design": "difference in differences",
+     "source": "“Did Fertility Go Up after the Oklahoma City Bombing? An Analysis of Births in Metropolitan Counties in Oklahoma, 1990–1999,” Demography, 2005",
+     "effect": "a significant rise in births in Oklahoma County after the bombing",
+     "doi": "10.1353/dem.2005.0034",
+     "rows": [
+      "OKC_BIRTHS"
+     ]
+    },
+    "range": [
+     "1995-04-01",
+     "1999-12-31"
+    ],
+    "mark": "Behavior",
+    "note": "From the paper: “Oklahoma County showed an interpretable, consistent, and significant increase in births.” The paper counts monthly births in Oklahoma's metro counties from 1990 to 1999 and compares Oklahoma County with the others."
+   }
+  ]
+ },
+ {
+  "slug": "study-sesame-school",
+  "title": "Sesame Street (1969)",
+  "date": "1969-07-01",
+  "batch": 18,
+  "vertical": "Published studies",
+  "steps": [
+   {
+    "n": 1,
+    "claim": "Sesame Street begins airing",
+    "test": {
+     "type": "record",
+     "date": "1969-07-01",
+     "date_precision": "year",
+     "source": "“Early Childhood Education by Television: Lessons from Sesame Street,” American Economic Journal: Applied Economics, 2019",
+     "doi": "10.1257/app.20170300"
+    },
+    "note": "Dated to the year, as the paper gives it."
+   },
+   {
+    "n": 2,
+    "claim": "Kids in places that could get the show were more often at the right grade for their age",
+    "short": "Right grade for age",
+    "test": {
+     "type": "study",
+     "date": "1980-07-01",
+     "date_precision": "year",
+     "window": "1980 census",
+     "grade": "measured",
+     "design": "natural experiment on TV reception",
+     "source": "“Early Childhood Education by Television: Lessons from Sesame Street,” American Economic Journal: Applied Economics, 2019",
+     "effect": "better school performance, most for boys and for kids in poorer areas",
+     "doi": "10.1257/app.20170300",
+     "rows": [
+      "SESAME_SCHOOL"
+     ]
+    },
+    "mark": "Behavior",
+    "note": "From the paper: “The results indicate that Sesame Street improved school performance, particularly for boys.” Reception depended on the kind of signal and the distance to a tower. The paper reads grade for age in the 1980 census. Its estimates for adult schooling and jobs are too imprecise to call."
+   }
+  ]
+ },
+ {
+  "slug": "study-tv-smoking",
+  "title": "Television in US cities (1946)",
+  "date": "1946-07-01",
+  "batch": 18,
+  "vertical": "Published studies",
+  "steps": [
+   {
+    "n": 1,
+    "claim": "Television arrives in US cities, some years before others",
+    "test": {
+     "type": "record",
+     "date": "1946-07-01",
+     "date_precision": "year",
+     "source": "“Was Television Responsible for a New Generation of Smokers?” Journal of Consumer Research, 2019",
+     "doi": "10.1093/jcr/ucz024"
+    },
+    "note": "The rollout began in 1946. Dated here to that year."
+   },
+   {
+    "n": 2,
+    "claim": "More Americans took up smoking",
+    "short": "More smokers",
+    "test": {
+     "type": "study",
+     "date": "1946-07-01",
+     "date_precision": "year",
+     "window": "1946 to 1970",
+     "grade": "measured",
+     "design": "difference in differences",
+     "source": "“Was Television Responsible for a New Generation of Smokers?” Journal of Consumer Research, 2019",
+     "effect": "the share of smokers rose 5 to 15 percentage points, about 11 million more smokers from 1946 to 1970",
+     "effect_short": "+5 to 15 points",
+     "doi": "10.1093/jcr/ucz024",
+     "rows": [
+      "TV_SMOKING"
+     ]
+    },
+    "range": [
+     "1946-07-01",
+     "1970-12-31"
+    ],
+    "mark": "Behavior",
+    "note": "From the paper: “Our preferred estimates suggest that television increased the share of smokers in the population by 5–15 percentage points.” People aged 16 to 21 were hit hardest, and most of the rise came within a couple of years of TV's arrival."
+   }
+  ]
+ },
+ {
+  "slug": "study-globo-family-size",
+  "title": "Rede Globo's telenovelas and family size (1965)",
+  "date": "1965-07-01",
+  "batch": 18,
+  "vertical": "Published studies",
+  "steps": [
+   {
+    "n": 1,
+    "claim": "Rede Globo's signal, and its telenovelas, reach more Brazilian towns",
+    "test": {
+     "type": "record",
+     "date": "1965-07-01",
+     "date_precision": "year",
+     "source": "“Soap Operas and Fertility: Evidence from Brazil,” American Economic Journal: Applied Economics, 2012",
+     "doi": "10.1257/app.4.4.1"
+    },
+    "note": "The rollout ran from 1965 to 1991. Dated here to its first year."
+   },
+   {
+    "n": 2,
+    "claim": "Women had fewer children where the Globo signal arrived",
+    "short": "Fewer births",
+    "test": {
+     "type": "study",
+     "date": "1970-07-01",
+     "date_precision": "year",
+     "window": "1970 to 1991",
+     "grade": "measured",
+     "design": "staggered signal arrival compared across areas",
+     "source": "“Soap Operas and Fertility: Evidence from Brazil,” American Economic Journal: Applied Economics, 2012",
+     "effect": "significantly lower fertility where Globo's signal arrived, most for poorer women",
+     "doi": "10.1257/app.4.4.1",
+     "rows": [
+      "NOVELA_FERTILITY"
+     ]
+    },
+    "range": [
+     "1970-07-01",
+     "1991-07-01"
+    ],
+    "mark": "Behavior",
+    "note": "From the paper: “Women living in areas covered by Globo have significantly lower fertility.” The telenovelas showed small families. The paper uses census data from 1970 to 1991."
+   }
+  ]
+ },
+ {
+  "slug": "study-globo-names",
+  "title": "Rede Globo's telenovelas and baby names (1965)",
+  "date": "1965-07-01",
+  "batch": 18,
+  "vertical": "Published studies",
+  "steps": [
+   {
+    "n": 1,
+    "claim": "Rede Globo's signal, and its telenovelas, reach more Brazilian towns",
+    "test": {
+     "type": "record",
+     "date": "1965-07-01",
+     "date_precision": "year",
+     "source": "“Soap Operas and Fertility: Evidence from Brazil,” American Economic Journal: Applied Economics, 2012",
+     "doi": "10.1257/app.4.4.1"
+    },
+    "note": "The rollout ran from 1965 to 1991. Dated here to its first year."
+   },
+   {
+    "n": 2,
+    "claim": "Parents named their children after telenovela characters",
+    "short": "Names from novelas",
+    "test": {
+     "type": "study",
+     "date": "1965-07-01",
+     "date_precision": "year",
+     "window": "1965 to 1991",
+     "grade": "measured",
+     "design": "staggered signal arrival compared across areas",
+     "source": "“Soap Operas and Fertility: Evidence from Brazil,” American Economic Journal: Applied Economics, 2012",
+     "effect": "children's names followed the characters of the telenovelas",
+     "doi": "10.1257/app.4.4.1",
+     "rows": [
+      "NOVELA_NAMES"
+     ]
+    },
+    "range": [
+     "1965-07-01",
+     "1991-12-31"
+    ],
+    "mark": "Behavior",
+    "note": "The paper uses naming patterns to show the telenovelas themselves shaped choices. The size of the effect is in the paper's body, which we did not check."
+   }
+  ]
+ },
+ {
+  "slug": "study-zanzibar-blackout",
+  "title": "Zanzibar's blackout (2008)",
+  "date": "2008-07-01",
+  "batch": 18,
+  "vertical": "Published studies",
+  "steps": [
+   {
+    "n": 1,
+    "claim": "A month-long blackout hits Zanzibar",
+    "test": {
+     "type": "record",
+     "date": "2008-07-01",
+     "date_precision": "year",
+     "source": "“Power Outages, Power Externalities, and Baby Booms,” Demography, 2014",
+     "doi": "10.1007/s13524-014-0316-7"
+    },
+    "note": "Dated to the year, as the paper gives it."
+   },
+   {
+    "n": 2,
+    "claim": "More babies were born in villages with electricity",
+    "short": "A baby boom",
+    "test": {
+     "type": "study",
+     "date": "2008-07-01",
+     "date_precision": "year",
+     "window": "8 to 10 months later",
+     "grade": "measured",
+     "design": "births compared across villages with and without power",
+     "source": "“Power Outages, Power Externalities, and Baby Booms,” Demography, 2014",
+     "effect": "a significant rise in births 8 to 10 months later in villages with electricity, none in villages without",
+     "doi": "10.1007/s13524-014-0316-7",
+     "rows": [
+      "ZANZIBAR_BLACKOUT"
+     ]
+    },
+    "mark": "Behavior",
+    "note": "From the paper: “a month-long blackout in 2008 caused a significant increase in the number of births 8 to 10 months later.” The paper says it is unclear whether the boom adds to the population for good."
+   }
+  ]
+ },
+ {
+  "slug": "study-ramayan-names",
+  "title": "Ramayan on TV and baby names (1987)",
+  "date": "1987-07-01",
+  "batch": 18,
+  "vertical": "Published studies",
+  "steps": [
+   {
+    "n": 1,
+    "claim": "Ramayan, a TV serial of the Hindu epic, airs in India",
+    "test": {
+     "type": "record",
+     "date": "1987-07-01",
+     "date_precision": "year",
+     "source": "“Ancient Epics in the Television Age: Religious Identity and the Rise of Hindu Nationalism in India,” NBER working paper, 2025",
+     "doi": "10.3386/w33417"
+    },
+    "note": "It aired in 1987 and 1988. Dated here to 1987."
+   },
+   {
+    "n": 2,
+    "claim": "Parents gave newborn sons more traditionally Hindu names",
+    "short": "Hindu baby names",
+    "test": {
+     "type": "study",
+     "date": "1987-07-01",
+     "date_precision": "year",
+     "window": "from 1987",
+     "grade": "measured",
+     "design": "difference in differences on TV signal strength",
+     "source": "“Ancient Epics in the Television Age: Religious Identity and the Rise of Hindu Nationalism in India,” NBER working paper, 2025",
+     "effect": "more traditionally Hindu names for newborn sons where the signal was stronger, and the shift lasted",
+     "doi": "10.3386/w33417",
+     "rows": [
+      "RAMAYAN_NAMES"
+     ]
+    },
+    "mark": "Behavior",
+    "note": "From the paper: “Localities with higher Ramayan exposure saw persistently strengthened Hindu religious identity, measured by the names given to newborns.”"
+   }
+  ]
+ },
+ {
+  "slug": "study-twende-family-planning",
+  "title": "Twende na Wakati (1993)",
+  "date": "1993-07-01",
+  "batch": 18,
+  "vertical": "Published studies",
+  "steps": [
+   {
+    "n": 1,
+    "claim": "Twende na Wakati, a radio soap opera, begins airing in Tanzania",
+    "test": {
+     "type": "record",
+     "date": "1993-07-01",
+     "date_precision": "year",
+     "source": "“A Staged Model of Communication Effects: Evidence from an Entertainment-Education Radio Soap Opera in Tanzania,” Journal of Health Communication, 2000",
+     "doi": "10.1080/10810730050131398"
+    },
+    "note": "Its first broadcast year ran from 1993 to 1994. Dated here to 1993."
+   },
+   {
+    "n": 2,
+    "claim": "More couples used family planning",
+    "short": "More family planning",
+    "test": {
+     "type": "study",
+     "date": "1993-07-01",
+     "date_precision": "year",
+     "window": "from 1993",
+     "grade": "measured",
+     "design": "broadcast area compared with an area that heard it later",
+     "source": "“A Staged Model of Communication Effects: Evidence from an Entertainment-Education Radio Soap Opera in Tanzania,” Journal of Health Communication, 2000",
+     "effect": "family planning use rose from 19% to 28%, and 26% of new clinic clients named the show",
+     "effect_short": "19% to 28%",
+     "doi": "10.1080/10810730050131398",
+     "rows": [
+      "TWENDE_FP"
+     ]
+    },
+    "mark": "Behavior",
+    "note": "From the paper: “the radio soap opera promoted progress through the stages for family planning adoption in the treatment area.” The effect showed in three of the four broadcast years, and in the comparison area once the show reached it."
+   }
+  ]
+ },
+ {
+  "slug": "study-sideways-wine",
+  "title": "Sideways and wine buying (2004)",
+  "date": "2004-07-01",
+  "batch": 18,
+  "vertical": "Published studies",
+  "steps": [
+   {
+    "n": 1,
+    "claim": "Sideways opens; the film praises Pinot Noir and mocks Merlot",
+    "test": {
+     "type": "record",
+     "date": "2004-07-01",
+     "date_precision": "year",
+     "source": "Date from a second study",
+     "doi": "10.1017/jwe.2021.26"
+    },
+    "note": "Dated to the release year by a second study."
+   },
+   {
+    "n": 2,
+    "claim": "Americans bought less Merlot and more Pinot Noir",
+    "short": "Pinot up, Merlot down",
+    "test": {
+     "type": "study",
+     "date": "2005-07-01",
+     "date_precision": "year",
+     "window": "from 2005",
+     "grade": "measured",
+     "design": "tests for breaks in sales trends",
+     "source": "“The Sideways Effect: A Test for Changes in the Demand for Merlot and Pinot Noir Wines,” Journal of Wine Economics, 2009",
+     "effect": "breaks in US sales of both wines after the film, which a 2021 paper calls the 2005 Sideways demand shock",
+     "doi": "10.1017/s193143610000081x",
+     "rows": [
+      "SIDEWAYS_DEMAND"
+     ]
+    },
+    "mark": "Behavior",
+    "note": "The paper tests each wine's sales before and after the film, by price point. We did not check the sizes in its body. The direction, Pinot Noir up and Merlot down, is stated by the 2021 follow-up paper."
+   }
+  ]
+ },
+ {
+  "slug": "study-superbowl-flu",
+  "title": "A Super Bowl team (1974)",
+  "date": "1974-07-01",
+  "batch": 18,
+  "vertical": "Published studies",
+  "steps": [
+   {
+    "n": 1,
+    "claim": "A county's team plays in the Super Bowl",
+    "test": {
+     "type": "record",
+     "date": "1974-07-01",
+     "date_precision": "year",
+     "source": "“Success Is Something to Sneeze At: Influenza Mortality in Cities that Participate in the Super Bowl,” American Journal of Health Economics, 2016",
+     "doi": "10.1162/ajhe_a_00036"
+    },
+    "note": "The study covers Super Bowls from 1974 to 2009. Dated here to the first year of that window."
+   },
+   {
+    "n": 2,
+    "claim": "More flu deaths among people over 65 in the team's home county",
+    "short": "Flu deaths over 65",
+    "test": {
+     "type": "study",
+     "date": "1974-07-01",
+     "date_precision": "year",
+     "window": "1974 to 2009",
+     "grade": "measured",
+     "design": "difference in differences",
+     "source": "“Success Is Something to Sneeze At: Influenza Mortality in Cities that Participate in the Super Bowl,” American Journal of Health Economics, 2016",
+     "effect": "18% more flu deaths among people over 65 in counties with a team in the game, and no change in host cities",
+     "effect_short": "+18%",
+     "doi": "10.1162/ajhe_a_00036",
+     "rows": [
+      "SUPERBOWL_FLU"
+     ]
+    },
+    "note": "From the paper: “We estimate having a local team in the Super Bowl caused an 18 percent increase in influenza deaths for the population over age 65.” The effect was largest in years with a harsher flu strain or a game closer to the flu season's peak."
+   }
+  ]
+ },
+ {
+  "slug": "study-pokemon-steps",
+  "title": "Pokémon Go and walking (2016)",
+  "date": "2016-07-01",
+  "batch": 18,
+  "vertical": "Published studies",
+  "steps": [
+   {
+    "n": 1,
+    "claim": "Pokémon Go is released",
+    "test": {
+     "type": "record",
+     "date": "2016-07-01",
+     "date_precision": "month",
+     "source": "Date from a second study",
+     "doi": "10.21037/atm.2017.03.38"
+    },
+    "note": "Dated to the month by a second study."
+   },
+   {
+    "n": 2,
+    "claim": "Engaged players walked about 1,473 more steps a day",
+    "short": "More steps a day",
+    "test": {
+     "type": "study",
+     "date": "2016-07-01",
+     "date_precision": "month",
+     "window": "Jul 2016, 30 days",
+     "grade": "measured",
+     "design": "players against their own past and against nonplayers",
+     "source": "“Influence of Pokémon Go on Physical Activity: Study and Implications,” Journal of Medical Internet Research, 2016",
+     "effect": "1,473 more steps a day for engaged players over 30 days, more than 25% above their usual level",
+     "effect_short": "+1,473 steps a day",
+     "doi": "10.2196/jmir.6759",
+     "rows": [
+      "POKEMON_STEPS"
+     ]
+    },
+    "note": "From the paper: “increasing their activity by 1473 steps a day on average, a more than 25% increase compared with their prior activity level.” The study used wearable sensors on 32,000 Microsoft Band users. A study in Yokohama found players stayed more active for 7 months."
+   }
+  ]
+ },
+ {
+  "slug": "study-couric-colonoscopy",
+  "title": "Couric's colonoscopy (2000)",
+  "date": "2000-03-01",
+  "batch": 18,
+  "vertical": "Published studies",
+  "steps": [
+   {
+    "n": 1,
+    "claim": "Katie Couric has a colonoscopy live on the Today Show",
+    "test": {
+     "type": "record",
+     "date": "2000-03-01",
+     "date_precision": "month",
+     "source": "“The Impact of a Celebrity Promotional Campaign on the Use of Colon Cancer Screening: The Katie Couric Effect,” Archives of Internal Medicine, 2003",
+     "doi": "10.1001/archinte.163.13.1601"
+    },
+    "note": "Dated to the month, as the paper gives it."
+   },
+   {
+    "n": 2,
+    "claim": "More people got colonoscopies",
+    "short": "More colonoscopies",
+    "test": {
+     "type": "study",
+     "date": "2000-03-01",
+     "date_precision": "month",
+     "window": "Mar 2000, 9 months",
+     "grade": "measured",
+     "design": "change point analysis with trend adjustment",
+     "source": "“The Impact of a Celebrity Promotional Campaign on the Use of Colon Cancer Screening: The Katie Couric Effect,” Archives of Internal Medicine, 2003",
+     "effect": "colonoscopies per doctor rose from 15.0 to 18.1 a month, and the higher rate held for 9 months",
+     "effect_short": "15.0 to 18.1 a month",
+     "doi": "10.1001/archinte.163.13.1601",
+     "rows": [
+      "COURIC_COLON"
+     ]
+    },
+    "range": [
+     "2000-03-01",
+     "2000-12-01"
+    ],
+    "note": "From the paper: “After adjusting for temporal trends, a significantly higher postcampaign colonoscopy rate was sustained for 9 months.” In a health plan of 44,000 members, the rate rose from 1.3 to 1.8 per 1,000 members a month."
+   }
+  ]
+ },
+ {
+  "slug": "study-violent-movies",
+  "title": "Violent blockbusters (1995)",
+  "date": "1995-07-01",
+  "batch": 18,
+  "vertical": "Published studies",
+  "steps": [
+   {
+    "n": 1,
+    "claim": "Big violent movies open in US theaters",
+    "test": {
+     "type": "record",
+     "date": "1995-07-01",
+     "date_precision": "year",
+     "source": "“Does Movie Violence Increase Violent Crime?” Quarterly Journal of Economics, 2009",
+     "doi": "10.1162/qjec.2009.124.2.677"
+    },
+    "note": "The study covers blockbusters from 1995 to 2004. Dated here to the first year."
+   },
+   {
+    "n": 2,
+    "claim": "Fewer assaults on nights when more people saw a violent movie",
+    "short": "Fewer assaults",
+    "test": {
+     "type": "study",
+     "date": "1995-07-01",
+     "date_precision": "year",
+     "window": "1995 to 2004",
+     "grade": "measured",
+     "design": "daily time series of movie audiences",
+     "source": "“Does Movie Violence Increase Violent Crime?” Quarterly Journal of Economics, 2009",
+     "effect": "violent crime fell on nights with big audiences for violent movies, almost 1,000 fewer assaults on an average weekend",
+     "effect_short": "almost 1,000 fewer a weekend",
+     "doi": "10.1162/qjec.2009.124.2.677",
+     "rows": [
+      "VIOLENT_MOVIES"
+     ]
+    },
+    "note": "From the paper: “Our estimates suggest that in the short run, violent movies deter almost 1,000 assaults on an average weekend.” The paper finds no rise in the three weeks after either."
+   }
+  ]
+ },
+ {
+  "slug": "study-jolie-brca",
+  "title": "Angelina Jolie's op-ed and BRCA tests (2013)",
+  "date": "2013-05-14",
+  "batch": 18,
+  "vertical": "Published studies",
+  "steps": [
+   {
+    "n": 1,
+    "claim": "Angelina Jolie writes in the New York Times about her preventive double mastectomy",
+    "test": {
+     "type": "record",
+     "date": "2013-05-14",
+     "date_precision": "day",
+     "source": "“Do Celebrity Endorsements Matter? Observational Study of BRCA Gene Testing and Mastectomy Rates after Angelina Jolie’s New York Times Editorial,” BMJ, 2016",
+     "doi": "10.1136/bmj.i6357"
+    }
+   },
+   {
+    "n": 2,
+    "claim": "More women got BRCA gene tests",
+    "short": "More BRCA tests",
+    "test": {
+     "type": "study",
+     "date": "2013-05-14",
+     "date_precision": "day",
+     "window": "May 2013, 15 business days",
+     "grade": "measured",
+     "design": "difference in differences on insurance claims",
+     "source": "“Do Celebrity Endorsements Matter? Observational Study of BRCA Gene Testing and Mastectomy Rates after Angelina Jolie’s New York Times Editorial,” BMJ, 2016",
+     "effect": "the daily BRCA test rate rose 64% in the 15 business days after, against the same days in 2012, about 4,500 extra tests",
+     "effect_short": "+64%",
+     "doi": "10.1136/bmj.i6357",
+     "rows": [
+      "JOLIE_BRCA"
+     ]
+    },
+    "note": "From the paper: “implying a difference-in-difference absolute daily increase of 0.45 tests/100 000 women or a 64% relative increase.” The study covers 9.5 million insured women aged 18 to 64."
+   }
+  ]
+ },
+ {
+  "slug": "study-got-dubrovnik",
+  "title": "Game of Thrones, Dubrovnik (2011)",
+  "date": "2011-07-01",
+  "batch": 18,
+  "vertical": "Published studies",
+  "steps": [
+   {
+    "n": 1,
+    "claim": "Game of Thrones films in Dubrovnik; the series runs from 2011 to 2019",
+    "test": {
+     "type": "record",
+     "date": "2011-07-01",
+     "date_precision": "year",
+     "source": "Date from a second study",
+     "doi": "10.3390/su16010186"
+    },
+    "note": "Dated to the series' first year by a second study."
+   },
+   {
+    "n": 2,
+    "claim": "More tourists came to Dubrovnik",
+    "short": "More tourists",
+    "test": {
+     "type": "study",
+     "date": "2011-07-01",
+     "date_precision": "year",
+     "window": "from 2011",
+     "grade": "measured",
+     "design": "synthetic control",
+     "source": "“The Effect of Film Industry on Tourism: Game of Thrones and Dubrovnik,” International Journal of Tourism Research, 2017",
+     "effect": "a robust rise in tourist arrivals, spilling over to other counties and the whole country",
+     "doi": "10.1002/jtr.2142",
+     "rows": [
+      "GOT_TOURISM"
+     ]
+    },
+    "note": "From the paper: “We find a robust and positive effect of filming the TV series in Dubrovnik on the number of tourist arrivals.” A later study of 14 filming locations in Spain, Croatia and Malta finds a lasting rise in arrivals and overnight stays."
+   }
+  ]
+ },
+ {
+  "slug": "study-fox-sentences",
+  "title": "Fox News Channel and sentencing (2005)",
+  "date": "2005-07-01",
+  "batch": 18,
+  "vertical": "Published studies",
+  "steps": [
+   {
+    "n": 1,
+    "claim": "Fox News Channel viewing in US towns",
+    "test": {
+     "type": "record",
+     "date": "2005-07-01",
+     "date_precision": "year",
+     "source": "“Conservative News Media and Criminal Justice: Evidence from Exposure to the Fox News Channel,” The Economic Journal, 2023",
+     "doi": "10.1093/ej/uead108"
+    },
+    "note": "The study covers 2005 to 2017. Dated here to the first year."
+   },
+   {
+    "n": 2,
+    "claim": "Judges handed down longer sentences",
+    "short": "Longer sentences",
+    "test": {
+     "type": "study",
+     "date": "2005-07-01",
+     "date_precision": "year",
+     "window": "2005 to 2017",
+     "grade": "measured",
+     "design": "instrumental variable on channel position",
+     "source": "“Conservative News Media and Criminal Justice: Evidence from Exposure to the Fox News Channel,” The Economic Journal, 2023",
+     "effect": "longer prison terms, most for Black defendants and drug crimes, from elected judges only",
+     "doi": "10.1093/ej/uead108",
+     "rows": [
+      "FOX_SENTENCES"
+     ]
+    },
+    "range": [
+     "2005-07-01",
+     "2017-12-31"
+    ],
+    "note": "From the paper: “Local exposure to conservative news causes judges to impose harsher criminal sentences.” The data cover almost seven million sentencing decisions."
+   }
+  ]
+ },
+ {
+  "slug": "study-ice-bucket-giving",
+  "title": "Ice Bucket Challenge and giving (2014)",
+  "date": "2014-08-01",
+  "batch": 18,
+  "vertical": "Published studies",
+  "steps": [
+   {
+    "n": 1,
+    "claim": "The ALS Ice Bucket Challenge goes viral",
+    "test": {
+     "type": "record",
+     "date": "2014-08-01",
+     "date_precision": "month",
+     "source": "“Social Media Charity Campaigns and Pro-Social Behaviour: Evidence from the Ice Bucket Challenge,” Journal of Economic Psychology, 2023",
+     "doi": "10.1016/j.joep.2023.102624"
+    },
+    "note": "Dated to the month, as the paper gives it."
+   },
+   {
+    "n": 2,
+    "claim": "More people gave money and volunteered, for less than a year",
+    "short": "More giving, briefly",
+    "test": {
+     "type": "study",
+     "date": "2014-08-01",
+     "date_precision": "month",
+     "window": "Aug 2014, under a year",
+     "grade": "measured",
+     "design": "UK panel data by exposure",
+     "source": "“Social Media Charity Campaigns and Pro-Social Behaviour: Evidence from the Ice Bucket Challenge,” Journal of Economic Psychology, 2023",
+     "effect": "a higher chance of donating and volunteering, mostly gone within a year",
+     "doi": "10.1016/j.joep.2023.102624",
+     "rows": [
+      "ICEBUCKET_GIVING"
+     ]
+    },
+    "note": "From the paper: “having been exposed to the IBC increases the probability of donating money.”"
+   }
+  ]
+ },
+ {
+  "slug": "study-goody-screening",
+  "title": "Jade Goody's diagnosis (2008)",
+  "date": "2008-08-01",
+  "batch": 18,
+  "vertical": "Published studies",
+  "steps": [
+   {
+    "n": 1,
+    "claim": "Jade Goody makes her cervical cancer diagnosis public",
+    "test": {
+     "type": "record",
+     "date": "2008-08-01",
+     "date_precision": "month",
+     "source": "“The Impact of Jade Goody’s Diagnosis and Death on the NHS Cervical Screening Programme,” Journal of Medical Screening, 2012",
+     "doi": "10.1258/jms.2012.012028"
+    },
+    "note": "She went public in Aug 2008, said in Feb 2009 that she was terminally ill, and died weeks later."
+   },
+   {
+    "n": 2,
+    "claim": "Far more women went for cervical screening",
+    "short": "Extra screenings",
+    "test": {
+     "type": "study",
+     "date": "2008-08-01",
+     "date_precision": "month",
+     "window": "mid-2008 to mid-2009",
+     "grade": "measured",
+     "design": "screening counts against those expected from other periods",
+     "source": "“The Impact of Jade Goody’s Diagnosis and Death on the NHS Cervical Screening Programme,” Journal of Medical Screening, 2012",
+     "effect": "about half a million extra screenings in England, 70% above expected at the March 2009 peak",
+     "effect_short": "+70% at the peak",
+     "doi": "10.1258/jms.2012.012028",
+     "rows": [
+      "GOODY_SCREEN"
+     ]
+    },
+    "range": [
+     "2008-08-01",
+     "2009-06-30"
+    ],
+    "note": "From the paper: “About half a million extra cervical screening attendances occurred in England between mid-2008 and mid-2009.” 370 of the extra attendances had a result of suspected neoplasia. Wales saw more than 33,000 extra tests."
+   }
+  ]
+ },
+ {
+  "slug": "study-worldcup-abuse",
+  "title": "England's World Cup games (2002)",
+  "date": "2002-07-01",
+  "batch": 18,
+  "vertical": "Published studies",
+  "steps": [
+   {
+    "n": 1,
+    "claim": "England plays in the 2002, 2006 and 2010 World Cups",
+    "test": {
+     "type": "record",
+     "date": "2002-07-01",
+     "date_precision": "year",
+     "source": "“Can the FIFA World Cup Football (Soccer) Tournament Be Associated with an Increase in Domestic Abuse?” Journal of Research in Crime and Delinquency, 2013",
+     "doi": "10.1177/0022427813494843"
+    },
+    "note": "Dated to the first of the three tournaments."
+   },
+   {
+    "n": 2,
+    "claim": "More domestic abuse reports on match days, after wins and losses",
+    "short": "More abuse reports",
+    "test": {
+     "type": "study",
+     "date": "2002-07-01",
+     "date_precision": "year",
+     "window": "2002, 2006, 2010",
+     "grade": "measured",
+     "design": "match days compared with other days",
+     "source": "“Can the FIFA World Cup Football (Soccer) Tournament Be Associated with an Increase in Domestic Abuse?” Journal of Research in Crime and Delinquency, 2013",
+     "effect": "reports rose 26% when England won or drew and 38% when England lost, in one North West England police force",
+     "effect_short": "+26% to +38%",
+     "doi": "10.1177/0022427813494843",
+     "rows": [
+      "WORLDCUP_DV"
+     ]
+    },
+    "note": "From the paper: “the risk of domestic abuse rose by 26 percent when the English national team won or drew.”"
+   }
+  ]
+ },
+ {
+  "slug": "study-nazi-radio",
+  "title": "Nazi radio (1933)",
+  "date": "1933-07-01",
+  "batch": 18,
+  "vertical": "Published studies",
+  "steps": [
+   {
+    "n": 1,
+    "claim": "Radio carries Nazi propaganda across Germany",
+    "test": {
+     "type": "record",
+     "date": "1933-07-01",
+     "date_precision": "year",
+     "source": "“Radio and the Rise of the Nazis in Prewar Germany,” Quarterly Journal of Economics, 2015",
+     "doi": "10.1093/qje/qjv030"
+    },
+    "note": "Dated to 1933, the year the paper's period of Nazi rule begins."
+   },
+   {
+    "n": 2,
+    "claim": "More people joined the Nazi party and reported Jews to the authorities",
+    "short": "Denunciations",
+    "test": {
+     "type": "study",
+     "date": "1933-07-01",
+     "date_precision": "year",
+     "window": "from 1933",
+     "grade": "measured",
+     "design": "radio reception compared across places",
+     "source": "“Radio and the Rise of the Nazis in Prewar Germany,” Quarterly Journal of Economics, 2015",
+     "effect": "radio helped the party enroll members and set off denunciations of Jews, most where anti-Semitism was already high",
+     "doi": "10.1093/qje/qjv030",
+     "rows": [
+      "NAZI_RADIO"
+     ]
+    },
+    "note": "From the paper: “radio propaganda incited anti-Semitic acts and denunciations of Jews to authorities by ordinary citizens.” Where anti-Semitism had been low, the broadcasts had the opposite effect."
+   }
+  ]
+ },
+ {
+  "slug": "study-kylie-scans",
+  "title": "Kylie Minogue's diagnosis (2005)",
+  "date": "2005-05-01",
+  "batch": 18,
+  "vertical": "Published studies",
+  "steps": [
+   {
+    "n": 1,
+    "claim": "Kylie Minogue announces she has breast cancer",
+    "test": {
+     "type": "record",
+     "date": "2005-05-01",
+     "date_precision": "month",
+     "source": "“Use of Breast Cancer Screening and Treatment Services by Australian Women Aged 25–44 Years following Kylie Minogue’s Breast Cancer Diagnosis,” International Journal of Epidemiology, 2008",
+     "doi": "10.1093/ije/dyn090"
+    },
+    "note": "Dated to the month, as the paper gives it."
+   },
+   {
+    "n": 2,
+    "claim": "Young women got more breast scans, and no more cancers were found",
+    "short": "More breast scans",
+    "test": {
+     "type": "study",
+     "date": "2005-05-01",
+     "date_precision": "month",
+     "window": "2005, two quarters",
+     "grade": "measured",
+     "design": "quarters before and after, with a forecast for the UK",
+     "source": "“Use of Breast Cancer Screening and Treatment Services by Australian Women Aged 25–44 Years following Kylie Minogue’s Breast Cancer Diagnosis,” International Journal of Epidemiology, 2008",
+     "effect": "20% higher odds of breast imaging for Australian women aged 25 to 44, with no change in cancer surgeries",
+     "effect_short": "+20%",
+     "doi": "10.1093/ije/dyn090",
+     "rows": [
+      "KYLIE_SCANS"
+     ]
+    },
+    "note": "From the paper: “The odds of women aged 25-44 years undergoing imaging procedures increased by 20% in the first and second quarters after the Minogue publicity.” A UK clinic saw more referrals and no rise in cancers found."
+   }
+  ]
+ },
+ {
+  "slug": "study-globo-divorce",
+  "title": "Rede Globo's telenovelas and divorce (1970)",
+  "date": "1970-07-01",
+  "batch": 18,
+  "vertical": "Published studies",
+  "steps": [
+   {
+    "n": 1,
+    "claim": "Rede Globo's signal, and its telenovelas, reach more Brazilian towns",
+    "test": {
+     "type": "record",
+     "date": "1970-07-01",
+     "date_precision": "year",
+     "source": "“Television and Divorce: Evidence from Brazilian Novelas,” 2009",
+     "doi": "10.18235/0010906"
+    },
+    "note": "This paper covers the rollout from 1970 to 1991. Dated here to its first year."
+   },
+   {
+    "n": 2,
+    "claim": "More women were separated or divorced after the signal arrived",
+    "short": "More divorce",
+    "test": {
+     "type": "study",
+     "date": "1970-07-01",
+     "date_precision": "year",
+     "window": "1970 to 1991",
+     "grade": "measured",
+     "design": "staggered signal arrival compared across areas",
+     "source": "“Television and Divorce: Evidence from Brazilian Novelas,” 2009",
+     "effect": "a significant rise in the share of women separated or divorced, strongest in smaller areas",
+     "doi": "10.18235/0010906",
+     "rows": [
+      "NOVELA_DIVORCE"
+     ]
+    },
+    "range": [
+     "1970-07-01",
+     "1991-07-01"
+    ],
+    "note": "From the paper: “the share of women who are separated or divorced increases significantly after the Globo signal becomes available.” The paper uses the censuses of 1970, 1980 and 1991."
+   }
+  ]
+ },
+ {
+  "slug": "study-jolie-mastectomy",
+  "title": "Angelina Jolie's op-ed and mastectomies (2013)",
+  "date": "2013-05-14",
+  "batch": 18,
+  "vertical": "Published studies",
+  "steps": [
+   {
+    "n": 1,
+    "claim": "Angelina Jolie writes in the New York Times about her preventive double mastectomy",
+    "test": {
+     "type": "record",
+     "date": "2013-05-14",
+     "date_precision": "day",
+     "source": "“Do Celebrity Endorsements Matter? Observational Study of BRCA Gene Testing and Mastectomy Rates after Angelina Jolie’s New York Times Editorial,” BMJ, 2016",
+     "doi": "10.1136/bmj.i6357"
+    }
+   },
+   {
+    "n": 2,
+    "claim": "More women without cancer chose a preventive double mastectomy",
+    "short": "More mastectomies",
+    "test": {
+     "type": "study",
+     "date": "2013-05-14",
+     "date_precision": "day",
+     "window": "2013 to 2016",
+     "grade": "measured",
+     "design": "interrupted time series on insurance claims",
+     "source": "“Risk-Reducing Mastectomy Rates in the US: A Closer Examination of the Angelina Jolie Effect,” Breast Cancer Research and Treatment, 2018",
+     "effect": "a significant rise in preventive mastectomies after the op-ed, sustained in later years",
+     "doi": "10.1007/s10549-018-4824-9",
+     "rows": [
+      "JOLIE_MASTECTOMY"
+     ]
+    },
+    "range": [
+     "2013-05-14",
+     "2016-09-30"
+    ],
+    "note": "From the paper: “significant increases in genetic testing and mastectomy rates were observed and sustained in subsequent years.” The claims run from 1997 to 2016. New York State and New South Wales saw rises too."
+   }
+  ]
+ },
+ {
+  "slug": "study-brazil-worldcup-heart",
+  "title": "Brazil's World Cup games (2014)",
+  "date": "2014-07-01",
+  "batch": 18,
+  "vertical": "Published studies",
+  "steps": [
+   {
+    "n": 1,
+    "claim": "Brazil plays at the 2014, 2018 and 2022 World Cups",
+    "test": {
+     "type": "record",
+     "date": "2014-07-01",
+     "date_precision": "year",
+     "source": "“Watching the Game, Skipping the Hospital: World Cup Matches and Cardiovascular Hospitalizations,” Cardiology Research, 2026",
+     "doi": "10.14740/cr2271"
+    },
+    "note": "Dated to the first of the three tournaments, which Brazil hosted."
+   },
+   {
+    "n": 2,
+    "claim": "Fewer heart attack and heart failure admissions on match days",
+    "short": "Fewer admissions",
+    "test": {
+     "type": "study",
+     "date": "2014-07-01",
+     "date_precision": "year",
+     "window": "2014, 2018, 2022",
+     "grade": "measured",
+     "design": "match days against other days",
+     "source": "“Watching the Game, Skipping the Hospital: World Cup Matches and Cardiovascular Hospitalizations,” Cardiology Research, 2026",
+     "effect": "7.0% fewer heart attack admissions and 11.1% fewer heart failure admissions on Brazil's match days",
+     "effect_short": "7.0% fewer",
+     "doi": "10.14740/cr2271",
+     "rows": [
+      "BRAZIL_WC_AMI"
+     ]
+    },
+    "note": "From the paper: “On Brazil match days, AMI admissions were 7.0% lower than non-match days.” AMI means a heart attack."
+   }
+  ]
+ },
+ {
+  "slug": "study-sheen-hiv-tests",
+  "title": "Charlie Sheen's HIV news (2015)",
+  "date": "2015-11-17",
+  "batch": 18,
+  "vertical": "Published studies",
+  "steps": [
+   {
+    "n": 1,
+    "claim": "Charlie Sheen says on national TV that he is HIV positive",
+    "test": {
+     "type": "record",
+     "date": "2015-11-17",
+     "date_precision": "day",
+     "source": "Date from a second study",
+     "doi": "10.17615/wtxf-sb90"
+    },
+    "note": "The day comes from a second study. This study gives the week."
+   },
+   {
+    "n": 2,
+    "claim": "Sales of in-home HIV test kits nearly doubled",
+    "short": "HIV test kit sales",
+    "test": {
+     "type": "study",
+     "date": "2015-11-17",
+     "date_precision": "day",
+     "window": "Nov 2015, 5 weeks",
+     "grade": "measured",
+     "design": "weekly sales against expected sales",
+     "source": "“The Charlie Sheen Effect on Rapid In-Home Human Immunodeficiency Virus Test Sales,” Prevention Science, 2017",
+     "effect": "sales rose 95% the week of the disclosure and stayed high for 4 more weeks, 8,225 more kits than expected",
+     "effect_short": "+95%",
+     "doi": "10.1007/s11121-017-0792-2",
+     "rows": [
+      "SHEEN_HIVTEST"
+     ]
+    },
+    "note": "From the paper: “In total, there were 8225 more sales than expected around Sheen's disclosure, surpassing World AIDS Day by a factor of about 7.”"
+   }
+  ]
+ },
+ {
+  "slug": "study-sideways-vines",
+  "title": "Sideways and vineyards (2004)",
+  "date": "2004-07-01",
+  "batch": 18,
+  "vertical": "Published studies",
+  "steps": [
+   {
+    "n": 1,
+    "claim": "Sideways opens; the film praises Pinot Noir and mocks Merlot",
+    "test": {
+     "type": "record",
+     "date": "2004-07-01",
+     "date_precision": "year",
+     "source": "“A ‘Sideways’ Supply Response in California Winegrapes,” Journal of Wine Economics, 2021",
+     "doi": "10.1017/jwe.2021.26"
+    },
+    "note": "Dated to the release year, as the paper gives it."
+   },
+   {
+    "n": 2,
+    "claim": "California growers shifted grapes toward Pinot Noir",
+    "short": "More Pinot Noir grapes",
+    "test": {
+     "type": "study",
+     "date": "2005-07-01",
+     "date_precision": "year",
+     "window": "2005 to 2012",
+     "grade": "measured",
+     "design": "modified difference in differences",
+     "source": "“A ‘Sideways’ Supply Response in California Winegrapes,” Journal of Wine Economics, 2021",
+     "effect": "Pinot Noir supply rose more than Merlot fell, mostly in lower value Central Valley vineyards",
+     "doi": "10.1017/jwe.2021.26",
+     "rows": [
+      "SIDEWAYS_VINES"
+     ]
+    },
+    "range": [
+     "2005-07-01",
+     "2012-12-31"
+    ],
+    "note": "From the paper: “The positive supply response for Pinot Noir is stronger than the negative response for Merlot and concentrated in lower value Central Valley vineyards.” The paper uses USDA data from 1999 to 2012."
+   }
+  ]
+ },
+ {
+  "slug": "study-ramayan-violence",
+  "title": "Ramayan on TV and communal violence (1987)",
+  "date": "1987-07-01",
+  "batch": 18,
+  "vertical": "Published studies",
+  "steps": [
+   {
+    "n": 1,
+    "claim": "Ramayan, a TV serial of the Hindu epic, airs in India",
+    "test": {
+     "type": "record",
+     "date": "1987-07-01",
+     "date_precision": "year",
+     "source": "“Ancient Epics in the Television Age: Religious Identity and the Rise of Hindu Nationalism in India,” NBER working paper, 2025",
+     "doi": "10.3386/w33417"
+    },
+    "note": "It aired in 1987 and 1988. Dated here to 1987."
+   },
+   {
+    "n": 2,
+    "claim": "More Hindu-Muslim communal violence through 1992",
+    "short": "Communal violence",
+    "test": {
+     "type": "study",
+     "date": "1987-07-01",
+     "date_precision": "year",
+     "window": "1987 to 1992",
+     "grade": "measured",
+     "design": "difference in differences on TV signal strength",
+     "source": "“Ancient Epics in the Television Age: Religious Identity and the Rise of Hindu Nationalism in India,” NBER working paper, 2025",
+     "effect": "more Hindu-Muslim communal violence through 1992 where the signal was stronger",
+     "doi": "10.3386/w33417",
+     "rows": [
+      "RAMAYAN_VIOLENCE"
+     ]
+    },
+    "range": [
+     "1987-07-01",
+     "1992-12-31"
+    ],
+    "note": "From the paper: “increases in Hindu-Muslim communal violence during the Hindu-nationalist mobilization of the early 1990s.”"
+   }
+  ]
+ },
+ {
+  "slug": "study-movie-tv-dvd",
+  "title": "Movies on broadcast TV (2005)",
+  "date": "2005-07-01",
+  "batch": 18,
+  "vertical": "Published studies",
+  "steps": [
+   {
+    "n": 1,
+    "claim": "Movies air on broadcast and cable TV",
+    "test": {
+     "type": "record",
+     "date": "2005-07-01",
+     "date_precision": "year",
+     "source": "“Competing with Free: The Impact of Movie Broadcasts on DVD Sales and Internet Piracy,” MIS Quarterly, 2009",
+     "doi": "10.2307/20650294"
+    },
+    "note": "The study covers eight months in 2005 and 2006. Dated here to 2005."
+   },
+   {
+    "n": 2,
+    "claim": "DVD sales of a movie rose after it aired",
+    "short": "More DVD sales",
+    "test": {
+     "type": "study",
+     "date": "2005-07-01",
+     "date_precision": "year",
+     "window": "2005 to 2006",
+     "grade": "measured",
+     "design": "each broadcast as an outside shock to demand",
+     "source": "“Competing with Free: The Impact of Movie Broadcasts on DVD Sales and Internet Piracy,” MIS Quarterly, 2009",
+     "effect": "Amazon DVD sales rose after a movie aired on over-the-air TV, and pirated copies did not cut into the gain",
+     "doi": "10.2307/20650294",
+     "rows": [
+      "MOVIE_TV_DVD"
+     ]
+    },
+    "note": "From the paper: “the post-broadcast increase in DVD sales suggests that giving away content in one channel can stimulate sales in a paid channel.”"
+   }
+  ]
+ },
+ {
+  "slug": "study-football-judges",
+  "title": "College football upsets (1996)",
+  "date": "1996-07-01",
+  "batch": 18,
+  "vertical": "Published studies",
+  "steps": [
+   {
+    "n": 1,
+    "claim": "A state's big college football team loses a game it was expected to win",
+    "test": {
+     "type": "record",
+     "date": "1996-07-01",
+     "date_precision": "year",
+     "source": "“Emotional Judges and Unlucky Juveniles,” American Economic Journal: Applied Economics, 2018",
+     "doi": "10.1257/app.20160390"
+    },
+    "note": "The study covers 1996 to 2012. Dated here to the first year."
+   },
+   {
+    "n": 2,
+    "claim": "Juvenile court judges gave longer sentences the week after",
+    "short": "Longer sentences",
+    "test": {
+     "type": "study",
+     "date": "1996-07-01",
+     "date_precision": "year",
+     "window": "1996 to 2012",
+     "grade": "measured",
+     "design": "upset losses measured against betting odds",
+     "source": "“Emotional Judges and Unlucky Juveniles,” American Economic Journal: Applied Economics, 2018",
+     "effect": "longer sentences in the week after an upset loss, borne mostly by Black defendants",
+     "doi": "10.1257/app.20160390",
+     "rows": [
+      "FOOTBALL_JUDGES"
+     ]
+    },
+    "note": "From the paper: “We find that unexpected losses increase sentence lengths assigned by judges during the week following the game.” Wins and close games made no difference."
+   }
+  ]
+ },
+ {
+  "slug": "study-magic-hiv-tests",
+  "title": "Magic Johnson's HIV news (1991)",
+  "date": "1991-11-07",
+  "batch": 18,
+  "vertical": "Published studies",
+  "steps": [
+   {
+    "n": 1,
+    "claim": "Magic Johnson announces he has HIV",
+    "test": {
+     "type": "record",
+     "date": "1991-11-07",
+     "date_precision": "day",
+     "source": "Date from two other studies",
+     "url": "https://openalex.org/W2414558898"
+    },
+    "note": "The day comes from two other studies."
+   },
+   {
+    "n": 2,
+    "claim": "More people sought anonymous HIV counseling and testing",
+    "short": "More HIV tests",
+    "test": {
+     "type": "study",
+     "date": "1991-11-07",
+     "date_precision": "day",
+     "window": "Nov 1991 to Jun 1992",
+     "grade": "measured",
+     "design": "interrupted time series on weekly visits",
+     "source": "“Harnessing the Heightened Public Awareness of Celebrity HIV Disclosures: ‘Magic’ and ‘Cookie’ Johnson and HIV Testing,” AIDS Education and Prevention, 1995",
+     "effect": "a large, immediate rise across sex, race and age at New York State's 61 anonymous test sites, still above earlier levels 7 months later",
+     "url": "https://pubmed.ncbi.nlm.nih.gov/7646947/",
+     "rows": [
+      "MAGIC_HIVTEST"
+     ]
+    },
+    "range": [
+     "1991-11-07",
+     "1992-06-30"
+    ],
+    "note": "From the paper: “Seven months later, demand had not returned to pre-disclosure levels.”"
+   }
+  ]
+ },
+ {
+  "slug": "study-boseman-donations",
+  "title": "Chadwick Boseman's death (2020)",
+  "date": "2020-08-28",
+  "batch": 18,
+  "vertical": "Published studies",
+  "steps": [
+   {
+    "n": 1,
+    "claim": "Chadwick Boseman dies of colon cancer",
+    "test": {
+     "type": "record",
+     "date": "2020-08-28",
+     "date_precision": "day",
+     "source": "Date from a second study",
+     "doi": "10.2196/27052"
+    }
+   },
+   {
+    "n": 2,
+    "claim": "Donations to the Colon Cancer Foundation jumped",
+    "short": "Donations",
+    "test": {
+     "type": "study",
+     "date": "2020-08-28",
+     "date_precision": "day",
+     "window": "Aug 2020",
+     "grade": "reported",
+     "design": "the foundation's own before and after figures",
+     "source": "“Public Interest and Behavior Change in the United States Regarding Colorectal Cancer Following the Death of Chadwick Boseman,” JMIR Infodemiology, 2021",
+     "effect": "the Colon Cancer Foundation reported a 331% rise in donations, and searches ran 3,590% above forecast",
+     "effect_short": "+331%",
+     "doi": "10.2196/29387",
+     "rows": [
+      "BOSEMAN_DONATE"
+     ]
+    },
+    "note": "From the paper: “The Colon Cancer Foundation reported a 331% increase in donations.”"
+   }
+  ]
+ },
+ {
+  "slug": "study-blackfish",
+  "title": "Blackfish (2013)",
+  "date": "2013-07-01",
+  "batch": 18,
+  "vertical": "Published studies",
+  "steps": [
+   {
+    "n": 1,
+    "claim": "Blackfish, a documentary about orcas at SeaWorld, is released",
+    "test": {
+     "type": "record",
+     "date": "2013-07-01",
+     "date_precision": "year",
+     "source": "“Nature Documentaries as Catalysts for Change: Mapping Out the ‘Blackfish Effect’,” People and Nature, 2021",
+     "doi": "10.1002/pan3.10221"
+    },
+    "note": "Dated to the year, as the paper gives it."
+   },
+   {
+    "n": 2,
+    "claim": "SeaWorld's attendance and market value fell, and it ended its orca breeding",
+    "short": "Orca breeding ends",
+    "test": {
+     "type": "study",
+     "date": "2013-07-01",
+     "date_precision": "year",
+     "window": "from 2013",
+     "grade": "reported",
+     "design": "stock data and interviews with 26 key informants",
+     "source": "“Nature Documentaries as Catalysts for Change: Mapping Out the ‘Blackfish Effect’,” People and Nature, 2021",
+     "effect": "attendance and market value fell and the orca breeding program ended",
+     "doi": "10.1002/pan3.10221",
+     "rows": [
+      "BLACKFISH_SEAWORLD"
+     ]
+    },
+    "note": "From the paper: “Following its release, SeaWorld suffered financial difficulties and the company underwent structural changes, including a cessation of its orca breeding programme.”"
+   }
+  ]
+ },
+ {
+  "slug": "study-sixteen-pregnant",
+  "title": "16 and Pregnant (2009)",
+  "date": "2009-07-01",
+  "batch": 18,
+  "vertical": "Published studies",
+  "steps": [
+   {
+    "n": 1,
+    "claim": "MTV's 16 and Pregnant first airs",
+    "test": {
+     "type": "record",
+     "date": "2009-07-01",
+     "date_precision": "year",
+     "source": "Date from a second study",
+     "doi": "10.17615/p0y7-d050"
+    },
+    "note": "Dated to the year by a second study."
+   },
+   {
+    "n": 2,
+    "claim": "The show cut teen births by 4.3%",
+    "short": "Teen births claim",
+    "test": {
+     "type": "study",
+     "date": "2009-07-01",
+     "date_precision": "year",
+     "window": "from 2009",
+     "grade": "disputed",
+     "design": "difference in differences reanalysis",
+     "source": "“A Cautionary Tale of Evaluating Identifying Assumptions: Did Reality TV Really Cause a Decline in Teenage Childbearing?” Journal of Business & Economic Statistics, 2018",
+     "finding": "With controls for earlier trends in birth rates the effect disappears, and placebo tests find an effect long before the show aired",
+     "doi": "10.1080/07350015.2018.1497510",
+     "also": [
+      {
+       "source": "“Media Influences on Social Outcomes: The Impact of MTV’s 16 and Pregnant on Teen Childbearing,” American Economic Review, 2015",
+       "doi": "10.1257/aer.20140012"
+      }
+     ],
+     "rows": [
+      "SIXTEEN_PREG",
+      "B_SIXTEEN"
+     ]
+    },
+    "note": "A 2015 study estimated the drop: “The results imply that this show led to a 4.3 percent reduction in teen births.” A 2018 reanalysis: “we find evidence of an ‘effect’ long before 16 and Pregnant started broadcasting.”"
+   }
+  ]
+ },
+ {
+  "slug": "study-england-argentina-heart",
+  "title": "England's penalty loss (1998)",
+  "date": "1998-06-30",
+  "batch": 18,
+  "vertical": "Published studies",
+  "steps": [
+   {
+    "n": 1,
+    "claim": "England loses to Argentina on penalties at the World Cup",
+    "test": {
+     "type": "record",
+     "date": "1998-06-30",
+     "date_precision": "day",
+     "source": "“Admissions for Myocardial Infarction and World Cup Football: Database Survey,” BMJ, 2002",
+     "doi": "10.1136/bmj.325.7378.1439"
+    }
+   },
+   {
+    "n": 2,
+    "claim": "Heart attack admissions in England rose 25% over three days",
+    "short": "Heart attack claim",
+    "test": {
+     "type": "study",
+     "date": "1998-06-30",
+     "date_precision": "day",
+     "window": "Jun 30, 1998, 3 days",
+     "grade": "disputed",
+     "design": "admissions time series and a review",
+     "source": "“It Is Just a Game: Lack of Association between Watching Football Matches and the Risk of Acute Cardiovascular Events,” International Journal of Epidemiology, 2010",
+     "finding": "A study of Italy's matches found no rise in heart attack admissions (relative risk 1.01), and most studies it reviewed put the risk between 0.7 and 1.3",
+     "doi": "10.1093/ije/dyq007",
+     "also": [
+      {
+       "source": "“Admissions for Myocardial Infarction and World Cup Football: Database Survey,” BMJ, 2002",
+       "doi": "10.1136/bmj.325.7378.1439"
+      }
+     ],
+     "rows": [
+      "ENG_ARG_MI",
+      "B_WORLDCUP_HEART"
+     ]
+    },
+    "note": "The 1998 study counted 55 extra admissions: “Risk of admission for acute myocardial infarction increased by 25%.” The 2010 study concluded: “The cardiovascular effects of watching football matches are likely to be, if anything, very small.”"
+   }
+  ]
+ },
+ {
+  "slug": "study-finding-dory",
+  "title": "Finding Dory (2016)",
+  "date": "2016-07-01",
+  "batch": 18,
+  "vertical": "Published studies",
+  "steps": [
+   {
+    "n": 1,
+    "claim": "Finding Dory, a Pixar film starring a blue tang, is released",
+    "test": {
+     "type": "record",
+     "date": "2016-07-01",
+     "date_precision": "year",
+     "source": "“Did the Movie Finding Dory Increase Demand for Blue Tang Fish?” Ambio, 2020",
+     "doi": "10.1007/s13280-019-01233-7"
+    },
+    "note": "Dated to the year."
+   },
+   {
+    "n": 2,
+    "claim": "People rushed to buy blue tang fish",
+    "short": "Blue tang rush",
+    "test": {
+     "type": "study",
+     "date": "2016-07-01",
+     "date_precision": "year",
+     "window": "2016",
+     "grade": "busted",
+     "design": "Bayesian counterfactual time series",
+     "source": "“Did the Movie Finding Dory Increase Demand for Blue Tang Fish?” Ambio, 2020",
+     "finding": "Online searches rose for 2 to 3 weeks, but US imports of blue tang and visits to aquariums did not rise against the counterfactual",
+     "doi": "10.1007/s13280-019-01233-7",
+     "rows": [
+      "B_DORY"
+     ]
+    },
+    "note": "From the paper: “we find no substantial evidence for an increase in imports of blue tang fish into the US.”"
+   }
+  ]
+ },
+ {
+  "slug": "study-potter-owls",
+  "title": "Harry Potter (1997)",
+  "date": "1997-07-01",
+  "batch": 18,
+  "vertical": "Published studies",
+  "steps": [
+   {
+    "n": 1,
+    "claim": "The Harry Potter books and films appear, 1997 to 2011",
+    "test": {
+     "type": "record",
+     "date": "1997-07-01",
+     "date_precision": "year",
+     "source": "“Investigating the Impact of Media on Demand for Wildlife: A Case Study of Harry Potter and the UK Trade in Owls,” PLOS ONE, 2017",
+     "doi": "10.1371/journal.pone.0182368"
+    },
+    "note": "Dated to 1997, the first year of the series."
+   },
+   {
+    "n": 2,
+    "claim": "A UK craze for pet owls, then mass abandonment",
+    "short": "Pet owl craze",
+    "test": {
+     "type": "study",
+     "date": "1997-07-01",
+     "date_precision": "year",
+     "window": "1997 to 2011",
+     "grade": "busted",
+     "design": "time series of owl ownership against box office, book sales and press",
+     "source": "“Investigating the Impact of Media on Demand for Wildlife: A Case Study of Harry Potter and the UK Trade in Owls,” PLOS ONE, 2017",
+     "finding": "Three measures of legal owl ownership in the UK show no rise tied to the books or films, even with time lags, and sanctuaries reported no wave of abandoned owls",
+     "doi": "10.1371/journal.pone.0182368",
+     "rows": [
+      "B_POTTER_OWLS"
+     ]
+    },
+    "note": "From the paper: “Counter to common assertions, we find no evidence that the ‘Harry Potter’ phenomenon increased the legal trade in owls within the UK.”"
+   }
+  ]
+ },
+ {
+  "slug": "study-blue-planet-plastic",
+  "title": "Blue Planet II (2017)",
+  "date": "2017-07-01",
+  "batch": 18,
+  "vertical": "Published studies",
+  "steps": [
+   {
+    "n": 1,
+    "claim": "Blue Planet II airs on the BBC",
+    "test": {
+     "type": "record",
+     "date": "2017-07-01",
+     "date_precision": "year",
+     "source": "“Evaluating the Impact of the Documentary Series Blue Planet II on Viewers’ Plastic Consumption Behaviors,” Conservation Science and Practice, 2020",
+     "doi": "10.1111/csp2.280"
+    },
+    "note": "Dated to the year."
+   },
+   {
+    "n": 2,
+    "claim": "Viewers cut their use of plastic",
+    "short": "Less plastic",
+    "test": {
+     "type": "study",
+     "date": "2017-07-01",
+     "date_precision": "year",
+     "window": "after it aired",
+     "grade": "busted",
+     "design": "randomized controlled trials",
+     "source": "“Evaluating the Impact of the Documentary Series Blue Planet II on Viewers’ Plastic Consumption Behaviors,” Conservation Science and Practice, 2020",
+     "finding": "In randomized trials, viewers learned more about ocean plastic, and their plastic buying did not change",
+     "doi": "10.1111/csp2.280",
+     "rows": [
+      "B_BLUEPLANET"
+     ]
+    },
+    "note": "From the paper: “Although environmental knowledge was found to be positively influenced by Blue Planet II, this did not translate into a behavioral change among participants.”"
+   }
+  ]
+ },
+ {
+  "slug": "study-olympics-sport",
+  "title": "Hosting the Olympics (2012)",
+  "date": "2012-07-01",
+  "batch": 18,
+  "vertical": "Published studies",
+  "steps": [
+   {
+    "n": 1,
+    "claim": "London hosts the 2012 Olympic Games",
+    "test": {
+     "type": "record",
+     "date": "2012-07-01",
+     "date_precision": "year",
+     "source": "“An Evidence-Based Assessment of the Impact of the Olympic Games on Population Levels of Physical Activity,” The Lancet, 2021",
+     "doi": "10.1016/s0140-6736(21)01165-x"
+    },
+    "note": "The study covers London 2012 and earlier host cities. Dated here to 2012."
+   },
+   {
+    "n": 2,
+    "claim": "More people in the host country exercise and play sport",
+    "short": "More sport",
+    "test": {
+     "type": "study",
+     "date": "2012-07-01",
+     "date_precision": "year",
+     "window": "2012 and earlier Games",
+     "grade": "busted",
+     "design": "synthesis of host-area surveys",
+     "source": "“An Evidence-Based Assessment of the Impact of the Olympic Games on Population Levels of Physical Activity,” The Lancet, 2021",
+     "finding": "Surveys in host areas show no change in physical activity or sport, except after Beijing 2008 and Nagano 1998, and a 2015 review found no built-in demonstration effect",
+     "doi": "10.1016/s0140-6736(21)01165-x",
+     "rows": [
+      "B_OLYMPICS"
+     ]
+    },
+    "note": "From the paper: “By themselves, the Olympic Games have not improved population-wide physical activity but might be an important missed public health opportunity.”"
+   }
+  ]
+ },
+ {
+  "slug": "study-jolie-mammograms",
+  "title": "Angelina Jolie's op-ed and mammograms (2013)",
+  "date": "2013-05-14",
+  "batch": 18,
+  "vertical": "Published studies",
+  "steps": [
+   {
+    "n": 1,
+    "claim": "Angelina Jolie writes in the New York Times about her preventive double mastectomy",
+    "test": {
+     "type": "record",
+     "date": "2013-05-14",
+     "date_precision": "day",
+     "source": "“Do Celebrity Endorsements Matter? Observational Study of BRCA Gene Testing and Mastectomy Rates after Angelina Jolie’s New York Times Editorial,” BMJ, 2016",
+     "doi": "10.1136/bmj.i6357"
+    }
+   },
+   {
+    "n": 2,
+    "claim": "More women got routine screening mammograms",
+    "short": "Mammogram claim",
+    "test": {
+     "type": "study",
+     "date": "2013-05-14",
+     "date_precision": "day",
+     "window": "2011 to 2015",
+     "grade": "busted",
+     "design": "interrupted time series",
+     "source": "“Evaluation of the ‘Angelina Jolie Effect’ on Screening Mammography Utilization in an Academic Center,” Journal of the American College of Radiology, 2017",
+     "finding": "At one large breast imaging center, 48,110 screening mammograms over four years showed no jump or speedup after the op-ed",
+     "doi": "10.1016/j.jacr.2017.03.016",
+     "rows": [
+      "B_JOLIE_MAMMO"
+     ]
+    },
+    "note": "From the paper: “we found no support for the hypothesis that this celebrity news drove increased screening.” This test covers routine screening at one center. BRCA gene tests did rise."
+   }
+  ]
+ },
+ {
+  "slug": "study-swift-kelce",
+  "title": "Swift at Chiefs games (2023)",
+  "date": "2023-07-01",
+  "batch": 18,
+  "vertical": "Published studies",
+  "steps": [
+   {
+    "n": 1,
+    "claim": "Taylor Swift attends Kansas City Chiefs games",
+    "test": {
+     "type": "record",
+     "date": "2023-07-01",
+     "date_precision": "year",
+     "source": "“The Folklore of the ‘Swift’ Effect: Lessons for Medical Research and Clinical Practice,” PLOS ONE, 2025",
+     "doi": "10.1371/journal.pone.0315560"
+    },
+    "note": "Dated to the 2023 season."
+   },
+   {
+    "n": 2,
+    "claim": "Travis Kelce played better with Swift in the stands",
+    "short": "Kelce's yardage",
+    "test": {
+     "type": "study",
+     "date": "2023-07-01",
+     "date_precision": "year",
+     "window": "2023 season",
+     "grade": "busted",
+     "design": "covariate matching",
+     "source": "“The Folklore of the ‘Swift’ Effect: Lessons for Medical Research and Clinical Practice,” PLOS ONE, 2025",
+     "finding": "Kelce's yardage in the 13 games Swift attended did not differ from matched games before her, and the Chiefs did not win more often",
+     "doi": "10.1371/journal.pone.0315560",
+     "rows": [
+      "B_SWIFT"
+     ]
+    },
+    "note": "From the paper: “Kelce's yardage did not significantly differ when Taylor Swift was in attendance.”"
+   }
+  ]
+ }
+]

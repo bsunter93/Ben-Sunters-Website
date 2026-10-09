@@ -196,6 +196,8 @@ deep enough for an adult to browse rabbit holes.
 
 ## 2. Current status (one screen, 2026-10-05)
 
+**Oct 8, studies.** 40 study-backed stories and a "Myths, checked" shelf group. Record: `docs/studies_v1.md`.
+
 **Oct 8, second pass.** The owner found the answer view too text heavy and the guess annoying. The page now opens on
 the ripple chart: the answer as the title, then one chart that plays the story row by row with one caption. Record:
 `docs/ripple_chart_v1.md`.
