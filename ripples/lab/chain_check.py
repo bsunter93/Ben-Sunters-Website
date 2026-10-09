@@ -15,6 +15,10 @@ Every step is one of:
   wayback the earliest Wayback Machine capture of a URL (CDX API): the thing was online by that date. An upper bound on
           when it began; ordered like a timed step. Options: url, matchType (exact|prefix), from (YYYY).
   record  a dated public record with a source. Not measured by us.
+  study   a published study's own result, read from its paper (ripples/docs/studies_v1.md). Not measured by us. Its grade
+          comes from the paper's design and finding, set in the chain: measured (a comparison design), reported (a
+          descriptive count), busted (the study found no effect), disputed (later research contests it). Dated by the
+          start of the study's own window; an optional "range" holds the whole window.
   none    not testable with free data, with the reason; an optional "range" places the claim at its midpoint.
 Ordering rule (ledger 1497): each step's reference date is the previous counted step's date (onset or record),
 starting from the event date. A step that moved but began before its reference is "wrong order".
@@ -310,6 +314,11 @@ def run_step(st, ref):
     k = t["type"]
     if k == "record":
         return {"onset": t["date"], "source": t.get("source")}
+    if k == "study":
+        out = {"onset": t["date"], "source": t.get("source")}
+        if st.get("range"):
+            out["range"] = st["range"]
+        return out
     if k == "none":  # an undated claim with an approximate range is placed at the range's midpoint
         if st.get("range"):
             a, b = D(st["range"][0]), D(st["range"][1])
@@ -351,6 +360,15 @@ def verdict(st, r, ref):
     k = st["test"]["type"]
     if k == "none":
         return st["test"].get("verdict", "not testable")
+    if k == "study":  # a published study: graded by its design and its finding, in the order rule like any step
+        g = st["test"].get("grade", "reported")
+        if g == "busted":
+            return "contradicted by a published study"
+        if g == "disputed":
+            return "contested by later research"
+        if D(r["onset"]) < ref - dt.timedelta(days=3):
+            return "wrong order"
+        return "measured by a published study" if g == "measured" else "reported by a published study"
     if k == "record":
         if st.get("must_precede"):  # a claimed cause of the step before it: it has to come first, or it is busted by order
             return "reported" if D(r["onset"]) <= ref else "reported, after what it is said to have started"

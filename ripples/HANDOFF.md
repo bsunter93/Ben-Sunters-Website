@@ -208,6 +208,7 @@ the pacing and the cut and are stale.
 
 **Not launched; the public launch is planned for Oct 6.** Everything below is live on main unless marked draft.
 
+- **Study-backed ripples (Oct 8):** 40 stories from published studies and a "Myths, checked" shelf: `docs/studies_v1.md`.
 - **The ripple chart (Oct 8, second pass), the default:** the answer is the title; one chart plays the story row by
   row, one row per step on one clock, each line a page's readers against its own normal on one shared scale, a lasting
   mark as an amber bar to today; one caption; the route folds under it; no guess. Code: `rc*` functions and `.rc*`

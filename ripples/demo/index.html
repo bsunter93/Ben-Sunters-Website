@@ -678,6 +678,7 @@ html:not(.avgl) .avhero{background:linear-gradient(#26313b 0,#0e1a24 42%,#0f2230
 .rcrow .rcbg{fill:rgba(242,169,59,.13);opacity:0;transition:opacity .3s}
 .rcrow.cur .rcbg{opacity:1}
 .rcrow .rcbase{stroke:rgba(30,42,46,.13);stroke-width:1}
+.rcrow .rcspan{fill:rgba(30,42,46,.08);stroke:rgba(30,42,46,.28);stroke-width:1}
 .rcn{font:600 14.5px var(--sans);fill:var(--paper-ink);paint-order:stroke;stroke:var(--paper);stroke-width:4px;stroke-linejoin:round}
 .rcd{font:500 12.5px var(--sans);fill:var(--paper-ink-3);paint-order:stroke;stroke:var(--paper);stroke-width:4px;stroke-linejoin:round}
 .rcrow.mark .rcn{fill:#8a5208}
@@ -691,6 +692,7 @@ html:not(.avgl) .avhero{background:linear-gradient(#26313b 0,#0e1a24 42%,#0f2230
 .rcnote .key b{color:var(--paper-ink)}
 .rcnote .sw{display:inline-block;width:18px;height:3px;border-radius:2px;background:#2f8fa6}
 .rcnote .bar{display:inline-block;width:18px;height:7px;border-radius:3.5px;background:#e0a33c}
+.rcnote .span{display:inline-block;width:18px;height:10px;border-radius:5px;background:rgba(30,42,46,.08);border:1px solid rgba(30,42,46,.28)}
 .rcalso{margin-top:4px;color:var(--paper-ink-3)}
 .rcfoot{display:flex;flex-wrap:wrap;align-items:center;gap:10px 12px;margin:16px 0 0;padding:16px 0 0;border-top:1px solid rgba(30,42,46,.12)}
 .rcfoot .avknew{margin:0 0 0 auto}
@@ -851,7 +853,7 @@ const TABS = {
     ["chain", "cellucotton-kleenex", "WWI bandages → Kleenex"], ["chain", "sildenafil-viagra", "An angina drug → Viagra"], ["chain", "heat-pump-super-soaker", "A heat pump → the Super Soaker"],
     ["chain", "perkin-chemotherapy", "A dye → chemotherapy?"], ["chain", "jurassic-park", "Jurassic Park → seized fossils"], ["chain", "ice-bucket", "Ice Bucket → an ALS gene"],
     ["chain", "ethanol-tortilla", "Ethanol law → tortilla riots?"]],
-  leads:[["chain", "creed-adonis", "Creed → baby Adonises"], ["chain", "glee-quinn", "Glee → baby Quinns"], ["wiki", "bambi-c3", "Bambi → Smokey Bear"], ["wiki", "tamagotchi-c3", "Tamagotchi → a merger called off"], ["wiki", "titanic-1997-film-c3", "Titanic → Carnival buys Cunard"], ["wiki", "abbey-road-c3", "Abbey Road → the studio takes the album's name"], ["wiki", "the-dark-side-of-the-moon-c3", "The Dark Side of the Moon → a hockey trophy"], ["wiki", "angry-birds-c3", "Angry Birds → a NASA lander"], ["wiki", "brave-new-world-c3", "Brave New World → a comedy theater"], ["wiki", "nineteen-eighty-four-c3", "Nineteen Eighty-Four → privacy awards"], ["wiki", "born-this-way-c3", "Born This Way → a youth foundation"], ["wiki", "braveheart-c3", "Braveheart → a university center's name"], ["wiki", "rififi-c2", "Rififi → an antibiotic class named after a heist film"], ["wiki", "shakespeare-in-love-c2", "Shakespeare in Love → a royal title"], ["wiki", "the-taking-of-pelham-one-two-three-c2", "Pelham One Two Three → no 1:23 train"], ["wiki", "weddad-c2", "Weddad → a football club"], ["wiki", "super-bowl-xxxviii-halftime-show-c2", "The 2004 halftime show → YouTube"], ["wiki", "whacking-day-c2", "A Simpsons episode → a yearly toad cull"], ["wiki", "oh-my-darling-clementine-c2", "A folk song → a nuclear reactor"], ["wiki", "star-wars-c2", "Star Wars → a census code and a street"], ["wiki", "the-onedin-line-c2", "The Onedin Line → a ferry company"], ["wiki", "funeral-parade-of-roses-c2", "Funeral Parade of Roses → a magazine"], ["wiki", "steel-magnolias-c2", "Steel Magnolias → a basketball club"], ["wiki", "crude-c2", "Crude → a $19 billion judgment ruled fraudulent"], ["wiki", "minecraft-c2", "Minecraft → a library for censored journalism"], ["wiki", "red-under-the-bed-c2", "Red Under the Bed → convictions sent back to court"], ["wiki", "space-invaders-c2", "Space Invaders → a Supreme Court case"], ["wiki", "ecstasy-1933-film-c2", "Ecstasy → Hollywood's Production Code enforced"], ["wiki", "the-colbert-report-c2", "The Colbert Report → a space station treadmill"], ["wiki", "the-hunger-games-c2", "The Hunger Games → a salute made illegal"], ["wiki", "dungeons-dragons-c2", "Dungeons & Dragons → a prison ban upheld in court"], ["wiki", "varsity-blues-c2", "Varsity Blues → an FBI operation"], ["wiki", "the-little-prince-c2", "The Little Prince → an asteroid defense foundation"], ["wiki", "rasputin-and-the-empress-c2", "Rasputin and the Empress → a libel ruling"], ["wiki", "the-sorrows-of-young-werther-c2", "Werther → a ban on a way of dressing"], ["wiki", "monty-python-s-flying-circus-c2", "Monty Python → a programming language"], ["wiki", "trevor-film-c2", "Trevor → The Trevor Project"], ["wiki", "star-trek-c2", "Star Trek → the Space Shuttle Enterprise"], ["wiki", "bts-c2", "BTS → a military service law"], ["wiki", "mortal-kombat-c2", "Mortal Kombat → game ratings in two countries"], ["wiki", "animal-machines-c2", "Animal Machines → the UK's farm welfare inquiry"], ["wiki", "the-raven-c2", "The Raven → an NFL team"], ["wiki", "pedigree-dogs-exposed-c2", "Pedigree Dogs Exposed → every breed standard reviewed"], ["wiki", "wolfenstein-3d-c2", "Wolfenstein 3D → a court ruling on games"], ["wiki", "seduction-of-the-innocent-c2", "Seduction of the Innocent → the Comics Code"], ["wiki", "sixty-minutes-stock-act", "60 Minutes → the STOCK Act"], ["wiki", "west-wing-hatred-act", "The West Wing → the Racial and Religious Hatred Act 2006"], ["wiki", "silent-spring-ddt", "Silent Spring → the National Environmental Policy Act"], ["wiki", "sputnik-nasa-arpa", "Sputnik → the National Defense Education Act"], ["wiki", "love-canal-superfund", "Love Canal → the ATSDR"], ["wiki", "exxon-valdez-opa90", "Exxon Valdez → the Oil Pollution Act and a state commission"], ["wiki", "columbine-active-shooter", "Columbine → New Jersey's anti-bullying law"], ["wiki", "flint-lead-pipes", "Flint → the Lead and Copper Rule revisions"], ["wiki", "fukushima", "Fukushima → four new institutions in Japan and Korea"], ["wiki", "anthrax", "The anthrax letters → the Patriot Act"], ["wiki", "an-inconvenient-truth", "An Inconvenient Truth → a climate institution and a court ruling"], ["wiki", "the-day-after", "The Day After → the INF Treaty"], ["wiki", "deepwater-horizon", "Deepwater Horizon → a commission, a council, a health study, a new bureau"], ["wiki", "sandy-hook", "Sandy Hook → two state gun laws and a records carve-out"], ["wiki", "september-11", "September 11 → eight laws and institutions on three continents"], ["wiki", "chernobyl-disaster", "Chernobyl → two conventions, two funds and a charity"], ["wiki", "bhopal", "Bhopal → an Act and a medical commission"], ["wiki", "challenger", "Challenger → a commission, a safety office and a center"], ["wiki", "rana-plaza", "Rana Plaza → the Accord and a factory-inspection law"], ["wiki", "oklahoma-city", "Oklahoma City → two federal laws"], ["wiki", "virginia-tech", "Virginia Tech → the NICS Improvement Amendments Act"], ["wiki", "parkland", "Parkland → a state law, a federal law, a movement and a death-penalty change"], ["wiki", "uvalde", "Uvalde → a federal law and three state laws"], ["wiki", "boston-marathon", "Boston Marathon → a fund and a civic holiday"], ["wiki", "pulse", "Pulse → a fund and a foundation"], ["wiki", "las-vegas-2017", "Las Vegas → the bump-stock ban"], ["wiki", "enron", "Enron → a tax-code section and a British audit law"], ["wiki", "cambridge-analytica", "Cambridge Analytica → Social Science One"], ["wiki", "metoo", "MeToo → Indonesia's Sexual Violence Crime Act"], ["wiki", "camp-fire", "The Camp Fire → an ordinance, a wildfire fund and a victims' trust"], ["wiki", "lac-megantic", "Lac-Mégantic → a federal emergency order on unattended trains"], ["wiki", "volkswagen", "Dieselgate → a national sales ban"], ["wiki", "dear-zachary", "Dear Zachary → Canada's Bill C-464"], ["wiki", "grenfell", "Grenfell → a memorial commission"], ["wiki", "hurricane-sandy", "Hurricane Sandy → the $50 billion aid law"], ["wiki", "cathy-come-home", "Cathy Come Home → the charity Crisis"], ["wiki", "frozen-culture", "Frozen → Norway tourism"], ["wiki", "game-of-thrones", "Game of Thrones → a sixth of Northern Ireland's tourists"], ["wiki", "finding-nemo", "Finding Nemo → demand for reef fish"], ["wiki", "101-dalmatians", "101 Dalmatians → a run on Dalmatian puppies"], ["wiki", "sideways", "Sideways → less Merlot, more Pinot noir"], ["wiki", "queens-gambit", "The Queen's Gambit → chess set sales"], ["wiki", "top-gun", "Top Gun → the Navy recruitment claim"], ["wiki", "pokemon-go", "Pokémon Go → a parole rule and a national ban"], ["wiki", "jurassic-park", "Jurassic Park → the Toronto Raptors"], ["wiki", "avatar-2009", "Avatar → 3D televisions"], ["wiki", "fifty-shades", "Fifty Shades of Grey → a national ban"], ["wiki", "da-vinci-code", "The Da Vinci Code → bans in seven Indian states"], ["wiki", "mad-men", "Mad Men → the return of the suit"], ["wiki", "bake-off", "Bake Off → baking ingredient sales"], ["wiki", "hamilton", "Hamilton → the Hamilton Education Program"], ["wiki", "furby", "Furby → banned by the NSA"], ["wiki", "tetris", "Tetris → The Tetris Company"], ["wiki", "zumba", "Zumba → banned in Iran"], ["wiki", "woodstock", "Woodstock → a museum town's economy"], ["wiki", "13-reasons-why", "13 Reasons Why → a rise in teen suicide the month after"], ["wiki", "blue-planet-ii", "Blue Planet II → marine biology applications and the plastics turn"], ["wiki", "emily-in-paris", "Emily in Paris → a reason to visit"],
+  leads:[["chain", "creed-adonis", "Creed → baby Adonises"], ["chain", "glee-quinn", "Glee → baby Quinns"], ["chain", "study-okc-births", "Oklahoma City bombing → more babies in Oklahoma County"], ["chain", "study-sesame-school", "Sesame Street → more kids at the right grade for their age"], ["chain", "study-tv-smoking", "Television → about 11 million more smokers"], ["chain", "study-globo-family-size", "Brazil's telenovelas → smaller families"], ["chain", "study-globo-names", "Brazil's telenovelas → babies named after characters"], ["chain", "study-zanzibar-blackout", "Zanzibar's month-long blackout → a baby boom"], ["chain", "study-ramayan-names", "Ramayan on TV → more traditionally Hindu baby names"], ["chain", "study-twende-family-planning", "A Tanzanian radio soap → more family planning"], ["chain", "study-sideways-wine", "Sideways → wine buyers moved from Merlot to Pinot Noir"], ["chain", "study-superbowl-flu", "Super Bowl → more flu deaths among seniors"], ["chain", "study-pokemon-steps", "Pokémon Go → players walked more"], ["chain", "study-couric-colonoscopy", "Katie Couric's colonoscopy → more colonoscopies"], ["chain", "study-violent-movies", "Violent blockbusters → fewer assaults that night"], ["chain", "study-jolie-brca", "Angelina Jolie's op-ed → more BRCA gene tests"], ["chain", "study-got-dubrovnik", "Game of Thrones → more tourists in Dubrovnik"], ["chain", "study-fox-sentences", "Fox News → longer sentences from elected judges"], ["chain", "study-ice-bucket-giving", "Ice Bucket Challenge → a short rise in giving"], ["chain", "study-goody-screening", "Jade Goody's diagnosis → half a million extra cervical screenings"], ["chain", "study-worldcup-abuse", "England's World Cup games → more domestic abuse reports"], ["chain", "study-nazi-radio", "Nazi radio → more denunciations of Jews"], ["chain", "study-kylie-scans", "Kylie Minogue's diagnosis → more breast scans for young women"], ["chain", "study-globo-divorce", "Brazil's telenovelas → more divorce"], ["chain", "study-jolie-mastectomy", "Angelina Jolie's op-ed → more preventive mastectomies"], ["chain", "study-brazil-worldcup-heart", "Brazil's World Cup games → fewer heart attack admissions"], ["chain", "study-sheen-hiv-tests", "Charlie Sheen's disclosure → HIV test kit sales nearly doubled"], ["chain", "study-sideways-vines", "Sideways → California growers grew more Pinot Noir"], ["chain", "study-ramayan-violence", "Ramayan on TV → more Hindu-Muslim violence"], ["chain", "study-movie-tv-dvd", "A movie on free TV → more DVD sales"], ["chain", "study-football-judges", "College football upsets → longer juvenile sentences"], ["chain", "study-magic-hiv-tests", "Magic Johnson's announcement → more HIV tests"], ["chain", "study-boseman-donations", "Chadwick Boseman's death → more colon cancer donations"], ["chain", "study-blackfish", "Blackfish → SeaWorld ends orca breeding"], ["chain", "study-finding-dory", "Finding Dory → a run on blue tang?"], ["chain", "study-potter-owls", "Harry Potter → a craze for pet owls?"], ["chain", "study-blue-planet-plastic", "Blue Planet II → less plastic use?"], ["chain", "study-sixteen-pregnant", "16 and Pregnant → fewer teen births?"], ["chain", "study-olympics-sport", "Hosting the Olympics → a more active country?"], ["chain", "study-jolie-mammograms", "Angelina Jolie's op-ed → more routine mammograms?"], ["chain", "study-england-argentina-heart", "England's World Cup loss → more heart attacks?"], ["chain", "study-swift-kelce", "Taylor Swift in the stands → a better Travis Kelce?"], ["wiki", "bambi-c3", "Bambi → Smokey Bear"], ["wiki", "tamagotchi-c3", "Tamagotchi → a merger called off"], ["wiki", "titanic-1997-film-c3", "Titanic → Carnival buys Cunard"], ["wiki", "abbey-road-c3", "Abbey Road → the studio takes the album's name"], ["wiki", "the-dark-side-of-the-moon-c3", "The Dark Side of the Moon → a hockey trophy"], ["wiki", "angry-birds-c3", "Angry Birds → a NASA lander"], ["wiki", "brave-new-world-c3", "Brave New World → a comedy theater"], ["wiki", "nineteen-eighty-four-c3", "Nineteen Eighty-Four → privacy awards"], ["wiki", "born-this-way-c3", "Born This Way → a youth foundation"], ["wiki", "braveheart-c3", "Braveheart → a university center's name"], ["wiki", "rififi-c2", "Rififi → an antibiotic class named after a heist film"], ["wiki", "shakespeare-in-love-c2", "Shakespeare in Love → a royal title"], ["wiki", "the-taking-of-pelham-one-two-three-c2", "Pelham One Two Three → no 1:23 train"], ["wiki", "weddad-c2", "Weddad → a football club"], ["wiki", "super-bowl-xxxviii-halftime-show-c2", "The 2004 halftime show → YouTube"], ["wiki", "whacking-day-c2", "A Simpsons episode → a yearly toad cull"], ["wiki", "oh-my-darling-clementine-c2", "A folk song → a nuclear reactor"], ["wiki", "star-wars-c2", "Star Wars → a census code and a street"], ["wiki", "the-onedin-line-c2", "The Onedin Line → a ferry company"], ["wiki", "funeral-parade-of-roses-c2", "Funeral Parade of Roses → a magazine"], ["wiki", "steel-magnolias-c2", "Steel Magnolias → a basketball club"], ["wiki", "crude-c2", "Crude → a $19 billion judgment ruled fraudulent"], ["wiki", "minecraft-c2", "Minecraft → a library for censored journalism"], ["wiki", "red-under-the-bed-c2", "Red Under the Bed → convictions sent back to court"], ["wiki", "space-invaders-c2", "Space Invaders → a Supreme Court case"], ["wiki", "ecstasy-1933-film-c2", "Ecstasy → Hollywood's Production Code enforced"], ["wiki", "the-colbert-report-c2", "The Colbert Report → a space station treadmill"], ["wiki", "the-hunger-games-c2", "The Hunger Games → a salute made illegal"], ["wiki", "dungeons-dragons-c2", "Dungeons & Dragons → a prison ban upheld in court"], ["wiki", "varsity-blues-c2", "Varsity Blues → an FBI operation"], ["wiki", "the-little-prince-c2", "The Little Prince → an asteroid defense foundation"], ["wiki", "rasputin-and-the-empress-c2", "Rasputin and the Empress → a libel ruling"], ["wiki", "the-sorrows-of-young-werther-c2", "Werther → a ban on a way of dressing"], ["wiki", "monty-python-s-flying-circus-c2", "Monty Python → a programming language"], ["wiki", "trevor-film-c2", "Trevor → The Trevor Project"], ["wiki", "star-trek-c2", "Star Trek → the Space Shuttle Enterprise"], ["wiki", "bts-c2", "BTS → a military service law"], ["wiki", "mortal-kombat-c2", "Mortal Kombat → game ratings in two countries"], ["wiki", "animal-machines-c2", "Animal Machines → the UK's farm welfare inquiry"], ["wiki", "the-raven-c2", "The Raven → an NFL team"], ["wiki", "pedigree-dogs-exposed-c2", "Pedigree Dogs Exposed → every breed standard reviewed"], ["wiki", "wolfenstein-3d-c2", "Wolfenstein 3D → a court ruling on games"], ["wiki", "seduction-of-the-innocent-c2", "Seduction of the Innocent → the Comics Code"], ["wiki", "sixty-minutes-stock-act", "60 Minutes → the STOCK Act"], ["wiki", "west-wing-hatred-act", "The West Wing → the Racial and Religious Hatred Act 2006"], ["wiki", "silent-spring-ddt", "Silent Spring → the National Environmental Policy Act"], ["wiki", "sputnik-nasa-arpa", "Sputnik → the National Defense Education Act"], ["wiki", "love-canal-superfund", "Love Canal → the ATSDR"], ["wiki", "exxon-valdez-opa90", "Exxon Valdez → the Oil Pollution Act and a state commission"], ["wiki", "columbine-active-shooter", "Columbine → New Jersey's anti-bullying law"], ["wiki", "flint-lead-pipes", "Flint → the Lead and Copper Rule revisions"], ["wiki", "fukushima", "Fukushima → four new institutions in Japan and Korea"], ["wiki", "anthrax", "The anthrax letters → the Patriot Act"], ["wiki", "an-inconvenient-truth", "An Inconvenient Truth → a climate institution and a court ruling"], ["wiki", "the-day-after", "The Day After → the INF Treaty"], ["wiki", "deepwater-horizon", "Deepwater Horizon → a commission, a council, a health study, a new bureau"], ["wiki", "sandy-hook", "Sandy Hook → two state gun laws and a records carve-out"], ["wiki", "september-11", "September 11 → eight laws and institutions on three continents"], ["wiki", "chernobyl-disaster", "Chernobyl → two conventions, two funds and a charity"], ["wiki", "bhopal", "Bhopal → an Act and a medical commission"], ["wiki", "challenger", "Challenger → a commission, a safety office and a center"], ["wiki", "rana-plaza", "Rana Plaza → the Accord and a factory-inspection law"], ["wiki", "oklahoma-city", "Oklahoma City → two federal laws"], ["wiki", "virginia-tech", "Virginia Tech → the NICS Improvement Amendments Act"], ["wiki", "parkland", "Parkland → a state law, a federal law, a movement and a death-penalty change"], ["wiki", "uvalde", "Uvalde → a federal law and three state laws"], ["wiki", "boston-marathon", "Boston Marathon → a fund and a civic holiday"], ["wiki", "pulse", "Pulse → a fund and a foundation"], ["wiki", "las-vegas-2017", "Las Vegas → the bump-stock ban"], ["wiki", "enron", "Enron → a tax-code section and a British audit law"], ["wiki", "cambridge-analytica", "Cambridge Analytica → Social Science One"], ["wiki", "metoo", "MeToo → Indonesia's Sexual Violence Crime Act"], ["wiki", "camp-fire", "The Camp Fire → an ordinance, a wildfire fund and a victims' trust"], ["wiki", "lac-megantic", "Lac-Mégantic → a federal emergency order on unattended trains"], ["wiki", "volkswagen", "Dieselgate → a national sales ban"], ["wiki", "dear-zachary", "Dear Zachary → Canada's Bill C-464"], ["wiki", "grenfell", "Grenfell → a memorial commission"], ["wiki", "hurricane-sandy", "Hurricane Sandy → the $50 billion aid law"], ["wiki", "cathy-come-home", "Cathy Come Home → the charity Crisis"], ["wiki", "frozen-culture", "Frozen → Norway tourism"], ["wiki", "game-of-thrones", "Game of Thrones → a sixth of Northern Ireland's tourists"], ["wiki", "finding-nemo", "Finding Nemo → demand for reef fish"], ["wiki", "101-dalmatians", "101 Dalmatians → a run on Dalmatian puppies"], ["wiki", "sideways", "Sideways → less Merlot, more Pinot noir"], ["wiki", "queens-gambit", "The Queen's Gambit → chess set sales"], ["wiki", "top-gun", "Top Gun → the Navy recruitment claim"], ["wiki", "pokemon-go", "Pokémon Go → a parole rule and a national ban"], ["wiki", "jurassic-park", "Jurassic Park → the Toronto Raptors"], ["wiki", "avatar-2009", "Avatar → 3D televisions"], ["wiki", "fifty-shades", "Fifty Shades of Grey → a national ban"], ["wiki", "da-vinci-code", "The Da Vinci Code → bans in seven Indian states"], ["wiki", "mad-men", "Mad Men → the return of the suit"], ["wiki", "bake-off", "Bake Off → baking ingredient sales"], ["wiki", "hamilton", "Hamilton → the Hamilton Education Program"], ["wiki", "furby", "Furby → banned by the NSA"], ["wiki", "tetris", "Tetris → The Tetris Company"], ["wiki", "zumba", "Zumba → banned in Iran"], ["wiki", "woodstock", "Woodstock → a museum town's economy"], ["wiki", "13-reasons-why", "13 Reasons Why → a rise in teen suicide the month after"], ["wiki", "blue-planet-ii", "Blue Planet II → marine biology applications and the plastics turn"], ["wiki", "emily-in-paris", "Emily in Paris → a reason to visit"],
     ["acts", "Cathy Come Home", "Cathy Come Home: cited in Parliament"], ["acts", "Mr Bates vs The Post Office", "Mr Bates: cited in Parliament"],
     ["acts", "Silent Spring", "Silent Spring: cited in Parliament"], ["acts", "Adolescence (TV series)", "Adolescence: cited in Parliament"],
     ...["queens-gambit", "chernobyl", "wednesday", "stranger-things-4", "saltburn", "bridgerton", "the-last-of-us", "squid-game", "shogun", "the-bear"].map(s => ["map", s, null])],
@@ -1040,6 +1042,10 @@ function rippleCount(items) {
 }
 const shortLabel = s => { if (s.length <= 24) return s; const cut = s.slice(0, 23); return cut.slice(0, cut.lastIndexOf(" ") > 10 ? cut.lastIndexOf(" ") : 23).replace(/[,;:]$/, "") + "…"; };
 const fmtMonth = d => d.toLocaleDateString("en-US", {month:"short", year:"numeric", timeZone:"UTC"});
+// a story built on a published study says its stone at the precision the paper gives and its span as the study's window
+const studyOf = s => (s.items || []).find(x => x.study);
+const stoneWhen = s => ((s.first && s.first.when) || "").replace(/<span>[\s\S]*$/, "").replace(/<[^>]+>/g, "").trim() || fmt(D(s.iso0));
+const studySpan = s => { const st = studyOf(s); return st ? `${stoneWhen(s)} · ${st.study.window}` : null; };
 const esc = s => String(s ?? "").replace(/[&<>"]/g, c => ({"&":"&amp;", "<":"&lt;", ">":"&gt;", '"':"&quot;"})[c]);
 
 // Time scale: playback position t in [0,1] -> days since the event. A short run-up, then log time.
@@ -1127,6 +1133,12 @@ function card({when, badge, badgeCls, title, spark = "", facts = "", short = "",
 // Plain-language account of the evidence behind one link: what was measured, how it was compared, what it does not show.
 function howSure(lv, o = {}) {
   const pct = o.p != null ? `${Math.max(0.1, Math.round(o.p * 1000) / 10)}%` : null;
+  if (o.kind === "study") {  // a published study's own result: we read the paper and its abstract; we did not rerun it
+    const st = o.study;
+    if (lv === "measured") return `We did not measure this ourselves. A published study did, with a comparison design (${esc(st.design)}): ${esc(st.effect)}. We checked the claim, the dates and the direction against the paper's own page. One study can still be wrong, and other things may have been going on too.`;
+    if (lv === "reported") return `We did not measure this ourselves. A published study reports it (${esc(st.design)}): ${esc(st.effect)}. Nothing in that study compares it with a baseline, so treat it as reliable reporting.`;
+    return `${esc(o.why)} ${st.grade === "disputed" ? "The first study's estimate is in the details. Later research does not hold it up." : "A published study tested this claim and found no effect."}`;
+  }
   const after = " It also began after the step before it, which is the order a cause needs.";
   if (lv === "measured") {
     if (o.kind === "dose") return `${esc(o.what)}. For each state that opened retail cannabis we took the change in the outcome from the last survey before to the second survey after, and subtracted the same change in states that never did. We then handed the same opening dates to 2,000 random sets of states: ${o.p <= 0.05 ? `only ${pct} of those produced a difference this large (p = ${o.p})` : `${pct} of those produced a difference at least this large (p = ${o.p}), so it is within what chance produces`}. A placebo on the two surveys before the opening checks whether the treated states were already drifting (pre-trend p = ${o.pre}). This is the first rung above timing: exposure that varies by place. It still cannot rule out something else that arrived in the same states at the same time.`;
@@ -1306,6 +1318,14 @@ function fromActs(work) {
 // ---- checked chains (ripples/docs/results/chain_check_v1.json) ----
 function chainLevel(st) {
   const v = st.verdict || "", why = st.reason || st.note || "";
+  if (st.test.type === "study") {  // a published study's own result (docs/studies_v1.md): graded by the paper's design and finding; our placebo test does not apply
+    const t = st.test, eff = t.effect ? cap(t.effect) : "";
+    if (/contested/.test(v)) return ["busted", "Disputed", `${cap(t.finding || "later research disputes it")}.`, "Disputed by later research"];
+    if (/contradicted/.test(v)) return ["busted", "Busted", `${cap(t.finding || "a study found no effect")}.`, "A published study found no effect"];
+    if (/wrong order/.test(v)) return ["busted", "Busted", "The study's window starts before the step it is said to follow.", "Came before its cause"];
+    if (/^measured/.test(v)) return ["measured", "Measured", `Measured in a published study (${t.design}): ${t.effect}.`, `${t.effect_short ? `${t.effect_short} · ` : ""}a published study`];
+    return ["reported", "Reported", `On the record in a published study (${t.design}): ${t.effect}. Nobody compared it with a baseline.`, "Reported in a published study"];
+  }
   if (/after what it is said/.test(v)) return ["busted", "Busted", "This came after what it is said to have started.", "Came after what it claims to have started"];
   if (/wrong order|before the step/.test(v)) return ["busted", "Busted", st.test.type === "record" ? "This came before the step it is said to follow." : "It began before the step before it.", "Came before its cause"];
   if (/contradicted/.test(v)) return ["busted", "Busted", `Contradicted. ${why}`, "Contradicted"];
@@ -1334,6 +1354,7 @@ function chainLevel(st) {
 const SRCURL = st => {
   const ty = st.test && st.test.type, txt = st.source || (st.test && st.test.source) || "";
   const m = /https?:\/\/[^\s)]+/.exec(txt); if (m) return [m[0], "Open the source"];
+  if (st.test && (st.test.doi || st.test.url)) return st.test.doi ? [`https://doi.org/${st.test.doi}`, "The paper"] : [st.test.url, /pubmed/.test(st.test.url) ? "The paper (PubMed)" : "The record"];  // a published study links its DOI
   if (ty === "wiki" && st.test.articles && st.test.articles[0]) return [`https://en.wikipedia.org/wiki/${encodeURIComponent(st.test.articles[0].replace(/ /g, "_"))}`, "Wikipedia article"];
   if (ty === "fred" && st.test.id) return [`https://fred.stlouisfed.org/series/${encodeURIComponent(st.test.id)}`, "FRED series"];
   if (ty === "ssa") return ["https://www.ssa.gov/oact/babynames/", "SSA baby names"];
@@ -1381,7 +1402,9 @@ function fromChain(slug) {
     const srcLine = amer(st.source || (st.test && st.test.source) || "");
     let srcShort = srcLine.split(/;|: | \(/)[0].trim(); if (srcShort.length > 72) srcShort = srcShort.slice(0, 72).replace(/\s+\S*$/, "") + "…";  // the source's name for the How-sure sentence, cut at a word
     let when, sub;
-    if (undated) { when = "Undated<span>no date to check</span>"; sub = "undated"; }
+    const study = st.test.type === "study" ? {design:st.test.design, effect:st.test.effect, eff:st.test.effect_short, window:st.test.window, grade:st.test.grade} : null;  // a published study's own result
+    if (study) { when = `${esc(study.window)}<span>a published study</span>`; sub = `${study.window} · a published study`; }
+    else if (undated) { when = "Undated<span>no date to check</span>"; sub = "undated"; }
     else if (st.range) {
       const y0 = st.range[0].slice(0, 4), y1 = st.range[1].slice(0, 4);
       const span = y0 === y1 ? `${fmt(D(st.range[0])).replace(/,.*/, "")}–${fmt(D(st.range[1])).replace(/,.*/, "")}, ${y0}` : `${y0}–${y1}`;
@@ -1390,20 +1413,21 @@ function fromChain(slug) {
     else if (/-07-01$/.test(st.onset || "") && !/jul/i.test(srcLine)) { when = `${st.onset.slice(0, 4)}<span>placed at mid-year · ${sinceLabel(d)}</span>`; sub = `${st.onset.slice(0, 4)} · ${sinceLabel(d)}`; }  // a step dated only to its year
     else if (st.test && st.test.type === "ssa") { when = `${st.onset.slice(0, 4)}<span>a year of births</span>`; sub = `${st.onset.slice(0, 4)} · births that year`; }  // a yearly count says only its year: not Jan 1, not "+7 months"
     else { when = `${fmt(D(st.onset))}<span>${sinceLabel(d)}</span>`; sub = `${fmtMonth(D(st.onset))} · ${sinceLabel(d)}`; }
-    const happened = st.test.type === "record" ? srcP(st, st.source || st.test.source) :
+    const happened = study ? srcP(st, st.source || st.test.source).replace(/<\/p>$/, (st.test.also || []).map(a => ` · Original study: ${esc(amer(a.source))} · <a href="https://doi.org/${esc(a.doi)}" target="_blank" rel="noopener">The paper ↗</a>`).join("") + "</p>") :
+      st.test.type === "record" ? srcP(st, st.source || st.test.source) :
       st.test.type === "none" ? srcP(st, st.source || "") : srcP(st, st.found && Object.keys(st.found).some(k => st.found[k]) ? "Wikipedia daily views: " + Object.keys(st.found).filter(k => st.found[k]).join(", ") : SRC(st));
     const id = `c${st.n}`;
     const parent = st.after ? (st.after === 1 ? null : `c${st.after}`) : st.branch ? null : lastMain;
     const shortLine = lv === "reported" ? "" : short;  // the source sits on its own line under the title; a Reported step needs no second sentence
     const pulseW = weekly && st.test.type !== "dose" ? weekly : (at && at.weekly ? at.weekly : null);
     const pulsePre = weekly && st.test.type !== "dose" && st.baseline ? st.baseline * 7 : null;  // the checker's own baseline, so the chart's peak and the card's ratio agree
-    items.push({id, parent, slice:st.slice || (st.branch ? `b${st.n}` : "main"), d, range, undated, label:st.short || shortLabel(st.claim), lv, lvText, sub, ttype:st.test.type, p:st.p, ratio:st.ratio, newArt:!!st.new_article, arch:!!st.archive_first, src:srcLine, srcName:SRC(st), bust:short, bustWhy:why, mark:lv === "busted" ? null : st.mark, short:shortLine, srcText:srcLine, title:st.claim, claimRef:(st.must_precede || /after what it is said/.test(st.verdict || "")) && st.ref ? daysBetween(iso0, st.ref) : null, notYet:/not yet/.test(st.verdict || ""), series:pulseW ? {weekly:pulseW, pre:pulsePre} : null,
+    items.push({id, parent, slice:st.slice || (st.branch ? `b${st.n}` : "main"), d, range, undated, label:st.short || shortLabel(st.claim), lv, lvText, sub, ttype:st.test.type, p:st.p, ratio:st.ratio, newArt:!!st.new_article, arch:!!st.archive_first, src:srcLine, srcName:SRC(st), bust:short, bustWhy:why, mark:lv === "busted" ? null : st.mark, short:shortLine, srcText:srcLine, title:st.claim, claimRef:(st.must_precede || /after what it is said/.test(st.verdict || "")) && st.ref ? daysBetween(iso0, st.ref) : null, notYet:/not yet/.test(st.verdict || ""), study, series:pulseW ? {weekly:pulseW, pre:pulsePre} : null,
       card:card({when, badge:lvText, badgeCls:/not yet/.test(st.verdict || "") ? "na" : `l-${lv}`, title:st.claim, cls:lv === "busted" ? (/not yet/.test(st.verdict || "") ? "notyet" : "busted") : "", spark:weekly ? sparkHTML(weekly, st.ref) : (lv === "measured" && at && at.weekly && at.ratio) ? sparkHTML(at.weekly, st.onset) : "", facts, short:shortLine,
-        sure:howSure(st.test.type === "dose" && st.p != null ? "measured" : lv, (lv === "measured" || (st.test.type === "dose" && st.p != null)) ? {kind:st.test.type === "wiki" ? "wiki" : st.test.type === "ssa" ? "ssa" : st.test.type === "dose" ? "dose" : "series", what:st.test.type === "wiki" ? (st.test.articles || [])[0] : SRC(st) || st.series,
+        sure:study ? howSure(lv, {kind:"study", study, what:srcShort, why}) : howSure(st.test.type === "dose" && st.p != null ? "measured" : lv, (lv === "measured" || (st.test.type === "dose" && st.p != null)) ? {kind:st.test.type === "wiki" ? "wiki" : st.test.type === "ssa" ? "ssa" : st.test.type === "dose" ? "dose" : "series", what:st.test.type === "wiki" ? (st.test.articles || [])[0] : SRC(st) || st.series,
             when:st.onset ? fmt(D(st.onset)) : "", ratio:st.ratio, p:st.p, n:st.n_placebo, pre:st.pretrend_p}
           : lv === "timed" ? {when:st.onset ? fmt(D(st.onset)) : "", archive:!!st.archive_first, newArticle:!!st.new_article}
           : lv === "reported" ? {what:srcShort, why:st.link_why} : {why:why, notYet:/not yet/.test(st.verdict || ""), late:/after what it is said/.test(st.verdict || "")}) + (attnNote ? ` ${esc(attnNote)}` : ""),
-        foot:happened, details:`<p>${esc(why)}</p>${st.note && st.note !== why ? `<p>${esc(st.note)}</p>` : ""}`})});
+        foot:happened, details:study ? (st.note ? `<p>${esc(st.note)}</p>` : "") : `<p>${esc(why)}</p>${st.note && st.note !== why ? `<p>${esc(st.note)}</p>` : ""}`})});
     if (!st.branch && !st.after) lastMain = id;
   });
   // a claim that says it started a trend is named on the trend's own card ("people say …"), so the argument reads in order
@@ -1418,7 +1442,7 @@ function fromChain(slug) {
   const s0 = ch.steps[0];
   return {key:slug, kind:"chain", title:ch.title, h1:ch.title, stone:ch.title.split(/,| and | → |\s\(/)[0].trim(), iso0, items, extra:[], names,
     sub:`${hold} of ${items.length} links after the event hold up: ` + ["measured", "timed", "reported", "plausible", "busted"].filter(k => tally[k]).map(k => `${tally[k]} ${LVL[k].toLowerCase()}`).join(", ") + ". Tap a ripple to see why.",
-    first:card({when:`${fmt(D(iso0))}<span>Day 0</span>`, badge:"The event", badgeCls:"event", title:s0.claim, short:s0.note ? esc(s0.note) : "", foot:srcP(s0, s0.source || s0.test.source || "")})};
+    first:card({when:`${s0.test.date_precision === "year" ? iso0.slice(0, 4) : s0.test.date_precision === "month" ? fmtMonth(D(iso0)) : fmt(D(iso0))}<span>Day 0</span>`, badge:"The event", badgeCls:"event", title:s0.claim, short:s0.note ? esc(s0.note) : "", foot:srcP(s0, s0.source || s0.test.source || "")})};  // a stone known only by its year or month says only that
 }
 
 // ---------- drawing ----------
@@ -1752,7 +1776,7 @@ function makeReelCut(story, beats) {
     tp = b.tS; dp = d;
   }
   const marks = story.items.filter(x => x.mark && !x.future);
-  const endBeat = {items:[], end:true, html:`<span class="bwhen">${esc(fmtMonth(D(story.iso0)))} → ${esc(fmtMonth(addDays(story.iso0, Math.max(...story.items.filter(x => !x.future).map(x => x.d)))))} · ${rippleCount(story.items).text}</span><b>${marks.length ? `What followed and stayed: ${marks.slice(0, 3).map(x => esc(x.label)).join("; ")}${marks.length > 3 ? `; and ${marks.length - 3} more` : ""}` : "A big splash, no lasting mark yet"}</b>${story.also ? `<span class="bwhy"><span class="bmk">It wasn't the only reason:</span> ${esc(story.also)}</span>` : ""}<span class="bmore">bensunter.com/ripples · every link graded · order doesn't prove cause</span>`};
+  const endBeat = {items:[], end:true, html:`<span class="bwhen">${esc(studySpan(story) || `${fmtMonth(D(story.iso0))} → ${fmtMonth(addDays(story.iso0, Math.max(...story.items.filter(x => !x.future).map(x => x.d))))}`)} · ${rippleCount(story.items).text}</span><b>${marks.length ? `What followed and stayed: ${marks.slice(0, 3).map(x => esc(x.label)).join("; ")}${marks.length > 3 ? `; and ${marks.length - 3} more` : ""}` : "A big splash, no lasting mark yet"}</b>${story.also ? `<span class="bwhy"><span class="bmk">It wasn't the only reason:</span> ${esc(story.also)}</span>` : ""}<span class="bmore">bensunter.com/ripples · every link graded · order doesn't prove cause</span>`};
   push(tp, 1, CUT.cut, null, "wide"); push(1, 1, CUT.end, endBeat, "wide");
   story.timeline = {segs, total:c, beats, reel:true, shots};
 }
@@ -1839,7 +1863,7 @@ function tailQ() {
 }
 function verifyText(b) {
   const m = b.mark, stone = cur.stone || cur.title, weak = cur.weak || "plausible";
-  const order = `${esc(stone)} came first, ${esc(fmt(D(cur.iso0)))}; ${esc(m.label)} ${sinceLabel(m.d).replace("+", "")} later.`;
+  const order = m.study ? `${esc(stone)} came first, ${esc(stoneWhen(cur))}; ${esc(m.label)}: ${esc(m.study.window)}, in a published study.` : `${esc(stone)} came first, ${esc(fmt(D(cur.iso0)))}; ${esc(m.label)} ${sinceLabel(m.d).replace("+", "")} later.`;
   const v = verdictHere() && cur.verdict;
   return `${v ? `<span class="gv">${v.html}</span>` : ""}<span class="bwhen">Checked</span><b>${order}</b><i class="bhow l-${weak}">weakest link ${esc(LVL[weak].toLowerCase())}</i><span class="bwhy">${weak === "measured" ? "Every link passed its test." : weak === "timed" ? "Every link is in order." : weak === "reported" ? "A source makes each link." : "One link is unproven."} Order doesn't prove cause.</span>`;  // the "it wasn't the only reason" line lives in the subtitle, whole; a hero beat does not end in an ellipsis
 }
@@ -2174,8 +2198,8 @@ function render(now = performance.now()) {
   $("#feed").classList.toggle("empty", !W2 && t < PRE && !items.some(x => x.state !== "hidden"));
   if (!playing && !scrubbing && t >= 1) {  // at rest: the story's span, not today's date
     const lastD = Math.max(...items.filter(x => !x.future).map(x => x.d));
-    $("#date").textContent = `${fmtMonth(D(iso0))} → ${fmtMonth(addDays(iso0, lastD))}`;
-    const rc = rippleCount(items); $("#since").innerHTML = `${rc.n} ripple${rc.n === 1 ? "" : "s"}<small>over ${sinceLabel(lastD).replace("+", "")}</small>`;
+    $("#date").textContent = studySpan(cur) || `${fmtMonth(D(iso0))} → ${fmtMonth(addDays(iso0, lastD))}`;
+    const rc = rippleCount(items); $("#since").innerHTML = `${rc.n} ripple${rc.n === 1 ? "" : "s"}<small>${studyOf(cur) ? "from a published study" : `over ${sinceLabel(lastD).replace("+", "")}`}</small>`;
   } else {
     $("#date").textContent = fmt(addDays(iso0, Math.floor(d)));
     $("#since").innerHTML = `${sinceLabel(Math.floor(d))}<small>${shown} ripple${shown === 1 ? "" : "s"}</small>`;  // the same whole day the date shows: the clue line counts from the step's day, and a rounded clock ran one ahead of it (Oct 5 review: "+9 months" over "+8 months")
@@ -2368,7 +2392,7 @@ function renderPicker() {
     if (tab !== "leads") return null;
     if (kind === "wiki") { const y = ((DATA.wiki.stones[slug] || {}).date || "").slice(0, 4); return y ? `From Wikipedia's record · ${y.slice(0, 3)}0s` : "From Wikipedia's record"; }
     if (kind === "acts") return "From Parliament and Congress";
-    if (kind === "chain") return "From the baby-name record";  // the names route (docs/names_v1.md): the two strongest, capped at two (owner, Oct 5)
+    if (kind === "chain") return (DATA.chains.find(c => c.slug === slug) || {}).batch === 18 ? "From published studies" : "From the baby-name record";  // the names route (docs/names_v1.md): the two strongest, capped at two (owner, Oct 5); batch 18: the studies pilot (docs/studies_v1.md)
     return "From attention";
   };
   const list = tab === "leads" ? [...TABS[tab]].sort((a, b) => { const ga = groupOf(a[0], a[1]), gb = groupOf(b[0], b[1]); return ga === gb ? 0 : ga.localeCompare(gb); }) : TABS[tab];
@@ -2475,7 +2499,7 @@ function showEndBeat() {  // at rest the lower third says what stayed and points
   if (!cur || REEL) return;
   const bl = $("#beatline"); if (!bl) return;
   const marks = cur.items.filter(x => x.mark && !x.future).sort((a, b) => a.d - b.d);
-  const span = `${esc(fmtMonth(D(cur.iso0)))} → ${esc(fmtMonth(addDays(cur.iso0, Math.max(...cur.items.filter(x => !x.future).map(x => x.d)))))} · ${rippleCount(cur.items).text}`;
+  const span = `${esc(studySpan(cur) || `${fmtMonth(D(cur.iso0))} → ${fmtMonth(addDays(cur.iso0, Math.max(...cur.items.filter(x => !x.future).map(x => x.d))))}`)} · ${rippleCount(cur.items).text}`;
   const what = marks.length ? `What followed and stayed: ${marks.slice(0, 3).map(x => esc(x.label)).join("; ")}${marks.length > 3 ? `; and ${marks.length - 3} more` : ""}` : "A big splash, no lasting mark yet";
   const nx = nextEntry();
   bl.innerHTML = `<span class="bwhen">${span}</span><b>${what}</b>${verdictHere() ? `<span class="gv">${cur.verdict.html}</span>` : ""}<button type="button" class="bnext" onclick="window.__via='end';next()">Next stone: ${esc(nx.title || "another pond")} →</button>`;
@@ -2498,7 +2522,12 @@ const AV_SURE = {
   measured:"Every link on the way was measured: each one beat the same test run at random dates. Order still doesn't prove cause.",
   timed:"Every link is in order. At least one was never tested against chance.",
   reported:"Every link is in order. The weakest one rests on a public record that names the link. Nobody measured it.",
-  plausible:"At least one link is unproven: it happened, but nothing on record ties it to the step before."};
+  plausible:"At least one link is unproven: it happened, but nothing on record ties it to the step before.",
+  study_measured:"A published study measured the link against a comparison: other places, other people or the expected trend. One study can still be wrong, and order doesn't prove cause.",
+  study_reported:"A published study reports the link. Nothing in it compares the change with a baseline.",
+  myth:"The claim this story names was tested in a published study, and it did not hold up."};
+const avMyth = st => { const its = st.items.filter(x => !x.aside && !x.future && !x.notYet); return its.length > 0 && its.every(x => x.lv === "busted"); };  // a story whose claimed link is busted or disputed: "Myths, checked"
+const AV_MYTH_ICON = '<svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" aria-hidden="true"><circle cx="8.5" cy="8.5" r="5.4"/><path d="M12.5 12.5 17 17"/><path d="M6.6 6.6l3.8 3.8M10.4 6.6l-3.8 3.8"/></svg>';
 const AV_STONE = `<svg viewBox="-16 -16 32 32" aria-hidden="true">${STONE_SVG}</svg>`;
 const AV_HEX = `<svg viewBox="-8 -8 16 16" aria-hidden="true"><path d="M0,-7 L6,-3.5 L6,3.5 L0,7 L-6,3.5 L-6,-3.5 Z" fill="#fff3dc" stroke="currentColor" stroke-width="1.5"/><circle r="2.3" fill="currentColor"/></svg>`;
 let avAll = false; const avShelfOpen = new Set(); let avShelfCache = null, avLake = null;
@@ -2533,6 +2562,8 @@ function avWhy(it) {
   const k = p => p == null ? null : p <= 0.0105 ? 99 : Math.max(1, Math.round((1 - p) * 100));
   if (it.notYet) return ["na", "Not yet", "It hasn't happened yet."];
   if (it.lv === "busted") return ["busted", it.lvText === "Disputed" ? "Disputed" : "Busted", avSent(avClip(cap(String(it.bustWhy || it.bust || it.short || "the record doesn't back it").replace(/\.\s*$/, "").replace(/\. ([a-z])/g, (m, c) => ". " + c.toUpperCase()))))];
+  if (it.study && it.lv === "measured") return ["measured", "Measured", `Measured in a published study (${it.study.design}): ${it.study.effect}.`];  // who measured it: the paper, linked by its DOI
+  if (it.study && it.lv === "reported") return ["reported", "On the record", `On the record in a published study (${it.study.design}): ${it.study.effect}.`];
   if (it.lv === "measured") {
     const beat = k(it.p), than = beat ? `, more than at ${beat} of 100 random dates before` : "";
     if (it.ttype === "wiki") return ["measured", "Measured", `Wikipedia readers jumped${it.ratio && it.ratio !== "several" ? ` to ${it.ratio}× normal` : ""}${than}. That counts attention.`];
@@ -2601,7 +2632,7 @@ function avRoute(s, animate) {
   const hidden = s.items.filter(x => x.aside).length + (s.extra || []).length + (avAll || s.av.open ? 0 : rows.filter(r => r.cluster).reduce((a, r) => a + r.cluster.length - 1, 0)) + all.slice(rows.length).reduce((a, r) => a + (r.cluster ? r.cluster.length : 1), 0);
   const extra = avAll && (s.extra || []).length ? `<div class="avextra"><h4>Checked, not counted</h4>${s.extra.map(e => { const d = document.createElement("div"); d.innerHTML = e.html || ""; const sh = d.querySelector(".short"); return `<p><b>${esc(e.title || "")}</b>${sh ? ` ${esc(sh.textContent)}` : ""}</p>`; }).join("")}</div>` : "";
   const last = s.items.filter(x => !x.future && !x.undated).reduce((a, x) => Math.max(a, x.d), 0);
-  $("#avright").innerHTML = `<div class="avrhead"><h3>How it got there</h3><span>${esc(fmtMonth(D(s.iso0)))} to ${esc(fmtMonth(addDays(s.iso0, last)))} · ${n} step${n === 1 ? "" : "s"}</span></div>
+  $("#avright").innerHTML = `<div class="avrhead"><h3>How it got there</h3><span>${esc(studyOf(s) ? stoneWhen(s) : `${fmtMonth(D(s.iso0))} to ${fmtMonth(addDays(s.iso0, last))}`)} · ${n} step${n === 1 ? "" : "s"}</span></div>
     <ol class="avstream${animate ? " reveal" : ""}">${html}</ol>${extra}${hidden || avAll ? `<button type="button" class="avall">${avAll ? "Show the short route" : `Show every step (${hidden} more)`}</button>` : ""}`;
   avLine(animate);
 }
@@ -2641,7 +2672,7 @@ function avHero(s, answered) {
   q.innerHTML = answered ? avTitle(s) : `What did <em>${esc(avStoneName(s))}</em> change?`;
   if (answered) q.classList.add("land");
   const a = s.answer, say = $("#avsay");
-  if (say) say.innerHTML = answered && a ? `<b>${esc(a.d < 1 ? "The same day" : `${cap(avGap(a.d))} later`)}:</b> ${esc(String(a.title || a.label).replace(/^(The|A|An) /, m => m.toLowerCase()))}` : "";
+  if (say) say.innerHTML = answered && a ? `<b>${esc(a.study ? `${cap(a.study.window)}, in a published study` : a.d < 1 ? "The same day" : `${cap(avGap(a.d))} later`)}:</b> ${esc(String(a.title || a.label).replace(/^(The|A|An) /, m => m.toLowerCase()))}` : "";
 }
 function avKnewDone(k) { return `<span>${k ? "You knew this one." : "New to you."} Your answer helps rank which finds are surprising.</span>`; }
 // ---------- the ripple chart (Oct 8, second pass) ----------
@@ -2674,17 +2705,20 @@ function rcRows(s) {  // the stone, then each step in date order; a long story k
 function rcCap(s, r, final) {  // the caption for one row: a kicker of facts and a headline
   const it = r.it;
   if (r.stone) return [`${esc(avWhen(s.first || {}))} · the stone`, esc(it.title), null];
-  const bits = [esc(avWhen(it)), it.d < 1 ? "the same day" : `${esc(avGap(it.d))} after`];
+  const bust = it.lv === "busted" ? (it.lvText === "Disputed" ? "disputed" : it.notYet ? "not yet" : "busted") : "";
+  const bits = it.study  // a study's step says its window, its effect and who measured it
+    ? [esc(avWhen(it)), it.study.eff && !bust ? `<b>${esc(it.study.eff)}</b>` : "", bust === "disputed" ? "disputed by later research" : bust ? "busted by a published study" : it.lv === "measured" ? "measured by a published study" : "reported by a published study"]
+    : [esc(avWhen(it)), it.d < 1 ? "the same day" : `${esc(avGap(it.d))} after`];
   if (r.lift) bits.push(`readers <b>${rcX(r.lift.peak[1])}×</b> normal`);
   if (it.mark) bits.push("<b>a lasting mark</b>");
-  if (it.lv === "busted") bits.push("busted"); else if (it.lv === "plausible") bits.push("unproven");
-  if (final && s.rc && s.rc.rows[rcLand(s)] === r) bits.unshift(`<b>${s.rc.landBy === "wave" ? "The biggest wave after it" : "Where it landed"}</b>`);
+  if (bust && !it.study) bits.push(bust); else if (it.lv === "plausible") bits.push("unproven");
+  if (final && s.rc && s.rc.rows[rcLand(s)] === r) bits.unshift(`<b>${bust ? "The claim" : s.rc.landBy === "wave" ? "The biggest wave after it" : "Where it landed"}</b>`);
   return [bits.filter(Boolean).join(" · "), esc(it.title || (it.card && it.card.title) || it.label), it.id];
 }
 function rcDraw(s) {
   const host = $("#rcchart"); if (!host || !s.rc) return;
   const rows = s.rc.rows, Wd = Math.round(Math.max(300, host.clientWidth || 900)), phone = Wd < 640; s.rc.w = Wd;
-  const today = Math.max(2, (Date.now() - D(s.iso0)) / 864e5), last = Math.max(20, ...rows.map(r => r.it.d));
+  const today = Math.max(2, (Date.now() - D(s.iso0)) / 864e5), last = Math.max(20, ...rows.map(r => Math.max(r.it.d, r.it.study && r.it.range ? Math.min(today, r.it.range[1]) : 0)));  // a study's window counts
   const dmax = Math.max(last * 1.1, Math.min(today, last * 4)), toToday = dmax >= today - 1;  // bars run on to today, unless today would squash the steps
   const L = phone ? 2 : 236, R = phone ? 30 : 58, lead = phone ? 14 : 26, x0 = L + lead, pw = Wd - R - x0;
   const X = d => d <= 0 ? x0 + lead * Math.max(-1, d / 28) : x0 + pw * Math.log1p(Math.min(d, dmax)) / Math.log1p(dmax);
@@ -2714,6 +2748,7 @@ function rcDraw(s) {
         labs += `<g class="rcrow pk" data-i="${i}" style="--h:${hue}"><text class="rcpk" x="${(px + (right ? -7 : 7)).toFixed(1)}" y="${(py - 7).toFixed(1)}" text-anchor="${right ? "end" : "start"}">${rcX(pk[1])}×</text></g>`;
       }
     }
+    if (it.study && it.range) { const a = X(Math.max(0, it.range[0])), b = X(Math.min(dmax, it.range[1])); if (b - a > 3) g += `<rect class="rcspan" x="${a.toFixed(1)}" y="${(y - 6).toFixed(1)}" width="${(b - a).toFixed(1)}" height="12" rx="6"/>`; }  // the study's own window
     if (it.mark) g += `<rect class="rcband" x="${x.toFixed(1)}" y="${(y - 3.5).toFixed(1)}" width="${Math.max(4, Wd - R - x).toFixed(1)}" height="7" rx="3.5"/>`;
     if (r.stone) g += `<circle cx="${x}" cy="${y.toFixed(1)}" r="11" fill="none" stroke="#1e2a2e" stroke-opacity=".28" stroke-width="1.5"/><circle cx="${x}" cy="${y.toFixed(1)}" r="6" fill="#1e2a2e"/>`;
     else if (it.mark) g += `<g transform="translate(${x.toFixed(1)},${y.toFixed(1)})"><path d="M0,-9 L7.8,-4.5 L7.8,4.5 L0,9 L-7.8,4.5 L-7.8,-4.5 Z" fill="#fff3dc" stroke="#c77f12" stroke-width="2"/><circle r="2.8" fill="#c77f12"/></g>`;
@@ -2760,6 +2795,7 @@ function rcLand(s) {  // the row the title points at: the answer, else the step 
   }
   s.rc.landBy = "wave";
   const lifts = rows.map((r, k) => [k, !r.stone && r.lift ? r.lift.peak[1] : 0]).filter(x => x[1] > 0).sort((a, b) => b[1] - a[1]); if (lifts.length) return lifts[0][0];
+  s.rc.landBy = "last";  // no line to rank: the last step that held is where it landed
   for (let k = rows.length - 1; k > 0; k--) if (rows[k].it.lv !== "busted") return k;
   return rows.length - 1;
 }
@@ -2782,11 +2818,13 @@ function rcPick(i) {  // a tap or a hover on a row: the story stops playing and 
 }
 function rcRender(s) {
   s.rc = {rows:rcRows(s), upto:-1, cur:-1, timer:0, done:false};
-  const lines = s.rc.rows.some(r => r.lift), marks = s.rc.rows.some(r => r.it.mark);
+  const lines = s.rc.rows.some(r => r.lift), marks = s.rc.rows.some(r => r.it.mark), spans = s.rc.rows.some(r => r.it.study && r.it.range), myth = avMyth(s), study = s.items.some(x => x.study);
+  const sureTag = myth ? (s.items.some(x => x.lvText === "Disputed") ? "Disputed" : "Busted") : AV_TAG[s.weak] || "Unproven";
+  const sureTip = myth ? AV_SURE.myth : study && AV_SURE[`study_${s.weak}`] ? AV_SURE[`study_${s.weak}`] : AV_SURE[s.weak] || AV_SURE.plausible;
   let knew = null; try { knew = JSON.parse(localStorage.getItem("ripple-knew") || "{}")[`${s.kind}:${s.key}`]; } catch {}
   const nx = nextEntry(), nxStone = (nx.title || "").split("→")[0].trim();
   $("#rcwrap").innerHTML = `<div class="rccap" id="rccap" aria-live="polite"></div><div class="rcchart" id="rcchart"></div>
-    <p class="rcnote">${lines ? `<span class="key"><i class="sw"></i>readers of that Wikipedia page, against its own normal</span>` : ""}${marks ? `<span class="key"><i class="bar"></i>a lasting mark, still there</span>` : ""}<span class="key" title="${esc(AV_SURE[s.weak] || AV_SURE.plausible)}">How sure: <b>${esc(AV_TAG[s.weak] || "Unproven")}</b></span>${s.rcHidden ? `<span class="key">${s.rcHidden} more step${s.rcHidden === 1 ? "" : "s"} in the list below</span>` : ""}</p>
+    <p class="rcnote">${lines ? `<span class="key"><i class="sw"></i>readers of that Wikipedia page, against its own normal</span>` : ""}${marks ? `<span class="key"><i class="bar"></i>a lasting mark, still there</span>` : ""}${spans ? `<span class="key"><i class="span"></i>the study's window</span>` : ""}<span class="key" title="${esc(sureTip)}">How sure: <b>${esc(sureTag)}</b></span>${s.rcHidden ? `<span class="key">${s.rcHidden} more step${s.rcHidden === 1 ? "" : "s"} in the list below</span>` : ""}</p>
     ${s.also ? `<p class="rcnote rcalso">Not the only reason: ${esc(s.also)}</p>` : ""}
     <div class="rcfoot"><button type="button" class="avnext">Next: ${esc(nxStone || "another stone")} →</button><button type="button" class="avshare">Share</button><button type="button" class="rcplay" id="rcplay">Skip to the end</button>
       <div class="avknew">${knew != null ? avKnewDone(knew) : `<span>New to you?</span><button type="button" data-knew="0">Yes</button><button type="button" data-knew="1">I knew it</button>`}</div></div>`;
@@ -2839,18 +2877,19 @@ function avShelfData() {
     if (!st) continue; seen.add(name);
     avPrep(st);
     st.titleText = name; const a = revealMark(st), [stone, land] = name.split(/\s*→\s*/);
-    out.push({kind, slug, stone, land, group:a ? guessOf(a.mark) : "none", weak:weakOf(st), gap:a ? a.d : null, year:(st.iso0 || "").slice(0, 4), ds:st.items.filter(x => !x.aside && !x.undated && !x.future && x.lv !== "busted").map(x => x.d)});
+    const myth = !a && avMyth(st);
+    out.push({kind, slug, stone, land, group:myth ? "myth" : a ? guessOf(a.mark) : "none", myth:myth ? (st.items.some(x => x.lvText === "Disputed") ? "Disputed" : "Busted") : null, study:st.items.some(x => x.study), weak:weakOf(st), gap:a ? a.d : null, year:(st.iso0 || "").slice(0, 4), ds:st.items.filter(x => !x.aside && !x.undated && !x.future && x.lv !== "busted").map(x => x.d)});
   }
   return avShelfCache = out;
 }
 function avShelf() {
   const el = $("#avshelf"); if (!el || !cur) return;
   const data = avShelfData(), here = `${cur.kind}:${cur.key}`;
-  const G = [["life", "Stones that changed how people live"], ["built", "Stones that built something"], ["law", "Stones that changed a law or rule"], ["none", "Big splashes, nothing lasting yet"]];
+  const G = [["life", "Stones that changed how people live"], ["myth", "Myths, checked"], ["built", "Stones that built something"], ["law", "Stones that changed a law or rule"], ["none", "Big splashes, nothing lasting yet"]];
   el.innerHTML = `<h2 class="avsh">More stones</h2><p class="avshsub">Each card says where the stone landed. The amber bar starts when it landed.</p>` + G.map(([g, h]) => {
     const list = data.filter(x => x.group === g && `${x.kind}:${x.slug}` !== here); if (!list.length) return "";
     const open = avShelfOpen.has(g), shown = open ? list : list.slice(0, 8);
-    return `<section class="avgroup"><h3>${AV_KIND[g].icon}<span>${h}</span><em>${list.length}</em></h3><div class="avgrid">${shown.map(x => `<button type="button" class="avcard" data-k="${x.kind}" data-s="${esc(x.slug)}"><span class="cy">${esc(x.year)}</span><span class="cs">${esc(x.stone)}</span><span class="cl">→ ${esc(x.land)}</span>${rcGlyph(x)}<span class="cm"><i class="d-${x.weak}"></i>${esc(AV_TAG[x.weak] || "")}${x.gap != null ? ` · ${esc(avGap(x.gap))} later` : ""}</span></button>`).join("")}</div>${list.length > 8 ? `<button type="button" class="avshmore" data-g="${g}">${open ? "Show fewer" : `Show all ${list.length}`}</button>` : ""}</section>`;
+    return `<section class="avgroup"><h3>${g === "myth" ? AV_MYTH_ICON : AV_KIND[g].icon}<span>${h}</span><em>${list.length}</em></h3><div class="avgrid">${shown.map(x => `<button type="button" class="avcard" data-k="${x.kind}" data-s="${esc(x.slug)}"><span class="cy">${esc(x.year)}</span><span class="cs">${esc(x.stone)}</span><span class="cl">→ ${esc(x.land)}</span>${rcGlyph(x)}<span class="cm"><i class="d-${x.myth ? "busted" : x.weak}"></i>${esc(x.myth || AV_TAG[x.weak] || "")}${x.study ? " · a published study" : x.gap != null ? ` · ${esc(avGap(x.gap))} later` : ""}</span></button>`).join("")}</div>${list.length > 8 ? `<button type="button" class="avshmore" data-g="${g}">${open ? "Show fewer" : `Show all ${list.length}`}</button>` : ""}</section>`;
   }).join("");
 }
 // The hero's water: a lake at dusk in WebGL, the stone thrown in, rings that spread and fade, and a pool of ember when the
@@ -2981,7 +3020,7 @@ function avInit() {
   $("#guessrow").addEventListener("click", e => { const gb = e.target.closest(".guess button"); if (gb) pickGuess(gb.dataset.g); });
   $("#sub").addEventListener("click", e => { const gb = e.target.closest(".guess button"); if (gb) { pickGuess(gb.dataset.g); return; } const sub = $("#sub"); if (sub.classList.contains("held") || !sub.hasAttribute("aria-expanded")) return; const cls = window.innerWidth <= 560 ? "clamp" : "fold"; const closed = sub.classList.toggle(cls); sub.dataset.open = closed ? "" : "1"; sub.setAttribute("aria-expanded", closed ? "false" : "true"); });  // a tap reads the whole subtitle
   const chooser = $("#chooser"), cbtn = $("#chooserbtn");
-  const TABCOUNT = () => ({maps:TABS.maps.length, stories:DATA.chains.length, leads:TABS.leads.filter(([k, s]) => k === "wiki" ? wikiStones().includes(s) : k === "acts" ? actsWorks().includes(s) : true).length});
+  const TABCOUNT = () => ({maps:TABS.maps.length, stories:DATA.chains.filter(c => !TABS.leads.some(([k, sl]) => k === "chain" && sl === c.slug)).length, leads:TABS.leads.filter(([k, s]) => k === "wiki" ? wikiStones().includes(s) : k === "acts" ? actsWorks().includes(s) : true).length});
   const TABNOTE_SHORT = {maps:"Events that left a law, an institution or a change in how people live.", stories:"Viral \"butterfly effect\" stories tested link by link; some are busted.", leads:"What the engine found on its own, screened by hand."};
   const setChooser = open => { chooser.hidden = !open; cbtn.setAttribute("aria-expanded", open); if (open) track("chooser_open", {slug: cur && cur.key});
     if (open) { chooser.classList.add("stage1"); const n = TABCOUNT(); document.querySelectorAll(".tab").forEach(b => b.dataset.note = `${TABNOTE_SHORT[b.dataset.tab]} ${n[b.dataset.tab]} ${n[b.dataset.tab] === 1 ? "story" : "stories"}.`); }  // first layer: the three kinds as cards
