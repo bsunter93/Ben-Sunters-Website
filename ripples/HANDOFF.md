@@ -124,7 +124,8 @@ GitHub Actions secrets, used by workflows only. Never put it in a local environm
 Differences from a cloud container: the one used in September could reach only whitelisted hosts
 (Wikipedia, legislation.gov.uk, govinfo's link service, pageviews.wmcloud.org) and nothing else, so fetchers ran in
 Actions. A local machine can reach everything, which changes nothing about the rules: the honest user agent, one request
-a second, a stop on any 4xx/5xx, no retries with a different agent, aggregate data only.
+a second, one retry after a wait on a 5xx, a 429 or a timeout, then a stop for the day (any other 4xx stops at once),
+no retries with a different agent, aggregate data only.
 
 ## 5. Build, test, ship
 

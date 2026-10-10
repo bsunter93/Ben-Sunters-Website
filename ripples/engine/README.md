@@ -127,7 +127,9 @@ exist.
 
 - The user agent is `ripple-research (bensunter.com)`, the one the studies pilot and the discovery v4 plan registered.
 - At most one request a second per host. OpenAlex gets one every 2 seconds and NCBI three a second.
-- Any 4xx or 5xx stops that host for the rest of the UTC day. There are no retries and no other agents.
+- A 5xx, a 429, a timeout or a connection error gets one retry after a wait (Retry-After up to 300 s, otherwise 60 s).
+  A second failure, or any other 4xx, stops that host for the rest of the UTC day. Never more than one retry, never
+  another agent.
 - No Wikipedia, Wikimedia, Wikidata, Reddit, Merriam-Webster or Etymonline requests. `fetch.py` refuses them.
 - No email address and no key goes in any request, with one exception. When `OPENALEX_API_KEY` is set, `fetch.py` adds
   it as the `api_key` parameter to requests whose host is exactly `api.openalex.org`, at the moment of sending. It never
