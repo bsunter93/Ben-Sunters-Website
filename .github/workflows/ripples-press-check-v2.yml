@@ -1,0 +1,47 @@
+# Press share check v2 (ripples/lab/press_check_v2.py; queries: ripples/lab/press_check_v2_queries.json).
+# Runs once, when this file is pushed on a work/ branch. No schedule: it must not loop. The keys are repository
+# secrets, passed only to the one step that needs them, and never echoed. Both APIs take the key as a query parameter,
+# so the script never prints or writes a request URL. NYT pacing (12.5 s a request) sets the run time, about 90 minutes.
+name: Ripples press check v2
+
+on:
+  push:
+    branches: ["work/**"]
+    paths: [".github/workflows/ripples-press-check-v2.yml"]
+
+permissions:
+  contents: write
+
+concurrency:
+  group: ripples-press-check
+  cancel-in-progress: false
+
+jobs:
+  press:
+    runs-on: ubuntu-latest
+    timeout-minutes: 180
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Count co-mentions (Guardian and NYT, counts only)
+        env:
+          GUARDIAN_API_KEY: ${{ secrets.GUARDIAN_API_KEY }}
+          NYT_API_KEY: ${{ secrets.NYT_API_KEY }}
+        run: python ripples/lab/press_check_v2.py
+      - name: Commit results
+        if: always()
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898900+github-actions[bot]@users.noreply.github.com"
+          mkdir -p /tmp/results && cp ripples/docs/results/press_check_v2.json /tmp/results/ 2>/dev/null || exit 0
+          for i in 1 2 3 4; do
+            git fetch -q origin "${GITHUB_REF_NAME}" && git reset -q --hard "origin/${GITHUB_REF_NAME}" || exit 0
+            cp /tmp/results/* ripples/docs/results/
+            git add ripples/docs/results/press_check_v2.json || exit 0
+            git diff --cached --quiet && exit 0
+            git commit -q -m "Ripples: press check v2, co-mention counts [skip ci]"
+            git push -q origin "HEAD:${GITHUB_REF_NAME}" && break
+            sleep 7
+          done
