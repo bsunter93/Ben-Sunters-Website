@@ -3,7 +3,9 @@
   - An honest user agent on every request.
   - At most one request a second per host; OpenAlex one per 2 seconds; NCBI three a second.
   - Redirects are followed one hop at a time, and every hop is checked against the forbidden hosts and the day's stops.
-  - Any 4xx or 5xx stops that host for the rest of the UTC day (logs/blocked_hosts.log). No retries, no other agent.
+  - A 5xx, a 429, a timeout or a connection error gets one retry after a wait (Retry-After when it is 300 s or less,
+    otherwise 60 s). A second failure, or any other 4xx, stops that host for the rest of the UTC day
+    (logs/blocked_hosts.log). Never more than one retry, never another agent.
   - No Wikipedia, Wikimedia, Wikidata, Reddit, Merriam-Webster or Etymonline requests.
   - Responses with status 200 are cached under raw/, keyed by the request URL, so a stopped run resumes.
 
@@ -122,13 +124,17 @@ class _NoRedirect(urllib.request.HTTPRedirectHandler):
 _opener = urllib.request.build_opener(_NoRedirect)
 
 
-def _one(url, accept):
-    """One hop, no redirect following. Returns (status, body, location)."""
-    host = (urllib.parse.urlsplit(url).hostname or "").lower()
-    if any(host == f or host.endswith("." + f) for f in FORBIDDEN):
-        raise RuntimeError("forbidden host " + host)
-    if host in blocked_hosts():
-        return -1, b"", None
+RETRY_DEFAULT = 60      # seconds to wait before the one retry
+RETRY_MAX_WAIT = 300    # a longer Retry-After is not honored; the default wait is used instead
+
+
+def _retryable(status):
+    """A 5xx, a 429, a timeout or a connection error (status 0) earns one retry. Other 4xx stop at once."""
+    return status == 0 or status == 429 or status >= 500
+
+
+def _attempt(url, accept, host):
+    """One request, no redirect following. Returns (status, body, location, retry_after_seconds or None)."""
     wait = _interval(host) - (time.time() - _last.get(host, 0))
     if wait > 0:
         time.sleep(wait)
@@ -136,7 +142,7 @@ def _one(url, accept):
     if accept:
         headers["Accept"] = accept
     req = urllib.request.Request(_with_key(url), headers=headers)
-    status, body, loc = 0, b"", None
+    status, body, loc, retry_after = 0, b"", None, None
     try:
         with _opener.open(req, timeout=45) as r:
             status = r.status
@@ -148,6 +154,8 @@ def _one(url, accept):
         loc = e.headers.get("Location") if 300 <= e.code < 400 else None
         if loc:
             loc = _strip_key(urllib.parse.urljoin(url, loc))
+        ra = (e.headers.get("Retry-After") or "").strip()
+        retry_after = int(ra) if ra.isdigit() else None
         try:
             body = e.read(20000)
         except Exception:
@@ -158,9 +166,27 @@ def _one(url, accept):
     _last[host] = time.time()
     with open(LOG, "a") as f:
         f.write(redact(f"{_stamp()}\t{status}\t{url}\t{loc or ''}") + "\n")
-    if status >= 400:
-        with open(BLOCK, "a") as f:
-            f.write(redact(f"{_stamp()}\t{host}\t{status}\t{url}\t{body[:300].decode('utf-8', 'replace')!r}") + "\n")
+    return status, body, loc, retry_after
+
+
+def _one(url, accept):
+    """One hop, no redirect following, at most one retry. Returns (status, body, location)."""
+    host = (urllib.parse.urlsplit(url).hostname or "").lower()
+    if any(host == f or host.endswith("." + f) for f in FORBIDDEN):
+        raise RuntimeError("forbidden host " + host)
+    if host in blocked_hosts():
+        return -1, b"", None
+    status, body, loc, retry_after = _attempt(url, accept, host)
+    if status >= 400 or status == 0:
+        if _retryable(status):
+            pause = retry_after if retry_after is not None and retry_after <= RETRY_MAX_WAIT else RETRY_DEFAULT
+            with open(LOG, "a") as f:
+                f.write(redact(f"{_stamp()}\tretry in {pause} s after {status}\t{url}\t") + "\n")
+            time.sleep(pause)
+            status, body, loc, retry_after = _attempt(url, accept, host)
+        if status >= 400 or status == 0:
+            with open(BLOCK, "a") as f:
+                f.write(redact(f"{_stamp()}\t{host}\t{status}\t{url}\t{body[:300].decode('utf-8', 'replace')!r}") + "\n")
     return status, body, loc
 
 
