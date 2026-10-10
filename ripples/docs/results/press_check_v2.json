@@ -1,0 +1,5783 @@
+{
+ "check": "press share check v2",
+ "script": "ripples/lab/press_check_v2.py",
+ "queries": "ripples/lab/press_check_v2_queries.json",
+ "queries_sha256": "6292009e5a916914ca8fc627f040378ac1753fc7634ae0214645bcc490ede08b",
+ "user_agent": "ripple-research (bensunter.com)",
+ "sources": {
+  "guardian": {
+   "endpoint": "https://content.guardianapis.com/search",
+   "count_field": "response.total",
+   "spacing_s": 1.0,
+   "cap_per_run": 480,
+   "pairs_ok": 257,
+   "stones_ok": 156,
+   "syntax": "lucene"
+  },
+  "nyt": {
+   "endpoint": "https://api.nytimes.com/svc/search/v2/articlesearch.json",
+   "count_field": "response.metadata.hits",
+   "spacing_s": 12.5,
+   "cap_per_run": 480,
+   "ceiling": 10000,
+   "pairs_ok": 0,
+   "stones_ok": 0,
+   "syntax": null
+  }
+ },
+ "syntax": {
+  "guardian": "lucene"
+ },
+ "runs": [
+  {
+   "started": "2026-10-10T14:05:55Z",
+   "finished": "2026-10-10T14:16:24Z",
+   "sources": {
+    "guardian": {
+     "status": "done",
+     "stop": null,
+     "requests": 415,
+     "retries": 0
+    },
+    "nyt": {
+     "status": "stopped",
+     "stop": "operator check failed for every syntax: OR did not widen or AND did not narrow",
+     "requests": 7,
+     "retries": 0
+    }
+   }
+  }
+ ],
+ "probe": {
+  "guardian": {
+   "lucene": {
+    "single": {
+     "count": 275,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-10T14:05:55Z",
+     "q": "(\"Silent Spring\")"
+    },
+    "or": {
+     "count": 350,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-10T14:05:57Z",
+     "q": "(\"Silent Spring\" OR \"Rachel Carson\")"
+    },
+    "and": {
+     "count": 101,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-10T14:05:58Z",
+     "q": "(\"Silent Spring\") AND (\"Rachel Carson\")"
+    },
+    "passed": true
+   }
+  },
+  "nyt": {
+   "lucene": {
+    "single": {
+     "count": 790,
+     "status": "ok",
+     "field": "response.metadata.hits",
+     "at": "2026-10-10T14:15:07Z",
+     "q": "\"Silent Spring\""
+    },
+    "or": {
+     "count": 287,
+     "status": "ok",
+     "field": "response.metadata.hits",
+     "at": "2026-10-10T14:15:20Z",
+     "q": "(\"Silent Spring\" OR \"Rachel Carson\")"
+    },
+    "and": {
+     "count": 287,
+     "status": "ok",
+     "field": "response.metadata.hits",
+     "at": "2026-10-10T14:15:33Z",
+     "q": "(\"Silent Spring\") AND (\"Rachel Carson\")"
+    },
+    "passed": false
+   },
+   "sqs_plus": {
+    "single": {
+     "count": 790,
+     "status": "ok",
+     "field": "response.metadata.hits",
+     "at": "2026-10-10T14:15:07Z",
+     "q": "\"Silent Spring\""
+    },
+    "or": {
+     "count": 287,
+     "status": "ok",
+     "field": "response.metadata.hits",
+     "at": "2026-10-10T14:15:46Z",
+     "q": "+(\"Silent Spring\" | \"Rachel Carson\")"
+    },
+    "and": {
+     "count": 287,
+     "status": "ok",
+     "field": "response.metadata.hits",
+     "at": "2026-10-10T14:15:58Z",
+     "q": "+(\"Silent Spring\") +(\"Rachel Carson\")"
+    },
+    "passed": false
+   },
+   "double": {
+    "single": {
+     "count": 790,
+     "status": "ok",
+     "field": "response.metadata.hits",
+     "at": "2026-10-10T14:15:07Z",
+     "q": "\"Silent Spring\""
+    },
+    "or": {
+     "count": 287,
+     "status": "ok",
+     "field": "response.metadata.hits",
+     "at": "2026-10-10T14:16:11Z",
+     "q": "(\"Silent Spring\" || \"Rachel Carson\")"
+    },
+    "and": {
+     "count": 287,
+     "status": "ok",
+     "field": "response.metadata.hits",
+     "at": "2026-10-10T14:16:24Z",
+     "q": "(\"Silent Spring\") && (\"Rachel Carson\")"
+    },
+    "passed": false
+   }
+  }
+ },
+ "pairs": {
+  "ctl:P140": {
+   "stone": "c090",
+   "q": {
+    "guardian": "(\"Jaws\" OR \"Jaws film\" OR \"Jaws movie\") AND (\"fear of sharks\" OR \"shark phobia\" OR \"shark scare\" OR \"shark fear\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 21,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-10T14:08:39Z"
+    }
+   }
+  },
+  "ctl:P141": {
+   "stone": "c023",
+   "q": {
+    "guardian": "(\"September 11 attacks\" OR \"Sept. 11 attacks\" OR \"September 11 terrorist attacks\" OR \"September 11th\") AND (\"Transportation Security Administration\" OR \"TSA\" OR \"airport screeners\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 8,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-10T14:10:55Z"
+    }
+   }
+  },
+  "ctl:P142": {
+   "stone": "c130",
+   "q": {
+    "guardian": "(\"Hurricane Katrina\" OR \"Katrina\") AND (\"FEMA reform\" OR \"Federal Emergency Management Agency\" OR \"FEMA\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 301,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-10T14:10:39Z"
+    }
+   }
+  },
+  "ctl:P143": {
+   "stone": "c148",
+   "q": {
+    "guardian": "(\"COVID-19\" OR \"Covid pandemic\" OR \"coronavirus pandemic\" OR \"coronavirus\") AND (\"remote work\" OR \"working from home\" OR \"work from home\" OR \"remote working\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 3931,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-10T14:09:29Z"
+    }
+   }
+  },
+  "ctl:P144": {
+   "stone": "c123",
+   "q": {
+    "guardian": "(\"Titanic\" OR \"Titanic film\" OR \"Cameron's Titanic\") AND (\"My Heart Will Go On\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 65,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-10T14:11:18Z"
+    }
+   }
+  },
+  "ctl:P145": {
+   "stone": "c012",
+   "q": {
+    "guardian": "(\"Top Gun\") AND (\"Navy recruitment\" OR \"Navy recruiting\" OR \"Navy pilot\" OR \"naval aviators\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 19,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-10T14:11:07Z"
+    }
+   }
+  },
+  "ctl:P146": {
+   "stone": "c133",
+   "q": {
+    "guardian": "(\"Chernobyl disaster\" OR \"Chernobyl\" OR \"Chernobyl nuclear accident\") AND (\"exclusion zone\" OR \"Zone of Alienation\" OR \"restricted zone\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 169,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-10T14:11:11Z"
+    }
+   }
+  },
+  "ctl:P147": {
+   "stone": "c099",
+   "q": {
+    "guardian": "(\"Fifty Shades of Grey\" OR \"Fifty Shades\") AND (\"bestselling sequels\" OR \"sequel sales\" OR \"erotic fiction sales\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 1,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-10T14:10:35Z"
+    }
+   }
+  },
+  "ctl:P148": {
+   "stone": "c127",
+   "q": {
+    "guardian": "(\"Super Mario Bros.\" OR \"Super Mario Brothers\") AND (\"Nintendo Entertainment System\" OR \"NES console\" OR \"Nintendo NES\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 37,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-10T14:10:06Z"
+    }
+   }
+  },
+  "ctl:P149": {
+   "stone": "c022",
+   "q": {
+    "guardian": "(\"global financial crisis\" OR \"financial crisis\" OR \"Great Recession\" OR \"credit crunch\") AND (\"Dodd-Frank\" OR \"Basel III\" OR \"banking regulation\" OR \"financial regulation\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 586,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-10T14:07:08Z"
+    }
+   }
+  },
+  "ctl:P150": {
+   "stone": "c047",
+   "q": {
+    "guardian": "(\"Friends\" OR \"Friends sitcom\" OR \"sitcom Friends\") AND (\"Coffee Shop Licensing Act\" OR \"coffee shop licensing\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 0,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-10T14:08:09Z"
+    }
+   }
+  },
+  "ctl:P151": {
+   "stone": "c058",
+   "q": {
+    "guardian": "(\"Seinfeld\" OR \"Seinfeld sitcom\") AND (\"Parking Fairness Act\" OR \"parking fairness law\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 0,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-10T14:07:51Z"
+    }
+   }
+  },
+  "ctl:P152": {
+   "stone": "c137",
+   "q": {
+    "guardian": "(\"Breaking Bad\") AND (\"RV registration\" OR \"RV registration law\" OR \"recreational vehicle registration\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 0,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-10T14:08:48Z"
+    }
+   }
+  },
+  "ctl:P153": {
+   "stone": "c101",
+   "q": {
+    "guardian": "(\"Great British Bake Off\" OR \"Bake Off\") AND (\"home bakery tax\" OR \"bakery tax break\" OR \"baking tax relief\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 0,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-10T14:09:47Z"
+    }
+   }
+  },
+  "ctl:P154": {
+   "stone": "c094",
+   "q": {
+    "guardian": "(\"Game of Thrones\") AND (\"Dragon Heritage Protection Act\" OR \"Iceland dragon law\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 0,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-10T14:08:38Z"
+    }
+   }
+  },
+  "ctl:P155": {
+   "stone": "c063",
+   "q": {
+    "guardian": "(\"Pokemon Go\" OR \"Pokémon Go\") AND (\"National Park Service\" OR \"national parks ban\" OR \"park gaming ban\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 2,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-10T14:08:15Z"
+    }
+   }
+  },
+  "ctl:P156": {
+   "stone": "c052",
+   "q": {
+    "guardian": "(\"The Office\" OR \"NBC's The Office\") AND (\"paper industry tax credit\" OR \"Pennsylvania paper industry\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 0,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-10T14:08:26Z"
+    }
+   }
+  },
+  "ctl:P157": {
+   "stone": "c025",
+   "q": {
+    "guardian": "(\"Stranger Things\") AND (\"government experiments\" OR \"MKUltra\" OR \"federal review\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 5,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-10T14:08:18Z"
+    }
+   }
+  },
+  "ctl:P158": {
+   "stone": "c054",
+   "q": {
+    "guardian": "(\"Toy Story\") AND (\"toy safety labeling\" OR \"toy safety law\" OR \"toy labeling law\" OR \"Child Safety Protection Act\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 0,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-10T14:10:18Z"
+    }
+   }
+  },
+  "ctl:P159": {
+   "stone": "c129",
+   "q": {
+    "guardian": "(\"Squid Game\") AND (\"household debt relief\" OR \"debt relief law\" OR \"Korean household debt\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 0,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-10T14:07:10Z"
+    }
+   }
+  },
+  "rc:CR0002": {
+   "stone": "c041",
+   "q": {
+    "guardian": "(\"Lushan earthquake\" OR \"Ya'an earthquake\") AND (\"cash flow\" OR \"firm profitability\" OR \"liquidity\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 0,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-10T14:08:02Z"
+    }
+   }
+  },
+  "rc:CR0003": {
+   "stone": "c041",
+   "q": {
+    "guardian": "(\"Lushan earthquake\" OR \"Ya'an earthquake\") AND (\"retained earnings\" OR \"non-business expenditures\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 0,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-10T14:07:35Z"
+    }
+   }
+  },
+  "rc:CR0004": {
+   "stone": "c041",
+   "q": {
+    "guardian": "(\"Lushan earthquake\" OR \"Ya'an earthquake\") AND (\"firm employment\" OR \"fixed assets\" OR \"employment decline\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 0,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-10T14:09:16Z"
+    }
+   }
+  },
+  "rc:CR0005": {
+   "stone": "c041",
+   "q": {
+    "guardian": "(\"Lushan earthquake\" OR \"Ya'an earthquake\") AND (\"R&D growth\" OR \"R&D spending\" OR \"market share\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 0,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-10T14:10:40Z"
+    }
+   }
+  },
+  "rc:CR0006": {
+   "stone": "c006",
+   "q": {
+    "guardian": "(\"ChatGPT\" OR \"Chat GPT\") AND (\"Stack Overflow\" OR \"Stack Exchange\" OR \"Stack Overflow traffic\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 4,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-10T14:11:28Z"
+    }
+   }
+  },
+  "rc:CR0007": {
+   "stone": "c006",
+   "q": {
+    "guardian": "(\"ChatGPT\" OR \"Chat GPT\") AND (\"Stack Overflow\" OR \"Stack Exchange\" OR \"question quality\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 4,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-10T14:09:49Z"
+    }
+   }
+  },
+  "rc:CR0008": {
+   "stone": "c006",
+   "q": {
+    "guardian": "(\"ChatGPT\" OR \"Chat GPT\") AND (\"Stack Overflow\" OR \"Stack Exchange\" OR \"complex questions\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 10,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-10T14:09:59Z"
+    }
+   }
+  },
+  "rc:CR0009": {
+   "stone": "c006",
+   "q": {
+    "guardian": "(\"ChatGPT\" OR \"Chat GPT\") AND (\"translators\" OR \"translation work\" OR \"freelance translators\" OR \"machine translation\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 16,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-10T14:10:30Z"
+    }
+   }
+  },
+  "rc:CR0010": {
+   "stone": "c006",
+   "q": {
+    "guardian": "(\"ChatGPT\" OR \"Chat GPT\") AND (\"freelance web developers\" OR \"web developers\" OR \"web development\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 4,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-10T14:06:52Z"
+    }
+   }
+  },
+  "rc:CR0011": {
+   "stone": "c135",
+   "q": {
+    "guardian": "(\"Christchurch earthquake\" OR \"Canterbury earthquakes\" OR \"Christchurch quake\") AND (\"GDP per capita\" OR \"Canterbury rebuild\" OR \"New Zealand GDP\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 0,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-10T14:09:38Z"
+    }
+   }
+  },
+  "rc:CR0012": {
+   "stone": "c064",
+   "q": {
+    "guardian": "(\"Maule earthquake\" OR \"Chile earthquake\" OR \"Chilean earthquake\" OR \"Chile quake\") AND (\"GDP per capita\" OR \"economic output\" OR \"economic recovery\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 0,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-10T14:07:45Z"
+    }
+   }
+  },
+  "rc:CR0013": {
+   "stone": "c080",
+   "q": {
+    "guardian": "(\"TikTok goes dark\" OR \"TikTok shutdown\" OR \"TikTok blackout\" OR \"TikTok ban\") AND (\"music streaming\" OR \"streaming revenue\" OR \"music streams\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 0,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-10T14:10:45Z"
+    }
+   }
+  },
+  "rc:CR0017": {
+   "stone": "c121",
+   "q": {
+    "guardian": "(\"mass shootings\" OR \"mass shooting\") AND (\"foot traffic\" OR \"mobility data\" OR \"points of interest\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 2,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-10T14:09:15Z"
+    }
+   }
+  },
+  "rc:CR0018": {
+   "stone": "c006",
+   "q": {
+    "guardian": "(\"ChatGPT\" OR \"Chat GPT\") AND (\"social skills\" OR \"soft skills\" OR \"people skills\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 11,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-10T14:11:25Z"
+    }
+   }
+  },
+  "rc:CR0020": {
+   "stone": "c024",
+   "q": {
+    "guardian": "(\"Hurricane Harvey\" OR \"Tropical Storm Harvey\") AND (\"construction wages\" OR \"construction labor shortage\" OR \"construction worker pay\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 0,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-10T14:10:43Z"
+    }
+   }
+  },
+  "rc:CR0021": {
+   "stone": "c024",
+   "q": {
+    "guardian": "(\"Hurricane Harvey\" OR \"Tropical Storm Harvey\") AND (\"construction employment\" OR \"construction jobs\" OR \"construction workers\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 2,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-10T14:08:55Z"
+    }
+   }
+  },
+  "rc:CR0022": {
+   "stone": "c006",
+   "q": {
+    "guardian": "(\"ChatGPT\" OR \"Chat GPT\") AND (\"jobs exposed to AI\" OR \"occupations exposed to AI\" OR \"AI-exposed occupations\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 2,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-10T14:09:00Z"
+    }
+   }
+  },
+  "rc:CR0024": {
+   "stone": "c140",
+   "q": {
+    "guardian": "(\"Eaton fire\" OR \"Eaton Canyon fire\") AND (\"house prices\" OR \"home values\" OR \"property values\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 2,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-10T14:08:28Z"
+    }
+   }
+  },
+  "rc:CR0026": {
+   "stone": "c006",
+   "q": {
+    "guardian": "(\"ChatGPT\" OR \"Chat GPT\") AND (\"freelance platforms\" OR \"Upwork\" OR \"Fiverr\" OR \"freelance marketplaces\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 2,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-10T14:07:12Z"
+    }
+   }
+  },
+  "rc:CR0027": {
+   "stone": "c006",
+   "q": {
+    "guardian": "(\"ChatGPT\" OR \"Chat GPT\") AND (\"wage stagnation\" OR \"stagnant wages\" OR \"stagnating wages\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 1,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-10T14:09:05Z"
+    }
+   }
+  },
+  "rc:CR0028": {
+   "stone": "c032",
+   "q": {
+    "guardian": "(\"Weinstein scandal\" OR \"Weinstein allegations\" OR \"MeToo movement\" OR \"Me Too movement\") AND (\"executive resignations\" OR \"board resignations\" OR \"executive departures\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 0,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-10T14:09:25Z"
+    }
+   }
+  },
+  "rc:CR0029": {
+   "stone": "c006",
+   "q": {
+    "guardian": "(\"ChatGPT\" OR \"Chat GPT\") AND (\"human capital\" OR \"skills premium\" OR \"education premium\" OR \"graduate premium\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 3,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-10T14:11:14Z"
+    }
+   }
+  },
+  "rc:CR0030": {
+   "stone": "c006",
+   "q": {
+    "guardian": "(\"ChatGPT\" OR \"Chat GPT\") AND (\"freelance rates\" OR \"cheaper freelancers\" OR \"freelance marketplace\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 0,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-10T14:10:33Z"
+    }
+   }
+  },
+  "rc:CR0032": {
+   "stone": "c021",
+   "q": {
+    "guardian": "(\"2002 World Cup\" OR \"Korea-Japan World Cup\") AND (\"school performance\" OR \"academic performance\" OR \"test scores\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 0,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-10T14:10:09Z"
+    }
+   }
+  },
+  "rc:CR0033": {
+   "stone": "c021",
+   "q": {
+    "guardian": "(\"2002 World Cup\" OR \"Korea-Japan World Cup\") AND (\"mental wellbeing\" OR \"mental well-being\" OR \"student wellbeing\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 1,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-10T14:06:46Z"
+    }
+   }
+  },
+  "rc:CR0036": {
+   "stone": "c106",
+   "q": {
+    "guardian": "(\"West German television\" OR \"West German TV\" OR \"valley of the clueless\") AND (\"smoking rates\" OR \"female smokers\" OR \"women smoking\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 0,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-10T14:10:37Z"
+    }
+   }
+  },
+  "rc:CR0037": {
+   "stone": "c106",
+   "q": {
+    "guardian": "(\"West German television\" OR \"West German TV\" OR \"valley of the clueless\") AND (\"health care use\" OR \"self-reported health\" OR \"mental health\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 0,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-10T14:09:57Z"
+    }
+   }
+  },
+  "rc:CR0038": {
+   "stone": "c067",
+   "q": {
+    "guardian": "(\"album release day\" OR \"album release\" OR \"album drop\" OR \"album launch\") AND (\"traffic fatalities\" OR \"road deaths\" OR \"fatal crashes\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 1,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-10T14:06:40Z"
+    }
+   }
+  },
+  "rc:CR0044": {
+   "stone": "c119",
+   "q": {
+    "guardian": "(\"Cyclone Aila\") AND (\"ADHD symptoms\" OR \"attention deficit\" OR \"hyperactivity disorder\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 0,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-10T14:10:31Z"
+    }
+   }
+  },
+  "rc:CR0045": {
+   "stone": "c116",
+   "q": {
+    "guardian": "(\"Black Summer bushfires\" OR \"Black Summer\" OR \"Australian bushfires\" OR \"Australia bushfires\") AND (\"birth weight\" OR \"low birth weight\" OR \"high birth weight\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 3,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-10T14:07:00Z"
+    }
+   }
+  },
+  "rc:CR0046": {
+   "stone": "c116",
+   "q": {
+    "guardian": "(\"Black Summer bushfires\" OR \"Black Summer\" OR \"Australian bushfires\" OR \"Australia bushfires\") AND (\"rupture of membranes\" OR \"prelabour rupture\" OR \"premature rupture\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 0,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-10T14:07:58Z"
+    }
+   }
+  },
+  "rc:CR0047": {
+   "stone": "c116",
+   "q": {
+    "guardian": "(\"Black Summer bushfires\" OR \"Black Summer\" OR \"Australian bushfires\" OR \"Australia bushfires\") AND (\"caesarean sections\" OR \"cesarean sections\" OR \"C-section rate\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 0,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-10T14:09:33Z"
+    }
+   }
+  },
+  "rc:CR0048": {
+   "stone": "c116",
+   "q": {
+    "guardian": "(\"Black Summer bushfires\" OR \"Black Summer\" OR \"Australian bushfires\" OR \"Australia bushfires\") AND (\"gestational diabetes\" OR \"pregnancy diabetes\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 2,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-10T14:10:28Z"
+    }
+   }
+  },
+  "rc:CR0049": {
+   "stone": "c051",
+   "q": {
+    "guardian": "(\"Camp Fire\" OR \"Camp Fire wildfire\") AND (\"preterm birth\" OR \"premature birth\" OR \"wildfire smoke\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 25,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-10T14:10:10Z"
+    }
+   }
+  },
+  "rc:CR0051": {
+   "stone": "c147",
+   "q": {
+    "guardian": "(\"Valencia floods\" OR \"Valencia flooding\" OR \"Spain floods\" OR \"DANA storm\") AND (\"premature births\" OR \"preterm birth\" OR \"premature babies\" OR \"prematurity\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 0,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-10T14:09:30Z"
+    }
+   }
+  },
+  "rc:CR0053": {
+   "stone": "c035",
+   "q": {
+    "guardian": "(\"Zhengzhou floods\" OR \"Henan floods\" OR \"Zhengzhou rainstorm\") AND (\"twin pregnancy\" OR \"ectopic pregnancy\" OR \"monozygotic twins\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 0,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-10T14:07:50Z"
+    }
+   }
+  },
+  "rc:CR0054": {
+   "stone": "c035",
+   "q": {
+    "guardian": "(\"Zhengzhou floods\" OR \"Henan floods\" OR \"Zhengzhou rainstorm\") AND (\"egg freezing\" OR \"oocyte vitrification\" OR \"fertilization rate\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 0,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-10T14:07:46Z"
+    }
+   }
+  },
+  "rc:CR0055": {
+   "stone": "c019",
+   "q": {
+    "guardian": "(\"mass shootings\" OR \"mass shooting\" OR \"deadliest mass shooting\") AND (\"traffic fatalities\" OR \"traffic deaths\" OR \"road deaths\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 10,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-10T14:11:34Z"
+    }
+   }
+  },
+  "rc:CR0057": {
+   "stone": "c068",
+   "q": {
+    "guardian": "(\"Typhoon Faxai\" OR \"Faxai\") AND (\"heat-related illness\" OR \"heatstroke\" OR \"heat stroke\" OR \"ambulance transports\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 0,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-10T14:07:31Z"
+    }
+   }
+  },
+  "rc:CR0058": {
+   "stone": "c068",
+   "q": {
+    "guardian": "(\"Typhoon Faxai\" OR \"Faxai\") AND (\"typhoon deaths\" OR \"excess mortality\" OR \"power outage deaths\" OR \"excess deaths\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 0,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-10T14:09:26Z"
+    }
+   }
+  },
+  "rc:CR0059": {
+   "stone": "c075",
+   "q": {
+    "guardian": "(\"Woolsey Fire\") AND (\"outpatient visits\" OR \"doctor visits\" OR \"medical appointments\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 0,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-10T14:08:57Z"
+    }
+   }
+  },
+  "rc:CR0060": {
+   "stone": "c075",
+   "q": {
+    "guardian": "(\"Woolsey Fire\") AND (\"wildfire smoke\" OR \"respiratory problems\" OR \"cardiorespiratory\" OR \"smoke exposure\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 4,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-10T14:08:52Z"
+    }
+   }
+  },
+  "rc:CR0062": {
+   "stone": "c114",
+   "q": {
+    "guardian": "(\"Hurricane Maria\") AND (\"dialysis patients\" OR \"dialysis treatment\" OR \"kidney patients\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 1,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-10T14:06:10Z"
+    }
+   }
+  },
+  "rc:CR0064": {
+   "stone": "c116",
+   "q": {
+    "guardian": "(\"Black Summer bushfires\" OR \"Black Summer\" OR \"Australian bushfires\" OR \"Australia bushfires\") AND (\"low birthweight babies\" OR \"low birth weight\" OR \"low birthweight\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 1,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-10T14:11:15Z"
+    }
+   }
+  },
+  "rc:CR0065": {
+   "stone": "c116",
+   "q": {
+    "guardian": "(\"Black Summer bushfires\" OR \"Black Summer\" OR \"Australian bushfires\" OR \"Australia bushfires\") AND (\"preterm births\" OR \"premature births\" OR \"premature babies\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 2,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-10T14:11:10Z"
+    }
+   }
+  },
+  "rc:CR0066": {
+   "stone": "c116",
+   "q": {
+    "guardian": "(\"Black Summer bushfires\" OR \"Black Summer\" OR \"Australian bushfires\" OR \"Australia bushfires\") AND (\"neonatal intensive care\" OR \"NICU admissions\" OR \"newborn intensive care\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 1,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-10T14:07:11Z"
+    }
+   }
+  },
+  "rc:CR0067": {
+   "stone": "c114",
+   "q": {
+    "guardian": "(\"Hurricane Maria\") AND (\"excess deaths\" OR \"death toll\" OR \"excess mortality\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 83,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-10T14:06:02Z"
+    }
+   }
+  },
+  "rc:CR0068": {
+   "stone": "c073",
+   "q": {
+    "guardian": "(\"Southern California wildfires\" OR \"Witch Creek fire\" OR \"Witch fire\" OR \"San Diego wildfires\") AND (\"respiratory hospitalizations\" OR \"wildfire smoke\" OR \"smoke exposure\" OR \"asthma admissions\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 0,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-10T14:06:42Z"
+    }
+   }
+  },
+  "rc:CR0069": {
+   "stone": "c074",
+   "q": {
+    "guardian": "(\"Kermanshah earthquake\" OR \"Iran-Iraq earthquake\" OR \"Sarpol-e Zahab earthquake\") AND (\"tuberculosis\" OR \"pulmonary tuberculosis\" OR \"TB cases\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 0,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-10T14:09:12Z"
+    }
+   }
+  },
+  "rc:CR0070": {
+   "stone": "c014",
+   "q": {
+    "guardian": "(\"Kumamoto earthquake\" OR \"Kumamoto earthquakes\" OR \"Kumamoto quake\") AND (\"acute myocardial infarction\" OR \"myocardial infarction\" OR \"heart attacks\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 0,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-10T14:08:30Z"
+    }
+   }
+  },
+  "rc:CR0071": {
+   "stone": "c014",
+   "q": {
+    "guardian": "(\"Kumamoto earthquake\" OR \"Kumamoto earthquakes\" OR \"Kumamoto quake\") AND (\"cardiac events\" OR \"cardiac arrest\" OR \"heart failure\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 1,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-10T14:11:32Z"
+    }
+   }
+  },
+  "rc:CR0072": {
+   "stone": "c085",
+   "q": {
+    "guardian": "(\"Brooklyn blackout\" OR \"Brooklyn power outage\" OR \"Con Edison outage\") AND (\"asthma attacks\" OR \"asthma cases\" OR \"asthma emergency visits\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 0,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-10T14:10:53Z"
+    }
+   }
+  },
+  "rc:CR0073": {
+   "stone": "c096",
+   "q": {
+    "guardian": "(\"NYCHA power outages\" OR \"NYCHA outages\" OR \"public housing outages\") AND (\"asthma attacks\" OR \"asthma emergency visits\" OR \"childhood asthma\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 0,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-10T14:09:46Z"
+    }
+   }
+  },
+  "rc:CR0074": {
+   "stone": "c141",
+   "q": {
+    "guardian": "(\"Camp Fire\" OR \"Camp Fire smoke\" OR \"Bay Area smoke\") AND (\"respiratory hospitalizations\" OR \"respiratory admissions\" OR \"hospital admissions\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 2,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-10T14:05:59Z"
+    }
+   }
+  },
+  "rc:CR0075": {
+   "stone": "c042",
+   "q": {
+    "guardian": "(\"Canadian wildfire smoke\" OR \"Canada wildfire smoke\" OR \"Canadian wildfires\") AND (\"asthma\" OR \"asthma attacks\" OR \"emergency room visits\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 16,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-10T14:10:03Z"
+    }
+   }
+  },
+  "rc:CR0079": {
+   "stone": "c109",
+   "q": {
+    "guardian": "(\"Camp Fire\" OR \"Woolsey Fire\" OR \"Camp and Woolsey\") AND (\"respiratory hospitalizations\" OR \"respiratory illness\" OR \"smoke inhalation\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 7,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-10T14:10:11Z"
+    }
+   }
+  },
+  "rc:CR0081": {
+   "stone": "c034",
+   "q": {
+    "guardian": "(\"Hurricane Florence\" OR \"Storm Florence\") AND (\"gastrointestinal illness\" OR \"hog farms\" OR \"waste lagoons\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 5,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-10T14:08:13Z"
+    }
+   }
+  },
+  "rc:CR0086": {
+   "stone": "c053",
+   "q": {
+    "guardian": "(\"Hurricane Sandy\" OR \"superstorm Sandy\") AND (\"asthma exacerbations\" OR \"asthma attacks\" OR \"asthma flare-ups\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 1,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-10T14:09:22Z"
+    }
+   }
+  },
+  "rc:CR0087": {
+   "stone": "c120",
+   "q": {
+    "guardian": "(\"Indian Ocean tsunami\" OR \"Boxing Day tsunami\" OR \"Asian tsunami\") AND (\"thyroid hormone\" OR \"thyroid function\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 0,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-10T14:11:12Z"
+    }
+   }
+  },
+  "rc:CR0088": {
+   "stone": "c120",
+   "q": {
+    "guardian": "(\"Indian Ocean tsunami\" OR \"Boxing Day tsunami\" OR \"Asian tsunami\") AND (\"cardiometabolic risk\" OR \"cardiometabolic disease\" OR \"heart disease risk\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 0,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-10T14:11:33Z"
+    }
+   }
+  },
+  "rc:CR0090": {
+   "stone": "c024",
+   "q": {
+    "guardian": "(\"Hurricane Harvey\" OR \"Tropical Storm Harvey\") AND (\"nursing home residents\" OR \"nursing home deaths\" OR \"COPD\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 2,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-10T14:11:03Z"
+    }
+   }
+  },
+  "rc:CR0091": {
+   "stone": "c142",
+   "q": {
+    "guardian": "(\"Iberian blackout\" OR \"Iberian Peninsula blackout\" OR \"Spain blackout\" OR \"Spanish blackout\") AND (\"excess deaths\" OR \"all-cause mortality\" OR \"excess mortality\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 0,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-10T14:11:06Z"
+    }
+   }
+  },
+  "rc:CR0093": {
+   "stone": "c014",
+   "q": {
+    "guardian": "(\"Kumamoto earthquake\" OR \"Kumamoto earthquakes\" OR \"Kumamoto quake\") AND (\"traffic crashes\" OR \"traffic accidents\" OR \"road accidents\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 0,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-10T14:09:28Z"
+    }
+   }
+  },
+  "rc:CR0094": {
+   "stone": "c048",
+   "q": {
+    "guardian": "(\"Uber in Brazil\" OR \"Uber Brazil\") AND (\"traffic deaths\" OR \"road deaths\" OR \"traffic injuries\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 0,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-10T14:06:05Z"
+    }
+   }
+  },
+  "rc:CR0096": {
+   "stone": "c150",
+   "q": {
+    "guardian": "(\"Didi Chuxing\" OR \"China ride-hailing\" OR \"Chinese ride-hailing\" OR \"Uber China\") AND (\"road traffic deaths\" OR \"traffic fatalities\" OR \"road deaths\" OR \"traffic accidents\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 0,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-10T14:06:58Z"
+    }
+   }
+  },
+  "rc:CR0097": {
+   "stone": "c098",
+   "q": {
+    "guardian": "(\"clocks go back\" OR \"clocks fall back\" OR \"daylight saving ends\" OR \"end of daylight saving\") AND (\"deer collisions\" OR \"deer-vehicle collisions\" OR \"deer crashes\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 1,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-10T14:06:04Z"
+    }
+   }
+  },
+  "rc:CR0102": {
+   "stone": "c098",
+   "q": {
+    "guardian": "(\"clocks go back\" OR \"clocks fall back\" OR \"daylight saving ends\" OR \"end of daylight saving\") AND (\"heart attacks\" OR \"myocardial infarction\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 3,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-10T14:11:41Z"
+    }
+   }
+  },
+  "rc:CR0105": {
+   "stone": "c143",
+   "q": {
+    "guardian": "(\"daylight saving time\" OR \"clocks go forward\" OR \"clocks go back\" OR \"British Summer Time\") AND (\"road traffic fatalities\" OR \"road deaths\" OR \"road casualties\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 15,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-10T14:08:11Z"
+    }
+   }
+  },
+  "rc:CR0108": {
+   "stone": "c103",
+   "q": {
+    "guardian": "(\"spring forward\" OR \"clocks go forward\" OR \"daylight saving begins\" OR \"clocks spring forward\") AND (\"fatal crashes\" OR \"traffic fatalities\" OR \"road deaths\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 1,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-10T14:06:01Z"
+    }
+   }
+  },
+  "rc:CR0110": {
+   "stone": "c088",
+   "q": {
+    "guardian": "(\"football match\" OR \"derby match\" OR \"local derby\") AND (\"male mortality\" OR \"excess deaths\" OR \"deaths among men\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 7,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-10T14:09:08Z"
+    }
+   }
+  },
+  "rc:CR0111": {
+   "stone": "c016",
+   "q": {
+    "guardian": "(\"Cyclone Batsirai\" OR \"Batsirai\") AND (\"vaccination rates\" OR \"vaccination coverage\" OR \"immunization rates\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 0,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-10T14:09:01Z"
+    }
+   }
+  },
+  "rc:CR0114": {
+   "stone": "c017",
+   "q": {
+    "guardian": "(\"Los Angeles wildfires\" OR \"LA wildfires\" OR \"Palisades fire\" OR \"Eaton fire\") AND (\"cardiovascular care\" OR \"cardiovascular visits\" OR \"virtual visits\" OR \"telehealth visits\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 0,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-10T14:10:51Z"
+    }
+   }
+  },
+  "rc:CR0116": {
+   "stone": "c017",
+   "q": {
+    "guardian": "(\"Los Angeles wildfires\" OR \"LA wildfires\" OR \"Palisades fire\" OR \"Eaton fire\") AND (\"neuropsychiatric visits\" OR \"mental health visits\" OR \"psychiatric visits\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 0,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-10T14:08:14Z"
+    }
+   }
+  },
+  "rc:CR0122": {
+   "stone": "c027",
+   "q": {
+    "guardian": "(\"Ramayan\" OR \"Ramayan serial\" OR \"Ramayan TV series\" OR \"Doordarshan Ramayan\") AND (\"Hindu religious schools\" OR \"Hindu schools\" OR \"religious schools\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 0,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-10T14:10:49Z"
+    }
+   }
+  },
+  "rc:CR0123": {
+   "stone": "c093",
+   "q": {
+    "guardian": "(\"broadband internet\" OR \"broadband access\" OR \"broadband rollout\") AND (\"health outcomes\" OR \"patient outcomes\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 0,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-10T14:08:49Z"
+    }
+   }
+  },
+  "rc:CR0124": {
+   "stone": "c093",
+   "q": {
+    "guardian": "(\"broadband internet\" OR \"broadband access\" OR \"broadband rollout\") AND (\"patient choice\" OR \"hospital quality\" OR \"provider quality\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 0,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-10T14:06:06Z"
+    }
+   }
+  },
+  "rc:CR0125": {
+   "stone": "c093",
+   "q": {
+    "guardian": "(\"broadband internet\" OR \"broadband access\" OR \"broadband rollout\") AND (\"provider quality\" OR \"hospital quality\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 0,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-10T14:06:21Z"
+    }
+   }
+  },
+  "rc:CR0127": {
+   "stone": "c153",
+   "q": {
+    "guardian": "(\"school shootings\" OR \"school shooting\" OR \"fatal school shooting\") AND (\"pro-gun PACs\" OR \"gun lobby donations\" OR \"NRA donations\" OR \"NRA contributions\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 3,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-10T14:07:59Z"
+    }
+   }
+  },
+  "rc:CR0132": {
+   "stone": "c029",
+   "q": {
+    "guardian": "(\"iPhone\" OR \"first iPhone\" OR \"original iPhone\") AND (\"teen pregnancy\" OR \"birth rate\" OR \"fertility rate\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 7,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-10T14:09:42Z"
+    }
+   }
+  },
+  "v4:CR0003": {
+   "stone": "c082",
+   "q": {
+    "guardian": "(\"Emilia earthquake\" OR \"Emilia-Romagna earthquake\" OR \"Emilia-Romagna quake\") AND (\"cardiovascular events\" OR \"heart attacks\" OR \"cardiac emergencies\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 0,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-10T14:08:43Z"
+    }
+   }
+  },
+  "v4:CR0004": {
+   "stone": "c004",
+   "q": {
+    "guardian": "(\"Newcastle earthquake\" OR \"Newcastle quake\") AND (\"myocardial infarction\" OR \"heart attack deaths\" OR \"coronary deaths\" OR \"cardiac deaths\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 0,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-10T14:08:45Z"
+    }
+   }
+  },
+  "v4:CR0006": {
+   "stone": "c072",
+   "q": {
+    "guardian": "(\"Athens earthquake\" OR \"Alkyonides earthquake\") AND (\"cardiac deaths\" OR \"heart attack deaths\" OR \"cardiac mortality\" OR \"heart attacks\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 1,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-10T14:08:31Z"
+    }
+   }
+  },
+  "v4:CR0008": {
+   "stone": "c055",
+   "q": {
+    "guardian": "(\"Hurricane Matthew\") AND (\"cardiovascular mortality\" OR \"cardiovascular deaths\" OR \"heart disease deaths\" OR \"heart attack deaths\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 0,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-10T14:06:30Z"
+    }
+   }
+  },
+  "v4:CR0009": {
+   "stone": "c005",
+   "q": {
+    "guardian": "(\"Black Summer\" OR \"Black Summer bushfires\" OR \"Australian bushfires\" OR \"bushfire smoke\") AND (\"low birthweight\" OR \"low birth weight\" OR \"birth weight\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 3,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-10T14:07:34Z"
+    }
+   }
+  },
+  "v4:CR0011": {
+   "stone": "c005",
+   "q": {
+    "guardian": "(\"Black Summer\" OR \"Black Summer bushfires\" OR \"Australian bushfires\" OR \"bushfire smoke\") AND (\"neonatal intensive care\" OR \"NICU admissions\" OR \"newborn intensive care\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 1,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-10T14:10:01Z"
+    }
+   }
+  },
+  "v4:CR0014": {
+   "stone": "c144",
+   "q": {
+    "guardian": "(\"Indian Ocean tsunami\" OR \"Boxing Day tsunami\" OR \"Asian tsunami\") AND (\"thyroid hormone\" OR \"thyroid function\" OR \"T3 levels\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 0,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-10T14:08:51Z"
+    }
+   }
+  },
+  "v4:CR0015": {
+   "stone": "c113",
+   "q": {
+    "guardian": "(\"Great East Japan Earthquake\" OR \"Tohoku earthquake\" OR \"Japan tsunami\") AND (\"hospital admissions\" OR \"ambulatory care\" OR \"preventable hospitalizations\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 1,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-10T14:09:11Z"
+    }
+   }
+  },
+  "v4:CR0017": {
+   "stone": "c105",
+   "q": {
+    "guardian": "(\"Hurricane Katrina\" OR \"Hurricane Rita\" OR \"Katrina and Rita\") AND (\"fetal death\" OR \"stillbirth rate\" OR \"fetal mortality\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 0,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-10T14:08:16Z"
+    }
+   }
+  },
+  "v4:CR0018": {
+   "stone": "c139",
+   "q": {
+    "guardian": "(\"Woolsey Fire\" OR \"Woolsey wildfire\") AND (\"outpatient visits\" OR \"durable medical equipment\" OR \"medical equipment users\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 0,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-10T14:11:40Z"
+    }
+   }
+  },
+  "v4:CR0019": {
+   "stone": "c139",
+   "q": {
+    "guardian": "(\"Woolsey Fire\" OR \"Woolsey wildfire\") AND (\"cardiorespiratory visits\" OR \"durable medical equipment\" OR \"respiratory hospitalizations\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 0,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-10T14:08:20Z"
+    }
+   }
+  },
+  "v4:CR0021": {
+   "stone": "c146",
+   "q": {
+    "guardian": "(\"Stockholm attack\" OR \"Stockholm truck attack\" OR \"Stockholm terror attack\" OR \"Drottninggatan\") AND (\"emergency department visits\" OR \"emergency room visits\" OR \"emergency department arrivals\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 0,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-10T14:10:52Z"
+    }
+   }
+  },
+  "v4:CR0023": {
+   "stone": "c053",
+   "q": {
+    "guardian": "(\"Hurricane Sandy\" OR \"superstorm Sandy\") AND (\"asthma exacerbations\" OR \"asthma symptoms\" OR \"asthma attacks\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 1,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-10T14:08:34Z"
+    }
+   }
+  },
+  "v4:CR0025": {
+   "stone": "c087",
+   "q": {
+    "guardian": "(\"Uber\" OR \"UberX\" OR \"Uber launch\") AND (\"binge drinking\" OR \"heavy drinking\" OR \"alcohol consumption\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 19,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-10T14:09:54Z"
+    }
+   }
+  },
+  "v4:CR0029": {
+   "stone": "c125",
+   "q": {
+    "guardian": "(\"Didi Chuxing\" OR \"Didi Kuaidi\" OR \"Didi Dache\" OR \"ride-hailing\") AND (\"road traffic fatalities\" OR \"traffic deaths\" OR \"road accident deaths\" OR \"traffic accidents\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 1,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-10T14:08:36Z"
+    }
+   }
+  },
+  "v4:CR0031": {
+   "stone": "c083",
+   "q": {
+    "guardian": "(\"daylight saving time ends\" OR \"clocks go back\" OR \"fall back\" OR \"end of daylight saving\") AND (\"deer-vehicle collisions\" OR \"deer collisions\" OR \"deer crashes\" OR \"hitting deer\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 1,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-10T14:06:32Z"
+    }
+   }
+  },
+  "v4:CR0034": {
+   "stone": "c044",
+   "q": {
+    "guardian": "(\"hosting the Olympics\" OR \"hosting the World Cup\" OR \"host the Olympics\" OR \"host the World Cup\") AND (\"employment rate\" OR \"unemployment rate\" OR \"job creation\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 9,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-10T14:07:02Z"
+    }
+   }
+  },
+  "v4:CR0035": {
+   "stone": "c044",
+   "q": {
+    "guardian": "(\"hosting the Olympics\" OR \"hosting the World Cup\" OR \"host the Olympics\" OR \"host the World Cup\") AND (\"GDP growth\" OR \"economic impact\" OR \"service sector\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 19,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-10T14:10:48Z"
+    }
+   }
+  },
+  "v4:CR0039": {
+   "stone": "c113",
+   "q": {
+    "guardian": "(\"Great East Japan Earthquake\" OR \"Tohoku earthquake\" OR \"Japan tsunami\") AND (\"obesity risk\" OR \"weight gain\" OR \"food outlets\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 1,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-10T14:08:27Z"
+    }
+   }
+  },
+  "v4:CR0040": {
+   "stone": "c122",
+   "q": {
+    "guardian": "(\"Würzburg attack\" OR \"Wurzburg attack\" OR \"Ansbach bombing\" OR \"Ansbach attack\") AND (\"hate speech\" OR \"online hate\" OR \"anti-refugee\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 0,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-10T14:09:34Z"
+    }
+   }
+  },
+  "v4:CR0042": {
+   "stone": "c113",
+   "q": {
+    "guardian": "(\"Great East Japan Earthquake\" OR \"Tohoku earthquake\" OR \"Japan tsunami\") AND (\"body mass index\" OR \"waist circumference\" OR \"BMI\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 0,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-10T14:08:32Z"
+    }
+   }
+  },
+  "v4:CR0043": {
+   "stone": "c149",
+   "q": {
+    "guardian": "(\"Burkina Faso attack\" OR \"Burkina Faso terrorist attack\" OR \"Burkina Faso jihadists\" OR \"Burkina Faso militants\") AND (\"family planning\" OR \"contraceptive use\" OR \"contraception uptake\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 0,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-10T14:08:56Z"
+    }
+   }
+  },
+  "v4:CR0044": {
+   "stone": "c113",
+   "q": {
+    "guardian": "(\"Great East Japan Earthquake\" OR \"Tohoku earthquake\" OR \"Japan tsunami\") AND (\"cognitive impairment\" OR \"cognitive decline\" OR \"dementia risk\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 0,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-10T14:11:24Z"
+    }
+   }
+  },
+  "v4:CR0047": {
+   "stone": "c060",
+   "q": {
+    "guardian": "(\"London 2012\" OR \"London Olympics\" OR \"London Olympic Games\" OR \"2012 Olympics\") AND (\"adolescent depression\" OR \"teenage depression\" OR \"adolescent well-being\" OR \"teen mental health\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 0,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-10T14:09:04Z"
+    }
+   }
+  },
+  "v4:CR0048": {
+   "stone": "c050",
+   "q": {
+    "guardian": "(\"Beijing Olympics\" OR \"Beijing Olympic Games\" OR \"Beijing Games\") AND (\"underweight children\" OR \"child malnutrition\" OR \"childhood malnutrition\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 1,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-10T14:10:32Z"
+    }
+   }
+  },
+  "v4:CR0050": {
+   "stone": "c028",
+   "q": {
+    "guardian": "(\"severe tornado\" OR \"deadly tornado\" OR \"violent tornado\" OR \"tornado outbreak\") AND (\"low birth weight\" OR \"Black maternal health\" OR \"birth outcomes\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 0,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-10T14:09:03Z"
+    }
+   }
+  },
+  "v4:CR0051": {
+   "stone": "c138",
+   "q": {
+    "guardian": "(\"2002 World Cup\" OR \"2002 FIFA World Cup\" OR \"Korea Japan World Cup\") AND (\"school performance\" OR \"academic performance\" OR \"test scores\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 0,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-10T14:11:20Z"
+    }
+   }
+  },
+  "v4:CR0052": {
+   "stone": "c138",
+   "q": {
+    "guardian": "(\"2002 World Cup\" OR \"2002 FIFA World Cup\" OR \"Korea Japan World Cup\") AND (\"student wellbeing\" OR \"mental wellbeing\" OR \"adolescent mental health\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 1,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-10T14:08:44Z"
+    }
+   }
+  },
+  "v4:CR0053": {
+   "stone": "c131",
+   "q": {
+    "guardian": "(\"Tokyo Olympics\" OR \"Tokyo 2020\" OR \"Tokyo Olympic Games\") AND (\"Covid cases Japan\" OR \"Covid-19 cases\" OR \"Japan coronavirus cases\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 214,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-10T14:06:17Z"
+    }
+   }
+  },
+  "v4:CR0055": {
+   "stone": "c060",
+   "q": {
+    "guardian": "(\"London 2012\" OR \"London Olympics\" OR \"London Olympic Games\" OR \"2012 Olympics\") AND (\"alcohol consumption\" OR \"alcohol and tobacco\" OR \"drinking habits\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 16,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-10T14:06:20Z"
+    }
+   }
+  },
+  "v4:CR0056": {
+   "stone": "c003",
+   "q": {
+    "guardian": "(\"commercial television\" OR \"commercial TV\" OR \"private broadcasters\" OR \"private television\") AND (\"life satisfaction\" OR \"subjective well-being\" OR \"subjective wellbeing\" OR \"happiness survey\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 0,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-10T14:06:48Z"
+    }
+   }
+  },
+  "v4:CR0060": {
+   "stone": "c110",
+   "q": {
+    "guardian": "(\"Women's Day march\" OR \"International Women's Day march\" OR \"Women's Day demonstration\") AND (\"coronavirus cases\" OR \"Covid cases\" OR \"COVID-19 outbreak\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 0,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-10T14:06:53Z"
+    }
+   }
+  },
+  "v4:CR0064": {
+   "stone": "c001",
+   "q": {
+    "guardian": "(\"Super Bowl\" OR \"Super Bowl victory\") AND (\"alcohol-related deaths\" OR \"alcohol mortality\" OR \"alcohol-related mortality\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 0,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-10T14:08:47Z"
+    }
+   }
+  },
+  "v4:CR0066": {
+   "stone": "c067",
+   "q": {
+    "guardian": "(\"album release day\" OR \"album release\" OR \"album drop\" OR \"album launch\") AND (\"traffic deaths\" OR \"road fatalities\" OR \"traffic fatalities\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 1,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-10T14:11:00Z"
+    }
+   }
+  },
+  "v4:CR0067": {
+   "stone": "c011",
+   "q": {
+    "guardian": "(\"Indiana daylight saving time\" OR \"Indiana daylight savings time\" OR \"Indiana daylight time\" OR \"Indiana time change\") AND (\"residential electricity demand\" OR \"electricity consumption\" OR \"electricity demand\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 0,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-10T14:07:15Z"
+    }
+   }
+  },
+  "v4:CR0069": {
+   "stone": "c059",
+   "q": {
+    "guardian": "(\"African footballers\" OR \"European football clubs\" OR \"narrow defeat\" OR \"last-minute defeat\") AND (\"street protests\" OR \"anti-government protests\" OR \"protest rate\" OR \"civil unrest\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 1,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-10T14:07:23Z"
+    }
+   }
+  },
+  "v4:CR0072": {
+   "stone": "c113",
+   "q": {
+    "guardian": "(\"Great East Japan Earthquake\" OR \"Tohoku earthquake\" OR \"Japan tsunami\") AND (\"childhood obesity\" OR \"outdoor play\" OR \"child obesity\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 0,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-10T14:10:59Z"
+    }
+   }
+  },
+  "v4:CR0073": {
+   "stone": "c113",
+   "q": {
+    "guardian": "(\"Great East Japan Earthquake\" OR \"Tohoku earthquake\" OR \"Japan tsunami\") AND (\"physical fitness\" OR \"athletic performance\" OR \"children's fitness\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 0,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-10T14:09:45Z"
+    }
+   }
+  },
+  "v4:CR0074": {
+   "stone": "c065",
+   "q": {
+    "guardian": "(\"World Cup\" OR \"FIFA World Cup\") AND (\"hours worked\" OR \"working hours\" OR \"lost productivity\" OR \"absenteeism\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 178,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-10T14:06:08Z"
+    }
+   }
+  },
+  "v4:CR0076": {
+   "stone": "c134",
+   "q": {
+    "guardian": "(\"CunBA\" OR \"Village Basketball Association\" OR \"Village Super League\" OR \"Cunchao\") AND (\"tertiary sector\" OR \"tertiary industry\" OR \"service sector\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 0,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-10T14:07:57Z"
+    }
+   }
+  },
+  "v4:CR0078": {
+   "stone": "c151",
+   "q": {
+    "guardian": "(\"original iPhone\" OR \"first iPhone\" OR \"iPhone launch\" OR \"AT&T iPhone\") AND (\"teen pregnancy\" OR \"teen births\" OR \"teenage pregnancy\" OR \"teenage births\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 0,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-10T14:08:35Z"
+    }
+   }
+  },
+  "v4:CR0079": {
+   "stone": "c095",
+   "q": {
+    "guardian": "(\"Norway broadband\" OR \"Norwegian broadband\" OR \"broadband rollout\") AND (\"labor supply\" OR \"female labor supply\" OR \"women's employment\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 0,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-10T14:06:29Z"
+    }
+   }
+  },
+  "v4:CR0080": {
+   "stone": "c095",
+   "q": {
+    "guardian": "(\"Norway broadband\" OR \"Norwegian broadband\" OR \"broadband rollout\") AND (\"fertility rate\" OR \"birth rate\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 1,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-10T14:06:34Z"
+    }
+   }
+  },
+  "v4:CR0081": {
+   "stone": "c002",
+   "q": {
+    "guardian": "(\"digital switchover\" OR \"digital TV switchover\" OR \"analogue switch-off\" OR \"digital switch-over\") AND (\"maternal employment\" OR \"working mothers\" OR \"mothers' employment\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 1,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-10T14:10:15Z"
+    }
+   }
+  },
+  "v4:CR0082": {
+   "stone": "c002",
+   "q": {
+    "guardian": "(\"digital switchover\" OR \"digital TV switchover\" OR \"analogue switch-off\" OR \"digital switch-over\") AND (\"housework\" OR \"household chores\" OR \"domestic chores\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 0,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-10T14:10:14Z"
+    }
+   }
+  },
+  "v4:CR0084": {
+   "stone": "c124",
+   "q": {
+    "guardian": "(\"undersea cables\" OR \"submarine cables\" OR \"undersea fiber\" OR \"Senegal broadband\") AND (\"bed nets\" OR \"bednets\" OR \"malaria nets\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 1,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-10T14:11:30Z"
+    }
+   }
+  },
+  "v4:CR0085": {
+   "stone": "c124",
+   "q": {
+    "guardian": "(\"undersea cables\" OR \"submarine cables\" OR \"undersea fiber\" OR \"Senegal broadband\") AND (\"antenatal care\" OR \"child immunization\" OR \"childhood vaccination\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 0,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-10T14:06:14Z"
+    }
+   }
+  },
+  "v4:CR0087": {
+   "stone": "c002",
+   "q": {
+    "guardian": "(\"digital switchover\" OR \"digital TV switchover\" OR \"analogue switch-off\" OR \"digital switch-over\") AND (\"academic performance\" OR \"school performance\" OR \"exam results\" OR \"test scores\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 0,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-10T14:07:27Z"
+    }
+   }
+  },
+  "v4:CR0088": {
+   "stone": "c002",
+   "q": {
+    "guardian": "(\"digital switchover\" OR \"digital TV switchover\" OR \"analogue switch-off\" OR \"digital switch-over\") AND (\"underage drinking\" OR \"teenage drinking\" OR \"children drinking alcohol\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 0,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-10T14:08:19Z"
+    }
+   }
+  },
+  "v4:CR0090": {
+   "stone": "c077",
+   "q": {
+    "guardian": "(\"Ramayan\" OR \"Ramayana\" OR \"Ramayan serial\" OR \"Ramayan TV series\") AND (\"Hindu identity\" OR \"religious identity\" OR \"Hindu nationalism\" OR \"Hindutva\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 3,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-10T14:10:19Z"
+    }
+   }
+  },
+  "v4:CR0093": {
+   "stone": "c010",
+   "q": {
+    "guardian": "(\"Peru broadband\" OR \"broadband in Peru\" OR \"Peruvian broadband\" OR \"internet in Peru\") AND (\"business growth\" OR \"firm growth\" OR \"small businesses\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 0,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-10T14:06:26Z"
+    }
+   }
+  },
+  "v4:CR0094": {
+   "stone": "c010",
+   "q": {
+    "guardian": "(\"Peru broadband\" OR \"broadband in Peru\" OR \"Peruvian broadband\" OR \"internet in Peru\") AND (\"new businesses\" OR \"business start-ups\" OR \"business formation\" OR \"firm entry\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 0,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-10T14:06:38Z"
+    }
+   }
+  },
+  "v4:CR0095": {
+   "stone": "c010",
+   "q": {
+    "guardian": "(\"Peru broadband\" OR \"broadband in Peru\" OR \"Peruvian broadband\" OR \"internet in Peru\") AND (\"business closures\" OR \"business failures\" OR \"firm exit\" OR \"company closures\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 0,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-10T14:08:23Z"
+    }
+   }
+  },
+  "v4:CR0096": {
+   "stone": "c010",
+   "q": {
+    "guardian": "(\"Peru broadband\" OR \"broadband in Peru\" OR \"Peruvian broadband\" OR \"internet in Peru\") AND (\"bank credit\" OR \"bank lending\" OR \"small business lending\" OR \"credit to firms\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 0,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-10T14:11:29Z"
+    }
+   }
+  },
+  "v4:CR0097": {
+   "stone": "c061",
+   "q": {
+    "guardian": "(\"3G network\" OR \"3G coverage\" OR \"3G rollout\" OR \"Tanzania mobile coverage\") AND (\"household consumption\" OR \"household spending\" OR \"consumer spending\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 1,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-10T14:11:04Z"
+    }
+   }
+  },
+  "v4:CR0098": {
+   "stone": "c061",
+   "q": {
+    "guardian": "(\"3G network\" OR \"3G coverage\" OR \"3G rollout\" OR \"Tanzania mobile coverage\") AND (\"poverty rate\" OR \"extreme poverty\" OR \"poverty reduction\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 0,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-10T14:11:26Z"
+    }
+   }
+  },
+  "v4:CR0099": {
+   "stone": "c061",
+   "q": {
+    "guardian": "(\"3G network\" OR \"3G coverage\" OR \"3G rollout\" OR \"Tanzania mobile coverage\") AND (\"labor force participation\" OR \"labour force participation\" OR \"workforce participation\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 0,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-10T14:09:07Z"
+    }
+   }
+  },
+  "v4:CR0102": {
+   "stone": "c061",
+   "q": {
+    "guardian": "(\"3G network\" OR \"3G coverage\" OR \"3G rollout\" OR \"Tanzania mobile coverage\") AND (\"farm employment\" OR \"agricultural employment\" OR \"agricultural jobs\" OR \"farm jobs\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 0,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-10T14:06:55Z"
+    }
+   }
+  },
+  "v4:CR0116": {
+   "stone": "c066",
+   "q": {
+    "guardian": "(\"Doctor Who Christmas special\" OR \"Doctor Who New Year special\" OR \"Doctor Who festive special\" OR \"Doctor Who Christmas episode\") AND (\"mortality rates\" OR \"death rates\" OR \"annual mortality\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 0,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-10T14:08:06Z"
+    }
+   }
+  },
+  "v4:CR0121": {
+   "stone": "c013",
+   "q": {
+    "guardian": "(\"General Electric Theater\" OR \"General Electric Theatre\" OR \"GE Theater\") AND (\"political donations\" OR \"campaign contributions\" OR \"campaign donations\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 0,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-10T14:06:24Z"
+    }
+   }
+  },
+  "v4:CR0122": {
+   "stone": "c069",
+   "q": {
+    "guardian": "(\"Barcelona attack\" OR \"Barcelona attacks\" OR \"Catalonia attacks\" OR \"Cambrils attack\") AND (\"low birth weight\" OR \"low-birth-weight babies\" OR \"birth weight\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 0,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-10T14:07:25Z"
+    }
+   }
+  },
+  "v4:CR0124": {
+   "stone": "c071",
+   "q": {
+    "guardian": "(\"Madrid train bombings\" OR \"Madrid bombings\" OR \"Madrid train bombing\" OR \"Madrid train attacks\") AND (\"premature births\" OR \"preterm birth\" OR \"premature babies\" OR \"prematurity\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 0,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-10T14:07:42Z"
+    }
+   }
+  },
+  "v4:CR0126": {
+   "stone": "c081",
+   "q": {
+    "guardian": "(\"Canterbury earthquakes\" OR \"Christchurch earthquake\" OR \"Christchurch earthquakes\" OR \"Canterbury quakes\") AND (\"PTSD\" OR \"post-traumatic stress\" OR \"mental disorders\" OR \"mental health\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 14,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-10T14:07:33Z"
+    }
+   }
+  },
+  "v4:CR0127": {
+   "stone": "c149",
+   "q": {
+    "guardian": "(\"Burkina Faso attack\" OR \"Burkina Faso terrorist attack\" OR \"Burkina Faso jihadists\" OR \"Burkina Faso militants\") AND (\"assisted deliveries\" OR \"facility deliveries\" OR \"institutional deliveries\" OR \"skilled birth attendance\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 0,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-10T14:06:13Z"
+    }
+   }
+  },
+  "v4:CR0129": {
+   "stone": "c149",
+   "q": {
+    "guardian": "(\"Burkina Faso attack\" OR \"Burkina Faso terrorist attack\" OR \"Burkina Faso jihadists\" OR \"Burkina Faso militants\") AND (\"antenatal care\" OR \"prenatal care\" OR \"antenatal visits\" OR \"prenatal visits\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 0,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-10T14:09:36Z"
+    }
+   }
+  },
+  "v4:CR0130": {
+   "stone": "c018",
+   "q": {
+    "guardian": "(\"Chile earthquake\" OR \"Chilean earthquake\" OR \"Chile quake\") AND (\"preterm births\" OR \"premature births\" OR \"gestational age\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 0,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-10T14:06:28Z"
+    }
+   }
+  },
+  "v4:CR0131": {
+   "stone": "c018",
+   "q": {
+    "guardian": "(\"Chile earthquake\" OR \"Chilean earthquake\" OR \"Chile quake\") AND (\"sex ratio\" OR \"sex ratio at birth\" OR \"male-to-female ratio\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 0,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-10T14:08:53Z"
+    }
+   }
+  },
+  "v4:CR0133": {
+   "stone": "c030",
+   "q": {
+    "guardian": "(\"Chile earthquake\" OR \"Chilean earthquake\" OR \"Maule earthquake\" OR \"Chile quake\") AND (\"birth rate\" OR \"baby boom\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 0,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-10T14:06:49Z"
+    }
+   }
+  },
+  "v4:CR0134": {
+   "stone": "c033",
+   "q": {
+    "guardian": "(\"Gujarat earthquake\" OR \"Bhuj earthquake\") AND (\"birth rate\" OR \"fertility rate\" OR \"baby boom\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 0,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-10T14:08:05Z"
+    }
+   }
+  },
+  "v4:CR0135": {
+   "stone": "c033",
+   "q": {
+    "guardian": "(\"Gujarat earthquake\" OR \"Bhuj earthquake\") AND (\"birth intervals\" OR \"birth spacing\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 0,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-10T14:11:17Z"
+    }
+   }
+  },
+  "v4:CR0141": {
+   "stone": "c038",
+   "q": {
+    "guardian": "(\"Hurricane Catarina\" OR \"Cyclone Catarina\") AND (\"low birth weight\" OR \"birth weight\" OR \"in utero exposure\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 0,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-10T14:09:18Z"
+    }
+   }
+  },
+  "v4:CR0143": {
+   "stone": "c038",
+   "q": {
+    "guardian": "(\"Hurricane Catarina\" OR \"Cyclone Catarina\") AND (\"fetal deaths\" OR \"fetal mortality\" OR \"stillbirths\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 0,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-10T14:10:07Z"
+    }
+   }
+  },
+  "v4:CR0149": {
+   "stone": "c144",
+   "q": {
+    "guardian": "(\"Indian Ocean tsunami\" OR \"Boxing Day tsunami\" OR \"Asian tsunami\") AND (\"orphaned children\" OR \"child schooling\" OR \"children's wellbeing\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 4,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-10T14:07:16Z"
+    }
+   }
+  },
+  "v4:CR0150": {
+   "stone": "c062",
+   "q": {
+    "guardian": "(\"Friuli earthquake\" OR \"Irpinia earthquake\" OR \"Friuli quake\" OR \"Irpinia quake\") AND (\"GDP per capita\" OR \"regional economy\" OR \"economic recovery\" OR \"reconstruction\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 2,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-10T14:09:21Z"
+    }
+   }
+  },
+  "v4:CR0151": {
+   "stone": "c045",
+   "q": {
+    "guardian": "(\"Pohang earthquake\" OR \"Pohang quake\") AND (\"population decline\" OR \"population loss\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 0,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-10T14:07:38Z"
+    }
+   }
+  },
+  "v4:CR0152": {
+   "stone": "c045",
+   "q": {
+    "guardian": "(\"Pohang earthquake\" OR \"Pohang quake\") AND (\"out-migration\" OR \"displaced residents\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 0,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-10T14:10:12Z"
+    }
+   }
+  },
+  "v4:CR0153": {
+   "stone": "c045",
+   "q": {
+    "guardian": "(\"Pohang earthquake\" OR \"Pohang quake\") AND (\"rental prices\" OR \"housing prices\" OR \"rent prices\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 0,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-10T14:09:24Z"
+    }
+   }
+  },
+  "v4:CR0154": {
+   "stone": "c126",
+   "q": {
+    "guardian": "(\"Banqiao Dam\" OR \"Banqiao Dam failure\" OR \"Zhumadian flood\" OR \"Banqiao disaster\") AND (\"years of schooling\" OR \"educational attainment\" OR \"schooling\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 0,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-10T14:07:37Z"
+    }
+   }
+  },
+  "v4:CR0155": {
+   "stone": "c126",
+   "q": {
+    "guardian": "(\"Banqiao Dam\" OR \"Banqiao Dam failure\" OR \"Zhumadian flood\" OR \"Banqiao disaster\") AND (\"age at marriage\" OR \"delayed marriage\" OR \"marriage age\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 0,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-10T14:06:12Z"
+    }
+   }
+  },
+  "v4:CR0156": {
+   "stone": "c043",
+   "q": {
+    "guardian": "(\"AMIA bombing\" OR \"AMIA attack\" OR \"Argentine Jewish center bombing\") AND (\"car theft\" OR \"auto theft\" OR \"police protection\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 0,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-10T14:08:24Z"
+    }
+   }
+  },
+  "v4:CR0157": {
+   "stone": "c155",
+   "q": {
+    "guardian": "(\"Nice attack\" OR \"Bastille Day attack\" OR \"Ansbach attack\" OR \"Wurzburg attack\") AND (\"asylum seekers\" OR \"refugee mental health\" OR \"asylum seeker mental health\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 2,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-10T14:09:50Z"
+    }
+   }
+  },
+  "v4:CR0159": {
+   "stone": "c097",
+   "q": {
+    "guardian": "(\"Mexico earthquake\" OR \"Mexico City earthquake\" OR \"Chiapas earthquake\") AND (\"cartel violence\" OR \"gang violence\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 0,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-10T14:08:10Z"
+    }
+   }
+  },
+  "v4:CR0161": {
+   "stone": "c097",
+   "q": {
+    "guardian": "(\"Mexico earthquake\" OR \"Mexico City earthquake\" OR \"Chiapas earthquake\") AND (\"cartel aid\" OR \"cartel handouts\" OR \"cartel relief efforts\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 0,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-10T14:08:07Z"
+    }
+   }
+  },
+  "v4:CR0163": {
+   "stone": "c104",
+   "q": {
+    "guardian": "(\"Ecuador earthquake\" OR \"Ecuadorian earthquake\" OR \"Pedernales earthquake\") AND (\"property crime\" OR \"theft arrests\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 0,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-10T14:07:22Z"
+    }
+   }
+  },
+  "v4:CR0164": {
+   "stone": "c104",
+   "q": {
+    "guardian": "(\"Ecuador earthquake\" OR \"Ecuadorian earthquake\" OR \"Pedernales earthquake\") AND (\"violent crime\" OR \"violent-crime arrests\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 0,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-10T14:10:02Z"
+    }
+   }
+  },
+  "v4:CR0165": {
+   "stone": "c031",
+   "q": {
+    "guardian": "(\"Paris attacks\" OR \"Charlie Hebdo attack\" OR \"Bataclan attack\" OR \"Bastille Day attack\") AND (\"mental health\" OR \"depression rates\" OR \"psychological impact\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 44,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-10T14:09:43Z"
+    }
+   }
+  },
+  "v4:CR0166": {
+   "stone": "c130",
+   "q": {
+    "guardian": "(\"Hurricane Katrina\" OR \"Katrina\") AND (\"reincarceration rate\" OR \"recidivism rate\" OR \"released prisoners\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 0,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-10T14:09:58Z"
+    }
+   }
+  },
+  "v4:CR0172": {
+   "stone": "c154",
+   "q": {
+    "guardian": "(\"Hurricane Floyd\" OR \"Tropical Storm Floyd\") AND (\"mental health visits\" OR \"outpatient mental health\" OR \"mental health services\" OR \"mental health care\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 0,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-10T14:10:23Z"
+    }
+   }
+  },
+  "v4:CR0173": {
+   "stone": "c154",
+   "q": {
+    "guardian": "(\"Hurricane Floyd\" OR \"Tropical Storm Floyd\") AND (\"psychiatric admissions\" OR \"psychiatric hospitalizations\" OR \"behavioral health admissions\" OR \"inpatient psychiatric care\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 0,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-10T14:10:47Z"
+    }
+   }
+  },
+  "v4:CR0174": {
+   "stone": "c154",
+   "q": {
+    "guardian": "(\"Hurricane Floyd\" OR \"Tropical Storm Floyd\") AND (\"antianxiety medication\" OR \"anti-anxiety medication\" OR \"anxiety medication\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 0,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-10T14:08:40Z"
+    }
+   }
+  },
+  "v4:CR0175": {
+   "stone": "c086",
+   "q": {
+    "guardian": "(\"Amapa blackout\" OR \"Amapa power outage\" OR \"Amapa power cut\") AND (\"hospital admissions\" OR \"hospitalizations\" OR \"hospitalisations\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 0,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-10T14:10:44Z"
+    }
+   }
+  },
+  "v4:CR0176": {
+   "stone": "c008",
+   "q": {
+    "guardian": "(\"Emilia-Romagna floods\" OR \"Emilia Romagna floods\" OR \"Emilia-Romagna flooding\" OR \"Emilia-Romagna flood\") AND (\"nighttime lights\" OR \"night lights\" OR \"nightlight data\" OR \"satellite data\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 0,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-10T14:06:33Z"
+    }
+   }
+  },
+  "v4:CR0178": {
+   "stone": "c113",
+   "q": {
+    "guardian": "(\"Great East Japan Earthquake\" OR \"Tohoku earthquake\" OR \"Japan tsunami\") AND (\"dementia symptoms\" OR \"dementia risk\" OR \"cognitive decline\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 0,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-10T14:07:39Z"
+    }
+   }
+  },
+  "v4:CR0179": {
+   "stone": "c112",
+   "q": {
+    "guardian": "(\"Hurricane Harvey\" OR \"Hurricane Irma\" OR \"Hurricane Michael\" OR \"Hurricane Florence\") AND (\"alcohol sales\" OR \"liquor sales\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 0,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-10T14:09:51Z"
+    }
+   }
+  },
+  "v4:CR0180": {
+   "stone": "c145",
+   "q": {
+    "guardian": "(\"damaging floods\" OR \"flood damage\" OR \"severe flooding\") AND (\"grocery spending\" OR \"food spending\" OR \"food-at-home spending\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 0,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-10T14:10:05Z"
+    }
+   }
+  },
+  "v4:CR0181": {
+   "stone": "c015",
+   "q": {
+    "guardian": "(\"damaging hurricanes\" OR \"hurricane damage\" OR \"major hurricanes\" OR \"devastating hurricanes\") AND (\"household food spending\" OR \"grocery spending\" OR \"food spending\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 0,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-10T14:06:41Z"
+    }
+   }
+  },
+  "v4:CR0183": {
+   "stone": "c020",
+   "q": {
+    "guardian": "(\"Japan earthquake\" OR \"Japan earthquakes\" OR \"Japanese earthquake\" OR \"Japan quake\") AND (\"green public procurement\" OR \"green procurement\" OR \"green purchasing\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 0,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-10T14:08:01Z"
+    }
+   }
+  },
+  "v4:CR0184": {
+   "stone": "c053",
+   "q": {
+    "guardian": "(\"Hurricane Sandy\" OR \"superstorm Sandy\") AND (\"volunteering\" OR \"volunteer work\" OR \"volunteer hours\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 9,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-10T14:10:58Z"
+    }
+   }
+  },
+  "v4:CR0186": {
+   "stone": "c091",
+   "q": {
+    "guardian": "(\"mass shooting\" OR \"mass shootings\") AND (\"voter turnout\" OR \"local election turnout\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 34,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-10T14:07:49Z"
+    }
+   }
+  },
+  "v4:CR0188": {
+   "stone": "c091",
+   "q": {
+    "guardian": "(\"mass shooting\" OR \"mass shootings\") AND (\"alcohol sales\" OR \"liquor sales\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 3,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-10T14:09:41Z"
+    }
+   }
+  },
+  "v4:CR0190": {
+   "stone": "c087",
+   "q": {
+    "guardian": "(\"Uber\" OR \"UberX\" OR \"Uber launch\") AND (\"drunk driving\" OR \"drunk driving deaths\" OR \"alcohol-related crashes\" OR \"DUI\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 17,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-10T14:10:56Z"
+    }
+   }
+  },
+  "v4:CR0191": {
+   "stone": "c036",
+   "q": {
+    "guardian": "(\"Uber returns\" OR \"Uber suspension\" OR \"Uber ban\") AND (\"alcohol-related crashes\" OR \"drunk driving\" OR \"DUI\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 0,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-10T14:07:07Z"
+    }
+   }
+  },
+  "v4:CR0196": {
+   "stone": "c118",
+   "q": {
+    "guardian": "(\"Tinder\" OR \"Tinder app\") AND (\"sexual assault\" OR \"sexual violence\" OR \"sexual offences\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 83,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-10T14:07:47Z"
+    }
+   }
+  },
+  "v4:CR0197": {
+   "stone": "c118",
+   "q": {
+    "guardian": "(\"Tinder\" OR \"Tinder app\") AND (\"sexually transmitted diseases\" OR \"sexually transmitted infections\" OR \"STD rates\" OR \"STI rates\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 12,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-10T14:08:22Z"
+    }
+   }
+  },
+  "v4:CR0199": {
+   "stone": "c056",
+   "q": {
+    "guardian": "(\"Uber\" OR \"Lyft\" OR \"ride-hailing\" OR \"ridesharing\") AND (\"vehicle registrations\" OR \"car registrations\" OR \"car ownership\" OR \"vehicle ownership\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 79,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-10T14:09:55Z"
+    }
+   }
+  },
+  "v4:CR0204": {
+   "stone": "c102",
+   "q": {
+    "guardian": "(\"dockless bikes\" OR \"dockless bike-sharing\" OR \"bike-sharing\" OR \"bike sharing\") AND (\"ride-sharing\" OR \"ride-hailing\" OR \"Didi Chuxing\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 17,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-10T14:07:43Z"
+    }
+   }
+  },
+  "v4:CR0205": {
+   "stone": "c076",
+   "q": {
+    "guardian": "(\"daylight saving time\" OR \"daylight savings time\" OR \"clocks change\" OR \"clocks go back\") AND (\"children's physical activity\" OR \"evening daylight\" OR \"outdoor play\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 8,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-10T14:07:14Z"
+    }
+   }
+  },
+  "v4:CR0206": {
+   "stone": "c076",
+   "q": {
+    "guardian": "(\"daylight saving time\" OR \"daylight savings time\" OR \"clocks change\" OR \"clocks go back\") AND (\"cardiovascular disease\" OR \"mental disorders\" OR \"injury rates\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 5,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-10T14:09:32Z"
+    }
+   }
+  },
+  "v4:CR0207": {
+   "stone": "c009",
+   "q": {
+    "guardian": "(\"daylight saving time\" OR \"daylight savings time\" OR \"clocks go forward\" OR \"spring forward\") AND (\"infection risk\" OR \"immune diseases\" OR \"immune-related diseases\" OR \"infectious diseases\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 3,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-10T14:06:16Z"
+    }
+   }
+  },
+  "v4:CR0209": {
+   "stone": "c076",
+   "q": {
+    "guardian": "(\"daylight saving time\" OR \"daylight savings time\" OR \"clocks change\" OR \"clocks go back\") AND (\"road traffic casualties\" OR \"road accidents\" OR \"traffic collisions\" OR \"road deaths\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 15,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-10T14:07:21Z"
+    }
+   }
+  },
+  "v4:CR0211": {
+   "stone": "c076",
+   "q": {
+    "guardian": "(\"daylight saving time\" OR \"daylight savings time\" OR \"clocks change\" OR \"clocks go back\") AND (\"pedestrian collisions\" OR \"pedestrian fatalities\" OR \"pedestrian crashes\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 1,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-10T14:08:42Z"
+    }
+   }
+  },
+  "v4:CR0212": {
+   "stone": "c076",
+   "q": {
+    "guardian": "(\"daylight saving time\" OR \"daylight savings time\" OR \"clocks change\" OR \"clocks go back\") AND (\"heart attacks\" OR \"myocardial infarction\" OR \"heart attack rates\" OR \"cardiac events\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 13,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-10T14:07:29Z"
+    }
+   }
+  },
+  "v4:CR0214": {
+   "stone": "c057",
+   "q": {
+    "guardian": "(\"Queensland daylight saving\" OR \"Queensland daylight saving trial\" OR \"daylight saving trial\") AND (\"substance abuse\" OR \"drug abuse\" OR \"drug-related hospitalisations\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 0,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-10T14:10:27Z"
+    }
+   }
+  },
+  "v4:CR0216": {
+   "stone": "c057",
+   "q": {
+    "guardian": "(\"Queensland daylight saving\" OR \"Queensland daylight saving trial\" OR \"daylight saving trial\") AND (\"road accidents\" OR \"motor vehicle accidents\" OR \"road deaths\" OR \"traffic accidents\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 0,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-10T14:06:36Z"
+    }
+   }
+  },
+  "v4:CR0218": {
+   "stone": "c009",
+   "q": {
+    "guardian": "(\"daylight saving time\" OR \"daylight savings time\" OR \"clocks go forward\" OR \"spring forward\") AND (\"serious crashes\" OR \"vehicle accidents\" OR \"road safety\" OR \"traffic accidents\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 15,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-10T14:10:16Z"
+    }
+   }
+  },
+  "v4:CR0219": {
+   "stone": "c111",
+   "q": {
+    "guardian": "(\"clocks go back\" OR \"clocks fall back\" OR \"daylight saving ends\" OR \"return to standard time\") AND (\"vehicle accidents\" OR \"car crashes\" OR \"fender benders\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 0,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-10T14:09:13Z"
+    }
+   }
+  },
+  "v4:CR0220": {
+   "stone": "c009",
+   "q": {
+    "guardian": "(\"daylight saving time\" OR \"daylight savings time\" OR \"clocks go forward\" OR \"spring forward\") AND (\"heart attack risk\" OR \"heart attacks\" OR \"myocardial infarction\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 14,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-10T14:09:17Z"
+    }
+   }
+  },
+  "v4:CR0222": {
+   "stone": "c009",
+   "q": {
+    "guardian": "(\"daylight saving time\" OR \"daylight savings time\" OR \"clocks go forward\" OR \"spring forward\") AND (\"road accidents\" OR \"traffic accidents\" OR \"road safety\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 18,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-10T14:11:08Z"
+    }
+   }
+  },
+  "v4:CR0223": {
+   "stone": "c037",
+   "q": {
+    "guardian": "(\"Chile daylight saving time\" OR \"Chile clock change\" OR \"Chile summer time\") AND (\"traffic accidents\" OR \"car accidents\" OR \"road accidents\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 0,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-10T14:10:36Z"
+    }
+   }
+  },
+  "v4:CR0224": {
+   "stone": "c009",
+   "q": {
+    "guardian": "(\"daylight saving time\" OR \"daylight savings time\" OR \"clocks go forward\" OR \"spring forward\") AND (\"car crashes\" OR \"traffic accidents\" OR \"car accidents\" OR \"road accidents\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 15,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-10T14:07:18Z"
+    }
+   }
+  },
+  "v4:CR0225": {
+   "stone": "c111",
+   "q": {
+    "guardian": "(\"clocks go back\" OR \"clocks fall back\" OR \"daylight saving ends\" OR \"return to standard time\") AND (\"car accidents\" OR \"traffic accidents\" OR \"road accidents\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 4,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-10T14:06:25Z"
+    }
+   }
+  },
+  "v4:CR0226": {
+   "stone": "c117",
+   "q": {
+    "guardian": "(\"anti-Black violence\" OR \"police killings\" OR \"police shootings\" OR \"hate crime murders\") AND (\"preterm birth\" OR \"premature birth\" OR \"Black mothers\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 6,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-10T14:06:09Z"
+    }
+   }
+  },
+  "v4:CR0230": {
+   "stone": "c084",
+   "q": {
+    "guardian": "(\"TikTok shutdown\" OR \"TikTok ban\" OR \"TikTok suspension\" OR \"TikTok outage\") AND (\"Meta advertising\" OR \"Meta ads\" OR \"ad spending\" OR \"Instagram ads\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 0,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-10T14:09:40Z"
+    }
+   }
+  },
+  "v4:CR0233": {
+   "stone": "c040",
+   "q": {
+    "guardian": "(\"UMG TikTok\" OR \"Universal Music TikTok\" OR \"UMG TikTok dispute\") AND (\"Spotify streams\" OR \"viral songs\" OR \"music streaming\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 0,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-10T14:07:26Z"
+    }
+   }
+  },
+  "v4:CR0234": {
+   "stone": "c084",
+   "q": {
+    "guardian": "(\"TikTok shutdown\" OR \"TikTok ban\" OR \"TikTok suspension\" OR \"TikTok outage\") AND (\"music streaming\" OR \"streaming revenue\" OR \"monetized streaming\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 0,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-10T14:07:41Z"
+    }
+   }
+  },
+  "v4:CR0235": {
+   "stone": "c070",
+   "q": {
+    "guardian": "(\"Qatar World Cup\" OR \"Qatar 2022\" OR \"2022 World Cup\" OR \"World Cup in Qatar\") AND (\"paternity leave\" OR \"parental leave\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 2,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-10T14:06:59Z"
+    }
+   }
+  },
+  "v4:CR0238": {
+   "stone": "c078",
+   "q": {
+    "guardian": "(\"Campeonato Paulista\" OR \"Paulistao\" OR \"Brasileirao\" OR \"Brazilian football\") AND (\"crime rate\" OR \"street crime\" OR \"football violence\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 6,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-10T14:07:53Z"
+    }
+   }
+  },
+  "v4:CR0242": {
+   "stone": "c144",
+   "q": {
+    "guardian": "(\"Indian Ocean tsunami\" OR \"Boxing Day tsunami\" OR \"Asian tsunami\") AND (\"private consumption\" OR \"household consumption\" OR \"consumer spending\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 0,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-10T14:06:51Z"
+    }
+   }
+  },
+  "v4:CR0243": {
+   "stone": "c026",
+   "q": {
+    "guardian": "(\"L'Aquila earthquake\" OR \"L'Aquila quake\" OR \"Abruzzo earthquake\") AND (\"graduation rates\" OR \"graduating on time\" OR \"on-time graduation\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 0,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-10T14:09:53Z"
+    }
+   }
+  },
+  "v4:CR0244": {
+   "stone": "c026",
+   "q": {
+    "guardian": "(\"L'Aquila earthquake\" OR \"L'Aquila quake\" OR \"Abruzzo earthquake\") AND (\"dropout rate\" OR \"dropping out\" OR \"university dropouts\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 0,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-10T14:07:04Z"
+    }
+   }
+  },
+  "v4:CR0245": {
+   "stone": "c136",
+   "q": {
+    "guardian": "(\"Boston Marathon bombing\" OR \"Sandy Hook shooting\" OR \"Sandy Hook massacre\" OR \"Boston bombing\") AND (\"hours worked\" OR \"working hours\" OR \"time spent working\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 0,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-10T14:11:37Z"
+    }
+   }
+  },
+  "v4:CR0246": {
+   "stone": "c007",
+   "q": {
+    "guardian": "(\"Boston Marathon bombing\" OR \"Boston bombing\" OR \"Boston Marathon bombings\" OR \"Boston Marathon attack\") AND (\"active leisure\" OR \"physical activity\" OR \"leisure time\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 1,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-10T14:07:03Z"
+    }
+   }
+  },
+  "v4:CR0247": {
+   "stone": "c152",
+   "q": {
+    "guardian": "(\"Sandy Hook\" OR \"Sandy Hook Elementary\" OR \"Sandy Hook massacre\" OR \"Newtown shooting\") AND (\"active leisure\" OR \"physical activity\" OR \"leisure activities\" OR \"recreational activity\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 0,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-10T14:06:44Z"
+    }
+   }
+  },
+  "v4:CR0248": {
+   "stone": "c092",
+   "q": {
+    "guardian": "(\"Sichuan earthquake\" OR \"Wenchuan earthquake\") AND (\"primary sector\" OR \"rural labor\" OR \"construction jobs\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 1,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-10T14:10:26Z"
+    }
+   }
+  },
+  "v4:CR0249": {
+   "stone": "c115",
+   "q": {
+    "guardian": "(\"Yogyakarta earthquake\" OR \"Yogyakarta quake\" OR \"Java earthquake\") AND (\"mental disorders\" OR \"mental health\" OR \"post-traumatic stress\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 0,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-10T14:10:41Z"
+    }
+   }
+  },
+  "v4:CR0250": {
+   "stone": "c115",
+   "q": {
+    "guardian": "(\"Yogyakarta earthquake\" OR \"Yogyakarta quake\" OR \"Java earthquake\") AND (\"education spending\" OR \"school fees\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 0,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-10T14:08:59Z"
+    }
+   }
+  },
+  "v4:CR0253": {
+   "stone": "c039",
+   "q": {
+    "guardian": "(\"Brisbane floods\" OR \"Queensland floods\" OR \"Brisbane flood\") AND (\"risk aversion\" OR \"risk taking\" OR \"scratch cards\" OR \"gambling\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 8,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-10T14:10:22Z"
+    }
+   }
+  },
+  "v4:CR0254": {
+   "stone": "c113",
+   "q": {
+    "guardian": "(\"Great East Japan Earthquake\" OR \"Tohoku earthquake\" OR \"Japan tsunami\") AND (\"stockpiling food\" OR \"panic buying\" OR \"food hoarding\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 0,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-10T14:09:09Z"
+    }
+   }
+  },
+  "v4:CR0255": {
+   "stone": "c132",
+   "q": {
+    "guardian": "(\"Kobe earthquake\" OR \"Great Hanshin earthquake\" OR \"Hanshin-Awaji earthquake\" OR \"Kobe quake\") AND (\"volunteer activity\" OR \"volunteering\" OR \"disaster volunteers\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 1,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-10T14:06:45Z"
+    }
+   }
+  },
+  "v4:CR0256": {
+   "stone": "c132",
+   "q": {
+    "guardian": "(\"Kobe earthquake\" OR \"Great Hanshin earthquake\" OR \"Hanshin-Awaji earthquake\" OR \"Kobe quake\") AND (\"elderly mortality\" OR \"elderly death rate\" OR \"senior mortality\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 0,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-10T14:06:37Z"
+    }
+   }
+  },
+  "v4:CR0258": {
+   "stone": "c108",
+   "q": {
+    "guardian": "(\"Pokémon Go\" OR \"Pokemon Go\") AND (\"time outdoors\" OR \"outdoor activity\" OR \"physical activity\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 7,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-10T14:07:30Z"
+    }
+   }
+  },
+  "v4:CR0259": {
+   "stone": "c049",
+   "q": {
+    "guardian": "(\"Uber in Africa\" OR \"Uber Africa\") AND (\"tourist spending\" OR \"tourism spending\" OR \"tourism revenue\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 0,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-10T14:06:22Z"
+    }
+   }
+  },
+  "v4:CR0261": {
+   "stone": "c046",
+   "q": {
+    "guardian": "(\"Uber Chile\" OR \"Uber in Chile\") AND (\"drunk driving\" OR \"drunk-driving crashes\" OR \"alcohol-related deaths\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 0,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-10T14:11:38Z"
+    }
+   }
+  },
+  "v4:CR0262": {
+   "stone": "c128",
+   "q": {
+    "guardian": "(\"Uber Austin\" OR \"Lyft Austin\" OR \"Austin ride-hailing\") AND (\"Airbnb occupancy\" OR \"Airbnb Austin\" OR \"Airbnb\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 0,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-10T14:11:36Z"
+    }
+   }
+  },
+  "v4:CR0263": {
+   "stone": "c128",
+   "q": {
+    "guardian": "(\"Uber Austin\" OR \"Lyft Austin\" OR \"Austin ride-hailing\") AND (\"Austin hotels\" OR \"hotel occupancy\" OR \"low-end hotels\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 0,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-10T14:06:56Z"
+    }
+   }
+  },
+  "v4:CR0264": {
+   "stone": "c087",
+   "q": {
+    "guardian": "(\"Uber\" OR \"UberX\" OR \"Uber launch\") AND (\"traffic congestion\" OR \"weekend traffic\" OR \"traffic volume\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 31,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-10T14:08:03Z"
+    }
+   }
+  },
+  "v4:CR0265": {
+   "stone": "c087",
+   "q": {
+    "guardian": "(\"Uber\" OR \"UberX\" OR \"Uber launch\") AND (\"traffic congestion\" OR \"traffic jams\" OR \"road congestion\" OR \"gridlock\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 106,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-10T14:10:20Z"
+    }
+   }
+  },
+  "v4:CR0266": {
+   "stone": "c087",
+   "q": {
+    "guardian": "(\"Uber\" OR \"UberX\" OR \"Uber launch\") AND (\"transit ridership\" OR \"public transit\" OR \"bus ridership\" OR \"public transport\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 376,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-10T14:09:20Z"
+    }
+   }
+  },
+  "v4:CR0267": {
+   "stone": "c009",
+   "q": {
+    "guardian": "(\"daylight saving time\" OR \"daylight savings time\" OR \"clocks go forward\" OR \"spring forward\") AND (\"robberies\" OR \"robbery rates\" OR \"street crime\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 0,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-10T14:10:24Z"
+    }
+   }
+  },
+  "v4:CR0270": {
+   "stone": "c100",
+   "q": {
+    "guardian": "(\"NFL games\" OR \"MLB games\" OR \"home games\") AND (\"stadium crime\" OR \"crime near stadiums\" OR \"game day crime\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 0,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-10T14:11:02Z"
+    }
+   }
+  },
+  "v4:CR0271": {
+   "stone": "c156",
+   "q": {
+    "guardian": "(\"Pontiac Silverdome\" OR \"Silverdome\" OR \"Ford Field\") AND (\"Pontiac crime\" OR \"game day crime\" OR \"crime rate\" OR \"vandalism\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 0,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-10T14:07:19Z"
+    }
+   }
+  },
+  "v4:CR0274": {
+   "stone": "c079",
+   "q": {
+    "guardian": "(\"Little Caesars Arena\") AND (\"reported crime\" OR \"stadium crime\" OR \"game day crime\" OR \"crime near stadiums\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 0,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-10T14:07:55Z"
+    }
+   }
+  },
+  "v4:CR0276": {
+   "stone": "c060",
+   "q": {
+    "guardian": "(\"London 2012\" OR \"London Olympics\" OR \"London Olympic Games\" OR \"2012 Olympics\") AND (\"London crime\" OR \"crime rate\" OR \"recorded crime\" OR \"crime figures\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 20,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-10T14:11:22Z"
+    }
+   }
+  },
+  "v4:CR0277": {
+   "stone": "c107",
+   "q": {
+    "guardian": "(\"PyeongChang Olympics\" OR \"PyeongChang Winter Games\" OR \"PyeongChang Winter Olympics\") AND (\"Gangneung apartment prices\" OR \"apartment prices\" OR \"property prices\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 0,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-10T14:07:06Z"
+    }
+   }
+  },
+  "v4:CR0279": {
+   "stone": "c050",
+   "q": {
+    "guardian": "(\"Beijing Olympics\" OR \"Beijing Olympic Games\" OR \"Beijing Games\") AND (\"real estate prices\" OR \"housing prices\" OR \"property prices\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 7,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-10T14:09:37Z"
+    }
+   }
+  },
+  "v4:CR0280": {
+   "stone": "c088",
+   "q": {
+    "guardian": "(\"football match\" OR \"derby match\" OR \"local derby\") AND (\"male mortality\" OR \"excess deaths\" OR \"men's mortality\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 6,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-10T14:07:54Z"
+    }
+   }
+  },
+  "v4:CR0281": {
+   "stone": "c089",
+   "q": {
+    "guardian": "(\"NBA suspension\" OR \"NHL suspension\" OR \"NBA suspends season\" OR \"NHL pauses season\") AND (\"COVID-19 deaths\" OR \"coronavirus deaths\" OR \"Covid deaths\" OR \"spread of coronavirus\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 0,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-10T14:11:21Z"
+    }
+   }
+  },
+  "v4:CR0285": {
+   "stone": "c060",
+   "q": {
+    "guardian": "(\"London 2012\" OR \"London Olympics\" OR \"London Olympic Games\" OR \"2012 Olympics\") AND (\"smoking rates\" OR \"smoking prevalence\" OR \"tobacco consumption\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 2,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-10T14:06:18Z"
+    }
+   }
+  }
+ },
+ "stones": {
+  "c001": {
+   "q": {
+    "guardian": "(\"Super Bowl\" OR \"Super Bowl victory\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 5875,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-10T14:12:09Z"
+    }
+   }
+  },
+  "c002": {
+   "q": {
+    "guardian": "(\"digital switchover\" OR \"digital TV switchover\" OR \"analogue switch-off\" OR \"digital switch-over\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 1503,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-10T14:13:31Z"
+    }
+   }
+  },
+  "c003": {
+   "q": {
+    "guardian": "(\"commercial television\" OR \"commercial TV\" OR \"private broadcasters\" OR \"private television\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 1960,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-10T14:13:19Z"
+    }
+   }
+  },
+  "c004": {
+   "q": {
+    "guardian": "(\"Newcastle earthquake\" OR \"Newcastle quake\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 6,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-10T14:14:34Z"
+    }
+   }
+  },
+  "c005": {
+   "q": {
+    "guardian": "(\"Black Summer\" OR \"Black Summer bushfires\" OR \"Australian bushfires\" OR \"bushfire smoke\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 936,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-10T14:14:05Z"
+    }
+   }
+  },
+  "c006": {
+   "q": {
+    "guardian": "(\"ChatGPT\" OR \"Chat GPT\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 2214,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-10T14:12:00Z"
+    }
+   }
+  },
+  "c007": {
+   "q": {
+    "guardian": "(\"Boston Marathon bombing\" OR \"Boston bombing\" OR \"Boston Marathon bombings\" OR \"Boston Marathon attack\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 522,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-10T14:12:48Z"
+    }
+   }
+  },
+  "c008": {
+   "q": {
+    "guardian": "(\"Emilia-Romagna floods\" OR \"Emilia Romagna floods\" OR \"Emilia-Romagna flooding\" OR \"Emilia-Romagna flood\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 0,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-10T14:11:52Z"
+    }
+   }
+  },
+  "c009": {
+   "q": {
+    "guardian": "(\"daylight saving time\" OR \"daylight savings time\" OR \"clocks go forward\" OR \"spring forward\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 551,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-10T14:14:46Z"
+    }
+   }
+  },
+  "c010": {
+   "q": {
+    "guardian": "(\"Peru broadband\" OR \"broadband in Peru\" OR \"Peruvian broadband\" OR \"internet in Peru\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 0,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-10T14:11:57Z"
+    }
+   }
+  },
+  "c011": {
+   "q": {
+    "guardian": "(\"Indiana daylight saving time\" OR \"Indiana daylight savings time\" OR \"Indiana daylight time\" OR \"Indiana time change\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 0,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-10T14:14:36Z"
+    }
+   }
+  },
+  "c012": {
+   "q": {
+    "guardian": "(\"Top Gun\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 1212,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-10T14:13:10Z"
+    }
+   }
+  },
+  "c013": {
+   "q": {
+    "guardian": "(\"General Electric Theater\" OR \"General Electric Theatre\" OR \"GE Theater\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 10,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-10T14:12:56Z"
+    }
+   }
+  },
+  "c014": {
+   "q": {
+    "guardian": "(\"Kumamoto earthquake\" OR \"Kumamoto earthquakes\" OR \"Kumamoto quake\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 6,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-10T14:11:47Z"
+    }
+   }
+  },
+  "c015": {
+   "q": {
+    "guardian": "(\"damaging hurricanes\" OR \"hurricane damage\" OR \"major hurricanes\" OR \"devastating hurricanes\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 281,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-10T14:14:43Z"
+    }
+   }
+  },
+  "c016": {
+   "q": {
+    "guardian": "(\"Cyclone Batsirai\" OR \"Batsirai\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 3,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-10T14:14:01Z"
+    }
+   }
+  },
+  "c017": {
+   "q": {
+    "guardian": "(\"Los Angeles wildfires\" OR \"LA wildfires\" OR \"Palisades fire\" OR \"Eaton fire\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 329,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-10T14:11:49Z"
+    }
+   }
+  },
+  "c018": {
+   "q": {
+    "guardian": "(\"Chile earthquake\" OR \"Chilean earthquake\" OR \"Chile quake\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 54,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-10T14:12:06Z"
+    }
+   }
+  },
+  "c019": {
+   "q": {
+    "guardian": "(\"mass shootings\" OR \"mass shooting\" OR \"deadliest mass shooting\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 3974,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-10T14:12:31Z"
+    }
+   }
+  },
+  "c020": {
+   "q": {
+    "guardian": "(\"Japan earthquake\" OR \"Japan earthquakes\" OR \"Japanese earthquake\" OR \"Japan quake\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 321,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-10T14:13:36Z"
+    }
+   }
+  },
+  "c021": {
+   "q": {
+    "guardian": "(\"2002 World Cup\" OR \"Korea-Japan World Cup\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 1897,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-10T14:12:05Z"
+    }
+   }
+  },
+  "c022": {
+   "q": {
+    "guardian": "(\"global financial crisis\" OR \"financial crisis\" OR \"Great Recession\" OR \"credit crunch\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 34765,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-10T14:13:54Z"
+    }
+   }
+  },
+  "c023": {
+   "q": {
+    "guardian": "(\"September 11 attacks\" OR \"Sept. 11 attacks\" OR \"September 11 terrorist attacks\" OR \"September 11th\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 4235,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-10T14:13:57Z"
+    }
+   }
+  },
+  "c024": {
+   "q": {
+    "guardian": "(\"Hurricane Harvey\" OR \"Tropical Storm Harvey\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 360,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-10T14:13:29Z"
+    }
+   }
+  },
+  "c025": {
+   "q": {
+    "guardian": "(\"Stranger Things\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 1848,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-10T14:12:41Z"
+    }
+   }
+  },
+  "c026": {
+   "q": {
+    "guardian": "(\"L'Aquila earthquake\" OR \"L'Aquila quake\" OR \"Abruzzo earthquake\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 44,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-10T14:14:40Z"
+    }
+   }
+  },
+  "c027": {
+   "q": {
+    "guardian": "(\"Ramayan\" OR \"Ramayan serial\" OR \"Ramayan TV series\" OR \"Doordarshan Ramayan\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 6,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-10T14:12:42Z"
+    }
+   }
+  },
+  "c028": {
+   "q": {
+    "guardian": "(\"severe tornado\" OR \"deadly tornado\" OR \"violent tornado\" OR \"tornado outbreak\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 64,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-10T14:12:01Z"
+    }
+   }
+  },
+  "c029": {
+   "q": {
+    "guardian": "(\"iPhone\" OR \"first iPhone\" OR \"original iPhone\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 16371,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-10T14:14:17Z"
+    }
+   }
+  },
+  "c030": {
+   "q": {
+    "guardian": "(\"Chile earthquake\" OR \"Chilean earthquake\" OR \"Maule earthquake\" OR \"Chile quake\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 54,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-10T14:13:49Z"
+    }
+   }
+  },
+  "c031": {
+   "q": {
+    "guardian": "(\"Paris attacks\" OR \"Charlie Hebdo attack\" OR \"Bataclan attack\" OR \"Bastille Day attack\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 1483,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-10T14:11:51Z"
+    }
+   }
+  },
+  "c032": {
+   "q": {
+    "guardian": "(\"Weinstein scandal\" OR \"Weinstein allegations\" OR \"MeToo movement\" OR \"Me Too movement\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 2418,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-10T14:12:26Z"
+    }
+   }
+  },
+  "c033": {
+   "q": {
+    "guardian": "(\"Gujarat earthquake\" OR \"Bhuj earthquake\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 28,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-10T14:12:20Z"
+    }
+   }
+  },
+  "c034": {
+   "q": {
+    "guardian": "(\"Hurricane Florence\" OR \"Storm Florence\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 111,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-10T14:12:37Z"
+    }
+   }
+  },
+  "c035": {
+   "q": {
+    "guardian": "(\"Zhengzhou floods\" OR \"Henan floods\" OR \"Zhengzhou rainstorm\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 3,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-10T14:13:18Z"
+    }
+   }
+  },
+  "c036": {
+   "q": {
+    "guardian": "(\"Uber returns\" OR \"Uber suspension\" OR \"Uber ban\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 10,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-10T14:11:45Z"
+    }
+   }
+  },
+  "c037": {
+   "q": {
+    "guardian": "(\"Chile daylight saving time\" OR \"Chile clock change\" OR \"Chile summer time\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 0,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-10T14:13:22Z"
+    }
+   }
+  },
+  "c038": {
+   "q": {
+    "guardian": "(\"Hurricane Catarina\" OR \"Cyclone Catarina\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 2,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-10T14:14:31Z"
+    }
+   }
+  },
+  "c039": {
+   "q": {
+    "guardian": "(\"Brisbane floods\" OR \"Queensland floods\" OR \"Brisbane flood\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 336,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-10T14:12:55Z"
+    }
+   }
+  },
+  "c040": {
+   "q": {
+    "guardian": "(\"UMG TikTok\" OR \"Universal Music TikTok\" OR \"UMG TikTok dispute\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 0,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-10T14:11:54Z"
+    }
+   }
+  },
+  "c041": {
+   "q": {
+    "guardian": "(\"Lushan earthquake\" OR \"Ya'an earthquake\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 1,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-10T14:14:29Z"
+    }
+   }
+  },
+  "c042": {
+   "q": {
+    "guardian": "(\"Canadian wildfire smoke\" OR \"Canada wildfire smoke\" OR \"Canadian wildfires\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 104,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-10T14:15:06Z"
+    }
+   }
+  },
+  "c043": {
+   "q": {
+    "guardian": "(\"AMIA bombing\" OR \"AMIA attack\" OR \"Argentine Jewish center bombing\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 11,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-10T14:12:52Z"
+    }
+   }
+  },
+  "c044": {
+   "q": {
+    "guardian": "(\"hosting the Olympics\" OR \"hosting the World Cup\" OR \"host the Olympics\" OR \"host the World Cup\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 1444,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-10T14:13:16Z"
+    }
+   }
+  },
+  "c045": {
+   "q": {
+    "guardian": "(\"Pohang earthquake\" OR \"Pohang quake\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 1,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-10T14:14:23Z"
+    }
+   }
+  },
+  "c046": {
+   "q": {
+    "guardian": "(\"Uber Chile\" OR \"Uber in Chile\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 0,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-10T14:12:14Z"
+    }
+   }
+  },
+  "c047": {
+   "q": {
+    "guardian": "(\"Friends\" OR \"Friends sitcom\" OR \"sitcom Friends\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 259487,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-10T14:12:30Z"
+    }
+   }
+  },
+  "c048": {
+   "q": {
+    "guardian": "(\"Uber in Brazil\" OR \"Uber Brazil\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 0,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-10T14:13:43Z"
+    }
+   }
+  },
+  "c049": {
+   "q": {
+    "guardian": "(\"Uber in Africa\" OR \"Uber Africa\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 0,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-10T14:13:08Z"
+    }
+   }
+  },
+  "c050": {
+   "q": {
+    "guardian": "(\"Beijing Olympics\" OR \"Beijing Olympic Games\" OR \"Beijing Games\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 2903,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-10T14:13:35Z"
+    }
+   }
+  },
+  "c051": {
+   "q": {
+    "guardian": "(\"Camp Fire\" OR \"Camp Fire wildfire\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 430,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-10T14:13:14Z"
+    }
+   }
+  },
+  "c052": {
+   "q": {
+    "guardian": "(\"The Office\" OR \"NBC's The Office\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 83677,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-10T14:13:06Z"
+    }
+   }
+  },
+  "c053": {
+   "q": {
+    "guardian": "(\"Hurricane Sandy\" OR \"superstorm Sandy\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 1104,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-10T14:13:53Z"
+    }
+   }
+  },
+  "c054": {
+   "q": {
+    "guardian": "(\"Toy Story\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 1767,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-10T14:12:59Z"
+    }
+   }
+  },
+  "c055": {
+   "q": {
+    "guardian": "(\"Hurricane Matthew\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 140,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-10T14:12:43Z"
+    }
+   }
+  },
+  "c056": {
+   "q": {
+    "guardian": "(\"Uber\" OR \"Lyft\" OR \"ride-hailing\" OR \"ridesharing\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 8583,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-10T14:13:52Z"
+    }
+   }
+  },
+  "c057": {
+   "q": {
+    "guardian": "(\"Queensland daylight saving\" OR \"Queensland daylight saving trial\" OR \"daylight saving trial\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 1,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-10T14:14:39Z"
+    }
+   }
+  },
+  "c058": {
+   "q": {
+    "guardian": "(\"Seinfeld\" OR \"Seinfeld sitcom\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 2267,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-10T14:12:39Z"
+    }
+   }
+  },
+  "c059": {
+   "q": {
+    "guardian": "(\"African footballers\" OR \"European football clubs\" OR \"narrow defeat\" OR \"last-minute defeat\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 1214,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-10T14:14:19Z"
+    }
+   }
+  },
+  "c060": {
+   "q": {
+    "guardian": "(\"London 2012\" OR \"London Olympics\" OR \"London Olympic Games\" OR \"2012 Olympics\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 15464,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-10T14:14:10Z"
+    }
+   }
+  },
+  "c061": {
+   "q": {
+    "guardian": "(\"3G network\" OR \"3G coverage\" OR \"3G rollout\" OR \"Tanzania mobile coverage\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 328,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-10T14:12:34Z"
+    }
+   }
+  },
+  "c062": {
+   "q": {
+    "guardian": "(\"Friuli earthquake\" OR \"Irpinia earthquake\" OR \"Friuli quake\" OR \"Irpinia quake\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 9,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-10T14:13:48Z"
+    }
+   }
+  },
+  "c063": {
+   "q": {
+    "guardian": "(\"Pokemon Go\" OR \"Pokémon Go\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 480,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-10T14:12:12Z"
+    }
+   }
+  },
+  "c064": {
+   "q": {
+    "guardian": "(\"Maule earthquake\" OR \"Chile earthquake\" OR \"Chilean earthquake\" OR \"Chile quake\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 54,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-10T14:12:44Z"
+    }
+   }
+  },
+  "c065": {
+   "q": {
+    "guardian": "(\"World Cup\" OR \"FIFA World Cup\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 108327,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-10T14:12:08Z"
+    }
+   }
+  },
+  "c066": {
+   "q": {
+    "guardian": "(\"Doctor Who Christmas special\" OR \"Doctor Who New Year special\" OR \"Doctor Who festive special\" OR \"Doctor Who Christmas episode\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 149,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-10T14:13:37Z"
+    }
+   }
+  },
+  "c067": {
+   "q": {
+    "guardian": "(\"album release day\" OR \"album release\" OR \"album drop\" OR \"album launch\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 563,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-10T14:12:23Z"
+    }
+   }
+  },
+  "c068": {
+   "q": {
+    "guardian": "(\"Typhoon Faxai\" OR \"Faxai\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 11,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-10T14:11:56Z"
+    }
+   }
+  },
+  "c069": {
+   "q": {
+    "guardian": "(\"Barcelona attack\" OR \"Barcelona attacks\" OR \"Catalonia attacks\" OR \"Cambrils attack\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 109,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-10T14:14:25Z"
+    }
+   }
+  },
+  "c070": {
+   "q": {
+    "guardian": "(\"Qatar World Cup\" OR \"Qatar 2022\" OR \"2022 World Cup\" OR \"World Cup in Qatar\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 3265,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-10T14:13:03Z"
+    }
+   }
+  },
+  "c071": {
+   "q": {
+    "guardian": "(\"Madrid train bombings\" OR \"Madrid bombings\" OR \"Madrid train bombing\" OR \"Madrid train attacks\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 506,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-10T14:13:00Z"
+    }
+   }
+  },
+  "c072": {
+   "q": {
+    "guardian": "(\"Athens earthquake\" OR \"Alkyonides earthquake\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 5,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-10T14:14:30Z"
+    }
+   }
+  },
+  "c073": {
+   "q": {
+    "guardian": "(\"Southern California wildfires\" OR \"Witch Creek fire\" OR \"Witch fire\" OR \"San Diego wildfires\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 15,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-10T14:13:28Z"
+    }
+   }
+  },
+  "c074": {
+   "q": {
+    "guardian": "(\"Kermanshah earthquake\" OR \"Iran-Iraq earthquake\" OR \"Sarpol-e Zahab earthquake\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 2,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-10T14:11:53Z"
+    }
+   }
+  },
+  "c075": {
+   "q": {
+    "guardian": "(\"Woolsey Fire\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 55,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-10T14:14:35Z"
+    }
+   }
+  },
+  "c076": {
+   "q": {
+    "guardian": "(\"daylight saving time\" OR \"daylight savings time\" OR \"clocks change\" OR \"clocks go back\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 411,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-10T14:15:05Z"
+    }
+   }
+  },
+  "c077": {
+   "q": {
+    "guardian": "(\"Ramayan\" OR \"Ramayana\" OR \"Ramayan serial\" OR \"Ramayan TV series\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 142,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-10T14:12:18Z"
+    }
+   }
+  },
+  "c078": {
+   "q": {
+    "guardian": "(\"Campeonato Paulista\" OR \"Paulistao\" OR \"Brasileirao\" OR \"Brazilian football\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 833,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-10T14:11:48Z"
+    }
+   }
+  },
+  "c079": {
+   "q": {
+    "guardian": "(\"Little Caesars Arena\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 7,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-10T14:14:59Z"
+    }
+   }
+  },
+  "c080": {
+   "q": {
+    "guardian": "(\"TikTok goes dark\" OR \"TikTok shutdown\" OR \"TikTok blackout\" OR \"TikTok ban\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 156,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-10T14:14:52Z"
+    }
+   }
+  },
+  "c081": {
+   "q": {
+    "guardian": "(\"Canterbury earthquakes\" OR \"Christchurch earthquake\" OR \"Christchurch earthquakes\" OR \"Canterbury quakes\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 114,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-10T14:13:44Z"
+    }
+   }
+  },
+  "c082": {
+   "q": {
+    "guardian": "(\"Emilia earthquake\" OR \"Emilia-Romagna earthquake\" OR \"Emilia-Romagna quake\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 0,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-10T14:13:40Z"
+    }
+   }
+  },
+  "c083": {
+   "q": {
+    "guardian": "(\"daylight saving time ends\" OR \"clocks go back\" OR \"fall back\" OR \"end of daylight saving\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 6408,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-10T14:13:07Z"
+    }
+   }
+  },
+  "c084": {
+   "q": {
+    "guardian": "(\"TikTok shutdown\" OR \"TikTok ban\" OR \"TikTok suspension\" OR \"TikTok outage\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 155,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-10T14:12:25Z"
+    }
+   }
+  },
+  "c085": {
+   "q": {
+    "guardian": "(\"Brooklyn blackout\" OR \"Brooklyn power outage\" OR \"Con Edison outage\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 1,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-10T14:12:47Z"
+    }
+   }
+  },
+  "c086": {
+   "q": {
+    "guardian": "(\"Amapa blackout\" OR \"Amapa power outage\" OR \"Amapa power cut\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 0,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-10T14:14:00Z"
+    }
+   }
+  },
+  "c087": {
+   "q": {
+    "guardian": "(\"Uber\" OR \"UberX\" OR \"Uber launch\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 8356,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-10T14:13:15Z"
+    }
+   }
+  },
+  "c088": {
+   "q": {
+    "guardian": "(\"football match\" OR \"derby match\" OR \"local derby\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 7387,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-10T14:12:35Z"
+    }
+   }
+  },
+  "c089": {
+   "q": {
+    "guardian": "(\"NBA suspension\" OR \"NHL suspension\" OR \"NBA suspends season\" OR \"NHL pauses season\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 3,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-10T14:12:46Z"
+    }
+   }
+  },
+  "c090": {
+   "q": {
+    "guardian": "(\"Jaws\" OR \"Jaws film\" OR \"Jaws movie\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 6113,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-10T14:14:15Z"
+    }
+   }
+  },
+  "c091": {
+   "q": {
+    "guardian": "(\"mass shooting\" OR \"mass shootings\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 3974,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-10T14:11:44Z"
+    }
+   }
+  },
+  "c092": {
+   "q": {
+    "guardian": "(\"Sichuan earthquake\" OR \"Wenchuan earthquake\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 210,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-10T14:14:11Z"
+    }
+   }
+  },
+  "c093": {
+   "q": {
+    "guardian": "(\"broadband internet\" OR \"broadband access\" OR \"broadband rollout\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 1905,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-10T14:14:38Z"
+    }
+   }
+  },
+  "c094": {
+   "q": {
+    "guardian": "(\"Game of Thrones\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 5647,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-10T14:12:51Z"
+    }
+   }
+  },
+  "c095": {
+   "q": {
+    "guardian": "(\"Norway broadband\" OR \"Norwegian broadband\" OR \"broadband rollout\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 125,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-10T14:14:44Z"
+    }
+   }
+  },
+  "c096": {
+   "q": {
+    "guardian": "(\"NYCHA power outages\" OR \"NYCHA outages\" OR \"public housing outages\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 0,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-10T14:13:24Z"
+    }
+   }
+  },
+  "c097": {
+   "q": {
+    "guardian": "(\"Mexico earthquake\" OR \"Mexico City earthquake\" OR \"Chiapas earthquake\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 31,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-10T14:14:06Z"
+    }
+   }
+  },
+  "c098": {
+   "q": {
+    "guardian": "(\"clocks go back\" OR \"clocks fall back\" OR \"daylight saving ends\" OR \"end of daylight saving\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 221,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-10T14:12:58Z"
+    }
+   }
+  },
+  "c099": {
+   "q": {
+    "guardian": "(\"Fifty Shades of Grey\" OR \"Fifty Shades\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 1470,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-10T14:13:02Z"
+    }
+   }
+  },
+  "c100": {
+   "q": {
+    "guardian": "(\"NFL games\" OR \"MLB games\" OR \"home games\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 5199,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-10T14:12:21Z"
+    }
+   }
+  },
+  "c101": {
+   "q": {
+    "guardian": "(\"Great British Bake Off\" OR \"Bake Off\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 3335,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-10T14:12:29Z"
+    }
+   }
+  },
+  "c102": {
+   "q": {
+    "guardian": "(\"dockless bikes\" OR \"dockless bike-sharing\" OR \"bike-sharing\" OR \"bike sharing\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 182,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-10T14:14:14Z"
+    }
+   }
+  },
+  "c103": {
+   "q": {
+    "guardian": "(\"spring forward\" OR \"clocks go forward\" OR \"daylight saving begins\" OR \"clocks spring forward\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 386,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-10T14:14:18Z"
+    }
+   }
+  },
+  "c104": {
+   "q": {
+    "guardian": "(\"Ecuador earthquake\" OR \"Ecuadorian earthquake\" OR \"Pedernales earthquake\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 8,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-10T14:11:58Z"
+    }
+   }
+  },
+  "c105": {
+   "q": {
+    "guardian": "(\"Hurricane Katrina\" OR \"Hurricane Rita\" OR \"Katrina and Rita\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 2747,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-10T14:15:00Z"
+    }
+   }
+  },
+  "c106": {
+   "q": {
+    "guardian": "(\"West German television\" OR \"West German TV\" OR \"valley of the clueless\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 20,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-10T14:13:32Z"
+    }
+   }
+  },
+  "c107": {
+   "q": {
+    "guardian": "(\"PyeongChang Olympics\" OR \"PyeongChang Winter Games\" OR \"PyeongChang Winter Olympics\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 87,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-10T14:15:02Z"
+    }
+   }
+  },
+  "c108": {
+   "q": {
+    "guardian": "(\"Pokémon Go\" OR \"Pokemon Go\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 480,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-10T14:12:17Z"
+    }
+   }
+  },
+  "c109": {
+   "q": {
+    "guardian": "(\"Camp Fire\" OR \"Woolsey Fire\" OR \"Camp and Woolsey\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 463,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-10T14:11:43Z"
+    }
+   }
+  },
+  "c110": {
+   "q": {
+    "guardian": "(\"Women's Day march\" OR \"International Women's Day march\" OR \"Women's Day demonstration\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 17,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-10T14:14:08Z"
+    }
+   }
+  },
+  "c111": {
+   "q": {
+    "guardian": "(\"clocks go back\" OR \"clocks fall back\" OR \"daylight saving ends\" OR \"return to standard time\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 212,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-10T14:14:13Z"
+    }
+   }
+  },
+  "c112": {
+   "q": {
+    "guardian": "(\"Hurricane Harvey\" OR \"Hurricane Irma\" OR \"Hurricane Michael\" OR \"Hurricane Florence\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 737,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-10T14:14:02Z"
+    }
+   }
+  },
+  "c113": {
+   "q": {
+    "guardian": "(\"Great East Japan Earthquake\" OR \"Tohoku earthquake\" OR \"Japan tsunami\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 117,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-10T14:14:33Z"
+    }
+   }
+  },
+  "c114": {
+   "q": {
+    "guardian": "(\"Hurricane Maria\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 366,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-10T14:14:22Z"
+    }
+   }
+  },
+  "c115": {
+   "q": {
+    "guardian": "(\"Yogyakarta earthquake\" OR \"Yogyakarta quake\" OR \"Java earthquake\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 4,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-10T14:13:20Z"
+    }
+   }
+  },
+  "c116": {
+   "q": {
+    "guardian": "(\"Black Summer bushfires\" OR \"Black Summer\" OR \"Australian bushfires\" OR \"Australia bushfires\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 886,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-10T14:14:04Z"
+    }
+   }
+  },
+  "c117": {
+   "q": {
+    "guardian": "(\"anti-Black violence\" OR \"police killings\" OR \"police shootings\" OR \"hate crime murders\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 1719,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-10T14:13:12Z"
+    }
+   }
+  },
+  "c118": {
+   "q": {
+    "guardian": "(\"Tinder\" OR \"Tinder app\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 2760,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-10T14:12:38Z"
+    }
+   }
+  },
+  "c119": {
+   "q": {
+    "guardian": "(\"Cyclone Aila\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 15,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-10T14:14:55Z"
+    }
+   }
+  },
+  "c120": {
+   "q": {
+    "guardian": "(\"Indian Ocean tsunami\" OR \"Boxing Day tsunami\" OR \"Asian tsunami\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 1097,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-10T14:12:02Z"
+    }
+   }
+  },
+  "c121": {
+   "q": {
+    "guardian": "(\"mass shootings\" OR \"mass shooting\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 3974,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-10T14:14:21Z"
+    }
+   }
+  },
+  "c122": {
+   "q": {
+    "guardian": "(\"Würzburg attack\" OR \"Wurzburg attack\" OR \"Ansbach bombing\" OR \"Ansbach attack\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 6,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-10T14:14:51Z"
+    }
+   }
+  },
+  "c123": {
+   "q": {
+    "guardian": "(\"Titanic\" OR \"Titanic film\" OR \"Cameron's Titanic\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 7625,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-10T14:13:45Z"
+    }
+   }
+  },
+  "c124": {
+   "q": {
+    "guardian": "(\"undersea cables\" OR \"submarine cables\" OR \"undersea fiber\" OR \"Senegal broadband\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 272,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-10T14:14:47Z"
+    }
+   }
+  },
+  "c125": {
+   "q": {
+    "guardian": "(\"Didi Chuxing\" OR \"Didi Kuaidi\" OR \"Didi Dache\" OR \"ride-hailing\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 539,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-10T14:14:48Z"
+    }
+   }
+  },
+  "c126": {
+   "q": {
+    "guardian": "(\"Banqiao Dam\" OR \"Banqiao Dam failure\" OR \"Zhumadian flood\" OR \"Banqiao disaster\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 5,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-10T14:12:04Z"
+    }
+   }
+  },
+  "c127": {
+   "q": {
+    "guardian": "(\"Super Mario Bros.\" OR \"Super Mario Brothers\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 490,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-10T14:15:03Z"
+    }
+   }
+  },
+  "c128": {
+   "q": {
+    "guardian": "(\"Uber Austin\" OR \"Lyft Austin\" OR \"Austin ride-hailing\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 0,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-10T14:14:27Z"
+    }
+   }
+  },
+  "c129": {
+   "q": {
+    "guardian": "(\"Squid Game\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 473,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-10T14:14:54Z"
+    }
+   }
+  },
+  "c130": {
+   "q": {
+    "guardian": "(\"Hurricane Katrina\" OR \"Katrina\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 5239,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-10T14:12:33Z"
+    }
+   }
+  },
+  "c131": {
+   "q": {
+    "guardian": "(\"Tokyo Olympics\" OR \"Tokyo 2020\" OR \"Tokyo Olympic Games\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 2795,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-10T14:12:16Z"
+    }
+   }
+  },
+  "c132": {
+   "q": {
+    "guardian": "(\"Kobe earthquake\" OR \"Great Hanshin earthquake\" OR \"Hanshin-Awaji earthquake\" OR \"Kobe quake\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 89,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-10T14:14:09Z"
+    }
+   }
+  },
+  "c133": {
+   "q": {
+    "guardian": "(\"Chernobyl disaster\" OR \"Chernobyl\" OR \"Chernobyl nuclear accident\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 1977,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-10T14:13:50Z"
+    }
+   }
+  },
+  "c134": {
+   "q": {
+    "guardian": "(\"CunBA\" OR \"Village Basketball Association\" OR \"Village Super League\" OR \"Cunchao\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 1,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-10T14:13:04Z"
+    }
+   }
+  },
+  "c135": {
+   "q": {
+    "guardian": "(\"Christchurch earthquake\" OR \"Canterbury earthquakes\" OR \"Christchurch quake\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 106,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-10T14:14:42Z"
+    }
+   }
+  },
+  "c136": {
+   "q": {
+    "guardian": "(\"Boston Marathon bombing\" OR \"Sandy Hook shooting\" OR \"Sandy Hook massacre\" OR \"Boston bombing\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 674,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-10T14:14:56Z"
+    }
+   }
+  },
+  "c137": {
+   "q": {
+    "guardian": "(\"Breaking Bad\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 1973,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-10T14:12:54Z"
+    }
+   }
+  },
+  "c138": {
+   "q": {
+    "guardian": "(\"2002 World Cup\" OR \"2002 FIFA World Cup\" OR \"Korea Japan World Cup\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 1920,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-10T14:12:10Z"
+    }
+   }
+  },
+  "c139": {
+   "q": {
+    "guardian": "(\"Woolsey Fire\" OR \"Woolsey wildfire\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 55,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-10T14:12:13Z"
+    }
+   }
+  },
+  "c140": {
+   "q": {
+    "guardian": "(\"Eaton fire\" OR \"Eaton Canyon fire\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 157,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-10T14:13:27Z"
+    }
+   }
+  },
+  "c141": {
+   "q": {
+    "guardian": "(\"Camp Fire\" OR \"Camp Fire smoke\" OR \"Bay Area smoke\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 430,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-10T14:12:50Z"
+    }
+   }
+  },
+  "c142": {
+   "q": {
+    "guardian": "(\"Iberian blackout\" OR \"Iberian Peninsula blackout\" OR \"Spain blackout\" OR \"Spanish blackout\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 5,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-10T14:13:46Z"
+    }
+   }
+  },
+  "c143": {
+   "q": {
+    "guardian": "(\"daylight saving time\" OR \"clocks go forward\" OR \"clocks go back\" OR \"British Summer Time\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 772,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-10T14:13:58Z"
+    }
+   }
+  },
+  "c144": {
+   "q": {
+    "guardian": "(\"Indian Ocean tsunami\" OR \"Boxing Day tsunami\" OR \"Asian tsunami\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 1097,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-10T14:12:02Z"
+    }
+   }
+  },
+  "c145": {
+   "q": {
+    "guardian": "(\"damaging floods\" OR \"flood damage\" OR \"severe flooding\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 1414,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-10T14:14:58Z"
+    }
+   }
+  },
+  "c146": {
+   "q": {
+    "guardian": "(\"Stockholm attack\" OR \"Stockholm truck attack\" OR \"Stockholm terror attack\" OR \"Drottninggatan\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 23,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-10T14:13:33Z"
+    }
+   }
+  },
+  "c147": {
+   "q": {
+    "guardian": "(\"Valencia floods\" OR \"Valencia flooding\" OR \"Spain floods\" OR \"DANA storm\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 20,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-10T14:12:22Z"
+    }
+   }
+  },
+  "c148": {
+   "q": {
+    "guardian": "(\"COVID-19\" OR \"Covid pandemic\" OR \"coronavirus pandemic\" OR \"coronavirus\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 71318,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-10T14:13:56Z"
+    }
+   }
+  },
+  "c149": {
+   "q": {
+    "guardian": "(\"Burkina Faso attack\" OR \"Burkina Faso terrorist attack\" OR \"Burkina Faso jihadists\" OR \"Burkina Faso militants\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 3,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-10T14:14:26Z"
+    }
+   }
+  },
+  "c150": {
+   "q": {
+    "guardian": "(\"Didi Chuxing\" OR \"China ride-hailing\" OR \"Chinese ride-hailing\" OR \"Uber China\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 37,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-10T14:13:39Z"
+    }
+   }
+  },
+  "c151": {
+   "q": {
+    "guardian": "(\"original iPhone\" OR \"first iPhone\" OR \"iPhone launch\" OR \"AT&T iPhone\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 353,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-10T14:12:27Z"
+    }
+   }
+  },
+  "c152": {
+   "q": {
+    "guardian": "(\"Sandy Hook\" OR \"Sandy Hook Elementary\" OR \"Sandy Hook massacre\" OR \"Newtown shooting\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 1325,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-10T14:13:41Z"
+    }
+   }
+  },
+  "c153": {
+   "q": {
+    "guardian": "(\"school shootings\" OR \"school shooting\" OR \"fatal school shooting\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 2210,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-10T14:13:25Z"
+    }
+   }
+  },
+  "c154": {
+   "q": {
+    "guardian": "(\"Hurricane Floyd\" OR \"Tropical Storm Floyd\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 49,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-10T14:14:50Z"
+    }
+   }
+  },
+  "c155": {
+   "q": {
+    "guardian": "(\"Nice attack\" OR \"Bastille Day attack\" OR \"Ansbach attack\" OR \"Wurzburg attack\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 130,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-10T14:13:23Z"
+    }
+   }
+  },
+  "c156": {
+   "q": {
+    "guardian": "(\"Pontiac Silverdome\" OR \"Silverdome\" OR \"Ford Field\")"
+   },
+   "counts": {
+    "guardian": {
+     "count": 96,
+     "status": "ok",
+     "field": "response.total",
+     "at": "2026-10-10T14:13:11Z"
+    }
+   }
+  }
+ }
+}
