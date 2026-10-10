@@ -1,7 +1,7 @@
 {
  "protocol": "ripples/lab/chain_check.py",
  "run": "2026-10-09",
- "checker_sha": "32feb86",
+ "checker_sha": "fc1d8e9",
  "chains": [
   {
    "slug": "frozen",
@@ -16628,6 +16628,491 @@
      "mark": null,
      "onset": "2023-07-01",
      "source": "“The Folklore of the ‘Swift’ Effect: Lessons for Medical Research and Clinical Practice,” PLOS ONE, 2025"
+    }
+   ]
+  },
+  {
+   "slug": "study-album-traffic",
+   "title": "Album release days (2018 to 2022)",
+   "date": "2018-06-29",
+   "batch": 19,
+   "vertical": "Published studies",
+   "steps": [
+    {
+     "n": 1,
+     "claim": "Ten record-streaming albums come out, from Drake's Scorpion to Taylor Swift's Midnights",
+     "test": {
+      "type": "record",
+      "date": "2018-06-29",
+      "source": "“Smartphones, Online Music Streaming, and Traffic Fatalities,” JAMA Network Open, 2026",
+      "doi": "10.1001/jamanetworkopen.2026.29282"
+     },
+     "ref": "2018-06-29",
+     "verdict": "reported",
+     "note": "The study takes the ten albums with the most first-day streams from 2017 to 2022. Dated here to the first of those release days, Scorpion on June 29, 2018.",
+     "link": null,
+     "link_why": null,
+     "branch": false,
+     "vertical": null,
+     "after": null,
+     "slice": null,
+     "short": null,
+     "mark": null,
+     "onset": "2018-06-29",
+     "source": "“Smartphones, Online Music Streaming, and Traffic Fatalities,” JAMA Network Open, 2026",
+     "attn": {
+      "result": "no article found"
+     }
+    },
+    {
+     "n": 2,
+     "claim": "Big release days saw about 18 more deaths on US roads",
+     "test": {
+      "type": "study",
+      "date": "2018-06-29",
+      "window": "10 release days, 2018 to 2022",
+      "grade": "measured",
+      "design": "release days against the 10 days before and after",
+      "source": "“Smartphones, Online Music Streaming, and Traffic Fatalities,” JAMA Network Open, 2026",
+      "effect": "18.2 more US traffic deaths on an average release day, a 15.1% rise, as streaming jumped 43%",
+      "effect_short": "+15%",
+      "doi": "10.1001/jamanetworkopen.2026.29282",
+      "rows": [
+       "CR0066"
+      ]
+     },
+     "ref": "2018-06-29",
+     "verdict": "measured by a published study",
+     "note": "From the paper: “major music album releases, accompanied by increased online streaming, were associated with a significant increase in traffic fatalities.” The extra deaths were higher among younger male drivers, crashes with one person in the car and cars with built-in infotainment screens.",
+     "link": null,
+     "link_why": null,
+     "branch": false,
+     "vertical": null,
+     "after": null,
+     "slice": null,
+     "short": "More traffic deaths",
+     "mark": null,
+     "onset": "2018-06-29",
+     "source": "“Smartphones, Online Music Streaming, and Traffic Fatalities,” JAMA Network Open, 2026",
+     "range": [
+      "2018-06-29",
+      "2022-11-04"
+     ]
+    }
+   ]
+  },
+  {
+   "slug": "study-football-protests",
+   "title": "European football (2005 to 2019)",
+   "date": "2005-07-01",
+   "batch": 19,
+   "vertical": "Published studies",
+   "steps": [
+    {
+     "n": 1,
+     "claim": "A European football club with an African player loses a close game",
+     "test": {
+      "type": "record",
+      "date": "2005-07-01",
+      "date_precision": "year",
+      "source": "“Do Politically Irrelevant Events Cause Conflict? The Cross-continental Effects of European Professional Football on Protests in Africa,” International Organization, 2023",
+      "doi": "10.1017/S0020818322000261"
+     },
+     "ref": "2005-07-01",
+     "verdict": "reported",
+     "note": "The study covers 15,102 close games from 2005 to 2019. Dated here to the first year.",
+     "link": null,
+     "link_why": null,
+     "branch": false,
+     "vertical": null,
+     "after": null,
+     "slice": null,
+     "short": null,
+     "mark": null,
+     "onset": "2005-07-01",
+     "source": "“Do Politically Irrelevant Events Cause Conflict? The Cross-continental Effects of European Professional Football on Protests in Africa,” International Organization, 2023"
+    },
+    {
+     "n": 2,
+     "claim": "More peaceful protests in the player's home country after his club loses a close game",
+     "test": {
+      "type": "study",
+      "date": "2005-07-01",
+      "date_precision": "year",
+      "window": "2005 to 2019",
+      "grade": "measured",
+      "design": "close losses against draws, adjusted for the betting odds",
+      "source": "“Do Politically Irrelevant Events Cause Conflict? The Cross-continental Effects of European Professional Football on Protests in Africa,” International Organization, 2023",
+      "effect": "more peaceful protests in the player's home country after a close loss, with no change in riots or armed conflict",
+      "doi": "10.1017/S0020818322000261",
+      "rows": [
+       "CR0069"
+      ]
+     },
+     "ref": "2005-07-01",
+     "verdict": "measured by a published study",
+     "note": "From the paper: “close losses of African players’ teams increase peaceful protests in their original countries while not changing the likelihood of riots or armed conflicts.” An earlier version (IDE Discussion Paper 866, 2022) put the rise at nearly double the usual protest rate. Close wins did not lower protests.",
+     "link": null,
+     "link_why": null,
+     "branch": false,
+     "vertical": null,
+     "after": null,
+     "slice": null,
+     "short": "More protests",
+     "mark": null,
+     "onset": "2005-07-01",
+     "source": "“Do Politically Irrelevant Events Cause Conflict? The Cross-continental Effects of European Professional Football on Protests in Africa,” International Organization, 2023",
+     "range": [
+      "2005-01-01",
+      "2019-12-31"
+     ]
+    }
+   ]
+  },
+  {
+   "slug": "study-stockholm-er",
+   "title": "The Stockholm truck attack (2017)",
+   "date": "2017-04-07",
+   "batch": 19,
+   "vertical": "Published studies",
+   "steps": [
+    {
+     "n": 1,
+     "claim": "A truck attack on a Stockholm shopping street kills five people",
+     "test": {
+      "type": "record",
+      "date": "2017-04-07",
+      "source": "“The effect of a terrorist attack on emergency department inflow: an observation study using difference-in-differences methodology,” Scandinavian Journal of Trauma, Resuscitation and Emergency Medicine, 2019",
+      "doi": "10.1186/s13049-019-0634-2"
+     },
+     "ref": "2017-04-07",
+     "verdict": "reported",
+     "note": "The attack came on April 7, 2017, the Friday a week before Good Friday.",
+     "link": null,
+     "link_why": null,
+     "branch": false,
+     "vertical": null,
+     "after": null,
+     "slice": null,
+     "short": null,
+     "mark": null,
+     "onset": "2017-04-07",
+     "source": "“The effect of a terrorist attack on emergency department inflow: an observation study using difference-in-differences methodology,” Scandinavian Journal of Trauma, Resuscitation and Emergency Medicine, 2019",
+     "attn": {
+      "result": "no article found"
+     }
+    },
+    {
+     "n": 2,
+     "claim": "Fewer people went to Stockholm's emergency rooms for about three weeks",
+     "test": {
+      "type": "study",
+      "date": "2017-04-07",
+      "window": "Apr 2017, about 3 weeks",
+      "grade": "measured",
+      "design": "difference in differences against the same hospitals in 2013 to 2016",
+      "source": "“The effect of a terrorist attack on emergency department inflow: an observation study using difference-in-differences methodology,” Scandinavian Journal of Trauma, Resuscitation and Emergency Medicine, 2019",
+      "effect": "7% to 9% fewer emergency room visits, strongest near the attack and back to normal in about three weeks",
+      "effect_short": "7% to 9% fewer",
+      "doi": "10.1186/s13049-019-0634-2",
+      "rows": [
+       "CR0021"
+      ]
+     },
+     "ref": "2017-04-07",
+     "verdict": "measured by a published study",
+     "note": "From the paper: “The study shows a statistically significant reduction in overall ED inflow of 7-9% following the attack.” The drop faded with distance and was not significant beyond 10 km. ED means an emergency department.",
+     "link": null,
+     "link_why": null,
+     "branch": false,
+     "vertical": null,
+     "after": null,
+     "slice": null,
+     "short": "Fewer ER visits",
+     "mark": null,
+     "onset": "2017-04-07",
+     "source": "“The effect of a terrorist attack on emergency department inflow: an observation study using difference-in-differences methodology,” Scandinavian Journal of Trauma, Resuscitation and Emergency Medicine, 2019",
+     "range": [
+      "2017-04-07",
+      "2017-04-28"
+     ]
+    }
+   ]
+  },
+  {
+   "slug": "study-greece-dst-crashes",
+   "title": "Greece's clock change (2006 to 2016)",
+   "date": "2006-07-01",
+   "batch": 19,
+   "vertical": "Published studies",
+   "steps": [
+    {
+     "n": 1,
+     "claim": "Greece moves its clocks forward an hour each spring",
+     "test": {
+      "type": "record",
+      "date": "2006-07-01",
+      "date_precision": "year",
+      "source": "“Summertime and the drivin’ is easy? Daylight saving time and vehicle accidents,” Health Economics, 2023",
+      "doi": "10.1002/hec.4715"
+     },
+     "ref": "2006-07-01",
+     "verdict": "reported",
+     "note": "The study covers every spring and fall clock change from 2006 to 2016. Dated here to the first year.",
+     "link": null,
+     "link_why": null,
+     "branch": false,
+     "vertical": null,
+     "after": null,
+     "slice": null,
+     "short": null,
+     "mark": null,
+     "onset": "2006-07-01",
+     "source": "“Summertime and the drivin’ is easy? Daylight saving time and vehicle accidents,” Health Economics, 2023"
+    },
+    {
+     "n": 2,
+     "claim": "Fewer serious road crashes in the days after the clocks go forward",
+     "test": {
+      "type": "study",
+      "date": "2006-07-01",
+      "date_precision": "year",
+      "window": "2006 to 2016",
+      "grade": "measured",
+      "design": "regression discontinuity at the clock change",
+      "source": "“Summertime and the drivin’ is easy? Daylight saving time and vehicle accidents,” Health Economics, 2023",
+      "effect": "15% to 20% fewer serious crashes after the spring change, strongest in the hours the change affects most",
+      "effect_short": "15% to 20% fewer",
+      "doi": "10.1002/hec.4715",
+      "rows": [
+       "CR0218"
+      ]
+     },
+     "ref": "2006-07-01",
+     "verdict": "measured by a published study",
+     "note": "From the paper: “The sizable discontinuity parameters suggest that the Spring transition causes a 15%–20% decrease in serious crashes.” Minor crashes rose about 13% after the fall change. Quoted from the published article's open copy at City, University of London.",
+     "link": null,
+     "link_why": null,
+     "branch": false,
+     "vertical": null,
+     "after": null,
+     "slice": null,
+     "short": "Fewer serious crashes",
+     "mark": null,
+     "onset": "2006-07-01",
+     "source": "“Summertime and the drivin’ is easy? Daylight saving time and vehicle accidents,” Health Economics, 2023",
+     "range": [
+      "2006-01-01",
+      "2016-12-31"
+     ]
+    }
+   ]
+  },
+  {
+   "slug": "study-britain-dst-casualties",
+   "title": "Britain's clock changes (2005 to 2018)",
+   "date": "2005-07-01",
+   "batch": 19,
+   "vertical": "Published studies",
+   "steps": [
+    {
+     "n": 1,
+     "claim": "Britain moves its clocks forward in spring and back in fall",
+     "test": {
+      "type": "record",
+      "date": "2005-07-01",
+      "date_precision": "year",
+      "source": "“Road traffic casualties in Great Britain at daylight savings time transitions: a causal regression discontinuity design analysis,” BMJ Open, 2022",
+      "doi": "10.1136/bmjopen-2021-054678"
+     },
+     "ref": "2005-07-01",
+     "verdict": "reported",
+     "note": "The study covers both clock changes in every year from 2005 to 2018. Dated here to the first year.",
+     "link": null,
+     "link_why": null,
+     "branch": false,
+     "vertical": null,
+     "after": null,
+     "slice": null,
+     "short": null,
+     "mark": null,
+     "onset": "2005-07-01",
+     "source": "“Road traffic casualties in Great Britain at daylight savings time transitions: a causal regression discontinuity design analysis,” BMJ Open, 2022"
+    },
+    {
+     "n": 2,
+     "claim": "Slightly fewer road casualties right after the clocks change",
+     "test": {
+      "type": "study",
+      "date": "2005-07-01",
+      "date_precision": "year",
+      "window": "2005 to 2018",
+      "grade": "measured",
+      "design": "regression discontinuity at the clock changes",
+      "source": "“Road traffic casualties in Great Britain at daylight savings time transitions: a causal regression discontinuity design analysis,” BMJ Open, 2022",
+      "effect": "about 4.7 fewer road casualties and 0.75 fewer deaths a year across both changes, a minor drop",
+      "effect_short": "4.7 fewer a year",
+      "doi": "10.1136/bmjopen-2021-054678",
+      "rows": [
+       "CR0209"
+      ]
+     },
+     "ref": "2005-07-01",
+     "verdict": "measured by a published study",
+     "note": "From the paper: “All significant average treatment effects are negative (54 significant models out of 287 estimated), indicating that there are fewer casualties following the transitions.” The authors say this does not support a UK parliamentary estimate of 30 fewer deaths a year if the clock changes ended.",
+     "link": null,
+     "link_why": null,
+     "branch": false,
+     "vertical": null,
+     "after": null,
+     "slice": null,
+     "short": "Fewer casualties",
+     "mark": null,
+     "onset": "2005-07-01",
+     "source": "“Road traffic casualties in Great Britain at daylight savings time transitions: a causal regression discontinuity design analysis,” BMJ Open, 2022",
+     "range": [
+      "2005-01-01",
+      "2018-12-31"
+     ]
+    }
+   ]
+  },
+  {
+   "slug": "study-catalonia-birthweight",
+   "title": "The Catalonia attacks (2017)",
+   "date": "2017-08-17",
+   "batch": 19,
+   "vertical": "Published studies",
+   "steps": [
+    {
+     "n": 1,
+     "claim": "Terror attacks in Barcelona and Cambrils kill sixteen people",
+     "test": {
+      "type": "record",
+      "date": "2017-08-17",
+      "source": "“Terrorist attacks, Islamophobia and newborns’ health,” Journal of Health Economics, 2021",
+      "doi": "10.1016/j.jhealeco.2021.102510"
+     },
+     "ref": "2017-08-17",
+     "verdict": "reported",
+     "note": "The first attack came in Barcelona on the afternoon of August 17, 2017.",
+     "link": null,
+     "link_why": null,
+     "branch": false,
+     "vertical": null,
+     "after": null,
+     "slice": null,
+     "short": null,
+     "mark": null,
+     "onset": "2017-08-17",
+     "source": "“Terrorist attacks, Islamophobia and newborns’ health,” Journal of Health Economics, 2021",
+     "attn": {
+      "result": "no article found"
+     }
+    },
+    {
+     "n": 2,
+     "claim": "More low-birth-weight babies born to mothers from Muslim countries in the towns attacked",
+     "test": {
+      "type": "study",
+      "date": "2017-08-17",
+      "window": "Aug 2017, the year after",
+      "grade": "measured",
+      "design": "triple difference by the mother's origin, her town, and before or after",
+      "source": "“Terrorist attacks, Islamophobia and newborns’ health,” Journal of Health Economics, 2021",
+      "effect": "the share of low-birth-weight babies rose 23.77% and deliveries with complications 13.02% among mothers from Muslim countries in Barcelona, Cambrils and Ripoll",
+      "effect_short": "+24%",
+      "doi": "10.1016/j.jhealeco.2021.102510",
+      "rows": [
+       "CR0122"
+      ]
+     },
+     "ref": "2017-08-17",
+     "verdict": "measured by a published study",
+     "note": "From the paper: “Results show that the share of low-birth-weight babies and deliveries with complications raise significantly by 23.77%, and 13.02%.” The study counts only babies conceived before the attacks. It also found more Islamophobia and more emotional distress in the same group.",
+     "link": null,
+     "link_why": null,
+     "branch": false,
+     "vertical": null,
+     "after": null,
+     "slice": null,
+     "short": "More low birth weight",
+     "mark": null,
+     "onset": "2017-08-17",
+     "source": "“Terrorist attacks, Islamophobia and newborns’ health,” Journal of Health Economics, 2021",
+     "range": [
+      "2017-08-17",
+      "2018-08-16"
+     ]
+    }
+   ]
+  },
+  {
+   "slug": "study-senegal-bednets",
+   "title": "Broadband in Senegal (2010)",
+   "date": "2010-07-01",
+   "batch": 19,
+   "vertical": "Published studies",
+   "steps": [
+    {
+     "n": 1,
+     "claim": "Undersea fiber cables bring broadband internet to Senegal",
+     "test": {
+      "type": "record",
+      "date": "2010-07-01",
+      "date_precision": "year",
+      "source": "“Impact of Broadband Internet on Preventive Healthcare Behaviors in Senegal,” Economie et Statistique / Economics and Statistics, 2024",
+      "doi": "10.24187/ecostat.2024.542.2113"
+     },
+     "ref": "2010-07-01",
+     "verdict": "reported",
+     "note": "The cables arrived in 2010. Dated here to that year.",
+     "link": null,
+     "link_why": null,
+     "branch": false,
+     "vertical": null,
+     "after": null,
+     "slice": null,
+     "short": null,
+     "mark": null,
+     "onset": "2010-07-01",
+     "source": "“Impact of Broadband Internet on Preventive Healthcare Behaviors in Senegal,” Economie et Statistique / Economics and Statistics, 2024"
+    },
+    {
+     "n": 2,
+     "claim": "More young children slept under a bednet in homes near the new fiber line",
+     "test": {
+      "type": "study",
+      "date": "2012-07-01",
+      "date_precision": "year",
+      "window": "2012 to 2016",
+      "grade": "measured",
+      "design": "difference in differences, homes near the fiber line against homes farther away",
+      "source": "“Impact of Broadband Internet on Preventive Healthcare Behaviors in Senegal,” Economie et Statistique / Economics and Statistics, 2024",
+      "effect": "7.8 to 14.3 percentage points more homes where children under 5 slept under a bednet the night before",
+      "effect_short": "+8 to +14 points",
+      "doi": "10.24187/ecostat.2024.542.2113",
+      "rows": [
+       "CR0084"
+      ]
+     },
+     "ref": "2010-07-01",
+     "verdict": "measured by a published study",
+     "note": "From the paper: “Broadband access is found to be positively associated with the use of bednet.” The 7.8-point estimate matches mothers on place, wealth, education and more; the 14.3-point one uses fixed effects. Results for prenatal care were mixed, and child vaccination did not change.",
+     "link": null,
+     "link_why": null,
+     "branch": false,
+     "vertical": null,
+     "after": null,
+     "slice": null,
+     "short": "More bednet use",
+     "mark": null,
+     "onset": "2012-07-01",
+     "source": "“Impact of Broadband Internet on Preventive Healthcare Behaviors in Senegal,” Economie et Statistique / Economics and Statistics, 2024",
+     "range": [
+      "2012-01-01",
+      "2016-12-31"
+     ]
     }
    ]
   },
