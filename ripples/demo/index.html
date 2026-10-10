@@ -1497,7 +1497,7 @@ function fromChain(slug) {
     const refD = st.ref ? daysBetween(iso0, st.ref) : null, onD = st.onset ? daysBetween(iso0, st.onset) : d;  // the days the test read, so the label sits on the week it measured
     const pulseWin = !pulseRatio ? null : weekly ? (refD != null ? [refD - 36, refD + (st.test.lag || 150) + 7] : null) : [onD - 36, onD + 52];  // the checker reads 30 days before to the lag after (45 for an attention check), in trailing weeks
     const who = unit !== "births" ? "" : st.test.name ? `${st.test.sex === "F" ? "girls" : st.test.sex === "M" ? "boys" : "babies"} named ${st.test.name}` : ((m => m ? `${m[1] === "sons" ? "boys" : "girls"} named ${m[2]}` : "babies given the name")(/\b(sons|daughters) ([A-Z][a-z]+)/.exec(st.claim)));
-    items.push({id, parent, slice:st.slice || (st.branch ? `b${st.n}` : "main"), d, range, undated, label:st.short || shortLabel(st.claim), lv, lvText, sub, ttype:st.test.type, p:st.p, ratio:st.ratio, newArt:!!st.new_article, arch:!!st.archive_first, src:srcLine, srcName:SRC(st), bust:short, bustWhy:why, mark:lv === "busted" ? null : st.mark, short:shortLine, srcText:srcLine, title:st.claim, claimRef:(st.must_precede || /after what it is said/.test(st.verdict || "")) && st.ref ? daysBetween(iso0, st.ref) : null, notYet:/not yet/.test(st.verdict || ""), study, prec, yr:st.onset ? +st.onset.slice(0, 4) : null, series:pulseW ? {weekly:pulseW, pre:pulsePre, ratio:pulseRatio, win:pulseWin, unit, who} : null,
+    items.push({id, parent, slice:st.slice || (st.branch ? `b${st.n}` : "main"), d, range, undated, label:st.short || shortLabel(st.claim), lv, lvText, sub, ttype:st.test.type, p:st.p, ratio:st.ratio, newArt:!!st.new_article, arch:!!st.archive_first, src:srcLine, srcName:SRC(st), bust:short, bustWhy:why, mark:lv === "busted" ? null : st.mark, short:shortLine, srcText:srcLine, title:st.claim, claimRef:(st.must_precede || /after what it is said/.test(st.verdict || "")) && st.ref ? daysBetween(iso0, st.ref) : null, notYet:/not yet/.test(st.verdict || ""), study, prec, yr:st.onset ? +st.onset.slice(0, 4) : null, series:pulseW ? {weekly:pulseW, pre:pulsePre, ratio:pulseRatio, win:pulseWin, unit, who, key:unit === "series" ? st.test.id || st.test.type : null, t0:unit === "series" ? onD : null} : null,
       card:card({when, badge:lvText, badgeCls:/not yet/.test(st.verdict || "") ? "na" : `l-${lv}`, title:st.claim, cls:lv === "busted" ? (/not yet/.test(st.verdict || "") ? "notyet" : "busted") : "", spark:weekly ? sparkHTML(weekly, st.ref) : (lv === "measured" && at && at.weekly && at.ratio) ? sparkHTML(at.weekly, st.onset) : "", facts, short:shortLine,
         sure:study ? howSure(lv, {kind:"study", study, what:srcShort, why}) : howSure(st.test.type === "dose" && st.p != null ? "measured" : lv, (lv === "measured" || (st.test.type === "dose" && st.p != null)) ? {kind:st.test.type === "wiki" ? "wiki" : st.test.type === "ssa" ? "ssa" : st.test.type === "dose" ? "dose" : "series", what:st.test.type === "wiki" ? (st.test.articles || [])[0] : SRC(st) || st.series,
             when:st.onset ? (st.test.type === "ssa" ? st.onset.slice(0, 4) : fmt(D(st.onset))) : "", ratio:st.ratio, p:st.p, n:st.n_placebo, pre:st.pretrend_p}
@@ -2484,8 +2484,9 @@ function renderPicker() {
     if (cur && cur.key === slug) requestAnimationFrame(() => b.scrollIntoView({block:"nearest", inline:"center"}));
   }
   if (tab === "stories") {
-    const sel = document.createElement("select"); sel.className = "chip"; sel.id = "allchains"; sel.setAttribute("aria-label", "All checked stories");
-    sel.innerHTML = '<option value="">All checked stories…</option>' + [...DATA.chains].sort((a, b) => a.title.localeCompare(b.title)).map(c => `<option value="${c.slug}">${esc(c.title)}</option>`).join("");
+    const mine = DATA.chains.filter(c => tabOf("chain", c.slug) === "stories").sort((a, b) => a.title.localeCompare(b.title));  // the fact-checks only: the other checked stories sit under Lasting marks and Engine leads
+    const sel = document.createElement("select"); sel.className = "chip"; sel.id = "allchains"; sel.setAttribute("aria-label", `All ${mine.length} fact-checks`);
+    sel.innerHTML = `<option value="">All ${mine.length} fact-checks…</option>` + mine.map(c => `<option value="${c.slug}">${esc(c.title)}</option>`).join("");
     if (cur && cur.kind === "chain" && !TABS.stories.some(([, s]) => s === cur.key)) sel.value = cur.key;
     sel.onchange = () => sel.value && show("chain", sel.value);
     pk.appendChild(sel);
@@ -2524,7 +2525,7 @@ function show(kind, slug, autoplay = true) {
   story.sub = story.sub.replace(/ Tap a ripple to see why\.$/, "");
   clearFocus(); hideTip(); cur = story; hot = null; t = 0; ambient = 0; guessRow("");
   sess.stories++; sess.reveal = false; sess.storyT0 = performance.now(); sess.scrubbed = false; track("story_start", {kind, slug, via: window.__via || (sess.stories === 1 ? "landing" : "unknown"), nth_story: sess.stories, view: AV ? "chart" : CV ? "chain" : "pond"}); window.__via = null;
-  const inTab = TABS[tab].some(([k, s]) => k === kind && s === slug) || (tab === "stories" && kind === "chain");
+  const inTab = TABS[tab].some(([k, s]) => k === kind && s === slug) || (tab === "stories" && kind === "chain" && tabOf(kind, slug) === "stories");  // a checked story listed under another tab opens there, with that tab's title
   if (!inTab) tab = tabOf(kind, slug);
   renderPicker();
   const named = TABS[tab].find(([k, s]) => k === kind && s === slug);
@@ -2684,7 +2685,7 @@ function avMore(it, s) {  // "How we know": the card's own account, its chart, i
   const detHtml = det ? [...det.children].filter(c => c.tagName !== "SUMMARY" && c !== src).map(c => c.outerHTML).join("") : "";  // a card whose source line sits in its details prints it once, at the end
   const on = addDays(s.iso0, Math.round(it.d)).toISOString().slice(0, 10);
   const sr = it.series, yearly = sr && (sr.unit === "births" || it.prec === "year"), when = x => yearly ? x.slice(0, 4) : fmtMonth(D(x));
-  const spark = sr && sr.weekly && sr.weekly.length > 2 ? `<div class="avspark"><span>${sr.unit === "births" ? `${esc(cap(sr.who))} each year` : sr.unit === "series" ? "The series" : "Wikipedia views a week"}, ${esc(when(sr.weekly[0][0]))} to ${esc(when(sr.weekly[sr.weekly.length - 1][0]))}; the dashed line is this step</span>${sparkHTML(it.series.weekly, on)}</div>` : "";
+  const spark = sr && sr.weekly && sr.weekly.length > 2 ? `<div class="avspark"><span>${sr.unit === "births" ? `${esc(cap(sr.who))} each year` : sr.unit === "series" ? (SERIES_UNIT[sr.key] ? esc(cap(SERIES_UNIT[sr.key].key)) : "The series") : "Wikipedia views a week"}, ${esc(when(sr.weekly[0][0]))} to ${esc(when(sr.weekly[sr.weekly.length - 1][0]))}; the dashed line is this step</span>${sparkHTML(it.series.weekly, on)}</div>` : "";
   const cite = it.cite || citeFor(it, s); if (cite) (s.av.cites = s.av.cites || {})[it.id] = cite;
   const body = `${spark}${facts ? facts.outerHTML : ""}${sure ? `<p>${sure.innerHTML}</p>` : ""}${detHtml}${src ? src.outerHTML : ""}${cite ? `<button type="button" class="avcite" data-id="${esc(it.id)}">Copy citation</button>` : ""}`;
   return body.replace(/<[^>]+>/g, "").trim() || cite ? `<details class="avmore"><summary>How we know</summary><div class="in">${body}</div></details>` : "";
@@ -2801,6 +2802,25 @@ function rcLift(it, iso0) {  // a line of Wikipedia readers as [days since the s
   const peak = fig ? [top[0], fig] : top;  // the label prints the test's figure on the busiest week the test read; the text under the chart gives the same number
   return peak[1] >= 1.5 ? {pts, peak} : null;
 }
+// An official series drawn in its own unit (Oct 9, owner): what the key says, the caption's short name, how a value prints.
+// Units as FRED, Stack Exchange and Zillow publish them. A series not listed here draws no line.
+const SERIES_UNIT = {
+  WRMFNS:{key:"retail money-market fund assets, $ billions a week (FRED)", say:"money-market funds", v:x => `$${Math.round(x).toLocaleString("en-US")} billion`},
+  DRTSCILM:{key:"net share of banks tightening business-loan standards, % a quarter (FRED)", say:"banks tightening", v:x => `${Math.round(x)}%`},
+  DHHNGSP:{key:"Henry Hub natural gas price, $ per million Btu a day (FRED)", say:"Henry Hub gas", v:x => `$${x.toFixed(2)}`},
+  PMAIZMTUSDM:{key:"world corn price, $ per metric ton a month (FRED)", say:"corn", v:x => `$${Math.round(x)} a ton`},
+  stackex:{key:"new Stack Overflow questions a month (Stack Exchange)", say:"Stack Overflow questions a month", v:x => Math.round(x).toLocaleString("en-US")},
+  zillow:{key:"home value growth in seven Zoom towns minus the US, percentage points (Zillow)", say:"Zoom towns over the US", v:x => `${x.toFixed(1)} points`}};
+function rcSeries(it, iso0) {  // an official series in its own unit: its points in days since the stone, its value at the step, and its biggest move after
+  const sr = it.series, u = sr && sr.unit === "series" && SERIES_UNIT[sr.key]; if (!u || !sr.weekly || sr.weekly.length < 3 || it.undated) return null;
+  const ds = sr.weekly.map(([d]) => daysBetween(iso0, d)), gaps = ds.slice(1).map((x, k) => x - ds[k]).sort((a, b) => a - b), per = Math.max(1, gaps[Math.floor(gaps.length / 2)] || 1);  // its own step: a day, a week, a month, a quarter
+  const pts = sr.weekly.map(([d, v], k) => ({d:ds[k] + (per >= 28 ? per / 2 : 0), v:+v, date:d}));  // a monthly or quarterly figure sits mid-period
+  const t = sr.t0 != null ? sr.t0 : it.d, i = pts.findIndex(p => p.d > t), a = pts[i - 1], b = pts[i];  // the step's own date, even when it is drawn at the stone
+  const atV = i < 0 ? pts[pts.length - 1].v : !a ? b.v : a.v + (b.v - a.v) * (t - a.d) / (b.d - a.d);  // the value on the step's date, read off the line
+  const after = i < 0 ? [] : pts.slice(i), ext = after.length ? after.reduce((m, p) => Math.abs(p.v - atV) > Math.abs(m.v - atV) ? p : m, after[0]) : null;
+  const when = p => { const t = D(p.date), y = t.getUTCFullYear(); return per >= 300 ? `in ${y}` : per >= 80 ? `in Q${Math.floor(t.getUTCMonth() / 3) + 1} ${y}` : per >= 28 ? `in ${fmtMonth(t)}` : `on ${fmt(t)}`; };
+  return {pts, per, u, atV, ext, when, end:pts[pts.length - 1].d};
+}
 function rcBirths(it, iso0) {  // a yearly count of babies given a name: one flat run a year, [from, to] in days since the stone, and the count
   const sr = it.series; if (!sr || sr.unit !== "births" || !sr.weekly || sr.weekly.length < 3 || it.undated) return null;
   const all = sr.weekly.map(([d, v]) => ({y:+d.slice(0, 4), a:daysBetween(iso0, `${d.slice(0, 4)}-01-01`), b:daysBetween(iso0, `${+d.slice(0, 4) + 1}-01-01`), v:+v}));
@@ -2815,7 +2835,7 @@ function rcRange(it, iso0) {  // a study's window in days since the stone: the c
   return m ? [Math.max(0, daysBetween(iso0, `${m[1]}-01-01`)), daysBetween(iso0, `${m[2]}-12-31`)] : null;
 }
 function rcRows(s) {  // the stone, then each step in date order; a long story keeps its marks, its answer and its biggest moves
-  let rows = s.items.filter(x => !x.aside && !x.undated && !x.future).sort((p, q) => p.d - q.d).map(it => ({it, lift:rcLift(it, s.iso0), births:rcBirths(it, s.iso0), range:rcRange(it, s.iso0)}));
+  let rows = s.items.filter(x => !x.aside && !x.undated && !x.future).sort((p, q) => p.d - q.d).map(it => ({it, lift:rcLift(it, s.iso0), births:rcBirths(it, s.iso0), series:rcSeries(it, s.iso0), range:rcRange(it, s.iso0)}));
   s.rcHidden = 0;
   if (rows.length > RC_MAX - 1) {
     const keep = new Set(rows.filter(r => r.it.mark || r.it === s.answer).map(r => r.it));
@@ -2833,7 +2853,7 @@ function rcCapGlyph(s, r, i) {
   if (r.stone) return svg(`<circle r="8" fill="none" stroke="#1e2a2e" stroke-opacity=".3" stroke-width="1.5"/><circle r="4.4" fill="#1e2a2e"/>`);
   if (it.mark) return svg(`<path d="M0,-8 L7,-4 L7,4 L0,8 L-7,4 L-7,-4 Z" fill="#fff3dc" stroke="#c77f12" stroke-width="1.8"/><circle r="2.5" fill="#c77f12"/>`);
   if (lv === "busted") return svg(`<path d="M-5,-5 L5,5 M5,-5 L-5,5" stroke="#b23a2c" stroke-width="2.2" stroke-linecap="round"/>`);
-  if (r.lift || r.births) return svg(`<path d="M-9,5 L-4,4 L-1,-6 L3,1 L9,3" fill="none" stroke="${PULSE_HUES[(i - 1 + PULSE_HUES.length) % PULSE_HUES.length]}" stroke-width="2.2" stroke-linejoin="round" stroke-linecap="round"/>`);
+  if (r.lift || r.births || r.series) return svg(`<path d="M-9,5 L-4,4 L-1,-6 L3,1 L9,3" fill="none" stroke="${PULSE_HUES[(i - 1 + PULSE_HUES.length) % PULSE_HUES.length]}" stroke-width="2.2" stroke-linejoin="round" stroke-linecap="round"/>`);
   if (lv === "plausible") return svg(`<circle r="4.6" fill="#f4efe4" stroke="#8a7638" stroke-width="2"/>`);
   return svg(`<circle r="4.6" fill="#3a4a4f"/>`);
 }
@@ -2846,6 +2866,7 @@ function rcCap(s, r, final) {
     : bust ? bust
     : r.lift ? `readers ${rcX(r.lift.peak[1])}× normal`
     : r.births ? `${esc(r.births.who)}: ${r.births.prev ? `${r.births.prev.v.toLocaleString("en-US")} to ` : ""}${r.births.at.v.toLocaleString("en-US")}`
+    : r.series ? `${esc(r.series.u.say)}: ${esc(r.series.u.v(r.series.atV))}${r.series.ext ? ` to ${esc(r.series.u.v(r.series.ext.v))}` : ""}`
     : it.lv === "plausible" ? "unproven"
     : esc(avSpan(s, null, it, true));
   return [`<b>${esc(avWhen(it))}</b><span>${fact}</span>`, esc(it.title || (it.card && it.card.title) || it.label), it.id];
@@ -2869,8 +2890,8 @@ function rcCalTicks(iso0, dmax, pw, phone) {  // calendar ticks at round dates: 
 }
 function rcScale(s, rows, Wd, phone) {
   const today = Math.max(2, (Date.now() - D(s.iso0)) / 864e5);
-  const end = Math.max(0, ...rows.map(r => Math.max(r.it.d, r.range ? Math.min(today, r.range[1]) : 0, r.births ? Math.min(today, r.births.end) : 0)));  // a births line runs to its last year
-  const mode = rows.some(r => r.lift) && end < 8 * 365.25 ? "since" : end < 1.5 ? "flat" : "years";
+  const end = Math.max(0, ...rows.map(r => Math.max(r.it.d, r.range ? Math.min(today, r.range[1]) : 0, r.births ? Math.min(today, r.births.end) : 0, r.series ? Math.min(today, r.series.end) : 0)));  // a births or series line runs to its last point
+  const mode = rows.some(r => r.lift || r.series) && end < 8 * 365.25 ? "since" : end < 1.5 ? "flat" : "years";
   const L = phone ? 2 : 236, R = phone ? 30 : 58;
   if (mode === "since") {
     const last = Math.max(20, end), dmax = Math.max(last * 1.1, Math.min(today, last * 4)), lead = phone ? 14 : 26, x0 = L + lead, pw = Wd - R - x0;
@@ -2894,7 +2915,7 @@ function rcDraw(s) {
   // a row with a line is taller, so every line stays inside its own row; all lines share one scale, so heights compare
   const RL = phone ? 104 : 88, R0 = cal ? (phone ? 60 : 52) : (phone ? 54 : 48), PAD = phone ? 12 : 16, AMP = RL - PAD - (phone ? 46 : 24);  // room above each peak for its number
   const ymax = Math.max(10, ...rows.filter(r => r.lift).map(r => r.lift.peak[1])), hOf = v => AMP * Math.log10(Math.max(1, v)) / Math.log10(ymax);
-  const rh = rows.map(r => r.lift || r.births ? RL : R0), rt = rh.map((h, i) => 6 + rh.slice(0, i).reduce((a, b) => a + b, 0));
+  const rh = rows.map(r => r.lift || r.births || r.series ? RL : R0), rt = rh.map((h, i) => 6 + rh.slice(0, i).reduce((a, b) => a + b, 0));
   const axisH = mode === "flat" ? 4 : 30, H = Math.round(6 + rh.reduce((a, b) => a + b, 0) + axisH), yb = i => rt[i] + rh[i] - PAD, ROW = i => rh[i];
   let ax = "";
   if (mode === "since") ax += `<text class="rcax" x="${x0}" y="${H - 7}" text-anchor="${phone ? "start" : "middle"}">the stone</text>`;
@@ -2908,7 +2929,7 @@ function rcDraw(s) {
     const it = r.it, y = yb(i), x = X(it.d), lv = r.stone ? "stone" : it.lv;
     const hue = r.stone ? "#1e2a2e" : it.mark ? "#c77f12" : PULSE_HUES[(i - 1 + PULSE_HUES.length) % PULSE_HUES.length];
     let g = `<rect class="rcbg" x="${phone ? -6 : -10}" y="${(rt[i] + 2).toFixed(1)}" width="${Wd + (phone ? 12 : 20)}" height="${ROW(i) - 4}" rx="10"/>`;
-    if (!cal || r.lift || r.births) g += `<line class="rcbase" x1="${x0}" x2="${(Wd - R).toFixed(1)}" y1="${y.toFixed(1)}" y2="${y.toFixed(1)}"/>`;
+    if (!cal || r.lift || r.births || r.series) g += `<line class="rcbase" x1="${x0}" x2="${(Wd - R).toFixed(1)}" y1="${y.toFixed(1)}" y2="${y.toFixed(1)}"/>`;
     if (r.lift) {
       const pts = r.lift.pts.filter(([d]) => d >= (cal ? 0 : -28) && d <= dmax).sort((a, b) => a[0] - b[0]);
       if (pts.length >= 2) {
@@ -2925,6 +2946,17 @@ function rcDraw(s) {
         g += `<path class="rca" d="${path}V${y.toFixed(1)}H${x1st.toFixed(1)}Z"/><path class="rcl" pathLength="1" d="${path}"/>`;
         const pk = B.peak, px = X(Math.min(dmax, pk.b)), py = y - hB(pk.v), right = px > Wd - R - 120;
         labs += `<g class="rcrow pk" data-i="${i}" style="--h:${hue}"><text class="rcpk" x="${(right ? px - 4 : px + 7).toFixed(1)}" y="${(py - 7).toFixed(1)}" text-anchor="${right ? "end" : "start"}">${pk.v.toLocaleString("en-US")} in ${pk.y}</text></g>`;
+      }
+    } else if (r.series) {  // an official series in its own unit, on the row's own scale: zero at the foot, or the series' low when it goes below zero
+      const S = r.series, lo = cal ? 0 : -28, vis = S.pts.filter(p => p.d >= lo && p.d <= dmax);
+      if (vis.length >= 2) {
+        const v0 = Math.min(0, ...vis.map(p => p.v)), v1 = Math.max(...vis.map(p => p.v)), hS = v => AMP * (v - v0) / Math.max(1e-9, v1 - v0);
+        const P = vis.map(p => [X(p.d), y - hS(p.v)]), line = P.map((p, k) => `${k ? "L" : "M"}${p[0].toFixed(1)},${p[1].toFixed(1)}`).join("");
+        if (v0 < 0) g += `<line class="rcgrid" x1="${P[0][0].toFixed(1)}" x2="${P[P.length - 1][0].toFixed(1)}" y1="${(y - hS(0)).toFixed(1)}" y2="${(y - hS(0)).toFixed(1)}"/>`;  // zero, when the series crosses it
+        g += `<path class="rca" d="${line}L${P[P.length - 1][0].toFixed(1)},${y.toFixed(1)}L${P[0][0].toFixed(1)},${y.toFixed(1)}Z"/><path class="rcl" pathLength="1" d="${line}"/>`;
+        const pk = S.ext && vis.includes(S.ext) ? S.ext : vis.reduce((m, p) => p.v > m.v ? p : m, vis[0]), px = X(pk.d), py = y - hS(pk.v), say = `${S.u.v(pk.v)} ${S.when(pk)}`, tw = say.length * 7.4, right = px + 7 + tw > Wd - R + (phone ? 26 : 44);
+        const lx = right ? px - 4 : px + 7, [a0, a1] = right ? [lx - tw, lx] : [lx, lx + tw], ly = Math.min(py, ...P.filter(q => q[0] >= a0 - 4 && q[0] <= a1 + 4).map(q => q[1])) - 7;  // above the line wherever the words run, so a low point's label clears the line beside it
+        labs += `<g class="rcrow pk" data-i="${i}" style="--h:${hue}"><text class="rcpk" x="${lx.toFixed(1)}" y="${ly.toFixed(1)}" text-anchor="${right ? "end" : "start"}">${esc(say)}</text></g>`;
       }
     } else if (cal && !r.stone) {  // no line: the hop from the step before, drawn to scale, with the time it took in words
       const p = rows[i - 1], x1 = X(p.it.d), yp = phone ? Math.max(yb(i - 1), rt[i] + 15) : yb(i - 1), gap = it.d - p.it.d;  // a phone's names sit above their row: the drop starts under the name
@@ -2948,7 +2980,7 @@ function rcDraw(s) {
     else if (it.mark) g += `<g transform="translate(${x.toFixed(1)},${y.toFixed(1)})"><path d="M0,-9 L7.8,-4.5 L7.8,4.5 L0,9 L-7.8,4.5 L-7.8,-4.5 Z" fill="#fff3dc" stroke="#c77f12" stroke-width="2"/><circle r="2.8" fill="#c77f12"/></g>`;
     else if (lv === "busted") g += `<path d="M-5,-5 L5,5 M5,-5 L-5,5" transform="translate(${x.toFixed(1)},${y.toFixed(1)})" stroke="#c0402f" stroke-width="2.4" stroke-linecap="round"/>`;
     else if (lv === "plausible") g += `<circle cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" r="5" fill="#f4efe4" stroke="#8a7638" stroke-width="2"/>`;
-    else g += `<circle cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" r="5" fill="${r.lift ? hue : "#3a4a4f"}"/>`;
+    else g += `<circle cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" r="5" fill="${r.lift || r.series ? hue : "#3a4a4f"}"/>`;
     const max = phone ? 25 : 27, name = it.label.length > max ? it.label.slice(0, max - 1).replace(/\s+\S*$/, "") + "…" : it.label;
     const when = r.stone ? avWhen(s.first || {}) : avWhen(it);
     labs += `<g class="rcrow lab${it.mark ? " mark" : ""}${lv === "busted" ? " busted" : ""}" data-i="${i}">` + (phone
@@ -3018,15 +3050,16 @@ function rcPick(i) {  // a tap or a hover on a row: the story stops playing and 
   if (!s.rc.done) rcEnd(s, "tap");
   rcSay(s, i, true);
 }
+function rowHue(r, rows) { const i = rows.indexOf(r); return r.it.mark ? "#c77f12" : PULSE_HUES[(i - 1 + PULSE_HUES.length) % PULSE_HUES.length]; }  // a row's line color, as rcDraw picks it, so each key swatch matches its line
 function rcRender(s) {
   s.rc = {rows:rcRows(s), upto:-1, cur:-1, timer:0, done:false};
-  const lines = s.rc.rows.some(r => r.lift), births = s.rc.rows.filter(r => r.births), marks = s.rc.rows.some(r => r.it.mark), spans = s.rc.rows.some(r => r.range), myth = avMyth(s), study = s.items.some(x => x.study);
+  const lifts = s.rc.rows.filter(r => r.lift), lines = lifts.length > 0, births = s.rc.rows.filter(r => r.births), series = s.rc.rows.filter(r => r.series), marks = s.rc.rows.some(r => r.it.mark), spans = s.rc.rows.some(r => r.range), myth = avMyth(s), study = s.items.some(x => x.study);
   const sureTag = myth ? (s.items.some(x => x.lvText === "Disputed") ? "Disputed" : "Busted") : AV_TAG[s.weak] || "Unproven";
   const sureTip = myth ? AV_SURE.myth : study && AV_SURE[`study_${s.weak}`] ? AV_SURE[`study_${s.weak}`] : AV_SURE[s.weak] || AV_SURE.plausible;
   let knew = null; try { knew = JSON.parse(localStorage.getItem("ripple-knew") || "{}")[`${s.kind}:${s.key}`]; } catch {}
   const nx = nextEntry(), nxStone = (nx.title || "").split("→")[0].trim();
   $("#rcwrap").innerHTML = `<div class="rctop"><div class="rccap" id="rccap" aria-live="polite"></div><button type="button" class="rcplay" id="rcplay"></button></div><div class="rcchart" id="rcchart"></div>
-    <p class="rcnote">${lines ? `<span class="key"><i class="kl"></i>readers of that Wikipedia page, against its own normal</span>` : ""}${births.length ? `<span class="key"><i class="kl"${births.length === 1 ? ` style="background:${births[0].it.mark ? "#c77f12" : PULSE_HUES[(s.rc.rows.indexOf(births[0]) - 1 + PULSE_HUES.length) % PULSE_HUES.length]}"` : ""}></i>${esc(births.length === 1 ? births[0].births.who : "babies given the name")} each year (US Social Security records)</span>` : ""}${marks ? `<span class="key"><i class="kb"></i>a lasting mark, still there</span>` : ""}${spans ? `<span class="key"><i class="ks"></i>the study's window</span>` : ""}<span class="key" title="${esc(sureTip)}">How sure: <b>${esc(sureTag)}</b></span>${s.rcHidden ? `<span class="key">${s.rcHidden} more step${s.rcHidden === 1 ? "" : "s"} in the list below</span>` : ""}</p>
+    <p class="rcnote">${lines ? `<span class="key"><i class="kl"${lifts.length === 1 ? ` style="background:${rowHue(lifts[0], s.rc.rows)}"` : ""}></i>readers of that Wikipedia page, against its own normal</span>` : ""}${births.length ? `<span class="key"><i class="kl"${births.length === 1 ? ` style="background:${births[0].it.mark ? "#c77f12" : PULSE_HUES[(s.rc.rows.indexOf(births[0]) - 1 + PULSE_HUES.length) % PULSE_HUES.length]}"` : ""}></i>${esc(births.length === 1 ? births[0].births.who : "babies given the name")} each year (US Social Security records)</span>` : ""}${series.map(r => `<span class="key"><i class="kl" style="background:${rowHue(r, s.rc.rows)}"></i>${esc(r.series.u.key)}</span>`).join("")}${marks ? `<span class="key"><i class="kb"></i>a lasting mark, still there</span>` : ""}${spans ? `<span class="key"><i class="ks"></i>the study's window</span>` : ""}<span class="key" title="${esc(sureTip)}">How sure: <b>${esc(sureTag)}</b></span>${s.rcHidden ? `<span class="key">${s.rcHidden} more step${s.rcHidden === 1 ? "" : "s"} in the list below</span>` : ""}</p>
     ${s.also ? `<p class="rcnote rcalso">Not the only reason: ${esc(s.also)}</p>` : ""}
     <div class="rcfoot" id="rcfoot"><button type="button" class="avnext">Next: ${esc(nxStone || "another stone")}</button><button type="button" class="avshare">Share</button>
       <p class="avknew" hidden>${knew != null ? avKnewDone(knew) : `<span>New to you?</span><button type="button" data-knew="0">Yes</button><button type="button" data-knew="1">I knew it</button>`}</p></div>`;
