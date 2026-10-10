@@ -691,6 +691,12 @@ html:not(.avgl) .avhero{background:linear-gradient(#26313b 0,#0e1a24 42%,#0f2230
 .rcrow.cur .rcbg{opacity:1}
 .rcrow .rcbase{stroke:rgba(30,42,46,.13);stroke-width:1}
 .rcrow .rcspan{fill:rgba(30,42,46,.08);stroke:rgba(30,42,46,.34);stroke-width:1}
+.rcrow .rcci{stroke:rgba(30,42,46,.26);stroke-width:1.5;stroke-linecap:round}
+.rcrow .rcci.hot{stroke:var(--h);stroke-opacity:.55;stroke-width:2}
+.rcrow .rcdot{fill:#7d8a8c;opacity:0;transition:opacity .3s ease calc(var(--k) * 45ms)}
+.rcrow .rcdot.hot{fill:var(--h);stroke:var(--paper);stroke-width:2;transition-delay:calc(var(--k) * 45ms + .25s)}
+.rcrow.on .rcdot{opacity:1}
+.rcax.rczero{font-size:12px}
 .rcn{font:600 15px var(--sans);fill:var(--paper-ink);paint-order:stroke;stroke:var(--paper);stroke-width:4px;stroke-linejoin:round}
 .rcd{font:500 13px var(--sans);fill:var(--paper-ink-2);font-variant-numeric:tabular-nums;paint-order:stroke;stroke:var(--paper);stroke-width:4px;stroke-linejoin:round}
 .rcrow.mark .rcn{fill:var(--amber-ink)}
@@ -709,6 +715,7 @@ html:not(.avgl) .avhero{background:linear-gradient(#26313b 0,#0e1a24 42%,#0f2230
 .rcnote .kl{height:3px;border-radius:2px;background:#2f8fa6}
 .rcnote .kb{height:7px;border-radius:3.5px;background:#e0a33c}
 .rcnote .ks{height:10px;border-radius:5px;background:rgba(30,42,46,.08);border:1px solid rgba(30,42,46,.34)}
+.rcnote .key i.ke{width:9px;height:9px;margin:0 4px;border-radius:50%}
 .rcalso{margin-top:6px}
 .rcfoot{display:flex;flex-wrap:wrap;align-items:center;gap:10px 12px;margin:18px 0 0;padding:18px 0 0;border-top:1px solid rgba(30,42,46,.12)}
 .rcfoot .avnext{min-height:46px;padding:0 22px;font:700 var(--t-s) var(--sans)}
@@ -1471,7 +1478,7 @@ function fromChain(slug) {
     let srcShort = srcLine.split(/;|: | \(/)[0].trim(); if (srcShort.length > 72) srcShort = srcShort.slice(0, 72).replace(/\s+\S*$/, "") + "…";  // the source's name for the How-sure sentence, cut at a word
     let when, sub, prec = st.test.date_precision || "day";  // how precise the step's date is: a year of births or a yearly figure is dated to its year
     const yr = st.onset ? +st.onset.slice(0, 4) - +iso0.slice(0, 4) : 0;
-    const study = st.test.type === "study" ? {design:st.test.design, effect:st.test.effect, eff:st.test.effect_short, window:st.test.window, grade:st.test.grade} : null;  // a published study's own result
+    const study = st.test.type === "study" ? {design:st.test.design, effect:st.test.effect, eff:st.test.effect_short, window:st.test.window, grade:st.test.grade, event:st.test.event || null} : null;  // a published study's own result; event: its day-by-day points around the event, when the paper gives them
     if (study) { when = `${esc(study.window)}<span>a published study</span>`; sub = `${study.window} · a published study`; }
     else if (undated) { when = "Undated<span>no date to check</span>"; sub = "undated"; }
     else if (st.range) {
@@ -2835,8 +2842,17 @@ function rcRange(it, iso0) {  // a study's window in days since the stone: the c
   const m = /^(\d{4}) to (\d{4})$/.exec(String(it.study.window || "").trim());
   return m ? [Math.max(0, daysBetween(iso0, `${m[1]}-01-01`)), daysBetween(iso0, `${m[2]}-12-31`)] : null;
 }
+// A study that reports its result day by day around the event (Oct 10, owner: "the album chart"): the days before and after
+// the event, each day's estimate and its 95% range, in the paper's own unit. Points read off a published figure say so in
+// the key. The chart then runs on the event's own clock, from the first day before to the last day after.
+function rcEvent(it) {
+  const e = it.study && it.study.event; if (!e || !Array.isArray(e.days) || e.days.length < 3) return null;
+  const n = e.days.length; if (![e.v, e.lo, e.hi].every(a => Array.isArray(a) && a.length === n) || !e.days.includes(0)) return null;
+  const pts = e.days.map((d, k) => ({d:+d, v:+e.v[k], lo:+e.lo[k], hi:+e.hi[k]}));
+  return {pts, at:pts.find(p => p.d === 0), d0:Math.min(...e.days), d1:Math.max(...e.days), zero:e.zero || "the day", key:e.key || ""};
+}
 function rcRows(s) {  // the stone, then each step in date order; a long story keeps its marks, its answer and its biggest moves
-  let rows = s.items.filter(x => !x.aside && !x.undated && !x.future).sort((p, q) => p.d - q.d).map(it => ({it, lift:rcLift(it, s.iso0), births:rcBirths(it, s.iso0), series:rcSeries(it, s.iso0), range:rcRange(it, s.iso0)}));
+  let rows = s.items.filter(x => !x.aside && !x.undated && !x.future).sort((p, q) => p.d - q.d).map(it => { const event = rcEvent(it); return {it, lift:rcLift(it, s.iso0), births:rcBirths(it, s.iso0), series:rcSeries(it, s.iso0), event, range:event ? null : rcRange(it, s.iso0)}; });
   s.rcHidden = 0;
   if (rows.length > RC_MAX - 1) {
     const keep = new Set(rows.filter(r => r.it.mark || r.it === s.answer).map(r => r.it));
@@ -2854,6 +2870,7 @@ function rcCapGlyph(s, r, i) {
   if (r.stone) return svg(`<circle r="8" fill="none" stroke="#1e2a2e" stroke-opacity=".3" stroke-width="1.5"/><circle r="4.4" fill="#1e2a2e"/>`);
   if (it.mark) return svg(`<path d="M0,-8 L7,-4 L7,4 L0,8 L-7,4 L-7,-4 Z" fill="#fff3dc" stroke="#c77f12" stroke-width="1.8"/><circle r="2.5" fill="#c77f12"/>`);
   if (lv === "busted") return svg(`<path d="M-5,-5 L5,5 M5,-5 L-5,5" stroke="#b23a2c" stroke-width="2.2" stroke-linecap="round"/>`);
+  if (r.event) return svg(`<g fill="${PULSE_HUES[(i - 1 + PULSE_HUES.length) % PULSE_HUES.length]}"><circle cx="-6.5" cy="3" r="2"/><circle cx="0" cy="-4" r="3.4"/><circle cx="6.5" cy="2" r="2"/></g>`);
   if (r.lift || r.births || r.series) return svg(`<path d="M-9,5 L-4,4 L-1,-6 L3,1 L9,3" fill="none" stroke="${PULSE_HUES[(i - 1 + PULSE_HUES.length) % PULSE_HUES.length]}" stroke-width="2.2" stroke-linejoin="round" stroke-linecap="round"/>`);
   if (lv === "plausible") return svg(`<circle r="4.6" fill="#f4efe4" stroke="#8a7638" stroke-width="2"/>`);
   return svg(`<circle r="4.6" fill="#3a4a4f"/>`);
@@ -2892,8 +2909,14 @@ function rcCalTicks(iso0, dmax, pw, phone) {  // calendar ticks at round dates: 
 function rcScale(s, rows, Wd, phone) {
   const today = Math.max(2, (Date.now() - D(s.iso0)) / 864e5);
   const end = Math.max(0, ...rows.map(r => Math.max(r.it.d, r.range ? Math.min(today, r.range[1]) : 0, r.births ? Math.min(today, r.births.end) : 0, r.series ? Math.min(today, r.series.end) : 0)));  // a births or series line runs to its last point
-  const mode = rows.some(r => r.lift || r.series) && end < 8 * 365.25 ? "since" : end < 1.5 ? "flat" : "years";
+  const ev = rows.find(r => r.event), evOk = ev && rows.every(r => r === ev || (!r.lift && !r.series && !r.births && r.it.d >= ev.event.d0 && r.it.d <= ev.event.d1));
+  const mode = evOk ? "event" : rows.some(r => r.lift || r.series) && end < 8 * 365.25 ? "since" : end < 1.5 ? "flat" : "years";
   const L = phone ? 2 : 236, R = phone ? 30 : 58;
+  if (mode === "event") {  // days before and after the event, to scale; the event itself in the middle
+    const E = ev.event, x0 = L + (phone ? 12 : 14), pw = Wd - R - x0, X = d => x0 + pw * (Math.max(E.d0, Math.min(E.d1, d)) - E.d0) / (E.d1 - E.d0);
+    const ticks = [[E.d0, `${-E.d0} days before`], [0, E.zero], [E.d1, `${E.d1} days after`]];
+    return {mode, L, R, x0, pw, X, dmax:E.d1, today, ticks, toToday:false};
+  }
   if (mode === "since") {
     const last = Math.max(20, end), dmax = Math.max(last * 1.1, Math.min(today, last * 4)), lead = phone ? 14 : 26, x0 = L + lead, pw = Wd - R - x0;
     const X = d => d <= 0 ? x0 + lead * Math.max(-1, d / 28) : x0 + pw * Math.log1p(Math.min(d, dmax)) / Math.log1p(dmax);
@@ -2916,12 +2939,13 @@ function rcDraw(s) {
   // a row with a line is taller, so every line stays inside its own row; all lines share one scale, so heights compare
   const RL = phone ? 104 : 88, R0 = cal ? (phone ? 60 : 52) : (phone ? 54 : 48), PAD = phone ? 12 : 16, AMP = RL - PAD - (phone ? 46 : 24);  // room above each peak for its number
   const ymax = Math.max(10, ...rows.filter(r => r.lift).map(r => r.lift.peak[1])), hOf = v => AMP * Math.log10(Math.max(1, v)) / Math.log10(ymax);
-  const rh = rows.map(r => r.lift || r.births || r.series ? RL : R0), rt = rh.map((h, i) => 6 + rh.slice(0, i).reduce((a, b) => a + b, 0));
+  const RE = phone ? 190 : 184;  // a day-by-day row: room for each day's range above and below zero
+  const rh = rows.map(r => r.event ? RE : r.lift || r.births || r.series ? RL : R0), rt = rh.map((h, i) => 6 + rh.slice(0, i).reduce((a, b) => a + b, 0));
   const axisH = mode === "flat" ? 4 : 30, H = Math.round(6 + rh.reduce((a, b) => a + b, 0) + axisH), yb = i => rt[i] + rh[i] - PAD, ROW = i => rh[i];
   let ax = "";
   if (mode === "since") ax += `<text class="rcax" x="${x0}" y="${H - 7}" text-anchor="${phone ? "start" : "middle"}">the stone</text>`;
   for (const [d, w] of sc.ticks) {
-    const x = X(d), tw = w.length * 7.4, anc = x + tw / 2 > Wd - 2 ? "end" : "middle";
+    const x = X(d), tw = w.length * 7.4, anc = x + tw / 2 > Wd - 2 ? "end" : x - tw / 2 < 0 ? "start" : "middle";
     ax += `<line class="rcgrid" x1="${x.toFixed(1)}" x2="${x.toFixed(1)}" y1="2" y2="${H - 24}"/><text class="rcax" x="${x.toFixed(1)}" y="${H - 7}" text-anchor="${anc}">${w}</text>`;
   }
   if (mode === "since") ax += `<text class="rcax" x="${X(dmax).toFixed(1)}" y="${H - 7}" text-anchor="${phone ? "end" : "middle"}">${sc.toToday ? "today" : "later"}</text>`;
@@ -2959,6 +2983,18 @@ function rcDraw(s) {
         const lx = right ? px - 4 : px + 7, [a0, a1] = right ? [lx - tw, lx] : [lx, lx + tw], ly = Math.min(py, ...P.filter(q => q[0] >= a0 - 4 && q[0] <= a1 + 4).map(q => q[1])) - 7;  // above the line wherever the words run, so a low point's label clears the line beside it
         labs += `<g class="rcrow pk" data-i="${i}" style="--h:${hue}"><text class="rcpk" x="${lx.toFixed(1)}" y="${ly.toFixed(1)}" text-anchor="${right ? "end" : "start"}">${esc(say)}</text></g>`;
       }
+    } else if (r.event) {  // each day's estimate and its 95% range against zero; the event's own day lit, the others quiet
+      const E = r.event, top = rt[i] + (phone ? 44 : 28), bot = y + 2, vmin = Math.min(0, ...E.pts.map(p => p.lo)), vmax = Math.max(0, ...E.pts.map(p => p.hi));
+      const Y = v => bot - (bot - top) * (v - vmin) / Math.max(1e-9, vmax - vmin), y0 = Y(0), rd = phone ? 3 : 3.6;
+      g += `<line class="rcbase" x1="${x0}" x2="${(Wd - R).toFixed(1)}" y1="${y0.toFixed(1)}" y2="${y0.toFixed(1)}"/>`;
+      if (!phone) g += `<text class="rcax rczero" x="${(Wd - R + 8).toFixed(1)}" y="${(y0 + 4).toFixed(1)}">0</text>`;
+      E.pts.forEach((p, k) => {
+        const px = X(p.d).toFixed(1), hot = p.d === 0;
+        if (p.hi > p.lo) g += `<line class="rcci${hot ? " hot" : ""}" x1="${px}" x2="${px}" y1="${Y(p.hi).toFixed(1)}" y2="${Y(p.lo).toFixed(1)}" style="--k:${k}"/>`;
+        g += `<circle class="rcdot${hot ? " hot" : ""}" cx="${px}" cy="${Y(p.v).toFixed(1)}" r="${hot ? rd + 2.6 : rd}" style="--k:${k}"/>`;
+      });
+      const at = E.at, say = it.study.eff || "";
+      if (say) labs += `<g class="rcrow pk" data-i="${i}" style="--h:${hue}"><text class="rcpk" x="${(X(0) + (phone ? 9 : 11)).toFixed(1)}" y="${(Y(at.hi) + 4).toFixed(1)}" text-anchor="start">${esc(say)} on ${esc(E.zero)}</text></g>`;
     } else if (cal && !r.stone) {  // no line: the hop from the step before, drawn to scale, with the time it took in words
       const p = rows[i - 1], x1 = X(p.it.d), yp = phone ? Math.max(yb(i - 1), rt[i] + 15) : yb(i - 1), gap = it.d - p.it.d;  // a phone's names sit above their row: the drop starts under the name
       const path = x - x1 > 14 ? `M${x1.toFixed(1)},${(yp + 10).toFixed(1)}V${(y - 6).toFixed(1)}Q${x1.toFixed(1)},${y.toFixed(1)} ${(x1 + 6).toFixed(1)},${y.toFixed(1)}H${(x - 11).toFixed(1)}` : `M${x1.toFixed(1)},${(yp + 10).toFixed(1)}V${(y - 11).toFixed(1)}`;
@@ -2981,7 +3017,7 @@ function rcDraw(s) {
     else if (it.mark) g += `<g transform="translate(${x.toFixed(1)},${y.toFixed(1)})"><path d="M0,-9 L7.8,-4.5 L7.8,4.5 L0,9 L-7.8,4.5 L-7.8,-4.5 Z" fill="#fff3dc" stroke="#c77f12" stroke-width="2"/><circle r="2.8" fill="#c77f12"/></g>`;
     else if (lv === "busted") g += `<path d="M-5,-5 L5,5 M5,-5 L-5,5" transform="translate(${x.toFixed(1)},${y.toFixed(1)})" stroke="#c0402f" stroke-width="2.4" stroke-linecap="round"/>`;
     else if (lv === "plausible") g += `<circle cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" r="5" fill="#f4efe4" stroke="#8a7638" stroke-width="2"/>`;
-    else g += `<circle cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" r="5" fill="${r.lift || r.series ? hue : "#3a4a4f"}"/>`;
+    else if (!r.event) g += `<circle cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" r="5" fill="${r.lift || r.series ? hue : "#3a4a4f"}"/>`;
     const max = phone ? 25 : 27, name = it.label.length > max ? it.label.slice(0, max - 1).replace(/\s+\S*$/, "") + "…" : it.label;
     const when = r.stone ? avWhen(s.first || {}) : avWhen(it);
     labs += `<g class="rcrow lab${it.mark ? " mark" : ""}${lv === "busted" ? " busted" : ""}" data-i="${i}">` + (phone
@@ -3060,7 +3096,7 @@ function rcRender(s) {
   let knew = null; try { knew = JSON.parse(localStorage.getItem("ripple-knew") || "{}")[`${s.kind}:${s.key}`]; } catch {}
   const nx = nextEntry(), nxStone = (nx.title || "").split("→")[0].trim();
   $("#rcwrap").innerHTML = `<div class="rctop"><div class="rccap" id="rccap" aria-live="polite"></div><button type="button" class="rcplay" id="rcplay"></button></div><div class="rcchart" id="rcchart"></div>
-    <p class="rcnote">${lines ? `<span class="key"><i class="kl"${lifts.length === 1 ? ` style="background:${rowHue(lifts[0], s.rc.rows)}"` : ""}></i>readers of that Wikipedia page, against its own normal</span>` : ""}${births.length ? `<span class="key"><i class="kl"${births.length === 1 ? ` style="background:${births[0].it.mark ? "#c77f12" : PULSE_HUES[(s.rc.rows.indexOf(births[0]) - 1 + PULSE_HUES.length) % PULSE_HUES.length]}"` : ""}></i>${esc(births.length === 1 ? births[0].births.who : "babies given the name")} each year (US Social Security records)</span>` : ""}${series.map(r => `<span class="key"><i class="kl" style="background:${rowHue(r, s.rc.rows)}"></i>${esc(r.series.u.key)}</span>`).join("")}${marks ? `<span class="key"><i class="kb"></i>a lasting mark, still there</span>` : ""}${spans ? `<span class="key"><i class="ks"></i>the study's window</span>` : ""}<span class="key" title="${esc(sureTip)}">How sure: <b>${esc(sureTag)}</b></span>${s.rcHidden ? `<span class="key">${s.rcHidden} more step${s.rcHidden === 1 ? "" : "s"} in the list below</span>` : ""}</p>
+    <p class="rcnote">${lines ? `<span class="key"><i class="kl"${lifts.length === 1 ? ` style="background:${rowHue(lifts[0], s.rc.rows)}"` : ""}></i>readers of that Wikipedia page, against its own normal</span>` : ""}${births.length ? `<span class="key"><i class="kl"${births.length === 1 ? ` style="background:${births[0].it.mark ? "#c77f12" : PULSE_HUES[(s.rc.rows.indexOf(births[0]) - 1 + PULSE_HUES.length) % PULSE_HUES.length]}"` : ""}></i>${esc(births.length === 1 ? births[0].births.who : "babies given the name")} each year (US Social Security records)</span>` : ""}${series.map(r => `<span class="key"><i class="kl" style="background:${rowHue(r, s.rc.rows)}"></i>${esc(r.series.u.key)}</span>`).join("")}${s.rc.rows.filter(r => r.event && r.event.key).map(r => `<span class="key"><i class="ke" style="background:${rowHue(r, s.rc.rows)}"></i>${esc(r.event.key)}</span>`).join("")}${marks ? `<span class="key"><i class="kb"></i>a lasting mark, still there</span>` : ""}${spans ? `<span class="key"><i class="ks"></i>the study's window</span>` : ""}<span class="key" title="${esc(sureTip)}">How sure: <b>${esc(sureTag)}</b></span>${s.rcHidden ? `<span class="key">${s.rcHidden} more step${s.rcHidden === 1 ? "" : "s"} in the list below</span>` : ""}</p>
     ${s.also ? `<p class="rcnote rcalso">Not the only reason: ${esc(s.also)}</p>` : ""}
     <div class="rcfoot" id="rcfoot"><button type="button" class="avnext">Next: ${esc(nxStone || "another stone")}</button><button type="button" class="avshare">Share</button>
       <p class="avknew" hidden>${knew != null ? avKnewDone(knew) : `<span>New to you?</span><button type="button" data-knew="0">Yes</button><button type="button" data-knew="1">I knew it</button>`}</p></div>`;
