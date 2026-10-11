@@ -32,6 +32,7 @@ OPENALEX_HOST = "api.openalex.org"
 KEY_ENV = "OPENALEX_API_KEY"
 
 LOG = BLOCK = RAW = None
+_MAX = [4_000_000]  # bytes read from one response; get_bytes raises it for a PDF
 _last = {}
 last_headers = {}
 
@@ -147,7 +148,7 @@ def _attempt(url, accept, host):
         with _opener.open(req, timeout=45) as r:
             status = r.status
             last_headers[host] = {k: v for k, v in r.headers.items() if k.lower().startswith("x-ratelimit")}
-            body = r.read(4_000_000)
+            body = r.read(_MAX[0])
     except urllib.error.HTTPError as e:
         status = e.code
         last_headers[host] = {k: v for k, v in e.headers.items() if k.lower().startswith("x-ratelimit")}
@@ -215,3 +216,29 @@ def get(url, accept=None, cache=True):
         open(path, "wb").write(text.encode("utf-8"))
         json.dump({"url": url, "status": status, "final_url": cur, "time": _stamp()}, open(path + ".meta", "w"))
     return status, text, cur
+
+
+def get_bytes(url, accept=None, cache=True, limit=40_000_000):
+    """GET a binary body (a paper's PDF) under the same rules. Returns (status, bytes, final_url); cached as bytes."""
+    _need()
+    url = _strip_key(url)
+    key = hashlib.sha1(("bytes:" + url).encode()).hexdigest()
+    path = os.path.join(RAW, key)
+    if cache and os.path.exists(path) and os.path.exists(path + ".meta"):
+        meta = json.load(open(path + ".meta"))
+        return meta["status"], open(path, "rb").read(), meta.get("final_url", url)
+    old, _MAX[0] = _MAX[0], limit
+    cur, status, body = url, 0, b""
+    try:
+        for _ in range(8):
+            status, body, loc = _one(cur, accept)
+            if status in (301, 302, 303, 307, 308) and loc:
+                cur = loc
+                continue
+            break
+    finally:
+        _MAX[0] = old
+    if status == 200:
+        open(path, "wb").write(body)
+        json.dump({"url": url, "status": status, "final_url": cur, "time": _stamp(), "bytes": len(body)}, open(path + ".meta", "w"))
+    return status, body, cur

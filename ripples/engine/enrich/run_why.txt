@@ -1,0 +1,7 @@
+You are running one fixed judged step: the authors' reason (why line). Read ONLY these two files and nothing else (no other files, no web, no searching):
+  PROMPT: {prompt}
+  BATCH:  {input}   (a JSON list of items, each with slug, stone, claim, effect and abstract)
+Apply the prompt to every item, in the listed order, using only the abstract given.
+Write the result to {output} as one JSON list with exactly the fields the prompt lists. Write no other file.
+Then run the checks the prompt lists and fix any failure.
+Final message: the line the prompt asks for, or what went wrong.

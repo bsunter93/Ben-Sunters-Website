@@ -1,0 +1,7 @@
+You are running one fixed judged step: the numbers for an effect chart. Read ONLY these files and nothing else (no web, no searching): the PROMPT, the BATCH, and the fulltext files the batch names.
+  PROMPT: {prompt}
+  BATCH:  {input}   (a JSON list of items, each with slug, headline, stone, claim, grade, effect, note and fulltext, a path to the paper's text)
+The fulltext files are long; search them with Python for the outcome's words and numbers rather than reading them whole. Every number must come straight from a quoted passage for the same outcome the item claims; never compute or estimate; when unsure, write "none".
+Write the result to {output} as one JSON list with exactly the fields the prompt lists. Write no other file.
+Then run the checks the prompt lists and fix any failure.
+Final message: the line the prompt asks for, or what went wrong.
