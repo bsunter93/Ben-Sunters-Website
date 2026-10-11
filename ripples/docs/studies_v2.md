@@ -72,8 +72,21 @@ now the Journal of Health Economics; its open copy dates the attacks).
   Korean World Cup birth bump (spring births against January births by year, 2000 to 2005) for the births part only.
 - **Recheck on another day:** the Mexico earthquake paper against its published version, and Katrina and the Chilean
   earthquake against their full texts.
-- **The working-paper label:** the first working paper to ship needs a plain "working paper, not yet peer reviewed" line
-  on its card.
+- **The working-paper label:** shipped Oct 11 with the iPhone story.
+
+## Added Oct 11: the iPhone on AT&T → fewer teen births (`study-iphone-teen-births`)
+
+The first working paper to ship: NBER Working Paper 35310, 2026 (Myers and Hooper, 10.3386/w35310), read from the NBER
+abstract and the authors' open copy. It compares counties by AT&T 3G coverage while the iPhone was sold only through AT&T
+(June 2007 to February 2011): 4.5% to 8.0% fewer births at ages 15 to 19, and a null on Verizon's and Sprint's networks.
+Graded Measured, with "a working paper, not yet peer reviewed" wherever the page names its source (`PUB` in
+`demo/index.html`).
+
+Its chart is the paper's own Figure 6 for ages 15 to 19: the national teen birth rate as a line and the paper's no-iPhone
+estimate as a band (low edge Poisson, high edge synthetic difference-in-differences), 2007 to 2011, in births per 1,000
+women. 2007 and 2011 come from the text (41.5, 31.2; without the iPhone 33.4 to 34.4); 2008 to 2010 were read off the
+figure's markers, calibrated on the two text values and checked against the two 2011 counterfactuals (34.37 and 33.39
+read, 34.4 and 33.4 printed). A study step with `test.lines` draws this way (`rcPaper`); any other step is unchanged.
 
 ## The opener
 
