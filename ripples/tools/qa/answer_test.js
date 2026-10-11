@@ -48,7 +48,7 @@ const { pageUrl, browser } = require('./common');
         if (p.kind === 'map' && !(MAPS[p.slug] && DATA.maps[p.slug]) && !(DATA.disc && DATA.disc.events[p.slug] && DATA.disc.events[p.slug].links.length)) continue;
         try {
           show(p.kind, p.slug); rcEnd(cur);
-          const rows = document.querySelectorAll('#rcchart g.rcrow.on:not(.lab):not(.pk)').length, cap = document.querySelector('#rccap').innerText, txt = document.querySelector('#avmain').innerText;
+          const rows = document.querySelectorAll('#rcchart .rcrow.on:not(.lab):not(.pk)').length,  /* SVG rows, or a result card's HTML row */ cap = document.querySelector('#rccap').innerText, txt = document.querySelector('#avmain').innerText;
           const names = [...document.querySelectorAll('#rcchart text.rcn')].map(e => e.getBoundingClientRect()); let ov = 0;
           for (let i = 0; i < names.length; i++) for (let j = i + 1; j < names.length; j++) { const a = names[i], c = names[j]; if (a.left < c.right - 1 && c.left < a.right - 1 && a.top < c.bottom - 1 && c.top < a.bottom - 1) ov++; }
           const bad = /\bundefined\b|\bNaN\b|\bnull\b|Invalid Date/.exec(txt);
