@@ -31582,6 +31582,222 @@
      ]
     }
    ]
+  },
+  {
+   "slug": "study-shootings-turnout",
+   "title": "Mass shootings before an election (2016 and 2020)",
+   "date": "2016-07-01",
+   "batch": 19,
+   "vertical": "Published studies",
+   "steps": [
+    {
+     "n": 1,
+     "claim": "A mass shooting happens near home in the six months before a presidential election",
+     "test": {
+      "type": "record",
+      "date": "2016-07-01",
+      "date_precision": "year",
+      "source": "“The effect of mass shootings on voter turnout in the United States,” Science Advances, 2025",
+      "doi": "10.1126/sciadv.adx5418"
+     },
+     "ref": "2016-07-01",
+     "verdict": "reported",
+     "note": "The study covers the 2016 and 2020 elections. Dated here to 2016.",
+     "link": null,
+     "link_why": null,
+     "branch": false,
+     "vertical": null,
+     "after": null,
+     "slice": null,
+     "short": null,
+     "mark": null,
+     "onset": "2016-07-01",
+     "source": "“The effect of mass shootings on voter turnout in the United States,” Science Advances, 2025"
+    },
+    {
+     "n": 2,
+     "claim": "Turnout rose in the blocks nearest the shooting",
+     "test": {
+      "type": "study",
+      "date": "2016-07-01",
+      "date_precision": "year",
+      "window": "2016 and 2020",
+      "grade": "measured",
+      "design": "regression discontinuity in time: shootings just before the election against shootings just after",
+      "source": "“The effect of mass shootings on voter turnout in the United States,” Science Advances, 2025",
+      "effect": "almost 10 points higher turnout in the blocks nearest the shooting and 3 to 4 points a little farther out, with no change in how people voted for president",
+      "effect_short": "+10 points",
+      "doi": "10.1126/sciadv.adx5418",
+      "rows": [
+       "CR0186"
+      ],
+      "why": "A shooting nearby probably makes gun violence stand out as a local issue, so people nearby are more likely to vote.",
+      "why_kind": "suggested",
+      "why_quote": "Our results show the (geographically bounded) salience of mass shootings for local political engagement and ballot reform efforts."
+     },
+     "ref": "2016-07-01",
+     "verdict": "measured by a published study",
+     "note": "From the paper: “we find that mass shootings mobilize local voters (especially in heavily Democratic areas) but do not shift presidential vote choices.” The study uses turnout for every census block group in the 2016 and 2020 elections and the Gun Violence Archive's public mass shootings within six months of each. The whole rise came in neighborhoods where Clinton or Biden won 80% or more of the vote.",
+     "link": null,
+     "link_why": null,
+     "branch": false,
+     "vertical": null,
+     "after": null,
+     "slice": null,
+     "short": "Higher turnout nearby",
+     "mark": null,
+     "onset": "2016-07-01",
+     "source": "“The effect of mass shootings on voter turnout in the United States,” Science Advances, 2025",
+     "range": [
+      "2016-05-01",
+      "2020-11-30"
+     ]
+    }
+   ]
+  },
+  {
+   "slug": "study-shootings-alcohol",
+   "title": "Mass shootings and alcohol sales (2006 to 2019)",
+   "date": "2006-07-01",
+   "batch": 19,
+   "vertical": "Published studies",
+   "steps": [
+    {
+     "n": 1,
+     "claim": "A mass shooting happens in the community",
+     "test": {
+      "type": "record",
+      "date": "2006-07-01",
+      "date_precision": "year",
+      "source": "“Mass shootings durably increase the sale of alcohol in American communities,” PNAS Nexus, 2024",
+      "doi": "10.1093/pnasnexus/pgae570"
+     },
+     "ref": "2006-07-01",
+     "verdict": "reported",
+     "note": "The study covers 326 mass shootings from 2006 to 2019. Dated here to the first year.",
+     "link": null,
+     "link_why": null,
+     "branch": false,
+     "vertical": null,
+     "after": null,
+     "slice": null,
+     "short": null,
+     "mark": null,
+     "onset": "2006-07-01",
+     "source": "“Mass shootings durably increase the sale of alcohol in American communities,” PNAS Nexus, 2024"
+    },
+    {
+     "n": 2,
+     "claim": "Stores in the area sold more alcohol for at least two years",
+     "test": {
+      "type": "study",
+      "date": "2006-07-01",
+      "date_precision": "year",
+      "window": "2006 to 2019",
+      "grade": "measured",
+      "design": "difference in differences with fixed-effects counterfactuals, by three-digit ZIP area and week",
+      "source": "“Mass shootings durably increase the sale of alcohol in American communities,” PNAS Nexus, 2024",
+      "effect": "about $22,000 more alcohol sold a week across the area for two years, a 3.5% rise, and 5.5% after shootings in public places; no rise after shootings in homes",
+      "effect_short": "+3.5% a week",
+      "doi": "10.1093/pnasnexus/pgae570",
+      "rows": [
+       "CR0188"
+      ],
+      "why": "Shootings leave a community with trauma, and people probably cope by changing their habits, including buying more alcohol.",
+      "why_kind": "suggested",
+      "why_quote": "Communities can cope with the ensuing trauma in a number of ways, including changing their behavioral patterns."
+     },
+     "ref": "2006-07-01",
+     "verdict": "measured by a published study",
+     "note": "From the paper: “a mass shooting in a given community (the area covered by the ZIP-3 code) predicts a significant increase in the sales of alcohol that lasts at least 2 years past the shooting.” The data are weekly sales at 35,000 stores. Across all shootings the rise just clears the usual test (p = 0.048); after public shootings it is larger.",
+     "link": null,
+     "link_why": null,
+     "branch": false,
+     "vertical": null,
+     "after": null,
+     "slice": null,
+     "short": "More alcohol sold",
+     "mark": "Behavior",
+     "onset": "2006-07-01",
+     "source": "“Mass shootings durably increase the sale of alcohol in American communities,” PNAS Nexus, 2024",
+     "range": [
+      "2006-01-01",
+      "2019-12-31"
+     ]
+    }
+   ]
+  },
+  {
+   "slug": "study-chile-dst-crashes",
+   "title": "Chile's daylight saving time (2002 to 2018)",
+   "date": "2002-07-01",
+   "batch": 19,
+   "vertical": "Published studies",
+   "steps": [
+    {
+     "n": 1,
+     "claim": "Chile switches to daylight saving time each year",
+     "test": {
+      "type": "record",
+      "date": "2002-07-01",
+      "date_precision": "year",
+      "source": "“Daylight Saving Time and Automobile Accidents: Evidence From Chile,” Health Economics, 2025",
+      "doi": "10.1002/hec.4936"
+     },
+     "ref": "2002-07-01",
+     "verdict": "reported",
+     "note": "The study covers every clock change in Chile from 2002 to 2018. Dated here to the first year.",
+     "link": null,
+     "link_why": null,
+     "branch": false,
+     "vertical": null,
+     "after": null,
+     "slice": null,
+     "short": null,
+     "mark": null,
+     "onset": "2002-07-01",
+     "source": "“Daylight Saving Time and Automobile Accidents: Evidence From Chile,” Health Economics, 2025"
+    },
+    {
+     "n": 2,
+     "claim": "Fewer car accidents while daylight saving time is on",
+     "test": {
+      "type": "study",
+      "date": "2002-07-01",
+      "date_precision": "year",
+      "window": "2002 to 2018",
+      "grade": "measured",
+      "design": "regression discontinuity at the clock change, plus difference in differences on the shifting start dates",
+      "source": "“Daylight Saving Time and Automobile Accidents: Evidence From Chile,” Health Economics, 2025",
+      "effect": "2.7% fewer car accidents under daylight saving time, though 6% more in the first week after the clocks go forward",
+      "effect_short": "2.7% fewer",
+      "doi": "10.1002/hec.4936",
+      "rows": [
+       "CR0223"
+      ],
+      "why": "Daylight saving shifts when it is light out, and more light on the road means fewer serious and fatal crashes.",
+      "why_kind": "tested",
+      "why_quote": "also find evidence that ambient light reduces serious and fatal accident risk"
+     },
+     "ref": "2002-07-01",
+     "verdict": "measured by a published study",
+     "note": "From the paper: “I find a 2.7% reduction in automobile accidents under the DST regime.” The first week after the clocks go forward saw 6% more accidents, which the author ties, as suggestive evidence, to lost sleep.",
+     "link": null,
+     "link_why": null,
+     "branch": false,
+     "vertical": null,
+     "after": null,
+     "slice": null,
+     "short": "Fewer car accidents",
+     "mark": null,
+     "onset": "2002-07-01",
+     "source": "“Daylight Saving Time and Automobile Accidents: Evidence From Chile,” Health Economics, 2025",
+     "range": [
+      "2002-01-01",
+      "2018-12-31"
+     ]
+    }
+   ]
   }
  ]
 }

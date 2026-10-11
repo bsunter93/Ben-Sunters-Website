@@ -1,5 +1,5 @@
 // The study's own reason under the answer (Oct 11): shown on every study story whose step carries test.why, hidden on
-// the rest, the right label for tested vs suggested, and no sideways scroll. Usage: node why_test.js [page or URL]
+// the rest, the right label for tested vs suggested, clear of the sheet that overlaps the hero, and no sideways scroll. Usage: node why_test.js [page or URL]
 process.env.QA_VIEW = 'answer';
 const { pageUrl, browser, REPO, path, fs } = require('./common');
 const base = pageUrl(process.argv[2]);
@@ -15,8 +15,9 @@ for (const b of ['batch18', 'batch19'])
       await pg.goto(base + (base.includes('?') ? '&' : '?') + `c=${slug}&nointro=1`);
       await pg.waitForSelector('#avq', { timeout: 15000 }); await pg.waitForTimeout(250);
       const r = await pg.evaluate(() => { const e = document.querySelector('#avwhyl'); const b = e && e.getBoundingClientRect();
-        return { hidden: !e || e.hidden, text: e ? e.textContent : '', right: b ? b.right : 0, sideways: document.scrollingElement.scrollWidth > innerWidth + 1 }; });
-      const ok = exp ? (!r.hidden && r.text === `${exp[0]} ${exp[1]}` && r.right <= w) : r.hidden;
+        const sh = document.querySelector('.avsheet').getBoundingClientRect(), hero = document.querySelector('#avhero').getBoundingClientRect();
+        return { hidden: !e || e.hidden, text: e ? e.textContent : '', right: b ? b.right : 0, gap: b ? Math.round(sh.top - b.bottom) : null, inHero: b ? b.bottom <= hero.bottom : true, sideways: document.scrollingElement.scrollWidth > innerWidth + 1 }; });
+      const ok = exp ? (!r.hidden && r.text === `${exp[0]} ${exp[1]}` && r.right <= w && r.gap >= 4 && r.inHero) : r.hidden;  // the sheet starts below the last line
       if (!ok || r.sideways) { bad++; console.log(`FAIL ${slug} ${w}: ${JSON.stringify(r)}`); }
       exp ? shown++ : hidden++;
     }
