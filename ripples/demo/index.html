@@ -660,6 +660,8 @@ html:not(.avgl) .avhero{background:linear-gradient(#26313b 0,#0e1a24 42%,#0f2230
 .avstonel{font-size:var(--t-s);font-variant-numeric:tabular-nums}
 .avsay{margin:12px 0 0;font:500 var(--t-m)/1.4 var(--sans);color:var(--ink);max-width:44rem;text-shadow:0 1px 10px rgba(15,28,38,.8)}
 .avsay b{color:#ffd391;font-weight:600;font-variant-numeric:tabular-nums}
+.avsay.avwhyl{margin-top:6px;font-weight:400;font-size:var(--t-s);line-height:1.45}
+.avwhy.avauth{margin-top:4px}
 .avpaper.rc{display:block;padding:24px 30px 22px}
 .rctop{display:flex;align-items:flex-start;gap:12px}
 .rccap{flex:1;min-width:0;min-height:76px;margin:0 0 4px}
@@ -843,7 +845,7 @@ html.av .picker .pgroup{font:600 var(--t-xs)/1.2 var(--sans);letter-spacing:0;te
 </div>
 
 <main class="avmain" id="avmain">
-  <section class="avhero" id="avhero"><div class="avin"><p class="avstonel" id="avstone"></p><h1 class="avq" id="avq"></h1><p class="avsay" id="avsay"></p></div></section>
+  <section class="avhero" id="avhero"><div class="avin"><p class="avstonel" id="avstone"></p><h1 class="avq" id="avq"></h1><p class="avsay" id="avsay"></p><p class="avsay avwhyl" id="avwhyl" hidden></p></div></section>
   <div class="avsheet"><div class="avpaper rc"><div class="rcwrap" id="rcwrap"></div><details class="rcsteps" id="rcsteps"><summary>Every step and how we know it</summary><div class="avright" id="avright"></div></details></div></div>
   <section class="avshelf" id="avshelf" aria-label="More stories"></section>
 </main>
@@ -1486,7 +1488,7 @@ function fromChain(slug) {
     let srcShort = srcLine.split(/;|: | \(/)[0].trim(); if (srcShort.length > 72) srcShort = srcShort.slice(0, 72).replace(/\s+\S*$/, "") + "…";  // the source's name for the How-sure sentence, cut at a word
     let when, sub, prec = st.test.date_precision || "day";  // how precise the step's date is: a year of births or a yearly figure is dated to its year
     const yr = st.onset ? +st.onset.slice(0, 4) - +iso0.slice(0, 4) : 0;
-    const study = st.test.type === "study" ? {design:st.test.design, effect:st.test.effect, eff:st.test.effect_short, window:st.test.window, grade:st.test.grade, event:st.test.event || null, lines:st.test.lines || null, pub:PUB(st.test)} : null;  // a published study's own result; event: its day-by-day points around the event, when the paper gives them
+    const study = st.test.type === "study" ? {design:st.test.design, effect:st.test.effect, eff:st.test.effect_short, window:st.test.window, grade:st.test.grade, event:st.test.event || null, lines:st.test.lines || null, pub:PUB(st.test), why:st.test.why || null, whyKind:st.test.why_kind || null} : null;  // a published study's own result; event: its day-by-day points around the event, when the paper gives them
     if (study) { when = `${esc(study.window)}<span>${study.pub}</span>`; sub = `${study.window} · ${study.pub}`; }
     else if (undated) { when = "Undated<span>no date to check</span>"; sub = "undated"; }
     else if (st.range) {
@@ -2731,6 +2733,7 @@ function avRow(r, s, i) {
     <p class="avtitle">${esc(it.title || (it.card && it.card.title) || it.label)}</p>
     ${it.mark ? `<p class="avmk">${HEX}Lasting mark · ${esc(it.mark)}${ans ? " · the answer" : ""}</p>` : ""}
     <p class="avwhy"><b class="avtag t-${cls}">${esc(tag)}</b> ${esc(why)}${link ? ` <a href="${esc(link[0])}" target="_blank" rel="noopener">${esc(link[1])} ↗</a>` : ""}${it.aside ? " Shown for context; it is off the way to the mark." : ""}</p>
+    ${(aw => aw ? `<p class="avwhy avauth"><b>${esc(aw[0])}</b> ${esc(aw[1])}</p>` : "")(avAuthorWhy(it.study))}
     ${avMore(it, s)}</div></li>`;
 }
 function avStoneRow(s) {
@@ -2795,6 +2798,12 @@ function avHero(s, answered) {
   if (answered) q.classList.add("land");
   const a = s.answer, say = $("#avsay");
   if (say) say.innerHTML = answered && a ? `<b>${esc(a.study ? `${cap(a.study.window)}, in ${a.study.pub}` : cap(avSpan(s, null, a, true)))}:</b> ${esc(String(a.title || a.label).replace(/^(The|A|An) /, m => m.toLowerCase()))}` : "";
+  const st = (a && a.study) || (s.items || []).map(x => x.study).filter(Boolean).pop();  // a study story without a lasting mark has no answer step
+  const wl = $("#avwhyl"), aw = answered ? avAuthorWhy(st) : null;
+  if (wl) { wl.hidden = !aw; wl.innerHTML = aw ? `<b>${esc(aw[0])}</b> ${esc(aw[1])}` : ""; }
+}
+function avAuthorWhy(st) {  // the study's own reason, quoted from its abstract (Oct 11, owner); never one written here
+  return st && st.why ? [st.whyKind === "suggested" ? "The authors' best guess:" : "Why, per the authors:", st.why] : null;
 }
 function avKnewDone(k) { return `<span>${k ? "You knew it." : "New to you."} Each answer helps rank the finds.</span>`; }
 // ---------- the ripple chart (Oct 8, second pass) ----------
