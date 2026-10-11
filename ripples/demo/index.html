@@ -701,6 +701,8 @@ html:not(.avgl) .avhero{background:linear-gradient(#26313b 0,#0e1a24 42%,#0f2230
 .rcfxmode .rccap{min-height:0}
 .rcfx{display:grid;gap:18px;padding:4px 0 2px}
 .rcfxhead{display:grid;gap:6px}
+.rcfxtop{margin:8px 0 6px}
+.rcfxbig.long{font-size:clamp(1.9rem,4vw,2.9rem);line-height:1.05}
 .rcfxbig{font:600 clamp(2.7rem,6.4vw,4.4rem)/.95 var(--display);color:var(--h);letter-spacing:-.015em;font-variant-numeric:tabular-nums;font-variation-settings:"SOFT" 50,"opsz" 96}
 .rcfxsub{margin:0;font:500 var(--t-m)/1.4 var(--sans);color:var(--paper-ink-2);max-width:36rem}
 .rcfxfrom{margin:0;font:500 var(--t-xs)/1.4 var(--sans);color:var(--paper-ink-3)}
@@ -777,6 +779,7 @@ details.rcalso p{margin:6px 0 0;max-width:46rem;line-height:1.5}
 .rcsteps>summary:hover{color:var(--paper-ink);text-decoration-color:var(--paper-ink)}
 .rcsteps .avright{padding:18px 0 0}
 .avcard .cg{display:block;width:100%;height:16px;margin:8px 0 2px}
+.avcard .cn{display:block;margin:8px 0 0;font:600 1.5rem/1.05 var(--display);color:#ffd391;font-variant-numeric:tabular-nums;letter-spacing:-.01em}
 /* the header: the search, and one plain button that opens the list of every story */
 html.av .chooserbtn{min-height:44px;background:none;border:1px solid rgba(214,232,246,.38);color:var(--ink);font-size:var(--t-s) !important;border-radius:8px}
 html.av .chooserbtn:hover{background:rgba(214,232,246,.08)}
@@ -2835,7 +2838,7 @@ function avHero(s, answered) {
   const q = $("#avq"); q.classList.remove("land"); void q.offsetWidth;
   q.innerHTML = answered ? avTitle(s) : `What did <em>${esc(avStoneName(s))}</em> change?`;
   if (answered) q.classList.add("land");
-  const a = s.answer, say = $("#avsay"), card = !!(rcFx(s) || rcResult(s));  // a one-study card says the finding itself
+  const a = s.answer, say = $("#avsay"), card = !!(rcFx(s) || rcResult(s) || rcStudyTop(s));  // a one-study card says the finding itself
   if (say) say.innerHTML = answered && a && !card ? `<b>${esc(a.study ? `${cap(a.study.window)}, in ${a.study.pub}` : cap(avSpan(s, null, a, true)))}:</b> ${esc(String(a.title || a.label).replace(/^(The|A|An) /, m => m.toLowerCase()))}` : "";
   const st = (a && a.study) || (s.items || []).map(x => x.study).filter(Boolean).pop();  // a study story without a lasting mark has no answer step
   const wl = $("#avwhyl"), aw = answered ? avAuthorWhy(st) : null;
@@ -3004,6 +3007,7 @@ function rcScale(s, rows, Wd, phone) {
 function rcFx(s) {
   const its = s.items.filter(x => !x.aside && x.study && x.study.fx); if (its.length !== 1) return null;
   const it = its[0], f = it.study.fx, B = Array.isArray(f.bars) ? f.bars : [], num = x => typeof x === "number" && isFinite(x);
+  if (it.lv === "busted") return null;  // a myth shows what was claimed against what was found, never a range bar (Oct 11)
   if (!B.length || !["pct", "levels", "groups"].includes(f.kind)) return null;
   const bars = f.kind === "pct"
     ? [{label:f.base_label || "Expected", v:100, base:true}, ...B.map(b => num(b.pct) ? {label:b.label, v:100 + b.pct, d:b.pct} : {label:b.label, lo:100 + b.pct_lo, hi:100 + b.pct_hi, dlo:b.pct_lo, dhi:b.pct_hi})]
@@ -3011,15 +3015,23 @@ function rcFx(s) {
   if (!bars.every(b => b.label && (num(b.v) || (num(b.lo) && num(b.hi))))) return null;
   return {it, kind:f.kind, unit:f.unit || "", from:f.from || null, bars, max:typeof f.max === "number" ? f.max : null};  // max: a share's own ceiling (100 points), so one bar isn't stretched to the edge
 }
-function rcDrawFx(s, host, Wd0, phone) {
-  const F = s.rc.fx, rows = s.rc.rows, si = Math.max(1, rows.findIndex(r => r.it === F.it)), hue = rowHue(rows[si], rows);
-  s.rc.mode = "effect";
+function fxText(F) {  // how an effect card prints each bar and its lead number
   const n = x => (+x).toLocaleString("en-US", {maximumFractionDigits:4}), sg = d => `${d > 0 ? "+" : d < 0 ? "−" : ""}${n(Math.abs(d))}`;
   const rng = (a, z, pct) => a < 0 && z < 0 ? `${n(-z)} to ${n(-a)}${pct ? "%" : ""} ${pct ? "fewer" : "less"}` : `${sg(a)} to ${n(z)}${pct ? "%" : ""}`;
   const say = b => F.kind === "pct" ? (b.base ? "" : b.d != null ? `${sg(b.d)}%` : rng(b.dlo, b.dhi, true))
     : b.v != null ? (F.kind === "groups" && !b.base ? sg(b.v) : n(b.v)) : rng(b.lo, b.hi, false);
   const main = F.bars.find(b => !b.base) || F.bars[0], base = F.bars.find(b => b.base);
-  const big = F.kind === "levels" && base ? `${n(base.v)} → ${n(main.v)}` : say(main);
+  return {n, sg, say, main, base, big:F.kind === "levels" && base ? `${n(base.v)} → ${n(main.v)}` : say(main)};
+}
+function rcStudyTop(s) {  // a one-study story that draws a chart of its own (a day-by-day event, a paper's lines): its head
+  const its = s.items.filter(x => !x.aside && x.study); if (its.length !== 1) return null;
+  const st = its[0].study; if (!(st.event || st.lines) || !st.eff) return null;
+  return {it:its[0], big:st.eff, sub:cap(String(st.effect || "").split(/(?<=\.)\s/)[0].replace(/\.$/, ""))};
+}
+function rcDrawFx(s, host, Wd0, phone) {
+  const F = s.rc.fx, rows = s.rc.rows, si = Math.max(1, rows.findIndex(r => r.it === F.it)), hue = rowHue(rows[si], rows);
+  s.rc.mode = "effect";
+  const {say, main, big} = fxText(F);
   const Wd = Math.min(Wd0, 780);
   let vis;
   if (F.kind === "groups" && F.max === 100 && F.bars.length === 1) {  // a share of 100: one dot each, the finding's dots lit
@@ -3044,7 +3056,7 @@ function rcDrawFx(s, host, Wd0, phone) {
     vis = `<svg viewBox="0 0 ${Wd} ${H}" width="${Wd}" height="${H}" role="img" aria-label="${esc(`${s.stone || "The stone"}: ${F.unit || "the study's result"}`)}">${g}</svg>`;
   }
   const waf = vis.startsWith("<svg class=\"rcwaf\"");
-  host.innerHTML = `<div class="rcfx rchit${waf ? " waf" : ""}" data-i="${si}" style="--h:${hue}"><div class="rcrow rcfxhead" data-i="${si}"><div class="rcfxbig">${esc(big)}</div>${F.unit ? `<p class="rcfxsub">${esc(cap(F.unit))}</p>` : ""}</div><div class="rcrow" data-i="${si}">${vis}</div>${F.from ? `<p class="rcfxfrom">Numbers from ${esc(F.from)}.</p>` : ""}</div>`;
+  host.innerHTML = `<div class="rcfx rchit${waf ? " waf" : ""}" data-i="${si}" style="--h:${hue}"><div class="rcrow rcfxhead" data-i="${si}"><div class="rcfxbig${big.length > 12 ? " long" : ""}">${esc(big)}</div>${F.unit ? `<p class="rcfxsub">${esc(cap(F.unit))}</p>` : ""}</div><div class="rcrow" data-i="${si}">${vis}</div>${F.from ? `<p class="rcfxfrom">Numbers from ${esc(F.from)}.</p>` : ""}</div>`;
   rcMark(s);
 }
 function rcResult(s) {
@@ -3191,7 +3203,7 @@ function rcSay(s, i, final) {
   const r = s.rc.rows[i], el = $("#rccap"); if (!r || !el) return;
   const [k, h, id] = rcCap(s, r, final);
   el.classList.remove("swap"); void el.offsetWidth;
-  const said = (s.rc.res && r.it === s.rc.res.it) || (s.rc.fx && r.it === s.rc.fx.it);  // the card under the caption says the finding: say it once
+  const said = (s.rc.res && r.it === s.rc.res.it) || (s.rc.fx && r.it === s.rc.fx.it) || (s.rc.top && r.it === s.rc.top.it);  // the card under the caption says the finding: say it once
   const wp = it => it.study && /working paper/.test(it.study.pub || ""), grade = it => it.lv === "busted" ? (it.lvText === "Disputed" ? "disputed by later research" : "busted by a published study") : `${it.lv === "measured" ? "measured" : "reported"} in ${wp(it) ? "a working paper, not yet peer reviewed" : "a published study"}`;
   el.innerHTML = said ? `<p class="k"><b>${esc(avWhen(r.it))}</b><span>${grade(r.it)}</span></p>` : `<p class="k">${k}</p><p class="h">${rcCapGlyph(s, r, i)}<span>${h}</span>${id && s.rc.done ? ` <button type="button" class="rchow" data-id="${esc(id)}">How we know</button>` : ""}</p>`; el.classList.add("swap");
   s.rc.cur = i; rcMark(s);
@@ -3244,18 +3256,19 @@ function rcPick(i) {  // a tap or a hover on a row: the story stops playing and 
 }
 function rowHue(r, rows) { const i = rows.indexOf(r); return r.it.mark ? "#c77f12" : PULSE_HUES[(i - 1 + PULSE_HUES.length) % PULSE_HUES.length]; }  // a row's line color, as rcDraw picks it, so each key swatch matches its line
 function rcRender(s) {
-  s.rc = {rows:rcRows(s), upto:-1, cur:-1, timer:0, done:false}; s.rc.fx = rcFx(s); s.rc.res = s.rc.fx ? null : rcResult(s);
+  s.rc = {rows:rcRows(s), upto:-1, cur:-1, timer:0, done:false}; s.rc.fx = rcFx(s); s.rc.res = s.rc.fx ? null : rcResult(s); s.rc.top = s.rc.fx || s.rc.res ? null : rcStudyTop(s);
   const lifts = s.rc.rows.filter(r => r.lift), lines = lifts.length > 0, births = s.rc.rows.filter(r => r.births), series = s.rc.rows.filter(r => r.series), marks = !s.rc.fx && !s.rc.res && s.rc.rows.some(r => r.it.mark), spans = !s.rc.fx && !s.rc.res && s.rc.rows.some(r => r.range), myth = avMyth(s), study = s.items.some(x => x.study);
   const sureTag = myth ? (s.items.some(x => x.lvText === "Disputed") ? "Disputed" : "Busted") : AV_TAG[s.weak] || "Unproven";
   const sureTip = myth ? AV_SURE.myth : study && AV_SURE[`study_${s.weak}`] ? AV_SURE[`study_${s.weak}`] : AV_SURE[s.weak] || AV_SURE.plausible;
   let knew = null; try { knew = JSON.parse(localStorage.getItem("ripple-knew") || "{}")[`${s.kind}:${s.key}`]; } catch {}
   const nx = nextEntry(), nxStone = (nx.title || "").split("→")[0].trim();
   $("#rcwrap").innerHTML = `<div class="rctop"><div class="rccap" id="rccap" aria-live="polite"></div><button type="button" class="rcplay" id="rcplay"></button></div><div class="rcchart" id="rcchart"></div>
-    <p class="rcnote">${lines ? `<span class="key"><i class="kl"${lifts.length === 1 ? ` style="background:${rowHue(lifts[0], s.rc.rows)}"` : ""}></i>readers of that Wikipedia page, against its own normal</span>` : ""}${births.length ? `<span class="key"><i class="kl"${births.length === 1 ? ` style="background:${births[0].it.mark ? "#c77f12" : PULSE_HUES[(s.rc.rows.indexOf(births[0]) - 1 + PULSE_HUES.length) % PULSE_HUES.length]}"` : ""}></i>${esc(births.length === 1 ? births[0].births.who : "babies given the name")} each year (US Social Security records)</span>` : ""}${series.map(r => `<span class="key"><i class="kl" style="background:${rowHue(r, s.rc.rows)}"></i>${esc(r.series.u.key)}</span>`).join("")}${s.rc.rows.filter(r => r.paper && r.paper.key).map(r => `<span class="key"><i class="kl" style="background:${rowHue(r, s.rc.rows)}"></i>${esc(r.paper.key)}</span>`).join("")}${s.rc.rows.filter(r => r.event && r.event.key).map(r => `<span class="key"><i class="ke" style="background:${rowHue(r, s.rc.rows)}"></i>${esc(r.event.key)}</span>`).join("")}${marks ? `<span class="key"><i class="kb"></i>a lasting mark, still there</span>` : ""}${spans ? `<span class="key"><i class="ks"></i>the study's window</span>` : ""}${s.rc.fx || s.rc.res ? "" : `<span class="key" title="${esc(sureTip)}">${s.items.some(x => x.study && /working paper/.test(x.study.pub)) ? `<span>How sure: <b>${esc(sureTag)}</b>, in a working paper not yet peer reviewed</span>` : `How sure: <b>${esc(sureTag)}</b>`}</span>`}${s.rcHidden ? `<span class="key">${s.rcHidden} more step${s.rcHidden === 1 ? "" : "s"} in the list below</span>` : ""}</p>
+    <p class="rcnote">${lines ? `<span class="key"><i class="kl"${lifts.length === 1 ? ` style="background:${rowHue(lifts[0], s.rc.rows)}"` : ""}></i>readers of that Wikipedia page, against its own normal</span>` : ""}${births.length ? `<span class="key"><i class="kl"${births.length === 1 ? ` style="background:${births[0].it.mark ? "#c77f12" : PULSE_HUES[(s.rc.rows.indexOf(births[0]) - 1 + PULSE_HUES.length) % PULSE_HUES.length]}"` : ""}></i>${esc(births.length === 1 ? births[0].births.who : "babies given the name")} each year (US Social Security records)</span>` : ""}${series.map(r => `<span class="key"><i class="kl" style="background:${rowHue(r, s.rc.rows)}"></i>${esc(r.series.u.key)}</span>`).join("")}${s.rc.rows.filter(r => r.paper && r.paper.key).map(r => `<span class="key"><i class="kl" style="background:${rowHue(r, s.rc.rows)}"></i>${esc(r.paper.key)}</span>`).join("")}${s.rc.rows.filter(r => r.event && r.event.key).map(r => `<span class="key"><i class="ke" style="background:${rowHue(r, s.rc.rows)}"></i>${esc(r.event.key)}</span>`).join("")}${marks ? `<span class="key"><i class="kb"></i>a lasting mark, still there</span>` : ""}${spans ? `<span class="key"><i class="ks"></i>the study's window</span>` : ""}${s.rc.fx || s.rc.res || s.rc.top ? "" : `<span class="key" title="${esc(sureTip)}">${s.items.some(x => x.study && /working paper/.test(x.study.pub)) ? `<span>How sure: <b>${esc(sureTag)}</b>, in a working paper not yet peer reviewed</span>` : `How sure: <b>${esc(sureTag)}</b>`}</span>`}${s.rcHidden ? `<span class="key">${s.rcHidden} more step${s.rcHidden === 1 ? "" : "s"} in the list below</span>` : ""}</p>
     ${s.also ? `<details class="rcalso"><summary>Not the only reason</summary><p>${esc(cap(s.also))}</p></details>` : ""}
     <div class="rcfoot" id="rcfoot"><button type="button" class="avnext">Next: ${esc(nxStone || "another stone")}</button><button type="button" class="avshare">Share</button>
       <p class="avknew" hidden>${knew != null ? avKnewDone(knew) : `<span>New to you?</span><button type="button" data-knew="0">Yes</button><button type="button" data-knew="1">I knew it</button>`}</p></div>`;
-  $("#rcwrap").classList.toggle("rcresmode", !!s.rc.res); $("#rcwrap").classList.toggle("rcfxmode", !!s.rc.fx);  // a study card's caption is one line
+  $("#rcwrap").classList.toggle("rcresmode", !!s.rc.res); $("#rcwrap").classList.toggle("rcfxmode", !!(s.rc.fx || s.rc.top));  // a study card's caption is one line
+  if (s.rc.top) { const si = s.rc.rows.findIndex(r => r.it === s.rc.top.it), hd = document.createElement("div"); hd.className = "rcfxhead rcfxtop"; hd.style.setProperty("--h", rowHue(s.rc.rows[Math.max(1, si)], s.rc.rows)); hd.innerHTML = `<div class="rcfxbig${s.rc.top.big.length > 12 ? " long" : ""}">${esc(s.rc.top.big)}</div>${s.rc.top.sub ? `<p class="rcfxsub">${esc(s.rc.top.sub)}</p>` : ""}`; $("#rcchart").before(hd); }
   rcDraw(s); rcPlay(s);
 }
 function rcGlyph(x) {  // a shelf card's ripple on one shared clock (up to a century): the stone, its steps, the mark and its bar
@@ -3306,18 +3319,20 @@ function avShelfData() {
     avPrep(st);
     st.titleText = name; const a = revealMark(st), [stone, land] = name.split(/\s*→\s*/);
     const myth = !a && avMyth(st);
-    out.push({kind, slug, stone, land, group:myth ? "myth" : a ? guessOf(a.mark) : "none", myth:myth ? (st.items.some(x => x.lvText === "Disputed") ? "Disputed" : "Busted") : null, study:st.items.some(x => x.study), weak:weakOf(st), gap:a ? a.d : null, later:a ? avSpan(st, null, a, true) : null, year:/^\d{4} to \d{4}$/.test(stoneWhen(st)) ? stoneWhen(st).replace(" to ", "–") : (st.iso0 || "").slice(0, 4), ds:st.items.filter(x => !x.aside && !x.undated && !x.future && x.lv !== "busted").map(x => x.d)});
+    const one = st.items.filter(x => !x.aside && x.study), fx = rcFx(st), num = !myth && one.length === 1 ? (fx ? fxText(fx).big : one[0].study.eff || "") : "";
+    out.push({kind, slug, stone, land, num, group:myth ? "myth" : one.length && !myth ? "study" : a ? guessOf(a.mark) : "none", myth:myth ? (st.items.some(x => x.lvText === "Disputed") ? "Disputed" : "Busted") : null, study:st.items.some(x => x.study), weak:weakOf(st), gap:a ? a.d : null, later:a ? avSpan(st, null, a, true) : null, year:/^\d{4} to \d{4}$/.test(stoneWhen(st)) ? stoneWhen(st).replace(" to ", "–") : (st.iso0 || "").slice(0, 4), ds:st.items.filter(x => !x.aside && !x.undated && !x.future && x.lv !== "busted").map(x => x.d)});
   }
   return avShelfCache = out;
 }
+const AV_STUDY_ICON = '<svg viewBox="0 0 20 20" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><path d="M3 16.5h14"/><path d="M5.5 16V10"/><path d="M10 16V5.5"/><path d="M14.5 16V8"/></svg>';
 function avShelf() {  // every other story, grouped by what it left behind; one row of cards a group until asked for more
   const el = $("#avshelf"); if (!el || !cur) return;
   const data = avShelfData(), here = `${cur.kind}:${cur.key}`, SHOW = window.innerWidth <= 560 ? 3 : 4;  // a phone shows three a group, a wider screen one row of four
-  const G = [["life", "Everyday life"], ["myth", "Myths, checked"], ["built", "Things built"], ["law", "Laws and rules"], ["none", "Nothing lasting yet"]];
-  el.innerHTML = `<h2 class="avsh">More stones</h2><p class="avshsub">The amber bar starts where each stone landed.</p>` + G.map(([g, h]) => {
+  const G = [["study", "What studies found"], ["life", "Everyday life"], ["myth", "Myths, checked"], ["built", "Things built"], ["law", "Laws and rules"], ["none", "Nothing lasting yet"]];
+  el.innerHTML = `<h2 class="avsh">More stones</h2>` + G.map(([g, h]) => {
     const list = data.filter(x => x.group === g && `${x.kind}:${x.slug}` !== here); if (!list.length) return "";
     const open = avShelfOpen.has(g), shown = open ? list : list.slice(0, SHOW);
-    return `<section class="avgroup"><h3>${g === "myth" ? AV_MYTH_ICON : AV_KIND[g].icon}<span>${h}</span><em>${list.length}</em></h3><div class="avgrid">${shown.map(x => `<button type="button" class="avcard" data-k="${x.kind}" data-s="${esc(x.slug)}"><span class="cy">${esc(x.year)}</span><span class="cs">${esc(x.stone)}</span><span class="cl">→ ${esc(x.land)}</span>${rcGlyph(x)}<span class="cm"><i class="d-${x.myth ? "busted" : x.weak}"></i><b>${esc(x.myth || AV_TAG[x.weak] || "")}</b>${x.study ? "<em>a published study</em>" : x.later ? `<em>${esc(x.later)}</em>` : ""}</span></button>`).join("")}</div>${list.length > SHOW ? `<button type="button" class="avshmore" data-g="${g}">${open ? "Show fewer" : `Show all ${list.length}`}</button>` : ""}</section>`;
+    return `<section class="avgroup"><h3>${g === "myth" ? AV_MYTH_ICON : g === "study" ? AV_STUDY_ICON : AV_KIND[g].icon}<span>${h}</span><em>${list.length}</em></h3><div class="avgrid">${shown.map(x => `<button type="button" class="avcard" data-k="${x.kind}" data-s="${esc(x.slug)}"><span class="cy">${esc(x.year)}</span><span class="cs">${esc(x.stone)}</span><span class="cl">→ ${esc(x.land)}</span>${x.num ? `<span class="cn">${esc(x.num)}</span>` : rcGlyph(x)}<span class="cm"><i class="d-${x.myth ? "busted" : x.weak}"></i><b>${esc(x.myth || AV_TAG[x.weak] || "")}</b>${x.study ? "<em>a published study</em>" : x.later ? `<em>${esc(x.later)}</em>` : ""}</span></button>`).join("")}</div>${list.length > SHOW ? `<button type="button" class="avshmore" data-g="${g}">${open ? "Show fewer" : `Show all ${list.length}`}</button>` : ""}</section>`;
   }).join("");
 }
 // The hero's water: a lake at dusk in WebGL, the stone thrown in, rings that spread and fade, and a pool of ember when the
