@@ -52,8 +52,8 @@ DOM = {
  "O7": r"test score|attendance|achievement|exam|educational|college major|enrol|academic|school",
  "O8": r"\bnames?\b|naming|language|word use|vocabular|dialect|linguistic",
  "O9": r"productiv|absentee|sick leave|labor supply|labour supply|work hours|worker|employee",
- "O10": r"spending|sales|purchas|consumption|expenditure|demand",
- "O11": r"blood don|organ don|donor|volunteer|charit|donation|census|civic",
+ "O10": r"spending|sales|purchas|consumption|expenditure|demand|alcohol|drink|gambl|betting|wager",
+ "O11": r"blood don|organ don|donor|volunteer|charit|donation|census|civic|turnout|voter|voting",
 }
 CLS = {k: re.compile(v) for k, v in CLS.items()}
 DOM = {k: re.compile(v) for k, v in DOM.items()}
