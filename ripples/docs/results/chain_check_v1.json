@@ -13571,7 +13571,20 @@
       "doi": "10.1093/jcr/ucz024",
       "rows": [
        "TV_SMOKING"
-      ]
+      ],
+      "fx": {
+       "kind": "groups",
+       "bars": [
+        {
+         "label": "Smoking, with TV",
+         "lo": 5,
+         "hi": 15
+        }
+       ],
+       "unit": "percentage points added to the share of adults who smoke, out of 100",
+       "quote": "the share of smokers rose 5 to 15 percentage points",
+       "max": 100
+      }
      },
      "ref": "1946-07-01",
      "verdict": "measured by a published study",
@@ -13913,7 +13926,23 @@
       ],
       "why": "Listeners probably copied the show's characters as role models and talked with other people about family planning.",
       "why_kind": "suggested",
-      "why_quote": "stimulating (1) involvement with media characters and role modeling of their actions, and (2) interpersonal communication"
+      "why_quote": "stimulating (1) involvement with media characters and role modeling of their actions, and (2) interpersonal communication",
+      "fx": {
+       "kind": "levels",
+       "bars": [
+        {
+         "label": "Before the show",
+         "v": 19,
+         "base": true
+        },
+        {
+         "label": "After the show",
+         "v": 28
+        }
+       ],
+       "unit": "percent using family planning",
+       "quote": "family planning use rose from 19% to 28%"
+      }
      },
      "ref": "1993-07-01",
      "verdict": "measured by a published study",
@@ -14046,7 +14075,19 @@
       ],
       "why": "Flu probably spreads at gatherings around the big game.",
       "why_kind": "suggested",
-      "why_quote": "Our findings suggest mitigating transmission at gatherings related to large spectator events could have substantial returns for public health."
+      "why_quote": "Our findings suggest mitigating transmission at gatherings related to large spectator events could have substantial returns for public health.",
+      "fx": {
+       "kind": "pct",
+       "base_label": "No team playing",
+       "bars": [
+        {
+         "label": "Team in the Super Bowl",
+         "pct": 18
+        }
+       ],
+       "unit": "flu deaths over 65, against counties without a team",
+       "quote": "18% more flu deaths among people over 65 in counties with a team in the game"
+      }
      },
      "ref": "1974-07-01",
      "verdict": "measured by a published study",
@@ -14215,7 +14256,19 @@
       ],
       "why": "The game puts play out in the real world, so players have to walk to play it.",
       "why_kind": "suggested",
-      "why_quote": "novel mobile games that embed game play in the physical world"
+      "why_quote": "novel mobile games that embed game play in the physical world",
+      "fx": {
+       "kind": "pct",
+       "base_label": "Before playing",
+       "bars": [
+        {
+         "label": "Engaged players, at least",
+         "pct": 25
+        }
+       ],
+       "unit": "daily steps over 30 days, against their own earlier level",
+       "quote": "a more than 25% increase compared with their prior activity level"
+      }
      },
      "ref": "2016-07-01",
      "verdict": "measured by a published study",
@@ -14280,7 +14333,23 @@
       "doi": "10.1001/archinte.163.13.1601",
       "rows": [
        "COURIC_COLON"
-      ]
+      ],
+      "fx": {
+       "kind": "levels",
+       "bars": [
+        {
+         "label": "Before the campaign",
+         "v": 15.0,
+         "base": true
+        },
+        {
+         "label": "After the campaign",
+         "v": 18.1
+        }
+       ],
+       "unit": "colonoscopies per doctor per month",
+       "quote": "colonoscopies per doctor rose from 15.0 to 18.1 a month"
+      }
      },
      "ref": "2000-03-01",
      "verdict": "measured by a published study",
@@ -14352,7 +14421,20 @@
       ],
       "why": "People prone to violence spend the evening at the movies instead of in riskier places, like out drinking.",
       "why_kind": "tested",
-      "why_quote": "leading to a substitution away from more volatile activities. In particular, movie attendance appears to reduce alcohol consumption."
+      "why_quote": "leading to a substitution away from more volatile activities. In particular, movie attendance appears to reduce alcohol consumption.",
+      "fx": {
+       "kind": "pct",
+       "base_label": "Expected",
+       "bars": [
+        {
+         "label": "Evening, per extra million viewers",
+         "pct_lo": -1.3,
+         "pct_hi": -1.1
+        }
+       ],
+       "unit": "violent crime from 6 p.m. to midnight, per extra million viewers",
+       "quote": "between 6 p.m. and 12 a.m., a one million increase in the audience for violent movies reduces violent crime by 1.1% to 1.3%"
+      }
      },
      "ref": "1995-07-01",
      "verdict": "measured by a published study",
@@ -14420,7 +14502,19 @@
       ],
       "why": "A celebrity's essay probably reached a huge audience fast, and it spoke up for testing.",
       "why_kind": "suggested",
-      "why_quote": "Such announcements can be a low cost means of reaching a broad audience quickly"
+      "why_quote": "Such announcements can be a low cost means of reaching a broad audience quickly",
+      "fx": {
+       "kind": "pct",
+       "base_label": "Same days in 2012",
+       "bars": [
+        {
+         "label": "After the op-ed",
+         "pct": 64
+        }
+       ],
+       "unit": "daily BRCA test rate, against the same days in 2012",
+       "quote": "the daily BRCA test rate rose 64% in the 15 business days after, against the same days in 2012"
+      }
      },
      "ref": "2013-05-14",
      "verdict": "measured by a published study",
@@ -14687,7 +14781,19 @@
       ],
       "why": "News coverage of her illness and death probably led women to book screenings.",
       "why_kind": "suggested",
-      "why_quote": "The pattern of increased attendance mirrored the pattern of media coverage of Jade Goody's diagnosis and death."
+      "why_quote": "The pattern of increased attendance mirrored the pattern of media coverage of Jade Goody's diagnosis and death.",
+      "fx": {
+       "kind": "pct",
+       "base_label": "Expected",
+       "bars": [
+        {
+         "label": "March 2009 peak",
+         "pct": 70
+        }
+       ],
+       "unit": "cervical screening attendance, against what was expected",
+       "quote": "At its peak in March 2009, attendance was 70% higher than expected"
+      }
      },
      "ref": "2008-08-01",
      "verdict": "measured by a published study",
@@ -14756,7 +14862,23 @@
       "doi": "10.1177/0022427813494843",
       "rows": [
        "WORLDCUP_DV"
-      ]
+      ],
+      "fx": {
+       "kind": "pct",
+       "base_label": "Expected",
+       "bars": [
+        {
+         "label": "England won or drew",
+         "pct": 26
+        },
+        {
+         "label": "England lost",
+         "pct": 38
+        }
+       ],
+       "unit": "domestic abuse reports on match days, against what was expected",
+       "quote": "reports rose 26% when England won or drew and 38% when England lost"
+      }
      },
      "ref": "2002-07-01",
      "verdict": "measured by a published study",
@@ -14891,7 +15013,19 @@
       ],
       "why": "News about her diagnosis probably changed what women asked for and what doctors ordered.",
       "why_kind": "suggested",
-      "why_quote": "High-publicised illnesses may affect both consumer and provider behaviour."
+      "why_quote": "High-publicised illnesses may affect both consumer and provider behaviour.",
+      "fx": {
+       "kind": "pct",
+       "base_label": "Before the news",
+       "bars": [
+        {
+         "label": "After her diagnosis",
+         "pct": 20
+        }
+       ],
+       "unit": "odds of breast imaging for women aged 25 to 44",
+       "quote": "20% higher odds of breast imaging for Australian women aged 25 to 44"
+      }
      },
      "ref": "2005-05-01",
      "verdict": "measured by a published study",
@@ -15098,7 +15232,23 @@
       ],
       "why": "On match days people probably put off seeking care, so fewer reach the hospital.",
       "why_kind": "suggested",
-      "why_quote": "Major sporting events may acutely alter patterns of cardiovascular hospitalization through changes in healthcare-seeking behavior, hospital utilization, and emotional or behavioral triggers."
+      "why_quote": "Major sporting events may acutely alter patterns of cardiovascular hospitalization through changes in healthcare-seeking behavior, hospital utilization, and emotional or behavioral triggers.",
+      "fx": {
+       "kind": "pct",
+       "base_label": "Non-match days",
+       "bars": [
+        {
+         "label": "Heart attack admissions",
+         "pct": -7.0
+        },
+        {
+         "label": "Heart failure admissions",
+         "pct": -11.1
+        }
+       ],
+       "unit": "hospital admissions on Brazil match days, against other days",
+       "quote": "7.0% fewer heart attack admissions and 11.1% fewer heart failure admissions"
+      }
      },
      "ref": "2014-07-01",
      "verdict": "measured by a published study",
@@ -15267,7 +15417,19 @@
       ],
       "why": "His announcement probably got people looking up HIV, and some then chose to test themselves at home.",
       "why_kind": "suggested",
-      "why_quote": "Web searches for HIV spiked around actor Charlie Sheen's HIV-positive disclosure."
+      "why_quote": "Web searches for HIV spiked around actor Charlie Sheen's HIV-positive disclosure.",
+      "fx": {
+       "kind": "pct",
+       "base_label": "Expected",
+       "bars": [
+        {
+         "label": "Week of disclosure",
+         "pct": 95
+        }
+       ],
+       "unit": "in-home HIV test kit sales, against what was expected",
+       "quote": "sales rose 95% the week of the disclosure"
+      }
      },
      "ref": "2015-11-17",
      "verdict": "measured by a published study",
@@ -15780,7 +15942,19 @@
       ],
       "why": "His death probably made many people more aware of colon cancer, and some gave money.",
       "why_kind": "suggested",
-      "why_quote": "Our results suggest that Chadwick Boseman's death was associated with substantial increases in awareness of CRC."
+      "why_quote": "Our results suggest that Chadwick Boseman's death was associated with substantial increases in awareness of CRC.",
+      "fx": {
+       "kind": "pct",
+       "base_label": "Month before",
+       "bars": [
+        {
+         "label": "Donations, as reported",
+         "pct": 331
+        }
+       ],
+       "unit": "Colon Cancer Foundation donations, against the month before",
+       "quote": "the Colon Cancer Foundation reported a 331% rise in donations"
+      }
      },
      "ref": "2020-08-28",
      "verdict": "reported by a published study",
@@ -16986,7 +17160,20 @@
       ],
       "why": "After the attack, some patients probably chose to wait or stay away from the emergency room.",
       "why_kind": "suggested",
-      "why_quote": "the results suggest that some patients actively choose when, where and if they should go to the ED"
+      "why_quote": "the results suggest that some patients actively choose when, where and if they should go to the ED",
+      "fx": {
+       "kind": "pct",
+       "base_label": "Earlier years",
+       "bars": [
+        {
+         "label": "All ER visits",
+         "pct_lo": -9,
+         "pct_hi": -7
+        }
+       ],
+       "unit": "emergency room visits after the attack, against earlier years",
+       "quote": "7% to 9% fewer emergency room visits"
+      }
      },
      "ref": "2017-04-07",
      "verdict": "measured by a published study",
@@ -17058,7 +17245,20 @@
       ],
       "why": "Moving the clocks changes how much light there is on the road, and more light makes serious crashes less likely.",
       "why_kind": "tested",
-      "why_quote": "support an ambient light mechanism that reduces the counts of serious vehicle accidents during the Spring transition"
+      "why_quote": "support an ambient light mechanism that reduces the counts of serious vehicle accidents during the Spring transition",
+      "fx": {
+       "kind": "pct",
+       "base_label": "Before the change",
+       "bars": [
+        {
+         "label": "Serious crashes",
+         "pct_lo": -20,
+         "pct_hi": -15
+        }
+       ],
+       "unit": "serious road crashes after the spring clock change",
+       "quote": "15% to 20% fewer serious crashes after the spring change"
+      }
      },
      "ref": "2006-07-01",
      "verdict": "measured by a published study",
@@ -17127,7 +17327,22 @@
       "doi": "10.1136/bmjopen-2021-054678",
       "rows": [
        "CR0209"
-      ]
+      ],
+      "fx": {
+       "kind": "groups",
+       "bars": [
+        {
+         "label": "Road casualties",
+         "v": -4.7
+        },
+        {
+         "label": "Road deaths",
+         "v": -0.75
+        }
+       ],
+       "unit": "change in road casualties and deaths a year, both clock changes",
+       "quote": "about 4.7 fewer road casualties and 0.75 fewer deaths a year across both changes"
+      }
      },
      "ref": "2005-07-01",
      "verdict": "measured by a published study",
@@ -17200,7 +17415,23 @@
       ],
       "why": "Stress from rising Islamophobia after the attacks probably hurt the health of babies at birth.",
       "why_kind": "suggested",
-      "why_quote": "We conclude that Islamophobia-related stress is possibly one of the channels affecting health at birth."
+      "why_quote": "We conclude that Islamophobia-related stress is possibly one of the channels affecting health at birth.",
+      "fx": {
+       "kind": "pct",
+       "base_label": "Expected",
+       "bars": [
+        {
+         "label": "Low birth weight",
+         "pct": 23.77
+        },
+        {
+         "label": "Delivery complications",
+         "pct": 13.02
+        }
+       ],
+       "unit": "births to mothers from Muslim countries, against what was expected",
+       "quote": "the share of low-birth-weight babies rose 23.77% and deliveries with complications 13.02%"
+      }
      },
      "ref": "2017-08-17",
      "verdict": "measured by a published study",
@@ -17272,7 +17503,20 @@
       ],
       "why": "Broadband let people read health information online, and that probably changed their health habits.",
       "why_kind": "suggested",
-      "why_quote": "The arrival of optic fiber submarine cables in 2010 brought broadband connectivity to Senegal, allowing access to healthcare information online."
+      "why_quote": "The arrival of optic fiber submarine cables in 2010 brought broadband connectivity to Senegal, allowing access to healthcare information online.",
+      "fx": {
+       "kind": "groups",
+       "bars": [
+        {
+         "label": "Homes using bednets",
+         "lo": 7.8,
+         "hi": 14.3
+        }
+       ],
+       "unit": "percentage points more homes with a child under 5 under a bednet, out of 100",
+       "quote": "7.8 to 14.3 percentage points more homes where children under 5 slept under a bednet the night before",
+       "max": 100
+      }
      },
      "ref": "2010-07-01",
      "verdict": "measured by a published study",
@@ -17452,7 +17696,23 @@
       ],
       "why": "A shooting nearby probably makes gun violence stand out as a local issue, so people nearby are more likely to vote.",
       "why_kind": "suggested",
-      "why_quote": "Our results show the (geographically bounded) salience of mass shootings for local political engagement and ballot reform efforts."
+      "why_quote": "Our results show the (geographically bounded) salience of mass shootings for local political engagement and ballot reform efforts.",
+      "fx": {
+       "kind": "groups",
+       "bars": [
+        {
+         "label": "Nearest blocks",
+         "v": 10
+        },
+        {
+         "label": "A little farther out",
+         "lo": 3,
+         "hi": 4
+        }
+       ],
+       "unit": "points of turnout added (the paper says almost 10 for the nearest blocks)",
+       "quote": "almost 10 points higher turnout in the blocks nearest the shooting and 3 to 4 points a little farther out"
+      }
      },
      "ref": "2016-07-01",
      "verdict": "measured by a published study",
@@ -17524,7 +17784,23 @@
       ],
       "why": "Shootings leave a community with trauma, and people probably cope by changing their habits, including buying more alcohol.",
       "why_kind": "suggested",
-      "why_quote": "Communities can cope with the ensuing trauma in a number of ways, including changing their behavioral patterns."
+      "why_quote": "Communities can cope with the ensuing trauma in a number of ways, including changing their behavioral patterns.",
+      "fx": {
+       "kind": "pct",
+       "base_label": "Expected",
+       "bars": [
+        {
+         "label": "All mass shootings",
+         "pct": 3.5
+        },
+        {
+         "label": "Shootings in public",
+         "pct": 5.5
+        }
+       ],
+       "unit": "weekly alcohol sales in the area, against what was expected",
+       "quote": "a 3.5% rise, and 5.5% after shootings in public places"
+      }
      },
      "ref": "2006-07-01",
      "verdict": "measured by a published study",
@@ -17596,7 +17872,23 @@
       ],
       "why": "Daylight saving shifts when it is light out, and more light on the road means fewer serious and fatal crashes.",
       "why_kind": "tested",
-      "why_quote": "also find evidence that ambient light reduces serious and fatal accident risk"
+      "why_quote": "also find evidence that ambient light reduces serious and fatal accident risk",
+      "fx": {
+       "kind": "pct",
+       "base_label": "Standard time",
+       "bars": [
+        {
+         "label": "Under daylight saving time",
+         "pct": -2.7
+        },
+        {
+         "label": "First week after change",
+         "pct": 6
+        }
+       ],
+       "unit": "car accidents, against standard time",
+       "quote": "2.7% fewer car accidents under daylight saving time, though 6% more in the first week after the clocks go forward"
+      }
      },
      "ref": "2002-07-01",
      "verdict": "measured by a published study",

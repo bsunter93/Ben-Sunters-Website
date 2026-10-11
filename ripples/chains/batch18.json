@@ -126,7 +126,20 @@
      "doi": "10.1093/jcr/ucz024",
      "rows": [
       "TV_SMOKING"
-     ]
+     ],
+     "fx": {
+      "kind": "groups",
+      "bars": [
+       {
+        "label": "Smoking, with TV",
+        "lo": 5,
+        "hi": 15
+       }
+      ],
+      "unit": "percentage points added to the share of adults who smoke, out of 100",
+      "quote": "the share of smokers rose 5 to 15 percentage points",
+      "max": 100
+     }
     },
     "range": [
      "1946-07-01",
@@ -358,7 +371,23 @@
      ],
      "why": "Listeners probably copied the show's characters as role models and talked with other people about family planning.",
      "why_kind": "suggested",
-     "why_quote": "stimulating (1) involvement with media characters and role modeling of their actions, and (2) interpersonal communication"
+     "why_quote": "stimulating (1) involvement with media characters and role modeling of their actions, and (2) interpersonal communication",
+     "fx": {
+      "kind": "levels",
+      "bars": [
+       {
+        "label": "Before the show",
+        "v": 19,
+        "base": true
+       },
+       {
+        "label": "After the show",
+        "v": 28
+       }
+      ],
+      "unit": "percent using family planning",
+      "quote": "family planning use rose from 19% to 28%"
+     }
     },
     "mark": "Behavior",
     "note": "From the paper: “the radio soap opera promoted progress through the stages for family planning adoption in the treatment area.” The effect showed in three of the four broadcast years, and in the comparison area once the show reached it."
@@ -447,7 +476,19 @@
      ],
      "why": "Flu probably spreads at gatherings around the big game.",
      "why_kind": "suggested",
-     "why_quote": "Our findings suggest mitigating transmission at gatherings related to large spectator events could have substantial returns for public health."
+     "why_quote": "Our findings suggest mitigating transmission at gatherings related to large spectator events could have substantial returns for public health.",
+     "fx": {
+      "kind": "pct",
+      "base_label": "No team playing",
+      "bars": [
+       {
+        "label": "Team in the Super Bowl",
+        "pct": 18
+       }
+      ],
+      "unit": "flu deaths over 65, against counties without a team",
+      "quote": "18% more flu deaths among people over 65 in counties with a team in the game"
+     }
     },
     "note": "From the paper: “We estimate having a local team in the Super Bowl caused an 18 percent increase in influenza deaths for the population over age 65.” The effect was largest in years with a harsher flu strain or a game closer to the flu season's peak."
    }
@@ -492,7 +533,19 @@
      ],
      "why": "The game puts play out in the real world, so players have to walk to play it.",
      "why_kind": "suggested",
-     "why_quote": "novel mobile games that embed game play in the physical world"
+     "why_quote": "novel mobile games that embed game play in the physical world",
+     "fx": {
+      "kind": "pct",
+      "base_label": "Before playing",
+      "bars": [
+       {
+        "label": "Engaged players, at least",
+        "pct": 25
+       }
+      ],
+      "unit": "daily steps over 30 days, against their own earlier level",
+      "quote": "a more than 25% increase compared with their prior activity level"
+     }
     },
     "note": "From the paper: “increasing their activity by 1473 steps a day on average, a more than 25% increase compared with their prior activity level.” The study used wearable sensors on 32,000 Microsoft Band users. A study in Yokohama found players stayed more active for 7 months."
    }
@@ -534,7 +587,23 @@
      "doi": "10.1001/archinte.163.13.1601",
      "rows": [
       "COURIC_COLON"
-     ]
+     ],
+     "fx": {
+      "kind": "levels",
+      "bars": [
+       {
+        "label": "Before the campaign",
+        "v": 15.0,
+        "base": true
+       },
+       {
+        "label": "After the campaign",
+        "v": 18.1
+       }
+      ],
+      "unit": "colonoscopies per doctor per month",
+      "quote": "colonoscopies per doctor rose from 15.0 to 18.1 a month"
+     }
     },
     "range": [
      "2000-03-01",
@@ -583,7 +652,20 @@
      ],
      "why": "People prone to violence spend the evening at the movies instead of in riskier places, like out drinking.",
      "why_kind": "tested",
-     "why_quote": "leading to a substitution away from more volatile activities. In particular, movie attendance appears to reduce alcohol consumption."
+     "why_quote": "leading to a substitution away from more volatile activities. In particular, movie attendance appears to reduce alcohol consumption.",
+     "fx": {
+      "kind": "pct",
+      "base_label": "Expected",
+      "bars": [
+       {
+        "label": "Evening, per extra million viewers",
+        "pct_lo": -1.3,
+        "pct_hi": -1.1
+       }
+      ],
+      "unit": "violent crime from 6 p.m. to midnight, per extra million viewers",
+      "quote": "between 6 p.m. and 12 a.m., a one million increase in the audience for violent movies reduces violent crime by 1.1% to 1.3%"
+     }
     },
     "note": "From the paper: “Our estimates suggest that in the short run, violent movies deter almost 1,000 assaults on an average weekend.” The paper finds no rise in the three weeks after either."
    }
@@ -627,7 +709,19 @@
      ],
      "why": "A celebrity's essay probably reached a huge audience fast, and it spoke up for testing.",
      "why_kind": "suggested",
-     "why_quote": "Such announcements can be a low cost means of reaching a broad audience quickly"
+     "why_quote": "Such announcements can be a low cost means of reaching a broad audience quickly",
+     "fx": {
+      "kind": "pct",
+      "base_label": "Same days in 2012",
+      "bars": [
+       {
+        "label": "After the op-ed",
+        "pct": 64
+       }
+      ],
+      "unit": "daily BRCA test rate, against the same days in 2012",
+      "quote": "the daily BRCA test rate rose 64% in the 15 business days after, against the same days in 2012"
+     }
     },
     "note": "From the paper: “implying a difference-in-difference absolute daily increase of 0.45 tests/100 000 women or a 64% relative increase.” The study covers 9.5 million insured women aged 18 to 64."
    }
@@ -802,7 +896,19 @@
      ],
      "why": "News coverage of her illness and death probably led women to book screenings.",
      "why_kind": "suggested",
-     "why_quote": "The pattern of increased attendance mirrored the pattern of media coverage of Jade Goody's diagnosis and death."
+     "why_quote": "The pattern of increased attendance mirrored the pattern of media coverage of Jade Goody's diagnosis and death.",
+     "fx": {
+      "kind": "pct",
+      "base_label": "Expected",
+      "bars": [
+       {
+        "label": "March 2009 peak",
+        "pct": 70
+       }
+      ],
+      "unit": "cervical screening attendance, against what was expected",
+      "quote": "At its peak in March 2009, attendance was 70% higher than expected"
+     }
     },
     "range": [
      "2008-08-01",
@@ -848,7 +954,23 @@
      "doi": "10.1177/0022427813494843",
      "rows": [
       "WORLDCUP_DV"
-     ]
+     ],
+     "fx": {
+      "kind": "pct",
+      "base_label": "Expected",
+      "bars": [
+       {
+        "label": "England won or drew",
+        "pct": 26
+       },
+       {
+        "label": "England lost",
+        "pct": 38
+       }
+      ],
+      "unit": "domestic abuse reports on match days, against what was expected",
+      "quote": "reports rose 26% when England won or drew and 38% when England lost"
+     }
     },
     "note": "From the paper: “the risk of domestic abuse rose by 26 percent when the English national team won or drew.”"
    }
@@ -937,7 +1059,19 @@
      ],
      "why": "News about her diagnosis probably changed what women asked for and what doctors ordered.",
      "why_kind": "suggested",
-     "why_quote": "High-publicised illnesses may affect both consumer and provider behaviour."
+     "why_quote": "High-publicised illnesses may affect both consumer and provider behaviour.",
+     "fx": {
+      "kind": "pct",
+      "base_label": "Before the news",
+      "bars": [
+       {
+        "label": "After her diagnosis",
+        "pct": 20
+       }
+      ],
+      "unit": "odds of breast imaging for women aged 25 to 44",
+      "quote": "20% higher odds of breast imaging for Australian women aged 25 to 44"
+     }
     },
     "note": "From the paper: “The odds of women aged 25-44 years undergoing imaging procedures increased by 20% in the first and second quarters after the Minogue publicity.” A UK clinic saw more referrals and no rise in cancers found."
    }
@@ -1074,7 +1208,23 @@
      ],
      "why": "On match days people probably put off seeking care, so fewer reach the hospital.",
      "why_kind": "suggested",
-     "why_quote": "Major sporting events may acutely alter patterns of cardiovascular hospitalization through changes in healthcare-seeking behavior, hospital utilization, and emotional or behavioral triggers."
+     "why_quote": "Major sporting events may acutely alter patterns of cardiovascular hospitalization through changes in healthcare-seeking behavior, hospital utilization, and emotional or behavioral triggers.",
+     "fx": {
+      "kind": "pct",
+      "base_label": "Non-match days",
+      "bars": [
+       {
+        "label": "Heart attack admissions",
+        "pct": -7.0
+       },
+       {
+        "label": "Heart failure admissions",
+        "pct": -11.1
+       }
+      ],
+      "unit": "hospital admissions on Brazil match days, against other days",
+      "quote": "7.0% fewer heart attack admissions and 11.1% fewer heart failure admissions"
+     }
     },
     "note": "From the paper: “On Brazil match days, AMI admissions were 7.0% lower than non-match days.” AMI means a heart attack."
    }
@@ -1119,7 +1269,19 @@
      ],
      "why": "His announcement probably got people looking up HIV, and some then chose to test themselves at home.",
      "why_kind": "suggested",
-     "why_quote": "Web searches for HIV spiked around actor Charlie Sheen's HIV-positive disclosure."
+     "why_quote": "Web searches for HIV spiked around actor Charlie Sheen's HIV-positive disclosure.",
+     "fx": {
+      "kind": "pct",
+      "base_label": "Expected",
+      "bars": [
+       {
+        "label": "Week of disclosure",
+        "pct": 95
+       }
+      ],
+      "unit": "in-home HIV test kit sales, against what was expected",
+      "quote": "sales rose 95% the week of the disclosure"
+     }
     },
     "note": "From the paper: “In total, there were 8225 more sales than expected around Sheen's disclosure, surpassing World AIDS Day by a factor of about 7.”"
    }
@@ -1392,7 +1554,19 @@
      ],
      "why": "His death probably made many people more aware of colon cancer, and some gave money.",
      "why_kind": "suggested",
-     "why_quote": "Our results suggest that Chadwick Boseman's death was associated with substantial increases in awareness of CRC."
+     "why_quote": "Our results suggest that Chadwick Boseman's death was associated with substantial increases in awareness of CRC.",
+     "fx": {
+      "kind": "pct",
+      "base_label": "Month before",
+      "bars": [
+       {
+        "label": "Donations, as reported",
+        "pct": 331
+       }
+      ],
+      "unit": "Colon Cancer Foundation donations, against the month before",
+      "quote": "the Colon Cancer Foundation reported a 331% rise in donations"
+     }
     },
     "note": "From the paper: “The Colon Cancer Foundation reported a 331% increase in donations.”"
    }
