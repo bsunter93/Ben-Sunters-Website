@@ -13604,7 +13604,21 @@
       "doi": "10.1257/app.20170300",
       "rows": [
        "SESAME_SCHOOL"
-      ]
+      ],
+      "fx": {
+       "kind": "groups",
+       "bars": [
+        {
+         "label": "30 points more TV coverage",
+         "v": 3.2
+        }
+       ],
+       "unit": "percentage points more children at the right grade for their age, out of 100",
+       "quote": "A 30-point increase in coverage rates would generate a 3.2 percentage point (0.3*0.105 = 0.032) increase in the rate of grade-for-age.",
+       "max": 100,
+       "from": "the 2015 NBER working paper",
+       "text_url": "https://www.nber.org/system/files/working_papers/w21229/w21229.pdf"
+      }
      },
      "ref": "1969-07-01",
      "verdict": "measured by a published study",
@@ -13753,7 +13767,21 @@
       ],
       "why": "The novelas showed small families, and viewers' choices followed what the shows portrayed.",
       "why_kind": "tested",
-      "why_quote": "We provide evidence that novelas, and not just television, affected individual choices, based on children's naming patterns and novela content."
+      "why_quote": "We provide evidence that novelas, and not just television, affected individual choices, based on children's naming patterns and novela content.",
+      "fx": {
+       "kind": "pct",
+       "base_label": "No Globo signal",
+       "bars": [
+        {
+         "label": "Chance of a birth",
+         "pct": -5
+        }
+       ],
+       "unit": "a woman's chance of giving birth in a year, against no Globo signal",
+       "quote": "Ceteris paribus, Globo coverage is associated with a decrease in the probability of giving birth of :5 percentage points, which is 5 percent of the mean.",
+       "from": "the authors' March 2012 copy",
+       "text_url": "https://didattica.unibocconi.it/mypage/upload/49273_20120316_124441_SOAPMAR2012.PDF"
+      }
      },
      "ref": "1965-07-01",
      "verdict": "measured by a published study",
@@ -13821,7 +13849,25 @@
       "doi": "10.1257/app.4.4.1",
       "rows": [
        "NOVELA_NAMES"
-      ]
+      ],
+      "fx": {
+       "kind": "levels",
+       "bars": [
+        {
+         "label": "Without Globo signal",
+         "v": 0.085,
+         "base": true
+        },
+        {
+         "label": "With Globo signal",
+         "v": 0.329
+        }
+       ],
+       "unit": "share of areas, 0 to 1, whose top 20 baby names include a novela character",
+       "quote": "Table 8: Naming children after novela characters Panel A: Test of means Mean of 95% Conf. Interval Difference of means Obs. NAMESMATCH (a) Lower Upper (p-value) Globo coverage Yes 319 0.329 0.277 0.381 No 47 0.085 0.002 0.168 0.0003",
+       "from": "the authors' March 2012 copy",
+       "text_url": "https://didattica.unibocconi.it/mypage/upload/49273_20120316_124441_SOAPMAR2012.PDF"
+      }
      },
      "ref": "1965-07-01",
      "verdict": "measured by a published study",
@@ -13956,7 +14002,20 @@
       ],
       "why": "The show strengthened people's Hindu religious identity, and the names they gave their babies reflect that.",
       "why_kind": "tested",
-      "why_quote": "Localities with higher Ramayan exposure saw persistently strengthened Hindu religious identity, measured by the names given to newborns"
+      "why_quote": "Localities with higher Ramayan exposure saw persistently strengthened Hindu religious identity, measured by the names given to newborns",
+      "fx": {
+       "kind": "pct",
+       "base_label": "Average share",
+       "bars": [
+        {
+         "label": "Stronger signal, roughly",
+         "pct": 5
+        }
+       ],
+       "unit": "share of newborns given a top-ten Hindu name, per standard deviation of TV signal",
+       "quote": "a one-standard-deviation increase in Ramayani (TV signal strength in 1987) leads to 0.203 percentage points higher share of newborns given a top-ten Hindu name. This effect is roughly 5% of the dependent variable mean, and 7% of the dependent variable standard deviation.",
+       "text_url": "https://www.nber.org/system/files/working_papers/w33417/w33417.pdf"
+      }
      },
      "ref": "1987-07-01",
      "verdict": "measured by a published study",
@@ -15258,7 +15317,24 @@
       ],
       "why": "Her op-ed probably raised public awareness about breast cancer genes, and women acted on it.",
       "why_kind": "suggested",
-      "why_quote": "represents a long-lasting impact of celebrity on public health awareness as significant increases in genetic testing and mastectomy rates were observed and sustained in subsequent years"
+      "why_quote": "represents a long-lasting impact of celebrity on public health awareness as significant increases in genetic testing and mastectomy rates were observed and sustained in subsequent years",
+      "fx": {
+       "kind": "levels",
+       "bars": [
+        {
+         "label": "Before the op-ed",
+         "v": 0.2,
+         "base": true
+        },
+        {
+         "label": "After the op-ed",
+         "v": 0.9
+        }
+       ],
+       "unit": "monthly growth in the preventive mastectomy rate, percent",
+       "quote": "Specifically, there was an increase in the IRR after the Angelina Jolie editorial date, with IR of risk-reducing mastectomy increasing 0.2% each month before the editorial and 0.9% each month after May 2013",
+       "text_url": "https://eutils.ncbi.nlm.nih.gov/entrez/eutils/efetch.fcgi?db=pmc&id=6096880&tool=ripple"
+      }
      },
      "ref": "2013-05-14",
      "verdict": "measured by a published study",
@@ -15803,7 +15879,21 @@
       ],
       "why": "An unexpected loss stirs up judges' emotions, and the effect is bigger for judges who went to the team's university.",
       "why_kind": "tested",
-      "why_quote": "larger for defendants if their cases are handled by judges who received their bachelor's degrees from the university with which the football team is affiliated"
+      "why_quote": "larger for defendants if their cases are handled by judges who received their bachelor's degrees from the university with which the football team is affiliated",
+      "fx": {
+       "kind": "pct",
+       "base_label": "Usual sentence",
+       "bars": [
+        {
+         "label": "Week after an upset loss",
+         "pct": 7
+        }
+       ],
+       "unit": "juvenile sentence length: about 35 more days on a 513-day average",
+       "quote": "Column (5) of Table 4 demonstrates that an upset loss increases disposition length set by the judges by about 35 days. Taking the average disposition length (513 days) as the baseline, this magnitude corresponds to a 7 percent increase.",
+       "from": "the 2016 NBER working paper",
+       "text_url": "https://www.nber.org/system/files/working_papers/w22611/w22611.pdf"
+      }
      },
      "ref": "1996-07-01",
      "verdict": "measured by a published study",
