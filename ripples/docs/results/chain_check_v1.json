@@ -1,7 +1,7 @@
 {
  "protocol": "ripples/lab/chain_check.py",
- "run": "2026-10-10",
- "checker_sha": "10b8d89",
+ "run": "2026-10-11",
+ "checker_sha": "1add37b",
  "chains": [
   {
    "slug": "frozen",
@@ -6642,7 +6642,105 @@
      "onset": "2019-06-11",
      "source": "House Judiciary subcommittee hearing, 11 Jun 2019",
      "attn": {
-      "result": "no article found"
+      "articles": [
+       "Stewart and Stewart"
+      ],
+      "onset": null,
+      "ratio": null,
+      "baseline": null,
+      "p": null,
+      "weekly": [
+       [
+        "2019-03-19",
+        17
+       ],
+       [
+        "2019-03-26",
+        21
+       ],
+       [
+        "2019-04-02",
+        15
+       ],
+       [
+        "2019-04-09",
+        15
+       ],
+       [
+        "2019-04-16",
+        15
+       ],
+       [
+        "2019-04-23",
+        20
+       ],
+       [
+        "2019-04-30",
+        15
+       ],
+       [
+        "2019-05-07",
+        15
+       ],
+       [
+        "2019-05-14",
+        16
+       ],
+       [
+        "2019-05-21",
+        18
+       ],
+       [
+        "2019-05-28",
+        14
+       ],
+       [
+        "2019-06-04",
+        23
+       ],
+       [
+        "2019-06-11",
+        15
+       ],
+       [
+        "2019-06-18",
+        13
+       ],
+       [
+        "2019-06-25",
+        11
+       ],
+       [
+        "2019-07-02",
+        18
+       ],
+       [
+        "2019-07-09",
+        19
+       ],
+       [
+        "2019-07-16",
+        16
+       ],
+       [
+        "2019-07-23",
+        20
+       ],
+       [
+        "2019-07-30",
+        16
+       ],
+       [
+        "2019-08-06",
+        25
+       ],
+       [
+        "2019-08-13",
+        21
+       ]
+      ],
+      "n_placebo": null,
+      "verdict": "no sustained rise"
      }
     },
     {
@@ -17214,6 +17312,108 @@
    ]
   },
   {
+   "slug": "study-iphone-teen-births",
+   "title": "The iPhone on AT&T (2007 to 2011)",
+   "date": "2007-06-29",
+   "batch": 19,
+   "vertical": "Published studies",
+   "steps": [
+    {
+     "n": 1,
+     "claim": "The iPhone goes on sale in the US, only through AT&T",
+     "test": {
+      "type": "record",
+      "date": "2007-06-29",
+      "source": "“Is the iPhone Birth Control? Causal Evidence from AT&T’s 2007–2011 Carrier Monopoly,” NBER Working Paper 35310, 2026",
+      "doi": "10.3386/w35310"
+     },
+     "ref": "2007-06-29",
+     "verdict": "reported",
+     "note": "AT&T kept the iPhone to itself until February 2011. The study uses that: it compares counties by how much of them AT&T’s 3G network reached.",
+     "link": null,
+     "link_why": null,
+     "branch": false,
+     "vertical": null,
+     "after": null,
+     "slice": null,
+     "short": null,
+     "mark": null,
+     "onset": "2007-06-29",
+     "source": "“Is the iPhone Birth Control? Causal Evidence from AT&T’s 2007–2011 Carrier Monopoly,” NBER Working Paper 35310, 2026"
+    },
+    {
+     "n": 2,
+     "claim": "Fewer babies born to teenagers where AT&T’s network reached",
+     "test": {
+      "type": "study",
+      "date": "2008-01-01",
+      "date_precision": "year",
+      "window": "2008 to 2011",
+      "grade": "measured",
+      "review": "working paper",
+      "design": "counties by AT&T 3G coverage, synthetic difference-in-differences and Poisson event studies",
+      "source": "“Is the iPhone Birth Control? Causal Evidence from AT&T’s 2007–2011 Carrier Monopoly,” NBER Working Paper 35310, 2026",
+      "effect": "4.5% to 8.0% fewer births at ages 15 to 19 where the iPhone could be used. Nationally the teen birth rate fell from 41.5 to 31.2 per 1,000 from 2007 to 2011; without the iPhone the paper puts 2011 at 33.4 to 34.4, so the iPhone accounts for 21% to 31% of the drop",
+      "effect_short": "21% to 31% of the drop",
+      "doi": "10.3386/w35310",
+      "rows": [
+       "CR0078"
+      ],
+      "lines": {
+       "unit": "births per 1,000 women aged 15 to 19",
+       "key": "teen births per 1,000 women: what happened, and the paper’s estimate without the iPhone (shaded; Figure 6)",
+       "without": "without the iPhone",
+       "years": [
+        2007,
+        2008,
+        2009,
+        2010,
+        2011
+       ],
+       "actual": [
+        41.5,
+        40.3,
+        38.0,
+        34.4,
+        31.2
+       ],
+       "lo": [
+        41.5,
+        40.7,
+        38.8,
+        36.3,
+        33.4
+       ],
+       "hi": [
+        41.5,
+        42.3,
+        40.2,
+        37.3,
+        34.4
+       ]
+      }
+     },
+     "ref": "2007-06-29",
+     "verdict": "measured by a published study",
+     "note": "From the paper: “access to the iPhone reduced births by 4.5–8.0% at ages 15–19 and 3.2–6.6% at ages 20–24.” Running the same test on Verizon’s and Sprint’s networks finds nothing. A working paper: not yet peer reviewed. The chart’s 2007 and 2011 values are from the paper’s text; 2008 to 2010 are read off its Figure 6, the low edge of the band from the Poisson estimate and the high edge from the synthetic difference-in-differences one. Quoted from the NBER abstract and the authors’ open copy.",
+     "link": null,
+     "link_why": null,
+     "branch": false,
+     "vertical": null,
+     "after": null,
+     "slice": null,
+     "short": "Fewer teen births",
+     "mark": null,
+     "onset": "2008-01-01",
+     "source": "“Is the iPhone Birth Control? Causal Evidence from AT&T’s 2007–2011 Carrier Monopoly,” NBER Working Paper 35310, 2026",
+     "range": [
+      "2008-01-01",
+      "2011-12-31"
+     ]
+    }
+   ]
+  },
+  {
    "slug": "serial",
    "title": "Serial (2014)",
    "date": "2014-10-03",
@@ -21358,7 +21558,7 @@
       ],
       [
        "2020-11-01",
-       134892.0
+       134891.0
       ],
       [
        "2020-12-01",
@@ -21382,7 +21582,7 @@
       ],
       [
        "2021-05-01",
-       133734.0
+       133733.0
       ],
       [
        "2021-06-01",
