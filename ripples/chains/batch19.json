@@ -12,6 +12,7 @@
     "test": {
      "type": "record",
      "date": "2018-06-29",
+     "window": "10 release days, 2018 to 2022",
      "source": "“Smartphones, Online Music Streaming, and Traffic Fatalities,” JAMA Network Open, 2026",
      "doi": "10.1001/jamanetworkopen.2026.29282"
     },
@@ -33,13 +34,109 @@
      "doi": "10.1001/jamanetworkopen.2026.29282",
      "rows": [
       "CR0066"
-     ]
+     ],
+     "event": {
+      "zero": "release day",
+      "key": "change in US road deaths each day, with its 95% range (the paper’s Figure 2A)",
+      "days": [
+       -10,
+       -9,
+       -8,
+       -7,
+       -6,
+       -5,
+       -4,
+       -3,
+       -2,
+       -1,
+       0,
+       1,
+       2,
+       3,
+       4,
+       5,
+       6,
+       7,
+       8,
+       9,
+       10
+      ],
+      "v": [
+       0.0,
+       4.4,
+       -1.7,
+       5.6,
+       5.2,
+       8.3,
+       -1.2,
+       -1.5,
+       7.7,
+       -4.3,
+       20.8,
+       1.3,
+       -0.3,
+       3.7,
+       6.3,
+       15.5,
+       -3.0,
+       4.1,
+       -3.4,
+       -0.8,
+       9.4
+      ],
+      "lo": [
+       0.0,
+       -10.8,
+       -14.4,
+       -8.9,
+       -10.5,
+       -2.4,
+       -14.4,
+       -15.0,
+       -5.8,
+       -15.3,
+       4.0,
+       -13.6,
+       -9.7,
+       -14.1,
+       -6.3,
+       -0.5,
+       -17.8,
+       -9.7,
+       -21.7,
+       -17.8,
+       -4.7
+      ],
+      "hi": [
+       0.0,
+       19.3,
+       10.9,
+       20.1,
+       21.0,
+       18.7,
+       12.3,
+       12.1,
+       21.3,
+       6.5,
+       37.1,
+       16.5,
+       9.0,
+       21.5,
+       19.0,
+       31.3,
+       11.8,
+       17.9,
+       14.8,
+       16.2,
+       23.5
+      ]
+     }
     },
     "range": [
      "2018-06-29",
      "2022-11-04"
     ],
-    "note": "From the paper: “major music album releases, accompanied by increased online streaming, were associated with a significant increase in traffic fatalities.” The extra deaths were higher among younger male drivers, crashes with one person in the car and cars with built-in infotainment screens."
+    "note": "From the paper: “major music album releases, accompanied by increased online streaming, were associated with a significant increase in traffic fatalities.” The extra deaths were higher among younger male drivers, crashes with one person in the car and cars with built-in infotainment screens. The chart’s 21 points are read off the paper’s Figure 2A (adjusted for holidays, day of the week, week of the year and year), to about half a death; day −10 is the paper’s reference day, set to zero."
    }
   ]
  },

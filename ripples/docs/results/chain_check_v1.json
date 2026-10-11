@@ -1,7 +1,7 @@
 {
  "protocol": "ripples/lab/chain_check.py",
- "run": "2026-10-09",
- "checker_sha": "fc1d8e9",
+ "run": "2026-10-10",
+ "checker_sha": "10b8d89",
  "chains": [
   {
    "slug": "frozen",
@@ -11294,7 +11294,7 @@
      "source": "Exelon shut down TMI-1 on September 20, 2019, for lack of a Pennsylvania subsidy",
      "attn": {
       "articles": [
-       "Three Mile Island accident"
+       "Three Mile Island Nuclear Generating Station"
       ],
       "onset": null,
       "ratio": null,
@@ -11303,91 +11303,91 @@
       "weekly": [
        [
         "2019-06-28",
-        55092
+        5268
        ],
        [
         "2019-07-05",
-        58194
+        5357
        ],
        [
         "2019-07-12",
-        38664
+        3859
        ],
        [
         "2019-07-19",
-        35291
+        3403
        ],
        [
         "2019-07-26",
-        29805
+        2907
        ],
        [
         "2019-08-02",
-        24186
+        2658
        ],
        [
         "2019-08-09",
-        25046
+        2607
        ],
        [
         "2019-08-16",
-        24535
+        2872
        ],
        [
         "2019-08-23",
-        21291
+        2468
        ],
        [
         "2019-08-30",
-        18903
+        2113
        ],
        [
         "2019-09-06",
-        17532
+        2279
        ],
        [
         "2019-09-13",
-        19675
+        2951
        ],
        [
         "2019-09-20",
-        41995
+        8907
        ],
        [
         "2019-09-27",
-        20318
+        3330
        ],
        [
         "2019-10-04",
-        19168
+        2812
        ],
        [
         "2019-10-11",
-        17878
+        2530
        ],
        [
         "2019-10-18",
-        17143
+        4585
        ],
        [
         "2019-10-25",
-        15364
+        2577
        ],
        [
         "2019-11-01",
-        16018
+        2415
        ],
        [
         "2019-11-08",
-        16203
+        2536
        ],
        [
         "2019-11-15",
-        16938
+        2380
        ],
        [
         "2019-11-22",
-        16279
+        2450
        ]
       ],
       "n_placebo": null,
@@ -16644,6 +16644,7 @@
      "test": {
       "type": "record",
       "date": "2018-06-29",
+      "window": "10 release days, 2018 to 2022",
       "source": "“Smartphones, Online Music Streaming, and Traffic Fatalities,” JAMA Network Open, 2026",
       "doi": "10.1001/jamanetworkopen.2026.29282"
      },
@@ -16679,11 +16680,107 @@
       "doi": "10.1001/jamanetworkopen.2026.29282",
       "rows": [
        "CR0066"
-      ]
+      ],
+      "event": {
+       "zero": "release day",
+       "key": "change in US road deaths each day, with its 95% range (the paper’s Figure 2A)",
+       "days": [
+        -10,
+        -9,
+        -8,
+        -7,
+        -6,
+        -5,
+        -4,
+        -3,
+        -2,
+        -1,
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10
+       ],
+       "v": [
+        0.0,
+        4.4,
+        -1.7,
+        5.6,
+        5.2,
+        8.3,
+        -1.2,
+        -1.5,
+        7.7,
+        -4.3,
+        20.8,
+        1.3,
+        -0.3,
+        3.7,
+        6.3,
+        15.5,
+        -3.0,
+        4.1,
+        -3.4,
+        -0.8,
+        9.4
+       ],
+       "lo": [
+        0.0,
+        -10.8,
+        -14.4,
+        -8.9,
+        -10.5,
+        -2.4,
+        -14.4,
+        -15.0,
+        -5.8,
+        -15.3,
+        4.0,
+        -13.6,
+        -9.7,
+        -14.1,
+        -6.3,
+        -0.5,
+        -17.8,
+        -9.7,
+        -21.7,
+        -17.8,
+        -4.7
+       ],
+       "hi": [
+        0.0,
+        19.3,
+        10.9,
+        20.1,
+        21.0,
+        18.7,
+        12.3,
+        12.1,
+        21.3,
+        6.5,
+        37.1,
+        16.5,
+        9.0,
+        21.5,
+        19.0,
+        31.3,
+        11.8,
+        17.9,
+        14.8,
+        16.2,
+        23.5
+       ]
+      }
      },
      "ref": "2018-06-29",
      "verdict": "measured by a published study",
-     "note": "From the paper: “major music album releases, accompanied by increased online streaming, were associated with a significant increase in traffic fatalities.” The extra deaths were higher among younger male drivers, crashes with one person in the car and cars with built-in infotainment screens.",
+     "note": "From the paper: “major music album releases, accompanied by increased online streaming, were associated with a significant increase in traffic fatalities.” The extra deaths were higher among younger male drivers, crashes with one person in the car and cars with built-in infotainment screens. The chart’s 21 points are read off the paper’s Figure 2A (adjusted for holidays, day of the week, week of the year and year), to about half a death; day −10 is the paper’s reference day, set to zero.",
      "link": null,
      "link_why": null,
      "branch": false,
@@ -21305,7 +21402,7 @@
       ],
       [
        "2021-10-01",
-       118767.0
+       118766.0
       ],
       [
        "2021-11-01",
@@ -21333,11 +21430,11 @@
       ],
       [
        "2022-05-01",
-       115912.0
+       115911.0
       ],
       [
        "2022-06-01",
-       111158.0
+       111157.0
       ],
       [
        "2022-07-01",
@@ -21369,7 +21466,7 @@
       ],
       [
        "2023-02-01",
-       85571.0
+       85570.0
       ],
       [
        "2023-03-01",
