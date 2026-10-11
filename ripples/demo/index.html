@@ -3313,7 +3313,7 @@ function avInit() {
     if (b.classList.contains("avshmore")) { const g = b.dataset.g; avShelfOpen.has(g) ? avShelfOpen.delete(g) : avShelfOpen.add(g); avShelf(); return; }
   });
   main.addEventListener("toggle", e => { if (e.target.matches && e.target.matches("details.avmore") && e.target.open) { track("learn_more", {slug:cur && cur.key, view:"answer"}); avLine(false); } else avLine(false); }, true);
-  main.addEventListener("mouseover", e => { const hit = e.target.closest && e.target.closest(".rchit"); if (hit && cur && cur.rc && cur.rc.done && cur.rc.cur !== +hit.dataset.i) rcSay(cur, +hit.dataset.i, true); });
+  // No hover: passing the pointer over the rows rewrote the caption and read as a glitch (owner, Oct 11). A click or tap picks a row.
   let rt = 0; window.addEventListener("resize", () => { clearTimeout(rt); rt = setTimeout(() => { avLine(false); const c = $("#rcchart"); if (cur && cur.rc && c && Math.abs(c.clientWidth - (cur.rc.w || 0)) > 8) rcDraw(cur); }, 120); });
   if (document.fonts) document.fonts.ready.then(() => avLine(false));
 }
