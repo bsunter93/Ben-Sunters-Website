@@ -1,0 +1,22 @@
+why_line_card_v1 (fixed prompt: the authors' reason for one study's finding, for a public story card)
+
+Input: the batch, a list of objects {slug, stone, claim, effect, abstract}. abstract is the study's abstract, or null.
+
+For every item write one object to the output file (a JSON list, in input order):
+{"slug": "...", "why": "...", "kind": "tested" | "suggested" | "none", "quote": "..."}
+
+- why: one plain sentence, at most 22 words, giving the reason the authors give for why the stone led to the claim
+  (the mechanism or channel). Only what the abstract says. If the abstract gives no reason, or abstract is null, write
+  "" and kind "none". Never add a reason the abstract does not give.
+- kind: "tested" when the abstract reports evidence for that channel (a mediator, a subgroup or a mechanism test);
+  "suggested" when the authors only propose or say the result is consistent with it.
+- quote: the exact words from the abstract (character for character, at most 30 words) that the reason rests on, or "".
+
+Style: plain words a 15-year-old knows, American English, no jargon, no statistics, no em dashes, no semicolons, no
+restating the claim, no "the authors say". Start with the cause. For "suggested", the sentence may say "probably".
+Example: "People stream a new album while they drive, so more drivers look at their phones."
+
+Rules: read only the batch and this file; do not open other files or look anything up. Do not judge whether the
+finding is true or surprising. Then check with Python: as many entries as items, slugs in input order, every non-empty
+quote is an exact substring of that item's abstract, every why has at most 22 words and no em dash. Fix any problem.
+Final message: "done, N written, T tested, S suggested, X none".

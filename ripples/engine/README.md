@@ -14,9 +14,15 @@ quote found, the stone dated before the outcome window and a comparison design. 
 of at least 3.5. The yield is reported per 100 candidates entering verification and per 100 raw pairs, so a gate cannot
 make it look better than it is.
 
+**Who decides surprising (Oct 11, 2026).** A person, not the panel. On 44 findings the owner rated blind, his surprise
+and his belief were unrelated (Spearman -0.03), while the simulated panel's ran against each other (-0.75); the panel
+matched his surprise at .35 and his belief at .02. So the panel stays as a cheap pre-filter, and each run's yield is
+read from a blind sample a person rates on the rating page (`rate/human/`): good means surprise 4+ on the claim alone
+and belief 4+ after the evidence. His first batch: 36 good per 100 real findings, 43 per 100 gate passers.
+
 Python 3.10 or later, standard library only. Run every command from the repository root.
 
-## The five stages
+## The stages
 
 Each step is one of three kinds. A **script** runs on its own. A **judged step** is a fixed prompt applied in a fresh
 context that reads only that prompt and its own input file and writes only its output file. A **review** is a person
@@ -46,6 +52,16 @@ reading rows and writing a small JSON file.
 | Rate | `rate/build_controls.py`, `rate/build_items.py` | script | the packet: candidates, planted controls and yield v1 anchors, shuffled |
 | | rating (`rate/rater_prompt.txt`, `rate/personas.json`) | judged | five simulated raters, each with a persona and a shuffle seed |
 | | `rate/score.py` | script | validity, both yields, the gate audit, spread, yield by cell |
+| Rate (a person) | `rate/human/pick.py` | script | a blind batch for a person: thirds by panel surprise, half with a why line, planted controls |
+| | `rate/human/build_page.py` | script | fills the rating page; publish it with an owner-only database |
+| | `rate/human/score.py` | script | the yield as a person sees it, the controls, the why line's effect, agreement with the panel |
+| Enrich | `enrich/fulltext.py` | script | an open copy of each study (PubMed Central, then OpenAlex's open locations; never SSRN), and its abstract |
+| | `enrich/judged.py inputs` | script | batches for the two judged steps below, from a chains file |
+| | why line (`enrich/why_prompt.txt`) | judged | the authors' reason from the abstract, tested or suggested, with the words it rests on |
+| | effect numbers (`enrich/fx_prompt.txt`) | judged | the paper's own number for the claim, from the full text, as a chart spec with its quote |
+| | `enrich/judged.py assemble` | script | every quote must be in the text read; every number on a bar must be in its quote |
+| | review | review | a person reads `enrich/enrich.json` and drops what should not show (the page draws no bars for a myth) |
+| | `enrich/apply.py` | script | writes the why lines and chart specs into the chains file, and with `--checked` into the page's data |
 | Yield | `yield/log.py`, `yield/report.py` | script | one ledger line per run and the table against earlier yields |
 
 `python3 ripples/engine/runner.py <step> <input>` prints the exact instructions for one judged run with the real paths
@@ -96,6 +112,20 @@ python3 ripples/engine/rate/build_items.py
 python3 ripples/engine/runner.py rate 1                                      # and 2, 3, 4, 5, each in its own fresh context
 python3 ripples/engine/rate/score.py
 
+# Rate, by a person (about ten minutes)
+python3 ripples/engine/rate/human/pick.py --n 30
+python3 ripples/engine/rate/human/build_page.py              # publish rate/human/page.html; export its ratings to a folder
+python3 ripples/engine/rate/human/score.py --ratings <folder>
+
+# Enrich: the stories you build from the good finds
+python3 ripples/engine/enrich/fulltext.py --chains ripples/chains/<batch>.json
+python3 ripples/engine/enrich/judged.py inputs --chains ripples/chains/<batch>.json
+python3 ripples/engine/runner.py why enrich/why_in/<batch>_01.json                # one fresh context per batch
+python3 ripples/engine/runner.py fx enrich/fx_in/<batch>_01.json
+python3 ripples/engine/enrich/judged.py assemble
+#   review: read enrich/enrich.json
+python3 ripples/engine/enrich/apply.py --chains ripples/chains/<batch>.json --checked
+
 # Yield
 python3 ripples/engine/yield/log.py --run <run> --generator "outcome-side grid, blind gate" --plan <plan.md> \
     --queries ripples/engine/generate/queries/<run>.json
@@ -108,7 +138,7 @@ The harvest, selection, fetch and logging scripts take `--dry-run`, and every sc
 
 ## Judged steps
 
-Five steps need judgment: extraction, prediction, matching, verification judgment and rating. Each one is a fixed
+Seven steps need judgment: extraction, prediction, matching, verification judgment, rating, and the two enrich steps (the why line and the effect numbers). Each one is a fixed
 prompt in this folder, applied in a fresh context that reads only the prompt and its own input file. The prediction
 step sees stone names and dates and nothing else, and every prediction is made before any candidate text reaches it.
 The matching step sees one candidate's outcome and claim and its stone's 25 predictions. Raters see the claim and its

@@ -11,6 +11,8 @@ real paths filled in, so every batch gets the same words.
     python3 ripples/engine/runner.py match   blind/match_in/w1_c01.json      # blind matching (gate)
     python3 ripples/engine/runner.py verify  verify/judge_in/w1_j01.json     # verification judgment (verify)
     python3 ripples/engine/runner.py rate 1                                  # simulated rater 1 to 5 (rate)
+    python3 ripples/engine/runner.py why enrich/why_in/batch19_01.json       # the authors' reason (enrich)
+    python3 ripples/engine/runner.py fx  enrich/fx_in/batch19_01.json        # the effect numbers (enrich)
 
 Input paths are relative to the work directory, or absolute.
 """
@@ -30,6 +32,8 @@ STEPS = {
     "predict": ("gate/run_predict.txt", "gate/predict_v1.txt", "blind/predict_in", "blind/predict_raw", ".jsonl"),
     "match": ("gate/run_match.txt", "gate/match_v1.txt", "blind/match_in", "blind/match_raw", ".jsonl"),
     "verify": ("verify/run_judge.txt", "verify/judge_prompt.txt", "verify/judge_in", "verify/judge_raw", ".jsonl"),
+    "why": ("enrich/run_why.txt", "enrich/why_prompt.txt", "enrich/why_in", "enrich/why_raw", ".json"),
+    "fx": ("enrich/run_fx.txt", "enrich/fx_prompt.txt", "enrich/fx_in", "enrich/fx_raw", ".json"),
 }
 
 
@@ -40,7 +44,7 @@ def out_path(work, step, inp):
 
 def main():
     ap = argparse.ArgumentParser(description="Print the instructions for one judged step.")
-    ap.add_argument("step", choices=["list", "extract", "predict", "match", "verify", "rate"])
+    ap.add_argument("step", choices=["list", "extract", "predict", "match", "verify", "why", "fx", "rate"])
     ap.add_argument("target", nargs="?", help="the input file, or the rater number for rate")
     workdir.add_arg(ap)
     a = ap.parse_args()

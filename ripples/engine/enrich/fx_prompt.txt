@@ -1,0 +1,34 @@
+effect_chart_v2 (fixed prompt: the numbers for one study's effect chart, from the paper's full text)
+
+Input: a JSON list of items {slug, headline, stone, claim, grade, effect, note, fulltext}. fulltext is the path to the
+paper's text (converted from PDF or XML; line breaks and hyphenation may be broken), or of its abstract when no full text was reachable.
+
+For each item, find the paper's own number for the finding the story states (the claim and headline), preferring the
+headline estimate in the abstract, introduction or conclusion over a table cell. For a busted or disputed item, find
+what the study measured (often close to zero), not the claim it tested.
+
+Write one object per item to the output file (a JSON list, in input order), in ONE of these kinds:
+1. "pct": a percentage change against what would have happened otherwise.
+   {"slug", "kind": "pct", "base_label", "bars": [{"label", "pct"} or {"label", "pct_lo", "pct_hi"}], "unit", "quote"}
+   pct is signed (+18 for 18% more, -2.7 for 2.7% fewer); a range is pct_lo/pct_hi. 1 to 3 bars, main finding first.
+2. "levels": both levels are given (a rate, a share, a count with and without, or before and after).
+   {"slug", "kind": "levels", "bars": [{"label", "v", "base": true}, {"label", "v"}], "unit", "quote"}
+3. "groups": the effect itself in a natural unit (points, cases, days, dollars) for 1 to 3 groups.
+   {"slug", "kind": "groups", "bars": [{"label", "v"} or {"label", "lo", "hi"}], "unit", "quote", "max": optional}
+   Add "max": 100 when the unit is percentage points of a share.
+4. "none": the paper gives no number for this finding that a reader could compare.
+   {"slug", "kind": "none", "reason"}
+
+Rules:
+- quote is ONE contiguous passage from the fulltext, at most 60 words, copied as it appears; you may join a broken line
+  with a single space and rejoin a word split by a hyphen at a line end. Every number in bars must appear as numerals in
+  quote. Do not compute, convert, average or round, except changing the sign for "fewer", "lower", "less", "drop",
+  "decline", "fall". A standard-deviation effect ("0.1 SD") is not a percent: use "groups" with unit "standard
+  deviations", or "none".
+- The number must be for the same outcome and population the claim names. If the paper's number is for something
+  narrower or different, say so in unit (at most 14 words) or use "none".
+- base_label 1 to 4 words; labels at most 5 words; plain American English; no em dashes.
+- Read only the input file, this prompt and the fulltext files it names. Do not look anything up or open other files.
+Then check with Python: as many entries as items, in order; for each quote, after collapsing all whitespace to single
+spaces in both, the quote is a substring of the collapsed fulltext; every number in bars appears in quote. Fix any
+failure. Final message: "done, N written, P pct, L levels, G groups, X none".
