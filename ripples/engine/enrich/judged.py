@@ -1,6 +1,7 @@
 """Inputs and checks for the two enrich judged steps: the authors' reason (why) and the effect numbers (fx).
 
     python3 ripples/engine/enrich/judged.py inputs --chains ripples/chains/batch19.json [--slugs a,b] [--size 6]
+    python3 ripples/engine/enrich/judged.py inputs --candidates [--size 10]    # a run's defensible candidates (why only)
     python3 ripples/engine/runner.py why enrich/why_in/<batch>.json     # one fresh context per batch
     python3 ripples/engine/runner.py fx  enrich/fx_in/<batch>.json
     python3 ripples/engine/enrich/judged.py assemble
@@ -33,7 +34,31 @@ def one_study(c):
     return st[0] if len(st) == 1 else None
 
 
+def cmd_inputs_candidates(a, work):
+    """Why lines for a run's rated candidates (gate passers and audited rejects), from the abstract extraction read."""
+    key = json.load(open(os.path.join(work, "data", "rate_key.json")))
+    cands = {c["candidate_id"]: c for c in json.load(open(os.path.join(work, "data", "candidates_core.json")))}
+    papers = {p["paper_id"]: p for p in json.load(open(os.path.join(work, "data", "papers.json")))}
+    rows = []
+    for v in key.values():
+        c = cands.get(v.get("ref"))
+        if v.get("group") not in ("gate_pass", "audit_reject") or not c:
+            continue
+        abstract = (papers.get(c["paper_id"]) or {}).get("abstract")
+        if abstract:
+            rows.append({"slug": c["candidate_id"], "stone": c["stone_name"], "claim": c["outcome"], "effect": c.get("effect", ""), "abstract": abstract})
+    rows.sort(key=lambda r: r["slug"])
+    d = os.path.join(work, "enrich", "why_in")
+    os.makedirs(d, exist_ok=True)
+    for k in range(0, len(rows), a.size):
+        p = os.path.join(d, f"candidates_{k // a.size + 1:02d}.json")
+        json.dump(rows[k:k + a.size], open(p, "w"), indent=1, ensure_ascii=False)
+        print("why", os.path.relpath(p, work), len(rows[k:k + a.size]), "items")
+
+
 def cmd_inputs(a, work):
+    if a.candidates:
+        return cmd_inputs_candidates(a, work)
     texts = os.path.join(work, "enrich", "texts")
     want = set(filter(None, a.slugs.split(",")))
     why, fx = [], []
@@ -125,14 +150,15 @@ def main():
     ap = argparse.ArgumentParser(description=__doc__.split("\n")[0])
     ap.add_argument("cmd", choices=["inputs", "assemble"])
     ap.add_argument("--chains")
+    ap.add_argument("--candidates", action="store_true", help="inputs: a run's rated candidates instead of a chains file")
     ap.add_argument("--slugs", default="")
     ap.add_argument("--size", type=int, default=6)
     workdir.add_arg(ap)
     a = ap.parse_args()
     work = workdir.resolve(a.work)
     if a.cmd == "inputs":
-        if not a.chains:
-            ap.error("--chains is required for inputs")
+        if not a.chains and not a.candidates:
+            ap.error("--chains or --candidates is required for inputs")
         cmd_inputs(a, work)
     else:
         cmd_assemble(a, work)

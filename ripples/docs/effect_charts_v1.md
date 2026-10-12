@@ -3,13 +3,14 @@
 Most study stories are one hop: a stone and one finding. The chart drew them as a dot and the study's window on a
 calendar, which showed when but not how much. A study story whose finding has numbers now draws the effect itself.
 
-Three kinds, set in the study step's `test.fx`:
+Four kinds, set in the study step's `test.fx`:
 
 | Kind | Bars | Example |
 |---|---|---|
 | `pct` | what was expected (gray, with a dashed line through every row) against each finding's percent change | Super Bowl teams: +18% flu deaths over 65 |
 | `levels` | the level before or without (gray) against the level after | A radio soap: family planning use from 19% to 28% |
 | `groups` | the effect itself by group, from zero, in the paper's unit; a share is drawn out of 100 | Turnout: about +10 points in the nearest blocks, +3 to 4 a little farther |
+| `people` | one dot per person: the usual count (gray), and beside it the day's own count with the extra people lit on top; two bars only, a base and the finding, each under 400 | Album release days: 121 people killed on US roads on a usual day, 139 on release day |
 
 A range ("15% to 20% fewer") is a solid bar to the smaller number and a light bar to the larger. The key under the
 chart says what the bars measure. During the play the gray bar comes in with the stone and the finding's bars grow
@@ -48,3 +49,12 @@ the 2022 discussion paper version, the only open copy, says close wins raise pro
 0.7152 percentage points). Its chart waits for a read of the published version.
 
 No study story draws the calendar row now: 27 bars, 22 result cards, 2 charts of their own.
+
+## People, not ranges (Oct 12)
+
+Owner, on the album story's day-by-day chart: "this UI looks really bad. not a great landing page", and on its dots and
+95% ranges: "just need a completely new visual." The album story now draws `people`: 121 dots for a usual day beside
+139 for a release day, the 18 extra lit. Both counts are the paper's own averages, quoted in `test.fx.quote` from its
+results (120.9 on the 10 days before and after, 139.1 on release days; PMC13483183), rounded to whole people, and the
+key under the dots prints the paper's two numbers as written. The day-by-day points stay in `test.event` for the step
+list; a story with `fx` never draws them.
