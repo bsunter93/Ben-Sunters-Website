@@ -543,6 +543,7 @@ html:not(.avgl) .avhero{background:linear-gradient(#26313b 0,#0e1a24 42%,#0f2230
 .avq{margin:0;font:600 clamp(2.1rem,4.8vw,3.7rem)/1.04 var(--display);letter-spacing:-.012em;color:var(--ink);max-width:16em;font-variation-settings:"SOFT" 100,"opsz" 72}
 .avq em{font-style:italic;color:var(--marigold)}
 .avq .avarw{color:var(--ink-3);font-weight:400}.avq .avland{color:#ffd391}
+.avq.fxland .avland{color:color-mix(in srgb, var(--land) 45%, #ffffff)}  /* a study's finding: the card's hue, lifted for the dark water */
 .avq.land{animation:avfade .6s ease both}
 .avfly{position:absolute;z-index:3;width:30px;height:30px;left:0;top:0;pointer-events:none;overflow:visible}
 .avsheet{position:relative;z-index:4;max-width:1180px;margin:-46px auto 0;padding:0 16px}
@@ -643,7 +644,7 @@ html:not(.avgl) .avhero{background:linear-gradient(#26313b 0,#0e1a24 42%,#0f2230
 .avshmore{margin:12px 0 0;padding:6px 0;background:none;border:0;border-bottom:1px solid var(--ink-3);font:600 .88rem var(--sans);color:var(--ink-2);cursor:pointer}
 @media (max-width:900px){.avpaper{grid-template-columns:minmax(0,1fr)}.avleft{border-right:0;border-bottom:1px solid rgba(30,42,46,.12)}}
 @media (max-width:560px){
-  .avhero{min-height:260px}
+  .avhero{min-height:214px}
   .avin{justify-content:flex-start;padding:16px 18px 44px}
   .avhero::after{top:0;bottom:auto;height:48%;background:linear-gradient(rgba(15,28,38,.62),rgba(15,28,38,0))}
   .avq{font-size:2rem}
@@ -739,6 +740,29 @@ html:not(.avgl) .avhero{background:linear-gradient(#26313b 0,#0e1a24 42%,#0f2230
 .rcfxkey i.o{box-sizing:border-box;background:none;border:1.5px solid var(--h);width:10px;height:10px;transform:translateY(1.5px)}
 .rcfxkey i.r{box-sizing:border-box;background:none;border:1.5px dashed var(--h);width:10px;height:10px;transform:translateY(1.5px)}
 @media (prefers-reduced-motion:reduce){.rcpp circle,.rcpp circle.x,.rcpp circle.o,.rcpp circle.r,.rcppx,.rcfx.pp .rcfxhead,.rcfx.pp .rcfxkey{transition:none}}
+.rcpace{display:grid;gap:8px}
+.rcpace svg{display:block;width:100%;max-width:860px;height:auto;overflow:visible}
+.rcpace circle.pd{fill:rgba(30,42,46,.2);opacity:0;transition:opacity .3s ease calc(var(--k) * 4ms)}
+.rcpace .rcrow.on circle.pd{opacity:1}
+.rcpace circle.me{fill:#c77f12}
+.rcpace .pmed{stroke:rgba(30,42,46,.45);stroke-width:1.2;stroke-dasharray:3 3}
+.rcpace .pmedt{font:500 12px var(--sans);fill:var(--paper-ink-2)}
+.rcpace .pspan{fill:#e0a33c;transform-box:fill-box;transform-origin:0 50%;transform:scaleX(0);transition:transform 1.2s cubic-bezier(.45,.05,.3,1) .1s}
+.rcpace .rcrow.on .pspan{transform:scaleX(1)}
+.rcpace .pstone{fill:#1e2a2e}
+.rcpace .pspant{font:700 15px var(--sans);fill:var(--amber-ink, #8a5a10)}
+.rcpacet{margin:0;font:400 var(--t-s)/1.4 var(--sans);color:var(--paper-ink-2)}
+.rcpacet b{font-weight:700;color:var(--paper-ink)}
+.rcnote .key i.kpd{display:inline-block;width:8px;height:8px;border-radius:50%;background:rgba(30,42,46,.28);margin-right:6px;vertical-align:1px}
+@media (prefers-reduced-motion:reduce){.rcpace circle.pd,.rcpace .pspan{transition:none}}
+.rcev{display:grid;gap:7px;margin:16px 0 0;padding:12px 0 0;border-top:1px dashed rgba(30,42,46,.16)}
+.rcevr{display:grid;grid-template-columns:14px auto minmax(0,1fr);column-gap:8px;align-items:baseline;margin:0;font:400 var(--t-s)/1.45 var(--sans);color:var(--paper-ink-2)}
+.rcevr > svg{width:14px;height:14px;transform:translateY(2px)}
+.rcevr b{font-weight:600;color:var(--paper-ink);white-space:nowrap}
+.rcevr span{display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;cursor:pointer}
+.rcevr.open span{display:block;-webkit-line-clamp:unset}
+.rcevr svg.rcevq{display:inline-block;width:120px;height:16px;vertical-align:-4px;margin-left:8px;overflow:visible}
+@media (max-width:560px){.rcevr{grid-template-columns:14px minmax(0,1fr)}.rcevr span{grid-column:2;-webkit-line-clamp:3}}
 details.rcalso{margin-top:12px;font-size:var(--t-s);color:var(--paper-ink-2)}
 details.rcalso summary{cursor:pointer;width:max-content;max-width:100%;font-weight:600;color:var(--paper-ink-2);text-decoration:underline dotted;text-underline-offset:4px}
 details.rcalso summary:hover{color:var(--paper-ink)}
@@ -792,6 +816,8 @@ details.rcalso p{margin:6px 0 0;max-width:46rem;line-height:1.5}
 .rcnote .key i.ke{width:9px;height:9px;margin:0 4px;border-radius:50%}
 .rcfoot{display:flex;flex-wrap:wrap;align-items:center;gap:10px 12px;margin:18px 0 0;padding:18px 0 0;border-top:1px solid rgba(30,42,46,.12)}
 .rcfoot .avnext{min-height:46px;padding:0 22px;font:700 var(--t-s) var(--sans)}
+.rcfoot .avnext .nxa{display:none}
+@media (max-width:560px){.rcfoot .avnext .nxa{display:inline}}
 .rcfoot .avshare{min-height:46px;padding:0 18px;font:600 var(--t-s) var(--sans);display:inline-flex;align-items:center;gap:8px}
 .rcfoot .avshare svg{width:17px;height:17px;flex:none}
 .rcfoot .avknew{display:flex;flex-wrap:wrap;align-items:center;gap:0 2px;margin:0 0 0 auto;font-size:var(--t-s);color:var(--paper-ink-2);animation:avfade .45s ease both}
@@ -852,6 +878,7 @@ html.av .picker .pgroup{font:600 var(--t-xs)/1.2 var(--sans);letter-spacing:0;te
   .avsay{font-size:var(--t-s)}
   .rcfoot .avnext{flex:1 1 0;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
   .rcfoot .avshare{width:46px;padding:0;justify-content:center}.rcfoot .avshare span{display:none}
+  .rcfoot .avnext .nxw{display:none}
   .rcfoot .avknew{margin-left:0;flex-basis:100%}
   .avgrid{grid-template-columns:1fr;gap:8px}
   .avcard{display:grid;grid-template-columns:minmax(0,1fr) auto;column-gap:12px;row-gap:2px;min-height:0;padding:12px 14px 10px}
@@ -1014,6 +1041,26 @@ const TABS = {
     ["acts", "Silent Spring", "Silent Spring: cited in Parliament"], ["acts", "Adolescence (TV series)", "Adolescence: cited in Parliament"],
     ...["queens-gambit", "chernobyl", "wednesday", "stranger-things-4", "saltburn", "bridgerton", "the-last-of-us", "squid-game", "shogun", "the-bear"].map(s => ["map", s, null])],
 };
+// Oct 12 review: 51 of 254 stories had no arrow headline, so the shelf and the menu skipped them and a direct link showed
+// "Tiger King (2020)". The viral chains (the old fact-checks) get a group of their own; each headline names the chain's
+// own endpoint, and a "?" marks an endpoint the record doesn't back. A chain that retells a story already on the shelf
+// takes that story's headline, so the shelf shows it once and a direct link still gets the arrow.
+const VIRAL = [["pokemon-go", "Pokémon GO → parks redesigned for AR?"], ["wordle", "Wordle → a wave of copycat puzzles?"], ["barbie", "Barbie → a pink paint shortage?"],
+  ["adolescence-schools", "Adolescence → misogyny in school guidance"], ["serial", "Serial → a murder conviction vacated"], ["covid-remote", "Remote work → Zoom towns cap rentals?"],
+  ["jwst", "Webb's first images → an infrared patent boom?"], ["gamestop", "The GameStop squeeze → trading apps drop gamified features"], ["svb", "Silicon Valley Bank → every deposit guaranteed"],
+  ["ever-given", "Ever Given → the end of just-in-time?"], ["chatgpt", "ChatGPT → the return of blue books?"], ["dobbs", "Dobbs → state travel-restriction laws"],
+  ["airpods", "The headphone jack → earbuds on subway tracks?"], ["national-sword", "China's scrap ban → curbside recycling suspended?"], ["csi", "CSI → a 'CSI effect' on juries?"],
+  ["gdpr", "GDPR → cookie banners everywhere?"], ["jaws", "Jaws → a scallop collapse?"], ["eyjafjallajokull", "An Icelandic volcano → Kenyan flowers destroyed"],
+  ["tiktok", "TikTok → shorter hit songs?"], ["thailand-floods", "Thailand's floods → hard-drive prices spike"], ["cash-for-clunkers", "Cash for Clunkers → pricier used cars"],
+  ["airbnb", "Airbnb → higher rents nearby"], ["the-dress", "The Dress → a new field of color science?"], ["toilet-paper", "Toilet paper panic → a bidet boom?"],
+  ["sony-hack", "The Sony hack → California's Fair Pay Act?"], ["gangnam-style", "Gangnam Style → YouTube's view counter broke?"], ["anthrax", "The anthrax letters → irradiated mail"],
+  ["squid-game-ripples", "Squid Game → $2.5 billion for Korean shows"], ["queens-gambit-2", "The Queen's Gambit → Chess.com buys Play Magnus"],
+  ["tiger-king", "Tiger King → the Big Cat Act"], ["top-gun", "Top Gun → the Navy recruitment claim"], ["sideways", "Sideways → less Merlot, more Pinot noir"]];
+const VIRAL_SET = new Set(VIRAL.map(([s]) => s));
+for (const [s, n] of VIRAL) { const e = TABS.stories.find(([k, x]) => k === "chain" && x === s); if (e) e[2] = n; else TABS.stories.push(["chain", s, n]); }
+const LEAD_NAMES = {"map:stranger-things-4":"Stranger Things 4 → Kate Bush back at No. 1", "map:saltburn":"Saltburn → Murder on the Dancefloor back in the Top 10", "map:the-last-of-us":"The Last of Us → a Linda Ronstadt song streams again"};
+for (const e of TABS.leads) { const n = LEAD_NAMES[`${e[0]}:${e[1]}`]; if (n) e[2] = n; }
+TABS.leads.push(["acts", "McMafia", "McMafia → the Sanctions and Anti-Money Laundering Act"], ["acts", "Our Friends in the North", "Our Friends in the North → the Rating (Empty Properties) Act"]);
 const TABNOTE = {maps:"Events that changed the world in a way that stuck: a law, an institution, infrastructure, jobs or health. Every link rated.", stories:"Viral “butterfly effect” stories put to the test, link by link. Some hold; some are busted.",
   leads:"What the engine found on its own: sentences in Wikipedia that name a lasting change after an event, dated and put in order; works cited in Parliament and Congress, resolved to the laws those debates became; things whose attention rose unusually after an event; and baby names whose biggest jump on record came the year after a film or show. Each lead shows the sentence, citation or count it rests on; a lead is not proof."};
 let tab = "maps";
@@ -2564,8 +2611,10 @@ function renderPicker() {
   if (q) {  // a search spans every tab: title, stone, year
     const TN = {maps:"Lasting marks", stories:"Fact-checks", leads:"Engine leads"};
     const RANK = {maps:0, stories:1, leads:2};
+    const SYN = [["crash", "accident", "collision", "road", "traffic"], ["baby", "babies", "birth", "births", "newborn"], ["death", "deaths", "fatal", "killed", "died", "mortality"], ["sleep", "daylight saving", "clock change", "clocks"], ["kid", "kids", "child", "children"], ["money", "donation", "donations", "sales", "price", "prices"], ["tv", "television", "show", "series"], ["movie", "film"], ["law", "act", "bill"]];
+    const qs = [q, ...SYN.filter(g => g.includes(q)).flat().filter(w => w !== q)];  // a word and its everyday neighbors: "crash" also reads "accident" (Oct 12: "sleep" found nothing)
     const named = p => norm(TABS_TITLE(p) || p.title).includes(q) || norm(p.stone).includes(q) || (p.year && p.year === q);  // the title first, then the words inside the story
-    const seen = new Set(), hits = allPonds().filter(p => { const key = `${p.kind}:${p.slug}`; if (seen.has(key)) return false; seen.add(key); return named(p) || (q.length >= 3 && storyText(p).includes(` ${q}`)); }).sort((a, b) => (named(b) - named(a)) || RANK[tabOf(a.kind, a.slug)] - RANK[tabOf(b.kind, b.slug)]).slice(0, 40);
+    const seen = new Set(), hits = allPonds().filter(p => { const key = `${p.kind}:${p.slug}`; if (seen.has(key)) return false; seen.add(key); return named(p) || (q.length >= 2 && qs.some(w => storyText(p).includes(` ${w}`) || norm(TABS_TITLE(p) || p.title).includes(w))); }).sort((a, b) => (named(b) - named(a)) || RANK[tabOf(a.kind, a.slug)] - RANK[tabOf(b.kind, b.slug)]).slice(0, 40);
     const GN = document.documentElement.classList.contains("av") ? Object.fromEntries(avShelfData().map(x => [`${x.kind}:${x.slug}`, (AV_GROUPS.find(([g]) => g === x.group) || [])[1]])) : {};
     $("#tabnote").textContent = hits.length ? `${hits.length} ${hits.length === 1 ? "story" : "stories"} match` : ""; $("#ponds").hidden = true;
     if (!hits.length) { pk.innerHTML = `<p class="none">Nothing matches “${esc($("#search").value)}”. Try a show, a law or a year.</p>`; return; }
@@ -2728,8 +2777,9 @@ const AV_SURE = {
 const avMyth = st => { const its = st.items.filter(x => !x.aside && !x.future && !x.notYet); return its.length > 0 && its.every(x => x.lv === "busted"); };  // a story whose claimed link is busted or disputed: "Myths, checked"
 // The groups a reader browses by, in the shelf and in the All stories menu alike (Oct 12 review: the menu had its own three
 // kinds, "Lasting marks", "Fact-checks" and "Engine leads", which a stranger can't map to anything on the page).
-const AV_GROUPS = [["study", "What studies found", "a number from a published paper"], ["life", "Everyday life", "names, habits, health"], ["myth", "Myths, checked", "viral claims put to a test"], ["built", "Things built", "an agency, a company, a place"], ["law", "Laws and rules", "a statute, a ban, a ruling"], ["none", "Nothing lasting yet", "a splash that faded"]];
-const avGroupIcon = g => g === "myth" ? AV_MYTH_ICON : g === "study" ? AV_STUDY_ICON : AV_KIND[g].icon;
+const AV_GROUPS = [["study", "What studies found", "a number from a published paper"], ["life", "Everyday life", "names, habits, health"], ["myth", "Myths, checked", "viral claims put to a test"], ["viral", "Viral chains, checked", "butterfly-effect stories, link by link"], ["built", "Things built", "an agency, a company, a place"], ["law", "Laws and rules", "a statute, a ban, a ruling"], ["none", "Nothing lasting yet", "a splash that faded"]];
+const AV_VIRAL_ICON = '<svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" aria-hidden="true"><circle cx="4" cy="10" r="2.2"/><circle cx="10" cy="10" r="2.2"/><path d="M14.2 7.8l3.6 4.4M17.8 7.8l-3.6 4.4"/><path d="M6.2 10h1.6M12.2 10h1"/></svg>';
+const avGroupIcon = g => g === "myth" ? AV_MYTH_ICON : g === "study" ? AV_STUDY_ICON : g === "viral" ? AV_VIRAL_ICON : AV_KIND[g].icon;
 const AV_MYTH_ICON = '<svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" aria-hidden="true"><circle cx="8.5" cy="8.5" r="5.4"/><path d="M12.5 12.5 17 17"/><path d="M6.6 6.6l3.8 3.8M10.4 6.6l-3.8 3.8"/></svg>';
 const AV_STONE = `<svg viewBox="-16 -16 32 32" aria-hidden="true">${STONE_SVG}</svg>`;
 const AV_HEX = `<svg viewBox="-8 -8 16 16" aria-hidden="true"><path d="M0,-7 L6,-3.5 L6,3.5 L0,7 L-6,3.5 L-6,-3.5 Z" fill="#fff3dc" stroke="currentColor" stroke-width="1.5"/><circle r="2.3" fill="currentColor"/></svg>`;
@@ -3205,6 +3255,7 @@ function rcDraw(s) {
   const rows = s.rc.rows, Wd = Math.round(Math.max(300, host.clientWidth || 900)), phone = Wd < 640; s.rc.w = Wd;
   if (s.rc.fx) return rcDrawFx(s, host, Wd, phone);  // a one-study story draws its effect, not a calendar
   if (s.rc.res) return rcDrawResult(s, host);  // no number in the paper: the finding in words
+  if (s.rc.pace) return rcDrawPace(s, host, Wd, phone);  // a stone and its mark: how quick, among every mark on Ripple
   const sc = rcScale(s, rows, Wd, phone), {mode, L, R, x0, X, dmax} = sc, cal = mode !== "since"; s.rc.mode = mode;
   // a row with a line is taller, so every line stays inside its own row; all lines share one scale, so heights compare
   const RL = phone ? 104 : 88, R0 = cal ? (phone ? 60 : 52) : (phone ? 54 : 48), PAD = phone ? 12 : 16, AMP = RL - PAD - (phone ? 46 : 24);  // room above each peak for its number
@@ -3378,21 +3429,148 @@ function rcPick(i) {  // a tap or a hover on a row: the story stops playing and 
   rcSay(s, i, true);
 }
 function rowHue(r, rows) { const i = rows.indexOf(r); return r.it.mark ? "#c77f12" : PULSE_HUES[(i - 1 + PULSE_HUES.length) % PULSE_HUES.length]; }  // a row's line color, as rcDraw picks it, so each key swatch matches its line
+// The evidence under each card (Oct 12, owner's ten-second test: what changed, how big against normal, what alternative was
+// tested, what the evidence establishes and what stays open). For a study: what it was compared with, in plain words, and the
+// checks its own text reports; every line rests on the step's note, design or effect in chains/*.json. Editorial, kept here.
+const STUDY_EV = {
+  "study-okc-births":{compare:"Oklahoma's other metro counties"},
+  "study-sesame-school":{compare:"places where the signal was weak or missing"},
+  "study-tv-smoking":{compare:"places without TV yet, before and after"},
+  "study-globo-family-size":{compare:"areas the Globo signal hadn't reached yet"},
+  "study-globo-names":{compare:"areas the Globo signal hadn't reached yet"},
+  "study-zanzibar-blackout":{compare:"villages without electricity", open:"the author calls 17% an upper bound (a lower one is 10.4%), and the range runs from 8.7% to 25.1%"},
+  "study-ramayan-names":{compare:"places with a weaker TV signal"},
+  "study-twende-family-planning":{compare:"an area that heard the show later", checks:"use rose there too once the show reached it"},
+  "study-sideways-wine":{compare:"each wine's own sales trend before the film"},
+  "study-superbowl-flu":{compare:"counties whose team didn't play", checks:"the cities hosting the game saw no rise"},
+  "study-pokemon-steps":{compare:"players' own past, and people who didn't play"},
+  "study-couric-colonoscopy":{compare:"the trend before the campaign"},
+  "study-violent-movies":{compare:"nights with smaller audiences for violent films", checks:"no rise in the three weeks after"},
+  "study-jolie-brca":{compare:"the same days in 2012"},
+  "study-got-dubrovnik":{compare:"a blend of similar places without the filming"},
+  "study-fox-sentences":{compare:"areas where Fox sat at a less-watched channel number", checks:"appointed judges didn't change"},
+  "study-ice-bucket-giving":{compare:"people less exposed to the challenge"},
+  "study-goody-screening":{compare:"attendance expected from other periods"},
+  "study-worldcup-abuse":{compare:"days without an England match"},
+  "study-nazi-radio":{compare:"places with weaker radio reception"},
+  "study-kylie-scans":{compare:"the quarters before the news", checks:"cancer surgeries didn't rise"},
+  "study-globo-divorce":{compare:"areas the Globo signal hadn't reached yet"},
+  "study-jolie-mastectomy":{compare:"the trend before the op-ed"},
+  "study-brazil-worldcup-heart":{compare:"days without a Brazil match"},
+  "study-sheen-hiv-tests":{compare:"sales expected without the news"},
+  "study-sideways-vines":{compare:"plantings before the film"},
+  "study-ramayan-violence":{compare:"places with a weaker TV signal"},
+  "study-movie-tv-dvd":{compare:"the same movies' sales before they aired"},
+  "study-football-judges":{compare:"the week after a win, a close game or an expected loss", checks:"wins and close games made no difference"},
+  "study-magic-hiv-tests":{compare:"the trend before the news"},
+  "study-boseman-donations":{compare:"the month before", open:"the foundation's own figures"},
+  "study-sixteen-pregnant":{compare:"teen births before the show, with earlier trends", checks:"placebo tests found an “effect” before it aired"},
+  "study-finding-dory":{compare:"a forecast of imports without the film"},
+  "study-potter-owls":{compare:"owl ownership before the books and films, with time lags"},
+  "study-blue-planet-plastic":{compare:"a randomly chosen comparison group"},
+  "study-olympics-sport":{compare:"activity in host areas before the Games"},
+  "study-jolie-mammograms":{compare:"the trend before the op-ed"},
+  "study-swift-kelce":{compare:"matched games before she attended"},
+  "study-album-traffic":{compare:"the 10 days before and after each release", checks:"Fridays, holidays and travel weekends, and the same dates in other years"},
+  "study-football-protests":{compare:"draws, adjusted for the betting odds"},
+  "study-stockholm-er":{compare:"the same hospitals in 2013 to 2016"},
+  "study-greece-dst-crashes":{compare:"the days just before the clocks go forward"},
+  "study-britain-dst-casualties":{compare:"the days just before each clock change", open:"the drop is small: 54 of 287 models found it"},
+  "study-catalonia-birthweight":{compare:"mothers from other countries and other towns, before and after", checks:"only babies conceived before the attacks were counted"},
+  "study-senegal-bednets":{compare:"homes farther from the fiber line", open:"two methods give 7.8 to 14.3 points"},
+  "study-iphone-teen-births":{compare:"counties without AT&T's 3G network", checks:"the same test on Verizon's and Sprint's networks finds nothing"},
+  "study-shootings-turnout":{compare:"shootings just after the election"},
+  "study-shootings-alcohol":{compare:"the same areas' expected sales", open:"across all shootings it only just clears the usual test"},
+  "study-chile-dst-crashes":{compare:"standard time, and the shifting start dates"},
+  "study-mexico-quake-sexual-abuse":{compare:"a comparison group, before and after"},
+  "study-japan-quake-political-groups":{compare:"people in regions the disaster spared"},
+};
+const EV_ICON = {y:'<svg viewBox="0 0 14 14" aria-hidden="true"><circle cx="7" cy="7" r="6.2" fill="#3e8f55"/><path d="M4 7.2l2 2 4-4.4" fill="none" stroke="#fff" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg>',
+  n:'<svg viewBox="0 0 14 14" aria-hidden="true"><circle cx="7" cy="7" r="5.6" fill="none" stroke="#8a9598" stroke-width="1.5"/></svg>',
+  o:'<svg viewBox="0 0 14 14" aria-hidden="true"><circle cx="7" cy="7" r="5.6" fill="none" stroke="#a08a47" stroke-width="1.5" stroke-dasharray="2.2 2"/></svg>',
+  q:'<svg viewBox="0 0 14 14" aria-hidden="true"><circle cx="7" cy="7" r="5.6" fill="none" stroke="#c77f12" stroke-width="1.5"/><path d="M7 3.8V7l2.2 1.4" fill="none" stroke="#c77f12" stroke-width="1.5" stroke-linecap="round"/></svg>'};
+function rcEvidence(s) {  // three lines at most: what it was compared with, what else was ruled out or left open, what the evidence can't say yet
+  const its = s.items.filter(x => !x.aside && !x.future), studies = its.filter(x => x.study), one = studies.length === 1 ? studies[0] : null;
+  const ev = one ? STUDY_EV[s.key] || {} : {}, myth = avMyth(s), rows = [];
+  const row = (k, label, text) => rows.push(`<p class="rcevr ${k}">${EV_ICON[k]}<b>${label}</b> <span>${esc(text)}</span></p>`);
+  const pq = !s.rc || s.rc.pace ? null : rcPace(s, true);  // a story with several steps keeps its timeline; its mark's speed among every mark on Ripple is one line with a small picture
+  if (pq) { const X = d => 2 + 116 * Math.log10(1 + d) / Math.log10(60001); let ticks = ""; for (const d of pq.gaps) ticks += `<line x1="${X(d).toFixed(1)}" x2="${X(d).toFixed(1)}" y1="4" y2="12" stroke="rgba(30,42,46,.22)" stroke-width="1"/>`;
+    rows.push(`<p class="rcevr q">${EV_ICON.q}<b>How quick</b> <span>${esc(avSpan(s, null, s.answer, false) || avGap(pq.gap))}: ${pq.pct >= 50 ? `quicker than ${pq.pct}` : `slower than ${100 - pq.pct}`} in every 100 lasting marks on Ripple <svg class="rcevq" viewBox="0 0 120 16" aria-hidden="true">${ticks}<path d="M0,-5 L4.3,-2.5 L4.3,2.5 L0,5 L-4.3,2.5 L-4.3,-2.5 Z" transform="translate(${X(pq.gap).toFixed(1)},8)" fill="#fff3dc" stroke="#c77f12" stroke-width="1.6"/></svg></span></p>`); }
+  const measured = its.filter(x => x.lv === "measured" && !x.study && x.ttype !== "act");
+  if (ev.compare) row("y", "Compared with", ev.compare);
+  else if (!one && measured.length) row("y", "Compared with", measured.some(x => x.ttype === "wiki") ? "the same page's readers at random dates before it" : measured.some(x => x.ttype === "ssa") ? "the same name's births in other years" : "the same series at random times before it");
+  else if (!myth) row("n", "Compared with", one ? "nothing outside the study's own figures" : "no baseline: a record names the link");
+  if (ev.checks) row("y", "Ruled out", ev.checks);
+  else if (s.also) row("n", "Not ruled out", cap(s.also).replace(/\.$/, ""));
+  if (!myth) {
+    const open = [];
+    if (one && one.study) {
+      if (one.study.whyKind === "suggested") open.push("why it happened: the authors' best guess");
+      else if (!one.study.why) open.push("why it happened");
+      if (s.rc && s.rc.fx && s.rc.fx.ci) open.push("the exact size");  // the rings and their key give the range
+      if (/working paper/.test(one.study.pub || "")) open.push("not yet peer reviewed");
+      if (ev.open) open.push(ev.open);
+      if (!open.length) open.push("it rests on one study");
+    } else {
+      if (its.some(x => x.lv === "plausible")) open.push("at least one link has nothing on record");
+      else if (!measured.length) open.push("whether one caused the other: timing shows the order, and a record names the link");  // the line above already says there is no baseline
+      if (measured.some(x => x.ttype === "wiki")) open.push("readers count attention, not what people did");
+      if (!open.length) open.push("timing shows the order, which is not proof of cause");
+    }
+    if (open.length) row("o", "Still open", cap(open.join("; ")));
+  }
+  return rows.length ? `<div class="rcev" aria-label="How far the evidence goes">${rows.join("")}</div>` : "";
+}
+// A story that is only a stone and its lasting mark drew two dots on an empty calendar (Oct 12 review: 79 stories). A law
+// or an agency has no size to set against normal, but it has a speed: this mark's time from the stone, set among every
+// lasting mark on Ripple as one dot each on one clock, so a reader sees at once whether it came fast or slow.
+function rcPace(s, any) {  // any: the numbers for every story with a mark (the evidence line), not only the two-row chart
+  const r = s.rc.rows; if (s.rc.fx || s.rc.res || s.rc.top || !s.answer || !(s.answer.d > 0)) return null;
+  if (!any && (r.length !== 2 || r[1].it !== s.answer || r[0].lift || r[1].lift || r[1].series || r[1].births || r[1].event || r[1].paper)) return null;
+  const all = avShelfData().filter(x => x.gap != null && x.gap > 0 && !x.myth), mine = `${s.kind}:${s.key}`;
+  const others = all.filter(x => `${x.kind}:${x.slug}` !== mine).map(x => x.gap); if (others.length < 30) return null;
+  const g = s.answer.d, quicker = others.filter(x => x > g).length, sorted = [...others, g].sort((a, b) => a - b);
+  return {gap:g, n:others.length + 1, quicker, pct:Math.round(100 * quicker / others.length), median:sorted[Math.floor(sorted.length / 2)], gaps:sorted};
+}
+function rcDrawPace(s, host, Wd0, phone) {
+  const P = s.rc.pace, Wd = Math.min(Wd0, 860), R0 = phone ? 2.6 : 3.1, B = 2 * R0 + 1.2, L = phone ? 4 : 8, Rm = phone ? 8 : 14;
+  const DMAX = 60000, X = d => L + (Wd - L - Rm) * Math.log10(1 + Math.max(0, d)) / Math.log10(1 + DMAX);
+  const cols = new Map(); for (const d of P.gaps) { const c = Math.round(X(d) / B); cols.set(c, (cols.get(c) || 0) + 1); }
+  const tall = Math.max(...cols.values()), top = phone ? 64 : 58, base = top + tall * B + 8, H = base + (phone ? 64 : 58);
+  let dist = "", k = 0; const seen = new Map(), mc = Math.round(X(P.gap) / B);
+  for (const d of P.gaps) { const c = Math.round(X(d) / B), j = seen.get(c) || 0; seen.set(c, j + 1); if (d === P.gap && c === mc && !dist.includes('class="me"')) { dist += `<circle class="me" cx="${(c * B).toFixed(1)}" cy="${(base - 4 - j * B - R0).toFixed(1)}" r="${(R0 + .6).toFixed(1)}"/>`; continue; } dist += `<circle class="pd" cx="${(c * B).toFixed(1)}" cy="${(base - 4 - j * B - R0).toFixed(1)}" r="${R0.toFixed(1)}" style="--k:${k++}"/>`; }
+  const TK = [[1, "1 day"], [30, "1 month"], [365, "1 year"], [3652, "10 years"], [36525, "100 years"]];
+  let ax = `<line class="rcbase" x1="${L}" x2="${(Wd - Rm).toFixed(1)}" y1="${base}" y2="${base}"/>`;
+  for (const [d, w] of TK) { const x = X(d), tw = w.length * (phone ? 6.4 : 7.4), anc = x + tw / 2 > Wd ? "end" : "middle"; ax += `<line class="rcgrid" x1="${x.toFixed(1)}" x2="${x.toFixed(1)}" y1="${top - 6}" y2="${base}"/><text class="rcax" x="${(anc === "end" ? Wd : x).toFixed(1)}" y="${base + 18}" text-anchor="${anc}"${phone ? ' style="font-size:12px"' : ""}>${w}</text>`; }
+  const xm = X(P.median); ax += `<line class="pmed" x1="${xm.toFixed(1)}" x2="${xm.toFixed(1)}" y1="${top - 22}" y2="${base}"/><text class="pmedt" x="${xm.toFixed(1)}" y="${top - 28}" text-anchor="middle">half take under ${esc(avGap(P.median))}</text>`;
+  const xg = X(P.gap), lab = avSpan(s, null, s.answer, false) || avGap(P.gap), anc = xg > Wd - 90 ? "end" : xg < 90 ? "start" : "middle";
+  const span = `<rect class="pspan" x="${L}" y="${base + 26}" width="${Math.max(3, xg - L).toFixed(1)}" height="6" rx="3"/><circle class="pstone" cx="${L}" cy="${base + 29}" r="5"/>
+    <g transform="translate(${xg.toFixed(1)},${base + 29})"><path d="M0,-8 L7,-4 L7,4 L0,8 L-7,4 L-7,-4 Z" fill="#fff3dc" stroke="#c77f12" stroke-width="2"/><circle r="2.5" fill="#c77f12"/></g>
+    <text class="pspant" x="${xg.toFixed(1)}" y="${base + 52}" text-anchor="${anc}">${esc(lab)}</text>`;
+  host.innerHTML = `<div class="rcpace rchit" data-i="1"><svg viewBox="0 0 ${Wd} ${H}" width="${Wd}" height="${H}" role="img" aria-label="${esc(`${lab} from the stone to the mark; quicker than ${P.pct} in every 100 of the ${P.n} lasting marks on Ripple`)}"><g class="rcrow" data-i="0">${ax}${dist}</g><g class="rcrow" data-i="1">${span}</g></svg>
+    <p class="rcpacet rcrow" data-i="1"><b>${P.pct >= 50 ? `Quicker than ${P.pct}` : `Slower than ${100 - P.pct}`}</b> in every 100 of the ${P.n} lasting marks on Ripple</p></div>`;
+  s.rc.mode = "pace"; rcMark(s);
+}
+function rcLandHue(s) {  // the hero's landing words share the study card's hue, so the finding reads as one thing from the title to the dots
+  const q = $("#avq"), card = s.rc.fx || s.rc.res || s.rc.top; if (!q) return;
+  if (!card || avMyth(s)) { q.classList.remove("fxland"); q.style.removeProperty("--land"); return; }
+  const si = Math.max(1, s.rc.rows.findIndex(r => r.it === card.it)); q.style.setProperty("--land", rowHue(s.rc.rows[si], s.rc.rows)); q.classList.add("fxland");
+}
 function rcRender(s) {
-  s.rc = {rows:rcRows(s), upto:-1, cur:-1, timer:0, done:false}; s.rc.fx = rcFx(s); s.rc.res = s.rc.fx ? null : rcResult(s); s.rc.top = s.rc.fx || s.rc.res ? null : rcStudyTop(s);
+  s.rc = {rows:rcRows(s), upto:-1, cur:-1, timer:0, done:false}; s.rc.fx = rcFx(s); s.rc.res = s.rc.fx ? null : rcResult(s); s.rc.top = s.rc.fx || s.rc.res ? null : rcStudyTop(s); s.rc.pace = rcPace(s);
   const lifts = s.rc.rows.filter(r => r.lift), lines = lifts.length > 0, births = s.rc.rows.filter(r => r.births), series = s.rc.rows.filter(r => r.series), marks = !s.rc.fx && !s.rc.res && s.rc.rows.some(r => r.it.mark), spans = !s.rc.fx && !s.rc.res && s.rc.rows.some(r => r.range), myth = avMyth(s), study = s.items.some(x => x.study);
   const sureTag = myth ? (s.items.some(x => x.lvText === "Disputed") ? "Disputed" : "Busted") : AV_TAG[s.weak] || "Unproven";
   const sureTip = myth ? AV_SURE.myth : study && AV_SURE[`study_${s.weak}`] ? AV_SURE[`study_${s.weak}`] : AV_SURE[s.weak] || AV_SURE.plausible;
   let knew = null; try { knew = JSON.parse(localStorage.getItem("ripple-knew") || "{}")[`${s.kind}:${s.key}`]; } catch {}
   const nx = nextEntry(), nxStone = (nx.title || "").split("→")[0].trim();
   $("#rcwrap").innerHTML = `<div class="rctop"><div class="rccap" id="rccap" aria-live="polite"></div><button type="button" class="rcplay" id="rcplay"></button></div><div class="rcchart" id="rcchart"></div>
-    <p class="rcnote">${lines ? `<span class="key"><i class="kl"${lifts.length === 1 ? ` style="background:${rowHue(lifts[0], s.rc.rows)}"` : ""}></i>readers of that Wikipedia page, against its own normal</span>` : ""}${births.length ? `<span class="key"><i class="kl"${births.length === 1 ? ` style="background:${births[0].it.mark ? "#c77f12" : PULSE_HUES[(s.rc.rows.indexOf(births[0]) - 1 + PULSE_HUES.length) % PULSE_HUES.length]}"` : ""}></i>${esc(births.length === 1 ? births[0].births.who : "babies given the name")} each year (US Social Security records)</span>` : ""}${series.map(r => `<span class="key"><i class="kl" style="background:${rowHue(r, s.rc.rows)}"></i>${esc(r.series.u.key)}</span>`).join("")}${s.rc.rows.filter(r => r.paper && r.paper.key).map(r => `<span class="key"><i class="kl" style="background:${rowHue(r, s.rc.rows)}"></i>${esc(r.paper.key)}</span>`).join("")}${(s.rc.fx ? [] : s.rc.rows.filter(r => r.event && r.event.key)).map(r => `<span class="key"><i class="ke" style="background:${rowHue(r, s.rc.rows)}"></i>${esc(r.event.key)}</span>`).join("")}${marks ? `<span class="key"><i class="kb"></i>a lasting mark, still there</span>` : ""}${spans ? `<span class="key"><i class="ks"></i>the study's window</span>` : ""}${s.rc.fx || s.rc.res || s.rc.top ? "" : `<span class="key" title="${esc(sureTip)}">${s.items.some(x => x.study && /working paper/.test(x.study.pub)) ? `<span>How sure: <b>${esc(sureTag)}</b>, in a working paper not yet peer reviewed</span>` : `How sure: <b>${esc(sureTag)}</b>`}</span>`}${s.rcHidden ? `<span class="key">${s.rcHidden} more step${s.rcHidden === 1 ? "" : "s"} in the list below</span>` : ""}</p>
-    ${s.also ? `<details class="rcalso"><summary>What else was going on</summary><p>${esc(cap(s.also))}</p></details>` : ""}
-    <div class="rcfoot" id="rcfoot"><button type="button" class="avnext">Next: ${esc(nxStone || "another stone")}</button><button type="button" class="avshare" aria-label="Share this story"><svg viewBox="0 0 20 20" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M10 12.5V3"/><path d="M6.5 6.2 10 2.8l3.5 3.4"/><path d="M5.5 9.5H4.8a1.3 1.3 0 0 0-1.3 1.3v5.4A1.3 1.3 0 0 0 4.8 17.5h10.4a1.3 1.3 0 0 0 1.3-1.3v-5.4a1.3 1.3 0 0 0-1.3-1.3h-.7"/></svg><span>Share</span></button>
+    <p class="rcnote">${lines ? `<span class="key"><i class="kl"${lifts.length === 1 ? ` style="background:${rowHue(lifts[0], s.rc.rows)}"` : ""}></i>readers of that Wikipedia page, against its own normal</span>` : ""}${births.length ? `<span class="key"><i class="kl"${births.length === 1 ? ` style="background:${births[0].it.mark ? "#c77f12" : PULSE_HUES[(s.rc.rows.indexOf(births[0]) - 1 + PULSE_HUES.length) % PULSE_HUES.length]}"` : ""}></i>${esc(births.length === 1 ? births[0].births.who : "babies given the name")} each year (US Social Security records)</span>` : ""}${series.map(r => `<span class="key"><i class="kl" style="background:${rowHue(r, s.rc.rows)}"></i>${esc(r.series.u.key)}</span>`).join("")}${s.rc.rows.filter(r => r.paper && r.paper.key).map(r => `<span class="key"><i class="kl" style="background:${rowHue(r, s.rc.rows)}"></i>${esc(r.paper.key)}</span>`).join("")}${(s.rc.fx ? [] : s.rc.rows.filter(r => r.event && r.event.key)).map(r => `<span class="key"><i class="ke" style="background:${rowHue(r, s.rc.rows)}"></i>${esc(r.event.key)}</span>`).join("")}${s.rc.pace ? `<span class="key"><i class="kpd"></i>another lasting mark on Ripple</span><span class="key"><i class="kb"></i>from the stone to this mark</span>` : marks ? `<span class="key"><i class="kb"></i>a lasting mark, still there</span>` : ""}${spans ? `<span class="key"><i class="ks"></i>the study's window</span>` : ""}${s.rc.fx || s.rc.res || s.rc.top ? "" : `<span class="key" title="${esc(sureTip)}">${s.items.some(x => x.study && /working paper/.test(x.study.pub)) ? `<span>How sure: <b>${esc(sureTag)}</b>, in a working paper not yet peer reviewed</span>` : `How sure: <b>${esc(sureTag)}</b>`}</span>`}${s.rcHidden ? `<span class="key">${s.rcHidden} more step${s.rcHidden === 1 ? "" : "s"} in the list below</span>` : ""}</p>
+    ${rcEvidence(s)}
+    <div class="rcfoot" id="rcfoot"><button type="button" class="avnext"><span class="nxw">Next: </span>${esc(nxStone || "another stone")}<span class="nxa"> →</span></button><button type="button" class="avshare" aria-label="Share this story"><svg viewBox="0 0 20 20" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M10 12.5V3"/><path d="M6.5 6.2 10 2.8l3.5 3.4"/><path d="M5.5 9.5H4.8a1.3 1.3 0 0 0-1.3 1.3v5.4A1.3 1.3 0 0 0 4.8 17.5h10.4a1.3 1.3 0 0 0 1.3-1.3v-5.4a1.3 1.3 0 0 0-1.3-1.3h-.7"/></svg><span>Share</span></button>
       <p class="avknew" hidden>${knew != null ? avKnewDone(knew) : `<span>New to you?</span><button type="button" data-knew="0">Yes</button><button type="button" data-knew="1">I knew it</button>`}</p></div>`;
   $("#rcwrap").classList.toggle("rcresmode", !!s.rc.res); $("#rcwrap").classList.toggle("rcfxmode", !!(s.rc.fx || s.rc.top));  // a study card's caption is one line
   if (s.rc.top) { const si = s.rc.rows.findIndex(r => r.it === s.rc.top.it), hd = document.createElement("div"); hd.className = "rcfxhead rcfxtop"; hd.style.setProperty("--h", rowHue(s.rc.rows[Math.max(1, si)], s.rc.rows)); hd.innerHTML = `<div class="rcfxbig${s.rc.top.big.length > 12 ? " long" : ""}">${esc(s.rc.top.big)}</div>${s.rc.top.sub ? `<p class="rcfxsub">${esc(s.rc.top.sub)}</p>` : ""}`; $("#rcchart").before(hd); }
-  rcDraw(s); rcPlay(s);
+  rcLandHue(s); rcDraw(s); rcPlay(s);
 }
 function rcGlyph(x) {  // a shelf card's ripple on one shared clock (up to a century): the stone, its steps, the mark and its bar
   const X = d => 5 + 230 * Math.log1p(Math.max(0, d)) / Math.log1p(36525);
@@ -3429,7 +3607,8 @@ function avStep(id) {  // a shared step: open the route with every step, and poi
 }
 function avShelfData() {
   if (avShelfCache) return avShelfCache;
-  const entries = [...TABS.maps, ...TABS.leads.filter(([k]) => k === "wiki" || k === "chain"), ...TABS.stories], seen = new Set(), out = [];
+  const leadMaps = TABS.leads.filter(([k, s, n]) => k === "map" && !n && MAPS[s]).map(([k, s]) => [k, s, MAPS[s].h1]);  // a map with a page of its own carries its headline there
+  const entries = [...TABS.maps, ...TABS.leads.filter(([k, , n]) => k === "wiki" || k === "chain" || ((k === "map" || k === "acts") && n)), ...leadMaps, ...TABS.stories], seen = new Set(), out = [];
   for (const [kind, slug, name] of entries) {
     if (!name || !name.includes("→") || seen.has(name)) continue;
     let st = null;
@@ -3437,13 +3616,15 @@ function avShelfData() {
       if (kind === "chain" && DATA.chains.some(c => c.slug === slug)) st = fromChain(slug);
       else if (kind === "wiki" && wikiStones().includes(slug)) st = fromWiki(slug);
       else if (kind === "map" && MAPS[slug] && DATA.maps[slug]) st = fromMap(slug);
+      else if (kind === "map" && DATA.disc && DATA.disc.events[slug]) st = fromDisc(slug);
+      else if (kind === "acts" && actsWorks().includes(slug)) st = fromActs(slug);
     } catch { st = null; }
     if (!st) continue; seen.add(name);
     avPrep(st);
     st.titleText = name; const a = revealMark(st), [stone, land] = name.split(/\s*→\s*/);
     const myth = !a && avMyth(st);
     const one = st.items.filter(x => !x.aside && x.study), fx = rcFx(st), num = !myth && one.length === 1 ? (fx ? fxText(fx).big : one[0].study.eff || "") : "";
-    out.push({kind, slug, stone, land, num, group:myth ? "myth" : one.length && !myth ? "study" : a ? guessOf(a.mark) : "none", myth:myth ? (st.items.some(x => x.lvText === "Disputed") ? "Disputed" : "Busted") : null, study:st.items.some(x => x.study), weak:weakOf(st), gap:a ? a.d : null, later:a ? avSpan(st, null, a, true) : null, year:/^\d{4} to \d{4}$/.test(stoneWhen(st)) ? stoneWhen(st).replace(" to ", "–") : (st.iso0 || "").slice(0, 4), ds:st.items.filter(x => !x.aside && !x.undated && !x.future && x.lv !== "busted").map(x => x.d)});
+    out.push({kind, slug, stone, land, num, group:kind === "chain" && VIRAL_SET.has(slug) ? "viral" : myth ? "myth" : one.length && !myth ? "study" : a ? guessOf(a.mark) : "none", myth:myth ? (st.items.some(x => x.lvText === "Disputed") ? "Disputed" : "Busted") : null, study:st.items.some(x => x.study), weak:weakOf(st), gap:a ? a.d : null, later:a ? avSpan(st, null, a, true) : null, year:/^\d{4} to \d{4}$/.test(stoneWhen(st)) ? stoneWhen(st).replace(" to ", "–") : (st.iso0 || "").slice(0, 4), ds:st.items.filter(x => !x.aside && !x.undated && !x.future && x.lv !== "busted").map(x => x.d)});
   }
   return avShelfCache = out;
 }
@@ -3548,6 +3729,7 @@ function avInit() {
   const main = $("#avmain"); if (!main) return;
   avLake = avLakeInit($("#avhero"));
   main.addEventListener("click", e => {
+    const evr = e.target.closest && e.target.closest(".rcevr span"); if (evr) { evr.parentNode.classList.toggle("open"); return; }
     const hit = e.target.closest && e.target.closest(".rchit"); if (hit) { rcPick(+hit.dataset.i); return; }
     const b = e.target.closest("button"); if (!b) return;
     if (b.id === "rcplay") { if (cur.rc) cur.rc.done ? rcPlay(cur) : rcEnd(cur, "skip"); return; }

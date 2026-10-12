@@ -326,7 +326,21 @@
      "doi": "10.1007/s13524-014-0316-7",
      "rows": [
       "ZANZIBAR_BLACKOUT"
-     ]
+     ],
+     "fx": {
+      "kind": "pct",
+      "base_label": "Expected",
+      "bars": [
+       {
+        "label": "Births 8 to 10 months later",
+        "pct": 17
+       }
+      ],
+      "unit": "maternity ward births 8 to 10 months after the blackout, against what was expected",
+      "quote": "indicating that the exposed cohort of children born 8-10 months later was 17% larger than expected (95% confidence interval: [8.7%, 25.1%])",
+      "text_url": "https://pages.uoregon.edu/burlando/Current_Research_files/BabyBoomsFINAL.pdf",
+      "from": "the author's final manuscript"
+     }
     },
     "mark": "Behavior",
     "note": "From the paper: “a month-long blackout in 2008 caused a significant increase in the number of births 8 to 10 months later.” The paper says it is unclear whether the boom adds to the population for good."
@@ -1497,7 +1511,28 @@
      ],
      "why": "A free TV showing probably made people want the DVD, which offers something TV doesn't.",
      "why_kind": "suggested",
-     "why_quote": "giving away content in one channel can stimulate sales in a paid channel if the free content is sufficiently differentiated from its paid counterpart"
+     "why_quote": "giving away content in one channel can stimulate sales in a paid channel if the free content is sufficiently differentiated from its paid counterpart",
+     "fx": {
+      "kind": "pct",
+      "base_label": "Before the broadcast",
+      "bars": [
+       {
+        "label": "Week 1",
+        "pct": 119
+       },
+       {
+        "label": "Week 2",
+        "pct": 56
+       },
+       {
+        "label": "Week 3",
+        "pct": 22
+       }
+      ],
+      "unit": "the movie's DVD sales at Amazon after a broadcast-network showing, against before it",
+      "quote": "movies shown on broadcast networks experience a 119 percent increase in DVD sales in week one, a 56 percent increase in week two and a 22 percent increase in week three",
+      "text_url": "https://www.cmu.edu/entertainment-analytics/documents/impact-of-piracy-on-sales-and-creativity/competing-with-free.pdf"
+     }
     },
     "note": "From the paper: “the post-broadcast increase in DVD sales suggests that giving away content in one channel can stimulate sales in a paid channel.”"
    }
