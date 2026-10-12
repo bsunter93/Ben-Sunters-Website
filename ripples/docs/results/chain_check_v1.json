@@ -1,7 +1,7 @@
 {
  "protocol": "ripples/lab/chain_check.py",
  "run": "2026-10-12",
- "checker_sha": "73ea364",
+ "checker_sha": "69dfe8e",
  "chains": [
   {
    "slug": "frozen",
@@ -17065,7 +17065,7 @@
    "steps": [
     {
      "n": 1,
-     "claim": "Ten record-streaming albums come out, from Drake's Scorpion to Taylor Swift's Midnights",
+     "claim": "The ten most-streamed albums drop, from Drake's Scorpion to Taylor Swift's Midnights",
      "test": {
       "type": "record",
       "date": "2018-06-29",
@@ -17217,7 +17217,13 @@
         }
        ],
        "quote": "The adjusted number of US traffic fatalities was 139.1 (95% CI, 126.8-151.4) on album release days compared with 120.9 (95% CI, 119.6-122.2) on the 10 days before and after the release",
-       "text_url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC13483183/"
+       "text_url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC13483183/",
+       "say": "more deaths on US roads on release day, as streaming rose 43%",
+       "ci": [
+        4.8,
+        31.7
+       ],
+       "ci_quote": "an absolute increase of 18.2 fatalities (95% CI, 4.8-31.7 fatalities; P = .01)"
       },
       "why": "Drivers probably stream the new album on their phones while driving, which distracts them.",
       "why_kind": "suggested",
@@ -17225,7 +17231,7 @@
      },
      "ref": "2018-06-29",
      "verdict": "measured by a published study",
-     "note": "From the paper: “major music album releases, accompanied by increased online streaming, were associated with a significant increase in traffic fatalities.” The extra deaths were higher among younger male drivers, crashes with one person in the car and cars with built-in infotainment screens. The chart’s 21 points are read off the paper’s Figure 2A (adjusted for holidays, day of the week, week of the year and year), to about half a death; day −10 is the paper’s reference day, set to zero.",
+     "note": "From the paper: “major music album releases, accompanied by increased online streaming, were associated with a significant increase in traffic fatalities.” The extra deaths were higher among younger male drivers, crashes with one person in the car and cars with built-in infotainment screens. The paper’s averages are 120.9 deaths on a usual day and 139.1 on a release day, 18.2 extra; its 95% range for the extra runs from 4.8 to 31.7.",
      "link": null,
      "link_why": null,
      "branch": false,
