@@ -541,6 +541,33 @@ footer{padding:26px 0 44px;border-top:1px solid var(--hair);
   .post-kind{padding-top:0}
 }
 
+/* ── work index (homepage): one row per group, its items on the right ──────
+   The homepage shows groups only; work.html carries every card. A group row
+   is not one link: the title opens the group and each item opens itself, so
+   the row is a div and only the title and items are anchors. */
+.groups{border-top:1px solid var(--line)}
+.group{display:grid;grid-template-columns:150px minmax(0,1fr) 250px;gap:0 24px;
+  align-items:start;padding:24px 0;border-bottom:1px solid var(--line)}
+.g-plan{--co:var(--accent)} .g-cases{--co:var(--warm)} .g-writing{--co:var(--plum)}
+.g-sheets{--co:var(--steel)} .g-side{--co:var(--muted)}
+.group-n{display:flex;align-items:center;gap:9px;font:500 10.5px/1.5 var(--mono);
+  letter-spacing:.12em;text-transform:uppercase;color:var(--muted);padding-top:6px}
+.group-n:before{content:"";width:16px;height:2px;background:var(--co);flex:none}
+.group-body h3{font:600 23px/1.2 var(--display);letter-spacing:-.016em;margin-bottom:8px}
+.group-body h3 a{color:var(--ink);text-decoration:none;transition:color .15s ease}
+.group-body h3 a:after{content:" \2192";color:var(--co)}
+.group-body h3 a:hover{color:var(--co)}
+.group-body p{margin:0;font-size:15.5px;color:var(--muted);max-width:52ch}
+.group-items{list-style:none;margin:0;padding:3px 0 0}
+.group-items li{padding:4px 0;border-bottom:1px solid var(--hair);font-size:14px;line-height:1.45}
+.group-items li:last-child{border-bottom:0}
+.group-items a{color:var(--body)}
+.group-items a:hover{color:var(--ink)}
+.group-items b{color:var(--ink);font-weight:600;margin-right:4px}
+@media (max-width:860px){.group{grid-template-columns:minmax(0,1fr) 220px}
+  .group-n{grid-column:1 / -1;padding:0 0 8px}}
+@media (max-width:640px){.group{grid-template-columns:1fr;gap:10px;padding:22px 0}}
+
 /* ── experience: one obvious disclosure per role ──────────────────────────
    The detail bullets are the bulk of this section and they are also the part a
    skimming reader can skip. Folding them is only safe if the control reads as a

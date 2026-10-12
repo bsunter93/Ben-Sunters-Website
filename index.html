@@ -74,7 +74,7 @@
     <nav>
       <a href="#work">Work</a>
       <a href="#experience">Experience</a>
-      <a href="#writing">Writing</a>
+      <a href="work.html#writing">Writing</a>
       <a href="#contact" class="nav-cta">Contact</a>
       <button type="button" id="menu" class="menu-btn" aria-label="Menu" aria-expanded="false" aria-controls="mobile-nav">
         <svg viewBox="0 0 24 24" width="17" height="17" aria-hidden="true" fill="none"
@@ -99,7 +99,7 @@
   <a href="#bring">What I bring</a>
   <a href="#work">Work</a>
   <a href="#experience">Experience</a>
-  <a href="#writing">Writing</a>
+  <a href="work.html#writing">Writing</a>
   <a href="#contact">Contact</a>
   <a href="Benjamin-Sunter-Resume.pdf">Resume (PDF)</a>
 </nav>
@@ -197,44 +197,75 @@
 </section>
 
 <section id="work" class="wrap">
+  <span id="writing" class="anchor" aria-hidden="true"></span>
+  <span id="case-studies" class="anchor" aria-hidden="true"></span>
   <span class="eyebrow"><b>01</b>The work</span>
-  <h2>Things I've built</h2>
-  <p class="lede">Both tools below are for planning work. One runs a whole year, the other
-     sizes one team. Three more, built for other problems, are under them.</p>
-  <div class="feature">
-    <a class="trio-card trio-card--feature" href="simulator/">
-      <span class="proj-kind"><b class="pk-app">Interactive</b>Simulator</span>
-      <h3>Operating Model Simulator</h3>
-      <p>It tests whether an organization can pull off its plan. You run the year one month at a time, see
-         which team runs out of room first, and pick moves that have each been tested against
-         the full year. Four organizations come with it, from a software company to a
-         charity running on restricted grants.</p>
-      <span class="playlink playlink-app">Try the simulator &rarr;</span>
-      <img src="simulator-card.jpg" alt="The Operating Model Simulator: a team card at 84% and over capacity beside one with room to spare, and the panel explaining the overload with a hire as the next move" width="800" height="640" loading="lazy">
-    </a>
-  </div>
-  <div class="feature">
-    <a class="trio-card trio-card--feature" href="headroom.html" style="border-top-color:var(--warm)">
-      <span class="proj-kind"><b class="pk-app">Interactive</b>Capacity planning</span>
-      <h3>Staffing Headroom</h3>
-      <p>How many people to hire when you know the forecast will be off. Being short and
-         being over don't cost the same, so the cheapest headcount sits to one side of the
-         plan. Type in the month, say which miss hurts more, and it works out which side and
-         by how much. Four worked examples to start from.</p>
-      <span class="playlink playlink-app">Run it &rarr;</span>
-      <img class="shot-light" src="headroom-card.jpg" alt="Staffing Headroom: the expected cost of being short and of being over, and the cheapest plan 4.2 people above the forecast" width="600" height="424" loading="lazy">
-      <img class="shot-dark" src="headroom-card-dark.jpg" alt="" width="1200" height="869" loading="lazy">
-    </a>
-  </div>
+  <h2>What I've built and written</h2>
+  <p class="lede">Tools, case studies and articles, grouped by the problem they're for.</p>
 
-  <div class="also">
-    <span class="also-l">Also built</span>
-    <a href="did-it-work/"><b>Did it work?</b> paste a number you watch, click when you changed something, read one sentence. Open source.</a>
-    <a href="careerops.html"><b>Career Ops</b> narrows twelve thousand job postings a morning to the few worth a look, and tracks every application from my inbox. Open source.</a>
-    <a href="comment-export.html"><b>Comment Export</b> a Google Workspace add-on that puts every Sheets comment thread in its own tab. Open source.</a>
-    <a href="https://play.google.com/store/apps/details?id=com.mirrorapp.reflection" rel="noopener"><b>Mirror</b> a small AI journaling app, published on Google Play.</a>
+  <div class="groups">
+    <div class="group g-plan">
+      <span class="group-n">3 tools</span>
+      <div class="group-body">
+        <h3><a href="work.html#planning">Planning tools</a></h3>
+        <p>Test whether a plan holds up, size a team when the forecast will be off, and check whether a change moved the number.</p>
+      </div>
+      <ul class="group-items">
+        <li><a href="simulator/">Operating Model Simulator</a></li>
+        <li><a href="headroom.html">Staffing Headroom</a></li>
+        <li><a href="did-it-work/">Did it work?</a></li>
+      </ul>
+    </div>
+    <div class="group g-cases">
+      <span class="group-n">3 case studies</span>
+      <div class="group-body">
+        <h3><a href="work.html#case-studies">Case studies</a></h3>
+        <p>Problems from my own work at Included Health, Accenture and Google, each with what I got wrong.</p>
+      </div>
+      <ul class="group-items">
+        <li><a href="case-studies.html#study-cost"><b>54% &rarr; 100%</b> quantified impact</a></li>
+        <li><a href="case-studies.html#study-merger"><b>74% &rarr; 95%</b> on-time deployments</a></li>
+        <li><a href="case-studies.html#study-reporting"><b>8 figures</b> incremental revenue</a></li>
+      </ul>
+    </div>
+    <div class="group g-writing">
+      <span class="group-n">3 articles</span>
+      <div class="group-body">
+        <h3><a href="work.html#writing">Writing</a></h3>
+        <p>Operating questions that usually get decided on gut feel.</p>
+      </div>
+      <ul class="group-items">
+        <li><a href="pods-or-pooled.html">Half a Day of Nothing</a></li>
+        <li><a href="did-it-work.html">Did it work?</a></li>
+        <li><a href="smallest-ask.html">The smallest ask that works</a></li>
+      </ul>
+    </div>
+    <div class="group g-sheets">
+      <span class="group-n">2 tools</span>
+      <div class="group-body">
+        <h3><a href="work.html#spreadsheets">Spreadsheet tools</a></h3>
+        <p>Free tools for Google Sheets. Both pull every comment thread out of a spreadsheet, with its tab, its cell and its replies.</p>
+      </div>
+      <ul class="group-items">
+        <li><a href="comment-export.html">Comment Export</a></li>
+        <li><a href="commentpulse.html">CommentPulse</a></li>
+      </ul>
+    </div>
+    <div class="group g-side">
+      <span class="group-n">3 projects</span>
+      <div class="group-body">
+        <h3><a href="work.html#side-projects">Side projects</a></h3>
+        <p>A job pipeline I run every morning, an experiment in tracing what an event changed, and a journaling app on Google Play.</p>
+      </div>
+      <ul class="group-items">
+        <li><a href="careerops.html">Career Ops</a></li>
+        <li><a href="ripples/demo/">Ripple</a></li>
+        <li><a href="https://play.google.com/store/apps/details?id=com.mirrorapp.reflection" rel="noopener">Mirror</a></li>
+      </ul>
+    </div>
   </div>
 </section>
+
 
 <section id="experience" class="wrap">
   <span class="eyebrow"><b>02</b>Experience</span>
@@ -425,88 +456,8 @@
   </div>
 </section>
 
-<section id="writing" class="wrap">
-  <span id="case-studies" class="anchor" aria-hidden="true"></span>
-  <span class="eyebrow">Case studies and articles</span>
-  <h2>Problems, worked through</h2>
-  <p class="lede">Problems from my own work, and operating questions that usually get decided on gut feel.</p>
-
-  <a class="post" href="case-studies.html#study-cost">
-    <span class="post-kind"><span class="post-tag tag-cs">Case study</span>Cost &amp; forecasting</span>
-    <div class="post-body">
-      <h3>Getting cost numbers to people in time to act on them</h3>
-      <p>Unit cost used to show up from finance late in the year, when the only lever left was
-         headcount. I turned it into a number three teams agreed on and saw every month.</p>
-      <p class="post-fig"><b>54% &rarr; 100%</b> of initiatives with quantified impact, in two weeks</p>
-      <p class="post-wrong"><b>What I got wrong:</b> I built the complete version first and the one-page version second. It should have
-         been the other way around.</p>
-      <span class="post-go">Read the case study &rarr;</span>
-    </div>
-    <span class="post-meta">Included Health</span>
-  </a>
-  <a class="post" href="case-studies.html#study-merger">
-    <span class="post-kind"><span class="post-tag tag-cs">Case study</span>Program governance</span>
-    <div class="post-body">
-      <h3>Building a PMO for a deal that hadn't closed yet</h3>
-      <p>Several hundred people kept building through months of regulatory hold, on a deal
-         that might not have made it through review.</p>
-      <p class="post-fig"><b>74% &rarr; 95%</b> on-time deployments, in under three months</p>
-      <p class="post-wrong"><b>What I got wrong:</b> I didn't standardize intake before a dozen vendor teams each built their own tracker.</p>
-      <span class="post-go">Read the case study &rarr;</span>
-    </div>
-    <span class="post-meta">Accenture</span>
-  </a>
-  <a class="post" href="case-studies.html#study-reporting">
-    <span class="post-kind"><span class="post-tag tag-cs">Case study</span>Go to market</span>
-    <div class="post-body">
-      <h3>Giving sellers a number they could pitch</h3>
-      <p>Sellers already had the list. They couldn't tell a publisher what it was
-         worth, so they kept losing to pitches that came with a number.</p>
-      <p class="post-fig"><b>8 figures</b> of incremental revenue, and a peak of 256% pipeline velocity</p>
-      <p class="post-wrong"><b>What I got wrong:</b> I scoped the queries to my own region, so I couldn't validate the results in the two
-         regions that adopted it.</p>
-      <span class="post-go">Read the case study &rarr;</span>
-    </div>
-    <span class="post-meta">Google</span>
-  </a>
-  <a class="post" href="pods-or-pooled.html">
-    <span class="post-kind"><span class="post-tag tag-art">Article</span>Operating model design</span>
-    <div class="post-body">
-      <h3>Half a Day of Nothing</h3>
-      <p>A support function can stay central or split into dedicated
-         pods. A shared person would have to be 73% slower on every request before pods come out
-         cheaper, which is much further than most people guess. The break-even also shifts with
-         client size.</p>
-      <span class="post-go">Read it &rarr;</span>
-    </div>
-    <span class="post-meta">6 min<br>Sep 2026</span>
-  </a>
-  <a class="post" href="did-it-work.html">
-    <span class="post-kind"><span class="post-tag tag-art">Article</span>Measurement</span>
-    <div class="post-body">
-      <h3>Did it work?</h3>
-      <p>Paste the number you watch, click when you changed something, read one sentence. How the
-         tool decides, the false-alarm rate it was held to, twelve pastes shaped like real exports,
-         and the slope fix I tried that made things worse.</p>
-      <span class="post-go">Read it &rarr;</span>
-    </div>
-    <span class="post-meta">5 min<br>Oct 2026</span>
-  </a>
-  <a class="post" href="smallest-ask.html">
-    <span class="post-kind"><span class="post-tag tag-art">Article</span>Operating notes</span>
-    <div class="post-body">
-      <h3>The smallest ask that works</h3>
-      <p>I designed an intake form around what I needed and didn't think about what anyone would fill in. Then I
-         blamed stakeholders when nobody used it. Forty-two fields, three of them ever read, at
-         a company whose CRM already had most of the answers.</p>
-      <span class="post-go">Read it &rarr;</span>
-    </div>
-    <span class="post-meta">1 min<br>Sep 2026</span>
-  </a>
-</section>
-
 <section id="personal" class="wrap tinted">
-  <span class="eyebrow"><b>05</b>Outside work</span>
+  <span class="eyebrow"><b>03</b>Outside work</span>
   <h2>A bit about me</h2>
   <ul class="facts">
       <li><b>Married, with two kids.</b> Most weekends we're outside somewhere in Colorado,
