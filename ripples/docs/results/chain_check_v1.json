@@ -1,7 +1,7 @@
 {
  "protocol": "ripples/lab/chain_check.py",
  "run": "2026-10-12",
- "checker_sha": "cfaebde",
+ "checker_sha": "73ea364",
  "chains": [
   {
    "slug": "frozen",
@@ -12680,7 +12680,105 @@
      "onset": "2018-06-14",
      "source": "Michigan Lead and Copper Rule, Mich. Admin. Code R 325.10604f, filed June 14, 2018: action level 12 ppb from 2025, full service-line replacement at utility expense",
      "attn": {
-      "result": "no article found"
+      "articles": [
+       "Michigan"
+      ],
+      "onset": null,
+      "ratio": null,
+      "baseline": null,
+      "p": null,
+      "weekly": [
+       [
+        "2018-03-22",
+        32315
+       ],
+       [
+        "2018-03-29",
+        29778
+       ],
+       [
+        "2018-04-05",
+        25643
+       ],
+       [
+        "2018-04-12",
+        29273
+       ],
+       [
+        "2018-04-19",
+        25285
+       ],
+       [
+        "2018-04-26",
+        25020
+       ],
+       [
+        "2018-05-03",
+        25016
+       ],
+       [
+        "2018-05-10",
+        25793
+       ],
+       [
+        "2018-05-17",
+        25532
+       ],
+       [
+        "2018-05-24",
+        28959
+       ],
+       [
+        "2018-05-31",
+        26362
+       ],
+       [
+        "2018-06-07",
+        25083
+       ],
+       [
+        "2018-06-14",
+        24133
+       ],
+       [
+        "2018-06-21",
+        24142
+       ],
+       [
+        "2018-06-28",
+        24695
+       ],
+       [
+        "2018-07-05",
+        25535
+       ],
+       [
+        "2018-07-12",
+        24917
+       ],
+       [
+        "2018-07-19",
+        24976
+       ],
+       [
+        "2018-07-26",
+        27505
+       ],
+       [
+        "2018-08-02",
+        32911
+       ],
+       [
+        "2018-08-09",
+        25435
+       ],
+       [
+        "2018-08-16",
+        27563
+       ]
+      ],
+      "n_placebo": null,
+      "verdict": "no sustained rise"
      }
     },
     {
@@ -16825,7 +16923,7 @@
      "source": "“The Folklore of the ‘Swift’ Effect: Lessons for Medical Research and Clinical Practice,” PLOS ONE, 2025",
      "attn": {
       "articles": [
-       "Taylor Swift"
+       "Kansas City Chiefs name controversy"
       ],
       "onset": null,
       "ratio": null,
@@ -16834,91 +16932,91 @@
       "weekly": [
        [
         "2023-04-08",
-        464765
+        323
        ],
        [
         "2023-04-15",
-        282031
+        299
        ],
        [
         "2023-04-22",
-        286244
+        284
        ],
        [
         "2023-04-29",
-        291476
+        326
        ],
        [
         "2023-05-06",
-        435972
+        381
        ],
        [
         "2023-05-13",
-        435881
+        356
        ],
        [
         "2023-05-20",
-        343312
+        306
        ],
        [
         "2023-05-27",
-        363700
+        243
        ],
        [
         "2023-06-03",
-        403629
+        268
        ],
        [
         "2023-06-10",
-        302019
+        231
        ],
        [
         "2023-06-17",
-        373253
+        263
        ],
        [
         "2023-06-24",
-        433129
+        238
        ],
        [
         "2023-07-01",
-        560916
+        224
        ],
        [
         "2023-07-08",
-        653769
+        300
        ],
        [
         "2023-07-15",
-        454502
+        392
        ],
        [
         "2023-07-22",
-        395765
+        315
        ],
        [
         "2023-07-29",
-        482900
+        251
        ],
        [
         "2023-08-05",
-        649726
+        322
        ],
        [
         "2023-08-12",
-        456778
+        426
        ],
        [
         "2023-08-19",
-        383146
+        387
        ],
        [
         "2023-08-26",
-        357622
+        394
        ],
        [
         "2023-09-02",
-        317781
+        1371
        ]
       ],
       "n_placebo": null,
@@ -20253,6 +20351,181 @@
       "n_placebo": null,
       "verdict": "article older"
      }
+    }
+   ]
+  },
+  {
+   "slug": "study-mexico-quake-sexual-abuse",
+   "title": "Mexico's 2017 earthquakes",
+   "date": "2017-09-15",
+   "batch": 20,
+   "vertical": "Published studies",
+   "steps": [
+    {
+     "n": 1,
+     "claim": "Two major earthquakes strike Mexico in September 2017",
+     "test": {
+      "type": "record",
+      "date": "2017-09-15",
+      "date_precision": "month",
+      "source": "“Earthquakes and Crimes Against Women,” Feminist Economics, 2024",
+      "doi": "10.1080/13545701.2024.2407614"
+     },
+     "ref": "2017-09-15",
+     "verdict": "reported",
+     "note": "The study covers two earthquakes that struck Mexico in September 2017. Dated here to the middle of that month.",
+     "link": null,
+     "link_why": null,
+     "branch": false,
+     "vertical": null,
+     "after": null,
+     "slice": null,
+     "short": null,
+     "mark": null,
+     "onset": "2017-09-15",
+     "source": "“Earthquakes and Crimes Against Women,” Feminist Economics, 2024",
+     "attn": {
+      "result": "no article found"
+     }
+    },
+    {
+     "n": 2,
+     "claim": "Sexual abuse and rape rose after Mexico's earthquakes",
+     "test": {
+      "type": "study",
+      "date": "2017-09-15",
+      "date_precision": "month",
+      "window": "2017",
+      "grade": "measured",
+      "design": "official crime records in Mexico from before and after the earthquakes, against a comparison group",
+      "source": "“Earthquakes and Crimes Against Women,” Feminist Economics, 2024",
+      "effect": "After the earthquakes, sexual abuse rose by 11 percent and rape by 12 percent.",
+      "effect_short": "+11%",
+      "doi": "10.1080/13545701.2024.2407614",
+      "rows": [
+       "v5:CR0082"
+      ],
+      "why": "Quake damage disrupted schools, which probably pulled more students into gangs, and gangs played a big part in the extra abuse.",
+      "why_kind": "tested",
+      "why_quote": "gangs play an important role in the escalation of sexual abuse. Data on school damages further shows that disruptions to middle- and high-schools could have plausibly facilitated students’ gang membership",
+      "fx": {
+       "kind": "pct",
+       "base_label": "Without the earthquakes",
+       "bars": [
+        {
+         "label": "Sexual abuse",
+         "pct": 11
+        },
+        {
+         "label": "Rape",
+         "pct": 12
+        }
+       ],
+       "unit": "percent change in recorded crimes",
+       "quote": "The article estimates causal effects using a difference-in-differences strategy and shows that following the earthquakes femicides decreased by 2 percent, sexual abuse rose by 11 percent, and rape climbed by 12 percent.",
+       "text_url": "https://api.openalex.org/works/doi:10.1080/13545701.2024.2407614"
+      }
+     },
+     "ref": "2017-09-15",
+     "verdict": "measured by a published study",
+     "note": "From the paper: “The article estimates causal effects using a difference-in-differences strategy and shows that following the earthquakes femicides decreased by 2 percent, sexual abuse rose by 11 percent, and rape climbed by 12 percent.” The study uses official crime records from Mexico on crimes against women after two major earthquakes in September 2017.",
+     "link": null,
+     "link_why": null,
+     "branch": false,
+     "vertical": null,
+     "after": null,
+     "slice": null,
+     "short": "More sexual abuse",
+     "mark": null,
+     "onset": "2017-09-15",
+     "source": "“Earthquakes and Crimes Against Women,” Feminist Economics, 2024",
+     "range": [
+      "2017-01-01",
+      "2017-12-31"
+     ]
+    }
+   ]
+  },
+  {
+   "slug": "study-japan-quake-political-groups",
+   "title": "Japan earthquake and tsunami (2011)",
+   "date": "2011-03-11",
+   "batch": 20,
+   "vertical": "Published studies",
+   "steps": [
+    {
+     "n": 1,
+     "claim": "The Great East Japan Earthquake and tsunami hit Japan",
+     "test": {
+      "type": "record",
+      "date": "2011-03-11",
+      "source": "“Natural Disasters and Political Participation: The Case of Japan and the 2011 Triple Disaster,” Journal of East Asian Studies, 2019",
+      "doi": "10.1017/jea.2019.26"
+     },
+     "ref": "2011-03-11",
+     "verdict": "reported",
+     "note": "The paper's abstract gives no study window, so the finding is dated to the stone.",
+     "link": null,
+     "link_why": null,
+     "branch": false,
+     "vertical": null,
+     "after": null,
+     "slice": null,
+     "short": null,
+     "mark": null,
+     "onset": "2011-03-11",
+     "source": "“Natural Disasters and Political Participation: The Case of Japan and the 2011 Triple Disaster,” Journal of East Asian Studies, 2019"
+    },
+    {
+     "n": 2,
+     "claim": "More people took part in political groups in hard-hit regions",
+     "test": {
+      "type": "study",
+      "date": "2011-03-11",
+      "window": "2011",
+      "grade": "measured",
+      "design": "people in regions hit hard by the disaster against people in other regions, before and after",
+      "source": "“Natural Disasters and Political Participation: The Case of Japan and the 2011 Triple Disaster,” Journal of East Asian Studies, 2019",
+      "effect": "Taking part in political groups rose 6 percent in regions hit hard by the 2011 disaster.",
+      "effect_short": "+6%",
+      "doi": "10.1017/jea.2019.26",
+      "rows": [
+       "v5:CR0111"
+      ],
+      "why": "Social ties carried the disaster's effect, since the rise in political activity came mostly from people with large social networks.",
+      "why_kind": "tested",
+      "why_quote": "the effect at the individual level is largely confined to individuals with large social networks",
+      "fx": {
+       "kind": "pct",
+       "base_label": "Without the disaster",
+       "bars": [
+        {
+         "label": "Political group participation",
+         "pct": 6
+        }
+       ],
+       "unit": "percent, participation in political groups",
+       "quote": "the 2011 triple disaster in Japan resulted in a 6 percent increase in participation in political groups in regions heavily affected by the disaster",
+       "text_url": "https://api.openalex.org/works/doi:10.1017/jea.2019.26"
+      }
+     },
+     "ref": "2011-03-11",
+     "verdict": "measured by a published study",
+     "note": "From the paper: “the 2011 triple disaster in Japan resulted in a 6 percent increase in participation in political groups in regions heavily affected by the disaster.” The study looks at the 2011 triple disaster in Japan, for both individual people and election districts.",
+     "link": null,
+     "link_why": null,
+     "branch": false,
+     "vertical": null,
+     "after": null,
+     "slice": null,
+     "short": "More political group activity",
+     "mark": null,
+     "onset": "2011-03-11",
+     "source": "“Natural Disasters and Political Participation: The Case of Japan and the 2011 Triple Disaster,” Journal of East Asian Studies, 2019",
+     "range": [
+      "2011-03-11",
+      "2011-03-11"
+     ]
     }
    ]
   },
@@ -32197,178 +32470,6 @@
        "2021-12-10",
        1148
       ]
-     ]
-    }
-   ]
-  },
-  {
-   "slug": "study-mexico-quake-sexual-abuse",
-   "title": "Mexico's 2017 earthquakes",
-   "date": "2017-09-15",
-   "batch": 20,
-   "vertical": "Published studies",
-   "steps": [
-    {
-     "n": 1,
-     "claim": "Two major earthquakes strike Mexico in September 2017",
-     "test": {
-      "type": "record",
-      "date": "2017-09-15",
-      "date_precision": "month",
-      "source": "“Earthquakes and Crimes Against Women,” Feminist Economics, 2024",
-      "doi": "10.1080/13545701.2024.2407614"
-     },
-     "ref": "2017-09-15",
-     "verdict": "reported",
-     "note": "The study covers two earthquakes that struck Mexico in September 2017. Dated here to the middle of that month.",
-     "link": null,
-     "link_why": null,
-     "branch": false,
-     "vertical": null,
-     "after": null,
-     "slice": null,
-     "short": null,
-     "mark": null,
-     "onset": "2017-09-15",
-     "source": "“Earthquakes and Crimes Against Women,” Feminist Economics, 2024"
-    },
-    {
-     "n": 2,
-     "claim": "Sexual abuse and rape rose after Mexico's earthquakes",
-     "test": {
-      "type": "study",
-      "date": "2017-09-15",
-      "date_precision": "month",
-      "window": "2017",
-      "grade": "measured",
-      "design": "official crime records in Mexico from before and after the earthquakes, against a comparison group",
-      "source": "“Earthquakes and Crimes Against Women,” Feminist Economics, 2024",
-      "effect": "After the earthquakes, sexual abuse rose by 11 percent and rape by 12 percent.",
-      "effect_short": "+11%",
-      "doi": "10.1080/13545701.2024.2407614",
-      "rows": [
-       "v5:CR0082"
-      ],
-      "why": "Quake damage disrupted schools, which probably pulled more students into gangs, and gangs played a big part in the extra abuse.",
-      "why_kind": "tested",
-      "why_quote": "gangs play an important role in the escalation of sexual abuse. Data on school damages further shows that disruptions to middle- and high-schools could have plausibly facilitated students’ gang membership",
-      "fx": {
-       "kind": "pct",
-       "base_label": "Without the earthquakes",
-       "bars": [
-        {
-         "label": "Sexual abuse",
-         "pct": 11
-        },
-        {
-         "label": "Rape",
-         "pct": 12
-        }
-       ],
-       "unit": "percent change in recorded crimes",
-       "quote": "The article estimates causal effects using a difference-in-differences strategy and shows that following the earthquakes femicides decreased by 2 percent, sexual abuse rose by 11 percent, and rape climbed by 12 percent.",
-       "text_url": "https://api.openalex.org/works/doi:10.1080/13545701.2024.2407614"
-      }
-     },
-     "ref": "2017-09-15",
-     "verdict": "measured by a published study",
-     "note": "From the paper: “The article estimates causal effects using a difference-in-differences strategy and shows that following the earthquakes femicides decreased by 2 percent, sexual abuse rose by 11 percent, and rape climbed by 12 percent.” The study uses official crime records from Mexico on crimes against women after two major earthquakes in September 2017.",
-     "link": null,
-     "link_why": null,
-     "branch": false,
-     "vertical": null,
-     "after": null,
-     "slice": null,
-     "short": "More sexual abuse",
-     "mark": null,
-     "onset": "2017-09-15",
-     "source": "“Earthquakes and Crimes Against Women,” Feminist Economics, 2024",
-     "range": [
-      "2017-01-01",
-      "2017-12-31"
-     ]
-    }
-   ]
-  },
-  {
-   "slug": "study-japan-quake-political-groups",
-   "title": "Japan earthquake and tsunami (2011)",
-   "date": "2011-03-11",
-   "batch": 20,
-   "vertical": "Published studies",
-   "steps": [
-    {
-     "n": 1,
-     "claim": "The Great East Japan Earthquake and tsunami hit Japan",
-     "test": {
-      "type": "record",
-      "date": "2011-03-11",
-      "source": "“Natural Disasters and Political Participation: The Case of Japan and the 2011 Triple Disaster,” Journal of East Asian Studies, 2019",
-      "doi": "10.1017/jea.2019.26"
-     },
-     "ref": "2011-03-11",
-     "verdict": "reported",
-     "note": "The paper's abstract gives no study window, so the finding is dated to the stone.",
-     "link": null,
-     "link_why": null,
-     "branch": false,
-     "vertical": null,
-     "after": null,
-     "slice": null,
-     "short": null,
-     "mark": null,
-     "onset": "2011-03-11",
-     "source": "“Natural Disasters and Political Participation: The Case of Japan and the 2011 Triple Disaster,” Journal of East Asian Studies, 2019"
-    },
-    {
-     "n": 2,
-     "claim": "More people took part in political groups in hard-hit regions",
-     "test": {
-      "type": "study",
-      "date": "2011-03-11",
-      "window": "2011",
-      "grade": "measured",
-      "design": "people in regions hit hard by the disaster against people in other regions, before and after",
-      "source": "“Natural Disasters and Political Participation: The Case of Japan and the 2011 Triple Disaster,” Journal of East Asian Studies, 2019",
-      "effect": "Taking part in political groups rose 6 percent in regions hit hard by the 2011 disaster.",
-      "effect_short": "+6%",
-      "doi": "10.1017/jea.2019.26",
-      "rows": [
-       "v5:CR0111"
-      ],
-      "why": "Social ties carried the disaster's effect, since the rise in political activity came mostly from people with large social networks.",
-      "why_kind": "tested",
-      "why_quote": "the effect at the individual level is largely confined to individuals with large social networks",
-      "fx": {
-       "kind": "pct",
-       "base_label": "Without the disaster",
-       "bars": [
-        {
-         "label": "Political group participation",
-         "pct": 6
-        }
-       ],
-       "unit": "percent, participation in political groups",
-       "quote": "the 2011 triple disaster in Japan resulted in a 6 percent increase in participation in political groups in regions heavily affected by the disaster",
-       "text_url": "https://api.openalex.org/works/doi:10.1017/jea.2019.26"
-      }
-     },
-     "ref": "2011-03-11",
-     "verdict": "measured by a published study",
-     "note": "From the paper: “the 2011 triple disaster in Japan resulted in a 6 percent increase in participation in political groups in regions heavily affected by the disaster.” The study looks at the 2011 triple disaster in Japan, for both individual people and election districts.",
-     "link": null,
-     "link_why": null,
-     "branch": false,
-     "vertical": null,
-     "after": null,
-     "slice": null,
-     "short": "More political group activity",
-     "mark": null,
-     "onset": "2011-03-11",
-     "source": "“Natural Disasters and Political Participation: The Case of Japan and the 2011 Triple Disaster,” Journal of East Asian Studies, 2019",
-     "range": [
-      "2011-03-11",
-      "2011-03-11"
      ]
     }
    ]
