@@ -1,0 +1,156 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Goal Seek: Checked Answers terms | Benjamin J. Sunter</title>
+<meta name="description" content="Terms of service for Goal Seek: Checked Answers, a free add-on for Google Sheets.">
+<meta name="author" content="Benjamin J. Sunter">
+<meta name="color-scheme" content="light dark">
+<link rel="canonical" href="https://bensunter.com/goal-seek-terms.html">
+<meta name="robots" content="index,follow">
+<link rel="icon" href="favicon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<meta name="theme-color" content="#0B3A40">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600&family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600&display=swap">
+<link rel="stylesheet" href="site.css">
+<style>
+.reading{max-width:680px;margin:0 auto;padding-inline:clamp(18px,5vw,32px)}
+.artbar{position:sticky;top:0;z-index:30;background:color-mix(in srgb,var(--paper) 94%,transparent);
+  backdrop-filter:saturate(180%) blur(12px);border-bottom:1px solid var(--line)}
+.artbar .inner{max-width:1020px;margin:0 auto;padding-inline:clamp(18px,5vw,32px);
+  display:flex;align-items:center;justify-content:space-between;gap:18px;height:54px}
+.artbar a{font:600 14px/1 var(--display);color:var(--ink);text-decoration:none}
+.artbar a:hover{color:var(--accent)}
+.artbar .kind{font:500 13px/1.2 var(--sans);color:var(--muted)}
+.arthead{padding:clamp(36px,6vw,64px) 0 4px}
+.arthead .kicker{display:flex;align-items:center;gap:9px;font:600 13px/1.2 var(--sans);
+  color:var(--muted);margin-bottom:16px}
+.arthead .kicker:before{content:"";width:20px;height:2px;background:var(--warm)}
+.arthead h1{font:600 clamp(31px,5vw,45px)/1.08 var(--display);letter-spacing:-.024em}
+.arthead .by{margin-top:20px;font:400 12.5px/1 var(--mono);color:var(--muted)}
+.reading p{font-size:17px;line-height:1.7;margin:0 0 19px}
+.reading p.open{font-size:19px;line-height:1.58;color:var(--ink)}
+.reading h2{font:600 22px/1.25 var(--display);letter-spacing:-.012em;margin:36px 0 12px}
+.reading strong{color:var(--ink);font-weight:600}
+.reading code{overflow-wrap:anywhere}
+.reading ul{margin:0 0 19px;padding-left:22px;font-size:17px;line-height:1.7}
+.reading li{margin:0 0 9px}
+.pull{font:600 clamp(19px,2.4vw,23px)/1.4 var(--display);color:var(--ink);
+  border-left:3px solid var(--warm);padding:6px 0 6px 22px;margin:32px 0}
+.artfoot{border-top:1px solid var(--line);margin-top:52px;padding:26px 0 60px}
+.artfoot .reading{display:flex;gap:20px;flex-wrap:wrap;justify-content:space-between;
+  font-size:13.5px;color:var(--muted)}
+</style>
+<script>try{var t=localStorage.getItem('theme');if(t==='light'||t==='dark')document.documentElement.setAttribute('data-theme',t)}catch(e){}</script>
+</head>
+<body>
+
+<div class="artbar">
+  <div class="inner">
+    <a href="index.html">&larr; Benjamin J. Sunter</a>
+    <span class="kind">Add-on terms</span>
+  </div>
+</div>
+
+<main>
+<header class="reading arthead">
+  <div class="kicker">Goal Seek: Checked Answers</div>
+  <h1>Terms of service</h1>
+  <p class="by">Updated 11 October 2026</p>
+</header>
+
+<article class="reading">
+
+<p class="open">Goal Seek: Checked Answers is free, and provided as it is. These terms are short because the add-on is
+small and I'm one person.</p>
+
+<h2>What you're agreeing to</h2>
+
+<p>By installing or using the add-on, you accept these terms. If you don't, don't install it, or remove it. Removing
+it is the complete remedy and it costs you nothing.</p>
+
+<h2>What it costs</h2>
+
+<p>Nothing. There is no fee, no subscription and no trial. If paid features are ever added, what is free today stays
+free.</p>
+
+<h2>What it does to your spreadsheet</h2>
+
+<p>While it works, it writes trial values into the input cell you choose, then puts your original value back. It
+only leaves a new value in place when you press <strong>Apply</strong>. It changes no other cell.</p>
+
+<p>If a run is cut off partway, for example by a Google outage, the input cell could be left holding a trial value.
+Check the cell if a run ends with an error.</p>
+
+<h2>Limits to know about</h2>
+
+<ul>
+<li>Every answer it shows has been checked by recalculating your sheet. The search for other answers covers a range
+    around the first answer, and the sidebar says which range it checked.</li>
+<li>Formulas that change on their own, like <code>RAND</code>, <code>RANDBETWEEN</code> and <code>NOW</code>, make
+    answers unreliable. The add-on checks for this and stops when it finds it.</li>
+<li>Each try takes as long as your sheet takes to recalculate, so large sheets are slower.</li>
+</ul>
+
+<h2>No warranty</h2>
+
+<p>The add-on is provided as is, without warranty of any kind, express or implied, including any warranty of
+merchantability, fitness for a particular purpose, or non-infringement. I do not warrant that it will be
+uninterrupted, error free, or that its output will be complete or correct for your purposes. Check anything you
+intend to rely on.</p>
+
+<h2>Limitation of liability</h2>
+
+<p>To the fullest extent permitted by law, I am not liable for any indirect, incidental, special, consequential or
+punitive damages, or for any loss of data, profits or business, arising out of your use of or inability to use the
+add-on, even if advised of the possibility. Since the add-on is free, my total liability to you for any claim
+relating to it is zero.</p>
+
+<h2>Acceptable use</h2>
+
+<p>Use it on spreadsheets you're entitled to edit. Don't attempt to interfere with it or with Google's services
+through it.</p>
+
+<h2>Availability</h2>
+
+<p>I may change, suspend or discontinue the add-on at any time. It depends on Google Apps Script, which I don't
+control, and if Google changes it the add-on may stop working. Nothing here obliges me to maintain it, though I will
+say so on this page if I stop.</p>
+
+<h2>Governing law</h2>
+
+<p>These terms are governed by the laws of the State of Colorado, United States, without regard to its conflict of
+law rules.</p>
+
+<h2>Changes to these terms</h2>
+
+<p>If these terms change, the revised version appears here with a new date. Continuing to use the add-on after that
+means you accept the revision.</p>
+
+<h2>Contact</h2>
+
+<p>Benjamin J. Sunter, Denver, Colorado. <a href="mailto:sunterbb@gmail.com">sunterbb@gmail.com</a>.</p>
+
+</article>
+</main>
+
+<footer class="artfoot">
+  <div class="reading">
+    <span>&copy; <span id="yr">2026</span> Benjamin J. Sunter</span>
+    <span><a href="index.html">Home</a> &middot; <a href="index.html#contact">Get in touch</a></span>
+  </div>
+</footer>
+
+<script>
+document.getElementById('yr').textContent = new Date().getFullYear();
+(function () {
+  var root = document.documentElement, saved;
+  try { saved = localStorage.getItem('theme'); } catch (e) { saved = null; }
+  if (saved === 'light' || saved === 'dark') root.setAttribute('data-theme', saved);
+})();
+</script>
+</body>
+</html>

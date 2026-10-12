@@ -1,0 +1,184 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Goal Seek: Checked Answers privacy | Benjamin J. Sunter</title>
+<meta name="description" content="What Goal Seek: Checked Answers does with your data. It runs inside your spreadsheet and sends nothing anywhere.">
+<meta name="author" content="Benjamin J. Sunter">
+<meta name="color-scheme" content="light dark">
+<link rel="canonical" href="https://bensunter.com/goal-seek-privacy.html">
+<meta name="robots" content="index,follow">
+<link rel="icon" href="favicon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<meta name="theme-color" content="#0B3A40">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600&family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600&display=swap">
+<link rel="stylesheet" href="site.css">
+<style>
+.reading{max-width:680px;margin:0 auto;padding-inline:clamp(18px,5vw,32px)}
+.artbar{position:sticky;top:0;z-index:30;background:color-mix(in srgb,var(--paper) 94%,transparent);
+  backdrop-filter:saturate(180%) blur(12px);border-bottom:1px solid var(--line)}
+.artbar .inner{max-width:1020px;margin:0 auto;padding-inline:clamp(18px,5vw,32px);
+  display:flex;align-items:center;justify-content:space-between;gap:18px;height:54px}
+.artbar a{font:600 14px/1 var(--display);color:var(--ink);text-decoration:none}
+.artbar a:hover{color:var(--accent)}
+.artbar .kind{font:500 13px/1.2 var(--sans);color:var(--muted)}
+.arthead{padding:clamp(36px,6vw,64px) 0 4px}
+.arthead .kicker{display:flex;align-items:center;gap:9px;font:600 13px/1.2 var(--sans);
+  color:var(--muted);margin-bottom:16px}
+.arthead .kicker:before{content:"";width:20px;height:2px;background:var(--warm)}
+.arthead h1{font:600 clamp(31px,5vw,45px)/1.08 var(--display);letter-spacing:-.024em}
+.arthead .by{margin-top:20px;font:400 12.5px/1 var(--mono);color:var(--muted)}
+.reading p{font-size:17px;line-height:1.7;margin:0 0 19px}
+.reading p.open{font-size:19px;line-height:1.58;color:var(--ink)}
+.reading h2{font:600 22px/1.25 var(--display);letter-spacing:-.012em;margin:36px 0 12px}
+.reading strong{color:var(--ink);font-weight:600}
+.reading code{overflow-wrap:anywhere}
+.reading ul{margin:0 0 19px;padding-left:22px;font-size:17px;line-height:1.7}
+.reading li{margin:0 0 9px}
+.pull{font:600 clamp(19px,2.4vw,23px)/1.4 var(--display);color:var(--ink);
+  border-left:3px solid var(--warm);padding:6px 0 6px 22px;margin:32px 0}
+.artfoot{border-top:1px solid var(--line);margin-top:52px;padding:26px 0 60px}
+.artfoot .reading{display:flex;gap:20px;flex-wrap:wrap;justify-content:space-between;
+  font-size:13.5px;color:var(--muted)}
+</style>
+<script>try{var t=localStorage.getItem('theme');if(t==='light'||t==='dark')document.documentElement.setAttribute('data-theme',t)}catch(e){}</script>
+</head>
+<body>
+
+<div class="artbar">
+  <div class="inner">
+    <a href="index.html">&larr; Benjamin J. Sunter</a>
+    <span class="kind">Add-on privacy</span>
+  </div>
+</div>
+
+<main>
+<header class="reading arthead">
+  <div class="kicker">Goal Seek: Checked Answers</div>
+  <h1>Privacy</h1>
+  <p class="by">Updated 11 October 2026</p>
+</header>
+
+<article class="reading">
+
+<p class="open">Goal Seek: Checked Answers finds the value of one cell that makes a formula reach a number you choose.
+It works entirely inside the spreadsheet you open it in. Nothing is sent anywhere. There is no server behind it, no
+account and no database, so there is nothing for me to collect.</p>
+
+<p>I'm the developer, and this page describes exactly what the add-on does. If any of it turns out to be wrong, tell
+me and I'll correct it.</p>
+
+<h2>What it asks for</h2>
+
+<p>The add-on requests two permissions, the narrowest ones that let it work:</p>
+
+<ul>
+<li><strong>View and manage spreadsheets that this application has been installed in</strong> (<code>spreadsheets.currentonly</code>).
+    This lets it try values in the input cell you choose and read the result cell. It covers only the spreadsheet you
+    have open. It can't see any other file in your Drive.</li>
+<li><strong>Display and run third-party web content in prompts and sidebars inside Google applications</strong>
+    (<code>script.container.ui</code>). This is what lets it show its sidebar. Everything in the sidebar is part of the
+    add-on itself. It loads nothing from anywhere else.</li>
+</ul>
+
+<p>It never asks to connect to an external service.</p>
+
+<p class="pull">The add-on has no server of its own and makes no network requests. There is no address your data
+could be sent to.</p>
+
+<h2>What happens when you press Find the value</h2>
+
+<ul>
+<li>It first checks that the result holds still: it changes the input cell once, puts it back, and reads the
+    result twice. If the result moved on its own, it says so and stops.</li>
+<li>It writes trial values into the input cell you chose, lets the spreadsheet recalculate, and reads the result
+    cell. You'll see the input cell change while it works.</li>
+<li>When it finds an answer, it writes that answer once more and reads the result again to check it.</li>
+<li>It tries a range of values around the answer to look for other answers, the same way.</li>
+<li>It puts your original value back. Your sheet only keeps a new value when you press <strong>Apply</strong>, and
+    <strong>Undo</strong> puts the old one back.</li>
+</ul>
+
+<h2>What is stored</h2>
+
+<p>The last setup you used: the two cell addresses and the target value. It is saved in this spreadsheet's own
+add-on storage, so the fields are filled in the next time you open the sidebar in that file. It stays in the file and
+nowhere else.</p>
+
+<h2>What I collect</h2>
+
+<p><strong>Nothing.</strong> There are no analytics and no error reports, and the add-on writes no logs. I can't
+see your spreadsheets, your cells or your results.</p>
+
+<h2>Sharing</h2>
+
+<p>There is nothing to share. No data is sold, rented, transferred or disclosed to anyone, because none is
+collected.</p>
+
+<h2>How the data is protected</h2>
+
+<p><strong>Access control.</strong> The add-on runs inside Google Apps Script under your own account, with access to
+the open spreadsheet only.</p>
+
+<p><strong>No transmission.</strong> The add-on makes no outbound requests, so there is nothing to encrypt in transit
+and nothing that leaves Google's infrastructure.</p>
+
+<p><strong>Encryption at rest.</strong> Your spreadsheet and the saved setup are stored by Google in your account,
+under Google's own encryption.</p>
+
+<p><strong>Retention and deletion.</strong> Trial values exist only while a run is in progress. The saved setup is
+replaced by each new run, and it goes with the file if the file is deleted.</p>
+
+<p><strong>Incident response.</strong> If you find a security problem, email
+<a href="mailto:sunterbb@gmail.com">sunterbb@gmail.com</a>. I will acknowledge it, publish a corrected version, and
+describe the fix on this page.</p>
+
+<h2>Google API Services User Data Policy</h2>
+
+<p>Goal Seek: Checked Answers' use and transfer of information received from Google APIs adheres to the
+<a href="https://developers.google.com/terms/api-services-user-data-policy" rel="noopener">Google API Services User
+Data Policy</a>, including the Limited Use requirements.</p>
+
+<h2>Revoking access</h2>
+
+<p>You can remove the add-on at any time from Extensions &gt; Add-ons &gt; Manage add-ons in Google Sheets, or revoke its access from
+<a href="https://myaccount.google.com/permissions" rel="noopener">your Google account permissions page</a>. Revoking
+access takes effect immediately.</p>
+
+<h2>Children</h2>
+
+<p>The add-on is a tool for working with spreadsheets and is not directed at children.</p>
+
+<h2>Changes</h2>
+
+<p>If the add-on ever starts doing something this page doesn't describe, this page will change first, with a new
+date.</p>
+
+<h2>Contact</h2>
+
+<p>Benjamin J. Sunter, Denver, Colorado. <a href="mailto:sunterbb@gmail.com">sunterbb@gmail.com</a>. Questions and
+corrections both welcome.</p>
+
+</article>
+</main>
+
+<footer class="artfoot">
+  <div class="reading">
+    <span>&copy; <span id="yr">2026</span> Benjamin J. Sunter</span>
+    <span><a href="index.html">Home</a> &middot; <a href="index.html#contact">Get in touch</a></span>
+  </div>
+</footer>
+
+<script>
+document.getElementById('yr').textContent = new Date().getFullYear();
+(function () {
+  var root = document.documentElement, saved;
+  try { saved = localStorage.getItem('theme'); } catch (e) { saved = null; }
+  if (saved === 'light' || saved === 'dark') root.setAttribute('data-theme', saved);
+})();
+</script>
+</body>
+</html>

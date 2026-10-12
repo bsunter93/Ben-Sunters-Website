@@ -1,0 +1,127 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Goal Seek: Checked Answers | Benjamin J. Sunter</title>
+<meta name="description" content="Goal Seek for Google Sheets that checks every answer by recalculating your sheet, and says plainly when there is no answer or more than one.">
+<meta name="author" content="Benjamin J. Sunter">
+<meta name="color-scheme" content="light dark">
+<link rel="canonical" href="https://bensunter.com/goal-seek.html">
+<meta name="robots" content="index,follow">
+<link rel="icon" href="favicon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<meta name="theme-color" content="#0B3A40">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600&family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600&display=swap">
+<link rel="stylesheet" href="site.css">
+<style>
+.reading{max-width:680px;margin:0 auto;padding-inline:clamp(18px,5vw,32px)}
+.artbar{position:sticky;top:0;z-index:30;background:color-mix(in srgb,var(--paper) 94%,transparent);
+  backdrop-filter:saturate(180%) blur(12px);border-bottom:1px solid var(--line)}
+.artbar .inner{max-width:1020px;margin:0 auto;padding-inline:clamp(18px,5vw,32px);
+  display:flex;align-items:center;justify-content:space-between;gap:18px;height:54px}
+.artbar a{font:600 14px/1 var(--display);color:var(--ink);text-decoration:none}
+.artbar a:hover{color:var(--accent)}
+.artbar .kind{font:500 13px/1.2 var(--sans);color:var(--muted)}
+.arthead{padding:clamp(36px,6vw,64px) 0 4px}
+.arthead .kicker{display:flex;align-items:center;gap:9px;font:600 13px/1.2 var(--sans);
+  color:var(--muted);margin-bottom:16px}
+.arthead .kicker:before{content:"";width:20px;height:2px;background:var(--warm)}
+.arthead h1{font:600 clamp(31px,5vw,45px)/1.08 var(--display);letter-spacing:-.024em}
+.arthead .by{margin-top:20px;font:400 12.5px/1 var(--mono);color:var(--muted)}
+.reading p{font-size:17px;line-height:1.7;margin:0 0 19px}
+.reading p.open{font-size:19px;line-height:1.58;color:var(--ink)}
+.reading h2{font:600 22px/1.25 var(--display);letter-spacing:-.012em;margin:36px 0 12px}
+.reading strong{color:var(--ink);font-weight:600}
+.reading code{overflow-wrap:anywhere}
+.reading ul{margin:0 0 19px;padding-left:22px;font-size:17px;line-height:1.7}
+.reading li{margin:0 0 9px}
+.pull{font:600 clamp(19px,2.4vw,23px)/1.4 var(--display);color:var(--ink);
+  border-left:3px solid var(--warm);padding:6px 0 6px 22px;margin:32px 0}
+.artfoot{border-top:1px solid var(--line);margin-top:52px;padding:26px 0 60px}
+.artfoot .reading{display:flex;gap:20px;flex-wrap:wrap;justify-content:space-between;
+  font-size:13.5px;color:var(--muted)}
+</style>
+<script>try{var t=localStorage.getItem('theme');if(t==='light'||t==='dark')document.documentElement.setAttribute('data-theme',t)}catch(e){}</script>
+</head>
+<body>
+
+<div class="artbar">
+  <div class="inner">
+    <a href="index.html">&larr; Benjamin J. Sunter</a>
+    <span class="kind">Add-on</span>
+  </div>
+</div>
+
+<main>
+<header class="reading arthead">
+  <div class="kicker">Add-on for Google Sheets</div>
+  <h1>Goal Seek: Checked Answers</h1>
+  <p class="by">Updated 11 October 2026</p>
+</header>
+
+<article class="reading">
+
+<p class="open">Goal Seek: Checked Answers finds the value of one input cell that makes a formula cell reach a number
+you choose. Before it shows an answer, it recalculates your sheet with that answer in place and shows you the result.</p>
+
+<h2>How to use it</h2>
+
+<ul>
+<li>Open it from <strong>Extensions &gt; Goal Seek: Checked Answers &gt; Open Goal Seek</strong>.</li>
+<li><strong>Set</strong>: the cell with the formula you care about, like a monthly payment or a profit total.</li>
+<li><strong>To</strong>: the number you want that cell to show.</li>
+<li><strong>By changing</strong>: the input cell it may change, like a price or a rate. It must hold a number you typed
+    in.</li>
+<li>Press <strong>Find the value</strong>, then <strong>Apply</strong> if you want to keep the answer.</li>
+</ul>
+
+<p>The buttons next to the cell fields fill in whichever cell you have selected.</p>
+
+<h2>What the results mean</h2>
+
+<ul>
+<li><strong>Answer found and checked</strong>: the value shown makes your cell hit the target. The green line is the
+    result your sheet calculated with that value in place.</li>
+<li><strong>2 answers found</strong>: more than one value hits the target, like a low and a high break-even price.
+    Pick the one that fits your situation.</li>
+<li><strong>No exact answer</strong>: no value hits the target. It shows the closest result, or the point where the
+    result jumps past the target.</li>
+<li><strong>These cells are not connected</strong>: the result doesn't change when the input changes. Check the
+    formula.</li>
+<li><strong>The result keeps changing</strong>: something feeding the result, like <code>RAND</code> or
+    <code>NOW</code>, changes on every recalculation, so no answer would be reliable.</li>
+</ul>
+
+<h2>Your data</h2>
+
+<p>It runs inside your spreadsheet and sends nothing anywhere. See the <a href="goal-seek-privacy.html">privacy
+page</a> and the <a href="goal-seek-terms.html">terms</a>.</p>
+
+<h2>Help and problems</h2>
+
+<p>Email <a href="mailto:sunterbb@gmail.com">sunterbb@gmail.com</a> with what you set it to do and what it showed.
+A copy of the sheet with anything private removed helps most.</p>
+
+</article>
+</main>
+
+<footer class="artfoot">
+  <div class="reading">
+    <span>&copy; <span id="yr">2026</span> Benjamin J. Sunter</span>
+    <span><a href="index.html">Home</a> &middot; <a href="index.html#contact">Get in touch</a></span>
+  </div>
+</footer>
+
+<script>
+document.getElementById('yr').textContent = new Date().getFullYear();
+(function () {
+  var root = document.documentElement, saved;
+  try { saved = localStorage.getItem('theme'); } catch (e) { saved = null; }
+  if (saved === 'light' || saved === 'dark') root.setAttribute('data-theme', saved);
+})();
+</script>
+</body>
+</html>
