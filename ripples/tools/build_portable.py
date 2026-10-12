@@ -9,7 +9,7 @@ OUT_HTML = R("ripples", "dist", "ripple-standalone.html")
 OUT_ZIP = R("ripples", "dist", "ripple-review-kit.zip")
 
 
-def standalone():
+def standalone(extra_chains=None, out=None):  # extra_chains: chain check entries to add (the story builder's preview)
     h = open(R("ripples", "demo", "index.html"), encoding="utf-8").read()
     maps = re.findall(r'^  "([a-z0-9-]+)": \{h1:', h, re.M)  # the keys of MAPS
     data = {"/ripples/demo/discovered.json": json.load(open(R("ripples", "demo", "discovered.json"))),
@@ -18,6 +18,8 @@ def standalone():
             "/ripples/demo/sources.json": json.load(open(R("ripples", "demo", "sources.json"))),
             "/ripples/demo/context.json": json.load(open(R("ripples", "demo", "context.json"))),
             "/ripples/demo/discovered_wiki.json": json.load(open(R("ripples", "demo", "discovered_wiki.json")))}
+    if extra_chains:
+        data["/ripples/docs/results/chain_check_v1.json"]["chains"] += extra_chains
     for s in maps:
         p = R("ripples", "maps", "out", f"{s}.json")
         if os.path.exists(p):
@@ -30,9 +32,10 @@ def standalone():
             ";const __f=window.fetch;window.fetch=(u,...a)=>{const k=String(u).split('?')[0];return k in __D?Promise.resolve({ok:true,json:()=>Promise.resolve(__D[k])}):__f(u,...a)};</script>\n")
     h = h.replace("<script>\n", shim + "<script>\n", 1)
     h = h.replace("</head>", f"<!-- Ripple standalone build {dt.date.today().isoformat()}: open this file directly; no server needed. Share pages and the discover pages link to bensunter.com. -->\n</head>", 1)
-    os.makedirs(os.path.dirname(OUT_HTML), exist_ok=True)
-    open(OUT_HTML, "w", encoding="utf-8").write(h)
-    return len(maps), os.path.getsize(OUT_HTML)
+    out = out or OUT_HTML
+    os.makedirs(os.path.dirname(out), exist_ok=True)
+    open(out, "w", encoding="utf-8").write(h)
+    return len(maps), os.path.getsize(out)
 
 
 SKIP_DIRS = {"node_modules", ".git", "__pycache__", "cultcache", "labcache"}

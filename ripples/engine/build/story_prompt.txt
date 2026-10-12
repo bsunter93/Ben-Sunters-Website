@@ -1,0 +1,52 @@
+study_story_v1 (fixed prompt: the words of one study story, from a verified finding and its paper's text)
+
+Input: a JSON list of items. Each item has slug, stone {name, date}, outcome, direction, effect, design, quote (the
+sentence the finding was read from), population_place, paper {title, venue, year}, abstract, and fulltext (a path to
+the paper's text, or null when only the abstract was reachable).
+
+For every item write one object to the output file (a JSON list, in input order):
+{"slug", "slug_hint", "label", "years", "stone_claim", "stone_date", "date_precision", "date_note", "claim", "short",
+ "design", "effect", "effect_short", "effect_quote", "note_quote", "note_more", "range", "skip"}
+
+- slug: copied from the input.
+- slug_hint: 2 to 4 lowercase words joined by hyphens, naming the stone and the outcome ("japan-quake-politics").
+- label: the stone in at most 5 words, as a reader would name it ("Album release days", "Violent tornadoes").
+- years: the study's own window in words: "2005", "2018 to 2022", "1990 to 2017".
+- stone_claim: one sentence, at most 18 words, present tense, saying what happened ("A violent tornado hits a US county").
+- stone_date: YYYY-MM-DD for the stone, or for the start of the study's window when the stone repeats. When only the
+  year is known use YYYY-07-01 and date_precision "year"; when only the month is known use YYYY-MM-15 and "month".
+- date_precision: "day", "month" or "year".
+- date_note: when the date stands for a window or a repeating event, one sentence: "The study covers ... Dated here to
+  ...". Otherwise "".
+- claim: the finding as a headline, at most 12 words, past tense, plain ("More people joined political groups").
+  Say what the paper found and no more: keep its population and its comparison when they matter.
+- short: the finding in at most 4 words, sentence case, no period ("More political groups").
+- design: what the study compared, in plain words, at most 20 words ("counties hit by a tornado against similar
+  counties that were not").
+- effect: one sentence, at most 30 words, giving the paper's own numbers for this finding. If the texts give no number
+  for it, write "".
+- effect_short: the lead number as it should appear large, at most 12 characters ("+15%", "2.7% fewer", "+10 points"),
+  or "" when effect is "".
+- effect_quote: ONE contiguous passage from the abstract or the fulltext, at most 60 words, copied as written, that
+  holds every number in claim, effect and effect_short. You may join a broken line with one space and rejoin a word
+  split by a hyphen at a line end. "" when effect is "".
+- note_quote: one sentence from the abstract, copied exactly, that states the finding (at most 40 words).
+- note_more: one or two plain sentences on who and where the study covers, from the abstract only, with no number the
+  abstract does not give. "" if the abstract does not say.
+- range: [start, end] as YYYY-MM-DD, the study's window.
+- skip: "" normally. When the texts do not state this finding, or state it for a different group or outcome than the
+  item names, write the reason in a few words and leave the other fields as "".
+
+Numbers: copy them from the passage. Do not compute, convert or average. You may round in claim only ("about 18" for
+18.2). A percent stays a percent; points stay points; a standard deviation is not a percent.
+
+Never give a reason or mechanism for the finding (another step does that, from the authors' words). Never add a fact
+the texts do not give. Style: plain words a 15-year-old knows, American English, no jargon, no statistics words (no
+"significant", "coefficient", "estimate"), no em dashes, no semicolons, no "the authors say".
+
+Rules: read only the batch, this file and the fulltext files the batch names. The fulltext files are long: search them
+with Python for the outcome's words and numbers rather than reading them whole. Do not look anything up. Then check
+with Python: as many entries as items, slugs in input order; every effect_quote and note_quote, after collapsing all
+whitespace to single spaces, is a substring of that item's collapsed abstract or fulltext; every number in claim,
+effect and effect_short appears in effect_quote (claim may round); lengths as above; no em dash anywhere. Fix any
+failure. Final message: "done, N written, S skipped".

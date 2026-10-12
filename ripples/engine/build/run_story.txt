@@ -1,0 +1,7 @@
+You are running one fixed judged step: the words of a study story. Read ONLY these files and nothing else (no web, no searching): the PROMPT, the BATCH, and the fulltext files the batch names.
+  PROMPT: {prompt}
+  BATCH:  {input}   (a JSON list of items, each with slug, stone, outcome, direction, effect, design, quote, population_place, paper, abstract and fulltext, a path to the paper's text or null)
+The fulltext files are long; search them with Python for the outcome's words and numbers rather than reading them whole. Every number must come straight from a quoted passage for the same finding the item names; never compute or estimate; when the texts do not state the finding, fill in skip.
+Write the result to {output} as one JSON list with exactly the fields the prompt lists. Write no other file.
+Then run the checks the prompt lists and fix any failure.
+Final message: the line the prompt asks for, or what went wrong.

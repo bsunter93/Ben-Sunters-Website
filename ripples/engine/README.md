@@ -62,6 +62,11 @@ reading rows and writing a small JSON file.
 | | `enrich/judged.py assemble` | script | every quote must be in the text read; every number on a bar must be in its quote |
 | | review | review | a person reads `enrich/enrich.json` and drops what should not show (the page draws no bars for a myth) |
 | | `enrich/apply.py` | script | writes the why lines and chart specs into the chains file, and with `--checked` into the page's data |
+| Build | `build/stories.py select` | script | a run's defensible findings (the owner's rated ones, every one, or named ids) with their evidence and why lines |
+| | story words (`build/story_prompt.txt`) | judged | the title, the stone, the headline, the effect sentence and its quote, the note's quote, the dates |
+| | `build/stories.py assemble` | script | rejects a draft whose quote is not in the paper, whose numbers are not in its quote, or that breaks a style rule; sets the source, DOI, grade and working-paper label itself |
+| | `build/stories.py preview` | script | the demo as one file with every draft in it, for a person to read |
+| | `build/stories.py apply` | script | ships drafts the owner rated good that are peer-reviewed articles (or named ids) into a chains file, and with `--checked` into the page's data |
 | Yield | `yield/log.py`, `yield/report.py` | script | one ledger line per run and the table against earlier yields |
 
 `python3 ripples/engine/runner.py <step> <input>` prints the exact instructions for one judged run with the real paths
@@ -126,6 +131,17 @@ python3 ripples/engine/enrich/judged.py assemble
 #   review: read enrich/enrich.json
 python3 ripples/engine/enrich/apply.py --chains ripples/chains/<batch>.json --checked
 
+# Build: verified findings to stories, with no hand-building
+python3 ripples/engine/build/stories.py select --run v5 --owner-ratings <folder>
+python3 ripples/engine/enrich/fulltext.py --targets build/targets.json
+python3 ripples/engine/build/stories.py inputs
+python3 ripples/engine/runner.py story build/story_in/build_01.json                 # one fresh context per batch
+python3 ripples/engine/runner.py fx enrich/fx_in/build_01.json
+python3 ripples/engine/enrich/judged.py assemble
+python3 ripples/engine/build/stories.py assemble --batch 20
+python3 ripples/engine/build/stories.py preview                                     # read build/preview.html
+python3 ripples/engine/build/stories.py apply --to ripples/chains/batch20.json --checked
+
 # Yield
 python3 ripples/engine/yield/log.py --run <run> --generator "outcome-side grid, blind gate" --plan <plan.md> \
     --queries ripples/engine/generate/queries/<run>.json
@@ -138,7 +154,7 @@ The harvest, selection, fetch and logging scripts take `--dry-run`, and every sc
 
 ## Judged steps
 
-Seven steps need judgment: extraction, prediction, matching, verification judgment, rating, and the two enrich steps (the why line and the effect numbers). Each one is a fixed
+Eight steps need judgment: extraction, prediction, matching, verification judgment, rating, the two enrich steps (the why line and the effect numbers) and the story's words. Each one is a fixed
 prompt in this folder, applied in a fresh context that reads only the prompt and its own input file. The prediction
 step sees stone names and dates and nothing else, and every prediction is made before any candidate text reaches it.
 The matching step sees one candidate's outcome and claim and its stone's 25 predictions. Raters see the claim and its

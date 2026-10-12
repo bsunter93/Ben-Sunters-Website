@@ -2514,6 +2514,19 @@ async function loadAll() {
     j("/ripples/docs/results/bill_act_v1.json"), j("/ripples/demo/sources.json"), j("/ripples/demo/context.json"), j("/ripples/demo/discovered_wiki.json"), ...Object.keys(MAPS).map(s => j(`/ripples/maps/out/${s}.json`))]);
   DATA.disc = disc; DATA.wiki = wiki; DATA.chains = chains ? chains.chains : []; DATA.acts = acts; DATA.sources = sources || {}; DATA.context = context || {}; DATA.run = chains && chains.run; DATA.sha = chains && chains.checker_sha;
   Object.keys(MAPS).forEach((s, i) => { if (maps[i]) DATA.maps[s] = maps[i]; });
+  autoLeads();
+}
+// A study story the story builder made (ripples/engine/build/) has no hand-written line in TABS. It gets one from its own
+// fields: the title's name, an arrow, the finding's short form. It sits with the other study findings, so the shelf,
+// the search and the headline all find it (Oct 12, owner: "build the auto story builder").
+function autoLeads() {
+  const listed = new Set(Object.values(TABS).flat().filter(([k]) => k === "chain").map(([, s]) => s));
+  const at = TABS.leads.reduce((m, e, i) => e[1].startsWith("study-") && !e[2].endsWith("?") ? i : m, TABS.leads.length - 1);
+  const add = DATA.chains.filter(c => c.vertical === "Published studies" && !listed.has(c.slug)).map(c => {
+    const st = (c.steps || []).find(x => x.test && x.test.type === "study");
+    return st && st.short ? ["chain", c.slug, `${c.title.replace(/\s*\([^)]*\)\s*$/, "")} → ${st.short.replace(/^[A-Z](?=[a-z])/, ch => ch.toLowerCase())}`] : null;
+  }).filter(Boolean);
+  TABS.leads.splice(at + 1, 0, ...add);
 }
 function tabOf(kind, slug) {
   for (const [k, list] of Object.entries(TABS)) if (list.some(([kk, ss]) => kk === kind && ss === slug)) return k;
@@ -3061,7 +3074,7 @@ function rcDrawFx(s, host, Wd0, phone) {
     g += lab(xs[0], n0, F.bars[0].label) + lab(xs[1], n1, F.bars[1].label);
     if (up && diff) g += `<text class="rcppx" x="${(xs[1] + C * D / 2).toFixed(1)}" y="${(base - rowsHi * D - 12).toFixed(1)}">+${diff}</text>`;
     vis = `<svg class="rcpp" viewBox="-4 0 ${Wv + 8} ${H}" width="${Wv + 8}" height="${H}" role="img" aria-label="${esc(`${F.unit || "people"}: ${n0} on ${F.bars[0].label.toLowerCase()}, ${n1} on ${F.bars[1].label.toLowerCase()}`)}">${g}</svg>`;
-  } else if (F.kind === "groups" && F.max === 100 && F.bars.length === 1) {  // a share of 100: one dot each, the finding's dots lit
+  } else if (F.kind === "groups" && F.max === 100 && F.bars.length === 1 && (main.v != null ? main.v : main.lo) > 0) {  // a share of 100: one dot each, the finding's dots lit (a drop draws a bar: no dots to light)
     const lo = Math.round(main.v != null ? main.v : main.lo), hi = Math.round(main.v != null ? main.v : main.hi), D = phone ? 21 : 24, R0 = phone ? 7 : 8;
     let dots = "";
     for (let k = 0; k < 100; k++) dots += `<circle class="${k < lo ? "a" : k < hi ? "b" : ""}" cx="${(k % 10) * D + R0 + 1}" cy="${Math.floor(k / 10) * D + R0 + 1}" r="${R0}" style="--k:${k}"/>`;
