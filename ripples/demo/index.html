@@ -714,6 +714,20 @@ html:not(.avgl) .avhero{background:linear-gradient(#26313b 0,#0e1a24 42%,#0f2230
 .rcrow.on .rcwaf circle.a{fill:var(--h)}
 .rcrow.on .rcwaf circle.b{fill:var(--h);fill-opacity:.38}
 @media (prefers-reduced-motion:reduce){.rcwaf circle{transition:none}}
+.rcpp,.rcchart svg.rcpp{display:block;width:auto;max-width:100%;height:auto;overflow:visible}  /* drawn at its own size: a dot is a person, so it never stretches */
+.rcpp circle{opacity:0;transform-box:fill-box;transform-origin:center;transition:opacity .25s ease calc(var(--k, 0) * 4ms)}
+.rcpp circle.p{fill:rgba(30,42,46,.24)}
+.rcpp circle.x{fill:var(--h);transform:scale(.2);transition:opacity .2s ease calc(.75s + var(--j) * 70ms),transform .4s cubic-bezier(.3,1.5,.5,1) calc(.75s + var(--j) * 70ms)}
+.rcrow.on .rcpp circle{opacity:1}
+.rcrow.on .rcpp circle.x{transform:scale(1)}
+.rcppn{font:600 22px var(--display);fill:var(--paper-ink);text-anchor:middle;font-variant-numeric:tabular-nums}
+.rcppl{font:500 13px var(--sans);fill:var(--paper-ink-2);text-anchor:middle}
+.rcppx{font:700 17px var(--sans);fill:var(--h);text-anchor:middle;font-variant-numeric:tabular-nums;opacity:0;transition:opacity .4s ease 2.1s}
+.rcrow.on .rcppx{opacity:1}
+.rcfxkey{margin:0;display:flex;gap:8px;align-items:baseline;font:500 var(--t-xs)/1.45 var(--sans);color:var(--paper-ink-2)}
+.rcfxkey i{flex:none;width:9px;height:9px;border-radius:50%;background:rgba(30,42,46,.24);transform:translateY(1px)}
+@media (min-width:700px){.rcfx.pp{grid-template-columns:minmax(0,1fr) auto;align-items:center;column-gap:56px}.rcfx.pp .rcfxkey{grid-column:1/-1}}
+@media (prefers-reduced-motion:reduce){.rcpp circle,.rcpp circle.x,.rcppx{transition:none}}
 details.rcalso{margin-top:12px;font-size:var(--t-s);color:var(--paper-ink-2)}
 details.rcalso summary{cursor:pointer;width:max-content;max-width:100%;font-weight:600;color:var(--paper-ink-2);text-decoration:underline dotted;text-underline-offset:4px}
 details.rcalso summary:hover{color:var(--paper-ink)}
@@ -3008,12 +3022,13 @@ function rcFx(s) {
   const its = s.items.filter(x => !x.aside && x.study && x.study.fx); if (its.length !== 1) return null;
   const it = its[0], f = it.study.fx, B = Array.isArray(f.bars) ? f.bars : [], num = x => typeof x === "number" && isFinite(x);
   if (it.lv === "busted") return null;  // a myth shows what was claimed against what was found, never a range bar (Oct 11)
-  if (!B.length || !["pct", "levels", "groups"].includes(f.kind)) return null;
+  if (!B.length || !["pct", "levels", "groups", "people"].includes(f.kind)) return null;
+  if (f.kind === "people" && !(B.length === 2 && B[0].base && !B[1].base && B.every(b => num(b.v) && b.v > 0 && b.v <= 400))) return null;  // a usual count and the day's own, small enough to draw one dot each
   const bars = f.kind === "pct"
     ? [{label:f.base_label || "Expected", v:100, base:true}, ...B.map(b => num(b.pct) ? {label:b.label, v:100 + b.pct, d:b.pct} : {label:b.label, lo:100 + b.pct_lo, hi:100 + b.pct_hi, dlo:b.pct_lo, dhi:b.pct_hi})]
     : B.map(b => ({...b}));
   if (!bars.every(b => b.label && (num(b.v) || (num(b.lo) && num(b.hi))))) return null;
-  return {it, kind:f.kind, unit:f.unit || "", from:f.from || null, bars, max:typeof f.max === "number" ? f.max : null};  // max: a share's own ceiling (100 points), so one bar isn't stretched to the edge
+  return {it, kind:f.kind, unit:f.unit || "", from:f.from || null, bars, max:typeof f.max === "number" ? f.max : null, eff:it.study.eff || "", effect:it.study.effect || ""};  // max: a share's own ceiling (100 points), so one bar isn't stretched to the edge
 }
 function fxText(F) {  // how an effect card prints each bar and its lead number
   const n = x => (+x).toLocaleString("en-US", {maximumFractionDigits:4}), sg = d => `${d > 0 ? "+" : d < 0 ? "−" : ""}${n(Math.abs(d))}`;
@@ -3021,7 +3036,8 @@ function fxText(F) {  // how an effect card prints each bar and its lead number
   const say = b => F.kind === "pct" ? (b.base ? "" : b.d != null ? `${sg(b.d)}%` : rng(b.dlo, b.dhi, true))
     : b.v != null ? (F.kind === "groups" && !b.base ? sg(b.v) : n(b.v)) : rng(b.lo, b.hi, false);
   const main = F.bars.find(b => !b.base) || F.bars[0], base = F.bars.find(b => b.base);
-  return {n, sg, say, main, base, big:F.kind === "levels" && base ? `${n(base.v)} → ${n(main.v)}` : say(main)};
+  const big = F.kind === "people" ? F.eff || sg(Math.round(main.v) - Math.round(base.v)) : F.kind === "levels" && base ? `${n(base.v)} → ${n(main.v)}` : say(main);
+  return {n, sg, say, main, base, big};
 }
 function rcStudyTop(s) {  // a one-study story that draws a chart of its own (a day-by-day event, a paper's lines): its head
   const its = s.items.filter(x => !x.aside && x.study); if (its.length !== 1) return null;
@@ -3034,7 +3050,18 @@ function rcDrawFx(s, host, Wd0, phone) {
   const {say, main, big} = fxText(F);
   const Wd = Math.min(Wd0, 780);
   let vis;
-  if (F.kind === "groups" && F.max === 100 && F.bars.length === 1) {  // a share of 100: one dot each, the finding's dots lit
+  if (F.kind === "people") {  // one dot per person (Oct 12, owner: "just need a completely new visual"): the usual day's count, then the same with the extra people lit on top
+    const n0 = Math.round(F.bars[0].v), n1 = Math.round(F.bars[1].v), up = n1 >= n0, C = 11, D = phone ? 11 : Wd >= 760 ? 17 : 15, R0 = D * .36, G = phone ? 40 : 64;
+    const rows = Math.ceil(Math.max(n0, n1) / C), top = 34, base = top + rows * D, H = base + (phone ? 50 : 56), Wv = 2 * C * D + G;
+    const stack = (x0, n, lit0, lit1) => { let g = ""; for (let k = 0; k < n; k++) { const x = x0 + (k % C) * D + D / 2, y = base - Math.floor(k / C) * D - D / 2, lit = k >= lit0 && k < lit1; g += `<circle class="${lit ? "x" : "p"}" cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" r="${R0.toFixed(1)}" style="${lit ? `--j:${k - lit0}` : `--k:${k}`}"/>`; } return g; };
+    const xs = [0, C * D + G], lab = (x, v, w) => `<text class="rcppn" x="${(x + C * D / 2).toFixed(1)}" y="${base + (phone ? 24 : 27)}">${v.toLocaleString("en-US")}</text><text class="rcppl" x="${(x + C * D / 2).toFixed(1)}" y="${base + (phone ? 42 : 47)}">${esc(w)}</text>`;
+    const diff = Math.abs(n1 - n0), rowsHi = Math.ceil(Math.max(n0, n1) / C);
+    let g = stack(xs[0], n0, up ? n0 : n1, up ? n0 : n0) + stack(xs[1], n1, up ? n0 : n1, up ? n1 : n1);
+    g += `<line class="rcbase" x1="-2" x2="${(Wv + 2).toFixed(1)}" y1="${(base + 3).toFixed(1)}" y2="${(base + 3).toFixed(1)}"/>`;
+    g += lab(xs[0], n0, F.bars[0].label) + lab(xs[1], n1, F.bars[1].label);
+    if (up && diff) g += `<text class="rcppx" x="${(xs[1] + C * D / 2).toFixed(1)}" y="${(base - rowsHi * D - 12).toFixed(1)}">+${diff}</text>`;
+    vis = `<svg class="rcpp" viewBox="-4 0 ${Wv + 8} ${H}" width="${Wv + 8}" height="${H}" role="img" aria-label="${esc(`${F.unit || "people"}: ${n0} on ${F.bars[0].label.toLowerCase()}, ${n1} on ${F.bars[1].label.toLowerCase()}`)}">${g}</svg>`;
+  } else if (F.kind === "groups" && F.max === 100 && F.bars.length === 1) {  // a share of 100: one dot each, the finding's dots lit
     const lo = Math.round(main.v != null ? main.v : main.lo), hi = Math.round(main.v != null ? main.v : main.hi), D = phone ? 21 : 24, R0 = phone ? 7 : 8;
     let dots = "";
     for (let k = 0; k < 100; k++) dots += `<circle class="${k < lo ? "a" : k < hi ? "b" : ""}" cx="${(k % 10) * D + R0 + 1}" cy="${Math.floor(k / 10) * D + R0 + 1}" r="${R0}" style="--k:${k}"/>`;
@@ -3055,8 +3082,9 @@ function rcDrawFx(s, host, Wd0, phone) {
     });
     vis = `<svg viewBox="0 0 ${Wd} ${H}" width="${Wd}" height="${H}" role="img" aria-label="${esc(`${s.stone || "The stone"}: ${F.unit || "the study's result"}`)}">${g}</svg>`;
   }
-  const waf = vis.startsWith("<svg class=\"rcwaf\"");
-  host.innerHTML = `<div class="rcfx rchit${waf ? " waf" : ""}" data-i="${si}" style="--h:${hue}"><div class="rcrow rcfxhead" data-i="${si}"><div class="rcfxbig${big.length > 12 ? " long" : ""}">${esc(big)}</div>${F.unit ? `<p class="rcfxsub">${esc(cap(F.unit))}</p>` : ""}</div><div class="rcrow" data-i="${si}">${vis}</div>${F.from ? `<p class="rcfxfrom">Numbers from ${esc(F.from)}.</p>` : ""}</div>`;
+  const waf = vis.startsWith("<svg class=\"rcwaf\""), pp = F.kind === "people", sub = pp ? F.effect : F.unit;
+  const key = pp ? `<p class="rcfxkey"><i></i>One dot is one ${esc(F.unit.replace(/^people\b/, "person"))}. The paper's averages: ${esc(fxText(F).n(F.bars[0].v))} on ${esc(F.bars[0].label.toLowerCase())}, ${esc(fxText(F).n(F.bars[1].v))} on ${esc(F.bars[1].label.toLowerCase())}.</p>` : "";
+  host.innerHTML = `<div class="rcfx rchit${waf || pp ? " waf" : ""}${pp ? " pp" : ""}" data-i="${si}" style="--h:${hue}"><div class="rcrow rcfxhead" data-i="${si}"><div class="rcfxbig${big.length > 12 ? " long" : ""}">${esc(big)}</div>${sub ? `<p class="rcfxsub">${esc(cap(sub))}</p>` : ""}</div><div class="rcrow" data-i="${si}">${vis}</div>${key}${F.from ? `<p class="rcfxfrom">Numbers from ${esc(F.from)}.</p>` : ""}</div>`;
   rcMark(s);
 }
 function rcResult(s) {
@@ -3263,7 +3291,7 @@ function rcRender(s) {
   let knew = null; try { knew = JSON.parse(localStorage.getItem("ripple-knew") || "{}")[`${s.kind}:${s.key}`]; } catch {}
   const nx = nextEntry(), nxStone = (nx.title || "").split("→")[0].trim();
   $("#rcwrap").innerHTML = `<div class="rctop"><div class="rccap" id="rccap" aria-live="polite"></div><button type="button" class="rcplay" id="rcplay"></button></div><div class="rcchart" id="rcchart"></div>
-    <p class="rcnote">${lines ? `<span class="key"><i class="kl"${lifts.length === 1 ? ` style="background:${rowHue(lifts[0], s.rc.rows)}"` : ""}></i>readers of that Wikipedia page, against its own normal</span>` : ""}${births.length ? `<span class="key"><i class="kl"${births.length === 1 ? ` style="background:${births[0].it.mark ? "#c77f12" : PULSE_HUES[(s.rc.rows.indexOf(births[0]) - 1 + PULSE_HUES.length) % PULSE_HUES.length]}"` : ""}></i>${esc(births.length === 1 ? births[0].births.who : "babies given the name")} each year (US Social Security records)</span>` : ""}${series.map(r => `<span class="key"><i class="kl" style="background:${rowHue(r, s.rc.rows)}"></i>${esc(r.series.u.key)}</span>`).join("")}${s.rc.rows.filter(r => r.paper && r.paper.key).map(r => `<span class="key"><i class="kl" style="background:${rowHue(r, s.rc.rows)}"></i>${esc(r.paper.key)}</span>`).join("")}${s.rc.rows.filter(r => r.event && r.event.key).map(r => `<span class="key"><i class="ke" style="background:${rowHue(r, s.rc.rows)}"></i>${esc(r.event.key)}</span>`).join("")}${marks ? `<span class="key"><i class="kb"></i>a lasting mark, still there</span>` : ""}${spans ? `<span class="key"><i class="ks"></i>the study's window</span>` : ""}${s.rc.fx || s.rc.res || s.rc.top ? "" : `<span class="key" title="${esc(sureTip)}">${s.items.some(x => x.study && /working paper/.test(x.study.pub)) ? `<span>How sure: <b>${esc(sureTag)}</b>, in a working paper not yet peer reviewed</span>` : `How sure: <b>${esc(sureTag)}</b>`}</span>`}${s.rcHidden ? `<span class="key">${s.rcHidden} more step${s.rcHidden === 1 ? "" : "s"} in the list below</span>` : ""}</p>
+    <p class="rcnote">${lines ? `<span class="key"><i class="kl"${lifts.length === 1 ? ` style="background:${rowHue(lifts[0], s.rc.rows)}"` : ""}></i>readers of that Wikipedia page, against its own normal</span>` : ""}${births.length ? `<span class="key"><i class="kl"${births.length === 1 ? ` style="background:${births[0].it.mark ? "#c77f12" : PULSE_HUES[(s.rc.rows.indexOf(births[0]) - 1 + PULSE_HUES.length) % PULSE_HUES.length]}"` : ""}></i>${esc(births.length === 1 ? births[0].births.who : "babies given the name")} each year (US Social Security records)</span>` : ""}${series.map(r => `<span class="key"><i class="kl" style="background:${rowHue(r, s.rc.rows)}"></i>${esc(r.series.u.key)}</span>`).join("")}${s.rc.rows.filter(r => r.paper && r.paper.key).map(r => `<span class="key"><i class="kl" style="background:${rowHue(r, s.rc.rows)}"></i>${esc(r.paper.key)}</span>`).join("")}${(s.rc.fx ? [] : s.rc.rows.filter(r => r.event && r.event.key)).map(r => `<span class="key"><i class="ke" style="background:${rowHue(r, s.rc.rows)}"></i>${esc(r.event.key)}</span>`).join("")}${marks ? `<span class="key"><i class="kb"></i>a lasting mark, still there</span>` : ""}${spans ? `<span class="key"><i class="ks"></i>the study's window</span>` : ""}${s.rc.fx || s.rc.res || s.rc.top ? "" : `<span class="key" title="${esc(sureTip)}">${s.items.some(x => x.study && /working paper/.test(x.study.pub)) ? `<span>How sure: <b>${esc(sureTag)}</b>, in a working paper not yet peer reviewed</span>` : `How sure: <b>${esc(sureTag)}</b>`}</span>`}${s.rcHidden ? `<span class="key">${s.rcHidden} more step${s.rcHidden === 1 ? "" : "s"} in the list below</span>` : ""}</p>
     ${s.also ? `<details class="rcalso"><summary>Not the only reason</summary><p>${esc(cap(s.also))}</p></details>` : ""}
     <div class="rcfoot" id="rcfoot"><button type="button" class="avnext">Next: ${esc(nxStone || "another stone")}</button><button type="button" class="avshare">Share</button>
       <p class="avknew" hidden>${knew != null ? avKnewDone(knew) : `<span>New to you?</span><button type="button" data-knew="0">Yes</button><button type="button" data-knew="1">I knew it</button>`}</p></div>`;
