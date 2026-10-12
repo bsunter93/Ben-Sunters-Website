@@ -6,8 +6,10 @@ Reads data/raw_pairs.jsonl plus three review files a person writes after reading
   data/stone_map.json   {"<raw stone string>": "<stone_id>"}: the same stone named two ways maps to one id
   data/stone_defs.json  {stone_id: {"name", "date", "cache_id" (optional: a stone already predicted in an earlier run)}}
   data/review.json      {"<raw_id>": {"action": "drop_live" | "drop_yield_v1" | "exclude_topic_match" | "exclude_other" |
-                                      "merge_into:<raw_id>" | "unexclude", "note": "...", "outcome": optional fix,
-                                      "outcome_domain": optional fix}}
+                                      "exclude_v4_repeat" | "merge_into:<raw_id>" | "unexclude", "note": "...",
+                                      "outcome": optional fix, "outcome_domain": optional fix}}
+                        exclude_v4_repeat: the same claim as an earlier run's candidate (same kind of stone, outcome and
+                        direction), which comes back through another copy of the same work; name that candidate in the note.
 Rules: excluded rows and null rows (direction none) never become candidates; duplicates of live chains or yield v1's 56
 study items are logged and dropped; the same stone and outcome from several papers merge into the first raw pair's
 candidate. Candidate ids are stable: C + the raw id of the pair that founded it. Every raw id gets a status in

@@ -32,3 +32,21 @@ source (Crossref 9, Europe PMC 1) and 12 only in OpenAlex's copy; the run's own 
 Repository PDFs found none: most answered with a bot check (403).
 
 `fetch.py` also refuses SSRN outright, including by redirect from a DOI; v4's logs show it reached www.ssrn.com.
+
+## A2 (Oct 12, 2026, 00:21 UTC, after the review of raw pairs, before the gate): findings v4 already had
+
+The plan marks v4's 442 papers as sent so v5 reads only new papers. That held by paper id, but the same findings came
+back through other copies of the same work: a working paper and its journal version, a replication package on ICPSR or
+Dataverse, a thesis, a data deposit. No v5 DOI matched a v4 candidate; by reading, 33 of the 151 usable raw pairs
+state a claim a v4 candidate already states (the same kind of stone, the same outcome, the same direction), and 4
+repeat a live story.
+
+Rule, applied in `data/review.json` as `exclude_v4_repeat` with the v4 candidate named in the note: a v5 pair that
+makes the same claim as a v4 candidate is dropped before the gate. A different outcome for the same stone stays, and
+so does the opposite direction on the same outcome (Uber and more transit trips stays; v4 had less transit). The
+owner rated some of these claims on Oct 11, and a repeat is not a new discovery.
+
+Counts after the review: 92 candidates on 67 stones (16 stones reuse v4's predictions); 4 dropped as live, 33 as v4
+repeats, 2 as parts of another row's finding, 22 merged into another row's candidate.
+
+Effect on the bars: none on their definitions. The share of raw pairs lost to repeats is reported with the results.
