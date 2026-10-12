@@ -628,7 +628,7 @@ html:not(.avgl) .avhero{background:linear-gradient(#26313b 0,#0e1a24 42%,#0f2230
 .avshelf{max-width:1180px;margin:56px auto 0;padding:0 16px}
 .avsh{margin:0;font:600 1.9rem/1.1 var(--display);color:var(--ink)}
 .avshsub{margin:6px 0 0;color:var(--ink-3);font-size:.95rem}
-.avgroup{margin:28px 0 0}
+.avgroup{margin:28px 0 0;scroll-margin-top:20px}
 .avgroup h3{display:flex;align-items:center;gap:10px;margin:0 0 12px;font:600 1.15rem var(--display);color:var(--ink)}
 .avgroup h3 svg{width:22px;height:22px;color:var(--marigold)}.avgroup h3 em{font:500 .82rem var(--sans);font-style:normal;color:var(--ink-3)}
 .avgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:12px}
@@ -717,7 +717,8 @@ html:not(.avgl) .avhero{background:linear-gradient(#26313b 0,#0e1a24 42%,#0f2230
 .rcpp,.rcchart svg.rcpp{display:block;width:auto;max-width:100%;height:auto;overflow:visible}  /* drawn at its own size: a dot is a person, so it never stretches */
 .rcpp circle{opacity:0;transform-box:fill-box;transform-origin:center;transition:opacity .25s ease calc(var(--k, 0) * 4ms)}
 .rcpp circle.p{fill:rgba(30,42,46,.24)}
-.rcpp circle.x{fill:var(--h);transform:scale(.2);transition:opacity .2s ease calc(.3s + var(--j) * 55ms),transform .4s cubic-bezier(.3,1.5,.5,1) calc(.3s + var(--j) * 55ms)}
+.rcpp circle.x{fill:var(--h);transform:scale(.2);transition:opacity .2s ease calc(.3s + var(--j) * var(--pps, 55ms)),transform .4s cubic-bezier(.3,1.5,.5,1) calc(.3s + var(--j) * var(--pps, 55ms))}
+.rcpp circle.o{fill:none;stroke:var(--h);stroke-width:1.5;transition:opacity .3s ease calc(.3s + var(--j) * var(--pps, 55ms))}
 .rcpp circle.r{fill:none;stroke:var(--h);stroke-width:1.3;stroke-dasharray:2.2 2.2;transition:opacity .3s ease calc(var(--ppd, 1.7s) + .55s + var(--q) * 22ms)}
 .rcrow.on .rcpp circle,.rcpp .rcrow.on circle{opacity:1}
 .rcpp .rcrow.on circle.r{opacity:.7}
@@ -731,12 +732,13 @@ html:not(.avgl) .avhero{background:linear-gradient(#26313b 0,#0e1a24 42%,#0f2230
 .rcrow.on .rcppx,.rcpp .rcrow.on .rcppx{opacity:1}
 .rcfxkey{margin:0;display:flex;gap:8px;align-items:baseline;font:500 var(--t-xs)/1.45 var(--sans);color:var(--paper-ink-2)}
 .rcfxkey i{flex:none;width:9px;height:9px;border-radius:50%;background:rgba(30,42,46,.24);transform:translateY(1px)}
-@media (min-width:700px){.rcfx.pp{grid-template-columns:minmax(0,1fr) auto;align-items:center;column-gap:56px}.rcfx.pp .rcfxkey{grid-column:1/-1}}
+@media (min-width:700px){.rcfx.pp{grid-template-columns:minmax(0,1fr) auto;align-items:center;column-gap:56px}.rcfx.pp .rcfxkey{grid-column:1/-1}.rcfx.pp.ppw{grid-template-columns:minmax(0,1fr)}}
 .rcfxkey.pp{flex-wrap:wrap;gap:6px 20px}
 .rcfxkey.pp span{display:inline-flex;gap:7px;align-items:baseline}
 .rcfxkey i.x{background:var(--h)}
+.rcfxkey i.o{box-sizing:border-box;background:none;border:1.5px solid var(--h);width:10px;height:10px;transform:translateY(1.5px)}
 .rcfxkey i.r{box-sizing:border-box;background:none;border:1.5px dashed var(--h);width:10px;height:10px;transform:translateY(1.5px)}
-@media (prefers-reduced-motion:reduce){.rcpp circle,.rcpp circle.x,.rcpp circle.r,.rcppx,.rcfx.pp .rcfxhead,.rcfx.pp .rcfxkey{transition:none}}
+@media (prefers-reduced-motion:reduce){.rcpp circle,.rcpp circle.x,.rcpp circle.o,.rcpp circle.r,.rcppx,.rcfx.pp .rcfxhead,.rcfx.pp .rcfxkey{transition:none}}
 details.rcalso{margin-top:12px;font-size:var(--t-s);color:var(--paper-ink-2)}
 details.rcalso summary{cursor:pointer;width:max-content;max-width:100%;font-weight:600;color:var(--paper-ink-2);text-decoration:underline dotted;text-underline-offset:4px}
 details.rcalso summary:hover{color:var(--paper-ink)}
@@ -790,7 +792,8 @@ details.rcalso p{margin:6px 0 0;max-width:46rem;line-height:1.5}
 .rcnote .key i.ke{width:9px;height:9px;margin:0 4px;border-radius:50%}
 .rcfoot{display:flex;flex-wrap:wrap;align-items:center;gap:10px 12px;margin:18px 0 0;padding:18px 0 0;border-top:1px solid rgba(30,42,46,.12)}
 .rcfoot .avnext{min-height:46px;padding:0 22px;font:700 var(--t-s) var(--sans)}
-.rcfoot .avshare{min-height:46px;padding:0 18px;font:600 var(--t-s) var(--sans)}
+.rcfoot .avshare{min-height:46px;padding:0 18px;font:600 var(--t-s) var(--sans);display:inline-flex;align-items:center;gap:8px}
+.rcfoot .avshare svg{width:17px;height:17px;flex:none}
 .rcfoot .avknew{display:flex;flex-wrap:wrap;align-items:center;gap:0 2px;margin:0 0 0 auto;font-size:var(--t-s);color:var(--paper-ink-2);animation:avfade .45s ease both}
 .rcfoot .avknew[hidden]{display:none}
 .rcfoot .avknew>span{margin-right:6px}
@@ -804,6 +807,17 @@ details.rcalso p{margin:6px 0 0;max-width:46rem;line-height:1.5}
 .avcard .cg{display:block;width:100%;height:16px;margin:8px 0 2px}
 .avcard .cn{display:block;margin:8px 0 0;font:600 1.5rem/1.05 var(--display);color:#ffd391;font-variant-numeric:tabular-nums;letter-spacing:-.01em}
 /* the header: the search, and one plain button that opens the list of every story */
+html.av .chooser .tabs{display:none !important}
+.avkinds{display:none}
+html.av .chooser.stage1 .avkinds{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;margin-top:14px}
+.avkind{display:grid;grid-template-columns:auto 1fr auto;align-items:center;column-gap:10px;row-gap:3px;padding:12px 14px;border:1px solid var(--hair);border-radius:10px;background:rgba(255,255,255,.03);color:var(--ink);text-align:left;cursor:pointer;font:inherit}
+.avkind:hover,.avkind:focus-visible{border-color:var(--marigold);background:rgba(242,169,59,.07)}
+.avkind svg{width:20px;height:20px;color:var(--marigold);grid-row:1}
+.avkind b{font:600 var(--t-s) var(--sans)}
+.avkind em{font:500 var(--t-xs) var(--sans);font-style:normal;color:var(--ink-2);font-variant-numeric:tabular-nums}
+.avkind span{grid-column:2/-1;font:400 var(--t-xs)/1.35 var(--sans);color:var(--ink-2)}
+@media (max-width:760px){html.av .chooser.stage1 .avkinds{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media (max-width:420px){html.av .chooser.stage1 .avkinds{grid-template-columns:1fr}}
 html.av .chooserbtn{min-height:44px;background:none;border:1px solid rgba(214,232,246,.38);color:var(--ink);font-size:var(--t-s) !important;border-radius:8px}
 html.av .chooserbtn:hover{background:rgba(214,232,246,.08)}
 html.av .chooserbtn[aria-expanded="true"]{background:rgba(214,232,246,.12);color:var(--ink);border-color:var(--ink-2)}
@@ -836,7 +850,8 @@ html.av .picker .pgroup{font:600 var(--t-xs)/1.2 var(--sans);letter-spacing:0;te
   .avpaper.rc{padding:18px 14px 18px}
   .rccap{min-height:92px}
   .avsay{font-size:var(--t-s)}
-  .rcfoot .avnext{flex:1 1 auto}
+  .rcfoot .avnext{flex:1 1 0;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .rcfoot .avshare{width:46px;padding:0;justify-content:center}.rcfoot .avshare span{display:none}
   .rcfoot .avknew{margin-left:0;flex-basis:100%}
   .avgrid{grid-template-columns:1fr;gap:8px}
   .avcard{display:grid;grid-template-columns:minmax(0,1fr) auto;column-gap:12px;row-gap:2px;min-height:0;padding:12px 14px 10px}
@@ -865,6 +880,7 @@ html.av .picker .pgroup{font:600 var(--t-xs)/1.2 var(--sans);letter-spacing:0;te
       <button class="chip" data-kind="map" data-slug="tiger-king">Tiger King</button><button class="chip" data-kind="chain" data-slug="squid-game-ripples">Squid Game</button>
       <button class="chip" data-kind="chain" data-slug="america-and-alcohol">Prohibition</button><button class="chip" data-kind="chain" data-slug="dust-bowl-soil">The Dust Bowl</button><button class="chip" data-kind="chain" data-slug="frozen">Frozen</button>
       <button class="chip" data-kind="chain" data-slug="tambora-bicycle">A volcano → the bicycle</button></div>
+    <div class="avkinds" id="avkinds"></div>
     <div class="tabs" role="tablist" aria-label="Kinds of story">
       <button class="tab" role="tab" data-tab="maps" aria-selected="true">Lasting marks</button>
       <button class="tab" role="tab" data-tab="stories" aria-selected="false">Fact-checks</button>
@@ -2548,12 +2564,14 @@ function renderPicker() {
   if (q) {  // a search spans every tab: title, stone, year
     const TN = {maps:"Lasting marks", stories:"Fact-checks", leads:"Engine leads"};
     const RANK = {maps:0, stories:1, leads:2};
-    const seen = new Set(), hits = allPonds().filter(p => { const title = TABS_TITLE(p) || p.title; const key = `${p.kind}:${p.slug}`; if (seen.has(key)) return false; seen.add(key); return norm(title).includes(q) || norm(p.stone).includes(q) || (p.year && p.year === q); }).sort((a, b) => RANK[tabOf(a.kind, a.slug)] - RANK[tabOf(b.kind, b.slug)]).slice(0, 40);
+    const named = p => norm(TABS_TITLE(p) || p.title).includes(q) || norm(p.stone).includes(q) || (p.year && p.year === q);  // the title first, then the words inside the story
+    const seen = new Set(), hits = allPonds().filter(p => { const key = `${p.kind}:${p.slug}`; if (seen.has(key)) return false; seen.add(key); return named(p) || (q.length >= 3 && storyText(p).includes(` ${q}`)); }).sort((a, b) => (named(b) - named(a)) || RANK[tabOf(a.kind, a.slug)] - RANK[tabOf(b.kind, b.slug)]).slice(0, 40);
+    const GN = document.documentElement.classList.contains("av") ? Object.fromEntries(avShelfData().map(x => [`${x.kind}:${x.slug}`, (AV_GROUPS.find(([g]) => g === x.group) || [])[1]])) : {};
     $("#tabnote").textContent = hits.length ? `${hits.length} ${hits.length === 1 ? "story" : "stories"} match` : ""; $("#ponds").hidden = true;
     if (!hits.length) { pk.innerHTML = `<p class="none">Nothing matches “${esc($("#search").value)}”. Try a show, a law or a year.</p>`; return; }
     for (const p of hits) {
       const b = document.createElement("button"); b.className = "chip"; b.dataset.k = `${p.kind}:${p.slug}`;
-      b.innerHTML = `${esc(TABS_TITLE(p) || p.title)}<span class="tabtag">${TN[tabOf(p.kind, p.slug)] || ""}</span>`;
+      b.innerHTML = `${esc(TABS_TITLE(p) || p.title)}<span class="tabtag">${esc(GN[`${p.kind}:${p.slug}`] || TN[tabOf(p.kind, p.slug)] || "")}</span>`;
       b.setAttribute("aria-pressed", cur && cur.key === p.slug && cur.kind === (p.kind === "map" ? cur.kind : p.kind)); b.onclick = () => show(p.kind, p.slug); pk.appendChild(b);
     }
     return;
@@ -2598,6 +2616,14 @@ function allPonds() {
   return out;
 }
 const norm = s => String(s || "").toLowerCase().replace(/^the /, "").replace(/[^a-z0-9]+/g, " ").trim();
+const storyTextCache = new Map();
+function storyText(p) {  // what a search reads besides the title: every step's claim, the finding and its unit, the authors' reason and the context line (Oct 12: "crash" found 1 of 4 crash stories)
+  const key = `${p.kind}:${p.slug}`; if (storyTextCache.has(key)) return storyTextCache.get(key);
+  let t = "";
+  if (p.kind === "chain") { const c = DATA.chains.find(x => x.slug === p.slug); if (c) t = c.steps.map(s => [s.claim, s.short, s.test && s.test.effect, s.test && s.test.fx && s.test.fx.unit, s.test && s.test.why].filter(Boolean).join(" ")).join(" "); }
+  else if (p.kind === "wiki") { const st = DATA.wiki && DATA.wiki.stones && DATA.wiki.stones[p.slug]; if (st) t = [st.first, ...(st.marks || []).map(m => `${m.title || ""} ${m.label || ""}`)].join(" "); }
+  const v = ` ${norm(`${t} ${(DATA.context || {})[key] || ""}`)} `; storyTextCache.set(key, v); return v;
+}
 // ponds whose stone is this name (other than the one showing)
 function pondsFor(name, exceptKind, exceptSlug) {
   const k = norm(name); if (!k) return [];
@@ -2700,6 +2726,10 @@ const AV_SURE = {
   study_reported:"A published study reports the link. Nothing in it compares the change with a baseline.",
   myth:"The claim this story names was tested in a published study, and it did not hold up."};
 const avMyth = st => { const its = st.items.filter(x => !x.aside && !x.future && !x.notYet); return its.length > 0 && its.every(x => x.lv === "busted"); };  // a story whose claimed link is busted or disputed: "Myths, checked"
+// The groups a reader browses by, in the shelf and in the All stories menu alike (Oct 12 review: the menu had its own three
+// kinds, "Lasting marks", "Fact-checks" and "Engine leads", which a stranger can't map to anything on the page).
+const AV_GROUPS = [["study", "What studies found", "a number from a published paper"], ["life", "Everyday life", "names, habits, health"], ["myth", "Myths, checked", "viral claims put to a test"], ["built", "Things built", "an agency, a company, a place"], ["law", "Laws and rules", "a statute, a ban, a ruling"], ["none", "Nothing lasting yet", "a splash that faded"]];
+const avGroupIcon = g => g === "myth" ? AV_MYTH_ICON : g === "study" ? AV_STUDY_ICON : AV_KIND[g].icon;
 const AV_MYTH_ICON = '<svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" aria-hidden="true"><circle cx="8.5" cy="8.5" r="5.4"/><path d="M12.5 12.5 17 17"/><path d="M6.6 6.6l3.8 3.8M10.4 6.6l-3.8 3.8"/></svg>';
 const AV_STONE = `<svg viewBox="-16 -16 32 32" aria-hidden="true">${STONE_SVG}</svg>`;
 const AV_HEX = `<svg viewBox="-8 -8 16 16" aria-hidden="true"><path d="M0,-7 L6,-3.5 L6,3.5 L0,7 L-6,3.5 L-6,-3.5 Z" fill="#fff3dc" stroke="currentColor" stroke-width="1.5"/><circle r="2.3" fill="currentColor"/></svg>`;
@@ -2808,7 +2838,7 @@ function avRow(r, s, i) {
   }
   const it = r.it, [cls, tag, why] = avWhy(it), link = avSrc(it), ans = it === s.answer;
   return `<li class="avn l-${cls}${it.mark ? " mark" : ""}${ans ? " ans" : ""}" data-id="${esc(it.id)}" data-lv="${cls}" style="--i:${i}"><span class="avdot">${it.mark ? AV_HEX : GLYPH[`l-${cls}`] || GLYPH.na}</span><div class="avbody">
-    <p class="avwhen">${esc(avWhen(it) || it.sub || "")}<span>${esc(it.undated ? "undated" : (it.sub || "").split(" · ")[1] || sinceLabel(it.d))}</span></p>
+    <p class="avwhen">${studyOf(s) && avWhen(it) === stoneWhen(s) ? "" : esc(avWhen(it) || it.sub || "")}<span>${esc(it.undated ? "undated" : (it.sub || "").split(" · ")[1] || sinceLabel(it.d))}</span></p>
     <p class="avtitle">${esc(it.title || (it.card && it.card.title) || it.label)}</p>
     ${it.mark ? `<p class="avmk">${HEX}Lasting mark · ${esc(it.mark)}${ans ? " · the answer" : ""}</p>` : ""}
     <p class="avwhy"><b class="avtag t-${cls}">${esc(tag)}</b> ${esc(why)}${link ? ` <a href="${esc(link[0])}" target="_blank" rel="noopener">${esc(link[1])} ↗</a>` : ""}${it.aside ? " Shown for context; it is off the way to the mark." : ""}</p>
@@ -2816,8 +2846,8 @@ function avRow(r, s, i) {
     ${avMore(it, s)}</div></li>`;
 }
 function avStoneRow(s) {
-  const f = s.first || {};
-  return `<li class="avn stone" data-lv="stone" style="--i:0"><span class="avdot">${AV_STONE}</span><div class="avbody"><p class="avwhen">${esc(avWhen(f))}<span>the stone</span></p><p class="avtitle">${esc(f.title || s.stone)}</p></div></li>`;
+  const f = s.first || {}, w = avWhen(f), dup = studyOf(s) && w === stoneWhen(s);  // a study story's header already gives this window
+  return `<li class="avn stone" data-lv="stone" style="--i:0"><span class="avdot">${AV_STONE}</span><div class="avbody"><p class="avwhen">${dup ? "" : esc(w)}<span>the stone</span></p><p class="avtitle">${esc(f.title || s.stone)}</p></div></li>`;
 }
 function avRoute(s, animate) {
   const all = avRows(s), n = s.items.filter(x => !x.aside).length;
@@ -2875,8 +2905,8 @@ function avHero(s, answered) {
   const q = $("#avq"); q.classList.remove("land"); void q.offsetWidth;
   q.innerHTML = answered ? avTitle(s) : `What did <em>${esc(avStoneName(s))}</em> change?`;
   if (answered) q.classList.add("land");
-  const a = s.answer, say = $("#avsay"), card = !!(rcFx(s) || rcResult(s) || rcStudyTop(s));  // a one-study card says the finding itself
-  if (say) say.innerHTML = answered && a && !card ? `<b>${esc(a.study ? `${cap(a.study.window)}, in ${a.study.pub}` : cap(avSpan(s, null, a, true)))}:</b> ${esc(String(a.title || a.label).replace(/^(The|A|An) /, m => m.toLowerCase()))}` : "";
+  const say = $("#avsay");  // the card's caption lands on the answer with its date and the time since the stone, so the hero no longer says the same sentence first (Oct 12 review)
+  if (say) { say.innerHTML = ""; say.hidden = true; }
   const st = avHeroStudy(s);  // a study story without a lasting mark has no answer step
   const wl = $("#avwhyl"), aw = answered ? avAuthorWhy(st) : null;
   if (wl) { wl.hidden = !aw; wl.innerHTML = aw ? `<b>${esc(aw[0])}</b> ${esc(aw[1])}` : ""; }
@@ -2991,7 +3021,7 @@ function rcCap(s, r, final) {
     : r.lift ? `readers ${rcX(r.lift.peak[1])}× normal`
     : r.births ? `${esc(r.births.who)}: ${r.births.prev ? `${r.births.prev.v.toLocaleString("en-US")} to ` : ""}${r.births.at.v.toLocaleString("en-US")}`
     : r.series ? `${esc(r.series.u.say)}: ${esc(r.series.u.v(r.series.atV))}${r.series.ext ? ` to ${esc(r.series.u.v(r.series.ext.v))}` : ""}`
-    : it.lv === "plausible" ? "unproven"
+    : it.lv === "plausible" ? `${esc(avSpan(s, null, it, true))}, unproven`
     : esc(avSpan(s, null, it, true));
   return [`<b>${esc(avWhen(it))}</b><span>${fact}</span>`, esc(it.title || (it.card && it.card.title) || it.label), it.id];
 }
@@ -3073,8 +3103,40 @@ function rcDrawFx(s, host, Wd0, phone) {
   s.rc.mode = "effect";
   const {say, main, big} = fxText(F);
   const Wd = Math.min(Wd0, 780);
+  const span = b => b.base ? null : b.d != null ? [b.d, b.d] : [Math.min(b.dlo, b.dhi), Math.max(b.dlo, b.dhi)];
+  const per100 = F.kind === "pct" && F.bars.length <= 3 && F.bars.every(b => b.base || (([lo, hi]) => (lo >= 0 || hi <= 0) && Math.abs(lo) <= 100 && Math.abs(hi) <= 100 && Math.round(Math.max(Math.abs(lo), Math.abs(hi))) >= 1)(span(b)));
   let vis;
-  if (F.kind === "people") {  // one dot per person (Oct 12, owner: "just need a completely new visual"): the usual day's count, then the same with the extra people lit on top
+  if (per100) {  // a percent change in the album card's language (Oct 12): the usual level as 100 dots, then each finding as the same 100 with its extra dots lit or its missing ones hollow; a range shows as rings
+    const C = 10, nS = F.bars.length, D = phone ? (nS > 2 ? 9 : 11) : Wd >= 760 ? 15 : 13, R0 = D * .36, G = phone ? (nS > 2 ? 18 : 40) : nS > 2 ? 44 : 64, SW = C * D;
+    const S = F.bars.map(b => {
+      if (b.base) return {b, grey:100, lit:0, hol:0, ring:[0, 0], up:true, num:"100", dl:""};
+      const [lo, hi] = span(b), up = lo >= 0, near = Math.round(up ? lo : -hi), far = Math.round(up ? hi : -lo), rg = far > near;
+      const num = rg ? `${100 + (up ? near : -far)} to ${100 + (up ? far : -near)}` : `${100 + (up ? near : -near)}`;
+      const dl = `${up ? "+" : "−"}${near}${rg ? ` to ${up ? "+" : "−"}${far}` : ""}`;
+      return up ? {b, grey:100, lit:near, hol:0, ring:[100 + near, 100 + far], up, num, dl} : {b, grey:100 - far, lit:0, hol:near, ring:[100 - far, 100 - near], up, num, dl};
+    });
+    const top = S.reduce((m, x) => Math.max(m, 100 + x.lit, x.ring[1]), 100), rowsHi = Math.ceil(top / C), y0 = 30, base = y0 + rowsHi * D;
+    const fs = phone ? 11.5 : 13, per = Math.max(8, Math.floor((SW + G * .7) / (fs * .55)));
+    const wrap = t => { const out = []; let line = ""; for (const w of String(t).split(/\s+/)) { if (line && (line + " " + w).length > per) { out.push(line); line = w; } else line = line ? `${line} ${w}` : w; } if (line) out.push(line); return out.slice(0, 3); };
+    const lines = Math.max(...S.map(x => wrap(x.b.label).length)), H = base + (phone ? 24 : 27) + lines * (fs + 4) + 8, Wv = nS * SW + (nS - 1) * G;
+    const at = (x0, k) => `cx="${(x0 + (k % C) * D + D / 2).toFixed(1)}" cy="${(base - Math.floor(k / C) * D - D / 2).toFixed(1)}" r="${R0.toFixed(1)}"`;
+    const maxN = Math.max(1, ...S.map(x => x.lit + x.hol)), pps = Math.min(55, Math.round(1100 / maxN));
+    let g = `<line class="rcbase" x1="-2" x2="${(Wv + 2).toFixed(1)}" y1="${(base + 3).toFixed(1)}" y2="${(base + 3).toFixed(1)}"/>`;
+    S.forEach((x, i) => {
+      const x0 = i * (SW + G), cx = x0 + SW / 2; let d = "";
+      for (let k = 0; k < x.grey; k++) d += `<circle class="p" ${at(x0, k)} style="--k:${k}"/>`;
+      for (let k = 0; k < x.lit; k++) d += `<circle class="x" ${at(x0, 100 + k)} style="--j:${k}"/>`;
+      for (let k = 0; k < x.hol; k++) d += `<circle class="o" ${at(x0, 99 - k)} style="--j:${k}"/>`;
+      for (let k = x.ring[0]; k < x.ring[1]; k++) d += `<circle class="r" ${at(x0, k)} style="--q:${k - x.ring[0]}"/>`;
+      d += `<text class="rcppn" x="${cx.toFixed(1)}" y="${base + (phone ? 22 : 25)}">${esc(x.num)}</text>`;
+      wrap(x.b.label).forEach((t, j) => { d += `<text class="rcppl" x="${cx.toFixed(1)}" y="${base + (phone ? 22 : 25) + (fs + 4) * (j + 1)}" style="font-size:${fs}px">${esc(t)}</text>`; });
+      if (!x.b.base) d += `<text class="rcppx" x="${cx.toFixed(1)}" y="${(base - Math.ceil(Math.max(100 + x.lit, x.ring[1]) / C) * D - 10).toFixed(1)}">${esc(x.dl)}</text>`;
+      g += `<g class="rcrow" data-i="${x.b.base ? 0 : si}">${d}</g>`;
+    });
+    vis = `<svg class="rcpp" viewBox="-4 0 ${Wv + 8} ${H}" width="${Wv + 8}" height="${H}" role="img" aria-label="${esc(`${F.unit || "the study's result"}: ${S.map(x => `${x.b.label} ${x.num}`).join(", ")}, for every 100 at the usual level`)}">${g}</svg>`;
+    F.ppd = (.3 + (maxN - 1) * pps / 1000 + .45).toFixed(2); F.pps = pps; F.wide = Wv > 420;  // three columns of dots leave no room for the number beside them
+    F.keys = {up:S.some(x => x.lit), down:S.some(x => x.hol), ring:S.some(x => x.ring[1] > x.ring[0])};
+  } else if (F.kind === "people") {  // one dot per person (Oct 12, owner: "just need a completely new visual"): the usual day's count, then the same with the extra people lit on top
     // Oct 12 review: the usual day draws first, then the release day with its extra people dropping in, then the number; the
     // paper's 95% range shows as rings up to its high end, so the one honest number the dots can't carry is on the picture.
     const n0 = Math.round(F.bars[0].v), n1 = Math.round(F.bars[1].v), up = n1 >= n0, C = 11, D = phone ? 11 : Wd >= 760 ? 17 : 15, R0 = D * .36, G = phone ? 40 : 64;
@@ -3089,7 +3151,7 @@ function rcDrawFx(s, host, Wd0, phone) {
     if (up && diff) right += `<text class="rcppx" x="${(xs[1] + C * D / 2).toFixed(1)}" y="${(base - rowsHi * D - 12).toFixed(1)}">+${diff}</text>`;
     const rng = ring1 > n1 ? `; the paper's range runs from ${Math.round(F.ci[0])} to ${hiX} extra` : "";
     vis = `<svg class="rcpp" viewBox="-4 0 ${Wv + 8} ${H}" width="${Wv + 8}" height="${H}" role="img" aria-label="${esc(`${F.unit || "people"}: ${n0} on ${F.bars[0].label.toLowerCase()}, ${n1} on ${F.bars[1].label.toLowerCase()}${rng}`)}"><g class="rcrow" data-i="0">${left}</g><g class="rcrow" data-i="${si}">${right}</g></svg>`;
-    F.ppd = (.3 + Math.max(0, diff - 1) * .055 + .45).toFixed(2); F.ring = ring1 > n1;
+    F.ppd = (.3 + Math.max(0, diff - 1) * .055 + .45).toFixed(2); F.pps = 55; F.ring = ring1 > n1;
   } else if (F.kind === "groups" && F.max === 100 && F.bars.length === 1 && (main.v != null ? main.v : main.lo) > 0) {  // a share of 100: one dot each, the finding's dots lit (a drop draws a bar: no dots to light)
     const lo = Math.round(main.v != null ? main.v : main.lo), hi = Math.round(main.v != null ? main.v : main.hi), D = phone ? 21 : 24, R0 = phone ? 7 : 8;
     let dots = "";
@@ -3111,9 +3173,9 @@ function rcDrawFx(s, host, Wd0, phone) {
     });
     vis = `<svg viewBox="0 0 ${Wd} ${H}" width="${Wd}" height="${H}" role="img" aria-label="${esc(`${s.stone || "The stone"}: ${F.unit || "the study's result"}`)}">${g}</svg>`;
   }
-  const waf = vis.startsWith("<svg class=\"rcwaf\""), pp = F.kind === "people", sub = pp ? F.say || F.effect : F.unit;
-  const key = pp ? `<p class="rcfxkey pp rcrow" data-i="${si}"><span><i></i>One ${esc(F.unit.replace(/^people\b/, "person"))}</span><span><i class="x"></i>The extra on ${esc(F.bars[1].label.toLowerCase())}</span>${F.ring ? `<span><i class="r"></i>The paper's range: ${Math.round(F.ci[0])} to ${Math.round(F.ci[1])} extra</span>` : ""}</p>` : "";  // a legend, not a sentence; the paper's averages are in How we know
-  host.innerHTML = `<div class="rcfx rchit${waf || pp ? " waf" : ""}${pp ? " pp" : ""}" data-i="${si}" style="--h:${hue}${pp ? `;--ppd:${F.ppd}s` : ""}"><div class="rcrow rcfxhead" data-i="${si}"><div class="rcfxbig${big.length > 12 ? " long" : ""}">${esc(big)}</div>${sub ? `<p class="rcfxsub">${esc(cap(sub))}</p>` : ""}</div><div class="${pp ? "rcppw" : "rcrow"}" data-i="${si}">${vis}</div>${key}${F.from ? `<p class="rcfxfrom">Numbers from ${esc(F.from)}.</p>` : ""}</div>`;
+  const waf = vis.startsWith("<svg class=\"rcwaf\""), people = F.kind === "people", pp = people || per100, sub = people ? F.say || F.effect : F.unit;
+  const key = per100 ? `<p class="rcfxkey pp rcrow" data-i="${si}"><span><i></i>Each dot is 1% of the usual level</span>${F.keys.up ? `<span><i class="x"></i>More than usual</span>` : ""}${F.keys.down ? `<span><i class="o"></i>Fewer than usual</span>` : ""}${F.keys.ring ? `<span><i class="r"></i>The paper's range</span>` : ""}</p>` : people ? `<p class="rcfxkey pp rcrow" data-i="${si}"><span><i></i>One ${esc(F.unit.replace(/^people\b/, "person"))}</span><span><i class="x"></i>The extra on ${esc(F.bars[1].label.toLowerCase())}</span>${F.ring ? `<span><i class="r"></i>The paper's range: ${Math.round(F.ci[0])} to ${Math.round(F.ci[1])} extra</span>` : ""}</p>` : "";  // a legend, not a sentence; the paper's averages are in How we know
+  host.innerHTML = `<div class="rcfx rchit${waf || pp ? " waf" : ""}${pp ? " pp" : ""}${F.wide ? " ppw" : ""}" data-i="${si}" style="--h:${hue}${pp ? `;--ppd:${F.ppd}s;--pps:${F.pps}ms` : ""}"><div class="rcrow rcfxhead" data-i="${si}"><div class="rcfxbig${big.length > 12 ? " long" : ""}">${esc(big)}</div>${sub ? `<p class="rcfxsub">${esc(cap(sub))}</p>` : ""}</div><div class="${pp ? "rcppw" : "rcrow"}" data-i="${si}">${vis}</div>${key}${F.from ? `<p class="rcfxfrom">Numbers from ${esc(F.from)}.</p>` : ""}</div>`;
   rcMark(s);
 }
 function rcResult(s) {
@@ -3240,11 +3302,14 @@ function rcDraw(s) {
     else if (lv === "busted") g += `<path d="M-5,-5 L5,5 M5,-5 L-5,5" transform="translate(${x.toFixed(1)},${y.toFixed(1)})" stroke="#c0402f" stroke-width="2.4" stroke-linecap="round"/>`;
     else if (lv === "plausible") g += `<circle cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" r="5" fill="#f4efe4" stroke="#8a7638" stroke-width="2"/>`;
     else if (!r.event && !r.paper) g += `<circle cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" r="5" fill="${r.lift || r.series ? hue : "#3a4a4f"}"/>`;
-    const max = phone ? 25 : 27, name = it.label.length > max ? it.label.slice(0, max - 1).replace(/\s+\S*$/, "") + "…" : it.label;
-    const when = r.stone ? avWhen(s.first || {}) : avWhen(it);
+    // a long name wraps to a second line on a wide screen and gives way to its date on a phone, instead of cutting off at 25 letters (Oct 12 review)
+    const when = r.stone ? avWhen(s.first || {}) : avWhen(it), cut = (t, n) => t.length > n ? t.slice(0, n - 1).replace(/\s+\S*$/, "") + "…" : t;
+    const max = phone ? Math.max(18, Math.floor((Wd - L - when.length * 6.7 - 18) / 8.4)) : 28;
+    const two = !phone && it.label.length > max ? (() => { const w = it.label.split(" "); let a = ""; while (w.length && (a ? a.length + 1 : 0) + w[0].length <= max) a = a ? `${a} ${w.shift()}` : w.shift(); return a && w.length ? [a, cut(w.join(" "), max)] : null; })() : null;
     labs += `<g class="rcrow lab${it.mark ? " mark" : ""}${lv === "busted" ? " busted" : ""}" data-i="${i}">` + (phone
-      ? `<text class="rcn" x="${L}" y="${(rt[i] + 19).toFixed(1)}">${esc(name)}<tspan class="rcd" dx="8">${esc(when)}</tspan></text>`
-      : `<text class="rcn" x="0" y="${(y - 3).toFixed(1)}">${esc(name)}</text><text class="rcd" x="0" y="${(y + 14).toFixed(1)}">${esc(when)}</text>`) + `</g>`;
+      ? `<text class="rcn" x="${L}" y="${(rt[i] + 19).toFixed(1)}">${esc(cut(it.label, max))}</text><text class="rcd" x="${Wd}" y="${(rt[i] + 19).toFixed(1)}" text-anchor="end">${esc(when)}</text>`
+      : two ? `<text class="rcn" x="0" y="${(y - 19).toFixed(1)}">${esc(two[0])}<tspan x="0" dy="16">${esc(two[1])}</tspan></text><text class="rcd" x="0" y="${(y + 14).toFixed(1)}">${esc(when)}</text>`
+      : `<text class="rcn" x="0" y="${(y - 3).toFixed(1)}">${esc(cut(it.label, max))}</text><text class="rcd" x="0" y="${(y + 14).toFixed(1)}">${esc(when)}</text>`) + `</g>`;
     body += `<g class="rcrow${r.stone ? " stone" : ""}${it.mark ? " mark" : ""}${lv === "busted" ? " busted" : ""}" data-i="${i}" style="--h:${hue}">${g}</g>`;
   });
   s.rc.runs = runs;
@@ -3323,7 +3388,7 @@ function rcRender(s) {
   $("#rcwrap").innerHTML = `<div class="rctop"><div class="rccap" id="rccap" aria-live="polite"></div><button type="button" class="rcplay" id="rcplay"></button></div><div class="rcchart" id="rcchart"></div>
     <p class="rcnote">${lines ? `<span class="key"><i class="kl"${lifts.length === 1 ? ` style="background:${rowHue(lifts[0], s.rc.rows)}"` : ""}></i>readers of that Wikipedia page, against its own normal</span>` : ""}${births.length ? `<span class="key"><i class="kl"${births.length === 1 ? ` style="background:${births[0].it.mark ? "#c77f12" : PULSE_HUES[(s.rc.rows.indexOf(births[0]) - 1 + PULSE_HUES.length) % PULSE_HUES.length]}"` : ""}></i>${esc(births.length === 1 ? births[0].births.who : "babies given the name")} each year (US Social Security records)</span>` : ""}${series.map(r => `<span class="key"><i class="kl" style="background:${rowHue(r, s.rc.rows)}"></i>${esc(r.series.u.key)}</span>`).join("")}${s.rc.rows.filter(r => r.paper && r.paper.key).map(r => `<span class="key"><i class="kl" style="background:${rowHue(r, s.rc.rows)}"></i>${esc(r.paper.key)}</span>`).join("")}${(s.rc.fx ? [] : s.rc.rows.filter(r => r.event && r.event.key)).map(r => `<span class="key"><i class="ke" style="background:${rowHue(r, s.rc.rows)}"></i>${esc(r.event.key)}</span>`).join("")}${marks ? `<span class="key"><i class="kb"></i>a lasting mark, still there</span>` : ""}${spans ? `<span class="key"><i class="ks"></i>the study's window</span>` : ""}${s.rc.fx || s.rc.res || s.rc.top ? "" : `<span class="key" title="${esc(sureTip)}">${s.items.some(x => x.study && /working paper/.test(x.study.pub)) ? `<span>How sure: <b>${esc(sureTag)}</b>, in a working paper not yet peer reviewed</span>` : `How sure: <b>${esc(sureTag)}</b>`}</span>`}${s.rcHidden ? `<span class="key">${s.rcHidden} more step${s.rcHidden === 1 ? "" : "s"} in the list below</span>` : ""}</p>
     ${s.also ? `<details class="rcalso"><summary>What else was going on</summary><p>${esc(cap(s.also))}</p></details>` : ""}
-    <div class="rcfoot" id="rcfoot"><button type="button" class="avnext">Next: ${esc(nxStone || "another stone")}</button><button type="button" class="avshare">Share</button>
+    <div class="rcfoot" id="rcfoot"><button type="button" class="avnext">Next: ${esc(nxStone || "another stone")}</button><button type="button" class="avshare" aria-label="Share this story"><svg viewBox="0 0 20 20" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M10 12.5V3"/><path d="M6.5 6.2 10 2.8l3.5 3.4"/><path d="M5.5 9.5H4.8a1.3 1.3 0 0 0-1.3 1.3v5.4A1.3 1.3 0 0 0 4.8 17.5h10.4a1.3 1.3 0 0 0 1.3-1.3v-5.4a1.3 1.3 0 0 0-1.3-1.3h-.7"/></svg><span>Share</span></button>
       <p class="avknew" hidden>${knew != null ? avKnewDone(knew) : `<span>New to you?</span><button type="button" data-knew="0">Yes</button><button type="button" data-knew="1">I knew it</button>`}</p></div>`;
   $("#rcwrap").classList.toggle("rcresmode", !!s.rc.res); $("#rcwrap").classList.toggle("rcfxmode", !!(s.rc.fx || s.rc.top));  // a study card's caption is one line
   if (s.rc.top) { const si = s.rc.rows.findIndex(r => r.it === s.rc.top.it), hd = document.createElement("div"); hd.className = "rcfxhead rcfxtop"; hd.style.setProperty("--h", rowHue(s.rc.rows[Math.max(1, si)], s.rc.rows)); hd.innerHTML = `<div class="rcfxbig${s.rc.top.big.length > 12 ? " long" : ""}">${esc(s.rc.top.big)}</div>${s.rc.top.sub ? `<p class="rcfxsub">${esc(s.rc.top.sub)}</p>` : ""}`; $("#rcchart").before(hd); }
@@ -3386,11 +3451,10 @@ const AV_STUDY_ICON = '<svg viewBox="0 0 20 20" aria-hidden="true" fill="none" s
 function avShelf() {  // every other story, grouped by what it left behind; one row of cards a group until asked for more
   const el = $("#avshelf"); if (!el || !cur) return;
   const data = avShelfData(), here = `${cur.kind}:${cur.key}`, SHOW = window.innerWidth <= 560 ? 3 : 4;  // a phone shows three a group, a wider screen one row of four
-  const G = [["study", "What studies found"], ["life", "Everyday life"], ["myth", "Myths, checked"], ["built", "Things built"], ["law", "Laws and rules"], ["none", "Nothing lasting yet"]];
-  el.innerHTML = `<h2 class="avsh">More stones</h2>` + G.map(([g, h]) => {
+  el.innerHTML = `<h2 class="avsh">More stones</h2>` + AV_GROUPS.map(([g, h]) => {
     const list = data.filter(x => x.group === g && `${x.kind}:${x.slug}` !== here); if (!list.length) return "";
     const open = avShelfOpen.has(g), shown = open ? list : list.slice(0, SHOW);
-    return `<section class="avgroup"><h3>${g === "myth" ? AV_MYTH_ICON : g === "study" ? AV_STUDY_ICON : AV_KIND[g].icon}<span>${h}</span><em>${list.length}</em></h3><div class="avgrid">${shown.map(x => `<button type="button" class="avcard" data-k="${x.kind}" data-s="${esc(x.slug)}"><span class="cy">${esc(x.year)}</span><span class="cs">${esc(x.stone)}</span><span class="cl">→ ${esc(x.land)}</span>${x.num ? `<span class="cn">${esc(x.num)}</span>` : rcGlyph(x)}<span class="cm"><i class="d-${x.myth ? "busted" : x.weak}"></i><b>${esc(x.myth || AV_TAG[x.weak] || "")}</b>${x.study ? "<em>a published study</em>" : x.later ? `<em>${esc(x.later)}</em>` : ""}</span></button>`).join("")}</div>${list.length > SHOW ? `<button type="button" class="avshmore" data-g="${g}">${open ? "Show fewer" : `Show all ${list.length}`}</button>` : ""}</section>`;
+    return `<section class="avgroup" id="avg-${g}"><h3>${avGroupIcon(g)}<span>${h}</span><em>${list.length}</em></h3><div class="avgrid">${shown.map(x => `<button type="button" class="avcard" data-k="${x.kind}" data-s="${esc(x.slug)}"><span class="cy">${esc(x.year)}</span><span class="cs">${esc(x.stone)}</span><span class="cl">→ ${esc(x.land)}</span>${x.num ? `<span class="cn">${esc(x.num)}</span>` : x.myth ? "" : rcGlyph(x)}<span class="cm"><i class="d-${x.myth ? "busted" : x.weak}"></i><b>${esc(x.myth || AV_TAG[x.weak] || "")}</b>${x.study ? "<em>a published study</em>" : x.later ? `<em>${esc(x.later)}</em>` : ""}</span></button>`).join("")}</div>${list.length > SHOW ? `<button type="button" class="avshmore" data-g="${g}">${open ? "Show fewer" : `Show all ${list.length}`}</button>` : ""}</section>`;
   }).join("");
 }
 // The hero's water: a lake at dusk in WebGL, the stone thrown in, rings that spread and fade, and a pool of ember when the
@@ -3529,9 +3593,15 @@ function avInit() {
   };
   const TABNOTE_SHORT = {maps:"Events that left a law, an institution or a change in how people live.", stories:"Viral \"butterfly effect\" stories tested link by link; some are busted.", leads:"What the engine found on its own, screened by hand."};
   const setChooser = open => { chooser.hidden = !open; cbtn.setAttribute("aria-expanded", open); if (open) track("chooser_open", {slug: cur && cur.key});
+    if (open && document.documentElement.classList.contains("av")) { const data = avShelfData(); $("#avkinds").innerHTML = AV_GROUPS.map(([g, name, ex]) => { const n = data.filter(x => x.group === g).length; return n ? `<button type="button" class="avkind" data-g="${g}">${avGroupIcon(g)}<b>${esc(name)}</b><em>${n}</em><span>${esc(ex)}</span></button>` : ""; }).join(""); }
     if (open) { chooser.classList.add("stage1"); const n = TABCOUNT(); document.querySelectorAll(".tab").forEach(b => b.dataset.note = `${TABNOTE_SHORT[b.dataset.tab]} ${n[b.dataset.tab]} ${n[b.dataset.tab] === 1 ? "story" : "stories"}.`); }  // first layer: the three kinds as cards
     if (open && window.innerWidth <= 560) requestAnimationFrame(() => cbtn.scrollIntoView({block:"start", behavior:"smooth"})); };  // on a phone the chooser lives under the pond, so opening it brings it up
   cbtn.onclick = () => setChooser(chooser.hidden);
+  $("#avkinds").addEventListener("click", e => {  // a group in the menu opens that row of the shelf in full and takes the reader there
+    const b = e.target.closest("button[data-g]"); if (!b) return;
+    const g = b.dataset.g; setChooser(false); track("kind", {tab:g}); avShelfOpen.add(g); avShelf();
+    const sec = document.getElementById(`avg-${g}`); if (sec) sec.scrollIntoView({block:"start", behavior:"smooth"});
+  });
   document.querySelectorAll(".known .chip").forEach(b => b.onclick = () => { window.__via = "known"; show(b.dataset.kind, b.dataset.slug); });
   $("#search").oninput = () => { if (chooser.hidden) setChooser(true); chooser.classList.remove("stage1"); renderPicker(); };  // the search sits in the header, always visible (a visitor, Oct 5: "the search bar should be more visible"); typing opens the results
   { const sn = TABCOUNT(); $("#search").placeholder = `Search ${sn.maps + sn.stories + sn.leads} stories`; }
