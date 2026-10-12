@@ -1,0 +1,271 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Work | Benjamin J. Sunter</title>
+<meta name="description" content="Planning tools, case studies, writing, spreadsheet tools and side projects by Benjamin J. Sunter, grouped by the problem each one is for.">
+<meta name="author" content="Benjamin J. Sunter">
+<meta name="color-scheme" content="light dark">
+<link rel="canonical" href="https://bensunter.com/work.html">
+<meta name="robots" content="index,follow">
+<link rel="icon" href="favicon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<meta name="theme-color" content="#0B3A40">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600&family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600&display=swap">
+<meta property="og:title" content="Work">
+<meta property="og:description" content="Planning tools, case studies, writing, spreadsheet tools and side projects, grouped by the problem each one is for.">
+<meta property="og:url" content="https://bensunter.com/work.html">
+<meta property="og:type" content="website">
+<meta property="og:image" content="https://bensunter.com/og-card.jpg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="stylesheet" href="site.css">
+<style>
+.reading{max-width:680px;margin:0 auto;padding-inline:clamp(18px,5vw,32px)}
+.artbar{position:sticky;top:0;z-index:30;background:color-mix(in srgb,var(--paper) 94%,transparent);
+  backdrop-filter:saturate(180%) blur(12px);border-bottom:1px solid var(--line)}
+.artbar .inner{max-width:1020px;margin:0 auto;padding-inline:clamp(18px,5vw,32px);
+  display:flex;align-items:center;justify-content:space-between;gap:18px;height:54px}
+.artbar a{font:600 14px/1 var(--display);color:var(--ink);text-decoration:none}
+.artbar a:hover{color:var(--accent)}
+.artbar .kind{font:500 13px/1.2 var(--sans);color:var(--muted)}
+.arthead{padding:clamp(36px,6vw,64px) 0 4px}
+.arthead .kicker{display:flex;align-items:center;gap:9px;font:600 13px/1.2 var(--sans);
+  color:var(--muted);margin-bottom:16px}
+.arthead .kicker:before{content:"";width:20px;height:2px;background:var(--warm)}
+.arthead h1{font:600 clamp(31px,5vw,45px)/1.08 var(--display);letter-spacing:-.024em}
+.arthead .by{margin-top:18px;font:400 17px/1.5 var(--sans);color:var(--muted)}
+.reading p{font-size:17px;line-height:1.7;margin:0 0 19px}
+.reading p.open{font-size:19px;line-height:1.58;color:var(--ink)}
+.reading h2{font:600 22px/1.25 var(--display);letter-spacing:-.012em;margin:36px 0 12px}
+.reading strong{color:var(--ink);font-weight:600}
+.reading ul{margin:0 0 19px;padding-left:22px;font-size:17px;line-height:1.7}
+.reading li{margin:0 0 9px}
+.pull{font:600 clamp(19px,2.4vw,23px)/1.4 var(--display);color:var(--ink);
+  border-left:3px solid var(--warm);padding:6px 0 6px 22px;margin:32px 0}
+.artfoot{border-top:1px solid var(--line);margin-top:52px;padding:26px 0 60px}
+.artfoot .reading{display:flex;gap:20px;flex-wrap:wrap;justify-content:space-between;
+  font-size:13.5px;color:var(--muted)}
+
+/* Sticky bar is 54px; land section titles below it. */
+main section{scroll-margin-top:62px}
+main section h2{margin-bottom:8px}
+.feature:first-of-type{margin-top:0}
+/* The Did it work? image is its share card: show it whole on its own background. */
+.feature .trio-card--feature>img.shot-fit{object-fit:contain;background:#0B3A40}
+</style>
+<script>try{var t=localStorage.getItem('theme');if(t==='light'||t==='dark')document.documentElement.setAttribute('data-theme',t)}catch(e){}</script>
+</head>
+<body>
+<div class="artbar">
+  <div class="inner">
+    <a href="index.html">&larr; Benjamin J. Sunter</a>
+    <span class="kind">Work</span>
+  </div>
+</div>
+<main>
+<header class="arthead"><div class="wrap">
+  <div class="kicker">Work</div>
+  <h1>Everything I've built and written</h1>
+  <p class="by">Grouped by the problem each one is for.</p>
+</div></header>
+<section id="planning" class="wrap">
+  <h2>Planning tools</h2>
+  <p class="lede">Test whether a plan holds up, size a team when the forecast will be off, and check whether a change moved the number.</p>
+  <div class="feature">
+    <a class="trio-card trio-card--feature" href="simulator/">
+      <span class="proj-kind"><b class="pk-app">Interactive</b>Simulator</span>
+      <h3>Operating Model Simulator</h3>
+      <p>It tests whether an organization can pull off its plan. You run the year one month at a time, see
+         which team runs out of room first, and pick moves that have each been tested against
+         the full year. Four organizations come with it, from a software company to a
+         charity running on restricted grants.</p>
+      <span class="playlink playlink-app">Try the simulator &rarr;</span>
+      <img src="simulator-card.jpg" alt="The Operating Model Simulator: a team card at 84% and over capacity beside one with room to spare, and the panel explaining the overload with a hire as the next move" width="800" height="640" loading="lazy">
+    </a>
+  </div>
+  <div class="feature">
+    <a class="trio-card trio-card--feature" href="headroom.html" style="border-top-color:var(--warm)">
+      <span class="proj-kind"><b class="pk-app">Interactive</b>Capacity planning</span>
+      <h3>Staffing Headroom</h3>
+      <p>How many people to hire when you know the forecast will be off. Being short and
+         being over don't cost the same, so the cheapest headcount sits to one side of the
+         plan. Type in the month, say which miss hurts more, and it works out which side and
+         by how much. Four worked examples to start from.</p>
+      <span class="playlink playlink-app">Run it &rarr;</span>
+      <img class="shot-light" src="headroom-card.jpg" alt="Staffing Headroom: the expected cost of being short and of being over, and the cheapest plan 4.2 people above the forecast" width="600" height="424" loading="lazy">
+      <img class="shot-dark" src="headroom-card-dark.jpg" alt="" width="1200" height="869" loading="lazy">
+    </a>
+  </div>
+  <div class="feature">
+    <a class="trio-card trio-card--feature" href="did-it-work/" style="border-top-color:var(--plum)">
+      <span class="proj-kind"><b class="pk-app">Interactive</b>Measurement</span>
+      <h3>Did it work?</h3>
+      <p>Paste the number you watch, click when you changed something, read one sentence. It runs in
+         your browser and nothing is uploaded. Open source.</p>
+      <span class="playlink playlink-app">Try it &rarr;</span>
+      <img class="shot-fit" src="og-did-it-work.jpg" alt="Did it work?: a weekly line that steps up after the marked change, and the verdict Partly: the change likely raised signups by 16%" width="1200" height="630" loading="lazy">
+    </a>
+  </div>
+</section>
+
+<section id="case-studies" class="wrap">
+  <h2>Case studies</h2>
+  <p class="lede">Problems from my own work at Included Health, Accenture and Google, each with what I got wrong.</p>
+  <a class="post" href="case-studies.html#study-cost">
+    <span class="post-kind"><span class="post-tag tag-cs">Case study</span>Cost &amp; forecasting</span>
+    <div class="post-body">
+      <h3>Getting cost numbers to people in time to act on them</h3>
+      <p>Unit cost used to show up from finance late in the year, when the only lever left was
+         headcount. I turned it into a number three teams agreed on and saw every month.</p>
+      <p class="post-fig"><b>54% &rarr; 100%</b> of initiatives with quantified impact, in two weeks</p>
+      <p class="post-wrong"><b>What I got wrong:</b> I built the complete version first and the one-page version second. It should have
+         been the other way around.</p>
+      <span class="post-go">Read the case study &rarr;</span>
+    </div>
+    <span class="post-meta">Included Health</span>
+  </a>
+  <a class="post" href="case-studies.html#study-merger">
+    <span class="post-kind"><span class="post-tag tag-cs">Case study</span>Program governance</span>
+    <div class="post-body">
+      <h3>Building a PMO for a deal that hadn't closed yet</h3>
+      <p>Several hundred people kept building through months of regulatory hold, on a deal
+         that might not have made it through review.</p>
+      <p class="post-fig"><b>74% &rarr; 95%</b> on-time deployments, in under three months</p>
+      <p class="post-wrong"><b>What I got wrong:</b> I didn't standardize intake before a dozen vendor teams each built their own tracker.</p>
+      <span class="post-go">Read the case study &rarr;</span>
+    </div>
+    <span class="post-meta">Accenture</span>
+  </a>
+  <a class="post" href="case-studies.html#study-reporting">
+    <span class="post-kind"><span class="post-tag tag-cs">Case study</span>Go to market</span>
+    <div class="post-body">
+      <h3>Giving sellers a number they could pitch</h3>
+      <p>Sellers already had the list. They couldn't tell a publisher what it was
+         worth, so they kept losing to pitches that came with a number.</p>
+      <p class="post-fig"><b>8 figures</b> of incremental revenue, and a peak of 256% pipeline velocity</p>
+      <p class="post-wrong"><b>What I got wrong:</b> I scoped the queries to my own region, so I couldn't validate the results in the two
+         regions that adopted it.</p>
+      <span class="post-go">Read the case study &rarr;</span>
+    </div>
+    <span class="post-meta">Google</span>
+  </a>
+</section>
+
+<section id="writing" class="wrap">
+  <h2>Writing</h2>
+  <p class="lede">Operating questions that usually get decided on gut feel.</p>
+  <a class="post" href="pods-or-pooled.html">
+    <span class="post-kind"><span class="post-tag tag-art">Article</span>Operating model design</span>
+    <div class="post-body">
+      <h3>Half a Day of Nothing</h3>
+      <p>A support function can stay central or split into dedicated
+         pods. A shared person would have to be 73% slower on every request before pods come out
+         cheaper, which is much further than most people guess. The break-even also shifts with
+         client size.</p>
+      <span class="post-go">Read it &rarr;</span>
+    </div>
+    <span class="post-meta">6 min<br>Sep 2026</span>
+  </a>
+  <a class="post" href="did-it-work.html">
+    <span class="post-kind"><span class="post-tag tag-art">Article</span>Measurement</span>
+    <div class="post-body">
+      <h3>Did it work?</h3>
+      <p>Paste the number you watch, click when you changed something, read one sentence. How the
+         tool decides, the false-alarm rate it was held to, twelve pastes shaped like real exports,
+         and the slope fix I tried that made things worse.</p>
+      <span class="post-go">Read it &rarr;</span>
+    </div>
+    <span class="post-meta">5 min<br>Oct 2026</span>
+  </a>
+  <a class="post" href="smallest-ask.html">
+    <span class="post-kind"><span class="post-tag tag-art">Article</span>Operating notes</span>
+    <div class="post-body">
+      <h3>The smallest ask that works</h3>
+      <p>I designed an intake form around what I needed and didn't think about what anyone would fill in. Then I
+         blamed stakeholders when nobody used it. Forty-two fields, three of them ever read, at
+         a company whose CRM already had most of the answers.</p>
+      <span class="post-go">Read it &rarr;</span>
+    </div>
+    <span class="post-meta">1 min<br>Sep 2026</span>
+  </a>
+</section>
+
+<section id="spreadsheets" class="wrap">
+  <h2>Spreadsheet tools</h2>
+  <p class="lede">Free tools for Google Sheets.</p>
+  <a class="post" href="comment-export.html">
+    <span class="post-kind"><span class="post-tag tag-cs">Add-on</span>Google Sheets</span>
+    <div class="post-body">
+      <h3>Comment Export</h3>
+      <p>Writes every comment in a spreadsheet to a sortable tab: sheet, cell, author, date, resolved status and replies.</p>
+      <span class="post-go">Read about it &rarr;</span>
+    </div>
+    <span class="post-meta">Open source</span>
+  </a>
+  <a class="post" href="commentpulse.html">
+    <span class="post-kind"><span class="post-tag tag-cs">Tool</span>Google Sheets</span>
+    <div class="post-body">
+      <h3>CommentPulse</h3>
+      <p>Pulls every comment thread out of a Google Sheet, with its tab, its cell and its replies. Runs in your browser. Nothing is uploaded.</p>
+      <span class="post-go">Try it &rarr;</span>
+    </div>
+    <span class="post-meta">In the browser</span>
+  </a>
+</section>
+
+<section id="side-projects" class="wrap">
+  <h2>Side projects</h2>
+  <p class="lede">A job pipeline I run every morning, an experiment in tracing what an event changed, and a journaling app on Google Play.</p>
+  <a class="post" href="careerops.html">
+    <span class="post-kind"><span class="post-tag tag-art">Tool</span>Job search</span>
+    <div class="post-body">
+      <h3>Career Ops</h3>
+      <p>A job pipeline that reads twelve thousand postings a morning, checks its rules against 886 hand-labeled emails, and fixes a year of stored records when a rule turns out to be wrong.</p>
+      <span class="post-go">Read about it &rarr;</span>
+    </div>
+    <span class="post-meta">Open source</span>
+  </a>
+  <a class="post" href="ripples/demo/">
+    <span class="post-kind"><span class="post-tag tag-art">Experiment</span>History</span>
+    <div class="post-body">
+      <h3>Ripple</h3>
+      <p>Drop in an event everyone remembers and watch what it changed, in the order it happened, with how sure it is of every link.</p>
+      <span class="post-go">Try it &rarr;</span>
+    </div>
+    <span class="post-meta">In the browser</span>
+  </a>
+  <a class="post" href="https://play.google.com/store/apps/details?id=com.mirrorapp.reflection" rel="noopener">
+    <span class="post-kind"><span class="post-tag tag-art">App</span>Android</span>
+    <div class="post-body">
+      <h3>Mirror</h3>
+      <p>A small AI journaling app.</p>
+      <span class="post-go">See it on Google Play &rarr;</span>
+    </div>
+    <span class="post-meta">Google Play</span>
+  </a>
+</section>
+
+</main>
+
+<footer class="artfoot">
+  <div class="reading">
+    <span>&copy; <span id="yr">2026</span> Benjamin J. Sunter</span>
+    <span><a href="index.html">Home</a> &middot; <a href="index.html#contact">Get in touch</a></span>
+  </div>
+</footer>
+
+<script>
+document.getElementById('yr').textContent = new Date().getFullYear();
+(function () {
+  var root = document.documentElement, saved;
+  try { saved = localStorage.getItem('theme'); } catch (e) { saved = null; }
+  if (saved === 'light' || saved === 'dark') root.setAttribute('data-theme', saved);
+})();
+</script>
+</body>
+</html>
