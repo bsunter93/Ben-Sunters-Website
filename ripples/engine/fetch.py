@@ -6,7 +6,10 @@
   - A 5xx, a 429, a timeout or a connection error gets one retry after a wait (Retry-After when it is 300 s or less,
     otherwise 60 s). A second failure, or any other 4xx, stops that host for the rest of the UTC day
     (logs/blocked_hosts.log). Never more than one retry, never another agent.
-  - No Wikipedia, Wikimedia, Wikidata, Reddit, Merriam-Webster or Etymonline requests.
+  - A 404 is a miss, not a refusal: the host does not hold that record (Crossref has no entry for a DOI registered
+    elsewhere). It is logged and returned, and the host keeps working (Oct 12: one Crossref 404 had stopped Crossref
+    for the rest of the day and cost 24 verification targets their abstracts in v4).
+  - No Wikipedia, Wikimedia, Wikidata, Reddit, Merriam-Webster, Etymonline or SSRN requests (a redirect to one stops there).
   - Responses with status 200 are cached under raw/, keyed by the request URL, so a stopped run resumes.
 
 Keys: no email address and no key is sent anywhere, with one exception. When OPENALEX_API_KEY is set in the
@@ -27,7 +30,7 @@ import urllib.parse
 import urllib.request
 
 UA = "ripple-research (bensunter.com)"
-FORBIDDEN = ["reddit.com", "wikipedia.org", "wikimedia.org", "wikidata.org", "merriam-webster.com", "etymonline.com"]
+FORBIDDEN = ["reddit.com", "wikipedia.org", "wikimedia.org", "wikidata.org", "merriam-webster.com", "etymonline.com", "ssrn.com"]  # SSRN: its robots.txt bars AI assistants
 OPENALEX_HOST = "api.openalex.org"
 KEY_ENV = "OPENALEX_API_KEY"
 
@@ -185,7 +188,7 @@ def _one(url, accept):
                 f.write(redact(f"{_stamp()}\tretry in {pause} s after {status}\t{url}\t") + "\n")
             time.sleep(pause)
             status, body, loc, retry_after = _attempt(url, accept, host)
-        if status >= 400 or status == 0:
+        if (status >= 400 or status == 0) and status != 404:
             with open(BLOCK, "a") as f:
                 f.write(redact(f"{_stamp()}\t{host}\t{status}\t{url}\t{body[:300].decode('utf-8', 'replace')!r}") + "\n")
     return status, body, loc

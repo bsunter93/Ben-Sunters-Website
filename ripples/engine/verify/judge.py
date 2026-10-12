@@ -24,7 +24,7 @@ import workdir  # noqa: E402
 
 CHUNK = 10
 TEXT_CAP = 40000
-SUFFIX = {"pubmed": "pubmed", "crossref-abstract": "crossref", "landing": "landing", "open-copy": "open"}
+SUFFIX = {"pubmed": "pubmed", "crossref-abstract": "crossref", "landing": "landing", "open-copy": "open", "europepmc": "europepmc", "pmc-fulltext": "pmc", "openalex-abstract": "openalex"}
 FIELDS = ["candidate_id", "same_paper", "quote_found", "better_quote", "claim_supported", "claim_fix", "date_order",
           "design_ok", "grade", "defensible", "note"]
 
