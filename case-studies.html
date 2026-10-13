@@ -16,7 +16,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600&family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600&display=swap">
 <meta property="og:title" content="Case studies">
-<meta property="og:description" content="A cost number that arrived too late to use, a PMO for a deal that hadn't closed, and an opportunity nobody could price. What was in the way, and where I got it wrong.">
+<meta property="og:description" content="A cost number that arrived too late to use, an opportunity nobody could price, and a PMO for a deal that hadn't closed. What I owned, what changed, and where I got it wrong.">
 <meta property="og:url" content="https://bensunter.com/case-studies.html">
 <meta property="og:type" content="article">
 <meta property="og:image" content="https://bensunter.com/og-card.jpg">
@@ -60,6 +60,10 @@
 .st-head .st-kind{display:block;margin:0 0 9px}
 .st-head .st-t{display:block;font-size:clamp(21px,2.6vw,26px);line-height:1.2}
 .st-more>.st-body{display:block}
+/* The four rows from the homepage card, so the deep page answers the same questions
+   before the diagram and the narrative. */
+.st-glance{margin:18px 0 4px;padding:16px 0;border-top:1px solid var(--hair);
+  border-bottom:1px solid var(--hair);max-width:none}
 </style>
 <script>try{var t=localStorage.getItem('theme');if(t==='light'||t==='dark')document.documentElement.setAttribute('data-theme',t)}catch(e){}</script>
 </head>
@@ -76,7 +80,7 @@
 <header class="reading arthead">
   <div class="kicker">Case studies</div>
   <h1>Three problems in more detail</h1>
-  <p class="by">What was in the way, how I worked through it, and where I got it wrong.</p>
+  <p class="by">Planning, revenue and execution, one problem each: what I owned, how it worked, what changed, and where I got it wrong.</p>
 </header>
 
 <section class="cs-wrap">
@@ -84,13 +88,27 @@
 <article class="study study--a" id="study-cost">
     <div class="st-wrap">
       <div class="st-head">
-      <span class="st-kind">Cost &amp; forecasting</span>
+      <span class="st-kind">Planning and resource allocation</span>
       <span class="st-t">Getting cost numbers to people in time to act on them</span>
       
       </div>
       <div class="st-inner">
     <p class="st-meta">Service operations · method</p>
     <p class="st-take">Unit cost used to arrive from finance late in the year, when the only lever left was people. I turned it into a number three functions signed off on and saw every month.</p>
+    <dl class="oc-grid st-glance">
+      <div><dt>Problem</dt><dd>Many initiatives under a multi-million-dollar cost-of-revenue
+        target had been sized on someone's say-so, and unit cost reached operators too late in
+        the year to change anything but headcount.</dd></div>
+      <div><dt>What I owned</dt><dd>The portfolio from the day I took it over: its intake, its
+        operating cadence and the sign-off chain across operations, workforce management and
+        finance.</dd></div>
+      <div><dt>Mechanism</dt><dd>Operators size each initiative in their own metrics, workforce
+        management converts it to FTE and finance converts FTE to unit cost. Weekly execution
+        pulses, with monthly forecast and workforce-model locks.</dd></div>
+      <div><dt>Result</dt><dd>Initiatives with a quantified impact went from 54% to 100% in two
+        weeks. Workforce management could turn each one into FTE, and planning cycles closed 25%
+        faster than the year before.</dd></div>
+    </dl>
     <figure class="st-fig">
         <svg viewBox="0 0 620 410" role="img" aria-label="A number travels from operators to workforce management to finance. Initiatives with quantified impact went from 54 percent to 100 percent. Before, unit cost arrived once late in the year. Now it arrives every month.">
   <text class="d-mono" x="0" y="18">How one number travels</text>
@@ -151,16 +169,111 @@
     </div>
   </article>
 
+<article class="study study--c" id="study-reporting">
+    <div class="st-wrap">
+      <div class="st-head">
+      <span class="st-kind">Revenue and commercial execution</span>
+      <span class="st-t">Giving sellers a number they could pitch</span>
+      
+      </div>
+      <div class="st-inner">
+    <p class="st-meta">Google · publisher partnerships</p>
+    <p class="st-take">Sellers already had the list. They couldn't tell a publisher what it was worth, so it kept losing to pitches that came with a number.</p>
+    <dl class="oc-grid st-glance">
+      <div><dt>Problem</dt><dd>Sellers had the target list but couldn't tell a publisher what the
+        opportunity was worth, so it kept losing to pitches that came with a number.</dd></div>
+      <div><dt>What I owned</dt><dd>pGTM asked me to connect product's evidence to the sellers.
+        I built the data layer, wrote the case study with product and designed the
+        competition.</dd></div>
+      <div><dt>Mechanism</dt><dd>A SQL and Looker layer joining pipeline and CRM data to product
+        adoption, a measured dollar figure per publisher from Impact Experiments in Ad Manager 360,
+        and a Q3 sales
+        competition with a live leaderboard.</dd></div>
+      <div><dt>Result</dt><dd>8-figure incremental revenue against target. pGTM adopted the
+        approach globally, and EMEA and APAC were running their own versions within days.</dd></div>
+    </dl>
+    <figure class="st-fig">
+        <svg viewBox="0 0 620 352" role="img" aria-label="A measured dollar figure per publisher was put to three uses: the internal performance view, the client conversation, and a live leaderboard">
+  <text class="d-mono" x="0" y="18">The constraint</text>
+  <text class="d-mut" x="0" y="42">Sellers already had the list.</text>
+  <text class="d-lab" x="0" y="64" fill="var(--warm)">They couldn't price it.</text>
+  <rect x="0" y="88" width="300" height="100" rx="3" fill="var(--accent)" opacity=".12"/>
+  <rect x="0" y="88" width="4" height="100" rx="2" fill="var(--accent)"/>
+  <text class="d-num" x="20" y="126">A measured $ figure</text>
+  <text class="d-mut" x="20" y="150">per publisher, from Impact Experiments</text>
+  <text class="d-mut" x="20" y="170">in Ad Manager 360.</text>
+  <path class="d-acc" d="M300 138 C340 138 340 72 372 72" opacity=".55"/><rect x="372" y="46" width="248" height="54" rx="3" fill="var(--accent)" opacity=".08"/><text class="d-lab" x="388" y="70">The internal performance view</text><text class="d-mut" x="388" y="88">sellers could book credit for it</text><path class="d-acc" d="M300 138 C340 138 340 146 372 146" opacity=".55"/><rect x="372" y="120" width="248" height="54" rx="3" fill="var(--accent)" opacity=".08"/><text class="d-lab" x="388" y="144">The client conversation</text><text class="d-mut" x="388" y="162">a figure a publisher would accept</text><path class="d-acc" d="M300 138 C340 138 340 220 372 220" opacity=".55"/><rect x="372" y="194" width="248" height="54" rx="3" fill="var(--accent)" opacity=".08"/><text class="d-lab" x="388" y="218">A live leaderboard</text><text class="d-mut" x="388" y="236">the contest that made it a priority</text>
+  <line x1="0" y1="274" x2="620" y2="274" stroke="var(--line)"/>
+  <text class="d-numw" x="0" y="308">256%</text>
+  <text class="d-mut" x="94" y="308">peak quarter-over-quarter pipeline velocity</text>
+  <text class="d-num" x="0" y="342">8-figure</text>
+  <text class="d-mut" x="94" y="342">incremental revenue growth vs target</text>
+</svg>
+        <figcaption>Before this, sellers were arguing over a figure nobody had produced.</figcaption>
+      </figure>
+    <div class="st-more">
+      <h3 class="st-more-h">How it went, and what I got wrong</h3>
+      <div class="st-body">
+      <p>Sellers had the list. They couldn't tell a
+         publisher what the opportunity was worth, so it kept losing to pitches that came
+         with a number attached.</p>
+      <h3>Getting a measured number</h3>
+      <p>Impact Experiments, the incrementality framework inside Ad Manager 360, gave us a
+         measured figure for each publisher. Publishers will argue with a projection. They
+         won't argue with their own incrementality result.</p>
+      <h3>Connecting the evidence to the people selling</h3>
+      <p>The measurement sat with product and pGTM. The publisher relationships sat with
+         sales. Neither group was going to build the other's artifact, so pGTM asked me to
+         do it. I ran the publisher meetings, took what came out of them back to
+         product, and built the case study
+         jointly with them, so it carried product's evidence in language a seller could put
+         straight into a pitch. Sales didn't have to translate it anymore, and started opening
+         conversations they'd been skipping.</p>
+      <h3>Putting the number to work</h3>
+      <p>It went into the internal performance view, so sellers could book credit for the
+         work, and into the client conversation as a figure a publisher would accept. I also
+         built the custom CRM and product views that didn't exist yet, and used them for a
+         leaderboard that turned pitching it into a contest.</p>
+      <p>I timed the launch to the week the case study cleared legal and client review, so
+         sellers got the proof they had been asking for and a reason to use it in the same
+         week. That opportunity hit a peak of 256% quarter-over-quarter pipeline velocity.</p>
+      <h3>What I got wrong</h3>
+      <p>I pointed the queries at AMS, the region I managed, because that was the problem
+         in front of me. Within days of release, EMEA and APAC asked for their own
+         versions. Repointing a query from one region to global is a small change and I
+         made it quickly. I hadn't planned for validation. I had no data access
+         outside my own region, and for data this sensitive the access review is long, so
+         two regions ran on output I couldn't check until it cleared. It held up, but I
+         couldn't confirm that at the time.</p>
+      </div>
+    </div>
+      </div>
+    </div>
+  </article>
+
 <article class="study study--b" id="study-merger">
     <div class="st-wrap">
       <div class="st-head">
-      <span class="st-kind">Program governance</span>
+      <span class="st-kind">Large-scale execution</span>
       <span class="st-t">Building a PMO for a deal that hadn't closed yet</span>
       
       </div>
       <div class="st-inner">
     <p class="st-meta">Accenture · $26.5B telecom merger · 2018 – 2020</p>
     <p class="st-take">Several hundred people kept building through months of regulatory hold, on a deal that might not have survived review at all.</p>
+    <dl class="oc-grid st-glance">
+      <div><dt>Problem</dt><dd>More than a dozen vendor teams each tracked milestones their own
+        way. Nobody could see real status without asking each team, and launch deployments kept
+        missing their dates.</dd></div>
+      <div><dt>What I owned</dt><dd>Governance for 24 workstreams under 16 VPs, none of whom
+        reported to me, and the integrated plan for 60+ projects.</dd></div>
+      <div><dt>Mechanism</dt><dd>A near real-time Tableau view of every code drop by release,
+        initiative and team, with acceptance gates that needed sign-off from each team a drop
+        affected. The reports went to the CIO.</dd></div>
+      <div><dt>Result</dt><dd>On-time deployments went from 74% to over 95% in under three
+        months. The architecture review process I designed re-checked 52 projects after a
+        months-long regulatory hold and avoided an estimated $2M of test remediation.</dd></div>
+    </dl>
     <figure class="st-fig">
         <svg viewBox="0 0 620 300" role="img" aria-label="Designs went as far as the law allowed, sat through months of regulatory hold, then passed an architecture review that caught drift before testing did">
   <text class="d-mono" x="0" y="18">What the deal did to the work</text>
@@ -251,75 +364,6 @@
          talked to anything else. So I spent the time meeting each team one at a time and
          building a translation layer from whatever they'd already committed to. If I'd set
          the format before the teams built their own, none of that would have been needed.</p>
-      </div>
-    </div>
-      </div>
-    </div>
-  </article>
-
-<article class="study study--c" id="study-reporting">
-    <div class="st-wrap">
-      <div class="st-head">
-      <span class="st-kind">Go to market</span>
-      <span class="st-t">Giving sellers a number they could pitch</span>
-      
-      </div>
-      <div class="st-inner">
-    <p class="st-meta">Google · publisher partnerships</p>
-    <p class="st-take">Sellers already had the list. They couldn't tell a publisher what it was worth, so it kept losing to pitches that came with a number.</p>
-    <figure class="st-fig">
-        <svg viewBox="0 0 620 352" role="img" aria-label="A measured dollar figure per publisher was put to three uses: the internal performance view, the client conversation, and a live leaderboard">
-  <text class="d-mono" x="0" y="18">The constraint</text>
-  <text class="d-mut" x="0" y="42">Sellers already had the list.</text>
-  <text class="d-lab" x="0" y="64" fill="var(--warm)">They couldn't price it.</text>
-  <rect x="0" y="88" width="300" height="100" rx="3" fill="var(--accent)" opacity=".12"/>
-  <rect x="0" y="88" width="4" height="100" rx="2" fill="var(--accent)"/>
-  <text class="d-num" x="20" y="126">A measured $ figure</text>
-  <text class="d-mut" x="20" y="150">per publisher, from Impact Experiments</text>
-  <text class="d-mut" x="20" y="170">in Ad Manager 360.</text>
-  <path class="d-acc" d="M300 138 C340 138 340 72 372 72" opacity=".55"/><rect x="372" y="46" width="248" height="54" rx="3" fill="var(--accent)" opacity=".08"/><text class="d-lab" x="388" y="70">The internal performance view</text><text class="d-mut" x="388" y="88">sellers could book credit for it</text><path class="d-acc" d="M300 138 C340 138 340 146 372 146" opacity=".55"/><rect x="372" y="120" width="248" height="54" rx="3" fill="var(--accent)" opacity=".08"/><text class="d-lab" x="388" y="144">The client conversation</text><text class="d-mut" x="388" y="162">a figure a publisher would accept</text><path class="d-acc" d="M300 138 C340 138 340 220 372 220" opacity=".55"/><rect x="372" y="194" width="248" height="54" rx="3" fill="var(--accent)" opacity=".08"/><text class="d-lab" x="388" y="218">A live leaderboard</text><text class="d-mut" x="388" y="236">the contest that made it a priority</text>
-  <line x1="0" y1="274" x2="620" y2="274" stroke="var(--line)"/>
-  <text class="d-numw" x="0" y="308">256%</text>
-  <text class="d-mut" x="94" y="308">peak quarter-over-quarter pipeline velocity</text>
-  <text class="d-num" x="0" y="342">8-figure</text>
-  <text class="d-mut" x="94" y="342">incremental revenue growth vs target</text>
-</svg>
-        <figcaption>Before this, sellers were arguing over a figure nobody had produced.</figcaption>
-      </figure>
-    <div class="st-more">
-      <h3 class="st-more-h">How it went, and what I got wrong</h3>
-      <div class="st-body">
-      <p>Sellers had the list. They couldn't tell a
-         publisher what the opportunity was worth, so it kept losing to pitches that came
-         with a number attached.</p>
-      <h3>Getting a measured number</h3>
-      <p>Impact Experiments, the incrementality framework inside Ad Manager 360, gave us a
-         measured figure for each publisher. Publishers will argue with a projection. They
-         won't argue with their own incrementality result.</p>
-      <h3>Connecting the evidence to the people selling</h3>
-      <p>The measurement sat with product and pGTM. The publisher relationships sat with
-         sales. Neither group was going to build the other's artifact, so pGTM asked me to
-         do it. I ran the publisher meetings, took what came out of them back to
-         product, and built the case study
-         jointly with them, so it carried product's evidence in language a seller could put
-         straight into a pitch. Sales didn't have to translate it anymore, and started opening
-         conversations they'd been skipping.</p>
-      <h3>Putting the number to work</h3>
-      <p>It went into the internal performance view, so sellers could book credit for the
-         work, and into the client conversation as a figure a publisher would accept. I also
-         built the custom CRM and product views that didn't exist yet, and used them for a
-         leaderboard that turned pitching it into a contest.</p>
-      <p>I timed the launch to the week the case study cleared legal and client review, so
-         sellers got the proof they had been asking for and a reason to use it in the same
-         week. That opportunity hit a peak of 256% quarter-over-quarter pipeline velocity.</p>
-      <h3>What I got wrong</h3>
-      <p>I pointed the queries at AMS, the region I managed, because that was the problem
-         in front of me. Within days of release, EMEA and APAC asked for their own
-         versions. Repointing a query from one region to global is a small change and I
-         made it quickly. I hadn't planned for validation. I had no data access
-         outside my own region, and for data this sensitive the access review is long, so
-         two regions ran on output I couldn't check until it cleared. It held up, but I
-         couldn't confirm that at the time.</p>
       </div>
     </div>
       </div>
