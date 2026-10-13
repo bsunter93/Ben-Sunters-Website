@@ -77,6 +77,9 @@ h1,h2,h3{color:var(--ink);text-wrap:balance;margin:0}
 section{padding:var(--gap) 0;border-top:1px solid var(--hair)}
 .tinted{background:var(--tint);border-top:1px solid var(--line)}
 section:first-of-type{border-top:0}
+/* The hero buttons and the nav jump to sections; without this the 61px masthead covered
+   each section's eyebrow on arrival. */
+section[id]{scroll-margin-top:60px}
 h2{font:600 clamp(26px,3.4vw,34px)/1.15 var(--display);letter-spacing:-.015em;margin-bottom:10px}
 .arc{list-style:none;display:grid;grid-template-columns:repeat(auto-fit,minmax(186px,1fr));
   gap:0;margin:24px 0 0;padding:0;border-top:1px solid rgba(255,255,255,.16)}
@@ -595,10 +598,69 @@ footer{padding:26px 0 44px;border-top:1px solid var(--hair);
 .jd-body{padding-top:4px}
 @media (prefers-reduced-motion:reduce){.jo-chev,.job-open{transition:none}}
 
-/* ── proof strip in the hero ───────────────────────────────────────────── */
-.proof{list-style:none;margin:18px 0 0;padding:14px 0 0;border-top:1px solid rgba(255,255,255,.16);display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px 28px;max-width:560px}
-.proof b{display:block;font:600 24px/1.05 var(--display);color:#fff;letter-spacing:-.01em}
-.proof span{display:block;margin-top:5px;font:400 12.5px/1.45 var(--sans);color:var(--on-deep-mut)}
+/* ── hero positioning ────────────────────────────────────────────────────
+   The h1 is a hiring category now, not a sentence, so it runs smaller than the old
+   one: at 53px "Senior Business Operations & Strategic Execution" broke onto three
+   lines beside the portrait. The figures left the hero for #proof, which is what
+   paid for the target-roles line without losing the fold. */
+.hero h1{font-size:clamp(32px,4.6vw,46px);margin-bottom:18px}
+.hero .hero-lead{font-size:clamp(18px,1.9vw,20.5px);line-height:1.45;color:#fff;max-width:46ch}
+.hero p{text-wrap:pretty}
+@media (max-width:560px){.hero p{font-size:16.5px}.hero .hero-lead{font-size:18px}}
+.hero .targets{display:flex;flex-wrap:wrap;align-items:baseline;gap:4px 0;margin:20px 0 0;
+  font:600 15.5px/1.5 var(--sans);color:#fff;max-width:none}
+.targets span{flex:none;margin-right:12px;padding:3px 9px;border-radius:999px;
+  font:600 12px/1.3 var(--sans);color:#26180A;background:var(--warm-bright)}
+.targets i{font-style:normal;color:var(--on-deep-mut);margin:0 9px}
+
+/* ── operating scope: one line under the band ───────────────────────────── */
+/* Inline rather than flex: as a flex row the list wrapped as one block under the label
+   at 1024. Inline items flow beside it, and nowrap keeps each item whole. */
+.opscope{padding-top:14px;padding-bottom:14px;border-bottom:1px solid var(--hair);
+  font:400 14px/1.75 var(--sans);color:var(--body)}
+.opscope-l{margin-right:14px;font-weight:600;color:var(--accent)}
+.opscope ul,.opscope li{display:inline;margin:0;padding:0}
+.opscope li{white-space:nowrap}
+/* The dot trails each item instead of leading the next, so a wrapped line never
+   opens on a separator. */
+.opscope li:not(:last-child):after{content:"\00B7";margin:0 9px;color:var(--muted)}
+
+/* ── proof at a glance ──────────────────────────────────────────────────
+   Each figure carries what it counts and where it was measured, so the number
+   answers its own follow-up question instead of inviting one. */
+.proofs{list-style:none;margin:22px 0 0;padding:0;display:grid;
+  grid-template-columns:repeat(3,minmax(0,1fr));gap:1px;background:var(--line);
+  border:1px solid var(--line);border-radius:2px}
+/* Subgrid, so the label, figure, claim and caption each share a row across all three
+   and the caption rules line up even when one claim runs a line longer. */
+.proofs li{display:grid;grid-row:span 4;grid-template-rows:subgrid;row-gap:0;
+  background:var(--surface);padding:18px 20px 20px;border-top:3px solid var(--co)}
+.pf-k{font:500 13px/1.3 var(--sans);color:var(--muted)}
+.pf-n{margin-top:12px;font:600 clamp(28px,3.2vw,34px)/1 var(--display);color:var(--co);
+  letter-spacing:-.015em}
+.pf-what{margin:9px 0 12px;font:500 15px/1.5 var(--sans);color:var(--ink)}
+.pf-how{padding-top:12px;border-top:1px solid var(--hair);
+  font:400 13.5px/1.55 var(--sans);color:var(--muted)}
+@media (max-width:760px){.proofs{grid-template-columns:1fr}}
+
+/* ── operating case studies on the homepage ─────────────────────────────
+   Four labelled rows per study, because a hiring manager has to tell what was owned
+   from what was supported. Full width rather than three narrow columns, which put
+   ~5 words on a line and ran each card past 600px. */
+.ocs{display:flex;flex-direction:column;gap:18px}
+.oc{display:grid;grid-template-columns:240px minmax(0,1fr);gap:18px 32px;
+  background:var(--surface);border:1px solid var(--line);border-top:3px solid var(--co);
+  border-radius:2px;padding:22px 24px 24px}
+.oc-head{display:flex;flex-direction:column;align-items:flex-start}
+.oc-kind{font:500 13px/1.3 var(--sans);color:var(--muted)}
+.oc h3{margin:8px 0 8px;font:600 20px/1.25 var(--display);letter-spacing:-.01em}
+.oc-meta{font:500 13px/1.4 var(--sans);color:var(--co)}
+.oc-go{margin-top:14px;font:500 14px/1 var(--sans)}
+.oc-grid{margin:0;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px 28px}
+.oc-grid dt{font:600 13px/1.3 var(--sans);color:var(--ink);margin-bottom:5px}
+.oc-grid dd{margin:0;font-size:14.5px;line-height:1.58;color:var(--body)}
+@media (max-width:860px){.oc{grid-template-columns:1fr}}
+@media (max-width:560px){.oc{padding:18px 18px 20px}.oc-grid{grid-template-columns:1fr}}
 
 /* ── what I bring ──────────────────────────────────────────────────────── */
 .bring{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:1px;background:var(--line);border:1px solid var(--line);border-radius:2px;margin-top:22px}
@@ -760,7 +822,7 @@ footer{padding:26px 0 44px;border-top:1px solid var(--hair);
    other: four proof points, three impact numbers per role. Proportional digits make
    those columns ragged. Tabular digits line them up, which is the difference between
    a number and a table of numbers. */
-.proof b,.jobfig b,.bring-item .n,.cs-fig,.arc span{font-variant-numeric:tabular-nums lining-nums}
+.pf-n,.jobfig b,.bring-item .n,.cs-fig,.arc span{font-variant-numeric:tabular-nums lining-nums}
 
 /* ── project page: plain-language pair, and the honest reading ───────────────
    The Career Ops page used to open with philosophy, run a terminal session, and
