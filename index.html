@@ -747,8 +747,6 @@ if (vids.length && 'IntersectionObserver' in window) {
 
 <!-- Firebase Analytics (GA4). The apiKey is a public project identifier. -->
 <script type="module">
-  import { initializeApp } from "https://www.gstatic.com/firebasejs/12.12.0/firebase-app.js";
-  import { getAnalytics, logEvent } from "https://www.gstatic.com/firebasejs/12.12.0/firebase-analytics.js";
   const firebaseConfig = {
     apiKey: "AIzaSyAzcJkc4l8ExO91r8yl1UdT15_9oR6e-JU",
     authDomain: "website-7a1e6.firebaseapp.com",
@@ -758,7 +756,24 @@ if (vids.length && 'IntersectionObserver' in window) {
     appId: "1:243930387281:web:5585cda4a723f87477f970",
     measurementId: "G-5DBXQV4RT2"
   };
+  // ?notrack=1 keeps this browser out of the counts on every page of the site (Ripple reads the same key); ?notrack=0 undoes it.
+  let notrack = false;
   try {
+    const q = new URLSearchParams(location.search).get("notrack");
+    if (q === "1") localStorage.setItem("bs-notrack", "1");
+    if (q === "0") localStorage.removeItem("bs-notrack");
+    notrack = localStorage.getItem("bs-notrack") === "1";
+    if (q === "1" || q === "0") {
+      const n = document.createElement("div");
+      n.textContent = notrack ? "This browser is no longer counted in analytics." : "This browser is counted in analytics again.";
+      n.style.cssText = "position:fixed;left:50%;bottom:24px;transform:translateX(-50%);background:#1d1d1b;color:#fff;font:15px/1.4 system-ui,sans-serif;padding:10px 16px;border-radius:8px;z-index:9999";
+      document.body.appendChild(n);
+      setTimeout(() => n.remove(), 5000);
+    }
+  } catch (_) {}
+  if (!notrack) try {
+    const { initializeApp } = await import("https://www.gstatic.com/firebasejs/12.12.0/firebase-app.js");
+    const { getAnalytics, logEvent } = await import("https://www.gstatic.com/firebasejs/12.12.0/firebase-analytics.js");
     const an = getAnalytics(initializeApp(firebaseConfig));
     // Count clicks through to the tools from this page, so the tools themselves stay tracker-free.
     document.addEventListener("click", (e) => {
