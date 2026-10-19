@@ -2,8 +2,8 @@
  "protocol": "ripples/docs/predictions_v1.md",
  "registered": "2026-10-05T07:15:00Z",
  "registration_commit": "04b2ab1",
- "run": "2026-10-12",
- "checker_sha": "4a8ce6c",
+ "run": "2026-10-19",
+ "checker_sha": "7743352",
  "stopped": null,
  "scorer_notes": [
   "A wiki_level window is pending until the API has data through the window's end (unpublished days would otherwise read as zeros).",
@@ -19,8 +19,90 @@
    "claim": "Attention to Capital punishment in Tennessee stays above chance in Oct 6 to 15.",
    "due": "2026-10-18",
    "confidence": 0.6,
-   "status": "pending",
-   "reason": "due 2026-10-18"
+   "status": "hit",
+   "verdict": "hit",
+   "scored_on": "2026-10-19",
+   "result": {
+    "moved": true,
+    "order_ok": true,
+    "strong": true,
+    "flags": [],
+    "ratio": 12.4,
+    "window_mean": 806.3,
+    "baseline": 65.0,
+    "p": 0.004,
+    "n_placebo": 270,
+    "seasonal_ratios": [
+     1.96,
+     1.07,
+     0.78
+    ],
+    "seasonal_ok": true,
+    "material": true,
+    "onset": "2026-09-30",
+    "window": [
+     "2026-10-06",
+     "2026-10-15"
+    ],
+    "weekly": [
+     [
+      "2026-07-08",
+      330
+     ],
+     [
+      "2026-07-15",
+      345
+     ],
+     [
+      "2026-07-22",
+      351
+     ],
+     [
+      "2026-07-29",
+      496
+     ],
+     [
+      "2026-08-05",
+      461
+     ],
+     [
+      "2026-08-12",
+      1189
+     ],
+     [
+      "2026-08-19",
+      593
+     ],
+     [
+      "2026-08-26",
+      477
+     ],
+     [
+      "2026-09-02",
+      702
+     ],
+     [
+      "2026-09-09",
+      724
+     ],
+     [
+      "2026-09-16",
+      836
+     ],
+     [
+      "2026-09-23",
+      4785
+     ],
+     [
+      "2026-09-30",
+      35159
+     ],
+     [
+      "2026-10-07",
+      6477
+     ]
+    ]
+   }
   },
   {
    "id": "A2",
@@ -29,8 +111,90 @@
    "claim": "Attention to Lethal injection stays above chance in Oct 6 to 15.",
    "due": "2026-10-18",
    "confidence": 0.5,
-   "status": "pending",
-   "reason": "due 2026-10-18"
+   "status": "hit",
+   "verdict": "hit",
+   "scored_on": "2026-10-19",
+   "result": {
+    "moved": true,
+    "order_ok": true,
+    "strong": false,
+    "flags": [],
+    "ratio": 5.21,
+    "window_mean": 6221.9,
+    "baseline": 1195.0,
+    "p": 0.004,
+    "n_placebo": 270,
+    "seasonal_ratios": [
+     1.42,
+     1.11,
+     0.94
+    ],
+    "seasonal_ok": true,
+    "material": true,
+    "onset": "2026-10-01",
+    "window": [
+     "2026-10-06",
+     "2026-10-15"
+    ],
+    "weekly": [
+     [
+      "2026-07-08",
+      7138
+     ],
+     [
+      "2026-07-15",
+      6724
+     ],
+     [
+      "2026-07-22",
+      7660
+     ],
+     [
+      "2026-07-29",
+      9166
+     ],
+     [
+      "2026-08-05",
+      8025
+     ],
+     [
+      "2026-08-12",
+      11233
+     ],
+     [
+      "2026-08-19",
+      9531
+     ],
+     [
+      "2026-08-26",
+      8099
+     ],
+     [
+      "2026-09-02",
+      9474
+     ],
+     [
+      "2026-09-09",
+      9291
+     ],
+     [
+      "2026-09-16",
+      12934
+     ],
+     [
+      "2026-09-23",
+      20501
+     ],
+     [
+      "2026-09-30",
+      182968
+     ],
+     [
+      "2026-10-07",
+      49504
+     ]
+    ]
+   }
   },
   {
    "id": "A3",
@@ -39,8 +203,90 @@
    "claim": "Attention to nitrogen execution (the article Inert gas asphyxiation) does NOT rise beyond chance in Oct 6 to 15.",
    "due": "2026-10-18",
    "confidence": 0.65,
-   "status": "pending",
-   "reason": "due 2026-10-18"
+   "status": "miss",
+   "verdict": "miss",
+   "scored_on": "2026-10-19",
+   "result": {
+    "moved": true,
+    "order_ok": true,
+    "strong": false,
+    "flags": [],
+    "ratio": 3.91,
+    "window_mean": 1580.4,
+    "baseline": 404.0,
+    "p": 0.018,
+    "n_placebo": 270,
+    "seasonal_ratios": [
+     1.18,
+     1.21,
+     0.96
+    ],
+    "seasonal_ok": true,
+    "material": true,
+    "onset": "2026-10-01",
+    "window": [
+     "2026-10-06",
+     "2026-10-15"
+    ],
+    "weekly": [
+     [
+      "2026-07-08",
+      2533
+     ],
+     [
+      "2026-07-15",
+      2420
+     ],
+     [
+      "2026-07-22",
+      2712
+     ],
+     [
+      "2026-07-29",
+      2953
+     ],
+     [
+      "2026-08-05",
+      2700
+     ],
+     [
+      "2026-08-12",
+      3171
+     ],
+     [
+      "2026-08-19",
+      2899
+     ],
+     [
+      "2026-08-26",
+      2811
+     ],
+     [
+      "2026-09-02",
+      3235
+     ],
+     [
+      "2026-09-09",
+      2933
+     ],
+     [
+      "2026-09-16",
+      6897
+     ],
+     [
+      "2026-09-23",
+      4748
+     ],
+     [
+      "2026-09-30",
+      25495
+     ],
+     [
+      "2026-10-07",
+      12467
+     ]
+    ]
+   }
   },
   {
    "id": "A4",
@@ -89,8 +335,90 @@
    "claim": "Attention to Assisted suicide in the United Kingdom does NOT rise beyond chance in Oct 6 to 15.",
    "due": "2026-10-18",
    "confidence": 0.7,
-   "status": "pending",
-   "reason": "due 2026-10-18"
+   "status": "hit",
+   "verdict": "hit",
+   "scored_on": "2026-10-19",
+   "result": {
+    "moved": false,
+    "order_ok": false,
+    "strong": false,
+    "flags": [],
+    "ratio": 1.15,
+    "window_mean": 29.9,
+    "baseline": 26.0,
+    "p": 0.404,
+    "n_placebo": 187,
+    "seasonal_ratios": [
+     1.13,
+     1.69,
+     1.25
+    ],
+    "seasonal_ok": false,
+    "material": false,
+    "onset": "2026-09-12",
+    "window": [
+     "2026-10-06",
+     "2026-10-15"
+    ],
+    "weekly": [
+     [
+      "2026-07-08",
+      211
+     ],
+     [
+      "2026-07-15",
+      267
+     ],
+     [
+      "2026-07-22",
+      198
+     ],
+     [
+      "2026-07-29",
+      179
+     ],
+     [
+      "2026-08-05",
+      148
+     ],
+     [
+      "2026-08-12",
+      153
+     ],
+     [
+      "2026-08-19",
+      169
+     ],
+     [
+      "2026-08-26",
+      153
+     ],
+     [
+      "2026-09-02",
+      164
+     ],
+     [
+      "2026-09-09",
+      637
+     ],
+     [
+      "2026-09-16",
+      214
+     ],
+     [
+      "2026-09-23",
+      197
+     ],
+     [
+      "2026-09-30",
+      230
+     ],
+     [
+      "2026-10-07",
+      200
+     ]
+    ]
+   }
   },
   {
    "id": "C1",
@@ -209,8 +537,94 @@
    "claim": "Attention to Industrial Society and Its Future (the manifesto) stays above chance in Oct 6 to 15.",
    "due": "2026-10-18",
    "confidence": 0.65,
-   "status": "pending",
-   "reason": "due 2026-10-18"
+   "status": "miss",
+   "verdict": "miss",
+   "scored_on": "2026-10-19",
+   "result": {
+    "moved": false,
+    "order_ok": true,
+    "strong": false,
+    "flags": [],
+    "ratio": 4.76,
+    "window_mean": 4291.1,
+    "baseline": 901.0,
+    "p": 0.085,
+    "n_placebo": 270,
+    "seasonal_ratios": [
+     0.94,
+     0.98,
+     1.19
+    ],
+    "seasonal_ok": true,
+    "material": true,
+    "onset": "2026-09-26",
+    "window": [
+     "2026-10-06",
+     "2026-10-15"
+    ],
+    "weekly": [
+     [
+      "2026-07-03",
+      5552
+     ],
+     [
+      "2026-07-10",
+      5827
+     ],
+     [
+      "2026-07-17",
+      5638
+     ],
+     [
+      "2026-07-24",
+      6909
+     ],
+     [
+      "2026-07-31",
+      7584
+     ],
+     [
+      "2026-08-07",
+      6426
+     ],
+     [
+      "2026-08-14",
+      7750
+     ],
+     [
+      "2026-08-21",
+      10512
+     ],
+     [
+      "2026-08-28",
+      16773
+     ],
+     [
+      "2026-09-04",
+      9059
+     ],
+     [
+      "2026-09-11",
+      10305
+     ],
+     [
+      "2026-09-18",
+      9828
+     ],
+     [
+      "2026-09-25",
+      96855
+     ],
+     [
+      "2026-10-02",
+      50180
+     ],
+     [
+      "2026-10-09",
+      28293
+     ]
+    ]
+   }
   },
   {
    "id": "E2",
@@ -219,8 +633,94 @@
    "claim": "Attention to Anarcho-primitivism does NOT rise beyond chance in Oct 6 to 15.",
    "due": "2026-10-18",
    "confidence": 0.6,
-   "status": "pending",
-   "reason": "due 2026-10-18"
+   "status": "hit",
+   "verdict": "hit",
+   "scored_on": "2026-10-19",
+   "result": {
+    "moved": false,
+    "order_ok": true,
+    "strong": false,
+    "flags": [],
+    "ratio": 1.19,
+    "window_mean": 238.4,
+    "baseline": 199.5,
+    "p": 0.14,
+    "n_placebo": 270,
+    "seasonal_ratios": [
+     1.1,
+     1.06,
+     0.9
+    ],
+    "seasonal_ok": true,
+    "material": false,
+    "onset": null,
+    "window": [
+     "2026-10-06",
+     "2026-10-15"
+    ],
+    "weekly": [
+     [
+      "2026-07-03",
+      1277
+     ],
+     [
+      "2026-07-10",
+      1379
+     ],
+     [
+      "2026-07-17",
+      1378
+     ],
+     [
+      "2026-07-24",
+      1315
+     ],
+     [
+      "2026-07-31",
+      1395
+     ],
+     [
+      "2026-08-07",
+      1435
+     ],
+     [
+      "2026-08-14",
+      1376
+     ],
+     [
+      "2026-08-21",
+      1472
+     ],
+     [
+      "2026-08-28",
+      1490
+     ],
+     [
+      "2026-09-04",
+      1384
+     ],
+     [
+      "2026-09-11",
+      1457
+     ],
+     [
+      "2026-09-18",
+      1465
+     ],
+     [
+      "2026-09-25",
+      2337
+     ],
+     [
+      "2026-10-02",
+      2090
+     ],
+     [
+      "2026-10-09",
+      1593
+     ]
+    ]
+   }
   },
   {
    "id": "E3",
@@ -229,8 +729,94 @@
    "claim": "Attention to Henry Murray (the Harvard psychologist whose experiments Kaczynski underwent) stays above chance in Oct 6 to 15.",
    "due": "2026-10-18",
    "confidence": 0.6,
-   "status": "pending",
-   "reason": "due 2026-10-18"
+   "status": "hit",
+   "verdict": "hit",
+   "scored_on": "2026-10-19",
+   "result": {
+    "moved": true,
+    "order_ok": true,
+    "strong": true,
+    "flags": [],
+    "ratio": 34.61,
+    "window_mean": 7649.2,
+    "baseline": 221.0,
+    "p": 0.004,
+    "n_placebo": 270,
+    "seasonal_ratios": [
+     0.83,
+     0.99,
+     0.78
+    ],
+    "seasonal_ok": true,
+    "material": true,
+    "onset": "2026-09-26",
+    "window": [
+     "2026-10-06",
+     "2026-10-15"
+    ],
+    "weekly": [
+     [
+      "2026-07-03",
+      1401
+     ],
+     [
+      "2026-07-10",
+      1268
+     ],
+     [
+      "2026-07-17",
+      1748
+     ],
+     [
+      "2026-07-24",
+      3184
+     ],
+     [
+      "2026-07-31",
+      2219
+     ],
+     [
+      "2026-08-07",
+      1574
+     ],
+     [
+      "2026-08-14",
+      1630
+     ],
+     [
+      "2026-08-21",
+      6645
+     ],
+     [
+      "2026-08-28",
+      11831
+     ],
+     [
+      "2026-09-04",
+      3553
+     ],
+     [
+      "2026-09-11",
+      3877
+     ],
+     [
+      "2026-09-18",
+      4452
+     ],
+     [
+      "2026-09-25",
+      231298
+     ],
+     [
+      "2026-10-02",
+      102541
+     ],
+     [
+      "2026-10-09",
+      51504
+     ]
+    ]
+   }
   },
   {
    "id": "F1",
@@ -239,8 +825,90 @@
    "claim": "Attention to Boeing 737 MAX does NOT rise beyond chance in Oct 6 to 15.",
    "due": "2026-10-18",
    "confidence": 0.7,
-   "status": "pending",
-   "reason": "due 2026-10-18"
+   "status": "hit",
+   "verdict": "hit",
+   "scored_on": "2026-10-19",
+   "result": {
+    "moved": false,
+    "order_ok": true,
+    "strong": false,
+    "flags": [],
+    "ratio": 0.85,
+    "window_mean": 1859.1,
+    "baseline": 2199.0,
+    "p": 0.834,
+    "n_placebo": 270,
+    "seasonal_ratios": [
+     0.79,
+     0.9,
+     0.91
+    ],
+    "seasonal_ok": false,
+    "material": false,
+    "onset": null,
+    "window": [
+     "2026-10-06",
+     "2026-10-15"
+    ],
+    "weekly": [
+     [
+      "2026-07-08",
+      16408
+     ],
+     [
+      "2026-07-15",
+      15512
+     ],
+     [
+      "2026-07-22",
+      15928
+     ],
+     [
+      "2026-07-29",
+      27957
+     ],
+     [
+      "2026-08-05",
+      20869
+     ],
+     [
+      "2026-08-12",
+      16679
+     ],
+     [
+      "2026-08-19",
+      27982
+     ],
+     [
+      "2026-08-26",
+      19127
+     ],
+     [
+      "2026-09-02",
+      15366
+     ],
+     [
+      "2026-09-09",
+      14812
+     ],
+     [
+      "2026-09-16",
+      14660
+     ],
+     [
+      "2026-09-23",
+      17519
+     ],
+     [
+      "2026-09-30",
+      19465
+     ],
+     [
+      "2026-10-07",
+      12841
+     ]
+    ]
+   }
   },
   {
    "id": "F2",
@@ -249,8 +917,90 @@
    "claim": "Attention to Germanwings Flight 9525 (the sibling pilot-caused crash) is back within chance in Oct 6 to 15.",
    "due": "2026-10-18",
    "confidence": 0.55,
-   "status": "pending",
-   "reason": "due 2026-10-18"
+   "status": "hit",
+   "verdict": "hit",
+   "scored_on": "2026-10-19",
+   "result": {
+    "moved": false,
+    "order_ok": true,
+    "strong": false,
+    "flags": [],
+    "ratio": 1.27,
+    "window_mean": 1916.7,
+    "baseline": 1509.0,
+    "p": 0.277,
+    "n_placebo": 270,
+    "seasonal_ratios": [
+     0.55,
+     0.7,
+     1.67
+    ],
+    "seasonal_ok": false,
+    "material": false,
+    "onset": "2026-09-30",
+    "window": [
+     "2026-10-06",
+     "2026-10-15"
+    ],
+    "weekly": [
+     [
+      "2026-07-08",
+      14992
+     ],
+     [
+      "2026-07-15",
+      10479
+     ],
+     [
+      "2026-07-22",
+      14316
+     ],
+     [
+      "2026-07-29",
+      13658
+     ],
+     [
+      "2026-08-05",
+      9729
+     ],
+     [
+      "2026-08-12",
+      11903
+     ],
+     [
+      "2026-08-19",
+      11870
+     ],
+     [
+      "2026-08-26",
+      12322
+     ],
+     [
+      "2026-09-02",
+      10132
+     ],
+     [
+      "2026-09-09",
+      18845
+     ],
+     [
+      "2026-09-16",
+      16973
+     ],
+     [
+      "2026-09-23",
+      12063
+     ],
+     [
+      "2026-09-30",
+      67822
+     ],
+     [
+      "2026-10-07",
+      12921
+     ]
+    ]
+   }
   },
   {
    "id": "G1",
@@ -259,8 +1009,90 @@
    "claim": "Attention to Title IX does NOT rise beyond chance in Oct 6 to 15.",
    "due": "2026-10-18",
    "confidence": 0.7,
-   "status": "pending",
-   "reason": "due 2026-10-18"
+   "status": "miss",
+   "verdict": "miss",
+   "scored_on": "2026-10-19",
+   "result": {
+    "moved": true,
+    "order_ok": true,
+    "strong": false,
+    "flags": [],
+    "ratio": 2.66,
+    "window_mean": 1222.4,
+    "baseline": 459.0,
+    "p": 0.015,
+    "n_placebo": 270,
+    "seasonal_ratios": [
+     1.12,
+     0.78,
+     0.92
+    ],
+    "seasonal_ok": true,
+    "material": true,
+    "onset": "2026-09-28",
+    "window": [
+     "2026-10-06",
+     "2026-10-15"
+    ],
+    "weekly": [
+     [
+      "2026-07-08",
+      3661
+     ],
+     [
+      "2026-07-15",
+      2680
+     ],
+     [
+      "2026-07-22",
+      3509
+     ],
+     [
+      "2026-07-29",
+      3503
+     ],
+     [
+      "2026-08-05",
+      4263
+     ],
+     [
+      "2026-08-12",
+      3352
+     ],
+     [
+      "2026-08-19",
+      3293
+     ],
+     [
+      "2026-08-26",
+      3571
+     ],
+     [
+      "2026-09-02",
+      3304
+     ],
+     [
+      "2026-09-09",
+      3482
+     ],
+     [
+      "2026-09-16",
+      4224
+     ],
+     [
+      "2026-09-23",
+      11909
+     ],
+     [
+      "2026-09-30",
+      22550
+     ],
+     [
+      "2026-10-07",
+      8222
+     ]
+    ]
+   }
   },
   {
    "id": "X1",
@@ -335,18 +1167,18 @@
  ],
  "summary": {
   "move": {
-   "hit": 0,
-   "miss": 0,
+   "hit": 3,
+   "miss": 1,
    "bust": 0,
    "void": 0,
-   "pending": 10
+   "pending": 6
   },
   "not move": {
-   "hit": 0,
-   "miss": 0,
+   "hit": 4,
+   "miss": 2,
    "bust": 0,
    "void": 0,
-   "pending": 15
+   "pending": 9
   },
   "decoy": {
    "hit": 0,
@@ -355,7 +1187,7 @@
    "void": 0,
    "pending": 7
   },
-  "brier": null,
-  "scored": 0
+  "brier": 0.245,
+  "scored": 10
  }
 }
