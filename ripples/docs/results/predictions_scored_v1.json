@@ -2,8 +2,8 @@
  "protocol": "ripples/docs/predictions_v1.md",
  "registered": "2026-10-05T07:15:00Z",
  "registration_commit": "04b2ab1",
- "run": "2026-10-19",
- "checker_sha": "7743352",
+ "run": "2026-10-26",
+ "checker_sha": "e211dd6",
  "stopped": null,
  "scorer_notes": [
   "A wiki_level window is pending until the API has data through the window's end (unpublished days would otherwise read as zeros).",
@@ -427,8 +427,94 @@
    "claim": "Attention to John Steinbeck stays above chance in Oct 6 to 21, and above the same dates in each of the three prior years.",
    "due": "2026-10-24",
    "confidence": 0.75,
-   "status": "pending",
-   "reason": "due 2026-10-24"
+   "status": "hit",
+   "verdict": "hit",
+   "scored_on": "2026-10-26",
+   "result": {
+    "moved": true,
+    "order_ok": true,
+    "strong": false,
+    "flags": [],
+    "ratio": 6.59,
+    "window_mean": 19198.1,
+    "baseline": 2911.5,
+    "p": 0.004,
+    "n_placebo": 270,
+    "seasonal_ratios": [
+     1.31,
+     1.16,
+     1.04
+    ],
+    "seasonal_ok": true,
+    "material": true,
+    "onset": "2026-10-02",
+    "window": [
+     "2026-10-06",
+     "2026-10-21"
+    ],
+    "weekly": [
+     [
+      "2026-07-09",
+      20915
+     ],
+     [
+      "2026-07-16",
+      20241
+     ],
+     [
+      "2026-07-23",
+      20112
+     ],
+     [
+      "2026-07-30",
+      21378
+     ],
+     [
+      "2026-08-06",
+      21136
+     ],
+     [
+      "2026-08-13",
+      22601
+     ],
+     [
+      "2026-08-20",
+      24436
+     ],
+     [
+      "2026-08-27",
+      27846
+     ],
+     [
+      "2026-09-03",
+      36293
+     ],
+     [
+      "2026-09-10",
+      26264
+     ],
+     [
+      "2026-09-17",
+      27146
+     ],
+     [
+      "2026-09-24",
+      31399
+     ],
+     [
+      "2026-10-01",
+      206772
+     ],
+     [
+      "2026-10-08",
+      156260
+     ],
+     [
+      "2026-10-15",
+      92839
+     ]
+    ]
+   }
   },
   {
    "id": "C2",
@@ -437,8 +523,94 @@
    "claim": "Attention to the 1955 film East of Eden stays above chance in Oct 6 to 21.",
    "due": "2026-10-24",
    "confidence": 0.6,
-   "status": "pending",
-   "reason": "due 2026-10-24"
+   "status": "hit",
+   "verdict": "hit",
+   "scored_on": "2026-10-26",
+   "result": {
+    "moved": true,
+    "order_ok": true,
+    "strong": true,
+    "flags": [],
+    "ratio": 14.25,
+    "window_mean": 10520.1,
+    "baseline": 738.0,
+    "p": 0.004,
+    "n_placebo": 270,
+    "seasonal_ratios": [
+     1.01,
+     1.0,
+     0.83
+    ],
+    "seasonal_ok": true,
+    "material": true,
+    "onset": "2026-10-02",
+    "window": [
+     "2026-10-06",
+     "2026-10-21"
+    ],
+    "weekly": [
+     [
+      "2026-07-09",
+      5154
+     ],
+     [
+      "2026-07-16",
+      4630
+     ],
+     [
+      "2026-07-23",
+      4998
+     ],
+     [
+      "2026-07-30",
+      4947
+     ],
+     [
+      "2026-08-06",
+      5505
+     ],
+     [
+      "2026-08-13",
+      8117
+     ],
+     [
+      "2026-08-20",
+      7407
+     ],
+     [
+      "2026-08-27",
+      10843
+     ],
+     [
+      "2026-09-03",
+      13783
+     ],
+     [
+      "2026-09-10",
+      7607
+     ],
+     [
+      "2026-09-17",
+      15154
+     ],
+     [
+      "2026-09-24",
+      18466
+     ],
+     [
+      "2026-10-01",
+      150302
+     ],
+     [
+      "2026-10-08",
+      85541
+     ],
+     [
+      "2026-10-15",
+      45484
+     ]
+    ]
+   }
   },
   {
    "id": "C3",
@@ -447,8 +619,94 @@
    "claim": "The article titled Timshel (a 2012 Hell on Wheels episode that shares the novel's key word) does NOT rise beyond chance in Oct 6 to 21.",
    "due": "2026-10-24",
    "confidence": 0.6,
-   "status": "pending",
-   "reason": "due 2026-10-24"
+   "status": "miss",
+   "verdict": "miss",
+   "scored_on": "2026-10-26",
+   "result": {
+    "moved": true,
+    "order_ok": true,
+    "strong": false,
+    "flags": [],
+    "ratio": 4.61,
+    "window_mean": 32.2,
+    "baseline": 7.0,
+    "p": 0.008,
+    "n_placebo": 263,
+    "seasonal_ratios": [
+     0.72,
+     1.34,
+     0.89
+    ],
+    "seasonal_ok": true,
+    "material": true,
+    "onset": "2026-10-06",
+    "window": [
+     "2026-10-06",
+     "2026-10-21"
+    ],
+    "weekly": [
+     [
+      "2026-07-09",
+      50
+     ],
+     [
+      "2026-07-16",
+      57
+     ],
+     [
+      "2026-07-23",
+      69
+     ],
+     [
+      "2026-07-30",
+      65
+     ],
+     [
+      "2026-08-06",
+      57
+     ],
+     [
+      "2026-08-13",
+      45
+     ],
+     [
+      "2026-08-20",
+      53
+     ],
+     [
+      "2026-08-27",
+      49
+     ],
+     [
+      "2026-09-03",
+      47
+     ],
+     [
+      "2026-09-10",
+      48
+     ],
+     [
+      "2026-09-17",
+      57
+     ],
+     [
+      "2026-09-24",
+      78
+     ],
+     [
+      "2026-10-01",
+      237
+     ],
+     [
+      "2026-10-08",
+      258
+     ],
+     [
+      "2026-10-15",
+      188
+     ]
+    ]
+   }
   },
   {
    "id": "C4",
@@ -467,8 +725,94 @@
    "claim": "Attention to The Grapes of Wrath does NOT rise beyond chance in Oct 6 to 21 (after the seasonal check).",
    "due": "2026-10-24",
    "confidence": 0.6,
-   "status": "pending",
-   "reason": "due 2026-10-24"
+   "status": "miss",
+   "verdict": "miss",
+   "scored_on": "2026-10-26",
+   "result": {
+    "moved": true,
+    "order_ok": true,
+    "strong": false,
+    "flags": [],
+    "ratio": 2.38,
+    "window_mean": 4054.3,
+    "baseline": 1701.5,
+    "p": 0.004,
+    "n_placebo": 270,
+    "seasonal_ratios": [
+     1.75,
+     0.91,
+     0.88
+    ],
+    "seasonal_ok": true,
+    "material": true,
+    "onset": "2026-10-02",
+    "window": [
+     "2026-10-06",
+     "2026-10-21"
+    ],
+    "weekly": [
+     [
+      "2026-07-09",
+      11857
+     ],
+     [
+      "2026-07-16",
+      11093
+     ],
+     [
+      "2026-07-23",
+      14224
+     ],
+     [
+      "2026-07-30",
+      12382
+     ],
+     [
+      "2026-08-06",
+      11865
+     ],
+     [
+      "2026-08-13",
+      12242
+     ],
+     [
+      "2026-08-20",
+      13508
+     ],
+     [
+      "2026-08-27",
+      13419
+     ],
+     [
+      "2026-09-03",
+      14082
+     ],
+     [
+      "2026-09-10",
+      12752
+     ],
+     [
+      "2026-09-17",
+      13743
+     ],
+     [
+      "2026-09-24",
+      13044
+     ],
+     [
+      "2026-10-01",
+      40032
+     ],
+     [
+      "2026-10-08",
+      31633
+     ],
+     [
+      "2026-10-15",
+      21850
+     ]
+    ]
+   }
   },
   {
    "id": "C6",
@@ -477,8 +821,94 @@
    "claim": "Attention to Salinas, California does NOT rise beyond chance in Oct 6 to 21.",
    "due": "2026-10-24",
    "confidence": 0.7,
-   "status": "pending",
-   "reason": "due 2026-10-24"
+   "status": "miss",
+   "verdict": "miss",
+   "scored_on": "2026-10-26",
+   "result": {
+    "moved": true,
+    "order_ok": true,
+    "strong": false,
+    "flags": [],
+    "ratio": 6.52,
+    "window_mean": 2802.1,
+    "baseline": 430.0,
+    "p": 0.004,
+    "n_placebo": 270,
+    "seasonal_ratios": [
+     0.93,
+     0.95,
+     0.85
+    ],
+    "seasonal_ok": true,
+    "material": true,
+    "onset": "2026-10-03",
+    "window": [
+     "2026-10-06",
+     "2026-10-21"
+    ],
+    "weekly": [
+     [
+      "2026-07-09",
+      2885
+     ],
+     [
+      "2026-07-16",
+      6310
+     ],
+     [
+      "2026-07-23",
+      3363
+     ],
+     [
+      "2026-07-30",
+      3381
+     ],
+     [
+      "2026-08-06",
+      3748
+     ],
+     [
+      "2026-08-13",
+      3075
+     ],
+     [
+      "2026-08-20",
+      3171
+     ],
+     [
+      "2026-08-27",
+      3201
+     ],
+     [
+      "2026-09-03",
+      3848
+     ],
+     [
+      "2026-09-10",
+      3001
+     ],
+     [
+      "2026-09-17",
+      3078
+     ],
+     [
+      "2026-09-24",
+      3214
+     ],
+     [
+      "2026-10-01",
+      25435
+     ],
+     [
+      "2026-10-08",
+      22772
+     ],
+     [
+      "2026-10-15",
+      13986
+     ]
+    ]
+   }
   },
   {
    "id": "C7",
@@ -527,8 +957,94 @@
    "claim": "Attention to Colleen Hoover stays above chance in Oct 6 to 22, with the rise beginning no earlier than Sep 29.",
    "due": "2026-10-25",
    "confidence": 0.55,
-   "status": "pending",
-   "reason": "due 2026-10-25"
+   "status": "bust",
+   "verdict": "bust",
+   "scored_on": "2026-10-26",
+   "result": {
+    "moved": true,
+    "order_ok": false,
+    "strong": false,
+    "flags": [],
+    "ratio": 3.35,
+    "window_mean": 3900.6,
+    "baseline": 1164.5,
+    "p": 0.015,
+    "n_placebo": 271,
+    "seasonal_ratios": [
+     2.72,
+     0.86,
+     0.68
+    ],
+    "seasonal_ok": true,
+    "material": true,
+    "onset": "2026-09-25",
+    "window": [
+     "2026-10-06",
+     "2026-10-22"
+    ],
+    "weekly": [
+     [
+      "2026-07-10",
+      8853
+     ],
+     [
+      "2026-07-17",
+      8245
+     ],
+     [
+      "2026-07-24",
+      8141
+     ],
+     [
+      "2026-07-31",
+      7376
+     ],
+     [
+      "2026-08-07",
+      23465
+     ],
+     [
+      "2026-08-14",
+      14285
+     ],
+     [
+      "2026-08-21",
+      9498
+     ],
+     [
+      "2026-08-28",
+      9032
+     ],
+     [
+      "2026-09-04",
+      12343
+     ],
+     [
+      "2026-09-11",
+      14115
+     ],
+     [
+      "2026-09-18",
+      19452
+     ],
+     [
+      "2026-09-25",
+      35557
+     ],
+     [
+      "2026-10-02",
+      67653
+     ],
+     [
+      "2026-10-09",
+      29144
+     ],
+     [
+      "2026-10-16",
+      17263
+     ]
+    ]
+   }
   },
   {
    "id": "E1",
@@ -1101,8 +1617,98 @@
    "claim": "Attention to De-extinction does NOT rise beyond chance in Oct 6 to 20.",
    "due": "2026-10-23",
    "confidence": 0.8,
-   "status": "pending",
-   "reason": "due 2026-10-23"
+   "status": "hit",
+   "verdict": "hit",
+   "scored_on": "2026-10-26",
+   "result": {
+    "moved": false,
+    "order_ok": true,
+    "strong": false,
+    "flags": [],
+    "ratio": 1.01,
+    "window_mean": 457.7,
+    "baseline": 454.0,
+    "p": 0.572,
+    "n_placebo": 270,
+    "seasonal_ratios": [
+     0.82,
+     1.32,
+     1.09
+    ],
+    "seasonal_ok": false,
+    "material": false,
+    "onset": null,
+    "window": [
+     "2026-10-06",
+     "2026-10-20"
+    ],
+    "weekly": [
+     [
+      "2026-07-05",
+      3011
+     ],
+     [
+      "2026-07-12",
+      4177
+     ],
+     [
+      "2026-07-19",
+      3218
+     ],
+     [
+      "2026-07-26",
+      3569
+     ],
+     [
+      "2026-08-02",
+      3317
+     ],
+     [
+      "2026-08-09",
+      3166
+     ],
+     [
+      "2026-08-16",
+      3072
+     ],
+     [
+      "2026-08-23",
+      3128
+     ],
+     [
+      "2026-08-30",
+      3346
+     ],
+     [
+      "2026-09-06",
+      3709
+     ],
+     [
+      "2026-09-13",
+      2984
+     ],
+     [
+      "2026-09-20",
+      3082
+     ],
+     [
+      "2026-09-27",
+      3151
+     ],
+     [
+      "2026-10-04",
+      3352
+     ],
+     [
+      "2026-10-11",
+      3195
+     ],
+     [
+      "2026-10-18",
+      3308
+     ]
+    ]
+   }
   },
   {
    "id": "X2",
@@ -1111,8 +1717,94 @@
    "claim": "Attention to Hydraulic shock (water hammer) does NOT rise beyond chance in Oct 6 to 22.",
    "due": "2026-10-25",
    "confidence": 0.85,
-   "status": "pending",
-   "reason": "due 2026-10-25"
+   "status": "hit",
+   "verdict": "hit",
+   "scored_on": "2026-10-26",
+   "result": {
+    "moved": false,
+    "order_ok": true,
+    "strong": false,
+    "flags": [],
+    "ratio": 1.04,
+    "window_mean": 84.9,
+    "baseline": 82.0,
+    "p": 0.288,
+    "n_placebo": 270,
+    "seasonal_ratios": [
+     1.2,
+     1.14,
+     0.76
+    ],
+    "seasonal_ok": false,
+    "material": false,
+    "onset": null,
+    "window": [
+     "2026-10-06",
+     "2026-10-22"
+    ],
+    "weekly": [
+     [
+      "2026-07-07",
+      536
+     ],
+     [
+      "2026-07-14",
+      542
+     ],
+     [
+      "2026-07-21",
+      902
+     ],
+     [
+      "2026-07-28",
+      563
+     ],
+     [
+      "2026-08-04",
+      559
+     ],
+     [
+      "2026-08-11",
+      503
+     ],
+     [
+      "2026-08-18",
+      571
+     ],
+     [
+      "2026-08-25",
+      611
+     ],
+     [
+      "2026-09-01",
+      641
+     ],
+     [
+      "2026-09-08",
+      661
+     ],
+     [
+      "2026-09-15",
+      573
+     ],
+     [
+      "2026-09-22",
+      604
+     ],
+     [
+      "2026-09-29",
+      931
+     ],
+     [
+      "2026-10-06",
+      613
+     ],
+     [
+      "2026-10-13",
+      578
+     ]
+    ]
+   }
   },
   {
    "id": "X3",
@@ -1121,8 +1813,94 @@
    "claim": "Attention to the Sally–Anne test does NOT rise beyond chance in Oct 6 to 23.",
    "due": "2026-10-26",
    "confidence": 0.8,
-   "status": "pending",
-   "reason": "due 2026-10-26"
+   "status": "hit",
+   "verdict": "hit",
+   "scored_on": "2026-10-26",
+   "result": {
+    "moved": false,
+    "order_ok": true,
+    "strong": false,
+    "flags": [],
+    "ratio": 1.88,
+    "window_mean": 225.9,
+    "baseline": 120.0,
+    "p": 0.055,
+    "n_placebo": 270,
+    "seasonal_ratios": [
+     1.4,
+     1.24,
+     1.33
+    ],
+    "seasonal_ok": true,
+    "material": true,
+    "onset": "2026-10-01",
+    "window": [
+     "2026-10-06",
+     "2026-10-23"
+    ],
+    "weekly": [
+     [
+      "2026-07-08",
+      704
+     ],
+     [
+      "2026-07-15",
+      660
+     ],
+     [
+      "2026-07-22",
+      654
+     ],
+     [
+      "2026-07-29",
+      1185
+     ],
+     [
+      "2026-08-05",
+      1590
+     ],
+     [
+      "2026-08-12",
+      1316
+     ],
+     [
+      "2026-08-19",
+      887
+     ],
+     [
+      "2026-08-26",
+      1920
+     ],
+     [
+      "2026-09-02",
+      911
+     ],
+     [
+      "2026-09-09",
+      795
+     ],
+     [
+      "2026-09-16",
+      821
+     ],
+     [
+      "2026-09-23",
+      774
+     ],
+     [
+      "2026-09-30",
+      19485
+     ],
+     [
+      "2026-10-07",
+      1971
+     ],
+     [
+      "2026-10-14",
+      889
+     ]
+    ]
+   }
   },
   {
    "id": "X4",
@@ -1141,8 +1919,94 @@
    "claim": "Attention to the Canadian Indian residential school system does NOT rise beyond chance in Oct 6 to 23, once the season is checked.",
    "due": "2026-10-26",
    "confidence": 0.8,
-   "status": "pending",
-   "reason": "due 2026-10-26"
+   "status": "hit",
+   "verdict": "hit",
+   "scored_on": "2026-10-26",
+   "result": {
+    "moved": false,
+    "order_ok": true,
+    "strong": false,
+    "flags": [],
+    "ratio": 1.42,
+    "window_mean": 532.8,
+    "baseline": 375.0,
+    "p": 0.207,
+    "n_placebo": 270,
+    "seasonal_ratios": [
+     1.65,
+     1.78,
+     1.36
+    ],
+    "seasonal_ok": false,
+    "material": false,
+    "onset": "2026-09-29",
+    "window": [
+     "2026-10-06",
+     "2026-10-23"
+    ],
+    "weekly": [
+     [
+      "2026-07-08",
+      2538
+     ],
+     [
+      "2026-07-15",
+      2989
+     ],
+     [
+      "2026-07-22",
+      2337
+     ],
+     [
+      "2026-07-29",
+      2780
+     ],
+     [
+      "2026-08-05",
+      2292
+     ],
+     [
+      "2026-08-12",
+      2188
+     ],
+     [
+      "2026-08-19",
+      2235
+     ],
+     [
+      "2026-08-26",
+      2296
+     ],
+     [
+      "2026-09-02",
+      2653
+     ],
+     [
+      "2026-09-09",
+      3184
+     ],
+     [
+      "2026-09-16",
+      3843
+     ],
+     [
+      "2026-09-23",
+      8050
+     ],
+     [
+      "2026-09-30",
+      17871
+     ],
+     [
+      "2026-10-07",
+      4276
+     ],
+     [
+      "2026-10-14",
+      3272
+     ]
+    ]
+   }
   },
   {
    "id": "X6",
@@ -1151,8 +2015,98 @@
    "claim": "Attention to TJX does NOT rise beyond chance in Oct 6 to 20.",
    "due": "2026-10-23",
    "confidence": 0.7,
-   "status": "pending",
-   "reason": "due 2026-10-23"
+   "status": "hit",
+   "verdict": "hit",
+   "scored_on": "2026-10-26",
+   "result": {
+    "moved": false,
+    "order_ok": true,
+    "strong": false,
+    "flags": [],
+    "ratio": 0.98,
+    "window_mean": 341.1,
+    "baseline": 347.0,
+    "p": 0.642,
+    "n_placebo": 270,
+    "seasonal_ratios": [
+     16.29,
+     1.14,
+     0.99
+    ],
+    "seasonal_ok": false,
+    "material": false,
+    "onset": null,
+    "window": [
+     "2026-10-06",
+     "2026-10-20"
+    ],
+    "weekly": [
+     [
+      "2026-07-05",
+      2354
+     ],
+     [
+      "2026-07-12",
+      2302
+     ],
+     [
+      "2026-07-19",
+      2347
+     ],
+     [
+      "2026-07-26",
+      2433
+     ],
+     [
+      "2026-08-02",
+      2413
+     ],
+     [
+      "2026-08-09",
+      2507
+     ],
+     [
+      "2026-08-16",
+      3197
+     ],
+     [
+      "2026-08-23",
+      2684
+     ],
+     [
+      "2026-08-30",
+      2534
+     ],
+     [
+      "2026-09-06",
+      2592
+     ],
+     [
+      "2026-09-13",
+      3252
+     ],
+     [
+      "2026-09-20",
+      2836
+     ],
+     [
+      "2026-09-27",
+      2521
+     ],
+     [
+      "2026-10-04",
+      2365
+     ],
+     [
+      "2026-10-11",
+      2382
+     ],
+     [
+      "2026-10-18",
+      2377
+     ]
+    ]
+   }
   },
   {
    "id": "X7",
@@ -1161,33 +2115,119 @@
    "claim": "Attention to the Elbe does NOT rise beyond chance in Oct 6 to 21.",
    "due": "2026-10-24",
    "confidence": 0.85,
-   "status": "pending",
-   "reason": "due 2026-10-24"
+   "status": "hit",
+   "verdict": "hit",
+   "scored_on": "2026-10-26",
+   "result": {
+    "moved": false,
+    "order_ok": true,
+    "strong": false,
+    "flags": [],
+    "ratio": 0.89,
+    "window_mean": 416.3,
+    "baseline": 470.0,
+    "p": 0.941,
+    "n_placebo": 270,
+    "seasonal_ratios": [
+     0.96,
+     0.93,
+     0.85
+    ],
+    "seasonal_ok": false,
+    "material": false,
+    "onset": null,
+    "window": [
+     "2026-10-06",
+     "2026-10-21"
+    ],
+    "weekly": [
+     [
+      "2026-07-06",
+      3220
+     ],
+     [
+      "2026-07-13",
+      3180
+     ],
+     [
+      "2026-07-20",
+      3204
+     ],
+     [
+      "2026-07-27",
+      3436
+     ],
+     [
+      "2026-08-03",
+      3911
+     ],
+     [
+      "2026-08-10",
+      3638
+     ],
+     [
+      "2026-08-17",
+      3457
+     ],
+     [
+      "2026-08-24",
+      3469
+     ],
+     [
+      "2026-08-31",
+      3278
+     ],
+     [
+      "2026-09-07",
+      3367
+     ],
+     [
+      "2026-09-14",
+      3104
+     ],
+     [
+      "2026-09-21",
+      3204
+     ],
+     [
+      "2026-09-28",
+      3356
+     ],
+     [
+      "2026-10-05",
+      2942
+     ],
+     [
+      "2026-10-12",
+      3021
+     ]
+    ]
+   }
   }
  ],
  "summary": {
   "move": {
-   "hit": 3,
+   "hit": 5,
    "miss": 1,
+   "bust": 1,
+   "void": 0,
+   "pending": 3
+  },
+  "not move": {
+   "hit": 4,
+   "miss": 5,
    "bust": 0,
    "void": 0,
    "pending": 6
   },
-  "not move": {
-   "hit": 4,
-   "miss": 2,
-   "bust": 0,
-   "void": 0,
-   "pending": 9
-  },
   "decoy": {
-   "hit": 0,
+   "hit": 6,
    "miss": 0,
    "bust": 0,
    "void": 0,
-   "pending": 7
+   "pending": 1
   },
-  "brier": 0.245,
-  "scored": 10
+  "brier": 0.202,
+  "scored": 22
  }
 }
