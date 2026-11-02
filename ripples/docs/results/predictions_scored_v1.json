@@ -2,8 +2,8 @@
  "protocol": "ripples/docs/predictions_v1.md",
  "registered": "2026-10-05T07:15:00Z",
  "registration_commit": "04b2ab1",
- "run": "2026-10-26",
- "checker_sha": "e211dd6",
+ "run": "2026-11-02",
+ "checker_sha": "d433570",
  "stopped": null,
  "scorer_notes": [
   "A wiki_level window is pending until the API has data through the window's end (unpublished days would otherwise read as zeros).",
@@ -1909,8 +1909,98 @@
    "claim": "Attention to Electronic stability control does NOT rise beyond chance in Oct 6 to 25.",
    "due": "2026-10-28",
    "confidence": 0.85,
-   "status": "pending",
-   "reason": "due 2026-10-28"
+   "status": "hit",
+   "verdict": "hit",
+   "scored_on": "2026-11-02",
+   "result": {
+    "moved": false,
+    "order_ok": true,
+    "strong": false,
+    "flags": [],
+    "ratio": 0.85,
+    "window_mean": 111.9,
+    "baseline": 132.0,
+    "p": 0.879,
+    "n_placebo": 271,
+    "seasonal_ratios": [
+     1.03,
+     1.35,
+     1.07
+    ],
+    "seasonal_ok": false,
+    "material": false,
+    "onset": null,
+    "window": [
+     "2026-10-06",
+     "2026-10-25"
+    ],
+    "weekly": [
+     [
+      "2026-07-10",
+      945
+     ],
+     [
+      "2026-07-17",
+      1025
+     ],
+     [
+      "2026-07-24",
+      922
+     ],
+     [
+      "2026-07-31",
+      886
+     ],
+     [
+      "2026-08-07",
+      894
+     ],
+     [
+      "2026-08-14",
+      831
+     ],
+     [
+      "2026-08-21",
+      893
+     ],
+     [
+      "2026-08-28",
+      902
+     ],
+     [
+      "2026-09-04",
+      912
+     ],
+     [
+      "2026-09-11",
+      844
+     ],
+     [
+      "2026-09-18",
+      877
+     ],
+     [
+      "2026-09-25",
+      908
+     ],
+     [
+      "2026-10-02",
+      878
+     ],
+     [
+      "2026-10-09",
+      764
+     ],
+     [
+      "2026-10-16",
+      782
+     ],
+     [
+      "2026-10-23",
+      781
+     ]
+    ]
+   }
   },
   {
    "id": "X5",
@@ -2221,13 +2311,13 @@
    "pending": 6
   },
   "decoy": {
-   "hit": 6,
+   "hit": 7,
    "miss": 0,
    "bust": 0,
    "void": 0,
-   "pending": 1
+   "pending": 0
   },
-  "brier": 0.202,
-  "scored": 22
+  "brier": 0.194,
+  "scored": 23
  }
 }
