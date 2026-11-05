@@ -1,0 +1,159 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Staffing Math | Benjamin J. Sunter</title>
+<meta name="description" content="Exact staffing math inside Claude, ChatGPT and Gemini: FTE for a workload, a monthly hiring plan, and Erlang C queue staffing, with the arithmetic shown.">
+<meta name="author" content="Benjamin J. Sunter">
+<meta name="color-scheme" content="light dark">
+<link rel="canonical" href="https://bensunter.com/staffing-math.html">
+<meta name="robots" content="index,follow">
+<meta property="og:title" content="Staffing Math">
+<meta property="og:description" content="How many people a workload needs and when to hire them, worked out inside Claude, ChatGPT and Gemini, with the arithmetic shown.">
+<meta property="og:url" content="https://bensunter.com/staffing-math.html">
+<meta property="og:type" content="website">
+<meta property="og:image" content="https://bensunter.com/og-staffing-math.jpg">
+<meta property="og:image:alt" content="A hiring plan drawn inside a chat: open 53 requisitions over 12 months, with January to March hatched as short before the first hire can count.">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="icon" href="favicon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<meta name="theme-color" content="#0B3A40">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600&family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600&display=swap">
+<link rel="stylesheet" href="site.css">
+<style>
+.reading{max-width:680px;margin:0 auto;padding-inline:clamp(18px,5vw,32px)}
+.artbar{position:sticky;top:0;z-index:30;background:color-mix(in srgb,var(--paper) 94%,transparent);
+  backdrop-filter:saturate(180%) blur(12px);border-bottom:1px solid var(--line)}
+.artbar .inner{max-width:1020px;margin:0 auto;padding-inline:clamp(18px,5vw,32px);
+  display:flex;align-items:center;justify-content:space-between;gap:18px;height:54px}
+.artbar a{font:600 14px/1 var(--display);color:var(--ink);text-decoration:none}
+.artbar a:hover{color:var(--accent)}
+.artbar .kind{font:500 13px/1.2 var(--sans);color:var(--muted)}
+.arthead{padding:clamp(36px,6vw,64px) 0 4px}
+.arthead .kicker{display:flex;align-items:center;gap:9px;font:600 13px/1.2 var(--sans);
+  color:var(--muted);margin-bottom:16px}
+.arthead .kicker:before{content:"";width:20px;height:2px;background:var(--warm)}
+.arthead h1{font:600 clamp(31px,5vw,45px)/1.08 var(--display);letter-spacing:-.024em}
+.arthead .by{margin-top:20px;font:400 12.5px/1 var(--mono);color:var(--muted)}
+.reading p{font-size:17px;line-height:1.7;margin:0 0 19px}
+.reading p.open{font-size:19px;line-height:1.58;color:var(--ink)}
+.reading h2{font:600 22px/1.25 var(--display);letter-spacing:-.012em;margin:36px 0 12px}
+.reading strong{color:var(--ink);font-weight:600}
+.reading ul{margin:0 0 19px;padding-left:22px;font-size:17px;line-height:1.7}
+.reading li{margin:0 0 9px}
+.addr{display:block;font:500 15px/1.4 var(--mono);color:var(--ink);overflow-wrap:anywhere;
+  background:color-mix(in srgb,var(--ink) 5%,transparent);border:1px solid var(--line);
+  border-radius:8px;padding:12px 14px;margin:0 0 19px}
+.fig{margin:6px 0 30px}
+.fig img{display:block;width:100%;height:auto;border-radius:10px;border:1px solid var(--line)}
+.fig .dark{display:none}
+@media (prefers-color-scheme:dark){
+  :root:not([data-theme=light]) .fig .light{display:none}
+  :root:not([data-theme=light]) .fig .dark{display:block}
+}
+:root[data-theme=dark] .fig .light{display:none}
+:root[data-theme=dark] .fig .dark{display:block}
+.artfoot{border-top:1px solid var(--line);margin-top:52px;padding:26px 0 60px}
+.artfoot .reading{display:flex;gap:20px;flex-wrap:wrap;justify-content:space-between;
+  font-size:13.5px;color:var(--muted)}
+</style>
+<script>try{var t=localStorage.getItem('theme');if(t==='light'||t==='dark')document.documentElement.setAttribute('data-theme',t)}catch(e){}</script>
+</head>
+<body>
+
+<div class="artbar">
+  <div class="inner">
+    <a href="index.html">&larr; Benjamin J. Sunter</a>
+    <span class="kind">Tool for AI assistants</span>
+  </div>
+</div>
+
+<main>
+<header class="reading arthead">
+  <div class="kicker">For Claude, ChatGPT and Gemini</div>
+  <h1>Staffing Math</h1>
+  <p class="by">Updated 5 November 2026</p>
+</header>
+
+<article class="reading">
+
+<p class="open">Staffing Math adds three staffing calculations to Claude, ChatGPT and Gemini. Ask in plain English how
+many people a workload needs or when to hire, and the assistant runs the calculation through this tool. Every answer
+lists its inputs as given or assumed and shows the arithmetic, so you can check it with a calculator.</p>
+
+<figure class="fig">
+  <img class="light" src="og-staffing-math.jpg" width="1200" height="630" alt="The hiring plan as it appears in a chat: open 53 requisitions over 12 months, FTE needed against FTE on hand by month, January to March hatched as short, and sliders for growth, attrition, time to hire and ramp.">
+  <img class="dark" src="staffing-math-card-dark.jpg" width="1200" height="630" alt="">
+</figure>
+
+<h2>What it answers</h2>
+
+<ul>
+<li><strong>How many people a workload needs.</strong> 4,000 cases a week at 12 minutes each, with 30% shrinkage,
+    85% occupancy and 40-hour weeks, is 33.61 FTE. That's 34 people.</li>
+<li><strong>When to hire.</strong> If that volume grows 5% a month, the plan opens 30 requisitions over 12 months, 4
+    of them in month 1. With 30 people today, 25% attrition and a month of ramp, it's 53, and the first three months
+    run short before any new hire can count.</li>
+<li><strong>How many agents a queue needs.</strong> 200 calls an hour at 5 minutes each needs 21 agents to answer 80%
+    within 20 seconds. One fewer answers 72.9%. At 30% shrinkage that's 30 people on the schedule.</li>
+</ul>
+
+<p>In Claude and ChatGPT the hiring plan also draws itself in the chat: FTE needed against FTE on hand, the short
+months hatched, requisitions by month, and sliders for growth, attrition, time to hire, ramp and shrinkage that rerun
+the plan.</p>
+
+<h2>Add it</h2>
+
+<p>It's free, needs no account and stores nothing. The address is:</p>
+
+<code class="addr">https://staffing-math.vercel.app/mcp</code>
+
+<ul>
+<li><strong>ChatGPT:</strong> open <a href="https://chatgpt.com/plugins">Plugins</a>, then Add, then Add custom MCP
+    server. Paste the address and set authentication to No authentication.</li>
+<li><strong>Gemini:</strong> open <a href="https://gemini.google.com/customize/connectors">Connectors</a>, then Custom.
+    Paste the address.</li>
+<li><strong>Claude:</strong> the Claude Desktop extension and the Claude Code plugin install from
+    <a href="https://github.com/bsunter93/staffing-math">GitHub</a>.</li>
+</ul>
+
+<p>Then ask something like: <em>I handle 4,000 cases a week at 12 minutes each with 30% shrinkage. How many people do I
+need, and what's my hiring plan if volume grows 5% a month?</em></p>
+
+<h2>Where the numbers come from</h2>
+
+<p>The calculations are the engine behind my <a href="simulator/">Operating Model Simulator</a>, copied in unchanged
+along with its own tests. Tests check each tool against hand calculations and against an independently written
+Erlang C. The code is open source under the MIT license on
+<a href="https://github.com/bsunter93/staffing-math">GitHub</a>.</p>
+
+<h2>Limits</h2>
+
+<p>It plans one team at a time and leaves out cost and budget. Erlang C assumes nobody hangs up while waiting, so
+staff the busiest hour. When attrition or current headcount isn't given, the answer says what it assumed, and for
+attrition it also shows the plan at 15% and 30% a year.</p>
+
+<h2>Help and problems</h2>
+
+<p>Email <a href="mailto:sunterbb@gmail.com">sunterbb@gmail.com</a> with what you asked and what came back.</p>
+
+</article>
+</main>
+
+<footer class="artfoot">
+  <div class="reading">
+    <span>&copy; <span id="yr">2026</span> Benjamin J. Sunter</span>
+    <span><a href="index.html">Home</a> &middot; <a href="work.html#planning">Other planning tools</a></span>
+  </div>
+</footer>
+
+<script>
+document.getElementById('yr').textContent = new Date().getFullYear();
+</script>
+</body>
+</html>

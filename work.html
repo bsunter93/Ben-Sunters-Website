@@ -57,6 +57,9 @@ main section h2{margin-bottom:8px}
 .feature:first-of-type{margin-top:0}
 /* The Did it work? image is its share card: show it whole on its own background. */
 .feature .trio-card--feature>img.shot-fit{object-fit:contain;background:#0B3A40}
+/* Staffing Math's card is light or dark to match the theme, so its letterbox matches too. */
+.feature .trio-card--feature>img.shot-fit.shot-light{background:#FAF9F7}
+.feature .trio-card--feature>img.shot-fit.shot-dark{background:#14171C}
 </style>
 <script>try{var t=localStorage.getItem('theme');if(t==='light'||t==='dark')document.documentElement.setAttribute('data-theme',t)}catch(e){}</script>
 </head>
@@ -75,7 +78,7 @@ main section h2{margin-bottom:8px}
 </div></header>
 <section id="planning" class="wrap">
   <h2>Planning tools</h2>
-  <p class="lede">Test whether a plan holds up, size a team when the forecast will be off, and check whether a change moved the number.</p>
+  <p class="lede">Test whether a plan holds up, size a team when the forecast will be off, get the hiring math inside Claude, ChatGPT or Gemini, and check whether a change moved the number.</p>
   <div class="feature">
     <a class="trio-card trio-card--feature" href="simulator/">
       <span class="proj-kind"><b class="pk-app">Interactive</b>Simulator</span>
@@ -99,6 +102,18 @@ main section h2{margin-bottom:8px}
       <span class="playlink playlink-app">Run it &rarr;</span>
       <img class="shot-light" src="headroom-card.jpg" alt="Staffing Headroom: the expected cost of being short and of being over, and the cheapest plan 4.2 people above the forecast" width="600" height="424" loading="lazy">
       <img class="shot-dark" src="headroom-card-dark.jpg" alt="" width="1200" height="869" loading="lazy">
+    </a>
+  </div>
+  <div class="feature">
+    <a class="trio-card trio-card--feature" href="staffing-math.html" style="border-top-color:var(--steel)">
+      <span class="proj-kind"><b class="pk-app">Interactive</b>Inside Claude, ChatGPT and Gemini</span>
+      <h3>Staffing Math</h3>
+      <p>Ask the assistant how many people a workload needs or when to hire, and it runs the numbers through
+         the same engine as the simulator. Every answer lists what it assumed and shows the arithmetic. In Claude
+         and ChatGPT the hiring plan draws itself, with sliders that rerun it.</p>
+      <span class="playlink playlink-app">Add it &rarr;</span>
+      <img class="shot-fit shot-light" src="og-staffing-math.jpg" alt="Staffing Math in a chat: open 53 requisitions over 12 months, with January to March hatched as short before the first hire can count" width="1200" height="630" loading="lazy">
+      <img class="shot-fit shot-dark" src="staffing-math-card-dark.jpg" alt="" width="1200" height="630" loading="lazy">
     </a>
   </div>
   <div class="feature">
