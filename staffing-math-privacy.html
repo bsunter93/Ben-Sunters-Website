@@ -1,0 +1,178 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Staffing Math privacy | Benjamin J. Sunter</title>
+<meta name="description" content="What Staffing Math does with the numbers an AI assistant sends it. It keeps none of them and counts calls by app.">
+<meta name="author" content="Benjamin J. Sunter">
+<meta name="color-scheme" content="light dark">
+<link rel="canonical" href="https://bensunter.com/staffing-math-privacy.html">
+<meta name="robots" content="index,follow">
+<link rel="icon" href="favicon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<meta name="theme-color" content="#0B3A40">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600&family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600&display=swap">
+<link rel="stylesheet" href="site.css">
+<style>
+.reading{max-width:680px;margin:0 auto;padding-inline:clamp(18px,5vw,32px)}
+.artbar{position:sticky;top:0;z-index:30;background:color-mix(in srgb,var(--paper) 94%,transparent);
+  backdrop-filter:saturate(180%) blur(12px);border-bottom:1px solid var(--line)}
+.artbar .inner{max-width:1020px;margin:0 auto;padding-inline:clamp(18px,5vw,32px);
+  display:flex;align-items:center;justify-content:space-between;gap:18px;height:54px}
+.artbar a{font:600 14px/1 var(--display);color:var(--ink);text-decoration:none}
+.artbar a:hover{color:var(--accent)}
+.artbar .kind{font:500 13px/1.2 var(--sans);color:var(--muted)}
+.arthead{padding-block:clamp(36px,6vw,64px) 4px}
+.arthead .kicker{display:flex;align-items:center;gap:9px;font:600 13px/1.2 var(--sans);
+  color:var(--muted);margin-bottom:16px}
+.arthead .kicker a{color:inherit;text-decoration:none}
+.arthead .kicker a:hover{color:var(--accent)}
+.arthead .kicker:before{content:"";width:20px;height:2px;background:var(--warm)}
+.arthead h1{font:600 clamp(31px,5vw,45px)/1.08 var(--display);letter-spacing:-.024em}
+.arthead .by{margin-top:20px;font:400 12.5px/1 var(--mono);color:var(--muted)}
+.reading p{font-size:17px;line-height:1.7;margin:0 0 19px}
+.reading p.open{font-size:19px;line-height:1.58;color:var(--ink)}
+.reading h2{font:600 22px/1.25 var(--display);letter-spacing:-.012em;margin:36px 0 12px}
+.reading strong{color:var(--ink);font-weight:600}
+.reading code{overflow-wrap:anywhere}
+.reading ul{margin:0 0 19px;padding-left:22px;font-size:17px;line-height:1.7}
+.reading li{margin:0 0 9px}
+.pull{font:600 clamp(19px,2.4vw,23px)/1.4 var(--display);color:var(--ink);
+  border-left:3px solid var(--warm);padding:6px 0 6px 22px;margin:32px 0}
+.artfoot{border-top:1px solid var(--line);margin-top:52px;padding:26px 0 60px}
+.artfoot .reading{display:flex;gap:20px;flex-wrap:wrap;justify-content:space-between;
+  font-size:13.5px;color:var(--muted)}
+</style>
+<script>try{var t=localStorage.getItem('theme');if(t==='light'||t==='dark')document.documentElement.setAttribute('data-theme',t)}catch(e){}</script>
+</head>
+<body>
+
+<div class="artbar">
+  <div class="inner">
+    <a href="index.html">&larr; Benjamin J. Sunter</a>
+    <span class="kind">Tool privacy</span>
+  </div>
+</div>
+
+<main>
+<header class="reading arthead">
+  <div class="kicker"><a href="staffing-math.html">Staffing Math</a></div>
+  <h1>Privacy</h1>
+  <p class="by">Updated 7 November 2026</p>
+</header>
+
+<article class="reading">
+
+<p class="open">Staffing Math is a calculator that AI assistants such as Claude, ChatGPT and Gemini can call. It has
+no accounts and no sign-in. It works out the answer to each request, sends it back, and keeps none of the numbers it
+was given.</p>
+
+<p>I'm the developer, and this page describes exactly what the hosted server at
+<code>staffing-math.vercel.app/mcp</code> does. If any of it turns out to be wrong, tell me and I'll correct it.</p>
+
+<h2>What a request contains</h2>
+
+<p>Your assistant decides when to call Staffing Math and what to send. A request holds the numbers a calculation
+needs, such as weekly volume, minutes per case, shrinkage, headcount, attrition, time to hire, calls per hour or a
+service level target. The server reads them, does the arithmetic and returns the result. It doesn't receive your
+conversation. Some assistants attach a little metadata of their own, such as a language setting or a rough location.
+The server doesn't read it or keep it.</p>
+
+<p class="pull">The server stores no inputs and no results. Each request is answered and forgotten.</p>
+
+<h2>What I count</h2>
+
+<p>Each request adds one to a tally. The tally records three things:</p>
+
+<ul>
+<li><strong>The day</strong>, in UTC.</li>
+<li><strong>The app that called</strong>, taken from the first word of the request's user agent, for example
+    <code>openai-mcp</code>. The rest of the user agent is dropped. When an app sends its name on connecting, that
+    name is tallied too.</li>
+<li><strong>What was asked for</strong>: connecting, listing the tools, which tool ran, or loading the hiring plan
+    chart.</li>
+</ul>
+
+<p>The tally never holds the numbers you sent, the answers, IP addresses or anything about you. The totals are public
+at <a href="https://staffing-math.vercel.app/stats">staffing-math.vercel.app/stats</a>, so you can see everything I
+see.</p>
+
+<p>Copies you run yourself, from GitHub or as a desktop extension, count nothing.</p>
+
+<h2>Who else handles a request</h2>
+
+<ul>
+<li><strong>Vercel</strong> hosts the server. Its platform keeps request logs, which on this plan last about an hour.
+    If a request fails, the error is written to that log. See
+    <a href="https://vercel.com/legal/privacy-notice" rel="noopener">Vercel's privacy notice</a>.</li>
+<li><strong>Upstash</strong> stores the tally described above. See
+    <a href="https://upstash.com/trust/privacy" rel="noopener">Upstash's privacy policy</a>.</li>
+<li><strong>Your assistant</strong> holds your conversation under its own privacy policy. Staffing Math doesn't change
+    what Anthropic, OpenAI or Google keep.</li>
+</ul>
+
+<h2>Sharing</h2>
+
+<p>No data is sold, rented or shared with anyone beyond the two services above, which run the server and store the
+tally.</p>
+
+<h2>AI and machine learning</h2>
+
+<p>Staffing Math uses no AI model. Every answer is ordinary arithmetic from the engine behind my
+<a href="simulator/">Operating Model Simulator</a>, and the code is open source on
+<a href="https://github.com/bsunter93/staffing-math" rel="noopener">GitHub</a>. Nothing sent to it is used to train
+any model.</p>
+
+<h2>How the data is protected</h2>
+
+<p><strong>In transit.</strong> The server answers over HTTPS only.</p>
+
+<p><strong>Retention and deletion.</strong> Inputs and results are gone once the reply is sent. Hosting logs expire
+after about an hour. The tally holds no personal data and is kept until I delete it.</p>
+
+<p><strong>Incident response.</strong> If you find a security problem, email
+<a href="mailto:sunterbb@gmail.com">sunterbb@gmail.com</a>. I will acknowledge it, fix it, and describe the fix on
+this page.</p>
+
+<h2>Removing it</h2>
+
+<p>Remove Staffing Math from your assistant's connector or app settings at any time. Nothing about you stays behind on
+the server.</p>
+
+<h2>Children</h2>
+
+<p>Staffing Math is a workforce planning tool and is not directed at children.</p>
+
+<h2>Changes</h2>
+
+<p>If the server ever starts doing something this page doesn't describe, this page will change first, with a new
+date.</p>
+
+<h2>Contact</h2>
+
+<p>Benjamin J. Sunter, Denver, Colorado. <a href="mailto:sunterbb@gmail.com">sunterbb@gmail.com</a>. Questions and
+corrections both welcome.</p>
+
+</article>
+</main>
+
+<footer class="artfoot">
+  <div class="reading">
+    <span>&copy; <span id="yr">2026</span> Benjamin J. Sunter</span>
+    <span><a href="staffing-math.html">Staffing Math</a> &middot; <a href="index.html#contact">Get in touch</a></span>
+  </div>
+</footer>
+
+<script>
+document.getElementById('yr').textContent = new Date().getFullYear();
+(function () {
+  var root = document.documentElement, saved;
+  try { saved = localStorage.getItem('theme'); } catch (e) { saved = null; }
+  if (saved === 'light' || saved === 'dark') root.setAttribute('data-theme', saved);
+})();
+</script>
+</body>
+</html>
