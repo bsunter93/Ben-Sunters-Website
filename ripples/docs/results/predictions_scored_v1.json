@@ -2,8 +2,8 @@
  "protocol": "ripples/docs/predictions_v1.md",
  "registered": "2026-10-05T07:15:00Z",
  "registration_commit": "04b2ab1",
- "run": "2026-11-02",
- "checker_sha": "d433570",
+ "run": "2026-11-09",
+ "checker_sha": "b6dba29",
  "stopped": null,
  "scorer_notes": [
   "A wiki_level window is pending until the API has data through the window's end (unpublished days would otherwise read as zeros).",
@@ -295,8 +295,102 @@
    "claim": "Attention to Job Corps is back within chance in Oct 14 to Nov 4.",
    "due": "2026-11-07",
    "confidence": 0.75,
-   "status": "pending",
-   "reason": "due 2026-11-07"
+   "status": "hit",
+   "verdict": "hit",
+   "scored_on": "2026-11-09",
+   "result": {
+    "moved": false,
+    "order_ok": true,
+    "strong": false,
+    "flags": [],
+    "ratio": 1.44,
+    "window_mean": 198.0,
+    "baseline": 137.5,
+    "p": 0.052,
+    "n_placebo": 270,
+    "seasonal_ratios": [
+     0.85,
+     0.84,
+     1.08
+    ],
+    "seasonal_ok": true,
+    "material": false,
+    "onset": "2026-09-30",
+    "window": [
+     "2026-10-14",
+     "2026-11-04"
+    ],
+    "weekly": [
+     [
+      "2026-07-08",
+      772
+     ],
+     [
+      "2026-07-15",
+      844
+     ],
+     [
+      "2026-07-22",
+      865
+     ],
+     [
+      "2026-07-29",
+      909
+     ],
+     [
+      "2026-08-05",
+      944
+     ],
+     [
+      "2026-08-12",
+      2267
+     ],
+     [
+      "2026-08-19",
+      3593
+     ],
+     [
+      "2026-08-26",
+      2443
+     ],
+     [
+      "2026-09-02",
+      4179
+     ],
+     [
+      "2026-09-09",
+      5848
+     ],
+     [
+      "2026-09-16",
+      6644
+     ],
+     [
+      "2026-09-23",
+      35073
+     ],
+     [
+      "2026-09-30",
+      255657
+     ],
+     [
+      "2026-10-07",
+      5996
+     ],
+     [
+      "2026-10-14",
+      1361
+     ],
+     [
+      "2026-10-21",
+      1422
+     ],
+     [
+      "2026-10-28",
+      1436
+     ]
+    ]
+   }
   },
   {
    "id": "A5",
@@ -2304,11 +2398,11 @@
    "pending": 3
   },
   "not move": {
-   "hit": 4,
+   "hit": 5,
    "miss": 5,
    "bust": 0,
    "void": 0,
-   "pending": 6
+   "pending": 5
   },
   "decoy": {
    "hit": 7,
@@ -2317,7 +2411,7 @@
    "void": 0,
    "pending": 0
   },
-  "brier": 0.194,
-  "scored": 23
+  "brier": 0.188,
+  "scored": 24
  }
 }
